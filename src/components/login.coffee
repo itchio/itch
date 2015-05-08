@@ -19,7 +19,7 @@ R.component "LoginForm", {
 
     I.api().login_with_password(username, password).then (res) =>
       @setState loading: false
-      I.set_current_user res
+      I.set_current_user res.key
     , (errors) =>
       @setState errors: errors, loading: false
 

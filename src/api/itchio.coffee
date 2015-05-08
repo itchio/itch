@@ -11,12 +11,32 @@ I.set_current_user = (data) =>
   @_current_user = new I.ItchioApiUser I.api(), data
 
 class I.ItchioApiUser
-  constructor: (@api, @data) ->
+  constructor: (@api, @key) ->
+    throw Error "Missing key for user" unless @key?.key
+
+  request: (method, url, params) ->
+    url = "/#{@key.key}#{url}"
+    @api.request method, url, params
+
+  my_games: ->
+    @request "get", "/my-games"
+
+  my_owned_keys: ->
+    @request "get", "/my-owned-keys"
+
+  my_claimed_keys: ->
+    @request "get", "/my-claimed-keys"
+
+  download_key_uploads: ->
+    throw Error "not yet"
+
+  download_upload: ->
+    throw Error "not yet"
 
 class I.ItchioApi
   root_url: "https://itch.io/api/1"
 
-  request: (method, url, params) =>
+  request: (method, url, params) ->
     querystring = require("querystring")
     method = method.toLowerCase()
 
