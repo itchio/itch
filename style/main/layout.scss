@@ -19,7 +19,7 @@ p {
         outline-color: #361275;
     }
 
-    &.disabled {
+    &.disabled, &[disabled] {
         text-shadow: none;
         color: #CCC;
         box-shadow: none;
