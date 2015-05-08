@@ -1,10 +1,5 @@
 
-body {
-    font-family: Lato, sans-serif;
-    font-size: 16px;
-    color: #333;
-}
-
-p {
-    line-height: 1.5;
-}
+@import "main/common";
+@import "main/form";
+@import "main/layout";
+@import "main/login";
