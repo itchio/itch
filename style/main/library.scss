@@ -1,0 +1,82 @@
+
+.library_page {
+    $sidebar_width: 250px;
+
+    background: #333;
+    color: white;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    .sidebar {
+        background: #232323;
+        width: $sidebar_width;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+    }
+
+    .main_content {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: $sidebar_width;
+        right: 0;
+    }
+
+    .game_list {
+        padding: 30px 20px 0 20px;
+    }
+
+    .game_cell {
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 20px 40px 20px;
+
+       .bordered {
+            background: rgba(0,0,0,.5);
+
+            width: 192px;
+            height: 152px;
+
+            position: relative;
+            border-radius: 2px;
+            box-shadow: 0 0 0 2px #222;
+
+            margin-bottom: 10px;
+        }
+
+        .game_thumb {
+            @include transition(opacity 0.20s ease-in-out);
+
+            vertical-align: top;
+            display: block;
+            position: absolute;
+            border-radius: 2px;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255, 0.3);
+            background-position: 50% 50%;
+            background-size: cover;
+        }
+
+        .game_title, .game_author {
+            @include single_line;
+        }
+
+        .game_title {
+            color: #eee;
+        }
+
+        .game_author {
+            color: #aaa;
+        }
+
+    }
+}

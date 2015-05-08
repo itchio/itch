@@ -20,12 +20,13 @@ R.component "LoginForm", {
     I.api().login_with_password(username, password).then (res) =>
       @setState loading: false
       I.set_current_user res.key
+      React.render (R.LibraryPage {}), document.body
     , (errors) =>
       @setState errors: errors, loading: false
 
   render: ->
     div className: "login_form",
-      (img className: "logo", src: "static/images/itchio-white.svg", onClick: -> alert "ehhh")
+      (img className: "logo", src: "static/images/itchio-white.svg")
       (div className: "login_box",
         (h1 {}, "Log in"),
         form className: "form", onSubmit: @handle_submit,
@@ -37,6 +38,7 @@ R.component "LoginForm", {
             name: "username"
             type: "text"
             ref: "username"
+            autofocus: true
             disabled: @state.loading
           }),
           (R.InputRow {
@@ -56,8 +58,12 @@ R.component "LoginForm", {
 }
 
 R.component "InputRow", {
+  componentDidMount: ->
+    if @props.autofocus
+      @refs.input.getDOMNode().focus()
+
   value: ->
-    React.findDOMNode(@refs.input).value
+    @refs.input.getDOMNode().value
 
   render: ->
     div className: "input_row",
