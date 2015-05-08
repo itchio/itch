@@ -1,0 +1,21 @@
+{
+  "name": "itchio-app",
+  "version": "0.0.0",
+  "homepage": "https://github.com/leafo/itchio-app",
+  "authors": [
+    "leaf corcoran <leafot@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "underscore": "~1.8.3",
+    "react": "~0.13.2",
+    "lato": "~0.3.0"
+  }
+}
