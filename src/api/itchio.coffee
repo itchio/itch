@@ -27,6 +27,9 @@ class I.ItchioApiUser
   my_claimed_keys: ->
     @request "get", "/my-claimed-keys"
 
+  me: ->
+    @request "get", "/me"
+
   download_key_uploads: ->
     throw Error "not yet"
 

@@ -8,7 +8,8 @@ R.component "LibraryPage", {
 
 R.component "LibrarySidebar", {
   render: ->
-    (div className: "sidebar", "Hello world")
+    (div className: "sidebar",
+      (R.UserPanel {}))
 }
 
 R.component "LibraryContent", {
@@ -16,16 +17,29 @@ R.component "LibraryContent", {
     { games: null }
 
   componentDidMount: ->
-    console.log "mounted library content"
     I.current_user().my_games().then (res) =>
-      console.log res.games
       @setState games: res.games
 
   render: ->
-    console.log "games: ", @state.games
     div className: "main_content",
       if @state.games
         (R.GameList games: @state.games)
+}
+
+R.component "UserPanel", {
+  getInitialState: ->
+    { user: null }
+
+  componentDidMount: ->
+    I.current_user().me().then (res) =>
+      @setState user: res.user
+  
+  render: ->
+    unless @state.user
+      return div className: "user_panel loading", "Loading"
+
+    div className: "user_panel",
+      "Logged in as #{@state.user.username}",
 }
 
 R.component "GameList", {
