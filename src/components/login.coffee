@@ -7,20 +7,21 @@ R.component "LoginPage", {
 
 R.component "LoginForm", {
   getInitialState: ->
-    { loading: false }
+    { loading: false, errors: null }
 
   handle_submit: (event) ->
     event.preventDefault()
 
-    @setState loading: true
+    @setState loading: true, errors: null
 
-    req = new XMLHttpRequest
-    req.onreadystatechange = ->
-      if req.readyState == 4
-        console.log "it finished:", req.status
+    username = @refs.username.value()
+    password = @refs.password.value()
 
-    req.open "POST", "http://leafo.net"
-    req.send()
+    I.api().login_with_password(username, password).then (res) =>
+      @setState loading: false
+      I.set_current_user res
+    , (errors) =>
+      @setState errors: errors, loading: false
 
   render: ->
     div className: "login_form",
@@ -28,16 +29,21 @@ R.component "LoginForm", {
       (div className: "login_box",
         (h1 {}, "Log in"),
         form className: "form", onSubmit: @handle_submit,
+          (if @state.errors
+            ul className: "form_errors",
+              (li {}, error for error in @state.errors )...)
           (R.InputRow {
             label: "Username"
             name: "username"
             type: "text"
+            ref: "username"
             disabled: @state.loading
           }),
           (R.InputRow {
             label: "Password"
             name: "password"
             type: "password"
+            ref: "password"
             disabled: @state.loading
           }),
           (div className: "buttons",
@@ -50,12 +56,16 @@ R.component "LoginForm", {
 }
 
 R.component "InputRow", {
+  value: ->
+    React.findDOMNode(@refs.input).value
+
   render: ->
     div className: "input_row",
       (label {},
         (div className: "label", @props.label),
         (input {
           type: @props.type || "text"
+          ref: "input"
           disabled: if @props.disabled then "disabled"
         }))
 }
