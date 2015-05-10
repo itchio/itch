@@ -3,8 +3,9 @@
 **This project is in very early development!**
 
 The goal of this project is to give you a desktop application that you can
-download and run games from itch.io, including updating them and notifying you
-when there are updates.
+download and run games from [itch.io](http://itch.io) with. Additionally you
+should be able to update games and get notified when games are updated. The
+goal is not to replace the itch.io website.
 
 ## Installing
 
@@ -31,7 +32,7 @@ $ tup
 You can now run the app in the current directory:
 
 ```bash
-$ electron.
+$ electron .
 ```
 
 ## Screenshots
