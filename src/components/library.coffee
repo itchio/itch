@@ -25,23 +25,46 @@ R.component "LibraryPage", {
 }
 
 R.component "GameBox", {
+  getInitialState: =>
+    { uploads: null, loading: false }
+
   close: ->
     @trigger "set_game", null
 
-  componentDidMount: ->
-    return unless @props.game.key.id
+  download_upload: (upload) ->
+    =>
+      I.current_user().download_upload(@props.game.key.id, upload.id).then (res) =>
+        console.log res
+      , (errors) =>
+        console.error "failed to download upload"
 
+  componentDidMount: ->
+    return unless @props.game.key
+
+    @setState loading: true
     I.current_user().download_key_uploads(@props.game.key.id).then (res) =>
-      console.log "res", res
+      @setState loading: false, uploads: res.uploads
     , (errors) =>
       console.error "failed to get download key uploads", errors
 
   render: ->
+    content = if @state.uploads
+      @render_uploads()
+    else
+      ["Loading"]
+
     (div className: "lightbox_container",
       (div className: "lightbox",
         (div className: "lightbox_close", onClick: @close, "×")
         (div className: "lightbox_header", "Game #{@props.game.id}")
-        (div className: "lightbox_content", "The game details go here")))
+        (div className: "lightbox_content", content...)))
+
+  render_uploads: ->
+    for upload in @state.uploads
+      (div upload: upload, className: "upload_row",
+        (span className: "upload_name", upload.filename),
+        (span className: "upload_size", upload.size),
+        (span className: "download_btn button", onClick: @download_upload(upload), "Download"))
 }
 
 R.component "LibrarySidebar", {
@@ -106,9 +129,6 @@ R.component "LibraryContent", {
 
   componentDidMount: ->
     @refresh_games()
-
-  componentWillReceiveProps: (next_props) ->
-    console.log "recieve props", next_props
 
   componentDidUpdate: (prev_props) ->
     if prev_props.current_panel != @props.current_panel

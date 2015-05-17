@@ -77,8 +77,8 @@ class I.ItchioApiUser
   download_key_uploads: (download_key_id) ->
     @request "get", "/download-key/#{download_key_id}/uploads"
 
-  download_upload: ->
-    throw Error "not yet"
+  download_upload: (download_key_id, upload_id)->
+    @request "get", "/download-key/#{download_key_id}/download/#{upload_id}"
 
 class I.ItchioApi
   root_url: "https://itch.io/api/1"
