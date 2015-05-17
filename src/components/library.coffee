@@ -8,8 +8,8 @@ R.component "LibraryPage", {
       set_panel: (name) =>
         @setState current_panel: name
 
-      set_game: (game_id) =>
-        @setState current_game: game_id
+      set_game: (game) =>
+        @setState current_game: game
     }
 
   componentDidUnmount: ->
@@ -20,7 +20,7 @@ R.component "LibraryPage", {
       (R.LibrarySidebar @state),
       (R.LibraryContent @state),
       if @state.current_game
-        (R.GameBox { game_id: @state.current_game })
+        (R.GameBox { game: @state.current_game })
 
 }
 
@@ -32,7 +32,7 @@ R.component "GameBox", {
     (div className: "lightbox_container",
       (div className: "lightbox",
         (div className: "lightbox_close", onClick: @close, "×")
-        (div className: "lightbox_header", "Game #{@props.game_id}")
+        (div className: "lightbox_header", "Game #{@props.game.id}")
         (div className: "lightbox_content", "The game details go here")))
 }
 
@@ -132,7 +132,7 @@ R.component "GameList", {
 
 R.component "GameCell", {
   select_game: ->
-    @trigger "set_game", @props.game.id
+    @trigger "set_game", @props.game
 
   render: ->
     game = @props.game
