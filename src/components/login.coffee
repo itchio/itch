@@ -9,6 +9,20 @@ R.component "LoginForm", {
   getInitialState: ->
     { loading: false, errors: null }
 
+  after_login: ->
+    React.render (R.LibraryPage {}), document.body
+
+  componentDidMount: ->
+    @setState loading: true
+    I.ItchioApiUser.get_saved_user().then (user) =>
+      I.set_current_user user
+      @after_login()
+    , (errors) =>
+      if errors.length
+        @setState errors: errors, loading: false
+      else
+        @setState loading: false
+
   handle_submit: (event) ->
     event.preventDefault()
 
@@ -18,9 +32,12 @@ R.component "LoginForm", {
     password = @refs.password.value()
 
     I.api().login_with_password(username, password).then (res) =>
+      console.log "login", res
+
       @setState loading: false
       I.set_current_user res.key
-      React.render (R.LibraryPage {}), document.body
+      I.current_user().save_login()
+      @after_login()
     , (errors) =>
       @setState errors: errors, loading: false
 

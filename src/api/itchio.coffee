@@ -3,20 +3,59 @@ I.api = =>
   @_api ||= new I.ItchioApi
   @_api
 
+I.config = =>
+  @_config ||= new I.Config
+  @_config
+
 I.current_user = =>
   throw Error "no current user" unless @_current_user
   @_current_user
 
 I.set_current_user = (data) =>
-  @_current_user = new I.ItchioApiUser I.api(), data
+  if data instanceof I.ItchioApiUser
+    @_current_user = data
+  else
+    @_current_user = new I.ItchioApiUser I.api(), data
+
+class I.Config
+  id: 0
+
+  constructor: ->
+    @listeners = {}
+    @ipc = require "ipc"
+    @ipc.on "return_get_config", (id, val) =>
+      l = @listeners[id]
+      l? val
+      delete @listeners[id]
+
+
+  set: (key, val) =>
+    @ipc.send "set_config", key, val
+
+  get: (key, fn) =>
+    id = @id++
+    @ipc.send "get_config", id, key
+    @listeners[id] = fn
 
 class I.ItchioApiUser
+  @get_saved_user: =>
+    new Promise (resolve, reject) ->
+      I.config().get "api_key", (key) =>
+        if key
+          I.api().login_key(key).then (res) =>
+            resolve new I.ItchioApiUser I.api(), { key: key }
+        else
+          reject []
+
   constructor: (@api, @key) ->
     throw Error "Missing key for user" unless @key?.key
 
   request: (method, url, params) ->
     url = "/#{@key.key}#{url}"
     @api.request method, url, params
+
+  save_login: ->
+    I.config().set "api_key", @key.key
 
   my_games: ->
     @request "get", "/my-games"
@@ -38,6 +77,7 @@ class I.ItchioApiUser
 
 class I.ItchioApi
   root_url: "https://itch.io/api/1"
+  root_url: "http://localhost.com:8080/api/1"
 
   request: (method, url, params) ->
     querystring = require("querystring")
@@ -78,6 +118,11 @@ class I.ItchioApi
         req.send data
       else
         req.send()
+
+  login_key: (key) =>
+    @request "post", "/#{key}/me", {
+      source: "desktop"
+    }
 
   login_with_password: (username, password) ->
     @request "post", "/login", {
