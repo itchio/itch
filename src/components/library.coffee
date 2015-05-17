@@ -1,16 +1,61 @@
 
 R.component "LibraryPage", {
+  getInitialState: ->
+    { current_panel: "owned" }
+
+  componentDidMount: ->
+    @detach = I.dispatch @, {
+      set_panel: (name) =>
+        @setState current_panel: name
+    }
+
+  componentDidUnmount: ->
+    @detach?()
+
   render: ->
     div className: "library_page",
-      (R.LibrarySidebar {}),
-      (R.LibraryContent {})
+      (R.LibrarySidebar @state),
+      (R.LibraryContent @state)
 }
 
 R.component "LibrarySidebar", {
+  set_panel: (name) ->
+    =>
+      @trigger "set_panel", name
+
   render: ->
     (div className: "sidebar",
-      (R.UserPanel {}))
+      (R.UserPanel {}),
+      (div className: "panel_links",
+        (R.LibraryPanelLink {
+          name: "owned"
+          label: "Owned"
+          current_panel: @props.current_panel
+        }),
+        (R.LibraryPanelLink {
+          name: "dashboard"
+          label: "Dashboard"
+          current_panel: @props.current_panel
+        })))
+
 }
+
+R.component "LibraryPanelLink", {
+  set_panel: (name) ->
+    =>
+      @trigger "set_panel", name
+
+  render: ->
+    classes = "panel_link"
+    if @props.name == @props.current_panel
+      classes += " current"
+
+    div {
+      className: classes
+      onClick: @set_panel @props.name
+    }, @props.label
+}
+
 
 R.component "LibraryContent", {
   getInitialState: ->
