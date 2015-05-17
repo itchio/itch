@@ -11,8 +11,11 @@ R.component "LoginForm", {
 
   after_login: ->
     React.render (R.LibraryPage {}), document.body
+    I.set_menu()
 
   componentDidMount: ->
+    I.set_menu()
+
     @setState loading: true
     I.ItchioApiUser.get_saved_user().then (user) =>
       I.set_current_user user

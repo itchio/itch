@@ -11,11 +11,16 @@ I.current_user = =>
   throw Error "no current user" unless @_current_user
   @_current_user
 
+I.has_current_user = =>
+  !!@_current_user
+
 I.set_current_user = (data) =>
-  if data instanceof I.ItchioApiUser
-    @_current_user = data
+  @_current_user = if data instanceof I.ItchioApiUser
+    data
+  else if data
+    new I.ItchioApiUser I.api(), data
   else
-    @_current_user = new I.ItchioApiUser I.api(), data
+    null
 
 class I.Config
   id: 0

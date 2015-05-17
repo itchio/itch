@@ -1,4 +1,4 @@
 include_rules
 
-: init/pre.coffee api/*.coffee components/*.coffee |> !coffee |> main.js
+: init/pre.coffee api/*.coffee components/*.coffee menu/*.coffee |> !coffee |> main.js
 
