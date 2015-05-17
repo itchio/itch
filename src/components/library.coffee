@@ -1,12 +1,15 @@
 
 R.component "LibraryPage", {
   getInitialState: ->
-    { current_panel: "owned" }
+    { current_panel: "owned", current_game: null }
 
   componentDidMount: ->
-    @detach = I.dispatch @, {
+    @dispatch {
       set_panel: (name) =>
         @setState current_panel: name
+
+      set_game: (game_id) =>
+        @setState current_game: game_id
     }
 
   componentDidUnmount: ->
@@ -15,7 +18,22 @@ R.component "LibraryPage", {
   render: ->
     div className: "library_page",
       (R.LibrarySidebar @state),
-      (R.LibraryContent @state)
+      (R.LibraryContent @state),
+      if @state.current_game
+        (R.GameBox { game_id: @state.current_game })
+
+}
+
+R.component "GameBox", {
+  close: ->
+    @trigger "set_game", null
+
+  render: ->
+    (div className: "lightbox_container",
+      (div className: "lightbox",
+        (div className: "lightbox_close", onClick: @close, "×")
+        (div className: "lightbox_header", "Game #{@props.game_id}")
+        (div className: "lightbox_content", "The game details go here")))
 }
 
 R.component "LibrarySidebar", {
@@ -113,6 +131,9 @@ R.component "GameList", {
 }
 
 R.component "GameCell", {
+  select_game: ->
+    @trigger "set_game", @props.game.id
+
   render: ->
     game = @props.game
 
@@ -125,6 +146,7 @@ R.component "GameCell", {
       (div className: "bordered",
         (div {
           className: thumb_classes
+          onClick: @select_game
           style: {
             backgroundImage: if cover = @props.game.cover_url
               "url('#{cover}')"

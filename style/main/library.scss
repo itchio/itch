@@ -91,6 +91,7 @@
             box-shadow: inset 0 0 0 1px rgba(255,255,255, 0.3);
             background-position: 50% 50%;
             background-size: cover;
+            cursor: pointer;
         }
 
         .game_title, .game_author {
@@ -105,5 +106,46 @@
             color: #aaa;
         }
 
+    }
+
+
+    .lightbox_container {
+        color: $body_color;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(black, 0.5);
+        overflow: auto;
+
+        .lightbox {
+            position: relative;
+            background: white;
+            overflow: hidden;
+            border-radius: 3px;
+            min-width: 400px;
+            max-width: 80%;
+            margin: 40px auto;
+
+            .lightbox_close {
+                position: absolute;
+                top: 5px;
+                right: 10px;
+                font-size: 30px;
+                color: #999;
+                cursor: pointer;
+            }
+
+            .lightbox_header {
+                border-bottom: 1px solid $border_color;
+                padding: 20px;
+                font-size: 24px;
+            }
+
+            .lightbox_content {
+                padding: 20px;
+            }
+        }
     }
 }

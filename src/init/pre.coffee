@@ -8,7 +8,7 @@ R.component = (name, data) ->
     undefined
 
   data.dispatch = ->
-    I.dispatch @, arguments...
+    @detach = I.dispatch @, arguments...
     undefined
 
   data.displayName = "R.#{name}"
@@ -24,7 +24,6 @@ R.component = (name, data) ->
 
 I.start = ->
   React.render (R.LoginPage {}), document.body
-
 
 I.dispatch = (c, table) ->
   node = c.getDOMNode()
