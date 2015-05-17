@@ -74,8 +74,8 @@ class I.ItchioApiUser
   me: ->
     @request "get", "/me"
 
-  download_key_uploads: ->
-    throw Error "not yet"
+  download_key_uploads: (download_key_id) ->
+    @request "get", "/download-key/#{download_key_id}/uploads"
 
   download_upload: ->
     throw Error "not yet"

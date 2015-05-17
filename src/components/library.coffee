@@ -28,6 +28,14 @@ R.component "GameBox", {
   close: ->
     @trigger "set_game", null
 
+  componentDidMount: ->
+    return unless @props.game.key.id
+
+    I.current_user().download_key_uploads(@props.game.key.id).then (res) =>
+      console.log "res", res
+    , (errors) =>
+      console.error "failed to get download key uploads", errors
+
   render: ->
     (div className: "lightbox_container",
       (div className: "lightbox",
@@ -89,7 +97,12 @@ R.component "LibraryContent", {
           @setState games: res.games
       when "owned"
         user.my_owned_keys().then (res) =>
-          @setState games: (key.game for key in res.owned_keys)
+          games = for key in res.owned_keys
+            game = key.game
+            game.key = key
+            game
+
+          @setState games: games
 
   componentDidMount: ->
     @refresh_games()
