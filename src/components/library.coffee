@@ -59,11 +59,29 @@ R.component "LibraryPanelLink", {
 
 R.component "LibraryContent", {
   getInitialState: ->
-    { games: null }
+    { games: null, loading: false }
+
+  refresh_games: ->
+    user = I.current_user()
+
+    @setState loading: true
+    switch @props.current_panel
+      when "dashboard"
+        user.my_games().then (res) =>
+          @setState games: res.games
+      when "owned"
+        user.my_owned_keys().then (res) =>
+          @setState games: (key.game for key in res.owned_keys)
 
   componentDidMount: ->
-    I.current_user().my_games().then (res) =>
-      @setState games: res.games
+    @refresh_games()
+
+  componentWillReceiveProps: (next_props) ->
+    console.log "recieve props", next_props
+
+  componentDidUpdate: (prev_props) ->
+    if prev_props.current_panel != @props.current_panel
+      @refresh_games()
 
   render: ->
     div className: "main_content",
