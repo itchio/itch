@@ -15,7 +15,8 @@ ipc.on "set_config", (event, key, value) ->
   console.log "Setting config: #{key}, #{value}"
   nconf.set key, value
   nconf.save (err) ->
-    console.log "Could not save config: #{err}"
+    if err
+      console.log "Could not save config: #{err}"
 
 app.on "window-all-closed", ->
   unless process.platform == "darwin"
