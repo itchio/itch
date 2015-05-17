@@ -3,6 +3,14 @@
 @R = {}
 
 R.component = (name, data) ->
+  data.trigger = ->
+    I.trigger @, arguments...
+    undefined
+
+  data.dispatch = ->
+    I.dispatch @, arguments...
+    undefined
+
   data.displayName = "R.#{name}"
   cl = React.createClass(data)
   R[name] = React.createFactory(cl)
@@ -17,5 +25,27 @@ R.component = (name, data) ->
 I.start = ->
   React.render (R.LoginPage {}), document.body
 
-  
+
+I.dispatch = (c, table) ->
+  node = c.getDOMNode()
+  console.log node
+
+  wrapped = for own key, fn of table
+    do (key, fn) ->
+      [key, (event) -> fn event.detail, event]
+
+  for [key, fn] in wrapped
+    node.addEventListener key, fn, false
+
+  detach = ->
+    for [key, fn] in wrapped
+      node.removeEventListener key, fn, false
+
+  detach
+
+I.trigger = (c, name, data) ->
+  c.getDOMNode().dispatchEvent new CustomEvent name, {
+    bubbles: true
+    detail: data
+  }
 
