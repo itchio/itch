@@ -82,7 +82,6 @@ class I.ItchioApiUser
 
 class I.ItchioApi
   root_url: "https://itch.io/api/1"
-  root_url: "http://localhost.com:8080/api/1"
 
   request: (method, url, params) ->
     querystring = require("querystring")
