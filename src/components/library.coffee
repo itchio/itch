@@ -42,7 +42,6 @@ R.component "GameBox", {
         console.error "failed to download upload"
 
   componentDidMount: ->
-    console.log "gamebox mounted, props = ", @props
     return unless @props.game.key
 
     @setState loading: true
