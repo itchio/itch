@@ -1,26 +1,29 @@
 
 R.component "LibraryPage", {
   getInitialState: ->
-    { current_panel: "owned", current_game: null }
+    { currentPanel: "owned", currentGame: null }
 
-  componentDidMount: ->
-    @dispatch {
-      set_panel: (name) =>
-        @setState current_panel: name
+  setPanel: (name) ->
+    @setState currentPanel: name
 
-      set_game: (game) =>
-        @setState current_game: game
-    }
-
-  componentDidUnmount: ->
-    @detach?()
+  setGame: (game) ->
+    @setState currentGame: game
 
   render: ->
     div className: "library_page",
-      (R.LibrarySidebar @state),
-      (R.LibraryContent @state),
-      if @state.current_game
-        (R.GameBox { game: @state.current_game })
+      (R.LibrarySidebar {
+        currentPanel: @state.currentPanel
+        setPanel: @setPanel
+      }),
+      (R.LibraryContent {
+        currentPanel: @state.currentPanel
+        setGame: @setGame
+      }),
+      @state.currentGame and
+        (R.GameBox {
+          game: @state.currentGame
+          setGame: @setGame
+        })
 
 }
 
@@ -29,9 +32,9 @@ R.component "GameBox", {
     { uploads: null, loading: false }
 
   close: ->
-    @trigger "set_game", null
+    @props.setGame null
 
-  download_upload: (upload) ->
+  downloadUpload: (upload) ->
     =>
       I.current_user().download_upload(@props.game.key.id, upload.id).then (res) =>
         console.log res
@@ -39,6 +42,7 @@ R.component "GameBox", {
         console.error "failed to download upload"
 
   componentDidMount: ->
+    console.log "gamebox mounted, props = ", @props
     return unless @props.game.key
 
     @setState loading: true
@@ -64,14 +68,10 @@ R.component "GameBox", {
       (div upload: upload, className: "upload_row",
         (span className: "upload_name", upload.filename),
         (span className: "upload_size", upload.size),
-        (span className: "download_btn button", onClick: @download_upload(upload), "Download"))
+        (span className: "download_btn button", onClick: @downloadUpload(upload), "Download"))
 }
 
 R.component "LibrarySidebar", {
-  set_panel: (name) ->
-    =>
-      @trigger "set_panel", name
-
   render: ->
     (div className: "sidebar",
       (R.UserPanel {}),
@@ -79,29 +79,27 @@ R.component "LibrarySidebar", {
         (R.LibraryPanelLink {
           name: "owned"
           label: "Owned"
-          current_panel: @props.current_panel
+          currentPanel: @props.currentPanel
+          setPanel: @props.setPanel
         }),
         (R.LibraryPanelLink {
           name: "dashboard"
           label: "Dashboard"
-          current_panel: @props.current_panel
+          currentPanel: @props.currentPanel
+          setPanel: @props.setPanel
         })))
 
 }
 
 R.component "LibraryPanelLink", {
-  set_panel: (name) ->
-    =>
-      @trigger "set_panel", name
-
   render: ->
     classes = "panel_link"
-    if @props.name == @props.current_panel
+    if @props.name == @props.currentPanel
       classes += " current"
 
     div {
       className: classes
-      onClick: @set_panel @props.name
+      onClick: => @props.setPanel @props.name
     }, @props.label
 }
 
@@ -110,11 +108,11 @@ R.component "LibraryContent", {
   getInitialState: ->
     { games: null, loading: false }
 
-  refresh_games: ->
+  refreshGames: ->
     user = I.current_user()
 
     @setState loading: true
-    switch @props.current_panel
+    switch @props.currentPanel
       when "dashboard"
         user.my_games().then (res) =>
           @setState games: res.games
@@ -128,16 +126,16 @@ R.component "LibraryContent", {
           @setState games: games
 
   componentDidMount: ->
-    @refresh_games()
+    @refreshGames()
 
-  componentDidUpdate: (prev_props) ->
-    if prev_props.current_panel != @props.current_panel
-      @refresh_games()
+  componentDidUpdate: (prevProps) ->
+    if prevProps.current_panel != @props.current_panel
+      @refreshGames()
 
   render: ->
     div className: "main_content",
       if @state.games
-        (R.GameList games: @state.games)
+        (R.GameList games: @state.games, setGame: @props.setGame)
 }
 
 R.component "UserPanel", {
@@ -160,13 +158,10 @@ R.component "GameList", {
   render: ->
     div className: "game_list",
       (for game in @props.games
-        R.GameCell game: game)...
+        R.GameCell game: game, setGame: @props.setGame)...
 }
 
 R.component "GameCell", {
-  select_game: ->
-    @trigger "set_game", @props.game
-
   render: ->
     game = @props.game
 
@@ -179,7 +174,7 @@ R.component "GameCell", {
       (div className: "bordered",
         (div {
           className: thumb_classes
-          onClick: @select_game
+          onClick: => @props.setGame game
           style: {
             backgroundImage: if cover = @props.game.cover_url
               "url('#{cover}')"
