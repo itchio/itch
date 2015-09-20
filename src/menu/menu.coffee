@@ -6,6 +6,7 @@ I.menus = {
     submenu: [
       {
         label: "Quit"
+        accelerator: "Command+Q"
         click: =>
           app = require("remote").require("app")
           app.quit()
