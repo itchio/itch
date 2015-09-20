@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "main": "main.js",
   "dependencies": {
-    "nconf": "^0.7.1"
+    "nconf": "^0.7.1",
+    "request": "^2.62.0"
   }
 }
