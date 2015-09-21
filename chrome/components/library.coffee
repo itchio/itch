@@ -40,7 +40,6 @@ R.component "GameBox", {
   downloadUpload: (upload) ->
     =>
       I.currentUser().downloadUpload(@props.game.key.id, upload.id).then (res) =>
-        new Notification("itch.io is now downloading #{@props.game.title}")
         downloader.queue {
           game: @props.game
           upload: upload
@@ -72,15 +71,25 @@ R.component "GameBox", {
     (div className: "lightbox_container",
       (div className: "lightbox",
         (div className: "lightbox_close", onClick: @close, "×")
-        (div className: "lightbox_header", "Game #{@props.game.id}")
+        (div className: "lightbox_header", @props.game.title)
         (div className: "lightbox_content game_box", content...)))
 
   renderUploads: ->
+    platforms = [
+      ["p_osx", "apple"]
+      ["p_windows", "windows8"]
+      ["p_linux", "tux"]
+    ]
+
     for upload in @state.uploads
       (div upload: upload, className: "upload_row",
+        (span className: "download_btn button", onClick: @downloadUpload(upload), "Download"),
         (span className: "upload_name", upload.filename),
-        (span className: "upload_size", upload.size),
-        (span className: "download_btn button", onClick: @downloadUpload(upload), "Download"))
+        (span className: "upload_size", "(#{_.str.formatBytes upload.size})"),
+        (span className: "upload_platforms", platforms.map (platform) ->
+          if upload[platform[0]]
+            (span className: "icon icon-#{platform[1]}")
+        ))
 }
 
 R.component "LibrarySidebar", {

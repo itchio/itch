@@ -118,40 +118,43 @@ $gray_back: #f4f4f4;
     }
 }
 
-@mixin button($bcolor, $height: 35px, $fz: $font_size + 1px, $depress: true, $desaturate: 30%) {
-    @include unselectable;
-    @include border_box;
-    $bg_shadow_color: desaturate(darken($bcolor, 12%), $desaturate);
+@mixin button($bcolor, $height: 35px, $fz: $font_size - 2px, $depress: true, $desaturate: 30%) {
+     @include unselectable;
+     @include border_box;
+     $bg_shadow_color: desaturate(darken($bcolor, 12%), $desaturate);
 
-    display: inline-block;
+     display: inline-block;
 
-    background: $bcolor;
-    color: white;
-    text-decoration: none;
-    padding: 0 10px;
-    font-size: $fz;
-    text-shadow: 1px 1px 0px $bg_shadow_color, -1px -1px 0px $bg_shadow_color, 1px -1px 0px $bg_shadow_color, -1px 1px 0px $bg_shadow_color;
+     background: $bcolor;
+     color: white;
+     text-decoration: none;
+     padding: 0 10px;
+     font-size: $fz;
+     text-shadow: 0 1px 0 $bg_shadow_color;
 
-    border-radius: 1px;
-    cursor: pointer;
-    border: 0;
-    text-align: center;
+     cursor: pointer;
+     border-radius: 3px;
+     border: none;
+     border: 1px solid rgba(0, 0, 0, 0.1);
+     box-shadow: inset 0 0 1px rgba(255, 255, 255, 0.21);
+     text-align: center;
 
-    line-height: $height;
-    height: $height;
+     line-height: $height - 2px;
+     font-weight: bold;
+     height: $height;
 
-    &:hover {
-        background: lighten($bcolor, 2%);
-    }
+     &:hover {
+         background: lighten($bcolor, 2%);
+     }
 
-    &:active {
-        background-color: darken(desaturate($bcolor, 20%), 8%);
-        @if $depress {
-            position: relative;
-            top: 1px;
-        }
-    }
-}
+     &:active {
+         background-color: darken(desaturate($bcolor, 20%), 8%);
+         @if $depress {
+             position: relative;
+             top: 1px;
+         }
+     }
+ }
 
 @mixin outline_button($hover: true, $light_bg: false) {
     @include border_box;

@@ -112,13 +112,16 @@
         .upload_row {
             margin: 10px 0;
 
-            .upload_name, .upload_size, .download_btn {
-                margin-right: 8px;
+            .download_btn, .upload_name, .upload_size {
+              margin-right: 15px;
+            }
+
+            .upload_name {
+              font-weight: bold;
             }
 
             .upload_size {
                 color: $body_color_light;
-                font-style: italic;
             }
 
             button {
