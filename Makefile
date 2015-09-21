@@ -1,12 +1,12 @@
-.PHONY: install_deps
-
+.PHONY: install_deps watch
 
 install_deps:
 	npm install
 	bower install
 
-# requires ruby gem 'filewatcher', stopgap measure
-# for tup's lack of monitor support on OSX
+# requires you to get Ruby and 'bundle install' first
+# replaces tup on both OSX (where it lacks a monitor) and
+# Windows (where it has too many issues to count)
 watch:
-	filewatcher '**/*.coffee' '**/*.scss' 'tup upd'
+	bundle exec guard
 
