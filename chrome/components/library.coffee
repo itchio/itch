@@ -37,8 +37,8 @@ R.component "GameBox", {
   downloadUpload: (upload) ->
     =>
       I.currentUser().downloadUpload(@props.game.key.id, upload.id).then (res) =>
-        new Notification("Now downloading game #{@props.game.title}")
-        require("remote").require("app").emit "download", {
+        new Notification("itch.io is now downloading #{@props.game.title}")
+        require("remote").require("./node/downloader").queue {
           game: @props.game
           upload: upload
           url: res.url
