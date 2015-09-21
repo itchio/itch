@@ -38,8 +38,13 @@ R.component "GameBox", {
   downloadUpload: (upload) ->
     =>
       I.current_user().download_upload(@props.game.key.id, upload.id).then (res) =>
-        new Notification("Now downloading game #{@props.game.id}")
-        require("remote").require("app").emit "download", res
+        new Notification("Now downloading game #{@props.game.title}")
+        console.log "upload = ", upload
+        require("remote").require("app").emit "download", {
+          game: @props.game
+          upload: upload
+          url: res.url
+        }
       , (errors) =>
         console.error "failed to download upload"
 

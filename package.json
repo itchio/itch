@@ -4,6 +4,7 @@
   "main": "main.js",
   "dependencies": {
     "nconf": "^0.7.1",
-    "request": "^2.62.0"
+    "request": "^2.62.0",
+    "unzip": "^0.1.11"
   }
 }
