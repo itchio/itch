@@ -1,4 +1,7 @@
 
+remote = require("remote")
+downloader = remote.require("./node/downloader")
+
 R.component "LibraryPage", {
   getInitialState: ->
     { currentPanel: "owned", currentGame: null }
@@ -38,7 +41,7 @@ R.component "GameBox", {
     =>
       I.currentUser().downloadUpload(@props.game.key.id, upload.id).then (res) =>
         new Notification("itch.io is now downloading #{@props.game.title}")
-        require("remote").require("./node/downloader").queue {
+        downloader.queue {
           game: @props.game
           upload: upload
           url: res.url
