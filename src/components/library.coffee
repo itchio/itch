@@ -4,6 +4,7 @@ R.component "LibraryPage", {
     { currentPanel: "owned", currentGame: null }
 
   setPanel: (name) ->
+    console.log "setting current panel to #{name}"
     @setState currentPanel: name
 
   setGame: (game) ->
@@ -29,7 +30,7 @@ R.component "LibraryPage", {
 
 R.component "GameBox", {
   getInitialState: =>
-    { uploads: null, loading: false }
+    { uploads: null, loading: false, error: null }
 
   close: ->
     @props.setGame null
@@ -43,7 +44,9 @@ R.component "GameBox", {
         console.error "failed to download upload"
 
   componentDidMount: ->
-    return unless @props.game.key
+    unless @props.game.key
+      @setState error: "Can't download this game (missing download key)"
+      return
 
     @setState loading: true
     I.current_user().download_key_uploads(@props.game.key.id).then (res) =>
@@ -52,18 +55,21 @@ R.component "GameBox", {
       console.error "failed to get download key uploads", errors
 
   render: ->
-    content = if @state.uploads
-      @render_uploads()
+    content = if @state.error
+      [(div className: "error_message",
+        (p {}, @state.error))]
+    else if @state.uploads
+      @renderUploads()
     else
-      ["Loading"]
+      ["Loading..."]
 
     (div className: "lightbox_container",
       (div className: "lightbox",
         (div className: "lightbox_close", onClick: @close, "×")
         (div className: "lightbox_header", "Game #{@props.game.id}")
-        (div className: "lightbox_content", content...)))
+        (div className: "lightbox_content game_box", content...)))
 
-  render_uploads: ->
+  renderUploads: ->
     for upload in @state.uploads
       (div upload: upload, className: "upload_row",
         (span className: "upload_name", upload.filename),
@@ -99,7 +105,8 @@ R.component "LibraryPanelLink", {
 
     div {
       className: classes
-      onClick: => @props.setPanel @props.name
+      onClick: =>
+        @props.setPanel @props.name
     }, @props.label
 }
 
@@ -108,13 +115,14 @@ R.component "LibraryContent", {
   getInitialState: ->
     { games: null, loading: false }
 
-  refreshGames: ->
+  refreshGames: (props) ->
     user = I.current_user()
 
     @setState loading: true
-    switch @props.currentPanel
+    switch props.currentPanel
       when "dashboard"
         user.my_games().then (res) =>
+          console.log "games = ", res.games
           @setState games: res.games
       when "owned"
         user.my_owned_keys().then (res) =>
@@ -123,14 +131,15 @@ R.component "LibraryContent", {
             game.key = key
             game
 
+          console.log "games = ", games
           @setState games: games
 
   componentDidMount: ->
-    @refreshGames()
+    @refreshGames(@props)
 
-  componentDidUpdate: (prevProps) ->
-    if prevProps.current_panel != @props.current_panel
-      @refreshGames()
+  componentWillReceiveProps: (nextProps) ->
+    if @props.currentPanel != nextProps.currentPanel
+      @refreshGames(nextProps)
 
   render: ->
     div className: "main_content",
@@ -145,7 +154,7 @@ R.component "UserPanel", {
   componentDidMount: ->
     I.current_user().me().then (res) =>
       @setState user: res.user
-  
+
   render: ->
     unless @state.user
       return div className: "user_panel loading", "Loading"
@@ -181,6 +190,6 @@ R.component "GameCell", {
             }
         })),
       (div className: "game_title", game.title),
-      (div className: "game_author", "Api missing author"),
+      game.user and (div className: "game_author", game.user.display_name),
 
 }

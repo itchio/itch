@@ -108,6 +108,25 @@
 
     }
 
+    .game_box {
+        .upload_row {
+            margin: 10px 0;
+
+            .upload_name, .upload_size, .download_btn {
+                margin-right: 8px;
+            }
+
+            .upload_size {
+                color: $body_color_light;
+                font-style: italic;
+            }
+
+            button {
+                @include button($button_color);
+            }
+        }
+    }
+
 
     .lightbox_container {
         color: $body_color;
@@ -131,7 +150,7 @@
             .lightbox_close {
                 position: absolute;
                 top: 5px;
-                right: 10px;
+                right: 15px;
                 font-size: 30px;
                 color: #999;
                 cursor: pointer;
