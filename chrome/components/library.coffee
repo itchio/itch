@@ -37,7 +37,7 @@ R.component "GameBox", {
 
   downloadUpload: (upload) ->
     =>
-      I.current_user().download_upload(@props.game.key.id, upload.id).then (res) =>
+      I.currentUser().downloadUpload(@props.game.key.id, upload.id).then (res) =>
         new Notification("Now downloading game #{@props.game.title}")
         console.log "upload = ", upload
         require("remote").require("app").emit "download", {
@@ -54,7 +54,7 @@ R.component "GameBox", {
       return
 
     @setState loading: true
-    I.current_user().download_key_uploads(@props.game.key.id).then (res) =>
+    I.currentUser().downloadKeyUploads(@props.game.key.id).then (res) =>
       @setState loading: false, uploads: res.uploads
     , (errors) =>
       console.error "failed to get download key uploads", errors
@@ -121,22 +121,20 @@ R.component "LibraryContent", {
     { games: null, loading: false }
 
   refreshGames: (props) ->
-    user = I.current_user()
+    user = I.currentUser()
 
     @setState loading: true
     switch props.currentPanel
       when "dashboard"
-        user.my_games().then (res) =>
-          console.log "games = ", res.games
+        user.myGames().then (res) =>
           @setState games: res.games
       when "owned"
-        user.my_owned_keys().then (res) =>
+        user.myOwnedKeys().then (res) =>
           games = for key in res.owned_keys
             game = key.game
             game.key = key
             game
 
-          console.log "games = ", games
           @setState games: games
 
   componentDidMount: ->
@@ -157,7 +155,7 @@ R.component "UserPanel", {
     { user: null }
 
   componentDidMount: ->
-    I.current_user().me().then (res) =>
+    I.currentUser().me().then (res) =>
       @setState user: res.user
 
   render: ->
@@ -179,15 +177,15 @@ R.component "GameCell", {
   render: ->
     game = @props.game
 
-    thumb_classes = "game_thumb"
+    thumbClasses = "game_thumb"
 
     if game.cover_url
-      thumb_classes += " has_cover"
+      thumbClasses += " has_cover"
 
     div className: "game_cell",
       (div className: "bordered",
         (div {
-          className: thumb_classes
+          className: thumbClasses
           onClick: => @props.setGame game
           style: {
             backgroundImage: if cover = @props.game.cover_url

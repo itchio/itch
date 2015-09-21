@@ -9,24 +9,24 @@ R.component "LoginForm", {
   getInitialState: ->
     { loading: false, errors: null }
 
-  after_login: ->
+  afterLogin: ->
     React.render (R.LibraryPage {}), document.body
-    I.set_menu()
+    I.setMenu()
 
   componentDidMount: ->
-    I.set_menu()
+    I.setMenu()
 
     @setState loading: true
-    I.ItchioApiUser.get_saved_user().then (user) =>
-      I.set_current_user user
-      @after_login()
+    I.ItchioApiUser.getSavedUser().then (user) =>
+      I.setCurrentUser user
+      @afterLogin()
     , (errors) =>
       if errors.length
         @setState errors: errors, loading: false
       else
         @setState loading: false
 
-  handle_submit: (event) ->
+  handleSubmit: (event) ->
     event.preventDefault()
 
     @setState loading: true, errors: null
@@ -34,13 +34,13 @@ R.component "LoginForm", {
     username = @refs.username.value()
     password = @refs.password.value()
 
-    I.api().login_with_password(username, password).then (res) =>
+    I.api().loginWithPassword(username, password).then (res) =>
       console.log "login", res
 
       @setState loading: false
-      I.set_current_user res.key
-      I.current_user().save_login()
-      @after_login()
+      I.setCurrentUser res.key
+      I.currentUser().saveLogin()
+      @afterLogin()
     , (errors) =>
       @setState errors: errors, loading: false
 
@@ -49,7 +49,7 @@ R.component "LoginForm", {
       (img className: "logo", src: "static/images/itchio-white.svg")
       (div className: "login_box",
         (h1 {}, "Log in"),
-        form className: "form", onSubmit: @handle_submit,
+        form className: "form", onSubmit: @handleSubmit,
           (if @state.errors
             ul className: "form_errors",
               (li {}, error for error in @state.errors )...)

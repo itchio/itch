@@ -14,10 +14,10 @@ BrowserWindow = require "browser-window"
 
 mainWindow = null
 
-ipc.on "get_config", (event, id, key) ->
-  event.sender.send "return_get_config", id, nconf.get key
+ipc.on "getConfig", (event, id, key) ->
+  event.sender.send "returnGetConfig", id, nconf.get key
 
-ipc.on "set_config", (event, key, value) ->
+ipc.on "setConfig", (event, key, value) ->
   console.log "Setting config: #{key}, #{value}"
   nconf.set key, value
   nconf.save (err) ->
