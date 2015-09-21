@@ -4,7 +4,6 @@ R.component "LibraryPage", {
     { currentPanel: "owned", currentGame: null }
 
   setPanel: (name) ->
-    console.log "setting current panel to #{name}"
     @setState currentPanel: name
 
   setGame: (game) ->
@@ -39,7 +38,6 @@ R.component "GameBox", {
     =>
       I.currentUser().downloadUpload(@props.game.key.id, upload.id).then (res) =>
         new Notification("Now downloading game #{@props.game.title}")
-        console.log "upload = ", upload
         require("remote").require("app").emit "download", {
           game: @props.game
           upload: upload

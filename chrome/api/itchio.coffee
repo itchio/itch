@@ -4,7 +4,7 @@ I.api = =>
   @_api
 
 I.config = =>
-  @_config ||= new I.Config
+  @_config ||= require("remote").require("./node/config")
   @_config
 
 I.currentUser = =>
@@ -22,35 +22,14 @@ I.setCurrentUser = (data) =>
   else
     null
 
-class I.Config
-  id: 0
-
-  constructor: ->
-    @listeners = {}
-    @ipc = require "ipc"
-    @ipc.on "returnGetConfig", (id, val) =>
-      l = @listeners[id]
-      l? val
-      delete @listeners[id]
-
-
-  set: (key, val) =>
-    @ipc.send "setConfig", key, val
-
-  get: (key, fn) =>
-    id = @id++
-    @ipc.send "getConfig", id, key
-    @listeners[id] = fn
-
 class I.ItchioApiUser
   @getSavedUser: =>
     new Promise (resolve, reject) ->
-      I.config().get "api_key", (key) =>
-        if key
-          I.api().loginKey(key).then (res) =>
-            resolve new I.ItchioApiUser I.api(), { key: key }
-        else
-          reject []
+      if key = I.config().get "api_key"
+        I.api().loginKey(key).then (res) =>
+          resolve new I.ItchioApiUser I.api(), { key: key }
+      else
+        reject []
 
   constructor: (@api, @key) ->
     throw Error "Missing key for user" unless @key?.key

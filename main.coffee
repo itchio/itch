@@ -1,28 +1,16 @@
 app = require "app"
 ipc = require "ipc"
-nconf = require "nconf"
 path = require "path"
 fs = require "fs"
 request = require "request"
 shell = require "shell"
 
+config = require "./node/config"
 fileutils = require "./node/fileutils"
-
-nconf.file file: "./config.json"
 
 BrowserWindow = require "browser-window"
 
 mainWindow = null
-
-ipc.on "getConfig", (event, id, key) ->
-  event.sender.send "returnGetConfig", id, nconf.get key
-
-ipc.on "setConfig", (event, key, value) ->
-  console.log "Setting config: #{key}, #{value}"
-  nconf.set key, value
-  nconf.save (err) ->
-    if err
-      console.log "Could not save config: #{err}"
 
 app.on "window-all-closed", ->
   unless process.platform == "darwin"
