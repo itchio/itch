@@ -28,6 +28,8 @@ class I.ItchioApiUser
       if key = I.config().get "api_key"
         I.api().loginKey(key).then (res) =>
           resolve new I.ItchioApiUser I.api(), { key: key }
+        , =>
+          reject []
       else
         reject []
 
