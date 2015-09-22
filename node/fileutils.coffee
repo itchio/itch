@@ -6,7 +6,7 @@ module.exports = {
   exeGlob: (appPath) ->
     switch process.platform
       when "win32"
-        "#{appPath}/**/*.app"
+        "#{appPath}/**/*.exe"
       when "darwin"
         "#{appPath}/**/*.app"
       when "linux"
