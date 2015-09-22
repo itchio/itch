@@ -6,6 +6,7 @@
     "nconf": "^0.7.1",
     "request": "^2.62.0",
     "request-progress": "^0.3.1",
-    "unzip2": "^0.2.5"
+    "fstream": "^1.0.8",
+    "unzip": "fasterthanlime/node-unzip-2#quick-hack"
   }
 }

@@ -4,7 +4,8 @@ fs = require "fs"
 request = require "request"
 progress = require "request-progress"
 shell = require "shell"
-unzip = require "unzip2"
+unzip = require "unzip"
+fstream = require "fstream"
 
 fileutils = require "./fileutils"
 
@@ -33,11 +34,19 @@ queue = (item) ->
   destPath = path.join(tempPath, "upload-#{item.upload.id}#{ext}")
 
   afterDownload = ->
-    # fs.createReadStream(destPath).pipe(unzip.Extract(path: appPath)).on 'finish', ->
-    #   app.mainWindow.webContents.executeJavaScript("new Notification('#{item.game.title} finished downloading.')")
-    #   shell.openItem(appPath)
-    fs.createReadStream(destPath).pipe(unzip.Parse()).on 'entry', (entry) ->
-      entry.autodrain()
+    parser = unzip.Parse()
+
+    unless process.platform == "win32"
+      parser.on 'metadata', (entry) ->
+        fullPath = path.join(appPath, entry.path)
+        console.log "chmodding #{fullPath} to #{entry.mode.toString(8)}"
+        fs.chmodSync(fullPath, entry.mode)
+
+    fstream.Reader(destPath).pipe(parser).pipe(fstream.Writer(path: appPath)).on 'close', ->
+      app.mainWindow.webContents.executeJavaScript("new Notification('#{item.game.title} finished downloading.')")
+      shell.openItem(appPath)
+
+    console.log 'Decompression started'
 
   if fs.existsSync destPath
     afterDownload()
