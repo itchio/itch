@@ -75,6 +75,25 @@
             box-shadow: 0 0 0 2px #222;
 
             margin-bottom: 10px;
+            overflow: hidden;
+
+            .game_launch {
+                @include transition(opacity 0.20s ease-in-out);
+                position: absolute;
+                bottom: 5px;
+                right: 5px;
+                opacity: 0;
+            }
+
+            &:hover {
+                .game_launch {
+                    opacity: .8;
+                }
+
+                .game_thumb {
+                    opacity: .4;
+                }
+            }
         }
 
         .game_thumb {

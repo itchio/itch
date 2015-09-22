@@ -201,7 +201,10 @@ R.component "GameCell", {
             backgroundImage: if cover = @props.game.cover_url
               "url('#{cover}')"
             }
-        })),
+        }),
+        (div className: "game_launch button fat", onClick: (->
+          console.log "Should launch!"
+        ), (span className: "icon icon-gamepad"), "Launch")),
       (div className: "game_title", game.title),
       game.user and (div className: "game_author", game.user.display_name),
 
