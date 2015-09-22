@@ -6,6 +6,7 @@ progress = require "request-progress"
 shell = require "shell"
 unzip = require "unzip"
 fstream = require "fstream"
+glob = require "glob"
 
 fileutils = require "./fileutils"
 
@@ -39,12 +40,22 @@ queue = (item) ->
     unless process.platform == "win32"
       parser.on 'metadata', (entry) ->
         fullPath = path.join(appPath, entry.path)
-        console.log "chmodding #{fullPath} to #{entry.mode.toString(8)}"
         fs.chmodSync(fullPath, entry.mode)
 
     fstream.Reader(destPath).pipe(parser).pipe(fstream.Writer(path: appPath)).on 'close', ->
       app.mainWindow.webContents.executeJavaScript("new Notification('#{item.game.title} finished downloading.')")
-      shell.openItem(appPath)
+      glob fileutils.exeGlob(appPath), (err, files) ->
+        files = files.filter((file) ->
+          !/^__MACOSX/.test(path.relative(appPath, file))
+        )
+        console.log "Found files: #{JSON.stringify(files)}"
+
+        if files.length == 1
+          exePath = files[0]
+          console.log "Found the exec! #{exePath}"
+          shell.openItem(exePath)
+        else
+          shell.openItem(appPath)
 
     console.log 'Decompression started'
 
