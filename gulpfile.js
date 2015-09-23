@@ -29,35 +29,21 @@ function bundle() {
     .pipe(gulp.dest('./chrome/'));
 }
 
-// var paths = {
-//   chrome: ['./chrome/**/*.coffee'],
-//   metal: ['./main.coffee', './metal/**/*.coffee']
-// };
+var paths = {
+  metal: ['./main.coffee', './metal/**/*.coffee'],
+  chrome: ['./chrome/**/*.coffee']
+};
 
-// gulp.task('chrome', function() {
-//   var browserified = transform(function (filename) {
-//     var b = browserify(filename, {
-//       extensions: ['.coffee', '.js']
-//     });
-//     return b.bundle();
-//   });
+gulp.task('metal', function() {
+  return gulp.src(paths.metal, { base: './' })
+    .pipe(coffee())
+    .pipe(gulp.dest('.'));
+});
 
-//   return gulp.src(paths.chrome)
-//     .pipe(plumber())
-//     .pipe(browserified)
-//     .pipe(gulp.dest('./chrome/'));
-// }); 
+gulp.task('watch', function () {
+  gulp.watch(paths.metal, ['metal']);
+  gulp.watch(paths.chrome, ['chrome']);
+});
 
-// gulp.task('metal', function() {
-//   return gulp.src(paths.chrome)
-//     .pipe(coffee())
-//     .pipe(gulp.dest('./'));
-// }); 
-
-// gulp.task('watch', function () {
-//   gulp.watch(paths.chrome, ['chrome']);
-//   gulp.watch(paths.metal, ['metal']);
-// });
-
-// gulp.task('default', ['watch']);
+gulp.task('default', ['watch']);
 
