@@ -1,6 +1,17 @@
 {
   "name": "itchio",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "description": "itch.io desktop client",
+  "repository": "https://github.com/itchio/itchio-app",
+  "author": "itch.io team <support@itch.io>",
+  "contributors": [{
+    "name": "Leaf Corcoran",
+    "email": "leafo@itch.io"
+  }, {
+    "name": "Amos Wenger",
+    "email": "amos@itch.io"
+  }],
+  "license": "MIT",
   "main": "main.js",
   "dependencies": {
     "nconf": "^0.7.1",
@@ -8,6 +19,28 @@
     "request-progress": "^0.3.1",
     "fstream": "^1.0.8",
     "unzip": "fasterthanlime/node-unzip-2#quick-hack",
+    "classnames": "^2.1.3",
     "glob": "^5.0.14"
+  },
+  "devDependencies": {
+    "browserify": "^6.2.0",
+    "uglify-js": "~2.4.15",
+    "watchify": "^2.1.1",
+    "envify": "^3.0.0",
+    "coffeeify": "^1.1.0",
+    "gulp": "^3.9.0",
+    "gulp-coffee": "^2.3.1",
+    "gulp-plumber": "^1.0.1",
+    "vinyl-transform": "^1.0.0"
+  },
+  "scripts": {
+    "start": "gulp watch"
+  },
+  "browserify": {
+    "transform": [
+      "coffeeify",
+      "envify"
+    ],
+    "extensions": [".coffee", ".js"]
   }
 }
