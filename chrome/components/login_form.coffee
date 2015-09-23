@@ -1,24 +1,29 @@
 
-R.component "LoginPage", {
-  render: ->
-    div className: "login_page",
-      R.LoginForm {}
-}
+{ div, img, h1, form, button, a } = React.DOM
 
-R.component "LoginForm", {
+component = require "./component"
+InputRow = require "./input_row"
+menu = require "../itchio/menu"
+
+api = require "../itchio/api"
+
+module.exports = component {
+  displayName: "LoginForm"
+
   getInitialState: ->
     { loading: false, errors: null }
 
   afterLogin: ->
-    React.render (R.LibraryPage {}), document.body
-    I.setMenu()
+    LibraryPage = require "./library_page"
+    React.render (LibraryPage {}), document.body
+    menu.setMenu()
 
   componentDidMount: ->
-    I.setMenu()
+    menu.setMenu()
 
     @setState loading: true
-    I.ItchioApiUser.getSavedUser().then (user) =>
-      I.setCurrentUser user
+    api.ApiUser.getSavedUser().then (user) =>
+      api.setCurrentUser user
       @afterLogin()
     , (errors) =>
       if errors.length
@@ -34,12 +39,12 @@ R.component "LoginForm", {
     username = @refs.username.value()
     password = @refs.password.value()
 
-    I.api().loginWithPassword(username, password).then (res) =>
+    api.get().loginWithPassword(username, password).then (res) =>
       console.log "login", res
 
       @setState loading: false
-      I.setCurrentUser res.key
-      I.currentUser().saveLogin()
+      api.setCurrentUser res.key
+      api.currentUser().saveLogin()
       @afterLogin()
     , (errors) =>
       @setState errors: errors, loading: false
@@ -53,7 +58,7 @@ R.component "LoginForm", {
           (if @state.errors
             ul className: "form_errors",
               (li {}, error for error in @state.errors )...)
-          (R.InputRow {
+          (InputRow {
             label: "Username"
             name: "username"
             type: "text"
@@ -61,7 +66,7 @@ R.component "LoginForm", {
             autofocus: true
             disabled: @state.loading
           }),
-          (R.InputRow {
+          (InputRow {
             label: "Password"
             name: "password"
             type: "password"
@@ -76,23 +81,3 @@ R.component "LoginForm", {
             " · ",
             (a href: "", "Forgot password")))
 }
-
-R.component "InputRow", {
-  componentDidMount: ->
-    if @props.autofocus
-      @refs.input.getDOMNode().focus()
-
-  value: ->
-    @refs.input.getDOMNode().value
-
-  render: ->
-    div className: "input_row",
-      (label {},
-        (div className: "label", @props.label),
-        (input {
-          type: @props.type || "text"
-          ref: "input"
-          disabled: if @props.disabled then "disabled"
-        }))
-}
-

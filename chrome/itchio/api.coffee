@@ -1,33 +1,36 @@
 
-I.api = =>
-  @_api ||= new I.ItchioApi
+get = =>
+  @_api ||= new Api
   @_api
 
-I.config = =>
-  @_config ||= window.require("remote").require("./node/config")
+config = =>
+  @_config ||= window.require("remote").require("./metal/config")
   @_config
 
-I.currentUser = =>
+currentUser = =>
   throw Error "no current user" unless @_currentUser
   @_currentUser
 
-I.hasCurrentUser = =>
+hasCurrentUser = =>
   !!@_currentUser
 
-I.setCurrentUser = (data) =>
-  @_currentUser = if data instanceof I.ItchioApiUser
+setCurrentUser = (data) =>
+  @_currentUser = if data instanceof ApiUser
     data
   else if data
-    new I.ItchioApiUser I.api(), data
+    new ApiUser get(), data
   else
     null
 
-class I.ItchioApiUser
+##
+# A user, according to the itch.io API
+##
+class ApiUser
   @getSavedUser: =>
     new Promise (resolve, reject) ->
-      if key = I.config().get "api_key"
-        I.api().loginKey(key).then (res) =>
-          resolve new I.ItchioApiUser I.api(), { key: key }
+      if key = config().get "api_key"
+        get().loginKey(key).then (res) =>
+          resolve new ApiUser get(), { key: key }
         , =>
           reject []
       else
@@ -41,7 +44,7 @@ class I.ItchioApiUser
     @api.request method, url, params
 
   saveLogin: ->
-    I.config().set "api_key", @key.key
+    config().set "api_key", @key.key
 
   myGames: ->
     @request "get", "/my-games"
@@ -61,7 +64,10 @@ class I.ItchioApiUser
   downloadUpload: (downloadKeyId, uploadId)->
     @request "get", "/download-key/#{downloadKeyId}/download/#{uploadId}"
 
-class I.ItchioApi
+##
+# Wrapper for the itch.io API
+##
+class Api
   rootUrl: "https://itch.io/api/1"
   # rootUrl: "http://localhost.com:8080/api/1"
 
@@ -116,4 +122,14 @@ class I.ItchioApi
       password: password
       source: "desktop"
     }
+
+module.exports = {
+  get
+  config
+  currentUser
+  hasCurrentUser
+  setCurrentUser
+  Api
+  ApiUser
+}
 
