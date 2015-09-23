@@ -1,7 +1,7 @@
 app = require "app"
 ipc = require "ipc"
 
-config = require "./node/config"
+config = require "./metal/config"
 
 BrowserWindow = require "browser-window"
 
