@@ -23,19 +23,20 @@
     "glob": "^5.0.14"
   },
   "devDependencies": {
-    "browserify": "^6.2.0",
+    "browserify": "^9.0.7",
     "uglify-js": "~2.4.15",
-    "watchify": "^2.1.1",
+    "watchify": "^3.1.0",
     "envify": "^3.0.0",
     "coffeeify": "^1.1.0",
     "gulp": "^3.9.0",
     "gulp-coffee": "^2.3.1",
-    "vinyl-source-stream": "*",
-    "lodash.assign": "*",
     "gulp-util": "*",
+    "gulp-concat": "*",
     "gulp-sass": "*",
     "gulp-plumber": "*",
-    "gulp-plumber-notifier": "*"
+    "gulp-plumber-notifier": "*",
+    "gulp-watchify": "*",
+    "gulp-streamify": "*"
   },
   "scripts": {
     "start": "gulp watch"

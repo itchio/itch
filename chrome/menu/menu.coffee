@@ -1,5 +1,4 @@
 
-
 I.menus = {
   file: {
     label: "File"
