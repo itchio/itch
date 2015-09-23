@@ -15,7 +15,6 @@ var envify = require('envify');
 
 var paths = {
   metal: ['./main.coffee', './metal/**/*.coffee'],
-  chrome: ['./chrome/**/*.coffee'],
   scss: ['./style/**/*.scss']
 };
 
@@ -23,18 +22,20 @@ var paths = {
  * Compile and bundle chrome code with watchify
  */
 
-(function() {
-  var customOpts = {
-    entries: ['./chrome/main.coffee'],
-    extensions: ['.coffee', '.js']
-  };
-  var opts = assign({}, watchify.args, customOpts);
-  var b = watchify(browserify(opts));
-  b.transform(coffeeify);
-  b.transform(envify);
-  b.on('log', gutil.log); // output build logs to terminal
+var customOpts = {
+  entries: ['./chrome/main.coffee'],
+  extensions: ['.coffee', '.js']
+};
+var opts = assign({}, watchify.args, customOpts);
+var browserified = watchify(browserify(opts));
+browserified.transform(coffeeify);
+browserified.transform(envify);
+browserified.on('log', gutil.log); // output build logs to terminal
 
-  gulp.task('chrome', function () {
+var chrome = function (b) {
+  console.log("Making a version of chrome with " + (b.__proto__.constructor + "").substring(0, 25));
+  return function () {
+    console.log("chrome called!");
     var handler = plumberNotifier().errorHandler;
     return b.bundle()
       .on('error', function(message) {
@@ -43,8 +44,13 @@ var paths = {
       })
       .pipe(source('bundle.js'))
       .pipe(gulp.dest('./chrome/'));
-  });
-})();
+  };
+};
+
+gulp.task('chrome', chrome(browserified));
+browserified.on('update', function() {
+  gulp.start('chrome');
+});
 
 /*
  * Compile metal code in-place with coffee-script
@@ -73,10 +79,16 @@ gulp.task('scss', function() {
  */
 
 gulp.task('watch', function () {
-  gulp.watch(paths.metal, ['metal']);
-  gulp.watch(paths.chrome, ['chrome']);
-  gulp.watch(paths.scss, ['scss']);
+  // watcher = watchify(browserified);
+  watcher = browserified;
+  watcher.on('update', chrome(watcher));
+  console.log("Hooked watcher y'all");
+
+  // gulp.watch(paths.metal, ['metal']);
+  // gulp.watch(paths.scss, ['scss']);
 });
 
-gulp.task('default', ['watch']);
+gulp.task('all', ['metal', 'chrome', 'scss']);
+
+gulp.task('default', ['all']);
 
