@@ -5,7 +5,6 @@ gutil = require('gulp-util')
 coffee = require('gulp-coffee')
 plumber = require('gulp-plumber')
 streamify = require('gulp-streamify')
-plumberNotifier = require('gulp-plumber-notifier')
 concat = require('gulp-concat')
 assign = require('lodash.assign')
 watchify = require('gulp-watchify')
@@ -31,7 +30,7 @@ gulp.task 'enable-watch-mode', -> watching = true
 
 gulp.task 'chrome', watchify((watchify) ->
   gulp.src(paths.chrome)
-    .pipe(plumberNotifier())
+    .pipe(plumber())
     .pipe(watchify {
       watch: watching
       extensions: [
@@ -52,8 +51,10 @@ gulp.task 'chrome', watchify((watchify) ->
 
 gulp.task 'metal', ->
   gulp.src(paths.metal, base: './')
-    .pipe(plumberNotifier())
-    .pipe(coffee().on('error', gutil.log))
+    .pipe(plumber())
+    .pipe(coffee().on('error', (e) ->
+      gutil.log "Coffeescript error: \n\n#{e.filename}:#{e.location.first_line}:#{e.location.first_column}\n#{e.message}"
+    ))
     .pipe gulp.dest('.')
 
 ###
@@ -62,8 +63,8 @@ gulp.task 'metal', ->
 
 gulp.task 'scss', ->
   gulp.src('style/main.scss')
-    .pipe(plumberNotifier())
-    .pipe(sass())
+    .pipe(plumber())
+    .pipe(sass().on('error', sass.logError))
     .pipe gulp.dest('style')
 
 ###

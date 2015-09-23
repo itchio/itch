@@ -34,7 +34,6 @@
     "gulp-concat": "*",
     "gulp-sass": "*",
     "gulp-plumber": "*",
-    "gulp-plumber-notifier": "*",
     "gulp-watchify": "*",
     "gulp-streamify": "*",
     "coffee-script": "*"
