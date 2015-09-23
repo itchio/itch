@@ -17,19 +17,12 @@ setProgress = (alpha) ->
   else
     percent = alpha * 100
     app.mainWindow.setProgressBar(alpha)
-    app.dock?.setBadge "#{state.percent.toFixed()}%"
+    app.dock?.setBadge "#{percent.toFixed()}%"
 
 queue = (item) ->
   itchioPath = path.join(app.getPath("home"), "Downloads", "itch.io")
   tempPath = path.join(itchioPath, "archives")
   appPath = path.join(itchioPath, "apps", item.game.title)
-
-  for _, folder of [tempPath, appPath]
-    console.log "Making directory #{folder}"
-    try
-      fs.mkdirSync(folder)
-    catch e
-      throw e unless e.code == 'EEXIST'
 
   ext = fileutils.ext item.upload.filename
   destPath = path.join(tempPath, "upload-#{item.upload.id}#{ext}")
@@ -42,7 +35,7 @@ queue = (item) ->
         fullPath = path.join(appPath, entry.path)
         fs.chmodSync(fullPath, entry.mode)
 
-    fstream.Reader(destPath).pipe(parser).pipe(fstream.Writer(path: appPath)).on 'close', ->
+    fstream.Reader(destPath).pipe(parser).pipe(fstream.Writer(path: appPath, type: "Directory")).on 'close', ->
       app.mainWindow.webContents.executeJavaScript("new Notification('#{item.game.title} finished downloading.')")
       glob fileutils.exeGlob(appPath), (err, files) ->
         files = files.filter((file) ->
@@ -74,7 +67,7 @@ queue = (item) ->
     r.on 'progress', (state) ->
       setProgress 0.01 * state.percent
 
-    r.pipe(fs.createWriteStream destPath).on 'finish', ->
+    r.pipe(fstream.Writer(path: destPath)).on 'close', ->
       console.log "Trying to open #{destPath}"
       setProgress -1
       afterDownload()
