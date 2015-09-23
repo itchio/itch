@@ -30,17 +30,11 @@
     "coffeeify": "^1.1.0",
     "gulp": "^3.9.0",
     "gulp-coffee": "^2.3.1",
-    "gulp-plumber": "^1.0.1",
-    "vinyl-transform": "^1.0.0"
+    "vinyl-source-stream": "*",
+    "lodash.assign": "*",
+    "gulp-util": "*"
   },
   "scripts": {
     "start": "gulp watch"
-  },
-  "browserify": {
-    "transform": [
-      "coffeeify",
-      "envify"
-    ],
-    "extensions": [".coffee", ".js"]
   }
 }
