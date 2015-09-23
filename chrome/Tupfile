@@ -1,4 +1,0 @@
-include_rules
-
-: init/pre.coffee api/*.coffee components/*.coffee menu/*.coffee |> !coffee |> chrome.js
-

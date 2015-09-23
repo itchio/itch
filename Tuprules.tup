@@ -1,8 +1,0 @@
-.gitignore
-
-!coffee = |> ^ coffee %o^ cat %f | coffee -c -s > %o |>
-
-: foreach *.coffee |> coffee -c %f |> %B.js
-: foreach *.scss |> sassc < %f > %o |> %B.css
-# : foreach *.md |> markdown < %f > %o |> %B.html
-
