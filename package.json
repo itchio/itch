@@ -36,7 +36,8 @@
     "gulp-plumber": "*",
     "gulp-plumber-notifier": "*",
     "gulp-watchify": "*",
-    "gulp-streamify": "*"
+    "gulp-streamify": "*",
+    "coffee-script": "*"
   },
   "scripts": {
     "start": "gulp watch"
