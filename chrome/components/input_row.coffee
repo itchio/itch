@@ -10,17 +10,20 @@ module.exports = component {
     if @props.autofocus
       @refs.input.getDOMNode().focus()
 
-  value: ->
-    @refs.input.getDOMNode().value
-
   render: ->
     div className: "input_row",
-      (label {},
-        (div className: "label", @props.label),
+      (label {}, [
+        (div { className: "label" }, @props.label)
         (input {
           type: @props.type || "text"
           ref: "input"
           disabled: if @props.disabled then "disabled"
-        }))
+        })
+      ])
+
+  # non-React methods
+
+  value: ->
+    @refs.input.getDOMNode().value
 }
 

@@ -10,28 +10,30 @@ module.exports = component {
   displayName: "LibraryPage"
 
   getInitialState: ->
-    { currentPanel: "owned", currentGame: null }
-
-  setPanel: (name) ->
-    @setState currentPanel: name
-
-  setGame: (game) ->
-    @setState currentGame: game
+    { current_panel: "owned", current_game: null }
 
   render: ->
     div className: "library_page",
       (LibrarySidebar {
-        currentPanel: @state.currentPanel
-        setPanel: @setPanel
+        current_panel: @state.current_panel
+        set_panel: @set_panel
       }),
       (LibraryContent {
-        currentPanel: @state.currentPanel
-        setGame: @setGame
+        current_panel: @state.current_panel
+        set_game: @set_game
       }),
-      @state.currentGame and
+      @state.current_game and
         (GameBox {
-          game: @state.currentGame
-          setGame: @setGame
+          game: @state.current_game
+          set_game: @set_game
         })
+
+  # non-React methods
+
+  set_panel: (name) ->
+    @setState current_panel: name
+
+  set_game: (game) ->
+    @setState current_game: game
 }
 

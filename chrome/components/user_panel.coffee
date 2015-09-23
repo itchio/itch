@@ -11,7 +11,7 @@ module.exports = component {
     { user: null }
 
   componentDidMount: ->
-    api.currentUser().me().then (res) =>
+    api.current_user().me().then (res) =>
       @setState user: res.user
 
   render: ->

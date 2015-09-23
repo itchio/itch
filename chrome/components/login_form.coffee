@@ -13,18 +13,13 @@ module.exports = component {
   getInitialState: ->
     { loading: false, errors: null }
 
-  afterLogin: ->
-    LibraryPage = require "./library_page"
-    React.render (LibraryPage {}), document.body
-    menu.setMenu()
-
   componentDidMount: ->
-    menu.setMenu()
+    menu.set_menu()
 
     @setState loading: true
-    api.ApiUser.getSavedUser().then (user) =>
-      api.setCurrentUser user
-      @afterLogin()
+    api.ApiUser.get_saved_user().then (user) =>
+      api.set_current_user user
+      @after_login()
     , (errors) =>
       if errors.length
         @setState errors: errors, loading: false
@@ -39,25 +34,28 @@ module.exports = component {
     username = @refs.username.value()
     password = @refs.password.value()
 
-    api.get().loginWithPassword(username, password).then (res) =>
+    api.get().login_with_password(username, password).then (res) =>
       console.log "login", res
 
       @setState loading: false
-      api.setCurrentUser res.key
-      api.currentUser().saveLogin()
-      @afterLogin()
+      api.set_current_user res.key
+      api.current_user().saveLogin()
+      @after_login()
     , (errors) =>
       @setState errors: errors, loading: false
 
   render: ->
-    div className: "login_form",
+    (div { className: "login_form" },
       (img className: "logo", src: "static/images/itchio-white.svg")
-      (div className: "login_box",
-        (h1 {}, "Log in"),
-        form className: "form", onSubmit: @handleSubmit,
-          (if @state.errors
-            ul className: "form_errors",
-              (li {}, error for error in @state.errors )...)
+      (div { className: "login_box" }, [
+        (h1 {}, "Log in")
+
+        (form { className: "form", onSubmit: @handleSubmit }, [
+
+          @state.errors and (ul className: "form_errors",
+              (li {}, error for error in @state.errors )
+          )
+
           (InputRow {
             label: "Username"
             name: "username"
@@ -65,19 +63,35 @@ module.exports = component {
             ref: "username"
             autofocus: true
             disabled: @state.loading
-          }),
+          })
+
           (InputRow {
             label: "Password"
             name: "password"
             type: "password"
             ref: "password"
             disabled: @state.loading
-          }),
-          (div className: "buttons",
+          })
+
+          (div { className: "buttons" }, [
             (button {
               className: "button"
               disabled: if @state.loading then "disabled"
-            }, "Log in"),
-            " · ",
-            (a href: "", "Forgot password")))
+            }, "Log in")
+
+            " · "
+
+            (a { href: "" }, "Forgot password")
+          ])
+        ])
+      ])
+    )
+
+  # non-React stuff
+  #
+  after_login: ->
+    LibraryPage = require "./library_page"
+    React.render (LibraryPage {}), document.body
+    menu.set_menu()
+
 }

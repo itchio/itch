@@ -7,15 +7,15 @@ config = =>
   @_config ||= window.require("remote").require("./metal/config")
   @_config
 
-currentUser = =>
-  throw Error "no current user" unless @_currentUser
-  @_currentUser
+current_user = =>
+  throw Error "no current user" unless @_current_user
+  @_current_user
 
-hasCurrentUser = =>
-  !!@_currentUser
+has_current_user = =>
+  !!@_current_user
 
-setCurrentUser = (data) =>
-  @_currentUser = if data instanceof ApiUser
+set_current_user = (data) =>
+  @_current_user = if data instanceof ApiUser
     data
   else if data
     new ApiUser get(), data
@@ -26,10 +26,10 @@ setCurrentUser = (data) =>
 # A user, according to the itch.io API
 ##
 class ApiUser
-  @getSavedUser: =>
+  @get_saved_user: =>
     new Promise (resolve, reject) ->
       if key = config().get "api_key"
-        get().loginKey(key).then (res) =>
+        get().login_key(key).then (res) =>
           resolve new ApiUser get(), { key: key }
         , =>
           reject []
@@ -43,40 +43,40 @@ class ApiUser
     url = "/#{@key.key}#{url}"
     @api.request method, url, params
 
-  saveLogin: ->
+  save_login: ->
     config().set "api_key", @key.key
 
-  myGames: ->
+  my_games: ->
     @request "get", "/my-games"
 
-  myOwnedKeys: ->
+  my_owned_keys: ->
     @request "get", "/my-owned-keys"
 
-  myClaimedKeys: ->
+  my_claimed_keys: ->
     @request "get", "/my-claimed-keys"
 
   me: ->
     @request "get", "/me"
 
-  downloadKeyUploads: (downloadKeyId) ->
-    @request "get", "/download-key/#{downloadKeyId}/uploads"
+  download_key_uploads: (download_key_id) ->
+    @request "get", "/download-key/#{download_key_id}/uploads"
 
-  downloadUpload: (downloadKeyId, uploadId)->
-    @request "get", "/download-key/#{downloadKeyId}/download/#{uploadId}"
+  download_upload: (download_key_id, upload_id)->
+    @request "get", "/download-key/#{download_key_id}/download/#{upload_id}"
 
 ##
 # Wrapper for the itch.io API
 ##
 class Api
-  rootUrl: "https://itch.io/api/1"
-  # rootUrl: "http://localhost.com:8080/api/1"
+  root_url: "https://itch.io/api/1"
+  # root_url: "http://localhost.com:8080/api/1"
 
   request: (method, url, params) ->
     querystring = require("querystring")
     method = method.toLowerCase()
 
     data = null
-    url = "#{@rootUrl}#{url}"
+    url = "#{@root_url}#{url}"
 
     switch method
       when "get"
@@ -111,12 +111,12 @@ class Api
       else
         req.send()
 
-  loginKey: (key) =>
+  login_key: (key) =>
     @request "post", "/#{key}/me", {
       source: "desktop"
     }
 
-  loginWithPassword: (username, password) ->
+  login_with_password: (username, password) ->
     @request "post", "/login", {
       username: username
       password: password
@@ -126,9 +126,9 @@ class Api
 module.exports = {
   get
   config
-  currentUser
-  hasCurrentUser
-  setCurrentUser
+  current_user
+  has_current_user
+  set_current_user
   Api
   ApiUser
 }

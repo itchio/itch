@@ -22,7 +22,7 @@ menus = {
         label: "Log out"
         click: =>
           api.config().set "api_key", null
-          api.setCurrentUser null
+          api.set_current_user null
           LoginPage = require "../components/login_page"
           React.render (LoginPage {}), document.body
       }
@@ -30,14 +30,14 @@ menus = {
   }
 }
 
-setMenu = ->
+set_menu = ->
   Menu = window.require("remote").require("menu")
   template = [menus.file]
 
-  if api.hasCurrentUser()
+  if api.has_current_user()
     template.push menus.account
 
   Menu.setApplicationMenu Menu.buildFromTemplate template
 
-module.exports = { setMenu }
+module.exports = { set_menu }
 

@@ -7,12 +7,12 @@ module.exports = component {
 
   render: ->
     classes = "panel_link"
-    if @props.name == @props.currentPanel
+    if @props.name == @props.current_panel
       classes += " current"
 
-    div {
+    (div {
       className: classes
       onClick: =>
-        @props.setPanel @props.name
-    }, @props.label
+        @props.set_panel @props.name
+    }, @props.label)
 }
