@@ -1,5 +1,5 @@
 
-remote = require("remote")
+remote = window.require("remote")
 downloader = remote.require("./node/downloader")
 
 R.component "LibraryPage", {

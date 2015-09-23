@@ -8,7 +8,7 @@ I.menus = {
         label: "Quit"
         accelerator: "Command+Q"
         click: =>
-          app = require("remote").require("app")
+          app = window.require("remote").require("app")
           app.quit()
       }
     ]
@@ -29,7 +29,7 @@ I.menus = {
 }
 
 I.setMenu = ->
-  Menu = require("remote").require "menu"
+  Menu = window.require("remote").require "menu"
   menus = [I.menus.file]
 
   if I.hasCurrentUser()

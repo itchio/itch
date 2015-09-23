@@ -4,7 +4,7 @@ I.api = =>
   @_api
 
 I.config = =>
-  @_config ||= require("remote").require("./node/config")
+  @_config ||= window.require("remote").require("./node/config")
   @_config
 
 I.currentUser = =>
