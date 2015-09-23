@@ -12,14 +12,14 @@ module.exports = component {
 
   render: ->
     div className: "input_row",
-      (label {}, [
+      (label {},
         (div { className: "label" }, @props.label)
         (input {
           type: @props.type || "text"
           ref: "input"
           disabled: if @props.disabled then "disabled"
         })
-      ])
+      )
 
   # non-React methods
 

@@ -47,11 +47,10 @@ module.exports = component {
   render: ->
     (div { className: "login_form" },
       (img className: "logo", src: "static/images/itchio-white.svg")
-      (div { className: "login_box" }, [
+      (div { className: "login_box" },
         (h1 {}, "Log in")
 
-        (form { className: "form", onSubmit: @handleSubmit }, [
-
+        (form { className: "form", onSubmit: @handleSubmit },
           @state.errors and (ul className: "form_errors",
               (li {}, error for error in @state.errors )
           )
@@ -73,7 +72,7 @@ module.exports = component {
             disabled: @state.loading
           })
 
-          (div { className: "buttons" }, [
+          (div { className: "buttons" },
             (button {
               className: "button"
               disabled: if @state.loading then "disabled"
@@ -82,9 +81,9 @@ module.exports = component {
             " · "
 
             (a { href: "" }, "Forgot password")
-          ])
-        ])
-      ])
+          )
+        )
+      )
     )
 
   # non-React stuff

@@ -13,8 +13,8 @@ GameCell = component {
     if game.cover_url
       thumb_classes += " has_cover"
 
-    div className: "game_cell",
-      (div className: "bordered",
+    (div { className: "game_cell" },
+      (div { className: "bordered" },
         (div {
           className: thumb_classes
           onClick: =>
@@ -28,12 +28,13 @@ GameCell = component {
           className: "game_launch button"
           onClick: ->
             console.log "Should launch!"
-        }, [
+        },
           (span className: "icon icon-gamepad")
           "Launch"
-        ])),
+        )),
       (div { className: "game_title" }, game.title),
       game.user and (div { className: "game_author" }, game.user.display_name),
+    )
 }
 
 module.exports = component {
@@ -42,7 +43,11 @@ module.exports = component {
   render: ->
     (div { className: "game_list" },
       for game in @props.games
-        GameCell game: game, set_game: @props.set_game
+        GameCell {
+          game: game
+          key: game.id
+          set_game: @props.set_game
+        }
     )
 }
 
