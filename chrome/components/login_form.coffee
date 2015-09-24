@@ -6,7 +6,6 @@ InputRow = require "./input_row"
 
 remote = window.require "remote"
 api = remote.require "./metal/api"
-menu = remote.require "./metal/menu"
 AppActions = remote.require "./metal/actions/AppActions"
 
 module.exports = component {
@@ -21,8 +20,8 @@ module.exports = component {
     AppActions.login_with_password username, password
 
   render: ->
-    errors = @props.data.get "errors"
-    loading = @props.data.get "loading"
+    errors = @props.errors
+    loading = @props.loading
 
     (div { className: "login_form" },
       (img className: "logo", src: "static/images/itchio-white.svg")

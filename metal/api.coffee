@@ -2,7 +2,7 @@
 request = require "request-promise"
 
 Promise = require "bluebird"
-Immutable = require "immutable"
+Immutable = require "seamless-immutable"
 
 ##
 # Wrapper for the itch.io API
@@ -23,9 +23,9 @@ class Client
 
     request(options).then(JSON.parse).then (res) =>
       if res.errors
-        Promise.reject res.errors
+        Promise.reject Immutable res.errors
       else
-        Immutable.fromJS res
+        Immutable res
 
   login_key: (key) =>
     @request "post", "/#{key}/me", {

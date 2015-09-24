@@ -2,6 +2,11 @@ app = require "app"
 ipc = require "ipc"
 
 config = require "./metal/config"
+{ refresh_menu } = require "./metal/menu"
+
+AppStore = require "./metal/stores/AppStore"
+AppStore.add_change_listener ->
+  setTimeout (-> refresh_menu()), 0
 
 BrowserWindow = require "browser-window"
 

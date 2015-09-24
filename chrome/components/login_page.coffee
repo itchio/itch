@@ -9,7 +9,7 @@ module.exports = component {
 
   render: ->
     (div { className: "login_page" },
-      (LoginForm @props.data)
+      (LoginForm @props)
     )
 }
 

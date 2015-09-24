@@ -10,6 +10,7 @@
     LIBRARY_CLOSE_GAME: null,
     LIBRARY_FOCUS_PANEL: null,
     LOGIN_WITH_PASSWORD: null,
+    LOGIN_DONE: null,
     LOGOUT: null
   });
 

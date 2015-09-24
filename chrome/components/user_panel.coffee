@@ -15,7 +15,7 @@ module.exports = component {
     { user: null }
 
   componentDidMount: ->
-    AppStore.get_state().get('current_user').me().then (res) =>
+    AppStore.get_current_user().me().then (res) =>
       @setState user: res.user
 
   render: ->

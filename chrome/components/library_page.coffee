@@ -11,9 +11,9 @@ module.exports = component {
 
   render: ->
     div className: "library_page",
-      (LibrarySidebar @props.data),
-      (LibraryContent @props.data),
-      if game = @props.data.get('game')
-        (GameBox game)
+      (LibrarySidebar @props),
+      (LibraryContent @props),
+      if game = @props.game
+        (GameBox { game })
 }
 

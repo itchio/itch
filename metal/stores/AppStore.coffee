@@ -1,6 +1,6 @@
 
 { EventEmitter } = require "events"
-Immutable = require "immutable"
+Immutable = require "seamless-immutable"
 assign = require "object-assign"
 
 AppDispatcher = require "../dispatcher/AppDispatcher"
@@ -12,18 +12,24 @@ api = require "../api"
 
 CHANGE_EVENT = 'change'
 
-state = Immutable.fromJS {
+state = Immutable {
   page: "login"
-  current_user: null
+
   library: {
     game: null
     games: []
-    panel: "owned"
+    panel: null
   }
+
   login: {
     loading: false
   }
 }
+
+current_user = null
+
+merge_state = (obj) ->
+  state = state.merge obj, deep: true
 
 AppStore = assign {}, EventEmitter.prototype, {
 
@@ -39,69 +45,71 @@ AppStore = assign {}, EventEmitter.prototype, {
   get_state: ->
     state
 
+  get_current_user: ->
+    current_user
+
 }
 
 fetch_games = ->
-  user = state.get "current_user"
-  fetch = switch state.getIn ["library", "panel"]
+  user = current_user
+  fetch = switch state.library.panel
     when "dashboard"
       user.my_games().then (res) ->
-        res.get "games"
+        res.games
     when "owned"
       user.my_owned_keys().then (res) =>
-        res.get("owned_keys").map (key) ->
+        res.owned_keys.map (key) ->
           # flip it around!
-          game = key.get("game")
-          game.set("key", key.delete("game"))
+          key.game.merge { key: key.without("game") }
 
   fetch.then (games) =>
-    state = state.setIn ["library", "games"], games
+    merge_state { library: { games: games } }
     AppStore.emit_change()
 
 focus_panel = (panel) ->
-  state = state.set "page", "library"
-  state = state.setIn ["library", "panel"], panel
-  state = state.setIn ["library", "games"], Immutable.List()
+  merge_state {
+    page: "library"
+    library: {
+      panel
+      games: []
+    }
+  }
   AppStore.emit_change()
 
   fetch_games()
 
 switch_page = (page) ->
-  state = state.set "page", page
+  merge_state { page }
   AppStore.emit_change()
 
 login_key = (key) ->
-  state = state.setIn ["login", "loading"], true
+  merge_state { login: { loading: true } }
   AppStore.emit_change()
 
-  console.log "Logging in with #{key}"
   api.client.login_key(key).then((res) =>
-    login_done key
+    setTimeout (-> AppActions.login_done key), 0
   ).catch((errors) =>
-    console.log "login with key, errors = ", errors
-    state = state.setIn ["login", "errors"], errors
+    merge_state { login: { errors } }
   ).finally =>
-    state = state.setIn ["login", "loading"], false
+    merge_state { login: { loading: false } }
     AppStore.emit_change()
 
 login_with_password = (username, password) ->
-  state = state.setIn ["login", "loading"], true
+  merge_state { login: { loading: true } }
   AppStore.emit_change()
 
   api.client.login_with_password(username, password).then((res) =>
-    login_done res.get("key")
+    setTimeout (-> AppActions.login_done res.key.key), 0
   ).catch((errors) =>
-    console.log "login with password, errors = ", errors
-    state = state.setIn ["login", "errors"], errors
+    merge_state { login: { errors } }
   ).finally =>
-    state = state.setIn ["login", "loading"], false
+    merge_state { login: { loading: false } }
     AppStore.emit_change()
 
 login_done = (key) ->
-  console.log "login done: #{key}"
   config.set "api_key", key
-  state = state.set "current_user", new api.User(api.client, key)
-  state = state.set "page", "library"
+  current_user = new api.User(api.client, key)
+  focus_panel "owned"
   AppStore.emit_change()
 
 AppDispatcher.register (action) ->
@@ -110,15 +118,16 @@ AppDispatcher.register (action) ->
   switch action.action_type
 
     when AppConstants.SWITCH_PAGE
-      state = state.set "page", action.page
+      switch_page action.page
       AppStore.emit_change()
 
     when AppConstants.LIBRARY_VIEW_GAME
-      state = state.setIn ["library", "game"], action.game
+      merge_state { library: { game: action.game } }
       AppStore.emit_change()
 
     when AppConstants.LIBRARY_CLOSE_GAME
-      state = state.deleteIn ["library", "game"]
+      library = state.library.without("game")
+      state = state.merge { library }
       AppStore.emit_change()
 
     when AppConstants.LIBRARY_FOCUS_PANEL
@@ -127,14 +136,16 @@ AppDispatcher.register (action) ->
     when AppConstants.LOGIN_WITH_PASSWORD
       login_with_password action.username, action.password
 
+    when AppConstants.LOGIN_DONE
+      login_done action.key
+
     when AppConstants.LOGOUT
       config.set "api_key", null
-      state = state.set "page", "login"
+      merge_state { page: "login" }
       AppStore.emit_change()
 
     when AppConstants.BOOT
       if key = config.get "api_key"
-        console.log "Found api key stored, logging in.."
         login_key(key)
 
     when AppConstants.QUIT
