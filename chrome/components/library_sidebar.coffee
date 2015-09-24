@@ -15,15 +15,13 @@ module.exports = component {
         (LibraryPanelLink {
           name: "owned"
           label: "Owned"
-          current_panel: @props.current_panel
-          set_panel: @props.set_panel
+          panel: @props.panel
         })
 
         (LibraryPanelLink {
           name: "dashboard"
           label: "Dashboard"
-          current_panel: @props.current_panel
-          set_panel: @props.set_panel
+          panel: @props.panel
         })
       )
     )

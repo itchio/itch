@@ -87,10 +87,11 @@ module.exports = component {
     )
 
   # non-React stuff
-  #
+
   after_login: ->
     LibraryPage = require "./library_page"
     React.render (LibraryPage {}), document.body
     menu.set_menu()
 
 }
+

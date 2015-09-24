@@ -2,23 +2,23 @@
 { div, span } = React.DOM
 component = require "./component"
 
+classNames = require "classnames"
+
+remote = window.require "remote"
+AppActions = remote.require "./metal/actions/AppActions"
+
 GameCell = component {
   displayName: "GameCell"
 
   render: ->
     game = @props.game
 
-    thumb_classes = "game_thumb"
-
-    if game.cover_url
-      thumb_classes += " has_cover"
-
     (div { className: "game_cell" },
       (div { className: "bordered" },
         (div {
-          className: thumb_classes
+          className: classNames("game_thumb", has_cover: game.cover_url)
           onClick: =>
-            @props.set_game game
+            AppActions.view_game game
           style: {
             backgroundImage: if cover = @props.game.cover_url
               "url('#{cover}')"
@@ -46,7 +46,6 @@ module.exports = component {
         GameCell {
           game: game
           key: game.id
-          set_game: @props.set_game
         }
     )
 }

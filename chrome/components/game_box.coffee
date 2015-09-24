@@ -4,6 +4,9 @@
 component = require "./component"
 api = require "../itchio/api"
 
+remote = window.require "remote"
+AppActions = remote.require "./metal/actions/AppActions"
+
 module.exports = component {
   displayName: "GameBox"
 
@@ -29,16 +32,13 @@ module.exports = component {
     else
       (p { className: "loading" }, "Loading...")
 
-    (div className: "lightbox_container",
-      (div className: "lightbox",
-        (div className: "lightbox_close", onClick: @close, "×")
-        (div className: "lightbox_header", @props.game.title)
-        (div className: "lightbox_content game_box", content)))
+    (div { className: "lightbox_container" },
+      (div { className: "lightbox" },
+        (div { className: "lightbox_close", onClick: -> AppActions.close_game() }, "×")
+        (div { className: "lightbox_header" }, @props.game.title)
+        (div { className: "lightbox_content game_box" }, content)))
 
   # non-React methods
-
-  close: ->
-    @props.set_game null
 
   render_uploads: ->
     platforms = [

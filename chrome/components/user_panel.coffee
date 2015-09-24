@@ -1,6 +1,7 @@
 
 { div } = React.DOM
 
+classNames = require "classnames"
 component = require "./component"
 api = require "../itchio/api"
 
@@ -15,10 +16,11 @@ module.exports = component {
       @setState user: res.user
 
   render: ->
-    unless @state.user
-      return div className: "user_panel loading", "Loading"
-
-    div className: "user_panel",
-      "Logged in as #{@state.user.username}",
+    (div { className: classNames("user_panel", loading: !@state.user) },
+      if @state.user
+        "Logged in as #{@state.user.username}"
+      else
+        "Loading"
+    )
 }
 

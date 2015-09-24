@@ -6,34 +6,43 @@ LibrarySidebar = require "./library_sidebar"
 LibraryContent = require "./library_content"
 GameBox = require "./game_box"
 
+remote = window.require "remote"
+AppStore = remote.require "./metal/stores/AppStore"
+
+get_library_state = ->
+  {
+    game: AppStore.get_game()
+    panel: AppStore.get_panel()
+  }
+
 module.exports = component {
   displayName: "LibraryPage"
 
   getInitialState: ->
-    { current_panel: "owned", current_game: null }
+    get_library_state()
+
+  componentDidMount: ->
+    AppStore.add_change_listener @_on_change
+
+  componentWillUnmount: ->
+    AppStore.remove_change_listener @_on_change
 
   render: ->
     div className: "library_page",
       (LibrarySidebar {
-        current_panel: @state.current_panel
-        set_panel: @set_panel
+        panel: @state.panel
       }),
       (LibraryContent {
-        current_panel: @state.current_panel
-        set_game: @set_game
+        panel: @state.panel
       }),
-      @state.current_game and
+      @state.game and
         (GameBox {
-          game: @state.current_game
-          set_game: @set_game
+          game: @state.game
         })
 
   # non-React methods
 
-  set_panel: (name) ->
-    @setState current_panel: name
-
-  set_game: (game) ->
-    @setState current_game: game
+  _on_change: ->
+    @setState get_library_state()
 }
 

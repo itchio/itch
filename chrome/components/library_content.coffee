@@ -15,7 +15,7 @@ module.exports = component {
     @refresh_games(@props)
 
   componentWillReceiveProps: (nextProps) ->
-    if @props.current_panel != nextProps.current_panel
+    if @props.panel != nextProps.panel
       @refresh_games(nextProps)
 
   render: ->
@@ -30,7 +30,7 @@ module.exports = component {
     user = api.current_user()
 
     @setState loading: true
-    switch props.current_panel
+    switch props.panel
       when "dashboard"
         user.my_games().then (res) =>
           @setState games: res.games
