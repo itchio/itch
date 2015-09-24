@@ -35,6 +35,8 @@ refresh_menu = ->
   if AppStore.get_current_user()
     template.push menus.account
 
+  # gotcha: buildFromTemplate mutates its argument - calling it
+  # twice with the same argument throws 'Invalid menu template'
   Menu.setApplicationMenu Menu.buildFromTemplate template
 
 module.exports = { refresh_menu }
