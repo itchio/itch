@@ -15,6 +15,6 @@ _.str.formatBytes = do ->
      "#{_.str.numberFormat bytes} bytes"
 
 document.addEventListener "DOMContentLoaded", ->
-  LoginPage = require "./components/login_page"
-  React.render (LoginPage {}), document.body
+  Layout = require "./components/layout"
+  React.render (Layout {}), document.body
 

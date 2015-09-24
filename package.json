@@ -20,7 +20,9 @@
   "main": "main.js",
   "dependencies": {
     "nconf": "^0.7.1",
+    "bluebird": "^2.10.0",
     "request": "^2.62.0",
+    "request-promise": "^0.4.3",
     "request-progress": "^0.3.1",
     "fstream": "^1.0.8",
     "unzip": "fasterthanlime/node-unzip-2#quick-hack",
@@ -28,7 +30,8 @@
     "glob": "^5.0.14",
     "flux": "^2.0.1",
     "object-assign": "^1.0.0",
-    "keymirror": "~0.1.0"
+    "keymirror": "~0.1.0",
+    "immutable": "^3.7.5"
   },
   "devDependencies": {
     "browserify": "^9.0.7",

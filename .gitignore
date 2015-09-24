@@ -1,7 +1,7 @@
 /bower_components
 /node_modules
-config.json
-*.css
-/metal/*.js
-/chrome/*.js
+/config.json
+/style/**/*.css
+/metal/**/*.js
+/chrome/**/*.js
 /main.js

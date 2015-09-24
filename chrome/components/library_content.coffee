@@ -3,43 +3,17 @@
 
 component = require "./component"
 GameList = require "./game_list"
-api = require "../itchio/api"
+
+Immutable = require "immutable"
+
+remote = window.require "remote"
+AppStore = remote.require "./metal/stores/AppStore"
 
 module.exports = component {
   displayName: "LibraryContent"
 
-  getInitialState: ->
-    { games: null, loading: false }
-
-  componentDidMount: ->
-    @refresh_games(@props)
-
-  componentWillReceiveProps: (nextProps) ->
-    if @props.panel != nextProps.panel
-      @refresh_games(nextProps)
-
   render: ->
+    games = @props.data.get "games"
     div className: "main_content",
-      if @state.games
-        (GameList games: @state.games, set_game: @props.set_game)
-
-
-  # non-React methods
-
-  refresh_games: (props) ->
-    user = api.current_user()
-
-    @setState loading: true
-    switch props.panel
-      when "dashboard"
-        user.my_games().then (res) =>
-          @setState games: res.games
-      when "owned"
-        user.my_owned_keys().then (res) =>
-          games = for key in res.owned_keys
-            game = key.game
-            game.key = key
-            game
-
-          @setState games: games
+      (GameList Immutable.fromJS { games })
 }

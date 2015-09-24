@@ -3,7 +3,10 @@
 
 classNames = require "classnames"
 component = require "./component"
-api = require "../itchio/api"
+
+remote = window.require "remote"
+api = remote.require "./metal/api"
+AppStore = remote.require "./metal/stores/AppStore"
 
 module.exports = component {
   displayName: "UserPanel"
@@ -12,7 +15,7 @@ module.exports = component {
     { user: null }
 
   componentDidMount: ->
-    api.current_user().me().then (res) =>
+    AppStore.get_state().get('current_user').me().then (res) =>
       @setState user: res.user
 
   render: ->

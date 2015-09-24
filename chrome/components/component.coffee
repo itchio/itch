@@ -1,8 +1,18 @@
 
+# TODO: Import React via browserify, not bower + explicit HTML include
+# TODO: use PureRenderMixin in there
+
 # Define a React component
-module.exports = (data) ->
-    clazz = React.createClass(data)
-    factory = React.createFactory clazz
-    factory._class = clazz
-    factory
+module.exports = (definition) ->
+  definition.shouldComponentUpdate or= (newProps, newState) ->
+    @props.data != newProps.data
+
+  clazz = React.createClass(definition)
+  factory = React.createFactory clazz
+
+  wrapper = (data, args...) ->
+    factory { data }, args...
+
+  wrapper._class = clazz
+  wrapper
 

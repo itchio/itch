@@ -1,5 +1,10 @@
 
+Menu = require "menu"
+
 api = require "./api"
+config = require "./config"
+AppStore = require "./stores/AppStore"
+AppActions = require "./actions/AppActions"
 
 menus = {
   file: {
@@ -9,8 +14,7 @@ menus = {
         label: "Quit"
         accelerator: "Command+Q"
         click: =>
-          app = window.require("remote").require("app")
-          app.quit()
+          AppActions.quit()
       }
     ]
   }
@@ -21,20 +25,17 @@ menus = {
       {
         label: "Log out"
         click: =>
-          api.config().set "api_key", null
-          api.set_current_user null
-          LoginPage = require "../components/login_page"
-          React.render (LoginPage {}), document.body
+          AppActions.logout()
       }
     ]
   }
 }
 
 set_menu = ->
-  Menu = window.require("remote").require("menu")
   template = [menus.file]
 
-  if api.has_current_user()
+  state = AppStore.get_state()
+  if state.has('current_user')
     template.push menus.account
 
   Menu.setApplicationMenu Menu.buildFromTemplate template

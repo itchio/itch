@@ -8,7 +8,8 @@ module.exports = component {
   displayName: "LoginPage"
 
   render: ->
-    div className: "login_page",
-      LoginForm {}
+    (div { className: "login_page" },
+      (LoginForm @props.data)
+    )
 }
 

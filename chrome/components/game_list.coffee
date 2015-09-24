@@ -3,6 +3,7 @@
 component = require "./component"
 
 classNames = require "classnames"
+Immutable = require "immutable"
 
 remote = window.require "remote"
 AppActions = remote.require "./metal/actions/AppActions"
@@ -11,17 +12,20 @@ GameCell = component {
   displayName: "GameCell"
 
   render: ->
-    game = @props.game
+    console.log "in GameCell render..."
+    game = @props.data.get "game"
+    console.log "in GameCell, game = ", game.toJS()
 
-    (div { className: "game_cell" },
+    cover_url = game.get "cover_url"
+
+    (div { className: "game_cell", key: game.get("id") },
       (div { className: "bordered" },
         (div {
-          className: classNames("game_thumb", has_cover: game.cover_url)
+          className: classNames("game_thumb", has_cover: cover_url)
           onClick: =>
             AppActions.view_game game
           style: {
-            backgroundImage: if cover = @props.game.cover_url
-              "url('#{cover}')"
+            backgroundImage: cover_url and "url('#{cover_url}')"
           }
         }),
         (div {
@@ -32,8 +36,8 @@ GameCell = component {
           (span className: "icon icon-gamepad")
           "Launch"
         )),
-      (div { className: "game_title" }, game.title),
-      game.user and (div { className: "game_author" }, game.user.display_name),
+      (div { className: "game_title" }, game.get "title"),
+      game.get("user") and (div { className: "game_author" }, game.get("user").get("display_name")),
     )
 }
 
@@ -41,12 +45,12 @@ module.exports = component {
   displayName: "GameList"
 
   render: ->
-    (div { className: "game_list" },
-      for game in @props.games
-        GameCell {
-          game: game
-          key: game.id
-        }
-    )
+    console.log "In game list, games = ", @props.data.get("games").toJS()
+    (div { className: "game_list" }, @props.data.get("games").toJS().map((game) ->
+      console.log "Creating gameCell from ", game
+      (GameCell Immutable.fromJS {
+        game: game
+      })
+    ))
 }
 

@@ -14,9 +14,9 @@ module.exports = component {
     (div {
       className: classNames(
         "panel_link"
-        current: @props.name == @props.panel
+        current: @props.data.get("name") == @props.data.get("panel")
       )
       onClick: =>
-        AppActions.focus_panel @props.name
-    }, @props.label)
+        AppActions.focus_panel @props.data.get("name")
+    }, @props.data.get("label"))
 }
