@@ -22,6 +22,7 @@ state = Immutable {
     game: null
     games: []
     panel: null
+    collection: []
   }
 
   login: {
@@ -57,6 +58,9 @@ AppStore = assign {}, EventEmitter.prototype, {
   get_state: ->
     state
 
+  get_state_json: ->
+    JSON.stringify state
+
   get_current_user: ->
     current_user
 
@@ -64,19 +68,35 @@ AppStore = assign {}, EventEmitter.prototype, {
 
 fetch_games = ->
   user = current_user
-  fetch = switch state.library.panel
+  { panel } = state.library
+
+  fetch = switch panel
+
     when "dashboard"
-      user.my_games().then (res) ->
+      user.my_games().then((res) ->
         res.games
+      ).then (games) =>
+        merge_state { library: { games: games } }
+        AppStore.emit_change()
+
     when "owned"
-      user.my_owned_keys().then (res) =>
+      user.my_owned_keys().then((res) =>
         res.owned_keys.map (key) ->
           # flip it around!
           key.game.merge { key: key.without("game") }
+      ).then (games) =>
+        merge_state { library: { games: games } }
+        AppStore.emit_change()
 
-  fetch.then (games) =>
-    merge_state { library: { games: games } }
-    AppStore.emit_change()
+    else
+      [_, collection_id] = panel.match /^collection\.(.+)$/
+      if collection_id
+        collection_id = parseInt collection_id, 10
+        collection = state.library.collections.filter((x) ->
+          x.id == collection_id
+        )[0]
+        if collection
+          merge_state { library: { games: collection.games } }
 
 focus_window = ->
   require("app").main_window?.show()
@@ -132,6 +152,12 @@ login_done = (key) ->
   current_user = new api.User(api.client, key)
   focus_panel "owned"
   AppStore.emit_change()
+
+  setTimeout (->
+    current_user.my_collections().then (res) =>
+      merge_state { library: { collections: res.collections } }
+      AppStore.emit_change()
+  ), 0
 
 AppDispatcher.register (action) ->
   # console.log action.action_type

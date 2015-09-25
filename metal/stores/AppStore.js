@@ -27,7 +27,8 @@
       me: null,
       game: null,
       games: [],
-      panel: null
+      panel: null,
+      collection: []
     },
     login: {
       loading: false
@@ -66,20 +67,34 @@
     get_state: function() {
       return state;
     },
+    get_state_json: function() {
+      return JSON.stringify(state);
+    },
     get_current_user: function() {
       return current_user;
     }
   });
 
   fetch_games = function() {
-    var fetch, user;
+    var _, collection, collection_id, fetch, panel, user;
     user = current_user;
-    fetch = (function() {
-      switch (state.library.panel) {
+    panel = state.library.panel;
+    return fetch = (function() {
+      var ref;
+      switch (panel) {
         case "dashboard":
           return user.my_games().then(function(res) {
             return res.games;
-          });
+          }).then((function(_this) {
+            return function(games) {
+              merge_state({
+                library: {
+                  games: games
+                }
+              });
+              return AppStore.emit_change();
+            };
+          })(this));
         case "owned":
           return user.my_owned_keys().then((function(_this) {
             return function(res) {
@@ -89,19 +104,33 @@
                 });
               });
             };
+          })(this)).then((function(_this) {
+            return function(games) {
+              merge_state({
+                library: {
+                  games: games
+                }
+              });
+              return AppStore.emit_change();
+            };
           })(this));
+        default:
+          ref = panel.match(/^collection\.(.+)$/), _ = ref[0], collection_id = ref[1];
+          if (collection_id) {
+            collection_id = parseInt(collection_id, 10);
+            collection = state.library.collections.filter(function(x) {
+              return x.id === collection_id;
+            })[0];
+            if (collection) {
+              return merge_state({
+                library: {
+                  games: collection.games
+                }
+              });
+            }
+          }
       }
     }).call(this);
-    return fetch.then((function(_this) {
-      return function(games) {
-        merge_state({
-          library: {
-            games: games
-          }
-        });
-        return AppStore.emit_change();
-      };
-    })(this));
   };
 
   focus_window = function() {
@@ -212,7 +241,19 @@
     config.set("api_key", key);
     current_user = new api.User(api.client, key);
     focus_panel("owned");
-    return AppStore.emit_change();
+    AppStore.emit_change();
+    return setTimeout((function() {
+      return current_user.my_collections().then((function(_this) {
+        return function(res) {
+          merge_state({
+            library: {
+              collections: res.collections
+            }
+          });
+          return AppStore.emit_change();
+        };
+      })(this));
+    }), 0);
   };
 
   AppDispatcher.register(function(action) {

@@ -44,6 +44,9 @@ make_main_window = ->
 
   main_window.loadUrl "file://#{__dirname}/index.html"
 
+  if process.env.DEVTOOLS
+    main_window.openDevTools()
+
 app.on "before-quit", ->
   quitting = true
      

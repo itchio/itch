@@ -17,7 +17,9 @@ extract = (archive_path, dest_path) ->
     # FIXME get 'mode' support merged into node-unzip-2, remove fork.
     parser.on 'metadata', (entry) ->
       entry_path = path.join dest_path, entry.path
-      fs.chmodSync entry_path, entry.mode
+      # always keep read-write on every file so we can update them.
+      mode = entry.mode | 0o600
+      fs.chmodSync entry_path, mode
 
   src = fstream.Reader(archive_path).pipe(parser)
   dst = fstream.Writer {
@@ -28,6 +30,7 @@ extract = (archive_path, dest_path) ->
 
   new Promise (resolve, reject) ->
     pipeline.on 'error', (e) ->
+      throw e
       reject e
     pipeline.on 'close', ->
       resolve()

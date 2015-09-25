@@ -15,15 +15,17 @@ module.exports = component {
     { uploads: null, loading: false, error: null }
 
   componentDidMount: ->
-    unless key = @props.game.key
-      @setState error: "Can't download this game (missing download key)"
-      return
-
     @setState loading: true
-    AppStore.get_current_user().download_key_uploads(key.id).then (res) =>
-      @setState loading: false, uploads: res.uploads
-    , (errors) =>
-      console.error "failed to get download key uploads", errors
+    if key = @props.game.key
+      AppStore.get_current_user().download_key_uploads(key.id).then (res) =>
+        @setState loading: false, uploads: res.uploads
+      , (errors) =>
+        console.error "failed to get download key uploads", errors
+    else
+      AppStore.get_current_user().game_uploads(@props.game.id).then (res) =>
+        @setState loading: false, uploads: res.uploads
+      , (errors) =>
+        console.error "failed to get uploads", errors
 
   render: ->
     content = if @state.error
@@ -51,7 +53,6 @@ module.exports = component {
     if @state.uploads?.length
       @state.uploads.map (upload) =>
         (div key: "upload-#{upload.id}", className: "upload_row",
-          (span className: "download_btn button", onClick: @download_upload(upload), "Download"),
           (span className: "upload_name", upload.filename),
           (span className: "upload_size", "(#{_.str.formatBytes upload.size})"),
           (span className: "upload_platforms", platforms.map (platform) ->
@@ -61,17 +62,5 @@ module.exports = component {
     else
       (p {}, "No uploads.")
 
-  download_upload: (upload) ->
-    =>
-      AppStore.get_current_user().download_upload(@props.game.key.id, upload.id).then (res) =>
-        downloader = window.require("remote")
-          .require("./metal/downloader")
-        downloader.queue {
-          game: @props.game
-          upload: upload
-          url: res.url
-        }
-      , (errors) =>
-        console.error "failed to download upload"
 }
 

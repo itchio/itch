@@ -1,5 +1,5 @@
 
-{ div } = React.DOM
+{ div, hr } = React.DOM
 
 component = require "./component"
 UserPanel = require "./user_panel"
@@ -13,7 +13,7 @@ module.exports = component {
 
     (div className: "sidebar",
       (UserPanel @props),
-      (div { className: "panel_links" },
+      (div { className: "panel_links" }, [
         (LibraryPanelLink {
           name: "owned"
           label: "Owned"
@@ -25,6 +25,15 @@ module.exports = component {
           label: "Dashboard"
           panel
         })
+      ].concat if @props.collections
+        [(div { className: "panel_link" }, (hr {}))].concat(
+          @props.collections.map (collection) ->
+            (LibraryPanelLink {
+              name: "collection.#{collection.id}"
+              label: collection.title
+              panel
+            })
+        )
       )
     )
 

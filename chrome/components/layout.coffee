@@ -7,8 +7,10 @@ remote = window.require "remote"
 AppStore = remote.require "./metal/stores/AppStore"
 AppActions = remote.require "./metal/actions/AppActions"
 
+Immutable = require "seamless-immutable"
+
 get_state = ->
-  AppStore.get_state()
+  JSON.parse AppStore.get_state_json()
 
 module.exports = component {
   displayName: "Layout"

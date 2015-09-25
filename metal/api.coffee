@@ -62,6 +62,9 @@ class User
   me: ->
     @request "get", "/me"
 
+  my_collections: ->
+    @request "get", "/my-collections"
+
   download_key_uploads: (download_key_id) ->
     @request "get", "/download-key/#{download_key_id}/uploads"
 
