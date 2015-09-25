@@ -15,7 +15,7 @@ make_tray = ->
     }
   ]
   if process.platform != "darwin"
-    tray_menu_template.concat [
+    tray_menu_template = tray_menu_template.concat [
       {
         type: "separator"
       }
