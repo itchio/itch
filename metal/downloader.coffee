@@ -24,7 +24,15 @@ bounce = ->
   app.dock?.bounce()
 
 notify = (msg) ->
-  app.main_window?.webContents?.executeJavaScript("new Notification(#{JSON.stringify(msg)})")
+  switch process.platform
+    when "win32"
+      app.main_tray?.displayBalloon {
+        title: "itch.io"
+        content: msg
+      }
+    else
+      code = "new Notification(#{JSON.stringify(msg)})"
+      app.main_window?.webContents?.executeJavaScript(code)
 
 queue = (item) ->
   itchioPath = path.join(app.getPath("home"), "Downloads", "itch.io")
