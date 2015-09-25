@@ -9,11 +9,11 @@ extract = (archivePath, destPath) ->
   type = fileType(buffer)
 
   console.log "type for #{archivePath}: #{JSON.stringify type}"
-  extractor = require("./extractors/#{type?.ext}")
 
-  if extractor
-    return extractor.extract archivePath, destPath
-  else
+  try
+    extractor = require("./extractors/#{type?.ext}")
+    extractor.extract archivePath, destPath
+  catch
     Promise.reject "Don't know how to extract: #{archivePath}"
 
 module.exports = { extract }
