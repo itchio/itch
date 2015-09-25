@@ -10,6 +10,11 @@
     LIBRARY_VIEW_GAME: null,
     LIBRARY_CLOSE_GAME: null,
     LIBRARY_FOCUS_PANEL: null,
+    DOWNLOAD_QUEUE: null,
+    SET_PROGRESS: null,
+    CLEAR_PROGRESS: null,
+    BOUNCE: null,
+    NOTIFY: null,
     LOGIN_WITH_PASSWORD: null,
     LOGIN_DONE: null,
     LOGOUT: null

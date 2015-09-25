@@ -95,24 +95,6 @@ $user_panel_height: 40px;
 
             margin-bottom: 10px;
             overflow: hidden;
-
-            .game_launch {
-                @include transition(opacity 0.20s ease-in-out);
-                position: absolute;
-                bottom: 5px;
-                right: 5px;
-                opacity: 0;
-            }
-
-            &:hover {
-                .game_launch {
-                    opacity: 1;
-                }
-
-                .game_thumb {
-                    opacity: .4;
-                }
-            }
         }
 
         .game_thumb {

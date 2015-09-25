@@ -58,6 +58,35 @@ AppActions = {
     AppDispatcher.dispatch {
       action_type: AppConstants.LOGOUT
     }
+
+  download_queue: (opts) ->
+    AppDispatcher.dispatch {
+      action_type: AppConstants.DOWNLOAD_QUEUE
+      opts
+    }
+
+  set_progress: (alpha) ->
+    AppDispatcher.dispatch {
+      action_type: AppConstants.SET_PROGRESS
+      alpha
+    }
+
+  clear_progress: (alpha) ->
+    AppDispatcher.dispatch {
+      action_type: AppConstants.CLEAR_PROGRESS
+      alpha
+    }
+
+  bounce: ->
+    AppDispatcher.dispatch {
+      action_type: AppConstants.BOUNCE
+    }
+
+  notify: (message) ->
+    AppDispatcher.dispatch {
+      action_type: AppConstants.NOTIFY
+      message
+    }
 }
 
 module.exports = AppActions

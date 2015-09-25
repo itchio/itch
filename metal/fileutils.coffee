@@ -3,14 +3,15 @@ module.exports = {
   ext: (filename) ->
     filename.toLowerCase().match(/\.[\w]+$/)
 
-  exeGlob: (appPath) ->
+  exe_glob: (app_path) ->
     switch process.platform
       when "win32"
-        "#{appPath}/**/*.exe"
+        "#{app_path}/**/*.exe"
       when "darwin"
-        "#{appPath}/**/*.app"
+        "#{app_path}/**/*.app"
       when "linux"
-        "#{appPath}/**/*.sh"
+        # That's.. far from enough
+        "#{app_path}/**/*.sh"
       else
         throw new Error("Unsupported platform: #{process.platform}")
 }

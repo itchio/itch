@@ -3,21 +3,24 @@ Menu = require "menu"
 
 AppStore = require "./stores/AppStore"
 AppActions = require "./actions/AppActions"
+AppDispatcher = require "./dispatcher/AppDispatcher"
 
 refresh_menu = ->
+  mac = (process.platform == "darwin")
+
   menus = {
     file: {
       label: "File"
       submenu: [
         {
           label: "Close Window"
-          accelerator: "Command+W"
+          accelerator: if mac then "Command+W" else "Alt+F4"
           click: ->
             require("app").main_window?.hide()
         }
         {
           label: "Quit"
-          accelerator: "Command+Q"
+          accelerator: if mac then "Command+Q" else "Ctrl+Q"
           click: ->
             AppActions.quit()
         }
@@ -45,5 +48,13 @@ refresh_menu = ->
   # twice with the same argument throws 'Invalid menu template'
   Menu.setApplicationMenu Menu.buildFromTemplate template
 
-module.exports = { refresh_menu }
+install = ->
+  AppDispatcher.register (action) ->
+    switch action.action_type
+      # TODO: keep an eye on that, might need to rebuild in
+      # other circumstances.
+      when 'BOOT', 'LOGIN_DONE', 'LOGOUT'
+        setTimeout (-> refresh_menu()), 0
+
+module.exports = { install }
 

@@ -31,7 +31,9 @@
     "flux": "^2.0.1",
     "object-assign": "^1.0.0",
     "keymirror": "~0.1.0",
-    "seamless-immutable": "^4.0.0"
+    "seamless-immutable": "^4.0.0",
+    "read-chunk": "^1.0.1",
+    "file-type": "^2.11.0"
   },
   "devDependencies": {
     "browserify": "^9.0.7",

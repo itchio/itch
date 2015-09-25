@@ -1,5 +1,5 @@
 (function() {
-  var AppActions, AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, Immutable, api, assign, config, current_user, fetch_games, focus_panel, focus_window, login_done, login_key, login_with_password, merge_state, state, switch_page;
+  var AppActions, AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, Immutable, api, app, assign, config, current_user, fetch_games, focus_panel, focus_window, login_done, login_key, login_with_password, merge_state, state, switch_page;
 
   EventEmitter = require("events").EventEmitter;
 
@@ -12,6 +12,8 @@
   AppConstants = require("../constants/AppConstants");
 
   AppActions = require("../actions/AppActions");
+
+  app = require("app");
 
   config = require("../config");
 
@@ -215,7 +217,6 @@
 
   AppDispatcher.register(function(action) {
     var key, library;
-    console.log(action.action_type);
     switch (action.action_type) {
       case AppConstants.SWITCH_PAGE:
         switch_page(action.page);

@@ -24,16 +24,18 @@ GameCell = component {
             backgroundImage: cover_url and "url('#{cover_url}')"
           }
         }),
-        (div {
-          className: "game_launch button"
-          onClick: ->
-            console.log "Should launch!"
-        },
-          (span className: "icon icon-gamepad")
-          "Launch"
-        )),
+        ),
       (div { className: "game_title" }, game.title),
-      game.user and (div { className: "game_author" }, game.user.display_name),
+      if game.user
+        (div { className: "game_author" }, game.user.display_name)
+      ,
+      (div {
+        className: "game_launch button"
+        onClick: -> AppActions.download_queue { game }
+      },
+        (span className: "icon icon-gamepad")
+        "Launch"
+      )
     )
 }
 

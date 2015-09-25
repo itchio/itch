@@ -61,6 +61,35 @@
       return AppDispatcher.dispatch({
         action_type: AppConstants.LOGOUT
       });
+    },
+    download_queue: function(opts) {
+      return AppDispatcher.dispatch({
+        action_type: AppConstants.DOWNLOAD_QUEUE,
+        opts: opts
+      });
+    },
+    set_progress: function(alpha) {
+      return AppDispatcher.dispatch({
+        action_type: AppConstants.SET_PROGRESS,
+        alpha: alpha
+      });
+    },
+    clear_progress: function(alpha) {
+      return AppDispatcher.dispatch({
+        action_type: AppConstants.CLEAR_PROGRESS,
+        alpha: alpha
+      });
+    },
+    bounce: function() {
+      return AppDispatcher.dispatch({
+        action_type: AppConstants.BOUNCE
+      });
+    },
+    notify: function(message) {
+      return AppDispatcher.dispatch({
+        action_type: AppConstants.NOTIFY,
+        message: message
+      });
     }
   };
 

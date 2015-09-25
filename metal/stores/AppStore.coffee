@@ -7,6 +7,8 @@ AppDispatcher = require "../dispatcher/AppDispatcher"
 AppConstants = require "../constants/AppConstants"
 AppActions = require "../actions/AppActions"
 
+app = require "app"
+
 config = require "../config"
 api = require "../api"
 
@@ -132,7 +134,7 @@ login_done = (key) ->
   AppStore.emit_change()
 
 AppDispatcher.register (action) ->
-  console.log action.action_type
+  # console.log action.action_type
 
   switch action.action_type
 

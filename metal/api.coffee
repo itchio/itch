@@ -65,8 +65,14 @@ class User
   download_key_uploads: (download_key_id) ->
     @request "get", "/download-key/#{download_key_id}/uploads"
 
-  download_upload: (download_key_id, upload_id)->
+  download_upload_with_key: (download_key_id, upload_id)->
     @request "get", "/download-key/#{download_key_id}/download/#{upload_id}"
+
+  game_uploads: (game_id) ->
+    @request "get", "/game/#{game_id}/uploads"
+
+  download_upload: (upload_id) ->
+    @request "get", "/upload/#{upload_id}/download"
 
 client = new Client
 
