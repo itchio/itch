@@ -10,6 +10,12 @@ refresh_menu = ->
       label: "File"
       submenu: [
         {
+          label: "Close Window"
+          accelerator: "Command+W"
+          click: ->
+            require("app").main_window?.hide()
+        }
+        {
           label: "Quit"
           accelerator: "Command+Q"
           click: ->

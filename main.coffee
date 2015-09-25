@@ -12,35 +12,40 @@ AppActions = require "./metal/actions/AppActions"
 
 BrowserWindow = require "browser-window"
 
-mainWindow = null
-booted = false
+main_window = null
 
-makeMainWindow = ->
-  if mainWindow
-    mainWindow.show()
+booted = false
+quitting = false
+
+make_main_window = ->
+  if main_window
+    main_window.show()
     return
 
-  mainWindow = new BrowserWindow width: 1200, height: 720
-  mainWindow.webContents.on "dom-ready", ->
-    unless booted
-      AppActions.boot()
-      booted = true
-  mainWindow.loadUrl "file://#{__dirname}/index.html"
+  unless booted
+    AppActions.boot()
+    booted = true
 
-  mainWindow.openDevTools()
+  main_window = new BrowserWindow width: 1200, height: 720
+  app.main_window = main_window
 
-  mainWindow.on "closed", ->
-    mainWindow = null
+  main_window.on "close", (e) ->
+    unless quitting
+      e.preventDefault()
+      main_window.hide()
 
-  app.mainWindow = mainWindow
+  main_window.loadUrl "file://#{__dirname}/index.html"
+
+app.on "before-quit", ->
+  quitting = true
 
 app.on "window-all-closed", ->
   unless process.platform == "darwin"
     app.quit()
-
-app.on "activate", ->
-  makeMainWindow()
  
 app.on "ready", ->
-  makeMainWindow()
+  make_main_window()
+
+app.on "activate", ->
+  main_window?.show()
 

@@ -33,8 +33,8 @@ module.exports = component {
     else
       (p { className: "loading" }, "Loading...")
 
-    (div { className: "lightbox_container" },
-      (div { className: "lightbox" },
+    (div { className: "lightbox_container", onClick: -> AppActions.close_game() },
+      (div { className: "lightbox", onClick: (e) -> e.stopPropagation() },
         (div { className: "lightbox_close", onClick: -> AppActions.close_game() }, "×")
         (div { className: "lightbox_header" }, @props.game.title)
         (div { className: "lightbox_content game_box" }, content)))
@@ -48,15 +48,18 @@ module.exports = component {
       ["p_linux", "tux"]
     ]
 
-    @state.uploads.map (upload) =>
-      (div key: "upload-#{upload.id}", className: "upload_row",
-        (span className: "download_btn button", onClick: @download_upload(upload), "Download"),
-        (span className: "upload_name", upload.filename),
-        (span className: "upload_size", "(#{_.str.formatBytes upload.size})"),
-        (span className: "upload_platforms", platforms.map (platform) ->
-          if upload[platform[0]]
-            (span key: "platform-#{platform[0]}", className: "icon icon-#{platform[1]}")
-        ))
+    if @state.uploads?.length
+      @state.uploads.map (upload) =>
+        (div key: "upload-#{upload.id}", className: "upload_row",
+          (span className: "download_btn button", onClick: @download_upload(upload), "Download"),
+          (span className: "upload_name", upload.filename),
+          (span className: "upload_size", "(#{_.str.formatBytes upload.size})"),
+          (span className: "upload_platforms", platforms.map (platform) ->
+            if upload[platform[0]]
+              (span key: "platform-#{platform[0]}", className: "icon icon-#{platform[1]}")
+          ))
+    else
+      (p {}, "No uploads.")
 
   download_upload: (upload) ->
     =>

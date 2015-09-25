@@ -11,13 +11,20 @@ glob = require "glob"
 fileutils = require "./fileutils"
 
 setProgress = (alpha) ->
-  if alpha < 0
-    app.mainWindow?.setProgressBar(-1)
-    app.dock?.setBadge ""
-  else
-    percent = alpha * 100
-    app.mainWindow?.setProgressBar(alpha)
-    app.dock?.setBadge "#{percent.toFixed()}%"
+  try
+    if alpha < 0
+      app.main_window?.setProgressBar(-1)
+      app.dock?.setBadge ""
+    else
+      percent = alpha * 100
+      app.main_window?.setProgressBar(alpha)
+      app.dock?.setBadge "#{percent.toFixed()}%"
+
+bounce = ->
+  app.dock?.bounce()
+
+notify = (msg) ->
+  app.main_window?.webContents?.executeJavaScript("new Notification(#{JSON.stringify(msg)})")
 
 queue = (item) ->
   itchioPath = path.join(app.getPath("home"), "Downloads", "itch.io")
@@ -36,7 +43,6 @@ queue = (item) ->
         fs.chmodSync(fullPath, entry.mode)
 
     fstream.Reader(destPath).pipe(parser).pipe(fstream.Writer(path: appPath, type: "Directory")).on 'close', ->
-      app.mainWindow?.webContents?.executeJavaScript("new Notification('#{item.game.title} finished downloading.')")
       glob fileutils.exeGlob(appPath), (err, files) ->
         files = files.filter((file) ->
           !/^__MACOSX/.test(path.relative(appPath, file))
@@ -55,7 +61,7 @@ queue = (item) ->
   if fs.existsSync destPath
     afterDownload()
   else
-    app.mainWindow?.webContents?.executeJavaScript("new Notification('Downloading #{item.game.title}')")
+    notify "Downloading #{item.game.title}"
     console.log "Downloading #{item.game.title} to #{destPath}"
 
     r = progress request.get(item.url), throttle: 25
@@ -70,6 +76,8 @@ queue = (item) ->
     r.pipe(fstream.Writer(path: destPath)).on 'close', ->
       console.log "Trying to open #{destPath}"
       setProgress -1
+      bounce()
+      notify "#{item.game.title} finished downloading."
       afterDownload()
 
 module.exports = {
