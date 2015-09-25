@@ -40,6 +40,7 @@ make_tray = ->
     }
   ]
 
+  tray.setToolTip "itch.io"
   tray.setContextMenu tray_menu
   tray.on "clicked", -> AppActions.focus_window()
   tray.on "double-clicked", -> AppActions.focus_window()
@@ -55,7 +56,13 @@ make_main_window = ->
     AppActions.boot()
     booted = true
 
-  main_window = new BrowserWindow width: 1200, height: 720
+  main_window = new BrowserWindow {
+    title: "itch.io"
+    icon: "./static/images/itchio-tray.png"
+    width: 1200
+    height: 720
+    center: true
+  }
   app.main_window = main_window
 
   main_window.on "close", (e) ->
