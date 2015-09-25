@@ -19,10 +19,8 @@ quitting = false
 
 make_tray = ->
   Menu = require "menu"
-  Tray = require "tray"
 
-  tray = new Tray("./static/images/itchio-tray-small.png")
-  tray_menu = Menu.buildFromTemplate [
+  tray_menu_template = [
     {
       label: "Owned"
       click: -> AppActions.focus_panel "owned"
@@ -31,21 +29,30 @@ make_tray = ->
       label: "Dashboard"
       click: -> AppActions.focus_panel "dashboard"
     }
-    {
-      type: "separator"
-    }
-    {
-      label: "Exit"
-      click: -> AppActions.quit()
-    }
   ]
+  if process.platform != "darwin"
+    tray_menu_template.concat [
+      {
+        type: "separator"
+      }
+      {
+        label: "Exit"
+        click: -> AppActions.quit()
+      }
+    ]
 
-  tray.setToolTip "itch.io"
-  tray.setContextMenu tray_menu
-  tray.on "clicked", -> AppActions.focus_window()
-  tray.on "double-clicked", -> AppActions.focus_window()
+  tray_menu = Menu.buildFromTemplate tray_menu_template
 
-  app.main_tray = tray
+  if process.platform == "darwin"
+    app.dock.setMenu tray_menu
+  else
+    Tray = require "tray"
+    tray = new Tray("./static/images/itchio-tray-small.png")
+    tray.setToolTip "itch.io"
+    tray.setContextMenu tray_menu
+    tray.on "clicked", -> AppActions.focus_window()
+    tray.on "double-clicked", -> AppActions.focus_window()
+    app.main_tray = tray
 
 make_main_window = ->
   if main_window
