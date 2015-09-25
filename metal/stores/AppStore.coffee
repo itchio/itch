@@ -16,6 +16,7 @@ state = Immutable {
   page: "login"
 
   library: {
+    me: null
     game: null
     games: []
     panel: null
@@ -32,15 +33,24 @@ merge_state = (obj) ->
   state = state.merge obj, deep: true
 
 AppStore = assign {}, EventEmitter.prototype, {
+  listeners: {}
 
   emit_change: ->
     @emit CHANGE_EVENT
 
-  add_change_listener: (callback) ->
+  add_change_listener: (name, callback) ->
+    @listeners[name] = callback
     @on CHANGE_EVENT, callback
+    console.log "Added listener '#{name}', #{@listenerCount CHANGE_EVENT} left"
 
-  remove_change_listener: (callback) ->
+  remove_change_listener: (name) ->
+    callback = @listeners[name]
+    unless callback
+      console.log "Can't remove non-listener '#{name}'"
+      return
+    delete @listeners[name]
     @removeListener CHANGE_EVENT, callback
+    console.log "Removed listener '#{name}', #{@listenerCount CHANGE_EVENT} left"
 
   get_state: ->
     state
@@ -87,6 +97,7 @@ login_key = (key) ->
   AppStore.emit_change()
 
   api.client.login_key(key).then((res) =>
+    merge_state { library: { me: res.user } }
     setTimeout (-> AppActions.login_done key), 0
   ).catch((errors) =>
     merge_state { login: { errors } }
@@ -99,7 +110,12 @@ login_with_password = (username, password) ->
   AppStore.emit_change()
 
   api.client.login_with_password(username, password).then((res) =>
-    setTimeout (-> AppActions.login_done res.key.key), 0
+    setTimeout (->
+      AppActions.login_done res.key.key
+      current_user.me().then((res) =>
+        merge_state { library: { me: res.user } }
+      )
+    ), 0
   ).catch((errors) =>
     merge_state { login: { errors } }
   ).finally =>
@@ -140,7 +156,8 @@ AppDispatcher.register (action) ->
       login_done action.key
 
     when AppConstants.LOGOUT
-      config.set "api_key", null
+      config.clear "api_key"
+      state = state.merge library: state.library.without("me")
       merge_state { page: "login" }
       AppStore.emit_change()
 

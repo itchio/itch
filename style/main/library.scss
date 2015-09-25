@@ -1,4 +1,6 @@
 
+$user_panel_height: 40px;
+
 .library_page {
     $sidebar_width: 250px;
 
@@ -12,8 +14,25 @@
     left: 0;
 
     .user_panel {
-        padding: 10px;
+        @include border_box;
+        height: $user_panel_height;
+        line-height: $user_panel_height;
+        padding: 0 8px;
         color: rgba(white, 0.4);
+
+        .avatar {
+            vertical-align: middle;
+            width: 24px;
+            height: 24px;
+            border: 1px solid #333;
+            border-radius: 2px;
+        }
+
+        .username {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
     }
 
     .sidebar {
@@ -64,7 +83,7 @@
         margin: 0 20px 40px 20px;
         max-width: 192px;
 
-       .bordered {
+        .bordered {
             background: rgba(0,0,0,.5);
 
             width: 192px;
@@ -132,11 +151,11 @@
             margin: 10px 0;
 
             .download_btn, .upload_name, .upload_size {
-              margin-right: 15px;
+                margin-right: 15px;
             }
 
             .upload_name {
-              font-weight: bold;
+                font-weight: bold;
             }
 
             .upload_size {

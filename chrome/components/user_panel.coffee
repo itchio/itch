@@ -1,5 +1,5 @@
 
-{ div } = React.DOM
+{ div, span, img } = React.DOM
 
 classNames = require "classnames"
 component = require "./component"
@@ -14,16 +14,15 @@ module.exports = component {
   getInitialState: ->
     { user: null }
 
-  componentDidMount: ->
-    AppStore.get_current_user().me().then (res) =>
-      @setState user: res.user
-
   render: ->
-    (div { className: classNames("user_panel", loading: !@state.user) },
-      if @state.user
-        "Logged in as #{@state.user.username}"
+    (div { className: classNames("user_panel", loading: !@props.me) },
+      if @props.me
+        [
+          (img { className: "avatar", src: @props.me.cover_url })
+          (div { className: "username" }, @props.me.username)
+        ]
       else
-        "Loading"
+        "Loading..."
     )
 }
 

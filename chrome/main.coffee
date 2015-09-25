@@ -18,3 +18,7 @@ document.addEventListener "DOMContentLoaded", ->
   Layout = require "./components/layout"
   React.render (Layout {}), document.body
 
+window.addEventListener "beforeunload", ->
+  console.log "Window close or reload"
+  React.unmountComponentAtNode document.body
+

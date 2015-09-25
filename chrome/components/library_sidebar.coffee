@@ -12,7 +12,7 @@ module.exports = component {
     panel = @props.panel
 
     (div className: "sidebar",
-      (UserPanel {}),
+      (UserPanel @props),
       (div { className: "panel_links" },
         (LibraryPanelLink {
           name: "owned"

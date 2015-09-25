@@ -17,11 +17,10 @@ module.exports = component {
     get_state()
 
   componentDidMount: ->
-    AppStore.add_change_listener @_on_change
-    AppActions.boot()
+    AppStore.add_change_listener 'layout', @_on_change
 
   componentWillUnmount: ->
-    AppStore.remove_change_listener @_on_change
+    AppStore.remove_change_listener 'layout'
 
   render: ->
     switch @state.page

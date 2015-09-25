@@ -22,6 +22,7 @@
   state = Immutable({
     page: "login",
     library: {
+      me: null,
       game: null,
       games: [],
       panel: null
@@ -40,14 +41,25 @@
   };
 
   AppStore = assign({}, EventEmitter.prototype, {
+    listeners: {},
     emit_change: function() {
       return this.emit(CHANGE_EVENT);
     },
-    add_change_listener: function(callback) {
-      return this.on(CHANGE_EVENT, callback);
+    add_change_listener: function(name, callback) {
+      this.listeners[name] = callback;
+      this.on(CHANGE_EVENT, callback);
+      return console.log("Added listener '" + name + "', " + (this.listenerCount(CHANGE_EVENT)) + " left");
     },
-    remove_change_listener: function(callback) {
-      return this.removeListener(CHANGE_EVENT, callback);
+    remove_change_listener: function(name) {
+      var callback;
+      callback = this.listeners[name];
+      if (!callback) {
+        console.log("Can't remove non-listener '" + name + "'");
+        return;
+      }
+      delete this.listeners[name];
+      this.removeListener(CHANGE_EVENT, callback);
+      return console.log("Removed listener '" + name + "', " + (this.listenerCount(CHANGE_EVENT)) + " left");
     },
     get_state: function() {
       return state;
@@ -118,6 +130,11 @@
     AppStore.emit_change();
     return api.client.login_key(key).then((function(_this) {
       return function(res) {
+        merge_state({
+          library: {
+            me: res.user
+          }
+        });
         return setTimeout((function() {
           return AppActions.login_done(key);
         }), 0);
@@ -152,7 +169,16 @@
     return api.client.login_with_password(username, password).then((function(_this) {
       return function(res) {
         return setTimeout((function() {
-          return AppActions.login_done(res.key.key);
+          AppActions.login_done(res.key.key);
+          return current_user.me().then((function(_this) {
+            return function(res) {
+              return merge_state({
+                library: {
+                  me: res.user
+                }
+              });
+            };
+          })(this));
         }), 0);
       };
     })(this))["catch"]((function(_this) {
@@ -209,7 +235,10 @@
       case AppConstants.LOGIN_DONE:
         return login_done(action.key);
       case AppConstants.LOGOUT:
-        config.set("api_key", null);
+        config.clear("api_key");
+        state = state.merge({
+          library: state.library.without("me")
+        });
         merge_state({
           page: "login"
         });

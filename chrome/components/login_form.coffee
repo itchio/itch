@@ -63,7 +63,7 @@ module.exports = component {
 
             " · "
 
-            (a { href: "" }, "Forgot password")
+            (a { href: "https://itch.io/user/forgot-password", target: "_blank" }, "Forgot password")
           )
         )
       )
