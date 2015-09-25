@@ -60,7 +60,20 @@ queue = (item) ->
         if files.length == 1
           exePath = files[0]
           console.log "Found the exec! #{exePath}"
-          shell.openItem(exePath)
+
+          childProcess = require "child_process"
+
+          switch process.platform
+            when "darwin"
+              exe = childProcess.exec("open -W '#{exePath}'")
+              exe.on 'exit', (code) ->
+                notify "Done playing! (darwin)"
+            when "win32"
+              exe = childProcess.exec("'#{exePath}'")
+              exe.on 'exit', (code) ->
+                notify "Done playing! (win32)"
+            else
+              shell.openItem(exePath)
         else
           shell.openItem(appPath)
 
