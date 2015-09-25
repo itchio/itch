@@ -33,6 +33,11 @@
         panel: panel
       });
     },
+    focus_window: function() {
+      return AppDispatcher.dispatch({
+        action_type: AppConstants.FOCUS_WINDOW
+      });
+    },
     login_key: function(key) {
       return AppDispatcher.dispatch({
         action_type: AppConstants.LOGIN_KEY,

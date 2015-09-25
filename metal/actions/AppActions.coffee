@@ -7,7 +7,7 @@ AppActions = {
     AppDispatcher.dispatch {
       action_type: AppConstants.BOOT
     }
-    
+
   quit: ->
     AppDispatcher.dispatch {
       action_type: AppConstants.QUIT
@@ -28,6 +28,11 @@ AppActions = {
     AppDispatcher.dispatch {
       action_type: AppConstants.LIBRARY_FOCUS_PANEL
       panel
+    }
+
+  focus_window: ->
+    AppDispatcher.dispatch {
+      action_type: AppConstants.FOCUS_WINDOW
     }
 
   login_key: (key) ->

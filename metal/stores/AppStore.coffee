@@ -76,6 +76,9 @@ fetch_games = ->
     merge_state { library: { games: games } }
     AppStore.emit_change()
 
+focus_window = ->
+  require("app").main_window?.show()
+
 focus_panel = (panel) ->
   merge_state {
     page: "library"
@@ -147,7 +150,11 @@ AppDispatcher.register (action) ->
       AppStore.emit_change()
 
     when AppConstants.LIBRARY_FOCUS_PANEL
+      focus_window()
       focus_panel action.panel
+
+    when AppConstants.FOCUS_WINDOW
+      focus_window()
 
     when AppConstants.LOGIN_WITH_PASSWORD
       login_with_password action.username, action.password

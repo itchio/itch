@@ -1,5 +1,5 @@
 (function() {
-  var AppActions, AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, Immutable, api, assign, config, current_user, fetch_games, focus_panel, login_done, login_key, login_with_password, merge_state, state, switch_page;
+  var AppActions, AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, Immutable, api, assign, config, current_user, fetch_games, focus_panel, focus_window, login_done, login_key, login_with_password, merge_state, state, switch_page;
 
   EventEmitter = require("events").EventEmitter;
 
@@ -100,6 +100,11 @@
         return AppStore.emit_change();
       };
     })(this));
+  };
+
+  focus_window = function() {
+    var ref;
+    return (ref = require("app").main_window) != null ? ref.show() : void 0;
   };
 
   focus_panel = function(panel) {
@@ -229,7 +234,10 @@
         });
         return AppStore.emit_change();
       case AppConstants.LIBRARY_FOCUS_PANEL:
+        focus_window();
         return focus_panel(action.panel);
+      case AppConstants.FOCUS_WINDOW:
+        return focus_window();
       case AppConstants.LOGIN_WITH_PASSWORD:
         return login_with_password(action.username, action.password);
       case AppConstants.LOGIN_DONE:
