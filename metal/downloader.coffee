@@ -69,7 +69,7 @@ queue = (item) ->
               exe.on 'exit', (code) ->
                 notify "Done playing! (darwin)"
             when "win32"
-              exe = childProcess.exec("'#{exePath}'")
+              exe = childProcess.exec("\"#{exePath}\"")
               exe.on 'exit', (code) ->
                 notify "Done playing! (win32)"
             else
