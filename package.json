@@ -35,7 +35,8 @@
     "seamless-immutable": "^4.0.0",
     "read-chunk": "^1.0.1",
     "file-type": "^2.12.0",
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^0.5.1",
+    "xml2js": "^0.4.12"
   },
   "devDependencies": {
     "browserify": "^9.0.7",
