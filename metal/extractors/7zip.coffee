@@ -15,6 +15,8 @@ switch process.platform
 normalize = (p) ->
   path.normalize p.replace /[\s]*$/, ""
 
+VERY_VERBOSE = false
+
 extract = (archive_path, dest_path) ->
   console.log "Extracting archive '#{archive_path}' to '#{dest_path}' with 7-Zip"
 
@@ -29,12 +31,12 @@ extract = (archive_path, dest_path) ->
   }
 
   li.progress((files) ->
-    console.log "Got info about #{files.length} files"
+    console.log "Got info about #{files.length} files" if VERY_VERBOSE
     for f in files
       total_size += f.size
       npath = normalize f.name
       sizes[npath] = f.size
-      console.log "#{npath} (#{f.size} bytes)"
+      console.log "#{npath} (#{f.size} bytes)" if VERY_VERBOSE
   )
 
   p = new Promise (resolve, reject) ->
@@ -44,14 +46,14 @@ extract = (archive_path, dest_path) ->
 
       xr = new sevenzip().extractFull(archive_path, dest_path)
       xr.progress((files) ->
-        console.log "Got progress about #{files.length} files"
+        console.log "Got progress about #{files.length} files" if VERY_VERBOSE
         for f in files
           npath = normalize f
           if size = sizes[npath]
             extracted_size += size
-            console.log "#{npath} (#{size} bytes)"
+            console.log "#{npath} (#{size} bytes)" if VERY_VERBOSE
           else
-            console.log "#{npath} (size not found)"
+            console.log "#{npath} (size not found)" if VERY_VERBOSE
         percent = Math.round(extracted_size / total_size * 100)
         console.log "Estimated progress: #{extracted_size} of #{total_size} bytes, ~#{percent}%"
         handlers.onprogress?({ percent })

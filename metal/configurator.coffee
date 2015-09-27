@@ -1,4 +1,5 @@
 
+read_chunk = require "read-chunk"
 fs = require "fs"
 path = require "path"
 glob = require "glob"
@@ -14,26 +15,51 @@ skip_bs = (files, app_path) ->
     !/^__MACOSX/.test(path.relative(app_path, file))
   )
 
-fix_permissions = (files) ->
+# TODO: refactor + better error handling
+fix_permissions = (files, app_path) ->
   new Promise (resolve, reject) ->
     switch process.platform
       when "darwin"
-        for file in files
-          stats = fs.lstatSync file
-          console.log "Attempting to fix permissions for #{file}"
+        for app_bundle in files
+          stats = fs.lstatSync app_bundle
+          console.log "Attempting to fix permissions for #{app_bundle}"
           continue unless stats.isDirectory()
-          plist_path = path.join(file, "Contents", "Info.plist")
+          plist_path = path.join(app_bundle, "Contents", "Info.plist")
           console.log "Attempting to read plist at #{plist_path}"
           continue unless fs.existsSync(plist_path)
           xml = fs.readFileSync(plist_path, encoding: 'utf8')
-          require("xml2js").parseString xml, (err, res) ->
+          xml2js = require "xml2js"
+          xml2js.parseString xml, (err, res) ->
             dict = res.plist.dict[0]
             dict = _.object dict.key, dict.string
             console.log "got dict: \n#{JSON.stringify dict}"
             exec_name = dict.CFBundleExecutable
-            exec_path = path.join(file, "Contents", "MacOS", exec_name)
+            exec_path = path.join(app_bundle, "Contents", "MacOS", exec_name)
             console.log "making #{exec_path} executable"
             fs.chmodSync(exec_path, 0o777)
+
+            glob "#{app_bundle}/**/*", (err, files) ->
+              console.log "Checking #{files.length} files to see if we have more executables"
+              for file in files
+                stats = fs.lstatSync file
+                continue unless stats?.isFile()
+
+                buf = read_chunk.sync(file, 0, 262)
+
+                format = switch
+                  # intel Mach-O executables start with 0xCEFAEDFE
+                  # (old PowerPC Mach-O executables started with 0xFEEDFACE)
+                  when buf[0] == 0xCE && buf[1] == 0xFA && buf[2] == 0xED && buf[3] == 0xFE
+                    'mach-o executable'
+
+                  # Shell-script start with an interro-bang
+                  when buf[0] == 0x23 && buf[1] == 0x21
+                    'shell script'
+
+                if format
+                  console.log "#{path.relative(app_bundle, file)} looks like a #{format}, +x'ing it"
+                  fs.chmodSync(file, 0o777)
+
             resolve []
       else
         resolve []
@@ -47,7 +73,7 @@ configure = (app_path) ->
       if files.length > 0
         console.log "Potential executables: #{JSON.stringify files}"
 
-      fix_permissions(files).then =>
+      fix_permissions(files, app_path).then =>
         resolve { executables: files }
 
 module.exports = { configure }
