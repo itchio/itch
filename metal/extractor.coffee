@@ -13,7 +13,8 @@ extract = (archivePath, destPath) ->
   try
     extractor = require("./extractors/#{type?.ext}")
     extractor.extract archivePath, destPath
-  catch
+  catch e
+    console.log e
     Promise.reject "Don't know how to extract: #{archivePath}"
 
 module.exports = { extract }

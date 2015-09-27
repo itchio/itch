@@ -1,39 +1,46 @@
 
-unzip = require "unzip"
-fstream = require "fstream"
-fs = require "fs"
 path = require "path"
-Promise = require "bluebird"
+Zip = require "node-7z"
 
-# All non-win32 platforms need correct file permissions
-restorePermissions = (process.platform != "win32")
+normalize = (p) ->
+  path.normalize p.replace /[\s]*$/, ""
 
 extract = (archive_path, dest_path) ->
   console.log "Extracting ZIP archive '#{archive_path}' to '#{dest_path}'"
 
-  parser = unzip.Parse()
+  li = new Zip().list(archive_path)
 
-  if restorePermissions
-    # FIXME get 'mode' support merged into node-unzip-2, remove fork.
-    parser.on 'metadata', (entry) ->
-      entry_path = path.join dest_path, entry.path
-      # always keep read-write on every file so we can update them.
-      mode = entry.mode | 0o666
-      fs.chmodSync entry_path, mode
+  sizes = {}
+  totalSize = 0
 
-  src = fstream.Reader(archive_path).pipe(parser)
-  dst = fstream.Writer {
-    path: dest_path
-    type: "Directory"
-  }
-  pipeline = src.pipe(dst)
+  li.progress((files) =>
+    console.log "Got info about #{files.length} files"
+    for f in files
+      totalSize += f.size
+      npath = normalize f.name
+      sizes[npath] = f.size
+      console.log "#{npath} (#{f.size} bytes)"
+  )
 
-  new Promise (resolve, reject) ->
-    pipeline.on 'error', (e) ->
-      throw e
-      reject e
-    pipeline.on 'close', ->
-      resolve()
+  extractedSize = 0
+
+  li.then (spec) =>
+    console.log "total extracted size: #{totalSize}"
+    # console.log "spec = \n#{JSON.stringify spec}"
+
+    xr = new Zip().extractFull(archive_path, dest_path)
+    xr.progress((files) =>
+      console.log "Got progress about #{files.length} files"
+      for f in files
+        npath = normalize f
+        if size = sizes[npath]
+          extractedSize += size
+          console.log "#{npath} (#{size} bytes)"
+        else
+          console.log "#{npath} (size not found)"
+      console.log "Estimated progress: #{extractedSize} of #{totalSize} bytes, ~#{Math.round(extractedSize / totalSize * 100)}%"
+    )
+    xr
 
 module.exports = { extract }
 
