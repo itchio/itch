@@ -14,12 +14,18 @@ sh = (exe_path, cmd) ->
       if cmd.indexOf(bidden) >= 0
         throw new Error "Command-line contains forbidden characters: #{cmd}"
 
-    exe = child_process.exec(cmd)
-    exe.on 'exit', (code) ->
-      if code == 0
-        resolve "Done playing #{exe_path}!"
+    exe = child_process.exec cmd, {
+      stdio: [ 0, 'pipe', 'pipe' ]
+    }, (error, stdout, stderr) ->
+      if error
+        console.log "#{exe_path} returned #{error}"
+        console.log "stdout: "
+        console.log stdout
+        console.log "stderr: "
+        console.log stderr
+        reject { exe_path, error }
       else
-        reject { exe_path, code }
+        resolve "Done playing #{exe_path}!"
 
 escape = (arg) ->
   '"' + arg.replace(/"/g, "\\\"") + '"'

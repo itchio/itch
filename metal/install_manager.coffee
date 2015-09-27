@@ -29,6 +29,7 @@ InstallState = keyMirror {
   CONFIGURING: null
   RUNNING: null
   ERROR: null
+  IDLE: null
 }
 
 class AppInstall
@@ -174,13 +175,19 @@ class AppInstall
       console.log msg
       console.log "...executable path: #{e.exe_path}"
       AppActions.notify msg
+    ).finally(=>
+      @set_state InstallState.IDLE
     )
 
 install = ->
   AppDispatcher.register (action) ->
     switch action.action_type
       when AppConstants.DOWNLOAD_QUEUE
-        items.push new AppInstall(action.opts)
+        dupe = item for item in items when item.game.id == action.opts.game.id
+        if dupe
+          dupe.launch()
+        else
+          items.push new AppInstall(action.opts)
 
 module.exports = { install }
 

@@ -55,7 +55,7 @@ module.exports = component {
               'settings'
             when 'RUNNING'
               'gamepad'
-            else
+            when 'IDLE'
               'checkmark'
 
           (LibraryPanelLink {
