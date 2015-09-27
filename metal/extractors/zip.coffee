@@ -18,7 +18,7 @@ extract = (archive_path, dest_path) ->
     parser.on 'metadata', (entry) ->
       entry_path = path.join dest_path, entry.path
       # always keep read-write on every file so we can update them.
-      mode = entry.mode | 0o600
+      mode = entry.mode | 0o666
       fs.chmodSync entry_path, mode
 
   src = fstream.Reader(archive_path).pipe(parser)

@@ -6,6 +6,7 @@ fs = require "fs"
 request = require "request"
 progress = require "request-progress"
 fstream = require "fstream"
+mkdirp = require "mkdirp"
 
 keyMirror = require "keymirror"
 
@@ -122,7 +123,8 @@ class AppInstall
       @progress = 0.01 * state.percent
       @emit_change()
 
-    dst = fstream.Writer(path: @archive_path)
+    mkdirp.sync(path.dirname(@archive_path))
+    dst = fs.createWriteStream(@archive_path, 'binary')
     r.pipe(dst).on 'close', =>
       @progress = 0
       @emit_change()
