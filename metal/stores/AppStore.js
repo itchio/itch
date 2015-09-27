@@ -1,11 +1,13 @@
 (function() {
-  var AppActions, AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, Immutable, api, app, assign, config, current_user, fetch_games, focus_panel, focus_window, login_done, login_key, login_with_password, merge_state, state, switch_page;
+  var AppActions, AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, Immutable, _, api, app, assign, config, current_user, fetch_games, focus_panel, focus_window, login_done, login_key, login_with_password, merge_state, state, switch_page;
 
   EventEmitter = require("events").EventEmitter;
 
   Immutable = require("seamless-immutable");
 
   assign = require("object-assign");
+
+  _ = require("underscore");
 
   AppDispatcher = require("../dispatcher/AppDispatcher");
 
@@ -28,7 +30,8 @@
       game: null,
       games: [],
       panel: null,
-      collection: []
+      collections: {},
+      installs: {}
     },
     login: {
       loading: false
@@ -76,7 +79,7 @@
   });
 
   fetch_games = function() {
-    var _, collection, collection_id, fetch, panel, user;
+    var collection, fetch, id, panel, type, user;
     user = current_user;
     panel = state.library.panel;
     return fetch = (function() {
@@ -115,19 +118,21 @@
             };
           })(this));
         default:
-          ref = panel.match(/^collection\.(.+)$/), _ = ref[0], collection_id = ref[1];
-          if (collection_id) {
-            collection_id = parseInt(collection_id, 10);
-            collection = state.library.collections.filter(function(x) {
-              return x.id === collection_id;
-            })[0];
-            if (collection) {
+          ref = panel.split("/"), type = ref[0], id = ref[1];
+          switch (type) {
+            case "collections":
+              collection = state.library.collections[id];
               return merge_state({
                 library: {
                   games: collection.games
                 }
               });
-            }
+            default:
+              return merge_state({
+                library: {
+                  games: []
+                }
+              });
           }
       }
     }).call(this);
@@ -245,9 +250,11 @@
     return setTimeout((function() {
       return current_user.my_collections().then((function(_this) {
         return function(res) {
+          var collections;
+          collections = _.indexBy(res.collections, "id");
           merge_state({
             library: {
-              collections: res.collections
+              collections: collections
             }
           });
           return AppStore.emit_change();
@@ -257,7 +264,7 @@
   };
 
   AppDispatcher.register(function(action) {
-    var key, library;
+    var installs, key, library, obj1;
     switch (action.action_type) {
       case AppConstants.SWITCH_PAGE:
         switch_page(action.page);
@@ -300,6 +307,18 @@
         break;
       case AppConstants.QUIT:
         return require("app").quit();
+      case AppConstants.INSTALL_PROGRESS:
+        installs = (
+          obj1 = {},
+          obj1["" + action.opts.id] = action.opts,
+          obj1
+        );
+        merge_state({
+          library: {
+            installs: installs
+          }
+        });
+        return AppStore.emit_change();
     }
   });
 

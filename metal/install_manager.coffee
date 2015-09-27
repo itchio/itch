@@ -32,20 +32,31 @@ class AppInstall
   @library_dir: path.join(app.getPath("home"), "Downloads", "itch.io")
   @archives_dir: path.join(@library_dir, "archives")
   @apps_dir: path.join(@library_dir, "apps")
+  @id_seed = 0
 
   constructor: (opts) ->
     @game = opts.game
     user = @game.user.username
     slug = @game.url.match /[^\/]+$/
     @app_path = path.join(AppInstall.apps_dir, "#{slug} by #{user}")
-    @state = InstallState.PENDING
+    @id = ++AppInstall.id_seed
+    @set_state InstallState.PENDING
+    @progress = 0
     @start()
+
+  set_state: (state) ->
+    console.log "Install #{@id}, [#{@state} -> #{state}]"
+    @state = state
+    @emit_change()
+
+  emit_change: ->
+    setTimeout (=> AppActions.install_progress @), 0
 
   start: ->
     @search_for_uploads()
 
   search_for_uploads: ->
-    @state = InstallState.SEARCHING_UPLOAD
+    @set_state InstallState.SEARCHING_UPLOAD
 
     client = AppStore.get_current_user()
     call = if @game.key
@@ -80,7 +91,7 @@ class AppInstall
     @get_url()
 
   get_url: ->
-    @state = InstallState.DOWNLOADING
+    @set_state InstallState.DOWNLOADING
 
     client = AppStore.get_current_user()
     call = if @game.key
@@ -93,7 +104,7 @@ class AppInstall
       @download()
 
   download: ->
-    @state = InstallState.DOWNLOADING
+    @set_state InstallState.DOWNLOADING
 
     if fs.existsSync @archive_path
       @extract()
@@ -106,7 +117,8 @@ class AppInstall
       console.log "Got content length: #{contentLength}"
 
     r.on 'progress', (state) =>
-      AppActions.set_progress(0.01 * state.percent)
+      @progress = 0.01 * state.percent
+      @emit_change()
 
     dst = fstream.Writer(path: @archive_path)
     r.pipe(dst).on 'close', =>
@@ -116,7 +128,7 @@ class AppInstall
       @extract()
 
   extract: ->
-    @state = InstallState.EXTRACTING
+    @set_state InstallState.EXTRACTING
     require("./extractor").extract(@archive_path, @app_path).then(=>
       @configure()
     ).catch (e) =>
@@ -124,7 +136,7 @@ class AppInstall
       throw e
 
   configure: ->
-    @state = InstallState.CONFIGURING
+    @set_state InstallState.CONFIGURING
     require("./configurator").configure(@app_path).then((res) =>
       @executables = res.executables
       console.log "Configuration successful"
@@ -132,7 +144,7 @@ class AppInstall
     )
 
   launch: ->
-    @state = InstallState.RUNNING
+    @set_state InstallState.RUNNING
     require("./launcher").launch(@executables[0])
 
 install = ->

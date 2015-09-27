@@ -2,6 +2,7 @@
 { EventEmitter } = require "events"
 Immutable = require "seamless-immutable"
 assign = require "object-assign"
+_ = require "underscore"
 
 AppDispatcher = require "../dispatcher/AppDispatcher"
 AppConstants = require "../constants/AppConstants"
@@ -22,7 +23,8 @@ state = Immutable {
     game: null
     games: []
     panel: null
-    collection: []
+    collections: {}
+    installs: {}
   }
 
   login: {
@@ -89,14 +91,13 @@ fetch_games = ->
         AppStore.emit_change()
 
     else
-      [_, collection_id] = panel.match /^collection\.(.+)$/
-      if collection_id
-        collection_id = parseInt collection_id, 10
-        collection = state.library.collections.filter((x) ->
-          x.id == collection_id
-        )[0]
-        if collection
+      [type, id] = panel.split "/"
+      switch type
+        when "collections"
+          collection = state.library.collections[id]
           merge_state { library: { games: collection.games } }
+        else
+          merge_state { library: { games: [] } }
 
 focus_window = ->
   require("app").main_window?.show()
@@ -155,7 +156,8 @@ login_done = (key) ->
 
   setTimeout (->
     current_user.my_collections().then (res) =>
-      merge_state { library: { collections: res.collections } }
+      collections = _.indexBy res.collections, "id"
+      merge_state { library: { collections } }
       AppStore.emit_change()
   ), 0
 
@@ -202,6 +204,11 @@ AppDispatcher.register (action) ->
 
     when AppConstants.QUIT
       require("app").quit()
+
+    when AppConstants.INSTALL_PROGRESS
+      installs = { "#{action.opts.id}": action.opts }
+      merge_state { library: { installs } }
+      AppStore.emit_change()
 
 module.exports = AppStore
 

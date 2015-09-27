@@ -71,6 +71,12 @@ AppActions = {
       alpha
     }
 
+  install_progress: (opts) ->
+    AppDispatcher.dispatch {
+      action_type: AppConstants.INSTALL_PROGRESS
+      opts
+    }
+
   clear_progress: (alpha) ->
     AppDispatcher.dispatch {
       action_type: AppConstants.CLEAR_PROGRESS

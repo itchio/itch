@@ -74,6 +74,12 @@
         alpha: alpha
       });
     },
+    install_progress: function(opts) {
+      return AppDispatcher.dispatch({
+        action_type: AppConstants.INSTALL_PROGRESS,
+        opts: opts
+      });
+    },
     clear_progress: function(alpha) {
       return AppDispatcher.dispatch({
         action_type: AppConstants.CLEAR_PROGRESS,

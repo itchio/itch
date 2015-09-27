@@ -11,6 +11,7 @@
     LIBRARY_CLOSE_GAME: null,
     LIBRARY_FOCUS_PANEL: null,
     DOWNLOAD_QUEUE: null,
+    INSTALL_PROGRESS: null,
     SET_PROGRESS: null,
     CLEAR_PROGRESS: null,
     BOUNCE: null,
