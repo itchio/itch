@@ -26,6 +26,7 @@ InstallState = keyMirror {
   EXTRACTING: null
   CONFIGURING: null
   RUNNING: null
+  ERROR: null
 }
 
 class AppInstall
@@ -80,6 +81,7 @@ class AppInstall
         # TODO let user choose
         @set_upload interesting_uploads[0]
       else
+        @set_state InstallState.ERROR
         AppActions.notify "No uploads found for #{@game.title}"
 
   set_upload: (@upload) ->
@@ -122,7 +124,9 @@ class AppInstall
 
     dst = fstream.Writer(path: @archive_path)
     r.pipe(dst).on 'close', =>
-      AppActions.clear_progress()
+      @progress = 0
+      @emit_change()
+
       AppActions.bounce()
       AppActions.notify "#{@game.title} finished downloading."
       @extract()
@@ -132,6 +136,7 @@ class AppInstall
     require("./extractor").extract(@archive_path, @app_path).then(=>
       @configure()
     ).catch (e) =>
+      @set_state InstallState.ERROR
       AppActions.notify "Failed to extract / configure / launch #{@game.title}"
       throw e
 

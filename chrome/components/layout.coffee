@@ -34,6 +34,6 @@ module.exports = component {
   # non-React methods
 
   _on_change: ->
-    @setState get_state()
+    setTimeout (=> @setState get_state()), 0
 }
 

@@ -1,5 +1,5 @@
 
-{ div, hr } = React.DOM
+{ div, h3 } = React.DOM
 
 component = require "./component"
 UserPanel = require "./user_panel"
@@ -14,6 +14,7 @@ module.exports = component {
     (div className: "sidebar",
       (UserPanel @props),
       (div { className: "panel_links" },
+        (h3 {}, "Tabs")
 
         (LibraryPanelLink {
           name: "owned"
@@ -27,6 +28,8 @@ module.exports = component {
           panel
         })
 
+        (h3 {}, "Collections")
+
         (for id, collection of (@props.collections or {})
           (LibraryPanelLink {
             name: "collections/#{id}"
@@ -35,15 +38,27 @@ module.exports = component {
           })
         )...
 
+        (h3 {}, "Installs")
+
         (for id, install of (@props.installs or {})
           percent = install.progress > 0 and " #{(install.progress * 100).toFixed(1)}%" or ""
-          state = "#{install.state.toLowerCase()}#{percent}"
-          label = "#{install.game.title} (#{state})"
+          label = "#{install.game.title}"
+          icon = switch install.state
+            when 'ERROR'
+              'warning'
+            when 'PENDING', 'SEARCHING_UPLOAD', 'DOWNLOADING'
+              'download'
+            when 'EXTRACTING', 'CONFIGURING'
+              'cart'
+            else
+              'checkmark'
 
           (LibraryPanelLink {
             name: "installs/#{id}"
             label
             panel
+            icon
+            progress: install.progress
           })
         )...
 

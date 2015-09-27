@@ -1,5 +1,5 @@
 
-{ div } = React.DOM
+{ div, span } = React.DOM
 component = require "./component"
 
 classNames = require "classnames"
@@ -18,5 +18,21 @@ module.exports = component {
       )
       onClick: =>
         AppActions.focus_panel @props.name
-    }, @props.label)
+    },
+      if @props.icon
+        (span {},
+          span { className: "icon icon-#{@props.icon}" }
+          " "
+        )
+      @props.label
+      if @props.progress
+        (div { className: "progress_outer" },
+          (div {
+            className: "progress_inner"
+            style: {
+              width: "#{@props.progress * 100}%"
+            }
+          })
+        )
+    )
 }

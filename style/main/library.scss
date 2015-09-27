@@ -1,5 +1,8 @@
 
 $user_panel_height: 40px;
+$cell_ratio: 152 / 192;
+$cell_width: 170px;
+$cell_height: $cell_width * $cell_ratio;
 
 .library_page {
     $sidebar_width: 250px;
@@ -42,12 +45,25 @@ $user_panel_height: 40px;
         top: 0;
         bottom: 0;
         left: 0;
+        overflow-y: auto;
+        font-size: 12px;
+
+        h3 {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 13px;
+            color: #777;
+            margin-left: 8px;
+            margin: 5px 0 0 0;
+            padding: 6px 0 4px 8px;
+            border-top: 1px solid #565353;
+        }
 
         .panel_links {
             border-top: 1px solid rgba(black, 0.1);
 
             .panel_link {
-                padding: 10px;
+                padding: 7px 8px;
                 color: rgba(white, 0.8);
                 cursor: pointer;
 
@@ -58,6 +74,18 @@ $user_panel_height: 40px;
                 &.current {
                     color: white;
                     background: rgba(white, 0.1);
+                }
+
+                .progress_outer {
+                    margin-top: 4px;
+                    width: 100%;
+                    height: 4px;
+                    background: #444;
+
+                    .progress_inner {
+                        height: 100%;
+                        background: #666;
+                    }
                 }
             }
 
@@ -81,13 +109,13 @@ $user_panel_height: 40px;
         display: inline-block;
         vertical-align: top;
         margin: 0 20px 40px 20px;
-        max-width: 192px;
+        max-width: $cell_width;
 
         .bordered {
             background: rgba(0,0,0,.5);
 
-            width: 192px;
-            height: 152px;
+            width: $cell_width;
+            height: $cell_height;
 
             position: relative;
             border-radius: 2px;
