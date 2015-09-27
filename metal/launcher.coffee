@@ -5,8 +5,12 @@ AppActions = require "./actions/AppActions"
 
 sh = (cmd) ->
   console.log "sh #{cmd}"
+
   # pretty weak but oh well.
   forbidden = [";", "&&"]
+  for bidden in forbidden
+    if cmd.indexOf(bidden) >= 0
+      throw new Error "Command-line contains forbidden characters: #{cmd}"
 
   exe = childProcess.exec(cmd)
   exe.on 'exit', (code) ->
