@@ -33,8 +33,8 @@ GameCell = component {
         className: "game_launch button"
         onClick: -> AppActions.download_queue { game }
       },
-        (span className: "icon icon-gamepad")
-        "Launch"
+        (span className: "icon icon-install")
+        "Install"
       )
     )
 }

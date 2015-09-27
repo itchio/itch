@@ -1,27 +1,32 @@
 
-childProcess = require "child_process"
+child_process = require "child_process"
+Promise = require "bluebird"
 
 AppActions = require "./actions/AppActions"
 
-sh = (cmd) ->
-  console.log "sh #{cmd}"
+sh = (exe_path, cmd) ->
+  new Promise (resolve, reject) ->
+    console.log "sh #{cmd}"
 
-  # pretty weak but oh well.
-  forbidden = [";", "&&"]
-  for bidden in forbidden
-    if cmd.indexOf(bidden) >= 0
-      throw new Error "Command-line contains forbidden characters: #{cmd}"
+    # pretty weak but oh well.
+    forbidden = [";", "&&"]
+    for bidden in forbidden
+      if cmd.indexOf(bidden) >= 0
+        throw new Error "Command-line contains forbidden characters: #{cmd}"
 
-  exe = childProcess.exec(cmd)
-  exe.on 'exit', (code) ->
-    AppActions.notify "Done playing! (#{process.platform})"
+    exe = child_process.exec(cmd)
+    exe.on 'exit', (code) ->
+      if code == 0
+        resolve "Done playing #{exe_path}!"
+      else
+        reject { exe_path, code }
 
 escape = (arg) ->
   '"' + arg.replace(/"/g, "\\\"") + '"'
 
-launch = (exePath, args=[]) ->
-  console.log "launching '#{exePath}' on '#{process.platform}' with args '#{args.join ' '}'"
-  argstring = args.map((x) -> escape(x)).join ' '
+launch = (exe_path, args=[]) ->
+  console.log "launching '#{exe_path}' on '#{process.platform}' with args '#{args.join ' '}'"
+  arg_string = args.map((x) -> escape(x)).join ' '
 
   switch process.platform
 
@@ -30,15 +35,15 @@ launch = (exePath, args=[]) ->
       # potentially easy to inject something into the command line
       # here but then again we are running executables downloaded
       # from the internet.
-      sh "open -W #{escape exePath} --args #{argstring}"
+      sh exe_path, "open -W #{escape exe_path} --args #{arg_string}"
 
     when "win32"
-      sh "#{escape exePath} #{argstring}"
+      sh exe_path, "#{escape exe_path} #{arg_string}"
 
     else
       # don't know how to launch, try to open with OS?
       shell = require "shell"
-      shell.openItem(exePath)
+      shell.openItem(exe_path)
 
 module.exports = { launch }
 

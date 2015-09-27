@@ -38,18 +38,23 @@ module.exports = component {
           })
         )...
 
-        (h3 {}, "Installs")
+        (h3 {}, "Installed")
 
         (for id, install of (@props.installs or {})
-          percent = install.progress > 0 and " #{(install.progress * 100).toFixed(1)}%" or ""
-          label = "#{install.game.title}"
+          label = install.game.title
           icon = switch install.state
             when 'ERROR'
-              'warning'
-            when 'PENDING', 'SEARCHING_UPLOAD', 'DOWNLOADING'
+              'error'
+            when 'PENDING', 'SEARCHING_UPLOAD'
+              'stopwatch'
+            when 'DOWNLOADING'
               'download'
-            when 'EXTRACTING', 'CONFIGURING'
-              'cart'
+            when 'EXTRACTING'
+              'file-zip'
+            when 'CONFIGURING'
+              'settings'
+            when 'RUNNING'
+              'gamepad'
             else
               'checkmark'
 

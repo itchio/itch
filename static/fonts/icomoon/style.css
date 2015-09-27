@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('fonts/icomoon.eot?d2shdt');
-	src:url('fonts/icomoon.eot?#iefixd2shdt') format('embedded-opentype'),
-		url('fonts/icomoon.ttf?d2shdt') format('truetype'),
-		url('fonts/icomoon.woff?d2shdt') format('woff'),
-		url('fonts/icomoon.svg?d2shdt#icomoon') format('svg');
+	src:url('fonts/icomoon.eot?q09krc');
+	src:url('fonts/icomoon.eot?#iefixq09krc') format('embedded-opentype'),
+		url('fonts/icomoon.ttf?q09krc') format('truetype'),
+		url('fonts/icomoon.woff?q09krc') format('woff'),
+		url('fonts/icomoon.svg?q09krc#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -23,6 +23,30 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.icon-install:before {
+	content: "\e61d";
+}
+.icon-uninstall:before {
+	content: "\e61e";
+}
+.icon-shuffle:before {
+	content: "\e60e";
+}
+.icon-error:before {
+	content: "\e61f";
+}
+.icon-cross:before {
+	content: "\e617";
+}
+.icon-settings:before {
+	content: "\e620";
+}
+.icon-like:before {
+	content: "\e611";
+}
+.icon-hand:before {
+	content: "\e609";
+}
 .icon-gamepad:before {
 	content: "\e61b";
 }
@@ -35,14 +59,14 @@
 .icon-bitcoin:before {
 	content: "\e60b";
 }
-.icon-cross:before {
-	content: "\e617";
-}
 .icon-triangle-right:before {
 	content: "\e612";
 }
 .icon-triangle-down:before {
 	content: "\e613";
+}
+.icon-file-zip:before {
+	content: "\e621";
 }
 .icon-play:before {
 	content: "\e61c";
@@ -166,13 +190,4 @@
 }
 .icon-heart-filled:before {
 	content: "\e60a";
-}
-.icon-like:before {
-	content: "\e611";
-}
-.icon-hand:before {
-	content: "\e609";
-}
-.icon-shuffle:before {
-	content: "\e60e";
 }

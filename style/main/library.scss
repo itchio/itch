@@ -67,6 +67,10 @@ $cell_height: $cell_width * $cell_ratio;
                 color: rgba(white, 0.8);
                 cursor: pointer;
 
+                span.icon {
+                    margin-right: 8px;
+                }
+
                 &:hover {
                     background: rgba(black, 0.1);
                 }
@@ -77,9 +81,9 @@ $cell_height: $cell_width * $cell_ratio;
                 }
 
                 .progress_outer {
-                    margin-top: 4px;
+                    margin-top: 5px;
                     width: 100%;
-                    height: 4px;
+                    height: 3px;
                     background: #444;
 
                     .progress_inner {

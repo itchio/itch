@@ -21,4 +21,11 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+---
+
+This software uses parts of the 7-zip program.
+
+7-zip is licensed under the GNU LGPL license.
+
+You can find the source code of 7-zip at http://www.7-zip.org/
 

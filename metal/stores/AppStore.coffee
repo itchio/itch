@@ -7,6 +7,7 @@ _ = require "underscore"
 AppDispatcher = require "../dispatcher/AppDispatcher"
 AppConstants = require "../constants/AppConstants"
 AppActions = require "../actions/AppActions"
+defer = require "../defer"
 
 app = require "app"
 
@@ -124,7 +125,7 @@ login_key = (key) ->
 
   api.client.login_key(key).then((res) =>
     merge_state { library: { me: res.user } }
-    setTimeout (-> AppActions.login_done key), 0
+    defer -> AppActions.login_done key
   ).catch((errors) =>
     merge_state { login: { errors } }
   ).finally =>
@@ -136,12 +137,11 @@ login_with_password = (username, password) ->
   AppStore.emit_change()
 
   api.client.login_with_password(username, password).then((res) =>
-    setTimeout (->
+    defer ->
       AppActions.login_done res.key.key
       current_user.me().then((res) =>
         merge_state { library: { me: res.user } }
       )
-    ), 0
   ).catch((errors) =>
     merge_state { login: { errors } }
   ).finally =>
@@ -154,12 +154,11 @@ login_done = (key) ->
   focus_panel "owned"
   AppStore.emit_change()
 
-  setTimeout (->
+  defer ->
     current_user.my_collections().then (res) =>
       collections = _.indexBy res.collections, "id"
       merge_state { library: { collections } }
       AppStore.emit_change()
-  ), 0
 
 AppDispatcher.register (action) ->
   # console.log action.action_type

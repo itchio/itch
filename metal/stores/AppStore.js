@@ -1,5 +1,5 @@
 (function() {
-  var AppActions, AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, Immutable, _, api, app, assign, config, current_user, fetch_games, focus_panel, focus_window, login_done, login_key, login_with_password, merge_state, state, switch_page;
+  var AppActions, AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, Immutable, _, api, app, assign, config, current_user, defer, fetch_games, focus_panel, focus_window, login_done, login_key, login_with_password, merge_state, state, switch_page;
 
   EventEmitter = require("events").EventEmitter;
 
@@ -14,6 +14,8 @@
   AppConstants = require("../constants/AppConstants");
 
   AppActions = require("../actions/AppActions");
+
+  defer = require("../defer");
 
   app = require("app");
 
@@ -176,9 +178,9 @@
             me: res.user
           }
         });
-        return setTimeout((function() {
+        return defer(function() {
           return AppActions.login_done(key);
-        }), 0);
+        });
       };
     })(this))["catch"]((function(_this) {
       return function(errors) {
@@ -209,7 +211,7 @@
     AppStore.emit_change();
     return api.client.login_with_password(username, password).then((function(_this) {
       return function(res) {
-        return setTimeout((function() {
+        return defer(function() {
           AppActions.login_done(res.key.key);
           return current_user.me().then((function(_this) {
             return function(res) {
@@ -220,7 +222,7 @@
               });
             };
           })(this));
-        }), 0);
+        });
       };
     })(this))["catch"]((function(_this) {
       return function(errors) {
@@ -247,7 +249,7 @@
     current_user = new api.User(api.client, key);
     focus_panel("owned");
     AppStore.emit_change();
-    return setTimeout((function() {
+    return defer(function() {
       return current_user.my_collections().then((function(_this) {
         return function(res) {
           var collections;
@@ -260,7 +262,7 @@
           return AppStore.emit_change();
         };
       })(this));
-    }), 0);
+    });
   };
 
   AppDispatcher.register(function(action) {

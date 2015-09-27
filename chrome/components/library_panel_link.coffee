@@ -20,10 +20,7 @@ module.exports = component {
         AppActions.focus_panel @props.name
     },
       if @props.icon
-        (span {},
-          span { className: "icon icon-#{@props.icon}" }
-          " "
-        )
+        (span { className: "icon icon-#{@props.icon}" })
       @props.label
       if @props.progress
         (div { className: "progress_outer" },

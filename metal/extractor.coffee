@@ -1,21 +1,20 @@
 
-readChunk = require "read-chunk"
-fileType = require "file-type"
+read_chunk = require "read-chunk"
+file_type = require "file-type"
 
 Promise = require "bluebird"
 
-extract = (archivePath, destPath) ->
-  buffer = readChunk.sync(archivePath, 0, 262)
-  type = fileType(buffer)
+extract = (archive_path, dest_path) ->
+  buffer = read_chunk.sync(archive_path, 0, 262)
+  type = file_type(buffer)
 
-  console.log "type for #{archivePath}: #{JSON.stringify type}"
+  console.log "type for #{archive_path}: #{JSON.stringify type}"
 
-  try
-    extractor = require("./extractors/#{type?.ext}")
-    extractor.extract archivePath, destPath
-  catch e
-    console.log e
-    Promise.reject "Don't know how to extract: #{archivePath}"
+  switch type.ext
+    when 'zip', 'gz', 'bz2', '7z'
+      require("./extractors/7zip").extract archive_path, dest_path
+    else
+      Promise.reject "Don't know how to extract #{archive_path} / #{JSON.stringify type}"
 
 module.exports = { extract }
 

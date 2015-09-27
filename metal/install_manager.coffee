@@ -10,6 +10,7 @@ mkdirp = require "mkdirp"
 
 keyMirror = require "keymirror"
 
+defer = require "./defer"
 fileutils = require "./fileutils"
 api = require "./api"
 
@@ -52,7 +53,7 @@ class AppInstall
     @emit_change()
 
   emit_change: ->
-    setTimeout (=> AppActions.install_progress @), 0
+    defer => AppActions.install_progress @
 
   start: ->
     @search_for_uploads()
@@ -104,7 +105,7 @@ class AppInstall
 
     call.then (res) =>
       @url = res.url
-      @download()
+      defer => @download()
 
   download: ->
     @set_state InstallState.DOWNLOADING
@@ -135,24 +136,45 @@ class AppInstall
 
   extract: ->
     @set_state InstallState.EXTRACTING
-    require("./extractor").extract(@archive_path, @app_path).then(=>
-      @configure()
+
+    require("./extractor").extract(@archive_path, @app_path).progress((state) =>
+      console.log "Progress callback! #{state.percent}"
+      @progress = 0.01 * state.percent
+      @emit_change()
+    ).then((res) =>
+      @progress = 0
+      @emit_change()
+      console.log "Extracted #{res.total_size} bytes total"
+      defer => @configure()
     ).catch (e) =>
       @set_state InstallState.ERROR
-      AppActions.notify "Failed to extract / configure / launch #{@game.title}"
-      throw e
+      console.log e
+      AppActions.notify "Failed to extract #{@game.title}"
 
   configure: ->
     @set_state InstallState.CONFIGURING
     require("./configurator").configure(@app_path).then((res) =>
       @executables = res.executables
-      console.log "Configuration successful"
-      @launch()
+      if @executables.length > 0
+        console.log "Configuration successful"
+        defer => @launch()
+      else
+        @set_state InstallState.ERROR
+        console.log "No executables found"
+        AppActions.notify "Failed to configure #{@game.title}"
     )
 
   launch: ->
     @set_state InstallState.RUNNING
-    require("./launcher").launch(@executables[0])
+    require("./launcher").launch(@executables[0]).then((res) =>
+      console.log res
+      AppActions.notify res
+    ).catch((e) =>
+      msg = "#{@game.title} crashed with code #{e.code}"
+      console.log msg
+      console.log "...executable path: #{e.exe_path}"
+      AppActions.notify msg
+    )
 
 install = ->
   AppDispatcher.register (action) ->
