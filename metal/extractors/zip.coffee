@@ -2,6 +2,11 @@
 path = require "path"
 Zip = require "node-7z"
 
+switch process.platform
+  when "darwin"
+    # ship 7za with the client
+    process.env.PATH += ':.'
+
 normalize = (p) ->
   path.normalize p.replace /[\s]*$/, ""
 
