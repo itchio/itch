@@ -53,7 +53,9 @@ configure = (app_path) ->
 
   new Promise (resolve, reject) ->
     glob fileutils.exe_glob(app_path), (err, files) ->
+      console.log "exe glob gave us #{files.length} files"
       files = skip_bs(files, app_path)
+      console.log "post-filter, #{files.length} files left"
       if files.length > 0
         console.log "Potential executables: #{JSON.stringify files}"
 

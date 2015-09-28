@@ -7,6 +7,7 @@ request = require "request"
 progress = require "request-progress"
 fstream = require "fstream"
 mkdirp = require "mkdirp"
+Humanize = require "humanize-plus"
 
 keyMirror = require "keymirror"
 
@@ -111,22 +112,49 @@ class AppInstall
   download: ->
     @set_state InstallState.DOWNLOADING
 
-    if fs.existsSync @archive_path
-      @extract()
+    headers = {}
+    flags = 'w'
+
+    if @local_size
+      headers['Range'] = "bytes=#{@local_size}-"
+      flags = 'a'
+    else if fs.existsSync(@archive_path)
+      console.log "Have existing archive at #{@archive_path}, checking size"
+      request.head(@url).on 'response', (response) =>
+        content_length = response.headers['content-length']
+        stats = fs.lstatSync @archive_path
+        console.log "#{Humanize.fileSize content_length} (remote file size)"
+        console.log "#{Humanize.fileSize stats.size} (local file size)"
+        diff = content_length - stats.size
+
+        if diff > 0
+          console.log "Should download remaining #{Humanize.fileSize(diff)} bytes."
+          @local_size = stats.size
+          @get_url()
+        else
+          console.log "All good."
+          @extract()
+
       return
 
-    r = progress request.get(@url), throttle: 25
+    r = progress request.get({
+      url: @url
+      headers
+    }), throttle: 25
     r.on 'response', (response) =>
       console.log "Got status code: #{response.statusCode}"
-      contentLength = response.headers['content-length']
-      console.log "Got content length: #{contentLength}"
+      content_length = response.headers['content-length']
+      console.log "Downloading #{Humanize.fileSize content_length} for #{@game.title}"
 
     r.on 'progress', (state) =>
       @progress = 0.01 * state.percent
       @emit_change()
 
     mkdirp.sync(path.dirname(@archive_path))
-    dst = fs.createWriteStream(@archive_path, 'binary')
+    dst = fs.createWriteStream(@archive_path, {
+      flags
+      defaultEncoding: "binary"
+    })
     r.pipe(dst).on 'close', =>
       @progress = 0
       @emit_change()

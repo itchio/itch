@@ -1,6 +1,7 @@
 
 path = require "path"
 sevenzip = require "node-7z"
+Humanize = require "humanize-plus"
 
 # node-7z needs:
 #   - 7za.exe next to package.json on win32
@@ -55,7 +56,7 @@ extract = (archive_path, dest_path) ->
           else
             console.log "#{npath} (size not found)" if VERY_VERBOSE
         percent = Math.round(extracted_size / total_size * 100)
-        console.log "Estimated progress: #{extracted_size} of #{total_size} bytes, ~#{percent}%"
+        console.log "Estimated progress: #{Humanize.fileSize extracted_size} of #{Humanize.fileSize total_size} bytes, ~#{percent}%"
         handlers.onprogress?({ percent })
       )
 
