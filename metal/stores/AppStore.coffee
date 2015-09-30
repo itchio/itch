@@ -123,9 +123,11 @@ fetch_games = ->
           console.log "game ids = #{JSON.stringify collection.game_ids}"
           db.find(_table: 'games', id: {$in: collection.game_ids}).then((games) =>
             merge_state { library: { games } }
+            AppStore.emit_change()
           )
         else
           merge_state { library: { games: [] } }
+          AppStore.emit_change()
 
 focus_window = ->
   require("app").main_window?.show()

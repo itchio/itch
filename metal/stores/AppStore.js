@@ -163,19 +163,21 @@
                 }
               }).then((function(_this) {
                 return function(games) {
-                  return merge_state({
+                  merge_state({
                     library: {
                       games: games
                     }
                   });
+                  return AppStore.emit_change();
                 };
               })(this));
             default:
-              return merge_state({
+              merge_state({
                 library: {
                   games: []
                 }
               });
+              return AppStore.emit_change();
           }
       }
     }).call(this);
