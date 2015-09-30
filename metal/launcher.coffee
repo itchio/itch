@@ -1,4 +1,5 @@
 
+path = require "path"
 child_process = require "child_process"
 Promise = require "bluebird"
 
@@ -14,8 +15,12 @@ sh = (exe_path, cmd) ->
       if cmd.indexOf(bidden) >= 0
         throw new Error "Command-line contains forbidden characters: #{cmd}"
 
+    wd = path.dirname(exe_path)
+    console.log "Working directory: #{wd}"
     exe = child_process.exec cmd, {
       stdio: [ 0, 'pipe', 'pipe' ]
+      maxBuffer: 5000 * 1024
+      cwd: wd
     }, (error, stdout, stderr) ->
       if error
         console.log "#{exe_path} returned #{error}"
