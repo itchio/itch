@@ -36,7 +36,8 @@
     "read-chunk": "^1.0.1",
     "file-type": "^2.12.0",
     "mkdirp": "^0.5.1",
-    "humanize-plus": "^1.5.0"
+    "humanize-plus": "^1.5.0",
+    "nedb": "^1.2.1"
   },
   "devDependencies": {
     "browserify": "^9.0.7",

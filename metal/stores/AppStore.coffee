@@ -13,8 +13,9 @@ app = require "app"
 
 config = require "../config"
 api = require "../api"
+db = require "../db"
 
-CHANGE_EVENT = 'change'
+CHANGE_EVENT = "change"
 
 state = Immutable {
   page: "login"
@@ -76,27 +77,53 @@ fetch_games = ->
   fetch = switch panel
 
     when "dashboard"
+      show_own_games = ->
+        own_id = state.library.me.id
+        db.find(_table: 'games', user_id: own_id).then(Immutable).then((games) ->
+          console.log "found #{games.length} own games"
+          merge_state { library: { games } }
+          AppStore.emit_change()
+        )
+
+      show_own_games()
+
       user.my_games().then((res) ->
-        res.games
-      ).then (games) =>
-        merge_state { library: { games: games } }
-        AppStore.emit_change()
+        res.games.map (game) ->
+          game.user = state.library.me
+          game
+      ).then(db.save_games).then -> show_own_games()
 
     when "owned"
+      show_owned_games = ->
+        db.find(_table: 'download_keys').then((keys) ->
+          _.pluck keys, 'game_id'
+        ).then((game_ids) ->
+          db.find(_table: 'games', id: { $in: game_ids })
+        ).then(Immutable).then((games) ->
+          merge_state { library: { games } }
+          AppStore.emit_change()
+        )
+
+      show_owned_games()
+
       user.my_owned_keys().then((res) =>
         res.owned_keys.map (key) ->
           # flip it around!
           key.game.merge { key: key.without("game") }
-      ).then (games) =>
-        merge_state { library: { games: games } }
-        AppStore.emit_change()
+      ).then(db.save_games).then( ->
+        show_owned_games()
+      )
 
     else
       [type, id] = panel.split "/"
       switch type
         when "collections"
           collection = state.library.collections[id]
-          merge_state { library: { games: collection.games } }
+          console.log "trying to show collection #{JSON.stringify collection}"
+          console.log "game ids = #{JSON.stringify collection.game_ids}"
+          db.find(_table: 'games', id: {$in: collection.game_ids}).then((games) =>
+            merge_state { library: { games } }
+          )
         else
           merge_state { library: { games: [] } }
 
@@ -155,10 +182,20 @@ login_done = (key) ->
   AppStore.emit_change()
 
   defer ->
-    current_user.my_collections().then (res) =>
-      collections = _.indexBy res.collections, "id"
-      merge_state { library: { collections } }
-      AppStore.emit_change()
+    show_collections = ->
+      db.find(_table: 'collections').then((collections) =>
+        console.log "found #{collections.length} collections"
+        _.indexBy collections, "id"
+      ).then((collections) =>
+        merge_state { library: { collections } }
+        AppStore.emit_change()
+      )
+
+    show_collections()
+
+    current_user.my_collections().then((res) ->
+      res.collections
+    ).then(db.save_collections).then -> show_collections()
 
 AppDispatcher.register (action) ->
   # console.log action.action_type

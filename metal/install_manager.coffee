@@ -14,6 +14,7 @@ keyMirror = require "keymirror"
 defer = require "./defer"
 fileutils = require "./fileutils"
 api = require "./api"
+db = require "./db"
 
 AppDispatcher = require "./dispatcher/AppDispatcher"
 AppConstants = require "./constants/AppConstants"
@@ -41,13 +42,15 @@ class AppInstall
 
   constructor: (opts) ->
     @game = opts.game
-    user = @game.user.username
-    slug = @game.url.match /[^\/]+$/
-    @app_path = path.join(AppInstall.apps_dir, "#{slug} by #{user}")
     @id = ++AppInstall.id_seed
-    @set_state InstallState.PENDING
-    @progress = 0
-    @start()
+
+    db.find(_table: 'users', id: @game.user_id).then (user) =>
+      username = user.username
+      slug = @game.url.match /[^\/]+$/
+      @app_path = path.join(AppInstall.apps_dir, "#{slug}-by-#{username}")
+      @set_state InstallState.PENDING
+      @progress = 0
+      @start()
 
   set_state: (state) ->
     console.log "Install #{@id}, [#{@state} -> #{state}]"

@@ -1,5 +1,5 @@
 (function() {
-  var AppActions, AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, Immutable, _, api, app, assign, config, current_user, defer, fetch_games, focus_panel, focus_window, login_done, login_key, login_with_password, merge_state, state, switch_page;
+  var AppActions, AppConstants, AppDispatcher, AppStore, CHANGE_EVENT, EventEmitter, Immutable, _, api, app, assign, config, current_user, db, defer, fetch_games, focus_panel, focus_window, login_done, login_key, login_with_password, merge_state, state, switch_page;
 
   EventEmitter = require("events").EventEmitter;
 
@@ -23,7 +23,9 @@
 
   api = require("../api");
 
-  CHANGE_EVENT = 'change';
+  db = require("../db");
+
+  CHANGE_EVENT = "change";
 
   state = Immutable({
     page: "login",
@@ -81,26 +83,61 @@
   });
 
   fetch_games = function() {
-    var collection, fetch, id, panel, type, user;
+    var collection, fetch, id, panel, show_own_games, show_owned_games, type, user;
     user = current_user;
     panel = state.library.panel;
     return fetch = (function() {
       var ref;
       switch (panel) {
         case "dashboard":
-          return user.my_games().then(function(res) {
-            return res.games;
-          }).then((function(_this) {
-            return function(games) {
+          show_own_games = function() {
+            var own_id;
+            own_id = state.library.me.id;
+            return db.find({
+              _table: 'games',
+              user_id: own_id
+            }).then(Immutable).then(function(games) {
+              console.log("found " + games.length + " own games");
               merge_state({
                 library: {
                   games: games
                 }
               });
               return AppStore.emit_change();
-            };
-          })(this));
+            });
+          };
+          show_own_games();
+          return user.my_games().then(function(res) {
+            return res.games.map(function(game) {
+              game.user = state.library.me;
+              return game;
+            });
+          }).then(db.save_games).then(function() {
+            return show_own_games();
+          });
         case "owned":
+          show_owned_games = function() {
+            return db.find({
+              _table: 'download_keys'
+            }).then(function(keys) {
+              return _.pluck(keys, 'game_id');
+            }).then(function(game_ids) {
+              return db.find({
+                _table: 'games',
+                id: {
+                  $in: game_ids
+                }
+              });
+            }).then(Immutable).then(function(games) {
+              merge_state({
+                library: {
+                  games: games
+                }
+              });
+              return AppStore.emit_change();
+            });
+          };
+          show_owned_games();
           return user.my_owned_keys().then((function(_this) {
             return function(res) {
               return res.owned_keys.map(function(key) {
@@ -109,26 +146,30 @@
                 });
               });
             };
-          })(this)).then((function(_this) {
-            return function(games) {
-              merge_state({
-                library: {
-                  games: games
-                }
-              });
-              return AppStore.emit_change();
-            };
-          })(this));
+          })(this)).then(db.save_games).then(function() {
+            return show_owned_games();
+          });
         default:
           ref = panel.split("/"), type = ref[0], id = ref[1];
           switch (type) {
             case "collections":
               collection = state.library.collections[id];
-              return merge_state({
-                library: {
-                  games: collection.games
+              console.log("trying to show collection " + (JSON.stringify(collection)));
+              console.log("game ids = " + (JSON.stringify(collection.game_ids)));
+              return db.find({
+                _table: 'games',
+                id: {
+                  $in: collection.game_ids
                 }
-              });
+              }).then((function(_this) {
+                return function(games) {
+                  return merge_state({
+                    library: {
+                      games: games
+                    }
+                  });
+                };
+              })(this));
             default:
               return merge_state({
                 library: {
@@ -250,18 +291,32 @@
     focus_panel("owned");
     AppStore.emit_change();
     return defer(function() {
-      return current_user.my_collections().then((function(_this) {
-        return function(res) {
-          var collections;
-          collections = _.indexBy(res.collections, "id");
-          merge_state({
-            library: {
-              collections: collections
-            }
-          });
-          return AppStore.emit_change();
-        };
-      })(this));
+      var show_collections;
+      show_collections = function() {
+        return db.find({
+          _table: 'collections'
+        }).then((function(_this) {
+          return function(collections) {
+            console.log("found " + collections.length + " collections");
+            return _.indexBy(collections, "id");
+          };
+        })(this)).then((function(_this) {
+          return function(collections) {
+            merge_state({
+              library: {
+                collections: collections
+              }
+            });
+            return AppStore.emit_change();
+          };
+        })(this));
+      };
+      show_collections();
+      return current_user.my_collections().then(function(res) {
+        return res.collections;
+      }).then(db.save_collections).then(function() {
+        return show_collections();
+      });
     });
   };
 
