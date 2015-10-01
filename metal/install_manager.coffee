@@ -227,7 +227,21 @@ class AppInstall
 
   launch: ->
     @set_state InstallState.RUNNING
-    require("./launcher").launch(@executables[0]).then((res) =>
+    console.log "Launching #{@game.title}, #{@executables.length} available"
+
+    # try to launch top-most executable
+    candidates = for orig_path in @executables
+      exec_path = path.normalize orig_path
+      {
+        exec_path
+        depth: exec_path.split(path.sep).length
+      }
+
+    candidates.sort (a, b) -> a.depth - b.depth
+
+    console.log "choosing #{candidates[0].exec_path} out of candidates\n #{JSON.stringify candidates}"
+
+    require("./launcher").launch(candidates[0].exec_path).then((res) =>
       console.log res
       AppActions.notify res
     ).catch((e) =>
