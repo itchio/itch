@@ -83,11 +83,11 @@
   });
 
   fetch_games = function() {
-    var collection, fetch, id, panel, show_own_games, show_owned_games, type, user;
+    var collection, fetch, id, panel, promise, show_own_games, show_owned_games, type, user;
     user = current_user;
     panel = state.library.panel;
     return fetch = (function() {
-      var ref;
+      var i, len, ref, ref1, results;
       switch (panel) {
         case "dashboard":
           show_own_games = function() {
@@ -143,19 +143,28 @@
             });
           };
           show_owned_games();
-          return user.my_owned_keys().then((function(_this) {
-            return function(res) {
-              return res.owned_keys.map(function(key) {
-                return key.game.merge({
-                  key: key.without("game")
-                });
-              });
-            };
-          })(this)).then(db.save_games).then(function() {
-            return show_owned_games();
-          });
+          ref = [
+            user.my_owned_keys().then((function(_this) {
+              return function(res) {
+                return res.owned_keys;
+              };
+            })(this)), user.my_claimed_keys().then((function(_this) {
+              return function(res) {
+                return res.claimed_keys;
+              };
+            })(this))
+          ];
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            promise = ref[i];
+            results.push(promise.then(db.save_download_keys).then(function() {
+              return show_owned_games();
+            }));
+          }
+          return results;
+          break;
         default:
-          ref = panel.split("/"), type = ref[0], id = ref[1];
+          ref1 = panel.split("/"), type = ref1[0], id = ref1[1];
           switch (type) {
             case "collections":
               collection = state.library.collections[id];
