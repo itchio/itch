@@ -97,7 +97,6 @@ class AppInstall
         client.game_uploads @game.id
     ).then (res) =>
       { uploads } = res
-      console.log "Got uploads:\n#{JSON.stringify(uploads)}"
 
       # filter uploads to find one relevant to our current platform
       prop = switch process.platform
@@ -107,9 +106,25 @@ class AppInstall
 
       interesting_uploads = uploads.filter (upload) -> !!upload[prop]
 
-      if interesting_uploads.length
+      scored_uploads = interesting_uploads.map (upload) ->
+        score = 0
+        filename = upload.filename.toLowerCase()
+
+        if /\.zip$/.test filename
+          score += 10
+
+        if /soundtrack/.test filename
+          score -= 100
+
+        upload.merge { score }
+
+      scored_uploads = scored_uploads.sort (a, b) -> b.score - a.score
+
+      console.log "Scored uploads\n#{JSON.stringify(scored_uploads)}"
+
+      if scored_uploads.length
         # TODO let user choose
-        @set_upload interesting_uploads[0]
+        @set_upload scored_uploads[0]
       else
         @set_state InstallState.ERROR
         AppActions.notify "No uploads found for #{@game.title}"

@@ -14,7 +14,9 @@ extract = (archive_path, dest_path) ->
     when 'zip', 'gz', 'bz2', '7z'
       require("./extractors/7zip").extract archive_path, dest_path
     else
-      Promise.reject "Don't know how to extract #{archive_path} / #{JSON.stringify type}"
+      p = Promise.reject "Don't know how to extract #{archive_path} / #{JSON.stringify type}"
+      p.progress = (-> p)
+      p
 
 module.exports = { extract }
 
