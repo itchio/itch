@@ -166,6 +166,7 @@ class AppInstall
 
     console.log "Downloading with headers #{JSON.stringify headers}, flags = #{flags}"
     r = progress request.get({
+      encoding: null # binary (otherwise defaults to utf-8)
       url: @url
       headers
     }), throttle: 25
@@ -173,6 +174,9 @@ class AppInstall
       console.log "Got status code: #{response.statusCode}"
       content_length = response.headers['content-length']
       console.log "Downloading #{Humanize.fileSize content_length} for #{@game.title}"
+
+    r.on 'error', (err) =>
+      console.log "Download error: #{JSON.stringify err}"
 
     r.on 'progress', (state) =>
       @progress = 0.01 * state.percent
