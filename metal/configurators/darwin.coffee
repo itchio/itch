@@ -35,16 +35,15 @@ fix_permissions = (bundle_path) ->
 
   glob("#{bundle_path}/**/*", nodir: true).then((all_files) ->
       log "Probing #{all_files.length} files for executables"
-
-      promises = all_files.map (file) ->
-        read_chunk(file, 0, 8).then(sniff_format).then((format) ->
-          return unless format
-          short_path = path.relative(bundle_path, file)
-          log "#{short_path} looks like a #{format}, +x'ing it"
-          fs.chmodAsync file, 0o777
-        )
-      Promise.all promises
-  ).then -> bundle_path
+      all_files
+  ).map((file) ->
+      read_chunk(file, 0, 8).then(sniff_format).then((format) ->
+        return unless format
+        short_path = path.relative(bundle_path, file)
+        log "#{short_path} looks like a #{format}, +x'ing it"
+        fs.chmodAsync file, 0o777
+      )
+  , concurrency: 4).then -> bundle_path
 
 configure = (app_path) ->
   glob("#{app_path}/**/*.app/").then((bundle_paths) ->

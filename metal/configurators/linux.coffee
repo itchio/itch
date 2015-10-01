@@ -27,19 +27,15 @@ find_and_fix_execs = (app_path) ->
 
   glob("#{app_path}/**/*", nodir: true).then((all_files) ->
       log "Probing #{all_files.length} files for executables"
-
-      promises = all_files.map (file) ->
-        read_chunk(file, 0, 8).then(sniff_format).then((format) ->
-          return null unless format
-          short_path = path.relative(app_path, file)
-          log "#{short_path} looks like a #{format}, +x'ing it"
-          fs.chmodAsync(file, 0o777).then ->
-            file
-        )
-      Promise.all(promises).then((execs) ->
-        execs.filter (x) -> x?
+  ).map((file) ->
+      read_chunk(file, 0, 8).then(sniff_format).then((format) ->
+        return null unless format
+        short_path = path.relative(app_path, file)
+        log "#{short_path} looks like a #{format}, +x'ing it"
+        fs.chmodAsync(file, 0o777).then ->
+          file
       )
-  )
+  , concurrency: 4).filter (x) -> x?
 
 configure = (app_path) ->
   find_and_fix_execs(app_path).then((executables) ->
