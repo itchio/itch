@@ -80,7 +80,7 @@ fetch_games = ->
       show_own_games = ->
         own_id = state.library.me.id
         db.find(_table: 'games', user_id: own_id).then(Immutable).then((games) ->
-          console.log "found #{games.length} own games"
+          return unless state.library.panel is "dashboard"
           merge_state { library: { games } }
           AppStore.emit_change()
         )
@@ -100,6 +100,7 @@ fetch_games = ->
         ).then((game_ids) ->
           db.find(_table: 'games', id: { $in: game_ids })
         ).then(Immutable).then((games) ->
+          return unless state.library.panel is "owned"
           merge_state { library: { games } }
           AppStore.emit_change()
         )
@@ -119,9 +120,8 @@ fetch_games = ->
       switch type
         when "collections"
           collection = state.library.collections[id]
-          console.log "trying to show collection #{JSON.stringify collection}"
-          console.log "game ids = #{JSON.stringify collection.game_ids}"
           db.find(_table: 'games', id: {$in: collection.game_ids}).then((games) =>
+            return unless state.library.panel is "collections/#{id}"
             merge_state { library: { games } }
             AppStore.emit_change()
           )
@@ -186,7 +186,6 @@ login_done = (key) ->
   defer ->
     show_collections = ->
       db.find(_table: 'collections').then((collections) =>
-        console.log "found #{collections.length} collections"
         _.indexBy collections, "id"
       ).then((collections) =>
         merge_state { library: { collections } }

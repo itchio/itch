@@ -21,8 +21,6 @@ AppConstants = require "./constants/AppConstants"
 AppActions = require "./actions/AppActions"
 AppStore = require "./stores/AppStore"
 
-items = []
-
 InstallState = keyMirror {
   PENDING: null
   SEARCHING_UPLOAD: null
@@ -38,19 +36,41 @@ class AppInstall
   @library_dir: path.join(app.getPath("home"), "Downloads", "itch.io")
   @archives_dir: path.join(@library_dir, "archives")
   @apps_dir: path.join(@library_dir, "apps")
-  @id_seed = 0
 
-  constructor: (opts) ->
-    @game = opts.game
-    @id = ++AppInstall.id_seed
+  constructor: ->
+    # muffin
 
-    db.find(_table: 'users', id: @game.user_id).then (user) =>
-      username = user.username
-      slug = @game.url.match /[^\/]+$/
-      @app_path = path.join(AppInstall.apps_dir, "#{slug}-by-#{username}")
-      @set_state InstallState.PENDING
-      @progress = 0
-      @start()
+  setup: (opts) ->
+    data = {
+      _table: 'installs'
+      game_id: opts.game.id
+      state: InstallState.PENDING
+    }
+    db.insert(data).then (record) => @load(record)
+
+  load: (record) ->
+    @id = record._id
+    @game_id = record.game_id
+    @progress = 0
+
+    db.findOne(_table: 'games', id: @game_id).then((game) =>
+      @game = game or throw new Error "game not found: #{@game_id}"
+      console.log "found game: #{JSON.stringify @game}"
+    ).then(=>
+      @app_path or db.findOne(_table: 'users', id: @game.user_id).then((user) =>
+        console.log "found user: #{JSON.stringify user}"
+        username = user.username
+        slug = @game.url.match /[^\/]+$/
+        @app_path = path.join(AppInstall.apps_dir, "#{slug}-by-#{username}")
+      )
+    ).then(=>
+      @set_state record.state
+      console.log "Loaded install #{@id} with state #{@state}"
+
+      switch @state
+        when InstallState.PENDING
+          defer => @start()
+    )
 
   set_state: (state) ->
     console.log "Install #{@id}, [#{@state} -> #{state}]"
@@ -214,11 +234,16 @@ install = ->
   AppDispatcher.register (action) ->
     switch action.action_type
       when AppConstants.DOWNLOAD_QUEUE
-        dupe = item for item in items when item.game.id == action.opts.game.id
-        if dupe
-          dupe.launch()
-        else
-          items.push new AppInstall(action.opts)
+        install = new AppInstall()
+        install.setup(action.opts)
+
+      when AppConstants.LOGIN_DONE
+        # load existing installs
+        db.find(_table: 'installs').then((records) ->
+          for record in records
+            install = new AppInstall()
+            install.load(record)
+        )
 
 module.exports = { install }
 

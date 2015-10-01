@@ -97,7 +97,9 @@
               _table: 'games',
               user_id: own_id
             }).then(Immutable).then(function(games) {
-              console.log("found " + games.length + " own games");
+              if (state.library.panel !== "dashboard") {
+                return;
+              }
               merge_state({
                 library: {
                   games: games
@@ -129,6 +131,9 @@
                 }
               });
             }).then(Immutable).then(function(games) {
+              if (state.library.panel !== "owned") {
+                return;
+              }
               merge_state({
                 library: {
                   games: games
@@ -154,8 +159,6 @@
           switch (type) {
             case "collections":
               collection = state.library.collections[id];
-              console.log("trying to show collection " + (JSON.stringify(collection)));
-              console.log("game ids = " + (JSON.stringify(collection.game_ids)));
               return db.find({
                 _table: 'games',
                 id: {
@@ -163,6 +166,9 @@
                 }
               }).then((function(_this) {
                 return function(games) {
+                  if (state.library.panel !== ("collections/" + id)) {
+                    return;
+                  }
                   merge_state({
                     library: {
                       games: games
@@ -299,7 +305,6 @@
           _table: 'collections'
         }).then((function(_this) {
           return function(collections) {
-            console.log("found " + collections.length + " collections");
             return _.indexBy(collections, "id");
           };
         })(this)).then((function(_this) {
@@ -384,3 +389,5 @@
   module.exports = AppStore;
 
 }).call(this);
+
+//# sourceMappingURL=../../maps/metal/stores/AppStore.js.map

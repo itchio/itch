@@ -7,6 +7,7 @@ plumber = require('gulp-plumber')
 streamify = require('gulp-streamify')
 concat = require('gulp-concat')
 watchify = require('gulp-watchify')
+sourcemaps = require('gulp-sourcemaps')
 coffeeify = require('coffeeify')
 envify = require('envify')
 
@@ -51,9 +52,11 @@ gulp.task 'chrome', watchify((watchify) ->
 gulp.task 'metal', ->
   gulp.src(paths.metal, base: './')
     .pipe(plumber())
+    .pipe(sourcemaps.init())
     .pipe(coffee().on('error', (e) ->
       gutil.log "Coffeescript error: \n\n#{e.filename}:#{e.location.first_line}:#{e.location.first_column}\n#{e.message}"
     ))
+    .pipe(sourcemaps.write('./maps'))
     .pipe gulp.dest('.')
 
 ###

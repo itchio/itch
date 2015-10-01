@@ -1,4 +1,9 @@
 
+try
+  require("source-map-support").install()
+catch e
+  console.log "Failed to install source map support:\n#{e}"
+
 app = require "app"
 
 BrowserWindow = require "browser-window"

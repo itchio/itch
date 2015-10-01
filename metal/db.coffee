@@ -25,8 +25,10 @@ to_date = (text) ->
     throw new Error("Invalid date: #{text}")
   new Date(Date.UTC year, month - 1, day, hour, min, sec)
 
+insert = Promise.promisify(store.insert, store)
 update = Promise.promisify(store.update, store)
 find = Promise.promisify(store.find, store)
+findOne = Promise.promisify(store.findOne, store)
 
 save_download_keys = (keys) ->
   return Promise.resolve() unless keys.length
@@ -137,7 +139,9 @@ module.exports = {
   save_users
   save_games
   save_collections
+  insert
   update
   find
+  findOne
 }
 
