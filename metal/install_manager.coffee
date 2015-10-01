@@ -36,6 +36,7 @@ class AppInstall
   @library_dir: path.join(app.getPath("home"), "Downloads", "itch.io")
   @archives_dir: path.join(@library_dir, "archives")
   @apps_dir: path.join(@library_dir, "apps")
+  @by_id = {}
 
   constructor: ->
     # muffin
@@ -50,6 +51,7 @@ class AppInstall
 
   load: (record) ->
     @id = record._id
+    AppInstall.by_id[@id] = @
     @game_id = record.game_id
     @progress = 0
 
@@ -221,7 +223,8 @@ class AppInstall
       @progress = 0
       @emit_change()
       console.log "Extracted #{res.total_size} bytes total"
-      defer => @configure()
+      @set_state InstallState.IDLE
+      # defer => @configure()
     ).catch (e) =>
       @set_state InstallState.ERROR
       console.log e
@@ -272,8 +275,14 @@ install = ->
   AppDispatcher.register (action) ->
     switch action.action_type
       when AppConstants.DOWNLOAD_QUEUE
-        install = new AppInstall()
-        install.setup(action.opts)
+        db.findOne(_table: 'installs', game_id: action.opts.game.id).then((record) =>
+          if record
+            install = AppInstall.by_id[record._id]
+            install.configure()
+          else
+            install = new AppInstall()
+            install.setup(action.opts)
+        )
 
       when AppConstants.LOGIN_DONE
         # load existing installs

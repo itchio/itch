@@ -186,6 +186,31 @@
                   return AppStore.emit_change();
                 };
               })(this));
+            case "installs":
+              return db.findOne({
+                _table: 'installs',
+                _id: id
+              }).then((function(_this) {
+                return function(install) {
+                  return db.findOne({
+                    _table: 'games',
+                    id: install.game_id
+                  });
+                };
+              })(this)).then((function(_this) {
+                return function(game) {
+                  if (state.library.panel !== ("installs/" + id)) {
+                    return;
+                  }
+                  console.log("game for this install is " + (JSON.stringify(game)));
+                  merge_state({
+                    library: {
+                      games: [game]
+                    }
+                  });
+                  return AppStore.emit_change();
+                };
+              })(this));
             default:
               merge_state({
                 library: {
