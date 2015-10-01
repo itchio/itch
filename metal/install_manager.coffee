@@ -160,6 +160,7 @@ class AppInstall
 
       return
 
+    console.log "Downloading with headers #{JSON.stringify headers}, flags = #{flags}"
     r = progress request.get({
       url: @url
       headers
