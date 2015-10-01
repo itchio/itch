@@ -25,13 +25,13 @@ sniff_format = (buf) ->
 # TODO: refactor + better error handling
 find_and_fix_execs = (app_path) ->
 
-  glob("#{app_bundle}/**/*", nodir: true).then((all_files) ->
+  glob("#{app_path}/**/*", nodir: true).then((all_files) ->
       log "Probing #{all_files.length} files for executables"
 
       promises = for file in all_files
         read_chunk(file, 0, 8).then(sniff_format).then((format) ->
           return null unless format
-          short_path = path.relative(app_bundle, candidate)
+          short_path = path.relative(app_path, file)
           log "#{short_path} looks like a #{format}, +x'ing it"
           fs.chmodAsync(file, 0o777).then ->
             file
@@ -42,7 +42,7 @@ find_and_fix_execs = (app_path) ->
   )
 
 configure = (app_path) ->
-  find_and_fix_execs().then((executables) ->
+  find_and_fix_execs(app_path).then((executables) ->
     { executables }
   )
 

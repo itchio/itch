@@ -48,13 +48,14 @@ launch = (exe_path, args=[]) ->
       # from the internet.
       sh exe_path, "open -W #{escape exe_path} --args #{arg_string}"
 
-    when "win32"
+    when "win32", "linux"
       sh exe_path, "#{escape exe_path} #{arg_string}"
 
     else
       # don't know how to launch, try to open with OS?
       shell = require "shell"
       shell.openItem(exe_path)
+      Promise.resolve "Opened #{exe_path} in shell!"
 
 module.exports = { launch }
 
