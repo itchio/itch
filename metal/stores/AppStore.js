@@ -143,15 +143,9 @@
             });
           };
           show_owned_games();
-          return user.my_owned_keys().then((function(_this) {
-            return function(res) {
-              return res.owned_keys.map(function(key) {
-                return key.game.merge({
-                  key: key.without("game")
-                });
-              });
-            };
-          })(this)).then(db.save_games).then(function() {
+          return user.my_owned_keys().then(function(res) {
+            return res.owned_keys;
+          }).then(db.save_download_keys).then(function() {
             return show_owned_games();
           });
         default:

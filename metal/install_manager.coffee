@@ -87,12 +87,15 @@ class AppInstall
     @set_state InstallState.SEARCHING_UPLOAD
 
     client = AppStore.get_current_user()
-    call = if @game.key
-      client.download_key_uploads @game.key.id
-    else
-      client.game_uploads @game.id
 
-    call.then (res) =>
+    db.findOne(_table: 'download_keys', game_id: @game.id).then((key) =>
+      console.log "tried to find download key for #{@game.id}, got #{JSON.stringify key}"
+      if key
+        @key = key
+        client.download_key_uploads @key.id
+      else
+        client.game_uploads @game.id
+    ).then (res) =>
       { uploads } = res
       console.log "Got uploads:\n#{JSON.stringify(uploads)}"
 
@@ -123,12 +126,13 @@ class AppInstall
     @set_state InstallState.DOWNLOADING
 
     client = AppStore.get_current_user()
-    call = if @game.key
-      client.download_upload_with_key @game.key.id, @upload.id
-    else
-      client.download_upload @upload.id
 
-    call.then (res) =>
+    (
+      if @key
+        client.download_upload_with_key @key.id, @upload.id
+      else
+        client.download_upload @upload.id
+    ).then (res) =>
       @url = res.url
       defer => @download()
 

@@ -41,6 +41,7 @@ save_download_keys = (keys) ->
         when typeof(field) == 'object'
           switch name
             when 'game'
+              record.game_id = field.id
               games.push field
         when is_date name
           record[name] = to_date field

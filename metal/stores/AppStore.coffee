@@ -107,11 +107,9 @@ fetch_games = ->
 
       show_owned_games()
 
-      user.my_owned_keys().then((res) =>
-        res.owned_keys.map (key) ->
-          # flip it around!
-          key.game.merge { key: key.without("game") }
-      ).then(db.save_games).then( ->
+      user.my_owned_keys().then((res) ->
+        res.owned_keys
+      ).then(db.save_download_keys).then(->
         show_owned_games()
       )
 
