@@ -1,10 +1,20 @@
-/bower_components
+# package manager stuff
 /node_modules
 /config.json
-/style/**/*.css
-/metal/**/*.js
-/chrome/**/*.js
-/main.js
-/maps
-/7za
-/7za.exe
+/app/node_modules
+/app/bower_components
+
+# build artifacts
+/app/style/**/*.css
+/app/metal/**/*.js
+/app/chrome/**/*.js
+/app/main.js
+/app/maps
+
+# 7-zip unarchiver binaries
+/app/7za
+/app/7za.exe
+
+# electron package-building stuff
+/build
+/cache

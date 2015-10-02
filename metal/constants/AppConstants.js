@@ -23,4 +23,4 @@
 
 }).call(this);
 
-//# sourceMappingURL=../../maps/metal/constants/AppConstants.js.map
+//# sourceMappingURL=../../app/maps/metal/constants/AppConstants.js.map

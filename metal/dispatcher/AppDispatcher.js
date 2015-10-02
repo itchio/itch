@@ -7,4 +7,4 @@
 
 }).call(this);
 
-//# sourceMappingURL=../../maps/metal/dispatcher/AppDispatcher.js.map
+//# sourceMappingURL=../../app/maps/metal/dispatcher/AppDispatcher.js.map

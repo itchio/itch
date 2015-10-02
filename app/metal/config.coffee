@@ -1,6 +1,9 @@
 nconf = require "nconf"
+path = require "path"
+app = require "app"
 
-nconf.file file: "./config.json"
+config_file = path.join(app.getPath("userData"), "config.json")
+nconf.file file: config_file
 
 save = ->
   nconf.save (err) ->

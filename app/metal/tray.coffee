@@ -1,4 +1,5 @@
 
+path = require "path"
 app = require "app"
 Menu = require "menu"
 AppActions = require "./actions/AppActions"
@@ -31,7 +32,7 @@ make_tray = ->
     app.dock.setMenu tray_menu
   else
     Tray = require "tray"
-    tray = new Tray("./static/images/itchio-tray-small.png")
+    tray = new Tray(path.resolve("#{__dirname}/../static/images/itchio-tray-small.png"))
     tray.setToolTip "itch.io"
     tray.setContextMenu tray_menu
     tray.on "clicked", -> AppActions.focus_window()

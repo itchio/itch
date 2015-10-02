@@ -103,4 +103,4 @@
 
 }).call(this);
 
-//# sourceMappingURL=../../maps/metal/actions/AppActions.js.map
+//# sourceMappingURL=../../app/maps/metal/actions/AppActions.js.map

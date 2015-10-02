@@ -424,4 +424,4 @@
 
 }).call(this);
 
-//# sourceMappingURL=../../maps/metal/stores/AppStore.js.map
+//# sourceMappingURL=../../app/maps/metal/stores/AppStore.js.map
