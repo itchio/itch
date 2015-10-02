@@ -54,7 +54,7 @@ module.exports = function (grunt) {
         outputDirectory: path.join(out_dir, 'itch.io-win32-installer'),
         authors: 'itch corp',
         exe: 'itch.io.exe',
-        remoteReleases: 'https://itchio-app.amos.me'
+        remoteReleases: 'https://github.com/itchio/itchio-app'
       }
     }
   });
