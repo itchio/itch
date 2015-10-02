@@ -31,6 +31,19 @@ module.exports = function (grunt) {
             InternalName: 'itch.io.exe'
           }
         }
+      },
+      osxBuild: {
+        options: {
+          dir: 'app',
+          name: 'itch.io',
+          platform: 'darwin',
+          arch: 'x64',
+          version: '0.33.4',
+          out: 'build',
+          icon: 'app/static/image/itchio.icns',
+          asar: true,
+          'app-version': version
+        }
       }
     },
     'create-windows-installer': {

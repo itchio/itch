@@ -18,3 +18,6 @@
 # electron package-building stuff
 /build
 /cache
+
+# OS-specific junk
+.DS_Store
