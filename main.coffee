@@ -4,6 +4,8 @@ try
 catch e
   console.log "Failed to install source map support:\n#{e}"
 
+return if require("./metal/squirrel").handle_startup_event()
+
 app = require "app"
 
 BrowserWindow = require "browser-window"
@@ -54,7 +56,7 @@ make_main_window = ->
 
 app.on "before-quit", ->
   quitting = true
-     
+
 app.on "ready", ->
   tray.make_tray()
   make_main_window()
