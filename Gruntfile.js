@@ -7,7 +7,7 @@ var package_path = path.join(__dirname, 'app', 'package.json');
 var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version;
 
 module.exports = function (grunt) {
-  var out_dir = path.join('build', version)
+  var out_dir = path.join('build', version);
 
   grunt.initConfig({
     'electron': {
@@ -60,5 +60,5 @@ module.exports = function (grunt) {
   });
 
   require('load-grunt-tasks')(grunt);
-}
+};
 
