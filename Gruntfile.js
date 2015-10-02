@@ -7,16 +7,18 @@ var package_path = path.join(__dirname, 'app', 'package.json');
 var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version;
 
 module.exports = function (grunt) {
+  var out_dir = path.join('build', version)
+
   grunt.initConfig({
     'electron': {
-      win32Build: {
+      win32: {
         options: {
           dir: 'app',
           name: 'itch.io',
           platform: 'win32',
           arch: 'ia32',
           version: '0.33.4',
-          out: 'build',
+          out: out_dir,
           icon: 'app/static/images/itchio.ico',
           asar: true,
           'app-version': version,
@@ -32,14 +34,14 @@ module.exports = function (grunt) {
           }
         }
       },
-      osxBuild: {
+      darwin: {
         options: {
           dir: 'app',
           name: 'itch.io',
           platform: 'darwin',
           arch: 'x64',
           version: '0.33.4',
-          out: 'build',
+          out: out_dir,
           icon: 'app/static/image/itchio.icns',
           asar: true,
           'app-version': version
@@ -48,10 +50,11 @@ module.exports = function (grunt) {
     },
     'create-windows-installer': {
       ia32: {
-        appDirectory: 'build/itch.io-win32-ia32',
-        outputDirectory: 'build/installer-win32',
+        appDirectory: path.join(out_dir, 'itch.io-win32-ia32'),
+        outputDirectory: path.join(out_dir, 'itch.io-win32-installer'),
         authors: 'itch corp',
-        exe: 'itch.io.exe'
+        exe: 'itch.io.exe',
+        remoteReleases: 'https://itchio-app.amos.me'
       }
     }
   });
