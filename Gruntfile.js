@@ -48,6 +48,18 @@ module.exports = function (grunt) {
           asar: true,
           'app-version': version
         }
+      },
+      linux: {
+        options: {
+          dir: 'app',
+          name: 'itch.io',
+          platform: 'linux',
+          arch: 'all',
+          version: '0.33.4',
+          out: out_dir,
+          asar: true,
+          'app-version': version
+        }
       }
     },
     'create-windows-installer': {

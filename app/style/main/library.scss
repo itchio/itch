@@ -91,6 +91,12 @@ $cell_height: $cell_width * $cell_ratio;
                         background: #666;
                     }
                 }
+
+                .panel_link_error {
+                    margin-top: 5px;
+                    padding: 3px 5px;
+                    color: #CC6767;
+                }
             }
 
         }

@@ -21,7 +21,7 @@ module.exports = component {
     },
       if @props.icon
         (span { className: "icon icon-#{@props.icon}" })
-      @props.label
+      "#{@props.label}#{@props.progress and " (#{(@props.progress * 100).toFixed()}%)" or ""}"
       if @props.progress
         (div { className: "progress_outer" },
           (div {
@@ -31,5 +31,7 @@ module.exports = component {
             }
           })
         )
+      if @props.error
+        (div { className: "panel_link_error" }, @props.error)
     )
 }

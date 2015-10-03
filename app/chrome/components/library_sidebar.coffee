@@ -42,6 +42,7 @@ module.exports = component {
 
         (for id, install of (@props.installs or {})
           label = install.game.title
+          error = install.state == 'ERROR' and install.error
           icon = switch install.state
             when 'ERROR'
               'error'
@@ -63,6 +64,7 @@ module.exports = component {
             label
             panel
             icon
+            error
             progress: install.progress
           })
         )...

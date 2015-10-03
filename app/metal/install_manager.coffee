@@ -97,7 +97,7 @@ class AppInstall
         client.download_key_uploads @key.id
       else
         client.game_uploads @game.id
-    ).then (res) =>
+    ).then((res) =>
       { uploads } = res
 
       # filter uploads to find one relevant to our current platform
@@ -128,8 +128,15 @@ class AppInstall
         # TODO let user choose
         @set_upload scored_uploads[0]
       else
+        @error = "No uploads found"
+        console.log @error
         @set_state InstallState.ERROR
-        AppActions.notify "No uploads found for #{@game.title}"
+    ).catch((err) =>
+      @error = "Could not download: #{err}"
+      console.log @error
+      console.log err
+      @set_state InstallState.ERROR
+    )
 
   set_upload: (@upload) ->
     console.log "Choosing to download #{@upload.filename}"
@@ -177,7 +184,7 @@ class AppInstall
           @get_url()
         else
           console.log "All good."
-          @extract()
+          defer => @extract()
 
       return
 
@@ -210,7 +217,7 @@ class AppInstall
 
       AppActions.bounce()
       AppActions.notify "#{@game.title} finished downloading."
-      @extract()
+      defer => @extract()
 
   extract: ->
     @set_state InstallState.EXTRACTING
@@ -220,15 +227,17 @@ class AppInstall
       @progress = 0.01 * state.percent
       @emit_change()
     ).then((res) =>
-      @progress = 0
-      @emit_change()
       console.log "Extracted #{res.total_size} bytes total"
       @set_state InstallState.IDLE
-      # defer => @configure()
-    ).catch (e) =>
-      @set_state InstallState.ERROR
+    ).catch((e) =>
+      @error = "Failed to extract"
+      console.log @error
       console.log e
+      @set_state InstallState.ERROR
       AppActions.notify "Failed to extract #{@game.title}"
+    ).finally =>
+      @progress = 0
+      @emit_change()
 
   configure: ->
     @set_state InstallState.CONFIGURING
@@ -238,8 +247,9 @@ class AppInstall
         console.log "Configuration successful"
         defer => @launch()
       else
+        @error = "No executables found"
+        console.log @error
         @set_state InstallState.ERROR
-        console.log "No executables found"
         AppActions.notify "Failed to configure #{@game.title}"
     )
 

@@ -26,6 +26,11 @@ sniff_format = (buf) ->
     when buf[0] == 0xCE && buf[1] == 0xFA && buf[2] == 0xED && buf[3] == 0xFE
       'mach-o executable'
 
+    # Mach-O universal binaries start with 0xCAFEBABE
+    # it's Apple's 'fat binary' stuff that contains multiple architectures
+    when buf[0] == 0xCA && buf[1] == 0xFE && buf[2] == 0xBA && buf[3] == 0xBE
+      'mach-o universal binary'
+
     # Shell-script start with an interro-bang
     when buf[0] == 0x23 && buf[1] == 0x21
       'shell script'

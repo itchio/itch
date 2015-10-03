@@ -36,7 +36,7 @@ make_main_window = ->
 
   main_window = new BrowserWindow {
     title: "itch.io"
-    icon: "./static/images/itchio-tray.png"
+    icon: "./static/images/itchio-tray-x4.png"
     width: 1200
     height: 720
     center: true
