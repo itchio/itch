@@ -13,6 +13,11 @@ refresh_menu = ->
       label: "File"
       submenu: [
         {
+          label: "itch.io version #{require("app").getVersion()}"
+          click: ->
+            require("shell").openExternal "https://github.com/itchio/itchio-app"
+        }
+        {
           label: "Close Window"
           accelerator: if mac then "Command+W" else "Alt+F4"
           click: ->
