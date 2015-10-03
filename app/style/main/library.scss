@@ -22,6 +22,7 @@ $cell_height: $cell_width * $cell_ratio;
         line-height: $user_panel_height;
         padding: 0 8px;
         color: rgba(white, 0.4);
+        margin-top: 20px;
 
         .avatar {
             vertical-align: middle;
@@ -45,8 +46,8 @@ $cell_height: $cell_width * $cell_ratio;
         top: 0;
         bottom: 0;
         left: 0;
-        overflow-y: auto;
         font-size: 12px;
+        height: 100%;
 
         h3 {
             font-weight: bold;
@@ -56,11 +57,17 @@ $cell_height: $cell_width * $cell_ratio;
             margin-left: 8px;
             margin: 5px 0 0 0;
             padding: 6px 0 4px 8px;
-            border-top: 1px solid #565353;
         }
 
         .panel_links {
-            border-top: 1px solid rgba(black, 0.1);
+            position: absolute;
+            top: 60px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding-bottom: 10px;
+            overflow-y: auto;
+            border-right: 1px solid rgba(black, 0.1);
 
             .panel_link {
                 padding: 7px 8px;
@@ -118,7 +125,7 @@ $cell_height: $cell_width * $cell_ratio;
     .game_cell {
         display: inline-block;
         vertical-align: top;
-        margin: 0 20px 40px 20px;
+        margin: 0 10px 40px 10px;
         max-width: $cell_width;
 
         .bordered {

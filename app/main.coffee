@@ -40,6 +40,7 @@ make_main_window = ->
     width: 1200
     height: 720
     center: true
+    "title-bar-style": "hidden"
   }
   app.main_window = main_window
 
