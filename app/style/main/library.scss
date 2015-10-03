@@ -22,7 +22,6 @@ $cell_height: $cell_width * $cell_ratio;
         line-height: $user_panel_height;
         padding: 0 8px;
         color: rgba(white, 0.4);
-        margin-top: 20px;
 
         .avatar {
             vertical-align: middle;
@@ -61,7 +60,7 @@ $cell_height: $cell_width * $cell_ratio;
 
         .panel_links {
             position: absolute;
-            top: 60px;
+            top: 40px;
             bottom: 0;
             left: 0;
             right: 0;
@@ -106,6 +105,16 @@ $cell_height: $cell_width * $cell_ratio;
                 }
             }
 
+        }
+
+        &.frameless {
+            .user_panel {
+                margin-top: 20px;
+            }
+
+            .panel_links {
+                top: 60px;
+            }
         }
     }
 

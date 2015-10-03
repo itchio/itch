@@ -1,9 +1,12 @@
 
 { div, h3 } = React.DOM
 
+classNames = require "classnames"
 component = require "./component"
 UserPanel = require "./user_panel"
 LibraryPanelLink = require "./library_panel_link"
+
+mac = window.require("remote").require("process").platform == "darwin"
 
 module.exports = component {
   displayName: "LibrarySidebar"
@@ -11,7 +14,12 @@ module.exports = component {
   render: ->
     panel = @props.panel
 
-    (div className: "sidebar",
+    (div {
+      className: classNames(
+        "sidebar"
+        frameless: mac
+      )
+    },
       (UserPanel @props),
       (div { className: "panel_links" },
         (h3 {}, "Tabs")
