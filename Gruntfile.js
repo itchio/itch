@@ -7,10 +7,10 @@ var package_path = path.join(__dirname, 'app', 'package.json');
 var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version;
 var ico_path  = 'app/static/images/itchio.ico';
 var icns_path = 'app/static/images/itchio.icns';
+var out_dir = path.join('build', version);
+var company_name = 'Itch Corp';
 
 module.exports = function (grunt) {
-  var out_dir = path.join('build', version);
-
   grunt.initConfig({
     'electron': {
       win32: {
@@ -25,7 +25,7 @@ module.exports = function (grunt) {
           asar: true,
           'app-version': version,
           'version-string': {
-            CompanyName: 'itch corp',
+            CompanyName: company_name,
             LegalCopyright: license,
             FileDescription: 'itch.io desktop client',
             OriginalFileName: 'itch.io.exe',
@@ -66,7 +66,7 @@ module.exports = function (grunt) {
       ia32: {
         appDirectory: path.join(out_dir, 'itch.io-win32-ia32'),
         outputDirectory: path.join(out_dir, 'itch.io-win32-installer'),
-        authors: 'itch corp',
+        authors: company_name,
         exe: 'itch.io.exe',
         description: 'itch.io desktop app',
         version: version,
