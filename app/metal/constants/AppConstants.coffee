@@ -5,6 +5,7 @@ module.exports = keyMirror {
   BOOT: null
   QUIT: null
   FOCUS_WINDOW: null
+  HIDE_WINDOW: null
 
   LIBRARY_VIEW_GAME: null
   LIBRARY_CLOSE_GAME: null

@@ -139,7 +139,10 @@ fetch_games = ->
           AppStore.emit_change()
 
 focus_window = ->
-  require("app").main_window?.show()
+  require("../window").show()
+
+hide_window = ->
+  require("../window").hide()
 
 focus_panel = (panel) ->
   merge_state {
@@ -231,6 +234,9 @@ AppDispatcher.register (action) ->
 
     when AppConstants.FOCUS_WINDOW
       focus_window()
+
+    when AppConstants.HIDE_WINDOW
+      hide_window()
 
     when AppConstants.LOGIN_WITH_PASSWORD
       login_with_password action.username, action.password

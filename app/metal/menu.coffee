@@ -18,7 +18,7 @@ refresh_menu = ->
         {
           label: "Close Window"
           accelerator: "CmdOrCtrl+W"
-          click: -> require("app").main_window?.hide()
+          click: -> AppActions.hide_window()
         }
         {
           label: "Quit"

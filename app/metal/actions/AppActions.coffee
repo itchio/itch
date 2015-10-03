@@ -35,6 +35,11 @@ AppActions = {
       action_type: AppConstants.FOCUS_WINDOW
     }
 
+  hide_window: ->
+    AppDispatcher.dispatch {
+      action_type: AppConstants.HIDE_WINDOW
+    }
+
   login_key: (key) ->
     AppDispatcher.dispatch {
       action_type: AppConstants.LOGIN_KEY

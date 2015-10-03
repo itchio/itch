@@ -1,5 +1,6 @@
 
 app = require "app"
+window = require "./window"
 AppConstants = require "./constants/AppConstants"
 AppDispatcher = require "./dispatcher/AppDispatcher"
 
@@ -11,11 +12,11 @@ install = ->
       when AppConstants.SET_PROGRESS
         { alpha } = action
         percent = alpha * 100
-        app.main_window?.setProgressBar(alpha)
+        window.get()?.setProgressBar(alpha)
         app.dock?.setBadge "#{percent.toFixed()}%"
 
       when AppConstants.CLEAR_PROGRESS
-        app.main_window?.setProgressBar(-1)
+        window.get()?.setProgressBar(-1)
         app.dock?.setBadge ""
 
       when AppConstants.BOUNCE
@@ -31,7 +32,7 @@ install = ->
             }
           else
             code = "new Notification(#{JSON.stringify(message)})"
-            app.main_window?.webContents?.executeJavaScript(code)
+            window.get()?.webContents?.executeJavaScript(code)
 
 module.exports = { install }
 
