@@ -27,6 +27,7 @@ find_and_fix_execs = (app_path) ->
 
   glob("#{app_path}/**/*", nodir: true).then((all_files) ->
       log "Probing #{all_files.length} files for executables"
+      all_files
   ).map((file) ->
       read_chunk(file, 0, 8).then(sniff_format).then((format) ->
         return null unless format
