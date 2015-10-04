@@ -18,7 +18,7 @@ db = require "../db"
 CHANGE_EVENT = "change"
 
 state = Immutable {
-  page: "login"
+  page: "setup"
 
   library: {
     me: null
@@ -31,6 +31,10 @@ state = Immutable {
 
   login: {
     loading: false
+  }
+
+  setup: {
+    message: "Checking dependencies"
   }
 }
 
@@ -168,6 +172,7 @@ login_key = (key) ->
     merge_state { library: { me: res.user } }
     defer -> AppActions.login_done key
   ).catch((errors) =>
+    switch_page "login"
     merge_state { login: { errors } }
   ).finally =>
     merge_state { login: { loading: false } }
@@ -210,6 +215,19 @@ login_done = (key) ->
       res.collections
     ).then(db.save_collections).then -> show_collections()
 
+setup = ->
+  setup = require("../setup").run()
+  setup.status (message) ->
+    merge_state setup: { message }
+    AppStore.emit_change()
+  setup.then(->
+    AppActions.setup_done()
+  ).catch((e) ->
+    message = ""+e
+    merge_state setup: { message }
+    AppStore.emit_change()
+  )
+
 AppDispatcher.register (action) ->
   # console.log action.action_type
 
@@ -250,9 +268,15 @@ AppDispatcher.register (action) ->
       merge_state { page: "login" }
       AppStore.emit_change()
 
-    when AppConstants.BOOT
+    when AppConstants.SETUP_DONE
+      merge_state setup: { message: "Logging in..." }
       if key = config.get "api_key"
         login_key(key)
+      else
+        switch_page "login"
+
+    when AppConstants.BOOT
+      setup()
 
     when AppConstants.QUIT
       require("app").quit()

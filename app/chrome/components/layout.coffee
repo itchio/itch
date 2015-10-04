@@ -1,5 +1,6 @@
 
 component = require "./component"
+SetupPage = require "./setup_page"
 LoginPage = require "./login_page"
 LibraryPage = require "./library_page"
 
@@ -26,6 +27,8 @@ module.exports = component {
 
   render: ->
     switch @state.page
+      when 'setup'
+        (SetupPage @state.setup)
       when 'login'
         (LoginPage @state.login)
       when 'library'

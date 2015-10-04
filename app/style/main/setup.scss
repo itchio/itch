@@ -1,0 +1,32 @@
+
+.setup_page {
+    background: url('../static/images/stock_blue.jpg') 50% 50% no-repeat;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .setup_widget {
+        width: 300px;
+        height: 300px;
+
+        background: rgba(0, 0, 0, .4);
+        border: 2px solid rgba(0, 0, 0, .2);
+        border-radius: 50%;
+        color: white;
+        text-align: center;
+
+        .throbber_loader {
+            margin-bottom: 30px;
+        }
+    }
+
+    .setup_message {
+        white-space: pre;
+    }
+}

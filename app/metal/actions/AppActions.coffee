@@ -59,6 +59,11 @@ AppActions = {
       key
     }
 
+  setup_done: ->
+    AppDispatcher.dispatch {
+      action_type: AppConstants.SETUP_DONE
+    }
+
   logout: ->
     AppDispatcher.dispatch {
       action_type: AppConstants.LOGOUT

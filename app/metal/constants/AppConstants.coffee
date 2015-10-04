@@ -20,6 +20,7 @@ module.exports = keyMirror {
   BOUNCE: null
   NOTIFY: null
 
+  SETUP_DONE: null
   LOGIN_WITH_PASSWORD: null
   LOGIN_DONE: null
   LOGOUT: null
