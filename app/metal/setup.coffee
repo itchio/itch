@@ -32,8 +32,7 @@ run = ->
 
       return unless file
 
-      status = "Downloading 7-zip..."
-      handlers.onstatus? status
+      handlers.onstatus? "Downloading 7-zip...", "download"
       url = "#{prefix}#{file}"
       console.log "Downloading from #{url}"
 

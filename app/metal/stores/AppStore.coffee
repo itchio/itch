@@ -35,6 +35,7 @@ state = Immutable {
 
   setup: {
     message: "Checking dependencies"
+    icon: "settings"
     error: false
   }
 }
@@ -217,19 +218,17 @@ login_done = (key) ->
     ).then(db.save_collections).then -> show_collections()
 
 setup = ->
-  setTimeout (->
-    setup = require("../setup").run()
-    setup.status (message) ->
-      merge_state setup: { message }
-      AppStore.emit_change()
-    setup.then(->
-      AppActions.setup_done()
-    ).catch((e) ->
-      message = ""+e
-      merge_state setup: { message, error: true }
-      AppStore.emit_change()
-    )
-  ), 1000
+  setup = require("../setup").run()
+  setup.status (message, icon) ->
+    merge_state setup: { message, icon: icon or state.setup.icon }
+    AppStore.emit_change()
+  setup.then(->
+    AppActions.setup_done()
+  ).catch((e) ->
+    message = ""+e
+    merge_state setup: { message, icon: "error" }
+    AppStore.emit_change()
+  )
 
 AppDispatcher.register (action) ->
   # console.log action.action_type
@@ -272,7 +271,7 @@ AppDispatcher.register (action) ->
       AppStore.emit_change()
 
     when AppConstants.SETUP_DONE
-      merge_state setup: { message: "Logging in..." }
+      merge_state setup: { message: "Logging in...", icon: "heart-filled" }
       if key = config.get "api_key"
         login_key(key)
       else
