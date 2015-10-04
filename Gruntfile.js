@@ -65,13 +65,13 @@ module.exports = function (grunt) {
     'create-windows-installer': {
       ia32: {
         appDirectory: path.join(out_dir, 'itch.io-win32-ia32'),
-        outputDirectory: path.join(out_dir, 'itch.io-win32-installer'),
+        outputDirectory: path.join('build', 'itch.io-win32-installer'),
         authors: company_name,
         exe: 'itch.io.exe',
         description: 'itch.io desktop app',
         version: version,
         title: 'itch.io',
-        iconUrl: 'https://raw.githubusercontent.com/itchio/itchio-app/master/app/static/images/itchio.ico',
+        iconUrl: 'http://raw.githubusercontent.com/itchio/itchio-app/master/app/static/images/itchio.ico',
         setupIcon: ico_path,
         remoteReleases: 'https://github.com/itchio/itchio-app'
       }
