@@ -50,7 +50,7 @@ gulp.task('metal', function() {
 		.pipe(sourcemaps.init())
     .pipe(coffee().on('error', function(e) {
 			return gutil.log("Coffeescript error: \n\n" + e.filename + ":" + e.location.first_line + ":" + e.location.first_column + "\n" + e.message);
-  })).pipe(sourcemaps.write('maps'))
+  })).pipe(sourcemaps.write('./maps'))
     .pipe(gulp.dest('./app/'));
 });
 

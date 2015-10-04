@@ -1,1 +1,0 @@
-{"version":3,"sources":["metal/defer.coffee"],"names":[],"mappings":"AAEA;EAAA,MAAM,CAAC,OAAP,GAAiB,SAAC,CAAD;WACf,UAAA,CAAW,CAAX,EAAc,CAAd;EADe;AAAjB","file":"metal/defer.js","sourceRoot":"/source/","sourcesContent":["\n# don't ask.\nmodule.exports = (f) ->\n  setTimeout f, 0\n"]}

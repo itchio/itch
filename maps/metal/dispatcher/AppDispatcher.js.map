@@ -1,1 +1,0 @@
-{"version":3,"sources":["metal/dispatcher/AppDispatcher.coffee"],"names":[],"mappings":"AACA;AAAA,MAAA;;EAAE,aAAe,OAAA,CAAQ,MAAR,EAAf;;EAEF,MAAM,CAAC,OAAP,GAAqB,IAAA,UAAA,CAAA;AAFrB","file":"metal/dispatcher/AppDispatcher.js","sourceRoot":"/source/","sourcesContent":["\n{ Dispatcher } = require(\"flux\")\n\nmodule.exports = new Dispatcher()\n"]}
