@@ -44,12 +44,20 @@ run = ->
         url
       }), throttle: 15
 
+      r.on 'error', (e) ->
+        reject "7-zip download failed with:\n#{e}\nTry again later!"
+
       r.on 'progress', (state) ->
         handlers.onstatus? "#{status} (#{state.percent}%)"
+
+      r.on 'response', (response) ->
+        unless /^2/.test (""+response.statusCode)
+          reject "Could not download 7-zip, server error #{response.statusCode}\nTry again later!"
 
       target_path = path.join(third_party_path, file)
       dst = fs.createWriteStream(target_path, { defaultEncoding: "binary" })
       r.pipe(dst).on "close", (e) ->
+        handlers.onstatsu? "7-zip downloaded."
         console.log "Done downloading 7za!"
         switch process.platform
           when "win32"

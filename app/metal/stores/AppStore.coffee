@@ -35,6 +35,7 @@ state = Immutable {
 
   setup: {
     message: "Checking dependencies"
+    error: false
   }
 }
 
@@ -216,17 +217,19 @@ login_done = (key) ->
     ).then(db.save_collections).then -> show_collections()
 
 setup = ->
-  setup = require("../setup").run()
-  setup.status (message) ->
-    merge_state setup: { message }
-    AppStore.emit_change()
-  setup.then(->
-    AppActions.setup_done()
-  ).catch((e) ->
-    message = ""+e
-    merge_state setup: { message }
-    AppStore.emit_change()
-  )
+  setTimeout (->
+    setup = require("../setup").run()
+    setup.status (message) ->
+      merge_state setup: { message }
+      AppStore.emit_change()
+    setup.then(->
+      AppActions.setup_done()
+    ).catch((e) ->
+      message = ""+e
+      merge_state setup: { message, error: true }
+      AppStore.emit_change()
+    )
+  ), 1000
 
 AppDispatcher.register (action) ->
   # console.log action.action_type
