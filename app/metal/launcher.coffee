@@ -3,7 +3,7 @@ path = require "path"
 child_process = require "child_process"
 Promise = require "bluebird"
 
-AppActions = require "./actions/AppActions"
+AppActions = require "./actions/app_actions"
 
 sh = (exe_path, cmd) ->
   new Promise (resolve, reject) ->

@@ -11,15 +11,19 @@ Humanize = require "humanize-plus"
 
 keyMirror = require "keymirror"
 
-defer = require "./defer"
-fileutils = require "./fileutils"
-api = require "./api"
-db = require "./db"
+defer = require "../defer"
+fileutils = require "../fileutils"
+api = require "../api"
+db = require "../db"
 
-AppDispatcher = require "./dispatcher/AppDispatcher"
-AppConstants = require "./constants/AppConstants"
-AppActions = require "./actions/AppActions"
-AppStore = require "./stores/AppStore"
+extractor = require "../extractor"
+configurator = require "../configurator"
+launcher = require "../launcher"
+
+AppDispatcher = require "../dispatcher/app_dispatcher"
+AppConstants = require "../constants/app_constants"
+AppActions = require "../actions/app_actions"
+AppStore = require "../stores/app_store"
 
 InstallState = keyMirror {
   PENDING: null
@@ -222,7 +226,7 @@ class AppInstall
   extract: ->
     @set_state InstallState.EXTRACTING
 
-    require("./extractor").extract(@archive_path, @app_path).progress((state) =>
+    extractor.extract(@archive_path, @app_path).progress((state) =>
       @progress = 0.01 * state.percent
       @emit_change()
     ).then((res) =>
@@ -240,7 +244,7 @@ class AppInstall
 
   configure: ->
     @set_state InstallState.CONFIGURING
-    require("./configurator").configure(@app_path).then((res) =>
+    configurator.configure(@app_path).then((res) =>
       @executables = res.executables
       if @executables.length > 0
         console.log "Configuration successful"
@@ -268,7 +272,7 @@ class AppInstall
 
     console.log "choosing #{candidates[0].exec_path} out of candidates\n #{JSON.stringify candidates}"
 
-    require("./launcher").launch(candidates[0].exec_path).then((res) =>
+    launcher.launch(candidates[0].exec_path).then((res) =>
       console.log res
       AppActions.notify res
     ).catch((e) =>

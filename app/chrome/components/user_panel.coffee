@@ -6,7 +6,7 @@ component = require "./component"
 
 remote = window.require "remote"
 api = remote.require "./metal/api"
-AppStore = remote.require "./metal/stores/AppStore"
+AppStore = remote.require "./metal/stores/app_store"
 
 module.exports = component {
   displayName: "UserPanel"

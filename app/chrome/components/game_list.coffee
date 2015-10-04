@@ -5,7 +5,7 @@ component = require "./component"
 classNames = require "classnames"
 
 remote = window.require "remote"
-AppActions = remote.require "./metal/actions/AppActions"
+AppActions = remote.require "./metal/actions/app_actions"
 
 GameCell = component {
   displayName: "GameCell"
@@ -18,8 +18,7 @@ GameCell = component {
       (div { className: "bordered" },
         (div {
           className: classNames("game_thumb", has_cover: cover_url)
-          onClick: =>
-            AppActions.view_game game
+          onClick: -> AppActions.view_game game
           style: {
             backgroundImage: cover_url and "url('#{cover_url}')"
           }

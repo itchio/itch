@@ -4,9 +4,9 @@ Immutable = require "seamless-immutable"
 assign = require "object-assign"
 _ = require "underscore"
 
-AppDispatcher = require "../dispatcher/AppDispatcher"
-AppConstants = require "../constants/AppConstants"
-AppActions = require "../actions/AppActions"
+AppDispatcher = require "../dispatcher/app_dispatcher"
+AppConstants = require "../constants/app_constants"
+AppActions = require "../actions/app_actions"
 defer = require "../defer"
 
 app = require "app"

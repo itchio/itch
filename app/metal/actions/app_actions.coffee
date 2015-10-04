@@ -1,6 +1,6 @@
 
-AppDispatcher = require "../dispatcher/AppDispatcher"
-AppConstants = require "../constants/AppConstants"
+AppDispatcher = require "../dispatcher/app_dispatcher"
+AppConstants = require "../constants/app_constants"
 
 AppActions = {
   boot: ->

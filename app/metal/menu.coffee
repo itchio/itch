@@ -1,9 +1,9 @@
 
 Menu = require "menu"
 
-AppStore = require "./stores/AppStore"
-AppActions = require "./actions/AppActions"
-AppDispatcher = require "./dispatcher/AppDispatcher"
+AppStore = require "./stores/app_store"
+AppActions = require "./actions/app_actions"
+AppDispatcher = require "./dispatcher/app_dispatcher"
 
 refresh_menu = ->
   mac = (process.platform == "darwin")

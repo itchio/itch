@@ -5,7 +5,7 @@ component = require "./component"
 classNames = require "classnames"
 
 remote = window.require "remote"
-AppActions = remote.require "./metal/actions/AppActions"
+AppActions = remote.require "./metal/actions/app_actions"
 
 module.exports = component {
   displayName: "LibraryPanelLink"

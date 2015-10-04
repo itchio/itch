@@ -6,7 +6,7 @@ InputRow = require "./input_row"
 
 remote = window.require "remote"
 api = remote.require "./metal/api"
-AppActions = remote.require "./metal/actions/AppActions"
+AppActions = remote.require "./metal/actions/app_actions"
 
 module.exports = component {
   displayName: "LoginForm"

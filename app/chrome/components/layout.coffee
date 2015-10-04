@@ -5,8 +5,8 @@ LoginPage = require "./login_page"
 LibraryPage = require "./library_page"
 
 remote = window.require "remote"
-AppStore = remote.require "./metal/stores/AppStore"
-AppActions = remote.require "./metal/actions/AppActions"
+AppStore = remote.require "./metal/stores/app_store"
+AppActions = remote.require "./metal/actions/app_actions"
 
 Immutable = require "seamless-immutable"
 

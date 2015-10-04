@@ -12,6 +12,6 @@ config = require "./metal/config"
 
 require("./metal/menu").install()
 require("./metal/notifier").install()
-require("./metal/install_manager").install()
+require("./metal/stores/install_store").install()
 require("./metal/window").install()
 

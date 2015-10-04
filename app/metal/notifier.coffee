@@ -1,8 +1,8 @@
 
 app = require "app"
 window = require "./window"
-AppConstants = require "./constants/AppConstants"
-AppDispatcher = require "./dispatcher/AppDispatcher"
+AppConstants = require "./constants/app_constants"
+AppDispatcher = require "./dispatcher/app_dispatcher"
 
 install = ->
   AppDispatcher.register (action) ->

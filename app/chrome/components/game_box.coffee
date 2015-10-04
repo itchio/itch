@@ -5,8 +5,8 @@ format = require "../helpers/format"
 component = require "./component"
 
 remote = window.require "remote"
-AppStore = remote.require "./metal/stores/AppStore"
-AppActions = remote.require "./metal/actions/AppActions"
+AppStore = remote.require "./metal/stores/app_store"
+AppActions = remote.require "./metal/actions/app_actions"
 api = remote.require "./metal/api"
 
 module.exports = component {

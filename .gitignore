@@ -2,7 +2,6 @@
 /node_modules
 /config.json
 /app/node_modules
-/app/bower_components
 
 # build artifacts
 /app/style/**/*.css

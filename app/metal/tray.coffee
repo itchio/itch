@@ -2,7 +2,7 @@
 path = require "path"
 app = require "app"
 Menu = require "menu"
-AppActions = require "./actions/AppActions"
+AppActions = require "./actions/app_actions"
 
 make_tray = ->
   tray_menu_template = [

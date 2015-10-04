@@ -1,5 +1,5 @@
 
-AppActions = require "./actions/AppActions"
+AppActions = require "./actions/app_actions"
 tray = require "./tray"
 
 BrowserWindow = require "browser-window"
