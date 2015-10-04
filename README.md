@@ -25,19 +25,19 @@ Run the following comments:
 
 ```bash
 $ npm install
-$ bower install
+$ (cd app && npm install && bower install)
 $ gulp
 ```
 
-You can now run the app in the current directory:
+You can now run the app:
 
 ```bash
-$ electron .
+$ (cd app && electron .)
 ```
 
 ## Screenshots
 
-![](http://leafo.net/shotsnb/2015-05-09_17-19-42.png)
+![](https://misc.amos.me/shots/Screen%20Shot%202015-10-04%20at%2019.09.56.png)
 
 
 ## License
