@@ -223,7 +223,6 @@ class AppInstall
     @set_state InstallState.EXTRACTING
 
     require("./extractor").extract(@archive_path, @app_path).progress((state) =>
-      console.log "Progress callback! #{state.percent}"
       @progress = 0.01 * state.percent
       @emit_change()
     ).then((res) =>

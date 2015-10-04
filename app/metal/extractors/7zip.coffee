@@ -26,13 +26,16 @@ is_tar = (file) ->
 
 VERY_VERBOSE = false
 
+log = (msg) ->
+  return unless VERY_VERBOSE
+
 extract = (archive_path, dest_path) ->
   handlers = {
     onprogress: null
   }
 
   p = new Promise (resolve, reject) ->
-    console.log "Extracting archive '#{archive_path}' to '#{dest_path}' with 7-Zip"
+    log "Extracting archive '#{archive_path}' to '#{dest_path}' with 7-Zip"
 
     li = new sevenzip().list(archive_path)
 
@@ -41,30 +44,30 @@ extract = (archive_path, dest_path) ->
     extracted_size = 0
 
     li.progress((files) ->
-      console.log "Got info about #{files.length} files" if VERY_VERBOSE
+      log "Got info about #{files.length} files" if VERY_VERBOSE
       for f in files
         total_size += f.size
         npath = normalize f.name
         sizes[npath] = f.size
-        console.log "#{npath} (#{f.size} bytes)" if VERY_VERBOSE
+        log "#{npath} (#{f.size} bytes)" if VERY_VERBOSE
     )
 
     li.then((spec) ->
-      console.log "total extracted size: #{total_size}"
-      # console.log "spec = \n#{JSON.stringify spec}"
+      log "total extracted size: #{total_size}"
+      # log "spec = \n#{JSON.stringify spec}"
 
       xr = new sevenzip().extractFull(archive_path, dest_path)
       xr.progress((files) ->
-        console.log "Got progress about #{files.length} files" if VERY_VERBOSE
+        log "Got progress about #{files.length} files" if VERY_VERBOSE
         for f in files
           npath = normalize f
           if size = sizes[npath]
             extracted_size += size
-            console.log "#{npath} (#{size} bytes)" if VERY_VERBOSE
+            log "#{npath} (#{size} bytes)" if VERY_VERBOSE
           else
-            console.log "#{npath} (size not found)" if VERY_VERBOSE
+            log "#{npath} (size not found)" if VERY_VERBOSE
         percent = Math.round(extracted_size / total_size * 100)
-        console.log "Estimated progress: #{Humanize.fileSize extracted_size} of #{Humanize.fileSize total_size} bytes, ~#{percent}%"
+        log "Estimated progress: #{Humanize.fileSize extracted_size} of #{Humanize.fileSize total_size} bytes, ~#{percent}%"
         handlers.onprogress? {
           extracted_size
           total_size
@@ -78,8 +81,8 @@ extract = (archive_path, dest_path) ->
     ).then((files) ->
       if files.length == 1 and is_tar files[0]
         tar = files[0]
-        console.log "Found tar: #{tar}"
-        console.log "Whereas dest_path is #{dest_path}"
+        log "Found tar: #{tar}"
+        log "Whereas dest_path is #{dest_path}"
         extract(tar, dest_path).then((res) ->
           resolve fs.unlinkAsync(tar).then -> res
         )
