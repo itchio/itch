@@ -12,8 +12,7 @@ run = ->
   third_party_path = path.join(app.getPath("userData"), "bin")
   mkdirp.sync(third_party_path)
   console.log "Adding #{third_party_path} to path"
-  process.env.PATH += ":#{third_party_path}"
-  process.env.PATH += ":."
+  process.env.PATH += "#{path.delimiter}#{third_party_path}"
 
   handlers = {
     onstatus: null
