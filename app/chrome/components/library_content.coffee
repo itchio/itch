@@ -1,5 +1,5 @@
 
-{ div } = React.DOM
+{ div } = require("react").DOM
 
 component = require "./component"
 GameList = require "./game_list"

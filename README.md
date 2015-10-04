@@ -25,7 +25,7 @@ Run the following commands:
 
 ```bash
 $ npm install
-$ (cd app && npm install && bower install)
+$ (cd app && npm install)
 $ gulp
 ```
 

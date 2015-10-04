@@ -1,5 +1,5 @@
 
-{ div, h3 } = React.DOM
+{ div, h3 } = require("react").DOM
 
 classNames = require "classnames"
 component = require "./component"

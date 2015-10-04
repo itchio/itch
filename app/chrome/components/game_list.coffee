@@ -1,5 +1,5 @@
 
-{ div, span } = React.DOM
+{ div, span } = require("react").DOM
 component = require "./component"
 
 classNames = require "classnames"

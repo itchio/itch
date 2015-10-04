@@ -1,6 +1,7 @@
 
-{ div, p, span } = React.DOM
+{ div, p, span } = require("react").DOM
 
+format = require "../helpers/format"
 component = require "./component"
 
 remote = window.require "remote"
@@ -54,7 +55,7 @@ module.exports = component {
       @state.uploads.map (upload) =>
         (div key: "upload-#{upload.id}", className: "upload_row",
           (span className: "upload_name", upload.filename),
-          (span className: "upload_size", "(#{_.str.formatBytes upload.size})"),
+          (span className: "upload_size", "(#{format.format_bytes upload.size})"),
           (span className: "upload_platforms", platforms.map (platform) ->
             if upload[platform[0]]
               (span key: "platform-#{platform[0]}", className: "icon icon-#{platform[1]}")

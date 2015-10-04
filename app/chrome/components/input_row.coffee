@@ -1,5 +1,5 @@
 
-{ div, label, input } = React.DOM
+{ div, label, input } = require("react").DOM
 
 component = require "./component"
 

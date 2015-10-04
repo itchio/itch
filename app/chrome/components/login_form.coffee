@@ -1,5 +1,5 @@
 
-{ div, img, h1, form, button, a, ul, li } = React.DOM
+{ div, img, h1, form, button, a, ul, li } = require("react").DOM
 
 component = require "./component"
 InputRow = require "./input_row"
