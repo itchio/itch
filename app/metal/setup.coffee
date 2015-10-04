@@ -5,7 +5,6 @@ app = require "app"
 fs = Promise.promisifyAll require "fs"
 path = require "path"
 request = require "request"
-progress = require "request-progress"
 mkdirp = require "mkdirp"
 
 run = ->
@@ -22,7 +21,7 @@ run = ->
     download = ->
       console.log "Could not launch 7za, attempting download"
 
-      prefix = "https://misc.amos.me/7za/"
+      prefix = "https://cdn.rawgit.com/itchio/7za-binaries/v9.20/"
       file = switch process.platform
         when "win32"
           "7za.exe"
@@ -38,16 +37,13 @@ run = ->
       url = "#{prefix}#{file}"
       console.log "Downloading from #{url}"
 
-      r = progress request.get({
+      r = request.get({
         encoding: null # binary
         url
-      }), throttle: 15
+      })
 
       r.on 'error', (e) ->
         reject "7-zip download failed with:\n#{e}\nTry again later!"
-
-      r.on 'progress', (state) ->
-        handlers.onstatus? "#{status} (#{state.percent}%)"
 
       r.on 'response', (response) ->
         unless /^2/.test (""+response.statusCode)
