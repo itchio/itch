@@ -21,7 +21,7 @@ npm install -g electron-prebuilt bower gulp
 
 Check out this repository
 
-Run the following comments:
+Run the following commands:
 
 ```bash
 $ npm install
