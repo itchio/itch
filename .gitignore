@@ -1,7 +1,5 @@
 # package manager stuff
-/node_modules
-/config.json
-/app/node_modules
+node_modules
 
 # build artifacts
 /app/style/**/*.css
