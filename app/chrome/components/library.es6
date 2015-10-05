@@ -1,12 +1,11 @@
 
 import React from "react";
 import classNames from "classnames";
+import _ from "underscore";
 
 import {UserPanel} from "./user_panel";
 import {GameList} from "./game_list";
 import {Icon, ErrorList, ProgressBar} from "./misc";
-
-import {entries} from "../helpers/collections";
 
 let remote = window.require("remote");
 let AppActions = remote.require("./metal/actions/app_actions");
@@ -35,7 +34,7 @@ class LibrarySidebar extends React.Component {
   render() {
     let panel = this.props.panel;
     let collections = [];
-    for (let [id, collection] of entries(this.props.collections || {})) {
+    for (let [id, collection] of _.pairs(this.props.collections || {})) {
       let props = {
         name: `collections/${id}`,
         label: collection.title,
@@ -45,7 +44,7 @@ class LibrarySidebar extends React.Component {
     }
 
     let installs = [];
-    for (let [id, install] of entries(this.props.installs || {})) {
+    for (let [id, install] of _.pairs(this.props.installs || {})) {
       let icon = this.state_to_icon(install.state);
       let props = {
         name: `installs/${id}`,
