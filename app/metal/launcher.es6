@@ -63,7 +63,7 @@ export function launch (exe_path, args=[]) {
     default:
       // don't know how to launch, try to open with OS?
       shell.openItem(exe_path);
-      Promise.resolve(`Opened ${exe_path} in shell!`);
+      return Promise.resolve(`Opened ${exe_path} in shell!`);
   }
 }
 

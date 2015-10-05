@@ -13,6 +13,6 @@ try {
   require("./metal/menu").install()
   require("./metal/notifier").install()
   require("./metal/stores/install_store").install()
-  require("./metal/window").install()
+  require("./metal/main_window").install()
 })();
 

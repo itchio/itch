@@ -1,12 +1,12 @@
 
 import app from "app";
 
-import window from "./window";
+import main_window from "./main_window";
 import AppConstants from "./constants/app_constants";
 import AppDispatcher from "./dispatcher/app_dispatcher";
 
 function set_progress_bar (alpha) {
-  let win = window.get();
+  let win = main_window.get();
   if (!win) return;
   win.setProgressBar(alpha);
 }
@@ -43,7 +43,7 @@ export function install() {
         bounce();
         break;
 
-      case AppConstants.NOTIFY:
+      case AppConstants.NOTIFY: {
         let { message } = action;
         switch (process.platform) {
           case "win32":
@@ -55,7 +55,7 @@ export function install() {
             });
             break;
           default:
-            let win = window.get();
+            let win = require("./main_window").get();
             if (!win) return;
             let {webContents} = win;
             if (!webContents) return;
@@ -65,6 +65,7 @@ export function install() {
             break;
         }
         break;
+      }
     }
   });
 }

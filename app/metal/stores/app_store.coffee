@@ -14,6 +14,7 @@ app = require "app"
 config = require "../config"
 api = require "../api"
 db = require "../db"
+main_window = require "../main_window"
 
 CHANGE_EVENT = "change"
 
@@ -145,10 +146,10 @@ fetch_games = ->
           AppStore.emit_change()
 
 focus_window = ->
-  require("../window").show()
+  main_window.show()
 
 hide_window = ->
-  require("../window").hide()
+  main_window.hide()
 
 focus_panel = (panel) ->
   merge_state {
