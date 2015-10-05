@@ -8,7 +8,6 @@ import Immutable from "seamless-immutable";
  */
 export class Client {
   constructor() {
-    super();
     this.root_url = "https://itch.io/api/1";
     // this.root_url = "http://localhost.com:8080/api/1";
   }
@@ -55,7 +54,6 @@ export class Client {
  */
 export class User {
   constructor (client, key) {
-    super();
     this.client = client;
     this.key = key;
     if (!this.key) {
@@ -64,44 +62,44 @@ export class User {
   }
 
   request (method, url, params) {
-    let url = `/${this.key}${url}`;
+    url = `/${this.key}${url}`;
     return this.client.request(method, url, params);
   }
 
   my_games() {
-    return this.request("get", "/my-games");
+    return this.request("get", `/my-games`);
   }
 
   my_owned_keys() {
-    return this.request("get", "/my-owned-keys");
+    return this.request("get", `/my-owned-keys`);
   }
 
   my_claimed_keys() {
-    return this.request("get", "/my-claimed-keys");
+    return this.request("get", `/my-claimed-keys`);
   }
 
   me() {
-    return this.request("get", "/me");
+    return this.request("get", `/me`);
   }
 
   my_collections() {
-    return this.request("get", "/my-collections");
+    return this.request("get", `/my-collections`);
   }
 
   download_key_uploads (download_key_id) {
-    return this.request("get", "/download-key/#{download_key_id}/uploads");
+    return this.request("get", `/download-key/${download_key_id}/uploads`);
   }
 
   download_upload_with_key (download_key_id, upload_id) {
-    return this.request("get", "/download-key/#{download_key_id}/download/#{upload_id}");
+    return this.request("get", `/download-key/${download_key_id}/download/${upload_id}`);
   }
 
   game_uploads (game_id) {
-    return this.request("get", "/game/#{game_id}/uploads");
+    return this.request("get", `/game/${game_id}/uploads`);
   }
 
   download_upload (upload_id) {
-    return this.request("get", "/upload/#{upload_id}/download");
+    return this.request("get", `/upload/${upload_id}/download`);
   }
 }
 
