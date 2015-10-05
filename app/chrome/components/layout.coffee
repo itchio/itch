@@ -1,8 +1,10 @@
 
+React = require "react"
+
 component = require "./component"
-SetupPage = require "./setup_page"
-LoginPage = require "./login_page"
-LibraryPage = require "./library_page"
+LoginPage = React.createFactory(require("./login").LoginPage)
+SetupPage = React.createFactory(require("./setup").SetupPage)
+LibraryPage = React.createFactory(require("./library").LibraryPage)
 
 remote = window.require "remote"
 AppStore = remote.require "./metal/stores/app_store"

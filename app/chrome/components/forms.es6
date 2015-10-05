@@ -23,5 +23,5 @@ class InputRow extends React.Component {
   }
 };
 
-export default InputRow = React.createFactory(InputRow);
+export {InputRow};
 

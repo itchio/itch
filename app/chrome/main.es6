@@ -1,4 +1,5 @@
 
+import * as polyfill from "babel/polyfill";
 import {render, unmountComponentAtNode} from "react";
 import {Layout} from "./components/layout";
 
