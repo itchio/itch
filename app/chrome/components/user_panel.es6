@@ -1,8 +1,8 @@
 
-import * as React from "react";
-var classNames = require("classnames");
+import React from "react";
+import classNames from "classnames";
 
-var remote = window.require("remote");
+let remote = window.require("remote");
 
 class UserPanel extends React.Component {
   constructor() {

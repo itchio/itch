@@ -18,6 +18,24 @@ export class Icon extends React.Component {
 }
 
 /**
+ * A single progress bar, with an outer and inner div. Style as you wish.
+ */
+export class ProgressBar extends React.Component {
+  render() {
+    let {progress} = this.props;
+    if (!progress) return <div/>;
+
+    let style = {
+      width: `${progress * 100}%`
+    }
+
+    return <div className="progress_outer">
+      <div className="progress_inner" style={style}/>
+    </div>
+  }
+}
+
+/**
  * A bunch of errors displayed in a list
  */
 export class ErrorList extends React.Component {
@@ -28,14 +46,14 @@ export class ErrorList extends React.Component {
       return <div/>;
     }
 
+    if (!Array.isArray(errors)) {
+      errors = [errors];
+    }
+
     return <ul className="form_errors">
-      {errors.length ?
-        errors.map((error, key) => {
-          return <li key={key}>{error}</li>
-        })
-        :
-        <li>{errors}</li>
-      }
+      {errors.map((error, key) => {
+        return <li key={key}>{error}</li>
+      })}
     </ul>;
   }
 }

@@ -1,30 +1,29 @@
 
-import * as React from "react";
-var classNames = require("classnames");
+import React from "react";
+import classNames from "classnames";
 
 import {UserPanel} from "./user_panel";
 import {GameList} from "./game_list";
+import {Icon, ErrorList, ProgressBar} from "./misc";
 
-var remote = window.require("remote");
-var AppActions = remote.require("./metal/actions/app_actions");
+import {entries} from "../helpers/collections";
+
+let remote = window.require("remote");
+let AppActions = remote.require("./metal/actions/app_actions");
 
 // Hack for frameless styling
-var frameless = remote.require("process").platform == "darwin"
-
-function* entries(obj) {
-  for (let key of Object.keys(obj)) {
-    yield [key, obj[key]];
-  }
-}
+let frameless = remote.require("process").platform == "darwin"
 
 /**
  * The main state of the client - displaying the library
  */
 class LibraryPage extends React.Component {
   render() {
+    let props = this.props;
+
     return <div className="library_page">
-      <LibrarySidebar {...this.props}/>
-      <LibraryContent {...this.props}/>
+      <LibrarySidebar {...props}/>
+      <LibraryContent {...props}/>
     </div>;
   }
 }
@@ -118,28 +117,17 @@ class LibraryContent extends React.Component {
 
 class LibraryPanelLink extends React.Component {
   render() {
-    var {name, panel, label, progress, icon, error} = this.props;
-    var current = name == panel;
+    let {name, panel, label, progress, icon, error} = this.props;
+    let current = name == panel;
 
-    var _progress = progress ? ` (${(progress * 100).toFixed()}%)` : '';
-    var _label = `${label}${_progress}`
+    let _progress = progress ? ` (${(progress * 100).toFixed()}%)` : '';
+    let _label = `${label}${_progress}`
 
     return <div className={classNames("panel_link", {current})} onClick={() => { AppActions.focus_panel(this.props.name); }}>
-      {icon ?
-        <span className={`icon icon-${icon}`}/>
-      :''}
-
+      <Icon {...{icon}}/>
       {_label}
-
-      {progress ?
-        <div className="progress_outer">
-          <div className="progress_inner" style={{width: `${progress * 100}%`}}/>
-        </div>
-      :''}
-
-      {error ?
-        <div className="panel_link_error">{error}</div>
-      :''}
+      <ProgressBar {...{progress}}/>
+      <ErrorList errors={error}/>
     </div>;
   }
 }

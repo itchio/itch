@@ -98,7 +98,12 @@ $cell_height: $cell_width * $cell_ratio;
                     }
                 }
 
-                .panel_link_error {
+                .form_errors {
+                    &, li {
+                        list-style-type: none;
+                        font-size: inherit;
+                    }
+                    margin: 0;
                     margin-top: 5px;
                     padding: 3px 5px;
                     color: #CC6767;
