@@ -59,11 +59,11 @@ class AppInstall
     @game_id = record.game_id
     @progress = 0
 
-    db.findOne(_table: 'games', id: @game_id).then((game) =>
+    db.find_one(_table: 'games', id: @game_id).then((game) =>
       @game = game or throw new Error "game not found: #{@game_id}"
       console.log "found game: #{JSON.stringify @game}"
     ).then(=>
-      @app_path or db.findOne(_table: 'users', id: @game.user_id).then((user) =>
+      @app_path or db.find_one(_table: 'users', id: @game.user_id).then((user) =>
         console.log "found user: #{JSON.stringify user}"
         username = user.username
         slug = @game.url.match /[^\/]+$/
@@ -94,7 +94,7 @@ class AppInstall
 
     client = AppStore.get_current_user()
 
-    db.findOne(_table: 'download_keys', game_id: @game.id).then((key) =>
+    db.find_one(_table: 'download_keys', game_id: @game.id).then((key) =>
       console.log "tried to find download key for #{@game.id}, got #{JSON.stringify key}"
       if key
         @key = key
@@ -288,7 +288,7 @@ install = ->
   AppDispatcher.register (action) ->
     switch action.action_type
       when AppConstants.DOWNLOAD_QUEUE
-        db.findOne(_table: 'installs', game_id: action.opts.game.id).then((record) =>
+        db.find_one(_table: 'installs', game_id: action.opts.game.id).then((record) =>
           if record
             install = AppInstall.by_id[record._id]
             install.configure()

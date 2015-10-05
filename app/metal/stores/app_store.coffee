@@ -132,8 +132,8 @@ fetch_games = ->
             AppStore.emit_change()
           )
         when "installs"
-          db.findOne(_table: 'installs', _id: id).then((install) =>
-            db.findOne(_table: 'games', id: install.game_id)
+          db.find_one(_table: 'installs', _id: id).then((install) =>
+            db.find_one(_table: 'games', id: install.game_id)
           ).then((game) =>
             return unless state.library.panel is "installs/#{id}"
             console.log "game for this install is #{JSON.stringify game}"
