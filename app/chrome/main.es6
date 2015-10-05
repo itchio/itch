@@ -1,20 +1,20 @@
 
-import * as polyfill from "babel/polyfill";
-import {render, unmountComponentAtNode} from "react";
+import polyfill from "babel/polyfill";
+import React from "react";
 import {Layout} from "./components/layout";
 
 document.addEventListener("DOMContentLoaded", () => {
-  render(Layout({}), document.body);
+  React.render(<Layout/>, document.body);
 });
 
 window.addEventListener("beforeunload", () => {
-  unmountComponentAtNode(document.body);
+  React.unmountComponentAtNode(document.body);
 });
 
 window.addEventListener("keydown", (e) => {
   switch (e.keyIdentifier) {
     case "F12":
-      var win = window.require("remote").getCurrentWindow();
+      let win = window.require("remote").getCurrentWindow();
       win.openDevTools();
       break;
     case "F5":
