@@ -46,5 +46,19 @@
     "underscore": "^1.8.3",
     "underscore.string": "^3.2.2",
     "win-spawn": "^2.0.0"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true
+    },
+    "ecmaFeatures": {
+      "modules": true,
+      "jsx": true,
+      "arrowFunctions": true
+    },
+    "rules": {
+    }
   }
 }
