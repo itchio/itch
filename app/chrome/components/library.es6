@@ -52,7 +52,8 @@ class LibrarySidebar extends React.Component {
         label: install.game.title,
         error: (install.state == 'ERROR' ? install.error : null),
         progress: install.progress,
-        icon
+        icon,
+        panel
       };
       installs.push(<LibraryPanelLink {...props}/>);
     }
@@ -118,7 +119,7 @@ class LibraryContent extends React.Component {
 class LibraryPanelLink extends React.Component {
   render() {
     let {name, panel, label, progress, icon, error} = this.props;
-    let current = name == panel;
+    let current = (name == panel);
 
     let _progress = progress ? ` (${(progress * 100).toFixed()}%)` : '';
     let _label = `${label}${_progress}`
