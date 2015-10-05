@@ -1,8 +1,7 @@
 
-import {DOM, Component, createFactory} from "react";
-var {div, label, input} = DOM;
+import * as React from "react";
 
-var InputRowClass = class InputRow extends Component {
+class InputRow extends React.Component {
   componentDidMount() {
     if (this.props.autofocus) {
       this.refs.input.getDOMNode().focus();
@@ -10,16 +9,12 @@ var InputRowClass = class InputRow extends Component {
   }
 
   render() {
-    return div({className: "input_row"},
-      label({},
-        div({className: "label"}, this.props.label),
-        input({
-          type: this.props.type || "text",
-          ref: "input",
-          disabled: this.props.disabled && "disabled"
-        })
-      )
-    );
+    return <div className="input_row">
+      <label>
+        <div className="label">{this.props.label}</div>
+        <input type={this.props.type || "text"} ref="input" disabled={this.props.disabled && "disabled"}/>
+      </label>
+    </div>;
   }
 
   // non-React methods
@@ -28,7 +23,5 @@ var InputRowClass = class InputRow extends Component {
   }
 };
 
-var InputRow = createFactory(InputRowClass);
-
-export { InputRow };
+export default InputRow = React.createFactory(InputRow);
 

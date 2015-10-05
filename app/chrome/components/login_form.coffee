@@ -2,7 +2,7 @@
 { div, img, h1, form, button, a, ul, li } = require("react").DOM
 
 component = require "./component"
-{ InputRow } = require "./input_row"
+InputRow = require "./input_row"
 
 remote = window.require "remote"
 api = remote.require "./metal/api"
