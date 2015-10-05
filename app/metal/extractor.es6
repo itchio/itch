@@ -14,7 +14,7 @@ export function extract (archive_path, dest_path) {
     case 'gz':
     case 'bz2':
     case '7z':
-      require("./extractors/7zip").extract(archive_path, dest_path);
+      return require("./extractors/7zip").extract(archive_path, dest_path);
     default:
       let p = Promise.reject(`Don't know how to extract ${archive_path} / ${JSON.stringify(type)}`)
       p.progress = () => p;
