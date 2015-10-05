@@ -3,6 +3,7 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 var gutil = require('gulp-util');
 var coffee = require('gulp-coffee');
+var babel = require('gulp-babel');
 var plumber = require('gulp-plumber');
 var streamify = require('gulp-streamify');
 var concat = require('gulp-concat');
@@ -14,7 +15,8 @@ var envify = require('envify');
 
 var paths = {
   chrome: ['./app/chrome/main.es6'],
-  metal: ['./app/main.coffee', './app/metal/**/*.coffee'],
+  metal: ['./app/metal/**/*.coffee'],
+  metal6: ['./app/main.es6', './app/metal/**/*.es6'],
   scss: ['./app/style/**/*.scss']
 };
 
@@ -61,6 +63,16 @@ gulp.task('metal', function() {
   .pipe(gulp.dest('./app/'));
 });
 
+gulp.task('metal6', function() {
+  return gulp.src(paths.metal6, {
+    base: './app/'
+  }).pipe(plumber())
+  .pipe(sourcemaps.init())
+  .pipe(babel())
+  .pipe(sourcemaps.write('./maps'))
+  .pipe(gulp.dest('./app/'));
+});
+
 
 /*
  * Compile css with sass
@@ -80,11 +92,12 @@ gulp.task('scss', function() {
 
 gulp.task('watch', ['enable-watch-mode'], function() {
   gulp.watch(paths.metal, ['metal']);
+  gulp.watch(paths.metal6, ['metal6']);
   gulp.watch(paths.scss, ['scss']);
   return gulp.start('chrome');
 });
 
-gulp.task('all', ['metal', 'chrome', 'scss']);
+gulp.task('all', ['metal', 'metal6', 'chrome', 'scss']);
 
 gulp.task('default', ['all']);
 
