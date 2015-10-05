@@ -36,7 +36,7 @@ show = ->
 
   main_window.loadUrl "file://#{__dirname}/../index.html"
 
-  if process.env.DEVTOOLS
+  if process.env.DEVTOOLS == "1"
     main_window.openDevTools()
 
 install = ->
