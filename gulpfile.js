@@ -32,12 +32,17 @@ gulp.task('chrome', watchify(function(watchify) {
   return gulp.src(paths.chrome).pipe(plumber()).pipe(watchify({
     watch: watching,
     extensions: ['.coffee', '.js', '.es6'],
+    debug: true,
     setup: function(bundle) {
       bundle.transform(coffeeify);
       bundle.transform(babelify);
       return bundle.transform(envify);
     }
-  })).pipe(streamify(concat('bundle.js'))).pipe(gulp.dest('./app/chrome/'));
+  }))
+  .pipe(streamify(sourcemaps.init({loadMaps: true})))
+  .pipe(streamify(concat('bundle.js')))
+  .pipe(streamify(sourcemaps.write('./maps')))
+  .pipe(gulp.dest('./app/chrome/'));
 }));
 
 
@@ -49,11 +54,11 @@ gulp.task('metal', function() {
   return gulp.src(paths.metal, {
     base: './app/'
   }).pipe(plumber())
-		.pipe(sourcemaps.init())
-    .pipe(coffee().on('error', function(e) {
-			return gutil.log("Coffeescript error: \n\n" + e.filename + ":" + e.location.first_line + ":" + e.location.first_column + "\n" + e.message);
+  .pipe(sourcemaps.init())
+  .pipe(coffee().on('error', function(e) {
+    return gutil.log("Coffeescript error: \n\n" + e.filename + ":" + e.location.first_line + ":" + e.location.first_column + "\n" + e.message);
   })).pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest('./app/'));
+  .pipe(gulp.dest('./app/'));
 });
 
 
@@ -63,9 +68,9 @@ gulp.task('metal', function() {
 
 gulp.task('scss', function() {
   return gulp.src('./app/style/main.scss')
-    .pipe(plumber())
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./app/style'));
+  .pipe(plumber())
+  .pipe(sass().on('error', sass.logError))
+  .pipe(gulp.dest('./app/style'));
 });
 
 
