@@ -13,7 +13,7 @@ var babelify = require('babelify');
 var envify = require('envify');
 
 var paths = {
-  chrome: ['./app/chrome/main.coffee'],
+  chrome: ['./app/chrome/main.es6'],
   metal: ['./app/main.coffee', './app/metal/**/*.coffee'],
   scss: ['./app/style/**/*.scss']
 };

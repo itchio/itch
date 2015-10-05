@@ -13,7 +13,7 @@ Immutable = require "seamless-immutable"
 get_state = ->
   JSON.parse AppStore.get_state_json()
 
-module.exports = component {
+Layout = component {
   displayName: "Layout"
 
   getInitialState: ->
@@ -39,4 +39,6 @@ module.exports = component {
   _on_change: ->
     setTimeout (=> @setState get_state()), 0
 }
+
+module.exports = { Layout }
 
