@@ -9,6 +9,7 @@ var concat = require('gulp-concat');
 var watchify = require('gulp-watchify');
 var sourcemaps = require('gulp-sourcemaps');
 var coffeeify = require('coffeeify');
+var babelify = require('babelify');
 var envify = require('envify');
 
 var paths = {
@@ -24,15 +25,16 @@ var paths = {
 var watching = false;
 
 gulp.task('enable-watch-mode', function() {
-  return watching = true;
+  watching = true;
 });
 
 gulp.task('chrome', watchify(function(watchify) {
   return gulp.src(paths.chrome).pipe(plumber()).pipe(watchify({
     watch: watching,
-    extensions: ['.coffee', '.js'],
+    extensions: ['.coffee', '.js', '.es6'],
     setup: function(bundle) {
       bundle.transform(coffeeify);
+      bundle.transform(babelify);
       return bundle.transform(envify);
     }
   })).pipe(streamify(concat('bundle.js'))).pipe(gulp.dest('./app/chrome/'));
