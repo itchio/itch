@@ -28,6 +28,33 @@ refresh_menu = ->
       ]
     }
 
+    edit: {
+      label: "Edit"
+      visible: false
+      submenu: [
+        {
+          label: "Cut"
+          accelerator: "CmdOrCtrl+X"
+          role: "cut"
+        }
+        {
+          label: "Copy"
+          accelerator: "CmdOrCtrl+C"
+          role: "copy"
+        }
+        {
+          label: "Paste"
+          accelerator: "CmdOrCtrl+V"
+          role: "paste"
+        }
+        {
+          label: "Select all"
+          accelerator: "CmdOrCtrl+A"
+          role: "selectall"
+        }
+      ]
+    }
+
     account: {
       label: "Account"
       submenu: [
@@ -79,7 +106,7 @@ refresh_menu = ->
     }
   }
 
-  template = [menus.file]
+  template = [menus.file, menus.edit]
 
   if AppStore.get_current_user()
     template.push menus.account
