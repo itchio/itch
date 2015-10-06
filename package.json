@@ -22,7 +22,7 @@
     "envify": "^3.0.0",
     "grunt": "^0.4.5",
     "grunt-electron": "^2.0.1",
-    "grunt-electron-installer": "^1.0.4",
+    "grunt-electron-installer": "^1.0.5",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-concat": "*",
