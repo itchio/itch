@@ -1,5 +1,7 @@
 # itch.io app
 
+[![Dependency Status](https://david-dm.org/itchio/itchio-app.svg)](https://david-dm.org/itchio/itchio-app)
+
 **This project is in very early development!**
 
 The goal of this project is to give you a desktop application that you can
