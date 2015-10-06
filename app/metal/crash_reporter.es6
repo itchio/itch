@@ -24,7 +24,8 @@ export function install() {
       let response = dialog.showMessageBox({
         type: "error",
         buttons: ["Report issue on GitHub", "Open crash log", "Close"],
-        message: `The itch.io app crashed :(\n\nA crash log has been written to ${crash_file}.`
+        message: `The itch.io app crashed :(`,
+        detail: `A crash log has been written to ${crash_file}.`
       });
 
       switch (response) {
