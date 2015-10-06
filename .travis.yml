@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "4.1"
+before_install:
+  - cd app && npm install
+  - cd spec/chrome && npm install
+  - npm install -g electron-prebuilt
+scrip:
+  - cd spec/chrome && electron . --ci
