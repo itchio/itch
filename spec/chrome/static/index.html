@@ -31,7 +31,7 @@
   require('babel/register'); // Supports .es6 tests
   var ipc = require('ipc');
 
-  // Rediret all output to browser.
+  // Redirect all output to nodejs.
   if (isCi) {
     global.__defineGetter__('console', function() {
       return {
@@ -69,8 +69,9 @@
   walker.on('end', function() {
     var runner = mocha.run(function() {
       Mocha.utils.highlightTags('code');
-      if (isCi)
+      if (isCi) {
         ipc.send('process.exit', runner.failures);
+      }
     });
   });
 })();

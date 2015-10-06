@@ -7,6 +7,10 @@ describe("itch.io base", () => {
     it("returns the correct app name", () => {
       assert.equal(app.getName(), "itch.io");
     });
+
+    it("fails for no reason", () => {
+      assert.equal(true, false);
+    });
   });
 });
 
