@@ -1,5 +1,6 @@
 # package manager stuff
 node_modules
+config.json
 
 # build artifacts
 /app/style/**/*.css
@@ -8,10 +9,6 @@ node_modules
 /app/main.js
 /app/maps
 /app/chrome/maps
-
-# 7-zip unarchiver binaries
-/app/7za
-/app/7za.exe
 
 # electron package-building stuff
 /build
