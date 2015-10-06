@@ -73,7 +73,8 @@ module.exports = function (grunt) {
         title: 'itch.io',
         iconUrl: 'http://raw.githubusercontent.com/itchio/itchio-app/master/app/static/images/itchio.ico',
         setupIcon: ico_path,
-        remoteReleases: 'https://github.com/itchio/itchio-app'
+        remoteReleases: 'https://github.com/itchio/itchio-app',
+        certificateFile: '../itchio-app-secrets/certificate.cer'
       }
     }
   });
