@@ -1,5 +1,5 @@
 
-import keyMirror from "keymirror";
+import keyMirror from 'keymirror'
 
 export default keyMirror({
   BOOT: null,
@@ -24,5 +24,5 @@ export default keyMirror({
   LOGIN_WITH_PASSWORD: null,
   LOGIN_DONE: null,
   LOGOUT: null,
-  LOGOUT_DONE: null,
-});
+  LOGOUT_DONE: null
+})

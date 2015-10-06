@@ -1,8 +1,9 @@
 # itch.io app
 
 [![Dependency Status](https://david-dm.org/itchio/itchio-app.svg)](https://david-dm.org/itchio/itchio-app)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 
-**This project is in very early development!**
+**This project is in early development!**
 
 The goal of this project is to give you a desktop application that you can
 download and run games from [itch.io](http://itch.io) with. Additionally you
@@ -52,4 +53,3 @@ Here are some other apps people have started:
 
 * Android: https://github.com/gotosleep/ItchDroid
 * iOS: https://github.com/khwang/cantaloupe
-

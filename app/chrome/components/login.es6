@@ -1,56 +1,60 @@
 
-import React from "react";
+import React from 'react'
+import {Component, PropTypes} from 'react'
 
-let remote = window.require("remote");
-let AppActions = remote.require("./metal/actions/app_actions");
+let remote = window.require('remote')
+let AppActions = remote.require('./metal/actions/app_actions')
 
-import {InputRow} from "./forms";
-import {ErrorList} from "./misc";
+import {InputRow} from './forms'
+import {ErrorList} from './misc'
 
-export class LoginPage extends React.Component {
-  render() {
-    return <div className="login_page">
+export class LoginPage extends Component {
+  render () {
+    return <div className='login_page'>
       <LoginForm {...this.props}/>
-    </div>;
+    </div>
   }
 }
 
-class LoginForm extends React.Component {
-  constructor() {
-    super();
-    // prebind handlers
-    this.handle_submit = this.handle_submit.bind(this);
+class LoginForm extends Component {
+  constructor () {
+    super()
+    this.handle_submit = this.handle_submit.bind(this)
   }
 
-  render() {
-    let {loading, errors} = this.props;
+  render () {
+    let {loading, errors} = this.props
 
-    return <div className="login_form">
-      <img className="logo" src="static/images/itchio-white.svg"/>
-      <div className="login_box">
+    return <div className='login_form'>
+      <img className='logo' src='static/images/itchio-white.svg'/>
+      <div className='login_box'>
         <h1>Log in</h1>
 
-        <form className="form" onSubmit={this.handle_submit}>
+        <form className='form' onSubmit={this.handle_submit}>
           <ErrorList {...{errors}}/>
 
-          <InputRow label="Username" name="username" type="text" ref="username" autofocus={true} disabled={loading}/>
-          <InputRow label="Password" name="password" type="password" ref="password" disabled={loading}/>
+          <InputRow label='Username' name='username' type='text' ref='username' autofocus disabled={loading}/>
+          <InputRow label='Password' name='password' type='password' ref='password' disabled={loading}/>
 
-          <div className="buttons">
-            <button className="button" disabled={loading && "disabled"}>Log in</button>
+          <div className='buttons'>
+            <button className='button' disabled={loading && 'disabled'}>Log in</button>
             <span> · </span>
-            <a href="https://itch.io/user/forgot-password" target="_blank">Forgot password</a>
+            <a href='https://itch.io/user/forgot-password' target='_blank'>Forgot password</a>
           </div>
         </form>
       </div>
-    </div>;
+    </div>
   }
 
-  handle_submit(event) {
-    event.preventDefault();
+  handle_submit (event) {
+    event.preventDefault()
 
-    let {username, password} = this.refs; 
-    AppActions.login_with_password(username.value(), password.value());
+    let {username, password} = this.refs
+    AppActions.login_with_password(username.value(), password.value())
   }
 }
 
+LoginForm.propTypes = {
+  loading: PropTypes.boolean,
+  errors: PropTypes.array
+}

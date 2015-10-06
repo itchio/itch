@@ -1,27 +1,35 @@
 
-import React from "react";
+import React from 'react'
+import {PropTypes, Component} from 'react'
 
-class InputRow extends React.Component {
-  componentDidMount() {
+class InputRow extends Component {
+  componentDidMount () {
     if (this.props.autofocus) {
-      this.refs.input.getDOMNode().focus();
+      this.refs.input.getDOMNode().focus()
     }
   }
 
-  render() {
-    return <div className="input_row">
+  render () {
+    let {label, type = 'text', disabled} = this.props
+    return <div className='input_row'>
       <label>
-        <div className="label">{this.props.label}</div>
-        <input type={this.props.type || "text"} ref="input" disabled={this.props.disabled && "disabled"}/>
+        <div className='label'>{this.props.label}</div>
+        <input type={type} ref='input' disabled={disabled && 'disabled'}/>
       </label>
-    </div>;
+    </div>
   }
 
   // non-React methods
-  value() {
-    return this.refs.input.getDOMNode().value;
+  value () {
+    return this.refs.input.getDOMNode().value
   }
-};
+}
 
-export {InputRow};
+InputRow.propTypes = {
+  autofocus: PropTypes.boolean,
+  disabled: PropTypes.boolean,
+  label: PropTypes.string,
+  type: PropTypes.oneOfType(['text', 'password'])
+}
 
+export {InputRow}

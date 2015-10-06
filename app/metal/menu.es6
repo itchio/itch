@@ -1,130 +1,129 @@
 
-import Menu from "menu";
-import AppStore from "./stores/app_store";
-import AppActions from "./actions/app_actions";
-import AppDispatcher from "./dispatcher/app_dispatcher";
-import defer from "./defer";
+import Menu from 'menu'
+import AppStore from './stores/app_store'
+import AppActions from './actions/app_actions'
+import AppDispatcher from './dispatcher/app_dispatcher'
+import defer from './defer'
 
-function refresh_menu() {
-  let mac = (process.platform == "darwin");
-  let repo_url = "https://github.com/itchio/itchio-app";
+function refresh_menu () {
+  let repo_url = 'https://github.com/itchio/itchio-app'
   function open_url (url) {
-    require("shell").openExternal(url);
+    require('shell').openExternal(url)
   }
 
   let menus = {
     file: {
-      label: "File",
+      label: 'File',
       submenu: [
         {
-          label: "Close Window",
-          accelerator: "CmdOrCtrl+W",
+          label: 'Close Window',
+          accelerator: 'CmdOrCtrl+W',
           click: () => AppActions.hide_window()
         },
         {
-          label: "Quit",
-          accelerator: "CmdOrCtrl+Q",
+          label: 'Quit',
+          accelerator: 'CmdOrCtrl+Q',
           click: () => AppActions.quit()
         }
       ]
     },
 
     edit: {
-      label: "Edit",
+      label: 'Edit',
       visible: false,
       submenu: [
         {
-          label: "Cut",
-          accelerator: "CmdOrCtrl+X",
-          role: "cut"
+          label: 'Cut',
+          accelerator: 'CmdOrCtrl+X',
+          role: 'cut'
         },
         {
-          label: "Copy",
-          accelerator: "CmdOrCtrl+C",
-          role: "copy"
+          label: 'Copy',
+          accelerator: 'CmdOrCtrl+C',
+          role: 'copy'
         },
         {
-          label: "Paste",
-          accelerator: "CmdOrCtrl+V",
-          role: "paste"
+          label: 'Paste',
+          accelerator: 'CmdOrCtrl+V',
+          role: 'paste'
         },
         {
-          label: "Select all",
-          accelerator: "CmdOrCtrl+A",
-          role: "selectall"
+          label: 'Select all',
+          accelerator: 'CmdOrCtrl+A',
+          role: 'selectall'
         }
       ]
     },
 
     account_disabled: {
-      label: "Account",
+      label: 'Account',
       submenu: [
         {
-          label: "Not logged in",
+          label: 'Not logged in',
           enabled: false
         }
       ]
     },
 
     account: {
-      label: "Account",
+      label: 'Account',
       submenu: [
         {
-          label: "Change user...",
+          label: 'Change user...',
           click: () => AppActions.logout()
         }
       ]
     },
 
     help: {
-      label: "Help",
+      label: 'Help',
       submenu: [
         {
-          label: "View itch.io Terms",
-          click: () => open_url("https://itch.io/docs/legal/terms")
+          label: 'View itch.io Terms',
+          click: () => open_url('https://itch.io/docs/legal/terms')
         },
         {
-          label: "View License",
+          label: 'View License',
           click: () => open_url(`${repo_url}/blob/master/LICENSE`)
         },
         {
-          label: `Version ${require("app").getVersion()}`,
+          label: `Version ${require('app').getVersion()}`,
           enabled: false
         },
         {
-          label: "Check for Update",
-          click: () => console.log("check for update: stub")
+          label: 'Check for Update',
+          click: () => console.log('check for update: stub')
         },
         {
-          type: "separator"
+          type: 'separator'
         },
         {
-          label: "Report Issue",
+          label: 'Report Issue',
           click: () => open_url(`${repo_url}/issues/new`)
         },
         {
-          label: "Search Issue",
+          label: 'Search Issue',
           click: () => open_url(`${repo_url}/search?type=Issues`)
         },
         {
-          type: "separator"
+          type: 'separator'
         },
         {
-          label: "Release Notes",
+          label: 'Release Notes',
           click: () => open_url(`${repo_url}/releases`)
         },
         {
-          type: "separator"
+          type: 'separator'
         },
         {
-          label: "Danger zone",
+          label: 'Danger zone',
           submenu: [
             {
-              label: "Don't use this.",
+              label: 'Don\'t use this.',
               submenu: [
                 {
-                  label: "Provoke crash",
-                  click: () => { throw new Error("Silly human-provoked crash."); }
+                  label: 'Provoke crash',
+                  click: () => { throw new Error('Silly human-provoked crash.') }
                 }
               ]
             }
@@ -137,29 +136,27 @@ function refresh_menu() {
   let template = [
     menus.file,
     menus.edit,
-    (AppStore.get_current_user() ?
-     menus.account
-      :
-     menus.account_disabled
-    ),
+    (AppStore.get_current_user()
+    ? menus.account
+    : menus.account_disabled),
     menus.help
-  ];
+  ]
 
   // gotcha: buildFromTemplate mutates its argument - calling it
   // twice with the same argument throws 'Invalid menu template'
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
 
-export function install() {
+export function install () {
   AppDispatcher.register((action) => {
     switch (action.action_type) {
       // TODO: keep an eye on that, might need to rebuild in other circumstances.
       case 'BOOT':
       case 'LOGIN_DONE':
       case 'LOGOUT_DONE':
-        defer(() => refresh_menu());
-        break;
+        defer(() => refresh_menu())
+        break
     }
-  });
+  })
 }
 

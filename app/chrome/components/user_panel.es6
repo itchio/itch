@@ -1,31 +1,34 @@
 
-import React from "react";
-import classNames from "classnames";
+import React from 'react'
+import {Component, PropTypes} from 'react'
+import classNames from 'classnames'
 
-let remote = window.require("remote");
-
-class UserPanel extends React.Component {
-  constructor() {
-    super();
-    this.state = { user: null };
+/**
+ * A friendly component that displays your avatar and username
+ */
+class UserPanel extends Component {
+  constructor () {
+    super()
+    this.state = { user: null }
   }
 
-  render() {
-    let me = this.props.me;
-    let loading = !me;
+  render () {
+    let me = this.props.me
+    let loading = !me
 
-    return <div className={classNames("user_panel", {loading})}>
-      {me ?
-        <div>
-          <img className="avatar" src={me.cover_url}/>
-          <div className="username">{me.username}</div>
+    return <div className={classNames('user_panel', {loading})}>
+      {me
+      ? <div>
+          <img className='avatar' src={me.cover_url}/>
+          <div className='username'>{me.username}</div>
         </div>
-      :
-        "Loading..."
-      }
-    </div>;
+      : 'Loading...'}
+    </div>
   }
 }
 
-export {UserPanel};
+UserPanel.propTypes = {
+  me: PropTypes.object
+}
 
+export {UserPanel}

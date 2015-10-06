@@ -1,5 +1,5 @@
 
 export default function (f) {
-  setTimeout(f, 0);
+  setTimeout(f, 0)
 }
 
