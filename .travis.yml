@@ -7,5 +7,5 @@ before_install:
   - (cd app && npm install)
   - (cd spec/chrome && npm install)
   - gulp all
-scrip:
+script:
   - (cd spec/chrome && electron . --ci)
