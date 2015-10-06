@@ -1,6 +1,6 @@
 {
   "name": "itchio-outer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "itch.io desktop client build environment",
   "repository": "https://github.com/itchio/itchio-app",
   "bugs": "https://github.com/itchio/itchio-app/issues",
