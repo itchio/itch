@@ -35,7 +35,6 @@
     "gulp-watchify": "*",
     "jest-cli": "^0.5.9",
     "load-grunt-tasks": "^3.3.0",
-    "uglify-js": "~2.4.15",
     "watchify": "^3.1.0"
   },
   "scripts": {
