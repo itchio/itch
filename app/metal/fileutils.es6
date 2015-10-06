@@ -1,7 +1,12 @@
 
 // return '.zip', '.exe', etc given any file path. Always lowercase.
 export function ext(filename) {
-  return filename.toLowerCase().match(/\.[\w]+$/);
+  let matches = filename.toLowerCase().match(/\.[\w]+$/);
+  if (matches) {
+    return matches[0];
+  } else {
+    return null;
+  }
 }
 
 export default {

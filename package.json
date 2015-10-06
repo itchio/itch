@@ -17,6 +17,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "babel-jest": "^5.3.0",
     "babelify": "^6.3.0",
     "browserify": "^9.0.7",
     "envify": "^3.0.0",
@@ -32,11 +33,34 @@
     "gulp-streamify": "*",
     "gulp-util": "*",
     "gulp-watchify": "*",
+    "jest-cli": "^0.5.9",
     "load-grunt-tasks": "^3.3.0",
     "uglify-js": "~2.4.15",
     "watchify": "^3.1.0"
   },
   "scripts": {
-    "start": "gulp watch"
+    "start": "gulp watch",
+    "test": "jest"
+  },
+  "jest": {
+    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
+    "testFileExtensions": ["es6", "js"],
+    "testDirectoryName": "spec",
+    "moduleFileExtensions": ["js", "es6"]
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true
+    },
+    "ecmaFeatures": {
+      "modules": true,
+      "jsx": true,
+      "arrowFunctions": true,
+      "forOf": true,
+      "generators": true
+    },
+    "rules": {}
   }
 }
