@@ -7,5 +7,9 @@ before_install:
   - (cd app && npm install)
   - (cd spec/chrome && npm install)
   - gulp all
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
 script:
   - (cd spec/chrome && electron . --ci)
