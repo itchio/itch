@@ -180,6 +180,11 @@ class AppInstall {
     ).then((res) => {
       this.url = res.url;
       defer(() => this.download());
+    }).catch((err) => {
+      this.error = `Could not download: ${err}`;
+      console.log(this.error);
+      console.log(err.stack);
+      this.set_state(InstallState.ERROR);
     });
   }
 

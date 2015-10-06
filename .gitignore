@@ -1,6 +1,7 @@
 # package manager stuff
 node_modules
 config.json
+npm-debug.log
 
 # build artifacts
 /app/style/**/*.css
