@@ -18,7 +18,7 @@ function is_tar (file) {
   return type && type.ext == 'tar';
 }
 
-let VERY_VERBOSE = true;
+let VERY_VERBOSE = false;
 
 function log (msg) {
   if (!VERY_VERBOSE) return;
@@ -99,6 +99,6 @@ export function extract (archive_path, dest_path) {
     return p;
   }
 
-  return p
+  return p;
 }
 
