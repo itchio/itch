@@ -23,5 +23,6 @@ export default keyMirror({
   SETUP_DONE: null,
   LOGIN_WITH_PASSWORD: null,
   LOGIN_DONE: null,
-  LOGOUT: null
+  LOGOUT: null,
+  LOGOUT_DONE: null,
 });

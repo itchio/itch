@@ -56,11 +56,21 @@ function refresh_menu() {
       ]
     },
 
+    account_disabled: {
+      label: "Account",
+      submenu: [
+        {
+          label: "Not logged in",
+          enabled: false
+        }
+      ]
+    },
+
     account: {
       label: "Account",
       submenu: [
         {
-          label: "Log out",
+          label: "Change user...",
           click: () => AppActions.logout()
         }
       ]
@@ -102,18 +112,38 @@ function refresh_menu() {
         {
           label: "Release Notes",
           click: () => open_url(`${repo_url}/releases`)
+        },
+        {
+          type: "separator"
+        },
+        {
+          label: "Danger zone",
+          submenu: [
+            {
+              label: "Don't use this.",
+              submenu: [
+                {
+                  label: "Provoke crash",
+                  click: () => { throw new Error("Silly human-provoked crash."); }
+                }
+              ]
+            }
+          ]
         }
       ]
     }
   }
 
-  let template = [menus.file, menus.edit];
-
-  if (AppStore.get_current_user()) {
-    template.push(menus.account);
-  }
-
-  template.push(menus.help);
+  let template = [
+    menus.file,
+    menus.edit,
+    (AppStore.get_current_user() ?
+     menus.account
+      :
+     menus.account_disabled
+    ),
+    menus.help
+  ];
 
   // gotcha: buildFromTemplate mutates its argument - calling it
   // twice with the same argument throws 'Invalid menu template'
@@ -126,7 +156,7 @@ export function install() {
       // TODO: keep an eye on that, might need to rebuild in other circumstances.
       case 'BOOT':
       case 'LOGIN_DONE':
-      case 'LOGOUT':
+      case 'LOGOUT_DONE':
         defer(() => refresh_menu());
         break;
     }

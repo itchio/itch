@@ -30,7 +30,8 @@ let state = Immutable({
   },
 
   login: {
-    loading: false
+    loading: false,
+    errors: null
   },
 
   setup: {
@@ -238,6 +239,7 @@ function login_done (key) {
   config.set("api_key", key);
   current_user = new api.User(api.client, key);
   focus_panel("owned");
+  merge_state({login: {errors: null}});
   AppStore.emit_change()
 
   defer(() => {
@@ -326,9 +328,11 @@ AppDispatcher.register((action) => {
 
     case AppConstants.LOGOUT: {
       config.clear("api_key");
+      current_user = null;
       state = state.merge({library: state.library.without("me")});
       merge_state({page: "login"});
       AppStore.emit_change()
+      defer(() => AppActions.logout_done());
       break;
     }
 

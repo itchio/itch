@@ -5,6 +5,8 @@ try {
   console.log("Failed to install source map support:\n#{e}");
 }
 
+require("./metal/crash_reporter").install();
+
 (() => {
   if (require("./metal/squirrel").handle_startup_event()) {
     return

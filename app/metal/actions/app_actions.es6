@@ -81,6 +81,12 @@ export default {
     });
   },
 
+  logout_done: () => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.LOGOUT_DONE
+    });
+  },
+
   download_queue: (opts) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.DOWNLOAD_QUEUE,
