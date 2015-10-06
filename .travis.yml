@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - '4.1'
 before_install:
-  - npm install -g gulp
+  - npm install -g gulp standard babel-eslint
   - npm install
   - "(cd app && npm install)"
   - gulp all
