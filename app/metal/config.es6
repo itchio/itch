@@ -6,7 +6,7 @@ import app from "app";
 let config_file = path.join(app.getPath("userData"), "config.json");
 nconf.file({file: config_file});
 
-export function save() {
+function save() {
   nconf.save((err) => {
     if (err) {
       console.log(`Could not save config: ${err}`);
@@ -14,17 +14,19 @@ export function save() {
   });
 }
 
-export function get(key) {
+function get(key) {
   return nconf.get(key);
 }
 
-export function set(key, value) {
+function set(key, value) {
   nconf.set(key, value);
   save();
 }
 
-export function clear(key) {
+function clear(key) {
   nconf.clear(key);
   save();
 }
+
+export default { save, get, set, clear };
 

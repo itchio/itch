@@ -178,3 +178,14 @@ export function save_collections (collections) {
   return Promise.all(promises);
 }
 
+export default {
+  save_download_keys,
+  save_users,
+  save_games,
+  save_collections,
+  insert,
+  update,
+  find,
+  find_one
+}
+

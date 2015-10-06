@@ -22,4 +22,7 @@ export function extract (archive_path, dest_path) {
   }
 }
 
+export default {
+  extract
+};
 

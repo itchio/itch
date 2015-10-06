@@ -15,3 +15,7 @@ export function configure (app_path) {
   }
 }
 
+export default {
+  configure
+};
+

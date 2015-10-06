@@ -67,3 +67,10 @@ export function install() {
   });
 }
 
+export default {
+  get,
+  hide,
+  show,
+  install
+};
+

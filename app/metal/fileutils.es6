@@ -4,3 +4,7 @@ export function ext(filename) {
   return filename.toLowerCase().match(/\.[\w]+$/);
 }
 
+export default {
+  ext
+};
+

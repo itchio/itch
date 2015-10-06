@@ -105,3 +105,9 @@ export class User {
 
 export let client = new Client();
 
+export default {
+  Client,
+  User,
+  client
+};
+

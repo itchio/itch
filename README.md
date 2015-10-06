@@ -9,14 +9,14 @@ goal is not to replace the itch.io website.
 
 ## Installing
 
-The itch.io app is built in HTML/CSS/CoffeeScript and runs inside of Electron.
+The itch.io app is built in HTML/SCSS/ES6 and runs inside of Electron.
 Install the following to get started with development:
 
 * Install [Node.js](https://nodejs.org/)
-* Install [Electron](https://github.com/atom/electron), [Bower](http://bower.io/), and [gulp](http://gittup.org/tup/):
+* Install [Electron](https://github.com/atom/electron), and [gulp](http://gittup.org/tup/):
 
 ```
-npm install -g electron-prebuilt bower gulp
+npm install -g electron-prebuilt gulp
 ```
 
 Check out this repository

@@ -67,5 +67,5 @@ export function launch (exe_path, args=[]) {
   }
 }
 
-module.exports = { launch }
+export default { launch };
 
