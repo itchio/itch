@@ -17,7 +17,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "babel-jest": "^5.3.0",
     "babelify": "^6.3.0",
     "browserify": "^9.0.7",
     "envify": "^3.0.0",
@@ -33,19 +32,12 @@
     "gulp-streamify": "*",
     "gulp-util": "*",
     "gulp-watchify": "*",
-    "jest-cli": "^0.5.9",
     "load-grunt-tasks": "^3.3.0",
     "watchify": "^3.1.0"
   },
   "scripts": {
     "start": "gulp watch",
-    "test": "jest"
-  },
-  "jest": {
-    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
-    "testFileExtensions": ["es6", "js"],
-    "testDirectoryName": "spec",
-    "moduleFileExtensions": ["js", "es6"]
+    "test": "standard app/**/*.es6 && electron spec/chrome --ci"
   },
   "eslintConfig": {
     "env": {
