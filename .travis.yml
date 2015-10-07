@@ -11,7 +11,6 @@ before_install:
   - nvm use --delete-prefix $NODE_VERSION
   - npm install -g gulp standard babel-eslint
   - npm install
-  - "(cd app && npm install)"
   - gulp all
   - "(cd spec/chrome && npm install)"
   - npm install -g 'electron-prebuilt@itchio/electron-prebuilt#exit-code'
