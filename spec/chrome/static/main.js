@@ -29,7 +29,16 @@ ipc.on('console.error', function(event, args) {
 });
 
 ipc.on('process.exit', function(event, code) {
-  process.exit(code);
+  // on Windows, calling process.exit(code) here will always
+  // return 3221226356 (heap corruption apparently?) so we
+  // call app.quit() on success instead, which actually results
+  // in a 0 exit code.
+  // -- @fasterthanlime, spent a day debugging various related issues
+  if (code == 0) {
+    app.quit();
+  } else {
+    process.exit(code);
+  }
 });
 
 ipc.on('eval', function(event, script) {
