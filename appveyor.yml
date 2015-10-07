@@ -1,3 +1,4 @@
+os: Visual Studio 2015
 install:
   - ps: Install-Product node 4.1
   - npm install -g gulp standard babel-eslint
