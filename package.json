@@ -53,12 +53,13 @@
     "grunt": "^0.4.5",
     "grunt-electron": "^2.0.1",
     "grunt-electron-installer": "^1.0.5",
-    "load-grunt-tasks": "^3.3.0",
+    "grunt-sass": "^1.0.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-plumber": "*",
     "gulp-sass": "*",
-    "gulp-sourcemaps": "*"
+    "gulp-sourcemaps": "*",
+    "load-grunt-tasks": "^3.3.0"
   },
   "scripts": {
     "start": "gulp watch",

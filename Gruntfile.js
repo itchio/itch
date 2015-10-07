@@ -12,8 +12,20 @@ var out_dir = path.join('build', version)
 var company_name = 'Itch Corp'
 
 module.exports = function (grunt) {
+  require('load-grunt-tasks')(grunt)
+
   grunt.initConfig({
-    'electron': {
+    sass: {
+      options: {
+        sourceMap: true
+      },
+      dist: {
+        files: {
+          'style/main.css': 'style/main.scss'
+        }
+      }
+    },
+    electron: {
       win32: {
         options: {
           dir: '.',
@@ -79,6 +91,4 @@ module.exports = function (grunt) {
       }
     }
   })
-
-  require('load-grunt-tasks')(grunt)
 }
