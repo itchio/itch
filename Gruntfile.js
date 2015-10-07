@@ -106,6 +106,25 @@ module.exports = function (grunt) {
         remoteReleases: 'https://github.com/itchio/itchio-app',
         certificateFile: '../itchio-app-secrets/certificate.cer'
       }
+    },
+    // Recompile files on-demand
+    watch: {
+      es6: {
+        files: ['**/*.es6'],
+        tasks: ['babel'],
+        options: {
+          spawn: false
+        }
+      },
+      scss: {
+        files: ['**/*.scss'],
+        tasks: ['sass'],
+        options: {
+          spawn: false
+        }
+      }
     }
   })
+
+  grunt.registerTask('default', ['sass', 'babel'])
 }

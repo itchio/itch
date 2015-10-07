@@ -21,7 +21,7 @@ Install the following to get started with development:
 * Install [Electron](https://github.com/atom/electron), and [gulp](http://gittup.org/tup/):
 
 ```
-npm install -g electron-prebuilt gulp
+npm install -g electron-prebuilt grunt-cli
 ```
 
 Check out this repository
@@ -30,7 +30,7 @@ Run the following commands:
 
 ```bash
 $ npm install
-$ gulp all
+$ grunt
 ```
 
 You can now run the app:

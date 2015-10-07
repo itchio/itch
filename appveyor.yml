@@ -3,9 +3,9 @@ install:
   - ps: Install-Product node 4.1
   - npm -g install npm@2
   - set PATH=%APPDATA%\npm;%PATH%
-  - npm install -g gulp
+  - npm install -g grunt-cli
   - npm install
-  - gulp all
+  - grunt
   - pushd spec\chrome && npm install & popd
   - npm install -g electron-prebuilt
 test_script:
