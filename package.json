@@ -30,16 +30,15 @@
     "gulp-sass": "*",
     "gulp-sourcemaps": "*",
     "gulp-streamify": "*",
-    "gulp-util": "*",
     "gulp-watchify": "*",
     "load-grunt-tasks": "^3.3.0",
     "watchify": "^3.1.0"
   },
   "scripts": {
     "start": "gulp watch",
-    "test": "standard app/**/*.es6 && electron spec/chrome --ci"
+    "test": "standard '**/*.es6' gulpfile.js 'spec/**/*.js' && electron spec/chrome --ci"
   },
   "standard": {
-    "parse": "babel-eslint"
+    "parser": "babel-eslint"
   }
 }
