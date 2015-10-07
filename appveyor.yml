@@ -8,7 +8,8 @@ install:
   - pushd spec\chrome && npm install & popd
   - npm install -g electron-prebuilt
 test_script:
-  - ps: npm test
+  - set OS=cygwin
+  - npm test
 notifications:
   - provider: Slack
     auth_token:
