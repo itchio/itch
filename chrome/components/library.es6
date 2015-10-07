@@ -41,7 +41,7 @@ class LibrarySidebar extends Component {
         label: collection.title,
         panel
       }
-      return <LibraryPanelLink {...props}/>
+      return <LibraryPanelLink {...props} key={id}/>
     })
 
     let install_items = pairs(installs).map(([id, install]) => {
@@ -54,7 +54,7 @@ class LibrarySidebar extends Component {
         icon,
         panel
       }
-      return <LibraryPanelLink {...props}/>
+      return <LibraryPanelLink {...props} key={id}/>
     })
 
     return <div className={classNames('sidebar', {frameless})}>
