@@ -1,6 +1,6 @@
 build: off
 environment:
-  - OS: cygwin
+  OS: cygwin
 install:
   - ps: Install-Product node 4.1
   - npm install -g gulp standard babel-eslint
