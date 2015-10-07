@@ -37,7 +37,7 @@
     "nedb": "^1.2.1",
     "node-7z": "^0.3.0",
     "object-assign": "^4.0.1",
-    "react": "^0.13.3",
+    "react": "^0.14.0",
     "read-chunk": "^1.0.1",
     "request": "^2.62.0",
     "request-progress": "^0.3.1",
