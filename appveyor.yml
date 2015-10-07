@@ -1,6 +1,4 @@
-environment:
-  matrix:
-  - Compiler: mingw
+build: off
 install:
   - ps: Install-Product node 4.1
   - npm install -g gulp standard babel-eslint
