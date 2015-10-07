@@ -11,8 +11,6 @@ test_script:
   - standard app/**/*.es6
   - set OS=cygwin
   - "%APPDATA%\\npm\\node_modules\\electron-prebuilt\\dist\\electron.exe spec\\chrome --ci --enable-logging"
-#on_finish:
-#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 notifications:
   - provider: Slack
     auth_token:
