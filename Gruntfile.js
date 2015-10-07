@@ -3,10 +3,10 @@ var fs = require('fs')
 var path = require('path')
 var license_path = path.join(__dirname, 'LICENSE')
 var license = fs.readFileSync(license_path, { encoding: 'utf8' })
-var package_path = path.join(__dirname, 'app', 'package.json')
+var package_path = path.join(__dirname, 'package.json')
 var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version
-var ico_path = 'app/static/images/itchio.ico'
-var icns_path = 'app/static/images/itchio.icns'
+var ico_path = 'static/images/itchio.ico'
+var icns_path = 'static/images/itchio.icns'
 var electron_version = '0.33.6'
 var out_dir = path.join('build', version)
 var company_name = 'Itch Corp'
@@ -16,7 +16,7 @@ module.exports = function (grunt) {
     'electron': {
       win32: {
         options: {
-          dir: 'app',
+          dir: '.',
           name: 'itch.io',
           platform: 'win32',
           arch: 'ia32',
@@ -39,7 +39,7 @@ module.exports = function (grunt) {
       },
       darwin: {
         options: {
-          dir: 'app',
+          dir: '.',
           name: 'itch.io',
           platform: 'darwin',
           arch: 'x64',
@@ -52,7 +52,7 @@ module.exports = function (grunt) {
       },
       linux: {
         options: {
-          dir: 'app',
+          dir: '.',
           name: 'itch.io',
           platform: 'linux',
           arch: 'all',
