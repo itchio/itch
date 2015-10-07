@@ -1,14 +1,13 @@
 build: off
 install:
   - ps: Install-Product node 4.1
-  - npm install -g gulp standard babel-eslint
+  - npm install -g gulp
   - npm install
   - pushd app && npm install & popd
   - gulp all
   - pushd spec\chrome && npm install & popd
   - npm install -g electron-prebuilt
 test_script:
-  - standard app/**/*.es6
   - set OS=cygwin
   - "%APPDATA%\\npm\\node_modules\\electron-prebuilt\\dist\\electron.exe spec\\chrome --ci --enable-logging"
 notifications:
