@@ -26,6 +26,21 @@ module.exports = function (grunt) {
         }
       }
     },
+    // Compile ES6 files to ES5
+    babel: {
+      options: {
+        sourceMap: true
+      },
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '.',
+          src: ['*.es6', 'chrome/**/*.es6', 'metal/**/*.es6'],
+          dest: '.',
+          ext: '.js'
+        }]
+      }
+    },
     // Create a .exe, .app, folder for windows, mac, linux
     electron: {
       win32: {

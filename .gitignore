@@ -5,11 +5,11 @@ npm-debug.log
 
 # build artifacts
 /style/**/*.css
-/style/**/*.map
 /metal/**/*.js
 /chrome/**/*.js
 /main.js
 /maps
+*.map
 
 # electron package-building stuff
 /build
