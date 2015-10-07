@@ -47,12 +47,12 @@ export function run () {
       })
 
       r.on('error', (e) => {
-        reject('7-zip download failed with:\n#{e}\nTry again later!')
+        reject(`7-zip download failed with:\n${e}\nTry again later!`)
       })
 
       r.on('response', (response) => {
         if (!/^2/.test('' + response.statusCode)) {
-          reject('Could not download 7-zip, server error #{response.statusCode}\nTry again later!')
+          reject(`Could not download 7-zip, server error ${response.statusCode}\nTry again later!`)
         }
       })
 
@@ -101,4 +101,3 @@ export function run () {
 
   return p
 }
-

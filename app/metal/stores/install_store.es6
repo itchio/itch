@@ -357,4 +357,3 @@ export function install () {
 }
 
 export default { install }
-

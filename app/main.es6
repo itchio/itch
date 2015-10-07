@@ -2,7 +2,7 @@
 try {
   require('source-map-support').install()
 } catch (e) {
-  console.log('Failed to install source map support:\n#{e}')
+  console.log(`Failed to install source map support:\n${e}`)
 }
 
 require('./metal/crash_reporter').install()
@@ -15,4 +15,3 @@ require('./metal/menu').install()
 require('./metal/notifier').install()
 require('./metal/stores/install_store').install()
 require('./metal/main_window').install()
-
