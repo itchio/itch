@@ -8,7 +8,7 @@ before_install:
   - git clone https://github.com/creationix/nvm.git /tmp/.nvm
   - source /tmp/.nvm/nvm.sh
   - nvm install $NODE_VERSION
-  - nvm use $NODE_VERSION
+  - nvm use --delete-prefix $NODE_VERSION
   - npm install -g gulp standard babel-eslint
   - npm install
   - "(cd app && npm install)"
