@@ -10,8 +10,10 @@ install:
   - pushd spec\chrome && npm install & popd
   - npm install -g electron-prebuilt
 test_script:
+  - echo %OS%
   - standard app/**/*.es6
   - electron spec/chrome --ci
+  - echo Exit code is %errorlevel%
 notifications:
   - provider: Slack
     auth_token:
