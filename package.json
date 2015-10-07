@@ -36,7 +36,7 @@
   },
   "scripts": {
     "start": "gulp watch",
-    "test": "standard '**/*.es6' gulpfile.js 'spec/**/*.js' && electron spec/chrome --ci"
+    "test": "standard '**/*.es6' gulpfile.js Gruntfile.js 'spec/**/*.js' && electron spec/chrome --ci"
   },
   "standard": {
     "parser": "babel-eslint"

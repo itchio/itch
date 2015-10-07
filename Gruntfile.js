@@ -1,14 +1,14 @@
 
-var fs = require('fs');
-var path = require('path');
-var license_path = path.join(__dirname, 'LICENSE');
-var license = fs.readFileSync(license_path, { encoding: 'utf8' });
-var package_path = path.join(__dirname, 'app', 'package.json');
-var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version;
-var ico_path  = 'app/static/images/itchio.ico';
-var icns_path = 'app/static/images/itchio.icns';
-var out_dir = path.join('build', version);
-var company_name = 'Itch Corp';
+var fs = require('fs')
+var path = require('path')
+var license_path = path.join(__dirname, 'LICENSE')
+var license = fs.readFileSync(license_path, { encoding: 'utf8' })
+var package_path = path.join(__dirname, 'app', 'package.json')
+var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version
+var ico_path = 'app/static/images/itchio.ico'
+var icns_path = 'app/static/images/itchio.icns'
+var out_dir = path.join('build', version)
+var company_name = 'Itch Corp'
 
 module.exports = function (grunt) {
   grunt.initConfig({
@@ -77,8 +77,7 @@ module.exports = function (grunt) {
         certificateFile: '../itchio-app-secrets/certificate.cer'
       }
     }
-  });
+  })
 
-  require('load-grunt-tasks')(grunt);
-};
-
+  require('load-grunt-tasks')(grunt)
+}
