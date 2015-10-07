@@ -11,6 +11,7 @@ install:
   - npm install -g electron-prebuilt
 test_script:
   - echo %OS%
+  - where electron
   - standard app/**/*.es6
   - electron spec/chrome --ci
   - echo Exit code is %errorlevel%
