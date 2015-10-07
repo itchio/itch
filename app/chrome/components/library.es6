@@ -54,7 +54,7 @@ class LibrarySidebar extends Component {
         icon,
         panel
       }
-      installs.push(<LibraryPanelLink {...props}/>)
+      return <LibraryPanelLink {...props}/>
     })
 
     return <div className={classNames('sidebar', {frameless})}>
@@ -158,4 +158,3 @@ LibraryPanelLink.propTypes = {
 }
 
 export {LibraryPage}
-
