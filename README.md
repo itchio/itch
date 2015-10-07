@@ -1,5 +1,6 @@
 # itch.io app
 
+[![Build Status](https://travis-ci.org/itchio/itchio-app.svg)](https://travis-ci.org/itchio/itchio-app)
 [![Dependency Status](https://david-dm.org/itchio/itchio-app.svg)](https://david-dm.org/itchio/itchio-app)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 
