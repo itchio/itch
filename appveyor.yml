@@ -1,4 +1,6 @@
 build: off
+environment:
+  - OS: cygwin
 install:
   - ps: Install-Product node 4.1
   - npm install -g gulp standard babel-eslint
@@ -8,7 +10,6 @@ install:
   - pushd spec\chrome && npm install & popd
   - npm install -g electron-prebuilt
 test_script:
-  - set OS=cygwin
   - npm test
 notifications:
   - provider: Slack
