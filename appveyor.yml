@@ -5,7 +5,7 @@ install:
   - pushd app && npm install & popd
   - gulp all
   - pushd spec\chrome && npm install & popd
-  - npm install -g 'electron-prebuilt@itchio/electron-prebuilt#exit-code'
+  - npm install -g electron-prebuilt
 test_script:
   - npm test
 notifications:
