@@ -9,9 +9,9 @@ before_install:
   - source /tmp/.nvm/nvm.sh
   - nvm install $NODE_VERSION
   - nvm use --delete-prefix $NODE_VERSION
-  - npm install -g gulp standard babel-eslint
+  - npm install -g grunt-cli standard babel-eslint
   - npm install
-  - gulp all
+  - grunt
   - "(cd spec/chrome && npm install)"
   - npm install -g 'electron-prebuilt@itchio/electron-prebuilt#exit-code'
 before_script:
