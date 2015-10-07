@@ -15,6 +15,7 @@ module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt)
 
   grunt.initConfig({
+    // Compile SCSS files to CSS
     sass: {
       options: {
         sourceMap: true
@@ -25,6 +26,7 @@ module.exports = function (grunt) {
         }
       }
     },
+    // Create a .exe, .app, folder for windows, mac, linux
     electron: {
       win32: {
         options: {
