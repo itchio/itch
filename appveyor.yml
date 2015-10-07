@@ -8,3 +8,8 @@ install:
   - npm install -g 'electron-prebuilt@itchio/electron-prebuilt#exit-code'
 test_script:
   - npm test
+notifications:
+  - provider: Slack
+    auth_token:
+      secure: h7YzDs6wW4jQe0B5U9rZshYhLu4bRi+l9+Qd9GrZrMM=
+    channel: git
