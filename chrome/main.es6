@@ -3,12 +3,17 @@ import ReactDOM from 'react-dom'
 import React from 'react'
 import {Layout} from './chrome/components/layout'
 
+let app_node
+
 document.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render(<Layout/>, document.body)
+  app_node = document.querySelector('#app')
+  ReactDOM.render(<Layout/>, app_node)
 })
 
 window.addEventListener('beforeunload', () => {
-  ReactDOM.unmountComponentAtNode(document.body)
+  if (!app_node) return
+  ReactDOM.unmountComponentAtNode(app_node)
+  app_node = null
 })
 
 window.addEventListener('keydown', (e) => {
