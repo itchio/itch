@@ -2,9 +2,13 @@ install:
   - ps: Install-Product node 4.1
   - npm install -g gulp standard babel-eslint
   - npm install
-  - "(cd app && npm install)"
+  - pushd app
+  - npm install
+  - popd
   - gulp all
-  - "(cd spec/chrome && npm install)"
+  - pushd spec\chrome
+  - npm install
+  - popd
   - npm install -g 'electron-prebuilt@itchio/electron-prebuilt#exit-code'
 test_script:
   - npm test
