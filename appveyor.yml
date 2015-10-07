@@ -10,7 +10,8 @@ install:
   - pushd spec\chrome && npm install & popd
   - npm install -g electron-prebuilt
 test_script:
-  - npm test
+  - standard app/**/*.es6
+  - electron spec/chrome --ci
 notifications:
   - provider: Slack
     auth_token:
