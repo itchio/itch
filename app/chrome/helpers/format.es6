@@ -8,7 +8,7 @@ let thresholds = [
 ]
 
 function format_bytes (bytes) {
-  for (var [label, min] in thresholds) {
+  for (var [label, min] of thresholds) {
     if (bytes >= min) {
       return `${numberFormat(bytes / min)} ${label}`
     }
