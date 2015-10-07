@@ -20,3 +20,5 @@ notifications:
     auth_token:
       secure: /uzHuC3MJVUjpuBHLDx2YvO6TC3e8AktasVjtzQhvZysPhWfrOB4W5GYNIs/EWbQy2K2tcihv33fmNjS+1jUmg==
     channel: git
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
