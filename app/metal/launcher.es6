@@ -27,7 +27,7 @@ function sh (exe_path, cmd) {
       cwd
     }, (error, stdout, stderr) => {
       if (error) {
-        console.log("#{exe_path} returned #{error}");
+        console.log(`${exe_path} returned ${error}`);
         console.log("stdout: ");
         console.log(stdout);
         console.log("stderr: ");
@@ -41,7 +41,7 @@ function sh (exe_path, cmd) {
 }
 
 function escape (arg) {
-  return '"' + arg.replace(/"/g, "\\\"") + '"';
+  return `"${arg.replace(/"/g, "\\\"")}"`;
 }
 
 export function launch (exe_path, args=[]) {

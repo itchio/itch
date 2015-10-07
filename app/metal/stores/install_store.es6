@@ -238,8 +238,8 @@ class AppInstall {
     });
 
     r.on('progress', (state) => {
-      this.progress = 0.01 * state.percent
-      this.emit_change()
+      this.progress = 0.01 * state.percent;
+      this.emit_change();
     });
 
     mkdirp.sync(path.dirname(this.archive_path));

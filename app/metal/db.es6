@@ -24,7 +24,7 @@ function is_date (name) {
 function to_date (text) {
   let matches = text.match(/^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)(\.\d*)?$/);
   if (!matches) {
-    throw new Error("Invalid date: #{text}");
+    throw new Error(`Invalid date: ${text}`);
   }
   let [, year, month, day, hour, min, sec] = matches;
   return new Date(Date.UTC(year, month - 1, day, hour, min, sec));
