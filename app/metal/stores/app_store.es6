@@ -99,7 +99,7 @@ function fetch_games() {
         db.find({_table: 'games', user_id: own_id}).then(Immutable).then((games) => {
           if (state.library.panel != "dashboard") return;
           merge_state({library: {games}});
-          AppStore.emit_change()
+          AppStore.emit_change();
         });
       }
 
@@ -123,7 +123,7 @@ function fetch_games() {
         }).then(Immutable).then((games) => {
           if (state.library.panel != "owned") return
           merge_state({library: {games}});
-          AppStore.emit_change()
+          AppStore.emit_change();
         });
       }
 
@@ -212,13 +212,13 @@ function login_key (key) {
     merge_state({login: {errors}});
   }).finally(() =>{
     merge_state({login: {loading: false}});
-    AppStore.emit_change()
+    AppStore.emit_change();
   });
 }
 
 function login_with_password (username, password) {
   merge_state({login: {loading: true}});
-  AppStore.emit_change()
+  AppStore.emit_change();
 
   api.client.login_with_password(username, password).then((res) => {
     defer(() => {
