@@ -1,6 +1,6 @@
 
 import React from 'react'
-import {Layout} from './components/layout'
+import {Layout} from './chrome/components/layout'
 
 document.addEventListener('DOMContentLoaded', () => {
   React.render(<Layout/>, document.body)
@@ -22,4 +22,3 @@ window.addEventListener('keydown', (e) => {
       break
   }
 })
-

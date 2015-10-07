@@ -9,7 +9,6 @@ npm-debug.log
 /app/chrome/**/*.js
 /app/main.js
 /app/maps
-/app/chrome/maps
 
 # electron package-building stuff
 /build
