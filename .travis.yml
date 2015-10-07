@@ -1,6 +1,9 @@
 language: node_js
 node_js:
   - '4.1'
+os:
+  - linux
+  - osx
 before_install:
   - npm install -g gulp standard babel-eslint
   - npm install
