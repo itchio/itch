@@ -1,54 +1,54 @@
 
 .login_page {
-    background: url('../static/images/stock_blue.jpg') 50% 50% no-repeat;
-    background-size: cover;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+  background: url('../static/images/stock_blue.jpg') 50% 50% no-repeat;
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    .login_form {
-        max-width: 400px;
+  .login_form {
+    max-width: 400px;
+  }
+
+  .logo {
+    width: 200px;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 10px;
+  }
+
+  .form_errors {
+    margin: 0;
+    margin-bottom: 20px;
+  }
+
+  .login_box {
+    background: white;
+    overflow: hidden;
+    border-radius: 3px;
+    min-width: 400px;
+
+    h1 {
+      margin: 0;
+      padding: 18px 30px;
+      border-bottom: 1px solid $border_color;
+      font-size: 24px;
+      font-weight: bold;
     }
 
-    .logo {
-        width: 200px;
-        display: block;
-        margin: 0 auto;
-        margin-bottom: 10px;
+    .form {
+      padding: 25px 30px;
     }
 
-    .form_errors {
-        margin: 0;
-        margin-bottom: 20px;
+    .button {
+      min-width: 100px;
     }
-
-    .login_box {
-        background: white;
-        overflow: hidden;
-        border-radius: 3px;
-        min-width: 400px;
-
-        h1 {
-            margin: 0;
-            padding: 18px 30px;
-            border-bottom: 1px solid $border_color;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .form {
-            padding: 25px 30px;
-        }
-
-        .button {
-            min-width: 100px;
-        }
-    }
+  }
 
 }

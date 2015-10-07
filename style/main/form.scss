@@ -1,116 +1,121 @@
 .form {
-    .input_row {
-        margin-bottom: 20px;
+  .input_row {
+    margin-bottom: 20px;
 
-        ul.radio_list, ul.check_list {
-            margin: 0;
-            padding: 0;
+    ul.radio_list,
+    ul.check_list {
+      margin: 0;
+      padding: 0;
 
-            li {
-                list-style: none;
-                margin: 8px 10px;
-                padding: 0;
-                color: #444;
-            }
-
-            input {
-                vertical-align: middle;
-                margin: 0 5px 0 0;
-            }
-        }
-    }
-
-    .label {
+      li {
+        list-style: none;
+        margin: 8px 10px;
+        padding: 0;
         color: #444;
-        font-weight: bold;
+      }
 
-    }
-
-    .label, label {
-        .sub {
-            font-weight: normal;
-            color: $body_color_light;
-
-            a {
-                color: #444;
-            }
-        }
-    }
-
-    input[type="text"], input[type="password"], input[type="email"], textarea {
-        @include border_box;
-        width: 100%;
-
-        border: 2px solid darken($border_color, 5%);
-        padding: 8px;
-        border-radius: 2px;
-        margin: 6px 0;
-
-        color: #333;
-
-        &:focus {
-            outline: none;
-            border-color: #aaa;
-        }
-
-        &.simple_border {
-            border: 1px solid #aaa;
-            padding: 4px;
-            color: #333;
-            width: auto;
-        }
-
-        &.big_input {
-            font-size: 24px;
-        }
-
-        &.medium_input {
-            font-size: 16px;
-        }
-
-        &.inline_input {
-            width: auto;
-        }
-    }
-
-    input[type="checkbox"] {
+      input {
         vertical-align: middle;
+        margin: 0 5px 0 0;
+      }
+    }
+  }
+
+  .label {
+    color: #444;
+    font-weight: bold;
+
+  }
+
+  .label,
+  label {
+    .sub {
+      font-weight: normal;
+      color: $body_color_light;
+
+      a {
+        color: #444;
+      }
+    }
+  }
+
+  input[type='text'],
+  input[type='password'],
+  input[type='email'],
+  textarea {
+    @include border_box;
+    width: 100%;
+
+    border: 2px solid darken($border_color, 5%);
+    padding: 8px;
+    border-radius: 2px;
+    margin: 6px 0;
+
+    color: #333;
+
+    &:focus {
+      outline: none;
+      border-color: #aaa;
     }
 
-    select {
-        margin: 6px 0;
+    &.simple_border {
+      border: 1px solid #aaa;
+      padding: 4px;
+      color: #333;
+      width: auto;
     }
 
-    .buttons {
-        margin-top: 20px;
-        color: $body_color_lighter;
-
-        .button {
-            margin-right: 10px;
-        }
-
-        a {
-            color: $body_color_light;
-        }
-
-        .right_buttons {
-            line-height: $button_height;
-            float: right;
-        }
+    &.big_input {
+      font-size: 24px;
     }
+
+    &.medium_input {
+      font-size: 16px;
+    }
+
+    &.inline_input {
+      width: auto;
+    }
+  }
+
+  input[type='checkbox'] {
+    vertical-align: middle;
+  }
+
+  select {
+    margin: 6px 0;
+  }
+
+  .buttons {
+    margin-top: 20px;
+    color: $body_color_lighter;
+
+    .button {
+      margin-right: 10px;
+    }
+
+    a {
+      color: $body_color_light;
+    }
+
+    .right_buttons {
+      line-height: $button_height;
+      float: right;
+    }
+  }
 }
 
 .form_errors {
-    color: $error_color;
-    font-size: 16px;
+  color: $error_color;
+  font-size: 16px;
 }
 
 fieldset {
-    border: 1px solid $border_color;
-    margin-bottom: 20px;
+  border: 1px solid $border_color;
+  margin-bottom: 20px;
 
-    legend {
-        font-weight: bold;
-        color: #444;
-    }
+  legend {
+    font-weight: bold;
+    color: #444;
+  }
 }

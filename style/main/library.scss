@@ -5,255 +5,260 @@ $cell_width: 185px;
 $cell_height: $cell_width * $cell_ratio;
 
 .library_page {
-    $sidebar_width: 250px;
+  $sidebar_width: 250px;
 
-    background: #333;
-    color: white;
+  background: #333;
+  color: white;
 
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  .user_panel {
+    @include border_box;
+    height: $user_panel_height;
+    line-height: $user_panel_height;
+    padding: 0 8px;
+    color: rgba(white, .4);
+
+    .avatar {
+      vertical-align: middle;
+      width: 24px;
+      height: 24px;
+      border: 1px solid #333;
+      border-radius: 2px;
+    }
+
+    .username {
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+  }
+
+  .sidebar {
+    background: #232323;
+    width: $sidebar_width;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    font-size: 12px;
+    height: 100%;
+
+    h3 {
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 13px;
+      color: #777;
+      margin-left: 8px;
+      margin: 5px 0 0 0;
+      padding: 6px 0 4px 8px;
+    }
+
+    .panel_links {
+      position: absolute;
+      top: 40px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding-bottom: 10px;
+      overflow-y: auto;
+      border-right: 1px solid rgba(black, .1);
+
+      .panel_link {
+        padding: 7px 8px;
+        color: rgba(white, .8);
+        cursor: pointer;
+
+        span.icon {
+          margin-right: 8px;
+        }
+
+        &:hover {
+          background: rgba(black, .1);
+        }
+
+        &.current {
+          color: white;
+          background: rgba(white, .1);
+        }
+
+        .progress_outer {
+          margin-top: 5px;
+          width: 100%;
+          height: 3px;
+          background: #444;
+
+          .progress_inner {
+            height: 100%;
+            background: #666;
+          }
+        }
+
+        .form_errors {
+          &,
+          li {
+            list-style-type: none;
+            font-size: inherit;
+          }
+          margin: 0;
+          margin-top: 5px;
+          padding: 3px 5px;
+          color: #cc6767;
+        }
+      }
+
+    }
+
+    &.frameless {
+      .user_panel {
+        margin-top: 20px;
+      }
+
+      .panel_links {
+        top: 60px;
+      }
+    }
+  }
+
+  .main_content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: $sidebar_width;
+    right: 0;
+    overflow: auto;
+  }
+
+  .game_list {
+    padding: 30px 20px 0 20px;
+  }
+
+  .game_cell {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 10px 40px 10px;
+    max-width: $cell_width;
+
+    .bordered {
+      background: rgba(0, 0, 0, .5);
+
+      width: $cell_width;
+      height: $cell_height;
+
+      position: relative;
+      border-radius: 2px;
+      box-shadow: 0 0 0 2px #222;
+
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .game_thumb {
+      @include transition(opacity .20s ease-in-out);
+
+      vertical-align: top;
+      display: block;
+      position: absolute;
+      border-radius: 2px;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3);
+      background-position: 50% 50%;
+      background-size: cover;
+      cursor: pointer;
+    }
+
+    .game_title,
+    .game_author {
+      @include single_line;
+    }
+
+    .game_title {
+      color: #eee;
+    }
+
+    .game_author {
+      color: #aaa;
+    }
+
+    .game_launch {
+      margin-top: 8px;
+
+      .icon {
+        margin-right: 5px;
+      }
+    }
+
+  }
+
+  .game_box {
+    .upload_row {
+      margin: 10px 0;
+
+      .download_btn,
+      .upload_name,
+      .upload_size {
+        margin-right: 15px;
+      }
+
+      .upload_name {
+        font-weight: bold;
+      }
+
+      .upload_size {
+        color: $body_color_light;
+      }
+
+      button {
+        @include button($button_color);
+      }
+    }
+  }
+
+
+  .lightbox_container {
+    color: $body_color;
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
+    background: rgba(black, .5);
+    overflow: auto;
 
-    .user_panel {
-        @include border_box;
-        height: $user_panel_height;
-        line-height: $user_panel_height;
-        padding: 0 8px;
-        color: rgba(white, 0.4);
+    .lightbox {
+      position: relative;
+      background: white;
+      overflow: hidden;
+      border-radius: 3px;
+      min-width: 400px;
+      max-width: 80%;
+      margin: 40px auto;
 
-        .avatar {
-            vertical-align: middle;
-            width: 24px;
-            height: 24px;
-            border: 1px solid #333;
-            border-radius: 2px;
-        }
-
-        .username {
-            display: inline-block;
-            vertical-align: middle;
-            margin-left: 8px;
-        }
-    }
-
-    .sidebar {
-        background: #232323;
-        width: $sidebar_width;
+      .lightbox_close {
         position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        font-size: 12px;
-        height: 100%;
+        top: 5px;
+        right: 15px;
+        font-size: 30px;
+        color: #999;
+        cursor: pointer;
+      }
 
-        h3 {
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 13px;
-            color: #777;
-            margin-left: 8px;
-            margin: 5px 0 0 0;
-            padding: 6px 0 4px 8px;
-        }
+      .lightbox_header {
+        border-bottom: 1px solid $border_color;
+        padding: 20px;
+        font-size: 24px;
+      }
 
-        .panel_links {
-            position: absolute;
-            top: 40px;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding-bottom: 10px;
-            overflow-y: auto;
-            border-right: 1px solid rgba(black, 0.1);
-
-            .panel_link {
-                padding: 7px 8px;
-                color: rgba(white, 0.8);
-                cursor: pointer;
-
-                span.icon {
-                    margin-right: 8px;
-                }
-
-                &:hover {
-                    background: rgba(black, 0.1);
-                }
-
-                &.current {
-                    color: white;
-                    background: rgba(white, 0.1);
-                }
-
-                .progress_outer {
-                    margin-top: 5px;
-                    width: 100%;
-                    height: 3px;
-                    background: #444;
-
-                    .progress_inner {
-                        height: 100%;
-                        background: #666;
-                    }
-                }
-
-                .form_errors {
-                    &, li {
-                        list-style-type: none;
-                        font-size: inherit;
-                    }
-                    margin: 0;
-                    margin-top: 5px;
-                    padding: 3px 5px;
-                    color: #CC6767;
-                }
-            }
-
-        }
-
-        &.frameless {
-            .user_panel {
-                margin-top: 20px;
-            }
-
-            .panel_links {
-                top: 60px;
-            }
-        }
+      .lightbox_content {
+        padding: 20px;
+      }
     }
-
-    .main_content {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: $sidebar_width;
-        right: 0;
-        overflow: auto;
-    }
-
-    .game_list {
-        padding: 30px 20px 0 20px;
-    }
-
-    .game_cell {
-        display: inline-block;
-        vertical-align: top;
-        margin: 0 10px 40px 10px;
-        max-width: $cell_width;
-
-        .bordered {
-            background: rgba(0,0,0,.5);
-
-            width: $cell_width;
-            height: $cell_height;
-
-            position: relative;
-            border-radius: 2px;
-            box-shadow: 0 0 0 2px #222;
-
-            margin-bottom: 10px;
-            overflow: hidden;
-        }
-
-        .game_thumb {
-            @include transition(opacity 0.20s ease-in-out);
-
-            vertical-align: top;
-            display: block;
-            position: absolute;
-            border-radius: 2px;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255, 0.3);
-            background-position: 50% 50%;
-            background-size: cover;
-            cursor: pointer;
-        }
-
-        .game_title, .game_author {
-            @include single_line;
-        }
-
-        .game_title {
-            color: #eee;
-        }
-
-        .game_author {
-            color: #aaa;
-        }
-
-        .game_launch {
-            margin-top: 8px;
-            .icon {
-                margin-right: 5px;
-            }
-        }
-
-    }
-
-    .game_box {
-        .upload_row {
-            margin: 10px 0;
-
-            .download_btn, .upload_name, .upload_size {
-                margin-right: 15px;
-            }
-
-            .upload_name {
-                font-weight: bold;
-            }
-
-            .upload_size {
-                color: $body_color_light;
-            }
-
-            button {
-                @include button($button_color);
-            }
-        }
-    }
-
-
-    .lightbox_container {
-        color: $body_color;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        background: rgba(black, 0.5);
-        overflow: auto;
-
-        .lightbox {
-            position: relative;
-            background: white;
-            overflow: hidden;
-            border-radius: 3px;
-            min-width: 400px;
-            max-width: 80%;
-            margin: 40px auto;
-
-            .lightbox_close {
-                position: absolute;
-                top: 5px;
-                right: 15px;
-                font-size: 30px;
-                color: #999;
-                cursor: pointer;
-            }
-
-            .lightbox_header {
-                border-bottom: 1px solid $border_color;
-                padding: 20px;
-                font-size: 24px;
-            }
-
-            .lightbox_content {
-                padding: 20px;
-            }
-        }
-    }
+  }
 }

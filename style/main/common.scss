@@ -4,20 +4,20 @@ $body_color: #333;
 $body_color_light: #666;
 $body_color_lighter: #999;
 
-$button_color: #FA5C5C;
+$button_color: #fa5c5c;
 $button_height: 35px;
-$light_button_color: #FF8080;
-$light_highlight_color: #FFF0F0;
+$light_button_color: #ff8080;
+$light_highlight_color: #fff0f0;
 $header_color: $button_color;
 
-$link_color: #DD4A4A;
-$error_color: #D14343;
-$warning_color: #EFEEBF;
-$success_color: #B9E8A1;
+$link_color: #dd4a4a;
+$error_color: #d14343;
+$warning_color: #efeebf;
+$success_color: #b9e8a1;
 
-$buy_color: #24C091;
-$sale_color: #FFC200;
-$bundle_color: #C17DFF;
+$buy_color: #24c091;
+$sale_color: #ffc200;
+$bundle_color: #c17dff;
 
 $header_height: 50px;
 
@@ -34,505 +34,508 @@ $gray_back: #f4f4f4;
 
 
 @mixin unselectable {
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 @mixin default_font {
-    font-family: Lato, sans-serif;
+  font-family: Lato, sans-serif;
 }
 
 @mixin grad($top, $bottom) {
-    background-color: mix($top, $bottom);
-    background-image: linear-gradient(bottom, $bottom 0%, $top 100%);
-    background-image: -webkit-linear-gradient(bottom, $bottom 0%, $top 100%);
-    background-image: -moz-linear-gradient(bottom, $bottom 0%, $top 100%);
-    background-image: -o-linear-gradient(bottom, $bottom 0%, $top 100%);
-    background-image: -ms-linear-gradient(bottom, $bottom 0%, $top 100%);
+  background-color: mix($top, $bottom);
+  background-image: linear-gradient(bottom, $bottom 0%, $top 100%);
+  background-image: -webkit-linear-gradient(bottom, $bottom 0%, $top 100%);
+  background-image: -moz-linear-gradient(bottom, $bottom 0%, $top 100%);
+  background-image: -o-linear-gradient(bottom, $bottom 0%, $top 100%);
+  background-image: -ms-linear-gradient(bottom, $bottom 0%, $top 100%);
 }
 
 @mixin grad3($top, $mid, $bottom) {
-    background-color: mix($top, $bottom);
-    background-image: linear-gradient(bottom, $bottom 10%, $mid 20%, $top 100%);
-    background-image: -webkit-linear-gradient(bottom, $bottom 10%, $mid 20%, $top 100%);
-    background-image: -moz-linear-gradient(bottom, $bottom 10%, $mid 20%, $top 100%);
-    background-image: -o-linear-gradient(bottom, $bottom 10%, $mid 20%, $top 100%);
-    background-image: -ms-linear-gradient(bottom, $bottom 10%, $mid 20%, $top 100%);
+  background-color: mix($top, $bottom);
+  background-image: linear-gradient(bottom, $bottom 10%, $mid 20%, $top 100%);
+  background-image: -webkit-linear-gradient(bottom, $bottom 10%, $mid 20%, $top 100%);
+  background-image: -moz-linear-gradient(bottom, $bottom 10%, $mid 20%, $top 100%);
+  background-image: -o-linear-gradient(bottom, $bottom 10%, $mid 20%, $top 100%);
+  background-image: -ms-linear-gradient(bottom, $bottom 10%, $mid 20%, $top 100%);
 }
 
 @mixin border_box {
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
 }
 
 @mixin transition($args...) {
-    -webkit-transition: $args;
-    -moz-transition: $args;
-    -ms-transition: $args;
-    transition: $args;
-}
-
-@mixin prefixed($prop, $args...) {
-    -webkit-#{$prop}: $args;
-    -moz-#{$prop}: $args;
-    -ms-#{$prop}: $args;
-    #{$prop}: $args;
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -ms-transition: $args;
+  transition: $args;
 }
 
 @mixin keyframes($name) {
-    @-webkit-keyframes #{$name} {
-        @content;
-    }
-    @-moz-keyframes #{$name} {
-        @content;
-    }
-    @-ms-keyframes #{$name} {
-        @content;
-    }
-    @keyframes #{$name} {
-        @content;
-    }
+  @-webkit-keyframes #{$name} {
+    @content;
+  }
+  @-moz-keyframes #{$name} {
+    @content;
+  }
+  @-ms-keyframes #{$name} {
+    @content;
+  }
+  @keyframes #{$name} {
+    @content;
+  }
 }
 
 @mixin autograd($color, $amount: 10%) {
-    @include grad($color, darken($color, $amount));
+  @include grad($color, darken($color, $amount));
 }
 
 @function grid_width($size, $divisions: 8, $gutter: 20px, $width: $site_width) {
-    @return floor($size * (($width - (($divisions - 1) * $gutter)) / $divisions) + ($size - 1) * $gutter);
+  @return floor($size * (($width - (($divisions - 1) * $gutter)) / $divisions) + ($size - 1) * $gutter);
 }
 
 @mixin grid_cell($size, $divisions: 8, $gutter: 20px, $width: $site_width, $reset_font: true) {
-    display: inline-block;
-    vertical-align: top;
-    @if ($reset_font) {
-        font-size: $font_size;
-    }
+  display: inline-block;
+  vertical-align: top;
+  @if ($reset_font) {
+    font-size: $font_size;
+  }
 
-    width: grid_width($size, $divisions, $gutter, $width);
-    margin-right: $gutter;
+  width: grid_width($size, $divisions, $gutter, $width);
+  margin-right: $gutter;
 
-    &:last-child, &.last {
-        margin-right: 0;
-    }
+  &:last-child,
+  &.last {
+    margin-right: 0;
+  }
 }
 
 @mixin button($bcolor, $height: 35px, $fz: $font_size - 2px, $depress: true, $desaturate: 30%) {
-     @include unselectable;
-     @include border_box;
-     $bg_shadow_color: desaturate(darken($bcolor, 12%), $desaturate);
+  @include unselectable;
+  @include border_box;
+  $bg_shadow_color: desaturate(darken($bcolor, 12%), $desaturate);
 
-     display: inline-block;
+  display: inline-block;
 
-     background: $bcolor;
-     color: white;
-     text-decoration: none;
-     padding: 0 10px;
-     font-size: $fz;
-     text-shadow: 0 1px 0 $bg_shadow_color;
+  background: $bcolor;
+  color: white;
+  text-decoration: none;
+  padding: 0 10px;
+  font-size: $fz;
+  text-shadow: 0 1px 0 $bg_shadow_color;
 
-     cursor: pointer;
-     border-radius: 3px;
-     border: none;
-     border: 1px solid rgba(0, 0, 0, 0.1);
-     box-shadow: inset 0 0 1px rgba(255, 255, 255, 0.21);
-     text-align: center;
+  cursor: pointer;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, .1);
+  box-shadow: inset 0 0 1px rgba(255, 255, 255, .21);
+  text-align: center;
 
-     line-height: $height - 2px;
-     font-weight: bold;
-     height: $height;
+  line-height: $height - 2px;
+  font-weight: bold;
+  height: $height;
 
-     &:hover {
-         background: lighten($bcolor, 2%);
-     }
+  &:hover {
+    background: lighten($bcolor, 2%);
+  }
 
-     &:active {
-         background-color: darken(desaturate($bcolor, 20%), 8%);
-         @if $depress {
-             position: relative;
-             top: 1px;
-         }
-     }
- }
+  &:active {
+    background-color: darken(desaturate($bcolor, 20%), 8%);
+    @if $depress {
+      position: relative;
+      top: 1px;
+    }
+  }
+}
 
 @mixin outline_button($hover: true, $light_bg: false) {
-    @include border_box;
-    @include transition(all 0.2s ease);
+  @include border_box;
+  @include transition(all .2s ease);
 
-    display: inline-block;
-    border-radius: 4px;
-    text-decoration: none;
-    padding: 3px 10px;
-    font-size: 14px;
-    letter-spacing: 0.025em;
-    white-space: nowrap;
+  display: inline-block;
+  border-radius: 4px;
+  text-decoration: none;
+  padding: 3px 10px;
+  font-size: 14px;
+  letter-spacing: .025em;
+  white-space: nowrap;
 
-    @if $light_bg {
-        border: 2px solid lighten(black, 80%);
-        color: #444;
-    } @else {
-        border: 2px solid darken(white, 20%);
-        color: white;
+  @if $light_bg {
+    border: 2px solid lighten(black, 80%);
+    color: #444;
+  } @else {
+    border: 2px solid darken(white, 20%);
+    color: white;
+  }
+
+  @if $hover {
+    &:hover {
+      background: white;
+      color: #333;
+
+      color: white;
+      background: $button_color;
+      border-color: $button_color;
     }
 
-    @if $hover {
-        &:hover {
-            background: white;
-            color: #333;
+    &:active {
+      $depress_color: darken(desaturate($button_color, 20%), 8%);
 
-            color: white;
-            background: $button_color;
-            border-color: $button_color;
-        }
-
-        &:active {
-            $depress_color: darken(desaturate($button_color, 20%), 8%);
-
-            background: $depress_color;
-            border-color: $depress_color;
-        }
+      background: $depress_color;
+      border-color: $depress_color;
     }
+  }
 }
 
 @mixin action_button {
-    @include unselectable;
-    display: inline-block;
+  @include unselectable;
+  display: inline-block;
 
-    background: black;
-    background: rgba(30,30,30, 0.5);
-    color: #eee;
-    font-size: 12px;
-    border: 1px solid rgba(10,10,10, 0.5);
-    border-radius: 2px;
-    padding: 2px 4px;
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
-    cursor: pointer;
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
-    margin-bottom: 10px;
-    text-decoration: none;
+  background: black;
+  background: rgba(30, 30, 30, .5);
+  color: #eee;
+  font-size: 12px;
+  border: 1px solid rgba(10, 10, 10, .5);
+  border-radius: 2px;
+  padding: 2px 4px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, .5);
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .2);
+  margin-bottom: 10px;
+  text-decoration: none;
 
-    .icon {
-        margin-right: 5px;
-    }
+  .icon {
+    margin-right: 5px;
+  }
 
-    &:hover {
-        background: rgba(38,38,38, 0.5);
-    }
+  &:hover {
+    background: rgba(38, 38, 38, .5);
+  }
 }
 
 @mixin clearfix {
-    *zoom: 1;
-    &:before, &:after {
-        content: " ";
-        display: table;
-    }
+  *zoom: 1;
 
-    &:after {
-        clear: both;
-    }
+  &:before,
+  &:after {
+    content: ' ';
+    display: table;
+  }
+
+  &:after {
+    clear: both;
+  }
 }
 
 @mixin ellipsis($width) {
-    max-width: $width;
-    display: inline-block;
-    white-space: nowrap;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
+  max-width: $width;
+  display: inline-block;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 
 @mixin opacity($opacity) {
-    opacity: $opacity;
-    .ie & {
-        $percent: round($opacity * 100);;
-        filter: unquote("alpha(opacity=#{$percent})");
-        -ms-filter: unquote('"progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$percent})"');
-    }
+  opacity: $opacity;
+
+  .ie & {
+    $percent: round($opacity * 100);;
+    filter: unquote('alpha(opacity=#{$percent})');
+    -ms-filter: unquote('"progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$percent})"');
+  }
 }
 
 @mixin single_line {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @mixin thumbnail_style {
-    box-shadow: 0 0 0 2px white, 0 0 0 4px lighten(#dadada, 8%);
+  box-shadow: 0 0 0 2px white, 0 0 0 4px lighten(#dadada, 8%);
 }
 
 @mixin thumbnail_size($width: null, $height: null) {
-    @if ($width) {
-        width: $width;
-        height: floor($width / $game_thumb_width * $game_thumb_height);
-    } @else {
-        width: floor($height / $game_thumb_height * $game_thumb_width);
-        height: $height;
-    }
+  @if ($width) {
+    width: $width;
+    height: floor($width / $game_thumb_width * $game_thumb_height);
+  } @else {
+    width: floor($height / $game_thumb_height * $game_thumb_width);
+    height: $height;
+  }
 }
 
 
 @mixin has_game_cell_tools {
+  .game_cell_tools {
+    @include opacity(0);
+    @include transition(opacity .2s ease, top .2s ease);
+
+    position: absolute;
+    top: 5px;
+    right: 10px;
+
+    .action_btn {
+      @include action_button;
+      border: 4px solid $link_color;
+      background: rgba(30, 30, 30, .8);
+      font-size: 14px;
+      box-shadow: none;
+      border-radius: 3px;
+
+      &:hover {
+        border-color: lighten($link_color, 5%);
+        background: rgba(40, 40, 40, .8);
+      }
+    }
+
+  }
+
+  &:hover {
     .game_cell_tools {
-        position: absolute;
-        top: 5px;
-        right: 10px;
-        @include opacity(0);
-        @include transition(opacity 0.2s ease, top 0.2s ease);
-
-        .action_btn {
-            @include action_button;
-            border: 4px solid $link_color;
-            background: rgba(30,30,30,0.8);
-            font-size: 14px;
-            box-shadow: none;
-            border-radius: 3px;
-
-            &:hover {
-                border-color: lighten($link_color, 5%);
-                background: rgba(40,40,40,0.8);
-            }
-        }
-
+      @include opacity(1);
+      top: 10px;
     }
-
-    &:hover {
-        .game_cell_tools {
-            top: 10px;
-            @include opacity(1);
-        }
-    }
+  }
 }
 
 @mixin has_game_thumb {
-    .game_thumb {
-        background-color: white;
-        background-position: 50% 50%;
-        background-size: cover;
+  .game_thumb {
+    @include thumbnail_style;
 
-        display: block;
-        position: relative;
+    background-color: white;
+    background-position: 50% 50%;
+    background-size: cover;
 
-        width: $game_thumb_width;
-        height: $game_thumb_height;
-        @include thumbnail_style;
+    display: block;
+    position: relative;
 
-        .no_cover_text {
-            color: #dadada;
-            font-size: 120px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            margin-left: (-120px / 2);
-            margin-top: (-130px / 2);
-        }
+    width: $game_thumb_width;
+    height: $game_thumb_height;
+
+    .no_cover_text {
+      color: #dadada;
+      font-size: 120px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-left: (-120px / 2);
+      margin-top: (-130px / 2);
     }
+  }
 }
 
 
 @mixin hovering_admin_panel {
-    @include transition(opacity 0.2s ease);
-    @include border_box;
-    opacity: 0.5;
-    background: white;
-    border: 1px solid $border_color;
-    padding: 10px;
+  @include transition(opacity .2s ease);
+  @include border_box;
+  opacity: .5;
+  background: white;
+  border: 1px solid $border_color;
+  padding: 10px;
 
-    &:hover {
-        opacity: 1.0;
-    }
+  &:hover {
+    opacity: 1.0;
+  }
 
-    hr {
-        border: 0;
-        height: 1px;
-        background: $border_color;
-    }
+  hr {
+    border: 0;
+    height: 1px;
+    background: $border_color;
+  }
 }
 
 @mixin follow_button {
-    &.animate_bounce, &.animate_drop_down {
-        pointer-events: none;
-    }
+  &.animate_bounce,
+  &.animate_drop_down {
+    pointer-events: none;
+  }
 
-    &.is_following {
-        &:hover {
-            .unfollow_label {
-                display: inline;
-            }
+  &.is_following {
+    &:hover {
+      .unfollow_label {
+        display: inline;
+      }
 
-            .on_unfollow {
-                display: none;
-            }
-        }
-
-        .on_unfollow {
-            display: inline;
-        }
-
-        .on_follow {
-            display: none;
-        }
-    }
-
-    .on_unfollow, .unfollow_label {
+      .on_unfollow {
         display: none;
+      }
     }
+
+    .on_unfollow {
+      display: inline;
+    }
+
+    .on_follow {
+      display: none;
+    }
+  }
+
+  .on_unfollow,
+  .unfollow_label {
+    display: none;
+  }
 }
 
 @mixin responsive_tab_stat_header($narrow_width) {
-    overflow: hidden;
-    margin-bottom: 20px;
+  overflow: hidden;
+  margin-bottom: 20px;
 
-    .stat_header_inside {
-        width: $narrow_width;
-        margin: 0 auto;
+  .stat_header_inside {
+    width: $narrow_width;
+    margin: 0 auto;
 
-        @media (max-width: $narrow_width) {
-            width: auto;
-            margin: 0;
-            margin-left: 40px;
+    @media (max-width: $narrow_width) {
+      width: auto;
+      margin: 0;
+      margin-left: 40px;
 
-            .stats_container > {
-                a:last-child .stat_box, .stat_box:last-child {
-                    border-right: 0;
-                }
-            }
+      .stats_container > {
+        a:last-child .stat_box,
+        .stat_box:last-child {
+          border-right: 0;
         }
+      }
     }
+  }
 
-    .stat_box {
-        border-right: 1px solid $border_color;
-        border-left: 0;
-    }
+  .stat_box {
+    border-right: 1px solid $border_color;
+    border-left: 0;
+  }
 }
 
 @mixin has_grid_loader {
+  .grid_loader {
+    background: #f5f5f5;
+    color: $body_color_light;
+    text-align: center;
+    font-size: 14px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid $edge_border_color;
+    font-size: 16px;
+
+    .on_loading {
+      display: none;
+    }
+
+    .loader {
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+  }
+
+  &.loading {
     .grid_loader {
-        background: #f5f5f5;
-        color: $body_color_light;
-        text-align: center;
-        font-size: 14px;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-bottom: 2px solid $edge_border_color;
-        font-size: 16px;
+      .on_loading {
+        display: block;
+      }
 
-        .on_loading {
-            display: none;
-        }
-
-        .loader {
-            vertical-align: middle;
-            margin-right: 10px;
-        }
+      .next_page {
+        display: none;
+      }
     }
-
-    &.loading {
-        .grid_loader {
-            .on_loading {
-                display: block;
-            }
-
-            .next_page {
-                display: none;
-            }
-        }
-    }
+  }
 }
 
 @mixin form_errors {
-    form {
-        &.has_errors {
-            .form_errors {
-                display: block;
-            }
-        }
-
-        .form_errors {
-            display: none;
-            margin: 0 40px 30px 40px;
-            font-size: 16px;
-
-            li {
-                line-height: 1.5;
-            }
-        }
+  form {
+    &.has_errors {
+      .form_errors {
+        display: block;
+      }
     }
+
+    .form_errors {
+      display: none;
+      margin: 0 40px 30px 40px;
+      font-size: 16px;
+
+      li {
+        line-height: 1.5;
+      }
+    }
+  }
 }
 
 @mixin quotes {
-    &:before {
-        content: "“";
-        font-weight: normal;
-        color: $body_color_lighter;
-    }
+  &:before {
+    content: '“';
+    font-weight: normal;
+    color: $body_color_lighter;
+  }
 
-    &:after {
-        content: "”";
-        font-weight: normal;
-        color: $body_color_lighter;
-    }
+  &:after {
+    content: '”';
+    font-weight: normal;
+    color: $body_color_lighter;
+  }
 }
 
 @mixin help_icon {
-    @include unselectable;
-    display: inline-block;
-    border: 1px solid $border_color;
-    background: white;
-    border-radius: 20px;
-    width: 15px;
-    height: 15px;
-    line-height: 15px;
-    text-align: center;
-    font-size: 11px;
-    font-weight: bold;
-    margin-left: 5px;
-    cursor: default;
+  @include unselectable;
+  display: inline-block;
+  border: 1px solid $border_color;
+  background: white;
+  border-radius: 20px;
+  width: 15px;
+  height: 15px;
+  line-height: 15px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: bold;
+  margin-left: 5px;
+  cursor: default;
 
-    &:before {
-        content: "?";
-    }
+  &:before {
+    content: '?';
+  }
 }
 
 @mixin fullscreen {
-    &:-webkit-full-screen {
-        @content;
-    }
-    &:-moz-full-screen {
-        @content;
-    }
-    &:-o-full-screen {
-        @content;
-    }
-    &:fullscreen {
-        @content;
-    }
+  &:-webkit-full-screen {
+    @content;
+  }
+
+  &:-moz-full-screen {
+    @content;
+  }
+
+  &:-o-full-screen {
+    @content;
+  }
+
+  &:fullscreen {
+    @content;
+  }
 }
 
 @mixin carousel_paddle_colors($paddle_bg_color, $dark_bg: false) {
-    .paddle_next {
-        background: linear-gradient(to right, rgba($paddle_bg_color,0) 0%, rgba($paddle_bg_color,1) 50%, rgba($paddle_bg_color,1) 100%);
+  .paddle_next {
+    background: linear-gradient(to right, rgba($paddle_bg_color, 0) 0%, rgba($paddle_bg_color, 1) 50%, rgba($paddle_bg_color, 1) 100%);
 
-        .paddle_center_area:after {
-            @if ($dark_bg) {
-                background-image: url("/static/images/carousel-arrow-right-white.png");
-            } @else {
-                background-image: url("/static/images/carousel-arrow-right-dark.png");
-            }
-        }
+    .paddle_center_area:after {
+      @if ($dark_bg) {
+        background-image: url('/static/images/carousel-arrow-right-white.png');
+      } @else {
+        background-image: url('/static/images/carousel-arrow-right-dark.png');
+      }
+    }
+  }
+
+  .paddle_prev {
+    background: linear-gradient(to right, rgba($paddle_bg_color, 1) 0%, rgba($paddle_bg_color, 1) 50%, rgba($paddle_bg_color, 0) 100%);
+
+
+    .paddle_center_area:after {
+      @if ($dark_bg) {
+        background-image: url('/static/images/carousel-arrow-left-white.png');
+      } @else {
+        background-image: url('/static/images/carousel-arrow-left-dark.png');
+      }
     }
 
-    .paddle_prev {
-        background: linear-gradient(to right, rgba($paddle_bg_color,1) 0%, rgba($paddle_bg_color,1) 50%, rgba($paddle_bg_color,0) 100%);
-
-
-        .paddle_center_area:after {
-            @if ($dark_bg) {
-                background-image: url("/static/images/carousel-arrow-left-white.png");
-            } @else {
-                background-image: url("/static/images/carousel-arrow-left-dark.png");
-            }
-        }
-
-    }
+  }
 }
-

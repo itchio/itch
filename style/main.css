@@ -321,7 +321,7 @@ p {
     .library_page .game_cell .bordered {
       background: rgba(0, 0, 0, 0.5);
       width: 185px;
-      height: 146.45833px;
+      height: 146.458333333px;
       position: relative;
       border-radius: 2px;
       box-shadow: 0 0 0 2px #222;
@@ -422,3 +422,5 @@ p {
         font-size: 24px; }
       .library_page .lightbox_container .lightbox .lightbox_content {
         padding: 20px; }
+
+/*# sourceMappingURL=main.css.map */
