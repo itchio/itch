@@ -1,6 +1,4 @@
 build: off
-environment:
-  OS: cygwin
 install:
   - ps: Install-Product node 4.1
   - npm install -g gulp standard babel-eslint
@@ -10,8 +8,6 @@ install:
   - pushd spec\chrome && npm install & popd
   - npm install -g electron-prebuilt
 test_script:
-  - echo %OS%
-  - where electron
   - standard app/**/*.es6
   - electron spec/chrome --ci
   - echo Exit code is %errorlevel%
