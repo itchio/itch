@@ -108,8 +108,8 @@ class LibrarySidebar extends Component {
 
 LibrarySidebar.propTypes = {
   panel: PropTypes.string,
-  installs: PropTypes.array,
-  collections: PropTypes.array
+  installs: PropTypes.object,
+  collections: PropTypes.object
 }
 
 /**
