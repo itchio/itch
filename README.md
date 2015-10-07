@@ -30,14 +30,13 @@ Run the following commands:
 
 ```bash
 $ npm install
-$ (cd app && npm install)
-$ gulp
+$ gulp all
 ```
 
 You can now run the app:
 
 ```bash
-$ (cd app && electron .)
+$ electron .
 ```
 
 ## Screenshots

@@ -7,6 +7,7 @@ var package_path = path.join(__dirname, 'app', 'package.json')
 var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version
 var ico_path = 'app/static/images/itchio.ico'
 var icns_path = 'app/static/images/itchio.icns'
+var electron_version = '0.33.6'
 var out_dir = path.join('build', version)
 var company_name = 'Itch Corp'
 
@@ -19,7 +20,7 @@ module.exports = function (grunt) {
           name: 'itch.io',
           platform: 'win32',
           arch: 'ia32',
-          version: '0.33.4',
+          version: electron_version,
           out: out_dir,
           icon: ico_path,
           asar: true,
@@ -42,7 +43,7 @@ module.exports = function (grunt) {
           name: 'itch.io',
           platform: 'darwin',
           arch: 'x64',
-          version: '0.33.4',
+          version: electron_version,
           out: out_dir,
           icon: icns_path,
           asar: true,
@@ -55,7 +56,7 @@ module.exports = function (grunt) {
           name: 'itch.io',
           platform: 'linux',
           arch: 'all',
-          version: '0.33.4',
+          version: electron_version,
           out: out_dir,
           asar: true,
           'app-version': version

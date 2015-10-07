@@ -6,8 +6,8 @@ var plumber = require('gulp-plumber')
 var sourcemaps = require('gulp-sourcemaps')
 
 var paths = {
-  es6: ['./app/chrome/**/*.es6', './app/main.es6', './app/metal/**/*.es6'],
-  scss: ['./app/style/**/*.scss']
+  es6: ['./chrome/**/*.es6', './main.es6', './metal/**/*.es6'],
+  scss: ['./style/**/*.scss']
 }
 
 /*
@@ -16,12 +16,12 @@ var paths = {
 
 gulp.task('es6', function () {
   return gulp.src(paths.es6, {
-    base: './app/'
+    base: './'
   }).pipe(plumber())
   .pipe(sourcemaps.init())
   .pipe(babel())
   .pipe(sourcemaps.write('./maps'))
-  .pipe(gulp.dest('./app/'))
+  .pipe(gulp.dest('./'))
 })
 
 /*
@@ -29,10 +29,10 @@ gulp.task('es6', function () {
  */
 
 gulp.task('scss', function () {
-  return gulp.src('./app/style/main.scss')
+  return gulp.src('./style/main.scss')
   .pipe(plumber())
   .pipe(sass().on('error', sass.logError))
-  .pipe(gulp.dest('./app/style'))
+  .pipe(gulp.dest('./style'))
 })
 
 /*
