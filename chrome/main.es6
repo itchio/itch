@@ -1,13 +1,14 @@
 
+import ReactDOM from 'react-dom'
 import React from 'react'
 import {Layout} from './chrome/components/layout'
 
 document.addEventListener('DOMContentLoaded', () => {
-  React.render(<Layout/>, document.body)
+  ReactDOM.render(<Layout/>, document.body)
 })
 
 window.addEventListener('beforeunload', () => {
-  React.unmountComponentAtNode(document.body)
+  ReactDOM.unmountComponentAtNode(document.body)
 })
 
 window.addEventListener('keydown', (e) => {
