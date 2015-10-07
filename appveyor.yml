@@ -3,7 +3,6 @@ install:
   - ps: Install-Product node 4.1
   - npm install -g gulp
   - npm install
-  - pushd app && npm install & popd
   - gulp all
   - pushd spec\chrome && npm install & popd
   - npm install -g electron-prebuilt
