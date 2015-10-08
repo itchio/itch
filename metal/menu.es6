@@ -3,7 +3,8 @@ import Menu from 'menu'
 import AppStore from './stores/app_store'
 import AppActions from './actions/app_actions'
 import AppDispatcher from './dispatcher/app_dispatcher'
-import defer from './defer'
+
+import defer from './util/defer'
 
 function refresh_menu () {
   let repo_url = 'https://github.com/itchio/itchio-app'
@@ -159,4 +160,3 @@ export function install () {
     }
   })
 }
-

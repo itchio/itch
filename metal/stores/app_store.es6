@@ -8,7 +8,7 @@ import _ from 'underscore'
 import AppDispatcher from '../dispatcher/app_dispatcher'
 import AppConstants from '../constants/app_constants'
 import AppActions from '../actions/app_actions'
-import defer from '../defer'
+import defer from '../util/defer'
 
 import config from '../config'
 import api from '../api'

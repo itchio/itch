@@ -11,7 +11,9 @@ import Humanize from 'humanize-plus'
 import keyMirror from 'keymirror'
 
 import os from '../util/os'
-import defer from '../defer'
+import log from '../util/log'
+import defer from '../util/defer'
+
 import db from '../db'
 
 import extractor from '../extractor'
@@ -36,6 +38,7 @@ let InstallState = keyMirror({
 
 class AppInstall {
   setup (opts) {
+    this.logger = new log.Logger()
     let data = {
       _table: 'installs',
       game_id: opts.game.id,
@@ -241,10 +244,17 @@ class AppInstall {
   extract () {
     this.set_state(InstallState.EXTRACTING)
 
-    extractor.extract(this.archive_path, this.app_path).progress((state) => {
-      this.progress = 0.01 * state.percent
-      this.emit_change()
-    }).then((res) => {
+    let opts = {
+      archive_path: this.archive_path,
+      dest_path: this.app_path,
+      logger: this.logger,
+      onprogress: (state) => {
+        console.log(`In install store, got onprogress: ${JSON.stringify(state)}`)
+        this.progress = 0.01 * state.percent
+        this.emit_change()
+      }
+    }
+    extractor.extract(opts).then((res) => {
       console.log(`Extracted ${res.total_size} bytes total`)
       this.set_state(InstallState.IDLE)
     }).catch((e) => {

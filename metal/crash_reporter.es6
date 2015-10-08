@@ -60,7 +60,7 @@ ${log}
       // well, we tried.
       console.log(`Error in error handler: ${e.stack}`)
     } finally {
-      require('app').quit()
+      process.exit(1)
     }
   })
 }
