@@ -10,6 +10,7 @@ import Humanize from 'humanize-plus'
 
 import keyMirror from 'keymirror'
 
+import os from '../util/os'
 import defer from '../defer'
 import db from '../db'
 
@@ -103,20 +104,7 @@ class AppInstall {
       let { uploads } = res
 
       // filter uploads to find one relevant to our current platform
-      let prop
-
-      switch (process.platform) {
-        case 'darwin':
-          prop = 'p_osx'
-          break
-        case 'win32':
-          prop = 'p_windows'
-          break
-        case 'linux':
-          prop = 'p_linux'
-          break
-      }
-
+      let prop = `p_${os.itch_platform()}`
       let interesting_uploads = uploads.filter((upload) => !!upload[prop])
 
       let scored_uploads = interesting_uploads.map((upload) => {

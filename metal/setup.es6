@@ -6,6 +6,7 @@ import path from 'path'
 import request from 'request'
 import mkdirp from 'mkdirp'
 
+import os from './util/os'
 let fs = Promise.promisifyAll(require('fs'))
 
 export function run () {
@@ -25,7 +26,7 @@ export function run () {
       let prefix = 'https://cdn.rawgit.com/itchio/7za-binaries/v9.20/'
       let file
 
-      switch (process.platform) {
+      switch (os.platform()) {
         case 'win32':
           file = '7za.exe'
           break
@@ -61,7 +62,7 @@ export function run () {
       r.pipe(dst).on('close', (e) => {
         handlers.onstatus('7-zip downloaded.')
         console.log('Done downloading 7za!')
-        switch (process.platform) {
+        switch (os.platform()) {
           case 'win32':
             // all good
             resolve()

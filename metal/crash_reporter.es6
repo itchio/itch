@@ -8,13 +8,14 @@ export function install () {
       let fs = require('fs')
       let path = require('path')
       let mkdirp = require('mkdirp')
+      let platform = require('./util/os').platform()
       let crash_file = path.join(app.getPath('userData'), 'crash_logs', `${+new Date()}.log`)
       mkdirp.sync(path.dirname(crash_file))
 
       let log = ''
       log += e.stack
 
-      if (process.platform === 'win32') {
+      if (platform === 'win32') {
         log = log.replace(/\n/g, '\r\n')
       }
       fs.writeFileSync(crash_file, log)
@@ -32,7 +33,7 @@ export function install () {
         case 0: { // Report issue
           let querystring = require('querystring')
           let query = querystring.stringify({
-            title: `[${process.platform}] Crash report for v${app.getVersion()}`,
+            title: `[${platform}] Crash report for v${app.getVersion()}`,
             body:
 `Crash log:
 
@@ -65,4 +66,3 @@ ${log}
 }
 
 export default { install }
-

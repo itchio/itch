@@ -4,6 +4,7 @@ import app from 'app'
 import main_window from './main_window'
 import AppConstants from './constants/app_constants'
 import AppDispatcher from './dispatcher/app_dispatcher'
+import os from './util/os'
 
 function set_progress_bar (alpha) {
   let win = main_window.get()
@@ -45,7 +46,7 @@ export function install () {
 
       case AppConstants.NOTIFY: {
         let { message } = action
-        switch (process.platform) {
+        switch (os.platform()) {
           case 'win32':
             let {main_tray} = app
             if (!main_tray) return
@@ -69,4 +70,3 @@ export function install () {
     }
   })
 }
-

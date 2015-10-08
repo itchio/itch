@@ -3,6 +3,7 @@ import shell from 'shell'
 import path from 'path'
 import child_process from 'child_process'
 import Promise from 'bluebird'
+import os from './util/os'
 
 function sh (exe_path, cmd) {
   return new Promise((resolve, reject) => {
@@ -43,10 +44,11 @@ function escape (arg) {
 }
 
 export function launch (exe_path, args = []) {
-  console.log(`launching '${exe_path}' on '${process.platform}' with args '${args.join(' ')}'`)
+  let platform = os.platform()
+  console.log(`launching '${exe_path}' on '${platform}' with args '${args.join(' ')}'`)
   let arg_string = args.map((x) => escape(x)).join(' ')
 
-  switch (process.platform) {
+  switch (platform) {
     case 'darwin':
       // '-W' waits for app to quit
       // potentially easy to inject something into the command line

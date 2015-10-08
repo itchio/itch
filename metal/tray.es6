@@ -4,6 +4,7 @@ import app from 'app'
 import Menu from 'menu'
 import Tray from 'tray'
 
+import os from './util/os'
 import AppActions from './actions/app_actions'
 
 export function make_tray () {
@@ -17,7 +18,7 @@ export function make_tray () {
       click: () => AppActions.focus_panel('dashboard')
     }
   ]
-  if (process.platform !== 'darwin') {
+  if (os.platform() !== 'darwin') {
     tray_menu_template = tray_menu_template.concat([
       {
         type: 'separator'
@@ -31,7 +32,7 @@ export function make_tray () {
 
   let tray_menu = Menu.buildFromTemplate(tray_menu_template)
 
-  if (process.platform === 'darwin') {
+  if (os.platform() === 'darwin') {
     app.dock.setMenu(tray_menu)
   } else {
     let tray = new Tray(path.resolve(`${__dirname}/../static/images/itchio-tray-small.png`))
@@ -42,4 +43,3 @@ export function make_tray () {
     app.main_tray = tray
   }
 }
-
