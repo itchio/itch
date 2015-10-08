@@ -1,12 +1,13 @@
 
 import app from 'app'
+import os from './util/os'
 
 export function handle_startup_event () {
-  if (process.platform !== 'win32') {
+  if (os.platform() !== 'win32') {
     return false
   }
 
-  let squirrel_command = process.argv[1]
+  let squirrel_command = os.cli_args()[1]
   switch (squirrel_command) {
     case '--squirrel-install':
     case '--squirrel-updated':
@@ -34,4 +35,3 @@ export function handle_startup_event () {
   }
   return false
 }
-

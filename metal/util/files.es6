@@ -12,4 +12,3 @@ export function ext (filename) {
 export default {
   ext
 }
-

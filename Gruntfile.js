@@ -126,11 +126,11 @@ module.exports = function (grunt) {
     },
     // Tests & code linter
     shell: {
-      'chrome-tests': {
-        command: 'electron spec/chrome --ci'
-      },
-      'metal-tests': {
+      'test-metal': {
         command: 'node_modules/.bin/ava spec/metal'
+      },
+      'test-chrome': {
+        command: 'electron spec/chrome --ci'
       },
       'lint': {
         command: 'node_modules/.bin/standard "**/*.es6" gulpfile.js Gruntfile.js "spec/**/*.{js,es6}"'
@@ -139,5 +139,8 @@ module.exports = function (grunt) {
   })
 
   grunt.registerTask('default', ['sass', 'babel'])
-  grunt.registerTask('test', ['shell:chrome-tests', 'shell:metal-tests', 'shell:lint'])
+  grunt.registerTask('test-metal', 'shell:test-metal')
+  grunt.registerTask('test-chrome', 'shell:test-chrome')
+  grunt.registerTask('lint', 'shell:lint')
+  grunt.registerTask('test', ['test-metal', 'test-chrome', 'lint'])
 }
