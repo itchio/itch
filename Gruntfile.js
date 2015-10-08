@@ -123,8 +123,22 @@ module.exports = function (grunt) {
           spawn: false
         }
       }
+    },
+    // Metal tests
+    ava: {
+      target: ['spec/metal/*-spec.js']
+    },
+    // Chrome tests
+    shell: {
+      'chrome-tests': {
+        command: 'electron spec/chrome --ci'
+      },
+      'lint': {
+        command: 'standard "**/*.es6" gulpfile.js Gruntfile.js "spec/**/*.{js,es6}"'
+      }
     }
   })
 
   grunt.registerTask('default', ['sass', 'babel'])
+  grunt.registerTask('test', ['shell:chrome-tests', 'ava', 'shell:lint'])
 }

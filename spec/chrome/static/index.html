@@ -62,7 +62,7 @@
   });
 
   walker.on('file', function(file) {
-    if (/-spec.es6/.test(file))
+    if (/-spec.js/.test(file))
       mocha.addFile(file);
   });
 
