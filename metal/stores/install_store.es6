@@ -249,7 +249,6 @@ class AppInstall {
       dest_path: this.app_path,
       logger: this.logger,
       onprogress: (state) => {
-        console.log(`In install store, got onprogress: ${JSON.stringify(state)}`)
         this.progress = 0.01 * state.percent
         this.emit_change()
       }

@@ -46,7 +46,7 @@ function sevenzip_extract (archive_path, dest_path, onprogress) {
   })
 }
 
-export function extract (opts) {
+function extract (opts) {
   let {archive_path, dest_path, onprogress = noop} = opts
 
   log(`Extracting archive '${archive_path}' to '${dest_path}' with 7-Zip`)
@@ -54,12 +54,10 @@ export function extract (opts) {
   let extracted_size = 0
   let total_size = 0
 
-  console.log(`Hey launching 7zip cause why not`)
-
   return (
     sevenzip_list(archive_path).then((info) => {
-      console.log(`Done listing files, info = ${JSON.stringify(info)}`)
       total_size = info.total_size
+      log(`Archive contains ${info.sizes.length} files, ${total_size} total`)
 
       let sevenzip_progress = (files) => {
         extracted_size += (
