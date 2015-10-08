@@ -1,8 +1,4 @@
 
-/*
- * Small wrapper around process.platform, useful for mocking
- */
-
 export function platform () {
   return process.platform
 }
@@ -26,6 +22,7 @@ export function cli_args () {
 }
 
 export default {
-  platform, itch_platform,
+  platform,
+  itch_platform,
   cli_args
 }
