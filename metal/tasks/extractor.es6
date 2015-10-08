@@ -4,7 +4,7 @@ import read_chunk from 'read-chunk'
 import file_type from 'file-type'
 import Promise from 'bluebird'
 
-let log = require('./util/log')('extractor')
+let log = require('../util/log')('extractor')
 
 let extract_schema = schema({
   archive_path: { type: 'string' },

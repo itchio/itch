@@ -3,7 +3,8 @@ import shell from 'shell'
 import path from 'path'
 import child_process from 'child_process'
 import Promise from 'bluebird'
-import os from './util/os'
+
+import os from '../util/os'
 
 function sh (exe_path, cmd) {
   return new Promise((resolve, reject) => {

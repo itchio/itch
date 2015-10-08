@@ -6,11 +6,11 @@ import read_chunk from 'read-chunk'
 import path from 'path'
 import assign from 'object-assign'
 
-import glob from '../util/glob'
-import fs from '../util/fs'
-import noop from '../util/noop'
+import glob from '../../util/glob'
+import fs from '../../util/fs'
+import noop from '../../util/noop'
 
-let log = require('../util/log')('7zip')
+let log = require('../../util/log')('7zip')
 
 function normalize (p) {
   return path.normalize(p.replace(/[\s]*$/, ''))

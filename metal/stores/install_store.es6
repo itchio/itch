@@ -16,9 +16,9 @@ import defer from '../util/defer'
 
 import db from '../db'
 
-import extractor from '../extractor'
-import configurator from '../configurator'
-import launcher from '../launcher'
+import extractor from '../tasks/extractor'
+import configurator from '../tasks/configurator'
+import launcher from '../tasks/launcher'
 
 import AppDispatcher from '../dispatcher/app_dispatcher'
 import AppConstants from '../constants/app_constants'
