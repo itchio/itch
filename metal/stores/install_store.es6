@@ -11,7 +11,6 @@ import Humanize from 'humanize-plus'
 import keyMirror from 'keymirror'
 
 import defer from '../defer'
-import fileutils from '../fileutils'
 import db from '../db'
 
 import extractor from '../extractor'
@@ -159,8 +158,7 @@ class AppInstall {
     this.upload = upload
     console.log(`Choosing to download ${this.upload.filename}`)
 
-    let ext = fileutils.ext(this.upload.filename)
-    let archive_name = `upload-${this.upload.id}${ext}`
+    let archive_name = `upload-${this.upload.id}.bin`
     this.archive_path = path.join(AppInstall.archives_dir, archive_name)
     this.get_url()
   }
