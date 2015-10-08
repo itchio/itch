@@ -9,7 +9,7 @@ before_install:
   - source /tmp/.nvm/nvm.sh
   - nvm install $NODE_VERSION
   - nvm use --delete-prefix $NODE_VERSION
-  - npm install -g grunt-cli standard babel-eslint
+  - npm install -g grunt-cli ava standard babel-eslint
   - npm install
   - grunt
   - "(cd spec/chrome && npm install)"
