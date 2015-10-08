@@ -1,9 +1,10 @@
 
+import Promise from 'bluebird'
+import SevenZip from 'node-7z'
 import file_type from 'file-type'
 import read_chunk from 'read-chunk'
 import path from 'path'
 import assign from 'object-assign'
-import SevenZip from 'node-7z'
 
 import glob from '../util/glob'
 import fs from '../util/fs'
@@ -20,17 +21,29 @@ function is_tar (file) {
   return type && type.ext === 'tar'
 }
 
-function list_files (archive_path) {
-  let op = new SevenZip().list(archive_path)
-  let sizes = {}
-  let total_size = 0
-  op.progress((files) => {
-    for (let f of files) {
-      total_size += f.size
-      sizes[normalize(f.name)] = f.size
-    }
+function sevenzip_list (archive_path) {
+  return new Promise((resolve, reject) => {
+    let op = new SevenZip().list(archive_path)
+    let sizes = {}
+    let total_size = 0
+    op.progress((files) => {
+      for (let f of files) {
+        total_size += f.size
+        sizes[normalize(f.name)] = f.size
+      }
+    })
+    op.then((r) => resolve({ sizes, total_size }))
+    op.catch((e) => reject(e))
   })
-  return op.then((spec) => ({ sizes, total_size }))
+}
+
+function sevenzip_extract (archive_path, dest_path, onprogress) {
+  return new Promise((resolve, reject) => {
+    let op = new SevenZip().extractFull(archive_path, dest_path)
+    op.progress(onprogress)
+    op.then((r) => resolve(r))
+    op.catch((e) => reject(e))
+  })
 }
 
 export function extract (opts) {
@@ -41,21 +54,22 @@ export function extract (opts) {
   let extracted_size = 0
   let total_size = 0
 
+  console.log(`Hey launching 7zip cause why not`)
+
   return (
-    list_files(archive_path).then((info) => {
+    sevenzip_list(archive_path).then((info) => {
       console.log(`Done listing files, info = ${JSON.stringify(info)}`)
       total_size = info.total_size
-      let {sizes} = info
 
-      let op = new SevenZip().extractFull(archive_path, dest_path)
-      op.progress((files) => {
-        for (let f of files) {
-          extracted_size += sizes[normalize(f)] || 0
-        }
+      let sevenzip_progress = (files) => {
+        extracted_size += (
+          files.map((f) => (info.sizes[f] || 0))
+          .reduce((a, b) => a + b)
+        )
         let percent = extracted_size / total_size * 100
         onprogress({ extracted_size, total_size, percent })
-      })
-      return op
+      }
+      return sevenzip_extract(archive_path, dest_path, sevenzip_progress)
     }).then(() =>
       glob(`${dest_path}/**/*`, {nodir: true})
     ).then((files) => {
@@ -71,10 +85,9 @@ export function extract (opts) {
         )
       }
 
-      let percent = 100
-      let status = { extracted_size, total_size, percent }
-      onprogress(status)
-      return status
+      return { extracted_size, total_size }
     })
   )
 }
+
+export default { extract }

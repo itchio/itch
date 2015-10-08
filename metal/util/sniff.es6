@@ -3,9 +3,9 @@ import Promise from 'bluebird'
 let read_chunk = Promise.promisify(require('read-chunk'))
 
 function buffer (buf) {
-  // intel Mach-O executables start with 0xCEFAEDFE
+  // intel Mach-O executables start with 0xCEFAEDFE or 0xCFFAEDFE
   // (old PowerPC Mach-O executables started with 0xFEEDFACE)
-  if (buf[0] === 0xCE && buf[1] === 0xFA && buf[2] === 0xED && buf[3] === 0xFE) {
+  if ((buf[0] === 0xCE || buf[0] === 0xCF) && buf[1] === 0xFA && buf[2] === 0xED && buf[3] === 0xFE) {
     return 'mach-o executable'
   }
 
