@@ -3,7 +3,7 @@ import sinon from 'sinon'
 import Promise from 'bluebird'
 
 import sevenzip from '../../metal/tasks/extractors/7zip'
-import extractor from '../../metal/tasks/extractor'
+import extractor from '../../metal/tasks/extract'
 
 let files = ['zip', 'gz', 'bz2', '7z']
 

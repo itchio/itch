@@ -1,14 +1,10 @@
 
 import app from 'app'
 import path from 'path'
-import fs from 'fs'
-
-import request from 'request'
-import progress from 'request-progress'
-import mkdirp from 'mkdirp'
-import Humanize from 'humanize-plus'
 
 import keyMirror from 'keymirror'
+import deep_assign from 'deep-assign'
+import {indexBy} from 'underscore'
 
 import os from '../util/os'
 import log from '../util/log'
@@ -16,9 +12,11 @@ import defer from '../util/defer'
 
 import db from '../db'
 
-import extractor from '../tasks/extractor'
-import configurator from '../tasks/configurator'
-import launcher from '../tasks/launcher'
+import download from '../tasks/download'
+import extract from '../tasks/extract'
+import configure from '../tasks/configure'
+import launch from '../tasks/launch'
+import {Transition} from '../tasks/errors'
 
 import AppDispatcher from '../dispatcher/app_dispatcher'
 import AppConstants from '../constants/app_constants'
@@ -36,20 +34,49 @@ let InstallState = keyMirror({
   IDLE: null
 })
 
+let library_dir = path.join(app.getPath('home'), 'Downloads', 'itch.io')
+let archives_dir = path.join(library_dir, 'archives')
+let apps_dir = path.join(library_dir, 'apps')
+let by_id = {}
+
+function get_install (id) {
+  console.log(`find_install(${id})`)
+  return db.find_one({_table: 'installs', _id: id})
+}
+
+function update_install (id, opts) {
+  console.log(`update_install(${id}, ${JSON.stringify(opts)})`)
+  return get_install(id).then((install) => {
+    let record = deep_assign({}, install, opts)
+    console.log(`Updated record: ${JSON.stringify(record)}`)
+    return db.update({_table: 'installs', _id: id}, record)
+  })
+}
+
+function archive_path (upload_id) {
+  return path.join(archives_dir, `${upload_id}.bin`)
+}
+
+function app_path (game_id) {
+  return path.join(apps_dir, game_id)
+}
+
 class AppInstall {
   setup (opts) {
-    this.logger = new log.Logger()
     let data = {
       _table: 'installs',
       game_id: opts.game.id,
       state: InstallState.PENDING
     }
-    db.insert(data).then((record) => this.load(record))
+    db.insert(data).then((record) => {
+      this.load(record)
+    })
   }
 
   load (record) {
+    this.logger = new log.Logger()
     this.id = record._id
-    AppInstall.by_id[this.id] = this
+    by_id[this.id] = this
     this.game_id = record.game_id
     this.progress = 0
 
@@ -57,13 +84,6 @@ class AppInstall {
       this.game = game
       if (!game) throw new Error(`game not found: ${this.game_id}`)
       console.log(`found game: ${JSON.stringify(this.game)}`)
-    }).then(() => {
-      return this.app_path || db.find_one({_table: 'users', id: this.game.user_id}).then((user) => {
-        console.log(`found user: ${JSON.stringify(user)}`)
-        let {username} = user
-        let slug = this.game.url.match(/[^\/]+$/)
-        this.app_path = path.join(AppInstall.apps_dir, `${slug}-by-${username}`)
-      })
     }).then(() => {
       this.set_state(record.state)
       console.log(`Loaded install ${this.id} with state ${this.state}`)
@@ -94,18 +114,24 @@ class AppInstall {
     this.set_state(InstallState.SEARCHING_UPLOAD)
 
     let client = AppStore.get_current_user()
+    let uploads = []
+    let upload_id
+    let id = this.id
 
     db.find_one({_table: 'download_keys', game_id: this.game.id}).then((key) => {
       console.log(`tried to find download key for ${this.game.id}, got ${JSON.stringify(key)}`)
       if (key) {
-        this.key = key
-        return client.download_key_uploads(this.key.id)
+        return (
+          update_install(id, {key: key.id})
+          .then(() => client.download_key_uploads(key.id))
+        )
       } else {
         return client.game_uploads(this.game.id)
       }
     }).then((res) => {
-      let { uploads } = res
-
+      uploads = res.uploads
+      return update_install(id, {uploads: indexBy(uploads, 'id')})
+    }).then(() => {
       // filter uploads to find one relevant to our current platform
       let prop = `p_${os.itch_platform()}`
       let interesting_uploads = uploads.filter((upload) => !!upload[prop])
@@ -126,134 +152,64 @@ class AppInstall {
       })
 
       scored_uploads = scored_uploads.sort((a, b) => (b.score - a.score))
-
       console.log(`Scored uploads\n${JSON.stringify(scored_uploads)}`)
 
       if (scored_uploads.length) {
-        // TODO let user choose
-        this.set_upload(scored_uploads[0])
+        // TODO let user choose if there's several viable uploads
+        upload_id = scored_uploads[0].id
+        return update_install(id, {upload_id})
       } else {
-        this.error = 'No uploads found'
-        console.log(this.error)
-        this.set_state(InstallState.ERROR)
+        throw new Error('No uploads found')
       }
-    }).catch((err) => {
-      this.error = `Could not download: ${err}`
-      console.log(this.error)
-      console.log(err.stack)
-      this.set_state(InstallState.ERROR)
-    })
-  }
-
-  set_upload (upload) {
-    this.upload = upload
-    console.log(`Choosing to download ${this.upload.filename}`)
-
-    let archive_name = `upload-${this.upload.id}.bin`
-    this.archive_path = path.join(AppInstall.archives_dir, archive_name)
-    this.get_url()
-  }
-
-  get_url () {
-    this.set_state(InstallState.DOWNLOADING)
-
-    let client = AppStore.get_current_user()
-
-    ;(this.key
-    ? client.download_upload_with_key(this.key.id, this.upload.id)
-    : client.download_upload(this.upload.id)).then((res) => {
-      this.url = res.url
-      defer(() => this.download())
-    }).catch((err) => {
-      this.error = `Could not download: ${err}`
-      console.log(this.error)
-      console.log(err.stack)
-      this.set_state(InstallState.ERROR)
-    })
-  }
-
-  download () {
-    this.set_state(InstallState.DOWNLOADING)
-
-    let headers = {}
-    let flags = 'w'
-
-    if (this.local_size) {
-      headers['Range'] = `bytes=${this.local_size}-`
-      flags = 'a'
-    } else if (fs.existsSync(this.archive_path)) {
-      console.log(`Have existing archive at ${this.archive_path}, checking size`)
-
-      request.head(this.url).on('response', (response) => {
-        let content_length = response.headers['content-length']
-        let stats = fs.lstatSync(this.archive_path)
-        console.log(`${Humanize.fileSize(content_length)} (remote file size)`)
-        console.log(`${Humanize.fileSize(stats.size)} (local file size)`)
-        let diff = content_length - stats.size
-
-        if (diff > 0) {
-          console.log(`Should download remaining ${Humanize.fileSize(diff)} bytes.`)
-          this.local_size = stats.size
-          this.get_url()
-        } else {
-          console.log('All good.')
-          defer(() => this.extract())
+    }).then(() => {
+      console.log(`Found upload, calling download task`)
+      return download.download(id, {
+        logger: this.logger,
+        onprogress: (state) => {
+          this.progress = state.percent * 0.01
+          this.emit_change()
         }
       })
-
-      return
-    }
-
-    console.log(`Downloading with headers ${JSON.stringify(headers)}, flags = ${flags}`)
-    let r = progress(request.get({
-      encoding: null, // binary (otherwise defaults to utf-8)
-      url: this.url,
-      headers
-    }), {throttle: 25})
-
-    r.on('response', (response) => {
-      console.log(`Got status code: ${response.statusCode}`)
-      let content_length = response.headers['content-length']
-      console.log(`Downloading ${Humanize.fileSize(content_length)} for ${this.game.title}`)
-    })
-
-    r.on('error', (err) => {
-      console.log(`Download error: ${JSON.stringify(err)}`)
-    })
-
-    r.on('progress', (state) => {
-      this.progress = 0.01 * state.percent
-      this.emit_change()
-    })
-
-    mkdirp.sync(path.dirname(this.archive_path))
-    let dst = fs.createWriteStream(this.archive_path, {
-      flags,
-      defaultEncoding: 'binary'
-    })
-    r.pipe(dst).on('close', () => {
-      this.progress = 0
-      this.emit_change()
-
-      AppActions.bounce()
-      AppActions.notify(`${this.game.title} finished downloading.`)
-      defer(() => this.extract())
+    }).then(() => {
+      console.log(`Done downloading! woo!`)
+      defer(() => { this.extract() })
+    }).catch((err) => {
+      if (err instanceof Transition) {
+        console.log(`Transition to '${err.to}' because '${err.reason}'`)
+        switch (err.to) {
+          case 'find_upload':
+            defer(() => { this.search_for_uploads() })
+            break
+          case 'extract':
+            defer(() => { this.extract() })
+            break
+          default:
+            throw new Error(`Transition to unknown task: ${err.to}`)
+        }
+        return
+      }
+      this.error = `Could not download: ${err}`
+      console.log(this.error)
+      console.log(err.stack)
+      this.set_state(InstallState.ERROR)
     })
   }
 
   extract () {
     this.set_state(InstallState.EXTRACTING)
 
-    let opts = {
-      archive_path: this.archive_path,
-      dest_path: this.app_path,
-      logger: this.logger,
-      onprogress: (state) => {
-        this.progress = 0.01 * state.percent
-        this.emit_change()
+    get_install(this.id).then((install) => {
+      let opts = {
+        archive_path: archive_path(install.upload_id),
+        dest_path: app_path(this.id),
+        logger: this.logger,
+        onprogress: (state) => {
+          this.progress = 0.01 * state.percent
+          this.emit_change()
+        }
       }
-    }
-    extractor.extract(opts).then((res) => {
+      return extract.extract(opts)
+    }).then((res) => {
       console.log(`Extracted ${res.total_size} bytes total`)
       this.set_state(InstallState.IDLE)
     }).catch((e) => {
@@ -271,7 +227,7 @@ class AppInstall {
   configure () {
     this.set_state(InstallState.CONFIGURING)
 
-    configurator.configure(this.app_path).then((res) => {
+    configure.configure(this.app_path).then((res) => {
       this.executables = res.executables
       if (this.executables.length > 0) {
         console.log('Configuration successful')
@@ -302,7 +258,7 @@ class AppInstall {
 
     console.log(`choosing ${candidates[0].exec_path} out of candidates\n ${JSON.stringify(candidates)}`)
 
-    launcher.launch(candidates[0].exec_path).then((res) => {
+    launch.launch(candidates[0].exec_path).then((res) => {
       console.log(res)
       AppActions.notify(res)
     }).catch((e) => {
@@ -316,18 +272,13 @@ class AppInstall {
   }
 }
 
-AppInstall.library_dir = path.join(app.getPath('home'), 'Downloads', 'itch.io')
-AppInstall.archives_dir = path.join(AppInstall.library_dir, 'archives')
-AppInstall.apps_dir = path.join(AppInstall.library_dir, 'apps')
-AppInstall.by_id = {}
-
-export function install () {
+function install () {
   AppDispatcher.register((action) => {
     switch (action.action_type) {
       case AppConstants.DOWNLOAD_QUEUE: {
         db.find_one({_table: 'installs', game_id: action.opts.game.id}).then((record) => {
           if (record) {
-            let install = AppInstall.by_id[record._id]
+            let install = by_id[record._id]
             install.configure()
           } else {
             let install = new AppInstall()
@@ -351,4 +302,10 @@ export function install () {
   })
 }
 
-export default { install }
+export default {
+  install,
+  get_install,
+  update_install,
+  archive_path,
+  app_path
+}
