@@ -1,4 +1,4 @@
-import test from 'tape'
+import test from 'tape-catch'
 import sinon from 'sinon'
 import mock from 'mock-require'
 
