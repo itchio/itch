@@ -5,6 +5,7 @@ import file_type from 'file-type'
 import read_chunk from 'read-chunk'
 import path from 'path'
 import assign from 'object-assign'
+import mkdirp from 'mkdirp'
 
 import glob from '../../util/glob'
 import fs from '../../util/fs'
@@ -39,6 +40,7 @@ function sevenzip_list (archive_path) {
 
 function sevenzip_extract (archive_path, dest_path, onprogress) {
   return new Promise((resolve, reject) => {
+    mkdirp.sync(dest_path)
     let op = new SevenZip().extractFull(archive_path, dest_path)
     op.progress(onprogress)
     op.then((r) => resolve(r))
@@ -47,17 +49,20 @@ function sevenzip_extract (archive_path, dest_path, onprogress) {
 }
 
 function extract (opts) {
+  console.log(`In 7-zip!`)
   let {archive_path, dest_path, onprogress = noop} = opts
 
-  log(`Extracting archive '${archive_path}' to '${dest_path}' with 7-Zip`)
+  log(opts, `Extracting archive '${archive_path}' to '${dest_path}' with 7-Zip`)
 
   let extracted_size = 0
   let total_size = 0
 
+  console.log(`After log`)
+
   return (
     sevenzip_list(archive_path).then((info) => {
       total_size = info.total_size
-      log(`Archive contains ${info.sizes.length} files, ${total_size} total`)
+      log(opts, `Archive contains ${Object.keys(info.sizes).length} files, ${total_size} total`)
 
       let sevenzip_progress = (files) => {
         extracted_size += (
@@ -68,9 +73,10 @@ function extract (opts) {
         onprogress({ extracted_size, total_size, percent })
       }
       return sevenzip_extract(archive_path, dest_path, sevenzip_progress)
-    }).then(() =>
-      glob(`${dest_path}/**/*`, {nodir: true})
-    ).then((files) => {
+    }).then((res) => {
+      log(opts, `Done extracting! res = ${JSON.stringify(res)}`)
+      return glob(`${dest_path}/**/*`, {nodir: true})
+    }).then((files) => {
       // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
       if (files.length === 1 && is_tar(files[0])) {
         let tar = files[0]

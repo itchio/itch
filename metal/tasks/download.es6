@@ -1,14 +1,7 @@
 
-import Promise from 'bluebird'
+import {Transition, Deadend} from './errors'
 
-import app from 'app'
-import request from 'request'
-import progress from 'request-progress'
-import mkdirp from 'mkdirp'
-import path from 'path'
-
-import {Transition} from './errors'
-
+import http from '../util/http'
 import fs from '../util/fs'
 import noop from '../util/noop'
 let log = require('../util/log')('tasks/download')
@@ -16,20 +9,16 @@ let log = require('../util/log')('tasks/download')
 import InstallStore from '../stores/install_store'
 import AppStore from '../stores/app_store'
 
-function download (id, opts) {
-  let {onprogress = noop} = opts
-  let headers = {
-    'User-Agent': `itch.io client v${app.getVersion()}`
-  }
+function start (opts) {
+  let {id, onprogress = noop} = opts
+  let headers = {}
   let flags = 'w'
   let install, upload, archive_path
 
   log(opts, 'started')
 
   return InstallStore.get_install(id).then((res) => {
-    // Fetch up-to-date install information
     install = res
-
     log(opts, 'got install')
 
     if (!install.upload_id || !install.uploads) {
@@ -48,8 +37,6 @@ function download (id, opts) {
     }
 
     archive_path = InstallStore.archive_path(install.upload_id)
-    mkdirp.sync(path.dirname(archive_path))
-
     log(opts, `made archive path at ${archive_path}`)
   }).then(() => {
     log(opts, `lstating ${archive_path}`)
@@ -86,7 +73,7 @@ function download (id, opts) {
     // Get download URL
     let client = AppStore.get_current_user()
     return (install.key
-      ? client.download_upload_with_key(install.key, install.upload_id)
+      ? client.download_upload_with_key(install.key.id, install.upload_id)
       : client.download_upload(install.upload_id)
     ).then((res) => {
       return res.url
@@ -94,34 +81,19 @@ function download (id, opts) {
       log(opts, `getting URL error: ${JSON.stringify(err)}`)
     })
   }).then((url) => {
-    log(opts, `downloading from ${url}`)
-    return new Promise((resolve, reject) => {
-      let r = progress(request.get({
-        encoding: null, // binary (otherwise defaults to utf-8)
-        url,
-        headers
-      }))
+    log(opts, `d/l from ${url}`)
 
-      r.on('error', (err) => {
-        log(opts, `download error: ${JSON.stringify(err)}`)
-      })
-
-      r.on('progress', (state) => {
-        log(opts, `progress state: ${JSON.stringify(state)}`)
-        onprogress(state)
-      })
-
-      let dst = fs.createWriteStream(archive_path, {
-        flags,
-        defaultEncoding: 'binary'
-      })
-      r.pipe(dst)
-
-      r.on('close', () => {
-        resolve('Done!')
+    return http.to_file({
+      url, headers,
+      flags, file: archive_path,
+      onprogress
+    }).catch((err) => {
+      log(opts, `download error: ${JSON.stringify(err)}`)
+      throw new Deadend({
+        reason: `Download error: ${err}`
       })
     })
   })
 }
 
-export default { download }
+export default { start }

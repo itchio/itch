@@ -2,7 +2,11 @@
 import Promise from 'bluebird'
 import os from '../util/os'
 
-export function configure (app_path) {
+let log = require('../util/log')('tasks/configure')
+
+import InstallStore from '../stores/install_store'
+
+function configure (app_path) {
   console.log(`Configuring app at '${app_path}'`)
   let platform = os.platform()
 
@@ -16,4 +20,15 @@ export function configure (app_path) {
   }
 }
 
-export default {configure}
+function start (opts) {
+  let {id} = opts
+
+  let app_path = InstallStore.app_path(id)
+  log(opts, `configuring ${app_path}`)
+  return configure(app_path).then((res) => {
+    let {executables} = res
+    return InstallStore.update_install(id, {executables})
+  })
+}
+
+export default { start }

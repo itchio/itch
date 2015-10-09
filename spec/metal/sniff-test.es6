@@ -1,4 +1,4 @@
-import test from 'ava'
+import test from 'tape'
 import sniff from '../../metal/util/sniff'
 
 let couples = [
@@ -15,6 +15,7 @@ for (let [file, expected_type] of couples) {
   test(`should sniff ${file} correctly`, t => {
     return sniff.path(`${__dirname}/fixtures/${file}`).then((type) => {
       t.is(type, expected_type)
+      t.end()
     })
   })
 }

@@ -6,6 +6,12 @@ import Promise from 'bluebird'
 
 import os from '../util/os'
 
+let log = require('../util/log')('tasks/launch')
+
+import {Transition} from './errors'
+
+import InstallStore from '../stores/install_store'
+
 function sh (exe_path, cmd) {
   return new Promise((resolve, reject) => {
     console.log(`sh ${cmd}`)
@@ -68,4 +74,25 @@ export function launch (exe_path, args = []) {
   }
 }
 
-export default { launch }
+export function start (opts) {
+  let {id} = opts
+  let install
+
+  return InstallStore.get_install(id).then((res) => {
+    install = res
+    log(opts, 'got install')
+
+    if (!install.executables) {
+      throw new Transition({
+        to: 'configure',
+        reason: 'no executables found',
+        data: { then: 'launch' }
+      })
+    }
+
+    let exe_path = install.executables[0]
+    return launch(exe_path)
+  })
+}
+
+export default { start, launch }

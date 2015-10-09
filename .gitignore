@@ -6,10 +6,15 @@ npm-debug.log
 # build artifacts
 /style/**/*.css
 /metal/**/*.js
+/spec/metal/**/*.js
 /chrome/**/*.js
 /main.js
 /maps
 *.map
+
+# coverage
+/coverage
+.nyc_output
 
 # electron package-building stuff
 /build

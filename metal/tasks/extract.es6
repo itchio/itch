@@ -1,27 +1,23 @@
 
-import schema from 'validate'
 import read_chunk from 'read-chunk'
 import file_type from 'file-type'
 import Promise from 'bluebird'
 
-let log = require('../util/log')('extractor')
+import {Deadend, Transition} from './errors'
 
-let extract_schema = schema({
-  archive_path: { type: 'string' },
-  dest_path: { type: 'string' },
-  onprogress: { type: 'function' }
-})
+import noop from '../util/noop'
+let log = require('../util/log')('tasks/extract')
 
-export function extract (opts) {
-  extract_schema.assert(opts)
+import InstallStore from '../stores/install_store'
 
+function extract (opts) {
   let {archive_path} = opts
   let buffer = read_chunk.sync(archive_path, 0, 262)
   let type = file_type(buffer)
 
   if (!type) return Promise.reject(`Can't determine type of archive ${archive_path}`)
 
-  log(opts, `Type of ${archive_path}: ${JSON.stringify(type)}`)
+  log(opts, `type of ${archive_path}: ${JSON.stringify(type)}`)
 
   switch (type.ext) {
     case 'zip':
@@ -34,4 +30,32 @@ export function extract (opts) {
   }
 }
 
-export default { extract }
+function start (opts) {
+  let {id, logger, onerror = noop} = opts
+  let install
+
+  return InstallStore.get_install(id).then((res) => {
+    install = res
+    log(opts, `got install with upload ${install.upload_id}`)
+
+    if (!install.upload_id) {
+      throw new Transition({
+        to: 'find_upload',
+        reason: 'nil uploads_id'
+      })
+    }
+
+    let archive_path = InstallStore.archive_path(install.upload_id)
+    let dest_path = InstallStore.app_path(id)
+    let extract_opts = { logger, onerror, archive_path, dest_path }
+
+    log(opts, `extract_opts = ${JSON.stringify(extract_opts)}`)
+    return extract(extract_opts)
+  }).catch((err) => {
+    throw new Deadend({
+      reason: err
+    })
+  })
+}
+
+export default { start, extract }

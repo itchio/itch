@@ -7,7 +7,9 @@ import deep_assign from 'deep-assign'
 
 function make (name) {
   return function (opts, message) {
-    if (!opts.logger) return
+    if (opts.logger == null) {
+      return
+    }
     opts.logger.log(`[${name}] ${message}`)
   }
 }

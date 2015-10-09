@@ -35,10 +35,29 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '.',
-          src: ['*.es6', 'chrome/**/*.es6', 'metal/**/*.es6'],
+          src: ['*.es6', 'chrome/**/*.es6', 'metal/**/*.es6', 'spec/**/*.es6'],
           dest: '.',
           ext: '.js'
         }]
+      }
+    },
+    // Recompile files on-demand
+    watch: {
+      es6: {
+        files: ['**/*.es6'],
+        tasks: ['newer:babel'],
+        options: {
+          spawn: false,
+          debounceDelay: 100
+        }
+      },
+      scss: {
+        files: ['**/*.scss'],
+        tasks: ['sass'],
+        options: {
+          spawn: false,
+          debounceDelay: 100
+        }
       }
     },
     // Create a .exe, .app, folder for windows, mac, linux
@@ -106,41 +125,9 @@ module.exports = function (grunt) {
         remoteReleases: 'https://github.com/itchio/itchio-app',
         certificateFile: '../itchio-app-secrets/certificate.cer'
       }
-    },
-    // Recompile files on-demand
-    watch: {
-      es6: {
-        files: ['**/*.es6'],
-        tasks: ['babel'],
-        options: {
-          spawn: false
-        }
-      },
-      scss: {
-        files: ['**/*.scss'],
-        tasks: ['sass'],
-        options: {
-          spawn: false
-        }
-      }
-    },
-    // Tests & code linter
-    shell: {
-      'test-metal': {
-        command: 'node_modules/.bin/ava spec/metal'
-      },
-      'test-chrome': {
-        command: 'electron spec/chrome --ci'
-      },
-      'lint': {
-        command: 'node_modules/.bin/standard "**/*.es6" gulpfile.js Gruntfile.js "spec/**/*.{js,es6}"'
-      }
     }
   })
 
-  grunt.registerTask('default', ['sass', 'babel'])
-  grunt.registerTask('test-metal', 'shell:test-metal')
-  grunt.registerTask('test-chrome', 'shell:test-chrome')
-  grunt.registerTask('lint', 'shell:lint')
-  grunt.registerTask('test', ['test-metal', 'test-chrome', 'lint'])
+  grunt.registerTask('all', ['sass', 'babel'])
+  grunt.registerTask('default', ['newer:sass', 'newer:babel'])
 }

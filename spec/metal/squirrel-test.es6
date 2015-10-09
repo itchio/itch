@@ -1,4 +1,4 @@
-import test from 'ava'
+import test from 'tape'
 import sinon from 'sinon'
 import mock from 'mock-require'
 
