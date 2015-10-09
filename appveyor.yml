@@ -9,7 +9,6 @@ install:
   - pushd spec\chrome && npm install & popd
   - npm install -g electron-prebuilt
 test_script:
-  - npm run test-metal
   - set OS=cygwin
   - "%APPDATA%\\npm\\node_modules\\electron-prebuilt\\dist\\electron.exe spec\\chrome --ci --enable-logging"
 notifications:
