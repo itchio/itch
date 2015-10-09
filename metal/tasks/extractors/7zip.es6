@@ -49,15 +49,12 @@ function sevenzip_extract (archive_path, dest_path, onprogress) {
 }
 
 function extract (opts) {
-  console.log(`In 7-zip!`)
   let {archive_path, dest_path, onprogress = noop} = opts
 
   log(opts, `Extracting archive '${archive_path}' to '${dest_path}' with 7-Zip`)
 
   let extracted_size = 0
   let total_size = 0
-
-  console.log(`After log`)
 
   return (
     sevenzip_list(archive_path).then((info) => {
