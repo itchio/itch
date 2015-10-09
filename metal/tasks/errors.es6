@@ -19,7 +19,6 @@ class Deadend extends ExtendableError {
 class InputRequired extends ExtendableError {
   constructor (opts) {
     super('user interaction required')
-    throw new Error('InputRequired: stub!')
   }
 }
 
