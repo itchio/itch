@@ -15,7 +15,7 @@ function extract (opts) {
   let buffer = read_chunk.sync(archive_path, 0, 262)
   let type = file_type(buffer)
 
-  if (!type) return Promise.reject(`Can't determine type of archive ${archive_path}`)
+  if (!type) return Promise.reject(`invalid archive ${archive_path}`)
 
   log(opts, `type of ${archive_path}: ${JSON.stringify(type)}`)
 
@@ -26,7 +26,7 @@ function extract (opts) {
     case '7z':
       return require('./extractors/7zip').extract(opts)
     default:
-      return Promise.reject(`Don't know how to extract ${archive_path} / ${JSON.stringify(type)}`)
+      return Promise.reject(`invalid archive ${archive_path}: ${JSON.stringify(type)}`)
   }
 }
 
@@ -50,10 +50,8 @@ function start (opts) {
     let extract_opts = { logger, onerror, archive_path, dest_path }
 
     log(opts, `extract_opts = ${JSON.stringify(extract_opts)}`)
-    return extract(extract_opts)
-  }).catch((err) => {
-    throw new Deadend({
-      reason: err
+    return extract(extract_opts).catch((err) => {
+      throw new Deadend({ reason: err })
     })
   })
 }
