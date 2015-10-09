@@ -25,3 +25,16 @@ for (let file of files) {
     })
   })
 }
+
+test(`should reject archives we don't know how to extract`, t => {
+  let failed = false
+  extractor.extract({
+    archive_path: `${__dirname}/fixtures/txt`,
+    dest_path: '/tmp'
+  }).catch(() => {
+    failed = true
+  }).finally(() => {
+    t.true(failed)
+    t.end()
+  })
+})
