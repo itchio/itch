@@ -78,7 +78,7 @@
     "test-chrome": "electron spec/chrome --ci",
     "test-metal": "nyc tape spec/**/*-test.js | tap-dot",
     "lint": "standard '**/*.es6' gulpfile.js Gruntfile.js 'spec/chrome/**/*.js' 'spec/metal/**/*.es6'",
-    "coveralls": "nyc report --reporter=text-ldov | coveralls"
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "standard": {
     "parser": "babel-eslint"
