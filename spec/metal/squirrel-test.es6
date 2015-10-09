@@ -32,3 +32,9 @@ test('handle_startup_event should be bypassed on linux', sinon.test(function (t)
     t.end()
   }))
 })
+
+test(`handle_startup_event should do nothing on windows when no squirrel command line argument`, sinon.test(function (t) {
+  this.stub(os, 'platform', () => 'win32')
+  t.false(squirrel.handle_startup_event())
+  t.end()
+}))
