@@ -6,7 +6,7 @@ install:
   - npm install -g grunt-cli
   - npm install
   - grunt all
-  - pushd spec\chrome && npm install & popd
+  - pushd test\chrome && npm install & popd
 test_script:
   - set OS=cygwin
   - npm run test-chrome

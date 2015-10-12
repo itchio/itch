@@ -78,9 +78,9 @@
   "scripts": {
     "start": "grunt && electron .",
     "test": "npm run test-metal && npm run test-chrome && npm run lint",
-    "test-chrome": "electron spec/chrome --ci --enable-logging",
-    "test-metal": "nyc node spec/metal/main.js",
-    "lint": "standard '**/*.es6' gulpfile.js Gruntfile.js 'spec/chrome/**/*.js' 'spec/metal/**/*.es6'",
+    "test-chrome": "electron test/chrome --ci --enable-logging",
+    "test-metal": "nyc node test/metal/main.js",
+    "lint": "standard '**/*.es6' gulpfile.js Gruntfile.js 'test/chrome/**/*.js' 'test/metal/**/*.es6'",
     "coveralls": "npm run remap && nyc report -r text-lcov | coveralls",
     "remap": "cat .nyc_output/*.json | remap-istanbul -o .nyc_output/*.json",
     "local-cov": "npm run test-metal && npm run remap && nyc report -r html"
