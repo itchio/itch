@@ -3,8 +3,6 @@ import sinon from 'sinon'
 import mock from 'mock-require'
 import Promise from 'bluebird'
 
-let noop = require('../../metal/util/noop')
-
 let InstallStore = {
   get_install: () => Promise.resolve({upload_id: 42}),
   archive_path: () => '/tmp/archive',
