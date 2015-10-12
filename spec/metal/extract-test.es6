@@ -6,13 +6,15 @@ import Promise from 'bluebird'
 let noop = require('../../metal/util/noop')
 
 let InstallStore = {
-  get_install: noop
+  get_install: () => Promise.resolve({upload_id: 42}),
+  archive_path: () => '/tmp/archive',
+  app_path: () => '/tmp/app'
 }
 mock('../../metal/stores/install_store', InstallStore)
 
 let sevenzip = require('../../metal/tasks/extractors/7zip')
 let errors = require('../../metal/tasks/errors')
-let extractor = require('../../metal/tasks/extract')
+let extract = require('../../metal/tasks/extract')
 
 let Logger = require('../../metal/util/log').Logger
 
@@ -24,7 +26,7 @@ for (let file of files) {
   test(`extract ${file} with 7-zip`, t => {
     let mock = sinon.mock(sevenzip)
     mock.expects('extract').once().returns(Promise.resolve())
-    extractor.extract({
+    extract.extract({
       archive_path: `${__dirname}/fixtures/${file}`,
       dest_path: '/tmp'
     }).finally(() => {
@@ -45,7 +47,7 @@ for (let file of files) {
       dest_path: '/tmp'
     }
 
-    extractor.extract(extract_opts).catch(spy).finally(() => {
+    extract.extract(extract_opts).catch(spy).finally(() => {
       t.ok(spy.calledWithMatch(/invalid archive/), 'archive rejected')
     })
   })
@@ -54,15 +56,26 @@ for (let file of files) {
 let logger = new Logger()
 let opts = {id: 42, logger}
 
-test(`should transition away if missing upload_id`, sinon.test(function (t) {
-  let spy = this.spy()
-  let mock = this.mock(InstallStore)
+test(`should transition away if missing upload_id`, function (t) {
+  let spy = sinon.spy()
+  let mock = sinon.mock(InstallStore)
   mock.expects('get_install').returns(Promise.resolve({}))
 
-  extractor.start(opts).catch(spy).finally(() => {
+  extract.start(opts).catch(spy).finally(() => {
     let matcher = sinon.match.instanceOf(errors.Transition)
       .and(sinon.match({to: 'find_upload'}))
     sinon.assert.calledWith(spy, matcher)
+    mock.verify()
     t.end()
   })
-}))
+})
+
+test(`should call subroutine`, function (t) {
+  let mock = sinon.mock(extract)
+  mock.expects('extract')
+
+  extract.start(opts).then(() => {
+    mock.verify()
+    t.end()
+  })
+})
