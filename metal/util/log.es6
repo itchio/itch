@@ -17,7 +17,7 @@ function make (name) {
 class Logger {
   constructor (user_opts = {}) {
     let default_opts = {sinks: {console: true}}
-    let opts = deep_assign(default_opts, user_opts)
+    let opts = deep_assign({}, default_opts, user_opts)
 
     let {sinks} = opts
 
@@ -29,21 +29,23 @@ class Logger {
     for (let [key, val] of pairs(sinks)) {
       switch (key) {
         case 'console': {
-          this.console_sink = true
+          this.console_sink = !!val
           break
         }
 
         case 'file': {
-          mkdirp.sync(path.dirpath(val))
-          this.file_sink = fs.createWriteStream(val, {
-            flags: 'a',
-            defaultEncoding: 'utf8'
-          })
+          if (val) {
+            mkdirp.sync(path.dirname(val))
+            this.file_sink = fs.createWriteStream(val, {
+              flags: 'a',
+              defaultEncoding: 'utf8'
+            })
+          }
           break
         }
 
         case 'string': {
-          this.string_sink = true
+          this.string_sink = !!val
           break
         }
       }
@@ -68,6 +70,15 @@ class Logger {
       this.file_sink.write(s)
       this.file_sink.write('\n')
     }
+  }
+
+  close () {
+    return new Promise((resolve, reject) => {
+      if (!this.file_sink) resolve()
+
+      this.file_sink.on('finish', () => resolve())
+      this.file_sink.end()
+    })
   }
 
   timestamp () {

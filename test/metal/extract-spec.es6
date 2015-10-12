@@ -61,7 +61,7 @@ test(`should transition away if missing upload_id`, t => {
   })
 })
 
-test(`should call subroutine`, t => {
+test.serial(`extract task should call subroutine`, t => {
   let {extract} = setup(t)
   t.mock(extract).expects('extract')
   return extract.start({id: 42})

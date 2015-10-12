@@ -7,6 +7,7 @@ test('platform', t => {
   t.ok(contains(['win32', 'linux', 'darwin'], os.platform()), 'is known')
 })
 
+// serial because mocking 'os' export
 test.serial('itch_platform', t => {
   let mock = t.mock(os)
 
