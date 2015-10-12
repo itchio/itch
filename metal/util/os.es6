@@ -1,14 +1,14 @@
 
-let os = {
-  platform: () => {
+let self = {
+  platform: function () {
     return process.platform
   },
 
   /**
    * Get platform in the format used by the itch.io API
    */
-  itch_platform: () => {
-    switch (os.platform()) {
+  itch_platform: function () {
+    switch (self.platform()) {
       case 'darwin':
         return 'osx'
       case 'win32':
@@ -18,9 +18,9 @@ let os = {
     }
   },
 
-  cli_args: () => {
+  cli_args: function () {
     return process.argv
   }
 }
 
-export default os
+export default self

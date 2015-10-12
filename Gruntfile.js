@@ -47,7 +47,6 @@ module.exports = function (grunt) {
         files: ['**/*.es6'],
         tasks: ['newer:babel'],
         options: {
-          spawn: false,
           debounceDelay: 100
         }
       },
@@ -55,7 +54,6 @@ module.exports = function (grunt) {
         files: ['**/*.scss'],
         tasks: ['sass'],
         options: {
-          spawn: false,
           debounceDelay: 100
         }
       }

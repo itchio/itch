@@ -1,8 +1,7 @@
-import test from 'tape'
+import test from 'zopf'
 import {Transition, Deadend, InputRequired} from '../../metal/tasks/errors'
 
 test('can build and throw three types of special errors', t => {
-  t.plan(3)
   t.throws(() => {
     throw new Transition({to: 'somewhere', reason: 'testing'})
   }, Transition)
