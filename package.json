@@ -45,7 +45,7 @@
     "read-chunk": "^1.0.1",
     "request": "^2.62.0",
     "request-progress": "^0.3.1",
-    "request-promise": "^0.4.3",
+    "request-promise": "^1.0.0",
     "seamless-immutable": "^4.0.0",
     "source-map-support": "^0.3.2",
     "underscore": "^1.8.3",
