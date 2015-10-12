@@ -35,7 +35,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '.',
-          src: ['*.es6', 'chrome/**/*.es6', 'metal/**/*.es6', 'spec/**/*.es6'],
+          src: ['*.es6', 'chrome/**/*.es6', 'metal/**/*.es6', 'test/**/*.es6'],
           dest: '.',
           ext: '.js'
         }]
