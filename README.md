@@ -1,10 +1,10 @@
 # itch.io app
 
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 [![Build Status](https://travis-ci.org/itchio/itchio-app.svg)](https://travis-ci.org/itchio/itchio-app)
 [![Build status](https://ci.appveyor.com/api/projects/status/g55d4rq4jc1tdh05?svg=true)](https://ci.appveyor.com/project/fasterthanlime/itchio-app)
 [![Coverage Status](https://coveralls.io/repos/itchio/itchio-app/badge.svg?service=github)](https://coveralls.io/github/itchio/itchio-app)
 [![Dependency Status](https://david-dm.org/itchio/itchio-app.svg)](https://david-dm.org/itchio/itchio-app)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 
 **This project is in early development!**
 
