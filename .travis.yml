@@ -11,9 +11,8 @@ before_install:
   - nvm use --delete-prefix $NODE_VERSION
   - npm install -g grunt-cli
   - npm install
-  - grunt
+  - grunt all
   - "(cd spec/chrome && npm install)"
-  - npm install -g 'electron-prebuilt@itchio/electron-prebuilt#exit-code'
 before_script:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
       export DISPLAY=:99.0;

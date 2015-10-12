@@ -5,12 +5,11 @@ install:
   - set PATH=%APPDATA%\npm;%PATH%
   - npm install -g grunt-cli
   - npm install
-  - grunt
+  - grunt all
   - pushd spec\chrome && npm install & popd
-  - npm install -g electron-prebuilt
 test_script:
   - set OS=cygwin
-  - "%APPDATA%\\npm\\node_modules\\electron-prebuilt\\dist\\electron.exe spec\\chrome --ci --enable-logging"
+  - npm run test-chrome
 notifications:
   - provider: Slack
     auth_token:
