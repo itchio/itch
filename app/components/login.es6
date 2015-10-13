@@ -2,8 +2,7 @@
 import React from 'react'
 import {Component, PropTypes} from 'react'
 
-let remote = window.require('remote')
-let AppActions = remote.require('./metal/actions/app_actions')
+import AppActions from '../actions/app_actions'
 
 import {InputRow} from './forms'
 import {ErrorList} from './misc'
@@ -23,6 +22,7 @@ class LoginForm extends Component {
   }
 
   render () {
+    console.log(this.props)
     let {loading, errors} = this.props
 
     return <div className='login_form'>
@@ -37,7 +37,7 @@ class LoginForm extends Component {
           <InputRow label='Password' name='password' type='password' ref='password' disabled={loading}/>
 
           <div className='buttons'>
-            <button className='button' disabled={loading && 'disabled'}>Log in</button>
+            <button className='button' disabled={loading}>Log in</button>
             <span> · </span>
             <a href='https://itch.io/user/forgot-password' target='_blank'>Forgot password</a>
           </div>
@@ -55,6 +55,6 @@ class LoginForm extends Component {
 }
 
 LoginForm.propTypes = {
-  loading: PropTypes.boolean,
+  loading: PropTypes.bool,
   errors: PropTypes.array
 }

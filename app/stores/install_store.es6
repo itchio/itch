@@ -9,7 +9,7 @@ import defer from '../util/defer'
 import {Logger} from '../util/log'
 let log = require('../util/log')('install_store')
 
-import db from '../db'
+import db from '../util/db'
 
 import {Transition, InputRequired, Deadend} from '../tasks/errors'
 

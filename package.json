@@ -20,7 +20,7 @@
       "email": "amos@itch.io"
     }
   ],
-  "main": "main.js",
+  "main": "app/metal.js",
   "license": "MIT",
   "dependencies": {
     "babel": "^5.8.23",
@@ -73,7 +73,7 @@
     "standard": "^5.3.1",
     "tape": "^4.2.1",
     "walkdir": "0.0.10",
-    "zopf": "^1.1.0"
+    "zopf": "^1.2.0"
   },
   "scripts": {
     "start": "grunt && electron .",

@@ -1,14 +1,21 @@
 
+import fs from 'fs'
+import path from 'path'
+import mkdirp from 'mkdirp'
+
+import app from 'app'
+import dialog from 'dialog'
+import querystring from 'querystring'
+
+import os from './os'
+
 export function install () {
   process.on('uncaughtException', (e) => {
     try {
       // write crash log
-      let app = require('app')
       console.log(`Uncaught exception: ${e.stack}`)
-      let fs = require('fs')
-      let path = require('path')
       let mkdirp = require('mkdirp')
-      let platform = require('./util/os').platform()
+      let platform = os.platform()
       let crash_file = path.join(app.getPath('userData'), 'crash_logs', `${+new Date()}.log`)
       mkdirp.sync(path.dirname(crash_file))
 
@@ -21,7 +28,6 @@ export function install () {
       fs.writeFileSync(crash_file, log)
 
       // try to show error dialog
-      let dialog = require('dialog')
       let response = dialog.showMessageBox({
         type: 'error',
         buttons: ['Report issue on GitHub', 'Open crash log', 'Close'],
@@ -31,7 +37,6 @@ export function install () {
 
       switch (response) {
         case 0: { // Report issue
-          let querystring = require('querystring')
           let query = querystring.stringify({
             title: `[${platform}] Crash report for v${app.getVersion()}`,
             body:

@@ -2,9 +2,9 @@
 import app from 'app'
 
 import main_window from './main_window'
-import AppConstants from './constants/app_constants'
-import AppDispatcher from './dispatcher/app_dispatcher'
-import os from './util/os'
+import AppConstants from '../constants/app_constants'
+import AppDispatcher from '../dispatcher/app_dispatcher'
+import os from '../util/os'
 
 function set_progress_bar (alpha) {
   let win = main_window.get()

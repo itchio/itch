@@ -15,7 +15,7 @@ let setup = (t) => {
     '@noCallThru': true
   }
 
-  let extract = proxyquire('../../metal/tasks/extract', {
+  let extract = proxyquire('../../app/tasks/extract', {
     '../stores/install_store': install_store,
     './extractors/7zip': sevenzip
   })

@@ -1,7 +1,7 @@
 import test from 'zopf'
 import {contains} from 'underscore'
 
-import os from '../../metal/util/os'
+import os from '../../app/util/os'
 
 test('platform', t => {
   t.ok(contains(['win32', 'linux', 'darwin'], os.platform()), 'is known')

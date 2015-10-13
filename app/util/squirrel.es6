@@ -1,6 +1,6 @@
 
 import app from 'app'
-import os from './util/os'
+import os from './os'
 
 export function handle_startup_event () {
   if (os.platform() !== 'win32') {

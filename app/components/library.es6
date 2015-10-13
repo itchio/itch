@@ -8,11 +8,10 @@ import {UserPanel} from './user_panel'
 import {GameList} from './game_list'
 import {Icon, ErrorList, ProgressBar} from './misc'
 
-let remote = window.require('remote')
-let AppActions = remote.require('./metal/actions/app_actions')
+import AppActions from '../actions/app_actions'
 
 // Hack for frameless styling
-let frameless = remote.require('process').platform === 'darwin'
+let frameless = process.platform === 'darwin'
 
 /**
  * The main state of the client - displaying the library

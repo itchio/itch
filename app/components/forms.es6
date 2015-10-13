@@ -5,7 +5,7 @@ import {PropTypes, Component} from 'react'
 class InputRow extends Component {
   componentDidMount () {
     if (this.props.autofocus) {
-      this.refs.input.getDOMNode().focus()
+      this.refs.input.focus()
     }
   }
 
@@ -21,13 +21,13 @@ class InputRow extends Component {
 
   // non-React methods
   value () {
-    return this.refs.input.getDOMNode().value
+    return this.refs.input.value
   }
 }
 
 InputRow.propTypes = {
-  autofocus: PropTypes.boolean,
-  disabled: PropTypes.boolean,
+  autofocus: PropTypes.bool,
+  disabled: PropTypes.bool,
   label: PropTypes.string,
   type: PropTypes.oneOfType(['text', 'password'])
 }

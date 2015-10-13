@@ -1,5 +1,5 @@
 import test from 'zopf'
-import {Transition, Deadend, InputRequired} from '../../metal/tasks/errors'
+import {Transition, Deadend, InputRequired} from '../../app/tasks/errors'
 
 test('can build and throw three types of special errors', t => {
   t.throws(() => {

@@ -13,9 +13,9 @@ let setup = t => {
     '@noCallThru': true
   }
 
-  let squirrel = proxyquire('../../metal/squirrel', {
+  let squirrel = proxyquire('../../app/util/squirrel', {
     'app': app,
-    './util/os': os
+    './os': os
   })
 
   return {squirrel, app, os}

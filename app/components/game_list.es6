@@ -3,8 +3,7 @@ import React from 'react'
 import {PropTypes, Component} from 'react'
 import classNames from 'classnames'
 
-let remote = window.require('remote')
-let AppActions = remote.require('./metal/actions/app_actions')
+import AppActions from '../actions/app_actions'
 
 class GameCell extends Component {
   render () {
@@ -53,4 +52,3 @@ GameList.propTypes = {
 }
 
 export {GameList}
-

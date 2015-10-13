@@ -4,11 +4,7 @@ config.json
 npm-debug.log
 
 # build artifacts
-/style/**/*.css
-/metal/**/*.js
 /test/metal/**/*.js
-/chrome/**/*.js
-/main.js
 /maps
 *.map
 tmp

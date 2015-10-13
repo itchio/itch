@@ -5,9 +5,9 @@ var license_path = path.join(__dirname, 'LICENSE')
 var license = fs.readFileSync(license_path, { encoding: 'utf8' })
 var package_path = path.join(__dirname, 'package.json')
 var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version
-var ico_path = 'static/images/itchio.ico'
-var icns_path = 'static/images/itchio.icns'
-var electron_version = '0.33.6'
+var ico_path = 'app/static/images/itchio.ico'
+var icns_path = 'app/static/images/itchio.icns'
+var electron_version = '0.33.7'
 var out_dir = path.join('build', version)
 var company_name = 'Itch Corp'
 
@@ -22,7 +22,7 @@ module.exports = function (grunt) {
       },
       dist: {
         files: {
-          'style/main.css': 'style/main.scss'
+          'app/style/main.css': 'app/style/main.scss'
         }
       }
     },
@@ -35,7 +35,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '.',
-          src: ['*.es6', 'chrome/**/*.es6', 'metal/**/*.es6', 'test/**/*.es6'],
+          src: ['app/**/*.es6', 'test/**/*.es6'],
           dest: '.',
           ext: '.js'
         }]
@@ -44,17 +44,19 @@ module.exports = function (grunt) {
     // Recompile files on-demand
     watch: {
       es6: {
-        files: ['**/*.es6'],
+        files: ['app/**/*.es6', 'test/**/*.es6'],
         tasks: ['newer:babel'],
         options: {
-          debounceDelay: 100
+          debounceDelay: 20,
+          spawn: false
         }
       },
       scss: {
-        files: ['**/*.scss'],
+        files: ['app/**/*.scss'],
         tasks: ['sass'],
         options: {
-          debounceDelay: 100
+          debounceDelay: 20,
+          spawn: false
         }
       }
     },

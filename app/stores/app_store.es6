@@ -10,10 +10,11 @@ import AppConstants from '../constants/app_constants'
 import AppActions from '../actions/app_actions'
 import defer from '../util/defer'
 
-import config from '../config'
-import api from '../api'
-import db from '../db'
-import main_window from '../main_window'
+import setup from '../util/setup'
+import config from '../util/config'
+import api from '../util/api'
+import db from '../util/db'
+import main_window from '../ui/main_window'
 
 let CHANGE_EVENT = 'change'
 
@@ -260,13 +261,15 @@ function login_done (key) {
   })
 }
 
-function setup () {
-  let setup = require('../setup').run()
-  setup.status((message, icon) => {
+function run_setup () {
+  let task = setup.run()
+
+  task.status((message, icon) => {
     merge_state({setup: {message, icon: icon || state.setup.icon}})
     AppStore.emit_change()
   })
-  setup.then(() => {
+
+  task.then(() => {
     AppActions.setup_done()
   }).catch((e) => {
     console.log(`Error in setup: `, e.stack)
@@ -348,7 +351,7 @@ AppDispatcher.register((action) => {
     }
 
     case AppConstants.BOOT: {
-      setup()
+      run_setup()
       break
     }
 

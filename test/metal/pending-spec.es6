@@ -14,15 +14,15 @@ let setup = (t) => {
     'shell': { '@global': true }
   }
 
-  t.require('../../metal/util/http', stubs)
-  t.require('../../metal/util/defer', stubs)
-  t.require('../../metal/util/fs', stubs)
-  t.require('../../metal/util/glob', stubs)
+  t.require('../../app/util/http', stubs)
+  t.require('../../app/util/defer', stubs)
+  t.require('../../app/util/fs', stubs)
+  t.require('../../app/util/glob', stubs)
 
-  t.require('../../metal/tasks/find_upload', stubs)
-  t.require('../../metal/tasks/download', stubs)
-  t.require('../../metal/tasks/configure', stubs)
-  t.require('../../metal/tasks/launch', stubs)
+  t.require('../../app/tasks/find_upload', stubs)
+  t.require('../../app/tasks/download', stubs)
+  t.require('../../app/tasks/configure', stubs)
+  t.require('../../app/tasks/launch', stubs)
 }
 
 test('do not let our coverage report lie that much', t => {

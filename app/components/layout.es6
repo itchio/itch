@@ -7,7 +7,7 @@ import {SetupPage} from './setup'
 import {LibraryPage} from './library'
 
 let remote = window.require('remote')
-let AppStore = remote.require('./metal/stores/app_store')
+let AppStore = remote.require('./stores/app_store')
 
 function get_state () {
   return JSON.parse(AppStore.get_state_json())
@@ -46,4 +46,3 @@ export class Layout extends Component {
     setTimeout(() => { this.setState(get_state()) }, 0)
   }
 }
-

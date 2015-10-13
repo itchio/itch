@@ -1,7 +1,9 @@
 
+console.log(`In chrome, process.type = ${process.type}`)
+
 import ReactDOM from 'react-dom'
 import React from 'react'
-import {Layout} from './chrome/components/layout'
+import {Layout} from './components/layout'
 
 let app_node
 

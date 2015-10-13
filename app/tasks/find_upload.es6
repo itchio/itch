@@ -1,5 +1,5 @@
 
-import db from '../db'
+import db from '../util/db'
 import {indexBy} from 'underscore'
 
 import os from '../util/os'

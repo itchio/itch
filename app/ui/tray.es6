@@ -4,8 +4,8 @@ import app from 'app'
 import Menu from 'menu'
 import Tray from 'tray'
 
-import os from './util/os'
-import AppActions from './actions/app_actions'
+import os from '../util/os'
+import AppActions from '../actions/app_actions'
 
 export function make_tray () {
   let tray_menu_template = [

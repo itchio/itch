@@ -2,7 +2,7 @@
 import app from 'app'
 import BrowserWindow from 'browser-window'
 
-import AppActions from './actions/app_actions'
+import AppActions from '../actions/app_actions'
 import {make_tray} from './tray'
 
 let booted = false
@@ -73,4 +73,3 @@ export default {
   show,
   install
 }
-

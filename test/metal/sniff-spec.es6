@@ -1,5 +1,5 @@
 import test from 'zopf'
-import sniff from '../../metal/util/sniff'
+import sniff from '../../app/util/sniff'
 
 ;[
   ['empty', false],
