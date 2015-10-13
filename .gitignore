@@ -11,6 +11,7 @@ npm-debug.log
 /main.js
 /maps
 *.map
+tmp
 
 # coverage
 /coverage

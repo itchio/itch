@@ -6,7 +6,7 @@ process.env['BLUEBIRD_DEBUG'] = 1
 let walker = walk(__dirname, { no_recurse: true })
 
 walker.on('file', function (file) {
-  let matches = file.match(/([^\/]+-spec).js$/)
+  let matches = file.match(/([^\/^\\]+-spec).js$/)
   if (!matches) return
   let modpath = `./${matches[1]}`
   require(modpath)

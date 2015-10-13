@@ -9,7 +9,7 @@ install:
   - pushd test\chrome && npm install & popd
 test_script:
   - set OS=cygwin
-  - npm run test-chrome
+  - npm test
 notifications:
   - provider: Slack
     auth_token:
