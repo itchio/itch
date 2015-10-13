@@ -14,15 +14,15 @@ let setup = (t) => {
     'shell': { '@global': true }
   }
 
-  t.require('../../app/util/http', stubs)
-  t.require('../../app/util/defer', stubs)
-  t.require('../../app/util/fs', stubs)
-  t.require('../../app/util/glob', stubs)
+  t.require('../app/util/http', stubs)
+  t.require('../app/util/defer', stubs)
+  t.require('../app/util/fs', stubs)
+  t.require('../app/util/glob', stubs)
 
-  t.require('../../app/tasks/find_upload', stubs)
-  t.require('../../app/tasks/download', stubs)
-  t.require('../../app/tasks/configure', stubs)
-  t.require('../../app/tasks/launch', stubs)
+  t.require('../app/tasks/find_upload', stubs)
+  t.require('../app/tasks/download', stubs)
+  t.require('../app/tasks/configure', stubs)
+  t.require('../app/tasks/launch', stubs)
 }
 
 test('do not let our coverage report lie that much', t => {

@@ -13,7 +13,7 @@ let setup = t => {
     '@noCallThru': true
   }
 
-  let squirrel = proxyquire('../../app/util/squirrel', {
+  let squirrel = proxyquire('../app/util/squirrel', {
     'app': app,
     './os': os
   })

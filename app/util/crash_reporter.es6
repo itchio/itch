@@ -14,7 +14,6 @@ export function install () {
     try {
       // write crash log
       console.log(`Uncaught exception: ${e.stack}`)
-      let mkdirp = require('mkdirp')
       let platform = os.platform()
       let crash_file = path.join(app.getPath('userData'), 'crash_logs', `${+new Date()}.log`)
       mkdirp.sync(path.dirname(crash_file))
