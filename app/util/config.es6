@@ -29,4 +29,3 @@ function clear (key) {
 }
 
 export default { save, get, set, clear }
-

@@ -4,35 +4,29 @@ import proxyquire from 'proxyquire'
 proxyquire.noCallThru()
 
 let setup = (t) => {
-  let stubs = {
-    'app': {
-      getVersion: () => 'evergreen',
-      getPath: () => 'tmp/',
-      '@global': true
-    },
-    'browser-window': {
-      '@global': true
-    },
-    'menu': {
-      '@global': true
-    },
-    'tray': {
-      '@global': true
-    },
-    'shell': {
-      '@global': true
-    }
-  }
+  let stubs = {}
+  ;['app', 'browser-window', 'menu', 'tray', 'shell', 'dialog', 'remote'].forEach((stub) => {
+    stubs[stub] = { '@global': true }
+  })
 
-  proxyquire('../app/util/http', stubs)
-  proxyquire('../app/util/defer', stubs)
-  proxyquire('../app/util/fs', stubs)
-  proxyquire('../app/util/glob', stubs)
+  stubs.app.getPath = () => './tmp/'
+  stubs.remote.require = () => null
 
-  proxyquire('../app/tasks/find_upload', stubs)
-  proxyquire('../app/tasks/download', stubs)
-  proxyquire('../app/tasks/configure', stubs)
-  proxyquire('../app/tasks/launch', stubs)
+  ;['main_window', 'menu', 'notifier', 'tray'].forEach((name) => {
+    proxyquire(`../app/ui/${name}`, stubs)
+  })
+
+  ;['http', 'defer', 'fs', 'glob', 'api', 'crash_reporter', 'defer'].forEach((name) => {
+    proxyquire(`../app/util/${name}`, stubs)
+  })
+
+  ;['find_upload', 'download', 'configure', 'launch'].forEach((name) => {
+    proxyquire(`../app/tasks/${name}`, stubs)
+  })
+
+  ;['forms', 'game_list', 'layout', 'library', 'login', 'misc', 'setup', 'user_panel'].forEach((name) => {
+    proxyquire(`../app/components/${name}`, stubs)
+  })
 }
 
 test('do not let our coverage report lie that much', t => {

@@ -6,7 +6,7 @@ import {LoginPage} from './login'
 import {SetupPage} from './setup'
 import {LibraryPage} from './library'
 
-let remote = window.require('remote')
+let remote = require('remote')
 let AppStore = remote.require('./stores/app_store')
 
 function get_state () {
