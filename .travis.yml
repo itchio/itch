@@ -12,7 +12,6 @@ before_install:
   - npm install -g grunt-cli
   - npm install
   - grunt all
-  - "(cd test/chrome && npm install)"
 before_script:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
       export DISPLAY=:99.0;

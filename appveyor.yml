@@ -6,9 +6,7 @@ install:
   - npm install -g grunt-cli
   - npm install
   - grunt all
-  - pushd test\chrome && npm install & popd
 test_script:
-  - set OS=cygwin
   - npm test
 notifications:
   - provider: Slack
