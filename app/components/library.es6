@@ -4,11 +4,11 @@ import {Component, PropTypes} from 'react'
 import classNames from 'classnames'
 import {pairs} from 'underscore'
 
-import {UserPanel} from './user_panel'
-import {GameList} from './game_list'
+import {UserPanel} from './user-panel'
+import {GameList} from './game-list'
 import {Icon, ErrorList, ProgressBar} from './misc'
 
-import AppActions from '../actions/app_actions'
+import AppActions from '../actions/app-actions'
 
 // Hack for frameless styling
 let frameless = process.platform === 'darwin'

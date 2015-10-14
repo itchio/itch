@@ -3,11 +3,11 @@ import db from '../util/db'
 import {indexBy} from 'underscore'
 
 import os from '../util/os'
-let log = require('../util/log')('tasks/find_upload')
+let log = require('../util/log')('tasks/find-upload')
 
 import {Deadend} from './errors'
-import InstallStore from '../stores/install_store'
-import AppStore from '../stores/app_store'
+import InstallStore from '../stores/install-store'
+import AppStore from '../stores/app-store'
 
 function filter_uploads (uploads) {
   // filter uploads to find one relevant to our current platform

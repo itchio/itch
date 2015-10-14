@@ -7,7 +7,7 @@ try {
   console.log(`Failed to install source map support:\n${e}`)
 }
 
-require('./util/crash_reporter').install()
+require('./util/crash-reporter').install()
 
 if (require('./util/squirrel').handle_startup_event()) {
   process.exit(0)
@@ -15,5 +15,5 @@ if (require('./util/squirrel').handle_startup_event()) {
 
 require('./ui/menu').install()
 require('./ui/notifier').install()
-require('./ui/main_window').install()
-require('./stores/install_store').install()
+require('./ui/main-window').install()
+require('./stores/install-store').install()

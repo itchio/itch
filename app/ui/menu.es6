@@ -1,8 +1,8 @@
 
 import Menu from 'menu'
-import AppStore from '../stores/app_store'
-import AppActions from '../actions/app_actions'
-import AppDispatcher from '../dispatcher/app_dispatcher'
+import AppStore from '../stores/app-store'
+import AppActions from '../actions/app-actions'
+import AppDispatcher from '../dispatcher/app-dispatcher'
 
 import defer from '../util/defer'
 

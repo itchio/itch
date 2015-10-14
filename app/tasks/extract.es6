@@ -8,7 +8,7 @@ import {Transition} from './errors'
 import noop from '../util/noop'
 let log = require('../util/log')('tasks/extract')
 
-import InstallStore from '../stores/install_store'
+import InstallStore from '../stores/install-store'
 
 let self = {
   extract: function (opts) {
@@ -41,8 +41,8 @@ let self = {
 
       if (!install.upload_id) {
         throw new Transition({
-          to: 'find_upload',
-          reason: 'nil uploads_id'
+          to: 'find-upload',
+          reason: 'nil upload_id'
         })
       }
 

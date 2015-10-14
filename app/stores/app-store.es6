@@ -5,16 +5,16 @@ import Immutable from 'seamless-immutable'
 import app from 'app'
 import _ from 'underscore'
 
-import AppDispatcher from '../dispatcher/app_dispatcher'
-import AppConstants from '../constants/app_constants'
-import AppActions from '../actions/app_actions'
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
 import defer from '../util/defer'
 
 import setup from '../util/setup'
 import config from '../util/config'
 import api from '../util/api'
 import db from '../util/db'
-import main_window from '../ui/main_window'
+import main_window from '../ui/main-window'
 
 let CHANGE_EVENT = 'change'
 

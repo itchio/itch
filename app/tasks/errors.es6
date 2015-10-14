@@ -7,6 +7,10 @@ class Transition extends ExtendableError {
     this.to = opts.to
     this.reason = opts.reason
   }
+
+  toString () {
+    return `Transition(to ${this.to} because ${this.reason})`
+  }
 }
 
 class Deadend extends ExtendableError {

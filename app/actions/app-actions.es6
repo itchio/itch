@@ -1,6 +1,6 @@
 
-import AppDispatcher from '../dispatcher/app_dispatcher'
-import AppConstants from '../constants/app_constants'
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
 
 export default {
   boot: () => {

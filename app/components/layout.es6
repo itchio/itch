@@ -7,7 +7,7 @@ import {SetupPage} from './setup'
 import {LibraryPage} from './library'
 
 let remote = require('remote')
-let AppStore = remote.require('./stores/app_store')
+let AppStore = remote.require('./stores/app-store')
 
 function get_state () {
   return JSON.parse(AppStore.get_state_json())

@@ -2,7 +2,7 @@
 import React from 'react'
 import {Component, PropTypes} from 'react'
 
-import AppActions from '../actions/app_actions'
+import AppActions from '../actions/app-actions'
 
 import {InputRow} from './forms'
 import {ErrorList} from './misc'

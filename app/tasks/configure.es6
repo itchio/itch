@@ -4,7 +4,7 @@ import os from '../util/os'
 
 let log = require('../util/log')('tasks/configure')
 
-import InstallStore from '../stores/install_store'
+import InstallStore from '../stores/install-store'
 
 function configure (app_path) {
   console.log(`Configuring app at '${app_path}'`)

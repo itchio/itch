@@ -10,8 +10,7 @@ let library_dir = path.join(app.getPath('home'), 'Downloads', 'itch.io')
 mkdirp.sync(library_dir)
 
 export let store = new Datastore({
-  filename: path.join(library_dir, 'db.dat'),
-  autoload: true
+  filename: path.join(library_dir, 'db.dat')
 })
 
 // returns true if field name looks like a date field

@@ -1,5 +1,5 @@
 
-import {Transition, Deadend} from './errors'
+import {Transition} from './errors'
 
 import fstream from 'fstream'
 
@@ -8,8 +8,8 @@ import fs from '../util/fs'
 import noop from '../util/noop'
 let log = require('../util/log')('tasks/download')
 
-import InstallStore from '../stores/install_store'
-import AppStore from '../stores/app_store'
+import InstallStore from '../stores/install-store'
+import AppStore from '../stores/app-store'
 
 function start (opts) {
   let {id, onprogress = noop} = opts
@@ -25,15 +25,15 @@ function start (opts) {
 
     if (!install.upload_id || !install.uploads) {
       throw new Transition({
-        to: 'find_upload',
-        reason: 'nil upload_id / upload'
+        to: 'find-upload',
+        reason: 'nil upload_id / uploads'
       })
     }
 
     upload = install.uploads[install.upload_id]
     if (!upload) {
       throw new Transition({
-        to: 'find_upload',
+        to: 'find-upload',
         reason: 'cannot find upload in install cache'
       })
     }
@@ -44,16 +44,13 @@ function start (opts) {
     log(opts, `lstating ${archive_path}`)
     // Check for existing files
     return fs.lstatAsync(archive_path).then((stats) => {
-      log(opts, `got stats: ${JSON.stringify(stats)}`)
       return stats.size
     }).catch((e) => {
-      log(opts, `didn't get squat`)
       // probably ENOENT
       return 0
     })
   }).then((local_size) => {
-    log(opts, `local size is  ${local_size}`)
-    log(opts, `upload size is ${upload.size}`)
+    log(opts, `got ${local_size} / ${upload.size} bytes locally`)
 
     // Check if our local file is complete
     if (local_size === upload.size) {
@@ -88,11 +85,6 @@ function start (opts) {
     return http.request({
       url, headers, onprogress,
       sink: fstream.Writer({path: archive_path, flags})
-    }).catch((err) => {
-      log(opts, `download error: ${JSON.stringify(err)}`)
-      throw new Deadend({
-        reason: `Download error: ${err}`
-      })
     })
   })
 }

@@ -1,9 +1,9 @@
 
 import app from 'app'
 
-import main_window from './main_window'
-import AppConstants from '../constants/app_constants'
-import AppDispatcher from '../dispatcher/app_dispatcher'
+import main_window from './main-window'
+import AppConstants from '../constants/app-constants'
+import AppDispatcher from '../dispatcher/app-dispatcher'
 import os from '../util/os'
 
 function set_progress_bar (alpha) {
@@ -56,7 +56,7 @@ export function install () {
             })
             break
           default:
-            let win = require('./main_window').get()
+            let win = main_window.get()
             if (!win) return
             let {webContents} = win
             if (!webContents) return

@@ -44,7 +44,7 @@ let self = {
 
       let {url, file} = self.binary_url()
       let target_path = path.join(bin_path, file)
-      let sink = fstream.Write({path: target_path, mode: 0o777})
+      let sink = fstream.Writer({path: target_path, mode: 0o777})
       return http.request({ url, sink })
     })
   }

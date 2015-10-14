@@ -3,7 +3,7 @@ import React from 'react'
 import {PropTypes, Component} from 'react'
 import classNames from 'classnames'
 
-import AppActions from '../actions/app_actions'
+import AppActions from '../actions/app-actions'
 
 class GameCell extends Component {
   render () {

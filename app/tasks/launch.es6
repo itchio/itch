@@ -10,7 +10,7 @@ let log = require('../util/log')('tasks/launch')
 
 import {Transition} from './errors'
 
-import InstallStore from '../stores/install_store'
+import InstallStore from '../stores/install-store'
 
 function sh (exe_path, cmd) {
   return new Promise((resolve, reject) => {
