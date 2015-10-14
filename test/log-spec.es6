@@ -2,6 +2,8 @@ import test from 'zopf'
 import proxyquire from 'proxyquire'
 import fs from 'fs'
 
+proxyquire.noPreserveCache()
+
 let setup = (t, logger_opts) => {
   let make = proxyquire('../app/util/log', {})
   let logger = new make.Logger(logger_opts)
@@ -12,7 +14,7 @@ let setup = (t, logger_opts) => {
   return {opts, log}
 }
 
-test.serial('log timestamp', t => {
+test('log timestamp', t => {
   let {opts} = setup(t, {sinks: {console: false}})
   opts.logger.timestamp.restore()
   t.not(new Date(opts.logger.timestamp()).toString(), 'Invalid Date')

@@ -1,12 +1,11 @@
 
 import request from 'request-promise'
-import Promise from 'bluebird'
 import Immutable from 'seamless-immutable'
 
 /**
  * Wrapper for the itch.io API
  */
-export class Client {
+class Client {
   constructor () {
     this.root_url = 'https://itch.io/api/1'
     // this.root_url = 'http://localhost.com:8080/api/1'
@@ -14,7 +13,7 @@ export class Client {
 
   request (method, path, data) {
     let uri = `${this.root_url}${path}`
-    let options = { method, uri }
+    let options = { json: true, method, uri }
 
     switch (method.toLowerCase()) {
       case 'get':
@@ -25,12 +24,11 @@ export class Client {
         break
     }
 
-    return request(options).then(JSON.parse).then((res) => {
+    return request(options).then(res => {
       if (res.errors) {
-        return Promise.reject(Immutable(res.errors))
-      } else {
-        return Immutable(res)
+        throw Immutable(res.errors)
       }
+      return Immutable(res)
     })
   }
 
@@ -52,13 +50,10 @@ export class Client {
 /**
  * A user, according to the itch.io API
  */
-export class User {
+class User {
   constructor (client, key) {
     this.client = client
     this.key = key
-    if (!this.key) {
-      throw new Error('Missing key for user')
-    }
   }
 
   request (method, path, params) {
@@ -103,11 +98,10 @@ export class User {
   }
 }
 
-export let client = new Client()
-
-export default {
+let self = {
   Client,
   User,
-  client
+  client: new Client()
 }
 
+export default self

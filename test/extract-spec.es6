@@ -2,6 +2,8 @@ import test from 'zopf'
 import proxyquire from 'proxyquire'
 import Promise from 'bluebird'
 
+proxyquire.noPreserveCache()
+
 let setup = (t) => {
   let install_store = {
     get_install: () => Promise.resolve({upload_id: 42}),
@@ -61,7 +63,7 @@ test(`should transition away if missing upload_id`, t => {
   })
 })
 
-test.serial(`extract task should call subroutine`, t => {
+test(`extract task should call subroutine`, t => {
   let {extract} = setup(t)
   t.mock(extract).expects('extract')
   return extract.start({id: 42})

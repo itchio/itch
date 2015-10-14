@@ -1,7 +1,9 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 
-let setup = t => {
+proxyquire.noPreserveCache()
+
+let setup = (t, resolve) => {
   let request = {
     get: (opts) => null
   }
@@ -19,10 +21,8 @@ let setup = t => {
 
   let handlers = {}
   let stub = {
-    on: function (ev, fn) {
-      handlers[ev] = fn
-    },
-    pipe: function () { return stub }
+    on: (ev, fn) => { handlers[ev] = fn },
+    pipe: () => { return stub }
   }
   let mock = t.mock(request)
   mock.expects('get').once().returns(stub)
@@ -31,27 +31,25 @@ let setup = t => {
 }
 
 let http_opts = {
-  url: 'http://example.org/hello.txt',
+  url: 'http://-invalid/hello.txt',
   file: 'tmp/hello.txt',
   flags: 'w',
-  headers: {}
+  headers: {},
+  onprogress: () => {}
 }
 
-test('http completes on close', t => {
-  let {handlers, http} = setup(t)
+test('http completes', t => {
+  let {http, handlers} = setup(t, true)
 
   setImmediate(() => { handlers.close() })
   return http.to_file(http_opts)
 })
 
-test('http throws on error', t => {
-  let {handlers, http} = setup(t)
+test('http rejects errors', t => {
+  let {http, handlers} = setup(t, false)
   let spy = t.spy()
 
-  setImmediate(() => {
-    handlers.error('418 am a teapot amaa')
-  })
-
+  setImmediate(() => { handlers.error('meow') })
   return http.to_file(http_opts).catch(spy).finally(() => {
     t.ok(spy.calledOnce)
   })

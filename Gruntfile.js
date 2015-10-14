@@ -47,16 +47,14 @@ module.exports = function (grunt) {
         files: ['app/**/*.es6', 'test/**/*.es6'],
         tasks: ['newer:babel'],
         options: {
-          debounceDelay: 20,
-          spawn: false
+          debounceDelay: 20
         }
       },
       scss: {
         files: ['app/**/*.scss'],
         tasks: ['sass'],
         options: {
-          debounceDelay: 20,
-          spawn: false
+          debounceDelay: 20
         }
       }
     },

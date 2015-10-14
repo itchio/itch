@@ -1,14 +1,21 @@
 import test from 'zopf'
+import proxyquire from 'proxyquire'
 import {contains} from 'underscore'
 
-import os from '../app/util/os'
+proxyquire.noPreserveCache()
+
+let setup = t => {
+  let os = proxyquire('../app/util/os', {})
+  return {os}
+}
 
 test('platform', t => {
+  let {os} = setup(t)
   t.ok(contains(['win32', 'linux', 'darwin'], os.platform()), 'is known')
 })
 
-// serial because mocking 'os' export
-test.serial('itch_platform', t => {
+test('itch_platform', t => {
+  let {os} = setup(t)
   let mock = t.mock(os)
 
   mock.expects('platform').returns('win32')
@@ -22,5 +29,6 @@ test.serial('itch_platform', t => {
 })
 
 test('cli_args', t => {
+  let {os} = setup(t)
   t.is(os.cli_args(), process.argv)
 })
