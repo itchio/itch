@@ -5,7 +5,6 @@ import {indexBy} from 'underscore'
 import os from '../util/os'
 let log = require('../util/log')('tasks/find-upload')
 
-import {Deadend} from './errors'
 import InstallStore from '../stores/install-store'
 import AppStore from '../stores/app-store'
 
@@ -70,9 +69,7 @@ function start (opts) {
     if (uploads.length > 0) {
       return InstallStore.update_install(id, {upload_id: uploads[0].id})
     } else {
-      throw new Deadend({
-        reason: 'No downloads available'
-      })
+      throw new Error('No downloads available')
     }
   })
 }

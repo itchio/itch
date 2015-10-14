@@ -11,7 +11,7 @@ let log = require('../util/log')('install-store')
 
 import db from '../util/db'
 
-import {Transition, InputRequired, Deadend} from '../tasks/errors'
+import {Transition, InputRequired} from '../tasks/errors'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
@@ -87,8 +87,6 @@ function queue_task (id, task_name, data = {}) {
       defer(() => queue_task(id, err.to, data))
     } else if (err instanceof InputRequired) {
       log(opts, `(stub) input required by ${task_name}`)
-    } else if (err instanceof Deadend) {
-      log(opts, `deadend for ${task_name} because ${err.reason}`)
     } else {
       if (err.stack) {
         console.log(err.stack)

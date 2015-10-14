@@ -14,7 +14,7 @@ let setup = (t) => {
   let install_store = proxyquire('./stubs/install-store', {})
 
   let stubs = assign({
-    '../stores/install_store': install_store,
+    '../stores/install-store': install_store,
     './extractors/7zip': sevenzip
   }, proxyquire('./stubs/electron', {}))
   let extract = proxyquire('../app/tasks/extract', stubs)
@@ -23,7 +23,6 @@ let setup = (t) => {
 
 ;['zip', 'gz', 'bz2', '7z'].forEach((type) => {
   test(`extract uses 7-zip on ${type}`, t => {
-    if (true) return
     let {sevenzip, extract} = setup(t)
     t.mock(sevenzip).expects('extract').once().returns(Promise.resolve())
 
@@ -38,7 +37,6 @@ let setup = (t) => {
 // isn't a valid archive type (hopefully)
 ;['empty', 'png'].forEach((type) => {
   test(`extract rejects invalid archives (${type})`, t => {
-    if (true) return
     let {extract} = setup(t)
     let spy = t.spy()
     let extract_opts = {
@@ -54,16 +52,14 @@ let setup = (t) => {
 
 test(`extract validates upload_id`, t => {
   let {extract, install_store} = setup(t)
-  let spy = t.spy()
   t.mock(install_store).expects('get_install').returns(Promise.resolve({}))
 
-  return extract.start({id: 42}).catch(spy).finally(() => {
-    t.ok(spy.calledOnce)
-  })
+  return t.rejects(extract.start({id: 42}))
 })
 
-test(`extract task should call subroutine`, t => {
+test(`extract task should start`, t => {
   let {extract} = setup(t)
-  t.mock(extract).expects('extract')
+  t.mock(extract).expects('extract').once()
+
   return extract.start({id: 42})
 })

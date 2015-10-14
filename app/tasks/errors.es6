@@ -13,17 +13,10 @@ class Transition extends ExtendableError {
   }
 }
 
-class Deadend extends ExtendableError {
-  constructor (opts) {
-    super('dead end')
-    this.reason = opts.reason
-  }
-}
-
 class InputRequired extends ExtendableError {
   constructor (opts) {
     super('user interaction required')
   }
 }
 
-export { Transition, Deadend, InputRequired }
+export { Transition, InputRequired }
