@@ -4,7 +4,7 @@ import proxyquire from 'proxyquire'
 let setup = (t) => {
   let stubs = proxyquire('./stubs/electron', {})
 
-  ;['main_window', 'menu', 'notifier', 'tray'].forEach((name) => {
+  ;['main-window', 'menu', 'notifier', 'tray'].forEach((name) => {
     proxyquire(`../app/ui/${name}`, stubs)
   })
 
