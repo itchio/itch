@@ -113,12 +113,7 @@ function install () {
       }
 
       case AppConstants.LOGIN_DONE: {
-        db.loadDatabase(err => {
-          if (err) {
-            console.log(`Couldn't restore database: ${err}`)
-            return
-          }
-
+        db.load_database().then(res => {
           // load existing installs
           db.find({_table: 'installs'}).then((records) => {
             for (let record of records) {

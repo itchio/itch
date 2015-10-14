@@ -9,7 +9,7 @@ import _ from 'underscore'
 let library_dir = path.join(app.getPath('home'), 'Downloads', 'itch.io')
 mkdirp.sync(library_dir)
 
-export let store = new Datastore({
+let store = new Datastore({
   filename: path.join(library_dir, 'db.dat')
 })
 
@@ -29,12 +29,13 @@ function to_date (text) {
   return new Date(Date.UTC(year, month - 1, day, hour, min, sec))
 }
 
-export let insert = Promise.promisify(store.insert, store)
-export let update = Promise.promisify(store.update, store)
-export let find = Promise.promisify(store.find, store)
-export let find_one = Promise.promisify(store.findOne, store)
+let insert = Promise.promisify(store.insert, store)
+let update = Promise.promisify(store.update, store)
+let find = Promise.promisify(store.find, store)
+let find_one = Promise.promisify(store.findOne, store)
+let load_database = Promise.promisify(store.loadDatabase, store)
 
-export function save_download_keys (keys) {
+function save_download_keys (keys) {
   if (keys.length === 0) return Promise.resolve()
 
   let games = []
@@ -70,7 +71,7 @@ export function save_download_keys (keys) {
   return Promise.all(promises)
 }
 
-export function save_users (users) {
+function save_users (users) {
   if (users.length === 0) return Promise.resolve()
 
   let promises = []
@@ -98,7 +99,7 @@ export function save_users (users) {
   return Promise.all(promises)
 }
 
-export function save_games (games) {
+function save_games (games) {
   if (games.length === 0) return Promise.resolve()
 
   let users = []
@@ -140,7 +141,7 @@ export function save_games (games) {
   return Promise.all(promises)
 }
 
-export function save_collections (collections) {
+function save_collections (collections) {
   if (collections.length === 0) return
 
   let games = []
@@ -185,5 +186,6 @@ export default {
   insert,
   update,
   find,
-  find_one
+  find_one,
+  load_database
 }
