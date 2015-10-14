@@ -10,6 +10,7 @@ let setup = (t) => {
   })
 
   stubs.app.getPath = () => './tmp/'
+  stubs.app.getVersion = () => '1.0'
   stubs.remote.require = () => null
 
   ;['main_window', 'menu', 'notifier', 'tray'].forEach((name) => {

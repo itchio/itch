@@ -1,7 +1,5 @@
 import {walk} from 'walkdir'
 
-process.env['BLUEBIRD_DEBUG'] = 1
-
 // Read all test files.
 let walker = walk(__dirname, { no_recurse: true })
 
