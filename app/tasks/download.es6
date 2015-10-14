@@ -1,6 +1,8 @@
 
 import {Transition, Deadend} from './errors'
 
+import fstream from 'fstream'
+
 import http from '../util/http'
 import fs from '../util/fs'
 import noop from '../util/noop'
@@ -83,10 +85,9 @@ function start (opts) {
   }).then((url) => {
     log(opts, `d/l from ${url}`)
 
-    return http.to_file({
-      url, headers,
-      flags, file: archive_path,
-      onprogress
+    return http.request({
+      url, headers, onprogress,
+      sink: fstream.Writer({path: archive_path, flags})
     }).catch((err) => {
       log(opts, `download error: ${JSON.stringify(err)}`)
       throw new Deadend({

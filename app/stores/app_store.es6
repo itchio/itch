@@ -262,12 +262,12 @@ function login_done (key) {
 }
 
 function run_setup () {
-  let task = setup.run()
-
-  task.status((message, icon) => {
+  let onstatus = (message, icon) => {
     merge_state({setup: {message, icon: icon || state.setup.icon}})
     AppStore.emit_change()
-  })
+  }
+
+  let task = setup.run({onstatus})
 
   task.then(() => {
     AppActions.setup_done()

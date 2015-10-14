@@ -1,4 +1,7 @@
 
+import Promise from 'bluebird'
+import spawn from 'win-spawn'
+
 let self = {
   platform: function () {
     return process.platform
@@ -20,6 +23,20 @@ let self = {
 
   cli_args: function () {
     return process.argv
+  },
+
+  check_presence: function (command, args = []) {
+    return new Promise((resolve, reject) => {
+      let child = spawn(command, args)
+      child.on('error', (e) => null)
+      child.on('close', (code) => {
+        if (code === 0) {
+          resolve(code)
+        } else {
+          reject(`${command} exited with code ${code}`)
+        }
+      })
+    })
   }
 }
 

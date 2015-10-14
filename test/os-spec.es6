@@ -32,3 +32,13 @@ test('cli_args', t => {
   let {os} = setup(t)
   t.is(os.cli_args(), process.argv)
 })
+
+test('check_presence (has)', t => {
+  let {os} = setup(t)
+  return os.check_presence('npm', ['-v'])
+})
+
+test('check_presence (has not)', t => {
+  let {os} = setup(t)
+  return t.rejects(os.check_presence('kalamazoo123'))
+})

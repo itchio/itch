@@ -9,24 +9,29 @@ import assign from 'object-assign'
 import request from 'request'
 import progress from 'request-progress'
 
-import fstream from 'fstream'
+import noop from './noop'
 
 let default_headers = {
   'User-Agent': `itchio-app/${app.getVersion()}`
 }
 
 let self = {
-  to_file: function (opts) {
-    let {url, file, flags, headers, onprogress} = opts
+  request: function (opts) {
+    let {url, sink, headers = {}, onprogress = noop} = opts
     headers = assign({}, default_headers, headers)
 
     let req = progress(request.get({ encoding: null, url, headers }))
-    req.on('progress', onprogress)
-
-    let out = req.pipe(fstream.Writer({ path: file, flags }))
+    let out = req.pipe(sink)
 
     return new Promise((resolve, reject) => {
+      req.on('progress', onprogress)
+      req.on('response', (response) => {
+        if (!/^2/.test('' + response.statusCode)) {
+          reject(`HTTP ${response.statusCode} while accessing ${url}`)
+        }
+      })
       req.on('error', reject)
+
       out.on('close', resolve)
     })
   }

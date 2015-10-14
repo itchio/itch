@@ -32,9 +32,7 @@ let setup = (t, resolve) => {
 
 let http_opts = {
   url: 'http://-invalid/hello.txt',
-  file: 'tmp/hello.txt',
-  flags: 'w',
-  headers: {},
+  sink: {},
   onprogress: () => {}
 }
 
@@ -42,15 +40,19 @@ test('http completes', t => {
   let {http, handlers} = setup(t, true)
 
   setImmediate(() => { handlers.close() })
-  return http.to_file(http_opts)
+  return http.request(http_opts)
+})
+
+test('http rejects non-2xx response', t => {
+  let {http, handlers} = setup(t, false)
+
+  setImmediate(() => { handlers.response({statusCode: 404}) })
+  return t.rejects(http.request(http_opts))
 })
 
 test('http rejects errors', t => {
   let {http, handlers} = setup(t, false)
-  let spy = t.spy()
 
   setImmediate(() => { handlers.error('meow') })
-  return http.to_file(http_opts).catch(spy).finally(() => {
-    t.ok(spy.calledOnce)
-  })
+  return t.rejects(http.request(http_opts))
 })
