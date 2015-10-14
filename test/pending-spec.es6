@@ -17,7 +17,7 @@ let setup = (t) => {
     proxyquire(`../app/ui/${name}`, stubs)
   })
 
-  ;['http', 'defer', 'fs', 'glob', 'api', 'crash_reporter', 'defer'].forEach((name) => {
+  ;['fs', 'glob', 'api', 'crash_reporter'].forEach((name) => {
     proxyquire(`../app/util/${name}`, stubs)
   })
 
