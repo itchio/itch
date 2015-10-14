@@ -28,7 +28,8 @@ test('updater should be bypassed on linux', t => {
 })
 
 test(`auto-updater/win32 should noop if no squirrel cli args`, t => {
-  let {updater} = setup(t)
+  let {os, updater} = setup(t)
+  t.stub(os, 'platform').returns('win32')
   t.false(updater.run(), 'returns false')
 })
 

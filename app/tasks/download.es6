@@ -76,8 +76,6 @@ function start (opts) {
       : client.download_upload(install.upload_id)
     ).then((res) => {
       return res.url
-    }).catch((err) => {
-      log(opts, `getting URL error: ${JSON.stringify(err)}`)
     })
   }).then((url) => {
     log(opts, `d/l from ${url}`)
