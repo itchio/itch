@@ -10,6 +10,7 @@ let stubs = {}
 
 stubs.app.getVersion = () => '1.0'
 stubs.app.getPath = () => 'tmp/'
+stubs.app.quit = () => null
 
 stubs.remote.require = () => {}
 

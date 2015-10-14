@@ -10,7 +10,8 @@ let library_dir = path.join(app.getPath('home'), 'Downloads', 'itch.io')
 mkdirp.sync(library_dir)
 
 let store = new Datastore({
-  filename: path.join(library_dir, 'db.dat')
+  filename: path.join(library_dir, 'db.dat'),
+  autoload: true
 })
 
 // returns true if field name looks like a date field
@@ -33,7 +34,6 @@ let insert = Promise.promisify(store.insert, store)
 let update = Promise.promisify(store.update, store)
 let find = Promise.promisify(store.find, store)
 let find_one = Promise.promisify(store.findOne, store)
-let load_database = Promise.promisify(store.loadDatabase, store)
 
 function save_download_keys (keys) {
   if (keys.length === 0) return Promise.resolve()
@@ -186,6 +186,5 @@ export default {
   insert,
   update,
   find,
-  find_one,
-  load_database
+  find_one
 }

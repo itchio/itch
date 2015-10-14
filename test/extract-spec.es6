@@ -3,7 +3,8 @@ import proxyquire from 'proxyquire'
 import Promise from 'bluebird'
 import assign from 'object-assign'
 
-proxyquire.noPreserveCache()
+import install_store from './stubs/install-store'
+import electron from './stubs/electron'
 
 let setup = (t) => {
   let sevenzip = {
@@ -11,12 +12,10 @@ let setup = (t) => {
     '@noCallThru': true
   }
 
-  let install_store = proxyquire('./stubs/install-store', {})
-
   let stubs = assign({
     '../stores/install-store': install_store,
     './extractors/7zip': sevenzip
-  }, proxyquire('./stubs/electron', {}))
+  }, electron)
   let extract = proxyquire('../app/tasks/extract', stubs)
   return {install_store, sevenzip, extract}
 }

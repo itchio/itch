@@ -1,44 +1,26 @@
 import test from 'zopf'
-import proxyquire from 'proxyquire'
 import {contains} from 'underscore'
 
-proxyquire.noPreserveCache()
+import os from '../app/util/os'
 
-let setup = t => {
-  let os = proxyquire('../app/util/os', {})
-  return {os}
-}
-
-test('platform', t => {
-  let {os} = setup(t)
-  t.ok(contains(['win32', 'linux', 'darwin'], os.platform()), 'is known')
-})
-
-test('itch_platform', t => {
-  let {os} = setup(t)
+test('os', t => {
   let mock = t.mock(os)
 
+  t.ok(contains(['win32', 'linux', 'darwin'], os.platform()), 'is known')
+
   mock.expects('platform').returns('win32')
-  t.is('windows', os.itch_platform())
+  t.is('windows', os.itch_platform(), 'itch_platform windows')
 
   mock.expects('platform').returns('linux')
-  t.is('linux', os.itch_platform())
+  t.is('linux', os.itch_platform(), 'itch_platform linux')
 
   mock.expects('platform').returns('darwin')
-  t.is('osx', os.itch_platform())
-})
+  t.is('osx', os.itch_platform(), 'itch_platform osx')
 
-test('cli_args', t => {
-  let {os} = setup(t)
   t.is(os.cli_args(), process.argv)
-})
 
-test('check_presence (has)', t => {
-  let {os} = setup(t)
-  return os.check_presence('npm', ['-v'])
-})
-
-test('check_presence (has not)', t => {
-  let {os} = setup(t)
-  return t.rejects(os.check_presence('kalamazoo123'))
+  return t.all([
+    [os.check_presence('npm', ['-v']), 'check presence'],
+    [t.rejects(os.check_presence('kalamazoo123')), 'check absence']
+  ])
 })

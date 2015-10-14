@@ -1,21 +1,18 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
+import assign from 'object-assign'
 
-proxyquire.noPreserveCache()
+import electron from './stubs/electron'
 
 let setup = (t, resolve) => {
   let request = {
     get: (opts) => null
   }
 
-  let stubs = {
+  let stubs = assign({
     request,
-    'request-progress': (t) => t,
-    'app': {
-      getVersion: () => '1.0',
-      '@noCallThru': true
-    }
-  }
+    'request-progress': (t) => t
+  }, electron)
 
   let http = proxyquire('../app/util/http', stubs)
 
@@ -27,7 +24,7 @@ let setup = (t, resolve) => {
   let mock = t.mock(request)
   mock.expects('get').once().returns(stub)
 
-  return {request, http, handlers}
+  return assign({request, http, handlers}, electron)
 }
 
 let http_opts = {

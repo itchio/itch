@@ -9,7 +9,7 @@ try {
 
 require('./util/crash-reporter').install()
 
-if (require('./util/squirrel').handle_startup_event()) {
+if (require('./util/auto-updater').run()) {
   process.exit(0)
 }
 

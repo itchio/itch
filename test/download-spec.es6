@@ -2,14 +2,13 @@ import test from 'zopf'
 import proxyquire from 'proxyquire'
 import assign from 'object-assign'
 
-proxyquire.noPreserveCache()
+import install_store from './stubs/install-store'
+import electron from './stubs/electron'
 
 let setup = (t) => {
-  let install_store = proxyquire('./stubs/install-store', {})
-
   let stubs = assign({
     '../stores/install_store': install_store
-  }, proxyquire('./stubs/electron', {}))
+  }, electron)
 
   let download = proxyquire('../app/tasks/download', stubs)
   return {download}

@@ -2,8 +2,6 @@ import test from 'zopf'
 import proxyquire from 'proxyquire'
 import fs from 'fs'
 
-proxyquire.noPreserveCache()
-
 let setup = (t, logger_opts) => {
   let make = proxyquire('../app/util/log', {})
   let logger = new make.Logger(logger_opts)
@@ -21,7 +19,7 @@ test('log timestamp', t => {
 })
 
 // serial because mocking global 'console.log'
-test.serial('log to console', t => {
+test('log to console', t => {
   let {log, opts} = setup(t, {sinks: {console: true}})
   t.mock(console).expects('log').withArgs('[time] [log-spec] Hi mom')
   log(opts, 'Hi mom')

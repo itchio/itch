@@ -1,5 +1,7 @@
 import test from 'zopf'
+import noop from '../app/util/noop'
 
-test('noop does nothing', t => {
-  require('../app/util/noop')()
+test('noop', t => {
+  noop()
+  t.pass('does nothing')
 })

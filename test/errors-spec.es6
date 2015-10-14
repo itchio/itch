@@ -1,12 +1,12 @@
 import test from 'zopf'
 import {Transition, InputRequired} from '../app/tasks/errors'
 
-test('can build and throw three types of special errors', t => {
+test('task errors', t => {
   t.throws(() => {
     throw new Transition({to: 'somewhere', reason: 'testing'})
-  }, Transition)
+  }, Transition, 'Transition')
+  t.is('Transition(to a because b)', new Transition({to: 'a', reason: 'b'}).toString(), 'Transition.toString')
   t.throws(() => {
     throw new InputRequired({})
-  }, InputRequired)
-  t.is('Transition(to a because b)', new Transition({to: 'a', reason: 'b'}).toString())
+  }, InputRequired, 'InputRequired')
 })
