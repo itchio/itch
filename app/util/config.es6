@@ -4,7 +4,12 @@ import path from 'path'
 import app from 'app'
 
 let config_file = path.join(app.getPath('userData'), 'config.json')
-nconf.file({file: config_file})
+try {
+  nconf.file({file: config_file})
+} catch (e) {
+  // We don't want that to be fatal
+  console.log(`Could not read config: ${e}`)
+}
 
 function save () {
   nconf.save((err) => {
