@@ -28,7 +28,7 @@ let setup = (t) => {
     '../stores/install-store': install_store,
     '../stores/app-store': app_store,
     '../util/http': http,
-    '../util/fs': fs
+    '../promised/fs': fs
   }, electron)
 
   let download = proxyquire('../app/tasks/download', stubs)

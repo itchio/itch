@@ -1,7 +1,7 @@
 
-import glob from '../../util/glob'
 import sniff from '../../util/sniff'
-import fs from '../../util/fs'
+import glob from '../../promised/glob'
+import fs from '../../promised/fs'
 
 /**
  * Tries to find executables by sniffing file contents,

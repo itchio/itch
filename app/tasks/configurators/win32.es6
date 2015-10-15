@@ -1,5 +1,5 @@
 
-import glob from '../../util/glob'
+import glob from '../../promised/glob'
 
 export function configure (app_path) {
   return (

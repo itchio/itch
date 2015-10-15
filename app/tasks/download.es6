@@ -3,10 +3,10 @@ import {Transition} from './errors'
 
 import fstream from 'fstream'
 
-import http from '../util/http'
-import fs from '../util/fs'
-import noop from '../util/noop'
 let log = require('../util/log')('tasks/download')
+import http from '../util/http'
+import noop from '../util/noop'
+import fs from '../promised/fs'
 
 import InstallStore from '../stores/install-store'
 import AppStore from '../stores/app-store'

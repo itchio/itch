@@ -1,6 +1,6 @@
 
 import common from './common'
-import glob from '../../util/glob'
+import glob from '../../promised/glob'
 
 // skip some typical junk we find in archives that's supposed
 // to be hidden / in trash / isn't in anyway relevant to what
