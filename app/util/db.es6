@@ -3,188 +3,144 @@ import Promise from 'bluebird'
 import Datastore from 'nedb'
 import mkdirp from 'mkdirp'
 import path from 'path'
+import {pairs, pluck} from 'underscore'
+
 import app from 'app'
-import _ from 'underscore'
 
 let library_dir = path.join(app.getPath('home'), 'Downloads', 'itch.io')
 mkdirp.sync(library_dir)
 
-let store = new Datastore({
-  filename: path.join(library_dir, 'db.dat'),
-  autoload: true
-})
+let self = {
+  store: new Datastore({
+    filename: path.join(library_dir, 'db.dat'),
+    autoload: true
+  }),
 
-// returns true if field name looks like a date field
-function is_date (name) {
-  return /_at$/.test(name)
-}
+  // returns true if field name looks like a date field
+  is_date: function (name) {
+    return /_at$/.test(name)
+  },
 
-// parse date returned by itch.io API, make a Javascript Date object out of it
-// assumes UTC, throws on parsing error
-function to_date (text) {
-  let matches = text.match(/^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)(\.\d*)?$/)
-  if (!matches) {
-    throw new Error(`Invalid date: ${text}`)
-  }
-  let [, year, month, day, hour, min, sec] = matches
-  return new Date(Date.UTC(year, month - 1, day, hour, min, sec))
-}
+  // parse date returned by itch.io API, make a Javascript Date object out of it
+  // assumes UTC, throws on parsing error
+  to_date: function (text) {
+    let matches = text.match(/^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)(\.\d*)?$/)
+    if (!matches) {
+      throw new Error(`Invalid date: ${text}`)
+    }
+    let [, year, month, day, hour, min, sec] = matches
+    return new Date(Date.UTC(year, month - 1, day, hour, min, sec))
+  },
 
-let insert = Promise.promisify(store.insert, store)
-let update = Promise.promisify(store.update, store)
-let find = Promise.promisify(store.find, store)
-let find_one = Promise.promisify(store.findOne, store)
+  singularize: function (name) {
+    return name.replace(/s$/, '')
+  },
 
-function save_download_keys (keys) {
-  if (keys.length === 0) return Promise.resolve()
+  dbify: function (k, v) {
+    if (self.is_date(k)) {
+      return self.to_date(v)
+    } else {
+      return v
+    }
+  },
 
-  let games = []
-  let promises = []
-  for (let key of keys) {
-    let record = {_table: 'download_keys'}
-    for (let [name, field] of _.pairs(key)) {
-      switch (true) {
-        case typeof field === 'object':
-          switch (name) {
-            case 'game':
-              record.game_id = field.id
-              games.push(field)
-              break
+  // Save a bunch of records returned from the itch.io api
+  // Ignore objects, except if they're specified in relations
+  // with a handler. Parses dates. Requires a unique (table, id),
+  // upserts by default
+  save_records: function (inputs, opts) {
+    if (inputs.length === 0) return Promise.resolve()
+    let _table = opts.table
+    let relations = opts.relations || {}
+
+    let relation_records = {}
+    for (let name of Object.keys(relations)) {
+      relation_records[name] = []
+    }
+
+    let promises = []
+    for (let input of inputs) {
+      let record = {_table}
+
+      for (let [k, v] of pairs(input)) {
+        if (typeof v === 'object') {
+          let relation = relations[k]
+          if (relation) {
+            switch (relation[0]) {
+              case 'has_one':
+                record[k + '_id'] = v.id
+                relation_records[k].push(v)
+                break
+              case 'belongs_to':
+                relation_records[k].push(v)
+                v[self.singularize(_table) + '_id'] = input.id
+                break
+              case 'has_many':
+                record[self.singularize(k) + '_ids'] = pluck(v, 'id')
+                relation_records[k] = relation_records[k].concat(v)
+                break
+            }
           }
-          break
-        case is_date(name):
-          record[name] = to_date(field)
-          break
-        default:
-          record[name] = field
-          break
+        } else {
+          record[k] = self.dbify(k, v)
+        }
       }
+
+      promises.push(self.update(
+        { _table, id: input.id },
+        record,
+        {upsert: true}
+      ))
     }
 
-    promises.push(update({
-      _table: 'download_keys',
-      id: key.id
-    }, record, {upsert: true}))
-  }
-
-  promises.push(save_games(games))
-  return Promise.all(promises)
-}
-
-function save_users (users) {
-  if (users.length === 0) return Promise.resolve()
-
-  let promises = []
-  for (let user of users) {
-    let record = { _table: 'users' }
-    for (let [name, field] of _.pairs(user)) {
-      switch (true) {
-        case typeof field === 'object':
-          break
-        case is_date(name):
-          record[name] = to_date(field)
-          break
-        default:
-          record[name] = field
-          break
-      }
+    for (let [name, records] of pairs(relation_records)) {
+      if (records.length === 0) continue
+      let handler = relations[name][1]
+      promises.push(handler(records))
     }
 
-    promises.push(update({
-      _table: 'users',
-      id: user.id
-    }, record, {upsert: true}))
-  }
+    return Promise.all(promises)
+  },
 
-  return Promise.all(promises)
-}
-
-function save_games (games) {
-  if (games.length === 0) return Promise.resolve()
-
-  let users = []
-  let keys = []
-  let promises = []
-
-  for (let game of games) {
-    let record = {_table: 'games'}
-    for (let [name, field] of _.pairs(game)) {
-      switch (true) {
-        case typeof field === 'object':
-          switch (name) {
-            case 'key':
-              keys.push(field)
-              break
-            case 'user':
-              users.push(field)
-              record.user_id = field.id
-              break
-          }
-          break
-        case is_date(name):
-          record[name] = to_date(field)
-          break
-        default:
-          record[name] = field
-          break
+  save_download_keys: function (keys) {
+    return self.save_records(keys, {
+      table: 'download_keys',
+      relations: {
+        game: ['has_one', self.save_games]
       }
-    }
+    })
+  },
 
-    promises.push(update({
-      _table: 'games',
-      id: record.id
-    }, record, {upsert: true}))
-  }
+  save_users: function (users) {
+    return self.save_records(users, {
+      table: 'users'
+    })
+  },
 
-  promises.push(save_users(users))
-  promises.push(save_download_keys(keys))
-  return Promise.all(promises)
-}
-
-function save_collections (collections) {
-  if (collections.length === 0) return
-
-  let games = []
-  let promises = []
-
-  for (let collection of collections) {
-    let record = {_table: 'collections'}
-    for (let [name, field] of _.pairs(collection)) {
-      switch (true) {
-        case typeof field === 'object':
-          switch (name) {
-            case 'games':
-              record.game_ids = _.pluck(field, 'id')
-              games = games.concat(field)
-              break
-          }
-          break
-        case is_date(name):
-          record[name] = to_date(field)
-          break
-        default:
-          record[name] = field
-          break
+  save_games: function (games) {
+    return self.save_records(games, {
+      table: 'games',
+      relations: {
+        key: ['belongs_to', self.save_download_keys],
+        user: ['has_one', self.save_users]
       }
-    }
+    })
+  },
 
-    promises.push(update({
-      _table: 'collections',
-      id: collection.id
-    }, record, {upsert: true}))
+  save_collections: function (collections) {
+    return self.save_records(collections, {
+      table: 'collections',
+      relations: {
+        games: ['has_many', self.save_games]
+      }
+    })
   }
-
-  promises.push(save_games(games))
-  return Promise.all(promises)
 }
 
-export default {
-  save_download_keys,
-  save_users,
-  save_games,
-  save_collections,
-  insert,
-  update,
-  find,
-  find_one
-}
+// nedb promisified wrappers
+self.insert = Promise.promisify(self.store.insert, self.store)
+self.update = Promise.promisify(self.store.update, self.store)
+self.find = Promise.promisify(self.store.find, self.store)
+self.find_one = Promise.promisify(self.store.findOne, self.store)
+
+export default self
