@@ -71,7 +71,7 @@
     "tap-difflet": "^0.4.0",
     "tape": "^4.2.1",
     "walkdir": "0.0.10",
-    "zopf": "^2.2.0"
+    "zopf": "^2.3.0"
   },
   "scripts": {
     "start": "grunt && electron .",
@@ -80,7 +80,7 @@
     "lint": "standard app/**/*.es6 test/**/*.es6 Gruntfile.js",
     "remap": "cat .nyc_output/*.json | remap-istanbul -o .nyc_output/*.json",
     "coveralls": "npm run remap && nyc report -r text-lcov | coveralls",
-    "local-cov": "npm run specs && npm run remap && nyc report -r text"
+    "local-cov": "npm run specs && npm run remap && nyc report -r text && npm run lint"
   },
   "standard": {
     "parser": "babel-eslint"
