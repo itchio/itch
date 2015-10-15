@@ -1,6 +1,5 @@
 import test from 'zopf'
 import sniff from '../app/util/sniff'
-import Promise from 'bluebird'
 
 test('sniff', t => {
   let types = [
@@ -12,9 +11,12 @@ test('sniff', t => {
     ['mach-o-universal', 'mach-o universal binary'],
     ['sh', 'shell script']
   ]
-  return Promise.map(types, ([file, expected_type]) => {
-    return sniff.path(`${__dirname}/fixtures/${file}`).then((type) => {
-      t.is(type, expected_type, file)
+
+  for (let [file, expected_type] of types) {
+    t.case(file, t => {
+      return sniff.path(`${__dirname}/fixtures/${file}`).then((type) => {
+        t.is(type, expected_type)
+      })
     })
-  })
+  }
 })
