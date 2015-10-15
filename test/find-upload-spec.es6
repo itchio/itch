@@ -32,7 +32,6 @@ let setup = t => {
   let client = app_store.get_current_user()
   t.stub(client, 'game_uploads').resolves(uploads_fixture)
 
-  let log = require('../app/util/log')
   return {find_upload, client, db, os, app_store, install_store}
 }
 
