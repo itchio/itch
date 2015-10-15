@@ -19,8 +19,11 @@ test('os', t => {
 
   t.is(os.cli_args(), process.argv)
 
-  return t.all([
-    [os.check_presence('npm', ['-v']), 'check presence'],
-    [t.rejects(os.check_presence('kalamazoo123')), 'check absence']
-  ])
+  t.case('check presence', t => {
+    return os.check_presence('npm', ['-v'])
+  })
+
+  t.case('check absence', t => {
+    return t.rejects(os.check_presence('kalamzoo123'))
+  })
 })

@@ -1,9 +1,8 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 import assign from 'object-assign'
-import sinon from 'sinon'
+import path from 'path'
 import Promise from 'bluebird'
-import {difference} from 'underscore'
 
 import electron from './stubs/electron'
 import install_store from './stubs/install-store'
@@ -58,12 +57,12 @@ test('configure', t => {
     return win32.configure(win32_path).then(spy).then(_ => {
       let names = [
         'game.exe', 'launcher.bat',
-        'resources/editor.exe',
-        'resources/quite/deep/share.bat'
+        path.join('resources', 'editor.exe'),
+        path.join('resources', 'quite', 'deep', 'share.bat')
       ]
-      let paths = names.map(x => `${win32_path}/${x}`)
+      let paths = names.map(x => path.join(win32_path, x))
       t.is(1, spy.callCount)
-      t.same([], difference(paths, spy.getCall(0).args[0].executables))
+      t.samePaths(paths, spy.getCall(0).args[0].executables)
     })
   })
 
@@ -83,7 +82,7 @@ test('configure', t => {
       ]
       let paths = names.map(x => `${darwin_path}/${x}`)
       t.is(1, spy.callCount)
-      t.same([], difference(paths, spy.getCall(0).args[0].executables))
+      t.samePaths(paths, spy.getCall(0).args[0].executables)
     })
   })
 
@@ -107,7 +106,7 @@ test('configure', t => {
       ]
       let paths = names.map(x => `${linux_path}/${x}`)
       t.is(1, spy.callCount)
-      t.same([], difference(paths, spy.getCall(0).args[0].executables))
+      t.samePaths(paths, spy.getCall(0).args[0].executables)
     })
   })
 })

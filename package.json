@@ -71,7 +71,7 @@
     "tap-difflet": "^0.4.0",
     "tape": "^4.2.1",
     "walkdir": "0.0.10",
-    "zopf": "^3.1.0"
+    "zopf": "^4.0.0"
   },
   "scripts": {
     "start": "grunt && electron .",
