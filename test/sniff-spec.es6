@@ -1,4 +1,6 @@
 import test from 'zopf'
+import sinon from 'sinon'
+
 import sniff from '../app/util/sniff'
 
 test('sniff', t => {
@@ -12,11 +14,12 @@ test('sniff', t => {
     ['sh', 'shell script']
   ]
 
-  for (let [file, expected_type] of types) {
+  types.forEach(([file, expected_type]) => {
     t.case(file, t => {
-      return sniff.path(`${__dirname}/fixtures/${file}`).then((type) => {
-        t.is(type, expected_type)
+      let spy = t.spy()
+      return sniff.path(`${__dirname}/fixtures/${file}`).then(spy).then(res => {
+        sinon.assert.calledWith(spy, expected_type)
       })
     })
-  }
+  })
 })

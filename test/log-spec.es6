@@ -12,33 +12,34 @@ let setup = (t, logger_opts) => {
   return {opts, log}
 }
 
-test('log timestamp', t => {
-  let {opts} = setup(t, {sinks: {console: false}})
-  opts.logger.timestamp.restore()
-  t.not(new Date(opts.logger.timestamp()).toString(), 'Invalid Date')
-})
+test('log', t => {
+  t.case('timestamp', t => {
+    let {opts} = setup(t, {sinks: {console: false}})
+    opts.logger.timestamp.restore()
+    t.not(new Date(opts.logger.timestamp()).toString(), 'Invalid Date')
+  })
 
-// serial because mocking global 'console.log'
-test('log to console', t => {
-  let {log, opts} = setup(t, {sinks: {console: true}})
-  t.mock(console).expects('log').withArgs('[time] [log-spec] Hi mom')
-  log(opts, 'Hi mom')
-})
+  t.case('to console', t => {
+    let {log, opts} = setup(t, {sinks: {console: true}})
+    t.mock(console).expects('log').withArgs('[time] [log-spec] Hi mom')
+    log(opts, 'Hi mom')
+  })
 
-test('log to string', t => {
-  let {log, opts} = setup(t, {sinks: {console: false, string: true}})
-  log(opts, 'Hi mem')
-  t.is(opts.logger.contents, '[time] [log-spec] Hi mem\n')
-})
+  t.case('to string', t => {
+    let {log, opts} = setup(t, {sinks: {console: false, string: true}})
+    log(opts, 'Hi mem')
+    t.is(opts.logger.contents, '[time] [log-spec] Hi mem\n')
+  })
 
-test('log to file', t => {
-  let file = './tmp/log.log'
-  try { fs.truncateSync(file) } catch (e) {}
-  let {log, opts} = setup(t, {sinks: {console: false, file}})
-  log(opts, 'Hi dad')
+  t.case('to file', t => {
+    let file = './tmp/log.log'
+    try { fs.truncateSync(file) } catch (e) {}
+    let {log, opts} = setup(t, {sinks: {console: false, file}})
+    log(opts, 'Hi dad')
 
-  opts.logger.close().then(() => {
-    t.is('[time] [log-spec] Hi dad\n', fs.readFileSync(file, {encoding: 'utf8'}))
-    try { fs.unlinkSync(file) } catch (e) {}
+    opts.logger.close().then(() => {
+      t.is('[time] [log-spec] Hi dad\n', fs.readFileSync(file, {encoding: 'utf8'}))
+      try { fs.unlinkSync(file) } catch (e) {}
+    })
   })
 })
