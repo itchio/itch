@@ -36,48 +36,46 @@ let setup = (t) => {
   return {download, client, fs, http}
 }
 
-test('download validates upload_id', t => {
-  let {download} = setup(t)
-  let install = typical_install.merge({upload_id: 22})
-  t.stub(install_store, 'get_install').resolves(install)
-  return t.rejects(download.start({id: 42}))
-})
-
-test('download validates upload in list', t => {
-  let {download} = setup(t)
-  return t.rejects(download.start({id: 42}))
-})
-
-test('download downloads free game', t => {
-  let {download, client} = setup(t)
-  let install = typical_install
-  t.stub(install_store, 'get_install').resolves(install)
-  t.stub(client, 'download_upload').resolves(upload_response)
-  return download.start({id: 42})
-})
-
-test('download downloads paid game', t => {
-  let {download, client} = setup(t)
-  let install = typical_install.merge({key: {id: 'abacus'}})
-  t.stub(install_store, 'get_install').resolves(install)
-  t.stub(client, 'download_upload_with_key').resolves(upload_response)
-  return download.start({id: 42})
-})
-
-test('download skips if already complete', t => {
-  let {download, client, fs} = setup(t)
-  t.stub(install_store, 'get_install').resolves(typical_install)
-  t.stub(client, 'download_upload').resolves(upload_response)
-  t.stub(fs, 'lstatAsync').resolves({size: 512})
-  return t.rejects(download.start({id: 42}))
-})
-
-test('download resumes', t => {
+test('download', t => {
   let {download, client, fs, http} = setup(t)
-  t.stub(install_store, 'get_install').resolves(typical_install)
-  t.stub(client, 'download_upload').resolves(upload_response)
-  t.stub(fs, 'lstatAsync').resolves({size: 256})
-  let mock = t.mock(http)
-  mock.expects('request').calledWith({})
-  return download.start({id: 42})
+
+  t.case('validates upload_id', t => {
+    let install = typical_install.merge({upload_id: 22})
+    t.stub(install_store, 'get_install').resolves(install)
+    return t.rejects(download.start({id: 42}))
+  })
+
+  t.case('validates upload in list', t => {
+    return t.rejects(download.start({id: 42}))
+  })
+
+  t.case('downloads free game', t => {
+    let install = typical_install
+    t.stub(install_store, 'get_install').resolves(install)
+    t.stub(client, 'download_upload').resolves(upload_response)
+    return download.start({id: 42})
+  })
+
+  t.case('downloads paid game', t => {
+    let install = typical_install.merge({key: {id: 'abacus'}})
+    t.stub(install_store, 'get_install').resolves(install)
+    t.stub(client, 'download_upload_with_key').resolves(upload_response)
+    return download.start({id: 42})
+  })
+
+  t.case('skips when complete', t => {
+    t.stub(install_store, 'get_install').resolves(typical_install)
+    t.stub(client, 'download_upload').resolves(upload_response)
+    t.stub(fs, 'lstatAsync').resolves({size: 512})
+    return t.rejects(download.start({id: 42}))
+  })
+
+  t.case('resumes', t => {
+    t.stub(install_store, 'get_install').resolves(typical_install)
+    t.stub(client, 'download_upload').resolves(upload_response)
+    t.stub(fs, 'lstatAsync').resolves({size: 256})
+    let mock = t.mock(http)
+    mock.expects('request').calledWith({})
+    return download.start({id: 42})
+  })
 })
