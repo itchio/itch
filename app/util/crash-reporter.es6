@@ -1,7 +1,6 @@
 
-import fs from 'fs'
+import fstream from 'fstream'
 import path from 'path'
-import mkdirp from 'mkdirp'
 
 import app from 'app'
 import dialog from 'dialog'
@@ -16,7 +15,6 @@ export function install () {
       console.log(`Uncaught exception: ${e.stack}`)
       let platform = os.platform()
       let crash_file = path.join(app.getPath('userData'), 'crash_logs', `${+new Date()}.log`)
-      mkdirp.sync(path.dirname(crash_file))
 
       let log = ''
       log += e.stack
@@ -24,7 +22,7 @@ export function install () {
       if (platform === 'win32') {
         log = log.replace(/\n/g, '\r\n')
       }
-      fs.writeFileSync(crash_file, log)
+      fstream.Writer({path: crash_file}).write(log).end()
 
       // try to show error dialog
       let response = dialog.showMessageBox({

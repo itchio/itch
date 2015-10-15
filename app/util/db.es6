@@ -1,20 +1,24 @@
 
 import Promise from 'bluebird'
 import Datastore from 'nedb'
-import mkdirp from 'mkdirp'
 import path from 'path'
 import {pairs, pluck} from 'underscore'
+import {camelize} from './format'
 
 import app from 'app'
 
+import mkdirp from '../promised/mkdirp'
+
 let library_dir = path.join(app.getPath('home'), 'Downloads', 'itch.io')
-mkdirp.sync(library_dir)
 
 let self = {
   store: new Datastore({
-    filename: path.join(library_dir, 'db.dat'),
-    autoload: true
+    filename: path.join(library_dir, 'db.dat')
   }),
+
+  load: function () {
+    return mkdirp(library_dir).then(_ => self.load_database())
+  },
 
   // returns true if field name looks like a date field
   is_date: function (name) {
@@ -137,10 +141,12 @@ let self = {
   }
 }
 
-// nedb promisified wrappers
-self.insert = Promise.promisify(self.store.insert, self.store)
-self.update = Promise.promisify(self.store.update, self.store)
-self.find = Promise.promisify(self.store.find, self.store)
-self.find_one = Promise.promisify(self.store.findOne, self.store)
+// promisify a few nedb methods
+let store = self.store
+
+;['insert', 'update', 'find', 'find_one', 'load_database'].forEach((method) => {
+  let node_version = store[camelize(method)]
+  self[method] = Promise.promisify(node_version, store)
+})
 
 export default self

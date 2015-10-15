@@ -1,8 +1,10 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 
+import electron from './stubs/electron'
+
 let setup = (t) => {
-  let stubs = proxyquire('./stubs/electron', {})
+  let stubs = electron
 
   ;['main-window', 'menu', 'notifier', 'tray'].forEach((name) => {
     proxyquire(`../app/ui/${name}`, stubs)
@@ -19,8 +21,6 @@ let setup = (t) => {
   proxyquire('../app/components/layout', stubs)
 }
 
-if (process.env.TRAVIS) {
-  test('do not let our coverage report lie that much', t => {
-    setup(t)
-  })
-}
+test('pending specs', t => {
+  setup(t)
+})

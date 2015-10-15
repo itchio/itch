@@ -1,5 +1,6 @@
 
 import Promise from 'bluebird'
+import file_type from 'file-type'
 let read_chunk = Promise.promisify(require('read-chunk'))
 
 function buffer (buf) {
@@ -31,6 +32,14 @@ function buffer (buf) {
 
 buffer.path = function (file) {
   return read_chunk(file, 0, 8).then(buffer)
+}
+
+buffer.is_tar = function (file) {
+  return read_chunk(file, 0, 262).then(buf => {
+    let type = file_type(buf)
+    if (!type) return false
+    return type.ext === 'tar'
+  })
 }
 
 export default buffer

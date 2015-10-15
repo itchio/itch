@@ -24,6 +24,12 @@ test('db', t => {
     t.is(db.dbify('user_id', 42), 42)
   })
 
+  t.case('load', t => {
+    let mock = t.mock(db)
+    mock.expects('load_database').once()
+    return db.load()
+  })
+
   let make_eggs = (hens = false) => {
     return [1, 2, 3].map(x => {
       return {

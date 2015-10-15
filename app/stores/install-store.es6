@@ -111,11 +111,13 @@ function install () {
       }
 
       case AppConstants.LOGIN_DONE: {
-        // load existing installs
-        db.find({_table: 'installs'}).then((records) => {
-          for (let record of records) {
-            queue_task(record._id, 'download')
-          }
+        db.load().then(_ => {
+          // load existing installs
+          db.find({_table: 'installs'}).then(records => {
+            for (let record of records) {
+              queue_task(record._id, 'download')
+            }
+          })
         })
         break
       }

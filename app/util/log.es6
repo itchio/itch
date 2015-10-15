@@ -1,8 +1,6 @@
 
 import {pairs} from 'underscore'
-import mkdirp from 'mkdirp'
-import path from 'path'
-import fs from 'fs'
+import fstream from 'fstream'
 import deep_assign from 'deep-assign'
 
 function make (name) {
@@ -35,10 +33,9 @@ class Logger {
 
         case 'file': {
           if (val) {
-            mkdirp.sync(path.dirname(val))
-            this.file_sink = fs.createWriteStream(val, {
-              flags: 'a',
-              defaultEncoding: 'utf8'
+            this.file_sink = fstream.Writer({
+              path: val,
+              flags: 'a'
             })
           }
           break
