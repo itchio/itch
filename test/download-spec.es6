@@ -2,7 +2,6 @@ import test from 'zopf'
 import proxyquire from 'proxyquire'
 import assign from 'object-assign'
 import Immutable from 'seamless-immutable'
-import Promise from 'bluebird'
 
 import http from './stubs/http'
 import app_store from './stubs/app-store'
@@ -21,7 +20,7 @@ let upload_response = Immutable({
 
 let setup = (t) => {
   let fs = {
-    lstatAsync: () => Promise.reject()
+    lstatAsync: () => null
   }
   let client = app_store.get_current_user()
 
@@ -53,6 +52,7 @@ test('download', t => {
     let install = typical_install
     t.stub(install_store, 'get_install').resolves(install)
     t.stub(client, 'download_upload').resolves(upload_response)
+    t.stub(fs, 'lstatAsync').rejects()
     return download.start({id: 42})
   })
 
@@ -60,6 +60,7 @@ test('download', t => {
     let install = typical_install.merge({key: {id: 'abacus'}})
     t.stub(install_store, 'get_install').resolves(install)
     t.stub(client, 'download_upload_with_key').resolves(upload_response)
+    t.stub(fs, 'lstatAsync').rejects()
     return download.start({id: 42})
   })
 

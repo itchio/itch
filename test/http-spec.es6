@@ -4,7 +4,7 @@ import assign from 'object-assign'
 
 import electron from './stubs/electron'
 
-let setup = (t, resolve) => {
+let setup = (t) => {
   let request = {
     get: (opts) => null
   }
@@ -21,8 +21,7 @@ let setup = (t, resolve) => {
     on: (ev, fn) => { handlers[ev] = fn },
     pipe: () => { return stub }
   }
-  let mock = t.mock(request)
-  mock.expects('get').once().returns(stub)
+  t.stub(request, 'get').returns(stub)
 
   return assign({request, http, handlers}, electron)
 }
@@ -33,23 +32,21 @@ let http_opts = {
   onprogress: () => {}
 }
 
-test('http completes', t => {
-  let {http, handlers} = setup(t, true)
+test('http', t => {
+  let {http, handlers} = setup(t)
 
-  setImmediate(() => { handlers.close() })
-  return http.request(http_opts)
-})
+  t.case('resolves on close', t => {
+    setImmediate(() => { handlers.close() })
+    return http.request(http_opts)
+  })
 
-test('http rejects non-2xx response', t => {
-  let {http, handlers} = setup(t, false)
+  t.case('rejects non-2xx response', t => {
+    setImmediate(() => { handlers.response({statusCode: 404}) })
+    return t.rejects(http.request(http_opts))
+  })
 
-  setImmediate(() => { handlers.response({statusCode: 404}) })
-  return t.rejects(http.request(http_opts))
-})
-
-test('http rejects errors', t => {
-  let {http, handlers} = setup(t, false)
-
-  setImmediate(() => { handlers.error('meow') })
-  return t.rejects(http.request(http_opts))
+  t.case('rejects errors', t => {
+    setImmediate(() => { handlers.error('meow') })
+    return t.rejects(http.request(http_opts))
+  })
 })

@@ -1,6 +1,5 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import Promise from 'bluebird'
 import assign from 'object-assign'
 
 import install_store from './stubs/install-store'
@@ -25,7 +24,7 @@ test('extract', t => {
 
   ;['zip', 'gz', 'bz2', '7z'].forEach((type) => {
     t.case(`use 7-zip on ${type}`, t => {
-      t.mock(sevenzip).expects('extract').once().returns(Promise.resolve())
+      t.mock(sevenzip).expects('extract').once().resolves()
 
       return extract.extract({
         archive_path: `${__dirname}/fixtures/${type}`,
@@ -51,7 +50,7 @@ test('extract', t => {
   })
 
   t.case(`validate upload_id`, t => {
-    t.mock(install_store).expects('get_install').returns(Promise.resolve({}))
+    t.mock(install_store).expects('get_install').resolves({})
     return t.rejects(extract.start({id: 42}))
   })
 

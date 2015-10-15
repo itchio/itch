@@ -3,8 +3,6 @@ import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 import assign from 'object-assign'
 
-import Promise from 'bluebird'
-
 let setup = (t, returns) => {
   let request = t.stub().resolves({id: 12})
 
@@ -23,17 +21,18 @@ test('api', t => {
   let {api, request, user} = setup(t)
   let {client} = api
 
-  t.case('can POST and GET', t => {
-    return Promise.all([
-      client.request('GET', 'yo', {b: 11}),
-      client.request('POST', 'yo', {b: 22})
-    ]).then(() => {
-      let common = { uri: 'http://example.org/yo', json: true }
+  let common = { uri: 'http://example.org/yo', json: true }
 
+  t.case('can GET', t => {
+    return client.request('GET', 'yo', {b: 11}).then(res => {
       sinon.assert.calledWith(request, assign({
         method: 'GET', qs: {b: 11}
       }, common))
+    })
+  })
 
+  t.case('can POST', t => {
+    return client.request('POST', 'yo', {b: 22}).then(res => {
       sinon.assert.calledWith(request, assign({
         method: 'POST', form: {b: 22}
       }, common))
