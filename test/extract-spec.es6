@@ -27,7 +27,7 @@ test('extract', t => {
       t.mock(sevenzip).expects('extract').once().resolves()
 
       return extract.extract({
-        archive_path: `${__dirname}/fixtures/${type}`,
+        archive_path: `${__dirname}/fixtures/files/${type}`,
         dest_path: '/tmp'
       })
     })
@@ -39,7 +39,7 @@ test('extract', t => {
     t.case(`reject invalid archives (${type})`, t => {
       let spy = t.spy()
       let extract_opts = {
-        archive_path: `${__dirname}/fixtures/${type}`,
+        archive_path: `${__dirname}/fixtures/files/${type}`,
         dest_path: '/tmp'
       }
 

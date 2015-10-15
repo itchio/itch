@@ -14,7 +14,7 @@ let setup = (t) => {
     proxyquire(`../app/util/${name}`, stubs)
   })
 
-  ;['find-upload', 'configure', 'launch'].forEach((name) => {
+  ;['configure', 'launch'].forEach((name) => {
     proxyquire(`../app/tasks/${name}`, stubs)
   })
 
