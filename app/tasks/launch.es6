@@ -60,7 +60,7 @@ let self = {
 
   launch: function (exe_path, args, opts) {
     let platform = os.platform()
-    console.log(`launching '${exe_path}' on '${platform}' with args '${args.join(' ')}'`)
+    log(opts, `launching '${exe_path}' on '${platform}' with args '${args.join(' ')}'`)
     let arg_string = args.map((x) => self.escape(x)).join(' ')
 
     switch (platform) {
