@@ -7,8 +7,6 @@ export default keyMirror({
   FOCUS_WINDOW: null,
   HIDE_WINDOW: null,
 
-  LIBRARY_VIEW_GAME: null,
-  LIBRARY_CLOSE_GAME: null,
   LIBRARY_FOCUS_PANEL: null,
 
   DOWNLOAD_QUEUE: null,
@@ -20,7 +18,6 @@ export default keyMirror({
   BOUNCE: null,
   NOTIFY: null,
 
-  SETUP_DONE: null,
   LOGIN_WITH_PASSWORD: null,
   LOGIN_DONE: null,
   LOGOUT: null,

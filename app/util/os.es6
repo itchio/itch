@@ -7,6 +7,10 @@ let self = {
     return process.platform
   },
 
+  process_type: function () {
+    return process.type
+  },
+
   /**
    * Get platform in the format used by the itch.io API
    */

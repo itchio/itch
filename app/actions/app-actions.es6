@@ -15,19 +15,6 @@ export default {
     })
   },
 
-  view_game: (game) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.LIBRARY_VIEW_GAME,
-      game
-    })
-  },
-
-  close_game: () => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.LIBRARY_CLOSE_GAME
-    })
-  },
-
   focus_panel: (panel) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.LIBRARY_FOCUS_PANEL,
@@ -47,13 +34,6 @@ export default {
     })
   },
 
-  login_key: (key) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.LOGIN_KEY,
-      key
-    })
-  },
-
   login_with_password: (username, password) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.LOGIN_WITH_PASSWORD,
@@ -66,12 +46,6 @@ export default {
     AppDispatcher.dispatch({
       action_type: AppConstants.LOGIN_DONE,
       key
-    })
-  },
-
-  setup_done: (key) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.SETUP_DONE
     })
   },
 
@@ -94,13 +68,6 @@ export default {
     })
   },
 
-  set_progress: (alpha) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.SET_PROGRESS,
-      alpha
-    })
-  },
-
   install_progress: (opts) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.INSTALL_PROGRESS,
@@ -108,10 +75,16 @@ export default {
     })
   },
 
-  clear_progress: (alpha) => {
+  set_progress: (alpha) => {
     AppDispatcher.dispatch({
-      action_type: AppConstants.CLEAR_PROGRESS,
+      action_type: AppConstants.SET_PROGRESS,
       alpha
+    })
+  },
+
+  clear_progress: () => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.CLEAR_PROGRESS
     })
   },
 

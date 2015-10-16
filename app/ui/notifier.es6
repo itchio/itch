@@ -6,6 +6,7 @@ import AppConstants from '../constants/app-constants'
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import os from '../util/os'
 
+// TODO: turn into proper store
 function set_progress_bar (alpha) {
   let win = main_window.get()
   if (!win) return

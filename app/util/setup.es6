@@ -7,6 +7,7 @@ import http from './http'
 import noop from './noop'
 import os from './os'
 
+// TODO: turn into a store!
 let self = {
   path_done: false,
 

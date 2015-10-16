@@ -1,9 +1,9 @@
-
-import {EventEmitter} from 'events'
 import assign from 'object-assign'
 import Immutable from 'seamless-immutable'
 import app from 'app'
 import _ from 'underscore'
+
+import Store from './store'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
@@ -15,8 +15,6 @@ import config from '../util/config'
 import api from '../util/api'
 import db from '../util/db'
 import main_window from '../ui/main-window'
-
-let CHANGE_EVENT = 'change'
 
 let state = Immutable({
   page: 'setup',
@@ -48,45 +46,15 @@ function merge_state (obj) {
   state = state.merge(obj, {deep: true})
 }
 
-let AppStore = assign({}, EventEmitter.prototype, {
-  listeners: {},
-
-  emit_change: function () {
-    this.emit(CHANGE_EVENT)
-  },
-
-  add_change_listener: function (name, callback) {
-    this.listeners[name] = callback
-    this.on(CHANGE_EVENT, callback)
-    console.log(`Added listener '${name}', ${this.listenerCount(CHANGE_EVENT)} left`)
-  },
-
-  remove_change_listener: function (name) {
-    let callback = this.listeners[name]
-    if (!callback) {
-      console.log(`Can't remove non-listener '${name}'`)
-      return
-    }
-    delete this.listeners[name]
-    this.removeListener(CHANGE_EVENT, callback)
-    console.log(`Removed listener '${name}', ${this.listenerCount(CHANGE_EVENT)} left`)
-  },
-
+let AppStore = assign(new Store(), {
   get_state: function () {
-    return state
-  },
-
-  get_state_json: function () {
     return JSON.stringify(state)
   },
 
   get_current_user: function () {
     return current_user
   }
-
 })
-
-export default AppStore
 
 function fetch_games () {
   let user = current_user
@@ -261,6 +229,16 @@ function login_done (key) {
   })
 }
 
+function setup_done () {
+  merge_state({setup: {message: 'Logging in...', icon: 'heart-filled'}})
+  let key = config.get('api_key')
+  if (key) {
+    login_key(key)
+  } else {
+    switch_page('login')
+  }
+}
+
 function run_setup () {
   let onstatus = (message, icon) => {
     merge_state({setup: {message, icon: icon || state.setup.icon}})
@@ -270,7 +248,7 @@ function run_setup () {
   let task = setup.run({onstatus})
 
   task.then(() => {
-    AppActions.setup_done()
+    setup_done()
   }).catch((e) => {
     console.log(`Error in setup: `, e.stack)
     let message = '' + e
@@ -279,30 +257,10 @@ function run_setup () {
   })
 }
 
-AppDispatcher.register((action) => {
+AppStore.dispatch_token = AppDispatcher.register((action) => {
   // console.log(action.action_type)
 
   switch (action.action_type) {
-
-    case AppConstants.SWITCH_PAGE: {
-      switch_page(action.page)
-      AppStore.emit_change()
-      break
-    }
-
-    case AppConstants.LIBRARY_VIEW_GAME: {
-      merge_state({library: {game: action.game}})
-      AppStore.emit_change()
-      break
-    }
-
-    case AppConstants.LIBRARY_CLOSE_GAME: {
-      let library = state.library.without('game')
-      state = state.merge({library})
-      AppStore.emit_change()
-      break
-    }
-
     case AppConstants.LIBRARY_FOCUS_PANEL: {
       focus_window()
       focus_panel(action.panel)
@@ -339,17 +297,6 @@ AppDispatcher.register((action) => {
       break
     }
 
-    case AppConstants.SETUP_DONE: {
-      merge_state({setup: {message: 'Logging in...', icon: 'heart-filled'}})
-      let key = config.get('api_key')
-      if (key) {
-        login_key(key)
-      } else {
-        switch_page('login')
-      }
-      break
-    }
-
     case AppConstants.BOOT: {
       run_setup()
       break
@@ -369,3 +316,5 @@ AppDispatcher.register((action) => {
 
   }
 })
+
+export default AppStore
