@@ -53,7 +53,7 @@ let self = {
   sort_by_depth: function (execs) {
     let depths = {}
     for (let exe of execs) {
-      depths[exe] = exe.split(path.sep).length
+      depths[exe] = path.normalize(exe).split(path.sep).length
     }
     return clone(execs).sort((a, b) => depths[a] - depths[b])
   },
