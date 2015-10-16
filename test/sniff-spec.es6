@@ -22,4 +22,8 @@ test('sniff', t => {
       })
     })
   })
+
+  t.case('is_tar', t => {
+    t.true(sniff.is_tar(`${__dirname}/fixtures/files/tar`))
+  })
 })

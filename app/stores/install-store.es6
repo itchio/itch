@@ -5,7 +5,6 @@ import path from 'path'
 import assign from 'object-assign'
 import deep_assign from 'deep-assign'
 
-import defer from '../util/defer'
 import {Logger} from '../util/log'
 let log = require('../util/log')('install-store')
 
@@ -23,113 +22,108 @@ let apps_dir = path.join(library_dir, 'apps')
 let logger = new Logger()
 let opts = {logger}
 
-function get_install (id) {
-  return db.find_one({_table: 'installs', _id: id})
-}
+let self = {
+  get_install: function (id) {
+    return db.find_one({_table: 'installs', _id: id})
+  },
 
-function get_install_for_game (game_id) {
-  return db.find_one({_table: 'installs', game_id: game_id})
-}
+  get_install_for_game: function (game_id) {
+    return db.find_one({_table: 'installs', game_id: game_id})
+  },
 
-function update_install (id, opts) {
-  log(opts, `update_install(${id}, ${JSON.stringify(opts)})`)
-  return get_install(id).then((install) => {
-    let record = deep_assign({}, install, opts)
-    return db.update({_table: 'installs', _id: id}, record)
-  })
-}
+  update_install: function (id, opts) {
+    log(opts, `update_install(${id}, ${JSON.stringify(opts)})`)
+    return self.get_install(id).then((install) => {
+      let record = deep_assign({}, install, opts)
+      return db.update({_table: 'installs', _id: id}, record)
+    })
+  },
 
-function archive_path (upload_id) {
-  return path.join(archives_dir, `${upload_id}.bin`)
-}
+  archive_path: function (upload_id) {
+    return path.join(archives_dir, `${upload_id}.bin`)
+  },
 
-function app_path (install_id) {
-  return path.join(apps_dir, install_id)
-}
+  app_path: function (install_id) {
+    return path.join(apps_dir, install_id)
+  },
 
-function queue_install (game_id) {
-  let data = {
-    _table: 'installs',
-    game_id
-  }
-  db.insert(data).then((record) => {
-    queue_task(record._id, 'download', opts)
-  })
-}
-
-function queue_task (id, task_name, data = {}) {
-  let task = require(`../tasks/${task_name}`)
-  let task_opts = assign({}, opts, data, {
-    id,
-    onprogress: (state) => {
-      log(opts, `${task_name} done ${state.percent}%`)
+  queue_install: function (game_id) {
+    let data = {
+      _table: 'installs',
+      game_id
     }
-  })
-  log(opts, `starting ${task_name}`)
-  task.start(task_opts).then((res) => {
-    switch (task_name) {
-      case 'find-upload':
-        throw new Transition({ to: 'download' })
-      case 'download':
-        throw new Transition({ to: 'extract' })
-      case 'extract':
-        throw new Transition({ to: 'configure' })
-      default:
-        log(opts, `task ${task_name} finished with ${JSON.stringify(res)}`)
-        if (task_opts.then) {
-          queue_task(id, task_opts.then)
+    db.insert(data).then((record) => {
+      self.queue_task(record._id, 'download', opts)
+    })
+  },
+
+  natural_transitions: {
+    'find-upload': 'download',
+    'download': 'extract',
+    'extract': 'configure'
+  },
+
+  queue_task: function (id, task_name, data = {}) {
+    let task = require(`../tasks/${task_name}`)
+    let task_opts = assign({}, opts, data, {
+      id,
+      onprogress: (state) => {
+        log(opts, `${task_name} done ${state.percent}%`)
+      }
+    })
+    log(opts, `starting ${task_name}`)
+    task.start(task_opts).then((res) => {
+      let transition = self.natural_transitions[task_name]
+      if (transition) throw new Transition({to: transition})
+
+      log(opts, `task ${task_name} finished with ${JSON.stringify(res)}`)
+      if (task_opts.then) {
+        self.queue_task(id, task_opts.then)
+      }
+    }).catch((err) => {
+      if (err instanceof Transition) {
+        log(opts, `[${task_name} => ${err.to}] ${err.reason}`)
+        let data = err.data || {}
+        self.queue_task(id, err.to, data)
+      } else if (err instanceof InputRequired) {
+        log(opts, `(stub) input required by ${task_name}`)
+      } else {
+        if (err.stack) {
+          log(opts, err.stack)
         }
-    }
-  }).catch((err) => {
-    if (err instanceof Transition) {
-      log(opts, `[${task_name} => ${err.to}] ${err.reason}`)
-      let {data} = err.data || {}
-      defer(() => queue_task(id, err.to, data))
-    } else if (err instanceof InputRequired) {
-      log(opts, `(stub) input required by ${task_name}`)
-    } else {
-      if (err.stack) {
-        console.log(err.stack)
+        throw err
       }
-      throw err
-    }
-  })
-}
+    })
+  },
 
-function install () {
-  AppDispatcher.register((action) => {
-    switch (action.action_type) {
-      case AppConstants.DOWNLOAD_QUEUE: {
-        db.find_one({_table: 'installs', game_id: action.opts.game.id}).then((record) => {
-          if (record) {
-            queue_task(record._id, 'launch')
-          } else {
-            queue_install(action.opts.game.id)
-          }
-        })
-        break
-      }
-
-      case AppConstants.LOGIN_DONE: {
-        db.load().then(_ => {
-          // load existing installs
-          db.find({_table: 'installs'}).then(records => {
-            for (let record of records) {
-              queue_task(record._id, 'download')
+  install: function () {
+    AppDispatcher.register((action) => {
+      switch (action.action_type) {
+        case AppConstants.DOWNLOAD_QUEUE: {
+          db.find_one({_table: 'installs', game_id: action.opts.game.id}).then((record) => {
+            if (record) {
+              self.queue_task(record._id, 'launch')
+            } else {
+              self.queue_install(action.opts.game.id)
             }
           })
-        })
-        break
+          break
+        }
+
+        case AppConstants.LOGIN_DONE: {
+          db.load().then(_ => {
+            // load existing installs
+            db.find({_table: 'installs'}).then(records => {
+              for (let record of records) {
+                self.queue_task(record._id, 'download')
+              }
+            })
+          })
+          break
+        }
       }
-    }
-  })
+    })
+  }
 }
 
-export default {
-  install,
-  get_install,
-  get_install_for_game,
-  update_install,
-  archive_path,
-  app_path
-}
+export default self

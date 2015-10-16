@@ -14,4 +14,6 @@ stubs.app.quit = () => null
 
 stubs.remote.require = () => {}
 
+stubs.shell.openItem = () => null
+
 export default stubs
