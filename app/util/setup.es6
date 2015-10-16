@@ -8,10 +8,14 @@ import noop from './noop'
 import os from './os'
 
 let self = {
+  path_done: false,
+
   augment_path: function () {
     let bin_path = path.join(app.getPath('userData'), 'bin')
-    console.log(`Adding ${bin_path} to path`)
-    process.env.PATH += `${path.delimiter}${bin_path}`
+    if (!self.path_done) {
+      self.path_done = true
+      process.env.PATH += `${path.delimiter}${bin_path}`
+    }
     return bin_path
   },
 
