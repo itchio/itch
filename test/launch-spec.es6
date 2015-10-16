@@ -26,7 +26,7 @@ let setup = t => {
   return {launch, child_process, os, shell}
 }
 
-let logger = new log.Logger({sinks: {console: true}})
+let logger = new log.Logger({sinks: {console: false}})
 let opts = {id: 'kalamazoo', logger}
 
 test('launch', t => {

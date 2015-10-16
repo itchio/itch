@@ -11,26 +11,28 @@ try {
   console.log(`Could not read config: ${e}`)
 }
 
-function save () {
-  nconf.save((err) => {
-    if (err) {
-      console.log(`Could not save config: ${err}`)
-    }
-  })
+let self = {
+  save: function () {
+    nconf.save((err) => {
+      if (err) {
+        console.log(`Could not save config: ${err}`)
+      }
+    })
+  },
+
+  get: function (key) {
+    return nconf.get(key)
+  },
+
+  set: function (key, value) {
+    nconf.set(key, value)
+    self.save()
+  },
+
+  clear: function (key) {
+    nconf.clear(key)
+    self.save()
+  }
 }
 
-function get (key) {
-  return nconf.get(key)
-}
-
-function set (key, value) {
-  nconf.set(key, value)
-  save()
-}
-
-function clear (key) {
-  nconf.clear(key)
-  save()
-}
-
-export default { save, get, set, clear }
+export default self
