@@ -1,4 +1,3 @@
-import assign from 'object-assign'
 import Immutable from 'seamless-immutable'
 import app from 'app'
 import {pluck, indexBy} from 'underscore'
@@ -38,7 +37,7 @@ let state = Immutable({
   }
 })
 
-let AppStore = assign(new Store(), {
+let AppStore = Object.assign(new Store(), {
   get_state: function () {
     return JSON.stringify(state)
   }

@@ -2,7 +2,6 @@
 import app from 'app'
 import path from 'path'
 
-import assign from 'object-assign'
 import deep_assign from 'deep-assign'
 
 import {Logger} from '../util/log'
@@ -65,7 +64,7 @@ let self = {
 
   queue_task: function (id, task_name, data = {}) {
     let task = require(`../tasks/${task_name}`)
-    let task_opts = assign({}, opts, data, {
+    let task_opts = Object.assign({}, opts, data, {
       id,
       onprogress: (state) => {
         log(opts, `${task_name} done ${state.percent}%`)

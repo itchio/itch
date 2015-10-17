@@ -1,7 +1,6 @@
 
 import Promise from 'bluebird'
 import app from 'app'
-import assign from 'object-assign'
 
 // this module is typically used to download large
 // binary files, so we use the vanilla request lib
@@ -18,7 +17,7 @@ let default_headers = {
 let self = {
   request: function (opts) {
     let {url, sink, headers = {}, onprogress = noop} = opts
-    headers = assign({}, default_headers, headers)
+    headers = Object.assign({}, default_headers, headers)
 
     let req = progress(request.get({ encoding: null, url, headers }))
     let out = req.pipe(sink)

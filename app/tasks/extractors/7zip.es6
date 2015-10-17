@@ -2,7 +2,6 @@
 import Promise from 'bluebird'
 import SevenZip from 'node-7z'
 import path from 'path'
-import assign from 'object-assign'
 
 import {is_tar} from '../../util/sniff'
 import noop from '../../util/noop'
@@ -72,7 +71,7 @@ let self = {
         // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
         if (files.length === 1 && is_tar(files[0])) {
           let tar = files[0]
-          let sub_opts = assign({}, opts, {archive_path: tar})
+          let sub_opts = Object.assign({}, opts, {archive_path: tar})
           return (
             self.extract(sub_opts)
             .then((res) => {

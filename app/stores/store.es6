@@ -1,11 +1,10 @@
 import {EventEmitter} from 'events'
-import assign from 'object-assign'
 
 let CHANGE_EVENT = 'change'
 
 function Store () {}
 
-assign(Store.prototype, EventEmitter.prototype, {
+Object.assign(Store.prototype, EventEmitter.prototype, {
   listeners: {},
 
   emit_change: function () {

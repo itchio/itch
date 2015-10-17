@@ -1,5 +1,3 @@
-import assign from 'object-assign'
-
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 import AppActions from '../actions/app-actions'
@@ -14,7 +12,7 @@ import api from '../util/api'
 let current_user = null
 let me = null
 
-let CredentialsStore = assign(new Store(), {
+let CredentialsStore = Object.assign(new Store(), {
   get_current_user: function () {
     return current_user
   },
