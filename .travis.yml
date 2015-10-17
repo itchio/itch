@@ -9,6 +9,7 @@ before_install:
   - source /tmp/.nvm/nvm.sh
   - nvm install $NODE_VERSION
   - nvm use --delete-prefix $NODE_VERSION
+  - npm config set spin false
   - npm install -g grunt-cli
   - npm install
   - grunt all
