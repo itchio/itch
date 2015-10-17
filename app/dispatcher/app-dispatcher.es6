@@ -40,6 +40,11 @@ if (os.process_type() === 'renderer') {
      */
     dispatch (payload) {
       console.log(`Dispatcher dispatching: ${JSON.stringify(payload, null, 2)}`)
+
+      if (this._promises) {
+        throw new Error(`Can't call dispatch synchronously from an action callback`)
+      }
+
       if (typeof payload.action_type === 'undefined') {
         throw new Error(`Trying to dispatch action with no type: ${JSON.stringify(payload, null, 2)}`)
       }
