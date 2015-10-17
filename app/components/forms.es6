@@ -13,8 +13,8 @@ class InputRow extends Component {
     let {label, type = 'text', disabled} = this.props
     return <div className='input_row'>
       <label>
-        <div className='label'>{this.props.label}</div>
-        <input type={type} ref='input' disabled={disabled && 'disabled'}/>
+        <div className='label'>{label}</div>
+        <input type={type} ref='input' disabled={disabled}/>
       </label>
     </div>
   }

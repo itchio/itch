@@ -22,7 +22,6 @@ class LoginForm extends Component {
   }
 
   render () {
-    console.log(this.props)
     let {loading, errors} = this.props
 
     return <div className='login_form'>
