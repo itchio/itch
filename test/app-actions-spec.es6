@@ -30,6 +30,7 @@ test('app-actions', t => {
   test_action('focus_window', [], { action_type: 'FOCUS_WINDOW' })
   test_action('hide_window', [], { action_type: 'HIDE_WINDOW' })
   test_action('login_with_password', ['might', 'magic'], { action_type: 'LOGIN_WITH_PASSWORD', username: 'might', password: 'magic' })
+  test_action('login_failure', [['might', 'magic']], { action_type: 'LOGIN_FAILURE', errors: ['might', 'magic'] })
   test_action('authenticated', ['zaw'], { action_type: 'AUTHENTICATED', key: 'zaw' })
   test_action('logout', [], { action_type: 'LOGOUT' })
   test_action('logout_done', [], { action_type: 'LOGOUT_DONE' })
