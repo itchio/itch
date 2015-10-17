@@ -1,6 +1,5 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import assign from 'object-assign'
 
 import log from '../app/util/log'
 import electron from './stubs/electron'
@@ -15,7 +14,7 @@ let setup = t => {
     platform: () => 'win32'
   }
 
-  let stubs = assign({
+  let stubs = Object.assign({
     '../stores/install-store': InstallStore,
     '../util/os': os,
     'child_process': child_process

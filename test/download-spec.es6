@@ -1,6 +1,5 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import assign from 'object-assign'
 import Immutable from 'seamless-immutable'
 
 import http from './stubs/http'
@@ -24,7 +23,7 @@ let setup = (t) => {
   }
   let client = CredentialsStore.get_current_user()
 
-  let stubs = assign({
+  let stubs = Object.assign({
     '../stores/install-store': InstallStore,
     '../stores/credentials-store': CredentialsStore,
     '../util/http': http,

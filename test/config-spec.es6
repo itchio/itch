@@ -1,6 +1,5 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import assign from 'object-assign'
 
 import electron from './stubs/electron'
 
@@ -12,7 +11,7 @@ let setup = t => {
     clear: () => null,
     save: () => null
   }
-  let stubs = assign({ nconf }, electron)
+  let stubs = Object.assign({ nconf }, electron)
 
   let config = proxyquire('../app/util/config', stubs)
   return {nconf, config}

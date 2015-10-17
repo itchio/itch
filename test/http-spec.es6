@@ -1,6 +1,5 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import assign from 'object-assign'
 
 import electron from './stubs/electron'
 
@@ -9,7 +8,7 @@ let setup = (t) => {
     get: (opts) => null
   }
 
-  let stubs = assign({
+  let stubs = Object.assign({
     request,
     'request-progress': (t) => t
   }, electron)
@@ -23,7 +22,7 @@ let setup = (t) => {
   }
   t.stub(request, 'get').returns(stub)
 
-  return assign({request, http, handlers}, electron)
+  return Object.assign({request, http, handlers}, electron)
 }
 
 let http_opts = {

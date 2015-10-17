@@ -1,6 +1,5 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import assign from 'object-assign'
 
 import electron from './stubs/electron'
 
@@ -12,7 +11,7 @@ let initialize = t => {
   let http = {
     request: () => null
   }
-  let stubs = assign({
+  let stubs = Object.assign({
     './os': os,
     './http': http
   }, electron)

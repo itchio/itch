@@ -1,18 +1,17 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import assign from 'object-assign'
 
 import electron from './stubs/electron'
 
 let setup = t => {
   let os = {}
 
-  let stubs = assign({
+  let stubs = Object.assign({
     './os': os
   }, electron)
 
   let updater = proxyquire('../app/util/auto-updater', stubs)
-  return assign({updater, os}, electron)
+  return Object.assign({updater, os}, electron)
 }
 
 test('auto-updater', t => {

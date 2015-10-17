@@ -1,7 +1,6 @@
 import test from 'zopf'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
-import assign from 'object-assign'
 
 let setup = (t, returns) => {
   let request = t.stub().resolves({id: 12})
@@ -25,7 +24,7 @@ test('api', t => {
 
   t.case('can GET', t => {
     return client.request('GET', 'yo', {b: 11}).then(res => {
-      sinon.assert.calledWith(request, assign({
+      sinon.assert.calledWith(request, Object.assign({
         method: 'GET', qs: {b: 11}
       }, common))
     })
@@ -33,7 +32,7 @@ test('api', t => {
 
   t.case('can POST', t => {
     return client.request('POST', 'yo', {b: 22}).then(res => {
-      sinon.assert.calledWith(request, assign({
+      sinon.assert.calledWith(request, Object.assign({
         method: 'POST', form: {b: 22}
       }, common))
     })

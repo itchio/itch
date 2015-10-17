@@ -1,6 +1,5 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import assign from 'object-assign'
 import path from 'path'
 import Promise from 'bluebird'
 
@@ -20,7 +19,7 @@ let setup = t => {
   let darwin = {configure: noop}
   let linux = {configure: noop}
 
-  let stubs = assign({
+  let stubs = Object.assign({
     '../util/os': os,
     './configurators/win32': win32,
     './configurators/darwin': darwin,

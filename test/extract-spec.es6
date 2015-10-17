@@ -1,6 +1,5 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import assign from 'object-assign'
 
 import install_store from './stubs/install-store'
 import electron from './stubs/electron'
@@ -11,7 +10,7 @@ let setup = (t) => {
     '@noCallThru': true
   }
 
-  let stubs = assign({
+  let stubs = Object.assign({
     '../stores/install-store': install_store,
     './extractors/7zip': sevenzip
   }, electron)

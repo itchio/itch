@@ -1,6 +1,5 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import assign from 'object-assign'
 import Promise from 'bluebird'
 import Immutable from 'seamless-immutable'
 import sinon from 'sinon'
@@ -22,7 +21,7 @@ let setup = t => {
     '@noCallThru': true
   }
 
-  let stubs = assign({
+  let stubs = Object.assign({
     '../stores/install-store': InstallStore,
     '../stores/credentials-store': CredentialsStore,
     '../actions/app-actions': AppActions,
