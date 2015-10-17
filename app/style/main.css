@@ -127,7 +127,8 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden; }
+  overflow: hidden;
+  -webkit-user-select: none; }
 
 body {
   font-family: Lato, sans-serif;
@@ -287,7 +288,7 @@ p {
       font-size: 13px;
       color: #777;
       margin-left: 8px;
-      margin: 5px 0 0 0;
+      margin: 5px 0 0;
       padding: 6px 0 4px 8px; }
     .library_page .sidebar .panel_links {
       position: absolute;
@@ -302,7 +303,7 @@ p {
         padding: 7px 8px;
         color: rgba(255, 255, 255, 0.8);
         cursor: pointer; }
-        .library_page .sidebar .panel_links .panel_link span.icon {
+        .library_page .sidebar .panel_links .panel_link .icon {
           margin-right: 8px; }
         .library_page .sidebar .panel_links .panel_link:hover {
           background: rgba(0, 0, 0, 0.1); }
@@ -338,11 +339,11 @@ p {
     right: 0;
     overflow: auto; }
   .library_page .game_list {
-    padding: 30px 20px 0 20px; }
+    padding: 30px 20px 0; }
   .library_page .game_cell {
     display: inline-block;
     vertical-align: top;
-    margin: 0 10px 40px 10px;
+    margin: 0 10px 40px;
     max-width: 185px; }
     .library_page .game_cell .bordered {
       background: rgba(0, 0, 0, 0.5);

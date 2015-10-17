@@ -5,7 +5,6 @@ import AppActions from '../actions/app-actions'
 import AppStore from './app-store'
 import Store from './store'
 
-import defer from '../util/defer'
 import config from '../util/config'
 import api from '../util/api'
 
@@ -26,7 +25,8 @@ function login_with_password (action) {
   let {username, password} = action
   api.client.login_with_password(username, password).then((res) => {
     me = res.user
-    defer(_ => AppActions.authenticated(res.key.key))
+    CredentialsStore.emit_change()
+    setImmediate(_ => AppActions.authenticated(res.key.key))
   }).catch(AppActions.login_failure)
 }
 
@@ -36,7 +36,8 @@ function boot () {
     let key = config.get('api_key')
     api.client.login_key(key).then((res) => {
       me = res.user
-      defer(_ => AppActions.authenticated(key))
+      CredentialsStore.emit_change()
+      setImmediate(_ => AppActions.authenticated(key))
     }).catch(AppActions.login_failure)
   })
 }

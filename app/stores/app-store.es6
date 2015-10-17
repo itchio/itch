@@ -7,7 +7,6 @@ import CredentialsStore from './credentials-store'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
-import defer from '../util/defer'
 
 import setup from '../util/setup'
 import db from '../util/db'
@@ -169,7 +168,7 @@ function authenticated (action) {
   AppDispatcher.wait_for(CredentialsStore).then(_ => {
     focus_panel('owned')
 
-    defer(() => {
+    setImmediate(_ => {
       let show_collections = function () {
         db.find({_table: 'collections'}).then((collections) => {
           return indexBy(collections, 'id')

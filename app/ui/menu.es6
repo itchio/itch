@@ -2,9 +2,6 @@
 import Menu from 'menu'
 import CredentialsStore from '../stores/credentials-store'
 import AppActions from '../actions/app-actions'
-import AppDispatcher from '../dispatcher/app-dispatcher'
-
-import defer from '../util/defer'
 
 function refresh_menu () {
   let repo_url = 'https://github.com/itchio/itchio-app'
@@ -149,14 +146,5 @@ function refresh_menu () {
 }
 
 export function install () {
-  AppDispatcher.register((action) => {
-    switch (action.action_type) {
-      // TODO: keep an eye on that, might need to rebuild in other circumstances.
-      case 'BOOT':
-      case 'AUTHENTICATED':
-      case 'LOGOUT':
-        AppDispatcher.wait_for(CredentialsStore).then(defer(refresh_menu))
-        break
-    }
-  })
+  CredentialsStore.add_change_listener('menu', refresh_menu)
 }

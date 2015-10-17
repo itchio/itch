@@ -54,7 +54,7 @@ $cell_height: $cell_width * $cell_ratio;
       font-size: 13px;
       color: #777;
       margin-left: 8px;
-      margin: 5px 0 0 0;
+      margin: 5px 0 0;
       padding: 6px 0 4px 8px;
     }
 
@@ -73,7 +73,7 @@ $cell_height: $cell_width * $cell_ratio;
         color: rgba(white, .8);
         cursor: pointer;
 
-        span.icon {
+        .icon {
           margin-right: 8px;
         }
 
@@ -134,13 +134,13 @@ $cell_height: $cell_width * $cell_ratio;
   }
 
   .game_list {
-    padding: 30px 20px 0 20px;
+    padding: 30px 20px 0;
   }
 
   .game_cell {
     display: inline-block;
     vertical-align: top;
-    margin: 0 10px 40px 10px;
+    margin: 0 10px 40px;
     max-width: $cell_width;
 
     .bordered {
@@ -158,7 +158,7 @@ $cell_height: $cell_width * $cell_ratio;
     }
 
     .game_thumb {
-      @include transition(opacity .20s ease-in-out);
+      @include transition(opacity .2s ease-in-out);
 
       vertical-align: top;
       display: block;
