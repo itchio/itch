@@ -110,7 +110,7 @@ let self = {
           break
         }
 
-        case AppConstants.LOGIN_DONE: {
+        case AppConstants.AUTHENTICATED: {
           db.load().then(_ => {
             // load existing installs
             db.find({_table: 'installs'}).then(records => {

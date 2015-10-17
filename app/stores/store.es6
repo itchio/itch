@@ -27,4 +27,20 @@ assign(Store.prototype, EventEmitter.prototype, {
   }
 })
 
+Store.action_listeners = (f) => {
+  let handlers = {}
+  let on = function (type, cb) {
+    if (!type) {
+      throw new Error('Trying to listen for null/undefined action')
+    }
+    handlers[type] = cb
+  }
+  f(on)
+  return function (action) {
+    let handler = handlers[action.action_type]
+    if (!handler) return
+    return handler(action)
+  }
+}
+
 export default Store

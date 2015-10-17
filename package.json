@@ -35,6 +35,7 @@
     "glob": "^5.0.14",
     "humanize-plus": "^1.5.0",
     "keymirror": "~0.1.0",
+    "leaf-flux-dispatcher": "0.0.3",
     "mkdirp": "^0.5.1",
     "nconf": "^0.8.2",
     "nedb": "^1.2.1",

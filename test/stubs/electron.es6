@@ -1,7 +1,7 @@
 
 let stubs = {}
 
-;['app', 'browser-window', 'menu', 'tray', 'shell', 'dialog', 'remote'].forEach((stub) => {
+;['app', 'browser-window', 'menu', 'tray', 'shell', 'dialog', 'remote', 'ipc'].forEach((stub) => {
   stubs[stub] = {
     '@noCallThru': true,
     '@global': true
@@ -11,6 +11,9 @@ let stubs = {}
 stubs.app.getVersion = () => '1.0'
 stubs.app.getPath = () => 'tmp/'
 stubs.app.quit = () => null
+
+stubs.ipc.on = () => null
+stubs.ipc.send = () => null
 
 stubs.remote.require = () => {}
 

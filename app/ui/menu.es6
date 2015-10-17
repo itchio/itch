@@ -1,6 +1,6 @@
 
 import Menu from 'menu'
-import AppStore from '../stores/app-store'
+import CredentialsStore from '../stores/credentials-store'
 import AppActions from '../actions/app-actions'
 import AppDispatcher from '../dispatcher/app-dispatcher'
 
@@ -137,7 +137,7 @@ function refresh_menu () {
   let template = [
     menus.file,
     menus.edit,
-    (AppStore.get_current_user()
+    (CredentialsStore.get_current_user()
     ? menus.account
     : menus.account_disabled),
     menus.help
@@ -153,9 +153,9 @@ export function install () {
     switch (action.action_type) {
       // TODO: keep an eye on that, might need to rebuild in other circumstances.
       case 'BOOT':
-      case 'LOGIN_DONE':
-      case 'LOGOUT_DONE':
-        defer(() => refresh_menu())
+      case 'AUTHENTICATED':
+      case 'LOGOUT':
+        AppDispatcher.wait_for(CredentialsStore).then(defer(refresh_menu))
         break
     }
   })

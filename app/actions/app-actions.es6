@@ -2,7 +2,7 @@
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 
-export default {
+let self = {
   boot: () => {
     AppDispatcher.dispatch({
       action_type: AppConstants.BOOT
@@ -42,9 +42,16 @@ export default {
     })
   },
 
-  login_done: (key) => {
+  login_failure: (errors) => {
     AppDispatcher.dispatch({
-      action_type: AppConstants.LOGIN_DONE,
+      action_type: AppConstants.LOGIN_FAILURE,
+      errors
+    })
+  },
+
+  authenticated: (key) => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.AUTHENTICATED,
       key
     })
   },
@@ -101,3 +108,5 @@ export default {
     })
   }
 }
+
+export default self

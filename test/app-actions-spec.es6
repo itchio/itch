@@ -1,13 +1,15 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 
+import electron from './stubs/electron'
+
 let setup = t => {
   let app_dispatcher = {
     dispatch: () => null
   }
-  let stubs = {
+  let stubs = Object.assign({
     '../dispatcher/app-dispatcher': app_dispatcher
-  }
+  }, electron)
   let app_actions = proxyquire('../app/actions/app-actions', stubs)
   return {app_actions, app_dispatcher}
 }
@@ -28,7 +30,7 @@ test('app-actions', t => {
   test_action('focus_window', [], { action_type: 'FOCUS_WINDOW' })
   test_action('hide_window', [], { action_type: 'HIDE_WINDOW' })
   test_action('login_with_password', ['might', 'magic'], { action_type: 'LOGIN_WITH_PASSWORD', username: 'might', password: 'magic' })
-  test_action('login_done', ['zaw'], { action_type: 'LOGIN_DONE', key: 'zaw' })
+  test_action('authenticated', ['zaw'], { action_type: 'AUTHENTICATED', key: 'zaw' })
   test_action('logout', [], { action_type: 'LOGOUT' })
   test_action('logout_done', [], { action_type: 'LOGOUT_DONE' })
   test_action('download_queue', [{a: 'b'}], { action_type: 'DOWNLOAD_QUEUE', opts: {a: 'b'} })

@@ -17,8 +17,8 @@ test('dispatcher', t => {
         process_type: () => 'renderer'
       }
     }, electron)
-    t.stub(electron.remote, 'require').returns(197)
     let dispatcher = proxyquire('../app/dispatcher/app-dispatcher', stubs)
-    t.is(dispatcher, 197, 'has')
+    t.mock(electron.ipc).expects('send').once()
+    dispatcher.dispatch({action_type: 'yellow'})
   })
 })

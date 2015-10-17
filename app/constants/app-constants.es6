@@ -19,7 +19,8 @@ export default keyMirror({
   NOTIFY: null,
 
   LOGIN_WITH_PASSWORD: null,
-  LOGIN_DONE: null,
+  LOGIN_FAILURE: null,
+  AUTHENTICATED: null,
   LOGOUT: null,
   LOGOUT_DONE: null
 })

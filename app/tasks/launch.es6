@@ -100,7 +100,7 @@ let self = {
       install = res
       log(opts, 'got install')
 
-      if (!install.executables) {
+      if (!install.executables || install.executables.length === 0) {
         throw new Transition({
           to: 'configure',
           reason: 'no executables found',

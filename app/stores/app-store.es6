@@ -1,18 +1,16 @@
 import assign from 'object-assign'
 import Immutable from 'seamless-immutable'
 import app from 'app'
-import _ from 'underscore'
+import {pluck, indexBy} from 'underscore'
 
 import Store from './store'
+import CredentialsStore from './credentials-store'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
-import AppActions from '../actions/app-actions'
 import defer from '../util/defer'
 
 import setup from '../util/setup'
-import config from '../util/config'
-import api from '../util/api'
 import db from '../util/db'
 import main_window from '../ui/main-window'
 
@@ -40,35 +38,29 @@ let state = Immutable({
   }
 })
 
-let current_user = null
-
-function merge_state (obj) {
-  state = state.merge(obj, {deep: true})
-}
-
 let AppStore = assign(new Store(), {
   get_state: function () {
     return JSON.stringify(state)
-  },
-
-  get_current_user: function () {
-    return current_user
   }
 })
 
+function merge_state (obj) {
+  state = state.merge(obj, {deep: true})
+  AppStore.emit_change()
+}
+
 function fetch_games () {
-  let user = current_user
-  let { panel } = state.library
+  let user = CredentialsStore.get_current_user()
+  let {panel} = state.library
 
   switch (panel) {
 
     case 'dashboard': {
       let show_own_games = function () {
-        let own_id = state.library.me.id
+        let own_id = CredentialsStore.get_me().id
         db.find({_table: 'games', user_id: own_id}).then(Immutable).then((games) => {
           if (state.library.panel !== 'dashboard') return
           merge_state({library: {games}})
-          AppStore.emit_change()
         })
       }
 
@@ -76,8 +68,7 @@ function fetch_games () {
 
       user.my_games().then((res) => {
         return res.games.map((game) => {
-          game.user = state.library.me
-          return game
+          return game.merge({user: CredentialsStore.get_me()})
         })
       }).then(db.save_games).then(() => show_own_games())
       break
@@ -86,13 +77,12 @@ function fetch_games () {
     case 'owned': {
       let show_owned_games = function () {
         db.find({_table: 'download_keys'}).then((keys) => {
-          return _.pluck(keys, 'game_id')
+          return pluck(keys, 'game_id')
         }).then((game_ids) => {
           return db.find({_table: 'games', id: {$in: game_ids}})
         }).then(Immutable).then((games) => {
           if (state.library.panel !== 'owned') return
           merge_state({library: {games}})
-          AppStore.emit_change()
         })
       }
 
@@ -116,7 +106,6 @@ function fetch_games () {
           db.find({_table: 'games', id: {$in: collection.game_ids}}).then((games) => {
             if (state.library.panel !== `collections/${id}`) return
             merge_state({library: {games}})
-            AppStore.emit_change()
           })
           break
         }
@@ -127,14 +116,12 @@ function fetch_games () {
           }).then((game) => {
             if (state.library.panel !== `installs/${id}`) return
             merge_state({library: {games: [game]}})
-            AppStore.emit_change()
           })
           break
         }
 
         default: {
           merge_state({library: {games: []}})
-          AppStore.emit_change()
           break
         }
       }
@@ -159,162 +146,93 @@ function focus_panel (panel) {
       games: []
     }
   })
-  AppStore.emit_change()
 
   fetch_games()
 }
 
 function switch_page (page) {
   merge_state({page})
-  AppStore.emit_change()
 }
 
-function login_key (key) {
+function login_with_password (action) {
   merge_state({login: {loading: true}})
-  AppStore.emit_change()
-
-  api.client.login_key(key).then((res) => {
-    merge_state({library: {me: res.user}})
-    defer(() => AppActions.login_done(key))
-  }).catch((errors) => {
-    switch_page('login')
-    merge_state({login: {errors}})
-  }).finally(() => {
-    merge_state({login: {loading: false}})
-    AppStore.emit_change()
-  })
 }
 
-function login_with_password (username, password) {
-  merge_state({login: {loading: true}})
-  AppStore.emit_change()
+function login_failure (action) {
+  let {errors} = action
+  merge_state({login: {loading: false, errors}})
+  switch_page('login')
+}
 
-  api.client.login_with_password(username, password).then((res) => {
+function authenticated (action) {
+  merge_state({login: {loading: false, errors: null}})
+
+  AppDispatcher.wait_for(CredentialsStore).then(_ => {
+    focus_panel('owned')
+
     defer(() => {
-      AppActions.login_done(res.key.key)
-      current_user.me().then((res) => {
-        merge_state({library: {me: res.user}})
-      })
+      let show_collections = function () {
+        db.find({_table: 'collections'}).then((collections) => {
+          return indexBy(collections, 'id')
+        }).then((collections) => {
+          merge_state({library: {collections}})
+        })
+      }
+
+      show_collections()
+
+      CredentialsStore.get_current_user().my_collections().then((res) => {
+        return res.collections
+      }).then(db.save_collections).then(() => show_collections())
     })
-  }).catch((errors) => {
-    merge_state({login: {errors}})
-  }).finally(() => {
-    merge_state({login: {loading: false}})
-    AppStore.emit_change()
   })
 }
 
-function login_done (key) {
-  config.set('api_key', key)
-  current_user = new api.User(api.client, key)
-  focus_panel('owned')
-  merge_state({login: {errors: null}})
-  AppStore.emit_change()
-
-  defer(() => {
-    let show_collections = function () {
-      db.find({_table: 'collections'}).then((collections) => {
-        return _.indexBy(collections, 'id')
-      }).then((collections) => {
-        merge_state({library: {collections}})
-        AppStore.emit_change()
-      })
-    }
-
-    show_collections()
-
-    current_user.my_collections().then((res) => {
-      return res.collections
-    }).then(db.save_collections).then(() => show_collections())
-  })
-}
-
-function setup_done () {
-  merge_state({setup: {message: 'Logging in...', icon: 'heart-filled'}})
-  let key = config.get('api_key')
-  if (key) {
-    login_key(key)
-  } else {
-    switch_page('login')
-  }
+function logout () {
+  state = state.merge({library: state.library.without('me')})
+  merge_state({page: 'login'})
 }
 
 function run_setup () {
   let onstatus = (message, icon) => {
     merge_state({setup: {message, icon: icon || state.setup.icon}})
-    AppStore.emit_change()
   }
 
   let task = setup.run({onstatus})
 
-  task.then(() => {
-    setup_done()
+  return task.then(() => {
+    merge_state({setup: {message: 'Logging in...', icon: 'heart-filled'}})
   }).catch((e) => {
     console.log(`Error in setup: `, e.stack)
     let message = '' + e
     merge_state({setup: {message, icon: 'error'}})
-    AppStore.emit_change()
   })
 }
 
-AppStore.dispatch_token = AppDispatcher.register((action) => {
-  // console.log(action.action_type)
+AppStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
+  on(AppConstants.BOOT, run_setup)
 
-  switch (action.action_type) {
-    case AppConstants.LIBRARY_FOCUS_PANEL: {
-      focus_window()
-      focus_panel(action.panel)
-      break
-    }
+  on(AppConstants.LIBRARY_FOCUS_PANEL, action => {
+    focus_window()
+    focus_panel(action.panel)
+  })
 
-    case AppConstants.FOCUS_WINDOW: {
-      focus_window()
-      break
-    }
+  // TODO move to main-window
+  on(AppConstants.FOCUS_WINDOW, focus_window)
+  on(AppConstants.HIDE_WINDOW, hide_window)
 
-    case AppConstants.HIDE_WINDOW: {
-      hide_window()
-      break
-    }
+  on(AppConstants.LOGIN_WITH_PASSWORD, login_with_password)
+  on(AppConstants.LOGIN_FAILURE, login_failure)
+  on(AppConstants.AUTHENTICATED, authenticated)
+  on(AppConstants.LOGOUT, logout)
 
-    case AppConstants.LOGIN_WITH_PASSWORD: {
-      login_with_password(action.username, action.password)
-      break
-    }
+  on(AppConstants.QUIT, _ => app.quit())
 
-    case AppConstants.LOGIN_DONE: {
-      login_done(action.key)
-      break
-    }
-
-    case AppConstants.LOGOUT: {
-      config.clear('api_key')
-      current_user = null
-      state = state.merge({library: state.library.without('me')})
-      merge_state({page: 'login'})
-      AppStore.emit_change()
-      defer(() => AppActions.logout_done())
-      break
-    }
-
-    case AppConstants.BOOT: {
-      run_setup()
-      break
-    }
-
-    case AppConstants.QUIT: {
-      app.quit()
-      break
-    }
-
-    case AppConstants.INSTALL_PROGRESS: {
-      let installs = { [action.opts.id]: action.opts }
-      merge_state({library: {installs}})
-      AppStore.emit_change()
-      break
-    }
-
-  }
-})
+  // TODO not even sure
+  on(AppConstants.INSTALL_PROGRESS, action => {
+    let installs = { [action.opts.id]: action.opts }
+    merge_state({library: {installs}})
+  })
+}))
 
 export default AppStore
