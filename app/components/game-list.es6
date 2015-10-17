@@ -23,7 +23,7 @@ class GameCell extends Component {
       {user
       ? <div className='game_author'>{user.display_name}</div>
       : ''}
-      <div className='game_launch button' onClick={() => AppActions.download_queue({game})}>
+      <div className='game_launch button' onClick={() => AppActions.install_queue(game.id)}>
         <span className='icon icon-install'/> Install
       </div>
     </div>

@@ -4,8 +4,8 @@ import assign from 'object-assign'
 import Immutable from 'seamless-immutable'
 
 import http from './stubs/http'
-import app_store from './stubs/app-store'
-import install_store from './stubs/install-store'
+import InstallStore from './stubs/install-store'
+import CredentialsStore from './stubs/credentials-store'
 import electron from './stubs/electron'
 
 let typical_install = Immutable({
@@ -22,11 +22,11 @@ let setup = (t) => {
   let fs = {
     lstatAsync: () => null
   }
-  let client = app_store.get_current_user()
+  let client = CredentialsStore.get_current_user()
 
   let stubs = assign({
-    '../stores/install-store': install_store,
-    '../stores/app-store': app_store,
+    '../stores/install-store': InstallStore,
+    '../stores/credentials-store': CredentialsStore,
     '../util/http': http,
     '../promised/fs': fs
   }, electron)
@@ -40,7 +40,7 @@ test('download', t => {
 
   t.case('validates upload_id', t => {
     let install = typical_install.merge({upload_id: 22})
-    t.stub(install_store, 'get_install').resolves(install)
+    t.stub(InstallStore, 'get_install').resolves(install)
     return t.rejects(download.start({id: 42}))
   })
 
@@ -50,7 +50,7 @@ test('download', t => {
 
   t.case('downloads free game', t => {
     let install = typical_install
-    t.stub(install_store, 'get_install').resolves(install)
+    t.stub(InstallStore, 'get_install').resolves(install)
     t.stub(client, 'download_upload').resolves(upload_response)
     t.stub(fs, 'lstatAsync').rejects()
     return download.start({id: 42})
@@ -58,21 +58,21 @@ test('download', t => {
 
   t.case('downloads paid game', t => {
     let install = typical_install.merge({key: {id: 'abacus'}})
-    t.stub(install_store, 'get_install').resolves(install)
+    t.stub(InstallStore, 'get_install').resolves(install)
     t.stub(client, 'download_upload_with_key').resolves(upload_response)
     t.stub(fs, 'lstatAsync').rejects()
     return download.start({id: 42})
   })
 
   t.case('skips when complete', t => {
-    t.stub(install_store, 'get_install').resolves(typical_install)
+    t.stub(InstallStore, 'get_install').resolves(typical_install)
     t.stub(client, 'download_upload').resolves(upload_response)
     t.stub(fs, 'lstatAsync').resolves({size: 512})
     return t.rejects(download.start({id: 42}))
   })
 
   t.case('resumes', t => {
-    t.stub(install_store, 'get_install').resolves(typical_install)
+    t.stub(InstallStore, 'get_install').resolves(typical_install)
     t.stub(client, 'download_upload').resolves(upload_response)
     t.stub(fs, 'lstatAsync').resolves({size: 256})
     let mock = t.mock(http)

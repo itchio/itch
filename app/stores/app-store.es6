@@ -7,16 +7,15 @@ import CredentialsStore from './credentials-store'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
 
 import setup from '../util/setup'
 import db from '../util/db'
-import main_window from '../ui/main-window'
 
 let state = Immutable({
   page: 'setup',
 
   library: {
-    me: null,
     game: null,
     games: [],
     panel: null,
@@ -128,14 +127,6 @@ function fetch_games () {
   }
 }
 
-function focus_window () {
-  main_window.show()
-}
-
-function hide_window () {
-  main_window.hide()
-}
-
 function focus_panel (panel) {
   merge_state({
     page: 'library',
@@ -211,13 +202,9 @@ AppStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
   on(AppConstants.BOOT, run_setup)
 
   on(AppConstants.LIBRARY_FOCUS_PANEL, action => {
-    focus_window()
+    setImmediate(AppActions.focus_window)
     focus_panel(action.panel)
   })
-
-  // TODO move to main-window
-  on(AppConstants.FOCUS_WINDOW, focus_window)
-  on(AppConstants.HIDE_WINDOW, hide_window)
 
   on(AppConstants.LOGIN_WITH_PASSWORD, login_with_password)
   on(AppConstants.LOGIN_FAILURE, login_failure)

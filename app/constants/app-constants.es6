@@ -9,8 +9,8 @@ export default keyMirror({
 
   LIBRARY_FOCUS_PANEL: null,
 
-  DOWNLOAD_QUEUE: null,
-
+  INSTALL_QUEUE: null,
+  INSTALL_UPDATE: null,
   INSTALL_PROGRESS: null,
 
   SET_PROGRESS: null,
@@ -22,5 +22,7 @@ export default keyMirror({
   LOGIN_FAILURE: null,
   AUTHENTICATED: null,
   LOGOUT: null,
-  LOGOUT_DONE: null
+  LOGOUT_DONE: null,
+
+  EVAL: null
 })

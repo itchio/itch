@@ -6,8 +6,8 @@ export default {
     upload_id: 42,
     game_id: 84
   }),
-  update_install: () => Promise.resolve(),
   archive_path: () => '/tmp/archive',
   app_path: () => '/tmp/app',
-  '@noCallThru': true
+  '@noCallThru': true,
+  '@global': true
 }

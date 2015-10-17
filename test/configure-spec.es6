@@ -5,7 +5,8 @@ import path from 'path'
 import Promise from 'bluebird'
 
 import electron from './stubs/electron'
-import install_store from './stubs/install-store'
+import InstallStore from './stubs/install-store'
+import AppActions from './stubs/app-actions'
 
 import log from '../app/util/log'
 let logger = new log.Logger({sinks: {console: false}})
@@ -24,7 +25,8 @@ let setup = t => {
     './configurators/win32': win32,
     './configurators/darwin': darwin,
     './configurators/linux': linux,
-    '../stores/install-store': install_store
+    '../stores/install-store': InstallStore,
+    '../actions/app-actions': AppActions
   }, electron)
 
   let configure = proxyquire('../app/tasks/configure', stubs)

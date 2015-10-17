@@ -5,8 +5,9 @@ import {indexBy} from 'underscore'
 import os from '../util/os'
 let log = require('../util/log')('tasks/find-upload')
 
+import AppActions from '../actions/app-actions'
 import InstallStore from '../stores/install-store'
-import AppStore from '../stores/app-store'
+import CredentialsStore from '../stores/credentials-store'
 
 let self = {
   filter_uploads: function (uploads) {
@@ -36,7 +37,7 @@ let self = {
   start: function (opts) {
     let {id} = opts
     let install, uploads
-    let client = AppStore.get_current_user()
+    let client = CredentialsStore.get_current_user()
 
     return InstallStore.get_install(id).then((res) => {
       install = res
@@ -49,7 +50,7 @@ let self = {
 
       if (key) {
         return (
-          InstallStore.update_install(id, {key})
+          AppActions.install_update(id, {key})
           .then(() => client.download_key_uploads(key.id))
         )
       } else {
@@ -58,13 +59,13 @@ let self = {
     }).then((res) => {
       uploads = res.uploads
       log(opts, `got a list of ${uploads.length} uploads`)
-      return InstallStore.update_install(id, {uploads: indexBy(uploads, 'id')})
+      return AppActions.install_update(id, {uploads: indexBy(uploads, 'id')})
     }).then(() =>
       uploads
     ).then(self.filter_uploads).map(self.score_upload).then(self.sort_uploads).then((uploads) => {
       log(opts, `post-filters, ${uploads.length} uploads left`)
       if (uploads.length > 0) {
-        return InstallStore.update_install(id, {upload_id: uploads[0].id})
+        return AppActions.install_update(id, {upload_id: uploads[0].id})
       } else {
         throw new Error('No downloads available')
       }

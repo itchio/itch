@@ -8,8 +8,7 @@ import Promise from 'bluebird'
 import os from '../util/os'
 
 let log = require('../util/log')('tasks/launch')
-
-import {Transition} from './errors'
+import configure from './configure'
 
 import InstallStore from '../stores/install-store'
 
@@ -92,27 +91,34 @@ let self = {
     }
   },
 
+  launch_install: function (opts, install) {
+    let sorted = self.sort_by_depth(install.executables)
+    log(opts, `executables (from best to worst): ${JSON.stringify(sorted, null, 2)}`)
+    let exe_path = sorted[0]
+    return self.launch(exe_path, [], opts)
+  },
+
+  valid_install: function (install) {
+    return install.executables && install.executables.length > 0
+  },
+
   start: function (opts) {
     let {id} = opts
-    let install
 
-    return InstallStore.get_install(id).then((res) => {
-      install = res
-      log(opts, 'got install')
-
-      if (!install.executables || install.executables.length === 0) {
-        throw new Transition({
-          to: 'configure',
-          reason: 'no executables found',
-          data: { then: 'launch' }
+    return InstallStore.get_install(id).then((install) => {
+      if (!self.valid_install(install)) {
+        return configure.start(opts).then(() => {
+          if (!self.valid_install(install)) {
+            throw new Error('No executables found')
+          }
+          InstallStore.get_install(id).then((install) =>
+            self.launch_install(opts, install)
+          )
         })
       }
 
-      let sorted = self.sort_by_depth(install.executables)
-      log(opts, `executables (from best to worst): ${JSON.stringify(sorted, null, 2)}`)
-      let exe_path = sorted[0]
-      return self.launch(exe_path, [], opts)
-    })
+      return install
+    }).then(install => self.launch_install(opts, install))
   }
 }
 

@@ -6,6 +6,7 @@ import os from '../util/os'
 let log = require('../util/log')('tasks/configure')
 
 import InstallStore from '../stores/install-store'
+import AppActions from '../actions/app-actions'
 
 let self = {
   configure: function (app_path) {
@@ -28,7 +29,7 @@ let self = {
     log(opts, `configuring ${app_path}`)
     return self.configure(app_path).then((res) => {
       let {executables} = res
-      return InstallStore.update_install(id, {executables})
+      return AppActions.install_update(id, {executables})
     })
   }
 }

@@ -4,7 +4,7 @@ import assign from 'object-assign'
 
 import log from '../app/util/log'
 import electron from './stubs/electron'
-import install_store from './stubs/install-store'
+import InstallStore from './stubs/install-store'
 
 let setup = t => {
   let child_process = {
@@ -16,7 +16,7 @@ let setup = t => {
   }
 
   let stubs = assign({
-    '../stores/install-store': install_store,
+    '../stores/install-store': InstallStore,
     '../util/os': os,
     'child_process': child_process
   }, electron)
@@ -34,15 +34,15 @@ test('launch', t => {
 
   t.case('rejects 0 execs', t => {
     let spy = t.spy()
-    t.stub(install_store, 'get_install').resolves({})
+    t.stub(InstallStore, 'get_install').resolves({})
     return launch.start(opts).catch(spy).then(_ => {
       t.is(spy.callCount, 1)
-      t.same(spy.getCall(0).args[0].reason, 'no executables found')
+      t.same(spy.getCall(0).args[0].message, 'No executables found')
     })
   })
 
   t.case('launches top-most exec', t => {
-    t.stub(install_store, 'get_install').resolves({
+    t.stub(InstallStore, 'get_install').resolves({
       executables: [ '/a/b/c', '/a/bababa', '/a/b/c/d' ]
     })
     t.mock(launch).expects('launch').once().withArgs('/a/bababa').resolves('Done!')

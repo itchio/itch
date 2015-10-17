@@ -1,19 +1,22 @@
 
 console.log(`In metal, process type = ${process.type}`)
 
-try {
-  require('source-map-support').install()
-} catch (e) {
-  console.log(`Failed to install source map support:\n${e}`)
-}
-
-require('./util/crash-reporter').install()
+require('source-map-support').install()
+require('./util/crash-reporter').mount()
 
 if (require('./util/auto-updater').run()) {
+  // squirrel on win32 sometimes requires exiting as early as possible
   process.exit(0)
 }
 
-require('./ui/menu').install()
-require('./ui/notifier').install()
-require('./ui/main-window').install()
-require('./stores/install-store').install()
+require('./stores/notification-store')
+require('./stores/tray-store')
+require('./stores/window-store')
+require('./stores/install-store')
+require('./ui/menu').mount()
+
+let AppActions = require('./actions/app-actions')
+let app = require('app')
+app.on('ready', AppActions.boot)
+app.on('activate', AppActions.focus_window)
+app.on('window-all-closed', e => e.preventDefault())

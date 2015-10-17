@@ -3,17 +3,35 @@ import React from 'react'
 import {Component, PropTypes} from 'react'
 import classNames from 'classnames'
 
+import remote from 'remote'
+let CredentialsStore = remote.require('./stores/credentials-store')
+
+function get_state () {
+  return { me: CredentialsStore.get_me() }
+}
+
 /**
  * A friendly component that displays your avatar and username
  */
 class UserPanel extends Component {
   constructor () {
     super()
-    this.state = { user: null }
+    this.state = get_state()
+  }
+
+  componentDidMount () {
+    let self = this
+    CredentialsStore.add_change_listener('user-panel', () => {
+      self.setState(get_state())
+    })
+  }
+
+  componentWillUnmount () {
+    CredentialsStore.remove_change_listener('user-panel')
   }
 
   render () {
-    let me = this.props.me
+    let me = this.state.me
     let loading = !me
 
     return <div className={classNames('user_panel', {loading})}>

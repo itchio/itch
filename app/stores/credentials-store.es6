@@ -12,21 +12,26 @@ let current_user = null
 let me = null
 
 let CredentialsStore = Object.assign(new Store(), {
-  get_current_user: function () {
-    return current_user
-  },
-
-  get_me: function () {
-    return me
-  }
+  get_current_user: () => current_user,
+  get_me: () => me
 })
+
+function got_key (key) {
+  config.set('api_key', key)
+  current_user = new api.User(api.client, key)
+  CredentialsStore.emit_change()
+  setImmediate(_ => AppActions.authenticated(key))
+}
 
 function login_with_password (action) {
   let {username, password} = action
   api.client.login_with_password(username, password).then((res) => {
-    me = res.user
-    CredentialsStore.emit_change()
-    setImmediate(_ => AppActions.authenticated(res.key.key))
+    got_key(res.key.key)
+    current_user.me().then(res => {
+      console.log(`Logged in with password, res = ${JSON.stringify(res, null, 2)}`)
+      me = res.user
+      CredentialsStore.emit_change()
+    })
   }).catch(AppActions.login_failure)
 }
 
@@ -37,16 +42,9 @@ function boot () {
     api.client.login_key(key).then((res) => {
       me = res.user
       CredentialsStore.emit_change()
-      setImmediate(_ => AppActions.authenticated(key))
+      got_key(key)
     }).catch(AppActions.login_failure)
   })
-}
-
-function authenticated (action) {
-  let {key} = action
-  config.set('api_key', key)
-  current_user = new api.User(api.client, key)
-  CredentialsStore.emit_change()
 }
 
 function logout () {
@@ -59,7 +57,6 @@ CredentialsStore.dispatch_token = AppDispatcher.register(Store.action_listeners(
   on(AppConstants.BOOT, boot)
 
   on(AppConstants.LOGIN_WITH_PASSWORD, login_with_password)
-  on(AppConstants.AUTHENTICATED, authenticated)
   on(AppConstants.LOGOUT, logout)
 }))
 

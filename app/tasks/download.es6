@@ -9,7 +9,7 @@ import noop from '../util/noop'
 import fs from '../promised/fs'
 
 import InstallStore from '../stores/install-store'
-import AppStore from '../stores/app-store'
+import CredentialsStore from '../stores/credentials-store'
 
 function start (opts) {
   let {id, onprogress = noop} = opts
@@ -70,7 +70,7 @@ function start (opts) {
     }
 
     // Get download URL
-    let client = AppStore.get_current_user()
+    let client = CredentialsStore.get_current_user()
     return (install.key
       ? client.download_upload_with_key(install.key.id, install.upload_id)
       : client.download_upload(install.upload_id)
