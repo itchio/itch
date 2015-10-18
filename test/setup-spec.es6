@@ -1,5 +1,4 @@
 import test from 'zopf'
-import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 
 import AppConstants from '../app/constants/app-constants'
@@ -31,7 +30,7 @@ let initialize = t => {
 }
 
 test('SetupStore', t => {
-  let {handler, os, http, dispatcher} = initialize(t)
+  let {handler, os, http} = initialize(t)
 
   t.case('boot (good)', t => {
     t.stub(os, 'check_presence').resolves()
