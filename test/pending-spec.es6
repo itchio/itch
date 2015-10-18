@@ -6,12 +6,8 @@ import electron from './stubs/electron'
 let setup = (t) => {
   let stubs = electron
 
-  ;['app-store', 'notification-store', 'tray-store', 'window-store'].forEach((name) => {
+  ;['app-store', 'window-store'].forEach((name) => {
     proxyquire(`../app/stores/${name}`, stubs)
-  })
-
-  ;['menu'].forEach((name) => {
-    proxyquire(`../app/ui/${name}`, stubs)
   })
 }
 

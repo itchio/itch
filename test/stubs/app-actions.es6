@@ -4,17 +4,21 @@ import Promise from 'bluebird'
 let noop = () => Promise.resolve()
 
 let self = {
-  hide_window: noop,
+  boot: noop,
   quit: noop,
+
+  hide_window: noop,
+
   install_update: noop,
-  login_with_password: noop,
-  logout: noop,
+
   no_stored_credentials: noop,
+  login_with_password: noop,
+  authenticated: noop,
+  logout: noop,
+
   setup_status: noop,
-  authenticated: () => {
-    console.log('In authenticated!')
-    return Promise.resolve()
-  },
+
+  eval: noop,
   '@noCallThru': true
 }
 

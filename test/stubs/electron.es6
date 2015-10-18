@@ -7,7 +7,9 @@ let stubs = {
     getPath: () => 'tmp/',
     quit: rnil,
     dock: {
-      setMenu: rnil
+      setMenu: rnil,
+      bounce: rnil,
+      setBadge: rnil
     }
   },
   tray: function () {
@@ -39,11 +41,12 @@ let stubs = {
 Object.assign(stubs.tray, {
   setToolTip: rnil,
   setContextMenu: rnil,
-  on: rnil
+  on: rnil,
+  displayBalloon: rnil // win32-only
 })
 
 Object.assign(stubs['browser-window'], {
-  // a bunch of window methods I suppose
+  setProgressBar: rnil
 })
 
 Object.keys(stubs).forEach((key) => {
