@@ -19,7 +19,7 @@ The itch.io app is built in HTML/SCSS/ES6 and runs inside of Electron.
 Install the following to get started with development:
 
 * Install [Node.js](https://nodejs.org/)
-* Install [Electron](https://github.com/atom/electron), and [gulp](http://gittup.org/tup/):
+* Install [Electron](https://github.com/atom/electron), and [grunt](http://gruntjs.com/):
 
 ```
 npm install -g electron-prebuilt grunt-cli
