@@ -18,5 +18,8 @@ stubs.ipc.send = () => null
 stubs.remote.require = () => {}
 
 stubs.shell.openItem = () => null
+stubs.shell.openExternal = () => null
+
+stubs.dialog.showMessageBox = () => null
 
 export default stubs
