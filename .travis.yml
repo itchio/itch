@@ -1,17 +1,10 @@
-language: cpp
-os:
-  - linux
-  - osx
+language: node_js
+node_js:
+  - "4.1"
 cache:
   directories:
     - node_modules
 before_install:
-  # nvm is not yet supported on osx, manually install
-  - export NODE_VERSION=4.1
-  - git clone https://github.com/creationix/nvm.git /tmp/.nvm
-  - source /tmp/.nvm/nvm.sh
-  - nvm install $NODE_VERSION
-  - nvm use --delete-prefix $NODE_VERSION
   - npm config set spin false
   - npm install -g grunt-cli
   - npm install
