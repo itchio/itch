@@ -41,5 +41,6 @@ test('forms', t => {
     instance.componentDidMount()
 
     t.is(instance.value(), 'bozo')
+    delete instance.refs[`__proto__`].input
   })
 })
