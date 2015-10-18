@@ -1,28 +1,49 @@
 
-let stubs = {}
+let rnil = () => null
 
-;['app', 'browser-window', 'menu', 'tray', 'shell', 'dialog', 'remote', 'ipc'].forEach((stub) => {
-  stubs[stub] = {
-    '@noCallThru': true,
-    '@global': true
+let stubs = {
+  app: {
+    getVersion: () => '1.0',
+    getPath: () => 'tmp/',
+    quit: rnil,
+    dock: {
+      setMenu: rnil
+    }
+  },
+  tray: function () {
+    Object.assign(this, stubs.tray)
+  },
+  ipc: {
+    on: rnil,
+    send: rnil
+  },
+  remote: {
+    require: () => {}
+  },
+  shell: {
+    openItem: rnil,
+    openExternal: rnil
+  },
+  dialog: {
+    showMessagseBox: rnil
+  },
+  menu: {
+    buildFromTemplate: rnil,
+    setApplicationMenu: rnil
   }
+}
+
+Object.assign(stubs.tray, {
+  setToolTip: rnil,
+  setContextMenu: rnil,
+  on: rnil
 })
 
-stubs.app.getVersion = () => '1.0'
-stubs.app.getPath = () => 'tmp/'
-stubs.app.quit = () => null
-
-stubs.ipc.on = () => null
-stubs.ipc.send = () => null
-
-stubs.remote.require = () => {}
-
-stubs.shell.openItem = () => null
-stubs.shell.openExternal = () => null
-
-stubs.dialog.showMessageBox = () => null
-
-stubs.menu.buildFromTemplate = (t) => t
-stubs.menu.setApplicationMenu = (t) => t
+Object.keys(stubs).forEach((key) => {
+  Object.assign(stubs[key], {
+    '@noCallThru': true,
+    '@global': true
+  })
+})
 
 export default stubs
