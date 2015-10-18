@@ -45,8 +45,19 @@ Object.assign(stubs.tray, {
   displayBalloon: rnil // win32-only
 })
 
+let webContents = {
+  on: (e, cb) => cb(),
+  executeJavaScript: rnil
+}
+
 Object.assign(stubs['browser-window'], {
-  setProgressBar: rnil
+  setProgressBar: rnil,
+  on: rnil,
+  openDevTools: rnil,
+  loadUrl: rnil,
+  hide: rnil,
+  show: rnil,
+  webContents
 })
 
 Object.keys(stubs).forEach((key) => {
