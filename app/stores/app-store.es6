@@ -29,8 +29,7 @@ let state = Immutable({
 
   setup: {
     message: 'Checking dependencies',
-    icon: 'settings',
-    error: null
+    icon: 'settings'
   }
 })
 

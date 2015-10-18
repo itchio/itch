@@ -7,7 +7,8 @@ import {Icon} from './misc'
 
 export class SetupPage extends Component {
   render () {
-    let {icon, message, error} = this.props
+    let {icon, message} = this.props
+    let error = (icon === 'error')
     return <div className={classNames('setup_page', {error})}>
       <div className='setup_widget'>
         <div className='throbber_loader'>
@@ -23,6 +24,5 @@ export class SetupPage extends Component {
 
 SetupPage.propTypes = {
   icon: PropTypes.string,
-  message: PropTypes.string,
-  error: PropTypes.string
+  message: PropTypes.string
 }

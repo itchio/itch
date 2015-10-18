@@ -15,7 +15,7 @@ test('forms', t => {
     label: 'Al'
   }
 
-  t.case('input row', t => {
+  t.case('InputRow', t => {
     let tree = sd.shallowRender($(InputRow, props))
 
     let label = tree.subTree('label')
