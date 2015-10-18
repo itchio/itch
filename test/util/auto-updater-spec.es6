@@ -1,7 +1,7 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 
-import electron from './stubs/electron'
+import electron from '../stubs/electron'
 
 let setup = t => {
   let os = {}
@@ -10,7 +10,7 @@ let setup = t => {
     './os': os
   }, electron)
 
-  let updater = proxyquire('../app/util/auto-updater', stubs)
+  let updater = proxyquire('../../app/util/auto-updater', stubs)
   return Object.assign({updater, os}, electron)
 }
 

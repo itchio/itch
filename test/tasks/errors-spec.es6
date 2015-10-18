@@ -1,5 +1,5 @@
 import test from 'zopf'
-import {Transition, InputRequired} from '../app/tasks/errors'
+import {Transition, InputRequired} from '../../app/tasks/errors'
 
 test('task errors', t => {
   t.throws(() => {

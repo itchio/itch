@@ -1,6 +1,6 @@
 import test from 'zopf'
 
-import format from '../app/util/format'
+import format from '../../app/util/format'
 
 test('format', t => {
   t.case('format_bytes', t => {

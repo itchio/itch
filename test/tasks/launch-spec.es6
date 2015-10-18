@@ -1,9 +1,10 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 
-import log from '../app/util/log'
-import electron from './stubs/electron'
-import InstallStore from './stubs/install-store'
+import electron from '../stubs/electron'
+import InstallStore from '../stubs/install-store'
+
+import log from '../../app/util/log'
 
 let setup = t => {
   let child_process = {
@@ -21,7 +22,7 @@ let setup = t => {
   }, electron)
 
   let {shell} = electron
-  let launch = proxyquire('../app/tasks/launch', stubs)
+  let launch = proxyquire('../../app/tasks/launch', stubs)
   return {launch, child_process, os, shell}
 }
 

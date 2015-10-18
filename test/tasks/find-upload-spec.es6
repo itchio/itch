@@ -4,11 +4,11 @@ import Promise from 'bluebird'
 import Immutable from 'seamless-immutable'
 import sinon from 'sinon'
 
-import fixture from './fixture'
-import electron from './stubs/electron'
-import InstallStore from './stubs/install-store'
-import CredentialsStore from './stubs/credentials-store'
-import AppActions from './stubs/app-actions'
+import fixture from '../fixture'
+import electron from '../stubs/electron'
+import InstallStore from '../stubs/install-store'
+import CredentialsStore from '../stubs/credentials-store'
+import AppActions from '../stubs/app-actions'
 
 let uploads_fixture = fixture.api('game/36664/uploads')
 
@@ -29,7 +29,7 @@ let setup = t => {
     '../util/os': os
   }, electron)
 
-  let find_upload = proxyquire('../app/tasks/find-upload', stubs)
+  let find_upload = proxyquire('../../app/tasks/find-upload', stubs)
   let client = CredentialsStore.get_current_user()
   t.stub(client, 'game_uploads').resolves(uploads_fixture)
 

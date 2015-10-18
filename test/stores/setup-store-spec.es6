@@ -1,9 +1,9 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 
-import AppConstants from '../app/constants/app-constants'
+import AppConstants from '../../app/constants/app-constants'
 
-import electron from './stubs/electron'
+import electron from '../stubs/electron'
 
 let initialize = t => {
   let os = {
@@ -24,7 +24,7 @@ let initialize = t => {
     '../util/http': http,
     '../dispatcher/app-dispatcher': dispatcher
   }, electron)
-  let SetupStore = proxyquire('../app/stores/setup-store', stubs)
+  let SetupStore = proxyquire('../../app/stores/setup-store', stubs)
 
   return {SetupStore, os, http, handler, dispatcher}
 }

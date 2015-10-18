@@ -1,13 +1,18 @@
 import fs from 'fs'
+import path from 'path'
 import Immutable from 'seamless-immutable'
 
 let self = {
-  json: function (path) {
-    return JSON.parse(fs.readFileSync(`${__dirname}/fixtures/${path}.json`))
+  path: function (spec) {
+    return path.resolve(`${__dirname}/fixtures/files/${spec}`)
   },
 
-  api: function (path) {
-    return Immutable(self.json(`api/${path}`))
+  json: function (spec) {
+    return JSON.parse(fs.readFileSync(`${__dirname}/fixtures/${spec}.json`))
+  },
+
+  api: function (spec) {
+    return Immutable(self.json(`api/${spec}`))
   }
 }
 

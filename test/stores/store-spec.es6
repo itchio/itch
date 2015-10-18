@@ -1,7 +1,7 @@
 import test from 'zopf'
 import sinon from 'sinon'
 
-import Store from '../app/stores/store'
+import Store from '../../app/stores/store'
 
 test('store', t => {
   t.case('Store', t => {

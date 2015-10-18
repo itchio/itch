@@ -3,8 +3,8 @@ import proxyquire from 'proxyquire'
 import React from 'react'
 import sd from 'skin-deep'
 
-import electron from './stubs/electron'
-import AppStore from './stubs/app-store'
+import electron from '../stubs/electron'
+import AppStore from '../stubs/app-store'
 
 let $ = React.createElement
 
@@ -13,7 +13,7 @@ let setup = t => {
     // muffin
   }, electron)
   t.stub(electron.remote, 'require').returns(AppStore)
-  let Layout = proxyquire('../app/components/layout', stubs).Layout
+  let Layout = proxyquire('../../app/components/layout', stubs).Layout
 
   let get_state = t.stub(AppStore, 'get_state')
   let set_state = (state) => {

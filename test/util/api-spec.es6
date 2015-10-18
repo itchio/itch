@@ -9,7 +9,7 @@ let setup = (t, returns) => {
     'request-promise': request
   }
 
-  let api = proxyquire('../app/util/api', stubs)
+  let api = proxyquire('../../app/util/api', stubs)
   api.client.root_url = 'http://example.org/'
 
   let user = new api.User(api.client, 'key')

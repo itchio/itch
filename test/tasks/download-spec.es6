@@ -2,10 +2,10 @@ import test from 'zopf'
 import proxyquire from 'proxyquire'
 import Immutable from 'seamless-immutable'
 
-import http from './stubs/http'
-import InstallStore from './stubs/install-store'
-import CredentialsStore from './stubs/credentials-store'
-import electron from './stubs/electron'
+import electron from '../stubs/electron'
+import http from '../stubs/http'
+import InstallStore from '../stubs/install-store'
+import CredentialsStore from '../stubs/credentials-store'
 
 let typical_install = Immutable({
   _id: 42,
@@ -30,7 +30,7 @@ let setup = (t) => {
     '../promised/fs': fs
   }, electron)
 
-  let download = proxyquire('../app/tasks/download', stubs)
+  let download = proxyquire('../../app/tasks/download', stubs)
   return {download, client, fs, http}
 }
 

@@ -1,8 +1,9 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 
-import install_store from './stubs/install-store'
-import electron from './stubs/electron'
+import fixture from '../fixture'
+import install_store from '../stubs/install-store'
+import electron from '../stubs/electron'
 
 let setup = (t) => {
   let sevenzip = {
@@ -14,7 +15,7 @@ let setup = (t) => {
     '../stores/install-store': install_store,
     './extractors/7zip': sevenzip
   }, electron)
-  let extract = proxyquire('../app/tasks/extract', stubs)
+  let extract = proxyquire('../../app/tasks/extract', stubs)
   return {install_store, sevenzip, extract}
 }
 
@@ -26,7 +27,7 @@ test('extract', t => {
       t.mock(sevenzip).expects('extract').once().resolves()
 
       return extract.extract({
-        archive_path: `${__dirname}/fixtures/files/${type}`,
+        archive_path: fixture.path(type),
         dest_path: '/tmp'
       })
     })
@@ -38,7 +39,7 @@ test('extract', t => {
     t.case(`reject invalid archives (${type})`, t => {
       let spy = t.spy()
       let extract_opts = {
-        archive_path: `${__dirname}/fixtures/files/${type}`,
+        archive_path: fixture.path(type),
         dest_path: '/tmp'
       }
 

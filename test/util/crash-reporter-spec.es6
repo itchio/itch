@@ -2,7 +2,7 @@ import test from 'zopf'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 
-import electron from './stubs/electron'
+import electron from '../stubs/electron'
 
 let setup = t => {
   let fstream = {
@@ -17,7 +17,7 @@ let setup = t => {
     'fstream': fstream,
     './os': os
   }, electron)
-  let crash_reporter = proxyquire('../app/util/crash-reporter', stubs)
+  let crash_reporter = proxyquire('../../app/util/crash-reporter', stubs)
   return {crash_reporter, os, fstream, electron}
 }
 

@@ -3,7 +3,7 @@ import proxyquire from 'proxyquire'
 import fs from 'fs'
 
 let setup = (t, logger_opts) => {
-  let make = proxyquire('../app/util/log', {})
+  let make = proxyquire('../../app/util/log', {})
   let logger = new make.Logger(logger_opts)
   t.stub(logger, 'timestamp', () => 'time')
   let opts = {logger}

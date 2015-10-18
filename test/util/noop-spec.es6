@@ -1,5 +1,5 @@
 import test from 'zopf'
-import noop from '../app/util/noop'
+import noop from '../../app/util/noop'
 
 test('noop', t => {
   noop()

@@ -3,11 +3,12 @@ import proxyquire from 'proxyquire'
 import path from 'path'
 import Promise from 'bluebird'
 
-import electron from './stubs/electron'
-import InstallStore from './stubs/install-store'
-import AppActions from './stubs/app-actions'
+import fixture from '../fixture'
+import electron from '../stubs/electron'
+import InstallStore from '../stubs/install-store'
+import AppActions from '../stubs/app-actions'
 
-import log from '../app/util/log'
+import log from '../../app/util/log'
 let logger = new log.Logger({sinks: {console: false}})
 let opts = {id: 'kalamazoo', logger}
 
@@ -28,7 +29,7 @@ let setup = t => {
     '../actions/app-actions': AppActions
   }, electron)
 
-  let configure = proxyquire('../app/tasks/configure', stubs)
+  let configure = proxyquire('../../app/tasks/configure', stubs)
 
   return {configure, os, win32, linux, darwin}
 }
@@ -50,8 +51,8 @@ test('configure', t => {
     })
   })
 
-  let win32 = proxyquire('../app/tasks/configurators/win32', {})
-  let win32_path = `${__dirname}/fixtures/configure/win32`
+  let win32 = proxyquire('../../app/tasks/configurators/win32', {})
+  let win32_path = fixture.path('configure/win32')
 
   t.case('win32 finds bats and exes', t => {
     let spy = t.spy()
@@ -70,10 +71,10 @@ test('configure', t => {
   let common = {
     fix_execs: () => Promise.resolve()
   }
-  let darwin = proxyquire('../app/tasks/configurators/darwin', {
+  let darwin = proxyquire('../../app/tasks/configurators/darwin', {
     './common': common
   })
-  let darwin_path = `${__dirname}/fixtures/configure/darwin`
+  let darwin_path = fixture.path('configure/darwin')
 
   t.case('darwin finds app bundles', t => {
     let spy = t.spy()
@@ -87,14 +88,14 @@ test('configure', t => {
     })
   })
 
-  let linux = proxyquire('../app/tasks/configurators/linux', {
+  let linux = proxyquire('../../app/tasks/configurators/linux', {
     '../../promised/fs': {
       chmodAsync: () => Promise.resolve(),
       '@global': true,
       '@noCallThru': true
     }
   })
-  let linux_path = `${__dirname}/fixtures/configure/linux`
+  let linux_path = fixture.path('configure/linux')
 
   t.case('linux finds scripts & binaries', t => {
     let spy = t.spy()

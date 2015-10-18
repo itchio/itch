@@ -78,7 +78,7 @@
   "scripts": {
     "start": "grunt && electron .",
     "test": "npm -s run specs && npm -s run lint",
-    "specs": "nyc -s node_modules/.bin/tape test/*-spec.js | tap-difflet",
+    "specs": "nyc -s node_modules/.bin/tape 'test/**/*-spec.js' | tap-difflet",
     "lint": "standard 'app/**/*.es6' 'test/**/*.es6' Gruntfile.js",
     "remap": "cat .nyc_output/*.json | remap-istanbul -o .nyc_output/*.json",
     "coveralls": "npm run remap && nyc report -r text-lcov | coveralls",

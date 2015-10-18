@@ -2,11 +2,11 @@ import test from 'zopf'
 import proxyquire from 'proxyquire'
 import {pluck} from 'underscore'
 
-import electron from './stubs/electron'
+import electron from '../stubs/electron'
 
 test('db', t => {
   let stubs = electron
-  let db = proxyquire('../app/util/db', stubs)
+  let db = proxyquire('../../app/util/db', stubs)
 
   t.case('is_date', t => {
     t.true(db.is_date('created_at'))

@@ -1,7 +1,7 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 
-import electron from './stubs/electron'
+import electron from '../stubs/electron'
 
 let setup = (t) => {
   let request = {
@@ -13,7 +13,7 @@ let setup = (t) => {
     'request-progress': (t) => t
   }, electron)
 
-  let http = proxyquire('../app/util/http', stubs)
+  let http = proxyquire('../../app/util/http', stubs)
 
   let handlers = {}
   let stub = {

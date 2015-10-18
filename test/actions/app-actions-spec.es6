@@ -1,7 +1,7 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 
-import electron from './stubs/electron'
+import electron from '../stubs/electron'
 
 let setup = t => {
   let app_dispatcher = {
@@ -10,7 +10,7 @@ let setup = t => {
   let stubs = Object.assign({
     '../dispatcher/app-dispatcher': app_dispatcher
   }, electron)
-  let app_actions = proxyquire('../app/actions/app-actions', stubs)
+  let app_actions = proxyquire('../../app/actions/app-actions', stubs)
   return {app_actions, app_dispatcher}
 }
 
