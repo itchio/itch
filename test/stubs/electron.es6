@@ -22,4 +22,7 @@ stubs.shell.openExternal = () => null
 
 stubs.dialog.showMessageBox = () => null
 
+stubs.menu.buildFromTemplate = (t) => t
+stubs.menu.setApplicationMenu = (t) => t
+
 export default stubs
