@@ -39,12 +39,12 @@ test('CredentialsStore', t => {
     t.stub(config, 'get').returns('numazu')
     t.stub(api.client, 'login_key').resolves({user})
     return handler({ action_type: AppConstants.BOOT }).then(() => {
-      t.not(CredentialsStore.get_current_user(), null)
+      t.ok(CredentialsStore.get_current_user())
       t.same(CredentialsStore.get_me(), user)
       return handler({ action_type: AppConstants.LOGOUT })
     }).then(() => {
-      t.is(CredentialsStore.get_current_user(), null)
-      t.is(CredentialsStore.get_me(), null)
+      t.notOk(CredentialsStore.get_current_user())
+      t.notOk(CredentialsStore.get_me())
     })
   })
 
@@ -58,7 +58,7 @@ test('CredentialsStore', t => {
     t.stub(api.client, 'login_with_password').resolves({key: {key}})
     t.stub(api.user, 'me').resolves({user})
     return handler({ action_type: AppConstants.LOGIN_WITH_PASSWORD, username, password }).then(() => {
-      t.not(CredentialsStore.get_current_user(), null)
+      t.ok(CredentialsStore.get_current_user())
       t.same(CredentialsStore.get_me(), user)
     })
   })
