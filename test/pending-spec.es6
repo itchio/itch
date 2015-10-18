@@ -13,8 +13,6 @@ let setup = (t) => {
   ;['menu'].forEach((name) => {
     proxyquire(`../app/ui/${name}`, stubs)
   })
-
-  proxyquire('../app/components/layout', stubs)
 }
 
 test('pending specs', t => {
