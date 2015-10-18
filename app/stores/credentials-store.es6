@@ -20,15 +20,14 @@ function got_key (key) {
   config.set('api_key', key)
   current_user = new api.User(api.client, key)
   CredentialsStore.emit_change()
-  setImmediate(_ => AppActions.authenticated(key))
+  AppActions.authenticated(key)
 }
 
 function login_with_password (action) {
   let {username, password} = action
-  api.client.login_with_password(username, password).then((res) => {
+  return api.client.login_with_password(username, password).then((res) => {
     got_key(res.key.key)
     current_user.me().then(res => {
-      console.log(`Logged in with password, res = ${JSON.stringify(res, null, 2)}`)
       me = res.user
       CredentialsStore.emit_change()
     })
@@ -36,11 +35,11 @@ function login_with_password (action) {
 }
 
 function boot () {
-  AppDispatcher.wait_for(SetupStore).then(_ => {
+  return AppDispatcher.wait_for(SetupStore).then(_ => {
     let key = config.get('api_key')
     if (key) {
       AppActions.setup_status('Logging in', 'heart-filled')
-      api.client.login_key(key).then((res) => {
+      return api.client.login_key(key).then((res) => {
         me = res.user
         CredentialsStore.emit_change()
         got_key(key)
@@ -54,6 +53,7 @@ function boot () {
 function logout () {
   config.clear('api_key')
   current_user = null
+  me = null
   CredentialsStore.emit_change()
 }
 

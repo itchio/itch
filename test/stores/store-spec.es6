@@ -3,8 +3,8 @@ import sinon from 'sinon'
 
 import Store from '../../app/stores/store'
 
-test('store', t => {
-  t.case('Store', t => {
+test('Store', t => {
+  t.case('event listeners', t => {
     let store = new Store()
     let spy = t.spy()
     store.add_change_listener('green', spy)
@@ -14,7 +14,7 @@ test('store', t => {
     store.remove_change_listener('green')
   })
 
-  t.case('action_listeners', t => {
+  t.case('action listeners', t => {
     t.throws(() => Store.action_listeners(on => on(undefined, () => {})))
 
     let wake_spy = t.spy()

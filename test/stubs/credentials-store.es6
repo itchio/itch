@@ -1,15 +1,7 @@
-import Promise from 'bluebird'
 
-let noop = () => Promise.resolve()
-
-let user = {
-  download_upload: noop,
-  download_upload_with_key: noop,
-  game_uploads: noop,
-  download_key_uploads: noop
-}
+import api from './api'
 
 export default {
-  get_current_user: () => user,
+  get_current_user: () => api.user,
   '@noCallThru': true
 }

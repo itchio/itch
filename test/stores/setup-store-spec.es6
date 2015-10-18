@@ -4,8 +4,9 @@ import proxyquire from 'proxyquire'
 import AppConstants from '../../app/constants/app-constants'
 
 import electron from '../stubs/electron'
+import AppDispatcher from '../stubs/app-dispatcher'
 
-let initialize = t => {
+let setup = t => {
   let os = {
     check_presence: () => Promise.resolve(),
     platform: () => 'win32'
@@ -13,24 +14,19 @@ let initialize = t => {
   let http = {
     request: () => null
   }
-  let handler
-  let dispatcher = {
-    register: (h) => handler = h,
-    dispatch: () => null,
-    '@global': true
-  }
   let stubs = Object.assign({
     '../util/os': os,
     '../util/http': http,
-    '../dispatcher/app-dispatcher': dispatcher
+    '../dispatcher/app-dispatcher': AppDispatcher
   }, electron)
-  let SetupStore = proxyquire('../../app/stores/setup-store', stubs)
 
-  return {SetupStore, os, http, handler, dispatcher}
+  let SetupStore = proxyquire('../../app/stores/setup-store', stubs)
+  let handler = AppDispatcher.get_handler(SetupStore)
+  return {handler, os, http}
 }
 
 test('SetupStore', t => {
-  let {handler, os, http} = initialize(t)
+  let {handler, os, http} = setup(t)
 
   t.case('boot (good)', t => {
     t.stub(os, 'check_presence').resolves()
