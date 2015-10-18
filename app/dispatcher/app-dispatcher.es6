@@ -3,6 +3,10 @@ import ipc from 'ipc'
 import Promise from 'bluebird'
 import os from '../util/os'
 
+let Log = require('../util/log')
+let log = Log('dispatcher')
+let opts = {logger: new Log.Logger()}
+
 // This makes sure everything is dispatched to the node side, whatever happens
 if (os.process_type() === 'renderer') {
   // Using IPC over RPC because the latter breaks when passing instances of
@@ -39,12 +43,6 @@ if (os.process_type() === 'renderer') {
      * will throw - helps debugging missing constants
      */
     dispatch (payload) {
-      if (payload.private) {
-        console.log(`Dispatcher dispatching ${payload.action_type}`)
-      } else {
-        console.log(`Dispatcher dispatching: ${JSON.stringify(payload, null, 2)}`)
-      }
-
       if (this._promises) {
         throw new Error(`Can't call dispatch synchronously from an action callback`)
       }
@@ -52,6 +50,13 @@ if (os.process_type() === 'renderer') {
       if (typeof payload.action_type === 'undefined') {
         throw new Error(`Trying to dispatch action with no type: ${JSON.stringify(payload, null, 2)}`)
       }
+
+      if (payload.private) {
+        log(opts, `dispatching ${payload.action_type}`)
+      } else {
+        log(opts, `dispatching: ${JSON.stringify(payload, null, 2)}`)
+      }
+
       let resolves = []
       let rejects = []
 
