@@ -14,10 +14,6 @@ let setup = (t) => {
     proxyquire(`../app/ui/${name}`, stubs)
   })
 
-  ;['crash-reporter'].forEach((name) => {
-    proxyquire(`../app/util/${name}`, stubs)
-  })
-
   proxyquire('../app/components/layout', stubs)
 }
 

@@ -9,7 +9,6 @@ import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 import AppActions from '../actions/app-actions'
 
-import setup from '../util/setup'
 import db from '../util/db'
 
 let state = Immutable({
@@ -153,6 +152,10 @@ function login_failure (action) {
   switch_page('login')
 }
 
+function no_stored_credentials () {
+  switch_page('login')
+}
+
 function authenticated (action) {
   merge_state({login: {loading: false, errors: null}})
 
@@ -182,30 +185,21 @@ function logout () {
   merge_state({page: 'login'})
 }
 
-function run_setup () {
-  let onstatus = (message, icon) => {
-    merge_state({setup: {message, icon: icon || state.setup.icon}})
-  }
-
-  let task = setup.run({onstatus})
-
-  return task.then(() => {
-    merge_state({setup: {message: 'Logging in...', icon: 'heart-filled'}})
-  }).catch((e) => {
-    console.log(`Error in setup: `, e.stack)
-    let message = '' + e
-    merge_state({setup: {message, icon: 'error'}})
-  })
+function setup_status (action) {
+  console.log(`Got setup_status: ${JSON.stringify(action, null, 2)}`)
+  let {message, icon = state.setup.icon} = action
+  merge_state({setup: {message, icon}})
 }
 
 AppStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
-  on(AppConstants.BOOT, run_setup)
+  on(AppConstants.SETUP_STATUS, setup_status)
 
   on(AppConstants.LIBRARY_FOCUS_PANEL, action => {
     setImmediate(AppActions.focus_window)
     focus_panel(action.panel)
   })
 
+  on(AppConstants.NO_STORED_CREDENTIALS, no_stored_credentials)
   on(AppConstants.LOGIN_WITH_PASSWORD, login_with_password)
   on(AppConstants.LOGIN_FAILURE, login_failure)
   on(AppConstants.AUTHENTICATED, authenticated)
@@ -213,7 +207,6 @@ AppStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
 
   on(AppConstants.QUIT, _ => app.quit())
 
-  // TODO not even sure
   on(AppConstants.INSTALL_PROGRESS, action => {
     let installs = { [action.opts.id]: action.opts }
     merge_state({library: {installs}})

@@ -34,11 +34,24 @@ let self = {
     })
   },
 
+  setup_status: (message, icon) => {
+    return AppDispatcher.dispatch({
+      action_type: AppConstants.SETUP_STATUS,
+      message, icon
+    })
+  },
+
+  no_stored_credentials: () => {
+    return AppDispatcher.dispatch({
+      action_type: AppConstants.NO_STORED_CREDENTIALS
+    })
+  },
+
   login_with_password: (username, password) => {
     return AppDispatcher.dispatch({
       action_type: AppConstants.LOGIN_WITH_PASSWORD,
-      username,
-      password
+      private: true,
+      username, password
     })
   },
 
@@ -58,12 +71,6 @@ let self = {
   logout: (key) => {
     return AppDispatcher.dispatch({
       action_type: AppConstants.LOGOUT
-    })
-  },
-
-  logout_done: () => {
-    return AppDispatcher.dispatch({
-      action_type: AppConstants.LOGOUT_DONE
     })
   },
 
@@ -93,12 +100,6 @@ let self = {
     return AppDispatcher.dispatch({
       action_type: AppConstants.SET_PROGRESS,
       alpha
-    })
-  },
-
-  clear_progress: () => {
-    return AppDispatcher.dispatch({
-      action_type: AppConstants.CLEAR_PROGRESS
     })
   },
 

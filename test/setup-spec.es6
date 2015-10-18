@@ -1,5 +1,8 @@
 import test from 'zopf'
+import sinon from 'sinon'
 import proxyquire from 'proxyquire'
+
+import AppConstants from '../app/constants/app-constants'
 
 import electron from './stubs/electron'
 
@@ -11,44 +14,46 @@ let initialize = t => {
   let http = {
     request: () => null
   }
+  let handler
+  let dispatcher = {
+    register: (h) => handler = h,
+    dispatch: () => null,
+    '@global': true
+  }
   let stubs = Object.assign({
-    './os': os,
-    './http': http
+    '../util/os': os,
+    '../util/http': http,
+    '../dispatcher/app-dispatcher': dispatcher
   }, electron)
-  let setup = proxyquire('../app/util/setup', stubs)
+  let SetupStore = proxyquire('../app/stores/setup-store', stubs)
 
-  return {setup, os, http}
+  return {SetupStore, os, http, handler, dispatcher}
 }
 
-test('setup', t => {
-  let {setup, os, http} = initialize(t)
+test('SetupStore', t => {
+  let {handler, os, http, dispatcher} = initialize(t)
 
-  t.case('augment_path', t => {
-    let path = setup.augment_path()
-    t.true(process.env.PATH.endsWith(path), 'added')
-  })
-
-  t.case('binary_url', t => {
-    let platform = t.stub(os, 'platform')
-
-    platform.returns('darwin')
-    t.is('7za', setup.binary_url().file)
-
-    platform.returns('win32')
-    t.is('7za.exe', setup.binary_url().file)
-
-    platform.returns('linux')
-    t.throws(() => setup.binary_url())
-  })
-
-  t.case('run', t => {
+  t.case('boot (good)', t => {
     t.stub(os, 'check_presence').resolves()
-    return setup.run({})
+    return handler({ action_type: AppConstants.BOOT })
   })
 
-  t.case('run (download)', t => {
+  t.case('boot (win32, no 7za)', t => {
     t.stub(os, 'check_presence').rejects()
     t.mock(http).expects('request').once().resolves()
-    return setup.run({})
+    return handler({ action_type: AppConstants.BOOT })
+  })
+
+  t.case('boot (darwin, no 7za)', t => {
+    t.stub(os, 'check_presence').rejects()
+    t.stub(os, 'platform').returns('darwin')
+    t.mock(http).expects('request').once().resolves()
+    return handler({ action_type: AppConstants.BOOT })
+  })
+
+  t.case('boot (linux, no 7za)', t => {
+    t.stub(os, 'check_presence').rejects()
+    t.stub(os, 'platform').returns('linux')
+    return t.rejects(handler({ action_type: AppConstants.BOOT }))
   })
 })

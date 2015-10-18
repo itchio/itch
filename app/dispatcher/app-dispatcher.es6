@@ -39,7 +39,11 @@ if (os.process_type() === 'renderer') {
      * will throw - helps debugging missing constants
      */
     dispatch (payload) {
-      console.log(`Dispatcher dispatching: ${JSON.stringify(payload, null, 2)}`)
+      if (payload.private) {
+        console.log(`Dispatcher dispatching ${payload.action_type}`)
+      } else {
+        console.log(`Dispatcher dispatching: ${JSON.stringify(payload, null, 2)}`)
+      }
 
       if (this._promises) {
         throw new Error(`Can't call dispatch synchronously from an action callback`)

@@ -2,7 +2,7 @@ import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 import AppActions from '../actions/app-actions'
 
-import AppStore from './app-store'
+import SetupStore from './setup-store'
 import Store from './store'
 
 import config from '../util/config'
@@ -36,14 +36,18 @@ function login_with_password (action) {
 }
 
 function boot () {
-  // TODO: move setup to its own store
-  AppDispatcher.wait_for(AppStore).then(_ => {
+  AppDispatcher.wait_for(SetupStore).then(_ => {
     let key = config.get('api_key')
-    api.client.login_key(key).then((res) => {
-      me = res.user
-      CredentialsStore.emit_change()
-      got_key(key)
-    }).catch(AppActions.login_failure)
+    if (key) {
+      AppActions.setup_status('Logging in', 'heart-filled')
+      api.client.login_key(key).then((res) => {
+        me = res.user
+        CredentialsStore.emit_change()
+        got_key(key)
+      }).catch(AppActions.login_failure)
+    } else {
+      AppActions.no_stored_credentials()
+    }
   })
 }
 

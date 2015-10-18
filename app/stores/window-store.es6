@@ -19,16 +19,20 @@ function show () {
     return
   }
 
+  let width = 1200
+  let height = 720
+
   window = new BrowserWindow({
     title: 'itch.io',
     icon: './static/images/itchio-tray-x4.png',
-    width: 1200,
-    height: 720,
+    width, height,
     center: true,
+    show: false,
     'title-bar-style': 'hidden'
   })
 
   window.on('close', (e) => window = null)
+  window.webContents.on('dom-ready', (e) => window.show())
   window.loadUrl(`file://${__dirname}/../index.html`)
 
   if (process.env.DEVTOOLS === '1') {

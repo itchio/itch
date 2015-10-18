@@ -49,7 +49,6 @@ function notify (content) {
 
 NotificationStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
   on(AppConstants.SET_PROGRESS, action => set_progress(action.alpha))
-  on(AppConstants.CLEAR_PROGRESS, action => set_progress(-1))
   on(AppConstants.BOUNCE, bounce)
   on(AppConstants.NOTIFY, action => notify(action.message))
 }))

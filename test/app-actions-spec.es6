@@ -26,19 +26,20 @@ test('app-actions', t => {
 
   test_action('boot', [], { action_type: 'BOOT' })
   test_action('quit', [], { action_type: 'QUIT' })
+
   test_action('focus_panel', ['waz'], { action_type: 'LIBRARY_FOCUS_PANEL', panel: 'waz' })
   test_action('focus_window', [], { action_type: 'FOCUS_WINDOW' })
   test_action('hide_window', [], { action_type: 'HIDE_WINDOW' })
-  test_action('login_with_password', ['might', 'magic'], { action_type: 'LOGIN_WITH_PASSWORD', username: 'might', password: 'magic' })
+
+  test_action('login_with_password', ['might', 'magic'], { action_type: 'LOGIN_WITH_PASSWORD', username: 'might', password: 'magic', private: true })
   test_action('login_failure', [['might', 'magic']], { action_type: 'LOGIN_FAILURE', errors: ['might', 'magic'] })
   test_action('authenticated', [], { action_type: 'AUTHENTICATED' })
   test_action('logout', [], { action_type: 'LOGOUT' })
-  test_action('logout_done', [], { action_type: 'LOGOUT_DONE' })
+
   test_action('install_queue', [42], { action_type: 'INSTALL_QUEUE', game_id: 42 })
   test_action('install_update', [42, {a: 'b'}], { action_type: 'INSTALL_UPDATE', id: 42, data: {a: 'b'} })
   test_action('install_progress', [{a: 'b'}], { action_type: 'INSTALL_PROGRESS', opts: {a: 'b'} })
   test_action('set_progress', [0.5], { action_type: 'SET_PROGRESS', alpha: 0.5 })
-  test_action('clear_progress', [], { action_type: 'CLEAR_PROGRESS' })
   test_action('bounce', [], { action_type: 'BOUNCE' })
   test_action('notify', ['les carottes sont cuites'], { action_type: 'NOTIFY', message: 'les carottes sont cuites' })
   test_action('eval', ['alert("Hi")'], { action_type: 'EVAL', code: 'alert("Hi")' })

@@ -9,9 +9,11 @@ if (require('./util/auto-updater').run()) {
   process.exit(0)
 }
 
+require('./stores/app-store')
 require('./stores/notification-store')
 require('./stores/tray-store')
 require('./stores/window-store')
+require('./stores/setup-store')
 require('./stores/install-store')
 require('./ui/menu').mount()
 
