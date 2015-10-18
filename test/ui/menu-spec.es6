@@ -63,5 +63,4 @@ test('menu', t => {
     let res = jspath.apply('.{.label === "Account"}.submenu.label', template)
     t.same('Change user...', res[0])
   })
-
 })
