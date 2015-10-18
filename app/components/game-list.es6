@@ -51,4 +51,4 @@ GameList.propTypes = {
   games: PropTypes.array
 }
 
-export {GameList}
+export {GameCell, GameList}
