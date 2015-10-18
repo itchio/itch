@@ -7,7 +7,7 @@ import AppActions from '../actions/app-actions'
 import {InputRow} from './forms'
 import {ErrorList} from './misc'
 
-export class LoginPage extends Component {
+class LoginPage extends Component {
   render () {
     return <div className='login_page'>
       <LoginForm {...this.props}/>
@@ -57,3 +57,5 @@ LoginForm.propTypes = {
   loading: PropTypes.bool,
   errors: PropTypes.array
 }
+
+export default {LoginPage, LoginForm}

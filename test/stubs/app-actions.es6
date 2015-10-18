@@ -7,6 +7,7 @@ let self = {
   hide_window: noop,
   quit: noop,
   install_update: noop,
+  login_with_password: noop,
   logout: noop,
   no_stored_credentials: noop,
   setup_status: noop,
