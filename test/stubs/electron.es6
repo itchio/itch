@@ -13,6 +13,9 @@ let stubs = {
   tray: function () {
     Object.assign(this, stubs.tray)
   },
+  'browser-window': function () {
+    Object.assign(this, stubs['browser-window'])
+  },
   ipc: {
     on: rnil,
     send: rnil
@@ -25,7 +28,7 @@ let stubs = {
     openExternal: rnil
   },
   dialog: {
-    showMessagseBox: rnil
+    showMessageBox: rnil
   },
   menu: {
     buildFromTemplate: rnil,
@@ -37,6 +40,10 @@ Object.assign(stubs.tray, {
   setToolTip: rnil,
   setContextMenu: rnil,
   on: rnil
+})
+
+Object.assign(stubs['browser-window'], {
+  // a bunch of window methods I suppose
 })
 
 Object.keys(stubs).forEach((key) => {
