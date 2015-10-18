@@ -6,7 +6,7 @@ import {Component, PropTypes} from 'react'
  * An icon from the icomoon font.
  * Peek in the static/fonts/icomoon/ folder to learn more.
  */
-export class Icon extends Component {
+class Icon extends Component {
   render () {
     let {icon} = this.props
 
@@ -25,7 +25,7 @@ Icon.propTypes = {
 /**
  * A single progress bar, with an outer and inner div. Style as you wish.
  */
-export class ProgressBar extends Component {
+class ProgressBar extends Component {
   render () {
     let {progress} = this.props
     if (!progress) return <div/>
@@ -47,7 +47,7 @@ ProgressBar.propTypes = {
 /**
  * A bunch of errors displayed in a list
  */
-export class ErrorList extends React.Component {
+class ErrorList extends React.Component {
   render () {
     let {errors} = this.props
 
@@ -70,3 +70,5 @@ export class ErrorList extends React.Component {
 ErrorList.propTypes = {
   errors: PropTypes.oneOfType([PropTypes.array, PropTypes.string])
 }
+
+export default {Icon, ProgressBar, ErrorList}
