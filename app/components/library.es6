@@ -27,6 +27,17 @@ class LibraryPage extends Component {
   }
 }
 
+let state_to_icon = {
+  ERROR: 'error',
+  PENDING: 'stopwatch',
+  SEARCHING_UPLOAD: 'stopwatch',
+  DOWNLOADING: 'download',
+  EXTRACTING: 'file-zip',
+  CONFIGURING: 'settings',
+  RUNNING: 'gamepad',
+  IDLE: 'checkmark'
+}
+
 /**
  * A list of tabs, collections and installed games
  */
@@ -44,7 +55,7 @@ class LibrarySidebar extends Component {
     })
 
     let install_items = pairs(installs).map(([id, install]) => {
-      let icon = this.state_to_icon(install.state)
+      let icon = state_to_icon[install.state] || ''
       let props = {
         name: `installs/${id}`,
         label: install.game.title,
@@ -73,35 +84,6 @@ class LibrarySidebar extends Component {
         {install_items}
       </div>
     </div>
-  }
-
-  state_to_icon (state) {
-    let icon = ''
-    switch (state) {
-      case 'ERROR':
-        icon = 'error'
-        break
-      case 'PENDING':
-      case 'SEARCHING_UPLOAD':
-        icon = 'stopwatch'
-        break
-      case 'DOWNLOADING':
-        icon = 'download'
-        break
-      case 'EXTRACTING':
-        icon = 'file-zip'
-        break
-      case 'CONFIGURING':
-        icon = 'settings'
-        break
-      case 'RUNNING':
-        icon = 'gamepad'
-        break
-      case 'IDLE':
-        icon = 'checkmark'
-        break
-    }
-    return icon
   }
 }
 
@@ -138,7 +120,8 @@ class LibraryPanelLink extends Component {
     let _progress = progress ? ` (${(progress * 100).toFixed()}%)` : ''
     let _label = `${label}${_progress}`
 
-    return <div className={classNames('panel_link', {current})} onClick={() => { console.log(`Clicked on ${JSON.stringify(this.props)}`); AppActions.focus_panel(this.props.name) }}>
+    return <div className={classNames('panel_link', {current})}
+      onClick={() => AppActions.focus_panel(this.props.name) }>
       <Icon {...{icon}}/>
       {_label}
       <ProgressBar {...{progress}}/>
@@ -156,4 +139,4 @@ LibraryPanelLink.propTypes = {
   error: PropTypes.string
 }
 
-export {LibraryPage}
+export {LibraryPage, LibrarySidebar, LibraryContent, LibraryPanelLink}
