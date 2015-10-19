@@ -75,7 +75,7 @@ let self = {
           return (
             self.extract(sub_opts)
             .then((res) => {
-              fs.unlinkAsync(tar).then(() => res)
+              return fs.unlinkAsync(tar).then(() => res)
             })
           )
         }
