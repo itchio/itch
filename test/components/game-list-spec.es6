@@ -12,7 +12,10 @@ test('game-list', t => {
   t.case('GameList', t => {
     sd.shallowRender($(GameList, {}))
     let props = {
-      games: ['a', 'b', 'c']
+      games: ['a', 'b', 'c', {id: 42}],
+      installs: {
+        'asd09f8': {game_id: 42}
+      }
     }
     sd.shallowRender($(GameList, props))
   })
@@ -25,8 +28,13 @@ test('game-list', t => {
         user: {
           display_name: 'd'
         }
-      }
+      },
+      install: { progress: 0.2 }
     }
-    sd.shallowRender($(GameCell, props))
+
+    ;['download', 'idle', 'error', 'launch'].forEach((task) => {
+      props.install.task = task
+      sd.shallowRender($(GameCell, props))
+    })
   })
 })
