@@ -16,7 +16,7 @@ let state = Immutable({
 
   library: {
     game: null,
-    games: [],
+    games: {},
     panel: null,
     collections: {},
     installs: {}
@@ -54,8 +54,7 @@ function fetch_games () {
       let show_own_games = function () {
         let own_id = CredentialsStore.get_me().id
         db.find({_table: 'games', user_id: own_id}).then(Immutable).then((games) => {
-          if (state.library.panel !== 'dashboard') return
-          merge_state({library: {games}})
+          merge_state({library: {games: {dashboard: games}}})
         })
       }
 
@@ -76,8 +75,7 @@ function fetch_games () {
         }).then((game_ids) => {
           return db.find({_table: 'games', id: {$in: game_ids}})
         }).then(Immutable).then((games) => {
-          if (state.library.panel !== 'owned') return
-          merge_state({library: {games}})
+          merge_state({library: {games: {owned: games}}})
         })
       }
 
@@ -100,7 +98,7 @@ function fetch_games () {
           let collection = state.library.collections[id]
           db.find({_table: 'games', id: {$in: collection.game_ids}}).then((games) => {
             if (state.library.panel !== `collections/${id}`) return
-            merge_state({library: {games}})
+            merge_state({library: {games: {[panel]: games}}})
           })
           break
         }
@@ -110,13 +108,8 @@ function fetch_games () {
             return db.find_one({_table: 'games', id: install.game_id})
           }).then((game) => {
             if (state.library.panel !== `installs/${id}`) return
-            merge_state({library: {games: [game]}})
+            merge_state({library: {games: {[panel]: [game]}}})
           })
-          break
-        }
-
-        default: {
-          merge_state({library: {games: []}})
           break
         }
       }

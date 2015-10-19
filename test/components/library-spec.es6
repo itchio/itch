@@ -32,7 +32,7 @@ test('library', t => {
   })
 
   t.case('LibraryContent', t => {
-    sd.shallowRender($(LibraryContent, {}))
+    sd.shallowRender($(LibraryContent, {games: {}}))
   })
 
   t.case('LibraryPanelLink', t => {

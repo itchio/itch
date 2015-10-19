@@ -95,14 +95,19 @@ LibrarySidebar.propTypes = {
  */
 class LibraryContent extends Component {
   render () {
+    let {panel, installs = {}, games = {}} = this.props
+    let shown_games = games[panel] || []
+
     return <div className='main_content'>
-      <GameList {...this.props}/>
+      <GameList games={shown_games} installs={installs}/>
     </div>
   }
 }
 
 LibraryContent.propTypes = {
-  games: PropTypes.array
+  games: PropTypes.object,
+  installs: PropTypes.object,
+  panel: PropTypes.string
 }
 
 /**
