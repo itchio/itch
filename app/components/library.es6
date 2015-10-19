@@ -6,7 +6,7 @@ import {pairs} from 'underscore'
 
 import {UserPanel} from './user-panel'
 import {GameList} from './game-list'
-import {Icon, ErrorList, ProgressBar} from './misc'
+import {TaskIcon, ErrorList, ProgressBar} from './misc'
 
 import AppActions from '../actions/app-actions'
 
@@ -27,16 +27,6 @@ class LibraryPage extends Component {
   }
 }
 
-let task_to_icon = {
-  'error': 'error',
-  'find-upload': 'stopwatch',
-  'download': 'download',
-  'extract': 'file-zip',
-  'configure': 'settings',
-  'launch': 'gamepad',
-  'idle': 'checkmark'
-}
-
 /**
  * A list of tabs, collections and installed games
  */
@@ -54,13 +44,12 @@ class LibrarySidebar extends Component {
     })
 
     let install_items = pairs(installs).map(([id, install]) => {
-      let icon = task_to_icon[install.task] || ''
       let props = {
         name: `installs/${id}`,
         label: install.game.title,
-        error: install.error,
+        error: (install.task === 'error' && install.error),
         progress: install.progress,
-        icon,
+        task: install.task,
         panel
       }
       return <LibraryPanelLink {...props} key={id}/>
@@ -98,7 +87,7 @@ LibrarySidebar.propTypes = {
 class LibraryContent extends Component {
   render () {
     return <div className='main_content'>
-      <GameList games={this.props.games}/>
+      <GameList {...this.props}/>
     </div>
   }
 }
@@ -113,7 +102,7 @@ LibraryContent.propTypes = {
  */
 class LibraryPanelLink extends Component {
   render () {
-    let {name, panel, label, progress, icon, error} = this.props
+    let {name, panel, label, progress, task, error} = this.props
     let current = (name === panel)
 
     let _progress = progress ? ` (${(progress * 100).toFixed()}%)` : ''
@@ -121,7 +110,7 @@ class LibraryPanelLink extends Component {
 
     return <div className={classNames('panel_link', {current})}
       onClick={() => AppActions.focus_panel(this.props.name) }>
-      <Icon {...{icon}}/>
+      <TaskIcon {...{task}}/>
       {_label}
       <ProgressBar {...{progress}}/>
       <ErrorList errors={error}/>
@@ -134,7 +123,7 @@ LibraryPanelLink.propTypes = {
   panel: PropTypes.string,
   label: PropTypes.string,
   progress: PropTypes.number,
-  icon: PropTypes.string,
+  task: PropTypes.string,
   error: PropTypes.string
 }
 

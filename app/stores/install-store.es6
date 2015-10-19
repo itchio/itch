@@ -57,9 +57,8 @@ function task_error_handler (id, task_name) {
       log(opts, msg)
       AppActions.install_progress({id, task: 'error', error: msg})
     } else {
-      let msg = err.stack || err
-      log(opts, msg)
-      AppActions.install_progress({id, task: 'error', error: msg})
+      log(opts, err.stack || err)
+      AppActions.install_progress({id, task: 'error', error: '' + err})
       throw err
     }
   }
@@ -115,7 +114,7 @@ InstallStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on =
   on(AppConstants.INSTALL_QUEUE, action => {
     db.find_one({_table: 'installs', game_id: action.game_id}).then((record) => {
       if (record) {
-        queue_task(record._id, 'launch')
+        queue_task(record._id, 'configure', {then: 'launch'})
       } else {
         queue_install(action.game_id)
       }

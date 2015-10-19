@@ -22,6 +22,31 @@ Icon.propTypes = {
   icon: PropTypes.string
 }
 
+let task_to_icon = {
+  'error': 'error',
+  'find-upload': 'stopwatch',
+  'download': 'download',
+  'extract': 'file-zip',
+  'configure': 'settings',
+  'launch': 'gamepad',
+  'idle': 'checkmark'
+}
+
+/**
+ * An icon that represents the state of a given task
+ */
+class TaskIcon extends Component {
+  render () {
+    let {task = ''} = this.props
+    let icon = task_to_icon[task] || ''
+    return <Icon {...{icon}}/>
+  }
+}
+
+TaskIcon.propTypes = {
+  task: PropTypes.string
+}
+
 /**
  * A single progress bar, with an outer and inner div. Style as you wish.
  */
@@ -71,4 +96,4 @@ ErrorList.propTypes = {
   errors: PropTypes.oneOfType([PropTypes.array, PropTypes.string])
 }
 
-export default {Icon, ProgressBar, ErrorList}
+export default {Icon, TaskIcon, ProgressBar, ErrorList}

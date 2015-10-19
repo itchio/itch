@@ -188,10 +188,20 @@ $cell_height: $cell_width * $cell_ratio;
     }
 
     .game_launch {
+      transition: all 0.2s;
       margin-top: 8px;
 
       .icon {
         margin-right: 5px;
+      }
+
+      &.install_download, &.install_extract, &.install_configure, &.install_launch, &.install_find-upload {
+        font-weight: normal;
+        color: #dadada;
+        background-color: #333;
+        text-shadow: none;
+        width: 100%;
+        text-align: center;
       }
     }
 

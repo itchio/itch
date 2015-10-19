@@ -381,9 +381,17 @@ p {
     .library_page .game_cell .game_author {
       color: #aaa; }
     .library_page .game_cell .game_launch {
+      transition: all 0.2s;
       margin-top: 8px; }
       .library_page .game_cell .game_launch .icon {
         margin-right: 5px; }
+      .library_page .game_cell .game_launch.install_download, .library_page .game_cell .game_launch.install_extract, .library_page .game_cell .game_launch.install_configure, .library_page .game_cell .game_launch.install_launch, .library_page .game_cell .game_launch.install_find-upload {
+        font-weight: normal;
+        color: #dadada;
+        background-color: #333;
+        text-shadow: none;
+        width: 100%;
+        text-align: center; }
   .library_page .game_box .upload_row {
     margin: 10px 0; }
     .library_page .game_box .upload_row .download_btn,
