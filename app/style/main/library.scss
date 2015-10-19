@@ -45,17 +45,13 @@ $cell_height: $cell_width * $cell_ratio;
     top: 0;
     bottom: 0;
     left: 0;
-    font-size: 12px;
+    font-size: 14px;
     height: 100%;
 
-    h3 {
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 13px;
-      color: #777;
-      margin-left: 8px;
-      margin: 5px 0 0;
-      padding: 6px 0 4px 8px;
+    .separator {
+      width: 100%;
+      height: 1px;
+      background: #333;
     }
 
     .panel_links {
@@ -64,17 +60,27 @@ $cell_height: $cell_width * $cell_ratio;
       bottom: 0;
       left: 0;
       right: 0;
+      padding-top: 10px;
       padding-bottom: 10px;
       overflow-y: auto;
       border-right: 1px solid rgba(black, .1);
 
       .panel_link {
-        padding: 7px 8px;
-        color: rgba(white, .8);
+        padding: 8px;
+        color: #A0A0A0;
         cursor: pointer;
 
         .icon {
           margin-right: 8px;
+        }
+
+        .bubble {
+          background: #666;
+          color: #dadada;
+          margin-left: 8px;
+          font-size: 90%;
+          border-radius: 2px;
+          padding: 0px 4px;
         }
 
         &:hover {

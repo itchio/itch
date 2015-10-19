@@ -44,41 +44,47 @@ function merge_state (obj) {
   AppStore.emit_change()
 }
 
+let show_dashboard_games = function () {
+  let own_id = CredentialsStore.get_me().id
+  db.find({_table: 'games', user_id: own_id}).then(Immutable).then((games) => {
+    merge_state({library: {games: {dashboard: games}}})
+  })
+}
+
+let show_owned_games = function () {
+  db.find({_table: 'download_keys'}).then((keys) => {
+    return pluck(keys, 'game_id')
+  }).then((game_ids) => {
+    return db.find({_table: 'games', id: {$in: game_ids}})
+  }).then(Immutable).then((games) => {
+    merge_state({library: {games: {owned: games}}})
+  })
+}
+
+let show_collection_games = function (id) {
+  let collection = state.library.collections[id]
+  db.find({_table: 'games', id: {$in: collection.game_ids}}).then((games) => {
+    merge_state({library: {games: {[`collections/${id}`]: games}}})
+  })
+}
+
 function fetch_games () {
   let user = CredentialsStore.get_current_user()
   let {panel} = state.library
 
   switch (panel) {
-
     case 'dashboard': {
-      let show_own_games = function () {
-        let own_id = CredentialsStore.get_me().id
-        db.find({_table: 'games', user_id: own_id}).then(Immutable).then((games) => {
-          merge_state({library: {games: {dashboard: games}}})
-        })
-      }
-
-      show_own_games()
+      show_dashboard_games()
 
       user.my_games().then((res) => {
         return res.games.map((game) => {
           return game.merge({user: CredentialsStore.get_me()})
         })
-      }).then(db.save_games).then(() => show_own_games())
+      }).then(db.save_games).then(() => show_dashboard_games())
       break
     }
 
     case 'owned': {
-      let show_owned_games = function () {
-        db.find({_table: 'download_keys'}).then((keys) => {
-          return pluck(keys, 'game_id')
-        }).then((game_ids) => {
-          return db.find({_table: 'games', id: {$in: game_ids}})
-        }).then(Immutable).then((games) => {
-          merge_state({library: {games: {owned: games}}})
-        })
-      }
-
       show_owned_games()
 
       for (let promise of [
@@ -95,11 +101,7 @@ function fetch_games () {
       let [type, id] = panel.split('/')
       switch (type) {
         case 'collections': {
-          let collection = state.library.collections[id]
-          db.find({_table: 'games', id: {$in: collection.game_ids}}).then((games) => {
-            if (state.library.panel !== `collections/${id}`) return
-            merge_state({library: {games: {[panel]: games}}})
-          })
+          show_collection_games(id)
           break
         }
 
@@ -121,10 +123,7 @@ function fetch_games () {
 function focus_panel (panel) {
   merge_state({
     page: 'library',
-    library: {
-      panel,
-      games: []
-    }
+    library: { panel }
   })
 
   fetch_games()
@@ -160,6 +159,7 @@ function authenticated (action) {
           return indexBy(collections, 'id')
         }).then((collections) => {
           merge_state({library: {collections}})
+          Object.keys(collections).forEach((cid) => show_collection_games(cid))
         })
       }
 
@@ -168,6 +168,8 @@ function authenticated (action) {
       CredentialsStore.get_current_user().my_collections().then((res) => {
         return res.collections
       }).then(db.save_collections).then(() => show_collections())
+
+      show_dashboard_games()
     })
   })
 }
@@ -202,6 +204,11 @@ AppStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
   on(AppConstants.INSTALL_PROGRESS, action => {
     let installs = { [action.opts.id]: action.opts }
     merge_state({library: {installs}})
+
+    let game_ids = pluck(state.library.installs, 'game_id')
+    db.find({_table: 'games', id: {$in: game_ids}}).then((games) => {
+      merge_state({library: {games: {installed: games}}})
+    })
   })
 }))
 

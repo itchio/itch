@@ -6,7 +6,7 @@ import {pairs} from 'underscore'
 
 import {UserPanel} from './user-panel'
 import {GameList} from './game-list'
-import {TaskIcon, ErrorList, ProgressBar} from './misc'
+import {Icon, TaskIcon, ErrorList, ProgressBar} from './misc'
 
 import AppActions from '../actions/app-actions'
 
@@ -32,12 +32,14 @@ class LibraryPage extends Component {
  */
 class LibrarySidebar extends Component {
   render () {
-    let {panel, installs = {}, collections = {}} = this.props
+    let {panel, installs = {}, collections = {}, games = {}} = this.props
 
     let collection_items = pairs(collections).map(([id, collection]) => {
       let props = {
+        games,
         name: `collections/${id}`,
         label: collection.title,
+        before: <Icon icon='tag'/>,
         panel
       }
       return <LibraryPanelLink {...props} key={id}/>
@@ -45,16 +47,17 @@ class LibrarySidebar extends Component {
 
     let has_installs = false
     let install_items = pairs(installs).map(([id, install]) => {
-      if (!(install.progress > 0)) {
+      if (!(install.progress > 0 || install.task === 'error')) {
         return ''
       }
 
       let props = {
+        games: {}, // don't display number bullet
         name: `installs/${id}`,
         label: install.game.title,
         error: (install.task === 'error' && install.error),
         progress: install.progress,
-        task: install.task,
+        before: <TaskIcon task={install.task}/>,
         panel
       }
       has_installs = true
@@ -64,18 +67,16 @@ class LibrarySidebar extends Component {
     return <div className={classNames('sidebar', {frameless})}>
       <UserPanel {...this.props}/>
       <div className='panel_links'>
-        <h3>Tabs</h3>
+        <LibraryPanelLink before={<Icon icon='heart-filled'/>} name='owned' label='Owned' panel={panel} games={games}/>
+        <LibraryPanelLink before={<Icon icon='gamepad'/>} name='installed' label='Installed' panel={panel} games={games}/>
+        <LibraryPanelLink before={<Icon icon='stats'/>} name='dashboard' label='Dashboard' panel={panel} games={games}/>
 
-        <LibraryPanelLink name='owned' label='Owned' panel={panel}/>
-        <LibraryPanelLink name='dashboard' label='Dashboard' panel={panel}/>
-
-        <h3>Collections</h3>
-
+        <div className='separator'/>
         {collection_items}
 
         {has_installs
         ? <div>
-            <h3>In progress</h3>
+            <div className='separator'/>
             {install_items}
           </div>
         : ''}
@@ -87,7 +88,8 @@ class LibrarySidebar extends Component {
 LibrarySidebar.propTypes = {
   panel: PropTypes.string,
   installs: PropTypes.object,
-  collections: PropTypes.object
+  collections: PropTypes.object,
+  games: PropTypes.object
 }
 
 /**
@@ -116,7 +118,9 @@ LibraryContent.propTypes = {
  */
 class LibraryPanelLink extends Component {
   render () {
-    let {name, panel, label, progress, task, error} = this.props
+    let {name, panel, label, progress, before = '', error, games} = this.props
+    let relevant_games = games[name] || []
+    let game_count = relevant_games.length
     let current = (name === panel)
 
     let _progress = progress ? ` (${(progress * 100).toFixed()}%)` : ''
@@ -124,8 +128,11 @@ class LibraryPanelLink extends Component {
 
     return <div className={classNames('panel_link', {current})}
       onClick={() => AppActions.focus_panel(this.props.name) }>
-      <TaskIcon {...{task}}/>
+      {before}
       {_label}
+      {game_count > 0
+      ? <span className='bubble'>{game_count}</span>
+      : ''}
       <ProgressBar {...{progress}}/>
       <ErrorList errors={error}/>
     </div>
@@ -137,8 +144,9 @@ LibraryPanelLink.propTypes = {
   panel: PropTypes.string,
   label: PropTypes.string,
   progress: PropTypes.number,
-  task: PropTypes.string,
-  error: PropTypes.string
+  error: PropTypes.string,
+  games: PropTypes.object,
+  before: PropTypes.any
 }
 
 export {LibraryPage, LibrarySidebar, LibraryContent, LibraryPanelLink}
