@@ -43,6 +43,7 @@ if (os.process_type() === 'renderer') {
      * will throw - helps debugging missing constants
      */
     dispatch (payload) {
+      let t1 = +new Date()
       if (this._promises) {
         throw new Error(`Can't call dispatch synchronously from an action callback`)
       }
@@ -78,7 +79,11 @@ if (os.process_type() === 'renderer') {
       let overallPromise = Promise.all(this._promises).then(() => payload)
       this._promises = null
 
-      return overallPromise
+      return overallPromise.then((res) => {
+        let t2 = +new Date()
+        log(opts, `dispatched ${payload.action_type} in ${t2 - t1}ms`)
+        return res
+      })
     }
 
     /**

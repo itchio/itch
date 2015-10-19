@@ -385,13 +385,46 @@ p {
       margin-top: 8px; }
       .library_page .game_cell .game_launch .icon {
         margin-right: 5px; }
-      .library_page .game_cell .game_launch.install_download, .library_page .game_cell .game_launch.install_extract, .library_page .game_cell .game_launch.install_configure, .library_page .game_cell .game_launch.install_launch, .library_page .game_cell .game_launch.install_find-upload {
+      .library_page .game_cell .game_launch.uninstalled, .library_page .game_cell .game_launch.install_error {
+        background-color: #222;
         font-weight: normal;
-        color: #dadada;
-        background-color: #333;
         text-shadow: none;
+        border: 1px solid #666; }
+      .library_page .game_cell .game_launch.install_download, .library_page .game_cell .game_launch.install_extract, .library_page .game_cell .game_launch.install_configure, .library_page .game_cell .game_launch.install_launch, .library_page .game_cell .game_launch.install_find-upload {
+        background-color: #222;
+        font-weight: normal;
+        text-shadow: none;
+        border: 1px solid #666;
+        color: #dadada;
         width: 100%;
         text-align: center; }
+      .library_page .game_cell .game_launch.install_idle {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        display: inline-block;
+        background: #fa5c5c;
+        color: white;
+        text-decoration: none;
+        padding: 0 10px;
+        font-size: 14px;
+        text-shadow: 0 1px 0 #d64343;
+        cursor: pointer;
+        border-radius: 3px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: inset 0 0 1px rgba(255, 255, 255, 0.21);
+        text-align: center;
+        line-height: 33px;
+        font-weight: bold;
+        height: 35px; }
+        .library_page .game_cell .game_launch.install_idle:hover {
+          background: #fa6666; }
+        .library_page .game_cell .game_launch.install_idle:active {
+          background-color: #e44949;
+          position: relative;
+          top: 1px; }
   .library_page .game_box .upload_row {
     margin: 10px 0; }
     .library_page .game_box .upload_row .download_btn,

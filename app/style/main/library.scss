@@ -195,13 +195,25 @@ $cell_height: $cell_width * $cell_ratio;
         margin-right: 5px;
       }
 
-      &.install_download, &.install_extract, &.install_configure, &.install_launch, &.install_find-upload {
+      &.uninstalled, &.install_error {
+        background-color: #222;
         font-weight: normal;
-        color: #dadada;
-        background-color: #333;
         text-shadow: none;
+        border: 1px solid #666;
+      }
+
+      &.install_download, &.install_extract, &.install_configure, &.install_launch, &.install_find-upload {
+        background-color: #222;
+        font-weight: normal;
+        text-shadow: none;
+        border: 1px solid #666;
+        color: #dadada;
         width: 100%;
         text-align: center;
+      }
+
+      &.install_idle {
+        @include button($button_color);
       }
     }
 

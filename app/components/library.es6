@@ -43,7 +43,12 @@ class LibrarySidebar extends Component {
       return <LibraryPanelLink {...props} key={id}/>
     })
 
+    let has_installs = false
     let install_items = pairs(installs).map(([id, install]) => {
+      if (!(install.progress > 0)) {
+        return ''
+      }
+
       let props = {
         name: `installs/${id}`,
         label: install.game.title,
@@ -52,6 +57,7 @@ class LibrarySidebar extends Component {
         task: install.task,
         panel
       }
+      has_installs = true
       return <LibraryPanelLink {...props} key={id}/>
     })
 
@@ -67,9 +73,12 @@ class LibrarySidebar extends Component {
 
         {collection_items}
 
-        <h3>Installs</h3>
-
-        {install_items}
+        {has_installs
+        ? <div>
+            <h3>In progress</h3>
+            {install_items}
+          </div>
+        : ''}
       </div>
     </div>
   }

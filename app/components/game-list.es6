@@ -21,13 +21,15 @@ class GameCell extends Component {
     let button_classes = 'game_launch button'
     if (install) {
       button_classes += ` install_${install.task}`
+    } else {
+      button_classes += ` uninstalled`
     }
 
     let button_style = {}
     if (install && install.progress > 0) {
       let percent = (install.progress * 100).toFixed() + '%'
-      let done_color = '#666'
-      let undone_color = '#333'
+      let done_color = '#444'
+      let undone_color = '#222'
       button_style.backgroundImage = `-webkit-linear-gradient(left, ${done_color}, ${done_color} ${percent}, ${undone_color} ${percent}, ${undone_color})`
     }
 
@@ -66,7 +68,10 @@ class GameCell extends Component {
     let res = 'Installing...'
     if (install.task === 'download') {
       res = 'Downloading...'
+    } else if (install.task === 'extract') {
+      res = 'Extracting'
     }
+
     if (install.progress > 0) {
       res += ` (${(install.progress * 100).toFixed()}%)`
     }

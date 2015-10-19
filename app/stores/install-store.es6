@@ -73,16 +73,19 @@ function queue_task (id, task_name, data = {}) {
     }
   })
   log(opts, `starting ${task_name}`)
-  AppActions.install_progress({id, progress: 0, task: task_name})
-  task.start(task_opts).then((res) => {
+  AppActions.install_progress({id, progress: 0, task: task_name}).then(() => {
+    return task.start(task_opts)
+  }).then((res) => {
     let transition = natural_transitions[task_name]
     if (transition) throw new Transition({to: transition})
 
     log(opts, `task ${task_name} finished with ${JSON.stringify(res)}`)
+    return AppActions.install_progress({id, progress: 0})
+  }).then(() => {
     if (task_opts.then) {
       queue_task(id, task_opts.then)
     } else {
-      AppActions.install_progress({id, progress: 0, task: 'idle'})
+      return AppActions.install_progress({id, task: 'idle'})
     }
   }).catch(task_error_handler(id, task_name))
 }
