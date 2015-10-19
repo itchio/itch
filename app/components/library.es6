@@ -118,7 +118,7 @@ LibraryContent.propTypes = {
  */
 class LibraryPanelLink extends Component {
   render () {
-    let {name, panel, label, progress, before = '', error, games} = this.props
+    let {name, panel, label, progress, before = '', error, games = {}} = this.props
     let relevant_games = games[name] || []
     let game_count = relevant_games.length
     let current = (name === panel)
