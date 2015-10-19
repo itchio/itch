@@ -59,7 +59,6 @@ function task_error_handler (id, task_name) {
     } else {
       log(opts, err.stack || err)
       AppActions.install_progress({id, task: 'error', error: '' + err})
-      throw err
     }
   }
 }
