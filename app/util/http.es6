@@ -19,7 +19,7 @@ let self = {
     let {url, sink, headers = {}, onprogress = noop} = opts
     headers = Object.assign({}, default_headers, headers)
 
-    let req = progress(request.get({ encoding: null, url, headers }))
+    let req = progress(request.get({ encoding: null, url, headers }), {throttle: 25})
     let out = req.pipe(sink)
 
     return new Promise((resolve, reject) => {
