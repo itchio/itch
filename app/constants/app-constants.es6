@@ -23,6 +23,9 @@ export default keyMirror({
   /** Cross-platform, notification bubble */
   NOTIFY: null,
 
+  /* Data retrieval stuff */
+  FETCH_GAMES: null,
+
   /** Ready but needs human login */
   NO_STORED_CREDENTIALS: null,
   /** Private - login attempt */

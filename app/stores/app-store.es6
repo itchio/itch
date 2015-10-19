@@ -1,8 +1,9 @@
 import Immutable from 'seamless-immutable'
 import app from 'app'
-import {pluck, indexBy} from 'underscore'
+import {indexBy} from 'underscore'
 
 import Store from './store'
+import GameStore from './game-store'
 import CredentialsStore from './credentials-store'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
@@ -44,89 +45,13 @@ function merge_state (obj) {
   AppStore.emit_change()
 }
 
-let show_dashboard_games = function () {
-  let own_id = CredentialsStore.get_me().id
-  db.find({_table: 'games', user_id: own_id}).then(Immutable).then((games) => {
-    merge_state({library: {games: {dashboard: games}}})
-  })
-}
-
-let show_owned_games = function () {
-  db.find({_table: 'download_keys'}).then((keys) => {
-    return pluck(keys, 'game_id')
-  }).then((game_ids) => {
-    return db.find({_table: 'games', id: {$in: game_ids}})
-  }).then(Immutable).then((games) => {
-    merge_state({library: {games: {owned: games}}})
-  })
-}
-
-let show_collection_games = function (id) {
-  let collection = state.library.collections[id]
-  db.find({_table: 'games', id: {$in: collection.game_ids}}).then((games) => {
-    merge_state({library: {games: {[`collections/${id}`]: games}}})
-  })
-}
-
-function fetch_games () {
-  let user = CredentialsStore.get_current_user()
-  let {panel} = state.library
-
-  switch (panel) {
-    case 'dashboard': {
-      show_dashboard_games()
-
-      user.my_games().then((res) => {
-        return res.games.map((game) => {
-          return game.merge({user: CredentialsStore.get_me()})
-        })
-      }).then(db.save_games).then(() => show_dashboard_games())
-      break
-    }
-
-    case 'owned': {
-      show_owned_games()
-
-      for (let promise of [
-        user.my_owned_keys().then((res) => res.owned_keys),
-        user.my_claimed_keys().then((res) => res.claimed_keys)
-      ]) {
-        promise.then(db.save_download_keys).then(() => show_owned_games())
-      }
-
-      break
-    }
-
-    default: {
-      let [type, id] = panel.split('/')
-      switch (type) {
-        case 'collections': {
-          show_collection_games(id)
-          break
-        }
-
-        case 'installs': {
-          db.find_one({_table: 'installs', _id: id}).then((install) => {
-            return db.find_one({_table: 'games', id: install.game_id})
-          }).then((game) => {
-            if (state.library.panel !== `installs/${id}`) return
-            merge_state({library: {games: {[panel]: [game]}}})
-          })
-          break
-        }
-      }
-      break
-    }
-  }
-}
-
 function focus_panel (panel) {
   merge_state({
     page: 'library',
     library: { panel }
   })
 
-  fetch_games()
+  setImmediate(() => AppActions.fetch_games(panel))
 }
 
 function switch_page (page) {
@@ -159,7 +84,9 @@ function authenticated (action) {
           return indexBy(collections, 'id')
         }).then((collections) => {
           merge_state({library: {collections}})
-          Object.keys(collections).forEach((cid) => show_collection_games(cid))
+          Object.keys(collections).forEach((cid) =>
+            AppActions.fetch_games(`collections/${cid}`)
+          )
         })
       }
 
@@ -169,7 +96,7 @@ function authenticated (action) {
         return res.collections
       }).then(db.save_collections).then(() => show_collections())
 
-      show_dashboard_games()
+      AppActions.fetch_games('dashboard')
     })
   })
 }
@@ -204,12 +131,13 @@ AppStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
   on(AppConstants.INSTALL_PROGRESS, action => {
     let installs = { [action.opts.id]: action.opts }
     merge_state({library: {installs}})
-
-    let game_ids = pluck(state.library.installs, 'game_id')
-    db.find({_table: 'games', id: {$in: game_ids}}).then((games) => {
-      merge_state({library: {games: {installed: games}}})
-    })
+    setImmediate(() => AppActions.fetch_games('installed'))
   })
 }))
+
+GameStore.add_change_listener('app-store', () => {
+  let games = GameStore.get_state()
+  merge_state({library: {games}})
+})
 
 export default AppStore

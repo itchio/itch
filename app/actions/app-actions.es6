@@ -116,6 +116,13 @@ let self = {
     })
   },
 
+  fetch_games: (path) => {
+    return AppDispatcher.dispatch({
+      action_type: AppConstants.FETCH_GAMES,
+      path
+    })
+  },
+
   eval: (code) => {
     return AppDispatcher.dispatch({
       action_type: AppConstants.EVAL,
