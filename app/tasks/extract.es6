@@ -9,6 +9,7 @@ import noop from '../util/noop'
 let log = require('../util/log')('tasks/extract')
 
 import InstallStore from '../stores/install-store'
+import AppActions from '../actions/app-actions'
 
 let self = {
   extract: function (opts) {
@@ -50,7 +51,11 @@ let self = {
       let dest_path = InstallStore.app_path(id)
       let extract_opts = { logger, onerror, onprogress, archive_path, dest_path }
 
-      return self.extract(extract_opts)
+      return AppActions.install_update(id, {launchable: false}).then(() => {
+        return self.extract(extract_opts)
+      }).then(() => {
+        return AppActions.install_update(id, {launchable: true})
+      })
     })
   }
 }
