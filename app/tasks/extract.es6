@@ -32,7 +32,7 @@ let self = {
   },
 
   start: function (opts) {
-    let {id, logger, onerror = noop} = opts
+    let {id, logger, onerror = noop, onprogress = noop} = opts
     let install
 
     return InstallStore.get_install(id).then((res) => {
@@ -48,9 +48,8 @@ let self = {
 
       let archive_path = InstallStore.archive_path(install.upload_id)
       let dest_path = InstallStore.app_path(id)
-      let extract_opts = { logger, onerror, archive_path, dest_path }
+      let extract_opts = { logger, onerror, onprogress, archive_path, dest_path }
 
-      log(opts, `extract_opts = ${JSON.stringify(extract_opts)}`)
       return self.extract(extract_opts)
     })
   }

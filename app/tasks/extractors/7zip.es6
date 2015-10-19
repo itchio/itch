@@ -34,12 +34,14 @@ let self = {
   },
 
   sevenzip_extract: function (archive_path, dest_path, onprogress) {
-    return mkdirp(dest_path).then(new Promise((resolve, reject) => {
-      let op = new SevenZip().extractFull(archive_path, dest_path)
-      op.progress(onprogress)
-      op.then((r) => resolve(r))
-      op.catch((e) => reject(e))
-    }))
+    return mkdirp(dest_path).then(() => {
+      return new Promise((resolve, reject) => {
+        let op = new SevenZip().extractFull(archive_path, dest_path)
+        op.progress(onprogress)
+        op.then((r) => resolve(r))
+        op.catch((e) => reject(e))
+      })
+    })
   },
 
   extract: function (opts) {
@@ -56,10 +58,7 @@ let self = {
         log(opts, `Archive contains ${Object.keys(info.sizes).length} files, ${total_size} total`)
 
         let sevenzip_progress = (files) => {
-          extracted_size += (
-            files.map((f) => (info.sizes[f] || 0))
-            .reduce((a, b) => a + b)
-          )
+          files.forEach((f) => extracted_size += (info.sizes[self.normalize(f)] || 0))
           let percent = extracted_size / total_size * 100
           onprogress({ extracted_size, total_size, percent })
         }
@@ -69,18 +68,23 @@ let self = {
         return glob(`${dest_path}/**/*`, {nodir: true})
       }).then((files) => {
         // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
-        if (files.length === 1 && is_tar(files[0])) {
-          let tar = files[0]
-          let sub_opts = Object.assign({}, opts, {archive_path: tar})
-          return (
-            self.extract(sub_opts)
-            .then((res) => {
-              return fs.unlinkAsync(tar).then(() => res)
-            })
-          )
-        }
+        if (files.length === 1) {
+          return is_tar(files[0]).then(is => {
+            if (!is) return { extracted_size, total_size }
 
-        return { extracted_size, total_size }
+            log(opts, `Found tar: ${files[0]}, re-extracting`)
+            let tar = files[0]
+            let sub_opts = Object.assign({}, opts, {archive_path: tar})
+            return (
+              self.extract(sub_opts)
+              .then((res) => {
+                return fs.unlinkAsync(tar).then(() => res)
+              })
+            )
+          })
+        } else {
+          return { extracted_size, total_size }
+        }
       })
     )
   }
