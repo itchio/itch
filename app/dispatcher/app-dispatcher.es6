@@ -5,7 +5,7 @@ import os from '../util/os'
 
 let Log = require('../util/log')
 let log = Log('dispatcher')
-let opts = {logger: new Log.Logger()}
+let opts = {logger: new Log.Logger({sinks: {console: false}})}
 
 // This makes sure everything is dispatched to the node side, whatever happens
 if (os.process_type() === 'renderer') {

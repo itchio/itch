@@ -69,7 +69,6 @@ function queue_task (id, task_name, data = {}) {
   let task_opts = Object.assign({}, opts, data, {
     id,
     onprogress: (state) => {
-      log(opts, `${task_name} done ${state.percent}%`)
       AppActions.install_progress({id, progress: state.percent * 0.01, task: task_name})
     }
   })
