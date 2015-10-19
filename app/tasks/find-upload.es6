@@ -60,9 +60,12 @@ let self = {
       uploads = res.uploads
       log(opts, `got a list of ${uploads.length} uploads`)
       return AppActions.install_update(id, {uploads: indexBy(uploads, 'id')})
-    }).then(() =>
-      uploads
-    ).then(self.filter_uploads).map(self.score_upload).then(self.sort_uploads).then((uploads) => {
+    }).then(() => {
+      if (!(Array.isArray(uploads) && uploads.length > 0)) {
+        throw new Error('No downloads available')
+      }
+      return uploads
+    }).then(self.filter_uploads).map(self.score_upload).then(self.sort_uploads).then((uploads) => {
       log(opts, `post-filters, ${uploads.length} uploads left`)
       if (uploads.length > 0) {
         return AppActions.install_update(id, {upload_id: uploads[0].id})
