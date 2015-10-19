@@ -16,6 +16,7 @@ function start (opts) {
   let headers = {}
   let flags = 'w'
   let install, upload, archive_path
+  let done_alpha = 0
 
   log(opts, 'started')
 
@@ -62,6 +63,7 @@ function start (opts) {
 
     // Set up headers
     if (local_size > 0) {
+      done_alpha = local_size / upload.size
       log(opts, `resuming from byte ${local_size}`)
       headers['Range'] = `bytes=${local_size}-`
       flags = 'a'
@@ -81,7 +83,11 @@ function start (opts) {
     log(opts, `d/l from ${url}`)
 
     return http.request({
-      url, headers, onprogress,
+      url, headers,
+      onprogress: (state) => {
+        let percent = done_alpha * 100 + (1 - done_alpha) * state.percent
+        onprogress({percent})
+      },
       sink: fstream.Writer({path: archive_path, flags})
     })
   })
