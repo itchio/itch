@@ -42,7 +42,7 @@ $ electron .
 
 ## Screenshots
 
-![](https://misc.amos.me/shots/Screen%20Shot%202015-10-04%20at%2019.09.56.png)
+![](https://cloud.githubusercontent.com/assets/7998310/10584017/554ac534-7690-11e5-8c5a-6eda011022e8.png)
 
 
 ## License
