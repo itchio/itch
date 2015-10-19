@@ -18,4 +18,11 @@ class InputRequired extends ExtendableError {
   }
 }
 
-export default { Transition, InputRequired }
+class Crash extends ExtendableError {
+  constructor (opts) {
+    super('application crashed')
+    Object.assign(this, opts)
+  }
+}
+
+export default { Transition, InputRequired, Crash }

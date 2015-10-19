@@ -4,7 +4,7 @@ import AppConstants from '../constants/app-constants'
 import AppActions from '../actions/app-actions'
 import Store from './store'
 
-import {Transition, InputRequired} from '../tasks/errors'
+import {Transition, InputRequired, Crash} from '../tasks/errors'
 
 import app from 'app'
 import path from 'path'
@@ -51,11 +51,15 @@ function task_error_handler (id, task_name) {
     if (err instanceof Transition) {
       log(opts, `[${task_name} => ${err.to}] ${err.reason}`)
       let data = err.data || {}
-      queue_task(id, err.to, data)
+      setImmediate(() => queue_task(id, err.to, data))
     } else if (err instanceof InputRequired) {
       let msg = `(stub) input required by ${task_name}`
       log(opts, msg)
       AppActions.install_progress({id, task: 'error', error: msg})
+    } else if (err instanceof Crash) {
+      let msg = `crashed with: ${JSON.stringify(err, null, 2)}`
+      log(opts, msg)
+      AppActions.install_progress({id, task: 'idle', error: msg})
     } else {
       log(opts, err.stack || err)
       AppActions.install_progress({id, task: 'error', error: '' + err})
@@ -72,9 +76,21 @@ function queue_task (id, task_name, data = {}) {
     }
   })
   log(opts, `starting ${task_name}`)
+
   AppActions.install_progress({id, progress: 0, task: task_name}).then(() => {
     return task.start(task_opts)
   }).then((res) => {
+    if (task_name === 'extract') {
+      db.find_one({_table: 'installs', _id: id}).then((install) => {
+        if (!install.success_once) {
+          return db.find_one({_table: 'games', id: install.game_id}).then((game) => {
+            AppActions.notify(`${game.title} is ready!`)
+            AppActions.install_update(id, {success_once: true})
+          })
+        }
+      })
+    }
+
     let transition = natural_transitions[task_name]
     if (transition) throw new Transition({to: transition})
 

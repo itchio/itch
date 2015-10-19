@@ -1,5 +1,4 @@
 
-import shell from 'shell'
 import path from 'path'
 import child_process from 'child_process'
 import clone from 'clone'
@@ -11,6 +10,7 @@ let log = require('../util/log')('tasks/launch')
 import configure from './configure'
 
 import InstallStore from '../stores/install-store'
+import {Crash} from './errors'
 
 let self = {
   sh: function (exe_path, cmd, opts) {
@@ -37,7 +37,7 @@ let self = {
           log(opts, `${exe_path} returned ${error}`)
           log(opts, `stdout:\n${stdout}`)
           log(opts, `stderr:\n${stderr}`)
-          reject({ exe_path, error })
+          reject(new Crash({ exe_path, error }))
         } else {
           resolve(`Done playing ${exe_path}!`)
         }
@@ -62,32 +62,22 @@ let self = {
     log(opts, `launching '${exe_path}' on '${platform}' with args '${args.join(' ')}'`)
     let arg_string = args.map((x) => self.escape(x)).join(' ')
 
-    switch (platform) {
-      case 'darwin': {
-        // '-W' waits for app to quit
-        // potentially easy to inject something into the command line
-        // here but then again we are running executables downloaded
-        // from the internet.
-        let cmd = `open -W ${self.escape(exe_path)}`
-        if (arg_string.length > 0) {
-          cmd += ` --args ${arg_string}`
-        }
-        return self.sh(exe_path, cmd, opts)
+    if (platform === 'darwin' && /\.app\/?$/.test(exe_path.toLowerCase())) {
+      // '-W' waits for app to quit
+      // potentially easy to inject something into the command line
+      // here but then again we are running executables downloaded
+      // from the internet.
+      let cmd = `open -W ${self.escape(exe_path)}`
+      if (arg_string.length > 0) {
+        cmd += ` --args ${arg_string}`
       }
-
-      case 'win32':
-      case 'linux': {
-        let cmd = `${self.escape(exe_path)}`
-        if (arg_string.length > 0) {
-          cmd += ` ${arg_string}`
-        }
-        return self.sh(exe_path, cmd, opts)
+      return self.sh(exe_path, cmd, opts)
+    } else {
+      let cmd = `${self.escape(exe_path)}`
+      if (arg_string.length > 0) {
+        cmd += ` ${arg_string}`
       }
-
-      default:
-        // don't know how to launch, try to open with OS?
-        shell.openItem(exe_path)
-        return Promise.resolve(`Opened ${exe_path} in shell!`)
+      return self.sh(exe_path, cmd, opts)
     }
   },
 

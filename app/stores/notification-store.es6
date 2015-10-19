@@ -43,7 +43,9 @@ function notify (content) {
     TrayStore.with(tray => tray.displayBalloon({ title: 'itch.io', content }))
   } else {
     // using stringify as an escape mechanism
-    AppActions.eval(`new Notification(${JSON.stringify(content)})`)
+    setImmediate(() => {
+      AppActions.eval(`new Notification(${JSON.stringify(content)})`)
+    })
   }
 }
 

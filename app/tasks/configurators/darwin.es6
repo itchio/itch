@@ -23,7 +23,18 @@ let self = {
       glob(`${install_path}/**/*.app/`)
       .then(self.skip_junk)
       .each(common.fix_execs)
-      .then((executables) => ({executables}))
+      .then((executables) => {
+        if (executables.length > 0) {
+          return {executables}
+        }
+        // some games aren't properly packaged app bundles
+        // but rather a shell script / binary - try it the
+        // linux way
+        return (
+          common.fix_execs(install_path)
+          .then((executables) => ({executables}))
+        )
+      })
     )
   }
 }
