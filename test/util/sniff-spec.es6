@@ -6,6 +6,7 @@ import sniff from '../../app/util/sniff'
 
 test('sniff', t => {
   let types = [
+    ['broken-symlink', false],
     ['empty', false],
     ['txt', false],
     ['elf', 'elf executable'],

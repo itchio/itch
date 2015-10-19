@@ -31,7 +31,12 @@ function buffer (buf) {
 }
 
 buffer.path = function (file) {
-  return read_chunk(file, 0, 8).then(buffer)
+  return read_chunk(file, 0, 8).then(buffer).catch(e => {
+    if (e && e.code === 'ENOENT') {
+      // probably a broken symlink
+      return false
+    } else throw e
+  })
 }
 
 buffer.is_tar = function (file) {

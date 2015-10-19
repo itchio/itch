@@ -1,3 +1,4 @@
+import Promise from 'bluebird'
 
 import common from './common'
 import glob from '../../promised/glob'
@@ -7,7 +8,13 @@ let self = {
   // to be hidden / in trash / isn't in anyway relevant to what
   // we're trying to do
   skip_junk: function (bundle_paths) {
-    return bundle_paths.filter((file) => !/__MACOSX/.test(file))
+    return Promise.resolve(bundle_paths).filter((file) => {
+      if (/__MACOSX/.test(file)) {
+        // should be hidden
+        return false
+      }
+      return true
+    }).then((files) => files.filter((x) => !!x))
   },
 
   configure: function (install_path) {
