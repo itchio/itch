@@ -27,15 +27,14 @@ class LibraryPage extends Component {
   }
 }
 
-let state_to_icon = {
-  ERROR: 'error',
-  PENDING: 'stopwatch',
-  SEARCHING_UPLOAD: 'stopwatch',
-  DOWNLOADING: 'download',
-  EXTRACTING: 'file-zip',
-  CONFIGURING: 'settings',
-  RUNNING: 'gamepad',
-  IDLE: 'checkmark'
+let task_to_icon = {
+  'error': 'error',
+  'find-upload': 'stopwatch',
+  'download': 'download',
+  'extract': 'file-zip',
+  'configure': 'settings',
+  'launch': 'gamepad',
+  'idle': 'checkmark'
 }
 
 /**
@@ -55,11 +54,11 @@ class LibrarySidebar extends Component {
     })
 
     let install_items = pairs(installs).map(([id, install]) => {
-      let icon = state_to_icon[install.state] || ''
+      let icon = task_to_icon[install.task] || ''
       let props = {
         name: `installs/${id}`,
         label: install.game.title,
-        error: (install.state === 'ERROR' ? install.error : null),
+        error: install.error,
         progress: install.progress,
         icon,
         panel

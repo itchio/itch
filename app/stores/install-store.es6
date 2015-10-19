@@ -1,6 +1,7 @@
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
 import Store from './store'
 
 import {Transition, InputRequired} from '../tasks/errors'
@@ -52,9 +53,13 @@ function task_error_handler (id, task_name) {
       let data = err.data || {}
       queue_task(id, err.to, data)
     } else if (err instanceof InputRequired) {
-      log(opts, `(stub) input required by ${task_name}`)
+      let msg = `(stub) input required by ${task_name}`
+      log(opts, msg)
+      AppActions.install_progress({id, task: 'error', error: msg})
     } else {
-      log(opts, err.stack || err)
+      let msg = err.stack || err
+      log(opts, msg)
+      AppActions.install_progress({id, task: 'error', error: msg})
       throw err
     }
   }
@@ -66,9 +71,11 @@ function queue_task (id, task_name, data = {}) {
     id,
     onprogress: (state) => {
       log(opts, `${task_name} done ${state.percent}%`)
+      AppActions.install_progress({id, progress: state.percent * 0.01, task: task_name})
     }
   })
   log(opts, `starting ${task_name}`)
+  AppActions.install_progress({id, progress: 0, task: task_name})
   task.start(task_opts).then((res) => {
     let transition = natural_transitions[task_name]
     if (transition) throw new Transition({to: transition})
@@ -76,14 +83,23 @@ function queue_task (id, task_name, data = {}) {
     log(opts, `task ${task_name} finished with ${JSON.stringify(res)}`)
     if (task_opts.then) {
       queue_task(id, task_opts.then)
+    } else {
+      AppActions.install_progress({id, progress: 0, task: 'idle'})
     }
   }).catch(task_error_handler(id, task_name))
+}
+
+function initial_progress (game, record) {
+  AppActions.install_progress(Object.assign({game, id: record._id}, record))
 }
 
 function queue_install (game_id) {
   let data = { _table: 'installs', game_id }
   db.insert(data).then((record) => {
-    queue_task(record._id, 'download', opts)
+    db.find_one({_table: 'games', id: game_id}).then((game) => {
+      initial_progress(game, record)
+      queue_task(record._id, 'download', opts)
+    })
   })
 }
 
@@ -114,7 +130,12 @@ InstallStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on =
     return (
       db.load()
       .then(() => db.find({_table: 'installs'}))
-      .map(record => queue_task(record._id, 'download'))
+      .each(record => {
+        db.find_one({_table: 'games', id: record.game_id}).then((game) => {
+          initial_progress(game, record)
+          queue_task(record._id, 'download')
+        })
+      })
     )
   })
 }))
