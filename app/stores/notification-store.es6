@@ -7,6 +7,7 @@ import TrayStore from './tray-store'
 import Store from './store'
 
 import os from '../util/os'
+import defer from '../util/defer'
 
 import app from 'app'
 
@@ -43,7 +44,7 @@ function notify (content) {
     TrayStore.with(tray => tray.displayBalloon({ title: 'itch.io', content }))
   } else {
     // using stringify as an escape mechanism
-    setImmediate(() => {
+    defer(() => {
       AppActions.eval(`new Notification(${JSON.stringify(content)})`)
     })
   }

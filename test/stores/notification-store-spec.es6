@@ -6,6 +6,7 @@ import AppConstants from '../../app/constants/app-constants'
 import AppActions from '../stubs/app-actions'
 import AppDispatcher from '../stubs/app-dispatcher'
 import electron from '../stubs/electron'
+import defer from '../stubs/defer'
 
 test('NotificationStore', t => {
   let os = {
@@ -22,6 +23,7 @@ test('NotificationStore', t => {
 
   let stubs = Object.assign({
     '../util/os': os,
+    '../util/defer': defer,
     '../actions/app-actions': AppActions,
     '../dispatcher/app-dispatcher': AppDispatcher,
     './window-store': WindowStore,
