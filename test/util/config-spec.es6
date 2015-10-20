@@ -13,6 +13,8 @@ let setup = t => {
   }
   let stubs = Object.assign({ nconf }, electron)
 
+  t.stub(nconf, 'file').throws()
+
   let config = proxyquire('../../app/util/config', stubs)
   return {nconf, config}
 }
