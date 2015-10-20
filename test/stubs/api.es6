@@ -11,7 +11,8 @@ let user = {
   download_key_uploads: noop,
   my_owned_keys: noop,
   my_claimed_keys: noop,
-  my_games: noop
+  my_games: noop,
+  my_collections: noop
 }
 
 let User = function () {

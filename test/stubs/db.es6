@@ -1,19 +1,17 @@
+
 import Promise from 'bluebird'
+import proxyquire from 'proxyquire'
+import electron from './electron'
 
 let noop = () => Promise.resolve()
 
 let self = {
-  insert: noop,
-  update: noop,
-  find_one: noop,
-  find: noop,
-  load: noop,
-  save_records: noop,
-  save_download_keys: noop,
-  save_users: noop,
-  save_games: noop,
-  save_collections: noop,
   '@noCallThru': true
 }
+
+let db = proxyquire('../../app/util/db', electron)
+Object.keys(db).forEach((key) => {
+  self[key] = noop
+})
 
 export default self
