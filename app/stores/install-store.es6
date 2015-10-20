@@ -132,7 +132,7 @@ InstallStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on =
     db.find_one({_table: 'installs', game_id: action.game_id}).then((record) => {
       if (record) {
         if (record.launchable) {
-          queue_task(record._id, 'configure', {then: 'launch'})
+          queue_task(record._id, 'launch')
         }
       } else {
         queue_install(action.game_id)
