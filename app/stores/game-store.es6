@@ -1,4 +1,5 @@
 import Immutable from 'seamless-immutable'
+import Promise from 'bluebird'
 import {pluck} from 'underscore'
 
 import Store from './store'
@@ -21,7 +22,7 @@ function merge_state (obj) {
 }
 
 function cache_owned_games () {
-  db.find({_table: 'download_keys'}).then((keys) => {
+  return db.find({_table: 'download_keys'}).then((keys) => {
     return pluck(keys, 'game_id')
   }).then((game_ids) => {
     return db.find({_table: 'games', id: {$in: game_ids}})
@@ -32,13 +33,13 @@ function cache_owned_games () {
 
 function cache_dashboard_games () {
   let own_id = CredentialsStore.get_me().id
-  db.find({_table: 'games', user_id: own_id}).then(Immutable).then((games) => {
+  return db.find({_table: 'games', user_id: own_id}).then(Immutable).then((games) => {
     merge_state({dashboard: games})
   })
 }
 
 function cache_installed_games () {
-  db.find({_table: 'installs'}).then((installs) => {
+  return db.find({_table: 'installs'}).then((installs) => {
     return pluck(installs, 'game_id')
   }).then((game_ids) => {
     return db.find({_table: 'games', id: {$in: game_ids}})
@@ -48,7 +49,7 @@ function cache_installed_games () {
 }
 
 function cache_collection_games (id) {
-  db.find_one({_table: 'collections', id}).then((collection) => {
+  return db.find_one({_table: 'collections', id}).then((collection) => {
     return db.find({_table: 'games', id: {$in: collection.game_ids}})
   }).then((games) => {
     merge_state({[`collections/${id}`]: games})
@@ -69,19 +70,18 @@ function fetch_games (action) {
 
   if (path === 'owned') {
     cache_owned_games()
-
-    for (let promise of [
+    return Promise.resolve([
       user.my_owned_keys().then((res) => res.owned_keys),
       user.my_claimed_keys().then((res) => res.claimed_keys)
-    ]) {
-      promise.then(db.save_download_keys).then(() => cache_owned_games())
-    }
+    ]).map((keys) => {
+      db.save_download_keys(keys).then(() => cache_owned_games())
+    })
   } else if (path === 'installed') {
-    cache_installed_games()
+    return cache_installed_games()
   } else if (path === 'dashboard') {
     cache_dashboard_games()
 
-    user.my_games().then((res) => {
+    return user.my_games().then((res) => {
       return res.games.map((game) => {
         return game.merge({user: CredentialsStore.get_me()})
       })

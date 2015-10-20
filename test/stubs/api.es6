@@ -8,7 +8,10 @@ let user = {
   download_upload: noop,
   download_upload_with_key: noop,
   game_uploads: noop,
-  download_key_uploads: noop
+  download_key_uploads: noop,
+  my_owned_keys: noop,
+  my_claimed_keys: noop,
+  my_games: noop
 }
 
 let User = function () {
