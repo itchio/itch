@@ -21,16 +21,15 @@ let setup = t => {
     'child_process': child_process
   }, electron)
 
-  let {shell} = electron
   let launch = proxyquire('../../app/tasks/launch', stubs)
-  return {launch, child_process, os, shell}
+  return {launch, child_process, os}
 }
 
 let logger = new log.Logger({sinks: {console: false}})
 let opts = {id: 'kalamazoo', logger}
 
 test('launch', t => {
-  let {launch, child_process, os, shell} = setup(t)
+  let {launch, child_process, os} = setup(t)
 
   t.case('rejects 0 execs', t => {
     let spy = t.spy()
@@ -49,31 +48,31 @@ test('launch', t => {
     return launch.start(opts)
   })
 
-  t.case('launch/darwin', t => {
+  t.case('launch/.app', t => {
     t.stub(os, 'platform').returns('darwin')
     t.mock(launch).expects('sh').once().withArgs('Dumbo.app', `open -W "Dumbo.app"`).resolves('Done!')
     return launch.launch('Dumbo.app', [])
   })
 
-  t.case('launch/darwin - with args', t => {
+  t.case('launch/.app - with args', t => {
     t.stub(os, 'platform').returns('darwin')
     t.mock(launch).expects('sh').once().withArgs('Dumbo.app', `open -W "Dumbo.app" --args "dumb" "du\\"mber" "frank spencer"`).resolves('Done!')
     return launch.launch('Dumbo.app', ['dumb', 'du"mber', 'frank spencer'])
   })
 
-  t.case('launch/win32', t => {
+  t.case('launch/binary', t => {
     t.mock(launch).expects('sh').once().withArgs('dumbo.exe', `"dumbo.exe"`).resolves('Done!')
     return launch.launch('dumbo.exe', [])
   })
 
-  t.case('launch/win32 -with args', t => {
+  t.case('launch/binary -with args', t => {
     t.mock(launch).expects('sh').once().withArgs('dumbo.exe', `"dumbo.exe" "dumb" "du\\"mber" "frank spencer"`).resolves('Done!')
     return launch.launch('dumbo.exe', ['dumb', 'du"mber', 'frank spencer'])
   })
 
   t.case('launch/unknown', t => {
     t.stub(os, 'platform').returns('irix')
-    t.mock(shell).expects('openItem').once().withArgs('dumbo').returns()
+    t.mock(launch).expects('sh').once().withArgs('dumbo', `"dumbo"`).resolves('Done!')
     return launch.launch('dumbo', [])
   })
 
