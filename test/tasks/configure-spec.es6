@@ -88,6 +88,21 @@ test('configure', t => {
     })
   })
 
+  t.case('darwin finds binaries when no app bundles', t => {
+    let spy = t.spy()
+    return darwin.configure(linux_path).then(spy).then(_ => {
+      let names = [
+        'bin/game32',
+        'bin/game64',
+        'OpenHexagon',
+        'quine'
+      ]
+      let paths = names.map(x => `${linux_path}/${x}`)
+      t.is(1, spy.callCount)
+      t.samePaths(paths, spy.getCall(0).args[0].executables)
+    })
+  })
+
   let linux = proxyquire('../../app/tasks/configurators/linux', {
     '../../promised/fs': {
       chmodAsync: () => Promise.resolve(),
