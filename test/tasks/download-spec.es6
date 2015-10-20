@@ -1,5 +1,6 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
+import sinon from 'sinon'
 import Immutable from 'seamless-immutable'
 
 import electron from '../stubs/electron'
@@ -74,8 +75,16 @@ test('download', t => {
     t.stub(InstallStore, 'get_install').resolves(typical_install)
     t.stub(client, 'download_upload').resolves(upload_response)
     t.stub(fs, 'lstatAsync').resolves({size: 256})
+
     let mock = t.mock(http)
-    mock.expects('request').calledWith({})
-    return download.start({id: 42})
+    let request_exp = mock.expects('request').resolves()
+
+    let outer_onprogress = t.stub()
+    let dl_promise = download.start({id: 42, onprogress: outer_onprogress})
+
+    return dl_promise.then(() => {
+      request_exp.getCall(0).args[0].onprogress({percent: 50.0})
+      sinon.assert.calledWith(outer_onprogress, {percent: 75.0})
+    })
   })
 })
