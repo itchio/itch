@@ -28,27 +28,28 @@ test('GameStore', t => {
     let mock = t.mock(CredentialsStore.get_current_user())
     mock.expects('my_owned_keys').resolves({owned_keys: [1, 2, 3]})
     mock.expects('my_claimed_keys').resolves({claimed_keys: [1, 2, 3]})
-    handler({ action_type: AppConstants.FETCH_GAMES, path: 'owned' })
+    return handler({ action_type: AppConstants.FETCH_GAMES, path: 'owned' })
   })
 
   t.case('fetch installed', t => {
-    handler({ action_type: AppConstants.FETCH_GAMES, path: 'installed' })
-    handler({ action_type: AppConstants.INSTALL_PROGRESS })
+    return handler({ action_type: AppConstants.FETCH_GAMES, path: 'installed' }).then(() => {
+      return handler({ action_type: AppConstants.INSTALL_PROGRESS })
+    })
   })
 
   t.case('fetch dashboard', t => {
     let mock = t.mock(CredentialsStore.get_current_user())
     mock.expects('my_games').resolves(Immutable({games: [{}, {}, {}]}))
-    handler({ action_type: AppConstants.FETCH_GAMES, path: 'dashboard' })
+    return handler({ action_type: AppConstants.FETCH_GAMES, path: 'dashboard' })
   })
 
   t.case('fetch install', t => {
     t.stub(db, 'find_one').resolves({game_id: 64})
-    handler({ action_type: AppConstants.FETCH_GAMES, path: 'installs/46' })
+    return handler({ action_type: AppConstants.FETCH_GAMES, path: 'installs/46' })
   })
 
   t.case('fetch collections', t => {
     t.stub(db, 'find_one').resolves({game_ids: [7, 4, 1]})
-    handler({ action_type: AppConstants.FETCH_GAMES, path: 'collections/78' })
+    return handler({ action_type: AppConstants.FETCH_GAMES, path: 'collections/78' })
   })
 })
