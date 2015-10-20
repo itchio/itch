@@ -51,7 +51,16 @@ test('configure', t => {
     })
   })
 
-  let win32 = proxyquire('../../app/tasks/configurators/win32', {})
+  let fs = {
+    chmodAsync: () => Promise.resolve(),
+    '@global': true,
+    '@noCallThru': true
+  }
+  let stubs = {
+    '../../promised/fs': fs
+  }
+
+  let win32 = proxyquire('../../app/tasks/configurators/win32', stubs)
   let win32_path = fixture.path('configure/win32')
 
   t.case('win32 finds bats and exes', t => {
@@ -68,12 +77,7 @@ test('configure', t => {
     })
   })
 
-  let common = {
-    fix_execs: () => Promise.resolve()
-  }
-  let darwin = proxyquire('../../app/tasks/configurators/darwin', {
-    './common': common
-  })
+  let darwin = proxyquire('../../app/tasks/configurators/darwin', stubs)
   let darwin_path = fixture.path('configure/darwin')
 
   t.case('darwin finds app bundles', t => {
@@ -87,6 +91,9 @@ test('configure', t => {
       t.samePaths(paths, spy.getCall(0).args[0].executables)
     })
   })
+
+  let linux = proxyquire('../../app/tasks/configurators/linux', stubs)
+  let linux_path = fixture.path('configure/linux')
 
   t.case('darwin finds binaries when no app bundles', t => {
     let spy = t.spy()
@@ -102,15 +109,6 @@ test('configure', t => {
       t.samePaths(paths, spy.getCall(0).args[0].executables)
     })
   })
-
-  let linux = proxyquire('../../app/tasks/configurators/linux', {
-    '../../promised/fs': {
-      chmodAsync: () => Promise.resolve(),
-      '@global': true,
-      '@noCallThru': true
-    }
-  })
-  let linux_path = fixture.path('configure/linux')
 
   t.case('linux finds scripts & binaries', t => {
     let spy = t.spy()
