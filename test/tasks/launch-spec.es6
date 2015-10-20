@@ -6,7 +6,10 @@ import InstallStore from '../stubs/install-store'
 
 import log from '../../app/util/log'
 
-let setup = t => {
+let logger = new log.Logger({sinks: {console: false}})
+let opts = {id: 'kalamazoo', logger}
+
+test('launch', t => {
   let child_process = {
     exec: () => null,
     '@noCallThru': true
@@ -15,21 +18,18 @@ let setup = t => {
     platform: () => 'win32'
   }
 
+  let configure = {
+    start: () => Promise.resolve()
+  }
+
   let stubs = Object.assign({
     '../stores/install-store': InstallStore,
     '../util/os': os,
+    './configure': configure,
     'child_process': child_process
   }, electron)
 
   let launch = proxyquire('../../app/tasks/launch', stubs)
-  return {launch, child_process, os}
-}
-
-let logger = new log.Logger({sinks: {console: false}})
-let opts = {id: 'kalamazoo', logger}
-
-test('launch', t => {
-  let {launch, child_process, os} = setup(t)
 
   t.case('rejects 0 execs', t => {
     let spy = t.spy()
@@ -45,6 +45,17 @@ test('launch', t => {
       executables: [ '/a/b/c', '/a/bababa', '/a/b/c/d' ]
     })
     t.mock(launch).expects('launch').once().withArgs('/a/bababa').resolves('Done!')
+    return launch.start(opts)
+  })
+
+  t.case('reconfigures as needed', t => {
+    let get_install = t.stub(InstallStore, 'get_install')
+    get_install.resolves({ executables: [] })
+    t.stub(configure, 'start', () => {
+      get_install.resolves({ executables: ['/a'] })
+      return Promise.resolve()
+    })
+    t.mock(launch).expects('launch').once().withArgs('/a').resolves('Done!')
     return launch.start(opts)
   })
 

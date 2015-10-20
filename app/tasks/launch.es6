@@ -97,16 +97,13 @@ let self = {
 
     return InstallStore.get_install(id).then((install) => {
       if (!self.valid_install(install)) {
-        return configure.start(opts).then(() => {
-          if (!self.valid_install(install)) {
-            throw new Error('No executables found')
-          }
-          InstallStore.get_install(id).then((install) =>
-            self.launch_install(opts, install)
-          )
-        })
+        return configure.start(opts).then(() => InstallStore.get_install(id))
       }
-
+      return install
+    }).then((install) => {
+      if (!self.valid_install(install)) {
+        throw new Error('No executables found')
+      }
       return install
     }).then(install => self.launch_install(opts, install))
   }
