@@ -24,8 +24,10 @@ test('library', t => {
         b: {title: 'Collection B'}
       },
       installs: {
-        c: {state: 'ERROR', error: 'testing', game},
-        d: {state: 'PENDING', game}
+        c: {task: 'download', progress: 0.2, game},
+        d: {task: 'extract', progress: 0.7, game},
+        e: {task: 'error', error: 'dun goofed', game},
+        f: {task: 'idle', game}
       }
     }
     sd.shallowRender($(LibrarySidebar, props))
