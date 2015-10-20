@@ -3,7 +3,13 @@ import proxyquire from 'proxyquire'
 
 import electron from '../stubs/electron'
 
-let setup = (t) => {
+let http_opts = {
+  url: 'http://-invalid/hello.txt',
+  sink: {},
+  onprogress: () => {}
+}
+
+test('http', t => {
   let request = {
     get: (opts) => null
   }
@@ -21,18 +27,6 @@ let setup = (t) => {
     pipe: () => { return stub }
   }
   t.stub(request, 'get').returns(stub)
-
-  return Object.assign({request, http, handlers}, electron)
-}
-
-let http_opts = {
-  url: 'http://-invalid/hello.txt',
-  sink: {},
-  onprogress: () => {}
-}
-
-test('http', t => {
-  let {http, handlers} = setup(t)
 
   t.case('resolves on close', t => {
     setImmediate(() => { handlers.close() })
