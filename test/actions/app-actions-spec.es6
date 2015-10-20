@@ -31,6 +31,7 @@ test('app-actions', t => {
   test_action('focus_window', [], { action_type: 'FOCUS_WINDOW' })
   test_action('hide_window', [], { action_type: 'HIDE_WINDOW' })
 
+  test_action('no_stored_credentials', [], { action_type: 'NO_STORED_CREDENTIALS' })
   test_action('login_with_password', ['might', 'magic'], { action_type: 'LOGIN_WITH_PASSWORD', username: 'might', password: 'magic', private: true })
   test_action('login_failure', [['might', 'magic']], { action_type: 'LOGIN_FAILURE', errors: ['might', 'magic'] })
   test_action('authenticated', [], { action_type: 'AUTHENTICATED' })
