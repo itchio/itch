@@ -1,6 +1,7 @@
 
-import request from 'request-promise'
 import Immutable from 'seamless-immutable'
+
+import needle from '../promised/needle'
 
 /**
  * Wrapper for the itch.io API
@@ -11,20 +12,11 @@ class Client {
     // this.root_url = 'http://localhost.com:8080/api/1'
   }
 
-  request (method, path, data) {
+  request (method, path, data = {}) {
     let uri = `${this.root_url}${path}`
-    let options = { json: true, method, uri }
 
-    switch (method.toLowerCase()) {
-      case 'get':
-        options.qs = data
-        break
-      case 'post':
-        options.form = data
-        break
-    }
-
-    return request(options).then(res => {
+    return needle.requestAsync(method, uri, data).then(arg => {
+      let res = arg[0].body
       if (res.errors) {
         throw Immutable(res.errors)
       }

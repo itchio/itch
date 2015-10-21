@@ -1,45 +1,60 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
+import {EventEmitter} from 'events'
 
 import electron from '../stubs/electron'
 
-let http_opts = {
-  url: 'http://-invalid/hello.txt',
-  sink: {},
-  onprogress: () => {}
-}
-
 test('http', t => {
-  let request = {
-    get: (opts) => null
+  let stub = Object.assign({
+    pipe: () => { return stub }
+  }, EventEmitter.prototype)
+  let needle = {
+    get: (opts) => stub
   }
 
   let stubs = Object.assign({
-    request,
-    'request-progress': (t) => t
+    'needle': needle
   }, electron)
 
   let http = proxyquire('../../app/util/http', stubs)
 
-  let handlers = {}
-  let stub = {
-    on: (ev, fn) => { handlers[ev] = fn },
-    pipe: () => { return stub }
+  let http_opts = {
+    url: 'http://-invalid/hello.txt',
+    sink: {},
+    onprogress: () => {}
   }
-  t.stub(request, 'get').returns(stub)
 
   t.case('resolves on close', t => {
-    setImmediate(() => { handlers.close() })
+    setImmediate(() => { stub.emit('close') })
     return http.request(http_opts)
   })
 
-  t.case('rejects non-2xx response', t => {
-    setImmediate(() => { handlers.response({statusCode: 404}) })
+  t.case('rejects errors', t => {
+    setImmediate(() => { stub.emit('error', 'meow') })
     return t.rejects(http.request(http_opts))
   })
 
-  t.case('rejects errors', t => {
-    setImmediate(() => { handlers.error('meow') })
-    return t.rejects(http.request(http_opts))
+  t.case('progress', t => {
+    t.mock(http_opts).expects('onprogress').withArgs({percent: 25})
+
+    setImmediate(() => {
+      stub.emit('headers', {'content-length': 512})
+      let has_read = false
+      let stream = {
+        read: function () {
+          if (!has_read) {
+            has_read = true
+            return new Buffer(128)
+          }
+        }
+      }
+      stub.listeners('readable').forEach((l) => l.apply(stream, []))
+    })
+
+    setTimeout(() => {
+      stub.emit('end')
+      stub.emit('close')
+    }, 100)
+    return http.request(http_opts)
   })
 })

@@ -2,39 +2,35 @@ import test from 'zopf'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 
-let setup = (t, returns) => {
-  let request = t.stub().resolves({id: 12})
+import electron from '../stubs/electron'
 
-  let stubs = {
-    'request-promise': request
+test('api', t => {
+  let request = t.stub().resolves([{body: {id: 12}}])
+  let needle = {
+    requestAsync: request
   }
+
+  let stubs = Object.assign({
+    '../promised/needle': needle
+  }, electron)
 
   let api = proxyquire('../../app/util/api', stubs)
   api.client.root_url = 'http://example.org/'
 
   let user = new api.User(api.client, 'key')
-  return {api, request, user}
-}
-
-test('api', t => {
-  let {api, request, user} = setup(t)
   let {client} = api
 
-  let common = { uri: 'http://example.org/yo', json: true }
+  let uri = 'http://example.org/yo'
 
   t.case('can GET', t => {
     return client.request('GET', 'yo', {b: 11}).then(res => {
-      sinon.assert.calledWith(request, Object.assign({
-        method: 'GET', qs: {b: 11}
-      }, common))
+      sinon.assert.calledWith(request, 'GET', uri, {b: 11})
     })
   })
 
   t.case('can POST', t => {
     return client.request('POST', 'yo', {b: 22}).then(res => {
-      sinon.assert.calledWith(request, Object.assign({
-        method: 'POST', form: {b: 22}
-      }, common))
+      sinon.assert.calledWith(request, 'POST', uri, {b: 22})
     })
   })
 
@@ -47,11 +43,11 @@ test('api', t => {
   t.case('rejects API errors', t => {
     let errors = ['foo', 'bar', 'baz']
     let spy = t.spy()
-    request.resolves({errors})
+    request.resolves([{body: {errors}}])
     return client.request('GET', '', {}).catch(spy).then(res => {
       sinon.assert.calledWith(spy, errors)
     }).then(res => {
-      request.resolves({id: 42})
+      request.resolves([{body: {id: 42}}])
     })
   })
 

@@ -11,6 +11,10 @@ let self = {
     return process.type
   },
 
+  get_version: function (key) {
+    return process.versions[key]
+  },
+
   /**
    * Get platform in the format used by the itch.io API
    */
