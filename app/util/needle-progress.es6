@@ -1,4 +1,6 @@
 
+import {PassThrough} from 'stream'
+
 let default_opts = {
   throttle: 50
 }
@@ -16,26 +18,29 @@ export default function (req, user_opts = {}) {
     total_size = headers['content-length']
   })
 
-  req.on('readable', function () {
-    let chunk
-    while ((chunk = this.read())) {
-      received_size += chunk.length
+  let clean_pipe = new PassThrough({objectMode: false})
+  req.pipe(clean_pipe)
 
-      if (timeout) return
+  clean_pipe.on('readable', function () {
+    let chunk = this.read()
+    if (!chunk) return
 
-      timeout = setTimeout(() => {
-        timeout = null
-        if (done) return
-        if (total_size === 0) return
+    received_size += chunk.length
 
-        req.emit('progress', {
-          percent: Math.round(received_size / total_size * 100)
-        })
-      }, throttle)
-    }
+    if (timeout) return
+
+    timeout = setTimeout(() => {
+      timeout = null
+      if (done) return
+      if (total_size === 0) return
+
+      req.emit('progress', {
+        percent: Math.round(received_size / total_size * 100)
+      })
+    }, throttle)
   })
 
-  req.on('end', () => {
+  clean_pipe.on('end', () => {
     done = true
   })
 

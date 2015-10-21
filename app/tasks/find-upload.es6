@@ -25,7 +25,7 @@ let self = {
     if (/soundtrack/.test(filename)) {
       score -= 100
     }
-    return upload.merge({score})
+    return Object.assign({}, upload, {score})
   },
 
   sort_uploads: function (scored_uploads) {

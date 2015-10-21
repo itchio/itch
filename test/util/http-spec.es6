@@ -1,15 +1,27 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import {EventEmitter} from 'events'
+import {PassThrough} from 'stream'
 
 import electron from '../stubs/electron'
 
+let get_http_opts = function () {
+  let sink = new PassThrough()
+  sink.on('data', () => null)
+  sink.on('end', () => sink.emit('close'))
+  return {
+    url: 'http://-invalid/hello.txt',
+    sink,
+    onprogress: () => {}
+  }
+}
+
 test('http', t => {
-  let stub = Object.assign({
-    pipe: () => { return stub }
-  }, EventEmitter.prototype)
+  let tube
+
   let needle = {
-    get: (opts) => stub
+    get: (opts) => {
+      return (tube = new PassThrough())
+    }
   }
 
   let stubs = Object.assign({
@@ -18,43 +30,35 @@ test('http', t => {
 
   let http = proxyquire('../../app/util/http', stubs)
 
-  let http_opts = {
-    url: 'http://-invalid/hello.txt',
-    sink: {},
-    onprogress: () => {}
-  }
-
   t.case('resolves on close', t => {
-    setImmediate(() => { stub.emit('close') })
+    let http_opts = get_http_opts()
+    setImmediate(() => {
+      tube.end()
+    })
     return http.request(http_opts)
   })
 
   t.case('rejects errors', t => {
-    setImmediate(() => { stub.emit('error', 'meow') })
-    return t.rejects(http.request(http_opts))
+    setImmediate(() => { tube.emit('error', 'meow') })
+    return t.rejects(http.request(get_http_opts()))
   })
 
   t.case('progress', t => {
+    let http_opts = get_http_opts()
     t.mock(http_opts).expects('onprogress').withArgs({percent: 25})
 
     setImmediate(() => {
-      stub.emit('headers', {'content-length': 512})
-      let has_read = false
-      let stream = {
-        read: function () {
-          if (!has_read) {
-            has_read = true
-            return new Buffer(128)
-          }
-        }
-      }
-      stub.listeners('readable').forEach((l) => l.apply(stream, []))
+      tube.emit('headers', {'content-length': 512})
+      tube.write(new Buffer(64))
+    })
+
+    setImmediate(() => {
+      tube.write(new Buffer(64))
     })
 
     setTimeout(() => {
-      stub.emit('end')
-      stub.emit('close')
-    }, 100)
+      tube.end()
+    }, 80)
     return http.request(http_opts)
   })
 })

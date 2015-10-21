@@ -1,6 +1,4 @@
 
-import Immutable from 'seamless-immutable'
-
 import needle from '../promised/needle'
 
 /**
@@ -18,9 +16,9 @@ class Client {
     return needle.requestAsync(method, uri, data).then(arg => {
       let res = arg[0].body
       if (res.errors) {
-        throw Immutable(res.errors)
+        throw res.errors
       }
-      return Immutable(res)
+      return res
     })
   }
 
@@ -48,9 +46,11 @@ class User {
     this.key = key
   }
 
-  request (method, path, params) {
+  request (method, path, data) {
+    console.log(`$HTTP ${method} ${path} with ${JSON.stringify(data)}`)
+
     let url = `/${this.key}${path}`
-    return this.client.request(method, url, params)
+    return this.client.request(method, url, data)
   }
 
   my_games () {

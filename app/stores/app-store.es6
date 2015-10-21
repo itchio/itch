@@ -1,9 +1,10 @@
-import Immutable from 'seamless-immutable'
 import app from 'app'
+import deep_assign from 'deep-assign'
 import {indexBy} from 'underscore'
 
 import Store from './store'
 import GameStore from './game-store'
+import WindowStore from './window-store'
 import CredentialsStore from './credentials-store'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
@@ -13,36 +14,36 @@ import AppActions from '../actions/app-actions'
 import defer from '../util/defer'
 import db from '../util/db'
 
-let state = Immutable({
+let state = {
   page: 'setup',
 
   library: {
-    game: null,
     games: {},
-    panel: null,
+    panel: '',
     collections: {},
     installs: {}
   },
 
   login: {
     loading: false,
-    errors: null
+    errors: []
   },
 
   setup: {
     message: 'Checking dependencies',
     icon: 'settings'
   }
-})
+}
 
 let AppStore = Object.assign(new Store(), {
   get_state: function () {
-    return JSON.stringify(state)
+    return state
   }
 })
 
 function merge_state (obj) {
-  state = state.merge(obj, {deep: true})
+  state = deep_assign({}, state, obj)
+  WindowStore.with(w => w.webContents.send('app-store-change', state))
   AppStore.emit_change()
 }
 

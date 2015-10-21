@@ -30,7 +30,7 @@ test('AppStore', t => {
 
   t.stub(CredentialsStore.get_current_user(), 'my_collections').resolves({collections: []})
 
-  let get_state = () => JSON.parse(AppStore.get_state())
+  let get_state = () => AppStore.get_state()
 
   t.case('GameStore change', t => {
     GameStore.add_change_listener.getCall(0).args[1]()

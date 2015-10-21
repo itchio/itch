@@ -6,25 +6,41 @@ import {LoginPage} from './login'
 import {SetupPage} from './setup'
 import {LibraryPage} from './library'
 
-let remote = require('remote')
-let AppStore = remote.require('./stores/app-store')
+import ipc from 'ipc'
 
-function get_state () {
-  return JSON.parse(AppStore.get_state())
-}
+let gateway = Object.assign({}, require('events').EventEmitter.prototype)
+
+ipc.on('app-store-change', (state) => {
+  gateway.emit('change', state)
+})
+
+let state_num = 0
 
 export class Layout extends Component {
   constructor () {
     super()
-    this.state = get_state()
+    this.state = { page: '' }
+  }
+
+  stateArrived (state, stoot_num) {
+    if (stoot_num < state_num) {
+      return
+    }
+    this.setState(state)
   }
 
   componentDidMount () {
-    AppStore.add_change_listener('layout', this.on_change.bind(this))
+    gateway.on('change', (state) => {
+      state_num++
+      let stoot_num = state_num
+      setTimeout(() => {
+        this.stateArrived(state, stoot_num)
+      }, 0)
+    })
   }
 
   componentWillUnmount () {
-    AppStore.remove_change_listener('layout')
+    gateway.removeAllListeners('change')
   }
 
   render () {
@@ -40,9 +56,5 @@ export class Layout extends Component {
       default:
         return <div/>
     }
-  }
-
-  on_change () {
-    setTimeout(() => { this.setState(get_state()) }, 0)
   }
 }

@@ -18,10 +18,11 @@ let stubs = {
   'browser-window': function () {
     Object.assign(this, stubs['browser-window'])
   },
-  ipc: {
-    on: rnil,
-    send: rnil
-  },
+  ipc: Object.assign({
+    send: function () {
+      this.emit.apply(this, arguments)
+    }
+  }, require('events').EventEmitter.prototype),
   remote: {
     require: () => {}
   },

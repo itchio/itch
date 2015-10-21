@@ -1,4 +1,4 @@
-import Immutable from 'seamless-immutable'
+import deep_assign from 'deep-assign'
 import Promise from 'bluebird'
 import {pluck} from 'underscore'
 
@@ -10,14 +10,14 @@ import AppConstants from '../constants/app-constants'
 
 import db from '../util/db'
 
-let state = Immutable({})
+let state = {}
 
 let GameStore = Object.assign(new Store(), {
   get_state: () => state
 })
 
 function merge_state (obj) {
-  state = state.merge(obj, {deep: true})
+  deep_assign(state, obj)
   GameStore.emit_change()
 }
 
@@ -26,14 +26,14 @@ function cache_owned_games () {
     return pluck(keys, 'game_id')
   }).then((game_ids) => {
     return db.find({_table: 'games', id: {$in: game_ids}})
-  }).then(Immutable).then((games) => {
+  }).then((games) => {
     merge_state({owned: games})
   })
 }
 
 function cache_dashboard_games () {
   let own_id = CredentialsStore.get_me().id
-  return db.find({_table: 'games', user_id: own_id}).then(Immutable).then((games) => {
+  return db.find({_table: 'games', user_id: own_id}).then((games) => {
     merge_state({dashboard: games})
   })
 }
@@ -111,7 +111,7 @@ function fetch_games (action) {
 
     return user.my_games().then((res) => {
       return res.games.map((game) => {
-        return game.merge({user: CredentialsStore.get_me()})
+        return Object.assign({}, game, {user: CredentialsStore.get_me()})
       })
     }).then(db.save_games).then(() => cache_dashboard_games())
   } else {

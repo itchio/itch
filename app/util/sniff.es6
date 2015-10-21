@@ -35,7 +35,7 @@ buffer.path = function (file) {
     if (e && e.code === 'ENOENT') {
       // probably a broken symlink
       return false
-    } else throw e
+    }
   })
 }
 

@@ -13,10 +13,13 @@ if (os.process_type() === 'renderer') {
   // Babel-compiled ES6 classes (only the fields seem to be exposed, not the methods)
   let self = {
     register: () => {
-      throw new Error('Registering from renderer: unsupported so far')
+      let msg = 'Registering from renderer: unsupported so far'
+      console.log(msg)
+      throw new Error(msg)
     },
 
     dispatch: (payload) => {
+      console.log(`IPC sending ${payload.action_type}`)
       ipc.send('dispatch', payload)
     }
   }
@@ -45,7 +48,9 @@ if (os.process_type() === 'renderer') {
     dispatch (payload) {
       let t1 = +new Date()
       if (this._promises) {
-        throw new Error(`Can't call dispatch synchronously from an action callback`)
+        let msg = `Can't call dispatch synchronously from an action callback`
+        console.log(msg)
+        throw new Error(msg)
       }
 
       if (typeof payload.action_type === 'undefined') {
@@ -78,6 +83,7 @@ if (os.process_type() === 'renderer') {
 
       let overallPromise = Promise.all(this._promises).then(() => payload)
       this._promises = null
+      log(opts, `ready to dispatch something after ${payload.action_type}`)
 
       return overallPromise.then((res) => {
         let t2 = +new Date()
@@ -116,6 +122,7 @@ if (os.process_type() === 'renderer') {
   let self = new Dispatcher()
 
   ipc.on('dispatch', (ev, payload) => {
+    console.log(`IPC got ${payload.action_type}`)
     self.dispatch(payload)
   })
 
