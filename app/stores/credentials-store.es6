@@ -2,7 +2,6 @@ import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 import AppActions from '../actions/app-actions'
 
-import SetupStore from './setup-store'
 import Store from './store'
 
 import config from '../util/config'
@@ -11,7 +10,7 @@ import api from '../util/api'
 let current_user = null
 let me = null
 
-let CredentialsStore = Object.assign(new Store(), {
+let CredentialsStore = Object.assign(new Store('credentials-store'), {
   get_current_user: () => current_user,
   get_me: () => me
 })
@@ -35,7 +34,7 @@ function login_with_password (action) {
 }
 
 function boot () {
-  return AppDispatcher.wait_for(SetupStore).then(_ => {
+  return AppDispatcher.wait_for('setup-store').then(_ => {
     let key = config.get('api_key')
     if (key) {
       AppActions.setup_status('Logging in', 'heart-filled')
@@ -57,7 +56,7 @@ function logout () {
   CredentialsStore.emit_change()
 }
 
-CredentialsStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
+AppDispatcher.register('credentials-store', Store.action_listeners(on => {
   on(AppConstants.BOOT, boot)
 
   on(AppConstants.LOGIN_WITH_PASSWORD, login_with_password)

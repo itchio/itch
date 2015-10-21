@@ -13,7 +13,7 @@ import os from '../util/os'
 
 let tray
 
-let TrayStore = Object.assign(new Store(), {
+let TrayStore = Object.assign(new Store('tray-store'), {
   with: (cb) => {
     if (!tray) return
     cb(tray)
@@ -57,7 +57,7 @@ function refresh () {
   TrayStore.emit_change()
 }
 
-TrayStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
+AppDispatcher.register('tray-store', Store.action_listeners(on => {
   on(AppConstants.BOOT, refresh)
 }))
 

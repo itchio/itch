@@ -1,18 +1,16 @@
-import app from 'app'
 import deep_assign from 'deep-assign'
-import {indexBy} from 'underscore'
+import ipc from 'ipc'
+// import {indexBy} from 'underscore'
 
 import Store from './store'
-import GameStore from './game-store'
-import WindowStore from './window-store'
-import CredentialsStore from './credentials-store'
+// import CredentialsStore from './credentials-store'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 import AppActions from '../actions/app-actions'
 
 import defer from '../util/defer'
-import db from '../util/db'
+// import db from '../util/db'
 
 let state = {
   page: 'setup',
@@ -35,7 +33,7 @@ let state = {
   }
 }
 
-let AppStore = Object.assign(new Store(), {
+let AppStore = Object.assign(new Store('app-store', 'renderer'), {
   get_state: function () {
     return state
   }
@@ -43,7 +41,7 @@ let AppStore = Object.assign(new Store(), {
 
 function merge_state (obj) {
   state = deep_assign({}, state, obj)
-  WindowStore.with(w => w.webContents.send('app-store-change', state))
+  // WindowStore.with(w => w.webContents.send('app-store-change', state))
   AppStore.emit_change()
 }
 
@@ -79,30 +77,30 @@ function no_stored_credentials () {
 function authenticated (action) {
   merge_state({login: {loading: false, errors: null}})
 
-  return AppDispatcher.wait_for(CredentialsStore).then(_ => {
+  // return AppDispatcher.wait_for(CredentialsStore).then(_ => {
     focus_panel({panel: 'owned'})
 
-    defer(() => {
-      let show_collections = function () {
-        db.find({_table: 'collections'}).then((collections) => {
-          return indexBy(collections, 'id')
-        }).then((collections) => {
-          merge_state({library: {collections}})
-          Object.keys(collections).forEach((cid) =>
-            AppActions.fetch_games(`collections/${cid}`)
-          )
-        })
-      }
-
-      show_collections()
-
-      CredentialsStore.get_current_user().my_collections().then((res) => {
-        return res.collections
-      }).then(db.save_collections).then(() => show_collections())
-
-      AppActions.fetch_games('dashboard')
-    })
-  })
+    // defer(() => {
+    //   let show_collections = function () {
+    //     db.find({_table: 'collections'}).then((collections) => {
+    //       return indexBy(collections, 'id')
+    //     }).then((collections) => {
+    //       merge_state({library: {collections}})
+    //       Object.keys(collections).forEach((cid) =>
+    //         AppActions.fetch_games(`collections/${cid}`)
+    //       )
+    //     })
+    //   }
+    //
+    //   show_collections()
+    //
+    //   // CredentialsStore.get_current_user().my_collections().then((res) => {
+    //   //   return res.collections
+    //   // }).then(db.save_collections).then(() => show_collections())
+    //
+    //   AppActions.fetch_games('dashboard')
+    // })
+  // })
 }
 
 function logout () {
@@ -120,7 +118,7 @@ function install_progress (action) {
   defer(() => AppActions.fetch_games('installed'))
 }
 
-AppStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
+AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.SETUP_STATUS, setup_status)
 
   on(AppConstants.LIBRARY_FOCUS_PANEL, focus_panel)
@@ -131,13 +129,16 @@ AppStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
   on(AppConstants.AUTHENTICATED, authenticated)
   on(AppConstants.LOGOUT, logout)
 
-  on(AppConstants.QUIT, _ => app.quit())
-
   on(AppConstants.INSTALL_PROGRESS, install_progress)
 }))
 
-GameStore.add_change_listener('app-store', () => {
-  let games = GameStore.get_state()
+// GameStore.add_change_listener('app-store', () => {
+//   let games = GameStore.get_state()
+//   merge_state({library: {games}})
+// })
+
+ipc.on('game-store-change', (games) => {
+  console.log(`got game-store-change with: ${games}`)
   merge_state({library: {games}})
 })
 

@@ -58,11 +58,11 @@ function boot () {
   })
 }
 
-let SetupStore = Object.assign(new Store(), {
+let SetupStore = Object.assign(new Store('setup-store'), {
   // muffin
 })
 
-SetupStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
+AppDispatcher.register('setup-store', Store.action_listeners(on => {
   on(AppConstants.BOOT, boot)
 }))
 

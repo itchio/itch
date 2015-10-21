@@ -6,41 +6,28 @@ import {LoginPage} from './login'
 import {SetupPage} from './setup'
 import {LibraryPage} from './library'
 
-import ipc from 'ipc'
+import AppStore from '../stores/app-store'
 
-let gateway = Object.assign({}, require('events').EventEmitter.prototype)
-
-ipc.on('app-store-change', (state) => {
-  gateway.emit('change', state)
-})
-
-let state_num = 0
+function get_state () {
+  return AppStore.get_state()
+}
 
 export class Layout extends Component {
   constructor () {
     super()
-    this.state = { page: '' }
-  }
-
-  stateArrived (state, stoot_num) {
-    if (stoot_num < state_num) {
-      return
-    }
-    this.setState(state)
+    this.state = get_state()
   }
 
   componentDidMount () {
-    gateway.on('change', (state) => {
-      state_num++
-      let stoot_num = state_num
+    AppStore.add_change_listener('layout', () => {
       setTimeout(() => {
-        this.stateArrived(state, stoot_num)
+        this.setState(get_state())
       }, 0)
     })
   }
 
   componentWillUnmount () {
-    gateway.removeAllListeners('change')
+    AppStore.remove_change_listener('layout')
   }
 
   render () {

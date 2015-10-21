@@ -2,11 +2,12 @@ import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 import Store from './store'
 
+import app from 'app'
 import BrowserWindow from 'browser-window'
 
 let window
 
-let WindowStore = Object.assign(new Store(), {
+let WindowStore = Object.assign(new Store('window-store'), {
   with: (f) => {
     if (!window) return
     f(window)
@@ -51,11 +52,12 @@ function _eval (action) {
   webContents.executeJavaScript(action.code)
 }
 
-WindowStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
+AppDispatcher.register('window-store', Store.action_listeners(on => {
   on(AppConstants.BOOT, show)
   on(AppConstants.FOCUS_WINDOW, show)
   on(AppConstants.HIDE_WINDOW, hide)
   on(AppConstants.EVAL, _eval)
+  on(AppConstants.QUIT, () => app.quit())
 }))
 
 export default WindowStore

@@ -12,7 +12,7 @@ import db from '../util/db'
 
 let state = {}
 
-let GameStore = Object.assign(new Store(), {
+let GameStore = Object.assign(new Store('game-store'), {
   get_state: () => state
 })
 
@@ -124,7 +124,7 @@ function fetch_games (action) {
   }
 }
 
-GameStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
+AppDispatcher.register('game-store', Store.action_listeners(on => {
   on(AppConstants.FETCH_GAMES, fetch_games)
   on(AppConstants.INSTALL_PROGRESS, () => {
     return fetch_games({path: 'installed'})

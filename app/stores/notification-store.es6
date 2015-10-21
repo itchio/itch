@@ -15,7 +15,7 @@ let state = {
   progress: -1
 }
 
-let NotificationStore = Object.assign(new Store(), {
+let NotificationStore = Object.assign(new Store('notification-store'), {
   get_progress: () => state.progress
 })
 
@@ -50,7 +50,7 @@ function notify (content) {
   }
 }
 
-NotificationStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
+AppDispatcher.register('notification-store', Store.action_listeners(on => {
   on(AppConstants.SET_PROGRESS, action => set_progress(action.alpha))
   on(AppConstants.BOUNCE, bounce)
   on(AppConstants.NOTIFY, action => notify(action.message))

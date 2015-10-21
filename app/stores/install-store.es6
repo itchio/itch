@@ -20,7 +20,7 @@ let apps_dir = path.join(library_dir, 'apps')
 let logger = new Logger()
 let opts = {logger}
 
-let InstallStore = Object.assign(new Store(), {
+let InstallStore = Object.assign(new Store('install-store'), {
   get_install: function (id) {
     return db.find_one({_table: 'installs', _id: id})
   },
@@ -121,7 +121,7 @@ function update_install (_id, data) {
   return db.merge_one({_table: 'installs', _id}, data)
 }
 
-InstallStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
+AppDispatcher.register('install-store', Store.action_listeners(on => {
   on(AppConstants.INSTALL_QUEUE, action => {
     db.find_one({_table: 'installs', game_id: action.game_id}).then((record) => {
       if (record) {
