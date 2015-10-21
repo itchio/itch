@@ -46,7 +46,6 @@
     "seamless-immutable": "^4.0.0",
     "source-map-support": "^0.3.2",
     "underscore": "^1.8.3",
-    "underscore.string": "^3.2.2",
     "win-spawn": "^2.0.0"
   },
   "devDependencies": {
