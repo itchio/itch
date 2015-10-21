@@ -58,6 +58,13 @@ test('find-upload', t => {
     return t.rejects(find_upload.start(opts))
   })
 
+  t.case('rejects 0 downloads for platform', t => {
+    client.game_uploads.resolves({uploads: [
+      {id: 11, filename: 'setup.dmg'}
+    ]})
+    return t.rejects(find_upload.start(opts))
+  })
+
   t.case('prefer zip', t => {
     client.game_uploads.resolves(Immutable({uploads: [
       {id: 11, p_windows: true, filename: 'setup.exe'},
