@@ -81,6 +81,10 @@ class User {
     return this.request('get', `/my-collections`)
   }
 
+  collection_games (collection_id, page = 1) {
+    return this.request('get', `/collection/${collection_id}/games`, {page})
+  }
+
   download_key_uploads (download_key_id) {
     return this.request('get', `/download-key/${download_key_id}/uploads`)
   }
