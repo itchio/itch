@@ -134,9 +134,7 @@ let self = {
   save_collections: function (collections) {
     return self.save_records(collections, {
       table: 'collections',
-      relations: {
-        games: ['has_many', self.save_games]
-      }
+      relations: {}
     })
   }
 }

@@ -56,6 +56,34 @@ function cache_collection_games (id) {
   })
 }
 
+function fetch_collection_games (id, page = 1, game_ids = []) {
+  cache_collection_games(id)
+
+  let user = CredentialsStore.get_current_user()
+  let fetched = 0
+  let total_items = 0
+
+  return user.collection_games(id, page).then((res) => {
+    total_items = res.total_items
+    fetched = res.per_page * page
+    game_ids = game_ids.concat(pluck(res.games, 'id'))
+    return db.save_games(res.games)
+  }).then(() => {
+    return db.update({_table: 'collections', id}, {
+      $addToSet: { game_ids: { $each: game_ids } }
+    })
+  }).then(() => {
+    cache_collection_games(id)
+    if (fetched < total_items) {
+      return fetch_collection_games(id, page + 1, game_ids)
+    } else {
+      return db.update({_table: 'collections', id}, {
+        $set: { game_ids }
+      })
+    }
+  })
+}
+
 function cache_install_game (id) {
   db.find_one({_table: 'installs', _id: id}).then((install) => {
     return db.find_one({_table: 'games', id: install.game_id})
@@ -89,7 +117,7 @@ function fetch_games (action) {
   } else {
     let [type, id] = path.split('/')
     if (type === 'collections') {
-      cache_collection_games(parseInt(id, 10))
+      return fetch_collection_games(parseInt(id, 10))
     } else if (type === 'installs') {
       cache_install_game(id)
     }
@@ -99,7 +127,7 @@ function fetch_games (action) {
 GameStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
   on(AppConstants.FETCH_GAMES, fetch_games)
   on(AppConstants.INSTALL_PROGRESS, () => {
-    fetch_games({path: 'installed'})
+    return fetch_games({path: 'installed'})
   })
 }))
 

@@ -1,4 +1,5 @@
 import test from 'zopf'
+import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 import Immutable from 'seamless-immutable'
 
@@ -49,7 +50,21 @@ test('GameStore', t => {
   })
 
   t.case('fetch collections', t => {
-    t.stub(db, 'find_one').resolves({game_ids: [7, 4, 1]})
-    return handler({ action_type: AppConstants.FETCH_GAMES, path: 'collections/78' })
+    t.stub(db, 'find_one').resolves({game_ids: [1, 2, 3, 4, 5]})
+    let user = CredentialsStore.get_current_user()
+    let collection_games = t.stub(user, 'collection_games')
+    collection_games.onCall(0).resolves({
+      total_items: 5, per_page: 3, page: 1,
+      games: [1, 3, 5].map((id) => ({id}))
+    })
+    collection_games.onCall(1).resolves({
+      total_items: 5, per_page: 3, page: 2,
+      games: [7, 9].map((id) => ({id}))
+    })
+
+    let update = t.stub(db, 'update')
+    return handler({ action_type: AppConstants.FETCH_GAMES, path: 'collections/78' }).then(() => {
+      sinon.assert.calledWith(update, {_table: 'collections', id: 78}, {$set: {game_ids: [1, 3, 5, 7, 9]}})
+    })
   })
 })

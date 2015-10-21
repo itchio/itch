@@ -121,6 +121,7 @@ function queue_install (game_id) {
 
 function update_install (id, data) {
   log(opts, `update_install(${id}, ${JSON.stringify(data, null, 2)})`)
+  // TODO: just have db.merge() instead of doing find_one+update - amos
   return InstallStore.get_install(id).then((install) => {
     let record = deep_assign({}, install, data)
     return db.update({_table: 'installs', _id: id}, record)
