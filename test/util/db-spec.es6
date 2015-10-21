@@ -24,6 +24,35 @@ test('db', t => {
     t.is(db.dbify('user_id', 42), 42)
   })
 
+  t.case('flatten', t => {
+    let date = new Date()
+    let obj = {
+      a: {
+        aa: { aaa: {}, aab: date },
+        ab: 12
+      },
+      b: {
+        ba: { baa: 'sheep' },
+        bb: [1, 2, 3]
+      },
+      i: { like: 'trains' }
+    }
+    let fobj = {
+      'a.aa.aab': date,
+      'a.ab': 12,
+      'b.ba.baa': 'sheep',
+      'b.bb': [1, 2, 3],
+      'i.like': 'trains'
+    }
+    t.same(db.flatten(obj), fobj)
+  })
+
+  t.case('merge_one', t => {
+    let mock = t.mock(db)
+    mock.expects('update').withArgs({_table: 'cookies', id: 19}, {$set: {'a.b': 1, 'b.a.c': 3}})
+    db.merge_one({_table: 'cookies', id: 19}, {a: {b: 1}, b: {a: {c: 3}}})
+  })
+
   t.case('load', t => {
     let mock = t.mock(db)
     mock.expects('load_database').once()

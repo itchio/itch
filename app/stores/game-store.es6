@@ -50,7 +50,7 @@ function cache_installed_games () {
 
 function cache_collection_games (id) {
   return db.find_one({_table: 'collections', id}).then((collection) => {
-    return db.find({_table: 'games', id: {$in: collection.game_ids}})
+    return db.find({_table: 'games', id: {$in: collection.game_ids || []}})
   }).then((games) => {
     merge_state({[`collections/${id}`]: games})
   })

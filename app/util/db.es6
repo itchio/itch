@@ -48,6 +48,25 @@ let self = {
     }
   },
 
+  flatten: function (obj) {
+    let result = {}
+    for (let [k, v] of pairs(obj)) {
+      if (typeof v === 'object' && !Array.isArray(v) && !(v instanceof Date)) {
+        let sub = self.flatten(v)
+        for (let [sk, sv] of pairs(sub)) {
+          result[`${k}.${sk}`] = sv
+        }
+      } else {
+        result[k] = v
+      }
+    }
+    return result
+  },
+
+  merge_one: function (query, data) {
+    return self.update(query, {$set: self.flatten(data)})
+  },
+
   // Save a bunch of records returned from the itch.io api
   // Ignore objects, except if they're specified in relations
   // with a handler. Parses dates. Requires a unique (table, id),
@@ -134,6 +153,8 @@ let self = {
   save_collections: function (collections) {
     return self.save_records(collections, {
       table: 'collections',
+      // NB: we ignore the initial 15 games returned by `my-collections`
+      // because we have paginated fetch logic elsewhere
       relations: {}
     })
   }

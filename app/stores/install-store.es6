@@ -9,8 +9,6 @@ import {Transition, InputRequired, Crash} from '../tasks/errors'
 import app from 'app'
 import path from 'path'
 
-import deep_assign from 'deep-assign'
-
 import {Logger} from '../util/log'
 let log = require('../util/log')('install-store')
 import db from '../util/db'
@@ -119,13 +117,8 @@ function queue_install (game_id) {
   })
 }
 
-function update_install (id, data) {
-  log(opts, `update_install(${id}, ${JSON.stringify(data, null, 2)})`)
-  // TODO: just have db.merge() instead of doing find_one+update - amos
-  return InstallStore.get_install(id).then((install) => {
-    let record = deep_assign({}, install, data)
-    return db.update({_table: 'installs', _id: id}, record)
-  })
+function update_install (_id, data) {
+  return db.merge_one({_table: 'installs', _id}, data)
 }
 
 InstallStore.dispatch_token = AppDispatcher.register(Store.action_listeners(on => {
