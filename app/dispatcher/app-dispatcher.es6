@@ -14,13 +14,8 @@ if (os.process_type() === 'renderer') {
     _callbacks: {},
 
     register: (name, cb) => {
-      log(opts, `Registering ${name} from renderer`)
+      log(opts, `Registering store ${name} renderer-side`)
       self._callbacks[name] = cb
-      ipc.send('dispatcher-register', name, {remote: true})
-    },
-
-    wait_for: () => {
-      throw new Error(`Can't wait_for from renderer`)
     },
 
     dispatch: (payload) => {
@@ -55,7 +50,7 @@ if (os.process_type() === 'renderer') {
       if (typeof name !== 'string') {
         throw new Error('Invalid store registration')
       }
-      log(opts, `Registering store ${name} ${(typeof callback === 'function') ? 'node' : 'renderer'}-side`)
+      log(opts, `Registering store ${name} node-side`)
       this._callbacks[name] = callback
     }
 
@@ -81,17 +76,9 @@ if (os.process_type() === 'renderer') {
         }
       })
 
-      BrowserWindow.getAllWindows().forEach(w => w.webContents.send('dispatcher-dispatch2', payload))
-    }
-
-    /**
-     * Return promise to chain on rather than being sync
-     * Can only call synchronously from within an action listener
-     * (after you've returned it's too late, some other action might
-     * be dispatched)
-     */
-    wait_for () {
-      return
+      BrowserWindow.getAllWindows().forEach(w =>
+        w.webContents.send('dispatcher-dispatch2', payload)
+      )
     }
   }
 
@@ -100,10 +87,6 @@ if (os.process_type() === 'renderer') {
   ipc.on('dispatcher-dispatch', (ev, payload) => {
     console.log(`IPC got ${payload.action_type}`)
     self.dispatch(payload)
-  })
-
-  ipc.on('dispatcher-register', (ev, name, cb) => {
-    self.register(name, cb)
   })
 
   module.exports = self
