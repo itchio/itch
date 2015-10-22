@@ -2,7 +2,6 @@ import {EventEmitter} from 'events'
 import os from '../util/os'
 
 let CHANGE_EVENT = 'change'
-let ipc
 
 function Store (name, process_type = 'browser') {
   if (typeof name !== 'string') {
@@ -14,6 +13,12 @@ function Store (name, process_type = 'browser') {
     throw new Error(`Tried to require a ${process_type} store from ${os.process_type()}`)
   }
   this.process_type = process_type
+
+  if (this.process_type === 'browser') {
+    require('ipc').on(`${this.name}-fetch`, (e) => {
+      e.sender.send(`${this.name}-state`, this.get_state())
+    })
+  }
 }
 
 Object.assign(Store.prototype, EventEmitter.prototype, {
@@ -27,14 +32,9 @@ Object.assign(Store.prototype, EventEmitter.prototype, {
     this.emit(CHANGE_EVENT)
 
     if (this.process_type === 'browser') {
-      if (!ipc) {
-        ipc = require('./window-store').with(w => {
-          let channel = `${this.name}-change`
-          let state = this.get_state()
-          console.log(`sending ${channel} to renderer, with state ${state}`)
-          w.webContents.send(channel, state)
-        })
-      }
+      require('browser-window').getAllWindows().forEach((w) => {
+        w.webContents.send(`${this.name}-change`)
+      })
     }
   },
 
@@ -67,6 +67,18 @@ Store.action_listeners = (f) => {
     if (!handler) return
     return handler(action)
   }
+}
+
+Store.subscribe = (name, cb) => {
+  if (os.process_type() !== 'renderer') {
+    throw new Error('Tried to use subscribe from node side')
+  }
+
+  let ipc = require('ipc')
+  ipc.on(`${name}-change`, () => ipc.send(`${name}-fetch`))
+  ipc.on(`${name}-state`, cb)
+
+  ipc.send(`${name}-fetch`)
 }
 
 export default Store

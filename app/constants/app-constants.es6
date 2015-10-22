@@ -6,6 +6,7 @@ export default keyMirror({
   SETUP_STATUS: null,
 
   FOCUS_WINDOW: null,
+  WINDOW_READY: null,
   HIDE_WINDOW: null,
   LIBRARY_FOCUS_PANEL: null,
 

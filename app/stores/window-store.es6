@@ -1,3 +1,4 @@
+import AppActions from '../actions/app-actions'
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 import Store from './store'
@@ -6,6 +7,7 @@ import app from 'app'
 import BrowserWindow from 'browser-window'
 
 let window
+let quitting = false
 
 let WindowStore = Object.assign(new Store('window-store'), {
   with: (f) => {
@@ -32,8 +34,15 @@ function show () {
     'title-bar-style': 'hidden'
   })
 
-  window.on('close', (e) => window = null)
-  window.webContents.on('dom-ready', (e) => window.show())
+  window.on('close', (e) => {
+    if (quitting) return
+    e.preventDefault()
+    window.hide()
+  })
+  window.webContents.on('dom-ready', (e) => {
+    AppActions.window_ready()
+    window.show()
+  })
   window.loadUrl(`file://${__dirname}/../index.html`)
 
   if (process.env.DEVTOOLS === '1') {
@@ -57,7 +66,10 @@ AppDispatcher.register('window-store', Store.action_listeners(on => {
   on(AppConstants.FOCUS_WINDOW, show)
   on(AppConstants.HIDE_WINDOW, hide)
   on(AppConstants.EVAL, _eval)
-  on(AppConstants.QUIT, () => app.quit())
+  on(AppConstants.QUIT, () => {
+    quitting = true
+    app.quit()
+  })
 }))
 
 export default WindowStore

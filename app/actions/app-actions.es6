@@ -28,6 +28,12 @@ let self = {
     })
   },
 
+  window_ready: () => {
+    return AppDispatcher.dispatch({
+      action_type: AppConstants.WINDOW_READY
+    })
+  },
+
   hide_window: () => {
     return AppDispatcher.dispatch({
       action_type: AppConstants.HIDE_WINDOW

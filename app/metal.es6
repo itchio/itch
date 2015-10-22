@@ -9,6 +9,7 @@ if (require('./util/auto-updater').run()) {
   process.exit(0)
 }
 
+require('./stores/collection-store')
 require('./stores/game-store')
 require('./stores/notification-store')
 require('./stores/tray-store')
