@@ -39,40 +39,46 @@ let self = {
     let install, uploads
     let client = CredentialsStore.get_current_user()
 
-    return InstallStore.get_install(id).then((res) => {
-      install = res
-      log(opts, 'got install')
+    return InstallStore.get_install(id)
+      .then((res) => {
+        install = res
+        log(opts, 'got install')
 
-      return install.key ||
-        db.find_one({_table: 'download_keys', game_id: install.game_id})
-    }).then((key) => {
-      log(opts, `found key ${JSON.stringify(key)} for game ${install.game_id}`)
+        return install.key ||
+          db.find_one({_table: 'download_keys', game_id: install.game_id})
+      })
+      .then((key) => {
+        log(opts, `found key ${JSON.stringify(key)} for game ${install.game_id}`)
 
-      if (key) {
-        return (
+        if (key) {
           AppActions.install_update(id, {key})
-          .then(() => client.download_key_uploads(key.id))
-        )
-      } else {
-        return client.game_uploads(install.game_id)
-      }
-    }).then((res) => {
-      uploads = res.uploads
-      log(opts, `got a list of ${uploads.length} uploads`)
-      return AppActions.install_update(id, {uploads: indexBy(uploads, 'id')})
-    }).then(() => {
-      if (!(Array.isArray(uploads) && uploads.length > 0)) {
-        throw new Error('No downloads available')
-      }
-      return uploads
-    }).then(self.filter_uploads).map(self.score_upload).then(self.sort_uploads).then((uploads) => {
-      log(opts, `post-filters, ${uploads.length} uploads left`)
-      if (uploads.length > 0) {
-        return AppActions.install_update(id, {upload_id: uploads[0].id})
-      } else {
-        throw new Error('No downloads available')
-      }
-    })
+          return client.download_key_uploads(key.id)
+        } else {
+          return client.game_uploads(install.game_id)
+        }
+      })
+      .then((res) => {
+        uploads = res.uploads
+        log(opts, `got a list of ${uploads.length} uploads`)
+        AppActions.install_update(id, {uploads: indexBy(uploads, 'id')})
+
+        if (!(Array.isArray(uploads) && uploads.length > 0)) {
+          throw new Error('No downloads available')
+        }
+
+        return uploads
+      })
+      .then(self.filter_uploads)
+      .map(self.score_upload)
+      .then(self.sort_uploads)
+      .then((uploads) => {
+        log(opts, `post-filters, ${uploads.length} uploads left`)
+        if (uploads.length > 0) {
+          return AppActions.install_update(id, {upload_id: uploads[0].id})
+        } else {
+          throw new Error('No downloads available')
+        }
+      })
   }
 }
 

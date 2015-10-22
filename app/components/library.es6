@@ -126,7 +126,8 @@ class LibraryPanelLink extends Component {
     let _progress = progress ? ` (${(progress * 100).toFixed()}%)` : ''
     let _label = `${label}${_progress}`
 
-    return <div className={classNames('panel_link', {current})} onClick={() => AppActions.focus_panel(this.props.name)}>
+    return <div className={classNames('panel_link', {current})} onClick={() => AppActions.focus_panel(this.props.name)}
+      >
       {before}
       {_label}
       {game_count > 0

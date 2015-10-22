@@ -4,6 +4,7 @@ import keyMirror from 'keymirror'
 export default keyMirror({
   BOOT: null,
   SETUP_STATUS: null,
+  SETUP_DONE: null,
 
   FOCUS_WINDOW: null,
   WINDOW_READY: null,

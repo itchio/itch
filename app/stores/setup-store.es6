@@ -55,6 +55,8 @@ function boot () {
   }).catch(err => {
     AppActions.setup_status(err.stack || err, 'error')
     throw err
+  }).then(() => {
+    AppActions.setup_done()
   })
 }
 

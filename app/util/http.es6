@@ -8,14 +8,14 @@ import noop from './noop'
 
 let self = {
   request: function (opts) {
-    let {url, sink, headers = {}, onprogress = noop} = opts
+    let {url, sink, headers = {}, onprogress = noop, throttle = 250} = opts
 
     let req = needle.get(url, {
       headers,
       decode_response: false,
       parse_response: false
     })
-    req = progress(req)
+    req = progress(req, {throttle})
     req.on('progress', onprogress)
 
     let out = req.pipe(sink)

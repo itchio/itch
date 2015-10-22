@@ -75,32 +75,34 @@ function queue_task (id, task_name, data = {}) {
   })
   log(opts, `starting ${task_name}`)
 
-  AppActions.install_progress({id, progress: 0, task: task_name}).then(() => {
-    return task.start(task_opts)
-  }).then((res) => {
-    if (task_name === 'extract') {
-      db.find_one({_table: 'installs', _id: id}).then((install) => {
-        if (!install.success_once) {
-          return db.find_one({_table: 'games', id: install.game_id}).then((game) => {
-            AppActions.notify(`${game.title} is ready!`)
-            AppActions.install_update(id, {success_once: true})
-          })
-        }
-      })
-    }
+  AppActions.install_progress({id, progress: 0, task: task_name})
+  task.start(task_opts)
+    .then((res) => {
+      if (task_name === 'extract') {
+        db.find_one({_table: 'installs', _id: id}).then((install) => {
+          if (!install.success_once) {
+            return db.find_one({_table: 'games', id: install.game_id}).then((game) => {
+              AppActions.notify(`${game.title} is ready!`)
+              AppActions.install_update(id, {success_once: true})
+            })
+          }
+        })
+      }
 
-    let transition = natural_transitions[task_name]
-    if (transition) throw new Transition({to: transition})
+      let transition = natural_transitions[task_name]
+      if (transition) throw new Transition({to: transition})
 
-    log(opts, `task ${task_name} finished with ${JSON.stringify(res)}`)
-    return AppActions.install_progress({id, progress: 0})
-  }).then(() => {
-    if (task_opts.then) {
-      queue_task(id, task_opts.then)
-    } else {
-      return AppActions.install_progress({id, task: 'idle'})
-    }
-  }).catch(task_error_handler(id, task_name))
+      log(opts, `task ${task_name} finished with ${JSON.stringify(res)}`)
+      AppActions.install_progress({id, progress: 0})
+    })
+    .then(() => {
+      if (task_opts.then) {
+        queue_task(id, task_opts.then)
+      } else {
+        AppActions.install_progress({id, task: 'idle'})
+      }
+    })
+    .catch(task_error_handler(id, task_name))
 }
 
 function initial_progress (game, record) {

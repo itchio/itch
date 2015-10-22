@@ -29,7 +29,7 @@ let self = {
     log(opts, `configuring ${app_path}`)
     return self.configure(app_path).then((res) => {
       let {executables} = res
-      return AppActions.install_update(id, {executables})
+      AppActions.install_update(id, {executables})
     })
   }
 }

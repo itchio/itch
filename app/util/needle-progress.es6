@@ -2,7 +2,7 @@
 import {PassThrough} from 'stream'
 
 let default_opts = {
-  throttle: 50
+  throttle: 250
 }
 
 export default function (req, user_opts = {}) {

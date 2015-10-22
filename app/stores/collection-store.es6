@@ -26,7 +26,6 @@ function cache_collections () {
     .then(collections => indexBy(collections, 'id'))
     .then(merge_state)
     .then(() => Object.keys(state))
-    .then(require('../util/speye')(`in cache_collections, will call fetch games`))
     .map(cid => AppActions.fetch_games(`collections/${cid}`))
 }
 

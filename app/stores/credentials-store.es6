@@ -33,20 +33,18 @@ function login_with_password (action) {
   }).catch(AppActions.login_failure)
 }
 
-function boot () {
-  return AppDispatcher.wait_for('setup-store').then(_ => {
-    let key = config.get('api_key')
-    if (key) {
-      AppActions.setup_status('Logging in', 'heart-filled')
-      return api.client.login_key(key).then((res) => {
-        me = res.user
-        CredentialsStore.emit_change()
-        got_key(key)
-      }).catch(AppActions.login_failure)
-    } else {
-      AppActions.no_stored_credentials()
-    }
-  })
+function setup_done () {
+  let key = config.get('api_key')
+  if (key) {
+    AppActions.setup_status('Logging in', 'heart-filled')
+    return api.client.login_key(key).then((res) => {
+      me = res.user
+      CredentialsStore.emit_change()
+      got_key(key)
+    }).catch(AppActions.login_failure)
+  } else {
+    AppActions.no_stored_credentials()
+  }
 }
 
 function logout () {
@@ -57,7 +55,7 @@ function logout () {
 }
 
 AppDispatcher.register('credentials-store', Store.action_listeners(on => {
-  on(AppConstants.BOOT, boot)
+  on(AppConstants.SETUP_DONE, setup_done)
 
   on(AppConstants.LOGIN_WITH_PASSWORD, login_with_password)
   on(AppConstants.LOGOUT, logout)

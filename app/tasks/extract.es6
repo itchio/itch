@@ -51,11 +51,10 @@ let self = {
       let dest_path = InstallStore.app_path(id)
       let extract_opts = { logger, onerror, onprogress, archive_path, dest_path }
 
-      return AppActions.install_update(id, {launchable: false}).then(() => {
-        return self.extract(extract_opts)
-      }).then(() => {
-        return AppActions.install_update(id, {launchable: true})
-      })
+      AppActions.install_update(id, {launchable: false})
+
+      return self.extract(extract_opts)
+        .then(() => AppActions.install_update(id, {launchable: true}))
     })
   }
 }

@@ -20,9 +20,7 @@ export class Layout extends Component {
 
   componentDidMount () {
     AppStore.add_change_listener('layout', () => {
-      setTimeout(() => {
-        this.setState(get_state())
-      }, 0)
+      setImmediate(() => { this.setState(get_state()) }, 0)
     })
   }
 

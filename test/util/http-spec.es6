@@ -11,7 +11,8 @@ let get_http_opts = function () {
   return {
     url: 'http://-invalid/hello.txt',
     sink,
-    onprogress: () => {}
+    onprogress: () => {},
+    throttle: 0
   }
 }
 
@@ -58,7 +59,7 @@ test('http', t => {
 
     setTimeout(() => {
       tube.end()
-    }, 80)
+    }, 20)
     return http.request(http_opts)
   })
 })
