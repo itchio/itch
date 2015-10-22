@@ -1,6 +1,7 @@
 
 import React from 'react'
-import {PropTypes, Component} from 'react'
+import {PropTypes} from 'react'
+import Component from './component'
 
 class InputRow extends Component {
   componentDidMount () {

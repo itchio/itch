@@ -1,6 +1,7 @@
 
 import React from 'react'
-import {Component, PropTypes} from 'react'
+import {PropTypes} from 'react'
+import Component from './component'
 
 /**
  * An icon from the icomoon font.

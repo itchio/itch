@@ -1,6 +1,6 @@
 
 import React from 'react'
-import {Component} from 'react'
+import Component from './component'
 import mori from 'mori'
 
 import {LoginPage} from './login'

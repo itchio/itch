@@ -1,7 +1,8 @@
 
 import React from 'react'
 import mori from 'mori'
-import {Component, PropTypes} from 'react'
+import {PropTypes} from 'react'
+import Component from './component'
 
 import AppActions from '../actions/app-actions'
 

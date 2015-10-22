@@ -1,6 +1,7 @@
 
 import React from 'react'
-import {Component, PropTypes} from 'react'
+import {PropTypes} from 'react'
+import Component from './component'
 import classNames from 'classnames'
 
 import remote from 'remote'

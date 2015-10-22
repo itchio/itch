@@ -124,10 +124,17 @@ function fetch_games (action) {
   }
 }
 
+let cached_installs = {}
+
 AppDispatcher.register('game-store', Store.action_listeners(on => {
   on(AppConstants.FETCH_GAMES, fetch_games)
-  on(AppConstants.INSTALL_PROGRESS, () => {
-    return fetch_games({path: 'installed'})
+  on(AppConstants.INSTALL_PROGRESS, (action) => {
+    let id = action.opts.id
+
+    if (!cached_installs[id]) {
+      cached_installs[id] = true
+      fetch_games({path: 'installed'})
+    }
   })
 }))
 
