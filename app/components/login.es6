@@ -1,5 +1,6 @@
 
 import React from 'react'
+import mori from 'mori'
 import {Component, PropTypes} from 'react'
 
 import AppActions from '../actions/app-actions'
@@ -10,9 +11,13 @@ import {ErrorList} from './misc'
 class LoginPage extends Component {
   render () {
     return <div className='login_page'>
-      <LoginForm {...this.props}/>
+      <LoginForm state={this.props.state}/>
     </div>
   }
+}
+
+LoginPage.propTypes = {
+  state: PropTypes.any
 }
 
 class LoginForm extends Component {
@@ -22,7 +27,7 @@ class LoginForm extends Component {
   }
 
   render () {
-    let {loading, errors} = this.props
+    let {loading, errors} = mori.toJs(this.props.state)
 
     return <div className='login_form'>
       <img className='logo' src='static/images/itchio-white.svg'/>
@@ -54,8 +59,7 @@ class LoginForm extends Component {
 }
 
 LoginForm.propTypes = {
-  loading: PropTypes.bool,
-  errors: PropTypes.array
+  state: PropTypes.any
 }
 
 export default {LoginPage, LoginForm}

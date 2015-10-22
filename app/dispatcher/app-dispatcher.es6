@@ -4,7 +4,7 @@ import os from '../util/os'
 
 let Log = require('../util/log')
 let log = Log('dispatcher')
-let opts = {logger: new Log.Logger({sinks: {console: false}})}
+let opts = {logger: new Log.Logger({sinks: {console: true}})}
 
 // This makes sure everything is dispatched to the node side, whatever happens
 if (os.process_type() === 'renderer') {
@@ -63,11 +63,11 @@ if (os.process_type() === 'renderer') {
         throw new Error(`Trying to dispatch action with no type: ${JSON.stringify(payload, null, 2)}`)
       }
 
-      // if (payload.private) {
-      //   log(opts, `dispatching ${payload.action_type}`)
-      // } else {
-      //   log(opts, `dispatching: ${JSON.stringify(payload, null, 2)}`)
-      // }
+      if (payload.private) {
+        log(opts, `dispatching ${payload.action_type}`)
+      } else {
+        log(opts, `dispatching: ${JSON.stringify(payload, null, 2)}`)
+      }
 
       Object.keys(this._callbacks).forEach((store_id) => {
         let callback = this._callbacks[store_id]

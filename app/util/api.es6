@@ -46,7 +46,7 @@ class User {
     this.key = key
   }
 
-  request (method, path, data) {
+  request (method, path, data = {}) {
     console.log(`$HTTP ${method} ${path} with ${JSON.stringify(data)}`)
 
     let url = `/${this.key}${path}`

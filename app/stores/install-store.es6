@@ -105,15 +105,15 @@ function queue_task (id, task_name, data = {}) {
     .catch(task_error_handler(id, task_name))
 }
 
-function initial_progress (game, record) {
-  AppActions.install_progress(Object.assign({game, id: record._id}, record))
+function initial_progress (record) {
+  AppActions.install_progress(Object.assign({id: record._id}, record))
 }
 
 function queue_install (game_id) {
   let data = { _table: 'installs', game_id }
   db.insert(data).then((record) => {
     db.find_one({_table: 'games', id: game_id}).then((game) => {
-      initial_progress(game, record)
+      initial_progress(record)
       queue_task(record._id, 'download', opts)
     })
   })
@@ -145,10 +145,8 @@ AppDispatcher.register('install-store', Store.action_listeners(on => {
       db.load()
       .then(() => db.find({_table: 'installs'}))
       .each(record => {
-        db.find_one({_table: 'games', id: record.game_id}).then((game) => {
-          initial_progress(game, record)
-          queue_task(record._id, 'download')
-        })
+        initial_progress(record)
+        queue_task(record._id, 'download')
       })
     )
   })

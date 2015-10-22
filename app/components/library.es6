@@ -1,8 +1,8 @@
 
 import React from 'react'
+import mori from 'mori'
 import {Component, PropTypes} from 'react'
 import classNames from 'classnames'
-import {pairs} from 'underscore'
 
 import {UserPanel} from './user-panel'
 import {GameList} from './game-list'
@@ -18,13 +18,17 @@ let frameless = process.platform === 'darwin'
  */
 class LibraryPage extends Component {
   render () {
-    let props = this.props
+    let {state} = this.props
 
     return <div className='library_page'>
-      <LibrarySidebar {...props}/>
-      <LibraryContent {...props}/>
+      <LibrarySidebar state={state}/>
+      <LibraryContent state={state}/>
     </div>
   }
+}
+
+LibraryPage.propTypes = {
+  state: PropTypes.any
 }
 
 /**
@@ -32,21 +36,25 @@ class LibraryPage extends Component {
  */
 class LibrarySidebar extends Component {
   render () {
-    let {panel, installs = {}, collections = {}, games = {}} = this.props
+    let {state} = this.props
+    let panel = mori.get(state, 'panel')
+    let installs = mori.get(state, 'installs')
+    let collections = mori.get(state, 'collections')
+    let games = mori.get(state, 'games')
 
-    let collection_items = pairs(collections).map(([id, collection]) => {
+    let collection_items = mori.reduceKV((acc, id, collection) => {
       let props = {
         games,
         name: `collections/${id}`,
-        label: collection.title,
+        label: mori.get(collection, 'title'),
         before: <Icon icon='tag'/>,
         panel
       }
-      return <LibraryPanelLink {...props} key={id}/>
-    })
+      acc.push(<LibraryPanelLink {...props} key={id}/>)
+      return acc
+    }, [], collections)
 
-    let has_installs = false
-    let install_items = pairs(installs).map(([id, install]) => {
+    let install_items = mori.reduceKV((acc, id, install) => {
       if (!(install.progress > 0 || install.task === 'error')) {
         return ''
       }
@@ -54,30 +62,30 @@ class LibrarySidebar extends Component {
       let props = {
         games: {}, // don't display number bullet
         name: `installs/${id}`,
-        label: install.game.title,
-        error: (install.task === 'error' && install.error),
-        progress: install.progress,
+        label: mori.getIn(install, ['game', 'title']),
+        error: mori.get(install, 'task') === 'error' && mori.get(install, 'error'),
+        progress: mori.get(install, 'progress'),
         before: <TaskIcon task={install.task}/>,
         panel
       }
-      has_installs = true
-      return <LibraryPanelLink {...props} key={id}/>
-    })
+      acc.push(<LibraryPanelLink {...props} key={id}/>)
+      return acc
+    }, [], installs)
 
     return <div className={classNames('sidebar', {frameless})}>
-      <UserPanel {...this.props}/>
+      <UserPanel/>
       <div className='panel_links'>
         <LibraryPanelLink before={<Icon icon='heart-filled'/>} name='owned' label='Owned' panel={panel} games={games}/>
         <LibraryPanelLink before={<Icon icon='gamepad'/>} name='installed' label='Installed' panel={panel} games={games}/>
         <LibraryPanelLink before={<Icon icon='stats'/>} name='dashboard' label='Dashboard' panel={panel} games={games}/>
 
         <div className='separator'/>
-        {collection_items}
+        {mori.intoArray(collection_items)}
 
-        {has_installs
+        {install_items.length
         ? <div>
             <div className='separator'/>
-            {install_items}
+            {mori.intoArray(install_items)}
           </div>
         : ''}
       </div>
@@ -86,10 +94,7 @@ class LibrarySidebar extends Component {
 }
 
 LibrarySidebar.propTypes = {
-  panel: PropTypes.string,
-  installs: PropTypes.object,
-  collections: PropTypes.object,
-  games: PropTypes.object
+  state: PropTypes.any
 }
 
 /**
@@ -97,8 +102,12 @@ LibrarySidebar.propTypes = {
  */
 class LibraryContent extends Component {
   render () {
-    let {panel, installs = {}, games = {}} = this.props
-    let shown_games = games[panel] || []
+    let {state} = this.props
+    let panel = mori.get(state, 'panel')
+    let installs = mori.get(state, 'installs')
+    let games = mori.get(state, 'games')
+
+    let shown_games = mori.get(games, panel) || mori.list()
 
     return <div className='main_content'>
       <GameList games={shown_games} installs={installs}/>
@@ -107,9 +116,7 @@ class LibraryContent extends Component {
 }
 
 LibraryContent.propTypes = {
-  games: PropTypes.object,
-  installs: PropTypes.object,
-  panel: PropTypes.string
+  state: PropTypes.any
 }
 
 /**
@@ -119,8 +126,8 @@ LibraryContent.propTypes = {
 class LibraryPanelLink extends Component {
   render () {
     let {name, panel, label, progress, before = '', error, games = {}} = this.props
-    let relevant_games = games[name] || []
-    let game_count = relevant_games.length
+    let relevant_games = mori.get(games, name) || mori.list()
+    let game_count = mori.count(relevant_games)
     let current = (name === panel)
 
     let _progress = progress ? ` (${(progress * 100).toFixed()}%)` : ''

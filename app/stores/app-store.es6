@@ -1,34 +1,35 @@
 
-import deep_assign from 'deep-assign'
+import mori from 'mori'
 
 import Store from './store'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 import AppActions from '../actions/app-actions'
+import {pairs} from 'underscore'
 
 import defer from '../util/defer'
 
-let state = {
-  page: 'setup',
+let state = mori.hashMap(
+  'page', 'setup',
 
-  library: {
-    games: {},
-    panel: '',
-    collections: {},
-    installs: {}
-  },
+  'library', mori.hashMap(
+    'games', mori.hashMap(),
+    'panel', '',
+    'collections', mori.hashMap(),
+    'installs', mori.hashMap()
+  ),
 
-  login: {
-    loading: false,
-    errors: []
-  },
+  'login', mori.hashMap(
+    'loading', false,
+    'errors', mori.vector()
+  ),
 
-  setup: {
-    message: 'Checking dependencies',
-    icon: 'settings'
-  }
-}
+  'setup', mori.hashMap(
+    'message', 'Checking dependencies',
+    'icon', 'settings'
+  )
+)
 
 let AppStore = Object.assign(new Store('app-store', 'renderer'), {
   get_state: function () {
@@ -36,17 +37,17 @@ let AppStore = Object.assign(new Store('app-store', 'renderer'), {
   }
 })
 
-function merge_state (obj) {
-  state = deep_assign({}, state, obj)
-  AppStore.emit_change()
-}
+// function merge_state (obj) {
+//   state = deep_assign({}, state, obj)
+//   AppStore.emit_change()
+// }
 
 function focus_panel (action) {
   let {panel} = action
-  merge_state({
-    page: 'library',
-    library: { panel }
-  })
+
+  state = mori.assoc(state, 'page', 'library')
+  state = mori.assocIn(state, ['library', 'panel'], panel)
+  AppStore.emit_change()
 
   defer(() => {
     AppActions.focus_window()
@@ -55,16 +56,18 @@ function focus_panel (action) {
 }
 
 function switch_page (page) {
-  merge_state({page})
+  state = mori.assoc(state, 'page', page)
+  AppStore.emit_change()
 }
 
 function login_with_password (action) {
-  merge_state({login: {loading: true}})
+  state = mori.assocIn(state, ['loading', 'loading'], true)
 }
 
 function login_failure (action) {
-  let {errors} = action
-  merge_state({login: {loading: false, errors}})
+  let errors = mori.vector([].concat(action.errors))
+  state = mori.assocIn(state, ['login', 'loading'], false)
+  state = mori.assocIn(state, ['login', 'errors'], errors)
   switch_page('login')
 }
 
@@ -73,8 +76,10 @@ function no_stored_credentials () {
 }
 
 function authenticated (action) {
-  merge_state({login: {loading: false, errors: null}})
+  state = mori.assocIn(state, ['login', 'loading'], false)
+  state = mori.assocIn(state, ['login', 'errors'], mori.vector())
   focus_panel({panel: 'owned'})
+
   defer(() => {
     AppActions.fetch_games('dashboard')
   })
@@ -85,13 +90,19 @@ function logout () {
 }
 
 function setup_status (action) {
-  let {message, icon = state.setup.icon} = action
-  merge_state({setup: {message, icon}})
+  let {message, icon} = action
+  state = mori.assocIn(state, ['setup', 'message'], message)
+  if (icon) {
+    state = mori.assocIn(state, ['setup', 'icon'], icon)
+  }
+  AppStore.emit_change()
 }
 
 function install_progress (action) {
-  let installs = { [action.opts.id]: action.opts }
-  merge_state({library: {installs}})
+  for (let [k, v] of pairs(action.opts)) {
+    state = mori.assocIn(state, ['library', 'installs', action.opts.id, k], mori.toClj(v))
+  }
+  AppStore.emit_change()
 }
 
 AppDispatcher.register('app-store', Store.action_listeners(on => {
@@ -108,11 +119,14 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.INSTALL_PROGRESS, install_progress)
 }))
 
-Store.subscribe('game-store', (games) =>
-  merge_state({library: {games}})
-)
-Store.subscribe('collection-store', (collections) =>
-  merge_state({library: {collections}})
-)
+Store.subscribe('game-store', (games) => {
+  state = mori.assocIn(state, ['library', 'games'], mori.toClj(games))
+  AppStore.emit_change()
+})
+
+Store.subscribe('collection-store', (collections) => {
+  state = mori.assocIn(state, ['library', 'collections'], mori.toClj(collections))
+  AppStore.emit_change()
+})
 
 export default AppStore

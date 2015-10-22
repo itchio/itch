@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import Immutable from 'seamless-immutable'
 
 let self = {
   path: function (spec) {
@@ -12,7 +11,7 @@ let self = {
   },
 
   api: function (spec) {
-    return Immutable(self.json(`api/${spec}`))
+    return self.json(`api/${spec}`)
   }
 }
 

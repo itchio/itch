@@ -34,6 +34,7 @@
     "humanize-plus": "^1.5.0",
     "keymirror": "~0.1.0",
     "mkdirp": "^0.5.1",
+    "mori": "^0.3.2",
     "nconf": "^0.8.2",
     "nedb": "^1.2.1",
     "needle": "^0.10.0",
@@ -41,7 +42,6 @@
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "read-chunk": "^1.0.1",
-    "seamless-immutable": "^4.0.0",
     "source-map-support": "^0.3.2",
     "underscore": "^1.8.3",
     "win-spawn": "^2.0.0"

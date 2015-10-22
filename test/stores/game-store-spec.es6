@@ -1,7 +1,6 @@
 import test from 'zopf'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
-import Immutable from 'seamless-immutable'
 
 import AppConstants from '../../app/constants/app-constants'
 
@@ -40,7 +39,7 @@ test('GameStore', t => {
 
   t.case('fetch dashboard', t => {
     let mock = t.mock(CredentialsStore.get_current_user())
-    mock.expects('my_games').resolves(Immutable({games: [{}, {}, {}]}))
+    mock.expects('my_games').resolves({games: [{}, {}, {}]})
     return handler({ action_type: AppConstants.FETCH_GAMES, path: 'dashboard' })
   })
 

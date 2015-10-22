@@ -1,8 +1,8 @@
 
 import React from 'react'
+import mori from 'mori'
 import {PropTypes, Component} from 'react'
 import classNames from 'classnames'
-import {indexBy, values} from 'underscore'
 
 import AppActions from '../actions/app-actions'
 
@@ -11,7 +11,9 @@ import {TaskIcon} from './misc'
 class GameCell extends Component {
   render () {
     let {game, install} = this.props
-    let {title, cover_url, user} = game
+    let title = mori.get(game, 'title')
+    let cover_url = mori.get(game, 'cover_url')
+    let user = mori.get(game, 'user')
     let has_cover = !!cover_url
 
     let style = {
@@ -20,14 +22,14 @@ class GameCell extends Component {
 
     let button_classes = 'game_launch button'
     if (install) {
-      button_classes += ` install_${install.task}`
+      button_classes += ` install_${mori.get(install, 'task')}`
     } else {
       button_classes += ` uninstalled`
     }
 
     let button_style = {}
-    if (install && install.progress > 0) {
-      let percent = (install.progress * 100).toFixed() + '%'
+    if (install && mori.get(install, 'progress') > 0) {
+      let percent = (mori.get(install, 'progress') * 100).toFixed() + '%'
       let done_color = '#444'
       let undone_color = '#222'
       button_style.backgroundImage = `-webkit-linear-gradient(left, ${done_color}, ${done_color} ${percent}, ${undone_color} ${percent}, ${undone_color})`
@@ -35,17 +37,17 @@ class GameCell extends Component {
 
     return <div className='game_cell'>
       <div className='bordered'>
-        <div className={classNames('game_thumb', {has_cover})} onClick={() => require('remote').require('shell').openExternal(game.url)} style={style}/>
+        <div className={classNames('game_thumb', {has_cover})} onClick={() => require('remote').require('shell').openExternal(mori.get(game, 'url'))} style={style}/>
       </div>
       <div className='game_title'>{title}</div>
       {user
       ? <div className='game_author'>{user.display_name}</div>
       : ''}
-      <div className={button_classes} style={button_style} onClick={() => AppActions.install_queue(game.id)}>
+      <div className={button_classes} style={button_style} onClick={() => AppActions.install_queue(mori.get(game, 'id'))}>
         {install
         ? (
           <span>
-            <TaskIcon task={install.task}/> {this.status(install)}
+            <TaskIcon task={mori.get(install, 'task')}/> {this.status(install)}
           </span>
         )
         : <span><span className='icon icon-install'/> Install</span>
@@ -55,25 +57,28 @@ class GameCell extends Component {
   }
 
   status (install) {
-    if (install.task === 'idle') {
+    let task = mori.get(install, 'task')
+    let progress = mori.get(install, 'progress')
+
+    if (task === 'idle') {
       return 'Launch'
     }
-    if (install.task === 'error') {
+    if (task === 'error') {
       return 'Broken'
     }
-    if (install.task === 'launch') {
+    if (task === 'launch') {
       return 'Running...'
     }
 
     let res = 'Installing...'
-    if (install.task === 'download') {
+    if (task === 'download') {
       res = 'Downloading...'
-    } else if (install.task === 'extract') {
+    } else if (task === 'extract') {
       res = 'Extracting'
     }
 
-    if (install.progress > 0) {
-      res += ` (${(install.progress * 100).toFixed()}%)`
+    if (progress > 0) {
+      res += ` (${(progress * 100).toFixed()}%)`
     }
     return res
   }
@@ -87,21 +92,24 @@ GameCell.propTypes = {
 class GameList extends React.Component {
   render () {
     let {games, installs} = this.props
-    let installs_by_game_id = indexBy(values(installs), 'game_id')
-    if (!games) return <div/>
+    console.log('installs', mori.toJs(installs))
+    let index_by = (acc, k, v) => mori.assoc(acc, mori.get(v, 'game_id'), v)
+    let installs_by_game_id = mori.reduceKV(index_by, mori.hashMap(), installs)
+    console.log('installs_by_game_id', mori.toJs(installs_by_game_id))
 
     return <div className='game_list'>
-      {games.map(game => {
-        let install = installs_by_game_id[game.id]
-        return <GameCell key={game.id} game={game} install={install}/>
-      })}
+      {mori.intoArray(mori.map(game => {
+        let game_id = mori.get(game, 'id')
+        let install = mori.get(installs_by_game_id, game_id)
+        return <GameCell key={game_id} game={game} install={install}/>
+      }, games))}
     </div>
   }
 }
 
 GameList.propTypes = {
-  games: PropTypes.array,
-  installs: PropTypes.object
+  games: PropTypes.any,
+  installs: PropTypes.any
 }
 
 export {GameCell, GameList}

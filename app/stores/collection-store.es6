@@ -1,4 +1,3 @@
-import deep_assign from 'deep-assign'
 import {indexBy} from 'underscore'
 
 import Store from './store'
@@ -17,7 +16,7 @@ let CollectionStore = Object.assign(new Store('collection-store'), {
 })
 
 function merge_state (obj) {
-  deep_assign(state, obj)
+  Object.assign(state, obj)
   CollectionStore.emit_change()
 }
 

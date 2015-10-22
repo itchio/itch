@@ -1,7 +1,6 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 import Promise from 'bluebird'
-import Immutable from 'seamless-immutable'
 import sinon from 'sinon'
 
 import fixture from '../fixture'
@@ -66,10 +65,10 @@ test('find-upload', t => {
   })
 
   t.case('prefer zip', t => {
-    client.game_uploads.resolves(Immutable({uploads: [
+    client.game_uploads.resolves({uploads: [
       {id: 11, p_windows: true, filename: 'setup.exe'},
       {id: 22, p_windows: true, filename: 'game.zip'}
-    ]}))
+    ]})
     let stub = t.stub(AppActions, 'install_update')
     return find_upload.start(opts).then(_ => {
       sinon.assert.calledWith(stub, 'kalamazoo', {upload_id: 22})

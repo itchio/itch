@@ -1,6 +1,7 @@
 
 import React from 'react'
 import {Component} from 'react'
+import mori from 'mori'
 
 import {LoginPage} from './login'
 import {SetupPage} from './setup'
@@ -9,7 +10,7 @@ import {LibraryPage} from './library'
 import AppStore from '../stores/app-store'
 
 function get_state () {
-  return AppStore.get_state()
+  return {state: AppStore.get_state()}
 }
 
 export class Layout extends Component {
@@ -29,15 +30,15 @@ export class Layout extends Component {
   }
 
   render () {
-    let {setup, login, library} = this.state
+    let state = this.state.state
 
-    switch (this.state.page) {
+    switch (mori.get(state, 'page')) {
       case 'setup':
-        return <SetupPage {...setup}/>
+        return <SetupPage state={mori.get(state, 'setup')}/>
       case 'login':
-        return <LoginPage {...login}/>
+        return <LoginPage state={mori.get(state, 'login')}/>
       case 'library':
-        return <LibraryPage {...library}/>
+        return <LibraryPage state={mori.get(state, 'library')}/>
       default:
         return <div/>
     }

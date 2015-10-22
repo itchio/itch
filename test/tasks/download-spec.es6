@@ -1,22 +1,21 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 import sinon from 'sinon'
-import Immutable from 'seamless-immutable'
 
 import electron from '../stubs/electron'
 import http from '../stubs/http'
 import InstallStore from '../stubs/install-store'
 import CredentialsStore from '../stubs/credentials-store'
 
-let typical_install = Immutable({
+let typical_install = {
   _id: 42,
   upload_id: 11,
   uploads: { '11': { id: 11, size: 512 } }
-})
+}
 
-let upload_response = Immutable({
+let upload_response = {
   url: 'http://example.org/game.zip'
-})
+}
 
 let setup = (t) => {
   let fs = {

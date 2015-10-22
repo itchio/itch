@@ -41,7 +41,7 @@ function binary_url () {
   return {url, file}
 }
 
-function boot () {
+function run () {
   let bin_path = augment_path()
 
   setImmediate(() => AppActions.setup_status('Checking for 7-zip'))
@@ -65,7 +65,7 @@ let SetupStore = Object.assign(new Store('setup-store'), {
 })
 
 AppDispatcher.register('setup-store', Store.action_listeners(on => {
-  on(AppConstants.BOOT, boot)
+  on(AppConstants.WINDOW_READY, run)
 }))
 
 export default SetupStore
