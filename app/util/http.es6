@@ -1,29 +1,34 @@
 
 import Promise from 'bluebird'
+import child_process from 'child_process'
+import StreamSplitter from 'stream-splitter'
+import path from 'path'
 
-import needle from 'needle'
+import mkdirp from '../promised/mkdirp'
 
-import progress from './needle-progress'
 import noop from './noop'
 
 let self = {
   request: function (opts) {
-    let {url, sink, headers = {}, onprogress = noop, throttle = 250} = opts
+    let {url, dest, onprogress = noop} = opts
 
-    let req = needle.get(url, {
-      headers,
-      decode_response: false,
-      parse_response: false
-    })
-    req = progress(req, {throttle})
-    req.on('progress', onprogress)
+    return mkdirp(path.dirname(dest))
+      .then(() => {
+        let child = child_process.spawn('wenger', ['dl', url, dest])
+        let splitter = child.stdout.pipe(StreamSplitter('\n'))
+        splitter.encoding = 'utf8'
 
-    let out = req.pipe(sink)
+        splitter.on('token', (token) => {
+          let status = JSON.parse(token)
+          let percent = status.Percent
+          onprogress({percent})
+        })
 
-    return new Promise((resolve, reject) => {
-      req.on('error', reject)
-      out.on('close', resolve)
-    })
+        return new Promise((resolve, reject) => {
+          child.on('close', resolve)
+          child.on('error', reject)
+        })
+      })
   }
 }
 

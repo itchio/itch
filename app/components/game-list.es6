@@ -92,10 +92,8 @@ GameCell.propTypes = {
 class GameList extends React.Component {
   render () {
     let {games, installs} = this.props
-    console.log('installs', mori.toJs(installs))
     let index_by = (acc, k, v) => mori.assoc(acc, mori.get(v, 'game_id'), v)
     let installs_by_game_id = mori.reduceKV(index_by, mori.hashMap(), installs)
-    console.log('installs_by_game_id', mori.toJs(installs_by_game_id))
 
     return <div className='game_list'>
       {mori.intoArray(mori.map(game => {

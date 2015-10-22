@@ -2,6 +2,7 @@
 import {Transition} from './errors'
 
 import fstream from 'fstream'
+import {PassThrough} from 'stream'
 
 let log = require('../util/log')('tasks/download')
 import http from '../util/http'
@@ -88,7 +89,7 @@ function start (opts) {
         let percent = done_alpha * 100 + (1 - done_alpha) * state.percent
         onprogress({percent})
       },
-      sink: fstream.Writer({path: archive_path, flags})
+      dest: archive_path
     })
   })
 }
