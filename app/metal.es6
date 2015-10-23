@@ -9,18 +9,19 @@ if (require('./util/auto-updater').run()) {
   process.exit(0)
 }
 
+require('./stores/window-store')
 require('./stores/collection-store')
 require('./stores/game-store')
 require('./stores/notification-store')
 require('./stores/tray-store')
-require('./stores/window-store')
 require('./stores/setup-store')
 require('./stores/install-store')
-require('./ui/menu').mount()
 
 let AppActions = require('./actions/app-actions')
 let app = require('app')
-app.on('ready', AppActions.boot)
+app.on('ready', () => {
+  require('./ui/menu').mount()
+  AppActions.boot()
+})
 app.on('activate', AppActions.focus_window)
 app.on('window-all-closed', e => e.preventDefault())
-console.log('metal done')

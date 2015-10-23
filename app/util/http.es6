@@ -9,19 +9,26 @@ import mkdirp from '../promised/mkdirp'
 import noop from './noop'
 
 let self = {
+  /*
+   * Uses https://github.com/itchio/butler to download a file
+   */
   request: function (opts) {
     let {url, dest, onprogress = noop} = opts
 
     return mkdirp(path.dirname(dest))
       .then(() => {
-        let child = child_process.spawn('wenger', ['dl', url, dest])
+        let args = ['dl', url, dest]
+        console.log(`spawning butler with args: ${args.join(' ')}`)
+        let child = child_process.spawn('butler', args)
         let splitter = child.stdout.pipe(StreamSplitter('\n'))
         splitter.encoding = 'utf8'
 
         splitter.on('token', (token) => {
+          console.log(`In http, got token: ${token}`)
           let status = JSON.parse(token)
-          let percent = status.Percent
-          onprogress({percent})
+          if (status.Percent) {
+            onprogress({percent: status.Percent})
+          }
         })
 
         return new Promise((resolve, reject) => {

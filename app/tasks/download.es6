@@ -1,23 +1,16 @@
 
 import {Transition} from './errors'
 
-import fstream from 'fstream'
-import {PassThrough} from 'stream'
-
 let log = require('../util/log')('tasks/download')
 import http from '../util/http'
 import noop from '../util/noop'
-import fs from '../promised/fs'
 
 import InstallStore from '../stores/install-store'
 import CredentialsStore from '../stores/credentials-store'
 
 function start (opts) {
   let {id, onprogress = noop} = opts
-  let headers = {}
-  let flags = 'w'
   let install, upload, archive_path
-  let done_alpha = 0
 
   log(opts, 'started')
 
@@ -43,35 +36,6 @@ function start (opts) {
     archive_path = InstallStore.archive_path(install.upload_id)
     log(opts, `made archive path at ${archive_path}`)
   }).then(() => {
-    log(opts, `lstating ${archive_path}`)
-    // Check for existing files
-    return fs.lstatAsync(archive_path).then((stats) => {
-      return stats.size
-    }).catch((e) => {
-      // probably ENOENT
-      return 0
-    })
-  }).then((local_size) => {
-    log(opts, `got ${local_size} / ${upload.size} bytes locally`)
-
-    // Check if our local file is complete
-    if (local_size === upload.size) {
-      throw new Transition({
-        to: 'extract',
-        reason: 'already downloaded fully'
-      })
-    }
-
-    // Set up headers
-    if (local_size > 0) {
-      done_alpha = local_size / upload.size
-      log(opts, `resuming from byte ${local_size}`)
-      headers['Range'] = `bytes=${local_size}-`
-      flags = 'a'
-    } else {
-      log(opts, `downloading full file`)
-    }
-
     // Get download URL
     let client = CredentialsStore.get_current_user()
     return (install.key
@@ -84,11 +48,8 @@ function start (opts) {
     log(opts, `d/l from ${url}`)
 
     return http.request({
-      url, headers,
-      onprogress: (state) => {
-        let percent = done_alpha * 100 + (1 - done_alpha) * state.percent
-        onprogress({percent})
-      },
+      url,
+      onprogress,
       dest: archive_path
     })
   })

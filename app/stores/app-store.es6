@@ -22,11 +22,11 @@ let state = mori.hashMap(
 
   'login', mori.hashMap(
     'loading', false,
-    'errors', mori.vector()
+    'errors', null
   ),
 
   'setup', mori.hashMap(
-    'message', 'Checking dependencies',
+    'message', '...',
     'icon', 'settings'
   )
 )
@@ -36,11 +36,6 @@ let AppStore = Object.assign(new Store('app-store', 'renderer'), {
     return state
   }
 })
-
-// function merge_state (obj) {
-//   state = deep_assign({}, state, obj)
-//   AppStore.emit_change()
-// }
 
 function focus_panel (action) {
   let {panel} = action
@@ -65,9 +60,9 @@ function login_with_password (action) {
 }
 
 function login_failure (action) {
-  let errors = mori.vector([].concat(action.errors))
+  let errors = {action}
   state = mori.assocIn(state, ['login', 'loading'], false)
-  state = mori.assocIn(state, ['login', 'errors'], errors)
+  state = mori.assocIn(state, ['login', 'errors'], errors.stack || errors)
   switch_page('login')
 }
 
@@ -77,7 +72,7 @@ function no_stored_credentials () {
 
 function authenticated (action) {
   state = mori.assocIn(state, ['login', 'loading'], false)
-  state = mori.assocIn(state, ['login', 'errors'], mori.vector())
+  state = mori.assocIn(state, ['login', 'errors'], null)
   focus_panel({panel: 'owned'})
 
   defer(() => {

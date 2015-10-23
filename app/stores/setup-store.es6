@@ -1,10 +1,9 @@
 
-import app from 'app'
+import Promise from 'bluebird'
 import path from 'path'
-import fstream from 'fstream'
 
-import http from '../util/http'
-import os from '../util/os'
+import ibrew from '../util/ibrew'
+import {Logger} from '../util/log'
 
 import Store from './store'
 
@@ -15,47 +14,31 @@ import AppActions from '../actions/app-actions'
 let path_done = false
 
 function augment_path () {
-  let bin_path = path.join(app.getPath('userData'), 'bin')
+  let bin_path = ibrew.bin_path()
   if (!path_done) {
     path_done = true
-    process.env.PATH += `${path.delimiter}${bin_path}`
+    process.env.PATH = `${bin_path}${path.delimiter}` + process.env.PATH
   }
   return bin_path
 }
 
-function binary_url () {
-  let prefix = 'https://cdn.rawgit.com/itchio/7za-binaries/v9.20/'
-  let file
-
-  switch (os.platform()) {
-    case 'win32':
-      file = '7za.exe'
-      break
-    case 'darwin':
-      file = '7za'
-      break
-    default:
-      throw new Error('7-zip missing: 7za must be in $PATH\n(Try installing p7zip-full)')
-  }
-  let url = `${prefix}${file}`
-  return {url, file}
-}
-
 function run () {
-  let bin_path = augment_path()
+  augment_path()
 
-  setImmediate(() => AppActions.setup_status('Checking for 7-zip'))
-  return os.check_presence('7za').catch(() => {
-    let {url, file} = binary_url()
-    let target_path = path.join(bin_path, file)
-    let sink = fstream.Writer({path: target_path, mode: 0o777})
+  let opts = {
+    logger: new Logger(),
+    onstatus: AppActions.setup_status
+  }
 
-    AppActions.setup_status('Downloading 7-zip...', 'download')
-    return http.request({ url, sink })
-  }).catch(err => {
+  return Promise.resolve(['7za', 'butler'])
+  .each(formula => {
+    return ibrew.fetch(opts, formula)
+  })
+  .catch(err => {
     AppActions.setup_status(err.stack || err, 'error')
     throw err
-  }).then(() => {
+  })
+  .then(() => {
     AppActions.setup_done()
   })
 }

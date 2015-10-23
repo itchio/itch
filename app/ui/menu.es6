@@ -149,8 +149,9 @@ function refresh_menu () {
 }
 
 let self = {
-  mount: function () {
+  mount: () => {
     CredentialsStore.add_change_listener('menu', refresh_menu)
+    refresh_menu()
   }
 }
 

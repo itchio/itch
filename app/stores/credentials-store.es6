@@ -25,10 +25,11 @@ function got_key (key) {
 function login_with_password (action) {
   let {username, password} = action
   return api.client.login_with_password(username, password).then((res) => {
-    got_key(res.key.key)
-    current_user.me().then(res => {
+    let key = res.key.key
+    let user = new api.User(api.client, key)
+    user.me().then(res => {
       me = res.user
-      CredentialsStore.emit_change()
+      got_key(key)
     })
   }).catch(AppActions.login_failure)
 }

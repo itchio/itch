@@ -28,7 +28,9 @@ class LoginForm extends Component {
   }
 
   render () {
-    let {loading, errors} = mori.toJs(this.props.state)
+    let {state} = this.props
+    let loading = mori.get(state, 'loading')
+    let errors = mori.get(state, 'errors')
 
     return <div className='login_form'>
       <img className='logo' src='static/images/itchio-white.svg'/>

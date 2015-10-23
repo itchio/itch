@@ -7,6 +7,10 @@ let self = {
     return process.platform
   },
 
+  arch: function () {
+    return process.arch
+  },
+
   process_type: function () {
     return process.type
   },
@@ -33,15 +37,30 @@ let self = {
     return process.argv
   },
 
-  check_presence: function (command, args = []) {
+  check_presence: function (command, args = [], parser = null) {
     return new Promise((resolve, reject) => {
       let child = spawn(command, args)
+
+      let stdout = ''
+      child.stdout.on('data', (data) => stdout += data)
+
+      let stderr = ''
+      child.stderr.on('data', (data) => stderr += data)
+
       child.on('error', (e) => null)
       child.on('close', (code) => {
         if (code === 0) {
-          resolve(code)
+          let parsed = null
+          if (parser) {
+            let matches = stdout.match(parser)
+            if (matches) {
+              parsed = matches[1]
+            }
+          }
+
+          resolve({code, stdout, stderr, parsed})
         } else {
-          reject(`${command} exited with code ${code}`)
+          reject(`${command} exited with code ${code}\nstdout: ${stdout}\n\nstderr: ${stderr}`)
         }
       })
     })
