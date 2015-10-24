@@ -1,6 +1,5 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import sinon from 'sinon'
 
 import electron from '../stubs/electron'
 import http from '../stubs/http'
@@ -35,10 +34,10 @@ let setup = (t) => {
 }
 
 test('download', t => {
-  let {download, client, fs, http} = setup(t)
+  let {download, client, fs} = setup(t)
 
   t.case('validates upload_id', t => {
-    let install = typical_install.merge({upload_id: 22})
+    let install = Object.assign({}, typical_install, {upload_id: 22})
     t.stub(InstallStore, 'get_install').resolves(install)
     return t.rejects(download.start({id: 42}))
   })
@@ -56,34 +55,10 @@ test('download', t => {
   })
 
   t.case('downloads paid game', t => {
-    let install = typical_install.merge({key: {id: 'abacus'}})
+    let install = Object.assign({}, typical_install, {key: {id: 'abacus'}})
     t.stub(InstallStore, 'get_install').resolves(install)
     t.stub(client, 'download_upload_with_key').resolves(upload_response)
     t.stub(fs, 'lstatAsync').rejects()
     return download.start({id: 42})
-  })
-
-  t.case('skips when complete', t => {
-    t.stub(InstallStore, 'get_install').resolves(typical_install)
-    t.stub(client, 'download_upload').resolves(upload_response)
-    t.stub(fs, 'lstatAsync').resolves({size: 512})
-    return t.rejects(download.start({id: 42}))
-  })
-
-  t.case('resumes', t => {
-    t.stub(InstallStore, 'get_install').resolves(typical_install)
-    t.stub(client, 'download_upload').resolves(upload_response)
-    t.stub(fs, 'lstatAsync').resolves({size: 256})
-
-    let mock = t.mock(http)
-    let request_exp = mock.expects('request').resolves()
-
-    let outer_onprogress = t.stub()
-    let dl_promise = download.start({id: 42, onprogress: outer_onprogress})
-
-    return dl_promise.then(() => {
-      request_exp.getCall(0).args[0].onprogress({percent: 50.0})
-      sinon.assert.calledWith(outer_onprogress, {percent: 75.0})
-    })
   })
 })

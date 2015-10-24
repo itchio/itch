@@ -17,7 +17,7 @@ test('os', t => {
   mock.expects('platform').returns('darwin')
   t.is('osx', os.itch_platform(), 'itch_platform osx')
 
-  t.is(os.process_type(), process.type, 'process_type')
+  t.is(os.process_type(), 'browser', 'process_type')
   t.is(os.cli_args(), process.argv, 'cli args')
 
   t.case('check presence', t => {
