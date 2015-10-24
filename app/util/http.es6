@@ -18,13 +18,11 @@ let self = {
     return mkdirp(path.dirname(dest))
       .then(() => {
         let args = ['dl', url, dest]
-        console.log(`spawning butler with args: ${args.join(' ')}`)
         let child = child_process.spawn('butler', args)
         let splitter = child.stdout.pipe(StreamSplitter('\n'))
         splitter.encoding = 'utf8'
 
         splitter.on('token', (token) => {
-          console.log(`In http, got token: ${token}`)
           let status = JSON.parse(token)
           if (status.Percent) {
             onprogress({percent: status.Percent})
