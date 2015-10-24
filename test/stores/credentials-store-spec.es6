@@ -33,18 +33,24 @@ test('CredentialsStore', t => {
     return handler({ action_type: AppConstants.SETUP_DONE })
   })
 
-  t.case('setup_done (no credentials) + logout', t => {
+  t.case('login with key + logout', t => {
     let user = {name: 'Pete'}
-    t.mock(AppActions).expects('authenticated').resolves()
+    t.mock(AppActions).expects('authenticated')
     t.stub(config, 'get').returns('numazu')
     t.stub(api.client, 'login_key').resolves({user})
-    return handler({ action_type: AppConstants.SETUP_DONE }).then(() => {
-      t.ok(CredentialsStore.get_current_user())
-      t.same(CredentialsStore.get_me(), user)
-      return handler({ action_type: AppConstants.LOGOUT })
-    }).then(() => {
-      t.notOk(CredentialsStore.get_current_user())
-      t.notOk(CredentialsStore.get_me())
+
+    handler({ action_type: AppConstants.SETUP_DONE })
+
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        t.ok(CredentialsStore.get_current_user(), 'has current user after setup')
+        t.same(CredentialsStore.get_me(), user, 'has me after setup')
+
+        handler({ action_type: AppConstants.LOGOUT })
+        t.notOk(CredentialsStore.get_current_user(), 'no current user after logout')
+        t.notOk(CredentialsStore.get_me(), 'no me after setup')
+        resolve()
+      }, 20)
     })
   })
 
@@ -57,9 +63,15 @@ test('CredentialsStore', t => {
     t.mock(AppActions).expects('authenticated').resolves()
     t.stub(api.client, 'login_with_password').resolves({key: {key}})
     t.stub(api.user, 'me').resolves({user})
-    return handler({ action_type: AppConstants.LOGIN_WITH_PASSWORD, username, password }).then(() => {
-      t.ok(CredentialsStore.get_current_user())
-      t.same(CredentialsStore.get_me(), user)
+
+    handler({ action_type: AppConstants.LOGIN_WITH_PASSWORD, username, password })
+
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        t.ok(CredentialsStore.get_current_user())
+        t.same(CredentialsStore.get_me(), user)
+        resolve()
+      }, 20)
     })
   })
 })

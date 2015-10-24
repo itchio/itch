@@ -4,7 +4,6 @@ import AppConstants from '../constants/app-constants'
 
 let self = {
   boot: () => {
-    console.log('booting!')
     AppDispatcher.dispatch({
       action_type: AppConstants.BOOT
     })
