@@ -1,5 +1,14 @@
-import PureRenderMixin from 'react-addons-pure-render-mixin'
-import mixin from 'es6-react-mixins'
 
-let Component = mixin(PureRenderMixin)
+import React from 'react'
+import {shallowEqual} from 'pure-render-mixin'
+
+class Component extends React.Component {
+
+  shouldComponentUpdate (nextProps, nextState) {
+    return !shallowEqual(this.props, nextProps) ||
+           !shallowEqual(this.state, nextState)
+  }
+
+}
+
 export default Component
