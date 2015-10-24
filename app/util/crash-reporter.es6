@@ -19,7 +19,9 @@ let self = {
     if (os.platform() === 'win32') {
       log = log.replace(/\n/g, '\r\n')
     }
-    fstream.Writer({path: crash_file}).write(log).end()
+    let writer = fstream.Writer({path: crash_file})
+    writer.write(log)
+    writer.end()
 
     return {log, crash_file}
   },
