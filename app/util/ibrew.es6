@@ -30,7 +30,7 @@ let self = {
       format: '7z',
       version_check: {
         args: ['version'],
-        parser: /butler version ([0-9.v]*)/
+        parser: /butler version ([0-9a-z.v]*)/
       }
     }
   },
