@@ -14,11 +14,17 @@ class Client {
     let uri = `${this.root_url}${path}`
 
     return needle.requestAsync(method, uri, data).then(arg => {
-      let res = arg[0].body
-      if (res.errors) {
-        throw res.errors
+      let resp = arg[0]
+      let {body} = resp
+
+      if (resp.statusCode !== 200) {
+        throw new Error(`HTTP ${resp.statusCode}`)
       }
-      return res
+
+      if (body.errors) {
+        throw body.errors
+      }
+      return body
     })
   }
 
