@@ -76,10 +76,10 @@ test('find-upload', t => {
   })
 
   t.case('avoid soundtracks', t => {
-    client.game_uploads.resolves(Immutable({uploads: [
+    client.game_uploads.resolves({uploads: [
       {id: 11, p_windows: true, filename: 'soundtrack.zip'},
       {id: 22, p_windows: true, filename: 'game.zip'}
-    ]}))
+    ]})
     let stub = t.stub(AppActions, 'install_update')
     return find_upload.start(opts).then(_ => {
       sinon.assert.calledWith(stub, 'kalamazoo', {upload_id: 22})
