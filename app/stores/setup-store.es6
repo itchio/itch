@@ -30,17 +30,16 @@ function run () {
     onstatus: AppActions.setup_status
   }
 
-  return Promise.resolve(['7za', 'butler'])
-  .each(formula => {
-    return ibrew.fetch(opts, formula)
-  })
-  .catch(err => {
-    AppActions.setup_status(err.stack || err, 'error')
-    throw err
-  })
-  .then(() => {
-    AppActions.setup_done()
-  })
+  Promise.resolve(['7za', 'butler'])
+    .each(formula => {
+      return ibrew.fetch(opts, formula)
+    })
+    .then(() => {
+      AppActions.setup_done()
+    })
+    .catch(err => {
+      AppActions.setup_status(err.stack || err, 'error')
+    })
 }
 
 let SetupStore = Object.assign(new Store('setup-store'), {
