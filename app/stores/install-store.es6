@@ -107,6 +107,9 @@ function queue_task (id, task_name, data = {}) {
 
 function initial_progress (record) {
   AppActions.install_progress(Object.assign({id: record._id}, record))
+  db.find_one({_table: 'games', id: record.game_id}).then(game => {
+    AppActions.install_progress({id: record._id, game})
+  })
 }
 
 function queue_install (game_id) {
@@ -144,9 +147,11 @@ AppDispatcher.register('install-store', Store.action_listeners(on => {
     return (
       db.load()
       .then(() => db.find({_table: 'installs'}))
-      .each(record => {
+      .each((record, i) => {
         initial_progress(record)
-        queue_task(record._id, 'download')
+        setTimeout(() => {
+          queue_task(record._id, 'download')
+        }, i * 250)
       })
     )
   })
