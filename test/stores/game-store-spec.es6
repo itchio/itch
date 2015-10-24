@@ -21,31 +21,30 @@ test('GameStore', t => {
 
   t.stub(CredentialsStore, 'get_me').resolves({id: 'gurn'})
 
-  let GameStore = proxyquire('../../app/stores/game-store', stubs)
+  proxyquire('../../app/stores/game-store', stubs)
   let handler = AppDispatcher.get_handler('game-store')
 
   t.case('fetch owned', t => {
     let mock = t.mock(CredentialsStore.get_current_user())
     mock.expects('my_owned_keys').resolves({owned_keys: [1, 2, 3]})
     mock.expects('my_claimed_keys').resolves({claimed_keys: [1, 2, 3]})
-    return handler({ action_type: AppConstants.FETCH_GAMES, path: 'owned' })
+    handler({ action_type: AppConstants.FETCH_GAMES, path: 'owned' })
   })
 
   t.case('fetch installed', t => {
-    return handler({ action_type: AppConstants.FETCH_GAMES, path: 'installed' }).then(() => {
-      return handler({ action_type: AppConstants.INSTALL_PROGRESS })
-    })
+    handler({ action_type: AppConstants.FETCH_GAMES, path: 'installed' })
+    handler({ action_type: AppConstants.INSTALL_PROGRESS, opts: {id: 12} })
   })
 
   t.case('fetch dashboard', t => {
     let mock = t.mock(CredentialsStore.get_current_user())
     mock.expects('my_games').resolves({games: [{}, {}, {}]})
-    return handler({ action_type: AppConstants.FETCH_GAMES, path: 'dashboard' })
+    handler({ action_type: AppConstants.FETCH_GAMES, path: 'dashboard' })
   })
 
   t.case('fetch install', t => {
     t.stub(db, 'find_one').resolves({game_id: 64})
-    return handler({ action_type: AppConstants.FETCH_GAMES, path: 'installs/46' })
+    handler({ action_type: AppConstants.FETCH_GAMES, path: 'installs/46' })
   })
 
   t.case('fetch collections', t => {
@@ -62,8 +61,13 @@ test('GameStore', t => {
     })
 
     let update = t.stub(db, 'update')
-    return handler({ action_type: AppConstants.FETCH_GAMES, path: 'collections/78' }).then(() => {
-      sinon.assert.calledWith(update, {_table: 'collections', id: 78}, {$set: {game_ids: [1, 3, 5, 7, 9]}})
+    handler({ action_type: AppConstants.FETCH_GAMES, path: 'collections/78' })
+
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        sinon.assert.calledWith(update, {_table: 'collections', id: 78}, {$set: {game_ids: [1, 3, 5, 7, 9]}})
+        resolve()
+      }, 20)
     })
   })
 })
