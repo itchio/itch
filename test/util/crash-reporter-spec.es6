@@ -44,21 +44,25 @@ test('crash-reporter', t => {
     crash_reporter.report_issue(e)
   })
 
-  t.case('handle → close', t => {
+  let stub_write = (t) => {
     t.stub(crash_reporter, 'write_crash_log').returns({log: e.stack, crash_file: 'tmp/crash_log.txt'})
+  }
+
+  t.case('handle → close', t => {
+    stub_write(t)
     t.stub(electron.dialog, 'showMessageBox').returns(-1)
     crash_reporter.handle(e)
   })
 
   t.case('handle → report_issue', t => {
-    t.stub(crash_reporter, 'write_crash_log').returns({log: e.stack, crash_file: 'tmp/crash_log.txt'})
+    stub_write(t)
     t.stub(electron.dialog, 'showMessageBox').returns(0)
     t.mock(crash_reporter).expects('report_issue').once()
     crash_reporter.handle(e)
   })
 
   t.case('handle → open_item', t => {
-    t.stub(crash_reporter, 'write_crash_log').returns({log: e.stack, crash_file: 'tmp/crash_log.txt'})
+    stub_write(t)
     t.stub(electron.dialog, 'showMessageBox').returns(1)
     t.mock(electron.shell).expects('openItem').once()
     crash_reporter.handle(e)
@@ -67,7 +71,7 @@ test('crash-reporter', t => {
   t.case('mount', t => {
     let exit = t.stub(process, 'exit')
     t.stub(process, 'on').callsArgWith(1, e)
-    t.mock(crash_reporter).expects('handle').once().throws()
+    t.mock(crash_reporter).expects('handle').once().throws('Test error, please ignore')
     crash_reporter.mount()
     sinon.assert.calledWith(exit, 1)
   })
