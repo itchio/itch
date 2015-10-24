@@ -2,8 +2,9 @@ import test from 'zopf'
 import proxyquire from 'proxyquire'
 
 import fixture from '../fixture'
-import install_store from '../stubs/install-store'
 import electron from '../stubs/electron'
+import InstallStore from '../stubs/install-store'
+import AppActions from '../stubs/app-actions'
 
 let setup = (t) => {
   let sevenzip = {
@@ -12,15 +13,16 @@ let setup = (t) => {
   }
 
   let stubs = Object.assign({
-    '../stores/install-store': install_store,
+    '../stores/install-store': InstallStore,
+    '../actions/app-actions': AppActions,
     './extractors/7zip': sevenzip
   }, electron)
   let extract = proxyquire('../../app/tasks/extract', stubs)
-  return {install_store, sevenzip, extract}
+  return {InstallStore, sevenzip, extract}
 }
 
 test('extract', t => {
-  let {sevenzip, extract, install_store} = setup(t)
+  let {sevenzip, extract, InstallStore} = setup(t)
 
   ;['zip', 'gz', 'bz2', '7z'].forEach((type) => {
     t.case(`use 7-zip on ${type}`, t => {
@@ -50,13 +52,12 @@ test('extract', t => {
   })
 
   t.case(`validate upload_id`, t => {
-    t.mock(install_store).expects('get_install').resolves({})
+    t.mock(InstallStore).expects('get_install').resolves({})
     return t.rejects(extract.start({id: 42}))
   })
 
   t.case(`task should start`, t => {
-    t.mock(extract).expects('extract').once()
-
+    t.mock(extract).expects('extract').resolves()
     return extract.start({id: 42})
   })
 })
