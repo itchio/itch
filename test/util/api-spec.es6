@@ -5,7 +5,7 @@ import proxyquire from 'proxyquire'
 import electron from '../stubs/electron'
 
 test('api', t => {
-  let request = t.stub().resolves([{body: {id: 12}}])
+  let request = t.stub().resolves([{body: {id: 12}, statusCode: 200}])
   let needle = {
     requestAsync: request
   }
@@ -43,11 +43,11 @@ test('api', t => {
   t.case('rejects API errors', t => {
     let errors = ['foo', 'bar', 'baz']
     let spy = t.spy()
-    request.resolves([{body: {errors}}])
+    request.resolves([{body: {errors}, statusCode: 200}])
     return client.request('GET', '', {}).catch(spy).then(res => {
       sinon.assert.calledWith(spy, errors)
     }).then(res => {
-      request.resolves([{body: {id: 42}}])
+      request.resolves([{body: {id: 42}, statusCode: 200}])
     })
   })
 
