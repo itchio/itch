@@ -1,4 +1,5 @@
 import test from 'zopf'
+import mori from 'mori'
 import proxyquire from 'proxyquire'
 import sd from 'skin-deep'
 
@@ -30,7 +31,7 @@ test('library', t => {
         f: {task: 'idle', game}
       }
     }
-    sd.shallowRender($(LibrarySidebar, props))
+    sd.shallowRender($(LibrarySidebar, {state: mori.toClj(props)}))
   })
 
   t.case('LibraryContent', t => {

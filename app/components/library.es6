@@ -34,6 +34,7 @@ LibraryPage.propTypes = {
 
 /**
  * A list of tabs, collections and installed games
+ * TODO: this component does too much, split it!
  */
 class LibrarySidebar extends Component {
   render () {
@@ -56,7 +57,11 @@ class LibrarySidebar extends Component {
     }, [], collections)
 
     let install_items = mori.reduceKV((acc, id, install) => {
-      if (!(install.progress > 0 || install.task === 'error')) {
+      let progress = mori.get(install, 'progress')
+      let task = mori.get(install, 'task')
+      let error = mori.get(install, 'error')
+
+      if (!(progress > 0 || task === 'error')) {
         return ''
       }
 
@@ -64,7 +69,7 @@ class LibrarySidebar extends Component {
         games: {}, // don't display number bullet
         name: `installs/${id}`,
         label: mori.getIn(install, ['game', 'title']),
-        error: mori.get(install, 'task') === 'error' && mori.get(install, 'error'),
+        error: task === 'error' && error,
         progress: mori.get(install, 'progress'),
         before: <TaskIcon task={install.task}/>,
         panel
@@ -152,7 +157,7 @@ LibraryPanelLink.propTypes = {
   panel: PropTypes.string,
   label: PropTypes.string,
   progress: PropTypes.number,
-  error: PropTypes.string,
+  error: PropTypes.any,
   games: PropTypes.object,
   before: PropTypes.any
 }
