@@ -31,7 +31,7 @@ test('NotificationStore', t => {
   }, electron)
 
   let NotificationStore = proxyquire('../../app/stores/notification-store', stubs)
-  let handler = AppDispatcher.get_handler(NotificationStore)
+  let handler = AppDispatcher.get_handler('notification-store')
 
   t.case('notify (win32)', t => {
     t.stub(os, 'platform').returns('win32')

@@ -56,7 +56,8 @@ function switch_page (page) {
 }
 
 function login_with_password (action) {
-  state = mori.assocIn(state, ['loading', 'loading'], true)
+  state = mori.assocIn(state, ['login', 'loading'], true)
+  AppStore.emit_change()
 }
 
 function login_failure (action) {

@@ -12,7 +12,7 @@ test('WindowStore', t => {
   }, electron)
 
   let WindowStore = proxyquire('../../app/stores/window-store', stubs)
-  let handler = AppDispatcher.get_handler(WindowStore)
+  let handler = AppDispatcher.get_handler('window-store')
   let window
 
   t.case('boot', t => {

@@ -22,7 +22,7 @@ test('GameStore', t => {
   t.stub(CredentialsStore, 'get_me').resolves({id: 'gurn'})
 
   let GameStore = proxyquire('../../app/stores/game-store', stubs)
-  let handler = AppDispatcher.get_handler(GameStore)
+  let handler = AppDispatcher.get_handler('game-store')
 
   t.case('fetch owned', t => {
     let mock = t.mock(CredentialsStore.get_current_user())

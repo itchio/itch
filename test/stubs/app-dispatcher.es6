@@ -1,16 +1,14 @@
 
-import Promise from 'bluebird'
-
-let handlers = []
+let handlers = {}
 
 let self = {
-  register: (h) => {
-    handlers.push(h)
-    return handlers.length - 1
+  register: (name, cb) => {
+    handlers[name] = cb
   },
-  dispatch: () => Promise.resolve(),
-  wait_for: () => Promise.resolve(),
-  get_handler: (store) => handlers[store.dispatch_token],
+  dispatch: () => null,
+  get_handler: (name) => {
+    return handlers[name]
+  },
   '@noCallThru': true,
   '@global': true
 }

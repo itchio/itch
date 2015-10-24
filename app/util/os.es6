@@ -12,7 +12,7 @@ let self = {
   },
 
   process_type: function () {
-    return process.type
+    return process.type || 'browser'
   },
 
   get_version: function (key) {

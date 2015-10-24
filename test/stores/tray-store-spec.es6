@@ -17,7 +17,7 @@ test('TrayStore', t => {
   }, electron)
 
   let TrayStore = proxyquire('../../app/stores/tray-store', stubs)
-  let handler = AppDispatcher.get_handler(TrayStore)
+  let handler = AppDispatcher.get_handler('tray-store')
 
   t.case('darwin', t => {
     t.stub(os, 'platform').returns('darwin')

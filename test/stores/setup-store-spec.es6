@@ -21,7 +21,7 @@ let setup = t => {
   }, electron)
 
   let SetupStore = proxyquire('../../app/stores/setup-store', stubs)
-  let handler = AppDispatcher.get_handler(SetupStore)
+  let handler = AppDispatcher.get_handler('setup-store')
   return {handler, os, http}
 }
 

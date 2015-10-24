@@ -52,6 +52,7 @@ let webContents = {
 }
 
 Object.assign(stubs['browser-window'], {
+  getAllWindows: () => [],
   setProgressBar: rnil,
   on: rnil,
   openDevTools: rnil,

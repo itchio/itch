@@ -20,7 +20,7 @@ let setup = t => {
   }, electron)
 
   let CredentialsStore = proxyquire('../../app/stores/credentials-store', stubs)
-  let handler = AppDispatcher.get_handler(CredentialsStore)
+  let handler = AppDispatcher.get_handler('credentials-store')
 
   return {CredentialsStore, handler}
 }
@@ -28,17 +28,17 @@ let setup = t => {
 test('CredentialsStore', t => {
   let {CredentialsStore, handler} = setup(t)
 
-  t.case('boot (no credentials)', t => {
+  t.case('setup_done (no credentials)', t => {
     t.mock(AppActions).expects('no_stored_credentials').resolves()
-    return handler({ action_type: AppConstants.BOOT })
+    return handler({ action_type: AppConstants.SETUP_DONE })
   })
 
-  t.case('boot (no credentials) + logout', t => {
+  t.case('setup_done (no credentials) + logout', t => {
     let user = {name: 'Pete'}
     t.mock(AppActions).expects('authenticated').resolves()
     t.stub(config, 'get').returns('numazu')
     t.stub(api.client, 'login_key').resolves({user})
-    return handler({ action_type: AppConstants.BOOT }).then(() => {
+    return handler({ action_type: AppConstants.SETUP_DONE }).then(() => {
       t.ok(CredentialsStore.get_current_user())
       t.same(CredentialsStore.get_me(), user)
       return handler({ action_type: AppConstants.LOGOUT })

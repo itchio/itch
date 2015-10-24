@@ -1,4 +1,5 @@
 import test from 'zopf'
+import mori from 'mori'
 import proxyquire from 'proxyquire'
 
 import AppConstants from '../../app/constants/app-constants'
@@ -16,24 +17,38 @@ test('AppStore', t => {
     get_state: () => [7, 3, 1]
   }
 
+  let os = {
+    process_type: () => 'renderer',
+    '@global': true
+  }
+
+  let Store = proxyquire('../../app/stores/store', Object.assign({
+    '../util/os': os
+  }, electron))
+
+  let subscriptions = {}
+  t.stub(Store, 'subscribe', (name, cb) => subscriptions[name] = cb)
+
   let stubs = Object.assign({
     './credentials-store': CredentialsStore,
     '../actions/app-actions': AppActions,
     '../dispatcher/app-dispatcher': AppDispatcher,
     '../util/db': db,
     '../util/defer': defer,
-    './game-store': GameStore
+    '../util/os': os,
+    './game-store': GameStore,
+    './store': Store
   }, electron)
 
   let AppStore = proxyquire('../../app/stores/app-store', stubs)
-  let handler = AppDispatcher.get_handler(AppStore)
+  let handler = AppDispatcher.get_handler('app-store')
 
   t.stub(CredentialsStore.get_current_user(), 'my_collections').resolves({collections: []})
 
-  let get_state = () => AppStore.get_state()
+  let get_state = () => mori.toJs(AppStore.get_state())
 
   t.case('GameStore change', t => {
-    GameStore.add_change_listener.getCall(0).args[1]()
+    subscriptions['game-store'](GameStore.get_state())
     t.same(get_state().library.games, GameStore.get_state())
   })
 
@@ -64,23 +79,17 @@ test('AppStore', t => {
     handler({ action_type: AppConstants.LOGIN_WITH_PASSWORD })
     t.ok(get_state().login.loading, 'loading after login_with_password')
 
-    return handler({ action_type: AppConstants.AUTHENTICATED }).then(() => {
-      t.notOk(get_state().login.loading, 'not loading after authenticated')
-      t.is(get_state().page, 'library', 'library after authenticated')
+    handler({ action_type: AppConstants.AUTHENTICATED })
+    t.notOk(get_state().login.loading, 'not loading after authenticated')
+    t.is(get_state().page, 'library', 'library after authenticated')
 
-      handler({ action_type: AppConstants.LOGOUT })
-      t.is(get_state().page, 'login')
-    })
+    handler({ action_type: AppConstants.LOGOUT })
+    t.is(get_state().page, 'login')
   })
 
   t.case('install_progress', t => {
     let opts = {id: 42, a: 'b'}
     handler({ action_type: AppConstants.INSTALL_PROGRESS, opts })
     t.same(get_state().library.installs, {'42': {id: 42, a: 'b'}})
-  })
-
-  t.case('quit', t => {
-    t.mock(electron.app).expects('quit')
-    return handler({ action_type: AppConstants.QUIT })
   })
 })
