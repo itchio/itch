@@ -1,4 +1,5 @@
 import test from 'zopf'
+import mori from 'mori'
 import proxyquire from 'proxyquire'
 import sd from 'skin-deep'
 
@@ -15,6 +16,6 @@ test('SetupPage', t => {
   }
 
   t.case('renders', t => {
-    sd.shallowRender($(SetupPage, props))
+    sd.shallowRender($(SetupPage, {state: mori.toClj(props)}))
   })
 })

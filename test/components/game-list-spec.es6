@@ -1,4 +1,5 @@
 import test from 'zopf'
+import mori from 'mori'
 import proxyquire from 'proxyquire'
 import sd from 'skin-deep'
 
@@ -17,7 +18,7 @@ test('game-list', t => {
         'asd09f8': {game_id: 42}
       }
     }
-    sd.shallowRender($(GameList, props))
+    sd.shallowRender($(GameList, {state: mori.toClj(props)}))
   })
 
   t.case('GameCell', t => {
@@ -37,7 +38,7 @@ test('game-list', t => {
 
     ;['download', 'extract', 'idle', 'error', 'launch'].forEach((task) => {
       props.install.task = task
-      sd.shallowRender($(GameCell, props))
+      sd.shallowRender($(GameCell, {state: mori.toClj(props)}))
     })
   })
 })

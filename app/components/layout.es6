@@ -8,6 +8,7 @@ import {SetupPage} from './setup'
 import {LibraryPage} from './library'
 
 import AppStore from '../stores/app-store'
+import defer from '../util/defer'
 
 function get_state () {
   return {state: AppStore.get_state()}
@@ -21,7 +22,7 @@ export class Layout extends Component {
 
   componentDidMount () {
     AppStore.add_change_listener('layout', () => {
-      setImmediate(() => { this.setState(get_state()) }, 0)
+      defer(() => { this.setState(get_state()) })
     })
   }
 
