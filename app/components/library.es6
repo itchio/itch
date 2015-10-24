@@ -62,7 +62,7 @@ class LibrarySidebar extends Component {
       let error = mori.get(install, 'error')
 
       if (!(progress > 0 || task === 'error')) {
-        return ''
+        return acc
       }
 
       let props = {
@@ -71,7 +71,7 @@ class LibrarySidebar extends Component {
         label: mori.getIn(install, ['game', 'title']),
         error: task === 'error' && error,
         progress: mori.get(install, 'progress'),
-        before: <TaskIcon task={install.task}/>,
+        before: <TaskIcon task={task}/>,
         panel
       }
       acc.push(<LibraryPanelLink {...props} key={id}/>)
@@ -88,7 +88,7 @@ class LibrarySidebar extends Component {
         <div className='separator'/>
         {mori.intoArray(collection_items)}
 
-        {install_items.length
+        {mori.count(install_items) > 0
         ? <div>
             <div className='separator'/>
             {mori.intoArray(install_items)}
