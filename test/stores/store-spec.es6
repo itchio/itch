@@ -1,11 +1,15 @@
 import test from 'zopf'
 import sinon from 'sinon'
+import proxyquire from 'proxyquire'
 
-import Store from '../../app/stores/store'
+import electron from '../stubs/electron'
 
 test('Store', t => {
+  let stubs = electron
+  let Store = proxyquire('../../app/stores/store', stubs)
+
   t.case('event listeners', t => {
-    let store = new Store()
+    let store = new Store('test-store')
     let spy = t.spy()
     store.add_change_listener('green', spy)
     store.emit_change()
