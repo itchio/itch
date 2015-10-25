@@ -4,7 +4,7 @@ import os from '../util/os'
 
 let Log = require('../util/log')
 let log = Log('dispatcher')
-let opts = {logger: new Log.Logger({sinks: {console: true}})}
+let opts = {logger: new Log.Logger({sinks: {console: false}})}
 
 // This makes sure everything is dispatched to the node side, whatever happens
 if (os.process_type() === 'renderer') {
@@ -19,7 +19,6 @@ if (os.process_type() === 'renderer') {
     },
 
     dispatch: (payload) => {
-      console.log(`IPC sending ${payload.action_type}`)
       ipc.send('dispatcher-dispatch', payload)
     }
   }
@@ -85,7 +84,6 @@ if (os.process_type() === 'renderer') {
   let self = new Dispatcher()
 
   ipc.on('dispatcher-dispatch', (ev, payload) => {
-    console.log(`IPC got ${payload.action_type}`)
     self.dispatch(payload)
   })
 

@@ -20,7 +20,13 @@ let stubs = {
   },
   ipc: Object.assign({
     send: function () {
-      this.emit.apply(this, arguments)
+      console.log('send from browser')
+      let args = []
+      for (let i = 1; i < arguments.length; i++) {
+        args.push(arguments[i])
+      }
+      args = [arguments[0], {}].concat(args)
+      this.emit.apply(this, args)
     }
   }, require('events').EventEmitter.prototype),
   remote: {

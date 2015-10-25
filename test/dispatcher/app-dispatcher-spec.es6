@@ -1,39 +1,63 @@
 import test from 'zopf'
+import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 
 import electron from '../stubs/electron'
 
-test('dispatcher (renderer side)', t => {
-  let stubs = Object.assign({
-    '../util/os': {
-      process_type: () => 'renderer'
-    }
+test('dispatcher', t => {
+  let r_stubs = Object.assign({
+    '../util/os': { process_type: () => 'renderer' }
   }, electron)
-  let dispatcher = proxyquire('../../app/dispatcher/app-dispatcher', stubs)
-  t.mock(electron.ipc).expects('send').once()
-  dispatcher.dispatch({action_type: 'yellow'})
 
-  dispatcher.register('test-store', () => null)
-})
+  let fake_window = {
+    webContents: {
+      send: (name, payload) => electron.ipc.emit(name, {}, payload)
+    }
+  }
+  t.stub(electron['browser-window'], 'getAllWindows').returns([fake_window])
 
-let setup = t => {
-  let stubs = Object.assign({}, electron)
-  t.stub(electron.ipc, 'on').callsArgWith(1, {}, {action_type: 'coverage'})
-  let dispatcher = proxyquire('../../app/dispatcher/app-dispatcher', stubs)
-  return {dispatcher}
-}
+  let b_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher', electron)
+  let original_on = electron.ipc.on.bind(electron.ipc)
+  let on = t.stub(electron.ipc, 'on', function (name, cb) {
+    original_on(name, function () {
+      // strip 'ev'
+      let args = []
+      for (let i = 1; i < arguments.length; i++) {
+        args.push(arguments[i])
+      }
+      cb.apply(null, args)
+    })
+  })
+  let r_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher', r_stubs)
+  on.restore()
 
-test('dispatcher (browser side)', t => {
-  t.case('dispatch', t => {
-    let {dispatcher} = setup(t)
+  let r_spy = t.spy(function () { console.log('r_spy ' + JSON.stringify(Array.prototype.slice.call(arguments))) })
+  r_dispatcher.register('renderer-store', r_spy)
+
+  let b_spy = t.spy(function () { console.log('b_spy ' + JSON.stringify(Array.prototype.slice.call(arguments))) })
+  b_dispatcher.register('browser-store', b_spy)
+
+  t.case('dispatch from renderer', t => {
+    let payload = {action_type: 'hello_from_renderer'}
+    r_dispatcher.dispatch(payload)
+
+    sinon.assert.calledWith(r_spy, payload)
+    sinon.assert.calledWith(b_spy, payload)
+  })
+
+  t.case('dispatch from browser', t => {
+    let payload = {action_type: 'hello_from_browser', private: true}
+    b_dispatcher.dispatch(payload)
+
+    sinon.assert.calledWith(r_spy, payload)
+    sinon.assert.calledWith(b_spy, payload)
+
     t.throws(() => {
-      dispatcher.register(() => null)
+      b_dispatcher.register(() => null)
     }, 'validates store name')
-    dispatcher.register('test-store', () => null)
-    dispatcher.dispatch({action_type: 'yellow'})
-    dispatcher.dispatch({action_type: 'green', private: true})
+
     t.throws(() => {
-      dispatcher.dispatch({atcion_type: 'typo'})
+      b_dispatcher.dispatch({atcion_type: 'typo'})
     }, 'validate action type')
   })
 })
