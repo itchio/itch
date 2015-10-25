@@ -45,7 +45,7 @@ let self = {
 
   ext: () => {
     if (os.platform() === 'win32') {
-      return 'exe'
+      return '.exe'
     } else {
       return ''
     }
@@ -102,6 +102,8 @@ let self = {
     let channel = `${self.root_url()}/${name}/${self.os()}-${self.arch()}`
 
     let download_version = (version) => {
+      console.log('download_version() ' + version)
+
       let archive_name = self.archive_name(name)
       let archive_url = `${channel}/${version}/${archive_name}`
       onstatus(`Downloading ${name} ${version}`, 'download')
@@ -137,6 +139,7 @@ let self = {
       return new Promise((resolve, reject) => {
         let url = `${channel}/LATEST`
         needle.get(url, (err, res) => {
+        console.log('err, res = ' + err + ', ' + res)
           if (err || res.statusCode !== 200) {
             return reject(err || `status code: ${res.statusCode}`)
           }
