@@ -139,7 +139,6 @@ let self = {
       return new Promise((resolve, reject) => {
         let url = `${channel}/LATEST`
         needle.get(url, (err, res) => {
-        console.log('err, res = ' + err + ', ' + res)
           if (err || res.statusCode !== 200) {
             return reject(err || `status code: ${res.statusCode}`)
           }
