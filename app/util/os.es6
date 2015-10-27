@@ -60,7 +60,7 @@ let self = {
 
           resolve({code, stdout, stderr, parsed})
         } else {
-          reject(`${command} exited with code ${code}\nstdout: ${stdout}\n\nstderr: ${stderr}`)
+          reject(new Error(`${command} exited with code ${code}\nstdout: ${stdout}\n\nstderr: ${stderr}`))
         }
       })
     })
