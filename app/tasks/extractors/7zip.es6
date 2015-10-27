@@ -2,9 +2,11 @@
 import Promise from 'bluebird'
 import SevenZip from 'node-7z'
 import path from 'path'
+import {object} from 'underscore'
 
 import {is_tar} from '../../util/sniff'
 import noop from '../../util/noop'
+import spawn from '../../util/spawn'
 
 import glob from '../../promised/glob'
 import mkdirp from '../../promised/mkdirp'
@@ -18,19 +20,22 @@ let self = {
   },
 
   sevenzip_list: function (archive_path) {
-    return new Promise((resolve, reject) => {
-      let op = new SevenZip().list(archive_path)
-      let sizes = {}
-      let total_size = 0
-      op.progress((files) => {
-        for (let f of files) {
-          total_size += f.size
-          sizes[self.normalize(f.name)] = f.size
-        }
-      })
-      op.then((r) => resolve({ sizes, total_size }))
-      op.catch((e) => reject(e))
-    })
+    let sizes = {}
+    let total_size = 0
+
+    return spawn({
+      command: '7za',
+      args: ['-slt', 'l', archive_path],
+      split: '\n\n',
+      ontoken: (token) => {
+        let spec = object(token.split('\n').map((x) => x.replace(/\r$/, '').split(' = ')))
+        if (!spec.Size || !spec.Path) return
+        let path = spec.Path
+        let size = parseInt(spec.Size, 10)
+
+        total_size += (sizes[path] = size)
+      }
+    }).then(() => ({sizes, total_size}))
   },
 
   sevenzip_extract: function (archive_path, dest_path, onprogress) {
