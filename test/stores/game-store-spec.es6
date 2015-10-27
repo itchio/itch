@@ -60,7 +60,7 @@ test('GameStore', t => {
       games: [7, 9].map((id) => ({id}))
     })
 
-    let update = t.stub(db, 'update')
+    let update = t.stub(db, 'update').resolves()
     handler({ action_type: AppConstants.FETCH_GAMES, path: 'collections/78' })
 
     return new Promise((resolve, reject) => {

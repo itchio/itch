@@ -27,7 +27,7 @@ function login_with_password (action) {
   return api.client.login_with_password(username, password).then((res) => {
     let key = res.key.key
     let user = new api.User(api.client, key)
-    user.me().then(res => {
+    return user.me().then(res => {
       me = res.user
       got_key(key)
     })
