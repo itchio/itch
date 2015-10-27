@@ -22,7 +22,7 @@ let self = {
     return (
       glob(`${install_path}/**/*.app/`)
       .then(self.skip_junk)
-      .each(common.fix_execs)
+      .each((x) => { common.fix_execs(x); return x })
       .then((executables) => {
         if (executables.length > 0) {
           return {executables}

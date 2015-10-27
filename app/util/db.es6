@@ -165,7 +165,7 @@ let store = self.store
 
 ;['insert', 'update', 'find', 'find_one', 'load_database'].forEach((method) => {
   let node_version = store[camelize(method)]
-  self[method] = Promise.promisify(node_version, store)
+  self[method] = Promise.promisify(node_version, {context: store})
 })
 
 export default self
