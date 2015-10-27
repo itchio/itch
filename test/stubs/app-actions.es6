@@ -1,9 +1,8 @@
 
-import Promise from 'bluebird'
 import proxyquire from 'proxyquire'
 import electron from './electron'
 
-let noop = () => Promise.resolve()
+let noop = () => null
 
 let self = {
   '@noCallThru': true
