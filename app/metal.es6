@@ -1,6 +1,5 @@
 
 require('bluebird').config({
-  warnings: true,
   longStackTraces: true,
   cancellation: true
 })
