@@ -75,14 +75,16 @@ ProgressBar.propTypes = {
  */
 class ErrorList extends React.Component {
   render () {
-    let {errors} = this.props
+    let error = this.props.errors
 
-    if (!errors) {
+    if (!error) {
       return <div/>
     }
 
+    let errors = {error}
+
     if (!Array.isArray(errors)) {
-      errors = [errors]
+      errors = [error]
     }
 
     return <ul className='form_errors'>

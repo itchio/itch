@@ -45,7 +45,7 @@ test('api', t => {
     let spy = t.spy()
     request.resolves({body: {errors}, statusCode: 200})
     return client.request('GET', '', {}).catch(spy).then(res => {
-      sinon.assert.calledWith(spy, errors)
+      sinon.assert.calledWith(spy, sinon.match({errors}))
     }).then(res => {
       request.resolves({body: {id: 42}, statusCode: 200})
     })

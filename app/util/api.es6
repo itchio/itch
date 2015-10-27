@@ -1,5 +1,13 @@
 
 import needle from '../promised/needle'
+import ExtendableError from 'es6-error'
+
+class ApiError extends ExtendableError {
+  constructor (errors) {
+    super(errors.join(', '))
+    this.errors = errors
+  }
+}
 
 /**
  * Wrapper for the itch.io API
@@ -21,7 +29,7 @@ class Client {
       }
 
       if (body.errors) {
-        throw body.errors
+        throw new ApiError(body.errors)
       }
       return body
     })
