@@ -1,39 +1,33 @@
 
-import Promise from 'bluebird'
-import child_process from 'child_process'
-import StreamSplitter from 'stream-splitter'
 import path from 'path'
-
-import mkdirp from '../promised/mkdirp'
+import {partial} from 'underscore'
 
 import noop from './noop'
+import spawn from './spawn'
+import mkdirp from '../promised/mkdirp'
 
 let self = {
+  parse_butler_status: function (opts, token) {
+    let {onprogress = noop} = opts
+
+    let status = JSON.parse(token)
+    if (status.Percent) {
+      onprogress({percent: status.Percent})
+    }
+  },
+
   /*
    * Uses https://github.com/itchio/butler to download a file
    */
   request: function (opts) {
-    let {url, dest, onprogress = noop} = opts
+    let {url, dest} = opts
 
     return mkdirp(path.dirname(dest))
-      .then(() => {
-        let args = ['dl', url, dest]
-        let child = child_process.spawn('butler', args)
-        let splitter = child.stdout.pipe(StreamSplitter('\n'))
-        splitter.encoding = 'utf8'
-
-        splitter.on('token', (token) => {
-          let status = JSON.parse(token)
-          if (status.Percent) {
-            onprogress({percent: status.Percent})
-          }
-        })
-
-        return new Promise((resolve, reject) => {
-          child.on('close', resolve)
-          child.on('error', reject)
-        })
-      })
+      .then(() => spawn({
+        command: 'butler',
+        args: ['dl', url, dest],
+        ontoken: partial(self.parse_butler_status, opts)
+      }))
   }
 }
 

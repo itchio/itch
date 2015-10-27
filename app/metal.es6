@@ -1,5 +1,9 @@
 
-console.log(`In metal, process type = ${process.type}`)
+require('bluebird').config({
+  warnings: true,
+  longStackTraces: true,
+  cancellation: true
+})
 
 require('source-map-support').install()
 require('./util/crash-reporter').mount()

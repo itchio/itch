@@ -1,5 +1,9 @@
 
-console.log(`In chrome, process.type = ${process.type}`)
+require('bluebird').config({
+  warnings: true,
+  longStackTraces: true,
+  cancellation: true
+})
 
 import ReactDOM from 'react-dom'
 import React from 'react'

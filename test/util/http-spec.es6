@@ -14,13 +14,17 @@ test('http', t => {
     onprogress: () => {}
   }
 
-  let child = Object.assign({
-    stdout: new PassThrough()
-  }, EventEmitter.prototype)
+  let child
 
   let child_process = {
-    spawn: () => child,
-    mkdirp: () => Promise.resolve()
+    spawn: () => {
+      child = Object.assign({
+        stdout: new PassThrough()
+      }, EventEmitter.prototype)
+      return child
+    },
+    mkdirp: () => Promise.resolve(),
+    '@global': true
   }
 
   let stubs = Object.assign({
@@ -47,28 +51,4 @@ test('http', t => {
     t.mock(http_opts).expects('onprogress').withArgs({percent: 39})
     return http.request(http_opts)
   })
-
-  // t.case('rejects errors', t => {
-  //   setImmediate(() => { tube.emit('error', 'meow') })
-  //   return t.rejects(http.request(get_http_opts()))
-  // })
-  //
-  // t.case('progress', t => {
-  //   let http_opts = get_http_opts()
-  //   t.mock(http_opts).expects('onprogress').withArgs({percent: 25})
-  //
-  //   setImmediate(() => {
-  //     tube.emit('headers', {'content-length': 512})
-  //     tube.write(new Buffer(64))
-  //   })
-  //
-  //   setImmediate(() => {
-  //     tube.write(new Buffer(64))
-  //   })
-  //
-  //   setTimeout(() => {
-  //     tube.end()
-  //   }, 20)
-  //   return http.request(http_opts)
-  // })
 })
