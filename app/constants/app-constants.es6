@@ -3,13 +3,21 @@ import keyMirror from 'keymirror'
 
 export default keyMirror({
   BOOT: null,
+  WINDOW_READY: null,
   SETUP_STATUS: null,
   SETUP_DONE: null,
 
   FOCUS_WINDOW: null,
-  WINDOW_READY: null,
   HIDE_WINDOW: null,
   LIBRARY_FOCUS_PANEL: null,
+
+  /* Self updates */
+  CHECK_FOR_SELF_UPDATE: null,
+  CHECKING_FOR_SELF_UPDATE: null,
+  SELF_UPDATE_AVAILABLE: null,
+  SELF_UPDATE_NOT_AVAILABLE: null,
+  SELF_UPDATE_ERROR: null,
+  SELF_UPDATE_DOWNLOADED: null,
 
   /** User requested game to be installed */
   INSTALL_QUEUE: null,

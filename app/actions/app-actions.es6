@@ -4,40 +4,11 @@ import AppConstants from '../constants/app-constants'
 
 let self = {
   boot: () => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.BOOT
-    })
-  },
-
-  quit: () => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.QUIT
-    })
-  },
-
-  focus_panel: (panel) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.LIBRARY_FOCUS_PANEL,
-      panel
-    })
-  },
-
-  focus_window: () => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.FOCUS_WINDOW
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.BOOT })
   },
 
   window_ready: () => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.WINDOW_READY
-    })
-  },
-
-  hide_window: () => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.HIDE_WINDOW
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.WINDOW_READY })
   },
 
   setup_status: (message, icon) => {
@@ -48,42 +19,46 @@ let self = {
   },
 
   setup_done: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.SETUP_DONE })
+  },
+
+  focus_window: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.FOCUS_WINDOW })
+  },
+
+  hide_window: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.HIDE_WINDOW })
+  },
+
+  focus_panel: (panel) => {
     AppDispatcher.dispatch({
-      action_type: AppConstants.SETUP_DONE
+      action_type: AppConstants.LIBRARY_FOCUS_PANEL,
+      panel
     })
   },
 
-  no_stored_credentials: () => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.NO_STORED_CREDENTIALS
-    })
+  check_for_self_update: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.CHECK_FOR_SELF_UPDATE })
   },
 
-  login_with_password: (username, password) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.LOGIN_WITH_PASSWORD,
-      private: true,
-      username, password
-    })
+  checking_for_self_update: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.CHECKING_FOR_SELF_UPDATE })
   },
 
-  login_failure: (errors) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.LOGIN_FAILURE,
-      errors
-    })
+  self_update_available: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.SELF_UPDATE_AVAILABLE })
   },
 
-  authenticated: () => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.AUTHENTICATED
-    })
+  self_update_not_available: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.SELF_UPDATE_NOT_AVAILABLE })
   },
 
-  logout: (key) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.LOGOUT
-    })
+  self_update_error: (message) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.SELF_UPDATE_ERROR, message })
+  },
+
+  self_update_downloaded: (version) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.SELF_UPDATE_DOWNLOADED, version })
   },
 
   install_queue: (game_id) => {
@@ -116,9 +91,7 @@ let self = {
   },
 
   bounce: () => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.BOUNCE
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.BOUNCE })
   },
 
   notify: (message) => {
@@ -126,6 +99,33 @@ let self = {
       action_type: AppConstants.NOTIFY,
       message
     })
+  },
+
+  no_stored_credentials: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.NO_STORED_CREDENTIALS })
+  },
+
+  login_with_password: (username, password) => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.LOGIN_WITH_PASSWORD,
+      private: true,
+      username, password
+    })
+  },
+
+  login_failure: (errors) => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.LOGIN_FAILURE,
+      errors
+    })
+  },
+
+  authenticated: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.AUTHENTICATED })
+  },
+
+  logout: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.LOGOUT })
   },
 
   fetch_games: (path) => {
@@ -140,6 +140,10 @@ let self = {
       action_type: AppConstants.EVAL,
       code
     })
+  },
+
+  quit: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.QUIT })
   }
 }
 

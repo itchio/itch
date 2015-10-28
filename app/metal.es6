@@ -7,11 +7,12 @@ require('bluebird').config({
 require('source-map-support').install()
 require('./util/crash-reporter').mount()
 
-if (require('./util/auto-updater').run()) {
+if (require('./util/auto-updater').start()) {
   // squirrel on win32 sometimes requires exiting as early as possible
   process.exit(0)
 }
 
+require('./stores/self-update-store')
 require('./stores/window-store')
 require('./stores/collection-store')
 require('./stores/game-store')

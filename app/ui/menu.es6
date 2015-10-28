@@ -19,12 +19,12 @@ let menus = {
       {
         label: 'Close Window',
         accelerator: 'CmdOrCtrl+W',
-        click: () => AppActions.hide_window()
+        click: AppActions.hide_window
       },
       {
         label: 'Quit',
         accelerator: 'CmdOrCtrl+Q',
-        click: () => AppActions.quit()
+        click: AppActions.quit
       }
     ]
   },
@@ -71,7 +71,7 @@ let menus = {
     submenu: [
       {
         label: 'Change user...',
-        click: () => AppActions.logout()
+        click: AppActions.logout
       }
     ]
   },
@@ -93,7 +93,7 @@ let menus = {
       },
       {
         label: 'Check for Update',
-        click: () => console.log('check for update: stub')
+        click: AppActions.check_for_self_update
       },
       {
         type: 'separator'
