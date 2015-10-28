@@ -39,7 +39,7 @@ let self = {
     return mkdirp(dest_path)
       .then(() => spawn({
         command: '7za',
-        args: ['x', archive_path, '-o', dest_path, '-y'],
+        args: ['x', archive_path, '-o' + dest_path, '-y'],
         split: '\n',
         ontoken: (token) => {
           if (err_state) {
