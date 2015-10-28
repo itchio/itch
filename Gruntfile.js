@@ -7,7 +7,7 @@ var package_path = path.join(__dirname, 'package.json')
 var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version
 var ico_path = 'app/static/images/itchio.ico'
 var icns_path = 'app/static/images/itchio.icns'
-var electron_version = '0.33.7'
+var electron_version = '0.34.1'
 var out_dir = path.join('build', version)
 var company_name = 'Itch Corp'
 
@@ -29,7 +29,8 @@ module.exports = function (grunt) {
     // Compile ES6 files to ES5
     babel: {
       options: {
-        sourceMap: true
+        sourceMap: true,
+        optional: ['bluebirdCoroutines']
       },
       dist: {
         files: [{
