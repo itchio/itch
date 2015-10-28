@@ -1,6 +1,8 @@
 
+import Promise from 'bluebird'
+
 let self = {
-  request: () => null
+  request: () => Promise.resolve()
 }
 
 export default self
