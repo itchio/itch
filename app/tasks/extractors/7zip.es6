@@ -1,6 +1,4 @@
 
-import Promise from 'bluebird'
-import SevenZip from 'node-7z'
 import path from 'path'
 import {object} from 'underscore'
 
@@ -15,10 +13,6 @@ import fs from '../../promised/fs'
 let log = require('../../util/log')('7zip')
 
 let self = {
-  normalize: function (p) {
-    return path.normalize(p.replace(/[\s]*$/, ''))
-  },
-
   sevenzip_list: function (archive_path) {
     let sizes = {}
     let total_size = 0
@@ -28,25 +22,45 @@ let self = {
       args: ['-slt', 'l', archive_path],
       split: '\n\n',
       ontoken: (token) => {
-        let spec = object(token.split('\n').map((x) => x.replace(/\r$/, '').split(' = ')))
-        if (!spec.Size || !spec.Path) return
-        let path = spec.Path
-        let size = parseInt(spec.Size, 10)
+        let item = object(token.split('\n').map((x) => x.replace(/\r$/, '').split(' = ')))
+        if (!item.Size || !item.Path) return
+        let item_path = path.normalize(item.Path)
+        let size = parseInt(item.Size, 10)
 
-        total_size += (sizes[path] = size)
+        total_size += (sizes[item_path] = size)
       }
     }).then(() => ({sizes, total_size}))
   },
 
   sevenzip_extract: function (archive_path, dest_path, onprogress) {
-    return mkdirp(dest_path).then(() => {
-      return new Promise((resolve, reject) => {
-        let op = new SevenZip().extractFull(archive_path, dest_path)
-        op.progress(onprogress)
-        op.then((r) => resolve(r))
-        op.catch((e) => reject(e))
+    let err_state = false
+    let err
+
+    return mkdirp(dest_path)
+      .then(() => spawn({
+        command: '7za',
+        args: ['x', archive_path, '-o', dest_path, '-y'],
+        split: '\n',
+        ontoken: (token) => {
+          if (err_state) {
+            if (!err) err = token
+            return
+          }
+          if (token.match(/^Error:/)) {
+            err_state = 1
+            return
+          }
+
+          let matches = token.match(/^Extracting\s+(.*)$/)
+          if (!matches) return
+
+          let item_path = path.normalize(matches[1])
+          onprogress(item_path)
+        }
+      }))
+      .then(() => {
+        if (err) throw err
       })
-    })
   },
 
   extract: function (opts) {
@@ -62,8 +76,8 @@ let self = {
         total_size = info.total_size
         log(opts, `Archive contains ${Object.keys(info.sizes).length} files, ${total_size} total`)
 
-        let sevenzip_progress = (files) => {
-          files.forEach((f) => extracted_size += (info.sizes[self.normalize(f)] || 0))
+        let sevenzip_progress = (f) => {
+          extracted_size += (info.sizes[f] || 0)
           let percent = extracted_size / total_size * 100
           onprogress({ extracted_size, total_size, percent })
         }
