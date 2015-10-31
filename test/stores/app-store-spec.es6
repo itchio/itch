@@ -73,7 +73,7 @@ test('AppStore', t => {
     handler({ action_type: AppConstants.LOGIN_WITH_PASSWORD })
     t.ok(get_state().login.loading, 'loading after login_with_password')
 
-    handler({ action_type: AppConstants.LOGIN_FAILURE })
+    handler({ action_type: AppConstants.LOGIN_FAILURE, errors: ['ha!'] })
     t.notOk(get_state().login.loading, 'not loading after failure')
 
     handler({ action_type: AppConstants.LOGIN_WITH_PASSWORD })
