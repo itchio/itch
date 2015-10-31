@@ -3,6 +3,8 @@ import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 import Store from './store'
 
+import defer from '../util/defer'
+
 import app from 'app'
 import BrowserWindow from 'browser-window'
 
@@ -15,6 +17,16 @@ let WindowStore = Object.assign(new Store('window-store'), {
     f(window)
   }
 })
+
+function boot () {
+  let should_quit = app.makeSingleInstance(AppActions.focus_window)
+
+  if (should_quit) {
+    defer(AppActions.quit)
+  } else {
+    show()
+  }
+}
 
 function show () {
   if (window) {
@@ -62,7 +74,7 @@ function _eval (action) {
 }
 
 AppDispatcher.register('window-store', Store.action_listeners(on => {
-  on(AppConstants.BOOT, show)
+  on(AppConstants.BOOT, boot)
   on(AppConstants.FOCUS_WINDOW, show)
   on(AppConstants.HIDE_WINDOW, hide)
   on(AppConstants.EVAL, _eval)

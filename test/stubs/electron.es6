@@ -5,6 +5,7 @@ let stubs = {
   app: {
     getVersion: () => '1.0',
     getPath: () => 'tmp/',
+    makeSingleInstance: (cb) => false,
     quit: rnil,
     dock: {
       setMenu: rnil,
