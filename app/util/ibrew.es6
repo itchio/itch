@@ -94,6 +94,7 @@ let self = {
   },
 
   download_to_file: (url, file) => {
+    console.log(`downloading ${url} to ${file}`)
     let req = needle.get(url)
     let sink = fstream.Writer({
       path: file,
@@ -136,7 +137,7 @@ let self = {
       onstatus(`Downloading ${name} ${version}`, 'download')
       log(opts, `downloading ${name} ${version} from ${archive_url}`)
 
-      await self.download_to_file(archive_path, archive_path)
+      await self.download_to_file(archive_url, archive_path)
 
       if (formula.format === 'executable') {
         log(opts, `executable formula, no extract step`)
