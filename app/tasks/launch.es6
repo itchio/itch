@@ -92,20 +92,20 @@ let self = {
     return install.executables && install.executables.length > 0
   },
 
-  start: function (opts) {
+  start: async function (opts) {
     let {id} = opts
 
-    return InstallStore.get_install(id).then((install) => {
-      if (!self.valid_install(install)) {
-        return configure.start(opts).then(() => InstallStore.get_install(id))
-      }
-      return install
-    }).then((install) => {
-      if (!self.valid_install(install)) {
-        throw new Error('No executables found')
-      }
-      return install
-    }).then(install => self.launch_install(opts, install))
+    let install = await InstallStore.get_install(id)
+    if (!self.valid_install(install)) {
+      await configure.start(opts)
+      install = await InstallStore.get_install(id)
+    }
+
+    if (!self.valid_install(install)) {
+      throw new Error('No executables found')
+    }
+
+    await self.launch_install(opts, install)
   }
 }
 

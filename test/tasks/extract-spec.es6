@@ -1,5 +1,6 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
+import sinon from 'sinon'
 
 import fixture from '../fixture'
 import electron from '../stubs/electron'
@@ -46,7 +47,7 @@ test('extract', t => {
       }
 
       return extract.extract(extract_opts).catch(spy).finally(() => {
-        t.ok(spy.calledWithMatch(/invalid archive/), 'archive rejected')
+        sinon.assert.calledWith(spy, sinon.match.has('message', sinon.match(/invalid archive/)))
       })
     })
   })
