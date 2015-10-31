@@ -44,28 +44,26 @@ let natural_transitions = {
   'extract': 'configure'
 }
 
-function task_error_handler (id, task_name) {
-  return function (err) {
-    if (err instanceof Transition) {
-      log(opts, `[${task_name} => ${err.to}] ${err.reason}`)
-      let data = err.data || {}
-      setImmediate(() => queue_task(id, err.to, data))
-    } else if (err instanceof InputRequired) {
-      let msg = `(stub) input required by ${task_name}`
-      log(opts, msg)
-      AppActions.install_progress({id, task: 'error', error: msg})
-    } else if (err instanceof Crash) {
-      let msg = `crashed with: ${JSON.stringify(err, null, 2)}`
-      log(opts, msg)
-      AppActions.install_progress({id, task: 'idle', error: msg})
-    } else {
-      log(opts, err.stack || err)
-      AppActions.install_progress({id, task: 'error', error: '' + err})
-    }
+function handle_task_error (err, id, task_name) {
+  if (err instanceof Transition) {
+    log(opts, `[${task_name} => ${err.to}] ${err.reason}`)
+    let data = err.data || {}
+    setImmediate(() => queue_task(id, err.to, data))
+  } else if (err instanceof InputRequired) {
+    let msg = `(stub) input required by ${task_name}`
+    log(opts, msg)
+    AppActions.install_progress({id, task: 'error', error: msg})
+  } else if (err instanceof Crash) {
+    let msg = `crashed with: ${JSON.stringify(err, null, 2)}`
+    log(opts, msg)
+    AppActions.install_progress({id, task: 'idle', error: msg})
+  } else {
+    log(opts, err.stack || err)
+    AppActions.install_progress({id, task: 'error', error: '' + err})
   }
 }
 
-function queue_task (id, task_name, data = {}) {
+async function queue_task (id, task_name, data = {}) {
   let task = require(`../tasks/${task_name}`)
   let task_opts = Object.assign({}, opts, data, {
     id,
@@ -76,33 +74,32 @@ function queue_task (id, task_name, data = {}) {
   log(opts, `starting ${task_name}`)
 
   AppActions.install_progress({id, progress: 0, task: task_name})
-  task.start(task_opts)
-    .then((res) => {
-      if (task_name === 'extract') {
-        db.find_one({_table: 'installs', _id: id}).then((install) => {
-          if (!install.success_once) {
-            return db.find_one({_table: 'games', id: install.game_id}).then((game) => {
-              AppActions.notify(`${game.title} is ready!`)
-              AppActions.install_update(id, {success_once: true})
-            })
-          }
-        })
-      }
 
-      let transition = natural_transitions[task_name]
-      if (transition) throw new Transition({to: transition})
-
-      log(opts, `task ${task_name} finished with ${JSON.stringify(res)}`)
-      AppActions.install_progress({id, progress: 0})
-    })
-    .then(() => {
-      if (task_opts.then) {
-        queue_task(id, task_opts.then)
-      } else {
-        AppActions.install_progress({id, task: 'idle'})
+  try {
+    let res = await task.start(task_opts)
+    if (task_name === 'extract') {
+      let install = await InstallStore.get_install(id)
+      if (!install.success_once) {
+        let game = await db.find_one({_table: 'games', id: install.game_id})
+        AppActions.notify(`${game.title} is ready!`)
+        AppActions.install_update(id, {success_once: true})
       }
-    })
-    .catch(task_error_handler(id, task_name))
+    }
+
+    let transition = natural_transitions[task_name]
+    if (transition) throw new Transition({to: transition})
+
+    log(opts, `task ${task_name} finished with ${JSON.stringify(res)}`)
+    AppActions.install_progress({id, progress: 0})
+
+    if (task_opts.then) {
+      queue_task(id, task_opts.then)
+    } else {
+      AppActions.install_progress({id, task: 'idle'})
+    }
+  } catch (err) {
+    handle_task_error(err, id, task_name)
+  }
 }
 
 function initial_progress (record) {
