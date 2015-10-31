@@ -84,7 +84,8 @@ let self = {
   launch_install: function (opts, install) {
     let sorted = self.sort_by_depth(install.executables)
     log(opts, `executables (from best to worst): ${JSON.stringify(sorted, null, 2)}`)
-    let exe_path = sorted[0]
+    let app_path = InstallStore.app_path(opts.id)
+    let exe_path = path.join(app_path, sorted[0])
     return self.launch(exe_path, [], opts)
   },
 

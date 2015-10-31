@@ -1,4 +1,7 @@
 
+import path from 'path'
+import {partial} from 'underscore'
+
 import os from '../util/os'
 
 let log = require('../util/log')('tasks/configure')
@@ -27,6 +30,8 @@ let self = {
     log(opts, `configuring ${app_path}`)
 
     let {executables} = await self.configure(app_path)
+    executables = executables.map(partial(path.relative, app_path))
+
     AppActions.install_update(id, {executables})
     return executables.length + ' candidates'
   }
