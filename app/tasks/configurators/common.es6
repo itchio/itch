@@ -15,14 +15,11 @@ function fix_execs (base_path) {
   )
 }
 
-function sniff_and_chmod (file) {
-  return sniff.path(file).then((format) => {
-    if (!format) return
-    return (
-      fs.chmodAsync(file, 0o777)
-      .then(() => file)
-    )
-  })
+async function sniff_and_chmod (file) {
+  if (await sniff.path(file)) {
+    await fs.chmodAsync(file, 0o777)
+    return file
+  }
 }
 
-export default { fix_execs }
+export default {fix_execs}

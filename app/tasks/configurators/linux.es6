@@ -2,11 +2,9 @@
 import common from './common'
 
 let self = {
-  configure: function (app_path) {
-    return (
-      common.fix_execs(app_path)
-      .then((executables) => ({executables}))
-    )
+  configure: async function (app_path) {
+    let executables = await common.fix_execs(app_path)
+    return {executables}
   }
 }
 

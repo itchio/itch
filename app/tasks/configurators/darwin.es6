@@ -1,3 +1,4 @@
+
 import Promise from 'bluebird'
 
 import common from './common'
@@ -8,34 +9,21 @@ let self = {
   // to be hidden / in trash / isn't in anyway relevant to what
   // we're trying to do
   skip_junk: function (bundle_paths) {
-    return Promise.resolve(bundle_paths).filter((file) => {
-      if (/__MACOSX/.test(file)) {
-        // should be hidden
-        return false
-      }
-      return true
-    }).then((files) => files.filter((x) => !!x))
+    return bundle_paths.filter((file) => !/__MACOSX/.test(file))
   },
 
-  configure: function (install_path) {
-    // gotcha: return '.app' bundles, not actual Mach-O executables
-    return (
-      glob(`${install_path}/**/*.app/`)
-      .then(self.skip_junk)
-      .each((x) => { common.fix_execs(x); return x })
-      .then((executables) => {
-        if (executables.length > 0) {
-          return {executables}
-        }
-        // some games aren't properly packaged app bundles
-        // but rather a shell script / binary - try it the
-        // linux way
-        return (
-          common.fix_execs(install_path)
-          .then((executables) => ({executables}))
-        )
-      })
-    )
+  configure: async function (install_path) {
+    let bundles = await glob(`${install_path}/**/*.app/`).then(self.skip_junk)
+
+    if (bundles.length > 0) {
+      await Promise.each(bundles, common.fix_execs)
+      return {executables: bundles}
+    }
+
+    // some games aren't properly packaged app bundles but rather a shell
+    // script / binary - try it the linux way
+    let executables = await common.fix_execs(install_path)
+    return {executables}
   }
 }
 
