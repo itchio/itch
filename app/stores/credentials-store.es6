@@ -22,6 +22,10 @@ function got_key (key) {
   AppActions.authenticated(key)
 }
 
+function login_failure (res) {
+  AppActions.login_failure(res.errors)
+}
+
 function login_with_password (action) {
   let {username, password} = action
   return api.client.login_with_password(username, password).then((res) => {
@@ -31,7 +35,7 @@ function login_with_password (action) {
       me = res.user
       got_key(key)
     })
-  }).catch(AppActions.login_failure)
+  }).catch(login_failure)
 }
 
 function setup_done () {
@@ -42,7 +46,7 @@ function setup_done () {
       me = res.user
       CredentialsStore.emit_change()
       got_key(key)
-    }).catch(AppActions.login_failure)
+    }).catch(login_failure)
   } else {
     AppActions.no_stored_credentials()
   }

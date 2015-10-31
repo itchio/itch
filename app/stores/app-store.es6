@@ -61,7 +61,7 @@ function login_with_password (action) {
 }
 
 function login_failure (action) {
-  let errors = {action}
+  let {errors} = action
   state = mori.assocIn(state, ['login', 'loading'], false)
   state = mori.assocIn(state, ['login', 'errors'], errors.stack || errors)
   switch_page('login')
