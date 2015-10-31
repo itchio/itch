@@ -7,6 +7,10 @@ class ApiError extends ExtendableError {
     super(errors.join(', '))
     this.errors = errors
   }
+
+  toString () {
+    return `API Error: ${this.errors.join(', ')}`
+  }
 }
 
 /**

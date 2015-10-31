@@ -7,9 +7,10 @@ var package_path = path.join(__dirname, 'package.json')
 var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version
 var ico_path = 'app/static/images/itchio.ico'
 var icns_path = 'app/static/images/itchio.icns'
-var electron_version = '0.34.1'
+var electron_version = '0.34.2'
 var out_dir = path.join('build', version)
 var company_name = 'Itch Corp'
+var ignore_for_bundle = '(test|build|coverage)'
 
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt)
@@ -87,14 +88,20 @@ module.exports = function (grunt) {
       darwin: {
         options: {
           dir: '.',
+          ignore: ignore_for_bundle,
           name: 'itch.io',
           platform: 'darwin',
           arch: 'x64',
           version: electron_version,
           out: out_dir,
           icon: icns_path,
+          prune: true,
           asar: true,
-          'app-version': version
+          'app-version': version,
+          protocols: [{
+            name: 'itch.io',
+            schemes: ['itchio']
+          }]
         }
       },
       linux: {
