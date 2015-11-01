@@ -13,7 +13,7 @@ var company_name = 'Itch Corp'
 
 var grunt_electron_common = {
   dir: '.',
-  ignore: '(test|build|coverage)',
+  ignore: '(test|build|coverage|tmp)',
   name: 'itch.io',
   version: electron_version,
   'app-version': version,
