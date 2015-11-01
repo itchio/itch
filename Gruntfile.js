@@ -72,15 +72,15 @@ module.exports = function (grunt) {
           arch: 'all',
           icon: ico_path,
           'version-string': {
-              CompanyName: company_name,
-              LegalCopyright: license,
-              FileDescription: 'itch.io desktop client',
-              OriginalFileName: 'itch.io.exe',
-              FileVersion: version,
-              AppVersion: version,
-              ProductName: 'itch.io',
-              InternalName: 'itch.io.exe'
-            }
+            CompanyName: company_name,
+            LegalCopyright: license,
+            FileDescription: 'itch.io desktop client',
+            OriginalFileName: 'itch.io.exe',
+            FileVersion: version,
+            AppVersion: version,
+            ProductName: 'itch.io',
+            InternalName: 'itch.io.exe'
+          }
         })
       },
       darwin: {
@@ -97,7 +97,7 @@ module.exports = function (grunt) {
       linux: {
         options: Object.assign({}, grunt_electron_common, {
           platform: 'linux',
-          arch: 'all',
+          arch: 'all'
         })
       }
     },
