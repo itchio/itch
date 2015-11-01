@@ -10,7 +10,17 @@ var icns_path = 'app/static/images/itchio.icns'
 var electron_version = '0.34.2'
 var out_dir = path.join('build', version)
 var company_name = 'Itch Corp'
-var ignore_for_bundle = '(test|build|coverage)'
+
+var grunt_electron_common = {
+  dir: '.',
+  ignore: '(test|build|coverage)',
+  name: 'itch.io',
+  version: electron_version,
+  'app-version': version,
+  prune: true,
+  asar: true,
+  out: out_dir
+}
 
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt)
@@ -22,9 +32,7 @@ module.exports = function (grunt) {
         sourceMap: true
       },
       dist: {
-        files: {
-          'app/style/main.css': 'app/style/main.scss'
-        }
+        files: { 'app/style/main.css': 'app/style/main.scss' }
       }
     },
     // Compile ES6 files to ES5
@@ -48,73 +56,49 @@ module.exports = function (grunt) {
       es6: {
         files: ['app/**/*.es6', 'test/**/*.es6'],
         tasks: ['newer:babel'],
-        options: {
-          debounceDelay: 20
-        }
+        options: { debounceDelay: 20 }
       },
       scss: {
         files: ['app/**/*.scss'],
         tasks: ['sass'],
-        options: {
-          debounceDelay: 20
-        }
+        options: { debounceDelay: 20 }
       }
     },
     // Create a .exe, .app, folder for windows, mac, linux
     electron: {
       win32: {
-        options: {
-          dir: '.',
-          name: 'itch.io',
+        options: Object.assign({}, grunt_electron_common, {
           platform: 'win32',
-          arch: 'ia32',
-          version: electron_version,
-          out: out_dir,
+          arch: 'all',
           icon: ico_path,
-          asar: true,
-          'app-version': version,
           'version-string': {
-            CompanyName: company_name,
-            LegalCopyright: license,
-            FileDescription: 'itch.io desktop client',
-            OriginalFileName: 'itch.io.exe',
-            FileVersion: version,
-            AppVersion: version,
-            ProductName: 'itch.io',
-            InternalName: 'itch.io.exe'
-          }
-        }
+              CompanyName: company_name,
+              LegalCopyright: license,
+              FileDescription: 'itch.io desktop client',
+              OriginalFileName: 'itch.io.exe',
+              FileVersion: version,
+              AppVersion: version,
+              ProductName: 'itch.io',
+              InternalName: 'itch.io.exe'
+            }
+        })
       },
       darwin: {
-        options: {
-          dir: '.',
-          ignore: ignore_for_bundle,
-          name: 'itch.io',
+        options: Object.assign({}, grunt_electron_common, {
           platform: 'darwin',
           arch: 'x64',
-          version: electron_version,
-          out: out_dir,
           icon: icns_path,
-          prune: true,
-          asar: true,
-          'app-version': version,
           protocols: [{
             name: 'itch.io',
             schemes: ['itchio']
           }]
-        }
+        })
       },
       linux: {
-        options: {
-          dir: '.',
-          name: 'itch.io',
+        options: Object.assign({}, grunt_electron_common, {
           platform: 'linux',
           arch: 'all',
-          version: electron_version,
-          out: out_dir,
-          asar: true,
-          'app-version': version
-        }
+        })
       }
     },
     'create-windows-installer': {
