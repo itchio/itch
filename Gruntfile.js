@@ -81,7 +81,7 @@ module.exports = function (grunt) {
       win32: {
         options: Object.assign({}, grunt_electron_common, {
           platform: 'win32',
-          arch: 'all',
+          arch: 'ia32',
           icon: ico_path,
           'version-string': {
             CompanyName: company_name,
