@@ -1,5 +1,6 @@
 import test from 'zopf'
 import proxyquire from 'proxyquire'
+import path from 'path'
 
 import electron from '../stubs/electron'
 import InstallStore from '../stubs/install-store'
@@ -44,7 +45,7 @@ test('launch', t => {
     t.stub(InstallStore, 'get_install').resolves({
       executables: [ '/a/b/c', '/a/bababa', '/a/b/c/d' ]
     })
-    t.mock(launch).expects('launch').once().withArgs('/tmp/app/a/bababa').resolves('Done!')
+    t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/a/bababa')).resolves('Done!')
     return launch.start(opts)
   })
 
@@ -55,7 +56,7 @@ test('launch', t => {
       get_install.resolves({ executables: ['/a'] })
       return Promise.resolve()
     })
-    t.mock(launch).expects('launch').once().withArgs('/tmp/app/a').resolves('Done!')
+    t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/a')).resolves('Done!')
     return launch.start(opts)
   })
 
