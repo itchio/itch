@@ -24,7 +24,7 @@ let self = {
       },
       version_check: {
         args: [],
-        parser: /(?:p7zip Version|7-Zip \(A\)) ([0-9.]*)/
+        parser: /([0-9a-z.v]*)\s+Copyright/
       }
     },
     'butler': {
