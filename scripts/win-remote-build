@@ -1,0 +1,41 @@
+#!/bin/bash
+set -e 
+set -o pipefail
+
+HOST=bowser.itch.zone
+REPO='~/Dev/itchio-app'
+
+function remote {
+  ssh $HOST "cd $REPO && $@"
+}
+
+function sync {
+  rsync -rav -e ssh $@
+}
+
+function sync-compiled {
+  sync --include '*/' --include '*.js' --include '*.css' --exclude='*' $@
+}
+
+function status {
+  echo ☃ $@
+}
+
+status "Building locally..."
+grunt all
+
+status "Sending over compiled .js/.css"
+sync-compiled app $HOST:$REPO/app
+
+status "Updating remote version..."
+remote git pull
+remote npm install
+
+status "Creating remote build..."
+remote grunt electron:win32
+
+status "Creating remote installer..."
+remote grunt create-windows-installer
+
+status "Retrieving installer"
+sync $HOST:$REPO/build/itch.io-win32-installer build/itch.io-win32-installer
