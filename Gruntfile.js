@@ -22,6 +22,18 @@ var grunt_electron_common = {
   out: out_dir
 }
 
+var electron_installer_common = {
+  authors: company_name,
+  exe: 'itch.io.exe',
+  description: 'itch.io desktop app',
+  version: version,
+  title: 'itch.io',
+  iconUrl: 'http://raw.githubusercontent.com/itchio/itchio-app/master/app/static/images/itchio.ico',
+  setupIcon: ico_path,
+  remoteReleases: 'https://github.com/itchio/itchio-app',
+  certificateFile: '../itchio-app-secrets/certificate.cer'
+}
+
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt)
 
@@ -102,19 +114,10 @@ module.exports = function (grunt) {
       }
     },
     'create-windows-installer': {
-      ia32: {
+      installer: Object.assign({}, electron_installer_common, {
         appDirectory: path.join(out_dir, 'itch.io-win32-ia32'),
-        outputDirectory: path.join('build', 'itch.io-win32-installer'),
-        authors: company_name,
-        exe: 'itch.io.exe',
-        description: 'itch.io desktop app',
-        version: version,
-        title: 'itch.io',
-        iconUrl: 'http://raw.githubusercontent.com/itchio/itchio-app/master/app/static/images/itchio.ico',
-        setupIcon: ico_path,
-        remoteReleases: 'https://github.com/itchio/itchio-app',
-        certificateFile: '../itchio-app-secrets/certificate.cer'
-      }
+        outputDirectory: path.join('build', 'itch.io-win32-installer')
+      })
     }
   })
 
