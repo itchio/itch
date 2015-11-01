@@ -24,7 +24,7 @@ let self = {
       },
       version_check: {
         args: [],
-        parser: /p7zip Version ([0-9.]*)/
+        parser: /(?:p7zip Version|7-Zip \(A\)) ([0-9.]*)/
       }
     },
     'butler': {
