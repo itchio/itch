@@ -7,12 +7,16 @@ import spawn from './spawn'
 import mkdirp from '../promised/mkdirp'
 
 let self = {
-  parse_butler_status: function (opts, token) {
+  parse_butler_status: function (opts, onerror, token) {
     let {onprogress = noop} = opts
 
     let status = JSON.parse(token)
     if (status.Percent) {
       onprogress({percent: status.Percent})
+    } else if (status.Message) {
+      console.log(`Message from butler: ${status.Message}`)
+    } else if (status.Error) {
+      onerror(status.Error)
     }
   },
 
@@ -21,13 +25,18 @@ let self = {
    */
   request: function (opts) {
     let {url, dest} = opts
+    let err = null
+    let onerror = (e) => err = e
 
     return mkdirp(path.dirname(dest))
       .then(() => spawn({
         command: 'butler',
         args: ['dl', url, dest],
-        ontoken: partial(self.parse_butler_status, opts)
-      }))
+        ontoken: partial(self.parse_butler_status, opts, onerror)
+      })).then((res) => {
+        if (err) { throw err }
+        return res
+      })
   }
 }
 
