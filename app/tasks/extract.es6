@@ -1,9 +1,7 @@
 
-import read_chunk from '../promised/read-chunk'
-import file_type from 'file-type'
-
 import {Transition} from './errors'
 
+import sniff from '../util/sniff'
 import noop from '../util/noop'
 let log = require('../util/log')('tasks/extract')
 
@@ -13,8 +11,7 @@ import AppActions from '../actions/app-actions'
 let self = {
   extract: async function (opts) {
     let {archive_path} = opts
-    let buffer = await read_chunk(archive_path, 0, 262)
-    let type = file_type(buffer)
+    let type = await sniff.path(archive_path)
 
     if (!type) throw new Error(`invalid archive ${archive_path}`)
 
@@ -26,6 +23,8 @@ let self = {
       case 'bz2':
       case '7z':
         return require('./extractors/7zip').extract(opts)
+      case 'msi':
+        return require('./installers/msi').install(opts)
       default:
         throw new Error(`invalid archive ${archive_path}: ${JSON.stringify(type)}`)
     }

@@ -2,7 +2,7 @@
 import path from 'path'
 import {object} from 'underscore'
 
-import {is_tar} from '../../util/sniff'
+import sniff from '../../util/sniff'
 import noop from '../../util/noop'
 import spawn from '../../util/spawn'
 
@@ -11,6 +11,11 @@ import mkdirp from '../../promised/mkdirp'
 import fs from '../../promised/fs'
 
 let log = require('../../util/log')('7zip')
+
+let is_tar = async function (path) {
+  let type = await sniff.path(path)
+  return type && type.ext === 'tar'
+}
 
 let self = {
   sevenzip_list: async function (archive_path) {
