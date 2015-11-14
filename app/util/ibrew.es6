@@ -78,7 +78,9 @@ let self = {
   },
 
   version_equal: (a, b) => {
-    return self.normalize_version(a) === self.normalize_version(b)
+    let aa = self.normalize_version(a)
+    let bb = self.normalize_version(b)
+    return aa === bb
   },
 
   archive_name: (name) => {
@@ -157,9 +159,16 @@ let self = {
       let info = await os.check_presence(name, check.args, check.parser)
       let local_version = info.parsed
       log(opts, `have local ${name}`)
-      let latest_version = await get_latest_version()
+      let latest_version
+      try {
+        latest_version = await get_latest_version()
+      } catch (e) {
+        log(opts, `cannot get latest version: ${e.stack || e}`)
+        return
+      }
 
-      if (self.version_equal(local_version, latest_version)) {
+      if (self.version_equal(local_version, latest_version) ||
+          local_version === 'head') {
         log(opts, `${name} ${local_version} is the latest`)
         return
       }
