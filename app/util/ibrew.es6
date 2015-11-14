@@ -159,7 +159,13 @@ let self = {
       let info = await os.check_presence(name, check.args, check.parser)
       let local_version = info.parsed
       log(opts, `have local ${name}`)
-      let latest_version = await get_latest_version()
+      let latest_version
+      try {
+	 latest_version = await get_latest_version()
+      } catch (e) {
+        log(opts, `cannot get latest version: ${e.stack || e}`)
+        return
+      }
 
       if (self.version_equal(local_version, latest_version) ||
           local_version === 'head') {
