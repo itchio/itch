@@ -161,7 +161,7 @@ let self = {
       log(opts, `have local ${name}`)
       let latest_version
       try {
-	 latest_version = await get_latest_version()
+        latest_version = await get_latest_version()
       } catch (e) {
         log(opts, `cannot get latest version: ${e.stack || e}`)
         return

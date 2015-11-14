@@ -99,7 +99,7 @@ test('ibrew', t => {
   t.case('unstable update server', t => {
     t.stub(os, 'check_presence').resolves({parsed: '0.9'})
     t.stub(needle, 'get').callsArgWith(1, null, {statusCode: 503, body: 'Nope!'})
-    return t.rejects(ibrew.fetch(opts, '7za'))
+    return ibrew.fetch(opts, '7za')
   })
 
   t.case('check filters', t => {
