@@ -25,6 +25,8 @@ let self = {
         return require('./extractors/7zip').extract(opts)
       case 'msi':
         return require('./installers/msi').install(opts)
+      case 'exe':
+        return require('./installers/generic').install(opts)
       default:
         throw new Error(`invalid archive ${archive_path}: ${JSON.stringify(type)}`)
     }
