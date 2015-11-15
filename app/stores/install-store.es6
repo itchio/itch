@@ -29,8 +29,8 @@ let InstallStore = Object.assign(new Store('install-store'), {
     return db.find_one({_table: 'installs', game_id: game_id})
   },
 
-  archive_path: function (upload_id) {
-    return path.join(archives_dir, `${upload_id}.bin`)
+  archive_path: function (upload) {
+    return path.join(archives_dir, `${upload.id}${path.extname(upload.filename)}`)
   },
 
   app_path: function (install_id) {

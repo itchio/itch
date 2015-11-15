@@ -1,6 +1,8 @@
 
 import spawn from '../../util/spawn'
 
+let log = require('../../util/log')('installers/msi')
+
 let self = {
   log_path: function (operation, msi_path) {
     return `${msi_path}.${operation}.log.txt`
@@ -28,6 +30,7 @@ let self = {
     await spawn({
       command: 'msiexec',
       args: self.args('i', archive_path, dest_path),
+      ontoken: (token) => log(opts, token),
       logger
     })
   },

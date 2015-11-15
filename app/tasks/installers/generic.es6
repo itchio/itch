@@ -46,9 +46,15 @@ let self = {
 
   install: async function (opts) {
     let type = await self.identify(opts)
+
     log(opts, `found generic installer type: ${type}`)
 
-    throw new Error('stub!')
+    if (!type) {
+      throw new Error(`unsupported installer type: ${type}`)
+    }
+
+    let installer = require(`./${type}`)
+    await installer.install(opts)
   }
 }
 

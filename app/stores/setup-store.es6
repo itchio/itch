@@ -30,7 +30,7 @@ function run () {
     onstatus: AppActions.setup_status
   }
 
-  Promise.resolve(['7za', 'butler'])
+  Promise.resolve(['7za', 'butler', 'elevate'])
     .each(formula => {
       return ibrew.fetch(opts, formula)
     })

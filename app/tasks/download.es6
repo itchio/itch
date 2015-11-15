@@ -39,7 +39,7 @@ async function start (opts) {
 
   await http.request({
     url, onprogress,
-    dest: InstallStore.archive_path(install.upload_id)
+    dest: InstallStore.archive_path(upload)
   })
 }
 

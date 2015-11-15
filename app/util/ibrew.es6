@@ -15,7 +15,7 @@ let self = {
   formulas: {
     '7za': {
       format: 'executable',
-      check: () => {
+      on_missing: () => {
         if (self.os() === 'linux') {
           // TODO: add link to doc page too
           let msg = '7-zip missing: 7za must be in $PATH\n(Try installing p7zip-full)'
@@ -33,6 +33,14 @@ let self = {
         args: ['version'],
         parser: /butler version ([0-9a-z.v]*)/
       }
+    },
+    'elevate': {
+      format: '7z',
+      version_check: {
+        args: ['-v'],
+        parser: /elevate version ([0-9a-z.v]*)/
+      },
+      os_whitelist: ['windows']
     }
   },
 
@@ -130,6 +138,11 @@ let self = {
     let formula = self.formulas[name]
     if (!formula) throw new Error(`Unknown formula: ${name}`)
 
+    let {os_whitelist} = formula
+    if (os_whitelist && os_whitelist.indexOf(self.os()) === -1) {
+      log(opts, `skipping ${name}, it's irrelevant on ${self.os()}`)
+    }
+
     let channel = `${self.root_url()}/${name}/${self.os()}-${self.arch()}`
 
     let download_version = async (version) => {
@@ -177,7 +190,7 @@ let self = {
       await download_version(latest_version)
     } catch (err) {
       console.log(err.stack || err)
-      if (formula.check) formula.check()
+      if (formula.on_missing) formula.on_missing()
       log(opts, `${name} missing, downloading latest`)
       await download_version(await get_latest_version())
     }

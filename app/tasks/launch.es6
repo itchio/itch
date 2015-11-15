@@ -57,6 +57,18 @@ let self = {
     return clone(execs).sort((a, b) => depths[a] - depths[b])
   },
 
+  sort_by_score: function (execs) {
+    let scores = {}
+    for (let exe of execs) {
+      let score = 100
+      if (/unins/.test(exe)) {
+        score = 0
+      }
+      scores[exe] = score
+    }
+    return clone(execs).sort((a, b) => scores[b] - scores[a])
+  },
+
   launch: function (exe_path, args, opts) {
     let platform = os.platform()
     log(opts, `launching '${exe_path}' on '${platform}' with args '${args.join(' ')}'`)
@@ -82,7 +94,10 @@ let self = {
   },
 
   launch_install: function (opts, install) {
-    let sorted = self.sort_by_depth(install.executables)
+    let by_score = self.sort_by_score(install.executables)
+    let by_depth = self.sort_by_depth(by_score)
+    let sorted = by_depth
+
     log(opts, `executables (from best to worst): ${JSON.stringify(sorted, null, 2)}`)
     let app_path = InstallStore.app_path(opts.id)
     let exe_path = path.join(app_path, sorted[0])
