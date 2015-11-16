@@ -141,6 +141,7 @@ let self = {
     let {os_whitelist} = formula
     if (os_whitelist && os_whitelist.indexOf(self.os()) === -1) {
       log(opts, `skipping ${name}, it's irrelevant on ${self.os()}`)
+      return
     }
 
     let channel = `${self.root_url()}/${name}/${self.os()}-${self.arch()}`
