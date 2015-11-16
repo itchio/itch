@@ -63,7 +63,7 @@
     "nyc": "^3.2.2",
     "proxyquire": "^1.7.3",
     "react-addons-test-utils": "^0.14.0",
-    "remap-istanbul": "^0.3.0",
+    "remap-istanbul": "^0.4.0",
     "sinon": "^1.17.1",
     "skin-deep": "^0.12.0",
     "standard": "^5.3.1",
@@ -76,7 +76,7 @@
     "test": "npm -s run specs && npm -s run lint",
     "specs": "nyc -s node_modules/.bin/tape \"test/**/*-spec.js\" | tap-difflet --color",
     "lint": "standard \"app/**/*.es6\" \"test/**/*.es6\" Gruntfile.js",
-    "remap": "cat .nyc_output/*.json | remap-istanbul -o .nyc_output/*.json",
+    "remap": "remap-istanbul -i .nyc_output/*.json -o .nyc_output/*.json",
     "coveralls": "npm run remap && nyc report -r text-lcov | coveralls",
     "local-cov": "npm run specs && npm run remap && nyc report -r text && npm run lint"
   },
