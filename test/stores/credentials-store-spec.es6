@@ -10,13 +10,18 @@ import config from '../stubs/config'
 import api from '../stubs/api'
 import defer from '../stubs/defer'
 
+let SetupStore = {
+  is_ready: () => true
+}
+
 let setup = t => {
   let stubs = Object.assign({
     '../util/defer': defer,
     '../util/config': config,
     '../util/api': api,
     '../actions/app-actions': AppActions,
-    '../dispatcher/app-dispatcher': AppDispatcher
+    '../dispatcher/app-dispatcher': AppDispatcher,
+    './setup-store': SetupStore
   }, electron)
 
   let CredentialsStore = proxyquire('../../app/stores/credentials-store', stubs)
@@ -28,9 +33,9 @@ let setup = t => {
 test('CredentialsStore', t => {
   let {CredentialsStore, handler} = setup(t)
 
-  t.case('setup_done (no credentials)', t => {
+  t.case('window_ready (no credentials)', t => {
     t.mock(AppActions).expects('no_stored_credentials').resolves()
-    return handler({ action_type: AppConstants.SETUP_DONE })
+    return handler({ action_type: AppConstants.WINDOW_READY })
   })
 
   t.case('login with key + logout', t => {
@@ -39,7 +44,7 @@ test('CredentialsStore', t => {
     t.stub(config, 'get').returns('numazu')
     t.stub(api.client, 'login_key').resolves({user})
 
-    handler({ action_type: AppConstants.SETUP_DONE })
+    handler({ action_type: AppConstants.WINDOW_READY })
 
     return new Promise((resolve, reject) => {
       setTimeout(() => {
