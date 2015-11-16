@@ -17,7 +17,7 @@ let state = mori.hashMap(
     'games', mori.hashMap(),
     'panel', '',
     'collections', mori.hashMap(),
-    'installs', mori.hashMap()
+    'caves', mori.hashMap()
   ),
 
   'login', mori.hashMap(
@@ -94,9 +94,9 @@ function setup_status (action) {
   AppStore.emit_change()
 }
 
-function install_progress (action) {
+function cave_progress (action) {
   for (let [k, v] of pairs(action.opts)) {
-    state = mori.assocIn(state, ['library', 'installs', action.opts.id, k], mori.toClj(v))
+    state = mori.assocIn(state, ['library', 'caves', action.opts.id, k], mori.toClj(v))
   }
   AppStore.emit_change()
 }
@@ -112,7 +112,7 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.AUTHENTICATED, authenticated)
   on(AppConstants.LOGOUT, logout)
 
-  on(AppConstants.INSTALL_PROGRESS, install_progress)
+  on(AppConstants.CAVE_PROGRESS, cave_progress)
 }))
 
 Store.subscribe('game-store', (games) => {

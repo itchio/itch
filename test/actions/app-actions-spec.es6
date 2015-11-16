@@ -37,9 +37,9 @@ test('app-actions', t => {
   test_action('authenticated', [], { action_type: 'AUTHENTICATED' })
   test_action('logout', [], { action_type: 'LOGOUT' })
 
-  test_action('install_queue', [42], { action_type: 'INSTALL_QUEUE', game_id: 42 })
-  test_action('install_update', [42, {a: 'b'}], { action_type: 'INSTALL_UPDATE', id: 42, data: {a: 'b'} })
-  test_action('install_progress', [{a: 'b'}], { action_type: 'INSTALL_PROGRESS', opts: {a: 'b'} })
+  test_action('cave_queue', [42], { action_type: 'CAVE_QUEUE', game_id: 42 })
+  test_action('cave_update', [42, {a: 'b'}], { action_type: 'CAVE_UPDATE', id: 42, data: {a: 'b'} })
+  test_action('cave_progress', [{a: 'b'}], { action_type: 'CAVE_PROGRESS', opts: {a: 'b'} })
   test_action('set_progress', [0.5], { action_type: 'SET_PROGRESS', alpha: 0.5 })
   test_action('bounce', [], { action_type: 'BOUNCE' })
   test_action('notify', ['les carottes sont cuites'], { action_type: 'NOTIFY', message: 'les carottes sont cuites' })

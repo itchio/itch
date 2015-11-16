@@ -32,7 +32,7 @@ test('SetupStore', t => {
 
   t.case('window_ready (err)', t => {
     t.stub(ibrew, 'fetch').returns(Promise.reject('Ha!'))
-    t.mock(AppActions).expects('setup_status').withArgs('Ha!', 'error').twice()
+    t.mock(AppActions).expects('setup_status').withArgs('Ha!', 'error')
     handler({ action_type: AppConstants.WINDOW_READY })
     return new Promise((resolve, reject) => setTimeout(resolve, 20))
   })

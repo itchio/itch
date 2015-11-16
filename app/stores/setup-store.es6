@@ -1,6 +1,7 @@
 
 import Promise from 'bluebird'
 import path from 'path'
+import {partial} from 'underscore'
 
 import ibrew from '../util/ibrew'
 import {Logger} from '../util/log'
@@ -22,7 +23,7 @@ function augment_path () {
   return bin_path
 }
 
-function run () {
+async function run () {
   augment_path()
 
   let opts = {
@@ -30,16 +31,20 @@ function run () {
     onstatus: AppActions.setup_status
   }
 
-  Promise.resolve(['7za', 'butler', 'elevate'])
-    .each(formula => {
-      return ibrew.fetch(opts, formula)
-    })
-    .then(() => {
-      AppActions.setup_done()
-    })
-    .catch(err => {
-      AppActions.setup_status(err.stack || err, 'error')
-    })
+  let fetch = partial(ibrew.fetch, opts)
+
+  try {
+    // 7-zip is a simple binary
+    await fetch('7za')
+
+    // these are .7z archives
+    let compressed = ['butler', 'elevate'].map(fetch)
+    await Promise.all(compressed)
+
+    AppActions.setup_done()
+  } catch (err) {
+    AppActions.setup_status(err.stack || err, 'error')
+  }
 }
 
 let SetupStore = Object.assign(new Store('setup-store'), {

@@ -25,14 +25,14 @@ test('ibrew', t => {
       return pt
     }
   }
-  let extract = {
-    extract: () => Promise.resolve()
+  let install = {
+    install: () => Promise.resolve()
   }
   let stubs = Object.assign({
     'needle': needle,
     'fstream': fstream,
     './os': os,
-    '../tasks/extract': extract
+    '../tasks/install': install
   }, electron)
   let ibrew = proxyquire('../../app/util/ibrew', stubs)
 

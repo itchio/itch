@@ -61,24 +61,24 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.SELF_UPDATE_DOWNLOADED, version })
   },
 
-  install_queue: (game_id) => {
+  cave_queue: (game_id) => {
     AppDispatcher.dispatch({
-      action_type: AppConstants.INSTALL_QUEUE,
+      action_type: AppConstants.CAVE_QUEUE,
       game_id
     })
   },
 
-  install_update: (id, data) => {
+  cave_update: (id, data) => {
     AppDispatcher.dispatch({
-      action_type: AppConstants.INSTALL_UPDATE,
+      action_type: AppConstants.CAVE_UPDATE,
       id,
       data
     })
   },
 
-  install_progress: (opts) => {
+  cave_progress: (opts) => {
     AppDispatcher.dispatch({
-      action_type: AppConstants.INSTALL_PROGRESS,
+      action_type: AppConstants.CAVE_PROGRESS,
       opts
     })
   },

@@ -10,7 +10,7 @@ import glob from '../../promised/glob'
 import mkdirp from '../../promised/mkdirp'
 import fs from '../../promised/fs'
 
-let log = require('../../util/log')('7zip')
+let log = require('../../util/log')('installers/archive')
 
 let is_tar = async function (path) {
   let type = await sniff.path(path)
@@ -68,7 +68,7 @@ let self = {
     if (err) throw err
   },
 
-  extract: async function (opts) {
+  install: async function (opts) {
     let {archive_path, dest_path, onprogress = noop} = opts
 
     log(opts, `Extracting archive '${archive_path}' to '${dest_path}' with 7-Zip`)

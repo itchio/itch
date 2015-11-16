@@ -38,13 +38,13 @@ function cache_dashboard_games () {
   })
 }
 
-function cache_installed_games () {
-  return db.find({_table: 'installs'}).then((installs) => {
-    return pluck(installs, 'game_id')
+function cache_caved_games () {
+  return db.find({_table: 'caves'}).then((caves) => {
+    return pluck(caves, 'game_id')
   }).then((game_ids) => {
     return db.find({_table: 'games', id: {$in: game_ids}})
   }).then((games) => {
-    merge_state({installed: games})
+    merge_state({caved: games})
   })
 }
 
@@ -84,11 +84,11 @@ function fetch_collection_games (id, page = 1, game_ids = []) {
   })
 }
 
-function cache_install_game (id) {
-  db.find_one({_table: 'installs', _id: id}).then((install) => {
-    return db.find_one({_table: 'games', id: install.game_id})
+function cache_cave_game (id) {
+  db.find_one({_table: 'caves', _id: id}).then((cave) => {
+    return db.find_one({_table: 'games', id: cave.game_id})
   }).then((game) => {
-    merge_state({[`installs/${id}`]: [game]})
+    merge_state({[`caves/${id}`]: [game]})
   })
 }
 
@@ -104,8 +104,8 @@ function fetch_games (action) {
     ]).map((keys) => {
       db.save_download_keys(keys).then(() => cache_owned_games())
     })
-  } else if (path === 'installed') {
-    return cache_installed_games()
+  } else if (path === 'caved') {
+    return cache_caved_games()
   } else if (path === 'dashboard') {
     cache_dashboard_games()
 
@@ -118,22 +118,22 @@ function fetch_games (action) {
     let [type, id] = path.split('/')
     if (type === 'collections') {
       return fetch_collection_games(parseInt(id, 10))
-    } else if (type === 'installs') {
-      cache_install_game(id)
+    } else if (type === 'caves') {
+      cache_cave_game(id)
     }
   }
 }
 
-let cached_installs = {}
+let cached_caves = {}
 
 AppDispatcher.register('game-store', Store.action_listeners(on => {
   on(AppConstants.FETCH_GAMES, fetch_games)
-  on(AppConstants.INSTALL_PROGRESS, (action) => {
+  on(AppConstants.CAVE_PROGRESS, (action) => {
     let id = action.opts.id
 
-    if (!cached_installs[id]) {
-      cached_installs[id] = true
-      fetch_games({path: 'installed'})
+    if (!cached_caves[id]) {
+      cached_caves[id] = true
+      fetch_games({path: 'caved'})
     }
   })
 }))

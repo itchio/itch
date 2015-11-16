@@ -6,7 +6,7 @@ import os from '../util/os'
 let log = require('../util/log')('tasks/find-upload')
 
 import AppActions from '../actions/app-actions'
-import InstallStore from '../stores/install-store'
+import CaveStore from '../stores/cave-store'
 import CredentialsStore from '../stores/credentials-store'
 
 let self = {
@@ -39,22 +39,22 @@ let self = {
     let uploads
     let client = CredentialsStore.get_current_user()
 
-    let install = await InstallStore.get_install(id)
-    let key = install.key || await db.find_one({_table: 'download_keys', game_id: install.game_id})
-    log(opts, `found key ${JSON.stringify(key)} for game ${install.game_id}`)
+    let cave = await CaveStore.find(id)
+    let key = cave.key || await db.find_one({_table: 'download_keys', game_id: cave.game_id})
+    log(opts, `found key ${JSON.stringify(key)} for game ${cave.game_id}`)
 
     if (key) {
-      AppActions.install_update(id, {key})
+      AppActions.cave_update(id, {key})
       console.log('getting uploads with key')
       uploads = (await client.download_key_uploads(key.id)).uploads
     } else {
       console.log('getting uploads without key')
       console.log('client = ' + JSON.stringify(client))
-      uploads = (await client.game_uploads(install.game_id)).uploads
+      uploads = (await client.game_uploads(cave.game_id)).uploads
     }
 
     log(opts, `got a list of ${uploads.length} uploads`)
-    AppActions.install_update(id, {uploads: indexBy(uploads, 'id')})
+    AppActions.cave_update(id, {uploads: indexBy(uploads, 'id')})
 
     if (!(Array.isArray(uploads) && uploads.length > 0)) {
       throw new Error('No downloads available')
@@ -69,7 +69,7 @@ let self = {
       throw new Error('No downloads available')
     }
 
-    AppActions.install_update(id, {upload_id: uploads[0].id})
+    AppActions.cave_update(id, {upload_id: uploads[0].id})
   }
 }
 

@@ -1,6 +1,7 @@
 
 import StreamSearch from 'streamsearch'
 import fstream from 'fstream'
+import os from '../../util/os'
 
 let log = require('../../util/log')('installers/generic')
 
@@ -33,7 +34,9 @@ let self = {
   },
 
   needles: {
-    // Boyer-Moore - longer strings means search is more efficient
+    // Boyer-Moore - longer strings means search is more efficient. That said,
+    // we don't really use it to skip forward, it just allows us not to scan
+    // entire buffers nodes gives us while reading the whole file
     'inno': 'Inno Setup Setup Data',
     'nsis': 'Nullsoft.NSIS.exehead'
   },
@@ -45,6 +48,10 @@ let self = {
   },
 
   install: async function (opts) {
+    if (os.platform() !== 'win32') {
+      throw new Error('MSI files are only supported on Windows')
+    }
+
     let type = await self.identify(opts)
 
     log(opts, `found generic installer type: ${type}`)

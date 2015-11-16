@@ -7,7 +7,7 @@ import Promise from 'bluebird'
 import {partial} from 'underscore'
 import needle from 'needle'
 
-import extract from '../tasks/extract'
+import install from '../tasks/install'
 import os from './os'
 let log = require('./log')('ibrew')
 
@@ -160,7 +160,7 @@ let self = {
       } else {
         log(opts, `${formula.format} formula, extracting`)
         onstatus(`Installing ${name}`, 'install')
-        await extract.extract({ archive_path, dest_path: self.bin_path() })
+        await install.install({ archive_path, dest_path: self.bin_path() })
       }
     }
 

@@ -10,7 +10,7 @@ import app from 'app'
 import path from 'path'
 
 import {Logger} from '../util/log'
-let log = require('../util/log')('install-store')
+let log = require('../util/log')('cave-store')
 import db from '../util/db'
 
 let library_dir = path.join(app.getPath('home'), 'Downloads', 'itch.io')
@@ -20,28 +20,30 @@ let apps_dir = path.join(library_dir, 'apps')
 let logger = new Logger()
 let opts = {logger}
 
-let InstallStore = Object.assign(new Store('install-store'), {
-  get_install: function (id) {
-    return db.find_one({_table: 'installs', _id: id})
+const CAVE_TABLE = 'caves'
+
+let CaveStore = Object.assign(new Store('cave-store'), {
+  find: function (id) {
+    return db.find_one({_table: CAVE_TABLE, _id: id})
   },
 
-  get_install_for_game: function (game_id) {
-    return db.find_one({_table: 'installs', game_id: game_id})
+  find_for_game: function (game_id) {
+    return db.find_one({_table: CAVE_TABLE, game_id: game_id})
   },
 
   archive_path: function (upload) {
     return path.join(archives_dir, `${upload.id}${path.extname(upload.filename)}`)
   },
 
-  app_path: function (install_id) {
-    return path.join(apps_dir, install_id)
+  app_path: function (cave_id) {
+    return path.join(apps_dir, cave_id)
   }
 })
 
 let natural_transitions = {
   'find-upload': 'download',
-  'download': 'extract',
-  'extract': 'configure'
+  'download': 'install',
+  'install': 'configure'
 }
 
 function handle_task_error (err, id, task_name) {
@@ -52,14 +54,14 @@ function handle_task_error (err, id, task_name) {
   } else if (err instanceof InputRequired) {
     let msg = `(stub) input required by ${task_name}`
     log(opts, msg)
-    AppActions.install_progress({id, task: 'error', error: msg})
+    AppActions.cave_progress({id, task: 'error', error: msg})
   } else if (err instanceof Crash) {
     let msg = `crashed with: ${JSON.stringify(err, null, 2)}`
     log(opts, msg)
-    AppActions.install_progress({id, task: 'idle', error: msg})
+    AppActions.cave_progress({id, task: 'idle', error: msg})
   } else {
     log(opts, err.stack || err)
-    AppActions.install_progress({id, task: 'error', error: '' + err})
+    AppActions.cave_progress({id, task: 'error', error: '' + err})
   }
 }
 
@@ -68,21 +70,21 @@ async function queue_task (id, task_name, data = {}) {
   let task_opts = Object.assign({}, opts, data, {
     id,
     onprogress: (state) => {
-      AppActions.install_progress({id, progress: state.percent * 0.01, task: task_name})
+      AppActions.cave_progress({id, progress: state.percent * 0.01, task: task_name})
     }
   })
   log(opts, `starting ${task_name}`)
 
-  AppActions.install_progress({id, progress: 0, task: task_name})
+  AppActions.cave_progress({id, progress: 0, task: task_name})
 
   try {
     let res = await task.start(task_opts)
-    if (task_name === 'extract') {
-      let install = await InstallStore.get_install(id)
-      if (!install.success_once) {
-        let game = await db.find_one({_table: 'games', id: install.game_id})
+    if (task_name === 'install') {
+      let cave = await CaveStore.find(id)
+      if (!cave.success_once) {
+        let game = await db.find_one({_table: 'games', id: cave.game_id})
         AppActions.notify(`${game.title} is ready!`)
-        AppActions.install_update(id, {success_once: true})
+        AppActions.cave_update(id, {success_once: true})
       }
     }
 
@@ -90,12 +92,12 @@ async function queue_task (id, task_name, data = {}) {
     if (transition) throw new Transition({to: transition})
 
     log(opts, `task ${task_name} finished with ${JSON.stringify(res)}`)
-    AppActions.install_progress({id, progress: 0})
+    AppActions.cave_progress({id, progress: 0})
 
     if (task_opts.then) {
       queue_task(id, task_opts.then)
     } else {
-      AppActions.install_progress({id, task: 'idle'})
+      AppActions.cave_progress({id, task: 'idle'})
     }
   } catch (err) {
     handle_task_error(err, id, task_name)
@@ -103,14 +105,14 @@ async function queue_task (id, task_name, data = {}) {
 }
 
 function initial_progress (record) {
-  AppActions.install_progress(Object.assign({id: record._id}, record))
+  AppActions.cave_progress(Object.assign({id: record._id}, record))
   db.find_one({_table: 'games', id: record.game_id}).then(game => {
-    AppActions.install_progress({id: record._id, game})
+    AppActions.cave_progress({id: record._id, game})
   })
 }
 
-function queue_install (game_id) {
-  let data = { _table: 'installs', game_id }
+function queue_cave (game_id) {
+  let data = { _table: CAVE_TABLE, game_id }
   db.insert(data).then((record) => {
     db.find_one({_table: 'games', id: game_id}).then((game) => {
       initial_progress(record)
@@ -119,31 +121,31 @@ function queue_install (game_id) {
   })
 }
 
-function update_install (_id, data) {
-  return db.merge_one({_table: 'installs', _id}, data)
+function update_cave (_id, data) {
+  return db.merge_one({_table: CAVE_TABLE, _id}, data)
 }
 
-AppDispatcher.register('install-store', Store.action_listeners(on => {
-  on(AppConstants.INSTALL_QUEUE, action => {
-    db.find_one({_table: 'installs', game_id: action.game_id}).then((record) => {
+AppDispatcher.register('cave-store', Store.action_listeners(on => {
+  on(AppConstants.CAVE_QUEUE, action => {
+    db.find_one({_table: CAVE_TABLE, game_id: action.game_id}).then((record) => {
       if (record) {
         if (record.launchable) {
           queue_task(record._id, 'launch')
         }
       } else {
-        queue_install(action.game_id)
+        queue_cave(action.game_id)
       }
     })
   })
 
-  on(AppConstants.INSTALL_UPDATE, action => {
-    return update_install(action.id, action.data)
+  on(AppConstants.CAVE_UPDATE, action => {
+    return update_cave(action.id, action.data)
   })
 
   on(AppConstants.AUTHENTICATED, action => {
     return (
       db.load()
-      .then(() => db.find({_table: 'installs'}))
+      .then(() => db.find({_table: CAVE_TABLE}))
       .each((record, i) => {
         initial_progress(record)
         setTimeout(() => {
@@ -154,4 +156,4 @@ AppDispatcher.register('install-store', Store.action_listeners(on => {
   })
 }))
 
-export default InstallStore
+export default CaveStore

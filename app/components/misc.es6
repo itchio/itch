@@ -24,10 +24,10 @@ Icon.propTypes = {
 }
 
 let task_to_icon = {
-  'error': 'error',
+  'error': 'neutral',
   'find-upload': 'stopwatch',
   'download': 'download',
-  'extract': 'file-zip',
+  'install': 'file-zip',
   'configure': 'settings',
   'launch': 'gamepad',
   'idle': 'checkmark'

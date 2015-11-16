@@ -9,7 +9,7 @@ import os from '../util/os'
 let log = require('../util/log')('tasks/launch')
 import configure from './configure'
 
-import InstallStore from '../stores/install-store'
+import CaveStore from '../stores/cave-store'
 import {Crash} from './errors'
 
 let self = {
@@ -93,35 +93,35 @@ let self = {
     }
   },
 
-  launch_install: function (opts, install) {
-    let by_score = self.sort_by_score(install.executables)
+  launch_cave: function (opts, cave) {
+    let by_score = self.sort_by_score(cave.executables)
     let by_depth = self.sort_by_depth(by_score)
     let sorted = by_depth
 
     log(opts, `executables (from best to worst): ${JSON.stringify(sorted, null, 2)}`)
-    let app_path = InstallStore.app_path(opts.id)
+    let app_path = CaveStore.app_path(opts.id)
     let exe_path = path.join(app_path, sorted[0])
     return self.launch(exe_path, [], opts)
   },
 
-  valid_install: function (install) {
-    return install.executables && install.executables.length > 0
+  valid_cave: function (cave) {
+    return cave.executables && cave.executables.length > 0
   },
 
   start: async function (opts) {
     let {id} = opts
 
-    let install = await InstallStore.get_install(id)
-    if (!self.valid_install(install)) {
+    let cave = await CaveStore.find(id)
+    if (!self.valid_cave(cave)) {
       await configure.start(opts)
-      install = await InstallStore.get_install(id)
+      cave = await CaveStore.find(id)
     }
 
-    if (!self.valid_install(install)) {
+    if (!self.valid_cave(cave)) {
       throw new Error('No executables found')
     }
 
-    await self.launch_install(opts, install)
+    await self.launch_cave(opts, cave)
   }
 }
 

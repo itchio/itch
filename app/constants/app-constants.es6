@@ -20,11 +20,11 @@ export default keyMirror({
   SELF_UPDATE_DOWNLOADED: null,
 
   /** User requested game to be installed */
-  INSTALL_QUEUE: null,
-  /** Internal install DB needs to be updated */
-  INSTALL_UPDATE: null,
-  /** Should probably replaced with an InstallStore.emit('change') event */
-  INSTALL_PROGRESS: null,
+  CAVE_QUEUE: null,
+  /** Internal cave DB needs to be updated */
+  CAVE_UPDATE: null,
+  /** Should probably replaced with an CaveStore.emit('change') event */
+  CAVE_PROGRESS: null,
 
   /** Set app-wide progress bar (title bar on Windows). Negative value clears. */
   SET_PROGRESS: null,

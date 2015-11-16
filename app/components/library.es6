@@ -33,14 +33,14 @@ LibraryPage.propTypes = {
 }
 
 /**
- * A list of tabs, collections and installed games
+ * A list of tabs, collections and caved games
  * TODO: this component does too much, split it!
  */
 class LibrarySidebar extends Component {
   render () {
     let {state} = this.props
     let panel = mori.get(state, 'panel')
-    let installs = mori.get(state, 'installs')
+    let caves = mori.get(state, 'caves')
     let collections = mori.get(state, 'collections')
     let games = mori.get(state, 'games')
 
@@ -56,10 +56,10 @@ class LibrarySidebar extends Component {
       return acc
     }, [], collections)
 
-    let install_items = mori.reduceKV((acc, id, install) => {
-      let progress = mori.get(install, 'progress')
-      let task = mori.get(install, 'task')
-      let error = mori.get(install, 'error')
+    let cave_items = mori.reduceKV((acc, id, cave) => {
+      let progress = mori.get(cave, 'progress')
+      let task = mori.get(cave, 'task')
+      let error = mori.get(cave, 'error')
 
       if (!(progress > 0 || task === 'error')) {
         return acc
@@ -67,31 +67,31 @@ class LibrarySidebar extends Component {
 
       let props = {
         games: {}, // don't display number bullet
-        name: `installs/${id}`,
-        label: mori.getIn(install, ['game', 'title']),
+        name: `caves/${id}`,
+        label: mori.getIn(cave, ['game', 'title']),
         error: task === 'error' && error,
-        progress: mori.get(install, 'progress'),
+        progress: mori.get(cave, 'progress'),
         before: <TaskIcon task={task}/>,
         panel
       }
       acc.push(<LibraryPanelLink {...props} key={id}/>)
       return acc
-    }, [], installs)
+    }, [], caves)
 
     return <div className={classNames('sidebar', {frameless})}>
       <UserPanel/>
       <div className='panel_links'>
         <LibraryPanelLink before={<Icon icon='heart-filled'/>} name='owned' label='Owned' panel={panel} games={games}/>
-        <LibraryPanelLink before={<Icon icon='gamepad'/>} name='installed' label='Installed' panel={panel} games={games}/>
+        <LibraryPanelLink before={<Icon icon='checkmark'/>} name='caved' label='Installed' panel={panel} games={games}/>
         <LibraryPanelLink before={<Icon icon='stats'/>} name='dashboard' label='Dashboard' panel={panel} games={games}/>
 
         <div className='separator'/>
         {mori.intoArray(collection_items)}
 
-        {mori.count(install_items) > 0
+        {mori.count(cave_items) > 0
         ? <div>
             <div className='separator'/>
-            {mori.intoArray(install_items)}
+            {mori.intoArray(cave_items)}
           </div>
         : ''}
       </div>
@@ -110,13 +110,13 @@ class LibraryContent extends Component {
   render () {
     let {state} = this.props
     let panel = mori.get(state, 'panel')
-    let installs = mori.get(state, 'installs')
+    let caves = mori.get(state, 'caves')
     let games = mori.get(state, 'games')
 
     let shown_games = mori.get(games, panel) || mori.list()
 
     return <div className='main_content'>
-      <GameList games={shown_games} installs={installs}/>
+      <GameList games={shown_games} caves={caves}/>
     </div>
   }
 }
@@ -127,7 +127,7 @@ LibraryContent.propTypes = {
 
 /**
  * A sidebar link to one of the library's panels. Could
- * be a link to a tab, or to a specific collection or install.
+ * be a link to a tab, or to a specific collection or cave.
  */
 class LibraryPanelLink extends Component {
   render () {

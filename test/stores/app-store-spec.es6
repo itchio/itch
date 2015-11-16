@@ -89,7 +89,7 @@ test('AppStore', t => {
 
   t.case('install_progress', t => {
     let opts = {id: 42, a: 'b'}
-    handler({ action_type: AppConstants.INSTALL_PROGRESS, opts })
-    t.same(get_state().library.installs, {'42': {id: 42, a: 'b'}})
+    handler({ action_type: AppConstants.CAVE_PROGRESS, opts })
+    t.same(get_state().library.caves, {'42': {id: 42, a: 'b'}})
   })
 })

@@ -12,8 +12,8 @@ let self = {
     return bundle_paths.filter((file) => !/__MACOSX/.test(file))
   },
 
-  configure: async function (install_path) {
-    let bundles = await glob(`${install_path}/**/*.app/`).then(self.skip_junk)
+  configure: async function (cave_path) {
+    let bundles = await glob(`${cave_path}/**/*.app/`).then(self.skip_junk)
 
     if (bundles.length > 0) {
       await Promise.each(bundles, common.fix_execs)
@@ -22,7 +22,7 @@ let self = {
 
     // some games aren't properly packaged app bundles but rather a shell
     // script / binary - try it the linux way
-    let executables = await common.fix_execs(install_path)
+    let executables = await common.fix_execs(cave_path)
     return {executables}
   }
 }

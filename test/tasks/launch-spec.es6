@@ -3,7 +3,7 @@ import proxyquire from 'proxyquire'
 import path from 'path'
 
 import electron from '../stubs/electron'
-import InstallStore from '../stubs/install-store'
+import CaveStore from '../stubs/cave-store'
 
 import log from '../../app/util/log'
 
@@ -24,7 +24,7 @@ test('launch', t => {
   }
 
   let stubs = Object.assign({
-    '../stores/install-store': InstallStore,
+    '../stores/cave-store': CaveStore,
     '../util/os': os,
     './configure': configure,
     'child_process': child_process
@@ -34,7 +34,7 @@ test('launch', t => {
 
   t.case('rejects 0 execs', t => {
     let spy = t.spy()
-    t.stub(InstallStore, 'get_install').resolves({})
+    t.stub(CaveStore, 'find').resolves({})
     return launch.start(opts).catch(spy).then(_ => {
       t.is(spy.callCount, 1)
       t.same(spy.getCall(0).args[0].message, 'No executables found')
@@ -42,7 +42,7 @@ test('launch', t => {
   })
 
   t.case('launches top-most exec', t => {
-    t.stub(InstallStore, 'get_install').resolves({
+    t.stub(CaveStore, 'find').resolves({
       executables: [ '/a/b/c', '/a/bababa', '/a/b/c/d' ]
     })
     t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/a/bababa')).resolves('Done!')
@@ -50,10 +50,10 @@ test('launch', t => {
   })
 
   t.case('reconfigures as needed', t => {
-    let get_install = t.stub(InstallStore, 'get_install')
-    get_install.resolves({ executables: [] })
+    let find = t.stub(CaveStore, 'find')
+    find.resolves({ executables: [] })
     t.stub(configure, 'start', () => {
-      get_install.resolves({ executables: ['/a'] })
+      find.resolves({ executables: ['/a'] })
       return Promise.resolve()
     })
     t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/a')).resolves('Done!')

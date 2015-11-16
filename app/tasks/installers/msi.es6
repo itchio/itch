@@ -1,5 +1,6 @@
 
 import spawn from '../../util/spawn'
+import os from '../../util/os'
 
 let log = require('../../util/log')('installers/msi')
 
@@ -25,6 +26,10 @@ let self = {
   },
 
   install: async function (opts) {
+    if (os.platform() !== 'win32') {
+      throw new Error('MSI files are only supported on Windows')
+    }
+
     let {archive_path, dest_path, logger} = opts
 
     await spawn({
@@ -36,6 +41,10 @@ let self = {
   },
 
   uninstall: async function (opts) {
+    if (os.platform() !== 'win32') {
+      throw new Error('MSI files are only supported on Windows')
+    }
+
     let {archive_path, dest_path, logger} = opts
 
     await spawn({

@@ -6,7 +6,7 @@ import os from '../util/os'
 
 let log = require('../util/log')('tasks/configure')
 
-import InstallStore from '../stores/install-store'
+import CaveStore from '../stores/cave-store'
 import AppActions from '../actions/app-actions'
 
 let self = {
@@ -26,13 +26,13 @@ let self = {
   start: async function (opts) {
     let {id} = opts
 
-    let app_path = InstallStore.app_path(id)
+    let app_path = CaveStore.app_path(id)
     log(opts, `configuring ${app_path}`)
 
     let {executables} = await self.configure(app_path)
     executables = executables.map(partial(path.relative, app_path))
 
-    AppActions.install_update(id, {executables})
+    AppActions.cave_update(id, {executables})
     return executables.length + ' candidates'
   }
 }

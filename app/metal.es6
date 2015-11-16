@@ -19,7 +19,7 @@ require('./stores/game-store')
 require('./stores/notification-store')
 require('./stores/tray-store')
 require('./stores/setup-store')
-require('./stores/install-store')
+require('./stores/cave-store')
 
 let AppActions = require('./actions/app-actions')
 let app = require('app')

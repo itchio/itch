@@ -5,7 +5,7 @@ import Promise from 'bluebird'
 
 import fixture from '../fixture'
 import electron from '../stubs/electron'
-import InstallStore from '../stubs/install-store'
+import CaveStore from '../stubs/cave-store'
 import AppActions from '../stubs/app-actions'
 
 import log from '../../app/util/log'
@@ -25,7 +25,7 @@ let setup = t => {
     './configurators/win32': win32,
     './configurators/darwin': darwin,
     './configurators/linux': linux,
-    '../stores/install-store': InstallStore,
+    '../stores/cave-store': CaveStore,
     '../actions/app-actions': AppActions
   }, electron)
 

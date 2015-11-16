@@ -1,7 +1,7 @@
 import Promise from 'bluebird'
 
 export default {
-  get_install: () => Promise.resolve({
+  find: () => Promise.resolve({
     _id: 'kalamazoo',
     upload_id: 42,
     game_id: 84
