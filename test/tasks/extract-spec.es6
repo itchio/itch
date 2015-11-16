@@ -7,6 +7,12 @@ import electron from '../stubs/electron'
 import InstallStore from '../stubs/install-store'
 import AppActions from '../stubs/app-actions'
 
+let typical_install = {
+  _id: 42,
+  upload_id: 11,
+  uploads: { '11': { id: 11, size: 512 } }
+}
+
 let setup = (t) => {
   let sevenzip = {
     extract: () => 0,
@@ -53,11 +59,12 @@ test('extract', t => {
   })
 
   t.case(`validate upload_id`, t => {
-    t.mock(InstallStore).expects('get_install').resolves({})
+    t.stub(InstallStore, 'get_install').resolves({})
     return t.rejects(extract.start({id: 42}))
   })
 
   t.case(`task should start`, t => {
+    t.stub(InstallStore, 'get_install').resolves(typical_install)
     t.mock(extract).expects('extract').resolves()
     return extract.start({id: 42})
   })
