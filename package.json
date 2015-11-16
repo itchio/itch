@@ -69,7 +69,6 @@
     "standard": "^5.3.1",
     "tap-difflet": "^0.4.0",
     "tape": "^4.2.1",
-    "walkdir": "0.0.10",
     "zopf": "^4.2.0"
   },
   "scripts": {
