@@ -29,7 +29,7 @@ let task_to_icon = {
   'download': 'download',
   'install': 'file-zip',
   'configure': 'settings',
-  'launch': 'gamepad',
+  'launch': 'fire',
   'idle': 'checkmark'
 }
 

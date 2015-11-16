@@ -83,7 +83,7 @@ class LibrarySidebar extends Component {
       <div className='panel_links'>
         <LibraryPanelLink before={<Icon icon='heart-filled'/>} name='owned' label='Owned' panel={panel} games={games}/>
         <LibraryPanelLink before={<Icon icon='checkmark'/>} name='caved' label='Installed' panel={panel} games={games}/>
-        <LibraryPanelLink before={<Icon icon='stats'/>} name='dashboard' label='Dashboard' panel={panel} games={games}/>
+        <LibraryPanelLink before={<Icon icon='rocket'/>} name='dashboard' label='Dashboard' panel={panel} games={games}/>
 
         <div className='separator'/>
         {mori.intoArray(collection_items)}

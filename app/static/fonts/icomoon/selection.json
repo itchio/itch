@@ -372,6 +372,34 @@
 		{
 			"icon": {
 				"paths": [
+					"M704 64l-320 320h-192l-192 256c0 0 203.416-56.652 322.066-30.084l-322.066 414.084 421.902-328.144c58.838 134.654-37.902 328.144-37.902 328.144l256-192v-192l320-320 64-320-320 64z"
+				],
+				"attrs": [],
+				"isMulticolor": false,
+				"tags": [
+					"rocket",
+					"jet",
+					"speed",
+					"spaceship",
+					"fast"
+				],
+				"grid": 16
+			},
+			"attrs": [],
+			"properties": {
+				"order": 1,
+				"id": 9,
+				"prevSize": 32,
+				"code": 59648,
+				"name": "rocket"
+			},
+			"setIdx": 6,
+			"setId": 4,
+			"iconIdx": 0
+		},
+		{
+			"icon": {
+				"paths": [
 					"M917.806 229.076c-22.208-30.292-53.174-65.7-87.178-99.704s-69.412-64.964-99.704-87.178c-51.574-37.82-76.592-42.194-90.924-42.194h-496c-44.112 0-80 35.888-80 80v864c0 44.112 35.884 80 80 80h736c44.112 0 80-35.888 80-80v-624c0-14.332-4.372-39.35-42.194-90.924v0 0zM785.374 174.626c30.7 30.7 54.8 58.398 72.58 81.374h-153.954v-153.946c22.98 17.78 50.678 41.878 81.374 72.572v0 0zM896 944c0 8.672-7.328 16-16 16h-736c-8.672 0-16-7.328-16-16v-864c0-8.672 7.328-16 16-16 0 0 495.956-0.002 496 0v224c0 17.672 14.322 32 32 32h224v624z",
 					"M256 64h128v64h-128v-64z",
 					"M384 128h128v64h-128v-64z",
@@ -405,7 +433,7 @@
 			},
 			"setIdx": 6,
 			"setId": 4,
-			"iconIdx": 0
+			"iconIdx": 1
 		},
 		{
 			"icon": {
@@ -430,7 +458,7 @@
 			},
 			"setIdx": 6,
 			"setId": 4,
-			"iconIdx": 1
+			"iconIdx": 2
 		},
 		{
 			"icon": {
@@ -458,7 +486,7 @@
 			},
 			"setIdx": 6,
 			"setId": 4,
-			"iconIdx": 2
+			"iconIdx": 3
 		},
 		{
 			"icon": {
@@ -485,7 +513,7 @@
 			},
 			"setIdx": 6,
 			"setId": 4,
-			"iconIdx": 3
+			"iconIdx": 4
 		},
 		{
 			"icon": {
@@ -513,7 +541,7 @@
 			},
 			"setIdx": 6,
 			"setId": 4,
-			"iconIdx": 4
+			"iconIdx": 5
 		},
 		{
 			"icon": {
@@ -541,7 +569,7 @@
 			},
 			"setIdx": 6,
 			"setId": 4,
-			"iconIdx": 5
+			"iconIdx": 6
 		},
 		{
 			"icon": {
@@ -566,7 +594,7 @@
 			},
 			"setIdx": 6,
 			"setId": 4,
-			"iconIdx": 6
+			"iconIdx": 7
 		},
 		{
 			"icon": {
@@ -595,7 +623,7 @@
 			},
 			"setIdx": 6,
 			"setId": 4,
-			"iconIdx": 7
+			"iconIdx": 8
 		},
 		{
 			"icon": {
@@ -1086,7 +1114,7 @@
 			},
 			"attrs": [],
 			"properties": {
-				"order": 59,
+				"order": 87,
 				"id": 10,
 				"prevSize": 32,
 				"code": 57352,
@@ -1600,7 +1628,7 @@
 	},
 	"preferences": {
 		"showGlyphs": true,
-		"showQuickUse": true,
+		"showQuickUse": false,
 		"showQuickUse2": true,
 		"showSVGs": true,
 		"fontPref": {
@@ -1625,6 +1653,7 @@
 			"bgColor": 16777215
 		},
 		"historySize": 100,
-		"gridSize": 16
+		"gridSize": 16,
+		"showCodes": true
 	}
 }
