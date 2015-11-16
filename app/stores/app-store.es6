@@ -11,7 +11,7 @@ import {pairs} from 'underscore'
 import defer from '../util/defer'
 
 let state = mori.hashMap(
-  'page', 'setup',
+  'page', 'login',
 
   'library', mori.hashMap(
     'games', mori.hashMap(),
@@ -55,7 +55,7 @@ function switch_page (page) {
   AppStore.emit_change()
 }
 
-function login_with_password (action) {
+function login_attempt (action) {
   state = mori.assocIn(state, ['login', 'loading'], true)
   AppStore.emit_change()
 }
@@ -94,6 +94,10 @@ function setup_status (action) {
   AppStore.emit_change()
 }
 
+function setup_wait (action) {
+  switch_page('setup')
+}
+
 function cave_progress (action) {
   for (let [k, v] of pairs(action.opts)) {
     state = mori.assocIn(state, ['library', 'caves', action.opts.id, k], mori.toClj(v))
@@ -103,11 +107,12 @@ function cave_progress (action) {
 
 AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.SETUP_STATUS, setup_status)
+  on(AppConstants.SETUP_WAIT, setup_wait)
 
   on(AppConstants.LIBRARY_FOCUS_PANEL, focus_panel)
 
   on(AppConstants.NO_STORED_CREDENTIALS, no_stored_credentials)
-  on(AppConstants.LOGIN_WITH_PASSWORD, login_with_password)
+  on(AppConstants.LOGIN_ATTEMPT, login_attempt)
   on(AppConstants.LOGIN_FAILURE, login_failure)
   on(AppConstants.AUTHENTICATED, authenticated)
   on(AppConstants.LOGOUT, logout)

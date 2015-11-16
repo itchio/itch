@@ -2,6 +2,11 @@
 import needle from '../promised/needle'
 import ExtendableError from 'es6-error'
 
+import {Logger} from './log'
+let log = require('./log')('api')
+let logger = new Logger()
+let opts = {logger}
+
 class ApiError extends ExtendableError {
   constructor (errors) {
     super(errors.join(', '))
@@ -64,7 +69,7 @@ class User {
   }
 
   request (method, path, data = {}) {
-    console.log(`$HTTP ${method} ${path} with ${JSON.stringify(data)}`)
+    log(opts, `${method} ${path} with ${JSON.stringify(data)}`)
 
     let url = `/${this.key}${path}`
     return this.client.request(method, url, data)

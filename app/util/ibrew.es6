@@ -103,8 +103,7 @@ let self = {
     }
   },
 
-  download_to_file: (url, file) => {
-    console.log(`downloading ${url} to ${file}`)
+  download_to_file: (opts, url, file) => {
     let req = needle.get(url)
     let sink = fstream.Writer({
       path: file,
@@ -140,7 +139,7 @@ let self = {
 
     let {os_whitelist} = formula
     if (os_whitelist && os_whitelist.indexOf(self.os()) === -1) {
-      log(opts, `skipping ${name}, it's irrelevant on ${self.os()}`)
+      log(opts, `${name}: skipping, it's irrelevant on ${self.os()}`)
       return
     }
 
@@ -151,16 +150,17 @@ let self = {
       let archive_path = path.join(self.bin_path(), archive_name)
       let archive_url = `${channel}/${version}/${archive_name}`
       onstatus(`Downloading ${name} ${version}`, 'download')
-      log(opts, `downloading ${name} ${version} from ${archive_url}`)
+      log(opts, `${name}: downloading '${version}' from ${archive_url}`)
 
-      await self.download_to_file(archive_url, archive_path)
+      await self.download_to_file(opts, archive_url, archive_path)
 
       if (formula.format === 'executable') {
-        log(opts, `executable formula, no extract step`)
+        log(opts, `${name}: installed!`)
       } else {
-        log(opts, `${formula.format} formula, extracting`)
+        log(opts, `${name}: extracting ${formula.format} archive`)
         onstatus(`Installing ${name}`, 'install')
         await install.install({ archive_path, dest_path: self.bin_path() })
+        log(opts, `${name}: installed!`)
       }
     }
 
@@ -168,33 +168,35 @@ let self = {
     let get_latest_version = partial(self.get_latest_version, channel)
 
     let check = formula.version_check
+    let info
 
     try {
-      let info = await os.check_presence(name, check.args, check.parser)
-      let local_version = info.parsed
-      log(opts, `have local ${name}`)
-      let latest_version
-      try {
-        latest_version = await get_latest_version()
-      } catch (e) {
-        log(opts, `cannot get latest version: ${e.stack || e}`)
-        return
-      }
-
-      if (self.version_equal(local_version, latest_version) ||
-          local_version === 'head') {
-        log(opts, `${name} ${local_version} is the latest`)
-        return
-      }
-
-      log(opts, `upgrading from ${name} ${local_version} => ${latest_version}`)
-      await download_version(latest_version)
+      info = await os.check_presence(name, check.args, check.parser)
     } catch (err) {
-      console.log(err.stack || err)
       if (formula.on_missing) formula.on_missing()
-      log(opts, `${name} missing, downloading latest`)
-      await download_version(await get_latest_version())
+      log(opts, `${name}: missing, downloading latest`)
+      return await download_version(await get_latest_version())
     }
+
+    let local_version = info.parsed
+    log(opts, `${name}: have local version '${local_version}'`)
+
+    let latest_version
+    try {
+      latest_version = await get_latest_version()
+    } catch (err) {
+      log(opts, `${name}: cannot get latest version, skipping: ${err.stack || err}`)
+      return
+    }
+
+    if (self.version_equal(local_version, latest_version) ||
+        local_version === 'head') {
+      log(opts, `${name}: up-to-date`)
+      return
+    }
+
+    log(opts, `${name}: upgrading '${local_version}' => '${latest_version}'`)
+    await download_version(latest_version)
   }
 }
 

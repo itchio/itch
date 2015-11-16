@@ -72,7 +72,7 @@ let self = {
   // with a handler. Parses dates. Requires a unique (table, id),
   // upserts by default
   save_records: function (inputs, opts) {
-    if (inputs.length === 0) return Promise.resolve()
+    if (~~inputs.length === 0) return Promise.resolve()
     let _table = opts.table
     let relations = opts.relations || {}
 
@@ -117,7 +117,7 @@ let self = {
     }
 
     for (let [name, records] of pairs(relation_records)) {
-      if (records.length === 0) continue
+      if (~~records.length === 0) continue
       let handler = relations[name][1]
       promises.push(handler(records))
     }

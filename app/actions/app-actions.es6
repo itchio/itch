@@ -18,6 +18,10 @@ let self = {
     })
   },
 
+  setup_wait: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.SETUP_WAIT })
+  },
+
   setup_done: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.SETUP_DONE })
   },
@@ -103,6 +107,10 @@ let self = {
 
   no_stored_credentials: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.NO_STORED_CREDENTIALS })
+  },
+
+  login_attempt: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.LOGIN_ATTEMPT })
   },
 
   login_with_password: (username, password) => {

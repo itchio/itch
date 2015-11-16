@@ -5,6 +5,7 @@ export default keyMirror({
   BOOT: null,
   WINDOW_READY: null,
   SETUP_STATUS: null,
+  SETUP_WAIT: null,
   SETUP_DONE: null,
 
   FOCUS_WINDOW: null,
@@ -38,7 +39,9 @@ export default keyMirror({
 
   /** Ready but needs human login */
   NO_STORED_CREDENTIALS: null,
-  /** Private - login attempt */
+  /** Any login attempt (cached or not) */
+  LOGIN_ATTEMPT: null,
+  /** Private - login attempt with username/password */
   LOGIN_WITH_PASSWORD: null,
   /** Wrong login/password or something else */
   LOGIN_FAILURE: null,

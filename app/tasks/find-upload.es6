@@ -41,15 +41,13 @@ let self = {
 
     let cave = await CaveStore.find(id)
     let key = cave.key || await db.find_one({_table: 'download_keys', game_id: cave.game_id})
-    log(opts, `found key ${JSON.stringify(key)} for game ${cave.game_id}`)
 
     if (key) {
       AppActions.cave_update(id, {key})
-      console.log('getting uploads with key')
+      log(opts, 'bought game, using download key')
       uploads = (await client.download_key_uploads(key.id)).uploads
     } else {
-      console.log('getting uploads without key')
-      console.log('client = ' + JSON.stringify(client))
+      log(opts, 'no download key, seeking free uploads')
       uploads = (await client.game_uploads(cave.game_id)).uploads
     }
 

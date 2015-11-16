@@ -13,6 +13,7 @@ import AppConstants from '../constants/app-constants'
 import AppActions from '../actions/app-actions'
 
 let path_done = false
+let ready = false
 
 function augment_path () {
   let bin_path = ibrew.bin_path()
@@ -41,6 +42,7 @@ async function run () {
     let compressed = ['butler', 'elevate'].map(fetch)
     await Promise.all(compressed)
 
+    ready = true
     AppActions.setup_done()
   } catch (err) {
     AppActions.setup_status(err.stack || err, 'error')
@@ -48,7 +50,9 @@ async function run () {
 }
 
 let SetupStore = Object.assign(new Store('setup-store'), {
-  // muffin
+  is_ready: () => {
+    return ready
+  }
 })
 
 AppDispatcher.register('setup-store', Store.action_listeners(on => {

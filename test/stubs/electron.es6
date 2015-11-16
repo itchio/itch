@@ -21,7 +21,6 @@ let stubs = {
   },
   ipc: Object.assign({
     send: function () {
-      console.log('send from browser')
       let args = []
       for (let i = 1; i < arguments.length; i++) {
         args.push(arguments[i])
