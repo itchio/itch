@@ -1,4 +1,8 @@
 .form {
+  input, button {
+    font-family: inherit !important;  
+  }
+
   .input_row {
     margin-bottom: 20px;
 
