@@ -6,6 +6,8 @@ import noop from './noop'
 import spawn from './spawn'
 import mkdirp from '../promised/mkdirp'
 
+let log = require('../util/log')('util/http')
+
 let self = {
   parse_butler_status: function (opts, onerror, token) {
     let {onprogress = noop} = opts
@@ -14,7 +16,7 @@ let self = {
     if (status.Percent) {
       onprogress({percent: status.Percent})
     } else if (status.Message) {
-      console.log(`Message from butler: ${status.Message}`)
+      log(opts, `butler: ${status.Message}`)
     } else if (status.Error) {
       onerror(status.Error)
     }

@@ -18,7 +18,7 @@ function ensure (predicate, reason) {
 }
 
 async function start (opts) {
-  let {id, onprogress = noop} = opts
+  let {id, onprogress = noop, logger} = opts
 
   let cave = await CaveStore.find(id)
 
@@ -38,7 +38,7 @@ async function start (opts) {
   log(opts, `d/l from ${url}`)
 
   await http.request({
-    url, onprogress,
+    url, onprogress, logger,
     dest: CaveStore.archive_path(upload)
   })
 }
