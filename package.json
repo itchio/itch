@@ -37,7 +37,7 @@
     "mori": "^0.3.2",
     "nconf": "^0.8.2",
     "nedb": "^1.2.1",
-    "needle": "^0.10.0",
+    "needle": "^0.11.0",
     "pure-render-mixin": "^1.0.2",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
