@@ -13,12 +13,13 @@ let self = {
     let {onprogress = noop} = opts
 
     let status = JSON.parse(token)
-    if (status.Percent) {
-      onprogress({percent: status.Percent})
-    } else if (status.Message) {
-      log(opts, `butler: ${status.Message}`)
-    } else if (status.Error) {
-      onerror(status.Error)
+    switch (status.type) {
+      case 'log':
+        return log(opts, `butler: ${status.message}`)
+      case 'progress':
+        return onprogress({percent: status.percentage})
+      case 'error':
+        return onerror(status.message)
     }
   },
 

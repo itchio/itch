@@ -45,7 +45,7 @@ test('http', t => {
 
   t.case('emits progress', t => {
     setTimeout(() => {
-      child.stdout.write(JSON.stringify({Percent: 39}) + '\n')
+      child.stdout.write(JSON.stringify({type: 'progress', percentage: 39}) + '\n')
       child.emit('close')
     }, 10)
     t.mock(http_opts).expects('onprogress').withArgs({percent: 39})
