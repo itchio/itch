@@ -34,7 +34,7 @@ let self = {
     return mkdirp(path.dirname(dest))
       .then(() => spawn({
         command: 'butler',
-        args: ['dl', url, dest],
+        args: ['-j', 'dl', url, dest],
         ontoken: partial(self.parse_butler_status, opts, onerror)
       })).then((res) => {
         if (err) { throw err }

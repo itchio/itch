@@ -52,8 +52,9 @@ let self = {
         if (code === 0) {
           let parsed = null
           if (parser) {
-            let matches = stdout.match(parser)
+            let matches = (stdout + '\n' + stderr).match(parser)
             if (matches) {
+              console.log(`found matches: ${JSON.stringify(matches)}`)
               parsed = matches[1]
             }
           }

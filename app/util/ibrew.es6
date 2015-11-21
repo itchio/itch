@@ -28,18 +28,10 @@ let self = {
       }
     },
     'butler': {
-      format: '7z',
-      version_check: {
-        args: ['version'],
-        parser: /butler version ([0-9a-z.v]*)/
-      }
+      format: '7z'
     },
     'elevate': {
       format: '7z',
-      version_check: {
-        args: ['-v'],
-        parser: /elevate version ([0-9a-z.v]*)/
-      },
       os_whitelist: ['windows']
     }
   },
@@ -167,7 +159,10 @@ let self = {
     onstatus(`Making sure we have the latest of everything...`, 'stopwatch')
     let get_latest_version = partial(self.get_latest_version, channel)
 
-    let check = formula.version_check
+    let check = Object.assign({
+      args: ['-V'],
+      parser: /([a-zA-Z0-9\.]+)/
+    }, formula.version_check || {})
     let info
 
     try {
