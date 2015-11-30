@@ -60,7 +60,7 @@
     "grunt-sass": "^1.0.0",
     "jspath": "^0.3.2",
     "load-grunt-tasks": "^3.3.0",
-    "nyc": "^3.2.2",
+    "nyc": "^4.0.1",
     "proxyquire": "^1.7.3",
     "react-addons-test-utils": "^0.14.3",
     "remap-istanbul": "^0.4.0",
