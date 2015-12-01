@@ -7,6 +7,16 @@ let log = require('./log')('api')
 let logger = new Logger()
 let opts = {logger}
 
+// cf. https://github.com/itchio/itchio-app/issues/48
+// basically, lua returns empty-object instead of empty-array
+// because they're the same in lua (empty table). not in JSON though.
+function ensure_array (v) {
+  if (~~v.length === 0) {
+    return []
+  }
+  return v
+}
+
 class ApiError extends ExtendableError {
   constructor (errors) {
     super(errors.join(', '))
@@ -75,24 +85,32 @@ class User {
     return this.client.request(method, url, data)
   }
 
-  my_games () {
-    return this.request('get', `/my-games`)
+  async my_games () {
+    let res = await this.request('get', `/my-games`)
+    res.games = ensure_array(res.games)
+    return res
   }
 
-  my_owned_keys () {
-    return this.request('get', `/my-owned-keys`)
+  async my_owned_keys () {
+    let res = await this.request('get', `/my-owned-keys`)
+    res.owned_keys = ensure_array(res.owned_keys)
+    return res
   }
 
-  my_claimed_keys () {
-    return this.request('get', `/my-claimed-keys`)
+  async my_claimed_keys () {
+    let res = await this.request('get', `/my-claimed-keys`)
+    res.claimed_keys = ensure_array(res.claimed_keys)
+    return res
   }
 
   me () {
     return this.request('get', `/me`)
   }
 
-  my_collections () {
-    return this.request('get', `/my-collections`)
+  async my_collections () {
+    let res = await this.request('get', `/my-collections`)
+    res.collections = ensure_array(res.collections)
+    return res
   }
 
   collection_games (collection_id, page = 1) {
@@ -107,8 +125,10 @@ class User {
     return this.request('get', `/download-key/${download_key_id}/download/${upload_id}`)
   }
 
-  game_uploads (game_id) {
-    return this.request('get', `/game/${game_id}/uploads`)
+  async game_uploads (game_id) {
+    let res = await this.request('get', `/game/${game_id}/uploads`)
+    res.uploads = ensure_array(res.uploads)
+    return res
   }
 
   download_upload (upload_id) {
@@ -119,7 +139,8 @@ class User {
 let self = {
   Client,
   User,
-  client: new Client()
+  client: new Client(),
+  ensure_array
 }
 
 export default self
