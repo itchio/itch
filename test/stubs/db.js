@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import Promise from 'bluebird'
 import proxyquire from 'proxyquire'

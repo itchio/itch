@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 import test from 'zopf'
 import {Transition, InputRequired} from '../../app/tasks/errors'
 

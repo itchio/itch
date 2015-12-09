@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import proxyquire from 'proxyquire'
 import electron from './electron'

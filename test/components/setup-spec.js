@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 import test from 'zopf'
 import mori from 'mori'
 import proxyquire from 'proxyquire'

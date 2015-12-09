@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 import test from 'zopf'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
