@@ -8,7 +8,7 @@ let electron = require('../stubs/electron')
 let $ = require('react').createElement
 
 test('forms', t => {
-  let {InputRow} = proxyquire('../../app/components/forms', electron)
+  let InputRow = proxyquire('../../app/components/forms', electron).InputRow
 
   let props = {
     autofocus: true,

@@ -8,7 +8,7 @@ let electron = require('../stubs/electron')
 let AppDispatcher = require('../stubs/app-dispatcher')
 let AppActions = require('../stubs/app-actions')
 
-let setup = t => {
+test('SetupStore', t => {
   let ibrew = {
     fetch: () => null
   }
@@ -20,11 +20,6 @@ let setup = t => {
 
   proxyquire('../../app/stores/setup-store', stubs)
   let handler = AppDispatcher.get_handler('setup-store')
-  return {handler, ibrew}
-}
-
-test('SetupStore', t => {
-  let {handler, ibrew} = setup(t)
 
   t.case('window_ready', t => {
     t.stub(ibrew, 'fetch').resolves()

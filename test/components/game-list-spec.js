@@ -9,7 +9,9 @@ let electron = require('../stubs/electron')
 let $ = require('react').createElement
 
 test('game-list', t => {
-  let {GameCell, GameList} = proxyquire('../../app/components/game-list', electron)
+  let gamelist = proxyquire('../../app/components/game-list', electron)
+  let GameCell = gamelist.GameCell
+  let GameList = gamelist.GameList
 
   t.case('GameList', t => {
     sd.shallowRender($(GameList, {}))

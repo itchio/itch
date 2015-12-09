@@ -5,7 +5,7 @@ let proxyquire = require('proxyquire')
 
 let electron = require('../stubs/electron')
 
-let setup = t => {
+test('crash-reporter', t => {
   let fstream = {
     Writer: () => fstream,
     write: () => fstream,
@@ -19,11 +19,7 @@ let setup = t => {
     './os': os
   }, electron)
   let crash_reporter = proxyquire('../../app/util/crash-reporter', stubs)
-  return {crash_reporter, os, fstream, electron}
-}
 
-test('crash-reporter', t => {
-  let {crash_reporter, os, fstream, electron} = setup(t)
   let e = { stack: 'Hey\nthere' }
 
   t.case('write_crash_log', t => {

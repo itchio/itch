@@ -19,7 +19,7 @@ test('api', t => {
   api.client.root_url = 'http://example.org/'
 
   let user = new api.User(api.client, 'key')
-  let {client} = api
+  let client = api.client
 
   let uri = 'http://example.org/yo'
 

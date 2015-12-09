@@ -12,7 +12,9 @@ test('user-panel', t => {
   let stubs = Object.assign({
     '../actions/app-actions': AppActions
   }, electron)
-  let {LoginPage, LoginForm} = proxyquire('../../app/components/login', stubs)
+  let login = proxyquire('../../app/components/login', stubs)
+  let LoginPage = login.LoginPage
+  let LoginForm = login.LoginForm
 
   t.case('LoginPage', t => {
     sd.shallowRender($(LoginPage, {}))

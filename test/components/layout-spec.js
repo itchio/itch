@@ -15,7 +15,7 @@ test('layout', t => {
     '../stores/app-store': AppStore,
     '../util/defer': defer
   }, electron)
-  let {Layout} = proxyquire('../../app/components/layout', stubs)
+  let Layout = proxyquire('../../app/components/layout', stubs).Layout
   let get_state = t.stub(AppStore, 'get_state')
 
   let set_state = (tree, props) => {

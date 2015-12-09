@@ -8,7 +8,11 @@ let electron = require('../stubs/electron')
 let $ = require('react').createElement
 
 test('user-panel', t => {
-  let {Icon, TaskIcon, ProgressBar, ErrorList} = proxyquire('../../app/components/misc', electron)
+  let misc = proxyquire('../../app/components/misc', electron)
+  let Icon = misc.Icon
+  let TaskIcon = misc.TaskIcon
+  let ProgressBar = misc.ProgressBar
+  let ErrorList = misc.ErrorList
 
   t.case('Icon', t => {
     sd.shallowRender($(Icon, {icon}))

@@ -4,7 +4,7 @@ let proxyquire = require('proxyquire')
 
 let electron = require('../stubs/electron')
 
-let setup = t => {
+test('app-actions', t => {
   let app_dispatcher = {
     dispatch: () => null
   }
@@ -12,11 +12,6 @@ let setup = t => {
     '../dispatcher/app-dispatcher': app_dispatcher
   }, electron)
   let app_actions = proxyquire('../../app/actions/app-actions', stubs)
-  return {app_actions, app_dispatcher}
-}
-
-test('app-actions', t => {
-  let {app_actions, app_dispatcher} = setup(t)
 
   let test_action = (name, args, object) => {
     t.case(name, t => {

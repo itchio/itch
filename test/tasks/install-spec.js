@@ -14,7 +14,7 @@ let typical_install = {
   uploads: { '11': { id: 11, size: 512 } }
 }
 
-let setup = (t) => {
+test('install', t => {
   let archive = {
     install: () => 0,
     '@noCallThru': true
@@ -26,11 +26,6 @@ let setup = (t) => {
     './installers/archive': archive
   }, electron)
   let install = proxyquire('../../app/tasks/install', stubs)
-  return {CaveStore, archive, install}
-}
-
-test('install', t => {
-  let {archive, install, CaveStore} = setup(t)
 
   ;['zip', 'gz', 'bz2', '7z'].forEach((type) => {
     t.case(`use 7-zip on ${type}`, t => {

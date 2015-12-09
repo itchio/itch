@@ -4,7 +4,7 @@ let proxyquire = require('proxyquire')
 
 let electron = require('../stubs/electron')
 
-let setup = t => {
+test('config', t => {
   let nconf = {
     file: () => null,
     get: () => null,
@@ -17,11 +17,6 @@ let setup = t => {
   t.stub(nconf, 'file').throws()
 
   let config = proxyquire('../../app/util/config', stubs)
-  return {nconf, config}
-}
-
-test('config', t => {
-  let {nconf, config} = setup(t)
 
   t.case('save', t => {
     t.mock(nconf).expects('save').once()

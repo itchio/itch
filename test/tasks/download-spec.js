@@ -17,7 +17,7 @@ let upload_response = {
   url: 'http://example.org/game.zip'
 }
 
-let setup = (t) => {
+test('download', t => {
   let fs = {
     lstatAsync: () => null
   }
@@ -31,11 +31,6 @@ let setup = (t) => {
   }, electron)
 
   let download = proxyquire('../../app/tasks/download', stubs)
-  return {download, client, fs, http}
-}
-
-test('download', t => {
-  let {download, client, fs} = setup(t)
 
   t.case('validates upload_id', t => {
     let install = Object.assign({}, typical_install, {upload_id: 22})

@@ -13,7 +13,7 @@ let log = require('../../app/util/log')
 let logger = new log.Logger({sinks: {console: false}})
 let opts = {id: 'kalamazoo', logger}
 
-let setup = t => {
+test('configure', t => {
   let os = {}
 
   let noop = () => Promise.resolve()
@@ -31,13 +31,7 @@ let setup = t => {
   }, electron)
 
   let configure = proxyquire('../../app/tasks/configure', stubs)
-
-  return {configure, os, win32, linux, darwin}
-}
-
-test('configure', t => {
-  let objects = setup(t)
-  let {configure, os} = objects
+  let platforms = {win32, darwin, linux}
 
   t.case('rejects unsupported platform', t => {
     t.stub(os, 'platform').returns('irix')
@@ -47,11 +41,13 @@ test('configure', t => {
   ;['win32', 'darwin', 'linux'].forEach((platform) => {
     t.case(platform, t => {
       t.stub(os, 'platform').returns(platform)
-      t.mock(objects[platform]).expects('configure').resolves({executables: []})
+      t.mock(platforms[platform]).expects('configure').resolves({executables: []})
       return configure.start(opts)
     })
   })
+})
 
+test('configure (each platform)', t => {
   let fs = {
     chmodAsync: () => Promise.resolve(),
     '@global': true,

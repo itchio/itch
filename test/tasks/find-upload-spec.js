@@ -12,7 +12,7 @@ let AppActions = require('../stubs/app-actions')
 
 let uploads_fixture = fixture.api('game/36664/uploads')
 
-let setup = t => {
+test('find-upload', t => {
   let db = {
     find_one: () => Promise.resolve(null)
   }
@@ -33,11 +33,6 @@ let setup = t => {
   let client = CredentialsStore.get_current_user()
   t.stub(client, 'game_uploads').resolves(uploads_fixture)
 
-  return {find_upload, client, db, CaveStore, AppActions}
-}
-
-test('find-upload', t => {
-  let {find_upload, client, db, CaveStore, AppActions} = setup(t)
   let opts = {id: 'kalamazoo'}
 
   t.case('search for download key', t => {

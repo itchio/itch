@@ -9,7 +9,7 @@ let electron = require('../stubs/electron')
 let $ = require('react').createElement
 
 test('SetupPage', t => {
-  let {SetupPage} = proxyquire('../../app/components/setup', electron)
+  let SetupPage = proxyquire('../../app/components/setup', electron).SetupPage
 
   let props = {
     icon: 'configure',
