@@ -2,6 +2,7 @@
 
 var path = require('path');
 var glob = require('glob');
+require('source-map-support').install();
 require('nodent')();
 
 process.argv.slice(2).forEach(function (arg) {
