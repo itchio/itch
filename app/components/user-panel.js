@@ -1,11 +1,11 @@
 'use nodent';'use strict'
 
-import React from 'react'
-import {PropTypes} from 'react'
-import Component from './component'
-import classNames from 'classnames'
+let React = require('react')
+let PropTypes = require('react').PropTypes
+let Component = require('./component')
+let classNames = require('classnames')
 
-import remote from 'remote'
+let remote = require('remote')
 let CredentialsStore = remote.require('./stores/credentials-store')
 
 function get_state () {

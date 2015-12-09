@@ -1,11 +1,11 @@
 'use nodent';'use strict'
 
-import path from 'path'
-import {partial} from 'underscore'
+let path = require('path')
+let partial = require('underscore').partial
 
-import noop from './noop'
-import spawn from './spawn'
-import mkdirp from '../promised/mkdirp'
+let noop = require('./noop')
+let spawn = require('./spawn')
+let mkdirp = require('../promised/mkdirp')
 
 let log = require('../util/log')('util/http')
 
@@ -44,4 +44,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

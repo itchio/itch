@@ -1,7 +1,7 @@
 'use nodent';'use strict'
 
-import React from 'react'
-import {shallowEqual} from 'pure-render-mixin'
+let React = require('react')
+let shallowEqual = require('pure-render-mixin').shallowEqual
 
 class Component extends React.Component {
 
@@ -12,4 +12,4 @@ class Component extends React.Component {
 
 }
 
-export default Component
+module.exports = Component

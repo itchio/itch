@@ -1,17 +1,17 @@
 'use nodent';'use strict'
 
-import path from 'path'
-import child_process from 'child_process'
-import clone from 'clone'
-import Promise from 'bluebird'
+let path = require('path')
+let child_process = require('child_process')
+let clone = require('clone')
+let Promise = require('bluebird')
 
-import os from '../util/os'
+let os = require('../util/os')
 
 let log = require('../util/log')('tasks/launch')
-import configure from './configure'
+let configure = require('./configure')
 
-import CaveStore from '../stores/cave-store'
-import {Crash} from './errors'
+let CaveStore = require('../stores/cave-store')
+let Crash = require('./errors').Crash
 
 let self = {
   sh: function (exe_path, cmd, opts) {
@@ -126,4 +126,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

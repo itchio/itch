@@ -1,16 +1,20 @@
 'use nodent';'use strict'
 
-import React from 'react'
-import mori from 'mori'
-import {PropTypes} from 'react'
-import Component from './component'
-import classNames from 'classnames'
+let React = require('react')
+let mori = require('mori')
+let PropTypes = require('react').PropTypes
+let Component = require('./component')
+let classNames = require('classnames')
 
-import {UserPanel} from './user-panel'
-import {GameList} from './game-list'
-import {Icon, TaskIcon, ErrorList, ProgressBar} from './misc'
+let UserPanel = require('./user-panel').UserPanel
+let GameList = require('./game-list').GameList
+let misc = require('./misc')
+let Icon = misc.Icon
+let TaskIcon = misc.TaskIcon
+let ErrorList = misc.ErrorList
+let ProgressBar = misc.ProgressBar
 
-import AppActions from '../actions/app-actions'
+let AppActions = require('../actions/app-actions')
 
 // Hack for frameless styling
 let frameless = process.platform === 'darwin'

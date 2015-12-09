@@ -1,7 +1,7 @@
 'use nodent';'use strict'
 
-import Promise from 'bluebird'
+let Promise = require('bluebird')
 
 let fs = Promise.promisifyAll(require('fs'))
 
-export default fs
+module.exports = fs

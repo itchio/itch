@@ -1,7 +1,7 @@
 'use nodent';'use strict'
-import ipc from 'ipc'
+let ipc = require('ipc')
 
-import os from '../util/os'
+let os = require('../util/os')
 
 let Log = require('../util/log')
 let log = Log('dispatcher')

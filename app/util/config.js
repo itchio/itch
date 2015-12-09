@@ -1,8 +1,8 @@
 'use nodent';'use strict'
 
-import nconf from 'nconf'
-import path from 'path'
-import app from 'app'
+let nconf = require('nconf')
+let path = require('path')
+let app = require('app')
 
 let config_file = path.join(app.getPath('userData'), 'config.json')
 try {
@@ -36,4 +36,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

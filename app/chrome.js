@@ -5,9 +5,9 @@ require('bluebird').config({
   cancellation: true
 })
 
-import ReactDOM from 'react-dom'
-import React from 'react'
-import {Layout} from './components/layout'
+let ReactDOM = require('react-dom')
+let React = require('react')
+let Layout = require('./components/layout').Layout
 
 let app_node
 

@@ -1,15 +1,15 @@
 'use nodent';'use strict'
 
-import app from 'app'
-import path from 'path'
-import fstream from 'fstream'
-import Promise from 'bluebird'
+let app = require('app')
+let path = require('path')
+let fstream = require('fstream')
+let Promise = require('bluebird')
 
-import {partial} from 'underscore'
-import needle from 'needle'
+let partial = require('underscore').partial
+let needle = require('needle')
 
-import install from '../tasks/install'
-import os from './os'
+let install = require('../tasks/install')
+let os = require('./os')
 let log = require('./log')('ibrew')
 
 let self = {
@@ -196,4 +196,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

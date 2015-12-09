@@ -1,15 +1,15 @@
 'use nodent';'use strict'
 
-import mori from 'mori'
+let mori = require('mori')
 
-import Store from './store'
+let Store = require('./store')
 
-import AppDispatcher from '../dispatcher/app-dispatcher'
-import AppConstants from '../constants/app-constants'
-import AppActions from '../actions/app-actions'
-import {pairs} from 'underscore'
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+let AppConstants = require('../constants/app-constants')
+let AppActions = require('../actions/app-actions')
+let pairs = require('underscore').pairs
 
-import defer from '../util/defer'
+let defer = require('../util/defer')
 
 let state = mori.hashMap(
   'page', 'login',
@@ -131,4 +131,4 @@ Store.subscribe('collection-store', (collections) => {
   AppStore.emit_change()
 })
 
-export default AppStore
+module.exports = AppStore

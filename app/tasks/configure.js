@@ -1,14 +1,14 @@
 'use nodent';'use strict'
 
-import path from 'path'
-import {partial} from 'underscore'
+let path = require('path')
+let partial = require('underscore').partial
 
-import os from '../util/os'
+let os = require('../util/os')
 
 let log = require('../util/log')('tasks/configure')
 
-import CaveStore from '../stores/cave-store'
-import AppActions from '../actions/app-actions'
+let CaveStore = require('../stores/cave-store')
+let AppActions = require('../actions/app-actions')
 
 let self = {
   configure: async function (app_path) {
@@ -38,4 +38,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

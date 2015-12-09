@@ -1,13 +1,13 @@
 'use nodent';'use strict'
 
-import {Transition} from './errors'
+let Transition = require('./errors').Transition
 
 let log = require('../util/log')('tasks/download')
-import http from '../util/http'
-import noop from '../util/noop'
+let http = require('../util/http')
+let noop = require('../util/noop')
 
-import CaveStore from '../stores/cave-store'
-import CredentialsStore from '../stores/credentials-store'
+let CaveStore = require('../stores/cave-store')
+let CredentialsStore = require('../stores/credentials-store')
 
 function ensure (predicate, reason) {
   if (!predicate) {
@@ -44,4 +44,4 @@ async function start (opts) {
   })
 }
 
-export default { start }
+module.exports = { start }

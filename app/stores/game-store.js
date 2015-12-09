@@ -1,15 +1,15 @@
 'use nodent';'use strict'
-import deep_assign from 'deep-assign'
-import Promise from 'bluebird'
-import {pluck} from 'underscore'
+let deep_assign = require('deep-assign')
+let Promise = require('bluebird')
+let pluck = require('underscore').pluck
 
-import Store from './store'
-import CredentialsStore from './credentials-store'
+let Store = require('./store')
+let CredentialsStore = require('./credentials-store')
 
-import AppDispatcher from '../dispatcher/app-dispatcher'
-import AppConstants from '../constants/app-constants'
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+let AppConstants = require('../constants/app-constants')
 
-import db from '../util/db'
+let db = require('../util/db')
 
 let state = {}
 
@@ -57,7 +57,14 @@ function cache_collection_games (id) {
   })
 }
 
-function fetch_collection_games (id, page = 1, game_ids = []) {
+function fetch_collection_games (id, page, game_ids) {
+  if (typeof page === 'undefined') {
+    page = 1
+  }
+  if (typeof game_ids === 'undefined') {
+    game_ids = []
+  }
+
   cache_collection_games(id)
 
   let user = CredentialsStore.get_current_user()
@@ -139,4 +146,4 @@ AppDispatcher.register('game-store', Store.action_listeners(on => {
   })
 }))
 
-export default GameStore
+module.exports = GameStore

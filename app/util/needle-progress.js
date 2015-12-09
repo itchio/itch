@@ -1,12 +1,16 @@
 'use nodent';'use strict'
 
-import {PassThrough} from 'stream'
+let PassThrough = require('stream').PassThrough
 
 let default_opts = {
   throttle: 250
 }
 
-export default function (req, user_opts = {}) {
+module.exports = function (req, user_opts) {
+  if (typeof user_opts === 'undefined') {
+    user_opts = {}
+  }
+
   let timeout = null
   let total_size = 0
   let received_size = 0

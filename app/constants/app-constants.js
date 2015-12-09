@@ -1,8 +1,8 @@
 'use nodent';'use strict'
 
-import keyMirror from 'keymirror'
+let keyMirror = require('keymirror')
 
-export default keyMirror({
+module.exports = keyMirror({
   BOOT: null,
   WINDOW_READY: null,
   SETUP_STATUS: null,

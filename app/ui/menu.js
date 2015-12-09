@@ -1,11 +1,11 @@
 'use nodent';'use strict'
 
-import Menu from 'menu'
+let Menu = require('menu')
 
-import CredentialsStore from '../stores/credentials-store'
-import AppActions from '../actions/app-actions'
+let CredentialsStore = require('../stores/credentials-store')
+let AppActions = require('../actions/app-actions')
 
-import clone from 'clone'
+let clone = require('clone')
 
 let repo_url = 'https://github.com/itchio/itchio-app'
 
@@ -156,4 +156,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

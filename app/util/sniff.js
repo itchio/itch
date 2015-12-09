@@ -1,7 +1,7 @@
 'use nodent';'use strict'
 
-import Promise from 'bluebird'
-import file_type from 'file-type'
+let Promise = require('bluebird')
+let file_type = require('file-type')
 let read_chunk = Promise.promisify(require('read-chunk'))
 
 function sniff (buf) {
@@ -72,4 +72,4 @@ sniff.path = async function (file) {
   }
 }
 
-export default sniff
+module.exports = sniff

@@ -1,14 +1,14 @@
 'use nodent';'use strict'
 
-import React from 'react'
-import mori from 'mori'
-import {PropTypes} from 'react'
-import Component from './component'
-import classNames from 'classnames'
+let React = require('react')
+let mori = require('mori')
+let PropTypes = require('react').PropTypes
+let Component = require('./component')
+let classNames = require('classnames')
 
-import AppActions from '../actions/app-actions'
+let AppActions = require('../actions/app-actions')
 
-import {TaskIcon} from './misc'
+let TaskIcon = require('./misc').TaskIcon
 
 class GameCell extends Component {
   render () {

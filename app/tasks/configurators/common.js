@@ -1,8 +1,8 @@
 'use nodent';'use strict'
 
-import sniff from '../../util/sniff'
-import glob from '../../promised/glob'
-import fs from '../../promised/fs'
+let sniff = require('../../util/sniff')
+let glob = require('../../promised/glob')
+let fs = require('../../promised/fs')
 
 /**
  * Tries to find executables by sniffing file contents,
@@ -23,4 +23,4 @@ async function sniff_and_chmod (file) {
   }
 }
 
-export default {fix_execs}
+module.exports = {fix_execs}

@@ -1,15 +1,15 @@
 'use nodent';'use strict'
 
-import path from 'path'
-import {object} from 'underscore'
+let path = require('path')
+let object = require('underscore').object
 
-import sniff from '../../util/sniff'
-import noop from '../../util/noop'
-import spawn from '../../util/spawn'
+let sniff = require('../../util/sniff')
+let noop = require('../../util/noop')
+let spawn = require('../../util/spawn')
 
-import glob from '../../promised/glob'
-import mkdirp from '../../promised/mkdirp'
-import fs from '../../promised/fs'
+let glob = require('../../promised/glob')
+let mkdirp = require('../../promised/mkdirp')
+let fs = require('../../promised/fs')
 
 let log = require('../../util/log')('installers/archive')
 
@@ -106,4 +106,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

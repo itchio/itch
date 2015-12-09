@@ -1,16 +1,16 @@
 'use nodent';'use strict'
-import AppDispatcher from '../dispatcher/app-dispatcher'
-import AppActions from '../actions/app-actions'
-import AppConstants from '../constants/app-constants'
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+let AppActions = require('../actions/app-actions')
+let AppConstants = require('../constants/app-constants')
 
-import WindowStore from './window-store'
-import TrayStore from './tray-store'
-import Store from './store'
+let WindowStore = require('./window-store')
+let TrayStore = require('./tray-store')
+let Store = require('./store')
 
-import os from '../util/os'
-import defer from '../util/defer'
+let os = require('../util/os')
+let defer = require('../util/defer')
 
-import app from 'app'
+let app = require('app')
 
 let state = {
   progress: -1
@@ -57,4 +57,4 @@ AppDispatcher.register('notification-store', Store.action_listeners(on => {
   on(AppConstants.NOTIFY, action => notify(action.message))
 }))
 
-export default NotificationStore
+module.exports = NotificationStore

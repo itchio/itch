@@ -1,8 +1,8 @@
 'use nodent';'use strict'
 
-import React from 'react'
-import {PropTypes} from 'react'
-import Component from './component'
+let React = require('react')
+let PropTypes = require('react').PropTypes
+let Component = require('./component')
 
 class InputRow extends Component {
   componentDidMount () {

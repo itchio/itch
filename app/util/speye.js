@@ -7,4 +7,4 @@ let self = function (msg) {
   }
 }
 
-export default self
+module.exports = self

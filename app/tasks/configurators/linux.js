@@ -1,6 +1,6 @@
 'use nodent';'use strict'
 
-import common from './common'
+let common = require('./common')
 
 let self = {
   configure: async function (app_path) {
@@ -9,4 +9,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

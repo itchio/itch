@@ -1,13 +1,13 @@
 'use nodent';'use strict'
-import AppActions from '../actions/app-actions'
-import AppDispatcher from '../dispatcher/app-dispatcher'
-import AppConstants from '../constants/app-constants'
-import Store from './store'
+let AppActions = require('../actions/app-actions')
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+let AppConstants = require('../constants/app-constants')
+let Store = require('./store')
 
-import defer from '../util/defer'
+let defer = require('../util/defer')
 
-import app from 'app'
-import BrowserWindow from 'browser-window'
+let app = require('app')
+let BrowserWindow = require('browser-window')
 
 let window
 let quitting = false
@@ -85,4 +85,4 @@ AppDispatcher.register('window-store', Store.action_listeners(on => {
   })
 }))
 
-export default WindowStore
+module.exports = WindowStore

@@ -1,3 +1,3 @@
 'use nodent';'use strict'
 
-export default () => null
+module.exports = () => null

@@ -1,8 +1,8 @@
 'use nodent';'use strict'
 
-import {pairs} from 'underscore'
-import fstream from 'fstream'
-import deep_assign from 'deep-assign'
+let pairs = require('underscore').pairs
+let fstream = require('fstream')
+let deep_assign = require('deep-assign')
 
 function make (name) {
   return function (opts, message) {
@@ -13,7 +13,11 @@ function make (name) {
 }
 
 class Logger {
-  constructor (user_opts = {}) {
+  constructor (user_opts) {
+    if (typeof user_opts === 'undefined') {
+      user_opts = {}
+    }
+
     let default_opts = {sinks: {console: true}}
     let opts = deep_assign({}, default_opts, user_opts)
 
@@ -84,4 +88,4 @@ class Logger {
 }
 make.Logger = Logger
 
-export default make
+module.exports = make

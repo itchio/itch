@@ -4,9 +4,6 @@ require('bluebird').config({
   longStackTraces: true,
   cancellation: true
 })
-require('nodent')({
-  promises: true
-})
 
 process.on('uncaughtException', function (e) {
   console.log('Uncaught exception o/')

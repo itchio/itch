@@ -1,8 +1,8 @@
 'use nodent';'use strict'
 
-import React from 'react'
-import {PropTypes} from 'react'
-import Component from './component'
+let React = require('react')
+let PropTypes = require('react').PropTypes
+let Component = require('./component')
 
 /**
  * An icon from the icomoon font.
@@ -100,4 +100,4 @@ ErrorList.propTypes = {
   errors: PropTypes.oneOfType([PropTypes.array, PropTypes.string])
 }
 
-export default {Icon, TaskIcon, ProgressBar, ErrorList}
+module.exports = {Icon, TaskIcon, ProgressBar, ErrorList}

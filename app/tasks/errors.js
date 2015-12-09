@@ -1,5 +1,5 @@
 'use nodent';'use strict'
-import ExtendableError from 'es6-error'
+let ExtendableError = require('es6-error')
 
 class Transition extends ExtendableError {
   constructor (opts) {
@@ -26,4 +26,4 @@ class Crash extends ExtendableError {
   }
 }
 
-export default { Transition, InputRequired, Crash }
+module.exports = { Transition, InputRequired, Crash }

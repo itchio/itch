@@ -1,6 +1,6 @@
 'use nodent';'use strict'
 
-import spawn from '../../util/spawn'
+let spawn = require('../../util/spawn')
 
 let log = require('../../util/log')('installers/inno')
 
@@ -34,4 +34,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

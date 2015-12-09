@@ -1,7 +1,7 @@
 'use nodent';'use strict'
 
-import AppDispatcher from '../dispatcher/app-dispatcher'
-import AppConstants from '../constants/app-constants'
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+let AppConstants = require('../constants/app-constants')
 
 let self = {
   boot: () => {
@@ -156,4 +156,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

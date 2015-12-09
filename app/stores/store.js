@@ -1,10 +1,13 @@
 'use nodent';'use strict'
-import {EventEmitter} from 'events'
-import os from '../util/os'
+let EventEmitter = require('events').EventEmitter
+let os = require('../util/os')
 
 let CHANGE_EVENT = 'change'
 
-function Store (name, process_type = 'browser') {
+function Store (name, process_type) {
+  if (typeof process_type === 'undefined') {
+    process_type = 'browser'
+  }
   if (typeof name !== 'string') {
     throw new Error(`Invalid store definition: missing name`)
   }
@@ -82,4 +85,4 @@ Store.subscribe = (name, cb) => {
   ipc.send(`${name}-fetch`)
 }
 
-export default Store
+module.exports = Store

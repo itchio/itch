@@ -1,17 +1,17 @@
 'use nodent';'use strict'
 
-import {Transition} from './errors'
+let Transition = require('./errors').Transition
 
-import sniff from '../util/sniff'
-import noop from '../util/noop'
+let sniff = require('../util/sniff')
+let noop = require('../util/noop')
 let log = require('../util/log')('tasks/install')
 
-import CaveStore from '../stores/cave-store'
-import AppActions from '../actions/app-actions'
+let CaveStore = require('../stores/cave-store')
+let AppActions = require('../actions/app-actions')
 
-import archive from './installers/archive'
-import msi from './installers/msi'
-import generic from './installers/generic'
+let archive = require('./installers/archive')
+let msi = require('./installers/msi')
+let generic = require('./installers/generic')
 
 function ensure (predicate, reason) {
   if (!predicate) {
@@ -72,4 +72,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

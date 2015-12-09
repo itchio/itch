@@ -1,14 +1,16 @@
 'use nodent';'use strict'
 
-import Promise from 'bluebird'
-import Datastore from 'nedb'
-import path from 'path'
-import {pairs, pluck} from 'underscore'
-import {camelize} from './format'
+let Promise = require('bluebird')
+let Datastore = require('nedb')
+let path = require('path')
+let underscore = require('underscore')
+let pairs = underscore.pairs
+let pluck = underscore.pluck
+let camelize = require('./format').camelize
 
-import app from 'app'
+let app = require('app')
 
-import mkdirp from '../promised/mkdirp'
+let mkdirp = require('../promised/mkdirp')
 
 let library_dir = path.join(app.getPath('home'), 'Downloads', 'itch.io')
 
@@ -169,4 +171,4 @@ let store = self.store
   self[method] = Promise.promisify(node_version, {context: store})
 })
 
-export default self
+module.exports = self

@@ -8,4 +8,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

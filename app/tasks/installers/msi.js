@@ -1,7 +1,7 @@
 'use nodent';'use strict'
 
-import spawn from '../../util/spawn'
-import os from '../../util/os'
+let spawn = require('../../util/spawn')
+let os = require('../../util/os')
 
 let log = require('../../util/log')('installers/msi')
 
@@ -56,4 +56,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

@@ -1,15 +1,15 @@
 'use nodent';'use strict'
 
-import React from 'react'
-import Component from './component'
-import mori from 'mori'
+let React = require('react')
+let Component = require('./component')
+let mori = require('mori')
 
-import {LoginPage} from './login'
-import {SetupPage} from './setup'
-import {LibraryPage} from './library'
+let LoginPage = require('./login').LoginPage
+let SetupPage = require('./setup').SetupPage
+let LibraryPage = require('./library').LibraryPage
 
-import AppStore from '../stores/app-store'
-import defer from '../util/defer'
+let AppStore = require('../stores/app-store')
+let defer = require('../util/defer')
 
 function get_state () {
   return {state: AppStore.get_state()}

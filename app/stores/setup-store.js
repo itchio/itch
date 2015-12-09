@@ -1,17 +1,17 @@
 'use nodent';'use strict'
 
-import Promise from 'bluebird'
-import path from 'path'
-import {partial} from 'underscore'
+let Promise = require('bluebird')
+let path = require('path')
+let partial = require('underscore').partial
 
-import ibrew from '../util/ibrew'
-import {Logger} from '../util/log'
+let ibrew = require('../util/ibrew')
+let Logger = require('../util/log').Logger
 
-import Store from './store'
+let Store = require('./store')
 
-import AppDispatcher from '../dispatcher/app-dispatcher'
-import AppConstants from '../constants/app-constants'
-import AppActions from '../actions/app-actions'
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+let AppConstants = require('../constants/app-constants')
+let AppActions = require('../actions/app-actions')
 
 let path_done = false
 let ready = false
@@ -60,4 +60,4 @@ AppDispatcher.register('setup-store', Store.action_listeners(on => {
   on(AppConstants.WINDOW_READY, run)
 }))
 
-export default SetupStore
+module.exports = SetupStore

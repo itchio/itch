@@ -1,8 +1,8 @@
 'use nodent';'use strict'
 'use nodent-promises';'use strict'
 
-import app from 'app'
-import os from '../os'
+let app = require('app')
+let os = require('../os')
 
 let self = {
   on_install: () => {
@@ -48,4 +48,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

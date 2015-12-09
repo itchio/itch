@@ -1,14 +1,14 @@
 'use nodent';'use strict'
-import {indexBy} from 'underscore'
+let indexBy = require('underscore').indexBy
 
-import Store from './store'
-import CredentialsStore from './credentials-store'
+let Store = require('./store')
+let CredentialsStore = require('./credentials-store')
 
-import AppDispatcher from '../dispatcher/app-dispatcher'
-import AppConstants from '../constants/app-constants'
-import AppActions from '../actions/app-actions'
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+let AppConstants = require('../constants/app-constants')
+let AppActions = require('../actions/app-actions')
 
-import db from '../util/db'
+let db = require('../util/db')
 
 let state = {}
 
@@ -43,4 +43,4 @@ AppDispatcher.register('collection-store', Store.action_listeners(on => {
   on(AppConstants.AUTHENTICATED, authenticated)
 }))
 
-export default CollectionStore
+module.exports = CollectionStore

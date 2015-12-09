@@ -1,14 +1,14 @@
 'use nodent';'use strict'
 
-import db from '../util/db'
-import {indexBy} from 'underscore'
+let db = require('../util/db')
+let indexBy = require('underscore').indexBy
 
-import os from '../util/os'
+let os = require('../util/os')
 let log = require('../util/log')('tasks/find-upload')
 
-import AppActions from '../actions/app-actions'
-import CaveStore from '../stores/cave-store'
-import CredentialsStore from '../stores/credentials-store'
+let AppActions = require('../actions/app-actions')
+let CaveStore = require('../stores/cave-store')
+let CredentialsStore = require('../stores/credentials-store')
 
 let self = {
   filter_uploads: function (uploads) {
@@ -72,4 +72,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

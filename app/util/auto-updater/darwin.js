@@ -5,4 +5,4 @@ let self = {
   start: () => false
 }
 
-export default self
+module.exports = self

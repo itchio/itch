@@ -1,5 +1,5 @@
 'use nodent';'use strict'
-import Promise from 'bluebird'
-import mkdirp from 'mkdirp'
+let Promise = require('bluebird')
+let mkdirp = require('mkdirp')
 
-export default Promise.promisify(mkdirp)
+module.exports = Promise.promisify(mkdirp)

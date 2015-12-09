@@ -1,18 +1,21 @@
 'use nodent';'use strict'
 
-import AppDispatcher from '../dispatcher/app-dispatcher'
-import AppConstants from '../constants/app-constants'
-import AppActions from '../actions/app-actions'
-import Store from './store'
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+let AppConstants = require('../constants/app-constants')
+let AppActions = require('../actions/app-actions')
+let Store = require('./store')
 
-import {Transition, InputRequired, Crash} from '../tasks/errors'
+let errors = require('../tasks/error')
+let Transition = errors.Transition
+let InputRequired = errors.InputRequired
+let Crash = errors.Crash
 
-import app from 'app'
-import path from 'path'
+let app = require('app')
+let path = require('path')
 
-import {Logger} from '../util/log'
+let Logger = require('../util/log').Logger
 let log = require('../util/log')('cave-store')
-import db from '../util/db'
+let db = require('../util/db')
 
 let library_dir = path.join(app.getPath('home'), 'Downloads', 'itch.io')
 let archives_dir = path.join(library_dir, 'archives')
@@ -66,7 +69,11 @@ function handle_task_error (err, id, task_name) {
   }
 }
 
-async function queue_task (id, task_name, data = {}) {
+async function queue_task (id, task_name, data) {
+  if (typeof data === 'undefined') {
+    data = {}
+  }
+
   let task = require(`../tasks/${task_name}`)
   let task_opts = Object.assign({}, opts, data, {
     id,
@@ -157,4 +164,4 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
   })
 }))
 
-export default CaveStore
+module.exports = CaveStore

@@ -1,13 +1,13 @@
 'use nodent';'use strict'
 
-import app from 'app'
+let app = require('app')
 
-import AppDispatcher from '../dispatcher/app-dispatcher'
-import AppActions from '../actions/app-actions'
-import AppConstants from '../constants/app-constants'
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+let AppActions = require('../actions/app-actions')
+let AppConstants = require('../constants/app-constants')
 
-import Store from './store'
-import os from '../util/os'
+let Store = require('./store')
+let os = require('../util/os')
 
 let auto_updater
 
@@ -49,4 +49,4 @@ AppDispatcher.register('self-update-store', Store.action_listeners(on => {
   on(AppConstants.SELF_UPDATE_ERROR, (payload) => console.log(`Auto updater error: ${payload.message}`))
 }))
 
-export default SelfUpdateStore
+module.exports = SelfUpdateStore

@@ -1,8 +1,8 @@
 'use nodent';'use strict'
 
-import StreamSearch from 'streamsearch'
-import fstream from 'fstream'
-import os from '../../util/os'
+let StreamSearch = require('streamsearch')
+let fstream = require('fstream')
+let os = require('../../util/os')
 
 let log = require('../../util/log')('installers/generic')
 
@@ -66,4 +66,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

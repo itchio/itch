@@ -1,14 +1,14 @@
 'use nodent';'use strict'
 
-import React from 'react'
-import mori from 'mori'
-import {PropTypes} from 'react'
-import Component from './component'
+let React = require('react')
+let mori = require('mori')
+let PropTypes = require('react').PropTypes
+let Component = require('./component')
 
-import AppActions from '../actions/app-actions'
+let AppActions = require('../actions/app-actions')
 
-import {InputRow} from './forms'
-import {ErrorList} from './misc'
+let InputRow = require('./forms').InputRow
+let ErrorList = require('./misc').ErrorList
 
 class LoginPage extends Component {
   render () {
@@ -66,4 +66,4 @@ LoginForm.propTypes = {
   state: PropTypes.any
 }
 
-export default {LoginPage, LoginForm}
+module.exports = {LoginPage, LoginForm}

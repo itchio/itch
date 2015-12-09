@@ -1,16 +1,16 @@
 'use nodent';'use strict'
-import AppDispatcher from '../dispatcher/app-dispatcher'
-import AppConstants from '../constants/app-constants'
-import AppActions from '../actions/app-actions'
-import Store from './store'
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+let AppConstants = require('../constants/app-constants')
+let AppActions = require('../actions/app-actions')
+let Store = require('./store')
 
-import path from 'path'
+let path = require('path')
 
-import app from 'app'
-import Menu from 'menu'
-import Tray from 'tray'
+let app = require('app')
+let Menu = require('menu')
+let Tray = require('tray')
 
-import os from '../util/os'
+let os = require('../util/os')
 
 let tray
 
@@ -62,4 +62,4 @@ AppDispatcher.register('tray-store', Store.action_listeners(on => {
   on(AppConstants.BOOT, refresh)
 }))
 
-export default TrayStore
+module.exports = TrayStore

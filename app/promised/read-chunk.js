@@ -1,5 +1,5 @@
 'use nodent';'use strict'
-import Promise from 'bluebird'
-import read_chunk from 'read-chunk'
+let Promise = require('bluebird')
+let read_chunk = require('read-chunk')
 
-export default Promise.promisify(read_chunk)
+module.exports = Promise.promisify(read_chunk)

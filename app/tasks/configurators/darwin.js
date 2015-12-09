@@ -1,9 +1,9 @@
 'use nodent';'use strict'
 
-import Promise from 'bluebird'
+let Promise = require('bluebird')
 
-import common from './common'
-import glob from '../../promised/glob'
+let common = require('./common')
+let glob = require('../../promised/glob')
 
 let self = {
   // skip some typical junk we find in archives that's supposed
@@ -28,4 +28,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

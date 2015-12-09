@@ -1,14 +1,18 @@
 'use nodent';'use strict'
 
-import Promise from 'bluebird'
-import child_process from 'child_process'
-import StreamSplitter from 'stream-splitter'
+let Promise = require('bluebird')
+let child_process = require('child_process')
+let StreamSplitter = require('stream-splitter')
 
-import noop from './noop'
+let noop = require('./noop')
 
 let log = require('./log')('spawn')
 
-function spawn (opts = {}) {
+function spawn (opts) {
+  if (typeof opts === 'undefined') {
+    opts = {}
+  }
+
   let {command, args = [], split = '\n', ontoken = noop} = opts
   log(opts, `spawning ${command} with args ${args.join(' ')}`)
 
@@ -24,4 +28,4 @@ function spawn (opts = {}) {
   })
 }
 
-export default spawn
+module.exports = spawn

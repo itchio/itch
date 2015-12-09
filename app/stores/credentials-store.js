@@ -1,13 +1,13 @@
 'use nodent';'use strict'
-import AppDispatcher from '../dispatcher/app-dispatcher'
-import AppConstants from '../constants/app-constants'
-import AppActions from '../actions/app-actions'
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+let AppConstants = require('../constants/app-constants')
+let AppActions = require('../actions/app-actions')
 
-import Store from './store'
-import SetupStore from './setup-store'
+let Store = require('./store')
+let SetupStore = require('./setup-store')
 
-import config from '../util/config'
-import api from '../util/api'
+let config = require('../util/config')
+let api = require('../util/api')
 
 let current_user = null
 let me = null
@@ -87,4 +87,4 @@ AppDispatcher.register('credentials-store', Store.action_listeners(on => {
   on(AppConstants.LOGOUT, logout)
 }))
 
-export default CredentialsStore
+module.exports = CredentialsStore

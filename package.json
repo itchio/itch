@@ -76,5 +76,12 @@
   },
   "standard": {
     "parser": "babel-eslint"
+  },
+  "nodent": {
+    "directive": {
+      "default": {
+        "promises": true
+      }
+    }
   }
 }

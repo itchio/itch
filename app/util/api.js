@@ -1,9 +1,9 @@
 'use nodent';'use strict'
 
-import needle from '../promised/needle'
-import ExtendableError from 'es6-error'
+let needle = require('../promised/needle')
+let ExtendableError = require('es6-error')
 
-import {Logger} from './log'
+let Logger = require('./log').Logger
 let log = require('./log')('api')
 let logger = new Logger()
 let opts = {logger}
@@ -144,4 +144,4 @@ let self = {
   ensure_array
 }
 
-export default self
+module.exports = self
