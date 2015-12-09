@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import spawn from '../../util/spawn'
 import os from '../../util/os'

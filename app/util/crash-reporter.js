@@ -1,13 +1,15 @@
+'use nodent';'use strict'
+'use nodent-promises';'use strict'
 
-import fstream from 'fstream'
-import path from 'path'
+let fstream = require('fstream')
+let path = require('path')
 
-import app from 'app'
-import shell from 'shell'
-import dialog from 'dialog'
-import querystring from 'querystring'
+let app = require('app')
+let shell = require('shell')
+let dialog = require('dialog')
+let querystring = require('querystring')
 
-import os from './os'
+let os = require('./os')
 
 let self = {
   write_crash_log: (e) => {
@@ -42,7 +44,9 @@ ${log}
 
   handle: (e) => {
     console.log(`Uncaught exception: ${e.stack}`)
-    let {log, crash_file} = self.write_crash_log(e)
+    let res = self.write_crash_log(e)
+    let log = res.log
+    let crash_file = res.crash_file
 
     // try to show error dialog
     let response = dialog.showMessageBox({
@@ -73,4 +77,4 @@ ${log}
   }
 }
 
-export default self
+module.exports = self

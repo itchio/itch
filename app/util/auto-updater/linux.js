@@ -1,6 +1,6 @@
+'use nodent';'use strict'
+'use nodent-promises';'use strict'
 
-let self = {
+module.exports = {
   start: () => false
 }
-
-export default self

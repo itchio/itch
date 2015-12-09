@@ -1,6 +1,7 @@
+'use nodent';'use strict'
 
-import Promise from 'bluebird'
-import spawn from 'win-spawn'
+let Promise = require('bluebird')
+let spawn = require('win-spawn')
 
 let self = {
   platform: function () {
@@ -37,7 +38,11 @@ let self = {
     return process.argv
   },
 
-  check_presence: function (command, args = [], parser = null) {
+  check_presence: function (command, args, parser) {
+    if (typeof args === 'undefined') {
+      args = []
+    }
+
     return new Promise((resolve, reject) => {
       let child = spawn(command, args)
 
@@ -67,4 +72,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

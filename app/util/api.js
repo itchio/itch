@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import needle from '../promised/needle'
 import ExtendableError from 'es6-error'

@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 require('bluebird').config({
   longStackTraces: true,

@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 import AppActions from '../actions/app-actions'

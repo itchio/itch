@@ -1,4 +1,5 @@
+'use nodent';'use strict'
 
-import os from './os'
+let os = require('./os')
 
-export default require(`./auto-updater/${os.platform()}`)
+module.exports = require(`./auto-updater/${os.platform()}`)

@@ -1,3 +1,5 @@
+'use nodent';'use strict'
+'use nodent-promises';'use strict'
 
 import app from 'app'
 import os from '../os'

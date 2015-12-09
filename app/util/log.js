@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import {pairs} from 'underscore'
 import fstream from 'fstream'

@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import sniff from '../../util/sniff'
 import glob from '../../promised/glob'

@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import StreamSearch from 'streamsearch'
 import fstream from 'fstream'

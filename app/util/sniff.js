@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import Promise from 'bluebird'
 import file_type from 'file-type'

@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import path from 'path'
 import child_process from 'child_process'

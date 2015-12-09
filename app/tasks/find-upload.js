@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import db from '../util/db'
 import {indexBy} from 'underscore'

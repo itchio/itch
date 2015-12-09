@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 import ExtendableError from 'es6-error'
 
 class Transition extends ExtendableError {

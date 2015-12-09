@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import common from './common'
 

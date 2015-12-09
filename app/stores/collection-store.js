@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 import {indexBy} from 'underscore'
 
 import Store from './store'

@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import Promise from 'bluebird'
 import child_process from 'child_process'

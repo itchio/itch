@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 import {EventEmitter} from 'events'
 import os from '../util/os'
 

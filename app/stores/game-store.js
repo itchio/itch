@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 import deep_assign from 'deep-assign'
 import Promise from 'bluebird'
 import {pluck} from 'underscore'

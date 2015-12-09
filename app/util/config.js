@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import nconf from 'nconf'
 import path from 'path'

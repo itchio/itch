@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import React from 'react'
 import {PropTypes} from 'react'

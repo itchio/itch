@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import path from 'path'
 import {partial} from 'underscore'

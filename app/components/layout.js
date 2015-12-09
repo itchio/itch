@@ -1,3 +1,4 @@
+'use nodent';'use strict'
 
 import React from 'react'
 import Component from './component'
