@@ -51,4 +51,4 @@ UserPanel.propTypes = {
   me: PropTypes.object
 }
 
-export {UserPanel}
+module.exports = {UserPanel}

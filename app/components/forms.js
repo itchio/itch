@@ -36,4 +36,4 @@ InputRow.propTypes = {
   type: PropTypes.oneOfType(['text', 'password'])
 }
 
-export {InputRow}
+module.exports = {InputRow}

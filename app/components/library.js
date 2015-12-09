@@ -174,4 +174,4 @@ LibraryPanelLink.propTypes = {
   before: PropTypes.any
 }
 
-export {LibraryPage, LibrarySidebar, LibraryContent, LibraryPanelLink}
+module.exports = {LibraryPage, LibrarySidebar, LibraryContent, LibraryPanelLink}

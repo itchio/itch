@@ -112,4 +112,4 @@ GameList.propTypes = {
   caves: PropTypes.any
 }
 
-export {GameCell, GameList}
+module.exports = {GameCell, GameList}
