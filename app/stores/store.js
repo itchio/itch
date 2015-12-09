@@ -36,7 +36,7 @@ Object.assign(Store.prototype, EventEmitter.prototype, {
     this.emit(CHANGE_EVENT)
 
     if (this.process_type === 'browser') {
-      require('browser-window').getAllWindows().forEach((w) => {
+      require('electron').BrowserWindow.getAllWindows().forEach((w) => {
         w.webContents.send(`${this.name}-change`)
       })
     }

@@ -10,7 +10,7 @@ let Store = require('./store')
 let os = require('../util/os')
 let defer = require('../util/defer')
 
-let app = require('app')
+let app = require('electron').app
 
 let state = {
   progress: -1

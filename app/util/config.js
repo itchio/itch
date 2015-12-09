@@ -2,7 +2,7 @@
 
 let nconf = require('nconf')
 let path = require('path')
-let app = require('app')
+let app = require('electron').app
 
 let config_file = path.join(app.getPath('userData'), 'config.json')
 try {

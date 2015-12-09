@@ -1,6 +1,6 @@
 'use nodent';'use strict'
 
-let app = require('app')
+let app = require('electron').app
 let path = require('path')
 let fstream = require('fstream')
 let Promise = require('bluebird')

@@ -10,7 +10,7 @@ let Transition = errors.Transition
 let InputRequired = errors.InputRequired
 let Crash = errors.Crash
 
-let app = require('app')
+let app = require('electron').app
 let path = require('path')
 
 let Logger = require('../util/log').Logger

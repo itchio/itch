@@ -4,9 +4,9 @@
 let fstream = require('fstream')
 let path = require('path')
 
-let app = require('app')
-let shell = require('shell')
-let dialog = require('dialog')
+let app = require('electron').app
+let shell = require('electron').shell
+let dialog = require('electron').dialog
 let querystring = require('querystring')
 
 let os = require('./os')

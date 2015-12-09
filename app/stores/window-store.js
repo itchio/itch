@@ -6,8 +6,8 @@ let Store = require('./store')
 
 let defer = require('../util/defer')
 
-let app = require('app')
-let BrowserWindow = require('browser-window')
+let app = require('electron').app
+let BrowserWindow = require('electron').BrowserWindow
 
 let window
 let quitting = false

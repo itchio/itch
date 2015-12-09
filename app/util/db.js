@@ -8,7 +8,7 @@ let pairs = underscore.pairs
 let pluck = underscore.pluck
 let camelize = require('./format').camelize
 
-let app = require('app')
+let app = require('electron').app
 
 let mkdirp = require('../promised/mkdirp')
 

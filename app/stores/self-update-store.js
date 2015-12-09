@@ -1,6 +1,6 @@
 'use nodent';'use strict'
 
-let app = require('app')
+let app = require('electron').app
 
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppActions = require('../actions/app-actions')
@@ -12,7 +12,7 @@ let os = require('../util/os')
 let auto_updater
 
 try {
-  auto_updater = require('auto-updater')
+  auto_updater = require('electron').autoUpdater
   auto_updater.on('error', AppActions.self_update_error)
 } catch (e) {
   console.log(`While installing auto updater: ${e.message}`)

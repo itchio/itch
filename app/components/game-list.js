@@ -40,7 +40,7 @@ class GameCell extends Component {
 
     return <div className='game_cell'>
       <div className='bordered'>
-        <div className={classNames('game_thumb', {has_cover})} onClick={() => require('remote').require('shell').openExternal(mori.get(game, 'url'))} style={style}/>
+        <div className={classNames('game_thumb', {has_cover})} onClick={() => require('electron').remote.require('electron').shell.openExternal(mori.get(game, 'url'))} style={style}/>
       </div>
       <div className='game_title'>{title}</div>
       {user

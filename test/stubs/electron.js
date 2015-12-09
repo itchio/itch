@@ -1,8 +1,11 @@
 'use nodent';'use strict'
 
 let rnil = () => null
+let EventEmitter = require('events').EventEmitter
 
-let stubs = {
+let electron = {
+  '@noCallThru': true,
+  '@global': true,
   app: {
     getVersion: () => '1.0',
     getPath: () => 'tmp/',
@@ -15,21 +18,21 @@ let stubs = {
     }
   },
   tray: function () {
-    Object.assign(this, stubs.tray)
+    Object.assign(this, electron.tray)
   },
-  'browser-window': function () {
-    Object.assign(this, stubs['browser-window'])
+  BrowserWindow: function () {
+    Object.assign(this, electron.BrowserWindow)
   },
-  ipc: Object.assign({
+  ipcMain: Object.assign({
     send: function () {
-      let args = []
-      for (let i = 1; i < arguments.length; i++) {
-        args.push(arguments[i])
-      }
-      args = [arguments[0], {}].concat(args)
-      this.emit.apply(this, args)
+      this.emit.apply(this, arguments)
     }
-  }, require('events').EventEmitter.prototype),
+  }, EventEmitter.prototype),
+  ipcRemote: Object.assign({
+    send: function () {
+      this.emit.apply(this, arguments)
+    }
+  }, EventEmitter.prototype),
   remote: {
     require: () => {}
   },
@@ -46,7 +49,7 @@ let stubs = {
   }
 }
 
-Object.assign(stubs.tray, {
+Object.assign(electron.tray, {
   setToolTip: rnil,
   setContextMenu: rnil,
   on: rnil,
@@ -58,7 +61,7 @@ let webContents = {
   executeJavaScript: rnil
 }
 
-Object.assign(stubs['browser-window'], {
+Object.assign(electron.BrowserWindow, {
   getAllWindows: () => [],
   setProgressBar: rnil,
   on: rnil,
@@ -69,17 +72,6 @@ Object.assign(stubs['browser-window'], {
   webContents
 })
 
-Object.keys(stubs).forEach((key) => {
-  Object.assign(stubs[key], {
-    '@noCallThru': true,
-    '@global': true
-  })
-})
-
-stubs.electron = {
-  '@global': true,
-  ipcMain: stubs.ipc,
-  ipcRenderer: stubs.ipc
+module.exports = {
+  'electron': electron
 }
-
-module.exports = stubs

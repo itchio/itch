@@ -3,7 +3,7 @@
 let Promise = require('bluebird')
 let needle = require('needle')
 
-let app = require('app')
+let app = require('electron').app
 let os = require('../util/os')
 
 needle.defaults({

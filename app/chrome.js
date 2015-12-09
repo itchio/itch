@@ -25,7 +25,7 @@ window.addEventListener('beforeunload', () => {
 window.addEventListener('keydown', (e) => {
   switch (e.keyIdentifier) {
     case 'F12':
-      let win = window.require('remote').getCurrentWindow()
+      let win = window.require('electron').remote.getCurrentWindow()
       win.openDevTools()
       break
     case 'F5':

@@ -5,7 +5,7 @@ let PropTypes = require('react').PropTypes
 let Component = require('./component')
 let classNames = require('classnames')
 
-let remote = require('remote')
+let remote = require('electron').remote
 let CredentialsStore = remote.require('./stores/credentials-store')
 
 function get_state () {

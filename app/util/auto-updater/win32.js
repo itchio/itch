@@ -1,7 +1,7 @@
 'use nodent';'use strict'
 'use nodent-promises';'use strict'
 
-let app = require('app')
+let app = require('electron').app
 let os = require('../os')
 
 let self = {

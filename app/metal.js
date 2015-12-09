@@ -23,7 +23,7 @@ require('./stores/setup-store')
 require('./stores/cave-store')
 
 let AppActions = require('./actions/app-actions')
-let app = require('app')
+let app = require('electron').app
 app.on('ready', () => {
   require('./ui/menu').mount()
   AppActions.boot()

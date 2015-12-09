@@ -1,6 +1,6 @@
 'use nodent';'use strict'
 
-let Menu = require('menu')
+let Menu = require('electron').menu
 
 let CredentialsStore = require('../stores/credentials-store')
 let AppActions = require('../actions/app-actions')
@@ -10,7 +10,7 @@ let clone = require('clone')
 let repo_url = 'https://github.com/itchio/itchio-app'
 
 function open_url (url) {
-  require('shell').openExternal(url)
+  require('electron').shell.openExternal(url)
 }
 
 let menus = {
@@ -89,7 +89,7 @@ let menus = {
         click: () => open_url(`${repo_url}/blob/master/LICENSE`)
       },
       {
-        label: `Version ${require('app').getVersion()}`,
+        label: `Version ${require('electron').app.getVersion()}`,
         enabled: false
       },
       {
