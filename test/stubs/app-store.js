@@ -3,7 +3,7 @@ let mori = require('mori')
 
 let handlers = []
 
-export default {
+module.exports = {
   get_state: () => mori.toClj({}),
   emit_change: () => {
     for (let h of handlers) { h() }

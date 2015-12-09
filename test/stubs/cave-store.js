@@ -1,7 +1,7 @@
 'use nodent';'use strict'
 let Promise = require('bluebird')
 
-export default {
+module.exports = {
   find: () => Promise.resolve({
     _id: 'kalamazoo',
     upload_id: 42,

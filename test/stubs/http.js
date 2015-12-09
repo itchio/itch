@@ -6,4 +6,4 @@ let self = {
   request: () => Promise.resolve()
 }
 
-export default self
+module.exports = self

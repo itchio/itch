@@ -1,4 +1,5 @@
 'use nodent';'use strict'
+
 let fs = require('fs')
 let path = require('path')
 
@@ -16,4 +17,4 @@ let self = {
   }
 }
 
-export default self
+module.exports = self

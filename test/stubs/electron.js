@@ -76,4 +76,4 @@ Object.keys(stubs).forEach((key) => {
   })
 })
 
-export default stubs
+module.exports = stubs

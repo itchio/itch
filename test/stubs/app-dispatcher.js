@@ -14,4 +14,4 @@ let self = {
   '@global': true
 }
 
-export default self
+module.exports = self

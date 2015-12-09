@@ -1,4 +1,4 @@
 'use nodent';'use strict'
 
 // synchronous defer, useful for testing stores
-export default (cb) => cb()
+module.exports = (cb) => cb()

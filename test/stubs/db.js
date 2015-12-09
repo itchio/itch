@@ -15,4 +15,4 @@ Object.keys(db).forEach((key) => {
   self[key] = noop
 })
 
-export default self
+module.exports = self

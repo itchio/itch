@@ -14,4 +14,4 @@ Object.keys(AppActions).forEach((key) => {
   self[key] = noop
 })
 
-export default self
+module.exports = self
