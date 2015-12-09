@@ -11,7 +11,7 @@ let log = require('../util/log')('util/http')
 
 let self = {
   parse_butler_status: function (opts, onerror, token) {
-    let {onprogress = noop} = opts
+    let onprogress = opts.onprogress || noop
 
     let status = JSON.parse(token)
     switch (status.type) {
@@ -28,7 +28,8 @@ let self = {
    * Uses https://github.com/itchio/butler to download a file
    */
   request: function (opts) {
-    let {url, dest} = opts
+    let url = opts.url
+    let dest = opts.dest
     let err = null
     let onerror = (e) => err = e
 

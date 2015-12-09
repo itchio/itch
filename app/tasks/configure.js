@@ -25,12 +25,12 @@ let self = {
   },
 
   start: async function (opts) {
-    let {id} = opts
+    let id = opts.id
 
     let app_path = CaveStore.app_path(id)
     log(opts, `configuring ${app_path}`)
 
-    let {executables} = await self.configure(app_path)
+    let executables = await self.configure(app_path).executables
     executables = executables.map(partial(path.relative, app_path))
 
     AppActions.cave_update(id, {executables})

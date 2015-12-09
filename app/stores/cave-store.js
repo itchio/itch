@@ -5,7 +5,7 @@ let AppConstants = require('../constants/app-constants')
 let AppActions = require('../actions/app-actions')
 let Store = require('./store')
 
-let errors = require('../tasks/error')
+let errors = require('../tasks/errors')
 let Transition = errors.Transition
 let InputRequired = errors.InputRequired
 let Crash = errors.Crash

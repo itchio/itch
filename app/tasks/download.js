@@ -19,7 +19,9 @@ function ensure (predicate, reason) {
 }
 
 async function start (opts) {
-  let {id, onprogress = noop, logger} = opts
+  let id = opts.id
+  let onprogress = opts.onprogress || noop
+  let logger = opts.logger
 
   let cave = await CaveStore.find(id)
 

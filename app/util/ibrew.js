@@ -125,12 +125,12 @@ let self = {
 
   fetch: async (opts, name) => {
     let noop = () => null
-    let {onstatus = noop} = opts
+    let onstatus = opts.onstatus || noop
 
     let formula = self.formulas[name]
     if (!formula) throw new Error(`Unknown formula: ${name}`)
 
-    let {os_whitelist} = formula
+    let os_whitelist = formula.os_whitelist
     if (os_whitelist && os_whitelist.indexOf(self.os()) === -1) {
       log(opts, `${name}: skipping, it's irrelevant on ${self.os()}`)
       return

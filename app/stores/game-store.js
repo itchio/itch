@@ -101,7 +101,7 @@ function cache_cave_game (id) {
 }
 
 function fetch_games (action) {
-  let {path} = action
+  let path = action.path
   let user = CredentialsStore.get_current_user()
 
   if (path === 'owned') {
@@ -123,7 +123,10 @@ function fetch_games (action) {
       })
     }).then(db.save_games).then(() => cache_dashboard_games())
   } else {
-    let [type, id] = path.split('/')
+    let path_tokens = path.split('/')
+    let type = path_tokens[0]
+    let id = path_tokens[1]
+
     if (type === 'collections') {
       return fetch_collection_games(parseInt(id, 10))
     } else if (type === 'caves') {

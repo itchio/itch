@@ -69,9 +69,9 @@ function hide () {
 
 function _eval (action) {
   if (!window) return
-  let {webContents} = window
-  if (!webContents) return
-  webContents.executeJavaScript(action.code)
+  let web = window.webContents
+  if (!web) return
+  web.executeJavaScript(action.code)
 }
 
 AppDispatcher.register('window-store', Store.action_listeners(on => {

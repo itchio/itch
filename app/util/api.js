@@ -38,11 +38,14 @@ class Client {
     // this.root_url = 'http://localhost.com:8080/api/1'
   }
 
-  request (method, path, data = {}) {
+  request (method, path, data) {
+    if (typeof data === 'undefined') {
+      data = {}
+    }
     let uri = `${this.root_url}${path}`
 
     return needle.requestAsync(method, uri, data).then(resp => {
-      let {body} = resp
+      let body = resp.body
 
       if (resp.statusCode !== 200) {
         throw new Error(`HTTP ${resp.statusCode}`)
@@ -79,7 +82,10 @@ class User {
     this.key = key
   }
 
-  request (method, path, data = {}) {
+  request (method, path, data) {
+    if (typeof data === 'undefined') {
+      data = {}
+    }
     log(opts, `${method} ${path} with ${JSON.stringify(data)}`)
 
     let url = `/${this.key}${path}`
@@ -114,7 +120,10 @@ class User {
     return res
   }
 
-  collection_games (collection_id, page = 1) {
+  collection_games (collection_id, page) {
+    if (typeof page === 'undefined') {
+      page = 1
+    }
     return this.request('get', `/collection/${collection_id}/games`, {page})
   }
 

@@ -36,7 +36,7 @@ let self = {
   },
 
   start: async function (opts) {
-    let {id} = opts
+    let id = opts.id
     let uploads
     let client = CredentialsStore.get_current_user()
 

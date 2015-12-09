@@ -29,7 +29,7 @@ class LoginForm extends Component {
   }
 
   render () {
-    let {state} = this.props
+    let state = this.props.state
     let loading = mori.get(state, 'loading')
     let errors = mori.get(state, 'errors')
 
@@ -57,7 +57,8 @@ class LoginForm extends Component {
   handle_submit (event) {
     event.preventDefault()
 
-    let {username, password} = this.refs
+    let username = this.refs.username
+    let password = this.refs.password
     AppActions.login_with_password(username.value(), password.value())
   }
 }

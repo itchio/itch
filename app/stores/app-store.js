@@ -39,7 +39,7 @@ let AppStore = Object.assign(new Store('app-store', 'renderer'), {
 })
 
 function focus_panel (action) {
-  let {panel} = action
+  let panel = action.panel
 
   state = mori.assoc(state, 'page', 'library')
   state = mori.assocIn(state, ['library', 'panel'], panel)
@@ -62,7 +62,7 @@ function login_attempt (action) {
 }
 
 function login_failure (action) {
-  let {errors} = action
+  let errors = action.errors
   state = mori.assocIn(state, ['login', 'loading'], false)
   state = mori.assocIn(state, ['login', 'errors'], errors.stack || errors)
   switch_page('login')
@@ -87,7 +87,8 @@ function logout () {
 }
 
 function setup_status (action) {
-  let {message, icon} = action
+  let message = action.message
+  let icon = action.icon
   state = mori.assocIn(state, ['setup', 'message'], message)
   if (icon) {
     state = mori.assocIn(state, ['setup', 'icon'], icon)
@@ -100,7 +101,9 @@ function setup_wait (action) {
 }
 
 function cave_progress (action) {
-  for (let [k, v] of pairs(action.opts)) {
+  for (let pair of pairs(action.opts)) {
+    let k = pair[0]
+    let v = pair[1]
     state = mori.assocIn(state, ['library', 'caves', action.opts.id, k], mori.toClj(v))
   }
   AppStore.emit_change()

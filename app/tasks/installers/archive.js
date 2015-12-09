@@ -70,7 +70,9 @@ let self = {
   },
 
   install: async function (opts) {
-    let {archive_path, dest_path, onprogress = noop} = opts
+    let archive_path = opts.archive_path
+    let dest_path = opts.dest_path
+    let onprogress = opts.onprogress || noop
 
     log(opts, `Extracting archive '${archive_path}' to '${dest_path}' with 7-Zip`)
 

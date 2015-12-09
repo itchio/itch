@@ -110,7 +110,7 @@ let self = {
   },
 
   start: async function (opts) {
-    let {id} = opts
+    let id = opts.id
 
     let cave = await CaveStore.find(id)
     if (!self.valid_cave(cave)) {

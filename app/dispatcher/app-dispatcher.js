@@ -1,5 +1,4 @@
 'use nodent';'use strict'
-let ipc = require('ipc')
 
 let os = require('../util/os')
 
@@ -9,6 +8,8 @@ let opts = {logger: new Log.Logger({sinks: {console: false}})}
 
 // This makes sure everything is dispatched to the node side, whatever happens
 if (os.process_type() === 'renderer') {
+  let ipc = require('electron').ipcRenderer
+
   // Using IPC over RPC because the latter breaks when passing instances of
   // Babel-compiled ES6 classes (only the fields seem to be exposed, not the methods)
   let self = {
@@ -33,6 +34,7 @@ if (os.process_type() === 'renderer') {
 
   module.exports = self
 } else {
+  let ipc = require('electron').ipcMain
   let BrowserWindow = require('browser-window')
 
   // Adapted from https://github.com/parisleaf/flux-dispatcher

@@ -35,7 +35,12 @@ let self = {
     if (!matches) {
       throw new Error(`Invalid date: ${text}`)
     }
-    let [, year, month, day, hour, min, sec] = matches
+    let year = matches[1]
+    let month = matches[2]
+    let day = matches[3]
+    let hour = matches[4]
+    let min = matches[5]
+    let sec = matches[6]
     return new Date(Date.UTC(year, month - 1, day, hour, min, sec))
   },
 
@@ -53,10 +58,14 @@ let self = {
 
   flatten: function (obj) {
     let result = {}
-    for (let [k, v] of pairs(obj)) {
+    for (let pair of pairs(obj)) {
+      let k = pair[0]
+      let v = pair[1]
       if (typeof v === 'object' && !Array.isArray(v) && !(v instanceof Date)) {
         let sub = self.flatten(v)
-        for (let [sk, sv] of pairs(sub)) {
+        for (let pair of pairs(sub)) {
+          let sk = pair[0]
+          let sv = pair[1]
           result[`${k}.${sk}`] = sv
         }
       } else {
@@ -88,7 +97,9 @@ let self = {
     for (let input of inputs) {
       let record = {_table}
 
-      for (let [k, v] of pairs(input)) {
+      for (let pair of pairs(input)) {
+        let k = pair[0]
+        let v = pair[1]
         if (typeof v === 'object') {
           let relation = relations[k]
           if (relation) {
@@ -119,7 +130,9 @@ let self = {
       ))
     }
 
-    for (let [name, records] of pairs(relation_records)) {
+    for (let pair of pairs(relation_records)) {
+      let name = pair[0]
+      let records = pair[1]
       if (~~records.length === 0) continue
       let handler = relations[name][1]
       promises.push(handler(records))

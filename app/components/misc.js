@@ -10,7 +10,7 @@ let Component = require('./component')
  */
 class Icon extends Component {
   render () {
-    let {icon} = this.props
+    let icon = this.props.icon
 
     if (icon) {
       return <span className={`icon icon-${icon}`}/>
@@ -39,7 +39,7 @@ let task_to_icon = {
  */
 class TaskIcon extends Component {
   render () {
-    let {task = ''} = this.props
+    let task = this.props.task || ''
     let icon = task_to_icon[task] || ''
     return <Icon {...{icon}}/>
   }
@@ -54,7 +54,7 @@ TaskIcon.propTypes = {
  */
 class ProgressBar extends Component {
   render () {
-    let {progress} = this.props
+    let progress = this.props.progress
     if (!progress) return <div/>
 
     let style = {

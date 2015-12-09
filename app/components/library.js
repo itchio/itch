@@ -24,7 +24,7 @@ let frameless = process.platform === 'darwin'
  */
 class LibraryPage extends Component {
   render () {
-    let {state} = this.props
+    let state = this.props.state
 
     return <div className='library_page'>
       <LibrarySidebar state={state}/>
@@ -43,7 +43,7 @@ LibraryPage.propTypes = {
  */
 class LibrarySidebar extends Component {
   render () {
-    let {state} = this.props
+    let state = this.props.state
     let panel = mori.get(state, 'panel')
     let caves = mori.get(state, 'caves')
     let collections = mori.get(state, 'collections')
@@ -113,7 +113,7 @@ LibrarySidebar.propTypes = {
  */
 class LibraryContent extends Component {
   render () {
-    let {state} = this.props
+    let state = this.props.state
     let panel = mori.get(state, 'panel')
     let caves = mori.get(state, 'caves')
     let games = mori.get(state, 'games')
@@ -136,7 +136,14 @@ LibraryContent.propTypes = {
  */
 class LibraryPanelLink extends Component {
   render () {
-    let {name, panel, label, progress, before = '', error, games = {}} = this.props
+    let name = this.props.name
+    let panel = this.props.panel
+    let label = this.props.label
+    let progress = this.props.progress
+    let before = this.props.before || ''
+    let error = this.props.error
+    let games = this.props.games || {}
+
     let relevant_games = mori.get(games, name) || mori.list()
     let game_count = mori.count(relevant_games)
     let current = (name === panel)

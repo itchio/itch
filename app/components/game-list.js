@@ -12,7 +12,8 @@ let TaskIcon = require('./misc').TaskIcon
 
 class GameCell extends Component {
   render () {
-    let {game, cave} = this.props
+    let game = this.props.game
+    let cave = this.props.cave
     let title = mori.get(game, 'title')
     let cover_url = mori.get(game, 'cover_url')
     let user = mori.get(game, 'user')
@@ -91,7 +92,8 @@ GameCell.propTypes = {
 
 class GameList extends React.Component {
   render () {
-    let {games, caves} = this.props
+    let games = this.props.games
+    let caves = this.props.caves
     let index_by = (acc, k, v) => mori.assoc(acc, mori.get(v, 'game_id'), v)
     let caves_by_game_id = mori.reduceKV(index_by, mori.hashMap(), caves)
 

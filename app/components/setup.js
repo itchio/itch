@@ -10,7 +10,9 @@ let Icon = require('./misc').Icon
 
 export class SetupPage extends Component {
   render () {
-    let {icon, message} = mori.toJs(this.props.state)
+    let state = mori.toJs(this.props.state)
+    let icon = state.icon
+    let message = state.message
     let error = (icon === 'error')
 
     return <div className={classNames('setup_page', {error})}>

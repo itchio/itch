@@ -17,7 +17,7 @@ module.exports = function (req, user_opts) {
   let done = false
 
   let opts = Object.assign({}, default_opts, user_opts)
-  let {throttle} = opts
+  let throttle = opts.throttle
 
   req.on('headers', (headers) => {
     total_size = headers['content-length']

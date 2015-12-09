@@ -21,14 +21,17 @@ class Logger {
     let default_opts = {sinks: {console: true}}
     let opts = deep_assign({}, default_opts, user_opts)
 
-    let {sinks} = opts
+    let sinks = opts.sinks
 
     this.console_sink = false
     this.string_sink = false
     this.file_sink = false
     this.contents = ''
 
-    for (let [key, val] of pairs(sinks)) {
+    for (let pair of pairs(sinks)) {
+      let key = pair[0]
+      let val = pair[1]
+
       switch (key) {
         case 'console': {
           this.console_sink = !!val

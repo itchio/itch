@@ -43,7 +43,7 @@ let self = {
   },
 
   identify: async function (opts) {
-    let {archive_path} = opts
+    let archive_path = opts.archive_path
 
     return await self.sniff(archive_path, self.needles)
   },

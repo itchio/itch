@@ -36,7 +36,7 @@ let self = {
   },
 
   install: async function (opts) {
-    let {archive_path} = opts
+    let archive_path = opts.archive_path
     let type = await sniff.path(archive_path)
 
     if (!type) throw new Error(`don't know how to install ${archive_path}`)
@@ -52,7 +52,10 @@ let self = {
   },
 
   start: async function (opts) {
-    let {id, logger, onerror = noop, onprogress = noop} = opts
+    let id = opts.id
+    let logger = opts.logger
+    let onerror = opts.onerror || noop
+    let onprogress = opts.onprogress || onprogress
 
     let cave = await CaveStore.find(id)
 

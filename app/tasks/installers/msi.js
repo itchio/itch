@@ -31,7 +31,9 @@ let self = {
       throw new Error('MSI files are only supported on Windows')
     }
 
-    let {archive_path, dest_path, logger} = opts
+    let archive_path = opts.archive_path
+    let dest_path = opts.dest_path
+    let logger = opts.logger
 
     await spawn({
       command: 'msiexec',
@@ -46,7 +48,9 @@ let self = {
       throw new Error('MSI files are only supported on Windows')
     }
 
-    let {archive_path, dest_path, logger} = opts
+    let archive_path = opts.archive_path
+    let dest_path = opts.dest_path
+    let logger = opts.logger
 
     await spawn({
       command: 'msiexec',

@@ -19,7 +19,7 @@ function Store (name, process_type) {
   this.process_type = process_type
 
   if (this.process_type === 'browser') {
-    require('ipc').on(`${this.name}-fetch`, (e) => {
+    require('electron').ipcMain.on(`${this.name}-fetch`, (e) => {
       e.sender.send(`${this.name}-state`, this.get_state())
     })
   }

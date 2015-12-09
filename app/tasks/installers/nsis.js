@@ -6,7 +6,9 @@ let log = require('../../util/log')('installers/nsis')
 
 let self = {
   install: async function (opts) {
-    let {archive_path, dest_path, logger} = opts
+    let archive_path = opts.archive_path
+    let dest_path = opts.dest_path
+    let logger = opts.logger
 
     let code = await spawn({
       command: 'elevate.exe',

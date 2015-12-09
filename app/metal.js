@@ -4,11 +4,7 @@ require('bluebird').config({
   longStackTraces: true,
   cancellation: true
 })
-
-process.on('uncaughtException', function (e) {
-  console.log('Uncaught exception o/')
-  console.log(e.stack || e)
-})
+require('nodent')()
 
 require('./util/crash-reporter').mount()
 

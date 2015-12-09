@@ -12,7 +12,9 @@ class InputRow extends Component {
   }
 
   render () {
-    let {label, type = 'text', disabled} = this.props
+    let label = this.props.label
+    let type = this.props.type || 'text'
+    let disabled = this.props.disabled
     return <div className='input_row'>
       <label>
         <div className='label'>{label}</div>

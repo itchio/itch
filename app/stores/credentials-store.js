@@ -40,7 +40,8 @@ function login_failure (res) {
 function login_with_password (action) {
   AppActions.login_attempt()
 
-  let {username, password} = action
+  let username = action.username
+  let password = action.password
   return api.client.login_with_password(username, password).then((res) => {
     let key = res.key.key
     let user = new api.User(api.client, key)
