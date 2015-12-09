@@ -14,7 +14,7 @@ var company_name = 'Itch Corp'
 var grunt_electron_common = {
   dir: '.',
   ignore: '(test|build|coverage|tmp)',
-  name: 'itch.io',
+  name: 'itch',
   version: electron_version,
   'app-version': version,
   prune: true,
@@ -25,13 +25,13 @@ var grunt_electron_common = {
 
 var electron_installer_common = {
   authors: company_name,
-  exe: 'itch.io.exe',
+  exe: 'itch.exe',
   description: 'itch.io desktop app',
   version: version,
-  title: 'itch.io',
-  iconUrl: 'http://raw.githubusercontent.com/itchio/itchio-app/master/app/static/images/itchio.ico',
+  title: 'itch',
+  iconUrl: 'http://raw.githubusercontent.com/itchio/itch/master/app/static/images/itchio.ico',
   setupIcon: ico_path,
-  remoteReleases: 'https://github.com/itchio/itchio-app',
+  remoteReleases: 'https://github.com/itchio/itch',
   certificateFile: '../itchio-app-secrets/certificate.cer'
 }
 
@@ -39,44 +39,6 @@ module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt)
 
   grunt.initConfig({
-    // Compile SCSS files to CSS
-    sass: {
-      options: {
-        sourceMap: true
-      },
-      dist: {
-        files: { 'app/style/main.css': 'app/style/main.scss' }
-      }
-    },
-    // Compile ES6 files to ES5
-    babel: {
-      options: {
-        sourceMap: true,
-        optional: ['bluebirdCoroutines']
-      },
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '.',
-          src: ['app/**/*.es6', 'test/**/*.es6'],
-          dest: '.',
-          ext: '.js'
-        }]
-      }
-    },
-    // Recompile files on-demand
-    watch: {
-      es6: {
-        files: ['app/**/*.es6', 'test/**/*.es6'],
-        tasks: ['newer:babel'],
-        options: { debounceDelay: 20 }
-      },
-      scss: {
-        files: ['app/**/*.scss'],
-        tasks: ['sass'],
-        options: { debounceDelay: 20 }
-      }
-    },
     // Create a .exe, .app, folder for windows, mac, linux
     electron: {
       win32: {
@@ -87,12 +49,12 @@ module.exports = function (grunt) {
           'version-string': {
             CompanyName: company_name,
             LegalCopyright: license,
-            FileDescription: 'itch.io desktop client',
-            OriginalFileName: 'itch.io.exe',
+            FileDescription: 'itch.io desktop app',
+            OriginalFileName: 'itch.exe',
             FileVersion: version,
             AppVersion: version,
-            ProductName: 'itch.io',
-            InternalName: 'itch.io.exe'
+            ProductName: 'itch',
+            InternalName: 'itch.exe'
           }
         })
       },
@@ -102,8 +64,8 @@ module.exports = function (grunt) {
           arch: 'x64',
           icon: icns_path,
           protocols: [{
-            name: 'itch.io',
-            schemes: ['itchio']
+            name: 'itch',
+            schemes: ['itch']
           }]
         })
       },
@@ -116,12 +78,9 @@ module.exports = function (grunt) {
     },
     'create-windows-installer': {
       installer: Object.assign({}, electron_installer_common, {
-        appDirectory: path.join(out_dir, 'itch.io-win32-ia32'),
-        outputDirectory: path.join('build', 'itch.io-win32-installer')
+        appDirectory: path.join(out_dir, 'itch-win32-ia32'),
+        outputDirectory: path.join('build', 'itch-win32-installer')
       })
     }
   })
-
-  grunt.registerTask('all', ['sass', 'babel'])
-  grunt.registerTask('default', ['newer:sass', 'newer:babel'])
 }

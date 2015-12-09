@@ -1,10 +1,16 @@
+'use strict'
 
 require('bluebird').config({
   longStackTraces: true,
   cancellation: true
 })
+require('nodent')()
 
-require('source-map-support').install()
+process.on('uncaughtException', function (e) {
+  console.log('Uncaught exception o/')
+  console.log(e.stack || e)
+})
+
 require('./util/crash-reporter').mount()
 
 if (require('./util/auto-updater').start()) {
