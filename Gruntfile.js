@@ -7,7 +7,7 @@ var package_path = path.join(__dirname, 'package.json')
 var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version
 var ico_path = 'app/static/images/itchio.ico'
 var icns_path = 'app/static/images/itchio.icns'
-var electron_version = '0.34.3'
+var electron_version = '0.35.4'
 var out_dir = path.join('build', version)
 var company_name = 'Itch Corp'
 
