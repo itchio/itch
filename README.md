@@ -1,4 +1,4 @@
-# itch.io app
+# itch
 
 ![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
@@ -8,8 +8,6 @@
 [![Coverage Status](https://coveralls.io/repos/itchio/itchio-app/badge.svg?service=github)](https://coveralls.io/github/itchio/itchio-app)
 [![Dependency Status](https://david-dm.org/itchio/itchio-app.svg)](https://david-dm.org/itchio/itchio-app)
 
-**This project is in early development!**
-
 The goal of this project is to give you a desktop application that you can
 download and run games from [itch.io](http://itch.io) with. Additionally you
 should be able to update games and get notified when games are updated. The
@@ -17,8 +15,8 @@ goal is not to replace the itch.io website.
 
 ## Installing
 
-The itch.io app is built in HTML/SCSS/ES6 and runs inside of Electron.
-Install the following to get started with development:
+itch is built in HTML/SCSS/ES6 and runs inside of Electron. Install the
+following to get started with development:
 
 * Install [Node.js](https://nodejs.org/)
 * Install [Electron](https://github.com/atom/electron), and [grunt](http://gruntjs.com/):
