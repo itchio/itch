@@ -8,7 +8,7 @@ let classNames = require('classnames')
 
 let Icon = require('./misc').Icon
 
-export class SetupPage extends Component {
+class SetupPage extends Component {
   render () {
     let state = mori.toJs(this.props.state)
     let icon = state.icon
@@ -31,3 +31,5 @@ export class SetupPage extends Component {
 SetupPage.propTypes = {
   state: PropTypes.any
 }
+
+module.exports = {SetupPage}

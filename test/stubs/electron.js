@@ -76,4 +76,10 @@ Object.keys(stubs).forEach((key) => {
   })
 })
 
+stubs.electron = {
+  '@global': true,
+  ipcMain: stubs.ipc,
+  ipcRenderer: stubs.ipc
+}
+
 module.exports = stubs

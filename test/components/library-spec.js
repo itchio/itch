@@ -11,8 +11,11 @@ let $ = require('react').createElement
 
 test('library', t => {
   t.stub(electron.remote, 'require').returns(AppStore)
-  let {LibraryPage, LibrarySidebar, LibraryContent,
-    LibraryPanelLink} = proxyquire('../../app/components/library', electron)
+  let library = proxyquire('../../app/components/library', electron)
+  let LibraryPage = library.LibraryPage
+  let LibrarySidebar = library.LibrarySidebar
+  let LibraryContent = library.LibraryContent
+  let LibraryPanelLink = library.LibraryPanelLink
 
   t.case('LibraryPage', t => {
     sd.shallowRender($(LibraryPage, {}))

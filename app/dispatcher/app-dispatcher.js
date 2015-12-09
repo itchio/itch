@@ -5,10 +5,11 @@ let os = require('../util/os')
 let Log = require('../util/log')
 let log = Log('dispatcher')
 let opts = {logger: new Log.Logger({sinks: {console: false}})}
+let electron = require('electron')
 
 // This makes sure everything is dispatched to the node side, whatever happens
 if (os.process_type() === 'renderer') {
-  let ipc = require('electron').ipcRenderer
+  let ipc = electron.ipcRenderer
 
   // Using IPC over RPC because the latter breaks when passing instances of
   // Babel-compiled ES6 classes (only the fields seem to be exposed, not the methods)
@@ -34,8 +35,8 @@ if (os.process_type() === 'renderer') {
 
   module.exports = self
 } else {
-  let ipc = require('electron').ipcMain
-  let BrowserWindow = require('browser-window')
+  let ipc = electron.ipcMain
+  let BrowserWindow = electron.BrowserWindow
 
   // Adapted from https://github.com/parisleaf/flux-dispatcher
   // A Flux-style dispatcher with promise support and some amount of validation

@@ -3,8 +3,8 @@ let test = require('zopf')
 let proxyquire = require('proxyquire')
 let Promise = require('bluebird')
 
-import {PassThrough} from 'stream'
-import {EventEmitter} from 'events'
+let PassThrough = require('stream').PassThrough
+let EventEmitter = require('events').EventEmitter
 
 let electron = require('../stubs/electron')
 

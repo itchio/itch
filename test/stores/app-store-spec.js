@@ -6,6 +6,7 @@ let proxyquire = require('proxyquire')
 let AppConstants = require('../../app/constants/app-constants')
 
 let electron = require('../stubs/electron')
+
 let AppDispatcher = require('../stubs/app-dispatcher')
 let AppActions = require('../stubs/app-actions')
 let CredentialsStore = require('../stubs/credentials-store')

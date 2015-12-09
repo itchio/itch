@@ -1,7 +1,7 @@
 'use nodent';'use strict'
 let test = require('zopf')
 let proxyquire = require('proxyquire')
-import {pluck} from 'underscore'
+let pluck = require('underscore').pluck
 
 let electron = require('../stubs/electron')
 
@@ -60,7 +60,10 @@ test('db', t => {
     return db.load()
   })
 
-  let make_eggs = (hens = false) => {
+  let make_eggs = (hens) => {
+    if (typeof hens === 'undefined') {
+      hens = false
+    }
     return [1, 2, 3].map(x => {
       return {
         id: x,

@@ -8,7 +8,7 @@ let Promise = require('bluebird')
 let partial = require('underscore').partial
 let needle = require('needle')
 
-let install = require('../tasks/install')
+let install = require('../tasks/install/core')
 let os = require('./os')
 let log = require('./log')('ibrew')
 

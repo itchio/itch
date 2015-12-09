@@ -59,7 +59,6 @@
     "nyc": "^3.2.2",
     "proxyquire": "^1.7.3",
     "react-addons-test-utils": "^0.14.3",
-    "remap-istanbul": "^0.4.0",
     "sinon": "^1.17.1",
     "skin-deep": "^0.12.0",
     "tap-difflet": "^0.4.0",
@@ -67,10 +66,9 @@
     "zopf": "^4.2.0"
   },
   "scripts": {
-    "start": "npm -s run build && electron .",
-    "build": "",
-    "test": "npm -s run specs && npm -s run lint",
-    "specs": "nyc -s node_modules/.bin/tape \"test/**/*-spec.js\" | tap-difflet --color",
+    "start": "npm run build && electron .",
+    "test": "npm run specs && npm run lint",
+    "specs": "nyc test/runner.js \"test/**/*-spec.js\" | tap-difflet --color",
     "coveralls": "npm run remap && nyc report -r text-lcov | coveralls",
     "local-cov": "npm run specs && npm run remap && nyc report -r text && npm run lint"
   },

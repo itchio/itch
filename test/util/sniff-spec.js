@@ -17,7 +17,9 @@ test('sniff', t => {
     ['tar', 'application/x-tar']
   ]
 
-  types.forEach(([file, expected_type]) => {
+  types.forEach((pair) => {
+    let file = pair[0]
+    let expected_type = pair[1]
     t.case(file, async t => {
       let res = await sniff.path(fixture.path(file))
       let type = (res && res.mime) || null

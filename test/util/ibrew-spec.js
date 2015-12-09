@@ -2,7 +2,7 @@
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let Promise = require('bluebird')
-import {PassThrough} from 'stream'
+let PassThrough = require('stream').PassThrough
 
 let electron = require('../stubs/electron')
 let log = require('../../app/util/log')
@@ -33,7 +33,7 @@ test('ibrew', t => {
     'needle': needle,
     'fstream': fstream,
     './os': os,
-    '../tasks/install': install
+    '../tasks/install/core': install
   }, electron)
   let ibrew = proxyquire('../../app/util/ibrew', stubs)
 

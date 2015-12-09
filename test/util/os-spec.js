@@ -1,6 +1,6 @@
 'use nodent';'use strict'
 let test = require('zopf')
-import {contains} from 'underscore'
+let contains = require('underscore').contains
 
 let os = require('../../app/util/os')
 

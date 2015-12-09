@@ -15,7 +15,7 @@ function get_state () {
   return {state: AppStore.get_state()}
 }
 
-export class Layout extends Component {
+class Layout extends Component {
   constructor () {
     super()
     this.state = get_state()
@@ -46,3 +46,5 @@ export class Layout extends Component {
     }
   }
 }
+
+module.exports = {Layout}
