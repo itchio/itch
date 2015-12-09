@@ -1,8 +1,8 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
 
-import electron from '../stubs/electron'
+let electron = require('../stubs/electron')
 
 let setup = t => {
   let os = {}

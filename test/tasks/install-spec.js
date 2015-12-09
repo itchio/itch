@@ -1,12 +1,12 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
-import sinon from 'sinon'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
+let sinon = require('sinon')
 
-import fixture from '../fixture'
-import electron from '../stubs/electron'
-import CaveStore from '../stubs/cave-store'
-import AppActions from '../stubs/app-actions'
+let fixture = require('../fixture')
+let electron = require('../stubs/electron')
+let CaveStore = require('../stubs/cave-store')
+let AppActions = require('../stubs/app-actions')
 
 let typical_install = {
   _id: 42,

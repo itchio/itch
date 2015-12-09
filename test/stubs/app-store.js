@@ -1,5 +1,5 @@
 'use nodent';'use strict'
-import mori from 'mori'
+let mori = require('mori')
 
 let handlers = []
 

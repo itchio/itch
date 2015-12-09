@@ -1,7 +1,7 @@
 'use nodent';'use strict'
 
-import proxyquire from 'proxyquire'
-import electron from './electron'
+let proxyquire = require('proxyquire')
+let electron = require('./electron')
 
 let noop = () => null
 

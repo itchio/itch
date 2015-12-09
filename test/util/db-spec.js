@@ -1,9 +1,9 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
 import {pluck} from 'underscore'
 
-import electron from '../stubs/electron'
+let electron = require('../stubs/electron')
 
 test('db', t => {
   let stubs = electron

@@ -1,7 +1,7 @@
 'use nodent';'use strict'
-import test from 'zopf'
+let test = require('zopf')
 
-import format from '../../app/util/format'
+let format = require('../../app/util/format')
 
 test('format', t => {
   t.case('camelize', t => {

@@ -1,11 +1,11 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
-import Promise from 'bluebird'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
+let Promise = require('bluebird')
 import {PassThrough} from 'stream'
 
-import electron from '../stubs/electron'
-import log from '../../app/util/log'
+let electron = require('../stubs/electron')
+let log = require('../../app/util/log')
 
 test('ibrew', t => {
   let opts = {

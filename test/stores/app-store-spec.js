@@ -1,16 +1,16 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import mori from 'mori'
-import proxyquire from 'proxyquire'
+let test = require('zopf')
+let mori = require('mori')
+let proxyquire = require('proxyquire')
 
-import AppConstants from '../../app/constants/app-constants'
+let AppConstants = require('../../app/constants/app-constants')
 
-import electron from '../stubs/electron'
-import AppDispatcher from '../stubs/app-dispatcher'
-import AppActions from '../stubs/app-actions'
-import CredentialsStore from '../stubs/credentials-store'
-import defer from '../stubs/defer'
-import db from '../stubs/db'
+let electron = require('../stubs/electron')
+let AppDispatcher = require('../stubs/app-dispatcher')
+let AppActions = require('../stubs/app-actions')
+let CredentialsStore = require('../stubs/credentials-store')
+let defer = require('../stubs/defer')
+let db = require('../stubs/db')
 
 test('AppStore', t => {
   let GameStore = {

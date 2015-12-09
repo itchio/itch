@@ -1,16 +1,16 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import sinon from 'sinon'
-import proxyquire from 'proxyquire'
+let test = require('zopf')
+let sinon = require('sinon')
+let proxyquire = require('proxyquire')
 
-import AppConstants from '../../app/constants/app-constants'
+let AppConstants = require('../../app/constants/app-constants')
 
-import electron from '../stubs/electron'
-import AppDispatcher from '../stubs/app-dispatcher'
-import AppActions from '../stubs/app-actions'
-import CredentialsStore from '../stubs/credentials-store'
+let electron = require('../stubs/electron')
+let AppDispatcher = require('../stubs/app-dispatcher')
+let AppActions = require('../stubs/app-actions')
+let CredentialsStore = require('../stubs/credentials-store')
 
-import db from '../stubs/db'
+let db = require('../stubs/db')
 
 test('GameStore', t => {
   let stubs = Object.assign({

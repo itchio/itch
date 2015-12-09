@@ -1,13 +1,13 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
 
-import AppConstants from '../../app/constants/app-constants'
+let AppConstants = require('../../app/constants/app-constants')
 
-import AppActions from '../stubs/app-actions'
-import AppDispatcher from '../stubs/app-dispatcher'
-import electron from '../stubs/electron'
-import defer from '../stubs/defer'
+let AppActions = require('../stubs/app-actions')
+let AppDispatcher = require('../stubs/app-dispatcher')
+let electron = require('../stubs/electron')
+let defer = require('../stubs/defer')
 
 test('NotificationStore', t => {
   let os = {

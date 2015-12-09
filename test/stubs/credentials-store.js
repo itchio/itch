@@ -1,6 +1,6 @@
 'use nodent';'use strict'
 
-import api from './api'
+let api = require('./api')
 
 export default {
   get_current_user: () => api.user,

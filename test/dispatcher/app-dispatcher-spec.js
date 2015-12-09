@@ -1,9 +1,9 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import sinon from 'sinon'
-import proxyquire from 'proxyquire'
+let test = require('zopf')
+let sinon = require('sinon')
+let proxyquire = require('proxyquire')
 
-import electron from '../stubs/electron'
+let electron = require('../stubs/electron')
 
 test('dispatcher', t => {
   let r_stubs = Object.assign({

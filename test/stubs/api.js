@@ -1,6 +1,6 @@
 'use nodent';'use strict'
 
-import Promise from 'bluebird'
+let Promise = require('bluebird')
 
 let noop = () => Promise.resolve()
 

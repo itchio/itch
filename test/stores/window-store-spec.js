@@ -1,11 +1,11 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
 
-import AppConstants from '../../app/constants/app-constants'
+let AppConstants = require('../../app/constants/app-constants')
 
-import AppDispatcher from '../stubs/app-dispatcher'
-import electron from '../stubs/electron'
+let AppDispatcher = require('../stubs/app-dispatcher')
+let electron = require('../stubs/electron')
 
 test('WindowStore', t => {
   let stubs = Object.assign({

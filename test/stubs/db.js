@@ -1,8 +1,8 @@
 'use nodent';'use strict'
 
-import Promise from 'bluebird'
-import proxyquire from 'proxyquire'
-import electron from './electron'
+let Promise = require('bluebird')
+let proxyquire = require('proxyquire')
+let electron = require('./electron')
 
 let noop = () => Promise.resolve()
 

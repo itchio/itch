@@ -1,11 +1,11 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
 
-import electron from '../stubs/electron'
-import http from '../stubs/http'
-import CaveStore from '../stubs/cave-store'
-import CredentialsStore from '../stubs/credentials-store'
+let electron = require('../stubs/electron')
+let http = require('../stubs/http')
+let CaveStore = require('../stubs/cave-store')
+let CredentialsStore = require('../stubs/credentials-store')
 
 let typical_install = {
   _id: 42,

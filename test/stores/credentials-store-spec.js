@@ -1,15 +1,15 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
 
-import AppConstants from '../../app/constants/app-constants'
+let AppConstants = require('../../app/constants/app-constants')
 
-import electron from '../stubs/electron'
-import AppDispatcher from '../stubs/app-dispatcher'
-import AppActions from '../stubs/app-actions'
-import config from '../stubs/config'
-import api from '../stubs/api'
-import defer from '../stubs/defer'
+let electron = require('../stubs/electron')
+let AppDispatcher = require('../stubs/app-dispatcher')
+let AppActions = require('../stubs/app-actions')
+let config = require('../stubs/config')
+let api = require('../stubs/api')
+let defer = require('../stubs/defer')
 
 let SetupStore = {
   is_ready: () => true

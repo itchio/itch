@@ -1,12 +1,12 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
-import Promise from 'bluebird'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
+let Promise = require('bluebird')
 
 import {PassThrough} from 'stream'
 import {EventEmitter} from 'events'
 
-import electron from '../stubs/electron'
+let electron = require('../stubs/electron')
 
 test('http', t => {
   let http_opts = {

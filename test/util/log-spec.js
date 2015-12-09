@@ -1,7 +1,7 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
-import fs from 'fs'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
+let fs = require('fs')
 
 let setup = (t, logger_opts) => {
   let make = proxyquire('../../app/util/log', {})

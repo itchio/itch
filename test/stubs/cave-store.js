@@ -1,5 +1,5 @@
 'use nodent';'use strict'
-import Promise from 'bluebird'
+let Promise = require('bluebird')
 
 export default {
   find: () => Promise.resolve({

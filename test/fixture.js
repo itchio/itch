@@ -1,6 +1,6 @@
 'use nodent';'use strict'
-import fs from 'fs'
-import path from 'path'
+let fs = require('fs')
+let path = require('path')
 
 let self = {
   path: function (spec) {

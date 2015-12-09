@@ -1,12 +1,12 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
-import path from 'path'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
+let path = require('path')
 
-import electron from '../stubs/electron'
-import CaveStore from '../stubs/cave-store'
+let electron = require('../stubs/electron')
+let CaveStore = require('../stubs/cave-store')
 
-import log from '../../app/util/log'
+let log = require('../../app/util/log')
 
 let logger = new log.Logger({sinks: {console: false}})
 let opts = {id: 'kalamazoo', logger}

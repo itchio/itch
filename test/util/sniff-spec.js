@@ -1,8 +1,8 @@
 'use nodent';'use strict'
-import test from 'zopf'
+let test = require('zopf')
 
-import fixture from '../fixture'
-import sniff from '../../app/util/sniff'
+let fixture = require('../fixture')
+let sniff = require('../../app/util/sniff')
 
 test('sniff', t => {
   let types = [

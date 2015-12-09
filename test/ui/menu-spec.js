@@ -1,11 +1,11 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
-import jspath from 'jspath'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
+let jspath = require('jspath')
 
-import electron from '../stubs/electron'
-import AppActions from '../stubs/app-actions'
-import CredentialsStore from '../stubs/credentials-store'
+let electron = require('../stubs/electron')
+let AppActions = require('../stubs/app-actions')
+let CredentialsStore = require('../stubs/credentials-store')
 
 let collect_actions = (template) => {
   let actions = {}

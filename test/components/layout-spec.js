@@ -1,12 +1,12 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import mori from 'mori'
-import proxyquire from 'proxyquire'
-import sd from 'skin-deep'
+let test = require('zopf')
+let mori = require('mori')
+let proxyquire = require('proxyquire')
+let sd = require('skin-deep')
 
-import electron from '../stubs/electron'
-import AppStore from '../stubs/app-store'
-import defer from '../stubs/defer'
+let electron = require('../stubs/electron')
+let AppStore = require('../stubs/app-store')
+let defer = require('../stubs/defer')
 
 let $ = require('react').createElement
 

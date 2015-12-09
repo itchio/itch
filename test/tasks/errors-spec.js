@@ -1,5 +1,5 @@
 'use nodent';'use strict'
-import test from 'zopf'
+let test = require('zopf')
 import {Transition, InputRequired} from '../../app/tasks/errors'
 
 test('task errors', t => {

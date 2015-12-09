@@ -1,12 +1,12 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
 
-import AppConstants from '../../app/constants/app-constants'
+let AppConstants = require('../../app/constants/app-constants')
 
-import electron from '../stubs/electron'
-import AppDispatcher from '../stubs/app-dispatcher'
-import AppActions from '../stubs/app-actions'
+let electron = require('../stubs/electron')
+let AppDispatcher = require('../stubs/app-dispatcher')
+let AppActions = require('../stubs/app-actions')
 
 let setup = t => {
   let ibrew = {

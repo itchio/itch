@@ -1,8 +1,8 @@
 'use nodent';'use strict'
-import test from 'zopf'
+let test = require('zopf')
 import {contains} from 'underscore'
 
-import os from '../../app/util/os'
+let os = require('../../app/util/os')
 
 test('os', t => {
   let mock = t.mock(os)

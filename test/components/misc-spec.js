@@ -1,9 +1,9 @@
 'use nodent';'use strict'
-import test from 'zopf'
-import proxyquire from 'proxyquire'
-import sd from 'skin-deep'
+let test = require('zopf')
+let proxyquire = require('proxyquire')
+let sd = require('skin-deep')
 
-import electron from '../stubs/electron'
+let electron = require('../stubs/electron')
 
 let $ = require('react').createElement
 
