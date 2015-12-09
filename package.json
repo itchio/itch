@@ -63,7 +63,7 @@
     "skin-deep": "^0.12.0",
     "tap-difflet": "^0.4.0",
     "tape": "^4.2.1",
-    "zopf": "^4.2.0"
+    "zopf": "^4.3.0"
   },
   "scripts": {
     "start": "npm run build && electron .",
