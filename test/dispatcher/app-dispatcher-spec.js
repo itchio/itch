@@ -18,8 +18,8 @@ test('dispatcher', t => {
   t.stub(electron['browser-window'], 'getAllWindows').returns([fake_window])
 
   let b_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher', electron)
-  let original_on = electron.ipc.on.bindelectron.electron.ipc)
-  let on = t.stubelectron.electron.ipc, 'on', function (name, cb) {
+  let original_on = electron.ipc.on.bind(electron.electron.ipc)
+  let on = t.stub(electron.electron.ipc, 'on', function (name, cb) {
     original_on(name, function () {
       // strip 'ev'
       let args = []

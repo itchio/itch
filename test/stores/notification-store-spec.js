@@ -15,11 +15,11 @@ test('NotificationStore', t => {
   }
 
   let TrayStore = {
-    with: (cb) => cbelectron.electron.tray)
+    with: (cb) => cb(electron.electron.Tray)
   }
 
   let WindowStore = {
-    with: (cb) => cb(electron['browser-window'])
+    with: (cb) => cb(electron.electron.BrowserWindow)
   }
 
   let stubs = Object.assign({
@@ -36,7 +36,7 @@ test('NotificationStore', t => {
 
   t.case('notify (win32)', t => {
     t.stub(os, 'platform').returns('win32')
-    t.mockelectron.electron.tray).expects('displayBalloon')
+    t.mock(electron.electron.Tray).expects('displayBalloon')
     handler({ action_type: AppConstants.NOTIFY })
   })
 
@@ -52,20 +52,20 @@ test('NotificationStore', t => {
     handler({ action_type: AppConstants.BOUNCE })
 
     electron.app.dock = old_dock
-    t.mockelectron.electron.app.dock).expects('bounce')
+    t.mock(electron.electron.app.dock).expects('bounce')
     handler({ action_type: AppConstants.BOUNCE })
   })
 
   t.case('set_progress', t => {
-    t.mockelectron.electron.app.dock).expects('setBadge').withArgs('50%')
-    t.mock(electron['browser-window']).expects('setProgressBar').withArgs(0.5)
+    t.mock(electron.electron.app.dock).expects('setBadge').withArgs('50%')
+    t.mock(electron.electron.BrowserWindow).expects('setProgressBar').withArgs(0.5)
     handler({ action_type: AppConstants.SET_PROGRESS, alpha: 0.5 })
     t.is(NotificationStore.get_progress(), 0.5)
   })
 
   t.case('set_progress (clear)', t => {
-    t.mockelectron.electron.app.dock).expects('setBadge').withArgs('')
-    t.mock(electron['browser-window']).expects('setProgressBar').withArgs(-1)
+    t.mock(electron.electron.app.dock).expects('setBadge').withArgs('')
+    t.mock(electron.electron.BrowserWindow).expects('setProgressBar').withArgs(-1)
     handler({ action_type: AppConstants.SET_PROGRESS, alpha: -1 })
   })
 })

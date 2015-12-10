@@ -7,8 +7,8 @@ let Store = require('./store')
 let path = require('path')
 
 let app = require('electron').app
-let Menu = require('electron').menu
-let Tray = require('electron').tray
+let Menu = require('electron').Menu
+let Tray = require('electron').Tray
 
 let os = require('../util/os')
 
