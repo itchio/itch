@@ -35,30 +35,38 @@ var electron_installer_common = {
   certificateFile: '../itchio-app-secrets/certificate.cer'
 }
 
+var windows_electron_options = Object.assign({}, grunt_electron_common, {
+  platform: 'win32',
+  icon: ico_path,
+  'version-string': {
+    CompanyName: company_name,
+    LegalCopyright: license,
+    FileDescription: 'itch.io desktop app',
+    OriginalFileName: 'itch.exe',
+    FileVersion: version,
+    AppVersion: version,
+    ProductName: 'itch',
+    InternalName: 'itch.exe'
+  }
+})
+
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt)
 
   grunt.initConfig({
     // Create a .exe, .app, folder for windows, mac, linux
     electron: {
-      win32: {
-        options: Object.assign({}, grunt_electron_common, {
-          platform: 'win32',
-          arch: 'ia32',
-          icon: ico_path,
-          'version-string': {
-            CompanyName: company_name,
-            LegalCopyright: license,
-            FileDescription: 'itch.io desktop app',
-            OriginalFileName: 'itch.exe',
-            FileVersion: version,
-            AppVersion: version,
-            ProductName: 'itch',
-            InternalName: 'itch.exe'
-          }
-        })
+      'windows-386': {
+        options: Object.assign({
+          arch: 'ia32' 
+        }, windows_electron_options)
       },
-      darwin: {
+      'windows-amd64': {
+        options: Object.assign({
+          arch: 'x64' 
+        }, windows_electron_options)
+      },
+      'darwin-amd64': {
         options: Object.assign({}, grunt_electron_common, {
           platform: 'darwin',
           arch: 'x64',
@@ -69,10 +77,16 @@ module.exports = function (grunt) {
           }]
         })
       },
-      linux: {
+      'linux-386': {
         options: Object.assign({}, grunt_electron_common, {
           platform: 'linux',
-          arch: 'all'
+          arch: '386'
+        })
+      },
+      'linux-amd64': {
+        options: Object.assign({}, grunt_electron_common, {
+          platform: 'linux',
+          arch: 'x64'
         })
       }
     },
