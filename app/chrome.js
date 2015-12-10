@@ -5,15 +5,15 @@ require('bluebird').config({
   cancellation: true
 })
 
+let r = require('r-dom')
 let ReactDOM = require('react-dom')
-let React = require('react')
 let Layout = require('./components/layout').Layout
 
 let app_node
 
 document.addEventListener('DOMContentLoaded', () => {
   app_node = document.querySelector('#app')
-  ReactDOM.render(<Layout/>, app_node)
+  ReactDOM.render(r(Layout), app_node)
 })
 
 window.addEventListener('beforeunload', () => {
