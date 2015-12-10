@@ -1,14 +1,16 @@
 'use nodent';'use strict'
 
+let r = require('r-dom')
 let React = require('react')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes
 let Component = require('./component')
-let classNames = require('classnames')
 
 let AppActions = require('../actions/app-actions')
 
-let TaskIcon = require('./misc').TaskIcon
+let misc = require('./misc')
+let TaskIcon = misc.TaskIcon
+let Icon = misc.Icon
 
 class GameCell extends Component {
   render () {
@@ -38,25 +40,37 @@ class GameCell extends Component {
       button_style.backgroundImage = `-webkit-linear-gradient(left, ${done_color}, ${done_color} ${percent}, ${undone_color} ${percent}, ${undone_color})`
     }
 
-    return <div className='game_cell'>
-      <div className='bordered'>
-        <div className={classNames('game_thumb', {has_cover})} onClick={() => require('electron').remote.require('electron').shell.openExternal(mori.get(game, 'url'))} style={style}/>
-      </div>
-      <div className='game_title'>{title}</div>
-      {user
-      ? <div className='game_author'>{user.display_name}</div>
-      : ''}
-      <div className={button_classes} style={button_style} onClick={() => AppActions.cave_queue(mori.get(game, 'id'))}>
-        {cave
-        ? (
-          <span>
-            <TaskIcon task={mori.get(cave, 'task')}/> {this.status(cave)}
-          </span>
-        )
-        : <span><span className='icon icon-install'/> Install</span>
-        }
-      </div>
-    </div>
+    return (
+      r.div({className: 'game_cell'}, [
+        r.div({className: 'bordered'}, [
+          r.div({
+            style,
+            classSet: {
+              game_thumb: true,
+              has_cover
+            },
+            onClick: () => {
+              require('electron').remote.require('electron').shell.openExternal(mori.get(game, 'url'))
+            }
+          })
+        ]),
+        r.div({className: 'game_title'}, title),
+        (user
+        ? r.div({className: 'game_author'}, user.display_name)
+        : ''),
+        r.div({className: button_classes, style: button_style, onClick: () => AppActions.cave_queue(mori.get(game, 'id'))}, [
+          cave
+          ? r.span({}, [
+            r(TaskIcon, {task: mori.get(cave, 'task')}),
+            this.status(cave)
+          ])
+          : r.span({}, [
+            r(Icon, {icon: 'install'}),
+            ' Install'
+          ])
+        ])
+      ])
+    )
   }
 
   status (cave) {
@@ -97,13 +111,13 @@ class GameList extends React.Component {
     let index_by = (acc, k, v) => mori.assoc(acc, mori.get(v, 'game_id'), v)
     let caves_by_game_id = mori.reduceKV(index_by, mori.hashMap(), caves)
 
-    return <div className='game_list'>
-      {mori.intoArray(mori.map(game => {
+    return (
+      r.div({className: 'game_list'}, mori.intoArray(mori.map(game => {
         let game_id = mori.get(game, 'id')
         let cave = mori.get(caves_by_game_id, game_id)
-        return <GameCell key={game_id} game={game} cave={cave}/>
-      }, games))}
-    </div>
+        return r(GameCell, {key: game_id, game, cave})
+      }, games)))
+    )
   }
 }
 

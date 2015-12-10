@@ -1,9 +1,8 @@
 'use nodent';'use strict'
 
-let React = require('react')
+let r = require('r-dom')
 let PropTypes = require('react').PropTypes
 let Component = require('./component')
-let classNames = require('classnames')
 
 let remote = require('electron').remote
 let CredentialsStore = remote.require('./stores/credentials-store')
@@ -36,14 +35,14 @@ class UserPanel extends Component {
     let me = this.state.me
     let loading = !me
 
-    return <div className={classNames('user_panel', {loading})}>
-      {me
-      ? <div>
-          <img className='avatar' src={me.cover_url}/>
-          <div className='username'>{me.username}</div>
-        </div>
-      : 'Loading...'}
-    </div>
+    return r.div({classSet: {user_panel: true, loading}}, [
+      me
+      ? r.div({}, [
+        r.img({className: 'avatar', src: me.cover_url}),
+        r.div({className: 'username'}, me.username)
+      ])
+      : 'Loading...'
+    ])
   }
 }
 

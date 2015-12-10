@@ -18,7 +18,7 @@ test('layout', t => {
   let Layout = proxyquire('../../app/components/layout', stubs).Layout
   let get_state = t.stub(AppStore, 'get_state')
 
-  let set_state = (tree, props) => {
+  let set_state = (props) => {
     get_state.returns(mori.toClj(props))
   }
 
@@ -39,11 +39,11 @@ test('layout', t => {
       error: null
     }
     let props = {page: 'setup', setup}
-    set_state(tree, props)
+    set_state(props)
 
     let tree = sd.shallowRender($(Layout, {}))
     let vdom = tree.getRenderOutput()
-    t.same(vdom.props, {state: mori.toClj(setup)})
+    t.same(vdom.props, {children: undefined, state: mori.toClj(setup)})
   })
 
   t.case('login', t => {
@@ -52,11 +52,11 @@ test('layout', t => {
       errors: ['try again']
     }
     let props = {page: 'login', login}
-    set_state(tree, props)
+    set_state(props)
 
     let tree = sd.shallowRender($(Layout, {}))
     let vdom = tree.getRenderOutput()
-    t.same(vdom.props, {state: mori.toClj(login)})
+    t.same(vdom.props, {children: undefined, state: mori.toClj(login)})
   })
 
   t.case('library', t => {
@@ -64,10 +64,10 @@ test('layout', t => {
       games: [1, 2, 3]
     }
     let props = {page: 'library', library}
-    set_state(tree, props)
+    set_state(props)
 
     let tree = sd.shallowRender($(Layout, {}))
     let vdom = tree.getRenderOutput()
-    t.same(vdom.props, {state: mori.toClj(library)})
+    t.same(vdom.props, {children: undefined, state: mori.toClj(library)})
   })
 })

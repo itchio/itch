@@ -1,8 +1,9 @@
 'use nodent';'use strict'
 
-let React = require('react')
+let r = require('r-dom')
 let mori = require('mori')
-let PropTypes = require('react').PropTypes
+let React = require('react')
+let PropTypes = React.PropTypes
 let Component = require('./component')
 let classNames = require('classnames')
 
@@ -15,16 +16,14 @@ class SetupPage extends Component {
     let message = state.message
     let error = (icon === 'error')
 
-    return <div className={classNames('setup_page', {error})}>
-      <div className='setup_widget'>
-        <div className='throbber_loader'>
-          <Icon {...{icon}}/>
-        </div>
-        <div className='setup_message'>
-          <div className='setup_message'>{message}</div>
-        </div>
-      </div>
-    </div>
+    return r.div({classSet: {setup_page: true, error}}, [
+      r.div({className: 'setup_widget'}, [
+        r.div({className: 'throbber_loader'}, [
+          r(Icon, {icon})
+        ]),
+        r.div({className: 'setup_message'}, message)
+      ])
+    ])
   }
 }
 

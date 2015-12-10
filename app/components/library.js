@@ -1,10 +1,9 @@
 'use nodent';'use strict'
 
-let React = require('react')
+let r = require('r-dom')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes
 let Component = require('./component')
-let classNames = require('classnames')
 
 let UserPanel = require('./user-panel').UserPanel
 let GameList = require('./game-list').GameList
@@ -26,10 +25,10 @@ class LibraryPage extends Component {
   render () {
     let state = this.props.state
 
-    return <div className='library_page'>
-      <LibrarySidebar state={state}/>
-      <LibraryContent state={state}/>
-    </div>
+    return r.div({className: 'library_page'}, [
+      r(LibrarySidebar, {state}),
+      r(LibraryContent, {state})
+    ])
   }
 }
 
@@ -54,10 +53,11 @@ class LibrarySidebar extends Component {
         games,
         name: `collections/${id}`,
         label: mori.get(collection, 'title'),
-        before: <Icon icon='tag'/>,
-        panel
+        before: r(Icon, {icon: 'tag'}),
+        panel,
+        key: id
       }
-      acc.push(<LibraryPanelLink {...props} key={id}/>)
+      acc.push(r(LibraryPanelLink, props))
       return acc
     }, [], collections)
 
@@ -76,31 +76,32 @@ class LibrarySidebar extends Component {
         label: mori.getIn(cave, ['game', 'title']),
         error: task === 'error' && error,
         progress: mori.get(cave, 'progress'),
-        before: <TaskIcon task={task}/>,
-        panel
+        before: r(TaskIcon, {task}),
+        panel,
+        key: id
       }
-      acc.push(<LibraryPanelLink {...props} key={id}/>)
+      acc.push(r(LibraryPanelLink, props))
       return acc
     }, [], caves)
 
-    return <div className={classNames('sidebar', {frameless})}>
-      <UserPanel/>
-      <div className='panel_links'>
-        <LibraryPanelLink before={<Icon icon='heart-filled'/>} name='owned' label='Owned' panel={panel} games={games}/>
-        <LibraryPanelLink before={<Icon icon='checkmark'/>} name='caved' label='Installed' panel={panel} games={games}/>
-        <LibraryPanelLink before={<Icon icon='rocket'/>} name='dashboard' label='Dashboard' panel={panel} games={games}/>
+    return (
+      r.div({classSet: {sidebar: true, frameless}}, [
+        r(UserPanel),
+        r.div({className: 'panel_links'}, [
+          r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-filled'}), name: 'owned', label: 'Owned', panel, games}),
+          r(LibraryPanelLink, {before: r(Icon, {icon: 'checkmark'}), name: 'caved', label: 'Installed', panel, games}),
+          r(LibraryPanelLink, {before: r(Icon, {icon: 'rocket'}), name: 'dashboard', label: 'Dashboard', panel, games}),
 
-        <div className='separator'/>
-        {mori.intoArray(collection_items)}
-
-        {mori.count(cave_items) > 0
-        ? <div>
-            <div className='separator'/>
-            {mori.intoArray(cave_items)}
-          </div>
-        : ''}
-      </div>
-    </div>
+          r.div({className: 'separator'})
+        ].concat(mori.intoArray(collection_items)).concat([
+          mori.count(cave_items) > 0
+          ? r.div({}, [
+            r.div({className: 'separator'})
+          ].concat(mori.intoArray(cave_items)))
+          : ''
+        ]))
+      ])
+    )
   }
 }
 
@@ -120,9 +121,11 @@ class LibraryContent extends Component {
 
     let shown_games = mori.get(games, panel) || mori.list()
 
-    return <div className='main_content'>
-      <GameList games={shown_games} caves={caves}/>
-    </div>
+    return (
+      r.div({className: 'main_content'}, [
+        r(GameList, {games: shown_games, caves})
+      ])
+    )
   }
 }
 
@@ -151,16 +154,17 @@ class LibraryPanelLink extends Component {
     let _progress = progress ? ` (${(progress * 100).toFixed()}%)` : ''
     let _label = `${label}${_progress}`
 
-    return <div className={classNames('panel_link', {current})} onClick={() => AppActions.focus_panel(this.props.name)}
-      >
-      {before}
-      {_label}
-      {game_count > 0
-      ? <span className='bubble'>{game_count}</span>
-      : ''}
-      <ProgressBar {...{progress}}/>
-      <ErrorList errors={error}/>
-    </div>
+    return (
+      r.div({classSet: {panel_link: true, current}, onClick: () => AppActions.focus_panel(this.props.name)}, [
+        before,
+        _label,
+        (game_count > 0
+        ? r.span({className: 'bubble'}, game_count)
+        : ''),
+        r(ProgressBar, {progress}),
+        r(ErrorList, {errors: error})
+      ])
+    )
   }
 }
 

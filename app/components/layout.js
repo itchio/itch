@@ -1,8 +1,8 @@
 'use nodent';'use strict'
 
-let React = require('react')
-let Component = require('./component')
 let mori = require('mori')
+let r = require('r-dom')
+let Component = require('./component')
 
 let LoginPage = require('./login').LoginPage
 let SetupPage = require('./setup').SetupPage
@@ -36,13 +36,13 @@ class Layout extends Component {
 
     switch (mori.get(state, 'page')) {
       case 'setup':
-        return <SetupPage state={mori.get(state, 'setup')}/>
+        return r(SetupPage, {state: mori.get(state, 'setup')})
       case 'login':
-        return <LoginPage state={mori.get(state, 'login')}/>
+        return r(LoginPage, {state: mori.get(state, 'login')})
       case 'library':
-        return <LibraryPage state={mori.get(state, 'library')}/>
+        return r(LibraryPage, {state: mori.get(state, 'library')})
       default:
-        return <div/>
+        return r.div()
     }
   }
 }
