@@ -15,7 +15,7 @@ test('user-panel', t => {
   let ErrorList = misc.ErrorList
 
   t.case('Icon', t => {
-    sd.shallowRender($(Icon, {icon}))
+    sd.shallowRender($(Icon, {}))
     let icon = 'boo'
     let tree = sd.shallowRender($(Icon, {icon}))
     t.ok(tree.findNode('.icon-boo'))

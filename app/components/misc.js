@@ -1,7 +1,8 @@
 'use nodent';'use strict'
 
+let r = require('r-dom')
 let React = require('react')
-let PropTypes = require('react').PropTypes
+let PropTypes = React.PropTypes
 let Component = require('./component')
 
 /**
@@ -13,9 +14,9 @@ class Icon extends Component {
     let icon = this.props.icon
 
     if (icon) {
-      return <span className={`icon icon-${icon}`}/>
+      return r.span({className: `icon icon-${icon}`})
     } else {
-      return <span/>
+      return r.span()
     }
   }
 }
@@ -41,7 +42,7 @@ class TaskIcon extends Component {
   render () {
     let task = this.props.task || ''
     let icon = task_to_icon[task] || ''
-    return <Icon {...{icon}}/>
+    return r(Icon, {icon})
   }
 }
 
@@ -55,15 +56,17 @@ TaskIcon.propTypes = {
 class ProgressBar extends Component {
   render () {
     let progress = this.props.progress
-    if (!progress) return <div/>
+    if (!progress) return r.div()
 
     let style = {
       width: `${progress * 100}%`
     }
 
-    return <div className='progress_outer'>
-      <div className='progress_inner' style={style}/>
-    </div>
+    return (
+      r.div({className: 'progress_outer'}, [
+        r.div({className: 'progress_inner', style})
+      ])
+    )
   }
 }
 
@@ -79,7 +82,7 @@ class ErrorList extends React.Component {
     let error = this.props.errors
 
     if (!error) {
-      return <div/>
+      return r.div()
     }
 
     let errors = {error}
@@ -88,11 +91,9 @@ class ErrorList extends React.Component {
       errors = [error]
     }
 
-    return <ul className='form_errors'>
-      {errors.map((error, key) => {
-        return <li key={key}>{error}</li>
-      })}
-    </ul>
+    return r.ul({className: 'form_errors'}, errors.map((error, key) => {
+      return r.li({key}, error)
+    }))
   }
 }
 

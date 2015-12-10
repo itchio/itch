@@ -39,6 +39,7 @@
     "needle": "^0.11.0",
     "nodent": "^2.3.5",
     "pure-render-mixin": "^1.0.2",
+    "r-dom": "^2.1.0",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
     "read-chunk": "^1.0.1",
