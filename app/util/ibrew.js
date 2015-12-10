@@ -42,7 +42,7 @@ let self = {
   },
 
   root_url: () => {
-    return 'https://misc.amos.me'
+    return 'https://dl.itch.ovh'
   },
 
   ext: () => {
