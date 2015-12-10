@@ -2,11 +2,8 @@
 
 ![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
-[![Build Status](https://travis-ci.org/itchio/itchio-app.svg)](https://travis-ci.org/itchio/itchio-app)
-[![Build status](https://ci.appveyor.com/api/projects/status/g55d4rq4jc1tdh05?svg=true)](https://ci.appveyor.com/project/fasterthanlime/itchio-app)
-
-[![Coverage Status](https://coveralls.io/repos/itchio/itchio-app/badge.svg?service=github)](https://coveralls.io/github/itchio/itchio-app)
-[![Dependency Status](https://david-dm.org/itchio/itchio-app.svg)](https://david-dm.org/itchio/itchio-app)
+[![Build Status](https://ci.itch.ovh/job/itch/badge/icon)](https://ci.itch.ovh/job/itch/)
+[![Coverage Status](https://coveralls.io/repos/itchio/itch/badge.svg?service=github)](https://coveralls.io/github/itchio/itch)
 
 The goal of this project is to give you a desktop application that you can
 download and run games from [itch.io](http://itch.io) with. Additionally you
