@@ -9,7 +9,7 @@ let CredentialsStore = require('../stubs/credentials-store')
 let $ = require('react').createElement
 
 test('user-panel', t => {
-  t.stub(electron.remote, 'require').returns(CredentialsStore)
+  t.stub(electron.electron.remote, 'require').returns(CredentialsStore)
   let UserPanel = proxyquire('../../app/components/user-panel', electron).UserPanel
 
   t.case('UserPanel (loading)', t => {

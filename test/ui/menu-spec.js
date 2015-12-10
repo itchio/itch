@@ -27,7 +27,7 @@ test('menu', t => {
   }, electron)
 
   let template
-  t.stub(electron.menu, 'buildFromTemplate', (t) => template = t)
+  t.stubelectron.electron.menu, 'buildFromTemplate', (t) => template = t)
 
   let menu = proxyquire('../../app/ui/menu', stubs)
   let handler

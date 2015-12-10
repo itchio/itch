@@ -17,8 +17,8 @@ let electron = {
       setBadge: rnil
     }
   },
-  tray: function () {
-    Object.assign(this, electron.tray)
+  Tray: function () {
+    Object.assign(this, electron.Tray)
   },
   BrowserWindow: function () {
     Object.assign(this, electron.BrowserWindow)
@@ -43,13 +43,13 @@ let electron = {
   dialog: {
     showMessageBox: rnil
   },
-  menu: {
+  Menu: {
     buildFromTemplate: rnil,
     setApplicationMenu: rnil
   }
 }
 
-Object.assign(electron.tray, {
+Object.assign(electron.Tray, {
   setToolTip: rnil,
   setContextMenu: rnil,
   on: rnil,

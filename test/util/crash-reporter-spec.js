@@ -36,7 +36,7 @@ test('crash-reporter', t => {
   })
 
   t.case('report_issue', t => {
-    let mock = t.mock(electron.shell)
+    let mock = t.mock(electron.electron.shell)
     mock.expects('openExternal').once()
     crash_reporter.report_issue(e)
   })
@@ -47,21 +47,21 @@ test('crash-reporter', t => {
 
   t.case('handle → close', t => {
     stub_write(t)
-    t.stub(electron.dialog, 'showMessageBox').returns(-1)
+    t.stub(electron.electron.dialog, 'showMessageBox').returns(-1)
     crash_reporter.handle(e)
   })
 
   t.case('handle → report_issue', t => {
     stub_write(t)
-    t.stub(electron.dialog, 'showMessageBox').returns(0)
+    t.stub(electron.electron.dialog, 'showMessageBox').returns(0)
     t.mock(crash_reporter).expects('report_issue').once()
     crash_reporter.handle(e)
   })
 
   t.case('handle → open_item', t => {
     stub_write(t)
-    t.stub(electron.dialog, 'showMessageBox').returns(1)
-    t.mock(electron.shell).expects('openItem').once()
+    t.stub(electron.electron.dialog, 'showMessageBox').returns(1)
+    t.mock(electron.electron.shell).expects('openItem').once()
     crash_reporter.handle(e)
   })
 

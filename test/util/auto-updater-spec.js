@@ -23,7 +23,7 @@ let setup_win32 = t => {
   }, electron)
 
   let win32 = proxyquire('../../app/util/auto-updater/win32', stubs)
-  return Object.assign({os, win32}, electron)
+  return Object.assign({os, win32}, electron.electron)
 }
 
 test('auto-updater', t => {
