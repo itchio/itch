@@ -72,9 +72,9 @@
   },
   "scripts": {
     "start": "npm run build && electron .",
-    "test": "nyc test/runner.js \"test/**/*-spec.js\" | tap-difflet",
+    "test": "nyc -s test/runner.js \"test/**/*-spec.js\" | tap-spec",
     "coveralls": "nyc report -r text-lcov | coveralls",
-    "local-cov": "npm test && nyc report -r text"
+    "local-cov": "npm test && nyc report -r text && nyc report -r html"
   },
   "standard": {
     "parser": "babel-eslint"
