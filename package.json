@@ -42,7 +42,7 @@
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
     "read-chunk": "^1.0.1",
-    "source-map-support": "^0.3.2",
+    "source-map-support": "^0.4.0",
     "stream-splitter": "^0.3.2",
     "streamsearch": "^0.1.2",
     "underscore": "^1.8.3",
