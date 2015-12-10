@@ -1,3 +1,5 @@
+'use strict'
+
 let mori = require('mori')
 let r = require('r-dom')
 let Component = require('./component')

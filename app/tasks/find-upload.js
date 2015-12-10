@@ -1,3 +1,5 @@
+'use strict'
+
 let db = require('../util/db')
 let indexBy = require('underscore').indexBy
 

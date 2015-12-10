@@ -1,3 +1,5 @@
+'use strict'
+
 let r = require('r-dom')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes

@@ -1,3 +1,5 @@
+'use strict'
+
 let test = require('zopf')
 let contains = require('underscore').contains
 

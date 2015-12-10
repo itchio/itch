@@ -1,3 +1,5 @@
+'use strict'
+
 let sniff = require('../../util/sniff')
 let glob = require('../../promised/glob')
 let fs = require('../../promised/fs')

@@ -1,3 +1,5 @@
+'use strict'
+
 if (!('boxShadow' in document.body.style)) {
 	document.body.setAttribute('class', 'noBoxShadow');
 }

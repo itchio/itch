@@ -1,3 +1,5 @@
+'use strict'
+
 let test = require('zopf')
 let errors = require('../../app/tasks/errors')
 let Transition = errors.Transition

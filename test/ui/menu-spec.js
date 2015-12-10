@@ -1,3 +1,5 @@
+'use strict'
+
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let jspath = require('jspath')

@@ -1,3 +1,5 @@
+'use strict'
+
 let test = require('zopf')
 let noop = require('../../app/util/noop')
 

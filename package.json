@@ -22,7 +22,6 @@
   "main": "app/metal.js",
   "license": "MIT",
   "dependencies": {
-    "babel-plugin-syntax-async-functions": "^6.3.13",
     "babel-register": "^6.3.13",
     "bluebird": "^3.0.6",
     "clone": "^1.0.2",
@@ -57,14 +56,14 @@
     "grunt-electron-installer": "^1.2.0",
     "jspath": "^0.3.2",
     "load-grunt-tasks": "^3.3.0",
-    "nyc": "^3.2.2",
+    "nyc": "^5.0.0",
     "proxyquire": "^1.7.3",
     "react-addons-test-utils": "^0.14.3",
     "sinon": "^1.17.1",
     "skin-deep": "^0.12.0",
     "tap-spec": "^4.1.1",
     "tape": "^4.2.1",
-    "zopf": "^4.3.0"
+    "zopf": "^4.3.1"
   },
   "scripts": {
     "start": "npm run build && electron .",

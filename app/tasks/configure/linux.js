@@ -1,3 +1,5 @@
+'use strict'
+
 let common = require('./common')
 
 let self = {

@@ -1,3 +1,5 @@
+'use strict'
+
 let React = require('react')
 let shallowEqual = require('pure-render-mixin').shallowEqual
 

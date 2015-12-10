@@ -1,3 +1,5 @@
+'use strict'
+
 let mori = require('mori')
 
 let Store = require('./store')

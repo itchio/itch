@@ -1,3 +1,5 @@
+'use strict'
+
 let app = require('electron').app
 let os = require('../os')
 

@@ -1,3 +1,5 @@
+'use strict'
+
 let PassThrough = require('stream').PassThrough
 
 let default_opts = {

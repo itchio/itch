@@ -1,3 +1,5 @@
+'use strict'
+
 let Promise = require('bluebird')
 let proxyquire = require('proxyquire')
 let electron = require('./electron')

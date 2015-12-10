@@ -1,3 +1,5 @@
+'use strict'
+
 let ExtendableError = require('es6-error')
 
 class Transition extends ExtendableError {

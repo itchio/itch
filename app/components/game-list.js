@@ -1,3 +1,5 @@
+'use strict'
+
 let r = require('r-dom')
 let React = require('react')
 let mori = require('mori')

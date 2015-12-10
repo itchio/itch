@@ -1,3 +1,5 @@
+'use strict'
+
 let self = {
   start: () => false
 }

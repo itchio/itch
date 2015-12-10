@@ -1,3 +1,5 @@
+'use strict'
+
 let Menu = require('electron').Menu
 
 let CredentialsStore = require('../stores/credentials-store')

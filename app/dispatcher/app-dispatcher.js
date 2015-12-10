@@ -1,3 +1,5 @@
+'use strict'
+
 let os = require('../util/os')
 
 let Log = require('../util/log')

@@ -1,3 +1,5 @@
+'use strict'
+
 
 let StreamSearch = require('streamsearch')
 let fstream = require('fstream')

@@ -1,3 +1,5 @@
+'use strict'
+
 let log = require('../../util/log')('tasks/install')
 let sniff = require('../../util/sniff')
 

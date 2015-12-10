@@ -1,3 +1,5 @@
+'use strict'
+
 
 let spawn = require('../../util/spawn')
 

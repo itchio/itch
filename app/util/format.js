@@ -1,3 +1,5 @@
+'use strict'
+
 let self = {
   camelize: function (str) {
     return str.replace(/(?:_[a-z])/g, function (letter, index) {

@@ -1,3 +1,5 @@
+'use strict'
+
 let api = require('./api')
 
 module.exports = {

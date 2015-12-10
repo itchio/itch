@@ -1,3 +1,5 @@
+'use strict'
+
 let fstream = require('fstream')
 let path = require('path')
 

@@ -1,3 +1,5 @@
+'use strict'
+
 let self = {
   get: () => null,
   set: () => null,
