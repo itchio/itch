@@ -1,6 +1,6 @@
 'use nodent';'use strict'
 
-let React = require('react')
+let r = require('r-dom')
 let PropTypes = require('react').PropTypes
 let Component = require('./component')
 
@@ -15,12 +15,15 @@ class InputRow extends Component {
     let label = this.props.label
     let type = this.props.type || 'text'
     let disabled = this.props.disabled
-    return <div className='input_row'>
-      <label>
-        <div className='label'>{label}</div>
-        <input type={type} ref='input' disabled={disabled}/>
-      </label>
-    </div>
+
+    return (
+      r.div({className: 'input-row'}, [
+        r.label({}, [
+          r.div({className: 'label'}, [label]),
+          r.input({type, disabled, ref: 'input'})
+        ])
+      ])
+    )
   }
 
   // non-React methods
