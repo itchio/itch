@@ -47,11 +47,11 @@ test('NotificationStore', t => {
   })
 
   t.case('bounce', t => {
-    let old_dock = electron.app.dock
-    electron.app.dock = null
+    let old_dock = electron.electron.app.dock
+    electron.electron.app.dock = null
     handler({ action_type: AppConstants.BOUNCE })
 
-    electron.app.dock = old_dock
+    electron.electron.app.dock = old_dock
     t.mock(electron.electron.app.dock).expects('bounce')
     handler({ action_type: AppConstants.BOUNCE })
   })
