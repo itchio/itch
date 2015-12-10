@@ -4,6 +4,7 @@ let proxyquire = require('proxyquire')
 let sd = require('skin-deep')
 
 let electron = require('../stubs/electron')
+let AppActions = require('../stubs/app-actions')
 
 let $ = require('react').createElement
 
@@ -11,7 +12,6 @@ test('user-panel', t => {
   let stubs = Object.assign({
     '../actions/app-actions': AppActions
   }, electron)
-  let AppActions = proxyquire('../stubs/app-actions', stubs)
 
   let login = proxyquire('../../app/components/login', stubs)
   let LoginPage = login.LoginPage

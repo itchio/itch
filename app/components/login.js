@@ -1,9 +1,10 @@
 'use nodent';'use strict'
 
+let r = require('r-dom')
 let React = require('react')
-let mori = require('mori')
-let PropTypes = require('react').PropTypes
+let PropTypes = React.PropTypes
 let Component = require('./component')
+let mori = require('mori')
 
 let AppActions = require('../actions/app-actions')
 
@@ -12,9 +13,11 @@ let ErrorList = require('./misc').ErrorList
 
 class LoginPage extends Component {
   render () {
-    return <div className='login_page'>
-      <LoginForm state={this.props.state}/>
-    </div>
+    return (
+      r.div({className: 'login_page'}, [
+        r(LoginForm, {state: this.props.state})
+      ])
+    )
   }
 }
 
@@ -33,25 +36,27 @@ class LoginForm extends Component {
     let loading = mori.get(state, 'loading')
     let errors = mori.get(state, 'errors')
 
-    return <div className='login_form'>
-      <img className='logo' src='static/images/itchio-white.svg'/>
-      <div className='login_box'>
-        <h1>Log in</h1>
+    return (
+      r.div({className: 'login_form'}, [
+        r.img({className: 'logo', src: 'static/images/itchio-white.svg'}),
+        r.div({className: 'login_box'}, [
+          r.h1('Log in'),
 
-        <form className='form' onSubmit={this.handle_submit}>
-          <ErrorList {...{errors}}/>
+          r.form({className: 'form', onSubmit: this.handle_submit}, [
+            r(ErrorList, {errors}),
 
-          <InputRow label='Username' name='username' type='text' ref='username' autofocus disabled={loading}/>
-          <InputRow label='Password' name='password' type='password' ref='password' disabled={loading}/>
+            r(InputRow, {label: 'Username', name: 'username', type: 'text', ref: 'username', autofocus: true, disabled: loading}),
+            r(InputRow, {label: 'Password', name: 'password', type: 'password', ref: 'password', disabled: loading}),
 
-          <div className='buttons'>
-            <button className='button' disabled={loading}>Log in</button>
-            <span> · </span>
-            <a href='https://itch.io/user/forgot-password' target='_blank'>Forgot password</a>
-          </div>
-        </form>
-      </div>
-    </div>
+            r.div({className: 'buttons'}, [
+              r.button({className: 'button', disabled: loading}, 'Log in'),
+              r.span(' · '),
+              r.a({href: 'https://itch.io/user/forgot-password', target: '_blank'}, 'Forgot password')
+            ])
+          ])
+        ])
+      ])
+    )
   }
 
   handle_submit (event) {

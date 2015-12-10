@@ -36,7 +36,7 @@ InputRow.propTypes = {
   autofocus: PropTypes.bool,
   disabled: PropTypes.bool,
   label: PropTypes.string,
-  type: PropTypes.oneOfType(['text', 'password'])
+  type: PropTypes.oneOf(['text', 'password'])
 }
 
 module.exports = {InputRow}
