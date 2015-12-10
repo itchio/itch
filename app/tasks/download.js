@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let Transition = require('./errors').Transition
 
 let log = require('../util/log')('tasks/download')

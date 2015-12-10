@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let Transition = require('./errors').Transition
 
 let noop = require('../util/noop')

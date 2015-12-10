@@ -1,4 +1,3 @@
-'use nodent';'use strict'
 let indexBy = require('underscore').indexBy
 
 let Store = require('./store')

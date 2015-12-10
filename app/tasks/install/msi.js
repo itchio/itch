@@ -1,4 +1,3 @@
-'use nodent';'use strict'
 
 let spawn = require('../../util/spawn')
 let os = require('../../util/os')

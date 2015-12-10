@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let r = require('r-dom')
 let mori = require('mori')
 let React = require('react')

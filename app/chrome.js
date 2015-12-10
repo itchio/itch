@@ -1,9 +1,10 @@
-'use nodent';'use strict'
+'use strict'
 
 require('bluebird').config({
   longStackTraces: true,
   cancellation: true
 })
+require('babel-register')
 
 let r = require('r-dom')
 let ReactDOM = require('react-dom')

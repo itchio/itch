@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let handlers = {}
 
 let self = {

@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let r = require('r-dom')
 let PropTypes = require('react').PropTypes
 let Component = require('./component')

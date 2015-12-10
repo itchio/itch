@@ -1,0 +1,6 @@
+{
+  "plugins": [
+    "fast-async",
+    "transform-strict-mode"
+  ]
+}

@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let Promise = require('bluebird')
 
 let glob = Promise.promisify(require('glob'))

@@ -4,7 +4,7 @@ require('bluebird').config({
   longStackTraces: true,
   cancellation: true
 })
-require('nodent')()
+require('babel-register')
 
 require('./util/crash-reporter').mount()
 

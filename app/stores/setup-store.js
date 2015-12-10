@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let Promise = require('bluebird')
 let path = require('path')
 let partial = require('underscore').partial

@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let glob = require('../../promised/glob')
 
 let self = {

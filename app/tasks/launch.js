@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let path = require('path')
 let child_process = require('child_process')
 let clone = require('clone')

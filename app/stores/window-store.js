@@ -1,4 +1,3 @@
-'use nodent';'use strict'
 let AppActions = require('../actions/app-actions')
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')

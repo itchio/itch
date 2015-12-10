@@ -1,4 +1,4 @@
-'use nodent';'use strict'
+
 let test = require('zopf')
 let mori = require('mori')
 let proxyquire = require('proxyquire')

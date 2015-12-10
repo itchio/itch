@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let pairs = require('underscore').pairs
 let fstream = require('fstream')
 let deep_assign = require('deep-assign')

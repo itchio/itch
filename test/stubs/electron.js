@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let rnil = () => null
 let EventEmitter = require('events').EventEmitter
 

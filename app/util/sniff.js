@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let Promise = require('bluebird')
 let file_type = require('file-type')
 let read_chunk = Promise.promisify(require('read-chunk'))

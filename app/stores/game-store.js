@@ -1,4 +1,3 @@
-'use nodent';'use strict'
 let deep_assign = require('deep-assign')
 let Promise = require('bluebird')
 let pluck = require('underscore').pluck

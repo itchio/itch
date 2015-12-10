@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let Promise = require('bluebird')
 let Datastore = require('nedb')
 let path = require('path')

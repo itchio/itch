@@ -1,4 +1,3 @@
-'use nodent';'use strict'
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let sinon = require('sinon')
@@ -41,19 +40,21 @@ test('install', t => {
   // 'empty' cannot be sniffed, 'png' can be sniffed but
   // isn't a valid archive type (hopefully)
   ;['empty', 'png'].forEach((type) => {
-    t.case(`admit own limits (${type})`, async t => {
+    t.case(`admit own limits (${type})`, t => {
       let spy = t.spy()
       let install_opts = {
         archive_path: fixture.path(type),
         dest_path: '/tmp/dest'
       }
 
-      try {
-        await install_core.install(install_opts)
-      } catch (e) {
-        spy(e)
+      return async function () {
+        try {
+          await install_core.install(install_opts)
+        } catch (e) {
+          spy(e)
+        }
+        sinon.assert.calledWith(spy, sinon.match.has('message', sinon.match(/don't know how/)))
       }
-      sinon.assert.calledWith(spy, sinon.match.has('message', sinon.match(/don't know how/)))
     })
   })
 

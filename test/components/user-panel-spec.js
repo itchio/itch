@@ -1,4 +1,3 @@
-'use nodent';'use strict'
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let sd = require('skin-deep')

@@ -1,5 +1,3 @@
-'use nodent';'use strict'
-
 let app = require('electron').app
 
 let AppDispatcher = require('../dispatcher/app-dispatcher')

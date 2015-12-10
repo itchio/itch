@@ -1,6 +1,3 @@
-'use nodent';'use strict'
-'use nodent-promises';'use strict'
-
 let fstream = require('fstream')
 let path = require('path')
 

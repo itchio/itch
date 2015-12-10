@@ -1,4 +1,3 @@
-'use nodent';'use strict'
 let EventEmitter = require('events').EventEmitter
 let os = require('../util/os')
 

@@ -1,4 +1,3 @@
-'use nodent';'use strict'
 let test = require('zopf')
 let sinon = require('sinon')
 let proxyquire = require('proxyquire')

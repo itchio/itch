@@ -1,6 +1,3 @@
-'use nodent';'use strict'
-'use nodent-promises';'use strict'
-
 let app = require('electron').app
 let os = require('../os')
 
