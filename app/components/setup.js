@@ -3,7 +3,6 @@ let mori = require('mori')
 let React = require('react')
 let PropTypes = React.PropTypes
 let Component = require('./component')
-let classNames = require('classnames')
 
 let Icon = require('./misc').Icon
 

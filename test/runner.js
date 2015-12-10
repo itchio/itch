@@ -4,8 +4,8 @@
 
   let path = require('path')
   let glob = require('glob')
-  require('source-map-support').install()
 
+  require('source-map-support').install()
   require('bluebird').config({
     longStackTraces: true,
     cancellation: true
