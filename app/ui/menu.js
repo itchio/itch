@@ -1,6 +1,6 @@
 'use nodent';'use strict'
 
-let Menu = require('electron').menu
+let Menu = require('electron').Menu
 
 let CredentialsStore = require('../stores/credentials-store')
 let AppActions = require('../actions/app-actions')
