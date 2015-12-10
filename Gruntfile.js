@@ -18,7 +18,7 @@ var grunt_electron_common = {
   version: electron_version,
   'app-version': version,
   prune: true,
-  asar: true,
+  asar: false,
   overwrite: true,
   out: out_dir
 }
