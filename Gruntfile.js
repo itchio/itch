@@ -80,7 +80,7 @@ module.exports = function (grunt) {
       'linux-386': {
         options: Object.assign({}, grunt_electron_common, {
           platform: 'linux',
-          arch: '386'
+          arch: 'ia32'
         })
       },
       'linux-amd64': {
