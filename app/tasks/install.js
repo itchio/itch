@@ -7,7 +7,7 @@ let noop = require('../util/noop')
 let CaveStore = require('../stores/cave-store')
 let AppActions = require('../actions/app-actions')
 
-let core = require('./installers/core')
+let core = require('./install/core')
 
 function ensure (predicate, reason) {
   if (!predicate) {

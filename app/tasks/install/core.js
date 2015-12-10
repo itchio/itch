@@ -20,7 +20,7 @@ let self = {
     'exe': generic
   },
 
-  async function (opts) {
+  install: async function (opts) {
     let archive_path = opts.archive_path
     let type = await sniff.path(archive_path)
 

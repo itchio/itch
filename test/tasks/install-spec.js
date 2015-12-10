@@ -25,13 +25,13 @@ test('install', t => {
     '../actions/app-actions': AppActions,
     './installers/archive': archive
   }, electron)
-  let install = proxyquire('../../app/tasks/install', stubs)
+  let install_core = proxyquire('../../app/tasks/install/core', stubs)
 
   ;['zip', 'gz', 'bz2', '7z'].forEach((type) => {
     t.case(`use 7-zip on ${type}`, t => {
       t.mock(archive).expects('install').once().resolves()
 
-      return install.install({
+      return install_core.install({
         archive_path: fixture.path(type),
         dest_path: '/tmp'
       })
@@ -48,11 +48,13 @@ test('install', t => {
         dest_path: '/tmp'
       }
 
-      return install.install(install_opts).catch(spy).finally(() => {
+      return install_core.install(install_opts).catch(spy).finally(() => {
         sinon.assert.calledWith(spy, sinon.match.has('message', sinon.match(/don't know how/)))
       })
     })
   })
+
+  let install = proxyquire('../../app/tasks/install', stubs)
 
   t.case(`validate upload_id`, t => {
     t.stub(CaveStore, 'find').resolves({})

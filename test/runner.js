@@ -5,6 +5,11 @@
   var path = require('path')
   var glob = require('glob')
   require('source-map-support').install()
+
+  require('bluebird').config({
+    longStackTraces: true,
+    cancellation: true
+  })
   require('nodent')()
 
   process.argv.slice(2).forEach((arg) => {
