@@ -23,9 +23,9 @@ test('configure', t => {
 
   let stubs = Object.assign({
     '../util/os': os,
-    './configurators/win32': win32,
-    './configurators/darwin': darwin,
-    './configurators/linux': linux,
+    './configure/win32': win32,
+    './configure/darwin': darwin,
+    './configure/linux': linux,
     '../stores/cave-store': CaveStore,
     '../actions/app-actions': AppActions
   }, electron)
@@ -57,7 +57,7 @@ test('configure (each platform)', t => {
     '../../promised/fs': fs
   }
 
-  let win32 = proxyquire('../../app/tasks/configurators/win32', stubs)
+  let win32 = proxyquire('../../app/tasks/configure/win32', stubs)
   let win32_path = fixture.path('configure/win32')
 
   t.case('win32 finds bats and exes', t => {
@@ -74,7 +74,7 @@ test('configure (each platform)', t => {
     })
   })
 
-  let darwin = proxyquire('../../app/tasks/configurators/darwin', stubs)
+  let darwin = proxyquire('../../app/tasks/configure/darwin', stubs)
   let darwin_path = fixture.path('configure/darwin')
 
   t.case('darwin finds app bundles', t => {
@@ -89,7 +89,7 @@ test('configure (each platform)', t => {
     })
   })
 
-  let linux = proxyquire('../../app/tasks/configurators/linux', stubs)
+  let linux = proxyquire('../../app/tasks/configure/linux', stubs)
   let linux_path = fixture.path('configure/linux')
 
   t.case('darwin finds binaries when no app bundles', t => {

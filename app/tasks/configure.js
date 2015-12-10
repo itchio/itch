@@ -18,7 +18,7 @@ let self = {
       case 'win32':
       case 'darwin':
       case 'linux':
-        return require(`./configurators/${platform}`).configure(app_path)
+        return require(`./configure/${platform}`).configure(app_path)
       default:
         throw new Error(`Unsupported platform: ${platform}`)
     }
@@ -30,7 +30,7 @@ let self = {
     let app_path = CaveStore.app_path(id)
     log(opts, `configuring ${app_path}`)
 
-    let executables = await self.configure(app_path).executables
+    let executables = (await self.configure(app_path)).executables
     executables = executables.map(partial(path.relative, app_path))
 
     AppActions.cave_update(id, {executables})

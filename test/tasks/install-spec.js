@@ -23,7 +23,7 @@ test('install', t => {
   let stubs = Object.assign({
     '../stores/cave-store': CaveStore,
     '../actions/app-actions': AppActions,
-    './installers/archive': archive
+    './archive': archive
   }, electron)
   let install_core = proxyquire('../../app/tasks/install/core', stubs)
 
@@ -33,7 +33,7 @@ test('install', t => {
 
       return install_core.install({
         archive_path: fixture.path(type),
-        dest_path: '/tmp'
+        dest_path: '/tmp/dest'
       })
     })
   })
@@ -41,19 +41,25 @@ test('install', t => {
   // 'empty' cannot be sniffed, 'png' can be sniffed but
   // isn't a valid archive type (hopefully)
   ;['empty', 'png'].forEach((type) => {
-    t.case(`admit own limits (${type})`, t => {
+    t.case(`admit own limits (${type})`, async t => {
       let spy = t.spy()
       let install_opts = {
         archive_path: fixture.path(type),
-        dest_path: '/tmp'
+        dest_path: '/tmp/dest'
       }
 
-      return install_core.install(install_opts).catch(spy).finally(() => {
-        sinon.assert.calledWith(spy, sinon.match.has('message', sinon.match(/don't know how/)))
-      })
+      try {
+        await install_core.install(install_opts)
+      } catch (e) {
+        spy(e)
+      }
+      sinon.assert.calledWith(spy, sinon.match.has('message', sinon.match(/don't know how/)))
     })
   })
 
+  stubs = Object.assign({
+    './install/core': install_core
+  }, stubs)
   let install = proxyquire('../../app/tasks/install', stubs)
 
   t.case(`validate upload_id`, t => {
@@ -63,7 +69,7 @@ test('install', t => {
 
   t.case(`task should start`, t => {
     t.stub(CaveStore, 'find').resolves(typical_install)
-    t.mock(install).expects('install').resolves()
+    t.mock(install_core).expects('install').resolves()
     return install.start({id: 42})
   })
 })
