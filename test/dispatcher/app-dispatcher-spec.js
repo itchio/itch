@@ -12,25 +12,13 @@ test('dispatcher', t => {
 
   let fake_window = {
     webContents: {
-      send: (name, payload) => electron.ipc.emit(name, {}, payload)
+      send: (name, payload) => electron.electron.ipcRenderer.emit(name, {}, payload)
     }
   }
-  t.stub(electron['browser-window'], 'getAllWindows').returns([fake_window])
+  t.stub(electron.electron.BrowserWindow, 'getAllWindows').returns([fake_window])
 
   let b_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher', electron)
-  let original_on = electron.ipc.on.bind(electron.electron.ipc)
-  let on = t.stub(electron.electron.ipc, 'on', function (name, cb) {
-    original_on(name, function () {
-      // strip 'ev'
-      let args = []
-      for (let i = 1; i < arguments.length; i++) {
-        args.push(arguments[i])
-      }
-      cb.apply(null, args)
-    })
-  })
   let r_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher', r_stubs)
-  on.restore()
 
   let r_spy = t.spy(function () { console.log('r_spy ' + JSON.stringify(Array.prototype.slice.call(arguments))) })
   r_dispatcher.register('renderer-store', r_spy)

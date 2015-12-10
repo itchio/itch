@@ -23,14 +23,15 @@ let electron = {
   BrowserWindow: function () {
     Object.assign(this, electron.BrowserWindow)
   },
-  ipcMain: Object.assign({
+  ipcMain: Object.assign({}, EventEmitter.prototype),
+  ipcRenderer: Object.assign({
     send: function () {
-      this.emit.apply(this, arguments)
-    }
-  }, EventEmitter.prototype),
-  ipcRemote: Object.assign({
-    send: function () {
-      this.emit.apply(this, arguments)
+      let args = []
+      for (let i = 0; i < arguments.length; i++) {
+        args.push(arguments[i])
+      }
+      args.splice(1, 0, {}) // inject fake 'ev' object
+      electron.ipcMain.emit.apply(electron.ipcMain, args)
     }
   }, EventEmitter.prototype),
   remote: {

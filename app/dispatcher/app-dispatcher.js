@@ -26,7 +26,7 @@ if (os.process_type() === 'renderer') {
     }
   }
 
-  ipc.on('dispatcher-dispatch2', (payload) => {
+  ipc.on('dispatcher-dispatch2', (ev, payload) => {
     Object.keys(self._callbacks).forEach((store_id) => {
       let cb = self._callbacks[store_id]
       cb(payload)
