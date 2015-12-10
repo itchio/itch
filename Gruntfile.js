@@ -91,8 +91,12 @@ module.exports = function (grunt) {
       }
     },
     'create-windows-installer': {
-      installer: Object.assign({}, electron_installer_common, {
+      '386': Object.assign({}, electron_installer_common, {
         appDirectory: path.join(out_dir, 'itch-win32-ia32'),
+        outputDirectory: path.join('build', 'itch-win32-installer')
+      }),
+      'adm64': Object.assign({}, electron_installer_common, {
+        appDirectory: path.join(out_dir, 'itch-win32-x64'),
         outputDirectory: path.join('build', 'itch-win32-installer')
       })
     }
