@@ -116,23 +116,26 @@ let menus = {
       },
       {
         type: 'separator'
-      },
+      }
+    ]
+  }
+}
+
+if (process.env.DANGERZONE) {
+  menus.help.submenu.push({
+    label: 'Danger zone',
+    submenu: [
       {
-        label: 'Danger zone',
+        label: 'Don\'t use this.',
         submenu: [
           {
-            label: 'Don\'t use this.',
-            submenu: [
-              {
-                label: 'Provoke crash',
-                click: () => { throw new Error('Silly human-provoked crash.') }
-              }
-            ]
+            label: 'Provoke crash',
+            click: () => { throw new Error('Silly human-provoked crash.') }
           }
         ]
       }
     ]
-  }
+  })
 }
 
 function refresh_menu () {

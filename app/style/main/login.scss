@@ -96,6 +96,11 @@
           border-color: #676767;
           box-shadow: 0 0 2px #131313;
         }
+
+        &[disabled] {
+          transform: scale(0.96);
+          opacity: .6;
+        }
       }
 
       input[type='text']:focus {
@@ -136,8 +141,16 @@
 
     .login_links {
       text-align: center;
-      margin-top: 15px;
+      margin-top: 17px;
       font-size: 16px;
+
+      span {
+        margin: 0 7px;
+      }
+
+      a {
+        text-decoration: none;
+      }
     }
 
     .button {
