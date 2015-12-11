@@ -1,8 +1,6 @@
 
 var fs = require('fs')
 var path = require('path')
-var license_path = path.join(__dirname, 'LICENSE')
-var license = fs.readFileSync(license_path, { encoding: 'utf8' })
 var package_path = path.join(__dirname, 'package.json')
 var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version
 var ico_path = 'app/static/images/itchio.ico'
@@ -39,7 +37,7 @@ var windows_electron_options = Object.assign({}, grunt_electron_common, {
   icon: ico_path,
   'version-string': {
     CompanyName: company_name,
-    LegalCopyright: license,
+    LegalCopyright: 'The MIT license, Itch Corp',
     FileDescription: 'itch.io desktop app',
     OriginalFileName: 'itch.exe',
     FileVersion: version,
