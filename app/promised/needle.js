@@ -7,7 +7,7 @@ let app = require('electron').app
 let os = require('../util/os')
 
 needle.defaults({
-  user_agent: `itchio-app/${app.getVersion()} (${os.platform()}; Electron/${os.get_version('electron')} Chrome/${os.get_version('chrome')})`
+  user_agent: `itch/${app.getVersion()} (${os.platform()}; Electron/${os.get_version('electron')} Chrome/${os.get_version('chrome')})`
 })
 
 module.exports = Promise.promisifyAll(needle)

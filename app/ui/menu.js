@@ -7,7 +7,7 @@ let AppActions = require('../actions/app-actions')
 
 let clone = require('clone')
 
-let repo_url = 'https://github.com/itchio/itchio-app'
+let repo_url = 'https://github.com/itchio/itch'
 
 function open_url (url) {
   require('electron').shell.openExternal(url)
@@ -113,29 +113,31 @@ let menus = {
       {
         label: 'Release Notes',
         click: () => open_url(`${repo_url}/releases`)
-      },
-      {
-        type: 'separator'
       }
     ]
   }
 }
 
 if (process.env.DANGERZONE) {
-  menus.help.submenu.push({
-    label: 'Danger zone',
-    submenu: [
-      {
-        label: 'Don\'t use this.',
-        submenu: [
-          {
-            label: 'Provoke crash',
-            click: () => { throw new Error('Silly human-provoked crash.') }
-          }
-        ]
-      }
-    ]
-  })
+  menus.help.submenu.concat([
+    {
+      type: 'separator'
+    },
+    {
+      label: 'Danger zone',
+      submenu: [
+        {
+          label: 'Don\'t use this.',
+          submenu: [
+            {
+              label: 'Provoke crash',
+              click: () => { throw new Error('Silly human-provoked crash.') }
+            }
+          ]
+        }
+      ]
+    }
+  ])
 }
 
 function refresh_menu () {

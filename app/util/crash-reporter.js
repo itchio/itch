@@ -28,17 +28,22 @@ let self = {
   },
 
   report_issue: (log) => {
-    let query = querystring.stringify({
-      title: `[${os.platform()}] Crash report for v${app.getVersion()}`,
-      body:
+    let body = ''
+    if (typeof log !== 'undefined') {
+      body = 
 `Crash log:
 
 \`\`\`
 ${log}
 \`\`\`
 `
+    }
+
+    let query = querystring.stringify({
+      title: `[${os.platform()}] Crash report for v${app.getVersion()}`,
+      body
     })
-    shell.openExternal(`https://github.com/itchio/itchio-app/issues/new?${query}`)
+    shell.openExternal(`https://github.com/itchio/itch/issues/new?${query}`)
   },
 
   handle: (e) => {
