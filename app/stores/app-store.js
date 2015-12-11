@@ -58,6 +58,7 @@ function switch_page (page) {
 
 function login_attempt (action) {
   state = mori.assocIn(state, ['login', 'loading'], true)
+  state = mori.assocIn(state, ['login', 'errors'], null)
   AppStore.emit_change()
 }
 

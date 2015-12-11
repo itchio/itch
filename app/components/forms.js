@@ -12,15 +12,14 @@ class InputRow extends Component {
   }
 
   render () {
-    let label = this.props.label
+    let name = this.props.name
     let type = this.props.type || 'text'
     let disabled = this.props.disabled
 
     return (
       r.div({className: 'input-row'}, [
         r.label({}, [
-          r.div({className: 'label'}, [label]),
-          r.input({type, disabled, ref: 'input'})
+          r.input({type, disabled, ref: 'input', placeholder: name})
         ])
       ])
     )

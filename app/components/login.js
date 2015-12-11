@@ -9,13 +9,24 @@ let mori = require('mori')
 let AppActions = require('../actions/app-actions')
 
 let InputRow = require('./forms').InputRow
-let ErrorList = require('./misc').ErrorList
+let misc = require('./misc')
 
 class LoginPage extends Component {
   render () {
+    let state = this.props.state
+
     return (
       r.div({className: 'login_page'}, [
-        r(LoginForm, {state: this.props.state})
+        r.div({className: 'login_form'}, [
+          r.img({className: 'logo', src: 'static/images/bench-itch.png'}),
+          r.div({className: 'login_box'}, [
+            r(LoginForm, {
+              page: mori.get(state, 'page'),
+              login_state: mori.get(state, 'login'),
+              setup_state: mori.get(state, 'setup')
+            })
+          ])
+        ])
       ])
     )
   }
@@ -32,27 +43,50 @@ class LoginForm extends Component {
   }
 
   render () {
-    let state = this.props.state
-    let loading = mori.get(state, 'loading')
-    let errors = mori.get(state, 'errors')
+    let page = this.props.page
+    let login_state = this.props.login_state
+    let setup_state = this.props.setup_state
+
+    // FIXME wouldn't all that imperative logic be very well suited
+    // for a refactoring? why yes, yes it would. — A
+    let loading = (
+      page === 'login'
+      ? mori.get(login_state, 'loading')
+      : true
+    )
+    let errors = mori.get((
+      page === 'login'
+      ? login_state
+      : setup_state
+    ), 'errors')
+
+    let icon = (
+      page === 'login'
+      ? 'heart-filled'
+      : mori.get(setup_state, 'icon')
+    )
+
+    let message = (
+      page === 'login'
+      ? 'Contacting dovecote'
+      : mori.get(setup_state, 'message')
+    )
 
     return (
-      r.div({className: 'login_form'}, [
-        r.img({className: 'logo', src: 'static/images/itchio-white.svg'}),
-        r.div({className: 'login_box'}, [
-          r.h1('Log in'),
+      r.form({className: 'form', onSubmit: this.handle_submit}, [
+        r(misc.ErrorList, {errors, before: r(misc.Icon, {icon: 'neutral'})}),
 
-          r.form({className: 'form', onSubmit: this.handle_submit}, [
-            r(ErrorList, {errors}),
+        r(InputRow, {name: 'username', type: 'text', ref: 'username', autofocus: true, disabled: loading}),
+        r(InputRow, {name: 'password', type: 'password', ref: 'password', disabled: loading}),
 
-            r(InputRow, {label: 'Username', name: 'username', type: 'text', ref: 'username', autofocus: true, disabled: loading}),
-            r(InputRow, {label: 'Password', name: 'password', type: 'password', ref: 'password', disabled: loading}),
-
-            r.div({className: 'buttons'}, [
-              r.button({className: 'button', disabled: loading}, 'Log in'),
-              r.span(' · '),
-              r.a({href: 'https://itch.io/user/forgot-password', target: '_blank'}, 'Forgot password')
-            ])
+        r.div({className: 'buttons'}, [
+          (loading
+          ? r.span({className: 'login_status'}, [r.span({className: `icon icon-${icon} small_throbber_loader`}), message])
+          : r.button({className: 'button'}, 'Up, up, and away!')),
+          r.div({className: 'login_links'}, [
+            r.a({href: 'https://itch.io/register', target: '_blank'}, 'register'),
+            r.span(' · '),
+            r.a({href: 'https://itch.io/user/forgot-password', target: '_blank'}, 'forgot password')
           ])
         ])
       ])

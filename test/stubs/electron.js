@@ -67,7 +67,7 @@ Object.assign(electron.BrowserWindow, {
   setProgressBar: rnil,
   on: rnil,
   openDevTools: rnil,
-  loadUrl: rnil,
+  loadURL: rnil,
   hide: rnil,
   show: rnil,
   webContents

@@ -1,16 +1,5 @@
 
-.setup_page {
-  background: url('../static/images/stock_blue.jpg') 50% 50% no-repeat;
-  background-size: cover;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
+.login_page {
   &.error {
     color: lighten(red, 40%);
 
@@ -19,15 +8,14 @@
     }
   }
 
-  .setup_widget {
+  .setup_info {
     width: 100%;
-    height: 300px;
 
     color: white;
     text-align: center;
 
     .throbber_loader {
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
   }
 

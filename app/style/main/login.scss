@@ -1,7 +1,36 @@
 
+@-webkit-keyframes bench-bg {
+  0% {
+    background: rgb(43, 42, 46);
+  }
+  50% {
+    background: rgb(46, 43, 44);
+  }
+  100% {
+    background: rgb(41, 43, 43);
+  }
+}
+
+@-webkit-keyframes logo-anim {
+  0%  { transform: scale(1.00) rotateZ(00deg); }
+  19% { transform: scale(0.98) rotateZ(03deg); }
+  20% { transform: scale(1.00) rotateZ(03deg); }
+  49% { transform: scale(0.97) rotateZ(-2deg); }
+  51% { transform: scale(1.03) rotateZ(01deg); }
+  66% { transform: scale(1.03) rotateZ(01deg); }
+  67% { transform: scale(1.08) rotateZ(00deg); }
+  88% { transform: scale(1.08) rotateZ(00deg); }
+  90% { transform: scale(0.94) rotateZ(02deg); }
+}
+
+@-webkit-keyframes drop-down {
+  0%   { transform: scale(1.2) translateY(-10%); opacity: 0; }
+  100% { transform: scale(1.0) translateY(0%); opacity: 1.0; }
+}
+
 .login_page {
-  background: url('../static/images/stock_blue.jpg') 50% 50% no-repeat;
-  background-size: cover;
+  background: rgb(43, 42, 46);
+  animation: bench-bg 23.2s .5s infinite ease-out;
   position: absolute;
   top: 0;
   right: 0;
@@ -13,37 +42,102 @@
   justify-content: center;
 
   .login_form {
+    animation: drop-down .3s ease-in;
     max-width: 400px;
   }
 
   .logo {
-    width: 200px;
+    width: 280px;
     display: block;
     margin: 0 auto;
+    margin-top: -30px;
     margin-bottom: 10px;
+    animation: logo-anim 21.0s .5s infinite ease-out;
   }
 
   .form_errors {
+    list-style-type: none;
     margin: 0;
     margin-bottom: 20px;
+    padding: 0;
+    text-align: center;
+    color: #90785E;
+    font-weight: bold;
+    font-size: 16px;
+
+    .icon {
+      margin-right: 0.7em;
+    }
   }
 
   .login_box {
-    background: white;
-    overflow: hidden;
-    border-radius: 3px;
-    min-width: 400px;
-
-    h1 {
-      margin: 0;
-      padding: 18px 30px;
-      border-bottom: 1px solid $border_color;
-      font-size: 24px;
-      font-weight: bold;
-    }
+    width: 400px;
+    height: 250px;
 
     .form {
       padding: 25px 30px;
+
+      input[type='password'], input[type='text'], input[type='email'], textarea {
+        transform: scale(1.0) rotateZ(0deg);
+        transition: all 0.2s;
+        box-sizing: border-box;
+        font-size: 16px;
+        margin: 8px 4px;
+        border: 2px solid #404040;
+        border-radius: 4px 2px 4px 2px;
+        background-color: rgba(0, 0, 0, 0.08);
+        color: #999;
+
+        &::-webkit-input-placeholder {
+          color: #666;
+        }
+
+        &:focus {
+          border-color: #676767;
+          box-shadow: 0 0 2px #131313;
+        }
+      }
+
+      input[type='text']:focus {
+        transform: scale(1.08) rotateZ(0.5deg);
+      }
+
+      input[type='password']:focus {
+        transform: scale(1.07) rotateZ(-0.3deg);
+      }
+
+      .button {
+        font-size: 18px;
+        display: block;
+        background-color: #464646;
+        text-shadow: 0 1px 1px #676767;
+        font-weight: bold;
+      }
+
+      .small_throbber_loader {
+        font-size: 34px;
+        margin-right: 10px;
+        animation: sk-rotateplane 2.8s .5s infinite ease-out;
+      }
+
+      .button, .login_status {
+        margin: 0 auto;
+        min-width: 220px;
+        display: block;
+        text-align: center;
+      }
+
+      .button, .login_status * {
+        height: 60px;
+        line-height: 60px;
+        vertical-align: middle;
+      }
+    }
+
+    .login_links {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 16px;
     }
 
     .button {

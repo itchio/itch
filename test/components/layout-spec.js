@@ -44,7 +44,7 @@ test('layout', t => {
 
     let tree = sd.shallowRender($(Layout, {}))
     let vdom = tree.getRenderOutput()
-    t.same(vdom.props, {children: undefined, state: mori.toClj(setup)})
+    t.same(vdom.props, {children: undefined, state: mori.toClj({page: 'setup', setup})})
   })
 
   t.case('login', t => {
@@ -57,7 +57,7 @@ test('layout', t => {
 
     let tree = sd.shallowRender($(Layout, {}))
     let vdom = tree.getRenderOutput()
-    t.same(vdom.props, {children: undefined, state: mori.toClj(login)})
+    t.same(vdom.props, {children: undefined, state: mori.toClj({page: 'login', login})})
   })
 
   t.case('library', t => {

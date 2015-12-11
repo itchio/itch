@@ -40,7 +40,7 @@ function show () {
   let height = 720
 
   window = new BrowserWindow({
-    title: 'itch.io',
+    title: 'itch',
     icon: './static/images/itchio-tray-x4.png',
     width, height,
     center: true,
@@ -57,7 +57,7 @@ function show () {
     AppActions.window_ready()
     window.show()
   })
-  window.loadUrl(`file://${__dirname}/../index.html`)
+  window.loadURL(`file://${__dirname}/../index.html`)
 
   if (process.env.DEVTOOLS === '1') {
     window.openDevTools()

@@ -5,7 +5,6 @@ let r = require('r-dom')
 let Component = require('./component')
 
 let LoginPage = require('./login').LoginPage
-let SetupPage = require('./setup').SetupPage
 let LibraryPage = require('./library').LibraryPage
 
 let AppStore = require('../stores/app-store')
@@ -35,10 +34,9 @@ class Layout extends Component {
     let state = this.state.state
 
     switch (mori.get(state, 'page')) {
-      case 'setup':
-        return r(SetupPage, {state: mori.get(state, 'setup')})
       case 'login':
-        return r(LoginPage, {state: mori.get(state, 'login')})
+      case 'setup':
+        return r(LoginPage, {state})
       case 'library':
         return r(LibraryPage, {state: mori.get(state, 'library')})
       default:

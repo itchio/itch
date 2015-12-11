@@ -29,7 +29,7 @@ function window_ready () {
   let platform = os.platform() + '_' + os.arch()
   let version = app.getVersion()
 
-  auto_updater.setFeedUrl(`${base}/update/${platform}/${version}`)
+  auto_updater.setFeedURL(`${base}/update/${platform}/${version}`)
   auto_updater.on('checking-for-update', AppActions.checking_for_self_update)
   auto_updater.on('update-available', AppActions.self_update_available)
   auto_updater.on('update-not-available', AppActions.self_update_not_available)

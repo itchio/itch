@@ -14,7 +14,7 @@ test('forms', t => {
   let props = {
     autofocus: true,
     disabled: true,
-    label: 'Al'
+    name: 'al'
   }
 
   t.case('InputRow', t => {
@@ -23,13 +23,10 @@ test('forms', t => {
     let label = tree.subTree('label')
     t.ok(label)
 
-    let legend = label.findNode('.label')
-    t.ok(legend)
-    t.is(legend.props.children, 'Al')
-
     let input = label.findNode('input')
     t.ok(input)
     t.ok(input.props.disabled)
+    t.is(input.props.placeholder, props.name)
 
     let instance = tree.getMountedInstance()
     let fake_input = {

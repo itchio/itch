@@ -142,7 +142,7 @@ let self = {
       let archive_name = self.archive_name(name)
       let archive_path = path.join(self.bin_path(), archive_name)
       let archive_url = `${channel}/${version}/${archive_name}`
-      onstatus(`Downloading ${name} ${version}`, 'download')
+      onstatus(`Summoning ${name} ${version}`, 'download')
       log(opts, `${name}: downloading '${version}' from ${archive_url}`)
 
       await self.download_to_file(opts, archive_url, archive_path)
@@ -151,13 +151,12 @@ let self = {
         log(opts, `${name}: installed!`)
       } else {
         log(opts, `${name}: extracting ${formula.format} archive`)
-        onstatus(`Installing ${name}`, 'install')
         await install.install({ archive_path, dest_path: self.bin_path() })
         log(opts, `${name}: installed!`)
       }
     }
 
-    onstatus(`Making sure we have the latest of everything...`, 'stopwatch')
+    onstatus(`Refilling stasis cells`, 'stopwatch')
     let get_latest_version = partial(self.get_latest_version, channel)
 
     let check = Object.assign({
