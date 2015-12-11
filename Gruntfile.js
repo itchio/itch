@@ -12,8 +12,7 @@ var out_dir = path.join('build', version)
 var company_name = 'Itch Corp'
 
 var grunt_electron_common = {
-  dir: '.',
-  ignore: '(test|build|coverage|tmp)',
+  dir: 'stage',
   name: 'itch',
   version: electron_version,
   'app-version': version,
