@@ -15,6 +15,7 @@ tmp
 # electron package-building stuff
 /build
 /cache
+/stage
 
 # OS-specific junk
 .DS_Store
