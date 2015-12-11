@@ -31,7 +31,7 @@ var electron_installer_common = {
   iconUrl: 'http://raw.githubusercontent.com/itchio/itch/master/app/static/images/itchio.ico',
   setupIcon: ico_path,
   remoteReleases: 'https://github.com/itchio/itch',
-  certificateFile: '../itchio-app-secrets/certificate.cer'
+  certificateFile: '/c/itchio-app-secrets/certificate.cer'
 }
 
 var windows_electron_options = Object.assign({}, grunt_electron_common, {
