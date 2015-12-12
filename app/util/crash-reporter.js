@@ -11,6 +11,12 @@ let querystring = require('querystring')
 let os = require('./os')
 
 let self = {
+  repo_url: 'https://github.com/itchio/itch',
+
+  open_url: function (url) {
+    require('electron').shell.openExternal(url)
+  },
+
   write_crash_log: (e) => {
     let crash_file = path.join(app.getPath('userData'), 'crash_logs', `${+new Date()}.log`)
 
@@ -29,7 +35,10 @@ let self = {
 
   report_issue: (log) => {
     let body = ''
+    let type = 'Issue'
+
     if (typeof log !== 'undefined') {
+      type = 'Crash report'
       body = 
 `Crash log:
 
@@ -40,10 +49,10 @@ ${log}
     }
 
     let query = querystring.stringify({
-      title: `[${os.platform()}] Crash report for v${app.getVersion()}`,
+      title: `[${os.platform()}] ${type} for v${app.getVersion()}`,
       body
     })
-    shell.openExternal(`https://github.com/itchio/itch/issues/new?${query}`)
+    self.open_url(`https://github.com/itchio/itch/issues/new?${query}`)
   },
 
   handle: (e) => {

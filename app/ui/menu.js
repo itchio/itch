@@ -7,11 +7,7 @@ let AppActions = require('../actions/app-actions')
 
 let clone = require('clone')
 
-let repo_url = 'https://github.com/itchio/itch'
-
-function open_url (url) {
-  require('electron').shell.openExternal(url)
-}
+let crash_reporter = require('../util/crash-reporter')
 
 let menus = {
   file: {
@@ -82,11 +78,11 @@ let menus = {
     submenu: [
       {
         label: 'View itch.io Terms',
-        click: () => open_url('https://itch.io/docs/legal/terms')
+        click: () => crash_reporter.open_url('https://itch.io/docs/legal/terms')
       },
       {
         label: 'View License',
-        click: () => open_url(`${repo_url}/blob/master/LICENSE`)
+        click: () => crash_reporter.open_url(`${crash_reporter.repo_url}/blob/master/LICENSE`)
       },
       {
         label: `Version ${require('electron').app.getVersion()}`,
@@ -101,25 +97,25 @@ let menus = {
       },
       {
         label: 'Report Issue',
-        click: () => open_url(`${repo_url}/issues/new`)
+        click: () => crash_reporter.report_issue()
       },
       {
         label: 'Search Issue',
-        click: () => open_url(`${repo_url}/search?type=Issues`)
+        click: () => crash_reporter.open_url(`${crash_reporter.repo_url}/search?type=Issues`)
       },
       {
         type: 'separator'
       },
       {
         label: 'Release Notes',
-        click: () => open_url(`${repo_url}/releases`)
+        click: () => crash_reporter.open_url(`${crash_reporter.repo_url}/releases`)
       }
     ]
   }
 }
 
-if (process.env.DANGERZONE) {
-  menus.help.submenu.concat([
+if (!!process.env.DANGERZONE) {
+  menus.help.submenu = menus.help.submenu.concat([
     {
       type: 'separator'
     },
