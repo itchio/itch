@@ -20,18 +20,6 @@ var grunt_electron_common = {
   out: out_dir
 }
 
-var electron_installer_common = {
-  authors: company_name,
-  exe: 'itch.exe',
-  description: 'itch.io desktop app',
-  version: version,
-  title: 'itch',
-  iconUrl: 'http://raw.githubusercontent.com/itchio/itch/master/app/static/images/itchio.ico',
-  setupIcon: ico_path,
-  remoteReleases: 'https://github.com/itchio/itch',
-  certificateFile: '/c/itchio-app-secrets/certificate.cer'
-}
-
 var windows_electron_options = Object.assign({}, grunt_electron_common, {
   platform: 'win32',
   icon: ico_path,
@@ -46,6 +34,23 @@ var windows_electron_options = Object.assign({}, grunt_electron_common, {
     InternalName: 'itch.exe'
   }
 })
+
+var codesign_spc_path = process.env.CODESIGN_SPC_PATH || 'missing-param.spc'
+var codesign_key_path = process.env.CODESIGN_KEY_PATH || 'missing-param.key'
+
+var electron_installer_common = {
+  authors: company_name,
+  exe: 'itch.exe',
+  description: 'itch.io desktop app',
+  version: version,
+  title: 'itch',
+  iconUrl: 'http://raw.githubusercontent.com/itchio/itch/master/app/static/images/itchio.ico',
+  setupIcon: ico_path,
+  remoteReleases: 'https://github.com/itchio/itch',
+  signTool: 'osslsigncode',
+  signWithParams: '-spc ' + codesign_spc_path + ' -key ' + codesign_key_path + ' -n "itch.io desktop app" -i "https://github.com/itchio/itch" -t http://timestamp.verisign.com/scripts/timstamp.dll',
+  noMsi: true,
+}
 
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt)
