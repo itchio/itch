@@ -19,3 +19,5 @@ tmp
 
 # OS-specific junk
 .DS_Store
+*.app
+*.dmg

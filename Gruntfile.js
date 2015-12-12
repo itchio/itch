@@ -93,7 +93,7 @@ module.exports = function (grunt) {
     'create-windows-installer': {
       'ia32': Object.assign({}, electron_installer_common, {
         appDirectory: path.join(out_dir, 'itch-win32-ia32'),
-        outputDirectory: path.join('build', 'itch-win32-ia32-installer')
+        outputDirectory: path.join('build', 'squirrel-ia32')
       })
     },
     'shell': {
