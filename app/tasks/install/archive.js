@@ -99,7 +99,7 @@ let self = {
       let tar = files[0]
       let sub_opts = Object.assign({}, opts, {archive_path: tar})
 
-      let res = await self.extract(sub_opts)
+      let res = await self.install(sub_opts)
       await fs.unlinkAsync(tar)
       return res
     }
