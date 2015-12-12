@@ -50,7 +50,7 @@ var electron_installer_common = {
   signTool: 'osslsigncode',
   signWithParams: '-spc ' + codesign_spc_path + ' -key ' + codesign_key_path + ' -n "itch.io desktop app" -i "https://github.com/itchio/itch" -t http://timestamp.verisign.com/scripts/timstamp.dll',
   noMsi: true,
-  nuspecTemplateFile: path.join(__dirname, 'release', 'template.nuspec'),
+  nuspecTemplateFile: path.join(__dirname, 'release', 'template.nuspec')
 }
 
 module.exports = function (grunt) {
@@ -59,12 +59,12 @@ module.exports = function (grunt) {
   grunt.initConfig({
     // Create a .exe, .app, folder for windows, mac, linux
     electron: {
-      'windows-386': {
+      'windows-ia32': {
         options: Object.assign({
-          arch: 'ia32' 
+          arch: 'ia32'
         }, windows_electron_options)
       },
-      'darwin-amd64': {
+      'darwin-x64': {
         options: Object.assign({}, grunt_electron_common, {
           platform: 'darwin',
           arch: 'x64',
@@ -77,13 +77,13 @@ module.exports = function (grunt) {
           }]
         })
       },
-      'linux-386': {
+      'linux-ia32': {
         options: Object.assign({}, grunt_electron_common, {
           platform: 'linux',
           arch: 'ia32'
         })
       },
-      'linux-amd64': {
+      'linux-x64': {
         options: Object.assign({}, grunt_electron_common, {
           platform: 'linux',
           arch: 'x64'
@@ -91,21 +91,21 @@ module.exports = function (grunt) {
       }
     },
     'create-windows-installer': {
-      '386': Object.assign({}, electron_installer_common, {
+      'ia32': Object.assign({}, electron_installer_common, {
         appDirectory: path.join(out_dir, 'itch-win32-ia32'),
         outputDirectory: path.join('build', 'itch-win32-ia32-installer')
-      }),
+      })
     },
     'shell': {
       sass: {
-        command: "sassc app/style/main.scss app/style/main.css"
+        command: 'sassc app/style/main.scss app/style/main.css'
       },
       mkstage: {
-        command: "rm -rf stage/ && mkdir stage/ && cp -rf node_modules package.json stage/"
+        command: 'rm -rf stage/ && mkdir stage/ && cp -rf node_modules package.json stage/'
       },
       transpile: {
-        command: "babel -D -d stage/app app"
-      },
+        command: 'babel -D -d stage/app app'
+      }
     },
     'bump': {
       options: {
@@ -125,9 +125,9 @@ module.exports = function (grunt) {
         metadata: '',
         regExp: false
       }
-    },
+    }
   })
 
-  grunt.registerTask('default', ['shell:sass']);
-  grunt.registerTask('prepare', ['shell:sass', 'shell:mkstage', 'shell:transpile']);
+  grunt.registerTask('default', ['shell:sass'])
+  grunt.registerTask('prepare', ['shell:sass', 'shell:mkstage', 'shell:transpile'])
 }
