@@ -4,6 +4,7 @@ let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
 let AppActions = require('../actions/app-actions')
 let Store = require('./store')
+let CredentialsStore = require('./credentials-store')
 
 let errors = require('../tasks/errors')
 let Transition = errors.Transition
@@ -36,6 +37,7 @@ let CaveStore = Object.assign(new Store('cave-store'), {
   },
 
   archive_path: function (upload) {
+    log(opts, `In archive_path, me = ${JSON.stringify(CredentialsStore.get_me())}`)
     return path.join(archives_dir, `${upload.id}${path.extname(upload.filename)}`)
   },
 

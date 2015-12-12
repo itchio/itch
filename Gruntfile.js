@@ -25,8 +25,8 @@ var windows_electron_options = Object.assign({}, grunt_electron_common, {
   icon: ico_path,
   'version-string': {
     CompanyName: company_name,
-    LegalCopyright: 'The MIT license, Itch Corp',
-    FileDescription: 'itch.io desktop app',
+    LegalCopyright: 'MIT license, (c) Itch Corp',
+    FileDescription: 'The best way to play itch.io games',
     OriginalFileName: 'itch.exe',
     FileVersion: version,
     AppVersion: version,
@@ -41,7 +41,7 @@ var codesign_key_path = process.env.CODESIGN_KEY_PATH || 'missing-param.key'
 var electron_installer_common = {
   authors: company_name,
   exe: 'itch.exe',
-  description: 'itch.io desktop app',
+  description: 'The best way to play itch.io games',
   version: version,
   title: 'itch',
   iconUrl: 'http://raw.githubusercontent.com/itchio/itch/master/app/static/images/itchio.ico',
@@ -50,6 +50,7 @@ var electron_installer_common = {
   signTool: 'osslsigncode',
   signWithParams: '-spc ' + codesign_spc_path + ' -key ' + codesign_key_path + ' -n "itch.io desktop app" -i "https://github.com/itchio/itch" -t http://timestamp.verisign.com/scripts/timstamp.dll',
   noMsi: true,
+  nuspecTemplateFile: path.join(__dirname, 'release', 'template.nuspec'),
 }
 
 module.exports = function (grunt) {
@@ -63,19 +64,16 @@ module.exports = function (grunt) {
           arch: 'ia32' 
         }, windows_electron_options)
       },
-      'windows-amd64': {
-        options: Object.assign({
-          arch: 'x64' 
-        }, windows_electron_options)
-      },
       'darwin-amd64': {
         options: Object.assign({}, grunt_electron_common, {
           platform: 'darwin',
           arch: 'x64',
           icon: icns_path,
+          'app-bundle-id': 'io.itch.mac',
+          'app-category-type': 'public.app-category.games',
           protocols: [{
-            name: 'itch',
-            schemes: ['itch']
+            name: 'itch.io',
+            schemes: ['itchio']
           }]
         })
       },
@@ -95,12 +93,22 @@ module.exports = function (grunt) {
     'create-windows-installer': {
       '386': Object.assign({}, electron_installer_common, {
         appDirectory: path.join(out_dir, 'itch-win32-ia32'),
-        outputDirectory: path.join('build', 'itch-win32-installer')
+        outputDirectory: path.join('build', 'itch-win32-ia32-installer')
       }),
-      'amd64': Object.assign({}, electron_installer_common, {
-        appDirectory: path.join(out_dir, 'itch-win32-x64'),
-        outputDirectory: path.join('build', 'itch-win32-installer')
-      })
-    }
+    },
+    'shell': {
+      sass: {
+        command: "sassc app/style/main.scss app/style/main.css"
+      },
+      mkstage: {
+        command: "rm -rf stage/ && mkdir stage/ && cp -rf node_modules package.json stage/"
+      },
+      transpile: {
+        command: "babel -D -d stage/app app"
+      },
+    },
   })
+
+  grunt.registerTask('default', ['shell:sass']);
+  grunt.registerTask('prepare', ['shell:sass', 'shell:mkstage', 'shell:transpile']);
 }
