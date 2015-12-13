@@ -7,4 +7,4 @@ Exec=itch
 Icon=itch.png
 Terminal=false
 Categories=Game;Utility;PackageManager
-MimeType=x-scheme-handler/itch
+MimeType=x-scheme-handler/itchio
