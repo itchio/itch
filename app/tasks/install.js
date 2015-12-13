@@ -3,6 +3,8 @@
 let Transition = require('./errors').Transition
 
 let noop = require('../util/noop')
+let fs = require('../promised/fs')
+let log = require('../util/log')('tasks/install')
 
 let CaveStore = require('../stores/cave-store')
 let AppActions = require('../actions/app-actions')
@@ -33,13 +35,23 @@ let self = {
     let upload = cave.uploads[cave.upload_id]
     ensure(upload, 'need upload in upload cache')
 
-    let archive_path = CaveStore.archive_path(upload)
     let dest_path = CaveStore.app_path(id)
+    let archive_path = CaveStore.archive_path(upload)
+
+    let imtime = cave.installed_archive_mtime
+    let amtime = (await fs.lstatAsync(archive_path)).mtime
+    log(opts, `comparing mtimes, installed = ${imtime}, archive = ${amtime}`)
+
+    if (imtime && !(amtime > imtime)) {
+      log(opts, `archive isn't more recent, nothing to install`)
+      return
+    }
+
     let extract_opts = { logger, onerror, onprogress, archive_path, dest_path }
 
     AppActions.cave_update(id, {launchable: false})
     await core.install(extract_opts)
-    AppActions.cave_update(id, {launchable: true})
+    AppActions.cave_update(id, {launchable: true, installed_archive_mtime: amtime})
   }
 }
 
