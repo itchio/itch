@@ -7,6 +7,7 @@ let sniff = require('../../util/sniff')
 let noop = require('../../util/noop')
 let spawn = require('../../util/spawn')
 
+let rimraf = require('../../promised/rimraf')
 let glob = require('../../promised/glob')
 let mkdirp = require('../../promised/mkdirp')
 let fs = require('../../promised/fs')
@@ -105,6 +106,16 @@ let self = {
     }
 
     return {extracted_size, total_size}
+  },
+
+  uninstall: async function (opts) {
+    let dest_path = opts.dest_path
+
+    log(opts, `Wiping directory ${dest_path}`)
+
+    await rimraf(dest_path, {
+      disableGlob: true // rm -rf + globs sound like the kind of evening I don't like
+    })
   }
 }
 

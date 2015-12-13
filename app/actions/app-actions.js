@@ -73,6 +73,13 @@ let self = {
     })
   },
 
+  cave_queue_uninstall: (id) => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.CAVE_QUEUE_UNINSTALL,
+      id
+    })
+  },
+
   cave_update: (id, data) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.CAVE_UPDATE,
@@ -85,6 +92,20 @@ let self = {
     AppDispatcher.dispatch({
       action_type: AppConstants.CAVE_PROGRESS,
       opts
+    })
+  },
+
+  cave_implode: (id) => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.CAVE_IMPLODE,
+      id
+    })
+  },
+
+  cave_thrown_into_bit_bucket: (id) => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.CAVE_THROWN_INTO_BIT_BUCKET,
+      id
     })
   },
 

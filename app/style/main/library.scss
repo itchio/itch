@@ -223,6 +223,18 @@ $cell_height: $cell_width * $cell_ratio;
       }
     }
 
+    .game_uninstall {
+      margin-left: 12px;
+
+      transition: all 0.4s;
+      opacity: .4;
+
+      &:hover {
+        opacity: .8;
+        cursor: pointer;
+      }
+    }
+
   }
 
   .game_box {

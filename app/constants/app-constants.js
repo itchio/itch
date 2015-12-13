@@ -23,10 +23,16 @@ module.exports = keyMirror({
 
   /** User requested game to be installed */
   CAVE_QUEUE: null,
+  /** User requested game to be uninstalled */
+  CAVE_QUEUE_UNINSTALL: null,
   /** Internal cave DB needs to be updated */
   CAVE_UPDATE: null,
   /** Should probably replaced with an CaveStore.emit('change') event */
   CAVE_PROGRESS: null,
+  /** Kaboom! */
+  CAVE_IMPLODE: null,
+  /** Bye bye. */
+  CAVE_THROWN_INTO_BIT_BUCKET: null,
 
   /** Set app-wide progress bar (title bar on Windows). Negative value clears. */
   SET_PROGRESS: null,

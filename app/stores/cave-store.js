@@ -92,9 +92,7 @@ function num_downloads () {
 let max_downloads = 2
 
 function recheck_pending_tasks () {
-  log(opts, `in recheck pending tasks`)
   let num_dl = num_downloads()
-  log(opts, `checking pending tasks, num dl = ${num_dl}`)
 
   if (num_dl >= max_downloads) {
     return
@@ -111,7 +109,6 @@ function recheck_pending_tasks () {
 function set_current_task (id, data) {
   // potentially send an event here
   if (data) {
-    log(opts, `current task for ${id} set to ${JSON.stringify(data)}`)
     current_tasks[id] = data
   } else {
     delete current_tasks[id]
@@ -188,36 +185,53 @@ function initial_progress (record) {
   })
 }
 
-function queue_cave (game_id) {
+async function queue_cave (game_id) {
   let data = { _table: CAVE_TABLE, game_id }
-  db.insert(data).then((record) => {
-    db.find_one({_table: 'games', id: game_id}).then((game) => {
-      initial_progress(record)
-      queue_task(record._id, 'download')
-    })
-  })
+  let record = await db.insert(data)
+
+  initial_progress(record)
+  queue_task(record._id, 'download')
 }
 
 function update_cave (_id, data) {
   return db.merge_one({_table: CAVE_TABLE, _id}, data)
 }
 
+function implode_cave (data) {
+  db.remove({_table: CAVE_TABLE, _id: data.id})
+  AppActions.cave_thrown_into_bit_bucket(data.id)
+}
+
 AppDispatcher.register('cave-store', Store.action_listeners(on => {
-  on(AppConstants.CAVE_QUEUE, action => {
-    db.find_one({_table: CAVE_TABLE, game_id: action.game_id}).then((record) => {
-      if (record) {
-        if (record.launchable) {
-          queue_task(record._id, 'launch')
-        }
+  on(AppConstants.CAVE_QUEUE, async action => {
+    let record = await db.find_one({_table: CAVE_TABLE, game_id: action.game_id})
+
+    if (record) {
+      if (record.launchable) {
+        queue_task(record._id, 'launch')
       } else {
-        queue_cave(action.game_id)
+        log(opts, `asked to launch ${record._id} but isn't launchable, ignoring`)
       }
-    })
+    } else {
+      queue_cave(action.game_id)
+    }
+  })
+
+  on(AppConstants.CAVE_QUEUE_UNINSTALL, async action => {
+    let record = await db.find_one({_table: CAVE_TABLE, _id: action.id})
+
+    if (record) {
+      queue_task(record._id, 'uninstall')
+    } else {
+
+    }
   })
 
   on(AppConstants.CAVE_UPDATE, action => {
     return update_cave(action.id, action.data)
   })
+
+  on(AppConstants.CAVE_IMPLODE, implode_cave)
 
   on(AppConstants.AUTHENTICATED, action => {
     return (

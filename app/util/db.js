@@ -179,7 +179,7 @@ let self = {
 // promisify a few nedb methods
 let store = self.store
 
-;['insert', 'update', 'find', 'find_one', 'load_database'].forEach((method) => {
+;['insert', 'update', 'find', 'find_one', 'load_database', 'remove'].forEach((method) => {
   let node_version = store[camelize(method)]
   self[method] = Promise.promisify(node_version, {context: store})
 })

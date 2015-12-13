@@ -1,6 +1,6 @@
 'use strict'
 
-let Transition = require('./errors').Transition
+let errors = require('./errors')
 
 let noop = require('../util/noop')
 let fs = require('../promised/fs')
@@ -13,10 +13,7 @@ let core = require('./install/core')
 
 function ensure (predicate, reason) {
   if (!predicate) {
-    throw new Transition({
-      to: 'find-upload',
-      reason
-    })
+    throw new errors.Transition({ to: 'find-upload', reason })
   }
 }
 
@@ -47,10 +44,10 @@ let self = {
       return
     }
 
-    let extract_opts = { logger, onerror, onprogress, archive_path, dest_path }
+    let core_opts = { logger, onerror, onprogress, archive_path, dest_path }
 
     AppActions.cave_update(id, {launchable: false})
-    await core.install(extract_opts)
+    await core.install(core_opts)
     AppActions.cave_update(id, {launchable: true, installed_archive_mtime: amtime})
   }
 }

@@ -16,6 +16,7 @@ class GameCell extends Component {
   render () {
     let game = this.props.game
     let cave = this.props.cave
+    let task = cave && mori.get(cave, 'task')
     let title = mori.get(game, 'title')
     let cover_url = mori.get(game, 'cover_url')
     let user = mori.get(game, 'user')
@@ -27,7 +28,7 @@ class GameCell extends Component {
 
     let button_classes = 'game_launch button'
     if (cave) {
-      button_classes += ` cave_${mori.get(cave, 'task')}`
+      button_classes += ` cave_${task}`
     } else {
       button_classes += ` uninstalled`
     }
@@ -61,14 +62,22 @@ class GameCell extends Component {
         r.div({className: button_classes, style: button_style, onClick: () => AppActions.cave_queue(mori.get(game, 'id'))}, [
           cave
           ? r.span({}, [
-            r(TaskIcon, {task: mori.get(cave, 'task')}),
+            r(TaskIcon, {task}),
             this.status(cave)
           ])
           : r.span({}, [
             r(Icon, {icon: 'install'}),
             ' Install'
           ])
+        ]),
+        ((cave && ['idle', 'error'].indexOf(task) !== -1)
+        ? r.span({
+          className: 'game_uninstall',
+          onClick: () => AppActions.cave_queue_uninstall(mori.get(cave, '_id'))
+        }, [
+          r(Icon, {icon: 'uninstall'})
         ])
+        : '')
       ])
     )
   }

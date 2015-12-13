@@ -110,6 +110,11 @@ function cave_progress (action) {
   AppStore.emit_change()
 }
 
+function cave_implode (action) {
+  state = mori.updateIn(state, ['library', 'caves'], caves => mori.dissoc(caves, action.id))
+  AppStore.emit_change()
+}
+
 AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.SETUP_STATUS, setup_status)
   on(AppConstants.SETUP_WAIT, setup_wait)
@@ -123,6 +128,7 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.LOGOUT, logout)
 
   on(AppConstants.CAVE_PROGRESS, cave_progress)
+  on(AppConstants.CAVE_IMPLODE, cave_implode)
 }))
 
 Store.subscribe('game-store', (games) => {

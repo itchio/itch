@@ -40,14 +40,12 @@ function cache_dashboard_games () {
   })
 }
 
-function cache_caved_games () {
-  return db.find({_table: 'caves'}).then((caves) => {
-    return pluck(caves, 'game_id')
-  }).then((game_ids) => {
-    return db.find({_table: 'games', id: {$in: game_ids}})
-  }).then((games) => {
-    merge_state({caved: games})
-  })
+async function cache_caved_games () {
+  let caves = await db.find({_table: 'caves'})
+  let game_ids = pluck(caves, 'game_id')
+  // can't use merge_state because some are being removed
+  state.caved = await db.find({_table: 'games', id: {$in: game_ids}})
+  GameStore.emit_change()
 }
 
 function cache_collection_games (id) {
@@ -147,6 +145,10 @@ AppDispatcher.register('game-store', Store.action_listeners(on => {
       cached_caves[id] = true
       fetch_games({path: 'caved'})
     }
+  })
+
+  on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, (action) => {
+    fetch_games({path: 'caved'})
   })
 }))
 

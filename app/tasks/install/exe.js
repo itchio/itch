@@ -49,9 +49,9 @@ let self = {
     return await self.sniff(archive_path, self.needles)
   },
 
-  install: async function (opts) {
+  find_installer: async function (opts) {
     if (os.platform() !== 'win32') {
-      throw new Error('MSI files are only supported on Windows')
+      throw new Error('Exe installers are only supported on Windows')
     }
 
     let type = await self.identify(opts)
@@ -62,8 +62,17 @@ let self = {
       throw new Error(`unsupported installer type: ${type}`)
     }
 
-    let installer = require(`./${type}`)
+    return require(`./${type}`)
+  },
+
+  install: async function (opts) {
+    let installer = await self.find_installer(opts)
     await installer.install(opts)
+  },
+
+  uninstall: async function (opts) {
+    let installer = await self.find_uninstaller(opts)
+    await installer.uninstall(opts)
   }
 }
 
