@@ -46,15 +46,14 @@ async function run () {
   }
 
   try {
-    let tasks = [
-      xdg_mime.register_if_needed(opts),
-      install_deps(opts)
-    ]
+    await xdg_mime.register_if_needed(opts)
+    await install_deps(opts)
 
-    await Promise.all(tasks)
-  } catch (err) {
-    AppActions.setup_status(err.stack || err, 'error')
+    ready = true
     AppActions.setup_done()
+  } catch (err) {
+    // only unrecoverable errors should get here
+    AppActions.setup_status(err.stack || err, 'error')
   }
 }
 
