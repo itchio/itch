@@ -5,6 +5,7 @@ let path = require('path')
 let partial = require('underscore').partial
 
 let ibrew = require('../util/ibrew')
+let xdg_mime = require('../util/xdg-mime')
 let Logger = require('../util/log').Logger
 
 let Store = require('./store')
@@ -25,6 +26,17 @@ function augment_path () {
   return bin_path
 }
 
+async function install_deps (opts) {
+  let fetch = partial(ibrew.fetch, opts)
+
+  // 7-zip is a simple binary
+  await fetch('7za')
+
+  // these are .7z archives
+  let compressed = ['butler', 'elevate'].map(fetch)
+  await Promise.all(compressed)
+}
+
 async function run () {
   augment_path()
 
@@ -33,27 +45,21 @@ async function run () {
     onstatus: AppActions.setup_status
   }
 
-  let fetch = partial(ibrew.fetch, opts)
-
   try {
-    // 7-zip is a simple binary
-    await fetch('7za')
+    let tasks = [
+      xdg_mime.register_if_needed(opts),
+      install_deps(opts)
+    ]
 
-    // these are .7z archives
-    let compressed = ['butler', 'elevate'].map(fetch)
-    await Promise.all(compressed)
-
-    ready = true
-    AppActions.setup_done()
+    await Promise.all(tasks)
   } catch (err) {
     AppActions.setup_status(err.stack || err, 'error')
+    AppActions.setup_done()
   }
 }
 
 let SetupStore = Object.assign(new Store('setup-store'), {
-  is_ready: () => {
-    return ready
-  }
+  is_ready: () => ready
 })
 
 AppDispatcher.register('setup-store', Store.action_listeners(on => {
