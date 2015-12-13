@@ -24,13 +24,15 @@ test('SetupStore', t => {
 
   t.case('window_ready', t => {
     t.stub(ibrew, 'fetch').resolves()
-    handler({ action_type: AppConstants.WINDOW_READY })
+    return handler({ action_type: AppConstants.WINDOW_READY })
   })
 
   t.case('window_ready (err)', t => {
-    t.stub(ibrew, 'fetch').returns(Promise.reject('Ha!'))
+    t.stub(ibrew, 'fetch', (opts, name) => {
+      if (name === 'butler') return Promise.reject('Ha!')
+      return Promise.resolve(null)
+    })
     t.mock(AppActions).expects('setup_status').withArgs('Ha!', 'error')
-    handler({ action_type: AppConstants.WINDOW_READY })
-    return new Promise((resolve, reject) => setTimeout(resolve, 20))
+    return handler({ action_type: AppConstants.WINDOW_READY })
   })
 })

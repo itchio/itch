@@ -7,6 +7,7 @@ let partial = require('underscore').partial
 let ibrew = require('../util/ibrew')
 let xdg_mime = require('../util/xdg-mime')
 let Logger = require('../util/log').Logger
+let log = require('../util/log')('setup-store')
 
 let Store = require('./store')
 
@@ -34,6 +35,7 @@ async function install_deps (opts) {
 
   // these are .7z archives
   let compressed = ['butler', 'elevate'].map(fetch)
+
   await Promise.all(compressed)
 }
 
@@ -52,6 +54,8 @@ async function run () {
     ready = true
     AppActions.setup_done()
   } catch (err) {
+    log(opts, `Setup failed: ${err.stack || err}`)
+
     // only unrecoverable errors should get here
     AppActions.setup_status(err.stack || err, 'error')
   }

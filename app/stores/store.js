@@ -70,7 +70,7 @@ Store.action_listeners = (f) => {
   return function (action) {
     let handler = handlers[action.action_type]
     if (!handler) return
-    handler(action)
+    return handler(action)
   }
 }
 
