@@ -27,6 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(r(Layout), app_node)
 })
 
+document.addEventListener('click', (e) => {
+  e.preventDefault()
+
+  if (e.target.tagName === 'A') {
+    window.require('electron').shell.openExternal(e.target.href)
+    return false
+  }
+})
+
 window.addEventListener('beforeunload', () => {
   if (!app_node) return
   ReactDOM.unmountComponentAtNode(app_node)
