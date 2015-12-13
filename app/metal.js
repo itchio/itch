@@ -44,3 +44,12 @@ app.on('ready', () => {
 })
 app.on('activate', AppActions.focus_window)
 app.on('window-all-closed', e => e.preventDefault())
+app.on('open-url', (e, url) => {
+  if (/^itchio:/.test(url.toLowerCase())) {
+    // we want to handle itchio:// URLs
+    e.preventDefault()
+    console.log(`open-url:stub | ${url}`)
+  } else {
+    console.log(`Ignoring unknown open-url: ${url}`)
+  }
+})
