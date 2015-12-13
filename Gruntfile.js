@@ -35,9 +35,6 @@ var windows_electron_options = Object.assign({}, grunt_electron_common, {
   }
 })
 
-var codesign_spc_path = process.env.CODESIGN_SPC_PATH || 'missing-param.spc'
-var codesign_key_path = process.env.CODESIGN_KEY_PATH || 'missing-param.key'
-
 var electron_installer_common = {
   authors: company_name,
   exe: 'itch.exe',
@@ -47,10 +44,8 @@ var electron_installer_common = {
   iconUrl: 'http://raw.githubusercontent.com/itchio/itch/master/app/static/images/itchio.ico',
   setupIcon: ico_path,
   remoteReleases: 'https://github.com/itchio/itch',
-  signTool: 'osslsigncode',
-  signWithParams: '-spc ' + codesign_spc_path + ' -key ' + codesign_key_path + ' -n "itch.io desktop app" -i "https://github.com/itchio/itch" -t http://timestamp.verisign.com/scripts/timstamp.dll',
-  noMsi: true,
-  nuspecTemplateFile: path.join(__dirname, 'release', 'template.nuspec')
+  signWithParams: '/v /s MY /n "Open Source Developer, Amos Wenger" /t http://timestamp.verisign.com/scripts/timstamp.dll',
+  noMsi: true
 }
 
 module.exports = function (grunt) {
