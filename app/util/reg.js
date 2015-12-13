@@ -18,7 +18,8 @@ let self = {
   reg_query: async function (key) {
     await spawn({
       command: self.reg_path,
-      args: ['query', key, '/s']
+      args: ['query', key, '/s'],
+      ontoken: (tok) => log(opts, `query: ` + tok)
     })
   },
 
