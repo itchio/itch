@@ -71,9 +71,21 @@ function handle_task_error (err, id, task_name) {
   }
 }
 
+let current_tasks = {}
+
+function set_current_task (id, data) {
+  // potentially send an event here
+  current_tasks[id] = data
+}
+
 async function queue_task (id, task_name, data) {
   if (typeof data === 'undefined') {
     data = {}
+  }
+
+  if (current_tasks[id]) {
+    log(opts, `task already in progress for ${id}, ignoring ${task_name} request`)
+    return
   }
 
   let task = require(`../tasks/${task_name}`)
@@ -88,7 +100,13 @@ async function queue_task (id, task_name, data) {
   AppActions.cave_progress({id, progress: 0, task: task_name})
 
   try {
+    set_current_task(id, {
+      name: task_name,
+      opts: task_opts
+    })
     let res = await task.start(task_opts)
+    set_current_task(id, null)
+
     if (task_name === 'install') {
       let cave = await CaveStore.find(id)
       if (!cave.success_once) {
@@ -110,6 +128,7 @@ async function queue_task (id, task_name, data) {
       AppActions.cave_progress({id, task: 'idle'})
     }
   } catch (err) {
+    set_current_task(id, null)
     handle_task_error(err, id, task_name)
   }
 }
