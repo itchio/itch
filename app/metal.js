@@ -6,8 +6,16 @@ require('bluebird').config({
   cancellation: true
 })
 
-// FIXME cf. #72
-require('babel-register')
+let env = require('./env')
+
+if (env.name === 'development') {
+  console.log('Development environment, using babel require hook')
+
+  // use register hook in dev, production builds are precompiled.
+  require('babel-register')
+} else {
+  console.log('Pre-compiled, not using require hook.')
+}
 
 require('./util/crash-reporter').mount()
 

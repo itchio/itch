@@ -105,6 +105,9 @@ module.exports = function (grunt) {
       },
       transpile: {
         command: 'babel -D -d stage/app app'
+      },
+      setenv: {
+        command: 'cp -fv release/env.js stage/app/env.js'
       }
     },
     'bump': {
@@ -129,5 +132,5 @@ module.exports = function (grunt) {
   })
 
   grunt.registerTask('default', ['shell:sass'])
-  grunt.registerTask('prepare', ['shell:sass', 'shell:mkstage', 'shell:transpile'])
+  grunt.registerTask('prepare', ['shell:sass', 'shell:mkstage', 'shell:transpile', 'shell:setenv'])
 }
