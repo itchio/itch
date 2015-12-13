@@ -73,7 +73,7 @@ function no_stored_credentials () {
   switch_page('login')
 }
 
-function authenticated (action) {
+function ready_to_roll (action) {
   state = mori.assocIn(state, ['login', 'loading'], false)
   state = mori.assocIn(state, ['login', 'errors'], null)
   focus_panel({panel: 'owned'})
@@ -84,6 +84,13 @@ function authenticated (action) {
 }
 
 function logout () {
+  state = mori.assocIn(state, ['library'], mori.hashMap(
+    'games', mori.hashMap(),
+    'panel', '',
+    'collections', mori.hashMap(),
+    'caves', mori.hashMap()
+  ))
+  AppStore.emit_change()
   switch_page('login')
 }
 
@@ -124,7 +131,7 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.NO_STORED_CREDENTIALS, no_stored_credentials)
   on(AppConstants.LOGIN_ATTEMPT, login_attempt)
   on(AppConstants.LOGIN_FAILURE, login_failure)
-  on(AppConstants.AUTHENTICATED, authenticated)
+  on(AppConstants.READY_TO_ROLL, ready_to_roll)
   on(AppConstants.LOGOUT, logout)
 
   on(AppConstants.CAVE_PROGRESS, cave_progress)

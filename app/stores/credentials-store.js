@@ -34,8 +34,8 @@ function got_key (key) {
   AppActions.authenticated(key)
 }
 
-function login_failure (res) {
-  AppActions.login_failure(res.errors)
+function login_failure (err) {
+  AppActions.login_failure(err.errors || err.stack || err)
 }
 
 function login_with_password (action) {

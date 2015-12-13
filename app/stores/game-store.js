@@ -137,6 +137,13 @@ function fetch_games (action) {
 let cached_caves = {}
 
 AppDispatcher.register('game-store', Store.action_listeners(on => {
+  on(AppConstants.LOGOUT, (action) => {
+    // clear cache
+    cached_caves = {}
+    state = {}
+    GameStore.emit_change()
+  })
+
   on(AppConstants.FETCH_GAMES, fetch_games)
   on(AppConstants.CAVE_PROGRESS, (action) => {
     let id = action.opts.id

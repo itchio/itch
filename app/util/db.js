@@ -12,15 +12,50 @@ let app = require('electron').app
 
 let mkdirp = require('../promised/mkdirp')
 
-let library_dir = path.join(app.getPath('home'), 'Downloads', 'itch.io')
+let promised_methods = ['insert', 'update', 'find', 'find_one', 'load_database', 'remove']
+
+let Logger = require('./log').Logger
+let opts = {
+  logger: new Logger()
+}
+let log = require('./log')('db')
 
 let self = {
-  store: new Datastore({
-    filename: path.join(library_dir, 'db.dat')
-  }),
+  // intentional ; will crash path.join if we have a logic error
+  library_dir: -1,
 
-  load: function () {
-    return mkdirp(library_dir).then(_ => self.load_database())
+  load: async function (user_id) {
+    log(opts, `loading db for user ${user_id}`)
+
+    let library_dir = path.join(app.getPath('userData'), 'users', user_id.toString())
+    self.library_dir = library_dir
+
+    log(opts, `making sure library dir ${library_dir} exists`)
+    await mkdirp(library_dir)
+
+    let db_opts = {
+      // the nedb format is basically append-only http://jsonlines.org/
+      // with automatic compaction now and then
+      filename: path.join(library_dir, 'db.jsonl')
+    }
+    let store = new Datastore(db_opts)
+    self.store = store
+
+    // promisify a few nedb methods
+    promised_methods.forEach((method) => {
+      let node_version = store[camelize(method)]
+      self[method] = Promise.promisify(node_version, {context: store})
+    })
+
+    await self.load_database()
+  },
+
+  unload: function () {
+    promised_methods.forEach((method) => {
+      delete self[method]
+    })
+    delete self.store
+    self.library_dir = -1
   },
 
   // returns true if field name looks like a date field
@@ -175,13 +210,5 @@ let self = {
     })
   }
 }
-
-// promisify a few nedb methods
-let store = self.store
-
-;['insert', 'update', 'find', 'find_one', 'load_database', 'remove'].forEach((method) => {
-  let node_version = store[camelize(method)]
-  self[method] = Promise.promisify(node_version, {context: store})
-})
 
 module.exports = self

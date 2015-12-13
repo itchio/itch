@@ -54,6 +54,8 @@ module.exports = keyMirror({
   LOGIN_FAILURE: null,
   /** API key available beyond this point */
   AUTHENTICATED: null,
+  /** db available beyond this point */
+  READY_TO_ROLL: null,
   /** Asked to logout */
   LOGOUT: null,
 

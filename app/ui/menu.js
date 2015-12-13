@@ -114,7 +114,7 @@ let menus = {
   }
 }
 
-if (!!process.env.DANGERZONE) {
+if (process.env.DANGERZONE) {
   menus.help.submenu = menus.help.submenu.concat([
     {
       type: 'separator'

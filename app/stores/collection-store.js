@@ -30,7 +30,7 @@ function cache_collections () {
     .map(cid => AppActions.fetch_games(`collections/${cid}`))
 }
 
-function authenticated () {
+function ready_to_roll () {
   cache_collections()
 
   let user = CredentialsStore.get_current_user()
@@ -41,7 +41,11 @@ function authenticated () {
 }
 
 AppDispatcher.register('collection-store', Store.action_listeners(on => {
-  on(AppConstants.AUTHENTICATED, authenticated)
+  on(AppConstants.LOGOUT, (action) => {
+    state = {}
+    CollectionStore.emit_change()
+  })
+  on(AppConstants.READY_TO_ROLL, ready_to_roll)
 }))
 
 module.exports = CollectionStore

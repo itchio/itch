@@ -18,10 +18,6 @@ let Logger = require('../util/log').Logger
 let log = require('../util/log')('cave-store')
 let db = require('../util/db')
 
-let library_dir = path.join(app.getPath('home'), 'Downloads', 'itch.io')
-let archives_dir = path.join(library_dir, 'archives')
-let apps_dir = path.join(library_dir, 'apps')
-
 let logger = new Logger()
 let opts = {logger}
 
@@ -37,12 +33,11 @@ let CaveStore = Object.assign(new Store('cave-store'), {
   },
 
   archive_path: function (upload) {
-    log(opts, `In archive_path, me = ${JSON.stringify(CredentialsStore.get_me())}`)
-    return path.join(archives_dir, `${upload.id}${path.extname(upload.filename)}`)
+    return path.join(db.library_dir, 'archives', `${upload.id}${path.extname(upload.filename)}`)
   },
 
   app_path: function (cave_id) {
-    return path.join(apps_dir, cave_id)
+    return path.join(db.library_dir, 'apps', cave_id)
   }
 })
 
@@ -223,7 +218,7 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
     if (record) {
       queue_task(record._id, 'uninstall')
     } else {
-
+      log(opts, `asked to uninstall ${action.id} but no record of it, ignoring`)
     }
   })
 
@@ -233,15 +228,36 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
 
   on(AppConstants.CAVE_IMPLODE, implode_cave)
 
-  on(AppConstants.AUTHENTICATED, action => {
-    return (
-      db.load()
-      .then(() => db.find({_table: CAVE_TABLE}))
-      .each((record, i) => {
-        initial_progress(record)
+  on(AppConstants.AUTHENTICATED, async action => {
+    log(opts, `authenticated!`)
+    let me = CredentialsStore.get_me()
+
+    log(opts, `me = ${JSON.stringify(me)}`)
+    try {
+      await db.load(me.id)
+    } catch (e) {
+      console.log(`error while db.loading: ${e.stack || e}`)
+      require('../util/crash_reporter').handle(e)
+      return
+    }
+
+    log(opts, `ready to roll (⌐■_■)`)
+    AppActions.ready_to_roll()
+
+    let caves = await db.find({_table: CAVE_TABLE})
+    log(opts, `found ${caves.length} caves`)
+    caves.forEach((record, i) => {
+      log(opts, `record: ${JSON.stringify(record)}`)
+      initial_progress(record)
+      // quick hack to avoid running into http 400 (ie. requesting too fast)
+      setTimeout(() => {
         queue_task(record._id, 'download')
-      })
-    )
+      }, i * 250)
+    })
+  })
+
+  on(AppConstants.LOGOUT, action => {
+    db.unload()
   })
 }))
 

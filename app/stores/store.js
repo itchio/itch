@@ -79,9 +79,9 @@ Store.subscribe = (name, cb) => {
     throw new Error('Tried to use subscribe from node side')
   }
 
-  let ipc = require('ipc')
+  let ipc = require('electron').ipcRenderer
   ipc.on(`${name}-change`, () => ipc.send(`${name}-fetch`))
-  ipc.on(`${name}-state`, cb)
+  ipc.on(`${name}-state`, (ev, data) => cb(data))
 
   ipc.send(`${name}-fetch`)
 }

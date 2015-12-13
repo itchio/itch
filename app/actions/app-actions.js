@@ -154,6 +154,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.AUTHENTICATED })
   },
 
+  ready_to_roll: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.READY_TO_ROLL })
+  },
+
   logout: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.LOGOUT })
   },

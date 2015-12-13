@@ -4,7 +4,7 @@ let os = require('../util/os')
 
 let Log = require('../util/log')
 let log = Log('dispatcher')
-let opts = {logger: new Log.Logger({sinks: {console: false}})}
+let opts = {logger: new Log.Logger({sinks: {console: !!process.env.MARCO_POLO}})}
 let electron = require('electron')
 
 // This makes sure everything is dispatched to the node side, whatever happens

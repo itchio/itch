@@ -39,7 +39,7 @@ let self = {
 
     if (typeof log !== 'undefined') {
       type = 'Crash report'
-      body = 
+      body =
 `Crash log:
 
 \`\`\`
