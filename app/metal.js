@@ -5,14 +5,19 @@ require('bluebird').config({
   longStackTraces: true,
   cancellation: true
 })
+
+// FIXME cf. #72
 require('babel-register')
 
 require('./util/crash-reporter').mount()
 
-if (require('./util/auto-updater').start()) {
-  // squirrel on win32 sometimes requires exiting as early as possible
-  process.exit(0)
-}
+let auto_updater = require('./util/auto-updater')
+Promise.resolve(auto_updater.start()).then((quit) => {
+  if (quit) {
+    // squirrel on win32 sometimes requires exiting as early as possible
+    process.exit(0)
+  }
+})
 
 require('./stores/self-update-store')
 require('./stores/window-store')

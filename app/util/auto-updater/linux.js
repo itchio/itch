@@ -1,5 +1,5 @@
 'use strict'
 
 module.exports = {
-  start: () => false
+  start: async () => false
 }

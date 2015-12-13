@@ -1,10 +1,10 @@
 'use strict'
 
-let app = require('electron').app
 let os = require('../os')
+let reg = require('../reg')
 
 let self = {
-  on_install: () => {
+  on_install: async () => {
     // Optionally do things such as:
     //
     // - Install desktop and start menu shortcuts
@@ -12,36 +12,38 @@ let self = {
     // - Write to the registry for things like file associations and
     //   explorer context menus
     // Always quit when done
-    app.quit()
+
+    await reg.install()
     return true
   },
 
-  on_uninstall: () => {
+  on_uninstall: async () => {
     // Undo anything you did in the --squirrel-install and
     // --squirrel-updated handlers
     // Always quit when done
-    app.quit()
+
+    await reg.uninstall()
     return true
   },
 
-  on_obsolete: () => {
+  on_obsolete: async () => {
     // This is called on the outgoing version of your app before
     // we update to the new version - it's the opposite of
     // --squirrel-updated
-    app.quit()
+
     return true
   },
 
-  start: () => {
+  start: async () => {
     let squirrel_command = os.cli_args()[1]
     switch (squirrel_command) {
       case '--squirrel-install':
       case '--squirrel-updated':
-        return self.on_install()
+        return await self.on_install()
       case '--squirrel-uninstall':
-        return self.on_uninstall()
+        return await self.on_uninstall()
       case '--squirrel-obsolete':
-        return self.on_obsolete()
+        return await self.on_obsolete()
     }
     return false
   }

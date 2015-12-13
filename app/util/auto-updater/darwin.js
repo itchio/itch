@@ -1,7 +1,5 @@
 'use strict'
 
-let self = {
-  start: () => false
+module.exports = {
+  start: async () => false
 }
-
-module.exports = self
