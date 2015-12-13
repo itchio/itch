@@ -5,7 +5,7 @@ let ExtendableError = require('es6-error')
 
 let Logger = require('./log').Logger
 let log = require('./log')('api')
-let logger = new Logger()
+let logger = new Logger({sinks: {console: false}}) // change to true to debug API calls
 let opts = {logger}
 
 // cf. https://github.com/itchio/itchio-app/issues/48

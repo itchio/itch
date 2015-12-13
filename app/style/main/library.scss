@@ -208,7 +208,7 @@ $cell_height: $cell_width * $cell_ratio;
         border: 1px solid #666;
       }
 
-      &.cave_download, &.cave_install, &.cave_configure, &.cave_launch, &.cave_find-upload {
+      &.cave_download, &.cave_download-queued, &.cave_install, &.cave_configure, &.cave_launch, &.cave_find-upload {
         background-color: #222;
         font-weight: normal;
         text-shadow: none;

@@ -91,6 +91,9 @@ class GameCell extends Component {
     if (task === 'download') {
       res = 'Downloading...'
     }
+    if (task === 'download-queued') {
+      res = 'Download queued'
+    }
 
     if (progress > 0) {
       res += ` (${(progress * 100).toFixed()}%)`

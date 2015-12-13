@@ -73,33 +73,81 @@ function handle_task_error (err, id, task_name) {
 
 let current_tasks = {}
 
-function set_current_task (id, data) {
-  // potentially send an event here
-  current_tasks[id] = data
+function every_task () {
+  let tasks = []
+  for (let key of Object.keys(current_tasks)) {
+    tasks.push(current_tasks[key])
+  }
+  return tasks
 }
 
-async function queue_task (id, task_name, data) {
-  if (typeof data === 'undefined') {
-    data = {}
+function num_downloads () {
+  let count = 0
+  for (let task of every_task()) {
+    if (task.name === 'download') count++
   }
+  return count
+}
 
-  if (current_tasks[id]) {
-    log(opts, `task already in progress for ${id}, ignoring ${task_name} request`)
+let max_downloads = 2
+
+function recheck_pending_tasks () {
+  log(opts, `in recheck pending tasks`)
+  let num_dl = num_downloads()
+  log(opts, `checking pending tasks, num dl = ${num_dl}`)
+
+  if (num_dl >= max_downloads) {
     return
   }
 
-  let task = require(`../tasks/${task_name}`)
-  let task_opts = Object.assign({}, opts, data, {
-    id,
-    onprogress: (state) => {
-      AppActions.cave_progress({id, progress: state.percent * 0.01, task: task_name})
+  for (let task of every_task()) {
+    if (task.name === 'download-queued') {
+      task.opts.emitter.emit('shine')
+      break
     }
-  })
-  log(opts, `starting ${task_name}`)
+  }
+}
 
-  AppActions.cave_progress({id, progress: 0, task: task_name})
+function set_current_task (id, data) {
+  // potentially send an event here
+  if (data) {
+    log(opts, `current task for ${id} set to ${JSON.stringify(data)}`)
+    current_tasks[id] = data
+  } else {
+    delete current_tasks[id]
+    // maybe a download finished?
+    recheck_pending_tasks()
+  }
+}
 
+async function queue_task (id, task_name, data) {
   try {
+    if (typeof data === 'undefined') {
+      data = {}
+    }
+
+    if (current_tasks[id]) {
+      log(opts, `task already in progress for ${id}, ignoring ${task_name} request`)
+      return
+    }
+
+    if (task_name === 'download' && num_downloads() >= max_downloads) {
+      log(opts, `too many downloads, will download ${id} later`)
+      let emitter = Object.assign({}, require('events').EventEmitter.prototype)
+      queue_task(id, 'download-queued', {emitter})
+      return
+    }
+
+    let task = require(`../tasks/${task_name}`)
+    let task_opts = Object.assign({}, opts, data, {
+      id,
+      onprogress: (state) => {
+        AppActions.cave_progress({id, progress: state.percent * 0.01, task: task_name})
+      }
+    })
+    log(opts, `starting ${task_name}`)
+    AppActions.cave_progress({id, progress: 0, task: task_name})
+
     set_current_task(id, {
       name: task_name,
       opts: task_opts
@@ -145,7 +193,7 @@ function queue_cave (game_id) {
   db.insert(data).then((record) => {
     db.find_one({_table: 'games', id: game_id}).then((game) => {
       initial_progress(record)
-      queue_task(record._id, 'download', opts)
+      queue_task(record._id, 'download')
     })
   })
 }
@@ -177,9 +225,7 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
       .then(() => db.find({_table: CAVE_TABLE}))
       .each((record, i) => {
         initial_progress(record)
-        setTimeout(() => {
-          queue_task(record._id, 'download')
-        }, i * 250)
+        queue_task(record._id, 'download')
       })
     )
   })

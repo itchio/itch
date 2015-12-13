@@ -29,6 +29,7 @@ let task_to_icon = {
   'error': 'neutral',
   'find-upload': 'stopwatch',
   'download': 'download',
+  'download-queued': 'download',
   'install': 'file-zip',
   'configure': 'settings',
   'launch': 'fire',
