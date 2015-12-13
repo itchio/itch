@@ -18,9 +18,14 @@ let setup = t => {
 
 let setup_win32 = t => {
   let os = {}
+  let reg = {
+    install: async () => null,
+    uninstall: async () => null
+  }
 
   let stubs = Object.assign({
-    '../os': os
+    '../os': os,
+    '../reg': reg
   }, electron)
 
   let win32 = proxyquire('../../app/util/auto-updater/win32', stubs)
