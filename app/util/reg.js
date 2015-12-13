@@ -1,3 +1,4 @@
+'use strict'
 
 let path = require('path')
 
@@ -8,16 +9,17 @@ let log = require('./log')('registry')
 
 let opts = { logger: new Logger() }
 
+let base = `HKCU\\Software\\Classes\\itchio`
+
+let system_root = process.env.SystemRoot || 'missing-system-root'
+let system32_path = path.join(system_root, 'System32')
+let reg_path = path.join(system32_path, 'reg.exe')
+
 let self = {
-
-  base_key: `HKCU\\Software\\Classes\\itchio`,
-
-  system32_path: path.join(process.env.SystemRoot, 'System32'),
-  reg_path: path.join(self.system32_path, 'reg.exe'),
 
   reg_query: async function (key) {
     await spawn({
-      command: self.reg_path,
+      command: reg_path,
       args: ['query', key, '/s'],
       ontoken: (tok) => log(opts, `query: ` + tok)
     })
@@ -25,28 +27,27 @@ let self = {
 
   reg_add_default: async function (key, value) {
     await spawn({
-      command: self.reg_path,
+      command: reg_path,
       args: ['add', key, '/ve', '/d', value, '/f']
     })
   },
 
   reg_add_empty: async function (key, value) {
     await spawn({
-      command: self.reg_path,
+      command: reg_path,
       args: ['add', key, '/v', value, '/f']
     })
   },
 
   reg_delete_all: async function (key) {
     await spawn({
-      command: self.reg_path,
+      command: reg_path,
       args: ['delete', key, '/va', '/f']
     })
   },
 
   install: async function (opts) {
     try {
-      let base = self.base_key
       await self.reg_add_default(base, 'URL:itch.io protocol')
       await self.reg_add_empty(base, 'URL protocol')
       await self.reg_add_default(`${base}\\DefaultIcon`, 'itch.exe')
@@ -58,7 +59,6 @@ let self = {
 
   uninstall: async function () {
     try {
-      let base = self.base_key
       await self.reg_delete_all(base)
     } catch (e) {
       log(opts, `Could not register itchio:// as default protocol handler: ${e.stack || e}`)

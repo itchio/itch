@@ -31,13 +31,17 @@ test('auto-updater', t => {
   t.case('stubbed on darwin', t => {
     let r = setup(t)
     t.stub(r.os, 'platform').returns('darwin')
-    t.false(r.updater.start(), 'returns false')
+    Promise.resolve(r.updater.start()).then((r) => {
+      t.false(r, 'returns false')
+    })
   })
 
   t.case('bypassed on linux', t => {
     let r = setup(t)
     t.stub(r.os, 'platform').returns('linux')
-    t.false(r.updater.start(), 'returns false')
+    Promise.resolve(r.updater.start()).then((r) => {
+      t.false(r, 'returns false')
+    })
   })
 })
 
@@ -45,15 +49,18 @@ test('auto-updater/win32', t => {
   t.case(`noop if no squirrel command`, t => {
     let r = setup(t)
     t.stub(r.os, 'platform').returns('win32')
-    t.false(r.updater.start(), 'returns false')
+    Promise.resolve(r.updater.start()).then((r) => {
+      t.false(r, 'returns false')
+    })
   })
 
   ;['install', 'updated', 'uninstall', 'obsolete'].forEach((action) => {
     t.case(`quit on ${action}`, t => {
       let r = setup_win32(t)
       t.stub(r.os, 'cli_args').returns(['hi mom', `--squirrel-${action}`])
-      t.mock(r.app).expects('quit').once()
-      t.true(r.win32.start(), 'returns true')
+      Promise.resolve(r.win32.start()).then((r) => {
+        t.true(r, 'returns true')
+      })
     })
   })
 })
