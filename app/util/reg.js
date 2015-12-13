@@ -42,7 +42,7 @@ let self = {
   reg_delete_all: async function (key) {
     await spawn({
       command: reg_path,
-      args: ['delete', key, '/va', '/f']
+      args: ['delete', key, '/f']
     })
   },
 
