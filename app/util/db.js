@@ -12,8 +12,6 @@ let app = require('electron').app
 
 let mkdirp = require('../promised/mkdirp')
 
-let promised_methods = ['insert', 'update', 'find', 'find_one', 'load_database', 'remove']
-
 let Logger = require('./log').Logger
 let opts = {
   logger: new Logger()
@@ -21,6 +19,8 @@ let opts = {
 let log = require('./log')('db')
 
 let self = {
+  promised_methods: ['insert', 'update', 'find', 'find_one', 'load_database', 'remove'],
+
   // intentional ; will crash path.join if we have a logic error
   library_dir: -1,
 
@@ -42,7 +42,7 @@ let self = {
     self.store = store
 
     // promisify a few nedb methods
-    promised_methods.forEach((method) => {
+    self.promised_methods.forEach((method) => {
       let node_version = store[camelize(method)]
       self[method] = Promise.promisify(node_version, {context: store})
     })
@@ -51,7 +51,7 @@ let self = {
   },
 
   unload: function () {
-    promised_methods.forEach((method) => {
+    self.promised_methods.forEach((method) => {
       delete self[method]
     })
     delete self.store
@@ -120,7 +120,7 @@ let self = {
   // upserts by default
   save_records: function (inputs, opts) {
     if (~~inputs.length === 0) return Promise.resolve()
-    let _table = opts.table
+      let _table = opts.table
     let relations = opts.relations || {}
 
     let relation_records = {}

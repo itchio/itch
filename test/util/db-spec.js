@@ -10,6 +10,13 @@ test('db', t => {
   let stubs = electron
   let db = proxyquire('../../app/util/db', stubs)
 
+  db.insert        = () => Promise.resolve()
+  db.update        = () => Promise.resolve()
+  db.find          = () => Promise.resolve()
+  db.find_one      = () => Promise.resolve()
+  db.load_database = () => Promise.resolve()
+  db.remove        = () => Promise.resolve()
+
   t.case('is_date', t => {
     t.true(db.is_date('created_at'))
     t.false(db.is_date('user_id'))
@@ -55,10 +62,10 @@ test('db', t => {
     db.merge_one({_table: 'cookies', id: 19}, {a: {b: 1}, b: {a: {c: 3}}})
   })
 
-  t.case('load', t => {
-    let mock = t.mock(db)
-    mock.expects('load_database').once()
-    return db.load()
+  t.case('load', async t => {
+    let db2 = proxyquire('../../app/util/db', stubs)
+    await db2.load(523980)
+    t.ok(db2.find_one)
   })
 
   let make_eggs = (hens) => {

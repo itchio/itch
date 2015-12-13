@@ -82,9 +82,9 @@ test('AppStore', t => {
     handler({ action_type: AppConstants.LOGIN_ATTEMPT })
     t.ok(get_state().login.loading, 'loading after login_attempt')
 
-    handler({ action_type: AppConstants.AUTHENTICATED })
-    t.notOk(get_state().login.loading, 'not loading after authenticated')
-    t.is(get_state().page, 'library', 'library after authenticated')
+    handler({ action_type: AppConstants.READY_TO_ROLL })
+    t.notOk(get_state().login.loading, 'not loading after ready-to-roll')
+    t.is(get_state().page, 'library', 'library after ready-to-roll')
 
     handler({ action_type: AppConstants.LOGOUT })
     t.is(get_state().page, 'login')

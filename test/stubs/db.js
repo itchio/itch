@@ -15,4 +15,8 @@ Object.keys(db).forEach((key) => {
   self[key] = noop
 })
 
+db.promised_methods.forEach((key) => {
+  self[key] = noop
+})
+
 module.exports = self
