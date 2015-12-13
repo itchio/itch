@@ -60,8 +60,12 @@ test('install', t => {
     })
   })
 
+  let fs = {
+    lstatAsync: () => Promise.resolve({mtime: 123})
+  }
   stubs = Object.assign({
-    './install/core': install_core
+    './install/core': install_core,
+    '../promised/fs': fs
   }, stubs)
   let install = proxyquire('../../app/tasks/install', stubs)
 
