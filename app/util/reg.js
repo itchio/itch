@@ -15,6 +15,10 @@ let system_root = process.env.SystemRoot || 'missing-system-root'
 let system32_path = path.join(system_root, 'System32')
 let reg_path = path.join(system32_path, 'reg.exe')
 
+let root_folder = path.resolve(process.execPath, '..')
+let squirrel_exe_path = path.join(root_folder, 'squirrel.exe')
+let exe_name = path.basename(process.execPath)
+
 let self = {
 
   reg_query: async function (key) {
@@ -46,8 +50,16 @@ let self = {
     })
   },
 
+  squirrel_run: async function (args) {
+    await spawn({
+      command: squirrel_exe_path,
+      args
+    })
+  },
+
   install: async function (opts) {
     try {
+      await self.squirrel_run(['--createShortcut', exe_name])
       await self.reg_add_default(base, 'URL:itch.io protocol')
       await self.reg_add_empty(base, 'URL protocol')
       await self.reg_add_default(`${base}\\DefaultIcon`, 'itch.exe')
@@ -59,6 +71,7 @@ let self = {
 
   uninstall: async function () {
     try {
+      await self.squirrel_run(['--removeShortcut', exe_name])
       await self.reg_delete_all(base)
     } catch (e) {
       log(opts, `Could not register itchio:// as default protocol handler: ${e.stack || e}`)
