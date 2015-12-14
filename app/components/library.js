@@ -24,8 +24,10 @@ let frameless = process.platform === 'darwin'
 class LibraryPage extends Component {
   render () {
     let state = this.props.state
+    let update = this.props.update
 
     return r.div({className: 'library_page'}, [
+      r(StatusBar, {update}),
       r(LibrarySidebar, {state}),
       r(LibraryContent, {state})
     ])
@@ -34,6 +36,49 @@ class LibraryPage extends Component {
 
 LibraryPage.propTypes = {
   state: PropTypes.any
+}
+
+class StatusBar extends Component {
+  render () {
+    let update = this.props.update
+    let available = mori.get(update, 'available')
+    let downloaded = mori.get(update, 'downloaded')
+    let checking = mori.get(update, 'checking')
+    let uptodate = mori.get(update, 'uptodate')
+
+    let children = []
+    let active = true
+
+    if (downloaded) {
+      children = [
+        r(misc.Icon, {icon: 'install'}),
+        r.span('Update available!')
+      ]
+    } else if (available) {
+      children = [
+        r(misc.Icon, {icon: 'download'}),
+        r.span('Downloading update...')
+      ]
+    } else if (checking) {
+      children = [
+        r(misc.Icon, {icon: 'stopwatch'}),
+        r.span('Looking for updates...')
+      ]
+    } else if (uptodate) {
+      children = [
+        r(misc.Icon, {icon: 'like'}),
+        r.span('Your itch is up-to-date!')
+      ]
+    } else {
+      active = false
+    }
+
+    return (
+      r.div({classSet: {status_bar: true, active}},
+        r.div({className: 'message'}, children)
+      )
+    )
+  }
 }
 
 /**

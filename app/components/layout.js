@@ -38,7 +38,7 @@ class Layout extends Component {
       case 'setup':
         return r(LoginPage, {state})
       case 'library':
-        return r(LibraryPage, {state: mori.get(state, 'library')})
+        return r(LibraryPage, {state: mori.get(state, 'library'), update: mori.get(state, 'update')})
       default:
         return r.div()
     }

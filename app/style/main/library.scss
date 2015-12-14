@@ -16,6 +16,46 @@ $cell_height: $cell_width * $cell_ratio;
   bottom: 0;
   left: 0;
 
+  .status_bar {
+    position: absolute;
+    bottom: -35px;
+    left: 0;
+    right: 0;
+    height: 35px;
+    line-height: 35px;
+    background-color: #272626;
+    border-top: 1px solid #434548;
+    z-index: 20;
+    color: whitesmoke;
+    text-align: right;
+    padding: 0 8px;
+    font-size: 90%;
+
+    transition: bottom 0.4s;
+
+    &.active {
+      bottom: 0;
+    }
+
+    .message:hover {
+      cursor: pointer;
+    }
+
+    .message, .message .icon {
+      height: 35px;
+      line-height: 35px;
+      vertical-align: middle;
+    }
+
+    .message .icon {
+      margin-right: 8px;
+
+      &.icon-download, &.icon-stopwatch {
+        animation: sk-rotateplane 2.8s .5s infinite ease-out;
+      }
+    }
+  }
+
   .user_panel {
     @include border_box;
     height: $user_panel_height;

@@ -14,6 +14,11 @@ let defer = require('../util/defer')
 let state = mori.hashMap(
   'page', 'login',
 
+  'update', mori.hashMap(
+    'available', false,
+    'downloaded', false
+  ),
+
   'library', mori.hashMap(
     'games', mori.hashMap(),
     'panel', '',
@@ -37,6 +42,36 @@ let AppStore = Object.assign(new Store('app-store', 'renderer'), {
     return state
   }
 })
+
+function checking_for_self_update (action) {
+  console.log(`checking for self updates...`)
+  state = mori.assocIn(state, ['update', 'checking'], true)
+  AppStore.emit_change()
+}
+
+function update_not_available (action) {
+  state = mori.assocIn(state, ['update', 'checking'], false)
+  state = mori.assocIn(state, ['update', 'uptodate'], true)
+  AppStore.emit_change()
+
+  setTimeout(function () {
+    state = mori.assocIn(state, ['update', 'uptodate'], false)
+    AppStore.emit_change()
+  }, 5000)
+}
+
+function update_available (action) {
+  console.log(`update available? cool!`)
+  state = mori.assocIn(state, ['update', 'checking'], false)
+  state = mori.assocIn(state, ['update', 'available'], true)
+  AppStore.emit_change()
+}
+
+function update_downloaded (action) {
+  console.log(`update downloaded?! uber-cool!`)
+  state = mori.assocIn(state, ['update', 'downloaded'], true)
+  AppStore.emit_change()
+}
 
 function focus_panel (action) {
   let panel = action.panel
@@ -136,6 +171,11 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
 
   on(AppConstants.CAVE_PROGRESS, cave_progress)
   on(AppConstants.CAVE_IMPLODE, cave_implode)
+
+  on(AppConstants.CHECKING_FOR_SELF_UPDATE, checking_for_self_update)
+  on(AppConstants.SELF_UPDATE_AVAILABLE, update_available)
+  on(AppConstants.SELF_UPDATE_NOT_AVAILABLE, update_not_available)
+  on(AppConstants.SELF_UPDATE_DOWNLOADED, update_downloaded)
 }))
 
 Store.subscribe('game-store', (games) => {
