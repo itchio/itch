@@ -91,8 +91,6 @@ class ErrorList extends React.Component {
       errors = [errors]
     }
 
-    console.log(`errors = `, errors)
-
     return r.ul({className: 'form_errors'}, errors.map((error, key) => {
       return r.li({key}, [
         before,

@@ -17,10 +17,9 @@ let Logger = require('../util/log').Logger
 let log = require('../util/log')('cave-store')
 let db = require('../util/db')
 
-let electron = require('electron')
+let fs = require('../promised/fs')
 
-let logger = new Logger()
-let opts = {logger}
+let electron = require('electron')
 
 const CAVE_TABLE = 'caves'
 
@@ -39,6 +38,10 @@ let CaveStore = Object.assign(new Store('cave-store'), {
 
   app_path: function (cave_id) {
     return path.join(db.library_dir, 'apps', cave_id)
+  },
+
+  log_path: function (cave_id) {
+    return path.join(db.library_dir, 'logs', cave_id + '.txt')
   }
 })
 
@@ -48,21 +51,42 @@ let natural_transitions = {
   'install': 'configure'
 }
 
+let store_opts = {
+  logger: new Logger()
+}
+
+let cave_opts_cache = {}
+
+function cave_opts (id) {
+  let cached = cave_opts_cache[id]
+  if (cached) return cached
+
+  let logger = new Logger({
+    sinks: {
+      console: true,
+      file: CaveStore.log_path(id)
+    }
+  })
+  let opts = { logger }
+  cave_opts_cache[id] = opts
+  return opts
+}
+
 function handle_task_error (err, id, task_name) {
   if (err instanceof Transition) {
-    log(opts, `[${task_name} => ${err.to}] ${err.reason}`)
+    log(cave_opts(id), `[${task_name} => ${err.to}] ${err.reason}`)
     let data = err.data || {}
     setImmediate(() => queue_task(id, err.to, data))
   } else if (err instanceof InputRequired) {
     let msg = `(stub) input required by ${task_name}`
-    log(opts, msg)
+    log(cave_opts(id), msg)
     AppActions.cave_progress({id, task: 'error', error: msg})
   } else if (err instanceof Crash) {
     let msg = `crashed with: ${JSON.stringify(err, null, 2)}`
-    log(opts, msg)
+    log(cave_opts(id), msg)
     AppActions.cave_progress({id, task: 'idle', error: msg})
   } else {
-    log(opts, err.stack || err)
+    log(cave_opts(id), err.stack || err)
     AppActions.cave_progress({id, task: 'error', error: '' + err})
   }
 }
@@ -120,25 +144,25 @@ async function queue_task (id, task_name, data) {
     }
 
     if (current_tasks[id]) {
-      log(opts, `task already in progress for ${id}, ignoring ${task_name} request`)
+      log(cave_opts(id), `task already in progress for ${id}, ignoring ${task_name} request`)
       return
     }
 
     if (task_name === 'download' && num_downloads() >= max_downloads) {
-      log(opts, `too many downloads, will download ${id} later`)
+      log(cave_opts(id), `too many downloads, will download ${id} later`)
       let emitter = Object.assign({}, require('events').EventEmitter.prototype)
       queue_task(id, 'download-queued', {emitter})
       return
     }
 
     let task = require(`../tasks/${task_name}`)
-    let task_opts = Object.assign({}, opts, data, {
+    let task_opts = Object.assign({}, cave_opts(id), data, {
       id,
       onprogress: (state) => {
         AppActions.cave_progress({id, progress: state.percent * 0.01, task: task_name})
       }
     })
-    log(opts, `starting ${task_name}`)
+    log(cave_opts(id), `starting ${task_name}`)
     AppActions.cave_progress({id, progress: 0, task: task_name})
 
     set_current_task(id, {
@@ -160,7 +184,7 @@ async function queue_task (id, task_name, data) {
     let transition = natural_transitions[task_name]
     if (transition) throw new Transition({to: transition})
 
-    log(opts, `task ${task_name} finished with ${JSON.stringify(res)}`)
+    log(cave_opts(id), `task ${task_name} finished with ${JSON.stringify(res)}`)
     AppActions.cave_progress({id, progress: 0})
 
     if (task_opts.then) {
@@ -189,8 +213,20 @@ async function queue_cave (game_id) {
   queue_task(record._id, 'download')
 }
 
-function explore_cave (payload) {
-  electron.shell.showItemInFolder(CaveStore.app_path(payload.id))
+async function explore_cave (payload) {
+  let app_path = CaveStore.app_path(payload.id)
+
+  try {
+    await fs.lstatAsync(app_path)
+    console.log(`opening item in folder: ${app_path}`)
+    electron.shell.showItemInFolder(app_path)
+  } catch (e) {
+    probe_cave(payload)
+  }
+}
+
+function probe_cave (payload) {
+  electron.shell.openItem(CaveStore.log_path(payload.id))
 }
 
 function update_cave (_id, data) {
@@ -210,7 +246,7 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
       if (record.launchable) {
         queue_task(record._id, 'launch')
       } else {
-        log(opts, `asked to launch ${record._id} but isn't launchable, ignoring`)
+        log(store_opts, `asked to launch ${record._id} but isn't launchable, ignoring`)
       }
     } else {
       queue_cave(action.game_id)
@@ -223,7 +259,7 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
     if (record) {
       queue_task(record._id, 'uninstall')
     } else {
-      log(opts, `asked to uninstall ${action.id} but no record of it, ignoring`)
+      log(store_opts, `asked to uninstall ${action.id} but no record of it, ignoring`)
     }
   })
 
@@ -235,11 +271,13 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
 
   on(AppConstants.CAVE_EXPLORE, explore_cave)
 
+  on(AppConstants.CAVE_PROBE, probe_cave)
+
   on(AppConstants.AUTHENTICATED, async action => {
-    log(opts, `authenticated!`)
+    log(store_opts, `authenticated!`)
     let me = CredentialsStore.get_me()
 
-    log(opts, `me = ${JSON.stringify(me)}`)
+    log(store_opts, `me = ${JSON.stringify(me)}`)
     try {
       await db.load(me.id)
     } catch (e) {
@@ -248,13 +286,13 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
       return
     }
 
-    log(opts, `ready to roll (⌐■_■)`)
+    log(store_opts, `ready to roll (⌐■_■)`)
     AppActions.ready_to_roll()
 
     let caves = await db.find({_table: CAVE_TABLE})
-    log(opts, `found ${caves.length} caves`)
+    log(store_opts, `found ${caves.length} caves`)
     caves.forEach((record, i) => {
-      log(opts, `record: ${JSON.stringify(record)}`)
+      log(store_opts, `record: ${JSON.stringify(record)}`)
       initial_progress(record)
       // quick hack to avoid running into http 400 (ie. requesting too fast)
       setTimeout(() => {

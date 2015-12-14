@@ -4,6 +4,8 @@ let pairs = require('underscore').pairs
 let fstream = require('fstream')
 let deep_assign = require('deep-assign')
 
+let EOL = require('os').EOL
+
 function make (name) {
   return function (opts, message) {
     if (opts && opts.logger) {
@@ -63,7 +65,7 @@ class Logger {
   write (s) {
     if (this.string_sink) {
       this.contents += s
-      this.contents += '\n'
+      this.contents += EOL
     }
 
     if (this.console_sink) {

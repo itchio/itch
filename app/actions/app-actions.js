@@ -124,6 +124,13 @@ let self = {
     })
   },
 
+  cave_probe: (id) => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.CAVE_PROBE,
+      id
+    })
+  },
+
   set_progress: (alpha) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.SET_PROGRESS,

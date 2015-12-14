@@ -55,6 +55,8 @@ class GameCell extends Component {
               let shell = remote.require('electron').shell
               if (e.ctrlKey || e.shiftKey) {
                 AppActions.cave_explore(mori.get(cave, '_id'))
+              } else if (e.altKey) {
+                AppActions.cave_probe(mori.get(cave, '_id'))
               } else {
                 shell.openExternal(mori.get(game, 'url'))
               }
@@ -65,7 +67,16 @@ class GameCell extends Component {
         (user
         ? r.div({className: 'game_author'}, user.display_name)
         : ''),
-        r.div({className: button_classes, style: button_style, onClick: () => AppActions.cave_queue(mori.get(game, 'id'))}, [
+        r.div({
+          className: button_classes, style: button_style,
+          onClick: () => {
+            if (cave && task === 'error') {
+              AppActions.cave_probe(mori.get(cave, '_id'))
+            } else {
+              AppActions.cave_queue(mori.get(game, 'id'))
+            }
+          }
+        }, [
           cave
           ? r.span({}, [
             r(TaskIcon, {task}),
