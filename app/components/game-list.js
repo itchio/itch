@@ -93,7 +93,7 @@ class GameCell extends Component {
             className: 'game_explore',
             onClick: () => AppActions.cave_explore(mori.get(cave, '_id'))
           }, [
-            r(Icon, {icon: 'copy'})
+            r(Icon, {icon: 'folder-open'})
           ]),
           r.span({
             className: 'game_uninstall',
