@@ -219,7 +219,13 @@ async function explore_cave (payload) {
   try {
     await fs.lstatAsync(app_path)
     console.log(`opening item in folder: ${app_path}`)
-    electron.shell.showItemInFolder(app_path)
+    if (process.platform === 'darwin') {
+      // openItem will open the finder but it will appear *under* the app
+      // which is a bit silly, so we just reveal it instead.
+      electron.shell.showItemInFolder(app_path)
+    } else {
+      electron.shell.openItem(app_path)
+    }
   } catch (e) {
     probe_cave(payload)
   }
