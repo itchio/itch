@@ -110,6 +110,13 @@ let self = {
     })
   },
 
+  cave_explore: (id) => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.CAVE_EXPLORE,
+      id
+    })
+  },
+
   cave_thrown_into_bit_bucket: (id) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.CAVE_THROWN_INTO_BIT_BUCKET,

@@ -53,6 +53,11 @@ $cell_height: $cell_width * $cell_ratio;
       &.icon-download, &.icon-stopwatch {
         animation: sk-rotateplane 2.8s .5s infinite ease-out;
       }
+
+      &.icon-cross {
+        margin-left: 8px;
+        opacity: .6;
+      }
     }
   }
 
@@ -263,7 +268,16 @@ $cell_height: $cell_width * $cell_ratio;
       }
     }
 
-    .game_uninstall {
+    .cave_actions {
+      display: inline;
+      opacity: 0;
+    }
+
+    &:hover .cave_actions {
+      opacity: 1;
+    }
+
+    .game_uninstall, .game_explore {
       margin-left: 12px;
 
       transition: all 0.4s;

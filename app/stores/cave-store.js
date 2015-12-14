@@ -11,12 +11,13 @@ let Transition = errors.Transition
 let InputRequired = errors.InputRequired
 let Crash = errors.Crash
 
-let app = require('electron').app
 let path = require('path')
 
 let Logger = require('../util/log').Logger
 let log = require('../util/log')('cave-store')
 let db = require('../util/db')
+
+let electron = require('electron')
 
 let logger = new Logger()
 let opts = {logger}
@@ -188,6 +189,10 @@ async function queue_cave (game_id) {
   queue_task(record._id, 'download')
 }
 
+function explore_cave (payload) {
+  electron.shell.showItemInFolder(CaveStore.app_path(payload.id))
+}
+
 function update_cave (_id, data) {
   return db.merge_one({_table: CAVE_TABLE, _id}, data)
 }
@@ -227,6 +232,8 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
   })
 
   on(AppConstants.CAVE_IMPLODE, implode_cave)
+
+  on(AppConstants.CAVE_EXPLORE, explore_cave)
 
   on(AppConstants.AUTHENTICATED, async action => {
     log(opts, `authenticated!`)

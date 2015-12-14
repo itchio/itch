@@ -54,9 +54,11 @@ class StatusBar extends Component {
 
     if (error) {
       onClick = AppActions.dismiss_update_error
+      console.log('error', error)
       children = [
         r(misc.Icon, {icon: 'neutral'}),
-        r.span('Error while checking for update: ' + error)
+        r.span('Error while checking for update: ' + error),
+        r(misc.Icon, {icon: 'cross'})
       ]
     } else if (downloaded) {
       onClick = AppActions.apply_self_update

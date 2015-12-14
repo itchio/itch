@@ -50,8 +50,14 @@ class GameCell extends Component {
               game_thumb: true,
               has_cover
             },
-            onClick: () => {
-              require('electron').remote.require('electron').shell.openExternal(mori.get(game, 'url'))
+            onClick: (e) => {
+              let remote = require('electron').remote
+              let shell = remote.require('electron').shell
+              if (e.ctrlKey || e.shiftKey) {
+                AppActions.cave_explore(mori.get(cave, '_id'))
+              } else {
+                shell.openExternal(mori.get(game, 'url'))
+              }
             }
           })
         ]),
@@ -71,11 +77,23 @@ class GameCell extends Component {
           ])
         ]),
         ((cave && ['idle', 'error'].indexOf(task) !== -1)
-        ? r.span({
-          className: 'game_uninstall',
-          onClick: () => AppActions.cave_queue_uninstall(mori.get(cave, '_id'))
-        }, [
-          r(Icon, {icon: 'uninstall'})
+        ? r.div({className: 'cave_actions'}, [
+          r.span({
+            className: 'game_explore',
+            onClick: () => AppActions.cave_explore(mori.get(cave, '_id'))
+          }, [
+            r(Icon, {icon: 'copy'})
+          ]),
+          r.span({
+            className: 'game_uninstall',
+            onClick: () => {
+              if (task === 'error' || window.confirm(`Are you sure you want to uninstall ${title}?`)) {
+                AppActions.cave_queue_uninstall(mori.get(cave, '_id'))
+              }
+            }
+          }, [
+            r(Icon, {icon: 'uninstall'})
+          ])
         ])
         : '')
       ])
