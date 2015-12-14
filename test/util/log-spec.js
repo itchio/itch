@@ -30,7 +30,7 @@ test('log', t => {
   t.case('to string', t => {
     let r = setup(t, {sinks: {console: false, string: true}})
     r.log(r.opts, 'Hi mem')
-    t.is(r.opts.logger.contents, '[time] [log-spec] Hi mem\n')
+    t.is(r.opts.logger.contents, '[time] [log-spec] Hi mem' + require('os').EOL)
   })
 
   t.case('to file', t => {
