@@ -65,7 +65,7 @@ class Logger {
   write (s) {
     if (this.string_sink) {
       this.contents += s
-      this.contents += EOL
+      this.contents += '\n'
     }
 
     if (this.console_sink) {
@@ -74,7 +74,7 @@ class Logger {
 
     if (this.file_sink) {
       this.file_sink.write(s)
-      this.file_sink.write('\n')
+      this.file_sink.write(EOL)
     }
   }
 

@@ -30,7 +30,7 @@ test('log', t => {
   t.case('to string', t => {
     let r = setup(t, {sinks: {console: false, string: true}})
     r.log(r.opts, 'Hi mem')
-    t.is(r.opts.logger.contents, '[time] [log-spec] Hi mem' + require('os').EOL)
+    t.is(r.opts.logger.contents, '[time] [log-spec] Hi mem\n')
   })
 
   t.case('to file', t => {
@@ -40,7 +40,7 @@ test('log', t => {
     r.log(r.opts, 'Hi dad')
 
     r.opts.logger.close().then(() => {
-      t.is('[time] [log-spec] Hi dad\n', fs.readFileSync(file, {encoding: 'utf8'}))
+      t.is('[time] [log-spec] Hi dad' + require('os').EOL, fs.readFileSync(file, {encoding: 'utf8'}))
       try { fs.unlinkSync(file) } catch (e) {}
     })
   })
