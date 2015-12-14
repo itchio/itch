@@ -49,6 +49,7 @@ AppDispatcher.register('self-update-store', Store.action_listeners(on => {
   on(AppConstants.CHECK_FOR_SELF_UPDATE, check_for_self_update)
   on(AppConstants.WINDOW_READY, window_ready)
   on(AppConstants.SELF_UPDATE_ERROR, (payload) => console.log(`Auto updater error: ${payload.message}`))
+  on(AppConstants.APPLY_SELF_UPDATE, () => auto_updater.quitAndInstall())
 }))
 
 module.exports = SelfUpdateStore

@@ -49,10 +49,13 @@ class StatusBar extends Component {
     let children = []
     let active = true
 
+    let onClick = () => null
+
     if (downloaded) {
+      onClick = AppActions.apply_self_update
       children = [
         r(misc.Icon, {icon: 'install'}),
-        r.span('Update available!')
+        r.span('Click to restart & apply update!')
       ]
     } else if (available) {
       children = [
@@ -75,7 +78,7 @@ class StatusBar extends Component {
 
     return (
       r.div({classSet: {status_bar: true, active}},
-        r.div({className: 'message'}, children)
+        r.div({className: 'message', onClick}, children)
       )
     )
   }

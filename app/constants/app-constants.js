@@ -20,6 +20,7 @@ module.exports = keyMirror({
   SELF_UPDATE_NOT_AVAILABLE: null,
   SELF_UPDATE_ERROR: null,
   SELF_UPDATE_DOWNLOADED: null,
+  APPLY_SELF_UPDATE: null,
 
   /** User requested game to be installed */
   CAVE_QUEUE: null,

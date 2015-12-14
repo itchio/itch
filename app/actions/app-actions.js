@@ -66,6 +66,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.SELF_UPDATE_DOWNLOADED, version })
   },
 
+  apply_self_update: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.APPLY_SELF_UPDATE })
+  },
+
   cave_queue: (game_id) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.CAVE_QUEUE,
