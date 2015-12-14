@@ -11,6 +11,7 @@ let electron = {
     getPath: () => 'tmp/',
     makeSingleInstance: (cb) => false,
     quit: rnil,
+    on: rnil,
     dock: {
       setMenu: rnil,
       bounce: rnil,
