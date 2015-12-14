@@ -91,20 +91,6 @@ module.exports = function (grunt) {
         outputDirectory: path.join('build', 'squirrel-ia32')
       })
     },
-    'shell': {
-      sass: {
-        command: 'sassc app/style/main.scss app/style/main.css'
-      },
-      mkstage: {
-        command: 'rm -rf stage/ && mkdir stage/ && cp -rf node_modules package.json stage/'
-      },
-      transpile: {
-        command: 'babel -D -d stage/app app'
-      },
-      setenv: {
-        command: 'cp -fv release/env.js stage/app/env.js'
-      }
-    },
     'bump': {
       options: {
         files: ['package.json'],
@@ -127,5 +113,4 @@ module.exports = function (grunt) {
   })
 
   grunt.registerTask('default', ['shell:sass'])
-  grunt.registerTask('prepare', ['shell:sass', 'shell:mkstage', 'shell:transpile', 'shell:setenv'])
 }
