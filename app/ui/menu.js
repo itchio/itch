@@ -68,7 +68,7 @@ let menus = {
     submenu: [
       {
         label: 'Change user...',
-        click: AppActions.logout
+        click: () => AppActions.change_user()
       }
     ]
   },

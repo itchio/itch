@@ -162,6 +162,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.READY_TO_ROLL })
   },
 
+  change_user: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.CHANGE_USER })
+  },
+
   logout: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.LOGOUT })
   },

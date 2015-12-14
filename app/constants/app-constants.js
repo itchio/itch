@@ -58,6 +58,8 @@ module.exports = keyMirror({
   /** db available beyond this point */
   READY_TO_ROLL: null,
   /** Asked to logout */
+  CHANGE_USER: null,
+  /** Confirmed logout */
   LOGOUT: null,
 
   /** Sent from metal when needs to eval something in chrome. Example: HTML5 Notification API */

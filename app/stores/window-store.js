@@ -84,6 +84,17 @@ AppDispatcher.register('window-store', Store.action_listeners(on => {
     quitting = true
     app.quit()
   })
+  on(AppConstants.CHANGE_USER, () => {
+    if (!window) return
+    let web = window.webContents
+    if (!web) return
+    web.executeJavaScript(`
+      var yes = window.confirm('Are you sure you want to log out?')
+      if (yes) {
+        require('./actions/app-actions').logout()
+      }
+    `)
+  })
 }))
 
 module.exports = WindowStore
