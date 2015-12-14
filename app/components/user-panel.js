@@ -38,7 +38,7 @@ class UserPanel extends Component {
     return r.div({classSet: {user_panel: true, loading}}, [
       me
       ? r.div({}, [
-        r.img({className: 'avatar', src: me.cover_url}),
+        r.img({className: 'avatar', src: me.cover_url || "static/images/itchio-textless-pink.svg"}),
         r.div({className: 'username'}, me.username)
       ])
       : 'Loading...'
