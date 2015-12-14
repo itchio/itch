@@ -69,6 +69,6 @@ test('layout', t => {
 
     let tree = sd.shallowRender($(Layout, {}))
     let vdom = tree.getRenderOutput()
-    t.same(vdom.props, {children: undefined, state: mori.toClj(library)})
+    t.same(vdom.props, {children: undefined, state: mori.toClj(library), update: null})
   })
 })
