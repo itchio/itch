@@ -70,6 +70,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.APPLY_SELF_UPDATE })
   },
 
+  dismiss_update_error: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.DISMISS_UPDATE_ERROR })
+  },
+
   cave_queue: (game_id) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.CAVE_QUEUE,

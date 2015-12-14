@@ -41,6 +41,7 @@ LibraryPage.propTypes = {
 class StatusBar extends Component {
   render () {
     let update = this.props.update
+    let error = mori.get(update, 'error')
     let available = mori.get(update, 'available')
     let downloaded = mori.get(update, 'downloaded')
     let checking = mori.get(update, 'checking')
@@ -51,7 +52,13 @@ class StatusBar extends Component {
 
     let onClick = () => null
 
-    if (downloaded) {
+    if (error) {
+      onClick = AppActions.dismiss_update_error
+      children = [
+        r(misc.Icon, {icon: 'neutral'}),
+        r.span('Error while checking for update: ' + error)
+      ]
+    } else if (downloaded) {
       onClick = AppActions.apply_self_update
       children = [
         r(misc.Icon, {icon: 'install'}),

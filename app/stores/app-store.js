@@ -73,6 +73,22 @@ function update_downloaded (action) {
   AppStore.emit_change()
 }
 
+function update_error (payload) {
+  if (/empty or corrupted/.test(payload.message)) {
+    // work around https://github.com/itchio/itch/issues/82 for now
+    return update_not_available()
+  }
+
+  state = mori.assocIn(state, ['update', 'checking'], false)
+  state = mori.assocIn(state, ['update', 'error'], payload.message)
+  AppStore.emit_change()
+}
+
+function dismiss_update_error () {
+  state = mori.updateIn(state, ['update'], x => mori.dissoc(x, 'error'))
+  AppStore.emit_change()
+}
+
 function focus_panel (action) {
   let panel = action.panel
 
@@ -176,6 +192,8 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.SELF_UPDATE_AVAILABLE, update_available)
   on(AppConstants.SELF_UPDATE_NOT_AVAILABLE, update_not_available)
   on(AppConstants.SELF_UPDATE_DOWNLOADED, update_downloaded)
+  on(AppConstants.SELF_UPDATE_ERROR, update_error)
+  on(AppConstants.DISMISS_UPDATE_ERROR, dismiss_update_error)
 }))
 
 Store.subscribe('game-store', (games) => {
