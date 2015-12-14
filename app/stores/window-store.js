@@ -49,6 +49,7 @@ function show () {
   })
 
   window.on('close', (e) => {
+    console.log(`window event: close ${JSON.stringify(e)}`)
     if (quitting) return
     e.preventDefault()
     window.hide()
@@ -96,5 +97,12 @@ AppDispatcher.register('window-store', Store.action_listeners(on => {
     `)
   })
 }))
+
+app.on('before-quit', e => {
+  if (!quitting && process.platform === 'darwin') {
+    // Hopefully fixes #85
+    AppActions.quit()
+  }
+})
 
 module.exports = WindowStore

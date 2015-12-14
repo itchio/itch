@@ -53,3 +53,7 @@ app.on('open-url', (e, url) => {
     console.log(`Ignoring unknown open-url: ${url}`)
   }
 })
+
+;['before-quit', 'will-quit', 'quit'].forEach((kind) => {
+  app.on(kind, (e) => console.log(`app event: ${kind} ${JSON.stringify(e)}`))
+})
