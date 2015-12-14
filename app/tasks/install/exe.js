@@ -59,7 +59,7 @@ let self = {
     log(opts, `found generic installer type: ${type}`)
 
     if (!type) {
-      throw new Error(`unsupported installer type: ${type}`)
+      return require(`./naked`)
     }
 
     return require(`./${type}`)
