@@ -1,7 +1,8 @@
 'use strict'
 
-let log = require('../../util/logger')('install/naked')
+let log = require('../../util/log')('install/naked')
 let rimraf = require('../../promised/rimraf')
+let mkdirp = require('../../promised/mkdirp')
 
 let fs = require('fs')
 let path = require('path')
@@ -21,6 +22,8 @@ let self = {
   install: async function (opts) {
     let archive_path = opts.archive_path
     let dest_path = opts.dest_path
+
+    await mkdirp(dest_path)
 
     let dest_file_path = path.join(dest_path, path.basename(archive_path))
     log(opts, `copying ${archive_path} to ${dest_file_path}`)
