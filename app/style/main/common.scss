@@ -32,11 +32,12 @@ $game_thumb_height: 250px;
 
 $gray_back: #f4f4f4;
 
+@mixin selectable {
+  -webkit-user-select: text;
+}
 
 @mixin unselectable {
-  -moz-user-select: none;
   -webkit-user-select: none;
-  user-select: none;
 }
 
 @mixin default_font {

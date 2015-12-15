@@ -1,6 +1,6 @@
 .form {
   input, button {
-    font-family: inherit !important;  
+    font-family: inherit !important;
   }
 
   .input_row {
@@ -110,6 +110,7 @@
 }
 
 .form_errors {
+  @include selectable;
   color: $error_color;
   font-size: 16px;
 }

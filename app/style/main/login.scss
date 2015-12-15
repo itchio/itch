@@ -43,7 +43,6 @@
 
   .login_form {
     animation: drop-down .3s ease-in;
-    max-width: 400px;
   }
 
   .logo {
@@ -71,13 +70,15 @@
   }
 
   .login_box {
-    width: 400px;
+    min-width: 400px;
     height: 250px;
 
     .form {
+      width: 400px;
       padding: 25px 30px;
 
       input[type='password'], input[type='text'], input[type='email'], textarea {
+        size: border-box;
         transform: scale(1.0) rotateZ(0deg);
         transition: all 0.2s;
         box-sizing: border-box;
@@ -125,6 +126,10 @@
         animation: sk-rotateplane 2.8s .5s infinite ease-out;
       }
 
+      .login_status {
+        @include selectable;
+      }
+
       .button, .login_status {
         margin: 0 auto;
         min-width: 220px;
@@ -136,6 +141,32 @@
         height: 60px;
         line-height: 60px;
         vertical-align: middle;
+      }
+
+      &.has_error {
+        width: 800px;
+
+        .small_throbber_loader {
+          animation: none;
+        }
+
+        input {
+          height: 0;
+          padding: 0;
+          margin: 0;
+          border: rgba(0, 0, 0, 0.01);
+        }
+
+        .login_status {
+          max-height: 220px;
+          overflow-y: auto;
+          text-align: left;
+        }
+
+        .login_status * {
+          white-space: pre;
+          line-height: 1;
+        }
       }
     }
 

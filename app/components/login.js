@@ -73,7 +73,7 @@ class LoginForm extends Component {
     )
 
     return (
-      r.form({className: 'form', onSubmit: this.handle_submit}, [
+      r.form({classSet: {form: true, has_error: (icon === 'error')}, onSubmit: this.handle_submit}, [
         r(misc.ErrorList, {errors, before: r(misc.Icon, {icon: 'neutral'})}),
 
         r(InputRow, {name: 'username', type: 'text', ref: 'username', autofocus: true, disabled: loading}),
