@@ -89,10 +89,7 @@ AppDispatcher.register('window-store', Store.action_listeners(on => {
 }))
 
 app.on('before-quit', e => {
-  if (!quitting && process.platform === 'darwin') {
-    // Hopefully fixes #85
-    AppActions.quit()
-  }
+  quitting = true
 })
 
 module.exports = WindowStore
