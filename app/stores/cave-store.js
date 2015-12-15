@@ -16,6 +16,8 @@ let path = require('path')
 let Logger = require('../util/log').Logger
 let log = require('../util/log')('cave-store')
 let db = require('../util/db')
+let os = require('../util/os')
+let diego = require('../util/diego')
 
 let fs = require('../promised/fs')
 
@@ -69,12 +71,16 @@ function cave_opts (id) {
   })
   let opts = { logger }
   cave_opts_cache[id] = opts
+
+  log(opts, `~~~~~~~~~~~~~~~~ the village awakens ~~~~~~~~~~~~~~~~`)
+  log(opts, `itch v${electron.app.getVersion()} to ground control, on ${os.itch_platform()}-${os.arch()}`)
+
   return opts
 }
 
 function handle_task_error (err, id, task_name) {
   if (err instanceof Transition) {
-    log(cave_opts(id), `[${task_name} => ${err.to}] ${err.reason}`)
+    log(cave_opts(id), `[${task_name} => ${err.to}] ${err.reason || ''}`)
     let data = err.data || {}
     setImmediate(() => queue_task(id, err.to, data))
   } else if (err instanceof InputRequired) {
@@ -198,17 +204,17 @@ async function queue_task (id, task_name, data) {
   }
 }
 
-function initial_progress (record) {
+async function initial_progress (record) {
   AppActions.cave_progress(Object.assign({id: record._id}, record))
-  db.find_one({_table: 'games', id: record.game_id}).then(game => {
-    AppActions.cave_progress({id: record._id, game})
-  })
+  let game = await db.find_one({_table: 'games', id: record.game_id})
+  AppActions.cave_progress({id: record._id, game})
 }
 
 async function queue_cave (game_id) {
   let data = { _table: CAVE_TABLE, game_id }
   let record = await db.insert(data)
 
+  diego.hire(cave_opts(record._id))
   initial_progress(record)
   queue_task(record._id, 'download')
 }
