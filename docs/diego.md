@@ -5,7 +5,7 @@ diego is our diagnostics mercenary: it attempts to dump information about the
 Operating System, CPU and Graphics Card to a log file when someone tries to
 install a game.
 
-You can [read its source](../util/diego.js), or look at these example outputs
+You can [read its source](../app/util/diego.js), or look at these example outputs
 
 
 ## Example outputs
