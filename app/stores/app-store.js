@@ -74,11 +74,6 @@ function update_downloaded (action) {
 }
 
 function update_error (payload) {
-  if (/empty or corrupted/.test(payload.message)) {
-    // work around https://github.com/itchio/itch/issues/82 for now
-    return update_not_available()
-  }
-
   state = mori.assocIn(state, ['update', 'checking'], false)
   state = mori.assocIn(state, ['update', 'error'], payload.message)
   AppStore.emit_change()
