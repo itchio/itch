@@ -208,6 +208,26 @@ $cell_height: $cell_width * $cell_ratio;
       overflow: hidden;
     }
 
+    .platforms {
+      background-color: #000;
+      height: 30px;
+      position: relative;
+      margin-top: $cell_height - 30;
+      float: right;
+      padding-left: 5px;
+      padding-right: 5px;
+      padding-top: 5px;
+      border-radius: 3px;
+
+      .icon {
+          padding-left: 2px;
+          padding-right: 2px;
+      }
+      .active {
+        color: #68DAFF
+      }
+    }
+
     .game_thumb {
       @include transition(opacity .2s ease-in-out);
 

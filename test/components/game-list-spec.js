@@ -29,7 +29,11 @@ test('game-list', t => {
       cover_url: 'b',
       user: {
         display_name: 'd'
-      }
+      },
+      p_android: true,
+      p_windows: true,
+      p_linux: true,
+      p_osx: true
     })
     let install = null
 
