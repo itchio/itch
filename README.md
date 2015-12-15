@@ -106,7 +106,7 @@ These environment variables will change the behavior of the app:
     `uname`, `lspci`, `sw_vers`, `wmic`, and `ver` on your system and writing
     the results to a file on your local disk.
 
-[diego]: app/util/diego.js
+[diego]: docs/diego.md
 
 Pro-tip: [undock the Chrome devtools][undock], they're more usable as a separate Windows.
 
