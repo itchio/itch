@@ -19,7 +19,6 @@ goal is not to replace the itch.io website.
 itch is built in HTML/SCSS/ES6 and runs inside of Electron. Install the
 following to get started with development:
 
-<<<<<<< HEAD
 * Install [node.js][] (version *4.2.x* is recommended, tests won't run on anything lower)
 * Install [electron][]:
 
