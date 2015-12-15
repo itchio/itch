@@ -7,10 +7,18 @@ let PropTypes = require('react').PropTypes
 let Component = require('./component')
 
 let AppActions = require('../actions/app-actions')
+let os = require('../util/os')
 
 let misc = require('./misc')
 let TaskIcon = misc.TaskIcon
 let Icon = misc.Icon
+
+let platform_data = mori.toClj({
+  p_android: {icon: 'android', platform: 'android'},
+  p_windows: {icon: 'windows8', platform: 'windows'},
+  p_linux: {icon: 'tux', platform: 'linux'},
+  p_osx: {icon: 'apple', platform: 'osx'}
+})
 
 class GameCell extends Component {
   render () {
@@ -41,6 +49,15 @@ class GameCell extends Component {
       button_style.backgroundImage = `-webkit-linear-gradient(left, ${done_color}, ${done_color} ${percent}, ${undone_color} ${percent}, ${undone_color})`
     }
 
+    let platform_list = mori.reduceKV((l, platform, data) => {
+      if (mori.get(this.props.game, platform)) {
+        let is_active = os.itch_platform() == mori.get(data, 'platform')
+        let className = `icon icon-${mori.get(data, 'icon')}` + (is_active ? ' active' : '')
+        l.push(r.span({ className }))
+      }
+      return l
+    }, [], platform_data)
+
     return (
       r.div({className: 'game_cell'}, [
         r.div({className: 'bordered'}, [
@@ -61,7 +78,10 @@ class GameCell extends Component {
                 shell.openExternal(mori.get(game, 'url'))
               }
             }
-          })
+          }),
+          (platform_list.length
+          ? r.div({className: 'platforms'}, platform_list)
+          : '')
         ]),
         r.div({className: 'game_title'}, title),
         (user
