@@ -23,6 +23,7 @@
   "main": "app/metal.js",
   "license": "MIT",
   "dependencies": {
+    "babel-plugin-transform-strict-mode": "^6.3.13",
     "babel-register": "^6.3.13",
     "bluebird": "^3.0.6",
     "clone": "^1.0.2",
