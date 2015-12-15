@@ -10,37 +10,37 @@ download and run games from [itch.io](http://itch.io) with. Additionally you
 should be able to update games and get notified when games are updated. The
 goal is not to replace the itch.io website.
 
+## Screenshots
+
+![](https://cloud.githubusercontent.com/assets/7998310/10584017/554ac534-7690-11e5-8c5a-6eda011022e8.png)
+
 ## Installing
 
 itch is built in HTML/SCSS/ES6 and runs inside of Electron. Install the
 following to get started with development:
 
 * Install [Node.js](https://nodejs.org/)
-* Install [Electron](https://github.com/atom/electron), and [grunt](http://gruntjs.com/):
+* Install [Electron](https://github.com/atom/electron):
 
 ```
-npm install -g electron-prebuilt grunt-cli
+npm install -g electron-prebuilt@0.35.4
 ```
+
+**N.B: 0.36.0 is known not to work with itch, 0.35.4 is the recommended release**
 
 Check out this repository
 
-Run the following commands:
+Install the javascript dependencies:
 
 ```bash
 $ npm install
-$ grunt
 ```
 
 You can now run the app:
 
 ```bash
-$ electron .
+$ npm start
 ```
-
-## Screenshots
-
-![](https://cloud.githubusercontent.com/assets/7998310/10584017/554ac534-7690-11e5-8c5a-6eda011022e8.png)
-
 
 ## License
 
