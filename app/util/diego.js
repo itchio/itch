@@ -32,7 +32,7 @@ let self = {
         await spawn({
           command, args, ontoken: (tok) => (re.test(tok) && log(tok))
         })
-      } catch (e) { log(`${command} resisted us: ${e.message || '?'}`) }
+      } catch (e) { log(`"${full}" resisted us: ${e.message || '?'}`) }
     }
 
     switch (os.itch_platform()) {
@@ -44,6 +44,7 @@ let self = {
         break
       case 'linux':
         await dump('uname -a')
+        await dump('cat /proc/cpuinfo', /model name/)
         await dump('lsb_release -a')
         await dump('lspci', /VGA compatible/)
         break
