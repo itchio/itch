@@ -102,6 +102,11 @@ These environment variables will change the behavior of the app:
     pay extra care to any logs you post publicly** to make sure you're not leaking
     your own credentials.
   * `DANGERZONE=1` — enable `Danger Zone` Help submenu with crashing options
+  * `DIEGO_IS_ASLEEP=1` - forbid [our diagnostics tool][diego] from running commands like
+    `uname`, `lspci`, `sw_vers`, `wmic`, and `ver` on your system and writing
+    the results to a file on your local disk.
+
+[diego]: app/util/diego.js
 
 Pro-tip: [undock the Chrome devtools][undock], they're more usable as a separate Windows.
 
