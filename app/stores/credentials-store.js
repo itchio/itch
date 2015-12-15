@@ -16,7 +16,8 @@ let delayed_key = null
 
 let CredentialsStore = Object.assign(new Store('credentials-store'), {
   get_current_user: () => current_user,
-  get_me: () => me
+  get_me: () => me,
+  get_state: () => ({me, current_user})
 })
 
 function got_key (key) {

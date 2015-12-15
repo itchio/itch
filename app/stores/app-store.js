@@ -201,4 +201,9 @@ Store.subscribe('collection-store', (collections) => {
   AppStore.emit_change()
 })
 
+Store.subscribe('credentials-store', (credentials) => {
+  state = mori.assocIn(state, ['library', 'credentials'], mori.toClj(credentials))
+  AppStore.emit_change()
+})
+
 module.exports = AppStore

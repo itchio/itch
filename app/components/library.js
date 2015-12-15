@@ -105,6 +105,12 @@ class LibrarySidebar extends Component {
     let collections = mori.get(state, 'collections')
     let games = mori.get(state, 'games')
 
+    let is_developer = false
+    let credentials = mori.get(state, 'credentials')
+    if (credentials) {
+      is_developer = mori.getIn(credentials, ['me', 'developer'])
+    }
+
     let collection_items = mori.reduceKV((acc, id, collection) => {
       let props = {
         games,
@@ -147,8 +153,9 @@ class LibrarySidebar extends Component {
         r.div({className: 'panel_links'}, [
           r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-filled'}), name: 'owned', label: 'Owned', panel, games}),
           r(LibraryPanelLink, {before: r(Icon, {icon: 'checkmark'}), name: 'caved', label: 'Installed', panel, games}),
-          r(LibraryPanelLink, {before: r(Icon, {icon: 'rocket'}), name: 'dashboard', label: 'Dashboard', panel, games}),
-
+          (is_developer
+          ? r(LibraryPanelLink, {before: r(Icon, {icon: 'rocket'}), name: 'dashboard', label: 'Dashboard', panel, games})
+          : ''),
           r.div({className: 'separator'})
         ].concat(mori.intoArray(collection_items)).concat([
           mori.count(cave_items) > 0
