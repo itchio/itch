@@ -15,12 +15,14 @@ goal is not to replace the itch.io website.
 itch is built in HTML/SCSS/ES6 and runs inside of Electron. Install the
 following to get started with development:
 
-* Install [Node.js](https://nodejs.org/)
-* Install [Electron](https://github.com/atom/electron), and [grunt](http://gruntjs.com/):
+* Install [Node.js](https://nodejs.org/). Tests aren't working with 0.12.* versions.
+* Install [Electron](https://github.com/atom/electron) and [Grunt](http://gruntjs.com/):
 
 ```
 npm install -g electron-prebuilt grunt-cli
 ```
+
+* Install [sassc](https://github.com/sass/sassc) following the instructions for [Unix](https://github.com/sass/sassc/blob/master/docs/building/unix-instructions.md) or [Windows](https://github.com/sass/sassc/blob/master/docs/building/windows-instructions.md). Make sure it's in your `$PATH`.
 
 Check out this repository
 
@@ -40,7 +42,6 @@ $ electron .
 ## Screenshots
 
 ![](https://cloud.githubusercontent.com/assets/7998310/10584017/554ac534-7690-11e5-8c5a-6eda011022e8.png)
-
 
 ## License
 
