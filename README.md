@@ -19,7 +19,7 @@ goal is not to replace the itch.io website.
 itch is built in HTML/SCSS/ES6 and runs inside of Electron. Install the
 following to get started with development:
 
-* Install [Node.js](https://nodejs.org/). Tests aren't working with 0.12.* versions.
+* Install [Node.js](https://nodejs.org/) 4.2.x+.
 * Install [Electron](https://github.com/atom/electron):
 
 ```
