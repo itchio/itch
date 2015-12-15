@@ -4,6 +4,7 @@ let keyMirror = require('keymirror')
 
 module.exports = keyMirror({
   BOOT: null,
+  OPEN_URL: null,
   WINDOW_READY: null,
   SETUP_STATUS: null,
   SETUP_WAIT: null,

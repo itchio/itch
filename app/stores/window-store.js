@@ -5,8 +5,6 @@ let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
 let Store = require('./store')
 
-let defer = require('../util/defer')
-
 let app = require('electron').app
 let BrowserWindow = require('electron').BrowserWindow
 
@@ -19,16 +17,6 @@ let WindowStore = Object.assign(new Store('window-store'), {
     f(window)
   }
 })
-
-function boot () {
-  let should_quit = app.makeSingleInstance(AppActions.focus_window)
-
-  if (should_quit) {
-    defer(AppActions.quit)
-  } else {
-    show()
-  }
-}
 
 function show () {
   if (window) {
@@ -55,6 +43,7 @@ function show () {
     window.hide()
   })
   window.webContents.on('dom-ready', (e) => {
+    console.log(`dom-ready o/`)
     AppActions.window_ready()
     window.show()
   })
@@ -77,7 +66,7 @@ function _eval (action) {
 }
 
 AppDispatcher.register('window-store', Store.action_listeners(on => {
-  on(AppConstants.BOOT, boot)
+  on(AppConstants.BOOT, show)
   on(AppConstants.FOCUS_WINDOW, show)
   on(AppConstants.HIDE_WINDOW, hide)
   on(AppConstants.EVAL, _eval)
@@ -96,6 +85,7 @@ AppDispatcher.register('window-store', Store.action_listeners(on => {
       }
     `)
   })
+  console.log(`in window-store done setting up action listeners`)
 }))
 
 app.on('before-quit', e => {

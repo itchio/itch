@@ -8,6 +8,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.BOOT })
   },
 
+  open_url: (url) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.OPEN_URL, url })
+  },
+
   window_ready: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.WINDOW_READY })
   },

@@ -17,6 +17,9 @@ if (os.process_type() === 'renderer') {
     _callbacks: {},
 
     register: (name, cb) => {
+      if (self._callbacks[name]) {
+        throw new Error(`Can't register store twice (renderer-side): ${name}`)
+      }
       log(opts, `Registering store ${name} renderer-side`)
       self._callbacks[name] = cb
     },
@@ -51,7 +54,10 @@ if (os.process_type() === 'renderer') {
      */
     register (name, callback) {
       if (typeof name !== 'string') {
-        throw new Error('Invalid store registration')
+        throw new Error('Invalid store registration (non-string name)')
+      }
+      if (self._callbacks[name]) {
+        throw new Error(`Can't register store twice (renderer-side): ${name}`)
       }
       log(opts, `Registering store ${name} node-side`)
       this._callbacks[name] = callback
