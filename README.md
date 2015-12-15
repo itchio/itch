@@ -19,7 +19,7 @@ goal is not to replace the itch.io website.
 itch is built in HTML/SCSS/ES6 and runs inside of Electron. Install the
 following to get started with development:
 
-* Install [Node.js](https://nodejs.org/)
+* Install [Node.js](https://nodejs.org/) 4.2.x+.
 * Install [Electron](https://github.com/atom/electron):
 
 ```
@@ -27,6 +27,8 @@ npm install -g electron-prebuilt@0.35.4
 ```
 
 **N.B: 0.36.0 is known not to work with itch, 0.35.4 is the recommended release**
+
+* Install [sassc](https://github.com/sass/sassc) following the instructions for [Unix](https://github.com/sass/sassc/blob/master/docs/building/unix-instructions.md) or [Windows](https://github.com/sass/sassc/blob/master/docs/building/windows-instructions.md). Make sure it's in your `$PATH`.
 
 Check out this repository
 
