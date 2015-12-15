@@ -209,23 +209,31 @@ $cell_height: $cell_width * $cell_ratio;
     }
 
     .platforms {
-      background-color: #000;
-      height: 30px;
-      position: relative;
-      margin-top: $cell_height - 30;
-      float: right;
-      padding-left: 5px;
-      padding-right: 5px;
-      padding-top: 5px;
+      transition: opacity .2s;
+      opacity: 0;
+      background-color: #040404;
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      padding: 0 3px;
+      height: 24px;
+      line-height: 24px;
       border-radius: 3px;
+      box-shadow: 0 0 1px #BFBFBF;
 
       .icon {
-          padding-left: 2px;
-          padding-right: 2px;
+        padding-left: 2px;
+        padding-right: 2px;
+        color: #5D5A5A;
+        font-size: 13px;
       }
       .active {
-        color: #68DAFF
+        color: #E6E6E6;
       }
+    }
+
+    &:hover .platforms {
+      opacity: 1;
     }
 
     .game_thumb {

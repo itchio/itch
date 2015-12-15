@@ -51,7 +51,7 @@ class GameCell extends Component {
 
     let platform_list = mori.reduceKV((l, platform, data) => {
       if (mori.get(this.props.game, platform)) {
-        let is_active = os.itch_platform() == mori.get(data, 'platform')
+        let is_active = os.itch_platform() === mori.get(data, 'platform')
         let className = `icon icon-${mori.get(data, 'icon')}` + (is_active ? ' active' : '')
         l.push(r.span({ className }))
       }
