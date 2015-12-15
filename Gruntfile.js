@@ -26,7 +26,7 @@ var windows_electron_options = Object.assign({}, grunt_electron_common, {
   'version-string': {
     CompanyName: company_name,
     LegalCopyright: 'MIT license, (c) Itch Corp',
-    FileDescription: 'The best way to play itch.io games',
+    FileDescription: 'itch',
     OriginalFileName: 'itch.exe',
     FileVersion: version,
     AppVersion: version,
