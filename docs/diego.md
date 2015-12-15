@@ -25,6 +25,19 @@ Windows 8.1 64-bit, Intel Core i3, GTX 560 Ti:
 [Tue, 15 Dec 2015 14:02:37 GMT] [diego] diego out
 ```
 
+Ubuntu 15.10 Wily amd64, running in VirtualBox:
+
+```
+[Tue, 15 Dec 2015 14:48:07 GMT] [diego] diego here, looking around
+[Tue, 15 Dec 2015 14:48:08 GMT] [diego] Linux zogzog 4.2.0-18-generic #22-Ubuntu SMP Fri Nov 6 18:25:50 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+[Tue, 15 Dec 2015 14:48:09 GMT] [diego] Distributor ID:	Ubuntu
+[Tue, 15 Dec 2015 14:48:09 GMT] [diego] Description:	Ubuntu 15.10
+[Tue, 15 Dec 2015 14:48:09 GMT] [diego] Release:	15.10
+[Tue, 15 Dec 2015 14:48:09 GMT] [diego] Codename:	wily
+[Tue, 15 Dec 2015 14:48:09 GMT] [diego] 00:02.0 VGA compatible controller: InnoTek Systemberatung GmbH VirtualBox Graphics Adapter
+[Tue, 15 Dec 2015 14:48:09 GMT] [diego] diego out
+```
+
 MacBook Pro (Retina, 15-inch, Mid 2014), OSX El Capitan, 10.11.2, Intel Iris Pro:
 
 ```
