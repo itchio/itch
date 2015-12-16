@@ -111,12 +111,17 @@ class LibrarySidebar extends Component {
     }
 
     let collection_items = mori.reduceKV((acc, id, collection) => {
+      let icon = 'tag'
+      if (mori.get(collection, '_featured')) {
+        icon = 'star'
+      }
+
       let props = {
         games,
         name: `collections/${id}`,
         className: `collection`,
         label: mori.get(collection, 'title'),
-        before: r(Icon, {icon: 'tag'}),
+        before: r(Icon, {icon}),
         panel,
         key: id
       }

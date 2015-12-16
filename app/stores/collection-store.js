@@ -23,6 +23,10 @@ function merge_state (obj) {
 }
 
 let collections_seen = {}
+let featured_ids = [
+  32029, // LD34 staff picks
+  32705, // Bite-sized gems
+]
 
 async function fetch_collections () {
   let user = CredentialsStore.get_current_user()
@@ -33,6 +37,13 @@ async function fetch_collections () {
   merge_state(old_collections_by_id)
 
   let collections = (await user.my_collections()).collections
+
+  for (let featured_id of featured_ids) {
+    let fc = (await user.collection(featured_id)).collection
+    fc._featured = true
+    collections.push(fc)
+  }
+
   let collections_by_id = indexBy(collections, 'id')
   await db.save_collections(collections)
   merge_state(collections_by_id)
