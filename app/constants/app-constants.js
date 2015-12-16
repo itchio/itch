@@ -51,6 +51,7 @@ module.exports = keyMirror({
   NOTIFY: null,
 
   /* Data retrieval stuff */
+  FETCH_COLLECTIONS: null,
   FETCH_GAMES: null,
   GAMES_FETCHED: null,
 
@@ -75,5 +76,8 @@ module.exports = keyMirror({
   EVAL: null,
 
   /** Buh-bye */
-  QUIT: null
+  QUIT: null,
+
+  /** Hi again! */
+  GAIN_FOCUS: null,
 })

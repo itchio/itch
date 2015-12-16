@@ -16,6 +16,7 @@ if (env.name === 'development') {
 } else {
   console.log('Pre-compiled, not using require hook.')
 }
+require('./util/crash-reporter').mount()
 
 let auto_updater = require('./util/auto-updater')
 Promise.resolve(auto_updater.start()).then((quit) => {
@@ -53,7 +54,6 @@ function boot () {
 }
 
 function ready () {
-  require('./util/crash-reporter').mount()
   let AppActions = require('./actions/app-actions')
 
   require('./stores/self-update-store')

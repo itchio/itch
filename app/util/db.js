@@ -160,7 +160,7 @@ let self = {
 
       promises.push(self.update(
         { _table, id: input.id },
-        record,
+        {$set: self.flatten(record)},
         {upsert: true}
       ))
     }

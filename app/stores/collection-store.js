@@ -22,22 +22,32 @@ function merge_state (obj) {
   CollectionStore.emit_change()
 }
 
-function cache_collections () {
-  db.find({_table: 'collections'})
-    .then(collections => indexBy(collections, 'id'))
-    .then(merge_state)
-    .then(() => Object.keys(state))
-    .map(cid => AppActions.fetch_games(`collections/${cid}`))
+let collections_seen = {}
+
+async function fetch_collections () {
+  let user = CredentialsStore.get_current_user()
+  if (!user) return
+
+  let old_collections = await db.find({_table: 'collections'})
+  let old_collections_by_id = indexBy(old_collections, 'id')
+  merge_state(old_collections_by_id)
+
+  let collections = (await user.my_collections()).collections
+  let collections_by_id = indexBy(collections, 'id')
+  await db.save_collections(collections)
+  merge_state(collections_by_id)
+
+  for (let coll of collections) {
+    if (collections_seen[coll.id]) {
+      continue
+    }
+    collections_seen[coll.id] = true
+    AppActions.fetch_games(`collections/${coll.id}`)
+  }
 }
 
 function ready_to_roll () {
-  cache_collections()
-
-  let user = CredentialsStore.get_current_user()
-  user.my_collections()
-    .then(res => res.collections)
-    .then(db.save_collections)
-    .then(cache_collections)
+  fetch_collections()
 }
 
 AppDispatcher.register('collection-store', Store.action_listeners(on => {
@@ -46,6 +56,8 @@ AppDispatcher.register('collection-store', Store.action_listeners(on => {
     CollectionStore.emit_change()
   })
   on(AppConstants.READY_TO_ROLL, ready_to_roll)
+  on(AppConstants.FETCH_COLLECTIONS, fetch_collections)
 }))
 
 module.exports = CollectionStore
+

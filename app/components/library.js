@@ -114,6 +114,7 @@ class LibrarySidebar extends Component {
       let props = {
         games,
         name: `collections/${id}`,
+        className: `collection`,
         label: mori.get(collection, 'title'),
         before: r(Icon, {icon: 'tag'}),
         panel,

@@ -5,7 +5,7 @@ let ExtendableError = require('es6-error')
 
 let Logger = require('./log').Logger
 let log = require('./log')('api')
-let logger = new Logger({sinks: {console: process.env.LET_ME_IN}})
+let logger = new Logger({sinks: {console: !!process.env.LET_ME_IN}})
 let opts = {logger}
 
 // cf. https://github.com/itchio/itchio-app/issues/48
@@ -36,26 +36,28 @@ class Client {
   constructor () {
     this.root_url = 'https://itch.io/api/1'
     // this.root_url = 'http://localhost.com:8080/api/1'
+    this.lastRequest = 0
   }
 
-  request (method, path, data) {
+  async request (method, path, data) {
     if (typeof data === 'undefined') {
       data = {}
     }
     let uri = `${this.root_url}${path}`
 
-    return needle.requestAsync(method, uri, data).then(resp => {
-      let body = resp.body
+    await cooldown()
 
-      if (resp.statusCode !== 200) {
-        throw new Error(`HTTP ${resp.statusCode}`)
-      }
+    let resp = await needle.requestAsync(method, uri, data)
+    let body = resp.body
 
-      if (body.errors) {
-        throw new ApiError(body.errors)
-      }
-      return body
-    })
+    if (resp.statusCode !== 200) {
+      throw new Error(`HTTP ${resp.statusCode}`)
+    }
+
+    if (body.errors) {
+      throw new ApiError(body.errors)
+    }
+    return body
   }
 
   login_key (key) {
@@ -125,6 +127,10 @@ class User {
     return this.request('get', `/game/${game_id}`)
   }
 
+  collection (collection_id) {
+    return this.request('get', `/collection/${collection_id}`)
+  }
+
   collection_games (collection_id, page) {
     if (typeof page === 'undefined') {
       page = 1
@@ -150,6 +156,28 @@ class User {
     return this.request('get', `/upload/${upload_id}/download`)
   }
 }
+
+/** Throttling logic */
+
+let last_request = 0
+
+function cooldown () {
+  let now = (+new Date)
+  let next_acceptable = last_request + 250
+  let quiet = next_acceptable - now
+
+  if (now > next_acceptable) {
+    last_request = now
+    return Promise.resolve()
+  } else {
+    last_request = next_acceptable
+  }
+
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, quiet)
+  })
+}
+
 
 let self = {
   Client,

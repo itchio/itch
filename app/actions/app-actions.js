@@ -193,6 +193,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.LOGOUT })
   },
 
+  fetch_collections: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.FETCH_COLLECTIONS })
+  },
+
   fetch_games: (path) => {
     AppDispatcher.dispatch({ action_type: AppConstants.FETCH_GAMES, path })
   },
@@ -210,6 +214,10 @@ let self = {
 
   quit: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.QUIT })
+  },
+
+  gain_focus: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.GAIN_FOCUS })
   }
 }
 

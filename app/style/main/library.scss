@@ -133,6 +133,16 @@ $broken_color: #C38E16;
           padding: 0px 4px;
         }
 
+        &.collection {
+          .bubble {
+            display: none;
+          }
+
+          &.current .bubble {
+            display: inline;
+          }
+        }
+
         &.broken {
           border-color: $broken_color;
         }

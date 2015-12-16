@@ -202,6 +202,12 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.SELF_UPDATE_ERROR, update_error)
   on(AppConstants.DISMISS_UPDATE_ERROR, dismiss_update_error)
   on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, cave_thrown_into_bit_bucket)
+
+  on(AppConstants.GAIN_FOCUS, (payload) => {
+    AppActions.fetch_collections()
+    let panel = mori.getIn(state, ['library', 'panel'])
+    panel && AppActions.fetch_games(panel)
+  })
 }))
 
 Store.subscribe('game-store', (games) => {

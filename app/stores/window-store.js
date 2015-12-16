@@ -20,6 +20,7 @@ let WindowStore = Object.assign(new Store('window-store'), {
 
 function show () {
   if (window) {
+    AppActions.gain_focus()
     window.show()
     return
   }
@@ -42,6 +43,12 @@ function show () {
     e.preventDefault()
     window.hide()
   })
+
+  window.on('focus', (e) => {
+    console.log(`window event: focus`)
+    AppActions.gain_focus()
+  })
+
   window.webContents.on('dom-ready', (e) => {
     AppActions.window_ready()
     window.show()

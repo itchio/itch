@@ -24,7 +24,7 @@ let GameStore = Object.assign(new Store('game-store'), {
 })
 
 function merge_state (obj) {
-  deep_assign(state, obj)
+  Object.assign(state, obj)
   GameStore.emit_change()
 }
 
@@ -33,6 +33,11 @@ async function fetch_games (payload) {
   let user = CredentialsStore.get_current_user()
 
   log(opts, `fetch_games(${payload.path})`)
+  if (!user) {
+    log(opts, `user not there yet, ignoring`)
+    return
+  }
+
 
   if (path === 'owned') {
     cache_owned_games()
@@ -56,7 +61,11 @@ async function fetch_games (payload) {
     let id = path_tokens[1]
 
     if (type === 'collections') {
-      fetch_collection_games(parseInt(id, 10))
+      try {
+        fetch_collection_games(parseInt(id, 10))
+      } catch (e) {
+        console.log(`while fetching collection games: ${e.stack || e}`)
+      }
     } else if (type === 'games') {
       fetch_single_game(parseInt(id, 10))
     } else if (type === 'caves') {
@@ -76,6 +85,7 @@ async function fetch_single_game (id) {
 
 async function fetch_collection_games (id, page, game_ids) {
   if (typeof page === 'undefined') {
+    cache_collection_games(id)
     page = 1
   }
   if (typeof game_ids === 'undefined') {
@@ -83,8 +93,6 @@ async function fetch_collection_games (id, page, game_ids) {
   }
 
   log(opts, `fetching page ${page} of collection ${id}`)
-
-  cache_collection_games(id)
 
   let user = CredentialsStore.get_current_user()
 
@@ -104,8 +112,9 @@ async function fetch_collection_games (id, page, game_ids) {
     await fetch_collection_games(id, page + 1, game_ids)
   } else {
     await db.update({_table: 'collections', id}, {
-      $set: { game_ids }
+      $set: { game_ids, _fetched_at: new Date() }
     })
+    cache_collection_games(id)
   }
 }
 

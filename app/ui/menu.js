@@ -4,6 +4,8 @@ let Menu = require('electron').Menu
 
 let CredentialsStore = require('../stores/credentials-store')
 let AppActions = require('../actions/app-actions')
+let AppConstants = require('../constants/app-constants')
+let AppDispatcher = require('../dispatcher/app-dispatcher')
 
 let clone = require('clone')
 
@@ -153,6 +155,12 @@ function refresh_menu () {
 let self = {
   mount: () => {
     CredentialsStore.add_change_listener('menu', refresh_menu)
+    AppDispatcher.register('menu', (payload) => {
+      if (payload.action_type === AppConstants.FOCUS_GAIN) {
+        console.log(`Gained focus, refreshing menu`)
+        refresh_menu()
+      }
+    })
     refresh_menu()
   }
 }
