@@ -203,9 +203,11 @@ GameCell.propTypes = {
   cave: PropTypes.object
 }
 
+let always_true = () => true
+
 class GameList extends React.Component {
   render () {
-    let pred = this.props.pred || (() => true)
+    let pred = this.props.pred || always_true
     let games = this.props.games
     let caves = this.props.caves
     let index_by = (acc, k, v) => mori.assoc(acc, mori.get(v, 'game_id'), v)

@@ -34,12 +34,13 @@ let self = {
   },
 
   report_issue: (opts) => {
-    let log = opts.log
-    let body = opts.body || ''
-    let type = opts.type || 'Issue'
     if (typeof opts === 'undefined') {
       opts = {}
     }
+
+    let log = opts.log
+    let body = opts.body || ''
+    let type = opts.type || 'Issue'
     let before = opts.before || ''
 
     if (typeof log !== 'undefined') {
