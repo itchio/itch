@@ -30,8 +30,9 @@ class GameCell extends Component {
     let user = mori.get(game, 'user')
     let has_cover = !!cover_url
 
-    let style = {
-      backgroundImage: cover_url && `url('${cover_url}')`
+    let style = {}
+    if (has_cover) {
+      style.backgroundImage = `url('${cover_url}')`
     }
 
     let button_classes = 'game_launch button'
@@ -39,6 +40,9 @@ class GameCell extends Component {
       button_classes += ` cave_${task}`
     } else {
       button_classes += ` uninstalled`
+    }
+    if (has_cover) {
+      button_classes += ` has_cover`
     }
 
     let button_style = {}

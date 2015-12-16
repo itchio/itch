@@ -54,7 +54,6 @@ class StatusBar extends Component {
 
     if (error) {
       onClick = AppActions.dismiss_update_error
-      console.log('error', error)
       children = [
         r(misc.Icon, {icon: 'heart-broken'}),
         r.span('Error while checking for update: ' + error),
@@ -211,7 +210,6 @@ class LibraryContent extends Component {
     if (panel === 'broken') {
       pred = (cave) => mori.get(cave, 'task') === 'error'
     }
-    console.log(`panel = ${panel}`)
 
     return (
       r.div({className: 'main_content'}, [

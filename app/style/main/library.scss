@@ -273,6 +273,11 @@ $broken_color: #C38E16;
       background-position: 50% 50%;
       background-size: cover;
       cursor: pointer;
+
+      &:not(.has_cover) {
+        background-image: -webkit-linear-gradient(62deg, rgb(123, 123, 123), rgb(47, 46, 46));
+        -webkit-filter: brightness(40%);
+      }
     }
 
     .game_title,
