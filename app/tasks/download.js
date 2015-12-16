@@ -33,13 +33,27 @@ async function start (opts) {
 
   // Get download URL
   let client = CredentialsStore.get_current_user()
-  let url = (await (cave.key
-    ? client.download_upload_with_key(cave.key.id, cave.upload_id)
-    : client.download_upload(cave.upload_id)
-  )).url
+  let url
+
+  try {
+    url = (await (cave.key
+      ? client.download_upload_with_key(cave.key.id, cave.upload_id)
+      : client.download_upload(cave.upload_id)
+    )).url
+  } catch (e) {
+    if (e.errors) {
+      if (e.errors[0] === 'invalid upload') {
+        throw new Transition({
+          to: 'find-upload',
+          reason: 'upload-gone'
+        })
+      }
+    }
+    throw e
+  }
 
   let parsed = require('url').parse(url)
-  log(opts, `d/l from ${parsed.hostname}`)
+  log(opts, `downloading from ${parsed.hostname}`)
 
   await http.request({
     url, onprogress, logger,
