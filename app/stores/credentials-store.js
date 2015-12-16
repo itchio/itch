@@ -39,11 +39,11 @@ function login_failure (err) {
   AppActions.login_failure(err.errors || err.stack || err)
 }
 
-function login_with_password (action) {
+function login_with_password (payload) {
   AppActions.login_attempt()
 
-  let username = action.username
-  let password = action.password
+  let username = payload.username
+  let password = payload.password
   return api.client.login_with_password(username, password).then((res) => {
     let key = res.key.key
     let user = new api.User(api.client, key)

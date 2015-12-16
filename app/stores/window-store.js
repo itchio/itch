@@ -57,11 +57,11 @@ function hide () {
   WindowStore.with(w => w.hide())
 }
 
-function _eval (action) {
+function _eval (payload) {
   if (!window) return
   let web = window.webContents
   if (!web) return
-  web.executeJavaScript(action.code)
+  web.executeJavaScript(payload.code)
 }
 
 AppDispatcher.register('window-store', Store.action_listeners(on => {

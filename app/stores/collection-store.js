@@ -41,7 +41,7 @@ function ready_to_roll () {
 }
 
 AppDispatcher.register('collection-store', Store.action_listeners(on => {
-  on(AppConstants.LOGOUT, (action) => {
+  on(AppConstants.LOGOUT, (payload) => {
     state = {}
     CollectionStore.emit_change()
   })

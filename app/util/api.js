@@ -5,7 +5,7 @@ let ExtendableError = require('es6-error')
 
 let Logger = require('./log').Logger
 let log = require('./log')('api')
-let logger = new Logger({sinks: {console: false}}) // change to true to debug API calls
+let logger = new Logger({sinks: {console: process.env.LET_ME_IN}})
 let opts = {logger}
 
 // cf. https://github.com/itchio/itchio-app/issues/48
@@ -92,22 +92,21 @@ class User {
     return this.client.request(method, url, data)
   }
 
-  async my_games () {
-    let res = await this.request('get', `/my-games`)
+  // TODO: paging, for the prolific game dev.
+  async my_games (data) {
+    let res = await this.request('get', `/my-games`, data)
     res.games = ensure_array(res.games)
     return res
   }
 
-  // TODO paging
-  async my_owned_keys () {
-    let res = await this.request('get', `/my-owned-keys`)
+  async my_owned_keys (data) {
+    let res = await this.request('get', `/my-owned-keys`, data)
     res.owned_keys = ensure_array(res.owned_keys)
     return res
   }
 
-  // TODO paging
-  async my_claimed_keys () {
-    let res = await this.request('get', `/my-claimed-keys`)
+  async my_claimed_keys (data) {
+    let res = await this.request('get', `/my-claimed-keys`, data)
     res.claimed_keys = ensure_array(res.claimed_keys)
     return res
   }

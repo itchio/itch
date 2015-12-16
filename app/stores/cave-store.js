@@ -292,8 +292,8 @@ function implode_cave (data) {
 }
 
 AppDispatcher.register('cave-store', Store.action_listeners(on => {
-  on(AppConstants.CAVE_QUEUE, async action => {
-    let record = await db.find_one({_table: CAVE_TABLE, game_id: action.game_id})
+  on(AppConstants.CAVE_QUEUE, async (payload) => {
+    let record = await db.find_one({_table: CAVE_TABLE, game_id: payload.game_id})
 
     if (record) {
       if (record.launchable) {
@@ -306,18 +306,18 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
     }
   })
 
-  on(AppConstants.CAVE_QUEUE_UNINSTALL, async action => {
-    let record = await db.find_one({_table: CAVE_TABLE, _id: action.id})
+  on(AppConstants.CAVE_QUEUE_UNINSTALL, async (payload) => {
+    let record = await db.find_one({_table: CAVE_TABLE, _id: payload.id})
 
     if (record) {
       queue_task(record._id, 'uninstall')
     } else {
-      log(store_opts, `asked to uninstall ${action.id} but no record of it, ignoring`)
+      log(store_opts, `asked to uninstall ${payload.id} but no record of it, ignoring`)
     }
   })
 
-  on(AppConstants.CAVE_UPDATE, action => {
-    return update_cave(action.id, action.data)
+  on(AppConstants.CAVE_UPDATE, (payload) => {
+    return update_cave(payload.id, payload.data)
   })
 
   on(AppConstants.CAVE_IMPLODE, implode_cave)
@@ -328,7 +328,7 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
 
   on(AppConstants.CAVE_REPORT, report_cave)
 
-  on(AppConstants.AUTHENTICATED, async action => {
+  on(AppConstants.AUTHENTICATED, async (payload) => {
     log(store_opts, `authenticated!`)
     let me = CredentialsStore.get_me()
 
@@ -354,9 +354,10 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
     })
   })
 
-  on(AppConstants.LOGOUT, action => {
+  on(AppConstants.LOGOUT, (payload) => {
     db.unload()
   })
 }))
 
 module.exports = CaveStore
+

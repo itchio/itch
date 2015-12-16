@@ -53,9 +53,9 @@ function notify (content) {
 }
 
 AppDispatcher.register('notification-store', Store.action_listeners(on => {
-  on(AppConstants.SET_PROGRESS, action => set_progress(action.alpha))
+  on(AppConstants.SET_PROGRESS, (payload) => set_progress(payload.alpha))
   on(AppConstants.BOUNCE, bounce)
-  on(AppConstants.NOTIFY, action => notify(action.message))
+  on(AppConstants.NOTIFY, (payload) => notify(payload.message))
 }))
 
 module.exports = NotificationStore

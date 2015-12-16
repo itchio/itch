@@ -44,13 +44,13 @@ let AppStore = Object.assign(new Store('app-store', 'renderer'), {
   }
 })
 
-function checking_for_self_update (action) {
+function checking_for_self_update (payload) {
   console.log(`checking for self updates...`)
   state = mori.assocIn(state, ['update', 'checking'], true)
   AppStore.emit_change()
 }
 
-function update_not_available (action) {
+function update_not_available (payload) {
   state = mori.assocIn(state, ['update', 'checking'], false)
   state = mori.assocIn(state, ['update', 'uptodate'], true)
   AppStore.emit_change()
@@ -61,14 +61,14 @@ function update_not_available (action) {
   }, 5000)
 }
 
-function update_available (action) {
+function update_available (payload) {
   console.log(`update available? cool!`)
   state = mori.assocIn(state, ['update', 'checking'], false)
   state = mori.assocIn(state, ['update', 'available'], true)
   AppStore.emit_change()
 }
 
-function update_downloaded (action) {
+function update_downloaded (payload) {
   console.log(`update downloaded?! uber-cool!`)
   state = mori.assocIn(state, ['update', 'downloaded'], true)
   AppStore.emit_change()
@@ -90,8 +90,8 @@ function dismiss_update_error () {
   AppStore.emit_change()
 }
 
-function focus_panel (action) {
-  let panel = action.panel
+function focus_panel (payload) {
+  let panel = payload.panel
 
   state = mori.assoc(state, 'page', 'library')
   state = mori.assocIn(state, ['library', 'panel'], panel)
@@ -108,14 +108,14 @@ function switch_page (page) {
   AppStore.emit_change()
 }
 
-function login_attempt (action) {
+function login_attempt (payload) {
   state = mori.assocIn(state, ['login', 'loading'], true)
   state = mori.assocIn(state, ['login', 'errors'], null)
   AppStore.emit_change()
 }
 
-function login_failure (action) {
-  let errors = action.errors
+function login_failure (payload) {
+  let errors = payload.errors
   state = mori.assocIn(state, ['login', 'loading'], false)
   state = mori.assocIn(state, ['login', 'errors'], errors.stack || errors)
   switch_page('login')
@@ -125,7 +125,7 @@ function no_stored_credentials () {
   switch_page('login')
 }
 
-function ready_to_roll (action) {
+function ready_to_roll (payload) {
   state = mori.assocIn(state, ['login', 'loading'], false)
   state = mori.assocIn(state, ['login', 'errors'], null)
   focus_panel({panel: 'owned'})
@@ -146,9 +146,9 @@ function logout () {
   switch_page('login')
 }
 
-function setup_status (action) {
-  let message = action.message
-  let icon = action.icon
+function setup_status (payload) {
+  let message = payload.message
+  let icon = payload.icon
   state = mori.assocIn(state, ['setup', 'message'], message)
   if (icon) {
     state = mori.assocIn(state, ['setup', 'icon'], icon)
@@ -156,15 +156,15 @@ function setup_status (action) {
   AppStore.emit_change()
 }
 
-function setup_wait (action) {
+function setup_wait (payload) {
   switch_page('setup')
 }
 
-function cave_progress (action) {
-  for (let pair of pairs(action.opts)) {
+function cave_progress (payload) {
+  for (let pair of pairs(payload.opts)) {
     let k = pair[0]
     let v = pair[1]
-    state = mori.assocIn(state, ['library', 'caves', action.opts.id, k], mori.toClj(v))
+    state = mori.assocIn(state, ['library', 'caves', payload.opts.id, k], mori.toClj(v))
   }
   AppStore.emit_change()
 }
