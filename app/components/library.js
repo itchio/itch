@@ -124,6 +124,9 @@ class LibrarySidebar extends Component {
       return acc
     }, [], collections)
 
+    let installed_count = 0
+    let broken_count = 0
+
     let cave_items = mori.reduceKV((acc, id, cave) => {
       let progress = mori.get(cave, 'progress')
       let task = mori.get(cave, 'task')
@@ -131,7 +134,14 @@ class LibrarySidebar extends Component {
       let path = `caves/${id}`
       let active = path === panel
 
-      if (!(progress > 0 || task === 'error' || active)) {
+      if (task === 'error') {
+        broken_count++
+        return acc
+      } else {
+        installed_count++
+      }
+
+      if (!(progress > 0 || active)) {
         return acc
       }
 
@@ -154,7 +164,10 @@ class LibrarySidebar extends Component {
         r(UserPanel),
         r.div({className: 'panel_links'}, [
           r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-filled'}), name: 'owned', label: 'Owned', panel, games}),
-          r(LibraryPanelLink, {before: r(Icon, {icon: 'checkmark'}), name: 'caved', label: 'Installed', panel, games}),
+          r(LibraryPanelLink, {before: r(Icon, {icon: 'checkmark'}), name: 'caved', label: 'Installed', panel, games, count: installed_count}),
+          (broken_count > 0
+          ? r(LibraryPanelLink, {before: r(Icon, {icon: 'neutral'}), name: 'broken', label: 'Broken', panel, games, count: broken_count})
+          : ''),
           (is_developer
           ? r(LibraryPanelLink, {before: r(Icon, {icon: 'rocket'}), name: 'dashboard', label: 'Dashboard', panel, games})
           : ''),
@@ -185,11 +198,21 @@ class LibraryContent extends Component {
     let caves = mori.get(state, 'caves')
     let games = mori.get(state, 'games')
 
-    let shown_games = mori.get(games, panel) || mori.list()
+    let bucket = (panel === 'broken' ? 'caved' : panel)
+    let shown_games = mori.get(games, bucket) || mori.list()
+
+    let pred = () => true
+    if (panel === 'caved') {
+      pred = (cave) => mori.get(cave, 'task') !== 'error'
+    }
+    if (panel === 'broken') {
+      pred = (cave) => mori.get(cave, 'task') === 'error'
+    }
+    console.log(`panel = ${panel}`)
 
     return (
       r.div({className: 'main_content'}, [
-        r(GameList, {games: shown_games, caves})
+        r(GameList, {games: shown_games, caves, pred})
       ])
     )
   }
@@ -213,8 +236,11 @@ class LibraryPanelLink extends Component {
     let error = this.props.error
     let games = this.props.games || {}
 
-    let relevant_games = mori.get(games, name) || mori.list()
-    let game_count = mori.count(relevant_games)
+    let count = this.props.count
+    if (typeof count === 'undefined') {
+      let relevant_games = mori.get(games, name) || mori.list()
+      count = mori.count(relevant_games)
+    }
     let current = (name === panel)
 
     let _progress = progress ? ` (${(progress * 100).toFixed()}%)` : ''
@@ -224,8 +250,8 @@ class LibraryPanelLink extends Component {
       r.div({classSet: {panel_link: true, current}, onClick: () => AppActions.focus_panel(this.props.name)}, [
         before,
         _label,
-        (game_count > 0
-        ? r.span({className: 'bubble'}, game_count)
+        (count > 0
+        ? r.span({className: 'bubble'}, count)
         : ''),
         r(ProgressBar, {progress}),
         r(ErrorList, {errors: error})

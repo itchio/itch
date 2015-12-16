@@ -40,11 +40,8 @@ async function cache_dashboard_games () {
 async function cache_caved_games () {
   let caves = await db.find({_table: 'caves'})
   let gids = pluck(caves, 'game_id')
-  let games = await db.find({_table: 'games', id: {$in: gids}})
-  // can't use merge_state because some are being removed
-  state.caved = games
+  state.caved = await db.find({_table: 'games', id: {$in: gids}})
   GameStore.emit_change()
-  AppActions.games_fetched(pluck(games, 'id'))
 }
 
 async function cache_collection_games (id) {

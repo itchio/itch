@@ -169,12 +169,12 @@ function cave_progress (action) {
   AppStore.emit_change()
 }
 
-function cave_implode (action) {
-  state = mori.updateIn(state, ['library', 'caves'], caves => mori.dissoc(caves, action.id))
-  AppStore.emit_change()
+function cave_implode (payload) {
 }
 
 function cave_thrown_into_bit_bucket (payload) {
+  state = mori.updateIn(state, ['library', 'caves'], caves => mori.dissoc(caves, payload.id))
+  AppStore.emit_change()
   if (mori.getIn(state, ['library', 'panel']) === `caves/${payload.id}`) {
     AppActions.focus_panel('caved')
   }

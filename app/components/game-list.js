@@ -167,6 +167,7 @@ GameCell.propTypes = {
 
 class GameList extends React.Component {
   render () {
+    let pred = this.props.pred || (() => true)
     let games = this.props.games
     let caves = this.props.caves
     let index_by = (acc, k, v) => mori.assoc(acc, mori.get(v, 'game_id'), v)
@@ -176,6 +177,7 @@ class GameList extends React.Component {
       r.div({className: 'game_list'}, mori.intoArray(mori.map(game => {
         let game_id = mori.get(game, 'id')
         let cave = mori.get(caves_by_game_id, game_id)
+        if (!pred(cave)) return ''
         return r(GameCell, {key: game_id, game, cave})
       }, games)))
     )

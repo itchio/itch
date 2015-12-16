@@ -191,6 +191,8 @@ async function queue_task (id, task_name, data) {
     if (transition) throw new Transition({to: transition})
 
     log(cave_opts(id), `task ${task_name} finished with ${JSON.stringify(res)}`)
+    if (task_name === 'uninstall') return
+
     AppActions.cave_progress({id, progress: 0})
 
     if (task_opts.then) {
