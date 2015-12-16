@@ -128,14 +128,16 @@ class LibrarySidebar extends Component {
       let progress = mori.get(cave, 'progress')
       let task = mori.get(cave, 'task')
       let error = mori.get(cave, 'error')
+      let path = `caves/${id}`
+      let active = path === panel
 
-      if (!(progress > 0 || task === 'error')) {
+      if (!(progress > 0 || task === 'error' || active)) {
         return acc
       }
 
       let props = {
         games: {}, // don't display number bullet
-        name: `caves/${id}`,
+        name: path,
         label: mori.getIn(cave, ['game', 'title']),
         error: task === 'error' && error,
         progress: mori.get(cave, 'progress'),

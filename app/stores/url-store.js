@@ -42,9 +42,11 @@ function process_queue () {
   }
 }
 
+// TODO: game fetching / queuing probably isn't urlstore's job
+
 let to_install = null
 
-function handle_url (urlStr) {
+async function handle_url (urlStr) {
   log(opts, `handle_url: ${urlStr}`)
 
   let url = url_parser.parse(urlStr)
@@ -54,20 +56,26 @@ function handle_url (urlStr) {
 
   switch (verb) {
     case 'install': {
-      let game_id = tokens[1]
-      if (!game_id) {
+      if (!tokens[1]) {
         log(opts, `for install: missing game_id, bailing out.`)
         return
       }
+      let gid = parseInt(tokens[1], 10)
 
-      to_install = parseInt(game_id, 10)
-      AppActions.fetch_games(`games/${game_id}`)
-      break;
+      let game = await db.find_one({_table: 'games', id: gid})
+      if (game) {
+        install_prompt(game)
+      } else {
+        to_install = gid
+        AppActions.fetch_games(`games/${gid}`)
+      }
     }
+      break;
 
     default: {
       log(opts, `unsupported verb: ${verb}, bailing out`)
     }
+      break;
   }
 }
 
@@ -78,27 +86,40 @@ async function games_fetched (payload) {
         to_install = null
 
         let game = await db.find_one({_table: 'games', id: gid})
-        let user = await db.find_one({_table: 'users', id: game.user_id})
-        let credit = user ? `\n\nA ${game.classification} by ${user.username}` : ''
-
-        let buttons = ['Yes', 'Cancel']
-        let dialog_opts = {
-          type: 'question',
-          buttons,
-          title: 'Install request',
-          message: `Do you want to install ${game.title}?`,
-          detail: `${game.short_text}${credit}`
-        }
-        let response = electron.dialog.showMessageBox(dialog_opts)
-        if (response === 0) {
-          AppActions.cave_queue(gid)
-        } else if (response === 1) {
-          // welp
-        }
+        await install_prompt(game)
       }
     }
   } catch (e) {
     log(opts, `games_fetched error: ${e.stack || e}`)
+  }
+}
+
+async function install_prompt (game) {
+  let cave = await db.find_one({_table: 'caves', game_id: game.id})
+  if (cave) {
+    let panel = `caves/${cave._id}`
+    log(opts, `have cave, focusing ${panel}`)
+    AppActions.focus_panel(panel)
+    return
+  }
+
+  log(opts, `no cave, opening prompt for ${game.title}`)
+  let user = await db.find_one({_table: 'users', id: game.user_id})
+  let credit = user ? `\n\nA ${game.classification} by ${user.username}` : ''
+
+  let buttons = ['Install', 'Cancel']
+  let dialog_opts = {
+    type: 'question',
+    buttons,
+    title: 'Install request',
+    message: `Do you want to install ${game.title}?`,
+    detail: `${game.short_text}${credit}`
+  }
+  let response = electron.dialog.showMessageBox(dialog_opts)
+  if (response === 0) {
+    AppActions.cave_queue(game.id)
+  } else if (response === 1) {
+    // welp
   }
 }
 

@@ -38,6 +38,12 @@ function window_ready () {
     console.log(`release notes: \n'${release_notes}'`)
     AppActions.self_update_downloaded(release_name)
   })
+
+  AppActions.check_for_self_update()
+  let hours = 6
+  let seconds = hours * 60
+  let millis = seconds * 1000
+  setInterval(AppActions.check_for_self_update, millis)
 }
 
 function check_for_self_update () {
@@ -48,7 +54,6 @@ function check_for_self_update () {
 AppDispatcher.register('self-update-store', Store.action_listeners(on => {
   on(AppConstants.CHECK_FOR_SELF_UPDATE, check_for_self_update)
   on(AppConstants.WINDOW_READY, window_ready)
-  on(AppConstants.SELF_UPDATE_ERROR, (payload) => console.log(`Auto updater error: ${payload.message}`))
   on(AppConstants.APPLY_SELF_UPDATE, () => auto_updater.quitAndInstall())
 }))
 

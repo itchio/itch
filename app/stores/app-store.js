@@ -10,6 +10,7 @@ let AppActions = require('../actions/app-actions')
 let pairs = require('underscore').pairs
 
 let defer = require('../util/defer')
+let env = require('../env')
 
 let state = mori.hashMap(
   'page', 'login',
@@ -74,6 +75,11 @@ function update_downloaded (action) {
 }
 
 function update_error (payload) {
+  if (env.name === 'development') {
+    console.log(`Ignoring update error ${payload.error} from dev environment`)
+    return
+  }
+
   state = mori.assocIn(state, ['update', 'checking'], false)
   state = mori.assocIn(state, ['update', 'error'], payload.message)
   AppStore.emit_change()
@@ -168,6 +174,12 @@ function cave_implode (action) {
   AppStore.emit_change()
 }
 
+function cave_thrown_into_bit_bucket (payload) {
+  if (mori.getIn(state, ['library', 'panel']) === `caves/${payload.id}`) {
+    AppActions.focus_panel('caved')
+  }
+}
+
 AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.SETUP_STATUS, setup_status)
   on(AppConstants.SETUP_WAIT, setup_wait)
@@ -189,6 +201,7 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.SELF_UPDATE_DOWNLOADED, update_downloaded)
   on(AppConstants.SELF_UPDATE_ERROR, update_error)
   on(AppConstants.DISMISS_UPDATE_ERROR, dismiss_update_error)
+  on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, cave_thrown_into_bit_bucket)
 }))
 
 Store.subscribe('game-store', (games) => {
