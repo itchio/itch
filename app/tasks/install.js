@@ -22,7 +22,7 @@ let self = {
     let id = opts.id
     let logger = opts.logger
     let onerror = opts.onerror || noop
-    let onprogress = opts.onprogress || onprogress
+    let onprogress = opts.onprogress || noop
 
     let cave = await CaveStore.find(id)
 

@@ -42,8 +42,10 @@ async function fetch_games (payload) {
   if (path === 'owned') {
     cache_owned_games()
 
-    fetch_keys('owned_keys')
-    fetch_keys('claimed_keys')
+    await Promise.all([
+      fetch_keys('owned_keys'),
+      fetch_keys('claimed_keys')
+    ])
   } else if (path === 'caved') {
     cache_caved_games()
   } else if (path === 'dashboard') {
@@ -62,7 +64,7 @@ async function fetch_games (payload) {
 
     if (type === 'collections') {
       try {
-        fetch_collection_games(parseInt(id, 10))
+        fetch_collection_games(parseInt(id, 10), new Date())
       } catch (e) {
         console.log(`while fetching collection games: ${e.stack || e}`)
       }
@@ -83,7 +85,7 @@ async function fetch_single_game (id) {
   AppActions.games_fetched([id])
 }
 
-async function fetch_collection_games (id, page, game_ids) {
+async function fetch_collection_games (id, _fetched_at, page, game_ids) {
   if (typeof page === 'undefined') {
     cache_collection_games(id)
     page = 1
@@ -109,10 +111,10 @@ async function fetch_collection_games (id, page, game_ids) {
   AppActions.games_fetched(game_ids)
 
   if (fetched < total_items) {
-    await fetch_collection_games(id, page + 1, game_ids)
+    await fetch_collection_games(id, _fetched_at, page + 1, game_ids)
   } else {
     await db.update({_table: 'collections', id}, {
-      $set: { game_ids, _fetched_at: new Date() }
+      $set: { game_ids, _fetched_at }
     })
     cache_collection_games(id)
   }

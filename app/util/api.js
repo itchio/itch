@@ -18,6 +18,8 @@ function ensure_array (v) {
   return v
 }
 
+let self
+
 class ApiError extends ExtendableError {
   constructor (errors) {
     super(errors.join(', '))
@@ -97,19 +99,19 @@ class User {
   // TODO: paging, for the prolific game dev.
   async my_games (data) {
     let res = await this.request('get', `/my-games`, data)
-    res.games = ensure_array(res.games)
+    res.games = self.ensure_array(res.games)
     return res
   }
 
   async my_owned_keys (data) {
     let res = await this.request('get', `/my-owned-keys`, data)
-    res.owned_keys = ensure_array(res.owned_keys)
+    res.owned_keys = self.ensure_array(res.owned_keys)
     return res
   }
 
   async my_claimed_keys (data) {
     let res = await this.request('get', `/my-claimed-keys`, data)
-    res.claimed_keys = ensure_array(res.claimed_keys)
+    res.claimed_keys = self.ensure_array(res.claimed_keys)
     return res
   }
 
@@ -119,7 +121,7 @@ class User {
 
   async my_collections () {
     let res = await this.request('get', `/my-collections`)
-    res.collections = ensure_array(res.collections)
+    res.collections = self.ensure_array(res.collections)
     return res
   }
 
@@ -148,7 +150,7 @@ class User {
 
   async game_uploads (game_id) {
     let res = await this.request('get', `/game/${game_id}/uploads`)
-    res.uploads = ensure_array(res.uploads)
+    res.uploads = self.ensure_array(res.uploads)
     return res
   }
 
@@ -178,8 +180,7 @@ function cooldown () {
   })
 }
 
-
-let self = {
+self = {
   Client,
   User,
   client: new Client(),

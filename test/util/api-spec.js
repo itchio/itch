@@ -17,6 +17,7 @@ test('api', t => {
   }, electron)
 
   let api = proxyquire('../../app/util/api', stubs)
+  api.ensure_array = (x) => x
   api.client.root_url = 'http://example.org/'
 
   let user = new api.User(api.client, 'key')
@@ -24,27 +25,26 @@ test('api', t => {
 
   let uri = 'http://example.org/yo'
 
-  t.case('can GET', t => {
-    return client.request('GET', 'yo', {b: 11}).then(res => {
-      sinon.assert.calledWith(request, 'GET', uri, {b: 11})
-    })
+  t.case('can GET', async t => {
+    let res = await client.request('GET', 'yo', {b: 11})
+    sinon.assert.calledWith(request, 'GET', uri, {b: 11})
   })
 
-  t.case('can POST', t => {
-    return client.request('POST', 'yo', {b: 22}).then(res => {
-      sinon.assert.calledWith(request, 'POST', uri, {b: 22})
-    })
+  t.case('can POST', async t => {
+    let res = await client.request('POST', 'yo', {b: 22})
+    sinon.assert.calledWith(request, 'POST', uri, {b: 22})
   })
 
   t.case('can make authenticated request', t => {
     let mock = t.mock(client)
-    mock.expects('request').withArgs('get', '/key/my-games')
+    mock.expects('request').withArgs('get', '/key/my-games').resolves({games: []})
     user.my_games()
   })
 
-  t.case('rejects API errors', t => {
+  t.case('rejects API errors', async t => {
     let errors = ['foo', 'bar', 'baz']
     let spy = t.spy()
+
     request.resolves({body: {errors}, statusCode: 200})
     return client.request('GET', '', {}).catch(spy).then(res => {
       sinon.assert.calledWith(spy, sinon.match({errors}))

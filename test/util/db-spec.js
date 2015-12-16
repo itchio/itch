@@ -90,7 +90,7 @@ test('db', t => {
     ;[1, 2, 3].forEach((x) => {
       mock.expects('update').withArgs(
         { _table: 'eggs', id: x },
-        { _table: 'eggs', id: x, x },
+        { $set: { _table: 'eggs', id: x, x } },
         { upsert: true }
       )
     })
@@ -102,7 +102,7 @@ test('db', t => {
     ;[1, 2, 3].forEach((x) => {
       mock.expects('update').withArgs(
         { _table: 'eggs', id: x },
-        { _table: 'eggs', id: x, x, hen_id: x * 2 },
+        { $set: { _table: 'eggs', id: x, x, hen_id: x * 2 } },
         { upsert: true }
       )
     })
@@ -145,7 +145,7 @@ test('db', t => {
     let mock = t.mock(db)
     mock.expects('update').once().withArgs(
       { _table: 'eggs', id: 9 },
-      { _table: 'eggs', id: 9, hen_ids: [19, 29, 39] },
+      { $set: { _table: 'eggs', id: 9, hen_ids: [19, 29, 39] } },
       { upsert: true }
     )
     let spy = t.spy()

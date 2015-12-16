@@ -1,19 +1,23 @@
 'use strict'
 
 require('source-map-support').install()
-require('bluebird').config({
-  longStackTraces: true,
-  cancellation: true
-})
 
 let env = require('./env')
 
 if (env.name === 'development') {
   console.log('Development environment, using babel require hook')
 
+  require('bluebird').config({
+    longStackTraces: true
+  })
+
   // use register hook in dev, production builds are precompiled.
   require('babel-register')
 } else {
+  require('bluebird').config({
+    longStackTraces: false
+  })
+
   console.log('Pre-compiled, not using require hook.')
 }
 require('./util/crash-reporter').mount()

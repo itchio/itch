@@ -26,30 +26,35 @@ test('GameStore', t => {
   proxyquire('../../app/stores/game-store', stubs)
   let handler = AppDispatcher.get_handler('game-store')
 
-  t.case('fetch owned', t => {
+  t.case('fetch owned', async t => {
     let mock = t.mock(CredentialsStore.get_current_user())
-    mock.expects('my_owned_keys').resolves({owned_keys: [1, 2, 3]})
-    mock.expects('my_claimed_keys').resolves({claimed_keys: [1, 2, 3]})
-    handler({ action_type: AppConstants.FETCH_GAMES, path: 'owned' })
+
+    ;['owned_keys', 'claimed_keys'].forEach((kind) => {
+      mock.expects(`my_${kind}`).twice()
+        .onFirstCall() .resolves({[kind]: [1, 2, 3]})
+        .onSecondCall().resolves({[kind]: []})
+    })
+
+    await handler({ action_type: AppConstants.FETCH_GAMES, path: 'owned' })
   })
 
-  t.case('fetch installed', t => {
-    handler({ action_type: AppConstants.FETCH_GAMES, path: 'installed' })
+  t.case('fetch installed', async t => {
+    await handler({ action_type: AppConstants.FETCH_GAMES, path: 'installed' })
     handler({ action_type: AppConstants.INSTALL_PROGRESS, opts: {id: 12} })
   })
 
-  t.case('fetch dashboard', t => {
+  t.case('fetch dashboard', async t => {
     let mock = t.mock(CredentialsStore.get_current_user())
     mock.expects('my_games').resolves({games: [{}, {}, {}]})
-    handler({ action_type: AppConstants.FETCH_GAMES, path: 'dashboard' })
+    await handler({ action_type: AppConstants.FETCH_GAMES, path: 'dashboard' })
   })
 
-  t.case('fetch install', t => {
+  t.case('fetch install', async t => {
     t.stub(db, 'find_one').resolves({game_id: 64})
-    handler({ action_type: AppConstants.FETCH_GAMES, path: 'installs/46' })
+    await handler({ action_type: AppConstants.FETCH_GAMES, path: 'installs/46' })
   })
 
-  t.case('fetch collections', t => {
+  t.case('fetch collections', async t => {
     t.stub(db, 'find_one').resolves({game_ids: [1, 2, 3, 4, 5]})
     let user = CredentialsStore.get_current_user()
     let collection_games = t.stub(user, 'collection_games')
@@ -67,9 +72,9 @@ test('GameStore', t => {
 
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        sinon.assert.calledWith(update, {_table: 'collections', id: 78}, {$set: {game_ids: [1, 3, 5, 7, 9]}})
+        sinon.assert.calledWith(update, {_table: 'collections', id: 78}, {$set: {game_ids: [1, 3, 5, 7, 9], _fetched_at: sinon.match.date }})
         resolve()
-      }, 20)
+      }, 50)
     })
   })
 })

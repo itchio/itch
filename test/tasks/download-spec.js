@@ -23,6 +23,9 @@ test('download', t => {
     lstatAsync: () => null
   }
   let client = CredentialsStore.get_current_user()
+  let emitter = {
+    on: () => null
+  }
 
   let stubs = Object.assign({
     '../stores/cave-store': CaveStore,
@@ -36,11 +39,11 @@ test('download', t => {
   t.case('validates upload_id', t => {
     let install = Object.assign({}, typical_install, {upload_id: 22})
     t.stub(CaveStore, 'find').resolves(install)
-    return t.rejects(download.start({id: 42}))
+    return t.rejects(download.start({id: 42, emitter}))
   })
 
   t.case('validates upload in list', t => {
-    return t.rejects(download.start({id: 42}))
+    return t.rejects(download.start({id: 42, emitter}))
   })
 
   t.case('downloads free game', t => {
@@ -48,7 +51,7 @@ test('download', t => {
     t.stub(CaveStore, 'find').resolves(install)
     t.stub(client, 'download_upload').resolves(upload_response)
     t.stub(fs, 'lstatAsync').rejects()
-    return download.start({id: 42})
+    return download.start({id: 42, emitter})
   })
 
   t.case('downloads paid game', t => {
@@ -56,6 +59,6 @@ test('download', t => {
     t.stub(CaveStore, 'find').resolves(install)
     t.stub(client, 'download_upload_with_key').resolves(upload_response)
     t.stub(fs, 'lstatAsync').rejects()
-    return download.start({id: 42})
+    return download.start({id: 42, emitter})
   })
 })
