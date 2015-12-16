@@ -37,13 +37,12 @@ function show () {
   })
 
   window.on('close', (e) => {
-    console.log(`window event: close ${JSON.stringify(e)}`)
+    console.log(`window event: close`)
     if (quitting) return
     e.preventDefault()
     window.hide()
   })
   window.webContents.on('dom-ready', (e) => {
-    console.log(`dom-ready o/`)
     AppActions.window_ready()
     window.show()
   })
@@ -85,7 +84,6 @@ AppDispatcher.register('window-store', Store.action_listeners(on => {
       }
     `)
   })
-  console.log(`in window-store done setting up action listeners`)
 }))
 
 app.on('before-quit', e => {

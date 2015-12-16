@@ -65,7 +65,7 @@ function cave_opts (id) {
 
   let logger = new Logger({
     sinks: {
-      console: true,
+      console: false,
       file: CaveStore.log_path(id)
     }
   })
@@ -224,7 +224,6 @@ async function explore_cave (payload) {
 
   try {
     await fs.lstatAsync(app_path)
-    console.log(`opening item in folder: ${app_path}`)
     if (process.platform === 'darwin') {
       // openItem will open the finder but it will appear *under* the app
       // which is a bit silly, so we just reveal it instead.
@@ -289,7 +288,7 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
     log(store_opts, `authenticated!`)
     let me = CredentialsStore.get_me()
 
-    log(store_opts, `me = ${JSON.stringify(me)}`)
+    log(store_opts, `me = ${JSON.stringify(me, null, 2)}`)
     try {
       await db.load(me.id)
     } catch (e) {
@@ -302,9 +301,7 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
     AppActions.ready_to_roll()
 
     let caves = await db.find({_table: CAVE_TABLE})
-    log(store_opts, `found ${caves.length} caves`)
     caves.forEach((record, i) => {
-      log(store_opts, `record: ${JSON.stringify(record)}`)
       initial_progress(record)
       // quick hack to avoid running into http 400 (ie. requesting too fast)
       setTimeout(() => {
