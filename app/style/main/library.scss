@@ -111,9 +111,12 @@ $cell_height: $cell_width * $cell_ratio;
       border-right: 1px solid rgba(black, .1);
 
       .panel_link {
+        transition: 0.2s border;
         padding: 8px;
         color: #A0A0A0;
         cursor: pointer;
+
+        border-left: 0 solid #888;
 
         .icon {
           margin-right: 8px;
@@ -128,6 +131,22 @@ $cell_height: $cell_width * $cell_ratio;
           padding: 0px 4px;
         }
 
+        &.broken {
+          border-color: #C38E16;
+        }
+
+        &.dashboard {
+          border-color: #2E9A55;
+        }
+
+        &.owned {
+          border-color: #E24957;
+        }
+
+        &.installed {
+          border-color: #577FDA;
+        }
+
         &:hover {
           background: rgba(black, .1);
         }
@@ -135,6 +154,7 @@ $cell_height: $cell_width * $cell_ratio;
         &.current {
           color: white;
           background: rgba(white, .1);
+          border-width: 3px;
         }
 
         .progress_outer {

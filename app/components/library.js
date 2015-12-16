@@ -163,16 +163,19 @@ class LibrarySidebar extends Component {
       r.div({classSet: {sidebar: true, frameless}}, [
         r(UserPanel),
         r.div({className: 'panel_links'}, [
-          r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-filled'}), name: 'owned', label: 'Owned', panel, games}),
-          r(LibraryPanelLink, {before: r(Icon, {icon: 'checkmark'}), name: 'caved', label: 'Installed', panel, games, count: installed_count}),
-          (broken_count > 0
-          ? r(LibraryPanelLink, {before: r(Icon, {icon: 'neutral'}), name: 'broken', label: 'Broken', panel, games, count: broken_count})
-          : ''),
           (is_developer
-          ? r(LibraryPanelLink, {before: r(Icon, {icon: 'rocket'}), name: 'dashboard', label: 'Dashboard', panel, games})
+          ? r(LibraryPanelLink, {before: r(Icon, {icon: 'rocket'}), name: 'dashboard', label: 'Developed', panel, games, className: 'dashboard'})
           : ''),
+          r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-filled'}), name: 'owned', label: 'Owned', panel, games, className: 'owned'}),
+          r(LibraryPanelLink, {before: r(Icon, {icon: 'checkmark'}), name: 'caved', label: 'Installed', panel, games, count: installed_count, className: 'installed'}),
           r.div({className: 'separator'})
-        ].concat(mori.intoArray(collection_items)).concat([
+        ].concat(broken_count > 0
+          ? [
+              r(LibraryPanelLink, {before: r(Icon, {icon: 'neutral'}), name: 'broken', label: 'Broken', panel, games, count: broken_count, className: 'broken'}),
+              r.div({className: 'separator'})
+            ]
+          : []
+        ).concat(mori.intoArray(collection_items)).concat([
           mori.count(cave_items) > 0
           ? r.div({}, [
             r.div({className: 'separator'})
@@ -228,6 +231,7 @@ LibraryContent.propTypes = {
  */
 class LibraryPanelLink extends Component {
   render () {
+    let className = this.props.className
     let name = this.props.name
     let panel = this.props.panel
     let label = this.props.label
@@ -247,7 +251,7 @@ class LibraryPanelLink extends Component {
     let _label = `${label}${_progress}`
 
     return (
-      r.div({classSet: {panel_link: true, current}, onClick: () => AppActions.focus_panel(this.props.name)}, [
+      r.div({classSet: {panel_link: true, current, [className]: true}, onClick: () => AppActions.focus_panel(this.props.name)}, [
         before,
         _label,
         (count > 0
