@@ -35,7 +35,10 @@ function boot () {
   let AppActions = require('./actions/app-actions')
   let app = electron.app
 
-  let should_quit = app.makeSingleInstance(AppActions.focus_window)
+  let should_quit = app.makeSingleInstance((argv, cwd) => {
+    handle_urls(argv)
+    AppActions.focus_window()
+  })
   if (should_quit) {
     app.quit()
   }
@@ -67,7 +70,7 @@ function ready () {
   require('./ui/menu').mount()
   AppActions.boot()
 
-  handle_urls()
+  register_url_handler()
 }
 
 // URL handling
@@ -76,12 +79,11 @@ function is_itchio_url (s) {
   return /^itchio:/i.test(s)
 }
 
-function handle_urls () {
+function register_url_handler () {
   let AppActions = require('./actions/app-actions')
-  let app = electron.app
 
   // OSX (Info.pList)
-  app.on('open-url', (e, url) => {
+  electron.app.on('open-url', (e, url) => {
     if (/^itchio:/.test(url.toLowerCase())) {
       // OSX will err -600 if we don't
       e.preventDefault()
@@ -91,8 +93,14 @@ function handle_urls () {
     }
   })
 
+  handle_urls(process.argv)
+}
+
+function handle_urls (argv) {
+  let AppActions = require('./actions/app-actions')
+
   // Windows (reg.exe), Linux (XDG)
-  process.argv.forEach((arg) => {
+  argv.forEach((arg) => {
     // XXX should we limit to one url at most ?
     if (is_itchio_url(arg)) {
       AppActions.open_url(arg)

@@ -98,12 +98,14 @@ class User {
     return res
   }
 
+  // TODO paging
   async my_owned_keys () {
     let res = await this.request('get', `/my-owned-keys`)
     res.owned_keys = ensure_array(res.owned_keys)
     return res
   }
 
+  // TODO paging
   async my_claimed_keys () {
     let res = await this.request('get', `/my-claimed-keys`)
     res.claimed_keys = ensure_array(res.claimed_keys)
@@ -118,6 +120,10 @@ class User {
     let res = await this.request('get', `/my-collections`)
     res.collections = ensure_array(res.collections)
     return res
+  }
+
+  game (game_id) {
+    return this.request('get', `/game/${game_id}`)
   }
 
   collection_games (collection_id, page) {

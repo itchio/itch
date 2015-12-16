@@ -193,10 +193,11 @@ let self = {
   },
 
   fetch_games: (path) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.FETCH_GAMES,
-      path
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.FETCH_GAMES, path })
+  },
+
+  games_fetched: (game_ids) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.GAMES_FETCHED, game_ids })
   },
 
   eval: (code) => {

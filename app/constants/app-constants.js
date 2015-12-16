@@ -50,6 +50,7 @@ module.exports = keyMirror({
 
   /* Data retrieval stuff */
   FETCH_GAMES: null,
+  GAMES_FETCHED: null,
 
   /** Ready but needs human login */
   NO_STORED_CREDENTIALS: null,
