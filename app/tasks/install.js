@@ -41,6 +41,7 @@ let self = {
 
     if (imtime && !(amtime > imtime)) {
       log(opts, `archive isn't more recent, nothing to install`)
+      throw new errors.Transition({to: 'idle', reason: 'up-to-date'})
       return
     }
 

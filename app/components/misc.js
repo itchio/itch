@@ -33,7 +33,7 @@ let task_to_icon = {
   'error': 'heart-broken',
   'find-upload': 'stopwatch',
   'download': 'download',
-  'download-queued': 'download',
+  'download-queued': 'hand-paper-o',
   'install': 'file-zip',
   'configure': 'settings',
   'launch': 'fire',
@@ -49,7 +49,7 @@ class TaskIcon extends Component {
     let spin = !!this.props.spin
     let icon = task_to_icon[task] || ''
     if (spin) {
-      icon = 'stopwatch'
+      icon = 'upload-to-cloud'
     }
 
     return r(Icon, {icon, spin})
