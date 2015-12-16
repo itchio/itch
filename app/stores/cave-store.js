@@ -18,6 +18,8 @@ let log = require('../util/log')('cave-store')
 let db = require('../util/db')
 let os = require('../util/os')
 let diego = require('../util/diego')
+let crash_reporter = require('../util/crash-reporter')
+let github = require('../util/github')
 
 let fs = require('../promised/fs')
 
@@ -242,6 +244,44 @@ function probe_cave (payload) {
   electron.shell.openItem(CaveStore.log_path(payload.id))
 }
 
+async function report_cave (payload) {
+  let id = payload.id
+
+  try {
+    AppActions.cave_progress({id, reporting: true})
+    let log_path = CaveStore.log_path(payload.id)
+    let cave = await db.find_one({_table: CAVE_TABLE, _id: payload.id})
+    let game = await db.find_one({_table: 'games', id: cave.game_id})
+
+    let game_log = await fs.readFileAsync(log_path, {encoding: 'utf8'})
+
+    let gist_data = {
+      description: `itch log for ${game.title} — ${game.url}`,
+      public: false,
+      files: {
+        '${game.slug}-log.txt': {
+          content: game_log
+        }
+      }
+    }
+    let gist = await github.create_gist(gist_data)
+
+    let body =
+`Game [${game.title}](${game.url}) is broken for me.
+
+Here's the [debug log](${gist.html_url}).`
+
+    crash_reporter.report_issue({
+      type: 'Broken game',
+      body
+    })
+  } catch (e) {
+    console.log(`Error reporting cave: ${e.stack || e}`)
+  } finally {
+    AppActions.cave_progress({id, reporting: false})
+  }
+}
+
 function update_cave (_id, data) {
   return db.merge_one({_table: CAVE_TABLE, _id}, data)
 }
@@ -285,6 +325,8 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
   on(AppConstants.CAVE_EXPLORE, explore_cave)
 
   on(AppConstants.CAVE_PROBE, probe_cave)
+
+  on(AppConstants.CAVE_REPORT, report_cave)
 
   on(AppConstants.AUTHENTICATED, async action => {
     log(store_opts, `authenticated!`)

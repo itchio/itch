@@ -12,9 +12,13 @@ let Component = require('./component')
 class Icon extends Component {
   render () {
     let icon = this.props.icon
+    let spin = !!this.props.spin
 
     if (icon) {
-      return r.span({className: `icon icon-${icon}`})
+      return r.span({
+        className: `icon icon-${icon}`,
+        classSet: {spin}
+      })
     } else {
       return r.span()
     }
@@ -26,7 +30,7 @@ Icon.propTypes = {
 }
 
 let task_to_icon = {
-  'error': 'neutral',
+  'error': 'heart-broken',
   'find-upload': 'stopwatch',
   'download': 'download',
   'download-queued': 'download',
@@ -42,8 +46,13 @@ let task_to_icon = {
 class TaskIcon extends Component {
   render () {
     let task = this.props.task || ''
+    let spin = !!this.props.spin
     let icon = task_to_icon[task] || ''
-    return r(Icon, {icon})
+    if (spin) {
+      icon = 'stopwatch'
+    }
+
+    return r(Icon, {icon, spin})
   }
 }
 

@@ -38,7 +38,8 @@ async function start (opts) {
     : client.download_upload(cave.upload_id)
   )).url
 
-  log(opts, `d/l from ${url}`)
+  let parsed = require('url').parse(url)
+  log(opts, `d/l from ${parsed.hostname}`)
 
   await http.request({
     url, onprogress, logger,

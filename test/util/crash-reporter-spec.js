@@ -39,7 +39,7 @@ test('crash-reporter', t => {
   t.case('report_issue', t => {
     let mock = t.mock(electron.electron.shell)
     mock.expects('openExternal').once()
-    crash_reporter.report_issue(e)
+    crash_reporter.report_issue({log: e})
   })
 
   let stub_write = (t) => {

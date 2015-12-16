@@ -33,9 +33,14 @@ let self = {
     return {log, crash_file}
   },
 
-  report_issue: (log) => {
-    let body = ''
-    let type = 'Issue'
+  report_issue: (opts) => {
+    let log = opts.log
+    let body = opts.body || ''
+    let type = opts.type || 'Issue'
+    if (typeof opts === 'undefined') {
+      opts = {}
+    }
+    let before = opts.before || ''
 
     if (typeof log !== 'undefined') {
       type = 'Crash report'
@@ -50,7 +55,7 @@ ${log}
 
     let query = querystring.stringify({
       title: `[${os.platform()}] ${type} for v${app.getVersion()}`,
-      body
+      body: (before + body)
     })
     self.open_url(`https://github.com/itchio/itch/issues/new?${query}`)
   },
@@ -70,7 +75,7 @@ ${log}
     })
 
     if (response === 0) {
-      self.report_issue(log)
+      self.report_issue({log})
     } else if (response === 1) {
       shell.openItem(crash_file)
     }

@@ -540,3 +540,8 @@ $gray_back: #f4f4f4;
 
   }
 }
+
+.icon.spin {
+  animation: sk-rotateplane 2.8s .5s infinite ease-out;
+}
+

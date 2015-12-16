@@ -4,6 +4,8 @@ $cell_ratio: 152 / 192;
 $cell_width: 185px;
 $cell_height: $cell_width * $cell_ratio;
 
+$broken_color: #C38E16;
+
 .library_page {
   $sidebar_width: 250px;
 
@@ -132,7 +134,7 @@ $cell_height: $cell_width * $cell_ratio;
         }
 
         &.broken {
-          border-color: #C38E16;
+          border-color: $broken_color;
         }
 
         &.dashboard {
@@ -234,7 +236,7 @@ $cell_height: $cell_width * $cell_ratio;
       background-color: #040404;
       position: absolute;
       bottom: 5px;
-      right: 5px;
+      left: 5px;
       padding: 0 3px;
       height: 24px;
       line-height: 24px;
@@ -299,6 +301,10 @@ $cell_height: $cell_width * $cell_ratio;
         font-weight: normal;
         text-shadow: none;
         border: 1px solid #666;
+
+        .icon {
+          margin-right: 0;
+        }
       }
 
       &.cave_download, &.cave_download-queued, &.cave_install, &.cave_configure, &.cave_launch, &.cave_find-upload {
@@ -321,11 +327,11 @@ $cell_height: $cell_width * $cell_ratio;
       opacity: 0;
     }
 
-    &:hover .cave_actions {
+    &:hover .cave_actions, .cave_actions.error {
       opacity: 1;
     }
 
-    .game_uninstall, .game_explore {
+    .game_uninstall, .game_explore, .game_retry, .game_probe {
       margin-left: 12px;
 
       transition: all 0.4s;

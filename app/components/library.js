@@ -56,7 +56,7 @@ class StatusBar extends Component {
       onClick = AppActions.dismiss_update_error
       console.log('error', error)
       children = [
-        r(misc.Icon, {icon: 'neutral'}),
+        r(misc.Icon, {icon: 'heart-broken'}),
         r.span('Error while checking for update: ' + error),
         r(misc.Icon, {icon: 'cross'})
       ]
@@ -171,7 +171,7 @@ class LibrarySidebar extends Component {
           r.div({className: 'separator'})
         ].concat(broken_count > 0
           ? [
-              r(LibraryPanelLink, {before: r(Icon, {icon: 'neutral'}), name: 'broken', label: 'Broken', panel, games, count: broken_count, className: 'broken'}),
+              r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-broken'}), name: 'broken', label: 'Broken', panel, games, count: broken_count, className: 'broken'}),
               r.div({className: 'separator'})
             ]
           : []

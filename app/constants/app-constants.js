@@ -40,6 +40,8 @@ module.exports = keyMirror({
   CAVE_EXPLORE: null,
   /** Alright, what broke this time? */
   CAVE_PROBE: null,
+  /** Let the others figure it out */
+  CAVE_REPORT: null,
 
   /** Set app-wide progress bar (title bar on Windows). Negative value clears. */
   SET_PROGRESS: null,

@@ -49,9 +49,14 @@ class GameCell extends Component {
       button_style.backgroundImage = `-webkit-linear-gradient(left, ${done_color}, ${done_color} ${percent}, ${undone_color} ${percent}, ${undone_color})`
     }
 
+    let platform_compatible = false
+
     let platform_list = mori.reduceKV((l, platform, data) => {
       if (mori.get(this.props.game, platform)) {
         let is_active = os.itch_platform() === mori.get(data, 'platform')
+        if (is_active) {
+          platform_compatible = true
+        }
         let className = `icon icon-${mori.get(data, 'icon')}` + (is_active ? ' active' : '')
         l.push(r.span({ className }))
       }
@@ -68,13 +73,13 @@ class GameCell extends Component {
               has_cover
             },
             onClick: (e) => {
-              let remote = require('electron').remote
-              let shell = remote.require('electron').shell
               if (e.ctrlKey || e.shiftKey) {
                 AppActions.cave_explore(mori.get(cave, '_id'))
               } else if (e.altKey) {
                 AppActions.cave_probe(mori.get(cave, '_id'))
               } else {
+                let remote = require('electron').remote
+                let shell = remote.require('electron').shell
                 shell.openExternal(mori.get(game, 'url'))
               }
             }
@@ -91,30 +96,63 @@ class GameCell extends Component {
           className: button_classes, style: button_style,
           onClick: () => {
             if (cave && task === 'error') {
-              AppActions.cave_probe(mori.get(cave, '_id'))
+              AppActions.cave_report(mori.get(cave, '_id'))
             } else {
-              AppActions.cave_queue(mori.get(game, 'id'))
+              if (platform_compatible) {
+                AppActions.cave_queue(mori.get(game, 'id'))
+              } else {
+                let remote = require('electron').remote
+                let shell = remote.require('electron').shell
+                shell.openExternal(mori.get(game, 'url'))
+              }
             }
           }
         }, [
           cave
           ? r.span({}, [
-            r(TaskIcon, {task}),
+            r(TaskIcon, {task, spin: mori.get(cave, 'reporting')}),
             this.status(cave)
           ])
-          : r.span({}, [
-            r(Icon, {icon: 'install'}),
-            ' Install'
-          ])
+          : (
+            platform_compatible
+            ? r.span({}, [
+              r(Icon, {icon: 'install'}),
+              ' Install'
+            ])
+            : r.span({}, [
+              r(Icon, {icon: 'earth'}),
+            ])
+          )
         ]),
         ((cave && ['idle', 'error'].indexOf(task) !== -1)
-        ? r.div({className: 'cave_actions'}, [
-          r.span({
-            className: 'game_explore',
-            onClick: () => AppActions.cave_explore(mori.get(cave, '_id'))
-          }, [
-            r(Icon, {icon: 'folder-open'})
-          ]),
+        ? r.div({classSet: {cave_actions: true, error: (task === 'error')}}, (
+          (task === 'error')
+          ? [
+            r.span({
+              className: 'game_retry',
+              onClick: () => AppActions.cave_queue(mori.get(game, 'id'))
+            }, [
+              r(Icon, {icon: 'refresh'})
+            ]),
+            r.span({
+              className: 'game_probe',
+              onClick: () => AppActions.cave_probe(mori.get(cave, '_id'))
+            }, [
+              r(Icon, {icon: 'bug'})
+            ]),
+          ]
+          : []
+        ).concat(
+          (task === 'error')
+          ? []
+          : [
+            r.span({
+              className: 'game_explore',
+              onClick: () => AppActions.cave_explore(mori.get(cave, '_id'))
+            }, [
+              r(Icon, {icon: 'folder-open'})
+            ])
+          ]).concat([
           r.span({
             className: 'game_uninstall',
             onClick: () => {
@@ -125,7 +163,7 @@ class GameCell extends Component {
           }, [
             r(Icon, {icon: 'delete'})
           ])
-        ])
+        ]))
         : '')
       ])
     )
@@ -139,7 +177,7 @@ class GameCell extends Component {
       return 'Launch'
     }
     if (task === 'error') {
-      return 'Broken'
+      return ''
     }
     if (task === 'launch') {
       return 'Running...'
