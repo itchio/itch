@@ -123,7 +123,7 @@ class GameCell extends Component {
               }
             }
           }, [
-            r(Icon, {icon: 'uninstall'})
+            r(Icon, {icon: 'delete'})
           ])
         ])
         : '')
