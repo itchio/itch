@@ -7,6 +7,11 @@ let log = Log('dispatcher')
 let opts = {logger: new Log.Logger({sinks: {console: !!process.env.MARCO_POLO}})}
 let electron = require('electron')
 
+let spammy = {
+  CAVE_PROGRESS: true,
+  GAMES_FETCHED: true
+}
+
 // This makes sure everything is dispatched to the node side, whatever happens
 if (os.process_type() === 'renderer') {
   let ipc = electron.ipcRenderer
@@ -72,10 +77,12 @@ if (os.process_type() === 'renderer') {
         throw new Error(`Trying to dispatch action with no type: ${JSON.stringify(payload, null, 2)}`)
       }
 
-      if (payload.private) {
-        log(opts, `dispatching ${payload.action_type}`)
-      } else {
-        log(opts, `dispatching: ${JSON.stringify(payload, null, 2)}`)
+      if (!spammy[payload.action_type]) {
+        if (payload.private) {
+          log(opts, `dispatching ${payload.action_type}`)
+        } else {
+          log(opts, `dispatching: ${JSON.stringify(payload, null, 2)}`)
+        }
       }
 
       Object.keys(this._callbacks).forEach((store_id) => {

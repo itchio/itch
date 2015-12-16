@@ -294,8 +294,31 @@ $broken_color: #C38E16;
     }
 
     .game_launch {
+      font-size: 13px;
+      height: 33px;
+      line-height: 33px;
       transition: all 0.2s;
       margin-top: 8px;
+
+      .cancel_cross {
+        display: none;
+      }
+
+      &.cancellable {
+        .cancel_cross {
+          overflow: hidden;
+          transition: 0.2s width;
+          float: right;
+          display: inline-block;
+          text-align: center;
+          width: 0;
+          color: #E68989;
+        }
+
+        &:hover .cancel_cross {
+          width: 15px;
+        }
+      }
 
       .icon {
         margin-right: 5px;

@@ -13,6 +13,7 @@ function spawn (opts) {
     opts = {}
   }
 
+  let emitter = opts.emitter
   let command = opts.command
   let args = opts.args || []
   let split = opts.split || '\n'
@@ -20,6 +21,17 @@ function spawn (opts) {
   log(opts, `spawning ${command} with args ${args.join(' ')}`)
 
   let child = child_process.spawn(command, args)
+
+  if (emitter) {
+    emitter.on('cancel', (e) => {
+      try {
+        child.kill('SIGKILL')
+        emitter.emit('cancelled', {comment: `Very dead, Mr. Spock.`})
+      } catch (e) {
+        log(opts, `error while killing ${command}: ${e.stack || e}`)
+      }
+    })
+  }
 
   let splitter = child.stdout.pipe(StreamSplitter(split))
   splitter.encoding = 'utf8'

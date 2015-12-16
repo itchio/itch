@@ -27,21 +27,23 @@ let self = {
   /*
    * Uses https://github.com/itchio/butler to download a file
    */
-  request: function (opts) {
+  request: async function (opts) {
+    let emitter = opts.emitter
     let url = opts.url
     let dest = opts.dest
     let err = null
     let onerror = (e) => err = e
 
-    return mkdirp(path.dirname(dest))
-      .then(() => spawn({
-        command: 'butler',
-        args: ['-j', 'dl', url, dest],
-        ontoken: partial(self.parse_butler_status, opts, onerror)
-      })).then((res) => {
-        if (err) { throw err }
-        return res
-      })
+    await mkdirp(path.dirname(dest)) 
+    let res = await spawn({
+      command: 'butler',
+      args: ['-j', 'dl', url, dest],
+      ontoken: partial(self.parse_butler_status, opts, onerror),
+      emitter
+    })
+
+    if (err) { throw err }
+    return res
   }
 }
 

@@ -6,6 +6,8 @@ let log = require('../util/log')('tasks/download')
 let http = require('../util/http')
 let noop = require('../util/noop')
 
+let rimraf = require('../promised/rimraf')
+
 let CaveStore = require('../stores/cave-store')
 let CredentialsStore = require('../stores/credentials-store')
 
@@ -22,6 +24,7 @@ async function start (opts) {
   let id = opts.id
   let onprogress = opts.onprogress || noop
   let logger = opts.logger
+  let emitter = opts.emitter
 
   let cave = await CaveStore.find(id)
 
@@ -55,10 +58,18 @@ async function start (opts) {
   let parsed = require('url').parse(url)
   log(opts, `downloading from ${parsed.hostname}`)
 
-  await http.request({
-    url, onprogress, logger,
-    dest: CaveStore.archive_path(upload)
+  let dest = CaveStore.archive_path(upload)
+
+  emitter.on('cancelled', async (e) => {
+    let archive_path = 
+    log(opts, `killed the butler with a wrench in the living room`)
+    log(opts, `wiping ${dest}`)
+    await rimraf(dest, {
+      disableGlob: true
+    })
   })
+
+  await http.request({ url, onprogress, logger, dest, emitter })
 }
 
 module.exports = { start }

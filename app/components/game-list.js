@@ -31,10 +31,12 @@ class GameCell extends Component {
     let has_cover = !!cover_url
 
     let style = {}
+
     if (has_cover) {
       style.backgroundImage = `url('${cover_url}')`
     }
 
+    // TODO: use classSet
     let button_classes = 'game_launch button'
     if (cave) {
       button_classes += ` cave_${task}`
@@ -43,6 +45,10 @@ class GameCell extends Component {
     }
     if (has_cover) {
       button_classes += ` has_cover`
+    }
+    let cancellable = /^download.*/.test(task)
+    if (cancellable) {
+      button_classes += ` cancellable`
     }
 
     let button_style = {}
@@ -99,8 +105,10 @@ class GameCell extends Component {
         r.div({
           className: button_classes, style: button_style,
           onClick: () => {
-            if (cave && task === 'error') {
+            if (task === 'error') {
               AppActions.cave_report(mori.get(cave, '_id'))
+            } else if (/^download.*$/.test(task)) {
+              AppActions.cave_implode(mori.get(cave, '_id'))
             } else {
               if (platform_compatible) {
                 AppActions.cave_queue(mori.get(game, 'id'))
@@ -113,10 +121,15 @@ class GameCell extends Component {
           }
         }, [
           cave
-          ? r.span({}, [
-            r(TaskIcon, {task, spin: mori.get(cave, 'reporting')}),
-            this.status(cave)
-          ])
+          ? [
+            r.span({className: 'normal_state'}, [
+              r(TaskIcon, {task, spin: mori.get(cave, 'reporting')}),
+              this.status(cave),
+              r.span({className: 'cancel_cross'}, [
+                r(Icon, {icon: 'cross'})
+              ])
+            ]),
+          ]
           : (
             platform_compatible
             ? r.span({}, [
@@ -124,7 +137,7 @@ class GameCell extends Component {
               ' Install'
             ])
             : r.span({}, [
-              r(Icon, {icon: 'earth'}),
+              r(Icon, {icon: 'earth'})
             ])
           )
         ]),
@@ -189,10 +202,10 @@ class GameCell extends Component {
 
     let res = 'Installing...'
     if (task === 'download') {
-      res = 'Downloading...'
+      res = 'Downloading'
     }
     if (task === 'download-queued') {
-      res = 'Download queued'
+      res = 'Queued'
     }
 
     if (progress > 0) {

@@ -25,6 +25,8 @@ let fs = require('../promised/fs')
 
 let electron = require('electron')
 
+let EventEmitter = require('events').EventEmitter
+
 const CAVE_TABLE = 'caves'
 
 let CaveStore = Object.assign(new Store('cave-store'), {
@@ -158,14 +160,15 @@ async function queue_task (id, task_name, data) {
 
     if (task_name === 'download' && num_downloads() >= max_downloads) {
       log(cave_opts(id), `too many downloads, will download ${id} later`)
-      let emitter = Object.assign({}, require('events').EventEmitter.prototype)
-      queue_task(id, 'download-queued', {emitter})
+      queue_task(id, 'download-queued')
       return
     }
 
     let task = require(`../tasks/${task_name}`)
+    let emitter = Object.assign({}, EventEmitter.prototype)
     let task_opts = Object.assign({}, cave_opts(id), data, {
       id,
+      emitter,
       onprogress: (state) => {
         AppActions.cave_progress({id, progress: state.percent * 0.01, task: task_name})
       }
@@ -282,13 +285,24 @@ Here's the [debug log](${gist.html_url}).`
   }
 }
 
+let cave_blacklist = {}
+
 function update_cave (_id, data) {
   return db.merge_one({_table: CAVE_TABLE, _id}, data)
 }
 
-function implode_cave (data) {
-  db.remove({_table: CAVE_TABLE, _id: data.id})
-  AppActions.cave_thrown_into_bit_bucket(data.id)
+async function implode_cave (payload) {
+  // don't accept any further updates to these caves, they're imploding.
+  // useful in case child takes some time to exit after it receives SIGKILL
+  cave_blacklist[payload.id] = true
+
+  let task = current_tasks[payload.id]
+  if (task) {
+    task.opts.emitter.emit('cancel')
+  }
+
+  db.remove({_table: CAVE_TABLE, _id: payload.id})
+  AppActions.cave_thrown_into_bit_bucket(payload.id)
 }
 
 AppDispatcher.register('cave-store', Store.action_listeners(on => {
@@ -299,7 +313,7 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
       if (record.launchable) {
         queue_task(record._id, 'launch')
       } else {
-        log(store_opts, `asked to launch ${record._id} but isn't launchable, ignoring`)
+        queue_task(record._id, 'download')
       }
     } else {
       queue_cave(payload.game_id)
