@@ -302,7 +302,7 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
         log(store_opts, `asked to launch ${record._id} but isn't launchable, ignoring`)
       }
     } else {
-      queue_cave(action.game_id)
+      queue_cave(payload.game_id)
     }
   })
 
