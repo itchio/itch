@@ -29,9 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('click', (e) => {
   let target = e.target
+
   while (target && target.tagName !== 'A') {
     target = target.parentNode
   }
+  if (!target) return
 
   if (target.tagName === 'A') {
     e.preventDefault()

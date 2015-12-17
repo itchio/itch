@@ -15,6 +15,7 @@ let opts = {
 }
 let log = require('../util/log')('url-store')
 let db = require('../util/db')
+let os = require('../util/os')
 
 let UrlStore = Object.assign(new Store('url-store'), {})
 
@@ -64,7 +65,13 @@ async function handle_url (urlStr) {
 
       let game = await db.find_one({_table: 'games', id: gid})
       if (game) {
-        install_prompt(game)
+        let plat = os.itch_platform()
+
+        if (game[plat]) {
+          install_prompt(game)
+        } else {
+          apology_prompt(game)
+        }
       } else {
         to_install = gid
         AppActions.fetch_games(`games/${gid}`)
@@ -115,12 +122,26 @@ async function install_prompt (game) {
     message: `Do you want to install ${game.title}?`,
     detail: `${game.short_text}${credit}`
   }
+
   let response = electron.dialog.showMessageBox(dialog_opts)
   if (response === 0) {
     AppActions.cave_queue(game.id)
   } else if (response === 1) {
     // welp
   }
+}
+
+async function apology_prompt (game) {
+  let buttons = ['Ok']
+  let dialog_opts = {
+    type: 'error',
+    buttons,
+    title: '${game.title} on ${os.itch_platform()}',
+    message: `We couldn't find an ${game.title} version for ${os.itch_platform()}.`,
+    detail: `Perhaps the ${game.classification} isn't compatible with it yet?`
+  }
+
+  electron.dialog.showMessageBox(dialog_opts)
 }
 
 function logout () {
