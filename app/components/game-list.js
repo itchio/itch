@@ -23,6 +23,7 @@ let platform_data = mori.toClj({
 class GameCell extends Component {
   render () {
     let game = this.props.game
+    let owned = this.props.owned
     let cave = this.props.cave
     let task = cave && mori.get(cave, 'task')
     let title = mori.get(game, 'title')
@@ -60,6 +61,11 @@ class GameCell extends Component {
     }
 
     let platform_compatible = false
+
+    /* before you think you can download all itch.io games:
+       there's obviously server-side checking.
+       you'll get neat error logs for free though! */
+    let may_download = process.env.TRUST_ME_IM_AN_ENGINEER || owned || (mori.get(game, 'min_price') === 0)
 
     let platform_list = mori.reduceKV((l, platform, data) => {
       if (mori.get(this.props.game, platform)) {
@@ -110,7 +116,7 @@ class GameCell extends Component {
             } else if (/^download.*$/.test(task)) {
               AppActions.cave_implode(mori.get(cave, '_id'))
             } else {
-              if (platform_compatible) {
+              if (platform_compatible && may_download) {
                 AppActions.cave_queue(mori.get(game, 'id'))
               } else {
                 let remote = require('electron').remote
@@ -132,10 +138,17 @@ class GameCell extends Component {
           ]
           : (
             platform_compatible
-            ? r.span({}, [
-              r(Icon, {icon: 'install'}),
-              ' Install'
-            ])
+            ?
+              (may_download
+              ? r.span({}, [
+                  r(Icon, {icon: 'install'}),
+                  ' Install'
+                ])
+              : r.span({}, [
+                  r(Icon, {icon: 'cart'}),
+                  ' Buy now'
+                ])
+              )
             : r.span({}, [
               r(Icon, {icon: 'earth'})
             ])
@@ -227,6 +240,8 @@ class GameList extends React.Component {
     let pred = this.props.pred || always_true
     let games = this.props.games
     let caves = this.props.caves
+    let owned_games_by_id = this.props.owned_games_by_id
+
     let index_by = (acc, k, v) => mori.assoc(acc, mori.get(v, 'game_id'), v)
     let caves_by_game_id = mori.reduceKV(index_by, mori.hashMap(), caves)
 
@@ -234,8 +249,9 @@ class GameList extends React.Component {
       r.div({className: 'game_list'}, mori.intoArray(mori.map(game => {
         let game_id = mori.get(game, 'id')
         let cave = mori.get(caves_by_game_id, game_id)
+        let owned = mori.get(owned_games_by_id, game_id)
         if (!pred(cave)) return ''
-        return r(GameCell, {key: game_id, game, cave})
+        return r(GameCell, {key: game_id, game, cave, owned})
       }, games)))
     )
   }

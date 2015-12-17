@@ -213,6 +213,11 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
     AppActions.fetch_collections()
     let panel = mori.getIn(state, ['library', 'panel'])
     panel && AppActions.fetch_games(panel)
+
+    if (panel !== 'owned') {
+      // buying a game can affect something in any panel
+      AppActions.fetch_games('owned')
+    }
   })
 }))
 

@@ -245,10 +245,13 @@ class LibraryContent extends Component {
       pred = (cave) => mori.get(cave, 'task') === 'error'
     }
 
+    let index_by = (acc, k, v) => mori.assoc(acc, mori.get(v, 'id'), true)
+    let owned_games_by_id = mori.reduceKV(index_by, mori.hashMap(), mori.get(games, 'owned'))
+
     let children = []
 
     if (mori.count(shown_games) > 0) {
-      children.push(r(GameList, {games: shown_games, caves, pred}))
+      children.push(r(GameList, {games: shown_games, caves, pred, owned_games_by_id}))
     } else {
       children.push(r(LibraryPlaceholder, {panel}))
     }
