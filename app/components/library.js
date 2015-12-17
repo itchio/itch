@@ -245,13 +245,10 @@ class LibraryContent extends Component {
       pred = (cave) => mori.get(cave, 'task') === 'error'
     }
 
-    let index_by = (acc, k, v) => mori.assoc(acc, mori.get(v, 'id'), true)
-    let owned_games_by_id = mori.reduceKV(index_by, mori.hashMap(),
-      mori.merge(
-        mori.get(games, 'dashboard'),
-        mori.get(games, 'owned')
-      )
-    )
+    let all_games = mori.concat(mori.get(games, 'dashboard'), mori.get(games, 'owned'))
+
+    let index_by = (acc, v) => mori.assoc(acc, mori.get(v, 'id'), true)
+    let owned_games_by_id = mori.reduce(index_by, mori.hashMap(), all_games)
 
     let children = []
 
