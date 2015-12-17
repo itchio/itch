@@ -246,7 +246,12 @@ class LibraryContent extends Component {
     }
 
     let index_by = (acc, k, v) => mori.assoc(acc, mori.get(v, 'id'), true)
-    let owned_games_by_id = mori.reduceKV(index_by, mori.hashMap(), mori.get(games, 'owned'))
+    let owned_games_by_id = mori.reduceKV(index_by, mori.hashMap(),
+      mori.merge(
+        mori.get(games, 'dashboard'),
+        mori.get(games, 'owned')
+      )
+    )
 
     let children = []
 
