@@ -361,10 +361,7 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
     let caves = await db.find({_table: CAVE_TABLE})
     caves.forEach((record, i) => {
       initial_progress(record)
-      // quick hack to avoid running into http 400 (ie. requesting too fast)
-      setTimeout(() => {
-        queue_task(record._id, 'download')
-      }, i * 250)
+      queue_task(record._id, 'download')
     })
   })
 
