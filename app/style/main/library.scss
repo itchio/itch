@@ -5,11 +5,13 @@ $cell_width: 185px;
 $cell_height: $cell_width * $cell_ratio;
 
 $broken_color: #C38E16;
+$library_bg: #333;
+$placeholder_link_color: #93C1F3;
 
 .library_page {
   $sidebar_width: 250px;
 
-  background: #333;
+  background: $library_bg;
   color: white;
 
   position: absolute;
@@ -148,7 +150,7 @@ $broken_color: #C38E16;
         }
 
         &.dashboard {
-          border-color: #2E9A55;
+          border-color: #41BD8F;
         }
 
         &.owned {
@@ -214,6 +216,91 @@ $broken_color: #C38E16;
     left: $sidebar_width;
     right: 0;
     overflow: auto;
+  }
+
+  .placeholder {
+    margin-left: 40px;
+
+    .placeholder_background {
+      position: absolute;
+      right: 40px;
+      top: 40px;
+      font-size: 200px;
+      color: #525151;
+    }
+
+    .placeholder_content {
+      display: block;
+    }
+
+    h2 {
+      font-weight: 100;
+      font-size: 65px;
+    }
+
+    p {
+      font-size: 20px;
+
+      &.hint {
+        margin-top: 3em;
+        color: #94AFA1;
+        opacity: .8;
+      }
+    }
+
+    a:not(.fake_button):not(.button) {
+      color: $placeholder_link_color;
+      text-decoration: none;
+      background: -webkit-linear-gradient($library_bg,$library_bg),-webkit-linear-gradient($library_bg,$library_bg),-webkit-linear-gradient($placeholder_link_color,$placeholder_link_color);
+      background: -moz-linear-gradient($library_bg,$library_bg),-moz-linear-gradient($library_bg,$library_bg),-moz-linear-gradient($placeholder_link_color,$placeholder_link_color);
+      background: -o-linear-gradient($library_bg,$library_bg),-o-linear-gradient($library_bg,$library_bg),-o-linear-gradient($placeholder_link_color,$placeholder_link_color);
+      background: -ms-linear-gradient($library_bg,$library_bg),-ms-linear-gradient($library_bg,$library_bg),-ms-linear-gradient($placeholder_link_color,$placeholder_link_color);
+      background: linear-gradient($library_bg,$library_bg),linear-gradient($library_bg,$library_bg),linear-gradient($placeholder_link_color,$placeholder_link_color);
+      -webkit-background-size: .05em 1px,.05em 1px,1px 1px;
+      -moz-background-size: .05em 1px,.05em 1px,1px 1px;
+      background-size: .05em 1px,.05em 1px,1px 1px;
+      background-repeat: no-repeat,no-repeat,repeat-x;
+      text-shadow: .03em 0 $library_bg,-.03em 0 $library_bg,0 .03em $library_bg,0 -.03em $library_bg,.06em 0 $library_bg,-.06em 0 $library_bg,.09em 0 $library_bg,-.09em 0 $library_bg,.12em 0 $library_bg,-.12em 0 $library_bg,.15em 0 $library_bg,-.15em 0 $library_bg;
+      background-position: 0 87%,100% 87%,0 87%;
+    }
+
+    .fake_button {
+      text-decoration: none;
+      color: white;
+      font-size: 80%;
+      display: inline-block;
+      margin: 4px 5px;
+      border: 1px solid #6D6D6D;
+      padding: 3px 7px;
+      border-radius: 3px;
+
+      .icon {
+        font-size: 80%;
+        margin-right: 3px;
+      }
+
+      &.hollow {
+        border: transparent;
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        .icon {
+          font-size: 150%;
+        }
+      }
+    }
+
+    .button.fat {
+      font-size: 26px;
+      height: auto;
+      padding: 13px 26px;
+      margin-top: 40px;
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 4px solid rgba(255, 255, 255, 0.27);
+      margin-right: 15px;
+    }
   }
 
   .game_list {

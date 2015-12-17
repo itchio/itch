@@ -111,12 +111,14 @@ class LibrarySidebar extends Component {
     }
 
     let collection_items = mori.reduceKV((acc, id, collection) => {
+      let featured = mori.get(collection, '_featured')
       let icon = 'tag'
-      if (mori.get(collection, '_featured')) {
+      if (featured) {
         icon = 'star'
       }
 
       let props = {
+        icon,
         games,
         name: `collections/${id}`,
         className: `collection`,
@@ -125,9 +127,35 @@ class LibrarySidebar extends Component {
         panel,
         key: id
       }
-      acc.push(r(LibraryPanelLink, props))
+      acc.push(props)
       return acc
     }, [], collections)
+
+    let grouped_colls = mori.groupBy((x) => x.icon,
+      mori.sortBy((x) => {
+        mori.count(mori.get(games, x.name))
+      }, collection_items)
+    )
+
+    let own_collections = mori.intoArray(mori.get(grouped_colls, 'tag'))
+    let ftd_collections = mori.intoArray(mori.get(grouped_colls, 'star'))
+
+    if (own_collections.length === 0) {
+      let icon = 'tag'
+      own_collections.push({
+        icon,
+        games,
+        name: `collections/empty`,
+        className: `collection`,
+        label: `Getting started`,
+        before: r(Icon, {icon}),
+        panel,
+        key: 'empty'
+      })
+    }
+
+    own_collections = own_collections.map((props) => r(LibraryPanelLink, props))
+    ftd_collections = ftd_collections.map((props) => r(LibraryPanelLink, props))
 
     let installed_count = 0
     let broken_count = 0
@@ -180,7 +208,7 @@ class LibrarySidebar extends Component {
               r.div({className: 'separator'})
             ]
           : []
-        ).concat(mori.intoArray(collection_items)).concat([
+        ).concat(own_collections).concat(ftd_collections).concat([
           mori.count(cave_items) > 0
           ? r.div({}, [
             r.div({className: 'separator'})
@@ -217,16 +245,92 @@ class LibraryContent extends Component {
       pred = (cave) => mori.get(cave, 'task') === 'error'
     }
 
-    return (
-      r.div({className: 'main_content'}, [
-        r(GameList, {games: shown_games, caves, pred})
-      ])
-    )
+    let children = []
+
+    if (mori.count(shown_games) > 0) {
+      children.push(r(GameList, {games: shown_games, caves, pred}))
+    } else {
+      children.push(r(LibraryPlaceholder, {panel}))
+    }
+
+    return r.div({className: 'main_content'}, children)
   }
 }
 
 LibraryContent.propTypes = {
   state: PropTypes.any
+}
+
+class LibraryPlaceholder extends Component {
+  render () {
+    let panel = this.props.panel
+
+    if (panel === `owned`) {
+      return (
+        r.div({className: `placeholder`}, [
+          r.div({className: 'placeholder_content'}, [
+            r.h2({}, 'You made it!'),
+            r.p({}, `Things are looking a bit empty right now, but no worries!`),
+            r.p({}, `We've put together a few collections so you can start playing right away.`),
+            r.p({className: 'hint'}, `Click the labels on your left to navigate around the app`),
+          ]),
+          r.span({className: 'icon icon-heart-filled placeholder_background'}),
+        ])
+      )
+    } else if (panel === `caved`) {
+      return (
+        r.div({className: `placeholder`}, [
+          r.div({className: 'placeholder_content'}, [
+            r.h2({}, 'Your library'),
+            r.p({}, `Watch games quietly download, install, and run.`),
+            r.p({}, [
+              `If something breaks, click `,
+              r.a({className: 'fake_button hollow', href: 'https://github.com/itchio/itch/issues'}, [
+                r(misc.Icon, {icon: 'heart-broken'})
+              ]),
+              ` to report it, or `,
+              r.a({className: 'fake_button hollow', href: 'https://github.com/itchio/itch/blob/master/docs/diego.md'}, [
+                r(misc.Icon, {icon: 'bug'})
+              ]),
+              ` to investigate.`
+            ]),
+            r.p({className: 'hint'}, `Keep in mind this is a pre-alpha!`)
+          ]),
+          r.span({className: 'icon icon-checkmark placeholder_background'})
+        ])
+      )
+    } else if (panel === `dashboard`) {
+      return (
+        r.div({className: `placeholder`}, [
+          r.div({className: 'placeholder_content'}, [
+            r.h2({}, 'Welcome home'),
+            r.p({}, `We're trying to make it the comfiest.`),
+            r.p({}, `Instant set-up, and as few barriers as we can manage.`)
+          ]),
+          r.span({className: 'icon icon-rocket placeholder_background'}),
+          r.a({className: 'fat button', href: 'https://itch.io/developers'}, `Get started`)
+        ])
+      )
+    } else if (/^collections/.test(panel)) {
+      return (
+        r.div({className: `placeholder`}, [
+          r.div({className: 'placeholder_content'}, [
+            r.h2({}, 'Mix & match'),
+            r.p({}, [
+              `Browse the site a little, then use`, r.a({href: 'https://itch.io/my-collections', className: 'fake_button'},
+                [r(misc.Icon, {icon: 'plus'}), ` Add to collection`]
+              ), ` to start organizing.`]
+            ),
+            r.p({}, `Your games will be here when you come back.`)
+          ]),
+          r.span({className: 'icon icon-tag placeholder_background'}),
+          r.a({className: 'fat button', href: 'https://itch.io'}, `Let's go shopping`)
+        ])
+      )
+    } else {
+      return r.div({}, '')
+    }
+  }
 }
 
 /**

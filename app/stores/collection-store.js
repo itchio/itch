@@ -55,6 +55,12 @@ async function fetch_collections () {
     collections_seen[coll.id] = true
     AppActions.fetch_games(`collections/${coll.id}`)
   }
+
+  for (let coll of old_collections) {
+    if (!collections_by_id[coll.id]) {
+      db.remove({_table: 'collections', id: coll.id})
+    }
+  }
 }
 
 function ready_to_roll () {

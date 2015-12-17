@@ -28,9 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 document.addEventListener('click', (e) => {
-  if (e.target.tagName === 'A') {
+  let target = e.target
+  while (target && target.tagName !== 'A') {
+    target = target.parentNode
+  }
+
+  if (target.tagName === 'A') {
     e.preventDefault()
-    window.require('electron').shell.openExternal(e.target.href)
+    window.require('electron').shell.openExternal(target.href)
     return false
   }
 })

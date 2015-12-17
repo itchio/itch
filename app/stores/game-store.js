@@ -63,6 +63,8 @@ async function fetch_games (payload) {
     let id = path_tokens[1]
 
     if (type === 'collections') {
+      if (id === 'empty') return
+
       try {
         fetch_collection_games(parseInt(id, 10), new Date())
       } catch (e) {
