@@ -217,7 +217,7 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
 }))
 
 Store.subscribe('game-store', (games) => {
-  // state = mori.assocIn(state, ['library', 'games'], mori.toClj(games))
+  state = mori.assocIn(state, ['library', 'games'], mori.toClj(games))
   AppStore.emit_change()
 })
 
