@@ -7,9 +7,13 @@ let AppActions = require('../actions/app-actions')
 let AppConstants = require('../constants/app-constants')
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 
+let os = require('../util/os')
+
 let clone = require('clone')
 
 let crash_reporter = require('../util/crash-reporter')
+
+let osx = (os.platform() === 'darwin')
 
 let menus = {
   file: {
@@ -17,7 +21,7 @@ let menus = {
     submenu: [
       {
         label: 'Close Window',
-        accelerator: 'CmdOrCtrl+W',
+        accelerator: (osx ? 'Cmd+W' : 'Alt+F4'),
         click: AppActions.hide_window
       },
       {
