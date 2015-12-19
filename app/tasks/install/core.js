@@ -14,6 +14,8 @@ let self = {
     'gz': archive,
     'bz2': archive,
     '7z': archive,
+    'tar': archive,
+    'xz': archive,
     // Microsoft packages
     'msi': msi,
     // Inno setup, NSIS
