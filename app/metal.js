@@ -43,7 +43,9 @@ function boot () {
     AppActions.focus_window()
   })
   if (should_quit) {
-    app.quit()
+    // app.quit() is the source of all our problems,
+    // cf. https://github.com/itchio/itch/issues/202
+    process.exit(0)
   }
 
   app.on('ready', () => {
