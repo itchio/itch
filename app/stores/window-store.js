@@ -38,7 +38,7 @@ function show () {
   })
 
   window.on('close', (e) => {
-    console.log(`window event: close`)
+    console.log(`window event: close. quitting? ${quitting}`)
     if (quitting) return
     e.preventDefault()
     window.hide()
@@ -91,10 +91,23 @@ AppDispatcher.register('window-store', Store.action_listeners(on => {
       }
     `)
   })
+  on(AppConstants.APPLY_SELF_UPDATE, () => {
+    quitting = true
+    AppActions.apply_self_update_for_realsies()
+  })
 }))
 
 app.on('before-quit', e => {
   quitting = true
+})
+
+app.on('window-all-closed', e => {
+  if (quitting) {
+    console.log(`app event: window-all-closed; quitting, all good`)
+    return
+  }
+  console.log(`app event: window-all-closed; preventing default`)
+  e.preventDefault()
 })
 
 module.exports = WindowStore

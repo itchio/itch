@@ -22,6 +22,7 @@ module.exports = keyMirror({
   SELF_UPDATE_ERROR: null,
   SELF_UPDATE_DOWNLOADED: null,
   APPLY_SELF_UPDATE: null,
+  APPLY_SELF_UPDATE_FOR_REALSIES: null,
   DISMISS_UPDATE_ERROR: null,
 
   /** User requested game to be installed */

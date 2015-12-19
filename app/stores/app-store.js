@@ -81,8 +81,14 @@ function update_error (payload) {
   }
 
   state = mori.assocIn(state, ['update', 'checking'], false)
+  state = mori.assocIn(state, ['update', 'available'], false)
+  state = mori.assocIn(state, ['update', 'downloaded'], false)
   state = mori.assocIn(state, ['update', 'error'], payload.message)
   AppStore.emit_change()
+
+  setTimeout(function () {
+    dismiss_update_error()
+  }, 5000)
 }
 
 function dismiss_update_error () {

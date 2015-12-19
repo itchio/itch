@@ -74,6 +74,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.APPLY_SELF_UPDATE })
   },
 
+  apply_self_update_for_realsies: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.APPLY_SELF_UPDATE_FOR_REALSIES })
+  },
+
   dismiss_update_error: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.DISMISS_UPDATE_ERROR })
   },

@@ -54,7 +54,7 @@ function check_for_self_update () {
 AppDispatcher.register('self-update-store', Store.action_listeners(on => {
   on(AppConstants.CHECK_FOR_SELF_UPDATE, check_for_self_update)
   on(AppConstants.WINDOW_READY, window_ready)
-  on(AppConstants.APPLY_SELF_UPDATE, () => auto_updater.quitAndInstall())
+  on(AppConstants.APPLY_SELF_UPDATE_FOR_REALSIES, () => auto_updater.quitAndInstall())
 }))
 
 module.exports = SelfUpdateStore
