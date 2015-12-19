@@ -66,8 +66,7 @@ async function handle_url (urlStr) {
       let game = await db.find_one({_table: 'games', id: gid})
       if (game) {
         let plat = os.itch_platform()
-
-        if (game[plat]) {
+        if (game[`p_${plat}`]) {
           install_prompt(game)
         } else {
           apology_prompt(game)
@@ -136,7 +135,7 @@ async function apology_prompt (game) {
   let dialog_opts = {
     type: 'error',
     buttons,
-    title: '${game.title} on ${os.itch_platform()}',
+    title: `${game.title} on ${os.itch_platform()}`,
     message: `We couldn't find an ${game.title} version for ${os.itch_platform()}.`,
     detail: `Perhaps the ${game.classification} isn't compatible with it yet?`
   }
