@@ -20,6 +20,11 @@ let menus = {
     label: 'File',
     submenu: [
       {
+        label: 'Preferences',
+        accelerator: (osx ? 'Cmd+' : 'Ctrl+P'),
+        click: AppActions.open_preferences
+      },
+      {
         label: 'Close Window',
         accelerator: (osx ? 'Cmd+W' : 'Alt+F4'),
         click: AppActions.hide_window
