@@ -261,12 +261,10 @@ async function report_cave (payload) {
     let gist_data = {
       description: `itch log for ${game.title} — ${game.url}`,
       public: false,
-      files: {
-        '${game.slug}-log.txt': {
-          content: game_log
-        }
-      }
+      files: {}
     }
+    let slug = /https?:\/\/.+\.itch\.io\/(.+)/.exec(game.url)[1]
+    gist_data.files[`${slug}-log.txt`] = {content: game_log}
     let gist = await github.create_gist(gist_data)
 
     let body =
@@ -371,4 +369,3 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
 }))
 
 module.exports = CaveStore
-
