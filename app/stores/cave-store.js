@@ -273,7 +273,7 @@ async function report_cave (payload) {
 Here's the [debug log](${gist.html_url}).`
 
     crash_reporter.report_issue({
-      type: 'Broken game',
+      type: `${game.classification} ${game.title} broken`,
       body
     })
   } catch (e) {
