@@ -268,9 +268,11 @@ async function report_cave (payload) {
     let gist = await github.create_gist(gist_data)
 
     let body =
-`Game [${game.title}](${game.url}) is broken for me.
+`:rotating_light: Game [${game.title}](${game.url}) is broken for me.
 
-Here's the [debug log](${gist.html_url}).`
+:book: Here's the complete [debug log](${gist.html_url}).
+
+:running: Any additional details can go here!`
 
     crash_reporter.report_issue({
       type: `${game.classification} ${game.title} broken`,
