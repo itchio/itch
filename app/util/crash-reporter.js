@@ -18,7 +18,7 @@ let self = {
   },
 
   write_crash_log: (e) => {
-    let crash_file = path.join(app.getPath('userData'), 'crash_logs', `${+new Date()}.log`)
+    let crash_file = path.join(app.getPath('userData'), 'crash_logs', `${+new Date()}.txt`)
 
     let log = ''
     log += e.stack
