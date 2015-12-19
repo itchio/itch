@@ -203,6 +203,10 @@ function cave_thrown_into_bit_bucket (payload) {
   }
 }
 
+function open_preferences (payload) {
+  switch_page('preferences')
+}
+
 AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.SETUP_STATUS, setup_status)
   on(AppConstants.SETUP_WAIT, setup_wait)
@@ -239,6 +243,7 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   })
 
   on(AppConstants.GAME_STORE_DIFF, game_store_diff)
+  on(AppConstants.OPEN_PREFERENCES, open_preferences)
 }))
 
 function game_store_diff (payload) {
