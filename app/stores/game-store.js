@@ -180,6 +180,7 @@ async function game_browse (payload) {
 }
 
 async function game_purchase (payload) {
+  let me = CredentialsStore.get_me()
   let game = await db.find_one({_table: 'games', id: payload.id})
   let path = require('path')
   let inject_path = path.resolve(__dirname, '..', 'inject', 'purchase.js')
@@ -190,7 +191,8 @@ async function game_purchase (payload) {
     center: true,
     webPreferences: {
       nodeIntegration: false,
-      preload: inject_path
+      preload: inject_path,
+      partition: `persist:itchio-${me.id}`
     }
   })
 
@@ -216,13 +218,19 @@ async function game_purchase (payload) {
   hostparts.shift()
   let hostname = hostparts.join('.')
 
-  let login_purchase_url = require('url').format({
+  let url_opts = {
     hostname,
-    port: parsed.port,
-    protocol: parsed.protocol,
     pathname: '/login',
     query: {return_to: purchase_url}
-  })
+  }
+  if (hostname === 'itch.io') {
+    url_opts.protocol = 'https'
+  } else {
+    url_opts.port = parsed.port
+    url_opts.protocol = parsed.protocol
+  }
+
+  let login_purchase_url = require('url').format(url_opts)
 
   win.webContents.on('did-get-redirect-request', (e, oldURL, newURL) => {
     if (oldURL.indexOf(`/login?`) !== -1) {
