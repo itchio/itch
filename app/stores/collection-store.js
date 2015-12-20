@@ -28,6 +28,12 @@ let featured_ids = [
   32705  // Bite-sized gems
 ]
 
+let env = require('../env')
+
+if (env.name === 'development') {
+  featured_ids.length = 0
+}
+
 async function fetch_collections () {
   let user = CredentialsStore.get_current_user()
   if (!user) return

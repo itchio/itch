@@ -23,7 +23,7 @@ module.exports = keyMirror({
   SELF_UPDATE_DOWNLOADED: null,
   APPLY_SELF_UPDATE: null,
   APPLY_SELF_UPDATE_FOR_REALSIES: null,
-  DISMISS_UPDATE_ERROR: null,
+  DISMISS_STATUS: null,
 
   /** User requested game to be installed */
   CAVE_QUEUE: null,
@@ -48,6 +48,7 @@ module.exports = keyMirror({
   GAME_BROWSE: null,
   /** Buy / support a game! */
   GAME_PURCHASE: null,
+  GAME_PURCHASED: null,
 
   /** Set app-wide progress bar (title bar on Windows). Negative value clears. */
   SET_PROGRESS: null,

@@ -78,8 +78,8 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.APPLY_SELF_UPDATE_FOR_REALSIES })
   },
 
-  dismiss_update_error: () => {
-    AppDispatcher.dispatch({ action_type: AppConstants.DISMISS_UPDATE_ERROR })
+  dismiss_status: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.DISMISS_STATUS })
   },
 
   cave_queue: (game_id) => {
@@ -146,6 +146,10 @@ let self = {
 
   game_purchase: (id) => {
     AppDispatcher.dispatch({ action_type: AppConstants.GAME_PURCHASE, id })
+  },
+
+  game_purchased: (id, message) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.GAME_PURCHASED, id, message })
   },
 
   set_progress: (alpha) => {

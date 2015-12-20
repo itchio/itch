@@ -181,16 +181,69 @@ async function game_browse (payload) {
 
 async function game_purchase (payload) {
   let game = await db.find_one({_table: 'games', id: payload.id})
+  let path = require('path')
+  let inject_path = path.resolve(__dirname, '..', 'inject', 'purchase.js')
+  console.log(`Inject path = ${inject_path}`)
   let win = new electron.BrowserWindow({
-    width: 720,
-    height: 480,
+    width: 960,
+    height: 520,
     center: true,
-    skipTaskBar: true
+    webPreferences: {
+      nodeIntegration: false,
+      preload: inject_path
+    }
   })
-  win.loadUrl(game.url + '/purchase')
-  win.on('close', (e) => {
-    AppActions.fetch_games('owned')
+
+  let events = 'page-title-updated close closed unresponsive responsive blur focus maximize unmaximize minimize restore resize move moved enter-full-screen enter-html-full-screen leave-html-full-screen app-command'
+  events.split(' ').forEach((ev) => {
+    win.on(ev, (e, deets) => {
+      console.log(`purchase window event: ${ev}, ${JSON.stringify(deets, null, 2)}`)
+    })
   })
+
+  let cevents = 'did-finish-load did-fail-load did-frame-finish-load did-start-loading did-stop-loading did-get-response-details did-get-redirect-request dom-ready page-favicon-updated new-window will-navigate crashed plugin-crashed destroyed'
+  cevents.split(' ').forEach((ev) => {
+    win.webContents.on(ev, (e, deets) => {
+      console.log(`purchase webcontents event: ${ev}, ${JSON.stringify(deets, null, 2)}`)
+    })
+  })
+
+  let purchase_url = game.url + '/purchase'
+  let parsed = require('url').parse(purchase_url)
+
+  // user.example.org => example.org
+  let hostparts = parsed.hostname.split('.')
+  hostparts.shift()
+  let hostname = hostparts.join('.')
+
+  let login_purchase_url = require('url').format({
+    hostname,
+    port: parsed.port,
+    protocol: parsed.protocol,
+    pathname: '/login',
+    query: {return_to: purchase_url}
+  })
+
+  win.webContents.on('did-get-redirect-request', (e, oldURL, newURL) => {
+    if (oldURL.indexOf(`/login?`) !== -1) {
+      // so, we're logged in now
+      e.preventDefault()
+      console.log(`redirect, newURL = ${newURL}`)
+      // work around https://github.com/leafo/itch.io/issues/286
+      win.loadURL(purchase_url)
+    }
+
+    let parsed = require('url').parse(newURL)
+    if (/^.*\/download\/[a-zA-Z0-9]*$/.test(parsed.pathname)) {
+      // purchase went through!
+      AppActions.fetch_games('owned')
+      AppActions.game_purchased(payload.id, `You just purchased ${game.title}! You should now be able to install it in one click.`)
+      win.close()
+    }
+  })
+
+  win.loadURL(login_purchase_url)
+  win.webContents.openDevTools({detach: true})
   win.show()
 }
 

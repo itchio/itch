@@ -164,7 +164,7 @@ class User {
 let last_request = 0
 
 function cooldown () {
-  let now = (+new Date)
+  let now = +new Date()
   let next_acceptable = last_request + 250
   let quiet = next_acceptable - now
 

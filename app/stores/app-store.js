@@ -14,6 +14,7 @@ let env = require('../env')
 
 let state = mori.hashMap(
   'page', 'login',
+  'status_message', null,
 
   'update', mori.hashMap(
     'available', false,
@@ -74,6 +75,15 @@ function update_downloaded (payload) {
   AppStore.emit_change()
 }
 
+function game_purchased (payload) {
+  state = mori.assocIn(state, ['status_message'], payload.message)
+  AppStore.emit_change()
+
+  setTimeout(function () {
+    dismiss_status()
+  }, 5000)
+}
+
 function update_error (payload) {
   if (env.name === 'development') {
     console.log(`Ignoring update error ${payload.error} from dev environment`)
@@ -87,12 +97,13 @@ function update_error (payload) {
   AppStore.emit_change()
 
   setTimeout(function () {
-    dismiss_update_error()
+    dismiss_status()
   }, 5000)
 }
 
-function dismiss_update_error () {
+function dismiss_status () {
   state = mori.updateIn(state, ['update'], x => mori.dissoc(x, 'error'))
+  state = mori.assocIn(state, ['status_message'], null)
   AppStore.emit_change()
 }
 
@@ -212,7 +223,8 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.SELF_UPDATE_NOT_AVAILABLE, update_not_available)
   on(AppConstants.SELF_UPDATE_DOWNLOADED, update_downloaded)
   on(AppConstants.SELF_UPDATE_ERROR, update_error)
-  on(AppConstants.DISMISS_UPDATE_ERROR, dismiss_update_error)
+  on(AppConstants.GAME_PURCHASED, game_purchased)
+  on(AppConstants.DISMISS_STATUS, dismiss_status)
   on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, cave_thrown_into_bit_bucket)
 
   on(AppConstants.GAIN_FOCUS, (payload) => {
