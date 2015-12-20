@@ -187,6 +187,12 @@ class GameCell extends Component {
           ? []
           : [
             r.span({
+              className: 'game_purchase',
+              onClick: () => AppActions.game_purchase(mori.get(game, 'id'))
+            }, [
+              r(Icon, {icon: 'cart'})
+            ]),
+            r.span({
               className: 'game_explore',
               onClick: () => AppActions.cave_explore(mori.get(cave, '_id'))
             }, [
