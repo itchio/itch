@@ -442,6 +442,19 @@ $placeholder_link_color: #93C1F3;
         text-align: center;
       }
 
+      &.buy_now {
+        background-color: #506F50;
+        border: 1px solid #598E4A;
+      }
+
+      &.incompatible {
+        color: #898989;
+        background: none;
+        border-color: transparent;
+        box-shadow: none;
+        padding: 0;
+      }
+
       &.cave_idle {
         @include button($button_color);
       }

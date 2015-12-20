@@ -79,6 +79,14 @@ class GameCell extends Component {
       return l
     }, [], platform_data)
 
+    if (platform_compatible && !may_download) {
+      button_classes += ` buy_now`
+    }
+
+    if (!platform_compatible) {
+      button_classes += ` incompatible`
+    }
+
     return (
       r.div({className: 'game_cell'}, [
         r.div({className: 'bordered'}, [
@@ -152,7 +160,7 @@ class GameCell extends Component {
               ])
             )
             : r.span({}, [
-              r(Icon, {icon: 'earth'})
+              `Not available on ${os.itch_platform()}`
             ])
           )
         ]),
