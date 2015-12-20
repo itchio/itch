@@ -36,8 +36,8 @@ class ApiError extends ExtendableError {
  */
 class Client {
   constructor () {
-    this.root_url = 'https://itch.io/api/1'
-    // this.root_url = 'http://localhost.com:8080/api/1'
+    let base = process.env.WHEN_IN_ROME ? 'http://localhost.com:8080' : 'https://itch.io'
+    this.root_url = `${base}/api/1`
     this.lastRequest = 0
   }
 

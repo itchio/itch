@@ -56,7 +56,7 @@ function show () {
   window.loadURL(`file://${__dirname}/../index.html`)
 
   if (process.env.DEVTOOLS === '1') {
-    window.openDevTools()
+    window.openDevTools({detached: true})
   }
 }
 

@@ -186,7 +186,7 @@ async function game_purchase (payload) {
   console.log(`Inject path = ${inject_path}`)
   let win = new electron.BrowserWindow({
     width: 960,
-    height: 520,
+    height: 620,
     center: true,
     webPreferences: {
       nodeIntegration: false,
@@ -243,7 +243,6 @@ async function game_purchase (payload) {
   })
 
   win.loadURL(login_purchase_url)
-  win.webContents.openDevTools({detach: true})
   win.show()
 }
 

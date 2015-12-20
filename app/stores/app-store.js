@@ -14,11 +14,11 @@ let env = require('../env')
 
 let state = mori.hashMap(
   'page', 'login',
-  'status_message', null,
 
   'update', mori.hashMap(
     'available', false,
-    'downloaded', false
+    'downloaded', false,
+    'status', null
   ),
 
   'library', mori.hashMap(
@@ -76,7 +76,7 @@ function update_downloaded (payload) {
 }
 
 function game_purchased (payload) {
-  state = mori.assocIn(state, ['status_message'], payload.message)
+  state = mori.assocIn(state, ['update', 'status'], payload.message)
   AppStore.emit_change()
 
   setTimeout(function () {
@@ -103,7 +103,7 @@ function update_error (payload) {
 
 function dismiss_status () {
   state = mori.updateIn(state, ['update'], x => mori.dissoc(x, 'error'))
-  state = mori.assocIn(state, ['status_message'], null)
+  state = mori.updateIn(state, ['update'], x => mori.dissoc(x, 'status'))
   AppStore.emit_change()
 }
 

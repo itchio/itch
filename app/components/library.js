@@ -41,6 +41,7 @@ LibraryPage.propTypes = {
 class StatusBar extends Component {
   render () {
     let update = this.props.update
+    let status = mori.get(update, 'status')
     let error = mori.get(update, 'error')
     let available = mori.get(update, 'available')
     let downloaded = mori.get(update, 'downloaded')
@@ -52,8 +53,15 @@ class StatusBar extends Component {
 
     let onClick = () => null
 
-    if (error) {
-      onClick = AppActions.dismiss_update_error
+    if (status) {
+      onClick = AppActions.dismiss_status
+      children = [
+        r(misc.Icon, {icon: 'heart-filled'}),
+        r.span(status),
+        r(misc.Icon, {icon: 'cross'})
+      ]
+    } else if (error) {
+      onClick = AppActions.dismiss_status
       children = [
         r(misc.Icon, {icon: 'heart-broken'}),
         r.span('Error while checking for update: ' + error),
