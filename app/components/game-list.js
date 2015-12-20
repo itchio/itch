@@ -190,7 +190,7 @@ class GameCell extends Component {
               className: 'game_purchase',
               onClick: () => AppActions.game_purchase(mori.get(game, 'id'))
             }, [
-              r(Icon, {icon: 'cart'})
+              r(Icon, {icon: owned ? 'heart-filled' : 'cart'})
             ]),
             r.span({
               className: 'game_explore',
@@ -210,7 +210,7 @@ class GameCell extends Component {
               r(Icon, {icon: 'delete'})
             ])
           ]))
-        : '')
+          : '')
       ])
     )
   }

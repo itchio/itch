@@ -182,6 +182,23 @@ async function game_browse (payload) {
 async function game_purchase (payload) {
   let me = CredentialsStore.get_me()
   let game = await db.find_one({_table: 'games', id: payload.id})
+  let keys = await db.find({_table: 'download_keys', game_id: payload.id})
+
+  if (keys.length > 0) {
+    let buttons = ['Purchase again', 'Cancel']
+    let dialog_opts = {
+      type: 'info',
+      buttons,
+      title: 'You already own this!',
+      message: `You've already bought a copy of this.`,
+      detail: `...but you could still buy a copy for a friend!\n\nDo you want to make another purchase?`
+    }
+    let response = require('electron').dialog.showMessageBox(dialog_opts)
+    if (response !== 0) {
+      return
+    }
+  }
+
   let path = require('path')
   let inject_path = path.resolve(__dirname, '..', 'inject', 'purchase.js')
   console.log(`Inject path = ${inject_path}`)
