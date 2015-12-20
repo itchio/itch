@@ -212,9 +212,9 @@ class LibrarySidebar extends Component {
           r.div({className: 'separator'})
         ].concat(broken_count > 0
           ? [
-              r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-broken'}), name: 'broken', label: 'Broken', panel, games, count: broken_count, className: 'broken'}),
-              r.div({className: 'separator'})
-            ]
+            r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-broken'}), name: 'broken', label: 'Broken', panel, games, count: broken_count, className: 'broken'}),
+            r.div({className: 'separator'})
+          ]
           : []
         ).concat(own_collections).concat(ftd_collections).concat([
           mori.count(cave_items) > 0
@@ -285,9 +285,9 @@ class LibraryPlaceholder extends Component {
             r.h2({}, 'You made it!'),
             r.p({}, `Things are looking a bit empty right now, but no worries!`),
             r.p({}, `We've put together a few collections so you can start playing right away.`),
-            r.p({className: 'hint'}, `Click the labels on your left to navigate around the app`),
+            r.p({className: 'hint'}, `Click the labels on your left to navigate around the app`)
           ]),
-          r.span({className: 'icon icon-heart-filled placeholder_background'}),
+          r.span({className: 'icon icon-heart-filled placeholder_background'})
         ])
       )
     } else if (panel === `caved`) {
