@@ -263,7 +263,7 @@ async function report_cave (payload) {
       public: false,
       files: {}
     }
-    let slug = /https?:\/\/.+\.itch\.io\/(.+)/.exec(game.url)[1]
+    let slug = /\/\/.*\/(.*)$/.exec(game.url)[1]
     gist_data.files[`${slug}-log.txt`] = {content: game_log}
     let gist = await github.create_gist(gist_data)
 
