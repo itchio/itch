@@ -247,6 +247,9 @@ async function game_purchase (payload) {
       AppActions.fetch_games('owned')
       AppActions.game_purchased(payload.id, `You just purchased ${game.title}! You should now be able to install it in one click.`)
       win.close()
+    } else if (/\/pay\/cancel/.test(parsed.pathname)) {
+      // payment was cancelled
+      win.close()
     }
   })
 

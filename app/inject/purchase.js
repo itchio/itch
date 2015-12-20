@@ -15,6 +15,14 @@ Object.defineProperty(I, 'BaseBuyForm', {
     BBF = val
     BBF.prototype.submit_handler = function () {
       if (!this.is_valid()) return false
+
+      let $ = window.$
+      let btns = $('.checkout_btn, .confirm_vat_btn')
+      btns.prop('disabled', true)
+      btns.css('opacity', 0.7)
+      btns.css('-webkit-filter', 'grayscale(70%)')
+      btns.html($('<span><span class="icon icon-stopwatch itch_injected-spinner"></span> Loading...</span>'))
+
       // don't close the window here
     }
   }
@@ -28,4 +36,36 @@ document.addEventListener('DOMContentLoaded', () => {
   let $ = window.$
   let form = $('form.buy_form_widget')
   form.attr('target', '_self')
-})
+
+  let css = $(`<style>
+    .itch_injected-spinner {
+      animation: sk-rotateplane 2.4s .5s infinite ease-out;
+    }
+
+    @-webkit-keyframes sk-rotateplane {
+      0% { transform: perspective(120px); }
+
+      50% { transform: perspective(120px) rotateY(180deg); }
+
+      100% { transform: perspective(120px) rotateY(180deg)  rotateX(180deg); }
+    }
+
+    @keyframes sk-rotateplane {
+      0% { transform: perspective(120px) rotateY(0deg); }
+
+      25% { transform: perspective(120px) rotateY(-180deg); }
+
+      50% { transform: perspective(120px) rotateY(-180deg); }
+
+      75% { transform: perspective(120px) rotateY(-360deg); }
+
+      100% { transform: perspective(120px) rotateY(-360deg); }
+    }
+  </style>`)[0]
+
+  css.onload = function () {
+    console.log('CSS IN IFRAME LOADED')
+  }
+
+  document.body.appendChild(css)
+} )
