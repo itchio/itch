@@ -82,7 +82,7 @@ class LoginForm extends Component {
         r.div({className: 'buttons'}, [
           (loading
           ? r.span({className: 'login_status'}, [r.span({className: `icon icon-${icon} small_throbber_loader`}), message])
-          : r.button({className: 'button'}, 'Up, up, and away!')),
+          : r.button({className: 'button'}, 'Log in')),
           r.div({className: 'login_links'}, [
             r.a({href: 'https://itch.io/register', target: '_blank'}, 'register'),
             r.span(' · '),
