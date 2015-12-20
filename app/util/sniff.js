@@ -62,7 +62,15 @@ function sniff (buf) {
 sniff.path = async function (file) {
   try {
     let buf = await read_chunk(file, 0, 262)
-    return sniff(buf)
+    let sniffed = sniff(buf)
+    if (sniffed)
+      return sniffed
+
+    let fallback_match = /\.([0-9a-z]+)$/i.exec(file)
+    if (fallback_match)
+      return {ext: fallback_match[1].toLowerCase(), mime: null}
+
+    return null
   } catch (e) {
     if (e.code === 'ENOENT') {
       // probably a broken symlink
