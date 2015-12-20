@@ -253,6 +253,26 @@ async function game_purchase (payload) {
     }
   })
 
+  win.webContents.on('did-get-response-details', (e, status, newURL, originalURL, httpResponseCode) => {
+    if (httpResponseCode === 404) {
+      console.log(`response code is not found! closing`)
+      win.close()
+
+      let buttons = ['Ok', 'Open game page']
+      let dialog_opts = {
+        type: 'info',
+        buttons,
+        title: 'Payments disabled',
+        message: `Unfortunately, the developer of ${game.title} does not accept payments for this title.`,
+        detail: `Maybe you can find another way to support them?`
+      }
+      let response = require('electron').dialog.showMessageBox(dialog_opts)
+      if (response === 1) {
+        require('electron').shell.openExternal(game.url)
+      }
+    }
+  })
+
   win.loadURL(login_purchase_url)
   win.show()
 }
