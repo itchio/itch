@@ -37,28 +37,17 @@ document.addEventListener('DOMContentLoaded', () => {
   let form = $('form.buy_form_widget')
   form.attr('target', '_self')
 
+  // TODO: use `file:///` protocol instead, if that's no issue.
   let css = $(`<style>
     .itch_injected-spinner {
       animation: sk-rotateplane 2.4s .5s infinite ease-out;
     }
 
-    @-webkit-keyframes sk-rotateplane {
-      0% { transform: perspective(120px); }
-
-      50% { transform: perspective(120px) rotateY(180deg); }
-
-      100% { transform: perspective(120px) rotateY(180deg)  rotateX(180deg); }
-    }
-
     @keyframes sk-rotateplane {
       0% { transform: perspective(120px) rotateY(0deg); }
-
       25% { transform: perspective(120px) rotateY(-180deg); }
-
       50% { transform: perspective(120px) rotateY(-180deg); }
-
       75% { transform: perspective(120px) rotateY(-360deg); }
-
       100% { transform: perspective(120px) rotateY(-360deg); }
     }
   </style>`)[0]
