@@ -44,6 +44,11 @@ module.exports = keyMirror({
   /** Let the others figure it out */
   CAVE_REPORT: null,
 
+  /** Open a game's page */
+  GAME_BROWSE: null,
+  /** Buy / support a game! */
+  GAME_PURCHASE: null,
+
   /** Set app-wide progress bar (title bar on Windows). Negative value clears. */
   SET_PROGRESS: null,
   /** OSX-only, bounce dock */
@@ -80,5 +85,5 @@ module.exports = keyMirror({
   QUIT: null,
 
   /** Hi again! */
-  GAIN_FOCUS: null,
+  GAIN_FOCUS: null
 })

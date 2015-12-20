@@ -1,6 +1,5 @@
 'use strict'
 
-let deep_assign = require('deep-assign')
 let Promise = require('bluebird')
 let pluck = require('underscore').pluck
 
@@ -16,6 +15,8 @@ let log = require('../util/log')('game-store')
 let opts = {logger: new Logger()}
 
 let db = require('../util/db')
+
+let electron = require('electron')
 
 let state = {}
 
@@ -37,7 +38,6 @@ async function fetch_games (payload) {
     log(opts, `user not there yet, ignoring`)
     return
   }
-
 
   if (path === 'owned') {
     cache_owned_games()
@@ -122,7 +122,6 @@ async function fetch_collection_games (id, _fetched_at, page, game_ids) {
   }
 }
 
-
 async function fetch_keys (type, page) {
   if (typeof page === 'undefined') {
     page = 1
@@ -175,6 +174,26 @@ async function cache_collection_games (id) {
   AppActions.games_fetched(pluck(games, 'id'))
 }
 
+async function game_browse (payload) {
+  let game = await db.find_one({_table: 'games', id: payload.id})
+  electron.shell.openExternal(game.url)
+}
+
+async function game_purchase (payload) {
+  let game = await db.find_one({_table: 'games', id: payload.id})
+  let win = new electron.BrowserWindow({
+    width: 720,
+    height: 480,
+    center: true,
+    skipTaskBar: true
+  })
+  win.loadUrl(game.url + '/purchase')
+  win.on('close', (e) => {
+    AppActions.fetch_games('owned')
+  })
+  win.show()
+}
+
 let cached_caves = {}
 
 AppDispatcher.register('game-store', Store.action_listeners(on => {
@@ -198,6 +217,9 @@ AppDispatcher.register('game-store', Store.action_listeners(on => {
   on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, (payload) => {
     fetch_games({path: 'caved'})
   })
+
+  on(AppConstants.GAME_BROWSE, game_browse)
+  on(AppConstants.GAME_PURCHASE, game_purchase)
 }))
 
 module.exports = GameStore

@@ -116,12 +116,14 @@ class GameCell extends Component {
             } else if (/^download.*$/.test(task)) {
               AppActions.cave_implode(mori.get(cave, '_id'))
             } else {
-              if (platform_compatible && may_download) {
-                AppActions.cave_queue(mori.get(game, 'id'))
+              if (platform_compatible) {
+                if (may_download) {
+                  AppActions.cave_queue(mori.get(game, 'id'))
+                } else {
+                  AppActions.game_purchase(mori.get(game, 'id'))
+                }
               } else {
-                let remote = require('electron').remote
-                let shell = remote.require('electron').shell
-                shell.openExternal(mori.get(game, 'url'))
+                AppActions.game_browse(mori.get(game, 'id'))
               }
             }
           }
@@ -134,21 +136,21 @@ class GameCell extends Component {
               r.span({className: 'cancel_cross'}, [
                 r(Icon, {icon: 'cross'})
               ])
-            ]),
+            ])
           ]
           : (
             platform_compatible
-            ?
-              (may_download
+            ? (
+              may_download
               ? r.span({}, [
-                  r(Icon, {icon: 'install'}),
-                  ' Install'
-                ])
+                r(Icon, {icon: 'install'}),
+                ' Install'
+              ])
               : r.span({}, [
-                  r(Icon, {icon: 'cart'}),
-                  ' Buy now'
-                ])
-              )
+                r(Icon, {icon: 'cart'}),
+                ' Buy now'
+              ])
+            )
             : r.span({}, [
               r(Icon, {icon: 'earth'})
             ])
@@ -169,7 +171,7 @@ class GameCell extends Component {
               onClick: () => AppActions.cave_probe(mori.get(cave, '_id'))
             }, [
               r(Icon, {icon: 'bug'})
-            ]),
+            ])
           ]
           : []
         ).concat(
@@ -183,17 +185,17 @@ class GameCell extends Component {
               r(Icon, {icon: 'folder-open'})
             ])
           ]).concat([
-          r.span({
-            className: 'game_uninstall',
-            onClick: () => {
-              if (task === 'error' || window.confirm(`Are you sure you want to uninstall ${title}?`)) {
-                AppActions.cave_queue_uninstall(mori.get(cave, '_id'))
+            r.span({
+              className: 'game_uninstall',
+              onClick: () => {
+                if (task === 'error' || window.confirm(`Are you sure you want to uninstall ${title}?`)) {
+                  AppActions.cave_queue_uninstall(mori.get(cave, '_id'))
+                }
               }
-            }
-          }, [
-            r(Icon, {icon: 'delete'})
-          ])
-        ]))
+            }, [
+              r(Icon, {icon: 'delete'})
+            ])
+          ]))
         : '')
       ])
     )

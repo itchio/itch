@@ -140,6 +140,14 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.CAVE_REPORT, id })
   },
 
+  game_browse: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.GAME_BROWSE, id })
+  },
+
+  game_purchase: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.GAME_PURCHASE, id })
+  },
+
   set_progress: (alpha) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.SET_PROGRESS,
