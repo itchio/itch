@@ -25,7 +25,7 @@ function merge_state (obj) {
 let collections_seen = {}
 let featured_ids = [
   32029, // LD34 staff picks
-  32705, // Bite-sized gems
+  32705  // Bite-sized gems
 ]
 
 async function fetch_collections () {
@@ -39,9 +39,14 @@ async function fetch_collections () {
   let collections = (await user.my_collections()).collections
 
   for (let featured_id of featured_ids) {
-    let fc = (await user.collection(featured_id)).collection
-    fc._featured = true
-    collections.push(fc)
+    try {
+      let fc = (await user.collection(featured_id)).collection
+      fc._featured = true
+      collections.push(fc)
+    } catch (e) {
+      // don't let that stop us now, we're having such a good time.
+      console.log(`Could not fetch featured collection ${featured_id}: ${e.stack || e}`)
+    }
   }
 
   let collections_by_id = indexBy(collections, 'id')
@@ -77,4 +82,3 @@ AppDispatcher.register('collection-store', Store.action_listeners(on => {
 }))
 
 module.exports = CollectionStore
-
