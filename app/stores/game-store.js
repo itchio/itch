@@ -262,15 +262,8 @@ async function game_purchase (payload) {
   let login_purchase_url = require('url').format(url_opts)
 
   win.webContents.on('did-get-redirect-request', (e, oldURL, newURL) => {
-    if (oldURL.indexOf(`/login?`) !== -1) {
-      // so, we're logged in now
-      e.preventDefault()
-      console.log(`redirect, newURL = ${newURL}`)
-      // work around https://github.com/leafo/itch.io/issues/286
-      win.loadURL(purchase_url)
-    }
-
     let parsed = require('url').parse(newURL)
+
     if (/^.*\/download\/[a-zA-Z0-9]*$/.test(parsed.pathname)) {
       // purchase went through!
       AppActions.fetch_games('owned')
