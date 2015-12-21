@@ -1,16 +1,4 @@
 
-@-webkit-keyframes bench-bg {
-  0% {
-    background: rgb(43, 42, 46);
-  }
-  50% {
-    background: rgb(46, 43, 44);
-  }
-  100% {
-    background: rgb(41, 43, 43);
-  }
-}
-
 @-webkit-keyframes logo-anim {
   0%  { transform: scale(1.00) rotateZ(00deg); }
   19% { transform: scale(0.98) rotateZ(03deg); }
@@ -29,8 +17,7 @@
 }
 
 .login_page {
-  background: rgb(43, 42, 46);
-  animation: bench-bg 23.2s .5s infinite ease-out;
+  background-color: $library_bg;
   position: absolute;
   top: 0;
   right: 0;
@@ -100,7 +87,7 @@
 
         &[disabled] {
           transform: scale(0.96);
-          opacity: .6;
+          opacity: 0;
         }
       }
 

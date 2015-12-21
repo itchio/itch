@@ -5,13 +5,12 @@ $cell_width: 185px;
 $cell_height: $cell_width * $cell_ratio;
 
 $broken_color: #C38E16;
-$library_bg: #333;
 $placeholder_link_color: #93C1F3;
 
 .library_page {
   $sidebar_width: 250px;
 
-  background: $library_bg;
+  background-color: $library_bg;
   color: white;
 
   position: absolute;
@@ -76,7 +75,7 @@ $placeholder_link_color: #93C1F3;
       vertical-align: middle;
       width: 24px;
       height: 24px;
-      border: 1px solid #333;
+      border: 1px solid $library_bg;
       border-radius: 2px;
     }
 
@@ -100,7 +99,7 @@ $placeholder_link_color: #93C1F3;
     .separator {
       width: 100%;
       height: 1px;
-      background: #333;
+      background: $library_bg;
     }
 
     .panel_links {
