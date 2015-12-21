@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 
@@ -27,7 +26,9 @@ test('WindowStore', t => {
   })
 
   t.case('hide_window', t => {
-    t.mock(window).expects('hide')
+    t.mock(window).expects('close')
+    t.mock(electron.electron.BrowserWindow).expects('getFocusedWindow').returns(window)
+
     handler({ action_type: AppConstants.HIDE_WINDOW })
   })
 

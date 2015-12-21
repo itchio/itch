@@ -60,17 +60,19 @@ Object.assign(electron.Tray, {
 
 let webContents = {
   on: (e, cb) => cb(),
-  executeJavaScript: rnil
+  executeJavaScript: rnil,
+  openDevTools: rnil
 }
 
 Object.assign(electron.BrowserWindow, {
   getAllWindows: () => [],
+  getFocusedWindow: () => null,
   setProgressBar: rnil,
   on: rnil,
-  openDevTools: rnil,
   loadURL: rnil,
   hide: rnil,
   show: rnil,
+  close: rnil,
   webContents
 })
 
