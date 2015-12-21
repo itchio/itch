@@ -23,7 +23,7 @@ let PurchaseStore = Object.assign(new Store('purchase-store'), {
 function make_purchase_window (me, game) {
   let path = require('path')
   let inject_path = path.resolve(__dirname, '..', 'inject', 'purchase.js')
-  return new electron.BrowserWindow({
+  let win = new electron.BrowserWindow({
     width: 960,
     height: 620,
     center: true,
@@ -38,6 +38,11 @@ function make_purchase_window (me, game) {
       partition: `persist:itchio-${me.id}`
     }
   })
+
+  // clear menu, cf. https://github.com/itchio/itch/issues/232
+  win.setMenu(null)
+
+  return win
 }
 
 /**

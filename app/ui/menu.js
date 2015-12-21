@@ -152,8 +152,10 @@ function refresh_menu () {
     menus.help
   ]
 
-  // buildFromTemplate mutates its argument
-  Menu.setApplicationMenu(Menu.buildFromTemplate(clone(template)))
+  // electron gotcha: buildFromTemplate mutates its argument
+  template = clone(template)
+  let menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
 }
 
 let self = {
