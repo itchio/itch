@@ -71,6 +71,7 @@ function ready () {
   require('./stores/cave-store')
   require('./stores/url-store')
   require('./stores/purchase-store')
+  require('./stores/report-store')
 
   require('./ui/menu').mount()
   AppActions.boot()
