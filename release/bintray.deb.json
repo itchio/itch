@@ -15,7 +15,8 @@
 
   "files": [
     {
-      "includePattern": "(*.deb)", "uploadPattern": "$1",
+      "includePattern": "build/(.*\.deb)",
+      "uploadPattern": "$1",
       "matrixParams": {
         "override": true,
         "deb_distribution": "wheezy,jessie,precise,trusty,vivid,wily",
