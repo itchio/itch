@@ -265,7 +265,7 @@ class GameList extends React.Component {
       r.div({className: 'game_list'}, mori.intoArray(mori.map(game => {
         let game_id = mori.get(game, 'id')
         let cave = mori.get(caves_by_game_id, game_id)
-        let owned = mori.get(owned_games_by_id, game_id)
+        let owned = mori.get(owned_games_by_id, game_id.toString())
         if (!pred(cave)) return ''
         return r(GameCell, {key: game_id, game, cave, owned})
       }, mori.vals(games))))

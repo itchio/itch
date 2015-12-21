@@ -33,8 +33,6 @@ function cache_games (key, games) {
   let state_diff = deep.diff(old_state, new_state)
 
   if (!state_diff) return
-
-  console.log(`${key} diff: ${JSON.stringify(state_diff, null, 2)}`)
   AppActions.game_store_diff(state_diff)
 
   state[key] = games_by_id
@@ -216,7 +214,6 @@ async function game_purchase (payload) {
 
   let path = require('path')
   let inject_path = path.resolve(__dirname, '..', 'inject', 'purchase.js')
-  console.log(`Inject path = ${inject_path}`)
   let win = new electron.BrowserWindow({
     width: 960,
     height: 620,

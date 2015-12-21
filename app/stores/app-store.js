@@ -243,7 +243,6 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
 
 function game_store_diff (payload) {
   let game_state = mori.getIn(state, ['library', 'games'])
-  console.log(`initial game state: `, mori.toJs(game_state))
 
   let diff = payload.diff
   for (let el of diff) {
@@ -271,10 +270,7 @@ function game_store_diff (payload) {
       }
         break
     }
-    console.log(`intermediary game state: `, mori.toJs(game_state))
   }
-  console.log(`final game state: `, mori.toJs(game_state))
-  console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`)
 
   state = mori.assocIn(state, ['library', 'games'], game_state)
   AppStore.emit_change()
