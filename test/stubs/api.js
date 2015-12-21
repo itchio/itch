@@ -1,5 +1,4 @@
 
-
 let Promise = require('bluebird')
 
 let noop = () => Promise.resolve()

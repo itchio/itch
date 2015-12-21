@@ -165,7 +165,7 @@ let last_request = 0
 
 function cooldown () {
   let now = +new Date()
-  let next_acceptable = last_request + 250
+  let next_acceptable = last_request + 130
   let quiet = next_acceptable - now
 
   if (now > next_acceptable) {
