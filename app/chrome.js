@@ -52,7 +52,7 @@ window.addEventListener('keydown', (e) => {
   switch (e.keyIdentifier) {
     case 'F12':
       let win = window.require('electron').remote.getCurrentWindow()
-      win.openDevTools({detach: true})
+      win.webContents.openDevTools({detach: true})
       break
     case 'F5':
       if (!e.shiftKey) return
