@@ -44,6 +44,7 @@ possible with your report. If you can, please include:
 * Consider starting the commit message with an applicable emoji:
   * :art: `:art:` when improving the format/structure of the code
   * :racehorse: `:racehorse:` when improving performance
+  * :clap: `:clap:` when improving user experience
   * :non-potable_water: `:non-potable_water:` when plugging memory leaks
   * :memo: `:memo:` when writing docs
   * :penguin: `:penguin:` when fixing something on Linux
