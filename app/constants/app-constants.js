@@ -82,6 +82,9 @@ module.exports = keyMirror({
   /** Sent from metal when needs to eval something in chrome. Example: HTML5 Notification API */
   EVAL: null,
 
+  /** Sent when app is about to reboot or shutdown */
+  APP_IMPLODE: null,
+
   /** Buh-bye */
   QUIT: null,
 

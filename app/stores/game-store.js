@@ -306,6 +306,11 @@ async function game_purchase (payload) {
   win.show()
 }
 
+function app_implode () {
+  state = {}
+  GameStore.emit_change()
+}
+
 let cached_caves = {}
 
 AppDispatcher.register('game-store', Store.action_listeners(on => {
@@ -332,6 +337,7 @@ AppDispatcher.register('game-store', Store.action_listeners(on => {
 
   on(AppConstants.GAME_BROWSE, game_browse)
   on(AppConstants.GAME_PURCHASE, game_purchase)
+  on(AppConstants.APP_IMPLODE, app_implode)
 }))
 
 module.exports = GameStore

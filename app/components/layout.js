@@ -8,6 +8,7 @@ let LoginPage = require('./login').LoginPage
 let LibraryPage = require('./library').LibraryPage
 
 let AppStore = require('../stores/app-store')
+let AppActions = require('../actions/app-actions')
 let defer = require('../util/defer')
 
 function get_state () {
@@ -28,6 +29,7 @@ class Layout extends Component {
 
   componentWillUnmount () {
     AppStore.remove_change_listener('layout')
+    AppActions.app_implode()
   }
 
   render () {

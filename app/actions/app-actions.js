@@ -238,6 +238,10 @@ let self = {
 
   game_store_diff: (diff) => {
     AppDispatcher.dispatch({ action_type: AppConstants.GAME_STORE_DIFF, diff })
+  },
+
+  app_implode: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.APP_IMPLODE })
   }
 }
 
