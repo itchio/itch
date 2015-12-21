@@ -1,4 +1,8 @@
 
+## For game developers
+
+Refer to the [app faq](https://itch.io/docs/app/faq) to know how to get your game running!
+
 ## Installing
 
 itch is built in HTML/SCSS/ES6 and runs inside of Electron. Install the
@@ -46,31 +50,9 @@ We use [grunt][] for packaging, see our [CI job definitions][ci].
 [grunt]: https://github.com/gruntjs/grunt
 [ci]: https://github.com/itchio/ci.itch.ovh/blob/master/src/jobs/itch.yml
 
-## itch for game developers
+### Debug facilities
 
-If your game is:
-
-  * an archive (.zip, .7z, .tar.gz, .tar.bz2) — *but not .rar*
-    * containing an .exe on Windows
-    * containing a .app bundle or shell script on OSX
-    * containing an .exe or shell script on Linux
-  * an installer powered by NSIS or InnoSetup on Windows
-  * an MSI file on Windows
-  * just a plain .exe file on Windows (not recommended)
-
-Then you're golden.
-
-Try logging in with your account and installing+launching your game.
-
-If it fails, inspect the log by `Alt-clicking` on the game's thumbnail,
-it should open a `.txt` file with your default text editor.
-
-See where game is installed by `Shift-clicking` on it or clicking the
-'Open folder' icon.
-
-## Debug facilities
-
-**N.B. when running from msys, `export OS=cygwin` to see log output**
+**:memo: When running from msys, `export OS=cygwin` to see log output**
 
 These keys do things:
 
@@ -91,9 +73,11 @@ These environment variables will change the behavior of the app:
   * `DIEGO_IS_ASLEEP=1` - forbid [our diagnostics tool][diego] from running commands like
     `uname`, `lspci`, `sw_vers`, `wmic`, and `ver` on your system and writing
     the results to a file on your local disk.
+  * `CAST_NO_SHADOW=1` — opens devtools for the purchase window
+  * `NO_TEACHING=1` — disable featured collections (useful to debug data transfer
+    between node and browser side)
+  * `TRUST_ME_IM_AN_ENGINEER=1` - never show `Buy now` instead of `Install`.
+    Obviously, the backend has to agree with you.
 
 [diego]: diego.md
 
-Pro-tip: [undock the Chrome devtools][undock], they're more usable as a separate Windows.
-
-[undock]: https://encrypted.google.com/search?hl=en&q=chrome%20dev%20tools%20undock
