@@ -76,19 +76,20 @@ async function handle_url (urlStr) {
         AppActions.fetch_games(`games/${gid}`)
       }
     }
-      break;
+      break
 
     default: {
       log(opts, `unsupported verb: ${verb}, bailing out`)
+      AppActions.focus_window()
     }
-      break;
+      break
   }
 }
 
 async function games_fetched (payload) {
   try {
     for (let gid of payload.game_ids) {
-      if (to_install == gid) {
+      if (to_install === gid) {
         to_install = null
 
         let game = await db.find_one({_table: 'games', id: gid})
