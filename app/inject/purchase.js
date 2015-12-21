@@ -90,6 +90,15 @@ function login_inject () {
   $form.find('.buttons .line').css('display', 'none')
 }
 
+function checkout_inject () {
+  let $ = window.$
+  $('.close_button').on('click', (e) => {
+    window.close()
+    e.preventDefault()
+    e.stopPropagation()
+  })
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   let url = require('electron').remote.require('./util/url')
   let host = url.subdomain_to_domain(window.location.hostname)
@@ -100,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   let tokens = window.location.pathname.split('/')
+  let first_token = tokens[1]
   let last_token = tokens[tokens.length - 1]
 
   switch (last_token) {
@@ -108,6 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
       break
     case 'login':
       login_inject()
+      break
+    default:
+      if (first_token === 'checkout') {
+        checkout_inject()
+      }
       break
   }
 })
