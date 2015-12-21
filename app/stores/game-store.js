@@ -1,7 +1,7 @@
 'use strict'
 
 let Promise = require('bluebird')
-let pluck = require('underscore').pluck
+let _ = require('underscore')
 
 let Store = require('./store')
 let CredentialsStore = require('./credentials-store')
@@ -16,6 +16,8 @@ let opts = {logger: new Logger()}
 
 let db = require('../util/db')
 
+let deep = require('deep-diff')
+
 let electron = require('electron')
 
 let state = {}
@@ -24,8 +26,17 @@ let GameStore = Object.assign(new Store('game-store'), {
   get_state: () => state
 })
 
-function merge_state (obj) {
-  Object.assign(state, obj)
+function cache_games (key, games) {
+  let games_by_id = _.indexBy(games, 'id')
+  let new_state = games_by_id
+  let old_state = key[state]
+  let state_diff = deep.diff(old_state, new_state)
+
+  if (!state_diff) return
+
+  console.log(`${key} diff size: ${state_diff.length}`)
+
+  state[key] = games_by_id
   GameStore.emit_change()
 }
 
@@ -103,7 +114,7 @@ async function fetch_collection_games (id, _fetched_at, page, game_ids) {
   let res = await user.collection_games(id, page)
   let total_items = res.total_items
   let fetched = res.per_page * page
-  game_ids = game_ids.concat(pluck(res.games, 'id'))
+  game_ids = game_ids.concat(_.pluck(res.games, 'id'))
 
   await db.save_games(res.games)
   await db.update({_table: 'collections', id}, {
@@ -142,37 +153,40 @@ async function fetch_keys (type, page) {
 
 async function cache_owned_games () {
   let keys = await db.find({_table: 'download_keys'})
-  let gids = pluck(keys, 'game_id')
+  let gids = _.pluck(keys, 'game_id')
   let games = await db.find({_table: 'games', id: {$in: gids}})
-  merge_state({owned: games})
+  cache_games('owned', games)
 }
 
 async function cache_dashboard_games () {
   let own_id = CredentialsStore.get_me().id
   let games = await db.find({_table: 'games', user_id: own_id})
-  merge_state({dashboard: games})
+  cache_games('dashboard', games)
 }
 
 async function cache_caved_games () {
   let caves = await db.find({_table: 'caves'})
-  let gids = pluck(caves, 'game_id')
-  state.caved = await db.find({_table: 'games', id: {$in: gids}})
-  GameStore.emit_change()
+  let gids = _.pluck(caves, 'game_id')
+  let games = await db.find({_table: 'games', id: {$in: gids}})
+  cache_games('caved', games)
 }
 
 async function cache_cave_game (_id) {
   let cave = await db.find_one({_table: 'caves', _id})
   let game = await db.find_one({_table: 'games', id: cave.game_id})
-  merge_state({[`caves/${_id}`]: [game]})
+  cache_games(`caves/${_id}`, [game])
 }
 
 async function cache_collection_games (id) {
   let collection = await db.find_one({_table: 'collections', id})
   let gids = collection.game_ids || []
   let games = await db.find({_table: 'games', id: {$in: gids}})
-  merge_state({[`collections/${id}`]: games})
-  AppActions.games_fetched(pluck(games, 'id'))
+  cache_games(`collections/${id}`, games)
+  AppActions.games_fetched(_.pluck(games, 'id'))
 }
+
+// Move those actions somewhere else, there has to be
+// a good store name we can find for browse, purchase, etc. ?
 
 async function game_browse (payload) {
   let game = await db.find_one({_table: 'games', id: payload.id})
