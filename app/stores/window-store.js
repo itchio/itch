@@ -61,7 +61,9 @@ function show () {
 }
 
 function hide () {
-  WindowStore.with(w => w.hide())
+  let w = BrowserWindow.getFocusedWindow()
+  if (!w) return
+  w.close()
 }
 
 function _eval (payload) {
