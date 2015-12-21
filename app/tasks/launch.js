@@ -1,11 +1,10 @@
 'use strict'
 
 let path = require('path')
-let child_process = require('child_process')
 let clone = require('clone')
-let Promise = require('bluebird')
 
 let os = require('../util/os')
+let spawn = require('../util/spawn')
 
 let log = require('../util/log')('tasks/launch')
 let configure = require('./configure')
@@ -14,36 +13,32 @@ let CaveStore = require('../stores/cave-store')
 let Crash = require('./errors').Crash
 
 let self = {
-  sh: function (exe_path, cmd, opts) {
-    return new Promise((resolve, reject) => {
-      log(opts, `sh ${cmd}`)
+  sh: async function (exe_path, command, opts) {
+    log(opts, `sh ${command}`)
 
-      // pretty weak but oh well.
-      let forbidden = [';', '&']
-      for (let bidden of forbidden) {
-        if (cmd.indexOf(bidden) >= 0) {
-          throw new Error(`Command-line contains forbidden characters: ${cmd}`)
-        }
+    // pretty weak but oh well.
+    let forbidden = [';', '&']
+    for (let bidden of forbidden) {
+      if (command.indexOf(bidden) !== -1) {
+        throw new Error(`Command-line contains forbidden characters: ${command}`)
       }
+    }
 
-      let cwd = path.dirname(exe_path)
-      log(opts, `Working directory: ${cwd}`)
+    let cwd = path.dirname(exe_path)
+    log(opts, `Working directory: ${cwd}`)
 
-      child_process.exec(cmd, {
-        stdio: [ 0, 'pipe', 'pipe' ],
-        maxBuffer: 5000 * 1024,
-        cwd
-      }, (error, stdout, stderr) => {
-        if (error) {
-          log(opts, `${exe_path} returned ${error}`)
-          log(opts, `stdout:\n${stdout}`)
-          log(opts, `stderr:\n${stderr}`)
-          reject(new Crash({ exe_path, error }))
-        } else {
-          resolve(`Done playing ${exe_path}!`)
-        }
-      })
+    let res = await spawn({
+      command,
+      ontoken: (tok) => log(opts, `stdout: ${tok}`),
+      onerrtoken: (tok) => log(opts, `stderr: ${tok}`),
+      opts: { cwd }
     })
+
+    if (res.code !== 0) {
+      let error = `process exited with code ${res.code}`
+      throw new Crash({ exe_path, error })
+    }
+    return `child completed successfully`
   },
 
   escape: function (arg) {

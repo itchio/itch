@@ -15,12 +15,13 @@ function spawn (opts) {
 
   let emitter = opts.emitter
   let command = opts.command
+  let spawn_opts = opts.opts || {}
   let args = opts.args || []
   let split = opts.split || '\n'
-  let ontoken = opts.ontoken || noop
+
   log(opts, `spawning ${command} with args ${args.join(' ')}`)
 
-  let child = child_process.spawn(command, args)
+  let child = child_process.spawn(command, args, spawn_opts)
 
   if (emitter) {
     emitter.on('cancel', (e) => {
@@ -33,9 +34,17 @@ function spawn (opts) {
     })
   }
 
-  let splitter = child.stdout.pipe(StreamSplitter(split))
-  splitter.encoding = 'utf8'
-  splitter.on('token', ontoken)
+  if (opts.ontoken) {
+    let splitter = child.stdout.pipe(StreamSplitter(split))
+    splitter.encoding = 'utf8'
+    splitter.on('token', opts.ontoken)
+  }
+
+  if (opts.onerrtoken) {
+    let splitter = child.stderr.pipe(StreamSplitter(split))
+    splitter.encoding = 'utf8'
+    splitter.on('token', opts.onerrtoken)
+  }
 
   return new Promise((resolve, reject, onCancel) => {
     child.on('close', resolve)
