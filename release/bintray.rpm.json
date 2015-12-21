@@ -1,0 +1,23 @@
+{
+  "package": {
+    "name": "itch",
+    "repo": "rpm",
+    "subject": "itchio"
+  },
+
+  "version": {
+    "name": "{{JENKINS_VERSION}}",
+    "desc": "v{{JENKINS_VERSION}}",
+    "released": "{{JENKINS_RELEASE_DATE}}",
+    "vcs_tag": "v{{JENKINS_VERSION}}",
+    "gpgSign": true
+  },
+
+  "files": [
+    {
+      "includePattern": "(*.rpm)", "uploadPattern": "$1",
+      "matrixParams": { "override": 1 }
+    }
+  ],
+  "publish": false
+}

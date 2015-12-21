@@ -1,0 +1,28 @@
+{
+  "package": {
+    "name": "itch",
+    "repo": "deb",
+    "subject": "itchio"
+  },
+
+  "version": {
+    "name": "{{JENKINS_VERSION}}",
+    "desc": "v{{JENKINS_VERSION}}",
+    "released": "{{JENKINS_RELEASE_DATE}}",
+    "vcs_tag": "v{{JENKINS_VERSION}}",
+    "gpgSign": true
+  },
+
+  "files": [
+    {
+      "includePattern": "(*.deb)", "uploadPattern": "$1",
+      "matrixParams": {
+        "override": true,
+        "deb_distribution": "wheezy,jessie,precise,trusty,vivid,wily",
+        "deb_component": "main",
+        "deb_architecture": "{{DEB_ARCH}}"
+      }
+    }
+  ],
+  "publish": false
+}
