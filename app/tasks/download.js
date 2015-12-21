@@ -61,7 +61,6 @@ async function start (opts) {
   let dest = CaveStore.archive_path(upload)
 
   emitter.on('cancelled', async (e) => {
-    let archive_path = 
     log(opts, `killed the butler with a wrench in the living room`)
     log(opts, `wiping ${dest}`)
     await rimraf(dest, {
