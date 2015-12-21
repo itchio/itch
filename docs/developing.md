@@ -50,6 +50,25 @@ We use [grunt][] for packaging, see our [CI job definitions][ci].
 [grunt]: https://github.com/gruntjs/grunt
 [ci]: https://github.com/itchio/ci.itch.ovh/blob/master/src/jobs/itch.yml
 
+### Running tests
+
+Run:
+
+```bash
+$ npm test
+```
+
+To run all tests. You can run a single test with:
+
+```bash
+$ test/runner.js test/util/os-spec.js | tap-spec
+```
+
+Piping to [tap-spec][] is optional, but neat. Make you sure `npm install -g
+tap-spec` if you haven't already.
+
+[tap-spec]: https://github.com/scottcorgan/tap-spec
+
 ### Debug facilities
 
 **:memo: When running from msys, `export OS=cygwin` to see log output**
