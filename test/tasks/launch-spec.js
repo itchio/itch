@@ -1,5 +1,5 @@
 
-
+let EventEmitter = require('events').EventEmitter
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let path = require('path')
@@ -12,10 +12,21 @@ let log = require('../../app/util/log')
 let logger = new log.Logger({sinks: {console: false}})
 let opts = {id: 'kalamazoo', logger}
 
+function make_dummy () {
+  let d = new EventEmitter()
+  ;['stderr', 'stdout'].forEach((type) => {
+    d[type] = {
+      pipe: (x) => x
+    }
+  })
+  return d
+}
+
 test('launch', t => {
   let child_process = {
-    exec: () => null,
-    '@noCallThru': true
+    spawn: () => null,
+    '@noCallThru': true,
+    '@global': true
   }
   let os = {
     platform: () => 'win32'
@@ -99,12 +110,26 @@ test('launch', t => {
   })
 
   t.case('sh error', t => {
-    t.mock(child_process).expects('exec').once().callsArgWith(2, new Error('crash!'), '', '')
-    return t.rejects(launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts))
+    let dummy = make_dummy()
+    t.mock(child_process).expects('spawn').returns(dummy)
+    let p = launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
+    dummy.emit('error')
+    return t.rejects(p)
   })
 
   t.case('sh successful', t => {
-    t.mock(child_process).expects('exec').once().callsArgWith(2, null, '', '')
-    return launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
+    let dummy = make_dummy()
+    t.mock(child_process).expects('spawn').returns(dummy)
+    let p = launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
+    dummy.emit('close', {code: 0})
+    return p
+  })
+
+  t.case('sh non-zero', t => {
+    let dummy = make_dummy()
+    t.mock(child_process).expects('spawn').returns(dummy)
+    let p = launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
+    dummy.emit('close', {code: 127})
+    return t.rejects(p)
   })
 })
