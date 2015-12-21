@@ -184,119 +184,11 @@ async function cache_collection_games (id) {
   AppActions.games_fetched(_.pluck(games, 'id'))
 }
 
-// Move those actions somewhere else, there has to be
-// a good store name we can find for browse, purchase, etc. ?
+// TODO: Move game_browse somewhere else
 
 async function game_browse (payload) {
   let game = await db.find_one({_table: 'games', id: payload.id})
   electron.shell.openExternal(game.url)
-}
-
-async function game_purchase (payload) {
-  let me = CredentialsStore.get_me()
-  let game = await db.find_one({_table: 'games', id: payload.id})
-  let keys = await db.find({_table: 'download_keys', game_id: payload.id})
-
-  if (keys.length > 0) {
-    let buttons = ['Purchase again', 'Cancel']
-    let dialog_opts = {
-      type: 'info',
-      buttons,
-      title: 'You already own this!',
-      message: `You've already bought a copy of this.`,
-      detail: `...but you could still buy a copy for a friend!\n\nDo you want to make another purchase?`
-    }
-    let response = require('electron').dialog.showMessageBox(dialog_opts)
-    if (response !== 0) {
-      return
-    }
-  }
-
-  let path = require('path')
-  let inject_path = path.resolve(__dirname, '..', 'inject', 'purchase.js')
-  let win = new electron.BrowserWindow({
-    width: 960,
-    height: 620,
-    center: true,
-    webPreferences: {
-      nodeIntegration: false,
-      preload: inject_path,
-      partition: `persist:itchio-${me.id}`
-    }
-  })
-
-  let events = 'page-title-updated close closed unresponsive responsive blur focus maximize unmaximize minimize restore resize move moved enter-full-screen enter-html-full-screen leave-html-full-screen app-command'
-  events.split(' ').forEach((ev) => {
-    win.on(ev, (e, deets) => {
-      console.log(`purchase window event: ${ev}, ${JSON.stringify(deets, null, 2)}`)
-    })
-  })
-
-  let cevents = 'did-finish-load did-fail-load did-frame-finish-load did-start-loading did-stop-loading did-get-response-details did-get-redirect-request dom-ready page-favicon-updated new-window will-navigate crashed plugin-crashed destroyed'
-  cevents.split(' ').forEach((ev) => {
-    win.webContents.on(ev, (e, deets) => {
-      console.log(`purchase webcontents event: ${ev}, ${JSON.stringify(deets, null, 2)}`)
-    })
-  })
-
-  let purchase_url = game.url + '/purchase'
-  let parsed = require('url').parse(purchase_url)
-
-  // user.example.org => example.org
-  let hostparts = parsed.hostname.split('.')
-  hostparts.shift()
-  let hostname = hostparts.join('.')
-
-  let url_opts = {
-    hostname,
-    pathname: '/login',
-    query: {return_to: purchase_url}
-  }
-  if (hostname === 'itch.io') {
-    url_opts.protocol = 'https'
-  } else {
-    url_opts.port = parsed.port
-    url_opts.protocol = parsed.protocol
-  }
-
-  let login_purchase_url = require('url').format(url_opts)
-
-  win.webContents.on('did-get-redirect-request', (e, oldURL, newURL) => {
-    let parsed = require('url').parse(newURL)
-
-    if (/^.*\/download\/[a-zA-Z0-9]*$/.test(parsed.pathname)) {
-      // purchase went through!
-      AppActions.fetch_games('owned')
-      AppActions.game_purchased(payload.id, `You just purchased ${game.title}! You should now be able to install it in one click.`)
-      win.close()
-    } else if (/\/pay\/cancel/.test(parsed.pathname)) {
-      // payment was cancelled
-      win.close()
-    }
-  })
-
-  win.webContents.on('did-get-response-details', (e, status, newURL, originalURL, httpResponseCode) => {
-    if (httpResponseCode === 404) {
-      console.log(`response code is not found! closing`)
-      win.close()
-
-      let buttons = ['Ok', 'Open game page']
-      let dialog_opts = {
-        type: 'info',
-        buttons,
-        title: 'Payments disabled',
-        message: `Unfortunately, the developer of ${game.title} does not accept payments for this title.`,
-        detail: `Maybe you can find another way to support them?`
-      }
-      let response = require('electron').dialog.showMessageBox(dialog_opts)
-      if (response === 1) {
-        require('electron').shell.openExternal(game.url)
-      }
-    }
-  })
-
-  win.loadURL(login_purchase_url)
-  win.show()
 }
 
 function app_implode () {
@@ -329,7 +221,6 @@ AppDispatcher.register('game-store', Store.action_listeners(on => {
   })
 
   on(AppConstants.GAME_BROWSE, game_browse)
-  on(AppConstants.GAME_PURCHASE, game_purchase)
   on(AppConstants.APP_IMPLODE, app_implode)
 }))
 

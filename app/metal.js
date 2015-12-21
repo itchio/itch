@@ -70,6 +70,7 @@ function ready () {
   require('./stores/setup-store')
   require('./stores/cave-store')
   require('./stores/url-store')
+  require('./stores/purchase-store')
 
   require('./ui/menu').mount()
   AppActions.boot()
