@@ -22,6 +22,7 @@ Object.defineProperty(I, 'BaseBuyForm', {
       let $buttons = $('.checkout_btn, .confirm_vat_btn')
       disable($buttons)
       $buttons.html($('<span><span class="icon icon-stopwatch itch_injected-spinner"></span> Loading...</span>'))
+      $buttons.not(':eq(0)').hide()
 
       // don't close the window here
     }
