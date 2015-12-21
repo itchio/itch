@@ -266,7 +266,11 @@ function game_store_diff (payload) {
       case 'D': {
         let path = el.path
         let key = path.pop()
-        game_state = mori.updateIn(game_state, path, (x) => mori.dissoc(x, key))
+        if (path.length > 0) {
+          game_state = mori.updateIn(game_state, path, (x) => mori.dissoc(x, key))
+        } else {
+          game_state = mori.dissoc(game_state, key)
+        }
       }
         break
     }
