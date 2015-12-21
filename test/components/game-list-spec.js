@@ -1,9 +1,9 @@
 
-
 let test = require('zopf')
 let mori = require('mori')
 let proxyquire = require('proxyquire')
 let sd = require('skin-deep')
+let _ = require('underscore')
 
 let electron = require('../stubs/electron')
 
@@ -16,7 +16,7 @@ test('game-list', t => {
 
   t.case('GameList', t => {
     sd.shallowRender($(GameList, {}))
-    let games = mori.toClj([{id: 12}, {id: 26}, {id: 42}])
+    let games = mori.toClj(_.indexBy([{id: 12}, {id: 26}, {id: 42}], 'id'))
     let installs = mori.toClj({
       'asd09f8': {game_id: 42}
     })
