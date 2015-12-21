@@ -27,6 +27,9 @@ let featured_ids = [
   32029, // LD34 staff picks
   32705  // Bite-sized gems
 ]
+if (process.env.NO_TEACHING) {
+  featured_ids.length = 0
+}
 
 let env = require('../env')
 

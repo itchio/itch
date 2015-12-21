@@ -86,5 +86,8 @@ module.exports = keyMirror({
   QUIT: null,
 
   /** Hi again! */
-  GAIN_FOCUS: null
+  GAIN_FOCUS: null,
+
+  /** Data sync functions */
+  GAME_STORE_DIFF: null
 })

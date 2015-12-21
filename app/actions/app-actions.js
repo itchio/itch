@@ -234,6 +234,10 @@ let self = {
 
   gain_focus: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.GAIN_FOCUS })
+  },
+
+  game_store_diff: (diff) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.GAME_STORE_DIFF, diff })
   }
 }
 

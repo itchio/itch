@@ -237,12 +237,53 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
       AppActions.fetch_games('owned')
     }
   })
+
+  on(AppConstants.GAME_STORE_DIFF, game_store_diff)
 }))
 
-Store.subscribe('game-store', (games) => {
-  state = mori.assocIn(state, ['library', 'games'], mori.toClj(games))
+function game_store_diff (payload) {
+  let game_state = mori.getIn(state, ['library', 'games'])
+  console.log(`initial game state: `, mori.toJs(game_state))
+
+  let diff = payload.diff
+  for (let el of diff) {
+    switch (el.kind) {
+      // array change
+      case 'A': {
+        let path = el.path.concat([el.index])
+        game_state = mori.assocIn(game_state, path, mori.toClj(el.rhs))
+      }
+        break
+
+      // new element
+      case 'N':
+      // edited element
+      case 'E': {
+        game_state = mori.assocIn(game_state, el.path, mori.toClj(el.rhs))
+      }
+        break
+
+      // deleted element
+      case 'D': {
+        let path = el.path
+        let key = path.pop()
+        game_state = mori.updateIn(game_state, path, (x) => mori.dissoc(x, key))
+      }
+        break
+    }
+    console.log(`intermediary game state: `, mori.toJs(game_state))
+  }
+  console.log(`final game state: `, mori.toJs(game_state))
+  console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`)
+
+  state = mori.assocIn(state, ['library', 'games'], game_state)
   AppStore.emit_change()
-})
+}
+
+// Store.subscribe('game-store', (games) => {
+//   state = mori.assocIn(state, ['library', 'games'], mori.toClj(games))
+//   AppStore.emit_change()
+// })
 
 Store.subscribe('collection-store', (collections) => {
   state = mori.assocIn(state, ['library', 'collections'], mori.toClj(collections))

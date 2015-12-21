@@ -28,13 +28,14 @@ let GameStore = Object.assign(new Store('game-store'), {
 
 function cache_games (key, games) {
   let games_by_id = _.indexBy(games, 'id')
-  let new_state = games_by_id
-  let old_state = key[state]
+  let new_state = {[key]: games_by_id}
+  let old_state = {[key]: state[key]}
   let state_diff = deep.diff(old_state, new_state)
 
   if (!state_diff) return
 
-  console.log(`${key} diff size: ${state_diff.length}`)
+  console.log(`${key} diff: ${JSON.stringify(state_diff, null, 2)}`)
+  AppActions.game_store_diff(state_diff)
 
   state[key] = games_by_id
   GameStore.emit_change()
