@@ -4,8 +4,6 @@ let Promise = require('bluebird')
 let child_process = require('child_process')
 let StreamSplitter = require('stream-splitter')
 
-let noop = require('./noop')
-
 let log = require('./log')('spawn')
 
 function spawn (opts) {
