@@ -93,7 +93,7 @@ module.exports = keyMirror({
 
   /** Data sync functions */
   GAME_STORE_DIFF: null,
-  
+
   /* Someone wants to change something */
   OPEN_PREFERENCES: null
 })

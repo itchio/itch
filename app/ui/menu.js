@@ -1,5 +1,6 @@
 'use strict'
 
+let i18n = require('../util/i18n')
 let Menu = require('electron').Menu
 
 let CredentialsStore = require('../stores/credentials-store')
@@ -17,7 +18,7 @@ let osx = (os.platform() === 'darwin')
 
 let menus = {
   file: {
-    label: 'File',
+    label: i18n.__('File'),
     submenu: [
       {
         label: 'Preferences',
