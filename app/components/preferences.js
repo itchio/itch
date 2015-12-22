@@ -6,10 +6,8 @@ let PropTypes = React.PropTypes
 let Component = require('./component')
 let preferences = require('../util/preferences')
 // let mori = require('mori')
-
 let AppActions = require('../actions/app-actions')
-
-let InputRow = require('./forms').InputRow
+let SelectRow = require('./forms').SelectRow
 let Icon = require('./misc').Icon
 
 class PreferencesPage extends Component {
@@ -47,7 +45,7 @@ class PreferencesForm extends Component {
 
     return (
       r.form({classSet: { form: true, onSubmit: this.handle_submit }}, [
-        r(InputRow, { name: 'language', type: 'text', ref: 'language', defaultValue: language, label: 'Language:', autofocus: true, disabled: false }),
+        r(SelectRow, { ref: 'language', options: [{ value: 'en', label: 'English' }, { value: 'es', label: 'Español' }], value: language, label: 'Language:' }),
 
         // Buttons.
         r.div({className: ''}, [
