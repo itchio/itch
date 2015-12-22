@@ -4,7 +4,7 @@ let r = require('r-dom')
 let React = require('react')
 let PropTypes = React.PropTypes
 let Component = require('./component')
-let db = require('../util/db')
+let preferences = require('../util/preferences')
 // let mori = require('mori')
 
 let AppActions = require('../actions/app-actions')
@@ -43,16 +43,17 @@ class PreferencesForm extends Component {
     // let page = this.props.page
     // let login_state = this.props.login_state
     // let setup_state = this.props.setup_state
+    let language = preferences.read('language') || 'en'
 
     return (
       r.form({classSet: { form: true, onSubmit: this.handle_submit }}, [
-        r(InputRow, { name: 'library_dir', type: 'text', ref: 'library_dir', defaultValue: db.library_dir, label: 'Library directory:', autofocus: true, disabled: false }),
+        r(InputRow, { name: 'language', type: 'text', ref: 'language', defaultValue: language, label: 'Language:', autofocus: true, disabled: false }),
 
         // Buttons.
         r.div({className: ''}, [
           r.div({
             className: 'button',
-            onClick: () => {}
+            onClick: this.handle_submit
           }, [
             r.span({}, [
               r(Icon, {icon: 'install'}), // TODO: Integrate a "save" icon.
@@ -75,7 +76,12 @@ class PreferencesForm extends Component {
 
   handle_submit (event) {
     event.preventDefault()
-    // TODO
+
+    // Save JSON with preferences.
+    preferences.save('language', this.refs.language.value())
+
+    // Go back.
+    AppActions.focus_panel('library')
   }
 }
 
