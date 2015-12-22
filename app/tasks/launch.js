@@ -2,6 +2,7 @@
 
 let path = require('path')
 let clone = require('clone')
+let shell_quote = require('shell-quote')
 
 let os = require('../util/os')
 let spawn = require('../util/spawn')
@@ -13,22 +14,26 @@ let CaveStore = require('../stores/cave-store')
 let Crash = require('./errors').Crash
 
 let self = {
-  sh: async function (exe_path, command, opts) {
-    log(opts, `sh ${command}`)
+  sh: async function (exe_path, full_command, opts) {
+    log(opts, `sh ${full_command}`)
 
     // pretty weak but oh well.
     let forbidden = [';', '&']
     for (let bidden of forbidden) {
-      if (command.indexOf(bidden) !== -1) {
-        throw new Error(`Command-line contains forbidden characters: ${command}`)
+      if (full_command.indexOf(bidden) !== -1) {
+        throw new Error(`Command-line contains forbidden characters: ${full_command}`)
       }
     }
 
     let cwd = path.dirname(exe_path)
     log(opts, `Working directory: ${cwd}`)
 
+    let args = shell_quote.parse(full_command)
+    let command = args.shift()
+
     let res = await spawn({
       command,
+      args,
       ontoken: (tok) => log(opts, `stdout: ${tok}`),
       onerrtoken: (tok) => log(opts, `stderr: ${tok}`),
       opts: { cwd }
