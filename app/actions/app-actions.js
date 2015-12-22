@@ -228,6 +228,10 @@ let self = {
     })
   },
 
+  open_preferences: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.OPEN_PREFERENCES })
+  },
+
   quit: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.QUIT })
   },

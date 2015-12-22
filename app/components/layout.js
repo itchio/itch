@@ -6,6 +6,7 @@ let Component = require('./component')
 
 let LoginPage = require('./login').LoginPage
 let LibraryPage = require('./library').LibraryPage
+let PreferencesPage = require('./preferences').PreferencesPage
 
 let AppStore = require('../stores/app-store')
 let AppActions = require('../actions/app-actions')
@@ -41,6 +42,8 @@ class Layout extends Component {
         return r(LoginPage, {state})
       case 'library':
         return r(LibraryPage, {state: mori.get(state, 'library'), update: mori.get(state, 'update')})
+      case 'preferences':
+        return r(PreferencesPage, {state})
       default:
         return r.div()
     }
