@@ -62,6 +62,9 @@ module.exports = keyMirror({
   FETCH_GAMES: null,
   GAMES_FETCHED: null,
 
+  /** Data sync functions */
+  GAME_STORE_DIFF: null,
+
   /** Ready but needs human login */
   NO_STORED_CREDENTIALS: null,
   /** Any login attempt (cached or not) */
@@ -91,9 +94,7 @@ module.exports = keyMirror({
   /** Hi again! */
   GAIN_FOCUS: null,
 
-  /** Data sync functions */
-  GAME_STORE_DIFF: null,
-
-  /* Someone wants to change something */
-  OPEN_PREFERENCES: null
+  /* Preferences */
+  OPEN_PREFERENCES: null,
+  SAVE_PREFERENCES: null
 })

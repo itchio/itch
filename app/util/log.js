@@ -7,11 +7,13 @@ let deep_assign = require('deep-assign')
 let EOL = require('os').EOL
 
 function make (name) {
-  return function (opts, message) {
+  let f = function (opts, message) {
     if (opts && opts.logger) {
       opts.logger.log(`[${name}] ${message}`)
     }
   }
+  f.Logger = Logger
+  return f
 }
 
 class Logger {

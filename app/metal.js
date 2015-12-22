@@ -61,6 +61,7 @@ function boot () {
 function ready () {
   let AppActions = require('./actions/app-actions')
 
+  require('./stores/i18n-store')
   require('./stores/self-update-store')
   require('./stores/window-store')
   require('./stores/collection-store')

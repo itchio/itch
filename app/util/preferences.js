@@ -1,5 +1,6 @@
 'use strict'
 
+// TODO: that's not a good place to store preferences.
 let nconf = require('nconf').file({file: get_user_home() + '/itch-preferences.json'}) // OS "home" folder.
 
 function get_user_home () {
@@ -17,6 +18,5 @@ function read (setting_key) {
 }
 
 module.exports = {
-  save: save,
-  read: read
+  save, read
 }
