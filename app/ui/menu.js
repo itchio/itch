@@ -21,7 +21,7 @@ let menus = {
     label: i18n.__('File'),
     submenu: [
       {
-        label: 'Preferences',
+        label: i18n.__('Preferences'),
         accelerator: (osx ? 'Cmd+,' : 'Ctrl+P'),
         click: AppActions.open_preferences
       },
