@@ -22,8 +22,11 @@ let menus = {
     submenu: [
       {
         label: 'Preferences',
-        accelerator: (osx ? 'Cmd+' : 'Ctrl+P'),
+        accelerator: (osx ? 'Cmd+,' : 'Ctrl+P'),
         click: AppActions.open_preferences
+      },
+      {
+        type: 'separator'
       },
       {
         label: 'Close Window',
