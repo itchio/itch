@@ -14,7 +14,9 @@ function save (setting_key, setting_value) {
 
 function read (setting_key) {
   nconf.load()
-  return nconf.get(setting_key)
+  let val = nconf.get(setting_key)
+  console.log(`preferences.read(${setting_key}) = ${val}`)
+  return val
 }
 
 module.exports = {

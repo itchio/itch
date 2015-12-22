@@ -19,12 +19,21 @@ if (env.name === 'development') {
 let r = require('r-dom')
 let ReactDOM = require('react-dom')
 let Layout = require('./components/layout').Layout
+let I18nextProvider = require('react-i18next').I18nextProvider
+
+let I18nStore = require('./stores/i18n-store')
 
 let app_node
 
-document.addEventListener('DOMContentLoaded', () => {
+function render () {
   app_node = document.querySelector('#app')
-  ReactDOM.render(r(Layout), app_node)
+  let i18n = I18nStore.get_state()
+  ReactDOM.render(r(I18nextProvider, {i18n}, [r(Layout)]), app_node)
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  render()
+  I18nStore.add_change_listener('chrome', render)
 })
 
 document.addEventListener('click', (e) => {

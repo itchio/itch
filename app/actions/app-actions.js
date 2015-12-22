@@ -232,6 +232,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.OPEN_PREFERENCES })
   },
 
+  save_preferences: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.SAVE_PREFERENCES })
+  },
+
   quit: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.QUIT })
   },

@@ -3,6 +3,7 @@
 let r = require('r-dom')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes
+let translate = require('react-i18next').translate
 let Component = require('./component')
 
 let UserPanel = require('./user-panel').UserPanel
@@ -104,8 +105,9 @@ class StatusBar extends Component {
  * A list of tabs, collections and caved games
  * TODO: this component does too much, split it!
  */
-class LibrarySidebar extends Component {
+class _LibrarySidebar extends Component {
   render () {
+    let t = this.props.t
     let state = this.props.state
     let panel = mori.get(state, 'panel')
     let caves = mori.get(state, 'caves')
@@ -205,7 +207,7 @@ class LibrarySidebar extends Component {
         r(UserPanel),
         r.div({className: 'panel_links'}, [
           (is_developer
-          ? r(LibraryPanelLink, {before: r(Icon, {icon: 'rocket'}), name: 'dashboard', label: 'Developed', panel, games, className: 'dashboard'})
+          ? r(LibraryPanelLink, {before: r(Icon, {icon: 'rocket'}), name: 'dashboard', label: t('dashboard'), panel, games, className: 'dashboard'})
           : ''),
           r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-filled'}), name: 'owned', label: 'Owned', panel, games, className: 'owned'}),
           r(LibraryPanelLink, {before: r(Icon, {icon: 'checkmark'}), name: 'caved', label: 'Installed', panel, games, count: installed_count, className: 'installed'}),
@@ -227,6 +229,8 @@ class LibrarySidebar extends Component {
     )
   }
 }
+
+let LibrarySidebar = translate('library-sidebar')(_LibrarySidebar)
 
 LibrarySidebar.propTypes = {
   state: PropTypes.any

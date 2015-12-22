@@ -16,7 +16,7 @@ let crash_reporter = require('../util/crash-reporter')
 let osx = (os.platform() === 'darwin')
 
 function make_menus () {
-  let _t = I18nStore.get_state().t
+  let _t = I18nStore.get_state().getFixedT(null, null)
 
   let menus = {
     file: {

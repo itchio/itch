@@ -71,6 +71,7 @@ class PreferencesForm extends Component {
     preferences.save('language', this.refs.language.value())
 
     // Go back.
+    AppActions.save_preferences()
     AppActions.focus_panel('library')
   }
 }
