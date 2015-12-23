@@ -66,4 +66,5 @@ PreferencesForm.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = translate('preferences-form')(PreferencesForm)
+// XXX: can't use translate because it doesn't pass refs
+module.exports = PreferencesForm

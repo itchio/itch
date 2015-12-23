@@ -1,7 +1,6 @@
 
 let r = require('r-dom')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let DeepComponent = require('./deep-component')
 
 /**
@@ -47,4 +46,5 @@ SelectRow.propTypes = {
   label: PropTypes.string.isRequired
 }
 
-module.exports = translate('select-row')(SelectRow)
+// XXX: can't use translate because it doesn't pass refs
+module.exports = SelectRow

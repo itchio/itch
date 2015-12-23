@@ -16,9 +16,9 @@ if (env.name === 'development') {
   console.log('Pre-compiled, not using require hook.')
 }
 
+let r = require('r-dom')
 let ReactDOM = require('react-dom')
-let React = require('react')
-let Layout = require('./components/layout').Layout
+let Layout = require('./components/layout')
 let I18nextProvider = require('react-i18next').I18nextProvider
 
 let I18nStore = require('./stores/i18n-store')
@@ -28,8 +28,8 @@ let app_node
 function render () {
   app_node = document.querySelector('#app')
   let i18n = I18nStore.get_state()
-  let layout = React.createElement(Layout)
-  let translated = React.createElement(I18nextProvider, {i18n}, layout)
+  let layout = r(Layout)
+  let translated = r(I18nextProvider, {i18n}, layout)
   ReactDOM.render(translated, app_node)
 }
 
