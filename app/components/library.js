@@ -1,4 +1,3 @@
-'use strict'
 
 let r = require('r-dom')
 let mori = require('mori')
@@ -8,6 +7,7 @@ let Component = require('./component')
 
 let UserPanel = require('./user-panel').UserPanel
 let GameList = require('./game-list').GameList
+let StatusBar = require('./status-bar')
 let misc = require('./misc')
 let Icon = misc.Icon
 let TaskIcon = misc.TaskIcon
@@ -39,73 +39,11 @@ LibraryPage.propTypes = {
   state: PropTypes.any
 }
 
-class StatusBar extends Component {
-  render () {
-    let update = this.props.update
-    let status = mori.get(update, 'status')
-    let error = mori.get(update, 'error')
-    let available = mori.get(update, 'available')
-    let downloaded = mori.get(update, 'downloaded')
-    let checking = mori.get(update, 'checking')
-    let uptodate = mori.get(update, 'uptodate')
-
-    let children = []
-    let active = true
-
-    let onClick = () => null
-
-    if (status) {
-      onClick = AppActions.dismiss_status
-      children = [
-        r(misc.Icon, {icon: 'heart-filled'}),
-        r.span(status),
-        r(misc.Icon, {icon: 'cross'})
-      ]
-    } else if (error) {
-      onClick = AppActions.dismiss_status
-      children = [
-        r(misc.Icon, {icon: 'heart-broken'}),
-        r.span('Error while checking for update: ' + error),
-        r(misc.Icon, {icon: 'cross'})
-      ]
-    } else if (downloaded) {
-      onClick = AppActions.apply_self_update
-      children = [
-        r(misc.Icon, {icon: 'install'}),
-        r.span('Click to restart & apply update!')
-      ]
-    } else if (available) {
-      children = [
-        r(misc.Icon, {icon: 'download'}),
-        r.span('Downloading update...')
-      ]
-    } else if (checking) {
-      children = [
-        r(misc.Icon, {icon: 'stopwatch'}),
-        r.span('Looking for updates...')
-      ]
-    } else if (uptodate) {
-      children = [
-        r(misc.Icon, {icon: 'like'}),
-        r.span('Your itch is up-to-date!')
-      ]
-    } else {
-      active = false
-    }
-
-    return (
-      r.div({classSet: {status_bar: true, active}},
-        r.div({className: 'message', onClick}, children)
-      )
-    )
-  }
-}
-
 /**
  * A list of tabs, collections and caved games
  * TODO: this component does too much, split it!
  */
-class _LibrarySidebar extends Component {
+class LibrarySidebar extends Component {
   render () {
     let t = this.props.t
     let state = this.props.state
@@ -229,8 +167,6 @@ class _LibrarySidebar extends Component {
     )
   }
 }
-
-let LibrarySidebar = translate('library-sidebar')(_LibrarySidebar)
 
 LibrarySidebar.propTypes = {
   state: PropTypes.any
@@ -396,4 +332,9 @@ LibraryPanelLink.propTypes = {
   before: PropTypes.any
 }
 
-module.exports = {LibraryPage, LibrarySidebar, LibraryContent, LibraryPanelLink}
+module.exports = {
+  LibrarySidebar: translate('library-sidebar')(LibrarySidebar),
+  LibraryPage,
+  LibraryContent,
+  LibraryPanelLink
+}

@@ -1,5 +1,4 @@
 
-
 let rnil = () => null
 let EventEmitter = require('events').EventEmitter
 
@@ -36,7 +35,7 @@ let electron = {
     }
   }, EventEmitter.prototype),
   remote: {
-    require: () => {}
+    require: (path) => ({})
   },
   shell: {
     openItem: rnil,

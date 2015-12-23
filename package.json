@@ -79,7 +79,7 @@
   },
   "scripts": {
     "start": "sassc app/style/main.scss app/style/main.css && electron .",
-    "test": "nyc -s test/runner.js \"test/**/*-spec.js\" | tap-spec",
+    "test": "nyc -s test/runner.js test | tap-spec",
     "coveralls": "nyc report -r text-lcov | coveralls",
     "local-cov": "npm test && nyc report -r text && nyc report -r html"
   },

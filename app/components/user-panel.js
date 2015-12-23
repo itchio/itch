@@ -5,6 +5,7 @@ let PropTypes = require('react').PropTypes
 let Component = require('./component')
 
 let remote = require('electron').remote
+// TODO: get rid of that, go through app-store instead
 let CredentialsStore = remote.require('./stores/credentials-store')
 
 function get_state () {

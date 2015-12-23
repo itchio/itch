@@ -2,25 +2,23 @@
 let test = require('zopf')
 let mori = require('mori')
 let proxyquire = require('proxyquire')
-let sd = require('skin-deep')
 let _ = require('underscore')
 
-let electron = require('../stubs/electron')
-
-let $ = require('react').createElement
+let sd = require('./skin-deeper')
+let stubs = require('../stubs/react-stubs')
 
 test('game-list', t => {
-  let gamelist = proxyquire('../../app/components/game-list', electron)
+  let gamelist = proxyquire('../../app/components/game-list', stubs)
   let GameCell = gamelist.GameCell
   let GameList = gamelist.GameList
 
   t.case('GameList', t => {
-    sd.shallowRender($(GameList, {}))
+    sd.shallowRender(sd(GameList, {}))
     let games = mori.toClj(_.indexBy([{id: 12}, {id: 26}, {id: 42}], 'id'))
     let installs = mori.toClj({
       'asd09f8': {game_id: 42}
     })
-    sd.shallowRender($(GameList, {games, installs}))
+    sd.shallowRender(sd(GameList, {games, installs}))
   })
 
   t.case('GameCell', t => {
@@ -37,12 +35,12 @@ test('game-list', t => {
     })
     let install = null
 
-    sd.shallowRender($(GameCell, {game, install}))
+    sd.shallowRender(sd(GameCell, {game, install}))
     install = mori.assoc(install, 'progress', 0.2)
 
     ;['download', 'extract', 'idle', 'error', 'launch'].forEach((task) => {
       install = mori.assoc(install, 'task', task)
-      sd.shallowRender($(GameCell, {game, install}))
+      sd.shallowRender(sd(GameCell, {game, install}))
     })
   })
 })

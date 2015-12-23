@@ -1,33 +1,24 @@
 
-
 let test = require('zopf')
 let mori = require('mori')
 let proxyquire = require('proxyquire')
-let sd = require('skin-deep')
 
-let electron = require('../stubs/electron')
-let AppStore = require('../stubs/app-store')
-let defer = require('../stubs/defer')
-
-let $ = require('react').createElement
+let sd = require('./skin-deeper')
+let stubs = require('../stubs/react-stubs')
 
 test('layout', t => {
-  let stubs = Object.assign({
-    '../stores/app-store': AppStore,
-    '../util/defer': defer
-  }, electron)
   let Layout = proxyquire('../../app/components/layout', stubs).Layout
-  let get_state = t.stub(AppStore, 'get_state')
+  let get_state = t.stub(stubs.AppStore, 'get_state')
 
   let set_state = (props) => {
     get_state.returns(mori.toClj(props))
   }
 
   t.case('listeners', t => {
-    let tree = sd.shallowRender($(Layout, {}))
+    let tree = sd.shallowRender(sd(Layout, {}))
     let instance = tree.getMountedInstance()
     instance.componentDidMount()
-    AppStore.emit_change()
+    stubs.AppStore.emit_change()
     instance.componentWillUnmount()
 
     t.is(get_state.callCount, 2)
@@ -42,7 +33,7 @@ test('layout', t => {
     let props = {page: 'setup', setup}
     set_state(props)
 
-    let tree = sd.shallowRender($(Layout, {}))
+    let tree = sd.shallowRender(sd(Layout, {}))
     let vdom = tree.getRenderOutput()
     t.same(vdom.props, {children: undefined, state: mori.toClj({page: 'setup', setup})})
   })
@@ -55,7 +46,7 @@ test('layout', t => {
     let props = {page: 'login', login}
     set_state(props)
 
-    let tree = sd.shallowRender($(Layout, {}))
+    let tree = sd.shallowRender(sd(Layout, {}))
     let vdom = tree.getRenderOutput()
     t.same(vdom.props, {children: undefined, state: mori.toClj({page: 'login', login})})
   })
@@ -67,7 +58,7 @@ test('layout', t => {
     let props = {page: 'library', library}
     set_state(props)
 
-    let tree = sd.shallowRender($(Layout, {}))
+    let tree = sd.shallowRender(sd(Layout, {}))
     let vdom = tree.getRenderOutput()
     t.same(vdom.props, {children: undefined, state: mori.toClj(library), update: null})
   })

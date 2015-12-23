@@ -1,25 +1,20 @@
 
-
 let test = require('zopf')
 let mori = require('mori')
 let proxyquire = require('proxyquire')
-let sd = require('skin-deep')
 
-let electron = require('../stubs/electron')
-let AppStore = require('../stubs/app-store')
-
-let $ = require('react').createElement
+let sd = require('./skin-deeper')
+let stubs = require('../stubs/react-stubs')
 
 test('library', t => {
-  t.stub(electron.electron.remote, 'require').returns(AppStore)
-  let library = proxyquire('../../app/components/library', electron)
+  let library = proxyquire('../../app/components/library', stubs)
   let LibraryPage = library.LibraryPage
   let LibrarySidebar = library.LibrarySidebar
   let LibraryContent = library.LibraryContent
   let LibraryPanelLink = library.LibraryPanelLink
 
   t.case('LibraryPage', t => {
-    sd.shallowRender($(LibraryPage, {}))
+    sd.shallowRender(sd(LibraryPage, {}))
   })
 
   t.case('LibrarySidebar', t => {
@@ -36,14 +31,14 @@ test('library', t => {
         f: {task: 'idle', game}
       }
     }
-    sd.shallowRender($(LibrarySidebar, {state: mori.toClj(props)}))
+    sd.shallowRender(sd(LibrarySidebar, {state: mori.toClj(props)}))
   })
 
   t.case('LibraryContent', t => {
-    sd.shallowRender($(LibraryContent, {games: {}}))
+    sd.shallowRender(sd(LibraryContent, {games: {}}))
   })
 
   t.case('LibraryPanelLink', t => {
-    sd.shallowRender($(LibraryPanelLink, {}))
+    sd.shallowRender(sd(LibraryPanelLink, {}))
   })
 })

@@ -6,12 +6,12 @@ let mori = require('mori')
 let PropTypes = require('react').PropTypes
 let Component = require('./component')
 
-let AppActions = require('../actions/app-actions')
-let os = require('../util/os')
-
 let misc = require('./misc')
 let TaskIcon = misc.TaskIcon
 let Icon = misc.Icon
+
+let AppActions = require('../actions/app-actions')
+let os = require('../util/os')
 
 let platform_data = mori.toClj({
   p_android: {icon: 'android', platform: 'android'},

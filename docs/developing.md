@@ -55,17 +55,20 @@ We use [grunt][] for packaging, see our [CI job definitions][ci].
 Run:
 
 ```bash
-$ npm test
+$ test/runner.sh
 ```
 
 To run all tests. You can run a single test with:
 
 ```bash
-$ test/runner.js test/util/os-spec.js | tap-spec
+$ test/runner.sh test/util/os-spec.js
 ```
 
-Piping to [tap-spec][] is optional, but neat. Make you sure `npm install -g
-tap-spec` if you haven't already.
+Or run all the tests in a directory with:
+
+```bash
+$ test/runner.sh test/components
+```
 
 [tap-spec]: https://github.com/scottcorgan/tap-spec
 

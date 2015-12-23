@@ -2,14 +2,12 @@
 
 let test = require('zopf')
 let proxyquire = require('proxyquire')
-let sd = require('skin-deep')
 
-let electron = require('../stubs/electron')
-
-let $ = require('react').createElement
+let sd = require('./skin-deeper')
+let stubs = require('../stubs/react-stubs')
 
 test('forms', t => {
-  let InputRow = proxyquire('../../app/components/forms', electron).InputRow
+  let InputRow = proxyquire('../../app/components/forms', stubs).InputRow
 
   let props = {
     autofocus: true,
@@ -18,7 +16,7 @@ test('forms', t => {
   }
 
   t.case('InputRow', t => {
-    let tree = sd.shallowRender($(InputRow, props))
+    let tree = sd.shallowRender(sd(InputRow, props))
 
     let label = tree.subTree('label')
     t.ok(label)

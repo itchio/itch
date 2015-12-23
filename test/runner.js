@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 (function () {
   'use strict'
+  /** requires node 4.2.x or higher because we use some ES6 features */
 
+  let fs = require('fs')
   let path = require('path')
   let glob = require('glob')
 
@@ -12,12 +14,31 @@
   })
   require('babel-register')
 
-  process.argv.slice(2).forEach((arg) => {
+  let is_dir = (f) => {
+    try {
+      return fs.lstatSync(f).isDirectory()
+    } catch (e) {
+      // probably a glob
+    }
+    return false
+  }
+
+  let args = process.argv.slice(2)
+  if (args.length === 0) {
+    args.push(path.resolve(__dirname, '..', 'test'))
+  }
+
+  for (let arg of args) {
+    if (is_dir(arg)) {
+      console.log(`Running all specs in ${arg}`)
+      arg = `${arg}/**/*-spec.js`
+    }
+
     glob(arg, function (e, files) {
       files.forEach(function (file) {
         let test = path.resolve(process.cwd(), file)
         require(test)
       })
     })
-  })
+  }
 })()

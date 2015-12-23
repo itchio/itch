@@ -1,21 +1,18 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
-let sd = require('skin-deep')
 
-let electron = require('../stubs/electron')
+let sd = require('./skin-deeper')
+let stubs = require('../stubs/react-stubs')
 let CredentialsStore = require('../stubs/credentials-store')
 
-let $ = require('react').createElement
-
 test('user-panel', t => {
-  t.stub(electron.electron.remote, 'require').returns(CredentialsStore)
-  let UserPanel = proxyquire('../../app/components/user-panel', electron).UserPanel
+  t.stub(stubs.electron.remote, 'require', () => CredentialsStore)
+  let UserPanel = proxyquire('../../app/components/user-panel', stubs).UserPanel
 
   t.case('UserPanel (loading)', t => {
     t.stub(CredentialsStore, 'get_me').returns(null)
-    sd.shallowRender($(UserPanel, {}))
+    sd.shallowRender(sd(UserPanel, {}))
   })
 
   t.case('UserPanel (loaded)', t => {
@@ -23,7 +20,7 @@ test('user-panel', t => {
       cover_url: 'https://example.org/img.png',
       username: 'toto'
     })
-    let tree = sd.shallowRender($(UserPanel, {}))
+    let tree = sd.shallowRender(sd(UserPanel, {}))
     let instance = tree.getMountedInstance()
     let mock = t.mock(CredentialsStore)
     mock.expects('add_change_listener').callsArg(1)
