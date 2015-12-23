@@ -85,7 +85,7 @@ test('AppStore', t => {
   })
 
   t.case('focus_panel', t => {
-    let panel = 'settings'
+    let panel = 'library'
     handler({ action_type: AppConstants.LIBRARY_FOCUS_PANEL, panel })
     t.is(get_state().library.panel, panel)
   })

@@ -27,7 +27,7 @@ test('layout', t => {
   t.case('setup', t => {
     let setup = {
       message: 'Checking dependencies',
-      icon: 'settings',
+      icon: 'cog',
       error: null
     }
     let props = {page: 'setup', setup}

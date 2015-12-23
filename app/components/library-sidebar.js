@@ -137,7 +137,7 @@ class LibrarySidebar extends ShallowComponent {
           ].concat(mori.intoArray(cave_items)))
           : ''
         ]).concat(panel === 'preferences'
-        ? r(LibraryPanelLink, {before: r(Icon, {icon: 'settings'}), name: 'preferences', label: 'Preferences', panel, games})
+        ? r(LibraryPanelLink, {before: r(Icon, {icon: 'cog'}), name: 'preferences', label: 'Preferences', panel, games})
         : ''
         ))
       ])

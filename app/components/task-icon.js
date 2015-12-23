@@ -12,7 +12,7 @@ let task_to_icon = {
   'download': 'download',
   'download-queued': 'hand-paper-o',
   'install': 'file-zip',
-  'configure': 'settings',
+  'configure': 'cog',
   'launch': 'fire',
   'idle': 'checkmark'
 }

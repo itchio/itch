@@ -39,7 +39,7 @@ let state = mori.hashMap(
 
   'setup', mori.hashMap(
     'message', '...',
-    'icon', 'settings'
+    'icon', 'cog'
   )
 )
 
