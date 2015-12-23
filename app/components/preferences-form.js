@@ -24,29 +24,28 @@ class PreferencesForm extends ShallowComponent {
 
   render () {
     let state = this.props.state
-    console.log(`In preferences form, state = `, mori.toJs(state))
     let language = mori.getIn(state, ['preferences', 'language'])
 
     return (
-      r.form({className: `form preferences_form`}, [
-        r(SelectRow, {
-          on_change: this.on_language_change,
-          options: lang_opts,
-          value: language,
-          label: 'Language:'
-        }),
+      r.div({className: 'preferences_panel'}, [
+        r.h2({}, 'Preferences'),
 
-        // Buttons.
-        r.div({className: ''}, [
-          r.div({
-            className: 'button',
-            onClick: () => { AppActions.focus_panel('library') }
-          }, [
-            r.span({}, [
-              r(Icon, {icon: 'cross'}), // TODO: Integrate a "cancel" icon.
-              ' Close'
+        r.form({className: `form preferences_form`}, [
+          // Buttons.
+          r.div({className: 'buttons'}, [
+            r.span({
+              onClick: () => { AppActions.focus_panel('library') }
+            }, [
+              r(Icon, {icon: 'cross'})
             ])
-          ])
+          ]),
+
+          r(SelectRow, {
+            on_change: this.on_language_change,
+            options: lang_opts,
+            value: language,
+            label: 'Language'
+          })
         ])
       ])
     )

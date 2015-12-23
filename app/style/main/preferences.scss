@@ -1,8 +1,26 @@
 
-.preferences_form {
-  /* TODO: This is almost the same padding as "game_list". We should define something common for all windows/layouts. */
-  padding: 20px 20px;
+.preferences_panel {
+  margin-left: 40px;
+  font-size: 20px;
 
- /* TODO: Which one is the default color for texts? */
-  color: $body_color_light;
+  color: white;
+
+  h2 {
+    font-weight: 100;
+    font-size: 65px;
+  }
+
+  .select-row select {
+    margin-left: 10px;
+  }
+
+  .buttons {
+    float: right;
+    opacity: .7;
+
+    &:hover {
+      opacity: 1;
+      cursor: hand;
+    }
+  }
 }
