@@ -71,9 +71,9 @@ own namespaces and to the result with a React class that inherits from `Componen
 ```javascript
 // in components/foo_bar.js
 let r = require('r-dom')
-let Component = require('./component')
+let ShallowComponent = require('./shallow-component')
 
-class _InternalThing extends Component {
+class _InternalThing extends ShallowComponent {
   render () {
     let message = this.props.message
     return r(div, {}, message)
@@ -81,7 +81,7 @@ class _InternalThing extends Component {
 }
 let InternalThing = translate('internal-thing')(_InternalThing)
 
-class FooBar extends Component {
+class FooBar extends ShallowComponent {
   render () {
     return r(InternalThing, {message: 'Secrets!'})
   }

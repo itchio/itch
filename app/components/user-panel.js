@@ -2,7 +2,8 @@
 
 let r = require('r-dom')
 let PropTypes = require('react').PropTypes
-let Component = require('./component')
+let translate = require('react-i18next').translate
+let ShallowComponent = require('./shallow-component')
 
 let remote = require('electron').remote
 // TODO: get rid of that, go through app-store instead
@@ -15,7 +16,7 @@ function get_state () {
 /**
  * A friendly component that displays your avatar and username
  */
-class UserPanel extends Component {
+class UserPanel extends ShallowComponent {
   constructor () {
     super()
     this.state = get_state()
@@ -36,10 +37,12 @@ class UserPanel extends Component {
     let me = this.state.me
     let loading = !me
 
+    let avatar = (me && me.cover_url) || 'static/images/itchio-textless-pink.svg'
+
     return r.div({classSet: {user_panel: true, loading}}, [
       me
       ? r.div({}, [
-        r.img({className: 'avatar', src: me.cover_url || "static/images/itchio-textless-pink.svg"}),
+        r.img({className: 'avatar', src: avatar}),
         r.div({className: 'username'}, me.username)
       ])
       : 'Loading...'
@@ -51,4 +54,4 @@ UserPanel.propTypes = {
   me: PropTypes.object
 }
 
-module.exports = {UserPanel}
+module.exports = translate('user-panel')(UserPanel)

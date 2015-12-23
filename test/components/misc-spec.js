@@ -5,14 +5,9 @@ let proxyquire = require('proxyquire')
 let sd = require('./skin-deeper')
 let stubs = require('../stubs/react-stubs')
 
-test('user-panel', t => {
-  let misc = proxyquire('../../app/components/misc', stubs)
-  let Icon = misc.Icon
-  let TaskIcon = misc.TaskIcon
-  let ProgressBar = misc.ProgressBar
-  let ErrorList = misc.ErrorList
-
+test('misc', t => {
   t.case('Icon', t => {
+    let Icon = proxyquire('../../app/components/icon', stubs)
     sd.shallowRender(sd(Icon, {}))
     let icon = 'boo'
     let tree = sd.shallowRender(sd(Icon, {icon}))
@@ -20,6 +15,7 @@ test('user-panel', t => {
   })
 
   t.case('TaskIcon', t => {
+    let TaskIcon = proxyquire('../../app/components/task-icon', stubs)
     let task = 'find-upload'
     let tree = sd.shallowRender(sd(TaskIcon, {task}))
     let Icon
@@ -28,6 +24,7 @@ test('user-panel', t => {
   })
 
   t.case('ProgressBar', t => {
+    let ProgressBar = proxyquire('../../app/components/progress-bar', stubs)
     sd.shallowRender(sd(ProgressBar, {}))
     let progress = 0.5
     let tree = sd.shallowRender(sd(ProgressBar, {progress}))
@@ -36,6 +33,7 @@ test('user-panel', t => {
   })
 
   t.case('ErrorList', t => {
+    let ErrorList = proxyquire('../../app/components/error-list', stubs)
     sd.shallowRender(sd(ErrorList, {errors: null}))
     sd.shallowRender(sd(ErrorList, {errors: 'uh oh'}))
     sd.shallowRender(sd(ErrorList, {errors: ['eenie', 'meenie']}))

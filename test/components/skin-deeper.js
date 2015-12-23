@@ -11,9 +11,6 @@ let self = (comp, opts, children) => {
   if (typeof opts === 'undefined') {
     opts = {}
   }
-  if (typeof children === 'undefined') {
-    children = []
-  }
   opts.t = t
 
   return react.createElement(comp, opts, children)

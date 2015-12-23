@@ -3,16 +3,16 @@ let r = require('r-dom')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes
 let translate = require('react-i18next').translate
-let Component = require('./component')
+let ShallowComponent = require('./shallow-component')
 
-let misc = require('./misc')
+let Icon = require('./icon')
 
 let AppActions = require('../actions/app-actions')
 
 /**
  * Displays our current progress when checking for updates, etc.
  */
-class StatusBar extends Component {
+class StatusBar extends ShallowComponent {
   render () {
     let t = this.props.t
     let update = this.props.update
@@ -31,36 +31,36 @@ class StatusBar extends Component {
     if (status) {
       onClick = AppActions.dismiss_status
       children = [
-        r(misc.Icon, {icon: 'heart-filled'}),
+        r(Icon, {icon: 'heart-filled'}),
         r.span(status),
-        r(misc.Icon, {icon: 'cross'})
+        r(Icon, {icon: 'cross'})
       ]
     } else if (error) {
       onClick = AppActions.dismiss_status
       children = [
-        r(misc.Icon, {icon: 'heart-broken'}),
+        r(Icon, {icon: 'heart-broken'}),
         r.span('Error while checking for update: ' + error),
-        r(misc.Icon, {icon: 'cross'})
+        r(Icon, {icon: 'cross'})
       ]
     } else if (downloaded) {
       onClick = AppActions.apply_self_update
       children = [
-        r(misc.Icon, {icon: 'install'}),
+        r(Icon, {icon: 'install'}),
         r.span('Click to restart & apply update!')
       ]
     } else if (available) {
       children = [
-        r(misc.Icon, {icon: 'download'}),
+        r(Icon, {icon: 'download'}),
         r.span('Downloading update...')
       ]
     } else if (checking) {
       children = [
-        r(misc.Icon, {icon: 'stopwatch'}),
+        r(Icon, {icon: 'stopwatch'}),
         r.span(t('checking'))
       ]
     } else if (uptodate) {
       children = [
-        r(misc.Icon, {icon: 'like'}),
+        r(Icon, {icon: 'like'}),
         r.span('Your itch is up-to-date!')
       ]
     } else {

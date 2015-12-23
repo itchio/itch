@@ -7,15 +7,14 @@ let sd = require('./skin-deeper')
 let stubs = require('../stubs/react-stubs')
 
 test('forms', t => {
-  let InputRow = proxyquire('../../app/components/forms', stubs).InputRow
-
-  let props = {
-    autofocus: true,
-    disabled: true,
-    name: 'al'
-  }
-
   t.case('InputRow', t => {
+    let InputRow = proxyquire('../../app/components/input-row', stubs)
+    let props = {
+      autofocus: true,
+      disabled: true,
+      name: 'al'
+    }
+
     let tree = sd.shallowRender(sd(InputRow, props))
 
     let label = tree.subTree('label')
@@ -39,5 +38,17 @@ test('forms', t => {
 
     t.is(instance.value(), 'bozo')
     delete instance.refs[`__proto__`].input
+  })
+
+  t.case('SelectRow', t => {
+    let SelectRow = proxyquire('../../app/components/select-row', stubs)
+    let props = {
+      label: 'FCC',
+      options: [
+        {value: 1, label: 'No showboating'},
+        {value: 2, label: 'Shipoopi'}
+      ]
+    }
+    sd.shallowRender(sd(SelectRow, props))
   })
 })

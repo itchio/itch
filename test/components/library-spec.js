@@ -7,17 +7,13 @@ let sd = require('./skin-deeper')
 let stubs = require('../stubs/react-stubs')
 
 test('library', t => {
-  let library = proxyquire('../../app/components/library', stubs)
-  let LibraryPage = library.LibraryPage
-  let LibrarySidebar = library.LibrarySidebar
-  let LibraryContent = library.LibraryContent
-  let LibraryPanelLink = library.LibraryPanelLink
-
   t.case('LibraryPage', t => {
+    let LibraryPage = proxyquire('../../app/components/library-page', stubs)
     sd.shallowRender(sd(LibraryPage, {}))
   })
 
   t.case('LibrarySidebar', t => {
+    let LibrarySidebar = proxyquire('../../app/components/library-sidebar', stubs)
     let game = { title: 'Wreck IT' }
     let props = {
       collections: {
@@ -35,10 +31,12 @@ test('library', t => {
   })
 
   t.case('LibraryContent', t => {
+    let LibraryContent = proxyquire('../../app/components/library-content', stubs)
     sd.shallowRender(sd(LibraryContent, {games: {}}))
   })
 
   t.case('LibraryPanelLink', t => {
+    let LibraryPanelLink = proxyquire('../../app/components/library-panel-link', stubs)
     sd.shallowRender(sd(LibraryPanelLink, {}))
   })
 })

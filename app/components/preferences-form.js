@@ -1,32 +1,18 @@
-'use strict'
 
 let r = require('r-dom')
-let React = require('react')
-let PropTypes = React.PropTypes
+let PropTypes = require('react').PropTypes
+let translate = require('react-i18next').translate
+let ShallowComponent = require('./shallow-component')
 
-let Component = require('./component')
-let SelectRow = require('./forms').SelectRow
-let Icon = require('./misc').Icon
-
-let preferences = require('../util/preferences')
 let AppActions = require('../actions/app-actions')
 
-class PreferencesPage extends Component {
-  render () {
-    return (
-      r.div({className: 'preferences_page'}, [
-        r.h1({className: 'preferences_form'}, 'Preferences'),
-        r(PreferencesForm, {})
-      ])
-    )
-  }
-}
+let SelectRow = require('./select-row')
+let Icon = require('./icon')
 
-PreferencesPage.propTypes = {
-  state: PropTypes.any
-}
+// TODO: don't do that, go through app-store
+let preferences = require('../util/preferences')
 
-class PreferencesForm extends Component {
+class PreferencesForm extends ShallowComponent {
   constructor () {
     super()
     this.handle_submit = this.handle_submit.bind(this)
@@ -80,4 +66,4 @@ PreferencesForm.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = { PreferencesPage, PreferencesForm }
+module.exports = translate('preferences-form')(PreferencesForm)

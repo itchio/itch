@@ -8,7 +8,7 @@ let CredentialsStore = require('../stubs/credentials-store')
 
 test('user-panel', t => {
   t.stub(stubs.electron.remote, 'require', () => CredentialsStore)
-  let UserPanel = proxyquire('../../app/components/user-panel', stubs).UserPanel
+  let UserPanel = proxyquire('../../app/components/user-panel', stubs)
 
   t.case('UserPanel (loading)', t => {
     t.stub(CredentialsStore, 'get_me').returns(null)

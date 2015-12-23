@@ -7,7 +7,7 @@ let sd = require('./skin-deeper')
 let stubs = require('../stubs/react-stubs')
 
 test('layout', t => {
-  let Layout = proxyquire('../../app/components/layout', stubs).Layout
+  let Layout = proxyquire('../../app/components/layout', stubs)
   let get_state = t.stub(stubs.AppStore, 'get_state')
 
   let set_state = (props) => {

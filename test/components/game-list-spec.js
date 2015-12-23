@@ -8,11 +8,8 @@ let sd = require('./skin-deeper')
 let stubs = require('../stubs/react-stubs')
 
 test('game-list', t => {
-  let gamelist = proxyquire('../../app/components/game-list', stubs)
-  let GameCell = gamelist.GameCell
-  let GameList = gamelist.GameList
-
   t.case('GameList', t => {
+    let GameList = proxyquire('../../app/components/game-list', stubs)
     sd.shallowRender(sd(GameList, {}))
     let games = mori.toClj(_.indexBy([{id: 12}, {id: 26}, {id: 42}], 'id'))
     let installs = mori.toClj({
@@ -22,6 +19,7 @@ test('game-list', t => {
   })
 
   t.case('GameCell', t => {
+    let GameCell = proxyquire('../../app/components/game-cell', stubs)
     let game = mori.toClj({
       title: 'a',
       cover_url: 'b',

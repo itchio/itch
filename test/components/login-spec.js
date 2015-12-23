@@ -6,15 +6,13 @@ let sd = require('./skin-deeper')
 let stubs = require('../stubs/react-stubs')
 
 test('login', t => {
-  let login = proxyquire('../../app/components/login', stubs)
-  let LoginPage = login.LoginPage
-  let LoginForm = login.LoginForm
-
   t.case('LoginPage', t => {
+    let LoginPage = proxyquire('../../app/components/login-page', stubs)
     sd.shallowRender(sd(LoginPage, {}))
   })
 
   t.case('LoginForm', t => {
+    let LoginForm = proxyquire('../../app/components/login-form', stubs)
     let tree = sd.shallowRender(sd(LoginForm, {}))
     let instance = tree.getMountedInstance()
 

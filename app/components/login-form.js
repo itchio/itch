@@ -1,42 +1,17 @@
-'use strict'
 
 let r = require('r-dom')
-let React = require('react')
-let PropTypes = React.PropTypes
-let Component = require('./component')
 let mori = require('mori')
+let PropTypes = require('react').PropTypes
+let translate = require('react-i18next').translate
+let ShallowComponent = require('./shallow-component')
 
 let AppActions = require('../actions/app-actions')
 
-let InputRow = require('./forms').InputRow
-let misc = require('./misc')
+let InputRow = require('./input-row')
+let ErrorList = require('./error-list')
+let Icon = require('./icon')
 
-class LoginPage extends Component {
-  render () {
-    let state = this.props.state
-
-    return (
-      r.div({className: 'login_page'}, [
-        r.div({className: 'login_form'}, [
-          r.img({className: 'logo', src: 'static/images/bench-itch.png'}),
-          r.div({className: 'login_box'}, [
-            r(LoginForm, {
-              page: mori.get(state, 'page'),
-              login_state: mori.get(state, 'login'),
-              setup_state: mori.get(state, 'setup')
-            })
-          ])
-        ])
-      ])
-    )
-  }
-}
-
-LoginPage.propTypes = {
-  state: PropTypes.any
-}
-
-class LoginForm extends Component {
+class LoginForm extends ShallowComponent {
   constructor () {
     super()
     this.handle_submit = this.handle_submit.bind(this)
@@ -74,7 +49,7 @@ class LoginForm extends Component {
 
     return (
       r.form({classSet: {form: true, has_error: (icon === 'error')}, onSubmit: this.handle_submit}, [
-        r(misc.ErrorList, {errors, before: r(misc.Icon, {icon: 'neutral'})}),
+        r(ErrorList, {errors, before: r(Icon, {icon: 'neutral'})}),
 
         r(InputRow, {name: 'username', type: 'text', ref: 'username', autofocus: true, disabled: loading}),
         r(InputRow, {name: 'password', type: 'password', ref: 'password', disabled: loading}),
@@ -106,4 +81,4 @@ LoginForm.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = {LoginPage, LoginForm}
+module.exports = translate('login-form')(LoginForm)
