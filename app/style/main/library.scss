@@ -221,11 +221,7 @@ $placeholder_link_color: #93C1F3;
     margin-left: 40px;
 
     .placeholder_background {
-      position: absolute;
-      right: 40px;
-      top: 40px;
-      font-size: 200px;
-      color: #525151;
+      @include icon_as_background;
     }
 
     .placeholder_content {

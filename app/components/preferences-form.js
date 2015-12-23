@@ -31,22 +31,15 @@ class PreferencesForm extends ShallowComponent {
         r.h2({}, 'Preferences'),
 
         r.form({className: `form preferences_form`}, [
-          // Buttons.
-          r.div({className: 'buttons'}, [
-            r.span({
-              onClick: () => { AppActions.focus_panel('library') }
-            }, [
-              r(Icon, {icon: 'cross'})
-            ])
-          ]),
-
           r(SelectRow, {
             on_change: this.on_language_change,
             options: lang_opts,
             value: language,
             label: 'Language'
           })
-        ])
+        ]),
+
+        r.span({className: 'icon icon-cog preferences_background'})
       ])
     )
   }

@@ -23,4 +23,8 @@
       cursor: hand;
     }
   }
+
+  .preferences_background {
+    @include icon_as_background;
+  }
 }

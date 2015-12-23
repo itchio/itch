@@ -544,6 +544,14 @@ $library_bg: #2E2B2C;
   }
 }
 
+@mixin icon_as_background {
+  position: absolute;
+  right: 40px;
+  top: 40px;
+  font-size: 200px;
+  color: #525151;
+}
+
 .icon.spin {
   animation: sk-rotateplane 2.8s .5s infinite ease-out;
 }
