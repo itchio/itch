@@ -15,6 +15,10 @@ let env = require('../env')
 let state = mori.hashMap(
   'page', 'login',
 
+  'preferences', mori.hashMap(
+    'language', 'en'
+  ),
+
   'update', mori.hashMap(
     'available', false,
     'downloaded', false,
@@ -285,11 +289,6 @@ function game_store_diff (payload) {
   AppStore.emit_change()
 }
 
-// Store.subscribe('game-store', (games) => {
-//   state = mori.assocIn(state, ['library', 'games'], mori.toClj(games))
-//   AppStore.emit_change()
-// })
-
 Store.subscribe('collection-store', (collections) => {
   state = mori.assocIn(state, ['library', 'collections'], mori.toClj(collections))
   AppStore.emit_change()
@@ -297,6 +296,11 @@ Store.subscribe('collection-store', (collections) => {
 
 Store.subscribe('credentials-store', (credentials) => {
   state = mori.assocIn(state, ['library', 'credentials'], mori.toClj(credentials))
+  AppStore.emit_change()
+})
+
+Store.subscribe('preferences-store', (preferences) => {
+  state = mori.assoc(state, 'preferences', mori.toClj(preferences))
   AppStore.emit_change()
 })
 

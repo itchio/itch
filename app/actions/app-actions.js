@@ -232,8 +232,8 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.OPEN_PREFERENCES })
   },
 
-  save_preferences: () => {
-    AppDispatcher.dispatch({ action_type: AppConstants.SAVE_PREFERENCES })
+  preferences_set_language: (language) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.PREFERENCES_SET_LANGUAGE, language })
   },
 
   quit: () => {

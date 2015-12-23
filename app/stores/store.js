@@ -34,7 +34,7 @@ Object.assign(Store.prototype, EventEmitter.prototype, {
   },
 
   emit_change: function () {
-    this.emit(CHANGE_EVENT)
+    this.emit(CHANGE_EVENT, this.get_state())
 
     if (this.process_type === 'browser') {
       require('electron').BrowserWindow.getAllWindows().forEach((w) => {
@@ -75,15 +75,18 @@ Store.action_listeners = (f) => {
 }
 
 Store.subscribe = (name, cb) => {
-  if (os.process_type() !== 'renderer') {
-    throw new Error('Tried to use subscribe from node side')
+  if (os.process_type() === 'renderer') {
+    let ipc = require('electron').ipcRenderer
+    ipc.on(`${name}-change`, () => ipc.send(`${name}-fetch`))
+    ipc.on(`${name}-state`, (ev, data) => cb(data))
+
+    ipc.send(`${name}-fetch`)
+  } else {
+    let store_path = `./${name}`
+    console.log(`Subscribing to ${store_path}`)
+    let specific_store = require(store_path)
+    specific_store.add_change_listener('anonymous', cb)
   }
-
-  let ipc = require('electron').ipcRenderer
-  ipc.on(`${name}-change`, () => ipc.send(`${name}-fetch`))
-  ipc.on(`${name}-state`, (ev, data) => cb(data))
-
-  ipc.send(`${name}-fetch`)
 }
 
 module.exports = Store

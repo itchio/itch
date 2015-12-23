@@ -17,7 +17,10 @@ class SelectRow extends DeepComponent {
   }
 
   handleChange (event) {
+    // TODO not sure I like it
     this.setState({value: event.target.value})
+    let on_change = this.props.on_change
+    if (on_change) { on_change(event.target.value) }
   }
 
   render () {
