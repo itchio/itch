@@ -7,7 +7,6 @@ let ShallowComponent = require('./shallow-component')
 
 let LoginPage = require('./login-page')
 let LibraryPage = require('./library-page')
-let PreferencesPage = require('./preferences-page')
 
 let AppStore = require('../stores/app-store')
 let AppActions = require('../actions/app-actions')
@@ -43,13 +42,9 @@ class Layout extends ShallowComponent {
 
     switch (mori.get(state, 'page')) {
       case 'login':
-      case 'setup':
-        // TODO: 'setup' page is deprecated, make sure we can remove the line above.
         return r(LoginPage, {state})
       case 'library':
-        return r(LibraryPage, {state: mori.get(state, 'library'), update: mori.get(state, 'update')})
-      case 'preferences':
-        return r(PreferencesPage, {state})
+        return r(LibraryPage, {state})
       default:
         return r.div()
     }

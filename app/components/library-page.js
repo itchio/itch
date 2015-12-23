@@ -1,5 +1,6 @@
 
 let r = require('r-dom')
+let mori = require('mori')
 let PropTypes = require('react').PropTypes
 let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
@@ -14,11 +15,10 @@ let LibraryContent = require('./library-content')
 class LibraryPage extends ShallowComponent {
   render () {
     let state = this.props.state
-    let update = this.props.update
 
     return r.div({className: 'library_page'}, [
-      r(StatusBar, {update}),
-      r(LibrarySidebar, {state}),
+      r(StatusBar, {update: mori.get(state, 'update')}),
+      r(LibrarySidebar, {state: mori.get(state, 'library')}),
       r(LibraryContent, {state})
     ])
   }

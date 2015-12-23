@@ -208,7 +208,7 @@ function cave_thrown_into_bit_bucket (payload) {
 }
 
 function open_preferences (payload) {
-  switch_page('preferences')
+  focus_panel({panel: 'preferences'})
 }
 
 AppDispatcher.register('app-store', Store.action_listeners(on => {

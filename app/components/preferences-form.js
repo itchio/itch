@@ -24,10 +24,11 @@ class PreferencesForm extends ShallowComponent {
 
   render () {
     let state = this.props.state
+    console.log(`In preferences form, state = `, mori.toJs(state))
     let language = mori.getIn(state, ['preferences', 'language'])
 
     return (
-      r.form({classSet: { form: true, onSubmit: this.handle_submit }}, [
+      r.form({className: `form preferences_form`}, [
         r(SelectRow, {
           on_change: this.on_language_change,
           options: lang_opts,
@@ -39,20 +40,11 @@ class PreferencesForm extends ShallowComponent {
         r.div({className: ''}, [
           r.div({
             className: 'button',
-            onClick: this.handle_submit
+            onClick: () => { AppActions.focus_panel('library') }
           }, [
             r.span({}, [
-              r(Icon, {icon: 'install'}), // TODO: Integrate a "save" icon.
-              ' Save'
-            ])
-          ]),
-          r.div({
-            className: 'button',
-            onClick: () => { AppActions.focus_panel('library') }
-          }, [ // TODO: Should be like "secondary" style instead of main color (primary).
-            r.span({}, [
-              r(Icon, {icon: 'uninstall'}), // TODO: Integrate a "cancel" icon.
-              ' Cancel'
+              r(Icon, {icon: 'cross'}), // TODO: Integrate a "cancel" icon.
+              ' Close'
             ])
           ])
         ])
