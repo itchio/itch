@@ -1,36 +1,42 @@
 
 ## Tree structure
 
-Electron apps have two sides: what happens in the main/node.js process,
-and what happens in the browser/chromium-content process.
+Electron apps have two sides: what happens in the browser/node.js process,
+and what happens in the renderer/chromium process.
 
-The node.js side is stored in `metal` (as in, closer to the metal),
-whereas the browser side is stored in `chrome` (as in, decorative
-chrome plating).
+In itch, things that happen on the browser/node side are:
 
-Using Electron's RPC facilities, one can be required from the other
-using `require("remote").require("some/module/on/the/other/side")`.
+  * API requests
+  * Getting dependencies with ibrew
+  * Driving downloads with butler
+  * Launching applications
+  * Displaying native dialog boxes
 
-> <https://github.com/atom/electron/blob/master/docs/api/remote.md>
+Things that happen on the renderer/chromium-content side:
 
-The node.js side is a bunch of CoffeeScript files compiled in-place
-to .js files that are then imported as needed by the node.js runtime
-whenever they're require()'d.
+  * Rendering the whole UI
+  * Showing HTML5 notifications
 
-The browser side is a bunch of CoffeeScript files that are all brought
-together in a bundle (`chrome/bundle.js`) via browserify - this allows
-us to use `require()` in client-side (ie. browser-side) code and 
-potentially share runtime-agnostic code between the node-side and the
-browser-side.
+**Never use RPC** — it's a nice idea, but synchronous message passing blocks
+the renderer process completely.
 
-> <http://browserify.org/>
+These used to be separated in the source tree, but they no longer are,
+because it's useful to share code between them sometimes (with two copies,
+one on each side).
+
+Most stores live on the browser/node side, except **AppStore**, which gathers
+all data for the react app, and **I18nStore** which simultaneously lives on
+both sides to avoid RPC.
 
 ## Building
 
-The whole build process is driven by `gulp`:
+In development, we are using babel's register hook, which means it's
+slower, but you don't need to worry about forgetting to recompile.
 
-  * `gulp all` will build everything, whereas `gulp chrome`, `gulp metal`, `gulp scss` will only build the parts you want
-  * `gulp watch` will watch for file changes and rebuild only when needed. watchify is especially clever about only rebuilding the parts of `chrome` that are needed.
+For SCSS, we use the sassc compiler: https://github.com/sass/sassc
+
+In production, it's driven by `release/prepare.js` and a few `grunt`
+tasks.
 
 ## Casing
 
@@ -46,8 +52,6 @@ makes sense to keep using `snake_case` everywhere.
 > (implementing a React callback) and a `render_uploads` method
 > (internal method).
 
-React components' `displayName`s are `CamelCase`
-
 ## CSS
 
 Class names are `snake_case`, not `kebab-case`. There's a `style/main.scss`
@@ -60,32 +64,33 @@ time for everyone.
 
 ## React components
 
-Exports from a `components/**/*.coffee` file should be a single React
-factory (created via the `component` helper). If you have private
-stuff, declare it locally like so:
+Exports from a `components/**/*.js` file should be a single React
+factory, which should be the result of a call to `translate` with its
+own namespaces and to the result with a React class that inherits from `Component`.
 
-```coffee
-# in components/foo_bar.coffee
-{ div } = React.DOM
-component = require "./component"
+```javascript
+// in components/foo_bar.js
+let r = require('r-dom')
+let Component = require('./component')
 
-InternalThing = component {
-  displayName: "InternalThing"
+class _InternalThing extends Component {
+  render () {
+    let message = this.props.message
+    return r(div, {}, message)
+  }
+}
+let InternalThing = translate('internal-thing')(_InternalThing)
 
-  render: ->
-    (div {}, @props.message)
+class FooBar extends Component {
+  render () {
+    return r(InternalThing, {message: 'Secrets!'})
+  }
 }
 
-module.exports = component {
-  displayName: "FooBar"
-
-  render: ->
-    (InternalThing {message: "Secrets!"})
-}
+module.exports = translate('foo-bar')(FooBar)
 ```
 
-`displayName` are very handy with the React devTools, which unfortunately
-don't seem to work with Electron at the moment?
+`displayName` is very handy with the React devTools, but unfortunately
+they don't seem to work with Electron at the moment?
 
 > <https://github.com/atom/electron/issues/915>
-
