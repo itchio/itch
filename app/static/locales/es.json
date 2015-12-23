@@ -1,0 +1,14 @@
+{
+  "sidebar": {
+    "dashboard": "Desarrollado"
+  },
+  "status": {
+    "checking": "Comprobando actualizaciones..."
+  },
+  "menu": {
+    "file": {
+      "file": "Archivo",
+      "preferences": "Preferencias"
+    }
+  }
+}

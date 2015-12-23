@@ -25,10 +25,7 @@ class SelectRow extends DeepComponent {
 
     let option_tags = options.map((option, index) => {
       console.log(`select value = ${value}, option value = ${option.value}`)
-      return r.option({
-        value: option.value,
-        selected: (value === option.value)
-      }, option.label)
+      return r.option({ value: option.value }, option.label)
     })
 
     return (

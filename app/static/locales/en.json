@@ -1,0 +1,19 @@
+{
+  "sidebar": {
+    "dashboard": "Developed",
+    "owned": "Owned",
+    "installed": "Installed"
+  },
+  "status": {
+    "checking": "Looking for updates...",
+    "downloading": "Downloading update...",
+    "downloaded": "Click to restart & apply update!",
+    "uptodate": "Your itch is up-to-date!"
+  },
+  "menu": {
+    "file": {
+      "file": "File",
+      "preferences": "Preferences"
+    }
+  }
+}

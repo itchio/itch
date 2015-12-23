@@ -119,14 +119,14 @@ class LibrarySidebar extends ShallowComponent {
         r(UserPanel),
         r.div({className: 'panel_links'}, [
           (is_developer
-          ? r(LibraryPanelLink, {before: r(Icon, {icon: 'rocket'}), name: 'dashboard', label: t('dashboard'), panel, games, className: 'dashboard'})
+          ? r(LibraryPanelLink, {before: r(Icon, {icon: 'rocket'}), name: 'dashboard', label: t('sidebar.dashboard'), panel, games, className: 'dashboard'})
           : ''),
-          r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-filled'}), name: 'owned', label: 'Owned', panel, games, className: 'owned'}),
-          r(LibraryPanelLink, {before: r(Icon, {icon: 'checkmark'}), name: 'caved', label: 'Installed', panel, games, count: installed_count, className: 'installed'}),
+          r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-filled'}), name: 'owned', label: t('sidebar.owned'), panel, games, className: 'owned'}),
+          r(LibraryPanelLink, {before: r(Icon, {icon: 'checkmark'}), name: 'caved', label: t('sidebar.installed'), panel, games, count: installed_count, className: 'installed'}),
           r.div({className: 'separator'})
         ].concat(broken_count > 0
           ? [
-            r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-broken'}), name: 'broken', label: 'Broken', panel, games, count: broken_count, className: 'broken'}),
+            r(LibraryPanelLink, {before: r(Icon, {icon: 'heart-broken'}), name: 'broken', label: t('sidebar.broken'), panel, games, count: broken_count, className: 'broken'}),
             r.div({className: 'separator'})
           ]
           : []
@@ -137,7 +137,7 @@ class LibrarySidebar extends ShallowComponent {
           ].concat(mori.intoArray(cave_items)))
           : ''
         ]).concat(panel === 'preferences'
-        ? r(LibraryPanelLink, {before: r(Icon, {icon: 'cog'}), name: 'preferences', label: 'Preferences', panel, games})
+        ? r(LibraryPanelLink, {before: r(Icon, {icon: 'cog'}), name: 'preferences', label: t('menu.file.preferences'), panel, games})
         : ''
         ))
       ])

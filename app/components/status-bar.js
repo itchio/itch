@@ -46,22 +46,22 @@ class StatusBar extends ShallowComponent {
       onClick = AppActions.apply_self_update
       children = [
         r(Icon, {icon: 'install'}),
-        r.span('Click to restart & apply update!')
+        r.span(t('status.downloaded'))
       ]
     } else if (available) {
       children = [
         r(Icon, {icon: 'download'}),
-        r.span('Downloading update...')
+        r.span(t('status.downloading'))
       ]
     } else if (checking) {
       children = [
         r(Icon, {icon: 'stopwatch'}),
-        r.span(t('checking'))
+        r.span(t('status.checking'))
       ]
     } else if (uptodate) {
       children = [
         r(Icon, {icon: 'like'}),
-        r.span('Your itch is up-to-date!')
+        r.span(t('status.uptodate'))
       ]
     } else {
       active = false
