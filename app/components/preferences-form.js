@@ -8,12 +8,17 @@ let ShallowComponent = require('./shallow-component')
 let AppActions = require('../actions/app-actions')
 
 let SelectRow = require('./select-row')
-let Icon = require('./icon')
 
 // TODO: move to constants
 let lang_opts = [
+  { value: 'cn', label: '中文' },
+  { value: 'de', label: 'Deutsch' },
   { value: 'en', label: 'English' },
-  { value: 'es', label: 'Español' }
+  { value: 'es', label: 'Español' },
+  { value: 'fr', label: 'Français' },
+  { value: 'it', label: 'Italiano' },
+  { value: 'ja', label: '日本語' },
+  { value: 'ro', label: 'Română' }
 ]
 
 class PreferencesForm extends ShallowComponent {
