@@ -31,5 +31,5 @@
     "status.checking": "Es wird nach Aktualisierungen gesucht...", 
     "status.downloaded": "", 
     "status.downloading": "", 
-    "status.uptodate": ""
+    "status.uptodate": "Itch ist auf dem neuesten Stand!"
 }
