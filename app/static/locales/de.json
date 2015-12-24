@@ -20,7 +20,7 @@
     "menu.file.close_window": "Fenster schließen", 
     "menu.file.file": "Datei", 
     "menu.file.preferences": "Einstellungen", 
-    "menu.file.quit": "", 
+    "menu.file.quit": "Beenden", 
     "menu.help.check_for_update": "Nach Aktualisierungen suchen", 
     "menu.help.help": "Hilfe", 
     "menu.help.release_notes": "Änderungen", 
