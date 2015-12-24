@@ -24,20 +24,6 @@ test('layout', t => {
     t.is(get_state.callCount, 2)
   })
 
-  t.case('setup', t => {
-    let setup = {
-      message: 'Checking dependencies',
-      icon: 'cog',
-      error: null
-    }
-    let props = {page: 'setup', setup}
-    set_state(props)
-
-    let tree = sd.shallowRender(sd(Layout, {}))
-    let vdom = tree.getRenderOutput()
-    t.same(vdom.props, {children: undefined, state: mori.toClj({page: 'setup', setup})})
-  })
-
   t.case('login', t => {
     let login = {
       loading: true,
@@ -60,6 +46,6 @@ test('layout', t => {
 
     let tree = sd.shallowRender(sd(Layout, {}))
     let vdom = tree.getRenderOutput()
-    t.same(vdom.props, {children: undefined, state: mori.toClj(library), update: null})
+    t.same(vdom.props, {children: undefined, state: mori.toClj(props)})
   })
 })
