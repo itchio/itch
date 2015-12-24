@@ -31,6 +31,6 @@
     "sidebar.owned": "Sammlung", 
     "status.checking": "Es wird nach Aktualisierungen gesucht...", 
     "status.downloaded": "Klicke hier, um Update anzuwenden und neuzustarten!", 
-    "status.downloading": "", 
+    "status.downloading": "Ladet Aktualisierung herunter...", 
     "status.uptodate": "Itch ist auf dem neuesten Stand!"
 }
