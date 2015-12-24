@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let jspath = require('jspath')
@@ -7,6 +6,7 @@ let jspath = require('jspath')
 let electron = require('../stubs/electron')
 let AppActions = require('../stubs/app-actions')
 let CredentialsStore = require('../stubs/credentials-store')
+let I18nStore = require('../stubs/i18n-store')
 
 let collect_actions = (template) => {
   let actions = {}
@@ -24,7 +24,8 @@ let collect_actions = (template) => {
 test('menu', t => {
   let stubs = Object.assign({
     '../actions/app-actions': AppActions,
-    '../stores/credentials-store': CredentialsStore
+    '../stores/credentials-store': CredentialsStore,
+    '../stores/i18n-store': I18nStore
   }, electron)
 
   let template
@@ -54,14 +55,14 @@ test('menu', t => {
   t.case('logged out', t => {
     t.stub(CredentialsStore, 'get_current_user').returns(null)
     handler()
-    let res = jspath.apply('.{.label === "Account"}.submenu.label', template)
-    t.same('Not logged in', res[0])
+    let res = jspath.apply('.{.label === "menu.account.account"}.submenu.label', template)
+    t.same(res[0], 'menu.account.not_logged_in')
   })
 
   t.case('logged in', t => {
     t.stub(CredentialsStore, 'get_current_user').returns({totally: 'legit'})
     handler()
-    let res = jspath.apply('.{.label === "Account"}.submenu.label', template)
-    t.same('Change user...', res[0])
+    let res = jspath.apply('.{.label === "menu.account.account"}.submenu.label', template)
+    t.same(res[0], 'menu.account.change_user')
   })
 })
