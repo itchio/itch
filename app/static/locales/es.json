@@ -1,47 +1,32 @@
 {
-  "sidebar": {
-    "dashboard": "Desarrollado",
-    "owned": "Comprados",
-    "installed": "Instalados"
-  },
-  "status": {
-    "checking": "Comprobando actualizaciones...",
-    "downloading": "Descargando actualización...",
-    "downloaded": "¡Reiniciar y aplicar actualización!",
-    "uptodate": "¡Tu itch está al día!"
-  },
-  "menu": {
-    "account": {
-      "account": "Cuenta",
-      "change_user": "Cambiar usuario...",
-      "not_logged_in": "Sin identificar"
-    },
-    "danger_zone": {
-      "danger_zone": "Zona peligrosa",
-      "dont_use": "No utilizar ésto.",
-      "provoke_crash": "Provocar problema"
-    },
-    "edit": {
-      "copy": "Copiar",
-      "cut": "Cortar",
-      "edit": "Edición",
-      "paste": "Pegar",
-      "select_all": "Seleccionar todo"
-    },
-    "file": {
-      "close_window": "Cerrar ventana",
-      "file": "Archivo",
-      "preferences": "Preferencias",
-      "quit": "Salir"
-    },
-    "help": {
-      "check_for_update": "Buscar actualizaciones",
-      "help": "Ayuda",
-      "release_notes": "Ver últimos cambios",
-      "report_issue": "Reportar un problema",
-      "search_issue": "Buscar problemas",
-      "view_license": "Ver licencia",
-      "view_terms": "Ver términos y condiciones"
-    }
-  }
+    "menu.account.account": "Cuenta",
+    "menu.account.change_user": "Cambiar usuario...",
+    "menu.account.not_logged_in": "Sin identificar",
+    "menu.danger_zone.danger_zone": "Zona peligrosa",
+    "menu.danger_zone.dont_use": "No utilizar ésto.",
+    "menu.danger_zone.provoke_crash": "Provocar problema",
+    "menu.edit.copy": "Copiar",
+    "menu.edit.cut": "Cortar",
+    "menu.edit.edit": "Edición",
+    "menu.edit.paste": "Pegar",
+    "menu.edit.select_all": "Seleccionar todo",
+    "menu.file.close_window": "Cerrar ventana",
+    "menu.file.file": "Archivo",
+    "menu.file.preferences": "Preferencias",
+    "menu.file.quit": "Salir",
+    "menu.help.check_for_update": "Buscar actualizaciones",
+    "menu.help.help": "Ayuda",
+    "menu.help.release_notes": "Ver últimos cambios",
+    "menu.help.report_issue": "Reportar un problema",
+    "menu.help.search_issue": "Buscar problemas",
+    "menu.help.view_license": "Ver licencia",
+    "menu.help.view_terms": "Ver términos y condiciones",
+    "sidebar.broken": "",
+    "sidebar.dashboard": "Desarrollado",
+    "sidebar.installed": "Instalados",
+    "sidebar.owned": "Comprados",
+    "status.checking": "Comprobando actualizaciones...",
+    "status.downloaded": "¡Reiniciar y aplicar actualización!",
+    "status.downloading": "Descargando actualización...",
+    "status.uptodate": "¡Tu itch está al día!"
 }

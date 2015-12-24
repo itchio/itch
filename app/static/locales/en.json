@@ -1,48 +1,32 @@
 {
-  "sidebar": {
-    "dashboard": "Developed",
-    "owned": "Owned",
-    "installed": "Installed",
-    "broken": "Broken"
-  },
-  "status": {
-    "checking": "Looking for updates...",
-    "downloading": "Downloading update...",
-    "downloaded": "Click to restart & apply update!",
-    "uptodate": "Your itch is up-to-date!"
-  },
-  "menu": {
-    "account": {
-      "account": "Account",
-      "change_user": "Change user...",
-      "not_logged_in": "Not logged in"
-    },
-    "danger_zone": {
-      "danger_zone": "Danger zone",
-      "dont_use": "Don't use this.",
-      "provoke_crash": "Provoke crash"
-    },
-    "edit": {
-      "copy": "Copy",
-      "cut": "Cut",
-      "edit": "Edit",
-      "paste": "Paste",
-      "select_all": "Select all"
-    },
-    "file": {
-      "close_window": "Close Window",
-      "file": "File",
-      "preferences": "Preferences",
-      "quit": "Quit"
-    },
-    "help": {
-      "check_for_update": "Check for Update",
-      "help": "Help",
-      "release_notes": "Release Notes",
-      "report_issue": "Report Issue",
-      "search_issue": "Search Issue",
-      "view_license": "View License",
-      "view_terms": "View itch.io Terms"
-    }
-  }
+    "menu.account.account": "Account",
+    "menu.account.change_user": "Change user...",
+    "menu.account.not_logged_in": "Not logged in",
+    "menu.danger_zone.danger_zone": "Danger zone",
+    "menu.danger_zone.dont_use": "Don't use this.",
+    "menu.danger_zone.provoke_crash": "Provoke crash",
+    "menu.edit.copy": "Copy",
+    "menu.edit.cut": "Cut",
+    "menu.edit.edit": "Edit",
+    "menu.edit.paste": "Paste",
+    "menu.edit.select_all": "Select all",
+    "menu.file.close_window": "Close Window",
+    "menu.file.file": "File",
+    "menu.file.preferences": "Preferences",
+    "menu.file.quit": "Quit",
+    "menu.help.check_for_update": "Check for Update",
+    "menu.help.help": "Help",
+    "menu.help.release_notes": "Release Notes",
+    "menu.help.report_issue": "Report Issue",
+    "menu.help.search_issue": "Search Issue",
+    "menu.help.view_license": "View License",
+    "menu.help.view_terms": "View itch.io Terms",
+    "sidebar.broken": "Broken",
+    "sidebar.dashboard": "Developed",
+    "sidebar.installed": "Installed",
+    "sidebar.owned": "Owned",
+    "status.checking": "Looking for updates...",
+    "status.downloaded": "Click to restart & apply update!",
+    "status.downloading": "Downloading update...",
+    "status.uptodate": "Your itch is up-to-date!"
 }
