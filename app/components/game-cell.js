@@ -24,6 +24,7 @@ let platform_data = mori.toClj({
  */
 class GameCell extends ShallowComponent {
   render () {
+    let t = this.props.t
     let game = this.props.game
     let owned = this.props.owned
     let cave = this.props.cave
@@ -154,15 +155,15 @@ class GameCell extends ShallowComponent {
               may_download
               ? r.span({}, [
                 r(Icon, {icon: 'install'}),
-                ' Install'
+                ' ' + t('grid.item.install')
               ])
               : r.span({}, [
                 r(Icon, {icon: 'cart'}),
-                ' Buy now'
+                ' ' + t('grid.item.buy_now')
               ])
             )
             : r.span({}, [
-              `Not available on ${os.itch_platform()}`
+              t('grid.item.not_platform_compatible', {platform: os.itch_platform()})
             ])
           )
         ]),
@@ -204,7 +205,8 @@ class GameCell extends ShallowComponent {
             r.span({
               className: 'game_uninstall',
               onClick: () => {
-                if (task === 'error' || window.confirm(`Are you sure you want to uninstall ${title}?`)) {
+                let msg = t('prompt.confirm_uninstall', {title})
+                if (task === 'error' || window.confirm(msg)) {
                   AppActions.cave_queue_uninstall(mori.get(cave, '_id'))
                 }
               }
@@ -218,25 +220,26 @@ class GameCell extends ShallowComponent {
   }
 
   status (cave) {
+    let t = this.props.t
     let task = mori.get(cave, 'task')
     let progress = mori.get(cave, 'progress')
 
     if (task === 'idle') {
-      return 'Launch'
+      return t('grid.item.launch')
     }
     if (task === 'error') {
       return ''
     }
     if (task === 'launch') {
-      return 'Running...'
+      return t('grid.item.running')
     }
 
-    let res = 'Installing...'
+    let res = t('grid.item.installing')
     if (task === 'download') {
-      res = 'Downloading'
+      res = t('grid.item.downloading')
     }
     if (task === 'download-queued') {
-      res = 'Queued'
+      res = t('grid.item.queued')
     }
 
     if (progress > 0) {

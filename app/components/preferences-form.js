@@ -28,12 +28,13 @@ class PreferencesForm extends ShallowComponent {
   }
 
   render () {
+    let t = this.props.t
     let state = this.props.state
     let language = mori.getIn(state, ['preferences', 'language'])
 
     return (
       r.div({className: 'preferences_panel'}, [
-        r.h2({}, 'Preferences'),
+        r.h2({}, t('menu.file.preferences')),
 
         r.form({className: `form preferences_form`}, [
           r(SelectRow, {
