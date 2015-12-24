@@ -21,6 +21,7 @@ function on_error (err) {
 let i18n_opts = {
   lng: 'en',
   fallbackLng: 'en',
+  keySeparator: '###',
   backend: {
     loadPath: `${locales_dir}/{{lng}}.json`
   }
