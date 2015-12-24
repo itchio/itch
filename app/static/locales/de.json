@@ -3,7 +3,7 @@
     "menu.account.change_user": "Benutzer wechseln...", 
     "menu.account.not_logged_in": "", 
     "menu.danger_zone.danger_zone": "", 
-    "menu.danger_zone.dont_use": "", 
+    "menu.danger_zone.dont_use": "Dies nicht verwenden", 
     "menu.danger_zone.provoke_crash": "", 
     "menu.edit.copy": "Kopieren", 
     "menu.edit.cut": "", 
