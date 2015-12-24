@@ -26,7 +26,7 @@
     "sidebar.dashboard": "Entwickelt", 
     "sidebar.installed": "", 
     "sidebar.owned": "", 
-    "status.checking": "Suche nach Updates...", 
+    "status.checking": "Es wird nach Aktualisierungen gesucht...", 
     "status.downloaded": "", 
     "status.downloading": "", 
     "status.uptodate": ""
