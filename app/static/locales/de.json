@@ -1,7 +1,7 @@
 {
     "grid.item.installing": "Installiert...", 
     "grid.item.queued": "In Warteschlange", 
-    "menu.account.account": "", 
+    "menu.account.account": "Benutzer", 
     "menu.account.change_user": "Benutzer wechseln...", 
     "menu.account.not_logged_in": "", 
     "menu.danger_zone.danger_zone": "", 
@@ -21,7 +21,7 @@
     "menu.help.release_notes": "Änderungen", 
     "menu.help.report_issue": "Problem melden", 
     "menu.help.search_issue": "Nach Problem suchen", 
-    "menu.help.view_license": "", 
+    "menu.help.view_license": "Lizenz anzeigen", 
     "menu.help.view_terms": "", 
     "prompt.confirm_uninstall": "Bist du sicher, dass du {{title}} deinstallieren willst?", 
     "sidebar.broken": "", 
