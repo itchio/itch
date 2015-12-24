@@ -11,7 +11,7 @@ let path = require('path')
 let locales_dir = path.resolve(path.join(__dirname, '..', 'static', 'locales'))
 
 function on_error (err) {
-  console.log(`on_error called! err = ${err}`)
+  // apparently the file backend doesn't validate JSON :|
   if (err) {
     let e = new Error(err)
     require('../util/crash-reporter').handle(e)
