@@ -11,14 +11,14 @@ let SelectRow = require('./select-row')
 
 // TODO: move to constants
 let lang_opts = [
-  { value: 'cn', label: '中文' },
   { value: 'de', label: 'Deutsch' },
   { value: 'en', label: 'English' },
   { value: 'es', label: 'Español' },
   { value: 'fr', label: 'Français' },
   { value: 'it', label: 'Italiano' },
   { value: 'ja', label: '日本語' },
-  { value: 'ro', label: 'Română' }
+  { value: 'ro', label: 'Română' },
+  { value: 'zh', label: '中文' }
 ]
 
 class PreferencesForm extends ShallowComponent {
