@@ -1,4 +1,5 @@
 {
+    "grid.item.installing": "Installiert...", 
     "grid.item.queued": "In Warteschlange", 
     "menu.account.account": "", 
     "menu.account.change_user": "Benutzer wechseln...", 
