@@ -1,5 +1,6 @@
 {
     "grid.item.buy_now": "Jetzt kaufen", 
+    "grid.item.downloading": "Ladet herunter...", 
     "grid.item.installing": "Installiert...", 
     "grid.item.launch": "Starten", 
     "grid.item.not_platform_compatible": "Nicht für {{platform}} verfügbar", 
