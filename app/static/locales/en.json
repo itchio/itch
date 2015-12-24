@@ -12,9 +12,37 @@
     "uptodate": "Your itch is up-to-date!"
   },
   "menu": {
+    "account": {
+      "account": "Account",
+      "change_user": "Change user...",
+      "not_logged_in": "Not logged in"
+    },
+    "danger_zone": {
+      "danger_zone": "Danger zone",
+      "dont_use": "Don\'t use this.",
+      "provoke_crash": "Provoke crash"
+    },
+    "edit": {
+      "copy": "Copy",
+      "cut": "Cut",
+      "edit": "Edit",
+      "paste": "Paste",
+      "select_all": "Select all"
+    },
     "file": {
+      "close_window": "Close Window",
       "file": "File",
-      "preferences": "Preferences"
+      "preferences": "Preferences",
+      "quit": "Quit"
+    },
+    "help": {
+      "check_for_update": "Check for Update",
+      "help": "Help",
+      "release_notes": "Release Notes",
+      "report_issue": "Report Issue",
+      "search_issue": "Search Issue",
+      "view_license": "View License",
+      "view_terms": "View itch.io Terms"
     }
   }
 }
