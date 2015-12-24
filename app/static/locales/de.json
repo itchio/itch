@@ -1,4 +1,5 @@
 {
+    "grid.item.queued": "In Warteschlange", 
     "menu.account.account": "", 
     "menu.account.change_user": "Benutzer wechseln...", 
     "menu.account.not_logged_in": "", 
@@ -22,10 +23,10 @@
     "menu.help.view_license": "", 
     "menu.help.view_terms": "", 
     "sidebar.broken": "", 
-    "sidebar.dashboard": "", 
+    "sidebar.dashboard": "Entwickelt", 
     "sidebar.installed": "", 
     "sidebar.owned": "", 
-    "status.checking": "", 
+    "status.checking": "Suche nach Updates...", 
     "status.downloaded": "", 
     "status.downloading": "", 
     "status.uptodate": ""
