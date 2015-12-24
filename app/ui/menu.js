@@ -20,7 +20,7 @@ function make_menus () {
 
   let menus = {
     file: {
-      label: _t('menu.file'),
+      label: _t('menu.file.file'),
       submenu: [
         {
           label: _t('menu.file.preferences'),
@@ -31,12 +31,12 @@ function make_menus () {
           type: 'separator'
         },
         {
-          label: 'Close Window',
+          label: _t('menu.file.close_window'),
           accelerator: (osx ? 'Cmd+W' : 'Alt+F4'),
           click: AppActions.hide_window
         },
         {
-          label: 'Quit',
+          label: _t('menu.file.quit'),
           accelerator: 'CmdOrCtrl+Q',
           click: AppActions.quit
         }
@@ -44,26 +44,26 @@ function make_menus () {
     },
 
     edit: {
-      label: 'Edit',
+      label: _t('menu.edit.edit'),
       visible: false,
       submenu: [
         {
-          label: 'Cut',
+          label: _t('menu.edit.cut'),
           accelerator: 'CmdOrCtrl+X',
           role: 'cut'
         },
         {
-          label: 'Copy',
+          label: _t('menu.edit.copy'),
           accelerator: 'CmdOrCtrl+C',
           role: 'copy'
         },
         {
-          label: 'Paste',
+          label: _t('menu.edit.paste'),
           accelerator: 'CmdOrCtrl+V',
           role: 'paste'
         },
         {
-          label: 'Select all',
+          label: _t('menu.edit.select_all'),
           accelerator: 'CmdOrCtrl+A',
           role: 'selectall'
         }
@@ -71,34 +71,34 @@ function make_menus () {
     },
 
     account_disabled: {
-      label: 'Account',
+      label: _t('menu.account.account'),
       submenu: [
         {
-          label: 'Not logged in',
+          label: _t('menu.account.not_logged_in'),
           enabled: false
         }
       ]
     },
 
     account: {
-      label: 'Account',
+      label: _t('menu.account.account'),
       submenu: [
         {
-          label: 'Change user...',
+          label: _t('menu.account.change_user'),
           click: () => AppActions.change_user()
         }
       ]
     },
 
     help: {
-      label: 'Help',
+      label: _t('menu.help.help'),
       submenu: [
         {
-          label: 'View itch.io Terms',
+          label: _t('menu.help.view_terms'),
           click: () => crash_reporter.open_url('https://itch.io/docs/legal/terms')
         },
         {
-          label: 'View License',
+          label: _t('menu.help.view_license'),
           click: () => crash_reporter.open_url(`${crash_reporter.repo_url}/blob/master/LICENSE`)
         },
         {
@@ -106,25 +106,25 @@ function make_menus () {
           enabled: false
         },
         {
-          label: 'Check for Update',
+          label: _t('menu.help.check_for_update'),
           click: AppActions.check_for_self_update
         },
         {
           type: 'separator'
         },
         {
-          label: 'Report Issue',
+          label: _t('menu.help.report_issue'),
           click: () => crash_reporter.report_issue()
         },
         {
-          label: 'Search Issue',
+          label: _t('menu.help.search_issue'),
           click: () => crash_reporter.open_url(`${crash_reporter.repo_url}/search?type=Issues`)
         },
         {
           type: 'separator'
         },
         {
-          label: 'Release Notes',
+          label: _t('menu.help.release_notes'),
           click: () => crash_reporter.open_url(`${crash_reporter.repo_url}/releases`)
         }
       ]
@@ -137,13 +137,13 @@ function make_menus () {
         type: 'separator'
       },
       {
-        label: 'Danger zone',
+        label: _t('menu.danger_zone.danger_zone'),
         submenu: [
           {
-            label: 'Don\'t use this.',
+            label: _t('menu.danger_zone.dont_use'),
             submenu: [
               {
-                label: 'Provoke crash',
+                label: _t('menu.danger_zone.provoke_crash'),
                 click: () => { throw new Error('Silly human-provoked crash.') }
               }
             ]

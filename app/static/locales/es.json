@@ -1,14 +1,47 @@
 {
   "sidebar": {
-    "dashboard": "Desarrollado"
+    "dashboard": "Desarrollado",
+    "owned": "Comprados",
+    "installed": "Instalados"
   },
   "status": {
-    "checking": "Comprobando actualizaciones..."
+    "checking": "Comprobando actualizaciones...",
+    "downloading": "Descargando actualización...",
+    "downloaded": "¡Reiniciar y aplicar actualización!",
+    "uptodate": "¡Tu itch está al día!"
   },
   "menu": {
+    "account": {
+      "account": "Cuenta",
+      "change_user": "Cambiar usuario...",
+      "not_logged_in": "Sin identificar"
+    },
+    "danger_zone": {
+      "danger_zone": "Zona peligrosa",
+      "dont_use": "No utilizar ésto.",
+      "provoke_crash": "Provocar problema"
+    },
+    "edit": {
+      "copy": "Copiar",
+      "cut": "Cortar",
+      "edit": "Edición",
+      "paste": "Pegar",
+      "select_all": "Seleccionar todo"
+    },
     "file": {
+      "close_window": "Cerrar ventana",
       "file": "Archivo",
-      "preferences": "Preferencias"
+      "preferences": "Preferencias",
+      "quit": "Salir"
+    },
+    "help": {
+      "check_for_update": "Buscar actualizaciones",
+      "help": "Ayuda",
+      "release_notes": "Ver últimos cambios",
+      "report_issue": "Reportar un problema",
+      "search_issue": "Buscar problemas",
+      "view_license": "Ver licencia",
+      "view_terms": "Ver términos y condiciones"
     }
   }
 }
