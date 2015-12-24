@@ -6,7 +6,6 @@
     "grid.item.queued": "Queued",
     "grid.item.install": "Install",
     "grid.item.buy_now": "Buy Now",
-    "grid.item.not_available": "Buy Now",
     "grid.item.not_platform_compatible": "Not available on {{platform}}",
     "menu.account.account": "Account",
     "menu.account.change_user": "Change user...",
