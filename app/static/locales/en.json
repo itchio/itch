@@ -2,7 +2,8 @@
   "sidebar": {
     "dashboard": "Developed",
     "owned": "Owned",
-    "installed": "Installed"
+    "installed": "Installed",
+    "broken": "Broken"
   },
   "status": {
     "checking": "Looking for updates...",
