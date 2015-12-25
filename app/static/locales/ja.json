@@ -23,6 +23,7 @@
     "menu.help.view_license": "", 
     "menu.help.view_terms": "", 
     "prompt.action.cancel": "キャンセル", 
+    "prompt.action.install": "インストール", 
     "sidebar.broken": "", 
     "sidebar.dashboard": "発展済み", 
     "sidebar.installed": "", 
