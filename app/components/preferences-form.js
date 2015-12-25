@@ -13,8 +13,10 @@ let SelectRow = require('./select-row')
 let lang_opts = [
   { value: 'de', label: 'Deutsch' },
   { value: 'en', label: 'English' },
+  { value: 'el', label: 'ελληνικά' },
   { value: 'es', label: 'Español' },
   { value: 'fr', label: 'Français' },
+  { value: 'hu', label: 'Magyar' },
   { value: 'it', label: 'Italiano' },
   { value: 'ja', label: '日本語' },
   { value: 'ro', label: 'Română' },
