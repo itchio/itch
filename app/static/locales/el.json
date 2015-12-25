@@ -33,7 +33,7 @@
     "menu.help.search_issue": "Αναζήτηση Προβλήματος", 
     "menu.help.view_license": "Προβολή Άδειας", 
     "menu.help.view_terms": "Δες τους Όρους Παροχής Υπηρεσιών του itch.io", 
-    "prompt.confirm_uninstall": "Are you sure you want to uninstall {{title}};", 
+    "prompt.confirm_uninstall": "", 
     "sidebar.broken": "Σπασμένο", 
     "sidebar.dashboard": "Ανεπτυγμένα", 
     "sidebar.installed": "Εγκατεστημένο", 
