@@ -1,17 +1,9 @@
 
-
 let r = require('r-dom')
+let mori = require('mori')
 let PropTypes = require('react').PropTypes
 let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
-
-let remote = require('electron').remote
-// TODO: get rid of that, go through app-store instead
-let CredentialsStore = remote.require('./stores/credentials-store')
-
-function get_state () {
-  return { me: CredentialsStore.get_me() }
-}
 
 /**
  * A friendly component that displays your avatar and username
@@ -19,31 +11,19 @@ function get_state () {
 class UserPanel extends ShallowComponent {
   constructor () {
     super()
-    this.state = get_state()
-  }
-
-  componentDidMount () {
-    let self = this
-    CredentialsStore.add_change_listener('user-panel', () => {
-      self.setState(get_state())
-    })
-  }
-
-  componentWillUnmount () {
-    CredentialsStore.remove_change_listener('user-panel')
   }
 
   render () {
-    let me = this.state.me
-    let loading = !me
+    let state = this.props.state
+    let me = mori.getIn(state, ['credentials', 'me'])
 
-    let avatar = (me && me.cover_url) || 'static/images/itchio-textless-pink.svg'
+    let avatar = mori.get(me, 'cover_url') || 'static/images/itchio-textless-pink.svg'
 
-    return r.div({classSet: {user_panel: true, loading}}, [
+    return r.div({classSet: {user_panel: true}}, [
       me
       ? r.div({}, [
         r.img({className: 'avatar', src: avatar}),
-        r.div({className: 'username'}, me.username)
+        r.div({className: 'username'}, mori.get(me, 'username'))
       ])
       : 'Loading...'
     ])

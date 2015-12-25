@@ -20,7 +20,8 @@ let frameless = process.platform === 'darwin'
 class LibrarySidebar extends ShallowComponent {
   render () {
     let t = this.props.t
-    let state = this.props.state
+    let global_state = this.props.state
+    let state = mori.get(global_state, 'library')
     let panel = mori.get(state, 'panel')
     let caves = mori.get(state, 'caves')
     let collections = mori.get(state, 'collections')
@@ -116,7 +117,7 @@ class LibrarySidebar extends ShallowComponent {
 
     return (
       r.div({classSet: {sidebar: true, frameless}}, [
-        r(UserPanel),
+        r(UserPanel, {state: global_state}),
         r.div({className: 'panel_links'}, [
           (is_developer
           ? r(LibraryPanelLink, {before: r(Icon, {icon: 'rocket'}), name: 'dashboard', label: t('sidebar.dashboard'), panel, games, className: 'dashboard'})

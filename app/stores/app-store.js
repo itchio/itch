@@ -150,7 +150,7 @@ function ready_to_roll (payload) {
   state = mori.assocIn(state, ['login', 'loading'], false)
   state = mori.assocIn(state, ['login', 'errors'], null)
 
-  let me = mori.getIn(state, ['library', 'credentials', 'me'])
+  let me = mori.getIn(state, ['credentials', 'me'])
   if (mori.get(me, 'developer')) {
     focus_panel({panel: 'dashboard'})
   } else {
@@ -297,7 +297,7 @@ Store.subscribe('collection-store', (collections) => {
 })
 
 Store.subscribe('credentials-store', (credentials) => {
-  state = mori.assocIn(state, ['library', 'credentials'], mori.toClj(credentials))
+  state = mori.assoc(state, 'credentials', mori.toClj(credentials))
   AppStore.emit_change()
 })
 
