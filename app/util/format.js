@@ -1,5 +1,4 @@
 
-
 let self = {
   camelize: function (str) {
     return str.replace(/(?:_[a-z])/g, function (letter, index) {
@@ -9,8 +8,8 @@ let self = {
 
   slugify: function (str) {
     return str.toLowerCase()
-      .replace(/ /g, '_')
-      .replace(/[^a-zA-Z_]/g, '')
+      .replace(/[^a-zA-Z_ ]/g, '')
+      .replace(/ +/g, '_')
   }
 }
 

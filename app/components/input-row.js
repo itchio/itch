@@ -18,12 +18,13 @@ class InputRow extends ShallowComponent {
     let label = this.props.label || ''
     let type = this.props.type || 'text'
     let disabled = this.props.disabled
+    let placeholder = this.props.placeholder || name
 
     return (
       r.div({className: 'input-row'}, [
         r.label({}, [
           label,
-          r.input({type, disabled, ref: 'input', placeholder: name})
+          r.input({type, disabled, ref: 'input', placeholder})
         ])
       ])
     )

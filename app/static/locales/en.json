@@ -1,4 +1,7 @@
 {
+    "errors.api.login.incorrect_username_or_password": "Incorrect username or password",
+    "errors.api.login.username_must_be_provided": "Username must be provided",
+    "errors.api.login.password_must_be_provided": "Password must be provided",
     "grid.item.launch": "Launch",
     "grid.item.running": "Running...",
     "grid.item.installing": "Installing...",
@@ -7,6 +10,8 @@
     "grid.item.install": "Install",
     "grid.item.buy_now": "Buy Now",
     "grid.item.not_platform_compatible": "Not available on {{platform}}",
+    "login.field.username": "Username",
+    "login.field.password": "Password",
     "login.action.login": "Log in",
     "login.action.register": "Register",
     "login.action.reset_password": "Forgot password",

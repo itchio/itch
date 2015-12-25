@@ -45,10 +45,10 @@ class LoginForm extends ShallowComponent {
 
     return (
       r.form({classSet: {form: true, has_error: (icon === 'error')}, onSubmit: this.handle_submit}, [
-        r(ErrorList, {errors, before: r(Icon, {icon: 'neutral'})}),
+        r(ErrorList, {errors, before: r(Icon, {icon: 'neutral'}), i18n_namespace: 'api.login'}),
 
-        r(InputRow, {name: 'username', type: 'text', ref: 'username', autofocus: true, disabled: loading}),
-        r(InputRow, {name: 'password', type: 'password', ref: 'password', disabled: loading}),
+        r(InputRow, {placeholder: t('login.field.username'), name: 'username', type: 'text', ref: 'username', autofocus: true, disabled: loading}),
+        r(InputRow, {placeholder: t('login.field.password'), name: 'password', type: 'password', ref: 'password', disabled: loading}),
 
         r.div({className: 'buttons'}, [
           primary_action,
