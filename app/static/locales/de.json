@@ -1,5 +1,6 @@
 {
     "errors.api.login.incorrect_username_or_password": "Nutzername oder Passwort ist falsch", 
+    "errors.api.login.password_must_be_provided": "Passwort muss angegeben werden", 
     "errors.api.login.username_must_be_provided": "Nutzername muss angegeben werden", 
     "grid.item.buy_now": "Jetzt kaufen", 
     "grid.item.downloading": "Ladet herunter...", 
@@ -36,6 +37,7 @@
     "prompt.action.cancel": "Abbrechen", 
     "prompt.action.ok": "Ok", 
     "prompt.confirm_uninstall": "Bist du sicher, dass du {{title}} deinstallieren willst?", 
+    "prompt.no_compatible_version.title": "{{title}} auf {{platform}}", 
     "prompt.url_install.credit": "Ein {{classification}} von {{username}}", 
     "prompt.url_install.title": "Installationsanfrage", 
     "sidebar.broken": "Kaputt", 
