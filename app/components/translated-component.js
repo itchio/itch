@@ -18,7 +18,6 @@ class TranslatedComponent extends React.Component {
 
   componentDidMount () {
     this.onI18nChanged = () => {
-      console.log(`onI18nChanged for ${this.constructor.displayName}. mounted? ${this.mounted}`)
       if (!this.mounted) return
 
       this.setState({ i18nLoadedAt: Date.now() })
