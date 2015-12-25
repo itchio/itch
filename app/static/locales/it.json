@@ -29,6 +29,7 @@
     "menu.help.search_issue": "Ricerca Problema", 
     "menu.help.view_license": "Vedi Licenza", 
     "menu.help.view_terms": "Vedi le Clausole di itch.io", 
+    "preferences.install_locations": "Directory per l'installazione", 
     "prompt.confirm_uninstall": "Sei sicuro di volere disinstallare {{title}}?", 
     "prompt.url_install.title": "Richiesta di installazione", 
     "sidebar.broken": "Non funzionante", 
