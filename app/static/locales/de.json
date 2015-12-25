@@ -7,6 +7,7 @@
     "grid.item.not_platform_compatible": "Nicht für {{platform}} verfügbar", 
     "grid.item.queued": "Eingereiht", 
     "grid.item.running": "Läuft...", 
+    "login.field.password": "Passwort", 
     "menu.account.account": "Benutzer", 
     "menu.account.change_user": "Benutzer wechseln...", 
     "menu.account.not_logged_in": "Nicht eingeloggt", 
