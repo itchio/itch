@@ -11,6 +11,7 @@
     "grid.item.queued": "Eingereiht", 
     "grid.item.running": "Läuft...", 
     "login.action.register": "Registrieren", 
+    "login.action.reset_password": "Passwort vergessen", 
     "login.field.password": "Passwort", 
     "login.status.setup_failure": "Es gab ein Problem beim Einrichten: {{error}}", 
     "menu.account.account": "Benutzer", 
