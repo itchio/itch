@@ -28,7 +28,7 @@
     "menu.help.report_issue": "Probléma jelentése", 
     "menu.help.search_issue": "Probléma keresése", 
     "menu.help.view_license": "Licensz megtekintése", 
-    "menu.help.view_terms": "Nézd meg az itch.io feltételeket.", 
+    "menu.help.view_terms": "Nézd meg az itch.io feltételeket", 
     "prompt.confirm_uninstall": "Biztosan el akarja távolítani az {{title}} -t?", 
     "sidebar.broken": "Elromlott", 
     "sidebar.dashboard": "Fejlesztve", 
