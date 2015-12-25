@@ -47,6 +47,7 @@
     "onboarding.dashboard.welcome_home": "Benvenuto a casa", 
     "onboarding.owned.navigation_hint": "Clicca le etichette alla tua sinistra per navigare nell'app", 
     "preferences.install_locations": "Directory per l'installazione", 
+    "prompt.action.cancel": "Annulla", 
     "prompt.action.close": "Chiudi", 
     "prompt.action.ok": "Ok", 
     "prompt.confirm_uninstall": "Sei sicuro di volere disinstallare {{title}}?", 
