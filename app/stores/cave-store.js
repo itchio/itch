@@ -19,6 +19,7 @@ let log = require('../util/log')('cave-store')
 let db = require('../util/db')
 let os = require('../util/os')
 let diego = require('../util/diego')
+let explorer = require('../util/explorer')
 
 let fs = require('../promised/fs')
 
@@ -229,13 +230,7 @@ async function explore_cave (payload) {
 
   try {
     await fs.lstatAsync(app_path)
-    if (process.platform === 'darwin') {
-      // openItem will open the finder but it will appear *under* the app
-      // which is a bit silly, so we just reveal it instead.
-      electron.shell.showItemInFolder(app_path)
-    } else {
-      electron.shell.openItem(app_path)
-    }
+    explorer.open(app_path)
   } catch (e) {
     probe_cave(payload)
   }

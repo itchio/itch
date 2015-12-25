@@ -1,6 +1,7 @@
 
 let r = require('r-dom')
 let mori = require('mori')
+let humanize = require('humanize-plus')
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
@@ -41,25 +42,81 @@ class PreferencesForm extends ShallowComponent {
             ])
           ]),
           r.p({}, t('preferences.install_locations')),
-          r.table({className: 'install_locations'}, [
-            r.tr({}, [
-              r.th({}, t('preferences.install_location.name')),
-              r.th({}, t('preferences.install_location.path')),
-              r.th({}, t('preferences.install_location.size')),
-              r.th({}, ''),
-              r.th({}, '')
-            ]),
-            r.tr({}, [
-              r.td({}, 'main'),
-              r.td({}, '~/Application Support/itch/users/230948'),
-              r.td({}, '2348 Mb'),
-              r.td({}, r(Icon, {icon: 'folder-open'})),
-              r.td({}, r(Icon, {icon: 'delete'}))
-            ])
-          ])
+          this.install_location_table()
         ])
       ])
     )
+  }
+
+  install_location_table () {
+    let t = this.t
+
+    let header = r.tr({}, [
+      r.th({}, t('preferences.install_location.path')),
+      r.th({}, t('preferences.install_location.size')),
+      r.th({}, t('preferences.install_location.item_count')),
+      r.th({}, ''),
+      r.th({}, '')
+    ])
+
+    let state = this.props.state
+    let locations = mori.toJs(mori.getIn(state, ['install-locations', 'locations']))
+    let aliases = mori.toJs(mori.getIn(state, ['install-locations', 'aliases']))
+
+    let rows = []
+    rows.push(header)
+
+    for (let name of Object.keys(locations)) {
+      let location = locations[name]
+
+      console.log(`name / location = `, name, mori.toJs(location))
+      let path = location.path
+      for (let alias of aliases) {
+        path = path.replace(alias[0], alias[1])
+      }
+      let size = location.size
+
+      rows.push(r.tr({}, [
+        r.td({}, path),
+        r.td({}, (
+          size === -1
+          ? r.button({
+            onClick: (e) => {
+              e.preventDefault()
+              AppActions.install_location_compute_size(name)
+            }
+          }, t('preferences.install_location.compute_size'))
+          : humanize.fileSize(size)
+        )),
+        r.td({}, location.item_count),
+        r.td({
+          className: 'action',
+          onClick: (e) => AppActions.install_location_browse(name)
+        }, r(Icon, {icon: 'folder-open'})),
+        r.td({
+          className: 'action',
+          onClick: (e) => AppActions.install_location_remove(name)
+        }, r(Icon, {icon: 'delete'}))
+      ]))
+    }
+    
+    rows.push(r.tr({}, [
+      r.td({
+        colSpan: 5,
+        className: 'action add_new',
+        onClick: (e) => {
+          e.preventDefault()
+          AppActions.install_location_add_request()
+        }
+      }, [
+        r(Icon, {icon: 'plus'}),
+        'Add location'
+      ])
+    ]))
+
+    return r.table({className: 'install_locations'}, [
+      r.tbody({}, rows)
+    ])
   }
 
   on_language_change (language) {

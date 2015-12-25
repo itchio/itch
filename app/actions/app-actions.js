@@ -1,5 +1,4 @@
 
-
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
 
@@ -81,6 +80,50 @@ let self = {
   dismiss_status: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.DISMISS_STATUS })
   },
+
+  /* Install locations */
+
+  install_location_compute_size: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_COMPUTE_SIZE, name })
+  },
+
+  install_location_browse: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_BROWSE, name })
+  },
+
+  install_location_add_request: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_ADD_REQUEST })
+  },
+
+  install_location_add: (name, path) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_ADD, name, path })
+  },
+
+  install_location_added: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_ADDED, name })
+  },
+
+  install_location_remove_request: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_REMOVE_REQUEST, name })
+  },
+
+  install_location_remove: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_REMOVE, name })
+  },
+
+  install_location_removed: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_REMOVED, name })
+  },
+
+  install_location_transfer: (name, new_path) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_TRANSFER, name, new_path })
+  },
+
+  install_location_make_default: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_MAKE_DEFAULT, name })
+  },
+
+  /* Caves */
 
   cave_queue: (game_id) => {
     AppDispatcher.dispatch({

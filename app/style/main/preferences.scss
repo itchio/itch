@@ -25,7 +25,8 @@
   }
 
   .get_involved {
-    margin: 20px 0;
+    margin: 20px 15px;
+    font-size: 80%;
   }
 
   .get_involved .icon {
@@ -44,18 +45,31 @@
   .install_locations {
     font-size: 15px;
     padding: 5px 0;
-    border: 1px solid #444;
-    border-left: none;
-    border-right: none;
+    border-collapse: collapse;
 
     th, td {
-      padding-right: 20px;
+      padding: 7px 15px;
+      text-align: left;
     }
 
-    th {
-      text-align: left;
-      padding-bottom: 10px;
+    td {
+      border-top: 1px solid #4A4848;
       color: #999;
+    }
+
+    td.action {
+      color: white;
+      opacity: .8;
+
+      .icon-plus {
+        font-size: 80%;
+        margin-right: 8px;
+      }
+
+      &:hover {
+        opacity: 1;
+        cursor: pointer;
+      }
     }
   }
 }

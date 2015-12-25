@@ -44,9 +44,32 @@ async function set_language (payload) {
   await save_to_disk()
 }
 
+async function install_location_add (payload) {
+  log(opts, `Adding install location: ${JSON.stringify(payload)}`)
+  if (!state.install_locations) {
+    state.install_locations = {}
+  }
+  state.install_locations[payload.name] = {
+    path: payload.path
+  }
+  await save_to_disk()
+}
+
+async function install_location_remove (payload) {
+  log(opts, `Removing install location: ${JSON.stringify(payload)}`)
+  if (!state.install_locations) {
+    state.install_locations = {}
+  }
+  // TODO: actually uninstall items
+  delete state.install_locations[payload.name]
+  await save_to_disk()
+}
+
 AppDispatcher.register('preferences-store', Store.action_listeners(on => {
   on(AppConstants.BOOT, load_from_disk)
   on(AppConstants.PREFERENCES_SET_LANGUAGE, set_language)
+  on(AppConstants.INSTALL_LOCATION_ADD, install_location_add)
+  on(AppConstants.INSTALL_LOCATION_REMOVE, install_location_remove)
 }))
 
 module.exports = PreferencesStore

@@ -306,4 +306,9 @@ Store.subscribe('preferences-store', (preferences) => {
   AppStore.emit_change()
 })
 
+Store.subscribe('install-location-store', (install_locations) => {
+  state = mori.assoc(state, 'install-locations', mori.toClj(install_locations))
+  AppStore.emit_change()
+})
+
 module.exports = AppStore

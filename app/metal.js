@@ -73,6 +73,7 @@ function ready () {
   require('./stores/url-store')
   require('./stores/purchase-store')
   require('./stores/report-store')
+  require('./stores/install-location-store')
 
   require('./ui/menu').mount()
   AppActions.boot()
