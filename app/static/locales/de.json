@@ -50,6 +50,7 @@
     "prompt.action.install": "Installieren", 
     "prompt.action.ok": "Ok", 
     "prompt.confirm_uninstall": "Bist du sicher, dass du {{title}} deinstallieren willst?", 
+    "prompt.crash_reporter.detail": "Das Absturzprotokoll wurde nach {{location}} geschrieben.", 
     "prompt.crash_reporter.open_crash_log": "Absturzprotokoll öffnen", 
     "prompt.logout_confirm": "Bist du sicher, dass du dich ausloggen möchtest?", 
     "prompt.no_compatible_version.title": "{{title}} auf {{platform}}", 
