@@ -1,7 +1,6 @@
 
 let r = require('r-dom')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 let StatusBar = require('./status-bar')
@@ -27,4 +26,4 @@ LibraryPage.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = translate('library-page')(LibraryPage)
+module.exports = LibraryPage

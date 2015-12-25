@@ -2,7 +2,6 @@
 let r = require('r-dom')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 let GameCell = require('./game-cell')
@@ -43,4 +42,4 @@ GameList.propTypes = {
   caves: PropTypes.any
 }
 
-module.exports = translate('game-list')(GameList)
+module.exports = GameList

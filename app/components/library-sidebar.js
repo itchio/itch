@@ -2,7 +2,6 @@
 let r = require('r-dom')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 let Icon = require('./icon')
@@ -19,7 +18,7 @@ let frameless = process.platform === 'darwin'
  */
 class LibrarySidebar extends ShallowComponent {
   render () {
-    let t = this.props.t
+    let t = this.t
     let global_state = this.props.state
     let state = mori.get(global_state, 'library')
     let panel = mori.get(state, 'panel')
@@ -28,7 +27,7 @@ class LibrarySidebar extends ShallowComponent {
     let games = mori.get(state, 'games')
 
     let is_developer = false
-    let credentials = mori.get(state, 'credentials')
+    let credentials = mori.get(global_state, 'credentials')
     if (credentials) {
       is_developer = mori.getIn(credentials, ['me', 'developer'])
     }
@@ -150,4 +149,4 @@ LibrarySidebar.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = translate('library-sidebar')(LibrarySidebar)
+module.exports = LibrarySidebar

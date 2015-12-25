@@ -45,7 +45,6 @@
     "r-dom": "^2.1.0",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
-    "react-i18next": "0.0.4",
     "read-chunk": "^1.0.1",
     "rimraf": "^2.4.4",
     "shell-quote": "^1.4.3",

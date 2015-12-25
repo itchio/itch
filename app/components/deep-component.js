@@ -1,5 +1,5 @@
 
-let React = require('react')
+let TranslatedComponent = require('./translated-component')
 let isEqual = require('underscore').isEqual
 
 /**
@@ -8,7 +8,7 @@ let isEqual = require('underscore').isEqual
  *
  * cf. https://www.youtube.com/watch?v=I7IdS-PbEgI
  */
-class DeepComponent extends React.Component {
+class DeepComponent extends TranslatedComponent {
 
   shouldComponentUpdate (nextProps, nextState) {
     return !isEqual(this.props, nextProps) ||

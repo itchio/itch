@@ -1,7 +1,6 @@
 
 let r = require('r-dom')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 let Icon = require('./icon')
@@ -82,4 +81,4 @@ LibraryPlaceholder.propTypes = {
   panel: PropTypes.string
 }
 
-module.exports = translate('library-placeholder')(LibraryPlaceholder)
+module.exports = LibraryPlaceholder

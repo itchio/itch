@@ -2,7 +2,6 @@
 let r = require('r-dom')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 let AppActions = require('../actions/app-actions')
@@ -30,7 +29,7 @@ class PreferencesForm extends ShallowComponent {
   }
 
   render () {
-    let t = this.props.t
+    let t = this.t
     let state = this.props.state
     let language = mori.getIn(state, ['preferences', 'language'])
 
@@ -61,4 +60,4 @@ PreferencesForm.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = translate('preferences-form')(PreferencesForm)
+module.exports = PreferencesForm

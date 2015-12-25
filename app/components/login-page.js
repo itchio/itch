@@ -1,7 +1,6 @@
 
 let r = require('r-dom')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 let LoginForm = require('./login-form')
@@ -31,4 +30,4 @@ LoginPage.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = translate('login-page')(LoginPage)
+module.exports = LoginPage

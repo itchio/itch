@@ -8,6 +8,7 @@ let ShallowComponent = require('./shallow-component')
  */
 class InputRow extends ShallowComponent {
   componentDidMount () {
+    super.componentDidMount()
     if (this.props.autofocus) {
       this.refs.input.focus()
     }

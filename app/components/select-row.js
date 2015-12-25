@@ -52,5 +52,4 @@ SelectRow.propTypes = {
   label: PropTypes.string.isRequired
 }
 
-// XXX: can't use translate because it doesn't pass refs
 module.exports = SelectRow

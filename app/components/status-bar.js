@@ -2,7 +2,6 @@
 let r = require('r-dom')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 let Icon = require('./icon')
@@ -14,7 +13,7 @@ let AppActions = require('../actions/app-actions')
  */
 class StatusBar extends ShallowComponent {
   render () {
-    let t = this.props.t
+    let t = this.t
     let update = this.props.update
     let status = mori.get(update, 'status')
     let error = mori.get(update, 'error')
@@ -79,4 +78,4 @@ StatusBar.propTypes = {
   update: PropTypes.any
 }
 
-module.exports = translate('status-bar')(StatusBar)
+module.exports = StatusBar

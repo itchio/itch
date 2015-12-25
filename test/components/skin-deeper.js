@@ -2,16 +2,13 @@
 let sd = require('skin-deep')
 let react = require('react')
 
-let t = (x) => x
-
 /**
-* Integrate skin-deep with react-i18next
+* Pretty much unnecessary now
 */
 let self = (comp, opts, children) => {
   if (typeof opts === 'undefined') {
     opts = {}
   }
-  opts.t = t
 
   return react.createElement(comp, opts, children)
 }

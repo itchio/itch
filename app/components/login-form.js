@@ -2,7 +2,6 @@
 let r = require('r-dom')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 let AppActions = require('../actions/app-actions')
@@ -18,7 +17,7 @@ class LoginForm extends ShallowComponent {
   }
 
   render () {
-    let t = this.props.t
+    let t = this.t
     let state = this.props.state
     let page = mori.get(state, 'page')
 
@@ -59,7 +58,7 @@ class LoginForm extends ShallowComponent {
   }
 
   button () {
-    let t = this.props.t
+    let t = this.t
     return r.button({className: 'button'}, t('login.action.login'))
   }
 
@@ -71,7 +70,7 @@ class LoginForm extends ShallowComponent {
   }
 
   secondary_actions () {
-    let t = this.props.t
+    let t = this.t
 
     return r.div({className: 'login_links'}, [
       r.a({
@@ -99,4 +98,4 @@ LoginForm.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = translate('login-form')(LoginForm)
+module.exports = LoginForm

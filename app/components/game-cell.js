@@ -2,7 +2,6 @@
 let r = require('r-dom')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 let Icon = require('./icon')
@@ -24,7 +23,7 @@ let platform_data = mori.toClj({
  */
 class GameCell extends ShallowComponent {
   render () {
-    let t = this.props.t
+    let t = this.t
     let game = this.props.game
     let owned = this.props.owned
     let cave = this.props.cave
@@ -220,7 +219,7 @@ class GameCell extends ShallowComponent {
   }
 
   status (cave) {
-    let t = this.props.t
+    let t = this.t
     let task = mori.get(cave, 'task')
     let progress = mori.get(cave, 'progress')
 
@@ -254,4 +253,4 @@ GameCell.propTypes = {
   cave: PropTypes.object
 }
 
-module.exports = translate('game-cell')(GameCell)
+module.exports = GameCell

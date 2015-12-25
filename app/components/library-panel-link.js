@@ -2,7 +2,6 @@
 let r = require('r-dom')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 let ProgressBar = require('./progress-bar')
@@ -59,4 +58,4 @@ LibraryPanelLink.propTypes = {
   before: PropTypes.any
 }
 
-module.exports = translate('library-panel-link')(LibraryPanelLink)
+module.exports = LibraryPanelLink

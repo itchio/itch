@@ -1,8 +1,6 @@
 
-
 let r = require('r-dom')
 let mori = require('mori')
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 let LoginPage = require('./login-page')
@@ -27,12 +25,14 @@ class Layout extends ShallowComponent {
   }
 
   componentDidMount () {
+    super.componentDidMount()
     AppStore.add_change_listener('layout', () => {
       defer(() => { this.setState(get_state()) })
     })
   }
 
   componentWillUnmount () {
+    super.componentWillUnmount()
     AppStore.remove_change_listener('layout')
     AppActions.app_implode()
   }
@@ -54,4 +54,4 @@ class Layout extends ShallowComponent {
 
 Layout.propTypes = {}
 
-module.exports = translate('layout')(Layout)
+module.exports = Layout

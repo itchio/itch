@@ -1,5 +1,5 @@
 
-let React = require('react')
+let TranslatedComponent = require('./translated-component')
 let shallowEqual = require('pure-render-mixin').shallowEqual
 
 /**
@@ -13,7 +13,7 @@ let shallowEqual = require('pure-render-mixin').shallowEqual
  * a value nested into a prop, but the prop's reference stays the same,
  * it won't rerender - and then you need 'DeepComponent' instead.
  */
-class ShallowComponent extends React.Component {
+class ShallowComponent extends TranslatedComponent {
 
   shouldComponentUpdate (nextProps, nextState) {
     return !shallowEqual(this.props, nextProps) ||

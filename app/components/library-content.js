@@ -2,7 +2,6 @@
 let r = require('r-dom')
 let mori = require('mori')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 let GameList = require('./game-list')
@@ -54,4 +53,4 @@ LibraryContent.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = translate('library-content')(LibraryContent)
+module.exports = LibraryContent

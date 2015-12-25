@@ -1,7 +1,6 @@
 
 let r = require('r-dom')
 let PropTypes = require('react').PropTypes
-let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
 
 /**
@@ -28,4 +27,4 @@ ProgressBar.propTypes = {
   progress: PropTypes.number
 }
 
-module.exports = translate('progress-bar')(ProgressBar)
+module.exports = ProgressBar
