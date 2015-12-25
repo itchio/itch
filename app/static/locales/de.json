@@ -30,6 +30,7 @@
     "menu.help.view_license": "Lizenz anzeigen", 
     "menu.help.view_terms": "Itch.io Nutzungsbedingungen anzeigen", 
     "prompt.confirm_uninstall": "Bist du sicher, dass du {{title}} deinstallieren willst?", 
+    "prompt.url_install.title": "Installationsanfrage", 
     "sidebar.broken": "Kaputt", 
     "sidebar.dashboard": "Entwickelt", 
     "sidebar.installed": "Installiert", 
