@@ -5,7 +5,7 @@
     "grid.item.installing": "Installiert...", 
     "grid.item.launch": "Starten", 
     "grid.item.not_platform_compatible": "Nicht für {{platform}} verfügbar", 
-    "grid.item.queued": "In Warteschlange", 
+    "grid.item.queued": "Eingereiht", 
     "grid.item.running": "Läuft...", 
     "menu.account.account": "Benutzer", 
     "menu.account.change_user": "Benutzer wechseln...", 
