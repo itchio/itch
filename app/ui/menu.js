@@ -1,4 +1,4 @@
-'use strict'
+
 
 let Menu = require('electron').Menu
 

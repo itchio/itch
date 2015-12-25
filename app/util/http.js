@@ -1,4 +1,4 @@
-'use strict'
+
 
 let path = require('path')
 let partial = require('underscore').partial

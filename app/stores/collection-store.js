@@ -1,4 +1,4 @@
-'use strict'
+
 
 let indexBy = require('underscore').indexBy
 

@@ -1,4 +1,4 @@
-'use strict'
+
 
 let os = require('./os')
 let spawn = require('./spawn')

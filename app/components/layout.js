@@ -1,4 +1,4 @@
-'use strict'
+
 
 let r = require('r-dom')
 let mori = require('mori')

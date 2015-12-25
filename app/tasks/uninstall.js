@@ -1,4 +1,4 @@
-'use strict'
+
 
 let noop = require('../util/noop')
 let rimraf = require('../promised/rimraf')

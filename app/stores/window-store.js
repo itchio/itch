@@ -1,4 +1,4 @@
-'use strict'
+
 
 let AppActions = require('../actions/app-actions')
 let AppDispatcher = require('../dispatcher/app-dispatcher')

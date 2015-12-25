@@ -1,4 +1,4 @@
-'use strict'
+
 
 let ExtendableError = require('es6-error')
 

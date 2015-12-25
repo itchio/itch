@@ -1,4 +1,4 @@
-'use strict'
+
 
 let self = function (msg) {
   return function (res) {

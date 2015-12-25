@@ -1,4 +1,4 @@
-'use strict'
+
 
 let Promise = require('bluebird')
 let mkdirp = require('mkdirp')

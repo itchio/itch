@@ -1,4 +1,4 @@
-'use strict'
+
 
 let self = {
   camelize: function (str) {

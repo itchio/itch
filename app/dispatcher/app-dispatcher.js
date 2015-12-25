@@ -1,4 +1,4 @@
-'use strict'
+
 
 let os = require('../util/os')
 

@@ -1,4 +1,4 @@
-'use strict'
+
 
 // TODO: prefill login form
 

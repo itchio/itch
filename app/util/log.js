@@ -1,4 +1,4 @@
-'use strict'
+
 
 let pairs = require('underscore').pairs
 let fstream = require('fstream')

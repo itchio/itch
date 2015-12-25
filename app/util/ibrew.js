@@ -1,4 +1,4 @@
-'use strict'
+
 
 let app = require('electron').app
 let path = require('path')

@@ -1,4 +1,4 @@
-'use strict'
+
 
 let Promise = require('bluebird')
 let read_chunk = require('read-chunk')

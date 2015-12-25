@@ -1,4 +1,4 @@
-'use strict'
+
 
 let path = require('path')
 let clone = require('clone')
