@@ -20,8 +20,12 @@ function on_error (err) {
 
 let i18n_opts = {
   lng: 'en',
+  interpolation: {
+    escapeValue: false
+  },
   fallbackLng: 'en',
   keySeparator: '###',
+  returnEmptyString: false,
   backend: {
     loadPath: `${locales_dir}/{{lng}}.json`
   }

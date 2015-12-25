@@ -2,6 +2,7 @@ let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
 let AppActions = require('../actions/app-actions')
 let Store = require('./store')
+let I18nStore = require('./i18n-store')
 
 let electron = require('electron')
 
@@ -100,6 +101,8 @@ async function games_fetched (payload) {
 }
 
 async function install_prompt (game) {
+  let i18n = I18nStore.get_state()
+
   let cave = await db.find_one({_table: 'caves', game_id: game.id})
   if (cave) {
     let panel = `caves/${cave._id}`
@@ -110,14 +113,24 @@ async function install_prompt (game) {
 
   log(opts, `no cave, opening prompt for ${game.title}`)
   let user = await db.find_one({_table: 'users', id: game.user_id})
-  let credit = user ? `\n\nA ${game.classification} by ${user.username}` : ''
 
-  let buttons = ['Install', 'Cancel']
+  let credit = ''
+  if (user) {
+    credit = '\n\n' + i18n.t('prompt.url_install.credit', {
+      classification: game.classification,
+      username: user.username
+    })
+  }
+
+  let buttons = [
+    i18n.t('prompt.action.install'),
+    i18n.t('prompt.action.cancel')
+  ]
   let dialog_opts = {
     type: 'question',
     buttons,
-    title: 'Install request',
-    message: `Do you want to install ${game.title}?`,
+    title: i18n.t('prompt.url_install.title'),
+    message: i18n.t('prompt.url_install.message', {title: game.title}),
     detail: `${game.short_text}${credit}`
   }
 
@@ -130,13 +143,23 @@ async function install_prompt (game) {
 }
 
 async function apology_prompt (game) {
-  let buttons = ['Ok']
+  let i18n = I18nStore.get_state()
+
+  let buttons = [
+    i18n.t('prompt.action.ok')
+  ]
+  let i18n_vars = {
+    title: game.title,
+    classification: game.classification,
+    platform: os.itch_platform()
+  }
+
   let dialog_opts = {
     type: 'error',
     buttons,
-    title: `${game.title} on ${os.itch_platform()}`,
-    message: `We couldn't find an ${game.title} version for ${os.itch_platform()}.`,
-    detail: `Perhaps the ${game.classification} isn't compatible with it yet?`
+    title: i18n.t('prompt.no_compatible_version.title', i18n_vars),
+    message: i18n.t('prompt.no_compatible_version.message', i18n_vars),
+    detail: i18n.t('prompt.no_compatible_version.detail', i18n_vars)
   }
 
   electron.dialog.showMessageBox(dialog_opts)

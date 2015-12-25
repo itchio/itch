@@ -67,12 +67,35 @@ ${log}
     let log = res.log
     let crash_file = res.crash_file
 
+    let i18n
+    try {
+      i18n = require('../stores/i18n-store').get_state()
+    } catch (e) {
+      console.log(`While loading i18n for crash report: ${e.stack || e}`)
+      i18n = {
+        t: (x, opts) => {
+          if (typeof opts === 'undefined') {
+            opts = {}
+          }
+          if (opts.defaultValue) {
+            return opts.defaultValue
+          }
+          return x
+        }
+      }
+    }
+
     // try to show error dialog
+    // supplying defaultValues everywhere in case the i18n system hasn't loaded yet
     let response = dialog.showMessageBox({
       type: 'error',
-      buttons: ['Report issue on GitHub', 'Open crash log', 'Close'],
-      message: `The itch.io app crashed :(`,
-      detail: `A crash log has been written to ${crash_file}.`
+      buttons: [
+        i18n.t('prompt.crash_reporter.report_issue', {defaultValue: 'Report issue'}),
+        i18n.t('prompt.crash_reporter.open_crash_log', {defaultValue: 'Open crash log'}),
+        i18n.t('prompt.action.close', {defaultValue: 'Close'})
+      ],
+      message: i18n.t('prompt.crash_reporter.message', {defaultValue: 'The application has crashed'}),
+      detail: i18n.t('prompt.crash_reporter.detail', {defaultValue: `A crash log was written to ${crash_file}`, location: crash_file})
     })
 
     if (response === 0) {
