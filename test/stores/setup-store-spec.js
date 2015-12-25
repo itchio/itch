@@ -31,7 +31,7 @@ test('SetupStore', t => {
       if (name === 'butler') return Promise.reject('Ha!')
       return Promise.resolve(null)
     })
-    t.mock(AppActions).expects('setup_status').withArgs('Ha!', 'error')
+    t.mock(AppActions).expects('setup_status').withArgs('login.status.error', 'error', { error: 'Ha!' })
     return handler({ action_type: AppConstants.WINDOW_READY })
   })
 })

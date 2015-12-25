@@ -81,7 +81,7 @@ test('AppStore', t => {
   t.case('setup_status', t => {
     let message = 'Hold on to your ifs'
     handler({ action_type: AppConstants.SETUP_STATUS, message })
-    t.is(get_state().setup.message, message)
+    t.is(get_state().login.setup.message, message)
   })
 
   t.case('focus_panel', t => {
