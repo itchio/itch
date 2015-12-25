@@ -1,5 +1,4 @@
 
-
 let proxyquire = require('proxyquire')
 let electron = require('./electron')
 

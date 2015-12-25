@@ -34,12 +34,12 @@ let state = mori.hashMap(
 
   'login', mori.hashMap(
     'loading', false,
-    'errors', null
-  ),
-
-  'setup', mori.hashMap(
-    'message', '...',
-    'icon', 'cog'
+    'errors', null,
+    'setup', mori.hashMap(
+      'message', '...',
+      'variables', null,
+      'icon', 'cog'
+    )
   )
 )
 
@@ -176,14 +176,16 @@ function logout () {
 function setup_status (payload) {
   let message = payload.message
   let icon = payload.icon
-  state = mori.assocIn(state, ['setup', 'message'], message)
+  let variables = payload.variables
+  state = mori.assocIn(state, ['login', 'setup', 'message'], message)
+  state = mori.assocIn(state, ['login', 'setup', 'variables'], variables)
   if (icon) {
-    state = mori.assocIn(state, ['setup', 'icon'], icon)
+    state = mori.assocIn(state, ['login', 'setup', 'icon'], icon)
   }
   AppStore.emit_change()
 }
 
-function setup_wait (payload) {
+function setup_wait () {
   switch_page('setup')
 }
 

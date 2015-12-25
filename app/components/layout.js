@@ -42,6 +42,7 @@ class Layout extends ShallowComponent {
 
     switch (mori.get(state, 'page')) {
       case 'login':
+      case 'setup':
         return r(LoginPage, {state})
       case 'library':
         return r(LibraryPage, {state})

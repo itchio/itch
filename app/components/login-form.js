@@ -18,34 +18,30 @@ class LoginForm extends ShallowComponent {
   }
 
   render () {
-    let page = this.props.page
-    let login_state = this.props.login_state
-    let setup_state = this.props.setup_state
+    let t = this.props.t
+    let state = this.props.state
+    let page = mori.get(state, 'page')
 
-    // FIXME wouldn't all that imperative logic be very well suited
-    // for a refactoring? why yes, yes it would. — A
-    let loading = (
-      page === 'login'
-      ? mori.get(login_state, 'loading')
-      : true
-    )
-    let errors = mori.get((
-      page === 'login'
-      ? login_state
-      : setup_state
-    ), 'errors')
+    let loading, errors, message, icon
 
-    let icon = (
-      page === 'login'
-      ? 'heart-filled'
-      : mori.get(setup_state, 'icon')
-    )
+    if (page === 'login') {
+      loading = mori.getIn(state, ['login', 'loading'])
+      errors = mori.getIn(state, ['login', 'errors'])
+      message = t('login.status.login')
+      icon = 'heart-filled'
+    } else if (page === 'setup') {
+      let setup_state = mori.getIn(state, ['login', 'setup'])
+      let setup_msg = mori.get(setup_state, 'message')
+      let setup_var = mori.get(setup_state, 'variables')
+      loading = true
+      errors = []
+      message = t(setup_msg, setup_var)
+      icon = mori.get(setup_state, 'icon')
+    } else {
+      throw new Error(`Unknown page for login form: ${page}`)
+    }
 
-    let message = (
-      page === 'login'
-      ? 'Contacting dovecote'
-      : mori.get(setup_state, 'message')
-    )
+    let primary_action = loading ? this.spinner(icon, message) : this.button()
 
     return (
       r.form({classSet: {form: true, has_error: (icon === 'error')}, onSubmit: this.handle_submit}, [
@@ -55,17 +51,39 @@ class LoginForm extends ShallowComponent {
         r(InputRow, {name: 'password', type: 'password', ref: 'password', disabled: loading}),
 
         r.div({className: 'buttons'}, [
-          (loading
-          ? r.span({className: 'login_status'}, [r.span({className: `icon icon-${icon} small_throbber_loader`}), message])
-          : r.button({className: 'button'}, 'Log in')),
-          r.div({className: 'login_links'}, [
-            r.a({href: 'https://itch.io/register', target: '_blank'}, 'register'),
-            r.span(' · '),
-            r.a({href: 'https://itch.io/user/forgot-password', target: '_blank'}, 'forgot password')
-          ])
+          primary_action,
+          this.secondary_actions()
         ])
       ])
     )
+  }
+
+  button () {
+    let t = this.props.t
+    return r.button({className: 'button'}, t('login.action.login'))
+  }
+
+  spinner (icon, message) {
+    return r.span({className: 'login_status'}, [
+      r.span({className: `icon icon-${icon} small_throbber_loader`}),
+      message
+    ])
+  }
+
+  secondary_actions () {
+    let t = this.props.t
+
+    return r.div({className: 'login_links'}, [
+      r.a({
+        href: 'https://itch.io/register'
+      }, t('login.action.register')),
+
+      r.span(' · '),
+
+      r.a({
+        href: 'https://itch.io/user/forgot-password'
+      }, t('login.action.reset_password'))
+    ])
   }
 
   handle_submit (event) {

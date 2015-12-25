@@ -57,7 +57,7 @@ async function run () {
     log(opts, `Setup failed: ${err.stack || err}`)
 
     // only unrecoverable errors should get here
-    AppActions.setup_status(err.stack || err, 'error')
+    AppActions.setup_status('login.status.error', 'error', {error: err.stack || err})
   }
 }
 

@@ -1,6 +1,5 @@
 
 let r = require('r-dom')
-let mori = require('mori')
 let PropTypes = require('react').PropTypes
 let translate = require('react-i18next').translate
 let ShallowComponent = require('./shallow-component')
@@ -20,11 +19,7 @@ class LoginPage extends ShallowComponent {
         r.div({className: 'login_form'}, [
           r.img({className: 'logo', src: 'static/images/bench-itch.png'}),
           r.div({className: 'login_box'}, [
-            r(LoginForm, {
-              page: mori.get(state, 'page'),
-              login_state: mori.get(state, 'login'),
-              setup_state: mori.get(state, 'setup')
-            })
+            r(LoginForm, {state})
           ])
         ])
       ])

@@ -16,10 +16,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.WINDOW_READY })
   },
 
-  setup_status: (message, icon) => {
+  setup_status: (message, icon, variables) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.SETUP_STATUS,
-      message, icon
+      message, icon, variables
     })
   },
 
