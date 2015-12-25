@@ -69,7 +69,7 @@ class LibrarySidebar extends ShallowComponent {
         games,
         name: `collections/empty`,
         className: `collection`,
-        label: `Getting started`,
+        label: t('sidebar.getting_started'),
         before: r(Icon, {icon}),
         panel,
         key: 'empty'

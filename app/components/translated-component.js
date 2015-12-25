@@ -34,7 +34,6 @@ class TranslatedComponent extends React.Component {
       i18n.off('loaded', this.onI18nChanged)
     }
   }
-
 }
 
 module.exports = TranslatedComponent
