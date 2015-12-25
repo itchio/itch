@@ -7,6 +7,7 @@ let ShallowComponent = require('./shallow-component')
 let AppActions = require('../actions/app-actions')
 
 let SelectRow = require('./select-row')
+let Icon = require('./icon')
 
 // TODO: move to constants
 let lang_opts = [
@@ -43,8 +44,31 @@ class PreferencesForm extends ShallowComponent {
             on_change: this.on_language_change,
             options: lang_opts,
             value: language,
-            label: 'Language'
-          })
+            label: t('preferences.language')
+          }),
+          r.div({className: 'get_involved'}, [
+            r.a({href: 'http://weblate.itch.ovh'}, [
+              r(Icon, {icon: 'earth'}),
+              t('preferences.language.get_involved', {name: 'itch'})
+            ])
+          ]),
+          r.p({}, t('preferences.install_locations')),
+          r.table({className: 'install_locations'}, [
+            r.tr({}, [
+              r.th({}, t('preferences.install_location.name')),
+              r.th({}, t('preferences.install_location.path')),
+              r.th({}, t('preferences.install_location.size')),
+              r.th({}, ''),
+              r.th({}, '')
+            ]),
+            r.tr({}, [
+              r.td({}, 'main'),
+              r.td({}, '~/Application Support/itch/users/230948'),
+              r.td({}, '2348 Mb'),
+              r.td({}, r(Icon, {icon: 'folder-open'})),
+              r.td({}, r(Icon, {icon: 'delete'}))
+            ])
+          ])
         ])
       ])
     )

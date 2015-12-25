@@ -24,7 +24,38 @@
     }
   }
 
+  .get_involved {
+    margin: 20px 0;
+  }
+
+  .get_involved .icon {
+    margin-right: 8px;
+  }
+
+  .get_involved a {
+    color: #87A7C3;
+    text-decoration: none;
+  }
+
   .preferences_background {
     @include icon_as_background;
+  }
+
+  .install_locations {
+    font-size: 15px;
+    padding: 5px 0;
+    border: 1px solid #444;
+    border-left: none;
+    border-right: none;
+
+    th, td {
+      padding-right: 20px;
+    }
+
+    th {
+      text-align: left;
+      padding-bottom: 10px;
+      color: #999;
+    }
   }
 }
