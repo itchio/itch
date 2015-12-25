@@ -42,6 +42,7 @@
     "prompt.crash_reporter.open_crash_log": "Absturzprotokoll öffnen", 
     "prompt.no_compatible_version.title": "{{title}} auf {{platform}}", 
     "prompt.url_install.credit": "Ein {{classification}} von {{username}}", 
+    "prompt.url_install.message": "Willst du {{title}} installieren?", 
     "prompt.url_install.title": "Installationsanfrage", 
     "sidebar.broken": "Kaputt", 
     "sidebar.dashboard": "Eigene Werke", 
