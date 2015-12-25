@@ -43,7 +43,7 @@
     "menu.help.view_terms": "Itch.io Nutzungsbedingungen anzeigen", 
     "onboarding.caved.troubleshoot_advice": "Sollte etwas nicht funktionieren, klicke {{report}}, um den Fehler zu melden oder {{probe}}, um nachzuforschen.", 
     "prompt.action.cancel": "Abbrechen", 
-    "prompt.action.install": "installieren", 
+    "prompt.action.install": "Installieren", 
     "prompt.action.ok": "Ok", 
     "prompt.confirm_uninstall": "Bist du sicher, dass du {{title}} deinstallieren willst?", 
     "prompt.crash_reporter.open_crash_log": "Absturzprotokoll öffnen", 
