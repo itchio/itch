@@ -35,6 +35,7 @@ class PreferencesForm extends ShallowComponent {
 
     return (
       r.div({className: 'preferences_panel'}, [
+        r.span({className: 'icon icon-cog preferences_background'}),
         r.h2({}, t('menu.file.preferences')),
 
         r.form({className: `form preferences_form`}, [
@@ -44,9 +45,7 @@ class PreferencesForm extends ShallowComponent {
             value: language,
             label: 'Language'
           })
-        ]),
-
-        r.span({className: 'icon icon-cog preferences_background'})
+        ])
       ])
     )
   }

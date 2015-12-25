@@ -545,9 +545,8 @@ $library_bg: #2E2B2C;
 }
 
 @mixin icon_as_background {
-  position: absolute;
-  right: 40px;
-  top: 40px;
+  float: right;
+  margin-right: 40px;
   font-size: 200px;
   color: #525151;
 }

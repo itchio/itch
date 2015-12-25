@@ -4,6 +4,7 @@ let AppActions = require('../actions/app-actions')
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
 let Store = require('./store')
+let I18nStore = require('./i18n-store')
 
 let app = require('electron').app
 let BrowserWindow = require('electron').BrowserWindow
@@ -86,8 +87,10 @@ AppDispatcher.register('window-store', Store.action_listeners(on => {
     if (!window) return
     let web = window.webContents
     if (!web) return
+    let i18n = I18nStore.get_state()
+    let logout_string = i18n.t('prompt.logout_confirm')
     web.executeJavaScript(`
-      var yes = window.confirm('Are you sure you want to log out?')
+      var yes = window.confirm(${JSON.stringify(logout_string)})
       if (yes) {
         require('./actions/app-actions').logout()
       }
