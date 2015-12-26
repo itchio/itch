@@ -11,12 +11,18 @@ class Icon extends ShallowComponent {
   render () {
     let icon = this.props.icon
     let spin = !!this.props.spin
+    let data_tip = this.props['data-tip']
 
     if (icon) {
-      return r.span({
+      let opts = {
         className: `icon icon-${icon}`,
         classSet: {spin}
-      })
+      }
+      if (data_tip) {
+        opts['data-tip'] = data_tip
+      }
+
+      return r.span(opts)
     } else {
       return r.span()
     }

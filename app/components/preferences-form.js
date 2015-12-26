@@ -56,6 +56,7 @@ class PreferencesForm extends ShallowComponent {
       r.th({}, t('preferences.install_location.size')),
       r.th({}, t('preferences.install_location.item_count')),
       r.th({}, ''),
+      r.th({}, ''),
       r.th({}, '')
     ])
 
@@ -66,10 +67,24 @@ class PreferencesForm extends ShallowComponent {
     let rows = []
     rows.push(header)
 
-    for (let name of Object.keys(locations)) {
+    let raw_loc_keys = Object.keys(locations)
+    let default_loc = mori.getIn(state, ['install-locations', 'default'])
+
+    let loc_keys = []
+    for (let k of raw_loc_keys) {
+      if (k === default_loc) {
+        loc_keys.unshift(k)
+      } else {
+        loc_keys.push(k)
+      }
+    }
+
+    let index = -1
+
+    for (let name of loc_keys) {
+      index++
       let location = locations[name]
 
-      console.log(`name / location = `, name, mori.toJs(location))
       let path = location.path
       for (let alias of aliases) {
         path = path.replace(alias[0], alias[1])
@@ -86,6 +101,7 @@ class PreferencesForm extends ShallowComponent {
               className: 'action'
             }, r(Icon, {icon: 'stopwatch', spin: true}))
             : r.span({
+              'data-tip': t('preferences.install_location.compute_size'),
               className: 'action',
               onClick: (e) => {
                 e.preventDefault()
@@ -99,12 +115,24 @@ class PreferencesForm extends ShallowComponent {
           ? item_count
           : r.span({className: 'empty'}, t('preferences.install_location.empty'))
         ),
+        (index === 0
+        ? r.td({
+          className: 'action',
+          'data-tip': t('preferences.install_location.is_default')
+        }, r(Icon, {icon: 'star'}))
+        : r.td({
+          className: 'action',
+          'data-tip': t('preferences.install_location.make_default'),
+          onClick: (e) => AppActions.install_location_make_default(name)
+        }, r(Icon, {icon: 'align-top'}))),
         r.td({
           className: 'action',
+          'data-tip': t('preferences.install_location.browse'),
           onClick: (e) => AppActions.install_location_browse(name)
         }, r(Icon, {icon: 'folder-open'})),
         r.td({
           className: 'action',
+          'data-tip': t('preferences.install_location.delete'),
           onClick: (e) => AppActions.install_location_remove(name)
         }, r(Icon, {icon: 'delete'}))
       ]))
@@ -112,7 +140,7 @@ class PreferencesForm extends ShallowComponent {
 
     rows.push(r.tr({}, [
       r.td({
-        colSpan: 5,
+        colSpan: 6,
         className: 'action add_new',
         onClick: (e) => {
           e.preventDefault()

@@ -65,11 +65,18 @@ async function install_location_remove (payload) {
   await save_to_disk()
 }
 
+async function install_location_make_default (payload) {
+  log(opts, `Setting default install location: ${JSON.stringify(payload)}`)
+  state.default_install_location = payload.name
+  await save_to_disk()
+}
+
 AppDispatcher.register('preferences-store', Store.action_listeners(on => {
   on(AppConstants.BOOT, load_from_disk)
   on(AppConstants.PREFERENCES_SET_LANGUAGE, set_language)
   on(AppConstants.INSTALL_LOCATION_ADD, install_location_add)
   on(AppConstants.INSTALL_LOCATION_REMOVE, install_location_remove)
+  on(AppConstants.INSTALL_LOCATION_MAKE_DEFAULT, install_location_make_default)
 }))
 
 module.exports = PreferencesStore
