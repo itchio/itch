@@ -192,7 +192,7 @@ class GameCell extends ShallowComponent {
               className: 'game_purchase',
               onClick: () => AppActions.game_purchase(mori.get(game, 'id'))
             }, [
-              r(Icon, {icon: owned ? 'heart-filled' : 'cart'})
+              r(Icon, {icon: 'cart'})
             ]),
             r.span({
               className: 'game_explore',
