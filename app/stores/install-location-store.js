@@ -56,10 +56,13 @@ let InstallLocationStore = Object.assign(new Store('install-location-store'), {
 
 async function reload () {
   log(opts, 'Hi!')
+
   default_location = {
     name: 'default',
     path: db.library_dir
   }
+
+  location_item_counts = {}
 
   let caves = await db.find({_table: 'caves'})
   for (let cave of caves) {
@@ -163,8 +166,14 @@ async function install_location_browse (payload) {
   explorer.open(loc.path)
 }
 
+async function logout () {
+  delete location_sizes['default']
+  delete location_item_counts['default']
+}
+
 AppDispatcher.register('install-location-store', Store.action_listeners(on => {
   on(AppConstants.READY_TO_ROLL, reload)
+  on(AppConstants.LOGOUT, logout)
   on(AppConstants.INSTALL_LOCATION_COMPUTE_SIZE, install_location_compute_size)
   on(AppConstants.INSTALL_LOCATION_BROWSE, install_location_browse)
   on(AppConstants.INSTALL_LOCATION_ADD_REQUEST, install_location_add_request)
