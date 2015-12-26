@@ -67,7 +67,22 @@ class PreferencesForm extends ShallowComponent {
     let rows = []
     rows.push(header)
 
-    for (let name of Object.keys(locations)) {
+    let raw_loc_keys = Object.keys(locations)
+    let default_loc = mori.getIn(state, ['install-locations', 'default'])
+
+    let loc_keys = []
+    for (let k of raw_loc_keys) {
+      if (k === default_loc) {
+        loc_keys.unshift(k)
+      } else {
+        loc_keys.push(k)
+      }
+    }
+
+    let index = -1
+
+    for (let name of loc_keys) {
+      index++
       let location = locations[name]
 
       let path = location.path
@@ -100,11 +115,16 @@ class PreferencesForm extends ShallowComponent {
           ? item_count
           : r.span({className: 'empty'}, t('preferences.install_location.empty'))
         ),
-        r.td({
+        (index === 0
+        ? r.td({
+          className: 'action',
+          'data-tip': t('preferences.install_location.is_default')
+        }, r(Icon, {icon: 'star'}))
+        : r.td({
           className: 'action',
           'data-tip': t('preferences.install_location.make_default'),
           onClick: (e) => AppActions.install_location_make_default(name)
-        }, r(Icon, {icon: 'align-top'})),
+        }, r(Icon, {icon: 'align-top'}))),
         r.td({
           className: 'action',
           'data-tip': t('preferences.install_location.browse'),

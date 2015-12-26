@@ -17,14 +17,15 @@ let WindowStore = require('./window-store')
 let I18nStore = require('./i18n-store')
 let SetupStore = require('./setup-store')
 
-let default_location = null
+let appdata_location = null
 let location_sizes = {}
 let location_computing_size = {}
 let location_item_counts = {}
 
 let InstallLocationStore = Object.assign(new Store('install-location-store'), {
   get_state: () => {
-    let raw_locations = Object.assign({}, PreferencesStore.get_state().install_locations || {}, {default: default_location})
+    let prefs = PreferencesStore.get_state()
+    let raw_locations = Object.assign({}, prefs.install_locations || {}, {appdata: appdata_location})
     let locations = {}
 
     for (let loc_name of Object.keys(raw_locations)) {
@@ -41,12 +42,17 @@ let InstallLocationStore = Object.assign(new Store('install-location-store'), {
     let aliases = [
       [process.env.HOME, '~']
     ]
-    return {locations, aliases}
+
+    return {
+      locations,
+      aliases,
+      default: prefs.default_install_location || 'appdata'
+    }
   },
 
   get_location: (name) => {
-    if (name === 'default') {
-      return default_location
+    if (name === 'appdata') {
+      return appdata_location
     } else {
       let locs = PreferencesStore.get_state().install_locations || {}
       return locs[name]
@@ -57,8 +63,8 @@ let InstallLocationStore = Object.assign(new Store('install-location-store'), {
 async function reload () {
   log(opts, 'Hi!')
 
-  default_location = {
-    name: 'default',
+  appdata_location = {
+    name: 'appdata',
     path: db.library_dir
   }
 
@@ -66,7 +72,7 @@ async function reload () {
 
   let caves = await db.find({_table: 'caves'})
   for (let cave of caves) {
-    let loc_name = cave.location || 'default'
+    let loc_name = cave.location || 'appdata'
     if (typeof location_item_counts[loc_name] === 'undefined') {
       location_item_counts[loc_name] = 0
     }
@@ -167,8 +173,8 @@ async function install_location_browse (payload) {
 }
 
 async function logout () {
-  delete location_sizes['default']
-  delete location_item_counts['default']
+  delete location_sizes['appdata']
+  delete location_item_counts['appdata']
 }
 
 AppDispatcher.register('install-location-store', Store.action_listeners(on => {
