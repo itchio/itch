@@ -24,6 +24,7 @@
     "menu.help.view_license": "", 
     "menu.help.view_terms": "", 
     "prompt.action.cancel": "キャンセル", 
+    "prompt.action.close": "閉じる", 
     "prompt.action.install": "インストール", 
     "sidebar.broken": "", 
     "sidebar.dashboard": "自分の制作したゲーム", 
