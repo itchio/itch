@@ -24,6 +24,18 @@ module.exports = keyMirror({
   APPLY_SELF_UPDATE_FOR_REALSIES: null,
   DISMISS_STATUS: null,
 
+  /* Install locations */
+  INSTALL_LOCATION_COMPUTE_SIZE: null,
+  INSTALL_LOCATION_BROWSE: null,
+  INSTALL_LOCATION_ADD_REQUEST: null,
+  INSTALL_LOCATION_ADD: null,
+  INSTALL_LOCATION_ADDED: null,
+  INSTALL_LOCATION_REMOVE_REQUEST: null,
+  INSTALL_LOCATION_REMOVE: null,
+  INSTALL_LOCATION_REMOVED: null,
+  INSTALL_LOCATION_TRANSFER: null,
+  INSTALL_LOCATION_MAKE_DEFAULT: null,
+
   /** User requested game to be installed */
   CAVE_QUEUE: null,
   /** User requested game to be uninstalled */

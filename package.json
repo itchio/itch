@@ -41,6 +41,7 @@
     "nconf": "^0.8.2",
     "nedb": "^1.2.1",
     "needle": "^0.11.0",
+    "node-uuid": "^1.4.7",
     "pure-render-mixin": "^1.0.2",
     "r-dom": "^2.1.0",
     "react": "^0.14.3",
@@ -52,6 +53,7 @@
     "stream-splitter": "^0.3.2",
     "streamsearch": "^0.1.2",
     "underscore": "^1.8.3",
+    "walk": "^2.3.9",
     "win-spawn": "^2.0.0"
   },
   "devDependencies": {
