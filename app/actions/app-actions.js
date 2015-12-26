@@ -99,20 +99,12 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_ADD, name, path })
   },
 
-  install_location_added: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_ADDED, name })
-  },
-
   install_location_remove_request: (name) => {
     AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_REMOVE_REQUEST, name })
   },
 
   install_location_remove: (name) => {
     AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_REMOVE, name })
-  },
-
-  install_location_removed: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_REMOVED, name })
   },
 
   install_location_transfer: (name, new_path) => {

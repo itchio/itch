@@ -113,8 +113,13 @@ function dismiss_status () {
 
 function focus_panel (payload) {
   let panel = payload.panel
+  let page = mori.get(state, 'page')
 
-  state = mori.assoc(state, 'page', 'library')
+  if (page !== 'library') {
+    console.log(`Not switching to panel ${panel} while on page ${page}`)
+    return
+  }
+
   state = mori.assocIn(state, ['library', 'panel'], panel)
   AppStore.emit_change()
 
@@ -151,15 +156,13 @@ function ready_to_roll (payload) {
   state = mori.assocIn(state, ['login', 'errors'], null)
 
   let me = mori.getIn(state, ['credentials', 'me'])
+  switch_page('library')
   if (mori.get(me, 'developer')) {
     focus_panel({panel: 'dashboard'})
+    defer(() => AppActions.fetch_games('dashboard'))
   } else {
     focus_panel({panel: 'owned'})
   }
-
-  defer(() => {
-    AppActions.fetch_games('dashboard')
-  })
 }
 
 function logout () {

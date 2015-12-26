@@ -15,13 +15,28 @@ let Store = require('./store')
 let PreferencesStore = require('./preferences-store')
 let WindowStore = require('./window-store')
 let I18nStore = require('./i18n-store')
+let SetupStore = require('./setup-store')
 
 let default_location = null
+let location_sizes = {}
+let location_computing_size = {}
+let location_item_counts = {}
 
 let InstallLocationStore = Object.assign(new Store('install-location-store'), {
   get_state: () => {
-    let pref_locations = PreferencesStore.get_state().install_locations || {}
-    let locations = Object.assign({default: default_location}, pref_locations)
+    let raw_locations = Object.assign({}, PreferencesStore.get_state().install_locations || {}, {default: default_location})
+    let locations = {}
+
+    for (let loc_name of Object.keys(raw_locations)) {
+      let raw_loc = raw_locations[loc_name]
+      let loc = Object.assign({}, raw_loc, {
+        size: location_sizes[loc_name] || -1,
+        computing_size: location_computing_size[loc_name] || false, // kinda dumb, I know.
+        item_count: location_item_counts[loc_name] || 0
+      })
+
+      locations[loc_name] = loc
+    }
 
     let aliases = [
       [process.env.HOME, '~']
@@ -43,22 +58,16 @@ async function reload () {
   log(opts, 'Hi!')
   default_location = {
     name: 'default',
-    path: db.library_dir,
-    item_count: 0,
-    size: -1
-  }
-  let locs = {
-    default: default_location
+    path: db.library_dir
   }
 
-  let games = await db.find({_table: 'games'})
-  for (let game of games) {
-    let loc_name = game.location || 'default'
-    let loc = locs[loc_name]
-    if (!loc) {
-      log(opts, `Found game with unknown location: ${loc_name}`)
+  let caves = await db.find({_table: 'caves'})
+  for (let cave of caves) {
+    let loc_name = cave.location || 'default'
+    if (typeof location_item_counts[loc_name] === 'undefined') {
+      location_item_counts[loc_name] = 0
     }
-    loc.item_count++
+    location_item_counts[loc_name]++
   }
 
   InstallLocationStore.emit_change()
@@ -74,15 +83,23 @@ function install_location_compute_size (payload) {
   }
 
   let total_size = 0
+  location_sizes[name] = 0
+  location_computing_size[name] = true
   let walker = walk.walk(loc.path)
 
   walker.on('file', (root, fileStats, next) => {
     total_size += fileStats.size
-    log(opts, `Total size of ${name}: ${total_size}`)
+    location_sizes[name] = total_size
+    log(opts, `Size of ${name} so far: ${total_size}`)
+    InstallLocationStore.emit_change()
+    next()
   })
 
   walker.on('end', () => {
     log(opts, `Done computing size of ${name}!`)
+    location_sizes[name] = total_size
+    location_computing_size[name] = false
+    InstallLocationStore.emit_change()
   })
 }
 
@@ -143,7 +160,7 @@ async function install_location_browse (payload) {
   }
 
   log(opts, `Browsing location ${loc}`)
-  explorer.open(payload.path)
+  explorer.open(loc.path)
 }
 
 AppDispatcher.register('install-location-store', Store.action_listeners(on => {
@@ -155,5 +172,10 @@ AppDispatcher.register('install-location-store', Store.action_listeners(on => {
   on(AppConstants.INSTALL_LOCATION_REMOVE_REQUEST, install_location_remove_request)
   on(AppConstants.INSTALL_LOCATION_REMOVED, reload)
 }))
+
+PreferencesStore.add_change_listener('install-location-store', () => {
+  if (!SetupStore.is_ready()) return
+  reload()
+})
 
 module.exports = InstallLocationStore

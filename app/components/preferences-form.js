@@ -75,20 +75,30 @@ class PreferencesForm extends ShallowComponent {
         path = path.replace(alias[0], alias[1])
       }
       let size = location.size
+      let item_count = location.item_count
+      let computing_size = location.computing_size
 
       rows.push(r.tr({}, [
         r.td({}, path),
-        r.td({}, (
-          size === -1
-          ? r.button({
-            onClick: (e) => {
-              e.preventDefault()
-              AppActions.install_location_compute_size(name)
-            }
-          }, t('preferences.install_location.compute_size'))
-          : humanize.fileSize(size)
-        )),
-        r.td({}, location.item_count),
+        r.td({}, [
+          (computing_size
+            ? r.span({
+              className: 'action'
+            }, r(Icon, {icon: 'stopwatch', spin: true}))
+            : r.span({
+              className: 'action',
+              onClick: (e) => {
+                e.preventDefault()
+                AppActions.install_location_compute_size(name)
+              }
+            }, r(Icon, {icon: 'refresh'}))),
+          (size === -1 ? '?' : humanize.fileSize(size))
+        ]),
+        r.td({},
+          item_count > 0
+          ? item_count
+          : r.span({className: 'empty'}, t('preferences.install_location.empty'))
+        ),
         r.td({
           className: 'action',
           onClick: (e) => AppActions.install_location_browse(name)
@@ -99,7 +109,7 @@ class PreferencesForm extends ShallowComponent {
         }, r(Icon, {icon: 'delete'}))
       ]))
     }
-    
+
     rows.push(r.tr({}, [
       r.td({
         colSpan: 5,

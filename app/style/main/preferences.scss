@@ -43,6 +43,7 @@
   }
 
   .install_locations {
+    width: 100%;
     font-size: 15px;
     padding: 5px 0;
     border-collapse: collapse;
@@ -57,11 +58,11 @@
       color: #999;
     }
 
-    td.action {
+    .action {
       color: white;
       opacity: .8;
 
-      .icon-plus {
+      .icon-plus, .icon-refresh, .icon-stopwatch {
         font-size: 80%;
         margin-right: 8px;
       }
@@ -70,6 +71,10 @@
         opacity: 1;
         cursor: pointer;
       }
+    }
+
+    .empty {
+      font-style: italic;
     }
   }
 }

@@ -52,6 +52,7 @@
     "preferences.install_location.delete": "Delete",
     "preferences.install_location.make_default": "Set as default",
     "preferences.install_location.compute_size": "Compute size",
+    "preferences.install_location.empty": "Empty",
     "prompt.install_location_add.title": "Pick a new install location",
     "prompt.install_location_remove.title": "Removing an install location",
     "prompt.install_location_remove.message": "Are you sure you want to remove this location?",
