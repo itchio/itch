@@ -28,7 +28,7 @@
     "prompt.action.install": "インストール", 
     "sidebar.broken": "", 
     "sidebar.dashboard": "自分の制作したゲーム", 
-    "sidebar.installed": "", 
+    "sidebar.installed": "インストール完了", 
     "sidebar.owned": "", 
     "status.checking": "アップデート照会中", 
     "status.downloaded": "", 
