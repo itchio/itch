@@ -1,4 +1,5 @@
 {
+    "grid.item.launch": "起動する", 
     "grid.item.queued": "順番待ち", 
     "menu.account.account": "", 
     "menu.account.change_user": "", 
@@ -8,7 +9,7 @@
     "menu.danger_zone.provoke_crash": "", 
     "menu.edit.copy": "コピー", 
     "menu.edit.cut": "", 
-    "menu.edit.edit": "", 
+    "menu.edit.edit": "編集", 
     "menu.edit.paste": "ペースト", 
     "menu.edit.select_all": "", 
     "menu.file.close_window": "", 
