@@ -41,6 +41,7 @@
     "menu.help.search_issue": "Buscar problemas", 
     "menu.help.view_license": "Ver licencia", 
     "menu.help.view_terms": "Ver términos y condiciones", 
+    "preferences.install_locations": "Ubicaciòn de la instalacion", 
     "prompt.confirm_uninstall": "¿Realmente desea desinstalar {{}}?", 
     "sidebar.broken": "Roto", 
     "sidebar.dashboard": "Desarrollado", 
