@@ -54,6 +54,7 @@
     "onboarding.dashboard.welcome_home": "Bienvenido", 
     "onboarding.owned.batteries_included": "Hemos reunido algunas colecciones para que puedas empezar a jugar ahora mismo.", 
     "onboarding.owned.navigation_hint": "Haz clic en las etiquetas de la izquierda para navegar por la aplicación.", 
+    "onboarding.owned.reassuring_comment": "Esto está un poco vacío de momento... ¡Pero no te preocupes!", 
     "onboarding.owned.title_warm_welcome": "¡Lo has conseguido!", 
     "preferences.install_location.empty": "Vacío", 
     "preferences.install_location.path": "Ubicación ", 
