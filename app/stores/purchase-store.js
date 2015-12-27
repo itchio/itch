@@ -9,6 +9,8 @@ let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppActions = require('../actions/app-actions')
 let AppConstants = require('../constants/app-constants')
 
+let I18nStore = require('./i18n-store')
+
 let Promise = require('bluebird')
 let electron = require('electron')
 
@@ -51,13 +53,15 @@ function make_purchase_window (me, game) {
  * an additional copy of something
  */
 function wants_to_buy_twice (game) {
+  let i18n = I18nStore.get_state()
+
   let buttons = ['Purchase again', 'Cancel']
   let dialog_opts = {
     type: 'info',
     buttons,
-    title: 'You already own this!',
-    message: `You've already bought a copy of ${game.title}.`,
-    detail: `...but you could still buy a copy for a friend!\n\nDo you want to make another purchase?`
+    title: i18n.t('prompt.additional_purchase.title'),
+    message: i18n.t('prompt.additional_purchase.message', {title: game.title}),
+    detail: i18n.t('prompt.additional_purchase.detail')
   }
 
   return new Promise((resolve, reject) => {
@@ -85,13 +89,15 @@ function enable_event_debugging (win) {
 }
 
 function wants_to_browse_after_failure (game) {
+  let i18n = I18nStore.get_state()
+
   let buttons = ['Ok', 'Open game page']
   let dialog_opts = {
     type: 'info',
     buttons,
-    title: 'Payments disabled',
-    message: `Unfortunately, the developer of ${game.title} does not accept payments for this title.`,
-    detail: `Maybe you can find another way to support them?`
+    title: i18n.t('prompt.payments_disabled.title'),
+    message: i18n.t('prompt.payments_disabled.message', {title: game.title}),
+    detail: i18n.t('prompt.payments_disabled.detail')
   }
 
   return new Promise((resolve, reject) => {
