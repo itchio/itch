@@ -59,6 +59,7 @@
     "preferences.install_location.item_count": "# di oggetti", 
     "preferences.install_locations": "Cartelle per l'installazione", 
     "preferences.language": "Lingua", 
+    "preferences.language.get_involved": "Aiutaci a tradurre {{nome}} nella tua lingua!", 
     "prompt.action.cancel": "Annulla", 
     "prompt.action.close": "Chiudi", 
     "prompt.action.confirm_removal": "Esegui la rimozione", 
