@@ -43,6 +43,7 @@
     "menu.help.view_terms": "Ver términos y condiciones", 
     "preferences.install_locations": "Ubicaciòn de la instalacion", 
     "prompt.confirm_uninstall": "¿Realmente desea desinstalar {{}}?", 
+    "prompt.url_install.credit": "Una {{classification}} de {{username}}", 
     "sidebar.broken": "Roto", 
     "sidebar.dashboard": "Desarrollado", 
     "sidebar.installed": "Instalados", 
