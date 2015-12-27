@@ -1,6 +1,6 @@
 {
     "errors.api.login.incorrect_username_or_password": "Nombre de usuario o contraseña incorrecto", 
-    "errors.api.login.password_must_be_provided": "Su contraseña es requerida", 
+    "errors.api.login.password_must_be_provided": "La contraseña es necesaria", 
     "errors.api.login.username_must_be_provided": "Su nombre de usuario es requerido", 
     "grid.item.buy_now": "Comprar", 
     "grid.item.downloading": "Descargando...", 
@@ -43,6 +43,7 @@
     "menu.help.view_terms": "Ver términos y condiciones", 
     "onboarding.collections.lets_shop": "¡Vamos de compras!", 
     "onboarding.collections.title_mix": "Mezcla y empareja ", 
+    "onboarding.collections.usage": "Da una vuelta por la página y usa {{add_to_collection}} para empezar a organizarte.", 
     "onboarding.dashboard.docs_link": "Más información", 
     "onboarding.dashboard.welcome_home": "Bienvenido", 
     "onboarding.owned.navigation_hint": "Haz clic en las etiquetas de la izquierda para navegar por la aplicación.", 
@@ -51,6 +52,7 @@
     "preferences.language": "Idioma", 
     "prompt.action.ok": "Aceptar ", 
     "prompt.confirm_uninstall": "¿Realmente desea desinstalar {{}}?", 
+    "prompt.no_compatible_version.title": "{{title}} en {{platform}}", 
     "prompt.url_install.credit": "Una {{classification}} de {{username}}", 
     "sidebar.broken": "Roto", 
     "sidebar.dashboard": "Desarrollado", 
