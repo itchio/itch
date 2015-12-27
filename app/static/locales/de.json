@@ -79,7 +79,7 @@
     "sidebar.installed": "Installiert", 
     "sidebar.owned": "Bibliothek", 
     "status.checking": "Es wird nach Aktualisierungen gesucht...", 
-    "status.downloaded": "Klicke hier, um Update anzuwenden und neuzustarten!", 
+    "status.downloaded": "Klicke hier für Neustart und Update-Installation!", 
     "status.downloading": "Ladet Aktualisierung herunter...", 
     "status.uptodate": "Itch ist auf dem neuesten Stand!"
 }
