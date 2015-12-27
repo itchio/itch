@@ -53,6 +53,7 @@
     "preferences.language": "Idioma", 
     "prompt.action.ok": "Aceptar ", 
     "prompt.confirm_uninstall": "¿Realmente desea desinstalar {{}}?", 
+    "prompt.crash_reporter.message": "La aplicación se ha cerrado por un error.", 
     "prompt.no_compatible_version.title": "{{title}} en {{platform}}", 
     "prompt.url_install.credit": "Una {{classification}} de {{username}}", 
     "sidebar.broken": "Roto", 
