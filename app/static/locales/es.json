@@ -41,6 +41,7 @@
     "menu.help.search_issue": "Buscar problemas", 
     "menu.help.view_license": "Ver licencia", 
     "menu.help.view_terms": "Ver términos y condiciones", 
+    "onboarding.collections.title_mix": "Mezcla y empareja ", 
     "preferences.install_locations": "Ubicaciòn de la instalacion", 
     "prompt.confirm_uninstall": "¿Realmente desea desinstalar {{}}?", 
     "prompt.url_install.credit": "Una {{classification}} de {{username}}", 
