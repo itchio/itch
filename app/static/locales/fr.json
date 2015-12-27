@@ -57,6 +57,7 @@
     "onboarding.owned.navigation_hint": "Cliquez sur les onglets ci-contre pour explorer l'application", 
     "onboarding.owned.reassuring_comment": "C'est un peu vide pour l'instant, mais pas de panique !", 
     "onboarding.owned.title_warm_welcome": "Vous voilà !", 
+    "preferences.install_location.add": "Ajouter un emplacement", 
     "preferences.install_location.browse": "Ouvrir l'emplacement d'installation dans l'explorateur de fichier", 
     "preferences.install_location.compute_size": "Calculer la taille du dossier sur le Disque", 
     "preferences.install_location.delete": "Supprimer l'emplacement de l'installation et son contenu", 
