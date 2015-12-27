@@ -57,6 +57,7 @@
     "onboarding.owned.navigation_hint": "Click the labels on your left to navigate around the app", 
     "onboarding.owned.reassuring_comment": "Things are looking a bit empty right now, but no worries!", 
     "onboarding.owned.title_warm_welcome": "You made it!", 
+    "preferences.install_locations": "Instalační adresáře", 
     "prompt.action.cancel": "Cancel", 
     "prompt.action.close": "Close", 
     "prompt.action.install": "Install", 
