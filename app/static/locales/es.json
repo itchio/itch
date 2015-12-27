@@ -42,6 +42,7 @@
     "menu.help.view_license": "Ver licencia", 
     "menu.help.view_terms": "Ver términos y condiciones", 
     "onboarding.collections.title_mix": "Mezcla y empareja ", 
+    "onboarding.dashboard.welcome_home": "Bienvenido", 
     "preferences.install_locations": "Ubicaciòn de la instalacion", 
     "prompt.confirm_uninstall": "¿Realmente desea desinstalar {{}}?", 
     "prompt.url_install.credit": "Una {{classification}} de {{username}}", 
