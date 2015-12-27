@@ -40,7 +40,7 @@
     "menu.help.report_issue": "Reportar un problema", 
     "menu.help.search_issue": "Buscar problemas", 
     "menu.help.view_license": "Ver licencia", 
-    "menu.help.view_terms": "Ver términos y condiciones", 
+    "menu.help.view_terms": "Ver términos y condiciones de itch.io", 
     "onboarding.caved.prealpha_reminder": "Ten en cuenta que esto es una pre-alpha", 
     "onboarding.caved.title_pick": "Haz tu elección", 
     "onboarding.caved.troubleshoot_advice": "Si algo falla, haz clic en {{report}} para enviar un informe, o {{probe}} para investigarlo.", 
