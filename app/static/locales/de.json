@@ -43,6 +43,7 @@
     "menu.help.view_terms": "Itch.io Nutzungsbedingungen anzeigen", 
     "onboarding.caved.prealpha_reminder": "Beachte, dass dies eine Pre-Alpha-Version ist!", 
     "onboarding.caved.troubleshoot_advice": "Sollte etwas nicht funktionieren, klicke {{report}}, um den Fehler zu melden oder {{probe}}, um nachzuforschen.", 
+    "onboarding.caved.usage": "Lade und installiere Spiele im Hintergrund", 
     "onboarding.collections.auto_sync": "Bei denem nächsten Besuch findest du deine Spiele hier.", 
     "onboarding.collections.lets_shop": "Ab in den Shop!", 
     "onboarding.collections.title_mix": "Bunte Auswahl", 
