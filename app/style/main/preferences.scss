@@ -59,12 +59,21 @@
     }
 
     .action {
+      transition: all .4s;
       color: white;
       opacity: .8;
 
       .icon-plus, .icon-refresh, .icon-stopwatch {
         font-size: 80%;
         margin-right: 8px;
+      }
+
+      &.default .icon {
+        color: #FDD660;
+      }
+
+      &.not_default .icon {
+        color: #777575;
       }
 
       &:hover {

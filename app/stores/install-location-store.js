@@ -30,10 +30,17 @@ let InstallLocationStore = Object.assign(new Store('install-location-store'), {
 
     for (let loc_name of Object.keys(raw_locations)) {
       let raw_loc = raw_locations[loc_name]
+
+      let size = location_sizes[loc_name]
+      if (typeof size === 'undefined') { size = -1 }
+
+      let computing_size = !!location_computing_size[loc_name]
+      let item_count = location_item_counts[loc_name] || 0
+
       let loc = Object.assign({}, raw_loc, {
-        size: location_sizes[loc_name] || -1,
-        computing_size: location_computing_size[loc_name] || false, // kinda dumb, I know.
-        item_count: location_item_counts[loc_name] || 0
+        size,
+        computing_size,
+        item_count
       })
 
       locations[loc_name] = loc
