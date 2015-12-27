@@ -8,7 +8,7 @@
     "grid.item.installing": "Installing...", 
     "grid.item.launch": "Launch", 
     "grid.item.not_platform_compatible": "Not available on {{platform}}", 
-    "grid.item.queued": "Queued", 
+    "grid.item.queued": "Ve frontě", 
     "grid.item.running": "Running...", 
     "login.action.login": "Log in", 
     "login.action.register": "Register", 
