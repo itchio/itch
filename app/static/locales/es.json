@@ -62,6 +62,7 @@
     "preferences.install_location.empty": "Vacío", 
     "preferences.install_location.is_default": "Las nuevas descargas se instalarán por defecto en esta ruta.", 
     "preferences.install_location.item_count": "# de elementos", 
+    "preferences.install_location.make_default": "Seleccionar como la ruta de instalación por defecto", 
     "preferences.install_location.name": "Nombre", 
     "preferences.install_location.path": "Ubicación ", 
     "preferences.install_location.size": "Espacio en disco", 
