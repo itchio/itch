@@ -59,6 +59,7 @@
     "onboarding.owned.title_warm_welcome": "おめでとうございます!", 
     "preferences.install_location.browse": "インストール先参照", 
     "preferences.install_location.delete": "このインストール先を除外して内容物をアンインストールする", 
+    "preferences.install_location.empty": "なし", 
     "preferences.install_location.make_default": "インストール先を初期状態に復元する", 
     "preferences.install_location.name": "名前", 
     "preferences.install_location.path": "インストール先", 
