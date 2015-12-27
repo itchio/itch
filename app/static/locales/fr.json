@@ -59,7 +59,7 @@
     "onboarding.owned.title_warm_welcome": "Vous voilà !", 
     "preferences.install_location.browse": "Ouvrir", 
     "preferences.install_location.compute_size": "Calculer la taille", 
-    "preferences.install_location.delete": "Enlever ce dossier d'installation et désinstaller son contenu", 
+    "preferences.install_location.delete": "Supprimer l'emplacement de l'installation et son contenu", 
     "preferences.install_location.empty": "Vide", 
     "preferences.install_location.item_count": "Nb. d'éléments", 
     "preferences.install_location.make_default": "Choisir comme emplacement par défaut", 
