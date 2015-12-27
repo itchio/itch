@@ -56,6 +56,7 @@
     "preferences.install_locations": "Ubicaciòn de la instalacion", 
     "preferences.language": "Idioma", 
     "preferences.language.get_involved": "¡Ayúdanos a traducir {{name}} a tu idioma!", 
+    "prompt.action.cancel": "Cancelar", 
     "prompt.action.close": "Cerrar", 
     "prompt.action.ok": "Aceptar ", 
     "prompt.confirm_uninstall": "¿Realmente desea desinstalar {{}}?", 
