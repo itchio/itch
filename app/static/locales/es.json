@@ -77,6 +77,7 @@
     "prompt.crash_reporter.open_crash_log": "Abrir registro de error", 
     "prompt.crash_reporter.report_issue": "Reportar problema", 
     "prompt.install_location_remove.message": "¿Seguro que quiere eliminar este lugar?", 
+    "prompt.install_location_remove.title": "Eliminando ruta de instalación", 
     "prompt.logout_confirm": "¿Seguro que quieres cerrar sesión?", 
     "prompt.no_compatible_version.message": "No hemos podido encontrar una versión de {{title}} para {{platform}}.", 
     "prompt.no_compatible_version.title": "{{title}} en {{platform}}", 
