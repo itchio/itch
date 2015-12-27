@@ -49,6 +49,7 @@
     "preferences.install_location.empty": "Vacío", 
     "preferences.install_locations": "Ubicaciòn de la instalacion", 
     "preferences.language": "Idioma", 
+    "prompt.action.ok": "Aceptar ", 
     "prompt.confirm_uninstall": "¿Realmente desea desinstalar {{}}?", 
     "prompt.url_install.credit": "Una {{classification}} de {{username}}", 
     "sidebar.broken": "Roto", 
