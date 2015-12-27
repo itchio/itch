@@ -85,9 +85,7 @@ ${log}
       }
     }
 
-    // try to show error dialog
-    // supplying defaultValues everywhere in case the i18n system hasn't loaded yet
-    let response = dialog.showMessageBox({
+    let dialog_opts = {
       type: 'error',
       buttons: [
         i18n.t('prompt.crash_reporter.report_issue', {defaultValue: 'Report issue'}),
@@ -96,13 +94,19 @@ ${log}
       ],
       message: i18n.t('prompt.crash_reporter.message', {defaultValue: 'The application has crashed'}),
       detail: i18n.t('prompt.crash_reporter.detail', {defaultValue: `A crash log was written to ${crash_file}`, location: crash_file})
-    })
-
-    if (response === 0) {
-      self.report_issue({log})
-    } else if (response === 1) {
-      shell.openItem(crash_file)
     }
+
+    let callback = (response) => {
+      if (response === 0) {
+        self.report_issue({log})
+      } else if (response === 1) {
+        shell.openItem(crash_file)
+      }
+    }
+
+    // try to show error dialog
+    // supplying defaultValues everywhere in case the i18n system hasn't loaded yet
+    dialog.showMessageBox(dialog_opts, callback)
   },
 
   mount: () => {
