@@ -134,12 +134,14 @@ async function install_prompt (game) {
     detail: `${game.short_text}${credit}`
   }
 
-  let response = electron.dialog.showMessageBox(dialog_opts)
-  if (response === 0) {
-    AppActions.cave_queue(game.id)
-  } else if (response === 1) {
-    // welp
+  let callback = (response) => {
+    if (response === 0) {
+      AppActions.cave_queue(game.id)
+    } else if (response === 1) {
+      // welp
+    }
   }
+  electron.dialog.showMessageBox(dialog_opts, callback)
 }
 
 async function apology_prompt (game) {
@@ -162,7 +164,10 @@ async function apology_prompt (game) {
     detail: i18n.t('prompt.no_compatible_version.detail', i18n_vars)
   }
 
-  electron.dialog.showMessageBox(dialog_opts)
+  let callback = () => {
+    // not much to do anyway.
+  }
+  electron.dialog.showMessageBox(dialog_opts, callback)
 }
 
 function logout () {
