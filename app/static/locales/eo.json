@@ -1,1 +1,7 @@
-{}
+{
+    "login.field.username": "Uzantnomo", 
+    "menu.danger_zone.dont_use": "Ne uzu tion.", 
+    "menu.help.help": "Helpo", 
+    "onboarding.dashboard.welcome_home": "Bonvenon hejme", 
+    "preferences.language": "Lingvo"
+}
