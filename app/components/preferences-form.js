@@ -125,7 +125,7 @@ class PreferencesForm extends ShallowComponent {
         r.td({
           className: 'action',
           'data-tip': t('preferences.install_location.delete'),
-          onClick: (e) => AppActions.install_location_remove(name)
+          onClick: (e) => AppActions.install_location_remove_request(name)
         }, r(Icon, {icon: 'delete'}))
       ]))
     }

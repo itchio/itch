@@ -129,18 +129,18 @@ async function install_location_add_request () {
   let window
   WindowStore.with(w => window = w)
 
-  let on_complete = (result) => {
-    if (!result) {
+  let callback = (response) => {
+    if (!response) {
       log(opts, `Install location addition was cancelled`)
       return
     }
 
     let loc_name = uuid.v4()
-    let loc_path = result[0]
+    let loc_path = response[0]
     AppActions.install_location_add(loc_name, loc_path)
     log(opts, `Adding install location at ${loc_path} with name ${loc_name}`)
   }
-  electron.dialog.showOpenDialog(window, dialog_opts, on_complete)
+  electron.dialog.showOpenDialog(window, dialog_opts, callback)
 }
 
 async function install_location_remove_request (payload) {
@@ -161,10 +161,16 @@ async function install_location_remove_request (payload) {
   let dialog_opts = {
     title: i18n.t('prompt.install_location_remove.title'),
     message: i18n.t('prompt.install_location_remove.message'),
-    detail: i18n.t('prompt.install_location_remove.detail'),
+    detail: i18n.t('prompt.install_location_remove.detail', {location: loc.path}),
     buttons
   }
-  electron.dialog.showMessageBox(dialog_opts)
+
+  let callback = (response) => {
+    if (response === 0) {
+      AppActions.install_location_remove(payload.id)
+    }
+  }
+  electron.dialog.showMessageBox(dialog_opts, callback)
 }
 
 async function install_location_browse (payload) {
