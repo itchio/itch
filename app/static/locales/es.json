@@ -79,6 +79,7 @@
     "prompt.crash_reporter.message": "La aplicación se ha cerrado por un error.", 
     "prompt.crash_reporter.open_crash_log": "Abrir registro de error", 
     "prompt.crash_reporter.report_issue": "Reportar problema", 
+    "prompt.install_location_remove.detail": "Los elementos instalados en {{localización}} serán desinstalados.", 
     "prompt.install_location_remove.message": "¿Seguro que quiere eliminar este lugar?", 
     "prompt.install_location_remove.title": "Eliminando ruta de instalación", 
     "prompt.logout_confirm": "¿Seguro que quieres cerrar sesión?", 
