@@ -58,6 +58,7 @@
     "onboarding.owned.reassuring_comment": "現段階では表示するものはありません、ですが心配ご無用!", 
     "onboarding.owned.title_warm_welcome": "おめでとうございます!", 
     "preferences.install_location.browse": "インストール先参照", 
+    "preferences.install_location.compute_size": "ディスク内での要領を算出する", 
     "preferences.install_location.delete": "このインストール先を除外して内容物をアンインストールする", 
     "preferences.install_location.empty": "なし", 
     "preferences.install_location.is_default": "新しく入手したアイテムは初期設定の場合、このフォルダにインストールされます。", 
