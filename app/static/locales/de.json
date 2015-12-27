@@ -59,6 +59,7 @@
     "onboarding.owned.title_warm_welcome": "Geschafft!", 
     "preferences.install_location.name": "Name", 
     "preferences.install_location.path": "Ort", 
+    "preferences.install_location.size": "Installationsgröße", 
     "preferences.install_locations": "Installationsorte", 
     "preferences.language": "Sprache", 
     "preferences.language.get_involved": "Hilf bei der Übersetzung von {{name}} in deine Sprache!", 
