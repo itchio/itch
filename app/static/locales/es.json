@@ -41,6 +41,7 @@
     "menu.help.search_issue": "Buscar problemas", 
     "menu.help.view_license": "Ver licencia", 
     "menu.help.view_terms": "Ver términos y condiciones", 
+    "onboarding.caved.usage": "Observa como los juegos discretamente se descargan, instalan y se ejecutan.", 
     "onboarding.collections.lets_shop": "¡Vamos de compras!", 
     "onboarding.collections.title_mix": "Mezcla y empareja ", 
     "onboarding.collections.usage": "Da una vuelta por la página y usa {{add_to_collection}} para empezar a organizarte.", 
