@@ -73,6 +73,7 @@
     "prompt.crash_reporter.open_crash_log": "Absturzprotokoll öffnen", 
     "prompt.crash_reporter.report_issue": "Fehler melden", 
     "prompt.logout_confirm": "Bist du sicher, dass du dich ausloggen möchtest?", 
+    "prompt.no_compatible_version.detail": "Vielleicht ist dieses {{classification}} noch nicht kompatibel?", 
     "prompt.no_compatible_version.message": "Wir konnten {{title}} für {{platform}} nicht finden.", 
     "prompt.no_compatible_version.title": "{{title}} auf {{platform}}", 
     "prompt.url_install.credit": "Ein {{classification}} von {{username}}", 
