@@ -45,6 +45,8 @@
     "onboarding.collections.title_mix": "Mezcla y empareja ", 
     "onboarding.dashboard.docs_link": "Más información", 
     "onboarding.dashboard.welcome_home": "Bienvenido", 
+    "onboarding.owned.navigation_hint": "Haz clic en las etiquetas de la izquierda para navegar por la aplicación.", 
+    "preferences.install_location.empty": "Vacío", 
     "preferences.install_locations": "Ubicaciòn de la instalacion", 
     "preferences.language": "Idioma", 
     "prompt.confirm_uninstall": "¿Realmente desea desinstalar {{}}?", 
