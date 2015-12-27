@@ -57,7 +57,7 @@
     "preferences.install_location.path": "Ort", 
     "preferences.install_locations": "Installationsorte", 
     "preferences.language": "Sprache", 
-    "preferences.language.get_involved": "Hilf mit, {{name}} in deine Sprache zu übersetzen!", 
+    "preferences.language.get_involved": "Hilf bei der Übersetzung von {{name}} in deine Sprache!", 
     "prompt.action.cancel": "Abbrechen", 
     "prompt.action.close": "Schließen", 
     "prompt.action.install": "Installieren", 
