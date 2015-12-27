@@ -79,6 +79,7 @@
     "prompt.crash_reporter.message": "itchはクラッシュしました", 
     "prompt.crash_reporter.open_crash_log": "クラッシュログを開く", 
     "prompt.crash_reporter.report_issue": "問題を報告する", 
+    "prompt.install_location_add.title": "インストール先を追加します", 
     "prompt.install_location_remove.detail": "{{location}}にインストールされたすべてのゲームはアンインストールされます。", 
     "prompt.install_location_remove.message": "このインストール先を削除してもよろしいですか？", 
     "prompt.install_location_remove.title": "インストール先を削除しています", 
