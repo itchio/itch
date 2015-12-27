@@ -9,6 +9,7 @@ let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppActions = require('../actions/app-actions')
 let AppConstants = require('../constants/app-constants')
 
+let Promise = require('bluebird')
 let electron = require('electron')
 
 let state = null
@@ -58,8 +59,10 @@ function wants_to_buy_twice (game) {
     message: `You've already bought a copy of ${game.title}.`,
     detail: `...but you could still buy a copy for a friend!\n\nDo you want to make another purchase?`
   }
-  let response = require('electron').dialog.showMessageBox(dialog_opts)
-  return (response === 0)
+
+  return new Promise((resolve, reject) => {
+    require('electron').dialog.showMessageBox(dialog_opts, (response) => resolve(response === 0))
+  })
 }
 
 /**
@@ -91,10 +94,9 @@ function wants_to_browse_after_failure (game) {
     detail: `Maybe you can find another way to support them?`
   }
 
-  let response = require('electron').dialog.showMessageBox(dialog_opts)
-  if (response === 1) {
-    require('electron').shell.openExternal(game.url)
-  }
+  return new Promise((resolve, reject) => {
+    require('electron').dialog.showMessageBox(dialog_opts, (response) => resolve(response === 1))
+  })
 }
 
 function build_login_and_return_url (return_to) {
@@ -123,9 +125,10 @@ async function game_purchase (payload) {
   let keys = await db.find({_table: 'download_keys', game_id: payload.id})
 
   let already_owns = keys.length > 0
-  if (already_owns && !wants_to_buy_twice(game)) {
+  if (already_owns) {
+    let wants = await wants_to_buy_twice(game)
     // user didn't want to buy twice
-    return
+    if (!wants) return
   }
 
   let win = make_purchase_window(me, game)
@@ -152,12 +155,12 @@ async function game_purchase (payload) {
     }
   })
 
-  win.webContents.on('did-get-response-details', (e, status, newURL, originalURL, httpResponseCode) => {
+  win.webContents.on('did-get-response-details', async (e, status, newURL, originalURL, httpResponseCode) => {
     if (httpResponseCode === 404) {
       console.log(`response code is not found! closing`)
       win.close()
 
-      if (wants_to_browse_after_failure(game)) {
+      if (await wants_to_browse_after_failure(game)) {
         AppActions.game_browse(game.id)
       }
     }
