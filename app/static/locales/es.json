@@ -58,6 +58,8 @@
     "onboarding.owned.reassuring_comment": "Esto está un poco vacío de momento... ¡Pero no te preocupes!", 
     "onboarding.owned.title_warm_welcome": "¡Lo has conseguido!", 
     "preferences.install_location.add": "Agregar ruta", 
+    "preferences.install_location.browse": "Abrir ruta de instalación en el explorador", 
+    "preferences.install_location.compute_size": "Calcular el espacio en disco de la carpeta", 
     "preferences.install_location.delete": "Eliminar este lugar y su contenido", 
     "preferences.install_location.empty": "Vacío", 
     "preferences.install_location.is_default": "Las nuevas descargas se instalarán por defecto en esta ruta.", 
