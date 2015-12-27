@@ -140,7 +140,7 @@ class PreferencesForm extends ShallowComponent {
         }
       }, [
         r(Icon, {icon: 'plus'}),
-        'Add location'
+        t('preferences.install_location.add')
       ])
     ]))
 
