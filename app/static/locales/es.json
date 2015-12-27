@@ -60,6 +60,7 @@
     "preferences.install_location.add": "Agregar ruta", 
     "preferences.install_location.delete": "Eliminar este lugar y su contenido", 
     "preferences.install_location.empty": "Vacío", 
+    "preferences.install_location.is_default": "Las nuevas descargas se instalarán por defecto en esta ruta.", 
     "preferences.install_location.item_count": "# de elementos", 
     "preferences.install_location.name": "Nombre", 
     "preferences.install_location.path": "Ubicación ", 
