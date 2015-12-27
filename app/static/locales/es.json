@@ -85,6 +85,7 @@
     "prompt.logout_confirm": "¿Seguro que quieres cerrar sesión?", 
     "prompt.no_compatible_version.message": "No hemos podido encontrar una versión de {{title}} para {{platform}}.", 
     "prompt.no_compatible_version.title": "{{title}} en {{platform}}", 
+    "prompt.payments_disabled.detail": "Quizás puedas encontrar otra forma de apoyar al desarrollador.", 
     "prompt.payments_disabled.title": "Pagos deshabilitados", 
     "prompt.url_install.credit": "Una {{classification}} de {{username}}", 
     "prompt.url_install.message": "¿Quieres instalar {{title}}?", 
