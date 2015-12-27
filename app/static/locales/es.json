@@ -1,7 +1,7 @@
 {
     "errors.api.login.incorrect_username_or_password": "Nombre de usuario o contraseña incorrecto", 
     "errors.api.login.password_must_be_provided": "La contraseña es necesaria", 
-    "errors.api.login.username_must_be_provided": "Su nombre de usuario es requerido", 
+    "errors.api.login.username_must_be_provided": "El nombre de usuario es necesario", 
     "grid.item.buy_now": "Comprar", 
     "grid.item.downloading": "Descargando...", 
     "grid.item.install": "Instalar", 
@@ -51,6 +51,7 @@
     "preferences.install_location.empty": "Vacío", 
     "preferences.install_locations": "Ubicaciòn de la instalacion", 
     "preferences.language": "Idioma", 
+    "preferences.language.get_involved": "¡Ayúdanos a traducir {{name}} a tu idioma!", 
     "prompt.action.ok": "Aceptar ", 
     "prompt.confirm_uninstall": "¿Realmente desea desinstalar {{}}?", 
     "prompt.crash_reporter.message": "La aplicación se ha cerrado por un error.", 
