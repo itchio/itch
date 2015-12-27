@@ -72,6 +72,7 @@
     "prompt.crash_reporter.message": "L'applicazione si è bloccata", 
     "prompt.crash_reporter.open_crash_log": "Apri il log degli errori", 
     "prompt.crash_reporter.report_issue": "Segnala problema", 
+    "prompt.install_location_remove.detail": "Tutti gli oggetti installati in {{location}} saranno disinstallati.", 
     "prompt.install_location_remove.message": "Sei sicuro di voler rimuovere questa cartella?", 
     "prompt.install_location_remove.title": "Rimuovere una cartella d'installazione", 
     "prompt.logout_confirm": "Sei sicuro di volere disconnetterti?", 
