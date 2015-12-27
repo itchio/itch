@@ -61,6 +61,7 @@
     "preferences.install_location.compute_size": "Calculer la taille", 
     "preferences.install_location.delete": "Supprimer l'emplacement de l'installation et son contenu", 
     "preferences.install_location.empty": "Vide", 
+    "preferences.install_location.is_default": "Les nouveaux objets s'installeront à cet endroit par défaut.", 
     "preferences.install_location.item_count": "Nb. d'éléments", 
     "preferences.install_location.make_default": "Choisir comme emplacement par défaut", 
     "preferences.install_location.name": "Nom", 
