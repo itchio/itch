@@ -62,7 +62,7 @@
     "preferences.install_location.compute_size": "Calcola le dimensioni della cartella sul disco", 
     "preferences.install_location.delete": "Rimuovi questa cartella di installazione e disinstalla il suo contenuto", 
     "preferences.install_location.empty": "Vuoto", 
-    "preferences.install_location.is_default": "I nuovi oggetti verranno installati in questa cartella automaticamente", 
+    "preferences.install_location.is_default": "I nuovi oggetti verranno installati in questa cartella automaticamente.", 
     "preferences.install_location.item_count": "Numero di oggetti", 
     "preferences.install_location.make_default": "Imposta come cartella di installazione predefinita", 
     "preferences.install_location.name": "Nome", 
