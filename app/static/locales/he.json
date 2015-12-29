@@ -63,7 +63,7 @@
     "preferences.install_location.name": "Name", 
     "preferences.install_location.path": "Location", 
     "preferences.install_location.size": "Size on disk", 
-    "preferences.install_locations": "מיקומי התקנה", 
+    "preferences.install_locations": "מקומות התקנה", 
     "preferences.language": "Language", 
     "preferences.language.get_involved": "Help translate {{name}} in your language!", 
     "prompt.action.cancel": "Cancel", 
