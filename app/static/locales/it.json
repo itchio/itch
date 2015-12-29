@@ -59,7 +59,7 @@
     "onboarding.owned.title_warm_welcome": "Ce l'hai fatta!", 
     "preferences.install_location.add": "Aggiungi cartella", 
     "preferences.install_location.empty": "Vuoto", 
-    "preferences.install_location.item_count": "# di oggetti", 
+    "preferences.install_location.item_count": "Numero di oggetti", 
     "preferences.install_location.name": "Nome", 
     "preferences.install_location.path": "Cartella", 
     "preferences.install_location.size": "Spazio su disco", 
