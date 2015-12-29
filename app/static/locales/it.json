@@ -14,7 +14,7 @@
     "login.action.register": "Registrati", 
     "login.action.reset_password": "Password dimenticata", 
     "login.field.password": "Password", 
-    "login.field.username": "Nome utente", 
+    "login.field.username": "Nome Utente", 
     "login.status.dependency_check": "Mi sto assicurando che tutto sia stato impostato…", 
     "login.status.dependency_install": "Sto installando la dipendenza {{name}} {{version}}", 
     "login.status.login": "Sto effettuando l'accesso…", 
