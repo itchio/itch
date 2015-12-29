@@ -55,7 +55,10 @@ function make_purchase_window (me, game) {
 function wants_to_buy_twice (game) {
   let i18n = I18nStore.get_state()
 
-  let buttons = ['Purchase again', 'Cancel']
+  let buttons = [
+    i18n.t('prompt.additional_purchase.purchase_again'),
+    i18n.t('prompt.action.cancel')
+  ]
   let dialog_opts = {
     type: 'info',
     buttons,
@@ -91,7 +94,10 @@ function enable_event_debugging (win) {
 function wants_to_browse_after_failure (game) {
   let i18n = I18nStore.get_state()
 
-  let buttons = ['Ok', 'Open game page']
+  let buttons = [
+    i18n.t('prompt.action.ok'),
+    i18n.t('prompt.payments_disabled.open_web_page')
+  ]
   let dialog_opts = {
     type: 'info',
     buttons,
