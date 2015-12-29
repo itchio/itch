@@ -8,7 +8,10 @@ let i18next = require('i18next')
 let backend = require('i18next-node-fs-backend')
 
 let path = require('path')
+let fs = require('../promised/fs')
+
 let locales_dir = path.resolve(path.join(__dirname, '..', 'static', 'locales'))
+let locales_list_path = path.resolve(path.join(locales_dir, '..', 'locales.json'))
 
 function on_error (err) {
   // apparently the file backend doesn't validate JSON :|
@@ -27,15 +30,29 @@ let i18n_opts = {
   keySeparator: '###',
   returnEmptyString: false,
   backend: {
+    // TODO: refresh locales from github
     loadPath: `${locales_dir}/{{lng}}.json`
   }
 }
 i18next.use(backend).init(i18n_opts, on_error)
 let state = i18next
 
+let locales_list
+
 // I18nStore can live on both sides: browser & renderer
 let I18nStore = Object.assign(new Store('i18n-store', process.type), {
-  get_state: () => state
+  get_state: () => state,
+
+  get_locales_list: () => {
+    if (!locales_list) {
+      // bad, but should only happen once at start-up
+      let contents = fs.readFileSync(locales_list_path, {encoding: 'utf8'})
+      locales_list = JSON.parse(contents).locales
+    }
+
+    // TODO: refresh locales list from github
+    return locales_list
+  }
 })
 
 state.on('error', (e) => {

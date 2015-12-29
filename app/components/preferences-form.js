@@ -6,11 +6,10 @@ let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
 let AppActions = require('../actions/app-actions')
+let I18nStore = require('../stores/i18n-store')
 
 let SelectRow = require('./select-row')
 let Icon = require('./icon')
-
-let language_codes = require('../constants/language-codes')
 
 class PreferencesForm extends ShallowComponent {
   constructor () {
@@ -22,6 +21,7 @@ class PreferencesForm extends ShallowComponent {
     let t = this.t
     let state = this.props.state
     let language = mori.getIn(state, ['preferences', 'language'])
+    let locales = I18nStore.get_locales_list()
 
     return (
       r.div({className: 'preferences_panel'}, [
@@ -31,7 +31,7 @@ class PreferencesForm extends ShallowComponent {
         r.form({className: `form preferences_form`}, [
           r(SelectRow, {
             on_change: this.on_language_change,
-            options: language_codes,
+            options: locales,
             value: language,
             label: t('preferences.language')
           }),
