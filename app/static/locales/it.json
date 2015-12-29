@@ -63,7 +63,7 @@
     "preferences.install_location.is_default": "I nuovi oggetti verranno installati in questa cartella automaticamente", 
     "preferences.install_location.item_count": "Numero di oggetti", 
     "preferences.install_location.name": "Nome", 
-    "preferences.install_location.path": "Cartella", 
+    "preferences.install_location.path": "Percorso installazione", 
     "preferences.install_location.size": "Spazio su disco", 
     "preferences.install_locations": "Cartelle per l'installazione", 
     "preferences.language": "Lingua", 
