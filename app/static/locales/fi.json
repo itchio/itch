@@ -97,7 +97,7 @@
     "prompt.payments_disabled.message": "Valitettavasti tuotteen {{title}} tekijä ei hyväksy maksuja tästä tuotteesta.", 
     "prompt.payments_disabled.open_web_page": "Avaa nettisivu", 
     "prompt.payments_disabled.title": "Maksut poissa käytöstä", 
-    "prompt.url_install.credit": "A {{classification}} by {{username}}", 
+    "prompt.url_install.credit": "{{classification}} käyttäjältä {{username}}", 
     "prompt.url_install.message": "Haluatko asentaa tuotteen {{title}}?", 
     "prompt.url_install.title": "Asennuspyyntö", 
     "sidebar.broken": "Poissa käytöstä", 
