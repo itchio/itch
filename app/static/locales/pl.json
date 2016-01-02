@@ -65,6 +65,7 @@
     "preferences.install_location.make_default": "Ustaw jako domyślną ścieżkę instalacji", 
     "preferences.install_location.name": "Nazwa", 
     "preferences.install_location.path": "Miejsce", 
+    "preferences.install_location.size": "Rozmiar na dysk", 
     "preferences.install_locations": "Ścieżki instalacji", 
     "preferences.language": "Język", 
     "preferences.language.get_involved": "Pomóż tłumaczyć {{name}} na twój język!", 
