@@ -63,6 +63,7 @@
     "preferences.install_location.item_count": "Liczba przedmiotów", 
     "preferences.install_locations": "Ścieżki instalacji", 
     "preferences.language": "Język", 
+    "preferences.language.get_involved": "Pomóż tłumaczyć {{name}} na twój język!", 
     "prompt.action.cancel": "", 
     "prompt.action.close": "", 
     "prompt.action.confirm_removal": "Kontynuuj usuwanie", 
