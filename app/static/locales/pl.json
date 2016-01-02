@@ -19,7 +19,7 @@
     "login.status.dependency_install": "", 
     "login.status.login": "", 
     "login.status.setup_failure": "", 
-    "menu.account.account": "", 
+    "menu.account.account": "Konto", 
     "menu.account.change_user": "", 
     "menu.account.not_logged_in": "", 
     "menu.danger_zone.danger_zone": "", 
