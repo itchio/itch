@@ -79,6 +79,7 @@
     "prompt.no_compatible_version.detail": "Μήπως η {{classification}} δεν είναι συμβατή ακόμα;", 
     "prompt.no_compatible_version.message": "Δεν βρήκαμε έκδοση του {{title}} για το {{platform}}.", 
     "prompt.no_compatible_version.title": "{{title}} στο {{platform}}\n", 
+    "prompt.payments_disabled.title": "Πληρωμές απενεργοποιημένες", 
     "prompt.url_install.credit": "{{classification}} κατά {{username}}", 
     "prompt.url_install.message": "Θέλεις να εγκαταστήσεις το {{title}};", 
     "prompt.url_install.title": "Αίτημα εγκατάστασης", 
