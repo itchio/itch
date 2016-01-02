@@ -47,7 +47,7 @@
     "onboarding.caved.usage": "Titta på medan spelen laddar ner, installeras och startar.", 
     "onboarding.collections.auto_sync": "Dina spel synkroniseras automatiskt och kommer vara uppdaterad när du kommer tillbaka.", 
     "onboarding.collections.lets_shop": "Ska vi se vad som finns i butiken?", 
-    "onboarding.collections.title_mix": "", 
+    "onboarding.collections.title_mix": "Lösgodis", 
     "onboarding.collections.usage": "Utforska sidan lite och använd sedan {{add_to_collection}} för att börja organisera dina saker.", 
     "onboarding.dashboard.docs_link": "Läs mer", 
     "onboarding.dashboard.mission_statement": "Vi har försökt göra upplevelsen här så bekväm som möjlig för utvecklare.", 
