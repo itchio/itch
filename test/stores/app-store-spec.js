@@ -2,9 +2,6 @@
 let test = require('zopf')
 let mori = require('mori')
 let proxyquire = require('proxyquire')
-let deep = require('deep-diff')
-let clone = require('clone')
-let _ = require('underscore')
 
 let AppConstants = require('../../app/constants/app-constants')
 
@@ -53,29 +50,6 @@ test('AppStore', t => {
   let get_state = () => mori.toJs(AppStore.get_state())
 
   t.case('GameStore change', t => {
-    let state = _.indexBy([ {id: 42}, {id: 21}, {id: 8} ], 'id')
-    let saved_state = {}
-
-    let send_diff = (label) => {
-      let diff = deep.diff(saved_state, state)
-      saved_state = clone(state)
-      handler({ action_type: AppConstants.GAME_STORE_DIFF, diff })
-      t.same(get_state().library.games, state, label)
-    }
-
-    send_diff('initial')
-
-    state['42'].name = 'Hi!'
-    send_diff('add field')
-
-    state['42'].name = 'Bye!'
-    send_diff('change field')
-
-    delete state['42'].name
-    send_diff('delete field')
-
-    delete state['21']
-    send_diff('delete record')
   })
 
   t.case('setup_status', t => {

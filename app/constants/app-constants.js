@@ -75,6 +75,7 @@ module.exports = keyMirror({
 
   /** Data sync functions */
   GAME_STORE_DIFF: null,
+  INSTALL_LOCATION_STORE_DIFF: null,
 
   /** Ready but needs human login */
   NO_STORED_CREDENTIALS: null,

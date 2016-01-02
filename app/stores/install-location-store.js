@@ -8,6 +8,8 @@ let explorer = require('../util/explorer')
 let log = require('../util/log')('install-location-store')
 let opts = { logger: new log.Logger() }
 
+let deep = require('deep-diff')
+
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
 let AppActions = require('../actions/app-actions')
@@ -22,39 +24,11 @@ let location_sizes = {}
 let location_computing_size = {}
 let location_item_counts = {}
 
+let state = {}
+
 let InstallLocationStore = Object.assign(new Store('install-location-store'), {
   get_state: () => {
-    let prefs = PreferencesStore.get_state()
-    let raw_locations = Object.assign({}, prefs.install_locations || {}, {appdata: appdata_location})
-    let locations = {}
-
-    for (let loc_name of Object.keys(raw_locations)) {
-      let raw_loc = raw_locations[loc_name]
-
-      let size = location_sizes[loc_name]
-      if (typeof size === 'undefined') { size = -1 }
-
-      let computing_size = !!location_computing_size[loc_name]
-      let item_count = location_item_counts[loc_name] || 0
-
-      let loc = Object.assign({}, raw_loc, {
-        size,
-        computing_size,
-        item_count
-      })
-
-      locations[loc_name] = loc
-    }
-
-    let aliases = [
-      [process.env.HOME, '~']
-    ]
-
-    return {
-      locations,
-      aliases,
-      default: prefs.default_install_location || 'appdata'
-    }
+    return state
   },
 
   get_location: (name) => {
@@ -66,6 +40,51 @@ let InstallLocationStore = Object.assign(new Store('install-location-store'), {
     }
   }
 })
+
+function compute_state () {
+  let prefs = PreferencesStore.get_state()
+  let raw_locations = Object.assign({}, prefs.install_locations || {}, {appdata: appdata_location})
+  let locations = {}
+
+  for (let loc_name of Object.keys(raw_locations)) {
+    let raw_loc = raw_locations[loc_name]
+
+    let size = location_sizes[loc_name]
+    if (typeof size === 'undefined') { size = -1 }
+
+    let computing_size = !!location_computing_size[loc_name]
+    let item_count = location_item_counts[loc_name] || 0
+
+    let loc = Object.assign({}, raw_loc, {
+      size,
+      computing_size,
+      item_count
+    })
+
+    locations[loc_name] = loc
+  }
+
+  let aliases = [
+    [process.env.HOME, '~']
+  ]
+
+  return {
+    locations,
+    aliases,
+    default: prefs.default_install_location || 'appdata'
+  }
+}
+
+function recompute_state () {
+  let old_state = state
+  let new_state = compute_state()
+  let state_diff = deep.diff(old_state, new_state)
+
+  if (!state_diff) return
+  AppActions.install_location_store_diff(state_diff)
+
+  InstallLocationStore.emit_change()
+}
 
 async function reload () {
   log(opts, 'Hi!')
@@ -86,7 +105,7 @@ async function reload () {
     location_item_counts[loc_name]++
   }
 
-  InstallLocationStore.emit_change()
+  recompute_state()
 }
 
 function install_location_compute_size (payload) {
@@ -107,7 +126,7 @@ function install_location_compute_size (payload) {
     total_size += fileStats.size
     location_sizes[name] = total_size
     log(opts, `Size of ${name} so far: ${total_size}`)
-    InstallLocationStore.emit_change()
+    recompute_state()
     next()
   })
 
@@ -115,7 +134,7 @@ function install_location_compute_size (payload) {
     log(opts, `Done computing size of ${name}!`)
     location_sizes[name] = total_size
     location_computing_size[name] = false
-    InstallLocationStore.emit_change()
+    recompute_state()
   })
 }
 
