@@ -13,6 +13,8 @@ let InputRequired = errors.InputRequired
 let Crash = errors.Crash
 
 let path = require('path')
+let deep = require('deep-diff')
+let clone = require('clone')
 
 let Logger = require('../util/log').Logger
 let log = require('../util/log')('cave-store')
@@ -29,7 +31,21 @@ let EventEmitter = require('events').EventEmitter
 
 const CAVE_TABLE = 'caves'
 
+let old_state = {}
+let state = {}
+let cave_blacklist = {}
+
+let natural_transitions = {
+  'find-upload': 'download',
+  'download': 'install',
+  'install': 'configure'
+}
+
 let CaveStore = Object.assign(new Store('cave-store'), {
+  get_state: function () {
+    state
+  },
+
   find: function (id) {
     return db.find_one({_table: CAVE_TABLE, _id: id})
   },
@@ -51,10 +67,15 @@ let CaveStore = Object.assign(new Store('cave-store'), {
   }
 })
 
-let natural_transitions = {
-  'find-upload': 'download',
-  'download': 'install',
-  'install': 'configure'
+function emit_change () {
+  let new_state = state
+  let state_diff = deep.diff(old_state, new_state)
+
+  if (!state_diff) return
+  old_state = clone(state)
+  AppActions.cave_store_diff(state_diff)
+
+  CaveStore.emit_change()
 }
 
 let store_opts = {
@@ -225,28 +246,69 @@ async function queue_cave (game_id) {
   queue_task(record._id, 'download')
 }
 
-async function explore_cave (payload) {
+async function cave_explore (payload) {
   let app_path = CaveStore.app_path(payload.id)
 
   try {
     await fs.lstatAsync(app_path)
     explorer.open(app_path)
   } catch (e) {
-    probe_cave(payload)
+    cave_probe(payload)
   }
 }
 
-function probe_cave (payload) {
+function cave_progress (payload) {
+  let _id = payload.opts.id
+  if (cave_blacklist[_id]) return
+
+  if (typeof state[_id] === 'undefined') {
+    state[_id] = {}
+  }
+
+  for (let key of Object.keys(payload.opts)) {
+    let val = payload.opts[key]
+    state[_id][key] = val
+  }
+
+  emit_change()
+}
+
+function cave_probe (payload) {
   electron.shell.openItem(CaveStore.log_path(payload.id))
 }
 
-let cave_blacklist = {}
+async function cave_queue (payload) {
+  let record = await db.find_one({_table: CAVE_TABLE, game_id: payload.game_id})
 
-function update_cave (_id, data) {
-  return db.merge_one({_table: CAVE_TABLE, _id}, data)
+  if (record) {
+    if (record.launchable) {
+      queue_task(record._id, 'launch')
+    } else {
+      queue_task(record._id, 'download')
+    }
+  } else {
+    queue_cave(payload.game_id)
+  }
 }
 
-async function implode_cave (payload) {
+async function cave_queue_uninstall (payload) {
+  let record = await db.find_one({_table: CAVE_TABLE, _id: payload.id})
+
+  if (record) {
+    queue_task(record._id, 'uninstall')
+  } else {
+    log(store_opts, `asked to uninstall ${payload.id} but no record of it, ignoring`)
+  }
+}
+
+async function cave_update (payload) {
+  let _id = payload.id
+  let data = payload.data
+  if (cave_blacklist[_id]) return
+  await db.merge_one({_table: CAVE_TABLE, _id}, data)
+}
+
+async function cave_implode (payload) {
   // don't accept any further updates to these caves, they're imploding.
   // useful in case child takes some time to exit after it receives SIGKILL
   cave_blacklist[payload.id] = true
@@ -257,70 +319,51 @@ async function implode_cave (payload) {
   }
 
   db.remove({_table: CAVE_TABLE, _id: payload.id})
+
+  delete state[payload.id]
+  emit_change()
+
   AppActions.cave_thrown_into_bit_bucket(payload.id)
 }
 
+async function authenticated (payload) {
+  log(store_opts, `authenticated!`)
+  let me = CredentialsStore.get_me()
+
+  log(store_opts, `me = ${JSON.stringify(me, null, 2)}`)
+  try {
+    await db.load(me.id)
+  } catch (e) {
+    console.log(`error while db.loading: ${e.stack || e}`)
+    require('../util/crash_reporter').handle(e)
+    return
+  }
+
+  log(store_opts, `ready to roll (⌐■_■)`)
+  AppActions.ready_to_roll()
+
+  let caves = await db.find({_table: CAVE_TABLE})
+  caves.forEach((record, i) => {
+    initial_progress(record)
+    queue_task(record._id, 'download')
+  })
+}
+
+function logout (payload) {
+  db.unload()
+}
+
 AppDispatcher.register('cave-store', Store.action_listeners(on => {
-  on(AppConstants.CAVE_QUEUE, async (payload) => {
-    let record = await db.find_one({_table: CAVE_TABLE, game_id: payload.game_id})
+  on(AppConstants.CAVE_QUEUE, cave_queue)
+  on(AppConstants.CAVE_QUEUE_UNINSTALL, cave_queue_uninstall)
+  on(AppConstants.CAVE_UPDATE, cave_update)
+  on(AppConstants.CAVE_IMPLODE, cave_implode)
+  on(AppConstants.CAVE_PROGRESS, cave_progress)
+  on(AppConstants.CAVE_EXPLORE, cave_explore)
+  on(AppConstants.CAVE_PROBE, cave_probe)
 
-    if (record) {
-      if (record.launchable) {
-        queue_task(record._id, 'launch')
-      } else {
-        queue_task(record._id, 'download')
-      }
-    } else {
-      queue_cave(payload.game_id)
-    }
-  })
-
-  on(AppConstants.CAVE_QUEUE_UNINSTALL, async (payload) => {
-    let record = await db.find_one({_table: CAVE_TABLE, _id: payload.id})
-
-    if (record) {
-      queue_task(record._id, 'uninstall')
-    } else {
-      log(store_opts, `asked to uninstall ${payload.id} but no record of it, ignoring`)
-    }
-  })
-
-  on(AppConstants.CAVE_UPDATE, (payload) => {
-    return update_cave(payload.id, payload.data)
-  })
-
-  on(AppConstants.CAVE_IMPLODE, implode_cave)
-
-  on(AppConstants.CAVE_EXPLORE, explore_cave)
-
-  on(AppConstants.CAVE_PROBE, probe_cave)
-
-  on(AppConstants.AUTHENTICATED, async (payload) => {
-    log(store_opts, `authenticated!`)
-    let me = CredentialsStore.get_me()
-
-    log(store_opts, `me = ${JSON.stringify(me, null, 2)}`)
-    try {
-      await db.load(me.id)
-    } catch (e) {
-      console.log(`error while db.loading: ${e.stack || e}`)
-      require('../util/crash_reporter').handle(e)
-      return
-    }
-
-    log(store_opts, `ready to roll (⌐■_■)`)
-    AppActions.ready_to_roll()
-
-    let caves = await db.find({_table: CAVE_TABLE})
-    caves.forEach((record, i) => {
-      initial_progress(record)
-      queue_task(record._id, 'download')
-    })
-  })
-
-  on(AppConstants.LOGOUT, (payload) => {
-    db.unload()
-  })
+  on(AppConstants.AUTHENTICATED, authenticated)
+  on(AppConstants.LOGOUT, logout)
 }))
 
 module.exports = CaveStore

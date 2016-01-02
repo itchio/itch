@@ -287,6 +287,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.GAME_STORE_DIFF, diff })
   },
 
+  cave_store_diff: (diff) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_STORE_DIFF, diff })
+  },
+
   install_location_store_diff: (diff) => {
     AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_STORE_DIFF, diff })
   },

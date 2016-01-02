@@ -7,13 +7,10 @@ let Store = require('./store')
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
 let AppActions = require('../actions/app-actions')
-let pairs = require('underscore').pairs
 
 let defer = require('../util/defer')
 let patch = require('../util/patch')
 let env = require('../env')
-
-let cave_blacklist = {}
 
 let state = mori.hashMap(
   'page', 'login',
@@ -195,23 +192,6 @@ function setup_wait () {
   switch_page('setup')
 }
 
-function cave_progress (payload) {
-  if (cave_blacklist[payload.opts.id]) {
-    return
-  }
-
-  for (let pair of pairs(payload.opts)) {
-    let k = pair[0]
-    let v = pair[1]
-    state = mori.assocIn(state, ['library', 'caves', payload.opts.id, k], mori.toClj(v))
-  }
-  AppStore.emit_change()
-}
-
-function cave_implode (payload) {
-  cave_blacklist[payload.id] = true
-}
-
 function cave_thrown_into_bit_bucket (payload) {
   state = mori.updateIn(state, ['library', 'caves'], caves => mori.dissoc(caves, payload.id))
   AppStore.emit_change()
@@ -236,9 +216,6 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.READY_TO_ROLL, ready_to_roll)
   on(AppConstants.LOGOUT, logout)
 
-  on(AppConstants.CAVE_PROGRESS, cave_progress)
-  on(AppConstants.CAVE_IMPLODE, cave_implode)
-
   on(AppConstants.CHECKING_FOR_SELF_UPDATE, checking_for_self_update)
   on(AppConstants.SELF_UPDATE_AVAILABLE, update_available)
   on(AppConstants.SELF_UPDATE_NOT_AVAILABLE, update_not_available)
@@ -260,12 +237,19 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   })
 
   on(AppConstants.GAME_STORE_DIFF, game_store_diff)
+  on(AppConstants.CAVE_STORE_DIFF, cave_store_diff)
   on(AppConstants.INSTALL_LOCATION_STORE_DIFF, install_location_store_diff)
   on(AppConstants.OPEN_PREFERENCES, open_preferences)
 }))
 
 function game_store_diff (payload) {
   state = patch.applyAt(state, ['library', 'games'], payload.diff)
+  AppStore.emit_change()
+}
+
+function cave_store_diff (payload) {
+  state = patch.applyAt(state, ['library', 'caves'], payload.diff)
+  console.log(`caves = `, mori.toJs(mori.getIn(state, ['library', 'caves'])))
   AppStore.emit_change()
 }
 
