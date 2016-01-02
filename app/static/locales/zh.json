@@ -4,7 +4,7 @@
     "grid.item.queued": "队列等待中", 
     "login.field.username": "用户名称", 
     "login.status.dependency_install": "正在安装相关元件 {{name}} {{version}}", 
-    "menu.account.account": "", 
+    "menu.account.account": "帐号", 
     "menu.account.change_user": "", 
     "menu.account.not_logged_in": "", 
     "menu.danger_zone.danger_zone": "", 
