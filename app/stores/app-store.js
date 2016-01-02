@@ -10,6 +10,7 @@ let AppActions = require('../actions/app-actions')
 let pairs = require('underscore').pairs
 
 let defer = require('../util/defer')
+let patch = require('../util/patch')
 let env = require('../env')
 
 let state = mori.hashMap(
@@ -252,45 +253,17 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   })
 
   on(AppConstants.GAME_STORE_DIFF, game_store_diff)
+  on(AppConstants.INSTALL_LOCATION_STORE_DIFF, install_location_store_diff)
   on(AppConstants.OPEN_PREFERENCES, open_preferences)
 }))
 
 function game_store_diff (payload) {
-  let game_state = mori.getIn(state, ['library', 'games'])
+  state = patch.applyAt(state, ['library', 'games'], payload.diff)
+  AppStore.emit_change()
+}
 
-  let diff = payload.diff
-  for (let el of diff) {
-    switch (el.kind) {
-      // array change
-      case 'A': {
-        let path = el.path.concat([el.index])
-        game_state = mori.assocIn(game_state, path, mori.toClj(el.rhs))
-      }
-        break
-
-      // new element
-      case 'N':
-      // edited element
-      case 'E': {
-        game_state = mori.assocIn(game_state, el.path, mori.toClj(el.rhs))
-      }
-        break
-
-      // deleted element
-      case 'D': {
-        let path = el.path
-        let key = path.pop()
-        if (path.length > 0) {
-          game_state = mori.updateIn(game_state, path, (x) => mori.dissoc(x, key))
-        } else {
-          game_state = mori.dissoc(game_state, key)
-        }
-      }
-        break
-    }
-  }
-
-  state = mori.assocIn(state, ['library', 'games'], game_state)
+function install_location_store_diff (payload) {
+  state = patch.applyAt(state, ['install-locations'], payload.diff)
   AppStore.emit_change()
 }
 
@@ -306,11 +279,6 @@ Store.subscribe('credentials-store', (credentials) => {
 
 Store.subscribe('preferences-store', (preferences) => {
   state = mori.assoc(state, 'preferences', mori.toClj(preferences))
-  AppStore.emit_change()
-})
-
-Store.subscribe('install-location-store', (install_locations) => {
-  state = mori.assoc(state, 'install-locations', mori.toClj(install_locations))
   AppStore.emit_change()
 })
 

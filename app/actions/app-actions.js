@@ -87,6 +87,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_COMPUTE_SIZE, name })
   },
 
+  install_location_cancel_size_computation: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_CANCEL_SIZE_COMPUTATION, name })
+  },
+
   install_location_browse: (name) => {
     AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_BROWSE, name })
   },
@@ -281,6 +285,10 @@ let self = {
 
   game_store_diff: (diff) => {
     AppDispatcher.dispatch({ action_type: AppConstants.GAME_STORE_DIFF, diff })
+  },
+
+  install_location_store_diff: (diff) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_STORE_DIFF, diff })
   },
 
   app_implode: () => {
