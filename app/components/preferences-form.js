@@ -90,7 +90,11 @@ class PreferencesForm extends ShallowComponent {
         r.td({}, [
           (computing_size
             ? r.span({
-              className: 'action'
+              className: 'action',
+              onClick: (e) => {
+                e.preventDefault()
+                AppActions.install_location_cancel_size_computation(name)
+              }
             }, r(Icon, {icon: 'stopwatch', spin: true}))
             : r.span({
               'data-tip': t('preferences.install_location.compute_size'),

@@ -26,6 +26,7 @@ module.exports = keyMirror({
 
   /* Install locations */
   INSTALL_LOCATION_COMPUTE_SIZE: null,
+  INSTALL_LOCATION_CANCEL_SIZE_COMPUTATION: null,
   INSTALL_LOCATION_BROWSE: null,
   INSTALL_LOCATION_ADD_REQUEST: null,
   INSTALL_LOCATION_ADD: null,

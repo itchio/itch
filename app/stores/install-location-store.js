@@ -20,6 +20,7 @@ let I18nStore = require('./i18n-store')
 let SetupStore = require('./setup-store')
 
 let appdata_location = null
+let computations_to_cancel = {}
 let location_sizes = {}
 let location_computing_size = {}
 let location_item_counts = {}
@@ -112,6 +113,8 @@ function install_location_compute_size (payload) {
   let name = payload.name
   log(opts, `Computing location of ${name}`)
 
+  delete computations_to_cancel[name]
+
   let loc = InstallLocationStore.get_location(name)
   if (!loc) {
     log(opts, `Unknown location, bailing out: ${loc}`)
@@ -127,7 +130,18 @@ function install_location_compute_size (payload) {
     location_sizes[name] = total_size
     log(opts, `Size of ${name} so far: ${total_size}`)
     recompute_state()
-    next()
+    if (computations_to_cancel[name]) {
+      delete computations_to_cancel[name]
+      // location size will be inaccurate but, eh, user cancelled.
+      // it might also be inaccurate because files were added since
+      // last computed. it's not an exact science.
+      location_computing_size[name] = false
+      recompute_state()
+
+      // not calling 'next' here will stop file walk
+    } else {
+      next()
+    }
   })
 
   walker.on('end', () => {
@@ -136,6 +150,10 @@ function install_location_compute_size (payload) {
     location_computing_size[name] = false
     recompute_state()
   })
+}
+
+function install_location_cancel_size_computation (payload) {
+  computations_to_cancel[payload.name] = true
 }
 
 async function install_location_add_request () {
@@ -213,6 +231,7 @@ AppDispatcher.register('install-location-store', Store.action_listeners(on => {
   on(AppConstants.READY_TO_ROLL, reload)
   on(AppConstants.LOGOUT, logout)
   on(AppConstants.INSTALL_LOCATION_COMPUTE_SIZE, install_location_compute_size)
+  on(AppConstants.INSTALL_LOCATION_CANCEL_SIZE_COMPUTATION, install_location_cancel_size_computation)
   on(AppConstants.INSTALL_LOCATION_BROWSE, install_location_browse)
   on(AppConstants.INSTALL_LOCATION_ADD_REQUEST, install_location_add_request)
   on(AppConstants.INSTALL_LOCATION_ADDED, reload)
