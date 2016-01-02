@@ -78,7 +78,7 @@
     "prompt.no_compatible_version.detail": "", 
     "prompt.no_compatible_version.message": "", 
     "prompt.no_compatible_version.title": "{{title}} na {{platform}}", 
-    "prompt.payments_disabled.open_web_page": "Otwórz stronę", 
+    "prompt.payments_disabled.open_web_page": "Otwórz stronę internetowa", 
     "prompt.payments_disabled.title": "Płatności wyłączone", 
     "prompt.url_install.credit": "A {{classification}} by {{username}}", 
     "prompt.url_install.message": "", 
