@@ -8,6 +8,7 @@ let ShallowComponent = require('./shallow-component')
 let AppActions = require('../actions/app-actions')
 let I18nStore = require('../stores/i18n-store')
 
+let Tooltip = require('rc-tooltip')
 let SelectRow = require('./select-row')
 let Icon = require('./icon')
 
@@ -112,10 +113,11 @@ class PreferencesForm extends ShallowComponent {
           : r.span({className: 'empty'}, '0')
         ),
         (is_default
-        ? r.td({
-          className: 'action default',
-          'data-tip': t('preferences.install_location.is_default')
-        }, r(Icon, {icon: 'star'}))
+        ? r(Tooltip, {
+          overlay: r.span({}, t('preferences.install_location.is_default'))
+        }, [
+          r.td({ className: 'action default' }, r(Icon, {icon: 'star'}))
+        ])
         : r.td({
           className: 'action not_default',
           'data-tip': t('preferences.install_location.make_default'),
