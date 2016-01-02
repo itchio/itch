@@ -57,6 +57,7 @@
     "onboarding.owned.navigation_hint": "Kliknij etykiety po lewej by przejść do innej sekcji aplikacji", 
     "onboarding.owned.reassuring_comment": "", 
     "onboarding.owned.title_warm_welcome": "", 
+    "preferences.install_location.add": "Dodaj miejsce", 
     "preferences.install_locations": "Ścieżki instalacji", 
     "preferences.language": "Język", 
     "prompt.action.cancel": "", 
