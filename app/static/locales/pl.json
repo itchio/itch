@@ -64,6 +64,7 @@
     "preferences.language": "Język", 
     "prompt.action.cancel": "", 
     "prompt.action.close": "", 
+    "prompt.action.confirm_removal": "Kontynuuj usuwanie", 
     "prompt.action.install": "Install", 
     "prompt.action.ok": "Ok", 
     "prompt.additional_purchase.title": "Posiadasz już ten produkt!", 
