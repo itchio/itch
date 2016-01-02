@@ -1,9 +1,13 @@
+
+$tooltip-bg: #fff;
+$tooltip-text: #373737;
+
 .rc-tooltip {
   position: absolute;
   z-index: 1070;
   display: block;
   visibility: visible;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   opacity: 0.9;
 }
@@ -32,10 +36,10 @@
 }
 .rc-tooltip-inner {
   padding: 8px 10px;
-  color: #fff;
+  color: $tooltip-text;
   text-align: left;
   text-decoration: none;
-  background-color: #373737;
+  background-color: $tooltip-bg;
   border-radius: 6px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.17);
   // min-height: 34px;
@@ -53,7 +57,7 @@
   bottom: 4px;
   margin-left: -5px;
   border-width: 5px 5px 0;
-  border-top-color: #373737;
+  border-top-color: $tooltip-bg;
 }
 .rc-tooltip-placement-top .rc-tooltip-arrow {
   left: 50%;
@@ -70,7 +74,7 @@
   left: 4px;
   margin-top: -5px;
   border-width: 5px 5px 5px 0;
-  border-right-color: #373737;
+  border-right-color: $tooltip-bg;
 }
 .rc-tooltip-placement-right .rc-tooltip-arrow {
   top: 50%;
@@ -88,7 +92,7 @@
   right: 4px;
   margin-top: -5px;
   border-width: 5px 0 5px 5px;
-  border-left-color: #373737;
+  border-left-color: $tooltip-bg;
 }
 .rc-tooltip-placement-left .rc-tooltip-arrow {
   top: 50%;
@@ -106,7 +110,7 @@
   top: 4px;
   margin-left: -5px;
   border-width: 0 5px 5px;
-  border-bottom-color: #373737;
+  border-bottom-color: $tooltip-bg;
 }
 .rc-tooltip-placement-bottom .rc-tooltip-arrow {
   left: 50%;

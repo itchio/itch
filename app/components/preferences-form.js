@@ -91,10 +91,7 @@ class PreferencesForm extends ShallowComponent {
         r.td({}, [
           (computing_size
 
-            ? r(Tooltip, {
-              placement: 'top',
-              overlay: r.span({}, t('preferences.install_location.stop_size_computation'))
-            }, r.span({
+            ? this.tooltip('preferences.install_location.stop_size_computation', r.span({
               className: 'action',
               onClick: (e) => {
                 e.preventDefault()
@@ -102,10 +99,7 @@ class PreferencesForm extends ShallowComponent {
               }
             }, r(Icon, {icon: 'stopwatch', spin: true})))
 
-            : r(Tooltip, {
-              placement: 'top',
-              overlay: r.span({}, t('preferences.install_location.compute_size'))
-            }, r.span({
+            : this.tooltip('preferences.install_location.compute_size', r.span({
               className: 'action',
               onClick: (e) => {
                 e.preventDefault()
@@ -123,29 +117,21 @@ class PreferencesForm extends ShallowComponent {
 
         (is_default
 
-          ? r(Tooltip, {
-            overlay: r.span({}, t('preferences.install_location.is_default'))
-          }, r.td({
+          ? this.tooltip('preferences.install_location.is_default', r.td({
             className: 'action default'
           }, r(Icon, {icon: 'star'})))
 
-          : r(Tooltip, {
-            overlay: r.span({}, t('preferences.install_location.make_default'))
-          }, r.td({
+          : this.tooltip('preferences.install_location.make_default', r.td({
             className: 'action not_default',
             onClick: (e) => AppActions.install_location_make_default(name)
           }, r(Icon, {icon: 'star'})))),
 
-        r(Tooltip, {
-          overlay: r.span({}, t('preferences.install_location.browse'))
-        }, r.td({
+        this.tooltip('preferences.install_location.browse', r.td({
           className: 'action',
           onClick: (e) => AppActions.install_location_browse(name)
         }, r(Icon, {icon: 'folder-open'}))),
 
-        r(Tooltip, {
-          overlay: r.span({}, t('preferences.install_location.delete'))
-        }, r.td({
+        this.tooltip('preferences.install_location.delete', r.td({
           className: 'action',
           onClick: (e) => AppActions.install_location_remove_request(name)
         }, r(Icon, {icon: 'cross'})))
@@ -173,6 +159,15 @@ class PreferencesForm extends ShallowComponent {
 
   on_language_change (language) {
     AppActions.preferences_set_language(language)
+  }
+
+  tooltip (key, component) {
+    let t = this.t
+
+    return r(Tooltip, {
+      mouseEnterDelay: 0.5,
+      overlay: r.span({}, t(key))
+    }, component)
   }
 }
 

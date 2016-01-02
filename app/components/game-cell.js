@@ -6,6 +6,7 @@ let ShallowComponent = require('./shallow-component')
 
 let Icon = require('./icon')
 let TaskIcon = require('./task-icon')
+let Tooltip = require('rc-tooltip')
 
 let os = require('../util/os')
 let AppActions = require('../actions/app-actions')
@@ -118,17 +119,20 @@ class GameCell extends ShallowComponent {
         (user
         ? r.div({className: 'game_author'}, user.display_name)
         : ''),
-        r.div({
-          className: button_classes, style: button_style,
-          'data-tip': (function () {
-            if (task === 'error') {
-              return t('grid.item.report_problem')
-            } else if (/^download.*$/.test(task)) {
-              return t('grid.item.cancel_download')
-            } else {
-              return null
+        r(Tooltip, (function () {
+          if (task === 'error') {
+            return {
+              overlay: r.span({}, t('grid.item.report_problem'))
             }
-          })(),
+          } else if (/^download.*$/.test(task)) {
+            return {
+              overlay: r.span({}, t('grid.item.cancel_download'))
+            }
+          } else {
+            return { visible: false, overlay: '' }
+          }
+        })(), r.div({
+          className: button_classes, style: button_style,
           onClick: () => {
             if (task === 'error') {
               AppActions.cave_report(mori.get(cave, '_id'))
@@ -174,7 +178,8 @@ class GameCell extends ShallowComponent {
               t('grid.item.not_platform_compatible', {platform: os.itch_platform()})
             ])
           )
-        ]),
+        ])),
+
         ((cave && ['idle', 'error'].indexOf(task) !== -1)
         ? r.div({classSet: {cave_actions: true, error: (task === 'error')}}, (
           (task === 'error')
@@ -256,9 +261,13 @@ class GameCell extends ShallowComponent {
     }
 
     if (progress > 0) {
-      res += ` (${(progress * 100).toFixed()}%)`
+      return r.span({}, [
+        res,
+        r.span({className: 'progress_text'}, ` (${(progress * 100).toFixed()}%)`)
+      ])
+    } else {
+      return res
     }
-    return res
   }
 }
 
