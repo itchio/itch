@@ -62,6 +62,11 @@ async function install_location_remove (payload) {
   }
   // TODO: actually uninstall items
   delete state.install_locations[payload.name]
+
+  if (state.default_install_location === payload.name) {
+    state.default_install_location = 'appdata'
+  }
+
   await save_to_disk()
 }
 
