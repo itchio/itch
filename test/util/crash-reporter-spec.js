@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let sinon = require('sinon')
 let proxyquire = require('proxyquire')
@@ -54,14 +53,14 @@ test('crash-reporter', t => {
 
   t.case('handle → report_issue', t => {
     stub_write(t)
-    t.stub(electron.electron.dialog, 'showMessageBox').returns(0)
+    t.stub(electron.electron.dialog, 'showMessageBox').callsArgWith(1, 0)
     t.mock(crash_reporter).expects('report_issue').once()
     crash_reporter.handle(e)
   })
 
   t.case('handle → open_item', t => {
     stub_write(t)
-    t.stub(electron.electron.dialog, 'showMessageBox').returns(1)
+    t.stub(electron.electron.dialog, 'showMessageBox').callsArgWith(1, 1)
     t.mock(electron.electron.shell).expects('openItem').once()
     crash_reporter.handle(e)
   })
