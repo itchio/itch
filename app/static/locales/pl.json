@@ -80,7 +80,7 @@
     "prompt.confirm_uninstall": "Czy na pewno chcesz usunąć {{title}}?", 
     "prompt.crash_reporter.detail": "Log błędu został zapisany do {{location}}.", 
     "prompt.crash_reporter.message": "Aplikacja wyłączyła się", 
-    "prompt.crash_reporter.open_crash_log": "", 
+    "prompt.crash_reporter.open_crash_log": "Pokaż log błędu", 
     "prompt.crash_reporter.report_issue": "Zgłoś błąd", 
     "prompt.install_location_add.title": "Wybierz nową ścieżkę instalacji", 
     "prompt.install_location_remove.detail": "Każda pozycja zainstalowana w {{location}} zostanie usunięta.", 
