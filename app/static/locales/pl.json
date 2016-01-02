@@ -73,6 +73,7 @@
     "prompt.action.confirm_removal": "Kontynuuj usuwanie", 
     "prompt.action.install": "Zainstaluj", 
     "prompt.action.ok": "Ok", 
+    "prompt.additional_purchase.detail": "...ale wciąż możesz kupić dodatkową kopię dla znajomego!\n\nCzy chciałbyś dokonać kolejnego zakupu?", 
     "prompt.additional_purchase.purchase_again": "Kup ponownie", 
     "prompt.additional_purchase.title": "Posiadasz już ten produkt!", 
     "prompt.confirm_uninstall": "Czy na pewno chcesz usunąć {{title}}?", 
