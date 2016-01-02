@@ -24,16 +24,29 @@ class LibraryContent extends ShallowComponent {
       let caves = mori.getIn(state, ['library', 'caves'])
       let games = mori.getIn(state, ['library', 'games'])
 
-      let bucket = (panel === 'broken' ? 'caved' : panel)
+      let bucket = panel
+      if (/^(locations|broken)/.test(panel)) {
+        bucket = 'caved'
+      }
       let shown_games = mori.get(games, bucket) || mori.list()
 
-      // FIXME this logic goes wrong - sometimes stuff gets stuck in 'broken'
       let pred = () => true
       if (panel === 'caved') {
         pred = (cave) => mori.get(cave, 'task') !== 'error'
       }
       if (panel === 'broken') {
         pred = (cave) => mori.get(cave, 'task') === 'error'
+      }
+
+      {
+        let loc_matches = panel.match(/^locations\/(.*)$/)
+        if (loc_matches) {
+          let loc_name_filter = loc_matches[1]
+          pred = (cave) => {
+            let loc_name = mori.get(cave, 'install_location') || 'appdata'
+            return (loc_name_filter === loc_name)
+          }
+        }
       }
 
       let owned_games_by_id = mori.merge(mori.get(games, 'dashboard'), mori.get(games, 'owned'))

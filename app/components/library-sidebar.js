@@ -114,6 +114,18 @@ class LibrarySidebar extends ShallowComponent {
       return acc
     }, [], caves)
 
+    let location_children = []
+    {
+      let loc_matches = panel.match(/^locations\/(.*)$/)
+      if (loc_matches) {
+        let loc_name = loc_matches[1]
+        let loc = mori.getIn(global_state, ['install-locations', 'locations', loc_name])
+        let loc_path = mori.get(loc, 'path')
+        let link = r(LibraryPanelLink, {before: r(Icon, {icon: 'folder-open'}), name: panel, label: loc_path, panel, games})
+        location_children.push(link)
+      }
+    }
+
     return (
       r.div({classSet: {sidebar: true, frameless}}, [
         r(UserPanel, {state: global_state}),
@@ -136,10 +148,10 @@ class LibrarySidebar extends ShallowComponent {
             r.div({className: 'separator'})
           ].concat(mori.intoArray(cave_items)))
           : ''
-        ]).concat(panel === 'preferences'
+        ]).concat([panel === 'preferences'
         ? r(LibraryPanelLink, {before: r(Icon, {icon: 'cog'}), name: 'preferences', label: t('menu.file.preferences'), panel, games})
         : ''
-        ))
+      ]).concat(location_children))
       ])
     )
   }

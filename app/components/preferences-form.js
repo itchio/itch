@@ -110,7 +110,13 @@ class PreferencesForm extends ShallowComponent {
 
           (size === -1 ? '?' : humanize.fileSize(size))
         ]),
-        r.td({},
+        r.td({
+          className: 'action',
+          onClick: (e) => {
+            e.preventDefault()
+            AppActions.focus_panel(`locations/${name}`)
+          }
+        },
           item_count > 0
           ? item_count
           : r.span({className: 'empty'}, '0')
