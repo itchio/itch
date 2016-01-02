@@ -56,6 +56,7 @@
     "onboarding.owned.navigation_hint": "Κλίκαρε τις ετικέτες στα αριστερά για να πλοηγηθείς στην εφαρμογή", 
     "onboarding.owned.reassuring_comment": "Δεν έχει και πολλά πράγματα εδώ προς το παρόν!", 
     "onboarding.owned.title_warm_welcome": "Τα κατάφερες!", 
+    "preferences.install_location.add": "Προσθήκη τοποθεσίας", 
     "preferences.install_location.delete": "Αφαίρεσε αυτή την τοποθεσία εγκατάστασης κι απεγκατέστησε το περιεχόμενό της", 
     "preferences.install_location.is_default": "Εγκατέστησε τα νέα αντικείμενο εδώ σαν προεπιλογή.", 
     "preferences.install_location.name": "Όνομα", 
