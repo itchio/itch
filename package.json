@@ -83,7 +83,8 @@
     "start": "sassc app/style/main.scss app/style/main.css && electron .",
     "test": "nyc -s test/runner.js test | tap-spec",
     "coveralls": "nyc report -r text-lcov | coveralls",
-    "local-cov": "npm test && nyc report -r text && nyc report -r html"
+    "local-cov": "npm test && nyc report -r text && nyc report -r html",
+    "i18n": "release/i18n-check.sh"
   },
   "standard": {
     "parser": "babel-eslint"
