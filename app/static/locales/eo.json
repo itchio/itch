@@ -92,6 +92,7 @@
     "prompt.no_compatible_version.detail": "Eble ĉi tiu {{classification}} ne jam kongruas kun ĝi?", 
     "prompt.no_compatible_version.message": "Ni ne povis trovi version de {{title}} por {{platform}}.", 
     "prompt.no_compatible_version.title": "{{title}} por {{platform}}", 
+    "prompt.payments_disabled.detail": "Eble vi povas trovi alian manieron por subteni ilin?", 
     "prompt.payments_disabled.message": "Bedaŭrinde, la programisto de {{title}} ne akceptas pagojn por ĉi tiu ludo.", 
     "prompt.payments_disabled.title": "Pagoj malebligitaj", 
     "prompt.url_install.credit": "{{classification}} de {{username}}", 
