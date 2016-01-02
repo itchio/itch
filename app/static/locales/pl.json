@@ -61,6 +61,7 @@
     "preferences.install_location.delete": "Usuń tą ścieżkę instalacji wraz z jej zawartością", 
     "preferences.install_location.is_default": "Nowe pozycje będą domyślnie instalowane do tej ścieżki.", 
     "preferences.install_location.item_count": "Liczba przedmiotów", 
+    "preferences.install_location.path": "Miejsce", 
     "preferences.install_locations": "Ścieżki instalacji", 
     "preferences.language": "Język", 
     "preferences.language.get_involved": "Pomóż tłumaczyć {{name}} na twój język!", 
