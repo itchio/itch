@@ -67,6 +67,7 @@
     "preferences.install_location.add": "Add location",
     "preferences.install_location.browse": "Open install location in file explorer",
     "preferences.install_location.compute_size": "Compute folder size on disk",
+    "preferences.install_location.stop_size_computation": "Stop computing folder size",
     "preferences.install_location.delete": "Remove this install location and uninstall its contents",
     "preferences.install_location.is_default": "New items will install to this location by default.",
     "preferences.install_location.item_count": "# of items",
