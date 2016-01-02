@@ -85,6 +85,7 @@ class PreferencesForm extends ShallowComponent {
       let size = location.size
       let item_count = location.item_count
       let computing_size = location.computing_size
+      let may_delete = (loc_keys.length > 0 && name !== 'appdata')
 
       rows.push(r.tr({}, [
         r.td({}, path),
@@ -131,10 +132,14 @@ class PreferencesForm extends ShallowComponent {
           onClick: (e) => AppActions.install_location_browse(name)
         }, r(Icon, {icon: 'folder-open'}))),
 
-        this.tooltip('preferences.install_location.delete', r.td({
+        (may_delete
+
+        ? this.tooltip('preferences.install_location.delete', r.td({
           className: 'action',
           onClick: (e) => AppActions.install_location_remove_request(name)
         }, r(Icon, {icon: 'cross'})))
+
+        : r.td({}, ''))
       ]))
     }
 
