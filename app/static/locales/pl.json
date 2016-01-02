@@ -58,6 +58,7 @@
     "onboarding.owned.reassuring_comment": "Wygląda na to, że nic tu nie ma, ale bez obaw!", 
     "onboarding.owned.title_warm_welcome": "Udało się!", 
     "preferences.install_location.add": "Dodaj ścieżkę", 
+    "preferences.install_location.browse": "Otwórz miejsce instalacji w eksploratorze plików", 
     "preferences.install_location.compute_size": "Oblicz rozmiar folderu na dysku", 
     "preferences.install_location.delete": "Usuń tą ścieżkę instalacji wraz z jej zawartością", 
     "preferences.install_location.empty": "Puste", 
