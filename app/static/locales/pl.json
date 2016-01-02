@@ -58,6 +58,7 @@
     "onboarding.owned.reassuring_comment": "", 
     "onboarding.owned.title_warm_welcome": "", 
     "preferences.install_location.add": "Dodaj ścieżkę", 
+    "preferences.install_location.item_count": "Liczba przedmiotów", 
     "preferences.install_locations": "Ścieżki instalacji", 
     "preferences.language": "Język", 
     "prompt.action.cancel": "", 
