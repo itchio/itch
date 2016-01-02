@@ -1,7 +1,7 @@
 
 $user_panel_height: 40px;
 $cell_ratio: 152 / 192;
-$cell_width: 185px;
+$cell_width: 200px;
 $cell_height: $cell_width * $cell_ratio;
 
 $broken_color: #C38E16;
@@ -391,6 +391,7 @@ $placeholder_link_color: #93C1F3;
       line-height: 33px;
       transition: all 0.2s;
       margin-top: 8px;
+      position: relative;
 
       .cancel_cross {
         display: none;
@@ -400,15 +401,22 @@ $placeholder_link_color: #93C1F3;
         .cancel_cross {
           overflow: hidden;
           transition: 0.2s width;
-          float: right;
+          position: absolute;
+          right: 5px;
           display: inline-block;
           text-align: center;
           width: 0;
           color: #E68989;
         }
 
-        &:hover .cancel_cross {
-          width: 15px;
+        &:hover {
+          .cancel_cross {
+            width: 15px;
+          }
+
+          .progress_text {
+            display: none;
+          }
         }
       }
 

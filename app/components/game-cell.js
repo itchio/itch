@@ -6,6 +6,7 @@ let ShallowComponent = require('./shallow-component')
 
 let Icon = require('./icon')
 let TaskIcon = require('./task-icon')
+let Tooltip = require('rc-tooltip')
 
 let os = require('../util/os')
 let AppActions = require('../actions/app-actions')
@@ -118,7 +119,23 @@ class GameCell extends ShallowComponent {
         (user
         ? r.div({className: 'game_author'}, user.display_name)
         : ''),
-        r.div({
+        r(Tooltip, (function () {
+          if (task === 'error') {
+            return {
+              placement: 'bottom',
+              mouseEnterDelay: 0.4,
+              overlay: r.span({}, t('grid.item.report_problem'))
+            }
+          } else if (/^download.*$/.test(task)) {
+            return {
+              placement: 'bottom',
+              mouseEnterDelay: 0.4,
+              overlay: r.span({}, t('grid.item.cancel_download'))
+            }
+          } else {
+            return { visible: false, overlay: '' }
+          }
+        })(), r.div({
           className: button_classes, style: button_style,
           onClick: () => {
             if (task === 'error') {
@@ -165,43 +182,47 @@ class GameCell extends ShallowComponent {
               t('grid.item.not_platform_compatible', {platform: os.itch_platform()})
             ])
           )
-        ]),
+        ])),
+
         ((cave && ['idle', 'error'].indexOf(task) !== -1)
         ? r.div({classSet: {cave_actions: true, error: (task === 'error')}}, (
           (task === 'error')
           ? [
-            r.span({
+            this.tooltip('grid.item.retry', r.span({
               className: 'game_retry',
               onClick: () => AppActions.cave_queue(mori.get(game, 'id'))
             }, [
               r(Icon, {icon: 'refresh'})
-            ]),
-            r.span({
+            ])),
+
+            this.tooltip('grid.item.probe', r.span({
               className: 'game_probe',
               onClick: () => AppActions.cave_probe(mori.get(cave, '_id'))
             }, [
               r(Icon, {icon: 'bug'})
-            ])
+            ]))
+
           ]
           : []
         ).concat(
           (task === 'error')
           ? []
           : [
-            r.span({
+            this.tooltip('grid.item.purchase_or_donate', r.span({
               className: 'game_purchase',
               onClick: () => AppActions.game_purchase(mori.get(game, 'id'))
             }, [
               r(Icon, {icon: 'cart'})
-            ]),
-            r.span({
+            ])),
+
+            this.tooltip('grid.item.open_in_file_explorer', r.span({
               className: 'game_explore',
               onClick: () => AppActions.cave_explore(mori.get(cave, '_id'))
             }, [
               r(Icon, {icon: 'folder-open'})
-            ])
+            ]))
           ]).concat([
-            r.span({
+            this.tooltip('grid.item.uninstall', r.span({
               className: 'game_uninstall',
               onClick: () => {
                 let msg = t('prompt.confirm_uninstall', {title})
@@ -211,7 +232,7 @@ class GameCell extends ShallowComponent {
               }
             }, [
               r(Icon, {icon: 'delete'})
-            ])
+            ]))
           ]))
           : '')
       ])
@@ -242,9 +263,23 @@ class GameCell extends ShallowComponent {
     }
 
     if (progress > 0) {
-      res += ` (${(progress * 100).toFixed()}%)`
+      return r.span({}, [
+        res,
+        r.span({className: 'progress_text'}, ` (${(progress * 100).toFixed()}%)`)
+      ])
+    } else {
+      return res
     }
-    return res
+  }
+
+  tooltip (key, component) {
+    let t = this.t
+
+    return r(Tooltip, {
+      mouseEnterDelay: 0.5,
+      placement: 'top',
+      overlay: r.span({}, t(key))
+    }, component)
   }
 }
 

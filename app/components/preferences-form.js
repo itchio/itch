@@ -8,6 +8,7 @@ let ShallowComponent = require('./shallow-component')
 let AppActions = require('../actions/app-actions')
 let I18nStore = require('../stores/i18n-store')
 
+let Tooltip = require('rc-tooltip')
 let SelectRow = require('./select-row')
 let Icon = require('./icon')
 
@@ -89,54 +90,56 @@ class PreferencesForm extends ShallowComponent {
         r.td({}, path),
         r.td({}, [
           (computing_size
-            ? r.span({
+
+            ? this.tooltip('preferences.install_location.stop_size_computation', r.span({
               className: 'action',
               onClick: (e) => {
                 e.preventDefault()
                 AppActions.install_location_cancel_size_computation(name)
               }
-            }, r(Icon, {icon: 'stopwatch', spin: true}))
-            : r.span({
-              'data-tip': t('preferences.install_location.compute_size'),
+            }, r(Icon, {icon: 'stopwatch', spin: true})))
+
+            : this.tooltip('preferences.install_location.compute_size', r.span({
               className: 'action',
               onClick: (e) => {
                 e.preventDefault()
                 AppActions.install_location_compute_size(name)
               }
-            }, r(Icon, {icon: 'refresh'}))),
+            }, r(Icon, {icon: 'refresh'})))),
+
           (size === -1 ? '?' : humanize.fileSize(size))
         ]),
         r.td({},
           item_count > 0
           ? item_count
-          : r.span({className: 'empty'}, t('preferences.install_location.empty'))
+          : r.span({className: 'empty'}, '0')
         ),
+
         (is_default
-        ? r.td({
-          className: 'action default',
-          'data-tip': t('preferences.install_location.is_default')
-        }, r(Icon, {icon: 'star'}))
-        : r.td({
-          className: 'action not_default',
-          'data-tip': t('preferences.install_location.make_default'),
-          onClick: (e) => AppActions.install_location_make_default(name)
-        }, r(Icon, {icon: 'star'}))),
-        r.td({
+
+          ? this.tooltip('preferences.install_location.is_default', r.td({
+            className: 'action default'
+          }, r(Icon, {icon: 'star'})))
+
+          : this.tooltip('preferences.install_location.make_default', r.td({
+            className: 'action not_default',
+            onClick: (e) => AppActions.install_location_make_default(name)
+          }, r(Icon, {icon: 'star'})))),
+
+        this.tooltip('preferences.install_location.browse', r.td({
           className: 'action',
-          'data-tip': t('preferences.install_location.browse'),
           onClick: (e) => AppActions.install_location_browse(name)
-        }, r(Icon, {icon: 'folder-open'})),
-        r.td({
+        }, r(Icon, {icon: 'folder-open'}))),
+
+        this.tooltip('preferences.install_location.delete', r.td({
           className: 'action',
-          'data-tip': t('preferences.install_location.delete'),
           onClick: (e) => AppActions.install_location_remove_request(name)
-        }, r(Icon, {icon: 'delete'}))
+        }, r(Icon, {icon: 'cross'})))
       ]))
     }
 
     rows.push(r.tr({}, [
       r.td({
-        colSpan: 6,
         className: 'action add_new',
         onClick: (e) => {
           e.preventDefault()
@@ -145,7 +148,8 @@ class PreferencesForm extends ShallowComponent {
       }, [
         r(Icon, {icon: 'plus'}),
         t('preferences.install_location.add')
-      ])
+      ]),
+      r.td({ colSpan: 5 })
     ]))
 
     return r.table({className: 'install_locations'}, [
@@ -155,6 +159,15 @@ class PreferencesForm extends ShallowComponent {
 
   on_language_change (language) {
     AppActions.preferences_set_language(language)
+  }
+
+  tooltip (key, component) {
+    let t = this.t
+
+    return r(Tooltip, {
+      mouseEnterDelay: 0.5,
+      overlay: r.span({}, t(key))
+    }, component)
   }
 }
 

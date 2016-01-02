@@ -4,7 +4,6 @@ let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
 let StatusBar = require('./status-bar')
-let ReactTooltip = require('react-tooltip')
 let LibrarySidebar = require('./library-sidebar')
 let LibraryContent = require('./library-content')
 
@@ -16,11 +15,6 @@ class LibraryPage extends ShallowComponent {
     let state = this.props.state
 
     return r.div({className: 'library_page'}, [
-      r(ReactTooltip, {
-        delayShow: 400,
-        effect: 'float',
-        type: 'light'
-      }),
       r(StatusBar, {state}),
       r(LibrarySidebar, {state}),
       r(LibraryContent, {state})

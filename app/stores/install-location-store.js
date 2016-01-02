@@ -128,7 +128,6 @@ function install_location_compute_size (payload) {
   walker.on('file', (root, fileStats, next) => {
     total_size += fileStats.size
     location_sizes[name] = total_size
-    log(opts, `Size of ${name} so far: ${total_size}`)
     recompute_state()
     if (computations_to_cancel[name]) {
       delete computations_to_cancel[name]
@@ -145,7 +144,7 @@ function install_location_compute_size (payload) {
   })
 
   walker.on('end', () => {
-    log(opts, `Done computing size of ${name}!`)
+    log(opts, `Total size of ${name}: ${total_size}`)
     location_sizes[name] = total_size
     location_computing_size[name] = false
     recompute_state()
