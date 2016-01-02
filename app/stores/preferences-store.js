@@ -60,6 +60,7 @@ async function install_location_remove (payload) {
   if (!state.install_locations) {
     state.install_locations = {}
   }
+
   // TODO: actually uninstall items
   delete state.install_locations[payload.name]
 

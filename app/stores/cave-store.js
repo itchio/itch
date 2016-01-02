@@ -6,6 +6,8 @@ let AppActions = require('../actions/app-actions')
 
 let Store = require('./store')
 let CredentialsStore = require('./credentials-store')
+let PreferencesStore = require('./preferences-store')
+let InstallLocationStore = require('./install-location-store')
 
 let errors = require('../tasks/errors')
 let Transition = errors.Transition
@@ -54,18 +56,37 @@ let CaveStore = Object.assign(new Store('cave-store'), {
     return db.find_one({_table: CAVE_TABLE, game_id: game_id})
   },
 
-  archive_path: function (upload) {
-    return path.join(db.library_dir, 'archives', `${upload.id}${path.extname(upload.filename)}`)
+  install_location_dir: function (loc_name) {
+    let loc_record = InstallLocationStore.get_location(loc_name || 'appdata')
+    if (!loc_record) {
+      throw new Error('Unknown location: ${loc}')
+    }
+    return loc_record.path
   },
 
-  app_path: function (cave_id) {
-    return path.join(db.library_dir, 'apps', cave_id)
+  archive_path: function (loc, upload) {
+    if (typeof upload === 'undefined') {
+      throw new Error('Missing args for CaveStore.archive_path')
+    }
+
+    let loc_dir = CaveStore.install_location_dir(loc)
+    return path.join(loc_dir, 'archives', `${upload.id}${path.extname(upload.filename)}`)
   },
 
-  log_path: function (cave_id) {
-    return path.join(db.library_dir, 'logs', cave_id + '.txt')
+  app_path: function (loc, cave_id) {
+    if (typeof cave_id === 'undefined') {
+      throw new Error('Missing args for CaveStore.app_path')
+    }
+
+    let loc_dir = CaveStore.install_location_dir(loc)
+    return path.join(loc_dir, 'apps', cave_id)
   }
 })
+
+function log_path (cave_id) {
+  let loc_dir = CaveStore.install_location_dir('appdata')
+  return path.join(loc_dir, 'logs', cave_id + '.txt')
+}
 
 function emit_change () {
   let new_state = state
@@ -91,7 +112,7 @@ function cave_opts (id) {
   let logger = new Logger({
     sinks: {
       console: false,
-      file: CaveStore.log_path(id)
+      file: log_path(id)
     }
   })
   let opts = { logger }
@@ -238,7 +259,8 @@ async function initial_progress (record) {
 }
 
 async function queue_cave (game_id) {
-  let data = { _table: CAVE_TABLE, game_id }
+  let install_location = PreferencesStore.get_state().default_install_location
+  let data = { _table: CAVE_TABLE, game_id, install_location }
   let record = await db.insert(data)
 
   diego.hire(cave_opts(record._id))
@@ -247,7 +269,8 @@ async function queue_cave (game_id) {
 }
 
 async function cave_explore (payload) {
-  let app_path = CaveStore.app_path(payload.id)
+  let cave = await CaveStore.find(payload.id)
+  let app_path = CaveStore.app_path(cave.install_location, payload.id)
 
   try {
     await fs.lstatAsync(app_path)
@@ -273,8 +296,8 @@ function cave_progress (payload) {
   emit_change()
 }
 
-function cave_probe (payload) {
-  electron.shell.openItem(CaveStore.log_path(payload.id))
+async function cave_probe (payload) {
+  electron.shell.openItem(log_path(payload.id))
 }
 
 async function cave_queue (payload) {

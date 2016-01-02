@@ -58,7 +58,7 @@ async function start (opts) {
   let parsed = require('url').parse(url)
   log(opts, `downloading from ${parsed.hostname}`)
 
-  let dest = CaveStore.archive_path(upload)
+  let dest = CaveStore.archive_path(cave.install_location, upload)
 
   emitter.on('cancelled', async (e) => {
     log(opts, `killed the butler with a wrench in the living room`)

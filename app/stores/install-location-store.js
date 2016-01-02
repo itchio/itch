@@ -88,8 +88,6 @@ function recompute_state () {
 }
 
 async function reload () {
-  log(opts, 'Hi!')
-
   appdata_location = {
     name: 'appdata',
     path: db.library_dir
@@ -99,7 +97,7 @@ async function reload () {
 
   let caves = await db.find({_table: 'caves'})
   for (let cave of caves) {
-    let loc_name = cave.location || 'appdata'
+    let loc_name = cave.install_location || 'appdata'
     if (typeof location_item_counts[loc_name] === 'undefined') {
       location_item_counts[loc_name] = 0
     }
@@ -107,6 +105,18 @@ async function reload () {
   }
 
   recompute_state()
+}
+
+let timeout = null
+let throttle = 500
+
+function throttled_reload () {
+  if (timeout) return
+
+  timeout = setTimeout(() => {
+    timeout = null
+    reload()
+  }, throttle)
 }
 
 function install_location_compute_size (payload) {
@@ -228,6 +238,8 @@ async function logout () {
 
 AppDispatcher.register('install-location-store', Store.action_listeners(on => {
   on(AppConstants.READY_TO_ROLL, reload)
+  on(AppConstants.CAVE_PROGRESS, throttled_reload)
+  on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, reload)
   on(AppConstants.LOGOUT, logout)
   on(AppConstants.INSTALL_LOCATION_COMPUTE_SIZE, install_location_compute_size)
   on(AppConstants.INSTALL_LOCATION_CANCEL_SIZE_COMPUTATION, install_location_cancel_size_computation)

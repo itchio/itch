@@ -27,7 +27,9 @@ let self = {
   start: async function (opts) {
     let id = opts.id
 
-    let app_path = CaveStore.app_path(id)
+    let cave = CaveStore.find(id)
+
+    let app_path = CaveStore.app_path(cave.install_location, id)
     log(opts, `configuring ${app_path}`)
 
     let executables = (await self.configure(app_path)).executables
