@@ -46,6 +46,9 @@ async function fetch_collections () {
   merge_state(old_collections_by_id)
 
   let collections = (await user.my_collections()).collections
+  for (let pc of collections) {
+    pc._featured = false
+  }
 
   for (let featured_id of featured_ids) {
     try {
