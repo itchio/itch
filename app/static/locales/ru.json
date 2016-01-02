@@ -53,7 +53,7 @@
     "onboarding.dashboard.mission_statement": "Мы делали для вашего максимального удобства.", 
     "onboarding.dashboard.selling_points": "Моментальная установка и минимальные припятствия.", 
     "onboarding.dashboard.welcome_home": "Добро пожаловать", 
-    "onboarding.owned.batteries_included": "Мы собрали несколько коллекций чтобы вы смогли начать играть прямо сейчас!", 
+    "onboarding.owned.batteries_included": "Мы собрали несколько коллекций, чтобы вы смогли начать играть прямо сейчас!", 
     "onboarding.owned.navigation_hint": "Нажми на значки слева для навигации", 
     "onboarding.owned.reassuring_comment": "Пока выглядит немножко пусто, но не волнуйтесь!", 
     "onboarding.owned.title_warm_welcome": "Вы сделали это!", 
@@ -106,7 +106,7 @@
     "sidebar.installed": "Установка завершена", 
     "sidebar.owned": "Библиотека", 
     "status.checking": "Проверка на обновления...", 
-    "status.downloaded": "Нажми для перезагрузки и применения обновлений.", 
+    "status.downloaded": "Нажми для перезагрузки и применения обновлений!", 
     "status.downloading": "Скачивание обновления...", 
     "status.uptodate": "Ваш itch обновлен!"
 }
