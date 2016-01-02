@@ -120,6 +120,15 @@ class GameCell extends ShallowComponent {
         : ''),
         r.div({
           className: button_classes, style: button_style,
+          'data-tip': (function () {
+            if (task === 'error') {
+              return t('grid.item.report_problem')
+            } else if (/^download.*$/.test(task)) {
+              return t('grid.item.cancel_download')
+            } else {
+              return null
+            }
+          })(),
           onClick: () => {
             if (task === 'error') {
               AppActions.cave_report(mori.get(cave, '_id'))
@@ -172,12 +181,14 @@ class GameCell extends ShallowComponent {
           ? [
             r.span({
               className: 'game_retry',
+              'data-tip': t('grid.item.retry'),
               onClick: () => AppActions.cave_queue(mori.get(game, 'id'))
             }, [
               r(Icon, {icon: 'refresh'})
             ]),
             r.span({
               className: 'game_probe',
+              'data-tip': t('grid.item.probe'),
               onClick: () => AppActions.cave_probe(mori.get(cave, '_id'))
             }, [
               r(Icon, {icon: 'bug'})
@@ -190,12 +201,14 @@ class GameCell extends ShallowComponent {
           : [
             r.span({
               className: 'game_purchase',
+              'data-tip': t('grid.item.purchase_or_donate'),
               onClick: () => AppActions.game_purchase(mori.get(game, 'id'))
             }, [
               r(Icon, {icon: 'cart'})
             ]),
             r.span({
               className: 'game_explore',
+              'data-tip': t('grid.item.open_in_file_explorer'),
               onClick: () => AppActions.cave_explore(mori.get(cave, '_id'))
             }, [
               r(Icon, {icon: 'folder-open'})
@@ -203,6 +216,7 @@ class GameCell extends ShallowComponent {
           ]).concat([
             r.span({
               className: 'game_uninstall',
+              'data-tip': t('grid.item.uninstall'),
               onClick: () => {
                 let msg = t('prompt.confirm_uninstall', {title})
                 if (task === 'error' || window.confirm(msg)) {
