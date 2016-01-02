@@ -203,7 +203,7 @@ async function install_location_remove_request (payload) {
 
   let callback = (response) => {
     if (response === 0) {
-      AppActions.install_location_remove(payload.id)
+      AppActions.install_location_remove(payload.name)
     }
   }
   electron.dialog.showMessageBox(dialog_opts, callback)

@@ -249,7 +249,6 @@ function game_store_diff (payload) {
 
 function cave_store_diff (payload) {
   state = patch.applyAt(state, ['library', 'caves'], payload.diff)
-  console.log(`caves = `, mori.toJs(mori.getIn(state, ['library', 'caves'])))
   AppStore.emit_change()
 }
 
