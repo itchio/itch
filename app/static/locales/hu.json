@@ -16,7 +16,7 @@
     "login.field.password": "Jelszó", 
     "login.field.username": "Felhasználói név", 
     "login.status.login": "Bejelentkezés...", 
-    "menu.account.account": "Account", 
+    "menu.account.account": "", 
     "menu.account.change_user": "Cserélj felhasználót...", 
     "menu.account.not_logged_in": "Nincs bejelentkezve", 
     "menu.danger_zone.danger_zone": "Veszélyes zóna", 
