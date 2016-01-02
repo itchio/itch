@@ -6,7 +6,7 @@
     "grid.item.downloading": "Laddar ner…", 
     "grid.item.install": "Installera", 
     "grid.item.installing": "Installerar…", 
-    "grid.item.launch": "Kör", 
+    "grid.item.launch": "Starta", 
     "grid.item.not_platform_compatible": "Inte tillgänglig för {{platform}}", 
     "grid.item.queued": "Lagd i kö", 
     "grid.item.running": "Kör…", 
