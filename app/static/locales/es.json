@@ -78,6 +78,7 @@
     "prompt.action.ok": "Aceptar", 
     "prompt.additional_purchase.detail": "...pero aún se podía comprar una copia para un amigo!\n\n¿Quieres hacer otra compra?", 
     "prompt.additional_purchase.message": "Ya tienes una copia de {{title}}.", 
+    "prompt.additional_purchase.purchase_again": "Comprar otra vez", 
     "prompt.additional_purchase.title": "¡Ya lo has comprado!", 
     "prompt.confirm_uninstall": "¿Seguro que quieres desinstalar {{}}?", 
     "prompt.crash_reporter.detail": "Se ha escrito un registro de error a {{location}}.", 
