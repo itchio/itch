@@ -13,6 +13,8 @@ let defer = require('../util/defer')
 let patch = require('../util/patch')
 let env = require('../env')
 
+let cave_blacklist = {}
+
 let state = mori.hashMap(
   'page', 'login',
 
@@ -194,6 +196,10 @@ function setup_wait () {
 }
 
 function cave_progress (payload) {
+  if (cave_blacklist[payload.opts.id]) {
+    return
+  }
+
   for (let pair of pairs(payload.opts)) {
     let k = pair[0]
     let v = pair[1]
@@ -203,6 +209,7 @@ function cave_progress (payload) {
 }
 
 function cave_implode (payload) {
+  cave_blacklist[payload.id] = true
 }
 
 function cave_thrown_into_bit_bucket (payload) {
