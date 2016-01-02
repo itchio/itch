@@ -88,7 +88,16 @@ class PreferencesForm extends ShallowComponent {
       let may_delete = (loc_keys.length > 0 && name !== 'appdata')
 
       rows.push(r.tr({}, [
-        r.td({}, path),
+        r.td({
+          className: 'action',
+          onClick: (e) => {
+            e.preventDefault()
+            AppActions.focus_panel(`locations/${name}`)
+          }
+        }, [
+          r(Icon, {icon: 'folder'}),
+          path
+        ]),
         r.td({}, [
           (computing_size
 
