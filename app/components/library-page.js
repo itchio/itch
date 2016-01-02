@@ -17,7 +17,7 @@ class LibraryPage extends ShallowComponent {
 
     return r.div({className: 'library_page'}, [
       r(ReactTooltip, {
-        delayShow: '400',
+        delayShow: 400,
         effect: 'float',
         type: 'light'
       }),
