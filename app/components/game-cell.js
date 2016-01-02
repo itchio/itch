@@ -122,10 +122,14 @@ class GameCell extends ShallowComponent {
         r(Tooltip, (function () {
           if (task === 'error') {
             return {
+              placement: 'bottom',
+              mouseEnterDelay: 0.4,
               overlay: r.span({}, t('grid.item.report_problem'))
             }
           } else if (/^download.*$/.test(task)) {
             return {
+              placement: 'bottom',
+              mouseEnterDelay: 0.4,
               overlay: r.span({}, t('grid.item.cancel_download'))
             }
           } else {
@@ -184,44 +188,42 @@ class GameCell extends ShallowComponent {
         ? r.div({classSet: {cave_actions: true, error: (task === 'error')}}, (
           (task === 'error')
           ? [
-            r.span({
+            this.tooltip('grid.item.retry', r.span({
               className: 'game_retry',
-              'data-tip': t('grid.item.retry'),
               onClick: () => AppActions.cave_queue(mori.get(game, 'id'))
             }, [
               r(Icon, {icon: 'refresh'})
-            ]),
-            r.span({
+            ])),
+
+            this.tooltip('grid.item.probe', r.span({
               className: 'game_probe',
-              'data-tip': t('grid.item.probe'),
               onClick: () => AppActions.cave_probe(mori.get(cave, '_id'))
             }, [
               r(Icon, {icon: 'bug'})
-            ])
+            ]))
+
           ]
           : []
         ).concat(
           (task === 'error')
           ? []
           : [
-            r.span({
+            this.tooltip('grid.item.purchase_or_donate', r.span({
               className: 'game_purchase',
-              'data-tip': t('grid.item.purchase_or_donate'),
               onClick: () => AppActions.game_purchase(mori.get(game, 'id'))
             }, [
               r(Icon, {icon: 'cart'})
-            ]),
-            r.span({
+            ])),
+
+            this.tooltip('grid.item.open_in_file_explorer', r.span({
               className: 'game_explore',
-              'data-tip': t('grid.item.open_in_file_explorer'),
               onClick: () => AppActions.cave_explore(mori.get(cave, '_id'))
             }, [
               r(Icon, {icon: 'folder-open'})
-            ])
+            ]))
           ]).concat([
-            r.span({
+            this.tooltip('grid.item.uninstall', r.span({
               className: 'game_uninstall',
-              'data-tip': t('grid.item.uninstall'),
               onClick: () => {
                 let msg = t('prompt.confirm_uninstall', {title})
                 if (task === 'error' || window.confirm(msg)) {
@@ -230,7 +232,7 @@ class GameCell extends ShallowComponent {
               }
             }, [
               r(Icon, {icon: 'delete'})
-            ])
+            ]))
           ]))
           : '')
       ])
@@ -268,6 +270,16 @@ class GameCell extends ShallowComponent {
     } else {
       return res
     }
+  }
+
+  tooltip (key, component) {
+    let t = this.t
+
+    return r(Tooltip, {
+      mouseEnterDelay: 0.5,
+      placement: 'top',
+      overlay: r.span({}, t(key))
+    }, component)
   }
 }
 

@@ -41,7 +41,7 @@ class ErrorList extends DeepComponent {
 }
 
 ErrorList.propTypes = {
-  errors: PropTypes.oneOfType([PropTypes.array, PropTypes.string])
+  errors: PropTypes.any
 }
 
 module.exports = ErrorList
