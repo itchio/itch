@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:    url('fonts/icomoon.eot?6ig1ce');
-    src:    url('fonts/icomoon.eot?6ig1ce#iefix') format('embedded-opentype'),
-        url('fonts/icomoon.ttf?6ig1ce') format('truetype'),
-        url('fonts/icomoon.woff?6ig1ce') format('woff'),
-        url('fonts/icomoon.svg?6ig1ce#icomoon') format('svg');
+    src:    url('fonts/icomoon.eot?cc8mho');
+    src:    url('fonts/icomoon.eot?cc8mho#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf?cc8mho') format('truetype'),
+        url('fonts/icomoon.woff?cc8mho') format('woff'),
+        url('fonts/icomoon.svg?cc8mho#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -24,14 +24,17 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-folder:before {
+    content: "\e900";
+}
 .icon-align-top:before {
     content: "\e909";
 }
 .icon-cog:before {
-    content: "\e900";
+    content: "\e901";
 }
 .icon-search:before {
-    content: "\e901";
+    content: "\e902";
 }
 .icon-upload-to-cloud:before {
     content: "\e905";
@@ -46,10 +49,10 @@
     content: "\e903";
 }
 .icon-heart-broken:before {
-    content: "\e902";
+    content: "\e907";
 }
 .icon-folder-open:before {
-    content: "\e907";
+    content: "\e908";
 }
 .icon-install:before {
     content: "\e61d";
@@ -91,7 +94,7 @@
     content: "\e613";
 }
 .icon-rocket:before {
-    content: "\e908";
+    content: "\e90a";
 }
 .icon-file-zip:before {
     content: "\e621";
