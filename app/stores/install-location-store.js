@@ -5,6 +5,7 @@ let uuid = require('node-uuid')
 
 let db = require('../util/db')
 let explorer = require('../util/explorer')
+let diskspace = require('../util/diskspace')
 let log = require('../util/log')('install-location-store')
 let opts = { logger: new log.Logger() }
 
@@ -24,6 +25,7 @@ let computations_to_cancel = {}
 let location_sizes = {}
 let location_computing_size = {}
 let location_item_counts = {}
+let disk_info = { parts: [] }
 
 let state = {}
 
@@ -53,11 +55,18 @@ function compute_state () {
     let size = location_sizes[loc_name]
     if (typeof size === 'undefined') { size = -1 }
 
+    let free_space = diskspace.free_in_folder(disk_info, raw_loc.path)
+
     let computing_size = !!location_computing_size[loc_name]
     let item_count = location_item_counts[loc_name] || 0
 
+    if (size === -1 && !computing_size) {
+      AppActions.install_location_compute_size(loc_name)
+    }
+
     let loc = Object.assign({}, raw_loc, {
       size,
+      free_space,
       computing_size,
       item_count
     })
@@ -104,6 +113,7 @@ async function reload () {
     location_item_counts[loc_name]++
   }
 
+  disk_info = await diskspace.disk_info()
   recompute_state()
 }
 

@@ -54,7 +54,8 @@ class PreferencesForm extends ShallowComponent {
 
     let header = r.tr({}, [
       r.th({}, t('preferences.install_location.path')),
-      r.th({}, t('preferences.install_location.size')),
+      r.th({}, t('preferences.install_location.used_space')),
+      r.th({}, t('preferences.install_location.free_space')),
       r.th({}, t('preferences.install_location.item_count')),
       r.th({}, ''),
       r.th({}, ''),
@@ -87,6 +88,7 @@ class PreferencesForm extends ShallowComponent {
         path = path.replace(alias[0], alias[1])
       }
       let size = mori.get(location, 'size')
+      let free_space = mori.get(location, 'free_space')
       let item_count = mori.get(location, 'item_count')
       let computing_size = mori.get(location, 'computing_size')
 
@@ -106,6 +108,7 @@ class PreferencesForm extends ShallowComponent {
           r(Icon, {icon: 'folder'}),
           path
         ]),
+
         r.td({}, [
           (computing_size
 
@@ -127,6 +130,11 @@ class PreferencesForm extends ShallowComponent {
 
           (size === -1 ? '?' : humanize.fileSize(size))
         ]),
+
+        r.td({}, [
+          (free_space === -1 ? '?' : humanize.fileSize(free_space))
+        ]),
+
         r.td({
           className: 'action',
           onClick: (e) => {
