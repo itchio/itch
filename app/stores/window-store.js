@@ -26,7 +26,7 @@ function show () {
     return
   }
 
-  let width = 1200
+  let width = 1220
   let height = 720
 
   window = new BrowserWindow({
