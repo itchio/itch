@@ -91,6 +91,8 @@ module.exports = keyMirror({
   AUTHENTICATED: null,
   /** db available beyond this point */
   READY_TO_ROLL: null,
+  /** install locations available beyond this point */
+  LOCATIONS_READY: null,
   /** Asked to logout */
   CHANGE_USER: null,
   /** Confirmed logout */

@@ -185,7 +185,7 @@ class PreferencesForm extends ShallowComponent {
         r(Icon, {icon: 'plus'}),
         t('preferences.install_location.add')
       ]),
-      r.td({ colSpan: 5 })
+      r.td({ colSpan: 6 })
     ]))
 
     return r.table({className: 'install_locations'}, [

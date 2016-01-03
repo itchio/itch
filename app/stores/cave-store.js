@@ -59,7 +59,7 @@ let CaveStore = Object.assign(new Store('cave-store'), {
   install_location_dir: function (loc_name) {
     let loc_record = InstallLocationStore.get_location(loc_name || 'appdata')
     if (!loc_record) {
-      throw new Error('Unknown location: ${loc}')
+      throw new Error(`Unknown location: ${loc_name}`)
     }
     return loc_record.path
   },
@@ -364,7 +364,9 @@ async function authenticated (payload) {
 
   log(store_opts, `ready to roll (⌐■_■)`)
   AppActions.ready_to_roll()
+}
 
+async function locations_ready (payload) {
   let caves = await db.find({_table: CAVE_TABLE})
   caves.forEach((record, i) => {
     initial_progress(record)
@@ -386,6 +388,7 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
   on(AppConstants.CAVE_PROBE, cave_probe)
 
   on(AppConstants.AUTHENTICATED, authenticated)
+  on(AppConstants.LOCATIONS_READY, locations_ready)
   on(AppConstants.LOGOUT, logout)
 }))
 

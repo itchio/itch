@@ -2,14 +2,15 @@
 let walk = require('walk')
 let electron = require('electron')
 let uuid = require('node-uuid')
+let deep = require('deep-diff')
+let deepAssign = require('deep-assign')
+let humanize = require('humanize-plus')
 
 let db = require('../util/db')
 let explorer = require('../util/explorer')
 let diskspace = require('../util/diskspace')
 let log = require('../util/log')('install-location-store')
 let opts = { logger: new log.Logger() }
-
-let deep = require('deep-diff')
 
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
@@ -46,7 +47,8 @@ let InstallLocationStore = Object.assign(new Store('install-location-store'), {
 
 function compute_state () {
   let prefs = PreferencesStore.get_state()
-  let raw_locations = Object.assign({}, prefs.install_locations || {}, {appdata: appdata_location})
+  let pref_locs = prefs.install_locations || {}
+  let raw_locations = deepAssign({}, pref_locs, {appdata: appdata_location})
   let locations = {}
 
   for (let loc_name of Object.keys(raw_locations)) {
@@ -60,7 +62,7 @@ function compute_state () {
     let computing_size = !!location_computing_size[loc_name]
     let item_count = location_item_counts[loc_name] || 0
 
-    if (size === -1 && !computing_size) {
+    if (size === -1 && !computing_size && !raw_loc.deleted) {
       AppActions.install_location_compute_size(loc_name)
     }
 
@@ -96,11 +98,15 @@ function recompute_state () {
   InstallLocationStore.emit_change()
 }
 
-async function reload () {
+function initialize_appdata () {
   appdata_location = {
     name: 'appdata',
     path: db.library_dir
   }
+}
+
+async function reload () {
+  initialize_appdata()
 
   location_item_counts = {}
 
@@ -164,7 +170,7 @@ function install_location_compute_size (payload) {
   })
 
   walker.on('end', () => {
-    log(opts, `Total size of ${name}: ${total_size}`)
+    log(opts, `Total size of ${name}: ${humanize.fileSize(total_size)}`)
     location_sizes[name] = total_size
     location_computing_size[name] = false
     recompute_state()
@@ -271,23 +277,38 @@ async function install_location_browse (payload) {
   explorer.open(loc.path)
 }
 
+async function ready_to_roll () {
+  initialize_appdata()
+  await reload()
+  AppActions.locations_ready()
+}
+
 async function logout () {
+  appdata_location = null
   delete location_sizes['appdata']
   delete location_item_counts['appdata']
 }
 
+async function library_focus_panel (payload) {
+  let panel = payload.panel
+  if (panel === 'preferences') {
+    throttled_reload()
+  }
+}
+
 AppDispatcher.register('install-location-store', Store.action_listeners(on => {
-  on(AppConstants.READY_TO_ROLL, reload)
+  on(AppConstants.READY_TO_ROLL, ready_to_roll)
   on(AppConstants.CAVE_PROGRESS, throttled_reload)
-  on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, reload)
+  on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, throttled_reload)
   on(AppConstants.LOGOUT, logout)
+  on(AppConstants.LIBRARY_FOCUS_PANEL, library_focus_panel)
   on(AppConstants.INSTALL_LOCATION_COMPUTE_SIZE, install_location_compute_size)
   on(AppConstants.INSTALL_LOCATION_CANCEL_SIZE_COMPUTATION, install_location_cancel_size_computation)
   on(AppConstants.INSTALL_LOCATION_BROWSE, install_location_browse)
   on(AppConstants.INSTALL_LOCATION_ADD_REQUEST, install_location_add_request)
-  on(AppConstants.INSTALL_LOCATION_ADDED, reload)
+  on(AppConstants.INSTALL_LOCATION_ADDED, throttled_reload)
   on(AppConstants.INSTALL_LOCATION_REMOVE_REQUEST, install_location_remove_request)
-  on(AppConstants.INSTALL_LOCATION_REMOVED, reload)
+  on(AppConstants.INSTALL_LOCATION_REMOVED, throttled_reload)
 }))
 
 PreferencesStore.add_change_listener('install-location-store', () => {

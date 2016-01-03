@@ -240,6 +240,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.READY_TO_ROLL })
   },
 
+  locations_ready: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.LOCATIONS_READY })
+  },
+
   change_user: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.CHANGE_USER })
   },
