@@ -1,5 +1,6 @@
 
 let spawn = require('./spawn')
+let os = require('./os')
 
 /*
  * Heavily based on https://github.com/int0h/npm-hddSpace
@@ -99,12 +100,57 @@ let self = {
     return result_obj
   },
 
-  run: async function () {
-    if (process.platform === 'win32') {
+  disk_info: async function () {
+    if (os.platform() === 'win32') {
       return await self.wmic()
     } else {
       return await self.df()
     }
+  },
+
+  letter_for: function (folder) {
+    let matches = folder.match(/^([A-Za-z]):/)
+    if (!matches) {
+      matches = folder.match(/^\/([A-Za-z])/)
+    }
+
+    if (!matches) {
+      return null
+    }
+
+    return matches[1].toUpperCase() + ':'
+  },
+
+  free_in_folder: function (disk_info, folder) {
+    if (os.platform() === 'win32') {
+      let letter = self.letter_for(folder)
+      if (!letter) return -1
+
+      for (let part of disk_info.parts) {
+        if (part.letter === letter) {
+          // break out of loop, there's no nested mountpoints on Windows
+          return part.free
+        }
+      }
+    } else {
+      let match = null
+
+      for (let part of disk_info.parts) {
+        // TODO: what about case-insensitive FSes ?
+        if (!folder.startsWith(part.mountpoint)) {
+          continue // doesn't contain folder
+        }
+
+        if (match && match.mountpoint.length > part.mountpoint.length) {
+          continue // skip, already got a longer match
+        }
+        match = part
+      }
+
+      if (match) return match.free
+    }
+
+    return -1
   }
 }
 

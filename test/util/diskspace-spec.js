@@ -1,6 +1,7 @@
 let test = require('zopf')
 let fixture = require('../fixture')
 let diskspace = require('../../app/util/diskspace')
+let os = require('../../app/util/os')
 
 test('diskspace', t => {
   t.case('df (OSX 10.11)', async t => {
@@ -63,5 +64,79 @@ test('diskspace', t => {
       ],
       total: { free: 399573766144, size: 2128430727168 }
     })
+  })
+
+  t.case('letter_for', t => {
+    let letter = diskspace.letter_for(`C:\\Users\\amos\\Downloads`)
+    t.is(letter, 'C:', `extracts letter`)
+
+    letter = diskspace.letter_for(`z:\\is\\for\\zoidberg`)
+    t.is(letter, 'Z:', `capitalizes correctly`)
+
+    letter = diskspace.letter_for(`i:/am/not/sure/anymore`)
+    t.is(letter, 'I:', `supports mingw paths`)
+
+    letter = diskspace.letter_for(`/d/ora/the/file/explorer`)
+    t.is(letter, 'D:', `supports mingw paths`)
+
+    letter = diskspace.letter_for(`smb://pluto/goodies`)
+    t.notOk(letter, `doesn't extract letters for non-local paths`)
+  })
+
+  t.case('free_in_folder (unix)', t => {
+    t.stub(os, 'platform').returns('linux')
+
+    let disk_info = {
+      parts: [
+        { free: 111, mountpoint: '/media/usb1' },
+        { free: 0, mountpoint: '/media/cdrom0' },
+        { free: 333, mountpoint: '/' }
+      ]
+    }
+
+    let free = diskspace.free_in_folder(disk_info, '/media/cdrom0/AUTORUN.bat')
+    t.is(free, 0, `on cdrom`)
+
+    free = diskspace.free_in_folder(disk_info, '/media/usb1/Diego el Rey del juego/Juegos de Itch')
+    t.is(free, 111, `on usb disk`)
+
+    free = diskspace.free_in_folder(disk_info, '/home/diego/Downloads')
+    t.is(free, 333, `on root`)
+
+    free = diskspace.free_in_folder(disk_info, `https://itch.io/app`)
+    t.is(free, -1, `non-local path`)
+
+    free = diskspace.free_in_folder(disk_info, ``)
+    t.is(free, -1, `empty path`)
+  })
+
+  t.case('free_in_folder (windows)', t => {
+    t.stub(os, 'platform').returns('win32')
+
+    let disk_info = {
+      parts: [
+        { free: 111, letter: 'C:' },
+        { free: 222, letter: 'D:' },
+        { free: 0, letter: 'Z:' }
+      ]
+    }
+
+    let free = diskspace.free_in_folder(disk_info, 'c:\\')
+    t.is(free, 111, `on C:`)
+
+    free = diskspace.free_in_folder(disk_info, `D:\\Tomorrow\\we\\dine\\it's\\swell`)
+    t.is(free, 222, `on D:`)
+
+    free = diskspace.free_in_folder(disk_info, `/z/dosbox`)
+    t.is(free, 0, `on Z:`)
+
+    free = diskspace.free_in_folder(disk_info, `E:\\Uh\\oh`)
+    t.is(free, -1, `on non-existant letter drive`)
+
+    free = diskspace.free_in_folder(disk_info, `https://itch.io/app`)
+    t.is(free, -1, `non-local path`)
+
+    free = diskspace.free_in_folder(disk_info, ``)
+    t.is(free, -1, `empty path`)
   })
 })
