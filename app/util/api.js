@@ -1,6 +1,7 @@
 
 
 let needle = require('../promised/needle')
+let urls = require('../constants/urls')
 let ExtendableError = require('es6-error')
 
 let Logger = require('./log').Logger
@@ -36,8 +37,7 @@ class ApiError extends ExtendableError {
  */
 class Client {
   constructor () {
-    let base = process.env.WHEN_IN_ROME ? 'http://localhost.com:8080' : 'https://itch.io'
-    this.root_url = `${base}/api/1`
+    this.root_url = `${urls.itchio_api}/api/1`
     this.lastRequest = 0
   }
 

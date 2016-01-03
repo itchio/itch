@@ -55,6 +55,8 @@ module.exports = keyMirror({
   CAVE_PROBE: null,
   /** Let the others figure it out */
   CAVE_REPORT: null,
+  /** Won't compromise on that */
+  SHOW_RAR_POLICY: null,
 
   /** Open a game's page */
   GAME_BROWSE: null,

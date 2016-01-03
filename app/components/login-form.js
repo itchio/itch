@@ -5,6 +5,7 @@ let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
 let AppActions = require('../actions/app-actions')
+let urls = require('../constants/urls')
 
 let InputRow = require('./input-row')
 let ErrorList = require('./error-list')
@@ -74,13 +75,13 @@ class LoginForm extends ShallowComponent {
 
     return r.div({className: 'login_links'}, [
       r.a({
-        href: 'https://itch.io/register'
+        href: urls.account_register
       }, t('login.action.register')),
 
       r.span(' · '),
 
       r.a({
-        href: 'https://itch.io/user/forgot-password'
+        href: urls.account_forgot_password
       }, t('login.action.reset_password'))
     ])
   }

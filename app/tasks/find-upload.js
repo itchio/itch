@@ -68,7 +68,16 @@ let self = {
       throw new Error('No downloads available')
     }
 
-    AppActions.cave_update(id, {upload_id: uploads[0].id})
+    // TODO: decide what happens when there's several uploads
+    let upload = uploads[0]
+
+    if (/\.rar$/i.test(upload.filename)) {
+      AppActions.cave_implode(id)
+      AppActions.show_rar_policy(id)
+      return
+    }
+
+    AppActions.cave_update(id, {upload_id: upload.id})
   }
 }
 

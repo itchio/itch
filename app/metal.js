@@ -71,6 +71,7 @@ function ready () {
   require('./stores/setup-store')
   require('./stores/cave-store')
   require('./stores/url-store')
+  require('./stores/rar-store')
   require('./stores/purchase-store')
   require('./stores/report-store')
   require('./stores/install-location-store')

@@ -1,11 +1,13 @@
 
-
-let Menu = require('electron').Menu
+let electron = require('electron')
+let Menu = electron.Menu
+let shell = electron.shell
 
 let CredentialsStore = require('../stores/credentials-store')
 let I18nStore = require('../stores/i18n-store')
 let AppActions = require('../actions/app-actions')
 let AppConstants = require('../constants/app-constants')
+let urls = require('../constants/urls')
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 
 let clone = require('clone')
@@ -95,11 +97,11 @@ function make_menus () {
       submenu: [
         {
           label: _t('menu.help.view_terms'),
-          click: () => crash_reporter.open_url('https://itch.io/docs/legal/terms')
+          click: () => shell.openExternal(urls.terms_of_service)
         },
         {
           label: _t('menu.help.view_license'),
-          click: () => crash_reporter.open_url(`${crash_reporter.repo_url}/blob/master/LICENSE`)
+          click: () => shell.openExternal(`${urls.itch_repo}/blob/master/LICENSE`)
         },
         {
           label: `Version ${require('electron').app.getVersion()}`,
@@ -118,14 +120,14 @@ function make_menus () {
         },
         {
           label: _t('menu.help.search_issue'),
-          click: () => crash_reporter.open_url(`${crash_reporter.repo_url}/search?type=Issues`)
+          click: () => shell.openExternal(`${urls.itch_repo}/search?type=Issues`)
         },
         {
           type: 'separator'
         },
         {
           label: _t('menu.help.release_notes'),
-          click: () => crash_reporter.open_url(`${crash_reporter.repo_url}/releases`)
+          click: () => shell.openExternal(`${urls.itch_repo}/releases`)
         }
       ]
     }

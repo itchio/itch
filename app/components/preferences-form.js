@@ -6,6 +6,7 @@ let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
 let AppActions = require('../actions/app-actions')
+let urls = require('../constants/urls')
 let I18nStore = require('../stores/i18n-store')
 
 let Tooltip = require('rc-tooltip')
@@ -37,7 +38,7 @@ class PreferencesForm extends ShallowComponent {
             label: t('preferences.language')
           }),
           r.div({className: 'get_involved'}, [
-            r.a({href: 'http://weblate.itch.ovh'}, [
+            r.a({href: urls.itch_translation_platform}, [
               r(Icon, {icon: 'earth'}),
               t('preferences.language.get_involved', {name: 'itch'})
             ])

@@ -179,6 +179,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.CAVE_REPORT, id })
   },
 
+  show_rar_policy: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.SHOW_RAR_POLICY, id })
+  },
+
   game_browse: (id) => {
     AppDispatcher.dispatch({ action_type: AppConstants.GAME_BROWSE, id })
   },

@@ -3,20 +3,17 @@
 let fstream = require('fstream')
 let path = require('path')
 
-let app = require('electron').app
-let shell = require('electron').shell
-let dialog = require('electron').dialog
+let electron = require('electron')
+let app = electron.app
+let shell = electron.shell
+let dialog = electron.dialog
 let querystring = require('querystring')
+
+let urls = require('../constants/urls')
 
 let os = require('./os')
 
 let self = {
-  repo_url: 'https://github.com/itchio/itch',
-
-  open_url: function (url) {
-    require('electron').shell.openExternal(url)
-  },
-
   write_crash_log: (e) => {
     let crash_file = path.join(app.getPath('userData'), 'crash_logs', `${+new Date()}.txt`)
 
@@ -58,7 +55,7 @@ ${log}
       title: `[${os.platform()}] ${type} for v${app.getVersion()}`,
       body: (before + body)
     })
-    self.open_url(`https://github.com/itchio/itch/issues/new?${query}`)
+    shell.openExternal(`${urls.itch_repo}/issues/new?${query}`)
   },
 
   handle: (e) => {

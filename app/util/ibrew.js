@@ -8,6 +8,7 @@ let Promise = require('bluebird')
 let partial = require('underscore').partial
 let needle = require('needle')
 
+let urls = require('../constants/urls')
 let install = require('../tasks/install/core')
 let os = require('./os')
 let log = require('./log')('ibrew')
@@ -39,10 +40,6 @@ let self = {
 
   bin_path: () => {
     return path.join(app.getPath('userData'), 'bin')
-  },
-
-  root_url: () => {
-    return 'https://dl.itch.ovh'
   },
 
   ext: () => {
@@ -136,7 +133,7 @@ let self = {
       return
     }
 
-    let channel = `${self.root_url()}/${name}/${self.os()}-${self.arch()}`
+    let channel = `${urls.ibrew_repo}/${name}/${self.os()}-${self.arch()}`
 
     let download_version = async (version) => {
       let archive_name = self.archive_name(name)

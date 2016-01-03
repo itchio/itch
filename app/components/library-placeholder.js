@@ -4,6 +4,8 @@ let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 let interleave = require('./interleave')
 
+let urls = require('../constants/urls')
+
 let Icon = require('./icon')
 
 class LibraryPlaceholder extends ShallowComponent {
@@ -31,10 +33,10 @@ class LibraryPlaceholder extends ShallowComponent {
             r.h2({}, t('onboarding.caved.title_pick')),
             r.p({}, t('onboarding.caved.usage')),
             r.p({}, interleave(t, 'onboarding.caved.troubleshoot_advice', {
-              report: r.a({className: 'fake_button hollow', href: 'https://github.com/itchio/itch/issues'}, [
+              report: r.a({className: 'fake_button hollow', href: `${urls.itch_repo}/issues`}, [
                 r(Icon, {icon: 'heart-broken'})
               ]),
-              probe: r.a({className: 'fake_button hollow', href: 'https://github.com/itchio/itch/blob/master/docs/diego.md'}, [
+              probe: r.a({className: 'fake_button hollow', href: `${urls.itch_repo}/blob/master/docs/diego.md`}, [
                 r(Icon, {icon: 'bug'})
               ])
             })),
@@ -51,7 +53,7 @@ class LibraryPlaceholder extends ShallowComponent {
             r.p({}, t('onboarding.dashboard.mission_statement')),
             r.p({}, t('onboarding.dashboard.selling_points'))
           ]),
-          r.a({className: 'fat button', href: 'https://itch.io/developers'}, t('onboarding.dashboard.docs_link'))
+          r.a({className: 'fat button', href: urls.developers_learn_more}, t('onboarding.dashboard.docs_link'))
         ])
       )
     } else if (/^collections/.test(panel)) {
@@ -61,14 +63,14 @@ class LibraryPlaceholder extends ShallowComponent {
           r.div({className: 'placeholder_content'}, [
             r.h2({}, t('onboarding.collections.title_mix')),
             r.p({}, interleave(t, 'onboarding.collections.usage', {
-              add_to_collection: r.a({href: 'https://itch.io/my-collections', className: 'fake_button'},
+              add_to_collection: r.a({href: urls.my_collections, className: 'fake_button'},
                 // N.B: Not translating this until itch.io get i18n'd
                 [r(Icon, {icon: 'plus'}), ` Add to collection`]
               )
             })),
             r.p({}, t('onboarding.collections.auto_sync'))
           ]),
-          r.a({className: 'fat button', href: 'https://itch.io'}, t('onboarding.collections.lets_shop'))
+          r.a({className: 'fat button', href: urls.itchio}, t('onboarding.collections.lets_shop'))
         ])
       )
     } else {
