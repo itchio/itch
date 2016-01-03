@@ -191,32 +191,62 @@ async function install_location_add_request () {
 
 async function install_location_remove_request (payload) {
   let name = payload.name
-  let loc = InstallLocationStore.get_location(name)
+  let i18n = I18nStore.get_state()
+
+  let locations = compute_state().locations
+  if (locations.length <= 1) {
+    let title = i18n.t('prompt.last_remaining_install_location.title')
+    let content = i18n.t('prompt.last_remaining_install_location.content')
+    electron.dialog.showErrorBox(title, content)
+    return
+  }
+
+  // call compute_state explicitly so we have fresh state regardless of throttling
+  let loc = locations[name]
   if (!loc) {
     log(opts, `Cannot remove unknown location ${loc}`)
     return
   }
 
-  let i18n = I18nStore.get_state()
+  if (loc.item_count > 0) {
+    let buttons = [
+      i18n.t('prompt.install_location_not_empty.show_contents'),
+      i18n.t('prompt.action.ok')
+    ]
 
-  let buttons = [
-    i18n.t('prompt.action.confirm_removal'),
-    i18n.t('prompt.action.cancel')
-  ]
-
-  let dialog_opts = {
-    title: i18n.t('prompt.install_location_remove.title'),
-    message: i18n.t('prompt.install_location_remove.message'),
-    detail: i18n.t('prompt.install_location_remove.detail', {location: loc.path}),
-    buttons
-  }
-
-  let callback = (response) => {
-    if (response === 0) {
-      AppActions.install_location_remove(payload.name)
+    let dialog_opts = {
+      title: i18n.t('prompt.install_location_not_empty.title'),
+      message: i18n.t('prompt.install_location_not_empty.message'),
+      detail: i18n.t('prompt.install_location_not_empty.detail'),
+      buttons
     }
+
+    let callback = (response) => {
+      if (response === 0) {
+        AppActions.focus_panel(`locations/${name}`)
+      }
+    }
+    electron.dialog.showMessageBox(dialog_opts, callback)
+  } else {
+    let buttons = [
+      i18n.t('prompt.action.confirm_removal'),
+      i18n.t('prompt.action.cancel')
+    ]
+
+    let dialog_opts = {
+      title: i18n.t('prompt.install_location_remove.title'),
+      message: i18n.t('prompt.install_location_remove.message'),
+      detail: i18n.t('prompt.install_location_remove.detail', {location: loc.path}),
+      buttons
+    }
+
+    let callback = (response) => {
+      if (response === 0) {
+        AppActions.install_location_remove(payload.name)
+      }
+    }
+    electron.dialog.showMessageBox(dialog_opts, callback)
   }
-  electron.dialog.showMessageBox(dialog_opts, callback)
 }
 
 async function install_location_browse (payload) {

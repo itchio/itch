@@ -8,6 +8,7 @@ let Store = require('./store')
 
 let path = require('path')
 let electron = require('electron')
+let deepAssign = require('deep-assign')
 let fs = require('../promised/fs')
 
 let state = {}
@@ -57,16 +58,14 @@ async function install_location_add (payload) {
 
 async function install_location_remove (payload) {
   log(opts, `Removing install location: ${JSON.stringify(payload)}`)
-  if (!state.install_locations) {
-    state.install_locations = {}
-  }
 
-  // TODO: actually uninstall items
-  delete state.install_locations[payload.name]
-
-  if (state.default_install_location === payload.name) {
-    state.default_install_location = 'appdata'
-  }
+  deepAssign(state, {
+    install_locations: {
+      [payload.name]: {
+        deleted: true
+      }
+    }
+  })
 
   await save_to_disk()
 }

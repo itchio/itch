@@ -62,30 +62,38 @@ class PreferencesForm extends ShallowComponent {
     ])
 
     let state = this.props.state
-    let locations = mori.toJs(mori.getIn(state, ['install-locations', 'locations']))
     let aliases = mori.toJs(mori.getIn(state, ['install-locations', 'aliases']))
+    let default_loc = mori.getIn(state, ['install-locations', 'default'])
+
+    let loc_map = mori.getIn(state, ['install-locations', 'locations'])
+    let locations = mori.filter((x) => !mori.get(mori.last(x), 'deleted'), loc_map)
+
+    // can't delete your last remaining location.
+    let may_delete = mori.count(locations) > 0
 
     let rows = []
     rows.push(header)
 
-    let loc_keys = Object.keys(locations)
-    let default_loc = mori.getIn(state, ['install-locations', 'default'])
-
     let index = -1
 
-    for (let name of loc_keys) {
+    mori.each(locations, (pair) => {
       index++
-      let location = locations[name]
+      let name = mori.first(pair)
+      let location = mori.last(pair)
       let is_default = (name === default_loc)
 
-      let path = location.path
+      let path = mori.get(location, 'path')
       for (let alias of aliases) {
         path = path.replace(alias[0], alias[1])
       }
-      let size = location.size
-      let item_count = location.item_count
-      let computing_size = location.computing_size
-      let may_delete = (loc_keys.length > 0 && name !== 'appdata')
+      let size = mori.get(location, 'size')
+      let item_count = mori.get(location, 'item_count')
+      let computing_size = mori.get(location, 'computing_size')
+
+      let browse_i18n_key = 'preferences.install_location.browse'
+      if (process.platform === 'darwin') {
+        browse_i18n_key += '_osx'
+      }
 
       rows.push(r.tr({}, [
         r.td({
@@ -142,7 +150,7 @@ class PreferencesForm extends ShallowComponent {
             onClick: (e) => AppActions.install_location_make_default(name)
           }, r(Icon, {icon: 'star'})))),
 
-        this.tooltip('preferences.install_location.browse', r.td({
+        this.tooltip(browse_i18n_key, r.td({
           className: 'action',
           onClick: (e) => AppActions.install_location_browse(name)
         }, r(Icon, {icon: 'folder-open'}))),
@@ -156,7 +164,7 @@ class PreferencesForm extends ShallowComponent {
 
         : r.td({}, ''))
       ]))
-    }
+    })
 
     rows.push(r.tr({}, [
       r.td({
