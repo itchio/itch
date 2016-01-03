@@ -108,18 +108,19 @@ function initialize_appdata () {
 async function reload () {
   initialize_appdata()
 
-  location_item_counts = {}
-
   let caves = await db.find({_table: 'caves'})
+  let counts = {}
+
   for (let cave of caves) {
     let loc_name = cave.install_location || 'appdata'
-    if (typeof location_item_counts[loc_name] === 'undefined') {
-      location_item_counts[loc_name] = 0
+    if (typeof counts[loc_name] === 'undefined') {
+      counts[loc_name] = 0
     }
-    location_item_counts[loc_name]++
+    counts[loc_name]++
   }
 
   disk_info = await diskspace.disk_info()
+  location_item_counts = counts
   recompute_state()
 }
 

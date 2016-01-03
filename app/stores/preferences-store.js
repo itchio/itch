@@ -67,6 +67,26 @@ async function install_location_remove (payload) {
     }
   })
 
+  let default_loc_name = state.default_install_location || 'appdata'
+  let default_loc = state.install_locations[default_loc_name]
+
+  let found_new_default = false
+
+  if (!default_loc || default_loc.deleted) {
+    for (let loc_name of Object.keys(state.install_locations)) {
+      let loc = state.install_locations[loc_name]
+      if (!loc.deleted) {
+        found_new_default = true
+        state.default_install_location = loc_name
+        break
+      }
+    }
+  }
+
+  if (!found_new_default) {
+    state.default_install_location = 'appdata'
+  }
+
   await save_to_disk()
 }
 
