@@ -100,7 +100,7 @@ let self = {
     let sorted = by_depth
 
     log(opts, `executables (from best to worst): ${JSON.stringify(sorted, null, 2)}`)
-    let app_path = CaveStore.app_path(opts.id)
+    let app_path = CaveStore.app_path(cave.install_location, opts.id)
     let exe_path = path.join(app_path, sorted[0])
     return self.launch(exe_path, [], opts)
   },

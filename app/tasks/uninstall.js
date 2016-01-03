@@ -31,8 +31,8 @@ let self = {
       let upload = cave.uploads[cave.upload_id]
       ensure(upload, 'need upload in upload cache')
 
-      let dest_path = CaveStore.app_path(id)
-      let archive_path = CaveStore.archive_path(upload)
+      let dest_path = CaveStore.app_path(cave.install_location, id)
+      let archive_path = CaveStore.archive_path(cave.install_location, upload)
 
       let core_opts = { logger, onerror, onprogress, archive_path, dest_path }
 

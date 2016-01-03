@@ -25,6 +25,9 @@ test('library', t => {
         d: {task: 'extract', progress: 0.7, game},
         e: {task: 'error', error: 'dun goofed', game},
         f: {task: 'idle', game}
+      },
+      library: {
+        panel: ''
       }
     }
     sd.shallowRender(sd(LibrarySidebar, {state: mori.toClj(props)}))
@@ -32,7 +35,12 @@ test('library', t => {
 
   t.case('LibraryContent', t => {
     let LibraryContent = proxyquire('../../app/components/library-content', stubs)
-    sd.shallowRender(sd(LibraryContent, {games: {}}))
+    let props = {
+      library: {
+        panel: ''
+      }
+    }
+    sd.shallowRender(sd(LibraryContent, {state: mori.toClj(props), games: {}}))
   })
 
   t.case('LibraryPanelLink', t => {

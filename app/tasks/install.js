@@ -32,8 +32,8 @@ let self = {
     let upload = cave.uploads[cave.upload_id]
     ensure(upload, 'need upload in upload cache')
 
-    let dest_path = CaveStore.app_path(id)
-    let archive_path = CaveStore.archive_path(upload)
+    let dest_path = CaveStore.app_path(cave.install_location, id)
+    let archive_path = CaveStore.archive_path(cave.install_location, upload)
 
     let imtime = cave.installed_archive_mtime
     let amtime = (await fs.lstatAsync(archive_path)).mtime
@@ -42,7 +42,6 @@ let self = {
     if (imtime && !(amtime > imtime)) {
       log(opts, `archive isn't more recent, nothing to install`)
       throw new errors.Transition({to: 'idle', reason: 'up-to-date'})
-      return
     }
 
     let core_opts = { logger, onerror, onprogress, archive_path, dest_path }

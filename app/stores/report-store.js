@@ -24,8 +24,8 @@ async function report_cave (payload) {
 
   try {
     AppActions.cave_progress({id, reporting: true})
-    let log_path = CaveStore.log_path(payload.id)
-    let cave = await db.find_one({_table: 'caves', _id: payload.id})
+    let cave = await CaveStore.find(id)
+    let log_path = CaveStore.log_path(cave.install_location, payload.id)
     let game = await db.find_one({_table: 'games', id: cave.game_id})
 
     let game_log = await fs.readFileAsync(log_path, {encoding: 'utf8'})

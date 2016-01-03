@@ -89,10 +89,4 @@ test('AppStore', t => {
     handler({ action_type: AppConstants.LOGOUT })
     t.is(get_state().page, 'login')
   })
-
-  t.case('install_progress', t => {
-    let opts = {id: 42, a: 'b'}
-    handler({ action_type: AppConstants.CAVE_PROGRESS, opts })
-    t.same(get_state().library.caves, {'42': {id: 42, a: 'b'}})
-  })
 })

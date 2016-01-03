@@ -200,6 +200,17 @@ function cave_thrown_into_bit_bucket (payload) {
   }
 }
 
+function gain_focus (payload) {
+  AppActions.fetch_collections()
+  let panel = mori.getIn(state, ['library', 'panel'])
+  panel && AppActions.fetch_games(panel)
+
+  if (panel !== 'owned') {
+    // buying a game can affect something in any panel
+    AppActions.fetch_games('owned')
+  }
+}
+
 function open_preferences (payload) {
   focus_panel({panel: 'preferences'})
 }
@@ -225,16 +236,7 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.DISMISS_STATUS, dismiss_status)
   on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, cave_thrown_into_bit_bucket)
 
-  on(AppConstants.GAIN_FOCUS, (payload) => {
-    AppActions.fetch_collections()
-    let panel = mori.getIn(state, ['library', 'panel'])
-    panel && AppActions.fetch_games(panel)
-
-    if (panel !== 'owned') {
-      // buying a game can affect something in any panel
-      AppActions.fetch_games('owned')
-    }
-  })
+  on(AppConstants.GAIN_FOCUS, gain_focus)
 
   on(AppConstants.GAME_STORE_DIFF, game_store_diff)
   on(AppConstants.CAVE_STORE_DIFF, cave_store_diff)

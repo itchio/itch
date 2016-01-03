@@ -85,9 +85,19 @@ class PreferencesForm extends ShallowComponent {
       let size = location.size
       let item_count = location.item_count
       let computing_size = location.computing_size
+      let may_delete = (loc_keys.length > 0 && name !== 'appdata')
 
       rows.push(r.tr({}, [
-        r.td({}, path),
+        r.td({
+          className: 'action',
+          onClick: (e) => {
+            e.preventDefault()
+            AppActions.focus_panel(`locations/${name}`)
+          }
+        }, [
+          r(Icon, {icon: 'folder'}),
+          path
+        ]),
         r.td({}, [
           (computing_size
 
@@ -109,7 +119,13 @@ class PreferencesForm extends ShallowComponent {
 
           (size === -1 ? '?' : humanize.fileSize(size))
         ]),
-        r.td({},
+        r.td({
+          className: 'action',
+          onClick: (e) => {
+            e.preventDefault()
+            AppActions.focus_panel(`locations/${name}`)
+          }
+        },
           item_count > 0
           ? item_count
           : r.span({className: 'empty'}, '0')
@@ -131,10 +147,14 @@ class PreferencesForm extends ShallowComponent {
           onClick: (e) => AppActions.install_location_browse(name)
         }, r(Icon, {icon: 'folder-open'}))),
 
-        this.tooltip('preferences.install_location.delete', r.td({
+        (may_delete
+
+        ? this.tooltip('preferences.install_location.delete', r.td({
           className: 'action',
           onClick: (e) => AppActions.install_location_remove_request(name)
         }, r(Icon, {icon: 'cross'})))
+
+        : r.td({}, ''))
       ]))
     }
 
