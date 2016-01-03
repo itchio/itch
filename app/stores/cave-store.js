@@ -370,7 +370,7 @@ async function locations_ready (payload) {
   let caves = await db.find({_table: CAVE_TABLE})
   caves.forEach((record, i) => {
     initial_progress(record)
-    queue_task(record._id, 'download')
+    queue_task(record._id, 'awaken')
   })
 }
 
