@@ -71,7 +71,7 @@ let self = {
   },
 
   uninstall: async function (opts) {
-    let installer = await self.find_uninstaller(opts)
+    let installer = await self.find_installer(opts)
     await installer.uninstall(opts)
   }
 }
