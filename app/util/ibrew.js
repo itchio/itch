@@ -35,6 +35,14 @@ let self = {
     'elevate': {
       format: '7z',
       os_whitelist: ['windows']
+    },
+    'file': {
+      format: '7z',
+      os_whitelist: ['windows'],
+      version_check: {
+        args: ['--version'],
+        parser: /file-([0-9a-z.]*)/
+      }
     }
   },
 

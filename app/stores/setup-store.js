@@ -34,7 +34,7 @@ async function install_deps (opts) {
   await fetch('7za')
 
   // these are .7z archives
-  let compressed = ['butler', 'elevate'].map(fetch)
+  let compressed = ['butler', 'elevate', 'file'].map(fetch)
 
   await Promise.all(compressed)
 }
