@@ -173,21 +173,26 @@ let self = {
       onprogress({percent})
     }
 
-    log(opts, `Detaching cdr file ${cdr_path}`)
-    code = await spawn({
-      command: 'hdiutil',
-      args: [
-        'detach',
-        '-force', // ignore opened files, etc.
-        device
-      ]
-    })
-    if (code !== 0) {
-      throw new Error(`Failed to mount image, with code ${code}`)
+    let cleanup = async () => {
+      log(opts, `Detaching cdr file ${cdr_path}`)
+      code = await spawn({
+        command: 'hdiutil',
+        args: [
+          'detach',
+          '-force', // ignore opened files, etc.
+          device
+        ]
+      })
+      if (code !== 0) {
+        throw new Error(`Failed to mount image, with code ${code}`)
+      }
+
+      log(opts, `Removing cdr file ${cdr_path}`)
+      await fs.unlinkAsync(cdr_path)
     }
 
-    log(opts, `Removing cdr file ${cdr_path}`)
-    await fs.unlinkAsync(cdr_path)
+    log(opts, `Launching cleanup asynchronously...`)
+    cleanup()
 
     onprogress({percent: 100})
   },
