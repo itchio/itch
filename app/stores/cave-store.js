@@ -307,7 +307,12 @@ async function cave_queue (payload) {
     if (record.launchable) {
       queue_task(record._id, 'launch')
     } else {
-      queue_task(record._id, 'download')
+      let task = current_tasks[record._id]
+      if (task) {
+        task.opts.emitter.emit('shine')
+      } else {
+        queue_task(record._id, 'download')
+      }
     }
   } else {
     queue_cave(payload.game_id)

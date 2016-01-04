@@ -38,9 +38,11 @@ let self = {
 
       AppActions.cave_update(id, {launchable: false})
       await core.uninstall(core_opts)
-      await rimraf(archive_path, {
-        disableGlob: true // rm -rf + globs sound like the kind of evening I don't like
-      })
+      if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
+        await rimraf(archive_path, {
+          disableGlob: true // rm -rf + globs sound like the kind of evening I don't like
+        })
+      }
     } catch (e) {
       log(opts, `Something went wrong during uninstall: ${e.stack || e}`)
       log(opts, `Imploding anyway.`)

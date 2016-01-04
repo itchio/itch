@@ -8,10 +8,13 @@ let Icon = require('./icon')
 // TODO: move to `constants/`
 let task_to_icon = {
   'error': 'heart-broken',
+  'awaken': 'stopwatch',
   'find-upload': 'stopwatch',
   'download': 'download',
   'download-queued': 'hand-paper-o',
   'install': 'file-zip',
+  'uninstall': 'delete',
+  'ask-before-install': 'install',
   'configure': 'cog',
   'launch': 'fire',
   'idle': 'checkmark'

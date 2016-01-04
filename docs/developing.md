@@ -79,7 +79,7 @@ $ test/runner.sh test/components
 These keys do things:
 
   * `Shift-F5` — reload the UI. Since the state is stored outside of the browser,
-    this shouldn't corrupt 
+    this shouldn't corrupt
   * `F12` — open Chrome Devtools
 
 These environment variables will change the behavior of the app:
@@ -100,6 +100,7 @@ These environment variables will change the behavior of the app:
     between node and browser side)
   * `TRUST_ME_IM_AN_ENGINEER=1` - never show `Buy now` instead of `Install`.
     Obviously, the backend has to agree with you.
+  * `REMEMBER_ME_WHEN_IM_GONE=1` - don't wipe downloads when uninstalling.
+    Useful for debugging install/uninstall routines.
 
 [diego]: diego.md
-

@@ -14,9 +14,15 @@ let self = {
   },
 
   install: async function (opts) {
+    if (!opts.has_user_blessing) {
+      throw new errors.Transition({
+        to: 'ask-before-install',
+        reason: `going to pop up an UAC dialog, need user's permission first`
+      })
+    }
+
     let archive_path = opts.archive_path
     let dest_path = opts.dest_path
-    let logger = opts.logger
     let log_path = self.log_path('i', archive_path)
 
     let spawn_opts = {
@@ -29,8 +35,7 @@ let self = {
         `/LOG=${log_path}`, // store log on disk
         `/DIR=${dest_path}` // install in apps directory if possible
       ],
-      ontoken: (token) => log(opts, token),
-      logger
+      ontoken: (token) => log(opts, token)
     }
     let code = await spawn(spawn_opts)
     log(opts, `inno installer exited with code ${code}`)
