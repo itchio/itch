@@ -97,6 +97,7 @@
     "prompt.payments_disabled.message": "Desafortunadamente, el desarrollador de {{title}} no acepta pagos para este título.", 
     "prompt.payments_disabled.open_web_page": "Abrir página web", 
     "prompt.payments_disabled.title": "Pagos deshabilitados", 
+    "prompt.rar_policy.message": "Éste contenido utiliza RAR como formato de compresión y no puede ser instalado por itch hasta ser comprimido nuevamente con un formato soportado.", 
     "prompt.url_install.credit": "Una {{classification}} de {{username}}", 
     "prompt.url_install.message": "¿Quieres instalar {{title}}?", 
     "prompt.url_install.title": "Solicitud de instalación", 
