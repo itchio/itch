@@ -28,6 +28,8 @@ let self = {
   uninstall: async function (opts) {
     // TODO: find unins*.exe file in dest_path, run it with
     // by setting _?= to dest_path
+    let dest_path = opts.dest_path
+
     throw new Error('nsis/uninstall: stub')
   }
 }

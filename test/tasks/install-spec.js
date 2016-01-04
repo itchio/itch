@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let sinon = require('sinon')
