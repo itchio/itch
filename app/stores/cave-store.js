@@ -136,10 +136,10 @@ function handle_task_error (err, id, task_name) {
   } else if (err instanceof Crash) {
     let msg = `crashed with: ${JSON.stringify(err, null, 2)}`
     log(cave_opts(id), msg)
-    AppActions.cave_progress({id, task: 'idle', error: msg})
+    AppActions.cave_progress({id, task: 'idle', error: msg, progress: 0})
   } else {
     log(cave_opts(id), err.stack || err)
-    AppActions.cave_progress({id, task: 'error', error: '' + err})
+    AppActions.cave_progress({id, task: 'error', error: '' + err, progress: 0})
   }
 }
 
