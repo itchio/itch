@@ -1,1 +1,10 @@
-{}
+{
+    "grid.item.installing": "Installerer...", 
+    "grid.item.queued": "I kø", 
+    "menu.help.help": "Hjælp", 
+    "onboarding.dashboard.docs_link": "Lær mere", 
+    "onboarding.dashboard.welcome_home": "Velkommen hjem", 
+    "preferences.language": "Sprog", 
+    "prompt.install_location_not_empty.detail": "Dette skal gøres manuelt på nuværende tidspunkt.", 
+    "prompt.no_compatible_version.title": "{{title}} på {{platform}}"
+}
