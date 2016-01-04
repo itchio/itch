@@ -84,6 +84,7 @@
     "prompt.install_location_remove.detail": "Alle bestanden die geïnstalleerd zijn in {{location}} zullen worden verwijderd.", 
     "prompt.install_location_remove.message": "Weet u zeker dat u deze locatie wilt verwijderen?", 
     "prompt.install_location_remove.title": "Een installatiepad verwijderen", 
+    "prompt.last_remaining_install_location.title": "Installatielocatie kan niet verwijderd worden", 
     "prompt.logout_confirm": "Weet je zeker dat je uit wilt loggen?", 
     "prompt.no_compatible_version.detail": "", 
     "prompt.no_compatible_version.message": "We hebben geen versie van {{title}} voor {{platform}} gevonden.", 
