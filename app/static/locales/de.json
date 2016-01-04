@@ -14,6 +14,7 @@
     "grid.item.queued": "Eingereiht", 
     "grid.item.report_problem": "Als defekt melden (Wird im Browser geöffnet)", 
     "grid.item.running": "Läuft...", 
+    "grid.item.uninstall": "Dieses Objekt jetzt deinstallieren", 
     "login.action.login": "Einloggen", 
     "login.action.register": "Registrieren", 
     "login.action.reset_password": "Passwort vergessen", 
