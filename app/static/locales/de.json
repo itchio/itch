@@ -83,6 +83,7 @@
     "prompt.action.ok": "Ok", 
     "prompt.additional_purchase.detail": "...aber du könntest einem Freund ein Exemplar kaufen!\n\nMöchtest du einen weiteren Kauf tätigen?", 
     "prompt.additional_purchase.message": "Du besitzt bereits ein Exemplar von {{title}}.", 
+    "prompt.additional_purchase.purchase_again": "Erneut kaufen", 
     "prompt.additional_purchase.title": "Du besitzt das bereits!", 
     "prompt.confirm_uninstall": "Bist du sicher, dass du {{title}} deinstallieren willst?", 
     "prompt.crash_reporter.detail": "Ein Fehlerbericht wurde an {{location}} gesendet.", 
