@@ -1,36 +1,63 @@
-'use strict'
-
 
 let spawn = require('../../util/spawn')
+let find_uninstallers = require('./find-uninstallers')
+
+let errors = require('../errors')
 
 let log = require('../../util/log')('installers/nsis')
 
+// NSIS docs: http://nsis.sourceforge.net/Docs/Chapter3.html
+
 let self = {
   install: async function (opts) {
-    let archive_path = opts.archive_path
+    let inst = opts.archive_path
     let dest_path = opts.dest_path
-    let logger = opts.logger
 
     let code = await spawn({
       command: 'elevate.exe',
       args: [
-        archive_path,
+        inst,
         '/S', // run the installer silently
         '/NCRC', // disable CRC-check, we do hash checking ourselves
         `/D=${dest_path}`
       ],
-      ontoken: (token) => log(opts, token),
-      logger
+      ontoken: (tok) => log(opts, `${inst}: ${tok}`)
     })
     log(opts, `elevate / nsis installer exited with code ${code}`)
   },
 
   uninstall: async function (opts) {
-    // TODO: find unins*.exe file in dest_path, run it with
-    // by setting _?= to dest_path
     let dest_path = opts.dest_path
+    let uninstallers = await find_uninstallers(dest_path)
 
-    throw new Error('nsis/uninstall: stub')
+    if (uninstallers.length === 0) {
+      log(opts, `could not find an uninstaller`)
+      return
+    }
+
+    for (let unins of uninstallers) {
+      log(opts, `running nsis uninstaller ${unins}`)
+      let spawn_opts = {
+        command: 'elevate.exe',
+        args: [
+          unins,
+          '/S', // run the uninstaller silently
+          `_?=${dest_path}` // specify uninstallation path
+        ],
+        opts: { cwd: dest_path },
+        on_token: (tok) => log(opts, `${unins}: ${tok}`)
+      }
+      let code = await spawn(spawn_opts)
+      log(opts, `elevate / nsis uninstaller exited with code ${code}`)
+
+      if (code !== 0) {
+        let reason = 'uninstaller failed, cancelling uninstallation'
+        throw new errors.Transition({
+          to: 'idle',
+          reason
+        })
+      }
+    }
   }
 }
 
