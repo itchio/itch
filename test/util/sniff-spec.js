@@ -18,8 +18,8 @@ test('sniff', t => {
     ['tar', {ext: 'tar', mime: 'application/x-tar'}],
     ['fallback.tar', {ext: 'tar', mime: null}],
     ['dmg', {ext: 'dmg', mime: 'application/x-apple-diskimage'}],
-    ['dmg-bz2', {ext: 'dmg', mime: 'application/x-apple-diskimage'}],
-    ['dmg-gz', {ext: 'dmg', mime: 'application/x-apple-diskimage'}]
+    ['bz2.dmg', {ext: 'dmg', mime: 'application/x-apple-diskimage'}],
+    ['gz.dmg', {ext: 'dmg', mime: 'application/x-apple-diskimage'}]
   ]
 
   types.forEach((pair) => {

@@ -1,5 +1,4 @@
 
-
 let Promise = require('bluebird')
 let file_type = require('file-type')
 let read_chunk = Promise.promisify(require('read-chunk'))
@@ -70,7 +69,7 @@ sniff.path = async function (file) {
     let buf = await read_chunk(file, 0, 262)
     let sniffed = sniff(buf)
     if (sniffed) {
-      if (sniffed.ext === 'bz2' || sniffed.ext === 'bz' && ext === 'dmg') {
+      if (sniffed.ext === 'bz2' || sniffed.ext === 'gz' && ext === 'dmg') {
         // compressed .dmg have wrong magic numbers
         return {ext: 'dmg', mime: 'application/x-apple-diskimage'}
       }
