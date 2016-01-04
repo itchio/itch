@@ -14,6 +14,7 @@
     "grid.item.purchase_or_donate": "Bezahle oder spende für den Artikel", 
     "grid.item.queued": "Eingereiht", 
     "grid.item.report_problem": "Als defekt melden (Wird im Browser geöffnet)", 
+    "grid.item.retry": "Versuche, dies noch einmal herunterzuladen / zu installieren / zu starten", 
     "grid.item.running": "Läuft...", 
     "grid.item.uninstall": "Dieses Objekt jetzt deinstallieren", 
     "login.action.login": "Einloggen", 
