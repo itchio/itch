@@ -244,7 +244,7 @@ class GameCell extends ShallowComponent {
     let task = mori.get(cave, 'task')
     let progress = mori.get(cave, 'progress')
 
-    if (task === 'idle') {
+    if (task === 'idle' || task === 'awaken') {
       return t('grid.item.launch')
     }
     if (task === 'error') {
@@ -255,8 +255,14 @@ class GameCell extends ShallowComponent {
     }
 
     let res = t('grid.item.installing')
-    if (task === 'download') {
+    if (task === 'uninstall') {
+      res = t('grid.item.uninstalling')
+    }
+    if (task === 'download' || task === 'find-upload') {
       res = t('grid.item.downloading')
+    }
+    if (task === 'ask-before-install') {
+      res = t('grid.item.finalize_installation')
     }
     if (task === 'download-queued') {
       res = t('grid.item.queued')

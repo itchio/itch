@@ -7,9 +7,18 @@ let errors = require('../errors')
 let log = require('../../util/log')('installers/nsis')
 
 // NSIS docs: http://nsis.sourceforge.net/Docs/Chapter3.html
+// When ran without elevate, some NSIS installers will silently fail.
+// So, we run them with elevate all the time.
 
 let self = {
   install: async function (opts) {
+    if (!opts.has_user_blessing) {
+      throw new errors.Transition({
+        to: 'ask-before-install',
+        reason: `going to pop up an UAC dialog, need user's permission first`
+      })
+    }
+
     let inst = opts.archive_path
     let dest_path = opts.dest_path
 

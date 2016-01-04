@@ -435,7 +435,7 @@ $placeholder_link_color: #93C1F3;
         }
       }
 
-      &.cave_download, &.cave_download-queued, &.cave_install, &.cave_configure, &.cave_launch, &.cave_find-upload {
+      &.cave_download, &.cave_download-queued, &.cave_install, &.cave_configure, &.cave_launch, &.cave_find-upload, &.cave_uninstall {
         background-color: #222;
         font-weight: normal;
         text-shadow: none;
