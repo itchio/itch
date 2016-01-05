@@ -121,7 +121,7 @@ test('launch', t => {
     let dummy = make_dummy()
     t.mock(child_process).expects('spawn').returns(dummy)
     let p = launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
-    dummy.emit('close', {code: 0})
+    dummy.emit('close', 0)
     return p
   })
 
@@ -129,7 +129,7 @@ test('launch', t => {
     let dummy = make_dummy()
     t.mock(child_process).expects('spawn').returns(dummy)
     let p = launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
-    dummy.emit('close', {code: 127})
+    dummy.emit('close', 127)
     return t.rejects(p)
   })
 })
