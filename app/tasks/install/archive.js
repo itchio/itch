@@ -20,7 +20,8 @@ let is_tar = async function (path) {
 }
 
 let self = {
-  sevenzip_list: async function (archive_path) {
+  sevenzip_list: async function (logger, archive_path) {
+    let opts = {logger}
     let sizes = {}
     let total_size = 0
 
@@ -29,18 +30,21 @@ let self = {
       args: ['-slt', 'l', archive_path],
       split: '\n\n',
       ontoken: (token) => {
+        log(opts, `7za list: ${token}`)
         let item = object(token.split('\n').map((x) => x.replace(/\r$/, '').split(' = ')))
         if (!item.Size || !item.Path) return
         let item_path = path.normalize(item.Path)
         let size = parseInt(item.Size, 10)
 
         total_size += (sizes[item_path] = size)
-      }
+      },
+      logger
     })
     return {sizes, total_size}
   },
 
-  sevenzip_extract: async function (archive_path, dest_path, onprogress) {
+  sevenzip_extract: async function (logger, archive_path, dest_path, onprogress) {
+    let opts = {logger}
     let err_state = false
     let err
 
@@ -50,6 +54,7 @@ let self = {
       args: ['x', archive_path, '-o' + dest_path, '-y'],
       split: '\n',
       ontoken: (token) => {
+        log(opts, `7za extract: ${token}`)
         if (err_state) {
           if (!err) err = token
           return
@@ -64,13 +69,15 @@ let self = {
 
         let item_path = path.normalize(matches[1])
         onprogress(item_path)
-      }
+      },
+      logger
     })
 
     if (err) throw err
   },
 
   install: async function (opts) {
+    let logger = opts.logger
     let archive_path = opts.archive_path
     let dest_path = opts.dest_path
     let onprogress = opts.onprogress || noop
@@ -80,7 +87,7 @@ let self = {
     let extracted_size = 0
     let total_size = 0
 
-    let info = await self.sevenzip_list(archive_path)
+    let info = await self.sevenzip_list(logger, archive_path)
     total_size = info.total_size
     log(opts, `Archive contains ${Object.keys(info.sizes).length} files, ${total_size} total`)
 
@@ -89,7 +96,7 @@ let self = {
       let percent = extracted_size / total_size * 100
       onprogress({ extracted_size, total_size, percent })
     }
-    await self.sevenzip_extract(archive_path, dest_path, sevenzip_progress)
+    await self.sevenzip_extract(logger, archive_path, dest_path, sevenzip_progress)
 
     log(opts, `Done extracting ${archive_path}`)
     let files = await glob(`${dest_path}/**/*`, {nodir: true})
