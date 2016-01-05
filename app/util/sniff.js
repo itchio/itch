@@ -65,9 +65,12 @@ sniff.path = async function (file) {
     if (ext_matches) {
       ext = ext_matches[1].toLowerCase()
     }
+    console.log(`file / ext_matches / ext = ${file} / ${JSON.stringify(ext_matches) / JSON.stringify(ext)}`)
 
     let buf = await read_chunk(file, 0, 262)
     let sniffed = sniff(buf)
+    console.log(`sniffed = ${JSON.stringify(sniffed)}`)
+
     if (sniffed) {
       if (ext === 'dmg' && (sniffed.ext === 'bz2' || sniffed.ext === 'gz')) {
         // compressed .dmg have wrong magic numbers
