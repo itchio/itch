@@ -149,7 +149,7 @@ let self = {
     await mkdirp(dest_path)
 
     log(opts, `Copying all files from ${mountpoint} to ${dest_path}`)
-    let files = await glob(`**/*`, {cwd: mountpoint, nodir: true})
+    let files = await glob('**/*', {cwd: mountpoint, nodir: true})
     let num_files = files.length
     let copied_files = 0
 
