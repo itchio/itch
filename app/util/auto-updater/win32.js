@@ -1,35 +1,30 @@
 
 let os = require('../os')
 let reg = require('../reg')
+let shortcut = require('../shortcut')
 
 let self = {
   on_install: async () => {
-    // Optionally do things such as:
-    //
-    // - Install desktop and start menu shortcuts
-    // - Add your .exe to the PATH
-    // - Write to the registry for things like file associations and
-    //   explorer context menus
-    // Always quit when done
-
     await reg.install()
+    await shortcut.install()
+    return true
+  },
+
+  on_update: async () => {
+    await reg.update()
+    await shortcut.update()
     return true
   },
 
   on_uninstall: async () => {
-    // Undo anything you did in the --squirrel-install and
-    // --squirrel-updated handlers
-    // Always quit when done
-
     await reg.uninstall()
+    await shortcut.uninstall()
     return true
   },
 
   on_obsolete: async () => {
     // This is called on the outgoing version of your app before
-    // we update to the new version - it's the opposite of
-    // --squirrel-updated
-
+    // we update to the new version - it's the opposite of --squirrel-update
     return true
   },
 
@@ -37,8 +32,9 @@ let self = {
     let squirrel_command = os.cli_args()[1]
     switch (squirrel_command) {
       case '--squirrel-install':
-      case '--squirrel-updated':
         return await self.on_install()
+      case '--squirrel-updated':
+        return await self.on_update()
       case '--squirrel-uninstall':
         return await self.on_uninstall()
       case '--squirrel-obsolete':
