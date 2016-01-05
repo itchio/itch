@@ -89,8 +89,9 @@ let self = {
     log(opts, `Found appid ${appid}, uninstalling...`)
 
     let spawn_opts = {
-      command: 'arh',
+      command: 'elevate.exe',
       args: [
+        'arh.exe',
         '-uninstallAppSilent',
         appid
       ],
