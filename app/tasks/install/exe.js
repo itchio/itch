@@ -1,7 +1,6 @@
 
 let StreamSearch = require('streamsearch')
 let os = require('../../util/os')
-let file = require('../../util/file')
 
 let fstream = require('fstream')
 let _ = require('underscore')
@@ -88,6 +87,7 @@ let self = {
   external_sniff: async function (archive_path, needles) {
     // sample file_output:
     // ['PE32 executable (GUI) Intel 80386', 'for MS Windows', 'InstallShield self-extracting archive']
+    let file = require('../../util/file')
     let file_output = await file(archive_path)
     let detail = file_output[2]
 

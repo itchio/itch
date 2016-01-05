@@ -1,18 +1,19 @@
 
 let spawn = require('./spawn')
-let ibrew = require('./ibrew')
 let os = require('./os')
 
 let path = require('path')
 
 let file = async (file_path) => {
+  let ibrew = require('./ibrew')
+
   let args = [
     '--brief' // don't echo file name
   ]
   if (os.platform() === 'win32') {
     args = args.concat([
       // we ship our own magic file
-      '-m', path.join(ibrew.bin_path, 'magic.mgc')
+      '-m', path.join(ibrew.bin_path(), 'magic.mgc')
     ])
   }
   args.push(file_path)

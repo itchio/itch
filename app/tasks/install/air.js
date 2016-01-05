@@ -7,7 +7,6 @@ let AppActions = require('../../actions/app-actions')
 
 let errors = require('../errors')
 
-let ibrew = require('../../util/ibrew')
 let log = require('../../util/log')('installers/air')
 
 let path = require('path')
@@ -84,6 +83,7 @@ let self = {
 
     let logger = opts.logger
 
+    let ibrew = require('../../util/ibrew')
     let ibrew_opts = {
       logger,
       onstatus: (msg) => log(opts, `ibrew status: ${msg}`)
