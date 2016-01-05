@@ -92,7 +92,7 @@ let self = {
 
     let cave = opts.cave
     let appid = cave.air_appid
-    if (appid) {
+    if (!appid) {
       log(opts, `No appid, skipping arh uninstall`)
       return
     }
