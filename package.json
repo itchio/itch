@@ -1,4 +1,5 @@
-{ "name": "itch",
+{
+  "name": "itch",
   "productName": "itch",
   "version": "0.11.4",
   "description": "itch.io desktop client",
@@ -47,6 +48,7 @@
     "react": "0.14.3",
     "react-dom": "0.14.3",
     "read-chunk": "^1.0.1",
+    "replacestream": "^4.0.0",
     "rimraf": "^2.4.4",
     "shell-quote": "^1.4.3",
     "source-map-support": "^0.3.2",

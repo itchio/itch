@@ -30,9 +30,9 @@ let self = {
       args: ['-slt', 'l', archive_path],
       split: '\n\n',
       ontoken: (token) => {
-        log(opts, `7za list: ${token}`)
         let item = object(token.split('\n').map((x) => x.replace(/\r$/, '').split(' = ')))
         if (!item.Size || !item.Path) return
+        log(opts, `list: ${item.Size} | ${item.Path}`)
         let item_path = path.normalize(item.Path)
         let size = parseInt(item.Size, 10)
 
