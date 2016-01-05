@@ -3,6 +3,8 @@ let spawn = require('../../util/spawn')
 let glob = require('../../promised/glob')
 let fs = require('../../promised/fs')
 
+let CaveStore = require('../../stores/cave-store')
+
 let errors = require('../errors')
 
 let ibrew = require('../../util/ibrew')
@@ -55,19 +57,6 @@ let self = {
       let message = CODE_MESSAGES[code]
       throw new Error(`AIR installer error: ${message}`)
     }
-  },
-
-  uninstall: async function (opts) {
-    log(opts, `Grabbing adobe's Air Runtime Helper if needed...`)
-
-    let dest_path = opts.dest_path
-    let logger = opts.logger
-
-    let ibrew_opts = {
-      logger,
-      onstatus: (msg) => log(opts, `ibrew status: ${msg}`)
-    }
-    await ibrew.fetch(ibrew_opts, 'arh')
 
     log(opts, `Locating app manifest`)
 
@@ -86,7 +75,24 @@ let self = {
     }
 
     let appid = matches[1]
-    log(opts, `Found appid ${appid}, uninstalling...`)
+    log(opts, `Found appid ${appid}, remembering`)
+    CaveStore.cave_update(opts.id, {air_appid: appid})
+  },
+
+  uninstall: async function (opts) {
+    log(opts, `Grabbing adobe's Air Runtime Helper if needed...`)
+
+    let logger = opts.logger
+
+    let ibrew_opts = {
+      logger,
+      onstatus: (msg) => log(opts, `ibrew status: ${msg}`)
+    }
+    await ibrew.fetch(ibrew_opts, 'arh')
+
+    let cave = opts.cave
+    let appid = cave.air_appid
+    log(opts, `Uninstalling appid ${appid}`)
 
     let spawn_opts = {
       command: 'elevate.exe',
@@ -101,6 +107,8 @@ let self = {
     if (code !== 0) {
       throw new Error(`arh uninstall failed with code ${code}`)
     }
+
+    log(opts, `Uninstallation successful`)
   }
 }
 

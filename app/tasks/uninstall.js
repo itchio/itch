@@ -35,7 +35,7 @@ let self = {
 
     log(opts, `Uninstalling app in ${dest_path} from archive ${archive_path}`)
 
-    let core_opts = { logger, onerror, onprogress, archive_path, dest_path }
+    let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave }
 
     AppActions.cave_update(id, {launchable: false})
     await core.uninstall(core_opts)
