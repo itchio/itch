@@ -43,6 +43,13 @@ let self = {
         args: ['--version'],
         parser: /file-([0-9a-z.]*)/
       }
+    },
+    'arh': {
+      format: '7z',
+      version_check: {
+        args: [],
+        parser: /Version ([0-9a-z.]*)/
+      }
     }
   },
 

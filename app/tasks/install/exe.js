@@ -40,7 +40,8 @@ let self = {
     // we don't really use it to skip forward, it just allows us not to scan
     // entire buffers nodes gives us while reading the whole file
     'inno': 'Inno Setup Setup Data',
-    'nsis': 'Nullsoft.NSIS.exehead'
+    'nsis': 'Nullsoft.NSIS.exehead',
+    'air': 'META-INF/AIR/application.xml'
   },
 
   identify: async function (opts) {
