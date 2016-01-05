@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let contains = require('underscore').contains
 
@@ -23,7 +22,7 @@ test('os', t => {
   t.is(os.cli_args(), process.argv, 'cli args')
 
   t.case('check presence', t => {
-    return os.check_presence('npm', ['-v'])
+    return os.check_presence('node', ['-v'])
   })
 
   t.case('check absence', t => {
