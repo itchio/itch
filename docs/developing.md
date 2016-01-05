@@ -102,5 +102,6 @@ These environment variables will change the behavior of the app:
     Obviously, the backend has to agree with you.
   * `REMEMBER_ME_WHEN_IM_GONE=1` - don't wipe downloads when uninstalling.
     Useful for debugging install/uninstall routines.
+  * `THE_DEPTHS_OF_THE_SOUL=1` - print debug info when extracting certain archives
 
 [diego]: diego.md

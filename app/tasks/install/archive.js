@@ -19,6 +19,8 @@ let is_tar = async function (path) {
   return type && type.ext === 'tar'
 }
 
+let verbose = (process.env.THE_DEPTHS_OF_THE_SOUL === '1')
+
 let self = {
   sevenzip_list: async function (version, logger, archive_path) {
     let opts = {logger}
@@ -32,7 +34,9 @@ let self = {
       ontoken: (token) => {
         let item = object(token.split('\n').map((x) => x.replace(/\r$/, '').split(' = ')))
         if (!item.Size || !item.Path) return
-        log(opts, `list: ${item.Size} | ${item.Path}`)
+        if (verbose) {
+          log(opts, `list: ${item.Size} | ${item.Path}`)
+        }
         let item_path = path.normalize(item.Path)
         let size = parseInt(item.Size, 10)
 
@@ -62,7 +66,9 @@ let self = {
       args: ['x', archive_path, '-o' + dest_path, '-y'].concat(additional_args),
       split: '\n',
       ontoken: (token) => {
-        log(opts, `extract: ${token}`)
+        if (verbose) {
+          log(opts, `extract: ${token}`)
+        }
         if (err_state) {
           if (!err) err = token
           return
@@ -90,32 +96,33 @@ let self = {
     let dest_path = opts.dest_path
     let onprogress = opts.onprogress || noop
 
-    log(opts, `Extracting archive '${archive_path}' to '${dest_path}' with 7-Zip`)
+    log(opts, `extracting archive '${archive_path}' to '${dest_path}'`)
 
     let ibrew = require('../../util/ibrew')
     let version = await ibrew.get_local_version('7za')
-    log(opts, `Running 7-zip ${version}`)
+    log(opts, `...using 7-zip version ${version}`)
 
     let extracted_size = 0
     let total_size = 0
 
     let info = await self.sevenzip_list(version, logger, archive_path)
     total_size = info.total_size
-    log(opts, `Archive contains ${Object.keys(info.sizes).length} files, ${total_size} total`)
+    log(opts, `archive contains ${Object.keys(info.sizes).length} files, ${total_size} total`)
 
     let sevenzip_progress = (f) => {
       extracted_size += (info.sizes[f] || 0)
       let percent = extracted_size / total_size * 100
+      log(opts, `onprogress ${percent.toFixed(2)}%`)
       onprogress({ extracted_size, total_size, percent })
     }
     await self.sevenzip_extract(version, logger, archive_path, dest_path, sevenzip_progress)
 
-    log(opts, `Done extracting ${archive_path}`)
+    log(opts, `done extracting ${archive_path}`)
     let files = await glob(`${dest_path}/**/*`, {nodir: true})
 
     // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
     if (files.length === 1 && await is_tar(files[0])) {
-      log(opts, `Found tar: ${files[0]}, re-extracting`)
+      log(opts, `found tar: ${files[0]}, re-extracting`)
       let tar = files[0]
       let sub_opts = Object.assign({}, opts, {archive_path: tar})
 
@@ -130,7 +137,7 @@ let self = {
   uninstall: async function (opts) {
     let dest_path = opts.dest_path
 
-    log(opts, `Wiping directory ${dest_path}`)
+    log(opts, `wiping directory ${dest_path}`)
 
     await rimraf(dest_path, {
       disableGlob: true // rm -rf + globs sound like the kind of evening I don't like
