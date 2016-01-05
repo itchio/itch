@@ -37,16 +37,25 @@ let self = {
     let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave }
 
     AppActions.cave_update(id, {launchable: false})
-    await core.uninstall(core_opts)
-    AppActions.cave_update(id, {installed_archive_mtime: null})
 
-    log(opts, `Uninstallation successful`)
+    try {
+      await core.uninstall(core_opts)
+      log(opts, `Uninstallation successful`)
+    } catch (e) {
+      if (e instanceof core.UnhandledFormat) {
+        log(opts, e.message)
+        log(opts, `Imploding anyway`)
+        await rimraf(dest_path, {disableGlob: true})
+      } else {
+        // re-raise other errors
+        throw e
+      }
+    }
+    AppActions.cave_update(id, {installed_archive_mtime: null})
 
     if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
       log(opts, `Erasing archive ${archive_path}`)
-      await rimraf(archive_path, {
-        disableGlob: true // rm -rf + globs sound like the kind of evening I don't like
-      })
+      await rimraf(archive_path, {disableGlob: true})
     }
 
     log(opts, `Imploding ${dest_path}`)

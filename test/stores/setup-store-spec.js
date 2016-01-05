@@ -12,8 +12,14 @@ test('SetupStore', t => {
   let ibrew = {
     fetch: () => null
   }
+
+  let xdg_mime =  {
+    register_if_needed: async () => null
+  }
+
   let stubs = Object.assign({
     '../util/ibrew': ibrew,
+    '../util/xdg-mime': xdg_mime,
     '../actions/app-actions': AppActions,
     '../dispatcher/app-dispatcher': AppDispatcher
   }, electron)

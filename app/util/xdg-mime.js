@@ -9,20 +9,24 @@ let self = {
   mime_type: 'x-scheme-handler/itchio',
 
   async query (opts) {
+    let logger = opts.logger
     log(opts, `querying default handler for itchio:// protocol`)
     return await spawn({
       command: 'xdg-mime',
       args: ['query', 'default', self.mime_type],
-      ontoken: (tok) => log(opts, `query: ` + tok)
+      ontoken: (tok) => log(opts, `query: ` + tok),
+      logger
     })
   },
 
   async set_default (opts) {
+    let logger = opts.logger
     log(opts, `registering self as default handler for itchio:// protocol`)
     return await spawn({
       command: 'xdg-mime',
       args: ['default', 'itch.desktop', self.mime_type],
-      ontoken: (tok) => log(opts, `set_default: ` + tok)
+      ontoken: (tok) => log(opts, `set_default: ` + tok),
+      logger
     })
   },
 
