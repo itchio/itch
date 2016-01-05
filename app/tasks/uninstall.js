@@ -22,32 +22,30 @@ let self = {
     let onerror = opts.onerror || noop
     let onprogress = opts.onprogress || onprogress
 
-    try {
-      let cave = await CaveStore.find(id)
+    let cave = await CaveStore.find(id)
 
-      ensure(cave.upload_id, 'need upload id')
-      ensure(cave.uploads, 'need cached uploads')
+    ensure(cave.upload_id, 'need upload id')
+    ensure(cave.uploads, 'need cached uploads')
 
-      let upload = cave.uploads[cave.upload_id]
-      ensure(upload, 'need upload in upload cache')
+    let upload = cave.uploads[cave.upload_id]
+    ensure(upload, 'need upload in upload cache')
 
-      let dest_path = CaveStore.app_path(cave.install_location, id)
-      let archive_path = CaveStore.archive_path(cave.install_location, upload)
+    let dest_path = CaveStore.app_path(cave.install_location, id)
+    let archive_path = CaveStore.archive_path(cave.install_location, upload)
 
-      let core_opts = { logger, onerror, onprogress, archive_path, dest_path }
+    log(opts, `Uninstalling app in ${dest_path} from archive ${archive_path}`)
 
-      AppActions.cave_update(id, {launchable: false})
-      await core.uninstall(core_opts)
-      if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
-        await rimraf(archive_path, {
-          disableGlob: true // rm -rf + globs sound like the kind of evening I don't like
-        })
-      }
-    } catch (e) {
-      log(opts, `Something went wrong during uninstall: ${e.stack || e}`)
-      log(opts, `Imploding anyway.`)
+    let core_opts = { logger, onerror, onprogress, archive_path, dest_path }
+
+    AppActions.cave_update(id, {launchable: false})
+    await core.uninstall(core_opts)
+    if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
+      await rimraf(archive_path, {
+        disableGlob: true // rm -rf + globs sound like the kind of evening I don't like
+      })
     }
 
+    log(opts, `Uninstallation successful, imploding ${dest_path}`)
     AppActions.cave_implode(id)
   }
 }
