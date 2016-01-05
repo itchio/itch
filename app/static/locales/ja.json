@@ -69,6 +69,7 @@
     "preferences.install_location.compute_size": "ディスク内での要領を算出する", 
     "preferences.install_location.delete": "このインストール先を除外して内容物をアンインストールする", 
     "preferences.install_location.empty": "なし", 
+    "preferences.install_location.free_space": "空き容量", 
     "preferences.install_location.is_default": "新しく入手したアイテムは初期設定の場合、このフォルダにインストールされます。", 
     "preferences.install_location.item_count": "アイテム数", 
     "preferences.install_location.make_default": "インストール先を初期状態に復元する", 
