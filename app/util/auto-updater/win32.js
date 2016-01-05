@@ -1,4 +1,3 @@
-'use strict'
 
 let os = require('../os')
 let reg = require('../reg')

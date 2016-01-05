@@ -1,4 +1,3 @@
-'use strict'
 
 let noop = require('../../util/noop')
 let spawn = require('../../util/spawn')

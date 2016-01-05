@@ -1,4 +1,3 @@
-'use strict'
 
 let path = require('path')
 let object = require('underscore').object
