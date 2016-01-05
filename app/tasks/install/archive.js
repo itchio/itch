@@ -118,17 +118,19 @@ let self = {
     await self.sevenzip_extract(version, logger, archive_path, dest_path, sevenzip_progress)
 
     log(opts, `done extracting ${archive_path}`)
-    let files = await glob(`${dest_path}/**/*`, {nodir: true})
+    let files = await glob('*', {nodir: true, cwd: dest_path})
 
     // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
-    if (files.length === 1 && await is_tar(files[0])) {
-      log(opts, `found tar: ${files[0]}, re-extracting`)
-      let tar = files[0]
-      let sub_opts = Object.assign({}, opts, {archive_path: tar})
+    if (files.length === 1) {
+      let tar = path.join(dest_path, files[0])
+      if (await is_tar(files[0])) {
+        log(opts, `found tar: ${files[0]}, re-extracting`)
+        let sub_opts = Object.assign({}, opts, {archive_path: tar})
 
-      let res = await self.install(sub_opts)
-      await fs.unlinkAsync(tar)
-      return res
+        let res = await self.install(sub_opts)
+        await fs.unlinkAsync(tar)
+        return res
+      }
     }
 
     return {extracted_size, total_size}
