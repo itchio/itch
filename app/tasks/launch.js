@@ -31,7 +31,7 @@ let self = {
     let args = shell_quote.parse(full_command)
     let command = args.shift()
 
-    let res = await spawn({
+    let code = await spawn({
       command,
       args,
       ontoken: (tok) => log(opts, `stdout: ${tok}`),
@@ -39,8 +39,8 @@ let self = {
       opts: { cwd }
     })
 
-    if (res.code !== 0) {
-      let error = `process exited with code ${res.code}`
+    if (code !== 0) {
+      let error = `process exited with code ${code}`
       throw new Crash({ exe_path, error })
     }
     return `child completed successfully`
