@@ -36,8 +36,16 @@ let self = {
     let dest_path = CaveStore.app_path(cave.install_location, id)
     let archive_path = CaveStore.archive_path(cave.install_location, upload)
 
+    let archive_stat
+    try {
+      archive_stat = await fs.lstatAsync(archive_path)
+    } catch (e) {
+      log(opts, `where did our archive go? re-downloading...`)
+      throw new errors.Transition({to: 'download', reason: 'missing-download'})
+    }
+
     let imtime = cave.installed_archive_mtime
-    let amtime = (await fs.lstatAsync(archive_path)).mtime
+    let amtime = archive_stat.mtime
     log(opts, `comparing mtimes, installed = ${imtime}, archive = ${amtime}`)
 
     if (imtime && !(amtime > imtime)) {

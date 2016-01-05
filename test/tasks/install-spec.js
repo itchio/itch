@@ -60,7 +60,7 @@ test('install', t => {
   })
 
   let fs = {
-    lstatAsync: () => Promise.resolve({mtime: 123})
+    lstatAsync: () => Promise.resolve({mtime: new Date(123)})
   }
   stubs = Object.assign({
     './install/core': install_core,
@@ -68,14 +68,41 @@ test('install', t => {
   }, stubs)
   let install = proxyquire('../../app/tasks/install', stubs)
 
-  t.case(`validate upload_id`, t => {
+  t.case(`validate upload_id`, async t => {
     t.stub(CaveStore, 'find').resolves({})
-    return t.rejects(install.start({id: 42}))
+    let err
+    try {
+      await install.start({id: 42})
+    } catch (e) { err = e }
+    t.same(err, {to: 'find-upload', reason: 'need upload id'})
   })
 
-  t.case(`task should start`, t => {
+  t.case(`task should start`, async t => {
     t.stub(CaveStore, 'find').resolves(typical_install)
     t.mock(install_core).expects('install').resolves()
-    return install.start({id: 42})
+    await install.start({id: 42})
+  })
+
+  t.case(`validate archive presence`, async t => {
+    t.stub(CaveStore, 'find').resolves(typical_install)
+    t.stub(fs, 'lstatAsync').rejects('ENOENT and whatnot')
+    let err
+    try {
+      await install.start({id: 42})
+    } catch (e) { err = e }
+    t.same(err, {to: 'download', reason: 'missing-download'})
+  })
+
+  t.case(`does nothing when up to date`, async t => {
+    let uptodate_install = Object.assign({}, typical_install, {
+      installed_archive_mtime: new Date(123)
+    })
+    t.stub(CaveStore, 'find').resolves(uptodate_install)
+
+    let err
+    try {
+      await install.start({id: 42})
+    } catch (e) { err = e }
+    t.same(err, {to: 'idle', reason: 'up-to-date'})
   })
 })
