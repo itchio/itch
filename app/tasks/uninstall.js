@@ -39,13 +39,18 @@ let self = {
 
     AppActions.cave_update(id, {launchable: false})
     await core.uninstall(core_opts)
+    AppActions.cave_update(id, {installed_archive_mtime: null})
+
+    log(opts, `Uninstallation successful`)
+
     if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
+      log(opts, `Erasing archive ${archive_path}`)
       await rimraf(archive_path, {
         disableGlob: true // rm -rf + globs sound like the kind of evening I don't like
       })
     }
 
-    log(opts, `Uninstallation successful, imploding ${dest_path}`)
+    log(opts, `Imploding ${dest_path}`)
     AppActions.cave_implode(id)
   }
 }
