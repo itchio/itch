@@ -69,7 +69,7 @@ sniff.path = async function (file) {
     let buf = await read_chunk(file, 0, 262)
     let sniffed = sniff(buf)
     if (sniffed) {
-      if (sniffed.ext === 'bz2' || sniffed.ext === 'gz' && ext === 'dmg') {
+      if (ext === 'dmg' && (sniffed.ext === 'bz2' || sniffed.ext === 'gz')) {
         // compressed .dmg have wrong magic numbers
         return {ext: 'dmg', mime: 'application/x-apple-diskimage'}
       }
