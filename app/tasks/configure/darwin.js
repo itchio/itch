@@ -1,23 +1,27 @@
-'use strict'
 
 let Promise = require('bluebird')
+let path = require('path')
 
 let common = require('./common')
 let glob = require('../../promised/glob')
 
-let self = {
+let ignore_patterns = [
   // skip some typical junk we find in archives that's supposed
   // to be hidden / in trash / isn't in anyway relevant to what
   // we're trying to do
-  skip_junk: function (bundle_paths) {
-    return bundle_paths.filter((file) => !/__MACOSX/.test(file))
-  },
+  '**/__MACOSX/**'
+]
 
+let self = {
   configure: async function (cave_path) {
-    let bundles = await glob(`${cave_path}/**/*.app/`).then(self.skip_junk)
+    let bundles = await glob('**/*.app/', {
+      cwd: cave_path,
+      ignore: ignore_patterns
+    })
 
-    if (bundles.length > 0) {
-      await Promise.each(bundles, common.fix_execs)
+    if (bundles.length) {
+      let fixer = (x) => common.fix_execs(path.join(cave_path, x))
+      await Promise.each(bundles, fixer)
       return {executables: bundles}
     }
 
