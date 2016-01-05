@@ -35,33 +35,33 @@ let self = {
   },
 
   identify: async function (opts) {
-    let archive_path = opts.archive_path
-
-    let kind = await self.builtin_sniff(archive_path, self.builtin_needles)
+    let kind = await self.builtin_sniff(opts, self.builtin_needles)
     if (!kind) {
-      kind = await self.external_sniff(archive_path, self.external_needles)
+      kind = await self.external_sniff(opts, self.external_needles)
     }
 
     return kind
   },
 
-  builtin_sniff: async function (path, needles) {
+  builtin_sniff: async function (opts, needles) {
+    let archive_path = opts.archive_path
     let result = null
     let searches = []
 
-    let on_info = (k, isMatch, data, start, end) => {
+    let on_info = (k, v, isMatch, data, start, end) => {
       if (!isMatch) return
+      log(opts, `builtin_sniff: found needle ${v}`)
       result = k
     }
 
     for (let k of Object.keys(needles)) {
       let v = needles[k]
       let search = new StreamSearch(v)
-      search.on('info', _.partial(on_info, k))
+      search.on('info', _.partial(on_info, k, v))
       searches.push(search)
     }
 
-    let reader = fstream.Reader(path)
+    let reader = fstream.Reader(archive_path)
     reader.on('data', buf => {
       for (let search of searches) {
         search.push(buf)
@@ -84,7 +84,9 @@ let self = {
     'air': 'META-INF/AIR/application.xml'
   },
 
-  external_sniff: async function (archive_path, needles) {
+  external_sniff: async function (opts, needles) {
+    let archive_path = opts.archive_path
+
     // sample file_output:
     // ['PE32 executable (GUI) Intel 80386', 'for MS Windows', 'InstallShield self-extracting archive']
     let file = require('../../util/file')
@@ -95,7 +97,10 @@ let self = {
 
     for (let k of Object.keys(needles)) {
       let v = needles[k]
-      if (v.test(detail)) return k
+      if (detail === v) {
+        log(opts, `external_sniff: found needle ${v}`)
+        return k
+      }
     }
 
     return null
@@ -103,7 +108,7 @@ let self = {
 
   external_needles: {
     // Just plain old regex being run on file(1)'s output
-    'archive': /InstallShield self-extracting archive/
+    'archive': 'InstallShield self-extracting archive'
   }
 }
 

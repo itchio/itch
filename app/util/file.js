@@ -1,6 +1,7 @@
 
 let spawn = require('./spawn')
 let os = require('./os')
+let fs = require('../promised/fs')
 
 let path = require('path')
 
@@ -11,10 +12,21 @@ let file = async (file_path) => {
     '--brief' // don't echo file name
   ]
   if (os.platform() === 'win32') {
-    args = args.concat([
-      // we ship our own magic file
-      '-m', path.join(ibrew.bin_path(), 'magic.mgc')
-    ])
+    let vendored_magic_path = path.join(ibrew.bin_path(), 'magic.mgc')
+    let has_vendored_magic = true
+
+    try {
+      await fs.lstatAsync(vendored_magic_path)
+    } catch (e) {
+      has_vendored_magic = false
+    }
+
+    if (has_vendored_magic) {
+      args = args.concat([
+        // use our vendored magic file
+        '-m', vendored_magic_path
+      ])
+    }
   }
   args.push(file_path)
 
