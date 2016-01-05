@@ -55,8 +55,7 @@
     "stream-splitter": "^0.3.2",
     "streamsearch": "^0.1.2",
     "underscore": "^1.8.3",
-    "walk": "^2.3.9",
-    "win-spawn": "^2.0.0"
+    "walk": "^2.3.9"
   },
   "devDependencies": {
     "babel-plugin-syntax-async-functions": "^6.3.13",

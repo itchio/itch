@@ -1,7 +1,5 @@
 
-
-let Promise = require('bluebird')
-let spawn = require('win-spawn')
+let spawn = require('./spawn')
 
 let self = {
   platform: function () {
@@ -38,37 +36,34 @@ let self = {
     return process.argv
   },
 
-  check_presence: function (command, args, parser) {
+  check_presence: async function (command, args, parser) {
     if (typeof args === 'undefined') {
       args = []
     }
 
-    return new Promise((resolve, reject) => {
-      let child = spawn(command, args)
+    let stdout = ''
+    let stderr = ''
 
-      let stdout = ''
-      child.stdout.on('data', (data) => stdout += data)
+    let spawn_opts = {
+      command,
+      args,
+      ontoken: (tok) => stdout += tok,
+      onerrtoken: (tok) => stderr += tok
+    }
+    let code = await spawn(spawn_opts)
+    if (code !== 0) {
+      throw new Error(`${command} exited with code ${code}\n${stdout}\n${stderr}`)
+    }
 
-      let stderr = ''
-      child.stderr.on('data', (data) => stderr += data)
+    let parsed = null
+    if (parser) {
+      let matches = parser.exec(stdout + '\n' + stderr)
+      if (matches) {
+        parsed = matches[1]
+      }
+    }
 
-      child.on('error', (e) => null)
-      child.on('close', (code) => {
-        if (code === 0) {
-          let parsed = null
-          if (parser) {
-            let matches = (stdout + '\n' + stderr).match(parser)
-            if (matches) {
-              parsed = matches[1]
-            }
-          }
-
-          resolve({code, stdout, stderr, parsed})
-        } else {
-          reject(new Error(`${command} exited with code ${code}\n${stdout}\n${stderr}`))
-        }
-      })
-    })
+    return {code, stdout, stderr, parsed}
   }
 }
 
