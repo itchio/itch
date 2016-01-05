@@ -109,12 +109,6 @@ class User {
     return res
   }
 
-  async my_claimed_keys (data) {
-    let res = await this.request('get', `/my-claimed-keys`, data)
-    res.claimed_keys = self.ensure_array(res.claimed_keys)
-    return res
-  }
-
   me () {
     return this.request('get', `/me`)
   }
