@@ -5,6 +5,7 @@ let sniff = require('../../util/sniff')
 
 let archive = require('./archive')
 let msi = require('./msi')
+let dmg = require('./dmg')
 let exe = require('./exe')
 
 let self = {
@@ -16,6 +17,8 @@ let self = {
     '7z': archive,
     'tar': archive,
     'xz': archive,
+    // Apple disk images (DMG)
+    'dmg': dmg,
     // Microsoft packages
     'msi': msi,
     // Inno setup, NSIS
