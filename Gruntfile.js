@@ -3,8 +3,10 @@ var fs = require('fs')
 var path = require('path')
 var package_path = path.join(__dirname, 'package.json')
 var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version
-var ico_path = 'app/static/images/itchio.ico'
-var icns_path = 'app/static/images/itchio.icns'
+var ico_path = 'release/itchio.ico'
+var installer_gif_path = 'release/installer.gif'
+var icns_path = 'release/itchio.icns'
+
 var electron_version = '0.36.2'
 var out_dir = path.join('build', 'v' + version)
 var company_name = 'Itch Corp'
@@ -42,6 +44,7 @@ var electron_installer_common = {
   version: version,
   title: 'itch',
   iconUrl: 'http://raw.githubusercontent.com/itchio/itch/master/app/static/images/itchio.ico',
+  loadingGif: installer_gif_path,
   setupIcon: ico_path,
   remoteReleases: 'https://github.com/itchio/itch',
   signWithParams: '/v /s MY /n "Open Source Developer, Amos Wenger" /t http://timestamp.verisign.com/scripts/timstamp.dll',
