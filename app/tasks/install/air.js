@@ -3,7 +3,7 @@ let spawn = require('../../util/spawn')
 let glob = require('../../promised/glob')
 let fs = require('../../promised/fs')
 
-let CaveStore = require('../../stores/cave-store')
+let AppActions = require('../../actions/app-actions')
 
 let errors = require('../errors')
 
@@ -76,7 +76,7 @@ let self = {
 
     let appid = matches[1]
     log(opts, `Found appid ${appid}, remembering`)
-    CaveStore.cave_update(opts.id, {air_appid: appid})
+    AppActions.cave_update(opts.id, {air_appid: appid})
   },
 
   uninstall: async function (opts) {
@@ -112,6 +112,7 @@ let self = {
     if (code !== 0) {
       throw new Error(`arh uninstall failed with code ${code}`)
     }
+    AppActions.cave_update(opts.id, {air_appid: null})
 
     log(opts, `Uninstallation successful`)
   }
