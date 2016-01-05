@@ -80,7 +80,7 @@ let self = {
 
     let manifest_path = path.join(dest_path, candidates[0])
     let manifest_contents = await fs.readFileAsync(manifest_path, {encoding: 'utf8'})
-    let matches = ID_RE.execute(manifest_contents)
+    let matches = ID_RE.exec(manifest_contents)
     if (!matches) {
       throw new Error(`Could not extract app id from manifest at ${manifest_path}`)
     }
