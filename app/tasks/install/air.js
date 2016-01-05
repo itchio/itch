@@ -14,6 +14,17 @@ let path = require('path')
 
 let MANIFEST_GLOB = '**/META-INF/AIR/application.xml'
 let ID_RE = /<id>(.*)<\/id>/
+let CODE_MESSAGES = {
+  1: 'Successful, but restart required for completion',
+  2: 'Usage error (incorrect arguments)',
+  3: 'Runtime not found',
+  4: 'Loading runtime failed',
+  5: 'Unknown error',
+  6: 'Installation canceled',
+  7: 'Installation failed',
+  8: 'Installation failed; update already in progress',
+  9: 'Installation failed; application already installed'
+}
 
 let self = {
   install: async function (opts) {
@@ -38,7 +49,12 @@ let self = {
       ontoken: (token) => log(opts, token)
     }
     let code = await spawn(spawn_opts)
-    log(opts, `inno installer exited with code ${code}`)
+    log(opts, `air installer exited with code ${code}`)
+
+    if (code !== 0) {
+      let message = CODE_MESSAGES[code]
+      throw new Error(`AIR installer error: ${message}`)
+    }
   },
 
   uninstall: async function (opts) {
