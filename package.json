@@ -1,7 +1,6 @@
-{
-  "name": "itch",
+{ "name": "itch",
   "productName": "itch",
-  "version": "0.11.3",
+  "version": "0.11.4",
   "description": "itch.io desktop client",
   "keywords": [
     "itch.io",

@@ -25,7 +25,7 @@ let self = {
       },
       version_check: {
         args: [],
-        parser: /([0-9a-z.v]*)\s+Copyright/
+        parser: /([0-9a-z.v]*)(\s+beta)?[\s:]+Copyright/
       }
     },
     'butler': {
