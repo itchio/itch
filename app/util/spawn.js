@@ -33,13 +33,13 @@ function spawn (opts) {
   }
 
   if (opts.ontoken) {
-    let splitter = child.stdout.pipe(LFTransform()).pipe(StreamSplitter(split))
+    let splitter = child.stdout.pipe(new LFTransform()).pipe(StreamSplitter(split))
     splitter.encoding = 'utf8'
     splitter.on('token', opts.ontoken)
   }
 
   if (opts.onerrtoken) {
-    let splitter = child.stderr.pipe(LFTransform()).pipe(StreamSplitter(split))
+    let splitter = child.stderr.pipe(new LFTransform()).pipe(StreamSplitter(split))
     splitter.encoding = 'utf8'
     splitter.on('token', opts.onerrtoken)
   }

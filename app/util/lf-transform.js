@@ -1,4 +1,16 @@
 
-let replacestream = require('replacestream')
+let Transform = require('stream').Transform
 
-module.exports = () => replacestream('\r\n', '\n')
+class LFTransform extends Transform {
+  constructor (opts) {
+    super(opts)
+  }
+
+  _transform (chunk, encoding, done) {
+    let data = chunk.toString()
+    this.push(data.replace(/\r/g, ''))
+    done()
+  }
+}
+
+module.exports = LFTransform
