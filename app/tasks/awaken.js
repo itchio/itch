@@ -1,5 +1,5 @@
 
-let Transition = require('./errors').Transition
+let errors = require('./errors')
 
 let log = require('../util/log')('tasks/awaken')
 
@@ -19,20 +19,13 @@ async function start (opts) {
 
     let cave_new = await CaveStore.find(id)
     if (cave_new.upload_id !== old_upload_id) {
-      let reason = `better download available! (${old_upload_id} => ${cave_new.upload_id})`
-      throw new Transition({
-        to: 'download',
-        reason
-      })
+      log(opts, `better download available (${old_upload_id} => ${cave_new.upload_id})`)
+      throw new errors.Transition({ to: 'download', reason: 'fresher-download' })
     }
 
     // all good!
   } else {
-    let reason = 'Not installed successfully earlier, going through whole dance'
-    throw new Transition({
-      to: 'find-upload',
-      reason
-    })
+    throw new errors.Transition({ to: 'find-upload', reason: 'not-installed' })
   }
 }
 

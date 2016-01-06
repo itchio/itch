@@ -10,7 +10,6 @@ let user = {
   game_uploads: noop,
   download_key_uploads: noop,
   my_owned_keys: noop,
-  my_claimed_keys: noop,
   my_games: noop,
   my_collections: noop,
   collection_games: noop

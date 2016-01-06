@@ -1,5 +1,4 @@
 
-
 let app = require('electron').app
 let path = require('path')
 let fstream = require('fstream')
@@ -26,7 +25,7 @@ let self = {
       },
       version_check: {
         args: [],
-        parser: /([0-9a-z.v]*)\s+Copyright/
+        parser: /([0-9a-z.v]*)(\s+beta)?[\s:]+Copyright/
       }
     },
     'butler': {
@@ -42,6 +41,13 @@ let self = {
       version_check: {
         args: ['--version'],
         parser: /file-([0-9a-z.]*)/
+      }
+    },
+    'arh': {
+      format: '7z',
+      version_check: {
+        args: [],
+        parser: /Version ([0-9a-z.]*)/
       }
     }
   },
@@ -80,6 +86,7 @@ let self = {
   },
 
   normalize_version: (version) => {
+    if (!version) return version
     return version.replace(/^v/, '')
   },
 
@@ -123,9 +130,28 @@ let self = {
           return reject(err || `status code: ${res.statusCode}`)
         }
         let version = res.body.toString('utf8').replace(/\s/g, '')
-        resolve(version)
+        resolve(self.normalize_version(version))
       })
     })
+  },
+
+  get_local_version: async (name) => {
+    let formula = self.formulas[name]
+
+    let check = Object.assign({}, {
+      args: ['-V'],
+      parser: /([a-zA-Z0-9\.]+)/
+    }, formula.version_check || {})
+
+    console.log(`Getting ${name}'s version with check ${JSON.stringify(check, null, 2)}'`)
+
+    try {
+      let info = await os.check_presence(name, check.args, check.parser)
+      console.log(`Got info ${JSON.stringify(info, null, 2)}`)
+      return self.normalize_version(info.parsed)
+    } catch (err) {
+      return null
+    }
   },
 
   fetch: async (opts, name) => {
@@ -146,7 +172,7 @@ let self = {
     let download_version = async (version) => {
       let archive_name = self.archive_name(name)
       let archive_path = path.join(self.bin_path(), archive_name)
-      let archive_url = `${channel}/${version}/${archive_name}`
+      let archive_url = `${channel}/v${version}/${archive_name}`
       onstatus('login.status.dependency_install', 'download', {name, version})
       log(opts, `${name}: downloading '${version}' from ${archive_url}`)
 
@@ -164,21 +190,14 @@ let self = {
     onstatus('login.status.dependency_check', 'stopwatch')
     let get_latest_version = partial(self.get_latest_version, channel)
 
-    let check = Object.assign({
-      args: ['-V'],
-      parser: /([a-zA-Z0-9\.]+)/
-    }, formula.version_check || {})
-    let info
+    let local_version = await self.get_local_version(name)
 
-    try {
-      info = await os.check_presence(name, check.args, check.parser)
-    } catch (err) {
+    if (!local_version) {
       if (formula.on_missing) formula.on_missing()
       log(opts, `${name}: missing, downloading latest`)
       return await download_version(await get_latest_version())
     }
 
-    let local_version = info.parsed
     log(opts, `${name}: have local version '${local_version}'`)
 
     let latest_version

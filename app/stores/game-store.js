@@ -1,6 +1,4 @@
 
-
-let Promise = require('bluebird')
 let _ = require('underscore')
 
 let Store = require('./store')
@@ -51,11 +49,7 @@ async function fetch_games (payload) {
 
   if (path === 'owned') {
     cache_owned_games()
-
-    await Promise.all([
-      fetch_keys('owned_keys'),
-      fetch_keys('claimed_keys')
-    ])
+    await fetch_owned_keys()
   } else if (path === 'caved') {
     cache_caved_games()
   } else if (path === 'dashboard') {
@@ -132,17 +126,20 @@ async function fetch_collection_games (id, _fetched_at, page, game_ids) {
   }
 }
 
-async function fetch_keys (type, page) {
+async function fetch_owned_keys (page) {
   if (typeof page === 'undefined') {
     page = 1
   }
 
-  log(opts, `fetch_keys(${type}, ${page})`)
+  log(opts, `fetch_owned_keys(${page})`)
 
   let user = CredentialsStore.get_current_user()
-  let keys = (await user[`my_${type}`]({page}))[type]
+  let res = await user.my_owned_keys({page})
+  let keys = res.owned_keys
 
-  if (keys.length) fetch_keys(type, page + 1)
+  if (keys.length) {
+    fetch_owned_keys(page + 1)
+  }
 
   await db.save_download_keys(keys)
   cache_owned_games()

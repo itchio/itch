@@ -1,28 +1,32 @@
-'use strict'
 
 let log = require('../../util/log')('tasks/install')
 let sniff = require('../../util/sniff')
 
-let archive = require('./archive')
-let msi = require('./msi')
-let dmg = require('./dmg')
-let exe = require('./exe')
+let ExtendableError = require('es6-error')
+
+class UnhandledFormat extends ExtendableError {
+  constructor (operation, archive_path) {
+    super(`don't know how to ${operation} ${archive_path}`)
+  }
+}
 
 let self = {
+  UnhandledFormat,
+
   installer_for_ext: {
     // Generic archives
-    'zip': archive,
-    'gz': archive,
-    'bz2': archive,
-    '7z': archive,
-    'tar': archive,
-    'xz': archive,
+    'zip': 'archive',
+    'gz': 'archive',
+    'bz2': 'archive',
+    '7z': 'archive',
+    'tar': 'archive',
+    'xz': 'archive',
     // Apple disk images (DMG)
-    'dmg': dmg,
+    'dmg': 'dmg',
     // Microsoft packages
-    'msi': msi,
+    'msi': 'msi',
     // Inno setup, NSIS
-    'exe': exe
+    'exe': 'exe'
   },
 
   install: async function (opts) {
@@ -37,15 +41,19 @@ let self = {
     let archive_path = opts.archive_path
     let type = await sniff.path(archive_path)
 
-    if (!type) throw new Error(`don't know how to ${operation} ${archive_path}`)
+    if (!type) {
+      throw new UnhandledFormat(operation, archive_path)
+    }
 
     log(opts, `type of ${archive_path}: ${JSON.stringify(type)}`)
 
-    let installer = self.installer_for_ext[type.ext]
-    if (installer) {
+    let installer_name = self.installer_for_ext[type.ext]
+
+    if (installer_name) {
+      let installer = require(`./${installer_name}`)
       await installer[operation](opts)
     } else {
-      throw new Error(`don't know how to ${operation} ${archive_path}: ${JSON.stringify(type)}`)
+      throw new UnhandledFormat(operation, `${archive_path} of type ${JSON.stringify(type)}`)
     }
   }
 }

@@ -64,16 +64,17 @@ sniff.path = async function (file) {
     let ext_matches = /\.([0-9a-z]+)$/i.exec(file)
     if (ext_matches) {
       ext = ext_matches[1].toLowerCase()
+
+      if (ext === 'dmg') {
+        // compressed .dmg have wrong magic numbers, go bye xtension
+        return {ext: 'dmg', mime: 'application/x-apple-diskimage'}
+      }
     }
 
     let buf = await read_chunk(file, 0, 262)
     let sniffed = sniff(buf)
-    if (sniffed) {
-      if (sniffed.ext === 'bz2' || sniffed.ext === 'gz' && ext === 'dmg') {
-        // compressed .dmg have wrong magic numbers
-        return {ext: 'dmg', mime: 'application/x-apple-diskimage'}
-      }
 
+    if (sniffed) {
       return sniffed
     }
 

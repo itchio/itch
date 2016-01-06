@@ -25,8 +25,8 @@ function make_tray () {
   let icon_path = `${__dirname}/../static/images/itchio-tray-small.png`
   tray = new Tray(path.resolve(icon_path))
   tray.setToolTip('itch.io')
-  tray.on('clicked', () => AppActions.focus_window())
-  tray.on('double-clicked', () => AppActions.focus_window())
+  tray.on('click', () => AppActions.focus_window())
+  tray.on('double-click', () => AppActions.focus_window())
   TrayStore.emit_change()
 }
 

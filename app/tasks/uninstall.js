@@ -1,5 +1,4 @@
 
-
 let noop = require('../util/noop')
 let rimraf = require('../promised/rimraf')
 let log = require('../util/log')('tasks/uninstall')
@@ -22,32 +21,44 @@ let self = {
     let onerror = opts.onerror || noop
     let onprogress = opts.onprogress || onprogress
 
+    let cave = await CaveStore.find(id)
+
+    ensure(cave.upload_id, 'need upload id')
+    ensure(cave.uploads, 'need cached uploads')
+
+    let upload = cave.uploads[cave.upload_id]
+    ensure(upload, 'need upload in upload cache')
+
+    let dest_path = CaveStore.app_path(cave.install_location, id)
+    let archive_path = CaveStore.archive_path(cave.install_location, upload)
+
+    log(opts, `Uninstalling app in ${dest_path} from archive ${archive_path}`)
+
+    let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave }
+
+    AppActions.cave_update(id, {launchable: false})
+
     try {
-      let cave = await CaveStore.find(id)
-
-      ensure(cave.upload_id, 'need upload id')
-      ensure(cave.uploads, 'need cached uploads')
-
-      let upload = cave.uploads[cave.upload_id]
-      ensure(upload, 'need upload in upload cache')
-
-      let dest_path = CaveStore.app_path(cave.install_location, id)
-      let archive_path = CaveStore.archive_path(cave.install_location, upload)
-
-      let core_opts = { logger, onerror, onprogress, archive_path, dest_path }
-
-      AppActions.cave_update(id, {launchable: false})
       await core.uninstall(core_opts)
-      if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
-        await rimraf(archive_path, {
-          disableGlob: true // rm -rf + globs sound like the kind of evening I don't like
-        })
-      }
+      log(opts, `Uninstallation successful`)
     } catch (e) {
-      log(opts, `Something went wrong during uninstall: ${e.stack || e}`)
-      log(opts, `Imploding anyway.`)
+      if (e instanceof core.UnhandledFormat) {
+        log(opts, e.message)
+        log(opts, `Imploding anyway`)
+        await rimraf(dest_path, {disableGlob: true})
+      } else {
+        // re-raise other errors
+        throw e
+      }
+    }
+    AppActions.cave_update(id, {installed_archive_mtime: null})
+
+    if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
+      log(opts, `Erasing archive ${archive_path}`)
+      await rimraf(archive_path, {disableGlob: true})
     }
 
+    log(opts, `Imploding ${dest_path}`)
     AppActions.cave_implode(id)
   }
 }

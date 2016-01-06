@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let Promise = require('bluebird')
@@ -109,5 +108,23 @@ test('ibrew', t => {
     t.stub(os, 'check_presence').rejects('Boo')
     t.stub(needle, 'get').callsArgWith(1, null, {statusCode: 200, body: '1.0'})
     return t.rejects(ibrew.fetch(opts, '7za'))
+  })
+
+  t.case('7za version parsing', t => {
+    let cases = {
+      // Windows 32-bit (7zip.org download)
+      '7-Zip (a) [32] 15.14 : Copyright (c) 1999-2015 Igor Pavlov : 2015-12-31': '15.14',
+      // Windows 64-bit (msys2)
+      '7-Zip (a) 9.38 beta  Copyright (c) 1999-2014 Igor Pavlov  2015-01-03': '9.38',
+      // OSX 64-bit, Ubuntu 64-bit
+      '7-Zip (A) [64] 9.20  Copyright (c) 1999-2010 Igor Pavlov  2010-11-18': '9.20'
+    }
+
+    let parser = ibrew.formulas['7za'].version_check.parser
+    for (let k of Object.keys(cases)) {
+      let expected_version = cases[k]
+      let parsed_version = parser.exec(k)[1]
+      t.is(parsed_version, expected_version, `parses version ${expected_version}`)
+    }
   })
 })

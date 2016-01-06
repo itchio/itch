@@ -29,7 +29,7 @@ test('GameStore', t => {
   t.case('fetch owned', async t => {
     let mock = t.mock(CredentialsStore.get_current_user())
 
-    ;['owned_keys', 'claimed_keys'].forEach((kind) => {
+    ;['owned_keys'].forEach((kind) => {
       mock.expects(`my_${kind}`).twice()
         .onFirstCall() .resolves({[kind]: [1, 2, 3]})
         .onSecondCall().resolves({[kind]: []})

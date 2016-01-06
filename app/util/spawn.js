@@ -1,8 +1,8 @@
 
-
 let Promise = require('bluebird')
 let child_process = require('child_process')
 let StreamSplitter = require('stream-splitter')
+let LFTransform = require('./lf-transform')
 
 let log = require('./log')('spawn')
 
@@ -33,13 +33,13 @@ function spawn (opts) {
   }
 
   if (opts.ontoken) {
-    let splitter = child.stdout.pipe(StreamSplitter(split))
+    let splitter = child.stdout.pipe(LFTransform()).pipe(StreamSplitter(split))
     splitter.encoding = 'utf8'
     splitter.on('token', opts.ontoken)
   }
 
   if (opts.onerrtoken) {
-    let splitter = child.stderr.pipe(StreamSplitter(split))
+    let splitter = child.stderr.pipe(LFTransform()).pipe(StreamSplitter(split))
     splitter.encoding = 'utf8'
     splitter.on('token', opts.onerrtoken)
   }
