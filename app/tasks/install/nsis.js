@@ -3,6 +3,8 @@ let spawn = require('../../util/spawn')
 let find_uninstallers = require('./find-uninstallers')
 
 let errors = require('../errors')
+let fstream = require('fstream')
+let rimraf = require('../../promised/rimraf')
 
 let log = require('../../util/log')('installers/nsis')
 
@@ -22,6 +24,24 @@ let self = {
     let inst = opts.archive_path
     let dest_path = opts.dest_path
 
+    let remove_after_usage = false
+
+    if (!/\.exe$/i.test(inst)) {
+      // copy to temporary file, otherwise windows will refuse to open them
+      // cf. https://github.com/itchio/itch/issues/322
+      inst += '.exe'
+      let f = fstream.Reader(opts.archive_path)
+      f.pipe(fstream.Writer({path: inst}))
+
+      let p = new Promise((resolve, reject) => {
+        f.on('end', resolve)
+        f.on('error', reject)
+      })
+      await p
+
+      remove_after_usage = true
+    }
+
     let code = await spawn({
       command: 'elevate.exe',
       args: [
@@ -32,7 +52,16 @@ let self = {
       ],
       ontoken: (tok) => log(opts, `${inst}: ${tok}`)
     })
-    log(opts, `elevate / nsis installer exited with code ${code}`)
+
+    if (remove_after_usage) {
+      await rimraf(inst, {disableGlob: true})
+    }
+
+    if (code !== 0) {
+      throw new Error(`elevate / nsis installer exited with code ${code}`)
+    }
+
+    log(opts, `elevate/nsis installer completed successfully`)
   },
 
   uninstall: async function (opts) {

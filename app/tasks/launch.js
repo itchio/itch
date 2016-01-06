@@ -1,4 +1,5 @@
 
+let Promise = require('bluebird')
 
 let path = require('path')
 let clone = require('clone')
@@ -6,6 +7,7 @@ let shell_quote = require('shell-quote')
 
 let os = require('../util/os')
 let spawn = require('../util/spawn')
+let fs = require('../promised/fs')
 
 let log = require('../util/log')('tasks/launch')
 let configure = require('./configure')
@@ -50,11 +52,33 @@ let self = {
     return `"${arg.replace(/"/g, '\\"')}"`
   },
 
+  sort_by_weight: async function (app_path, execs) {
+    let weights = {}
+
+    console.log(`Starting to sort by weight`)
+    let t1 = +new Date()
+    let f = async (exe) => {
+      let exe_path = path.join(app_path, exe)
+      let stats = await fs.statAsync(exe_path)
+      weights[exe] = stats.size
+    }
+    await Promise.resolve(execs).map(f, {concurrency: 4})
+    console.log(`Done sorting by weight!`)
+
+    let t2 = +new Date()
+    console.log(`Took ${t2 - t1} to stat the things`)
+
+    // sort from heaviest to lightest
+    return clone(execs).sort((a, b) => weights[b] - weights[a])
+  },
+
   sort_by_depth: function (execs) {
     let depths = {}
     for (let exe of execs) {
       depths[exe] = path.normalize(exe).split(path.sep).length
     }
+
+    // sort from least amount of path elements to most
     return clone(execs).sort((a, b) => depths[a] - depths[b])
   },
 
@@ -67,6 +91,8 @@ let self = {
       }
       scores[exe] = score
     }
+
+    // sort from most score to least
     return clone(execs).sort((a, b) => scores[b] - scores[a])
   },
 
@@ -94,13 +120,15 @@ let self = {
     }
   },
 
-  launch_cave: function (opts, cave) {
-    let by_score = self.sort_by_score(cave.executables)
+  launch_cave: async function (opts, cave) {
+    let app_path = CaveStore.app_path(cave.install_location, opts.id)
+
+    let by_weight = await self.sort_by_weight(app_path, cave.executables)
+    let by_score = self.sort_by_score(by_weight)
     let by_depth = self.sort_by_depth(by_score)
     let sorted = by_depth
 
     log(opts, `executables (from best to worst): ${JSON.stringify(sorted, null, 2)}`)
-    let app_path = CaveStore.app_path(cave.install_location, opts.id)
     let exe_path = path.join(app_path, sorted[0])
     return self.launch(exe_path, [], opts)
   },

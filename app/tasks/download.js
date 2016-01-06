@@ -38,18 +38,17 @@ async function start (opts) {
   let url
 
   try {
-    url = (await (cave.key
-      ? client.download_upload_with_key(cave.key.id, cave.upload_id)
-      : client.download_upload(cave.upload_id)
-    )).url
+    if (cave.key) {
+      url = (await client.download_upload_with_key(cave.key.id, cave.upload_id)).url
+    } else {
+      url = (await client.download_upload(cave.upload_id)).url
+    }
   } catch (e) {
-    if (e.errors) {
-      if (e.errors[0] === 'invalid upload') {
-        throw new Transition({
-          to: 'find-upload',
-          reason: 'upload-gone'
-        })
-      }
+    if (e.errors && e.errors[0] === 'invalid upload') {
+      throw new Transition({
+        to: 'find-upload',
+        reason: 'upload-gone'
+      })
     }
     throw e
   }
