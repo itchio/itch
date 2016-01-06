@@ -1,4 +1,3 @@
-'use strict'
 
 let log = require('../../util/log')('install/naked')
 let rimraf = require('../../promised/rimraf')

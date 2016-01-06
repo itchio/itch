@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let path = require('path')
@@ -61,65 +60,49 @@ test('configure (each platform)', t => {
   let win32 = proxyquire('../../app/tasks/configure/win32', stubs)
   let win32_path = fixture.path('configure/win32')
 
-  t.case('win32 finds bats and exes', t => {
-    let spy = t.spy()
-    return win32.configure(win32_path).then(spy).then(_ => {
-      let names = [
-        'game.exe', 'launcher.bat',
-        path.join('resources', 'editor.exe'),
-        path.join('resources', 'quite', 'deep', 'share.bat')
-      ]
-      let paths = names.map(x => path.join(win32_path, x))
-      t.is(1, spy.callCount)
-      t.samePaths(paths, spy.getCall(0).args[0].executables)
-    })
+  t.case('win32 finds bats and exes', async t => {
+    let res = await win32.configure(win32_path)
+    let names = [
+      'game.exe', 'launcher.bat',
+      path.join('resources', 'editor.exe'),
+      path.join('resources', 'quite', 'deep', 'share.bat')
+    ]
+    t.samePaths(res.executables, names)
   })
 
   let darwin = proxyquire('../../app/tasks/configure/darwin', stubs)
   let darwin_path = fixture.path('configure/darwin')
 
-  t.case('darwin finds app bundles', t => {
-    let spy = t.spy()
-    return darwin.configure(darwin_path).then(spy).then(_ => {
-      let names = [
-        'Some Grand Game.app/'
-      ]
-      let paths = names.map(x => `${darwin_path}/${x}`)
-      t.is(1, spy.callCount)
-      t.samePaths(paths, spy.getCall(0).args[0].executables)
-    })
+  t.case('darwin finds app bundles', async t => {
+    let res = await darwin.configure(darwin_path)
+    let names = [
+      'Some Grand Game.app/'
+    ]
+    t.samePaths(res.executables, names)
   })
 
   let linux = proxyquire('../../app/tasks/configure/linux', stubs)
   let linux_path = fixture.path('configure/linux')
 
-  t.case('darwin finds binaries when no app bundles', t => {
-    let spy = t.spy()
-    return darwin.configure(linux_path).then(spy).then(_ => {
-      let names = [
-        'bin/game32',
-        'bin/game64',
-        'OpenHexagon',
-        'quine'
-      ]
-      let paths = names.map(x => `${linux_path}/${x}`)
-      t.is(1, spy.callCount)
-      t.samePaths(paths, spy.getCall(0).args[0].executables)
-    })
+  t.case('darwin finds binaries when no app bundles', async t => {
+    let res = await darwin.configure(linux_path)
+    let names = [
+      'bin/game32',
+      'bin/game64',
+      'OpenHexagon',
+      'quine'
+    ]
+    t.samePaths(res.executables, names)
   })
 
-  t.case('linux finds scripts & binaries', t => {
-    let spy = t.spy()
-    return linux.configure(linux_path).then(spy).then(_ => {
-      let names = [
-        'bin/game32',
-        'bin/game64',
-        'OpenHexagon',
-        'quine'
-      ]
-      let paths = names.map(x => `${linux_path}/${x}`)
-      t.is(1, spy.callCount)
-      t.samePaths(paths, spy.getCall(0).args[0].executables)
-    })
+  t.case('linux finds scripts & binaries', async t => {
+    let res = await linux.configure(linux_path)
+    let names = [
+      'bin/game32',
+      'bin/game64',
+      'OpenHexagon',
+      'quine'
+    ]
+    t.samePaths(res.executables, names)
   })
 })

@@ -1,5 +1,4 @@
 
-
 let path = require('path')
 
 let spawn = require('./spawn')
@@ -14,11 +13,6 @@ let base = `HKCU\\Software\\Classes\\itchio`
 let system_root = process.env.SystemRoot || 'missing-system-root'
 let system32_path = path.join(system_root, 'System32')
 let reg_path = path.join(system32_path, 'reg.exe')
-
-let app_folder = path.resolve(process.execPath, '..')
-let root_folder = path.resolve(app_folder, '..')
-let update_exe_path = path.join(root_folder, 'Update.exe')
-let exe_name = path.basename(process.execPath)
 
 let self = {
 
@@ -51,16 +45,8 @@ let self = {
     })
   },
 
-  update_run: async function (args) {
-    await spawn({
-      command: update_exe_path,
-      args
-    })
-  },
-
-  install: async function (opts) {
+  install: async function () {
     try {
-      await self.update_run(['--createShortcut', exe_name])
       await self.reg_add_default(base, 'URL:itch.io protocol')
       await self.reg_add_empty(base, 'URL protocol')
       await self.reg_add_default(`${base}\\DefaultIcon`, 'itch.exe')
@@ -70,9 +56,12 @@ let self = {
     }
   },
 
+  update: async function () {
+    await self.install()
+  },
+
   uninstall: async function () {
     try {
-      await self.update_run(['--removeShortcut', exe_name])
       await self.reg_delete_all(base)
     } catch (e) {
       log(opts, `Could not register itchio:// as default protocol handler: ${e.stack || e}`)

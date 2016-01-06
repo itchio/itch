@@ -26,12 +26,12 @@ test('api', t => {
   let uri = 'http://example.org/yo'
 
   t.case('can GET', async t => {
-    let res = await client.request('GET', 'yo', {b: 11})
+    await client.request('GET', 'yo', {b: 11})
     sinon.assert.calledWith(request, 'GET', uri, {b: 11})
   })
 
   t.case('can POST', async t => {
-    let res = await client.request('POST', 'yo', {b: 22})
+    await client.request('POST', 'yo', {b: 22})
     sinon.assert.calledWith(request, 'POST', uri, {b: 22})
   })
 
@@ -89,10 +89,6 @@ test('api', t => {
     test_api(
       'my_owned_keys', [],
       ['get', '/my-owned-keys']
-    )
-    test_api(
-      'my_claimed_keys', [],
-      ['get', '/my-claimed-keys']
     )
     test_api(
       'me', [],

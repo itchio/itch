@@ -1,8 +1,4 @@
 
-
-let path = require('path')
-let partial = require('underscore').partial
-
 let os = require('../util/os')
 
 let log = require('../util/log')('tasks/configure')
@@ -33,7 +29,6 @@ let self = {
     log(opts, `configuring ${app_path}`)
 
     let executables = (await self.configure(app_path)).executables
-    executables = executables.map(partial(path.relative, app_path))
 
     AppActions.cave_update(id, {executables})
     return executables.length + ' candidates'
