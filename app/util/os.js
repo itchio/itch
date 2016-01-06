@@ -47,8 +47,8 @@ let self = {
     let spawn_opts = {
       command,
       args,
-      ontoken: (tok) => stdout += tok,
-      onerrtoken: (tok) => stderr += tok
+      ontoken: (tok) => stdout += '\n' + tok,
+      onerrtoken: (tok) => stderr += '\n' + tok
     }
     let code = await spawn(spawn_opts)
     if (code !== 0) {
