@@ -13,7 +13,7 @@ test('SetupStore', t => {
     fetch: () => null
   }
 
-  let xdg_mime =  {
+  let xdg_mime = {
     register_if_needed: async () => null
   }
 
@@ -37,7 +37,7 @@ test('SetupStore', t => {
       if (name === 'butler') return Promise.reject('Ha!')
       return Promise.resolve(null)
     })
-    t.mock(AppActions).expects('setup_status').withArgs('login.status.error', 'error', { error: 'Ha!' })
+    t.mock(AppActions).expects('setup_status').withArgs('login.status.setup_failure', 'error', { error: 'Ha!' })
     return handler({ action_type: AppConstants.WINDOW_READY })
   })
 })
