@@ -187,10 +187,11 @@ let self = {
       let done = finalhandler(req, res)
       serve(req, res, done)
     })
-    server.listen(0)
+    let port
+    server.listen(0) // let node/os assign random port
     server.on('listening', function() {
-      let port = server.address().port
-      log(opts, `serving on port ${port}`)
+      port = server.address().port
+      log(opts, `serving game on port ${port}`)
       win.loadURL(`http://localhost:${port}/index.html`)
       if (process.env.DEVTOOLS === '1') {
         win.webContents.openDevTools({detach: true})
@@ -199,6 +200,8 @@ let self = {
 
     return new Promise((resolve, reject) => {
       win.on('close', (e) => {
+        log(opts, `shutting down http server on port ${port}`)
+        server.close()
         resolve('browser window closed')
       })
     })
