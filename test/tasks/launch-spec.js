@@ -67,6 +67,22 @@ test('launch', t => {
     return launch.start(opts)
   })
 
+  t.case('ignores uninstallers', t => {
+    t.stub(CaveStore, 'find').resolves({
+      executables: [ 'uninstall.exe', 'game.exe' ]
+    })
+    t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/game.exe')).resolves('Done!')
+    return launch.start(opts)
+  })
+
+  t.case('ignores dxwebsetup', t => {
+    t.stub(CaveStore, 'find').resolves({
+      executables: [ 'dxwebsetup.exe', 'game.exe' ]
+    })
+    t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/game.exe')).resolves('Done!')
+    return launch.start(opts)
+  })
+
   t.case('reconfigures as needed', t => {
     let find = t.stub(CaveStore, 'find')
     find.resolves({ executables: [] })
