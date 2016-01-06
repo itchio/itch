@@ -6,7 +6,7 @@ let Store = require('./store')
 let AppActions = require('../actions/app-actions')
 
 let i18next = require('i18next')
-let backend = require('i18next-node-fs-backend')
+let backend = require('../i18next/backend')
 
 let path = require('path')
 let fs = require('../promised/fs')
@@ -34,7 +34,7 @@ let i18n_opts = {
   returnEmptyString: false,
   backend: {
     // TODO: refresh locales from github
-    loadPath: `${locales_dir}/{{lng}}.json`
+    loadPath: locales_dir
   }
 }
 i18next.use(backend).init(i18n_opts, on_error)

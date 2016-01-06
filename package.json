@@ -34,7 +34,6 @@
     "glob": "^6.0.1",
     "humanize-plus": "^1.5.0",
     "i18next": "^2.0.4",
-    "i18next-node-fs-backend": "0.0.6",
     "keymirror": "~0.1.0",
     "mkdirp": "^0.5.1",
     "mori": "^0.3.2",
