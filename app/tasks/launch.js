@@ -55,18 +55,12 @@ let self = {
   sort_by_weight: async function (app_path, execs) {
     let weights = {}
 
-    console.log(`Starting to sort by weight`)
-    let t1 = +new Date()
     let f = async (exe) => {
       let exe_path = path.join(app_path, exe)
       let stats = await fs.statAsync(exe_path)
       weights[exe] = stats.size
     }
-    await Promise.resolve(execs).map(f, {concurrency: 4})
-    console.log(`Done sorting by weight!`)
-
-    let t2 = +new Date()
-    console.log(`Took ${t2 - t1} to stat the things`)
+    await Promise.resolve(execs).map(f, {concurrency: 2})
 
     // sort from heaviest to lightest
     return clone(execs).sort((a, b) => weights[b] - weights[a])
