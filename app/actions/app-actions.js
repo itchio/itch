@@ -283,6 +283,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.PREFERENCES_SET_LANGUAGE, language })
   },
 
+  preferences_set_sniffed_language: (language) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.PREFERENCES_SET_SNIFFED_LANGUAGE, language })
+  },
+
   quit: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.QUIT })
   },

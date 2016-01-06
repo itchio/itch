@@ -39,9 +39,20 @@ async function save_to_disk () {
   PreferencesStore.emit_change()
 }
 
+async function set_sniffed_language (payload) {
+  state.sniffed_language = payload.language
+  log(opts, `Just set sniffed language to: ${state.sniffed_language}`)
+  await save_to_disk()
+}
+
 async function set_language (payload) {
-  state.language = payload.language
-  log(opts, `Just set language to: ${state.language}`)
+  if (payload.language === '__') {
+    delete state.language
+    log(opts, `Just reset language to auto`)
+  } else {
+    state.language = payload.language
+    log(opts, `Just set language to: ${state.language}`)
+  }
   await save_to_disk()
 }
 
@@ -99,6 +110,7 @@ async function install_location_make_default (payload) {
 AppDispatcher.register('preferences-store', Store.action_listeners(on => {
   on(AppConstants.BOOT, load_from_disk)
   on(AppConstants.PREFERENCES_SET_LANGUAGE, set_language)
+  on(AppConstants.PREFERENCES_SET_SNIFFED_LANGUAGE, set_sniffed_language)
   on(AppConstants.INSTALL_LOCATION_ADD, install_location_add)
   on(AppConstants.INSTALL_LOCATION_REMOVE, install_location_remove)
   on(AppConstants.INSTALL_LOCATION_MAKE_DEFAULT, install_location_make_default)

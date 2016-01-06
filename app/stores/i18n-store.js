@@ -3,6 +3,7 @@ let log = require('../util/log')('i18n-store')
 let opts = { logger: new log.Logger() }
 
 let Store = require('./store')
+let AppActions = require('../actions/app-actions')
 
 let i18next = require('i18next')
 let backend = require('i18next-node-fs-backend')
@@ -20,6 +21,8 @@ function on_error (err) {
     require('../util/crash-reporter').handle(e)
   }
 }
+
+let sniffed_language = 'en'
 
 let i18n_opts = {
   lng: 'en',
@@ -52,6 +55,10 @@ let I18nStore = Object.assign(new Store('i18n-store', process.type), {
 
     // TODO: refresh locales list from github
     return locales_list
+  },
+
+  get_sniffed_language: () => {
+    return sniffed_language
   }
 })
 
@@ -63,8 +70,17 @@ state.on('languageChanged loaded', () => {
   I18nStore.emit_change()
 })
 
+if (process.type === 'renderer') {
+  try {
+    AppActions.preferences_set_sniffed_language(navigator.language)
+  } catch (e) {
+    console.log(`Could not sniff language from chrome: ${e.stack || e}`)
+  }
+}
+
 function reload (preferences) {
-  let lang = preferences.language || 'en'
+  sniffed_language = preferences.sniffed_language || 'en'
+  let lang = preferences.language || sniffed_language
   log(opts, `Switching to language ${lang}`)
   state.changeLanguage(lang, on_error)
 }

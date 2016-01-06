@@ -82,6 +82,7 @@
     "preferences.install_location.free_space": "Free space",
     "preferences.install_locations": "Install locations",
     "preferences.language": "Language",
+    "preferences.language.auto": "System language ({{language}})",
     "preferences.language.get_involved": "Help translate {{name}} in your language!",
     "prompt.action.cancel": "Cancel",
     "prompt.action.close": "Close",
