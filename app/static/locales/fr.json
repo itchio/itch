@@ -84,6 +84,7 @@
     "preferences.install_location.used_space": "Espace utilisé", 
     "preferences.install_locations": "Emplacements d'installation", 
     "preferences.language": "Langue", 
+    "preferences.language.auto": "Langue du système ({{language}})", 
     "preferences.language.get_involved": "Aidez à traduire {{name}} dans votre langue !", 
     "prompt.action.cancel": "Annuler", 
     "prompt.action.close": "Fermer", 
