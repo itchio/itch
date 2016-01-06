@@ -16,6 +16,7 @@ tmp
 /build
 /cache
 /stage
+/release/itch.desktop
 
 # OS-specific junk
 .DS_Store
