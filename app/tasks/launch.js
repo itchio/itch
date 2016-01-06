@@ -65,6 +65,9 @@ let self = {
       if (/unins/.test(exe)) {
         score = 0
       }
+      if (/\.so$/.test(exe)) {
+        score -= 50
+      }
       scores[exe] = score
     }
     return clone(execs).sort((a, b) => scores[b] - scores[a])
