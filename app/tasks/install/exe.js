@@ -5,7 +5,7 @@ let os = require('../../util/os')
 let fstream = require('fstream')
 let _ = require('underscore')
 
-let log = require('../../util/log')('installers/generic')
+let log = require('../../util/log')('installers/exe')
 
 let AppActions = require('../../actions/app-actions')
 
@@ -51,9 +51,11 @@ let self = {
   retrieve_cached_type: function (opts) {
     let cave = opts.cave_update
     if (!cave) return
+    log(opts, `got cave: ${JSON.stringify(cave, null, 2)}`)
 
     let installer_exe_cache = cave.installer_exe_cache || {}
     let type = installer_exe_cache[cave.upload_id]
+    log(opts, `found cached installer type ${type}`)
 
     if (self.valid_installers.indexOf(type) === -1) {
       log(opts, `invalid exe type stored: ${type} - discarding`)
