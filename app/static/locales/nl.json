@@ -61,6 +61,7 @@
     "preferences.install_location.compute_size": "Bereken de mapgrootte op de schijf", 
     "preferences.install_location.delete": "Verwijder dit installatiepad en deïnstalleer de bestanden", 
     "preferences.install_location.empty": "Leeg", 
+    "preferences.install_location.free_space": "Vrije ruimte", 
     "preferences.install_location.is_default": "Nieuwe items zullen standaard hier geïnstalleerd worden.", 
     "preferences.install_location.item_count": "Aantal items", 
     "preferences.install_location.make_default": "Dit als de standaard installatielocatie instellen", 
