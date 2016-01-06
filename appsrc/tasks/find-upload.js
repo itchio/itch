@@ -48,8 +48,9 @@ let self = {
       score -= 100
     }
 
-    /* Native downloads are preferred */
+    /* Native uploads are preferred */
     if (upload.type === 'html') {
+      score -= 20
       score -= 20
     }
 

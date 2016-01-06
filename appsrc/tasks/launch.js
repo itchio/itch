@@ -3,10 +3,12 @@ import {sortBy} from 'underline'
 let Promise = require('bluebird')
 
 let path = require('path')
-let shell_quote = require('shell-quote')
-
-let BrowserWindow = require('electron').BrowserWindow
 let http = require('http')
+
+let clone = require('clone')
+let shell_quote = require('shell-quote')
+let BrowserWindow = require('electron').BrowserWindow
+
 let serveStatic = require('serve-static')
 let finalhandler = require('finalhandler')
 
@@ -170,7 +172,8 @@ let self = {
   launch_html_cave: async function(opts, cave) {
     let game = await db.find_one({_table: 'games', id: cave.game_id})
     let app_path = CaveStore.app_path(cave.install_location, opts.id)
-    if (!fs.existsSync(path.join(app_path, 'index.html'))) {
+    let index_missing = await sf.exists(path.join(app_path, 'index.html'))
+    if (index_missing) {
       throw new Error('html game missing index.html')
     }
     let win = new BrowserWindow({
@@ -179,8 +182,11 @@ let self = {
       width: 1280, height: 720,
       center: true,
       show: true,
-      'auto-hide-menu-bar': true,
-      'node-integration': false
+      autoHideMenuBar: true,
+      webPreferences: {
+        nodeIntegration: false,
+        partition: `persist:gamesession_${cave.game_id}`
+      }
     })
     let serve = serveStatic(app_path, {'index': ['index.html', 'index.htm']})
     let server = http.createServer((req, res) => {
@@ -198,13 +204,14 @@ let self = {
       }
     })
 
-    return new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
       win.on('close', (e) => {
-        log(opts, `shutting down http server on port ${port}`)
-        server.close()
-        resolve('browser window closed')
+        resolve()
       })
     })
+
+    log(opts, `shutting down http server on port ${port}`)
+    server.close()
   },
 
   valid_cave: function (cave) {
@@ -218,8 +225,8 @@ let self = {
     if (!cave.uploads) {
       throw new Error('need cached uploads')
     }
-    let has_native = _.values(cave.uploads).filter((upload) => !!upload[`p_${os.itch_platform()}`]).length > 0
-    let has_html = _.values(cave.uploads).filter((upload) => upload.type === 'html').length > 0
+    let has_native = _.some(_.values(cave.uploads), (upload) => !!upload[`p_${os.itch_platform()}`])
+    let has_html = _.some(_.values(cave.uploads), (upload) => upload.type === 'html')
     if (has_html && !has_native) {
       return self.launch_html_cave(opts, cave)
     }
