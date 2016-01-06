@@ -12,6 +12,7 @@ let finalhandler = require('finalhandler')
 
 
 let os = require('../util/os')
+let db = require('../util/db')
 let spawn = require('../util/spawn')
 let sf = require('../util/sf')
 
@@ -166,21 +167,21 @@ let self = {
     return self.launch(exe_path, [], opts)
   },
 
-  launch_html_cave: function(opts, cave) {
-    /*
-    TODOs:
-    -> isolate environment
-      -> cookies, localStorage: clean
-    */
+  launch_html_cave: async function(opts, cave) {
+    let game = await db.find_one({_table: 'games', id: cave.game_id})
+    let app_path = CaveStore.app_path(cave.install_location, opts.id)
+    if (!fs.existsSync(path.join(app_path, 'index.html'))) {
+      throw new Error('html game missing index.html')
+    }
     let win = new BrowserWindow({
-      title: 'html-game',
+      title: game.title,
       icon: './static/images/itchio-tray-x4.png',
-      width: 800, height: 600,
+      width: 1280, height: 720,
       center: true,
       show: true,
-      'title-bar-style': 'hidden'
+      'auto-hide-menu-bar': true,
+      'node-integration': false
     })
-    let app_path = CaveStore.app_path(cave.install_location, opts.id)
     let serve = serveStatic(app_path, {'index': ['index.html', 'index.htm']})
     let server = http.createServer((req, res) => {
       let done = finalhandler(req, res)
@@ -198,7 +199,6 @@ let self = {
 
     return new Promise((resolve, reject) => {
       win.on('close', (e) => {
-        log(opts, 'window.on close')
         resolve('browser window closed')
       })
     })
@@ -212,11 +212,12 @@ let self = {
     let id = opts.id
 
     let cave = await CaveStore.find(id)
-    //ensure(cave.uploads, 'need cached uploads')
+    if (!cave.uploads) {
+      throw new Error('need cached uploads')
+    }
     let has_native = _.values(cave.uploads).filter((upload) => !!upload[`p_${os.itch_platform()}`]).length > 0
     let has_html = _.values(cave.uploads).filter((upload) => upload.type === 'html').length > 0
     if (has_html && !has_native) {
-      log(opts, 'launching html game')
       return self.launch_html_cave(opts, cave)
     }
     if (!self.valid_cave(cave)) {
