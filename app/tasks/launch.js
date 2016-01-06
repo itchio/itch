@@ -88,6 +88,8 @@ let self = {
       let score = 100
       if (/unins/.test(exe)) {
         score = 0
+      } else if (/dxwebsetup\.exe/i.test(exe)) {
+        score = 0
       }
       scores[exe] = score
     }
