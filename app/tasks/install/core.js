@@ -1,17 +1,21 @@
 
-let log = require('../../util/log')('tasks/install')
+let log = require('../../util/log')('install/core')
 let sniff = require('../../util/sniff')
+
+let AppActions = require('../../actions/app-actions')
 
 let ExtendableError = require('es6-error')
 
 class UnhandledFormat extends ExtendableError {
   constructor (operation, archive_path) {
-    super(`don't know how to ${operation} ${archive_path}`)
+    super(`don't know how to handle ${archive_path}`)
   }
 }
 
 let self = {
   UnhandledFormat,
+
+  valid_installers: ['archive', 'dmg', 'msi', 'exe'],
 
   installer_for_ext: {
     // Generic archives
@@ -37,24 +41,61 @@ let self = {
     return await self.operate(opts, 'uninstall')
   },
 
-  operate: async function (opts, operation) {
-    let archive_path = opts.archive_path
-    let type = await sniff.path(archive_path)
+  cache_type: function (opts, installer_name) {
+    let cave = opts.cave
+    if (!cave) return
 
-    if (!type) {
-      throw new UnhandledFormat(operation, archive_path)
+    let installer_cache = {}
+    installer_cache[cave.upload_id] = installer_name
+    AppActions.cave_update(cave._id, {installer_cache})
+  },
+
+  retrieve_cached_type: function (opts) {
+    let cave = opts.cave
+    if (!cave) return null
+
+    log(opts, `retrieving installer type of ${opts.archive_path} from cache`)
+    let installer_cache = cave.installer_cache || {}
+    let installer_name = installer_cache[cave.upload_id]
+
+    if (self.valid_installers.indexOf(installer_name) === -1) {
+      log(opts, `invalid installer name stored: ${installer_name} - discarding`)
+      return null
     }
 
-    log(opts, `type of ${archive_path}: ${JSON.stringify(type)}`)
+    return installer_name
+  },
+
+  sniff_type: async function (opts) {
+    let archive_path = opts.archive_path
+
+    let type = await sniff.path(archive_path)
+    log(opts, `sniffed type ${JSON.stringify(type)} for ${archive_path}`)
+    if (!type) {
+      throw new UnhandledFormat(archive_path)
+    }
 
     let installer_name = self.installer_for_ext[type.ext]
+    if (!installer_name) {
+      throw new UnhandledFormat(`${archive_path} of type ${JSON.stringify(type)}`)
+    }
+
+    self.cache_type(opts, installer_name)
+    return installer_name
+  },
+
+  operate: async function (opts, operation) {
+    let archive_path = opts.archive_path
+    let installer_name = self.retrieve_cached_type(opts)
 
     if (installer_name) {
-      let installer = require(`./${installer_name}`)
-      await installer[operation](opts)
+      log(opts, `using cached installer type ${installer_name} for ${archive_path}`)
     } else {
-      throw new UnhandledFormat(operation, `${archive_path} of type ${JSON.stringify(type)}`)
+      installer_name = await self.sniff_type(opts)
     }
+
+    let installer = require(`./${installer_name}`)
+    await installer[operation](opts)
   }
 }
 

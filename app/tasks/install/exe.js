@@ -7,7 +7,11 @@ let _ = require('underscore')
 
 let log = require('../../util/log')('installers/generic')
 
+let AppActions = require('../../actions/app-actions')
+
 let self = {
+  valid_installers: ['inno', 'nsis', 'air', 'archive'],
+
   install: async function (opts) {
     let installer = await self.find_installer(opts)
     await installer.install(opts)
@@ -23,15 +27,47 @@ let self = {
       throw new Error('Exe installers are only supported on Windows')
     }
 
-    let type = await self.identify(opts)
+    let archive_path = opts.archive_path
+    let type = self.retrieve_cached_type(opts)
 
-    log(opts, `found generic installer type: ${type}`)
+    if (type) {
+      log(opts, `using cached installer type ${type} for ${archive_path}`)
+    } else {
+      type = await self.identify(opts)
 
-    if (!type) {
-      return require(`./naked`)
+      if (type) {
+        log(opts, `found exe installer type ${type} for ${archive_path}`)
+        self.cache_type(opts, type)
+      } else {
+        // don't cache that, we might find better later
+        log(opts, `falling back to 'naked exe' for ${archive_path}`)
+        type = 'naked'
+      }
     }
 
     return require(`./${type}`)
+  },
+
+  retrieve_cached_type: function (opts) {
+    let cave = opts.cave_update
+    if (!cave) return
+
+    let installer_exe_cache = cave.installer_exe_cache || {}
+    let type = installer_exe_cache[cave.upload_id]
+
+    if (self.valid_installers.indexOf(type) === -1) {
+      log(opts, `invalid exe type stored: ${type} - discarding`)
+      type = null
+    }
+  },
+
+  cache_type: function (opts, type) {
+    let cave = opts.cave_update
+    if (!cave) return
+
+    let installer_exe_cache = {}
+    installer_exe_cache[cave.upload_id] = type
+    AppActions.cave_update(cave._id, {installer_exe_cache})
   },
 
   identify: async function (opts) {
