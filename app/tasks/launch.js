@@ -85,6 +85,9 @@ let self = {
       } else if (/dxwebsetup\.exe/i.test(exe)) {
         score = 0
       }
+      if (/\.so$/.test(exe)) {
+        score -= 50
+      }
       scores[exe] = score
     }
 
