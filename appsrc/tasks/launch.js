@@ -5,6 +5,12 @@ let Promise = require('bluebird')
 let path = require('path')
 let shell_quote = require('shell-quote')
 
+let BrowserWindow = require('electron').BrowserWindow
+let http = require('http')
+let serveStatic = require('serve-static')
+let finalhandler = require('finalhandler')
+
+
 let os = require('../util/os')
 let spawn = require('../util/spawn')
 let sf = require('../util/sf')
@@ -160,6 +166,44 @@ let self = {
     return self.launch(exe_path, [], opts)
   },
 
+  launch_html_cave: function(opts, cave) {
+    /*
+    TODOs:
+    -> isolate environment
+      -> cookies, localStorage: clean
+    */
+    let win = new BrowserWindow({
+      title: 'html-game',
+      icon: './static/images/itchio-tray-x4.png',
+      width: 800, height: 600,
+      center: true,
+      show: true,
+      'title-bar-style': 'hidden'
+    })
+    let app_path = CaveStore.app_path(cave.install_location, opts.id)
+    let serve = serveStatic(app_path, {'index': ['index.html', 'index.htm']})
+    let server = http.createServer((req, res) => {
+      let done = finalhandler(req, res)
+      serve(req, res, done)
+    })
+    server.listen(0)
+    server.on('listening', function() {
+      let port = server.address().port
+      log(opts, `serving on port ${port}`)
+      win.loadURL(`http://localhost:${port}/index.html`)
+      if (process.env.DEVTOOLS === '1') {
+        win.webContents.openDevTools({detach: true})
+      }
+    })
+
+    return new Promise((resolve, reject) => {
+      win.on('close', (e) => {
+        log(opts, 'window.on close')
+        resolve('browser window closed')
+      })
+    })
+  },
+
   valid_cave: function (cave) {
     return cave.executables && cave.executables.length > 0
   },
@@ -168,7 +212,13 @@ let self = {
     let id = opts.id
 
     let cave = await CaveStore.find(id)
-
+    //ensure(cave.uploads, 'need cached uploads')
+    let has_native = _.values(cave.uploads).filter((upload) => !!upload[`p_${os.itch_platform()}`]).length > 0
+    let has_html = _.values(cave.uploads).filter((upload) => upload.type === 'html').length > 0
+    if (has_html && !has_native) {
+      log(opts, 'launching html game')
+      return self.launch_html_cave(opts, cave)
+    }
     if (!self.valid_cave(cave)) {
       await configure.start(opts)
       cave = await CaveStore.find(id)
