@@ -49,7 +49,7 @@ let self = {
   },
 
   retrieve_cached_type: function (opts) {
-    let cave = opts.cave_update
+    let cave = opts.cave
     if (!cave) return
     log(opts, `got cave: ${JSON.stringify(cave, null, 2)}`)
 
@@ -59,12 +59,14 @@ let self = {
 
     if (self.valid_installers.indexOf(type) === -1) {
       log(opts, `invalid exe type stored: ${type} - discarding`)
-      type = null
+      return null
     }
+
+    return type
   },
 
   cache_type: function (opts, type) {
-    let cave = opts.cave_update
+    let cave = opts.cave
     if (!cave) return
 
     let installer_exe_cache = {}
@@ -110,7 +112,7 @@ let self = {
       reader.on('end', () => resolve(result))
       reader.on('error', reject)
     })
-    await p
+    return await p
   },
 
   builtin_needles: {
