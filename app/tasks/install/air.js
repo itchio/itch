@@ -36,6 +36,8 @@ let self = {
       })
     }
 
+    AppActions.cave_progress({id: opts.id, progress: -1})
+
     let archive_path = opts.archive_path
     let dest_path = opts.dest_path
 
@@ -79,6 +81,8 @@ let self = {
   },
 
   uninstall: async function (opts) {
+    AppActions.cave_progress({id: opts.id, progress: -1})
+
     log(opts, `Grabbing adobe's Air Runtime Helper if needed...`)
 
     let logger = opts.logger

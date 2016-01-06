@@ -2,6 +2,8 @@
 let spawn = require('../../util/spawn')
 let os = require('../../util/os')
 
+let AppActions = require('../../actions/app-actions')
+
 let log = require('../../util/log')('installers/msi')
 
 let self = {
@@ -26,6 +28,8 @@ let self = {
   },
 
   install: async function (opts) {
+    AppActions.cave_progress({id: opts.id, progress: -1})
+
     if (os.platform() !== 'win32') {
       throw new Error('MSI files are only supported on Windows')
     }
@@ -46,6 +50,8 @@ let self = {
     if (os.platform() !== 'win32') {
       throw new Error('MSI files are only supported on Windows')
     }
+
+    AppActions.cave_progress({id: opts.id, progress: -1})
 
     let archive_path = opts.archive_path
     let dest_path = opts.dest_path

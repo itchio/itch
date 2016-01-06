@@ -28,7 +28,8 @@ class GameCell extends ShallowComponent {
     let game = this.props.game
     let owned = this.props.owned
     let cave = this.props.cave
-    let task = cave && mori.get(cave, 'task')
+    let task = mori.get(cave, 'task')
+    let progress = mori.get(cave, 'progress')
     let title = mori.get(game, 'title')
     let cover_url = mori.get(game, 'cover_url')
     let user = mori.get(game, 'user')
@@ -55,12 +56,20 @@ class GameCell extends ShallowComponent {
       button_classes += ` cancellable`
     }
 
+    let icon_spin = false
+    if (mori.get(cave, 'reporting')) {
+      icon_spin = true
+    }
+
     let button_style = {}
-    if (cave && mori.get(cave, 'progress') > 0) {
-      let percent = (mori.get(cave, 'progress') * 100).toFixed() + '%'
+    if (progress > 0) {
+      let percent = (progress * 100).toFixed() + '%'
       let done_color = '#444'
       let undone_color = '#222'
       button_style.backgroundImage = `-webkit-linear-gradient(left, ${done_color}, ${done_color} ${percent}, ${undone_color} ${percent}, ${undone_color})`
+    }
+    if (progress < 0) {
+      icon_spin = true
     }
 
     let platform_compatible = false
@@ -68,7 +77,9 @@ class GameCell extends ShallowComponent {
     /* before you think you can download all itch.io games:
        there's obviously server-side checking.
        you'll get neat error logs for free though! */
-    let may_download = process.env.TRUST_ME_IM_AN_ENGINEER || owned || (mori.get(game, 'min_price') === 0)
+    let may_download = process.env.TRUST_ME_IM_AN_ENGINEER ||
+      owned ||
+      (mori.get(game, 'min_price') === 0)
 
     let platform_list = mori.reduceKV((l, platform, data) => {
       if (mori.get(this.props.game, platform)) {
@@ -158,7 +169,7 @@ class GameCell extends ShallowComponent {
           cave
           ? [
             r.span({className: 'normal_state'}, [
-              r(TaskIcon, {task, spin: mori.get(cave, 'reporting')}),
+              r(TaskIcon, {task, spin: icon_spin}),
               this.status(cave),
               r.span({className: 'cancel_cross'}, [
                 r(Icon, {icon: 'cross'})

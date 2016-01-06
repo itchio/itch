@@ -2,6 +2,8 @@
 let spawn = require('../../util/spawn')
 let find_uninstallers = require('./find-uninstallers')
 
+let AppActions = require('../../actions/app-actions')
+
 let errors = require('../errors')
 let fstream = require('fstream')
 let rimraf = require('../../promised/rimraf')
@@ -20,6 +22,8 @@ let self = {
         reason: `going to pop up an UAC dialog, need user's permission first`
       })
     }
+
+    AppActions.cave_progress({id: opts.id, progress: -1})
 
     let inst = opts.archive_path
     let dest_path = opts.dest_path
@@ -65,6 +69,8 @@ let self = {
   },
 
   uninstall: async function (opts) {
+    AppActions.cave_progress({id: opts.id, progress: -1})
+
     let dest_path = opts.dest_path
     let uninstallers = await find_uninstallers(dest_path)
 

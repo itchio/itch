@@ -223,6 +223,7 @@ async function queue_task (id, task_name, data) {
     })
     let res = await task.start(task_opts)
     set_current_task(id, null)
+    AppActions.cave_progress({id, progress: 0})
 
     if (task_name === 'install') {
       let cave = await CaveStore.find(id)
