@@ -143,11 +143,8 @@ let self = {
       parser: /([a-zA-Z0-9\.]+)/
     }, formula.version_check || {})
 
-    console.log(`Getting ${name}'s version with check ${JSON.stringify(check, null, 2)}'`)
-
     try {
       let info = await os.check_presence(name, check.args, check.parser)
-      console.log(`Got info ${JSON.stringify(info, null, 2)}`)
       return self.normalize_version(info.parsed)
     } catch (err) {
       return null
