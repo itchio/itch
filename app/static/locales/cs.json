@@ -25,7 +25,7 @@
     "login.status.dependency_install": "Instaluji související {{name}} {{version}}", 
     "login.status.login": "", 
     "login.status.setup_failure": "Při nastavování došlo k problému: {{error}}", 
-    "menu.account.account": "", 
+    "menu.account.account": "Účet", 
     "menu.account.change_user": "Změnit uživatele…", 
     "menu.account.not_logged_in": "Nepřihlášeni", 
     "menu.danger_zone.danger_zone": "", 
