@@ -13,9 +13,16 @@
     "grid.item.retry": "Tenta transferir / instalar / correr este item novamente", 
     "grid.item.running": "A executar...", 
     "grid.item.uninstall": "Desinstalar este item agora", 
+    "login.status.dependency_install": "A instalar a dependência {{name}} {{version}}", 
     "menu.help.check_for_update": "Verificar se há atualização", 
+    "menu.help.help": "Ajuda", 
+    "onboarding.dashboard.welcome_home": "Bem-vindo à página principal", 
     "preferences.install_location.free_space": "Espaço livre", 
     "preferences.install_locations": "Locais para instalação", 
+    "prompt.additional_purchase.detail": "...mas ainda podes comprar uma cópia para um(a) amigo(a)!\n\nQueres fazer outra compra?", 
     "prompt.install_location_not_empty.detail": "Precisa de ser feito manualmente por enquanto.", 
-    "prompt.payments_disabled.title": "Pagamentos desativados"
+    "prompt.last_remaining_install_location.title": "Não é possível remover o local para instalação", 
+    "prompt.no_compatible_version.title": "{{title}} para {{platform}}", 
+    "prompt.payments_disabled.title": "Pagamentos desativados", 
+    "status.downloaded": "Clica para reiniciar e aplicar a actualização!"
 }
