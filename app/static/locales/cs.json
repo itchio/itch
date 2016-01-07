@@ -1,7 +1,7 @@
 {
     "errors.api.login.incorrect_username_or_password": "", 
     "errors.api.login.password_must_be_provided": "", 
-    "errors.api.login.username_must_be_provided": "", 
+    "errors.api.login.username_must_be_provided": "Nutno vyplnit uživatelské jméno ", 
     "grid.item.buy_now": "", 
     "grid.item.cancel_download": "Zrušit stahování", 
     "grid.item.downloading": "", 
