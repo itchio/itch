@@ -300,9 +300,11 @@ class GameCell extends ShallowComponent {
   }
 
   browse_i18n_key () {
+    let fallback = 'grid.item.open_in_file_explorer'
     switch (os.platform()) {
-      case 'darwin': return 'grid.item.open_in_file_explorer_osx'
-      default: return 'grid.item.open_in_file_explorer'
+      case 'darwin': return ['grid.item.open_in_file_explorer_osx', fallback]
+      case 'linux': return ['grid.item.open_in_file_explorer_linux', fallback]
+      default: return fallback
     }
   }
 }

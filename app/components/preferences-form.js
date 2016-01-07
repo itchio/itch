@@ -203,10 +203,11 @@ class PreferencesForm extends ShallowComponent {
   }
 
   browse_i18n_key () {
+    let fallback = 'preferences.install_location.browse'
     switch (os.platform()) {
-      case 'darwin': return 'preferences.install_location.browse_osx'
-      case 'linux': return 'preferences.install_location.browse_linux'
-      default: return 'preferences.install_location.browse'
+      case 'darwin': return ['preferences.install_location.browse_osx', fallback]
+      case 'linux': return ['preferences.install_location.browse_linux', fallback]
+      default: return fallback
     }
   }
 
