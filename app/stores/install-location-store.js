@@ -72,6 +72,11 @@ function compute_state () {
       item_count
     })
 
+    if (loc_name === 'appdata') {
+      // you can't delete appdata! it's your user-specific fallback.
+      delete loc.deleted
+    }
+
     locations[loc_name] = loc
   }
 
