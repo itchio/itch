@@ -68,6 +68,7 @@
     "prompt.action.install": "Install", 
     "prompt.action.ok": "Ok", 
     "prompt.additional_purchase.detail": "...men du kan likevel kjøpe et eksemplar til en venn!\n\nVil du foreta et nytt kjøp?", 
+    "prompt.additional_purchase.title": "Du eier allerede dette!", 
     "prompt.confirm_uninstall": "", 
     "prompt.crash_reporter.detail": "", 
     "prompt.crash_reporter.message": "", 
