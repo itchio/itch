@@ -16,7 +16,7 @@
     "login.status.dependency_install": "A instalar a dependência {{name}} {{version}}", 
     "menu.help.check_for_update": "Verificar se há atualização", 
     "menu.help.help": "Ajuda", 
-    "onboarding.dashboard.welcome_home": "Bem-vindo à página principal", 
+    "onboarding.dashboard.welcome_home": "Bem-vindo a casa", 
     "preferences.install_location.free_space": "Espaço livre", 
     "preferences.install_locations": "Locais para instalação", 
     "prompt.additional_purchase.detail": "...mas ainda podes comprar uma cópia para um(a) amigo(a)!\n\nQueres fazer outra compra?", 
