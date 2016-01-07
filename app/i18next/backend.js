@@ -2,13 +2,17 @@
 let log = require('../util/log')('i18n-backend')
 let opts = { logger: new log.Logger() }
 
-let fs = require('../promised/fs')
+let sf = require('../util/sf')
 let urls = require('../constants/urls')
 let env = require('../env')
 
 let path = require('path')
 
+// for now, fetch once per session
 let already_fetched = {}
+
+// don't overwrite local files
+let remote_suffix = '.remote.json'
 
 class Backend {
   constructor (services, options) {
@@ -44,29 +48,33 @@ class Backend {
     let err_message = null
 
     for (let candidate of candidates) {
-      let filename = path.join(this.options.loadPath, candidate + '.json')
+      let canonical_filename = path.join(this.options.loadPath, candidate + '.json')
+      let loaded_filename = canonical_filename
 
-      let has = true
-      try {
-        await fs.lstatAsync(filename)
-      } catch (e) {
-        has = false
+      // do we have a newer version?
+      if (await sf.exists(canonical_filename + remote_suffix)) {
+        loaded_filename = canonical_filename + remote_suffix
+      } else if (await sf.exists(canonical_filename)) {
+        // all good
+      } else {
+        // so we don't have it then
+        continue
       }
-      if (!has) continue
 
       found = true
 
-      let contents = await fs.readFileAsync(filename, {encoding: 'utf8'})
+      let contents = await sf.read_file(loaded_filename)
       try {
         let parsed = JSON.parse(contents)
-        log(opts, `Successfully loaded ${language} from ${filename} (in ${process.type})`)
+        log(opts, `Successfully loaded ${language} from ${loaded_filename} (in ${process.type})`)
         callback(null, parsed)
-
-        this.queue_download(candidate, filename, callback)
       } catch (err) {
-        err_message = 'error parsing ' + filename + ': ' + err.message
+        err_message = 'error parsing ' + loaded_filename + ': ' + err.message
         continue
       }
+
+      this.queue_download(candidate, canonical_filename, callback)
+      break
     }
 
     if (found) return
@@ -81,7 +89,9 @@ class Backend {
     }
   }
 
-  async queue_download (candidate, filename, callback) {
+  async queue_download (candidate, local_filename, callback) {
+    let remote_filename = local_filename + '.remote.json'
+
     if (process.type !== 'browser') {
       return
     }
@@ -96,7 +106,7 @@ class Backend {
     }
     already_fetched[candidate] = true
 
-    let uri = `${urls.remote_locale_path}/${candidate}.remote.json`
+    let uri = `${urls.remote_locale_path}/${candidate}.json`
 
     log(opts, `Downloading fresh locale file from ${uri}`)
 
@@ -123,8 +133,8 @@ class Backend {
       return
     }
 
-    log(opts, `Saving fresh ${candidate} locale to ${filename}`)
-    await fs.writeFileAsync(filename, body)
+    log(opts, `Saving fresh ${candidate} locale to ${remote_filename}`)
+    await sf.write_file(remote_filename, body)
   }
 
 }
