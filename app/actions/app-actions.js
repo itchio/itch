@@ -81,6 +81,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.DISMISS_STATUS })
   },
 
+  locale_update_downloaded: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.LOCALE_UPDATE_DOWNLOADED })
+  },
+
   /* Install locations */
 
   install_location_compute_size: (name) => {

@@ -4,7 +4,8 @@ let self = {
   itchio: 'https://itch.io',
   itch_translation_platform: 'https://weblate.itch.ovh',
   github_api: 'https://api.github.com',
-  ibrew_repo: 'https://dl.itch.ovh'
+  ibrew_repo: 'https://dl.itch.ovh',
+  remote_locale_path: 'https://raw.githubusercontent.com/itchio/itch/master/app/static/locales'
 }
 
 let itchio_api = process.env.WHEN_IN_ROME ? 'http://localhost.com:8080' : self.itchio
