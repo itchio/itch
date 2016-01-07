@@ -8,7 +8,7 @@
     "grid.item.install": "Установить", 
     "grid.item.installing": "Установка...", 
     "grid.item.launch": "Запустить", 
-    "grid.item.not_platform_compatible": "Не доступно на {{platform}}", 
+    "grid.item.not_platform_compatible": "Недоступно на {{platform}}", 
     "grid.item.queued": "В очереди", 
     "grid.item.report_problem": "Отчет испорчен ( Открыть в браузере)", 
     "grid.item.running": "Запускается...", 
