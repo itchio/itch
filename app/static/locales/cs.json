@@ -95,7 +95,7 @@
     "sidebar.getting_started": "Začínáme", 
     "sidebar.installed": "", 
     "sidebar.owned": "", 
-    "status.checking": "", 
+    "status.checking": "Hledaní aktualizací...", 
     "status.downloaded": "Kliknutím restartovat & aktualizovat!", 
     "status.downloading": "", 
     "status.uptodate": ""
