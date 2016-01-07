@@ -70,5 +70,6 @@
     "prompt.url_install.title": "Pedido de instalação", 
     "sidebar.getting_started": "Para começar", 
     "status.checking": "À procura de atualizações...", 
-    "status.downloaded": "Clica para reiniciar e aplicar a actualização!"
+    "status.downloaded": "Clica para reiniciar e aplicar a actualização!", 
+    "status.downloading": "A descarregar atualização..."
 }
