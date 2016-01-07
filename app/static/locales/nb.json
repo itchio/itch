@@ -118,5 +118,5 @@
     "status.checking": "Ser etter oppdateringer...", 
     "status.downloaded": "Klikk for omstart og aktivering av oppdateringen!", 
     "status.downloading": "Laster ned oppdatering...", 
-    "status.uptodate": ""
+    "status.uptodate": "Din itch er oppdatert!"
 }
