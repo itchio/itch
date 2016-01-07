@@ -27,7 +27,7 @@
     "menu.danger_zone.danger_zone": "", 
     "menu.danger_zone.dont_use": "", 
     "menu.danger_zone.provoke_crash": "", 
-    "menu.edit.copy": "", 
+    "menu.edit.copy": "Kopiér", 
     "menu.edit.cut": "", 
     "menu.edit.edit": "Rediger", 
     "menu.edit.paste": "", 
