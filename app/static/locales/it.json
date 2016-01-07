@@ -10,6 +10,7 @@
     "grid.item.launch": "Lancia", 
     "grid.item.not_platform_compatible": "Non disponibile per {{platform}}", 
     "grid.item.probe": "Apri il log eventi di questo elemento per trovare la causa dell'errore (Avanzato)", 
+    "grid.item.purchase_or_donate": "Compra o dona in favore dell'oggetto", 
     "grid.item.queued": "In coda", 
     "grid.item.report_problem": "Segnala come non funzionante (Apre nel browser)", 
     "grid.item.retry": "Prova nuovamente a scaricare / installare / avviare l'elemento", 
