@@ -13,6 +13,7 @@
     "grid.item.retry": "Tenta transferir / instalar / correr este item novamente", 
     "grid.item.running": "A executar...", 
     "grid.item.uninstall": "Desinstalar este item agora", 
+    "menu.help.check_for_update": "Verificar se há atualização", 
     "preferences.install_location.free_space": "Espaço livre", 
     "preferences.install_locations": "Locais para instalação", 
     "prompt.install_location_not_empty.detail": "Precisa de ser feito manualmente por enquanto.", 
