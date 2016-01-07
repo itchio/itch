@@ -3,6 +3,7 @@
     "grid.item.install": "Instalar", 
     "grid.item.installing": "A instalar...", 
     "grid.item.not_platform_compatible": "Não disponível para {{platform}}", 
+    "grid.item.purchase_or_donate": "Comprar ou doar dinheiro para este item", 
     "grid.item.queued": "Na fila", 
     "grid.item.report_problem": "Reportar que não funciona (Abre no navegador)", 
     "grid.item.retry": "Tenta transferir / instalar / correr este item novamente", 
