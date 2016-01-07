@@ -1,9 +1,13 @@
 {
     "grid.item.cancel_download": "Cancelar transferência", 
+    "grid.item.install": "Instalar", 
     "grid.item.installing": "A instalar...", 
+    "grid.item.not_platform_compatible": "Não disponível para {{platform}}", 
     "grid.item.queued": "Na fila", 
     "grid.item.report_problem": "Reportar que não funciona (Abre no navegador)", 
     "grid.item.retry": "Tenta transferir / instalar / correr este item novamente", 
+    "grid.item.running": "A executar...", 
+    "grid.item.uninstall": "Desinstalar este item agora", 
     "preferences.install_location.free_space": "Espaço livre", 
     "preferences.install_locations": "Locais para instalação", 
     "prompt.payments_disabled.title": "Pagamentos desativados"
