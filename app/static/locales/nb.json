@@ -60,6 +60,7 @@
     "onboarding.owned.reassuring_comment": "", 
     "onboarding.owned.title_warm_welcome": "", 
     "preferences.install_location.free_space": "Ledig plass", 
+    "preferences.install_location.item_count": "# av artikler", 
     "preferences.install_locations": "Installasjonsområder", 
     "preferences.language": "Språk", 
     "prompt.action.cancel": "", 
