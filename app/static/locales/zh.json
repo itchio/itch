@@ -1,6 +1,6 @@
 {
     "errors.api.login.incorrect_username_or_password": "用户名称或密码不正确", 
-    "errors.api.login.password_must_be_provided": "必须填写密码", 
+    "errors.api.login.password_must_be_provided": "请您填写密码？", 
     "grid.item.buy_now": "立刻购买", 
     "grid.item.cancel_download": "取消下载", 
     "grid.item.downloading": "正在下载...", 
