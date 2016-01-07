@@ -93,7 +93,7 @@
     "sidebar.installed": "", 
     "sidebar.owned": "", 
     "status.checking": "", 
-    "status.downloaded": "", 
+    "status.downloaded": "Kliknutím restartovat & aktualizovat!", 
     "status.downloading": "", 
     "status.uptodate": ""
 }
