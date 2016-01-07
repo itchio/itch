@@ -64,6 +64,7 @@
     "onboarding.owned.navigation_hint": "Clique nos rótulos à esquerda para navegar pelo app", 
     "onboarding.owned.reassuring_comment": "As coisas estão um pouco vazias no momento, mas não se preocupe!", 
     "onboarding.owned.title_warm_welcome": "Você conseguiu!", 
+    "preferences.install_location.free_space": "Espaço livre", 
     "preferences.install_locations": "Locais de instalação", 
     "prompt.action.cancel": "Cancelar", 
     "prompt.action.close": "Fechar", 
