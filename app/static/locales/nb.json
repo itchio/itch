@@ -89,6 +89,7 @@
     "prompt.install_location_not_empty.detail": "Foreløpig må det gjøres manuelt.", 
     "prompt.install_location_not_empty.message": "Installasjonsområder kan bare bli fjernet når alt deres innhold er avinstallert.", 
     "prompt.install_location_not_empty.show_contents": "Vis innhold", 
+    "prompt.install_location_remove.message": "Er du sikker på at du vil fjerne dette området?", 
     "prompt.install_location_remove.title": "Fjerner et installasjonsområde", 
     "prompt.last_remaining_install_location.content": "Dette er det siste gjenværende installasjonsområdet, og det kan ikke fjernes før et nytt har blitt lagt til.", 
     "prompt.last_remaining_install_location.title": "Kan ikke fjerne installasjonsområdet", 
