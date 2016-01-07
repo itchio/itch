@@ -13,6 +13,7 @@
     "grid.item.report_problem": "Rapporter et problem (Åpnes i nettleser)", 
     "grid.item.retry": "Prøv å laste ned / installere / starte denne artikkelen igjen", 
     "grid.item.running": "Kjører...", 
+    "grid.item.uninstall": "Avinstaller denne artikkelen nå", 
     "login.action.login": "Log in", 
     "login.action.register": "", 
     "login.action.reset_password": "Glemt passord", 
