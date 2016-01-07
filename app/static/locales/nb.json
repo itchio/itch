@@ -74,7 +74,7 @@
     "prompt.additional_purchase.title": "Du eier allerede dette!", 
     "prompt.confirm_uninstall": "", 
     "prompt.crash_reporter.detail": "", 
-    "prompt.crash_reporter.message": "", 
+    "prompt.crash_reporter.message": "Programmet har krasjet", 
     "prompt.crash_reporter.open_crash_log": "", 
     "prompt.crash_reporter.report_issue": "", 
     "prompt.install_location_not_empty.detail": "Foreløpig må det gjøres manuelt.", 
