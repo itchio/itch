@@ -1,1 +1,10 @@
-{}
+{
+    "grid.item.cancel_download": "لغو بارگیری‌", 
+    "grid.item.installing": "درحال نصب...", 
+    "grid.item.queued": "در نوبت", 
+    "menu.help.check_for_update": "بررسی برای به روز رسانی", 
+    "preferences.install_location.free_space": "فضای آزاد", 
+    "preferences.install_locations": "نصب مکان‌ها", 
+    "prompt.install_location_not_empty.detail": "در حال حاضر نیاز است که به صورت دستی انجام شود.", 
+    "prompt.no_compatible_version.title": "\n{{عنوان}} در {{پلتفرم}}\n"
+}
