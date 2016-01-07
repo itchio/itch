@@ -80,6 +80,7 @@
     "prompt.rar_policy.message": "Este conteúdo usa o formato de compressão RAR, e não pode ser instalado com o itch até ser reempacotado.", 
     "prompt.url_install.title": "Pedido de instalação", 
     "sidebar.getting_started": "Para começar", 
+    "sidebar.installed": "Instalado", 
     "status.checking": "À procura de atualizações...", 
     "status.downloaded": "Clica para reiniciar e aplicar a actualização!", 
     "status.downloading": "A descarregar atualização..."
