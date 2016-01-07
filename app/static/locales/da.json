@@ -1,6 +1,7 @@
 {
     "grid.item.installing": "Installerer...", 
     "grid.item.queued": "I kø", 
+    "menu.help.check_for_update": "Tjek for Opdatering", 
     "menu.help.help": "Hjælp", 
     "onboarding.dashboard.docs_link": "Lær mere", 
     "onboarding.dashboard.welcome_home": "Velkommen hjem", 
