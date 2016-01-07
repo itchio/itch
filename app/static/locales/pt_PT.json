@@ -20,6 +20,7 @@
     "login.action.register": "Registar", 
     "login.action.reset_password": "Esqueci-me da palavra-passe", 
     "login.field.password": "Palavra-passe", 
+    "login.field.username": "Nome de Utilizador", 
     "login.status.dependency_check": "A certificar que temos tudo configurado...", 
     "login.status.dependency_install": "A instalar a dependência {{name}} {{version}}", 
     "login.status.setup_failure": "Houve um problema durante a configuração: {{error}}", 
