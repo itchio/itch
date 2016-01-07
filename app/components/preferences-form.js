@@ -8,6 +8,7 @@ let ShallowComponent = require('./shallow-component')
 let AppActions = require('../actions/app-actions')
 let urls = require('../constants/urls')
 let I18nStore = require('../stores/i18n-store')
+let os = require('../util/os')
 
 let Tooltip = require('rc-tooltip')
 let SelectRow = require('./select-row')
@@ -24,7 +25,8 @@ class PreferencesForm extends ShallowComponent {
     let state = this.props.state
     let language = mori.getIn(state, ['preferences', 'language'])
     let locales = I18nStore.get_locales_list()
-    let sniffed = I18nStore.get_sniffed_language()
+    let sniff_code = I18nStore.get_sniffed_language()
+    let sniffed = sniff_code
     for (let loc of locales) {
       if (loc.value === sniffed) {
         sniffed = loc.label
@@ -34,7 +36,7 @@ class PreferencesForm extends ShallowComponent {
 
     let options = [{
       value: '__',
-      label: t('preferences.language.auto', {language: sniffed})
+      label: t('preferences.language.auto', {language: sniffed, lngs: [sniff_code, 'en']})
     }].concat(locales)
 
     return (
@@ -105,11 +107,6 @@ class PreferencesForm extends ShallowComponent {
       let item_count = mori.get(location, 'item_count')
       let computing_size = mori.get(location, 'computing_size')
 
-      let browse_i18n_key = 'preferences.install_location.browse'
-      if (process.platform === 'darwin') {
-        browse_i18n_key += '_osx'
-      }
-
       rows.push(r.tr({}, [
         r.td({
           className: 'action',
@@ -171,7 +168,7 @@ class PreferencesForm extends ShallowComponent {
             onClick: (e) => AppActions.install_location_make_default(name)
           }, r(Icon, {icon: 'star'})))),
 
-        this.tooltip(browse_i18n_key, r.td({
+        this.tooltip(this.browse_i18n_key(), r.td({
           className: 'action',
           onClick: (e) => AppActions.install_location_browse(name)
         }, r(Icon, {icon: 'folder-open'}))),
@@ -204,6 +201,15 @@ class PreferencesForm extends ShallowComponent {
     return r.table({className: 'install_locations'}, [
       r.tbody({}, rows)
     ])
+  }
+
+  browse_i18n_key () {
+    let fallback = 'preferences.install_location.browse'
+    switch (os.platform()) {
+      case 'darwin': return ['preferences.install_location.browse_osx', fallback]
+      case 'linux': return ['preferences.install_location.browse_linux', fallback]
+      default: return fallback
+    }
   }
 
   on_language_change (language) {

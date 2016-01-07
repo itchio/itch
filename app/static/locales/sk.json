@@ -1,1 +1,21 @@
-{}
+{
+    "grid.item.cancel_download": "Zrušiť sťahovanie", 
+    "grid.item.installing": "Inštalácia...", 
+    "grid.item.queued": "Zaradené do fronty", 
+    "login.status.dependency_install": "Inštalácia závislosti {{name}} {{version}}", 
+    "menu.edit.edit": "Úprava", 
+    "menu.help.check_for_update": "Skontrolovať aktualizácie", 
+    "menu.help.help": "Pomoc", 
+    "onboarding.collections.lets_shop": "Poďme nakupovať", 
+    "onboarding.dashboard.docs_link": "Zistiť viac", 
+    "onboarding.dashboard.welcome_home": "Vítajte doma", 
+    "preferences.install_location.free_space": "Voľné miesto", 
+    "preferences.install_locations": "Miesta inštalácie", 
+    "preferences.language": "Jazyk", 
+    "prompt.additional_purchase.detail": "... ale stále môžete kúpiť kópiu pre priateľa\n\nChcete vykonať ďalší nákup?", 
+    "prompt.install_location_not_empty.detail": "Za súčasných okolností je nutné to dokončiť ručne.", 
+    "prompt.last_remaining_install_location.title": "Nie je možné vymazať miesto inštalácie", 
+    "prompt.no_compatible_version.title": "{{title}} pre {{platform}}", 
+    "prompt.payments_disabled.title": "Platby zablokované", 
+    "status.downloaded": "Kliknite pre reštartovanie a aplikovanie aktualizácií!"
+}

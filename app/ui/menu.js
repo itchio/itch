@@ -133,28 +133,6 @@ function make_menus () {
     }
   }
 
-  if (process.env.DANGER_ZONE) {
-    menus.help.submenu = menus.help.submenu.concat([
-      {
-        type: 'separator'
-      },
-      {
-        label: _t('menu.danger_zone.danger_zone'),
-        submenu: [
-          {
-            label: _t('menu.danger_zone.dont_use'),
-            submenu: [
-              {
-                label: _t('menu.danger_zone.provoke_crash'),
-                click: () => { throw new Error('Silly human-provoked crash.') }
-              }
-            ]
-          }
-        ]
-      }
-    ])
-  }
-
   return menus
 }
 
