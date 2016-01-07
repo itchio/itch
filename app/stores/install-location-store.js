@@ -65,10 +65,6 @@ function compute_state () {
     let computing_size = !!location_computing_size[loc_name]
     let item_count = location_item_counts[loc_name] || 0
 
-    if (size === -1 && !computing_size && !raw_loc.deleted) {
-      AppActions.install_location_compute_size(loc_name)
-    }
-
     let loc = Object.assign({}, raw_loc, {
       size,
       free_space,
