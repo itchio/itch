@@ -63,7 +63,7 @@
     "preferences.install_location.delete": "הסר את מיקום ההתקנה הזה ומחק את התוכן שלו", 
     "preferences.install_location.empty": "ריק", 
     "preferences.install_location.free_space": "מקום פנוי", 
-    "preferences.install_location.is_default": "דברים חדשים יותקנו למיקום זה בברירת מחדל", 
+    "preferences.install_location.is_default": "דברים חדשים יותקנו למיקום זה בברירת מחדל.", 
     "preferences.install_location.item_count": "# פריטים", 
     "preferences.install_location.make_default": "הגדר כברירת מחדל", 
     "preferences.install_location.name": "שם", 
