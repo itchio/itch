@@ -10,6 +10,7 @@
     "grid.item.launch": "", 
     "grid.item.not_platform_compatible": "", 
     "grid.item.queued": "I kø", 
+    "grid.item.report_problem": "Rapporter et problem (Åpnes i nettleser)", 
     "grid.item.retry": "Prøv å laste ned / installere / starte denne artikkelen igjen", 
     "grid.item.running": "", 
     "login.action.login": "Log in", 
