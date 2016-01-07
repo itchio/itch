@@ -2,7 +2,7 @@
     "grid.item.cancel_download": "لغو بارگیری‌", 
     "grid.item.installing": "درحال نصب...", 
     "grid.item.queued": "در نوبت", 
-    "login.status.dependency_install": "نصب وابستگی {{name}} {{version}}\n", 
+    "login.status.dependency_install": "نصب وابستگی {{name}} {{version}}", 
     "menu.help.check_for_update": "بررسی برای به روز رسانی", 
     "menu.help.help": "راهنما", 
     "onboarding.dashboard.welcome_home": "به خانه خوش آمدید", 
