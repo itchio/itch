@@ -110,6 +110,7 @@
     "prompt.payments_disabled.open_web_page": "Apri pagina web", 
     "prompt.payments_disabled.title": "Pagamenti disabilitati", 
     "prompt.rar_policy.learn_more": "Scopri di più", 
+    "prompt.rar_policy.message": "Questo contenuto utilizza il formato di compressione RAR, e non potrà essere installato finché non sara reimpacchettato.", 
     "prompt.url_install.credit": "Una {{classification}} di {{username}}", 
     "prompt.url_install.message": "Vuoi installare {{title}}?", 
     "prompt.url_install.title": "Richiesta di installazione", 
