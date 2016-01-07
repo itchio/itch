@@ -12,6 +12,8 @@
     "grid.item.queued": "В очереди", 
     "grid.item.report_problem": "Отчет испорчен ( Открыть в браузере)", 
     "grid.item.running": "Запускается...", 
+    "grid.item.uninstall": "Удалить этот предмет сейчас", 
+    "grid.item.uninstalling": "Удаление...", 
     "login.action.login": "Войти", 
     "login.action.register": "Зарегистрироваться", 
     "login.action.reset_password": "Забыли пароль?", 
