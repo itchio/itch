@@ -15,5 +15,6 @@
     "grid.item.uninstall": "Desinstalar este item agora", 
     "preferences.install_location.free_space": "Espaço livre", 
     "preferences.install_locations": "Locais para instalação", 
+    "prompt.install_location_not_empty.detail": "Precisa de ser feito manualmente por enquanto.", 
     "prompt.payments_disabled.title": "Pagamentos desativados"
 }
