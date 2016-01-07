@@ -2,6 +2,7 @@
     "grid.item.cancel_download": "Cancelar transferência", 
     "grid.item.installing": "A instalar...", 
     "grid.item.queued": "Na fila", 
+    "grid.item.report_problem": "Reportar como estragado (Abre no navegador)", 
     "grid.item.retry": "Tenta transferir / instalar / correr este item novamente", 
     "preferences.install_location.free_space": "Espaço livre", 
     "preferences.install_locations": "Locais para instalação", 
