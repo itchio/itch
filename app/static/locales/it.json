@@ -104,7 +104,7 @@
     "prompt.install_location_remove.detail": "Tutti gli oggetti installati in {{location}} saranno disinstallati.", 
     "prompt.install_location_remove.message": "Sei sicuro di voler rimuovere questa cartella?", 
     "prompt.install_location_remove.title": "Rimuovere una cartella d'installazione", 
-    "prompt.last_remaining_install_location.content": "Questo è l'ultimo percorso di installazione, è impossibile rimuoverlo finchè non ne viene aggiunto un altro.\n", 
+    "prompt.last_remaining_install_location.content": "Questo è l'ultimo percorso di installazione, è impossibile rimuoverlo finchè non ne viene aggiunto un altro.", 
     "prompt.last_remaining_install_location.title": "Impossibile rimuovere il percorso di installazione", 
     "prompt.logout_confirm": "Sei sicuro di volere disconnetterti?", 
     "prompt.no_compatible_version.detail": "Forse questa {{classification}} non è ancora compatibile per ora?", 
