@@ -73,7 +73,7 @@
     "preferences.language": "Språk", 
     "preferences.language.get_involved": "Hjelp til med å oversette {{name}} til ditt språk!", 
     "prompt.action.cancel": "", 
-    "prompt.action.close": "", 
+    "prompt.action.close": "Lukk", 
     "prompt.action.confirm_removal": "Fortsett med fjerning", 
     "prompt.action.install": "Install", 
     "prompt.action.ok": "Ok", 
