@@ -93,6 +93,7 @@
     "prompt.no_compatible_version.detail": "", 
     "prompt.no_compatible_version.message": "We hebben geen versie van {{title}} voor {{platform}} gevonden.", 
     "prompt.no_compatible_version.title": "{{title}} voor {{platform}}", 
+    "prompt.payments_disabled.title": "Betalingen uitgezet", 
     "prompt.url_install.credit": "Een {{classification}} van {{username}}", 
     "prompt.url_install.message": "Wil je {{title}} installeren?", 
     "prompt.url_install.title": "", 
