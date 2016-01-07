@@ -75,7 +75,7 @@
     "preferences.install_location.name": "Nombre", 
     "preferences.install_location.path": "Ubicación", 
     "preferences.install_location.size": "Espacio en disco", 
-    "preferences.install_locations": "Ubicaciòn de la instalacion", 
+    "preferences.install_locations": "Ruta de instalación", 
     "preferences.language": "Idioma", 
     "preferences.language.get_involved": "¡Ayúdanos a traducir {{name}} a tu idioma!", 
     "prompt.action.cancel": "Cancelar", 
