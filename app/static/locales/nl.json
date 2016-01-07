@@ -100,7 +100,7 @@
     "sidebar.installed": "Geïnstalleerd", 
     "sidebar.owned": "Bibliotheek", 
     "status.checking": "Zoeken naar updates...", 
-    "status.downloaded": "Klik om opnieuw te starten en de update te installeren", 
+    "status.downloaded": "Klik om opnieuw te starten en de update te installeren!", 
     "status.downloading": "Update downloaden...", 
     "status.uptodate": "Je itch is de nieuwste versie!"
 }
