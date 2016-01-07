@@ -2,6 +2,7 @@
     "grid.item.cancel_download": "Annullér hentning", 
     "grid.item.installing": "Installerer...", 
     "grid.item.queued": "I kø", 
+    "login.status.dependency_install": "Installerer afhængighed {{name}} {{version}}", 
     "menu.help.check_for_update": "Tjek for Opdatering", 
     "menu.help.help": "Hjælp", 
     "onboarding.dashboard.docs_link": "Lær mere", 
