@@ -25,7 +25,8 @@ class PreferencesForm extends ShallowComponent {
     let state = this.props.state
     let language = mori.getIn(state, ['preferences', 'language'])
     let locales = I18nStore.get_locales_list()
-    let sniffed = I18nStore.get_sniffed_language()
+    let sniff_code = I18nStore.get_sniffed_language()
+    let sniffed = sniff_code
     for (let loc of locales) {
       if (loc.value === sniffed) {
         sniffed = loc.label
@@ -35,7 +36,7 @@ class PreferencesForm extends ShallowComponent {
 
     let options = [{
       value: '__',
-      label: t('preferences.language.auto', {language: sniffed})
+      label: t('preferences.language.auto', {language: sniffed, lngs: [sniff_code, 'en']})
     }].concat(locales)
 
     return (
