@@ -100,7 +100,7 @@
     "prompt.no_compatible_version.detail": "Может {{classification}} еще не совместима?", 
     "prompt.no_compatible_version.message": "Мы не смогли найти версию {{title}} для {{platform}}.", 
     "prompt.no_compatible_version.title": "{{title}} на {{platform}}", 
-    "prompt.payments_disabled.detail": "Возможно, вы сможете другой способ поддержать их?", 
+    "prompt.payments_disabled.detail": "Возможно, вы сможете найти другой способ поддержать их?", 
     "prompt.payments_disabled.message": "Увы, но разработчик отключил платежи для {{title}}.", 
     "prompt.payments_disabled.open_web_page": "Открыть в браузере", 
     "prompt.payments_disabled.title": "Платежи отключены", 
