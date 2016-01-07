@@ -48,7 +48,7 @@
     "menu.help.report_issue": "Rapporter en sak", 
     "menu.help.search_issue": "", 
     "menu.help.view_license": "Se lisens", 
-    "menu.help.view_terms": "", 
+    "menu.help.view_terms": "Se vilkår for itch.io", 
     "onboarding.caved.prealpha_reminder": "Husk at dette er en pre-alfa", 
     "onboarding.caved.title_pick": "Ta et valg", 
     "onboarding.caved.troubleshoot_advice": "Hvis det oppstår problemer, klikk {{report}} for å rapportere dem, eller {{probe}} for å undersøke nærmere.", 
