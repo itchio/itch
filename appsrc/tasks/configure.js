@@ -1,10 +1,13 @@
 
 let os = require('../util/os')
+let _ = require('underscore')
 
 let log = require('../util/log')('tasks/configure')
 
 let CaveStore = require('../stores/cave-store')
 let AppActions = require('../actions/app-actions')
+
+let html = require('./configure/html')
 
 let self = {
   configure: async function (app_path) {
@@ -28,10 +31,20 @@ let self = {
     let app_path = CaveStore.app_path(cave.install_location, id)
     log(opts, `configuring ${app_path}`)
 
-    let executables = (await self.configure(app_path)).executables
+    let has_native = _.some(_.values(cave.uploads), (upload) => !!upload[`p_${os.itch_platform()}`])
+    let has_html = _.some(_.values(cave.uploads), (upload) => upload.type === 'html')
+    let launch_type = has_html && !has_native ? 'html' : 'native'
+    AppActions.cave_update(id, {launch_type})
+    if (launch_type === 'html') {
+      let res = await html.configure(app_path)
+      AppActions.cave_update(id, res)
+      return 'html configure result: ' + JSON.stringify(res)
+    } else {
+      let executables = (await self.configure(app_path)).executables
 
-    AppActions.cave_update(id, {executables})
-    return executables.length + ' candidates'
+      AppActions.cave_update(id, {executables})
+      return executables.length + ' candidates'
+    }
   }
 }
 
