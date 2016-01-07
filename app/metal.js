@@ -3,6 +3,12 @@
 require('source-map-support').install()
 
 let env = require('./env')
+if (!process.env.NODE_ENV) {
+  console.log(`Setting NODE_ENV to ${env.name}`)
+  process.env.NODE_ENV = env.name
+} else {
+  console.log(`NODE_ENV manually set to ${process.env.NODE_ENV}`)
+}
 
 if (env.name === 'development') {
   console.log('Development environment, using babel require hook')

@@ -188,6 +188,10 @@ async function game_browse (payload) {
   electron.shell.openExternal(game.url)
 }
 
+let fetch_caved_games = _.debounce(() => {
+  fetch_games({path: 'caved'})
+}, 250, true)
+
 function app_implode () {
   state = {}
   GameStore.emit_change()
@@ -209,12 +213,12 @@ AppDispatcher.register('game-store', Store.action_listeners(on => {
 
     if (!cached_caves[id]) {
       cached_caves[id] = true
-      fetch_games({path: 'caved'})
+      fetch_caved_games()
     }
   })
 
   on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, (payload) => {
-    fetch_games({path: 'caved'})
+    fetch_caved_games()
   })
 
   on(AppConstants.GAME_BROWSE, game_browse)

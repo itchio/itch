@@ -1,9 +1,23 @@
 
-let log = require('../util/log')('i18n-backend')
+let log = require('../util/log')('i18n-backend/' + process.type)
 let opts = { logger: new log.Logger() }
 
-let fs = require('../promised/fs')
+let sf = require('../util/sf')
+let urls = require('../constants/urls')
+let env = require('../env')
+
 let path = require('path')
+
+let i18next = require('i18next')
+
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+let AppConstants = require('../constants/app-constants')
+let AppActions = require('../actions/app-actions')
+
+let being_fetched = {}
+
+// don't overwrite local files
+let remote_suffix = '.remote.json'
 
 class Backend {
   constructor (services, options) {
@@ -13,6 +27,19 @@ class Backend {
     this.init(services, options)
 
     this.type = 'backend'
+
+    AppDispatcher.register('i18n-backend', (payload) => {
+      if (payload.action_type === AppConstants.LOCALE_UPDATE_DOWNLOADED) {
+        log(opts, `Adding resources to ${payload.lang}`)
+        i18next.addResources(
+          payload.lang,
+          'translation', /* default i18next namespace */
+          payload.resources
+        )
+      } else if (payload.action_type === AppConstants.LOCALE_UPDATE_QUEUE_DOWNLOAD) {
+        this.queue_download(payload.lang)
+      }
+    })
   }
 
   init (services, options, coreOptions) {
@@ -28,47 +55,122 @@ class Backend {
     this.coreOptions = coreOptions
   }
 
+  canonical_filename (candidate) {
+    return path.join(this.options.loadPath, candidate + '.json')
+  }
+
   async read (language, namespace, callback) {
-    // We don't use namespaces
-    let candidates = [
-      language,
-      language.substring(0, 2)
-    ]
+    this.queue_download(language)
 
-    let found = false
+    let canonical_filename = this.canonical_filename(language)
 
-    for (let candidate of candidates) {
-      let filename = path.join(this.options.loadPath, candidate + '.json')
-
-      let has = true
-      try {
-        await fs.lstatAsync(filename)
-      } catch (e) {
-        has = false
-      }
-      if (!has) continue
-
-      found = true
-
-      let contents = await fs.readFileAsync(filename, {encoding: 'utf8'})
-      try {
-        let parsed = JSON.parse(contents)
-        log(opts, `Successfully loaded ${language} from ${filename}`)
-        callback(null, parsed)
-      } catch (err) {
-        err.message = 'error parsing ' + filename + ': ' + err.message
-        callback(err)
+    if (!await sf.exists(canonical_filename)) {
+      canonical_filename = this.canonical_filename(language.substring(0, 2))
+      if (!await sf.exists(canonical_filename)) {
+        log(opts, `No locale file found for language ${language}`)
+        return callback(null, {})
       }
     }
 
-    if (!found) {
-      log(opts, `No locale file found for language ${language}`)
-      callback(null, {})
+    let loaded_filename = canonical_filename
+
+    // do we have a newer version?
+    if (await sf.exists(canonical_filename + remote_suffix)) {
+      // neat, use it.
+      loaded_filename = canonical_filename + remote_suffix
+    }
+
+    let contents = await sf.read_file(loaded_filename)
+    try {
+      let parsed = JSON.parse(contents)
+      log(opts, `Successfully loaded ${language} from ${loaded_filename}`)
+      return callback(null, parsed)
+    } catch (err) {
+      err.message = 'error parsing ' + loaded_filename + ': ' + err.message
+      return callback(err)
     }
   }
 
+  async queue_download (language) {
+    // only run local updating on the node side
+    if (process.type !== 'browser') return
+
+    if (env.name === 'development' && process.env.DID_I_STUTTER !== '1') {
+      log(opts, `Not downloading locales in development, export DID_I_STUTTER=1 to override`)
+      return
+    }
+
+    if (being_fetched[language]) return
+
+    being_fetched[language] = true
+    AppActions.locale_update_download_start(language)
+
+    log(opts, `Waiting a bit before downloading ${language} locale..`)
+    await cooldown()
+
+    try {
+      await this.download_fresh_locale(language)
+    } catch (e) {
+      log(opts, `While downloading fresh locale: ${e.stack || e}`)
+    }
+
+    being_fetched[language] = false
+    AppActions.locale_update_download_end(language)
+  }
+
+  async download_fresh_locale (language) {
+    let local_filename = this.canonical_filename(language)
+    if (!await sf.exists(local_filename)) {
+      // try stripping region
+      local_filename = this.canonical_filename(language.substring(0, 2))
+    }
+
+    let remote_filename = local_filename + '.remote.json'
+    let uri = `${urls.remote_locale_path}/${language}.json`
+
+    log(opts, `Downloading fresh locale file from ${uri}`)
+
+    let needle = require('../promised/needle')
+    let resp = await needle.requestAsync('GET', uri)
+    let resources = resp.body
+
+    if (resp.statusCode !== 200) {
+      log(opts, `Got HTTP ${resp.statusCode} while fetching fresh locale`)
+      return
+    }
+
+    log(opts, `Successfully obtained remote locale ${language}`)
+    AppActions.locale_update_downloaded(language, resources)
+
+    log(opts, `Saving fresh ${language} locale to ${remote_filename}`)
+    await sf.write_file(remote_filename, resources)
+  }
 }
 
 Backend.type = 'backend'
+
+/** Throttling logic */
+// Stolen from api.js, once copied another time, make generic
+// cf. https://en.wikipedia.org/wiki/Rule_of_three_(computer_programming)
+
+let last_request = 0
+let ms_between_requests = 1000
+
+function cooldown () {
+  let now = +new Date()
+  let next_acceptable = last_request + ms_between_requests
+  let quiet = next_acceptable - now
+
+  if (now > next_acceptable) {
+    last_request = now
+    return Promise.resolve()
+  } else {
+    last_request = next_acceptable
+  }
+
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, quiet)
+  })
+}
 
 module.exports = Backend

@@ -58,6 +58,7 @@ class GameCell extends ShallowComponent {
 
     let icon_spin = false
     if (mori.get(cave, 'reporting')) {
+      task = 'report'
       icon_spin = true
     }
 

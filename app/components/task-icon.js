@@ -7,6 +7,7 @@ let Icon = require('./icon')
 
 // TODO: move to `constants/`
 let task_to_icon = {
+  'report': 'upload-to-cloud',
   'error': 'heart-broken',
   'awaken': 'stopwatch',
   'find-upload': 'stopwatch',
@@ -28,11 +29,6 @@ class TaskIcon extends ShallowComponent {
     let task = this.props.task || ''
     let spin = !!this.props.spin
     let icon = task_to_icon[task] || ''
-
-    if (spin) {
-      // TODO: fix me, that's ugly
-      icon = 'upload-to-cloud'
-    }
 
     return r(Icon, {icon, spin})
   }

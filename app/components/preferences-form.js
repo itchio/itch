@@ -34,6 +34,8 @@ class PreferencesForm extends ShallowComponent {
       }
     }
 
+    let num_fetching = mori.count(mori.getIn(state, ['locales', 'updating']))
+
     let options = [{
       value: '__',
       label: t('preferences.language.auto', {language: sniffed, lngs: [sniff_code, 'en']})
@@ -51,6 +53,24 @@ class PreferencesForm extends ShallowComponent {
             value: language || '__',
             label: t('preferences.language')
           }),
+
+          r.div({
+            className: 'locale_fetcher',
+            onClick: (e) => {
+              e.preventDefault()
+              AppActions.locale_update_queue_download(language)
+            }
+          }, (num_fetching > 0
+
+            ? r(Icon, {
+              icon: 'stopwatch',
+              spin: true
+            })
+
+            : r(Icon, {
+              icon: 'refresh'
+            }))),
+
           r.div({className: 'get_involved'}, [
             r.a({href: urls.itch_translation_platform}, [
               r(Icon, {icon: 'earth'}),

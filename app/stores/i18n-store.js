@@ -22,6 +22,7 @@ function on_error (err) {
   }
 }
 
+let lang = 'en'
 let sniffed_language = 'en'
 
 let i18n_opts = {
@@ -66,7 +67,7 @@ state.on('error', (e) => {
   console.log(`Error loading translations: ${e}`)
 })
 
-state.on('languageChanged loaded', () => {
+state.on('languageChanged loaded added removed', () => {
   I18nStore.emit_change()
 })
 
@@ -80,7 +81,7 @@ if (process.type === 'renderer') {
 
 function reload (preferences) {
   sniffed_language = preferences.sniffed_language || 'en'
-  let lang = preferences.language || sniffed_language
+  lang = preferences.language || sniffed_language
   log(opts, `Switching to language ${lang}`)
   state.changeLanguage(lang, on_error)
 }
