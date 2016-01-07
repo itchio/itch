@@ -16,6 +16,7 @@
     "grid.item.retry": "Prova nuovamente a scaricare / installare / avviare l'elemento", 
     "grid.item.running": "In esecuzione…", 
     "grid.item.uninstall": "Rimuovi questo elemento", 
+    "grid.item.uninstalling": "Disinstallazione in corso...", 
     "login.action.login": "Accedi", 
     "login.action.register": "Registrati", 
     "login.action.reset_password": "Password dimenticata", 
