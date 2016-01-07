@@ -8,7 +8,7 @@
     "grid.item.finalize_installation": "Ferdigstill installasjon", 
     "grid.item.install": "Install", 
     "grid.item.installing": "Installerer...", 
-    "grid.item.launch": "", 
+    "grid.item.launch": "Start", 
     "grid.item.not_platform_compatible": "Ikke tilgjengelig for {{platform}}", 
     "grid.item.probe": "Åpne denne artikkelens hendelseslogg for å finne årsaken til feilen (Avansert)", 
     "grid.item.purchase_or_donate": "Kjøp eller doner penger for artikkel", 
