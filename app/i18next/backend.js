@@ -131,25 +131,19 @@ class Backend {
     log(opts, `Downloading fresh locale file from ${uri}`)
 
     let needle = require('../promised/needle')
-    let resp = await needle.requestAsync('GET', uri, {})
-    let body = resp.body
+    let resp = await needle.requestAsync('GET', uri)
+    let resources = resp.body
 
     if (resp.statusCode !== 200) {
       log(opts, `Got HTTP ${resp.statusCode} while fetching fresh locale`)
       return
     }
 
-    try {
-      let resources = JSON.parse(body)
-      log(opts, `Successfully parsed ${language} from remote locale`)
-      AppActions.locale_update_downloaded(language, resources)
-    } catch (err) {
-      log(opts, `Error parsing ${uri}: ${err.message}`)
-      return
-    }
+    log(opts, `Successfully obtained remote locale ${language}`)
+    AppActions.locale_update_downloaded(language, resources)
 
     log(opts, `Saving fresh ${language} locale to ${remote_filename}`)
-    await sf.write_file(remote_filename, body)
+    await sf.write_file(remote_filename, resources)
   }
 }
 
