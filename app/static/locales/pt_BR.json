@@ -9,6 +9,7 @@
     "grid.item.installing": "Instalando...", 
     "grid.item.launch": "Iniciar", 
     "grid.item.not_platform_compatible": "Não disponível em {{platform}}", 
+    "grid.item.probe": "Abrir o log de eventos deste item para encontrar a falha do problema (Avançado)", 
     "grid.item.purchase_or_donate": "Comprar ou doar dinheiro para o item", 
     "grid.item.queued": "Enfileirado", 
     "grid.item.report_problem": "Reportar um problema (Abrirá no navegador)", 
