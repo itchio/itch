@@ -64,6 +64,7 @@
     "preferences.install_location.add": "Legg til område", 
     "preferences.install_location.delete": "Fjern dette installasjonsområdet og slett alt innhold", 
     "preferences.install_location.free_space": "Ledig plass", 
+    "preferences.install_location.is_default": "Nye artikler vil bli installert til dette området som standard.", 
     "preferences.install_location.item_count": "# av artikler", 
     "preferences.install_locations": "Installasjonsområder", 
     "preferences.language": "Språk", 
