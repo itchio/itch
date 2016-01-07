@@ -103,4 +103,12 @@ test('configure (each platform)', t => {
     ]
     t.samePaths(res.executables, names)
   })
+
+  let html = proxyquire('../../app/tasks/configure/html', stubs)
+  let html_path = fixture.path('configure/html')
+
+  t.case('html finds game root', async t => {
+    let res = await html.configure(html_path)
+    t.same(res.game_root, 'ThisContainsStuff')
+  })
 })

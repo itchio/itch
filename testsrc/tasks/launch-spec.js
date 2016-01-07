@@ -6,6 +6,7 @@ let path = require('path')
 
 let electron = require('../stubs/electron')
 let CaveStore = require('../stubs/cave-store')
+let db = require('../stubs/db')
 
 let log = require('../../app/util/log')
 
@@ -22,19 +23,34 @@ function make_dummy () {
   return d
 }
 
+function mockable_func_module () {
+  function f (arg) {
+    f._func(arg)
+  }
+  let o = {}
+  o.__proto__ = f.__proto__
+  f.__proto__ = o
+  f._func = () => null
+  return f
+}
+
+let rnil = () => null
+
 test('launch', t => {
+  let configure = {
+    start: () => Promise.resolve()
+  }
+  let os = {
+    platform: () => 'win32'
+  }
   let child_process = {
     spawn: () => null,
     '@noCallThru': true,
     '@global': true
   }
-  let os = {
-    platform: () => 'win32'
-  }
 
-  let configure = {
-    start: async () => null
-  }
+  let native = { launch: () => Promise.resolve() }
+  let html = { launch: () => Promise.resolve() }
 
   let sf = {
     stat: async () => ({size: 0})
@@ -45,87 +61,133 @@ test('launch', t => {
     '../util/sf': sf,
     '../util/os': os,
     './configure': configure,
-    'child_process': child_process
+    'child_process': child_process,
+    './launch/native': native,
+    './launch/html': html
   }, electron)
 
   let launch = proxyquire('../../app/tasks/launch', stubs)
 
-  t.case('rejects 0 execs', async t => {
-    t.stub(CaveStore, 'find').resolves({})
-
-    let err
-    try {
-      await launch.start(opts)
-    } catch (e) { err = e }
-    t.same(err.message, 'No executables found')
-  })
-
-  t.case('launches top-most exec', async t => {
-    t.stub(CaveStore, 'find').resolves({
-      executables: [ '/a/b/c', '/a/bababa', '/a/b/c/d' ]
+  t.case('rejects 0 execs', t => {
+    let spy = t.spy()
+    t.stub(CaveStore, 'find').resolves({ launch_type: 'native' })
+    return launch.start(opts).catch(spy).then(_ => {
+      t.is(spy.callCount, 1)
+      t.same(spy.getCall(0).args[0].message, 'Cave is invalid')
     })
-    t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/a/bababa')).resolves('Done!')
-    await launch.start(opts)
-  })
-
-  t.case('ignores uninstallers', async t => {
-    t.stub(CaveStore, 'find').resolves({
-      executables: [ 'uninstall.exe', 'game.exe' ]
-    })
-    t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/game.exe')).resolves('Done!')
-    await launch.start(opts)
-  })
-
-  t.case('ignores dxwebsetup', async t => {
-    t.stub(CaveStore, 'find').resolves({
-      executables: [ 'dxwebsetup.exe', 'game.exe' ]
-    })
-    t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/game.exe')).resolves('Done!')
-    await launch.start(opts)
   })
 
   t.case('reconfigures as needed', async t => {
     let find = t.stub(CaveStore, 'find')
-    find.resolves({ executables: [] })
-    t.stub(configure, 'start', async () => {
-      find.resolves({ executables: ['/a'] })
+    find.resolves({ executables: [], launch_type: 'native' })
+    t.stub(configure, 'start', () => {
+      find.resolves({ executables: ['/a'], launch_type: 'native' })
+      return Promise.resolve()
     })
-    t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/a')).resolves('Done!')
+    t.mock(native).expects('launch').once().resolves('Done!')
+    return launch.start(opts)
+  })
+
+  t.case('launches correct launch_type', async t => {
+    let find = t.stub(CaveStore, 'find')
+    find.resolves({ executables: ['./a'], launch_type: 'native' })
+    t.mock(native).expects('launch').once().resolves('Done!')
+    await launch.start(opts)
+    find.resolves({ game_root: 'a', window_size: {width: 1, height: 1}, launch_type: 'html' })
+    t.mock(html).expects('launch').once().resolves('Done!')
     await launch.start(opts)
   })
 
-  t.case('launch/.app', async t => {
+  t.case('rejects invalid launch_type', t => {
+    let spy = t.spy()
+    t.stub(CaveStore, 'find').resolves({ launch_type: 'invalid' })
+    return launch.start(opts).catch(spy).then(_ => {
+      t.is(spy.callCount, 1)
+      t.same(spy.getCall(0).args[0].message, 'Unsupported launch type \'invalid\'')
+    })
+  })
+})
+
+test('launch/native', t => {
+  let child_process = {
+    spawn: () => null,
+    '@noCallThru': true,
+    '@global': true
+  }
+
+  let os = {
+    platform: () => 'win32'
+  }
+
+  let sf = {
+    stat: async () => ({size: 0})
+  }
+
+  let stubs = Object.assign({
+    '../../stores/cave-store': CaveStore,
+    '../../util/sf': sf,
+    '../../util/os': os,
+    'child_process': child_process
+  }, electron)
+
+  let native = proxyquire('../../app/tasks/launch/native', stubs)
+
+  t.case('launches top-most exec', t => {
+    let cave = {
+      executables: [ '/a/b/c', '/a/bababa', '/a/b/c/d' ]
+    }
+    t.mock(native).expects('launch_executable').once().withArgs(path.normalize('/tmp/app/a/bababa')).resolves('Done!')
+    return native.launch(opts, cave)
+  })
+
+  t.case('ignores uninstallers', async t => {
+    let cave = {
+      executables: [ 'uninstall.exe', 'game.exe' ]
+    }
+    t.mock(native).expects('launch_executable').once().withArgs(path.normalize('/tmp/app/game.exe')).resolves('Done!')
+    await native.launch(opts, cave)
+  })
+
+  t.case('ignores dxwebsetup', async t => {
+    let cave = {
+      executables: [ 'dxwebsetup.exe', 'game.exe' ]
+    }
+    t.mock(native).expects('launch_executable').once().withArgs(path.normalize('/tmp/app/game.exe')).resolves('Done!')
+    await native.launch(opts, cave)
+  })
+
+  t.case('launch/.app', t => {
     t.stub(os, 'platform').returns('darwin')
-    t.mock(launch).expects('sh').once().withArgs('Dumbo.app', `open -W "Dumbo.app"`).resolves('Done!')
-    await launch.launch('Dumbo.app', [])
+    t.mock(native).expects('sh').once().withArgs('Dumbo.app', `open -W "Dumbo.app"`).resolves('Done!')
+    return native.launch_executable('Dumbo.app', [])
   })
 
   t.case('launch/.app - with args', async t => {
     t.stub(os, 'platform').returns('darwin')
-    t.mock(launch).expects('sh').once().withArgs('Dumbo.app', `open -W "Dumbo.app" --args "dumb" "du\\"mber" "frank spencer"`).resolves('Done!')
-    await launch.launch('Dumbo.app', ['dumb', 'du"mber', 'frank spencer'])
+    t.mock(native).expects('sh').once().withArgs('Dumbo.app', `open -W "Dumbo.app" --args "dumb" "du\\"mber" "frank spencer"`).resolves('Done!')
+    await native.launch_executable('Dumbo.app', ['dumb', 'du"mber', 'frank spencer'])
   })
 
   t.case('launch/binary', async t => {
-    t.mock(launch).expects('sh').once().withArgs('dumbo.exe', `"dumbo.exe"`).resolves('Done!')
-    await launch.launch('dumbo.exe', [])
+    t.mock(native).expects('sh').once().withArgs('dumbo.exe', `"dumbo.exe"`).resolves('Done!')
+    await native.launch_executable('dumbo.exe', [])
   })
 
   t.case('launch/binary -with args', async t => {
-    t.mock(launch).expects('sh').once().withArgs('dumbo.exe', `"dumbo.exe" "dumb" "du\\"mber" "frank spencer"`).resolves('Done!')
-    await launch.launch('dumbo.exe', ['dumb', 'du"mber', 'frank spencer'])
+    t.mock(native).expects('sh').once().withArgs('dumbo.exe', `"dumbo.exe" "dumb" "du\\"mber" "frank spencer"`).resolves('Done!')
+    await native.launch_executable('dumbo.exe', ['dumb', 'du"mber', 'frank spencer'])
   })
 
   t.case('launch/unknown', async t => {
     t.stub(os, 'platform').returns('irix')
-    t.mock(launch).expects('sh').once().withArgs('dumbo', `"dumbo"`).resolves('Done!')
-    await launch.launch('dumbo', [])
+    t.mock(native).expects('sh').once().withArgs('dumbo', `"dumbo"`).resolves('Done!')
+    await native.launch_executable('dumbo', [])
   })
 
   t.case('sh error', async t => {
     let dummy = make_dummy()
     t.mock(child_process).expects('spawn').returns(dummy)
-    let p = launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
+    let p = native.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
     dummy.emit('error')
 
     await t.rejects(p)
@@ -134,7 +196,7 @@ test('launch', t => {
   t.case('sh successful', async t => {
     let dummy = make_dummy()
     t.mock(child_process).expects('spawn').returns(dummy)
-    let p = launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
+    let p = native.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
     dummy.emit('close', 0)
     await p
   })
@@ -142,8 +204,60 @@ test('launch', t => {
   t.case('sh non-zero', async t => {
     let dummy = make_dummy()
     t.mock(child_process).expects('spawn').returns(dummy)
-    let p = launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
+    let p = native.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
     dummy.emit('close', 127)
     await t.rejects(p)
+  })
+})
+
+test('launch/html', t => {
+  let serveStatic = mockable_func_module()
+
+  let http = {
+    createServer: () => {
+      return {
+        listen: rnil,
+        on: (event, func) => {
+          func()
+        },
+        address: () => {
+          return {port: 1234}
+        },
+        close: rnil
+      }
+    }
+  }
+
+  let stubs = Object.assign({
+    '../../stores/cave-store': CaveStore,
+    '../../util/db': db,
+    'http': http,
+    'serve-static': serveStatic
+  }, electron)
+
+  let html = proxyquire('../../app/tasks/launch/html', stubs)
+
+  let cave = {
+    game_root: 'blah',
+    window_size: {
+      width: 10,
+      height: 10
+    }
+  }
+
+  t.stub(db, 'find_one').resolves({
+    title: 'game'
+  })
+  t.stub(electron.electron.BrowserWindow, 'on', (action, callback) => {
+    callback()
+  })
+
+  t.case('serves correct directory', t => {
+    t.mock(serveStatic).expects('_func').once().withArgs('/tmp/app/blah')
+    return html.launch(opts, cave)
+  })
+  t.case('loads correct url', t => {
+    t.mock(electron.electron.BrowserWindow).expects('loadURL').once().withArgs('http://localhost:1234/index.html')
+    return html.launch(opts, cave)
   })
 })

@@ -110,7 +110,7 @@ let self = {
     return output
   },
 
-  launch: function (exe_path, args, opts) {
+  launch_executable: function (exe_path, args, opts) {
     let platform = os.platform()
     log(opts, `launching '${exe_path}' on '${platform}' with args '${args.join(' ')}'`)
     let arg_string = args.map((x) => self.escape(x)).join(' ')
@@ -134,7 +134,7 @@ let self = {
     }
   },
 
-  launch_cave: async function (opts, cave) {
+  launch: async function (opts, cave) {
     let app_path = CaveStore.app_path(cave.install_location, opts.id)
 
     let candidates = cave.executables.map((path) => {
@@ -156,7 +156,7 @@ let self = {
     log(opts, `candidates after depth sorting: ${JSON.stringify(candidates, null, 2)}`)
 
     let exe_path = path.join(app_path, candidates[0].path)
-    return self.launch(exe_path, [], opts)
+    return self.launch_executable(exe_path, [], opts)
   }
 }
 

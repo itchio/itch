@@ -1,6 +1,7 @@
 
 let os = require('../util/os')
-let _ = require('underscore')
+
+import {some, values} from 'underline'
 
 let log = require('../util/log')('tasks/configure')
 
@@ -31,8 +32,8 @@ let self = {
     let app_path = CaveStore.app_path(cave.install_location, id)
     log(opts, `configuring ${app_path}`)
 
-    let has_native = _.some(_.values(cave.uploads), (upload) => !!upload[`p_${os.itch_platform()}`])
-    let has_html = _.some(_.values(cave.uploads), (upload) => upload.type === 'html')
+    let has_native = cave.uploads::values()::some((upload) => !!upload[`p_${os.itch_platform()}`])
+    let has_html = cave.uploads::values()::some((upload) => upload.type === 'html')
     let launch_type = has_html && !has_native ? 'html' : 'native'
     AppActions.cave_update(id, {launch_type})
     if (launch_type === 'html') {

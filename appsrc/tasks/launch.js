@@ -4,8 +4,8 @@ let configure = require('./configure')
 
 let CaveStore = require('../stores/cave-store')
 
-let launch_native = require('./launch/native').launch
-let launch_html = require('./launch/html').launch
+let native = require('./launch/native')
+let html = require('./launch/html')
 
 let self = {
   valid_cave: function (cave) {
@@ -13,7 +13,7 @@ let self = {
       case 'native':
         return cave.executables && cave.executables.length > 0
       case 'html':
-        return cave.game_root && cave.window_size
+        return cave.game_root && !!cave.window_size
       default:
         return false
     }
@@ -29,16 +29,16 @@ let self = {
       cave = await CaveStore.find(id)
     }
 
+    let module = {native, html}[cave.launch_type]
+    if (!module) {
+      throw new Error(`Unsupported launch type '${cave.launch_type}'`)
+    }
+
     if (!self.valid_cave(cave)) {
       throw new Error('Cave is invalid')
     }
 
-    let launch_func = {native: launch_native, html: launch_html}[cave.launch_type]
-    if (!launch_func) {
-      throw new Error(`Unsupported launch type '${cave.launch_type}'`)
-    }
-
-    await launch_func(opts, cave)
+    await module.launch(opts, cave)
   }
 }
 

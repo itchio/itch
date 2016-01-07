@@ -50,7 +50,7 @@
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
     "read-chunk": "^1.0.1",
-    "serve-static": "^1.10.0",
+    "serve-static": "^1.10.2",
     "shell-quote": "^1.4.3",
     "source-map-support": "^0.3.2",
     "stream-splitter": "^0.3.2",
