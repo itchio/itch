@@ -1,4 +1,5 @@
 {
+    "grid.item.cancel_download": "Annullér hentning", 
     "grid.item.installing": "Installerer...", 
     "grid.item.queued": "I kø", 
     "menu.help.check_for_update": "Tjek for Opdatering", 
@@ -8,6 +9,7 @@
     "preferences.install_location.free_space": "Fri plads", 
     "preferences.install_locations": "Installationssteder", 
     "preferences.language": "Sprog", 
+    "prompt.additional_purchase.detail": "...men du kan købe en kopi til en ven!\n\nVil du foretage endnu et køb?", 
     "prompt.install_location_not_empty.detail": "Dette skal gøres manuelt på nuværende tidspunkt.", 
     "prompt.no_compatible_version.title": "{{title}} på {{platform}}"
 }
