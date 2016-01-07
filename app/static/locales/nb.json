@@ -75,6 +75,7 @@
     "preferences.install_location.item_count": "# av artikler", 
     "preferences.install_location.make_default": "Sett dette installasjonsområdet som standard", 
     "preferences.install_location.path": "Område", 
+    "preferences.install_location.stop_size_computation": "Stopp beregning av mappestørrelse", 
     "preferences.install_location.used_space": "Brukt plass", 
     "preferences.install_locations": "Installasjonsområder", 
     "preferences.language": "Språk", 
