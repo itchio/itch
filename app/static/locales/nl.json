@@ -34,7 +34,7 @@
     "menu.file.file": "Bestand", 
     "menu.file.preferences": "Voorkeuren", 
     "menu.file.quit": "Sluiten", 
-    "menu.help.check_for_update": "", 
+    "menu.help.check_for_update": "Controleren op Updates", 
     "menu.help.help": "Hulp", 
     "menu.help.release_notes": "", 
     "menu.help.report_issue": "Probleem rapporteren", 
