@@ -3,6 +3,7 @@
     "errors.api.login.password_must_be_provided": "La contraseña es necesaria", 
     "errors.api.login.username_must_be_provided": "El nombre de usuario es necesario", 
     "grid.item.buy_now": "Comprar", 
+    "grid.item.cancel_download": "Cancelar descarga", 
     "grid.item.downloading": "Descargando...", 
     "grid.item.install": "Instalar", 
     "grid.item.installing": "Instalando...", 
