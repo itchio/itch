@@ -107,6 +107,6 @@
     "sidebar.owned": "", 
     "status.checking": "Ser etter oppdateringer...", 
     "status.downloaded": "Klikk for omstart og aktivering av oppdateringen!", 
-    "status.downloading": "", 
+    "status.downloading": "Laster ned oppdatering...", 
     "status.uptodate": ""
 }
