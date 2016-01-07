@@ -62,6 +62,7 @@
     "preferences.install_location.compute_size": "Laske kansion tila levyllä", 
     "preferences.install_location.delete": "Poista tämä asennussijainti ja sen sisältö", 
     "preferences.install_location.empty": "Tyhjä", 
+    "preferences.install_location.free_space": "Tilaa vapaana", 
     "preferences.install_location.is_default": "Uudet asiat asennataan oletuksena tänne.", 
     "preferences.install_location.item_count": "# kappaletta", 
     "preferences.install_location.make_default": "Valitse tämä oletusasennussijainniksi", 
