@@ -10,6 +10,7 @@
     "grid.item.launch": "Iniciar", 
     "grid.item.not_platform_compatible": "Não disponível em {{platform}}", 
     "grid.item.queued": "Enfileirado", 
+    "grid.item.retry": "Tente baixar / instalar / iniciar este item novamente", 
     "grid.item.running": "Executando...", 
     "login.action.login": "Entrar", 
     "login.action.register": "Registrar", 
