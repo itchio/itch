@@ -1,5 +1,4 @@
 
-
 let mori = require('mori')
 
 let Store = require('./store')
@@ -103,6 +102,18 @@ function update_error (payload) {
   setTimeout(function () {
     dismiss_status()
   }, 5000)
+}
+
+function locale_update_download_start (payload) {
+  let lang = payload.lang
+  state = mori.assocIn(state, ['locales', 'updating', lang])
+  AppStore.emit_change()
+}
+
+function locale_update_download_end (payload) {
+  let lang = payload.lang
+  state = mori.updateIn(state, ['locales', 'updating'], x => mori.dissoc(x, lang))
+  AppStore.emit_change()
 }
 
 function dismiss_status () {
@@ -242,6 +253,9 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.CAVE_STORE_DIFF, cave_store_diff)
   on(AppConstants.INSTALL_LOCATION_STORE_DIFF, install_location_store_diff)
   on(AppConstants.OPEN_PREFERENCES, open_preferences)
+
+  on(AppConstants.LOCALE_UPDATE_DOWNLOAD_START, locale_update_download_start)
+  on(AppConstants.LOCALE_UPDATE_DOWNLOAD_END, locale_update_download_end)
 }))
 
 function game_store_diff (payload) {

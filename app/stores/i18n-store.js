@@ -4,8 +4,6 @@ let opts = { logger: new log.Logger() }
 
 let Store = require('./store')
 let AppActions = require('../actions/app-actions')
-let AppConstants = require('../constants/app-constants')
-let AppDispatcher = require('../dispatcher/app-dispatcher')
 
 let i18next = require('i18next')
 let backend = require('../i18next/backend')
@@ -24,6 +22,7 @@ function on_error (err) {
   }
 }
 
+let lang = 'en'
 let sniffed_language = 'en'
 
 let i18n_opts = {
@@ -68,7 +67,7 @@ state.on('error', (e) => {
   console.log(`Error loading translations: ${e}`)
 })
 
-state.on('languageChanged loaded', () => {
+state.on('languageChanged loaded added removed', () => {
   I18nStore.emit_change()
 })
 
@@ -82,18 +81,10 @@ if (process.type === 'renderer') {
 
 function reload (preferences) {
   sniffed_language = preferences.sniffed_language || 'en'
-  let lang = preferences.language || sniffed_language
+  lang = preferences.language || sniffed_language
   log(opts, `Switching to language ${lang}`)
   state.changeLanguage(lang, on_error)
 }
-
-function locale_update_downloaded (payload) {
-  i18next.loadResources()
-}
-
-AppDispatcher.register('i18n-store', Store.action_listeners(on => {
-  on(AppConstants.LOCALE_UPDATE_DOWNLOADED, locale_update_downloaded)
-}))
 
 Store.subscribe('preferences-store', reload)
 

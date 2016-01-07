@@ -10,8 +10,24 @@
     font-size: 65px;
   }
 
+  .select-row {
+    display: inline-block;
+  }
+
   .select-row select {
     margin-left: 10px;
+  }
+
+  .locale_fetcher {
+    display: inline-block;
+    font-size: 80%;
+    margin-left: 8px;
+    opacity: .7;
+
+    &:hover {
+      opacity: 1;
+      cursor: hand;
+    }
   }
 
   .buttons {

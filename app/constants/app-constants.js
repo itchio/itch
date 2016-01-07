@@ -23,7 +23,12 @@ module.exports = keyMirror({
   APPLY_SELF_UPDATE: null,
   APPLY_SELF_UPDATE_FOR_REALSIES: null,
   DISMISS_STATUS: null,
+
+  /* Locale updates */
   LOCALE_UPDATE_DOWNLOADED: null,
+  LOCALE_UPDATE_QUEUE_DOWNLOAD: null,
+  LOCALE_UPDATE_DOWNLOAD_START: null,
+  LOCALE_UPDATE_DOWNLOAD_END: null,
 
   /* Install locations */
   INSTALL_LOCATION_COMPUTE_SIZE: null,
