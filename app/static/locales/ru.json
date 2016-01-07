@@ -90,6 +90,7 @@
     "prompt.crash_reporter.open_crash_log": "Открыть отчёт об ошибке", 
     "prompt.crash_reporter.report_issue": "Доложить об ошибке", 
     "prompt.install_location_add.title": "Выбрать новый путь для установки", 
+    "prompt.install_location_not_empty.detail": "Это необходимо делать вручную временно. ", 
     "prompt.install_location_remove.detail": "Всё, что было установлено в {{location}}, будет удалено.", 
     "prompt.install_location_remove.message": "Уверены что хотите удалить эту локацию?", 
     "prompt.install_location_remove.title": "Удалить путь установки", 
