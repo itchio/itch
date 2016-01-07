@@ -13,7 +13,7 @@
     "grid.item.report_problem": "Reportar um problema (Abrirá no navegador)", 
     "grid.item.retry": "Tente baixar / instalar / iniciar este item novamente", 
     "grid.item.running": "Executando...", 
-    "grid.item.uninstall": "Desinstalar esse item agora", 
+    "grid.item.uninstall": "Desinstalar este item agora", 
     "login.action.login": "Entrar", 
     "login.action.register": "Registrar", 
     "login.action.reset_password": "Esqueci minha senha", 
