@@ -3,6 +3,7 @@
     "grid.item.downloading": "A descarregar...", 
     "grid.item.install": "Instalar", 
     "grid.item.installing": "A instalar...", 
+    "grid.item.launch": "Executar", 
     "grid.item.not_platform_compatible": "Não disponível para {{platform}}", 
     "grid.item.probe": "Abrir o histórico de eventos deste item para descobrir a causa da falha (Avançado)", 
     "grid.item.purchase_or_donate": "Comprar ou doar dinheiro para este item", 
