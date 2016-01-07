@@ -13,7 +13,7 @@ let self = {
       case 'native':
         return cave.executables && cave.executables.length > 0
       case 'html':
-        return cave.game_root && !!cave.window_size
+        return cave.game_path && !!cave.window_size
       default:
         return false
     }

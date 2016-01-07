@@ -14,7 +14,7 @@ let CaveStore = require('../../stores/cave-store')
 let self = {
   launch: async function(opts, cave) {
     let game = await db.find_one({_table: 'games', id: cave.game_id})
-    let app_path = path.join(CaveStore.app_path(cave.install_location, opts.id), cave.game_root)
+    let app_path = path.join(CaveStore.app_path(cave.install_location, opts.id), cave.game_path)
     log(opts, `game root: ${app_path}`)
     let win = new BrowserWindow({
       title: game.title,
@@ -28,7 +28,7 @@ let self = {
         partition: `persist:gamesession_${cave.game_id}`
       }
     })
-    let serve = serveStatic(app_path, {'index': ['index.html', 'index.htm']})
+    let serve = serveStatic(path.dirname(app_path), {'index': [path.basename(app_path)]})
     let server = http.createServer((req, res) => {
       let done = finalhandler(req, res)
       serve(req, res, done)
@@ -38,16 +38,14 @@ let self = {
     server.on('listening', function () {
       port = server.address().port
       log(opts, `serving game on port ${port}`)
-      win.loadURL(`http://localhost:${port}/index.html`)
+      win.loadURL(`http://localhost:${port}`)
       if (process.env.DEVTOOLS === '1') {
         win.webContents.openDevTools({detach: true})
       }
     })
 
     await new Promise((resolve, reject) => {
-      win.on('close', (e) => {
-        resolve()
-      })
+      win.on('close', resolve)
     })
 
     log(opts, `shutting down http server on port ${port}`)

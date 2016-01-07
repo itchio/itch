@@ -109,6 +109,6 @@ test('configure (each platform)', t => {
 
   t.case('html finds game root', async t => {
     let res = await html.configure(html_path)
-    t.same(res.game_root, 'ThisContainsStuff')
+    t.same(res.game_path, 'ThisContainsStuff/index.html')
   })
 })

@@ -39,7 +39,7 @@ let self = {
     if (launch_type === 'html') {
       let res = await html.configure(app_path)
       AppActions.cave_update(id, res)
-      return 'html configure result: ' + JSON.stringify(res)
+      return res
     } else {
       let executables = (await self.configure(app_path)).executables
 

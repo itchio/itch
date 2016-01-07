@@ -23,18 +23,18 @@ function make_dummy () {
   return d
 }
 
-function mockable_func_module () {
-  function f (arg) {
-    f._func(arg)
+let rnil = () => null
+
+function mockable_func_module (orig_func) {
+  function f () {
+    return f._func.apply(null, arguments)
   }
   let o = {}
   o.__proto__ = f.__proto__
   f.__proto__ = o
-  f._func = () => null
+  f._func = orig_func
   return f
 }
-
-let rnil = () => null
 
 test('launch', t => {
   let configure = {
@@ -93,7 +93,7 @@ test('launch', t => {
     find.resolves({ executables: ['./a'], launch_type: 'native' })
     t.mock(native).expects('launch').once().resolves('Done!')
     await launch.start(opts)
-    find.resolves({ game_root: 'a', window_size: {width: 1, height: 1}, launch_type: 'html' })
+    find.resolves({ game_path: 'a/a.html', window_size: {width: 1, height: 1}, launch_type: 'html' })
     t.mock(html).expects('launch').once().resolves('Done!')
     await launch.start(opts)
   })
@@ -211,7 +211,7 @@ test('launch/native', t => {
 })
 
 test('launch/html', t => {
-  let serveStatic = mockable_func_module()
+  let serveStatic = mockable_func_module(rnil)
 
   let http = {
     createServer: () => {
@@ -238,7 +238,7 @@ test('launch/html', t => {
   let html = proxyquire('../../app/tasks/launch/html', stubs)
 
   let cave = {
-    game_root: 'blah',
+    game_path: 'blah/i.html',
     window_size: {
       width: 10,
       height: 10
@@ -252,12 +252,13 @@ test('launch/html', t => {
     callback()
   })
 
-  t.case('serves correct directory', t => {
-    t.mock(serveStatic).expects('_func').once().withArgs('/tmp/app/blah')
-    return html.launch(opts, cave)
+  t.case('serves correct directory', async t => {
+    t.mock(serveStatic).expects('_func').once().withArgs('/tmp/app/blah', {index: ['i.html']})
+    await html.launch(opts, cave)
   })
-  t.case('loads correct url', t => {
-    t.mock(electron.electron.BrowserWindow).expects('loadURL').once().withArgs('http://localhost:1234/index.html')
-    return html.launch(opts, cave)
+
+  t.case('loads correct url', async t => {
+    t.mock(electron.electron.BrowserWindow).expects('loadURL').once().withArgs('http://localhost:1234')
+    await html.launch(opts, cave)
   })
 })
