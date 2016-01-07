@@ -22,6 +22,7 @@
     "login.field.password": "Palavra-passe", 
     "login.status.dependency_check": "A certificar que temos tudo configurado...", 
     "login.status.dependency_install": "A instalar a dependência {{name}} {{version}}", 
+    "login.status.setup_failure": "Houve um problema durante a configuração: {{error}}", 
     "menu.account.change_user": "Mudar utilizador...", 
     "menu.account.not_logged_in": "Não entraste com uma conta", 
     "menu.edit.copy": "Copiar", 
