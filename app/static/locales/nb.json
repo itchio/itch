@@ -43,7 +43,7 @@
     "menu.file.quit": "", 
     "menu.help.check_for_update": "Se etter oppdatering", 
     "menu.help.help": "Help", 
-    "menu.help.release_notes": "", 
+    "menu.help.release_notes": "Endringslogg", 
     "menu.help.report_issue": "Rapporter en sak", 
     "menu.help.search_issue": "", 
     "menu.help.view_license": "Se lisens", 
