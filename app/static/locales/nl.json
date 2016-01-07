@@ -8,7 +8,7 @@
     "grid.item.installing": "Installeren...", 
     "grid.item.launch": "Start", 
     "grid.item.not_platform_compatible": "Niet beschikbaar voor {{platform}}", 
-    "grid.item.queued": "", 
+    "grid.item.queued": "Wachtrij", 
     "grid.item.running": "", 
     "login.action.login": "Log in", 
     "login.action.register": "Registreer", 
