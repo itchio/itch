@@ -6,5 +6,5 @@
     "preferences.install_location.free_space": "فضای آزاد", 
     "preferences.install_locations": "نصب مکان‌ها", 
     "prompt.install_location_not_empty.detail": "در حال حاضر نیاز است که به صورت دستی انجام شود.", 
-    "prompt.no_compatible_version.title": "\n{{عنوان}} در {{پلتفرم}}\n"
+    "prompt.no_compatible_version.title": "{{عنوان}} در {{پلتفرم}}"
 }
