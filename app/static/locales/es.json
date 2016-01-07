@@ -10,6 +10,7 @@
     "grid.item.launch": "Iniciar", 
     "grid.item.not_platform_compatible": "No disponible para {{platform}}", 
     "grid.item.queued": "En cola", 
+    "grid.item.report_problem": "Reportar como roto (abre en navegador)", 
     "grid.item.retry": "Intente descargar / instalar / iniciar  nuevamente.", 
     "grid.item.running": "Iniciando...", 
     "login.action.login": "Iniciar sesión", 
