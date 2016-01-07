@@ -16,7 +16,12 @@ tmp
 /build
 /cache
 /stage
+
+# release stuff
 /release/itch.desktop
+
+# locale stuff
+/app/static/locales/*.remote.json
 
 # OS-specific junk
 .DS_Store

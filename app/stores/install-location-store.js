@@ -1,4 +1,6 @@
 
+let _ = require('underscore')
+
 let walk = require('walk')
 let electron = require('electron')
 let uuid = require('node-uuid')
@@ -29,6 +31,7 @@ let location_item_counts = {}
 let disk_info = { parts: [] }
 
 let state = {}
+let throttle = 500
 
 let InstallLocationStore = Object.assign(new Store('install-location-store'), {
   get_state: () => {
@@ -62,16 +65,17 @@ function compute_state () {
     let computing_size = !!location_computing_size[loc_name]
     let item_count = location_item_counts[loc_name] || 0
 
-    if (size === -1 && !computing_size && !raw_loc.deleted) {
-      AppActions.install_location_compute_size(loc_name)
-    }
-
     let loc = Object.assign({}, raw_loc, {
       size,
       free_space,
       computing_size,
       item_count
     })
+
+    if (loc_name === 'appdata') {
+      // you can't delete appdata! it's your user-specific fallback.
+      delete loc.deleted
+    }
 
     locations[loc_name] = loc
   }
@@ -98,6 +102,8 @@ function recompute_state () {
   InstallLocationStore.emit_change()
 }
 
+let throttled_recompute_state = _.throttle(recompute_state, throttle, true)
+
 function initialize_appdata () {
   appdata_location = {
     name: 'appdata',
@@ -121,20 +127,10 @@ async function reload () {
 
   disk_info = await diskspace.disk_info()
   location_item_counts = counts
-  recompute_state()
+  throttled_recompute_state()
 }
 
-let timeout = null
-let throttle = 500
-
-function throttled_reload () {
-  if (timeout) return
-
-  timeout = setTimeout(() => {
-    timeout = null
-    reload()
-  }, throttle)
-}
+let throttled_reload = _.throttle(reload, throttle)
 
 function install_location_compute_size (payload) {
   let name = payload.name
@@ -155,14 +151,15 @@ function install_location_compute_size (payload) {
   walker.on('file', (root, fileStats, next) => {
     total_size += fileStats.size
     location_sizes[name] = total_size
-    recompute_state()
+    throttled_recompute_state()
+
     if (computations_to_cancel[name]) {
       delete computations_to_cancel[name]
       // location size will be inaccurate but, eh, user cancelled.
       // it might also be inaccurate because files were added since
       // last computed. it's not an exact science.
       location_computing_size[name] = false
-      recompute_state()
+      throttled_recompute_state()
 
       // not calling 'next' here will stop file walk
     } else {
@@ -174,7 +171,7 @@ function install_location_compute_size (payload) {
     log(opts, `Total size of ${name}: ${humanize.fileSize(total_size)}`)
     location_sizes[name] = total_size
     location_computing_size[name] = false
-    recompute_state()
+    throttled_recompute_state()
   })
 }
 

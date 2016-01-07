@@ -5,7 +5,7 @@
     "errors.api.login.username_must_be_provided": "ユーザー名を入力していただく必要があります", 
     "grid.item.buy_now": "今すぐ購入", 
     "grid.item.cancel_download": "ダウンロード中止", 
-    "grid.item.downloading": "ダウンロード中...", 
+    "grid.item.downloading": "ダウンロード中…", 
     "grid.item.finalize_installation": "インストールを完成する", 
     "grid.item.install": "インストール", 
     "grid.item.installing": "インストール中…", 

@@ -1,5 +1,4 @@
 
-
 let handlers = {}
 
 let self = {

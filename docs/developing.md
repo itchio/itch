@@ -15,10 +15,7 @@ following to get started with development:
 [electron]: https://github.com/atom/electron
 
 ```
-npm install -g electron-prebuilt@0.35.4
-```
-
-**N.B: 0.36.0 is known not to work with itch, 0.35.4 is the recommended release**
+npm install -g electron-prebuilt@0.36.2
 
 * Install [sassc][] following the instructions for [Unix][sassc-unix] or
   [Windows][sassc-win].  Make sure it's in your `$PATH`.

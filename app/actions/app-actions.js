@@ -81,6 +81,24 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.DISMISS_STATUS })
   },
 
+  /* Locale updates */
+
+  locale_update_queue_download: (lang) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.LOCALE_UPDATE_QUEUE_DOWNLOAD, lang })
+  },
+
+  locale_update_downloaded: (lang, resources) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.LOCALE_UPDATE_DOWNLOADED, lang, resources })
+  },
+
+  locale_update_download_start: (lang, resources) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.LOCALE_UPDATE_DOWNLOAD_START, lang })
+  },
+
+  locale_update_download_end: (lang, resources) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.LOCALE_UPDATE_DOWNLOAD_END, lang, resources })
+  },
+
   /* Install locations */
 
   install_location_compute_size: (name) => {

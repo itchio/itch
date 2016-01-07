@@ -1,5 +1,4 @@
 
-
 let os = require('../util/os')
 
 let Log = require('../util/log')
@@ -9,7 +8,10 @@ let electron = require('electron')
 
 let spammy = {
   CAVE_PROGRESS: true,
-  GAMES_FETCHED: true
+  GAMES_FETCHED: true,
+  GAME_STORE_DIFF: true,
+  CAVE_STORE_DIFF: true,
+  INSTALL_LOCATION_STORE_DIFF: true
 }
 
 // This makes sure everything is dispatched to the node side, whatever happens

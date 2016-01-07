@@ -34,6 +34,8 @@ class PreferencesForm extends ShallowComponent {
       }
     }
 
+    let updating_locales = mori.getIn(state, ['locales', 'updating'])
+
     let options = [{
       value: '__',
       label: t('preferences.language.auto', {language: sniffed, lngs: [sniff_code, 'en']})
@@ -51,6 +53,24 @@ class PreferencesForm extends ShallowComponent {
             value: language || '__',
             label: t('preferences.language')
           }),
+
+          r.div({
+            className: 'locale_fetcher',
+            onClick: (e) => {
+              e.preventDefault()
+              AppActions.locale_update_queue_download(language)
+            }
+          }, (updating_locales
+
+            ? r(Icon, {
+              icon: 'stopwatch',
+              spin: true
+            })
+
+            : r(Icon, {
+              icon: 'refresh'
+            }))),
+
           r.div({className: 'get_involved'}, [
             r.a({href: urls.itch_translation_platform}, [
               r(Icon, {icon: 'earth'}),
@@ -85,7 +105,7 @@ class PreferencesForm extends ShallowComponent {
     let locations = mori.filter((x) => !mori.get(mori.last(x), 'deleted'), loc_map)
 
     // can't delete your last remaining location.
-    let may_delete = mori.count(locations) > 0
+    let several_locations = mori.count(locations) > 0
 
     let rows = []
     rows.push(header)
@@ -97,6 +117,7 @@ class PreferencesForm extends ShallowComponent {
       let name = mori.first(pair)
       let location = mori.last(pair)
       let is_default = (name === default_loc)
+      let may_delete = several_locations && name !== 'appdata'
 
       let path = mori.get(location, 'path')
       for (let alias of aliases) {

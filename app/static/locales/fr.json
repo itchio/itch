@@ -5,7 +5,7 @@
     "errors.api.login.username_must_be_provided": "Le nom d'utilisateur est requis", 
     "grid.item.buy_now": "Acheter", 
     "grid.item.cancel_download": "Annuler le téléchargement", 
-    "grid.item.downloading": "Téléchargement...", 
+    "grid.item.downloading": "Téléchargement…", 
     "grid.item.finalize_installation": "Finaliser l'installation", 
     "grid.item.install": "Installer", 
     "grid.item.installing": "Installation...", 
