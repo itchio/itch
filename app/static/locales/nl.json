@@ -76,6 +76,7 @@
     "prompt.action.confirm_removal": "Verdergaan met verwijderen", 
     "prompt.action.install": "Installeren", 
     "prompt.action.ok": "Oke", 
+    "prompt.additional_purchase.detail": "…maar je kan nog steeds een exemplaar voor een vriend kopen!\n\nWens je nog iets te kopen?", 
     "prompt.confirm_uninstall": "Weet je zeker dat je {{title}} wilt verwijderen?", 
     "prompt.crash_reporter.detail": "Een crash log is naar {{location}} geschreven.", 
     "prompt.crash_reporter.message": "De applicatie is gecrasht", 
