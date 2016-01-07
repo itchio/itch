@@ -83,6 +83,7 @@
     "prompt.no_compatible_version.detail": "", 
     "prompt.no_compatible_version.message": "", 
     "prompt.no_compatible_version.title": "{{title}} on {{platform}}", 
+    "prompt.payments_disabled.title": "Autor nepřijímá platby", 
     "prompt.url_install.credit": "{{classification}} od {{username}}", 
     "prompt.url_install.message": "", 
     "prompt.url_install.title": "Instalovat", 
