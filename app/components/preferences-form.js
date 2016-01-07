@@ -34,7 +34,7 @@ class PreferencesForm extends ShallowComponent {
       }
     }
 
-    let num_fetching = mori.count(mori.getIn(state, ['locales', 'updating']))
+    let updating_locales = mori.getIn(state, ['locales', 'updating'])
 
     let options = [{
       value: '__',
@@ -60,7 +60,7 @@ class PreferencesForm extends ShallowComponent {
               e.preventDefault()
               AppActions.locale_update_queue_download(language)
             }
-          }, (num_fetching > 0
+          }, (updating_locales
 
             ? r(Icon, {
               icon: 'stopwatch',

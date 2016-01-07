@@ -105,14 +105,14 @@ function update_error (payload) {
 }
 
 function locale_update_download_start (payload) {
-  let lang = payload.lang
-  state = mori.assocIn(state, ['locales', 'updating', lang])
+  state = mori.assocIn(state, ['locales', 'updating'], true)
   AppStore.emit_change()
+
+  setTimeout(locale_update_download_end, 2000)
 }
 
 function locale_update_download_end (payload) {
-  let lang = payload.lang
-  state = mori.updateIn(state, ['locales', 'updating'], x => mori.dissoc(x, lang))
+  state = mori.assocIn(state, ['locales', 'updating'], false)
   AppStore.emit_change()
 }
 
