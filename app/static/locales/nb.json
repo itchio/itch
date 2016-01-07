@@ -15,7 +15,7 @@
     "grid.item.running": "", 
     "login.action.login": "Log in", 
     "login.action.register": "", 
-    "login.action.reset_password": "", 
+    "login.action.reset_password": "Glemt passord", 
     "login.field.password": "Password", 
     "login.field.username": "", 
     "login.status.dependency_check": "", 
