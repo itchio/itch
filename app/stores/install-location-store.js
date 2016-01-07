@@ -97,7 +97,7 @@ function recompute_state () {
   InstallLocationStore.emit_change()
 }
 
-let throttled_recompute_state = _.debounce(recompute_state, throttle, true)
+let throttled_recompute_state = _.throttle(recompute_state, throttle, true)
 
 function initialize_appdata () {
   appdata_location = {
@@ -125,7 +125,7 @@ async function reload () {
   throttled_recompute_state()
 }
 
-let throttled_reload = _.debounce(reload, throttle)
+let throttled_reload = _.throttle(reload, throttle)
 
 function install_location_compute_size (payload) {
   let name = payload.name
