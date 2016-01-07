@@ -226,7 +226,7 @@ class GameCell extends ShallowComponent {
               r(Icon, {icon: 'cart'})
             ])),
 
-            this.tooltip('grid.item.open_in_file_explorer', r.span({
+            this.tooltip(this.browse_i18n_key(), r.span({
               className: 'game_explore',
               onClick: () => AppActions.cave_explore(mori.get(cave, '_id'))
             }, [
@@ -297,6 +297,13 @@ class GameCell extends ShallowComponent {
       placement: 'top',
       overlay: r.span({}, t(key))
     }, component)
+  }
+
+  browse_i18n_key () {
+    switch (os.platform()) {
+      case 'darwin': return 'grid.item.open_in_file_explorer_osx'
+      default: return 'grid.item.open_in_file_explorer'
+    }
   }
 }
 

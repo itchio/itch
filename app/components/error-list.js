@@ -7,6 +7,10 @@ let format = require('../util/format')
 
 /**
  * A bunch of errors displayed in a list
+ * Supports the following API i18n keys:
+ *  - errors.api.login.incorrect_username_or_password
+ *  - errors.api.login.password_must_be_provided
+ *  - errors.api.login.username_must_be_provided
  */
 class ErrorList extends DeepComponent {
   render () {
