@@ -55,7 +55,7 @@
     "onboarding.dashboard.selling_points": "", 
     "onboarding.dashboard.welcome_home": "Vítej doma", 
     "onboarding.owned.batteries_included": "", 
-    "onboarding.owned.navigation_hint": "", 
+    "onboarding.owned.navigation_hint": "Po aplikaci se pohybujte klikáním na popisky vlevo", 
     "onboarding.owned.reassuring_comment": "Zatím to tu vypadá prázdně, ale žádný strach!", 
     "onboarding.owned.title_warm_welcome": "", 
     "preferences.install_location.empty": "Prázdné", 
