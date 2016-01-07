@@ -101,7 +101,7 @@
     "prompt.crash_reporter.open_crash_log": "クラッシュログを開く", 
     "prompt.crash_reporter.report_issue": "問題を報告する", 
     "prompt.install_location_add.title": "インストール先を追加します", 
-    "prompt.install_location_not_empty.detail": "現段階では手動で行っていただく必要があります", 
+    "prompt.install_location_not_empty.detail": "現段階では手動で行っていただく必要があります.", 
     "prompt.install_location_not_empty.message": "インストール先の削除はフォルダ内のコンテンツをすべてアンインストールすることで可能になります。", 
     "prompt.install_location_not_empty.show_contents": "内容を見る", 
     "prompt.install_location_not_empty.title": "このインストール先は空ではありません", 
