@@ -4,7 +4,7 @@
     "errors.api.login.username_must_be_provided": "Brukernavn må oppgis", 
     "grid.item.buy_now": "Kjøp nå", 
     "grid.item.cancel_download": "Avbryt nedlasting", 
-    "grid.item.downloading": "Laster ned...", 
+    "grid.item.downloading": "Laster ned…", 
     "grid.item.finalize_installation": "Ferdigstill installasjon", 
     "grid.item.install": "Install", 
     "grid.item.installing": "Installerer...", 
