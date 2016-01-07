@@ -82,6 +82,7 @@
     "prompt.crash_reporter.open_crash_log": "Crash log openen", 
     "prompt.crash_reporter.report_issue": "Probleem rapporteren", 
     "prompt.install_location_add.title": "Kies een nieuwe locatie om te installeren", 
+    "prompt.install_location_not_empty.detail": "Dit moet voorlopig manueel gedaan worden.", 
     "prompt.install_location_remove.detail": "Alle bestanden die geïnstalleerd zijn in {{location}} zullen worden verwijderd.", 
     "prompt.install_location_remove.message": "Weet u zeker dat u deze locatie wilt verwijderen?", 
     "prompt.install_location_remove.title": "Een installatiepad verwijderen", 
