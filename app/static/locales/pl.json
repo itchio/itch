@@ -93,7 +93,7 @@
     "prompt.action.install": "Zainstaluj", 
     "prompt.action.ok": "Ok", 
     "prompt.additional_purchase.detail": "...lecz nadal możesz kupić kopię komuś bliskiemu!\n\nCzy chcesz dokonać kolejnego zakupu?", 
-    "prompt.additional_purchase.message": "Posiadasz już kopię {{title}}.", 
+    "prompt.additional_purchase.message": "Już posiadasz kopię {{title}}.", 
     "prompt.additional_purchase.purchase_again": "Kup ponownie", 
     "prompt.additional_purchase.title": "Posiadasz już ten produkt!", 
     "prompt.confirm_uninstall": "Czy na pewno chcesz usunąć {{title}}?", 
