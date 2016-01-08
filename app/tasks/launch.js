@@ -80,9 +80,13 @@ let self = {
     let scores = {}
     for (let exe of execs) {
       let score = 100
-      if (/unins/.test(exe)) {
+      if (/unins.*\.exe$/i.test(exe)) {
+        score -= 50
+      }
+      if (/dxwebsetup\.exe$/i.test(exe)) {
         score = 0
-      } else if (/dxwebsetup\.exe/i.test(exe)) {
+      }
+      if (/vcredist.*\.exe$/i.test(exe)) {
         score = 0
       }
       if (/\.so$/.test(exe)) {

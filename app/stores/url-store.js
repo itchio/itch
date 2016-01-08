@@ -46,6 +46,15 @@ function process_queue () {
 
 let to_install = null
 
+function try_install (game) {
+  let plat = os.itch_platform()
+  if (game[`p_${plat}`]) {
+    install_prompt(game)
+  } else {
+    apology_prompt(game)
+  }
+}
+
 async function handle_url (urlStr) {
   log(opts, `handle_url: ${urlStr}`)
 
@@ -64,13 +73,32 @@ async function handle_url (urlStr) {
 
       let game = await db.find_one({_table: 'games', id: gid})
       if (game) {
-        let plat = os.itch_platform()
-        if (game[`p_${plat}`]) {
-          install_prompt(game)
+        try_install(game)
+      } else {
+        to_install = gid
+        AppActions.fetch_games(`games/${gid}`)
+      }
+    }
+      break
+
+    case 'launch': {
+      if (!tokens[1]) {
+        log(opts, `for install: missing game_id, bailing out.`)
+        return
+      }
+      let gid = parseInt(tokens[1], 10)
+
+      let game = await db.find_one({_table: 'games', id: gid})
+      if (game) {
+        let cave = await db.find_one({_table: 'caves', game_id: gid})
+        if (cave) {
+          AppActions.cave_queue(gid)
         } else {
-          apology_prompt(game)
+          log(opts, `game ${gid} known but not installed, queuing for install`)
+          try_install(game)
         }
       } else {
+        log(opts, `don't even know about game ${gid}, trying to install instead`)
         to_install = gid
         AppActions.fetch_games(`games/${gid}`)
       }
