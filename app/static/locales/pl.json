@@ -102,7 +102,7 @@
     "prompt.install_location_not_empty.detail": "Na chwilę obecną należy wykonać to ręcznie.", 
     "prompt.install_location_not_empty.message": "Ścieżki instalacji mogą być usunięte tylko gdy ich zawartość zostanie odinstalowana.", 
     "prompt.install_location_not_empty.show_contents": "Pokaż zawartość", 
-    "prompt.install_location_remove.detail": "Każda pozycja zainstalowana w {{location}} zostanie usunięta.", 
+    "prompt.install_location_remove.detail": "Wszystkie przedmioty zainstalowane w {{location}} będą odinstalowane.", 
     "prompt.install_location_remove.message": "Jesteś pewien, że chcesz usunąć tą ścieżkę?", 
     "prompt.install_location_remove.title": "Usuwanie ścieżki instalacji", 
     "prompt.last_remaining_install_location.content": "Wymagana jest co najmniej jedna lokacja instalacji. Dodaj nową aby usunąć obecną.", 
