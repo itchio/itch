@@ -82,6 +82,7 @@
     "preferences.install_location.name": "Nazwa", 
     "preferences.install_location.path": "Ścieżka", 
     "preferences.install_location.size": "Rozmiar na dysk", 
+    "preferences.install_location.used_space": "Zajęte miejsce", 
     "preferences.install_locations": "Ścieżki instalacji", 
     "preferences.language": "Język", 
     "preferences.language.auto": "Język systemowy ({{language}})", 
