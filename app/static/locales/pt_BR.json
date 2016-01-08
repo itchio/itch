@@ -75,6 +75,7 @@
     "preferences.install_location.item_count": "# de itens", 
     "preferences.install_locations": "Locais de instalação", 
     "preferences.language": "Idioma", 
+    "preferences.language.auto": "Idioma do sistema ({{idioma}})", 
     "prompt.action.cancel": "Cancelar", 
     "prompt.action.close": "Fechar", 
     "prompt.action.confirm_removal": "Continuar a remoção", 
