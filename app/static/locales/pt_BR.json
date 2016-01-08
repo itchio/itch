@@ -115,6 +115,7 @@
     "prompt.payments_disabled.title": "Pagamentos desativados", 
     "prompt.rar_policy.learn_more": "Aprender mais", 
     "prompt.rar_policy.message": "Este conteúdo utiliza o formato RAR de compressão, e não pode ser instalado com itch até que seja recompactado.", 
+    "prompt.rar_policy.title": "RAR não é suportado", 
     "prompt.url_install.credit": "Uma {{classification}} por {{username}}", 
     "prompt.url_install.message": "Você deseja instalar {{title}}?", 
     "prompt.url_install.title": "Requisição de instalação", 
