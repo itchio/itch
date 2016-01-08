@@ -77,6 +77,7 @@
     "preferences.install_location.item_count": "# de itens", 
     "preferences.install_location.make_default": "Definir este como o local padrão de instalação", 
     "preferences.install_location.path": "Local", 
+    "preferences.install_location.used_space": "Espaço em uso", 
     "preferences.install_locations": "Locais de instalação", 
     "preferences.language": "Idioma", 
     "preferences.language.auto": "Idioma do sistema ({{idioma}})", 
