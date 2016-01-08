@@ -4,7 +4,7 @@
     "errors.api.login.username_must_be_provided": "O nome de usuário deve ser informado", 
     "grid.item.buy_now": "Comprar Agora", 
     "grid.item.cancel_download": "Cancelar download", 
-    "grid.item.downloading": "Baixando...", 
+    "grid.item.downloading": "Baixando…", 
     "grid.item.install": "Instalar", 
     "grid.item.installing": "Instalando...", 
     "grid.item.launch": "Iniciar", 
