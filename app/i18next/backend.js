@@ -28,7 +28,8 @@ let remote_dir = path.join(app.getPath('userData'), 'locales')
 
 let exists = async (file) => {
   try {
-    await sf.read_file(file)
+    let contents = await sf.read_file(file)
+    JSON.parse(contents)
     return true
   } catch (e) {
     return false
@@ -167,7 +168,7 @@ class Backend {
 
     log(opts, `Saving fresh ${language} locale to ${remote_filename}`)
     await mkdirp(path.dirname(remote_filename))
-    await sf.write_file(remote_filename, resources)
+    await sf.write_file(remote_filename, JSON.stringify(resources, null, 2))
   }
 }
 
