@@ -51,7 +51,7 @@
     "menu.help.search_issue": "Wyszukaj wątek", 
     "menu.help.view_license": "Zobacz licencję", 
     "menu.help.view_terms": "Zobacz regulamin itch.io", 
-    "onboarding.caved.prealpha_reminder": "Pamiętaj, że projekt jest we wczesnej fazie rozwoju", 
+    "onboarding.caved.prealpha_reminder": "Pamiętaj, że projekt jest jeszcze we wczesnej fazie rozwoju!", 
     "onboarding.caved.title_pick": "Skorzystaj z wyboru", 
     "onboarding.caved.troubleshoot_advice": "Gdy coś się zepsuje, kliknij {{report}} by to zgłosić lub {{probe}} by dowiedzieć się więcej.", 
     "onboarding.caved.usage": "Patrz, jak gry zostają spokojnie pobrane, zainstalowane i uruchomione.", 
