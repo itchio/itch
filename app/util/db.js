@@ -120,7 +120,7 @@ let self = {
   // upserts by default
   save_records: function (inputs, opts) {
     if (~~inputs.length === 0) return Promise.resolve()
-      let _table = opts.table
+    let _table = opts.table
     let relations = opts.relations || {}
 
     let relation_records = {}
