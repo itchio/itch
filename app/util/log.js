@@ -1,7 +1,6 @@
 
-
 let pairs = require('underscore').pairs
-let fstream = require('fstream')
+let fstream = require('fstream-electron')
 let deep_assign = require('deep-assign')
 
 let EOL = require('os').EOL

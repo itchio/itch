@@ -30,7 +30,7 @@
     "es6-error": "^2.0.0",
     "fast-async": "^6.0.11",
     "file-type": "^3.0.0",
-    "fstream": "^1.0.8",
+    "fstream-electron": "^0.1.0",
     "glob": "^6.0.1",
     "humanize-plus": "^1.5.0",
     "i18next": "^2.0.4",

@@ -6,7 +6,7 @@ let glob = require('../../promised/glob')
 let mkdirp = require('../../promised/mkdirp')
 let fs = require('../../promised/fs')
 
-let fstream = require('fstream')
+let fstream = require('fstream-electron')
 
 let archive = require('./archive')
 let path = require('path')

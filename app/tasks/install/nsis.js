@@ -5,7 +5,7 @@ let find_uninstallers = require('./find-uninstallers')
 let AppActions = require('../../actions/app-actions')
 
 let errors = require('../errors')
-let fstream = require('fstream')
+let fstream = require('fstream-electron')
 let rimraf = require('../../promised/rimraf')
 
 let log = require('../../util/log')('installers/nsis')

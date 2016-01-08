@@ -1,7 +1,7 @@
 
 let app = require('electron').app
 let path = require('path')
-let fstream = require('fstream')
+let fstream = require('fstream-electron')
 let Promise = require('bluebird')
 
 let partial = require('underscore').partial
