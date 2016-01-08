@@ -1,6 +1,6 @@
 
 
-let fstream = require('fstream')
+let fstream = require('fstream-electron')
 let path = require('path')
 
 let electron = require('electron')

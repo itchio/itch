@@ -2,7 +2,7 @@
 let StreamSearch = require('streamsearch')
 let os = require('../../util/os')
 
-let fstream = require('fstream')
+let fstream = require('fstream-electron')
 let _ = require('underscore')
 
 let log = require('../../util/log')('installers/exe')
