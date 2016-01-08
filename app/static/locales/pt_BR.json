@@ -68,6 +68,7 @@
     "onboarding.owned.reassuring_comment": "As coisas estão um pouco vazias no momento, mas não se preocupe!", 
     "onboarding.owned.title_warm_welcome": "Você conseguiu!", 
     "preferences.install_location.browse_linux": "Abra o local de instalação no explorador de arquivos", 
+    "preferences.install_location.delete": "Remover este local de instalação e desinstalar seus conteúdos.", 
     "preferences.install_location.free_space": "Espaço livre", 
     "preferences.install_location.item_count": "# de itens", 
     "preferences.install_locations": "Locais de instalação", 
