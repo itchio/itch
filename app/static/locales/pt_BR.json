@@ -9,6 +9,8 @@
     "grid.item.installing": "Instalando...", 
     "grid.item.launch": "Iniciar", 
     "grid.item.not_platform_compatible": "Não disponível em {{platform}}", 
+    "grid.item.open_in_file_explorer": "Abra a pasta de instalação no explorador de arquivos", 
+    "grid.item.open_in_file_explorer_osx": "Mostre no Buscador onde esse item está instalado.", 
     "grid.item.probe": "Abrir o log de eventos deste item para encontrar a falha do problema (Avançado)", 
     "grid.item.purchase_or_donate": "Comprar ou doar dinheiro para o item", 
     "grid.item.queued": "Enfileirado", 
