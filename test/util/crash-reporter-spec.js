@@ -15,7 +15,7 @@ test('crash-reporter', t => {
     platform: () => 'linux'
   }
   let stubs = Object.assign({
-    'fstream': fstream,
+    'fstream-electron': fstream,
     './os': os
   }, electron)
   let crash_reporter = proxyquire('../../app/util/crash-reporter', stubs)

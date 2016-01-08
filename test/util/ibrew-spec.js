@@ -31,7 +31,7 @@ test('ibrew', t => {
   }
   let stubs = Object.assign({
     'needle': needle,
-    'fstream': fstream,
+    'fstream-electron': fstream,
     './os': os,
     '../tasks/install/core': install
   }, electron)
