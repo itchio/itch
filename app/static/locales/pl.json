@@ -3,6 +3,7 @@
     "errors.api.login.password_must_be_provided": "Musisz podać hasło", 
     "errors.api.login.username_must_be_provided": "Należy podać nazwę użytkownika", 
     "grid.item.buy_now": "Kup teraz", 
+    "grid.item.cancel_download": "Anuluj pobieranie", 
     "grid.item.downloading": "Pobieranie...", 
     "grid.item.install": "Instaluj", 
     "grid.item.installing": "Trwa instalacja...", 
