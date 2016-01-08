@@ -1,4 +1,5 @@
 {
+    "desktop.shortcut.comment": "Łatwo instaluj i graj w gry itch.io", 
     "errors.api.login.incorrect_username_or_password": "Niewłaściwa nazwa użytkownika lub hasło", 
     "errors.api.login.password_must_be_provided": "Musisz podać hasło", 
     "errors.api.login.username_must_be_provided": "Należy podać nazwę użytkownika", 
