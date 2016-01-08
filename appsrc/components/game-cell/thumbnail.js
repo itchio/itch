@@ -24,6 +24,11 @@ class Thumbnail extends ShallowComponent {
       classSet[`icon-${platform_spec.icon}`] = true
       platform_list.push(r.span({ classSet }))
     }
+    if (game::get('type') === 'html') {
+      let is_active = platform_list.length === 0 // prefer native builds
+      let classSet = {icon: true, 'icon-earth': true, active: is_active}
+      platform_list.push(r.span({ classSet }))
+    }
 
     let style = {}
 

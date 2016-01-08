@@ -40,28 +40,13 @@ test('launch', t => {
   let configure = {
     start: () => Promise.resolve()
   }
-  let os = {
-    platform: () => 'win32'
-  }
-  let child_process = {
-    spawn: () => null,
-    '@noCallThru': true,
-    '@global': true
-  }
 
   let native = { launch: () => Promise.resolve() }
   let html = { launch: () => Promise.resolve() }
 
-  let sf = {
-    stat: async () => ({size: 0})
-  }
-
   let stubs = Object.assign({
     '../stores/cave-store': CaveStore,
-    '../util/sf': sf,
-    '../util/os': os,
     './configure': configure,
-    'child_process': child_process,
     './launch/native': native,
     './launch/html': html
   }, electron)
@@ -85,7 +70,7 @@ test('launch', t => {
       return Promise.resolve()
     })
     t.mock(native).expects('launch').once().resolves('Done!')
-    return launch.start(opts)
+    await launch.start(opts)
   })
 
   t.case('launches correct launch_type', async t => {
@@ -248,6 +233,7 @@ test('launch/html', t => {
   t.stub(db, 'find_one').resolves({
     title: 'game'
   })
+
   t.stub(electron.electron.BrowserWindow, 'on', (action, callback) => {
     callback()
   })
