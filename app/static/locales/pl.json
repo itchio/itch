@@ -11,6 +11,8 @@
     "grid.item.not_platform_compatible": "Niedostępne na {{platform}}", 
     "grid.item.open_in_file_explorer_osx": "Pokaż ścieżkę instalacji w Finderze", 
     "grid.item.queued": "W kolejce", 
+    "grid.item.report_problem": "Zgłoś błąd (Otwiera okno w przeglądarce)", 
+    "grid.item.retry": "Spróbuj ściągnąć / zainstalować / uruchomić to jeszcze raz", 
     "grid.item.running": "Uruchomiony...", 
     "login.action.login": "Logowanie", 
     "login.action.register": "Rejestracja", 
