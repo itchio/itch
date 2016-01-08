@@ -95,6 +95,7 @@
     "prompt.crash_reporter.report_issue": "Reportar problema", 
     "prompt.install_location_add.title": "Elige una nueva ruta de instalación", 
     "prompt.install_location_not_empty.detail": "Debe ser realizado manualmente, por ahora.", 
+    "prompt.install_location_not_empty.message": "Las ubicaciones de instalación solo pueden ser eliminadas una vez todos sus contenidos hayan sido desinstalados.", 
     "prompt.install_location_remove.detail": "Los elementos instalados en {{location}} serán desinstalados.", 
     "prompt.install_location_remove.message": "¿Seguro que quiere eliminar este lugar?", 
     "prompt.install_location_remove.title": "Eliminando ruta de instalación", 
