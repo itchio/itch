@@ -50,6 +50,8 @@ let electron = {
   }
 }
 
+electron.remote.app = electron.app
+
 Object.assign(electron.Tray, {
   setToolTip: rnil,
   setContextMenu: rnil,

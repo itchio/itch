@@ -34,7 +34,7 @@ class PreferencesForm extends ShallowComponent {
       }
     }
 
-    let num_fetching = mori.count(mori.getIn(state, ['locales', 'updating']))
+    let updating_locales = mori.getIn(state, ['locales', 'updating'])
 
     let options = [{
       value: '__',
@@ -60,7 +60,7 @@ class PreferencesForm extends ShallowComponent {
               e.preventDefault()
               AppActions.locale_update_queue_download(language)
             }
-          }, (num_fetching > 0
+          }, (updating_locales
 
             ? r(Icon, {
               icon: 'stopwatch',
@@ -105,7 +105,7 @@ class PreferencesForm extends ShallowComponent {
     let locations = mori.filter((x) => !mori.get(mori.last(x), 'deleted'), loc_map)
 
     // can't delete your last remaining location.
-    let may_delete = mori.count(locations) > 0
+    let several_locations = mori.count(locations) > 0
 
     let rows = []
     rows.push(header)
@@ -117,6 +117,7 @@ class PreferencesForm extends ShallowComponent {
       let name = mori.first(pair)
       let location = mori.last(pair)
       let is_default = (name === default_loc)
+      let may_delete = several_locations && name !== 'appdata'
 
       let path = mori.get(location, 'path')
       for (let alias of aliases) {

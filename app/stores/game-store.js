@@ -188,7 +188,7 @@ async function game_browse (payload) {
   electron.shell.openExternal(game.url)
 }
 
-let fetch_caved_games = _.debounce(() => {
+let fetch_caved_games = _.throttle(() => {
   fetch_games({path: 'caved'})
 }, 250, true)
 

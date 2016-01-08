@@ -1,7 +1,7 @@
 {
   "title": "itch",
 
-  "icon": "../app/static/images/itchio.icns",
+  "icon": "../release/itchio.icns",
 
   "background": "dmgbg.png",
 

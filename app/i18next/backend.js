@@ -3,6 +3,7 @@ let log = require('../util/log')('i18n-backend/' + process.type)
 let opts = { logger: new log.Logger() }
 
 let sf = require('../util/sf')
+let mkdirp = require('../promised/mkdirp')
 let urls = require('../constants/urls')
 let env = require('../env')
 
@@ -16,8 +17,24 @@ let AppActions = require('../actions/app-actions')
 
 let being_fetched = {}
 
-// don't overwrite local files
-let remote_suffix = '.remote.json'
+let app
+if (process.type === 'browser') {
+  app = require('electron').app
+} else {
+  app = require('electron').remote.app
+}
+
+let remote_dir = path.join(app.getPath('userData'), 'locales')
+
+let exists = async (file) => {
+  try {
+    let contents = await sf.read_file(file)
+    JSON.parse(contents)
+    return true
+  } catch (e) {
+    return false
+  }
+}
 
 class Backend {
   constructor (services, options) {
@@ -55,8 +72,12 @@ class Backend {
     this.coreOptions = coreOptions
   }
 
-  canonical_filename (candidate) {
-    return path.join(this.options.loadPath, candidate + '.json')
+  canonical_filename (language) {
+    return path.join(this.options.loadPath, language + '.json')
+  }
+
+  remote_filename (language) {
+    return path.join(remote_dir, language + '.json')
   }
 
   async read (language, namespace, callback) {
@@ -64,20 +85,21 @@ class Backend {
 
     let canonical_filename = this.canonical_filename(language)
 
-    if (!await sf.exists(canonical_filename)) {
+    if (!await exists(canonical_filename)) {
       canonical_filename = this.canonical_filename(language.substring(0, 2))
-      if (!await sf.exists(canonical_filename)) {
+      if (!await exists(canonical_filename)) {
         log(opts, `No locale file found for language ${language}`)
         return callback(null, {})
       }
     }
 
     let loaded_filename = canonical_filename
+    let remote_filename = this.remote_filename(language)
 
     // do we have a newer version?
-    if (await sf.exists(canonical_filename + remote_suffix)) {
+    if (await exists(remote_filename)) {
       // neat, use it.
-      loaded_filename = canonical_filename + remote_suffix
+      loaded_filename = remote_filename
     }
 
     let contents = await sf.read_file(loaded_filename)
@@ -86,13 +108,13 @@ class Backend {
       log(opts, `Successfully loaded ${language} from ${loaded_filename}`)
       return callback(null, parsed)
     } catch (err) {
-      err.message = 'error parsing ' + loaded_filename + ': ' + err.message
-      return callback(err)
+      log(opts, `Error parsing ${loaded_filename}: ${err.message}`)
+      return callback(null, {})
     }
   }
 
   async queue_download (language) {
-    // only run local updating on the node side
+    // only run the locale updating routine on the node side
     if (process.type !== 'browser') return
 
     if (env.name === 'development' && process.env.DID_I_STUTTER !== '1') {
@@ -120,22 +142,24 @@ class Backend {
 
   async download_fresh_locale (language) {
     let local_filename = this.canonical_filename(language)
-    if (!await sf.exists(local_filename)) {
+    if (!await exists(local_filename)) {
       // try stripping region
-      local_filename = this.canonical_filename(language.substring(0, 2))
+      language = language.substring(0, 2)
     }
 
-    let remote_filename = local_filename + '.remote.json'
+    let remote_filename = this.remote_filename(language)
     let uri = `${urls.remote_locale_path}/${language}.json`
 
     log(opts, `Downloading fresh locale file from ${uri}`)
 
     let needle = require('../promised/needle')
-    let resp = await needle.requestAsync('GET', uri)
+    let resp = await needle.requestAsync('GET', uri, {format: 'json'})
+
+    log(opts, `HTTP GET ${uri}: ${resp.statusCode}`)
     let resources = resp.body
 
     if (resp.statusCode !== 200) {
-      log(opts, `Got HTTP ${resp.statusCode} while fetching fresh locale`)
+      log(opts, `Non-200 status code, bailing out`)
       return
     }
 
@@ -143,7 +167,8 @@ class Backend {
     AppActions.locale_update_downloaded(language, resources)
 
     log(opts, `Saving fresh ${language} locale to ${remote_filename}`)
-    await sf.write_file(remote_filename, resources)
+    await mkdirp(path.dirname(remote_filename))
+    await sf.write_file(remote_filename, JSON.stringify(resources, null, 2))
   }
 }
 

@@ -65,16 +65,17 @@ function compute_state () {
     let computing_size = !!location_computing_size[loc_name]
     let item_count = location_item_counts[loc_name] || 0
 
-    if (size === -1 && !computing_size && !raw_loc.deleted) {
-      AppActions.install_location_compute_size(loc_name)
-    }
-
     let loc = Object.assign({}, raw_loc, {
       size,
       free_space,
       computing_size,
       item_count
     })
+
+    if (loc_name === 'appdata') {
+      // you can't delete appdata! it's your user-specific fallback.
+      delete loc.deleted
+    }
 
     locations[loc_name] = loc
   }
@@ -101,7 +102,7 @@ function recompute_state () {
   InstallLocationStore.emit_change()
 }
 
-let throttled_recompute_state = _.debounce(recompute_state, throttle, true)
+let throttled_recompute_state = _.throttle(recompute_state, throttle, true)
 
 function initialize_appdata () {
   appdata_location = {
@@ -129,7 +130,7 @@ async function reload () {
   throttled_recompute_state()
 }
 
-let throttled_reload = _.debounce(reload, throttle)
+let throttled_reload = _.throttle(reload, throttle)
 
 function install_location_compute_size (payload) {
   let name = payload.name
