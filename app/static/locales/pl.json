@@ -120,6 +120,7 @@
     "prompt.payments_disabled.title": "Płatności wyłączone", 
     "prompt.rar_policy.learn_more": "Dowiedz się więcej", 
     "prompt.rar_policy.message": "Ta zawartość używa formatu kompresji RAR i nie może być zainstalowana w itch dopóki nie zostanie przepakowana.", 
+    "prompt.rar_policy.title": "RAR nie jest wspierany", 
     "prompt.url_install.credit": "{{classification}} autorstwa {{username}}", 
     "prompt.url_install.message": "Czy chcesz zainstalować {{title}}?", 
     "prompt.url_install.title": "Inicjacja instalacji", 
