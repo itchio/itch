@@ -77,6 +77,7 @@
     "prompt.action.install": "Instalar", 
     "prompt.action.ok": "Ok", 
     "prompt.additional_purchase.detail": "...mas você ainda pode comprar uma cópia para um amigo\n\nGostaria de fazer outra compra?", 
+    "prompt.additional_purchase.title": "Você já possui isso!", 
     "prompt.confirm_uninstall": "Tem certeza que você deseja desinstalar {{title}}?", 
     "prompt.crash_reporter.detail": "Um log de erro foi salvo em {{location}}.", 
     "prompt.crash_reporter.message": "A aplicação apresentou um erro", 
