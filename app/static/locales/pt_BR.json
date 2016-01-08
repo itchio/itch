@@ -109,6 +109,7 @@
     "prompt.no_compatible_version.message": "Não foi possível encontrar uma versão de {{title}} para {{platform}}.", 
     "prompt.no_compatible_version.title": "{{title}} na {{platform}}", 
     "prompt.payments_disabled.detail": "Talvez você possa encontrar outro jeito de ajudar eles?", 
+    "prompt.payments_disabled.message": "Infelizmente o desenvolvedor de {{title}} não aceita pagamentos para este titulo.", 
     "prompt.payments_disabled.open_web_page": "Abrir página web", 
     "prompt.payments_disabled.title": "Pagamentos desativados", 
     "prompt.rar_policy.learn_more": "Aprender mais", 
