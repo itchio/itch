@@ -73,6 +73,7 @@
     "preferences.install_location.free_space": "Espaço livre", 
     "preferences.install_location.is_default": "Novos itens serão instalados nesta localização por padrão.", 
     "preferences.install_location.item_count": "# de itens", 
+    "preferences.install_location.path": "Local", 
     "preferences.install_locations": "Locais de instalação", 
     "preferences.language": "Idioma", 
     "preferences.language.auto": "Idioma do sistema ({{idioma}})", 
