@@ -140,14 +140,20 @@ let self = {
         await sf.wipe(tar)
         return res
       } else {
+        let sniff_opts = {archive_path: only_file}
+        let installer_name
+
         try {
-          let sniff_opts = {archive_path: only_file}
-          let installer_name = await core.sniff_type(opts)
+          installer_name = await core.sniff_type(opts)
+        } catch (err) {
+          log(opts, `only file isn't a recognized installer type`)
+          installer_name = null
+        }
+
+        if (installer_name) {
           log(opts, `found nested installer '${installer_name}', going with it!`)
           let nested_opts = Object.assign({}, opts, sniff_opts)
           await core.install(nested_opts)
-        } catch (err) {
-          log(opts, `only file isn't a recognized installer type`)
         }
       }
     }
