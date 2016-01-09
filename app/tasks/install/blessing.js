@@ -10,8 +10,7 @@ let self = (opts) => {
   let cb = (resolve, reject) => {
     let onshine, oncancel
     let remove_listeners = () => {
-      opts.emitter.off('shine', onshine)
-      opts.emitter.off('cancel', oncancel)
+      opts.emitter.removeListener('shine', onshine).removeListener('cancel', oncancel)
       AppActions.cave_progress({id: opts.id, need_blessing: false})
     }
 
