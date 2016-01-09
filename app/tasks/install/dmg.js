@@ -28,6 +28,7 @@ let self = {
     let onprogress = opts.onprogress || noop
 
     log(opts, `Preparing installation of '${archive_path}'`)
+    onprogress({percent: -1})
 
     let cdr_path = path.resolve(archive_path + '.cdr')
 
@@ -87,8 +88,6 @@ let self = {
       log(opts, `Couldn't unlink ${cdr_path}: ${e}`)
     }
 
-    onprogress({percent: 5})
-
     log(opts, `Converting archive '${archive_path}' to CDR with hdiutil`)
 
     code = await spawn({
@@ -103,8 +102,6 @@ let self = {
     if (code !== 0) {
       throw new Error(`Failed to convert dmg image, with code ${code}`)
     }
-
-    onprogress({percent: 30})
 
     log(opts, `Attaching cdr file ${cdr_path}`)
 
@@ -138,8 +135,6 @@ let self = {
       throw new Error('Failed to mount image (no mountpoint)')
     }
 
-    onprogress({percent: 33})
-
     log(opts, `Creating target directory ${dest_path}`)
     await sf.mkdir(dest_path)
 
@@ -156,7 +151,7 @@ let self = {
       }
 
       copied_files += 1
-      let percent = (0.33 + 0.66 * (copied_files / num_files)) * 100
+      let percent = (copied_files / num_files) * 100
       onprogress({percent})
     }
 
