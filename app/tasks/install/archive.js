@@ -140,7 +140,7 @@ let self = {
         await sf.wipe(tar)
         return res
       } else {
-        let sniff_opts = {archive_path: only_file}
+        let sniff_opts = {archive_path: only_file, disable_cache: true}
         let installer_name
 
         try {

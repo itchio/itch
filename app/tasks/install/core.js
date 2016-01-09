@@ -94,13 +94,19 @@ let self = {
       }
     }
 
-    self.cache_type(opts, installer_name)
+    if (!opts.disable_cache) {
+      self.cache_type(opts, installer_name)
+    }
     return installer_name
   },
 
   operate: async function (opts, operation) {
     let archive_path = opts.archive_path
-    let installer_name = self.retrieve_cached_type(opts)
+    let installer_name
+
+    if (!opts.disable_cache) {
+      installer_name = self.retrieve_cached_type(opts)
+    }
 
     if (installer_name) {
       log(opts, `using cached installer type ${installer_name} for ${archive_path}`)

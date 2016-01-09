@@ -62,6 +62,11 @@ class GameCell extends ShallowComponent {
       icon_spin = true
     }
 
+    if (mori.get(cave, 'needs_blessing')) {
+      task = 'ask-before-install'
+      icon_spin = true
+    }
+
     let button_style = {}
     if (progress > 0) {
       let percent = (progress * 100).toFixed() + '%'

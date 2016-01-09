@@ -4,6 +4,7 @@ let find_uninstallers = require('./find-uninstallers')
 
 let AppActions = require('../../actions/app-actions')
 
+let blessing = require('./blessing')
 let errors = require('../errors')
 
 let log = require('../../util/log')('installers/inno')
@@ -16,12 +17,7 @@ let self = {
   },
 
   install: async function (opts) {
-    if (!opts.has_user_blessing) {
-      throw new errors.Transition({
-        to: 'ask-before-install',
-        reason: `going to pop up an UAC dialog, need user's permission first`
-      })
-    }
+    await blessing(opts)
 
     AppActions.cave_progress({id: opts.id, progress: -1})
 
