@@ -103,6 +103,7 @@
     "prompt.install_location_remove.detail": "Los elementos instalados en {{location}} serán desinstalados.", 
     "prompt.install_location_remove.message": "¿Seguro que quiere eliminar este lugar?", 
     "prompt.install_location_remove.title": "Eliminando ruta de instalación", 
+    "prompt.last_remaining_install_location.title": "No se puede eliminar la ubicación de la instalación", 
     "prompt.logout_confirm": "¿Seguro que quieres cerrar sesión?", 
     "prompt.no_compatible_version.detail": "Tal vez esta {{classification}} todavía no es compatible con la suya?", 
     "prompt.no_compatible_version.message": "No hemos podido encontrar una versión de {{title}} para {{platform}}.", 
