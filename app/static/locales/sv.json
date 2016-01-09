@@ -10,6 +10,7 @@
     "grid.item.launch": "Starta", 
     "grid.item.not_platform_compatible": "Inte tillgänglig för {{platform}}", 
     "grid.item.open_in_file_explorer": "Öppna installationsmappen i Utforskaren", 
+    "grid.item.open_in_file_explorer_linux": "Öppna installationskatalogen i filhanteraren", 
     "grid.item.open_in_file_explorer_osx": "Visa med Finder var objektet är installerat.", 
     "grid.item.probe": "Öppna händelselogg för att hitta felorsak (avancerat)", 
     "grid.item.purchase_or_donate": "Köp eller donera pengar för denna produkt", 
