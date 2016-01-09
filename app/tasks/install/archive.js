@@ -209,6 +209,9 @@ let self = {
       files: stage_files
     }, null, 2))
 
+    log(opts, `wiping stage...`)
+    await sf.wipe(stage_path)
+
     return {extracted_size, total_size}
   },
 
