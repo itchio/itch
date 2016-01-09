@@ -38,10 +38,16 @@ let stubs = {
   'graceful-fs': graceful_fs
 }
 
-let debug = () => null
+let debug_level = ~~process.env.INCENTIVE_MET
+let debug = (msg, level) => {
+  if (typeof level === 'undefined') {
+    level = 1
+  }
+  if (debug_level < level) {
+    return
+  }
 
-if (process.env.INCENTIVE_MET) {
-  debug = (msg) => console.log(`[sf] ${msg}`)
+  console.log(`[sf] ${msg}`)
 }
 
 fs = graceful_fs
@@ -60,9 +66,6 @@ let read_chunk = Promise.promisify(proxyquire('read-chunk', stubs))
 
 // other deps
 let path = require('path')
-
-// graceful-fs should keep us from EMFILE
-let concurrency = 8
 
 // global ignore patterns
 let ignore = [
@@ -147,30 +150,48 @@ let self = {
       stats = await self.lstat(file_or_dir)
     } catch (err) {
       if (err.code === 'ENOENT') {
-        debug(`already wiped: ${file_or_dir}`)
         return
       }
       throw err
     }
 
     if (stats.isDirectory()) {
-      let files = await self.glob('**/*', {nodir: true, cwd: file_or_dir, dot: true, ignore})
+      let files = await self.glob('**', {cwd: file_or_dir, dot: true, ignore})
+      let dirs = []
 
       for (let file of files) {
         let full_file = path.join(file_or_dir, file)
-        debug(`rm ${full_file}`)
-        await self.unlink(full_file)
+
+        let stats
+        try {
+          stats = await self.lstat(full_file)
+        } catch (err) {
+          if (err.code === 'ENOENT') {
+            // good!
+          } else {
+            throw err
+          }
+        }
+
+        if (stats.isDirectory()) {
+          dirs.push(file)
+        } else {
+          debug(`rm ${full_file}`, 2)
+          await self.unlink(full_file)
+        }
       }
 
-      let dirs = await self.glob('**/*/', {cwd: file_or_dir, dot: true, ignore})
       // remove deeper dirs first
       dirs.sort((a, b) => (b.length - a.length))
 
       for (let dir of dirs) {
         let full_dir = path.join(file_or_dir, dir)
-        debug(`rmdir ${full_dir}`)
+
+        debug(`rmdir ${full_dir}`, 2)
         await self.rmdir(full_dir)
       }
+
+      debug(`wipe ${file_or_dir} done (removed ${files.length} files & ${dirs.length} directories)`)
     } else {
       debug(`rm ${file_or_dir}`)
       await self.unlink(file_or_dir)
@@ -184,13 +205,11 @@ let self = {
   ditto: async (src, dst, opts) => {
     debug(`ditto ${src} ${dst}`)
 
-    let _copy = async (src_file, dst_file) => {
-      let stats = await self.lstat(src_file)
-
+    let _copy = async (src_file, dst_file, stats) => {
       if (stats.isSymbolicLink()) {
         let link_target = await self.readlink(src_file)
 
-        debug(`ln -s ${link_target} ${dst_file}`)
+        debug(`ln -s ${link_target} ${dst_file}`, 2)
         await self.wipe(dst_file)
         await self.symlink(link_target, dst_file)
       } else {
@@ -202,7 +221,7 @@ let self = {
         let rs = self.createReadStream(src_file, { encoding: 'binary' })
         let cp = self.promised(rs)
         rs.pipe(ws)
-        debug(`cp ${src_file} ${dst_file}`)
+        debug(`cp ${src_file} ${dst_file}`, 2)
         await cp
       }
     }
@@ -214,33 +233,52 @@ let self = {
     let always_false = () => false
     let should_skip = opts.should_skip || always_false
 
+    // if we're not a directory, no need to recurse
     let stats = await self.lstat(src)
     if (!stats.isDirectory()) {
-      await _copy(src, dst)
+      await _copy(src, dst, stats)
       return
     }
 
+    // unfortunately, glob considers symlinks like directories :(
+    // we can't use '**/*' as this will return paths *inside* symlinked dirs
+    let files_and_dirs = await self.glob('**', {cwd: src, dot: true, ignore})
+
+    let files = []
+    let dirs = []
+
+    for (let fad of files_and_dirs) {
+      let full_fad = path.join(src, fad)
+      let stats = await self.lstat(full_fad)
+      if (stats.isDirectory()) {
+        dirs.push(fad)
+      } else {
+        files.push([fad, stats])
+      }
+    }
+
     let mkdir = async (dir) => {
-      debug(`mkdir ${dir}`)
+      debug(`mkdir ${dir}`, 2)
       await self.mkdir(path.join(dst, dir))
     }
-    let dirs = await self.glob('**/*/', {cwd: src, dot: true, ignore})
 
     // have to mkdir sequentially
     await Promise.resolve(dirs).each(mkdir)
 
-    let files = await self.glob('**/*', {cwd: src, dot: true, nodir: true, ignore})
     let num_done = 0
 
-    let copy = async (file) => {
+    let copy = async (arr) => {
+      let file = arr[0]
+      let stats = arr[1]
+
       let src_file = path.join(src, file)
       if (should_skip(src_file)) {
-        debug(`skipping ${src_file}`)
+        debug(`skipping ${src_file}`, 2)
         return
       }
 
       let dst_file = path.join(dst, file)
-      await _copy(src_file, dst_file)
+      await _copy(src_file, dst_file, stats)
 
       num_done += 1
       let percent = num_done * 100 / files.length
@@ -248,7 +286,10 @@ let self = {
     }
 
     // can copy in parallel, all directories already exist
-    await Promise.resolve(files).map(copy, {concurrency})
+    for (let file of files) {
+      await copy(file)
+    }
+    debug(`ditto ${src} ${dst} done (copied ${files.length} files & ${dirs.length} directories)`)
   },
 
   /**
@@ -258,9 +299,9 @@ let self = {
   glob,
 
   /**
-  * Promised version of read_chunk
-  * https://www.npmjs.com/package/read-chunk
-  */
+   * Promised version of read_chunk
+   * https://www.npmjs.com/package/read-chunk
+   */
   read_chunk,
 
   fs_name
