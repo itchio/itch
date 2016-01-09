@@ -3,7 +3,7 @@ let electron = require('electron')
 let path = require('path')
 
 let spawn = require('./spawn')
-let fs = require('../promised/fs')
+let sf = require('./sf')
 
 let Logger = require('./log').Logger
 let log = require('./log')('shortcut')
@@ -40,10 +40,9 @@ let self = {
     // cf. https://github.com/itchio/itch/issues/239
     let remove_desktop_shortcut = false
 
-    try {
-      await fs.lstatAsync(shortcut_path)
+    if (await sf.exists(shortcut_path)) {
       log(opts, `Shortcut at ${shortcut_path} still exists, letting Squirrel do its thing`)
-    } catch (e) {
+    } else {
       // shortcut was deleted by user, remove it after Squirrel recreates it
       remove_desktop_shortcut = true
       log(opts, `Shortcut at ${shortcut_path} has been deleted, preparing to re-delete`)
@@ -54,7 +53,7 @@ let self = {
       await self.create_or_update_shortcut()
       if (remove_desktop_shortcut) {
         log(opts, `Removing shortcut as requested`)
-        await fs.unlinkAsync(shortcut_path)
+        await sf.wipe(shortcut_path)
       }
     } catch (e) {
       log(opts, `Could not update shortcut: ${e.stack || e}`)

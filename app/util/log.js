@@ -1,6 +1,6 @@
 
 let pairs = require('underscore').pairs
-let fstream = require('fstream-electron')
+let sf = require('../util/sf')
 let deep_assign = require('deep-assign')
 
 let EOL = require('os').EOL
@@ -43,7 +43,7 @@ class Logger {
 
         case 'file': {
           if (val) {
-            this.file_sink = fstream.Writer({
+            this.file_sink = sf.Writer({
               path: val,
               flags: 'a'
             })

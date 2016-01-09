@@ -1,179 +1,46 @@
 
 let app = require('electron').app
 let path = require('path')
-let fstream = require('fstream-electron')
-let Promise = require('bluebird')
+let os = require('./os')
 
 let partial = require('underscore').partial
-let needle = require('needle')
 
-let urls = require('../constants/urls')
 let install = require('../tasks/install/core')
-let os = require('./os')
 let log = require('./log')('ibrew')
 
+let formulas = require('./ibrew/formulas')
+let version = require('./ibrew/version')
+let net = require('./ibrew/net')
+
+let default_version_check = {
+  args: ['-V'],
+  parser: /([a-zA-Z0-9\.]+)/
+}
+
 let self = {
-  formulas: {
-    '7za': {
-      format: 'executable',
-      on_missing: () => {
-        if (self.os() === 'linux') {
-          // TODO: add link to doc page too
-          let msg = '7-zip missing: 7za must be in $PATH\n(Try installing p7zip-full)'
-          throw new Error(msg)
-        }
-      },
-      version_check: {
-        args: [],
-        parser: /([0-9a-z.v]*)(\s+beta)?[\s:]+Copyright/
-      }
-    },
-    'butler': {
-      format: '7z'
-    },
-    'elevate': {
-      format: '7z',
-      os_whitelist: ['windows']
-    },
-    'file': {
-      format: '7z',
-      os_whitelist: ['windows'],
-      version_check: {
-        args: ['--version'],
-        parser: /file-([0-9a-z.]*)/
-      }
-    },
-    'arh': {
-      format: '7z',
-      version_check: {
-        args: [],
-        parser: /Version ([0-9a-z.]*)/
-      }
-    }
-  },
-
-  bin_path: () => {
-    return path.join(app.getPath('userData'), 'bin')
-  },
-
-  ext: () => {
-    if (os.platform() === 'win32') {
-      return '.exe'
-    } else {
-      return ''
-    }
-  },
-
-  /** platform in go format */
-  os: () => {
-    let result = os.platform()
-    if (result === 'win32') {
-      return 'windows'
-    }
-    return result
-  },
-
-  /** arch in go format */
-  arch: () => {
-    let result = os.arch()
-    if (result === 'x64') {
-      return 'amd64'
-    } else if (result === 'ia32') {
-      return '386'
-    } else {
-      return 'unknown'
-    }
-  },
-
-  normalize_version: (version) => {
-    if (!version) return version
-    return version.replace(/^v/, '')
-  },
-
-  version_equal: (a, b) => {
-    let aa = self.normalize_version(a)
-    let bb = self.normalize_version(b)
-    return aa === bb
-  },
-
-  archive_name: (name) => {
-    let formula = self.formulas[name]
-
-    if (formula.format === '7z') {
-      return `${name}.7z`
-    } else if (formula.format === 'executable') {
-      return `${name}${self.ext()}`
-    } else {
-      throw new Error(`Unknown formula format: ${formula.format}`)
-    }
-  },
-
-  download_to_file: (opts, url, file) => {
-    let req = needle.get(url)
-    let sink = fstream.Writer({
-      path: file,
-      mode: 0o777
-    })
-    req.pipe(sink)
-
-    return new Promise((resolve, reject) => {
-      sink.on('close', resolve)
-      req.on('error', reject)
-    })
-  },
-
-  get_latest_version: (channel) => {
-    return new Promise((resolve, reject) => {
-      let url = `${channel}/LATEST`
-      needle.get(url, (err, res) => {
-        if (err || res.statusCode !== 200) {
-          return reject(err || `status code: ${res.statusCode}`)
-        }
-        let version = res.body.toString('utf8').replace(/\s/g, '')
-        resolve(self.normalize_version(version))
-      })
-    })
-  },
-
-  get_local_version: async (name) => {
-    let formula = self.formulas[name]
-
-    let check = Object.assign({}, {
-      args: ['-V'],
-      parser: /([a-zA-Z0-9\.]+)/
-    }, formula.version_check || {})
-
-    try {
-      let info = await os.check_presence(name, check.args, check.parser)
-      return self.normalize_version(info.parsed)
-    } catch (err) {
-      return null
-    }
-  },
-
   fetch: async (opts, name) => {
     let noop = () => null
     let onstatus = opts.onstatus || noop
 
-    let formula = self.formulas[name]
+    let formula = formulas[name]
     if (!formula) throw new Error(`Unknown formula: ${name}`)
 
     let os_whitelist = formula.os_whitelist
-    if (os_whitelist && os_whitelist.indexOf(self.os()) === -1) {
-      log(opts, `${name}: skipping, it's irrelevant on ${self.os()}`)
+    if (os_whitelist && os_whitelist.indexOf(net.os()) === -1) {
+      log(opts, `${name}: skipping, it's irrelevant on ${net.os()}`)
       return
     }
 
-    let channel = `${urls.ibrew_repo}/${name}/${self.os()}-${self.arch()}`
+    let channel = net.channel(name)
 
-    let download_version = async (version) => {
+    let download_version = async (v) => {
       let archive_name = self.archive_name(name)
       let archive_path = path.join(self.bin_path(), archive_name)
-      let archive_url = `${channel}/v${version}/${archive_name}`
-      onstatus('login.status.dependency_install', 'download', {name, version})
-      log(opts, `${name}: downloading '${version}' from ${archive_url}`)
+      let archive_url = `${channel}/v${v}/${archive_name}`
+      onstatus('login.status.dependency_install', 'download', {name, version: v})
+      log(opts, `${name}: downloading '${v}' from ${archive_url}`)
 
-      await self.download_to_file(opts, archive_url, archive_path)
+      await net.download_to_file(opts, archive_url, archive_path)
 
       if (formula.format === 'executable') {
         log(opts, `${name}: installed!`)
@@ -185,7 +52,7 @@ let self = {
     }
 
     onstatus('login.status.dependency_check', 'stopwatch')
-    let get_latest_version = partial(self.get_latest_version, channel)
+    let get_latest_version = partial(net.get_latest_version, channel)
 
     let local_version = await self.get_local_version(name)
 
@@ -205,7 +72,7 @@ let self = {
       return
     }
 
-    if (self.version_equal(local_version, latest_version) ||
+    if (version.equal(local_version, latest_version) ||
         local_version === 'head') {
       log(opts, `${name}: up-to-date`)
       return
@@ -213,7 +80,37 @@ let self = {
 
     log(opts, `${name}: upgrading '${local_version}' => '${latest_version}'`)
     await download_version(latest_version)
-  }
+  },
+
+  archive_name: (name) => {
+    let formula = formulas[name]
+
+    if (formula.format === '7z') {
+      return `${name}.7z`
+    } else if (formula.format === 'executable') {
+      return `${name}${self.ext()}`
+    } else {
+      throw new Error(`Unknown formula format: ${formula.format}`)
+    }
+  },
+
+  get_local_version: async (name) => {
+    let formula = formulas[name]
+
+    let check = Object.assign({}, default_version_check, formula.version_check || {})
+
+    try {
+      let info = await os.assert_presence(name, check.args, check.parser)
+      return version.normalize(info.parsed)
+    } catch (err) {
+      // not present
+      return null
+    }
+  },
+
+  bin_path: () => path.join(app.getPath('userData'), 'bin'),
+
+  ext: () => (os.platform() === 'win32') ? '.exe' : ''
 }
 
 module.exports = self

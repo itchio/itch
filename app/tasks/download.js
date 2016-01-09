@@ -4,8 +4,7 @@ let Transition = require('./errors').Transition
 let log = require('../util/log')('tasks/download')
 let http = require('../util/http')
 let noop = require('../util/noop')
-
-let rimraf = require('../promised/rimraf')
+let sf = require('../util/sf')
 
 let CaveStore = require('../stores/cave-store')
 let CredentialsStore = require('../stores/credentials-store')
@@ -61,9 +60,7 @@ async function start (opts) {
   emitter.on('cancelled', async (e) => {
     log(opts, `killed the butler with a wrench in the living room`)
     log(opts, `wiping ${dest}`)
-    await rimraf(dest, {
-      disableGlob: true
-    })
+    await sf.wipe(dest)
   })
 
   await http.request({ url, onprogress, logger, dest, emitter })

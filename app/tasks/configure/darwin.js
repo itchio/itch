@@ -3,7 +3,7 @@ let Promise = require('bluebird')
 let path = require('path')
 
 let common = require('./common')
-let glob = require('../../promised/glob')
+let sf = require('../../util/sf')
 
 let ignore_patterns = [
   // skip some typical junk we find in archives that's supposed
@@ -14,7 +14,7 @@ let ignore_patterns = [
 
 let self = {
   configure: async function (cave_path) {
-    let bundles = await glob('**/*.app/', {
+    let bundles = await sf.glob('**/*.app/', {
       cwd: cave_path,
       ignore: ignore_patterns
     })

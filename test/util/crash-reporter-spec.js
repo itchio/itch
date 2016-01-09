@@ -6,16 +6,14 @@ let proxyquire = require('proxyquire')
 let electron = require('../stubs/electron')
 
 test('crash-reporter', t => {
-  let fstream = {
-    Writer: () => fstream,
-    write: () => fstream,
-    end: () => fstream
+  let sf = {
+    write_file: () => null
   }
   let os = {
     platform: () => 'linux'
   }
   let stubs = Object.assign({
-    'fstream-electron': fstream,
+    '../util/sf': sf,
     './os': os
   }, electron)
   let crash_reporter = proxyquire('../../app/util/crash-reporter', stubs)
@@ -23,15 +21,15 @@ test('crash-reporter', t => {
   let e = { stack: 'Hey\nthere' }
 
   t.case('write_crash_log', t => {
-    let mock = t.mock(fstream)
-    mock.expects('write').once().withArgs('Hey\nthere').returns(fstream)
+    let mock = t.mock(sf)
+    mock.expects('write_file').once().withArgs(sinon.match.string, 'Hey\nthere').returns(sf)
     crash_reporter.write_crash_log(e)
   })
 
   t.case('write_crash_log (win32)', t => {
     t.stub(os, 'platform').returns('win32')
-    let mock = t.mock(fstream)
-    mock.expects('write').once().withArgs('Hey\r\nthere').returns(fstream)
+    let mock = t.mock(sf)
+    mock.expects('write_file').once().withArgs(sinon.match.string, 'Hey\r\nthere').returns(sf)
     crash_reporter.write_crash_log(e)
   })
 

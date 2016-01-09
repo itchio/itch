@@ -1,11 +1,10 @@
 
-
 let path = require('path')
 let partial = require('underscore').partial
 
 let noop = require('./noop')
 let spawn = require('./spawn')
-let mkdirp = require('../promised/mkdirp')
+let sf = require('./sf')
 
 let log = require('../util/log')('util/http')
 
@@ -34,7 +33,7 @@ let self = {
     let err = null
     let onerror = (e) => err = e
 
-    await mkdirp(path.dirname(dest)) 
+    await sf.mkdir(path.dirname(dest))
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'dl', url, dest],

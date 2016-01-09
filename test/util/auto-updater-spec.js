@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 
@@ -20,12 +19,20 @@ let setup_win32 = t => {
   let os = {}
   let reg = {
     install: async () => null,
+    update: async () => null,
+    uninstall: async () => null
+  }
+
+  let shortcut = {
+    install: async () => null,
+    update: async () => null,
     uninstall: async () => null
   }
 
   let stubs = Object.assign({
     '../os': os,
-    '../reg': reg
+    '../reg': reg,
+    '../shortcut': shortcut
   }, electron)
 
   let win32 = proxyquire('../../app/util/auto-updater/win32', stubs)

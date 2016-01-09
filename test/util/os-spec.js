@@ -21,11 +21,11 @@ test('os', t => {
   t.is(os.process_type(), 'browser', 'process_type')
   t.is(os.cli_args(), process.argv, 'cli args')
 
-  t.case('check presence', t => {
-    return os.check_presence('node', ['-v'])
+  t.case('assert presence', t => {
+    return os.assert_presence('node', ['-v'])
   })
 
-  t.case('check absence', t => {
-    return t.rejects(os.check_presence('kalamzoo123'))
+  t.case('assert absence', t => {
+    return t.rejects(os.assert_presence('kalamzoo123'))
   })
 })

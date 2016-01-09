@@ -1,5 +1,5 @@
 
-let glob = require('../../promised/glob')
+let sf = require('../../util/sf')
 
 // example installer names:
 //  * pidgin-uninst.exe
@@ -10,7 +10,7 @@ let glob = require('../../promised/glob')
 let pattern = '**/@(*uninst|uninstall|unins*).exe'
 
 let find_uninstallers = async function (dest_path) {
-  return await glob(pattern, {nodir: true, nocase: true, cwd: dest_path})
+  return await sf.glob(pattern, {nodir: true, nocase: true, cwd: dest_path})
 }
 
 module.exports = find_uninstallers

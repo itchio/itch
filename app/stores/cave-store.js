@@ -23,8 +23,7 @@ let db = require('../util/db')
 let os = require('../util/os')
 let diego = require('../util/diego')
 let explorer = require('../util/explorer')
-
-let fs = require('../promised/fs')
+let sf = require('../util/sf')
 
 let electron = require('electron')
 
@@ -272,10 +271,9 @@ async function cave_explore (payload) {
   let cave = await CaveStore.find(payload.id)
   let app_path = CaveStore.app_path(cave.install_location, payload.id)
 
-  try {
-    await fs.lstatAsync(app_path)
+  if (await sf.exists(app_path)) {
     explorer.open(app_path)
-  } catch (e) {
+  } else {
     cave_probe(payload)
   }
 }

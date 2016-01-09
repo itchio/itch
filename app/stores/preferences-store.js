@@ -9,7 +9,7 @@ let Store = require('./store')
 let path = require('path')
 let electron = require('electron')
 let deepAssign = require('deep-assign')
-let fs = require('../promised/fs')
+let sf = require('../util/sf')
 
 let state = {}
 
@@ -21,7 +21,7 @@ let preferences_path = path.join(electron.app.getPath('userData'), 'preferences.
 
 async function load_from_disk () {
   try {
-    let contents = await fs.readFileAsync(preferences_path, {encoding: 'utf8'})
+    let contents = await sf.read_file(preferences_path)
     state = JSON.parse(contents)
     log(opts, `Read preferences: ${JSON.stringify(state, null, 2)}`)
 
@@ -34,7 +34,7 @@ async function load_from_disk () {
 async function save_to_disk () {
   log(opts, `Writing preferences: ${JSON.stringify(state, null, 2)}`)
   let contents = JSON.stringify(state)
-  await fs.writeFileAsync(preferences_path, contents)
+  await sf.write_file(preferences_path, contents)
 
   PreferencesStore.emit_change()
 }

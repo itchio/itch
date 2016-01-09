@@ -7,7 +7,7 @@ let shell_quote = require('shell-quote')
 
 let os = require('../util/os')
 let spawn = require('../util/spawn')
-let fs = require('../promised/fs')
+let sf = require('../util/sf')
 
 let log = require('../util/log')('tasks/launch')
 let configure = require('./configure')
@@ -57,7 +57,7 @@ let self = {
 
     let f = async (exe) => {
       let exe_path = path.join(app_path, exe)
-      let stats = await fs.statAsync(exe_path)
+      let stats = await sf.stat(exe_path)
       weights[exe] = stats.size
     }
     await Promise.resolve(execs).map(f, {concurrency: 2})

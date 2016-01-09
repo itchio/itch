@@ -36,7 +36,7 @@ let self = {
     return process.argv
   },
 
-  check_presence: async function (command, args, parser) {
+  assert_presence: async function (command, args, parser) {
     if (typeof args === 'undefined') {
       args = []
     }

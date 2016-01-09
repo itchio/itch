@@ -5,8 +5,7 @@ let find_uninstallers = require('./find-uninstallers')
 let AppActions = require('../../actions/app-actions')
 
 let errors = require('../errors')
-let fstream = require('fstream-electron')
-let rimraf = require('../../promised/rimraf')
+let sf = require('../../util/sf')
 
 let log = require('../../util/log')('installers/nsis')
 
@@ -34,15 +33,7 @@ let self = {
       // copy to temporary file, otherwise windows will refuse to open them
       // cf. https://github.com/itchio/itch/issues/322
       inst += '.exe'
-      let f = fstream.Reader(opts.archive_path)
-      f.pipe(fstream.Writer({path: inst}))
-
-      let p = new Promise((resolve, reject) => {
-        f.on('end', resolve)
-        f.on('error', reject)
-      })
-      await p
-
+      await sf.ditto(opts.archive_path, inst)
       remove_after_usage = true
     }
 
@@ -58,7 +49,7 @@ let self = {
     })
 
     if (remove_after_usage) {
-      await rimraf(inst, {disableGlob: true})
+      await sf.wipe(inst)
     }
 
     if (code !== 0) {

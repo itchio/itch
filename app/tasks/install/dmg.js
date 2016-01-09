@@ -2,11 +2,7 @@
 let noop = require('../../util/noop')
 let spawn = require('../../util/spawn')
 
-let glob = require('../../promised/glob')
-let mkdirp = require('../../promised/mkdirp')
-let fs = require('../../promised/fs')
-
-let fstream = require('fstream-electron')
+let sf = require('../../util/sf')
 
 let archive = require('./archive')
 let path = require('path')
@@ -86,7 +82,7 @@ let self = {
     log(opts, `Trying to unlink ${cdr_path}`)
 
     try {
-      await fs.unlinkAsync(cdr_path)
+      await sf.wipe(cdr_path)
     } catch (e) {
       log(opts, `Couldn't unlink ${cdr_path}: ${e}`)
     }
@@ -145,10 +141,10 @@ let self = {
     onprogress({percent: 33})
 
     log(opts, `Creating target directory ${dest_path}`)
-    await mkdirp(dest_path)
+    await sf.mkdir(dest_path)
 
     log(opts, `Copying all files from ${mountpoint} to ${dest_path}`)
-    let files = await glob('**/*', {cwd: mountpoint, nodir: true})
+    let files = await sf.glob('**/*', {cwd: mountpoint, nodir: true})
     let num_files = files.length
     let copied_files = 0
 
@@ -156,15 +152,7 @@ let self = {
       if (!self.should_skip(f)) {
         let src = path.join(mountpoint, f)
         let dst = path.join(dest_path, f)
-
-        let cp = fstream.Reader(src)
-        let cpp = new Promise((resolve, reject) => {
-          cp.on('end', resolve)
-          cp.on('error', reject)
-        })
-        cp.pipe(fstream.Writer(dst))
-
-        await cpp
+        await sf.ditto(src, dst)
       }
 
       copied_files += 1
@@ -187,7 +175,7 @@ let self = {
       }
 
       log(opts, `Removing cdr file ${cdr_path}`)
-      await fs.unlinkAsync(cdr_path)
+      await sf.wipe(cdr_path)
     }
 
     log(opts, `Launching cleanup asynchronously...`)

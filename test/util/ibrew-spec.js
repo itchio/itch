@@ -17,9 +17,12 @@ test('ibrew', t => {
     arch: () => 'x64'
   }
   let needle = {
-    get: () => Promise.reject()
+    get: () => Promise.reject(),
+    defaults: () => null,
+    '@global': true,
+    '@noCallThru': true
   }
-  let fstream = {
+  let sf = {
     Writer: () => {
       let pt = new PassThrough()
       pt.on('data', () => null)
@@ -31,26 +34,35 @@ test('ibrew', t => {
   }
   let stubs = Object.assign({
     'needle': needle,
-    'fstream-electron': fstream,
+    './sf': sf,
     './os': os,
     '../tasks/install/core': install
   }, electron)
   let ibrew = proxyquire('../../app/util/ibrew', stubs)
 
+  let net_stubs = Object.assign({
+    'needle': needle,
+    '../os': os
+  })
+  let net = proxyquire('../../app/util/ibrew/net', net_stubs)
+
+  let version = require('../../app/util/ibrew/version')
+  let formulas = require('../../app/util/ibrew/formulas')
+
   t.case('compares versions', t => {
-    t.ok(ibrew.version_equal('v1.23', '1.23'), 'equal versions')
-    t.notOk(ibrew.version_equal('v1.23', 'v1.24'), 'unequal versions')
+    t.ok(version.equal('v1.23', '1.23'), 'equal versions')
+    t.notOk(version.equal('v1.23', 'v1.24'), 'unequal versions')
   })
 
   t.case('os / arch', t => {
-    t.is('windows', ibrew.os())
-    t.is('amd64', ibrew.arch())
+    t.is('windows', net.os())
+    t.is('amd64', net.arch())
     t.stub(os, 'platform').returns('linux')
     t.stub(os, 'arch').returns('ia32')
-    t.is('linux', ibrew.os())
-    t.is('386', ibrew.arch())
+    t.is('linux', net.os())
+    t.is('386', net.arch())
     os.arch.returns('armv7')
-    t.is('unknown', ibrew.arch())
+    t.is('unknown', net.arch())
   })
 
   t.case('archive_name', t => {
@@ -58,12 +70,12 @@ test('ibrew', t => {
     t.is('7za.exe', ibrew.archive_name('7za'))
     t.stub(os, 'platform').returns('linux')
     t.is('7za', ibrew.archive_name('7za'))
-    ibrew.formulas.namaste = {format: 'A4'}
+    formulas.namaste = {format: 'A4'}
     t.throws(() => ibrew.archive_name('namaste'))
   })
 
   t.case('with all deps', t => {
-    t.stub(os, 'check_presence').resolves({parsed: '1.0'})
+    t.stub(os, 'assert_presence').resolves({parsed: '1.0'})
     t.stub(needle, 'get').callsArgWith(1, null, {statusCode: 200, body: '1.0'})
     let opts = {}
     return Promise.resolve(['7za', 'butler'])
@@ -71,9 +83,10 @@ test('ibrew', t => {
   })
 
   t.case('without all deps', t => {
-    let check = t.stub(os, 'check_presence')
+    let check = t.stub(os, 'assert_presence')
     check.onCall(0).rejects('nope!')
     check.onCall(1).resolves({parsed: '0.8'})
+
     t.stub(needle, 'get', function (url, cb) {
       if (cb) {
         cb(null, {statusCode: 200, body: '1.0'})
@@ -89,25 +102,35 @@ test('ibrew', t => {
         return req
       }
     })
+
     return Promise.resolve(['7za', 'butler'])
       .each((f) => ibrew.fetch(opts, f))
   })
 
-  t.case('unknown formula', t => {
-    return t.rejects(ibrew.fetch(opts, 'hidalgo'))
+  t.case('unknown formula', async t => {
+    let err
+    try {
+      await ibrew.fetch(opts, 'hidalgo')
+    } catch (e) { err = e }
+    t.ok(err, 'did throw')
   })
 
-  t.case('unstable update server', t => {
-    t.stub(os, 'check_presence').resolves({parsed: '0.9'})
+  t.case('unstable update server', async t => {
+    t.stub(os, 'assert_presence').resolves({parsed: '0.9'})
     t.stub(needle, 'get').callsArgWith(1, null, {statusCode: 503, body: 'Nope!'})
-    return ibrew.fetch(opts, '7za')
+    await ibrew.fetch(opts, '7za')
   })
 
-  t.case('check filters', t => {
+  t.case('check filters', async t => {
     t.stub(os, 'platform').returns('linux')
-    t.stub(os, 'check_presence').rejects('Boo')
+    t.stub(os, 'assert_presence').rejects('Boo')
     t.stub(needle, 'get').callsArgWith(1, null, {statusCode: 200, body: '1.0'})
-    return t.rejects(ibrew.fetch(opts, '7za'))
+
+    let err
+    try {
+      await ibrew.fetch(opts, '7za')
+    } catch (e) { err = e }
+    t.ok(err, 'did throw')
   })
 
   t.case('7za version parsing', t => {
@@ -120,7 +143,7 @@ test('ibrew', t => {
       '7-Zip (A) [64] 9.20  Copyright (c) 1999-2010 Igor Pavlov  2010-11-18': '9.20'
     }
 
-    let parser = ibrew.formulas['7za'].version_check.parser
+    let parser = formulas['7za'].version_check.parser
     for (let k of Object.keys(cases)) {
       let expected_version = cases[k]
       let parsed_version = parser.exec(k)[1]
