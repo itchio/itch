@@ -4,7 +4,7 @@
     "errors.api.login.username_must_be_provided": "Gebruikersnaam moet ingevuld zijn", 
     "grid.item.buy_now": "Koop nu", 
     "grid.item.cancel_download": "Download annuleren", 
-    "grid.item.downloading": "Downloaden...", 
+    "grid.item.downloading": "Downloaden…", 
     "grid.item.install": "Installeer", 
     "grid.item.installing": "Installeren...", 
     "grid.item.launch": "Start", 
