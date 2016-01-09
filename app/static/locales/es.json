@@ -71,6 +71,7 @@
     "preferences.install_location.add": "Agregar ruta", 
     "preferences.install_location.browse": "Abrir ruta de instalación en el explorador", 
     "preferences.install_location.browse_linux": "Abrir carpeta de instalación en el explorador de archivos", 
+    "preferences.install_location.browse_osx": "Mostrar ubicación de instalación en el Buscador", 
     "preferences.install_location.compute_size": "Calcular el espacio en disco de la carpeta", 
     "preferences.install_location.delete": "Eliminar este lugar y su contenido", 
     "preferences.install_location.empty": "Vacío", 
