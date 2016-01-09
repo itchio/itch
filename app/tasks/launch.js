@@ -1,8 +1,8 @@
 
+let _ = require('underscore')
 let Promise = require('bluebird')
 
 let path = require('path')
-let clone = require('clone')
 let shell_quote = require('shell-quote')
 
 let os = require('../util/os')
@@ -52,51 +52,39 @@ let self = {
     return `"${arg.replace(/"/g, '\\"')}"`
   },
 
-  sort_by_weight: async function (app_path, execs) {
-    let weights = {}
-
+  compute_weight: async function (app_path, execs) {
     let f = async (exe) => {
-      let exe_path = path.join(app_path, exe)
+      let exe_path = path.join(app_path, exe.path)
       let stats = await sf.stat(exe_path)
-      weights[exe] = stats.size
+      exe.weight = stats.size
     }
-    await Promise.resolve(execs).map(f, {concurrency: 2})
-
-    // sort from heaviest to lightest
-    return clone(execs).sort((a, b) => weights[b] - weights[a])
+    await Promise.resolve(execs).map(f, {concurrency: 8})
   },
 
-  sort_by_depth: function (execs) {
-    let depths = {}
+  compute_depth: function (execs) {
     for (let exe of execs) {
-      depths[exe] = path.normalize(exe).split(path.sep).length
+      exe.depth = path.normalize(exe.path).split(path.sep).length
     }
-
-    // sort from least amount of path elements to most
-    return clone(execs).sort((a, b) => depths[a] - depths[b])
   },
 
-  sort_by_score: function (execs) {
-    let scores = {}
+  compute_score: function (execs) {
     for (let exe of execs) {
       let score = 100
-      if (/unins.*\.exe$/i.test(exe)) {
-        score -= 50
-      }
-      if (/dxwebsetup\.exe$/i.test(exe)) {
-        score = 0
-      }
-      if (/vcredist.*\.exe$/i.test(exe)) {
-        score = 0
-      }
-      if (/\.so$/.test(exe)) {
-        score -= 50
-      }
-      scores[exe] = score
-    }
 
-    // sort from most score to least
-    return clone(execs).sort((a, b) => scores[b] - scores[a])
+      if (/unins.*\.exe$/i.test(exe.path)) {
+        score -= 50
+      }
+      if (/dxwebsetup\.exe$/i.test(exe.path)) {
+        score = 0
+      }
+      if (/vcredist.*\.exe$/i.test(exe.path)) {
+        score = 0
+      }
+      if (/\.so/.test(exe.path)) {
+        score = 0
+      }
+      exe.score = score
+    }
   },
 
   launch: function (exe_path, args, opts) {
@@ -126,13 +114,25 @@ let self = {
   launch_cave: async function (opts, cave) {
     let app_path = CaveStore.app_path(cave.install_location, opts.id)
 
-    let by_weight = await self.sort_by_weight(app_path, cave.executables)
-    let by_score = self.sort_by_score(by_weight)
-    let by_depth = self.sort_by_depth(by_score)
-    let sorted = by_depth
+    let candidates = cave.executables.map((path) => {
+      return {path}
+    })
+    await self.compute_weight(app_path, candidates)
+    self.compute_score(candidates)
+    self.compute_depth(candidates)
 
-    log(opts, `executables (from best to worst): ${JSON.stringify(sorted, null, 2)}`)
-    let exe_path = path.join(app_path, sorted[0])
+    log(opts, `candidates: ${JSON.stringify(candidates, null, 2)}`)
+
+    candidates = _.sortBy(candidates, (x) => -x.weight)
+    log(opts, `candidates after weight sorting: ${JSON.stringify(candidates, null, 2)}`)
+
+    candidates = _.sortBy(candidates, (x) => -x.score)
+    log(opts, `candidates after score sorting: ${JSON.stringify(candidates, null, 2)}`)
+
+    candidates = _.sortBy(candidates, (x) => x.depth)
+    log(opts, `candidates after depth sorting: ${JSON.stringify(candidates, null, 2)}`)
+
+    let exe_path = path.join(app_path, candidates[0].path)
     return self.launch(exe_path, [], opts)
   },
 
