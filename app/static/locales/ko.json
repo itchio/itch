@@ -63,7 +63,7 @@
     "preferences.language": "언어", 
     "prompt.action.cancel": "", 
     "prompt.action.close": "", 
-    "prompt.action.confirm_removal": "\n\n\n\n\n제거 를 진행합니다\n", 
+    "prompt.action.confirm_removal": "제거 를 진행합니다", 
     "prompt.action.install": "Install", 
     "prompt.action.ok": "Ok", 
     "prompt.additional_purchase.detail": "...하지만 선물용으로 구매할 수 있습니다!\n\n하나 더 구매할까요?", 
