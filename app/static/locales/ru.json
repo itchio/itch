@@ -99,6 +99,7 @@
     "prompt.install_location_remove.detail": "Всё, что было установлено в {{location}}, будет удалено.", 
     "prompt.install_location_remove.message": "Уверены что хотите удалить эту локацию?", 
     "prompt.install_location_remove.title": "Удалить путь установки", 
+    "prompt.last_remaining_install_location.title": "Невозможно удалить путь установки", 
     "prompt.logout_confirm": "Вы уверены, что хотите выйти?", 
     "prompt.no_compatible_version.detail": "Может {{classification}} еще не совместима?", 
     "prompt.no_compatible_version.message": "Мы не смогли найти версию {{title}} для {{platform}}.", 
