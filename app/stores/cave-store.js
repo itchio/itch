@@ -78,6 +78,10 @@ let CaveStore = Object.assign(new Store('cave-store'), {
 
     let loc_dir = CaveStore.install_location_dir(loc)
     return path.join(loc_dir, 'apps', cave_id)
+  },
+
+  log_path: function (cave_id) {
+    return log_path(cave_id)
   }
 })
 
