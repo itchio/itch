@@ -26,7 +26,7 @@
     "login.action.register": "Inscription", 
     "login.action.reset_password": "Mot de passe oublié ?", 
     "login.field.password": "Mot de passe", 
-    "login.field.username": "Nom d'utilisateur", 
+    "login.field.username": "Nom d'utilisateur or e-mail", 
     "login.status.dependency_check": "Vérifications de dernière minute…", 
     "login.status.dependency_install": "Installation du composant {{name}} {{version}}", 
     "login.status.login": "Connexion en cours...", 

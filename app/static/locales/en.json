@@ -26,7 +26,7 @@
     "login.action.register": "Register", 
     "login.action.reset_password": "Forgot password", 
     "login.field.password": "Password", 
-    "login.field.username": "Username", 
+    "login.field.username": "Username or e-mail", 
     "login.status.dependency_check": "Making sure we have everything set up...", 
     "login.status.dependency_install": "Installing dependency {{name}} {{version}}", 
     "login.status.login": "Logging you in...", 
