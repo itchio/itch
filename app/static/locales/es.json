@@ -120,6 +120,7 @@
     "prompt.payments_disabled.title": "Pagos deshabilitados", 
     "prompt.rar_policy.learn_more": "Descubre más", 
     "prompt.rar_policy.message": "Éste contenido utiliza RAR como formato de compresión y no puede ser instalado por itch hasta ser comprimido nuevamente con un formato soportado.", 
+    "prompt.rar_policy.title": "RAR no es compatible", 
     "prompt.url_install.credit": "Una {{classification}} de {{username}}", 
     "prompt.url_install.message": "¿Quieres instalar {{title}}?", 
     "prompt.url_install.title": "Solicitud de instalación", 
