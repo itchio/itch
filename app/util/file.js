@@ -1,7 +1,7 @@
 
 let spawn = require('./spawn')
 let os = require('./os')
-let sf = require('./fs')
+let sf = require('./sf')
 
 let path = require('path')
 
