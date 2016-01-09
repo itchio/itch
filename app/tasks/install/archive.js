@@ -113,7 +113,7 @@ let self = {
 
     let sevenzip_progress = (f) => {
       extracted_size += (info.sizes[f] || 0)
-      let percent = extracted_size / total_size * 90
+      let percent = extracted_size / total_size * 80
       onprogress({ extracted_size, total_size, percent })
     }
     await self.sevenzip_extract(version, logger, archive_path, stage_path, sevenzip_progress)
@@ -171,11 +171,13 @@ let self = {
       log(opts, `no dinosaurs`)
     }
 
-    let percent = 95
+    let percent = 80
     onprogress({ percent })
 
     log(opts, `copying stage to dest`)
-    await sf.ditto(stage_path, dest_path)
+    await sf.ditto(stage_path, dest_path, {
+      onprogress: (percent) => onprogress({ percent: 80 + 20 * percent })
+    })
 
     percent = 100
     onprogress({ percent })
