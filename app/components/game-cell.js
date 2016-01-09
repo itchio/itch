@@ -41,6 +41,17 @@ class GameCell extends ShallowComponent {
       style.backgroundImage = `url('${cover_url}')`
     }
 
+    let icon_spin = false
+    if (mori.get(cave, 'reporting')) {
+      task = 'report'
+      icon_spin = true
+    }
+
+    if (mori.get(cave, 'need_blessing')) {
+      task = 'ask-before-install'
+      icon_spin = true
+    }
+
     // TODO: use classSet
     let button_classes = 'game_launch button'
     if (cave) {
@@ -54,17 +65,6 @@ class GameCell extends ShallowComponent {
     let cancellable = /^download.*/.test(task)
     if (cancellable) {
       button_classes += ` cancellable`
-    }
-
-    let icon_spin = false
-    if (mori.get(cave, 'reporting')) {
-      task = 'report'
-      icon_spin = true
-    }
-
-    if (mori.get(cave, 'need_blessing')) {
-      task = 'ask-before-install'
-      icon_spin = true
     }
 
     let button_style = {}
@@ -176,7 +176,7 @@ class GameCell extends ShallowComponent {
           ? [
             r.span({className: 'normal_state'}, [
               r(TaskIcon, {task, spin: icon_spin}),
-              this.status(cave),
+              this.status(cave, task),
               r.span({className: 'cancel_cross'}, [
                 r(Icon, {icon: 'cross'})
               ])
@@ -251,9 +251,8 @@ class GameCell extends ShallowComponent {
     )
   }
 
-  status (cave) {
+  status (cave, task) {
     let t = this.t
-    let task = mori.get(cave, 'task')
     let progress = mori.get(cave, 'progress')
 
     if (task === 'idle' || task === 'awaken') {
