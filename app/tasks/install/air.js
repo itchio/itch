@@ -4,7 +4,7 @@ let sf = require('../../util/sf')
 
 let AppActions = require('../../actions/app-actions')
 
-let errors = require('../errors')
+let blessing = require('./blessing')
 
 let log = require('../../util/log')('installers/air')
 
@@ -28,13 +28,7 @@ let CODE_MESSAGES = {
 
 let self = {
   install: async function (opts) {
-    if (!opts.has_user_blessing) {
-      throw new errors.Transition({
-        to: 'ask-before-install',
-        reason: `going to pop up an UAC dialog, need user's permission first`
-      })
-    }
-
+    await blessing(opts)
     AppActions.cave_progress({id: opts.id, progress: -1})
 
     let archive_path = opts.archive_path

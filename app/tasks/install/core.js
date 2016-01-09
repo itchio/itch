@@ -102,9 +102,9 @@ let self = {
 
   operate: async function (opts, operation) {
     let archive_path = opts.archive_path
-    let installer_name
+    let installer_name = opts.installer_name
 
-    if (!opts.disable_cache) {
+    if (!installer_name && !opts.disable_cache) {
       installer_name = self.retrieve_cached_type(opts)
     }
 

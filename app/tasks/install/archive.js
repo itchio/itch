@@ -14,6 +14,8 @@ let core = require('./core')
 
 let log = require('../../util/log')('installers/archive')
 
+let AppActions = require('../../actions/app-actions')
+
 let is_tar = async function (path) {
   let type = await sniff.path(path)
   return type && type.ext === 'tar'
@@ -22,6 +24,32 @@ let is_tar = async function (path) {
 let verbose = (process.env.THE_DEPTHS_OF_THE_SOUL === '1')
 
 let self = {
+  retrieve_cached_type: function (opts) {
+    let cave = opts.cave
+    if (!cave) return
+    log(opts, `got cave: ${JSON.stringify(cave, null, 2)}`)
+
+    let archive_nested_cache = cave.archive_nested_cache || {}
+    let type = archive_nested_cache[cave.upload_id]
+    log(opts, `found cached installer type ${type}`)
+
+    if (core.valid_installers.indexOf(type) === -1) {
+      log(opts, `invalid exe type stored: ${type} - discarding`)
+      return null
+    }
+
+    return type
+  },
+
+  cache_type: function (opts, type) {
+    let cave = opts.cave
+    if (!cave) return
+
+    let archive_nested_cache = {}
+    archive_nested_cache[cave.upload_id] = type
+    AppActions.cave_update(cave._id, {archive_nested_cache})
+  },
+
   sevenzip_list: async function (version, logger, archive_path) {
     let opts = {logger}
     let sizes = {}
@@ -134,7 +162,11 @@ let self = {
       if (!opts.tar && await is_tar(only_file)) {
         let tar = only_file
         log(opts, `found tar: ${tar}, re-extracting`)
-        let sub_opts = Object.assign({}, opts, {archive_path: tar, tar: true})
+        let sub_opts = Object.assign({}, opts, {
+          archive_path: tar,
+          tar: true,
+          onprogress: stagecp_onprogress
+        })
 
         let res = await self.install(sub_opts)
         await sf.wipe(tar)
@@ -144,16 +176,21 @@ let self = {
         let installer_name
 
         try {
-          installer_name = await core.sniff_type(opts)
+          installer_name = await core.sniff_type(sniff_opts)
         } catch (err) {
           log(opts, `only file isn't a recognized installer type`)
           installer_name = null
         }
 
         if (installer_name) {
+          onprogress({percent: 0})
+          self.cache_type(opts, installer_name)
           log(opts, `found nested installer '${installer_name}', going with it!`)
-          let nested_opts = Object.assign({}, opts, sniff_opts)
-          await core.install(nested_opts)
+          let nested_opts = Object.assign({}, opts, sniff_opts, {
+            onprogress: stagecp_onprogress
+          })
+          log(opts, `giving nested_opts: ${JSON.stringify(nested_opts, null, 2)}`)
+          return await core.install(nested_opts)
         }
       }
     }
@@ -218,8 +255,18 @@ let self = {
   uninstall: async function (opts) {
     let dest_path = opts.dest_path
 
-    log(opts, `wiping directory ${dest_path}`)
-    await sf.wipe(dest_path)
+    let installer_name = self.retrieve_cached_type(opts)
+    if (installer_name) {
+      log(opts, `have nested installer type ${installer_name}, running...`)
+      let core_opts = Object.assign({}, opts, {installer_name})
+      await core.uninstall(core_opts)
+    } else {
+      log(opts, `wiping directory ${dest_path}`)
+      await sf.wipe(dest_path)
+    }
+
+    log(opts, `cleaning up cache`)
+    self.cache_type(opts, null)
   }
 }
 
