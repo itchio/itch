@@ -236,12 +236,7 @@ class GameCell extends ShallowComponent {
           ]).concat([
             this.tooltip('grid.item.uninstall', r.span({
               className: 'game_uninstall',
-              onClick: () => {
-                let msg = t('prompt.confirm_uninstall', {title})
-                if (task === 'error' || window.confirm(msg)) {
-                  AppActions.cave_queue_uninstall(mori.get(cave, '_id'))
-                }
-              }
+              onClick: () => AppActions.cave_request_uninstall(mori.get(cave, '_id'))
             }, [
               r(Icon, {icon: 'delete'})
             ]))

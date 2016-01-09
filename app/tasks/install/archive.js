@@ -140,7 +140,22 @@ let self = {
     log(opts, `cleaning up dest path ${dest_path}`)
 
     // XXX write stage file list when all is said and done / read it back when upgrading
-    let dest_files = await sf.glob('**/*', {cwd: dest_path})
+    let receipt_path = path.join(dest_path, '.itch', 'receipt.json')
+    let dest_files
+
+    try {
+      let receipt_contents = await sf.read_file(receipt_path)
+      let receipt = JSON.parse(receipt_contents)
+      dest_files = receipt.files
+      log(opts, `Got receipt for an existing ${humanize.fileSize(receipt.total_size)} install.`)
+    } catch (err) {
+      log(opts, `Could not read receipt: ${err.message}`)
+    }
+    if (!dest_files || !dest_files.length) {
+      log(opts, `Globbing for destfiles`)
+      dest_files = await sf.glob('**/*', {cwd: dest_path})
+    }
+
     log(opts, `dest has ${dest_files.length} potential dinosaurs`)
 
     let dinosaurs = _.difference(dest_files, stage_files)
@@ -165,7 +180,16 @@ let self = {
     percent = 100
     onprogress({ percent })
 
-    log(opts, `everything copied, should be good`)
+    log(opts, `everything copied, writing receipt`)
+    let cave = opts.cave || {}
+
+    sf.write_file(receipt_path, JSON.stringify({
+      cave,
+      total_size,
+      num_files: stage_files.length,
+      files: stage_files
+    }, null, 2))
+
     return {extracted_size, total_size}
   },
 

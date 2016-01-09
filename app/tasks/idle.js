@@ -1,5 +1,4 @@
 
-
 let self = {
   start: async () => {
     // (ಠ_x) ༼☉
@@ -7,4 +6,3 @@ let self = {
 }
 
 module.exports = self
-

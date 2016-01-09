@@ -146,9 +146,23 @@ let self = {
     })
   },
 
+  cave_request_uninstall: (id) => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.CAVE_REQUEST_UNINSTALL,
+      id
+    })
+  },
+
   cave_queue_uninstall: (id) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.CAVE_QUEUE_UNINSTALL,
+      id
+    })
+  },
+
+  cave_queue_reinstall: (id) => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.CAVE_QUEUE_REINSTALL,
       id
     })
   },

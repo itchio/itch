@@ -7,6 +7,7 @@ let Store = require('./store')
 let CredentialsStore = require('./credentials-store')
 let PreferencesStore = require('./preferences-store')
 let InstallLocationStore = require('./install-location-store')
+let I18nStore = require('./i18n-store')
 
 let errors = require('../tasks/errors')
 let Transition = errors.Transition
@@ -321,6 +322,37 @@ async function cave_queue (payload) {
   }
 }
 
+async function cave_request_uninstall (payload) {
+  let cave = await CaveStore.find(payload.id)
+  let game = await db.find_one({_table: 'games', id: cave.game_id})
+
+  let i18n = I18nStore.get_state()
+
+  let buttons = [
+    i18n.t('prompt.uninstall.uninstall'),
+    i18n.t('prompt.uninstall.reinstall'),
+    i18n.t('prompt.uninstall.cancel')
+  ]
+  let i18n_vars = {
+    title: game.title
+  }
+
+  let dialog_opts = {
+    type: 'question',
+    buttons,
+    message: i18n.t('prompt.uninstall.message', i18n_vars)
+  }
+
+  let callback = (response) => {
+    if (response === 0) {
+      AppActions.cave_queue_uninstall(payload.id)
+    } else if (response === 1) {
+      AppActions.cave_queue_reinstall(payload.id)
+    }
+  }
+  electron.dialog.showMessageBox(dialog_opts, callback)
+}
+
 async function cave_queue_uninstall (payload) {
   let record = await db.find_one({_table: CAVE_TABLE, _id: payload.id})
 
@@ -329,6 +361,17 @@ async function cave_queue_uninstall (payload) {
   } else {
     log(store_opts, `asked to uninstall ${payload.id} but no record of it, ignoring`)
   }
+}
+
+async function cave_queue_reinstall (payload) {
+  log(store_opts, `reinstalling ${payload.id}!`)
+  await cave_update({
+    id: payload.id,
+    data: {
+      installed_archive_mtime: 0
+    }
+  })
+  queue_task(payload.id, 'install')
 }
 
 async function cave_update (payload) {
@@ -387,7 +430,9 @@ function logout (payload) {
 
 AppDispatcher.register('cave-store', Store.action_listeners(on => {
   on(AppConstants.CAVE_QUEUE, cave_queue)
+  on(AppConstants.CAVE_REQUEST_UNINSTALL, cave_request_uninstall)
   on(AppConstants.CAVE_QUEUE_UNINSTALL, cave_queue_uninstall)
+  on(AppConstants.CAVE_QUEUE_REINSTALL, cave_queue_reinstall)
   on(AppConstants.CAVE_UPDATE, cave_update)
   on(AppConstants.CAVE_IMPLODE, cave_implode)
   on(AppConstants.CAVE_PROGRESS, cave_progress)
