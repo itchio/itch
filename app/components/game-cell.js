@@ -62,7 +62,7 @@ class GameCell extends ShallowComponent {
       icon_spin = true
     }
 
-    if (mori.get(cave, 'needs_blessing')) {
+    if (mori.get(cave, 'need_blessing')) {
       task = 'ask-before-install'
       icon_spin = true
     }
