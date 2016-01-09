@@ -137,7 +137,6 @@ let self = {
   /**
    * Burn to the ground an entire directory and everything in it
    * Also works on file, don't bother with unlink.
-   * Uses rimraf: https://www.npmjs.com/package/rimraf
    */
   wipe: async (file_or_dir) => {
     debug(`wipe ${file_or_dir}`)
@@ -192,6 +191,7 @@ let self = {
         let link_target = await self.readlink(src_file)
 
         debug(`ln -s ${link_target} ${dst_file}`)
+        await self.wipe(dst_file)
         await self.symlink(link_target, dst_file)
       } else {
         let ws = self.createWriteStream(dst_file, {
