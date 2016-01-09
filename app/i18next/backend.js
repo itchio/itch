@@ -5,6 +5,7 @@ let opts = { logger: new log.Logger() }
 let sf = require('../util/sf')
 let urls = require('../constants/urls')
 let env = require('../env')
+let upgrades_enabled = env.name === 'production' || process.env.DID_I_STUTTER === '1'
 
 let path = require('path')
 
@@ -96,7 +97,7 @@ class Backend {
     let remote_filename = this.remote_filename(language)
 
     // do we have a newer version?
-    if (await exists(remote_filename)) {
+    if (upgrades_enabled && await exists(remote_filename)) {
       // neat, use it.
       loaded_filename = remote_filename
     }
@@ -116,7 +117,7 @@ class Backend {
     // only run the locale updating routine on the node side
     if (process.type !== 'browser') return
 
-    if (env.name === 'development' && process.env.DID_I_STUTTER !== '1') {
+    if (!upgrades_enabled) {
       log(opts, `Not downloading locales in development, export DID_I_STUTTER=1 to override`)
       return
     }
