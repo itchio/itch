@@ -1,7 +1,6 @@
 
 let spawn = require('../../util/spawn')
-let glob = require('../../promised/glob')
-let fs = require('../../promised/fs')
+let sf = require('../../util/sf')
 
 let AppActions = require('../../actions/app-actions')
 
@@ -61,7 +60,7 @@ let self = {
 
     log(opts, `Locating app manifest`)
 
-    let candidates = await glob(MANIFEST_GLOB, {cwd: dest_path})
+    let candidates = await sf.glob(MANIFEST_GLOB, {cwd: dest_path})
     if (candidates.length === 0) {
       throw new Error(`Adobe AIR app manifest not found, cannot uninstall`)
     }
@@ -69,7 +68,7 @@ let self = {
     log(opts, `Found app manifest at ${candidates[0]}`)
 
     let manifest_path = path.join(dest_path, candidates[0])
-    let manifest_contents = await fs.readFileAsync(manifest_path, {encoding: 'utf8'})
+    let manifest_contents = await sf.read_file(manifest_path)
     let matches = ID_RE.exec(manifest_contents)
     if (!matches) {
       throw new Error(`Could not extract app id from manifest at ${manifest_path}`)

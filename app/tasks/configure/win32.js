@@ -1,9 +1,9 @@
 
-let glob = require('../../promised/glob')
+let sf = require('../../util/sf')
 
 let self = {
   configure: async function (app_path) {
-    let executables = await glob('**/*.@(exe|bat)', {
+    let executables = await sf.glob('**/*.@(exe|bat)', {
       cwd: app_path,
       nocase: true
     })

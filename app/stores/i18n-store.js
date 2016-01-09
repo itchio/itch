@@ -9,7 +9,9 @@ let i18next = require('i18next')
 let backend = require('../i18next/backend')
 
 let path = require('path')
-let fs = require('../promised/fs')
+
+/* not using sf because locales list is packed within our app.asar */
+let fs = require('fs')
 
 let locales_dir = path.resolve(path.join(__dirname, '..', 'static', 'locales'))
 let locales_list_path = path.resolve(path.join(locales_dir, '..', 'locales.json'))

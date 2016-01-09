@@ -1,6 +1,5 @@
 
-
-let fstream = require('fstream-electron')
+let sf = require('../util/sf')
 let path = require('path')
 
 let electron = require('electron')
@@ -23,9 +22,7 @@ let self = {
     if (os.platform() === 'win32') {
       log = log.replace(/\n/g, '\r\n')
     }
-    let writer = fstream.Writer({path: crash_file})
-    writer.write(log)
-    writer.end()
+    sf.write_file(crash_file, log)
 
     return {log, crash_file}
   },
@@ -68,7 +65,7 @@ ${log}
     try {
       i18n = require('../stores/i18n-store').get_state()
     } catch (e) {
-      console.log(`While loading i18n for crash report: ${e.stack || e}`)
+      console.log(`While loading i18n for crash report: ${e.message || e}`)
       i18n = {
         t: (x, opts) => {
           if (typeof opts === 'undefined') {

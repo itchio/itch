@@ -3,7 +3,6 @@ let log = require('../util/log')('i18n-backend/' + process.type)
 let opts = { logger: new log.Logger() }
 
 let sf = require('../util/sf')
-let mkdirp = require('../promised/mkdirp')
 let urls = require('../constants/urls')
 let env = require('../env')
 
@@ -167,7 +166,6 @@ class Backend {
     AppActions.locale_update_downloaded(language, resources)
 
     log(opts, `Saving fresh ${language} locale to ${remote_filename}`)
-    await mkdirp(path.dirname(remote_filename))
     await sf.write_file(remote_filename, JSON.stringify(resources, null, 2))
   }
 }

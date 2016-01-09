@@ -15,6 +15,7 @@ if (env.name === 'development') {
 } else {
   console.log('Pre-compiled, not using require hook.')
 }
+require('./util/sf')
 
 let r = require('r-dom')
 let ReactDOM = require('react-dom')

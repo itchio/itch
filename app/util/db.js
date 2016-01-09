@@ -1,5 +1,4 @@
 
-
 let Promise = require('bluebird')
 let Datastore = require('nedb')
 let path = require('path')
@@ -10,7 +9,7 @@ let camelize = require('./format').camelize
 
 let app = require('electron').app
 
-let mkdirp = require('../promised/mkdirp')
+let sf = require('../util/sf')
 
 let Logger = require('./log').Logger
 let opts = {
@@ -31,7 +30,7 @@ let self = {
     self.library_dir = library_dir
 
     log(opts, `making sure library dir ${library_dir} exists`)
-    await mkdirp(library_dir)
+    await sf.mkdir(library_dir)
 
     let db_opts = {
       // the nedb format is basically append-only http://jsonlines.org/

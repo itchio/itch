@@ -46,7 +46,11 @@ module.exports = keyMirror({
   /** User requested game to be installed */
   CAVE_QUEUE: null,
   /** User requested game to be uninstalled */
+  CAVE_REQUEST_UNINSTALL: null,
+  /** Cave is going to be uninstalled */
   CAVE_QUEUE_UNINSTALL: null,
+  /** Cave is going to be reinstalled */
+  CAVE_QUEUE_REINSTALL: null,
   /** Internal cave DB needs to be updated */
   CAVE_UPDATE: null,
   /** Should probably replaced with an CaveStore.emit('change') event */

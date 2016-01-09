@@ -2,11 +2,7 @@
 let noop = require('../../util/noop')
 let spawn = require('../../util/spawn')
 
-let glob = require('../../promised/glob')
-let mkdirp = require('../../promised/mkdirp')
-let fs = require('../../promised/fs')
-
-let fstream = require('fstream-electron')
+let sf = require('../../util/sf')
 
 let archive = require('./archive')
 let path = require('path')
@@ -17,8 +13,6 @@ let HFS_RE = /(.*)\s+Apple_HFS\s+(.*)\s*$/
 
 let self = {
   should_skip: function (f) {
-    // Don't copy OSX (literal) trash
-    if (/\.Trashes$/.test(f)) return true
     // Don't copy Applications symlink
     if (/^Applications$/.test(f)) return true
     return false
@@ -32,6 +26,7 @@ let self = {
     let onprogress = opts.onprogress || noop
 
     log(opts, `Preparing installation of '${archive_path}'`)
+    onprogress({percent: -1})
 
     let cdr_path = path.resolve(archive_path + '.cdr')
 
@@ -86,12 +81,10 @@ let self = {
     log(opts, `Trying to unlink ${cdr_path}`)
 
     try {
-      await fs.unlinkAsync(cdr_path)
+      await sf.wipe(cdr_path)
     } catch (e) {
       log(opts, `Couldn't unlink ${cdr_path}: ${e}`)
     }
-
-    onprogress({percent: 5})
 
     log(opts, `Converting archive '${archive_path}' to CDR with hdiutil`)
 
@@ -107,8 +100,6 @@ let self = {
     if (code !== 0) {
       throw new Error(`Failed to convert dmg image, with code ${code}`)
     }
-
-    onprogress({percent: 30})
 
     log(opts, `Attaching cdr file ${cdr_path}`)
 
@@ -142,35 +133,15 @@ let self = {
       throw new Error('Failed to mount image (no mountpoint)')
     }
 
-    onprogress({percent: 33})
-
     log(opts, `Creating target directory ${dest_path}`)
-    await mkdirp(dest_path)
+    await sf.mkdir(dest_path)
 
     log(opts, `Copying all files from ${mountpoint} to ${dest_path}`)
-    let files = await glob('**/*', {cwd: mountpoint, nodir: true})
-    let num_files = files.length
-    let copied_files = 0
 
-    for (let f of files) {
-      if (!self.should_skip(f)) {
-        let src = path.join(mountpoint, f)
-        let dst = path.join(dest_path, f)
-
-        let cp = fstream.Reader(src)
-        let cpp = new Promise((resolve, reject) => {
-          cp.on('end', resolve)
-          cp.on('error', reject)
-        })
-        cp.pipe(fstream.Writer(dst))
-
-        await cpp
-      }
-
-      copied_files += 1
-      let percent = (0.33 + 0.66 * (copied_files / num_files)) * 100
-      onprogress({percent})
-    }
+    await sf.ditto(mountpoint, dest_path, {
+      onprogress,
+      should_skip: self.should_skip
+    })
 
     let cleanup = async () => {
       log(opts, `Detaching cdr file ${cdr_path}`)
@@ -187,7 +158,7 @@ let self = {
       }
 
       log(opts, `Removing cdr file ${cdr_path}`)
-      await fs.unlinkAsync(cdr_path)
+      await sf.wipe(cdr_path)
     }
 
     log(opts, `Launching cleanup asynchronously...`)

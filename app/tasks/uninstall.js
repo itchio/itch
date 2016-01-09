@@ -1,6 +1,6 @@
 
 let noop = require('../util/noop')
-let rimraf = require('../promised/rimraf')
+let sf = require('../util/sf')
 let log = require('../util/log')('tasks/uninstall')
 
 let CaveStore = require('../stores/cave-store')
@@ -45,7 +45,7 @@ let self = {
       if (e instanceof core.UnhandledFormat) {
         log(opts, e.message)
         log(opts, `Imploding anyway`)
-        await rimraf(dest_path, {disableGlob: true})
+        await sf.wipe(dest_path)
       } else {
         // re-raise other errors
         throw e
@@ -55,7 +55,7 @@ let self = {
 
     if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
       log(opts, `Erasing archive ${archive_path}`)
-      await rimraf(archive_path, {disableGlob: true})
+      await sf.wipe(archive_path)
     }
 
     log(opts, `Imploding ${dest_path}`)

@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 
@@ -19,9 +18,6 @@ let upload_response = {
 }
 
 test('download', t => {
-  let fs = {
-    lstatAsync: () => null
-  }
   let client = CredentialsStore.get_current_user()
   let emitter = {
     on: () => null
@@ -30,8 +26,7 @@ test('download', t => {
   let stubs = Object.assign({
     '../stores/cave-store': CaveStore,
     '../stores/credentials-store': CredentialsStore,
-    '../util/http': http,
-    '../promised/fs': fs
+    '../util/http': http
   }, electron)
 
   let download = proxyquire('../../app/tasks/download', stubs)
@@ -50,7 +45,6 @@ test('download', t => {
     let install = typical_install
     t.stub(CaveStore, 'find').resolves(install)
     t.stub(client, 'download_upload').resolves(upload_response)
-    t.stub(fs, 'lstatAsync').rejects()
     return download.start({id: 42, emitter})
   })
 
@@ -58,7 +52,6 @@ test('download', t => {
     let install = Object.assign({}, typical_install, {key: {id: 'abacus'}})
     t.stub(CaveStore, 'find').resolves(install)
     t.stub(client, 'download_upload_with_key').resolves(upload_response)
-    t.stub(fs, 'lstatAsync').rejects()
     return download.start({id: 42, emitter})
   })
 })

@@ -146,9 +146,23 @@ let self = {
     })
   },
 
+  cave_request_uninstall: (id) => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.CAVE_REQUEST_UNINSTALL,
+      id
+    })
+  },
+
   cave_queue_uninstall: (id) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.CAVE_QUEUE_UNINSTALL,
+      id
+    })
+  },
+
+  cave_queue_reinstall: (id) => {
+    AppDispatcher.dispatch({
+      action_type: AppConstants.CAVE_QUEUE_REINSTALL,
       id
     })
   },
@@ -197,8 +211,8 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.CAVE_REPORT, id })
   },
 
-  show_rar_policy: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.SHOW_RAR_POLICY, id })
+  show_rar_policy: (game_id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.SHOW_RAR_POLICY, game_id })
   },
 
   game_browse: (id) => {

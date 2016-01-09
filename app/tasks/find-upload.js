@@ -72,7 +72,7 @@ let self = {
 
     if (/\.rar$/i.test(upload.filename)) {
       AppActions.cave_implode(id)
-      AppActions.show_rar_policy(id)
+      AppActions.show_rar_policy(cave.game_id)
       return
     }
 

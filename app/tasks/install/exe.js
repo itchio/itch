@@ -2,7 +2,7 @@
 let StreamSearch = require('streamsearch')
 let os = require('../../util/os')
 
-let fstream = require('fstream-electron')
+let sf = require('../../util/sf')
 let _ = require('underscore')
 
 let log = require('../../util/log')('installers/exe')
@@ -101,18 +101,15 @@ let self = {
       searches.push(search)
     }
 
-    let reader = fstream.Reader(archive_path)
+    let reader = sf.createReadStream(archive_path, { encoding: 'binary' })
     reader.on('data', buf => {
       for (let search of searches) {
         search.push(buf)
       }
     })
 
-    let p = new Promise((resolve, reject) => {
-      reader.on('end', () => resolve(result))
-      reader.on('error', reject)
-    })
-    return await p
+    await sf.promised(reader)
+    return result
   },
 
   builtin_needles: {

@@ -59,12 +59,12 @@ test('install', t => {
     })
   })
 
-  let fs = {
-    lstatAsync: () => Promise.resolve({mtime: new Date(123)})
+  let sf = {
+    lstat: () => Promise.resolve({mtime: new Date(123)})
   }
   stubs = Object.assign({
     './install/core': install_core,
-    '../promised/fs': fs
+    '../util/sf': sf
   }, stubs)
   let install = proxyquire('../../app/tasks/install', stubs)
 
@@ -85,7 +85,7 @@ test('install', t => {
 
   t.case(`validate archive presence`, async t => {
     t.stub(CaveStore, 'find').resolves(typical_install)
-    t.stub(fs, 'lstatAsync').rejects('ENOENT and whatnot')
+    t.stub(sf, 'lstat').rejects('ENOENT and whatnot')
     let err
     try {
       await install.start({id: 42})

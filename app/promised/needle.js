@@ -1,9 +1,13 @@
 
-
 let Promise = require('bluebird')
 let needle = require('needle')
 
-let app = require('electron').app
+let app
+if (process.versions.electron) {
+  app = require('electron').app
+} else {
+  app = { getVersion: () => '???' }
+}
 let os = require('../util/os')
 
 needle.defaults({

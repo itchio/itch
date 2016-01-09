@@ -36,13 +36,13 @@ test('launch', t => {
     start: () => Promise.resolve()
   }
 
-  let fs = {
-    statAsync: async () => ({size: 0})
+  let sf = {
+    stat: async () => ({size: 0})
   }
 
   let stubs = Object.assign({
     '../stores/cave-store': CaveStore,
-    '../promised/fs': fs,
+    '../util/sf': sf,
     '../util/os': os,
     './configure': configure,
     'child_process': child_process

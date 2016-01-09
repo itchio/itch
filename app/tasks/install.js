@@ -2,7 +2,7 @@
 let errors = require('./errors')
 
 let noop = require('../util/noop')
-let fs = require('../promised/fs')
+let sf = require('../util/sf')
 let log = require('../util/log')('tasks/install')
 
 let CaveStore = require('../stores/cave-store')
@@ -37,7 +37,7 @@ let self = {
 
     let archive_stat
     try {
-      archive_stat = await fs.lstatAsync(archive_path)
+      archive_stat = await sf.lstat(archive_path)
     } catch (e) {
       log(opts, `where did our archive go? re-downloading...`)
       throw new errors.Transition({to: 'download', reason: 'missing-download'})

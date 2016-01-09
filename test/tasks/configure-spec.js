@@ -48,13 +48,12 @@ test('configure', t => {
 })
 
 test('configure (each platform)', t => {
-  let fs = {
-    chmodAsync: () => Promise.resolve(),
-    '@global': true,
-    '@noCallThru': true
+  let sf = {
+    chmod: () => Promise.resolve(),
+    '@global': true
   }
   let stubs = {
-    '../../promised/fs': fs
+    '../../util/sf': sf
   }
 
   let win32 = proxyquire('../../app/tasks/configure/win32', stubs)

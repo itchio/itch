@@ -8,9 +8,7 @@ let CaveStore = require('./cave-store')
 
 let crash_reporter = require('../util/crash-reporter')
 let github = require('../util/github')
-
-let fs = require('../promised/fs')
-
+let sf = require('../util/sf')
 let db = require('../util/db')
 
 let state = {}
@@ -25,10 +23,10 @@ async function report_cave (payload) {
   try {
     AppActions.cave_progress({id, reporting: true})
     let cave = await CaveStore.find(id)
-    let log_path = CaveStore.log_path(cave.install_location, payload.id)
+    let log_path = CaveStore.log_path(payload.id)
     let game = await db.find_one({_table: 'games', id: cave.game_id})
 
-    let game_log = await fs.readFileAsync(log_path, {encoding: 'utf8'})
+    let game_log = await sf.read_file(log_path)
 
     let gist_data = {
       description: `itch log for ${game.title} — ${game.url}`,
