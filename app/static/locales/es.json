@@ -1,4 +1,5 @@
 {
+    "desktop.shortcut.comment": "Instala y juega fácilmente juegos de itch.io", 
     "errors.api.login.incorrect_username_or_password": "Nombre de usuario o contraseña incorrecto", 
     "errors.api.login.password_must_be_provided": "La contraseña es necesaria", 
     "errors.api.login.username_must_be_provided": "El nombre de usuario es necesario", 
@@ -83,6 +84,7 @@
     "preferences.install_location.used_space": "Espacio utilizado", 
     "preferences.install_locations": "Ruta de instalación", 
     "preferences.language": "Idioma", 
+    "preferences.language.auto": "Idioma del sistema ({{language}})", 
     "preferences.language.get_involved": "¡Ayúdanos a traducir {{name}} a tu idioma!", 
     "prompt.action.cancel": "Cancelar", 
     "prompt.action.close": "Cerrar", 
@@ -115,6 +117,7 @@
     "prompt.payments_disabled.message": "Desafortunadamente, el desarrollador de {{title}} no acepta pagos para este título.", 
     "prompt.payments_disabled.open_web_page": "Abrir página web", 
     "prompt.payments_disabled.title": "Pagos deshabilitados", 
+    "prompt.rar_policy.learn_more": "Descubre más", 
     "prompt.rar_policy.message": "Éste contenido utiliza RAR como formato de compresión y no puede ser instalado por itch hasta ser comprimido nuevamente con un formato soportado.", 
     "prompt.url_install.credit": "Una {{classification}} de {{username}}", 
     "prompt.url_install.message": "¿Quieres instalar {{title}}?", 
