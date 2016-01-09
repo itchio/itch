@@ -22,7 +22,7 @@ let self = {
     let logger = opts.logger
     let onerror = opts.onerror || noop
     let onprogress = opts.onprogress || noop
-    let has_user_blessing = !!opts.has_user_blessing
+    let emitter = opts.emitter
 
     let cave = await CaveStore.find(id)
 
@@ -52,7 +52,7 @@ let self = {
       throw new errors.Transition({to: 'idle', reason: 'up-to-date'})
     }
 
-    let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, has_user_blessing }
+    let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter }
 
     AppActions.cave_update(id, {launchable: false})
     await core.install(core_opts)

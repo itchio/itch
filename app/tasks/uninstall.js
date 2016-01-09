@@ -20,6 +20,7 @@ let self = {
     let logger = opts.logger
     let onerror = opts.onerror || noop
     let onprogress = opts.onprogress || onprogress
+    let emitter = opts.emitter
 
     let cave = await CaveStore.find(id)
 
@@ -34,7 +35,7 @@ let self = {
 
     log(opts, `Uninstalling app in ${dest_path} from archive ${archive_path}`)
 
-    let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave }
+    let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter }
 
     AppActions.cave_update(id, {launchable: false})
 
