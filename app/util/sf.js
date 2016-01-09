@@ -24,9 +24,6 @@ let fs = Object.assign({}, require(fs_name), {
   disableGlob: true /* Don't ever use globs with rimraf */
 })
 
-// adds 'xxxAsync' variants of all fs functions, which we'll use
-Promise.promisifyAll(fs)
-
 // graceful-fs fixes a few things https://www.npmjs.com/package/graceful-fs
 // notably, EMFILE, EPERM, etc.
 let graceful_fs = Object.assign({}, proxyquire('graceful-fs', {fs}), {
@@ -48,6 +45,9 @@ if (process.env.INCENTIVE_MET) {
 }
 
 fs = graceful_fs
+
+// adds 'xxxAsync' variants of all fs functions, which we'll use
+Promise.promisifyAll(fs)
 
 // single function, callback-based, can't specify fs
 let glob = Promise.promisify(proxyquire('glob', stubs))
@@ -266,14 +266,17 @@ let self = {
   fs_name
 }
 
-let mirrored = ['createReadStream', 'createWriteStream']
-for (let m of mirrored) {
-  self[m] = fs[m].bind(fs)
-}
+function make_bindings () {
+  let mirrored = ['createReadStream', 'createWriteStream']
+  for (let m of mirrored) {
+    self[m] = fs[m].bind(fs)
+  }
 
-let mirorred_async = ['chmod', 'stat', 'lstat', 'readlink', 'symlink', 'rmdir', 'unlink']
-for (let m of mirorred_async) {
-  self[m] = fs[m + 'Async'].bind(fs)
+  let mirorred_async = ['chmod', 'stat', 'lstat', 'readlink', 'symlink', 'rmdir', 'unlink']
+  for (let m of mirorred_async) {
+    self[m] = fs[m + 'Async'].bind(fs)
+  }
 }
+make_bindings()
 
 module.exports = self

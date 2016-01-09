@@ -68,7 +68,7 @@ let self = {
     try {
       latest_version = await get_latest_version()
     } catch (err) {
-      log(opts, `${name}: cannot get latest version, skipping: ${err.stack || err}`)
+      log(opts, `${name}: cannot get latest version, skipping: ${err.message || err}`)
       return
     }
 

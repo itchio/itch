@@ -14,7 +14,8 @@ test('ibrew', t => {
   }
   let os = {
     platform: () => 'win32',
-    arch: () => 'x64'
+    arch: () => 'x64',
+    '@global': true
   }
   let needle = {
     get: () => Promise.reject(),
@@ -23,11 +24,12 @@ test('ibrew', t => {
     '@noCallThru': true
   }
   let sf = {
-    Writer: () => {
+    createWriteStream: () => {
       let pt = new PassThrough()
       pt.on('data', () => null)
       return pt
-    }
+    },
+    '@global': true
   }
   let install = {
     install: () => Promise.resolve()
@@ -35,19 +37,25 @@ test('ibrew', t => {
   let stubs = Object.assign({
     'needle': needle,
     './sf': sf,
+    '../sf': sf,
     './os': os,
+    '../os': os,
     '../tasks/install/core': install
   }, electron)
   let ibrew = proxyquire('../../app/util/ibrew', stubs)
 
-  let net_stubs = Object.assign({
+  let net_stubs = {
     'needle': needle,
     '../os': os
-  })
+  }
   let net = proxyquire('../../app/util/ibrew/net', net_stubs)
 
+  let formulas_stubs = {
+    '../os': os
+  }
+  let formulas = proxyquire('../../app/util/ibrew/formulas', formulas_stubs)
+
   let version = require('../../app/util/ibrew/version')
-  let formulas = require('../../app/util/ibrew/formulas')
 
   t.case('compares versions', t => {
     t.ok(version.equal('v1.23', '1.23'), 'equal versions')

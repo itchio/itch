@@ -1,4 +1,6 @@
 
+let os = require('../os')
+
 let self = {}
 
 /**
@@ -8,7 +10,7 @@ let self = {}
 self['7za'] = {
   format: 'executable',
   on_missing: () => {
-    if (process.platform === 'linux') {
+    if (os.platform() === 'linux') {
       // TODO: add link to doc page too
       let msg = '7-zip missing: 7za must be in $PATH\n(Try installing p7zip-full)'
       throw new Error(msg)

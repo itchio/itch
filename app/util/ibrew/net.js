@@ -1,8 +1,8 @@
 
 let needle = require('../../promised/needle')
-let sf = require('../../util/sf')
 let urls = require('../../constants/urls')
 
+let sf = require('../sf')
 let os = require('../os')
 let version = require('./version')
 
