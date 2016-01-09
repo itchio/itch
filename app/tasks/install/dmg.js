@@ -13,8 +13,6 @@ let HFS_RE = /(.*)\s+Apple_HFS\s+(.*)\s*$/
 
 let self = {
   should_skip: function (f) {
-    // Don't copy OSX (literal) trash
-    if (/\.Trashes$/.test(f)) return true
     // Don't copy Applications symlink
     if (/^Applications$/.test(f)) return true
     return false
@@ -139,21 +137,11 @@ let self = {
     await sf.mkdir(dest_path)
 
     log(opts, `Copying all files from ${mountpoint} to ${dest_path}`)
-    let files = await sf.glob('**/*', {cwd: mountpoint, nodir: true})
-    let num_files = files.length
-    let copied_files = 0
 
-    for (let f of files) {
-      if (!self.should_skip(f)) {
-        let src = path.join(mountpoint, f)
-        let dst = path.join(dest_path, f)
-        await sf.ditto(src, dst)
-      }
-
-      copied_files += 1
-      let percent = (copied_files / num_files) * 100
-      onprogress({percent})
-    }
+    await sf.ditto(mountpoint, dest_path, {
+      onprogress,
+      should_skip: self.should_skip
+    })
 
     let cleanup = async () => {
       log(opts, `Detaching cdr file ${cdr_path}`)

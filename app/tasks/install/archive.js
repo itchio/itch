@@ -135,8 +135,11 @@ let self = {
       }
     }
 
+    await sf.mkdir(dest_path)
+
     log(opts, `cleaning up dest path ${dest_path}`)
 
+    // XXX write stage file list when all is said and done / read it back when upgrading
     let dest_files = await sf.glob('**/*', {cwd: dest_path})
     log(opts, `dest has ${dest_files.length} potential dinosaurs`)
 
@@ -157,11 +160,7 @@ let self = {
     onprogress({ percent })
 
     log(opts, `copying stage to dest`)
-    try {
-      await sf.ditto(stage_path, dest_path)
-    } catch (e) {
-      log(opts, `while copying: ${e.stack || e}`)
-    }
+    await sf.ditto(stage_path, dest_path)
 
     percent = 100
     onprogress({ percent })

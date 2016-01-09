@@ -43,8 +43,8 @@ class Logger {
 
         case 'file': {
           if (val) {
-            this.file_sink = sf.Writer({
-              path: val,
+            this.file_sink = sf.createWriteStream(val, {
+              defaultEncoding: 'utf8',
               flags: 'a'
             })
           }

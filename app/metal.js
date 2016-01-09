@@ -26,6 +26,7 @@ if (env.name === 'development') {
 
   console.log('Pre-compiled, not using require hook.')
 }
+require('./util/sf')
 require('./util/crash-reporter').mount()
 
 let auto_updater = require('./util/auto-updater')

@@ -13,7 +13,7 @@ let self = {
    */
   download_to_file: async (opts, url, file) => {
     let req = needle.get(url)
-    let sink = sf.Writer({ path: file, mode: 0o777 })
+    let sink = sf.createWriteStream(file, { flags: 'w', mode: 0o777, defaultEncoding: 'binary' })
     req.pipe(sink)
     return await sf.promised(sink)
   },
