@@ -2,7 +2,7 @@
 let self = {
   itch_repo: 'https://github.com/itchio/itch',
   itchio: 'https://itch.io',
-  itch_translation_platform: 'https://weblate.itch.ovh',
+  itch_translation_platform: 'https://weblate.itch.ovh/projects/itch',
   github_api: 'https://api.github.com',
   ibrew_repo: 'https://dl.itch.ovh',
   remote_locale_path: 'http://locales.itch.ovh/itch'

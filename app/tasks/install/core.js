@@ -1,13 +1,14 @@
 
 let log = require('../../util/log')('install/core')
 let sniff = require('../../util/sniff')
+let spawn = require('../../util/spawn')
 
 let AppActions = require('../../actions/app-actions')
 
 let ExtendableError = require('es6-error')
 
 class UnhandledFormat extends ExtendableError {
-  constructor (operation, archive_path) {
+  constructor (archive_path) {
     super(`don't know how to handle ${archive_path}`)
   }
 }
@@ -77,7 +78,20 @@ let self = {
 
     let installer_name = self.installer_for_ext[type.ext]
     if (!installer_name) {
-      throw new UnhandledFormat(`${archive_path} of type ${JSON.stringify(type)}`)
+      let code = await spawn({
+        command: '7za',
+        args: ['l', archive_path]
+      })
+
+      if (code === 0) {
+        log(opts, `7-zip saves the day! it's an archive.`)
+        installer_name = 'archive'
+      } else if (archive_path.executable) {
+        log(opts, `it's executable, going with naked`)
+        installer_name = 'naked'
+      } else {
+        throw new UnhandledFormat(`${archive_path} of type ${JSON.stringify(type)}`)
+      }
     }
 
     self.cache_type(opts, installer_name)
