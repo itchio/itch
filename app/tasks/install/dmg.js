@@ -19,8 +19,6 @@ let self = {
   },
 
   install: async function (opts) {
-    console.log(`in dmg, do we have a logger?, ${!!opts.logger}`)
-
     let archive_path = opts.archive_path
     let dest_path = opts.dest_path
     let onprogress = opts.onprogress || noop
@@ -163,8 +161,6 @@ let self = {
 
     log(opts, `Launching cleanup asynchronously...`)
     cleanup()
-
-    onprogress({percent: 100})
   },
 
   uninstall: async function (opts) {

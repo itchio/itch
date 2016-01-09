@@ -4,11 +4,13 @@ let humanize = require('humanize-plus')
 let Promise = require('bluebird')
 let path = require('path')
 
+let subprogress = require('../../util/subprogress')
 let sniff = require('../../util/sniff')
 let noop = require('../../util/noop')
 let spawn = require('../../util/spawn')
 
 let sf = require('../../util/sf')
+let core = require('./core')
 
 let log = require('../../util/log')('installers/archive')
 
@@ -111,10 +113,13 @@ let self = {
     total_size = info.total_size
     log(opts, `archive contains ${Object.keys(info.sizes).length} files, ${humanize.fileSize(total_size)} total`)
 
+    let extract_onprogress = subprogress(onprogress, 0, 80)
+    let stagecp_onprogress = subprogress(onprogress, 80, 100)
+
     let sevenzip_progress = (f) => {
       extracted_size += (info.sizes[f] || 0)
-      let percent = extracted_size / total_size * 80
-      onprogress({ extracted_size, total_size, percent })
+      let percent = extracted_size / total_size * 100
+      extract_onprogress({ extracted_size, total_size, percent })
     }
     await self.sevenzip_extract(version, logger, archive_path, stage_path, sevenzip_progress)
 
@@ -123,15 +128,27 @@ let self = {
     let stage_files = await sf.glob('**/*', {cwd: stage_path})
 
     // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
-    if (!opts.tar && stage_files.length === 1) {
-      let tar = path.join(stage_path, stage_files[0])
-      if (await is_tar(tar)) {
+    if (stage_files.length === 1) {
+      let only_file = path.join(stage_path, stage_files[0])
+
+      if (!opts.tar && await is_tar(only_file)) {
+        let tar = only_file
         log(opts, `found tar: ${tar}, re-extracting`)
         let sub_opts = Object.assign({}, opts, {archive_path: tar, tar: true})
 
         let res = await self.install(sub_opts)
         await sf.wipe(tar)
         return res
+      } else {
+        try {
+          let sniff_opts = {archive_path: only_file}
+          let installer_name = await core.sniff_type(opts)
+          log(opts, `found nested installer '${installer_name}', going with it!`)
+          let nested_opts = Object.assign({}, opts, sniff_opts)
+          await core.install(nested_opts)
+        } catch (err) {
+          log(opts, `only file isn't a recognized installer type`)
+        }
       }
     }
 
@@ -171,16 +188,10 @@ let self = {
       log(opts, `no dinosaurs`)
     }
 
-    let percent = 80
-    onprogress({ percent })
-
     log(opts, `copying stage to dest`)
     await sf.ditto(stage_path, dest_path, {
-      onprogress: (percent) => onprogress({ percent: 80 + 20 * percent })
+      onprogress: stagecp_onprogress
     })
-
-    percent = 100
-    onprogress({ percent })
 
     log(opts, `everything copied, writing receipt`)
     let cave = opts.cave || {}
