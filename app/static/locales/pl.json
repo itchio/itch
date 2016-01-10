@@ -27,12 +27,12 @@
     "login.action.reset_password": "Zapomniane hasło", 
     "login.field.password": "Hasło", 
     "login.field.username": "Nazwa użytkownika", 
-    "login.status.dependency_check": "Upewnianie się, że wszystko jest ustawione...", 
+    "login.status.dependency_check": "Upewnianie się, że wszystko jest ustawione…", 
     "login.status.dependency_install": "Instalacja zależności {{name}} {{version}}", 
     "login.status.login": "Logowanie...", 
     "login.status.setup_failure": "Problem w trakcie instalacji: {{error}}", 
     "menu.account.account": "Konto", 
-    "menu.account.change_user": "Zmień użytkownika...", 
+    "menu.account.change_user": "Zmień użytkownika…", 
     "menu.account.not_logged_in": "Niezalogowany", 
     "menu.danger_zone.danger_zone": "Strefa zagrożenia", 
     "menu.danger_zone.dont_use": "Nie używać.", 
@@ -137,6 +137,6 @@
     "sidebar.owned": "Biblioteka", 
     "status.checking": "Aktualizacje są wyszukiwane…", 
     "status.downloaded": "Kliknij, by zrestartować i zainstalować aktualizację!", 
-    "status.downloading": "Pobieram aktualizacje...", 
+    "status.downloading": "Pobieram aktualizacje…", 
     "status.uptodate": "Twój itch jest już w najnowszej wersji!"
 }
