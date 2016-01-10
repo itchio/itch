@@ -24,7 +24,7 @@
     "login.action.register": "Registrieren", 
     "login.action.reset_password": "Passwort vergessen", 
     "login.field.password": "Passwort", 
-    "login.field.username": "Nutzername", 
+    "login.field.username": "Nutzername oder E-Mail-Adresse", 
     "login.status.dependency_check": "Stelle sicher, dass alles eingerichtet ist…", 
     "login.status.dependency_install": "Abhängigkeit {{name}} {{version}} wird installiert", 
     "login.status.login": "Du wirst eingeloggt…", 
