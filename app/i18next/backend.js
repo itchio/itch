@@ -25,6 +25,23 @@ if (process.type === 'browser') {
   app = require('electron').remote.app
 }
 
+async function exists (file) {
+  let p = new Promise((resolve, reject) => {
+    fs.access(file, fs.r_OK, (err) => resolve(!err))
+  })
+  return await p
+}
+
+async function read_file (file) {
+  let p = new Promise((resolve, reject) => {
+    fs.readFile(file, {encoding: 'utf8'}, (err, res) => {
+      if (err) return reject(err)
+      resolve(res)
+    })
+  })
+  return await p
+}
+
 let remote_dir = path.join(app.getPath('userData'), 'locales')
 
 class Backend {
@@ -71,22 +88,15 @@ class Backend {
     return path.join(remote_dir, language + '.json')
   }
 
-  async exists (file) {
-    let p = new Promise((resolve, reject) => {
-      fs.access(file, fs.r_OK, (err) => resolve(!err))
-    })
-    return await p
-  }
-
   async read (language, namespace, callback) {
     this.queue_download(language)
 
     let canonical_filename = this.canonical_filename(language)
 
-    if (!await this.exists(canonical_filename)) {
+    if (!await exists(canonical_filename)) {
       log(opts, `${canonical_filename} does not exist, attempting a trim`)
       canonical_filename = this.canonical_filename(language.substring(0, 2))
-      if (!await this.exists(canonical_filename)) {
+      if (!await exists(canonical_filename)) {
         log(opts, `${canonical_filename} does not exist either :(`)
         log(opts, `No locale file found for language ${language}`)
         return callback(null, {})
@@ -97,13 +107,13 @@ class Backend {
     let remote_filename = this.remote_filename(language)
 
     // do we have a newer version?
-    if (upgrades_enabled && await this.exists(remote_filename)) {
+    if (upgrades_enabled && await exists(remote_filename)) {
       log(opts, `trying to use ${remote_filename}`)
       // neat, use it.
       loaded_filename = remote_filename
     }
 
-    let contents = await sf.read_file(loaded_filename)
+    let contents = await read_file(loaded_filename)
     try {
       let parsed = JSON.parse(contents)
       log(opts, `Successfully loaded ${language} from ${loaded_filename}`)
@@ -143,7 +153,7 @@ class Backend {
 
   async download_fresh_locale (language) {
     let local_filename = this.canonical_filename(language)
-    if (!await this.exists(local_filename)) {
+    if (!await exists(local_filename)) {
       // try stripping region
       language = language.substring(0, 2)
     }
