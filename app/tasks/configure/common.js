@@ -13,7 +13,7 @@ function fix_execs (base_path) {
   let f = _.partial(sniff_and_chmod, base_path)
 
   return (
-    sf.glob(`**/*`, {nodir: true, cwd: base_path})
+    sf.glob(`**`, {nodir: true, cwd: base_path})
     .map(f, {concurrency: 2})
     .filter((x) => !!x)
   )

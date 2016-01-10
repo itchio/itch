@@ -38,16 +38,13 @@ let stubs = {
   'graceful-fs': graceful_fs
 }
 
-let debug_level = ~~process.env.INCENTIVE_MET
-let debug = (msg, level) => {
-  if (typeof level === 'undefined') {
-    level = 1
-  }
+let debug_level = ~~process.env.INCENTIVE_MET || -1
+let debug = (level, parts) => {
   if (debug_level < level) {
     return
   }
 
-  console.log(`[sf] ${msg}`)
+  console.log(`[sf] ${parts.join(' ')}`)
 }
 
 fs = graceful_fs
@@ -72,6 +69,8 @@ let ignore = [
   // on OSX, trashes exist on dmg volumes but cannot be scandir'd for some reason
   '**/.Trashes/**'
 ]
+
+let concurrency = 8
 
 /*
  * sf = backward fs, because fs itself is quite backwards
@@ -141,13 +140,13 @@ let self = {
    * Burn to the ground an entire directory and everything in it
    * Also works on file, don't bother with unlink.
    */
-  wipe: async (file_or_dir) => {
-    debug(`wipe ${file_or_dir}`)
+  wipe: async (shelter) => {
+    debug(1, ['wipe', shelter])
 
     let stats
 
     try {
-      stats = await self.lstat(file_or_dir)
+      stats = await self.lstat(shelter)
     } catch (err) {
       if (err.code === 'ENOENT') {
         return
@@ -156,15 +155,16 @@ let self = {
     }
 
     if (stats.isDirectory()) {
-      let files = await self.glob('**', {cwd: file_or_dir, dot: true, ignore})
+      let file_or_dirs = await self.glob('**', {cwd: shelter, dot: true, ignore})
       let dirs = []
+      let files = []
 
-      for (let file of files) {
-        let full_file = path.join(file_or_dir, file)
+      for (let fad of file_or_dirs) {
+        let full_fad = path.join(shelter, fad)
 
         let stats
         try {
-          stats = await self.lstat(full_file)
+          stats = await self.lstat(full_fad)
         } catch (err) {
           if (err.code === 'ENOENT') {
             // good!
@@ -174,27 +174,35 @@ let self = {
         }
 
         if (stats.isDirectory()) {
-          dirs.push(file)
+          dirs.push(fad)
         } else {
-          debug(`rm ${full_file}`, 2)
-          await self.unlink(full_file)
+          files.push(fad)
         }
       }
+
+      let unlink = async (file) => {
+        let full_file = path.join(shelter, file)
+        await self.unlink(full_file)
+      }
+      await Promise.resolve(files).map(unlink, {concurrency})
 
       // remove deeper dirs first
       dirs.sort((a, b) => (b.length - a.length))
 
+      // needs to be done in order
       for (let dir of dirs) {
-        let full_dir = path.join(file_or_dir, dir)
+        let full_dir = path.join(shelter, dir)
 
-        debug(`rmdir ${full_dir}`, 2)
+        debug(2, ['rmdir', full_dir])
         await self.rmdir(full_dir)
       }
 
-      debug(`wipe ${file_or_dir} done (removed ${files.length} files & ${dirs.length} directories)`)
+      debug(1, ['rmdir', shelter])
+      await self.rmdir(shelter)
+      debug(1, ['wipe', 'shelter', `done (removed ${files.length} files & ${dirs.length} directories)`])
     } else {
-      debug(`rm ${file_or_dir}`)
-      await self.unlink(file_or_dir)
+      debug(1, ['unlink', shelter])
+      await self.unlink(shelter)
     }
   },
 
@@ -203,28 +211,7 @@ let self = {
    * (Does not remove files that aren't in src)
    */
   ditto: async (src, dst, opts) => {
-    debug(`ditto ${src} ${dst}`)
-
-    let _copy = async (src_file, dst_file, stats) => {
-      if (stats.isSymbolicLink()) {
-        let link_target = await self.readlink(src_file)
-
-        debug(`ln -s ${link_target} ${dst_file}`, 2)
-        await self.wipe(dst_file)
-        await self.symlink(link_target, dst_file)
-      } else {
-        let ws = self.createWriteStream(dst_file, {
-          flags: 'w',
-          defaultEncoding: 'binary',
-          mode: stats.mode
-        })
-        let rs = self.createReadStream(src_file, { encoding: 'binary' })
-        let cp = self.promised(rs)
-        rs.pipe(ws)
-        debug(`cp ${src_file} ${dst_file}`, 2)
-        await cp
-      }
-    }
+    debug(2, ['ditto', src, dst])
 
     if (typeof opts === 'undefined') {
       opts = {}
@@ -232,6 +219,38 @@ let self = {
     let onprogress = opts.onprogress || noop
     let always_false = () => false
     let should_skip = opts.should_skip || always_false
+    let operation = opts.operation || 'copy'
+    let move = (operation === 'move')
+
+    let _copy = async (src_file, dst_file, stats) => {
+      if (stats.isSymbolicLink()) {
+        let link_target = await self.readlink(src_file)
+
+        debug(2, ['symlink', link_target, dst_file])
+        await self.wipe(dst_file)
+        await self.symlink(link_target, dst_file)
+      } else {
+        if (move) {
+          debug(2, ['rename', src_file, dst_file])
+          await self.rename(src_file, dst_file)
+        } else {
+          // we still need to be able to read/write the file
+          let mode = stats.mode & 0o777 | 0o666
+          debug(2, ['cp', mode.toString(8), src_file, dst_file])
+          let ws = self.createWriteStream(dst_file, {
+            flags: 'w',
+            /* anything is binary if you try hard enough */
+            defaultEncoding: 'binary',
+            mode
+          })
+          let rs = self.createReadStream(src_file, { encoding: 'binary' })
+          let cp = self.promised(ws)
+          rs.pipe(ws)
+          await cp
+          rs.close()
+        }
+      }
+    }
 
     // if we're not a directory, no need to recurse
     let stats = await self.lstat(src)
@@ -257,13 +276,19 @@ let self = {
       }
     }
 
+    // create shallow dirs first
+    dirs.sort((a, b) => (a.length - b.length))
+
     let mkdir = async (dir) => {
-      debug(`mkdir ${dir}`, 2)
-      await self.mkdir(path.join(dst, dir))
+      let full_dir = path.join(dst, dir)
+      debug(2, ['mkdir', full_dir])
+      await self.mkdir(full_dir)
     }
 
     // have to mkdir sequentially
-    await Promise.resolve(dirs).each(mkdir)
+    for (let dir of dirs) {
+      await mkdir(dir)
+    }
 
     let num_done = 0
 
@@ -271,12 +296,12 @@ let self = {
       let file = arr[0]
       let stats = arr[1]
 
-      let src_file = path.join(src, file)
-      if (should_skip(src_file)) {
-        debug(`skipping ${src_file}`, 2)
+      if (should_skip(file)) {
+        debug(2, ['skipping', file])
         return
       }
 
+      let src_file = path.join(src, file)
       let dst_file = path.join(dst, file)
       await _copy(src_file, dst_file, stats)
 
@@ -286,10 +311,9 @@ let self = {
     }
 
     // can copy in parallel, all directories already exist
-    for (let file of files) {
-      await copy(file)
-    }
-    debug(`ditto ${src} ${dst} done (copied ${files.length} files & ${dirs.length} directories)`)
+    await Promise.resolve(files).map(copy, {concurrency})
+
+    debug(1, ['ditto', src, dst, `done (copied ${files.length} files & ${dirs.length} directories)`])
   },
 
   /**
