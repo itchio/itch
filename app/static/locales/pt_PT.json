@@ -32,7 +32,7 @@
     "login.status.login": "A iniciar sessão…", 
     "login.status.setup_failure": "Houve um problema durante a configuração: {{error}}", 
     "menu.account.account": "Conta", 
-    "menu.account.change_user": "Mudar utilizador...", 
+    "menu.account.change_user": "Mudar de utilizador…", 
     "menu.account.not_logged_in": "Não entraste com uma conta", 
     "menu.edit.copy": "Copiar", 
     "menu.edit.cut": "Cortar", 
