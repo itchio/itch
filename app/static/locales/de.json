@@ -122,6 +122,7 @@
     "prompt.rar_policy.message": "Der Inhalt benutzt das RAR Kompressionsformat und kann mit itch nicht installiert werden bis es neu verpackt wurde.", 
     "prompt.rar_policy.open_web_page": "Öffne Homepage von {{title}}", 
     "prompt.rar_policy.title": "RAR wird nicht unterstützt", 
+    "prompt.uninstall.message": "Bist du sicher, dass du {{title}} deinstallieren möchtest?", 
     "prompt.url_install.credit": "Ein {{classification}} von {{username}}", 
     "prompt.url_install.message": "Willst du {{title}} installieren?", 
     "prompt.url_install.title": "Installationsanfrage", 
