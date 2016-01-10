@@ -126,6 +126,7 @@
     "prompt.rar_policy.message": "Ta zawartość używa formatu kompresji RAR i nie może być zainstalowana w itch dopóki nie zostanie przepakowana.", 
     "prompt.rar_policy.open_web_page": "Otwórz stronę sklepu dla {{title}}", 
     "prompt.rar_policy.title": "RAR nie jest wspierany", 
+    "prompt.uninstall.message": "Czy na pewno chcesz odinstalować {{title}}?", 
     "prompt.url_install.credit": "{{classification}} autorstwa {{username}}", 
     "prompt.url_install.message": "Czy chcesz zainstalować {{title}}?", 
     "prompt.url_install.title": "Inicjacja instalacji", 
