@@ -29,7 +29,7 @@
     "login.field.username": "Nazwa użytkownika lub e-mail", 
     "login.status.dependency_check": "Upewnianie się, że wszystko jest ustawione…", 
     "login.status.dependency_install": "Instalacja zależności {{name}} {{version}}", 
-    "login.status.login": "Logowanie...", 
+    "login.status.login": "Logowanie…", 
     "login.status.setup_failure": "Problem w trakcie instalacji: {{error}}", 
     "menu.account.account": "Konto", 
     "menu.account.change_user": "Zmień użytkownika…", 
