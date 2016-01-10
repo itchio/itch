@@ -1,6 +1,8 @@
 
 let pairs = require('underscore').pairs
+let fs = require('fs')
 let sf = require('../util/sf')
+let path = require('path')
 let deep_assign = require('deep-assign')
 
 let EOL = require('os').EOL
@@ -43,6 +45,10 @@ class Logger {
 
         case 'file': {
           if (val) {
+            // XXX bad, but we're in a constructor, not seeing many other options
+            try {
+              fs.mkdirSync(path.dirname(val))
+            } catch (err) {}
             this.file_sink = sf.createWriteStream(val, {
               defaultEncoding: 'utf8',
               flags: 'a'

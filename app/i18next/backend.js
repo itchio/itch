@@ -3,6 +3,7 @@ let log = require('../util/log')('i18n-backend/' + process.type)
 let opts = { logger: new log.Logger() }
 
 let sf = require('../util/sf')
+let fs = require('fs')
 let urls = require('../constants/urls')
 let env = require('../env')
 let upgrades_enabled = env.name === 'production' || process.env.DID_I_STUTTER === '1'
@@ -24,17 +25,24 @@ if (process.type === 'browser') {
   app = require('electron').remote.app
 }
 
-let remote_dir = path.join(app.getPath('userData'), 'locales')
-
-let exists = async (file) => {
-  try {
-    let contents = await sf.read_file(file)
-    JSON.parse(contents)
-    return true
-  } catch (e) {
-    return false
-  }
+async function exists (file) {
+  let p = new Promise((resolve, reject) => {
+    fs.access(file, fs.r_OK, (err) => resolve(!err))
+  })
+  return await p
 }
+
+async function read_file (file) {
+  let p = new Promise((resolve, reject) => {
+    fs.readFile(file, {encoding: 'utf8'}, (err, res) => {
+      if (err) return reject(err)
+      resolve(res)
+    })
+  })
+  return await p
+}
+
+let remote_dir = path.join(app.getPath('userData'), 'locales')
 
 class Backend {
   constructor (services, options) {
@@ -86,8 +94,10 @@ class Backend {
     let canonical_filename = this.canonical_filename(language)
 
     if (!await exists(canonical_filename)) {
+      log(opts, `${canonical_filename} does not exist, attempting a trim`)
       canonical_filename = this.canonical_filename(language.substring(0, 2))
       if (!await exists(canonical_filename)) {
+        log(opts, `${canonical_filename} does not exist either :(`)
         log(opts, `No locale file found for language ${language}`)
         return callback(null, {})
       }
@@ -98,11 +108,12 @@ class Backend {
 
     // do we have a newer version?
     if (upgrades_enabled && await exists(remote_filename)) {
+      log(opts, `trying to use ${remote_filename}`)
       // neat, use it.
       loaded_filename = remote_filename
     }
 
-    let contents = await sf.read_file(loaded_filename)
+    let contents = await read_file(loaded_filename)
     try {
       let parsed = JSON.parse(contents)
       log(opts, `Successfully loaded ${language} from ${loaded_filename}`)

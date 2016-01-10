@@ -14,7 +14,8 @@ let AppActions = require('../actions/app-actions')
 class StatusBar extends ShallowComponent {
   render () {
     let t = this.t
-    let update = this.props.update
+    let state = this.props.state
+    let update = mori.get(state, 'update')
     let status = mori.get(update, 'status')
     let error = mori.get(update, 'error')
     let available = mori.get(update, 'available')

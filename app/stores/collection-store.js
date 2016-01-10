@@ -24,7 +24,7 @@ function merge_state (obj) {
 
 let collections_seen = {}
 let featured_ids = [
-  32029, // LD34 staff picks
+  37741, // Early 2016 picks
   32705  // Bite-sized gems
 ]
 if (process.env.NO_TEACHING) {
