@@ -83,6 +83,9 @@ let self = {
       if (/\.so/.test(exe.path)) {
         score = 0
       }
+      if (/\.sh/.test(exe.path)) {
+        score += 20
+      }
       exe.score = score
     }
   },
