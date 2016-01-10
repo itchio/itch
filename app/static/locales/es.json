@@ -32,7 +32,7 @@
     "login.status.login": "Iniciando sesión...", 
     "login.status.setup_failure": "Ha habido un problema durante la configuración: {{error}}", 
     "menu.account.account": "Cuenta", 
-    "menu.account.change_user": "Cambiar usuario...", 
+    "menu.account.change_user": "Cambiar usuario…", 
     "menu.account.not_logged_in": "Sin identificar", 
     "menu.danger_zone.danger_zone": "Zona peligrosa", 
     "menu.danger_zone.dont_use": "No utilizar ésto.", 
@@ -138,6 +138,6 @@
     "sidebar.owned": "Biblioteca", 
     "status.checking": "Comprobando actualizaciones…", 
     "status.downloaded": "¡Haz clic para reiniciar y aplicar la actualización!", 
-    "status.downloading": "Descargando actualización...", 
+    "status.downloading": "Descargando actualización…", 
     "status.uptodate": "¡Tu itch está al día!"
 }
