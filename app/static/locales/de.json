@@ -68,7 +68,7 @@
     "onboarding.owned.title_warm_welcome": "Geschafft!", 
     "preferences.install_location.add": "Pfad hinzufügen", 
     "preferences.install_location.browse": "Öffne Installationsort im Datei Explorer", 
-    "preferences.install_location.browse_linux": "Öffne Installationsverzeichnis im Dateimanager.", 
+    "preferences.install_location.browse_linux": "Öffne Installationsverzeichnis im Dateimanager", 
     "preferences.install_location.browse_osx": "Zeige Installationsort im Finder", 
     "preferences.install_location.compute_size": "Berechne Ordnergöße auf der Festplatte", 
     "preferences.install_location.delete": "Entferne diesen Installationsort und deinstalliere den Inhalt", 
