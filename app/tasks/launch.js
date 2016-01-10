@@ -74,6 +74,9 @@ let self = {
       if (/unins.*\.exe$/i.test(exe.path)) {
         score -= 50
       }
+      if (/nwjc\.exe$/i.test(exe.path)) {
+        score -= 20
+      }
       if (/dxwebsetup\.exe$/i.test(exe.path)) {
         score = 0
       }
