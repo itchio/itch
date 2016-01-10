@@ -5,6 +5,7 @@ let urls = require('../../constants/urls')
 let sf = require('../sf')
 let os = require('../os')
 let version = require('./version')
+let path = require('path')
 
 let self = {
   /**
@@ -13,9 +14,12 @@ let self = {
    */
   download_to_file: async (opts, url, file) => {
     let req = needle.get(url)
+    await sf.mkdir(path.dirname(file))
+    console.log(`downloading ${url} to ${file}`)
     let sink = sf.createWriteStream(file, { flags: 'w', mode: 0o777, defaultEncoding: 'binary' })
     req.pipe(sink)
-    return await sf.promised(sink)
+    await sf.promised(sink)
+    sink.close()
   },
 
   /** platform in go format */
