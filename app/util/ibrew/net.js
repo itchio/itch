@@ -19,7 +19,6 @@ let self = {
     let sink = sf.createWriteStream(file, { flags: 'w', mode: 0o777, defaultEncoding: 'binary' })
     req.pipe(sink)
     await sf.promised(sink)
-    sink.close()
   },
 
   /** platform in go format */

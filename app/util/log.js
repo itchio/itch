@@ -45,8 +45,10 @@ class Logger {
 
         case 'file': {
           if (val) {
-            // bad, but we're in a constructor, not seeing many other options
-            fs.mkdirSync(path.dirname(val))
+            // XXX bad, but we're in a constructor, not seeing many other options
+            try {
+              fs.mkdirSync(path.dirname(val))
+            } catch (err) {}
             this.file_sink = sf.createWriteStream(val, {
               defaultEncoding: 'utf8',
               flags: 'a'
