@@ -225,7 +225,7 @@ let self = {
 
       await Promise.resolve(dinosaurs).map((rel) => {
         let dinosaur = path.join(dest_path, rel)
-        sf.wipe(dinosaur)
+        return sf.wipe(dinosaur)
       }, {concurrency: 4})
     } else {
       log(opts, `no dinosaurs`)
@@ -239,7 +239,7 @@ let self = {
     log(opts, `everything copied, writing receipt`)
     let cave = opts.cave || {}
 
-    sf.write_file(receipt_path, JSON.stringify({
+    await sf.write_file(receipt_path, JSON.stringify({
       cave,
       total_size,
       num_files: stage_files.length,
