@@ -27,7 +27,7 @@
     "login.action.reset_password": "Olvidé mi contraseña", 
     "login.field.password": "Contraseña", 
     "login.field.username": "Nombre de usuario", 
-    "login.status.dependency_check": "Comprobando que todo esté configurado...", 
+    "login.status.dependency_check": "Comprobando que todo esté configurado…", 
     "login.status.dependency_install": "Instalando la dependencia {{name}} {{version}}", 
     "login.status.login": "Iniciando sesión...", 
     "login.status.setup_failure": "Ha habido un problema durante la configuración: {{error}}", 
