@@ -17,6 +17,7 @@
     "grid.item.retry": "Versuche, dies noch einmal herunterzuladen / zu installieren / zu starten", 
     "grid.item.running": "Läuft…", 
     "grid.item.uninstall": "Dieses Objekt jetzt deinstallieren", 
+    "grid.item.uninstalling": "Deinstalliere...", 
     "login.action.login": "Einloggen", 
     "login.action.register": "Registrieren", 
     "login.action.reset_password": "Passwort vergessen", 
