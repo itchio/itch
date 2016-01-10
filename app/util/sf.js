@@ -168,6 +168,7 @@ let self = {
         } catch (err) {
           if (err.code === 'ENOENT') {
             // good!
+            continue
           } else {
             throw err
           }
