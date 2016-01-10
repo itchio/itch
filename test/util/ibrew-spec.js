@@ -31,8 +31,8 @@ test('ibrew', t => {
     },
     '@global': true
   }
-  let install = {
-    install: () => Promise.resolve()
+  let archive = {
+    sevenzip_extract: () => Promise.resolve()
   }
   let stubs = Object.assign({
     'needle': needle,
@@ -40,7 +40,7 @@ test('ibrew', t => {
     '../sf': sf,
     './os': os,
     '../os': os,
-    '../tasks/install/core': install
+    '../tasks/install/archive': archive
   }, electron)
   let ibrew = proxyquire('../../app/util/ibrew', stubs)
 
