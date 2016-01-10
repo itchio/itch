@@ -111,6 +111,7 @@
     "prompt.payments_disabled.title": "Платежи отключены", 
     "prompt.rar_policy.learn_more": "Читать далее", 
     "prompt.rar_policy.title": "RAR не поддерживается", 
+    "prompt.uninstall.message": "Вы уверены, что хотите удалить {{title}}?", 
     "prompt.url_install.credit": "{{classification}} по {{username}}", 
     "prompt.url_install.message": "Вы хотите установить {{title}}?", 
     "prompt.url_install.title": "Запрос на установку", 
