@@ -29,7 +29,7 @@
     "login.status.login": "Du wirst eingeloggt…", 
     "login.status.setup_failure": "Es gab ein Problem beim Einrichten: {{error}}", 
     "menu.account.account": "Benutzer", 
-    "menu.account.change_user": "Benutzer wechseln...", 
+    "menu.account.change_user": "Benutzer wechseln…", 
     "menu.account.not_logged_in": "Nicht eingeloggt", 
     "menu.danger_zone.danger_zone": "Gefahrenzone", 
     "menu.danger_zone.dont_use": "Dies nicht verwenden.", 
