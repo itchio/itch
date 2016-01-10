@@ -3,6 +3,7 @@ let log = require('../util/log')('i18n-backend/' + process.type)
 let opts = { logger: new log.Logger() }
 
 let sf = require('../util/sf')
+let fs = require('fs')
 let urls = require('../constants/urls')
 let env = require('../env')
 let upgrades_enabled = env.name === 'production' || process.env.DID_I_STUTTER === '1'
@@ -25,16 +26,6 @@ if (process.type === 'browser') {
 }
 
 let remote_dir = path.join(app.getPath('userData'), 'locales')
-
-let exists = async (file) => {
-  try {
-    let contents = await sf.read_file(file)
-    JSON.parse(contents)
-    return true
-  } catch (e) {
-    return false
-  }
-}
 
 class Backend {
   constructor (services, options) {
@@ -80,14 +71,23 @@ class Backend {
     return path.join(remote_dir, language + '.json')
   }
 
+  async exists (file) {
+    let p = new Promise((resolve, reject) => {
+      fs.access(file, fs.r_OK, (err) => resolve(!err))
+    })
+    return await p
+  }
+
   async read (language, namespace, callback) {
     this.queue_download(language)
 
     let canonical_filename = this.canonical_filename(language)
 
-    if (!await exists(canonical_filename)) {
+    if (!await this.exists(canonical_filename)) {
+      log(opts, `${canonical_filename} does not exist, attempting a trim`)
       canonical_filename = this.canonical_filename(language.substring(0, 2))
-      if (!await exists(canonical_filename)) {
+      if (!await this.exists(canonical_filename)) {
+        log(opts, `${canonical_filename} does not exist either :(`)
         log(opts, `No locale file found for language ${language}`)
         return callback(null, {})
       }
@@ -97,7 +97,8 @@ class Backend {
     let remote_filename = this.remote_filename(language)
 
     // do we have a newer version?
-    if (upgrades_enabled && await exists(remote_filename)) {
+    if (upgrades_enabled && await this.exists(remote_filename)) {
+      log(opts, `trying to use ${remote_filename}`)
       // neat, use it.
       loaded_filename = remote_filename
     }
@@ -142,7 +143,7 @@ class Backend {
 
   async download_fresh_locale (language) {
     let local_filename = this.canonical_filename(language)
-    if (!await exists(local_filename)) {
+    if (!await this.exists(local_filename)) {
       // try stripping region
       language = language.substring(0, 2)
     }
