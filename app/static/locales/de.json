@@ -124,6 +124,7 @@
     "prompt.rar_policy.open_web_page": "Öffne Homepage von {{title}}", 
     "prompt.rar_policy.title": "RAR wird nicht unterstützt", 
     "prompt.uninstall.message": "Bist du sicher, dass du {{title}} deinstallieren möchtest?", 
+    "prompt.uninstall.uninstall": "Jetzt deinstallieren", 
     "prompt.url_install.credit": "Ein {{classification}} von {{username}}", 
     "prompt.url_install.message": "Willst du {{title}} installieren?", 
     "prompt.url_install.title": "Installationsanfrage", 
