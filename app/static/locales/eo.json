@@ -73,7 +73,7 @@
     "preferences.install_location.browse": "Malfermi la instal-lokon en dosiera foliumilo", 
     "preferences.install_location.browse_linux": "Malfermi la instal-lokon en dosiera foliumilo", 
     "preferences.install_location.browse_osx": "Montri la instal-lokon en dosiera foliumilo", 
-    "preferences.install_location.compute_size": "Komputi endiskan dosiergrandon", 
+    "preferences.install_location.compute_size": "Komputi endiskan dosierujgrandon", 
     "preferences.install_location.delete": "Forigi ĉi tiun instal-lokon kaj malinstali ĝian enhavon", 
     "preferences.install_location.empty": "Malplena", 
     "preferences.install_location.free_space": "Disponebla diskospaco", 
