@@ -127,7 +127,7 @@
     "prompt.uninstall.message": "Er du sikker på at du ønsker å avinstallere {{title}}?", 
     "prompt.uninstall.reinstall": "Reinstaller", 
     "prompt.uninstall.uninstall": "Avinstaller nå", 
-    "prompt.url_install.credit": "A {{classification}} by {{username}}", 
+    "prompt.url_install.credit": "Et {{classification}} av {{username}}", 
     "prompt.url_install.message": "Vil du installere {{title}}?", 
     "prompt.url_install.title": "Installasjonsforespørsel", 
     "sidebar.broken": "I ustand", 
