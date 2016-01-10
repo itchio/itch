@@ -23,40 +23,39 @@ let self = {
     let emitter = opts.emitter
 
     let cave = await CaveStore.find(id)
-
-    ensure(cave.upload_id, 'need upload id')
-    ensure(cave.uploads, 'need cached uploads')
-
-    let upload = cave.uploads[cave.upload_id]
-    ensure(upload, 'need upload in upload cache')
-
     let dest_path = CaveStore.app_path(cave.install_location, id)
-    let archive_path = CaveStore.archive_path(cave.install_location, upload)
 
-    log(opts, `Uninstalling app in ${dest_path} from archive ${archive_path}`)
+    if (cave.upload_id && cave.uploads) {
+      let upload = cave.uploads[cave.upload_id]
+      ensure(upload, 'need upload in upload cache')
 
-    let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter }
+      let archive_path = CaveStore.archive_path(cave.install_location, upload)
 
-    AppActions.cave_update(id, {launchable: false})
+      log(opts, `Uninstalling app in ${dest_path} from archive ${archive_path}`)
 
-    try {
-      await core.uninstall(core_opts)
-      log(opts, `Uninstallation successful`)
-    } catch (e) {
-      if (e instanceof core.UnhandledFormat) {
-        log(opts, e.message)
-        log(opts, `Imploding anyway`)
-        await sf.wipe(dest_path)
-      } else {
-        // re-raise other errors
-        throw e
+      let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter }
+
+      AppActions.cave_update(id, {launchable: false})
+
+      try {
+        await core.uninstall(core_opts)
+        log(opts, `Uninstallation successful`)
+      } catch (e) {
+        if (e instanceof core.UnhandledFormat) {
+          log(opts, e.message)
+          log(opts, `Imploding anyway`)
+          await sf.wipe(dest_path)
+        } else {
+          // re-raise other errors
+          throw e
+        }
       }
-    }
-    AppActions.cave_update(id, {installed_archive_mtime: null})
+      AppActions.cave_update(id, {installed_archive_mtime: null})
 
-    if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
-      log(opts, `Erasing archive ${archive_path}`)
-      await sf.wipe(archive_path)
+      if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
+        log(opts, `Erasing archive ${archive_path}`)
+        await sf.wipe(archive_path)
+      }
     }
 
     log(opts, `Imploding ${dest_path}`)
