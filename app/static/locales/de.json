@@ -120,7 +120,7 @@
     "prompt.payments_disabled.title": "Zahlungen deaktiviert", 
     "prompt.rar_policy.detail": "RAR ist ein veraltetes und nicht freies Format und wird niemals unterstützt.", 
     "prompt.rar_policy.learn_more": "Erfahre mehr", 
-    "prompt.rar_policy.message": "Der Inhalt benutzt das RAR Kompressionsformat und kann mit itch nicht installiert werden bis es neu verpackt wurde.", 
+    "prompt.rar_policy.message": "{{title}} benutzt das RAR Kompressionsformat und kann mit itch nicht installiert werden, bis es neu verpackt wurde.", 
     "prompt.rar_policy.open_web_page": "Öffne Homepage von {{title}}", 
     "prompt.rar_policy.title": "RAR wird nicht unterstützt", 
     "prompt.uninstall.message": "Bist du sicher, dass du {{title}} deinstallieren möchtest?", 
