@@ -57,7 +57,7 @@
     "onboarding.caved.title_pick": "Haz tu elección", 
     "onboarding.caved.troubleshoot_advice": "Si algo falla, haz clic en {{report}} para enviar un informe, o {{probe}} para investigarlo.", 
     "onboarding.caved.usage": "Observa como los juegos discretamente se descargan, instalan y se ejecutan.", 
-    "onboarding.collections.auto_sync": "Tus juegos seguirán aquí cuando regreses.", 
+    "onboarding.collections.auto_sync": "Tus juegos estarán aquí cuando regreses. ", 
     "onboarding.collections.lets_shop": "¡Vamos de compras!", 
     "onboarding.collections.title_mix": "Mezcla y empareja", 
     "onboarding.collections.usage": "Da una vuelta por la página y usa {{add_to_collection}} para empezar a organizarte.", 
