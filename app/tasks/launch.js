@@ -109,7 +109,7 @@ let self = {
       exe.score = score
 
       if (score > 0) {
-        output.push(score)
+        output.push(exe)
       }
     }
 
