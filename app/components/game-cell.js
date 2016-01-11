@@ -212,13 +212,19 @@ class GameCell extends ShallowComponent {
               r(Icon, {icon: 'refresh'})
             ])),
 
+            this.tooltip(this.browse_i18n_key(), r.span({
+              className: 'game_explore',
+              onClick: () => AppActions.cave_explore(mori.get(cave, '_id'))
+            }, [
+              r(Icon, {icon: 'folder-open'})
+            ])),
+
             this.tooltip('grid.item.probe', r.span({
               className: 'game_probe',
               onClick: () => AppActions.cave_probe(mori.get(cave, '_id'))
             }, [
               r(Icon, {icon: 'bug'})
             ]))
-
           ]
           : []
         ).concat(
