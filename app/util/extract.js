@@ -7,6 +7,10 @@ let log = require('./log')('util/extract')
 
 let verbose = (process.env.THE_DEPTHS_OF_THE_SOUL === '1')
 
+let formulas = require('./ibrew/formulas')
+let version = require('./ibrew/version')
+
+let os = require('./os')
 let noop = require('./noop')
 let sf = require('./sf')
 let spawn = require('./spawn')
@@ -14,7 +18,7 @@ let sniff = require('./sniff')
 let butler = require('./butler')
 
 let self = {
-  sevenzip_list: async function (version, logger, archive_path) {
+  sevenzip_list: async function (v, logger, archive_path) {
     let opts = {logger}
     let sizes = {}
     let total_size = 0
@@ -39,7 +43,7 @@ let self = {
     return {sizes, total_size}
   },
 
-  sevenzip_extract: async function (version, logger, archive_path, dest_path, onprogress) {
+  sevenzip_extract: async function (v, logger, archive_path, dest_path, onprogress) {
     let opts = {logger}
     let err_state = false
     let err
@@ -47,7 +51,7 @@ let self = {
     let EXTRACT_RE = /^Extracting\s+(.+)$/
     let additional_args = []
 
-    if (/^15/.test(version)) {
+    if (/^15/.test(v)) {
       EXTRACT_RE = /^-\s(.+)$/
       additional_args.push('-bb1')
     }
@@ -88,14 +92,16 @@ let self = {
     let onprogress = opts.onprogress || noop
     let logger = opts.logger
 
-    let ibrew = require('./ibrew')
-    let version = await ibrew.get_local_version('7za')
-    log(opts, `using 7-zip version ${version}`)
+    let check = formulas['7za'].version_check
+    let sevenzip_info = await os.assert_presence('7za', check.args, check.parser)
+    let v = version.normalize(sevenzip_info.parsed)
+
+    log(opts, `using 7-zip version ${v}`)
 
     let extracted_size = 0
     let total_size = 0
 
-    let info = await self.sevenzip_list(version, logger, archive_path)
+    let info = await self.sevenzip_list(v, logger, archive_path)
     total_size = info.total_size
     log(opts, `archive contains ${Object.keys(info.sizes).length} files, ${humanize.fileSize(total_size)} total`)
 
@@ -104,7 +110,7 @@ let self = {
       let percent = extracted_size / total_size * 100
       onprogress({ extracted_size, total_size, percent })
     }
-    await self.sevenzip_extract(version, logger, archive_path, dest_path, sevenzip_progress)
+    await self.sevenzip_extract(v, logger, archive_path, dest_path, sevenzip_progress)
   },
 
   extract: async (opts) => {
@@ -112,6 +118,7 @@ let self = {
 
     let type = await sniff.path(archive_path)
     if (type.ext === 'tar') {
+      log(opts, `using butler`)
       return await butler.untar(opts)
     } else {
       return await self.sevenzip(opts)

@@ -1,6 +1,5 @@
 
 let _ = require('underscore')
-let humanize = require('humanize-plus')
 let Promise = require('bluebird')
 let path = require('path')
 
@@ -120,17 +119,17 @@ let self = {
 
     // XXX write stage file list when all is said and done / read it back when upgrading
     let receipt_path = path.join(dest_path, '.itch', 'receipt.json')
-    let dest_files
+    let dest_files = []
 
     try {
       let receipt_contents = await sf.read_file(receipt_path)
       let receipt = JSON.parse(receipt_contents)
-      dest_files = receipt.files
-      log(opts, `Got receipt for an existing ${humanize.fileSize(receipt.total_size)} install.`)
+      dest_files = receipt.files || []
+      log(opts, `Got receipt for an existing ${dest_files.length}-files install.`)
     } catch (err) {
       log(opts, `Could not read receipt: ${err.message}`)
     }
-    if (!dest_files || !dest_files.length) {
+    if (!dest_files.length) {
       log(opts, `Globbing for destfiles`)
       dest_files = await sf.glob('**', {cwd: dest_path})
     }

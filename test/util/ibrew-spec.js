@@ -15,6 +15,7 @@ test('ibrew', t => {
   let os = {
     platform: () => 'win32',
     arch: () => 'x64',
+    assert_presence: async () => ({parsed: '9.20'}),
     '@global': true
   }
   let needle = {
@@ -31,8 +32,8 @@ test('ibrew', t => {
     },
     '@global': true
   }
-  let archive = {
-    sevenzip_extract: () => Promise.resolve()
+  let extract = {
+    extract: () => Promise.resolve()
   }
   let stubs = Object.assign({
     'needle': needle,
@@ -40,7 +41,7 @@ test('ibrew', t => {
     '../sf': sf,
     './os': os,
     '../os': os,
-    '../tasks/install/archive': archive
+    './extract': extract
   }, electron)
   let ibrew = proxyquire('../../app/util/ibrew', stubs)
 
