@@ -53,21 +53,38 @@ let self = {
   },
 
   compute_weight: async function (app_path, execs) {
+    let output = []
+
     let f = async (exe) => {
       let exe_path = path.join(app_path, exe.path)
-      let stats = await sf.stat(exe_path)
-      exe.weight = stats.size
+      let stats
+      try {
+        stats = await sf.stat(exe_path)
+      } catch (err) {
+        // entering the ultra hat dimension
+      }
+
+      if (stats) {
+        exe.weight = stats.size
+        output.push(exe)
+      }
     }
-    await Promise.resolve(execs).map(f, {concurrency: 8})
+    await Promise.resolve(execs).map(f, {concurrency: 4})
+
+    return output
   },
 
   compute_depth: function (execs) {
     for (let exe of execs) {
       exe.depth = path.normalize(exe.path).split(path.sep).length
     }
+
+    return execs
   },
 
   compute_score: function (execs) {
+    let output = []
+
     for (let exe of execs) {
       let score = 100
 
@@ -90,7 +107,13 @@ let self = {
         score += 20
       }
       exe.score = score
+
+      if (score > 0) {
+        output.push(score)
+      }
     }
+
+    return output
   },
 
   launch: function (exe_path, args, opts) {
@@ -123,11 +146,11 @@ let self = {
     let candidates = cave.executables.map((path) => {
       return {path}
     })
-    await self.compute_weight(app_path, candidates)
-    self.compute_score(candidates)
-    self.compute_depth(candidates)
+    candidates = await self.compute_weight(app_path, candidates)
+    candidates = self.compute_score(candidates)
+    candidates = self.compute_depth(candidates)
 
-    log(opts, `candidates: ${JSON.stringify(candidates, null, 2)}`)
+    log(opts, `initial candidate set: ${JSON.stringify(candidates, null, 2)}`)
 
     candidates = _.sortBy(candidates, (x) => -x.weight)
     log(opts, `candidates after weight sorting: ${JSON.stringify(candidates, null, 2)}`)
