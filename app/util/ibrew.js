@@ -5,7 +5,7 @@ let os = require('./os')
 
 let partial = require('underscore').partial
 
-let archive = require('../tasks/install/archive')
+let extract = require('./extract')
 let log = require('./log')('ibrew')
 
 let formulas = require('./ibrew/formulas')
@@ -46,10 +46,10 @@ let self = {
         log(opts, `${name}: installed!`)
       } else {
         log(opts, `${name}: extracting ${formula.format} archive`)
-        let sevenzip_version = await self.get_local_version('7za')
-        let onprogress = () => null
-        let logger = null
-        await archive.sevenzip_extract(sevenzip_version, logger, archive_path, self.bin_path(), onprogress)
+        await extract.extract({
+          archive_path,
+          dest_path: self.bin_path()
+        })
         log(opts, `${name}: installed!`)
       }
     }

@@ -3,7 +3,7 @@ let test = require('zopf')
 let proxyquire = require('proxyquire')
 
 let electron = require('../stubs/electron')
-let http = require('../stubs/http')
+let butler = require('../stubs/butler')
 let CaveStore = require('../stubs/cave-store')
 let CredentialsStore = require('../stubs/credentials-store')
 
@@ -26,7 +26,7 @@ test('download', t => {
   let stubs = Object.assign({
     '../stores/cave-store': CaveStore,
     '../stores/credentials-store': CredentialsStore,
-    '../util/http': http
+    '../util/butler': butler
   }, electron)
 
   let download = proxyquire('../../app/tasks/download', stubs)

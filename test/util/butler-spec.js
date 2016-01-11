@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let sinon = require('sinon')
@@ -19,10 +18,10 @@ test('http', t => {
     './spawn': spawn
   }, electron)
 
-  let http = proxyquire('../../app/util/http', stubs)
+  let butler = proxyquire('../../app/util/butler', stubs)
 
   t.case('spawns butler', async t => {
-    let r = await http.request(http_opts)
+    let r = await butler.dl(http_opts)
     sinon.assert.calledOnce(spawn)
     t.is(r, 42)
 

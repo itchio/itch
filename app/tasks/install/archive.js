@@ -7,9 +7,10 @@ let path = require('path')
 let subprogress = require('../../util/subprogress')
 let sniff = require('../../util/sniff')
 let noop = require('../../util/noop')
-let spawn = require('../../util/spawn')
 
 let sf = require('../../util/sf')
+let extract = require('../../util/extract')
+
 let core = require('./core')
 
 let log = require('../../util/log')('installers/archive')
@@ -20,8 +21,6 @@ let is_tar = async function (path) {
   let type = await sniff.path(path)
   return type && type.ext === 'tar'
 }
-
-let verbose = (process.env.THE_DEPTHS_OF_THE_SOUL === '1')
 
 let self = {
   retrieve_cached_type: function (opts) {
@@ -50,79 +49,13 @@ let self = {
     AppActions.cave_update(cave._id, {archive_nested_cache})
   },
 
-  sevenzip_list: async function (version, logger, archive_path) {
-    let opts = {logger}
-    let sizes = {}
-    let total_size = 0
-
-    await spawn({
-      command: '7za',
-      args: ['-slt', 'l', archive_path],
-      split: '\n\n',
-      ontoken: (token) => {
-        let item = _.object(token.split('\n').map((x) => x.replace(/\r$/, '').split(' = ')))
-        if (!item.Size || !item.Path) return
-        if (verbose) {
-          log(opts, `list: ${item.Size} | ${item.Path}`)
-        }
-        let item_path = path.normalize(item.Path)
-        let size = parseInt(item.Size, 10)
-
-        total_size += (sizes[item_path] = size)
-      },
-      logger
-    })
-    return {sizes, total_size}
-  },
-
-  sevenzip_extract: async function (version, logger, archive_path, dest_path, onprogress) {
-    let opts = {logger}
-    let err_state = false
-    let err
-
-    let EXTRACT_RE = /^Extracting\s+(.+)$/
-    let additional_args = []
-
-    if (/^15/.test(version)) {
-      EXTRACT_RE = /^-\s(.+)$/
-      additional_args.push('-bb1')
-    }
-
-    await sf.mkdir(dest_path)
-    await spawn({
-      command: '7za',
-      args: ['x', archive_path, '-o' + dest_path, '-y'].concat(additional_args),
-      split: '\n',
-      ontoken: (token) => {
-        if (verbose) {
-          log(opts, `extract: ${token}`)
-        }
-        if (err_state) {
-          if (!err) err = token
-          return
-        }
-        if (token.match(/^Error:/)) {
-          err_state = 1
-          return
-        }
-
-        let matches = EXTRACT_RE.exec(token)
-        if (!matches) return
-
-        let item_path = path.normalize(matches[1])
-        onprogress(item_path)
-      },
-      logger
-    })
-
-    if (err) throw err
-  },
-
   install: async function (opts) {
-    let logger = opts.logger
     let archive_path = opts.archive_path
     let dest_path = opts.dest_path
+
     let onprogress = opts.onprogress || noop
+    let extract_onprogress = subprogress(onprogress, 0, 80)
+    let stagecp_onprogress = subprogress(onprogress, 80, 100)
 
     let stage_path = opts.archive_path + '-stage'
     await sf.wipe(stage_path)
@@ -130,36 +63,21 @@ let self = {
 
     log(opts, `extracting archive '${archive_path}' to '${stage_path}'`)
 
-    let ibrew = require('../../util/ibrew')
-    let version = await ibrew.get_local_version('7za')
-    log(opts, `...using 7-zip version ${version}`)
-
-    let extracted_size = 0
-    let total_size = 0
-
-    let info = await self.sevenzip_list(version, logger, archive_path)
-    total_size = info.total_size
-    log(opts, `archive contains ${Object.keys(info.sizes).length} files, ${humanize.fileSize(total_size)} total`)
-
-    let extract_onprogress = subprogress(onprogress, 0, 80)
-    let stagecp_onprogress = subprogress(onprogress, 80, 100)
-
-    let sevenzip_progress = (f) => {
-      extracted_size += (info.sizes[f] || 0)
-      let percent = extracted_size / total_size * 100
-      extract_onprogress({ extracted_size, total_size, percent })
-    }
-    await self.sevenzip_extract(version, logger, archive_path, stage_path, sevenzip_progress)
+    let extract_opts = Object.assign({}, opts, {
+      onprogress: extract_onprogress,
+      dest_path: stage_path
+    })
+    await extract.extract(extract_opts)
 
     log(opts, `extracted all files ${archive_path} into staging area`)
 
-    let stage_files = await sf.glob('**/*', {cwd: stage_path})
+    let stage_files = await sf.glob('**', {cwd: stage_path})
 
-    // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
     if (stage_files.length === 1) {
       let only_file = path.join(stage_path, stage_files[0])
 
       if (!opts.tar && await is_tar(only_file)) {
+        // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
         let tar = only_file
         log(opts, `found tar: ${tar}, re-extracting`)
         let sub_opts = Object.assign({}, opts, {
@@ -172,6 +90,7 @@ let self = {
         await sf.wipe(tar)
         return res
       } else {
+        // zipped installers need love too
         let sniff_opts = {archive_path: only_file, disable_cache: true}
         let installer_name
 
@@ -213,7 +132,7 @@ let self = {
     }
     if (!dest_files || !dest_files.length) {
       log(opts, `Globbing for destfiles`)
-      dest_files = await sf.glob('**/*', {cwd: dest_path})
+      dest_files = await sf.glob('**', {cwd: dest_path})
     }
 
     log(opts, `dest has ${dest_files.length} potential dinosaurs`)
@@ -241,7 +160,6 @@ let self = {
 
     await sf.write_file(receipt_path, JSON.stringify({
       cave,
-      total_size,
       num_files: stage_files.length,
       files: stage_files
     }, null, 2))
@@ -249,7 +167,7 @@ let self = {
     log(opts, `wiping stage...`)
     await sf.wipe(stage_path)
 
-    return {extracted_size, total_size}
+    return {status: 'ok'}
   },
 
   uninstall: async function (opts) {

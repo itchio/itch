@@ -2,7 +2,7 @@
 let Transition = require('./errors').Transition
 
 let log = require('../util/log')('tasks/download')
-let http = require('../util/http')
+let butler = require('../util/butler')
 let noop = require('../util/noop')
 let sf = require('../util/sf')
 
@@ -63,7 +63,7 @@ async function start (opts) {
     await sf.wipe(dest)
   })
 
-  await http.request({ url, onprogress, logger, dest, emitter })
+  await butler.dl({ url, dest, onprogress, logger, emitter })
 }
 
 module.exports = { start }
