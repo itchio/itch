@@ -134,6 +134,14 @@ function build_login_and_return_url (return_to) {
 async function game_purchase (payload) {
   let me = CredentialsStore.get_me()
   let game = await db.find_one({_table: 'games', id: payload.id})
+
+  if (!game.can_be_bought) {
+    if (await wants_to_browse_after_failure(game)) {
+      AppActions.game_browse(game.id)
+    }
+    return
+  }
+
   let keys = await db.find({_table: 'download_keys', game_id: payload.id})
 
   let already_owns = keys.length > 0
