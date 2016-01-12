@@ -44,6 +44,7 @@ async function start (opts) {
     }
   } catch (e) {
     if (e.errors && e.errors[0] === 'invalid upload') {
+      await new Promise((resolve, reject) => setTimeout(resolve, 1500))
       throw new Transition({
         to: 'find-upload',
         reason: 'upload-gone'
