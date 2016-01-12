@@ -8,6 +8,11 @@ let GameList = require('./game-list')
 let LibraryPlaceholder = require('./library-placeholder')
 let PreferencesForm = require('./preferences-form')
 
+// predicates
+let pred_every = (cave) => true
+let pred_caved = (cave) => mori.get(cave, 'task') !== 'error'
+let pred_broken = (cave) => mori.get(cave, 'task') === 'error'
+
 /**
  * A list of games corresponding to whatever library tab is selected
  */
@@ -15,6 +20,8 @@ class LibraryContent extends ShallowComponent {
   render () {
     let state = this.props.state
     let panel = mori.getIn(state, ['library', 'panel'])
+    // PSA: the app is open-source, but remember that the server has to agree with you
+    let is_press = mori.getIn(state, ['credentials', 'me', 'press_user'])
 
     let children = []
 
@@ -30,12 +37,12 @@ class LibraryContent extends ShallowComponent {
       }
       let shown_games = mori.get(games, bucket) || mori.list()
 
-      let pred = () => true
+      let pred = pred_every
       if (panel === 'caved') {
-        pred = (cave) => mori.get(cave, 'task') !== 'error'
+        pred = pred_caved
       }
       if (panel === 'broken') {
-        pred = (cave) => mori.get(cave, 'task') === 'error'
+        pred = pred_broken
       }
 
       {
@@ -52,7 +59,7 @@ class LibraryContent extends ShallowComponent {
       let owned_games_by_id = mori.merge(mori.get(games, 'dashboard'), mori.get(games, 'owned'))
 
       if (mori.count(shown_games) > 0) {
-        children.push(r(GameList, {games: shown_games, caves, pred, owned_games_by_id}))
+        children.push(r(GameList, {games: shown_games, caves, pred, owned_games_by_id, is_press}))
       } else {
         children.push(r(LibraryPlaceholder, {panel}))
       }

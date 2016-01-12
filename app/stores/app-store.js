@@ -14,6 +14,8 @@ let env = require('../env')
 let state = mori.hashMap(
   'page', 'login',
 
+  'credentials', null,
+
   'preferences', mori.hashMap(
     'language', 'en'
   ),

@@ -17,6 +17,7 @@ class GameList extends ShallowComponent {
     let games = this.props.games
     let caves = this.props.caves
     let owned_games_by_id = this.props.owned_games_by_id
+    let is_press = this.props.is_press
 
     let index_by = (acc, k, v) => mori.assoc(acc, mori.get(v, 'game_id'), v)
     let caves_by_game_id = mori.reduceKV(index_by, mori.hashMap(), caves)
@@ -24,7 +25,8 @@ class GameList extends ShallowComponent {
     let make_cell = (game) => {
       let game_id = mori.get(game, 'id')
       let cave = mori.get(caves_by_game_id, game_id)
-      let owned = mori.get(owned_games_by_id, game_id.toString())
+      let owned = mori.get(owned_games_by_id, game_id.toString()) ||
+        (is_press && mori.get(game, 'in_press_system'))
       if (!pred(cave)) return ''
       return r(GameCell, {key: game_id, game, cave, owned})
     }
