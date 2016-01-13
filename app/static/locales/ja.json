@@ -24,7 +24,7 @@
     "login.action.register": "itch.ioに登録する", 
     "login.action.reset_password": "パスワードを忘れた場合", 
     "login.field.password": "パスワード", 
-    "login.field.username": "ユーザー名", 
+    "login.field.username": "ユーザー名、またはパスワード", 
     "login.status.dependency_check": "設定を確認中...", 
     "login.status.dependency_install": "依存ファイル {{name}} {{version}}をインストール中", 
     "login.status.login": "ログインしています...", 
