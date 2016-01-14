@@ -4,7 +4,6 @@ let Transition = require('./errors').Transition
 let log = require('../util/log')('tasks/download')
 let butler = require('../util/butler')
 let noop = require('../util/noop')
-let sf = require('../util/sf')
 
 let CaveStore = require('../stores/cave-store')
 let CredentialsStore = require('../stores/credentials-store')
@@ -61,7 +60,7 @@ async function start (opts) {
   emitter.on('cancelled', async (e) => {
     log(opts, `killed the butler with a wrench in the living room`)
     log(opts, `wiping ${dest}`)
-    await sf.wipe(dest)
+    await butler.wipe(dest)
   })
 
   await butler.dl({ url, dest, onprogress, logger, emitter })

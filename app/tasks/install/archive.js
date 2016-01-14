@@ -8,6 +8,7 @@ let sniff = require('../../util/sniff')
 let noop = require('../../util/noop')
 
 let sf = require('../../util/sf')
+let butler = require('../../util/butler')
 let extract = require('../../util/extract')
 
 let core = require('./core')
@@ -51,14 +52,15 @@ let self = {
   install: async function (opts) {
     let archive_path = opts.archive_path
     let dest_path = opts.dest_path
+    let emitter = opts.emitter
 
     let onprogress = opts.onprogress || noop
     let extract_onprogress = subprogress(onprogress, 0, 80)
     let stagecp_onprogress = subprogress(onprogress, 80, 100)
 
     let stage_path = opts.archive_path + '-stage'
-    await sf.wipe(stage_path)
-    await sf.mkdir(stage_path)
+    await butler.wipe(stage_path)
+    await butler.mkdir(stage_path)
 
     log(opts, `extracting archive '${archive_path}' to '${stage_path}'`)
 
@@ -86,7 +88,7 @@ let self = {
         })
 
         let res = await self.install(sub_opts)
-        await sf.wipe(tar)
+        await butler.wipe(tar)
         return res
       } else {
         // zipped installers need love too
@@ -113,7 +115,7 @@ let self = {
       }
     }
 
-    await sf.mkdir(dest_path)
+    await butler.mkdir(dest_path)
 
     log(opts, `cleaning up dest path ${dest_path}`)
 
@@ -143,15 +145,16 @@ let self = {
 
       await Promise.resolve(dinosaurs).map((rel) => {
         let dinosaur = path.join(dest_path, rel)
-        return sf.wipe(dinosaur)
+        return butler.wipe(dinosaur)
       }, {concurrency: 4})
     } else {
       log(opts, `no dinosaurs`)
     }
 
     log(opts, `copying stage to dest`)
-    await sf.ditto(stage_path, dest_path, {
-      onprogress: stagecp_onprogress
+    await butler.ditto(stage_path, dest_path, {
+      onprogress: stagecp_onprogress,
+      emitter: emitter
     })
 
     log(opts, `everything copied, writing receipt`)
@@ -164,7 +167,7 @@ let self = {
     }, null, 2))
 
     log(opts, `wiping stage...`)
-    await sf.wipe(stage_path)
+    await butler.wipe(stage_path)
 
     return {status: 'ok'}
   },
@@ -179,7 +182,7 @@ let self = {
       await core.uninstall(core_opts)
     } else {
       log(opts, `wiping directory ${dest_path}`)
-      await sf.wipe(dest_path)
+      await butler.wipe(dest_path)
     }
 
     log(opts, `cleaning up cache`)

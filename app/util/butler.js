@@ -60,6 +60,62 @@ let self = {
 
     if (err) { throw err }
     return res
+  },
+
+  /* rm -rf ${path} */
+  wipe: async function (path, opts) {
+    if (typeof opts === 'undefined') {
+      opts = {}
+    }
+    let err = null
+    let onerror = (e) => err = e
+
+    let res = await spawn({
+      command: 'butler',
+      args: ['-j', 'wipe', path],
+      ontoken: partial(self.parse_butler_status, opts, onerror)
+    })
+
+    if (err) { throw err }
+    return res
+  },
+
+  /* mkdir -p ${path} */
+  mkdir: async function (path, opts) {
+    if (typeof opts === 'undefined') {
+      opts = {}
+    }
+    let err = null
+    let onerror = (e) => err = e
+
+    let res = await spawn({
+      command: 'butler',
+      args: ['-j', 'mkdir', path],
+      ontoken: partial(self.parse_butler_status, opts, onerror)
+    })
+
+    if (err) { throw err }
+    return res
+  },
+
+  /* rsync -a ${src} ${dst} */
+  ditto: async function (src, dst, opts) {
+    if (typeof opts === 'undefined') {
+      opts = {}
+    }
+    let err = null
+    let onerror = (e) => err = e
+    let emitter = opts.emitter
+
+    let res = await spawn({
+      command: 'butler',
+      args: ['-j', 'ditto', src, dst],
+      ontoken: partial(self.parse_butler_status, opts, onerror),
+      emitter
+    })
+
+    if (err) { throw err }
+    return res
   }
 }
 

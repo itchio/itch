@@ -2,7 +2,7 @@
 let noop = require('../../util/noop')
 let spawn = require('../../util/spawn')
 
-let sf = require('../../util/sf')
+let butler = require('../../util/butler')
 
 let archive = require('./archive')
 let path = require('path')
@@ -12,12 +12,6 @@ let log = require('../../util/log')('installers/dmg')
 let HFS_RE = /(.*)\s+Apple_HFS\s+(.*)\s*$/
 
 let self = {
-  should_skip: function (f) {
-    // Don't copy Applications symlink
-    if (/^Applications$/.test(f)) return true
-    return false
-  },
-
   install: async function (opts) {
     let archive_path = opts.archive_path
     let dest_path = opts.dest_path
@@ -79,7 +73,7 @@ let self = {
     log(opts, `Trying to unlink ${cdr_path}`)
 
     try {
-      await sf.wipe(cdr_path)
+      await butler.wipe(cdr_path)
     } catch (e) {
       log(opts, `Couldn't unlink ${cdr_path}: ${e}`)
     }
@@ -132,14 +126,12 @@ let self = {
     }
 
     log(opts, `Creating target directory ${dest_path}`)
-    await sf.mkdir(dest_path)
+    await butler.mkdir(dest_path)
 
     log(opts, `Copying all files from ${mountpoint} to ${dest_path}`)
+    // TODO probably use staging as well? re-use code from archive
 
-    await sf.ditto(mountpoint, dest_path, {
-      onprogress,
-      should_skip: self.should_skip
-    })
+    await butler.ditto(mountpoint, dest_path, { onprogress })
 
     let cleanup = async () => {
       log(opts, `Detaching cdr file ${cdr_path}`)
@@ -156,7 +148,7 @@ let self = {
       }
 
       log(opts, `Removing cdr file ${cdr_path}`)
-      await sf.wipe(cdr_path)
+      await butler.wipe(cdr_path)
     }
 
     log(opts, `Launching cleanup asynchronously...`)
