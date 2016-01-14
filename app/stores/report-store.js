@@ -38,7 +38,7 @@ async function report_cave (payload) {
     let gist = await github.create_gist(gist_data)
 
     let body =
-`:rotating_light: Game [${game.title}](${game.url}) is broken for me.
+`:rotating_light: ${game.classification} [${game.title}](${game.url}) is broken for me.
 
 :book: Here's the complete [debug log](${gist.html_url}).
 
