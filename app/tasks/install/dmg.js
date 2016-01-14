@@ -1,10 +1,11 @@
 
 let noop = require('../../util/noop')
 let spawn = require('../../util/spawn')
-
 let butler = require('../../util/butler')
+let deploy = require('../../util/deploy')
 
 let archive = require('./archive')
+
 let path = require('path')
 
 let log = require('../../util/log')('installers/dmg')
@@ -14,7 +15,6 @@ let HFS_RE = /(.*)\s+Apple_HFS\s+(.*)\s*$/
 let self = {
   install: async function (opts) {
     let archive_path = opts.archive_path
-    let dest_path = opts.dest_path
     let onprogress = opts.onprogress || noop
 
     log(opts, `Preparing installation of '${archive_path}'`)
@@ -125,13 +125,10 @@ let self = {
       throw new Error('Failed to mount image (no mountpoint)')
     }
 
-    log(opts, `Creating target directory ${dest_path}`)
-    await butler.mkdir(dest_path)
-
-    log(opts, `Copying all files from ${mountpoint} to ${dest_path}`)
-    // TODO probably use staging as well? re-use code from archive
-
-    await butler.ditto(mountpoint, dest_path, { onprogress })
+    let deploy_opts = Object.assign({}, opts, {
+      stage_path: mountpoint
+    })
+    await deploy.deploy(deploy_opts)
 
     let cleanup = async () => {
       log(opts, `Detaching cdr file ${cdr_path}`)

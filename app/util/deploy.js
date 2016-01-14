@@ -6,7 +6,7 @@ let butler = require('./butler')
 let _ = require('underscore')
 let path = require('path')
 
-let log = require('./log')('staged-extract')
+let log = require('./log')('deploy')
 
 let pnoop = async () => null
 
