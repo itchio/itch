@@ -385,7 +385,7 @@ $placeholder_link_color: #93C1F3;
       color: #aaa;
     }
 
-    .game_launch {
+    .main_action {
       font-size: 13px;
       height: 33px;
       line-height: 33px;
@@ -424,7 +424,7 @@ $placeholder_link_color: #93C1F3;
         margin-right: 5px;
       }
 
-      &.uninstalled, &.cave_error {
+      &.uninstalled, &.task_error {
         background-color: #222;
         font-weight: normal;
         text-shadow: none;
@@ -435,7 +435,7 @@ $placeholder_link_color: #93C1F3;
         }
       }
 
-      &.cave_download, &.cave_download-queued, &.cave_install, &.cave_configure, &.cave_launch, &.cave_find-upload, &.cave_uninstall {
+      &.task_download, &.task_download-queued, &.task_install, &.task_configure, &.task_launch, &.task_find-upload, &.task_uninstall {
         background-color: #222;
         font-weight: normal;
         text-shadow: none;
@@ -458,7 +458,7 @@ $placeholder_link_color: #93C1F3;
         padding: 0;
       }
 
-      &.cave_idle {
+      &.task_idle {
         @include button($button_color);
       }
     }

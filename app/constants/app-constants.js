@@ -43,8 +43,6 @@ module.exports = keyMirror({
   INSTALL_LOCATION_TRANSFER: null,
   INSTALL_LOCATION_MAKE_DEFAULT: null,
 
-  /** User requested game to be installed */
-  CAVE_QUEUE: null,
   /** User requested game to be uninstalled */
   CAVE_REQUEST_UNINSTALL: null,
   /** Cave is going to be uninstalled */
@@ -68,6 +66,8 @@ module.exports = keyMirror({
   /** Won't compromise on that */
   SHOW_RAR_POLICY: null,
 
+  /** User requested game to be installed */
+  GAME_QUEUE: null,
   /** Open a game's page */
   GAME_BROWSE: null,
   /** Buy / support a game! */

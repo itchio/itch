@@ -27,7 +27,10 @@ class GameList extends ShallowComponent {
       let cave = mori.get(caves_by_game_id, game_id)
       let owned = mori.get(owned_games_by_id, game_id.toString()) ||
         (is_press && mori.get(game, 'in_press_system'))
-      if (!pred(cave)) return ''
+      if (!pred(cave)) {
+        console.log(`failed predicate, skipping: `, mori.toJs(cave))
+        return ''
+      }
       return r(GameCell, {key: game_id, game, cave, owned})
     }
 

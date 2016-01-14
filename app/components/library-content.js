@@ -10,8 +10,6 @@ let PreferencesForm = require('./preferences-form')
 
 // predicates
 let pred_every = (cave) => true
-let pred_caved = (cave) => mori.get(cave, 'task') !== 'error'
-let pred_broken = (cave) => mori.get(cave, 'task') === 'error'
 
 /**
  * A list of games corresponding to whatever library tab is selected
@@ -38,12 +36,6 @@ class LibraryContent extends ShallowComponent {
       let shown_games = mori.get(games, bucket) || mori.list()
 
       let pred = pred_every
-      if (panel === 'caved') {
-        pred = pred_caved
-      }
-      if (panel === 'broken') {
-        pred = pred_broken
-      }
 
       {
         let loc_matches = panel.match(/^locations\/(.*)$/)

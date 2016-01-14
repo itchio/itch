@@ -10,6 +10,7 @@
     "grid.item.install": "Install",
     "grid.item.installing": "Installing…",
     "grid.item.launch": "Launch",
+    "grid.item.open": "Open",
     "grid.item.not_platform_compatible": "Not available on {{platform}}",
     "grid.item.open_in_file_explorer": "Open installation folder in file explorer",
     "grid.item.open_in_file_explorer_linux": "Open installation folder in file manager",

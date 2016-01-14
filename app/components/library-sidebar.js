@@ -13,11 +13,6 @@ let LibraryPanelLink = require('./library-panel-link')
 // Hack for frameless styling
 let frameless = process.platform === 'darwin'
 
-let is_cave_broken = (kv) => {
-  let cave = mori.last(kv)
-  return mori.get(cave, 'task') === 'error'
-}
-
 let is_cave_interesting = (panel, kv) => {
   let id = mori.first(kv)
   let cave = mori.last(kv)
@@ -100,8 +95,7 @@ class LibrarySidebar extends ShallowComponent {
     own_collections = own_collections.map((props) => r(LibraryPanelLink, props))
     ftd_collections = ftd_collections.map((props) => r(LibraryPanelLink, props))
 
-    let broken_count = mori.count(mori.filter(is_cave_broken, caves))
-    let installed_count = mori.count(mori.filter(_.negate(is_cave_broken), caves))
+    let installed_count = mori.count(caves)
 
     let in_progress_items = mori.filter(_.partial(is_cave_interesting, panel), caves)
     let cave_items = mori.map((kv) => {
@@ -150,16 +144,6 @@ class LibrarySidebar extends ShallowComponent {
       panel, games, className: 'installed',
       count: installed_count
     }))
-
-    if (broken_count > 0) {
-      links.push(r(LibraryPanelLink, {
-        before: r(Icon, {icon: 'heart-broken'}),
-        name: 'broken',
-        label: t('sidebar.broken'),
-        panel, games, className: 'broken',
-        count: broken_count
-      }))
-    }
 
     if (panel === 'preferences') {
       links.push(r(LibraryPanelLink, {

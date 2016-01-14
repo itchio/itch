@@ -184,7 +184,7 @@ async function cache_collection_games (id) {
 // TODO: Move game_browse somewhere else
 
 async function game_browse (payload) {
-  let game = await db.find_one({_table: 'games', id: payload.id})
+  let game = await db.find_one({_table: 'games', id: payload.game_id})
   electron.shell.openExternal(game.url)
 }
 

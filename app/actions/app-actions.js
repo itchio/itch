@@ -139,13 +139,6 @@ let self = {
 
   /* Caves */
 
-  cave_queue: (game_id) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.CAVE_QUEUE,
-      game_id
-    })
-  },
-
   cave_request_uninstall: (id) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.CAVE_REQUEST_UNINSTALL,
@@ -211,20 +204,26 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.CAVE_REPORT, id })
   },
 
+  /* Games */
+
   show_rar_policy: (game_id) => {
     AppDispatcher.dispatch({ action_type: AppConstants.SHOW_RAR_POLICY, game_id })
   },
 
-  game_browse: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GAME_BROWSE, id })
+  game_queue: (game_id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.GAME_QUEUE, game_id })
   },
 
-  game_purchase: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GAME_PURCHASE, id })
+  game_browse: (game_id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.GAME_BROWSE, game_id })
   },
 
-  game_purchased: (id, message) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GAME_PURCHASED, id, message })
+  game_purchase: (game_id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.GAME_PURCHASE, game_id })
+  },
+
+  game_purchased: (game_id, message) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.GAME_PURCHASED, game_id, message })
   },
 
   set_progress: (alpha) => {

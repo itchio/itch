@@ -8,10 +8,17 @@ let log = require('../util/log')('tasks/find-upload')
 let AppActions = require('../actions/app-actions')
 let CaveStore = require('../stores/cave-store')
 let CredentialsStore = require('../stores/credentials-store')
+let classification_actions = require('../constants/classification-actions')
 
 let self = {
-  filter_uploads: function (uploads) {
+  filter_uploads: function (action, uploads) {
+    if (action === 'open') {
+      // don't filter if we're just downloading a bunch of files
+      return uploads
+    }
+
     // filter uploads to find one relevant to our current platform
+    // XXX only for game/tool!
     let prop = `p_${os.itch_platform()}`
     return uploads.filter((upload) => !!upload[prop])
   },
@@ -42,6 +49,9 @@ let self = {
     let cave = await CaveStore.find(id)
     let key = cave.key || await db.find_one({_table: 'download_keys', game_id: cave.game_id})
 
+    let game = await db.find_one({_table: 'games', id: cave.game_id})
+    let action = classification_actions[game.classification] || 'launch'
+
     if (key) {
       AppActions.cave_update(id, {key})
       log(opts, 'bought game, using download key')
@@ -58,7 +68,7 @@ let self = {
       throw new Error('No downloads available')
     }
 
-    uploads = self.filter_uploads(uploads)
+    uploads = self.filter_uploads(action, uploads)
     uploads = uploads.map(self.score_upload)
     uploads = self.sort_uploads(uploads)
 

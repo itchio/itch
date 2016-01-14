@@ -303,7 +303,7 @@ async function cave_probe (payload) {
   electron.shell.openItem(log_path(payload.id))
 }
 
-async function cave_queue (payload) {
+async function game_queue (payload) {
   let record = await db.find_one({_table: CAVE_TABLE, game_id: payload.game_id})
 
   if (record) {
@@ -429,7 +429,8 @@ function logout (payload) {
 }
 
 AppDispatcher.register('cave-store', Store.action_listeners(on => {
-  on(AppConstants.CAVE_QUEUE, cave_queue)
+  on(AppConstants.GAME_QUEUE, game_queue)
+
   on(AppConstants.CAVE_REQUEST_UNINSTALL, cave_request_uninstall)
   on(AppConstants.CAVE_QUEUE_UNINSTALL, cave_queue_uninstall)
   on(AppConstants.CAVE_QUEUE_REINSTALL, cave_queue_reinstall)

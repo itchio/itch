@@ -133,7 +133,7 @@ function build_login_and_return_url (return_to) {
 
 async function game_purchase (payload) {
   let me = CredentialsStore.get_me()
-  let game = await db.find_one({_table: 'games', id: payload.id})
+  let game = await db.find_one({_table: 'games', id: payload.game_id})
 
   if (!game.can_be_bought) {
     if (await wants_to_browse_after_failure(game)) {
