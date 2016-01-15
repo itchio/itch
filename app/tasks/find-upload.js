@@ -63,10 +63,11 @@ let self = {
     let client = CredentialsStore.get_current_user()
 
     let cave = await CaveStore.find(id)
-    let key = cave.key || await db.find_one({_table: 'download_keys', game_id: cave.game_id})
+    let key = cave.key || await db.find_download_key_for_game(cave.game_id)
 
-    let game = await db.find_one({_table: 'games', id: cave.game_id})
-    let action = classification_actions[game.classification] || 'launch'
+    let action = 'launch'
+    let game = (await db.find_game(cave.game_id)) || {}
+    action = classification_actions[game.classification] || 'launch'
 
     if (key) {
       AppActions.cave_update(id, {key})

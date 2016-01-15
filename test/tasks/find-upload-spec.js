@@ -1,21 +1,17 @@
 
 let test = require('zopf')
 let proxyquire = require('proxyquire')
-let Promise = require('bluebird')
-let sinon = require('sinon')
 
 let fixture = require('../fixture')
 let electron = require('../stubs/electron')
 let CaveStore = require('../stubs/cave-store')
 let CredentialsStore = require('../stubs/credentials-store')
 let AppActions = require('../stubs/app-actions')
+let db = require('../stubs/db')
 
 let uploads_fixture = fixture.api('game/36664/uploads')
 
 test('find-upload', t => {
-  let db = {
-    find_one: () => Promise.resolve(null)
-  }
   let os = {
     itch_platform: () => 'windows',
     '@noCallThru': true
@@ -35,50 +31,69 @@ test('find-upload', t => {
 
   let opts = {id: 'kalamazoo'}
 
-  t.case('search for download key', t => {
-    t.mock(db).expects('find_one').once().resolves(null)
-    return find_upload.start({})
+  let picks_upload = async (t, upload_id) => {
+    let err
+    try {
+      await find_upload.start(opts)
+    } catch (e) { err = e }
+    t.same(err, {to: 'download', reason: 'found-upload', data: {upload_id}}, `picked upload ${upload_id}`)
+  }
+
+  let transitions = async (t, opts) => {
+    let err
+    try {
+      await find_upload.start(opts)
+    } catch (e) { err = e }
+    t.same(err.to, 'download', 'transitioned')
+  }
+
+  t.case('searches for download key', async t => {
+    t.mock(db).expects('find_download_key_for_game').once().resolves(null)
+    await transitions(t, {})
   })
 
-  t.case('use download key', t => {
+  t.case('uses download key', async t => {
     t.stub(CaveStore, 'find').resolves({
       key: {id: 'olmec'}
     })
     t.mock(client).expects('download_key_uploads').once().resolves(uploads_fixture)
-    return find_upload.start(opts)
+    await transitions(t, opts)
   })
 
-  t.case('rejects 0 downloads', t => {
+  t.case('rejects 0 downloads', async t => {
     client.game_uploads.resolves({uploads: []})
-    return t.rejects(find_upload.start(opts))
+    await t.rejects(find_upload.start(opts))
   })
 
-  t.case('rejects 0 downloads for platform', t => {
+  t.case('rejects 0 downloads for platform', async t => {
     client.game_uploads.resolves({uploads: [
       {id: 11, filename: 'setup.dmg'}
     ]})
-    return t.rejects(find_upload.start(opts))
+    await t.rejects(find_upload.start(opts))
   })
 
-  t.case('prefer zip', t => {
+  t.case('prefer zip', async t => {
     client.game_uploads.resolves({uploads: [
       {id: 11, p_windows: true, filename: 'setup.exe'},
       {id: 22, p_windows: true, filename: 'game.zip'}
     ]})
-    let stub = t.stub(AppActions, 'cave_update')
-    return find_upload.start(opts).then(_ => {
-      sinon.assert.calledWith(stub, 'kalamazoo', {upload_id: 22})
-    })
+    await picks_upload(t, 22)
   })
 
-  t.case('avoid soundtracks', t => {
+  t.case('avoid soundtracks', async t => {
     client.game_uploads.resolves({uploads: [
-      {id: 11, p_windows: true, filename: 'soundtrack.zip'},
-      {id: 22, p_windows: true, filename: 'game.zip'}
+      {id: 11, p_windows: true, filename: 'game.zip'},
+      {id: 22, p_windows: true, filename: 'soundtrack.zip'}
     ]})
-    let stub = t.stub(AppActions, 'cave_update')
-    return find_upload.start(opts).then(_ => {
-      sinon.assert.calledWith(stub, 'kalamazoo', {upload_id: 22})
-    })
+    await picks_upload(t, 11)
+  })
+
+  t.case('avoid deb/rpm', async t => {
+    client.game_uploads.resolves({uploads: [
+      {id: 11, p_windows: true, filename: 'game.deb'},
+      {id: 22, p_windows: true, filename: 'game.rpm'},
+      {id: 33, p_windows: true, filename: 'game.zip'}
+    ]})
+    await picks_upload(t, 33)
   })
 })

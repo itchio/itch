@@ -1,5 +1,4 @@
 
-
 let Promise = require('bluebird')
 let proxyquire = require('proxyquire')
 let electron = require('./electron')
@@ -11,6 +10,7 @@ let self = {
 }
 
 let db = proxyquire('../../app/util/db', electron)
+
 Object.keys(db).forEach((key) => {
   self[key] = noop
 })

@@ -207,7 +207,27 @@ let self = {
       // because we have paginated fetch logic elsewhere
       relations: {}
     })
-  }
+  },
+
+  /* Helpers */
+
+  find_game: async function (game_id) {
+    return await self.find_one({_table: 'games', id: game_id})
+  },
+
+  find_download_key_for_game: async function (game_id) {
+    return await self.find_one({_table: 'download_keys', game_id})
+  },
+
+  find_user: async function (user_id) {
+    return await self.find_one({_table: 'users', id: user_id})
+  },
+
+  find_cave: async function (cave_id) {
+    return await self.find_one({_table: 'caves', _id: cave_id})
+  },
+
+  end: true
 }
 
 module.exports = self

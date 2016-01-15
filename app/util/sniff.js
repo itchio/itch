@@ -3,9 +3,6 @@ let Promise = require('bluebird')
 let file_type = require('file-type')
 let read_chunk = Promise.promisify(require('read-chunk'))
 
-let is_mac = (process.platform === 'darwin')
-let is_linux = (process.platform === 'linux')
-
 function sniff (buf) {
   // intel Mach-O executables start with 0xCEFAEDFE or 0xCFFAEDFE
   // (old PowerPC Mach-O executables started with 0xFEEDFACE)
@@ -13,7 +10,7 @@ function sniff (buf) {
     return {
       ext: '',
       mime: 'application/octet-stream',
-      executable: is_mac
+      mac_executable: true
     }
   }
 
@@ -23,7 +20,7 @@ function sniff (buf) {
     return {
       ext: '',
       mime: 'application/octet-stream',
-      executable: is_mac
+      mac_executable: true
     }
   }
 
@@ -33,7 +30,7 @@ function sniff (buf) {
     return {
       ext: '',
       mime: 'application/octet-stream',
-      executable: is_linux
+      linux_executable: true
     }
   }
 
@@ -43,7 +40,8 @@ function sniff (buf) {
     return {
       ext: 'sh',
       mime: 'application/x-sh',
-      executable: (is_mac || is_linux)
+      mac_executable: true,
+      linux_executable: true
     }
   }
 
