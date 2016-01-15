@@ -31,9 +31,7 @@ let self = {
     // Microsoft packages
     'msi': 'msi',
     // Inno setup, NSIS
-    'exe': 'exe',
-    // .deb packages: APT / Debian-based distributions
-    'deb': 'deb'
+    'exe': 'exe'
   },
 
   install: async function (opts) {

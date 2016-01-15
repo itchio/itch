@@ -64,7 +64,7 @@ module.exports = keyMirror({
   /** Let the others figure it out */
   CAVE_REPORT: null,
   /** Won't compromise on that */
-  SHOW_RAR_POLICY: null,
+  SHOW_PACKAGING_POLICY: null,
 
   /** User requested game to be installed */
   GAME_QUEUE: null,

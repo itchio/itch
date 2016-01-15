@@ -206,8 +206,8 @@ let self = {
 
   /* Games */
 
-  show_rar_policy: (game_id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.SHOW_RAR_POLICY, game_id })
+  show_packaging_policy: (format, game_id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.SHOW_PACKAGING_POLICY, format, game_id })
   },
 
   game_queue: (game_id) => {

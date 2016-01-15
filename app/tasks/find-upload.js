@@ -18,20 +18,34 @@ let self = {
     }
 
     // filter uploads to find one relevant to our current platform
-    // XXX only for game/tool!
     let prop = `p_${os.itch_platform()}`
     return uploads.filter((upload) => !!upload[prop])
   },
 
   score_upload: function (upload) {
     let filename = upload.filename.toLowerCase()
-    let score = 0
-    if (/\.zip$/.test(filename)) {
+    let score = 50
+
+    /* Preferred formats */
+    if (/\.(zip|7z)$/i.test(filename)) {
       score += 10
     }
+
+    /* Usually not what you want (usually set of sources on Linux) */
+    if (/\.tar\.(gz|bz2|xz)$/i.test(filename)) {
+      score -= 10
+    }
+
+    /* Unsupported formats */
+    if (/\.(rpm|deb|rar)$/i.test(filename)) {
+      score -= 50
+    }
+
+    /* Definitely not something we can launch */
     if (/soundtrack/.test(filename)) {
       score -= 100
     }
+
     return Object.assign({}, upload, {score})
   },
 
@@ -57,7 +71,7 @@ let self = {
       log(opts, 'bought game, using download key')
       uploads = (await client.download_key_uploads(key.id)).uploads
     } else {
-      log(opts, 'no download key, seeking free uploads')
+      log(opts, 'no download key, seeking available uploads')
       uploads = (await client.game_uploads(cave.game_id)).uploads
     }
 
@@ -72,7 +86,8 @@ let self = {
     uploads = uploads.map(self.score_upload)
     uploads = self.sort_uploads(uploads)
 
-    log(opts, `post-filters, ${uploads.length} uploads left`)
+    log(opts, `sorted uploads: ${JSON.stringify(uploads, null, 2)}`)
+
     if (uploads.length === 0) {
       throw new Error('No downloads available')
     }
@@ -80,9 +95,15 @@ let self = {
     // TODO: decide what happens when there's several uploads
     let upload = uploads[0]
 
-    if (/\.rar$/i.test(upload.filename)) {
-      AppActions.cave_implode(id)
-      AppActions.show_rar_policy(cave.game_id)
+    let matches = /\.(rar|deb|rpm)$/i.exec(upload.filename)
+    if (matches) {
+      let format = matches[1]
+      console.log(`refusing to work with ${format}`)
+
+      if (!cave.launchable) {
+        AppActions.cave_implode(id)
+      }
+      AppActions.show_rar_policy(format, cave.game_id)
       return
     }
 

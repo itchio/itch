@@ -17,7 +17,9 @@ Object.assign(self, {
   account_forgot_password: `${self.itchio}/user/forgot-password`,
   developers_learn_more: `${self.itchio}/developers`,
   my_collections: `${self.itchio}/my-collections`,
-  rar_policy: `${self.itchio}/t/11918/rar-support-is-not-happening-repack-your-games`
+  rar_policy: `${self.itchio}/t/11918/rar-support-is-not-happening-repack-your-games`,
+  deb_policy: `${self.itchio}/t/13882/deb-and-rpm-arent-supported-by-itch-please-ship-portable-linux-builds`,
+  rpm_policy: `${self.itchio}/t/13882/deb-and-rpm-arent-supported-by-itch-please-ship-portable-linux-builds`
 })
 
 module.exports = self
