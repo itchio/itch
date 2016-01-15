@@ -135,12 +135,15 @@ async function game_purchase (payload) {
   let me = CredentialsStore.get_me()
   let game = await db.find_one({_table: 'games', id: payload.game_id})
 
-  if (!game.can_be_bought) {
-    if (await wants_to_browse_after_failure(game)) {
-      AppActions.game_browse(game.id)
-    }
-    return
-  }
+  console.log(`trying to purchase ${JSON.stringify(game, null, 2)}`)
+
+  // XXX working around https://github.com/itchio/itch/issues/379 for now
+  // if (!game.can_be_bought) {
+  //   if (await wants_to_browse_after_failure(game)) {
+  //     AppActions.game_browse(game.id)
+  //   }
+  //   return
+  // }
 
   let keys = await db.find({_table: 'download_keys', game_id: payload.id})
 
