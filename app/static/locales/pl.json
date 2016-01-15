@@ -28,7 +28,7 @@
     "login.action.reset_password": "Zapomniane hasło", 
     "login.field.password": "Hasło", 
     "login.field.username": "Nazwa użytkownika lub e-mail", 
-    "login.status.dependency_check": "Sprawdzenie, czy wszystko jest OK…", 
+    "login.status.dependency_check": "Sprawdzanie, czy wszystko jest OK…", 
     "login.status.dependency_install": "Instalacja zależności {{name}} {{version}}", 
     "login.status.login": "Logowanie…", 
     "login.status.setup_failure": "Problem w trakcie instalacji: {{error}}", 
