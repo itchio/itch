@@ -83,6 +83,9 @@ let self = {
       if (/unins.*\.exe$/i.test(exe.path)) {
         score -= 50
       }
+      if (/^kick\.bin/i.test(exe.path)) {
+        score -= 50
+      }
       if (/nwjc\.exe$/i.test(exe.path)) {
         score -= 20
       }
@@ -92,7 +95,7 @@ let self = {
       if (/vcredist.*\.exe$/i.test(exe.path)) {
         score = 0
       }
-      if (/\.so/.test(exe.path)) {
+      if (/\.(so|dylib)/.test(exe.path)) {
         score = 0
       }
       if (/\.sh/.test(exe.path)) {
