@@ -8,6 +8,7 @@ let Tooltip = require('rc-tooltip')
 let Icon = require('../icon')
 
 let AppActions = require('../../actions/app-actions')
+let classification_actions = require('../../constants/classification-actions')
 
 let platform = require('../../util/os').itch_platform()
 
@@ -21,6 +22,9 @@ class SecondaryActions extends ShallowComponent {
 
     let cave_id = mori.get(cave, 'id')
     let task = mori.get(cave, 'task')
+
+    let classification = mori.get(game, 'classification')
+    let action = classification_actions[classification]
 
     if (task === 'error') {
       children.push(this.tooltip('grid.item.retry', r.span({
@@ -52,12 +56,14 @@ class SecondaryActions extends ShallowComponent {
         r(Icon, {icon: 'cart'})
       ])))
 
-      children.push(this.tooltip(this.browse_i18n_key(), r.span({
-        className: 'game_explore',
-        onClick: () => AppActions.cave_explore(cave_id)
-      }, [
-        r(Icon, {icon: 'folder-open'})
-      ])))
+      if (action !== 'open') {
+        children.push(this.tooltip(this.browse_i18n_key(), r.span({
+          className: 'game_explore',
+          onClick: () => AppActions.cave_explore(cave_id)
+        }, [
+          r(Icon, {icon: 'folder-open'})
+        ])))
+      }
     }
 
     children.push(this.tooltip('grid.item.uninstall', r.span({
