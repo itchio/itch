@@ -18,13 +18,13 @@ let sniff = require('./sniff')
 let butler = require('./butler')
 
 let self = {
-  sevenzip_list: async function (v, logger, archive_path) {
+  sevenzip_list: async function (command, v, logger, archive_path) {
     let opts = {logger}
     let sizes = {}
     let total_size = 0
 
     await spawn({
-      command: '7za',
+      command,
       args: ['-slt', 'l', archive_path],
       split: '\n\n',
       ontoken: (token) => {
@@ -43,7 +43,7 @@ let self = {
     return {sizes, total_size}
   },
 
-  sevenzip_extract: async function (v, logger, archive_path, dest_path, onprogress) {
+  sevenzip_extract: async function (command, v, logger, archive_path, dest_path, onprogress) {
     let opts = {logger}
     let err_state = false
     let err
@@ -58,7 +58,7 @@ let self = {
 
     await sf.mkdir(dest_path)
     await spawn({
-      command: '7za',
+      command,
       args: ['x', archive_path, '-o' + dest_path, '-y'].concat(additional_args),
       split: '\n',
       ontoken: (token) => {
@@ -90,6 +90,7 @@ let self = {
     let archive_path = opts.archive_path
     let dest_path = opts.dest_path
     let onprogress = opts.onprogress || noop
+    let command = opts.sevenzip || '7za'
     let logger = opts.logger
 
     let check = formulas['7za'].version_check
@@ -101,7 +102,7 @@ let self = {
     let extracted_size = 0
     let total_size = 0
 
-    let info = await self.sevenzip_list(v, logger, archive_path)
+    let info = await self.sevenzip_list(command, v, logger, archive_path)
     total_size = info.total_size
     log(opts, `archive contains ${Object.keys(info.sizes).length} files, ${humanize.fileSize(total_size)} total`)
 
@@ -110,7 +111,7 @@ let self = {
       let percent = extracted_size / total_size * 100
       onprogress({ extracted_size, total_size, percent })
     }
-    await self.sevenzip_extract(v, logger, archive_path, dest_path, sevenzip_progress)
+    await self.sevenzip_extract(command, v, logger, archive_path, dest_path, sevenzip_progress)
   },
 
   extract: async (opts) => {
