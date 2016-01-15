@@ -48,10 +48,7 @@ class GameCell extends ShallowComponent {
 
     children.push(r(MainAction, {cave, game, platform_compatible, may_download}))
 
-    let task = mori.get(cave, 'task')
-    if (cave && (task === 'idle' || task === 'error')) {
-      children.push(r(SecondaryActions, { cave, game }))
-    }
+    children.push(r(SecondaryActions, {cave, game, may_download}))
 
     return r.div({className: 'game_cell'}, children)
   }

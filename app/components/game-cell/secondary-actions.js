@@ -16,66 +16,91 @@ class SecondaryActions extends ShallowComponent {
   render () {
     let game = this.props.game
     let cave = this.props.cave
+    let may_download = this.props.may_download
+    let error = false
 
     let children = []
     let game_id = mori.get(game, 'id')
 
-    let cave_id = mori.get(cave, 'id')
-    let task = mori.get(cave, 'task')
-
     let classification = mori.get(game, 'classification')
     let action = classification_actions[classification]
 
-    if (task === 'error') {
-      children.push(this.tooltip('grid.item.retry', r.span({
-        className: 'game_retry',
-        onClick: () => AppActions.game_queue(game_id)
-      }, [
-        r(Icon, {icon: 'refresh'})
-      ])))
+    if (cave) {
+      let cave_id = mori.get(cave, 'id')
+      let task = mori.get(cave, 'task')
 
-      children.push(this.tooltip(this.browse_i18n_key(), r.span({
-        className: 'game_explore',
-        onClick: () => AppActions.cave_explore(cave_id)
-      }, [
-        r(Icon, {icon: 'folder-open'})
-      ])))
+      if (task === 'error') {
+        error = true
 
-      children.push(this.tooltip('grid.item.probe', r.span({
-        className: 'game_probe',
-        onClick: () => AppActions.cave_probe(cave_id)
-      }, [
-        r(Icon, {icon: 'bug'})
-      ])))
-    } else {
-      // No errors
-      children.push(this.tooltip('grid.item.purchase_or_donate', r.span({
-        className: 'game_purchase',
-        onClick: () => AppActions.game_purchase(game_id)
-      }, [
-        r(Icon, {icon: 'cart'})
-      ])))
+        children.push(this.tooltip('grid.item.retry', r.span({
+          className: 'game_retry',
+          onClick: () => AppActions.game_queue(game_id)
+        }, [
+          r(Icon, {icon: 'refresh'})
+        ])))
 
-      if (action !== 'open') {
         children.push(this.tooltip(this.browse_i18n_key(), r.span({
           className: 'game_explore',
           onClick: () => AppActions.cave_explore(cave_id)
         }, [
           r(Icon, {icon: 'folder-open'})
         ])))
+
+        children.push(this.tooltip('grid.item.probe', r.span({
+          className: 'game_probe',
+          onClick: () => AppActions.cave_probe(cave_id)
+        }, [
+          r(Icon, {icon: 'bug'})
+        ])))
+      }
+
+      if (task === 'idle') {
+        // No errors
+        children.push(this.tooltip('grid.item.purchase_or_donate', r.span({
+          className: 'game_purchase',
+          onClick: () => AppActions.game_purchase(game_id)
+        }, [
+          r(Icon, {icon: 'cart'})
+        ])))
+
+        if (action !== 'open') {
+          children.push(this.tooltip(this.browse_i18n_key(), r.span({
+            className: 'game_explore',
+            onClick: () => AppActions.cave_explore(cave_id)
+          }, [
+            r(Icon, {icon: 'folder-open'})
+          ])))
+        }
+      }
+
+      if (task === 'error' || task === 'idle') {
+        children.push(this.tooltip('grid.item.uninstall', r.span({
+          className: 'game_uninstall',
+          onClick: () => AppActions.cave_request_uninstall(cave_id)
+        }, [
+          r(Icon, {icon: 'delete'})
+        ])))
+      }
+    } else {
+      // No cave
+      let has_min_price = mori.get(game, 'min_price') > 0
+      let main_is_purchase = !may_download && has_min_price
+
+      // XXX should use API' can_be_bought but see
+      // https://github.com/itchio/itch/issues/379
+      if (!main_is_purchase) {
+        children.push(this.tooltip('grid.item.purchase_or_donate', r.span({
+          className: 'game_purchase',
+          onClick: () => AppActions.game_purchase(game_id)
+        }, [
+          r(Icon, {icon: 'cart'})
+        ])))
       }
     }
 
-    children.push(this.tooltip('grid.item.uninstall', r.span({
-      className: 'game_uninstall',
-      onClick: () => AppActions.cave_request_uninstall(cave_id)
-    }, [
-      r(Icon, {icon: 'delete'})
-    ])))
-
     let classSet = {
       cave_actions: true,
-      error: (task === 'error')
+      error
     }
 
     return r.div({classSet}, children)
@@ -105,6 +130,7 @@ class SecondaryActions extends ShallowComponent {
 }
 
 SecondaryActions.propTypes = {
+  may_download: PropTypes.bool,
   cave: PropTypes.any,
   game: PropTypes.any
 }
