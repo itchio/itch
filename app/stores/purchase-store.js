@@ -132,8 +132,10 @@ function build_login_and_return_url (return_to) {
 }
 
 async function game_purchase (payload) {
+  let game_id = payload.game_id
+
   let me = CredentialsStore.get_me()
-  let game = await db.find_one({_table: 'games', id: payload.game_id})
+  let game = await db.find_one({_table: 'games', id: game_id})
 
   console.log(`trying to purchase ${JSON.stringify(game, null, 2)}`)
 
@@ -145,7 +147,7 @@ async function game_purchase (payload) {
   //   return
   // }
 
-  let keys = await db.find({_table: 'download_keys', game_id: payload.id})
+  let keys = await db.find({_table: 'download_keys', game_id})
 
   let already_owns = keys.length > 0
   if (already_owns) {
@@ -170,7 +172,7 @@ async function game_purchase (payload) {
     if (/^.*\/download\/[a-zA-Z0-9]*$/.test(parsed.pathname)) {
       // purchase went through!
       AppActions.fetch_games('owned')
-      AppActions.game_purchased(payload.id, `You just purchased ${game.title}! You should now be able to install it in one click.`)
+      AppActions.game_purchased(game_id, `You just purchased ${game.title}! You should now be able to install it in one click.`)
       win.close()
     } else if (/\/pay\/cancel/.test(parsed.pathname)) {
       // payment was cancelled
