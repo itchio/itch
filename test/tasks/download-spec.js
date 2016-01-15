@@ -9,7 +9,6 @@ let CredentialsStore = require('../stubs/credentials-store')
 
 let typical_install = {
   _id: 42,
-  upload_id: 11,
   uploads: { '11': { id: 11, size: 512 } }
 }
 
@@ -38,20 +37,28 @@ test('download', t => {
   })
 
   t.case('validates upload in list', t => {
-    return t.rejects(download.start({id: 42, emitter}))
+    return t.rejects(download.start({id: 42, upload_id: 11, emitter}))
   })
 
-  t.case('downloads free game', t => {
+  t.case('downloads free game', async t => {
     let install = typical_install
     t.stub(CaveStore, 'find').resolves(install)
     t.stub(client, 'download_upload').resolves(upload_response)
-    return download.start({id: 42, emitter})
+    let err
+    try {
+      await download.start({id: 42, upload_id: 11, emitter})
+    } catch (e) { err = e }
+    t.same(err.reason, 'download-finished')
   })
 
-  t.case('downloads paid game', t => {
+  t.case('downloads paid game', async t => {
     let install = Object.assign({}, typical_install, {key: {id: 'abacus'}})
     t.stub(CaveStore, 'find').resolves(install)
     t.stub(client, 'download_upload_with_key').resolves(upload_response)
-    return download.start({id: 42, emitter})
+    let err
+    try {
+      await download.start({id: 42, upload_id: 11, emitter})
+    } catch (e) { err = e }
+    t.same(err.reason, 'download-finished')
   })
 })

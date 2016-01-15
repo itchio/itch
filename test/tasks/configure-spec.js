@@ -86,8 +86,8 @@ test('configure (each platform)', t => {
   t.case('darwin finds binaries when no app bundles', async t => {
     let res = await darwin.configure(linux_path)
     let names = [
-      'bin/game32',
-      'bin/game64',
+      'bin/mach-o',
+      'bin/mach-o-bis',
       'OpenHexagon',
       'quine'
     ]

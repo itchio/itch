@@ -20,7 +20,7 @@ async function start (opts) {
   try {
     await find_upload.start(opts)
   } catch (err) {
-    if (err instanceof errors.Transition && err.to === 'download') {
+    if (err.type === 'transition' && err.to === 'download') {
       let upload_id = err.data.upload_id
       if (upload_id !== cave.upload_id) {
         log(opts, `better download available (${cave.upload_id} => ${upload_id})`)

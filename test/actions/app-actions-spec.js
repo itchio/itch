@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 
@@ -34,12 +33,13 @@ test('app-actions', t => {
   test_action('authenticated', [], { action_type: 'AUTHENTICATED' })
   test_action('logout', [], { action_type: 'LOGOUT' })
 
-  test_action('cave_queue', [42], { action_type: 'CAVE_QUEUE', game_id: 42 })
   test_action('cave_update', [42, {a: 'b'}], { action_type: 'CAVE_UPDATE', id: 42, data: {a: 'b'} })
   test_action('cave_progress', [{a: 'b'}], { action_type: 'CAVE_PROGRESS', opts: {a: 'b'} })
   test_action('set_progress', [0.5], { action_type: 'SET_PROGRESS', alpha: 0.5 })
   test_action('bounce', [], { action_type: 'BOUNCE' })
   test_action('notify', ['les carottes sont cuites'], { action_type: 'NOTIFY', message: 'les carottes sont cuites' })
+
+  test_action('game_queue', [42], { action_type: 'GAME_QUEUE', game_id: 42 })
 
   test_action('fetch_games', ['collections/23498'], { action_type: 'FETCH_GAMES', path: 'collections/23498' })
 

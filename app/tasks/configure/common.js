@@ -1,19 +1,16 @@
 
 let sniff = require('../../util/sniff')
 let sf = require('../../util/sf')
-let os = require('../../util/os')
 
 let _ = require('underscore')
 let path = require('path')
-
-let field = os.platform() === 'darwin' ? 'mac_executable' : 'linux_executable'
 
 /**
  * Tries to find executables by sniffing file contents,
  * +x them, and return a list of them
  */
-function fix_execs (base_path) {
-  let f = _.partial(sniff_and_chmod, base_path)
+function fix_execs (field, base_path) {
+  let f = _.partial(sniff_and_chmod, field, base_path)
 
   return (
     sf.glob(`**`, {nodir: true, cwd: base_path})
@@ -22,7 +19,7 @@ function fix_execs (base_path) {
   )
 }
 
-async function sniff_and_chmod (base, rel) {
+async function sniff_and_chmod (field, base, rel) {
   let file = path.join(base, rel)
 
   let type = await sniff.path(file)

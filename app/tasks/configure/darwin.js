@@ -20,14 +20,14 @@ let self = {
     })
 
     if (bundles.length) {
-      let fixer = (x) => common.fix_execs(path.join(cave_path, x))
+      let fixer = (x) => common.fix_execs('mac_executable', path.join(cave_path, x))
       await Promise.each(bundles, fixer)
       return {executables: bundles}
     }
 
     // some games aren't properly packaged app bundles but rather a shell
     // script / binary - try it the linux way
-    let executables = await common.fix_execs(cave_path)
+    let executables = await common.fix_execs('mac_executable', cave_path)
     return {executables}
   }
 }

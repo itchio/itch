@@ -36,7 +36,7 @@ test('find-upload', t => {
     try {
       await find_upload.start(opts)
     } catch (e) { err = e }
-    t.same(err, {to: 'download', reason: 'found-upload', data: {upload_id}}, `picked upload ${upload_id}`)
+    t.same(err, {type: 'transition', to: 'download', reason: 'found-upload', data: {upload_id}}, `picked upload ${upload_id}`)
   }
 
   let transitions = async (t, opts) => {
@@ -44,7 +44,8 @@ test('find-upload', t => {
     try {
       await find_upload.start(opts)
     } catch (e) { err = e }
-    t.same(err.to, 'download', 'transitioned')
+    t.same(err.type, 'transition', 'transitioned')
+    t.same(err.to, 'download', 'transitioned to download')
   }
 
   t.case('searches for download key', async t => {

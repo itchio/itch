@@ -1,7 +1,6 @@
 
 let test = require('zopf')
 let proxyquire = require('proxyquire')
-let Promise = require('bluebird')
 
 let electron = require('../stubs/electron')
 let CaveStore = require('../stubs/cave-store')
@@ -9,7 +8,7 @@ let CredentialsStore = require('../stubs/credentials-store')
 
 test('awaken', t => {
   let find_upload = {
-    start: () => Promise.resolve(null),
+    start: async () => null,
     '@noCallThru': true
   }
   let os = {
@@ -39,22 +38,19 @@ test('awaken', t => {
     try {
       await awaken.start(opts)
     } catch (e) { err = e }
-    t.same(err, {to: 'find-upload', reason: 'not-installed'})
+    t.same(err, {type: 'transition', to: 'find-upload', reason: 'not-installed'})
   })
 
   t.case('redownloads if has a fresher download', async t => {
-    let new_uploads = [
-      {id: 67, p_windows: true, filename: 'setup_post-jam.exe'},
-      {id: 78, p_windows: true, filename: 'game_post-jam.zip'}
-    ]
-    t.stub(CaveStore, 'find')
-      .onFirstCall().resolves({ uploads, upload_id: 66, launchable: true })
-      .onSecondCall().resolves({ uploads: new_uploads, upload_id: 78, launchable: true })
+    let transition = {type: 'transition', to: 'download', reason: 'upload-found', data: {upload_id: 78}}
+    t.stub(CaveStore, 'find').resolves({ uploads, upload_id: 66, launchable: true })
+    t.stub(find_upload, 'start').rejects(transition)
+
     let err
     try {
       await awaken.start(opts)
     } catch (e) { err = e }
-    t.same(err, {to: 'download', reason: 'fresher-download'})
+    t.same(err, transition)
   })
 
   t.case('does not redownload when up to date', async t => {

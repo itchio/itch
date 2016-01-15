@@ -10,7 +10,6 @@ let AppActions = require('../stubs/app-actions')
 
 let typical_install = {
   _id: 42,
-  upload_id: 11,
   uploads: { '11': { id: 11, size: 512 } }
 }
 
@@ -60,7 +59,7 @@ test('install', t => {
   })
 
   let sf = {
-    lstat: () => Promise.resolve({mtime: new Date(123)})
+    lstat: async () => ({mtime: new Date(123)})
   }
   stubs = Object.assign({
     './install/core': install_core,
@@ -74,13 +73,17 @@ test('install', t => {
     try {
       await install.start({id: 42})
     } catch (e) { err = e }
-    t.same(err, {to: 'find-upload', reason: 'need upload id'})
+    t.same(err, {type: 'transition', to: 'find-upload', reason: 'need upload id'})
   })
 
   t.case(`task should start`, async t => {
     t.stub(CaveStore, 'find').resolves(typical_install)
     t.mock(install_core).expects('install').resolves()
-    await install.start({id: 42})
+    let err
+    try {
+      await install.start({id: 42, upload_id: 11})
+    } catch (e) { err = e }
+    t.same(err, {type: 'transition', to: 'configure', reason: 'installed'})
   })
 
   t.case(`validate archive presence`, async t => {
@@ -88,21 +91,22 @@ test('install', t => {
     t.stub(sf, 'lstat').rejects('ENOENT and whatnot')
     let err
     try {
-      await install.start({id: 42})
+      await install.start({id: 42, upload_id: 11})
     } catch (e) { err = e }
-    t.same(err, {to: 'download', reason: 'missing-download'})
+    t.same(err, {type: 'transition', to: 'download', reason: 'missing-download'})
   })
 
   t.case(`does nothing when up to date`, async t => {
     let uptodate_install = Object.assign({}, typical_install, {
+      upload_id: 11,
       installed_archive_mtime: new Date(123)
     })
     t.stub(CaveStore, 'find').resolves(uptodate_install)
 
     let err
     try {
-      await install.start({id: 42})
+      await install.start({id: 42, upload_id: 11})
     } catch (e) { err = e }
-    t.same(err, {to: 'idle', reason: 'up-to-date'})
+    t.same(err, {type: 'transition', to: 'idle', reason: 'up-to-date'})
   })
 })
