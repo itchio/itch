@@ -55,6 +55,8 @@ module.exports = keyMirror({
   CAVE_PROGRESS: null,
   /** Kaboom! */
   CAVE_IMPLODE: null,
+  /** I changed my mind */
+  CAVE_CANCEL: null,
   /** Bye bye. */
   CAVE_THROWN_INTO_BIT_BUCKET: null,
   /** i spy, i spy */

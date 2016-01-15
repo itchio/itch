@@ -26,4 +26,11 @@ class Crash extends ExtendableError {
   }
 }
 
-module.exports = { Transition, InputRequired, Crash }
+class Cancelled extends ExtendableError {
+  constructor (opts) {
+    super('cancelled')
+    Object.assign(this, opts)
+  }
+}
+
+module.exports = { Transition, InputRequired, Crash, Cancelled }

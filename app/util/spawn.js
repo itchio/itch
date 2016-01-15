@@ -4,6 +4,8 @@ let child_process = require('child_process')
 let StreamSplitter = require('stream-splitter')
 let LFTransform = require('./lf-transform')
 
+let errors = require('../tasks/errors')
+
 let log = require('./log')('spawn')
 
 function spawn (opts) {
@@ -20,10 +22,12 @@ function spawn (opts) {
   log(opts, `spawning ${command} with args ${args.join(' ')}`)
 
   let child = child_process.spawn(command, args, spawn_opts)
+  let cancelled = false
 
   if (emitter) {
-    emitter.on('cancel', (e) => {
+    emitter.once('cancel', (e) => {
       try {
+        cancelled = true
         child.kill('SIGKILL')
         emitter.emit('cancelled', {comment: `Very dead, Mr. Spock.`})
       } catch (e) {
@@ -44,8 +48,14 @@ function spawn (opts) {
     splitter.on('token', opts.onerrtoken)
   }
 
-  return new Promise((resolve, reject, onCancel) => {
-    child.on('close', resolve)
+  return new Promise((resolve, reject) => {
+    child.on('close', (code, signal) => {
+      if (cancelled) {
+        reject(new errors.Cancelled())
+      } else {
+        resolve(code)
+      }
+    })
     child.on('error', reject)
   })
 }

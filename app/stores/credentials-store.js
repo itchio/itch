@@ -1,5 +1,4 @@
 
-
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
 let AppActions = require('../actions/app-actions')
@@ -39,19 +38,21 @@ function login_failure (err) {
   AppActions.login_failure(err.errors || err.stack || err)
 }
 
-function login_with_password (payload) {
+async function login_with_password (payload) {
   AppActions.login_attempt()
 
-  let username = payload.username
-  let password = payload.password
-  return api.client.login_with_password(username, password).then((res) => {
-    let key = res.key.key
+  try {
+    let username = payload.username
+    let password = payload.password
+    let key = (await api.client.login_with_password(username, password)).key.key
+
     let user = new api.User(api.client, key)
-    return user.me().then(res => {
-      me = res.user
-      got_key(key)
-    })
-  }).catch(login_failure)
+    me = (await user.me()).user
+
+    got_key(key)
+  } catch (err) {
+    login_failure(err)
+  }
 }
 
 function setup_done () {
@@ -60,16 +61,18 @@ function setup_done () {
   }
 }
 
-function window_ready () {
+async function window_ready () {
   let key = config.get('api_key')
   if (key) {
     AppActions.login_attempt()
 
-    return api.client.login_key(key).then((res) => {
-      me = res.user
+    try {
+      me = (await api.client.login_key(key)).user
       CredentialsStore.emit_change()
       got_key(key)
-    }).catch(login_failure)
+    } catch (err) {
+      login_failure(err)
+    }
   } else {
     AppActions.no_stored_credentials()
   }

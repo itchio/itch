@@ -1,7 +1,8 @@
 
 let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
 let AppActions = require('../actions/app-actions')
+let AppConstants = require('../constants/app-constants')
+let classification_actions = require('../constants/classification-actions')
 
 let Store = require('./store')
 let CredentialsStore = require('./credentials-store')
@@ -10,9 +11,6 @@ let InstallLocationStore = require('./install-location-store')
 let I18nStore = require('./i18n-store')
 
 let errors = require('../tasks/errors')
-let Transition = errors.Transition
-let InputRequired = errors.InputRequired
-let Crash = errors.Crash
 
 let path = require('path')
 let deep = require('deep-diff')
@@ -35,12 +33,6 @@ const CAVE_TABLE = 'caves'
 let old_state = {}
 let state = {}
 let cave_blacklist = {}
-
-let natural_transitions = {
-  'find-upload': 'download',
-  'download': 'install',
-  'install': 'configure'
-}
 
 let CaveStore = Object.assign(new Store('cave-store'), {
   get_state: function () {
@@ -128,18 +120,20 @@ function cave_opts (id) {
 }
 
 function handle_task_error (err, id, task_name) {
-  if (err instanceof Transition) {
+  if (err instanceof errors.Transition) {
     log(cave_opts(id), `[${task_name} => ${err.to}] ${err.reason || ''}`)
     let data = err.data || {}
     setImmediate(() => queue_task(id, err.to, data))
-  } else if (err instanceof InputRequired) {
+  } else if (err instanceof errors.InputRequired) {
     let msg = `(stub) input required by ${task_name}`
     log(cave_opts(id), msg)
     AppActions.cave_progress({id, task: 'error', error: msg})
-  } else if (err instanceof Crash) {
+  } else if (err instanceof errors.Crash) {
     let msg = `crashed with: ${JSON.stringify(err, null, 2)}`
     log(cave_opts(id), msg)
     AppActions.cave_progress({id, task: 'idle', error: msg, progress: 0})
+  } else if (err instanceof errors.Cancelled) {
+    queue_task(id, 'idle')
   } else {
     log(cave_opts(id), err.stack || err)
     AppActions.cave_progress({id, task: 'error', error: '' + err, progress: 0})
@@ -237,9 +231,6 @@ async function queue_task (id, task_name, data) {
       }
     }
 
-    let transition = natural_transitions[task_name]
-    if (transition) throw new Transition({to: transition})
-
     log(cave_opts(id), `task ${task_name} finished with ${JSON.stringify(res)}`)
     if (task_name === 'uninstall') return
 
@@ -304,17 +295,23 @@ async function cave_probe (payload) {
 }
 
 async function game_queue (payload) {
-  let record = await db.find_one({_table: CAVE_TABLE, game_id: payload.game_id})
+  let cave = await db.find_one({_table: CAVE_TABLE, game_id: payload.game_id})
 
-  if (record) {
-    if (record.launchable) {
-      queue_task(record._id, 'launch')
+  if (cave) {
+    if (cave.launchable) {
+      let game = await db.find_one({_table: 'games', id: cave.game_id})
+      let action = classification_actions[game.classification]
+      if (action === 'open') {
+        AppActions.cave_explore(cave._id)
+      } else {
+        queue_task(cave._id, 'launch')
+      }
     } else {
-      let task = current_tasks[record._id]
+      let task = current_tasks[cave._id]
       if (task) {
         task.opts.emitter.emit('shine')
       } else {
-        queue_task(record._id, 'download')
+        queue_task(cave._id, 'download')
       }
     }
   } else {
@@ -365,13 +362,7 @@ async function cave_queue_uninstall (payload) {
 
 async function cave_queue_reinstall (payload) {
   log(store_opts, `reinstalling ${payload.id}!`)
-  await cave_update({
-    id: payload.id,
-    data: {
-      installed_archive_mtime: 0
-    }
-  })
-  queue_task(payload.id, 'install')
+  queue_task(payload.id, 'install', {reinstall: true})
 }
 
 async function cave_update (payload) {
@@ -385,11 +376,7 @@ async function cave_implode (payload) {
   // don't accept any further updates to these caves, they're imploding.
   // useful in case child takes some time to exit after it receives SIGKILL
   cave_blacklist[payload.id] = true
-
-  let task = current_tasks[payload.id]
-  if (task) {
-    task.opts.emitter.emit('cancel')
-  }
+  cave_cancel(payload)
 
   db.remove({_table: CAVE_TABLE, _id: payload.id})
 
@@ -397,6 +384,14 @@ async function cave_implode (payload) {
   emit_change()
 
   AppActions.cave_thrown_into_bit_bucket(payload.id)
+}
+
+function cave_cancel (payload) {
+  let task = current_tasks[payload.id]
+  if (task) {
+    task.opts.emitter.emit('cancel')
+    delete current_tasks[payload.id]
+  }
 }
 
 async function authenticated (payload) {
@@ -408,7 +403,7 @@ async function authenticated (payload) {
     await db.load(me.id)
   } catch (e) {
     console.log(`error while db.loading: ${e.stack || e}`)
-    require('../util/crash_reporter').handle(e)
+    require('../util/crash-reporter').handle(e)
     return
   }
 
@@ -424,7 +419,20 @@ async function locations_ready (payload) {
   })
 }
 
+function cancel_all_tasks () {
+  for (let cave_id of Object.keys(current_tasks)) {
+    let task = current_tasks[cave_id]
+    if (!task) continue
+    if (task) {
+      task.opts.emitter.emit('cancel')
+    }
+  }
+  current_tasks = {}
+}
+
 function logout (payload) {
+  cancel_all_tasks()
+
   db.unload()
 }
 
@@ -436,6 +444,7 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
   on(AppConstants.CAVE_QUEUE_REINSTALL, cave_queue_reinstall)
   on(AppConstants.CAVE_UPDATE, cave_update)
   on(AppConstants.CAVE_IMPLODE, cave_implode)
+  on(AppConstants.CAVE_CANCEL, cave_cancel)
   on(AppConstants.CAVE_PROGRESS, cave_progress)
   on(AppConstants.CAVE_EXPLORE, cave_explore)
   on(AppConstants.CAVE_PROBE, cave_probe)

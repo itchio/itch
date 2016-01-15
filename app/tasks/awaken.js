@@ -11,22 +11,25 @@ async function start (opts) {
 
   let cave = await CaveStore.find(id)
 
-  if (cave.launchable) {
-    log(opts, `launchable cave, looking for fresher upload`)
-
-    let old_upload_id = cave.upload_id
-    await find_upload.start(opts)
-
-    let cave_new = await CaveStore.find(id)
-    if (cave_new.upload_id !== old_upload_id) {
-      log(opts, `better download available (${old_upload_id} => ${cave_new.upload_id})`)
-      throw new errors.Transition({ to: 'download', reason: 'fresher-download' })
-    }
-
-    // all good!
-  } else {
+  if (!cave.launchable) {
     throw new errors.Transition({ to: 'find-upload', reason: 'not-installed' })
   }
+
+  log(opts, `launchable cave, looking for fresher upload`)
+
+  try {
+    await find_upload.start(opts)
+  } catch (err) {
+    if (err instanceof errors.Transition && err.to === 'download') {
+      let upload_id = err.data.upload_id
+      if (upload_id !== cave.upload_id) {
+        log(opts, `better download available (${cave.upload_id} => ${upload_id})`)
+        throw err
+      }
+    }
+  }
+
+  // all good!
 }
 
 module.exports = { start }

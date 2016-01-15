@@ -122,6 +122,11 @@ let self = {
   },
 
   free_in_folder: function (disk_info, folder) {
+    if (typeof folder !== 'string') {
+      console.log(`can't compute free space in ${folder}`)
+      return -1
+    }
+
     if (os.platform() === 'win32') {
       let letter = self.letter_for(folder)
       if (!letter) return -1

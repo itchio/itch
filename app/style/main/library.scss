@@ -7,6 +7,8 @@ $cell_height: $cell_width * $cell_ratio;
 $broken_color: #C38E16;
 $placeholder_link_color: #93C1F3;
 
+$open_button_color: #4B6D85;
+
 .library_page {
   $sidebar_width: 250px;
 
@@ -460,6 +462,10 @@ $placeholder_link_color: #93C1F3;
 
       &.task_idle {
         @include button($button_color);
+
+        &.action_open {
+          @include button($open_button_color);
+        }
       }
     }
 

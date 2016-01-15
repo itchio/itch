@@ -27,8 +27,17 @@ let task_to_icon = {
 class TaskIcon extends ShallowComponent {
   render () {
     let task = this.props.task || ''
+    let action = this.props.action || 'launch'
     let spin = !!this.props.spin
     let icon = task_to_icon[task] || ''
+
+    if (task === 'idle') {
+      if (action === 'open') {
+        icon = 'folder-open'
+      } else {
+        icon = 'rocket'
+      }
+    }
 
     return r(Icon, {icon, spin})
   }

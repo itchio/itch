@@ -8,12 +8,6 @@ let AppActions = require('../actions/app-actions')
 
 let core = require('./install/core')
 
-function ensure (predicate, reason) {
-  if (!predicate) {
-    throw new Error(reason)
-  }
-}
-
 let self = {
   start: async function (opts) {
     let id = opts.id
@@ -25,9 +19,8 @@ let self = {
     let cave = await CaveStore.find(id)
     let dest_path = CaveStore.app_path(cave.install_location, id)
 
-    if (cave.upload_id && cave.uploads) {
+    if (cave.upload_id && cave.uploads && cave.uploads[cave.upload_id]) {
       let upload = cave.uploads[cave.upload_id]
-      ensure(upload, 'need upload in upload cache')
 
       let archive_path = CaveStore.archive_path(cave.install_location, upload)
 

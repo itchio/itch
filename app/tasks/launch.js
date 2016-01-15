@@ -8,16 +8,12 @@ let shell_quote = require('shell-quote')
 let os = require('../util/os')
 let spawn = require('../util/spawn')
 let sf = require('../util/sf')
-let db = require('../util/db')
-let explorer = require('../util/explorer')
 
 let log = require('../util/log')('tasks/launch')
 let configure = require('./configure')
 
 let CaveStore = require('../stores/cave-store')
 let Crash = require('./errors').Crash
-
-let classification_actions = require('../constants/classification-actions')
 
 let self = {
   sh: async function (exe_path, full_command, opts) {
@@ -169,13 +165,6 @@ let self = {
     let id = opts.id
 
     let cave = await CaveStore.find(id)
-    let game = await db.find_one({_table: 'games', id: cave.game_id})
-    let action = classification_actions[game.classification]
-    if (action === 'open') {
-      let folder = CaveStore.app_path(cave.install_location, id)
-      explorer.open(folder)
-      return
-    }
 
     if (!self.valid_cave(cave)) {
       await configure.start(opts)

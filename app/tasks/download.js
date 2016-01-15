@@ -1,5 +1,5 @@
 
-let Transition = require('./errors').Transition
+let errors = require('./errors')
 
 let log = require('../util/log')('tasks/download')
 let butler = require('../util/butler')
@@ -7,10 +7,11 @@ let noop = require('../util/noop')
 
 let CaveStore = require('../stores/cave-store')
 let CredentialsStore = require('../stores/credentials-store')
+let AppActions = require('../actions/app-actions')
 
 function ensure (predicate, reason) {
   if (!predicate) {
-    throw new Transition({
+    throw new errors.Transition({
       to: 'find-upload',
       reason
     })
@@ -22,13 +23,14 @@ async function start (opts) {
   let onprogress = opts.onprogress || noop
   let logger = opts.logger
   let emitter = opts.emitter
+  let upload_id = opts.upload_id
 
   let cave = await CaveStore.find(id)
 
-  ensure(cave.upload_id, 'need upload id')
+  ensure(upload_id, 'need upload id')
   ensure(cave.uploads, 'need cached uploads')
 
-  let upload = cave.uploads[cave.upload_id]
+  let upload = cave.uploads[upload_id]
   ensure(upload, 'need upload in upload cache')
 
   // Get download URL
@@ -37,14 +39,14 @@ async function start (opts) {
 
   try {
     if (cave.key) {
-      url = (await client.download_upload_with_key(cave.key.id, cave.upload_id)).url
+      url = (await client.download_upload_with_key(cave.key.id, upload_id)).url
     } else {
-      url = (await client.download_upload(cave.upload_id)).url
+      url = (await client.download_upload(upload_id)).url
     }
   } catch (e) {
     if (e.errors && e.errors[0] === 'invalid upload') {
       await new Promise((resolve, reject) => setTimeout(resolve, 1500))
-      throw new Transition({
+      throw new errors.Transition({
         to: 'find-upload',
         reason: 'upload-gone'
       })
@@ -57,13 +59,23 @@ async function start (opts) {
 
   let dest = CaveStore.archive_path(cave.install_location, upload)
 
-  emitter.on('cancelled', async (e) => {
-    log(opts, `killed the butler with a wrench in the living room`)
-    log(opts, `wiping ${dest}`)
-    await butler.wipe(dest)
-  })
+  try {
+    await butler.dl({ url, dest, onprogress, logger, emitter })
+  } catch (err) {
+    log(opts, `couldn't finish download: ${err.message || err}`)
 
-  await butler.dl({ url, dest, onprogress, logger, emitter })
+    if (cave.launchable) {
+      log(opts, `launchable download cancelled, keeping`)
+    } else {
+      log(opts, `first download cancelled, wiping ${dest}`)
+      AppActions.cave_implode(id)
+      await butler.wipe(dest)
+    }
+
+    throw err
+  }
+
+  throw new errors.Transition({ to: 'install', reason: 'download-finished', data: {upload_id} })
 }
 
 module.exports = { start }

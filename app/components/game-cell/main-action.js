@@ -64,7 +64,7 @@ class MainAction extends ShallowComponent {
 
     if (cave) {
       child = r.span({className: 'normal_state'}, [
-        r(TaskIcon, {task, spin}),
+        r(TaskIcon, {task, spin, action}),
         this.status(cave, task, action),
         r.span({className: 'cancel_cross'}, [
           r(Icon, {icon: 'cross'})
@@ -103,6 +103,8 @@ class MainAction extends ShallowComponent {
     } else {
       classSet.uninstalled = true
     }
+
+    classSet[`action_${action}`] = true
 
     let style = {}
     if (progress > 0) {
@@ -145,7 +147,7 @@ class MainAction extends ShallowComponent {
     if (task === 'error') {
       AppActions.cave_report(cave_id)
     } else if (/^download.*$/.test(task)) {
-      AppActions.cave_implode(cave_id)
+      AppActions.cave_cancel(cave_id)
     } else {
       if (platform_compatible) {
         if (may_download) {

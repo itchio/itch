@@ -5,6 +5,8 @@ let indexBy = require('underscore').indexBy
 let os = require('../util/os')
 let log = require('../util/log')('tasks/find-upload')
 
+let errors = require('./errors')
+
 let AppActions = require('../actions/app-actions')
 let CaveStore = require('../stores/cave-store')
 let CredentialsStore = require('../stores/credentials-store')
@@ -107,7 +109,11 @@ let self = {
       return
     }
 
-    AppActions.cave_update(id, {upload_id: upload.id})
+    throw new errors.Transition({
+      to: 'download',
+      reason: 'found-upload',
+      data: {upload_id: upload.id}
+    })
   }
 }
 

@@ -140,60 +140,39 @@ let self = {
   /* Caves */
 
   cave_request_uninstall: (id) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.CAVE_REQUEST_UNINSTALL,
-      id
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_REQUEST_UNINSTALL, id })
   },
 
   cave_queue_uninstall: (id) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.CAVE_QUEUE_UNINSTALL,
-      id
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_QUEUE_UNINSTALL, id })
   },
 
   cave_queue_reinstall: (id) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.CAVE_QUEUE_REINSTALL,
-      id
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_QUEUE_REINSTALL, id })
   },
 
   cave_update: (id, data) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.CAVE_UPDATE,
-      id,
-      data
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_UPDATE, id, data })
   },
 
   cave_progress: (opts) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.CAVE_PROGRESS,
-      opts
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_PROGRESS, opts })
+  },
+
+  cave_cancel: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_CANCEL, id })
   },
 
   cave_implode: (id) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.CAVE_IMPLODE,
-      id
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_IMPLODE, id })
   },
 
   cave_explore: (id) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.CAVE_EXPLORE,
-      id
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_EXPLORE, id })
   },
 
   cave_thrown_into_bit_bucket: (id) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.CAVE_THROWN_INTO_BIT_BUCKET,
-      id
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, id })
   },
 
   cave_probe: (id) => {
