@@ -31,7 +31,9 @@ let self = {
     // Microsoft packages
     'msi': 'msi',
     // Inno setup, NSIS
-    'exe': 'exe'
+    'exe': 'exe',
+    // Books!
+    'pdf': 'naked'
   },
 
   install: async function (opts) {

@@ -106,17 +106,24 @@ class Backend {
     let loaded_filename = canonical_filename
     let remote_filename = this.remote_filename(language)
 
-    // do we have a newer version?
-    if (upgrades_enabled && await exists(remote_filename)) {
-      log(opts, `trying to use ${remote_filename}`)
-      // neat, use it.
-      loaded_filename = remote_filename
-    }
-
     let contents = await read_file(loaded_filename)
     try {
       let parsed = JSON.parse(contents)
       log(opts, `Successfully loaded ${language} from ${loaded_filename}`)
+
+      // do we have a newer version?
+      if (upgrades_enabled && await exists(remote_filename)) {
+        log(opts, `adding ${remote_filename} on top`)
+        // neat, use it.
+        let additional_contents = await read_file(remote_filename)
+        try {
+          let additional_parsed = JSON.parse(additional_contents)
+          Object.assign(parsed, additional_parsed)
+        } catch (err) {
+          log(opts, `While parsing remote locale ${remote_filename}: ${err.message}`)
+        }
+      }
+
       return callback(null, parsed)
     } catch (err) {
       log(opts, `Error parsing ${loaded_filename}: ${err.message}`)
