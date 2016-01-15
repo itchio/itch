@@ -103,7 +103,7 @@ let self = {
       if (!cave.launchable) {
         AppActions.cave_implode(id)
       }
-      AppActions.show_rar_policy(format, cave.game_id)
+      AppActions.show_packaging_policy(format, cave.game_id)
       return
     }
 
