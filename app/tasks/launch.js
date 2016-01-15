@@ -23,14 +23,6 @@ let self = {
   sh: async function (exe_path, full_command, opts) {
     log(opts, `sh ${full_command}`)
 
-    // pretty weak but oh well.
-    let forbidden = [';', '&']
-    for (let bidden of forbidden) {
-      if (full_command.indexOf(bidden) !== -1) {
-        throw new Error(`Command-line contains forbidden characters: ${full_command}`)
-      }
-    }
-
     let cwd = path.dirname(exe_path)
     log(opts, `Working directory: ${cwd}`)
 

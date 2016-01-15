@@ -1,4 +1,5 @@
 
+let Promise = require('bluebird')
 let sf = require('./sf')
 let noop = require('./noop')
 let butler = require('./butler')
