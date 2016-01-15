@@ -1,6 +1,6 @@
 
 let archive = require('./archive')
-let os = require('../util/os')
+let os = require('../../util/os')
 
 let self = {
   install: async (opts) => {
