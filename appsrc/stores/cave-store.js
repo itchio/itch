@@ -354,7 +354,7 @@ async function cave_request_uninstall (payload) {
 
 async function cave_queue_uninstall (payload) {
   let cave_id = payload.id
-  let record = await db.find_table(cave_id)
+  let record = await db.find_cave(cave_id)
 
   if (record) {
     queue_task(record._id, 'uninstall')
