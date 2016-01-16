@@ -10,7 +10,7 @@ let AppConstants = require('../constants/app-constants')
 
 let Logger = require('../util/log').Logger
 let log = require('../util/log')('game-store')
-let opts = {logger: new Logger()}
+let opts = {logger: new Logger({sinks: {console: !!process.env.LET_ME_IN}})}
 
 let db = require('../util/db')
 

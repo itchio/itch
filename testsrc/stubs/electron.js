@@ -50,6 +50,9 @@ let electron = {
   }
 }
 
+electron.ipcRenderer.setMaxListeners(Infinity)
+electron.ipcMain.setMaxListeners(Infinity)
+
 electron.remote.app = electron.app
 
 Object.assign(electron.Tray, {

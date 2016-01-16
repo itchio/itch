@@ -109,7 +109,7 @@ ${log}
         self.handle(e)
       } catch (e) {
         // well, we tried.
-        console.log(`Error in crash-reporter\n${e.stack || e}`)
+        console.log(`Error in crash-reporter\n${e.message || e}`)
       } finally {
         process.exit(1)
       }

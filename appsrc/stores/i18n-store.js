@@ -41,6 +41,7 @@ let i18n_opts = {
   }
 }
 i18next.use(backend).init(i18n_opts, on_error)
+let test_t = i18next.getFixedT()
 let state = i18next
 
 let locales_list
@@ -48,6 +49,8 @@ let locales_list
 // I18nStore can live on both sides: browser & renderer
 let I18nStore = Object.assign(new Store('i18n-store', process.type), {
   get_state: () => state,
+
+  get_t: () => state.getFixedT(),
 
   get_locales_list: () => {
     if (!locales_list) {
@@ -65,11 +68,14 @@ let I18nStore = Object.assign(new Store('i18n-store', process.type), {
   }
 })
 
+I18nStore.setMaxListeners(Infinity)
+
 state.on('error', (e) => {
   console.log(`Error loading translations: ${e}`)
 })
 
-state.on('languageChanged loaded added removed', () => {
+state.on('languageChanged loaded added removed', (e) => {
+  console.log(`i18n-store, event ${JSON.stringify(e)} - ${test_t('menu.help.help')}`)
   I18nStore.emit_change()
 })
 
@@ -77,14 +83,14 @@ if (process.type === 'renderer') {
   try {
     AppActions.preferences_set_sniffed_language(navigator.language)
   } catch (e) {
-    console.log(`Could not sniff language from chrome: ${e.stack || e}`)
+    console.log(`Could not sniff language from chrome: ${e.stack || e} - ${test_t('menu.help.help')}`)
   }
 }
 
 function reload (preferences) {
   sniffed_language = preferences.sniffed_language || 'en'
   lang = preferences.language || sniffed_language
-  log(opts, `Switching to language ${lang}`)
+  log(opts, `Switching to language ${lang} - ${test_t('menu.help.help')}`)
   state.changeLanguage(lang, on_error)
 }
 

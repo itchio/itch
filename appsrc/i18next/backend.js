@@ -78,6 +78,7 @@ class Backend {
     this.services = services
     this.options = Object.assign({}, options)
     this.coreOptions = coreOptions
+    log(opts, `initialized`)
   }
 
   canonical_filename (language) {
@@ -99,6 +100,7 @@ class Backend {
       if (!await exists(canonical_filename)) {
         log(opts, `${canonical_filename} does not exist either :(`)
         log(opts, `No locale file found for language ${language}`)
+        log(opts, `Returning null resources`)
         return callback(null, {})
       }
     }
@@ -124,9 +126,11 @@ class Backend {
         }
       }
 
+      log(opts, `Giving callback ${Object.keys(parsed).length} entries`)
       return callback(null, parsed)
     } catch (err) {
       log(opts, `Error parsing ${loaded_filename}: ${err.message}`)
+      log(opts, `Returning null resources`)
       return callback(null, {})
     }
   }

@@ -2,9 +2,6 @@
 let React = require('react')
 let I18nStore = require('../stores/i18n-store')
 
-let i18n = I18nStore.get_state()
-let t = i18n.t.bind(i18n)
-
 class TranslatedComponent extends React.Component {
 
   constructor (props) {
@@ -13,7 +10,7 @@ class TranslatedComponent extends React.Component {
 
   componentWillMount () {
     this.mounted = true
-    this.t = t
+    this.t = I18nStore.get_t()
   }
 
   componentDidMount () {
@@ -23,14 +20,13 @@ class TranslatedComponent extends React.Component {
       this.setState({ i18nLoadedAt: Date.now() })
     }
 
-    i18n.on('languageChanged loaded', this.onI18nChanged)
+    I18nStore.on('change', this.onI18nChanged)
   }
 
   componentWillUnmount () {
     this.mounted = false
     if (this.onI18nChanged) {
-      i18n.off('languageChanged', this.onI18nChanged)
-      i18n.off('loaded', this.onI18nChanged)
+      I18nStore.removeListener('change', this.onI18nChanged)
     }
   }
 }

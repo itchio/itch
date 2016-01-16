@@ -12,7 +12,8 @@ let i18next = {
   init: () => i18next,
   on: () => null,
   off: () => null,
-  t: (x) => x
+  t: (x) => x,
+  getFixedT: () => i18next.t
 }
 
 let self = Object.assign({
