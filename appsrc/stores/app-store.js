@@ -154,6 +154,7 @@ function login_attempt (payload) {
 }
 
 function login_failure (payload) {
+  AppStore.emit('login_failure', {})
   let errors = payload.errors
   state = mori.assocIn(state, ['login', 'loading'], false)
   state = mori.assocIn(state, ['login', 'errors'], errors.stack || errors)

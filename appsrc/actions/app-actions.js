@@ -232,18 +232,11 @@ let self = {
   },
 
   login_with_password: (username, password) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.LOGIN_WITH_PASSWORD,
-      private: true,
-      username, password
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.LOGIN_WITH_PASSWORD, private: true, username, password })
   },
 
   login_failure: (errors) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.LOGIN_FAILURE,
-      errors
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.LOGIN_FAILURE, errors })
   },
 
   authenticated: () => {

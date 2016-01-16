@@ -2,6 +2,10 @@
   "ecmaVersion": 6,
   "libs": [],
   "loadEagerly": [
-    "app/**/*.js"
+    "appsrc/**/*.js"
+  ],
+  "dontLoad": [
+    "app/**/*.js",
+    "test/**/*.js"
   ]
 }

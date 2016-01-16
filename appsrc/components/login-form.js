@@ -4,6 +4,7 @@ let mori = require('mori')
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
+let AppStore = require('../stores/app-store')
 let AppActions = require('../actions/app-actions')
 let urls = require('../constants/urls')
 
@@ -15,6 +16,17 @@ class LoginForm extends ShallowComponent {
   constructor () {
     super()
     this.handle_submit = this.handle_submit.bind(this)
+    this.handle_login_failure = this.handle_login_failure.bind(this)
+  }
+
+  componentDidMount () {
+    super.componentDidMount()
+    AppStore.on('login_failure', this.handle_login_failure)
+  }
+
+  componentWillUnmount () {
+    super.componentWillUnmount()
+    AppStore.removeListener('login_failure', this.handle_login_failure)
   }
 
   render () {
@@ -92,6 +104,11 @@ class LoginForm extends ShallowComponent {
     let username = this.refs.username
     let password = this.refs.password
     AppActions.login_with_password(username.value(), password.value())
+  }
+
+  handle_login_failure () {
+    let password = this.refs.password
+    if (password) { setTimeout(() => { password.focus() }, 200) }
   }
 }
 

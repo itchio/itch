@@ -35,6 +35,10 @@ class InputRow extends ShallowComponent {
   value () {
     return this.refs.input.value
   }
+
+  focus () {
+    this.refs.input.focus()
+  }
 }
 
 InputRow.propTypes = {

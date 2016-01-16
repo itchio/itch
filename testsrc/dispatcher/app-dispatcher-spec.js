@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let sinon = require('sinon')
 let proxyquire = require('proxyquire')
@@ -7,9 +6,9 @@ let proxyquire = require('proxyquire')
 let electron = require('../stubs/electron')
 
 test('dispatcher', t => {
-  let r_stubs = Object.assign({
-    '../util/os': { process_type: () => 'renderer' }
-  }, electron)
+  let r_stubs = Object.assign({}, electron, {
+    '../../util/os': { process_type: () => 'renderer' }
+  })
 
   let fake_window = {
     webContents: {
@@ -18,8 +17,8 @@ test('dispatcher', t => {
   }
   t.stub(electron.electron.BrowserWindow, 'getAllWindows').returns([fake_window])
 
-  let b_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher', electron)
-  let r_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher', r_stubs)
+  let b_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher/browser', electron)
+  let r_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher/renderer', r_stubs)
 
   let r_spy = t.spy(function () { console.log('r_spy ' + JSON.stringify(Array.prototype.slice.call(arguments))) })
   r_dispatcher.register('renderer-store', r_spy)
