@@ -25,6 +25,12 @@ npm install -g electron-prebuilt@0.36.4
 $ npm install
 ```
 
+* Install grunt's CLI if you don't have it already:
+
+```bash
+$ npm install -g grunt-cli
+```
+
 * You can now run the app:
 
 ```bash
@@ -34,7 +40,7 @@ $ npm start
 Running the app like that will be slower than a release, as it compiles
 files as they are loaded, with [babel][]'s require hook.
 
-We use [grunt][] for packaging, see our [CI job definitions][ci].
+We use [grunt][] for building and packaging, see our [CI job definitions][ci].
 
 [babel]: http://babeljs.io/
 [grunt]: https://github.com/gruntjs/grunt
