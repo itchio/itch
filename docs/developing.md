@@ -8,14 +8,14 @@ Refer to the [app faq](https://itch.io/docs/app/faq) to know how to get your gam
 itch is built in HTML/SCSS/ES6 and runs inside of Electron. Install the
 following to get started with development:
 
-* Install [node.js][] (version *4.2.x* is recommended, tests won't run on anything lower)
+* Install [node.js][] (version *5.4.x* is recommended)
 * Install [electron][]:
 
 [node.js]: https://nodejs.org/
 [electron]: https://github.com/atom/electron
 
 ```
-npm install -g electron-prebuilt@0.36.2
+npm install -g electron-prebuilt@0.36.4
 
 * Install [sassc][] following the instructions for [Unix][sassc-unix] or
   [Windows][sassc-win].  Make sure it's in your `$PATH`.
