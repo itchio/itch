@@ -25,13 +25,6 @@ if (process.type === 'browser') {
   app = require('electron').remote.app
 }
 
-async function exists (file) {
-  let p = new Promise((resolve, reject) => {
-    fs.access(file, fs.r_OK, (err) => resolve(!err))
-  })
-  return await p
-}
-
 async function read_file (file) {
   let p = new Promise((resolve, reject) => {
     fs.readFile(file, {encoding: 'utf8'}, (err, res) => {
@@ -40,6 +33,16 @@ async function read_file (file) {
     })
   })
   return await p
+}
+
+// XXX we can't use fs.access via ASAR, it always returns false
+async function exists (file) {
+  try {
+    await read_file(file)
+  } catch (err) {
+    return false
+  }
+  return true
 }
 
 let remote_dir = path.join(app.getPath('userData'), 'locales')
