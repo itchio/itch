@@ -135,10 +135,13 @@ module.exports = function (grunt) {
       }
     },
     'copy': {
+      options: {
+        mode: true
+      },
       dist: {
         files: [
           { expand: true, cwd: 'appsrc', src: ['**/*.html', 'static/**'], dest: 'app' },
-          { expand: true, cwd: 'testsrc', src: ['**/*.sh'], dest: 'test' }
+          { expand: true, cwd: 'testsrc', src: ['runner'], dest: 'test' }
         ]
       }
     }

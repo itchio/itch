@@ -81,7 +81,7 @@
   },
   "scripts": {
     "start": "grunt && electron .",
-    "test": "grunt && nyc -s sh test/runner.sh",
+    "test": "grunt && nyc -s node test/runner.js | tap-spec",
     "coveralls": "nyc report -r text-lcov | coveralls",
     "local-cov": "npm test && nyc report -r text && nyc report -r html",
     "i18n": "release/i18n-check.sh"
