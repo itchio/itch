@@ -3,6 +3,21 @@
 require('source-map-support').install()
 
 let env = require('./env')
+
+if (env.name === 'development') {
+  console.log('Development environment, using debug-friendly settings')
+
+  require('bluebird').config({
+    longStackTraces: true
+  })
+} else {
+  console.log('Production environment, using optimized settings')
+
+  require('bluebird').config({
+    longStackTraces: false
+  })
+}
+
 if (!process.env.NODE_ENV) {
   console.log(`Setting NODE_ENV to ${env.name}`)
   process.env.NODE_ENV = env.name
@@ -10,22 +25,6 @@ if (!process.env.NODE_ENV) {
   console.log(`NODE_ENV manually set to ${process.env.NODE_ENV}`)
 }
 
-if (env.name === 'development') {
-  console.log('Development environment, using babel require hook')
-
-  require('bluebird').config({
-    longStackTraces: true
-  })
-
-  // use register hook in dev, production builds are precompiled.
-  require('babel-register')
-} else {
-  require('bluebird').config({
-    longStackTraces: false
-  })
-
-  console.log('Pre-compiled, not using require hook.')
-}
 require('./util/sf')
 require('./util/crash-reporter').mount()
 

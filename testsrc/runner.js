@@ -9,10 +9,8 @@
 
   require('source-map-support').install()
   require('bluebird').config({
-    longStackTraces: true,
-    cancellation: true
+    longStackTraces: true
   })
-  require('babel-register')
 
   let is_dir = (f) => {
     try {

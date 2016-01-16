@@ -1,12 +1,10 @@
 #!/bin/sh -xe
 
+grunt -v babel sass copy
+
 rm -rf stage/
 mkdir stage/
 cp -rf node_modules package.json stage/
 
-sassc app/style/main.scss app/style/main.css
-
-babel -D -d stage/app app
-
+cp -rf app stage/
 cp -fv release/env.js stage/app/env.js
-

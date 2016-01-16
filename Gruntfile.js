@@ -118,22 +118,31 @@ module.exports = function (grunt) {
         sourceMap: true
       },
       dist: {
-        files: [{
-          expand: true,
-          cwd: '.',
-          src: ['appsrc/**/*.js'],
-          dest: 'app',
-          ext: '.js'
-        }, {
-          expand: true,
-          cwd: '.',
-          src: ['testsrc/**/*.js'],
-          dest: 'test',
-          ext: '.js'
-        }]
+        files: [
+          { expand: true, cwd: 'appsrc', src: ['**/*.js'], dest: 'app' },
+          { expand: true, cwd: 'testsrc', src: ['**/*.js'], dest: 'test' }
+        ]
+      }
+    },
+    'sass': {
+      options: {
+        sourceMap: true
+      },
+      dist: {
+        files: {
+          'app/style/main.css': 'appsrc/style/main.scss'
+        }
+      }
+    },
+    'copy': {
+      dist: {
+        files: [
+          { expand: true, cwd: 'appsrc', src: ['**/*.html', 'static/**'], dest: 'app' },
+          { expand: true, cwd: 'testsrc', src: ['**/*.sh'], dest: 'test' }
+        ]
       }
     }
   })
 
-  grunt.registerTask('default', ['shell:sass'])
+  grunt.registerTask('default', ['newer:babel', 'newer:sass', 'newer:copy'])
 }

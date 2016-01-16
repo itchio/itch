@@ -1,19 +1,19 @@
 'use strict'
 
-require('bluebird').config({
-  longStackTraces: true,
-  cancellation: true
-})
-
 let env = require('./env')
 
 if (env.name === 'development') {
-  console.log('Development environment, using babel require hook')
+  console.log('Development environment, using debug-friendly settings')
 
-  // use register hook in dev, production builds are precompiled.
-  require('babel-register')
+  require('bluebird').config({
+    longStackTraces: true
+  })
 } else {
-  console.log('Pre-compiled, not using require hook.')
+  console.log('Production environment, using optimized settings')
+
+  require('bluebird').config({
+    longStackTraces: false
+  })
 }
 require('./util/sf')
 
