@@ -31,7 +31,7 @@ class LibraryPanelLink extends ShallowComponent {
     }
     let current = (name === panel)
 
-    let _progress = progress ? ` (${(progress * 100).toFixed()}%)` : ''
+    let _progress = (progress > 0) ? ` (${(progress * 100).toFixed()}%)` : ''
     let _label = `${label}${_progress}`
 
     return (

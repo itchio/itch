@@ -5,7 +5,7 @@ let errors = require('../errors')
 let AppActions = require('../../actions/app-actions')
 
 let self = (opts) => {
-  AppActions.cave_progress({id: opts.id, need_blessing: true})
+  AppActions.cave_progress({id: opts.id, progress: 0, need_blessing: true})
 
   let cb = (resolve, reject) => {
     let onshine, oncancel

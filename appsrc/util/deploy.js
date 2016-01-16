@@ -33,7 +33,7 @@ let self = {
     if (stage_files.length === 1) {
       let only_file = path.join(stage_path, stage_files[0])
       let res = await onsingle(only_file)
-      if (res) {
+      if (res && res.deployed) {
         // onsingle returning true means it's been handled upstraem
         return res
       }

@@ -47,7 +47,6 @@ let self = {
 
   install: async function (opts) {
     let archive_path = opts.archive_path
-    let dest_path = opts.dest_path
 
     let onprogress = opts.onprogress || noop
     let extract_onprogress = subprogress(onprogress, 0, 80)
@@ -77,12 +76,10 @@ let self = {
         return await self.handle_tar(deploy_opts, only_file)
       }
 
-      return await self.handle_nested(deploy_opts, only_file)
+      return await self.handle_nested(opts, only_file)
     }
 
     await deploy.deploy(deploy_opts)
-
-    await butler.mkdir(dest_path)
 
     log(opts, `wiping stage...`)
     await butler.wipe(stage_path)
@@ -115,9 +112,10 @@ let self = {
       tar: true
     })
 
-    let res = await self.install(sub_opts)
+    await self.install(sub_opts)
     await butler.wipe(tar)
-    return res
+
+    return {deployed: true}
   },
 
   handle_nested: async function (opts, only_file) {
@@ -136,7 +134,9 @@ let self = {
     log(opts, `found a '${installer_name}': ${only_file}`)
     let nested_opts = Object.assign({}, opts, sniff_opts)
     log(opts, `installing it with nested_opts: ${JSON.stringify(nested_opts, null, 2)}`)
-    return await core.install(nested_opts)
+    await core.install(nested_opts)
+
+    return {deployed: true}
   }
 }
 
