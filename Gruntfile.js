@@ -7,7 +7,7 @@ var ico_path = 'release/itchio.ico'
 var installer_gif_path = 'release/installer.gif'
 var icns_path = 'release/itchio.icns'
 
-var electron_version = '0.36.2'
+var electron_version = '0.36.4'
 var out_dir = path.join('build', 'v' + version)
 var company_name = 'Itch Corp'
 
@@ -111,6 +111,26 @@ module.exports = function (grunt) {
         prereleaseName: false,
         metadata: '',
         regExp: false
+      }
+    },
+    'babel': {
+      options: {
+        sourceMap: true
+      },
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '.',
+          src: ['appsrc/**/*.js'],
+          dest: 'app',
+          ext: '.js'
+        }, {
+          expand: true,
+          cwd: '.',
+          src: ['testsrc/**/*.js'],
+          dest: 'test',
+          ext: '.js'
+        }]
       }
     }
   })

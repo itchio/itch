@@ -4,6 +4,8 @@ config.json
 npm-debug.log
 
 # build artifacts
+/app
+/test
 /maps
 *.map
 tmp
