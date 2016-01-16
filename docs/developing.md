@@ -17,13 +17,6 @@ following to get started with development:
 ```
 npm install -g electron-prebuilt@0.36.4
 
-* Install [sassc][] following the instructions for [Unix][sassc-unix] or
-  [Windows][sassc-win].  Make sure it's in your `$PATH`.
-
-[sassc]: https://github.com/sass/sassc
-[sassc-unix]: https://github.com/sass/sassc/blob/master/docs/building/unix-instructions.md
-[sassc-win]: https://github.com/sass/sassc/blob/master/docs/building/windows-instructions.md
-
 * Check out this repository
 
 * Install the javascript dependencies:
@@ -52,19 +45,19 @@ We use [grunt][] for packaging, see our [CI job definitions][ci].
 Run:
 
 ```bash
-$ test/runner.sh
+$ npm test
 ```
 
 To run all tests. You can run a single test with:
 
 ```bash
-$ test/runner.sh test/util/os-spec.js
+$ test/runner test/util/os-spec.js
 ```
 
 Or run all the tests in a directory with:
 
 ```bash
-$ test/runner.sh test/components
+$ test/runner test/components
 ```
 
 [tap-spec]: https://github.com/scottcorgan/tap-spec
