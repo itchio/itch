@@ -167,24 +167,25 @@ async function cache_caved_games () {
   cache_games('caved', games)
 }
 
-async function cache_cave_game (_id) {
-  let cave = await db.find_one({_table: 'caves', _id})
-  let game = await db.find_one({_table: 'games', id: cave.game_id})
-  cache_games(`caves/${_id}`, [game])
+async function cache_cave_game (cave_id) {
+  let cave = await db.find_cave(cave_id)
+  let game = await db.find_game(cave.game_id)
+  cache_games(`caves/${cave_id}`, [game])
 }
 
-async function cache_collection_games (id) {
-  let collection = await db.find_one({_table: 'collections', id})
+async function cache_collection_games (collection_id) {
+  let collection = await db.find_collection(collection_id)
   let gids = collection.game_ids || []
   let games = await db.find({_table: 'games', id: {$in: gids}})
-  cache_games(`collections/${id}`, games)
+  cache_games(`collections/${collection_id}`, games)
   AppActions.games_fetched(_.pluck(games, 'id'))
 }
 
 // TODO: Move game_browse somewhere else
 
 async function game_browse (payload) {
-  let game = await db.find_one({_table: 'games', id: payload.game_id})
+  let game_id = payload.game_id
+  let game = await db.find_game(game_id)
   electron.shell.openExternal(game.url)
 }
 

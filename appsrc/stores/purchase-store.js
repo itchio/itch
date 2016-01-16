@@ -133,9 +133,9 @@ function build_login_and_return_url (return_to) {
 
 async function game_purchase (payload) {
   let game_id = payload.game_id
+  let game = await db.find_game(game_id)
 
   let me = CredentialsStore.get_me()
-  let game = await db.find_one({_table: 'games', id: game_id})
 
   console.log(`trying to purchase ${JSON.stringify(game, null, 2)}`)
 

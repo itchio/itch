@@ -14,7 +14,8 @@ async function show_packaging_policy (payload) {
   let i18n = I18nStore.get_state()
   let format = payload.format
 
-  let game = await db.find_one({_table: 'games', id: payload.game_id})
+  let game_id = payload.game_id
+  let game = await db.find_game(game_id)
 
   let buttons = [
     i18n.t('prompt.action.ok'),

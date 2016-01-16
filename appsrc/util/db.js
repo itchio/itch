@@ -227,6 +227,14 @@ let self = {
     return await self.find_one({_table: 'caves', _id: cave_id})
   },
 
+  find_cave_for_game: async function (game_id) {
+    return await self.find_one({_table: 'caves', game_id})
+  },
+
+  find_collection: async function (collection_id) {
+    return await self.find_one({_table: 'collections', id: collection_id})
+  },
+
   end: true
 }
 

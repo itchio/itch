@@ -39,12 +39,12 @@ let CaveStore = Object.assign(new Store('cave-store'), {
     state
   },
 
-  find: function (id) {
-    return db.find_one({_table: CAVE_TABLE, _id: id})
+  find: function (cave_id) {
+    return db.find_cave(cave_id)
   },
 
   find_for_game: function (game_id) {
-    return db.find_one({_table: CAVE_TABLE, game_id: game_id})
+    return db.find_cave_for_game(game_id)
   },
 
   install_location_dir: function (loc_name) {
@@ -225,7 +225,7 @@ async function queue_task (id, task_name, data) {
     if (task_name === 'install') {
       let cave = await CaveStore.find(id)
       if (!cave.success_once) {
-        let game = await db.find_one({_table: 'games', id: cave.game_id})
+        let game = await db.find_game(cave.game_id)
         AppActions.notify(`${game.title} is ready!`)
         AppActions.cave_update(id, {success_once: true})
       }
@@ -249,7 +249,7 @@ async function queue_task (id, task_name, data) {
 
 async function initial_progress (record) {
   AppActions.cave_progress(Object.assign({id: record._id}, record))
-  let game = await db.find_one({_table: 'games', id: record.game_id})
+  let game = await db.find_game(record.game_id)
   AppActions.cave_progress({id: record._id, game})
 }
 
@@ -295,11 +295,12 @@ async function cave_probe (payload) {
 }
 
 async function game_queue (payload) {
-  let cave = await db.find_one({_table: CAVE_TABLE, game_id: payload.game_id})
+  let game_id = payload.game_id
+  let cave = await db.find_cave_for_game(game_id)
 
   if (cave) {
     if (cave.launchable) {
-      let game = await db.find_one({_table: 'games', id: cave.game_id})
+      let game = await db.find_game(game_id)
       let action = classification_actions[game.classification]
       if (action === 'open') {
         AppActions.cave_explore(cave._id)
@@ -315,13 +316,14 @@ async function game_queue (payload) {
       }
     }
   } else {
-    queue_cave(payload.game_id)
+    queue_cave(game_id)
   }
 }
 
 async function cave_request_uninstall (payload) {
-  let cave = await CaveStore.find(payload.id)
-  let game = await db.find_one({_table: 'games', id: cave.game_id})
+  let cave_id = payload.id
+  let cave = await db.find_cave(cave_id)
+  let game = await db.find_game(cave.game_id)
 
   let i18n = I18nStore.get_state()
 
@@ -351,7 +353,8 @@ async function cave_request_uninstall (payload) {
 }
 
 async function cave_queue_uninstall (payload) {
-  let record = await db.find_one({_table: CAVE_TABLE, _id: payload.id})
+  let cave_id = payload.id
+  let record = await db.find_table(cave_id)
 
   if (record) {
     queue_task(record._id, 'uninstall')
@@ -361,15 +364,16 @@ async function cave_queue_uninstall (payload) {
 }
 
 async function cave_queue_reinstall (payload) {
-  log(store_opts, `reinstalling ${payload.id}!`)
-  queue_task(payload.id, 'install', {reinstall: true})
+  let cave_id = payload.id
+  log(store_opts, `reinstalling ${cave_id}!`)
+  queue_task(cave_id, 'install', {reinstall: true})
 }
 
 async function cave_update (payload) {
-  let _id = payload.id
+  let cave_id = payload.id
   let data = payload.data
-  if (cave_blacklist[_id]) return
-  await db.merge_one({_table: CAVE_TABLE, _id}, data)
+  if (cave_blacklist[cave_id]) return
+  await db.merge_one({_table: CAVE_TABLE, _id: cave_id}, data)
 }
 
 async function cave_implode (payload) {

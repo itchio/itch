@@ -71,7 +71,7 @@ async function handle_url (urlStr) {
       }
       let gid = parseInt(tokens[1], 10)
 
-      let game = await db.find_one({_table: 'games', id: gid})
+      let game = await db.find_game(gid)
       if (game) {
         try_install(game)
       } else {
@@ -88,9 +88,9 @@ async function handle_url (urlStr) {
       }
       let gid = parseInt(tokens[1], 10)
 
-      let game = await db.find_one({_table: 'games', id: gid})
+      let game = await db.find_game(gid)
       if (game) {
-        let cave = await db.find_one({_table: 'caves', game_id: gid})
+        let cave = await db.find_cave_for_game(gid)
         if (cave) {
           AppActions.cave_queue(gid)
         } else {
@@ -119,7 +119,7 @@ async function games_fetched (payload) {
       if (to_install === gid) {
         to_install = null
 
-        let game = await db.find_one({_table: 'games', id: gid})
+        let game = await db.find_game(gid)
         await install_prompt(game)
       }
     }
@@ -131,7 +131,7 @@ async function games_fetched (payload) {
 async function install_prompt (game) {
   let i18n = I18nStore.get_state()
 
-  let cave = await db.find_one({_table: 'caves', game_id: game.id})
+  let cave = await db.find_cave_for_game(game.id)
   if (cave) {
     let panel = `caves/${cave._id}`
     log(opts, `have cave, focusing ${panel}`)
@@ -140,7 +140,7 @@ async function install_prompt (game) {
   }
 
   log(opts, `no cave, opening prompt for ${game.title}`)
-  let user = await db.find_one({_table: 'users', id: game.user_id})
+  let user = await db.find_user(game.user_id)
 
   let credit = ''
   if (user) {
