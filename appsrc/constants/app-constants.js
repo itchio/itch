@@ -91,6 +91,7 @@ module.exports = keyMirror({
   /** Data sync functions */
   GAME_STORE_DIFF: null,
   CAVE_STORE_DIFF: null,
+  CAVE_STORE_CAVE_DIFF: null,
   INSTALL_LOCATION_STORE_DIFF: null,
 
   /** Ready but needs human login */

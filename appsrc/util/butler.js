@@ -1,6 +1,6 @@
 
+let _ = require('underscore')
 let path = require('path')
-let partial = require('underscore').partial
 
 let noop = require('./noop')
 let spawn = require('./spawn')
@@ -35,7 +35,7 @@ let self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'dl', url, dest],
-      ontoken: partial(self.parse_butler_status, opts, onerror),
+      ontoken: _.partial(self.parse_butler_status, opts, onerror),
       emitter
     })
 
@@ -54,7 +54,7 @@ let self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'untar', archive_path, '-d', dest_path],
-      ontoken: partial(self.parse_butler_status, opts, onerror),
+      ontoken: _.partial(self.parse_butler_status, opts, onerror),
       emitter
     })
 
@@ -73,7 +73,7 @@ let self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'wipe', path],
-      ontoken: partial(self.parse_butler_status, opts, onerror)
+      ontoken: _.partial(self.parse_butler_status, opts, onerror)
     })
 
     if (err) { throw err }
@@ -91,7 +91,7 @@ let self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'mkdir', path],
-      ontoken: partial(self.parse_butler_status, opts, onerror)
+      ontoken: _.partial(self.parse_butler_status, opts, onerror)
     })
 
     if (err) { throw err }
@@ -110,7 +110,7 @@ let self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'ditto', src, dst],
-      ontoken: partial(self.parse_butler_status, opts, onerror),
+      ontoken: _.partial(self.parse_butler_status, opts, onerror),
       emitter
     })
 

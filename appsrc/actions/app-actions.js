@@ -306,6 +306,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.CAVE_STORE_DIFF, diff })
   },
 
+  cave_store_cave_diff: (cave_id, diff) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_STORE_CAVE_DIFF, cave_id, diff })
+  },
+
   install_location_store_diff: (diff) => {
     AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_STORE_DIFF, diff })
   },

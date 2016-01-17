@@ -254,6 +254,7 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
 
   on(AppConstants.GAME_STORE_DIFF, game_store_diff)
   on(AppConstants.CAVE_STORE_DIFF, cave_store_diff)
+  on(AppConstants.CAVE_STORE_CAVE_DIFF, cave_store_cave_diff)
   on(AppConstants.INSTALL_LOCATION_STORE_DIFF, install_location_store_diff)
   on(AppConstants.OPEN_PREFERENCES, open_preferences)
 
@@ -268,6 +269,11 @@ function game_store_diff (payload) {
 
 function cave_store_diff (payload) {
   state = patch.applyAt(state, ['library', 'caves'], payload.diff)
+  AppStore.emit_change()
+}
+
+function cave_store_cave_diff (payload) {
+  state = patch.applyAt(state, ['library', 'caves', payload.cave_id], payload.diff)
   AppStore.emit_change()
 }
 

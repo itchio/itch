@@ -1,4 +1,6 @@
 
+let _ = require('underscore')
+
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppActions = require('../actions/app-actions')
 let AppConstants = require('../constants/app-constants')
@@ -29,6 +31,7 @@ let electron = require('electron')
 let EventEmitter = require('events').EventEmitter
 
 const CAVE_TABLE = 'caves'
+const THROTTLE = 50
 
 let old_state = {}
 let state = {}
@@ -207,9 +210,9 @@ async function queue_task (id, task_name, data) {
     let task_opts = Object.assign({}, cave_opts(id), data, {
       id,
       emitter,
-      onprogress: (state) => {
+      onprogress: _.throttle((state) => {
         AppActions.cave_progress({id, progress: state.percent * 0.01, task: task_name})
-      }
+      }, THROTTLE)
     })
     log(cave_opts(id), `starting ${task_name}`)
     AppActions.cave_progress({id, progress: 0, task: task_name})
@@ -278,16 +281,17 @@ function cave_progress (payload) {
   let _id = payload.opts.id
   if (cave_blacklist[_id]) return
 
-  if (typeof state[_id] === 'undefined') {
-    state[_id] = {}
-  }
+  let old_state = state[_id] || {}
+  let new_state = Object.assign({}, old_state, payload.opts)
 
-  for (let key of Object.keys(payload.opts)) {
-    let val = payload.opts[key]
-    state[_id][key] = val
-  }
+  let diff = deep.diff(old_state, new_state)
+  if (!diff) return
 
-  emit_change()
+  state[_id] = new_state
+
+  AppActions.cave_store_cave_diff(_id, diff)
+
+  CaveStore.emit_change()
 }
 
 async function cave_probe (payload) {
