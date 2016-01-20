@@ -1,6 +1,9 @@
 
+let t = (x) => x
+
 let i18n_state = {
-  getFixedT: () => (x) => x
+  getFixedT: () => t,
+  t
 }
 let I18nStore = {
   get_state: () => i18n_state,

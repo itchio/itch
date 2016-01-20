@@ -21,12 +21,12 @@ let UrlStore = Object.assign(new Store('url-store'), {})
 let rolling = false
 let queue_item = null
 
-function open_url (payload) {
+async function open_url (payload) {
   let url = payload.url
   log(opts, `open_url: ${url}`)
 
   if (rolling) {
-    handle_url(url)
+    await handle_url(url)
   } else {
     queue_item = url
   }
@@ -46,19 +46,21 @@ function process_queue () {
 
 let to_install = null
 
-function try_install (game) {
+async function try_install (game) {
   let plat = os.itch_platform()
   if (game[`p_${plat}`]) {
-    install_prompt(game)
+    log(opts, `try_install ${game.id}, compatible with ${plat}, installing`)
+    return await install_prompt(game)
   } else {
-    apology_prompt(game)
+    log(opts, `try_install ${game.id}, not available for ${plat}`)
+    return await apology_prompt(game)
   }
 }
 
-async function handle_url (urlStr) {
-  log(opts, `handle_url: ${urlStr}`)
+async function handle_url (url_str) {
+  log(opts, `handle_url: ${url_str}`)
 
-  let url = url_parser.parse(urlStr)
+  let url = url_parser.parse(url_str)
 
   let verb = url.hostname
   let tokens = url.pathname.split('/')
@@ -73,8 +75,9 @@ async function handle_url (urlStr) {
 
       let game = await db.find_game(gid)
       if (game) {
-        try_install(game)
+        await try_install(game)
       } else {
+        log(opts, `for install: game not in db, fetchint ${gid} first`)
         to_install = gid
         AppActions.fetch_games(`games/${gid}`)
       }
@@ -92,10 +95,10 @@ async function handle_url (urlStr) {
       if (game) {
         let cave = await db.find_cave_for_game(gid)
         if (cave) {
-          AppActions.cave_queue(gid)
+          AppActions.game_queue(gid)
         } else {
           log(opts, `game ${gid} known but not installed, queuing for install`)
-          try_install(game)
+          await try_install(game)
         }
       } else {
         log(opts, `don't even know about game ${gid}, trying to install instead`)
@@ -117,10 +120,11 @@ async function games_fetched (payload) {
   try {
     for (let gid of payload.game_ids) {
       if (to_install === gid) {
+        log(opts, `games_fetched: we were waiting on ${gid}, waking it up!`)
         to_install = null
 
         let game = await db.find_game(gid)
-        await install_prompt(game)
+        await try_install(game)
       }
     }
   } catch (e) {
@@ -164,7 +168,7 @@ async function install_prompt (game) {
 
   let callback = (response) => {
     if (response === 0) {
-      AppActions.cave_queue(game.id)
+      AppActions.game_queue(game.id)
     } else if (response === 1) {
       // welp
     }
