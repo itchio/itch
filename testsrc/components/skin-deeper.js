@@ -13,6 +13,8 @@ let self = (comp, opts, children) => {
   return react.createElement(comp, opts, children)
 }
 
+self.as_array = (arr) => Array.isArray(arr) ? arr : [arr]
+
 Object.assign(self, sd)
 
 module.exports = self

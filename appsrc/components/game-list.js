@@ -36,7 +36,7 @@ class GameList extends ShallowComponent {
       if (!pred(cave)) return
 
       let owned_via_library = mori.hasKey(owned_games_by_id, game_id.toString())
-      let owned_via_press_system = (is_press && mori.get(game, 'in_press_system'))
+      let owned_via_press_system = !!(is_press && mori.get(game, 'in_press_system'))
       let owned = owned_via_library || owned_via_press_system
 
       children.push(
