@@ -10,6 +10,14 @@ let self = {
     return process.arch
   },
 
+  in_browser: function () {
+    return self.process_type() === 'browser'
+  },
+
+  in_renderer: function () {
+    return self.process_type() === 'renderer'
+  },
+
   process_type: function () {
     return process.type || 'browser'
   },

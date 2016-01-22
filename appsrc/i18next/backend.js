@@ -1,9 +1,12 @@
 
-let log = require('../util/log')('i18n-backend/' + process.type)
+let os = require('../util/os')
+let app = require('../util/app')
+
+let log = require('../util/log')('i18n-backend/' + os.process_type())
 let opts = { logger: new log.Logger() }
 
-let sf = require('../util/sf')
-let fs = require('fs')
+let needle = require('../promised/needle')
+let ifs = require('./ifs')
 let urls = require('../constants/urls')
 let env = require('../env')
 let upgrades_enabled = env.name === 'production' || process.env.DID_I_STUTTER === '1'
@@ -18,69 +21,33 @@ let AppActions = require('../actions/app-actions')
 
 let being_fetched = {}
 
-let app
-if (process.type === 'browser') {
-  app = require('electron').app
-} else {
-  app = require('electron').remote.app
-}
-
-async function read_file (file) {
-  let p = new Promise((resolve, reject) => {
-    fs.readFile(file, {encoding: 'utf8'}, (err, res) => {
-      if (err) return reject(err)
-      resolve(res)
-    })
-  })
-  return await p
-}
-
-// XXX we can't use fs.access via ASAR, it always returns false
-async function exists (file) {
-  try {
-    await read_file(file)
-  } catch (err) {
-    return false
-  }
-  return true
-}
-
 let remote_dir = path.join(app.getPath('userData'), 'locales')
 
 class Backend {
   constructor (services, options) {
-    if (typeof options === 'undefined') {
-      options = {}
-    }
     this.init(services, options)
-
     this.type = 'backend'
 
-    AppDispatcher.register('i18n-backend', (payload) => {
-      if (payload.action_type === AppConstants.LOCALE_UPDATE_DOWNLOADED) {
-        log(opts, `Adding resources to ${payload.lang}`)
-        i18next.addResources(
-          payload.lang,
-          'translation', /* default i18next namespace */
-          payload.resources
-        )
-      } else if (payload.action_type === AppConstants.LOCALE_UPDATE_QUEUE_DOWNLOAD) {
-        this.queue_download(payload.lang)
-      }
-    })
+    AppDispatcher.register('i18n-backend', this.on_event.bind(this))
+  }
+
+  on_event (payload) {
+    if (payload.action_type === AppConstants.LOCALE_UPDATE_DOWNLOADED) {
+      log(opts, `Adding resources to ${payload.lang}`)
+      i18next.addResources(
+       payload.lang,
+       'translation', /* default i18next namespace */
+       payload.resources
+      )
+    } else if (payload.action_type === AppConstants.LOCALE_UPDATE_QUEUE_DOWNLOAD) {
+      this.queue_download(payload.lang)
+    }
   }
 
   init (services, options, coreOptions) {
-    if (typeof options === 'undefined') {
-      options = {}
-    }
-    if (typeof coreOptions === 'undefined') {
-      coreOptions = {}
-    }
-
     this.services = services
     this.options = Object.assign({}, options)
-    this.coreOptions = coreOptions
+    this.coreOptions = Object.assign({}, coreOptions)
     log(opts, `initialized`)
   }
 
@@ -93,14 +60,13 @@ class Backend {
   }
 
   async read (language, namespace, callback) {
-    this.queue_download(language)
-
     let canonical_filename = this.canonical_filename(language)
 
-    if (!await exists(canonical_filename)) {
+    if (!await ifs.exists(canonical_filename)) {
       log(opts, `${canonical_filename} does not exist, attempting a trim`)
       canonical_filename = this.canonical_filename(language.substring(0, 2))
-      if (!await exists(canonical_filename)) {
+
+      if (!await ifs.exists(canonical_filename)) {
         log(opts, `${canonical_filename} does not exist either :(`)
         log(opts, `No locale file found for language ${language}`)
         log(opts, `Returning null resources`)
@@ -111,16 +77,17 @@ class Backend {
     let loaded_filename = canonical_filename
     let remote_filename = this.remote_filename(language)
 
-    let contents = await read_file(loaded_filename)
+    let contents = await ifs.read_file(loaded_filename)
+
     try {
       let parsed = JSON.parse(contents)
       log(opts, `Successfully loaded ${language} from ${loaded_filename}`)
 
       // do we have a newer version?
-      if (upgrades_enabled && await exists(remote_filename)) {
+      if (upgrades_enabled && await ifs.exists(remote_filename)) {
         log(opts, `adding ${remote_filename} on top`)
         // neat, use it.
-        let additional_contents = await read_file(remote_filename)
+        let additional_contents = await ifs.read_file(remote_filename)
         try {
           let additional_parsed = JSON.parse(additional_contents)
           Object.assign(parsed, additional_parsed)
@@ -130,17 +97,18 @@ class Backend {
       }
 
       log(opts, `Giving callback ${Object.keys(parsed).length} entries`)
-      return callback(null, parsed)
+      callback(null, parsed)
+      await this.queue_download(language)
     } catch (err) {
       log(opts, `Error parsing ${loaded_filename}: ${err.message}`)
       log(opts, `Returning null resources`)
-      return callback(null, {})
+      callback(null, {})
     }
   }
 
   async queue_download (language) {
     // only run the locale updating routine on the node side
-    if (process.type !== 'browser') return
+    if (os.process_type() !== 'browser') return
 
     if (!upgrades_enabled) {
       log(opts, `Not downloading locales in development, export DID_I_STUTTER=1 to override`)
@@ -167,7 +135,7 @@ class Backend {
 
   async download_fresh_locale (language) {
     let local_filename = this.canonical_filename(language)
-    if (!await exists(local_filename)) {
+    if (!await ifs.exists(local_filename)) {
       // try stripping region
       language = language.substring(0, 2)
     }
@@ -177,7 +145,6 @@ class Backend {
 
     log(opts, `Downloading fresh locale file from ${uri}`)
 
-    let needle = require('../promised/needle')
     let resp = await needle.requestAsync('GET', uri, {format: 'json'})
 
     log(opts, `HTTP GET ${uri}: ${resp.statusCode}`)
@@ -192,7 +159,7 @@ class Backend {
     AppActions.locale_update_downloaded(language, resources)
 
     log(opts, `Saving fresh ${language} locale to ${remote_filename}`)
-    await sf.write_file(remote_filename, JSON.stringify(resources, null, 2))
+    await ifs.write_file(remote_filename, JSON.stringify(resources, null, 2))
   }
 }
 

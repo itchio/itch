@@ -45,10 +45,10 @@ test('ibrew', t => {
   }, electron)
   let ibrew = proxyquire('../../app/util/ibrew', stubs)
 
-  let net_stubs = {
+  let net_stubs = Object.assign({
     'needle': needle,
     '../os': os
-  }
+  }, electron)
   let net = proxyquire('../../app/util/ibrew/net', net_stubs)
 
   let formulas_stubs = {
