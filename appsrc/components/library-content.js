@@ -1,6 +1,7 @@
 
 let r = require('r-dom')
-let mori = require('mori')
+import {getIn, get, merge, count} from 'mori-ext'
+
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
@@ -17,23 +18,23 @@ let pred_every = (cave) => true
 class LibraryContent extends ShallowComponent {
   render () {
     let state = this.props.state
-    let panel = mori.getIn(state, ['library', 'panel'])
+    let panel = state::getIn(['library', 'panel'])
     // PSA: the app is open-source, but remember that the server has to agree with you
-    let is_press = mori.getIn(state, ['credentials', 'me', 'press_user'])
+    let is_press = state::getIn(['credentials', 'me', 'press_user'])
 
     let children = []
 
     if (panel === 'preferences') {
       children.push(r(PreferencesForm, {state}))
     } else {
-      let caves = mori.getIn(state, ['library', 'caves'])
-      let games = mori.getIn(state, ['library', 'games'])
+      let caves = state::getIn(['library', 'caves'])
+      let games = state::getIn(['library', 'games'])
 
       let bucket = panel
       if (/^(locations|broken)/.test(panel)) {
         bucket = 'caved'
       }
-      let shown_games = mori.get(games, bucket) || mori.list()
+      let shown_games = games::get(bucket)
 
       let pred = pred_every
 
@@ -42,15 +43,15 @@ class LibraryContent extends ShallowComponent {
         if (loc_matches) {
           let loc_name_filter = loc_matches[1]
           pred = (cave) => {
-            let loc_name = mori.get(cave, 'install_location') || 'appdata'
+            let loc_name = cave::get('install_location') || 'appdata'
             return (loc_name_filter === loc_name)
           }
         }
       }
 
-      let owned_games_by_id = mori.merge(mori.get(games, 'dashboard'), mori.get(games, 'owned'))
+      let owned_games_by_id = games::get('dashboard')::merge(games::get('owned'))
 
-      if (mori.count(shown_games) > 0) {
+      if (shown_games::count() > 0) {
         children.push(r(GameList, {games: shown_games, caves, pred, owned_games_by_id, is_press}))
       } else {
         children.push(r(LibraryPlaceholder, {panel}))
