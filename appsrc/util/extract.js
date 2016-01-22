@@ -115,6 +115,12 @@ let self = {
   },
 
   extract: async (opts) => {
+    pre: { // eslint-disable-line
+      typeof opts === 'object'
+      typeof opts.archive_path === 'string'
+      typeof opts.dest_path === 'string'
+    }
+
     let archive_path = opts.archive_path
 
     let type = await sniff.path(archive_path)

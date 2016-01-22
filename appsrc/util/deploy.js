@@ -21,6 +21,13 @@ let self = {
    *     (that receipt will be used on next deploy)
    */
   deploy: async (opts) => {
+    pre: { // eslint-disable-line
+      typeof opts === 'object'
+      typeof opts.stage_path === 'string'
+      typeof opts.dest_path === 'string'
+      typeof opts.emitter === 'object'
+    }
+
     let stage_path = opts.stage_path
     let dest_path = opts.dest_path
     let emitter = opts.emitter

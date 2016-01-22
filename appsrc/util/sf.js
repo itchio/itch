@@ -80,6 +80,10 @@ let self = {
    * Returns true if file exists, false if ENOENT, throws if other error
    */
   exists: (file) => {
+    pre: { // eslint-disable-line
+      typeof file === 'string'
+    }
+
     return new Promise((resolve, reject) => {
       let callback = (err) => {
         if (err) {
@@ -101,6 +105,10 @@ let self = {
    * Return utf-8 file contents as string
    */
   read_file: async (file) => {
+    pre: { // eslint-disable-line
+      typeof file === 'string'
+    }
+
     return await fs.readFileAsync(file, {encoding: 'utf8'})
   },
 
@@ -108,6 +116,11 @@ let self = {
    * Writes an utf-8 string to `file`. Creates any directory needed.
    */
   write_file: async (file, contents) => {
+    pre: { // eslint-disable-line
+      typeof file === 'string'
+      typeof contents === 'string'
+    }
+
     await self.mkdir(path.dirname(file))
     return await fs.writeFileAsync(file, contents)
   },
@@ -117,6 +130,10 @@ let self = {
    * 'close' or 'end' is emitted, rejects when 'error' is
    */
   promised: async (stream) => {
+    pre: { // eslint-disable-line
+      typeof stream === 'object'
+    }
+
     let p = new Promise((resolve, reject) => {
       stream.on('close', resolve)
       stream.on('end', resolve)
@@ -133,6 +150,10 @@ let self = {
    * Uses mkdirp: https://www.npmjs.com/package/mkdirp
    */
   mkdir: async (dir) => {
+    pre: { // eslint-disable-line
+      typeof dir === 'string'
+    }
+
     return await mkdirp(dir)
   },
 
@@ -141,6 +162,10 @@ let self = {
    * Also works on file, don't bother with unlink.
    */
   wipe: async (shelter) => {
+    pre: { // eslint-disable-line
+      typeof shelter === 'string'
+    }
+
     debug(1, ['wipe', shelter])
 
     let stats
@@ -212,6 +237,12 @@ let self = {
    * (Does not remove files that aren't in src)
    */
   ditto: async (src, dst, opts) => {
+    pre: { // eslint-disable-line
+      typeof src === 'string'
+      typeof dst === 'string'
+      typeof opts === 'object' || opts === undefined
+    }
+
     debug(2, ['ditto', src, dst])
 
     if (typeof opts === 'undefined') {

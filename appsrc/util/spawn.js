@@ -9,8 +9,14 @@ let errors = require('../tasks/errors')
 let log = require('./log')('spawn')
 
 function spawn (opts) {
-  if (typeof opts === 'undefined') {
-    opts = {}
+  pre: { // eslint-disable-line
+    typeof opts === 'object'
+    typeof opts.command === 'string'
+    typeof opts.opts === 'object' || opts.opts === undefined
+    Array.isArray(opts.args) || opts.args === undefined
+    typeof opts.split === 'string' || opts.split === undefined
+    typeof opts.ontoken === 'function' || opts.ontoken === undefined
+    typeof opts.onerrtoken === 'function' || opts.onerrtoken === undefined
   }
 
   let emitter = opts.emitter
