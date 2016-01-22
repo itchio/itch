@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#! /usr/bin/env node
 (function () {
   'use strict'
   /** requires node 4.2.x or higher because we use some ES6 features */

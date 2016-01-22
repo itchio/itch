@@ -6,6 +6,13 @@
     ["transform-async-to-module-method", {
       "module": "bluebird",
       "method": "coroutine"
+    }],
+    ["contracts", {
+      "env": {
+        "production": {
+          "strip": true
+        }
+      }
     }]
   ]
 }

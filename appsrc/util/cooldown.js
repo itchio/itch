@@ -1,9 +1,12 @@
 
 let self = function (ms_between_requests) {
+  pre: { // eslint-disable-line
+    typeof ms_between_requests === 'number'
+    ms_between_requests > 0
+  }
   let last_request = 0
 
   return function cooldown () {
-    // TODO use babel-plugin-contracts
     let now = Date.now()
     let next_acceptable = last_request + ms_between_requests
     let quiet = next_acceptable - now

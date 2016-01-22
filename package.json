@@ -56,18 +56,20 @@
     "walk": "^2.3.9"
   },
   "devDependencies": {
+    "babel-eslint": "^4.1.6",
+    "babel-plugin-contracts": "^1.1.0",
     "babel-plugin-syntax-async-functions": "^6.3.13",
     "babel-plugin-transform-async-to-module-method": "^6.3.13",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.3.16",
     "babel-plugin-transform-strict-mode": "^6.3.13",
     "coveralls": "^2.11.4",
+    "electron-packager": "^5.2.1",
     "grunt": "^0.4.5",
     "grunt-babel": "^6.0.0",
     "grunt-bump": "^0.7.0",
     "grunt-contrib-copy": "^0.8.2",
-    "grunt-electron-installer": "^1.2.1",
     "grunt-electron": "^2.0.1",
-    "electron-packager": "^5.2.1",
+    "grunt-electron-installer": "^1.2.1",
     "grunt-newer": "^1.1.1",
     "grunt-sass": "^1.1.0",
     "jspath": "^0.3.2",
@@ -76,15 +78,17 @@
     "react-addons-test-utils": "0.14.3",
     "sinon": "^1.17.1",
     "skin-deep": "^0.12.0",
+    "standard": "^5.4.1",
     "tap-spec": "^4.1.1",
     "tape": "^4.2.1",
     "zopf": "^4.3.1"
   },
   "scripts": {
     "start": "grunt && electron .",
-    "test": "grunt && nyc -s node test/runner.js | tap-spec",
+    "test": "npm run lint && grunt && nyc -s node test/runner.js | tap-spec",
     "coveralls": "nyc report -r text-lcov | coveralls",
     "local-cov": "npm test && nyc report -r text && nyc report -r html",
+    "lint": "standard appsrc/**.js testsrc/**.js",
     "i18n": "release/i18n-check.sh"
   },
   "standard": {
