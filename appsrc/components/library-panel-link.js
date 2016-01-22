@@ -1,6 +1,6 @@
 
 let r = require('r-dom')
-let mori = require('mori')
+import {get, count} from 'mori-ext'
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
@@ -16,18 +16,13 @@ let AppActions = require('../actions/app-actions')
 class LibraryPanelLink extends ShallowComponent {
   render () {
     let className = this.props.className
-    let name = this.props.name
-    let panel = this.props.panel
-    let label = this.props.label
-    let progress = this.props.progress
+    let {name, panel, label, progress, error} = this.props
     let before = this.props.before || ''
-    let error = this.props.error
     let games = this.props.games || {}
 
-    let count = this.props.count
-    if (typeof count === 'undefined') {
-      let relevant_games = mori.get(games, name) || mori.list()
-      count = mori.count(relevant_games)
+    let num_items = this.props.count
+    if (typeof num_items === 'undefined') {
+      num_items = games::get(name)::count()
     }
     let current = (name === panel)
 
@@ -38,8 +33,8 @@ class LibraryPanelLink extends ShallowComponent {
       r.div({classSet: {panel_link: true, current, [className]: true}, onClick: () => AppActions.focus_panel(this.props.name)}, [
         before,
         _label,
-        (count > 0
-        ? r.span({className: 'bubble'}, count)
+        (num_items > 0
+        ? r.span({className: 'bubble'}, num_items)
         : ''),
         r(ProgressBar, {progress}),
         r(ErrorList, {errors: error})
