@@ -7,17 +7,7 @@ let AppActions = require('./app-actions')
 let AppDispatcher = require('./app-dispatcher')
 let Store = require('./store')
 
-let i18next = {
-  '@global': true,
-  '@noCallThru': true,
-  use: () => i18next,
-  init: () => i18next,
-  on: () => null,
-  off: () => null,
-  t: (x) => x,
-  addResources: () => null,
-  getFixedT: () => i18next.t
-}
+let i18next = require('./i18next')
 
 let self = Object.assign({
   '../util/defer': defer,

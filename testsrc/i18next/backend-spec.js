@@ -3,12 +3,16 @@ let test = require('zopf')
 let sinon = require('sinon')
 let proxyquire = require('proxyquire')
 let react_stubs = require('../stubs/react-stubs')
+let cooldown = require('../stubs/cooldown')
 let AppConstants = require('../../app/constants/app-constants')
 
 test('i18next backend', t => {
   let app = {
     getPath: () => 'userdata'
   }
+
+  let log = () => null
+  log.Logger = function () {}
 
   let ifs = {
     exists: async () => false,
@@ -36,6 +40,8 @@ test('i18next backend', t => {
   let stubs = Object.assign({}, react_stubs, {
     './ifs': ifs,
     '../util/app': app,
+    '../util/log': () => log,
+    '../util/cooldown': cooldown,
     '../promised/needle': needle,
     '../env': env
   })
@@ -84,6 +90,18 @@ test('i18next backend', t => {
     sinon.assert.calledWith(spy, null, {a: 'b'})
   })
 
+  t.case(`returns empty resources if we can't parse local files`, async t => {
+    let exists = t.stub(ifs, 'exists')
+    exists.resolves(false)
+    exists.withArgs('locales/fr.json').resolves(true)
+
+    t.stub(ifs, 'read_file').resolves('not even json')
+
+    let spy = t.spy()
+    await backend.read('fr_CH', 'language', spy)
+    sinon.assert.calledWith(spy, null, {})
+  })
+
   t.case('uses updated locale file if available', async t => {
     let exists = t.stub(ifs, 'exists')
     exists.resolves(false)
@@ -100,6 +118,9 @@ test('i18next backend', t => {
   })
 
   t.case('grabs & saves remote locale when available', async t => {
+    let start = t.spy(react_stubs.AppActions, 'locale_update_download_start')
+    let end = t.spy(react_stubs.AppActions, 'locale_update_download_end')
+
     let exists = t.stub(ifs, 'exists')
     exists.resolves(false)
     exists.withArgs('locales/fr.json').resolves(true)
@@ -109,5 +130,8 @@ test('i18next backend', t => {
 
     let spy = t.spy()
     await backend.read('fr_CH', 'language', spy)
+
+    sinon.assert.calledOnce(start)
+    sinon.assert.calledOnce(end)
   })
 })

@@ -1,6 +1,7 @@
 
 let os = require('../util/os')
 let app = require('../util/app')
+let cooldown = require('../util/cooldown')(1000)
 
 let log = require('../util/log')('i18n-backend/' + os.process_type())
 let opts = { logger: new log.Logger() }
@@ -108,14 +109,18 @@ class Backend {
 
   async queue_download (language) {
     // only run the locale updating routine on the node side
-    if (os.process_type() !== 'browser') return
+    if (os.process_type() !== 'browser') {
+      return
+    }
 
     if (!upgrades_enabled) {
       log(opts, `Not downloading locales in development, export DID_I_STUTTER=1 to override`)
       return
     }
 
-    if (being_fetched[language]) return
+    if (being_fetched[language]) {
+      return
+    }
 
     being_fetched[language] = true
     AppActions.locale_update_download_start(language)
@@ -164,29 +169,5 @@ class Backend {
 }
 
 Backend.type = 'backend'
-
-/** Throttling logic */
-// Stolen from api.js, once copied another time, make generic
-// cf. https://en.wikipedia.org/wiki/Rule_of_three_(computer_programming)
-
-let last_request = 0
-let ms_between_requests = 1000
-
-function cooldown () {
-  let now = +new Date()
-  let next_acceptable = last_request + ms_between_requests
-  let quiet = next_acceptable - now
-
-  if (now > next_acceptable) {
-    last_request = now
-    return Promise.resolve()
-  } else {
-    last_request = next_acceptable
-  }
-
-  return new Promise((resolve, reject) => {
-    setTimeout(resolve, quiet)
-  })
-}
 
 module.exports = Backend

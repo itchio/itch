@@ -61,33 +61,17 @@ ${log}
     let log = res.log
     let crash_file = res.crash_file
 
-    let i18n
-    try {
-      i18n = require('../stores/i18n-store').get_state()
-    } catch (e) {
-      console.log(`While loading i18n for crash report: ${e.message || e}`)
-      i18n = {
-        t: (x, opts) => {
-          if (typeof opts === 'undefined') {
-            opts = {}
-          }
-          if (opts.defaultValue) {
-            return opts.defaultValue
-          }
-          return x
-        }
-      }
-    }
+    let t = require('i18next').getFixedT()
 
     let dialog_opts = {
       type: 'error',
       buttons: [
-        i18n.t('prompt.crash_reporter.report_issue', {defaultValue: 'Report issue'}),
-        i18n.t('prompt.crash_reporter.open_crash_log', {defaultValue: 'Open crash log'}),
-        i18n.t('prompt.action.close', {defaultValue: 'Close'})
+        t('prompt.crash_reporter.report_issue', {defaultValue: 'Report issue'}),
+        t('prompt.crash_reporter.open_crash_log', {defaultValue: 'Open crash log'}),
+        t('prompt.action.close', {defaultValue: 'Close'})
       ],
-      message: i18n.t('prompt.crash_reporter.message', {defaultValue: 'The application has crashed'}),
-      detail: i18n.t('prompt.crash_reporter.detail', {defaultValue: `A crash log was written to ${crash_file}`, location: crash_file})
+      message: t('prompt.crash_reporter.message', {defaultValue: 'The application has crashed'}),
+      detail: t('prompt.crash_reporter.detail', {defaultValue: `A crash log was written to ${crash_file}`, location: crash_file})
     }
 
     let callback = (response) => {

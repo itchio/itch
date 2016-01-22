@@ -36,12 +36,11 @@ let i18n_opts = {
   keySeparator: '###',
   returnEmptyString: false,
   backend: {
-    // TODO: refresh locales from github
+
     loadPath: locales_dir
   }
 }
 i18next.use(backend).init(i18n_opts, on_error)
-let test_t = i18next.getFixedT()
 let state = i18next
 
 let locales_list
@@ -75,7 +74,6 @@ state.on('error', (e) => {
 })
 
 state.on('languageChanged loaded added removed', (e) => {
-  console.log(`i18n-store, event ${JSON.stringify(e)} - ${test_t('menu.help.help')}`)
   I18nStore.emit_change()
 })
 
@@ -83,14 +81,14 @@ if (process.type === 'renderer') {
   try {
     AppActions.preferences_set_sniffed_language(navigator.language)
   } catch (e) {
-    console.log(`Could not sniff language from chrome: ${e.stack || e} - ${test_t('menu.help.help')}`)
+    console.log(`Could not sniff language from chrome: ${e.stack || e}`)
   }
 }
 
 function reload (preferences) {
   sniffed_language = preferences.sniffed_language || 'en'
   lang = preferences.language || sniffed_language
-  log(opts, `Switching to language ${lang} - ${test_t('menu.help.help')}`)
+  log(opts, `Switching to language ${lang}`)
   state.changeLanguage(lang, on_error)
 }
 

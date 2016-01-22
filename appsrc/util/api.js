@@ -3,6 +3,8 @@ let needle = require('../promised/needle')
 let urls = require('../constants/urls')
 let ExtendableError = require('es6-error')
 
+let cooldown = require('../util/cooldown')(130)
+
 let Logger = require('./log').Logger
 let log = require('./log')('api')
 let logger = new Logger({sinks: {console: !!process.env.LET_ME_IN}})
@@ -150,27 +152,6 @@ class User {
   download_upload (upload_id) {
     return this.request('get', `/upload/${upload_id}/download`)
   }
-}
-
-/** Throttling logic */
-
-let last_request = 0
-
-function cooldown () {
-  let now = +new Date()
-  let next_acceptable = last_request + 130
-  let quiet = next_acceptable - now
-
-  if (now > next_acceptable) {
-    last_request = now
-    return Promise.resolve()
-  } else {
-    last_request = next_acceptable
-  }
-
-  return new Promise((resolve, reject) => {
-    setTimeout(resolve, quiet)
-  })
 }
 
 self = {

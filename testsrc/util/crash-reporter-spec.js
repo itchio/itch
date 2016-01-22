@@ -4,6 +4,7 @@ let sinon = require('sinon')
 let proxyquire = require('proxyquire')
 
 let electron = require('../stubs/electron')
+let i18next = require('../stubs/i18next')
 
 test('crash-reporter', t => {
   let sf = {
@@ -14,23 +15,24 @@ test('crash-reporter', t => {
   }
   let stubs = Object.assign({
     '../util/sf': sf,
-    './os': os
+    './os': os,
+    i18next
   }, electron)
   let crash_reporter = proxyquire('../../app/util/crash-reporter', stubs)
 
-  let e = { stack: 'Hey\nthere' }
+  let e = { stack: 'No sweat' }
 
   t.case('write_crash_log', t => {
     let mock = t.mock(sf)
     mock.expects('write_file').once().withArgs(sinon.match.string, 'Hey\nthere').returns(sf)
-    crash_reporter.write_crash_log(e)
+    crash_reporter.write_crash_log({ stack: 'Hey\nthere' })
   })
 
   t.case('write_crash_log (win32)', t => {
     t.stub(os, 'platform').returns('win32')
     let mock = t.mock(sf)
     mock.expects('write_file').once().withArgs(sinon.match.string, 'Hey\r\nthere').returns(sf)
-    crash_reporter.write_crash_log(e)
+    crash_reporter.write_crash_log({ stack: 'Hey\nthere' })
   })
 
   t.case('report_issue', t => {

@@ -5,6 +5,7 @@ let sinon = require('sinon')
 let proxyquire = require('proxyquire')
 
 let electron = require('../stubs/electron')
+let cooldown = require('../stubs/cooldown')
 
 test('api', t => {
   let request = t.stub().resolves({body: {id: 12}, statusCode: 200})
@@ -13,7 +14,8 @@ test('api', t => {
   }
 
   let stubs = Object.assign({
-    '../promised/needle': needle
+    '../promised/needle': needle,
+    '../util/cooldown': cooldown
   }, electron)
 
   let api = proxyquire('../../app/util/api', stubs)
