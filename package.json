@@ -24,6 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.0.6",
+    "circular-json": "^0.3.0",
     "clone": "^1.0.2",
     "deep-assign": "^2.0.0",
     "deep-diff": "^0.3.3",

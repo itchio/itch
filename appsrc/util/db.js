@@ -94,7 +94,9 @@ let self = {
     for (let pair of obj::pairs()) {
       let k = pair[0]
       let v = pair[1]
-      if (typeof v === 'object' && !Array.isArray(v) && !(v instanceof Date)) {
+      if (k === 'global') continue
+
+      if (v && typeof v === 'object' && !Array.isArray(v) && !(v instanceof Date)) {
         let sub = self.flatten(v)
         for (let pair of sub::pairs()) {
           let sk = pair[0]

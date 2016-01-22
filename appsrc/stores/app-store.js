@@ -1,7 +1,7 @@
 
-let mori = require('mori')
-
 let Store = require('./store')
+import {hashMap} from 'mori'
+import {assocIn, assoc, dissoc, updateIn, getIn, get, toClj} from 'mori-ext'
 
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
@@ -11,32 +11,32 @@ let defer = require('../util/defer')
 let patch = require('../util/patch')
 let env = require('../env')
 
-let state = mori.hashMap(
+let state = hashMap(
   'page', 'login',
 
   'credentials', null,
 
-  'preferences', mori.hashMap(
+  'preferences', hashMap(
     'language', 'en'
   ),
 
-  'update', mori.hashMap(
+  'update', hashMap(
     'available', false,
     'downloaded', false,
     'status', null
   ),
 
-  'library', mori.hashMap(
-    'games', mori.hashMap(),
+  'library', hashMap(
+    'games', hashMap(),
     'panel', '',
-    'collections', mori.hashMap(),
-    'caves', mori.hashMap()
+    'collections', hashMap(),
+    'caves', hashMap()
   ),
 
-  'login', mori.hashMap(
+  'login', hashMap(
     'loading', false,
     'errors', null,
-    'setup', mori.hashMap(
+    'setup', hashMap(
       'message', '...',
       'variables', null,
       'icon', 'cog'
@@ -52,36 +52,36 @@ let AppStore = Object.assign(new Store('app-store', 'renderer'), {
 
 function checking_for_self_update (payload) {
   console.log(`checking for self updates...`)
-  state = mori.assocIn(state, ['update', 'checking'], true)
+  state = state::assocIn(['update', 'checking'], true)
   AppStore.emit_change()
 }
 
 function update_not_available (payload) {
-  state = mori.assocIn(state, ['update', 'checking'], false)
-  state = mori.assocIn(state, ['update', 'uptodate'], true)
+  state = state::assocIn(['update', 'checking'], false)
+  state = state::assocIn(['update', 'uptodate'], true)
   AppStore.emit_change()
 
   setTimeout(function () {
-    state = mori.assocIn(state, ['update', 'uptodate'], false)
+    state = state::assocIn(['update', 'uptodate'], false)
     AppStore.emit_change()
   }, 5000)
 }
 
 function update_available (payload) {
   console.log(`update available? cool!`)
-  state = mori.assocIn(state, ['update', 'checking'], false)
-  state = mori.assocIn(state, ['update', 'available'], true)
+  state = state::assocIn(['update', 'checking'], false)
+  state = state::assocIn(['update', 'available'], true)
   AppStore.emit_change()
 }
 
 function update_downloaded (payload) {
   console.log(`update downloaded?! uber-cool!`)
-  state = mori.assocIn(state, ['update', 'downloaded'], true)
+  state = state::assocIn(['update', 'downloaded'], true)
   AppStore.emit_change()
 }
 
 function game_purchased (payload) {
-  state = mori.assocIn(state, ['update', 'status'], payload.message)
+  state = state::assocIn(['update', 'status'], payload.message)
   AppStore.emit_change()
 
   setTimeout(function () {
@@ -95,10 +95,10 @@ function update_error (payload) {
     return
   }
 
-  state = mori.assocIn(state, ['update', 'checking'], false)
-  state = mori.assocIn(state, ['update', 'available'], false)
-  state = mori.assocIn(state, ['update', 'downloaded'], false)
-  state = mori.assocIn(state, ['update', 'error'], payload.message)
+  state = state::assocIn(['update', 'checking'], false)
+  state = state::assocIn(['update', 'available'], false)
+  state = state::assocIn(['update', 'downloaded'], false)
+  state = state::assocIn(['update', 'error'], payload.message)
   AppStore.emit_change()
 
   setTimeout(function () {
@@ -107,33 +107,33 @@ function update_error (payload) {
 }
 
 function locale_update_download_start (payload) {
-  state = mori.assocIn(state, ['locales', 'updating'], true)
+  state = state::assocIn(['locales', 'updating'], true)
   AppStore.emit_change()
 
   setTimeout(locale_update_download_end, 2000)
 }
 
 function locale_update_download_end (payload) {
-  state = mori.assocIn(state, ['locales', 'updating'], false)
+  state = state::assocIn(['locales', 'updating'], false)
   AppStore.emit_change()
 }
 
 function dismiss_status () {
-  state = mori.updateIn(state, ['update'], x => mori.dissoc(x, 'error'))
-  state = mori.updateIn(state, ['update'], x => mori.dissoc(x, 'status'))
+  state = state::updateIn(['update'], x => x::dissoc('error'))
+  state = state::updateIn(['update'], x => x::dissoc('status'))
   AppStore.emit_change()
 }
 
 function focus_panel (payload) {
   let panel = payload.panel
-  let page = mori.get(state, 'page')
+  let page = state::get('page')
 
   if (page !== 'library') {
     console.log(`Not switching to panel ${panel} while on page ${page}`)
     return
   }
 
-  state = mori.assocIn(state, ['library', 'panel'], panel)
+  state = state::assocIn(['library', 'panel'], panel)
   AppStore.emit_change()
 
   defer(() => {
@@ -143,21 +143,21 @@ function focus_panel (payload) {
 }
 
 function switch_page (page) {
-  state = mori.assoc(state, 'page', page)
+  state = state::assoc('page', page)
   AppStore.emit_change()
 }
 
 function login_attempt (payload) {
-  state = mori.assocIn(state, ['login', 'loading'], true)
-  state = mori.assocIn(state, ['login', 'errors'], null)
+  state = state::assocIn(['login', 'loading'], true)
+  state = state::assocIn(['login', 'errors'], null)
   AppStore.emit_change()
 }
 
 function login_failure (payload) {
   AppStore.emit('login_failure', {})
   let errors = payload.errors
-  state = mori.assocIn(state, ['login', 'loading'], false)
-  state = mori.assocIn(state, ['login', 'errors'], errors.stack || errors)
+  state = state::assocIn(['login', 'loading'], false)
+  state = state::assocIn(['login', 'errors'], errors.stack || errors)
   switch_page('login')
 }
 
@@ -166,12 +166,12 @@ function no_stored_credentials () {
 }
 
 function ready_to_roll (payload) {
-  state = mori.assocIn(state, ['login', 'loading'], false)
-  state = mori.assocIn(state, ['login', 'errors'], null)
+  state = state::assocIn(['login', 'loading'], false)
+  state = state::assocIn(['login', 'errors'], null)
 
-  let me = mori.getIn(state, ['credentials', 'me'])
+  let me = state::getIn(['credentials', 'me'])
   switch_page('library')
-  if (mori.get(me, 'developer')) {
+  if (me::get('developer')) {
     focus_panel({panel: 'dashboard'})
     defer(() => AppActions.fetch_games('dashboard'))
   } else {
@@ -180,11 +180,11 @@ function ready_to_roll (payload) {
 }
 
 function logout () {
-  state = mori.assocIn(state, ['library'], mori.hashMap(
-    'games', mori.hashMap(),
+  state = state::assocIn(['library'], hashMap(
+    'games', hashMap(),
     'panel', '',
-    'collections', mori.hashMap(),
-    'caves', mori.hashMap()
+    'collections', hashMap(),
+    'caves', hashMap()
   ))
   AppStore.emit_change()
   switch_page('login')
@@ -194,10 +194,10 @@ function setup_status (payload) {
   let message = payload.message
   let icon = payload.icon
   let variables = payload.variables
-  state = mori.assocIn(state, ['login', 'setup', 'message'], message)
-  state = mori.assocIn(state, ['login', 'setup', 'variables'], variables)
+  state = state::assocIn(['login', 'setup', 'message'], message)
+  state = state::assocIn(['login', 'setup', 'variables'], variables)
   if (icon) {
-    state = mori.assocIn(state, ['login', 'setup', 'icon'], icon)
+    state = state::assocIn(['login', 'setup', 'icon'], icon)
   }
   AppStore.emit_change()
 }
@@ -207,17 +207,19 @@ function setup_wait () {
 }
 
 function cave_thrown_into_bit_bucket (payload) {
-  state = mori.updateIn(state, ['library', 'caves'], caves => mori.dissoc(caves, payload.id))
+  state = state::updateIn(['library', 'caves'], caves => caves::dissoc(payload.id))
   AppStore.emit_change()
-  if (mori.getIn(state, ['library', 'panel']) === `caves/${payload.id}`) {
+  if (state::getIn(['library', 'panel']) === `caves/${payload.id}`) {
     AppActions.focus_panel('caved')
   }
 }
 
 function gain_focus (payload) {
   AppActions.fetch_collections()
-  let panel = mori.getIn(state, ['library', 'panel'])
-  panel && AppActions.fetch_games(panel)
+  let panel = state::getIn(['library', 'panel'])
+  if (panel) {
+    AppActions.fetch_games(panel)
+  }
 
   if (panel !== 'owned') {
     // buying a game can affect something in any panel
@@ -283,17 +285,17 @@ function install_location_store_diff (payload) {
 }
 
 Store.subscribe('collection-store', (collections) => {
-  state = mori.assocIn(state, ['library', 'collections'], mori.toClj(collections))
+  state = state::assocIn(['library', 'collections'], collections::toClj())
   AppStore.emit_change()
 })
 
 Store.subscribe('credentials-store', (credentials) => {
-  state = mori.assoc(state, 'credentials', mori.toClj(credentials))
+  state = state::assoc('credentials', credentials::toClj())
   AppStore.emit_change()
 })
 
 Store.subscribe('preferences-store', (preferences) => {
-  state = mori.assoc(state, 'preferences', mori.toClj(preferences))
+  state = state::assoc('preferences', preferences::toClj())
   AppStore.emit_change()
 })
 

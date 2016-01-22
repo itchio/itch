@@ -1,5 +1,5 @@
 
-let mori = require('mori')
+import {getIn, assocIn, updateIn, dissoc, toClj} from 'mori-ext'
 
 /**
  * Take a diff as produced by deep-diff, and apply it to a mori data structure
@@ -10,7 +10,7 @@ let patch = (state, diff) => {
       // array change
       case 'A': {
         let path = el.path.concat([el.index])
-        state = mori.assocIn(state, path, mori.toClj(el.rhs))
+        state = state::assocIn(path, el.rhs::toClj())
       }
         break
 
@@ -18,7 +18,7 @@ let patch = (state, diff) => {
       case 'N':
       // edited element
       case 'E': {
-        state = mori.assocIn(state, el.path, mori.toClj(el.rhs))
+        state = state::assocIn(el.path, el.rhs::toClj())
       }
         break
 
@@ -26,10 +26,11 @@ let patch = (state, diff) => {
       case 'D': {
         let path = el.path
         let key = path.pop()
+
         if (path.length > 0) {
-          state = mori.updateIn(state, path, (x) => mori.dissoc(x, key))
+          state = state::updateIn(path, (x) => x::dissoc(key))
         } else {
-          state = mori.dissoc(state, key)
+          state = state::dissoc(key)
         }
       }
         break
@@ -40,9 +41,9 @@ let patch = (state, diff) => {
 }
 
 patch.applyAt = (state, path, diff) => {
-  let initial = mori.getIn(state, path)
+  let initial = state::getIn(path)
   let patched = patch(initial, diff)
-  return mori.assocIn(state, path, patched)
+  return state::assocIn(path, patched)
 }
 
 module.exports = patch

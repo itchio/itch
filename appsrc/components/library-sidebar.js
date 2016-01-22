@@ -36,19 +36,14 @@ let is_cave_interesting = (panel, kv) => {
 class LibrarySidebar extends ShallowComponent {
   render () {
     let t = this.t
-    let global_state = this.props.state
-    let state = global_state::get('library')
+    let {state} = this.props
 
-    let panel = state::get('panel')
-    let caves = state::get('caves')
-    let collections = state::get('collections')
-    let games = state::get('games')
+    let panel = state::getIn(['library', 'panel'])
+    let caves = state::getIn(['library', 'caves'])
+    let collections = state::getIn(['library', 'collections'])
+    let games = state::getIn(['library', 'collections'])
 
-    let is_developer = false
-    let credentials = global_state::get('credentials')
-    if (credentials) {
-      is_developer = credentials::getIn(['me', 'developer'])
-    }
+    let is_developer = state::getIn(['credentials', 'me', 'developer'])
 
     let collection_items = ((pair) => {
       let id = pair::first()
@@ -71,11 +66,11 @@ class LibrarySidebar extends ShallowComponent {
       }
     })::map(collections)
 
-    let colls_by_decreasing_num_items = collection_items::sortBy((x) => -games::get(x.name)::count())
-    let grouped_colls = colls_by_decreasing_num_items::groupBy((x) => x.icon)
+    let decreasing_count = (x) => -games::get(x.name)::count()
+    let grouped_colls = collection_items::groupBy((x) => x.icon)
 
-    let own_collections = grouped_colls::get('tag')::intoArray()
-    let ftd_collections = grouped_colls::get('star')::intoArray()
+    let own_collections = grouped_colls::get('tag')::sortBy(decreasing_count)::intoArray()
+    let ftd_collections = grouped_colls::get('star')::sortBy(decreasing_count)::intoArray()
 
     if (own_collections.length === 0) {
       let icon = 'tag'
@@ -158,13 +153,13 @@ class LibrarySidebar extends ShallowComponent {
       let loc_matches = panel.match(/^locations\/(.*)$/)
       if (loc_matches) {
         let loc_name = loc_matches[1]
-        let loc = global_state::getIn(['install-locations', 'locations', loc_name])
+        let loc = state::getIn(['install-locations', 'locations', loc_name])
         let path = loc::get('path')
 
         // XXX perf: can definitely be handled store-side
         ;((alias) => {
           path = path.replace(alias::first(), alias::last())
-        })::each(global_state::getIn(['install-locations', 'aliases']))
+        })::each(state::getIn(['install-locations', 'aliases']))
 
         let link = r(LibraryPanelLink, {before: r(Icon, {icon: 'folder'}), name: panel, label: path, panel, games})
         links.push(link)
@@ -184,7 +179,7 @@ class LibrarySidebar extends ShallowComponent {
 
     return (
       r.div({classSet: {sidebar: true, frameless}}, [
-        r(UserPanel, {state: global_state}),
+        r(UserPanel, {state}),
         r.div({className: 'panel_links'}, links)
       ])
     )

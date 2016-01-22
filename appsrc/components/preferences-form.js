@@ -1,6 +1,7 @@
 
 let r = require('r-dom')
-let mori = require('mori')
+import {get, getIn, first, last, toJs, filter, each, count} from 'mori-ext'
+
 let humanize = require('humanize-plus')
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
@@ -23,7 +24,7 @@ class PreferencesForm extends ShallowComponent {
   render () {
     let t = this.t
     let state = this.props.state
-    let language = mori.getIn(state, ['preferences', 'language'])
+    let language = state::getIn(['preferences', 'language'])
     let locales = I18nStore.get_locales_list()
     let sniff_code = I18nStore.get_sniffed_language()
     let sniffed = sniff_code
@@ -34,7 +35,7 @@ class PreferencesForm extends ShallowComponent {
       }
     }
 
-    let updating_locales = mori.getIn(state, ['locales', 'updating'])
+    let updating_locales = state::getIn(['locales', 'updating'])
 
     let options = [{
       value: '__',
@@ -98,35 +99,35 @@ class PreferencesForm extends ShallowComponent {
     ])
 
     let state = this.props.state
-    let aliases = mori.toJs(mori.getIn(state, ['install-locations', 'aliases']))
-    let default_loc = mori.getIn(state, ['install-locations', 'default'])
+    let aliases = state::getIn(['install-locations', 'aliases'])::toJs()
+    let default_loc = state::getIn(['install-locations', 'default'])
 
-    let loc_map = mori.getIn(state, ['install-locations', 'locations'])
-    let locations = mori.filter((x) => !mori.get(mori.last(x), 'deleted'), loc_map)
+    let loc_map = state::getIn(['install-locations', 'locations'])
+    let locations = loc_map::filter((x) => !x::last()::get('deleted'))
 
     // can't delete your last remaining location.
-    let several_locations = mori.count(locations) > 0
+    let several_locations = locations::count() > 0
 
     let rows = []
     rows.push(header)
 
     let index = -1
 
-    mori.each(locations, (pair) => {
+    locations::each((pair) => {
       index++
-      let name = mori.first(pair)
-      let location = mori.last(pair)
+      let name = pair::first()
+      let location = pair::last()
       let is_default = (name === default_loc)
       let may_delete = several_locations && name !== 'appdata'
 
-      let path = mori.get(location, 'path')
+      let path = location::get('path')
       for (let alias of aliases) {
         path = path.replace(alias[0], alias[1])
       }
-      let size = mori.get(location, 'size')
-      let free_space = mori.get(location, 'free_space')
-      let item_count = mori.get(location, 'item_count')
-      let computing_size = mori.get(location, 'computing_size')
+      let size = location::get('size')
+      let free_space = location::get('free_space')
+      let item_count = location::get('item_count')
+      let computing_size = location::get('computing_size')
 
       rows.push(r.tr({}, [
         r.td({
