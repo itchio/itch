@@ -1,6 +1,7 @@
 
 let r = require('r-dom')
-let mori = require('mori')
+import {get} from 'mori-ext'
+
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('../shallow-component')
 
@@ -15,7 +16,7 @@ class Thumbnail extends ShallowComponent {
 
     let platform_list = []
     for (let platform_spec of platform_data) {
-      if (!mori.get(game, platform_spec.field)) {
+      if (!game::get(platform_spec.field)) {
         continue
       }
       let active = (platform === platform_spec.platform)
@@ -26,7 +27,7 @@ class Thumbnail extends ShallowComponent {
 
     let style = {}
 
-    let cover_url = mori.get(game, 'cover_url')
+    let cover_url = game::get('cover_url')
     if (cover_url) {
       style.backgroundImage = `url('${cover_url}')`
     }
@@ -48,11 +49,10 @@ class Thumbnail extends ShallowComponent {
   }
 
   on_click (e) {
-    let cave = this.props.cave
-    let cave_id = mori.get(cave, '_id')
+    let {cave, game} = this.props
 
-    let game = this.props.game
-    let game_id = mori.get(game, 'id')
+    let cave_id = cave::get('_id')
+    let game_id = game::get('id')
 
     if (e.ctrlKey || e.shiftKey) {
       AppActions.cave_explore(cave_id)
