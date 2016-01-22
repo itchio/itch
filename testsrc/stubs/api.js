@@ -1,7 +1,5 @@
 
-let Promise = require('bluebird')
-
-let noop = () => Promise.resolve()
+let noop = async () => null
 
 let user = {
   me: noop,

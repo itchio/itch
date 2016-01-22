@@ -27,17 +27,19 @@ test('SetupStore', t => {
   proxyquire('../../app/stores/setup-store', stubs)
   let handler = AppDispatcher.get_handler('setup-store')
 
-  t.case('window_ready', t => {
+  t.case('window_ready', async t => {
     t.stub(ibrew, 'fetch').resolves()
-    return handler({ action_type: AppConstants.WINDOW_READY })
+    await handler({ action_type: AppConstants.WINDOW_READY })
   })
 
-  t.case('window_ready (err)', t => {
-    t.stub(ibrew, 'fetch', (opts, name) => {
-      if (name === 'butler') return Promise.reject('Ha!')
-      return Promise.resolve(null)
+  t.case('window_ready (err)', async t => {
+    t.stub(ibrew, 'fetch', async (opts, name) => {
+      if (name === 'butler') {
+        let err = {stack: 'Ha!'}
+        throw err
+      }
     })
     t.mock(AppActions).expects('setup_status').withArgs('login.status.setup_failure', 'error', { error: 'Ha!' })
-    return handler({ action_type: AppConstants.WINDOW_READY })
+    await handler({ action_type: AppConstants.WINDOW_READY })
   })
 })

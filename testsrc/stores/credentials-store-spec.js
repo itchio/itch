@@ -48,7 +48,7 @@ test('CredentialsStore', t => {
     t.notOk(CredentialsStore.get_me(), 'no me after setup')
   })
 
-  t.case('login with password', t => {
+  t.case('login with password', async t => {
     let user = {name: 'Pete'}
     let username = 'foo'
     let password = 'bar'
@@ -58,14 +58,9 @@ test('CredentialsStore', t => {
     t.stub(api.client, 'login_with_password').resolves({key: {key}})
     t.stub(api.user, 'me').resolves({user})
 
-    handler({ action_type: AppConstants.LOGIN_WITH_PASSWORD, username, password })
+    await handler({ action_type: AppConstants.LOGIN_WITH_PASSWORD, username, password })
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        t.ok(CredentialsStore.get_current_user())
-        t.same(CredentialsStore.get_me(), user)
-        resolve()
-      }, 20)
-    })
+    t.ok(CredentialsStore.get_current_user())
+    t.same(CredentialsStore.get_me(), user)
   })
 })

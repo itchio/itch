@@ -1,9 +1,6 @@
 
-
-let Promise = require('bluebird')
-
 module.exports = {
-  find: () => Promise.resolve({
+  find: async () => ({
     _id: 'kalamazoo',
     upload_id: 42,
     game_id: 84

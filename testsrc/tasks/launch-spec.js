@@ -33,7 +33,7 @@ test('launch', t => {
   }
 
   let configure = {
-    start: () => Promise.resolve()
+    start: async () => null
   }
 
   let sf = {
@@ -50,107 +50,100 @@ test('launch', t => {
 
   let launch = proxyquire('../../app/tasks/launch', stubs)
 
-  t.case('rejects 0 execs', t => {
-    let spy = t.spy()
+  t.case('rejects 0 execs', async t => {
     t.stub(CaveStore, 'find').resolves({})
-    return launch.start(opts).catch(spy).then(_ => {
-      t.is(spy.callCount, 1)
-      t.same(spy.getCall(0).args[0].message, 'No executables found')
-    })
+
+    let err
+    try {
+      await launch.start(opts)
+    } catch (e) { err = e }
+    t.same(err.message, 'No executables found')
   })
 
-  t.case('launches top-most exec', t => {
+  t.case('launches top-most exec', async t => {
     t.stub(CaveStore, 'find').resolves({
       executables: [ '/a/b/c', '/a/bababa', '/a/b/c/d' ]
     })
     t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/a/bababa')).resolves('Done!')
-    return launch.start(opts)
+    await launch.start(opts)
   })
 
-  t.case('ignores uninstallers', t => {
+  t.case('ignores uninstallers', async t => {
     t.stub(CaveStore, 'find').resolves({
       executables: [ 'uninstall.exe', 'game.exe' ]
     })
     t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/game.exe')).resolves('Done!')
-    return launch.start(opts)
+    await launch.start(opts)
   })
 
-  t.case('ignores dxwebsetup', t => {
+  t.case('ignores dxwebsetup', async t => {
     t.stub(CaveStore, 'find').resolves({
       executables: [ 'dxwebsetup.exe', 'game.exe' ]
     })
     t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/game.exe')).resolves('Done!')
-    return launch.start(opts)
+    await launch.start(opts)
   })
 
-  t.case('reconfigures as needed', t => {
+  t.case('reconfigures as needed', async t => {
     let find = t.stub(CaveStore, 'find')
     find.resolves({ executables: [] })
-    t.stub(configure, 'start', () => {
+    t.stub(configure, 'start', async () => {
       find.resolves({ executables: ['/a'] })
-      return Promise.resolve()
     })
     t.mock(launch).expects('launch').once().withArgs(path.normalize('/tmp/app/a')).resolves('Done!')
-    return launch.start(opts)
+    await launch.start(opts)
   })
 
-  t.case('launch/.app', t => {
+  t.case('launch/.app', async t => {
     t.stub(os, 'platform').returns('darwin')
     t.mock(launch).expects('sh').once().withArgs('Dumbo.app', `open -W "Dumbo.app"`).resolves('Done!')
-    return launch.launch('Dumbo.app', [])
+    await launch.launch('Dumbo.app', [])
   })
 
-  t.case('launch/.app - with args', t => {
+  t.case('launch/.app - with args', async t => {
     t.stub(os, 'platform').returns('darwin')
     t.mock(launch).expects('sh').once().withArgs('Dumbo.app', `open -W "Dumbo.app" --args "dumb" "du\\"mber" "frank spencer"`).resolves('Done!')
-    return launch.launch('Dumbo.app', ['dumb', 'du"mber', 'frank spencer'])
+    await launch.launch('Dumbo.app', ['dumb', 'du"mber', 'frank spencer'])
   })
 
-  t.case('launch/binary', t => {
+  t.case('launch/binary', async t => {
     t.mock(launch).expects('sh').once().withArgs('dumbo.exe', `"dumbo.exe"`).resolves('Done!')
-    return launch.launch('dumbo.exe', [])
+    await launch.launch('dumbo.exe', [])
   })
 
-  t.case('launch/binary -with args', t => {
+  t.case('launch/binary -with args', async t => {
     t.mock(launch).expects('sh').once().withArgs('dumbo.exe', `"dumbo.exe" "dumb" "du\\"mber" "frank spencer"`).resolves('Done!')
-    return launch.launch('dumbo.exe', ['dumb', 'du"mber', 'frank spencer'])
+    await launch.launch('dumbo.exe', ['dumb', 'du"mber', 'frank spencer'])
   })
 
-  t.case('launch/unknown', t => {
+  t.case('launch/unknown', async t => {
     t.stub(os, 'platform').returns('irix')
     t.mock(launch).expects('sh').once().withArgs('dumbo', `"dumbo"`).resolves('Done!')
-    return launch.launch('dumbo', [])
+    await launch.launch('dumbo', [])
   })
 
-  t.case('sh sanity filter 1', t => {
-    return t.rejects(launch.sh('dumbo', 'dumbo & fork-bomb', opts))
-  })
-
-  t.case('sh sanity filter 2', t => {
-    return t.rejects(launch.sh('dumbo', 'dumbo ; evil', opts))
-  })
-
-  t.case('sh error', t => {
+  t.case('sh error', async t => {
     let dummy = make_dummy()
     t.mock(child_process).expects('spawn').returns(dummy)
     let p = launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
     dummy.emit('error')
-    return t.rejects(p)
+
+    await t.rejects(p)
   })
 
-  t.case('sh successful', t => {
+  t.case('sh successful', async t => {
     let dummy = make_dummy()
     t.mock(child_process).expects('spawn').returns(dummy)
     let p = launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
     dummy.emit('close', 0)
-    return p
+    await p
   })
 
-  t.case('sh non-zero', t => {
+  t.case('sh non-zero', async t => {
     let dummy = make_dummy()
     t.mock(child_process).expects('spawn').returns(dummy)
     let p = launch.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
     dummy.emit('close', 127)
-    return t.rejects(p)
+    await t.rejects(p)
   })
 })

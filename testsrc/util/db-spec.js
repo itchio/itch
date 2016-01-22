@@ -94,7 +94,7 @@ test('db', t => {
     return db.save_records(make_eggs(), {table})
   })
 
-  t.case('save_records (has_one)', t => {
+  t.case('save_records (has_one)', async t => {
     let mock = t.mock(db)
     ;[1, 2, 3].forEach((x) => {
       mock.expects('update').withArgs(
@@ -105,36 +105,36 @@ test('db', t => {
     })
     let save_hens = t.spy()
     let eggs = make_eggs()
-    return db.save_records(eggs, {
+    await db.save_records(eggs, {
       table,
       relations: {
         hen: ['has_one', save_hens]
       }
-    }).then(() => {
-      t.is(save_hens.callCount, 1)
-      let args = save_hens.getCall(0).args
-      t.same(args, [eggs::pluck('hen')])
     })
+
+    t.is(save_hens.callCount, 1)
+    let args = save_hens.getCall(0).args
+    t.same(args, [eggs::pluck('hen')])
   })
 
-  t.case('save_records (belongs_to)', t => {
+  t.case('save_records (belongs_to)', async t => {
     t.stub(db, 'update')
     let spy = t.spy()
     let eggs = make_eggs()
-    return db.save_records(eggs, {
+    await db.save_records(eggs, {
       table,
       relations: {
         hen: ['belongs_to', spy]
       }
-    }).then(() => {
-      t.is(spy.callCount, 1)
-      let args = spy.getCall(0).args
-      t.same(args, [eggs::pluck('hen')])
-      t.same([1, 2, 3], eggs::pluck('hen')::pluck('egg_id'))
     })
+
+    t.is(spy.callCount, 1)
+    let args = spy.getCall(0).args
+    t.same(args, [eggs::pluck('hen')])
+    t.same([1, 2, 3], eggs::pluck('hen')::pluck('egg_id'))
   })
 
-  t.case('save_records (has_many)', t => {
+  t.case('save_records (has_many)', async t => {
     let eggs = [{
       id: 9,
       hens: [ {id: 19}, {id: 29}, {id: 39} ]
@@ -146,16 +146,16 @@ test('db', t => {
       { upsert: true }
     )
     let spy = t.spy()
-    return db.save_records(eggs, {
+    await db.save_records(eggs, {
       table,
       relations: {
         hens: ['has_many', spy]
       }
-    }).then(() => {
-      t.is(spy.callCount, 1)
-      let args = spy.getCall(0).args
-      t.same(args, [eggs[0].hens])
     })
+
+    t.is(spy.callCount, 1)
+    let args = spy.getCall(0).args
+    t.same(args, [eggs[0].hens])
   })
 
   ;['download_keys', 'users', 'games', 'collections'].forEach((type) => {

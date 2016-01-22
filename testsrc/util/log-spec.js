@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let fs = require('fs')
@@ -33,15 +32,16 @@ test('log', t => {
     t.is(r.opts.logger.contents, '[time] [log-spec] Hi mem\n')
   })
 
-  t.case('to file', t => {
+  t.case('to file', async t => {
     let file = './tmp/log.log'
     try { fs.truncateSync(file) } catch (e) {}
     let r = setup(t, {sinks: {console: false, file}})
     r.log(r.opts, 'Hi dad')
 
-    r.opts.logger.close().then(() => {
-      t.is('[time] [log-spec] Hi dad' + require('os').EOL, fs.readFileSync(file, {encoding: 'utf8'}))
-      try { fs.unlinkSync(file) } catch (e) {}
-    })
+    await r.opts.logger.close()
+    let contents = fs.readFileSync(file, {encoding: 'utf8'})
+    try { fs.unlinkSync(file) } catch (e) {}
+
+    t.is('[time] [log-spec] Hi dad' + require('os').EOL, contents)
   })
 })

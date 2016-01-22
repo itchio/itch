@@ -2,7 +2,6 @@
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let path = require('path')
-let Promise = require('bluebird')
 
 let fixture = require('../fixture')
 let electron = require('../stubs/electron')
@@ -16,7 +15,7 @@ let opts = {id: 'kalamazoo', logger}
 test('configure', t => {
   let os = {}
 
-  let noop = () => Promise.resolve()
+  let noop = async () => null
   let win32 = {configure: noop}
   let darwin = {configure: noop}
   let linux = {configure: noop}
@@ -49,7 +48,7 @@ test('configure', t => {
 
 test('configure (each platform)', t => {
   let sf = {
-    chmod: () => Promise.resolve(),
+    chmod: async () => null,
     '@global': true
   }
   let stubs = {

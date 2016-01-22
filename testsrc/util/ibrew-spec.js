@@ -1,8 +1,6 @@
 
 let test = require('zopf')
-import {partial} from 'underline'
 let proxyquire = require('proxyquire')
-let Promise = require('bluebird')
 let PassThrough = require('stream').PassThrough
 
 let electron = require('../stubs/electron')
@@ -20,7 +18,7 @@ test('ibrew', t => {
     '@global': true
   }
   let needle = {
-    get: () => Promise.reject(),
+    get: async () => { throw new Error('stub') },
     defaults: () => null,
     '@global': true,
     '@noCallThru': true
@@ -34,7 +32,7 @@ test('ibrew', t => {
     '@global': true
   }
   let extract = {
-    extract: () => Promise.resolve()
+    extract: async () => null
   }
   let stubs = Object.assign({
     'needle': needle,
@@ -84,15 +82,16 @@ test('ibrew', t => {
     t.throws(() => ibrew.archive_name('namaste'))
   })
 
-  t.case('with all deps', t => {
+  t.case('with all deps', async t => {
     t.stub(os, 'assert_presence').resolves({parsed: '1.0'})
     t.stub(needle, 'get').callsArgWith(1, null, {statusCode: 200, body: '1.0'})
     let opts = {}
-    return Promise.resolve(['7za', 'butler'])
-      .each((f) => ibrew.fetch(opts, f))
+
+    await ibrew.fetch(opts, '7za')
+    await ibrew.fetch(opts, 'butler')
   })
 
-  t.case('without all deps', t => {
+  t.case('without all deps', async t => {
     let check = t.stub(os, 'assert_presence')
     check.onCall(0).rejects('nope!')
     check.onCall(1).resolves({parsed: '0.8'})
@@ -108,7 +107,8 @@ test('ibrew', t => {
       }
     })
 
-    return Promise.each(['7za', 'butler'], ibrew.fetch::partial(opts))
+    await ibrew.fetch(opts, '7za')
+    await ibrew.fetch(opts, 'butler')
   })
 
   t.case('unknown formula', async t => {

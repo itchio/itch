@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let sinon = require('sinon')
 let proxyquire = require('proxyquire')
@@ -8,9 +7,8 @@ let electron = require('../stubs/electron')
 let cooldown = require('../stubs/cooldown')
 
 test('api', t => {
-  let request = t.stub().resolves({body: {id: 12}, statusCode: 200})
   let needle = {
-    requestAsync: request
+    requestAsync: async () => ({body: {id: 12}, statusCode: 200})
   }
 
   let stubs = Object.assign({
@@ -28,11 +26,13 @@ test('api', t => {
   let uri = 'http://example.org/yo'
 
   t.case('can GET', async t => {
+    let request = t.spy(needle, 'requestAsync')
     await client.request('GET', 'yo', {b: 11})
     sinon.assert.calledWith(request, 'GET', uri, {b: 11})
   })
 
   t.case('can POST', async t => {
+    let request = t.spy(needle, 'requestAsync')
     await client.request('POST', 'yo', {b: 22})
     sinon.assert.calledWith(request, 'POST', uri, {b: 22})
   })
@@ -45,14 +45,13 @@ test('api', t => {
 
   t.case('rejects API errors', async t => {
     let errors = ['foo', 'bar', 'baz']
-    let spy = t.spy()
 
-    request.resolves({body: {errors}, statusCode: 200})
-    return client.request('GET', '', {}).catch(spy).then(res => {
-      sinon.assert.calledWith(spy, sinon.match({errors}))
-    }).then(res => {
-      request.resolves({body: {id: 42}, statusCode: 200})
-    })
+    t.stub(needle, 'requestAsync').resolves({body: {errors}, statusCode: 200})
+    let err
+    try {
+      await client.request('GET', '', {})
+    } catch (e) { err = e }
+    t.same(err, {errors})
   })
 
   {
