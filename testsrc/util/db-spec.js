@@ -1,8 +1,7 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
-let pluck = require('underscore').pluck
+import {pluck} from 'underline'
 
 let electron = require('../stubs/electron')
 
@@ -10,12 +9,10 @@ test('db', t => {
   let stubs = electron
   let db = proxyquire('../../app/util/db', stubs)
 
-  db.insert        = () => Promise.resolve()
-  db.update        = () => Promise.resolve()
-  db.find          = () => Promise.resolve()
-  db.find_one      = () => Promise.resolve()
-  db.load_database = () => Promise.resolve()
-  db.remove        = () => Promise.resolve()
+  let noop = async () => undefined
+  for (let m of ['insert', 'update', 'find', 'find_one', 'load_database', 'remove']) {
+    db[m] = noop
+  }
 
   t.case('is_date', t => {
     t.true(db.is_date('created_at'))
@@ -116,7 +113,7 @@ test('db', t => {
     }).then(() => {
       t.is(save_hens.callCount, 1)
       let args = save_hens.getCall(0).args
-      t.same(args, [pluck(eggs, 'hen')])
+      t.same(args, [eggs::pluck('hen')])
     })
   })
 
@@ -132,8 +129,8 @@ test('db', t => {
     }).then(() => {
       t.is(spy.callCount, 1)
       let args = spy.getCall(0).args
-      t.same(args, [pluck(eggs, 'hen')])
-      t.same([1, 2, 3], pluck(pluck(eggs, 'hen'), 'egg_id'))
+      t.same(args, [eggs::pluck('hen')])
+      t.same([1, 2, 3], eggs::pluck('hen')::pluck('egg_id'))
     })
   })
 

@@ -1,5 +1,5 @@
 
-let _ = require('underscore')
+import {sortBy} from 'underline'
 let Promise = require('bluebird')
 
 let path = require('path')
@@ -147,13 +147,13 @@ let self = {
 
     log(opts, `initial candidate set: ${JSON.stringify(candidates, null, 2)}`)
 
-    candidates = _.sortBy(candidates, (x) => -x.weight)
+    candidates = candidates::sortBy((x) => -x.weight)
     log(opts, `candidates after weight sorting: ${JSON.stringify(candidates, null, 2)}`)
 
-    candidates = _.sortBy(candidates, (x) => -x.score)
+    candidates = candidates::sortBy((x) => -x.score)
     log(opts, `candidates after score sorting: ${JSON.stringify(candidates, null, 2)}`)
 
-    candidates = _.sortBy(candidates, (x) => x.depth)
+    candidates = candidates::sortBy((x) => x.depth)
     log(opts, `candidates after depth sorting: ${JSON.stringify(candidates, null, 2)}`)
 
     let exe_path = path.join(app_path, candidates[0].path)

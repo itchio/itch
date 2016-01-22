@@ -1,7 +1,7 @@
 
 let r = require('r-dom')
+import {partial} from 'underline'
 let mori = require('mori')
-let _ = require('underscore')
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
@@ -97,7 +97,7 @@ class LibrarySidebar extends ShallowComponent {
 
     let installed_count = mori.count(caves)
 
-    let in_progress_items = mori.filter(_.partial(is_cave_interesting, panel), caves)
+    let in_progress_items = mori.filter(is_cave_interesting::partial(panel), caves)
     let cave_items = mori.map((kv) => {
       let id = mori.first(kv)
       let cave = mori.last(kv)

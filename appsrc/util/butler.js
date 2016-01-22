@@ -1,6 +1,6 @@
 
-let _ = require('underscore')
 let path = require('path')
+import {partial} from 'underline'
 
 let noop = require('./noop')
 let spawn = require('./spawn')
@@ -25,9 +25,13 @@ let self = {
 
   /* Downloads file at ${url} to ${dest} */
   dl: async function (opts) {
-    let emitter = opts.emitter
-    let url = opts.url
-    let dest = opts.dest
+    pre: { // eslint-disable-line
+      typeof opts === 'object'
+      typeof opts.url === 'string'
+      typeof opts.dest === 'string'
+    }
+
+    let {emitter, url, dest} = opts
     let err = null
     let onerror = (e) => err = e
 
@@ -35,7 +39,7 @@ let self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'dl', url, dest],
-      ontoken: _.partial(self.parse_butler_status, opts, onerror),
+      ontoken: self.parse_butler_status::partial(opts, onerror),
       emitter
     })
 
@@ -45,16 +49,20 @@ let self = {
 
   /* Extracts tar archive ${archive_path} into directory ${dest_path} */
   untar: async function (opts) {
-    let emitter = opts.emitter
-    let archive_path = opts.archive_path
-    let dest_path = opts.dest_path
+    pre: { // eslint-disable-line
+      typeof opts === 'object'
+      typeof opts.archive_path === 'string'
+      typeof opts.dest_path === 'string'
+    }
+
+    let {emitter, archive_path, dest_path} = opts
     let err = null
     let onerror = (e) => err = e
 
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'untar', archive_path, '-d', dest_path],
-      ontoken: _.partial(self.parse_butler_status, opts, onerror),
+      ontoken: self.parse_butler_status::partial(opts, onerror),
       emitter
     })
 
@@ -63,17 +71,14 @@ let self = {
   },
 
   /* rm -rf ${path} */
-  wipe: async function (path, opts) {
-    if (typeof opts === 'undefined') {
-      opts = {}
-    }
+  wipe: async function (path, opts = {}) {
     let err = null
     let onerror = (e) => err = e
 
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'wipe', path],
-      ontoken: _.partial(self.parse_butler_status, opts, onerror)
+      ontoken: self.parse_butler_status::partial(opts, onerror)
     })
 
     if (err) { throw err }
@@ -81,17 +86,18 @@ let self = {
   },
 
   /* mkdir -p ${path} */
-  mkdir: async function (path, opts) {
-    if (typeof opts === 'undefined') {
-      opts = {}
+  mkdir: async function (path, opts = {}) {
+    pre: { // eslint-disable-line
+      typeof path === 'string'
     }
+
     let err = null
     let onerror = (e) => err = e
 
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'mkdir', path],
-      ontoken: _.partial(self.parse_butler_status, opts, onerror)
+      ontoken: self.parse_butler_status::partial(opts, onerror)
     })
 
     if (err) { throw err }
@@ -99,9 +105,10 @@ let self = {
   },
 
   /* rsync -a ${src} ${dst} */
-  ditto: async function (src, dst, opts) {
-    if (typeof opts === 'undefined') {
-      opts = {}
+  ditto: async function (src, dst, opts = {}) {
+    pre: { // eslint-disable-line
+      typeof src === 'string'
+      typeof dst === 'string'
     }
     let err = null
     let onerror = (e) => err = e
@@ -110,7 +117,7 @@ let self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'ditto', src, dst],
-      ontoken: _.partial(self.parse_butler_status, opts, onerror),
+      ontoken: self.parse_butler_status::partial(opts, onerror),
       emitter
     })
 

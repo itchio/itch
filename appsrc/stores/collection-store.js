@@ -1,6 +1,5 @@
 
-
-let indexBy = require('underscore').indexBy
+import {indexBy} from 'underline'
 
 let Store = require('./store')
 let CredentialsStore = require('./credentials-store')
@@ -42,7 +41,7 @@ async function fetch_collections () {
   if (!user) return
 
   let old_collections = await db.find({_table: 'collections'})
-  let old_collections_by_id = indexBy(old_collections, 'id')
+  let old_collections_by_id = old_collections::indexBy('id')
   merge_state(old_collections_by_id)
 
   let collections = (await user.my_collections()).collections

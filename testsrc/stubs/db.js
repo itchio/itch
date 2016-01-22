@@ -1,9 +1,8 @@
 
-let Promise = require('bluebird')
 let proxyquire = require('proxyquire')
 let electron = require('./electron')
 
-let noop = () => Promise.resolve()
+let noop = async () => undefined
 
 let self = {
   '@noCallThru': true

@@ -1,6 +1,6 @@
 
 let db = require('../util/db')
-let indexBy = require('underscore').indexBy
+import {indexBy} from 'underline'
 
 let os = require('../util/os')
 let log = require('../util/log')('tasks/find-upload')
@@ -79,7 +79,7 @@ let self = {
     }
 
     log(opts, `got a list of ${uploads.length} uploads`)
-    AppActions.cave_update(id, {uploads: indexBy(uploads, 'id')})
+    AppActions.cave_update(id, {uploads: uploads::indexBy('id')})
 
     if (!(Array.isArray(uploads) && uploads.length > 0)) {
       throw new Error('No downloads available')

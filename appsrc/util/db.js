@@ -2,9 +2,8 @@
 let Promise = require('bluebird')
 let Datastore = require('nedb')
 let path = require('path')
-let underscore = require('underscore')
-let pairs = underscore.pairs
-let pluck = underscore.pluck
+
+import {pairs, pluck} from 'underline'
 let camelize = require('./format').camelize
 
 let app = require('electron').app
@@ -92,12 +91,12 @@ let self = {
 
   flatten: function (obj) {
     let result = {}
-    for (let pair of pairs(obj)) {
+    for (let pair of obj::pairs()) {
       let k = pair[0]
       let v = pair[1]
       if (typeof v === 'object' && !Array.isArray(v) && !(v instanceof Date)) {
         let sub = self.flatten(v)
-        for (let pair of pairs(sub)) {
+        for (let pair of sub::pairs()) {
           let sk = pair[0]
           let sv = pair[1]
           result[`${k}.${sk}`] = sv
@@ -131,7 +130,7 @@ let self = {
     for (let input of inputs) {
       let record = {_table}
 
-      for (let pair of pairs(input)) {
+      for (let pair of input::pairs()) {
         let k = pair[0]
         let v = pair[1]
         if (typeof v === 'object') {
@@ -147,7 +146,7 @@ let self = {
                 v[self.singularize(_table) + '_id'] = input.id
                 break
               case 'has_many':
-                record[self.singularize(k) + '_ids'] = pluck(v, 'id')
+                record[self.singularize(k) + '_ids'] = v::pluck('id')
                 relation_records[k] = relation_records[k].concat(v)
                 break
             }
@@ -164,7 +163,7 @@ let self = {
       ))
     }
 
-    for (let pair of pairs(relation_records)) {
+    for (let pair of relation_records::pairs()) {
       let name = pair[0]
       let records = pair[1]
       if (~~records.length === 0) continue

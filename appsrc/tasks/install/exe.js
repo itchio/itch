@@ -1,13 +1,12 @@
 
 let StreamSearch = require('streamsearch')
 let os = require('../../util/os')
-
 let sf = require('../../util/sf')
-let _ = require('underscore')
-
 let log = require('../../util/log')('installers/exe')
 
 let AppActions = require('../../actions/app-actions')
+
+import {partial} from 'underline'
 
 let self = {
   valid_installers: ['inno', 'nsis', 'air', 'archive'],
@@ -97,7 +96,7 @@ let self = {
     for (let k of Object.keys(needles)) {
       let v = needles[k]
       let search = new StreamSearch(v)
-      search.on('info', _.partial(on_info, k, v))
+      search.on('info', on_info::partial(k, v))
       searches.push(search)
     }
 

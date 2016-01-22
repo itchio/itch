@@ -1,10 +1,11 @@
 
-let Promise = require('bluebird')
+import {difference} from 'underline'
+import bluebird from 'bluebird'
+
 let sf = require('./sf')
 let noop = require('./noop')
 let butler = require('./butler')
 
-let _ = require('underscore')
 let path = require('path')
 
 let log = require('./log')('deploy')
@@ -28,10 +29,7 @@ let self = {
       typeof opts.emitter === 'object'
     }
 
-    let stage_path = opts.stage_path
-    let dest_path = opts.dest_path
-    let emitter = opts.emitter
-
+    let {stage_path, dest_path, emitter} = opts
     let onprogress = opts.onprogress || noop
     let onsingle = opts.onsingle || pnoop
 
@@ -68,12 +66,12 @@ let self = {
 
     log(opts, `dest has ${dest_files.length} potential dinosaurs`)
 
-    let dinosaurs = _.difference(dest_files, stage_files)
+    let dinosaurs = dest_files::difference(stage_files)
     if (dinosaurs.length) {
       log(opts, `removing ${dinosaurs.length} dinosaurs in dest`)
       log(opts, `example dinosaurs: ${JSON.stringify(dinosaurs.slice(0, 10), null, 2)}`)
 
-      await Promise.resolve(dinosaurs).map((rel) => {
+      await dinosaurs::bluebird.map((rel) => {
         let dinosaur = path.join(dest_path, rel)
         return butler.wipe(dinosaur)
       }, {concurrency: 4})

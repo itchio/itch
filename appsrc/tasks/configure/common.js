@@ -1,8 +1,8 @@
 
 let sniff = require('../../util/sniff')
 let sf = require('../../util/sf')
+import {partial} from 'underline'
 
-let _ = require('underscore')
 let path = require('path')
 
 /**
@@ -10,7 +10,7 @@ let path = require('path')
  * +x them, and return a list of them
  */
 function fix_execs (field, base_path) {
-  let f = _.partial(sniff_and_chmod, field, base_path)
+  let f = sniff_and_chmod::partial(field, base_path)
 
   return (
     sf.glob(`**`, {nodir: true, cwd: base_path})

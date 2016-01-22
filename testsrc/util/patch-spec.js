@@ -2,12 +2,13 @@ let test = require('zopf')
 let mori = require('mori')
 let clone = require('clone')
 let deep = require('deep-diff')
-let _ = require('underscore')
+
+import {indexBy} from 'underline'
 
 let patch = require('../../app/util/patch')
 
 test('patch', t => {
-  let state = _.indexBy([ {id: 42}, {id: 21}, {id: 8} ], 'id')
+  let state = [ {id: 42}, {id: 21}, {id: 8} ]::indexBy('id')
   let saved_state = {}
   let mori_state = mori.hashMap()
 

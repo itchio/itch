@@ -3,7 +3,7 @@ let app = require('electron').app
 let path = require('path')
 let os = require('./os')
 
-let partial = require('underscore').partial
+import {partial} from 'underline'
 
 let extract = require('./extract')
 let log = require('./log')('ibrew')
@@ -55,7 +55,7 @@ let self = {
     }
 
     onstatus('login.status.dependency_check', 'stopwatch')
-    let get_latest_version = partial(net.get_latest_version, channel)
+    let get_latest_version = net.get_latest_version::partial(channel)
 
     let local_version = await self.get_local_version(name)
 

@@ -28,11 +28,9 @@ test('GameStore', t => {
   t.case('fetch owned', async t => {
     let mock = t.mock(CredentialsStore.get_current_user())
 
-    ;['owned_keys'].forEach((kind) => {
-      mock.expects(`my_${kind}`).twice()
-        .onFirstCall() .resolves({[kind]: [1, 2, 3]})
-        .onSecondCall().resolves({[kind]: []})
-    })
+    mock.expects(`my_owned_keys`).twice()
+      .onFirstCall().resolves({owned_keys: [1, 2, 3]})
+      .onSecondCall().resolves({owned_keys: []})
 
     await handler({ action_type: AppConstants.FETCH_GAMES, path: 'owned' })
   })
@@ -67,13 +65,7 @@ test('GameStore', t => {
     })
 
     let update = t.stub(db, 'update').resolves()
-    handler({ action_type: AppConstants.FETCH_GAMES, path: 'collections/78' })
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        sinon.assert.calledWith(update, {_table: 'collections', id: 78}, {$set: {game_ids: [1, 3, 5, 7, 9], _fetched_at: sinon.match.date}})
-        resolve()
-      }, 50)
-    })
+    await handler({ action_type: AppConstants.FETCH_GAMES, path: 'collections/78' })
+    sinon.assert.calledWith(update, {_table: 'collections', id: 78}, {$set: {game_ids: [1, 3, 5, 7, 9], _fetched_at: sinon.match.date}})
   })
 })

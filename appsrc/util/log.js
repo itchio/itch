@@ -1,5 +1,6 @@
 
-let pairs = require('underscore').pairs
+import {pairs} from 'underline'
+
 let fs = require('fs')
 let sf = require('../util/sf')
 let path = require('path')
@@ -33,7 +34,7 @@ class Logger {
     this.file_sink = false
     this.contents = ''
 
-    for (let pair of pairs(sinks)) {
+    for (let pair of sinks::pairs()) {
       let key = pair[0]
       let val = pair[1]
 

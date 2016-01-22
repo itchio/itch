@@ -1,5 +1,5 @@
 
-let _ = require('underscore')
+import {throttle} from 'underline'
 
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppActions = require('../actions/app-actions')
@@ -31,7 +31,6 @@ let electron = require('electron')
 let EventEmitter = require('events').EventEmitter
 
 const CAVE_TABLE = 'caves'
-const THROTTLE = 50
 
 let old_state = {}
 let state = {}
@@ -210,9 +209,9 @@ async function queue_task (id, task_name, data) {
     let task_opts = Object.assign({}, cave_opts(id), data, {
       id,
       emitter,
-      onprogress: _.throttle((state) => {
+      onprogress: ((state) => {
         AppActions.cave_progress({id, progress: state.percent * 0.01, task: task_name})
-      }, THROTTLE)
+      })::throttle(50)
     })
     log(cave_opts(id), `starting ${task_name}`)
     AppActions.cave_progress({id, progress: 0, task: task_name})

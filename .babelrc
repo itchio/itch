@@ -1,8 +1,11 @@
 {
   "plugins": [
     "syntax-async-functions",
-    "transform-es2015-modules-commonjs",
     "transform-strict-mode",
+    "transform-function-bind",
+    "transform-es2015-modules-commonjs",
+    "transform-es2015-destructuring",
+    "transform-es2015-parameters",
     ["transform-async-to-module-method", {
       "module": "bluebird",
       "method": "coroutine"

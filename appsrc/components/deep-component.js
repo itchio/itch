@@ -1,6 +1,6 @@
 
 let TranslatedComponent = require('./translated-component')
-let isEqual = require('underscore').isEqual
+import {isEqual} from 'underline'
 
 /**
  * These components require a deep comparison because they do not use
@@ -11,8 +11,8 @@ let isEqual = require('underscore').isEqual
 class DeepComponent extends TranslatedComponent {
 
   shouldComponentUpdate (nextProps, nextState) {
-    return !isEqual(this.props, nextProps) ||
-           !isEqual(this.state, nextState)
+    return !this.props::isEqual(nextProps) ||
+           !this.state::isEqual(nextState)
   }
 
 }

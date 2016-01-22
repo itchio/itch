@@ -1,7 +1,7 @@
 
 let Promise = require('bluebird')
 let path = require('path')
-let partial = require('underscore').partial
+import {partial} from 'underline'
 
 let ibrew = require('../util/ibrew')
 let xdg_mime = require('../util/xdg-mime')
@@ -27,7 +27,7 @@ function augment_path () {
 }
 
 async function install_deps (opts) {
-  let fetch = partial(ibrew.fetch, opts)
+  let fetch = ibrew.fetch::partial(opts)
 
   // 7-zip is a simple binary
   await fetch('7za')

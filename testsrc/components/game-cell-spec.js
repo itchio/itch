@@ -2,7 +2,6 @@
 let test = require('zopf')
 let mori = require('mori')
 let proxyquire = require('proxyquire')
-let _ = require('underscore')
 
 let sd = require('./skin-deeper')
 let stubs = require('../stubs/react-stubs')

@@ -1,5 +1,5 @@
 
-let _ = require('underscore')
+import {throttle} from 'underline'
 
 let walk = require('walk')
 let electron = require('electron')
@@ -31,7 +31,6 @@ let location_item_counts = {}
 let disk_info = { parts: [] }
 
 let state = {}
-let throttle = 500
 
 let InstallLocationStore = Object.assign(new Store('install-location-store'), {
   get_state: () => {
@@ -102,7 +101,7 @@ function recompute_state () {
   InstallLocationStore.emit_change()
 }
 
-let throttled_recompute_state = _.throttle(recompute_state, throttle, true)
+let throttled_recompute_state = recompute_state::throttle(500, true)
 
 function initialize_appdata () {
   appdata_location = {
@@ -130,7 +129,7 @@ async function reload () {
   throttled_recompute_state()
 }
 
-let throttled_reload = _.throttle(reload, throttle)
+let throttled_reload = reload::throttle(500)
 
 function install_location_compute_size (payload) {
   let name = payload.name

@@ -1,5 +1,6 @@
 
-let _ = require('underscore')
+import {object} from 'underline'
+
 let humanize = require('humanize-plus')
 let path = require('path')
 
@@ -28,7 +29,7 @@ let self = {
       args: ['-slt', 'l', archive_path],
       split: '\n\n',
       ontoken: (token) => {
-        let item = _.object(token.split('\n').map((x) => x.replace(/\r$/, '').split(' = ')))
+        let item = token.split('\n').map((x) => x.replace(/\r$/, '').split(' = '))::object()
         if (!item.Size || !item.Path) return
         if (verbose) {
           log(opts, `list: ${item.Size} | ${item.Path}`)

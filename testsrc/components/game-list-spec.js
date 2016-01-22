@@ -2,7 +2,7 @@
 let test = require('zopf')
 let mori = require('mori')
 let proxyquire = require('proxyquire')
-let _ = require('underscore')
+import {indexBy} from 'underline'
 
 let sd = require('./skin-deeper')
 let stubs = require('../stubs/react-stubs')
@@ -17,7 +17,7 @@ test('GameList', t => {
   })
 
   t.case('predicate-based filtering', t => {
-    let games = mori.toClj(_.indexBy([{id: 12}, {id: 26, in_press_system: true}, {id: 42}], 'id'))
+    let games = mori.toClj([{id: 12}, {id: 26, in_press_system: true}, {id: 42}]::indexBy('id'))
     let caves = mori.toClj({
       'asd09f8': {game_id: 42}
     })

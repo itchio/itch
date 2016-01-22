@@ -52,7 +52,7 @@
     "source-map-support": "^0.3.2",
     "stream-splitter": "^0.3.2",
     "streamsearch": "^0.1.2",
-    "underscore": "^1.8.3",
+    "underline": "^1.0.2",
     "walk": "^2.3.9"
   },
   "devDependencies": {
@@ -60,7 +60,10 @@
     "babel-plugin-contracts": "^1.1.0",
     "babel-plugin-syntax-async-functions": "^6.3.13",
     "babel-plugin-transform-async-to-module-method": "^6.3.13",
+    "babel-plugin-transform-es2015-destructuring": "^6.4.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.3.16",
+    "babel-plugin-transform-es2015-parameters": "^6.4.5",
+    "babel-plugin-transform-function-bind": "^6.3.13",
     "babel-plugin-transform-strict-mode": "^6.3.13",
     "coveralls": "^2.11.4",
     "electron-packager": "^5.2.1",
@@ -74,6 +77,7 @@
     "grunt-sass": "^1.1.0",
     "jspath": "^0.3.2",
     "load-grunt-tasks": "^3.3.0",
+    "mori-ext": "^0.1.0",
     "nyc": "^5.0.0",
     "react-addons-test-utils": "0.14.3",
     "sinon": "^1.17.1",

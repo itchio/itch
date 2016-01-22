@@ -1,13 +1,13 @@
 
 let test = require('zopf')
-let contains = require('underscore').contains
+import {contains} from 'underline'
 
 let os = require('../../app/util/os')
 
 test('os', t => {
   let mock = t.mock(os)
 
-  t.ok(contains(['win32', 'linux', 'darwin'], os.platform()), 'is known')
+  t.ok(['win32', 'linux', 'darwin']::contains(os.platform()), 'is known')
 
   mock.expects('platform').returns('win32')
   t.is('windows', os.itch_platform(), 'itch_platform windows')

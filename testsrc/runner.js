@@ -34,6 +34,7 @@
 
     glob(arg, function (e, files) {
       files.forEach(function (file) {
+        // console.log(`Requiring ${file}`)
         let test = path.resolve(process.cwd(), file)
         require(test)
       })

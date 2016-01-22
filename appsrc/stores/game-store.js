@@ -1,5 +1,5 @@
 
-let _ = require('underscore')
+import {indexBy, pluck, throttle} from 'underline'
 
 let Store = require('./store')
 let CredentialsStore = require('./credentials-store')
@@ -25,7 +25,7 @@ let GameStore = Object.assign(new Store('game-store'), {
 })
 
 function cache_games (key, games) {
-  let games_by_id = _.indexBy(games, 'id')
+  let games_by_id = games::indexBy('id')
   let new_state = {[key]: games_by_id}
   let old_state = {[key]: state[key]}
   let state_diff = deep.diff(old_state, new_state)
@@ -70,7 +70,7 @@ async function fetch_games (payload) {
       if (id === 'empty') return
 
       try {
-        fetch_collection_games(parseInt(id, 10), new Date())
+        await fetch_collection_games(parseInt(id, 10), new Date())
       } catch (e) {
         console.log(`while fetching collection games: ${e.stack || e}`)
       }
@@ -91,13 +91,9 @@ async function fetch_single_game (id) {
   AppActions.games_fetched([id])
 }
 
-async function fetch_collection_games (id, _fetched_at, page, game_ids) {
-  if (typeof page === 'undefined') {
-    cache_collection_games(id)
-    page = 1
-  }
-  if (typeof game_ids === 'undefined') {
-    game_ids = []
+async function fetch_collection_games (id, _fetched_at, page = 1, game_ids = []) {
+  if (page === 1) {
+    await cache_collection_games(id)
   }
 
   log(opts, `fetching page ${page} of collection ${id}`)
@@ -107,13 +103,13 @@ async function fetch_collection_games (id, _fetched_at, page, game_ids) {
   let res = await user.collection_games(id, page)
   let total_items = res.total_items
   let fetched = res.per_page * page
-  game_ids = game_ids.concat(_.pluck(res.games, 'id'))
+  game_ids = game_ids.concat(res.games::pluck('id'))
 
   await db.save_games(res.games)
   await db.update({_table: 'collections', id}, {
     $addToSet: { game_ids: { $each: game_ids } }
   })
-  cache_collection_games(id)
+  await cache_collection_games(id)
   AppActions.games_fetched(game_ids)
 
   if (fetched < total_items) {
@@ -122,7 +118,7 @@ async function fetch_collection_games (id, _fetched_at, page, game_ids) {
     await db.update({_table: 'collections', id}, {
       $set: { game_ids, _fetched_at }
     })
-    cache_collection_games(id)
+    await cache_collection_games(id)
   }
 }
 
@@ -142,14 +138,14 @@ async function fetch_owned_keys (page) {
   }
 
   await db.save_download_keys(keys)
-  cache_owned_games()
+  await cache_owned_games()
 }
 
 /* Cache API results in DB */
 
 async function cache_owned_games () {
   let keys = await db.find({_table: 'download_keys'})
-  let gids = _.pluck(keys, 'game_id')
+  let gids = keys::pluck('game_id')
   let games = await db.find({_table: 'games', id: {$in: gids}})
   cache_games('owned', games)
 }
@@ -162,7 +158,7 @@ async function cache_dashboard_games () {
 
 async function cache_caved_games () {
   let caves = await db.find({_table: 'caves'})
-  let gids = _.pluck(caves, 'game_id')
+  let gids = caves::pluck('game_id')
   let games = await db.find({_table: 'games', id: {$in: gids}})
   cache_games('caved', games)
 }
@@ -178,7 +174,7 @@ async function cache_collection_games (collection_id) {
   let gids = collection.game_ids || []
   let games = await db.find({_table: 'games', id: {$in: gids}})
   cache_games(`collections/${collection_id}`, games)
-  AppActions.games_fetched(_.pluck(games, 'id'))
+  AppActions.games_fetched(games::pluck('id'))
 }
 
 // TODO: Move game_browse somewhere else
@@ -189,9 +185,9 @@ async function game_browse (payload) {
   electron.shell.openExternal(game.url)
 }
 
-let fetch_caved_games = _.throttle(() => {
+let fetch_caved_games = (() => {
   fetch_games({path: 'caved'})
-}, 250, true)
+})::throttle(250, true)
 
 function app_implode () {
   state = {}
