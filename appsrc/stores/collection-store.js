@@ -60,7 +60,7 @@ async function fetch_collections () {
     }
   }
 
-  let collections_by_id = indexBy(collections, 'id')
+  let collections_by_id = collections::indexBy('id')
   await db.save_collections(collections)
   merge_state(collections_by_id)
 

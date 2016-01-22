@@ -70,7 +70,7 @@ async function fetch_games (payload) {
       if (id === 'empty') return
 
       try {
-        await fetch_collection_games(parseInt(id, 10), new Date())
+        await fetch_collection_games({id: parseInt(id, 10), _fetched_at: new Date()})
       } catch (e) {
         console.log(`while fetching collection games: ${e.stack || e}`)
       }
@@ -91,7 +91,15 @@ async function fetch_single_game (id) {
   AppActions.games_fetched([id])
 }
 
-async function fetch_collection_games (id, _fetched_at, page = 1, game_ids = []) {
+async function fetch_collection_games (id, ctx) {
+  pre: { // eslint-disable-line
+    typeof id === 'number'
+    typeof ctx === 'object'
+    ctx._fetched_at instanceof Date
+  }
+
+  let {_fetched_at, page = 1, game_ids = []} = ctx
+
   if (page === 1) {
     await cache_collection_games(id)
   }
@@ -113,7 +121,7 @@ async function fetch_collection_games (id, _fetched_at, page = 1, game_ids = [])
   AppActions.games_fetched(game_ids)
 
   if (fetched < total_items) {
-    await fetch_collection_games(id, _fetched_at, page + 1, game_ids)
+    await fetch_collection_games(id, {_fetched_at, page: page + 1, game_ids})
   } else {
     await db.update({_table: 'collections', id}, {
       $set: { game_ids, _fetched_at }
@@ -171,6 +179,8 @@ async function cache_cave_game (cave_id) {
 
 async function cache_collection_games (collection_id) {
   let collection = await db.find_collection(collection_id)
+  if (!collection) return
+
   let gids = collection.game_ids || []
   let games = await db.find({_table: 'games', id: {$in: gids}})
   cache_games(`collections/${collection_id}`, games)
