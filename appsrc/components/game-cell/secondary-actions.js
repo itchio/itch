@@ -1,6 +1,7 @@
 
+import {get} from 'mori-ext'
+
 let r = require('r-dom')
-let mori = require('mori')
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('../shallow-component')
 
@@ -14,20 +15,18 @@ let platform = require('../../util/os').itch_platform()
 
 class SecondaryActions extends ShallowComponent {
   render () {
-    let game = this.props.game
-    let cave = this.props.cave
-    let may_download = this.props.may_download
+    let {game, cave, may_download} = this.props
     let error = false
 
     let children = []
-    let game_id = mori.get(game, 'id')
+    let game_id = game::get('id')
 
-    let classification = mori.get(game, 'classification')
+    let classification = game::get('classification')
     let action = classification_actions[classification]
 
     if (cave) {
-      let cave_id = mori.get(cave, 'id')
-      let task = mori.get(cave, 'task')
+      let cave_id = cave::get('id')
+      let task = cave::get('task')
 
       if (task === 'error') {
         error = true
@@ -83,7 +82,7 @@ class SecondaryActions extends ShallowComponent {
       }
     } else {
       // No cave
-      let has_min_price = mori.get(game, 'min_price') > 0
+      let has_min_price = game::get('min_price') > 0
       let main_is_purchase = !may_download && has_min_price
 
       // XXX should use API' can_be_bought but see
