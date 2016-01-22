@@ -1,5 +1,4 @@
 
-
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 
@@ -34,25 +33,19 @@ test('CredentialsStore', t => {
     return handler({ action_type: AppConstants.WINDOW_READY })
   })
 
-  t.case('login with key + logout', t => {
+  t.case('login with key + logout', async t => {
     let user = {name: 'Pete'}
     t.mock(AppActions).expects('authenticated')
     t.stub(config, 'get').returns('numazu')
     t.stub(api.client, 'login_key').resolves({user})
 
-    handler({ action_type: AppConstants.WINDOW_READY })
+    await handler({ action_type: AppConstants.WINDOW_READY })
+    t.ok(CredentialsStore.get_current_user(), 'has current user after setup')
+    t.same(CredentialsStore.get_me(), user, 'has me after setup')
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        t.ok(CredentialsStore.get_current_user(), 'has current user after setup')
-        t.same(CredentialsStore.get_me(), user, 'has me after setup')
-
-        handler({ action_type: AppConstants.LOGOUT })
-        t.notOk(CredentialsStore.get_current_user(), 'no current user after logout')
-        t.notOk(CredentialsStore.get_me(), 'no me after setup')
-        resolve()
-      }, 20)
-    })
+    handler({ action_type: AppConstants.LOGOUT })
+    t.notOk(CredentialsStore.get_current_user(), 'no current user after logout')
+    t.notOk(CredentialsStore.get_me(), 'no me after setup')
   })
 
   t.case('login with password', t => {

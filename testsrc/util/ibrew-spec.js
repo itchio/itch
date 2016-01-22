@@ -1,5 +1,6 @@
 
 let test = require('zopf')
+import {partial} from 'underline'
 let proxyquire = require('proxyquire')
 let Promise = require('bluebird')
 let PassThrough = require('stream').PassThrough
@@ -100,20 +101,14 @@ test('ibrew', t => {
       if (cb) {
         cb(null, {statusCode: 200, body: '1.0'})
       } else {
-        let req = {
-          pipe: (sink) => {
-            setTimeout(() => {
-              sink.emit('close')
-            }, 20)
-          },
+        return {
+          pipe: (sink) => setImmediate(() => sink.emit('close')),
           on: () => null
         }
-        return req
       }
     })
 
-    return Promise.resolve(['7za', 'butler'])
-      .each((f) => ibrew.fetch(opts, f))
+    return Promise.each(['7za', 'butler'], ibrew.fetch::partial(opts))
   })
 
   t.case('unknown formula', async t => {
