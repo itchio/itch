@@ -70,7 +70,7 @@ async function fetch_games (payload) {
       if (id === 'empty') return
 
       try {
-        await fetch_collection_games({id: parseInt(id, 10), _fetched_at: new Date()})
+        await fetch_collection_games(parseInt(id, 10), {_fetched_at: new Date()})
       } catch (e) {
         console.log(`while fetching collection games: ${e.stack || e}`)
       }
