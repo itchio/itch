@@ -124,7 +124,7 @@ test('i18next backend', t => {
 
     let exists = t.stub(ifs, 'exists')
     exists.resolves(false)
-    exists.withArgs('locales/fr.json').resolves(true)
+    exists.withArgs(path.join('locales', 'fr.json')).resolves(true)
 
     t.stub(needle, 'requestAsync').resolves({statusCode: 200, body: {a: 'c'}})
     t.mock(ifs).expects('write_file').resolves()
