@@ -5,6 +5,7 @@ let proxyquire = require('proxyquire')
 let react_stubs = require('../stubs/react-stubs')
 let cooldown = require('../stubs/cooldown')
 let AppConstants = require('../../app/constants/app-constants')
+let path = require('path')
 
 test('i18next backend', t => {
   let app = {
@@ -73,7 +74,7 @@ test('i18next backend', t => {
   t.case('succeeds if long file exists', async t => {
     let exists = t.stub(ifs, 'exists')
     exists.resolves(false)
-    exists.withArgs('locales/fr_CH.json').resolves(true)
+    exists.withArgs(path.join('locales', 'fr_CH.json')).resolves(true)
 
     let spy = t.spy()
     await backend.read('fr_CH', 'language', spy)
@@ -83,7 +84,7 @@ test('i18next backend', t => {
   t.case('succeeds if short file exists', async t => {
     let exists = t.stub(ifs, 'exists')
     exists.resolves(false)
-    exists.withArgs('locales/fr.json').resolves(true)
+    exists.withArgs(path.join('locales', 'fr.json')).resolves(true)
 
     let spy = t.spy()
     await backend.read('fr_CH', 'language', spy)
@@ -93,7 +94,7 @@ test('i18next backend', t => {
   t.case(`returns empty resources if we can't parse local files`, async t => {
     let exists = t.stub(ifs, 'exists')
     exists.resolves(false)
-    exists.withArgs('locales/fr.json').resolves(true)
+    exists.withArgs(path.join('locales', 'fr.json')).resolves(true)
 
     t.stub(ifs, 'read_file').resolves('not even json')
 
@@ -105,16 +106,16 @@ test('i18next backend', t => {
   t.case('uses updated locale file if available', async t => {
     let exists = t.stub(ifs, 'exists')
     exists.resolves(false)
-    exists.withArgs('locales/fr.json').resolves(true)
-    exists.withArgs('userdata/locales/fr_CH.json').resolves(true)
+    exists.withArgs(path.join('locales', 'fr.json')).resolves(true)
+    exists.withArgs(path.join('userdata', 'locales', 'fr_CH.json')).resolves(true)
 
     let read_file = t.spy(ifs, 'read_file')
 
     let spy = t.spy()
     await backend.read('fr_CH', 'language', spy)
     sinon.assert.calledWith(spy, null, {a: 'c'})
-    sinon.assert.calledWith(read_file, 'locales/fr.json')
-    sinon.assert.calledWith(read_file, 'userdata/locales/fr_CH.json')
+    sinon.assert.calledWith(read_file, path.join('locales', 'fr.json'))
+    sinon.assert.calledWith(read_file, path.join('userdata', 'locales', 'fr_CH.json'))
   })
 
   t.case('grabs & saves remote locale when available', async t => {
