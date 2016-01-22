@@ -1,6 +1,7 @@
 
+import {get} from 'mori-ext'
+
 let r = require('r-dom')
-let mori = require('mori')
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('../shallow-component')
 
@@ -21,16 +22,16 @@ let linear_gradient = (progress) => {
 }
 
 let icon_info = (cave) => {
-  let progress = mori.get(cave, 'progress')
-  let task = mori.get(cave, 'task')
+  let progress = cave::get('progress')
+  let task = cave::get('task')
   let spin = false
 
   if (progress < 0) {
     spin = true
-  } else if (mori.get(cave, 'reporting')) {
+  } else if (cave::get('reporting')) {
     task = 'report'
     spin = true
-  } else if (mori.get(cave, 'need_blessing')) {
+  } else if (cave::get('need_blessing')) {
     task = 'ask-before-install'
     spin = true
   }
@@ -47,13 +48,13 @@ class MainAction extends ShallowComponent {
     let platform_compatible = this.props.platform_compatible
     let may_download = this.props.may_download
 
-    let classification = mori.get(game, 'classification')
+    let classification = game::get('classification')
     let action = classification_actions[classification]
     if (action === 'open') {
       platform_compatible = true
     }
 
-    let progress = mori.get(cave, 'progress')
+    let progress = cave::get('progress')
     let info = icon_info(cave)
     let task = info.task
     let spin = info.spin
@@ -138,11 +139,10 @@ class MainAction extends ShallowComponent {
   }
 
   on_click (task, may_download, platform_compatible) {
-    let cave = this.props.cave
-    let cave_id = mori.get(cave, '_id')
+    let {cave, game} = this.props
 
-    let game = this.props.game
-    let game_id = mori.get(game, 'id')
+    let cave_id = cave::get('_id')
+    let game_id = game::get('id')
 
     if (task === 'error') {
       AppActions.cave_report(cave_id)
@@ -163,7 +163,7 @@ class MainAction extends ShallowComponent {
 
   status (cave, task, action) {
     let t = this.t
-    let progress = mori.get(cave, 'progress')
+    let progress = cave::get('progress')
 
     if (task === 'idle' || task === 'awaken') {
       switch (action) {
