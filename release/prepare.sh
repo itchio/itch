@@ -1,5 +1,6 @@
 #!/bin/sh -xe
 
+export NODE_ENV=production
 grunt -v babel sass copy
 
 rm -rf stage/
