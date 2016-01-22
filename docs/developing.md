@@ -5,7 +5,7 @@ Refer to the [app faq](https://itch.io/docs/app/faq) to know how to get your gam
 
 ## Installing
 
-itch is built in HTML/SCSS/ES6 and runs inside of Electron. Install the
+itch is built in HTML/SCSS/ES2015 and runs inside of Electron. Install the
 following to get started with development:
 
 * Install [node.js][] (version *5.4.x* is recommended)
@@ -37,8 +37,8 @@ $ npm install -g grunt-cli
 $ npm start
 ```
 
-Running the app like that will be slower than a release, as it compiles
-files as they are loaded, with [babel][]'s require hook.
+This command first compiles newer files from ES2016 to a subset of ES6
+understood by both Node.js & Chromium, in strict mode.
 
 We use [grunt][] for building and packaging, see our [CI job definitions][ci].
 
@@ -68,6 +68,16 @@ $ test/runner test/components
 
 [tap-spec]: https://github.com/scottcorgan/tap-spec
 
+`test/runner` is a bash script, so if you're on Win32 running on PowerShell or cmd.exe,
+you might want to use this variant:
+
+```PowerShell
+$ grunt; node test/runner.js test/components
+```
+
+Note that this will run tests even if `grunt` invocation fails. If someone
+knows a good replacement for `&&` in PowerShell, please open an issue.
+
 ### Debug facilities
 
 **:memo: When running from msys, `export OS=cygwin` to see log output**
@@ -76,11 +86,11 @@ These keys do things:
 
   * `Shift-F5` — reload the UI. Since the state is stored outside of the browser,
     this shouldn't corrupt
-  * `F12` — open Chrome Devtools
+  * `F12` — open Chromium developer tools, to inspect the DOM, run arbitrary javascript code, etc.
 
 These environment variables will change the behavior of the app:
 
-  * `DEVTOOLS=1` — start with Chrome Devtools open — useful when something goes
+  * `DEVTOOLS=1` — start with Chromium Devtools open — useful when something goes
     wrong before the `F12` binding becomes available.
   * `MARCO_POLO=1` — dumps all Flux events being dispatched throughout the app.
     We attempt to filter that (see `private` field in payloads) but **please
