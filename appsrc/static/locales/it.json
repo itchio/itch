@@ -6,7 +6,7 @@
     "grid.item.cancel_download": "Annulla il download", 
     "grid.item.downloading": "Sto scaricando…", 
     "grid.item.install": "Installa", 
-    "grid.item.installing": "Sto installando…", 
+    "grid.item.installing": "Installazione in corso…", 
     "grid.item.launch": "Lancia", 
     "grid.item.not_platform_compatible": "Non disponibile per {{platform}}", 
     "grid.item.probe": "Apri il log eventi di questo elemento per trovare la causa dell'errore (Avanzato)", 
