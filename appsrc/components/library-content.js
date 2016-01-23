@@ -8,6 +8,7 @@ let ShallowComponent = require('./shallow-component')
 let GameList = require('./game-list')
 let LibraryPlaceholder = require('./library-placeholder')
 let PreferencesForm = require('./preferences-form')
+let SearchContent = require('./search')
 
 // predicates
 let pred_every = (cave) => true
@@ -26,6 +27,8 @@ class LibraryContent extends ShallowComponent {
 
     if (panel === 'preferences') {
       children.push(r(PreferencesForm, {state}))
+    } else if (/^search/.test(panel)) {
+      children.push(r(SearchContent, {state}))
     } else {
       let caves = state::getIn(['library', 'caves'])
       let games = state::getIn(['library', 'games'])

@@ -135,6 +135,12 @@ class User {
     return this.request('get', `/collection/${collection_id}/games`, {page})
   }
 
+  async search (query) {
+    let res = await this.request('get', '/search/games', {query})
+    res.games = ensure_array(res.games)
+    return res
+  }
+
   download_key_uploads (download_key_id) {
     return this.request('get', `/download-key/${download_key_id}/uploads`)
   }

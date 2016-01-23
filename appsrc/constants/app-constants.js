@@ -76,6 +76,9 @@ module.exports = keyMirror({
   GAME_PURCHASE: null,
   GAME_PURCHASED: null,
 
+  /** User changed search query */
+  SEARCH_QUERY_CHANGE: null,
+
   /** Set app-wide progress bar (title bar on Windows). Negative value clears. */
   SET_PROGRESS: null,
   /** OSX-only, bounce dock */
@@ -86,7 +89,9 @@ module.exports = keyMirror({
   /* Data retrieval stuff */
   FETCH_COLLECTIONS: null,
   FETCH_GAMES: null,
+  FETCH_SEARCH: null,
   GAMES_FETCHED: null,
+  SEARCH_FETCHED: null,
 
   /** Data sync functions */
   GAME_STORE_DIFF: null,

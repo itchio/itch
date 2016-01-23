@@ -2,6 +2,7 @@
 let Store = require('./store')
 import {hashMap} from 'mori'
 import {assocIn, assoc, dissoc, updateIn, getIn, get, toClj} from 'mori-ext'
+import {reduce} from 'underline'
 
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
@@ -30,7 +31,11 @@ let state = hashMap(
     'games', hashMap(),
     'panel', '',
     'collections', hashMap(),
-    'caves', hashMap()
+    'caves', hashMap(),
+    'search', hashMap(
+      'query', '',
+      'games', hashMap()
+    )
   ),
 
   'login', hashMap(
@@ -214,6 +219,21 @@ function cave_thrown_into_bit_bucket (payload) {
   }
 }
 
+function search_fetched (payload) {
+  let current_query = state::getIn(['library', 'search', 'query'])
+  let fetched_query = state::getIn(['library', 'search', 'fetched_query'])
+
+  if (current_query === fetched_query && payload.query !== current_query) {
+    return // got outdated search result, network lag?
+  }
+
+  let games = payload.game_ids::reduce((games, id) => games::assoc(id, payload.games[id]::toClj()), hashMap())
+
+  state = state::assocIn(['library', 'search', 'games'], games)
+  state = state::assocIn(['library', 'search', 'fetched_query'], payload.query)
+  AppStore.emit_change()
+}
+
 function gain_focus (payload) {
   AppActions.fetch_collections()
   let panel = state::getIn(['library', 'panel'])
@@ -251,6 +271,12 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.GAME_PURCHASED, game_purchased)
   on(AppConstants.DISMISS_STATUS, dismiss_status)
   on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, cave_thrown_into_bit_bucket)
+
+  on(AppConstants.SEARCH_FETCHED, search_fetched)
+  on(AppConstants.SEARCH_QUERY_CHANGE, (payload) => {
+    state = state::assocIn(['library', 'search', 'query'], payload.query)
+    AppStore.emit_change()
+  })
 
   on(AppConstants.GAIN_FOCUS, gain_focus)
 
