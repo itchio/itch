@@ -1,6 +1,5 @@
 
 let r = require('r-dom')
-import {toJs} from 'mori'
 import {getIn, get, count, merge} from 'mori-ext'
 
 let PropTypes = require('react').PropTypes
@@ -29,11 +28,8 @@ class SearchContent extends ShallowComponent {
     let loading = query !== fetched_query
     let empty = search_games::count() === 0
     let is_press = this.state::getIn(['credentials', 'me', 'press_user'])
-    if (!empty) {
-      console.log(toJs(search_games), toJs(caves))
-    }
 
-    return r.div({className: 'main_content'}, [
+    return r.div({style: {height: '100%'}}, [ // TODO: get rid of this div
       r.div({classSet: {dimmer: true, active: loading && !empty}, style: {transition: 'all 0.2s'}}),
       r.div({className: 'searchbox'}, [
         r.input({type: 'text', value: query, placeholder: t('search.placeholder'), onChange: this.onInput.bind(this)})

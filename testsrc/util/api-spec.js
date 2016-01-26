@@ -104,6 +104,10 @@ test('api', t => {
       ['get', '/collection/1708/games', {page: 1}]
     )
     test_api(
+      'search', ['baz'],
+      ['get', '/search/games', {query: 'baz'}]
+    )
+    test_api(
       'download_key_uploads', ['foobar'],
       ['get', '/download-key/foobar/uploads']
     )
