@@ -130,6 +130,9 @@ module.exports = keyMirror({
   /** Hi again! */
   GAIN_FOCUS: null,
 
+  /** GC unused database entries */
+  GC_DATABASE: null,
+
   /* Preferences */
   OPEN_PREFERENCES: null,
   PREFERENCES_SET_LANGUAGE: null,

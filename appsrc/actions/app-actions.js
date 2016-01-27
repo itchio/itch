@@ -328,6 +328,10 @@ let self = {
 
   app_implode: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.APP_IMPLODE })
+  },
+
+  gc_database: (used_game_ids) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.GC_DATABASE, used_game_ids })
   }
 }
 

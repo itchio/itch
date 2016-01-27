@@ -17,7 +17,7 @@ let opts = {
 let log = require('./log')('db')
 
 let self = {
-  promised_methods: ['insert', 'update', 'find', 'find_one', 'load_database', 'remove'],
+  promised_methods: ['insert', 'update', 'find', 'find_one', 'load_database', 'remove', 'count'],
 
   // intentional ; will crash path.join if we have a logic error
   library_dir: -1,
@@ -208,6 +208,20 @@ let self = {
       // because we have paginated fetch logic elsewhere
       relations: {}
     })
+  },
+
+  collect_garbage: async function (used_game_ids) {
+    let prev_count = await self.count({_table: 'games'})
+
+    await self.remove({_table: 'games', $where: function () {
+      return !used_game_ids.includes(this.id)
+    }}, {multi: true})
+
+    let count = await self.count({_table: 'games'})
+    if (prev_count - count > 0) {
+      log(opts, `gc'd ${prev_count - count} database items (of ${prev_count}) [${(100 - count / prev_count * 100).toFixed(0)}%]`)
+      log(opts, `remaining database entries: ${count} [${(count / prev_count * 100).toFixed(0)}%]`)
+    }
   },
 
   /* Helpers */
