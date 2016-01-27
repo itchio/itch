@@ -90,6 +90,7 @@ class LibrarySidebar extends ShallowComponent {
     ftd_collections = ftd_collections.map((props) => r(LibraryPanelLink, props))
 
     let installed_count = caves::count()
+    let search_count = state::getIn(['library', 'search', 'games'])::count()
 
     let in_progress_items = caves::filter(is_cave_interesting::partial(panel))
 
@@ -146,7 +147,7 @@ class LibrarySidebar extends ShallowComponent {
       name: 'search',
       label: t('sidebar.search'),
       panel, games, className: 'search',
-      count: installed_count
+      count: panel === 'search' && search_count
     }))
 
     if (panel === 'preferences') {
