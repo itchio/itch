@@ -3,7 +3,7 @@ let Promise = require('bluebird')
 let Datastore = require('nedb')
 let path = require('path')
 
-import {pairs, pluck} from 'underline'
+import {contains, pairs, pluck} from 'underline'
 let camelize = require('./format').camelize
 
 let app = require('electron').app
@@ -214,13 +214,12 @@ let self = {
     let prev_count = await self.count({_table: 'games'})
 
     await self.remove({_table: 'games', $where: function () {
-      return !used_game_ids.includes(this.id)
+      return !used_game_ids::contains(this.id)
     }}, {multi: true})
 
     let count = await self.count({_table: 'games'})
     if (prev_count - count > 0) {
-      log(opts, `gc'd ${prev_count - count} database items (of ${prev_count}) [${(100 - count / prev_count * 100).toFixed(0)}%]`)
-      log(opts, `remaining database entries: ${count} [${(count / prev_count * 100).toFixed(0)}%]`)
+      log(opts, `gc'd ${prev_count - count} games (of ${prev_count}) [${(100 - count / prev_count * 100).toFixed(0)}%]`)
     }
   },
 
