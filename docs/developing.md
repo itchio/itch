@@ -16,6 +16,7 @@ following to get started with development:
 
 ```
 npm install -g electron-prebuilt@0.36.4
+```
 
 * Check out this repository
 
@@ -108,5 +109,7 @@ These environment variables will change the behavior of the app:
   * `REMEMBER_ME_WHEN_IM_GONE=1` - don't wipe downloads when uninstalling.
     Useful for debugging install/uninstall routines.
   * `THE_DEPTHS_OF_THE_SOUL=1` - print debug info when extracting certain archives
+  * `ENABLE_SEARCH=1` - enables search tab in sidebar
+    _(will be removed later)_
 
 [diego]: diego.md
