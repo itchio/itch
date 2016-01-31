@@ -101,40 +101,40 @@ let self = {
 
   /* Install locations */
 
-  install_location_compute_size: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_COMPUTE_SIZE, name })
+  compute_install_location_size: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.COMPUTE_INSTALL_LOCATION_SIZE, name })
   },
 
-  install_location_cancel_size_computation: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_CANCEL_SIZE_COMPUTATION, name })
+  cancel_install_location_size_computation: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.CANCEL_INSTALL_LOCATION_SIZE_COMPUTATION, name })
   },
 
-  install_location_browse: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_BROWSE, name })
+  browse_install_location: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.BROWSE_INSTALL_LOCATION, name })
   },
 
-  install_location_add_request: () => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_ADD_REQUEST })
+  add_install_location_request: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.ADD_INSTALL_LOCATION_REQUEST })
   },
 
-  install_location_add: (name, path) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_ADD, name, path })
+  add_install_location: (name, path) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.ADD_INSTALL_LOCATION, name, path })
   },
 
-  install_location_remove_request: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_REMOVE_REQUEST, name })
+  remove_install_location_request: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.REMOVE_INSTALL_LOCATION_REQUEST, name })
   },
 
-  install_location_remove: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_REMOVE, name })
+  remove_install_location: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.REMOVE_INSTALL_LOCATION, name })
   },
 
-  install_location_transfer: (name, new_path) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_TRANSFER, name, new_path })
+  transfer_install_location: (name, new_path) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.TRANSFER_INSTALL_LOCATION, name, new_path })
   },
 
-  install_location_make_default: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_MAKE_DEFAULT, name })
+  make_install_location_default: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.MAKE_INSTALL_LOCATION_DEFAULT, name })
   },
 
   /* Caves */
