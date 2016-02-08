@@ -57,6 +57,7 @@ window.addEventListener('beforeunload', () => {
 window.addEventListener('keydown', (e) => {
   switch (e.keyIdentifier) {
     case 'F12':
+      if (!e.shiftKey) return
       let win = window.require('electron').remote.getCurrentWindow()
       win.webContents.openDevTools({detach: true})
       break

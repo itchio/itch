@@ -86,7 +86,7 @@ These keys do things:
 
   * `Shift-F5` — reload the UI. Since the state is stored outside of the browser,
     this shouldn't corrupt
-  * `F12` — open Chromium developer tools, to inspect the DOM, run arbitrary javascript code, etc.
+  * `Shift-F12` — open Chromium developer tools, to inspect the DOM, run arbitrary javascript code, etc.
 
 These environment variables will change the behavior of the app:
 
@@ -108,5 +108,6 @@ These environment variables will change the behavior of the app:
   * `REMEMBER_ME_WHEN_IM_GONE=1` - don't wipe downloads when uninstalling.
     Useful for debugging install/uninstall routines.
   * `THE_DEPTHS_OF_THE_SOUL=1` - print debug info when extracting certain archives
+  * `IMMEDIATE_NOSE_DIVE=1` - open dev tools before launching html games
 
 [diego]: diego.md

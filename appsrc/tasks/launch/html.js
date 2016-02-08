@@ -6,6 +6,7 @@ let serveStatic = require('serve-static')
 let finalhandler = require('finalhandler')
 
 let db = require('../../util/db')
+let url = require('../../util/url')
 
 let log = require('../../util/log')('tasks/launch')
 
@@ -14,6 +15,7 @@ let CaveStore = require('../../stores/cave-store')
 let self = {
   launch: async function(opts, cave) {
     let game = await db.find_one({_table: 'games', id: cave.game_id})
+    let inject_path = path.resolve(__dirname, '..', '..', 'inject', 'game.js')
     let app_path = path.join(CaveStore.app_path(cave.install_location, opts.id), cave.game_path)
 
     log(opts, `game root: ${app_path}`)
@@ -25,9 +27,12 @@ let self = {
       center: true,
       show: true,
       autoHideMenuBar: true,
+      useContentSize: true,
       webPreferences: {
         /* don't let web code control the OS */
         nodeIntegration: false,
+        /* hook up a few keyboard shortcuts of our own */
+        preload: inject_path,
         /* stores cookies etc. in persistent session to save progress */
         partition: `persist:gamesession_${cave.game_id}`
       }
@@ -38,10 +43,30 @@ let self = {
     userAgent = userAgent.replace(/Electron\/[0-9.]+\s/, '')
     win.webContents.setUserAgent(userAgent)
 
+    // open dev tools immediately if requested
     if (process.env.IMMEDIATE_NOSE_DIVE === '1') {
       win.webContents.openDevTools({detach: true})
     }
 
+    // intercept requests to 'itch-internal' domain, act accordingly
+    let filter = {
+      urls: ['https://itch-internal/*']
+    }
+    win.webContents.session.webRequest.onBeforeSendHeaders(filter, (details, callback) => {
+      callback({cancel: true})
+
+      let parsed = url.parse(details.url)
+      switch (parsed.pathname.replace(/^\//, '')) {
+        case 'toggle-fullscreen':
+          win.setFullScreen(!win.isFullScreen())
+          break
+        case 'open-devtools':
+          win.webContents.openDevTools({detach: true})
+          break
+      }
+    })
+
+    // serve files
     let serve = serveStatic(path.dirname(app_path), {'index': [path.basename(app_path)]})
     let server = http.createServer((req, res) => {
       let done = finalhandler(req, res)
