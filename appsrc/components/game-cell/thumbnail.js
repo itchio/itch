@@ -63,9 +63,9 @@ class Thumbnail extends ShallowComponent {
     let cave_id = cave::get('_id')
     let game_id = game::get('id')
 
-    if (e.ctrlKey || e.shiftKey) {
+    if (e.shiftKey) {
       AppActions.cave_explore(cave_id)
-    } else if (e.altKey) {
+    } else if (e.altKey || e.ctrlKey) {
       AppActions.cave_probe(cave_id)
     } else {
       AppActions.game_browse(game_id)
