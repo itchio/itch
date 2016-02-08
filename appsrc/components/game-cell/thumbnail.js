@@ -15,13 +15,22 @@ class Thumbnail extends ShallowComponent {
     let game = this.props.game
 
     let platform_list = []
+    let has_native = false
+
     for (let platform_spec of platform_data) {
       if (!game::get(platform_spec.field)) {
         continue
       }
       let active = (platform === platform_spec.platform)
+      has_native = has_native || active
       let classSet = { icon: true, active }
       classSet[`icon-${platform_spec.icon}`] = true
+      platform_list.push(r.span({ classSet }))
+    }
+
+    if (game::get('type') === 'html') {
+      let active = !has_native // prefer native builds
+      let classSet = { icon: true, 'icon-earth': true, active }
       platform_list.push(r.span({ classSet }))
     }
 

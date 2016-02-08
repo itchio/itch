@@ -21,7 +21,7 @@ let self = {
 
     // filter uploads to find one relevant to our current platform
     let prop = `p_${os.itch_platform()}`
-    return uploads.filter((upload) => !!upload[prop])
+    return uploads.filter((upload) => !!upload[prop] || upload.type === 'html')
   },
 
   score_upload: function (upload) {
@@ -46,6 +46,12 @@ let self = {
     /* Definitely not something we can launch */
     if (/soundtrack/.test(filename)) {
       score -= 100
+    }
+
+    /* Native uploads are preferred */
+    if (upload.type === 'html') {
+      score -= 20
+      score -= 20
     }
 
     return Object.assign({}, upload, {score})

@@ -33,7 +33,9 @@ let self = {
     // Inno setup, NSIS
     'exe': 'exe',
     // Books!
-    'pdf': 'naked'
+    'pdf': 'naked',
+    // some html games provide a single raw html file
+    'html': 'naked'
   },
 
   install: async function (opts) {
