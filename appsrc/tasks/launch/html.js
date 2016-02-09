@@ -71,6 +71,9 @@ let self = {
 
       let parsed = url.parse(details.url)
       switch (parsed.pathname.replace(/^\//, '')) {
+        case 'exit-fullscreen':
+          win.setFullScreen(false)
+          break
         case 'toggle-fullscreen':
           win.setFullScreen(!win.isFullScreen())
           break

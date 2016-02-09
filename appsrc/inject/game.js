@@ -12,6 +12,13 @@ window.addEventListener('keydown', (e) => {
     case 'F11':
       sendMessage('toggle-fullscreen')
       break
+    case 'U+0046': // Cmd-Shift-F
+      if (!e.metaKey || !e.shiftKey) return
+      sendMessage('toggle-fullscreen')
+      break
+    case 'U+001B': // Escape
+      sendMessage('exit-fullscreen')
+      break
     case 'F12':
       if (!e.shiftKey) return
       sendMessage('open-devtools')
@@ -36,6 +43,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
   let refit_canvas = function () {
     if (window.innerHeight > 0) {
       document.body.style.overflow = 'hidden'
+      canvas.style.zIndex = '1000'
       canvas.style.position = 'fixed'
       canvas.style.margin = '0'
 
