@@ -1,9 +1,13 @@
+
 let path = require('path')
 let Promise = require('bluebird')
-let BrowserWindow = require('electron').BrowserWindow
 let serveStatic = require('serve-static')
 let finalhandler = require('finalhandler')
 let http = require('http')
+
+let electron = require('electron')
+let BrowserWindow = electron.BrowserWindow
+let shell = electron.shell
 
 let db = require('../../util/db')
 let url = require('../../util/url')
@@ -74,6 +78,11 @@ let self = {
           win.webContents.openDevTools({detach: true})
           break
       }
+    })
+
+    win.webContents.on('new-window', (e, url) => {
+      e.preventDefault()
+      shell.openExternal(url)
     })
 
     // serve files
