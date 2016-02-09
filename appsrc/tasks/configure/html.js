@@ -1,9 +1,7 @@
 
-let Promise = require('bluebird')
 let path = require('path')
 let clone = require('clone')
 
-let common = require('./common')
 let sf = require('../../util/sf')
 
 let self = {

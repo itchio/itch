@@ -18,3 +18,16 @@ window.addEventListener('keydown', (e) => {
       break
   }
 })
+
+window.addEventListener('DOMContentLoaded', (e) => {
+  let refit_canvas = function () {
+    let canvas = document.getElementById('canvas')
+    if (canvas) {
+      document.body.style.overflow = 'hidden'
+      canvas.style.margin = '0'
+      canvas.style.height = document.body.clientHeight + 'px'
+    }
+  }
+  window.onresize = refit_canvas
+  refit_canvas()
+})
