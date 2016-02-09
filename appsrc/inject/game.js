@@ -47,6 +47,13 @@ window.addEventListener('DOMContentLoaded', (e) => {
 
       canvas.style.top = '0'
       canvas.style.left = horizontalMargin.toFixed() + 'px'
+
+      let parent = canvas.parentNode
+      while (parent && parent.style) {
+        parent.style.transform = 'none'
+        parent.style['webkit-transform'] = 'none'
+        parent = parent.parentNode
+      }
     }
   }
   window.onresize = refit_canvas
