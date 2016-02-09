@@ -37,11 +37,16 @@ window.addEventListener('DOMContentLoaded', (e) => {
     if (window.innerHeight > 0) {
       document.body.style.overflow = 'hidden'
       canvas.style.position = 'fixed'
-      canvas.style.top = '50%'
-      canvas.style.left = '50%'
-      canvas.style.transform = 'translate(-50%, -50%)'
       canvas.style.margin = '0'
+
+      let ratio = canvas.width / canvas.height
       canvas.style.height = window.innerHeight + 'px'
+
+      let stretchWidth = window.innerHeight * ratio
+      let horizontalMargin = (window.innerWidth - stretchWidth) / 2
+
+      canvas.style.top = '0'
+      canvas.style.left = horizontalMargin.toFixed() + 'px'
     }
   }
   window.onresize = refit_canvas
