@@ -98,13 +98,13 @@ let self = {
     })
 
     await new Promise((resolve, reject) => {
-      win.on('close', resolve)
+      win.on('close', () => {
+        win.webContents.session.clearCache(resolve)
+      })
     })
 
     log(opts, `shutting down http server on port ${port}`)
     server.close()
-
-    win.webContents.session.clearCache()
   }
 }
 
