@@ -79,6 +79,16 @@ AppDispatcher.register('window-store', Store.action_listeners(on => {
   on(AppConstants.FOCUS_WINDOW, show)
   on(AppConstants.HIDE_WINDOW, hide)
   on(AppConstants.EVAL, _eval)
+  on(AppConstants.QUIT_WHEN_MAIN, () => {
+    let focused = BrowserWindow.getFocusedWindow()
+    if (!focused) return
+
+    if (window && focused.id === window.id) {
+      AppActions.quit()
+    } else {
+      focused.close()
+    }
+  })
   on(AppConstants.QUIT, () => {
     quitting = true
     app.quit()
