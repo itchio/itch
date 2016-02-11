@@ -1,9 +1,6 @@
 
 let path = require('path')
 let Promise = require('bluebird')
-let serveStatic = require('serve-static')
-let finalhandler = require('finalhandler')
-let http = require('http')
 
 let electron = require('electron')
 let BrowserWindow = electron.BrowserWindow
@@ -11,6 +8,7 @@ let shell = electron.shell
 
 let db = require('../../util/db')
 let url = require('../../util/url')
+let http_server = require('../../util/http-server')
 let debug_browser_window = require('../../util/debug-browser-window')
 
 let log = require('../../util/log')('tasks/launch')
@@ -92,14 +90,9 @@ let self = {
     let file_root = path.dirname(entry_point)
     let index_name = path.basename(entry_point)
 
-    let serve = serveStatic(file_root, {'index': [index_name]})
-    let server = http.createServer((req, res) => {
-      let done = finalhandler(req, res)
-      serve(req, res, done)
-    })
-    let port
-    server.listen(0) // let node/os assign random port
+    let server = http_server.create(file_root, {'index': [index_name]})
 
+    let port
     server.on('listening', function () {
       port = server.address().port
       log(opts, `serving game on port ${port}`)

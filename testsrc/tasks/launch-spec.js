@@ -25,17 +25,6 @@ function make_dummy () {
 
 let rnil = () => null
 
-function mockable_func_module (orig_func) {
-  function f () {
-    return f._func.apply(null, arguments)
-  }
-  let o = {}
-  o.__proto__ = f.__proto__
-  f.__proto__ = o
-  f._func = orig_func
-  return f
-}
-
 test('launch', t => {
   let configure = {
     start: () => Promise.resolve()
@@ -196,28 +185,27 @@ test('launch/native', t => {
 })
 
 test('launch/html', t => {
-  let serveStatic = mockable_func_module(rnil)
+  let fake_server = {
+    listen: rnil,
+    on: (event, func) => {
+      func()
+    },
+    address: () => {
+      return {port: 1234}
+    },
+    close: rnil
+  }
 
-  let http = {
-    createServer: () => {
-      return {
-        listen: rnil,
-        on: (event, func) => {
-          func()
-        },
-        address: () => {
-          return {port: 1234}
-        },
-        close: rnil
-      }
+  let http_server = {
+    create: () => {
+      return fake_server
     }
   }
 
   let stubs = Object.assign({
     '../../stores/cave-store': CaveStore,
     '../../util/db': db,
-    'http': http,
-    'serve-static': serveStatic
+    '../../util/http-server': http_server
   }, electron)
 
   let html = proxyquire('../../app/tasks/launch/html', stubs)
@@ -239,7 +227,7 @@ test('launch/html', t => {
   })
 
   t.case('serves correct directory', async t => {
-    t.mock(serveStatic).expects('_func').once().withArgs('/tmp/app/blah', {index: ['i.html']})
+    t.mock(http_server).expects('create').once().withArgs(path.normalize('/tmp/app/blah'), {index: ['i.html']}).returns(fake_server)
     await html.launch(opts, cave)
   })
 
