@@ -30,7 +30,7 @@ let self = {
 
     let executables = (await self.configure(app_path)).executables
 
-    AppActions.cave_update(id, {executables})
+    AppActions.update_cave(id, {executables})
     return executables.length + ' candidates'
   }
 }

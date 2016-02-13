@@ -139,48 +139,48 @@ let self = {
 
   /* Caves */
 
-  cave_request_uninstall: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_REQUEST_UNINSTALL, id })
+  request_cave_uninstall: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.REQUEST_CAVE_UNINSTALL, id })
   },
 
-  cave_queue_uninstall: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_QUEUE_UNINSTALL, id })
+  queue_cave_uninstall: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_CAVE_UNINSTALL, id })
   },
 
-  cave_queue_reinstall: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_QUEUE_REINSTALL, id })
+  queue_cave_reinstall: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_CAVE_REINSTALL, id })
   },
 
-  cave_update: (id, data) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_UPDATE, id, data })
+  update_cave: (id, data) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.UPDATE_CAVE, id, data })
   },
 
   cave_progress: (opts) => {
     AppDispatcher.dispatch({ action_type: AppConstants.CAVE_PROGRESS, opts })
   },
 
-  cave_cancel: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_CANCEL, id })
+  cancel_cave: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.CANCEL_CAVE, id })
   },
 
-  cave_implode: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_IMPLODE, id })
+  implode_cave: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.IMPLODE_CAVE, id })
   },
 
-  cave_explore: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_EXPLORE, id })
+  explore_cave: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.EXPLORE_CAVE, id })
   },
 
   cave_thrown_into_bit_bucket: (id) => {
     AppDispatcher.dispatch({ action_type: AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, id })
   },
 
-  cave_probe: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_PROBE, id })
+  probe_cave: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.PROBE_CAVE, id })
   },
 
-  cave_report: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_REPORT, id })
+  report_cave: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.REPORT_CAVE, id })
   },
 
   /* Games */

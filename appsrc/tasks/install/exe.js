@@ -70,7 +70,7 @@ let self = {
 
     let installer_exe_cache = {}
     installer_exe_cache[cave.upload_id] = type
-    AppActions.cave_update(cave._id, {installer_exe_cache})
+    AppActions.update_cave(cave._id, {installer_exe_cache})
   },
 
   identify: async function (opts) {

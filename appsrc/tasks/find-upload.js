@@ -70,7 +70,7 @@ let self = {
     action = classification_actions[game.classification] || 'launch'
 
     if (key) {
-      AppActions.cave_update(id, {key})
+      AppActions.update_cave(id, {key})
       log(opts, 'bought game, using download key')
       uploads = (await client.download_key_uploads(key.id)).uploads
     } else {
@@ -79,7 +79,7 @@ let self = {
     }
 
     log(opts, `got a list of ${uploads.length} uploads`)
-    AppActions.cave_update(id, {uploads: uploads::indexBy('id')})
+    AppActions.update_cave(id, {uploads: uploads::indexBy('id')})
 
     if (!(Array.isArray(uploads) && uploads.length > 0)) {
       throw new Error('No downloads available')
@@ -104,7 +104,7 @@ let self = {
       console.log(`refusing to work with ${format}`)
 
       if (!cave.launchable) {
-        AppActions.cave_implode(id)
+        AppActions.implode_cave(id)
       }
       AppActions.show_packaging_policy(format, cave.game_id)
       return

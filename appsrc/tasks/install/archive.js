@@ -42,7 +42,7 @@ let self = {
 
     let archive_nested_cache = {}
     archive_nested_cache[cave.upload_id] = type
-    AppActions.cave_update(cave._id, {archive_nested_cache})
+    AppActions.update_cave(cave._id, {archive_nested_cache})
   },
 
   install: async function (opts) {

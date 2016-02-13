@@ -145,9 +145,9 @@ class MainAction extends ShallowComponent {
     let game_id = game::get('id')
 
     if (task === 'error') {
-      AppActions.cave_report(cave_id)
+      AppActions.report_cave(cave_id)
     } else if (/^download.*$/.test(task)) {
-      AppActions.cave_cancel(cave_id)
+      AppActions.cancel_cave(cave_id)
     } else {
       if (platform_compatible) {
         if (may_download) {

@@ -40,14 +40,14 @@ class SecondaryActions extends ShallowComponent {
 
         children.push(this.tooltip(this.browse_i18n_key(), r.span({
           className: 'game_explore',
-          onClick: () => AppActions.cave_explore(cave_id)
+          onClick: () => AppActions.explore_cave(cave_id)
         }, [
           r(Icon, {icon: 'folder-open'})
         ])))
 
         children.push(this.tooltip('grid.item.probe', r.span({
           className: 'game_probe',
-          onClick: () => AppActions.cave_probe(cave_id)
+          onClick: () => AppActions.probe_cave(cave_id)
         }, [
           r(Icon, {icon: 'bug'})
         ])))
@@ -65,7 +65,7 @@ class SecondaryActions extends ShallowComponent {
         if (action !== 'open') {
           children.push(this.tooltip(this.browse_i18n_key(), r.span({
             className: 'game_explore',
-            onClick: () => AppActions.cave_explore(cave_id)
+            onClick: () => AppActions.explore_cave(cave_id)
           }, [
             r(Icon, {icon: 'folder-open'})
           ])))
@@ -75,7 +75,7 @@ class SecondaryActions extends ShallowComponent {
       if (task === 'error' || task === 'idle') {
         children.push(this.tooltip('grid.item.uninstall', r.span({
           className: 'game_uninstall',
-          onClick: () => AppActions.cave_request_uninstall(cave_id)
+          onClick: () => AppActions.request_cave_uninstall(cave_id)
         }, [
           r(Icon, {icon: 'delete'})
         ])))

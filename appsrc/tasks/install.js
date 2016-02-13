@@ -61,9 +61,9 @@ let self = {
 
     let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter }
 
-    AppActions.cave_update(id, {launchable: false})
+    AppActions.update_cave(id, {launchable: false})
     await core.install(core_opts)
-    AppActions.cave_update(id, {launchable: true, installed_archive_mtime: amtime, upload_id})
+    AppActions.update_cave(id, {launchable: true, installed_archive_mtime: amtime, upload_id})
 
     throw new errors.Transition({to: 'configure', reason: 'installed'})
   }

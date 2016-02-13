@@ -44,27 +44,27 @@ module.exports = keyMirror({
   MAKE_INSTALL_LOCATION_DEFAULT: null,
 
   /** User requested game to be uninstalled */
-  CAVE_REQUEST_UNINSTALL: null,
+  REQUEST_CAVE_UNINSTALL: null,
   /** Cave is going to be uninstalled */
-  CAVE_QUEUE_UNINSTALL: null,
+  QUEUE_CAVE_UNINSTALL: null,
   /** Cave is going to be reinstalled */
-  CAVE_QUEUE_REINSTALL: null,
+  QUEUE_CAVE_REINSTALL: null,
   /** Internal cave DB needs to be updated */
-  CAVE_UPDATE: null,
+  UPDATE_CAVE: null,
   /** Should probably replaced with an CaveStore.emit('change') event */
   CAVE_PROGRESS: null,
   /** Kaboom! */
-  CAVE_IMPLODE: null,
+  IMPLODE_CAVE: null,
   /** I changed my mind */
-  CAVE_CANCEL: null,
+  CANCEL_CAVE: null,
   /** Bye bye. */
   CAVE_THROWN_INTO_BIT_BUCKET: null,
   /** i spy, i spy */
-  CAVE_EXPLORE: null,
+  EXPLORE_CAVE: null,
   /** Alright, what broke this time? */
-  CAVE_PROBE: null,
+  PROBE_CAVE: null,
   /** Let the others figure it out */
-  CAVE_REPORT: null,
+  REPORT_CAVE: null,
   /** Won't compromise on that */
   SHOW_PACKAGING_POLICY: null,
 
