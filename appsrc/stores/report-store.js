@@ -56,7 +56,7 @@ async function report_cave (payload) {
 }
 
 AppDispatcher.register('report-store', Store.action_listeners(on => {
-  on(AppConstants.CAVE_REPORT, report_cave)
+  on(AppConstants.REPORT_CAVE, report_cave)
 }))
 
 module.exports = ReportStore

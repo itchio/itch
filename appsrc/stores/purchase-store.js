@@ -113,7 +113,7 @@ function build_login_and_return_url (return_to) {
   return url.format(url_opts)
 }
 
-async function game_purchase (payload) {
+async function purchase_game (payload) {
   let game_id = payload.game_id
   let game = await db.find_game(game_id)
 
@@ -124,7 +124,7 @@ async function game_purchase (payload) {
   // XXX working around https://github.com/itchio/itch/issues/379 for now
   // if (!game.can_be_bought) {
   //   if (await wants_to_browse_after_failure(game)) {
-  //     AppActions.game_browse(game.id)
+  //     AppActions.browse_game(game.id)
   //   }
   //   return
   // }
@@ -154,7 +154,7 @@ async function game_purchase (payload) {
     if (/^.*\/download\/[a-zA-Z0-9]*$/.test(parsed.pathname)) {
       // purchase went through!
       AppActions.fetch_games('owned')
-      AppActions.game_purchased(game_id, `You just purchased ${game.title}! You should now be able to install it in one click.`)
+      AppActions.gamed_purchase(game_id, `You just purchased ${game.title}! You should now be able to install it in one click.`)
       win.close()
     } else if (/\/pay\/cancel/.test(parsed.pathname)) {
       // payment was cancelled
@@ -169,7 +169,7 @@ async function game_purchase (payload) {
       win.close()
 
       if (await wants_to_browse_after_failure(game)) {
-        AppActions.game_browse(game.id)
+        AppActions.browse_game(game.id)
       }
     }
   })
@@ -179,7 +179,7 @@ async function game_purchase (payload) {
 }
 
 AppDispatcher.register('purchase-store', Store.action_listeners(on => {
-  on(AppConstants.GAME_PURCHASE, game_purchase)
+  on(AppConstants.PURCHASE_GAME, purchase_game)
 }))
 
 module.exports = PurchaseStore

@@ -34,7 +34,7 @@ class Layout extends ShallowComponent {
   componentWillUnmount () {
     super.componentWillUnmount()
     AppStore.remove_change_listener('layout')
-    AppActions.app_implode()
+    AppActions.implode_app()
   }
 
   render () {

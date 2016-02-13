@@ -229,7 +229,7 @@ async function queue_task (id, task_name, data) {
       if (!cave.success_once) {
         let game = await db.find_game(cave.game_id)
         AppActions.notify(`${game.title} is ready!`)
-        AppActions.cave_update(id, {success_once: true})
+        AppActions.update_cave(id, {success_once: true})
       }
     }
 
@@ -265,14 +265,14 @@ async function queue_cave (game_id) {
   queue_task(record._id, 'download')
 }
 
-async function cave_explore (payload) {
+async function explore_cave (payload) {
   let cave = await CaveStore.find(payload.id)
   let app_path = CaveStore.app_path(cave.install_location, payload.id)
 
   if (await sf.exists(app_path)) {
     explorer.open(app_path)
   } else {
-    cave_probe(payload)
+    probe_cave(payload)
   }
 }
 
@@ -293,11 +293,11 @@ function cave_progress (payload) {
   CaveStore.emit_change()
 }
 
-async function cave_probe (payload) {
+async function probe_cave (payload) {
   electron.shell.openItem(log_path(payload.id))
 }
 
-async function game_queue (payload) {
+async function queue_game (payload) {
   let game_id = payload.game_id
   let cave = await db.find_cave_for_game(game_id)
 
@@ -306,7 +306,7 @@ async function game_queue (payload) {
       let game = await db.find_game(game_id)
       let action = classification_actions[game.classification]
       if (action === 'open') {
-        AppActions.cave_explore(cave._id)
+        AppActions.explore_cave(cave._id)
       } else {
         queue_task(cave._id, 'launch')
       }
@@ -323,7 +323,7 @@ async function game_queue (payload) {
   }
 }
 
-async function cave_request_uninstall (payload) {
+async function request_cave_uninstall (payload) {
   let cave_id = payload.id
   let cave = await db.find_cave(cave_id)
   let game = await db.find_game(cave.game_id)
@@ -347,15 +347,15 @@ async function cave_request_uninstall (payload) {
 
   let callback = (response) => {
     if (response === 0) {
-      AppActions.cave_queue_uninstall(payload.id)
+      AppActions.queue_cave_uninstall(payload.id)
     } else if (response === 1) {
-      AppActions.cave_queue_reinstall(payload.id)
+      AppActions.queue_cave_reinstall(payload.id)
     }
   }
   electron.dialog.showMessageBox(dialog_opts, callback)
 }
 
-async function cave_queue_uninstall (payload) {
+async function queue_cave_uninstall (payload) {
   let cave_id = payload.id
   let record = await db.find_cave(cave_id)
 
@@ -366,24 +366,24 @@ async function cave_queue_uninstall (payload) {
   }
 }
 
-async function cave_queue_reinstall (payload) {
+async function queue_cave_reinstall (payload) {
   let cave_id = payload.id
   log(store_opts, `reinstalling ${cave_id}!`)
   queue_task(cave_id, 'install', {reinstall: true})
 }
 
-async function cave_update (payload) {
+async function update_cave (payload) {
   let cave_id = payload.id
   let data = payload.data
   if (cave_blacklist[cave_id]) return
   await db.merge_one({_table: CAVE_TABLE, _id: cave_id}, data)
 }
 
-async function cave_implode (payload) {
+async function implode_cave (payload) {
   // don't accept any further updates to these caves, they're imploding.
   // useful in case child takes some time to exit after it receives SIGKILL
   cave_blacklist[payload.id] = true
-  cave_cancel(payload)
+  cancel_cave(payload)
 
   db.remove({_table: CAVE_TABLE, _id: payload.id})
 
@@ -393,7 +393,7 @@ async function cave_implode (payload) {
   AppActions.cave_thrown_into_bit_bucket(payload.id)
 }
 
-function cave_cancel (payload) {
+function cancel_cave (payload) {
   let task = current_tasks[payload.id]
   if (task) {
     task.opts.emitter.emit('cancel')
@@ -444,17 +444,17 @@ function logout (payload) {
 }
 
 AppDispatcher.register('cave-store', Store.action_listeners(on => {
-  on(AppConstants.GAME_QUEUE, game_queue)
+  on(AppConstants.QUEUE_GAME, queue_game)
 
-  on(AppConstants.CAVE_REQUEST_UNINSTALL, cave_request_uninstall)
-  on(AppConstants.CAVE_QUEUE_UNINSTALL, cave_queue_uninstall)
-  on(AppConstants.CAVE_QUEUE_REINSTALL, cave_queue_reinstall)
-  on(AppConstants.CAVE_UPDATE, cave_update)
-  on(AppConstants.CAVE_IMPLODE, cave_implode)
-  on(AppConstants.CAVE_CANCEL, cave_cancel)
+  on(AppConstants.REQUEST_CAVE_UNINSTALL, request_cave_uninstall)
+  on(AppConstants.QUEUE_CAVE_UNINSTALL, queue_cave_uninstall)
+  on(AppConstants.QUEUE_CAVE_REINSTALL, queue_cave_reinstall)
+  on(AppConstants.UPDATE_CAVE, update_cave)
+  on(AppConstants.IMPLODE_CAVE, implode_cave)
+  on(AppConstants.CANCEL_CAVE, cancel_cave)
   on(AppConstants.CAVE_PROGRESS, cave_progress)
-  on(AppConstants.CAVE_EXPLORE, cave_explore)
-  on(AppConstants.CAVE_PROBE, cave_probe)
+  on(AppConstants.EXPLORE_CAVE, explore_cave)
+  on(AppConstants.PROBE_CAVE, probe_cave)
 
   on(AppConstants.AUTHENTICATED, authenticated)
   on(AppConstants.LOCATIONS_READY, locations_ready)

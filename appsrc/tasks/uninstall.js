@@ -28,7 +28,7 @@ let self = {
 
       let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter }
 
-      AppActions.cave_update(id, {launchable: false})
+      AppActions.update_cave(id, {launchable: false})
 
       try {
         await core.uninstall(core_opts)
@@ -43,7 +43,7 @@ let self = {
           throw e
         }
       }
-      AppActions.cave_update(id, {installed_archive_mtime: null})
+      AppActions.update_cave(id, {installed_archive_mtime: null})
 
       if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
         log(opts, `Erasing archive ${archive_path}`)
@@ -52,7 +52,7 @@ let self = {
     }
 
     log(opts, `Imploding ${dest_path}`)
-    AppActions.cave_implode(id)
+    AppActions.implode_cave(id)
   }
 }
 

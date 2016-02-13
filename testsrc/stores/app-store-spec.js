@@ -73,13 +73,13 @@ test('AppStore', t => {
   })
 
   t.case('login flow', t => {
-    handler({ action_type: AppConstants.LOGIN_ATTEMPT })
+    handler({ action_type: AppConstants.ATTEMPT_LOGIN })
     t.ok(get_state().login.loading, 'loading after login_attempt')
 
     handler({ action_type: AppConstants.LOGIN_FAILURE, errors: ['ha!'] })
     t.notOk(get_state().login.loading, 'not loading after failure')
 
-    handler({ action_type: AppConstants.LOGIN_ATTEMPT })
+    handler({ action_type: AppConstants.ATTEMPT_LOGIN })
     t.ok(get_state().login.loading, 'loading after login_attempt')
 
     handler({ action_type: AppConstants.READY_TO_ROLL })

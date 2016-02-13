@@ -55,7 +55,7 @@
     "prompt.crash_reporter.detail": "Журнал падіння збережено до {{location}}.", 
     "prompt.crash_reporter.message": "Програма впала", 
     "prompt.install_location_not_empty.show_contents": "Показати вміст", 
-    "prompt.install_location_remove.title": "Триває вилучення розташування встановленн", 
+    "prompt.remove_install_location.title": "Триває вилучення розташування встановленн", 
     "prompt.last_remaining_install_location.content": "Це останнє місце встановлення і його не можна видалити допоки іншого не додано.", 
     "prompt.logout_confirm": "Дійсно бажаєте вийти?", 
     "prompt.no_compatible_version.title": "{{title}} на {{platform}}", 

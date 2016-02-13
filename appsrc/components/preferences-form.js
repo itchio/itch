@@ -1,5 +1,6 @@
 
 let r = require('r-dom')
+let mori = require('mori')
 import {get, getIn, first, last, toJs, filter, each, count} from 'mori-ext'
 
 let humanize = require('humanize-plus')
@@ -99,11 +100,31 @@ class PreferencesForm extends ShallowComponent {
     ])
 
     let state = this.props.state
+    let temp = state::toJs()
+    console.log('real',temp)
     let aliases = state::getIn(['install-locations', 'aliases'])::toJs()
     let default_loc = state::getIn(['install-locations', 'default'])
 
     let loc_map = state::getIn(['install-locations', 'locations'])
     let locations = loc_map::filter((x) => !x::last()::get('deleted'))
+    /*console.log('real',locations::toJs())
+    let appdata2 = mori.toClj({
+      name: 'appdata',
+      size: -1,
+      free_space: 202006237184,
+      item_count: 2,
+      computing_size: false,
+      path: 'C:\\Users\\Andy\\AppData\\Roaming\\itch\\users\\61698'
+    })
+    let state2 = mori.toClj({
+      'install-locations': {
+        default: 'appdata',
+        locations: {appdata: appdata2}
+      }
+    })
+    let loc_map2 = state2::getIn(['install-locations', 'locations'])
+    let locations2 = loc_map2::filter((x) => !x::last()::get('deleted'))
+    console.log('test',locations2::toJs())*/
 
     // can't delete your last remaining location.
     let several_locations = locations::count() > 0
@@ -113,7 +134,11 @@ class PreferencesForm extends ShallowComponent {
 
     let index = -1
 
+
+
+
     locations::each((pair) => {
+      //console.log('************* Locations', pair::first(), pair::last())
       index++
       let name = pair::first()
       let location = pair::last()
@@ -128,7 +153,10 @@ class PreferencesForm extends ShallowComponent {
       let free_space = location::get('free_space')
       let item_count = location::get('item_count')
       let computing_size = location::get('computing_size')
-
+      //console.log('size',size)
+      //console.log('free_space', free_space)
+      //console.log('item_count',item_count)
+      //console.log('computing size',computing_size)
       rows.push(r.tr({}, [
         r.td({
           className: 'action',
@@ -148,7 +176,7 @@ class PreferencesForm extends ShallowComponent {
               className: 'action',
               onClick: (e) => {
                 e.preventDefault()
-                AppActions.install_location_cancel_size_computation(name)
+                AppActions.cancel_install_location_size_computation(name)
               }
             }, r(Icon, {icon: 'stopwatch', spin: true})))
 
@@ -156,7 +184,7 @@ class PreferencesForm extends ShallowComponent {
               className: 'action',
               onClick: (e) => {
                 e.preventDefault()
-                AppActions.install_location_compute_size(name)
+                AppActions.compute_install_location_size(name)
               }
             }, r(Icon, {icon: 'refresh'})))),
 
@@ -187,19 +215,19 @@ class PreferencesForm extends ShallowComponent {
 
           : this.tooltip('preferences.install_location.make_default', r.td({
             className: 'action not_default',
-            onClick: (e) => AppActions.install_location_make_default(name)
+            onClick: (e) => AppActions.make_install_location_default(name)
           }, r(Icon, {icon: 'star'})))),
 
         this.tooltip(this.browse_i18n_key(), r.td({
           className: 'action',
-          onClick: (e) => AppActions.install_location_browse(name)
+          onClick: (e) => AppActions.browse_install_location(name)
         }, r(Icon, {icon: 'folder-open'}))),
 
         (may_delete
 
         ? this.tooltip('preferences.install_location.delete', r.td({
           className: 'action',
-          onClick: (e) => AppActions.install_location_remove_request(name)
+          onClick: (e) => AppActions.remove_install_location_request(name)
         }, r(Icon, {icon: 'cross'})))
 
         : r.td({}, ''))
@@ -211,7 +239,7 @@ class PreferencesForm extends ShallowComponent {
         className: 'action add_new',
         onClick: (e) => {
           e.preventDefault()
-          AppActions.install_location_add_request()
+          AppActions.add_install_location_request()
         }
       }, [
         r(Icon, {icon: 'plus'}),

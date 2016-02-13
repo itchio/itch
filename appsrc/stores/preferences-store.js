@@ -56,7 +56,7 @@ async function set_language (payload) {
   await save_to_disk()
 }
 
-async function install_location_add (payload) {
+async function add_install_location (payload) {
   log(opts, `Adding install location: ${JSON.stringify(payload)}`)
   if (!state.install_locations) {
     state.install_locations = {}
@@ -67,7 +67,7 @@ async function install_location_add (payload) {
   await save_to_disk()
 }
 
-async function install_location_remove (payload) {
+async function remove_install_location (payload) {
   log(opts, `Removing install location: ${JSON.stringify(payload)}`)
 
   deepAssign(state, {
@@ -101,7 +101,7 @@ async function install_location_remove (payload) {
   await save_to_disk()
 }
 
-async function install_location_make_default (payload) {
+async function make_install_location_default (payload) {
   log(opts, `Setting default install location: ${JSON.stringify(payload)}`)
   state.default_install_location = payload.name
   await save_to_disk()
@@ -111,9 +111,9 @@ AppDispatcher.register('preferences-store', Store.action_listeners(on => {
   on(AppConstants.BOOT, load_from_disk)
   on(AppConstants.PREFERENCES_SET_LANGUAGE, set_language)
   on(AppConstants.PREFERENCES_SET_SNIFFED_LANGUAGE, set_sniffed_language)
-  on(AppConstants.INSTALL_LOCATION_ADD, install_location_add)
-  on(AppConstants.INSTALL_LOCATION_REMOVE, install_location_remove)
-  on(AppConstants.INSTALL_LOCATION_MAKE_DEFAULT, install_location_make_default)
+  on(AppConstants.ADD_INSTALL_LOCATION, add_install_location)
+  on(AppConstants.REMOVE_INSTALL_LOCATION, remove_install_location)
+  on(AppConstants.MAKE_INSTALL_LOCATION_DEFAULT, make_install_location_default)
 }))
 
 module.exports = PreferencesStore

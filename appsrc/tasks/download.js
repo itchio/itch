@@ -68,7 +68,7 @@ async function start (opts) {
       log(opts, `launchable download cancelled, keeping`)
     } else {
       log(opts, `first download cancelled, wiping ${dest}`)
-      AppActions.cave_implode(id)
+      AppActions.implode_cave(id)
       await butler.wipe(dest)
     }
 

@@ -51,7 +51,7 @@ test('UrlStore', t => {
     t.stub(db, 'find_game').resolves({p_osx: true})
     t.stub(db, 'find_user').resolves({})
     t.stub(electron.electron.dialog, 'showMessageBox').callsArgWith(1, 0)
-    t.mock(AppActions).expects('game_queue')
+    t.mock(AppActions).expects('queue_game')
 
     await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234' })
   })
@@ -102,7 +102,7 @@ test('UrlStore', t => {
   t.case('launch tries to launch when installed', async t => {
     t.stub(db, 'find_game').resolves({p_osx: true})
     t.stub(db, 'find_cave_for_game').resolves({id: 'kalamazoo'})
-    t.mock(AppActions).expects('game_queue')
+    t.mock(AppActions).expects('queue_game')
 
     await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://launch/1234' })
   })

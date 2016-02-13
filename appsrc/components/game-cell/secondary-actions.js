@@ -33,21 +33,21 @@ class SecondaryActions extends ShallowComponent {
 
         children.push(this.tooltip('grid.item.retry', r.span({
           className: 'game_retry',
-          onClick: () => AppActions.game_queue(game_id)
+          onClick: () => AppActions.queue_game(game_id)
         }, [
           r(Icon, {icon: 'refresh'})
         ])))
 
         children.push(this.tooltip(this.browse_i18n_key(), r.span({
           className: 'game_explore',
-          onClick: () => AppActions.cave_explore(cave_id)
+          onClick: () => AppActions.explore_cave(cave_id)
         }, [
           r(Icon, {icon: 'folder-open'})
         ])))
 
         children.push(this.tooltip('grid.item.probe', r.span({
           className: 'game_probe',
-          onClick: () => AppActions.cave_probe(cave_id)
+          onClick: () => AppActions.probe_cave(cave_id)
         }, [
           r(Icon, {icon: 'bug'})
         ])))
@@ -56,8 +56,8 @@ class SecondaryActions extends ShallowComponent {
       if (task === 'idle') {
         // No errors
         children.push(this.tooltip('grid.item.purchase_or_donate', r.span({
-          className: 'game_purchase',
-          onClick: () => AppActions.game_purchase(game_id)
+          className: 'purchase_game',
+          onClick: () => AppActions.purchase_game(game_id)
         }, [
           r(Icon, {icon: 'cart'})
         ])))
@@ -65,7 +65,7 @@ class SecondaryActions extends ShallowComponent {
         if (action !== 'open') {
           children.push(this.tooltip(this.browse_i18n_key(), r.span({
             className: 'game_explore',
-            onClick: () => AppActions.cave_explore(cave_id)
+            onClick: () => AppActions.explore_cave(cave_id)
           }, [
             r(Icon, {icon: 'folder-open'})
           ])))
@@ -75,7 +75,7 @@ class SecondaryActions extends ShallowComponent {
       if (task === 'error' || task === 'idle') {
         children.push(this.tooltip('grid.item.uninstall', r.span({
           className: 'game_uninstall',
-          onClick: () => AppActions.cave_request_uninstall(cave_id)
+          onClick: () => AppActions.request_cave_uninstall(cave_id)
         }, [
           r(Icon, {icon: 'delete'})
         ])))
@@ -89,8 +89,8 @@ class SecondaryActions extends ShallowComponent {
       // https://github.com/itchio/itch/issues/379
       if (!main_is_purchase) {
         children.push(this.tooltip('grid.item.purchase_or_donate', r.span({
-          className: 'game_purchase',
-          onClick: () => AppActions.game_purchase(game_id)
+          className: 'purchase_game',
+          onClick: () => AppActions.purchase_game(game_id)
         }, [
           r(Icon, {icon: 'cart'})
         ])))
