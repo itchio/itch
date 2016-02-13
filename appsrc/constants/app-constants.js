@@ -69,12 +69,12 @@ module.exports = keyMirror({
   SHOW_PACKAGING_POLICY: null,
 
   /** User requested game to be installed */
-  GAME_QUEUE: null,
+  QUEUE_GAME: null,
   /** Open a game's page */
-  GAME_BROWSE: null,
+  BROWSE_GAME: null,
   /** Buy / support a game! */
-  GAME_PURCHASE: null,
-  GAME_PURCHASED: null,
+  PURCHASE_GAME: null,
+  GAMED_PURCHASE: null,
 
   /** Set app-wide progress bar (title bar on Windows). Negative value clears. */
   SET_PROGRESS: null,
@@ -97,7 +97,7 @@ module.exports = keyMirror({
   /** Ready but needs human login */
   NO_STORED_CREDENTIALS: null,
   /** Any login attempt (cached or not) */
-  LOGIN_ATTEMPT: null,
+  ATTEMPT_LOGIN: null,
   /** Private - login attempt with username/password */
   LOGIN_WITH_PASSWORD: null,
   /** Wrong login/password or something else */
@@ -117,7 +117,7 @@ module.exports = keyMirror({
   EVAL: null,
 
   /** Sent when app is about to reboot or shutdown */
-  APP_IMPLODE: null,
+  IMPLODE_APP: null,
 
   /** Buh-bye */
   QUIT: null,

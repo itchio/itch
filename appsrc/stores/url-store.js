@@ -95,7 +95,7 @@ async function handle_url (url_str) {
       if (game) {
         let cave = await db.find_cave_for_game(gid)
         if (cave) {
-          AppActions.game_queue(gid)
+          AppActions.queue_game(gid)
         } else {
           log(opts, `game ${gid} known but not installed, queuing for install`)
           await try_install(game)
@@ -168,7 +168,7 @@ async function install_prompt (game) {
 
   let callback = (response) => {
     if (response === 0) {
-      AppActions.game_queue(game.id)
+      AppActions.queue_game(game.id)
     } else if (response === 1) {
       // welp
     }

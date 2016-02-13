@@ -189,20 +189,20 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.SHOW_PACKAGING_POLICY, format, game_id })
   },
 
-  game_queue: (game_id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GAME_QUEUE, game_id })
+  queue_game: (game_id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_GAME, game_id })
   },
 
-  game_browse: (game_id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GAME_BROWSE, game_id })
+  browse_game: (game_id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.BROWSE_GAME, game_id })
   },
 
-  game_purchase: (game_id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GAME_PURCHASE, game_id })
+  purchase_game: (game_id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.PURCHASE_GAME, game_id })
   },
 
-  game_purchased: (game_id, message) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GAME_PURCHASED, game_id, message })
+  gamed_purchase: (game_id, message) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.GAMED_PURCHASE, game_id, message })
   },
 
   set_progress: (alpha) => {
@@ -227,8 +227,8 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.NO_STORED_CREDENTIALS })
   },
 
-  login_attempt: () => {
-    AppDispatcher.dispatch({ action_type: AppConstants.LOGIN_ATTEMPT })
+  attempt_login: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.ATTEMPT_LOGIN })
   },
 
   login_with_password: (username, password) => {
@@ -314,8 +314,8 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_STORE_DIFF, diff })
   },
 
-  app_implode: () => {
-    AppDispatcher.dispatch({ action_type: AppConstants.APP_IMPLODE })
+  implode_app: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.IMPLODE_APP })
   }
 }
 

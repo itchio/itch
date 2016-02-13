@@ -297,7 +297,7 @@ async function probe_cave (payload) {
   electron.shell.openItem(log_path(payload.id))
 }
 
-async function game_queue (payload) {
+async function queue_game (payload) {
   let game_id = payload.game_id
   let cave = await db.find_cave_for_game(game_id)
 
@@ -444,7 +444,7 @@ function logout (payload) {
 }
 
 AppDispatcher.register('cave-store', Store.action_listeners(on => {
-  on(AppConstants.GAME_QUEUE, game_queue)
+  on(AppConstants.QUEUE_GAME, queue_game)
 
   on(AppConstants.REQUEST_CAVE_UNINSTALL, request_cave_uninstall)
   on(AppConstants.QUEUE_CAVE_UNINSTALL, queue_cave_uninstall)

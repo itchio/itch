@@ -33,7 +33,7 @@ class SecondaryActions extends ShallowComponent {
 
         children.push(this.tooltip('grid.item.retry', r.span({
           className: 'game_retry',
-          onClick: () => AppActions.game_queue(game_id)
+          onClick: () => AppActions.queue_game(game_id)
         }, [
           r(Icon, {icon: 'refresh'})
         ])))
@@ -56,8 +56,8 @@ class SecondaryActions extends ShallowComponent {
       if (task === 'idle') {
         // No errors
         children.push(this.tooltip('grid.item.purchase_or_donate', r.span({
-          className: 'game_purchase',
-          onClick: () => AppActions.game_purchase(game_id)
+          className: 'purchase_game',
+          onClick: () => AppActions.purchase_game(game_id)
         }, [
           r(Icon, {icon: 'cart'})
         ])))
@@ -89,8 +89,8 @@ class SecondaryActions extends ShallowComponent {
       // https://github.com/itchio/itch/issues/379
       if (!main_is_purchase) {
         children.push(this.tooltip('grid.item.purchase_or_donate', r.span({
-          className: 'game_purchase',
-          onClick: () => AppActions.game_purchase(game_id)
+          className: 'purchase_game',
+          onClick: () => AppActions.purchase_game(game_id)
         }, [
           r(Icon, {icon: 'cart'})
         ])))

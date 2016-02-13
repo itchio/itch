@@ -59,7 +59,7 @@ class Thumbnail extends ShallowComponent {
     } else if (e.altKey) {
       AppActions.probe_cave(cave_id)
     } else {
-      AppActions.game_browse(game_id)
+      AppActions.browse_game(game_id)
     }
   }
 }
