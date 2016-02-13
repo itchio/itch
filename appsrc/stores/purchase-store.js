@@ -4,6 +4,7 @@ let CredentialsStore = require('./credentials-store')
 
 let db = require('../util/db')
 let url = require('../util/url')
+let debug_browser_window = require('../util/debug-browser-window')
 
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppActions = require('../actions/app-actions')
@@ -69,25 +70,6 @@ function wants_to_buy_twice (game) {
 
   return new Promise((resolve, reject) => {
     require('electron').dialog.showMessageBox(dialog_opts, (response) => resolve(response === 0))
-  })
-}
-
-/**
- * Gives us some log of what happens in the browser window, helps debugging the flow
- */
-function enable_event_debugging (win) {
-  let events = 'page-title-updated close closed unresponsive responsive blur focus maximize unmaximize minimize restore resize move moved enter-full-screen enter-html-full-screen leave-html-full-screen app-command'
-  events.split(' ').forEach((ev) => {
-    win.on(ev, (e, deets) => {
-      console.log(`purchase window event: ${ev}, ${JSON.stringify(deets, null, 2)}`)
-    })
-  })
-
-  let cevents = 'did-finish-load did-fail-load did-frame-finish-load did-start-loading did-stop-loading did-get-response-details did-get-redirect-request dom-ready page-favicon-updated new-window will-navigate crashed plugin-crashed destroyed'
-  cevents.split(' ').forEach((ev) => {
-    win.webContents.on(ev, (e, deets) => {
-      console.log(`purchase webcontents event: ${ev}, ${JSON.stringify(deets, null, 2)}`)
-    })
   })
 }
 
@@ -159,7 +141,7 @@ async function purchase_game (payload) {
   let win = make_purchase_window(me, game)
 
   if (process.env.CAST_NO_SHADOW === '1') {
-    enable_event_debugging(win)
+    debug_browser_window('purchase', win)
     win.webContents.openDevTools({detach: true})
   }
 

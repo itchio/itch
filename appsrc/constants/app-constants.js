@@ -121,6 +121,7 @@ module.exports = keyMirror({
 
   /** Buh-bye */
   QUIT: null,
+  QUIT_WHEN_MAIN: null,
 
   /** Hi again! */
   GAIN_FOCUS: null,

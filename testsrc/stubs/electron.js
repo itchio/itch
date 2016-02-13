@@ -62,10 +62,23 @@ Object.assign(electron.Tray, {
   displayBalloon: rnil // win32-only
 })
 
+let webRequest = {
+  onBeforeSendHeaders: rnil
+}
+
+let session = {
+  clearCache: (f) => f(),
+  webRequest
+}
+
 let webContents = {
-  on: (e, cb) => cb(),
+  on: (e, cb) => cb({preventDefault: rnil}),
   executeJavaScript: rnil,
-  openDevTools: rnil
+  insertCSS: rnil,
+  openDevTools: rnil,
+  getUserAgent: () => 'tester',
+  setUserAgent: rnil,
+  session
 }
 
 Object.assign(electron.BrowserWindow, {
@@ -74,6 +87,7 @@ Object.assign(electron.BrowserWindow, {
   setProgressBar: rnil,
   on: rnil,
   loadURL: rnil,
+  setMenu: rnil,
   hide: rnil,
   show: rnil,
   close: rnil,

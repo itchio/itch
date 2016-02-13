@@ -34,6 +34,7 @@ class GameCell extends ShallowComponent {
         platform_compatible = !!game::get(platform_spec.field)
       }
     }
+    platform_compatible |= game::get('type') === 'html'
 
     let children = []
 

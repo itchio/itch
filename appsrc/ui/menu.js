@@ -40,7 +40,7 @@ function make_menus () {
         {
           label: _t('menu.file.quit'),
           accelerator: 'CmdOrCtrl+Q',
-          click: AppActions.quit
+          click: AppActions.quit_when_main
         }
       ]
     },

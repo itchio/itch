@@ -83,6 +83,7 @@ function ready () {
   require('./stores/install-location-store')
 
   require('./ui/menu').mount()
+
   AppActions.boot()
 
   register_url_handler()

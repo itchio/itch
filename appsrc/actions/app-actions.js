@@ -294,6 +294,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.QUIT })
   },
 
+  quit_when_main: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.QUIT_WHEN_MAIN })
+  },
+
   gain_focus: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.GAIN_FOCUS })
   },
