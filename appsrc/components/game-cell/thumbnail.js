@@ -64,11 +64,11 @@ class Thumbnail extends ShallowComponent {
     let game_id = game::get('id')
 
     if (e.shiftKey) {
-      AppActions.cave_explore(cave_id)
+      AppActions.explore_cave(cave_id)
     } else if (e.altKey || e.ctrlKey) {
-      AppActions.cave_probe(cave_id)
+      AppActions.probe_cave(cave_id)
     } else {
-      AppActions.game_browse(game_id)
+      AppActions.browse_game(game_id)
     }
   }
 }

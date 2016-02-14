@@ -35,15 +35,15 @@ let self = {
     let has_native = cave.uploads::values()::some((upload) => !!upload[`p_${os.itch_platform()}`])
     let has_html = cave.uploads::values()::some((upload) => upload.type === 'html')
     let launch_type = has_html && !has_native ? 'html' : 'native'
-    AppActions.cave_update(id, {launch_type})
+    AppActions.update_cave(id, {launch_type})
     if (launch_type === 'html') {
       let res = await html.configure(app_path)
-      AppActions.cave_update(id, res)
+      AppActions.update_cave(id, res)
       return res
     } else {
       let executables = (await self.configure(app_path)).executables
 
-      AppActions.cave_update(id, {executables})
+      AppActions.update_cave(id, {executables})
       return executables.length + ' candidates'
     }
   }

@@ -148,7 +148,7 @@ class PreferencesForm extends ShallowComponent {
               className: 'action',
               onClick: (e) => {
                 e.preventDefault()
-                AppActions.install_location_cancel_size_computation(name)
+                AppActions.cancel_install_location_size_computation(name)
               }
             }, r(Icon, {icon: 'stopwatch', spin: true})))
 
@@ -156,7 +156,7 @@ class PreferencesForm extends ShallowComponent {
               className: 'action',
               onClick: (e) => {
                 e.preventDefault()
-                AppActions.install_location_compute_size(name)
+                AppActions.compute_install_location_size(name)
               }
             }, r(Icon, {icon: 'refresh'})))),
 
@@ -187,19 +187,19 @@ class PreferencesForm extends ShallowComponent {
 
           : this.tooltip('preferences.install_location.make_default', r.td({
             className: 'action not_default',
-            onClick: (e) => AppActions.install_location_make_default(name)
+            onClick: (e) => AppActions.make_install_location_default(name)
           }, r(Icon, {icon: 'star'})))),
 
         this.tooltip(this.browse_i18n_key(), r.td({
           className: 'action',
-          onClick: (e) => AppActions.install_location_browse(name)
+          onClick: (e) => AppActions.browse_install_location(name)
         }, r(Icon, {icon: 'folder-open'}))),
 
         (may_delete
 
         ? this.tooltip('preferences.install_location.delete', r.td({
           className: 'action',
-          onClick: (e) => AppActions.install_location_remove_request(name)
+          onClick: (e) => AppActions.remove_install_location_request(name)
         }, r(Icon, {icon: 'cross'})))
 
         : r.td({}, ''))
@@ -211,7 +211,7 @@ class PreferencesForm extends ShallowComponent {
         className: 'action add_new',
         onClick: (e) => {
           e.preventDefault()
-          AppActions.install_location_add_request()
+          AppActions.add_install_location_request()
         }
       }, [
         r(Icon, {icon: 'plus'}),

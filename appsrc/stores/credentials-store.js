@@ -39,7 +39,7 @@ function login_failure (err) {
 }
 
 async function login_with_password (payload) {
-  AppActions.login_attempt()
+  AppActions.attempt_login()
 
   try {
     let username = payload.username
@@ -64,7 +64,7 @@ function setup_done () {
 async function window_ready () {
   let key = config.get('api_key')
   if (key) {
-    AppActions.login_attempt()
+    AppActions.attempt_login()
 
     try {
       me = (await api.client.login_key(key)).user

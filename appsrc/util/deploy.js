@@ -71,7 +71,7 @@ let self = {
       log(opts, `removing ${dinosaurs.length} dinosaurs in dest`)
       log(opts, `example dinosaurs: ${JSON.stringify(dinosaurs.slice(0, 10), null, 2)}`)
 
-      await dinosaurs::bluebird.map((rel) => {
+      await bluebird.map(dinosaurs, (rel) => {
         let dinosaur = path.join(dest_path, rel)
         return butler.wipe(dinosaur)
       }, {concurrency: 4})

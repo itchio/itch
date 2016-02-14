@@ -101,86 +101,86 @@ let self = {
 
   /* Install locations */
 
-  install_location_compute_size: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_COMPUTE_SIZE, name })
+  compute_install_location_size: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.COMPUTE_INSTALL_LOCATION_SIZE, name })
   },
 
-  install_location_cancel_size_computation: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_CANCEL_SIZE_COMPUTATION, name })
+  cancel_install_location_size_computation: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.CANCEL_INSTALL_LOCATION_SIZE_COMPUTATION, name })
   },
 
-  install_location_browse: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_BROWSE, name })
+  browse_install_location: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.BROWSE_INSTALL_LOCATION, name })
   },
 
-  install_location_add_request: () => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_ADD_REQUEST })
+  add_install_location_request: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.ADD_INSTALL_LOCATION_REQUEST })
   },
 
-  install_location_add: (name, path) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_ADD, name, path })
+  add_install_location: (name, path) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.ADD_INSTALL_LOCATION, name, path })
   },
 
-  install_location_remove_request: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_REMOVE_REQUEST, name })
+  remove_install_location_request: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.REMOVE_INSTALL_LOCATION_REQUEST, name })
   },
 
-  install_location_remove: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_REMOVE, name })
+  remove_install_location: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.REMOVE_INSTALL_LOCATION, name })
   },
 
-  install_location_transfer: (name, new_path) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_TRANSFER, name, new_path })
+  transfer_install_location: (name, new_path) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.TRANSFER_INSTALL_LOCATION, name, new_path })
   },
 
-  install_location_make_default: (name) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_MAKE_DEFAULT, name })
+  make_install_location_default: (name) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.MAKE_INSTALL_LOCATION_DEFAULT, name })
   },
 
   /* Caves */
 
-  cave_request_uninstall: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_REQUEST_UNINSTALL, id })
+  request_cave_uninstall: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.REQUEST_CAVE_UNINSTALL, id })
   },
 
-  cave_queue_uninstall: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_QUEUE_UNINSTALL, id })
+  queue_cave_uninstall: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_CAVE_UNINSTALL, id })
   },
 
-  cave_queue_reinstall: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_QUEUE_REINSTALL, id })
+  queue_cave_reinstall: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_CAVE_REINSTALL, id })
   },
 
-  cave_update: (id, data) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_UPDATE, id, data })
+  update_cave: (id, data) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.UPDATE_CAVE, id, data })
   },
 
   cave_progress: (opts) => {
     AppDispatcher.dispatch({ action_type: AppConstants.CAVE_PROGRESS, opts })
   },
 
-  cave_cancel: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_CANCEL, id })
+  cancel_cave: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.CANCEL_CAVE, id })
   },
 
-  cave_implode: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_IMPLODE, id })
+  implode_cave: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.IMPLODE_CAVE, id })
   },
 
-  cave_explore: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_EXPLORE, id })
+  explore_cave: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.EXPLORE_CAVE, id })
   },
 
   cave_thrown_into_bit_bucket: (id) => {
     AppDispatcher.dispatch({ action_type: AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, id })
   },
 
-  cave_probe: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_PROBE, id })
+  probe_cave: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.PROBE_CAVE, id })
   },
 
-  cave_report: (id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_REPORT, id })
+  report_cave: (id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.REPORT_CAVE, id })
   },
 
   /* Games */
@@ -189,20 +189,20 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.SHOW_PACKAGING_POLICY, format, game_id })
   },
 
-  game_queue: (game_id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GAME_QUEUE, game_id })
+  queue_game: (game_id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_GAME, game_id })
   },
 
-  game_browse: (game_id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GAME_BROWSE, game_id })
+  browse_game: (game_id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.BROWSE_GAME, game_id })
   },
 
-  game_purchase: (game_id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GAME_PURCHASE, game_id })
+  initiate_purchase: (game_id) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.INITIATE_PURCHASE, game_id })
   },
 
-  game_purchased: (game_id, message) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GAME_PURCHASED, game_id, message })
+  purchase_completed: (game_id, message) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.PURCHASE_COMPLETED, game_id, message })
   },
 
   set_progress: (alpha) => {
@@ -227,8 +227,8 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.NO_STORED_CREDENTIALS })
   },
 
-  login_attempt: () => {
-    AppDispatcher.dispatch({ action_type: AppConstants.LOGIN_ATTEMPT })
+  attempt_login: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.ATTEMPT_LOGIN })
   },
 
   login_with_password: (username, password) => {
@@ -318,8 +318,8 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.INSTALL_LOCATION_STORE_DIFF, diff })
   },
 
-  app_implode: () => {
-    AppDispatcher.dispatch({ action_type: AppConstants.APP_IMPLODE })
+  implode_app: () => {
+    AppDispatcher.dispatch({ action_type: AppConstants.IMPLODE_APP })
   }
 }
 

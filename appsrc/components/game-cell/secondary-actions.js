@@ -31,54 +31,22 @@ class SecondaryActions extends ShallowComponent {
       if (task === 'error') {
         error = true
 
-        children.push(this.tooltip('grid.item.retry', r.span({
-          className: 'game_retry',
-          onClick: () => AppActions.game_queue(game_id)
-        }, [
-          r(Icon, {icon: 'refresh'})
-        ])))
-
-        children.push(this.tooltip(this.browse_i18n_key(), r.span({
-          className: 'game_explore',
-          onClick: () => AppActions.cave_explore(cave_id)
-        }, [
-          r(Icon, {icon: 'folder-open'})
-        ])))
-
-        children.push(this.tooltip('grid.item.probe', r.span({
-          className: 'game_probe',
-          onClick: () => AppActions.cave_probe(cave_id)
-        }, [
-          r(Icon, {icon: 'bug'})
-        ])))
+        children.push(this.retry_action(game_id))
+        children.push(this.browse_action(cave_id))
+        children.push(this.probe_action(cave_id))
       }
 
       if (task === 'idle') {
         // No errors
-        children.push(this.tooltip('grid.item.purchase_or_donate', r.span({
-          className: 'game_purchase',
-          onClick: () => AppActions.game_purchase(game_id)
-        }, [
-          r(Icon, {icon: 'cart'})
-        ])))
+        children.push(this.purchase_action(game_id))
 
         if (action !== 'open') {
-          children.push(this.tooltip(this.browse_i18n_key(), r.span({
-            className: 'game_explore',
-            onClick: () => AppActions.cave_explore(cave_id)
-          }, [
-            r(Icon, {icon: 'folder-open'})
-          ])))
+          children.push(this.browse_action(cave_id))
         }
       }
 
       if (task === 'error' || task === 'idle') {
-        children.push(this.tooltip('grid.item.uninstall', r.span({
-          className: 'game_uninstall',
-          onClick: () => AppActions.cave_request_uninstall(cave_id)
-        }, [
-          r(Icon, {icon: 'delete'})
-        ])))
+        children.push(this.uninstall_action(cave_id))
       }
     } else {
       // No cave
@@ -88,12 +56,7 @@ class SecondaryActions extends ShallowComponent {
       // XXX should use API' can_be_bought but see
       // https://github.com/itchio/itch/issues/379
       if (!main_is_purchase) {
-        children.push(this.tooltip('grid.item.purchase_or_donate', r.span({
-          className: 'game_purchase',
-          onClick: () => AppActions.game_purchase(game_id)
-        }, [
-          r(Icon, {icon: 'cart'})
-        ])))
+        children.push(this.purchase_action(game_id))
       }
     }
 
@@ -103,6 +66,15 @@ class SecondaryActions extends ShallowComponent {
     }
 
     return r.div({classSet}, children)
+  }
+
+  action (opts) {
+    let {key, icon, on_click} = opts
+
+    return this.tooltip(key, r.span({
+      className: 'secondary_action',
+      onClick: on_click
+    }, r(Icon, {icon})))
   }
 
   tooltip (key, component) {
@@ -124,6 +96,46 @@ class SecondaryActions extends ShallowComponent {
       case 'linux': return ['grid.item.open_in_file_explorer_linux', fallback]
       default: return fallback
     }
+  }
+
+  browse_action (cave_id) {
+    return this.action({
+      key: this.browse_i18n_key(),
+      icon: 'folder-open',
+      on_click: () => AppActions.explore_cave(cave_id)
+    })
+  }
+
+  purchase_action (game_id) {
+    return this.action({
+      key: 'grid.item.purchase_or_donate',
+      icon: 'cart',
+      on_click: () => AppActions.initiate_purchase(game_id)
+    })
+  }
+
+  retry_action (game_id) {
+    return this.action({
+      key: 'grid.item.retry',
+      icon: 'refresh',
+      on_click: () => AppActions.queue_game(game_id)
+    })
+  }
+
+  probe_action (cave_id) {
+    return this.action({
+      key: 'grid.item.probe',
+      icon: 'bug',
+      on_click: () => AppActions.probe_cave(cave_id)
+    })
+  }
+
+  uninstall_action (cave_id) {
+    return this.action({
+      key: 'grid.item.uninstall',
+      icon: 'delete',
+      on_click: () => AppActions.request_cave_uninstall(cave_id)
+    })
   }
 
 }

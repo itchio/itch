@@ -131,7 +131,7 @@ async function reload () {
 
 let throttled_reload = reload::throttle(500)
 
-function install_location_compute_size (payload) {
+function compute_install_location_size (payload) {
   let name = payload.name
   log(opts, `Computing location of ${name}`)
 
@@ -174,11 +174,11 @@ function install_location_compute_size (payload) {
   })
 }
 
-function install_location_cancel_size_computation (payload) {
+function cancel_install_location_size_computation (payload) {
   computations_to_cancel[payload.name] = true
 }
 
-async function install_location_add_request () {
+async function add_install_location_request () {
   let i18n = I18nStore.get_state()
 
   let dialog_opts = {
@@ -196,13 +196,13 @@ async function install_location_add_request () {
 
     let loc_name = uuid.v4()
     let loc_path = response[0]
-    AppActions.install_location_add(loc_name, loc_path)
+    AppActions.add_install_location(loc_name, loc_path)
     log(opts, `Adding install location at ${loc_path} with name ${loc_name}`)
   }
   electron.dialog.showOpenDialog(window, dialog_opts, callback)
 }
 
-async function install_location_remove_request (payload) {
+async function remove_install_location_request (payload) {
   let name = payload.name
   let i18n = I18nStore.get_state()
 
@@ -255,14 +255,14 @@ async function install_location_remove_request (payload) {
 
     let callback = (response) => {
       if (response === 0) {
-        AppActions.install_location_remove(payload.name)
+        AppActions.remove_install_location(payload.name)
       }
     }
     electron.dialog.showMessageBox(dialog_opts, callback)
   }
 }
 
-async function install_location_browse (payload) {
+async function browse_install_location (payload) {
   let name = payload.name
   let loc = InstallLocationStore.get_location(name)
   if (!loc) {
@@ -299,13 +299,13 @@ AppDispatcher.register('install-location-store', Store.action_listeners(on => {
   on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, throttled_reload)
   on(AppConstants.LOGOUT, logout)
   on(AppConstants.LIBRARY_FOCUS_PANEL, library_focus_panel)
-  on(AppConstants.INSTALL_LOCATION_COMPUTE_SIZE, install_location_compute_size)
-  on(AppConstants.INSTALL_LOCATION_CANCEL_SIZE_COMPUTATION, install_location_cancel_size_computation)
-  on(AppConstants.INSTALL_LOCATION_BROWSE, install_location_browse)
-  on(AppConstants.INSTALL_LOCATION_ADD_REQUEST, install_location_add_request)
-  on(AppConstants.INSTALL_LOCATION_ADDED, throttled_reload)
-  on(AppConstants.INSTALL_LOCATION_REMOVE_REQUEST, install_location_remove_request)
-  on(AppConstants.INSTALL_LOCATION_REMOVED, throttled_reload)
+  on(AppConstants.COMPUTE_INSTALL_LOCATION_SIZE, compute_install_location_size)
+  on(AppConstants.CANCEL_INSTALL_LOCATION_SIZE_COMPUTATION, cancel_install_location_size_computation)
+  on(AppConstants.BROWSE_INSTALL_LOCATION, browse_install_location)
+  on(AppConstants.ADD_INSTALL_LOCATION_REQUEST, add_install_location_request)
+  on(AppConstants.ADD_INSTALL_LOCATIONED, throttled_reload)
+  on(AppConstants.REMOVE_INSTALL_LOCATION_REQUEST, remove_install_location_request)
+  on(AppConstants.REMOVE_INSTALL_LOCATIOND, throttled_reload)
 }))
 
 PreferencesStore.add_change_listener('install-location-store', () => {

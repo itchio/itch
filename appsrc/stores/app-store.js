@@ -80,7 +80,7 @@ function update_downloaded (payload) {
   AppStore.emit_change()
 }
 
-function game_purchased (payload) {
+function purchase_completed (payload) {
   state = state::assocIn(['update', 'status'], payload.message)
   AppStore.emit_change()
 
@@ -147,7 +147,7 @@ function switch_page (page) {
   AppStore.emit_change()
 }
 
-function login_attempt (payload) {
+function attempt_login (payload) {
   state = state::assocIn(['login', 'loading'], true)
   state = state::assocIn(['login', 'errors'], null)
   AppStore.emit_change()
@@ -238,7 +238,7 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.LIBRARY_FOCUS_PANEL, focus_panel)
 
   on(AppConstants.NO_STORED_CREDENTIALS, no_stored_credentials)
-  on(AppConstants.LOGIN_ATTEMPT, login_attempt)
+  on(AppConstants.ATTEMPT_LOGIN, attempt_login)
   on(AppConstants.LOGIN_FAILURE, login_failure)
   on(AppConstants.READY_TO_ROLL, ready_to_roll)
   on(AppConstants.LOGOUT, logout)
@@ -248,7 +248,7 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.SELF_UPDATE_NOT_AVAILABLE, update_not_available)
   on(AppConstants.SELF_UPDATE_DOWNLOADED, update_downloaded)
   on(AppConstants.SELF_UPDATE_ERROR, update_error)
-  on(AppConstants.GAME_PURCHASED, game_purchased)
+  on(AppConstants.PURCHASE_COMPLETED, purchase_completed)
   on(AppConstants.DISMISS_STATUS, dismiss_status)
   on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, cave_thrown_into_bit_bucket)
 

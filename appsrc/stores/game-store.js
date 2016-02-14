@@ -187,9 +187,9 @@ async function cache_collection_games (collection_id) {
   AppActions.games_fetched(games::pluck('id'))
 }
 
-// TODO: Move game_browse somewhere else
+// TODO: Move browse_game somewhere else
 
-async function game_browse (payload) {
+async function browse_game (payload) {
   let game_id = payload.game_id
   let game = await db.find_game(game_id)
   electron.shell.openExternal(game.url)
@@ -199,7 +199,7 @@ let fetch_caved_games = (() => {
   fetch_games({path: 'caved'})
 })::throttle(250, true)
 
-function app_implode () {
+function implode_app () {
   state = {}
   GameStore.emit_change()
 }
@@ -228,8 +228,8 @@ AppDispatcher.register('game-store', Store.action_listeners(on => {
     fetch_caved_games()
   })
 
-  on(AppConstants.GAME_BROWSE, game_browse)
-  on(AppConstants.APP_IMPLODE, app_implode)
+  on(AppConstants.BROWSE_GAME, browse_game)
+  on(AppConstants.IMPLODE_APP, implode_app)
 }))
 
 module.exports = GameStore

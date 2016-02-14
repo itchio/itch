@@ -31,50 +31,52 @@ module.exports = keyMirror({
   LOCALE_UPDATE_DOWNLOAD_END: null,
 
   /* Install locations */
-  INSTALL_LOCATION_COMPUTE_SIZE: null,
-  INSTALL_LOCATION_CANCEL_SIZE_COMPUTATION: null,
-  INSTALL_LOCATION_BROWSE: null,
-  INSTALL_LOCATION_ADD_REQUEST: null,
-  INSTALL_LOCATION_ADD: null,
-  INSTALL_LOCATION_ADDED: null,
-  INSTALL_LOCATION_REMOVE_REQUEST: null,
-  INSTALL_LOCATION_REMOVE: null,
-  INSTALL_LOCATION_REMOVED: null,
-  INSTALL_LOCATION_TRANSFER: null,
-  INSTALL_LOCATION_MAKE_DEFAULT: null,
+  COMPUTE_INSTALL_LOCATION_SIZE: null,
+  CANCEL_INSTALL_LOCATION_SIZE_COMPUTATION: null,
+  BROWSE_INSTALL_LOCATION: null,
+  ADD_INSTALL_LOCATION_REQUEST: null,
+  ADD_INSTALL_LOCATION: null,
+  ADD_INSTALL_LOCATIONED: null,
+  REMOVE_INSTALL_LOCATION_REQUEST: null,
+  REMOVE_INSTALL_LOCATION: null,
+  REMOVE_INSTALL_LOCATIOND: null,
+  TRANSFER_INSTALL_LOCATION: null,
+  MAKE_INSTALL_LOCATION_DEFAULT: null,
 
   /** User requested game to be uninstalled */
-  CAVE_REQUEST_UNINSTALL: null,
+  REQUEST_CAVE_UNINSTALL: null,
   /** Cave is going to be uninstalled */
-  CAVE_QUEUE_UNINSTALL: null,
+  QUEUE_CAVE_UNINSTALL: null,
   /** Cave is going to be reinstalled */
-  CAVE_QUEUE_REINSTALL: null,
+  QUEUE_CAVE_REINSTALL: null,
   /** Internal cave DB needs to be updated */
-  CAVE_UPDATE: null,
+  UPDATE_CAVE: null,
   /** Should probably replaced with an CaveStore.emit('change') event */
   CAVE_PROGRESS: null,
   /** Kaboom! */
-  CAVE_IMPLODE: null,
+  IMPLODE_CAVE: null,
   /** I changed my mind */
-  CAVE_CANCEL: null,
+  CANCEL_CAVE: null,
   /** Bye bye. */
   CAVE_THROWN_INTO_BIT_BUCKET: null,
   /** i spy, i spy */
-  CAVE_EXPLORE: null,
+  EXPLORE_CAVE: null,
   /** Alright, what broke this time? */
-  CAVE_PROBE: null,
+  PROBE_CAVE: null,
   /** Let the others figure it out */
-  CAVE_REPORT: null,
+  REPORT_CAVE: null,
   /** Won't compromise on that */
   SHOW_PACKAGING_POLICY: null,
 
   /** User requested game to be installed */
-  GAME_QUEUE: null,
+  QUEUE_GAME: null,
+
   /** Open a game's page */
-  GAME_BROWSE: null,
-  /** Buy / support a game! */
-  GAME_PURCHASE: null,
-  GAME_PURCHASED: null,
+  BROWSE_GAME: null,
+
+  /** Buy / support something! */
+  INITIATE_PURCHASE: null,
+  PURCHASE_COMPLETED: null,
 
   /** Set app-wide progress bar (title bar on Windows). Negative value clears. */
   SET_PROGRESS: null,
@@ -97,7 +99,7 @@ module.exports = keyMirror({
   /** Ready but needs human login */
   NO_STORED_CREDENTIALS: null,
   /** Any login attempt (cached or not) */
-  LOGIN_ATTEMPT: null,
+  ATTEMPT_LOGIN: null,
   /** Private - login attempt with username/password */
   LOGIN_WITH_PASSWORD: null,
   /** Wrong login/password or something else */
@@ -117,7 +119,7 @@ module.exports = keyMirror({
   EVAL: null,
 
   /** Sent when app is about to reboot or shutdown */
-  APP_IMPLODE: null,
+  IMPLODE_APP: null,
 
   /** Buh-bye */
   QUIT: null,

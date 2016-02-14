@@ -70,7 +70,7 @@ let self = {
 
     let appid = matches[1]
     log(opts, `Found appid ${appid}, remembering`)
-    AppActions.cave_update(opts.id, {air_appid: appid})
+    AppActions.update_cave(opts.id, {air_appid: appid})
   },
 
   uninstall: async function (opts) {
@@ -109,7 +109,7 @@ let self = {
     if (code !== 0) {
       throw new Error(`arh uninstall failed with code ${code}`)
     }
-    AppActions.cave_update(opts.id, {air_appid: null})
+    AppActions.update_cave(opts.id, {air_appid: null})
 
     log(opts, `Uninstallation successful`)
   }

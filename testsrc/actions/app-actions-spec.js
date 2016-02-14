@@ -33,13 +33,13 @@ test('app-actions', t => {
   test_action('authenticated', [], { action_type: 'AUTHENTICATED' })
   test_action('logout', [], { action_type: 'LOGOUT' })
 
-  test_action('cave_update', [42, {a: 'b'}], { action_type: 'CAVE_UPDATE', id: 42, data: {a: 'b'} })
+  test_action('update_cave', [42, {a: 'b'}], { action_type: 'UPDATE_CAVE', id: 42, data: {a: 'b'} })
   test_action('cave_progress', [{a: 'b'}], { action_type: 'CAVE_PROGRESS', opts: {a: 'b'} })
   test_action('set_progress', [0.5], { action_type: 'SET_PROGRESS', alpha: 0.5 })
   test_action('bounce', [], { action_type: 'BOUNCE' })
   test_action('notify', ['les carottes sont cuites'], { action_type: 'NOTIFY', message: 'les carottes sont cuites' })
 
-  test_action('game_queue', [42], { action_type: 'GAME_QUEUE', game_id: 42 })
+  test_action('queue_game', [42], { action_type: 'QUEUE_GAME', game_id: 42 })
 
   test_action('fetch_games', ['collections/23498'], { action_type: 'FETCH_GAMES', path: 'collections/23498' })
 
