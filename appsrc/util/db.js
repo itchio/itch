@@ -3,7 +3,7 @@ let Promise = require('bluebird')
 let Datastore = require('nedb')
 let path = require('path')
 
-import {pairs, pluck} from 'underline'
+import {contains, pairs, pluck} from 'underline'
 let camelize = require('./format').camelize
 
 let app = require('electron').app
@@ -17,7 +17,7 @@ let opts = {
 let log = require('./log')('db')
 
 let self = {
-  promised_methods: ['insert', 'update', 'find', 'find_one', 'load_database', 'remove'],
+  promised_methods: ['insert', 'update', 'find', 'find_one', 'load_database', 'remove', 'count'],
 
   // intentional ; will crash path.join if we have a logic error
   library_dir: -1,
@@ -208,6 +208,19 @@ let self = {
       // because we have paginated fetch logic elsewhere
       relations: {}
     })
+  },
+
+  collect_garbage: async function (used_game_ids) {
+    let prev_count = await self.count({_table: 'games'})
+
+    await self.remove({_table: 'games', $where: function () {
+      return !used_game_ids::contains(this.id)
+    }}, {multi: true})
+
+    let count = await self.count({_table: 'games'})
+    if (prev_count - count > 0) {
+      log(opts, `gc'd ${prev_count - count} games (of ${prev_count}) [${(100 - count / prev_count * 100).toFixed(0)}%]`)
+    }
   },
 
   /* Helpers */

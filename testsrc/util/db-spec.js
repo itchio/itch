@@ -10,7 +10,7 @@ test('db', t => {
   let db = proxyquire('../../app/util/db', stubs)
 
   let noop = async () => undefined
-  for (let m of ['insert', 'update', 'find', 'find_one', 'load_database', 'remove']) {
+  for (let m of ['insert', 'update', 'find', 'find_one', 'load_database', 'remove', 'count']) {
     db[m] = noop
   }
 
@@ -163,5 +163,16 @@ test('db', t => {
       t.mock(db).expects('save_records').once().resolves()
       return db[`save_${type}`]([{id: 55}])
     })
+  })
+
+  t.case('gc\'s correct items', async t => {
+    t.mock(db).expects('count').twice().resolves(-1)
+    db.remove = async function (selector, options) {
+      let f = (o) => selector.$where.bind(o)()
+      t.is(f({id: 1}), false)
+      t.is(f({id: 2}), true)
+      t.is(f({id: 3}), false)
+    }
+    await db.collect_garbage([1, 3])
   })
 })

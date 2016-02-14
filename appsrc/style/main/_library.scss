@@ -162,6 +162,10 @@ $open_button_color: #4B6D85;
           border-color: #577FDA;
         }
 
+        &.search {
+          border-color: #DA57AC;
+        }
+
         &:hover {
           background: rgba(black, .1);
         }
@@ -217,6 +221,48 @@ $open_button_color: #4B6D85;
     left: $sidebar_width;
     right: 0;
     overflow: auto;
+
+    .searchbox {
+      overflow-x: hidden;
+      height: 30px;
+
+      input {
+        font-size: 20px;
+        width: 100%;
+        background: #797979;
+        color: #F5F5F5;
+      }
+    }
+
+    .dimmer {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: rgba(185, 185, 185, 0);
+      z-index: 1;
+      pointer-events: none;
+
+      &.active {
+        background: rgba(160, 160, 160, 0.3);
+      }
+    }
+
+    .search_content {
+      min-height: calc(100% - 30px);
+      height: 0px;
+
+      .empty_search_content {
+        position: relative;
+        top: 45%;
+        .icon {
+          font-size: 60px;
+          padding: 10px;
+        }
+        div {
+          text-align: center;
+        }
+      }
+    }
   }
 
   .placeholder {

@@ -149,6 +149,30 @@ async function fetch_owned_keys (page) {
   await cache_owned_games()
 }
 
+async function fetch_search (payload) {
+  let query = payload.query
+  if (query === '') {
+    log(opts, 'empty fetch_search query')
+    AppActions.search_fetched(query, [], {})
+    return
+  }
+  log(opts, `fetch_search(${query})`)
+  let user = CredentialsStore.get_current_user()
+  try {
+    let res = await user.search(query)
+    let game_ids = res.games::pluck('id')
+    let games = {}
+    for (let game of res.games) {
+      games[game.id] = game
+    }
+
+    await db.save_games(res.games)
+    AppActions.search_fetched(query, game_ids, games)
+  } catch (e) {
+    console.log(`while fetching search games: ${e.stack || e}`)
+  }
+}
+
 /* Cache API results in DB */
 
 async function cache_owned_games () {
@@ -215,6 +239,7 @@ AppDispatcher.register('game-store', Store.action_listeners(on => {
   })
 
   on(AppConstants.FETCH_GAMES, fetch_games)
+  on(AppConstants.FETCH_SEARCH, fetch_search)
   on(AppConstants.CAVE_PROGRESS, (payload) => {
     let id = payload.opts.id
 

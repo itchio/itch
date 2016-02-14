@@ -138,8 +138,13 @@
     "sidebar.getting_started": "Getting started",
     "sidebar.installed": "Installed",
     "sidebar.owned": "Library",
+    "sidebar.search": "Search",
     "status.checking": "Looking for updates…",
     "status.downloaded": "Click to restart & apply update!",
     "status.downloading": "Downloading update…",
-    "status.uptodate": "Your itch is up-to-date!"
+    "status.uptodate": "Your itch is up-to-date!",
+    "search.placeholder": "Search...",
+    "search.empty.tagline": "Start searching above!",
+    "search.empty.no_results": "No results found.",
+    "search.empty.loading": "Loading..."
 }

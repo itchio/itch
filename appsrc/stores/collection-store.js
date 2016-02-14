@@ -79,6 +79,10 @@ async function fetch_collections () {
   }
 }
 
+function gc_database (payload) {
+  db.collect_garbage(payload.used_game_ids)
+}
+
 function ready_to_roll () {
   fetch_collections()
 }
@@ -90,6 +94,7 @@ AppDispatcher.register('collection-store', Store.action_listeners(on => {
   })
   on(AppConstants.READY_TO_ROLL, ready_to_roll)
   on(AppConstants.FETCH_COLLECTIONS, fetch_collections)
+  on(AppConstants.GC_DATABASE, gc_database)
 }))
 
 module.exports = CollectionStore
