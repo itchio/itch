@@ -26,11 +26,6 @@ test('LibrarySidebar', t => {
   }
   sd.shallowRender(sd(LibrarySidebar, {state: mori.toClj(props)}))
 
-  process.env.ENABLE_SEARCH = 0
   let tree = sd.shallowRender(sd(LibrarySidebar, {state: mori.toClj(props)}))
-  t.false(tree.findNode('.search'), 'honors ENABLE_SEARCH=0')
-
-  process.env.ENABLE_SEARCH = 1
-  tree = sd.shallowRender(sd(LibrarySidebar, {state: mori.toClj(props)}))
-  t.ok(tree.findNode('.search'), 'honors ENABLE_SEARCH=1')
+  t.ok(tree.findNode('.search'), 'displays search area')
 })

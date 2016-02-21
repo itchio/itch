@@ -110,7 +110,5 @@ These environment variables will change the behavior of the app:
     Useful for debugging install/uninstall routines.
   * `THE_DEPTHS_OF_THE_SOUL=1` - print debug info when extracting certain archives
   * `IMMEDIATE_NOSE_DIVE=1` - open dev tools before launching html games
-  * `ENABLE_SEARCH=1` - enables search tab in sidebar
-    _(will be removed later)_
 
 [diego]: diego.md

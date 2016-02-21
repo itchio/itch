@@ -141,16 +141,14 @@ class LibrarySidebar extends ShallowComponent {
       count: installed_count
     }))
 
-    if (process.env.ENABLE_SEARCH === '1') {
-      links.push(r.div({className: 'separator'}))
-      links.push(r(LibraryPanelLink, {
-        before: r(Icon, {icon: 'search'}),
-        name: 'search',
-        label: t('sidebar.search'),
-        panel, games, className: 'search',
-        count: panel === 'search' && search_count
-      }))
-    }
+    links.push(r.div({className: 'separator'}))
+    links.push(r(LibraryPanelLink, {
+      before: r(Icon, {icon: 'search'}),
+      name: 'search',
+      label: t('sidebar.search'),
+      panel, games, className: 'search',
+      count: panel === 'search' && search_count
+    }))
 
     if (panel === 'preferences') {
       links.push(r(LibraryPanelLink, {
