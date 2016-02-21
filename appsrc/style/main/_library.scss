@@ -258,9 +258,20 @@ $open_button_color: #4B6D85;
       }
     }
 
+    .search_header {
+      height: 120px;
+      background-image: -webkit-linear-gradient(#2E2B2C 0%, #2E2B2C 80%, transparent 100%);
+      position: fixed;
+      top: 0;
+      left: 250px;
+      right: 0;
+      z-index: 20;
+    }
+
     .search_content {
       min-height: calc(100% - 30px);
       height: 0px;
+      padding-top: 75px;
 
       .empty_search_content {
         position: relative;
