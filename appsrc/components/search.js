@@ -32,6 +32,7 @@ class SearchContent extends ShallowComponent {
     return r.div({style: {height: '100%'}}, [ // TODO: get rid of this div
       r.div({classSet: {dimmer: true, active: loading && !empty}, style: {transition: 'all 0.2s'}}),
       r.div({className: 'searchbox'}, [
+        r(Icon, {icon: 'search'}),
         r.input({type: 'text', value: query, placeholder: t('search.placeholder'), onChange: this.onInput.bind(this)})
       ]),
       r.div({className: 'search_content'}, [
@@ -52,18 +53,19 @@ class EmptySearchContent extends ShallowComponent {
     let t = this.t
     let query = this.props.query
     let fetched_query = this.props.fetched_query
-    return r.div({className: 'empty_search_content'}, [
-      query !== ''
-      ? r.div({}, [
-        r(Icon, {icon: 'search'}),
-        fetched_query !== '' ? r.div({}, t('search.empty.no_results')) : '',
-        fetched_query !== query ? r.div({}, t('search.empty.loading')) : ''
-      ])
-      : r.div({}, [
-        r(Icon, {icon: 'search'}),
-        r.div({}, t('search.empty.tagline'))
-      ])
-    ])
+
+    let message = t(this.message_key(query, fetched_query))
+    return r.div({className: 'search_content empty_search_content'}, r.div({}, message))
+  }
+
+  message_key (query, fetched_query) {
+    if (query.length === 0) {
+      return 'search.empty.tagline'
+    } else if (query === fetched_query) {
+      return 'search.empty.no_results'
+    } else {
+      return 'search.empty.loading'
+    }
   }
 }
 

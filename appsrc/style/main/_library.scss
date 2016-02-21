@@ -225,12 +225,36 @@ $open_button_color: #4B6D85;
     .searchbox {
       overflow-x: hidden;
       height: 30px;
+      margin: 30px 30px 0px 30px;
+      border: 1px solid #5F5A5A;
+      padding: 5px;
+      background-size: auto 80%;
+      background-position-y: 50%;
+      background-position-x: 5px;
+      background-repeat: no-repeat;
+      border-radius: 2px;
+
+      .icon {
+        display: inline;
+        color: #5F5A5A;
+        margin: 0 6px;
+      }
 
       input {
         font-size: 20px;
-        width: 100%;
-        background: #797979;
+        width: auto;
+        height: 100%;
+        background: transparent;
         color: #F5F5F5;
+        border: none;
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      .icon, input {
+        display: inline;
       }
     }
 
