@@ -1,5 +1,5 @@
 
-import {indexBy, pluck, throttle} from 'underline'
+import {indexBy, pluck, throttle, debounce} from 'underline'
 
 let Store = require('./store')
 let CredentialsStore = require('./credentials-store')
@@ -239,7 +239,7 @@ AppDispatcher.register('game-store', Store.action_listeners(on => {
   })
 
   on(AppConstants.FETCH_GAMES, fetch_games)
-  on(AppConstants.FETCH_SEARCH, fetch_search)
+  on(AppConstants.FETCH_SEARCH, fetch_search::debounce(500))
   on(AppConstants.CAVE_PROGRESS, (payload) => {
     let id = payload.opts.id
 
