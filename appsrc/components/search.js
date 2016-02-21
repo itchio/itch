@@ -29,12 +29,13 @@ class SearchContent extends ShallowComponent {
     let empty = search_games::count() === 0
     let is_press = this.state::getIn(['credentials', 'me', 'press_user'])
 
+    let searchbox_children = [
+      r(Icon, {icon: 'search', spin: (query.length > 0 && loading)}),
+      r.input({type: 'text', value: query, placeholder: t('search.placeholder'), onChange: this.onInput.bind(this)})
+    ]
+
     return r.div({style: {height: '100%'}}, [ // TODO: get rid of this div
-      r.div({classSet: {dimmer: true, active: loading && !empty}, style: {transition: 'all 0.2s'}}),
-      r.div({className: 'searchbox'}, [
-        r(Icon, {icon: 'search'}),
-        r.input({type: 'text', value: query, placeholder: t('search.placeholder'), onChange: this.onInput.bind(this)})
-      ]),
+      r.div({className: 'searchbox'}, searchbox_children),
       r.div({className: 'search_content'}, [
         empty
         ? r(EmptySearchContent, {fetched_query, query})
