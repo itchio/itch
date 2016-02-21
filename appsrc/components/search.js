@@ -34,7 +34,7 @@ class SearchContent extends ShallowComponent {
       r.input({type: 'text', value: query, placeholder: t('search.placeholder'), onChange: this.onInput.bind(this)})
     ]
 
-    return r.div({style: {height: '100%'}}, [
+    return r.div({className: 'search_container'}, [
       r.div({className: 'search_header'}, [
         r.div({className: 'searchbox'}, searchbox_children)
       ]),
