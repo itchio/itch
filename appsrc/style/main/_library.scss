@@ -237,7 +237,7 @@ $open_button_color: #4B6D85;
       .icon {
         display: inline;
         color: #5F5A5A;
-        margin: 0 6px;
+        margin: 0 8px 0 6px;
       }
 
       input {
@@ -254,7 +254,9 @@ $open_button_color: #4B6D85;
       }
 
       .icon, input {
-        display: inline;
+        display: inline-block;
+        height: 28px;
+        line-height: 28px;
       }
     }
 
