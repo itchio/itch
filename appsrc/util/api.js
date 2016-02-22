@@ -43,6 +43,8 @@ class Client {
   }
 
   async request (method, path, data) {
+    let t1 = Date.now()
+
     if (typeof data === 'undefined') {
       data = {}
     }
@@ -52,6 +54,9 @@ class Client {
 
     let resp = await needle.requestAsync(method, uri, data)
     let body = resp.body
+    let t2 = Date.now()
+
+    log(opts, `${t2 - t1}ms\t ${method} ${path} with ${JSON.stringify(data)}`)
 
     if (resp.statusCode !== 200) {
       throw new Error(`HTTP ${resp.statusCode}`)
@@ -91,7 +96,6 @@ class User {
     if (typeof data === 'undefined') {
       data = {}
     }
-    log(opts, `${method} ${path} with ${JSON.stringify(data)}`)
 
     let url = `/${this.key}${path}`
     return this.client.request(method, url, data)
