@@ -156,7 +156,16 @@ let self = {
     log(opts, `candidates after depth sorting: ${JSON.stringify(candidates, null, 2)}`)
 
     let exe_path = path.join(app_path, candidates[0].path)
-    return self.launch_executable(exe_path, [], opts)
+    let args = []
+
+    if (/\.jar$/i.test(exe_path)) {
+      log(opts, `Launching .jar`)
+      args.push('-jar')
+      args.push(exe_path)
+      exe_path = 'java'
+    }
+
+    return self.launch_executable(exe_path, args, opts)
   }
 }
 

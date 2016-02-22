@@ -27,6 +27,9 @@ class SecondaryActions extends ShallowComponent {
     if (cave) {
       let cave_id = cave::get('id')
       let task = cave::get('task')
+      if (task === 'check-for-update') {
+        task = 'idle'
+      }
 
       if (task === 'error') {
         error = true

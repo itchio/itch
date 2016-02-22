@@ -1,7 +1,6 @@
 
 let os = require('../util/os')
-
-import {some, values} from 'underline'
+import { findWhere } from 'underline'
 
 let log = require('../util/log')('tasks/configure')
 
@@ -32,19 +31,28 @@ let self = {
     let app_path = CaveStore.app_path(cave.install_location, id)
     log(opts, `configuring ${app_path}`)
 
-    let has_native = cave.uploads::values()::some((upload) => !!upload[`p_${os.itch_platform()}`])
-    let has_html = cave.uploads::values()::some((upload) => upload.type === 'html')
-    let launch_type = has_html && !has_native ? 'html' : 'native'
+    let uploads = cave.uploads
+    if (!uploads) {
+      throw new Error(`invalid cave (no uploads), cannot configure`)
+    }
+
+    let upload = cave.uploads::findWhere({id: cave.upload_id})
+    if (!upload) {
+      throw new Error(`invalid cave (upload not found), cannot configure`)
+    }
+
+    let launch_type = 'native'
+    if (upload.type === 'html') {
+      launch_type = 'html'
+    }
     AppActions.update_cave(id, {launch_type})
+
     if (launch_type === 'html') {
       let res = await html.configure(app_path)
       AppActions.update_cave(id, res)
-      return res
     } else {
       let executables = (await self.configure(app_path)).executables
-
       AppActions.update_cave(id, {executables})
-      return executables.length + ' candidates'
     }
   }
 }

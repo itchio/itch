@@ -36,6 +36,10 @@ let icon_info = (cave) => {
     spin = true
   }
 
+  if (task === 'check-for-update') {
+    task = 'idle'
+  }
+
   return { task, spin }
 }
 

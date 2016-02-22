@@ -34,6 +34,8 @@ let self = {
     'exe': 'exe',
     // Books!
     'pdf': 'naked',
+    // Java things
+    'jar': 'naked',
     // some html games provide a single raw html file
     'html': 'naked'
   },

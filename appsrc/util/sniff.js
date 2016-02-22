@@ -73,7 +73,7 @@ sniff.path = async function (file) {
 
       if (ext === 'jar') {
         // jar files are hard to distinguish from .zip files without listing their contents
-        return {ext: 'jar', mime: 'application/java-archive'}
+        return {ext: 'jar', mime: 'application/java-archive', linux_executable: true, mac_executable: true}
       }
     }
 
