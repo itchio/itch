@@ -51,12 +51,13 @@ class Client {
     let uri = `${this.root_url}${path}`
 
     await cooldown()
+    let t2 = Date.now()
 
     let resp = await needle.requestAsync(method, uri, data)
     let body = resp.body
-    let t2 = Date.now()
+    let t3 = Date.now()
 
-    log(opts, `${t2 - t1}ms\t ${method} ${path} with ${JSON.stringify(data)}`)
+    log(opts, `${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${path} with ${JSON.stringify(data)}`)
 
     if (resp.statusCode !== 200) {
       throw new Error(`HTTP ${resp.statusCode}`)
