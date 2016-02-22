@@ -27,6 +27,11 @@ class RendererDispatcher {
     this._callbacks[name] = cb
   }
 
+  unregister (name) {
+    log(opts, `Unregistering store ${name} renderer-side`)
+    delete this._callbacks[name]
+  }
+
   dispatch (payload) {
     ipc.send('dispatcher-to-browser', payload)
   }

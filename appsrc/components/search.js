@@ -7,7 +7,12 @@ let ShallowComponent = require('./shallow-component')
 
 let Icon = require('./icon')
 let GameList = require('./game-list')
+
 let AppActions = require('../actions/app-actions')
+let AppDispatcher = require('../dispatcher/app-dispatcher')
+
+let AppConstants = require('../constants/app-constants')
+let SearchExamples = require('../constants/search-examples')
 
 class SearchContent extends ShallowComponent {
   onInput (event) {
@@ -15,6 +20,26 @@ class SearchContent extends ShallowComponent {
     AppActions.search_query_change(query)
     AppActions.fetch_search(query)
   }
+
+  componentDidMount () {
+    AppDispatcher.register('search-bar', (payload) => {
+      if (payload.action_type === AppConstants.LIBRARY_FOCUS_PANEL && payload.panel === 'search') {
+        this.focus()
+      }
+    })
+
+    this.focus()
+  }
+
+  componentWillUnmount () {
+    AppDispatcher.unregister('search-bar')
+  }
+
+  focus () {
+    this.refs.input.focus()
+    this.refs.input.select()
+  }
+
   render () {
     let t = this.t
     let state = this.props.state::get('library')
@@ -31,7 +56,7 @@ class SearchContent extends ShallowComponent {
 
     let searchbox_children = [
       r(Icon, {icon: 'search', spin: (query.length > 0 && loading)}),
-      r.input({type: 'text', value: query, placeholder: t('search.placeholder'), onChange: this.onInput.bind(this)})
+      r.input({ref: 'input', type: 'text', value: query, placeholder: t('search.placeholder'), onChange: this.onInput.bind(this)})
     ]
 
     return r.div({className: 'search_container'}, [
@@ -52,6 +77,13 @@ SearchContent.propTypes = {
 }
 
 class EmptySearchContent extends ShallowComponent {
+  constructor () {
+    super()
+    this.state = {
+      example_index: Math.floor(Math.random() * (SearchExamples.length - 1))
+    }
+  }
+
   render () {
     let t = this.t
     let query = this.props.query
@@ -62,13 +94,20 @@ class EmptySearchContent extends ShallowComponent {
   }
 
   message_key (query, fetched_query) {
+    let t = this.t
     if (query.length === 0) {
-      return 'search.empty.tagline'
+      console.log(`example index = ${this.state.example_index}`)
+      let example = SearchExamples[this.state.example_index]
+      return t('search.empty.tagline', {example})
     } else if (query === fetched_query) {
-      return 'search.empty.no_results'
+      return t('search.empty.no_results')
     } else {
-      return 'search.empty.loading'
+      return ''
     }
+  }
+
+  pick_example () {
+
   }
 }
 
