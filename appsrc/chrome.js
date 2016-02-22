@@ -56,7 +56,6 @@ window.addEventListener('beforeunload', () => {
 })
 
 window.addEventListener('keydown', (e) => {
-  console.log(e)
   switch (e.keyIdentifier) {
     case 'F12': // Shift-F12
       if (e.shiftKey) {
