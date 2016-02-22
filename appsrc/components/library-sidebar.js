@@ -167,9 +167,9 @@ class LibrarySidebar extends ShallowComponent {
         let path = loc::get('path')
 
         // XXX perf: can definitely be handled store-side
-        ;((alias) => {
+        state::getIn(['install-locations', 'aliases'])::each((alias) => {
           path = path.replace(alias::first(), alias::last())
-        })::each(state::getIn(['install-locations', 'aliases']))
+        })
 
         let link = r(LibraryPanelLink, {before: r(Icon, {icon: 'folder'}), name: panel, label: path, panel, games})
         links.push(link)
