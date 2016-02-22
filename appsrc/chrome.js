@@ -20,6 +20,7 @@ require('./util/sf')
 let r = require('r-dom')
 let ReactDOM = require('react-dom')
 let Layout = require('./components/layout')
+let AppActions = require('./actions/app-actions')
 
 let app_node
 
@@ -55,15 +56,30 @@ window.addEventListener('beforeunload', () => {
 })
 
 window.addEventListener('keydown', (e) => {
+  console.log(e)
   switch (e.keyIdentifier) {
-    case 'F12':
-      if (!e.shiftKey) return
-      let win = window.require('electron').remote.getCurrentWindow()
-      win.webContents.openDevTools({detach: true})
+    case 'F12': // Shift-F12
+      if (e.shiftKey) {
+        let win = window.require('electron').remote.getCurrentWindow()
+        win.webContents.openDevTools({detach: true})
+      }
       break
-    case 'F5':
-      if (!e.shiftKey) return
-      window.location.reload()
+
+    case 'F5': // Shift-F5
+      if (e.shiftKey) {
+        window.location.reload()
+      }
+      break
+
+    case 'U+0052': // Shift-Cmd-R
+      if (e.shiftKey && e.metaKey) {
+        window.location.reload()
+      }
+      break
+
+    case 'U+0046': // Ctrl-F / Cmd-F
+      if (!e.ctrlKey && !e.metaKey) return
+      AppActions.focus_panel('search')
       break
   }
 })
