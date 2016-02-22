@@ -67,7 +67,7 @@ sniff.path = async function (file) {
       ext = ext_matches[1].toLowerCase()
 
       if (ext === 'dmg') {
-        // compressed .dmg have wrong magic numbers, go bye xtension
+        // compressed .dmg have wrong magic numbers, go by extension
         return {ext: 'dmg', mime: 'application/x-apple-diskimage'}
       }
     }
