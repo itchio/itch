@@ -17,7 +17,8 @@ let self = {
       case 'win32':
       case 'darwin':
       case 'linux':
-        return require(`./configure/${platform}`).configure(app_path)
+        let configurator = require(`./configure/${platform}`)
+        return await configurator.configure(app_path)
       default:
         throw new Error(`Unsupported platform: ${platform}`)
     }

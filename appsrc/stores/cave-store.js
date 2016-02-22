@@ -189,6 +189,8 @@ function set_current_task (id, data) {
 }
 
 async function queue_task (id, task_name, data) {
+  let running = true
+
   try {
     if (typeof data === 'undefined') {
       data = {}
@@ -210,6 +212,7 @@ async function queue_task (id, task_name, data) {
       id,
       emitter,
       onprogress: ((state) => {
+        if (!running) return
         AppActions.cave_progress({id, progress: state.percent * 0.01, task: task_name})
       })::throttle(50)
     })
@@ -221,6 +224,7 @@ async function queue_task (id, task_name, data) {
       opts: task_opts
     })
     let res = await task.start(task_opts)
+    running = false
     set_current_task(id, null)
     AppActions.cave_progress({id, progress: 0})
 
@@ -244,6 +248,7 @@ async function queue_task (id, task_name, data) {
       AppActions.cave_progress({id, task: 'idle'})
     }
   } catch (err) {
+    running = false
     set_current_task(id, null)
     handle_task_error(err, id, task_name)
   }

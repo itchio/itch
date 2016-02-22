@@ -83,6 +83,7 @@ let self = {
 
     log(opts, `wiping stage...`)
     await butler.wipe(stage_path)
+    log(opts, `done wiping stage`)
 
     return {status: 'ok'}
   },
