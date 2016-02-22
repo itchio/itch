@@ -165,7 +165,7 @@ class MainAction extends ShallowComponent {
     let t = this.t
     let progress = cave::get('progress')
 
-    if (task === 'idle' || task === 'awaken') {
+    if (task === 'idle' || task === 'awaken' || task === 'check-for-update') {
       switch (action) {
         case 'open':
           return t('grid.item.open')

@@ -9,7 +9,6 @@ let Icon = require('./icon')
 let task_to_icon = {
   'report': 'upload-to-cloud',
   'error': 'heart-broken',
-  'awaken': 'stopwatch',
   'find-upload': 'stopwatch',
   'download': 'download',
   'download-queued': 'hand-paper-o',
@@ -17,7 +16,9 @@ let task_to_icon = {
   'uninstall': 'delete',
   'ask-before-install': 'install',
   'configure': 'cog',
+  'awaken': 'stopwatch',
   'launch': 'fire',
+  'check-for-update': 'checkmark',
   'idle': 'checkmark'
 }
 

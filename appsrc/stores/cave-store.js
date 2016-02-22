@@ -402,10 +402,8 @@ function cancel_cave (payload) {
 }
 
 async function authenticated (payload) {
-  log(store_opts, `authenticated!`)
   let me = CredentialsStore.get_me()
 
-  log(store_opts, `me = ${JSON.stringify(me, null, 2)}`)
   try {
     await db.load(me.id)
   } catch (e) {
@@ -414,7 +412,6 @@ async function authenticated (payload) {
     return
   }
 
-  log(store_opts, `ready to roll (⌐■_■)`)
   AppActions.ready_to_roll()
 }
 
