@@ -270,7 +270,7 @@ async function browse_install_location (payload) {
     return
   }
 
-  log(opts, `Browsing location ${loc}`)
+  log(opts, `Browsing location ${name}`)
   explorer.open(loc.path)
 }
 
