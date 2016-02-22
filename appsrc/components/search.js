@@ -22,7 +22,7 @@ class SearchContent extends ShallowComponent {
 
     let games = state::get('games')
     let owned_games_by_id = games::get('dashboard')::merge(games::get('owned'))
-    let query = state::getIn(['search', 'query'])
+    let query = state::getIn(['search', 'query']) || ''
     let fetched_query = state::getIn(['search', 'fetched_query'])
     let search_games = state::getIn(['search', 'games'])
     let loading = query !== fetched_query
