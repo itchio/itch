@@ -70,6 +70,11 @@ sniff.path = async function (file) {
         // compressed .dmg have wrong magic numbers, go by extension
         return {ext: 'dmg', mime: 'application/x-apple-diskimage'}
       }
+
+      if (ext === 'jar') {
+        // jar files are hard to distinguish from .zip files without listing their contents
+        return {ext: 'jar', mime: 'application/java-archive'}
+      }
     }
 
     let buf = await read_chunk(file, 0, 262)

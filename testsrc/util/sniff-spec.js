@@ -20,6 +20,7 @@ test('sniff', t => {
     ['dmg', {ext: 'dmg', mime: 'application/x-apple-diskimage'}],
     ['bz2.dmg', {ext: 'dmg', mime: 'application/x-apple-diskimage'}],
     ['gz.dmg', {ext: 'dmg', mime: 'application/x-apple-diskimage'}],
+    ['fallback.jar', {ext: 'dmg', mime: 'application/java-archive'}],
     ['bz2', {ext: 'bz2', mime: 'application/x-bzip2'}],
     ['gz', {ext: 'gz', mime: 'application/gzip'}]
   ]
