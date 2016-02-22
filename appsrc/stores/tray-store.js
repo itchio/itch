@@ -22,7 +22,7 @@ let TrayStore = Object.assign(new Store('tray-store'), {
 })
 
 function make_tray () {
-  let icon_path = `${__dirname}/../static/images/itchio-tray-small.png`
+  let icon_path = `${__dirname}/../static/images/itchio-tray.png`
   tray = new Tray(path.resolve(icon_path))
   tray.setToolTip('itch.io')
   tray.on('click', () => AppActions.focus_window())
