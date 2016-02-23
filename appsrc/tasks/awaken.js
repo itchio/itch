@@ -5,7 +5,7 @@ let CaveStore = require('../stores/cave-store')
 async function start (opts) {
   let id = opts.id
 
-  let cave = await CaveStore.find(id)
+  let cave = CaveStore.find(id)
 
   if (cave.launchable) {
     throw new errors.Transition({ to: 'check-for-update', reason: 'awakening' })

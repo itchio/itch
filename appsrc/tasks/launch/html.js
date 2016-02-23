@@ -17,7 +17,7 @@ let CaveStore = require('../../stores/cave-store')
 
 let self = {
   launch: async function(opts, cave) {
-    let game = await db.find_one({_table: 'games', id: cave.game_id})
+    let game = await db.find_one({_table: 'games', id: cave.game})
     let inject_path = path.resolve(__dirname, '..', '..', 'inject', 'game.js')
     let entry_point = path.join(CaveStore.app_path(cave.install_location, opts.id), cave.game_path)
 
@@ -38,7 +38,7 @@ let self = {
         /* hook up a few keyboard shortcuts of our own */
         preload: inject_path,
         /* stores cookies etc. in persistent session to save progress */
-        partition: `persist:gamesession_${cave.game_id}`
+        partition: `persist:gamesession_${cave.game}`
       }
     })
 

@@ -1,6 +1,7 @@
 
 let r = require('r-dom')
-import {getIn, get, merge, count} from 'mori-ext'
+import { getIn, count } from 'grovel'
+import { each } from 'underline'
 
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
@@ -37,7 +38,7 @@ class LibraryContent extends ShallowComponent {
       if (/^(locations|broken)/.test(panel)) {
         bucket = 'caved'
       }
-      let shown_games = games::get(bucket)
+      let shown_games = games[bucket] || {}
 
       let pred = pred_every
 
@@ -46,15 +47,18 @@ class LibraryContent extends ShallowComponent {
         if (loc_matches) {
           let loc_name_filter = loc_matches[1]
           pred = (cave) => {
-            let loc_name = cave::get('install_location') || 'appdata'
+            let loc_name = cave.install_location || 'appdata'
             return (loc_name_filter === loc_name)
           }
         }
       }
 
-      let owned_games_by_id = games::get('dashboard')::merge(games::get('owned'))
+      // XXX: dedup with search
+      let owned_games_by_id = {}
+      games.dashboard::each((g) => owned_games_by_id[g.id] = true)
+      games.owned::each((g) => owned_games_by_id[g.id] = true)
 
-      if (shown_games::count() > 0) {
+      if (shown_games::count()) {
         children.push(r(GameList, {games: shown_games, caves, pred, owned_games_by_id, is_press}))
       } else {
         children.push(r(LibraryPlaceholder, {panel}))

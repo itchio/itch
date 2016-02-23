@@ -91,7 +91,7 @@ async function fetch_collection_games (collection_id, cb) {
   let page = 1
   let fetched = 0
   let total_items = 1
-  let game_ids = []
+  let games = []
 
   while (fetched < total_items) {
     let res = await api.collection_games(collection_id, page)
@@ -99,7 +99,7 @@ async function fetch_collection_games (collection_id, cb) {
     fetched = res.per_page * page
 
     let normalized = normalize(res, {games: arrayOf(game)})
-    game_ids = game_ids.concat(normalized.entities.games::pluck('id'))
+    games = games.concat(normalized.entities.games::pluck('id'))
     save_all_entities(normalized)
     cb()
     page++
@@ -141,7 +141,13 @@ function save_all_entities (response) {
 }
 
 function get_entities (table) {
-  return data[table] || {}
+  let entities = data[table]
+  if (!entities) {
+    entities = {}
+    data[table] = entities
+  }
+
+  return entities
 }
 
 module.exports = {

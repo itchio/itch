@@ -126,8 +126,8 @@ class User {
     return res
   }
 
-  game (game_id) {
-    return this.request('get', `/game/${game_id}`)
+  game (game) {
+    return this.request('get', `/game/${game}`)
   }
 
   collection (collection_id) {
@@ -155,8 +155,8 @@ class User {
     return this.request('get', `/download-key/${download_key_id}/download/${upload_id}`)
   }
 
-  async game_uploads (game_id) {
-    let res = await this.request('get', `/game/${game_id}/uploads`)
+  async game_uploads (game) {
+    let res = await this.request('get', `/game/${game}/uploads`)
     res.uploads = self.ensure_array(res.uploads)
     return res
   }

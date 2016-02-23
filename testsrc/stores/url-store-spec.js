@@ -65,7 +65,7 @@ test('UrlStore', t => {
 
     t.mock(electron.electron.dialog).expects('showMessageBox').withArgs(sinon.match.has('title', 'prompt.url_install.title'))
     find_game.resolves({p_osx: true})
-    await handler({ action_type: AppConstants.GAMES_FETCHED, game_ids: [5124, 12379, 1234, 4] })
+    await handler({ action_type: AppConstants.GAMES_FETCHED, games: [5124, 12379, 1234, 4] })
   })
 
   t.case('install apologizes if game is not compatible', async t => {

@@ -116,20 +116,18 @@ function build_login_and_return_url (return_to) {
 }
 
 async function initiate_purchase (payload) {
-  let game_id = payload.game_id
-  let game = market.get_entities('games')[game_id]
+  pre: { // eslint-disable-line
+    typeof payload.id === 'number'
+  }
+  let game = market.get_entities('games')[payload.id]
 
   let me = CredentialsStore.get_me()
-
-  console.log(`trying to purchase ${JSON.stringify(game, null, 2)}`)
 
   // XXX 'can_be_bought' API field seems buggy for now?
   // cf. https://github.com/itchio/itch/issues/379
 
-  let keys = market.get_entities('download_keys')::findWhere({game_id})
-
-  let already_owns = keys.length > 0
-  if (already_owns) {
+  let key = market.get_entities('download_keys')::findWhere({game: payload.id})
+  if (key) {
     let wants = await wants_to_buy_twice(game)
     // user didn't want to buy twice
     if (!wants) return
@@ -151,7 +149,7 @@ async function initiate_purchase (payload) {
     if (/^.*\/download\/[a-zA-Z0-9]*$/.test(parsed.pathname)) {
       // purchase went through!
       AppActions.fetch_games('owned')
-      AppActions.purchase_completed(game_id, `You just purchased ${game.title}! You should now be able to install it in one click.`)
+      AppActions.purchase_completed(game, `You just purchased ${game.title}! You should now be able to install it in one click.`)
       win.close()
     } else if (/\/pay\/cancel/.test(parsed.pathname)) {
       // payment was cancelled

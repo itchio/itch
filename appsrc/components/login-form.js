@@ -1,6 +1,5 @@
 
 let r = require('r-dom')
-import {get, getIn} from 'mori-ext'
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
@@ -32,22 +31,22 @@ class LoginForm extends ShallowComponent {
   render () {
     let t = this.t
     let state = this.props.state
-    let page = state::get('page')
+    let page = state.page
 
     let loading, errors, message, icon
 
     if (page === 'login') {
-      loading = state::getIn(['login', 'loading'])
-      errors = state::getIn(['login', 'errors'])
+      loading = state.login.loading
+      errors = state.login.errors
       message = t('login.status.login')
       icon = 'heart-filled'
     } else if (page === 'setup') {
-      let setup_msg = state::getIn(['login', 'setup', 'message'])
-      let setup_var = state::getIn(['login', 'setup', 'variables'])
+      let setup_msg = state.login.setup.message
+      let setup_var = state.login.setup.variables
       loading = true
       errors = []
       message = t(setup_msg, setup_var)
-      icon = state::getIn(['login', 'setup', 'icon'])
+      icon = state.login.setup.icon
     } else {
       throw new Error(`Unknown page for login form: ${page}`)
     }

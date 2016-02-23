@@ -8,7 +8,7 @@ let cooldown = require('../util/cooldown')(500)
 
 async function start (opts) {
   let id = opts.id
-  let cave = await CaveStore.find(id)
+  let cave = CaveStore.find(id)
 
   log(opts, `launchable cave, looking for fresher upload`)
 

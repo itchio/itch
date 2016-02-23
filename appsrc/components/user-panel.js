@@ -1,6 +1,5 @@
 
 let r = require('r-dom')
-import {getIn, get} from 'mori-ext'
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
@@ -14,15 +13,15 @@ class UserPanel extends ShallowComponent {
 
   render () {
     let state = this.props.state
-    let me = state::getIn(['credentials', 'me'])
+    let me = state.credentials.me
 
-    let avatar = me::get('cover_url') || 'static/images/itchio-textless-pink.svg'
+    let avatar = me.cover_url || 'static/images/itchio-textless-pink.svg'
 
     return r.div({classSet: {user_panel: true}}, [
       me
       ? r.div({}, [
         r.img({className: 'avatar', src: avatar}),
-        r.div({className: 'username'}, me::get('username'))
+        r.div({className: 'username'}, me.username)
       ])
       : 'Loading...'
     ])

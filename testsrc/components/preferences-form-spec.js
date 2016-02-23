@@ -16,16 +16,17 @@ test('PreferencesForm', t => {
     computing_size: false,
     path: ''
   })
-  let state = mori.toClj({
-    'install-locations': {
+  let state = {
+    install_locations: {
       aliases: [
-        ["","~"]
+        ['', '~']
       ],
       default: 'appdata',
       locations: { appdata }
     }
-  })
+  }
 
   let tree = sd.shallowRender(sd(PreferencesForm, { state }))
   let instance = tree.getMountedInstance()
+  // TODO: finish writing test
 })

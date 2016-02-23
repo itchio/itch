@@ -70,7 +70,7 @@ async function handle_url (url_str) {
   switch (verb) {
     case 'install': {
       if (!tokens[1]) {
-        log(opts, `for install: missing game_id, bailing out.`)
+        log(opts, `for install: missing game, bailing out.`)
         return
       }
       let gid = parseInt(tokens[1], 10)
@@ -88,14 +88,14 @@ async function handle_url (url_str) {
 
     case 'launch': {
       if (!tokens[1]) {
-        log(opts, `for install: missing game_id, bailing out.`)
+        log(opts, `for install: missing game, bailing out.`)
         return
       }
       let gid = parseInt(tokens[1], 10)
 
       let game = market.get_entities('games')[gid]
       if (game) {
-        let cave = await CaveStore.find_for_game(gid)
+        let cave = CaveStore.find_for_game(gid)
         if (cave) {
           AppActions.queue_game(gid)
         } else {
@@ -120,7 +120,7 @@ async function handle_url (url_str) {
 
 async function games_fetched (payload) {
   try {
-    for (let gid of payload.game_ids) {
+    for (let gid of payload.games) {
       if (to_install === gid) {
         log(opts, `games_fetched: we were waiting on ${gid}, waking it up!`)
         to_install = null
@@ -137,9 +137,9 @@ async function games_fetched (payload) {
 async function install_prompt (game) {
   let i18n = I18nStore.get_state()
 
-  let cave = await CaveStore.find_for_game(game.id)
+  let cave = CaveStore.find_for_game(game.id)
   if (cave) {
-    let panel = `caves/${cave._id}`
+    let panel = `caves/${cave.id}`
     log(opts, `have cave, focusing ${panel}`)
     AppActions.focus_panel(panel)
     return

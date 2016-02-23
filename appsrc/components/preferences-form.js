@@ -1,6 +1,6 @@
 
 let r = require('r-dom')
-import {get, getIn, first, last, toJs, filter, each, count} from 'mori-ext'
+import { each, filter } from 'underline'
 
 let humanize = require('humanize-plus')
 let PropTypes = require('react').PropTypes
@@ -24,7 +24,7 @@ class PreferencesForm extends ShallowComponent {
   render () {
     let t = this.t
     let state = this.props.state
-    let language = state::getIn(['preferences', 'language'])
+    let language = state.preferences.language
     let locales = I18nStore.get_locales_list()
     let sniff_code = I18nStore.get_sniffed_language()
     let sniffed = sniff_code
@@ -35,7 +35,7 @@ class PreferencesForm extends ShallowComponent {
       }
     }
 
-    let updating_locales = state::getIn(['locales', 'updating'])
+    let updating_locales = state.locales.updating
 
     let options = [{
       value: '__',
@@ -99,35 +99,33 @@ class PreferencesForm extends ShallowComponent {
     ])
 
     let state = this.props.state
-    let aliases = state::getIn(['install-locations', 'aliases'])::toJs()
-    let default_loc = state::getIn(['install-locations', 'default'])
+    let aliases = state.install_locations.aliases
+    let default_loc = state.install_locations.default
 
-    let loc_map = state::getIn(['install-locations', 'locations'])
-    let locations = loc_map::filter((x) => !x::last()::get('deleted'))
+    let loc_map = state.install_locations.locations
+    let locations = loc_map::filter((x) => !x.deleted)
 
     // can't delete your last remaining location.
-    let several_locations = locations::count() > 0
+    let several_locations = locations.size
 
     let rows = []
     rows.push(header)
 
     let index = -1
 
-    locations::each((pair) => {
+    locations::each((location, name) => {
       index++
-      let name = pair::first()
-      let location = pair::last()
       let is_default = (name === default_loc)
       let may_delete = several_locations && name !== 'appdata'
 
-      let path = location::get('path')
+      let path = location.path
       for (let alias of aliases) {
         path = path.replace(alias[0], alias[1])
       }
-      let size = location::get('size')
-      let free_space = location::get('free_space')
-      let item_count = location::get('item_count')
-      let computing_size = location::get('computing_size')
+      let size = location.size
+      let free_space = location.free_space
+      let item_count = location.item_count
+      let computing_size = location.computing_size
 
       rows.push(r.tr({}, [
         r.td({

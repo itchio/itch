@@ -16,7 +16,7 @@ let self = {
     let onprogress = opts.onprogress || onprogress
     let emitter = opts.emitter
 
-    let cave = await CaveStore.find(id)
+    let cave = CaveStore.find(id)
     let dest_path = CaveStore.app_path(cave.install_location, id)
 
     if (cave.upload_id && cave.uploads && cave.uploads[cave.upload_id]) {

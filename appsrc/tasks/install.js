@@ -26,7 +26,7 @@ let self = {
     let upload_id = opts.upload_id
     let check_timestamps = true
 
-    let cave = await CaveStore.find(id)
+    let cave = CaveStore.find(id)
 
     if (opts.reinstall) {
       upload_id = cave.upload_id

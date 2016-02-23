@@ -1,5 +1,5 @@
 
-import {zipmap, hasKey, get, vals, each, map} from 'mori-ext'
+import { each, indexBy } from 'underline'
 
 let r = require('r-dom')
 let PropTypes = require('react').PropTypes
@@ -20,24 +20,23 @@ class GameList extends ShallowComponent {
 
     // TODO perf: app-store should maintain this instead of us recomputing it
     // every time GameList is dirty
-    let caves_by_game_id = ((x) => x::get('game_id'))::map(caves::vals())::zipmap(caves::vals())
+    let caves_by_game = caves::indexBy('game')
 
     let children = []
 
     // TODO perf: game-list should only filter & pass down immutable
     // substructures, and let owned computation to children so that we
     // take advantage of dirty checking
-    games::vals()::each((game) => {
-      let game_id = game::get('id')
-      let cave = caves_by_game_id::get(game_id)
+    games::each((game) => {
+      let cave = caves_by_game[game.id]
       if (!pred(cave)) return
 
-      let owned_via_library = owned_games_by_id::hasKey(game_id.toString())
-      let owned_via_press_system = !!(is_press && game::get('in_press_system'))
+      let owned_via_library = owned_games_by_id[game.id]
+      let owned_via_press_system = !!(is_press && game.in_press_system)
       let owned = owned_via_library || owned_via_press_system
 
       children.push(
-        r(GameCell, {key: game_id, game, cave, owned})
+        r(GameCell, {key: game.id, game, cave, owned})
       )
     })
 

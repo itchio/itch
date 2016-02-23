@@ -47,12 +47,12 @@ test('GameStore', t => {
   })
 
   t.case('fetch install', async t => {
-    t.stub(db, 'find_cave').resolves({game_id: 64})
+    t.stub(db, 'find_cave').resolves({game: 64})
     await handler({ action_type: AppConstants.FETCH_GAMES, path: 'installs/46' })
   })
 
   t.case('fetch collections', async t => {
-    t.stub(db, 'find_collection').resolves({game_ids: [1, 2, 3, 4, 5]})
+    t.stub(db, 'find_collection').resolves({games: [1, 2, 3, 4, 5]})
     let user = CredentialsStore.get_current_user()
     let collection_games = t.stub(user, 'collection_games')
     collection_games.onCall(0).resolves({
@@ -66,6 +66,6 @@ test('GameStore', t => {
 
     let update = t.stub(db, 'update').resolves()
     await handler({ action_type: AppConstants.FETCH_GAMES, path: 'collections/78' })
-    sinon.assert.calledWith(update, {_table: 'collections', id: 78}, {$set: {game_ids: [1, 3, 5, 7, 9], _fetched_at: sinon.match.date}})
+    sinon.assert.calledWith(update, {_table: 'collections', id: 78}, {$set: {games: [1, 3, 5, 7, 9], _fetched_at: sinon.match.date}})
   })
 })

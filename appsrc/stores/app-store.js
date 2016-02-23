@@ -1,8 +1,6 @@
 
+import { assocIn, dissocIn, getIn } from 'grovel'
 let Store = require('./store')
-import {hashMap} from 'mori'
-import {assocIn, assoc, dissoc, updateIn, getIn, get, toClj} from 'mori-ext'
-import {reduce} from 'underline'
 
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
@@ -12,42 +10,42 @@ let defer = require('../util/defer')
 let patch = require('../util/patch')
 let env = require('../env')
 
-let state = hashMap(
-  'page', 'login',
+let state = {
+  page: 'login',
 
-  'credentials', null,
+  credentials: null,
+  locales: null,
 
-  'preferences', hashMap(
-    'language', 'en'
-  ),
+  preferences: {
+    language: 'en'
+  },
 
-  'update', hashMap(
-    'available', false,
-    'downloaded', false,
-    'status', null
-  ),
+  update: {
+    available: false,
+    downloaded: false,
+    status: null
+  },
 
-  'library', hashMap(
-    'games', hashMap(),
-    'panel', '',
-    'collections', hashMap(),
-    'caves', hashMap(),
-    'search', hashMap(
-      'query', '',
-      'games', hashMap()
-    )
-  ),
+  library: {
+    games: {},
+    panel: '',
+    collections: {},
+    caves: {},
+    search: {
+      query: ''
+    }
+  },
 
-  'login', hashMap(
-    'loading', false,
-    'errors', null,
-    'setup', hashMap(
-      'message', '...',
-      'variables', null,
-      'icon', 'cog'
-    )
-  )
-)
+  login: {
+    loading: false,
+    errors: null,
+    setup: {
+      message: '...',
+      variables: null,
+      icon: 'cog'
+    }
+  }
+}
 
 let AppStore = Object.assign(new Store('app-store', 'renderer'), {
   get_state: function () {
@@ -57,7 +55,7 @@ let AppStore = Object.assign(new Store('app-store', 'renderer'), {
 
 function checking_for_self_update (payload) {
   console.log(`checking for self updates...`)
-  state = state::assocIn(['update', 'checking'], true)
+  state = state::assocIn(state, ['update', 'checking'], true)
   AppStore.emit_change()
 }
 
@@ -124,14 +122,13 @@ function locale_update_download_end (payload) {
 }
 
 function dismiss_status () {
-  state = state::updateIn(['update'], x => x::dissoc('error'))
-  state = state::updateIn(['update'], x => x::dissoc('status'))
+  state = state::dissocIn(['update', 'error'])::dissocIn(['update', 'status'])
   AppStore.emit_change()
 }
 
 function focus_panel (payload) {
   let panel = payload.panel
-  let page = state::get('page')
+  let page = state.page
 
   if (page !== 'library') {
     console.log(`Not switching to panel ${panel} while on page ${page}`)
@@ -148,7 +145,7 @@ function focus_panel (payload) {
 }
 
 function switch_page (page) {
-  state = state::assoc('page', page)
+  state = state::assocIn(['page'], page)
   AppStore.emit_change()
 }
 
@@ -176,7 +173,7 @@ function ready_to_roll (payload) {
 
   let me = state::getIn(['credentials', 'me'])
   switch_page('library')
-  if (me::get('developer')) {
+  if (me.developer) {
     focus_panel({panel: 'dashboard'})
     defer(() => AppActions.fetch_games('dashboard'))
   } else {
@@ -185,20 +182,24 @@ function ready_to_roll (payload) {
 }
 
 function logout () {
-  state = state::assocIn(['library'], hashMap(
-    'games', hashMap(),
-    'panel', '',
-    'collections', hashMap(),
-    'caves', hashMap()
-  ))
+  state = state::assocIn(['library'], {
+    'games': {},
+    'panel': '',
+    'collections': {},
+    'caves': {}
+  })
   AppStore.emit_change()
   switch_page('login')
 }
 
 function setup_status (payload) {
-  let message = payload.message
-  let icon = payload.icon
-  let variables = payload.variables
+  pre: { // eslint-disable-line
+    typeof payload.message === 'string'
+    typeof payload.icon === 'string'
+  }
+
+  let {message, icon, variables} = payload
+
   state = state::assocIn(['login', 'setup', 'message'], message)
   state = state::assocIn(['login', 'setup', 'variables'], variables)
   if (icon) {
@@ -212,7 +213,10 @@ function setup_wait () {
 }
 
 function cave_thrown_into_bit_bucket (payload) {
-  state = state::updateIn(['library', 'caves'], caves => caves::dissoc(payload.id))
+  pre: { // eslint-disable-line
+    typeof payload.id === 'string'
+  }
+  state = state::dissocIn(['library', 'caves', payload.id])
   AppStore.emit_change()
   if (state::getIn(['library', 'panel']) === `caves/${payload.id}`) {
     AppActions.focus_panel('caved')
@@ -255,6 +259,7 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.SELF_UPDATE_ERROR, update_error)
   on(AppConstants.PURCHASE_COMPLETED, purchase_completed)
   on(AppConstants.DISMISS_STATUS, dismiss_status)
+
   on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, cave_thrown_into_bit_bucket)
 
   on(AppConstants.FETCH_SEARCH, (payload) => {
@@ -285,27 +290,27 @@ function cave_store_diff (payload) {
 }
 
 function cave_store_cave_diff (payload) {
-  state = patch.applyAt(state, ['library', 'caves', payload.cave_id], payload.diff)
+  state = patch.applyAt(state, ['library', 'caves', payload.cave], payload.diff)
   AppStore.emit_change()
 }
 
 function install_location_store_diff (payload) {
-  state = patch.applyAt(state, ['install-locations'], payload.diff)
+  state = patch.applyAt(state, ['install_locations'], payload.diff)
   AppStore.emit_change()
 }
 
 Store.subscribe('collection-store', (collections) => {
-  state = state::assocIn(['library', 'collections'], collections::toClj())
+  state = state::assocIn(['library', 'collections'], collections)
   AppStore.emit_change()
 })
 
 Store.subscribe('credentials-store', (credentials) => {
-  state = state::assoc('credentials', credentials::toClj())
+  state = state::assocIn(['credentials'], credentials)
   AppStore.emit_change()
 })
 
 Store.subscribe('preferences-store', (preferences) => {
-  state = state::assoc('preferences', preferences::toClj())
+  state = state::assocIn(['preferences'], preferences)
   AppStore.emit_change()
 })
 

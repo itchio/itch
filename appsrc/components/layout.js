@@ -1,6 +1,5 @@
 
 let r = require('r-dom')
-import {get} from 'mori-ext'
 let ShallowComponent = require('./shallow-component')
 
 let LoginPage = require('./login-page')
@@ -40,7 +39,7 @@ class Layout extends ShallowComponent {
   render () {
     let state = this.state.state
 
-    switch (state::get('page')) {
+    switch (state.page) {
       case 'login':
       case 'setup':
         return r(LoginPage, {state})

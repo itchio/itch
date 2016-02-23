@@ -54,7 +54,7 @@ let self = {
 
     let installer_cache = {}
     installer_cache[cave.upload_id] = installer_name
-    AppActions.update_cave(cave._id, {installer_cache})
+    AppActions.update_cave(cave.id, {installer_cache})
   },
 
   retrieve_cached_type: function (opts) {

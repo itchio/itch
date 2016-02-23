@@ -1,6 +1,5 @@
 
 let r = require('r-dom')
-import {getIn} from 'mori-ext'
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
@@ -16,12 +15,7 @@ class StatusBar extends ShallowComponent {
     let t = this.t
     let state = this.props.state
 
-    let status = state::getIn(['update', 'status'])
-    let error = state::getIn(['update', 'error'])
-    let available = state::getIn(['update', 'available'])
-    let downloaded = state::getIn(['update', 'downloaded'])
-    let checking = state::getIn(['update', 'checking'])
-    let uptodate = state::getIn(['update', 'uptodate'])
+    let {status, error, available, downloaded, checking, uptodate} = state.update
 
     let children = []
     let active = true

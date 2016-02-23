@@ -49,6 +49,14 @@ let self = {
     await self.load_database()
   },
 
+  unload: function () {
+    self.promised_methods.forEach((method) => {
+      delete self[method]
+    })
+    delete self.store
+    self.library_dir = -1
+  },
+
   flatten: function (obj) {
     let result = {}
     for (let pair of obj::pairs()) {
@@ -76,12 +84,12 @@ let self = {
 
   /* Helpers */
 
-  find_cave: async function (cave_id) {
-    return await self.find_one({_table: 'caves', _id: cave_id})
+  find_cave: async function (cave) {
+    return await self.find_one({_table: 'caves', _id: cave})
   },
 
-  find_cave_for_game: async function (game_id) {
-    return await self.find_one({_table: 'caves', game_id})
+  find_cave_for_game: async function (game) {
+    return await self.find_one({_table: 'caves', game})
   },
 
   end: true

@@ -22,11 +22,11 @@ let self = {
   start: async function (opts) {
     let id = opts.id
 
-    let cave = await CaveStore.find(id)
+    let cave = CaveStore.find(id)
 
     if (!self.valid_cave(cave)) {
       await configure.start(opts)
-      cave = await CaveStore.find(id)
+      cave = CaveStore.find(id)
     }
 
     let module = {native, html}[cave.launch_type]

@@ -1,6 +1,4 @@
 
-import {get} from 'mori-ext'
-
 let r = require('r-dom')
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
@@ -23,7 +21,7 @@ class GameCell extends ShallowComponent {
     let game = this.props.game
     let cave = this.props.cave
 
-    let min_price = game::get('min_price')
+    let min_price = game.min_price
     let free = (min_price === 0)
 
     let may_download = may_download_all || owned || free
@@ -31,19 +29,19 @@ class GameCell extends ShallowComponent {
     let platform_compatible = false
     for (let platform_spec of platform_data) {
       if (platform === platform_spec.platform) {
-        platform_compatible = !!game::get(platform_spec.field)
+        platform_compatible = !!game[platform_spec.field]
       }
     }
-    platform_compatible |= game::get('type') === 'html'
+    platform_compatible |= game.type === 'html'
 
     let children = []
 
     children.push(r(Thumbnail, {cave, game}))
 
-    let title = game::get('title')
+    let title = game.title
     children.push(r.div({className: 'game_title'}, title))
 
-    let user = game::get('user')
+    let user = game.user
     if (user) {
       r.div({className: 'game_author'}, user.display_name)
     }

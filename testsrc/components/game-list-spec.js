@@ -19,7 +19,7 @@ test('GameList', t => {
   t.case('predicate-based filtering', t => {
     let games = mori.toClj([{id: 12}, {id: 26, in_press_system: true}, {id: 42}]::indexBy('id'))
     let caves = mori.toClj({
-      'asd09f8': {game_id: 42}
+      'asd09f8': {game: 42}
     })
 
     let tree = sd.shallowRender(sd(GameList, {games, caves}))

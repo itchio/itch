@@ -1,5 +1,5 @@
 
-import {getIn, assocIn, updateIn, dissoc, toClj} from 'mori-ext'
+import { getIn, assocIn, dissocIn } from 'grovel'
 
 /**
  * Take a diff as produced by deep-diff, and apply it to a mori data structure
@@ -10,7 +10,7 @@ let patch = (state, diff) => {
       // array change
       case 'A': {
         let path = el.path.concat([el.index])
-        state = state::assocIn(path, el.rhs::toClj())
+        state = state::assocIn(path, el.rhs)
       }
         break
 
@@ -18,20 +18,13 @@ let patch = (state, diff) => {
       case 'N':
       // edited element
       case 'E': {
-        state = state::assocIn(el.path, el.rhs::toClj())
+        state = state::assocIn(el.path, el.rhs)
       }
         break
 
       // deleted element
       case 'D': {
-        let path = el.path
-        let key = path.pop()
-
-        if (path.length > 0) {
-          state = state::updateIn(path, (x) => x::dissoc(key))
-        } else {
-          state = state::dissoc(key)
-        }
+        state = state::dissocIn(el.path)
       }
         break
     }

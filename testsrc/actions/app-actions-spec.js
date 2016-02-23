@@ -39,7 +39,7 @@ test('app-actions', t => {
   test_action('bounce', [], { action_type: 'BOUNCE' })
   test_action('notify', ['les carottes sont cuites'], { action_type: 'NOTIFY', message: 'les carottes sont cuites' })
 
-  test_action('queue_game', [42], { action_type: 'QUEUE_GAME', game_id: 42 })
+  test_action('queue_game', [42], { action_type: 'QUEUE_GAME', game: 42 })
 
   test_action('fetch_games', ['collections/23498'], { action_type: 'FETCH_GAMES', path: 'collections/23498' })
   test_action('fetch_search', ['baz'], { action_type: 'FETCH_SEARCH', query: 'baz' })

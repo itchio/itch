@@ -87,19 +87,17 @@ async function commit_owned_games () {
   commit_games('owned', games)
 }
 
-let db = require('../util/db')
-
 async function commit_caved_games () {
-  let caves = await db.find({_table: 'caves'})
-  let gids = caves::indexBy('game_id')
+  let caves = market.get_entities('caves')
+  let gids = caves::indexBy('game')
   let games = market.get_entities('games')::filter((g) => gids[g.id])
   commit_games('caved', games)
 }
 
 async function commit_cave_game (cave_id) {
-  let cave = await db.find_cave(cave_id)
-  let game = market.get_entities('games')[cave.game_id]
-  commit_games(`caves/${cave_id}`, [game])
+  let cave = market.get_entities('caves')[cave_id]
+  let game = market.get_entities('games')[cave.game]
+  commit_games(`caves/${cave_id}`, {[game.id]: game})
 }
 
 async function commit_collection_games (collection_id) {
@@ -128,8 +126,7 @@ function commit_games (key, games) {
 // TODO: Move browse_game somewhere else
 
 async function browse_game (payload) {
-  let game_id = payload.game_id
-  let game = market.get_entities('games')[game_id]
+  let game = market.get_entities('games')[payload.id]
   electron.shell.openExternal(game.url)
 }
 
@@ -155,7 +152,7 @@ AppDispatcher.register('game-store', Store.action_listeners(on => {
   on(AppConstants.FETCH_GAMES, fetch_games)
   on(AppConstants.FETCH_SEARCH, fetch_search::debounce(150))
   on(AppConstants.CAVE_PROGRESS, (payload) => {
-    let id = payload.opts.id
+    let id = payload.data.id
 
     if (!cached_caves[id]) {
       cached_caves[id] = true

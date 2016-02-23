@@ -22,9 +22,9 @@ async function report_cave (payload) {
 
   try {
     AppActions.cave_progress({id, reporting: true})
-    let cave = await CaveStore.find(id)
+    let cave = CaveStore.find(id)
     let log_path = CaveStore.log_path(id)
-    let game = market.get_entities('games')[cave.game_id]
+    let game = market.get_entities('games')[cave.game]
 
     let game_log = await sf.read_file(log_path)
 

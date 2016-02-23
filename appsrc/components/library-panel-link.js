@@ -1,6 +1,7 @@
 
 let r = require('r-dom')
-import {get, count} from 'mori-ext'
+import { count } from 'grovel'
+
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
 
@@ -22,7 +23,7 @@ class LibraryPanelLink extends ShallowComponent {
 
     let num_items = this.props.count
     if (typeof num_items === 'undefined') {
-      num_items = games::get(name)::count()
+      num_items = games[name]::count()
     }
     let current = (name === panel)
 

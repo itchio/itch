@@ -25,7 +25,7 @@ async function start (opts) {
   let emitter = opts.emitter
   let upload_id = opts.upload_id
 
-  let cave = await CaveStore.find(id)
+  let cave = CaveStore.find(id)
 
   ensure(upload_id, 'need upload id')
   ensure(cave.uploads, 'need cached uploads')

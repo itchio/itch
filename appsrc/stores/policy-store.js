@@ -14,8 +14,7 @@ async function show_packaging_policy (payload) {
   let i18n = I18nStore.get_state()
   let format = payload.format
 
-  let game_id = payload.game_id
-  let game = market.get_entities('games')[game_id]
+  let game = market.get_entities('games')[payload.game_id]
 
   let buttons = [
     i18n.t('prompt.action.ok'),
