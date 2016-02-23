@@ -96,7 +96,6 @@ class EmptySearchContent extends ShallowComponent {
   message_key (query, fetched_query) {
     let t = this.t
     if (query.length === 0) {
-      console.log(`example index = ${this.state.example_index}`)
       let example = SearchExamples[this.state.example_index]
       return t('search.empty.tagline', {example})
     } else if (query === fetched_query) {
