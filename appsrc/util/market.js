@@ -48,7 +48,7 @@ async function fetch_owned_keys (cb) {
 
   while (running) {
     let response = await api.my_owned_keys({page: page++})
-    save_all_entities(normalize(await api.my_owned_keys(), {
+    save_all_entities(normalize(response, {
       owned_keys: arrayOf(download_key)
     }))
     cb()
