@@ -57,7 +57,8 @@ class Client {
     let body = resp.body
     let t3 = Date.now()
 
-    log(opts, `${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${path} with ${JSON.stringify(data)}`)
+    let short_path = path.replace(/^\/[^\/]*\//, '')
+    log(opts, `${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${short_path} with ${JSON.stringify(data)}`)
 
     if (resp.statusCode !== 200) {
       throw new Error(`HTTP ${resp.statusCode}`)

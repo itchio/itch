@@ -1,5 +1,5 @@
 
-import { each } from 'underline'
+import { each, pluck } from 'underline'
 import { normalize, Schema, arrayOf } from 'normalizr'
 let CredentialsStore = require('../stores/credentials-store')
 
@@ -58,6 +58,54 @@ async function fetch_owned_keys (cb) {
   cb()
 }
 
+async function fetch_collections (featured_ids, cb) {
+  cb()
+
+  let api = CredentialsStore.get_current_user()
+  if (!api) return
+
+  let my_collections_res = await api.my_collections()
+  let my_collections = normalize(my_collections_res, {
+    collections: arrayOf(collection)
+  })
+  ;(my_collections.entities.collections || [])::each((c) => c._featured = false)
+  save_all_entities(my_collections)
+  cb()
+
+  for (let featured_id of featured_ids) {
+    let featured_collection_res = await api.collection(featured_id)
+    let featured_collection = normalize(featured_collection_res, {
+      collection: collection
+    })
+    ;(featured_collection.entities.collections || [])::each((c) => c._featured = true)
+    save_all_entities(featured_collection)
+    cb()
+  }
+}
+
+async function fetch_collection_games (collection_id, cb) {
+  cb()
+
+  let api = CredentialsStore.get_current_user()
+
+  let page = 1
+  let fetched = 0
+  let total_items = 1
+  let game_ids = []
+
+  while (fetched < total_items) {
+    let res = await api.collection_games(collection_id, page)
+    total_items = res.total_items
+    fetched = res.per_page * page
+
+    let normalized = normalize(res, {games: arrayOf(game)})
+    game_ids = game_ids.concat(normalized.entities.games::pluck('id'))
+    save_all_entities(normalized)
+    cb()
+    page++
+  }
+}
+
 let data = {}
 
 function save_all_entities (response) {
@@ -90,5 +138,7 @@ function get_entities (table) {
 module.exports = {
   fetch_dashboard_games,
   fetch_owned_keys,
+  fetch_collections,
+  fetch_collection_games,
   get_entities
 }

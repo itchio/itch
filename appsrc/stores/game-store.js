@@ -1,5 +1,5 @@
 
-import {filter, where, indexBy, throttle, debounce} from 'underline'
+import {filter, where, indexBy, throttle, debounce, pluck} from 'underline'
 
 let Store = require('./store')
 let CredentialsStore = require('./credentials-store')
@@ -49,7 +49,8 @@ async function fetch_games (payload) {
       if (id === 'empty') return
 
       try {
-        await fetch_collection_games(parseInt(id, 10), {_fetched_at: new Date()})
+        let collection_id = parseInt(id, 10)
+        market.fetch_collection_games(collection_id, () => commit_collection_games(collection_id))
       } catch (e) {
         console.log(`while fetching collection games: ${e.stack || e}`)
       }
@@ -132,12 +133,7 @@ async function fetch_search (payload) {
 
 async function commit_dashboard_games () {
   let me = CredentialsStore.get_me()
-  console.log(`me = ${JSON.stringify(me, null, 2)}`)
-
-  let games = market.get_entities('games')
-  console.log(`1st game = ${JSON.stringify(games[Object.keys(games)[0]], null, 2)}`)
-
-  games = market.get_entities('games')::where({user: me.id})
+  let games = market.get_entities('games')::where({user: me.id})
   commit_games('dashboard', games)
 }
 
@@ -149,10 +145,10 @@ async function commit_owned_games () {
 }
 
 async function commit_caved_games () {
-  let caves = await db.find({_table: 'caves'})
-  let gids = caves::indexBy('game_id')
-  let games = market.get_entities('games')::filter((g) => gids[g.id])
-  cache_games('caved', games)
+  // let caves = await db.find({_table: 'caves'})
+  // let gids = caves::indexBy('game_id')
+  // let games = market.get_entities('games')::filter((g) => gids[g.id])
+  // cache_games('caved', games)
 }
 
 async function commit_cave_game (cave_id) {
@@ -162,13 +158,13 @@ async function commit_cave_game (cave_id) {
 }
 
 async function commit_collection_games (collection_id) {
-  // let collection = await db.find_collection(collection_id)
-  // if (!collection) return
-  //
-  // let gids = collection.game_ids || []
-  // let games = find_games(gids)
-  // cache_games(`collections/${collection_id}`, games)
-  // AppActions.games_fetched(games::pluck('id'))
+  let collection = market.get_entities('collections')[collection_id]
+  if (!collection) return
+
+  let gids = (collection.games || [])::indexBy((id) => id)
+  let games = market.get_entities('games')::filter((g) => gids[g.id])
+  commit_games(`collections/${collection_id}`, games)
+  AppActions.games_fetched(games::pluck('id'))
 }
 
 function commit_games (key, games) {
