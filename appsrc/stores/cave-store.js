@@ -21,6 +21,7 @@ let clone = require('clone')
 let Logger = require('../util/log').Logger
 let log = require('../util/log')('cave-store')
 let db = require('../util/db')
+let market = require('../util/market')
 let os = require('../util/os')
 let diego = require('../util/diego')
 let explorer = require('../util/explorer')
@@ -231,7 +232,7 @@ async function queue_task (id, task_name, data) {
     if (task_name === 'install') {
       let cave = await CaveStore.find(id)
       if (!cave.success_once) {
-        let game = await db.find_game(cave.game_id)
+        let game = market.get_entities('games')[cave.game_id]
         AppActions.notify(`${game.title} is ready!`)
         AppActions.update_cave(id, {success_once: true})
       }
@@ -256,7 +257,7 @@ async function queue_task (id, task_name, data) {
 
 async function initial_progress (record) {
   AppActions.cave_progress(Object.assign({id: record._id}, record))
-  let game = await db.find_game(record.game_id)
+  let game = market.get_entities('games')[record.game_id]
   AppActions.cave_progress({id: record._id, game})
 }
 
@@ -308,7 +309,7 @@ async function queue_game (payload) {
 
   if (cave) {
     if (cave.launchable) {
-      let game = await db.find_game(game_id)
+      let game = market.get_entities('games')[game_id]
       let action = classification_actions[game.classification]
       if (action === 'open') {
         AppActions.explore_cave(cave._id)
@@ -331,7 +332,7 @@ async function queue_game (payload) {
 async function request_cave_uninstall (payload) {
   let cave_id = payload.id
   let cave = await db.find_cave(cave_id)
-  let game = await db.find_game(cave.game_id)
+  let game = market.get_entities('games')[cave.game_id]
 
   let i18n = I18nStore.get_state()
 

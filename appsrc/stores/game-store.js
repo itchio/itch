@@ -71,42 +71,6 @@ async function fetch_single_game (id) {
   // AppActions.games_fetched([id])
 }
 
-async function fetch_collection_games (id, ctx) {
-  // pre: { // eslint-disable-line
-  //   typeof id === 'number'
-  //   typeof ctx === 'object'
-  //   ctx._fetched_at instanceof Date
-  // }
-  //
-  // let {_fetched_at, page = 1, game_ids = []} = ctx
-  //
-  // if (page === 1) {
-  //   await cache_collection_games(id)
-  // }
-  //
-  // log(opts, `fetching page ${page} of collection ${id}`)
-  //
-  // let user = CredentialsStore.get_current_user()
-  //
-  // let res = await user.collection_games(id, page)
-  // let total_items = res.total_items
-  // let fetched = res.per_page * page
-  // game_ids = game_ids.concat(res.games::pluck('id'))
-  //
-  // save_games(res.games)
-  // save_collection_games(id, game_ids, true)
-  //
-  // await cache_collection_games(id)
-  // AppActions.games_fetched(game_ids)
-  //
-  // if (fetched < total_items) {
-  //   await fetch_collection_games(id, {_fetched_at, page: page + 1, game_ids})
-  // } else {
-  //   save_collection_games(id, game_ids, true)
-  //   await cache_collection_games(id)
-  // }
-}
-
 async function fetch_search (payload) {
   // let query = payload.query
   // if (query === '') {
@@ -145,16 +109,16 @@ async function commit_owned_games () {
 }
 
 async function commit_caved_games () {
-  // let caves = await db.find({_table: 'caves'})
-  // let gids = caves::indexBy('game_id')
-  // let games = market.get_entities('games')::filter((g) => gids[g.id])
-  // cache_games('caved', games)
+  let caves = await db.find({_table: 'caves'})
+  let gids = caves::indexBy('game_id')
+  let games = market.get_entities('games')::filter((g) => gids[g.id])
+  commit_games('caved', games)
 }
 
 async function commit_cave_game (cave_id) {
-  // let cave = await db.find_cave(cave_id)
-  // let game = await db.find_game(cave.game_id)
-  // cache_games(`caves/${cave_id}`, [game])
+  let cave = await db.find_cave(cave_id)
+  let game = market.get_entities('games')[cave.game_id]
+  commit_games(`caves/${cave_id}`, [game])
 }
 
 async function commit_collection_games (collection_id) {

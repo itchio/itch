@@ -1,6 +1,6 @@
 
-let db = require('../util/db')
-import {indexBy} from 'underline'
+let market = require('../util/market')
+import { indexBy, findWhere } from 'underline'
 
 let os = require('../util/os')
 let log = require('../util/log')('tasks/find-upload')
@@ -69,10 +69,10 @@ let self = {
     let client = CredentialsStore.get_current_user()
 
     let cave = await CaveStore.find(id)
-    let key = cave.key || await db.find_download_key_for_game(cave.game_id)
+    let key = cave.key || market.get_entities('download_keys')::findWhere({game: cave.game_id})
 
     let action = 'launch'
-    let game = (await db.find_game(cave.game_id)) || {}
+    let game = market.get_entities('games')[cave.game_id] || {}
     action = classification_actions[game.classification] || 'launch'
 
     if (key) {

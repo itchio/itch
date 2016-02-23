@@ -1,7 +1,7 @@
 
 let Store = require('./store')
 import {hashMap} from 'mori'
-import {assocIn, assoc, dissoc, updateIn, getIn, get, reduceKV, vals, map, intoArray, toClj} from 'mori-ext'
+import {assocIn, assoc, dissoc, updateIn, getIn, get, toClj} from 'mori-ext'
 import {reduce} from 'underline'
 
 let AppDispatcher = require('../dispatcher/app-dispatcher')
@@ -144,22 +144,6 @@ function focus_panel (payload) {
   defer(() => {
     AppActions.focus_window()
     AppActions.fetch_games(panel)
-
-    /* TODO: move this somewhere else. multiprocess stuff is confusing */
-    let used_game_ids = state::getIn(['library', 'games'])::reduceKV((game_ids, collection, games) => {
-      let get_id = (g) => g::get('id')
-      let ids = get_id::map(games::vals())::intoArray()
-      return game_ids.concat(ids)
-    }, [])
-
-    used_game_ids = state::getIn(['library', 'search', 'games'])::reduceKV((game_ids, _, game) => {
-      game_ids.push(game::get('id'))
-      return game_ids
-    }, used_game_ids)
-
-    if (used_game_ids.length > 0) {
-      AppActions.gc_database(used_game_ids)
-    }
   })
 }
 

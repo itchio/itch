@@ -2,7 +2,9 @@
 let Store = require('./store')
 let CredentialsStore = require('./credentials-store')
 
-let db = require('../util/db')
+import { findWhere } from 'underline'
+
+let market = require('../util/market')
 let url = require('../util/url')
 let debug_browser_window = require('../util/debug-browser-window')
 
@@ -115,7 +117,7 @@ function build_login_and_return_url (return_to) {
 
 async function initiate_purchase (payload) {
   let game_id = payload.game_id
-  let game = await db.find_game(game_id)
+  let game = market.get_entities('games')[game_id]
 
   let me = CredentialsStore.get_me()
 
@@ -124,7 +126,7 @@ async function initiate_purchase (payload) {
   // XXX 'can_be_bought' API field seems buggy for now?
   // cf. https://github.com/itchio/itch/issues/379
 
-  let keys = await db.find({_table: 'download_keys', game_id})
+  let keys = market.get_entities('download_keys')::findWhere({game_id})
 
   let already_owns = keys.length > 0
   if (already_owns) {

@@ -2,7 +2,7 @@
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
 let urls = require('../constants/urls')
-let db = require('../util/db')
+let market = require('../util/market')
 let Store = require('./store')
 let I18nStore = require('./i18n-store')
 
@@ -15,7 +15,7 @@ async function show_packaging_policy (payload) {
   let format = payload.format
 
   let game_id = payload.game_id
-  let game = await db.find_game(game_id)
+  let game = market.get_entities('games')[game_id]
 
   let buttons = [
     i18n.t('prompt.action.ok'),

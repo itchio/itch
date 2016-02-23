@@ -332,10 +332,6 @@ let self = {
 
   implode_app: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.IMPLODE_APP })
-  },
-
-  gc_database: (used_game_ids) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GC_DATABASE, used_game_ids })
   }
 }
 

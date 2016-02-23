@@ -9,7 +9,7 @@ let CaveStore = require('./cave-store')
 let crash_reporter = require('../util/crash-reporter')
 let github = require('../util/github')
 let sf = require('../util/sf')
-let db = require('../util/db')
+let market = require('../util/market')
 
 let state = {}
 
@@ -24,7 +24,7 @@ async function report_cave (payload) {
     AppActions.cave_progress({id, reporting: true})
     let cave = await CaveStore.find(id)
     let log_path = CaveStore.log_path(id)
-    let game = await db.find_game(cave.game_id)
+    let game = market.get_entities('games')[cave.game_id]
 
     let game_log = await sf.read_file(log_path)
 

@@ -1,7 +1,9 @@
+
 let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
 let AppActions = require('../actions/app-actions')
 let Store = require('./store')
+let CaveStore = require('./cave-store')
 let I18nStore = require('./i18n-store')
 
 let electron = require('electron')
@@ -13,7 +15,7 @@ let opts = {
   logger: new Logger()
 }
 let log = require('../util/log')('url-store')
-let db = require('../util/db')
+let market = require('../util/market')
 let os = require('../util/os')
 
 let UrlStore = Object.assign(new Store('url-store'), {})
@@ -73,7 +75,7 @@ async function handle_url (url_str) {
       }
       let gid = parseInt(tokens[1], 10)
 
-      let game = await db.find_game(gid)
+      let game = market.get_entities('games')[gid]
       if (game) {
         await try_install(game)
       } else {
@@ -91,9 +93,9 @@ async function handle_url (url_str) {
       }
       let gid = parseInt(tokens[1], 10)
 
-      let game = await db.find_game(gid)
+      let game = market.get_entities('games')[gid]
       if (game) {
-        let cave = await db.find_cave_for_game(gid)
+        let cave = await CaveStore.find_for_game(gid)
         if (cave) {
           AppActions.queue_game(gid)
         } else {
@@ -123,7 +125,7 @@ async function games_fetched (payload) {
         log(opts, `games_fetched: we were waiting on ${gid}, waking it up!`)
         to_install = null
 
-        let game = await db.find_game(gid)
+        let game = market.get_entities('games')[gid]
         await try_install(game)
       }
     }
@@ -135,7 +137,7 @@ async function games_fetched (payload) {
 async function install_prompt (game) {
   let i18n = I18nStore.get_state()
 
-  let cave = await db.find_cave_for_game(game.id)
+  let cave = await CaveStore.find_for_game(game.id)
   if (cave) {
     let panel = `caves/${cave._id}`
     log(opts, `have cave, focusing ${panel}`)
@@ -144,7 +146,7 @@ async function install_prompt (game) {
   }
 
   log(opts, `no cave, opening prompt for ${game.title}`)
-  let user = await db.find_user(game.user_id)
+  let user = await market.get_entities('users')[game.user]
 
   let credit = ''
   if (user) {
