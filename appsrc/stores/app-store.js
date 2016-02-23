@@ -219,21 +219,6 @@ function cave_thrown_into_bit_bucket (payload) {
   }
 }
 
-function search_fetched (payload) {
-  let current_query = state::getIn(['library', 'search', 'query'])
-  let fetched_query = state::getIn(['library', 'search', 'fetched_query'])
-
-  if (current_query === fetched_query && payload.query !== current_query) {
-    return // got outdated search result, network lag?
-  }
-
-  let games = payload.game_ids::reduce((games, id) => games::assoc(id, payload.games[id]::toClj()), hashMap())
-
-  state = state::assocIn(['library', 'search', 'games'], games)
-  state = state::assocIn(['library', 'search', 'fetched_query'], payload.query)
-  AppStore.emit_change()
-}
-
 function gain_focus (payload) {
   AppActions.fetch_collections()
   let panel = state::getIn(['library', 'panel'])
@@ -272,8 +257,7 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
   on(AppConstants.DISMISS_STATUS, dismiss_status)
   on(AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, cave_thrown_into_bit_bucket)
 
-  on(AppConstants.SEARCH_FETCHED, search_fetched)
-  on(AppConstants.SEARCH_QUERY_CHANGE, (payload) => {
+  on(AppConstants.FETCH_SEARCH, (payload) => {
     state = state::assocIn(['library', 'search', 'query'], payload.query)
     AppStore.emit_change()
   })

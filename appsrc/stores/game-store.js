@@ -55,44 +55,23 @@ async function fetch_games (payload) {
         console.log(`while fetching collection games: ${e.stack || e}`)
       }
     } else if (type === 'games') {
-      fetch_single_game(parseInt(id, 10))
+      market.fetch_single_game(parseInt(id, 10), () => null)
     } else if (type === 'caves') {
       commit_cave_game(id)
     }
   }
 }
 
-async function fetch_single_game (id) {
-  // log(opts, `fetching single game ${id}`)
-  //
-  // let user = CredentialsStore.get_current_user()
-  // let game = (await user.game(id)).game
-  // save_games([game])
-  // AppActions.games_fetched([id])
-}
-
 async function fetch_search (payload) {
-  // let query = payload.query
-  // if (query === '') {
-  //   log(opts, 'empty fetch_search query')
-  //   AppActions.search_fetched(query, [], {})
-  //   return
-  // }
-  // log(opts, `fetch_search(${query})`)
-  // let user = CredentialsStore.get_current_user()
-  // try {
-  //   let res = await user.search(query)
-  //   let game_ids = res.games::pluck('id')
-  //   let games = {}
-  //   for (let game of res.games) {
-  //     games[game.id] = game
-  //   }
-  //
-  //   save_games(res.games)
-  //   AppActions.search_fetched(query, game_ids, games)
-  // } catch (e) {
-  //   console.log(`while fetching search games: ${e.stack || e}`)
-  // }
+  let query = payload.query
+  if (query === '') {
+    log(opts, 'empty fetch_search query')
+    commit_games('search', {})
+    return
+  }
+
+  log(opts, `fetch_search(${query})`)
+  market.fetch_search(query, (games) => commit_games('search', games))
 }
 
 async function commit_dashboard_games () {
@@ -107,6 +86,8 @@ async function commit_owned_games () {
   let games = market.get_entities('games')::filter((g) => gids[g.id])
   commit_games('owned', games)
 }
+
+let db = require('../util/db')
 
 async function commit_caved_games () {
   let caves = await db.find({_table: 'caves'})

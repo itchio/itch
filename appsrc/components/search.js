@@ -17,7 +17,6 @@ let SearchExamples = require('../constants/search-examples')
 class SearchContent extends ShallowComponent {
   onInput (event) {
     let query = event.target.value
-    AppActions.search_query_change(query)
     AppActions.fetch_search(query)
   }
 
@@ -47,9 +46,10 @@ class SearchContent extends ShallowComponent {
 
     let games = state::get('games')
     let owned_games_by_id = games::get('dashboard')::merge(games::get('owned'))
+
     let query = state::getIn(['search', 'query']) || ''
     let fetched_query = state::getIn(['search', 'fetched_query'])
-    let search_games = state::getIn(['search', 'games'])
+    let search_games = games::get('search')
     let loading = query !== fetched_query
     let empty = search_games::count() === 0
     let is_press = this.state::getIn(['credentials', 'me', 'press_user'])

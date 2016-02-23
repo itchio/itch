@@ -275,14 +275,6 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.GAMES_FETCHED, game_ids })
   },
 
-  search_fetched: (query, game_ids, games) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.SEARCH_FETCHED, game_ids, games, query })
-  },
-
-  search_query_change: (query) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.SEARCH_QUERY_CHANGE, query })
-  },
-
   eval: (code) => {
     AppDispatcher.dispatch({
       action_type: AppConstants.EVAL,

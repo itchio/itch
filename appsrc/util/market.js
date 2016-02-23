@@ -106,6 +106,15 @@ async function fetch_collection_games (collection_id, cb) {
   }
 }
 
+async function fetch_search (query, cb) {
+  let api = CredentialsStore.get_current_user()
+
+  let response = normalize(await api.search(query), {
+    games: arrayOf(game)
+  })
+  cb(response.entities.games || {})
+}
+
 let data = {}
 
 function save_all_entities (response) {
@@ -140,5 +149,6 @@ module.exports = {
   fetch_owned_keys,
   fetch_collections,
   fetch_collection_games,
+  fetch_search,
   get_entities
 }
