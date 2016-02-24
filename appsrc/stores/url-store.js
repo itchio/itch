@@ -120,7 +120,7 @@ async function handle_url (url_str) {
 
 async function games_fetched (payload) {
   try {
-    for (let gid of payload.games) {
+    for (let gid of payload.game_ids) {
       if (to_install === gid) {
         log(opts, `games_fetched: we were waiting on ${gid}, waking it up!`)
         to_install = null

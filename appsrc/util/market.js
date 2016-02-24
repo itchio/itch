@@ -4,7 +4,7 @@ let log = require('../util/log')('market')
 let opts = {logger: new Logger({sinks: {console: true}})}
 
 import { each, union, pluck } from 'underline'
-import { normalize, Schema, arrayOf } from 'normalizr'
+import { normalize, Schema, arrayOf } from 'idealizr'
 let CredentialsStore = require('../stores/credentials-store')
 
 const user = new Schema('users')
@@ -34,7 +34,7 @@ async function fetch_dashboard_games (cb) {
     games: arrayOf(game)
   })
 
-  normalized.entities.games::each((g) => g.user = me.id)
+  normalized.entities.games::each((g) => g.user_id = me.id)
   normalized.entities.users = {
     [me.id]: me
   }

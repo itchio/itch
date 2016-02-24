@@ -43,7 +43,7 @@
     "nedb": "^1.2.1",
     "needle": "^0.11.0",
     "node-uuid": "^1.4.7",
-    "normalizr": "^2.0.0",
+    "idealizr": "^1.0.0",
     "proxyquire": "^1.7.3",
     "pure-render-mixin": "^1.0.2",
     "r-dom": "^2.1.0",

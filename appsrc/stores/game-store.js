@@ -76,20 +76,20 @@ async function fetch_search (payload) {
 
 async function commit_dashboard_games () {
   let me = CredentialsStore.get_me()
-  let games = market.get_entities('games')::where({user: me.id})
+  let games = market.get_entities('games')::where({user_id: me.id})
   commit_games('dashboard', games)
 }
 
 async function commit_owned_games () {
   let keys = market.get_entities('download_keys')
-  let gids = keys::indexBy('game')
+  let gids = keys::indexBy('game_id')
   let games = market.get_entities('games')::filter((g) => gids[g.id])
   commit_games('owned', games)
 }
 
 async function commit_caved_games () {
   let caves = market.get_entities('caves')
-  let gids = caves::indexBy('game')
+  let gids = caves::indexBy('game_id')
   let games = market.get_entities('games')::filter((g) => gids[g.id])
   commit_games('caved', games)
 }
