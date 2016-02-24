@@ -20,7 +20,7 @@ class GameList extends ShallowComponent {
 
     // TODO perf: app-store should maintain this instead of us recomputing it
     // every time GameList is dirty
-    let caves_by_game = caves::indexBy('game')
+    let caves_by_game = caves::indexBy('game_id')
 
     let children = []
 
