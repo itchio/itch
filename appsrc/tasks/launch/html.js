@@ -6,7 +6,7 @@ let electron = require('electron')
 let BrowserWindow = electron.BrowserWindow
 let shell = electron.shell
 
-let db = require('../../util/db')
+let market = require('../../util/market')
 let url = require('../../util/url')
 let http_server = require('../../util/http-server')
 let debug_browser_window = require('../../util/debug-browser-window')
@@ -17,7 +17,7 @@ let CaveStore = require('../../stores/cave-store')
 
 let self = {
   launch: async function(opts, cave) {
-    let game = await db.find_one({_table: 'games', id: cave.game})
+    let game = market.get_entities('games')[cave.game]
     let inject_path = path.resolve(__dirname, '..', '..', 'inject', 'game.js')
     let entry_point = path.join(CaveStore.app_path(cave.install_location, opts.id), cave.game_path)
 

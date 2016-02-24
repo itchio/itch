@@ -274,11 +274,11 @@ let self = {
 
   /* Games */
 
-  queue_game: (id) => {
+  queue_game: (game) => {
     pre: { // eslint-disable-line
-      typeof id === 'number'
+      typeof game === 'object'
     }
-    AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_GAME, id })
+    AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_GAME, game })
   },
 
   browse_game: (id) => {

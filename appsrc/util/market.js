@@ -112,6 +112,7 @@ async function fetch_collection_games (collection_id, cb) {
   let page = 1
   let fetched = 0
   let total_items = 1
+  let fetched_games = []
 
   while (fetched < total_items) {
     let res = await api.collection_games(collection_id, page)
@@ -119,11 +120,17 @@ async function fetch_collection_games (collection_id, cb) {
     fetched = res.per_page * page
 
     let normalized = normalize(res, {games: arrayOf(game)})
-    collection.games = collection.games::union(normalized.entities.games::pluck('id'))
+    let page_game_ids = normalized.entities.games::pluck('id')
+    collection.games = collection.games::union(page_game_ids)
+    fetched_games = fetched_games::union(page_game_ids)
     save_all_entities(normalized)
     cb()
     page++
   }
+
+  // if games were removed, they'll be removed at this step
+  collection.games = fetched_games
+  cb()
 }
 
 async function fetch_search (query, cb) {
@@ -176,5 +183,6 @@ module.exports = {
   fetch_collections,
   fetch_collection_games,
   fetch_search,
+  save_all_entities,
   get_entities
 }

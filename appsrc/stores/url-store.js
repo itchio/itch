@@ -95,9 +95,9 @@ async function handle_url (url_str) {
 
       let game = market.get_entities('games')[gid]
       if (game) {
-        let cave = CaveStore.find_for_game(gid)
+        let cave = CaveStore.find_for_game(game.id)
         if (cave) {
-          AppActions.queue_game(gid)
+          AppActions.queue_game(game)
         } else {
           log(opts, `game ${gid} known but not installed, queuing for install`)
           await try_install(game)
@@ -170,7 +170,7 @@ async function install_prompt (game) {
 
   let callback = (response) => {
     if (response === 0) {
-      AppActions.queue_game(game.id)
+      AppActions.queue_game(game)
     } else if (response === 1) {
       // welp
     }

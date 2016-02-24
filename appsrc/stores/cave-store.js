@@ -260,9 +260,11 @@ async function initial_progress (cave) {
   AppActions.cave_progress(cave)
 }
 
-async function queue_game_install (game_id) {
+async function queue_game_install (game) {
+  market.save_all_entities({ entities: { games: { [game.id]: game } } })
+
   let install_location = PreferencesStore.get_state().default_install_location
-  let cave = { id: uuid.v4(), game: game_id, install_location }
+  let cave = { id: uuid.v4(), game: game.id, install_location }
   market.get_entities('caves')[cave.id] = cave
 
   diego.hire(cave_opts(cave.id))
@@ -302,11 +304,11 @@ async function probe_cave (payload) {
 }
 
 async function queue_game (payload) {
-  let cave = CaveStore.find_for_game(payload.id)
+  let game = payload.game
+  let cave = CaveStore.find_for_game(game.id)
 
   if (cave) {
     if (cave.launchable) {
-      let game = market.get_entities('games')[payload.id]
       let action = classification_actions[game.classification]
       if (action === 'open') {
         AppActions.explore_cave(cave.id)
@@ -322,7 +324,7 @@ async function queue_game (payload) {
       }
     }
   } else {
-    queue_game_install(payload.id)
+    queue_game_install(game)
   }
 }
 
