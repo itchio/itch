@@ -1,6 +1,5 @@
 
 let test = require('zopf')
-let mori = require('mori')
 let proxyquire = require('proxyquire')
 
 let AppConstants = require('../../app/constants/app-constants')
@@ -47,7 +46,7 @@ test('AppStore', t => {
 
   t.stub(CredentialsStore.get_current_user(), 'my_collections').resolves({collections: []})
 
-  let get_state = () => mori.toJs(AppStore.get_state())
+  let get_state = () => AppStore.get_state()
 
   t.case('GameStore change', t => {
   })

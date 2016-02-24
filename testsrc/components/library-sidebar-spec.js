@@ -1,6 +1,5 @@
 
 let test = require('zopf')
-let mori = require('mori')
 let proxyquire = require('proxyquire')
 
 let sd = require('./skin-deeper')
@@ -24,8 +23,8 @@ test('LibrarySidebar', t => {
       panel: ''
     }
   }
-  sd.shallowRender(sd(LibrarySidebar, {state: mori.toClj(props)}))
+  sd.shallowRender(sd(LibrarySidebar, {state: props}))
 
-  let tree = sd.shallowRender(sd(LibrarySidebar, {state: mori.toClj(props)}))
+  let tree = sd.shallowRender(sd(LibrarySidebar, {state: props}))
   t.ok(tree.findNode('.search'), 'displays search area')
 })

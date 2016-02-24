@@ -1,6 +1,5 @@
 
 let test = require('zopf')
-let mori = require('mori')
 let proxyquire = require('proxyquire')
 
 let sd = require('./skin-deeper')
@@ -8,14 +7,14 @@ let stubs = require('../stubs/react-stubs')
 
 test('PreferencesForm', t => {
   let PreferencesForm = proxyquire('../../app/components/preferences-form', stubs)
-  let appdata = mori.toClj({
+  let appdata = {
     name: 'appdata',
     size: -1,
     free_space: 202006237184,
     item_count: 0,
     computing_size: false,
     path: ''
-  })
+  }
   let state = {
     install_locations: {
       aliases: [

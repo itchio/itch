@@ -1,6 +1,5 @@
 
 let test = require('zopf')
-let mori = require('mori')
 let proxyquire = require('proxyquire')
 
 let sd = require('./skin-deeper')
@@ -13,5 +12,5 @@ test('LibraryContent', t => {
       panel: ''
     }
   }
-  sd.shallowRender(sd(LibraryContent, {state: mori.toClj(props), games: {}}))
+  sd.shallowRender(sd(LibraryContent, {state: props, games: {}}))
 })

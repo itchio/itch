@@ -1,6 +1,5 @@
 
 let test = require('zopf')
-let mori = require('mori')
 let proxyquire = require('proxyquire')
 
 let sd = require('./skin-deeper')
@@ -11,7 +10,7 @@ test('layout', t => {
   let get_state = t.stub(stubs.AppStore, 'get_state')
 
   let set_state = (props) => {
-    get_state.returns(mori.toClj(props))
+    get_state.returns(props)
   }
 
   t.case('listeners', t => {
@@ -34,7 +33,7 @@ test('layout', t => {
 
     let tree = sd.shallowRender(sd(Layout, {}))
     let vdom = tree.getRenderOutput()
-    t.same(vdom.props, {children: undefined, state: mori.toClj({page: 'login', login})})
+    t.same(vdom.props, {children: undefined, state: {page: 'login', login}})
   })
 
   t.case('library', t => {
@@ -46,6 +45,6 @@ test('layout', t => {
 
     let tree = sd.shallowRender(sd(Layout, {}))
     let vdom = tree.getRenderOutput()
-    t.same(vdom.props, {children: undefined, state: mori.toClj(props)})
+    t.same(vdom.props, {children: undefined, state: props})
   })
 })
