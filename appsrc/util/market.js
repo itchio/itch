@@ -1,5 +1,9 @@
 
-import { each, pluck } from 'underline'
+let Logger = require('../util/log').Logger
+let log = require('../util/log')('market')
+let opts = {logger: new Logger({sinks: {console: true}})}
+
+import { each, union, pluck } from 'underline'
 import { normalize, Schema, arrayOf } from 'normalizr'
 let CredentialsStore = require('../stores/credentials-store')
 
@@ -61,6 +65,17 @@ async function fetch_owned_keys (cb) {
 async function fetch_collections (featured_ids, cb) {
   cb()
 
+  let prepare_collections = (normalized) => {
+    let colls = get_entities('collections')
+    normalized.entities.collections::each((coll, coll_id) => {
+      let old = colls[coll_id]
+      if (old) {
+        coll.games = old.games::union(coll.games)
+      }
+    })
+    return normalized
+  }
+
   let api = CredentialsStore.get_current_user()
   if (!api) return
 
@@ -69,7 +84,7 @@ async function fetch_collections (featured_ids, cb) {
     collections: arrayOf(collection)
   })
   ;(my_collections.entities.collections || [])::each((c) => c._featured = false)
-  save_all_entities(my_collections)
+  save_all_entities(prepare_collections(my_collections))
   cb()
 
   for (let featured_id of featured_ids) {
@@ -78,12 +93,18 @@ async function fetch_collections (featured_ids, cb) {
       collection: collection
     })
     ;(featured_collection.entities.collections || [])::each((c) => c._featured = true)
-    save_all_entities(featured_collection)
+    save_all_entities(prepare_collections(featured_collection))
     cb()
   }
 }
 
 async function fetch_collection_games (collection_id, cb) {
+  let collection = get_entities('collections')[collection_id]
+  if (!collection) {
+    log(opts, `collection not found: ${collection_id}`)
+    return
+  }
+
   cb()
 
   let api = CredentialsStore.get_current_user()
@@ -91,7 +112,6 @@ async function fetch_collection_games (collection_id, cb) {
   let page = 1
   let fetched = 0
   let total_items = 1
-  let games = []
 
   while (fetched < total_items) {
     let res = await api.collection_games(collection_id, page)
@@ -99,7 +119,7 @@ async function fetch_collection_games (collection_id, cb) {
     fetched = res.per_page * page
 
     let normalized = normalize(res, {games: arrayOf(game)})
-    games = games.concat(normalized.entities.games::pluck('id'))
+    collection.games = collection.games::union(normalized.entities.games::pluck('id'))
     save_all_entities(normalized)
     cb()
     page++
