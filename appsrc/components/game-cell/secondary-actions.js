@@ -37,7 +37,7 @@ class SecondaryActions extends ShallowComponent {
 
       if (task === 'idle') {
         // No errors
-        children.push(this.purchase_action(game.id))
+        children.push(this.purchase_action(game))
 
         if (action !== 'open') {
           children.push(this.browse_action(cave.id))
@@ -55,7 +55,7 @@ class SecondaryActions extends ShallowComponent {
       // XXX should use API' can_be_bought but see
       // https://github.com/itchio/itch/issues/379
       if (!main_is_purchase) {
-        children.push(this.purchase_action(game.id))
+        children.push(this.purchase_action(game))
       }
     }
 
@@ -105,11 +105,14 @@ class SecondaryActions extends ShallowComponent {
     })
   }
 
-  purchase_action (game_id) {
+  purchase_action (game) {
+    pre: { // eslint-disable-line
+      typeof game === 'object'
+    }
     return this.action({
       key: 'grid.item.purchase_or_donate',
       icon: 'cart',
-      on_click: () => AppActions.initiate_purchase(game_id)
+      on_click: () => AppActions.initiate_purchase(game)
     })
   }
 

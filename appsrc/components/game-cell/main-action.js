@@ -152,10 +152,10 @@ class MainAction extends ShallowComponent {
         if (may_download) {
           AppActions.queue_game(game)
         } else {
-          AppActions.initiate_purchase(game.id)
+          AppActions.initiate_purchase(game)
         }
       } else {
-        AppActions.browse_game(game.id)
+        AppActions.browse_game(game.id, game.url)
       }
     }
   }

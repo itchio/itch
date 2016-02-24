@@ -281,18 +281,19 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_GAME, game })
   },
 
-  browse_game: (id) => {
+  browse_game: (id, url) => {
     pre: { // eslint-disable-line
       typeof id === 'number'
+      typeof url === 'string'
     }
-    AppDispatcher.dispatch({ action_type: AppConstants.BROWSE_GAME, id })
+    AppDispatcher.dispatch({ action_type: AppConstants.BROWSE_GAME, id, url })
   },
 
-  initiate_purchase: (id) => {
+  initiate_purchase: (game) => {
     pre: { // eslint-disable-line
-      typeof id === 'number'
+      typeof game === 'object'
     }
-    AppDispatcher.dispatch({ action_type: AppConstants.INITIATE_PURCHASE, id })
+    AppDispatcher.dispatch({ action_type: AppConstants.INITIATE_PURCHASE, game })
   },
 
   purchase_completed: (id, message) => {

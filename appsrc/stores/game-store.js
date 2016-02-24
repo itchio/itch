@@ -126,8 +126,7 @@ function commit_games (key, games) {
 // TODO: Move browse_game somewhere else
 
 async function browse_game (payload) {
-  let game = market.get_entities('games')[payload.id]
-  electron.shell.openExternal(game.url)
+  electron.shell.openExternal(payload.url)
 }
 
 let fetch_caved_games = (() => {

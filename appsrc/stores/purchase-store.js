@@ -117,16 +117,16 @@ function build_login_and_return_url (return_to) {
 
 async function initiate_purchase (payload) {
   pre: { // eslint-disable-line
-    typeof payload.id === 'number'
+    typeof payload.game === 'object'
   }
-  let game = market.get_entities('games')[payload.id]
+  let game = payload.game
 
   let me = CredentialsStore.get_me()
 
   // XXX 'can_be_bought' API field seems buggy for now?
   // cf. https://github.com/itchio/itch/issues/379
 
-  let key = market.get_entities('download_keys')::findWhere({game: payload.id})
+  let key = market.get_entities('download_keys')::findWhere({game_id: game.id})
   if (key) {
     let wants = await wants_to_buy_twice(game)
     // user didn't want to buy twice
@@ -164,7 +164,7 @@ async function initiate_purchase (payload) {
       win.close()
 
       if (await wants_to_browse_after_failure(game)) {
-        AppActions.browse_game(game.id)
+        AppActions.browse_game(game.id, game.url)
       }
     }
   })
