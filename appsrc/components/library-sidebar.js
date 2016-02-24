@@ -1,6 +1,6 @@
 
 let r = require('r-dom')
-import { count } from 'grovel'
+import { count, getIn } from 'grovel'
 import { map, partial, groupBy, sortBy, filter, each } from 'underline'
 
 let PropTypes = require('react').PropTypes
@@ -35,12 +35,8 @@ class LibrarySidebar extends ShallowComponent {
     let t = this.t
     let {state} = this.props
 
-    let panel = state.library.panel
-    let caves = state.library.caves
-    let collections = state.library.collections
-    let games = state.library.games
-
-    let is_developer = state.credentials.me.developer
+    let {panel, caves = {}, collections = {}, games = {}} = state.library
+    let is_developer = state::getIn(['credentials', 'me', 'developer'])
 
     let collection_items = collections::map((collection) => {
       let featured = collection._featured
@@ -85,7 +81,7 @@ class LibrarySidebar extends ShallowComponent {
     ftd_collections = ftd_collections.map((props) => r(LibraryPanelLink, props))
 
     let installed_count = caves.length
-    let search_count = state.library.games.search::count()
+    let search_count = games.search::count()
 
     let in_progress_items = caves::filter(is_cave_interesting::partial(panel))
 

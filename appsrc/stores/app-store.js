@@ -131,7 +131,6 @@ function focus_panel (payload) {
   let page = state.page
 
   if (page !== 'library') {
-    console.log(`Not switching to panel ${panel} while on page ${page}`)
     return
   }
 
@@ -173,7 +172,7 @@ function ready_to_roll (payload) {
 
   let me = state::getIn(['credentials', 'me'])
   switch_page('library')
-  if (me.developer) {
+  if (me::getIn(['developer'])) {
     focus_panel({panel: 'dashboard'})
     defer(() => AppActions.fetch_games('dashboard'))
   } else {
@@ -195,7 +194,6 @@ function logout () {
 function setup_status (payload) {
   pre: { // eslint-disable-line
     typeof payload.message === 'string'
-    typeof payload.icon === 'string'
   }
 
   let {message, icon, variables} = payload

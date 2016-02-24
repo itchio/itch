@@ -4,7 +4,7 @@ let app = require('../util/app')
 let cooldown = require('../util/cooldown')(1000)
 
 let log = require('../util/log')('i18n-backend/' + os.process_type())
-let opts = { logger: new log.Logger() }
+let opts = { logger: new log.Logger({sinks: {console: !!process.env.LET_ME_OUT}}) }
 
 let needle = require('../promised/needle')
 let ifs = require('./ifs')

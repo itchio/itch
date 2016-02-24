@@ -1,7 +1,7 @@
 
 let r = require('r-dom')
 import { each } from 'underline'
-import { count } from 'grovel'
+import { count, getIn } from 'grovel'
 
 let PropTypes = require('react').PropTypes
 let ShallowComponent = require('./shallow-component')
@@ -42,23 +42,21 @@ class SearchContent extends ShallowComponent {
 
   render () {
     let t = this.t
-    let state = this.props.state.library
-    let caves = state.caves
-
-    let games = state.games
+    let state = this.props::getIn(['state', 'library']) || {}
+    let {caves = {}, games = {}} = state
 
     // XXX: dedup with library-content
     let owned_games_by_id = {}
-    games.dashboard::each((g) => owned_games_by_id[g.id] = true)
-    games.owned::each((g) => owned_games_by_id[g.id] = true)
+    games::getIn(['dashboard'])::each((g) => owned_games_by_id[g.id] = true)
+    games::getIn(['owned'])::each((g) => owned_games_by_id[g.id] = true)
 
     // XXX: more dedup
-    let query = state.search.query || ''
-    let fetched_query = state.search.fetched_query || ''
-    let search_games = games.search
+    let query = state::getIn(['search', 'query']) || ''
+    let fetched_query = state::getIn(['search', 'fetched_query']) || ''
+    let search_games = games::getIn(['search'])
     let loading = query !== fetched_query
     let empty = search_games::count() === 0
-    let is_press = this.props.state.credentials.me.press_user
+    let is_press = this.props::getIn(['state', 'credentials', 'me', 'press_user'])
 
     let searchbox_children = [
       r(Icon, {icon: 'search', spin: (query.length > 0 && loading)}),

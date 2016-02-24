@@ -1,6 +1,7 @@
 
 let r = require('r-dom')
 import { each, filter } from 'underline'
+import { getIn } from 'grovel'
 
 let humanize = require('humanize-plus')
 let PropTypes = require('react').PropTypes
@@ -23,8 +24,8 @@ class PreferencesForm extends ShallowComponent {
 
   render () {
     let t = this.t
-    let state = this.props.state
-    let language = state.preferences.language
+    let state = this.props.state || {}
+    let language = state::getIn(['preferences', 'languages'])
     let locales = I18nStore.get_locales_list()
     let sniff_code = I18nStore.get_sniffed_language()
     let sniffed = sniff_code
@@ -35,7 +36,7 @@ class PreferencesForm extends ShallowComponent {
       }
     }
 
-    let updating_locales = state.locales.updating
+    let updating_locales = state::getIn(['locales', 'updating'])
 
     let options = [{
       value: '__',

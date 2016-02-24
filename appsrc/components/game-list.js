@@ -15,7 +15,7 @@ let always_true = () => true
  */
 class GameList extends ShallowComponent {
   render () {
-    let {games, caves, owned_games_by_id, is_press} = this.props
+    let {games, caves, owned_games_by_id = {}, is_press} = this.props
     let pred = this.props.pred || always_true
 
     // TODO perf: app-store should maintain this instead of us recomputing it

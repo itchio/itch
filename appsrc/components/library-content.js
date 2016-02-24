@@ -35,10 +35,7 @@ class LibraryContent extends ShallowComponent {
       let games = state::getIn(['library', 'games'])
 
       let bucket = panel
-      if (/^(locations|broken)/.test(panel)) {
-        bucket = 'caved'
-      }
-      let shown_games = games[bucket] || {}
+      let shown_games = games::getIn([bucket]) || {}
 
       let pred = pred_every
 
@@ -55,8 +52,8 @@ class LibraryContent extends ShallowComponent {
 
       // XXX: dedup with search
       let owned_games_by_id = {}
-      games.dashboard::each((g) => owned_games_by_id[g.id] = true)
-      games.owned::each((g) => owned_games_by_id[g.id] = true)
+      games::getIn(['dashboard'])::each((g) => owned_games_by_id[g.id] = true)
+      games::getIn(['owned'])::each((g) => owned_games_by_id[g.id] = true)
 
       if (shown_games::count()) {
         children.push(r(GameList, {games: shown_games, caves, pred, owned_games_by_id, is_press}))

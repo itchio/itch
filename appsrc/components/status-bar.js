@@ -13,9 +13,8 @@ let AppActions = require('../actions/app-actions')
 class StatusBar extends ShallowComponent {
   render () {
     let t = this.t
-    let state = this.props.state
-
-    let {status, error, available, downloaded, checking, uptodate} = state.update
+    let state = this.props.state || {}
+    let {status, error, available, downloaded, checking, uptodate} = state.update || {}
 
     let children = []
     let active = true

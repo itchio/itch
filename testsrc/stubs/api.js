@@ -10,6 +10,7 @@ let user = {
   my_owned_keys: noop,
   my_games: noop,
   my_collections: noop,
+  collection: noop,
   collection_games: noop
 }
 

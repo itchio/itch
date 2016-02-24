@@ -61,7 +61,7 @@ test('patchAt', t => {
   t.same(state, {
     library: {
       games: {
-        library: {
+        dashboard: {
           '50723': { name: 'Nono' },
           '50724': { name: 'Momo' }
         }

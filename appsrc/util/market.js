@@ -48,18 +48,18 @@ async function fetch_owned_keys (cb) {
 
   let api = CredentialsStore.get_current_user()
   let page = 0
-  let running = true
 
-  while (running) {
+  while (true) {
     let response = await api.my_owned_keys({page: page++})
+    if (response.owned_keys.length === 0) {
+      break
+    }
+
     save_all_entities(normalize(response, {
       owned_keys: arrayOf(download_key)
     }))
     cb()
-    running = response.owned_keys.length > 0
   }
-
-  cb()
 }
 
 async function fetch_collections (featured_ids, cb) {
@@ -112,7 +112,7 @@ async function fetch_collection_games (collection_id, cb) {
   let page = 1
   let fetched = 0
   let total_items = 1
-  let fetched_games = []
+  let fetched_game_ids = []
 
   while (fetched < total_items) {
     let res = await api.collection_games(collection_id, page)
@@ -121,15 +121,15 @@ async function fetch_collection_games (collection_id, cb) {
 
     let normalized = normalize(res, {games: arrayOf(game)})
     let page_game_ids = normalized.entities.games::pluck('id')
-    collection.games = collection.games::union(page_game_ids)
-    fetched_games = fetched_games::union(page_game_ids)
+    collection.game_ids = collection.game_ids::union(page_game_ids)
+    fetched_game_ids = fetched_game_ids::union(page_game_ids)
     save_all_entities(normalized)
     cb()
     page++
   }
 
-  // if games were removed, they'll be removed at this step
-  collection.games = fetched_games
+  // if games were removed remotely, they'll be removed locally at this step
+  collection.game_ids = fetched_game_ids
   cb()
 }
 
@@ -177,6 +177,14 @@ function get_entities (table) {
   return entities
 }
 
+function clear () {
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      delete data[key]
+    }
+  }
+}
+
 module.exports = {
   fetch_dashboard_games,
   fetch_owned_keys,
@@ -184,5 +192,6 @@ module.exports = {
   fetch_collection_games,
   fetch_search,
   save_all_entities,
+  clear,
   get_entities
 }

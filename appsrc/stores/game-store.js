@@ -24,7 +24,7 @@ let GameStore = Object.assign(new Store('game-store'), {
   get_state: () => state
 })
 
-async function fetch_games (payload) {
+function fetch_games (payload) {
   let path = payload.path
   let user = CredentialsStore.get_current_user()
 
@@ -62,7 +62,7 @@ async function fetch_games (payload) {
   }
 }
 
-async function fetch_search (payload) {
+function fetch_search (payload) {
   let query = payload.query
   if (query === '') {
     log(opts, 'empty fetch_search query')
@@ -74,37 +74,37 @@ async function fetch_search (payload) {
   market.fetch_search(query, (games) => commit_games('search', games))
 }
 
-async function commit_dashboard_games () {
+function commit_dashboard_games () {
   let me = CredentialsStore.get_me()
   let games = market.get_entities('games')::where({user_id: me.id})
   commit_games('dashboard', games)
 }
 
-async function commit_owned_games () {
+function commit_owned_games () {
   let keys = market.get_entities('download_keys')
   let gids = keys::indexBy('game_id')
   let games = market.get_entities('games')::filter((g) => gids[g.id])
   commit_games('owned', games)
 }
 
-async function commit_caved_games () {
+function commit_caved_games () {
   let caves = market.get_entities('caves')
   let gids = caves::indexBy('game_id')
   let games = market.get_entities('games')::filter((g) => gids[g.id])
   commit_games('caved', games)
 }
 
-async function commit_cave_game (cave_id) {
+function commit_cave_game (cave_id) {
   let cave = market.get_entities('caves')[cave_id]
   let game = market.get_entities('games')[cave.game]
   commit_games(`caves/${cave_id}`, {[game.id]: game})
 }
 
-async function commit_collection_games (collection_id) {
+function commit_collection_games (collection_id) {
   let collection = market.get_entities('collections')[collection_id]
   if (!collection) return
 
-  let gids = (collection.games || [])::indexBy((id) => id)
+  let gids = (collection.game_ids || [])::indexBy((id) => id)
   let games = market.get_entities('games')::filter((g) => gids[g.id])
   commit_games(`collections/${collection_id}`, games)
   AppActions.games_fetched(games::pluck('id'))

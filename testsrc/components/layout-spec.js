@@ -7,7 +7,7 @@ let stubs = require('../stubs/react-stubs')
 
 test('layout', t => {
   let Layout = proxyquire('../../app/components/layout', stubs)
-  let get_state = t.stub(stubs.AppStore, 'get_state')
+  let get_state = t.stub(stubs.AppStore, 'get_state').returns({})
 
   let set_state = (props) => {
     get_state.returns(props)

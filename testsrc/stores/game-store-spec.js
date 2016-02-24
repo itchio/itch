@@ -1,6 +1,5 @@
 
 let test = require('zopf')
-let sinon = require('sinon')
 let proxyquire = require('proxyquire')
 
 let AppConstants = require('../../app/constants/app-constants')
@@ -9,63 +8,68 @@ let electron = require('../stubs/electron')
 let AppDispatcher = require('../stubs/app-dispatcher')
 let AppActions = require('../stubs/app-actions')
 let CredentialsStore = require('../stubs/credentials-store')
+let market = require('../stubs/market')
 
-let db = require('../stubs/db')
+import { pluck, indexBy } from 'underline'
 
 test('GameStore', t => {
   let stubs = Object.assign({
     './credentials-store': CredentialsStore,
     '../actions/app-actions': AppActions,
     '../dispatcher/app-dispatcher': AppDispatcher,
-    '../util/db': db
+    '../util/market': market
   }, electron)
 
-  t.stub(CredentialsStore, 'get_me').resolves({id: 'gurn'})
+  t.stub(CredentialsStore, 'get_me').returns({id: 123})
 
-  proxyquire('../../app/stores/game-store', stubs)
-  let handler = AppDispatcher.get_handler('game-store')
-
-  t.case('fetch owned', async t => {
-    let mock = t.mock(CredentialsStore.get_current_user())
-
-    mock.expects(`my_owned_keys`).twice()
-      .onFirstCall().resolves({owned_keys: [1, 2, 3]})
-      .onSecondCall().resolves({owned_keys: []})
-
-    await handler({ action_type: AppConstants.FETCH_GAMES, path: 'owned' })
-  })
-
-  t.case('fetch installed', async t => {
-    await handler({ action_type: AppConstants.FETCH_GAMES, path: 'installed' })
-    handler({ action_type: AppConstants.INSTALL_PROGRESS, opts: {id: 12} })
-  })
+  const GameStore = proxyquire('../../app/stores/game-store', stubs)
+  const handler = AppDispatcher.get_handler('game-store')
 
   t.case('fetch dashboard', async t => {
-    let mock = t.mock(CredentialsStore.get_current_user())
-    mock.expects('my_games').resolves({games: [{}, {}, {}]})
-    await handler({ action_type: AppConstants.FETCH_GAMES, path: 'dashboard' })
+    let bag = {
+      games: [
+        { id: 1, name: 'Mine', user_id: 123 },
+        { id: 2, name: 'Theirs', user_id: 4209 },
+        { id: 3, name: 'Also mine', user_id: 123 }
+      ]::indexBy('id')
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
+    handler({ action_type: AppConstants.FETCH_GAMES, path: 'dashboard' })
+
+    t.same(GameStore.get_state()['dashboard']::pluck('id'), [1, 3])
   })
 
-  t.case('fetch install', async t => {
-    t.stub(db, 'find_cave').resolves({game: 64})
-    await handler({ action_type: AppConstants.FETCH_GAMES, path: 'installs/46' })
+  t.case('fetch owned', async t => {
+    let bag = {
+      games: [
+        { id: 1, name: 'Mine', user_id: 123 },
+        { id: 2, name: 'Theirs', user_id: 4209 },
+        { id: 3, name: 'Also mine', user_id: 123 }
+      ]::indexBy('id'),
+      download_keys: [
+        { id: 23498, game_id: 4209 }
+      ]::indexBy('id')
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
+
+    handler({ action_type: AppConstants.FETCH_GAMES, path: 'owned' })
+    t.same(GameStore.get_state()['dashboard']::pluck('id'), [1, 3])
   })
 
-  t.case('fetch collections', async t => {
-    t.stub(db, 'find_collection').resolves({games: [1, 2, 3, 4, 5]})
-    let user = CredentialsStore.get_current_user()
-    let collection_games = t.stub(user, 'collection_games')
-    collection_games.onCall(0).resolves({
-      total_items: 5, per_page: 3, page: 1,
-      games: [1, 3, 5].map((id) => ({id}))
-    })
-    collection_games.onCall(1).resolves({
-      total_items: 5, per_page: 3, page: 2,
-      games: [7, 9].map((id) => ({id}))
-    })
+  t.case('fetch collection games', async t => {
+    let bag = {
+      collections: [
+        { id: 2340, name: 'The grittiest', game_ids: [123, 456, 789] }
+      ]::indexBy('id'),
+      games: [
+        { id: 123, name: 'Good', user_id: 3 },
+        { id: 456, name: 'Better', user_id: 3 },
+        { id: 789, name: 'None', user_id: 3 }
+      ]::indexBy('id')
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
 
-    let update = t.stub(db, 'update').resolves()
-    await handler({ action_type: AppConstants.FETCH_GAMES, path: 'collections/78' })
-    sinon.assert.calledWith(update, {_table: 'collections', id: 78}, {$set: {games: [1, 3, 5, 7, 9], _fetched_at: sinon.match.date}})
+    handler({ action_type: AppConstants.FETCH_GAMES, path: 'collections/2340' })
+    t.same(GameStore.get_state()['collections/2340']::pluck('id'), [123, 456, 789])
   })
 })
