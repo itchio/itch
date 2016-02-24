@@ -4,9 +4,10 @@ let test = require('zopf')
 let proxyquire = require('proxyquire')
 let path = require('path')
 
+import { indexBy } from 'underline'
+
 let electron = require('../stubs/electron')
 let CaveStore = require('../stubs/cave-store')
-let db = require('../stubs/db')
 
 let log = require('../../app/util/log')
 
@@ -44,7 +45,7 @@ test('launch', t => {
 
   t.case('rejects 0 execs', t => {
     let spy = t.spy()
-    t.stub(CaveStore, 'find').resolves({ launch_type: 'native' })
+    t.stub(CaveStore, 'find').returns({ launch_type: 'native' })
     return launch.start(opts).catch(spy).then(_ => {
       t.is(spy.callCount, 1)
       t.same(spy.getCall(0).args[0].message, 'Cave is invalid')
@@ -53,9 +54,9 @@ test('launch', t => {
 
   t.case('reconfigures as needed', async t => {
     let find = t.stub(CaveStore, 'find')
-    find.resolves({ executables: [], launch_type: 'native' })
+    find.returns({ executables: [], launch_type: 'native' })
     t.stub(configure, 'start', () => {
-      find.resolves({ executables: ['/a'], launch_type: 'native' })
+      find.returns({ executables: ['/a'], launch_type: 'native' })
       return Promise.resolve()
     })
     t.mock(native).expects('launch').once().resolves('Done!')
@@ -64,17 +65,17 @@ test('launch', t => {
 
   t.case('launches correct launch_type', async t => {
     let find = t.stub(CaveStore, 'find')
-    find.resolves({ executables: ['./a'], launch_type: 'native' })
+    find.returns({ executables: ['./a'], launch_type: 'native' })
     t.mock(native).expects('launch').once().resolves('Done!')
     await launch.start(opts)
-    find.resolves({ game_path: 'a/a.html', window_size: {width: 1, height: 1}, launch_type: 'html' })
+    find.returns({ game_path: 'a/a.html', window_size: {width: 1, height: 1}, launch_type: 'html' })
     t.mock(html).expects('launch').once().resolves('Done!')
     await launch.start(opts)
   })
 
   t.case('rejects invalid launch_type', t => {
     let spy = t.spy()
-    t.stub(CaveStore, 'find').resolves({ launch_type: 'invalid' })
+    t.stub(CaveStore, 'find').returns({ launch_type: 'invalid' })
     return launch.start(opts).catch(spy).then(_ => {
       t.is(spy.callCount, 1)
       t.same(spy.getCall(0).args[0].message, 'Unsupported launch type \'invalid\'')
@@ -202,25 +203,33 @@ test('launch/html', t => {
     }
   }
 
+  let bag = {
+    games: [
+      // has to match with stubs/cave-store
+      {id: 84, title: 'I wanna be the weegee'}
+    ]::indexBy('id')
+  }
+  let market = {
+    get_entities: (x) => bag[x],
+    '@noCallThru': true
+  }
+
   let stubs = Object.assign({
     '../../stores/cave-store': CaveStore,
-    '../../util/db': db,
+    '../../util/market': market,
     '../../util/http-server': http_server
   }, electron)
 
   let html = proxyquire('../../app/tasks/launch/html', stubs)
 
   let cave = {
+    game_id: 84,
     game_path: 'blah/i.html',
     window_size: {
       width: 10,
       height: 10
     }
   }
-
-  t.stub(db, 'find_one').resolves({
-    title: 'game'
-  })
 
   t.stub(electron.electron.BrowserWindow, 'on', (action, callback) => {
     callback()

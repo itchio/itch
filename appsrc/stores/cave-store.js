@@ -233,7 +233,7 @@ async function queue_task (id, task_name, data) {
     if (task_name === 'install') {
       let cave = CaveStore.find(id)
       if (!cave.success_once) {
-        let game = market.get_entities('games')[cave.game]
+        let game = market.get_entities('games')[cave.game_id]
         AppActions.notify(`${game.title} is ready!`)
         AppActions.update_cave(id, {success_once: true})
       }
@@ -330,7 +330,7 @@ async function queue_game (payload) {
 
 async function request_cave_uninstall (payload) {
   let cave = CaveStore.find(payload.id)
-  let game = market.get_entities('games')[cave.game]
+  let game = market.get_entities('games')[cave.game_id]
 
   let i18n = I18nStore.get_state()
 

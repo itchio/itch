@@ -23,7 +23,7 @@ test('awaken', t => {
   let opts = {id: 'kalamazoo'}
 
   t.case('downloads if not launchable', async t => {
-    t.stub(CaveStore, 'find').resolves({ launchable: false })
+    t.stub(CaveStore, 'find').returns({ launchable: false })
     let err
     try {
       await awaken.start(opts)
@@ -32,7 +32,7 @@ test('awaken', t => {
   })
 
   t.case('checks for update if launchable', async t => {
-    t.stub(CaveStore, 'find').resolves({ launchable: true })
+    t.stub(CaveStore, 'find').returns({ launchable: true })
     let err
     try {
       await awaken.start(opts)

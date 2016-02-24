@@ -2,12 +2,15 @@
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 
+import { indexBy } from 'underline'
+
 let fixture = require('../fixture')
 let electron = require('../stubs/electron')
 let CaveStore = require('../stubs/cave-store')
 let CredentialsStore = require('../stubs/credentials-store')
 let AppActions = require('../stubs/app-actions')
 let db = require('../stubs/db')
+let market = require('../stubs/market')
 
 let uploads_fixture = fixture.api('game/36664/uploads')
 
@@ -21,6 +24,7 @@ test('find-upload', t => {
     '../stores/cave-store': CaveStore,
     '../stores/credentials-store': CredentialsStore,
     '../actions/app-actions': AppActions,
+    '../util/market': market,
     '../util/db': db,
     '../util/os': os
   }, electron)
@@ -48,13 +52,31 @@ test('find-upload', t => {
     t.same(err.to, 'download', 'transitioned to download')
   }
 
-  t.case('searches for download key', async t => {
-    t.mock(db).expects('find_download_key_for_game').once().resolves(null)
-    await transitions(t, {})
+  t.case('seeks download key', async t => {
+    let bag = {
+      download_keys: [
+        { id: 1, game_id: 84 }
+      ]::indexBy('id'),
+      games: [
+        { id: 84, title: 'Yeehaw' }
+      ]::indexBy('id')
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
+
+    t.stub(CaveStore, 'find').returns({ game_id: 84 })
+    t.mock(client).expects('download_key_uploads').once().resolves(uploads_fixture)
+    await transitions(t, opts)
   })
 
   t.case('uses download key', async t => {
-    t.stub(CaveStore, 'find').resolves({
+    let bag = {
+      games: [
+        { id: 84, title: 'Yeehaw' }
+      ]::indexBy('id')
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
+
+    t.stub(CaveStore, 'find').returns({
       key: {id: 'olmec'}
     })
     t.mock(client).expects('download_key_uploads').once().resolves(uploads_fixture)

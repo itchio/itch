@@ -68,7 +68,7 @@ test('install', t => {
   let install = proxyquire('../../app/tasks/install', stubs)
 
   t.case(`validate upload_id`, async t => {
-    t.stub(CaveStore, 'find').resolves({})
+    t.stub(CaveStore, 'find').returns({})
     let err
     try {
       await install.start({id: 42})
@@ -77,7 +77,7 @@ test('install', t => {
   })
 
   t.case(`task should start`, async t => {
-    t.stub(CaveStore, 'find').resolves(typical_install)
+    t.stub(CaveStore, 'find').returns(typical_install)
     t.mock(install_core).expects('install').resolves()
     let err
     try {
@@ -87,7 +87,7 @@ test('install', t => {
   })
 
   t.case(`validate archive presence`, async t => {
-    t.stub(CaveStore, 'find').resolves(typical_install)
+    t.stub(CaveStore, 'find').returns(typical_install)
     t.stub(sf, 'lstat').rejects('ENOENT and whatnot')
     let err
     try {
@@ -101,7 +101,7 @@ test('install', t => {
       upload_id: 11,
       installed_archive_mtime: new Date(123)
     })
-    t.stub(CaveStore, 'find').resolves(uptodate_install)
+    t.stub(CaveStore, 'find').returns(uptodate_install)
 
     let err
     try {

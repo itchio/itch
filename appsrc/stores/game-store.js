@@ -96,7 +96,7 @@ function commit_caved_games () {
 
 function commit_cave_game (cave_id) {
   let cave = market.get_entities('caves')[cave_id]
-  let game = market.get_entities('games')[cave.game]
+  let game = market.get_entities('games')[cave.game_id]
   commit_games(`caves/${cave_id}`, {[game.id]: game})
 }
 

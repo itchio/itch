@@ -69,10 +69,10 @@ let self = {
     let client = CredentialsStore.get_current_user()
 
     let cave = CaveStore.find(id)
-    let key = cave.key || market.get_entities('download_keys')::findWhere({game: cave.game})
+    let key = cave.key || market.get_entities('download_keys')::findWhere({game_id: cave.game_id})
 
     let action = 'launch'
-    let game = market.get_entities('games')[cave.game] || {}
+    let game = market.get_entities('games')[cave.game_id] || {}
     action = classification_actions[game.classification] || 'launch'
 
     if (key) {
@@ -81,7 +81,7 @@ let self = {
       uploads = (await client.download_key_uploads(key.id)).uploads
     } else {
       log(opts, 'no download key, seeking available uploads')
-      uploads = (await client.game_uploads(cave.game)).uploads
+      uploads = (await client.game_uploads(cave.game_id)).uploads
     }
 
     log(opts, `got a list of ${uploads.length} uploads`)
@@ -112,7 +112,7 @@ let self = {
       if (!cave.launchable) {
         AppActions.implode_cave(id)
       }
-      AppActions.show_packaging_policy(format, cave.game)
+      AppActions.show_packaging_policy(format, cave.game_id)
       return
     }
 

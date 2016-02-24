@@ -32,7 +32,7 @@ test('download', t => {
 
   t.case('validates upload_id', t => {
     let install = Object.assign({}, typical_install, {upload_id: 22})
-    t.stub(CaveStore, 'find').resolves(install)
+    t.stub(CaveStore, 'find').returns(install)
     return t.rejects(download.start({id: 42, emitter}))
   })
 
@@ -42,7 +42,7 @@ test('download', t => {
 
   t.case('downloads free game', async t => {
     let install = typical_install
-    t.stub(CaveStore, 'find').resolves(install)
+    t.stub(CaveStore, 'find').returns(install)
     t.stub(client, 'download_upload').resolves(upload_response)
     let err
     try {
@@ -53,7 +53,7 @@ test('download', t => {
 
   t.case('downloads paid game', async t => {
     let install = Object.assign({}, typical_install, {key: {id: 'abacus'}})
-    t.stub(CaveStore, 'find').resolves(install)
+    t.stub(CaveStore, 'find').returns(install)
     t.stub(client, 'download_upload_with_key').resolves(upload_response)
     let err
     try {

@@ -1,10 +1,10 @@
 
 module.exports = {
-  find: async () => ({
+  find: () => ({
     _id: 'kalamazoo',
     upload_id: 42,
     uploads: [ {id: 42, filename: 'hehe'} ],
-    game: 84,
+    game_id: 84,
     launch_type: 'native'
   }),
   archive_path: () => '/tmp/archive',

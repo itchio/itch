@@ -89,11 +89,12 @@ class LibrarySidebar extends ShallowComponent {
       let task = cave.task
       let error = cave.error
       let path = `caves/${cave.id}`
+      let cave_game = games::getIn(['caved', cave.game_id])
 
       let props = {
         games: {}, // don't display number bullet
         name: path,
-        label: cave.game.title, // TODO: fetch related game instead of assuming it's nested under cave
+        label: cave_game.title,
         error: task === 'error' && error,
         progress: cave.progress,
         before: r(TaskIcon, {task}),
