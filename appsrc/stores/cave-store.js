@@ -265,7 +265,7 @@ async function queue_game_install (game) {
 
   let install_location = PreferencesStore.get_state().default_install_location
   let cave = { id: uuid.v4(), game_id: game.id, install_location }
-  market.get_entities('caves')[cave.id] = cave
+  market.save_all_entities({ entities: { caves: { [cave.id]: cave } } })
 
   diego.hire(cave_opts(cave.id))
   initial_progress(cave)

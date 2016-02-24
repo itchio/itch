@@ -169,14 +169,14 @@ function save_all_entities (response) {
       }
       Object.assign(record, entity)
 
-      let f = async () => {
-        let target_file = path.join('/tmp', 'whateverdb', table_name, entity_id)
-        let dir = path.dirname(target_file)
-        await sf.mkdir(dir)
+      ;(async function () {
+        let folder = path.join('/tmp', 'whateverdb', table_name)
+        await sf.mkdir(folder)
+
+        let file = path.join(folder, entity_id)
         let json = JSON.stringify(record)
-        await sf.write_file(target_file, json)
-      }
-      f()
+        await sf.write_file(file, json)
+      })()
     }
   }
 }
