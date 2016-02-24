@@ -15,7 +15,7 @@ let opts = {
 }
 let log = require('./log')('db')
 
-import { pairs } from 'underline'
+import { each, indexBy } from 'underline'
 
 let self = {
   promised_methods: ['insert', 'update', 'find', 'find_one', 'load_database', 'remove', 'count'],
@@ -47,6 +47,35 @@ let self = {
     })
 
     await self.load_database()
+
+    let caves = await self.find({_table: 'caves'})
+    console.log(`[kalamazoo] found ${caves.length} caves in old DB`)
+
+    caves::each((c) => {
+      if (c.hasOwnProperty('_id')) {
+        c.id = c._id
+        delete c._id
+      }
+    })
+
+    let games = await self.find({_table: 'games'})
+    console.log(`[kalamazoo] found ${games.length} games in old DB`)
+
+    let collections = await self.find({_table: 'collections'})
+    console.log(`[kalamazoo] found ${collections.length} collections in old DB`)
+
+    let users = await self.find({_table: 'users'})
+    console.log(`[kalamazoo] found ${users.length} users in old DB`)
+
+    let market = require('./market')
+    market.save_all_entities({
+      entities: {
+        collections: collections::indexBy('id'),
+        users: users::indexBy('id'),
+        caves: caves::indexBy('id'),
+        games: games::indexBy('id')
+      }
+    })
   },
 
   unload: function () {
@@ -55,41 +84,6 @@ let self = {
     })
     delete self.store
     self.library_dir = -1
-  },
-
-  flatten: function (obj) {
-    let result = {}
-    for (let pair of obj::pairs()) {
-      let k = pair[0]
-      let v = pair[1]
-      if (k === 'global') continue
-
-      if (v && typeof v === 'object' && !Array.isArray(v) && !(v instanceof Date)) {
-        let sub = self.flatten(v)
-        for (let pair of sub::pairs()) {
-          let sk = pair[0]
-          let sv = pair[1]
-          result[`${k}.${sk}`] = sv
-        }
-      } else {
-        result[k] = v
-      }
-    }
-    return result
-  },
-
-  merge_one: function (query, data) {
-    return self.update(query, {$set: self.flatten(data)})
-  },
-
-  /* Helpers */
-
-  find_cave: async function (cave) {
-    return await self.find_one({_table: 'caves', _id: cave})
-  },
-
-  find_cave_for_game: async function (game) {
-    return await self.find_one({_table: 'caves', game})
   },
 
   end: true

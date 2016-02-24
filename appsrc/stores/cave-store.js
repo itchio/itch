@@ -417,8 +417,12 @@ async function authenticated (payload) {
   AppActions.ready_to_roll()
 }
 
+import {count} from 'grovel'
+
 async function locations_ready (payload) {
   let caves = market.get_entities('caves')
+
+  console.log(`[kalamazoo] in locations_ready, got ${caves::count()} caves`)
   caves::each((record, i) => {
     initial_progress(record)
     queue_task(record.id, 'awaken')

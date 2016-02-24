@@ -12,6 +12,12 @@ const game = new Schema('games')
 const collection = new Schema('collections')
 const download_key = new Schema('download_keys')
 
+const Datastore = require('nedb')
+const store = new Datastore({
+  filename: '/tmp/test.jsonl',
+  autoload: true
+})
+
 game.define({
   user: user
 })
@@ -163,6 +169,9 @@ function save_all_entities (response) {
         table[entity_id] = record
       }
       Object.assign(record, entity)
+
+      let db_record = Object.assign({ _table: table_name }, record)
+      store.update({_table: table_name, id: entity_id}, db_record, {upsert: true})
     }
   }
 }
