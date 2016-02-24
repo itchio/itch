@@ -69,7 +69,6 @@
     "babel-plugin-transform-es2015-parameters": "^6.4.5",
     "babel-plugin-transform-function-bind": "^6.3.13",
     "babel-plugin-transform-strict-mode": "^6.3.13",
-    "babel-plugin-typecheck": "^3.6.1",
     "coveralls": "^2.11.4",
     "electron-packager": "^5.2.1",
     "grunt": "^0.4.5",
