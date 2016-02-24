@@ -70,11 +70,23 @@ test('configure (each platform)', t => {
 
   let darwin = proxyquire('../../app/tasks/configure/darwin', stubs)
   let darwin_path = fixture.path('configure/darwin')
+  let darwin_nested_path = fixture.path('configure/darwin-nested')
 
   t.case('darwin finds app bundles', async t => {
     let res = await darwin.configure(darwin_path)
     let names = [
       'Some Grand Game.app/'
+    ]
+    t.samePaths(res.executables, names)
+  })
+
+  t.case('darwin finds nested app bundles', async t => {
+    let res = await darwin.configure(darwin_nested_path)
+    let names = [
+      'osx64/dragonjousting.app/',
+      'osx64/dragonjousting.app/Contents/Frameworks/node-webkit Helper.app/',
+      'osx64/dragonjousting.app/Contents/Frameworks/node-webkit Helper NP.app/',
+      'osx64/dragonjousting.app/Contents/Frameworks/node-webkit Helper EH.app/'
     ]
     t.samePaths(res.executables, names)
   })
