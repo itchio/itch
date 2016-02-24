@@ -95,7 +95,7 @@
     "test": "npm run lint && grunt && nyc -s node test/runner.js | tap-spec",
     "coveralls": "nyc report -r text-lcov | coveralls",
     "local-cov": "npm test && nyc report -r text && nyc report -r html",
-    "lint": "standard appsrc/**.js testsrc/**.js",
+    "lint": "standard --parser babel-eslint \"appsrc/**/*.js\" \"testsrc/**/*.js\"",
     "i18n": "release/i18n-check.sh"
   },
   "standard": {

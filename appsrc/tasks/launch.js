@@ -1,5 +1,4 @@
 
-let log = require('../util/log')('tasks/launch')
 let configure = require('./configure')
 
 let CaveStore = require('../stores/cave-store')

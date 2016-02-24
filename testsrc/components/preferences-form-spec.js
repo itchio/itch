@@ -28,4 +28,5 @@ test('PreferencesForm', t => {
   let tree = sd.shallowRender(sd(PreferencesForm, { state }))
   let instance = tree.getMountedInstance()
   // TODO: finish writing test
+  instance = instance
 })

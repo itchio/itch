@@ -63,11 +63,11 @@ class Backend {
   async read (language, namespace, callback) {
     let canonical_filename = this.canonical_filename(language)
 
-    if (!await ifs.exists(canonical_filename)) {
+    if (!(await ifs.exists(canonical_filename))) {
       log(opts, `${canonical_filename} does not exist, attempting a trim`)
       canonical_filename = this.canonical_filename(language.substring(0, 2))
 
-      if (!await ifs.exists(canonical_filename)) {
+      if (!(await ifs.exists(canonical_filename))) {
         log(opts, `${canonical_filename} does not exist either :(`)
         log(opts, `No locale file found for language ${language}`)
         log(opts, `Returning null resources`)
@@ -140,7 +140,7 @@ class Backend {
 
   async download_fresh_locale (language) {
     let local_filename = this.canonical_filename(language)
-    if (!await ifs.exists(local_filename)) {
+    if (!(await ifs.exists(local_filename))) {
       // try stripping region
       language = language.substring(0, 2)
     }
