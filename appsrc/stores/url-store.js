@@ -79,7 +79,7 @@ async function handle_url (url_str) {
       if (game) {
         await try_install(game)
       } else {
-        log(opts, `for install: game not in db, fetching ${gid} first`)
+        log(opts, `for install: game not in market, fetching ${gid} first`)
         to_install = gid
         AppActions.fetch_games(`games/${gid}`)
       }
@@ -146,7 +146,7 @@ async function install_prompt (game) {
   }
 
   log(opts, `no cave, opening prompt for ${game.title}`)
-  let user = await market.get_entities('users')[game.user]
+  let user = market.get_entities('users')[game.user_id]
 
   let credit = ''
   if (user) {

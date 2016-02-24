@@ -8,8 +8,8 @@ let AppConstants = require('../../app/constants/app-constants')
 let I18nStore = require('../stubs/i18n-store')
 let AppActions = require('../stubs/app-actions')
 let AppDispatcher = require('../stubs/app-dispatcher')
+let market = require('../stubs/market')
 let electron = require('../stubs/electron')
-let db = require('../stubs/db')
 let url_parser = require('url')
 
 test('UrlStore', t => {
@@ -17,11 +17,17 @@ test('UrlStore', t => {
     itch_platform: () => 'osx'
   }
 
+  let CaveStore = {
+    find_for_game: () => null,
+    '@noCallThru': true
+  }
+
   let stubs = Object.assign({
     'url': url_parser,
     './i18n-store': I18nStore,
+    './cave-store': CaveStore,
     '../util/os': os,
-    '../util/db': db,
+    '../util/market': market,
     '../dispatcher/app-dispatcher': AppDispatcher,
     '../actions/app-actions': AppActions
   }, electron)
@@ -48,60 +54,107 @@ test('UrlStore', t => {
   })
 
   t.case('install tries to install game', async t => {
-    t.stub(db, 'find_game').resolves({p_osx: true})
-    t.stub(db, 'find_user').resolves({})
+    let bag = {
+      games: {
+        '1234': { id: 1234, user_id: 42, p_osx: true }
+      },
+      users: {
+        '42': {}
+      }
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
+
     t.stub(electron.electron.dialog, 'showMessageBox').callsArgWith(1, 0)
     t.mock(AppActions).expects('queue_game')
-
     await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234' })
   })
 
   t.case('install tries to fetch info about game, then install', async t => {
-    let find_game = t.stub(db, 'find_game')
-    find_game.resolves(null)
+    let bag = {
+      games: {},
+      users: {
+        '42': {}
+      }
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
     t.mock(AppActions).expects('fetch_games')
 
     await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234' })
 
     t.mock(electron.electron.dialog).expects('showMessageBox').withArgs(sinon.match.has('title', 'prompt.url_install.title'))
-    find_game.resolves({p_osx: true})
+    bag.games['1234'] = { id: 1234, user_id: 42, p_osx: true }
     await handler({ action_type: AppConstants.GAMES_FETCHED, game_ids: [5124, 12379, 1234, 4] })
   })
 
   t.case('install apologizes if game is not compatible', async t => {
-    t.stub(db, 'find_game').resolves({p_osx: false, p_windows: true, p_linux: true})
+    let bag = {
+      games: {
+        '1234': { id: 1234, user_id: 42, p_osx: false }
+      },
+      users: {
+        '42': {}
+      }
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
+
     t.mock(electron.electron.dialog).expects('showMessageBox').withArgs(sinon.match.has('title', 'prompt.no_compatible_version.title'))
 
     await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234' })
   })
 
   t.case('install focuses on game if already installed', async t => {
-    t.stub(db, 'find_game').resolves({p_osx: true})
-    t.stub(db, 'find_cave_for_game').resolves({_id: 'hello'})
+    let bag = {
+      games: {
+        '1234': { id: 1234, user_id: 42, p_osx: true }
+      },
+      users: {
+        '42': {}
+      }
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
+
+    t.stub(CaveStore, 'find_for_game').returns({id: 'hello'})
     t.mock(AppActions).expects('focus_panel').withArgs('caves/hello')
 
     await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234' })
   })
 
   t.case('launch tries to install when not installed yet', async t => {
-    t.stub(db, 'find_game').resolves({p_osx: true})
-    t.stub(db, 'find_cave_for_game').resolves(null)
+    let bag = {
+      games: {
+        '1234': { id: 1234, user_id: 42, p_osx: true }
+      },
+      users: {
+        '42': {}
+      }
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
+    t.stub(CaveStore, 'find_for_game').returns(null)
     t.mock(electron.electron.dialog).expects('showMessageBox').withArgs(sinon.match.has('title', 'prompt.url_install.title'))
 
     await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://launch/1234' })
   })
 
   t.case('launch tries to install when not even in db', async t => {
-    t.stub(db, 'find_game').resolves(null)
-    t.stub(db, 'find_cave_for_game').resolves(null)
+    t.stub(market, 'get_entities').returns({})
+    t.stub(CaveStore, 'find_for_game').returns(null)
     t.mock(AppActions).expects('fetch_games').withArgs('games/1234')
 
     await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://launch/1234' })
   })
 
   t.case('launch tries to launch when installed', async t => {
-    t.stub(db, 'find_game').resolves({p_osx: true})
-    t.stub(db, 'find_cave_for_game').resolves({id: 'kalamazoo'})
+    let bag = {
+      games: {
+        '1234': { id: 1234, user_id: 42, p_osx: true }
+      },
+      users: {
+        '42': {}
+      }
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
+
+    t.stub(CaveStore, 'find_for_game').returns({id: 'hello'})
     t.mock(AppActions).expects('queue_game')
 
     await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://launch/1234' })
