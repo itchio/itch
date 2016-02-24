@@ -3,6 +3,9 @@ let Logger = require('../util/log').Logger
 let log = require('../util/log')('market')
 let opts = {logger: new Logger({sinks: {console: true}})}
 
+let path = require('path')
+let sf = require('../util/sf')
+
 import { each, union, pluck } from 'underline'
 import { normalize, Schema, arrayOf } from 'idealizr'
 let CredentialsStore = require('../stores/credentials-store')
@@ -11,12 +14,6 @@ const user = new Schema('users')
 const game = new Schema('games')
 const collection = new Schema('collections')
 const download_key = new Schema('download_keys')
-
-const Datastore = require('nedb')
-const store = new Datastore({
-  filename: '/tmp/test.jsonl',
-  autoload: true
-})
 
 game.define({
   user: user
@@ -76,7 +73,7 @@ async function fetch_collections (featured_ids, cb) {
     normalized.entities.collections::each((coll, coll_id) => {
       let old = colls[coll_id]
       if (old) {
-        coll.games = old.games::union(coll.games)
+        coll.game_ids = old.game_ids::union(coll.game_ids)
       }
     })
     return normalized
@@ -98,7 +95,9 @@ async function fetch_collections (featured_ids, cb) {
     let featured_collection = normalize(featured_collection_res, {
       collection: collection
     })
-    ;(featured_collection.entities.collections || [])::each((c) => c._featured = true)
+    ;(featured_collection.entities.collections || [])::each((c) => {
+      c._featured = true
+    })
     save_all_entities(prepare_collections(featured_collection))
     cb()
   }
@@ -170,8 +169,14 @@ function save_all_entities (response) {
       }
       Object.assign(record, entity)
 
-      let db_record = Object.assign({ _table: table_name }, record)
-      store.update({_table: table_name, id: entity_id}, db_record, {upsert: true})
+      let f = async () => {
+        let target_file = path.join('/tmp', 'whateverdb', table_name, entity_id)
+        let dir = path.dirname(target_file)
+        await sf.mkdir(dir)
+        let json = JSON.stringify(record)
+        await sf.write_file(target_file, json)
+      }
+      f()
     }
   }
 }
