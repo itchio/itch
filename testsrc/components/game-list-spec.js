@@ -18,7 +18,7 @@ test('GameList', t => {
   t.case('predicate-based filtering', t => {
     let games = [{id: 12}, {id: 26, in_press_system: true}, {id: 42}]::indexBy('id')
     let caves = {
-      'asd09f8': {game: 42}
+      'asd09f8': {game_id: 42}
     }
 
     let tree = sd.shallowRender(sd(GameList, {games, caves}))
