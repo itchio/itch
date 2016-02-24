@@ -47,8 +47,8 @@ let CaveStore = Object.assign(new Store('cave-store'), {
     return market.get_entities('caves')[cave]
   },
 
-  find_for_game: function (game) {
-    return market.get_entities('caves')::findWhere({game: game})
+  find_for_game: function (game_id) {
+    return market.get_entities('caves')::findWhere({game_id: game_id})
   },
 
   install_location_dir: function (loc_name) {
