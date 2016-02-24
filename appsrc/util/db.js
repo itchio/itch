@@ -49,28 +49,40 @@ let self = {
     await self.load_database()
 
     let caves = await self.find({_table: 'caves'})
-    console.log(`[kalamazoo] found ${caves.length} caves in old DB`)
+    console.log(`[cunégonde] found ${caves.length} caves in old DB`)
 
-    caves::each((c) => {
-      if (c.hasOwnProperty('_id')) {
-        c.id = c._id
-        delete c._id
+    caves::each((x) => {
+      if (x.hasOwnProperty('_id')) {
+        x.id = x._id
       }
     })
 
     let games = await self.find({_table: 'games'})
-    console.log(`[kalamazoo] found ${games.length} games in old DB`)
+    console.log(`[cunégonde] found ${games.length} games in old DB`)
 
     let collections = await self.find({_table: 'collections'})
-    console.log(`[kalamazoo] found ${collections.length} collections in old DB`)
+    console.log(`[cunégonde] found ${collections.length} collections in old DB`)
 
     let users = await self.find({_table: 'users'})
-    console.log(`[kalamazoo] found ${users.length} users in old DB`)
+    console.log(`[cunégonde] found ${users.length} users in old DB`)
+
+    let download_keys = await self.find({_table: 'download_keys'})
+    console.log(`[cunégonde] found ${download_keys.length} download keys in old DB`)
+
+    let strip_underscore_id = (coll) => {
+      coll::each((x) => delete x._id)
+    }
+
+    strip_underscore_id(games)
+    strip_underscore_id(collections)
+    strip_underscore_id(users)
+    strip_underscore_id(download_keys)
 
     let market = require('./market')
     market.save_all_entities({
       entities: {
         collections: collections::indexBy('id'),
+        download_keys: download_keys::indexBy('id'),
         users: users::indexBy('id'),
         caves: caves::indexBy('id'),
         games: games::indexBy('id')
