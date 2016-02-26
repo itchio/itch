@@ -158,6 +158,18 @@ let self = {
   },
 
   /**
+   * Rename old_path into new_path, throws if it can't
+   */
+  rename: async (old_path, new_path) => {
+    pre: { // eslint-disable-line
+      typeof old_path === 'string'
+      typeof new_path === 'string'
+    }
+
+    return await fs.renameFileAsync(old_path, new_path)
+  },
+
+  /**
    * Burn to the ground an entire directory and everything in it
    * Also works on file, don't bother with unlink.
    */

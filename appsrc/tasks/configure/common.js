@@ -1,7 +1,7 @@
 
 let sniff = require('../../util/sniff')
 let sf = require('../../util/sf')
-import {partial} from 'underline'
+import { partial } from 'underline'
 
 let path = require('path')
 

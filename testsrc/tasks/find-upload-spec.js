@@ -9,7 +9,6 @@ let electron = require('../stubs/electron')
 let CaveStore = require('../stubs/cave-store')
 let CredentialsStore = require('../stubs/credentials-store')
 let AppActions = require('../stubs/app-actions')
-let db = require('../stubs/db')
 let market = require('../stubs/market')
 
 let uploads_fixture = fixture.api('game/36664/uploads')
@@ -25,7 +24,6 @@ test('find-upload', t => {
     '../stores/credentials-store': CredentialsStore,
     '../actions/app-actions': AppActions,
     '../util/market': market,
-    '../util/db': db,
     '../util/os': os
   }, electron)
 

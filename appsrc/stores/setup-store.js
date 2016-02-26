@@ -1,7 +1,7 @@
 
 let Promise = require('bluebird')
 let path = require('path')
-import {partial} from 'underline'
+import { partial } from 'underline'
 
 let ibrew = require('../util/ibrew')
 let xdg_mime = require('../util/xdg-mime')

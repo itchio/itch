@@ -1,7 +1,7 @@
 
 let test = require('zopf')
 let proxyquire = require('proxyquire')
-import {indexBy} from 'underline'
+import { indexBy } from 'underline'
 
 let sd = require('./skin-deeper')
 let stubs = require('../stubs/react-stubs')

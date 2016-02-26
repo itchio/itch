@@ -8,6 +8,7 @@ let AppConstants = require('../constants/app-constants')
 let AppActions = require('../actions/app-actions')
 
 let market = require('../util/market')
+let fetch = require('../util/fetch')
 
 let state = {}
 
@@ -36,7 +37,7 @@ if (env.name === 'development') {
 }
 
 function fetch_collections () {
-  market.fetch_collections(featured_ids, commit_collections)
+  fetch.collections(featured_ids, commit_collections)
 }
 
 function commit_collections () {

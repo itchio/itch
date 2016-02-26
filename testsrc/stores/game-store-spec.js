@@ -9,15 +9,19 @@ let AppDispatcher = require('../stubs/app-dispatcher')
 let AppActions = require('../stubs/app-actions')
 let CredentialsStore = require('../stubs/credentials-store')
 let market = require('../stubs/market')
+let fetch = require('../stubs/fetch')
 
 import { pluck, indexBy } from 'underline'
 
 test('GameStore', t => {
+  // XXX: provide a market to fetch
+
   let stubs = Object.assign({
     './credentials-store': CredentialsStore,
     '../actions/app-actions': AppActions,
     '../dispatcher/app-dispatcher': AppDispatcher,
-    '../util/market': market
+    '../util/market': market,
+    '../util/fetch': fetch
   }, electron)
 
   t.stub(CredentialsStore, 'get_me').returns({id: 123})

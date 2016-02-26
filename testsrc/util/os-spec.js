@@ -1,6 +1,6 @@
 
 let test = require('zopf')
-import {contains} from 'underline'
+import { contains } from 'underline'
 
 let os = require('../../app/util/os')
 

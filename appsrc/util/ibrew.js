@@ -3,7 +3,7 @@ let app = require('electron').app
 let path = require('path')
 let os = require('./os')
 
-import {partial} from 'underline'
+import { partial } from 'underline'
 
 let extract = require('./extract')
 let log = require('./log')('ibrew')

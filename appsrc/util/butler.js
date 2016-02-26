@@ -1,6 +1,6 @@
 
 let path = require('path')
-import {partial} from 'underline'
+import { partial } from 'underline'
 
 let noop = require('./noop')
 let spawn = require('./spawn')

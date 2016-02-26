@@ -1,5 +1,5 @@
 
-import {pairs} from 'underline'
+import { pairs } from 'underline'
 
 let fs = require('fs')
 let sf = require('../util/sf')

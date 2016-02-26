@@ -1,5 +1,5 @@
 
-import {difference} from 'underline'
+import { difference } from 'underline'
 import bluebird from 'bluebird'
 
 let sf = require('./sf')

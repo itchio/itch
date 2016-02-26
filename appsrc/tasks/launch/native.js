@@ -1,6 +1,6 @@
 let path = require('path')
 
-import {sortBy} from 'underline'
+import { sortBy } from 'underline'
 let Promise = require('bluebird')
 let shell_quote = require('shell-quote')
 

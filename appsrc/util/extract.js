@@ -1,5 +1,5 @@
 
-import {object} from 'underline'
+import { object } from 'underline'
 
 let humanize = require('humanize-plus')
 let path = require('path')

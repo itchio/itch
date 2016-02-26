@@ -6,7 +6,7 @@ let log = require('../../util/log')('installers/exe')
 
 let AppActions = require('../../actions/app-actions')
 
-import {partial} from 'underline'
+import { partial } from 'underline'
 
 let self = {
   valid_installers: ['inno', 'nsis', 'air', 'archive'],

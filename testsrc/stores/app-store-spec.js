@@ -10,7 +10,6 @@ let AppDispatcher = require('../stubs/app-dispatcher')
 let AppActions = require('../stubs/app-actions')
 let CredentialsStore = require('../stubs/credentials-store')
 let defer = require('../stubs/defer')
-let db = require('../stubs/db')
 
 test('AppStore', t => {
   let GameStore = {
@@ -34,7 +33,6 @@ test('AppStore', t => {
     './credentials-store': CredentialsStore,
     '../actions/app-actions': AppActions,
     '../dispatcher/app-dispatcher': AppDispatcher,
-    '../util/db': db,
     '../util/defer': defer,
     '../util/os': os,
     './game-store': GameStore,
@@ -47,9 +45,6 @@ test('AppStore', t => {
   t.stub(CredentialsStore.get_current_user(), 'my_collections').resolves({collections: []})
 
   let get_state = () => AppStore.get_state()
-
-  t.case('GameStore change', t => {
-  })
 
   t.case('setup_status', t => {
     let message = 'Hold on to your ifs'

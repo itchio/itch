@@ -1,5 +1,5 @@
 
-import {filter, where, indexBy, throttle, debounce, pluck} from 'underline'
+import { filter, where, indexBy, throttle, debounce, pluck } from 'underline'
 
 let Store = require('./store')
 let CredentialsStore = require('./credentials-store')
@@ -17,6 +17,7 @@ let deep = require('deep-diff')
 let electron = require('electron')
 
 let market = require('../util/market')
+let fetch = require('../util/fetch')
 
 let state = {}
 
@@ -35,11 +36,11 @@ function fetch_games (payload) {
   }
 
   if (path === 'owned') {
-    market.fetch_owned_keys(commit_owned_games)
+    fetch.owned_keys(commit_owned_games)
   } else if (path === 'caved') {
     commit_caved_games()
   } else if (path === 'dashboard') {
-    market.fetch_dashboard_games(commit_dashboard_games)
+    fetch.dashboard_games(commit_dashboard_games)
   } else {
     let path_tokens = path.split('/')
     let type = path_tokens[0]
@@ -50,12 +51,12 @@ function fetch_games (payload) {
 
       try {
         let collection_id = parseInt(id, 10)
-        market.fetch_collection_games(collection_id, () => commit_collection_games(collection_id))
+        fetch.collection_games(collection_id, () => commit_collection_games(collection_id))
       } catch (e) {
         console.log(`while fetching collection games: ${e.stack || e}`)
       }
     } else if (type === 'games') {
-      market.fetch_single_game(parseInt(id, 10), () => null)
+      fetch.single_game(parseInt(id, 10), () => null)
     } else if (type === 'caves') {
       commit_cave_game(id)
     }
@@ -71,7 +72,7 @@ function fetch_search (payload) {
   }
 
   log(opts, `fetch_search(${query})`)
-  market.fetch_search(query, (games) => commit_games('search', games))
+  fetch.search(query, (games) => commit_games('search', games))
 }
 
 function commit_dashboard_games () {

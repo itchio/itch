@@ -1,19 +1,34 @@
 
-let Logger = require('../util/log').Logger
-let log = require('../util/log')('market')
+let Promise = require('bluebird')
+let Logger = require('./log').Logger
+let log = require('./log')('market')
 let opts = {logger: new Logger({sinks: {console: true}})}
 
 let path = require('path')
-let sf = require('../util/sf')
+let sf = require('./sf')
+let app = require('./app')
 
-import { each, union, pluck } from 'underline'
-import { normalize, Schema, arrayOf } from 'idealizr'
-let CredentialsStore = require('../stores/credentials-store')
+import { Schema, arrayOf } from 'idealizr'
+
+const legacy_db = require('./legacy-db')
 
 const user = new Schema('users')
 const game = new Schema('games')
 const collection = new Schema('collections')
 const download_key = new Schema('download_keys')
+
+let state = {
+  library_dir: null,
+
+  get_db_root: () => {
+    if (!state.library_dir) {
+      throw new Error('tried to get db root before library dir was set')
+    }
+    return path.join(state.library_dir, 'marketdb')
+  }
+}
+
+/* Schemas */
 
 game.define({
   user: user
@@ -27,167 +42,87 @@ download_key.define({
   game: game
 })
 
-async function fetch_dashboard_games (cb) {
-  cb()
-
-  let api = CredentialsStore.get_current_user()
-  let me = CredentialsStore.get_me()
-
-  let normalized = normalize(await api.my_games(), {
-    games: arrayOf(game)
-  })
-
-  normalized.entities.games::each((g) => g.user_id = me.id)
-  normalized.entities.users = {
-    [me.id]: me
-  }
-  save_all_entities(normalized)
-
-  cb()
-}
-
-async function fetch_owned_keys (cb) {
-  cb()
-
-  let api = CredentialsStore.get_current_user()
-  let page = 0
-
-  while (true) {
-    let response = await api.my_owned_keys({page: page++})
-    if (response.owned_keys.length === 0) {
-      break
-    }
-
-    save_all_entities(normalize(response, {
-      owned_keys: arrayOf(download_key)
-    }))
-    cb()
-  }
-}
-
-async function fetch_collections (featured_ids, cb) {
-  cb()
-
-  let prepare_collections = (normalized) => {
-    let colls = get_entities('collections')
-    normalized.entities.collections::each((coll, coll_id) => {
-      let old = colls[coll_id]
-      if (old) {
-        coll.game_ids = old.game_ids::union(coll.game_ids)
-      }
-    })
-    return normalized
-  }
-
-  let api = CredentialsStore.get_current_user()
-  if (!api) return
-
-  let my_collections_res = await api.my_collections()
-  let my_collections = normalize(my_collections_res, {
-    collections: arrayOf(collection)
-  })
-  ;(my_collections.entities.collections || [])::each((c) => c._featured = false)
-  save_all_entities(prepare_collections(my_collections))
-  cb()
-
-  for (let featured_id of featured_ids) {
-    let featured_collection_res = await api.collection(featured_id)
-    let featured_collection = normalize(featured_collection_res, {
-      collection: collection
-    })
-    ;(featured_collection.entities.collections || [])::each((c) => {
-      c._featured = true
-    })
-    save_all_entities(prepare_collections(featured_collection))
-    cb()
-  }
-}
-
-async function fetch_collection_games (collection_id, cb) {
-  let collection = get_entities('collections')[collection_id]
-  if (!collection) {
-    log(opts, `collection not found: ${collection_id}`)
-    return
-  }
-
-  cb()
-
-  let api = CredentialsStore.get_current_user()
-
-  let page = 1
-  let fetched = 0
-  let total_items = 1
-  let fetched_game_ids = []
-
-  while (fetched < total_items) {
-    let res = await api.collection_games(collection_id, page)
-    total_items = res.total_items
-    fetched = res.per_page * page
-
-    let normalized = normalize(res, {games: arrayOf(game)})
-    let page_game_ids = normalized.entities.games::pluck('id')
-    collection.game_ids = collection.game_ids::union(page_game_ids)
-    fetched_game_ids = fetched_game_ids::union(page_game_ids)
-    save_all_entities(normalized)
-    cb()
-    page++
-  }
-
-  // if games were removed remotely, they'll be removed locally at this step
-  collection.game_ids = fetched_game_ids
-  cb()
-}
-
-async function fetch_search (query, cb) {
-  let api = CredentialsStore.get_current_user()
-
-  let response = normalize(await api.search(query), {
-    games: arrayOf(game)
-  })
-  cb(response.entities.games || {})
-}
+/* Data persistence / retrieval */
 
 let data = {}
 
-function save_all_entities (response) {
-  // console.log(`saving all entities: ${JSON.stringify(response, null, 2)}`)
+async function load (user_id) {
+  log(opts, `loading db for user ${user_id}`)
+  state.library_dir = path.join(app.getPath('userData'), 'users', user_id.toString())
 
-  for (let table_name of Object.keys(response.entities)) {
-    let table = data[table_name]
-    if (!table) {
-      table = {}
-      data[table_name] = table
+  let old_db_filename = path.join(state.library_dir, 'db.jsonl')
+  if (await sf.exists(old_db_filename)) {
+    await legacy_db.import_old_data(old_db_filename)
+    await sf.rename(old_db_filename, old_db_filename + '.obsolete')
+  } else {
+    log(opts, `nothing to import from legacy db`)
+  }
+
+  const entities = {}
+
+  const record_paths = await sf.glob('*/*', {cwd: state.get_db_root()})
+  for (const record_path of record_paths) {
+    const tokens = record_path.split('/')
+    const [table_name, entity_id] = tokens
+    const file = path.join(state.get_db_root(), record_path)
+    const contents = await sf.read_file(file)
+
+    const table = entities[table_name] || {}
+    try {
+      table[entity_id] = JSON.parse(contents)
+    } catch (e) {
+      log(opts, `warning: skipping malformed record ${table_name}/${entity_id}`)
     }
+    entities[table_name] = table
+  }
 
-    let entities = response.entities[table_name]
-    for (let entity_id of Object.keys(entities)) {
-      let entity = entities[entity_id]
-      let record = table[entity_id]
-      if (!record) {
-        record = {}
-        table[entity_id] = record
-      }
+  log(opts, `done loading db for user ${user_id}`)
+  save_all_entities({entities}, {persist: false})
+}
+
+async function save_to_disk (table_name, entity_id, record) {
+  const file = path.join(state.get_db_root(), table_name, entity_id)
+  await sf.write_file(file, JSON.stringify(record))
+}
+
+function save_all_entities (response, opts) {
+  opts = opts || {}
+  const {persist = true, ondone} = opts
+
+  let promises = null
+  if (ondone) {
+    promises = []
+  }
+
+  for (const table_name of Object.keys(response.entities)) {
+    const entities = response.entities[table_name]
+    let table = data[table_name] || {}
+
+    for (const entity_id of Object.keys(entities)) {
+      const entity = entities[entity_id]
+
+      let record = table[entity_id] || {}
       Object.assign(record, entity)
+      table[entity_id] = record
 
-      ;(async function () {
-        let folder = path.join('/tmp', 'whateverdb', table_name)
-        await sf.mkdir(folder)
-
-        let file = path.join(folder, entity_id)
-        let json = JSON.stringify(record)
-        await sf.write_file(file, json)
-      })()
+      if (persist) {
+        let p = save_to_disk(table_name, entity_id, record)
+        if (promises) promises.push(p)
+      }
     }
+
+    data[table_name] = table
+  }
+
+  if (ondone) {
+    Promise.all(promises).then(opts.ondone)
   }
 }
 
 function get_entities (table) {
-  let entities = data[table]
-  if (!entities) {
-    entities = {}
-    data[table] = entities
-  }
-
+  // lazily creates table in 'data' object
+  let entities = data[table] || {}
+  data[table] = entities
   return entities
 }
 
@@ -199,13 +134,19 @@ function clear () {
   }
 }
 
+function unload () {
+  clear()
+  state.library_dir = null
+}
+
 module.exports = {
-  fetch_dashboard_games,
-  fetch_owned_keys,
-  fetch_collections,
-  fetch_collection_games,
-  fetch_search,
+  load,
+  get_entities,
   save_all_entities,
   clear,
-  get_entities
+  unload,
+  schemas: {
+    user, game, collection, download_key
+  },
+  _state: state
 }

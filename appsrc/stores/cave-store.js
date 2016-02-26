@@ -31,9 +31,6 @@ let electron = require('electron')
 
 let EventEmitter = require('events').EventEmitter
 
-// XXX: remove eventually
-let db = require('../util/db')
-
 let old_state = {}
 let state = {}
 let cave_blacklist = {}
@@ -407,9 +404,9 @@ async function authenticated (payload) {
   let me = CredentialsStore.get_me()
 
   try {
-    await db.load(me.id)
+    await market.load(me.id)
   } catch (e) {
-    console.log(`error while loading db: ${e.stack || e}`)
+    console.log(`error while loading market: ${e.stack || e}`)
     require('../util/crash-reporter').handle(e)
     return
   }
@@ -417,7 +414,7 @@ async function authenticated (payload) {
   AppActions.ready_to_roll()
 }
 
-import {count} from 'grovel'
+import { count } from 'grovel'
 
 async function locations_ready (payload) {
   let caves = market.get_entities('caves')
@@ -442,8 +439,7 @@ function cancel_all_tasks () {
 
 function logout (payload) {
   cancel_all_tasks()
-
-  db.unload()
+  market.unload()
 }
 
 AppDispatcher.register('cave-store', Store.action_listeners(on => {

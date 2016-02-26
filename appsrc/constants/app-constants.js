@@ -49,7 +49,7 @@ module.exports = keyMirror({
   QUEUE_CAVE_UNINSTALL: null,
   /** Cave is going to be reinstalled */
   QUEUE_CAVE_REINSTALL: null,
-  /** Internal cave DB needs to be updated */
+  /** Persistent cave metadata storage needs to be updated */
   UPDATE_CAVE: null,
   /** Should probably replaced with an CaveStore.emit('change') event */
   CAVE_PROGRESS: null,
@@ -107,7 +107,7 @@ module.exports = keyMirror({
   LOGIN_FAILURE: null,
   /** API key available beyond this point */
   AUTHENTICATED: null,
-  /** db available beyond this point */
+  /** market available beyond this point */
   READY_TO_ROLL: null,
   /** install locations available beyond this point */
   LOCATIONS_READY: null,
