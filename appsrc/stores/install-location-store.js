@@ -42,7 +42,6 @@ let InstallLocationStore = Object.assign(new Store('install-location-store'), {
       return appdata_location
     } else {
       let locs = PreferencesStore.get_state().install_locations || {}
-      console.log(`kalamazoo all locs = ${JSON.stringify(locs, null, 2)}`)
       return locs[name]
     }
   }
@@ -107,7 +106,7 @@ let throttled_recompute_state = recompute_state::throttle(500, true)
 function initialize_appdata () {
   appdata_location = {
     name: 'appdata',
-    path: market.library_dir
+    path: market.get_library_dir()
   }
 }
 

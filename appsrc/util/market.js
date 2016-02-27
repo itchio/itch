@@ -125,5 +125,6 @@ module.exports = {
   save_all_entities,
   clear,
   unload,
+  get_library_dir: () => state.library_dir,
   _state: state
 }

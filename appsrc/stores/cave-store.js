@@ -440,8 +440,6 @@ async function authenticated (payload) {
 async function locations_ready (payload) {
   let caves = market.get_entities('caves')
 
-  console.log(`in cave-store locations ready, appdata path = ${JSON.stringify(InstallLocationStore.get_location('appdata'), null, 2)}`)
-
   caves::each((record) => {
     initial_progress(record)
     queue_task(record.id, 'awaken')
