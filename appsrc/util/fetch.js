@@ -3,14 +3,13 @@ let Logger = require('./log').Logger
 let log = require('./log')('fetch')
 let opts = {logger: new Logger({sinks: {console: true}})}
 
-import { each, union, pluck } from 'underline'
-import { normalize, arrayOf } from 'idealizr'
 let CredentialsStore = require('../stores/credentials-store')
 
-const market = require('./market')
-const { game, collection, download_key } = market.schemas
+import { normalize, arrayOf } from 'idealizr'
+import { game, collection, download_key } from './schemas'
+import { each, union, pluck } from 'underline'
 
-async function dashboard_games (cb) {
+async function dashboard_games (market, cb) {
   cb()
 
   const api = CredentialsStore.get_current_user()
@@ -30,7 +29,7 @@ async function dashboard_games (cb) {
   cb()
 }
 
-async function owned_keys (cb) {
+async function owned_keys (market, cb) {
   cb()
 
   const api = CredentialsStore.get_current_user()
@@ -49,7 +48,7 @@ async function owned_keys (cb) {
   }
 }
 
-async function collections (featured_ids, cb) {
+async function collections (market, featured_ids, cb) {
   cb()
 
   const prepare_collections = (normalized) => {
@@ -87,7 +86,7 @@ async function collections (featured_ids, cb) {
   }
 }
 
-async function collection_games (collection_id, cb) {
+async function collection_games (market, collection_id, cb) {
   const collection = market.get_entities('collections')[collection_id]
   if (!collection) {
     log(opts, `collection not found: ${collection_id}`)
@@ -122,7 +121,7 @@ async function collection_games (collection_id, cb) {
   cb()
 }
 
-async function search (query, cb) {
+async function search (market, query, cb) {
   const api = CredentialsStore.get_current_user()
 
   const response = normalize(await api.search(query), {

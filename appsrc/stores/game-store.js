@@ -36,11 +36,11 @@ function fetch_games (payload) {
   }
 
   if (path === 'owned') {
-    fetch.owned_keys(commit_owned_games)
+    fetch.owned_keys(market, commit_owned_games)
   } else if (path === 'caved') {
     commit_caved_games()
   } else if (path === 'dashboard') {
-    fetch.dashboard_games(commit_dashboard_games)
+    fetch.dashboard_games(market, commit_dashboard_games)
   } else {
     let path_tokens = path.split('/')
     let type = path_tokens[0]
@@ -51,12 +51,12 @@ function fetch_games (payload) {
 
       try {
         let collection_id = parseInt(id, 10)
-        fetch.collection_games(collection_id, () => commit_collection_games(collection_id))
+        fetch.collection_games(market, collection_id, () => commit_collection_games(collection_id))
       } catch (e) {
         console.log(`while fetching collection games: ${e.stack || e}`)
       }
     } else if (type === 'games') {
-      fetch.single_game(parseInt(id, 10), () => null)
+      fetch.single_game(market, parseInt(id, 10), () => null)
     } else if (type === 'caves') {
       commit_cave_game(id)
     }
@@ -72,7 +72,7 @@ function fetch_search (payload) {
   }
 
   log(opts, `fetch_search(${query})`)
-  fetch.search(query, (games) => commit_games('search', games))
+  fetch.search(market, query, (games) => commit_games('search', games))
 }
 
 function commit_dashboard_games () {

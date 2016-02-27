@@ -8,14 +8,7 @@ let path = require('path')
 let sf = require('./sf')
 let app = require('./app')
 
-import { Schema, arrayOf } from 'idealizr'
-
 const legacy_db = require('./legacy-db')
-
-const user = new Schema('users')
-const game = new Schema('games')
-const collection = new Schema('collections')
-const download_key = new Schema('download_keys')
 
 let state = {
   library_dir: null,
@@ -28,20 +21,6 @@ let state = {
   }
 }
 
-/* Schemas */
-
-game.define({
-  user: user
-})
-
-collection.define({
-  games: arrayOf(game)
-})
-
-download_key.define({
-  game: game
-})
-
 /* Data persistence / retrieval */
 
 let data = {}
@@ -52,16 +31,15 @@ async function load (user_id) {
 
   let old_db_filename = path.join(state.library_dir, 'db.jsonl')
   if (await sf.exists(old_db_filename)) {
-    await legacy_db.import_old_data(old_db_filename)
+    let response = await legacy_db.import_old_data(old_db_filename)
+    save_all_entities(response)
     await sf.rename(old_db_filename, old_db_filename + '.obsolete')
   } else {
     log(opts, `nothing to import from legacy db`)
   }
 
   const entities = {}
-
-  const record_paths = await sf.glob('*/*', {cwd: state.get_db_root()})
-  for (const record_path of record_paths) {
+  const load_record = async function (record_path) {
     const tokens = record_path.split('/')
     const [table_name, entity_id] = tokens
     const file = path.join(state.get_db_root(), record_path)
@@ -71,10 +49,12 @@ async function load (user_id) {
     try {
       table[entity_id] = JSON.parse(contents)
     } catch (e) {
-      log(opts, `warning: skipping malformed record ${table_name}/${entity_id}`)
+      log(opts, `warning: skipping malformed record ${table_name}/${entity_id} (${e})`)
     }
     entities[table_name] = table
   }
+
+  await sf.glob('*/*', {cwd: state.get_db_root()}).map(load_record, {concurrency: 4})
 
   log(opts, `done loading db for user ${user_id}`)
   save_all_entities({entities}, {persist: false})
@@ -145,8 +125,5 @@ module.exports = {
   save_all_entities,
   clear,
   unload,
-  schemas: {
-    user, game, collection, download_key
-  },
   _state: state
 }

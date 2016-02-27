@@ -54,34 +54,48 @@ let CaveStore = Object.assign(new Store('cave-store'), {
       throw new Error(`Unknown location: ${loc_name}`)
     }
     return loc_record.path
+
+    post: { // eslint-disable-line
+      typeof loc_record.path === 'string'
+    }
   },
 
   archive_path: function (loc, upload) {
-    if (typeof upload === 'undefined') {
-      throw new Error('Missing args for CaveStore.archive_path')
+    pre: { // eslint-disable-line
+      typeof loc === 'string'
+      typeof upload === 'object'
     }
 
     let loc_dir = CaveStore.install_location_dir(loc)
     return path.join(loc_dir, 'archives', `${upload.id}${path.extname(upload.filename)}`)
   },
 
-  app_path: function (loc, cave) {
-    if (typeof cave === 'undefined') {
-      throw new Error('Missing args for CaveStore.app_path')
+  app_path: function (loc, cave_id) {
+    pre: { // eslint-disable-line
+      typeof loc === 'string'
+      typeof cave_id === 'string'
     }
 
     let loc_dir = CaveStore.install_location_dir(loc)
-    return path.join(loc_dir, 'apps', cave)
+    return path.join(loc_dir, 'apps', cave_id)
   },
 
-  log_path: function (cave) {
-    return log_path(cave)
+  log_path: function (cave_id) {
+    pre: { // eslint-disable-line
+      typeof cave_id === 'string'
+    }
+
+    return log_path(cave_id)
   }
 })
 
-function log_path (cave) {
+function log_path (cave_id) {
+  pre: { // eslint-disable-line
+    typeof cave_id === 'string'
+  }
+
   let loc_dir = CaveStore.install_location_dir('appdata')
-  return path.join(loc_dir, 'logs', cave + '.txt')
+  return path.join(loc_dir, 'logs', cave_id + '.txt')
 }
 
 function emit_change () {
@@ -102,6 +116,10 @@ let store_opts = {
 let cave_opts_cache = {}
 
 function cave_opts (id) {
+  pre: { // eslint-disable-line
+    typeof id === 'string'
+  }
+
   let cached = cave_opts_cache[id]
   if (cached) return cached
 
@@ -188,6 +206,11 @@ function set_current_task (id, data) {
 }
 
 async function queue_task (id, task_name, data) {
+  pre: { // eslint-disable-line
+    typeof id === 'string'
+    typeof task_name === 'string'
+  }
+
   let running = true
 
   try {
@@ -414,13 +437,12 @@ async function authenticated (payload) {
   AppActions.ready_to_roll()
 }
 
-import { count } from 'grovel'
-
 async function locations_ready (payload) {
   let caves = market.get_entities('caves')
 
-  console.log(`[kalamazoo] in locations_ready, got ${caves::count()} caves`)
-  caves::each((record, i) => {
+  console.log(`in cave-store locations ready, appdata path = ${JSON.stringify(InstallLocationStore.get_location('appdata'), null, 2)}`)
+
+  caves::each((record) => {
     initial_progress(record)
     queue_task(record.id, 'awaken')
   })

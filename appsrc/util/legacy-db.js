@@ -9,7 +9,6 @@ const opts = {
   logger: new Logger()
 }
 const log = require('./log')('legacy-db')
-const market = require('./market')
 
 /*
  * nedb was previously used for as both a persistent layer and
@@ -18,7 +17,10 @@ const market = require('./market')
  */
 
 async function import_old_data (filename) {
-  const store = new Datastore({filename, autoload: true})
+  const store = new Datastore({filename, autoload: false})
+  const loadDatabase = Promise.promisify(store.loadDatabase, {context: store})
+  await loadDatabase()
+
   const find = Promise.promisify(store.find, {context: store})
 
   const caves = await find({_table: 'caves'})
@@ -27,7 +29,12 @@ async function import_old_data (filename) {
   const users = await find({_table: 'users'})
   const download_keys = await find({_table: 'download_keys'})
 
-  caves::each((x) => x.id = x._id)
+  caves::each((x) => {
+    if (x.hasOwnProperty('_id')) {
+      x.id = x._id
+      delete x._id
+    }
+  })
 
   const strip_underscore_id = (coll) => {
     coll::each((x) => delete x._id)
@@ -38,7 +45,9 @@ async function import_old_data (filename) {
   strip_underscore_id(users)
   strip_underscore_id(download_keys)
 
-  market.save_all_entities({
+  log(opts, `Imported ${caves.length} caves, ${games.length} games, ${collections.length} collections, ${users.length} and ${download_keys.length} download keys from legacy db`)
+
+  return {
     entities: {
       collections: collections::indexBy('id'),
       download_keys: download_keys::indexBy('id'),
@@ -46,9 +55,7 @@ async function import_old_data (filename) {
       caves: caves::indexBy('id'),
       games: games::indexBy('id')
     }
-  })
-
-  log(opts, `Imported ${caves.length} caves, ${games.length} games, ${collections.length} collections, ${users.length} and ${download_keys.length} download keys from legacy db`)
+  }
 }
 
 module.exports = {import_old_data}

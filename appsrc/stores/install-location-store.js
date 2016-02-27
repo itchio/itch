@@ -1,5 +1,5 @@
 
-import { throttle } from 'underline'
+import { throttle, each } from 'underline'
 
 let walk = require('walk')
 let electron = require('electron')
@@ -42,6 +42,7 @@ let InstallLocationStore = Object.assign(new Store('install-location-store'), {
       return appdata_location
     } else {
       let locs = PreferencesStore.get_state().install_locations || {}
+      console.log(`kalamazoo all locs = ${JSON.stringify(locs, null, 2)}`)
       return locs[name]
     }
   }
@@ -116,10 +117,10 @@ async function reload () {
   const counts = {}
   const caves = market.get_entities()['caves']
 
-  for (const cave of caves) {
+  caves::each((cave) => {
     const loc_name = cave.install_location || 'appdata'
     counts[loc_name] = (counts[loc_name] || 0) + 1
-  }
+  })
 
   disk_info = await diskspace.disk_info()
   location_item_counts = counts

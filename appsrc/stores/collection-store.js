@@ -37,7 +37,7 @@ if (env.name === 'development') {
 }
 
 function fetch_collections () {
-  fetch.collections(featured_ids, commit_collections)
+  fetch.collections(market, featured_ids, commit_collections)
 }
 
 function commit_collections () {

@@ -1,10 +1,10 @@
 
 let fetch = {
-  dashboard_games: cb => cb(),
-  owned_keys: (cb) => cb(),
-  collections: (fid, cb) => cb(),
-  collection_games: (cid, cb) => cb(),
-  search: (q, cb) => cb(),
+  dashboard_games: (market, cb) => cb(),
+  owned_keys: (market, cb) => cb(),
+  collections: (market, fid, cb) => cb(),
+  collection_games: (market, cid, cb) => cb(),
+  search: (market, q, cb) => cb(),
 
   '@noCallThru': true
 }

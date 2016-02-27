@@ -3,6 +3,7 @@ let test = require('zopf')
 let proxyquire = require('proxyquire')
 import { indexBy, pluck } from 'underline'
 
+let electron = require('../stubs/electron')
 let CredentialsStore = require('../stubs/credentials-store')
 
 test('Market', t => {
@@ -14,13 +15,11 @@ test('Market', t => {
   const stubs = Object.assign({
     '../stores/credentials-store': CredentialsStore,
     './app': app
-  })
+  }, electron)
   const market = proxyquire('../../app/util/market', stubs)
   market._state.library_dir = 'test/tmp/users/foobar'
 
-  const fetch = proxyquire('../../app/util/fetch', Object.assign({}, stubs, {
-    './market': market
-  }))
+  const fetch = proxyquire('../../app/util/fetch', stubs)
 
   let api = CredentialsStore.get_current_user()
 
@@ -39,7 +38,7 @@ test('Market', t => {
     })
 
     let cb = t.spy()
-    await fetch.collections(featured_ids, cb)
+    await fetch.collections(market, featured_ids, cb)
 
     t.same(cb.callCount, 3)
     t.sameSet(market.get_entities('collections')::pluck('id'), [23, 78, 97])
@@ -52,7 +51,7 @@ test('Market', t => {
     })
 
     let cb = t.spy()
-    await fetch.dashboard_games(cb)
+    await fetch.dashboard_games(market, cb)
 
     t.same(cb.callCount, 2)
     t.same(market.get_entities('games'), {
@@ -86,7 +85,7 @@ test('Market', t => {
     })
 
     let cb = t.spy()
-    await fetch.owned_keys(cb)
+    await fetch.owned_keys(market, cb)
 
     t.equal(stub.callCount, 2)
     t.equal(cb.callCount, 2)
@@ -115,7 +114,7 @@ test('Market', t => {
     })
 
     let cb = t.spy()
-    await fetch.collection_games(8712, cb)
+    await fetch.collection_games(market, 8712, cb)
 
     t.equal(cb.callCount, 4)
     t.sameSet(collection.game_ids, [1, 3, 5, 7, 9])

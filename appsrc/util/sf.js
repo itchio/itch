@@ -166,7 +166,7 @@ let self = {
       typeof new_path === 'string'
     }
 
-    return await fs.renameFileAsync(old_path, new_path)
+    return await fs.renameAsync(old_path, new_path)
   },
 
   /**
