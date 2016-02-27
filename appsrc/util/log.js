@@ -4,9 +4,8 @@ import { pairs } from 'underline'
 let fs = require('fs')
 let sf = require('../util/sf')
 let path = require('path')
+let eol = require('eol')
 let deep_assign = require('deep-assign')
-
-let EOL = require('os').EOL
 
 function make (name) {
   let f = function (opts, message) {
@@ -72,8 +71,7 @@ class Logger {
 
   write (s) {
     if (this.string_sink) {
-      this.contents += s
-      this.contents += '\n'
+      this.contents += eol.auto(s + '\n')
     }
 
     if (this.console_sink) {
@@ -81,8 +79,7 @@ class Logger {
     }
 
     if (this.file_sink) {
-      this.file_sink.write(s)
-      this.file_sink.write(EOL)
+      this.file_sink.write(eol.auto(s + '\n'))
     }
   }
 
