@@ -34,10 +34,6 @@ let icon_info = (cave) => {
     spin = true
   }
 
-  if (task === 'check-for-update') {
-    task = 'idle'
-  }
-
   return { task, spin }
 }
 
@@ -164,7 +160,7 @@ class MainAction extends ShallowComponent {
     let t = this.t
     let progress = cave ? cave.progress : 0
 
-    if (task === 'idle' || task === 'awaken' || task === 'check-for-update') {
+    if (task === 'idle' || task === 'awaken') {
       switch (action) {
         case 'open':
           return t('grid.item.open')

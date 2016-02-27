@@ -18,7 +18,7 @@ let task_to_icon = {
   'configure': 'cog',
   'awaken': 'stopwatch',
   'launch': 'fire',
-  'check-for-update': 'checkmark',
+  'check-for-update': 'stopwatch',
   'idle': 'checkmark'
 }
 
