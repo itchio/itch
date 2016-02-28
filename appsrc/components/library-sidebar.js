@@ -131,7 +131,6 @@ class LibrarySidebar extends ShallowComponent {
       count: installed_count
     }))
 
-    links.push(r.div({className: 'separator'}))
     links.push(r(LibraryPanelLink, {
       before: r(Icon, {icon: 'search'}),
       name: 'search',
