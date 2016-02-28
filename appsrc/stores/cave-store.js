@@ -366,7 +366,8 @@ async function request_cave_uninstall (payload) {
   let dialog_opts = {
     type: 'question',
     buttons,
-    message: i18n.t('prompt.uninstall.message', i18n_vars)
+    message: i18n.t('prompt.uninstall.message', i18n_vars),
+    cancelId: 2
   }
 
   let callback = (response) => {
@@ -398,7 +399,7 @@ async function queue_cave_reinstall (payload) {
 async function update_cave (payload) {
   let {id, cave} = payload
   if (cave_blacklist[id]) return
-  Object.assign(market.get_entities('caves')[id], cave)
+  market.save_all_entities({entities: {caves: {[id]: cave}}})
 }
 
 async function implode_cave (payload) {
@@ -407,7 +408,7 @@ async function implode_cave (payload) {
   cave_blacklist[payload.id] = true
   cancel_cave(payload)
 
-  delete market.get_entities('caves')[payload.id]
+  market.delete_all_entities({entities: {caves: [payload.id]}})
 
   delete state[payload.id]
   emit_change()

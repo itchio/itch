@@ -60,9 +60,16 @@ async function load (user_id) {
   save_all_entities({entities}, {persist: false})
 }
 
+function entity_path (table_name, entity_id) {
+  return path.join(state.get_db_root(), table_name, entity_id)
+}
+
 async function save_to_disk (table_name, entity_id, record) {
-  const file = path.join(state.get_db_root(), table_name, entity_id)
-  await sf.write_file(file, JSON.stringify(record))
+  await sf.write_file(entity_path(table_name, entity_id), JSON.stringify(record))
+}
+
+async function delete_from_disk (table_name, entity_id) {
+  await sf.wipe(entity_path(table_name, entity_id))
 }
 
 function save_all_entities (response, opts) {
@@ -99,6 +106,34 @@ function save_all_entities (response, opts) {
   }
 }
 
+function delete_all_entities (response, opts) {
+  opts = opts || {}
+  const {ondone} = opts
+
+  let promises = null
+  if (ondone) {
+    promises = []
+  }
+
+  for (const table_name of Object.keys(response.entities)) {
+    const entities = response.entities[table_name]
+    let table = data[table_name] || {}
+
+    for (const entity_id of entities) {
+      delete table[entity_id]
+
+      let p = delete_from_disk(table_name, entity_id)
+      if (promises) promises.push(p)
+    }
+
+    data[table_name] = table
+  }
+
+  if (ondone) {
+    Promise.all(promises).then(opts.ondone)
+  }
+}
+
 function get_entities (table) {
   // lazily creates table in 'data' object
   let entities = data[table] || {}
@@ -123,6 +158,7 @@ module.exports = {
   load,
   get_entities,
   save_all_entities,
+  delete_all_entities,
   clear,
   unload,
   get_library_dir: () => state.library_dir,
