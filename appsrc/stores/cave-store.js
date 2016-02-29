@@ -152,6 +152,7 @@ function handle_task_error (err, id, task_name) {
     log(cave_opts(id), msg)
     AppActions.cave_progress({id, task: 'idle', error: msg, progress: 0})
   } else if (err instanceof errors.Cancelled) {
+    log(cave_opts(id), `${task_name} cancelled!`)
     let cave = CaveStore.find(id)
     if (cave) {
       if (cave.launchable && cave.success_once) {
@@ -408,6 +409,7 @@ async function queue_cave_reinstall (payload) {
 async function update_cave (payload) {
   let {id, cave} = payload
   if (cave_blacklist[id]) return
+  console.log(`update_cave ${JSON.stringify(payload, null, 2)}`)
   market.save_all_entities({entities: {caves: {[id]: cave}}})
 }
 

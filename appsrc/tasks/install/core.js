@@ -49,11 +49,17 @@ let self = {
   },
 
   cache_type: function (opts, installer_name) {
+    pre: { // eslint-disable-line
+      typeof opts === 'object'
+      typeof opts.upload_id === 'number'
+      typeof installer_name === 'string'
+    }
+
     let cave = opts.cave
     if (!cave) return
 
     let installer_cache = {}
-    installer_cache[cave.upload_id] = installer_name
+    installer_cache[opts.upload_id] = installer_name
     AppActions.update_cave(cave.id, {installer_cache})
   },
 

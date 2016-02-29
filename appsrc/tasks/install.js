@@ -59,7 +59,7 @@ let self = {
       throw new errors.Transition({to: 'idle', reason: 'up-to-date'})
     }
 
-    let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter }
+    let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter, upload_id }
 
     AppActions.update_cave(id, {launchable: false})
     await core.install(core_opts)

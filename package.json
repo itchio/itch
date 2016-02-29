@@ -28,6 +28,7 @@
     "clone": "^1.0.2",
     "deep-assign": "^2.0.0",
     "deep-diff": "^0.3.3",
+    "deep-freeze": "0.0.1",
     "eol": "^0.2.0",
     "es6-error": "^2.0.0",
     "fast-async": "^6.0.11",

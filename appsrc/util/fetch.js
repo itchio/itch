@@ -1,4 +1,6 @@
 
+import { assocIn } from 'grovel'
+
 let Logger = require('./log').Logger
 let log = require('./log')('fetch')
 let opts = {logger: new Logger({sinks: {console: true}})}
@@ -87,7 +89,7 @@ async function collections (market, featured_ids, cb) {
 }
 
 async function collection_games (market, collection_id, cb) {
-  const collection = market.get_entities('collections')[collection_id]
+  let collection = market.get_entities('collections')[collection_id]
   if (!collection) {
     log(opts, `collection not found: ${collection_id}`)
     return
@@ -109,7 +111,9 @@ async function collection_games (market, collection_id, cb) {
 
     const normalized = normalize(res, {games: arrayOf(game)})
     const page_game_ids = normalized.entities.games::pluck('id')
-    collection.game_ids = collection.game_ids::union(page_game_ids)
+    collection = collection::assocIn(['game_ids'], collection.game_ids::union(page_game_ids))
+    market.save_all_entities({entities: {collections: {[collection.id]: collection}}})
+
     fetched_game_ids = fetched_game_ids::union(page_game_ids)
     market.save_all_entities(normalized)
     cb()
@@ -117,7 +121,8 @@ async function collection_games (market, collection_id, cb) {
   }
 
   // if games were removed remotely, they'll be removed locally at this step
-  collection.game_ids = fetched_game_ids
+  collection = collection::assocIn(['game_ids'], fetched_game_ids)
+  market.save_all_entities({entities: {collections: {[collection.id]: collection}}})
   cb()
 }
 

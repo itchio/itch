@@ -8,6 +8,8 @@ let path = require('path')
 let sf = require('./sf')
 let app = require('./app')
 
+const deep_freeze = require('deep-freeze')
+
 import { isEqual } from 'underline'
 
 const legacy_db = require('./legacy-db')
@@ -99,10 +101,10 @@ function save_all_entities (response, opts) {
       const record = table[entity_id] || {}
       const new_record = Object.assign({}, record, entity)
       if (!record::isEqual(new_record)) {
-        table[entity_id] = new_record
+        table[entity_id] = deep_freeze(new_record)
 
         if (persist) {
-          let p = save_to_disk(table_name, entity_id, record)
+          let p = save_to_disk(table_name, entity_id, new_record)
           if (promises) promises.push(p)
         }
       }
