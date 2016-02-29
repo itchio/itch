@@ -10,7 +10,7 @@ let app = require('./app')
 
 const deep_freeze = require('deep-freeze')
 
-import { isEqual } from 'underline'
+import { isEqual, each } from 'underline'
 
 const legacy_db = require('./legacy-db')
 
@@ -28,6 +28,18 @@ const state = {
 /* Data persistence / retrieval */
 
 const data = {}
+
+// once in a while you have to write some code you're not proud of
+const blacklist = {}
+setInterval(() => {
+  const now = Date.now()
+  blacklist::each((expires_at, key) => {
+    if (now >= expires_at) {
+      console.log(`culling ${key} from blacklist`)
+      delete blacklist[key]
+    }
+  })
+}, 1000)
 
 async function load (user_id) {
   log(opts, `loading db for user ${user_id}`)
@@ -75,10 +87,19 @@ function entity_path (table_name, entity_id) {
 }
 
 async function save_to_disk (table_name, entity_id, record) {
+  if (blacklist[`${table_name}/${entity_id}`]) {
+    console.log(`ignoring blacklisted write: ${table_name}/${entity_id} = ${record}`)
+    return
+  }
   await sf.write_file_atomic(entity_path(table_name, entity_id), JSON.stringify(record))
+  if (blacklist[`${table_name}/${entity_id}`]) {
+    await sf.wipe(entity_path(table_name, entity_id))
+  }
 }
 
 async function delete_from_disk (table_name, entity_id) {
+  console.log(`blacklisting ${table_name}/${entity_id} for 5s`)
+  blacklist[`${table_name}/${entity_id}`] = Date.now() + 5000
   await sf.wipe(entity_path(table_name, entity_id))
 }
 
