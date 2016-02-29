@@ -65,7 +65,7 @@ function entity_path (table_name, entity_id) {
 }
 
 async function save_to_disk (table_name, entity_id, record) {
-  await sf.write_file(entity_path(table_name, entity_id), JSON.stringify(record))
+  await sf.write_file_atomic(entity_path(table_name, entity_id), JSON.stringify(record))
 }
 
 async function delete_from_disk (table_name, entity_id) {
