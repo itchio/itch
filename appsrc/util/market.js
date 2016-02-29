@@ -87,6 +87,10 @@ function entity_path (table_name, entity_id) {
 }
 
 async function save_to_disk (table_name, entity_id, record) {
+  // TODO: better fix - when we're about to rename, check that
+  // data[table_name][entity_id] still exists - if it doesn't,
+  // wipe the tmp file instead of renaming it into the new file.
+  // TODO: when better fix is in, get rid of blacklist...
   if (blacklist[`${table_name}/${entity_id}`]) {
     console.log(`ignoring blacklisted write: ${table_name}/${entity_id} = ${record}`)
     return
