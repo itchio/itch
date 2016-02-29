@@ -89,6 +89,7 @@ module.exports = keyMirror({
   FETCH_COLLECTIONS: null,
   FETCH_GAMES: null,
   FETCH_SEARCH: null,
+  SEARCH_FETCHED: null,
   GAMES_FETCHED: null,
 
   /** Data sync functions */

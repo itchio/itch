@@ -264,6 +264,10 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
     state = state::assocIn(['library', 'search', 'query'], payload.query)
     AppStore.emit_change()
   })
+  on(AppConstants.SEARCH_FETCHED, (payload) => {
+    state = state::assocIn(['library', 'search', 'fetched_query'], payload.query)
+    AppStore.emit_change()
+  })
 
   on(AppConstants.GAIN_FOCUS, gain_focus)
 

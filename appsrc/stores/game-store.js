@@ -73,6 +73,7 @@ function fetch_search (payload) {
 
   log(opts, `fetch_search(${query})`)
   fetch.search(market, query, (games) => commit_games('search', games))
+  AppActions.search_fetched(query)
 }
 
 function commit_dashboard_games () {

@@ -12,11 +12,12 @@ class Icon extends ShallowComponent {
     let icon = this.props.icon
     let spin = !!this.props.spin
     let data_tip = this.props['data-tip']
+    let additional_class_set = this.props.classSet
 
     if (icon) {
       let opts = {
         className: `icon icon-${icon}`,
-        classSet: {spin}
+        classSet: Object.assign({spin}, additional_class_set)
       }
       if (data_tip) {
         opts['data-tip'] = data_tip

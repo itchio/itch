@@ -370,6 +370,10 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.FETCH_SEARCH, query })
   },
 
+  search_fetched: (query) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.SEARCH_FETCHED, query })
+  },
+
   games_fetched: (game_ids) => {
     AppDispatcher.dispatch({ action_type: AppConstants.GAMES_FETCHED, game_ids })
   },

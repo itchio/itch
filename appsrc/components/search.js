@@ -58,8 +58,13 @@ class SearchContent extends ShallowComponent {
     let empty = search_games::count() === 0
     let is_press = this.props::getIn(['state', 'credentials', 'me', 'press_user'])
 
+    let search_class_set = {}
+    if (query.length > 0 && loading) {
+      search_class_set.loading = true
+    }
+
     let searchbox_children = [
-      r(Icon, {icon: 'search', spin: (query.length > 0 && loading)}),
+      r(Icon, {icon: 'search', classSet: search_class_set}),
       r.input({ref: 'input', type: 'text', value: query, placeholder: t('search.placeholder'), onChange: this.onInput.bind(this)})
     ]
 
