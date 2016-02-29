@@ -5,6 +5,7 @@ let Promise = require('bluebird')
 let electron = require('electron')
 let BrowserWindow = electron.BrowserWindow
 let shell = electron.shell
+let powerSaveBlocker = electron.powerSaveBlocker
 
 let market = require('../../util/market')
 let url = require('../../util/url')
@@ -102,11 +103,15 @@ let self = {
       win.loadURL(`http://localhost:${port}`, options)
     })
 
+    const blocker_id = powerSaveBlocker.start('prevent-display-sleep')
+
     await new Promise((resolve, reject) => {
       win.on('close', () => {
         win.webContents.session.clearCache(resolve)
       })
     })
+
+    powerSaveBlocker.stop(blocker_id)
 
     log(opts, `shutting down http server on port ${port}`)
     server.close()
