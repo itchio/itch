@@ -152,7 +152,16 @@ function handle_task_error (err, id, task_name) {
     log(cave_opts(id), msg)
     AppActions.cave_progress({id, task: 'idle', error: msg, progress: 0})
   } else if (err instanceof errors.Cancelled) {
-    queue_task(id, 'idle')
+    let cave = CaveStore.find(id)
+    if (cave) {
+      if (cave.launchable && cave.success_once) {
+        queue_task(id, 'idle')
+      } else {
+        AppActions.implode_cave(id)
+      }
+    } else {
+      // it's dead, Jim!
+    }
   } else {
     log(cave_opts(id), err.stack || err)
     AppActions.cave_progress({id, task: 'error', error: '' + err, progress: 0})
@@ -418,9 +427,9 @@ async function implode_cave (payload) {
 
 function cancel_cave (payload) {
   let task = current_tasks[payload.id]
-  if (task) {
+  if (task && !task.cancelling) {
+    task.cancelling = true
     task.opts.emitter.emit('cancel')
-    delete current_tasks[payload.id]
   }
 }
 

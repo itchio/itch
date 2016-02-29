@@ -8,6 +8,8 @@ let AppActions = require('../actions/app-actions')
 
 let core = require('./install/core')
 
+const keep_archives = (process.env.REMEMBER_ME_WHEN_IM_GONE === '1')
+
 let self = {
   start: async function (opts) {
     let id = opts.id
@@ -43,9 +45,8 @@ let self = {
           throw e
         }
       }
-      AppActions.update_cave(id, {installed_archive_mtime: null})
 
-      if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
+      if (!keep_archives) {
         log(opts, `Erasing archive ${archive_path}`)
         await sf.wipe(archive_path)
       }

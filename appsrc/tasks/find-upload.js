@@ -64,16 +64,24 @@ let self = {
   },
 
   start: async function (opts) {
-    let id = opts.id
+    const id = opts.id
+
+    const emitter = opts.emitter
+    let cancelled = false
+    if (emitter) {
+      emitter.once('cancel', () => {
+        cancelled = true
+      })
+    }
+
+    const client = CredentialsStore.get_current_user()
     let uploads
-    let client = CredentialsStore.get_current_user()
 
-    let cave = CaveStore.find(id)
-    let key = cave.key || market.get_entities('download_keys')::findWhere({game_id: cave.game_id})
+    const cave = CaveStore.find(id)
+    const key = cave.key || market.get_entities('download_keys')::findWhere({game_id: cave.game_id})
 
-    let action = 'launch'
-    let game = market.get_entities('games')[cave.game_id] || {}
-    action = classification_actions[game.classification] || 'launch'
+    const game = market.get_entities('games')[cave.game_id] || {}
+    const action = classification_actions[game.classification] || 'launch'
 
     if (key) {
       AppActions.update_cave(id, {key})
@@ -114,6 +122,10 @@ let self = {
       }
       AppActions.show_packaging_policy(format, cave.game_id)
       return
+    }
+
+    if (cancelled) {
+      throw new errors.Cancelled()
     }
 
     throw new errors.Transition({

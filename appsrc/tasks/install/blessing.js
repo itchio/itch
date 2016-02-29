@@ -20,14 +20,13 @@ let self = (opts) => {
     }
     opts.emitter.on('shine', onshine)
 
+    // FIXME the flow for cancelling blessing is unclear
+    // (can't abort an installation at )
     oncancel = () => {
       remove_listeners()
-      let tr = new errors.Transition({
-        to: 'idle',
-        reason: 'no-blessing'
-      })
-      reject(tr)
+      reject(new errors.Cancelled())
     }
+    opts.emitter.on('cancel', oncancel)
   }
   return new Promise(cb)
 }

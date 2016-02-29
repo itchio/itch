@@ -30,18 +30,6 @@ function spawn (opts) {
   let child = child_process.spawn(command, args, spawn_opts)
   let cancelled = false
 
-  if (emitter) {
-    emitter.once('cancel', (e) => {
-      try {
-        cancelled = true
-        child.kill('SIGKILL')
-        emitter.emit('cancelled', {comment: `Very dead, Mr. Spock.`})
-      } catch (e) {
-        log(opts, `error while killing ${command}: ${e.stack || e}`)
-      }
-    })
-  }
-
   if (opts.ontoken) {
     let splitter = child.stdout.pipe(new LFTransform()).pipe(StreamSplitter(split))
     splitter.encoding = 'utf8'
@@ -63,6 +51,17 @@ function spawn (opts) {
       }
     })
     child.on('error', reject)
+
+    if (emitter) {
+      emitter.once('cancel', (e) => {
+        try {
+          cancelled = true
+          child.kill('SIGKILL')
+        } catch (e) {
+          log(opts, `error while killing ${command}: ${e.stack || e}`)
+        }
+      })
+    }
   })
 }
 

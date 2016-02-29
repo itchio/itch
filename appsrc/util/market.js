@@ -8,9 +8,11 @@ let path = require('path')
 let sf = require('./sf')
 let app = require('./app')
 
+import { isEqual } from 'underline'
+
 const legacy_db = require('./legacy-db')
 
-let state = {
+const state = {
   library_dir: null,
 
   get_db_root: () => {
@@ -23,7 +25,7 @@ let state = {
 
 /* Data persistence / retrieval */
 
-let data = {}
+const data = {}
 
 async function load (user_id) {
   log(opts, `loading db for user ${user_id}`)
@@ -54,6 +56,12 @@ async function load (user_id) {
     entities[table_name] = table
   }
 
+  const wipe_temp = async function (record_path) {
+    const file = path.join(state.get_db_root(), record_path)
+    await sf.wipe(file)
+  }
+
+  await sf.glob('*/*.tmp*', {cwd: state.get_db_root()}).map(wipe_temp, {concurrency: 4})
   await sf.glob('*/*', {cwd: state.get_db_root()}).map(load_record, {concurrency: 4})
 
   log(opts, `done loading db for user ${user_id}`)
@@ -88,13 +96,15 @@ function save_all_entities (response, opts) {
     for (const entity_id of Object.keys(entities)) {
       const entity = entities[entity_id]
 
-      let record = table[entity_id] || {}
-      Object.assign(record, entity)
-      table[entity_id] = record
+      const record = table[entity_id] || {}
+      const new_record = Object.assign({}, record, entity)
+      if (!record::isEqual(new_record)) {
+        table[entity_id] = new_record
 
-      if (persist) {
-        let p = save_to_disk(table_name, entity_id, record)
-        if (promises) promises.push(p)
+        if (persist) {
+          let p = save_to_disk(table_name, entity_id, record)
+          if (promises) promises.push(p)
+        }
       }
     }
 
