@@ -267,7 +267,7 @@ let self = {
   show_packaging_policy: (format, game_id) => {
     pre: { // eslint-disable-line
       typeof format === 'string'
-      typeof game_id === 'string'
+      typeof game_id === 'number'
     }
     AppDispatcher.dispatch({ action_type: AppConstants.SHOW_PACKAGING_POLICY, format, game_id })
   },
