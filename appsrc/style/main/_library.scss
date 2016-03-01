@@ -245,7 +245,7 @@ $open_button_color: #4B6D85;
 
       .icon-search {
         display: inline;
-        color: #5F5A5A;
+        color: lighten(#5F5A5A, 20%);
         margin: 0 8px 0 6px;
         -webkit-animation: none;
 
