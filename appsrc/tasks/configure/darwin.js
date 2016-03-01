@@ -1,9 +1,9 @@
 
-const Promise = require('bluebird')
-const path = require('path')
+import Promise from 'bluebird'
+import path from 'path'
 
-const common = require('./common')
-const sf = require('../../util/sf')
+import common from './common'
+import sf from '../../util/sf'
 
 let ignore_patterns = [
   // skip some typical junk we find in archives that's supposed
@@ -32,4 +32,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

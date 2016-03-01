@@ -1,12 +1,12 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const sd = require('./skin-deeper')
-const stubs = require('../stubs/react-stubs')
+import sd from './skin-deeper'
+import stubs from '../stubs/react-stubs'
 
 test('ProgressBar', t => {
-  let ProgressBar = proxyquire('../../app/components/progress-bar', stubs)
+  const ProgressBar = proxyquire('../../app/components/progress-bar', stubs).default
   sd.shallowRender(sd(ProgressBar, {}))
   let progress = 0.5
   let tree = sd.shallowRender(sd(ProgressBar, {progress}))

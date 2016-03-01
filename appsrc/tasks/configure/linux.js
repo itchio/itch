@@ -1,5 +1,5 @@
 
-const common = require('./common')
+import common from './common'
 
 let self = {
   configure: async function (app_path) {
@@ -8,4 +8,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

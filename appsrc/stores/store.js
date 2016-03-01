@@ -1,9 +1,8 @@
 
+import {EventEmitter} from 'events'
+import os from '../util/os'
 
-const EventEmitter = require('events').EventEmitter
-const os = require('../util/os')
-
-let CHANGE_EVENT = 'change'
+const CHANGE_EVENT = 'change'
 
 function Store (name, process_type) {
   if (typeof process_type === 'undefined') {
@@ -84,9 +83,9 @@ Store.subscribe = (name, cb) => {
   } else {
     let store_path = `./${name}`
     console.log(`Subscribing to ${store_path}`)
-    const specific_store = require(store_path)
+    const specific_store = require(store_path).default
     specific_store.add_change_listener('anonymous', cb)
   }
 }
 
-module.exports = Store
+export default Store

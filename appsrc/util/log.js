@@ -1,11 +1,11 @@
 
 import { pairs } from 'underline'
 
-const fs = require('fs')
-const sf = require('../util/sf')
-const path = require('path')
-const eol = require('eol')
-const deep_assign = require('deep-assign')
+import fs from 'fs'
+import sf from '../util/sf'
+import path from 'path'
+import eol from 'eol'
+import deep_assign from 'deep-assign'
 
 function make (name) {
   let f = function (opts, message) {
@@ -17,7 +17,7 @@ function make (name) {
   return f
 }
 
-class Logger {
+export class Logger {
   constructor (user_opts) {
     if (typeof user_opts === 'undefined') {
       user_opts = {}
@@ -98,4 +98,4 @@ class Logger {
 }
 make.Logger = Logger
 
-module.exports = make
+export default make

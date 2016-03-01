@@ -1,16 +1,17 @@
 
-const market = require('../util/market')
+import market from '../util/market'
 import { indexBy, findWhere } from 'underline'
 
-const os = require('../util/os')
-const log = require('../util/log')('tasks/find-upload')
+import os from '../util/os'
+import mklog from '../util/log'
+const log = mklog('tasks/find-upload')
 
-const errors = require('./errors')
+import errors from './errors'
 
-const AppActions = require('../actions/app-actions')
-const CaveStore = require('../stores/cave-store')
-const CredentialsStore = require('../stores/credentials-store')
-const classification_actions = require('../constants/classification-actions')
+import AppActions from '../actions/app-actions'
+import CaveStore from '../stores/cave-store'
+import CredentialsStore from '../stores/credentials-store'
+import classification_actions from '../constants/classification-actions'
 
 let self = {
   filter_uploads: function (action, uploads) {
@@ -136,4 +137,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

@@ -1,27 +1,28 @@
 
 import { throttle, each } from 'underline'
 
-const walk = require('walk')
-const electron = require('electron')
-const uuid = require('node-uuid')
-const deep = require('deep-diff')
-const deepAssign = require('deep-assign')
-const humanize = require('humanize-plus')
+import walk from 'walk'
+import electron from 'electron'
+import uuid from 'node-uuid'
+import deep from 'deep-diff'
+import deepAssign from 'deep-assign'
+import humanize from 'humanize-plus'
 
-const market = require('../util/market')
-const explorer = require('../util/explorer')
-const diskspace = require('../util/diskspace')
-const log = require('../util/log')('install-location-store')
-let opts = { logger: new log.Logger() }
+import market from '../util/market'
+import explorer from '../util/explorer'
+import diskspace from '../util/diskspace'
+import mklog from '../util/log'
+const log = mklog('install-location-store')
+const opts = { logger: new log.Logger() }
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppConstants = require('../constants/app-constants')
-const AppActions = require('../actions/app-actions')
-const Store = require('./store')
-const PreferencesStore = require('./preferences-store')
-const WindowStore = require('./window-store')
-const I18nStore = require('./i18n-store')
-const SetupStore = require('./setup-store')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
+import Store from './store'
+import PreferencesStore from './preferences-store'
+import WindowStore from './window-store'
+import I18nStore from './i18n-store'
+import SetupStore from './setup-store'
 
 let appdata_location = null
 let computations_to_cancel = {}
@@ -323,4 +324,4 @@ PreferencesStore.add_change_listener('install-location-store', () => {
   reload()
 })
 
-module.exports = InstallLocationStore
+export default InstallLocationStore

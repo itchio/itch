@@ -10,6 +10,6 @@ game.define({ user })
 collection.define({ games: arrayOf(game) })
 download_key.define({ game })
 
-module.exports = {
+export default {
   game, user, collection, download_key
 }

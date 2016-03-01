@@ -1,6 +1,6 @@
 
-const spawn = require('./spawn')
-const os = require('./os')
+import spawn from './spawn'
+import os from './os'
 
 /*
  * Heavily based on https://github.com/int0h/npm-hddSpace
@@ -159,4 +159,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

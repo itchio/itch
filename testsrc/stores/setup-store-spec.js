@@ -1,23 +1,28 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const AppConstants = require('../../app/constants/app-constants')
+import AppConstants from '../../app/constants/app-constants'
 
-const electron = require('../stubs/electron')
-const AppDispatcher = require('../stubs/app-dispatcher')
-const AppActions = require('../stubs/app-actions')
+import electron from '../stubs/electron'
+import AppDispatcher from '../stubs/app-dispatcher'
+import AppActions from '../stubs/app-actions'
 
 test('SetupStore', t => {
-  let ibrew = {
-    fetch: () => null
+  const ibrew = {
+    __esModule: true,
+    default: {
+      fetch: () => null,
+      bin_path: () => ''
+    },
+    '@noCallThru': true
   }
 
-  let xdg_mime = {
+  const xdg_mime = {
     register_if_needed: async () => null
   }
 
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     '../util/ibrew': ibrew,
     '../util/xdg-mime': xdg_mime,
     '../actions/app-actions': AppActions,
@@ -25,15 +30,15 @@ test('SetupStore', t => {
   }, electron)
 
   proxyquire('../../app/stores/setup-store', stubs)
-  let handler = AppDispatcher.get_handler('setup-store')
+  const handler = AppDispatcher.get_handler('setup-store')
 
   t.case('window_ready', async t => {
-    t.stub(ibrew, 'fetch').resolves()
+    t.stub(ibrew.default, 'fetch').resolves()
     await handler({ action_type: AppConstants.WINDOW_READY })
   })
 
   t.case('window_ready (err)', async t => {
-    t.stub(ibrew, 'fetch', async (opts, name) => {
+    t.stub(ibrew.default, 'fetch', async (opts, name) => {
       if (name === 'butler') {
         let err = {stack: 'Ha!'}
         throw err

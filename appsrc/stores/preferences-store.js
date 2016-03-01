@@ -1,15 +1,16 @@
 
-const log = require('../util/log')('i18n-store')
-let opts = { logger: new log.Logger() }
+import mklog from '../util/log'
+const log = mklog('i18n-store')
+const opts = { logger: new log.Logger() }
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppConstants = require('../constants/app-constants')
-const Store = require('./store')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import Store from './store'
 
-const path = require('path')
-const electron = require('electron')
-const deepAssign = require('deep-assign')
-const sf = require('../util/sf')
+import path from 'path'
+import electron from 'electron'
+import deepAssign from 'deep-assign'
+import sf from '../util/sf'
 
 let state = {}
 
@@ -116,4 +117,4 @@ AppDispatcher.register('preferences-store', Store.action_listeners(on => {
   on(AppConstants.MAKE_INSTALL_LOCATION_DEFAULT, make_install_location_default)
 }))
 
-module.exports = PreferencesStore
+export default PreferencesStore

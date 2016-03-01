@@ -1,11 +1,11 @@
 
-const sd = require('skin-deep')
-const react = require('react')
+import sd from 'skin-deep'
+import react from 'react'
 
 /**
 * Pretty much unnecessary now
 */
-let self = (comp, opts, children) => {
+const self = (comp, opts, children) => {
   if (typeof opts === 'undefined') {
     opts = {}
   }
@@ -17,4 +17,4 @@ self.as_array = (arr) => Array.isArray(arr) ? arr : [arr]
 
 Object.assign(self, sd)
 
-module.exports = self
+export default self

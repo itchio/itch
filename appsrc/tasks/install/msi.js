@@ -1,8 +1,8 @@
 
-const spawn = require('../../util/spawn')
-const os = require('../../util/os')
+import spawn from '../../util/spawn'
+import os from '../../util/os'
 
-const AppActions = require('../../actions/app-actions')
+import AppActions from '../../actions/app-actions'
 
 const log = require('../../util/log')('installers/msi')
 
@@ -65,4 +65,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

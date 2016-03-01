@@ -1,35 +1,36 @@
 
 import { throttle, findWhere, each } from 'underline'
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppActions = require('../actions/app-actions')
-const AppConstants = require('../constants/app-constants')
-const classification_actions = require('../constants/classification-actions')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppActions from '../actions/app-actions'
+import AppConstants from '../constants/app-constants'
+import classification_actions from '../constants/classification-actions'
 
-const Store = require('./store')
-const CredentialsStore = require('./credentials-store')
-const PreferencesStore = require('./preferences-store')
-const InstallLocationStore = require('./install-location-store')
-const I18nStore = require('./i18n-store')
+import Store from './store'
+import CredentialsStore from './credentials-store'
+import PreferencesStore from './preferences-store'
+import InstallLocationStore from './install-location-store'
+import I18nStore from './i18n-store'
 
-const errors = require('../tasks/errors')
+import errors from '../tasks/errors'
 
-const path = require('path')
-const deep = require('deep-diff')
-const clone = require('clone')
-const uuid = require('node-uuid')
+import path from 'path'
+import deep from 'deep-diff'
+import clone from 'clone'
+import uuid from 'node-uuid'
 
-const Logger = require('../util/log').Logger
-const log = require('../util/log')('cave-store')
-const market = require('../util/market')
-const os = require('../util/os')
-const diego = require('../util/diego')
-const explorer = require('../util/explorer')
-const sf = require('../util/sf')
+import {Logger} from '../util/log'
+import mklog from '../util/log'
+const log = mklog('cave-store')
+import market from '../util/market'
+import os from '../util/os'
+import diego from '../util/diego'
+import explorer from '../util/explorer'
+import sf from '../util/sf'
 
-const electron = require('electron')
+import electron from 'electron'
 
-const EventEmitter = require('events').EventEmitter
+import {EventEmitter} from 'events'
 
 let old_state = {}
 let state = {}
@@ -359,28 +360,28 @@ async function queue_game (payload) {
 }
 
 async function request_cave_uninstall (payload) {
-  let cave = CaveStore.find(payload.id)
-  let game = market.get_entities('games')[cave.game_id]
+  const cave = CaveStore.find(payload.id)
+  const game = market.get_entities('games')[cave.game_id]
 
-  let i18n = I18nStore.get_state()
+  const i18n = I18nStore.get_state()
 
-  let buttons = [
+  const buttons = [
     i18n.t('prompt.uninstall.uninstall'),
     i18n.t('prompt.uninstall.reinstall'),
     i18n.t('prompt.uninstall.cancel')
   ]
-  let i18n_vars = {
+  const i18n_vars = {
     title: game.title
   }
 
-  let dialog_opts = {
+  const dialog_opts = {
     type: 'question',
     buttons,
     message: i18n.t('prompt.uninstall.message', i18n_vars),
     cancelId: 2
   }
 
-  let callback = (response) => {
+  const callback = (response) => {
     if (response === 0) {
       AppActions.queue_cave_uninstall(payload.id)
     } else if (response === 1) {
@@ -391,7 +392,12 @@ async function request_cave_uninstall (payload) {
 }
 
 async function queue_cave_uninstall (payload) {
-  let record = CaveStore.find(payload.id)
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.id === 'string'
+  }
+
+  const record = CaveStore.find(payload.id)
 
   if (record) {
     queue_task(record.id, 'uninstall')
@@ -401,23 +407,41 @@ async function queue_cave_uninstall (payload) {
 }
 
 async function queue_cave_reinstall (payload) {
-  let cave = payload.id
-  log(store_opts, `reinstalling ${cave}!`)
-  queue_task(cave, 'install', {reinstall: true})
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.id === 'string'
+  }
+
+  const cave_id = payload.id
+  log(store_opts, `reinstalling ${cave_id}!`)
+  queue_task(cave_id, 'install', {reinstall: true})
 }
 
 async function update_cave (payload) {
-  let {id, cave} = payload
-  if (cave_blacklist[id]) return
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.id === 'string'
+    typeof payload.cave === 'object'
+  }
+
+  const {id, cave} = payload
+  if (cave_blacklist[id]) {
+    return
+  }
   market.save_all_entities({entities: {caves: {[id]: cave}}})
 }
 
 async function implode_cave (payload) {
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.id === 'string'
+  }
+
   // don't accept any further updates to these caves, they're imploding.
   // useful in case child takes some time to exit after it receives SIGKILL
   cave_blacklist[payload.id] = true
-  cancel_cave(payload)
 
+  cancel_cave(payload)
   market.delete_all_entities({entities: {caves: [payload.id]}})
 
   delete state[payload.id]
@@ -427,7 +451,12 @@ async function implode_cave (payload) {
 }
 
 function cancel_cave (payload) {
-  let task = current_tasks[payload.id]
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.id === 'string'
+  }
+
+  const task = current_tasks[payload.id]
   if (task && !task.cancelling) {
     task.cancelling = true
     task.opts.emitter.emit('cancel')
@@ -435,13 +464,13 @@ function cancel_cave (payload) {
 }
 
 async function authenticated (payload) {
-  let me = CredentialsStore.get_me()
+  const me = CredentialsStore.get_me()
 
   try {
     await market.load(me.id)
   } catch (e) {
     console.log(`error while loading market: ${e.stack || e}`)
-    require('../util/crash-reporter').handle(e)
+    require('../util/crash-reporter').default.handle(e)
     return
   }
 
@@ -449,7 +478,7 @@ async function authenticated (payload) {
 }
 
 async function locations_ready (payload) {
-  let caves = market.get_entities('caves')
+  const caves = market.get_entities('caves')
 
   caves::each((record) => {
     initial_progress(record)
@@ -459,13 +488,14 @@ async function locations_ready (payload) {
 
 function cancel_all_tasks () {
   for (let cave of Object.keys(current_tasks)) {
-    let task = current_tasks[cave]
-    if (!task) continue
-    if (task) {
-      task.opts.emitter.emit('cancel')
+    const task = current_tasks[cave]
+    delete current_tasks[cave]
+
+    if (!task) {
+      continue
     }
+    task.opts.emitter.emit('cancel')
   }
-  current_tasks = {}
 }
 
 function logout (payload) {
@@ -491,4 +521,4 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
   on(AppConstants.LOGOUT, logout)
 }))
 
-module.exports = CaveStore
+export default CaveStore

@@ -1,15 +1,16 @@
 
-const r = require('r-dom')
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('../shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from '../shallow-component'
 
-const Tooltip = require('rc-tooltip')
-const Icon = require('../icon')
+import Tooltip from 'rc-tooltip'
+import Icon from '../icon'
 
-const AppActions = require('../../actions/app-actions')
-const classification_actions = require('../../constants/classification-actions')
+import AppActions from '../../actions/app-actions'
+import ClassificationActions from '../../constants/classification-actions'
 
-const platform = require('../../util/os').itch_platform()
+import os from '../../util/os'
+const platform = os.itch_platform()
 
 class SecondaryActions extends ShallowComponent {
   render () {
@@ -19,7 +20,7 @@ class SecondaryActions extends ShallowComponent {
     let children = []
 
     let classification = game.classification
-    let action = classification_actions[classification]
+    let action = ClassificationActions[classification]
 
     if (cave) {
       let task = cave.task
@@ -148,4 +149,4 @@ SecondaryActions.propTypes = {
   game: PropTypes.any
 }
 
-module.exports = SecondaryActions
+export default SecondaryActions

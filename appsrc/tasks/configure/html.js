@@ -1,8 +1,8 @@
 
-const path = require('path')
-const clone = require('clone')
+import path from 'path'
+import clone from 'clone'
 
-const sf = require('../../util/sf')
+import sf from '../../util/sf'
 
 let self = {
   sort_by_depth: function (paths) {
@@ -28,4 +28,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

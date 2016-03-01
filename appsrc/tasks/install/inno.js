@@ -1,17 +1,17 @@
 
-const spawn = require('../../util/spawn')
-const find_uninstallers = require('./find-uninstallers')
+import spawn from '../../util/spawn'
+import find_uninstallers from './find-uninstallers'
 
-const AppActions = require('../../actions/app-actions')
+import AppActions from '../../actions/app-actions'
 
-const blessing = require('./blessing')
-const errors = require('../errors')
+import blessing from './blessing'
+import errors from '../errors'
 
 const log = require('../../util/log')('installers/inno')
 
 // InnoSetup docs: http://www.jrsoftware.org/ishelp/index.php?topic=setupcmdline
 
-let self = {
+const self = {
   log_path: function (operation, installer_path) {
     return `${installer_path}.${operation}.log.txt`
   },
@@ -76,4 +76,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

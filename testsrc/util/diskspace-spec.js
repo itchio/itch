@@ -1,7 +1,8 @@
-const test = require('zopf')
-const fixture = require('../fixture')
-const diskspace = require('../../app/util/diskspace')
-const os = require('../../app/util/os')
+
+import test from 'zopf'
+import fixture from '../fixture'
+import diskspace from '../../app/util/diskspace'
+import os from '../../app/util/os'
 
 test('diskspace', t => {
   t.case('df (OSX 10.11)', async t => {

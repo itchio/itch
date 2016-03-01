@@ -1,13 +1,12 @@
 
+import AppActions from '../actions/app-actions'
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import Store from './store'
+import I18nStore from './i18n-store'
 
-const AppActions = require('../actions/app-actions')
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppConstants = require('../constants/app-constants')
-const Store = require('./store')
-const I18nStore = require('./i18n-store')
-
-const app = require('electron').app
-const BrowserWindow = require('electron').BrowserWindow
+import electron from 'electron'
+const {app, BrowserWindow} = electron
 
 let window
 let quitting = false
@@ -123,4 +122,4 @@ app.on('window-all-closed', e => {
   e.preventDefault()
 })
 
-module.exports = WindowStore
+export default WindowStore

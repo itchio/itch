@@ -1,22 +1,23 @@
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppConstants = require('../constants/app-constants')
-const AppActions = require('../actions/app-actions')
-const Store = require('./store')
-const CaveStore = require('./cave-store')
-const I18nStore = require('./i18n-store')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
+import Store from './store'
+import CaveStore from './cave-store'
+import I18nStore from './i18n-store'
 
-const electron = require('electron')
+import electron from 'electron'
 
-const url_parser = require('url')
+import url_parser from 'url'
 
-const Logger = require('../util/log').Logger
-let opts = {
+import {Logger} from '../util/log'
+import mklog from '../util/log'
+const log = mklog('url-store')
+const opts = {
   logger: new Logger()
 }
-const log = require('../util/log')('url-store')
-const market = require('../util/market')
-const os = require('../util/os')
+import market from '../util/market'
+import os from '../util/os'
 
 let UrlStore = Object.assign(new Store('url-store'), {})
 
@@ -215,4 +216,4 @@ AppDispatcher.register('url-store', Store.action_listeners(on => {
   on(AppConstants.GAMES_FETCHED, games_fetched)
 }))
 
-module.exports = UrlStore
+export default UrlStore

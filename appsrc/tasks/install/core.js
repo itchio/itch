@@ -1,11 +1,11 @@
 
 const log = require('../../util/log')('install/core')
-const sniff = require('../../util/sniff')
-const spawn = require('../../util/spawn')
+import sniff from '../../util/sniff'
+import spawn from '../../util/spawn'
 
-const AppActions = require('../../actions/app-actions')
+import AppActions from '../../actions/app-actions'
 
-const ExtendableError = require('es6-error')
+import ExtendableError from 'es6-error'
 
 class UnhandledFormat extends ExtendableError {
   constructor (archive_path) {
@@ -131,4 +131,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

@@ -1,15 +1,15 @@
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppConstants = require('../constants/app-constants')
-const AppActions = require('../actions/app-actions')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
 
-const Store = require('./store')
-const CaveStore = require('./cave-store')
+import Store from './store'
+import CaveStore from './cave-store'
 
-const crash_reporter = require('../util/crash-reporter')
-const github = require('../util/github')
-const sf = require('../util/sf')
-const market = require('../util/market')
+import crash_reporter from '../util/crash-reporter'
+import github from '../util/github'
+import sf from '../util/sf'
+import market from '../util/market'
 
 let state = {}
 
@@ -59,4 +59,4 @@ AppDispatcher.register('report-store', Store.action_listeners(on => {
   on(AppConstants.REPORT_CAVE, report_cave)
 }))
 
-module.exports = ReportStore
+export default ReportStore

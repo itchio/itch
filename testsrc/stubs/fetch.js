@@ -9,4 +9,4 @@ let fetch = {
   '@noCallThru': true
 }
 
-module.exports = fetch
+export default fetch

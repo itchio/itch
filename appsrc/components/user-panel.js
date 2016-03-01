@@ -1,7 +1,7 @@
 
-const r = require('r-dom')
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
 /**
  * A friendly component that displays your avatar and username
@@ -32,4 +32,4 @@ UserPanel.propTypes = {
   me: PropTypes.object
 }
 
-module.exports = UserPanel
+export default UserPanel

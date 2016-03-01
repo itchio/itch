@@ -1,5 +1,4 @@
 
+import os from './os'
 
-const os = require('./os')
-
-module.exports = require(`./auto-updater/${os.platform()}`)
+export default require(`./auto-updater/${os.platform()}`)

@@ -1,14 +1,14 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const sd = require('./skin-deeper')
-const stubs = require('../stubs/react-stubs')
+import sd from './skin-deeper'
+import stubs from '../stubs/react-stubs'
 
 test('LibrarySidebar', t => {
-  let LibrarySidebar = proxyquire('../../app/components/library-sidebar', stubs)
-  let game = { title: 'Wreck IT' }
-  let props = {
+  const LibrarySidebar = proxyquire('../../app/components/library-sidebar', stubs).default
+  const game = { title: 'Wreck IT' }
+  const props = {
     collections: {
       a: {title: 'Collection A'},
       b: {title: 'Collection B'}
@@ -25,6 +25,6 @@ test('LibrarySidebar', t => {
   }
   sd.shallowRender(sd(LibrarySidebar, {state: props}))
 
-  let tree = sd.shallowRender(sd(LibrarySidebar, {state: props}))
+  const tree = sd.shallowRender(sd(LibrarySidebar, {state: props}))
   t.ok(tree.findNode('.search'), 'displays search area')
 })

@@ -8,4 +8,4 @@ let market = {
   '@noCallThru': true
 }
 
-module.exports = market
+export default market

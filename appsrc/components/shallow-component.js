@@ -1,5 +1,5 @@
 
-const TranslatedComponent = require('./translated-component')
+import TranslatedComponent from './translated-component'
 const shallowEqual = require('pure-render-mixin').shallowEqual
 
 /**
@@ -22,4 +22,4 @@ class ShallowComponent extends TranslatedComponent {
 
 }
 
-module.exports = ShallowComponent
+export default ShallowComponent

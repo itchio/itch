@@ -1,9 +1,9 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
-const sinon = require('sinon')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
+import sinon from 'sinon'
 
-const electron = require('../stubs/electron')
+import electron from '../stubs/electron'
 
 test('http', t => {
   let onprogress = t.spy()

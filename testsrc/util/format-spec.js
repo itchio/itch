@@ -1,7 +1,7 @@
 
-const test = require('zopf')
+import test from 'zopf'
 
-const format = require('../../app/util/format')
+import format from '../../app/util/format'
 
 test('format', t => {
   t.case('camelize', t => {

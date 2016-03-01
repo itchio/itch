@@ -1,14 +1,14 @@
 
 import { each } from 'underline'
 
-const Store = require('./store')
+import Store from './store'
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppConstants = require('../constants/app-constants')
-const AppActions = require('../actions/app-actions')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
 
-const market = require('../util/market')
-const fetch = require('../util/fetch')
+import market from '../util/market'
+import fetch from '../util/fetch'
 
 let state = {}
 
@@ -30,7 +30,7 @@ if (process.env.NO_TEACHING) {
   featured_ids.length = 0
 }
 
-const env = require('../env')
+import env from '../env'
 
 if (env.name === 'development') {
   featured_ids.length = 0
@@ -66,4 +66,4 @@ AppDispatcher.register('collection-store', Store.action_listeners(on => {
   on(AppConstants.FETCH_COLLECTIONS, fetch_collections)
 }))
 
-module.exports = CollectionStore
+export default CollectionStore

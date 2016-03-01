@@ -1,10 +1,10 @@
 
-const configure = require('./configure')
+import configure from './configure'
 
-const CaveStore = require('../stores/cave-store')
+import CaveStore from '../stores/cave-store'
 
-const native = require('./launch/native')
-const html = require('./launch/html')
+import native from './launch/native'
+import html from './launch/html'
 
 let self = {
   valid_cave: function (cave) {
@@ -41,4 +41,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

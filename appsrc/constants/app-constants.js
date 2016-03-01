@@ -1,7 +1,7 @@
 
-const keyMirror = require('keymirror')
+import keyMirror from 'keymirror'
 
-module.exports = keyMirror({
+export default keyMirror({
   BOOT: null,
   OPEN_URL: null,
   WINDOW_READY: null,

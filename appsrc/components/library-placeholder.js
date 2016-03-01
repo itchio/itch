@@ -1,12 +1,12 @@
 
-const r = require('r-dom')
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('./shallow-component')
-const interleave = require('./interleave')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
+import interleave from './interleave'
 
-const urls = require('../constants/urls')
+import urls from '../constants/urls'
 
-const Icon = require('./icon')
+import Icon from './icon'
 
 class LibraryPlaceholder extends ShallowComponent {
   render () {
@@ -83,4 +83,4 @@ LibraryPlaceholder.propTypes = {
   panel: PropTypes.string
 }
 
-module.exports = LibraryPlaceholder
+export default LibraryPlaceholder

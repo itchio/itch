@@ -1,12 +1,12 @@
 
-const Promise = require('bluebird')
-const child_process = require('child_process')
-const StreamSplitter = require('stream-splitter')
-const LFTransform = require('./lf-transform')
+import Promise from 'bluebird'
+import child_process from 'child_process'
+import StreamSplitter from 'stream-splitter'
+import LFTransform from './lf-transform'
 
-const errors = require('../tasks/errors')
+import errors from '../tasks/errors'
 
-const log = require('./log')('spawn')
+const log = require('./log').default('spawn')
 
 function spawn (opts) {
   pre: { // eslint-disable-line
@@ -65,4 +65,4 @@ function spawn (opts) {
   })
 }
 
-module.exports = spawn
+export default spawn

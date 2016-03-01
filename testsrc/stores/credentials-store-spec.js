@@ -1,22 +1,26 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const AppConstants = require('../../app/constants/app-constants')
+import AppConstants from '../../app/constants/app-constants'
 
-const electron = require('../stubs/electron')
-const AppDispatcher = require('../stubs/app-dispatcher')
-const AppActions = require('../stubs/app-actions')
-const config = require('../stubs/config')
-const api = require('../stubs/api')
-const defer = require('../stubs/defer')
-
-let SetupStore = {
-  is_ready: () => true
-}
+import electron from '../stubs/electron'
+import AppDispatcher from '../stubs/app-dispatcher'
+import AppActions from '../stubs/app-actions'
+import config from '../stubs/config'
+import api from '../stubs/api'
+import defer from '../stubs/defer'
 
 test('CredentialsStore', t => {
-  let stubs = Object.assign({
+  const SetupStore = {
+    __esModule: true,
+    default: {
+      is_ready: () => true
+    },
+    '@noCallThru': true
+  }
+
+  const stubs = Object.assign({
     '../util/defer': defer,
     '../util/config': config,
     '../util/api': api,
@@ -25,16 +29,16 @@ test('CredentialsStore', t => {
     './setup-store': SetupStore
   }, electron)
 
-  let CredentialsStore = proxyquire('../../app/stores/credentials-store', stubs)
-  let handler = AppDispatcher.get_handler('credentials-store')
+  const CredentialsStore = proxyquire('../../app/stores/credentials-store', stubs).default
+  const handler = AppDispatcher.get_handler('credentials-store')
 
   t.case('window_ready (no credentials)', t => {
-    t.mock(AppActions).expects('no_stored_credentials').resolves()
+    t.mock(AppActions).expects('no_stored_credentials')
     return handler({ action_type: AppConstants.WINDOW_READY })
   })
 
   t.case('login with key + logout', async t => {
-    let user = {name: 'Pete'}
+    const user = {name: 'Pete'}
     t.mock(AppActions).expects('authenticated')
     t.stub(config, 'get').returns('numazu')
     t.stub(api.client, 'login_key').resolves({user})
@@ -49,12 +53,12 @@ test('CredentialsStore', t => {
   })
 
   t.case('login with password', async t => {
-    let user = {name: 'Pete'}
-    let username = 'foo'
-    let password = 'bar'
-    let key = 'numazu'
+    const user = {name: 'Pete'}
+    const username = 'foo'
+    const password = 'bar'
+    const key = 'numazu'
 
-    t.mock(AppActions).expects('authenticated').resolves()
+    t.mock(AppActions).expects('authenticated')
     t.stub(api.client, 'login_with_password').resolves({key: {key}})
     t.stub(api.user, 'me').resolves({user})
 

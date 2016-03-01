@@ -1,16 +1,17 @@
 
-const os = require('../../util/os')
+import os from '../../util/os'
 if (os.process_type() !== 'renderer') {
   throw new Error(`app-dispatcher/renderer required from ${os.process_type()}`)
 }
 
 const marco_level = parseInt(process.env.MARCO_POLO || '0', 10)
-const Log = require('../../util/log')
-let log = Log('dispatcher')
-let opts = {logger: new Log.Logger({sinks: {console: (marco_level > 0)}})}
 
-const electron = require('electron')
-let ipc = electron.ipcRenderer
+import Log from '../../util/log'
+const log = Log('dispatcher')
+const opts = {logger: new Log.Logger({sinks: {console: (marco_level > 0)}})}
+
+import electron from 'electron'
+const ipc = electron.ipcRenderer
 
 class RendererDispatcher {
   constructor () {
@@ -50,4 +51,4 @@ ipc.on('dispatcher-to-renderer', (ev, payload) => {
   })
 })
 
-module.exports = self
+export default self

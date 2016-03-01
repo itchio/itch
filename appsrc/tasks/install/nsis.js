@@ -1,12 +1,12 @@
 
-const spawn = require('../../util/spawn')
-const find_uninstallers = require('./find-uninstallers')
+import spawn from '../../util/spawn'
+import find_uninstallers from './find-uninstallers'
 
-const AppActions = require('../../actions/app-actions')
+import AppActions from '../../actions/app-actions'
 
-const blessing = require('./blessing')
-const errors = require('../errors')
-const sf = require('../../util/sf')
+import blessing from './blessing'
+import errors from '../errors'
+import sf from '../../util/sf'
 
 const log = require('../../util/log')('installers/nsis')
 
@@ -91,4 +91,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

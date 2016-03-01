@@ -1,5 +1,5 @@
 
-const electron = require('electron')
+import electron from 'electron'
 
 let self = {
   open: (folder) => {
@@ -13,4 +13,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

@@ -1,11 +1,11 @@
 
-const r = require('r-dom')
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-const Icon = require('./icon')
+import Icon from './icon'
 
-const AppActions = require('../actions/app-actions')
+import AppActions from '../actions/app-actions'
 
 /**
  * Displays our current progress when checking for updates, etc.
@@ -72,4 +72,4 @@ StatusBar.propTypes = {
   update: PropTypes.any
 }
 
-module.exports = StatusBar
+export default StatusBar

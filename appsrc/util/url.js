@@ -1,6 +1,6 @@
 
 /* node's standard url module */
-const url = require('url')
+import url from 'url'
 
 let self = {
   /** user.example.org => example.org */
@@ -16,4 +16,4 @@ let self = {
   format: url.format.bind(url)
 }
 
-module.exports = self
+export default self

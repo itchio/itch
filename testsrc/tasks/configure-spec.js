@@ -1,14 +1,14 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
-const path = require('path')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
+import path from 'path'
 
-const fixture = require('../fixture')
-const electron = require('../stubs/electron')
-const CaveStore = require('../stubs/cave-store')
-const AppActions = require('../stubs/app-actions')
+import fixture from '../fixture'
+import electron from '../stubs/electron'
+import CaveStore from '../stubs/cave-store'
+import AppActions from '../stubs/app-actions'
 
-const log = require('../../app/util/log')
+import log from '../../app/util/log'
 let logger = new log.Logger({sinks: {console: false}})
 let opts = {id: 'kalamazoo', logger}
 

@@ -1,5 +1,5 @@
 
-const spawn = require('./spawn')
+import spawn from './spawn'
 
 let self = {
   platform: function () {
@@ -75,4 +75,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

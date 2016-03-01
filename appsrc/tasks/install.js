@@ -1,14 +1,15 @@
 
-const errors = require('./errors')
+import errors from './errors'
 
-const noop = require('../util/noop')
-const sf = require('../util/sf')
-const log = require('../util/log')('tasks/install')
+import noop from '../util/noop'
+import sf from '../util/sf'
+import mklog from '../util/mklog'
+const log = mklog('tasks/install')
 
-const CaveStore = require('../stores/cave-store')
-const AppActions = require('../actions/app-actions')
+import CaveStore from '../stores/cave-store'
+import AppActions from '../actions/app-actions'
 
-const core = require('./install/core')
+import core from './install/core'
 
 function ensure (predicate, reason) {
   if (!predicate) {
@@ -69,4 +70,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

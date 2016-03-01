@@ -1,14 +1,14 @@
 
-const r = require('r-dom')
+import r from 'r-dom'
 import { count } from 'grovel'
 
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('./shallow-component')
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-const ProgressBar = require('./progress-bar')
-const ErrorList = require('./error-list')
+import ProgressBar from './progress-bar'
+import ErrorList from './error-list'
 
-const AppActions = require('../actions/app-actions')
+import AppActions from '../actions/app-actions'
 
 /**
 * A sidebar link to one of the library's panels. Could
@@ -54,4 +54,4 @@ LibraryPanelLink.propTypes = {
   before: PropTypes.any
 }
 
-module.exports = LibraryPanelLink
+export default LibraryPanelLink

@@ -1,8 +1,8 @@
 
-const test = require('zopf')
+import test from 'zopf'
 import { contains } from 'underline'
 
-const os = require('../../app/util/os')
+import os from '../../app/util/os'
 
 test('os', t => {
   let mock = t.mock(os)

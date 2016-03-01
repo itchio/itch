@@ -1,13 +1,13 @@
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppConstants = require('../constants/app-constants')
-const AppActions = require('../actions/app-actions')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
 
-const Store = require('./store')
-const SetupStore = require('./setup-store')
+import Store from './store'
+import SetupStore from './setup-store'
 
-const config = require('../util/config')
-const api = require('../util/api')
+import config from '../util/config'
+import api from '../util/api'
 
 let current_user = null
 let me = null
@@ -93,4 +93,4 @@ AppDispatcher.register('credentials-store', Store.action_listeners(on => {
   on(AppConstants.LOGOUT, logout)
 }))
 
-module.exports = CredentialsStore
+export default CredentialsStore

@@ -1,13 +1,13 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const sd = require('./skin-deeper')
-const stubs = require('../stubs/react-stubs')
+import sd from './skin-deeper'
+import stubs from '../stubs/react-stubs'
 
 test('PreferencesForm', t => {
-  let PreferencesForm = proxyquire('../../app/components/preferences-form', stubs)
-  let appdata = {
+  const PreferencesForm = proxyquire('../../app/components/preferences-form', stubs).default
+  const appdata = {
     name: 'appdata',
     size: -1,
     free_space: 202006237184,
@@ -15,7 +15,7 @@ test('PreferencesForm', t => {
     computing_size: false,
     path: ''
   }
-  let state = {
+  const state = {
     install_locations: {
       aliases: [
         ['', '~']
@@ -25,7 +25,7 @@ test('PreferencesForm', t => {
     }
   }
 
-  let tree = sd.shallowRender(sd(PreferencesForm, { state }))
+  const tree = sd.shallowRender(sd(PreferencesForm, { state }))
   let instance = tree.getMountedInstance()
   // TODO: finish writing test
   instance = instance

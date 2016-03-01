@@ -1,16 +1,17 @@
-const path = require('path')
+
+import path from 'path'
 
 import { sortBy } from 'underline'
-const Promise = require('bluebird')
-const shell_quote = require('shell-quote')
+import Promise from 'bluebird'
+import shell_quote from 'shell-quote'
 
-const os = require('../../util/os')
-const sf = require('../../util/sf')
-const spawn = require('../../util/spawn')
+import os from '../../util/os'
+import sf from '../../util/sf'
+import spawn from '../../util/spawn'
 
 const log = require('../../util/log')('tasks/launch')
 
-const CaveStore = require('../../stores/cave-store')
+import CaveStore from '../../stores/cave-store'
 const Crash = require('../errors').Crash
 
 
@@ -169,4 +170,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

@@ -2,7 +2,9 @@
 const errors = require('./errors')
 const CaveStore = require('../stores/cave-store')
 
-async function start (opts) {
+const self = {}
+
+self.start = async function (opts) {
   let id = opts.id
 
   let cave = CaveStore.find(id)
@@ -14,4 +16,4 @@ async function start (opts) {
   }
 }
 
-module.exports = { start }
+export default self

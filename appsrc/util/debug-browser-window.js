@@ -18,4 +18,4 @@ function enable_event_debugging (prefix, win) {
   })
 }
 
-module.exports = enable_event_debugging
+export default enable_event_debugging

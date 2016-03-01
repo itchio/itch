@@ -1,12 +1,12 @@
 
-const r = require('r-dom')
-const ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import ShallowComponent from './shallow-component'
 
-const LoginPage = require('./login-page')
-const LibraryPage = require('./library-page')
+import LoginPage from './login-page'
+import LibraryPage from './library-page'
 
-const AppStore = require('../stores/app-store')
-const AppActions = require('../actions/app-actions')
+import AppStore from '../stores/app-store'
+import AppActions from '../actions/app-actions'
 
 function get_state () {
   return {app_state: AppStore.get_state()}
@@ -56,4 +56,4 @@ class Layout extends ShallowComponent {
 
 Layout.propTypes = {}
 
-module.exports = Layout
+export default Layout

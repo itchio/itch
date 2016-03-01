@@ -1,6 +1,6 @@
 
-const nconf = require('nconf')
-const path = require('path')
+import nconf from 'nconf'
+import path from 'path'
 const app = require('electron').app
 
 let config_file = path.join(app.getPath('userData'), 'config.json')
@@ -35,4 +35,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

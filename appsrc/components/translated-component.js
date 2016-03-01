@@ -1,9 +1,8 @@
 
-const React = require('react')
-const I18nStore = require('../stores/i18n-store')
+import {Component} from 'react'
+import I18nStore from '../stores/i18n-store'
 
-class TranslatedComponent extends React.Component {
-
+class TranslatedComponent extends Component {
   constructor (props) {
     super(props)
   }
@@ -31,4 +30,4 @@ class TranslatedComponent extends React.Component {
   }
 }
 
-module.exports = TranslatedComponent
+export default TranslatedComponent

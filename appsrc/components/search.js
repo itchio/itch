@@ -1,19 +1,19 @@
 
-const r = require('r-dom')
+import r from 'r-dom'
 import { each } from 'underline'
 import { count, getIn } from 'grovel'
 
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('./shallow-component')
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-const Icon = require('./icon')
-const GameList = require('./game-list')
+import Icon from './icon'
+import GameList from './game-list'
 
-const AppActions = require('../actions/app-actions')
-const AppDispatcher = require('../dispatcher/app-dispatcher')
+import AppActions from '../actions/app-actions'
+import AppDispatcher from '../dispatcher/app-dispatcher'
 
-const AppConstants = require('../constants/app-constants')
-const SearchExamples = require('../constants/search-examples')
+import AppConstants from '../constants/app-constants'
+import SearchExamples from '../constants/search-examples'
 
 class SearchContent extends ShallowComponent {
   onInput (event) {
@@ -124,4 +124,4 @@ EmptySearchContent.propTypes = {
   fetched_query: PropTypes.any
 }
 
-module.exports = SearchContent
+export default SearchContent

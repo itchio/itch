@@ -2,10 +2,10 @@
 import { assocIn } from 'grovel'
 
 const Logger = require('./log').Logger
-const log = require('./log')('fetch')
+const log = require('./log').default('fetch')
 let opts = {logger: new Logger({sinks: {console: true}})}
 
-const CredentialsStore = require('../stores/credentials-store')
+import CredentialsStore from '../stores/credentials-store'
 
 import { normalize, arrayOf } from 'idealizr'
 import { game, collection, download_key } from './schemas'
@@ -188,7 +188,7 @@ async function game_lazily (market, game_id) {
   return response.entities.games[game_id]
 }
 
-module.exports = {
+export default {
   dashboard_games,
   owned_keys,
   collections,

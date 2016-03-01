@@ -1,8 +1,8 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const electron = require('../stubs/electron')
+import electron from '../stubs/electron'
 
 test('config', t => {
   let nconf = {

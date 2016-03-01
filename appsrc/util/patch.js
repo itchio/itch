@@ -39,4 +39,4 @@ patch.applyAt = (state, path, diff) => {
   return state::assocIn(path, patched)
 }
 
-module.exports = patch
+export default patch

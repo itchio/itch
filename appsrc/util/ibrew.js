@@ -1,16 +1,16 @@
 
 const app = require('electron').app
-const path = require('path')
-const os = require('./os')
+import path from 'path'
+import os from './os'
 
 import { partial } from 'underline'
 
-const extract = require('./extract')
-const log = require('./log')('ibrew')
+import extract from './extract'
+const log = require('./log').default('ibrew')
 
-const formulas = require('./ibrew/formulas')
-const version = require('./ibrew/version')
-const net = require('./ibrew/net')
+import formulas from './ibrew/formulas'
+import version from './ibrew/version'
+import net from './ibrew/net'
 
 let default_version_check = {
   args: ['-V'],
@@ -116,4 +116,4 @@ let self = {
   ext: () => (os.platform() === 'win32') ? '.exe' : ''
 }
 
-module.exports = self
+export default self

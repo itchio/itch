@@ -1,10 +1,10 @@
 
-const test = require('zopf')
-const sinon = require('sinon')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import sinon from 'sinon'
+import proxyquire from 'proxyquire'
 
-const electron = require('../stubs/electron')
-const cooldown = require('../stubs/cooldown')
+import electron from '../stubs/electron'
+import cooldown from '../stubs/cooldown'
 
 test('api', t => {
   let needle = {

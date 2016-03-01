@@ -30,4 +30,4 @@ let self = {
   '@noCallThru': true
 }
 
-module.exports = self
+export default self

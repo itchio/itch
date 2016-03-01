@@ -1,6 +1,6 @@
 
-const Promise = require('bluebird')
-const Datastore = require('nedb')
+import Promise from 'bluebird'
+import Datastore from 'nedb'
 
 import { each, indexBy } from 'underline'
 
@@ -8,7 +8,7 @@ const Logger = require('./log').Logger
 const opts = {
   logger: new Logger()
 }
-const log = require('./log')('legacy-db')
+const log = require('./log').default('legacy-db')
 
 /*
  * nedb was previously used for as both a persistent layer and
@@ -58,4 +58,4 @@ async function import_old_data (filename) {
   }
 }
 
-module.exports = {import_old_data}
+export default {import_old_data}

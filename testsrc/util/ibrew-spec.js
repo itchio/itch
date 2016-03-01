@@ -1,10 +1,12 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 const PassThrough = require('stream').PassThrough
 
-const electron = require('../stubs/electron')
-const log = require('../../app/util/log')
+import electron from '../stubs/electron'
+import log from '../../app/util/log'
+
+import version from '../../app/util/ibrew/version'
 
 test('ibrew', t => {
   let opts = {
@@ -54,8 +56,6 @@ test('ibrew', t => {
     '../os': os
   }
   let formulas = proxyquire('../../app/util/ibrew/formulas', formulas_stubs)
-
-  const version = require('../../app/util/ibrew/version')
 
   t.case('compares versions', t => {
     t.ok(version.equal('v1.23', '1.23'), 'equal versions')

@@ -5,7 +5,7 @@ let default_opts = {
   throttle: 250
 }
 
-module.exports = function (req, user_opts) {
+export default function (req, user_opts) {
   if (typeof user_opts === 'undefined') {
     user_opts = {}
   }

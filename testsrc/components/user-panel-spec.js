@@ -1,12 +1,12 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const sd = require('./skin-deeper')
-const stubs = require('../stubs/react-stubs')
+import sd from './skin-deeper'
+import stubs from '../stubs/react-stubs'
 
 test('user-panel', t => {
-  let UserPanel = proxyquire('../../app/components/user-panel', stubs)
+  const UserPanel = proxyquire('../../app/components/user-panel', stubs).default
 
   t.case('UserPanel', t => {
     let state = {

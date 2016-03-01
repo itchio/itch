@@ -1,11 +1,11 @@
 
-const test = require('zopf')
-const sinon = require('sinon')
-const proxyquire = require('proxyquire')
-const react_stubs = require('../stubs/react-stubs')
-const cooldown = require('../stubs/cooldown')
-const AppConstants = require('../../app/constants/app-constants')
-const path = require('path')
+import test from 'zopf'
+import sinon from 'sinon'
+import proxyquire from 'proxyquire'
+import react_stubs from '../stubs/react-stubs'
+import cooldown from '../stubs/cooldown'
+import AppConstants from '../../app/constants/app-constants'
+import path from 'path'
 
 test('i18next backend', t => {
   let app = {

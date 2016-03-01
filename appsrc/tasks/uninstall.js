@@ -1,12 +1,13 @@
 
-const noop = require('../util/noop')
-const sf = require('../util/sf')
-const log = require('../util/log')('tasks/uninstall')
+import noop from '../util/noop'
+import sf from '../util/sf'
+import mklog from '../util/log'
+const log = mklog('tasks/uninstall')
 
-const CaveStore = require('../stores/cave-store')
-const AppActions = require('../actions/app-actions')
+import CaveStore from '../stores/cave-store'
+import AppActions from '../actions/app-actions'
 
-const core = require('./install/core')
+import core from './install/core'
 
 const keep_archives = (process.env.REMEMBER_ME_WHEN_IM_GONE === '1')
 
@@ -57,4 +58,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

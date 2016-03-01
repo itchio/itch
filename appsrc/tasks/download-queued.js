@@ -1,6 +1,6 @@
 
-const Promise = require('bluebird')
-const errors = require('./errors')
+import Promise from 'bluebird'
+import errors from './errors'
 
 function start (opts) {
   let emitter = opts.emitter
@@ -21,4 +21,4 @@ function start (opts) {
   })
 }
 
-module.exports = { start }
+export default { start }

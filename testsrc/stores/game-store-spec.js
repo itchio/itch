@@ -1,15 +1,15 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const AppConstants = require('../../app/constants/app-constants')
+import AppConstants from '../../app/constants/app-constants'
 
-const electron = require('../stubs/electron')
-const AppDispatcher = require('../stubs/app-dispatcher')
-const AppActions = require('../stubs/app-actions')
-const CredentialsStore = require('../stubs/credentials-store')
-const market = require('../stubs/market')
-const fetch = require('../stubs/fetch')
+import electron from '../stubs/electron'
+import AppDispatcher from '../stubs/app-dispatcher'
+import AppActions from '../stubs/app-actions'
+import CredentialsStore from '../stubs/credentials-store'
+import market from '../stubs/market'
+import fetch from '../stubs/fetch'
 
 import { pluck, indexBy } from 'underline'
 
@@ -26,7 +26,7 @@ test('GameStore', t => {
 
   t.stub(CredentialsStore, 'get_me').returns({id: 123})
 
-  const GameStore = proxyquire('../../app/stores/game-store', stubs)
+  const GameStore = proxyquire('../../app/stores/game-store', stubs).default
   const handler = AppDispatcher.get_handler('game-store')
 
   t.case('fetch dashboard', async t => {

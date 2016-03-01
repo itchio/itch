@@ -1,11 +1,11 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const sd = require('./skin-deeper')
-const stubs = require('../stubs/react-stubs')
+import sd from './skin-deeper'
+import stubs from '../stubs/react-stubs'
 
 test('LibraryPage', t => {
-  let LibraryPage = proxyquire('../../app/components/library-page', stubs)
+  const LibraryPage = proxyquire('../../app/components/library-page', stubs).default
   sd.shallowRender(sd(LibraryPage, {}))
 })

@@ -1,10 +1,10 @@
 
-const path = require('path')
+import path from 'path'
 
-const spawn = require('./spawn')
+import spawn from './spawn'
 
 const Logger = require('./log').Logger
-const log = require('./log')('registry')
+const log = require('./log').default('registry')
 
 let opts = { logger: new Logger() }
 
@@ -70,4 +70,4 @@ let self = {
 
 }
 
-module.exports = self
+export default self

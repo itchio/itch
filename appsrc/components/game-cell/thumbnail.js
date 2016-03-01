@@ -1,13 +1,14 @@
 
-const r = require('r-dom')
+import r from 'r-dom'
 
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('../shallow-component')
+import {PropTypes} from 'react'
+import ShallowComponent from '../shallow-component'
 
-const AppActions = require('../../actions/app-actions')
+import AppActions from '../../actions/app-actions'
 
-const platform_data = require('../../constants/platform-data')
-const platform = require('../../util/os').itch_platform()
+import PlatformData from '../../constants/platform-data'
+import os from '../../util/os'
+const platform = os.itch_platform()
 
 class Thumbnail extends ShallowComponent {
   render () {
@@ -16,7 +17,7 @@ class Thumbnail extends ShallowComponent {
     let platform_list = []
     let has_native = false
 
-    for (let platform_spec of platform_data) {
+    for (let platform_spec of PlatformData) {
       if (!game[platform_spec.field]) {
         continue
       }
@@ -74,4 +75,4 @@ Thumbnail.propTypes = {
   cave: PropTypes.any
 }
 
-module.exports = Thumbnail
+export default Thumbnail

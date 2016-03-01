@@ -1,13 +1,14 @@
 
-const os = require('../util/os')
+import os from '../util/os'
 import { findWhere } from 'underline'
 
-const log = require('../util/log')('tasks/configure')
+import mklog from '../util/log'
+const log = mklog('tasks/configure')
 
-const CaveStore = require('../stores/cave-store')
-const AppActions = require('../actions/app-actions')
+import CaveStore from '../stores/cave-store'
+import AppActions from '../actions/app-actions'
 
-const html = require('./configure/html')
+import html from './configure/html'
 
 let self = {
   configure: async function (app_path) {
@@ -17,7 +18,7 @@ let self = {
       case 'win32':
       case 'darwin':
       case 'linux':
-        const configurator = require(`./configure/${platform}`)
+        const configurator = require(`./configure/${platform}`).default
         return await configurator.configure(app_path)
       default:
         throw new Error(`Unsupported platform: ${platform}`)
@@ -58,4 +59,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

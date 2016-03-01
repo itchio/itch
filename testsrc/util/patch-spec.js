@@ -1,10 +1,11 @@
-const test = require('zopf')
-const clone = require('clone')
-const deep = require('deep-diff')
+
+import test from 'zopf'
+import clone from 'clone'
+import deep from 'deep-diff'
 
 import { indexBy } from 'underline'
 
-const patch = require('../../app/util/patch')
+import patch from '../../app/util/patch'
 
 test('patch', t => {
   let state = [ {id: 42}, {id: 21}, {id: 8} ]::indexBy('id')

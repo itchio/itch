@@ -1,6 +1,6 @@
-const test = require('zopf')
-const fixture = require('../fixture')
-const find_uninstallers = require('../../app/tasks/install/find-uninstallers')
+import test from 'zopf'
+import fixture from '../fixture'
+import find_uninstallers from '../../app/tasks/install/find-uninstallers'
 
 test('find-uninstallers', async t => {
   let results

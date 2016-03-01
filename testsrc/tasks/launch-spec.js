@@ -1,15 +1,15 @@
 
 const EventEmitter = require('events').EventEmitter
-const test = require('zopf')
-const proxyquire = require('proxyquire')
-const path = require('path')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
+import path from 'path'
 
 import { indexBy } from 'underline'
 
-const electron = require('../stubs/electron')
-const CaveStore = require('../stubs/cave-store')
+import electron from '../stubs/electron'
+import CaveStore from '../stubs/cave-store'
 
-const log = require('../../app/util/log')
+import log from '../../app/util/log'
 
 let logger = new log.Logger({sinks: {console: false}})
 let opts = {id: 'kalamazoo', logger}

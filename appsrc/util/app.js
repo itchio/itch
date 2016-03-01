@@ -1,6 +1,6 @@
 
-const os = require('./os')
-const electron = require('electron')
+import os from './os'
+import electron from 'electron'
 
 let app = os.in_browser() ? electron.app : electron.remote.app
 
@@ -21,4 +21,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

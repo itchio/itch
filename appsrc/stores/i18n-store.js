@@ -1,26 +1,27 @@
 
-const log = require('../util/log')('i18n-store')
+import mklog from '../util/log'
+const log = mklog('i18n-store')
 let opts = { logger: new log.Logger() }
 
-const Store = require('./store')
-const AppActions = require('../actions/app-actions')
+import Store from './store'
+import AppActions from '../actions/app-actions'
 
-const i18next = require('i18next')
-const backend = require('../i18next/backend')
+import i18next from 'i18next'
+import backend from '../i18next/backend'
 
-const path = require('path')
+import path from 'path'
 
 /* not using sf because locales list is packed within our app.asar */
-const fs = require('fs')
+import fs from 'fs'
 
-let locales_dir = path.resolve(path.join(__dirname, '..', 'static', 'locales'))
-let locales_list_path = path.resolve(path.join(locales_dir, '..', 'locales.json'))
+const locales_dir = path.resolve(path.join(__dirname, '..', 'static', 'locales'))
+const locales_list_path = path.resolve(path.join(locales_dir, '..', 'locales.json'))
 
 function on_error (err) {
   // apparently the file backend doesn't validate JSON :|
   if (err) {
     let e = new Error(err)
-    require('../util/crash-reporter').handle(e)
+    require('../util/crash-reporter').default.handle(e)
   }
 }
 
@@ -94,4 +95,4 @@ function reload (preferences) {
 
 Store.subscribe('preferences-store', reload)
 
-module.exports = I18nStore
+export default I18nStore

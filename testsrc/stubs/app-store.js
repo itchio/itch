@@ -1,7 +1,7 @@
 
 let handlers = []
 
-module.exports = {
+export default {
   get_state: () => {},
   emit_change: (state) => {
     for (let h of handlers) { h(state) }
@@ -12,5 +12,6 @@ module.exports = {
   remove_change_listener: () => {
     handlers.length = 0
   },
-  '@noCallThru': true
+  '@noCallThru': true,
+  '@global': true
 }

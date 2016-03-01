@@ -1,7 +1,7 @@
 
-const api = require('./api')
+import api from './api'
 
-module.exports = {
+export default {
   get_current_user: () => api.user,
   get_me: () => ({id: 123}),
   add_change_listener: () => null,

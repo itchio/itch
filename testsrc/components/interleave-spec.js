@@ -1,6 +1,6 @@
 
-const test = require('zopf')
-const interleave = require('../../app/components/interleave')
+import test from 'zopf'
+import interleave from '../../app/components/interleave'
 
 test('interleave', t => {
   let _t = (x, vars) => x

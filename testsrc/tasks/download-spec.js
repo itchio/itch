@@ -1,11 +1,11 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const electron = require('../stubs/electron')
-const butler = require('../stubs/butler')
-const CaveStore = require('../stubs/cave-store')
-const CredentialsStore = require('../stubs/credentials-store')
+import electron from '../stubs/electron'
+import butler from '../stubs/butler'
+import CaveStore from '../stubs/cave-store'
+import CredentialsStore from '../stubs/credentials-store'
 
 let typical_install = {
   _id: 42,

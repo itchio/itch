@@ -1,2 +1,2 @@
 
-module.exports = () => null
+export default () => null

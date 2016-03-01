@@ -1,5 +1,5 @@
 
-const ExtendableError = require('es6-error')
+import ExtendableError from 'es6-error'
 
 class Transition extends ExtendableError {
   constructor (opts) {
@@ -33,4 +33,4 @@ class Cancelled extends ExtendableError {
   }
 }
 
-module.exports = { Transition, InputRequired, Crash, Cancelled }
+export default { Transition, InputRequired, Crash, Cancelled }

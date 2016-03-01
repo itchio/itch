@@ -1,10 +1,10 @@
 
-const test = require('zopf')
-const sinon = require('sinon')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import sinon from 'sinon'
+import proxyquire from 'proxyquire'
 
-const electron = require('../stubs/electron')
-const i18next = require('../stubs/i18next')
+import electron from '../stubs/electron'
+import i18next from '../stubs/i18next'
 
 test('crash-reporter', t => {
   let sf = {

@@ -1,10 +1,10 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const electron = require('../stubs/electron')
-const CaveStore = require('../stubs/cave-store')
-const CredentialsStore = require('../stubs/credentials-store')
+import electron from '../stubs/electron'
+import CaveStore from '../stubs/cave-store'
+import CredentialsStore from '../stubs/credentials-store'
 
 test('check-for-update', t => {
   let find_upload = {

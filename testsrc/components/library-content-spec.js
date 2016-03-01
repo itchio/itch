@@ -1,13 +1,13 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const sd = require('./skin-deeper')
-const stubs = require('../stubs/react-stubs')
+import sd from './skin-deeper'
+import stubs from '../stubs/react-stubs'
 
 test('LibraryContent', t => {
-  let LibraryContent = proxyquire('../../app/components/library-content', stubs)
-  let props = {
+  const LibraryContent = proxyquire('../../app/components/library-content', stubs).default
+  const props = {
     library: {
       panel: ''
     }

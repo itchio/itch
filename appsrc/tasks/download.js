@@ -1,13 +1,14 @@
 
-const errors = require('./errors')
+import errors from './errors'
 
-const log = require('../util/log')('tasks/download')
-const butler = require('../util/butler')
-const noop = require('../util/noop')
+import mklog from '../util/log'
+const log = mklog('tasks/download')
+import butler from '../util/butler'
+import noop from '../util/noop'
 
-const CaveStore = require('../stores/cave-store')
-const CredentialsStore = require('../stores/credentials-store')
-const AppActions = require('../actions/app-actions')
+import CaveStore from '../stores/cave-store'
+import CredentialsStore from '../stores/credentials-store'
+import AppActions from '../actions/app-actions'
 
 function ensure (predicate, reason) {
   if (!predicate) {
@@ -78,4 +79,4 @@ async function start (opts) {
   throw new errors.Transition({ to: 'install', reason: 'download-finished', data: {upload_id} })
 }
 
-module.exports = { start }
+export default { start }

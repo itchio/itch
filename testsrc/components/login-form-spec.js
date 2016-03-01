@@ -1,27 +1,27 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const sd = require('./skin-deeper')
-const stubs = require('../stubs/react-stubs')
+import sd from './skin-deeper'
+import stubs from '../stubs/react-stubs'
 
 test('LoginForm', t => {
-  let LoginForm = proxyquire('../../app/components/login-form', stubs)
-  let state = {page: 'login'}
+  const LoginForm = proxyquire('../../app/components/login-form', stubs).default
+  const state = {page: 'login'}
 
-  let tree = sd.shallowRender(sd(LoginForm, {state}))
-  let instance = tree.getMountedInstance()
+  const tree = sd.shallowRender(sd(LoginForm, {state}))
+  const instance = tree.getMountedInstance()
 
-  let fake_user = { value: () => 'marco' }
+  const fake_user = { value: () => 'marco' }
   instance.refs[`__proto__`].username = fake_user
 
-  let fake_pass = { value: () => 'polo' }
+  const fake_pass = { value: () => 'polo' }
   instance.refs[`__proto__`].password = fake_pass
 
-  let mock = t.mock(stubs.AppActions)
+  const mock = t.mock(stubs.AppActions)
   mock.expects('login_with_password').withArgs('marco', 'polo')
 
-  let ev = { preventDefault: t.stub() }
+  const ev = { preventDefault: t.stub() }
   instance.handle_submit(ev)
 
   delete instance.refs[`__proto__`].username

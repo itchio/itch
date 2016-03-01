@@ -10,4 +10,4 @@ let I18nStore = {
   add_change_listener: () => null
 }
 
-module.exports = I18nStore
+export default I18nStore

@@ -1,16 +1,16 @@
 
-const proxyquire = require('proxyquire')
-const electron = require('./electron')
+import proxyquire from 'proxyquire'
+import electron from './electron'
 
-let noop = () => null
+const noop = () => null
 
-let self = {
+const self = {
   '@noCallThru': true
 }
 
-let AppActions = proxyquire('../../app/actions/app-actions', electron)
+const AppActions = proxyquire('../../app/actions/app-actions', electron).default
 Object.keys(AppActions).forEach((key) => {
   self[key] = noop
 })
 
-module.exports = self
+export default self

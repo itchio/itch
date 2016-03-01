@@ -1,5 +1,5 @@
 
-const TranslatedComponent = require('./translated-component')
+import TranslatedComponent from './translated-component'
 import { isEqual } from 'underline'
 
 /**
@@ -17,4 +17,4 @@ class DeepComponent extends TranslatedComponent {
 
 }
 
-module.exports = DeepComponent
+export default DeepComponent

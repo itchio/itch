@@ -1,7 +1,7 @@
 
-const r = require('r-dom')
-const PropTypes = require('react').PropTypes
-const DeepComponent = require('./deep-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import DeepComponent from './deep-component'
 
 /**
  * A drop-down you can select from
@@ -52,4 +52,4 @@ SelectRow.propTypes = {
   label: PropTypes.string.isRequired
 }
 
-module.exports = SelectRow
+export default SelectRow

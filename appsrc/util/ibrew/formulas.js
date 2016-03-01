@@ -62,4 +62,4 @@ self['arh'] = {
   }
 }
 
-module.exports = self
+export default self

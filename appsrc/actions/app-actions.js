@@ -1,5 +1,5 @@
 
-import AppDispatcher from '../dispatcher/app-dispacher'
+import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 
 const self = {
@@ -430,4 +430,4 @@ const self = {
   }
 }
 
-module.exports = self
+export default self

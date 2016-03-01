@@ -6,4 +6,4 @@ let self = {
   untar: noop
 }
 
-module.exports = self
+export default self

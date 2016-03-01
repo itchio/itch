@@ -1,9 +1,9 @@
 
-const test = require('zopf')
-const assert = require('assert')
+import test from 'zopf'
+import assert from 'assert'
 
-const fixture = require('../fixture')
-const sniff = require('../../app/util/sniff')
+import fixture from '../fixture'
+import sniff from '../../app/util/sniff'
 
 test('sniff', t => {
   let types = [

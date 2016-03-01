@@ -44,4 +44,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

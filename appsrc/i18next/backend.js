@@ -1,28 +1,30 @@
 
-const os = require('../util/os')
-const app = require('../util/app')
-const cooldown = require('../util/cooldown')(1000)
+import os from '../util/os'
+import app from '../util/app'
 
-const log = require('../util/log')('i18n-backend/' + os.process_type())
-let opts = { logger: new log.Logger({sinks: {console: !!process.env.LET_ME_OUT}}) }
+import mkcooldown from '../util/cooldown'
+const cooldown = mkcooldown(1000)
 
-const needle = require('../promised/needle')
-const ifs = require('./ifs')
-const urls = require('../constants/urls')
-const env = require('../env')
-let upgrades_enabled = env.name === 'production' || process.env.DID_I_STUTTER === '1'
+import mklog from '../util/log'
+const log = mklog('i18n-backend/' + os.process_type())
+const opts = { logger: new log.Logger({sinks: {console: (process.env.LET_ME_OUT === '1')}}) }
 
-const path = require('path')
+import needle from '../promised/needle'
+import ifs from './ifs'
+import urls from '../constants/urls'
+import env from '../env'
+const upgrades_enabled = (env.name === 'production') || (process.env.DID_I_STUTTER === '1')
 
-const i18next = require('i18next')
+import path from 'path'
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppConstants = require('../constants/app-constants')
-const AppActions = require('../actions/app-actions')
+import i18next from 'i18next'
 
-let being_fetched = {}
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
 
-let remote_dir = path.join(app.getPath('userData'), 'locales')
+const being_fetched = {}
+const remote_dir = path.join(app.getPath('userData'), 'locales')
 
 class Backend {
   constructor (services, options) {
@@ -170,4 +172,4 @@ class Backend {
 
 Backend.type = 'backend'
 
-module.exports = Backend
+export default Backend

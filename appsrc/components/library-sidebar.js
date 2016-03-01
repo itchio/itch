@@ -1,15 +1,15 @@
 
-const r = require('r-dom')
+import r from 'r-dom'
 import { count, getIn } from 'grovel'
 import { map, partial, groupBy, sortBy, filter, each } from 'underline'
 
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('./shallow-component')
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-const Icon = require('./icon')
-const TaskIcon = require('./task-icon')
-const UserPanel = require('./user-panel')
-const LibraryPanelLink = require('./library-panel-link')
+import Icon from './icon'
+import TaskIcon from './task-icon'
+import UserPanel from './user-panel'
+import LibraryPanelLink from './library-panel-link'
 
 // Hack for frameless styling
 let frameless = process.platform === 'darwin'
@@ -189,4 +189,4 @@ LibrarySidebar.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = LibrarySidebar
+export default LibrarySidebar

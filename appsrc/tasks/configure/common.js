@@ -1,9 +1,9 @@
 
-const sniff = require('../../util/sniff')
-const sf = require('../../util/sf')
+import sniff from '../../util/sniff'
+import sf from '../../util/sf'
 import { partial } from 'underline'
 
-const path = require('path')
+import path from 'path'
 
 /**
  * Tries to find executables by sniffing file contents,
@@ -29,4 +29,4 @@ async function sniff_and_chmod (field, base, rel) {
   }
 }
 
-module.exports = {fix_execs}
+export default {fix_execs}

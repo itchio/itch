@@ -1,11 +1,11 @@
 
-const r = require('r-dom')
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-const StatusBar = require('./status-bar')
-const LibrarySidebar = require('./library-sidebar')
-const LibraryContent = require('./library-content')
+import StatusBar from './status-bar'
+import LibrarySidebar from './library-sidebar'
+import LibraryContent from './library-content'
 
 /**
  * The main state of the client - displaying the library
@@ -26,4 +26,4 @@ LibraryPage.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = LibraryPage
+export default LibraryPage

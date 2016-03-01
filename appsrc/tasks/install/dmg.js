@@ -1,12 +1,12 @@
 
-const noop = require('../../util/noop')
-const spawn = require('../../util/spawn')
-const butler = require('../../util/butler')
-const deploy = require('../../util/deploy')
+import noop from '../../util/noop'
+import spawn from '../../util/spawn'
+import butler from '../../util/butler'
+import deploy from '../../util/deploy'
 
-const archive = require('./archive')
+import archive from './archive'
 
-const path = require('path')
+import path from 'path'
 
 const log = require('../../util/log')('installers/dmg')
 
@@ -158,4 +158,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

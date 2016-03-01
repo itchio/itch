@@ -1,6 +1,6 @@
 
-const test = require('zopf')
-const errors = require('../../app/tasks/errors')
+import test from 'zopf'
+import errors from '../../app/tasks/errors'
 let Transition = errors.Transition
 let InputRequired = errors.Required
 

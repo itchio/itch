@@ -98,6 +98,7 @@ Object.assign(electron.BrowserWindow, {
   webContents
 })
 
-module.exports = {
-  'electron': electron
-}
+electron.__esModule = true
+electron.default = electron
+
+export default {electron}

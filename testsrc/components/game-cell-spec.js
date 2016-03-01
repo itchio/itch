@@ -1,13 +1,13 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const sd = require('./skin-deeper')
-const stubs = require('../stubs/react-stubs')
+import sd from './skin-deeper'
+import stubs from '../stubs/react-stubs'
 
 test('GameCell', t => {
-  let GameCell = proxyquire('../../app/components/game-cell', stubs)
-  let game = {
+  const GameCell = proxyquire('../../app/components/game-cell', stubs).default
+  const game = {
     title: 'a',
     cover_url: 'b',
     user: {
@@ -18,7 +18,7 @@ test('GameCell', t => {
     p_linux: true,
     p_osx: true
   }
-  let install = {}
+  const install = {}
 
   sd.shallowRender(sd(GameCell, {game, install}))
   install.progress = 0.2

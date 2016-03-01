@@ -1,21 +1,21 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const sd = require('./skin-deeper')
-const stubs = require('../stubs/react-stubs')
+import sd from './skin-deeper'
+import stubs from '../stubs/react-stubs'
 
 test('layout', t => {
-  let Layout = proxyquire('../../app/components/layout', stubs)
-  let get_state = t.stub(stubs.AppStore, 'get_state').returns({})
+  const Layout = proxyquire('../../app/components/layout', stubs).default
+  const get_state = t.stub(stubs.AppStore, 'get_state').returns({})
 
-  let set_state = (props) => {
+  const set_state = (props) => {
     get_state.returns(props)
   }
 
   t.case('listeners', t => {
-    let tree = sd.shallowRender(sd(Layout, {}))
-    let instance = tree.getMountedInstance()
+    const tree = sd.shallowRender(sd(Layout, {}))
+    const instance = tree.getMountedInstance()
     instance.componentDidMount()
     stubs.AppStore.emit_change({})
     instance.componentWillUnmount()
@@ -24,27 +24,27 @@ test('layout', t => {
   })
 
   t.case('login', t => {
-    let login = {
+    const login = {
       loading: true,
       errors: ['try again']
     }
-    let props = {page: 'login', login}
+    const props = {page: 'login', login}
     set_state(props)
 
-    let tree = sd.shallowRender(sd(Layout, {}))
-    let vdom = tree.getRenderOutput()
+    const tree = sd.shallowRender(sd(Layout, {}))
+    const vdom = tree.getRenderOutput()
     t.same(vdom.props, {children: undefined, state: {page: 'login', login}})
   })
 
   t.case('library', t => {
-    let library = {
+    const library = {
       games: [1, 2, 3]
     }
-    let props = {page: 'library', library}
+    const props = {page: 'library', library}
     set_state(props)
 
-    let tree = sd.shallowRender(sd(Layout, {}))
-    let vdom = tree.getRenderOutput()
+    const tree = sd.shallowRender(sd(Layout, {}))
+    const vdom = tree.getRenderOutput()
     t.same(vdom.props, {children: undefined, state: props})
   })
 })

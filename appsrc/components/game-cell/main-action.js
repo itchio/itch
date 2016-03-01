@@ -1,16 +1,17 @@
 
-const r = require('r-dom')
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('../shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from '../shallow-component'
 
-const Tooltip = require('rc-tooltip')
-const Icon = require('../icon')
-const TaskIcon = require('../task-icon')
+import Tooltip from 'rc-tooltip'
+import Icon from '../icon'
+import TaskIcon from '../task-icon'
 
-const AppActions = require('../../actions/app-actions')
-const classification_actions = require('../../constants/classification-actions')
+import AppActions from '../../actions/app-actions'
+import ClassificationActions from '../../constants/classification-actions'
 
-const platform = require('../../util/os').itch_platform()
+import os from '../../util/os'
+const platform = os.itch_platform()
 
 let linear_gradient = (progress) => {
   let percent = (progress * 100).toFixed() + '%'
@@ -47,7 +48,7 @@ class MainAction extends ShallowComponent {
     let may_download = this.props.may_download
 
     let classification = game.classification
-    let action = classification_actions[classification]
+    let action = ClassificationActions[classification]
     if (action === 'open') {
       platform_compatible = true
     }
@@ -211,4 +212,4 @@ MainAction.propTypes = {
   game: PropTypes.any
 }
 
-module.exports = MainAction
+export default MainAction

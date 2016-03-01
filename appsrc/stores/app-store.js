@@ -1,14 +1,14 @@
 
 import { assocIn, dissocIn, getIn } from 'grovel'
-const Store = require('./store')
+import Store from './store'
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppConstants = require('../constants/app-constants')
-const AppActions = require('../actions/app-actions')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
 
-const defer = require('../util/defer')
-const patch = require('../util/patch')
-const env = require('../env')
+import defer from '../util/defer'
+import patch from '../util/patch'
+import env from '../env'
 
 let state = {
   page: 'login',
@@ -47,7 +47,7 @@ let state = {
   }
 }
 
-let AppStore = Object.assign(new Store('app-store', 'renderer'), {
+const AppStore = Object.assign(new Store('app-store', 'renderer'), {
   get_state: function () {
     return state
   }
@@ -214,6 +214,7 @@ function cave_thrown_into_bit_bucket (payload) {
   pre: { // eslint-disable-line
     typeof payload.id === 'string'
   }
+
   state = state::dissocIn(['library', 'caves', payload.id])
   AppStore.emit_change()
   if (state::getIn(['library', 'panel']) === `caves/${payload.id}`) {
@@ -316,4 +317,4 @@ Store.subscribe('preferences-store', (preferences) => {
   AppStore.emit_change()
 })
 
-module.exports = AppStore
+export default AppStore

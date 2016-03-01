@@ -1,8 +1,8 @@
 
-const Promise = require('bluebird')
-const errors = require('../errors')
+import Promise from 'bluebird'
+import errors from '../errors'
 
-const AppActions = require('../../actions/app-actions')
+import AppActions from '../../actions/app-actions'
 
 let self = (opts) => {
   AppActions.cave_progress({id: opts.id, progress: 0, need_blessing: true})
@@ -31,4 +31,4 @@ let self = (opts) => {
   return new Promise(cb)
 }
 
-module.exports = self
+export default self

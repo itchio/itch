@@ -1,16 +1,16 @@
 
-const sf = require('../util/sf')
-const path = require('path')
+import sf from '../util/sf'
+import path from 'path'
 
-const electron = require('electron')
+import electron from 'electron'
 let app = electron.app
 let shell = electron.shell
 let dialog = electron.dialog
-const querystring = require('querystring')
+import querystring from 'querystring'
 
-const urls = require('../constants/urls')
+import urls from '../constants/urls'
 
-const os = require('./os')
+import os from './os'
 
 let self = {
   write_crash_log: (e) => {
@@ -101,4 +101,4 @@ ${log}
   }
 }
 
-module.exports = self
+export default self

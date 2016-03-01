@@ -1,15 +1,15 @@
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppConstants = require('../constants/app-constants')
-const urls = require('../constants/urls')
-const market = require('../util/market')
-const fetch = require('../util/fetch')
-const Store = require('./store')
-const I18nStore = require('./i18n-store')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import urls from '../constants/urls'
+import market from '../util/market'
+import fetch from '../util/fetch'
+import Store from './store'
+import I18nStore from './i18n-store'
 
-const electron = require('electron')
+import electron from 'electron'
 
-let PolicyStore = Object.assign(new Store('policy-store'), {})
+const PolicyStore = Object.assign(new Store('policy-store'), {})
 
 async function show_packaging_policy (payload) {
   pre: { // eslint-disable-line
@@ -57,4 +57,4 @@ AppDispatcher.register('policy-store', Store.action_listeners(on => {
   on(AppConstants.SHOW_PACKAGING_POLICY, show_packaging_policy)
 }))
 
-module.exports = PolicyStore
+export default PolicyStore

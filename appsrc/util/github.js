@@ -1,6 +1,6 @@
 
-const urls = require('../constants/urls')
-const needle = require('../promised/needle')
+import urls from '../constants/urls'
+import needle from '../promised/needle'
 
 let self = {
   create_gist: async function (data) {
@@ -13,4 +13,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

@@ -1,3 +1,3 @@
 
 // synchronous defer, useful for testing stores
-module.exports = (cb) => cb()
+export default (cb) => cb()

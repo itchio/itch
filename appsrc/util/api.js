@@ -1,12 +1,12 @@
 
-const needle = require('../promised/needle')
-const urls = require('../constants/urls')
-const ExtendableError = require('es6-error')
+import needle from '../promised/needle'
+import urls from '../constants/urls'
+import ExtendableError from 'es6-error'
 
 const cooldown = require('../util/cooldown')(130)
 
 const Logger = require('./log').Logger
-const log = require('./log')('api')
+const log = require('./log').default('api')
 let logger = new Logger({sinks: {console: !!process.env.LET_ME_IN}})
 let opts = {logger}
 
@@ -173,4 +173,4 @@ self = {
   ensure_array
 }
 
-module.exports = self
+export default self

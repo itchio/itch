@@ -11,4 +11,4 @@ let i18next = {
   getFixedT: () => i18next.t
 }
 
-module.exports = i18next
+export default i18next

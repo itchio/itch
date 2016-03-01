@@ -1,23 +1,24 @@
 
 import { filter, where, indexBy, throttle, debounce, pluck } from 'underline'
 
-const Store = require('./store')
-const CredentialsStore = require('./credentials-store')
+import Store from './store'
+import CredentialsStore from './credentials-store'
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppActions = require('../actions/app-actions')
-const AppConstants = require('../constants/app-constants')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppActions from '../actions/app-actions'
+import AppConstants from '../constants/app-constants'
 
-const Logger = require('../util/log').Logger
-const log = require('../util/log')('game-store')
-let opts = {logger: new Logger({sinks: {console: !!process.env.LET_ME_IN}})}
+import {Logger} from '../util/log'
+import mklog from '../util/log'
+const log = mklog('game-store')
+const opts = {logger: new Logger({sinks: {console: (process.env.LET_ME_IN === '1')}})}
 
-const deep = require('deep-diff')
+import deep from 'deep-diff'
 
-const electron = require('electron')
+import electron from 'electron'
 
-const market = require('../util/market')
-const fetch = require('../util/fetch')
+import market from '../util/market'
+import fetch from '../util/fetch'
 
 let state = {}
 
@@ -169,4 +170,4 @@ AppDispatcher.register('game-store', Store.action_listeners(on => {
   on(AppConstants.IMPLODE_APP, implode_app)
 }))
 
-module.exports = GameStore
+export default GameStore

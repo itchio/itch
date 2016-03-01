@@ -1,47 +1,48 @@
 
-const r = require('r-dom')
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-const Thumbnail = require('./game-cell/thumbnail')
-const MainAction = require('./game-cell/main-action')
-const SecondaryActions = require('./game-cell/secondary-actions')
+import Thumbnail from './game-cell/thumbnail'
+import MainAction from './game-cell/main-action'
+import SecondaryActions from './game-cell/secondary-actions'
 
-const platform_data = require('../constants/platform-data')
-const platform = require('../util/os').itch_platform()
+import PlatformData from '../constants/platform-data'
+import os from '../util/os'
+
+const platform = os.itch_platform()
 
 /* before you think you can download all itch.io games:
 there's obviously server-side checking.
 you'll get neat error logs for free though! */
-let may_download_all = (process.env.TRUST_ME_IM_AN_ENGINEER === '1')
+const may_download_all = (process.env.TRUST_ME_IM_AN_ENGINEER === '1')
 
 class GameCell extends ShallowComponent {
   render () {
-    let owned = this.props.owned
-    let game = this.props.game
-    let cave = this.props.cave
+    const {owned, game, cave} = this.props
 
-    let min_price = game.min_price
-    let free = (min_price === 0)
-
-    let may_download = may_download_all || owned || free
+    const min_price = game.min_price
+    const free = (min_price === 0)
+    const may_download = may_download_all || owned || free
 
     let platform_compatible = false
-    for (let platform_spec of platform_data) {
+    for (const platform_spec of PlatformData) {
       if (platform === platform_spec.platform) {
         platform_compatible = !!game[platform_spec.field]
       }
     }
-    platform_compatible |= game.type === 'html'
+    const is_html = game.type === 'html'
+    platform_compatible |= is_html
 
-    let children = []
-
+    const children = []
     children.push(r(Thumbnail, {cave, game}))
 
-    let title = game.title
+    const title = game.title
     children.push(r.div({className: 'game_title'}, title))
 
-    let user = game.user
+    // TODO: this never happens anymore, maybe we should make it happen
+    // again but we don't have a good page to navigate to
+    const user = game.user
     if (user) {
       r.div({className: 'game_author'}, user.display_name)
     }
@@ -59,4 +60,4 @@ GameCell.propTypes = {
   cave: PropTypes.object
 }
 
-module.exports = GameCell
+export default GameCell

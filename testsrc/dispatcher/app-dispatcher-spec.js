@@ -1,9 +1,9 @@
 
-const test = require('zopf')
-const sinon = require('sinon')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import sinon from 'sinon'
+import proxyquire from 'proxyquire'
 
-const electron = require('../stubs/electron')
+import electron from '../stubs/electron'
 
 test('dispatcher', t => {
   let r_stubs = Object.assign({}, electron, {

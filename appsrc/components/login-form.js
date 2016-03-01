@@ -1,16 +1,16 @@
 
 import { getIn } from 'grovel'
-const r = require('r-dom')
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-const AppStore = require('../stores/app-store')
-const AppActions = require('../actions/app-actions')
-const urls = require('../constants/urls')
+import AppStore from '../stores/app-store'
+import AppActions from '../actions/app-actions'
+import urls from '../constants/urls'
 
-const InputRow = require('./input-row')
-const ErrorList = require('./error-list')
-const Icon = require('./icon')
+import InputRow from './input-row'
+import ErrorList from './error-list'
+import Icon from './icon'
 
 class LoginForm extends ShallowComponent {
   constructor () {
@@ -115,4 +115,4 @@ LoginForm.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = LoginForm
+export default LoginForm

@@ -1,5 +1,5 @@
 
-const sf = require('../../util/sf')
+import sf from '../../util/sf'
 
 // example installer names:
 //  * pidgin-uninst.exe
@@ -7,10 +7,10 @@ const sf = require('../../util/sf')
 //  * uninstall.exe
 //  * unins000.exe
 //  * unins001.exe
-let pattern = '**/@(*uninst|uninstall|unins*).exe'
+const pattern = '**/@(*uninst|uninstall|unins*).exe'
 
-let find_uninstallers = async function (dest_path) {
+const find_uninstallers = async function (dest_path) {
   return await sf.glob(pattern, {nodir: true, nocase: true, cwd: dest_path})
 }
 
-module.exports = find_uninstallers
+export default find_uninstallers

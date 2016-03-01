@@ -1,8 +1,9 @@
 
-const log = require('../util/log')('tasks/awaken')
+import mklog from '../util/log'
+const log = mklog('tasks/awaken')
 
-const CaveStore = require('../stores/cave-store')
-const find_upload = require('./find-upload')
+import CaveStore from '../stores/cave-store'
+import find_upload from './find-upload'
 
 const cooldown = require('../util/cooldown')(500)
 
@@ -28,4 +29,4 @@ async function start (opts) {
   // all good!
 }
 
-module.exports = { start }
+export default { start }

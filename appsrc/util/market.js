@@ -1,18 +1,18 @@
 
-const Promise = require('bluebird')
+import Promise from 'bluebird'
 const Logger = require('./log').Logger
-const log = require('./log')('market')
+const log = require('./log').default('market')
 let opts = {logger: new Logger({sinks: {console: true}})}
 
-const path = require('path')
-const sf = require('./sf')
-const app = require('./app')
+import path from 'path'
+import sf from './sf'
+import app from './app'
 
-const deep_freeze = require('deep-freeze')
+import deep_freeze from 'deep-freeze'
 
 import { isEqual } from 'underline'
 
-const legacy_db = require('./legacy-db')
+import legacy_db from './legacy-db'
 
 const state = {
   library_dir: null,
@@ -177,7 +177,7 @@ function unload () {
   state.library_dir = null
 }
 
-module.exports = {
+export default {
   load,
   get_entities,
   save_all_entities,

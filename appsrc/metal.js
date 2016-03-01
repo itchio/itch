@@ -26,7 +26,7 @@ if (!process.env.NODE_ENV) {
 }
 
 require('./util/sf')
-require('./util/crash-reporter').mount()
+require('./util/crash-reporter').default.mount()
 
 const auto_updater = require('./util/auto-updater')
 Promise.resolve(auto_updater.start()).then((quit) => {
@@ -61,7 +61,7 @@ function boot () {
 }
 
 function ready () {
-  const AppActions = require('./actions/app-actions')
+  const AppActions = require('./actions/app-actions').default
 
   require('./stores/i18n-store')
   require('./stores/self-update-store')
@@ -78,7 +78,7 @@ function ready () {
   require('./stores/report-store')
   require('./stores/install-location-store')
 
-  require('./ui/menu').mount()
+  require('./ui/menu').default.mount()
 
   AppActions.boot()
 

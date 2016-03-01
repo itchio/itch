@@ -1,22 +1,25 @@
 
-const test = require('zopf')
-const proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-const electron = require('../stubs/electron')
+import electron from '../stubs/electron'
 
 test('app-actions', t => {
   let app_dispatcher = {
-    dispatch: () => null
+    __esModule: true,
+    default: {
+      dispatch: () => null
+    }
   }
   let stubs = Object.assign({
     '../dispatcher/app-dispatcher': app_dispatcher
   }, electron)
-  let app_actions = proxyquire('../../app/actions/app-actions', stubs)
+  let AppActions = proxyquire('../../app/actions/app-actions', stubs).default
 
   let test_action = (name, args, object) => {
     t.case(name, t => {
-      t.mock(app_dispatcher).expects('dispatch').withArgs(object)
-      app_actions[name].apply(app_actions, args)
+      t.mock(app_dispatcher.default).expects('dispatch').withArgs(object)
+      AppActions[name].apply(AppActions, args)
     })
   }
 

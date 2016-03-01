@@ -1,7 +1,7 @@
 
-const r = require('r-dom')
-const PropTypes = require('react').PropTypes
-const ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
 /**
  * An icon from the icomoon font.
@@ -9,24 +9,22 @@ const ShallowComponent = require('./shallow-component')
  */
 class Icon extends ShallowComponent {
   render () {
-    let icon = this.props.icon
-    let spin = !!this.props.spin
-    let data_tip = this.props['data-tip']
-    let additional_class_set = this.props.classSet
+    const {icon, spin = false, classSet} = this.props
+    const data_tip = this.props['data-tip']
 
-    if (icon) {
-      let opts = {
-        className: `icon icon-${icon}`,
-        classSet: Object.assign({spin}, additional_class_set)
-      }
-      if (data_tip) {
-        opts['data-tip'] = data_tip
-      }
-
-      return r.span(opts)
-    } else {
+    if (!icon) {
       return r.span()
     }
+
+    let opts = {
+      className: `icon icon-${icon}`,
+      classSet: Object.assign({spin}, classSet)
+    }
+    if (data_tip) {
+      opts['data-tip'] = data_tip
+    }
+
+    return r.span(opts)
   }
 }
 
@@ -34,4 +32,4 @@ Icon.propTypes = {
   icon: PropTypes.string
 }
 
-module.exports = Icon
+export default Icon

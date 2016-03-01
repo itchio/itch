@@ -21,7 +21,7 @@
     return false
   }
 
-  let args = process.argv.slice(2)
+  const args = process.argv.slice(2)
   if (args.length === 0) {
     args.push(path.resolve(__dirname, '..', 'test'))
   }
@@ -35,7 +35,7 @@
     glob(arg, function (e, files) {
       files.forEach(function (file) {
         // console.log(`Requiring ${file}`)
-        let test = path.resolve(process.cwd(), file)
+        const test = path.resolve(process.cwd(), file)
         require(test)
       })
     })

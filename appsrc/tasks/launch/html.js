@@ -1,20 +1,18 @@
 
-const path = require('path')
-const Promise = require('bluebird')
+import path from 'path'
+import Promise from 'bluebird'
 
-const electron = require('electron')
-let BrowserWindow = electron.BrowserWindow
-let shell = electron.shell
-let powerSaveBlocker = electron.powerSaveBlocker
+import electron from 'electron'
+const {BrowserWindow, shell, powerSaveBlocker} = electron
 
-const market = require('../../util/market')
-const url = require('../../util/url')
-const http_server = require('../../util/http-server')
-const debug_browser_window = require('../../util/debug-browser-window')
+import market from '../../util/market'
+import url from '../../util/url'
+import http_server from '../../util/http-server'
+import debug_browser_window from '../../util/debug-browser-window'
 
 const log = require('../../util/log')('tasks/launch')
 
-const CaveStore = require('../../stores/cave-store')
+import CaveStore from '../../stores/cave-store'
 
 let self = {
   launch: async function(opts, cave) {
@@ -118,4 +116,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

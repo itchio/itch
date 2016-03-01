@@ -13,4 +13,4 @@ class LFTransform extends Transform {
   }
 }
 
-module.exports = LFTransform
+export default LFTransform

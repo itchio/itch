@@ -1,12 +1,13 @@
 
-const path = require('path')
+import path from 'path'
 import { partial } from 'underline'
 
-const noop = require('./noop')
-const spawn = require('./spawn')
-const sf = require('./sf')
+import noop from './noop'
+import spawn from './spawn'
+import sf from './sf'
 
-const log = require('../util/log')('butler')
+import mklog from './log'
+const log = mklog('butler')
 
 let self = {
   parse_butler_status: function (opts, onerror, token) {
@@ -126,4 +127,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

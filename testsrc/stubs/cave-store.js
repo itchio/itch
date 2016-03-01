@@ -1,5 +1,5 @@
 
-module.exports = {
+export default {
   find: () => ({
     _id: 'kalamazoo',
     upload_id: 42,

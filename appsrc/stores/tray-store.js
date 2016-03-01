@@ -1,20 +1,19 @@
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppConstants = require('../constants/app-constants')
-const AppActions = require('../actions/app-actions')
-const Store = require('./store')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
+import Store from './store'
 
-const path = require('path')
+import path from 'path'
 
-const app = require('electron').app
-const Menu = require('electron').Menu
-const Tray = require('electron').Tray
+import electron from 'electron'
+const {app, Menu, Tray} = electron
 
-const os = require('../util/os')
+import os from '../util/os'
 
 let tray
 
-let TrayStore = Object.assign(new Store('tray-store'), {
+const TrayStore = Object.assign(new Store('tray-store'), {
   with: (cb) => {
     if (!tray) return
     cb(tray)
@@ -62,4 +61,4 @@ AppDispatcher.register('tray-store', Store.action_listeners(on => {
   on(AppConstants.BOOT, refresh)
 }))
 
-module.exports = TrayStore
+export default TrayStore

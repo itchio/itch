@@ -1,12 +1,12 @@
 
-const electron = require('electron')
-const path = require('path')
+import electron from 'electron'
+import path from 'path'
 
-const spawn = require('./spawn')
-const sf = require('./sf')
+import spawn from './spawn'
+import sf from './sf'
 
 const Logger = require('./log').Logger
-const log = require('./log')('shortcut')
+const log = require('./log').default('shortcut')
 
 let opts = { logger: new Logger() }
 
@@ -80,4 +80,4 @@ let self = {
 
 }
 
-module.exports = self
+export default self

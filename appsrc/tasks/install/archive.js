@@ -1,17 +1,17 @@
 
-const subprogress = require('../../util/subprogress')
-const sniff = require('../../util/sniff')
-const noop = require('../../util/noop')
+import subprogress from '../../util/subprogress'
+import sniff from '../../util/sniff'
+import noop from '../../util/noop'
 
-const butler = require('../../util/butler')
-const extract = require('../../util/extract')
-const deploy = require('../../util/deploy')
+import butler from '../../util/butler'
+import extract from '../../util/extract'
+import deploy from '../../util/deploy'
 
-const core = require('./core')
+import core from './core'
 
 const log = require('../../util/log')('installers/archive')
 
-const AppActions = require('../../actions/app-actions')
+import AppActions from '../../actions/app-actions'
 
 let is_tar = async function (path) {
   let type = await sniff.path(path)
@@ -141,4 +141,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self
