@@ -4,9 +4,10 @@ if (os.process_type() !== 'renderer') {
   throw new Error(`app-dispatcher/renderer required from ${os.process_type()}`)
 }
 
+const marco_level = parseInt(process.env.MARCO_POLO || '0', 10)
 let Log = require('../../util/log')
 let log = Log('dispatcher')
-let opts = {logger: new Log.Logger({sinks: {console: !!process.env.MARCO_POLO}})}
+let opts = {logger: new Log.Logger({sinks: {console: (marco_level > 0)}})}
 
 let electron = require('electron')
 let ipc = electron.ipcRenderer
@@ -33,6 +34,9 @@ class RendererDispatcher {
   }
 
   dispatch (payload) {
+    if (marco_level >= 1) {
+      log(opts, `browser <<< renderer: ${payload.action_type}, ${JSON.stringify(payload).length} bytes`)
+    }
     ipc.send('dispatcher-to-browser', payload)
   }
 }

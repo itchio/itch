@@ -4,9 +4,10 @@ if (os.process_type() !== 'browser') {
   throw new Error(`app-dispatcher/browser required from ${os.process_type()}`)
 }
 
+const marco_level = parseInt(process.env.MARCO_POLO || '0', 10)
 let Log = require('../../util/log')
 let log = Log('dispatcher')
-let opts = {logger: new Log.Logger({sinks: {console: !!process.env.MARCO_POLO}})}
+let opts = {logger: new Log.Logger({sinks: {console: (marco_level > 0)}})}
 
 let electron = require('electron')
 let ipc = electron.ipcMain
@@ -25,19 +26,17 @@ let spammy = {
 class BrowserDispatcher {
   constructor () {
     this._callbacks = {}
-    this._message_id_seed = 0
   }
 
   /**
   * Register an action callback, returns dispatch token
   */
   register (name, callback) {
-    if (typeof name !== 'string') {
-      throw new Error('Invalid store registration (non-string name)')
+    pre: { // eslint-disable-line
+      typeof name === 'string'
+      !this._callbacks[name]
     }
-    if (this._callbacks[name]) {
-      throw new Error(`Can't register store twice (renderer-side): ${name}`)
-    }
+
     log(opts, `Registering store ${name} node-side`)
     this._callbacks[name] = callback
   }
@@ -47,11 +46,12 @@ class BrowserDispatcher {
   * will throw - helps debugging missing constants
   */
   dispatch (payload) {
-    if (typeof payload.action_type === 'undefined') {
-      throw new Error(`Trying to dispatch action with no type: ${JSON.stringify(payload, null, 2)}`)
+    pre: { // eslint-disable-line
+      typeof payload === 'object'
+      typeof payload.action_type === 'string'
     }
 
-    if (!spammy[payload.action_type]) {
+    if (marco_level >= 2 && !spammy[payload.action_type]) {
       if (payload.private) {
         log(opts, `dispatching ${payload.action_type}`)
       } else {
@@ -66,9 +66,16 @@ class BrowserDispatcher {
       }
     })
 
-    BrowserWindow.getAllWindows().forEach(w =>
+    if (marco_level >= 1) {
+      log(opts, `browser >>> renderer: ${payload.action_type}, ${JSON.stringify(payload).length} bytes`)
+    }
+
+    BrowserWindow.getAllWindows().forEach(w => {
+      // async ipc is marshalled to JSON internally, so there's
+      // no RemoteMember penalty on either side, but we should
+      // keep the payloads light anyway
       w.webContents.send('dispatcher-to-renderer', payload)
-    )
+    })
   }
 }
 
