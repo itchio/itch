@@ -32,7 +32,8 @@ test('install', t => {
 
       return install_core.install({
         archive_path: fixture.path(type),
-        dest_path: '/tmp/dest'
+        dest_path: '/tmp/dest',
+        upload_id: 999
       })
     })
   })
@@ -44,7 +45,8 @@ test('install', t => {
       let spy = t.spy()
       let install_opts = {
         archive_path: fixture.path(type),
-        dest_path: '/tmp/dest'
+        dest_path: '/tmp/dest',
+        upload_id: 999
       }
 
       return async function () {
