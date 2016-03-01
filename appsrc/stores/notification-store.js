@@ -8,7 +8,6 @@ import TrayStore from './tray-store'
 import Store from './store'
 
 import os from '../util/os'
-import defer from '../util/defer'
 
 import electron from 'electron'
 const {app} = electron
