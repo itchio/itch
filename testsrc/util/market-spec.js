@@ -101,9 +101,8 @@ test('Market', t => {
         ]::indexBy('id')
       }
     })
-    let collection = market.get_entities('collections')[8712]
 
-    let collection_games = t.stub(api, 'collection_games')
+    const collection_games = t.stub(api, 'collection_games')
     collection_games.onCall(0).resolves({
       total_items: 5, per_page: 3, page: 1,
       games: [1, 3, 5].map((id) => ({id}))
@@ -117,6 +116,7 @@ test('Market', t => {
     await fetch.collection_games(market, 8712, cb)
 
     t.equal(cb.callCount, 4)
-    t.sameSet(collection.game_ids, [1, 3, 5, 7, 9])
+    const collection = market.get_entities('collections')[8712].game_ids
+    t.sameSet(collection, [1, 3, 5, 7, 9])
   })
 })

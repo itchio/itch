@@ -81,7 +81,7 @@ async function save_to_disk (table_name, entity_id, record) {
   const tmp_path = file + '.tmp' + (_atomic_invocations++)
   await sf.write_file(tmp_path, JSON.stringify(record))
 
-  if (data[table_name][entity_id]) {
+  if (data[table_name] && data[table_name][entity_id]) {
     await sf.rename(tmp_path, file)
   } else {
     // entity has been deleted in the meantime
