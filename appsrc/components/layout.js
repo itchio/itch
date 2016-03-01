@@ -7,7 +7,6 @@ let LibraryPage = require('./library-page')
 
 let AppStore = require('../stores/app-store')
 let AppActions = require('../actions/app-actions')
-let defer = require('../util/defer')
 
 function get_state () {
   return {state: AppStore.get_state()}
@@ -25,8 +24,8 @@ class Layout extends ShallowComponent {
 
   componentDidMount () {
     super.componentDidMount()
-    AppStore.add_change_listener('layout', () => {
-      defer(() => { this.setState(get_state()) })
+    AppStore.add_change_listener('layout', (state) => {
+      this.setState({state})
     })
   }
 
