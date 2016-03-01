@@ -20,7 +20,5 @@ npm install
 npm test
 
 if [ "$CI_OS" = "linux" ]; then
-  export COVERALLS_SERVICE_NAME=jenkins
-  export COVERALLS_SERVICE_JOB_ID=$CI_BUILD_ID
   npm run coveralls
 fi
