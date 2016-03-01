@@ -65,7 +65,7 @@ class SearchContent extends ShallowComponent {
 
     let searchbox_children = [
       r(Icon, {icon: 'search', classSet: search_class_set}),
-      r.input({ref: 'input', type: 'text', value: query, placeholder: t('search.placeholder'), onChange: this.onInput.bind(this)})
+      r.input({ref: 'input', type: 'text', defaultValue: query, placeholder: t('search.placeholder'), onChange: this.onInput.bind(this)})
     ]
 
     return r.div({className: 'search_container'}, [
