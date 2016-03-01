@@ -17,6 +17,10 @@ let electron = {
       setBadge: rnil
     }
   },
+  powerSaveBlocker: {
+    start: rnil,
+    stop: rnil
+  },
   Tray: function () {
     Object.assign(this, electron.Tray)
   },
