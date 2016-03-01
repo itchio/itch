@@ -1,7 +1,7 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+const r = require('r-dom')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
 
 /**
  * A single progress bar, with an outer and inner div. Style as you wish.

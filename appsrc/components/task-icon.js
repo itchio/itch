@@ -1,9 +1,9 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+const r = require('r-dom')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
 
-let Icon = require('./icon')
+const Icon = require('./icon')
 
 // TODO: move to `constants/`
 let task_to_icon = {

@@ -1,13 +1,13 @@
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppConstants = require('../constants/app-constants')
+const AppActions = require('../actions/app-actions')
 
-let Store = require('./store')
-let SetupStore = require('./setup-store')
+const Store = require('./store')
+const SetupStore = require('./setup-store')
 
-let config = require('../util/config')
-let api = require('../util/api')
+const config = require('../util/config')
+const api = require('../util/api')
 
 let current_user = null
 let me = null

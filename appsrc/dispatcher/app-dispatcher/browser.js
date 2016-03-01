@@ -1,15 +1,15 @@
 
-let os = require('../../util/os')
+const os = require('../../util/os')
 if (os.process_type() !== 'browser') {
   throw new Error(`app-dispatcher/browser required from ${os.process_type()}`)
 }
 
 const marco_level = parseInt(process.env.MARCO_POLO || '0', 10)
-let Log = require('../../util/log')
+const Log = require('../../util/log')
 let log = Log('dispatcher')
 let opts = {logger: new Log.Logger({sinks: {console: (marco_level > 0)}})}
 
-let electron = require('electron')
+const electron = require('electron')
 let ipc = electron.ipcMain
 let BrowserWindow = electron.BrowserWindow
 

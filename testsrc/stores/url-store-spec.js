@@ -1,16 +1,16 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
-let sinon = require('sinon')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
+const sinon = require('sinon')
 
-let AppConstants = require('../../app/constants/app-constants')
+const AppConstants = require('../../app/constants/app-constants')
 
-let I18nStore = require('../stubs/i18n-store')
-let AppActions = require('../stubs/app-actions')
-let AppDispatcher = require('../stubs/app-dispatcher')
-let market = require('../stubs/market')
-let electron = require('../stubs/electron')
-let url_parser = require('url')
+const I18nStore = require('../stubs/i18n-store')
+const AppActions = require('../stubs/app-actions')
+const AppDispatcher = require('../stubs/app-dispatcher')
+const market = require('../stubs/market')
+const electron = require('../stubs/electron')
+const url_parser = require('url')
 
 test('UrlStore', t => {
   let os = {

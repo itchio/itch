@@ -1,5 +1,5 @@
 
-let api = require('./api')
+const api = require('./api')
 
 module.exports = {
   get_current_user: () => api.user,

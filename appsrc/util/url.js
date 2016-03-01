@@ -1,6 +1,6 @@
 
 /* node's standard url module */
-let url = require('url')
+const url = require('url')
 
 let self = {
   /** user.example.org => example.org */

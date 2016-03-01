@@ -1,10 +1,10 @@
 
-let path = require('path')
+const path = require('path')
 
-let spawn = require('./spawn')
+const spawn = require('./spawn')
 
-let Logger = require('./log').Logger
-let log = require('./log')('registry')
+const Logger = require('./log').Logger
+const log = require('./log')('registry')
 
 let opts = { logger: new Logger() }
 

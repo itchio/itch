@@ -1,10 +1,10 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
-let PassThrough = require('stream').PassThrough
+const test = require('zopf')
+const proxyquire = require('proxyquire')
+const PassThrough = require('stream').PassThrough
 
-let electron = require('../stubs/electron')
-let log = require('../../app/util/log')
+const electron = require('../stubs/electron')
+const log = require('../../app/util/log')
 
 test('ibrew', t => {
   let opts = {
@@ -55,7 +55,7 @@ test('ibrew', t => {
   }
   let formulas = proxyquire('../../app/util/ibrew/formulas', formulas_stubs)
 
-  let version = require('../../app/util/ibrew/version')
+  const version = require('../../app/util/ibrew/version')
 
   t.case('compares versions', t => {
     t.ok(version.equal('v1.23', '1.23'), 'equal versions')

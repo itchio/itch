@@ -1,9 +1,9 @@
 
-let test = require('zopf')
-let sinon = require('sinon')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const sinon = require('sinon')
+const proxyquire = require('proxyquire')
 
-let electron = require('../stubs/electron')
+const electron = require('../stubs/electron')
 
 test('Store', t => {
   let stubs = electron

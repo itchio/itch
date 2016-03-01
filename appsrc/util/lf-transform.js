@@ -1,5 +1,5 @@
 
-let Transform = require('stream').Transform
+const Transform = require('stream').Transform
 
 class LFTransform extends Transform {
   constructor (opts) {

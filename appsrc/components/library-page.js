@@ -1,11 +1,11 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+const r = require('r-dom')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
 
-let StatusBar = require('./status-bar')
-let LibrarySidebar = require('./library-sidebar')
-let LibraryContent = require('./library-content')
+const StatusBar = require('./status-bar')
+const LibrarySidebar = require('./library-sidebar')
+const LibraryContent = require('./library-content')
 
 /**
  * The main state of the client - displaying the library

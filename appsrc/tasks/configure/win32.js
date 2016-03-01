@@ -1,5 +1,5 @@
 
-let sf = require('../../util/sf')
+const sf = require('../../util/sf')
 
 let self = {
   configure: async function (app_path) {

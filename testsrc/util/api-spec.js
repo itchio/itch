@@ -1,10 +1,10 @@
 
-let test = require('zopf')
-let sinon = require('sinon')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const sinon = require('sinon')
+const proxyquire = require('proxyquire')
 
-let electron = require('../stubs/electron')
-let cooldown = require('../stubs/cooldown')
+const electron = require('../stubs/electron')
+const cooldown = require('../stubs/cooldown')
 
 test('api', t => {
   let needle = {

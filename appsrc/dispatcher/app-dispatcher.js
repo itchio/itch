@@ -1,5 +1,5 @@
 
-let os = require('../util/os')
+const os = require('../util/os')
 
 if (os.process_type() === 'renderer') {
   module.exports = require('./app-dispatcher/renderer')

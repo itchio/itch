@@ -1,11 +1,11 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
 
-let AppConstants = require('../../app/constants/app-constants')
+const AppConstants = require('../../app/constants/app-constants')
 
-let AppDispatcher = require('../stubs/app-dispatcher')
-let electron = require('../stubs/electron')
+const AppDispatcher = require('../stubs/app-dispatcher')
+const electron = require('../stubs/electron')
 
 test('WindowStore', t => {
   let stubs = Object.assign({

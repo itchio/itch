@@ -1,18 +1,18 @@
 
-let Promise = require('bluebird')
-let path = require('path')
+const Promise = require('bluebird')
+const path = require('path')
 import { partial } from 'underline'
 
-let ibrew = require('../util/ibrew')
-let xdg_mime = require('../util/xdg-mime')
-let Logger = require('../util/log').Logger
-let log = require('../util/log')('setup-store')
+const ibrew = require('../util/ibrew')
+const xdg_mime = require('../util/xdg-mime')
+const Logger = require('../util/log').Logger
+const log = require('../util/log')('setup-store')
 
-let Store = require('./store')
+const Store = require('./store')
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppConstants = require('../constants/app-constants')
+const AppActions = require('../actions/app-actions')
 
 let path_done = false
 let ready = false

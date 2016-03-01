@@ -1,9 +1,9 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+const r = require('r-dom')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
 
-let LoginForm = require('./login-form')
+const LoginForm = require('./login-form')
 
 /**
  * The 'login' state of the application, during which

@@ -1,15 +1,15 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
 
 import { indexBy } from 'underline'
 
-let fixture = require('../fixture')
-let electron = require('../stubs/electron')
-let CaveStore = require('../stubs/cave-store')
-let CredentialsStore = require('../stubs/credentials-store')
-let AppActions = require('../stubs/app-actions')
-let market = require('../stubs/market')
+const fixture = require('../fixture')
+const electron = require('../stubs/electron')
+const CaveStore = require('../stubs/cave-store')
+const CredentialsStore = require('../stubs/credentials-store')
+const AppActions = require('../stubs/app-actions')
+const market = require('../stubs/market')
 
 let uploads_fixture = fixture.api('game/36664/uploads')
 

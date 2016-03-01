@@ -1,12 +1,12 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
-let interleave = require('./interleave')
+const r = require('r-dom')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
+const interleave = require('./interleave')
 
-let urls = require('../constants/urls')
+const urls = require('../constants/urls')
 
-let Icon = require('./icon')
+const Icon = require('./icon')
 
 class LibraryPlaceholder extends ShallowComponent {
   render () {

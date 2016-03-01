@@ -1,35 +1,35 @@
 
 import { throttle, findWhere, each } from 'underline'
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppActions = require('../actions/app-actions')
-let AppConstants = require('../constants/app-constants')
-let classification_actions = require('../constants/classification-actions')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppActions = require('../actions/app-actions')
+const AppConstants = require('../constants/app-constants')
+const classification_actions = require('../constants/classification-actions')
 
-let Store = require('./store')
-let CredentialsStore = require('./credentials-store')
-let PreferencesStore = require('./preferences-store')
-let InstallLocationStore = require('./install-location-store')
-let I18nStore = require('./i18n-store')
+const Store = require('./store')
+const CredentialsStore = require('./credentials-store')
+const PreferencesStore = require('./preferences-store')
+const InstallLocationStore = require('./install-location-store')
+const I18nStore = require('./i18n-store')
 
-let errors = require('../tasks/errors')
+const errors = require('../tasks/errors')
 
-let path = require('path')
-let deep = require('deep-diff')
-let clone = require('clone')
-let uuid = require('node-uuid')
+const path = require('path')
+const deep = require('deep-diff')
+const clone = require('clone')
+const uuid = require('node-uuid')
 
-let Logger = require('../util/log').Logger
-let log = require('../util/log')('cave-store')
-let market = require('../util/market')
-let os = require('../util/os')
-let diego = require('../util/diego')
-let explorer = require('../util/explorer')
-let sf = require('../util/sf')
+const Logger = require('../util/log').Logger
+const log = require('../util/log')('cave-store')
+const market = require('../util/market')
+const os = require('../util/os')
+const diego = require('../util/diego')
+const explorer = require('../util/explorer')
+const sf = require('../util/sf')
 
-let electron = require('electron')
+const electron = require('electron')
 
-let EventEmitter = require('events').EventEmitter
+const EventEmitter = require('events').EventEmitter
 
 let old_state = {}
 let state = {}
@@ -238,7 +238,7 @@ async function queue_task (id, task_name, data) {
       return
     }
 
-    let task = require(`../tasks/${task_name}`)
+    const task = require(`../tasks/${task_name}`)
     let emitter = Object.assign({}, EventEmitter.prototype)
     let task_opts = Object.assign({}, cave_opts(id), data, {
       id,

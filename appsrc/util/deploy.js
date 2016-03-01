@@ -2,13 +2,13 @@
 import { difference } from 'underline'
 import bluebird from 'bluebird'
 
-let sf = require('./sf')
-let noop = require('./noop')
-let butler = require('./butler')
+const sf = require('./sf')
+const noop = require('./noop')
+const butler = require('./butler')
 
-let path = require('path')
+const path = require('path')
 
-let log = require('./log')('deploy')
+const log = require('./log')('deploy')
 
 let pnoop = async () => null
 

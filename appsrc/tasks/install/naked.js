@@ -1,8 +1,8 @@
 
-let log = require('../../util/log')('install/naked')
-let sf = require('../../util/sf')
+const log = require('../../util/log')('install/naked')
+const sf = require('../../util/sf')
 
-let path = require('path')
+const path = require('path')
 
 let self = {
   install: async function (opts) {

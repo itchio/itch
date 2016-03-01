@@ -1,20 +1,20 @@
 
-let path = require('path')
-let Promise = require('bluebird')
+const path = require('path')
+const Promise = require('bluebird')
 
-let electron = require('electron')
+const electron = require('electron')
 let BrowserWindow = electron.BrowserWindow
 let shell = electron.shell
 let powerSaveBlocker = electron.powerSaveBlocker
 
-let market = require('../../util/market')
-let url = require('../../util/url')
-let http_server = require('../../util/http-server')
-let debug_browser_window = require('../../util/debug-browser-window')
+const market = require('../../util/market')
+const url = require('../../util/url')
+const http_server = require('../../util/http-server')
+const debug_browser_window = require('../../util/debug-browser-window')
 
-let log = require('../../util/log')('tasks/launch')
+const log = require('../../util/log')('tasks/launch')
 
-let CaveStore = require('../../stores/cave-store')
+const CaveStore = require('../../stores/cave-store')
 
 let self = {
   launch: async function(opts, cave) {

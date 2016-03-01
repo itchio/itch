@@ -1,12 +1,12 @@
 
-let noop = require('../util/noop')
-let sf = require('../util/sf')
-let log = require('../util/log')('tasks/uninstall')
+const noop = require('../util/noop')
+const sf = require('../util/sf')
+const log = require('../util/log')('tasks/uninstall')
 
-let CaveStore = require('../stores/cave-store')
-let AppActions = require('../actions/app-actions')
+const CaveStore = require('../stores/cave-store')
+const AppActions = require('../actions/app-actions')
 
-let core = require('./install/core')
+const core = require('./install/core')
 
 const keep_archives = (process.env.REMEMBER_ME_WHEN_IM_GONE === '1')
 

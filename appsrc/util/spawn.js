@@ -1,12 +1,12 @@
 
-let Promise = require('bluebird')
-let child_process = require('child_process')
-let StreamSplitter = require('stream-splitter')
-let LFTransform = require('./lf-transform')
+const Promise = require('bluebird')
+const child_process = require('child_process')
+const StreamSplitter = require('stream-splitter')
+const LFTransform = require('./lf-transform')
 
-let errors = require('../tasks/errors')
+const errors = require('../tasks/errors')
 
-let log = require('./log')('spawn')
+const log = require('./log')('spawn')
 
 function spawn (opts) {
   pre: { // eslint-disable-line

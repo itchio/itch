@@ -1,5 +1,5 @@
 
-let spawn = require('./spawn')
+const spawn = require('./spawn')
 
 let self = {
   platform: function () {

@@ -1,14 +1,14 @@
 
-let errors = require('./errors')
+const errors = require('./errors')
 
-let noop = require('../util/noop')
-let sf = require('../util/sf')
-let log = require('../util/log')('tasks/install')
+const noop = require('../util/noop')
+const sf = require('../util/sf')
+const log = require('../util/log')('tasks/install')
 
-let CaveStore = require('../stores/cave-store')
-let AppActions = require('../actions/app-actions')
+const CaveStore = require('../stores/cave-store')
+const AppActions = require('../actions/app-actions')
 
-let core = require('./install/core')
+const core = require('./install/core')
 
 function ensure (predicate, reason) {
   if (!predicate) {

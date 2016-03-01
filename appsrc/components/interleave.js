@@ -1,5 +1,5 @@
 
-let keyMirror = require('keymirror')
+const keyMirror = require('keymirror')
 let State = keyMirror({
   NORMAL: null,
   EXPECT_COMPONENT_KEY: null,

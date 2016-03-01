@@ -1,8 +1,8 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
 
-let electron = require('../stubs/electron')
+const electron = require('../stubs/electron')
 
 test('app-actions', t => {
   let app_dispatcher = {

@@ -1,14 +1,14 @@
 
-let r = require('r-dom')
+const r = require('r-dom')
 import { count } from 'grovel'
 
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
 
-let ProgressBar = require('./progress-bar')
-let ErrorList = require('./error-list')
+const ProgressBar = require('./progress-bar')
+const ErrorList = require('./error-list')
 
-let AppActions = require('../actions/app-actions')
+const AppActions = require('../actions/app-actions')
 
 /**
 * A sidebar link to one of the library's panels. Could

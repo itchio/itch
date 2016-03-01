@@ -1,17 +1,17 @@
-let path = require('path')
+const path = require('path')
 
 import { sortBy } from 'underline'
-let Promise = require('bluebird')
-let shell_quote = require('shell-quote')
+const Promise = require('bluebird')
+const shell_quote = require('shell-quote')
 
-let os = require('../../util/os')
-let sf = require('../../util/sf')
-let spawn = require('../../util/spawn')
+const os = require('../../util/os')
+const sf = require('../../util/sf')
+const spawn = require('../../util/spawn')
 
-let log = require('../../util/log')('tasks/launch')
+const log = require('../../util/log')('tasks/launch')
 
-let CaveStore = require('../../stores/cave-store')
-let Crash = require('../errors').Crash
+const CaveStore = require('../../stores/cave-store')
+const Crash = require('../errors').Crash
 
 
 let self = {

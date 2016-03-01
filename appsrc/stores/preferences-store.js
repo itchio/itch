@@ -1,15 +1,15 @@
 
-let log = require('../util/log')('i18n-store')
+const log = require('../util/log')('i18n-store')
 let opts = { logger: new log.Logger() }
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let Store = require('./store')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppConstants = require('../constants/app-constants')
+const Store = require('./store')
 
-let path = require('path')
-let electron = require('electron')
-let deepAssign = require('deep-assign')
-let sf = require('../util/sf')
+const path = require('path')
+const electron = require('electron')
+const deepAssign = require('deep-assign')
+const sf = require('../util/sf')
 
 let state = {}
 

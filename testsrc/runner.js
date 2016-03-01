@@ -3,9 +3,9 @@
   'use strict'
   /** requires node 4.2.x or higher because we use some ES6 features */
 
-  let fs = require('fs')
-  let path = require('path')
-  let glob = require('glob')
+  const fs = require('fs')
+  const path = require('path')
+  const glob = require('glob')
 
   require('source-map-support').install()
   require('bluebird').config({

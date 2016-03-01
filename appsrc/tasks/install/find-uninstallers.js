@@ -1,5 +1,5 @@
 
-let sf = require('../../util/sf')
+const sf = require('../../util/sf')
 
 // example installer names:
 //  * pidgin-uninst.exe

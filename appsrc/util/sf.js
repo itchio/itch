@@ -1,6 +1,6 @@
 
-let Promise = require('bluebird')
-let noop = require('./noop')
+const Promise = require('bluebird')
+const noop = require('./noop')
 
 // let's patch all the things! Electron randomly decides to
 // substitute 'fs' with their own version that considers '.asar'
@@ -16,7 +16,7 @@ if (!process.versions.electron) {
   fs_name = 'fs'
 }
 
-let proxyquire = require('proxyquire')
+const proxyquire = require('proxyquire')
 
 let fs = Object.assign({}, require(fs_name), {
   '@global': true, /* Work with transitive imports */
@@ -62,7 +62,7 @@ let mkdirp = Promise.promisify(proxyquire('mkdirp', stubs))
 let read_chunk = Promise.promisify(proxyquire('read-chunk', stubs))
 
 // other deps
-let path = require('path')
+const path = require('path')
 
 // global ignore patterns
 let ignore = [

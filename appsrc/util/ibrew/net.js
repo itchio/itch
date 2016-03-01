@@ -1,11 +1,11 @@
 
-let needle = require('../../promised/needle')
-let urls = require('../../constants/urls')
+const needle = require('../../promised/needle')
+const urls = require('../../constants/urls')
 
-let sf = require('../sf')
-let os = require('../os')
-let version = require('./version')
-let path = require('path')
+const sf = require('../sf')
+const os = require('../os')
+const version = require('./version')
+const path = require('path')
 
 let self = {
   /**

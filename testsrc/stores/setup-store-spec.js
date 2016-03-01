@@ -1,12 +1,12 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
 
-let AppConstants = require('../../app/constants/app-constants')
+const AppConstants = require('../../app/constants/app-constants')
 
-let electron = require('../stubs/electron')
-let AppDispatcher = require('../stubs/app-dispatcher')
-let AppActions = require('../stubs/app-actions')
+const electron = require('../stubs/electron')
+const AppDispatcher = require('../stubs/app-dispatcher')
+const AppActions = require('../stubs/app-actions')
 
 test('SetupStore', t => {
   let ibrew = {

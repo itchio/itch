@@ -1,5 +1,5 @@
 
-let keyMirror = require('keymirror')
+const keyMirror = require('keymirror')
 
 module.exports = keyMirror({
   BOOT: null,

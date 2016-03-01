@@ -1,10 +1,10 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
 import { indexBy, pluck } from 'underline'
 
-let electron = require('../stubs/electron')
-let CredentialsStore = require('../stubs/credentials-store')
+const electron = require('../stubs/electron')
+const CredentialsStore = require('../stubs/credentials-store')
 
 test('Market', t => {
   const app = {

@@ -1,5 +1,5 @@
 
-let TranslatedComponent = require('./translated-component')
+const TranslatedComponent = require('./translated-component')
 import { isEqual } from 'underline'
 
 /**

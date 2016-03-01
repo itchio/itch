@@ -1,14 +1,14 @@
 
 import { assocIn, dissocIn, getIn } from 'grovel'
-let Store = require('./store')
+const Store = require('./store')
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppConstants = require('../constants/app-constants')
+const AppActions = require('../actions/app-actions')
 
-let defer = require('../util/defer')
-let patch = require('../util/patch')
-let env = require('../env')
+const defer = require('../util/defer')
+const patch = require('../util/patch')
+const env = require('../env')
 
 let state = {
   page: 'login',

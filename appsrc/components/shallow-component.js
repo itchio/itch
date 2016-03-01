@@ -1,6 +1,6 @@
 
-let TranslatedComponent = require('./translated-component')
-let shallowEqual = require('pure-render-mixin').shallowEqual
+const TranslatedComponent = require('./translated-component')
+const shallowEqual = require('pure-render-mixin').shallowEqual
 
 /**
  * These components only need a shallow comparison between old and new state,

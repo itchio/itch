@@ -1,8 +1,8 @@
 
 /* Diego is your little diagnostics mercenary! */
-let _log = require('./log')('diego')
-let os = require('./os')
-let spawn = require('./spawn')
+const _log = require('./log')('diego')
+const os = require('./os')
+const spawn = require('./spawn')
 
 let self = {
   hire: async function (opts) {

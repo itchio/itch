@@ -1,16 +1,16 @@
 
 import { getIn } from 'grovel'
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+const r = require('r-dom')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
 
-let AppStore = require('../stores/app-store')
-let AppActions = require('../actions/app-actions')
-let urls = require('../constants/urls')
+const AppStore = require('../stores/app-store')
+const AppActions = require('../actions/app-actions')
+const urls = require('../constants/urls')
 
-let InputRow = require('./input-row')
-let ErrorList = require('./error-list')
-let Icon = require('./icon')
+const InputRow = require('./input-row')
+const ErrorList = require('./error-list')
+const Icon = require('./icon')
 
 class LoginForm extends ShallowComponent {
   constructor () {

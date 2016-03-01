@@ -1,13 +1,13 @@
 
 
-let AppActions = require('../actions/app-actions')
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let Store = require('./store')
-let I18nStore = require('./i18n-store')
+const AppActions = require('../actions/app-actions')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppConstants = require('../constants/app-constants')
+const Store = require('./store')
+const I18nStore = require('./i18n-store')
 
-let app = require('electron').app
-let BrowserWindow = require('electron').BrowserWindow
+const app = require('electron').app
+const BrowserWindow = require('electron').BrowserWindow
 
 let window
 let quitting = false

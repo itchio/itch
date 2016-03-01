@@ -1,12 +1,12 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
-let jspath = require('jspath')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
+const jspath = require('jspath')
 
-let electron = require('../stubs/electron')
-let AppActions = require('../stubs/app-actions')
-let CredentialsStore = require('../stubs/credentials-store')
-let I18nStore = require('../stubs/i18n-store')
+const electron = require('../stubs/electron')
+const AppActions = require('../stubs/app-actions')
+const CredentialsStore = require('../stubs/credentials-store')
+const I18nStore = require('../stubs/i18n-store')
 
 let collect_actions = (template) => {
   let actions = {}

@@ -1,9 +1,9 @@
 
-let Promise = require('bluebird')
-let needle = require('needle')
+const Promise = require('bluebird')
+const needle = require('needle')
 
-let app = require('../util/app')
-let os = require('../util/os')
+const app = require('../util/app')
+const os = require('../util/os')
 
 needle.defaults({
   user_agent: `itch/${app.getVersion()} (${os.platform()}; Electron/${os.get_version('electron')} Chrome/${os.get_version('chrome')})`

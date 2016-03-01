@@ -1,7 +1,7 @@
-let test = require('zopf')
-let fixture = require('../fixture')
-let diskspace = require('../../app/util/diskspace')
-let os = require('../../app/util/os')
+const test = require('zopf')
+const fixture = require('../fixture')
+const diskspace = require('../../app/util/diskspace')
+const os = require('../../app/util/os')
 
 test('diskspace', t => {
   t.case('df (OSX 10.11)', async t => {

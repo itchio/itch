@@ -1,11 +1,11 @@
 
 import { assocIn } from 'grovel'
 
-let Logger = require('./log').Logger
-let log = require('./log')('fetch')
+const Logger = require('./log').Logger
+const log = require('./log')('fetch')
 let opts = {logger: new Logger({sinks: {console: true}})}
 
-let CredentialsStore = require('../stores/credentials-store')
+const CredentialsStore = require('../stores/credentials-store')
 
 import { normalize, arrayOf } from 'idealizr'
 import { game, collection, download_key } from './schemas'

@@ -1,14 +1,14 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+const r = require('r-dom')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
 
-let Thumbnail = require('./game-cell/thumbnail')
-let MainAction = require('./game-cell/main-action')
-let SecondaryActions = require('./game-cell/secondary-actions')
+const Thumbnail = require('./game-cell/thumbnail')
+const MainAction = require('./game-cell/main-action')
+const SecondaryActions = require('./game-cell/secondary-actions')
 
-let platform_data = require('../constants/platform-data')
-let platform = require('../util/os').itch_platform()
+const platform_data = require('../constants/platform-data')
+const platform = require('../util/os').itch_platform()
 
 /* before you think you can download all itch.io games:
 there's obviously server-side checking.

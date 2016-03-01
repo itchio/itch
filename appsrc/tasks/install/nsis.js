@@ -1,14 +1,14 @@
 
-let spawn = require('../../util/spawn')
-let find_uninstallers = require('./find-uninstallers')
+const spawn = require('../../util/spawn')
+const find_uninstallers = require('./find-uninstallers')
 
-let AppActions = require('../../actions/app-actions')
+const AppActions = require('../../actions/app-actions')
 
-let blessing = require('./blessing')
-let errors = require('../errors')
-let sf = require('../../util/sf')
+const blessing = require('./blessing')
+const errors = require('../errors')
+const sf = require('../../util/sf')
 
-let log = require('../../util/log')('installers/nsis')
+const log = require('../../util/log')('installers/nsis')
 
 // NSIS docs: http://nsis.sourceforge.net/Docs/Chapter3.html
 // When ran without elevate, some NSIS installers will silently fail.

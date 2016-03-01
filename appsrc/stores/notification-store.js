@@ -1,17 +1,17 @@
 
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppActions = require('../actions/app-actions')
-let AppConstants = require('../constants/app-constants')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppActions = require('../actions/app-actions')
+const AppConstants = require('../constants/app-constants')
 
-let WindowStore = require('./window-store')
-let TrayStore = require('./tray-store')
-let Store = require('./store')
+const WindowStore = require('./window-store')
+const TrayStore = require('./tray-store')
+const Store = require('./store')
 
-let os = require('../util/os')
-let defer = require('../util/defer')
+const os = require('../util/os')
+const defer = require('../util/defer')
 
-let app = require('electron').app
+const app = require('electron').app
 
 let state = {
   progress: -1

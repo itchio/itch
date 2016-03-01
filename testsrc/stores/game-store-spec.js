@@ -1,15 +1,15 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
 
-let AppConstants = require('../../app/constants/app-constants')
+const AppConstants = require('../../app/constants/app-constants')
 
-let electron = require('../stubs/electron')
-let AppDispatcher = require('../stubs/app-dispatcher')
-let AppActions = require('../stubs/app-actions')
-let CredentialsStore = require('../stubs/credentials-store')
-let market = require('../stubs/market')
-let fetch = require('../stubs/fetch')
+const electron = require('../stubs/electron')
+const AppDispatcher = require('../stubs/app-dispatcher')
+const AppActions = require('../stubs/app-actions')
+const CredentialsStore = require('../stubs/credentials-store')
+const market = require('../stubs/market')
+const fetch = require('../stubs/fetch')
 
 import { pluck, indexBy } from 'underline'
 

@@ -1,24 +1,24 @@
 
-let os = require('../util/os')
-let app = require('../util/app')
-let cooldown = require('../util/cooldown')(1000)
+const os = require('../util/os')
+const app = require('../util/app')
+const cooldown = require('../util/cooldown')(1000)
 
-let log = require('../util/log')('i18n-backend/' + os.process_type())
+const log = require('../util/log')('i18n-backend/' + os.process_type())
 let opts = { logger: new log.Logger({sinks: {console: !!process.env.LET_ME_OUT}}) }
 
-let needle = require('../promised/needle')
-let ifs = require('./ifs')
-let urls = require('../constants/urls')
-let env = require('../env')
+const needle = require('../promised/needle')
+const ifs = require('./ifs')
+const urls = require('../constants/urls')
+const env = require('../env')
 let upgrades_enabled = env.name === 'production' || process.env.DID_I_STUTTER === '1'
 
-let path = require('path')
+const path = require('path')
 
-let i18next = require('i18next')
+const i18next = require('i18next')
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppConstants = require('../constants/app-constants')
+const AppActions = require('../actions/app-actions')
 
 let being_fetched = {}
 

@@ -1,9 +1,9 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let DeepComponent = require('./deep-component')
+const r = require('r-dom')
+const PropTypes = require('react').PropTypes
+const DeepComponent = require('./deep-component')
 
-let format = require('../util/format')
+const format = require('../util/format')
 
 /**
  * A bunch of errors displayed in a list

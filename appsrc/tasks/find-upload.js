@@ -1,16 +1,16 @@
 
-let market = require('../util/market')
+const market = require('../util/market')
 import { indexBy, findWhere } from 'underline'
 
-let os = require('../util/os')
-let log = require('../util/log')('tasks/find-upload')
+const os = require('../util/os')
+const log = require('../util/log')('tasks/find-upload')
 
-let errors = require('./errors')
+const errors = require('./errors')
 
-let AppActions = require('../actions/app-actions')
-let CaveStore = require('../stores/cave-store')
-let CredentialsStore = require('../stores/credentials-store')
-let classification_actions = require('../constants/classification-actions')
+const AppActions = require('../actions/app-actions')
+const CaveStore = require('../stores/cave-store')
+const CredentialsStore = require('../stores/credentials-store')
+const classification_actions = require('../constants/classification-actions')
 
 let self = {
   filter_uploads: function (action, uploads) {

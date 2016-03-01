@@ -1,11 +1,11 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
 
-let electron = require('../stubs/electron')
-let butler = require('../stubs/butler')
-let CaveStore = require('../stubs/cave-store')
-let CredentialsStore = require('../stubs/credentials-store')
+const electron = require('../stubs/electron')
+const butler = require('../stubs/butler')
+const CaveStore = require('../stubs/cave-store')
+const CredentialsStore = require('../stubs/credentials-store')
 
 let typical_install = {
   _id: 42,

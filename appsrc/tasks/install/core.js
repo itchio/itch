@@ -1,11 +1,11 @@
 
-let log = require('../../util/log')('install/core')
-let sniff = require('../../util/sniff')
-let spawn = require('../../util/spawn')
+const log = require('../../util/log')('install/core')
+const sniff = require('../../util/sniff')
+const spawn = require('../../util/spawn')
 
-let AppActions = require('../../actions/app-actions')
+const AppActions = require('../../actions/app-actions')
 
-let ExtendableError = require('es6-error')
+const ExtendableError = require('es6-error')
 
 class UnhandledFormat extends ExtendableError {
   constructor (archive_path) {
@@ -126,7 +126,7 @@ let self = {
       installer_name = await self.sniff_type(opts)
     }
 
-    let installer = require(`./${installer_name}`)
+    const installer = require(`./${installer_name}`)
     await installer[operation](opts)
   }
 }

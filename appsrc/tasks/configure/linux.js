@@ -1,5 +1,5 @@
 
-let common = require('./common')
+const common = require('./common')
 
 let self = {
   configure: async function (app_path) {

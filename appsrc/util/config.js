@@ -1,7 +1,7 @@
 
-let nconf = require('nconf')
-let path = require('path')
-let app = require('electron').app
+const nconf = require('nconf')
+const path = require('path')
+const app = require('electron').app
 
 let config_file = path.join(app.getPath('userData'), 'config.json')
 try {

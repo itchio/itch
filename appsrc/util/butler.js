@@ -1,12 +1,12 @@
 
-let path = require('path')
+const path = require('path')
 import { partial } from 'underline'
 
-let noop = require('./noop')
-let spawn = require('./spawn')
-let sf = require('./sf')
+const noop = require('./noop')
+const spawn = require('./spawn')
+const sf = require('./sf')
 
-let log = require('../util/log')('butler')
+const log = require('../util/log')('butler')
 
 let self = {
   parse_butler_status: function (opts, onerror, token) {

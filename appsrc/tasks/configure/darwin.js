@@ -1,9 +1,9 @@
 
-let Promise = require('bluebird')
-let path = require('path')
+const Promise = require('bluebird')
+const path = require('path')
 
-let common = require('./common')
-let sf = require('../../util/sf')
+const common = require('./common')
+const sf = require('../../util/sf')
 
 let ignore_patterns = [
   // skip some typical junk we find in archives that's supposed

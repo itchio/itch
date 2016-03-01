@@ -1,13 +1,13 @@
 
-let spawn = require('../../util/spawn')
-let find_uninstallers = require('./find-uninstallers')
+const spawn = require('../../util/spawn')
+const find_uninstallers = require('./find-uninstallers')
 
-let AppActions = require('../../actions/app-actions')
+const AppActions = require('../../actions/app-actions')
 
-let blessing = require('./blessing')
-let errors = require('../errors')
+const blessing = require('./blessing')
+const errors = require('../errors')
 
-let log = require('../../util/log')('installers/inno')
+const log = require('../../util/log')('installers/inno')
 
 // InnoSetup docs: http://www.jrsoftware.org/ishelp/index.php?topic=setupcmdline
 

@@ -1,9 +1,9 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
 
-let sd = require('./skin-deeper')
-let stubs = require('../stubs/react-stubs')
+const sd = require('./skin-deeper')
+const stubs = require('../stubs/react-stubs')
 
 test('ErrorList', t => {
   let ErrorList = proxyquire('../../app/components/error-list', stubs)

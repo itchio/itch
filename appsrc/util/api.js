@@ -1,12 +1,12 @@
 
-let needle = require('../promised/needle')
-let urls = require('../constants/urls')
-let ExtendableError = require('es6-error')
+const needle = require('../promised/needle')
+const urls = require('../constants/urls')
+const ExtendableError = require('es6-error')
 
-let cooldown = require('../util/cooldown')(130)
+const cooldown = require('../util/cooldown')(130)
 
-let Logger = require('./log').Logger
-let log = require('./log')('api')
+const Logger = require('./log').Logger
+const log = require('./log')('api')
 let logger = new Logger({sinks: {console: !!process.env.LET_ME_IN}})
 let opts = {logger}
 

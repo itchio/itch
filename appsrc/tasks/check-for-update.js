@@ -1,10 +1,10 @@
 
-let log = require('../util/log')('tasks/awaken')
+const log = require('../util/log')('tasks/awaken')
 
-let CaveStore = require('../stores/cave-store')
-let find_upload = require('./find-upload')
+const CaveStore = require('../stores/cave-store')
+const find_upload = require('./find-upload')
 
-let cooldown = require('../util/cooldown')(500)
+const cooldown = require('../util/cooldown')(500)
 
 async function start (opts) {
   let id = opts.id

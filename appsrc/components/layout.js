@@ -1,12 +1,12 @@
 
-let r = require('r-dom')
-let ShallowComponent = require('./shallow-component')
+const r = require('r-dom')
+const ShallowComponent = require('./shallow-component')
 
-let LoginPage = require('./login-page')
-let LibraryPage = require('./library-page')
+const LoginPage = require('./login-page')
+const LibraryPage = require('./library-page')
 
-let AppStore = require('../stores/app-store')
-let AppActions = require('../actions/app-actions')
+const AppStore = require('../stores/app-store')
+const AppActions = require('../actions/app-actions')
 
 function get_state () {
   return {app_state: AppStore.get_state()}

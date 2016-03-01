@@ -1,10 +1,10 @@
 
-let StreamSearch = require('streamsearch')
-let os = require('../../util/os')
-let sf = require('../../util/sf')
-let log = require('../../util/log')('installers/exe')
+const StreamSearch = require('streamsearch')
+const os = require('../../util/os')
+const sf = require('../../util/sf')
+const log = require('../../util/log')('installers/exe')
 
-let AppActions = require('../../actions/app-actions')
+const AppActions = require('../../actions/app-actions')
 
 import { partial } from 'underline'
 
@@ -125,7 +125,7 @@ let self = {
 
     // sample file_output:
     // ['PE32 executable (GUI) Intel 80386', 'for MS Windows', 'InstallShield self-extracting archive']
-    let file = require('../../util/file')
+    const file = require('../../util/file')
     let file_output = await file(archive_path)
     let detail = file_output[2]
 

@@ -1,15 +1,15 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
 
-let AppConstants = require('../../app/constants/app-constants')
+const AppConstants = require('../../app/constants/app-constants')
 
-let electron = require('../stubs/electron')
+const electron = require('../stubs/electron')
 
-let AppDispatcher = require('../stubs/app-dispatcher')
-let AppActions = require('../stubs/app-actions')
-let CredentialsStore = require('../stubs/credentials-store')
-let defer = require('../stubs/defer')
+const AppDispatcher = require('../stubs/app-dispatcher')
+const AppActions = require('../stubs/app-actions')
+const CredentialsStore = require('../stubs/credentials-store')
+const defer = require('../stubs/defer')
 
 test('AppStore', t => {
   let GameStore = {

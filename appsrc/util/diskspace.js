@@ -1,6 +1,6 @@
 
-let spawn = require('./spawn')
-let os = require('./os')
+const spawn = require('./spawn')
+const os = require('./os')
 
 /*
  * Heavily based on https://github.com/int0h/npm-hddSpace

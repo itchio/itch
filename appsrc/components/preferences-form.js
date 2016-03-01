@@ -1,20 +1,20 @@
 
-let r = require('r-dom')
+const r = require('r-dom')
 import { each, filter } from 'underline'
 import { getIn } from 'grovel'
 
-let humanize = require('humanize-plus')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+const humanize = require('humanize-plus')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
 
-let AppActions = require('../actions/app-actions')
-let urls = require('../constants/urls')
-let I18nStore = require('../stores/i18n-store')
-let os = require('../util/os')
+const AppActions = require('../actions/app-actions')
+const urls = require('../constants/urls')
+const I18nStore = require('../stores/i18n-store')
+const os = require('../util/os')
 
-let Tooltip = require('rc-tooltip')
-let SelectRow = require('./select-row')
-let Icon = require('./icon')
+const Tooltip = require('rc-tooltip')
+const SelectRow = require('./select-row')
+const Icon = require('./icon')
 
 class PreferencesForm extends ShallowComponent {
   constructor () {

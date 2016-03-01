@@ -1,13 +1,13 @@
 
-let r = require('r-dom')
+const r = require('r-dom')
 
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('../shallow-component')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('../shallow-component')
 
-let AppActions = require('../../actions/app-actions')
+const AppActions = require('../../actions/app-actions')
 
-let platform_data = require('../../constants/platform-data')
-let platform = require('../../util/os').itch_platform()
+const platform_data = require('../../constants/platform-data')
+const platform = require('../../util/os').itch_platform()
 
 class Thumbnail extends ShallowComponent {
   render () {

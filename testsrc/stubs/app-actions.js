@@ -1,6 +1,6 @@
 
-let proxyquire = require('proxyquire')
-let electron = require('./electron')
+const proxyquire = require('proxyquire')
+const electron = require('./electron')
 
 let noop = () => null
 

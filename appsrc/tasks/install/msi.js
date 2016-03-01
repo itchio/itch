@@ -1,10 +1,10 @@
 
-let spawn = require('../../util/spawn')
-let os = require('../../util/os')
+const spawn = require('../../util/spawn')
+const os = require('../../util/os')
 
-let AppActions = require('../../actions/app-actions')
+const AppActions = require('../../actions/app-actions')
 
-let log = require('../../util/log')('installers/msi')
+const log = require('../../util/log')('installers/msi')
 
 let self = {
   log_path: function (operation, msi_path) {

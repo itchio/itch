@@ -1,15 +1,15 @@
 
-let r = require('r-dom')
+const r = require('r-dom')
 import { count, getIn } from 'grovel'
 import { map, partial, groupBy, sortBy, filter, each } from 'underline'
 
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
 
-let Icon = require('./icon')
-let TaskIcon = require('./task-icon')
-let UserPanel = require('./user-panel')
-let LibraryPanelLink = require('./library-panel-link')
+const Icon = require('./icon')
+const TaskIcon = require('./task-icon')
+const UserPanel = require('./user-panel')
+const LibraryPanelLink = require('./library-panel-link')
 
 // Hack for frameless styling
 let frameless = process.platform === 'darwin'

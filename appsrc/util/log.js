@@ -1,11 +1,11 @@
 
 import { pairs } from 'underline'
 
-let fs = require('fs')
-let sf = require('../util/sf')
-let path = require('path')
-let eol = require('eol')
-let deep_assign = require('deep-assign')
+const fs = require('fs')
+const sf = require('../util/sf')
+const path = require('path')
+const eol = require('eol')
+const deep_assign = require('deep-assign')
 
 function make (name) {
   let f = function (opts, message) {

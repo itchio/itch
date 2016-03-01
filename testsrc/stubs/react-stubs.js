@@ -1,13 +1,13 @@
 
-let electron = require('./electron')
+const electron = require('./electron')
 
-let defer = require('./defer')
-let AppStore = require('./app-store')
-let AppActions = require('./app-actions')
-let AppDispatcher = require('./app-dispatcher')
-let Store = require('./store')
+const defer = require('./defer')
+const AppStore = require('./app-store')
+const AppActions = require('./app-actions')
+const AppDispatcher = require('./app-dispatcher')
+const Store = require('./store')
 
-let i18next = require('./i18next')
+const i18next = require('./i18next')
 
 let self = Object.assign({
   '../util/defer': defer,

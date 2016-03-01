@@ -1,14 +1,14 @@
 
-let spawn = require('../../util/spawn')
-let sf = require('../../util/sf')
+const spawn = require('../../util/spawn')
+const sf = require('../../util/sf')
 
-let AppActions = require('../../actions/app-actions')
+const AppActions = require('../../actions/app-actions')
 
-let blessing = require('./blessing')
+const blessing = require('./blessing')
 
-let log = require('../../util/log')('installers/air')
+const log = require('../../util/log')('installers/air')
 
-let path = require('path')
+const path = require('path')
 
 // Adobe Air docs: http://help.adobe.com/en_US/air/redist/WS485a42d56cd19641-70d979a8124ef20a34b-8000.html
 
@@ -80,7 +80,7 @@ let self = {
 
     let logger = opts.logger
 
-    let ibrew = require('../../util/ibrew')
+    const ibrew = require('../../util/ibrew')
     let ibrew_opts = {
       logger,
       onstatus: (msg) => log(opts, `ibrew status: ${msg}`)

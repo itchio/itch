@@ -1,16 +1,16 @@
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
-let Store = require('./store')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppConstants = require('../constants/app-constants')
+const AppActions = require('../actions/app-actions')
+const Store = require('./store')
 
-let path = require('path')
+const path = require('path')
 
-let app = require('electron').app
-let Menu = require('electron').Menu
-let Tray = require('electron').Tray
+const app = require('electron').app
+const Menu = require('electron').Menu
+const Tray = require('electron').Tray
 
-let os = require('../util/os')
+const os = require('../util/os')
 
 let tray
 

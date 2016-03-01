@@ -1,17 +1,17 @@
 
-let log = require('../util/log')('i18n-store')
+const log = require('../util/log')('i18n-store')
 let opts = { logger: new log.Logger() }
 
-let Store = require('./store')
-let AppActions = require('../actions/app-actions')
+const Store = require('./store')
+const AppActions = require('../actions/app-actions')
 
-let i18next = require('i18next')
-let backend = require('../i18next/backend')
+const i18next = require('i18next')
+const backend = require('../i18next/backend')
 
-let path = require('path')
+const path = require('path')
 
 /* not using sf because locales list is packed within our app.asar */
-let fs = require('fs')
+const fs = require('fs')
 
 let locales_dir = path.resolve(path.join(__dirname, '..', 'static', 'locales'))
 let locales_list_path = path.resolve(path.join(locales_dir, '..', 'locales.json'))

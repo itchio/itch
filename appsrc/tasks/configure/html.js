@@ -1,8 +1,8 @@
 
-let path = require('path')
-let clone = require('clone')
+const path = require('path')
+const clone = require('clone')
 
-let sf = require('../../util/sf')
+const sf = require('../../util/sf')
 
 let self = {
   sort_by_depth: function (paths) {

@@ -1,11 +1,11 @@
 
-let test = require('zopf')
-let sinon = require('sinon')
-let proxyquire = require('proxyquire')
-let react_stubs = require('../stubs/react-stubs')
-let cooldown = require('../stubs/cooldown')
-let AppConstants = require('../../app/constants/app-constants')
-let path = require('path')
+const test = require('zopf')
+const sinon = require('sinon')
+const proxyquire = require('proxyquire')
+const react_stubs = require('../stubs/react-stubs')
+const cooldown = require('../stubs/cooldown')
+const AppConstants = require('../../app/constants/app-constants')
+const path = require('path')
 
 test('i18next backend', t => {
   let app = {

@@ -1,15 +1,15 @@
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppConstants = require('../constants/app-constants')
+const AppActions = require('../actions/app-actions')
 
-let Store = require('./store')
-let CaveStore = require('./cave-store')
+const Store = require('./store')
+const CaveStore = require('./cave-store')
 
-let crash_reporter = require('../util/crash-reporter')
-let github = require('../util/github')
-let sf = require('../util/sf')
-let market = require('../util/market')
+const crash_reporter = require('../util/crash-reporter')
+const github = require('../util/github')
+const sf = require('../util/sf')
+const market = require('../util/market')
 
 let state = {}
 

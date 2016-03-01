@@ -1,5 +1,5 @@
 
-let ExtendableError = require('es6-error')
+const ExtendableError = require('es6-error')
 
 class Transition extends ExtendableError {
   constructor (opts) {

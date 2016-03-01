@@ -1,16 +1,16 @@
 
-let sf = require('../util/sf')
-let path = require('path')
+const sf = require('../util/sf')
+const path = require('path')
 
-let electron = require('electron')
+const electron = require('electron')
 let app = electron.app
 let shell = electron.shell
 let dialog = electron.dialog
-let querystring = require('querystring')
+const querystring = require('querystring')
 
-let urls = require('../constants/urls')
+const urls = require('../constants/urls')
 
-let os = require('./os')
+const os = require('./os')
 
 let self = {
   write_crash_log: (e) => {
@@ -61,7 +61,7 @@ ${log}
     let log = res.log
     let crash_file = res.crash_file
 
-    let t = require('i18next').getFixedT()
+    const t = require('i18next').getFixedT()
 
     let dialog_opts = {
       type: 'error',

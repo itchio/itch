@@ -1,9 +1,9 @@
 
-let sniff = require('../../util/sniff')
-let sf = require('../../util/sf')
+const sniff = require('../../util/sniff')
+const sf = require('../../util/sf')
 import { partial } from 'underline'
 
-let path = require('path')
+const path = require('path')
 
 /**
  * Tries to find executables by sniffing file contents,

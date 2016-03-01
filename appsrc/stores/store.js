@@ -1,7 +1,7 @@
 
 
-let EventEmitter = require('events').EventEmitter
-let os = require('../util/os')
+const EventEmitter = require('events').EventEmitter
+const os = require('../util/os')
 
 let CHANGE_EVENT = 'change'
 
@@ -76,7 +76,7 @@ Store.action_listeners = (f) => {
 
 Store.subscribe = (name, cb) => {
   if (os.process_type() === 'renderer') {
-    let ipc = require('electron').ipcRenderer
+    const ipc = require('electron').ipcRenderer
     ipc.on(`${name}-change`, () => ipc.send(`${name}-fetch`))
     ipc.on(`${name}-state`, (ev, data) => cb(data))
 
@@ -84,7 +84,7 @@ Store.subscribe = (name, cb) => {
   } else {
     let store_path = `./${name}`
     console.log(`Subscribing to ${store_path}`)
-    let specific_store = require(store_path)
+    const specific_store = require(store_path)
     specific_store.add_change_listener('anonymous', cb)
   }
 }

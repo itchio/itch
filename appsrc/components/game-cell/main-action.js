@@ -1,16 +1,16 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('../shallow-component')
+const r = require('r-dom')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('../shallow-component')
 
-let Tooltip = require('rc-tooltip')
-let Icon = require('../icon')
-let TaskIcon = require('../task-icon')
+const Tooltip = require('rc-tooltip')
+const Icon = require('../icon')
+const TaskIcon = require('../task-icon')
 
-let AppActions = require('../../actions/app-actions')
-let classification_actions = require('../../constants/classification-actions')
+const AppActions = require('../../actions/app-actions')
+const classification_actions = require('../../constants/classification-actions')
 
-let platform = require('../../util/os').itch_platform()
+const platform = require('../../util/os').itch_platform()
 
 let linear_gradient = (progress) => {
   let percent = (progress * 100).toFixed() + '%'

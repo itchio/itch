@@ -1,19 +1,19 @@
 
-let electron = require('electron')
+const electron = require('electron')
 let Menu = electron.Menu
 let shell = electron.shell
 
-let CredentialsStore = require('../stores/credentials-store')
-let I18nStore = require('../stores/i18n-store')
-let AppActions = require('../actions/app-actions')
-let AppConstants = require('../constants/app-constants')
-let urls = require('../constants/urls')
-let AppDispatcher = require('../dispatcher/app-dispatcher')
+const CredentialsStore = require('../stores/credentials-store')
+const I18nStore = require('../stores/i18n-store')
+const AppActions = require('../actions/app-actions')
+const AppConstants = require('../constants/app-constants')
+const urls = require('../constants/urls')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
 
-let clone = require('clone')
+const clone = require('clone')
 
-let os = require('../util/os')
-let crash_reporter = require('../util/crash-reporter')
+const os = require('../util/os')
+const crash_reporter = require('../util/crash-reporter')
 
 let osx = (os.platform() === 'darwin')
 

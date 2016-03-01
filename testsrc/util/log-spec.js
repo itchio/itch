@@ -1,7 +1,7 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
-let fs = require('fs')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
+const fs = require('fs')
 const os = require('os')
 
 let setup = (t, logger_opts) => {

@@ -1,17 +1,17 @@
 
-let subprogress = require('../../util/subprogress')
-let sniff = require('../../util/sniff')
-let noop = require('../../util/noop')
+const subprogress = require('../../util/subprogress')
+const sniff = require('../../util/sniff')
+const noop = require('../../util/noop')
 
-let butler = require('../../util/butler')
-let extract = require('../../util/extract')
-let deploy = require('../../util/deploy')
+const butler = require('../../util/butler')
+const extract = require('../../util/extract')
+const deploy = require('../../util/deploy')
 
-let core = require('./core')
+const core = require('./core')
 
-let log = require('../../util/log')('installers/archive')
+const log = require('../../util/log')('installers/archive')
 
-let AppActions = require('../../actions/app-actions')
+const AppActions = require('../../actions/app-actions')
 
 let is_tar = async function (path) {
   let type = await sniff.path(path)

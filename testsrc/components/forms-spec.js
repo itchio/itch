@@ -1,10 +1,10 @@
 
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
 
-let sd = require('./skin-deeper')
-let stubs = require('../stubs/react-stubs')
+const sd = require('./skin-deeper')
+const stubs = require('../stubs/react-stubs')
 
 test('forms', t => {
   t.case('InputRow', t => {

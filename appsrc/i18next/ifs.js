@@ -1,6 +1,6 @@
 
-let sf = require('../util/sf')
-let fs = require('fs')
+const sf = require('../util/sf')
+const fs = require('fs')
 
 let self = {
   read_file: async function (file) {

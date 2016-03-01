@@ -1,12 +1,12 @@
 
-let spawn = require('./spawn')
-let os = require('./os')
-let sf = require('./sf')
+const spawn = require('./spawn')
+const os = require('./os')
+const sf = require('./sf')
 
-let path = require('path')
+const path = require('path')
 
 let file = async (file_path) => {
-  let ibrew = require('./ibrew')
+  const ibrew = require('./ibrew')
 
   let args = [
     '--brief' // don't echo file name

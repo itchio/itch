@@ -1,6 +1,6 @@
 
-let errors = require('./errors')
-let CaveStore = require('../stores/cave-store')
+const errors = require('./errors')
+const CaveStore = require('../stores/cave-store')
 
 async function start (opts) {
   let id = opts.id

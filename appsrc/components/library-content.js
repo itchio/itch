@@ -1,15 +1,15 @@
 
-let r = require('r-dom')
+const r = require('r-dom')
 import { getIn, count } from 'grovel'
 import { each } from 'underline'
 
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
 
-let GameList = require('./game-list')
-let LibraryPlaceholder = require('./library-placeholder')
-let PreferencesForm = require('./preferences-form')
-let SearchContent = require('./search')
+const GameList = require('./game-list')
+const LibraryPlaceholder = require('./library-placeholder')
+const PreferencesForm = require('./preferences-form')
+const SearchContent = require('./search')
 
 // predicates
 let pred_every = (cave) => true

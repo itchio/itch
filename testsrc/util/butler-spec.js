@@ -1,9 +1,9 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
-let sinon = require('sinon')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
+const sinon = require('sinon')
 
-let electron = require('../stubs/electron')
+const electron = require('../stubs/electron')
 
 test('http', t => {
   let onprogress = t.spy()

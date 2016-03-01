@@ -1,5 +1,5 @@
 
-let electron = require('electron')
+const electron = require('electron')
 
 let self = {
   open: (folder) => {

@@ -1,6 +1,6 @@
 
-let urls = require('../constants/urls')
-let needle = require('../promised/needle')
+const urls = require('../constants/urls')
+const needle = require('../promised/needle')
 
 let self = {
   create_gist: async function (data) {

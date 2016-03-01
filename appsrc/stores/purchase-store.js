@@ -1,21 +1,21 @@
 
-let Store = require('./store')
-let CredentialsStore = require('./credentials-store')
+const Store = require('./store')
+const CredentialsStore = require('./credentials-store')
 
 import { findWhere } from 'underline'
 
-let market = require('../util/market')
-let url = require('../util/url')
-let debug_browser_window = require('../util/debug-browser-window')
+const market = require('../util/market')
+const url = require('../util/url')
+const debug_browser_window = require('../util/debug-browser-window')
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppActions = require('../actions/app-actions')
-let AppConstants = require('../constants/app-constants')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppActions = require('../actions/app-actions')
+const AppConstants = require('../constants/app-constants')
 
-let I18nStore = require('./i18n-store')
+const I18nStore = require('./i18n-store')
 
-let Promise = require('bluebird')
-let electron = require('electron')
+const Promise = require('bluebird')
+const electron = require('electron')
 
 let state = null
 
@@ -27,7 +27,7 @@ let PurchaseStore = Object.assign(new Store('purchase-store'), {
  * Creates a new browser window to initiate the purchase flow
  */
 function make_purchase_window (me, game) {
-  let path = require('path')
+  const path = require('path')
   let inject_path = path.resolve(__dirname, '..', 'inject', 'purchase.js')
   let win = new electron.BrowserWindow({
     width: 960,

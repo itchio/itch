@@ -1,8 +1,8 @@
 
 
-let os = require('./os')
-let spawn = require('./spawn')
-let log = require('./log')('xdg-mime')
+const os = require('./os')
+const spawn = require('./spawn')
+const log = require('./log')('xdg-mime')
 
 let self = {
 

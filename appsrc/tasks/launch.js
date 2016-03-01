@@ -1,10 +1,10 @@
 
-let configure = require('./configure')
+const configure = require('./configure')
 
-let CaveStore = require('../stores/cave-store')
+const CaveStore = require('../stores/cave-store')
 
-let native = require('./launch/native')
-let html = require('./launch/html')
+const native = require('./launch/native')
+const html = require('./launch/html')
 
 let self = {
   valid_cave: function (cave) {

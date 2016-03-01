@@ -1,6 +1,6 @@
 
-let os = require('./os')
-let electron = require('electron')
+const os = require('./os')
+const electron = require('electron')
 
 let app = os.in_browser() ? electron.app : electron.remote.app
 

@@ -1,7 +1,7 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let DeepComponent = require('./deep-component')
+const r = require('r-dom')
+const PropTypes = require('react').PropTypes
+const DeepComponent = require('./deep-component')
 
 /**
  * A drop-down you can select from

@@ -1,22 +1,22 @@
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
-let Store = require('./store')
-let CaveStore = require('./cave-store')
-let I18nStore = require('./i18n-store')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppConstants = require('../constants/app-constants')
+const AppActions = require('../actions/app-actions')
+const Store = require('./store')
+const CaveStore = require('./cave-store')
+const I18nStore = require('./i18n-store')
 
-let electron = require('electron')
+const electron = require('electron')
 
-let url_parser = require('url')
+const url_parser = require('url')
 
-let Logger = require('../util/log').Logger
+const Logger = require('../util/log').Logger
 let opts = {
   logger: new Logger()
 }
-let log = require('../util/log')('url-store')
-let market = require('../util/market')
-let os = require('../util/os')
+const log = require('../util/log')('url-store')
+const market = require('../util/market')
+const os = require('../util/os')
 
 let UrlStore = Object.assign(new Store('url-store'), {})
 

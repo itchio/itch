@@ -1,19 +1,19 @@
 
-let r = require('r-dom')
+const r = require('r-dom')
 import { each } from 'underline'
 import { count, getIn } from 'grovel'
 
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
 
-let Icon = require('./icon')
-let GameList = require('./game-list')
+const Icon = require('./icon')
+const GameList = require('./game-list')
 
-let AppActions = require('../actions/app-actions')
-let AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppActions = require('../actions/app-actions')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
 
-let AppConstants = require('../constants/app-constants')
-let SearchExamples = require('../constants/search-examples')
+const AppConstants = require('../constants/app-constants')
+const SearchExamples = require('../constants/search-examples')
 
 class SearchContent extends ShallowComponent {
   onInput (event) {

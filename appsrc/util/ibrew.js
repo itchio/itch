@@ -1,16 +1,16 @@
 
-let app = require('electron').app
-let path = require('path')
-let os = require('./os')
+const app = require('electron').app
+const path = require('path')
+const os = require('./os')
 
 import { partial } from 'underline'
 
-let extract = require('./extract')
-let log = require('./log')('ibrew')
+const extract = require('./extract')
+const log = require('./log')('ibrew')
 
-let formulas = require('./ibrew/formulas')
-let version = require('./ibrew/version')
-let net = require('./ibrew/net')
+const formulas = require('./ibrew/formulas')
+const version = require('./ibrew/version')
+const net = require('./ibrew/net')
 
 let default_version_check = {
   args: ['-V'],

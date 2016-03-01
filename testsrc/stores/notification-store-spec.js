@@ -1,13 +1,13 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
 
-let AppConstants = require('../../app/constants/app-constants')
+const AppConstants = require('../../app/constants/app-constants')
 
-let AppActions = require('../stubs/app-actions')
-let AppDispatcher = require('../stubs/app-dispatcher')
-let electron = require('../stubs/electron')
-let defer = require('../stubs/defer')
+const AppActions = require('../stubs/app-actions')
+const AppDispatcher = require('../stubs/app-dispatcher')
+const electron = require('../stubs/electron')
+const defer = require('../stubs/defer')
 
 test('NotificationStore', t => {
   let os = {

@@ -1,27 +1,27 @@
 
 import { throttle, each } from 'underline'
 
-let walk = require('walk')
-let electron = require('electron')
-let uuid = require('node-uuid')
-let deep = require('deep-diff')
-let deepAssign = require('deep-assign')
-let humanize = require('humanize-plus')
+const walk = require('walk')
+const electron = require('electron')
+const uuid = require('node-uuid')
+const deep = require('deep-diff')
+const deepAssign = require('deep-assign')
+const humanize = require('humanize-plus')
 
-let market = require('../util/market')
-let explorer = require('../util/explorer')
-let diskspace = require('../util/diskspace')
-let log = require('../util/log')('install-location-store')
+const market = require('../util/market')
+const explorer = require('../util/explorer')
+const diskspace = require('../util/diskspace')
+const log = require('../util/log')('install-location-store')
 let opts = { logger: new log.Logger() }
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
-let Store = require('./store')
-let PreferencesStore = require('./preferences-store')
-let WindowStore = require('./window-store')
-let I18nStore = require('./i18n-store')
-let SetupStore = require('./setup-store')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppConstants = require('../constants/app-constants')
+const AppActions = require('../actions/app-actions')
+const Store = require('./store')
+const PreferencesStore = require('./preferences-store')
+const WindowStore = require('./window-store')
+const I18nStore = require('./i18n-store')
+const SetupStore = require('./setup-store')
 
 let appdata_location = null
 let computations_to_cancel = {}

@@ -1,14 +1,14 @@
 
-let noop = require('../../util/noop')
-let spawn = require('../../util/spawn')
-let butler = require('../../util/butler')
-let deploy = require('../../util/deploy')
+const noop = require('../../util/noop')
+const spawn = require('../../util/spawn')
+const butler = require('../../util/butler')
+const deploy = require('../../util/deploy')
 
-let archive = require('./archive')
+const archive = require('./archive')
 
-let path = require('path')
+const path = require('path')
 
-let log = require('../../util/log')('installers/dmg')
+const log = require('../../util/log')('installers/dmg')
 
 let HFS_RE = /(.*)\s+Apple_HFS\s+(.*)\s*$/
 

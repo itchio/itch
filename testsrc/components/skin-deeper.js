@@ -1,6 +1,6 @@
 
-let sd = require('skin-deep')
-let react = require('react')
+const sd = require('skin-deep')
+const react = require('react')
 
 /**
 * Pretty much unnecessary now

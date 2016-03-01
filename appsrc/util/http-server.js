@@ -1,7 +1,7 @@
 
-let serveStatic = require('serve-static')
-let finalhandler = require('finalhandler')
-let http = require('http')
+const serveStatic = require('serve-static')
+const finalhandler = require('finalhandler')
+const http = require('http')
 
 let self = {
   create: (file_root, opts) => {

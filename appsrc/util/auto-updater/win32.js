@@ -1,7 +1,7 @@
 
-let os = require('../os')
-let reg = require('../reg')
-let shortcut = require('../shortcut')
+const os = require('../os')
+const reg = require('../reg')
+const shortcut = require('../shortcut')
 
 let self = {
   on_install: async () => {

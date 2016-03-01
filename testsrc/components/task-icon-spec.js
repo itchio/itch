@@ -1,9 +1,9 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
 
-let sd = require('./skin-deeper')
-let stubs = require('../stubs/react-stubs')
+const sd = require('./skin-deeper')
+const stubs = require('../stubs/react-stubs')
 
 test('TaskIcon', t => {
   let TaskIcon = proxyquire('../../app/components/task-icon', stubs)

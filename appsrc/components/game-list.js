@@ -1,11 +1,11 @@
 
 import { each, indexBy } from 'underline'
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+const r = require('r-dom')
+const PropTypes = require('react').PropTypes
+const ShallowComponent = require('./shallow-component')
 
-let GameCell = require('./game-cell')
+const GameCell = require('./game-cell')
 
 // can't write that as an inline expression (babel goes crazy)
 let always_true = () => true

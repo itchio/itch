@@ -1,6 +1,6 @@
 
-let test = require('zopf')
-let noop = require('../../app/util/noop')
+const test = require('zopf')
+const noop = require('../../app/util/noop')
 
 test('noop', t => {
   noop()

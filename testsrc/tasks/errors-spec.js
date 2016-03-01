@@ -1,6 +1,6 @@
 
-let test = require('zopf')
-let errors = require('../../app/tasks/errors')
+const test = require('zopf')
+const errors = require('../../app/tasks/errors')
 let Transition = errors.Transition
 let InputRequired = errors.Required
 

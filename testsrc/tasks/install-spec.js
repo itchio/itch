@@ -1,12 +1,12 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
-let sinon = require('sinon')
+const test = require('zopf')
+const proxyquire = require('proxyquire')
+const sinon = require('sinon')
 
-let fixture = require('../fixture')
-let electron = require('../stubs/electron')
-let CaveStore = require('../stubs/cave-store')
-let AppActions = require('../stubs/app-actions')
+const fixture = require('../fixture')
+const electron = require('../stubs/electron')
+const CaveStore = require('../stubs/cave-store')
+const AppActions = require('../stubs/app-actions')
 
 let typical_install = {
   _id: 42,

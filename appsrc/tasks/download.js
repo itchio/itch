@@ -1,13 +1,13 @@
 
-let errors = require('./errors')
+const errors = require('./errors')
 
-let log = require('../util/log')('tasks/download')
-let butler = require('../util/butler')
-let noop = require('../util/noop')
+const log = require('../util/log')('tasks/download')
+const butler = require('../util/butler')
+const noop = require('../util/noop')
 
-let CaveStore = require('../stores/cave-store')
-let CredentialsStore = require('../stores/credentials-store')
-let AppActions = require('../actions/app-actions')
+const CaveStore = require('../stores/cave-store')
+const CredentialsStore = require('../stores/credentials-store')
+const AppActions = require('../actions/app-actions')
 
 function ensure (predicate, reason) {
   if (!predicate) {
@@ -54,7 +54,7 @@ async function start (opts) {
     throw e
   }
 
-  let parsed = require('url').parse(url)
+  const parsed = require('url').parse(url)
   log(opts, `downloading from ${parsed.hostname}`)
 
   let dest = CaveStore.archive_path(cave.install_location, upload)

@@ -1,14 +1,14 @@
 
 import { each } from 'underline'
 
-let Store = require('./store')
+const Store = require('./store')
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppConstants = require('../constants/app-constants')
+const AppActions = require('../actions/app-actions')
 
-let market = require('../util/market')
-let fetch = require('../util/fetch')
+const market = require('../util/market')
+const fetch = require('../util/fetch')
 
 let state = {}
 
@@ -30,7 +30,7 @@ if (process.env.NO_TEACHING) {
   featured_ids.length = 0
 }
 
-let env = require('../env')
+const env = require('../env')
 
 if (env.name === 'development') {
   featured_ids.length = 0

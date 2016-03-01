@@ -1,6 +1,6 @@
 
-let React = require('react')
-let I18nStore = require('../stores/i18n-store')
+const React = require('react')
+const I18nStore = require('../stores/i18n-store')
 
 class TranslatedComponent extends React.Component {
 

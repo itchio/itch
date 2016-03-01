@@ -1,23 +1,23 @@
 
 import { filter, where, indexBy, throttle, debounce, pluck } from 'underline'
 
-let Store = require('./store')
-let CredentialsStore = require('./credentials-store')
+const Store = require('./store')
+const CredentialsStore = require('./credentials-store')
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppActions = require('../actions/app-actions')
-let AppConstants = require('../constants/app-constants')
+const AppDispatcher = require('../dispatcher/app-dispatcher')
+const AppActions = require('../actions/app-actions')
+const AppConstants = require('../constants/app-constants')
 
-let Logger = require('../util/log').Logger
-let log = require('../util/log')('game-store')
+const Logger = require('../util/log').Logger
+const log = require('../util/log')('game-store')
 let opts = {logger: new Logger({sinks: {console: !!process.env.LET_ME_IN}})}
 
-let deep = require('deep-diff')
+const deep = require('deep-diff')
 
-let electron = require('electron')
+const electron = require('electron')
 
-let market = require('../util/market')
-let fetch = require('../util/fetch')
+const market = require('../util/market')
+const fetch = require('../util/fetch')
 
 let state = {}
 

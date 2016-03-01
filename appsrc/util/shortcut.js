@@ -1,12 +1,12 @@
 
-let electron = require('electron')
-let path = require('path')
+const electron = require('electron')
+const path = require('path')
 
-let spawn = require('./spawn')
-let sf = require('./sf')
+const spawn = require('./spawn')
+const sf = require('./sf')
 
-let Logger = require('./log').Logger
-let log = require('./log')('shortcut')
+const Logger = require('./log').Logger
+const log = require('./log')('shortcut')
 
 let opts = { logger: new Logger() }
 

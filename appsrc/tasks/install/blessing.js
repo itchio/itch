@@ -1,8 +1,8 @@
 
-let Promise = require('bluebird')
-let errors = require('../errors')
+const Promise = require('bluebird')
+const errors = require('../errors')
 
-let AppActions = require('../../actions/app-actions')
+const AppActions = require('../../actions/app-actions')
 
 let self = (opts) => {
   AppActions.cave_progress({id: opts.id, progress: 0, need_blessing: true})

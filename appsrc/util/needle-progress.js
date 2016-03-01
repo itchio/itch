@@ -1,5 +1,5 @@
 
-let PassThrough = require('stream').PassThrough
+const PassThrough = require('stream').PassThrough
 
 let default_opts = {
   throttle: 250

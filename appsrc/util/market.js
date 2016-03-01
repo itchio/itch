@@ -1,12 +1,12 @@
 
-let Promise = require('bluebird')
-let Logger = require('./log').Logger
-let log = require('./log')('market')
+const Promise = require('bluebird')
+const Logger = require('./log').Logger
+const log = require('./log')('market')
 let opts = {logger: new Logger({sinks: {console: true}})}
 
-let path = require('path')
-let sf = require('./sf')
-let app = require('./app')
+const path = require('path')
+const sf = require('./sf')
+const app = require('./app')
 
 const deep_freeze = require('deep-freeze')
 

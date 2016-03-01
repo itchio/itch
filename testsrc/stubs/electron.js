@@ -1,6 +1,6 @@
 
 let rnil = () => null
-let EventEmitter = require('events').EventEmitter
+const EventEmitter = require('events').EventEmitter
 
 let electron = {
   '@noCallThru': true,
