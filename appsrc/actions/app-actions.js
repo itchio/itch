@@ -1,8 +1,8 @@
 
-const AppDispatcher = require('../dispatcher/app-dispatcher')
-const AppConstants = require('../constants/app-constants')
+import AppDispatcher from '../dispatcher/app-dispacher'
+import AppConstants from '../constants/app-constants'
 
-let self = {
+const self = {
   boot: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.BOOT })
   },
