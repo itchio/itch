@@ -10,7 +10,7 @@ let app = require('./app')
 
 const deep_freeze = require('deep-freeze')
 
-import { isEqual, each } from 'underline'
+import { isEqual } from 'underline'
 
 const legacy_db = require('./legacy-db')
 
@@ -28,18 +28,6 @@ const state = {
 /* Data persistence / retrieval */
 
 const data = {}
-
-// once in a while you have to write some code you're not proud of
-const blacklist = {}
-setInterval(() => {
-  const now = Date.now()
-  blacklist::each((expires_at, key) => {
-    if (now >= expires_at) {
-      console.log(`culling ${key} from blacklist`)
-      delete blacklist[key]
-    }
-  })
-}, 1000)
 
 async function load (user_id) {
   log(opts, `loading db for user ${user_id}`)
@@ -86,24 +74,22 @@ function entity_path (table_name, entity_id) {
   return path.join(state.get_db_root(), table_name, entity_id)
 }
 
+let _atomic_invocations = 0
+
 async function save_to_disk (table_name, entity_id, record) {
-  // TODO: better fix - when we're about to rename, check that
-  // data[table_name][entity_id] still exists - if it doesn't,
-  // wipe the tmp file instead of renaming it into the new file.
-  // TODO: when better fix is in, get rid of blacklist...
-  if (blacklist[`${table_name}/${entity_id}`]) {
-    console.log(`ignoring blacklisted write: ${table_name}/${entity_id} = ${record}`)
-    return
-  }
-  await sf.write_file_atomic(entity_path(table_name, entity_id), JSON.stringify(record))
-  if (blacklist[`${table_name}/${entity_id}`]) {
-    await sf.wipe(entity_path(table_name, entity_id))
+  const file = entity_path(table_name, entity_id)
+  const tmp_path = file + '.tmp' + (_atomic_invocations++)
+  await sf.write_file(tmp_path, JSON.stringify(record))
+
+  if (data[table_name][entity_id]) {
+    await sf.rename(tmp_path, file)
+  } else {
+    // entity has been deleted in the meantime
+    await sf.wipe(tmp_path)
   }
 }
 
 async function delete_from_disk (table_name, entity_id) {
-  console.log(`blacklisting ${table_name}/${entity_id} for 5s`)
-  blacklist[`${table_name}/${entity_id}`] = Date.now() + 5000
   await sf.wipe(entity_path(table_name, entity_id))
 }
 

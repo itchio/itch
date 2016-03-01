@@ -125,14 +125,6 @@ let self = {
     return await fs.writeFileAsync(file, contents)
   },
 
-  _invocations: 0,
-
-  write_file_atomic: async (file, contents) => {
-    let tmp_path = file + '.tmp' + (self._invocations++)
-    await self.write_file(tmp_path, contents)
-    await self.rename(tmp_path, file)
-  },
-
   /**
    * Turns a stream into a promise, resolves when
    * 'close' or 'end' is emitted, rejects when 'error' is
