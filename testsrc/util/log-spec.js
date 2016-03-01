@@ -2,6 +2,7 @@
 let test = require('zopf')
 let proxyquire = require('proxyquire')
 let fs = require('fs')
+const os = require('os')
 
 let setup = (t, logger_opts) => {
   let make = proxyquire('../../app/util/log', {})
@@ -29,7 +30,7 @@ test('log', t => {
   t.case('to string', t => {
     let r = setup(t, {sinks: {console: false, string: true}})
     r.log(r.opts, 'Hi mem')
-    t.is(r.opts.logger.contents, '[time] [log-spec] Hi mem\n')
+    t.is(r.opts.logger.contents, '[time] [log-spec] Hi mem' + os.EOL)
   })
 
   t.case('to file', async t => {
