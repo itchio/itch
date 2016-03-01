@@ -115,7 +115,7 @@ let self = {
     let matches = /\.(rar|deb|rpm)$/i.exec(upload.filename)
     if (matches) {
       let format = matches[1]
-      console.log(`refusing to work with ${format}`)
+      log(opts, `refusing to work with ${format}`)
 
       if (!cave.launchable) {
         AppActions.implode_cave(id)

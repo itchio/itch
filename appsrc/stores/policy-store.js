@@ -3,6 +3,7 @@ let AppDispatcher = require('../dispatcher/app-dispatcher')
 let AppConstants = require('../constants/app-constants')
 let urls = require('../constants/urls')
 let market = require('../util/market')
+let fetch = require('../util/fetch')
 let Store = require('./store')
 let I18nStore = require('./i18n-store')
 
@@ -11,18 +12,29 @@ let electron = require('electron')
 let PolicyStore = Object.assign(new Store('policy-store'), {})
 
 async function show_packaging_policy (payload) {
-  let i18n = I18nStore.get_state()
-  let format = payload.format
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.format === 'string'
+    typeof payload.game_id === 'number'
+  }
 
-  let game = market.get_entities('games')[payload.game_id]
+  const i18n = I18nStore.get_state()
+  const format = payload.format
 
-  let buttons = [
+  const game = await fetch.game_lazily(market, payload.game_id)
+  if (!game) {
+    throw new Error(`unknown game id ${payload.game_id}, can't show policy`)
+  }
+
+  console.log(`policy store, got game: ${JSON.stringify(game, null, 2)}`)
+
+  const buttons = [
     i18n.t('prompt.action.ok'),
     i18n.t(`prompt.packaging_policy.learn_more`),
     i18n.t(`prompt.packaging_policy.open_web_page`, {title: game.title})
   ]
 
-  let dialog_opts = {
+  const dialog_opts = {
     type: 'error',
     buttons,
     title: i18n.t(`prompt.${format}_policy.title`),
@@ -30,7 +42,7 @@ async function show_packaging_policy (payload) {
     detail: i18n.t(`prompt.${format}_policy.detail`)
   }
 
-  let callback = (response) => {
+  const callback = (response) => {
     // not much to do anyway.
     if (response === 1) {
       electron.shell.openExternal(urls[`${format}_policy`])
