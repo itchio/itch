@@ -12,6 +12,11 @@ import { game, collection, download_key } from './schemas'
 import { each, union, pluck } from 'underline'
 
 async function dashboard_games (market, cb) {
+  pre: { // eslint-disable-line
+    typeof market === 'object'
+    typeof cb === 'function'
+  }
+
   cb()
 
   const api = CredentialsStore.get_current_user()
@@ -32,6 +37,11 @@ async function dashboard_games (market, cb) {
 }
 
 async function owned_keys (market, cb) {
+  pre: { // eslint-disable-line
+    typeof market === 'object'
+    typeof cb === 'function'
+  }
+
   cb()
 
   const api = CredentialsStore.get_current_user()
@@ -51,6 +61,12 @@ async function owned_keys (market, cb) {
 }
 
 async function collections (market, featured_ids, cb) {
+  pre: { // eslint-disable-line
+    typeof market === 'object'
+    Array.isArray(featured_ids)
+    typeof cb === 'function'
+  }
+
   cb()
 
   const prepare_collections = (normalized) => {
@@ -89,6 +105,12 @@ async function collections (market, featured_ids, cb) {
 }
 
 async function collection_games (market, collection_id, cb) {
+  pre: { // eslint-disable-line
+    typeof market === 'object'
+    typeof collection_id === 'number'
+    typeof cb === 'function'
+  }
+
   let collection = market.get_entities('collections')[collection_id]
   if (!collection) {
     log(opts, `collection not found: ${collection_id}`)
@@ -127,6 +149,12 @@ async function collection_games (market, collection_id, cb) {
 }
 
 async function search (market, query, cb) {
+  pre: { // eslint-disable-line
+    typeof market === 'object'
+    typeof query === 'string'
+    typeof cb === 'function'
+  }
+
   const api = CredentialsStore.get_current_user()
 
   const response = normalize(await api.search(query), {
@@ -135,10 +163,36 @@ async function search (market, query, cb) {
   cb(response.entities.games || {})
 }
 
+async function game_lazily (market, game_id) {
+  pre: { // eslint-disable-line
+    typeof market === 'object'
+    typeof game_id === 'number'
+  }
+
+  const record = market.get_entities('games')[game_id]
+  if (record) {
+    return record
+  }
+
+  const api = CredentialsStore.get_current_user()
+  const response = normalize(await api.game(game_id), {game})
+
+  console.log(`game lazily, got response: ${JSON.stringify(response, null, 2)}`)
+
+  // TODO: re-use the 'user' this endpoint gives us?
+  // thinking about layered markets, e.g.:
+  //  < looking for a user >
+  //  |-> [ query market - contains temporary data related to a search ]
+  //  |-> [ main market - contains persistent data (own games, owned games, games in collection) ]
+  // at least, market shouldn't be a singleton
+  return response.entities.games[game_id]
+}
+
 module.exports = {
   dashboard_games,
   owned_keys,
   collections,
   collection_games,
-  search
+  search,
+  game_lazily
 }
