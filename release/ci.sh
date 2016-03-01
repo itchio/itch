@@ -1,6 +1,8 @@
 #!/bin/sh -xe
 
-7za | head -2
+if [ "$CI_OS" = "darwin" ]; then
+  7za | head -2
+fi
 node --version
 npm --version
 go version
