@@ -409,7 +409,6 @@ async function queue_cave_reinstall (payload) {
 async function update_cave (payload) {
   let {id, cave} = payload
   if (cave_blacklist[id]) return
-  console.log(`update_cave ${JSON.stringify(payload, null, 2)}`)
   market.save_all_entities({entities: {caves: {[id]: cave}}})
 }
 

@@ -39,14 +39,12 @@ function show () {
   })
 
   window.on('close', (e) => {
-    console.log(`window event: close. quitting? ${quitting}`)
     if (quitting) return
     e.preventDefault()
     window.hide()
   })
 
   window.on('focus', (e) => {
-    console.log(`window event: focus`)
     AppActions.gain_focus()
   })
 

@@ -58,10 +58,6 @@ function boot () {
     ready()
   })
   app.on('activate', AppActions.focus_window)
-
-  ;['will-finish-launching', 'ready', 'window-all-closed', 'before-quit', 'will-quit', 'quit', 'activate'].forEach((kind) => {
-    app.on(kind, (e) => console.log(`app event: ${kind}`))
-  })
 }
 
 function ready () {
