@@ -17,6 +17,8 @@ npm install -g grunt-cli
 
 export PATH=$PATH:$PWD/node_modules/.bin
 npm install
+
+grunt copy sass babel
 npm test
 
 if [ "$CI_OS" = "linux" ]; then
