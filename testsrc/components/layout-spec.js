@@ -17,10 +17,10 @@ test('layout', t => {
     let tree = sd.shallowRender(sd(Layout, {}))
     let instance = tree.getMountedInstance()
     instance.componentDidMount()
-    stubs.AppStore.emit_change()
+    stubs.AppStore.emit_change({})
     instance.componentWillUnmount()
 
-    t.is(get_state.callCount, 2)
+    t.is(get_state.callCount, 1)
   })
 
   t.case('login', t => {

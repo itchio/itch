@@ -9,7 +9,7 @@ let AppStore = require('../stores/app-store')
 let AppActions = require('../actions/app-actions')
 
 function get_state () {
-  return {state: AppStore.get_state()}
+  return {app_state: AppStore.get_state()}
 }
 
 /**
@@ -24,8 +24,12 @@ class Layout extends ShallowComponent {
 
   componentDidMount () {
     super.componentDidMount()
-    AppStore.add_change_listener('layout', (state) => {
-      this.setState({state})
+    AppStore.add_change_listener('layout', (app_state) => {
+      pre: { // eslint-disable-line
+        typeof app_state === 'object'
+      }
+
+      this.setState({app_state})
     })
   }
 
@@ -36,14 +40,14 @@ class Layout extends ShallowComponent {
   }
 
   render () {
-    let state = this.state.state
+    const {app_state} = this.state
 
-    switch (state.page) {
+    switch (app_state.page) {
       case 'login':
       case 'setup':
-        return r(LoginPage, {state})
+        return r(LoginPage, {state: app_state})
       case 'library':
-        return r(LibraryPage, {state})
+        return r(LibraryPage, {state: app_state})
       default:
         return r.div()
     }

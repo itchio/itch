@@ -3,8 +3,8 @@ let handlers = []
 
 module.exports = {
   get_state: () => {},
-  emit_change: () => {
-    for (let h of handlers) { h() }
+  emit_change: (state) => {
+    for (let h of handlers) { h(state) }
   },
   add_change_listener: (name, l) => {
     handlers.push(l)
