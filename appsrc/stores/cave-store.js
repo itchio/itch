@@ -12,7 +12,7 @@ import PreferencesStore from './preferences-store'
 import InstallLocationStore from './install-location-store'
 import I18nStore from './i18n-store'
 
-import errors from '../tasks/errors'
+import {Transition, Cancelled, InputRequired, Crash} from '../tasks/errors'
 
 import path from 'path'
 import deep from 'deep-diff'
@@ -140,19 +140,19 @@ function cave_opts (id) {
 }
 
 function handle_task_error (err, id, task_name) {
-  if (err instanceof errors.Transition) {
+  if (err instanceof Transition) {
     log(cave_opts(id), `[${task_name} => ${err.to}] ${err.reason || ''}`)
     let data = err.data || {}
     setImmediate(() => queue_task(id, err.to, data))
-  } else if (err instanceof errors.InputRequired) {
+  } else if (err instanceof InputRequired) {
     let msg = `(stub) input required by ${task_name}`
     log(cave_opts(id), msg)
     AppActions.cave_progress({id, task: 'error', error: msg})
-  } else if (err instanceof errors.Crash) {
+  } else if (err instanceof Crash) {
     let msg = `crashed with: ${JSON.stringify(err, null, 2)}`
     log(cave_opts(id), msg)
     AppActions.cave_progress({id, task: 'idle', error: msg, progress: 0})
-  } else if (err instanceof errors.Cancelled) {
+  } else if (err instanceof Cancelled) {
     log(cave_opts(id), `${task_name} cancelled!`)
     let cave = CaveStore.find(id)
     if (cave) {
