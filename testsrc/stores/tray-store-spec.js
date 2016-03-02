@@ -8,9 +8,9 @@ import AppDispatcher from '../stubs/app-dispatcher'
 import electron from '../stubs/electron'
 
 test('TrayStore', t => {
-  const os = {
+  const os = test.module({
     platform: () => 'darwin'
-  }
+  })
 
   const stubs = Object.assign({
     '../util/os': os,
