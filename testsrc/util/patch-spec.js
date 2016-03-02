@@ -3,17 +3,17 @@ import test from 'zopf'
 import clone from 'clone'
 import deep from 'deep-diff'
 
-import { indexBy } from 'underline'
+import {indexBy} from 'underline'
 
 import patch from '../../app/util/patch'
 
 test('patch', t => {
-  let state = [ {id: 42}, {id: 21}, {id: 8} ]::indexBy('id')
+  const state = [ {id: 42}, {id: 21}, {id: 8} ]::indexBy('id')
   let saved_state = {}
   let patched_state = {}
 
-  let send_diff = (label) => {
-    let diff = deep.diff(saved_state, state)
+  const send_diff = (label) => {
+    const diff = deep.diff(saved_state, state)
     saved_state = clone(state)
     patched_state = patch(patched_state, diff)
     t.same(patched_state, state, label)
@@ -41,7 +41,7 @@ test('patchAt', t => {
     }
   }
 
-  let diff = [
+  const diff = [
     {
       kind: 'N',
       path: ['dashboard', '50723'],

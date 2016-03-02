@@ -6,7 +6,7 @@ import fixture from '../fixture'
 import sniff from '../../app/util/sniff'
 
 test('sniff', t => {
-  let types = [
+  const types = [
     ['broken-symlink', null],
     ['empty', null],
     ['txt', null],
@@ -26,10 +26,9 @@ test('sniff', t => {
   ]
 
   types.forEach((pair) => {
-    let file = pair[0]
-    let expected = pair[1]
+    const [file, expected] = pair
     t.case(file, async t => {
-      let res = await sniff.path(fixture.path(file))
+      const res = await sniff.path(fixture.path(file))
       assert.deepEqual(res, expected)
     })
   })
