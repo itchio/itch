@@ -1,12 +1,10 @@
 
 import test from 'zopf'
-import proxyquire from 'proxyquire'
-
 import sd from './skin-deeper'
-import stubs from '../stubs/react-stubs'
+
+import LibrarySidebar from '../../app/components/library-sidebar'
 
 test('LibrarySidebar', t => {
-  const LibrarySidebar = proxyquire('../../app/components/library-sidebar', stubs).default
   const game = { title: 'Wreck IT' }
   const props = {
     collections: {

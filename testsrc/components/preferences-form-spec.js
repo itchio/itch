@@ -1,12 +1,10 @@
 
 import test from 'zopf'
-import proxyquire from 'proxyquire'
-
 import sd from './skin-deeper'
-import stubs from '../stubs/react-stubs'
+
+import PreferencesForm from '../../app/components/preferences-form'
 
 test('PreferencesForm', t => {
-  const PreferencesForm = proxyquire('../../app/components/preferences-form', stubs).default
   const appdata = {
     name: 'appdata',
     size: -1,

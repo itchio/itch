@@ -1,12 +1,13 @@
 
-import needle from '../promised/needle'
-import urls from '../constants/urls'
 import ExtendableError from 'es6-error'
 
-const cooldown = require('../util/cooldown')(130)
+import needle from '../promised/needle'
+import urls from '../constants/urls'
 
+import mkcooldown from './cooldown'
 import mklog from './log'
 
+const cooldown = mkcooldown(130)
 const log = mklog('api')
 const logger = new mklog.Logger({sinks: {console: !!process.env.LET_ME_IN}})
 const opts = {logger}

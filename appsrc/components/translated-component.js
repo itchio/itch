@@ -1,6 +1,13 @@
 
 import {Component} from 'react'
-import I18nStore from '../stores/i18n-store'
+import env from '../env'
+
+const test = (env.name === 'test')
+const I18nStore = !test ? require('../stores/i18n-store').default : {
+  get_t: () => (x) => x,
+  on: () => null,
+  removeListener: () => null
+}
 
 class TranslatedComponent extends Component {
   constructor (props) {
@@ -15,8 +22,7 @@ class TranslatedComponent extends Component {
   componentDidMount () {
     this.onI18nChanged = () => {
       if (!this.mounted) return
-
-      this.setState({ i18nLoadedAt: Date.now() })
+      this.setState({i18nLoadedAt: Date.now()})
     }
 
     I18nStore.on('change', this.onI18nChanged)

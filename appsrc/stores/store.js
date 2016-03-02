@@ -14,7 +14,7 @@ function Store (name, process_type) {
   }
   this.name = name
 
-  if (os.process_type() !== process_type) {
+  if (env.name !== 'test' && os.process_type() !== process_type) {
     throw new Error(`Tried to require a ${process_type} store from ${os.process_type()}`)
   }
   this.process_type = process_type
@@ -86,7 +86,6 @@ Store.subscribe = (name, cb) => {
     }
   } else {
     let store_path = `./${name}`
-    console.log(`Subscribing to ${store_path}`)
     const specific_store = require(store_path).default
     specific_store.add_change_listener('anonymous', cb)
   }

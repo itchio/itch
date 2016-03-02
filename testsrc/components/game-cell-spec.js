@@ -1,12 +1,10 @@
 
 import test from 'zopf'
-import proxyquire from 'proxyquire'
-
 import sd from './skin-deeper'
-import stubs from '../stubs/react-stubs'
+
+import GameCell from '../../app/components/game-cell'
 
 test('GameCell', t => {
-  const GameCell = proxyquire('../../app/components/game-cell', stubs).default
   const game = {
     title: 'a',
     cover_url: 'b',

@@ -1,16 +1,13 @@
 
 import test from 'zopf'
-import proxyquire from 'proxyquire'
+import sd from './skin-deeper'
 import { indexBy } from 'underline'
 
-import sd from './skin-deeper'
-import stubs from '../stubs/react-stubs'
+import GameList from '../../app/components/game-list'
 
 let cellprops = (tree, f) => sd.as_array(tree.findNode('.game_list').props.children).map(f)
 
 test('GameList', t => {
-  const GameList = proxyquire('../../app/components/game-list', stubs).default
-
   t.case('empty', t => {
     sd.shallowRender(sd(GameList, {}))
   })

@@ -1,12 +1,10 @@
 
 import test from 'zopf'
-import proxyquire from 'proxyquire'
-
 import sd from './skin-deeper'
-import stubs from '../stubs/react-stubs'
+
+import TaskIcon from '../../app/components/task-icon'
 
 test('TaskIcon', t => {
-  const TaskIcon = proxyquire('../../app/components/task-icon', stubs).default
   const task = 'find-upload'
   const tree = sd.shallowRender(sd(TaskIcon, {task}))
   let Icon

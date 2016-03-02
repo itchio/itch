@@ -2,10 +2,14 @@
 import test from 'zopf'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
-import react_stubs from '../stubs/react-stubs'
 import cooldown from '../stubs/cooldown'
-import AppConstants from '../../app/constants/app-constants'
 import path from 'path'
+
+import AppConstants from '../../app/constants/app-constants'
+import AppDispatcher from '../../app/dispatcher/app-dispatcher'
+import AppActions from '../../app/actions/app-actions'
+
+import i18next from 'i18next'
 
 test('i18next backend', t => {
   let app = {
@@ -38,7 +42,7 @@ test('i18next backend', t => {
     '@noCallThru': true
   }
 
-  let stubs = Object.assign({}, react_stubs, {
+  let stubs = Object.assign({}, {
     './ifs': ifs,
     '../util/app': app,
     '../util/log': () => log,
@@ -50,7 +54,7 @@ test('i18next backend', t => {
   let backend, handler
 
   t.case('registers as listener', t => {
-    let mock = t.mock(react_stubs.AppDispatcher).expects('register')
+    let mock = t.mock(AppDispatcher).expects('register')
     backend = new Backend({}, {loadPath: 'locales'})
     handler = mock.getCall(0).args[1]
   })
@@ -61,7 +65,7 @@ test('i18next backend', t => {
   })
 
   t.case('responds to resource fetching', t => {
-    t.mock(react_stubs.i18next).expects('addResources')
+    t.mock(i18next).expects('addResources')
     handler({action_type: AppConstants.LOCALE_UPDATE_DOWNLOADED, lang: 'zh', resources: {}})
   })
 
@@ -119,8 +123,8 @@ test('i18next backend', t => {
   })
 
   t.case('grabs & saves remote locale when available', async t => {
-    let start = t.spy(react_stubs.AppActions, 'locale_update_download_start')
-    let end = t.spy(react_stubs.AppActions, 'locale_update_download_end')
+    let start = t.spy(AppActions, 'locale_update_download_start')
+    let end = t.spy(AppActions, 'locale_update_download_end')
 
     let exists = t.stub(ifs, 'exists')
     exists.resolves(false)

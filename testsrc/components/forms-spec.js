@@ -1,13 +1,12 @@
 
 import test from 'zopf'
-import proxyquire from 'proxyquire'
-
 import sd from './skin-deeper'
-import stubs from '../stubs/react-stubs'
+
+import InputRow from '../../app/components/input-row'
+import SelectRow from '../../app/components/select-row'
 
 test('forms', t => {
   t.case('InputRow', t => {
-    const InputRow = proxyquire('../../app/components/input-row', stubs).default
     const props = {
       autofocus: true,
       disabled: true,
@@ -40,7 +39,6 @@ test('forms', t => {
   })
 
   t.case('SelectRow', t => {
-    const SelectRow = proxyquire('../../app/components/select-row', stubs).default
     const props = {
       label: 'FCC',
       options: [

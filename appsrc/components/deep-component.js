@@ -1,6 +1,6 @@
 
 import TranslatedComponent from './translated-component'
-import { isEqual } from 'underline'
+import {isEqual} from 'underline'
 
 /**
  * These components require a deep comparison because they do not use

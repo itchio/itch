@@ -1,6 +1,6 @@
 
-const app = require('electron').app
 import path from 'path'
+import app from './app'
 import os from './os'
 
 import {partial} from 'underline'

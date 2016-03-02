@@ -8,10 +8,6 @@ import LibraryPage from './library-page'
 import AppStore from '../stores/app-store'
 import AppActions from '../actions/app-actions'
 
-function get_state () {
-  return {app_state: AppStore.get_state()}
-}
-
 /**
  * Top-level component in the app, decides which page to show
  * Also, subscribes to app store to synchronize its state
@@ -19,7 +15,7 @@ function get_state () {
 class Layout extends ShallowComponent {
   constructor () {
     super()
-    this.state = get_state()
+    this.state = {app_state: AppStore.get_state()}
   }
 
   componentDidMount () {

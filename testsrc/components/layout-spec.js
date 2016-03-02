@@ -1,13 +1,12 @@
 
 import test from 'zopf'
-import proxyquire from 'proxyquire'
-
 import sd from './skin-deeper'
-import stubs from '../stubs/react-stubs'
+
+import AppStore from '../../app/stores/app-store'
+import Layout from '../../app/components/layout'
 
 test('layout', t => {
-  const Layout = proxyquire('../../app/components/layout', stubs).default
-  const get_state = t.stub(stubs.AppStore, 'get_state').returns({})
+  const get_state = t.stub(AppStore, 'get_state').returns({})
 
   const set_state = (props) => {
     get_state.returns(props)
@@ -16,11 +15,12 @@ test('layout', t => {
   t.case('listeners', t => {
     const tree = sd.shallowRender(sd(Layout, {}))
     const instance = tree.getMountedInstance()
-    instance.componentDidMount()
-    stubs.AppStore.emit_change({})
-    instance.componentWillUnmount()
+    t.is(get_state.callCount, 1, 'initializes state once')
 
-    t.is(get_state.callCount, 1)
+    instance.componentDidMount()
+    AppStore.emit_change({})
+    instance.componentWillUnmount()
+    t.is(get_state.callCount, 2, 'responds to state change')
   })
 
   t.case('login', t => {

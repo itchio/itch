@@ -1,4 +1,9 @@
 
+import path from 'path'
+import deepAssign from 'deep-assign'
+
+import app from '../util/app'
+import sf from '../util/sf'
 import mklog from '../util/log'
 const log = mklog('i18n-store')
 const opts = { logger: new log.Logger() }
@@ -7,18 +12,13 @@ import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
 import Store from './store'
 
-import path from 'path'
-import electron from 'electron'
-import deepAssign from 'deep-assign'
-import sf from '../util/sf'
-
 let state = {}
 
 let PreferencesStore = Object.assign(new Store('preferences-store'), {
   get_state: () => state
 })
 
-let preferences_path = path.join(electron.app.getPath('userData'), 'preferences.json')
+let preferences_path = path.join(app.getPath('userData'), 'preferences.json')
 
 async function load_from_disk () {
   try {

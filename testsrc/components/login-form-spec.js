@@ -1,12 +1,11 @@
 
 import test from 'zopf'
-import proxyquire from 'proxyquire'
-
 import sd from './skin-deeper'
-import stubs from '../stubs/react-stubs'
+
+import AppActions from '../../app/actions/app-actions'
+import LoginForm from '../../app/components/login-form'
 
 test('LoginForm', t => {
-  const LoginForm = proxyquire('../../app/components/login-form', stubs).default
   const state = {page: 'login'}
 
   const tree = sd.shallowRender(sd(LoginForm, {state}))
@@ -18,7 +17,7 @@ test('LoginForm', t => {
   const fake_pass = { value: () => 'polo' }
   instance.refs[`__proto__`].password = fake_pass
 
-  const mock = t.mock(stubs.AppActions)
+  const mock = t.mock(AppActions)
   mock.expects('login_with_password').withArgs('marco', 'polo')
 
   const ev = { preventDefault: t.stub() }
