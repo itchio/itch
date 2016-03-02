@@ -1,18 +1,16 @@
 
 import Promise from 'bluebird'
-const Logger = require('./log').Logger
-const log = require('./log').default('market')
-let opts = {logger: new Logger({sinks: {console: true}})}
 
 import path from 'path'
 import sf from './sf'
 import app from './app'
+import legacy_db from './legacy-db'
+import mklog from './log'
+const log = mklog('market')
+const opts = {logger: new mklog.Logger()}
 
 import deep_freeze from 'deep-freeze'
-
-import { isEqual } from 'underline'
-
-import legacy_db from './legacy-db'
+import {isEqual} from 'underline'
 
 const state = {
   library_dir: null,

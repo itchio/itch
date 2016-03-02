@@ -1,31 +1,26 @@
 
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import { indexBy, pluck } from 'underline'
+import {indexBy, pluck} from 'underline'
 
 import electron from '../stubs/electron'
 import CredentialsStore from '../stubs/credentials-store'
 
 test('Market', t => {
-  const app = {
-    '@noCallThru': true,
-    getPath: () => 'test/tmp'
-  }
-
   const stubs = Object.assign({
-    '../stores/credentials-store': CredentialsStore,
-    './app': app
+    '../stores/credentials-store': CredentialsStore
   }, electron)
-  const market = proxyquire('../../app/util/market', stubs)
+
+  const market = proxyquire('../../app/util/market', stubs).default
   market._state.library_dir = 'test/tmp/users/foobar'
 
-  const fetch = proxyquire('../../app/util/fetch', stubs)
+  const fetch = proxyquire('../../app/util/fetch', stubs).default
 
-  let api = CredentialsStore.get_current_user()
+  const api = CredentialsStore.get_current_user()
 
   t.case('fetch collections', async t => {
     market.clear()
-    let featured_ids = [23]
+    const featured_ids = [23]
 
     t.stub(api, 'my_collections').resolves({
       collections: [
@@ -37,7 +32,7 @@ test('Market', t => {
       collection: { id: 23 }
     })
 
-    let cb = t.spy()
+    const cb = t.spy()
     await fetch.collections(market, featured_ids, cb)
 
     t.same(cb.callCount, 3)
@@ -50,7 +45,7 @@ test('Market', t => {
       games: [ { id: 234, name: 'Peter Pan' } ]
     })
 
-    let cb = t.spy()
+    const cb = t.spy()
     await fetch.dashboard_games(market, cb)
 
     t.same(cb.callCount, 2)
@@ -65,7 +60,7 @@ test('Market', t => {
 
   t.case('fetch owned keys', async t => {
     market.clear()
-    let stub = t.stub(api, 'my_owned_keys')
+    const stub = t.stub(api, 'my_owned_keys')
     stub.onFirstCall().resolves({
       owned_keys: [
         {
@@ -84,7 +79,7 @@ test('Market', t => {
       owned_keys: []
     })
 
-    let cb = t.spy()
+    const cb = t.spy()
     await fetch.owned_keys(market, cb)
 
     t.equal(stub.callCount, 2)
@@ -112,7 +107,7 @@ test('Market', t => {
       games: [7, 9].map((id) => ({id}))
     })
 
-    let cb = t.spy()
+    const cb = t.spy()
     await fetch.collection_games(market, 8712, cb)
 
     t.equal(cb.callCount, 4)

@@ -1,15 +1,15 @@
 
-import { assocIn } from 'grovel'
+import {assocIn} from 'grovel'
 
-const Logger = require('./log').Logger
-const log = require('./log').default('fetch')
-let opts = {logger: new Logger({sinks: {console: true}})}
+import mklog from './log'
+const log = mklog('fetch')
+const opts = {logger: new mklog.Logger()}
 
 import CredentialsStore from '../stores/credentials-store'
 
-import { normalize, arrayOf } from 'idealizr'
-import { game, collection, download_key } from './schemas'
-import { each, union, pluck } from 'underline'
+import {normalize, arrayOf} from 'idealizr'
+import {game, collection, download_key} from './schemas'
+import {each, union, pluck} from 'underline'
 
 async function dashboard_games (market, cb) {
   pre: { // eslint-disable-line
@@ -176,8 +176,6 @@ async function game_lazily (market, game_id) {
 
   const api = CredentialsStore.get_current_user()
   const response = normalize(await api.game(game_id), {game})
-
-  console.log(`game lazily, got response: ${JSON.stringify(response, null, 2)}`)
 
   // TODO: re-use the 'user' this endpoint gives us?
   // thinking about layered markets, e.g.:
