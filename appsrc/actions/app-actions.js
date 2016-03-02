@@ -106,7 +106,7 @@ const self = {
   locale_update_downloaded: (lang, resources) => {
     pre: { // eslint-disable-line
       typeof lang === 'string'
-      Array.isArray(resources)
+      typeof resources === 'object'
     }
     AppDispatcher.dispatch({ action_type: AppConstants.LOCALE_UPDATE_DOWNLOADED, lang, resources })
   },

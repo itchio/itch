@@ -9,17 +9,19 @@ import AppConstants from '../../app/constants/app-constants'
 import AppDispatcher from '../../app/dispatcher/app-dispatcher'
 import AppActions from '../../app/actions/app-actions'
 
-import i18next from 'i18next'
-
 test('i18next backend', t => {
-  let app = {
-    getPath: () => 'userdata'
-  }
+  const i18next = test.module({
+    addResources: () => null
+  })
 
-  let log = () => null
+  const app = test.module({
+    getPath: () => 'userdata'
+  })
+
+  const log = () => null
   log.Logger = function () {}
 
-  let ifs = {
+  const ifs = test.module({
     exists: async () => false,
     read_file: async (path) => {
       if (/^userdata/.test(path)) {
@@ -28,33 +30,31 @@ test('i18next backend', t => {
         return '{"a": "b"}'
       }
     },
-    write_file: async () => null,
-    '@noCallThru': true
-  }
+    write_file: async () => null
+  })
 
-  let needle = {
-    requestAsync: async () => ({statusCode: 418}),
-    '@noCallThru': true
-  }
+  const needle = test.module({
+    requestAsync: async () => ({statusCode: 418})
+  })
 
-  let env = {
-    name: 'production',
-    '@noCallThru': true
-  }
+  const env = test.module({
+    name: 'production'
+  })
 
-  let stubs = Object.assign({}, {
+  const stubs = {
     './ifs': ifs,
     '../util/app': app,
     '../util/log': () => log,
     '../util/cooldown': cooldown,
     '../promised/needle': needle,
-    '../env': env
-  })
-  let Backend = proxyquire('../../app/i18next/backend', stubs)
-  let backend, handler
+    '../env': env,
+    i18next
+  }
+  const Backend = proxyquire('../../app/i18next/backend', stubs).default
 
+  let backend, handler
   t.case('registers as listener', t => {
-    let mock = t.mock(AppDispatcher).expects('register')
+    const mock = t.mock(AppDispatcher).expects('register')
     backend = new Backend({}, {loadPath: 'locales'})
     handler = mock.getCall(0).args[1]
   })
@@ -70,52 +70,52 @@ test('i18next backend', t => {
   })
 
   t.case('fails if no files exist', async t => {
-    let spy = t.spy()
+    const spy = t.spy()
     await backend.read('fr_CH', 'language', spy)
     sinon.assert.calledWith(spy, null, {})
   })
 
   t.case('succeeds if long file exists', async t => {
-    let exists = t.stub(ifs, 'exists')
+    const exists = t.stub(ifs, 'exists')
     exists.resolves(false)
     exists.withArgs(path.join('locales', 'fr_CH.json')).resolves(true)
 
-    let spy = t.spy()
+    const spy = t.spy()
     await backend.read('fr_CH', 'language', spy)
     sinon.assert.calledWith(spy, null, {a: 'b'})
   })
 
   t.case('succeeds if short file exists', async t => {
-    let exists = t.stub(ifs, 'exists')
+    const exists = t.stub(ifs, 'exists')
     exists.resolves(false)
     exists.withArgs(path.join('locales', 'fr.json')).resolves(true)
 
-    let spy = t.spy()
+    const spy = t.spy()
     await backend.read('fr_CH', 'language', spy)
     sinon.assert.calledWith(spy, null, {a: 'b'})
   })
 
   t.case(`returns empty resources if we can't parse local files`, async t => {
-    let exists = t.stub(ifs, 'exists')
+    const exists = t.stub(ifs, 'exists')
     exists.resolves(false)
     exists.withArgs(path.join('locales', 'fr.json')).resolves(true)
 
     t.stub(ifs, 'read_file').resolves('not even json')
 
-    let spy = t.spy()
+    const spy = t.spy()
     await backend.read('fr_CH', 'language', spy)
     sinon.assert.calledWith(spy, null, {})
   })
 
   t.case('uses updated locale file if available', async t => {
-    let exists = t.stub(ifs, 'exists')
+    const exists = t.stub(ifs, 'exists')
     exists.resolves(false)
     exists.withArgs(path.join('locales', 'fr.json')).resolves(true)
     exists.withArgs(path.join('userdata', 'locales', 'fr_CH.json')).resolves(true)
 
-    let read_file = t.spy(ifs, 'read_file')
+    const read_file = t.spy(ifs, 'read_file')
 
-    let spy = t.spy()
+    const spy = t.spy()
     await backend.read('fr_CH', 'language', spy)
     sinon.assert.calledWith(spy, null, {a: 'c'})
     sinon.assert.calledWith(read_file, path.join('locales', 'fr.json'))
@@ -123,17 +123,17 @@ test('i18next backend', t => {
   })
 
   t.case('grabs & saves remote locale when available', async t => {
-    let start = t.spy(AppActions, 'locale_update_download_start')
-    let end = t.spy(AppActions, 'locale_update_download_end')
+    const start = t.spy(AppActions, 'locale_update_download_start')
+    const end = t.spy(AppActions, 'locale_update_download_end')
 
-    let exists = t.stub(ifs, 'exists')
+    const exists = t.stub(ifs, 'exists')
     exists.resolves(false)
     exists.withArgs(path.join('locales', 'fr.json')).resolves(true)
 
     t.stub(needle, 'requestAsync').resolves({statusCode: 200, body: {a: 'c'}})
     t.mock(ifs).expects('write_file').resolves()
 
-    let spy = t.spy()
+    const spy = t.spy()
     await backend.read('fr_CH', 'language', spy)
 
     sinon.assert.calledOnce(start)
