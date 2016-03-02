@@ -10,7 +10,7 @@ import CredentialsStore from '../stubs/credentials-store'
 import AppActions from '../stubs/app-actions'
 import market from '../stubs/market'
 
-let uploads_fixture = fixture.api('game/36664/uploads')
+const uploads_fixture = fixture.api('game/36664/uploads')
 
 test('find-upload', t => {
   const os = test.module({

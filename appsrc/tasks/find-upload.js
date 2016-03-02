@@ -1,12 +1,12 @@
 
 import market from '../util/market'
-import { indexBy, findWhere } from 'underline'
+import {indexBy, findWhere} from 'underline'
 
 import os from '../util/os'
 import mklog from '../util/log'
 const log = mklog('tasks/find-upload')
 
-import errors from './errors'
+import {Transition, Cancelled} from './errors'
 
 import AppActions from '../actions/app-actions'
 import CaveStore from '../stores/cave-store'
@@ -126,10 +126,10 @@ let self = {
     }
 
     if (cancelled) {
-      throw new errors.Cancelled()
+      throw new Cancelled()
     }
 
-    throw new errors.Transition({
+    throw new Transition({
       to: 'download',
       reason: 'found-upload',
       data: {upload_id: upload.id}
