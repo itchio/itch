@@ -1,7 +1,7 @@
 
 import nconf from 'nconf'
 import path from 'path'
-const app = require('electron').app
+import app from './app'
 
 let config_file = path.join(app.getPath('userData'), 'config.json')
 try {

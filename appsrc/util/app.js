@@ -1,8 +1,17 @@
 
 import os from './os'
-import electron from 'electron'
+import env from '../env'
 
-let app = os.in_browser() ? electron.app : electron.remote.app
+let app
+if (env.name === 'test') {
+  app = {
+    getVersion: () => 'test-version',
+    getPath: (p) => `tmp/${p}`
+  }
+} else {
+  const electron = require('electron')
+  app = os.in_browser() ? electron.app : electron.remote.app
+}
 
 // preload all values at loadtime to avoid doing sync RPC (via remote) at runtime
 let version = app.getVersion()

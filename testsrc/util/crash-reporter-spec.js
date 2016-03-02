@@ -7,36 +7,38 @@ import electron from '../stubs/electron'
 import i18next from '../stubs/i18next'
 
 test('crash-reporter', t => {
-  let sf = {
+  const sf = test.module({
     write_file: () => null
-  }
-  let os = {
+  })
+
+  const os = test.module({
     platform: () => 'linux'
-  }
-  let stubs = Object.assign({
+  })
+
+  const stubs = Object.assign({
     '../util/sf': sf,
     './os': os,
     i18next
   }, electron)
-  let crash_reporter = proxyquire('../../app/util/crash-reporter', stubs)
+  const crash_reporter = proxyquire('../../app/util/crash-reporter', stubs).default
 
-  let e = { stack: 'No sweat' }
+  const e = { stack: 'No sweat' }
 
   t.case('write_crash_log', t => {
-    let mock = t.mock(sf)
+    const mock = t.mock(sf)
     mock.expects('write_file').once().withArgs(sinon.match.string, 'Hey\nthere').returns(sf)
     crash_reporter.write_crash_log({ stack: 'Hey\nthere' })
   })
 
   t.case('write_crash_log (win32)', t => {
     t.stub(os, 'platform').returns('win32')
-    let mock = t.mock(sf)
+    const mock = t.mock(sf)
     mock.expects('write_file').once().withArgs(sinon.match.string, 'Hey\r\nthere').returns(sf)
     crash_reporter.write_crash_log({ stack: 'Hey\nthere' })
   })
 
   t.case('report_issue', t => {
-    let mock = t.mock(electron.electron.shell)
+    const mock = t.mock(electron.electron.shell)
     mock.expects('openExternal').once()
     crash_reporter.report_issue({log: e})
   })
@@ -66,7 +68,7 @@ test('crash-reporter', t => {
   })
 
   t.case('mount', t => {
-    let exit = t.stub(process, 'exit')
+    const exit = t.stub(process, 'exit')
     t.stub(process, 'on').callsArgWith(1, e)
     t.mock(crash_reporter).expects('handle').once().throws('Test error, please ignore')
     crash_reporter.mount()

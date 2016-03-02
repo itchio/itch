@@ -7,44 +7,44 @@ import electron from '../stubs/electron'
 import cooldown from '../stubs/cooldown'
 
 test('api', t => {
-  let needle = {
+  const needle = test.module({
     requestAsync: async () => ({body: {id: 12}, statusCode: 200})
-  }
+  })
 
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     '../promised/needle': needle,
     '../util/cooldown': cooldown
   }, electron)
 
-  let api = proxyquire('../../app/util/api', stubs)
+  const api = proxyquire('../../app/util/api', stubs).default
   api.ensure_array = (x) => x
   api.client.root_url = 'http://example.org/'
 
-  let user = new api.User(api.client, 'key')
-  let client = api.client
+  const user = new api.User(api.client, 'key')
+  const client = api.client
 
-  let uri = 'http://example.org/yo'
+  const uri = 'http://example.org/yo'
 
   t.case('can GET', async t => {
-    let request = t.spy(needle, 'requestAsync')
+    const request = t.spy(needle, 'requestAsync')
     await client.request('GET', 'yo', {b: 11})
     sinon.assert.calledWith(request, 'GET', uri, {b: 11})
   })
 
   t.case('can POST', async t => {
-    let request = t.spy(needle, 'requestAsync')
+    const request = t.spy(needle, 'requestAsync')
     await client.request('POST', 'yo', {b: 22})
     sinon.assert.calledWith(request, 'POST', uri, {b: 22})
   })
 
   t.case('can make authenticated request', t => {
-    let mock = t.mock(client)
+    const mock = t.mock(client)
     mock.expects('request').withArgs('get', '/key/my-games').resolves({games: []})
     user.my_games()
   })
 
   t.case('rejects API errors', async t => {
-    let errors = ['foo', 'bar', 'baz']
+    const errors = ['foo', 'bar', 'baz']
 
     t.stub(needle, 'requestAsync').resolves({body: {errors}, statusCode: 200})
     let err

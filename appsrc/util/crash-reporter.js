@@ -2,10 +2,12 @@
 import sf from '../util/sf'
 import path from 'path'
 
+// TODO: reduce dependency on electron to allow easier testing
 import electron from 'electron'
 let app = electron.app
 let shell = electron.shell
 let dialog = electron.dialog
+
 import querystring from 'querystring'
 
 import urls from '../constants/urls'

@@ -1,13 +1,14 @@
 
 import test from 'zopf'
 import fixture from '../fixture'
+
 import diskspace from '../../app/util/diskspace'
 import os from '../../app/util/os'
 
 test('diskspace', t => {
   t.case('df (OSX 10.11)', async t => {
     t.stub(diskspace, 'df_run').resolves(fixture.lines('diskspace', 'df-osx-10.11'))
-    let out = await diskspace.df()
+    const out = await diskspace.df()
     t.same(out, {
       parts: [
         { free: 10112122880, mountpoint: '/', size: 249769230336 },
@@ -19,7 +20,7 @@ test('diskspace', t => {
 
   t.case('df (Ubuntu)', async t => {
     t.stub(diskspace, 'df_run').resolves(fixture.lines('diskspace', 'df-ubuntu-15.10'))
-    let out = await diskspace.df()
+    const out = await diskspace.df()
     t.same(out, {
       parts: [
         { free: 938479616, mountpoint: '/dev', size: 938479616 },
@@ -37,7 +38,7 @@ test('diskspace', t => {
 
   t.case('df (ArchLinux)', async t => {
     t.stub(diskspace, 'df_run').resolves(fixture.lines('diskspace', 'df-archlinux'))
-    let out = await diskspace.df()
+    const out = await diskspace.df()
     t.same(out, {
       parts: [
         { free: 520163328, mountpoint: '/dev', size: 520163328 },
@@ -56,7 +57,7 @@ test('diskspace', t => {
 
   t.case('wmic (Windows 10.11)', async t => {
     t.stub(diskspace, 'wmic_run').resolves(fixture.lines('diskspace', 'wmic-windows-8.1'))
-    let out = await diskspace.wmic()
+    const out = await diskspace.wmic()
     t.same(out, {
       parts: [
         { free: 41468653568, letter: 'C:', size: 128034672640 },
@@ -87,7 +88,7 @@ test('diskspace', t => {
   t.case('free_in_folder (unix)', t => {
     t.stub(os, 'platform').returns('linux')
 
-    let disk_info = {
+    const disk_info = {
       parts: [
         { free: 111, mountpoint: '/media/usb1' },
         { free: 0, mountpoint: '/media/cdrom0' },
@@ -114,7 +115,7 @@ test('diskspace', t => {
   t.case('free_in_folder (windows)', t => {
     t.stub(os, 'platform').returns('win32')
 
-    let disk_info = {
+    const disk_info = {
       parts: [
         { free: 111, letter: 'C:' },
         { free: 222, letter: 'D:' },

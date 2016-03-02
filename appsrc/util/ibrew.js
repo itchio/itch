@@ -3,7 +3,7 @@ const app = require('electron').app
 import path from 'path'
 import os from './os'
 
-import { partial } from 'underline'
+import {partial} from 'underline'
 
 import extract from './extract'
 const log = require('./log').default('ibrew')
@@ -31,12 +31,12 @@ let self = {
       return
     }
 
-    let channel = net.channel(name)
+    const channel = net.channel(name)
 
-    let download_version = async (v) => {
-      let archive_name = self.archive_name(name)
-      let archive_path = path.join(self.bin_path(), archive_name)
-      let archive_url = `${channel}/v${v}/${archive_name}`
+    const download_version = async (v) => {
+      const archive_name = self.archive_name(name)
+      const archive_path = path.join(self.bin_path(), archive_name)
+      const archive_url = `${channel}/v${v}/${archive_name}`
       onstatus('login.status.dependency_install', 'download', {name, version: v})
       log(opts, `${name}: downloading '${v}' from ${archive_url}`)
 
@@ -55,12 +55,12 @@ let self = {
     }
 
     onstatus('login.status.dependency_check', 'stopwatch')
-    let get_latest_version = net.get_latest_version::partial(channel)
+    const get_latest_version = net.get_latest_version::partial(channel)
 
-    let local_version = await self.get_local_version(name)
+    const local_version = await self.get_local_version(name)
 
     if (!local_version) {
-      if (formula.on_missing) formula.on_missing()
+      if (formula.on_missing) formula.on_missing(os.platform())
       log(opts, `${name}: missing, downloading latest`)
       return await download_version(await get_latest_version())
     }

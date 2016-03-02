@@ -1,24 +1,24 @@
 
-import electron from 'electron'
 import path from 'path'
 
+import app from './app'
 import spawn from './spawn'
 import sf from './sf'
 
 const Logger = require('./log').Logger
 const log = require('./log').default('shortcut')
 
-let opts = { logger: new Logger() }
+const opts = { logger: new Logger() }
 
-let app_folder = path.resolve(process.execPath, '..')
-let root_folder = path.resolve(app_folder, '..')
-let update_exe_path = path.join(root_folder, 'Update.exe')
-let exe_name = path.basename(process.execPath)
+const app_folder = path.resolve(process.execPath, '..')
+const root_folder = path.resolve(app_folder, '..')
+const update_exe_path = path.join(root_folder, 'Update.exe')
+const exe_name = path.basename(process.execPath)
 
-let self = {
+const self = {
   update_run: async function (args) {
     log(opts, `Update.exe located at = ${update_exe_path}`)
-    let code = await spawn({
+    const code = await spawn({
       command: update_exe_path,
       args
     })
@@ -33,8 +33,8 @@ let self = {
   },
 
   update: async function () {
-    let desktop_path = electron.app.getPath('desktop')
-    let shortcut_path = path.join(desktop_path, 'itch.lnk')
+    const desktop_path = app.getPath('desktop')
+    const shortcut_path = path.join(desktop_path, 'itch.lnk')
 
     // find out if the user has deleted the desktop shortcut
     // cf. https://github.com/itchio/itch/issues/239

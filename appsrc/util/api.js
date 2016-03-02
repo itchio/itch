@@ -5,10 +5,11 @@ import ExtendableError from 'es6-error'
 
 const cooldown = require('../util/cooldown')(130)
 
-const Logger = require('./log').Logger
-const log = require('./log').default('api')
-let logger = new Logger({sinks: {console: !!process.env.LET_ME_IN}})
-let opts = {logger}
+import mklog from './log'
+
+const log = mklog('api')
+const logger = new mklog.Logger({sinks: {console: !!process.env.LET_ME_IN}})
+const opts = {logger}
 
 // cf. https://github.com/itchio/itchio-app/issues/48
 // basically, lua returns empty-object instead of empty-array
@@ -143,7 +144,7 @@ class User {
 
   async search (query) {
     let res = await this.request('get', '/search/games', {query})
-    res.games = ensure_array(res.games)
+    res.games = self.ensure_array(res.games)
     return res
   }
 
