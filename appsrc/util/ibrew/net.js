@@ -1,11 +1,11 @@
 
-const needle = require('../../promised/needle')
-const urls = require('../../constants/urls')
+import needle from '../../promised/needle'
+import urls from '../../constants/urls'
 
-const sf = require('../sf')
-const os = require('../os')
-const version = require('./version')
-const path = require('path')
+import sf from '../sf'
+import os from '../os'
+import version from './version'
+import path from 'path'
 
 let self = {
   /**
