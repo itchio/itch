@@ -12,21 +12,14 @@ import CredentialsStore from '../stubs/credentials-store'
 import defer from '../stubs/defer'
 
 test('AppStore', t => {
-  const GameStore = {
-    __esModule: true,
-    default: {
-      add_change_listener: t.spy(),
-      get_state: () => {}
-    }
-  }
+  const GameStore = test.module({
+    add_change_listener: t.spy(),
+    get_state: () => {}
+  })
 
-  const os = {
-    __esModule: true,
-    default: {
-      process_type: () => 'renderer'
-    },
-    '@global': true
-  }
+  const os = test.module({
+    process_type: () => 'renderer'
+  })
 
   const Store = proxyquire('../../app/stores/store', Object.assign({
     '../util/os': os

@@ -1,5 +1,5 @@
 
-import { assocIn, dissocIn, getIn } from 'grovel'
+import {assocIn, dissocIn, getIn} from 'grovel'
 import Store from './store'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'

@@ -1,6 +1,7 @@
 
 import {EventEmitter} from 'events'
 import os from '../util/os'
+import env from '../env'
 
 const CHANGE_EVENT = 'change'
 
@@ -18,7 +19,7 @@ function Store (name, process_type) {
   }
   this.process_type = process_type
 
-  if (this.process_type === 'browser') {
+  if (env.name !== 'test' && this.process_type === 'browser') {
     require('electron').ipcMain.on(`${this.name}-fetch`, (e) => {
       e.sender.send(`${this.name}-state`, this.get_state())
     })
@@ -36,9 +37,11 @@ Object.assign(Store.prototype, EventEmitter.prototype, {
     this.emit(CHANGE_EVENT, this.get_state())
 
     if (this.process_type === 'browser') {
-      require('electron').BrowserWindow.getAllWindows().forEach((w) => {
-        w.webContents.send(`${this.name}-change`)
-      })
+      if (env.name !== 'test') {
+        require('electron').BrowserWindow.getAllWindows().forEach((w) => {
+          w.webContents.send(`${this.name}-change`)
+        })
+      }
     }
   },
 
@@ -75,11 +78,12 @@ Store.action_listeners = (f) => {
 
 Store.subscribe = (name, cb) => {
   if (os.process_type() === 'renderer') {
-    const ipc = require('electron').ipcRenderer
-    ipc.on(`${name}-change`, () => ipc.send(`${name}-fetch`))
-    ipc.on(`${name}-state`, (ev, data) => cb(data))
-
-    ipc.send(`${name}-fetch`)
+    if (env.name !== 'test') {
+      const ipc = require('electron').ipcRenderer
+      ipc.on(`${name}-change`, () => ipc.send(`${name}-fetch`))
+      ipc.on(`${name}-state`, (ev, data) => cb(data))
+      ipc.send(`${name}-fetch`)
+    }
   } else {
     let store_path = `./${name}`
     console.log(`Subscribing to ${store_path}`)
