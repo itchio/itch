@@ -6,8 +6,16 @@ import proxyquire from 'proxyquire'
 import electron from '../stubs/electron'
 
 test('dispatcher', t => {
+  const env = test.module({
+    name: 'production'
+  })
+
+  let b_stubs = Object.assign({}, electron, {
+    '../../env': env
+  })
+
   let r_stubs = Object.assign({}, electron, {
-    '../../util/os': { process_type: () => 'renderer' }
+    '../../util/os': test.module({ process_type: () => 'renderer' })
   })
 
   let fake_window = {
@@ -17,8 +25,8 @@ test('dispatcher', t => {
   }
   t.stub(electron.electron.BrowserWindow, 'getAllWindows').returns([fake_window])
 
-  let b_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher/browser', electron)
-  let r_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher/renderer', r_stubs)
+  let b_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher/browser', b_stubs).default
+  let r_dispatcher = proxyquire('../../app/dispatcher/app-dispatcher/renderer', r_stubs).default
 
   let r_spy = t.spy(function () { console.log('r_spy ' + JSON.stringify(Array.prototype.slice.call(arguments))) })
   r_dispatcher.register('renderer-store', r_spy)
