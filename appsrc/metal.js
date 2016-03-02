@@ -28,7 +28,7 @@ if (!process.env.NODE_ENV) {
 require('./util/sf')
 require('./util/crash-reporter').default.mount()
 
-const auto_updater = require('./util/auto-updater')
+const auto_updater = require('./util/auto-updater').default
 Promise.resolve(auto_updater.start()).then((quit) => {
   if (quit) {
     // squirrel on win32 sometimes requires exiting as early as possible
