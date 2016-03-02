@@ -1,7 +1,8 @@
 
-let noop = async () => null
+import test from 'zopf'
+const noop = async () => null
 
-let user = {
+const user = {
   me: noop,
   download_upload: noop,
   download_upload_with_key: noop,
@@ -14,20 +15,13 @@ let user = {
   collection_games: noop
 }
 
-let User = function () {
+const User = function () {
   Object.assign(this, user)
 }
 
-let client = {
+const client = {
   login_key: noop,
   login_with_password: noop
 }
 
-let self = {
-  client,
-  user,
-  User,
-  '@noCallThru': true
-}
-
-export default self
+module.exports = test.module({ client, user, User })

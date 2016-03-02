@@ -10,7 +10,8 @@ import url from '../../util/url'
 import http_server from '../../util/http-server'
 import debug_browser_window from '../../util/debug-browser-window'
 
-const log = require('../../util/log')('tasks/launch')
+import mklog from '../../util/log'
+const log = mklog('tasks/launch')
 
 import CaveStore from '../../stores/cave-store'
 

@@ -1,16 +1,15 @@
 
-let handlers = {}
+import test from 'zopf'
+const handlers = {}
 
-let self = {
+const self = {
   register: (name, cb) => {
     handlers[name] = cb
   },
   dispatch: () => null,
   get_handler: (name) => {
     return handlers[name]
-  },
-  '@noCallThru': true,
-  '@global': true
+  }
 }
 
-export default self
+module.exports = test.module(self)

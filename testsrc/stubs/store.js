@@ -1,8 +1,8 @@
 
-let Store = function () {
-}
+import test from 'zopf'
 
-Store['@global'] = true
+const Store = function () {}
+
 Store.subscribe = () => null
 
-export default Store
+module.exports = test.module(Store)

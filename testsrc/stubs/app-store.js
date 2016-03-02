@@ -1,7 +1,8 @@
 
-let handlers = []
+import test from 'zopf'
+const handlers = []
 
-export default {
+const self = {
   get_state: () => {},
   emit_change: (state) => {
     for (let h of handlers) { h(state) }
@@ -11,7 +12,7 @@ export default {
   },
   remove_change_listener: () => {
     handlers.length = 0
-  },
-  '@noCallThru': true,
-  '@global': true
+  }
 }
+
+module.exports = test.module(self)

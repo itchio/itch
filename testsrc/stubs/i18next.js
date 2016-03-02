@@ -1,5 +1,7 @@
 
-let i18next = {
+import test from 'zopf'
+
+const i18next = {
   '@global': true,
   '@noCallThru': true,
   use: () => i18next,
@@ -11,4 +13,4 @@ let i18next = {
   getFixedT: () => i18next.t
 }
 
-export default i18next
+module.exports = test.module(i18next)

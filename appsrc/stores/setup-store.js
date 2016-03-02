@@ -1,7 +1,7 @@
 
 import Promise from 'bluebird'
 import path from 'path'
-import { partial } from 'underline'
+import {partial} from 'underline'
 
 import ibrew from '../util/ibrew'
 import xdg_mime from '../util/xdg-mime'

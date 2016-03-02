@@ -1,50 +1,38 @@
 
-const EventEmitter = require('events').EventEmitter
 import test from 'zopf'
 import proxyquire from 'proxyquire'
 import path from 'path'
 
-import { indexBy } from 'underline'
+import {indexBy} from 'underline'
 
 import electron from '../stubs/electron'
 import CaveStore from '../stubs/cave-store'
 
 import log from '../../app/util/log'
+const logger = new log.Logger({sinks: {console: false}})
+const opts = {id: 'kalamazoo', logger}
 
-let logger = new log.Logger({sinks: {console: false}})
-let opts = {id: 'kalamazoo', logger}
-
-function make_dummy () {
-  let d = new EventEmitter()
-  ;['stderr', 'stdout'].forEach((type) => {
-    d[type] = {
-      pipe: (x) => x
-    }
-  })
-  return d
-}
-
-let rnil = () => null
+const rnil = () => null
 
 test('launch', t => {
-  let configure = {
+  const configure = test.module({
     start: () => Promise.resolve()
-  }
+  })
 
-  let native = { launch: () => Promise.resolve() }
-  let html = { launch: () => Promise.resolve() }
+  const native = test.module({ launch: () => Promise.resolve() })
+  const html = test.module({ launch: () => Promise.resolve() })
 
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     '../stores/cave-store': CaveStore,
     './configure': configure,
     './launch/native': native,
     './launch/html': html
   }, electron)
 
-  let launch = proxyquire('../../app/tasks/launch', stubs)
+  const launch = proxyquire('../../app/tasks/launch', stubs).default
 
   t.case('rejects 0 execs', t => {
-    let spy = t.spy()
+    const spy = t.spy()
     t.stub(CaveStore, 'find').returns({ launch_type: 'native' })
     return launch.start(opts).catch(spy).then(_ => {
       t.is(spy.callCount, 1)
@@ -53,7 +41,7 @@ test('launch', t => {
   })
 
   t.case('reconfigures as needed', async t => {
-    let find = t.stub(CaveStore, 'find')
+    const find = t.stub(CaveStore, 'find')
     find.returns({ executables: [], launch_type: 'native' })
     t.stub(configure, 'start', () => {
       find.returns({ executables: ['/a'], launch_type: 'native' })
@@ -64,7 +52,7 @@ test('launch', t => {
   })
 
   t.case('launches correct launch_type', async t => {
-    let find = t.stub(CaveStore, 'find')
+    const find = t.stub(CaveStore, 'find')
     find.returns({ executables: ['./a'], launch_type: 'native' })
     t.mock(native).expects('launch').once().resolves('Done!')
     await launch.start(opts)
@@ -74,7 +62,7 @@ test('launch', t => {
   })
 
   t.case('rejects invalid launch_type', t => {
-    let spy = t.spy()
+    const spy = t.spy()
     t.stub(CaveStore, 'find').returns({ launch_type: 'invalid' })
     return launch.start(opts).catch(spy).then(_ => {
       t.is(spy.callCount, 1)
@@ -84,31 +72,30 @@ test('launch', t => {
 })
 
 test('launch/native', t => {
-  let child_process = {
-    spawn: () => null,
-    '@noCallThru': true,
-    '@global': true
-  }
+  let on_spawn = async () => null
+  const spawn = test.module(async function () {
+    return await on_spawn()
+  })
 
-  let os = {
+  const os = test.module({
     platform: () => 'win32'
-  }
+  })
 
-  let sf = {
+  const sf = test.module({
     stat: async () => ({size: 0})
-  }
+  })
 
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     '../../stores/cave-store': CaveStore,
     '../../util/sf': sf,
     '../../util/os': os,
-    'child_process': child_process
+    '../../util/spawn': spawn
   }, electron)
 
-  let native = proxyquire('../../app/tasks/launch/native', stubs)
+  const native = proxyquire('../../app/tasks/launch/native', stubs).default
 
   t.case('launches top-most exec', t => {
-    let cave = {
+    const cave = {
       executables: [ '/a/b/c', '/a/bababa', '/a/b/c/d' ]
     }
     t.mock(native).expects('launch_executable').once().withArgs(path.normalize('/tmp/app/a/bababa')).resolves('Done!')
@@ -116,7 +103,7 @@ test('launch/native', t => {
   })
 
   t.case('ignores uninstallers', async t => {
-    let cave = {
+    const cave = {
       executables: [ 'uninstall.exe', 'game.exe' ]
     }
     t.mock(native).expects('launch_executable').once().withArgs(path.normalize('/tmp/app/game.exe')).resolves('Done!')
@@ -124,7 +111,7 @@ test('launch/native', t => {
   })
 
   t.case('ignores dxwebsetup', async t => {
-    let cave = {
+    const cave = {
       executables: [ 'dxwebsetup.exe', 'game.exe' ]
     }
     t.mock(native).expects('launch_executable').once().withArgs(path.normalize('/tmp/app/game.exe')).resolves('Done!')
@@ -160,33 +147,26 @@ test('launch/native', t => {
   })
 
   t.case('sh error', async t => {
-    let dummy = make_dummy()
-    t.mock(child_process).expects('spawn').returns(dummy)
-    let p = native.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
-    dummy.emit('error')
-
+    on_spawn = async () => { throw new Error('segfault') }
+    const p = native.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
     await t.rejects(p)
   })
 
   t.case('sh successful', async t => {
-    let dummy = make_dummy()
-    t.mock(child_process).expects('spawn').returns(dummy)
-    let p = native.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
-    dummy.emit('close', 0)
+    on_spawn = async () => 0
+    const p = native.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
     await p
   })
 
   t.case('sh non-zero', async t => {
-    let dummy = make_dummy()
-    t.mock(child_process).expects('spawn').returns(dummy)
-    let p = native.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
-    dummy.emit('close', 127)
+    on_spawn = async () => 127
+    const p = native.sh('dumbo', 'dumbo --fullscreen --no-sound', opts)
     await t.rejects(p)
   })
 })
 
 test('launch/html', t => {
-  let fake_server = {
+  const fake_server = {
     listen: rnil,
     on: (event, func) => {
       func()
@@ -197,32 +177,32 @@ test('launch/html', t => {
     close: rnil
   }
 
-  let http_server = {
+  const http_server = test.module({
     create: () => {
       return fake_server
     }
-  }
+  })
 
-  let bag = {
+  const bag = {
     games: [
       // has to match with stubs/cave-store
       {id: 84, title: 'I wanna be the weegee'}
     ]::indexBy('id')
   }
-  let market = {
-    get_entities: (x) => bag[x],
-    '@noCallThru': true
-  }
 
-  let stubs = Object.assign({
+  const market = test.module({
+    get_entities: (x) => bag[x]
+  })
+
+  const stubs = Object.assign({
     '../../stores/cave-store': CaveStore,
     '../../util/market': market,
     '../../util/http-server': http_server
   }, electron)
 
-  let html = proxyquire('../../app/tasks/launch/html', stubs)
+  const html = proxyquire('../../app/tasks/launch/html', stubs).default
 
-  let cave = {
+  const cave = {
     game_id: 84,
     game_path: 'blah/i.html',
     window_size: {

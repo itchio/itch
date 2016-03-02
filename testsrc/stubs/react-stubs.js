@@ -6,10 +6,9 @@ import AppStore from './app-store'
 import AppActions from './app-actions'
 import AppDispatcher from './app-dispatcher'
 import Store from './store'
-
 import i18next from './i18next'
 
-let self = Object.assign({
+const stubs = Object.assign({
   '../util/defer': defer,
   '../stores/app-store': AppStore,
   '../actions/app-actions': AppActions,
@@ -18,6 +17,6 @@ let self = Object.assign({
   i18next
 }, electron)
 
-Object.assign(self, { defer, AppStore, AppDispatcher, AppActions })
+Object.assign(stubs, {defer, AppStore, AppDispatcher, AppActions})
 
-export default self
+module.exports = stubs

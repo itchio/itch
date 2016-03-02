@@ -1,6 +1,6 @@
 
-const errors = require('./errors')
-const CaveStore = require('../stores/cave-store')
+import {Transition} from './errors'
+import CaveStore from '../stores/cave-store'
 
 const self = {}
 
@@ -10,9 +10,9 @@ self.start = async function (opts) {
   let cave = CaveStore.find(id)
 
   if (cave.launchable) {
-    throw new errors.Transition({ to: 'check-for-update', reason: 'awakening' })
+    throw new Transition({ to: 'check-for-update', reason: 'awakening' })
   } else {
-    throw new errors.Transition({ to: 'find-upload', reason: 'not-installed' })
+    throw new Transition({ to: 'find-upload', reason: 'not-installed' })
   }
 }
 

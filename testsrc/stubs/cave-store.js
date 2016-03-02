@@ -1,5 +1,7 @@
 
-export default {
+import test from 'zopf'
+
+module.exports = test.module({
   find: () => ({
     _id: 'kalamazoo',
     upload_id: 42,
@@ -8,7 +10,5 @@ export default {
     launch_type: 'native'
   }),
   archive_path: () => '/tmp/archive',
-  app_path: () => '/tmp/app',
-  '@noCallThru': true,
-  '@global': true
-}
+  app_path: () => '/tmp/app'
+})

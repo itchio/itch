@@ -1,11 +1,12 @@
 
-let rnil = () => null
+import test from 'zopf'
+const rnil = () => null
 
-let market = {
+const market = {
   get_entities: (table) => ({}),
   save_all_entities: rnil,
 
   '@noCallThru': true
 }
 
-export default market
+module.exports = test.module(market)

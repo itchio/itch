@@ -9,9 +9,15 @@ import Log from '../../util/log'
 let log = Log('dispatcher')
 let opts = {logger: new Log.Logger({sinks: {console: (marco_level > 0)}})}
 
-import electron from 'electron'
-let ipc = electron.ipcMain
-let BrowserWindow = electron.BrowserWindow
+import env from '../../env'
+let ipcMain, BrowserWindow
+
+if (env.name === 'test') {
+} else {
+  const electron = require('electron')
+  ipcMain = electron.ipcMain
+  BrowserWindow = electron.BrowserWindow
+}
 
 let spammy = {
   CAVE_PROGRESS: true,
@@ -70,19 +76,23 @@ class BrowserDispatcher {
       log(opts, `browser >>> renderer: ${payload.action_type}, ${JSON.stringify(payload).length} bytes`)
     }
 
-    BrowserWindow.getAllWindows().forEach(w => {
-      // async ipc is marshalled to JSON internally, so there's
-      // no RemoteMember penalty on either side, but we should
-      // keep the payloads light anyway
-      w.webContents.send('dispatcher-to-renderer', payload)
-    })
+    if (BrowserWindow) {
+      BrowserWindow.getAllWindows().forEach(w => {
+        // async ipc is marshalled to JSON internally, so there's
+        // no RemoteMember penalty on either side, but we should
+        // keep the payloads light anyway
+        w.webContents.send('dispatcher-to-renderer', payload)
+      })
+    }
   }
 }
 
 let self = new BrowserDispatcher()
 
-ipc.on('dispatcher-to-browser', (ev, payload) => {
-  self.dispatch(payload)
-})
+if (ipcMain) {
+  ipcMain.on('dispatcher-to-browser', (ev, payload) => {
+    self.dispatch(payload)
+  })
+}
 
 export default self

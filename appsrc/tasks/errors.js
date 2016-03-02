@@ -1,7 +1,7 @@
 
 import ExtendableError from 'es6-error'
 
-class Transition extends ExtendableError {
+export class Transition extends ExtendableError {
   constructor (opts) {
     super('task transition')
     Object.assign(this, opts, {type: 'transition'})
@@ -12,25 +12,23 @@ class Transition extends ExtendableError {
   }
 }
 
-class InputRequired extends ExtendableError {
+export class InputRequired extends ExtendableError {
   constructor (opts) {
     super('user interaction required')
     Object.assign(this, opts, {type: 'input_required'})
   }
 }
 
-class Crash extends ExtendableError {
+export class Crash extends ExtendableError {
   constructor (opts) {
     super('application crashed')
     Object.assign(this, opts, {type: 'crash'})
   }
 }
 
-class Cancelled extends ExtendableError {
+export class Cancelled extends ExtendableError {
   constructor (opts) {
     super('cancelled')
     Object.assign(this, opts, {type: 'cancelled'})
   }
 }
-
-export default { Transition, InputRequired, Crash, Cancelled }

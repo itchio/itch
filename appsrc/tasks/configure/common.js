@@ -1,7 +1,7 @@
 
 import sniff from '../../util/sniff'
 import sf from '../../util/sf'
-import { partial } from 'underline'
+import {partial} from 'underline'
 
 import path from 'path'
 

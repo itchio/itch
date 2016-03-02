@@ -1,9 +1,8 @@
 
-let noop = async () => null
+import test from 'zopf'
+const noop = async () => null
 
-let self = {
+module.exports = test.module({
   dl: noop,
   untar: noop
-}
-
-export default self
+})

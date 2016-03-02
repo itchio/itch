@@ -1,10 +1,10 @@
 
+import test from 'zopf'
 import api from './api'
 
-export default {
+module.exports = test.module({
   get_current_user: () => api.user,
   get_me: () => ({id: 123}),
   add_change_listener: () => null,
-  remove_change_listener: () => null,
-  '@noCallThru': true
-}
+  remove_change_listener: () => null
+})

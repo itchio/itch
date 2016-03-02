@@ -1,8 +1,7 @@
 
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-
-import { indexBy } from 'underline'
+import {indexBy} from 'underline'
 
 import fixture from '../fixture'
 import electron from '../stubs/electron'
@@ -14,12 +13,11 @@ import market from '../stubs/market'
 let uploads_fixture = fixture.api('game/36664/uploads')
 
 test('find-upload', t => {
-  let os = {
-    itch_platform: () => 'windows',
-    '@noCallThru': true
-  }
+  const os = test.module({
+    itch_platform: () => 'windows'
+  })
 
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     '../stores/cave-store': CaveStore,
     '../stores/credentials-store': CredentialsStore,
     '../actions/app-actions': AppActions,
@@ -27,13 +25,13 @@ test('find-upload', t => {
     '../util/os': os
   }, electron)
 
-  let find_upload = proxyquire('../../app/tasks/find-upload', stubs)
-  let client = CredentialsStore.get_current_user()
+  const find_upload = proxyquire('../../app/tasks/find-upload', stubs).default
+  const client = CredentialsStore.get_current_user()
   t.stub(client, 'game_uploads').resolves(uploads_fixture)
 
-  let opts = {id: 'kalamazoo'}
+  const opts = {id: 'kalamazoo'}
 
-  let picks_upload = async (t, upload_id) => {
+  const picks_upload = async (t, upload_id) => {
     let err
     try {
       await find_upload.start(opts)
@@ -41,7 +39,7 @@ test('find-upload', t => {
     t.same(err, {type: 'transition', to: 'download', reason: 'found-upload', data: {upload_id}}, `picked upload ${upload_id}`)
   }
 
-  let transitions = async (t, opts) => {
+  const transitions = async (t, opts) => {
     let err
     try {
       await find_upload.start(opts)
@@ -51,7 +49,7 @@ test('find-upload', t => {
   }
 
   t.case('seeks download key', async t => {
-    let bag = {
+    const bag = {
       download_keys: [
         { id: 1, game_id: 84 }
       ]::indexBy('id'),
@@ -67,7 +65,7 @@ test('find-upload', t => {
   })
 
   t.case('uses download key', async t => {
-    let bag = {
+    const bag = {
       games: [
         { id: 84, title: 'Yeehaw' }
       ]::indexBy('id')

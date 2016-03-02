@@ -7,35 +7,33 @@ import CaveStore from '../stubs/cave-store'
 import CredentialsStore from '../stubs/credentials-store'
 
 test('check-for-update', t => {
-  let find_upload = {
-    start: async () => null,
-    '@noCallThru': true
-  }
-  let os = {
-    itch_platform: () => 'windows',
-    '@noCallThru': true
-  }
+  const find_upload = test.module({
+    start: async () => null
+  })
+  const os = test.module({
+    itch_platform: () => 'windows'
+  })
 
-  let uploads = [
+  const uploads = [
     {id: 55, p_windows: true, filename: 'setup.exe'},
     {id: 66, p_windows: true, filename: 'game.zip'}
   ]
 
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     '../stores/cave-store': CaveStore,
     '../stores/credentials-store': CredentialsStore,
     './find-upload': find_upload,
     '../util/os': os
   }, electron)
 
-  let check_for_update = proxyquire('../../app/tasks/check-for-update', stubs)
+  const check_for_update = proxyquire('../../app/tasks/check-for-update', stubs).default
 
-  let opts = {id: 'kalamazoo'}
+  const opts = {id: 'kalamazoo'}
 
   t.case('redownloads if has a fresher download', async t => {
-    let transition = {type: 'transition', to: 'download', reason: 'upload-found', data: {upload_id: 78}}
+    const transition = {type: 'transition', to: 'download', reason: 'upload-found', data: {upload_id: 78}}
     t.stub(CaveStore, 'find').returns({ uploads, upload_id: 66, launchable: true })
-    t.stub(find_upload, 'start').rejects(transition)
+    t.stub(find_upload.default, 'start').rejects(transition)
 
     let err
     try {

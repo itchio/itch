@@ -1,7 +1,7 @@
 
 import path from 'path'
 
-import { sortBy } from 'underline'
+import {sortBy} from 'underline'
 import Promise from 'bluebird'
 import shell_quote from 'shell-quote'
 
@@ -9,23 +9,23 @@ import os from '../../util/os'
 import sf from '../../util/sf'
 import spawn from '../../util/spawn'
 
-const log = require('../../util/log')('tasks/launch')
+import mklog from '../../util/log'
+const log = mklog('tasks/launch')
 
 import CaveStore from '../../stores/cave-store'
-const Crash = require('../errors').Crash
+import {Crash} from '../errors'
 
-
-let self = {
+const self = {
   sh: async function (exe_path, full_command, opts) {
     log(opts, `sh ${full_command}`)
 
-    let cwd = path.dirname(exe_path)
+    const cwd = path.dirname(exe_path)
     log(opts, `Working directory: ${cwd}`)
 
-    let args = shell_quote.parse(full_command)
-    let command = args.shift()
+    const args = shell_quote.parse(full_command)
+    const command = args.shift()
 
-    let code = await spawn({
+    const code = await spawn({
       command,
       args,
       ontoken: (tok) => log(opts, `stdout: ${tok}`),
@@ -34,7 +34,7 @@ let self = {
     })
 
     if (code !== 0) {
-      let error = `process exited with code ${code}`
+      const error = `process exited with code ${code}`
       throw new Crash({ exe_path, error })
     }
     return `child completed successfully`
@@ -45,10 +45,10 @@ let self = {
   },
 
   compute_weight: async function (app_path, execs) {
-    let output = []
+    const output = []
 
-    let f = async (exe) => {
-      let exe_path = path.join(app_path, exe.path)
+    const f = async (exe) => {
+      const exe_path = path.join(app_path, exe.path)
       let stats
       try {
         stats = await sf.stat(exe_path)
@@ -75,9 +75,9 @@ let self = {
   },
 
   compute_score: function (execs) {
-    let output = []
+    const output = []
 
-    for (let exe of execs) {
+    for (const exe of execs) {
       let score = 100
 
       if (/unins.*\.exe$/i.test(exe.path)) {
@@ -112,9 +112,9 @@ let self = {
   },
 
   launch_executable: function (exe_path, args, opts) {
-    let platform = os.platform()
+    const platform = os.platform()
     log(opts, `launching '${exe_path}' on '${platform}' with args '${args.join(' ')}'`)
-    let arg_string = args.map((x) => self.escape(x)).join(' ')
+    const arg_string = args.map((x) => self.escape(x)).join(' ')
 
     if (platform === 'darwin' && /\.app\/?$/.test(exe_path.toLowerCase())) {
       // '-W' waits for app to quit
@@ -136,7 +136,7 @@ let self = {
   },
 
   launch: async function (opts, cave) {
-    let app_path = CaveStore.app_path(cave.install_location, opts.id)
+    const app_path = CaveStore.app_path(cave.install_location, opts.id)
 
     let candidates = cave.executables.map((path) => {
       return {path}
@@ -157,7 +157,7 @@ let self = {
     log(opts, `candidates after depth sorting: ${JSON.stringify(candidates, null, 2)}`)
 
     let exe_path = path.join(app_path, candidates[0].path)
-    let args = []
+    const args = []
 
     if (/\.jar$/i.test(exe_path)) {
       log(opts, `Launching .jar`)

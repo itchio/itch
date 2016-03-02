@@ -12,6 +12,9 @@
     longStackTraces: true
   })
 
+  const env = require('../app/env')
+  env.name = 'test'
+
   let is_dir = (f) => {
     try {
       return fs.lstatSync(f).isDirectory()

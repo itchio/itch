@@ -1,10 +1,10 @@
 
-let rnil = () => null
-const EventEmitter = require('events').EventEmitter
+import test from 'zopf'
+import {EventEmitter} from 'events'
 
-let electron = {
-  '@noCallThru': true,
-  '@global': true,
+const rnil = () => null
+
+const electron = {
   app: {
     getVersion: () => '1.0',
     getPath: () => 'tmp/',
@@ -98,7 +98,6 @@ Object.assign(electron.BrowserWindow, {
   webContents
 })
 
-electron.__esModule = true
-electron.default = electron
-
-export default {electron}
+export default {
+  electron: test.module(electron)
+}

@@ -7,20 +7,19 @@ import CaveStore from '../stubs/cave-store'
 import CredentialsStore from '../stubs/credentials-store'
 
 test('awaken', t => {
-  let os = {
-    itch_platform: () => 'windows',
-    '@noCallThru': true
-  }
+  const os = test.module({
+    itch_platform: () => 'windows'
+  })
 
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     '../stores/cave-store': CaveStore,
     '../stores/credentials-store': CredentialsStore,
     '../util/os': os
   }, electron)
 
-  let awaken = proxyquire('../../app/tasks/awaken', stubs)
+  const awaken = proxyquire('../../app/tasks/awaken', stubs).default
 
-  let opts = {id: 'kalamazoo'}
+  const opts = {id: 'kalamazoo'}
 
   t.case('downloads if not launchable', async t => {
     t.stub(CaveStore, 'find').returns({ launchable: false })
