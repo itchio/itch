@@ -1,22 +1,22 @@
 
-import {object} from 'underline'
+import { object } from 'underline'
 
-let humanize = require('humanize-plus')
-let path = require('path')
+import humanize from 'humanize-plus'
+import path from 'path'
 
-let log = require('./log')('util/extract')
+const log = require('./log').default('util/extract')
 
 let verbose = (process.env.THE_DEPTHS_OF_THE_SOUL === '1')
 
-let formulas = require('./ibrew/formulas')
-let version = require('./ibrew/version')
+import formulas from './ibrew/formulas'
+import version from './ibrew/version'
 
-let os = require('./os')
-let noop = require('./noop')
-let sf = require('./sf')
-let spawn = require('./spawn')
-let sniff = require('./sniff')
-let butler = require('./butler')
+import os from './os'
+import noop from './noop'
+import sf from './sf'
+import spawn from './spawn'
+import sniff from './sniff'
+import butler from './butler'
 
 let self = {
   sevenzip_list: async function (command, v, logger, archive_path) {
@@ -134,4 +134,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

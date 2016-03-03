@@ -1,32 +1,30 @@
 
+import test from 'zopf'
+import sd from './skin-deeper'
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
-
-let sd = require('./skin-deeper')
-let stubs = require('../stubs/react-stubs')
+import InputRow from '../../app/components/input-row'
+import SelectRow from '../../app/components/select-row'
 
 test('forms', t => {
   t.case('InputRow', t => {
-    let InputRow = proxyquire('../../app/components/input-row', stubs)
-    let props = {
+    const props = {
       autofocus: true,
       disabled: true,
       name: 'al'
     }
 
-    let tree = sd.shallowRender(sd(InputRow, props))
+    const tree = sd.shallowRender(sd(InputRow, props))
 
-    let label = tree.subTree('label')
+    const label = tree.subTree('label')
     t.ok(label)
 
-    let input = label.findNode('input')
+    const input = label.findNode('input')
     t.ok(input)
     t.ok(input.props.disabled)
     t.is(input.props.placeholder, props.name)
 
-    let instance = tree.getMountedInstance()
-    let fake_input = {
+    const instance = tree.getMountedInstance()
+    const fake_input = {
       value: 'bozo',
       focus: () => null
     }
@@ -41,8 +39,7 @@ test('forms', t => {
   })
 
   t.case('SelectRow', t => {
-    let SelectRow = proxyquire('../../app/components/select-row', stubs)
-    let props = {
+    const props = {
       label: 'FCC',
       options: [
         {value: 1, label: 'No showboating'},

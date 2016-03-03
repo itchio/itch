@@ -1,14 +1,14 @@
 
-import {indexBy} from 'underline'
+import { each } from 'underline'
 
-let Store = require('./store')
-let CredentialsStore = require('./credentials-store')
+import Store from './store'
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
 
-let db = require('../util/db')
+import market from '../util/market'
+import fetch from '../util/fetch'
 
 let state = {}
 
@@ -30,57 +30,27 @@ if (process.env.NO_TEACHING) {
   featured_ids.length = 0
 }
 
-let env = require('../env')
+import env from '../env'
 
 if (env.name === 'development') {
   featured_ids.length = 0
 }
 
-async function fetch_collections () {
-  let user = CredentialsStore.get_current_user()
-  if (!user) return
-
-  let old_collections = await db.find({_table: 'collections'})
-  let old_collections_by_id = old_collections::indexBy('id')
-  merge_state(old_collections_by_id)
-
-  let collections = (await user.my_collections()).collections
-  for (let pc of collections) {
-    pc._featured = false
-  }
-
-  for (let featured_id of featured_ids) {
-    try {
-      let fc = (await user.collection(featured_id)).collection
-      fc._featured = true
-      collections.push(fc)
-    } catch (e) {
-      // don't let that stop us now, we're having such a good time.
-      console.log(`Could not fetch featured collection ${featured_id}: ${e.stack || e}`)
-    }
-  }
-
-  let collections_by_id = collections::indexBy('id')
-  await db.save_collections(collections)
-  merge_state(collections_by_id)
-
-  for (let coll of collections) {
-    if (collections_seen[coll.id]) {
-      continue
-    }
-    collections_seen[coll.id] = true
-    AppActions.fetch_games(`collections/${coll.id}`)
-  }
-
-  for (let coll of old_collections) {
-    if (!collections_by_id[coll.id]) {
-      db.remove({_table: 'collections', id: coll.id})
-    }
-  }
+function fetch_collections () {
+  fetch.collections(market, featured_ids, commit_collections)
 }
 
-function gc_database (payload) {
-  db.collect_garbage(payload.used_game_ids)
+function commit_collections () {
+  const collections = market.get_entities('collections')
+  merge_state(collections)
+
+  collections::each((c) => {
+    if (collections_seen[c.id]) {
+      return
+    }
+    collections_seen[c.id] = true
+    AppActions.fetch_games(`collections/${c.id}`)
+  })
 }
 
 function ready_to_roll () {
@@ -94,7 +64,6 @@ AppDispatcher.register('collection-store', Store.action_listeners(on => {
   })
   on(AppConstants.READY_TO_ROLL, ready_to_roll)
   on(AppConstants.FETCH_COLLECTIONS, fetch_collections)
-  on(AppConstants.GC_DATABASE, gc_database)
 }))
 
-module.exports = CollectionStore
+export default CollectionStore

@@ -1,11 +1,10 @@
 
-let log = require('../util/log')('tasks/launch')
-let configure = require('./configure')
+import configure from './configure'
 
-let CaveStore = require('../stores/cave-store')
+import CaveStore from '../stores/cave-store'
 
-let native = require('./launch/native')
-let html = require('./launch/html')
+import native from './launch/native'
+import html from './launch/html'
 
 let self = {
   valid_cave: function (cave) {
@@ -22,11 +21,11 @@ let self = {
   start: async function (opts) {
     let id = opts.id
 
-    let cave = await CaveStore.find(id)
+    let cave = CaveStore.find(id)
 
     if (!self.valid_cave(cave)) {
       await configure.start(opts)
-      cave = await CaveStore.find(id)
+      cave = CaveStore.find(id)
     }
 
     let module = {native, html}[cave.launch_type]
@@ -42,4 +41,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

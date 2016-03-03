@@ -1,6 +1,6 @@
 
-let Promise = require('bluebird')
-let file_type = require('file-type')
+import Promise from 'bluebird'
+import file_type from 'file-type'
 let read_chunk = Promise.promisify(require('read-chunk'))
 
 function sniff (buf) {
@@ -98,4 +98,4 @@ sniff.path = async function (file) {
   }
 }
 
-module.exports = sniff
+export default sniff

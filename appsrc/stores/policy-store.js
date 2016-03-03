@@ -1,29 +1,40 @@
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let urls = require('../constants/urls')
-let db = require('../util/db')
-let Store = require('./store')
-let I18nStore = require('./i18n-store')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import urls from '../constants/urls'
+import market from '../util/market'
+import fetch from '../util/fetch'
+import Store from './store'
+import I18nStore from './i18n-store'
 
-let electron = require('electron')
+import electron from 'electron'
 
-let PolicyStore = Object.assign(new Store('policy-store'), {})
+const PolicyStore = Object.assign(new Store('policy-store'), {})
 
 async function show_packaging_policy (payload) {
-  let i18n = I18nStore.get_state()
-  let format = payload.format
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.format === 'string'
+    typeof payload.game_id === 'number'
+  }
 
-  let game_id = payload.game_id
-  let game = await db.find_game(game_id)
+  const i18n = I18nStore.get_state()
+  const format = payload.format
 
-  let buttons = [
+  const game = await fetch.game_lazily(market, payload.game_id)
+  if (!game) {
+    throw new Error(`unknown game id ${payload.game_id}, can't show policy`)
+  }
+
+  console.log(`policy store, got game: ${JSON.stringify(game, null, 2)}`)
+
+  const buttons = [
     i18n.t('prompt.action.ok'),
     i18n.t(`prompt.packaging_policy.learn_more`),
     i18n.t(`prompt.packaging_policy.open_web_page`, {title: game.title})
   ]
 
-  let dialog_opts = {
+  const dialog_opts = {
     type: 'error',
     buttons,
     title: i18n.t(`prompt.${format}_policy.title`),
@@ -31,7 +42,7 @@ async function show_packaging_policy (payload) {
     detail: i18n.t(`prompt.${format}_policy.detail`)
   }
 
-  let callback = (response) => {
+  const callback = (response) => {
     // not much to do anyway.
     if (response === 1) {
       electron.shell.openExternal(urls[`${format}_policy`])
@@ -46,4 +57,4 @@ AppDispatcher.register('policy-store', Store.action_listeners(on => {
   on(AppConstants.SHOW_PACKAGING_POLICY, show_packaging_policy)
 }))
 
-module.exports = PolicyStore
+export default PolicyStore

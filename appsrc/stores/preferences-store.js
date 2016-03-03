@@ -1,15 +1,16 @@
 
-let log = require('../util/log')('i18n-store')
-let opts = { logger: new log.Logger() }
+import path from 'path'
+import deepAssign from 'deep-assign'
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let Store = require('./store')
+import app from '../util/app'
+import sf from '../util/sf'
+import mklog from '../util/log'
+const log = mklog('i18n-store')
+const opts = { logger: new log.Logger() }
 
-let path = require('path')
-let electron = require('electron')
-let deepAssign = require('deep-assign')
-let sf = require('../util/sf')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import Store from './store'
 
 let state = {}
 
@@ -17,7 +18,7 @@ let PreferencesStore = Object.assign(new Store('preferences-store'), {
   get_state: () => state
 })
 
-let preferences_path = path.join(electron.app.getPath('userData'), 'preferences.json')
+let preferences_path = path.join(app.getPath('userData'), 'preferences.json')
 
 async function load_from_disk () {
   try {
@@ -116,4 +117,4 @@ AppDispatcher.register('preferences-store', Store.action_listeners(on => {
   on(AppConstants.MAKE_INSTALL_LOCATION_DEFAULT, make_install_location_default)
 }))
 
-module.exports = PreferencesStore
+export default PreferencesStore

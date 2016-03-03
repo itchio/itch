@@ -1,15 +1,15 @@
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
 
-let Store = require('./store')
-let CaveStore = require('./cave-store')
+import Store from './store'
+import CaveStore from './cave-store'
 
-let crash_reporter = require('../util/crash-reporter')
-let github = require('../util/github')
-let sf = require('../util/sf')
-let db = require('../util/db')
+import crash_reporter from '../util/crash-reporter'
+import github from '../util/github'
+import sf from '../util/sf'
+import market from '../util/market'
 
 let state = {}
 
@@ -22,9 +22,9 @@ async function report_cave (payload) {
 
   try {
     AppActions.cave_progress({id, reporting: true})
-    let cave = await CaveStore.find(id)
+    let cave = CaveStore.find(id)
     let log_path = CaveStore.log_path(id)
-    let game = await db.find_game(cave.game_id)
+    let game = market.get_entities('games')[cave.game_id]
 
     let game_log = await sf.read_file(log_path)
 
@@ -59,4 +59,4 @@ AppDispatcher.register('report-store', Store.action_listeners(on => {
   on(AppConstants.REPORT_CAVE, report_cave)
 }))
 
-module.exports = ReportStore
+export default ReportStore

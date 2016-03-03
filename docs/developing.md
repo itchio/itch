@@ -8,19 +8,20 @@ Refer to the [app faq](https://itch.io/docs/app/faq) to know how to get your gam
 itch is built in HTML/SCSS/ES2015 and runs inside of Electron. Install the
 following to get started with development:
 
-* Install [node.js][] (version *5.4.x* is recommended)
+* Install [node.js][] (any version >*5.1.x* should work)
 * Install [electron][]:
 
 [node.js]: https://nodejs.org/
 [electron]: https://github.com/atom/electron
 
 ```
-npm install -g electron-prebuilt@0.36.7
+$ npm install -g electron-prebuilt@0.36.7
 ```
 
 * Check out this repository
 
-* Install the javascript dependencies:
+* Install the javascript dependencies by running this command from
+within the `itch` directory you've just cloned:
 
 ```bash
 $ npm install

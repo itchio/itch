@@ -1,22 +1,25 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-let electron = require('../stubs/electron')
+import electron from '../stubs/electron'
 
 test('app-actions', t => {
   let app_dispatcher = {
-    dispatch: () => null
+    __esModule: true,
+    default: {
+      dispatch: () => null
+    }
   }
   let stubs = Object.assign({
     '../dispatcher/app-dispatcher': app_dispatcher
   }, electron)
-  let app_actions = proxyquire('../../app/actions/app-actions', stubs)
+  let AppActions = proxyquire('../../app/actions/app-actions', stubs).default
 
   let test_action = (name, args, object) => {
     t.case(name, t => {
-      t.mock(app_dispatcher).expects('dispatch').withArgs(object)
-      app_actions[name].apply(app_actions, args)
+      t.mock(app_dispatcher.default).expects('dispatch').withArgs(object)
+      AppActions[name].apply(AppActions, args)
     })
   }
 
@@ -33,13 +36,13 @@ test('app-actions', t => {
   test_action('authenticated', [], { action_type: 'AUTHENTICATED' })
   test_action('logout', [], { action_type: 'LOGOUT' })
 
-  test_action('update_cave', [42, {a: 'b'}], { action_type: 'UPDATE_CAVE', id: 42, data: {a: 'b'} })
-  test_action('cave_progress', [{a: 'b'}], { action_type: 'CAVE_PROGRESS', opts: {a: 'b'} })
+  test_action('update_cave', ['uuid', {a: 'b'}], { action_type: 'UPDATE_CAVE', id: 'uuid', cave: {a: 'b'} })
+  test_action('cave_progress', [{id: 'uuid', a: 'b'}], { action_type: 'CAVE_PROGRESS', data: {id: 'uuid', a: 'b'} })
   test_action('set_progress', [0.5], { action_type: 'SET_PROGRESS', alpha: 0.5 })
   test_action('bounce', [], { action_type: 'BOUNCE' })
   test_action('notify', ['les carottes sont cuites'], { action_type: 'NOTIFY', message: 'les carottes sont cuites' })
 
-  test_action('queue_game', [42], { action_type: 'QUEUE_GAME', game_id: 42 })
+  test_action('queue_game', [{name: 'Downwell'}], { action_type: 'QUEUE_GAME', game: {name: 'Downwell'} })
 
   test_action('fetch_games', ['collections/23498'], { action_type: 'FETCH_GAMES', path: 'collections/23498' })
   test_action('fetch_search', ['baz'], { action_type: 'FETCH_SEARCH', query: 'baz' })

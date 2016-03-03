@@ -1,18 +1,19 @@
 
-let Promise = require('bluebird')
-let path = require('path')
+import Promise from 'bluebird'
+import path from 'path'
 import {partial} from 'underline'
 
-let ibrew = require('../util/ibrew')
-let xdg_mime = require('../util/xdg-mime')
-let Logger = require('../util/log').Logger
-let log = require('../util/log')('setup-store')
+import ibrew from '../util/ibrew'
+import xdg_mime from '../util/xdg-mime'
+import {Logger} from '../util/log'
+import mklog from '../util/log'
+const log = mklog('setup-store')
 
-let Store = require('./store')
+import Store from './store'
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
 
 let path_done = false
 let ready = false
@@ -68,4 +69,4 @@ AppDispatcher.register('setup-store', Store.action_listeners(on => {
   on(AppConstants.WINDOW_READY, run)
 }))
 
-module.exports = SetupStore
+export default SetupStore

@@ -1,19 +1,18 @@
 
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppActions from '../actions/app-actions'
+import AppConstants from '../constants/app-constants'
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppActions = require('../actions/app-actions')
-let AppConstants = require('../constants/app-constants')
+import WindowStore from './window-store'
+import TrayStore from './tray-store'
+import Store from './store'
 
-let WindowStore = require('./window-store')
-let TrayStore = require('./tray-store')
-let Store = require('./store')
+import os from '../util/os'
 
-let os = require('../util/os')
-let defer = require('../util/defer')
+import electron from 'electron'
+const {app} = electron
 
-let app = require('electron').app
-
-let state = {
+const state = {
   progress: -1
 }
 
@@ -46,9 +45,7 @@ function notify (content) {
     TrayStore.with(tray => tray.displayBalloon({ title: 'itch.io', content }))
   } else {
     // using stringify as an escape mechanism
-    defer(() => {
-      AppActions.eval(`new Notification(${JSON.stringify(content)})`)
-    })
+    AppActions.eval(`new Notification(${JSON.stringify(content)})`)
   }
 }
 
@@ -58,4 +55,4 @@ AppDispatcher.register('notification-store', Store.action_listeners(on => {
   on(AppConstants.NOTIFY, (payload) => notify(payload.message))
 }))
 
-module.exports = NotificationStore
+export default NotificationStore

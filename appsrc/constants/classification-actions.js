@@ -1,5 +1,5 @@
 
-module.exports = {
+export default {
   'game': 'launch',
   'tool': 'launch',
 

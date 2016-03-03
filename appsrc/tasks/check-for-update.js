@@ -1,14 +1,16 @@
 
-let log = require('../util/log')('tasks/awaken')
+import mklog from '../util/log'
+const log = mklog('tasks/awaken')
 
-let CaveStore = require('../stores/cave-store')
-let find_upload = require('./find-upload')
+import CaveStore from '../stores/cave-store'
+import find_upload from './find-upload'
 
-let cooldown = require('../util/cooldown')(500)
+import mkcooldown from '../util/cooldown'
+const cooldown = mkcooldown(500)
 
 async function start (opts) {
-  let id = opts.id
-  let cave = await CaveStore.find(id)
+  const id = opts.id
+  const cave = CaveStore.find(id)
 
   log(opts, `launchable cave, looking for fresher upload`)
 
@@ -17,7 +19,7 @@ async function start (opts) {
     await find_upload.start(opts)
   } catch (err) {
     if (err.type === 'transition' && err.to === 'download') {
-      let upload_id = err.data.upload_id
+      const upload_id = err.data.upload_id
       if (upload_id !== cave.upload_id) {
         log(opts, `better download available (${cave.upload_id} => ${upload_id})`)
         throw err
@@ -28,4 +30,4 @@ async function start (opts) {
   // all good!
 }
 
-module.exports = { start }
+export default { start }

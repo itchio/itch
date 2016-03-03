@@ -1,16 +1,17 @@
 
-let db = require('../util/db')
-import {indexBy} from 'underline'
+import market from '../util/market'
+import {indexBy, findWhere} from 'underline'
 
-let os = require('../util/os')
-let log = require('../util/log')('tasks/find-upload')
+import os from '../util/os'
+import mklog from '../util/log'
+const log = mklog('tasks/find-upload')
 
-let errors = require('./errors')
+import {Transition, Cancelled} from './errors'
 
-let AppActions = require('../actions/app-actions')
-let CaveStore = require('../stores/cave-store')
-let CredentialsStore = require('../stores/credentials-store')
-let classification_actions = require('../constants/classification-actions')
+import AppActions from '../actions/app-actions'
+import CaveStore from '../stores/cave-store'
+import CredentialsStore from '../stores/credentials-store'
+import classification_actions from '../constants/classification-actions'
 
 let self = {
   filter_uploads: function (action, uploads) {
@@ -64,16 +65,24 @@ let self = {
   },
 
   start: async function (opts) {
-    let id = opts.id
+    const id = opts.id
+
+    const emitter = opts.emitter
+    let cancelled = false
+    if (emitter) {
+      emitter.once('cancel', () => {
+        cancelled = true
+      })
+    }
+
+    const client = CredentialsStore.get_current_user()
     let uploads
-    let client = CredentialsStore.get_current_user()
 
-    let cave = await CaveStore.find(id)
-    let key = cave.key || await db.find_download_key_for_game(cave.game_id)
+    const cave = CaveStore.find(id)
+    const key = cave.key || market.get_entities('download_keys')::findWhere({game_id: cave.game_id})
 
-    let action = 'launch'
-    let game = (await db.find_game(cave.game_id)) || {}
-    action = classification_actions[game.classification] || 'launch'
+    const game = market.get_entities('games')[cave.game_id] || {}
+    const action = classification_actions[game.classification] || 'launch'
 
     if (key) {
       AppActions.update_cave(id, {key})
@@ -107,7 +116,7 @@ let self = {
     let matches = /\.(rar|deb|rpm)$/i.exec(upload.filename)
     if (matches) {
       let format = matches[1]
-      console.log(`refusing to work with ${format}`)
+      log(opts, `refusing to work with ${format}`)
 
       if (!cave.launchable) {
         AppActions.implode_cave(id)
@@ -116,7 +125,11 @@ let self = {
       return
     }
 
-    throw new errors.Transition({
+    if (cancelled) {
+      throw new Cancelled()
+    }
+
+    throw new Transition({
       to: 'download',
       reason: 'found-upload',
       data: {upload_id: upload.id}
@@ -124,4 +137,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

@@ -1,7 +1,7 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
 /**
  * Basically a text field, name isn't ideal.
@@ -15,11 +15,8 @@ class InputRow extends ShallowComponent {
   }
 
   render () {
-    let name = this.props.name
-    let label = this.props.label || ''
-    let type = this.props.type || 'text'
-    let disabled = this.props.disabled
-    let placeholder = this.props.placeholder || name
+    const {name, label = '', type = 'text', disabled} = this.props
+    const {placeholder = name} = this.props
 
     return (
       r.div({className: 'input-row'}, [
@@ -48,4 +45,4 @@ InputRow.propTypes = {
   type: PropTypes.oneOf(['text', 'password'])
 }
 
-module.exports = InputRow
+export default InputRow

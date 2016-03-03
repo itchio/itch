@@ -8,7 +8,7 @@ let self = {
   remote_locale_path: 'http://locales.itch.ovh/itch'
 }
 
-let itchio_api = process.env.WHEN_IN_ROME ? 'http://localhost.com:8080' : self.itchio
+const itchio_api = process.env.WHEN_IN_ROME || self.itchio
 
 Object.assign(self, {
   itchio_api,
@@ -22,4 +22,4 @@ Object.assign(self, {
   rpm_policy: `${self.itchio}/t/13882/deb-and-rpm-arent-supported-by-itch-please-ship-portable-linux-builds`
 })
 
-module.exports = self
+export default self

@@ -1,17 +1,17 @@
 
-let subprogress = require('../../util/subprogress')
-let sniff = require('../../util/sniff')
-let noop = require('../../util/noop')
+import subprogress from '../../util/subprogress'
+import sniff from '../../util/sniff'
+import noop from '../../util/noop'
 
-let butler = require('../../util/butler')
-let extract = require('../../util/extract')
-let deploy = require('../../util/deploy')
+import butler from '../../util/butler'
+import extract from '../../util/extract'
+import deploy from '../../util/deploy'
 
-let core = require('./core')
+import core from './core'
 
-let log = require('../../util/log')('installers/archive')
+const log = require('../../util/log')('installers/archive')
 
-let AppActions = require('../../actions/app-actions')
+import AppActions from '../../actions/app-actions'
 
 let is_tar = async function (path) {
   let type = await sniff.path(path)
@@ -42,7 +42,7 @@ let self = {
 
     let archive_nested_cache = {}
     archive_nested_cache[cave.upload_id] = type
-    AppActions.update_cave(cave._id, {archive_nested_cache})
+    AppActions.update_cave(cave.id, {archive_nested_cache})
   },
 
   install: async function (opts) {
@@ -141,4 +141,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

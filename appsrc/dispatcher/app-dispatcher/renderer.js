@@ -1,15 +1,17 @@
 
-let os = require('../../util/os')
+import os from '../../util/os'
 if (os.process_type() !== 'renderer') {
   throw new Error(`app-dispatcher/renderer required from ${os.process_type()}`)
 }
 
-let Log = require('../../util/log')
-let log = Log('dispatcher')
-let opts = {logger: new Log.Logger({sinks: {console: !!process.env.MARCO_POLO}})}
+const marco_level = parseInt(process.env.MARCO_POLO || '0', 10)
 
-let electron = require('electron')
-let ipc = electron.ipcRenderer
+import Log from '../../util/log'
+const log = Log('dispatcher')
+const opts = {logger: new Log.Logger({sinks: {console: (marco_level > 0)}})}
+
+import electron from 'electron'
+const ipc = electron.ipcRenderer
 
 class RendererDispatcher {
   constructor () {
@@ -33,6 +35,9 @@ class RendererDispatcher {
   }
 
   dispatch (payload) {
+    if (marco_level >= 1) {
+      log(opts, `browser <<< renderer: ${payload.action_type}, ${JSON.stringify(payload).length} bytes`)
+    }
     ipc.send('dispatcher-to-browser', payload)
   }
 }
@@ -42,8 +47,11 @@ let self = new RendererDispatcher()
 ipc.on('dispatcher-to-renderer', (ev, payload) => {
   Object.keys(self._callbacks).forEach((store_id) => {
     let cb = self._callbacks[store_id]
-    cb(payload)
+    // sometimes callbacks disappear
+    if (typeof cb === 'function') {
+      cb(payload)
+    }
   })
 })
 
-module.exports = self
+export default self

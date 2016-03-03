@@ -1,13 +1,16 @@
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
 
-let self = {
+const self = {
   boot: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.BOOT })
   },
 
   open_url: (url) => {
+    pre: { // eslint-disable-line
+      typeof url === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.OPEN_URL, url })
   },
 
@@ -16,6 +19,10 @@ let self = {
   },
 
   setup_status: (message, icon, variables) => {
+    pre: { // eslint-disable-line
+      typeof message === 'string'
+      typeof icon === 'string'
+    }
     AppDispatcher.dispatch({
       action_type: AppConstants.SETUP_STATUS,
       message, icon, variables
@@ -39,10 +46,10 @@ let self = {
   },
 
   focus_panel: (panel) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.LIBRARY_FOCUS_PANEL,
-      panel
-    })
+    pre: { // eslint-disable-line
+      typeof panel === 'string'
+    }
+    AppDispatcher.dispatch({ action_type: AppConstants.LIBRARY_FOCUS_PANEL, panel })
   },
 
   check_for_self_update: () => {
@@ -62,10 +69,16 @@ let self = {
   },
 
   self_update_error: (message) => {
+    pre: { // eslint-disable-line
+      typeof message === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.SELF_UPDATE_ERROR, message })
   },
 
   self_update_downloaded: (version) => {
+    pre: { // eslint-disable-line
+      typeof version === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.SELF_UPDATE_DOWNLOADED, version })
   },
 
@@ -84,32 +97,54 @@ let self = {
   /* Locale updates */
 
   locale_update_queue_download: (lang) => {
+    pre: { // eslint-disable-line
+      typeof lang === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.LOCALE_UPDATE_QUEUE_DOWNLOAD, lang })
   },
 
   locale_update_downloaded: (lang, resources) => {
+    pre: { // eslint-disable-line
+      typeof lang === 'string'
+      typeof resources === 'object'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.LOCALE_UPDATE_DOWNLOADED, lang, resources })
   },
 
-  locale_update_download_start: (lang, resources) => {
+  locale_update_download_start: (lang) => {
+    pre: { // eslint-disable-line
+      typeof lang === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.LOCALE_UPDATE_DOWNLOAD_START, lang })
   },
 
-  locale_update_download_end: (lang, resources) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.LOCALE_UPDATE_DOWNLOAD_END, lang, resources })
+  locale_update_download_end: (lang) => {
+    pre: { // eslint-disable-line
+      typeof lang === 'string'
+    }
+    AppDispatcher.dispatch({ action_type: AppConstants.LOCALE_UPDATE_DOWNLOAD_END, lang })
   },
 
   /* Install locations */
 
   compute_install_location_size: (name) => {
+    pre: { // eslint-disable-line
+      typeof name === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.COMPUTE_INSTALL_LOCATION_SIZE, name })
   },
 
   cancel_install_location_size_computation: (name) => {
+    pre: { // eslint-disable-line
+      typeof name === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.CANCEL_INSTALL_LOCATION_SIZE_COMPUTATION, name })
   },
 
   browse_install_location: (name) => {
+    pre: { // eslint-disable-line
+      typeof name === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.BROWSE_INSTALL_LOCATION, name })
   },
 
@@ -118,6 +153,9 @@ let self = {
   },
 
   add_install_location: (name, path) => {
+    pre: { // eslint-disable-line
+      typeof name === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.ADD_INSTALL_LOCATION, name, path })
   },
 
@@ -130,86 +168,143 @@ let self = {
   },
 
   transfer_install_location: (name, new_path) => {
+    pre: { // eslint-disable-line
+      typeof name === 'string'
+      typeof new_path === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.TRANSFER_INSTALL_LOCATION, name, new_path })
   },
 
   make_install_location_default: (name) => {
+    pre: { // eslint-disable-line
+      typeof name === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.MAKE_INSTALL_LOCATION_DEFAULT, name })
   },
 
   /* Caves */
 
   request_cave_uninstall: (id) => {
+    pre: { // eslint-disable-line
+      typeof id === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.REQUEST_CAVE_UNINSTALL, id })
   },
 
   queue_cave_uninstall: (id) => {
+    pre: { // eslint-disable-line
+      typeof id === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_CAVE_UNINSTALL, id })
   },
 
   queue_cave_reinstall: (id) => {
+    pre: { // eslint-disable-line
+      typeof id === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_CAVE_REINSTALL, id })
   },
 
-  update_cave: (id, data) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.UPDATE_CAVE, id, data })
+  update_cave: (id, cave) => {
+    pre: { // eslint-disable-line
+      typeof id === 'string'
+    }
+    AppDispatcher.dispatch({ action_type: AppConstants.UPDATE_CAVE, id, cave })
   },
 
-  cave_progress: (opts) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_PROGRESS, opts })
+  cave_progress: (data) => {
+    pre: { // eslint-disable-line
+      typeof data === 'object'
+      typeof data.id === 'string'
+    }
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_PROGRESS, data })
   },
 
   cancel_cave: (id) => {
+    pre: { // eslint-disable-line
+      typeof id === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.CANCEL_CAVE, id })
   },
 
   implode_cave: (id) => {
+    pre: { // eslint-disable-line
+      typeof id === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.IMPLODE_CAVE, id })
   },
 
   explore_cave: (id) => {
+    pre: { // eslint-disable-line
+      typeof id === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.EXPLORE_CAVE, id })
   },
 
   cave_thrown_into_bit_bucket: (id) => {
+    pre: { // eslint-disable-line
+      typeof id === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.CAVE_THROWN_INTO_BIT_BUCKET, id })
   },
 
   probe_cave: (id) => {
+    pre: { // eslint-disable-line
+      typeof id === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.PROBE_CAVE, id })
   },
 
   report_cave: (id) => {
+    pre: { // eslint-disable-line
+      typeof id === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.REPORT_CAVE, id })
+  },
+
+  /* Packaging policy */
+
+  show_packaging_policy: (format, game_id) => {
+    pre: { // eslint-disable-line
+      typeof format === 'string'
+      typeof game_id === 'number'
+    }
+    AppDispatcher.dispatch({ action_type: AppConstants.SHOW_PACKAGING_POLICY, format, game_id })
   },
 
   /* Games */
 
-  show_packaging_policy: (format, game_id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.SHOW_PACKAGING_POLICY, format, game_id })
+  queue_game: (game) => {
+    pre: { // eslint-disable-line
+      typeof game === 'object'
+    }
+    AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_GAME, game })
   },
 
-  queue_game: (game_id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.QUEUE_GAME, game_id })
+  browse_game: (id, url) => {
+    pre: { // eslint-disable-line
+      typeof id === 'number'
+      typeof url === 'string'
+    }
+    AppDispatcher.dispatch({ action_type: AppConstants.BROWSE_GAME, id, url })
   },
 
-  browse_game: (game_id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.BROWSE_GAME, game_id })
+  initiate_purchase: (game) => {
+    pre: { // eslint-disable-line
+      typeof game === 'object'
+    }
+    AppDispatcher.dispatch({ action_type: AppConstants.INITIATE_PURCHASE, game })
   },
 
-  initiate_purchase: (game_id) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.INITIATE_PURCHASE, game_id })
-  },
-
-  purchase_completed: (game_id, message) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.PURCHASE_COMPLETED, game_id, message })
+  purchase_completed: (id, message) => {
+    pre: { // eslint-disable-line
+      typeof id === 'number'
+    }
+    AppDispatcher.dispatch({ action_type: AppConstants.PURCHASE_COMPLETED, id, message })
   },
 
   set_progress: (alpha) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.SET_PROGRESS,
-      alpha
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.SET_PROGRESS, alpha })
   },
 
   bounce: () => {
@@ -217,10 +312,10 @@ let self = {
   },
 
   notify: (message) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.NOTIFY,
-      message
-    })
+    pre: { // eslint-disable-line
+      typeof message === 'string'
+    }
+    AppDispatcher.dispatch({ action_type: AppConstants.NOTIFY, message })
   },
 
   no_stored_credentials: () => {
@@ -232,6 +327,10 @@ let self = {
   },
 
   login_with_password: (username, password) => {
+    pre: { // eslint-disable-line
+      typeof username === 'string'
+      typeof password === 'string'
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.LOGIN_WITH_PASSWORD, private: true, username, password })
   },
 
@@ -271,16 +370,12 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.FETCH_SEARCH, query })
   },
 
+  search_fetched: (query) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.SEARCH_FETCHED, query })
+  },
+
   games_fetched: (game_ids) => {
     AppDispatcher.dispatch({ action_type: AppConstants.GAMES_FETCHED, game_ids })
-  },
-
-  search_fetched: (query, game_ids, games) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.SEARCH_FETCHED, game_ids, games, query })
-  },
-
-  search_query_change: (query) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.SEARCH_QUERY_CHANGE, query })
   },
 
   eval: (code) => {
@@ -322,8 +417,8 @@ let self = {
     AppDispatcher.dispatch({ action_type: AppConstants.CAVE_STORE_DIFF, diff })
   },
 
-  cave_store_cave_diff: (cave_id, diff) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_STORE_CAVE_DIFF, cave_id, diff })
+  cave_store_cave_diff: (cave, diff) => {
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_STORE_CAVE_DIFF, cave, diff })
   },
 
   install_location_store_diff: (diff) => {
@@ -332,11 +427,7 @@ let self = {
 
   implode_app: () => {
     AppDispatcher.dispatch({ action_type: AppConstants.IMPLODE_APP })
-  },
-
-  gc_database: (used_game_ids) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.GC_DATABASE, used_game_ids })
   }
 }
 
-module.exports = self
+export default self

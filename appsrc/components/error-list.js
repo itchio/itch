@@ -1,9 +1,9 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let DeepComponent = require('./deep-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import DeepComponent from './deep-component'
 
-let format = require('../util/format')
+import format from '../util/format'
 
 /**
  * A bunch of errors displayed in a list
@@ -15,31 +15,25 @@ let format = require('../util/format')
 class ErrorList extends DeepComponent {
   render () {
     let prefix = 'errors'
-    let t = this.t
-    let i18n_namespace = this.props.i18n_namespace
+
+    const t = this.t
+    const i18n_namespace = this.props.i18n_namespace
     if (i18n_namespace) {
       prefix = prefix + '.' + i18n_namespace
     }
 
-    let errors = this.props.errors
-    let before = this.props.before || ''
+    const {errors, before = ''} = this.props
 
     if (!errors) {
       return r.div()
     }
 
-    if (!Array.isArray(errors)) {
-      errors = [errors]
-    }
+    const error_array = Array.isArray(errors) ? errors : [errors]
 
-    return r.ul({className: 'form_errors'}, errors.map((error, key) => {
-      let i18n_key = prefix + '.' + format.slugify(error)
-      let message = t(i18n_key, {defaultValue: error})
-
-      return r.li({key}, [
-        before,
-        message
-      ])
+    return r.ul({className: 'form_errors'}, error_array.map((error, key) => {
+      const i18n_key = prefix + '.' + format.slugify(error)
+      const message = t(i18n_key, {defaultValue: error})
+      return r.li({key}, [ before, message ])
     }))
   }
 }
@@ -48,4 +42,4 @@ ErrorList.propTypes = {
   errors: PropTypes.any
 }
 
-module.exports = ErrorList
+export default ErrorList

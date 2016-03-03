@@ -1,12 +1,18 @@
 
-let keyMirror = require('keymirror')
-let State = keyMirror({
+const keyMirror = require('keymirror')
+const State = keyMirror({
   NORMAL: null,
   EXPECT_COMPONENT_KEY: null,
   EXPECT_CLOSE: null
 })
 
-module.exports = (t, key, components, text_vars) => {
+function interleave (t, key, components, text_vars) {
+  pre: { // eslint-disable-line
+    typeof t === 'function'
+    typeof key === 'string'
+    typeof components === 'object'
+  }
+
   if (typeof text_vars === 'undefined') {
     text_vars = {}
   }
@@ -26,20 +32,23 @@ module.exports = (t, key, components, text_vars) => {
     vars[component_key] = '[[' + component_key + ']]'
   }
 
-  let result = []
-  let translated = t(key, vars)
+  const result = []
+  const translated = t(key, vars)
   // example: ["Click on ", "[[", "report", "]]", " or ", "[[", "probe", "]]", ""]
-  let tokens = translated.split(/(\[\[|\]\])/)
+  const tokens = translated.split(/(\[\[|\]\])/)
+
   let state = State.NORMAL
 
   for (let i = 0; i < tokens.length; i++) {
-    let token = tokens[i]
+    const token = tokens[i]
 
     if (state === State.NORMAL) {
       if (token === '[[') {
         state = State.EXPECT_COMPONENT_KEY
       } else {
-        if (token.length) result.push(token)
+        if (token.length) {
+          result.push(token)
+        }
       }
     } else if (state === State.EXPECT_COMPONENT_KEY) {
       result.push(components[token])
@@ -56,3 +65,5 @@ module.exports = (t, key, components, text_vars) => {
 
   return result
 }
+
+export default interleave

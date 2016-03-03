@@ -1,18 +1,19 @@
 
-let errors = require('./errors')
+import {Transition} from './errors'
 
-let noop = require('../util/noop')
-let sf = require('../util/sf')
-let log = require('../util/log')('tasks/install')
+import noop from '../util/noop'
+import sf from '../util/sf'
+import mklog from '../util/log'
+const log = mklog('tasks/install')
 
-let CaveStore = require('../stores/cave-store')
-let AppActions = require('../actions/app-actions')
+import CaveStore from '../stores/cave-store'
+import AppActions from '../actions/app-actions'
 
-let core = require('./install/core')
+import core from './install/core'
 
 function ensure (predicate, reason) {
   if (!predicate) {
-    throw new errors.Transition({ to: 'find-upload', reason })
+    throw new Transition({ to: 'find-upload', reason })
   }
 }
 
@@ -26,7 +27,7 @@ let self = {
     let upload_id = opts.upload_id
     let check_timestamps = true
 
-    let cave = await CaveStore.find(id)
+    let cave = CaveStore.find(id)
 
     if (opts.reinstall) {
       upload_id = cave.upload_id
@@ -47,7 +48,7 @@ let self = {
       archive_stat = await sf.lstat(archive_path)
     } catch (e) {
       log(opts, `where did our archive go? re-downloading...`)
-      throw new errors.Transition({to: 'download', reason: 'missing-download'})
+      throw new Transition({to: 'download', reason: 'missing-download'})
     }
 
     let imtime = cave.installed_archive_mtime
@@ -56,17 +57,17 @@ let self = {
 
     if (check_timestamps && imtime && !(amtime > imtime)) {
       log(opts, `archive isn't more recent, nothing to install`)
-      throw new errors.Transition({to: 'idle', reason: 'up-to-date'})
+      throw new Transition({to: 'idle', reason: 'up-to-date'})
     }
 
-    let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter }
+    let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter, upload_id }
 
     AppActions.update_cave(id, {launchable: false})
     await core.install(core_opts)
     AppActions.update_cave(id, {launchable: true, installed_archive_mtime: amtime, upload_id})
 
-    throw new errors.Transition({to: 'configure', reason: 'installed'})
+    throw new Transition({to: 'configure', reason: 'installed'})
   }
 }
 
-module.exports = self
+export default self

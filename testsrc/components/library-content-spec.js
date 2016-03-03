@@ -1,17 +1,14 @@
 
-let test = require('zopf')
-let mori = require('mori')
-let proxyquire = require('proxyquire')
+import test from 'zopf'
+import sd from './skin-deeper'
 
-let sd = require('./skin-deeper')
-let stubs = require('../stubs/react-stubs')
+import LibraryContent from '../../app/components/library-content'
 
 test('LibraryContent', t => {
-  let LibraryContent = proxyquire('../../app/components/library-content', stubs)
-  let props = {
+  const props = {
     library: {
       panel: ''
     }
   }
-  sd.shallowRender(sd(LibraryContent, {state: mori.toClj(props), games: {}}))
+  sd.shallowRender(sd(LibraryContent, {state: props, games: {}}))
 })

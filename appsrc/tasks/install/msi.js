@@ -1,10 +1,10 @@
 
-let spawn = require('../../util/spawn')
-let os = require('../../util/os')
+import spawn from '../../util/spawn'
+import os from '../../util/os'
 
-let AppActions = require('../../actions/app-actions')
+import AppActions from '../../actions/app-actions'
 
-let log = require('../../util/log')('installers/msi')
+const log = require('../../util/log')('installers/msi')
 
 let self = {
   log_path: function (operation, msi_path) {
@@ -65,4 +65,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

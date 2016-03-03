@@ -6,7 +6,6 @@ npm-debug.log
 # build artifacts
 /app
 /test
-/maps
 *.map
 tmp
 
@@ -27,5 +26,5 @@ tmp
 
 # OS-specific junk
 .DS_Store
-*.app
-*.dmg
+/*.app
+/*.dmg

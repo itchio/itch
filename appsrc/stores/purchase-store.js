@@ -1,19 +1,22 @@
 
-let Store = require('./store')
-let CredentialsStore = require('./credentials-store')
+import Store from './store'
+import CredentialsStore from './credentials-store'
 
-let db = require('../util/db')
-let url = require('../util/url')
-let debug_browser_window = require('../util/debug-browser-window')
+import { findWhere } from 'underline'
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppActions = require('../actions/app-actions')
-let AppConstants = require('../constants/app-constants')
+import market from '../util/market'
+import url from '../util/url'
+import debug_browser_window from '../util/debug-browser-window'
 
-let I18nStore = require('./i18n-store')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppActions from '../actions/app-actions'
+import AppConstants from '../constants/app-constants'
 
-let Promise = require('bluebird')
-let electron = require('electron')
+import I18nStore from './i18n-store'
+
+import Promise from 'bluebird'
+import electron from 'electron'
+import path from 'path'
 
 let state = null
 
@@ -25,7 +28,6 @@ let PurchaseStore = Object.assign(new Store('purchase-store'), {
  * Creates a new browser window to initiate the purchase flow
  */
 function make_purchase_window (me, game) {
-  let path = require('path')
   let inject_path = path.resolve(__dirname, '..', 'inject', 'purchase.js')
   let win = new electron.BrowserWindow({
     width: 960,
@@ -114,20 +116,18 @@ function build_login_and_return_url (return_to) {
 }
 
 async function initiate_purchase (payload) {
-  let game_id = payload.game_id
-  let game = await db.find_game(game_id)
+  pre: { // eslint-disable-line
+    typeof payload.game === 'object'
+  }
+  let game = payload.game
 
   let me = CredentialsStore.get_me()
-
-  console.log(`trying to purchase ${JSON.stringify(game, null, 2)}`)
 
   // XXX 'can_be_bought' API field seems buggy for now?
   // cf. https://github.com/itchio/itch/issues/379
 
-  let keys = await db.find({_table: 'download_keys', game_id})
-
-  let already_owns = keys.length > 0
-  if (already_owns) {
+  let key = market.get_entities('download_keys')::findWhere({game_id: game.id})
+  if (key) {
     let wants = await wants_to_buy_twice(game)
     // user didn't want to buy twice
     if (!wants) return
@@ -149,7 +149,7 @@ async function initiate_purchase (payload) {
     if (/^.*\/download\/[a-zA-Z0-9]*$/.test(parsed.pathname)) {
       // purchase went through!
       AppActions.fetch_games('owned')
-      AppActions.purchase_completed(game_id, `You just purchased ${game.title}! You should now be able to install it in one click.`)
+      AppActions.purchase_completed(game, `You just purchased ${game.title}! You should now be able to install it in one click.`)
       win.close()
     } else if (/\/pay\/cancel/.test(parsed.pathname)) {
       // payment was cancelled
@@ -164,7 +164,7 @@ async function initiate_purchase (payload) {
       win.close()
 
       if (await wants_to_browse_after_failure(game)) {
-        AppActions.browse_game(game.id)
+        AppActions.browse_game(game.id, game.url)
       }
     }
   })
@@ -177,4 +177,4 @@ AppDispatcher.register('purchase-store', Store.action_listeners(on => {
   on(AppConstants.INITIATE_PURCHASE, initiate_purchase)
 }))
 
-module.exports = PurchaseStore
+export default PurchaseStore

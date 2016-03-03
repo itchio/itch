@@ -1,15 +1,12 @@
 
-let test = require('zopf')
-let mori = require('mori')
-let proxyquire = require('proxyquire')
+import test from 'zopf'
+import sd from './skin-deeper'
 
-let sd = require('./skin-deeper')
-let stubs = require('../stubs/react-stubs')
+import LibrarySidebar from '../../app/components/library-sidebar'
 
 test('LibrarySidebar', t => {
-  let LibrarySidebar = proxyquire('../../app/components/library-sidebar', stubs)
-  let game = { title: 'Wreck IT' }
-  let props = {
+  const game = { title: 'Wreck IT' }
+  const props = {
     collections: {
       a: {title: 'Collection A'},
       b: {title: 'Collection B'}
@@ -24,8 +21,8 @@ test('LibrarySidebar', t => {
       panel: ''
     }
   }
-  sd.shallowRender(sd(LibrarySidebar, {state: mori.toClj(props)}))
+  sd.shallowRender(sd(LibrarySidebar, {state: props}))
 
-  let tree = sd.shallowRender(sd(LibrarySidebar, {state: mori.toClj(props)}))
+  const tree = sd.shallowRender(sd(LibrarySidebar, {state: props}))
   t.ok(tree.findNode('.search'), 'displays search area')
 })

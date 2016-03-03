@@ -1,19 +1,18 @@
 
-let electron = require('electron')
-let Menu = electron.Menu
-let shell = electron.shell
+import electron from 'electron'
+const {Menu, shell} = electron
 
-let CredentialsStore = require('../stores/credentials-store')
-let I18nStore = require('../stores/i18n-store')
-let AppActions = require('../actions/app-actions')
-let AppConstants = require('../constants/app-constants')
-let urls = require('../constants/urls')
-let AppDispatcher = require('../dispatcher/app-dispatcher')
+import CredentialsStore from '../stores/credentials-store'
+import I18nStore from '../stores/i18n-store'
+import AppActions from '../actions/app-actions'
+import AppConstants from '../constants/app-constants'
+import urls from '../constants/urls'
+import AppDispatcher from '../dispatcher/app-dispatcher'
 
-let clone = require('clone')
+import clone from 'clone'
 
-let os = require('../util/os')
-let crash_reporter = require('../util/crash-reporter')
+import os from '../util/os'
+import crash_reporter from '../util/crash-reporter'
 
 let osx = (os.platform() === 'darwin')
 
@@ -167,4 +166,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

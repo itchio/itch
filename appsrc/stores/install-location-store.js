@@ -1,27 +1,28 @@
 
-import {throttle} from 'underline'
+import { throttle, each } from 'underline'
 
-let walk = require('walk')
-let electron = require('electron')
-let uuid = require('node-uuid')
-let deep = require('deep-diff')
-let deepAssign = require('deep-assign')
-let humanize = require('humanize-plus')
+import walk from 'walk'
+import electron from 'electron'
+import uuid from 'node-uuid'
+import deep from 'deep-diff'
+import deepAssign from 'deep-assign'
+import humanize from 'humanize-plus'
 
-let db = require('../util/db')
-let explorer = require('../util/explorer')
-let diskspace = require('../util/diskspace')
-let log = require('../util/log')('install-location-store')
-let opts = { logger: new log.Logger() }
+import market from '../util/market'
+import explorer from '../util/explorer'
+import diskspace from '../util/diskspace'
+import mklog from '../util/log'
+const log = mklog('install-location-store')
+const opts = { logger: new log.Logger() }
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
-let Store = require('./store')
-let PreferencesStore = require('./preferences-store')
-let WindowStore = require('./window-store')
-let I18nStore = require('./i18n-store')
-let SetupStore = require('./setup-store')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
+import Store from './store'
+import PreferencesStore from './preferences-store'
+import WindowStore from './window-store'
+import I18nStore from './i18n-store'
+import SetupStore from './setup-store'
 
 let appdata_location = null
 let computations_to_cancel = {}
@@ -106,38 +107,35 @@ let throttled_recompute_state = recompute_state::throttle(500, true)
 function initialize_appdata () {
   appdata_location = {
     name: 'appdata',
-    path: db.library_dir
+    path: market.get_library_dir()
   }
 }
 
 async function reload () {
   initialize_appdata()
 
-  let caves = await db.find({_table: 'caves'})
-  let counts = {}
+  const counts = {}
+  const caves = market.get_entities()['caves']
 
-  for (let cave of caves) {
-    let loc_name = cave.install_location || 'appdata'
-    if (typeof counts[loc_name] === 'undefined') {
-      counts[loc_name] = 0
-    }
-    counts[loc_name]++
-  }
+  caves::each((cave) => {
+    const loc_name = cave.install_location || 'appdata'
+    counts[loc_name] = (counts[loc_name] || 0) + 1
+  })
 
   disk_info = await diskspace.disk_info()
   location_item_counts = counts
   throttled_recompute_state()
 }
 
-let throttled_reload = reload::throttle(500)
+const throttled_reload = reload::throttle(500)
 
 function compute_install_location_size (payload) {
-  let name = payload.name
+  const name = payload.name
   log(opts, `Computing location of ${name}`)
 
   delete computations_to_cancel[name]
 
-  let loc = InstallLocationStore.get_location(name)
+  const loc = InstallLocationStore.get_location(name)
   if (!loc) {
     log(opts, `Unknown location, bailing out: ${loc}`)
   }
@@ -145,7 +143,7 @@ function compute_install_location_size (payload) {
   let total_size = 0
   location_sizes[name] = 0
   location_computing_size[name] = true
-  let walker = walk.walk(loc.path)
+  const walker = walk.walk(loc.path)
 
   walker.on('file', (root, fileStats, next) => {
     total_size += fileStats.size
@@ -175,6 +173,10 @@ function compute_install_location_size (payload) {
 }
 
 function cancel_install_location_size_computation (payload) {
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.name === 'string'
+  }
   computations_to_cancel[payload.name] = true
 }
 
@@ -188,14 +190,14 @@ async function add_install_location_request () {
   let window
   WindowStore.with(w => window = w)
 
-  let callback = (response) => {
+  const callback = (response) => {
     if (!response) {
       log(opts, `Install location addition was cancelled`)
       return
     }
 
-    let loc_name = uuid.v4()
-    let loc_path = response[0]
+    const loc_name = uuid.v4()
+    const loc_path = response[0]
     AppActions.add_install_location(loc_name, loc_path)
     log(opts, `Adding install location at ${loc_path} with name ${loc_name}`)
   }
@@ -203,10 +205,15 @@ async function add_install_location_request () {
 }
 
 async function remove_install_location_request (payload) {
-  let name = payload.name
-  let i18n = I18nStore.get_state()
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.name === 'string'
+  }
 
-  let locations = compute_state().locations
+  const name = payload.name
+  const i18n = I18nStore.get_state()
+
+  const locations = compute_state().locations
   if (locations.length <= 1) {
     let title = i18n.t('prompt.last_remaining_install_location.title')
     let content = i18n.t('prompt.last_remaining_install_location.content')
@@ -215,45 +222,45 @@ async function remove_install_location_request (payload) {
   }
 
   // call compute_state explicitly so we have fresh state regardless of throttling
-  let loc = locations[name]
+  const loc = locations[name]
   if (!loc) {
     log(opts, `Cannot remove unknown location ${loc}`)
     return
   }
 
   if (loc.item_count > 0) {
-    let buttons = [
+    const buttons = [
       i18n.t('prompt.install_location_not_empty.show_contents'),
       i18n.t('prompt.action.ok')
     ]
 
-    let dialog_opts = {
+    const dialog_opts = {
       title: i18n.t('prompt.install_location_not_empty.title'),
       message: i18n.t('prompt.install_location_not_empty.message'),
       detail: i18n.t('prompt.install_location_not_empty.detail'),
       buttons
     }
 
-    let callback = (response) => {
+    const callback = (response) => {
       if (response === 0) {
         AppActions.focus_panel(`locations/${name}`)
       }
     }
     electron.dialog.showMessageBox(dialog_opts, callback)
   } else {
-    let buttons = [
+    const buttons = [
       i18n.t('prompt.action.confirm_removal'),
       i18n.t('prompt.action.cancel')
     ]
 
-    let dialog_opts = {
+    const dialog_opts = {
       title: i18n.t('prompt.install_location_remove.title'),
       message: i18n.t('prompt.install_location_remove.message'),
       detail: i18n.t('prompt.install_location_remove.detail', {location: loc.path}),
       buttons
     }
 
-    let callback = (response) => {
+    const callback = (response) => {
       if (response === 0) {
         AppActions.remove_install_location(payload.name)
       }
@@ -263,8 +270,8 @@ async function remove_install_location_request (payload) {
 }
 
 async function browse_install_location (payload) {
-  let name = payload.name
-  let loc = InstallLocationStore.get_location(name)
+  const name = payload.name
+  const loc = InstallLocationStore.get_location(name)
   if (!loc) {
     log(opts, `Cannot browse unknown location ${loc}`)
     return
@@ -287,7 +294,11 @@ async function logout () {
 }
 
 async function library_focus_panel (payload) {
-  let panel = payload.panel
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.panel === 'string'
+  }
+  const panel = payload.panel
   if (panel === 'preferences') {
     throttled_reload()
   }
@@ -313,4 +324,4 @@ PreferencesStore.add_change_listener('install-location-store', () => {
   reload()
 })
 
-module.exports = InstallLocationStore
+export default InstallLocationStore

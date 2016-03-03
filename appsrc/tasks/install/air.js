@@ -1,14 +1,14 @@
 
-let spawn = require('../../util/spawn')
-let sf = require('../../util/sf')
+import spawn from '../../util/spawn'
+import sf from '../../util/sf'
 
-let AppActions = require('../../actions/app-actions')
+import AppActions from '../../actions/app-actions'
 
-let blessing = require('./blessing')
+import blessing from './blessing'
 
-let log = require('../../util/log')('installers/air')
+const log = require('../../util/log')('installers/air')
 
-let path = require('path')
+import path from 'path'
 
 // Adobe Air docs: http://help.adobe.com/en_US/air/redist/WS485a42d56cd19641-70d979a8124ef20a34b-8000.html
 
@@ -80,7 +80,7 @@ let self = {
 
     let logger = opts.logger
 
-    let ibrew = require('../../util/ibrew')
+    const ibrew = require('../../util/ibrew').default
     let ibrew_opts = {
       logger,
       onstatus: (msg) => log(opts, `ibrew status: ${msg}`)
@@ -115,4 +115,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

@@ -1,13 +1,12 @@
 
-let spawn = require('./spawn')
-let os = require('./os')
-let sf = require('./sf')
+import spawn from './spawn'
+import os from './os'
+import sf from './sf'
+import ibrew from './ibrew'
 
-let path = require('path')
+import path from 'path'
 
-let file = async (file_path) => {
-  let ibrew = require('./ibrew')
-
+const file = async (file_path) => {
   let args = [
     '--brief' // don't echo file name
   ]
@@ -36,4 +35,4 @@ let file = async (file_path) => {
   return output.split(',').map((x) => x.trim())
 }
 
-module.exports = file
+export default file

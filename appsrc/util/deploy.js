@@ -1,14 +1,14 @@
 
-import {difference} from 'underline'
+import { difference } from 'underline'
 import bluebird from 'bluebird'
 
-let sf = require('./sf')
-let noop = require('./noop')
-let butler = require('./butler')
+import sf from './sf'
+import noop from './noop'
+import butler from './butler'
 
-let path = require('path')
+import path from 'path'
 
-let log = require('./log')('deploy')
+const log = require('./log').default('deploy')
 
 let pnoop = async () => null
 
@@ -98,4 +98,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

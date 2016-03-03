@@ -1,14 +1,11 @@
 
-let test = require('zopf')
-let mori = require('mori')
-let proxyquire = require('proxyquire')
+import test from 'zopf'
+import sd from './skin-deeper'
 
-let sd = require('./skin-deeper')
-let stubs = require('../stubs/react-stubs')
+import GameCell from '../../app/components/game-cell'
 
 test('GameCell', t => {
-  let GameCell = proxyquire('../../app/components/game-cell', stubs)
-  let game = mori.toClj({
+  const game = {
     title: 'a',
     cover_url: 'b',
     user: {
@@ -18,14 +15,14 @@ test('GameCell', t => {
     p_windows: true,
     p_linux: true,
     p_osx: true
-  })
-  let install = null
+  }
+  const install = {}
 
   sd.shallowRender(sd(GameCell, {game, install}))
-  install = mori.assoc(install, 'progress', 0.2)
+  install.progress = 0.2
 
   ;['download', 'extract', 'idle', 'error', 'launch'].forEach((task) => {
-    install = mori.assoc(install, 'task', task)
+    install.task = task
     sd.shallowRender(sd(GameCell, {game, install}))
   })
 })

@@ -1,8 +1,12 @@
 
-let os = require('../util/os')
+import os from '../util/os'
+
+let specific_dispatcher
 
 if (os.process_type() === 'renderer') {
-  module.exports = require('./app-dispatcher/renderer')
+  specific_dispatcher = require('./app-dispatcher/renderer').default
 } else {
-  module.exports = require('./app-dispatcher/browser')
+  specific_dispatcher = require('./app-dispatcher/browser').default
 }
+
+export default specific_dispatcher

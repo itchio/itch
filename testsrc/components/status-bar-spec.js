@@ -1,14 +1,12 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+import test from 'zopf'
+import sd from './skin-deeper'
 
-let sd = require('./skin-deeper')
-let stubs = require('../stubs/react-stubs')
+import StatusBar from '../../app/components/status-bar'
 
 test('status-bar', t => {
   t.case('StatusBar', t => {
     // TODO: actually test it
-    let StatusBar = proxyquire('../../app/components/status-bar', stubs)
     sd.shallowRender(sd(StatusBar))
   })
 })

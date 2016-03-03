@@ -1,4 +1,9 @@
 
+import test from 'zopf'
 
 // synchronous defer, useful for testing stores
-module.exports = (cb) => cb()
+function defer (cb) {
+  cb()
+}
+
+module.exports = test.module(defer)

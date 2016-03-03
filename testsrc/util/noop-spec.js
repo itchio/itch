@@ -1,7 +1,6 @@
 
-
-let test = require('zopf')
-let noop = require('../../app/util/noop')
+import test from 'zopf'
+import noop from '../../app/util/noop'
 
 test('noop', t => {
   noop()

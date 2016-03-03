@@ -1,15 +1,14 @@
 
-let electron = require('./electron')
+import electron from './electron'
 
-let defer = require('./defer')
-let AppStore = require('./app-store')
-let AppActions = require('./app-actions')
-let AppDispatcher = require('./app-dispatcher')
-let Store = require('./store')
+import defer from './defer'
+import AppStore from './app-store'
+import AppActions from './app-actions'
+import AppDispatcher from './app-dispatcher'
+import Store from './store'
+import i18next from './i18next'
 
-let i18next = require('./i18next')
-
-let self = Object.assign({
+const stubs = Object.assign({
   '../util/defer': defer,
   '../stores/app-store': AppStore,
   '../actions/app-actions': AppActions,
@@ -18,6 +17,6 @@ let self = Object.assign({
   i18next
 }, electron)
 
-Object.assign(self, { defer, AppStore, AppDispatcher, AppActions })
+Object.assign(stubs, {defer, AppStore, AppDispatcher, AppActions})
 
-module.exports = self
+module.exports = stubs

@@ -1,18 +1,17 @@
 
-import {get} from 'mori-ext'
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from '../shallow-component'
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('../shallow-component')
+import Tooltip from 'rc-tooltip'
+import Icon from '../icon'
+import TaskIcon from '../task-icon'
 
-let Tooltip = require('rc-tooltip')
-let Icon = require('../icon')
-let TaskIcon = require('../task-icon')
+import AppActions from '../../actions/app-actions'
+import ClassificationActions from '../../constants/classification-actions'
 
-let AppActions = require('../../actions/app-actions')
-let classification_actions = require('../../constants/classification-actions')
-
-let platform = require('../../util/os').itch_platform()
+import os from '../../util/os'
+const platform = os.itch_platform()
 
 let linear_gradient = (progress) => {
   let percent = (progress * 100).toFixed() + '%'
@@ -22,22 +21,18 @@ let linear_gradient = (progress) => {
 }
 
 let icon_info = (cave) => {
-  let progress = cave::get('progress')
-  let task = cave::get('task')
+  let progress = cave ? cave.progress : 0
+  let task = cave ? cave.task : null
   let spin = false
 
   if (progress < 0) {
     spin = true
-  } else if (cave::get('reporting')) {
+  } else if (cave && cave.reporting) {
     task = 'report'
     spin = true
-  } else if (cave::get('need_blessing')) {
+  } else if (cave && cave.need_blessing) {
     task = 'ask-before-install'
     spin = true
-  }
-
-  if (task === 'check-for-update') {
-    task = 'idle'
   }
 
   return { task, spin }
@@ -52,13 +47,13 @@ class MainAction extends ShallowComponent {
     let platform_compatible = this.props.platform_compatible
     let may_download = this.props.may_download
 
-    let classification = game::get('classification')
-    let action = classification_actions[classification]
+    let classification = game.classification
+    let action = ClassificationActions[classification]
     if (action === 'open') {
       platform_compatible = true
     }
 
-    let progress = cave::get('progress')
+    let progress = cave ? cave.progress : 0
     let info = icon_info(cave)
     let task = info.task
     let spin = info.spin
@@ -145,31 +140,28 @@ class MainAction extends ShallowComponent {
   on_click (task, may_download, platform_compatible) {
     let {cave, game} = this.props
 
-    let cave_id = cave::get('_id')
-    let game_id = game::get('id')
-
     if (task === 'error') {
-      AppActions.report_cave(cave_id)
+      AppActions.report_cave(cave.id)
     } else if (/^download.*$/.test(task)) {
-      AppActions.cancel_cave(cave_id)
+      AppActions.cancel_cave(cave.id)
     } else {
       if (platform_compatible) {
         if (may_download) {
-          AppActions.queue_game(game_id)
+          AppActions.queue_game(game)
         } else {
-          AppActions.initiate_purchase(game_id)
+          AppActions.initiate_purchase(game)
         }
       } else {
-        AppActions.browse_game(game_id)
+        AppActions.browse_game(game.id, game.url)
       }
     }
   }
 
   status (cave, task, action) {
     let t = this.t
-    let progress = cave::get('progress')
+    let progress = cave ? cave.progress : 0
 
-    if (task === 'idle' || task === 'awaken' || task === 'check-for-update') {
+    if (task === 'idle' || task === 'awaken') {
       switch (action) {
         case 'open':
           return t('grid.item.open')
@@ -220,4 +212,4 @@ MainAction.propTypes = {
   game: PropTypes.any
 }
 
-module.exports = MainAction
+export default MainAction

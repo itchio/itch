@@ -1,37 +1,37 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
+import {indexBy} from 'underline'
 
-let fixture = require('../fixture')
-let electron = require('../stubs/electron')
-let CaveStore = require('../stubs/cave-store')
-let CredentialsStore = require('../stubs/credentials-store')
-let AppActions = require('../stubs/app-actions')
-let db = require('../stubs/db')
+import fixture from '../fixture'
+import electron from '../stubs/electron'
+import CaveStore from '../stubs/cave-store'
+import CredentialsStore from '../stubs/credentials-store'
+import AppActions from '../stubs/app-actions'
+import market from '../stubs/market'
 
-let uploads_fixture = fixture.api('game/36664/uploads')
+const uploads_fixture = fixture.api('game/36664/uploads')
 
 test('find-upload', t => {
-  let os = {
-    itch_platform: () => 'windows',
-    '@noCallThru': true
-  }
+  const os = test.module({
+    itch_platform: () => 'windows'
+  })
 
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     '../stores/cave-store': CaveStore,
     '../stores/credentials-store': CredentialsStore,
     '../actions/app-actions': AppActions,
-    '../util/db': db,
+    '../util/market': market,
     '../util/os': os
   }, electron)
 
-  let find_upload = proxyquire('../../app/tasks/find-upload', stubs)
-  let client = CredentialsStore.get_current_user()
+  const find_upload = proxyquire('../../app/tasks/find-upload', stubs).default
+  const client = CredentialsStore.get_current_user()
   t.stub(client, 'game_uploads').resolves(uploads_fixture)
 
-  let opts = {id: 'kalamazoo'}
+  const opts = {id: 'kalamazoo'}
 
-  let picks_upload = async (t, upload_id) => {
+  const picks_upload = async (t, upload_id) => {
     let err
     try {
       await find_upload.start(opts)
@@ -39,7 +39,7 @@ test('find-upload', t => {
     t.same(err, {type: 'transition', to: 'download', reason: 'found-upload', data: {upload_id}}, `picked upload ${upload_id}`)
   }
 
-  let transitions = async (t, opts) => {
+  const transitions = async (t, opts) => {
     let err
     try {
       await find_upload.start(opts)
@@ -48,13 +48,31 @@ test('find-upload', t => {
     t.same(err.to, 'download', 'transitioned to download')
   }
 
-  t.case('searches for download key', async t => {
-    t.mock(db).expects('find_download_key_for_game').once().resolves(null)
-    await transitions(t, {})
+  t.case('seeks download key', async t => {
+    const bag = {
+      download_keys: [
+        { id: 1, game_id: 84 }
+      ]::indexBy('id'),
+      games: [
+        { id: 84, title: 'Yeehaw' }
+      ]::indexBy('id')
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
+
+    t.stub(CaveStore, 'find').returns({ game_id: 84 })
+    t.mock(client).expects('download_key_uploads').once().resolves(uploads_fixture)
+    await transitions(t, opts)
   })
 
   t.case('uses download key', async t => {
-    t.stub(CaveStore, 'find').resolves({
+    const bag = {
+      games: [
+        { id: 84, title: 'Yeehaw' }
+      ]::indexBy('id')
+    }
+    t.stub(market, 'get_entities', (x) => bag[x])
+
+    t.stub(CaveStore, 'find').returns({
       key: {id: 'olmec'}
     })
     t.mock(client).expects('download_key_uploads').once().resolves(uploads_fixture)

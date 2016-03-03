@@ -1,7 +1,7 @@
 
-let keyMirror = require('keymirror')
+import keyMirror from 'keymirror'
 
-module.exports = keyMirror({
+export default keyMirror({
   BOOT: null,
   OPEN_URL: null,
   WINDOW_READY: null,
@@ -49,7 +49,7 @@ module.exports = keyMirror({
   QUEUE_CAVE_UNINSTALL: null,
   /** Cave is going to be reinstalled */
   QUEUE_CAVE_REINSTALL: null,
-  /** Internal cave DB needs to be updated */
+  /** Persistent cave metadata storage needs to be updated */
   UPDATE_CAVE: null,
   /** Should probably replaced with an CaveStore.emit('change') event */
   CAVE_PROGRESS: null,
@@ -78,9 +78,6 @@ module.exports = keyMirror({
   INITIATE_PURCHASE: null,
   PURCHASE_COMPLETED: null,
 
-  /** User changed search query */
-  SEARCH_QUERY_CHANGE: null,
-
   /** Set app-wide progress bar (title bar on Windows). Negative value clears. */
   SET_PROGRESS: null,
   /** OSX-only, bounce dock */
@@ -88,12 +85,12 @@ module.exports = keyMirror({
   /** Cross-platform, notification bubble */
   NOTIFY: null,
 
-  /* Data retrieval stuff */
+  /* Data retrieval */
   FETCH_COLLECTIONS: null,
   FETCH_GAMES: null,
   FETCH_SEARCH: null,
-  GAMES_FETCHED: null,
   SEARCH_FETCHED: null,
+  GAMES_FETCHED: null,
 
   /** Data sync functions */
   GAME_STORE_DIFF: null,
@@ -111,7 +108,7 @@ module.exports = keyMirror({
   LOGIN_FAILURE: null,
   /** API key available beyond this point */
   AUTHENTICATED: null,
-  /** db available beyond this point */
+  /** market available beyond this point */
   READY_TO_ROLL: null,
   /** install locations available beyond this point */
   LOCATIONS_READY: null,

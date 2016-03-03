@@ -1,7 +1,7 @@
 
-let serveStatic = require('serve-static')
-let finalhandler = require('finalhandler')
-let http = require('http')
+import serveStatic from 'serve-static'
+import finalhandler from 'finalhandler'
+import http from 'http'
 
 let self = {
   create: (file_root, opts) => {
@@ -16,4 +16,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

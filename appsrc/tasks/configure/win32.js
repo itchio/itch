@@ -1,5 +1,5 @@
 
-let sf = require('../../util/sf')
+import sf from '../../util/sf'
 
 let self = {
   configure: async function (app_path) {
@@ -11,4 +11,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

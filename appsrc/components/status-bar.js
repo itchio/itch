@@ -1,12 +1,11 @@
 
-let r = require('r-dom')
-import {getIn} from 'mori-ext'
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-let Icon = require('./icon')
+import Icon from './icon'
 
-let AppActions = require('../actions/app-actions')
+import AppActions from '../actions/app-actions'
 
 /**
  * Displays our current progress when checking for updates, etc.
@@ -14,14 +13,8 @@ let AppActions = require('../actions/app-actions')
 class StatusBar extends ShallowComponent {
   render () {
     let t = this.t
-    let state = this.props.state
-
-    let status = state::getIn(['update', 'status'])
-    let error = state::getIn(['update', 'error'])
-    let available = state::getIn(['update', 'available'])
-    let downloaded = state::getIn(['update', 'downloaded'])
-    let checking = state::getIn(['update', 'checking'])
-    let uptodate = state::getIn(['update', 'uptodate'])
+    let state = this.props.state || {}
+    let {status, error, available, downloaded, checking, uptodate} = state.update || {}
 
     let children = []
     let active = true
@@ -79,4 +72,4 @@ StatusBar.propTypes = {
   update: PropTypes.any
 }
 
-module.exports = StatusBar
+export default StatusBar

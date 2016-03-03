@@ -1,0 +1,27 @@
+
+stages:
+  - test
+
+test:linux:
+  stage: test
+  tags:
+    - linux
+  script:
+    - export CI_OS=linux
+    - release/ci.sh
+
+test:darwin:
+  stage: test
+  tags:
+    - darwin
+  script:
+    - export CI_OS=darwin
+    - release/ci.sh
+
+test:windows:
+  stage: test
+  tags:
+    - windows
+  script:
+    - export CI_OS=windows
+    - release/ci.sh

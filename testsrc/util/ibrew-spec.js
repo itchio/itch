@@ -1,61 +1,71 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
-let PassThrough = require('stream').PassThrough
+import test from 'zopf'
+import proxyquire from 'proxyquire'
+import {PassThrough} from 'stream'
 
-let electron = require('../stubs/electron')
-let log = require('../../app/util/log')
+import electron from '../stubs/electron'
+import log from '../../app/util/log'
+
+import version from '../../app/util/ibrew/version'
 
 test('ibrew', t => {
-  let opts = {
+  const opts = {
     onstatus: (msg) => console.log(msg),
     logger: new log.Logger()
   }
-  let os = {
+
+  const os = test.module({
     platform: () => 'win32',
     arch: () => 'x64',
     assert_presence: async () => ({parsed: '9.20'}),
-    '@global': true
-  }
-  let needle = {
-    get: async () => { throw new Error('stub') },
-    defaults: () => null,
-    '@global': true,
-    '@noCallThru': true
-  }
-  let sf = {
+    in_browser: () => true
+  })
+
+  const needle = test.module({
+    get: () => { throw new Error('stub') },
+    getAsync: async () => { return needle.get.apply(needle, arguments) },
+    defaults: () => null
+  })
+
+  const sf = test.module({
+    mkdir: async () => null,
+    promised: async() => null,
     createWriteStream: () => {
       let pt = new PassThrough()
       pt.on('data', () => null)
       return pt
-    },
-    '@global': true
-  }
-  let extract = {
+    }
+  })
+
+  const extract = test.module({
     extract: async () => null
-  }
-  let stubs = Object.assign({
+  })
+
+  const net_mock = test.module({
+    download_to_file: async () => null,
+    get_latest_version: async () => 'LATEST',
+    channel: () => 'testchannel'
+  })
+
+  const stubs = Object.assign({
     'needle': needle,
+    './ibrew/net': net_mock,
     './sf': sf,
-    '../sf': sf,
     './os': os,
-    '../os': os,
     './extract': extract
   }, electron)
-  let ibrew = proxyquire('../../app/util/ibrew', stubs)
+  const ibrew = proxyquire('../../app/util/ibrew', stubs).default
 
-  let net_stubs = Object.assign({
-    'needle': needle,
+  const net_stubs = Object.assign({
+    '../../promised/needle': needle,
     '../os': os
   }, electron)
-  let net = proxyquire('../../app/util/ibrew/net', net_stubs)
+  const net = proxyquire('../../app/util/ibrew/net', net_stubs).default
 
-  let formulas_stubs = {
+  const formulas_stubs = {
     '../os': os
   }
-  let formulas = proxyquire('../../app/util/ibrew/formulas', formulas_stubs)
-
-  let version = require('../../app/util/ibrew/version')
+  const formulas = proxyquire('../../app/util/ibrew/formulas', formulas_stubs).default
 
   t.case('compares versions', t => {
     t.ok(version.equal('v1.23', '1.23'), 'equal versions')
@@ -85,14 +95,14 @@ test('ibrew', t => {
   t.case('with all deps', async t => {
     t.stub(os, 'assert_presence').resolves({parsed: '1.0'})
     t.stub(needle, 'get').callsArgWith(1, null, {statusCode: 200, body: '1.0'})
-    let opts = {}
+    const opts = {}
 
     await ibrew.fetch(opts, '7za')
     await ibrew.fetch(opts, 'butler')
   })
 
   t.case('without all deps', async t => {
-    let check = t.stub(os, 'assert_presence')
+    const check = t.stub(os, 'assert_presence')
     check.onCall(0).rejects('nope!')
     check.onCall(1).resolves({parsed: '0.8'})
 
@@ -138,7 +148,7 @@ test('ibrew', t => {
   })
 
   t.case('7za version parsing', t => {
-    let cases = {
+    const cases = {
       // Windows 32-bit (7zip.org download)
       '7-Zip (a) [32] 15.14 : Copyright (c) 1999-2015 Igor Pavlov : 2015-12-31': '15.14',
       // Windows 64-bit (msys2)
@@ -147,10 +157,10 @@ test('ibrew', t => {
       '7-Zip (A) [64] 9.20  Copyright (c) 1999-2010 Igor Pavlov  2010-11-18': '9.20'
     }
 
-    let parser = formulas['7za'].version_check.parser
-    for (let k of Object.keys(cases)) {
-      let expected_version = cases[k]
-      let parsed_version = parser.exec(k)[1]
+    const parser = formulas['7za'].version_check.parser
+    for (const k of Object.keys(cases)) {
+      const expected_version = cases[k]
+      const parsed_version = parser.exec(k)[1]
       t.is(parsed_version, expected_version, `parses version ${expected_version}`)
     }
   })

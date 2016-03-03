@@ -1,10 +1,10 @@
 
-let rnil = () => null
-let EventEmitter = require('events').EventEmitter
+import test from 'zopf'
+import {EventEmitter} from 'events'
 
-let electron = {
-  '@noCallThru': true,
-  '@global': true,
+const rnil = () => null
+
+const electron = {
   app: {
     getVersion: () => '1.0',
     getPath: () => 'tmp/',
@@ -16,6 +16,10 @@ let electron = {
       bounce: rnil,
       setBadge: rnil
     }
+  },
+  powerSaveBlocker: {
+    start: rnil,
+    stop: rnil
   },
   Tray: function () {
     Object.assign(this, electron.Tray)
@@ -94,6 +98,6 @@ Object.assign(electron.BrowserWindow, {
   webContents
 })
 
-module.exports = {
-  'electron': electron
+export default {
+  electron: test.module(electron)
 }
