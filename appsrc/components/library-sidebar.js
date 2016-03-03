@@ -1,7 +1,7 @@
 
 import r from 'r-dom'
-import { count, getIn } from 'grovel'
-import { map, partial, groupBy, sortBy, filter, each } from 'underline'
+import {count, getIn} from 'grovel'
+import {map, partial, groupBy, sortBy, filter, each} from 'underline'
 
 import {PropTypes} from 'react'
 import ShallowComponent from './shallow-component'
@@ -85,7 +85,7 @@ class LibrarySidebar extends ShallowComponent {
 
     let in_progress_items = caves::filter(is_cave_interesting::partial(panel))
 
-    let cave_items = ((cave) => {
+    let cave_items = in_progress_items::map((cave) => {
       let task = cave.task
       let error = cave.error
       let path = `caves/${cave.id}`
@@ -102,7 +102,7 @@ class LibrarySidebar extends ShallowComponent {
         key: cave.id
       }
       return r(LibraryPanelLink, props)
-    })::map(in_progress_items)
+    })
 
     let links = []
 
