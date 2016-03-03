@@ -1,15 +1,14 @@
 
-import {assocIn} from 'grovel'
-
 import mklog from './log'
 const log = mklog('fetch')
 const opts = {logger: new mklog.Logger()}
 
 import CredentialsStore from '../stores/credentials-store'
 
+import {assocIn} from 'grovel'
 import {normalize, arrayOf} from 'idealizr'
 import {game, collection, download_key} from './schemas'
-import {each, union, pluck} from 'underline'
+import {each, union, pluck, difference} from 'underline'
 
 async function dashboard_games (market, cb) {
   pre: { // eslint-disable-line
@@ -69,6 +68,8 @@ async function collections (market, featured_ids, cb) {
 
   cb()
 
+  const old_collection_ids = market.get_entities('collections')::pluck('id')
+
   const prepare_collections = (normalized) => {
     const colls = market.get_entities('collections')
     normalized.entities.collections::each((coll, coll_id) => {
@@ -83,24 +84,27 @@ async function collections (market, featured_ids, cb) {
   const api = CredentialsStore.get_current_user()
   if (!api) return
 
-  const my_collections_res = await api.my_collections()
-  const my_collections = normalize(my_collections_res, {
+  const my_collections_res = normalize(await api.my_collections(), {
     collections: arrayOf(collection)
   })
-  ;(my_collections.entities.collections || [])::each((c) => c._featured = false)
-  market.save_all_entities(prepare_collections(my_collections))
+  market.save_all_entities(prepare_collections(my_collections_res))
   cb()
 
+  let new_collection_ids = my_collections_res.entities.collections::pluck('id')
+
   for (const featured_id of featured_ids) {
-    const featured_collection_res = await api.collection(featured_id)
-    const featured_collection = normalize(featured_collection_res, {
+    const featured_collection_res = normalize(await api.collection(featured_id), {
       collection: collection
     })
-    ;(featured_collection.entities.collections || [])::each((c) => {
-      c._featured = true
-    })
-    market.save_all_entities(prepare_collections(featured_collection))
+
+    new_collection_ids = new_collection_ids::union(featured_collection_res.entities.collections::pluck('id'))
+    market.save_all_entities(prepare_collections(featured_collection_res))
     cb()
+  }
+
+  const goners = old_collection_ids::difference(new_collection_ids)
+  if (goners.length > 0) {
+    market.delete_all_entities({entities: {collections: goners}})
   }
 }
 

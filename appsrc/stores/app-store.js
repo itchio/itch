@@ -44,6 +44,10 @@ let state = {
       variables: null,
       icon: 'cog'
     }
+  },
+
+  collections: {
+    featured_ids: []
   }
 }
 
@@ -293,7 +297,7 @@ function cave_store_diff (payload) {
 }
 
 function cave_store_cave_diff (payload) {
-  state = patch.applyAt(state, ['library', 'caves', payload.cave], payload.diff)
+  state = patch.applyAt(state, ['library', 'caves', payload.cave_id], payload.diff)
   AppStore.emit_change()
 }
 

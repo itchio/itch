@@ -16,11 +16,6 @@ let CollectionStore = Object.assign(new Store('collection-store'), {
   get_state: () => state
 })
 
-function merge_state (obj) {
-  Object.assign(state, obj)
-  CollectionStore.emit_change()
-}
-
 let collections_seen = {}
 let featured_ids = [
   37741, // Early 2016 picks
@@ -41,20 +36,16 @@ function fetch_collections () {
 }
 
 function commit_collections () {
-  const collections = market.get_entities('collections')
-  merge_state(collections)
+  state = market.get_entities('collections')
 
-  collections::each((c) => {
-    if (collections_seen[c.id]) {
+  state::each((c, id) => {
+    if (collections_seen[id]) {
       return
     }
-    collections_seen[c.id] = true
+    collections_seen[id] = true
     AppActions.fetch_games(`collections/${c.id}`)
   })
-}
-
-function ready_to_roll () {
-  fetch_collections()
+  CollectionStore.emit_change()
 }
 
 AppDispatcher.register('collection-store', Store.action_listeners(on => {
@@ -62,7 +53,7 @@ AppDispatcher.register('collection-store', Store.action_listeners(on => {
     state = {}
     CollectionStore.emit_change()
   })
-  on(AppConstants.READY_TO_ROLL, ready_to_roll)
+  on(AppConstants.READY_TO_ROLL, fetch_collections)
   on(AppConstants.FETCH_COLLECTIONS, fetch_collections)
 }))
 

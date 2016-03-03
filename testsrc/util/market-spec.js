@@ -1,117 +1,28 @@
 
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import {indexBy, pluck} from 'underline'
+import path from 'path'
 
 import electron from '../stubs/electron'
 import CredentialsStore from '../stubs/credentials-store'
 
-test('Market', t => {
+test('market', t => {
+  const sf = test.module({
+    exists: async () => false,
+    glob: async () => []
+  })
+
   const stubs = Object.assign({
-    '../stores/credentials-store': CredentialsStore
+    '../stores/credentials-store': CredentialsStore,
+    './sf': sf
   }, electron)
 
   const market = proxyquire('../../app/util/market', stubs).default
-  market._state.library_dir = 'test/tmp/users/foobar'
+  t.case('computes library dir properly', async t => {
+    const user_id = 1234
+    const library_dir = path.join(`tmp/userData/users/${user_id}`)
 
-  const fetch = proxyquire('../../app/util/fetch', stubs).default
-
-  const api = CredentialsStore.get_current_user()
-
-  t.case('fetch collections', async t => {
-    market.clear()
-    const featured_ids = [23]
-
-    t.stub(api, 'my_collections').resolves({
-      collections: [
-        { id: 78 },
-        { id: 97 }
-      ]
-    })
-    t.stub(api, 'collection').resolves({
-      collection: { id: 23 }
-    })
-
-    const cb = t.spy()
-    await fetch.collections(market, featured_ids, cb)
-
-    t.same(cb.callCount, 3)
-    t.sameSet(market.get_entities('collections')::pluck('id'), [23, 78, 97])
-  })
-
-  t.case('fetch dashboard games', async t => {
-    market.clear()
-    t.stub(api, 'my_games').resolves({
-      games: [ { id: 234, name: 'Peter Pan' } ]
-    })
-
-    const cb = t.spy()
-    await fetch.dashboard_games(market, cb)
-
-    t.same(cb.callCount, 2)
-    t.same(market.get_entities('games'), {
-      '234': {
-        id: 234,
-        user_id: 123,
-        name: 'Peter Pan'
-      }
-    })
-  })
-
-  t.case('fetch owned keys', async t => {
-    market.clear()
-    const stub = t.stub(api, 'my_owned_keys')
-    stub.onFirstCall().resolves({
-      owned_keys: [
-        {
-          id: 456,
-          game: {
-            '999': {
-              id: 999,
-              user_id: 432,
-              name: 'Hoodwink'
-            }
-          }
-        }
-      ]
-    })
-    stub.onSecondCall().resolves({
-      owned_keys: []
-    })
-
-    const cb = t.spy()
-    await fetch.owned_keys(market, cb)
-
-    t.equal(stub.callCount, 2)
-    t.equal(cb.callCount, 2)
-    t.same(market.get_entities('download_keys')::pluck('id'), [456])
-  })
-
-  t.case('fetch collection games', async t => {
-    market.clear()
-    market.save_all_entities({
-      entities: {
-        collections: [
-          { id: 8712, game_ids: [9, 12, 87] }
-        ]::indexBy('id')
-      }
-    })
-
-    const collection_games = t.stub(api, 'collection_games')
-    collection_games.onCall(0).resolves({
-      total_items: 5, per_page: 3, page: 1,
-      games: [1, 3, 5].map((id) => ({id}))
-    })
-    collection_games.onCall(1).resolves({
-      total_items: 5, per_page: 3, page: 2,
-      games: [7, 9].map((id) => ({id}))
-    })
-
-    const cb = t.spy()
-    await fetch.collection_games(market, 8712, cb)
-
-    t.equal(cb.callCount, 4)
-    const collection = market.get_entities('collections')[8712].game_ids
-    t.sameSet(collection, [1, 3, 5, 7, 9])
+    await market.load(user_id)
+    t.same(market.get_library_dir(), library_dir)
   })
 })
