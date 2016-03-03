@@ -6,7 +6,8 @@ import AppActions from '../../actions/app-actions'
 
 import blessing from './blessing'
 
-const log = require('../../util/log')('installers/air')
+import mklog from '../../util/log'
+const log = mklog('installers/air')
 
 import path from 'path'
 

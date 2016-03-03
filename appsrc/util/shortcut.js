@@ -5,10 +5,9 @@ import app from './app'
 import spawn from './spawn'
 import sf from './sf'
 
-const Logger = require('./log').Logger
-const log = require('./log').default('shortcut')
-
-const opts = { logger: new Logger() }
+import mklog from './log'
+const log = mklog('shortcut')
+const opts = { logger: new mklog.Logger() }
 
 const app_folder = path.resolve(process.execPath, '..')
 const root_folder = path.resolve(app_folder, '..')

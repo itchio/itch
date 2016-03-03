@@ -4,9 +4,10 @@ import child_process from 'child_process'
 import StreamSplitter from 'stream-splitter'
 import LFTransform from './lf-transform'
 
-import errors from '../tasks/errors'
+import {Cancelled} from '../tasks/errors'
 
-const log = require('./log').default('spawn')
+import mklog from './log'
+const log = mklog('spawn')
 
 function spawn (opts) {
   pre: { // eslint-disable-line
@@ -45,7 +46,7 @@ function spawn (opts) {
   return new Promise((resolve, reject) => {
     child.on('close', (code, signal) => {
       if (cancelled) {
-        reject(new errors.Cancelled())
+        reject(new Cancelled())
       } else {
         resolve(code)
       }

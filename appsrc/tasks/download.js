@@ -6,7 +6,7 @@ const log = mklog('tasks/download')
 
 import butler from '../util/butler'
 import noop from '../util/noop'
-import url from 'url'
+import url_parser from 'url'
 
 import CaveStore from '../stores/cave-store'
 import CredentialsStore from '../stores/credentials-store'
@@ -35,12 +35,12 @@ async function start (opts) {
   // Get download URL
   const client = CredentialsStore.get_current_user()
 
-  let download_url
+  let url
   try {
     if (cave.key) {
-      download_url = (await client.download_upload_with_key(cave.key.id, upload_id)).url
+      url = (await client.download_upload_with_key(cave.key.id, upload_id)).url
     } else {
-      download_url = (await client.download_upload(upload_id)).url
+      url = (await client.download_upload(upload_id)).url
     }
   } catch (e) {
     if (e.errors && e.errors[0] === 'invalid upload') {
@@ -53,7 +53,7 @@ async function start (opts) {
     throw e
   }
 
-  const parsed = url.parse(download_url)
+  const parsed = url_parser.parse(url)
   log(opts, `downloading from ${parsed.hostname}`)
 
   const dest = CaveStore.archive_path(cave.install_location, upload)

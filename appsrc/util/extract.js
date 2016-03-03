@@ -4,7 +4,8 @@ import { object } from 'underline'
 import humanize from 'humanize-plus'
 import path from 'path'
 
-const log = require('./log').default('util/extract')
+import mklog from './log'
+const log = mklog('util/extract')
 
 let verbose = (process.env.THE_DEPTHS_OF_THE_SOUL === '1')
 

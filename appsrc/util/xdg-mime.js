@@ -1,7 +1,8 @@
 
 import os from './os'
 import spawn from './spawn'
-const log = require('./log').default('xdg-mime')
+import mklog from './log'
+const log = mklog('xdg-mime')
 
 let self = {
 

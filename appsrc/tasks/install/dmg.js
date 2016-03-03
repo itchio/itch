@@ -8,7 +8,8 @@ import archive from './archive'
 
 import path from 'path'
 
-const log = require('../../util/log')('installers/dmg')
+import mklog from '../../util/log'
+const log = mklog('installers/dmg')
 
 let HFS_RE = /(.*)\s+Apple_HFS\s+(.*)\s*$/
 

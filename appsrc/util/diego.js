@@ -1,6 +1,7 @@
 
 /* Diego is your little diagnostics mercenary! */
-const _log = require('./log').default('diego')
+import mklog from './log'
+const _log = mklog('diego')
 import os from './os'
 import spawn from './spawn'
 

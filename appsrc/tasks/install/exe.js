@@ -4,11 +4,12 @@ import os from '../../util/os'
 import sf from '../../util/sf'
 import file from '../../util/file'
 
-const log = require('../../util/log')('installers/exe')
+import mklog from '../../util/log'
+const log = mklog('installers/exe')
 
 import AppActions from '../../actions/app-actions'
 
-import { partial } from 'underline'
+import {partial} from 'underline'
 
 let self = {
   valid_installers: ['inno', 'nsis', 'air', 'archive'],
@@ -46,7 +47,7 @@ let self = {
       }
     }
 
-    return require(`./${type}`)
+    return require(`./${type}`).default
   },
 
   retrieve_cached_type: function (opts) {

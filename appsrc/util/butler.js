@@ -1,6 +1,6 @@
 
 import path from 'path'
-import { partial } from 'underline'
+import {partial} from 'underline'
 
 import noop from './noop'
 import spawn from './spawn'
@@ -9,11 +9,11 @@ import sf from './sf'
 import mklog from './log'
 const log = mklog('butler')
 
-let self = {
+const self = {
   parse_butler_status: function (opts, onerror, token) {
-    let onprogress = opts.onprogress || noop
+    const {onprogress = noop} = opts
 
-    let status = JSON.parse(token)
+    const status = JSON.parse(token)
     switch (status.type) {
       case 'log':
         return log(opts, `butler: ${status.message}`)

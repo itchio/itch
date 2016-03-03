@@ -3,10 +3,9 @@ import path from 'path'
 
 import spawn from './spawn'
 
-const Logger = require('./log').Logger
-const log = require('./log').default('registry')
-
-let opts = { logger: new Logger() }
+import mklog from './log'
+const log = mklog('registry')
+const opts = { logger: new mklog.Logger() }
 
 let base = `HKCU\\Software\\Classes\\itchio`
 

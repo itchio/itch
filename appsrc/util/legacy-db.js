@@ -2,13 +2,11 @@
 import Promise from 'bluebird'
 import Datastore from 'nedb'
 
-import { each, indexBy } from 'underline'
+import {each, indexBy} from 'underline'
 
-const Logger = require('./log').Logger
-const opts = {
-  logger: new Logger()
-}
-const log = require('./log').default('legacy-db')
+import mklog from './log'
+const log = mklog('legacy-db')
+const opts = { logger: new mklog.Logger() }
 
 /*
  * nedb was previously used for as both a persistent layer and

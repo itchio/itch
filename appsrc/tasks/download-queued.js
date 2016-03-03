@@ -1,20 +1,20 @@
 
 import Promise from 'bluebird'
-import errors from './errors'
+import {Cancelled, Transition} from './errors'
 
 function start (opts) {
   let emitter = opts.emitter
 
   return new Promise((resolve, reject) => {
     emitter.once('shine', t => {
-      reject(new errors.Transition({
+      reject(new Transition({
         to: 'download',
         reason: `It's our time to shine.`
       }))
     })
 
     emitter.once('cancel', t => {
-      reject(new errors.Cancelled())
+      reject(new Cancelled())
     })
 
     // we never resolve

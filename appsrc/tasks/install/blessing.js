@@ -1,15 +1,15 @@
 
 import Promise from 'bluebird'
-import errors from '../errors'
+import {Cancelled} from '../errors'
 
 import AppActions from '../../actions/app-actions'
 
-let self = (opts) => {
+const self = (opts) => {
   AppActions.cave_progress({id: opts.id, progress: 0, need_blessing: true})
 
-  let cb = (resolve, reject) => {
+  const cb = (resolve, reject) => {
     let onshine, oncancel
-    let remove_listeners = () => {
+    const remove_listeners = () => {
       opts.emitter.removeListener('shine', onshine).removeListener('cancel', oncancel)
       AppActions.cave_progress({id: opts.id, need_blessing: false})
     }
@@ -24,7 +24,7 @@ let self = (opts) => {
     // (can't abort an installation at )
     oncancel = () => {
       remove_listeners()
-      reject(new errors.Cancelled())
+      reject(new Cancelled())
     }
     opts.emitter.on('cancel', oncancel)
   }

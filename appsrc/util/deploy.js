@@ -8,7 +8,8 @@ import butler from './butler'
 
 import path from 'path'
 
-const log = require('./log').default('deploy')
+import mklog from './log'
+const log = mklog('deploy')
 
 let pnoop = async () => null
 

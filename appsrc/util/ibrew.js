@@ -5,8 +5,9 @@ import os from './os'
 
 import {partial} from 'underline'
 
+import mklog from './log'
+const log = mklog('ibrew')
 import extract from './extract'
-const log = require('./log').default('ibrew')
 
 import formulas from './ibrew/formulas'
 import version from './ibrew/version'

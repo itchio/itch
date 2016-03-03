@@ -126,7 +126,7 @@ const self = {
       installer_name = await self.sniff_type(opts)
     }
 
-    const installer = require(`./${installer_name}`)
+    const installer = require(`./${installer_name}`).default
     await installer[operation](opts)
   }
 }

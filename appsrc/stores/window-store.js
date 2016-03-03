@@ -99,7 +99,7 @@ AppDispatcher.register('window-store', Store.action_listeners(on => {
     web.executeJavaScript(`
       var yes = window.confirm(${JSON.stringify(logout_string)})
       if (yes) {
-        require('./actions/app-actions').logout()
+        require('./actions/app-actions').default.logout()
       }
     `)
   })

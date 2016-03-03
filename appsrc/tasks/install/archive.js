@@ -9,23 +9,24 @@ import deploy from '../../util/deploy'
 
 import core from './core'
 
-const log = require('../../util/log')('installers/archive')
+import mklog from '../../util/log'
+const log = mklog('installers/archive')
 
 import AppActions from '../../actions/app-actions'
 
-let is_tar = async function (path) {
-  let type = await sniff.path(path)
+const is_tar = async function (path) {
+  const type = await sniff.path(path)
   return type && type.ext === 'tar'
 }
 
-let self = {
+const self = {
   retrieve_cached_type: function (opts) {
-    let cave = opts.cave
+    const cave = opts.cave
     if (!cave) return
     log(opts, `got cave: ${JSON.stringify(cave, null, 2)}`)
 
-    let archive_nested_cache = cave.archive_nested_cache || {}
-    let type = archive_nested_cache[cave.upload_id]
+    const archive_nested_cache = cave.archive_nested_cache || {}
+    const type = archive_nested_cache[cave.upload_id]
     log(opts, `found cached installer type ${type}`)
 
     if (core.valid_installers.indexOf(type) === -1) {
@@ -37,28 +38,28 @@ let self = {
   },
 
   cache_type: function (opts, type) {
-    let cave = opts.cave
+    const cave = opts.cave
     if (!cave) return
 
-    let archive_nested_cache = {}
+    const archive_nested_cache = {}
     archive_nested_cache[cave.upload_id] = type
     AppActions.update_cave(cave.id, {archive_nested_cache})
   },
 
   install: async function (opts) {
-    let archive_path = opts.archive_path
+    const archive_path = opts.archive_path
 
-    let onprogress = opts.onprogress || noop
-    let extract_onprogress = subprogress(onprogress, 0, 80)
-    let deploy_onprogress = subprogress(onprogress, 80, 100)
+    const onprogress = opts.onprogress || noop
+    const extract_onprogress = subprogress(onprogress, 0, 80)
+    const deploy_onprogress = subprogress(onprogress, 80, 100)
 
-    let stage_path = opts.archive_path + '-stage'
+    const stage_path = opts.archive_path + '-stage'
     await butler.wipe(stage_path)
     await butler.mkdir(stage_path)
 
     log(opts, `extracting archive '${archive_path}' to '${stage_path}'`)
 
-    let extract_opts = Object.assign({}, opts, {
+    const extract_opts = Object.assign({}, opts, {
       onprogress: extract_onprogress,
       dest_path: stage_path
     })
@@ -66,7 +67,7 @@ let self = {
 
     log(opts, `extracted all files ${archive_path} into staging area`)
 
-    let deploy_opts = Object.assign({}, opts, {
+    const deploy_opts = Object.assign({}, opts, {
       onprogress: deploy_onprogress,
       stage_path
     })
@@ -89,12 +90,12 @@ let self = {
   },
 
   uninstall: async function (opts) {
-    let dest_path = opts.dest_path
+    const dest_path = opts.dest_path
 
-    let installer_name = self.retrieve_cached_type(opts)
+    const installer_name = self.retrieve_cached_type(opts)
     if (installer_name) {
       log(opts, `have nested installer type ${installer_name}, running...`)
-      let core_opts = Object.assign({}, opts, {installer_name})
+      const core_opts = Object.assign({}, opts, {installer_name})
       await core.uninstall(core_opts)
     } else {
       log(opts, `wiping directory ${dest_path}`)
@@ -108,7 +109,7 @@ let self = {
   handle_tar: async function (opts, tar) {
     // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
     log(opts, `extracting tar: ${tar}`)
-    let sub_opts = Object.assign({}, opts, {
+    const sub_opts = Object.assign({}, opts, {
       archive_path: tar,
       tar: true
     })
@@ -121,9 +122,9 @@ let self = {
 
   handle_nested: async function (opts, only_file) {
     // zipped installers need love too
-    let sniff_opts = {archive_path: only_file, disable_cache: true}
-    let installer_name
+    const sniff_opts = {archive_path: only_file, disable_cache: true}
 
+    let installer_name
     try {
       installer_name = await core.sniff_type(sniff_opts)
     } catch (err) {
@@ -133,7 +134,7 @@ let self = {
 
     self.cache_type(opts, installer_name)
     log(opts, `found a '${installer_name}': ${only_file}`)
-    let nested_opts = Object.assign({}, opts, sniff_opts)
+    const nested_opts = Object.assign({}, opts, sniff_opts)
     log(opts, `installing it with nested_opts: ${JSON.stringify(nested_opts, null, 2)}`)
     await core.install(nested_opts)
 

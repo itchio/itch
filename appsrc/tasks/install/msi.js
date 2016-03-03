@@ -4,15 +4,16 @@ import os from '../../util/os'
 
 import AppActions from '../../actions/app-actions'
 
-const log = require('../../util/log')('installers/msi')
+import mklog from '../../util/log'
+const log = mklog('installers/msi')
 
-let self = {
+const self = {
   log_path: function (operation, msi_path) {
     return `${msi_path}.${operation}.log.txt`
   },
 
   args: function (operation, msi_path, target_path) {
-    let log_path = self.log_path(operation, msi_path)
+    const log_path = self.log_path(operation, msi_path)
 
     return [
       'ALLUSERS=2', 'MSIINSTALLPERUSER=1', // single-user install (no need for UAC dialog)
@@ -34,9 +35,9 @@ let self = {
       throw new Error('MSI files are only supported on Windows')
     }
 
-    let archive_path = opts.archive_path
-    let dest_path = opts.dest_path
-    let logger = opts.logger
+    const archive_path = opts.archive_path
+    const dest_path = opts.dest_path
+    const logger = opts.logger
 
     await spawn({
       command: 'msiexec',
@@ -53,9 +54,9 @@ let self = {
 
     AppActions.cave_progress({id: opts.id, progress: -1})
 
-    let archive_path = opts.archive_path
-    let dest_path = opts.dest_path
-    let logger = opts.logger
+    const archive_path = opts.archive_path
+    const dest_path = opts.dest_path
+    const logger = opts.logger
 
     await spawn({
       command: 'msiexec',

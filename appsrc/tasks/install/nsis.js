@@ -4,23 +4,24 @@ import find_uninstallers from './find-uninstallers'
 
 import AppActions from '../../actions/app-actions'
 
+import {Transition} from '../errors'
 import blessing from './blessing'
-import errors from '../errors'
 import sf from '../../util/sf'
 
-const log = require('../../util/log')('installers/nsis')
+import mklog from '../../util/log'
+const log = mklog('installers/nsis')
 
 // NSIS docs: http://nsis.sourceforge.net/Docs/Chapter3.html
 // When ran without elevate, some NSIS installers will silently fail.
 // So, we run them with elevate all the time.
 
-let self = {
+const self = {
   install: async function (opts) {
     await blessing(opts)
     AppActions.cave_progress({id: opts.id, progress: -1})
 
     let inst = opts.archive_path
-    let dest_path = opts.dest_path
+    const dest_path = opts.dest_path
 
     let remove_after_usage = false
 
@@ -32,7 +33,7 @@ let self = {
       remove_after_usage = true
     }
 
-    let code = await spawn({
+    const code = await spawn({
       command: 'elevate.exe',
       args: [
         inst,
@@ -57,17 +58,17 @@ let self = {
   uninstall: async function (opts) {
     AppActions.cave_progress({id: opts.id, progress: -1})
 
-    let dest_path = opts.dest_path
-    let uninstallers = await find_uninstallers(dest_path)
+    const dest_path = opts.dest_path
+    const uninstallers = await find_uninstallers(dest_path)
 
     if (uninstallers.length === 0) {
       log(opts, `could not find an uninstaller`)
       return
     }
 
-    for (let unins of uninstallers) {
+    for (const unins of uninstallers) {
       log(opts, `running nsis uninstaller ${unins}`)
-      let spawn_opts = {
+      const spawn_opts = {
         command: 'elevate.exe',
         args: [
           unins,
@@ -77,15 +78,12 @@ let self = {
         opts: { cwd: dest_path },
         on_token: (tok) => log(opts, `${unins}: ${tok}`)
       }
-      let code = await spawn(spawn_opts)
+      const code = await spawn(spawn_opts)
       log(opts, `elevate / nsis uninstaller exited with code ${code}`)
 
       if (code !== 0) {
-        let reason = 'uninstaller failed, cancelling uninstallation'
-        throw new errors.Transition({
-          to: 'idle',
-          reason
-        })
+        const reason = 'uninstaller failed, cancelling uninstallation'
+        throw new Transition({ to: 'idle', reason })
       }
     }
   }

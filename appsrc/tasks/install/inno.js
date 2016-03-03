@@ -5,9 +5,10 @@ import find_uninstallers from './find-uninstallers'
 import AppActions from '../../actions/app-actions'
 
 import blessing from './blessing'
-import errors from '../errors'
+import {Transition} from '../errors'
 
-const log = require('../../util/log')('installers/inno')
+import mklog from '../../util/log'
+const log = mklog('installers/inno')
 
 // InnoSetup docs: http://www.jrsoftware.org/ishelp/index.php?topic=setupcmdline
 
@@ -67,10 +68,7 @@ const self = {
 
       if (code !== 0) {
         let reason = 'uninstaller failed, cancelling uninstallation'
-        throw new errors.Transition({
-          to: 'idle',
-          reason
-        })
+        throw new Transition({ to: 'idle', reason })
       }
     }
   }
