@@ -110,7 +110,6 @@ function commit_collection_games (collection_id) {
   let gids = (collection.game_ids || [])::indexBy((id) => id)
   let games = market.get_entities('games')::filter((g) => gids[g.id])
   commit_games(`collections/${collection_id}`, games)
-  AppActions.games_fetched(games::pluck('id'))
 }
 
 function commit_games (key, games) {

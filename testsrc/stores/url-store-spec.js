@@ -13,20 +13,13 @@ import electron from '../stubs/electron'
 import url_parser from 'url'
 
 test('UrlStore', t => {
-  const os = {
-    __esModule: true,
-    default: {
-      itch_platform: () => 'osx'
-    }
-  }
+  const os = test.module({
+    itch_platform: () => 'osx'
+  })
 
-  const CaveStore = {
-    __esModule: true,
-    default: {
-      find_for_game: () => null
-    },
-    '@noCallThru': true
-  }
+  const CaveStore = test.module({
+    find_for_game: () => null
+  })
 
   const stubs = Object.assign({
     'url': url_parser,
@@ -75,23 +68,6 @@ test('UrlStore', t => {
     await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234' })
   })
 
-  t.case('install tries to fetch info about game, then install', async t => {
-    const bag = {
-      games: {},
-      users: {
-        '42': {}
-      }
-    }
-    t.stub(market, 'get_entities', (x) => bag[x])
-    t.mock(AppActions).expects('fetch_games')
-
-    await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234' })
-
-    t.mock(electron.electron.dialog).expects('showMessageBox').withArgs(sinon.match.has('title', 'prompt.url_install.title'))
-    bag.games['1234'] = { id: 1234, user_id: 42, p_osx: true }
-    await handler({ action_type: AppConstants.GAMES_FETCHED, game_ids: [5124, 12379, 1234, 4] })
-  })
-
   t.case('install apologizes if game is not compatible', async t => {
     const bag = {
       games: {
@@ -137,14 +113,6 @@ test('UrlStore', t => {
     t.stub(market, 'get_entities', (x) => bag[x])
     t.stub(CaveStore.default, 'find_for_game').returns(null)
     t.mock(electron.electron.dialog).expects('showMessageBox').withArgs(sinon.match.has('title', 'prompt.url_install.title'))
-
-    await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://launch/1234' })
-  })
-
-  t.case('launch tries to install when not even in db', async t => {
-    t.stub(market, 'get_entities').returns({})
-    t.stub(CaveStore.default, 'find_for_game').returns(null)
-    t.mock(AppActions).expects('fetch_games').withArgs('games/1234')
 
     await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://launch/1234' })
   })

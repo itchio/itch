@@ -12,7 +12,8 @@ const user = {
   my_games: noop,
   my_collections: noop,
   collection: noop,
-  collection_games: noop
+  collection_games: noop,
+  game: noop
 }
 
 const User = function () {

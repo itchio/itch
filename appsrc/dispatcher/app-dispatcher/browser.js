@@ -21,7 +21,6 @@ if (env.name === 'test') {
 
 let spammy = {
   CAVE_PROGRESS: true,
-  GAMES_FETCHED: true,
   GAME_STORE_DIFF: true,
   CAVE_STORE_DIFF: true,
   INSTALL_LOCATION_STORE_DIFF: true

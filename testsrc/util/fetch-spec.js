@@ -124,6 +124,32 @@ test('fetch', t => {
     const collection = market.get_entities('collections')[8712].game_ids
     t.sameSet(collection, [1, 3, 5, 7, 9])
   })
+
+  t.case('lazily fetches game', async t => {
+    const game_stub = t.stub(api, 'game')
+
+    const market = new TestMarket()
+    market.save_all_entities({
+      entities: {
+        games: [
+          { id: 123, title: 'Rambo (local)' }
+        ]::indexBy('id')
+      }
+    })
+
+    const game1 = await fetch.game_lazily(market, 123)
+    t.equal(game1.title, 'Rambo (local)')
+    t.equal(game_stub.callCount, 0)
+
+    market.delete_all_entities({entities: {games: [123]}})
+
+    game_stub.resolves({
+      game: { id: 123, title: 'Rambo (remote)' }
+    })
+    const game2 = await fetch.game_lazily(market, 123)
+    t.equal(game2.title, 'Rambo (remote)')
+    t.equal(game_stub.callCount, 1)
+  })
 })
 
 class TestMarket {

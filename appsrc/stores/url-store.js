@@ -7,6 +7,7 @@ import CaveStore from './cave-store'
 import I18nStore from './i18n-store'
 
 import electron from 'electron'
+const {dialog} = electron
 
 import url_parser from 'url'
 
@@ -16,10 +17,12 @@ const log = mklog('url-store')
 const opts = {
   logger: new Logger()
 }
+
 import market from '../util/market'
+import fetch from '../util/fetch'
 import os from '../util/os'
 
-let UrlStore = Object.assign(new Store('url-store'), {})
+const UrlStore = Object.assign(new Store('url-store'), {})
 
 let rolling = false
 let queue_item = null
@@ -45,12 +48,8 @@ function process_queue () {
   }
 }
 
-// TODO: game fetching / queuing probably isn't urlstore's job
-
-let to_install = null
-
 async function try_install (game) {
-  let plat = os.itch_platform()
+  const plat = os.itch_platform()
   if (game[`p_${plat}`]) {
     log(opts, `try_install ${game.id}, compatible with ${plat}, installing`)
     return await install_prompt(game)
@@ -62,11 +61,10 @@ async function try_install (game) {
 
 async function handle_url (url_str) {
   log(opts, `handle_url: ${url_str}`)
+  const url = url_parser.parse(url_str)
 
-  let url = url_parser.parse(url_str)
-
-  let verb = url.hostname
-  let tokens = url.pathname.split('/')
+  const verb = url.hostname
+  const tokens = url.pathname.split('/')
 
   switch (verb) {
     case 'install': {
@@ -74,64 +72,46 @@ async function handle_url (url_str) {
         log(opts, `for install: missing game, bailing out.`)
         return
       }
-      let gid = parseInt(tokens[1], 10)
+      const gid = parseInt(tokens[1], 10)
 
-      let game = market.get_entities('games')[gid]
+      const game = await fetch.game_lazily(market, gid)
       if (game) {
         await try_install(game)
       } else {
-        log(opts, `for install: game not in market, fetching ${gid} first`)
-        to_install = gid
-        AppActions.fetch_games(`games/${gid}`)
+        log(opts, `for install: invalid game id ${gid}`)
       }
-    }
       break
+    }
 
     case 'launch': {
       if (!tokens[1]) {
         log(opts, `for install: missing game, bailing out.`)
         return
       }
-      let gid = parseInt(tokens[1], 10)
+      const gid = parseInt(tokens[1], 10)
 
-      let game = market.get_entities('games')[gid]
+      const game = await fetch.game_lazily(market, gid)
       if (game) {
         let cave = CaveStore.find_for_game(game.id)
         if (cave) {
+          // XXX: careful with that, maybe at some point 'queue_game' won't
+          // be the only primary action anymore?
           AppActions.queue_game(game)
         } else {
           log(opts, `game ${gid} known but not installed, queuing for install`)
           await try_install(game)
         }
       } else {
-        log(opts, `don't even know about game ${gid}, trying to install instead`)
-        to_install = gid
-        AppActions.fetch_games(`games/${gid}`)
+        log(opts, `for install: invalid game id ${gid}`)
       }
-    }
       break
+    }
 
     default: {
       log(opts, `unsupported verb: ${verb}, bailing out`)
       AppActions.focus_window()
-    }
       break
-  }
-}
-
-async function games_fetched (payload) {
-  try {
-    for (let gid of payload.game_ids) {
-      if (to_install === gid) {
-        log(opts, `games_fetched: we were waiting on ${gid}, waking it up!`)
-        to_install = null
-
-        let game = market.get_entities('games')[gid]
-        await try_install(game)
-      }
     }
-  } catch (e) {
-    log(opts, `games_fetched error: ${e.stack || e}`)
   }
 }
 
@@ -176,22 +156,22 @@ async function install_prompt (game) {
       // welp
     }
   }
-  electron.dialog.showMessageBox(dialog_opts, callback)
+  dialog.showMessageBox(dialog_opts, callback)
 }
 
 async function apology_prompt (game) {
-  let i18n = I18nStore.get_state()
+  const i18n = I18nStore.get_state()
 
-  let buttons = [
+  const buttons = [
     i18n.t('prompt.action.ok')
   ]
-  let i18n_vars = {
+  const i18n_vars = {
     title: game.title,
     classification: game.classification,
     platform: os.itch_platform()
   }
 
-  let dialog_opts = {
+  const dialog_opts = {
     type: 'error',
     buttons,
     title: i18n.t('prompt.no_compatible_version.title', i18n_vars),
@@ -199,10 +179,10 @@ async function apology_prompt (game) {
     detail: i18n.t('prompt.no_compatible_version.detail', i18n_vars)
   }
 
-  let callback = () => {
+  const callback = () => {
     // not much to do anyway.
   }
-  electron.dialog.showMessageBox(dialog_opts, callback)
+  dialog.showMessageBox(dialog_opts, callback)
 }
 
 function logout () {
@@ -213,7 +193,6 @@ AppDispatcher.register('url-store', Store.action_listeners(on => {
   on(AppConstants.OPEN_URL, open_url)
   on(AppConstants.READY_TO_ROLL, process_queue)
   on(AppConstants.LOGOUT, logout)
-  on(AppConstants.GAMES_FETCHED, games_fetched)
 }))
 
 export default UrlStore
