@@ -379,10 +379,7 @@ const self = {
   },
 
   eval: (code) => {
-    AppDispatcher.dispatch({
-      action_type: AppConstants.EVAL,
-      code
-    })
+    AppDispatcher.dispatch({ action_type: AppConstants.EVAL, code })
   },
 
   open_preferences: () => {
@@ -410,15 +407,25 @@ const self = {
   },
 
   game_store_diff: (diff) => {
+    pre: { // eslint-disable-line
+      Array.isArray(diff)
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.GAME_STORE_DIFF, diff })
   },
 
   cave_store_diff: (diff) => {
+    pre: { // eslint-disable-line
+      Array.isArray(diff)
+    }
     AppDispatcher.dispatch({ action_type: AppConstants.CAVE_STORE_DIFF, diff })
   },
 
-  cave_store_cave_diff: (cave, diff) => {
-    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_STORE_CAVE_DIFF, cave, diff })
+  cave_store_cave_diff: (cave_id, diff) => {
+    pre: { // eslint-disable-line
+      typeof cave_id === 'string'
+      Array.isArray(diff)
+    }
+    AppDispatcher.dispatch({ action_type: AppConstants.CAVE_STORE_CAVE_DIFF, cave_id, diff })
   },
 
   install_location_store_diff: (diff) => {
