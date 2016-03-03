@@ -48,7 +48,7 @@ For everything `snake_case` is the preferred style at itch corp. Since
 eventually we'll share code between the client and the main site, it
 makes sense to keep using `snake_case` everywhere.
 
-> That means the same component can have a `getInitialState` method
+> That means the same component can have a `componentDidMount` method
 > (implementing a React callback) and a `render_uploads` method
 > (internal method).
 
@@ -57,29 +57,27 @@ makes sense to keep using `snake_case` everywhere.
 Class names are `snake_case`, not `kebab-case`. There's a `style/main.scss`
 which imports everything else that's needed.
 
-Most `@mixin`s go in `style/main/common.scss`. We have mixins for stuff like
+Most `@mixin`s go in `style/main/_common.scss`. We have mixins for stuff like
 `transition`, `gradients`, probably not all that relevant in an Electron
 environment but, again, shared code with main itch.io codebase = easier
 time for everyone.
 
 ## React components
 
-Exports from a `components/**/*.js` file should be a single React
-factory, which should be the result of a call to `translate` with its
-own namespaces and to the result with a React class that inherits from `Component`.
+Exports from a `components/**/*.js` file should be a single ES6 class that
+extends `react.Component` one way or the other.
 
 ```javascript
-// in components/foo_bar.js
-let r = require('r-dom')
-let ShallowComponent = require('./shallow-component')
+// in components/foo-bar.js
+import r from 'r-dom'
+import ShallowComponent from './shallow-component'
 
-class _InternalThing extends ShallowComponent {
+class InternalThing extends ShallowComponent {
   render () {
-    let message = this.props.message
+    const {message} = this.props
     return r(div, {}, message)
   }
 }
-let InternalThing = translate('internal-thing')(_InternalThing)
 
 class FooBar extends ShallowComponent {
   render () {
@@ -87,10 +85,8 @@ class FooBar extends ShallowComponent {
   }
 }
 
-export default translate('foo-bar')(FooBar)
+export default FooBar
 ```
 
-`displayName` is very handy with the React devTools, but unfortunately
-they don't seem to work with Electron at the moment?
-
-> <https://github.com/atom/electron/issues/915>
+The codebase provides the base classes `DeepComponent` and `ShallowComponent`,
+both of which inherit from `TranslatedComponent`, making `this.t` available.
