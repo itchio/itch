@@ -50,6 +50,10 @@ let CaveStore = Object.assign(new Store('cave-store'), {
   },
 
   install_location_dir: function (loc_name) {
+    pre: { // eslint-disable-line
+      !loc_name || typeof loc_name === 'string'
+    }
+
     let loc_record = InstallLocationStore.get_location(loc_name || 'appdata')
     if (!loc_record) {
       throw new Error(`Unknown location: ${loc_name}`)
@@ -61,23 +65,21 @@ let CaveStore = Object.assign(new Store('cave-store'), {
     }
   },
 
-  archive_path: function (loc, upload) {
+  archive_path: function (loc_name, upload) {
     pre: { // eslint-disable-line
-      typeof loc === 'string'
       typeof upload === 'object'
     }
 
-    let loc_dir = CaveStore.install_location_dir(loc)
+    let loc_dir = CaveStore.install_location_dir(loc_name)
     return path.join(loc_dir, 'archives', `${upload.id}${path.extname(upload.filename)}`)
   },
 
-  app_path: function (loc, cave_id) {
+  app_path: function (loc_name, cave_id) {
     pre: { // eslint-disable-line
-      typeof loc === 'string'
       typeof cave_id === 'string'
     }
 
-    let loc_dir = CaveStore.install_location_dir(loc)
+    let loc_dir = CaveStore.install_location_dir(loc_name)
     return path.join(loc_dir, 'apps', cave_id)
   },
 

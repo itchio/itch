@@ -47,7 +47,10 @@ let self = new RendererDispatcher()
 ipc.on('dispatcher-to-renderer', (ev, payload) => {
   Object.keys(self._callbacks).forEach((store_id) => {
     let cb = self._callbacks[store_id]
-    cb(payload)
+    // sometimes callbacks disappear
+    if (typeof cb === 'function') {
+      cb(payload)
+    }
   })
 })
 
