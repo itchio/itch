@@ -26,8 +26,6 @@ async function show_packaging_policy (payload) {
     throw new Error(`unknown game id ${payload.game_id}, can't show policy`)
   }
 
-  console.log(`policy store, got game: ${JSON.stringify(game, null, 2)}`)
-
   const buttons = [
     i18n.t('prompt.action.ok'),
     i18n.t(`prompt.packaging_policy.learn_more`),
