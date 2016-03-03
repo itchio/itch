@@ -2,7 +2,7 @@
 /* node's standard url module */
 import url from 'url'
 
-let self = {
+const self = {
   /** user.example.org => example.org */
   subdomain_to_domain: function (subdomain) {
     let parts = subdomain.split('.')

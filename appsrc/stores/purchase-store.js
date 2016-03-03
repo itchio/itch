@@ -2,7 +2,7 @@
 import Store from './store'
 import CredentialsStore from './credentials-store'
 
-import { findWhere } from 'underline'
+import {findWhere} from 'underline'
 
 import market from '../util/market'
 import url from '../util/url'

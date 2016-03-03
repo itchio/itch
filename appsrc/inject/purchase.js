@@ -68,7 +68,7 @@ function itch_inject () {
 function login_inject () {
   itch_inject()
 
-  const CredentialsStore = require('electron').remote.require('./stores/credentials-store')
+  const CredentialsStore = require('electron').remote.require('./stores/credentials-store').default
   const me = CredentialsStore.get_me()
 
   const {$} = window
@@ -98,7 +98,7 @@ function checkout_inject () {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const url = require('electron').remote.require('./util/url')
+  const url = require('electron').remote.require('./util/url').default
   const host = url.subdomain_to_domain(window.location.hostname)
 
   if (['itch.io', 'itch.ovh', 'localhost.com'].indexOf(host) === -1) {
