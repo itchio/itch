@@ -1,5 +1,5 @@
 
-import { filter, where, indexBy, throttle, debounce, pluck } from 'underline'
+import {filter, where, indexBy, throttle, debounce} from 'underline'
 
 import Store from './store'
 import CredentialsStore from './credentials-store'
@@ -64,7 +64,7 @@ function fetch_games (payload) {
   }
 }
 
-function fetch_search (payload) {
+async function fetch_search (payload) {
   let query = payload.query
   if (query === '') {
     log(opts, 'empty fetch_search query')
@@ -73,7 +73,8 @@ function fetch_search (payload) {
   }
 
   log(opts, `fetch_search(${query})`)
-  fetch.search(market, query, (games) => commit_games('search', games))
+  const games = await fetch.search(query)
+  commit_games('search', games)
   AppActions.search_fetched(query)
 }
 

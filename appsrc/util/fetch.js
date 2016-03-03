@@ -8,7 +8,7 @@ import CredentialsStore from '../stores/credentials-store'
 import {assocIn} from 'grovel'
 import {normalize, arrayOf} from 'idealizr'
 import {game, collection, download_key} from './schemas'
-import {each, union, pluck, difference} from 'underline'
+import {each, union, pluck, where, difference} from 'underline'
 
 async function dashboard_games (market, cb) {
   pre: { // eslint-disable-line
@@ -21,6 +21,8 @@ async function dashboard_games (market, cb) {
   const api = CredentialsStore.get_current_user()
   const me = CredentialsStore.get_me()
 
+  const old_game_ids = market.get_entities('games')::where({user_id: me.id})::pluck('id')
+
   const normalized = normalize(await api.my_games(), {
     games: arrayOf(game)
   })
@@ -32,6 +34,11 @@ async function dashboard_games (market, cb) {
   }
   market.save_all_entities(normalized)
 
+  const new_game_ids = normalized.entities.games::pluck('id')
+  const goners = old_game_ids::difference(new_game_ids)
+  if (goners.length > 0) {
+    market.delete_all_entities({entities: {games: goners}})
+  }
   cb()
 }
 
@@ -105,6 +112,7 @@ async function collections (market, featured_ids, cb) {
   const goners = old_collection_ids::difference(new_collection_ids)
   if (goners.length > 0) {
     market.delete_all_entities({entities: {collections: goners}})
+    cb()
   }
 }
 
@@ -152,11 +160,9 @@ async function collection_games (market, collection_id, cb) {
   cb()
 }
 
-async function search (market, query, cb) {
+async function search (query) {
   pre: { // eslint-disable-line
-    typeof market === 'object'
     typeof query === 'string'
-    typeof cb === 'function'
   }
 
   const api = CredentialsStore.get_current_user()
@@ -164,7 +170,7 @@ async function search (market, query, cb) {
   const response = normalize(await api.search(query), {
     games: arrayOf(game)
   })
-  cb(response.entities.games || {})
+  return response.entities.games || {}
 }
 
 async function game_lazily (market, game_id) {

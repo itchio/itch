@@ -1,8 +1,8 @@
 
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import {indexBy, pluck, each} from 'underline'
 import deep_freeze from 'deep-freeze'
+import {filter, indexBy, pluck, each, map} from 'underline'
 
 import electron from '../stubs/electron'
 import CredentialsStore from '../stubs/credentials-store'
@@ -33,7 +33,7 @@ test('fetch', t => {
     const cb = t.spy()
     await fetch.collections(market, featured_ids, cb)
 
-    t.same(cb.callCount, 3)
+    t.equal(cb.callCount, 3)
     t.sameSet(market.get_entities('collections')::pluck('id'), [23, 78, 97])
 
     my_collections.resolves({
@@ -45,27 +45,35 @@ test('fetch', t => {
     const cb2 = t.spy()
     await fetch.collections(market, featured_ids, cb2)
 
-    t.same(cb.callCount, 3)
+    t.equal(cb2.callCount, 4)
     t.sameSet(market.get_entities('collections')::pluck('id'), [23, 78, 42])
   })
 
   t.case('fetch dashboard games', async t => {
     const market = new TestMarket()
-    t.stub(api, 'my_games').resolves({
-      games: [ { id: 234, name: 'Peter Pan' } ]
-    })
+    const to_market_format = (games) => games::map((x) => Object.assign(x, {user_id: 123}))::indexBy('id')
+    const my_games_stub = t.stub(api, 'my_games')
+
+    const games = [
+      { id: 234, name: 'Peter Pan' },
+      { id: 345, name: 'Tinker Bell' },
+      { id: 456, name: 'Diddly Squat' }
+    ]
 
     const cb = t.spy()
+    my_games_stub.resolves({ games })
     await fetch.dashboard_games(market, cb)
+    t.equal(cb.callCount, 2)
+    t.same(market.get_entities('games'), to_market_format(games))
 
-    t.same(cb.callCount, 2)
-    t.same(market.get_entities('games'), {
-      '234': {
-        id: 234,
-        user_id: 123,
-        name: 'Peter Pan'
-      }
-    })
+    const fewer_games = games::filter((x) => x.id <= 345)
+    t.same(fewer_games.length, 2)
+
+    const cb2 = t.spy()
+    my_games_stub.resolves({ games: fewer_games })
+    await fetch.dashboard_games(market, cb2)
+    t.equal(cb.callCount, 2)
+    t.same(market.get_entities('games'), to_market_format(fewer_games))
   })
 
   t.case('fetch owned keys', async t => {
@@ -123,6 +131,17 @@ test('fetch', t => {
     t.equal(cb.callCount, 4)
     const collection = market.get_entities('collections')[8712].game_ids
     t.sameSet(collection, [1, 3, 5, 7, 9])
+  })
+
+  t.case('fetches search', async t => {
+    t.mock(api).expects('search').withArgs('hello').resolves({
+      games: [
+        { id: 9182 }
+      ]
+    })
+
+    const games = await fetch.search('hello')
+    t.sameSet(games::pluck('id'), [9182])
   })
 
   t.case('lazily fetches game', async t => {

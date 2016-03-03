@@ -90,7 +90,7 @@ export default keyMirror({
   FETCH_GAMES: null,
   FETCH_SEARCH: null,
   SEARCH_FETCHED: null,
-  
+
   /** Data sync functions */
   GAME_STORE_DIFF: null,
   CAVE_STORE_DIFF: null,
