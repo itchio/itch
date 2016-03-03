@@ -1,16 +1,13 @@
 
-import electron from 'electron'
-const {app} = electron
-
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppActions from '../actions/app-actions'
 import AppConstants from '../constants/app-constants'
 
 import Store from './store'
+import app from '../util/app'
 import os from '../util/os'
 
 let auto_updater
-
 try {
   auto_updater = require('electron').autoUpdater
   auto_updater.on('error', (ev, err) => AppActions.self_update_error(err))
@@ -26,9 +23,9 @@ const SelfUpdateStore = Object.assign(new Store('self-update-store'), {
 function window_ready () {
   if (!auto_updater) return
 
-  let base = 'https://nuts.itch.zone'
-  let platform = os.platform() + '_' + os.arch()
-  let version = app.getVersion()
+  const base = 'https://nuts.itch.zone'
+  const platform = os.platform() + '_' + os.arch()
+  const version = app.getVersion()
 
   auto_updater.setFeedURL(`${base}/update/${platform}/${version}`)
   auto_updater.on('checking-for-update', AppActions.checking_for_self_update)
@@ -41,9 +38,10 @@ function window_ready () {
   })
 
   AppActions.check_for_self_update()
-  let hours = 6
-  let seconds = hours * 60
-  let millis = seconds * 1000
+  const hours = 6
+  const minutes = hours * 60
+  const seconds = minutes * 60
+  const millis = seconds * 1000
   setInterval(AppActions.check_for_self_update, millis)
 }
 
