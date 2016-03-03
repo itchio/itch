@@ -69,7 +69,7 @@ async function load (user_id) {
 }
 
 function entity_path (table_name, entity_id) {
-  return path.join(state.get_db_root(), table_name, entity_id)
+  return path.join(state.get_db_root(), `${table_name}/${entity_id}`)
 }
 
 let _atomic_invocations = 0
