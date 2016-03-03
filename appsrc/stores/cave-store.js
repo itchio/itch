@@ -239,7 +239,7 @@ async function queue_task (id, task_name, data) {
       return
     }
 
-    const task = require(`../tasks/${task_name}`)
+    const task = require(`../tasks/${task_name}`).default
     let emitter = Object.assign({}, EventEmitter.prototype)
     let task_opts = Object.assign({}, cave_opts(id), data, {
       id,
