@@ -2,7 +2,7 @@
 
 require('source-map-support').install()
 
-let env = require('./env')
+const env = require('./env')
 
 if (env.name === 'development') {
   console.log('Development environment, using debug-friendly settings')
@@ -26,9 +26,9 @@ if (!process.env.NODE_ENV) {
 }
 
 require('./util/sf')
-require('./util/crash-reporter').mount()
+require('./util/crash-reporter').default.mount()
 
-let auto_updater = require('./util/auto-updater')
+const auto_updater = require('./util/auto-updater').default
 Promise.resolve(auto_updater.start()).then((quit) => {
   if (quit) {
     // squirrel on win32 sometimes requires exiting as early as possible
@@ -38,10 +38,10 @@ Promise.resolve(auto_updater.start()).then((quit) => {
   }
 })
 
-let electron = require('electron')
+const electron = require('electron')
 
 function boot () {
-  let AppActions = require('./actions/app-actions')
+  const AppActions = require('./actions/app-actions')
   let app = electron.app
 
   let should_quit = app.makeSingleInstance((argv, cwd) => {
@@ -58,14 +58,10 @@ function boot () {
     ready()
   })
   app.on('activate', AppActions.focus_window)
-
-  ;['will-finish-launching', 'ready', 'window-all-closed', 'before-quit', 'will-quit', 'quit', 'activate'].forEach((kind) => {
-    app.on(kind, (e) => console.log(`app event: ${kind}`))
-  })
 }
 
 function ready () {
-  let AppActions = require('./actions/app-actions')
+  const AppActions = require('./actions/app-actions').default
 
   require('./stores/i18n-store')
   require('./stores/self-update-store')
@@ -82,7 +78,7 @@ function ready () {
   require('./stores/report-store')
   require('./stores/install-location-store')
 
-  require('./ui/menu').mount()
+  require('./ui/menu').default.mount()
 
   AppActions.boot()
 
@@ -96,7 +92,7 @@ function is_itchio_url (s) {
 }
 
 function register_url_handler () {
-  let AppActions = require('./actions/app-actions')
+  const AppActions = require('./actions/app-actions')
 
   // OSX (Info.pList)
   electron.app.on('open-url', (e, url) => {
@@ -113,7 +109,7 @@ function register_url_handler () {
 }
 
 function handle_urls (argv) {
-  let AppActions = require('./actions/app-actions')
+  const AppActions = require('./actions/app-actions')
 
   // Windows (reg.exe), Linux (XDG)
   argv.forEach((arg) => {

@@ -1,16 +1,16 @@
 
-let r = require('r-dom')
-import {get, getIn} from 'mori-ext'
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+import { getIn } from 'grovel'
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-let AppStore = require('../stores/app-store')
-let AppActions = require('../actions/app-actions')
-let urls = require('../constants/urls')
+import AppStore from '../stores/app-store'
+import AppActions from '../actions/app-actions'
+import urls from '../constants/urls'
 
-let InputRow = require('./input-row')
-let ErrorList = require('./error-list')
-let Icon = require('./icon')
+import InputRow from './input-row'
+import ErrorList from './error-list'
+import Icon from './icon'
 
 class LoginForm extends ShallowComponent {
   constructor () {
@@ -31,8 +31,8 @@ class LoginForm extends ShallowComponent {
 
   render () {
     let t = this.t
-    let state = this.props.state
-    let page = state::get('page')
+    let state = this.props.state || {}
+    let {page} = state
 
     let loading, errors, message, icon
 
@@ -47,7 +47,7 @@ class LoginForm extends ShallowComponent {
       loading = true
       errors = []
       message = t(setup_msg, setup_var)
-      icon = state::getIn(['login', 'setup', 'icon'])
+      icon = state.login.setup.icon
     } else {
       throw new Error(`Unknown page for login form: ${page}`)
     }
@@ -115,4 +115,4 @@ LoginForm.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = LoginForm
+export default LoginForm

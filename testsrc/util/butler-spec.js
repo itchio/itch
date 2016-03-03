@@ -1,31 +1,28 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
-let sinon = require('sinon')
-
-let electron = require('../stubs/electron')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
+import sinon from 'sinon'
 
 test('http', t => {
-  let onprogress = t.spy()
-  let http_opts = {
+  const onprogress = t.spy()
+  const http_opts = {
     url: 'http://-invalid/hello.txt',
     dest: '/dev/null',
     onprogress
   }
 
-  let spawn = t.stub().resolves(42)
-  let stubs = Object.assign({
+  const spawn = test.module(t.stub().resolves(42))
+  const stubs = {
     './spawn': spawn
-  }, electron)
-
-  let butler = proxyquire('../../app/util/butler', stubs)
+  }
+  const butler = proxyquire('../../app/util/butler', stubs).default
 
   t.case('spawns butler', async t => {
-    let r = await butler.dl(http_opts)
+    const r = await butler.dl(http_opts)
     sinon.assert.calledOnce(spawn)
     t.is(r, 42)
 
-    let ontoken = spawn.getCall(0).args[0].ontoken
+    const ontoken = spawn.getCall(0).args[0].ontoken
     ontoken(JSON.stringify({type: 'progress', percentage: 45.12}))
     sinon.assert.calledWith(onprogress, {percent: 45.12})
   })

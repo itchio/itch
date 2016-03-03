@@ -1,7 +1,7 @@
 
 
-let fs = require('fs')
-let path = require('path')
+const fs = require('fs')
+const path = require('path')
 
 let self = {
   path: function (spec) {
@@ -21,4 +21,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

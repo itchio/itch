@@ -1,19 +1,20 @@
 
-let r = require('r-dom')
-import {get, getIn, first, last, toJs, filter, each, count} from 'mori-ext'
+import r from 'r-dom'
+import { each, filter } from 'underline'
+import { getIn } from 'grovel'
 
-let humanize = require('humanize-plus')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+import humanize from 'humanize-plus'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-let AppActions = require('../actions/app-actions')
-let urls = require('../constants/urls')
-let I18nStore = require('../stores/i18n-store')
-let os = require('../util/os')
+import AppActions from '../actions/app-actions'
+import urls from '../constants/urls'
+import I18nStore from '../stores/i18n-store'
+import os from '../util/os'
 
-let Tooltip = require('rc-tooltip')
-let SelectRow = require('./select-row')
-let Icon = require('./icon')
+import Tooltip from 'rc-tooltip'
+import SelectRow from './select-row'
+import Icon from './icon'
 
 class PreferencesForm extends ShallowComponent {
   constructor () {
@@ -23,8 +24,8 @@ class PreferencesForm extends ShallowComponent {
 
   render () {
     let t = this.t
-    let state = this.props.state
-    let language = state::getIn(['preferences', 'language'])
+    let state = this.props.state || {}
+    let language = state::getIn(['preferences', 'languages'])
     let locales = I18nStore.get_locales_list()
     let sniff_code = I18nStore.get_sniffed_language()
     let sniffed = sniff_code
@@ -99,35 +100,33 @@ class PreferencesForm extends ShallowComponent {
     ])
 
     let state = this.props.state
-    let aliases = state::getIn(['install-locations', 'aliases'])::toJs()
-    let default_loc = state::getIn(['install-locations', 'default'])
+    let aliases = state.install_locations.aliases
+    let default_loc = state.install_locations.default
 
-    let loc_map = state::getIn(['install-locations', 'locations'])
-    let locations = loc_map::filter((x) => !x::last()::get('deleted'))
+    let loc_map = state.install_locations.locations
+    let locations = loc_map::filter((x) => !x.deleted)
 
     // can't delete your last remaining location.
-    let several_locations = locations::count() > 0
+    let several_locations = locations.size
 
     let rows = []
     rows.push(header)
 
     let index = -1
 
-    locations::each((pair) => {
+    locations::each((location, name) => {
       index++
-      let name = pair::first()
-      let location = pair::last()
       let is_default = (name === default_loc)
       let may_delete = several_locations && name !== 'appdata'
 
-      let path = location::get('path')
+      let path = location.path
       for (let alias of aliases) {
         path = path.replace(alias[0], alias[1])
       }
-      let size = location::get('size')
-      let free_space = location::get('free_space')
-      let item_count = location::get('item_count')
-      let computing_size = location::get('computing_size')
+      let size = location.size
+      let free_space = location.free_space
+      let item_count = location.item_count
+      let computing_size = location.computing_size
 
       rows.push(r.tr({}, [
         r.td({
@@ -252,4 +251,4 @@ PreferencesForm.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = PreferencesForm
+export default PreferencesForm

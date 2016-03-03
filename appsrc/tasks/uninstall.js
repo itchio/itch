@@ -1,12 +1,15 @@
 
-let noop = require('../util/noop')
-let sf = require('../util/sf')
-let log = require('../util/log')('tasks/uninstall')
+import noop from '../util/noop'
+import sf from '../util/sf'
+import mklog from '../util/log'
+const log = mklog('tasks/uninstall')
 
-let CaveStore = require('../stores/cave-store')
-let AppActions = require('../actions/app-actions')
+import CaveStore from '../stores/cave-store'
+import AppActions from '../actions/app-actions'
 
-let core = require('./install/core')
+import core from './install/core'
+
+const keep_archives = (process.env.REMEMBER_ME_WHEN_IM_GONE === '1')
 
 let self = {
   start: async function (opts) {
@@ -16,7 +19,7 @@ let self = {
     let onprogress = opts.onprogress || onprogress
     let emitter = opts.emitter
 
-    let cave = await CaveStore.find(id)
+    let cave = CaveStore.find(id)
     let dest_path = CaveStore.app_path(cave.install_location, id)
 
     if (cave.upload_id && cave.uploads && cave.uploads[cave.upload_id]) {
@@ -43,9 +46,8 @@ let self = {
           throw e
         }
       }
-      AppActions.update_cave(id, {installed_archive_mtime: null})
 
-      if (process.env.REMEMBER_ME_WHEN_IM_GONE !== '1') {
+      if (!keep_archives) {
         log(opts, `Erasing archive ${archive_path}`)
         await sf.wipe(archive_path)
       }
@@ -56,4 +58,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

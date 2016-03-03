@@ -1,8 +1,8 @@
 
-let log = require('../../util/log')('install/naked')
-let sf = require('../../util/sf')
+const log = require('../../util/log')('install/naked')
+import sf from '../../util/sf'
 
-let path = require('path')
+import path from 'path'
 
 let self = {
   install: async function (opts) {
@@ -25,4 +25,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

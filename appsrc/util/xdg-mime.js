@@ -1,8 +1,7 @@
 
-
-let os = require('./os')
-let spawn = require('./spawn')
-let log = require('./log')('xdg-mime')
+import os from './os'
+import spawn from './spawn'
+const log = require('./log').default('xdg-mime')
 
 let self = {
 
@@ -47,4 +46,4 @@ let self = {
 
 }
 
-module.exports = self
+export default self

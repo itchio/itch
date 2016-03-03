@@ -1,12 +1,14 @@
 
-let sf = require('../util/sf')
-let fs = require('fs')
+const sf = require('../util/sf')
+const fs = require('fs')
 
 let self = {
   read_file: async function (file) {
-    let p = new Promise((resolve, reject) => {
+    const p = new Promise((resolve, reject) => {
       fs.readFile(file, {encoding: 'utf8'}, (err, res) => {
-        if (err) return reject(err)
+        if (err) {
+          return reject(err)
+        }
         resolve(res)
       })
     })
@@ -26,4 +28,4 @@ let self = {
   write_file: sf.write_file
 }
 
-module.exports = self
+export default self

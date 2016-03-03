@@ -1,12 +1,12 @@
 
-let Promise = require('bluebird')
-let child_process = require('child_process')
-let StreamSplitter = require('stream-splitter')
-let LFTransform = require('./lf-transform')
+import Promise from 'bluebird'
+import child_process from 'child_process'
+import StreamSplitter from 'stream-splitter'
+import LFTransform from './lf-transform'
 
-let errors = require('../tasks/errors')
+import errors from '../tasks/errors'
 
-let log = require('./log')('spawn')
+const log = require('./log').default('spawn')
 
 function spawn (opts) {
   pre: { // eslint-disable-line
@@ -30,18 +30,6 @@ function spawn (opts) {
   let child = child_process.spawn(command, args, spawn_opts)
   let cancelled = false
 
-  if (emitter) {
-    emitter.once('cancel', (e) => {
-      try {
-        cancelled = true
-        child.kill('SIGKILL')
-        emitter.emit('cancelled', {comment: `Very dead, Mr. Spock.`})
-      } catch (e) {
-        log(opts, `error while killing ${command}: ${e.stack || e}`)
-      }
-    })
-  }
-
   if (opts.ontoken) {
     let splitter = child.stdout.pipe(new LFTransform()).pipe(StreamSplitter(split))
     splitter.encoding = 'utf8'
@@ -63,7 +51,18 @@ function spawn (opts) {
       }
     })
     child.on('error', reject)
+
+    if (emitter) {
+      emitter.once('cancel', (e) => {
+        try {
+          cancelled = true
+          child.kill('SIGKILL')
+        } catch (e) {
+          log(opts, `error while killing ${command}: ${e.stack || e}`)
+        }
+      })
+    }
   })
 }
 
-module.exports = spawn
+export default spawn

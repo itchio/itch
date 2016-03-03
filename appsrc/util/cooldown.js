@@ -24,4 +24,4 @@ let self = function (ms_between_requests) {
   }
 }
 
-module.exports = self
+export default self

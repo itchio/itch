@@ -1,22 +1,22 @@
-let test = require('zopf')
-let mori = require('mori')
-let clone = require('clone')
-let deep = require('deep-diff')
+
+import test from 'zopf'
+import clone from 'clone'
+import deep from 'deep-diff'
 
 import {indexBy} from 'underline'
 
-let patch = require('../../app/util/patch')
+import patch from '../../app/util/patch'
 
 test('patch', t => {
-  let state = [ {id: 42}, {id: 21}, {id: 8} ]::indexBy('id')
+  const state = [ {id: 42}, {id: 21}, {id: 8} ]::indexBy('id')
   let saved_state = {}
-  let mori_state = mori.hashMap()
+  let patched_state = {}
 
-  let send_diff = (label) => {
-    let diff = deep.diff(saved_state, state)
+  const send_diff = (label) => {
+    const diff = deep.diff(saved_state, state)
     saved_state = clone(state)
-    mori_state = patch(mori_state, diff)
-    t.same(mori.toJs(mori_state), state, label)
+    patched_state = patch(patched_state, diff)
+    t.same(patched_state, state, label)
   }
 
   send_diff('initial')
@@ -32,4 +32,41 @@ test('patch', t => {
 
   delete state['21']
   send_diff('delete record')
+})
+
+test('patchAt', t => {
+  let state = {
+    library: {
+      games: {}
+    }
+  }
+
+  const diff = [
+    {
+      kind: 'N',
+      path: ['dashboard', '50723'],
+      rhs: {
+        name: 'Nono'
+      }
+    },
+    {
+      kind: 'N',
+      path: ['dashboard', '50724'],
+      rhs: {
+        name: 'Momo'
+      }
+    }
+  ]
+  state = patch.applyAt(state, ['library', 'games'], diff)
+
+  t.same(state, {
+    library: {
+      games: {
+        dashboard: {
+          '50723': { name: 'Nono' },
+          '50724': { name: 'Momo' }
+        }
+      }
+    }
+  })
 })

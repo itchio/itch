@@ -1,29 +1,28 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-let electron = require('../stubs/electron')
-let CaveStore = require('../stubs/cave-store')
-let CredentialsStore = require('../stubs/credentials-store')
+import electron from '../stubs/electron'
+import CaveStore from '../stubs/cave-store'
+import CredentialsStore from '../stubs/credentials-store'
 
 test('awaken', t => {
-  let os = {
-    itch_platform: () => 'windows',
-    '@noCallThru': true
-  }
+  const os = test.module({
+    itch_platform: () => 'windows'
+  })
 
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     '../stores/cave-store': CaveStore,
     '../stores/credentials-store': CredentialsStore,
     '../util/os': os
   }, electron)
 
-  let awaken = proxyquire('../../app/tasks/awaken', stubs)
+  const awaken = proxyquire('../../app/tasks/awaken', stubs).default
 
-  let opts = {id: 'kalamazoo'}
+  const opts = {id: 'kalamazoo'}
 
   t.case('downloads if not launchable', async t => {
-    t.stub(CaveStore, 'find').resolves({ launchable: false })
+    t.stub(CaveStore, 'find').returns({ launchable: false })
     let err
     try {
       await awaken.start(opts)
@@ -32,7 +31,7 @@ test('awaken', t => {
   })
 
   t.case('checks for update if launchable', async t => {
-    t.stub(CaveStore, 'find').resolves({ launchable: true })
+    t.stub(CaveStore, 'find').returns({ launchable: true })
     let err
     try {
       await awaken.start(opts)

@@ -1,8 +1,8 @@
 
 /* Diego is your little diagnostics mercenary! */
-let _log = require('./log')('diego')
-let os = require('./os')
-let spawn = require('./spawn')
+const _log = require('./log').default('diego')
+import os from './os'
+import spawn from './spawn'
 
 let self = {
   hire: async function (opts) {
@@ -59,4 +59,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

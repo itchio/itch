@@ -1,9 +1,9 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-let LoginForm = require('./login-form')
+import LoginForm from './login-form'
 
 /**
  * The 'login' state of the application, during which
@@ -30,4 +30,4 @@ LoginPage.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = LoginPage
+export default LoginPage

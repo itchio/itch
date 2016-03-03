@@ -9,6 +9,15 @@ $placeholder_link_color: #93C1F3;
 
 $open_button_color: #4B6D85;
 
+@-webkit-keyframes horizontal-scan {
+  0% {
+    background-position: 0em 0;
+  }
+  100% {
+    background-position: 1em 0;
+  }
+}
+
 .library_page {
   $sidebar_width: 250px;
 
@@ -234,10 +243,19 @@ $open_button_color: #4B6D85;
       background-repeat: no-repeat;
       border-radius: 2px;
 
-      .icon {
+      .icon-search {
         display: inline;
-        color: #5F5A5A;
+        color: lighten(#5F5A5A, 20%);
         margin: 0 8px 0 6px;
+        -webkit-animation: none;
+
+        &.loading {
+          background: -webkit-linear-gradient(left, #5F5A5A 0%, #5F5A5A 50%, lighten(#5F5A5A, 20%) 50%);
+          background-size: 200% 100%;
+          -webkit-animation: horizontal-scan 2s infinite;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
       }
 
       input {

@@ -1,13 +1,15 @@
 
-let t = (x) => x
+import test from 'zopf'
+const t = (x) => x
 
-let i18n_state = {
+const i18n_state = {
   getFixedT: () => t,
   t
 }
-let I18nStore = {
+
+const I18nStore = {
   get_state: () => i18n_state,
   add_change_listener: () => null
 }
 
-module.exports = I18nStore
+module.exports = test.module(I18nStore)

@@ -3,14 +3,17 @@
   'use strict'
   /** requires node 4.2.x or higher because we use some ES6 features */
 
-  let fs = require('fs')
-  let path = require('path')
-  let glob = require('glob')
+  const fs = require('fs')
+  const path = require('path')
+  const glob = require('glob')
 
   require('source-map-support').install()
   require('bluebird').config({
     longStackTraces: true
   })
+
+  const env = require('../app/env')
+  env.name = 'test'
 
   let is_dir = (f) => {
     try {
@@ -21,7 +24,7 @@
     return false
   }
 
-  let args = process.argv.slice(2)
+  const args = process.argv.slice(2)
   if (args.length === 0) {
     args.push(path.resolve(__dirname, '..', 'test'))
   }
@@ -35,7 +38,7 @@
     glob(arg, function (e, files) {
       files.forEach(function (file) {
         // console.log(`Requiring ${file}`)
-        let test = path.resolve(process.cwd(), file)
+        const test = path.resolve(process.cwd(), file)
         require(test)
       })
     })

@@ -1,11 +1,11 @@
 
-let needle = require('../../promised/needle')
-let urls = require('../../constants/urls')
+import needle from '../../promised/needle'
+import urls from '../../constants/urls'
 
-let sf = require('../sf')
-let os = require('../os')
-let version = require('./version')
-let path = require('path')
+import sf from '../sf'
+import os from '../os'
+import version from './version'
+import path from 'path'
 
 let self = {
   /**
@@ -62,4 +62,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

@@ -1,7 +1,7 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
 /**
  * A single progress bar, with an outer and inner div. Style as you wish.
@@ -27,4 +27,4 @@ ProgressBar.propTypes = {
   progress: PropTypes.number
 }
 
-module.exports = ProgressBar
+export default ProgressBar

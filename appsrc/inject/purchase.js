@@ -1,8 +1,6 @@
 'use strict'
 
-// TODO: prefill login form
-
-let I = {}
+const I = {}
 
 Object.defineProperty(window, 'I', {
   get: () => I,
@@ -18,8 +16,8 @@ Object.defineProperty(I, 'BaseBuyForm', {
     BBF.prototype.submit_handler = function () {
       if (!this.is_valid()) return false
 
-      let $ = window.$
-      let $buttons = $('.checkout_btn, .confirm_vat_btn')
+      const $ = window.$
+      const $buttons = $('.checkout_btn, .confirm_vat_btn')
       disable($buttons)
       $buttons.html($('<span><span class="icon icon-stopwatch itch_injected-spinner"></span> Loading...</span>'))
       $buttons.not(':eq(0)').hide()
@@ -36,12 +34,12 @@ function disable ($el) {
 }
 
 function purchase_inject () {
-  let $ = window.$
-  let form = $('form.buy_form_widget')
+  const {$} = window
+  const form = $('form.buy_form_widget')
   form.attr('target', '_self')
 
   // TODO: use `file:///` protocol instead, if that's no issue.
-  let css = $(`<style>
+  const css = $(`<style>
     .itch_injected-spinner {
       animation: sk-rotateplane 2.4s .5s infinite ease-out;
     }
@@ -63,35 +61,35 @@ function purchase_inject () {
 }
 
 function itch_inject () {
-  let $ = window.$
+  const {$} = window
   $('.header_widget, .footer').css('pointer-events', 'none')
 }
 
 function login_inject () {
   itch_inject()
 
-  let CredentialsStore = require('electron').remote.require('./stores/credentials-store')
-  let me = CredentialsStore.get_me()
+  const CredentialsStore = require('electron').remote.require('./stores/credentials-store')
+  const me = CredentialsStore.get_me()
 
-  let $ = window.$
-  let $page = $('.user_login_page')
-  let $title = $page.find('.stat_header_widget h2')
+  const {$} = window
+  const $page = $('.user_login_page')
+  const $title = $page.find('.stat_header_widget h2')
   $title.text(`Verify password for ${me.username}`)
 
-  let $form = $page.find('.form')
+  const $form = $page.find('.form')
 
-  let $username = $form.find('input[name=username]')
+  const $username = $form.find('input[name=username]')
   $username.val(me.username)
   $username.closest('.input_row').css('display', 'none')
 
-  let $password = $form.find('input[name=password]')
+  const $password = $form.find('input[name=password]')
   $password.focus()
 
   $form.find('.buttons .line').css('display', 'none')
 }
 
 function checkout_inject () {
-  let $ = window.$
+  const {$} = window
   $('.close_button').on('click', (e) => {
     window.close()
     e.preventDefault()
@@ -100,17 +98,17 @@ function checkout_inject () {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  let url = require('electron').remote.require('./util/url')
-  let host = url.subdomain_to_domain(window.location.hostname)
+  const url = require('electron').remote.require('./util/url')
+  const host = url.subdomain_to_domain(window.location.hostname)
 
   if (['itch.io', 'itch.ovh', 'localhost.com'].indexOf(host) === -1) {
     // don't inject anything on non-itch pages
     return
   }
 
-  let tokens = window.location.pathname.split('/')
-  let first_token = tokens[1]
-  let last_token = tokens[tokens.length - 1]
+  const tokens = window.location.pathname.split('/')
+  const first_token = tokens[1]
+  const last_token = tokens[tokens.length - 1]
 
   switch (last_token) {
     case 'purchase':

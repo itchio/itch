@@ -1,12 +1,12 @@
 
-let Promise = require('bluebird')
-let needle = require('needle')
+import Promise from 'bluebird'
+import needle from 'needle'
 
-let app = require('../util/app')
-let os = require('../util/os')
+import app from '../util/app'
+import os from '../util/os'
 
 needle.defaults({
   user_agent: `itch/${app.getVersion()} (${os.platform()}; Electron/${os.get_version('electron')} Chrome/${os.get_version('chrome')})`
 })
 
-module.exports = Promise.promisifyAll(needle)
+export default Promise.promisifyAll(needle)

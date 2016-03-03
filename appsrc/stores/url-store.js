@@ -1,20 +1,23 @@
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
-let Store = require('./store')
-let I18nStore = require('./i18n-store')
 
-let electron = require('electron')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
+import Store from './store'
+import CaveStore from './cave-store'
+import I18nStore from './i18n-store'
 
-let url_parser = require('url')
+import electron from 'electron'
 
-let Logger = require('../util/log').Logger
-let opts = {
+import url_parser from 'url'
+
+import {Logger} from '../util/log'
+import mklog from '../util/log'
+const log = mklog('url-store')
+const opts = {
   logger: new Logger()
 }
-let log = require('../util/log')('url-store')
-let db = require('../util/db')
-let os = require('../util/os')
+import market from '../util/market'
+import os from '../util/os'
 
 let UrlStore = Object.assign(new Store('url-store'), {})
 
@@ -68,16 +71,16 @@ async function handle_url (url_str) {
   switch (verb) {
     case 'install': {
       if (!tokens[1]) {
-        log(opts, `for install: missing game_id, bailing out.`)
+        log(opts, `for install: missing game, bailing out.`)
         return
       }
       let gid = parseInt(tokens[1], 10)
 
-      let game = await db.find_game(gid)
+      let game = market.get_entities('games')[gid]
       if (game) {
         await try_install(game)
       } else {
-        log(opts, `for install: game not in db, fetchint ${gid} first`)
+        log(opts, `for install: game not in market, fetching ${gid} first`)
         to_install = gid
         AppActions.fetch_games(`games/${gid}`)
       }
@@ -86,16 +89,16 @@ async function handle_url (url_str) {
 
     case 'launch': {
       if (!tokens[1]) {
-        log(opts, `for install: missing game_id, bailing out.`)
+        log(opts, `for install: missing game, bailing out.`)
         return
       }
       let gid = parseInt(tokens[1], 10)
 
-      let game = await db.find_game(gid)
+      let game = market.get_entities('games')[gid]
       if (game) {
-        let cave = await db.find_cave_for_game(gid)
+        let cave = CaveStore.find_for_game(game.id)
         if (cave) {
-          AppActions.queue_game(gid)
+          AppActions.queue_game(game)
         } else {
           log(opts, `game ${gid} known but not installed, queuing for install`)
           await try_install(game)
@@ -123,7 +126,7 @@ async function games_fetched (payload) {
         log(opts, `games_fetched: we were waiting on ${gid}, waking it up!`)
         to_install = null
 
-        let game = await db.find_game(gid)
+        let game = market.get_entities('games')[gid]
         await try_install(game)
       }
     }
@@ -135,16 +138,16 @@ async function games_fetched (payload) {
 async function install_prompt (game) {
   let i18n = I18nStore.get_state()
 
-  let cave = await db.find_cave_for_game(game.id)
+  let cave = CaveStore.find_for_game(game.id)
   if (cave) {
-    let panel = `caves/${cave._id}`
+    let panel = `caves/${cave.id}`
     log(opts, `have cave, focusing ${panel}`)
     AppActions.focus_panel(panel)
     return
   }
 
   log(opts, `no cave, opening prompt for ${game.title}`)
-  let user = await db.find_user(game.user_id)
+  let user = market.get_entities('users')[game.user_id]
 
   let credit = ''
   if (user) {
@@ -168,7 +171,7 @@ async function install_prompt (game) {
 
   let callback = (response) => {
     if (response === 0) {
-      AppActions.queue_game(game.id)
+      AppActions.queue_game(game)
     } else if (response === 1) {
       // welp
     }
@@ -213,4 +216,4 @@ AppDispatcher.register('url-store', Store.action_listeners(on => {
   on(AppConstants.GAMES_FETCHED, games_fetched)
 }))
 
-module.exports = UrlStore
+export default UrlStore

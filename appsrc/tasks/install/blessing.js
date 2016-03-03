@@ -1,8 +1,8 @@
 
-let Promise = require('bluebird')
-let errors = require('../errors')
+import Promise from 'bluebird'
+import errors from '../errors'
 
-let AppActions = require('../../actions/app-actions')
+import AppActions from '../../actions/app-actions'
 
 let self = (opts) => {
   AppActions.cave_progress({id: opts.id, progress: 0, need_blessing: true})
@@ -20,16 +20,15 @@ let self = (opts) => {
     }
     opts.emitter.on('shine', onshine)
 
+    // FIXME the flow for cancelling blessing is unclear
+    // (can't abort an installation at )
     oncancel = () => {
       remove_listeners()
-      let tr = new errors.Transition({
-        to: 'idle',
-        reason: 'no-blessing'
-      })
-      reject(tr)
+      reject(new errors.Cancelled())
     }
+    opts.emitter.on('cancel', oncancel)
   }
   return new Promise(cb)
 }
 
-module.exports = self
+export default self

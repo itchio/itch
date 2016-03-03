@@ -1,28 +1,25 @@
 
-let r = require('r-dom')
-import {partial} from 'underline'
-import {first, last, each, get, getIn, map, filter, count, sortBy, groupBy, intoArray} from 'mori-ext'
+import r from 'r-dom'
+import { count, getIn } from 'grovel'
+import { map, partial, groupBy, sortBy, filter, each } from 'underline'
 
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-let Icon = require('./icon')
-let TaskIcon = require('./task-icon')
-let UserPanel = require('./user-panel')
-let LibraryPanelLink = require('./library-panel-link')
+import Icon from './icon'
+import TaskIcon from './task-icon'
+import UserPanel from './user-panel'
+import LibraryPanelLink from './library-panel-link'
 
 // Hack for frameless styling
 let frameless = process.platform === 'darwin'
 
-let is_cave_interesting = (panel, kv) => {
-  let id = kv::first()
-  let cave = kv::last()
-
-  if (cave::get('progress') > 0) {
+let is_cave_interesting = (panel, cave) => {
+  if (cave.progress > 0) {
     return true
   }
 
-  if (panel === `caves/${id}`) {
+  if (panel === `caves/${cave.id}`) {
     return true
   }
 
@@ -38,17 +35,11 @@ class LibrarySidebar extends ShallowComponent {
     let t = this.t
     let {state} = this.props
 
-    let panel = state::getIn(['library', 'panel'])
-    let caves = state::getIn(['library', 'caves'])
-    let collections = state::getIn(['library', 'collections'])
-    let games = state::getIn(['library', 'collections'])
-
+    let {panel, caves = {}, collections = {}, games = {}} = state.library
     let is_developer = state::getIn(['credentials', 'me', 'developer'])
 
-    let collection_items = ((pair) => {
-      let id = pair::first()
-      let collection = pair::last()
-      let featured = collection::get('_featured')
+    let collection_items = collections::map((collection) => {
+      let featured = collection._featured
       let icon = 'tag'
       if (featured) {
         icon = 'star'
@@ -57,20 +48,20 @@ class LibrarySidebar extends ShallowComponent {
       return {
         icon,
         games,
-        name: `collections/${id}`,
+        name: `collections/${collection.id}`,
         className: `collection`,
-        label: collection::get('title'),
+        label: collection.title,
         before: r(Icon, {icon}),
         panel,
-        key: id
+        key: collection.id
       }
-    })::map(collections)
+    })
 
-    let decreasing_count = (x) => -games::get(x.name)::count()
+    let decreasing_count = (x) => -games[x.name]::count()
     let grouped_colls = collection_items::groupBy((x) => x.icon)
 
-    let own_collections = grouped_colls::get('tag')::sortBy(decreasing_count)::intoArray()
-    let ftd_collections = grouped_colls::get('star')::sortBy(decreasing_count)::intoArray()
+    let own_collections = grouped_colls.tag::sortBy(decreasing_count)
+    let ftd_collections = grouped_colls.star::sortBy(decreasing_count)
 
     if (own_collections.length === 0) {
       let icon = 'tag'
@@ -89,27 +80,26 @@ class LibrarySidebar extends ShallowComponent {
     own_collections = own_collections.map((props) => r(LibraryPanelLink, props))
     ftd_collections = ftd_collections.map((props) => r(LibraryPanelLink, props))
 
-    let installed_count = caves::count()
-    let search_count = state::getIn(['library', 'search', 'games'])::count()
+    let installed_count = caves.length
+    let search_count = games.search::count()
 
     let in_progress_items = caves::filter(is_cave_interesting::partial(panel))
 
-    let cave_items = ((kv) => {
-      let id = kv::first()
-      let cave = kv::last()
-      let task = cave::get('task')
-      let error = cave::get('error')
-      let path = `caves/${id}`
+    let cave_items = ((cave) => {
+      let task = cave.task
+      let error = cave.error
+      let path = `caves/${cave.id}`
+      let cave_game = games::getIn(['caved', cave.game_id])
 
       let props = {
         games: {}, // don't display number bullet
         name: path,
-        label: cave::getIn(['game', 'title']),
+        label: cave_game.title,
         error: task === 'error' && error,
-        progress: cave::get('progress'),
+        progress: cave.progress,
         before: r(TaskIcon, {task}),
         panel,
-        key: id
+        key: cave.id
       }
       return r(LibraryPanelLink, props)
     })::map(in_progress_items)
@@ -141,7 +131,6 @@ class LibrarySidebar extends ShallowComponent {
       count: installed_count
     }))
 
-    links.push(r.div({className: 'separator'}))
     links.push(r(LibraryPanelLink, {
       before: r(Icon, {icon: 'search'}),
       name: 'search',
@@ -163,12 +152,12 @@ class LibrarySidebar extends ShallowComponent {
       let loc_matches = panel.match(/^locations\/(.*)$/)
       if (loc_matches) {
         let loc_name = loc_matches[1]
-        let loc = state::getIn(['install-locations', 'locations', loc_name])
-        let path = loc::get('path')
+        let loc = state.install_locations.locations[loc_name]
+        let path = loc.path
 
         // XXX perf: can definitely be handled store-side
-        state::getIn(['install-locations', 'aliases'])::each((alias) => {
-          path = path.replace(alias::first(), alias::last())
+        state.install_locations.aliases::each((short, long) => {
+          path = path.replace(long, short)
         })
 
         let link = r(LibraryPanelLink, {before: r(Icon, {icon: 'folder'}), name: panel, label: path, panel, games})
@@ -181,10 +170,10 @@ class LibrarySidebar extends ShallowComponent {
     links = links.concat(own_collections)
     links = links.concat(ftd_collections)
 
-    let num_cave_items = cave_items::count()
+    let num_cave_items = cave_items.length
     if (num_cave_items > 0) {
       links.push(r.div({className: 'separator'}))
-      links = links.concat(cave_items::intoArray())
+      links = links.concat(cave_items)
     }
 
     return (
@@ -200,4 +189,4 @@ LibrarySidebar.propTypes = {
   state: PropTypes.any
 }
 
-module.exports = LibrarySidebar
+export default LibrarySidebar

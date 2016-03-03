@@ -1,13 +1,13 @@
 
+import electron from 'electron'
+const {app} = electron
 
-let app = require('electron').app
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppActions from '../actions/app-actions'
+import AppConstants from '../constants/app-constants'
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppActions = require('../actions/app-actions')
-let AppConstants = require('../constants/app-constants')
-
-let Store = require('./store')
-let os = require('../util/os')
+import Store from './store'
+import os from '../util/os'
 
 let auto_updater
 
@@ -18,7 +18,8 @@ try {
   console.log(`While installing auto updater: ${e.message}`)
   auto_updater = null
 }
-let SelfUpdateStore = Object.assign(new Store('self-update-store'), {
+
+const SelfUpdateStore = Object.assign(new Store('self-update-store'), {
   // muffin
 })
 
@@ -57,4 +58,4 @@ AppDispatcher.register('self-update-store', Store.action_listeners(on => {
   on(AppConstants.APPLY_SELF_UPDATE_FOR_REALSIES, () => auto_updater.quitAndInstall())
 }))
 
-module.exports = SelfUpdateStore
+export default SelfUpdateStore

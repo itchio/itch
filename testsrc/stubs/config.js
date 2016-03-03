@@ -1,10 +1,9 @@
 
-
-let self = {
+import test from 'zopf'
+const self = {
   get: () => null,
   set: () => null,
-  clear: () => null,
-  '@noCallThru': true
+  clear: () => null
 }
 
-module.exports = self
+module.exports = test.module(self)

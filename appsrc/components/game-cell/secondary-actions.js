@@ -1,17 +1,16 @@
 
-import {get} from 'mori-ext'
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from '../shallow-component'
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('../shallow-component')
+import Tooltip from 'rc-tooltip'
+import Icon from '../icon'
 
-let Tooltip = require('rc-tooltip')
-let Icon = require('../icon')
+import AppActions from '../../actions/app-actions'
+import ClassificationActions from '../../constants/classification-actions'
 
-let AppActions = require('../../actions/app-actions')
-let classification_actions = require('../../constants/classification-actions')
-
-let platform = require('../../util/os').itch_platform()
+import os from '../../util/os'
+const platform = os.itch_platform()
 
 class SecondaryActions extends ShallowComponent {
   render () {
@@ -19,14 +18,12 @@ class SecondaryActions extends ShallowComponent {
     let error = false
 
     let children = []
-    let game_id = game::get('id')
 
-    let classification = game::get('classification')
-    let action = classification_actions[classification]
+    let classification = game.classification
+    let action = ClassificationActions[classification]
 
     if (cave) {
-      let cave_id = cave::get('id')
-      let task = cave::get('task')
+      let task = cave.task
       if (task === 'check-for-update') {
         task = 'idle'
       }
@@ -34,32 +31,32 @@ class SecondaryActions extends ShallowComponent {
       if (task === 'error') {
         error = true
 
-        children.push(this.retry_action(game_id))
-        children.push(this.browse_action(cave_id))
-        children.push(this.probe_action(cave_id))
+        children.push(this.retry_action(game.id))
+        children.push(this.browse_action(cave.id))
+        children.push(this.probe_action(cave.id))
       }
 
       if (task === 'idle') {
         // No errors
-        children.push(this.purchase_action(game_id))
+        children.push(this.purchase_action(game))
 
         if (action !== 'open') {
-          children.push(this.browse_action(cave_id))
+          children.push(this.browse_action(cave.id))
         }
       }
 
       if (task === 'error' || task === 'idle') {
-        children.push(this.uninstall_action(cave_id))
+        children.push(this.uninstall_action(cave.id))
       }
     } else {
       // No cave
-      let has_min_price = game::get('min_price') > 0
+      let has_min_price = game.min_price > 0
       let main_is_purchase = !may_download && has_min_price
 
       // XXX should use API' can_be_bought but see
       // https://github.com/itchio/itch/issues/379
       if (!main_is_purchase) {
-        children.push(this.purchase_action(game_id))
+        children.push(this.purchase_action(game))
       }
     }
 
@@ -109,11 +106,14 @@ class SecondaryActions extends ShallowComponent {
     })
   }
 
-  purchase_action (game_id) {
+  purchase_action (game) {
+    pre: { // eslint-disable-line
+      typeof game === 'object'
+    }
     return this.action({
       key: 'grid.item.purchase_or_donate',
       icon: 'cart',
-      on_click: () => AppActions.initiate_purchase(game_id)
+      on_click: () => AppActions.initiate_purchase(game)
     })
   }
 
@@ -149,4 +149,4 @@ SecondaryActions.propTypes = {
   game: PropTypes.any
 }
 
-module.exports = SecondaryActions
+export default SecondaryActions

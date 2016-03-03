@@ -1,12 +1,14 @@
 
-let StreamSearch = require('streamsearch')
-let os = require('../../util/os')
-let sf = require('../../util/sf')
-let log = require('../../util/log')('installers/exe')
+import StreamSearch from 'streamsearch'
+import os from '../../util/os'
+import sf from '../../util/sf'
+import file from '../../util/file'
 
-let AppActions = require('../../actions/app-actions')
+const log = require('../../util/log')('installers/exe')
 
-import {partial} from 'underline'
+import AppActions from '../../actions/app-actions'
+
+import { partial } from 'underline'
 
 let self = {
   valid_installers: ['inno', 'nsis', 'air', 'archive'],
@@ -70,7 +72,7 @@ let self = {
 
     let installer_exe_cache = {}
     installer_exe_cache[cave.upload_id] = type
-    AppActions.update_cave(cave._id, {installer_exe_cache})
+    AppActions.update_cave(cave.id, {installer_exe_cache})
   },
 
   identify: async function (opts) {
@@ -125,7 +127,6 @@ let self = {
 
     // sample file_output:
     // ['PE32 executable (GUI) Intel 80386', 'for MS Windows', 'InstallShield self-extracting archive']
-    let file = require('../../util/file')
     let file_output = await file(archive_path)
     let detail = file_output[2]
 
@@ -148,4 +149,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

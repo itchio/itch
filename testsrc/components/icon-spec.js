@@ -1,14 +1,12 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+import test from 'zopf'
+import sd from './skin-deeper'
 
-let sd = require('./skin-deeper')
-let stubs = require('../stubs/react-stubs')
+import Icon from '../../app/components/icon'
 
 test('Icon', t => {
-  let Icon = proxyquire('../../app/components/icon', stubs)
   sd.shallowRender(sd(Icon, {}))
-  let icon = 'boo'
-  let tree = sd.shallowRender(sd(Icon, {icon}))
+  const icon = 'boo'
+  const tree = sd.shallowRender(sd(Icon, {icon}))
   t.ok(tree.findNode('.icon-boo'))
 })

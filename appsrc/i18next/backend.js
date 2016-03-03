@@ -1,28 +1,30 @@
 
-let os = require('../util/os')
-let app = require('../util/app')
-let cooldown = require('../util/cooldown')(1000)
+import os from '../util/os'
+import app from '../util/app'
 
-let log = require('../util/log')('i18n-backend/' + os.process_type())
-let opts = { logger: new log.Logger() }
+import mkcooldown from '../util/cooldown'
+const cooldown = mkcooldown(1000)
 
-let needle = require('../promised/needle')
-let ifs = require('./ifs')
-let urls = require('../constants/urls')
-let env = require('../env')
-let upgrades_enabled = env.name === 'production' || process.env.DID_I_STUTTER === '1'
+import mklog from '../util/log'
+const log = mklog('i18n-backend/' + os.process_type())
+const opts = { logger: new log.Logger({sinks: {console: (process.env.LET_ME_OUT === '1')}}) }
 
-let path = require('path')
+import needle from '../promised/needle'
+import ifs from './ifs'
+import urls from '../constants/urls'
+import env from '../env'
+const upgrades_enabled = (env.name === 'production') || (process.env.DID_I_STUTTER === '1')
 
-let i18next = require('i18next')
+import path from 'path'
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppConstants = require('../constants/app-constants')
-let AppActions = require('../actions/app-actions')
+import i18next from 'i18next'
 
-let being_fetched = {}
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppConstants from '../constants/app-constants'
+import AppActions from '../actions/app-actions'
 
-let remote_dir = path.join(app.getPath('userData'), 'locales')
+const being_fetched = {}
+const remote_dir = path.join(app.getPath('userData'), 'locales')
 
 class Backend {
   constructor (services, options) {
@@ -63,11 +65,11 @@ class Backend {
   async read (language, namespace, callback) {
     let canonical_filename = this.canonical_filename(language)
 
-    if (!await ifs.exists(canonical_filename)) {
+    if (!(await ifs.exists(canonical_filename))) {
       log(opts, `${canonical_filename} does not exist, attempting a trim`)
       canonical_filename = this.canonical_filename(language.substring(0, 2))
 
-      if (!await ifs.exists(canonical_filename)) {
+      if (!(await ifs.exists(canonical_filename))) {
         log(opts, `${canonical_filename} does not exist either :(`)
         log(opts, `No locale file found for language ${language}`)
         log(opts, `Returning null resources`)
@@ -140,7 +142,7 @@ class Backend {
 
   async download_fresh_locale (language) {
     let local_filename = this.canonical_filename(language)
-    if (!await ifs.exists(local_filename)) {
+    if (!(await ifs.exists(local_filename))) {
       // try stripping region
       language = language.substring(0, 2)
     }
@@ -170,4 +172,4 @@ class Backend {
 
 Backend.type = 'backend'
 
-module.exports = Backend
+export default Backend

@@ -1,26 +1,28 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
-let path = require('path')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
+import path from 'path'
 
-let fixture = require('../fixture')
-let electron = require('../stubs/electron')
-let CaveStore = require('../stubs/cave-store')
-let AppActions = require('../stubs/app-actions')
+import fixture from '../fixture'
+import electron from '../stubs/electron'
+import CaveStore from '../stubs/cave-store'
+import AppActions from '../stubs/app-actions'
 
-let log = require('../../app/util/log')
-let logger = new log.Logger({sinks: {console: false}})
-let opts = {id: 'kalamazoo', logger}
+import log from '../../app/util/log'
+const logger = new log.Logger({sinks: {console: false}})
+const opts = {id: 'kalamazoo', logger}
 
 test('configure', t => {
-  let os = {}
+  const os = test.module({
+    platform: () => null
+  })
 
-  let noop = async () => null
-  let win32 = {configure: noop}
-  let darwin = {configure: noop}
-  let linux = {configure: noop}
+  const noop = async () => null
+  const win32 = test.module({configure: noop})
+  const darwin = test.module({configure: noop})
+  const linux = test.module({configure: noop})
 
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     '../util/os': os,
     './configure/win32': win32,
     './configure/darwin': darwin,
@@ -29,8 +31,8 @@ test('configure', t => {
     '../actions/app-actions': AppActions
   }, electron)
 
-  let configure = proxyquire('../../app/tasks/configure', stubs)
-  let platforms = {win32, darwin, linux}
+  const configure = proxyquire('../../app/tasks/configure', stubs).default
+  const platforms = {win32, darwin, linux}
 
   t.case('rejects unsupported platform', t => {
     t.stub(os, 'platform').returns('irix')
@@ -46,21 +48,24 @@ test('configure', t => {
   })
 })
 
+import real_sf from '../../app/util/sf'
+
 test('configure (each platform)', t => {
-  let sf = {
+  const sf = test.module({
     chmod: async () => null,
+    glob: real_sf.glob.bind(real_sf),
     '@global': true
-  }
-  let stubs = {
+  })
+  const stubs = {
     '../../util/sf': sf
   }
 
-  let win32 = proxyquire('../../app/tasks/configure/win32', stubs)
-  let win32_path = fixture.path('configure/win32')
+  const win32 = proxyquire('../../app/tasks/configure/win32', stubs).default
+  const win32_path = fixture.path('configure/win32')
 
   t.case('win32 finds bats and exes', async t => {
-    let res = await win32.configure(win32_path)
-    let names = [
+    const res = await win32.configure(win32_path)
+    const names = [
       'game.exe', 'launcher.bat',
       path.join('resources', 'editor.exe'),
       path.join('resources', 'quite', 'deep', 'share.bat')
@@ -68,23 +73,35 @@ test('configure (each platform)', t => {
     t.samePaths(res.executables, names)
   })
 
-  let darwin = proxyquire('../../app/tasks/configure/darwin', stubs)
-  let darwin_path = fixture.path('configure/darwin')
+  const darwin = proxyquire('../../app/tasks/configure/darwin', stubs).default
+  const darwin_path = fixture.path('configure/darwin')
+  const darwin_nested_path = fixture.path('configure/darwin-nested')
 
   t.case('darwin finds app bundles', async t => {
-    let res = await darwin.configure(darwin_path)
-    let names = [
+    const res = await darwin.configure(darwin_path)
+    const names = [
       'Some Grand Game.app/'
     ]
     t.samePaths(res.executables, names)
   })
 
-  let linux = proxyquire('../../app/tasks/configure/linux', stubs)
-  let linux_path = fixture.path('configure/linux')
+  t.case('darwin finds nested app bundles', async t => {
+    const res = await darwin.configure(darwin_nested_path)
+    const names = [
+      'osx64/dragonjousting.app/',
+      'osx64/dragonjousting.app/Contents/Frameworks/node-webkit Helper.app/',
+      'osx64/dragonjousting.app/Contents/Frameworks/node-webkit Helper NP.app/',
+      'osx64/dragonjousting.app/Contents/Frameworks/node-webkit Helper EH.app/'
+    ]
+    t.samePaths(res.executables, names)
+  })
+
+  const linux = proxyquire('../../app/tasks/configure/linux', stubs).default
+  const linux_path = fixture.path('configure/linux')
 
   t.case('darwin finds binaries when no app bundles', async t => {
-    let res = await darwin.configure(linux_path)
-    let names = [
+    const res = await darwin.configure(linux_path)
+    const names = [
       'bin/mach-o',
       'bin/mach-o-bis',
       'OpenHexagon',
@@ -94,8 +111,8 @@ test('configure (each platform)', t => {
   })
 
   t.case('linux finds scripts & binaries', async t => {
-    let res = await linux.configure(linux_path)
-    let names = [
+    const res = await linux.configure(linux_path)
+    const names = [
       'bin/game32',
       'bin/game64',
       'OpenHexagon',
@@ -104,11 +121,11 @@ test('configure (each platform)', t => {
     t.samePaths(res.executables, names)
   })
 
-  let html = proxyquire('../../app/tasks/configure/html', stubs)
-  let html_path = fixture.path('configure/html')
+  const html = proxyquire('../../app/tasks/configure/html', stubs).default
+  const html_path = fixture.path('configure/html')
 
   t.case('html finds game root', async t => {
-    let res = await html.configure(html_path)
+    const res = await html.configure(html_path)
     t.same(res.game_path, 'ThisContainsStuff/index.html')
   })
 })

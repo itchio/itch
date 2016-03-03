@@ -1,13 +1,14 @@
 
-let r = require('r-dom')
-import {get, count} from 'mori-ext'
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import { count } from 'grovel'
 
-let ProgressBar = require('./progress-bar')
-let ErrorList = require('./error-list')
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-let AppActions = require('../actions/app-actions')
+import ProgressBar from './progress-bar'
+import ErrorList from './error-list'
+
+import AppActions from '../actions/app-actions'
 
 /**
 * A sidebar link to one of the library's panels. Could
@@ -22,7 +23,7 @@ class LibraryPanelLink extends ShallowComponent {
 
     let num_items = this.props.count
     if (typeof num_items === 'undefined') {
-      num_items = games::get(name)::count()
+      num_items = games[name]::count()
     }
     let current = (name === panel)
 
@@ -53,4 +54,4 @@ LibraryPanelLink.propTypes = {
   before: PropTypes.any
 }
 
-module.exports = LibraryPanelLink
+export default LibraryPanelLink

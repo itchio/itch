@@ -1,14 +1,16 @@
 
-let needle = require('../promised/needle')
-let urls = require('../constants/urls')
-let ExtendableError = require('es6-error')
+import ExtendableError from 'es6-error'
 
-let cooldown = require('../util/cooldown')(130)
+import needle from '../promised/needle'
+import urls from '../constants/urls'
 
-let Logger = require('./log').Logger
-let log = require('./log')('api')
-let logger = new Logger({sinks: {console: !!process.env.LET_ME_IN}})
-let opts = {logger}
+import mkcooldown from './cooldown'
+import mklog from './log'
+
+const cooldown = mkcooldown(130)
+const log = mklog('api')
+const logger = new mklog.Logger({sinks: {console: !!process.env.LET_ME_IN}})
+const opts = {logger}
 
 // cf. https://github.com/itchio/itchio-app/issues/48
 // basically, lua returns empty-object instead of empty-array
@@ -57,7 +59,8 @@ class Client {
     let body = resp.body
     let t3 = Date.now()
 
-    log(opts, `${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${path} with ${JSON.stringify(data)}`)
+    let short_path = path.replace(/^\/[^\/]*\//, '')
+    log(opts, `${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${short_path} with ${JSON.stringify(data)}`)
 
     if (resp.statusCode !== 200) {
       throw new Error(`HTTP ${resp.statusCode}`)
@@ -125,8 +128,8 @@ class User {
     return res
   }
 
-  game (game_id) {
-    return this.request('get', `/game/${game_id}`)
+  game (game) {
+    return this.request('get', `/game/${game}`)
   }
 
   collection (collection_id) {
@@ -142,7 +145,7 @@ class User {
 
   async search (query) {
     let res = await this.request('get', '/search/games', {query})
-    res.games = ensure_array(res.games)
+    res.games = self.ensure_array(res.games)
     return res
   }
 
@@ -154,8 +157,8 @@ class User {
     return this.request('get', `/download-key/${download_key_id}/download/${upload_id}`)
   }
 
-  async game_uploads (game_id) {
-    let res = await this.request('get', `/game/${game_id}/uploads`)
+  async game_uploads (game) {
+    let res = await this.request('get', `/game/${game}/uploads`)
     res.uploads = self.ensure_array(res.uploads)
     return res
   }
@@ -172,4 +175,4 @@ self = {
   ensure_array
 }
 
-module.exports = self
+export default self

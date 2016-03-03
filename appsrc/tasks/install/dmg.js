@@ -1,14 +1,14 @@
 
-let noop = require('../../util/noop')
-let spawn = require('../../util/spawn')
-let butler = require('../../util/butler')
-let deploy = require('../../util/deploy')
+import noop from '../../util/noop'
+import spawn from '../../util/spawn'
+import butler from '../../util/butler'
+import deploy from '../../util/deploy'
 
-let archive = require('./archive')
+import archive from './archive'
 
-let path = require('path')
+import path from 'path'
 
-let log = require('../../util/log')('installers/dmg')
+const log = require('../../util/log')('installers/dmg')
 
 let HFS_RE = /(.*)\s+Apple_HFS\s+(.*)\s*$/
 
@@ -158,4 +158,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

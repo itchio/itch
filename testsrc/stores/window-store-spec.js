@@ -1,19 +1,19 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-let AppConstants = require('../../app/constants/app-constants')
+import AppConstants from '../../app/constants/app-constants'
 
-let AppDispatcher = require('../stubs/app-dispatcher')
-let electron = require('../stubs/electron')
+import AppDispatcher from '../stubs/app-dispatcher'
+import electron from '../stubs/electron'
 
 test('WindowStore', t => {
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     '../dispatcher/app-dispatcher': AppDispatcher
   }, electron)
 
-  let WindowStore = proxyquire('../../app/stores/window-store', stubs)
-  let handler = AppDispatcher.get_handler('window-store')
+  const WindowStore = proxyquire('../../app/stores/window-store', stubs).default
+  const handler = AppDispatcher.get_handler('window-store')
   let window
 
   t.case('boot', t => {
@@ -23,6 +23,7 @@ test('WindowStore', t => {
     handler({ action_type: AppConstants.BOOT })
     WindowStore.with(w => window = w)
     t.ok(window)
+    delete process.env.DEVTOOLS
   })
 
   t.case('hide_window', t => {

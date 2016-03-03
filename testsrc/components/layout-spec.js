@@ -1,51 +1,50 @@
 
-let test = require('zopf')
-let mori = require('mori')
-let proxyquire = require('proxyquire')
+import test from 'zopf'
+import sd from './skin-deeper'
 
-let sd = require('./skin-deeper')
-let stubs = require('../stubs/react-stubs')
+import AppStore from '../../app/stores/app-store'
+import Layout from '../../app/components/layout'
 
 test('layout', t => {
-  let Layout = proxyquire('../../app/components/layout', stubs)
-  let get_state = t.stub(stubs.AppStore, 'get_state')
+  const get_state = t.stub(AppStore, 'get_state').returns({})
 
-  let set_state = (props) => {
-    get_state.returns(mori.toClj(props))
+  const set_state = (props) => {
+    get_state.returns(props)
   }
 
   t.case('listeners', t => {
-    let tree = sd.shallowRender(sd(Layout, {}))
-    let instance = tree.getMountedInstance()
-    instance.componentDidMount()
-    stubs.AppStore.emit_change()
-    instance.componentWillUnmount()
+    const tree = sd.shallowRender(sd(Layout, {}))
+    const instance = tree.getMountedInstance()
+    t.is(get_state.callCount, 1, 'initializes state once')
 
-    t.is(get_state.callCount, 2)
+    instance.componentDidMount()
+    AppStore.emit_change({})
+    instance.componentWillUnmount()
+    t.is(get_state.callCount, 2, 'responds to state change')
   })
 
   t.case('login', t => {
-    let login = {
+    const login = {
       loading: true,
       errors: ['try again']
     }
-    let props = {page: 'login', login}
+    const props = {page: 'login', login}
     set_state(props)
 
-    let tree = sd.shallowRender(sd(Layout, {}))
-    let vdom = tree.getRenderOutput()
-    t.same(vdom.props, {children: undefined, state: mori.toClj({page: 'login', login})})
+    const tree = sd.shallowRender(sd(Layout, {}))
+    const vdom = tree.getRenderOutput()
+    t.same(vdom.props, {children: undefined, state: {page: 'login', login}})
   })
 
   t.case('library', t => {
-    let library = {
+    const library = {
       games: [1, 2, 3]
     }
-    let props = {page: 'library', library}
+    const props = {page: 'library', library}
     set_state(props)
 
-    let tree = sd.shallowRender(sd(Layout, {}))
-    let vdom = tree.getRenderOutput()
-    t.same(vdom.props, {children: undefined, state: mori.toClj(props)})
+    const tree = sd.shallowRender(sd(Layout, {}))
+    const vdom = tree.getRenderOutput()
+    t.same(vdom.props, {children: undefined, state: props})
   })
 })

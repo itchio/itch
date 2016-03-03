@@ -1,9 +1,15 @@
 
-let React = require('react')
-let I18nStore = require('../stores/i18n-store')
+import {Component} from 'react'
+import env from '../env'
 
-class TranslatedComponent extends React.Component {
+const test = (env.name === 'test')
+const I18nStore = !test ? require('../stores/i18n-store').default : {
+  get_t: () => (x) => x,
+  on: () => null,
+  removeListener: () => null
+}
 
+class TranslatedComponent extends Component {
   constructor (props) {
     super(props)
   }
@@ -16,8 +22,7 @@ class TranslatedComponent extends React.Component {
   componentDidMount () {
     this.onI18nChanged = () => {
       if (!this.mounted) return
-
-      this.setState({ i18nLoadedAt: Date.now() })
+      this.setState({i18nLoadedAt: Date.now()})
     }
 
     I18nStore.on('change', this.onI18nChanged)
@@ -31,4 +36,4 @@ class TranslatedComponent extends React.Component {
   }
 }
 
-module.exports = TranslatedComponent
+export default TranslatedComponent

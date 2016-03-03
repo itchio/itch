@@ -1,16 +1,14 @@
 
-let proxyquire = require('proxyquire')
-let electron = require('./electron')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
+import electron from './electron'
 
-let noop = () => null
+const noop = () => null
+const self = {}
 
-let self = {
-  '@noCallThru': true
-}
-
-let AppActions = proxyquire('../../app/actions/app-actions', electron)
+const AppActions = proxyquire('../../app/actions/app-actions', electron).default
 Object.keys(AppActions).forEach((key) => {
   self[key] = noop
 })
 
-module.exports = self
+module.exports = test.module(self)

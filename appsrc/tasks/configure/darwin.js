@@ -1,9 +1,9 @@
 
-let Promise = require('bluebird')
-let path = require('path')
+import Promise from 'bluebird'
+import path from 'path'
 
-let common = require('./common')
-let sf = require('../../util/sf')
+import common from './common'
+import sf from '../../util/sf'
 
 let ignore_patterns = [
   // skip some typical junk we find in archives that's supposed
@@ -14,7 +14,7 @@ let ignore_patterns = [
 
 let self = {
   configure: async function (cave_path) {
-    let bundles = await sf.glob(`**.app/`, {
+    let bundles = await sf.glob(`**/*.app/`, {
       cwd: cave_path,
       ignore: ignore_patterns
     })
@@ -32,4 +32,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

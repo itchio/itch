@@ -1,23 +1,23 @@
 
-let r = require('r-dom')
-import {getIn, get, count, merge} from 'mori-ext'
+import r from 'r-dom'
+import { each } from 'underline'
+import { count, getIn } from 'grovel'
 
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-let Icon = require('./icon')
-let GameList = require('./game-list')
+import Icon from './icon'
+import GameList from './game-list'
 
-let AppActions = require('../actions/app-actions')
-let AppDispatcher = require('../dispatcher/app-dispatcher')
+import AppActions from '../actions/app-actions'
+import AppDispatcher from '../dispatcher/app-dispatcher'
 
-let AppConstants = require('../constants/app-constants')
-let SearchExamples = require('../constants/search-examples')
+import AppConstants from '../constants/app-constants'
+import SearchExamples from '../constants/search-examples'
 
 class SearchContent extends ShallowComponent {
   onInput (event) {
     let query = event.target.value
-    AppActions.search_query_change(query)
     AppActions.fetch_search(query)
   }
 
@@ -42,21 +42,30 @@ class SearchContent extends ShallowComponent {
 
   render () {
     let t = this.t
-    let state = this.props.state::get('library')
-    let caves = state::get('caves')
+    let state = this.props::getIn(['state', 'library']) || {}
+    let {caves = {}, games = {}} = state
 
-    let games = state::get('games')
-    let owned_games_by_id = games::get('dashboard')::merge(games::get('owned'))
+    // XXX: dedup with library-content
+    let owned_games_by_id = {}
+    games::getIn(['dashboard'])::each((g) => owned_games_by_id[g.id] = true)
+    games::getIn(['owned'])::each((g) => owned_games_by_id[g.id] = true)
+
+    // XXX: more dedup
     let query = state::getIn(['search', 'query']) || ''
-    let fetched_query = state::getIn(['search', 'fetched_query'])
-    let search_games = state::getIn(['search', 'games'])
+    let fetched_query = state::getIn(['search', 'fetched_query']) || ''
+    let search_games = games::getIn(['search'])
     let loading = query !== fetched_query
     let empty = search_games::count() === 0
-    let is_press = this.state::getIn(['credentials', 'me', 'press_user'])
+    let is_press = this.props::getIn(['state', 'credentials', 'me', 'press_user'])
+
+    let search_class_set = {}
+    if (query.length > 0 && loading) {
+      search_class_set.loading = true
+    }
 
     let searchbox_children = [
-      r(Icon, {icon: 'search', spin: (query.length > 0 && loading)}),
-      r.input({ref: 'input', type: 'text', value: query, placeholder: t('search.placeholder'), onChange: this.onInput.bind(this)})
+      r(Icon, {icon: 'search', classSet: search_class_set}),
+      r.input({ref: 'input', type: 'text', defaultValue: query, placeholder: t('search.placeholder'), onChange: this.onInput.bind(this)})
     ]
 
     return r.div({className: 'search_container'}, [
@@ -96,7 +105,6 @@ class EmptySearchContent extends ShallowComponent {
   message_key (query, fetched_query) {
     let t = this.t
     if (query.length === 0) {
-      console.log(`example index = ${this.state.example_index}`)
       let example = SearchExamples[this.state.example_index]
       return t('search.empty.tagline', {example})
     } else if (query === fetched_query) {
@@ -116,4 +124,4 @@ EmptySearchContent.propTypes = {
   fetched_query: PropTypes.any
 }
 
-module.exports = SearchContent
+export default SearchContent

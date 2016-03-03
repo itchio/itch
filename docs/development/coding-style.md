@@ -87,7 +87,7 @@ class FooBar extends ShallowComponent {
   }
 }
 
-module.exports = translate('foo-bar')(FooBar)
+export default translate('foo-bar')(FooBar)
 ```
 
 `displayName` is very handy with the React devTools, but unfortunately

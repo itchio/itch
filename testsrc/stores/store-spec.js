@@ -1,14 +1,13 @@
 
+import test from 'zopf'
+import sinon from 'sinon'
+import proxyquire from 'proxyquire'
 
-let test = require('zopf')
-let sinon = require('sinon')
-let proxyquire = require('proxyquire')
-
-let electron = require('../stubs/electron')
+import electron from '../stubs/electron'
 
 test('Store', t => {
-  let stubs = electron
-  let Store = proxyquire('../../app/stores/store', stubs)
+  const stubs = electron
+  const Store = proxyquire('../../app/stores/store', stubs).default
 
   t.case('event listeners', t => {
     let store = new Store('test-store')
@@ -23,16 +22,16 @@ test('Store', t => {
   t.case('action listeners', t => {
     t.throws(() => Store.action_listeners(on => on(undefined, () => {})))
 
-    let wake_spy = t.spy()
-    let sleep_spy = t.spy()
-    let cb = Store.action_listeners(on => {
+    const wake_spy = t.spy()
+    const sleep_spy = t.spy()
+    const cb = Store.action_listeners(on => {
       on('wake', wake_spy)
       on('sleep', sleep_spy)
     })
-    let wake = {action_type: 'wake'}
+    const wake = {action_type: 'wake'}
     cb(wake)
     sinon.assert.calledWith(wake_spy, wake)
-    let sleep = {action_type: 'sleep'}
+    const sleep = {action_type: 'sleep'}
     cb(sleep)
     sinon.assert.calledWith(sleep_spy, sleep)
   })

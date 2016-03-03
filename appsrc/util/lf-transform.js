@@ -1,5 +1,5 @@
 
-let Transform = require('stream').Transform
+const Transform = require('stream').Transform
 
 class LFTransform extends Transform {
   constructor (opts) {
@@ -13,4 +13,4 @@ class LFTransform extends Transform {
   }
 }
 
-module.exports = LFTransform
+export default LFTransform

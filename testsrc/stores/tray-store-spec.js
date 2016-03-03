@@ -1,24 +1,24 @@
 
-let test = require('zopf')
-let proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-let AppConstants = require('../../app/constants/app-constants')
+import AppConstants from '../../app/constants/app-constants'
 
-let AppDispatcher = require('../stubs/app-dispatcher')
-let electron = require('../stubs/electron')
+import AppDispatcher from '../stubs/app-dispatcher'
+import electron from '../stubs/electron'
 
 test('TrayStore', t => {
-  let os = {
+  const os = test.module({
     platform: () => 'darwin'
-  }
+  })
 
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     '../util/os': os,
     '../dispatcher/app-dispatcher': AppDispatcher
   }, electron)
 
-  let TrayStore = proxyquire('../../app/stores/tray-store', stubs)
-  let handler = AppDispatcher.get_handler('tray-store')
+  const TrayStore = proxyquire('../../app/stores/tray-store', stubs).default
+  const handler = AppDispatcher.get_handler('tray-store')
 
   t.case('darwin', t => {
     t.stub(os, 'platform').returns('darwin')

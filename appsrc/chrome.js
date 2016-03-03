@@ -1,6 +1,10 @@
 'use strict'
 
-let env = require('./env')
+import env from './env'
+import r from 'r-dom'
+import ReactDOM from 'react-dom'
+import Layout from './components/layout'
+import AppActions from './actions/app-actions'
 
 if (env.name === 'development') {
   console.log('Development environment, using debug-friendly settings')
@@ -16,11 +20,6 @@ if (env.name === 'development') {
   })
 }
 require('./util/sf')
-
-let r = require('r-dom')
-let ReactDOM = require('react-dom')
-let Layout = require('./components/layout')
-let AppActions = require('./actions/app-actions')
 
 let app_node
 

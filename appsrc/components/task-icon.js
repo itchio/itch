@@ -1,9 +1,9 @@
 
-let r = require('r-dom')
-let PropTypes = require('react').PropTypes
-let ShallowComponent = require('./shallow-component')
+import r from 'r-dom'
+import {PropTypes} from 'react'
+import ShallowComponent from './shallow-component'
 
-let Icon = require('./icon')
+import Icon from './icon'
 
 // TODO: move to `constants/`
 let task_to_icon = {
@@ -18,7 +18,7 @@ let task_to_icon = {
   'configure': 'cog',
   'awaken': 'stopwatch',
   'launch': 'fire',
-  'check-for-update': 'checkmark',
+  'check-for-update': 'stopwatch',
   'idle': 'checkmark'
 }
 
@@ -48,4 +48,4 @@ TaskIcon.propTypes = {
   task: PropTypes.string
 }
 
-module.exports = TaskIcon
+export default TaskIcon

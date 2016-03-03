@@ -1,65 +1,58 @@
 
-let test = require('zopf')
-let mori = require('mori')
-let proxyquire = require('proxyquire')
+import test from 'zopf'
+import proxyquire from 'proxyquire'
 
-let AppConstants = require('../../app/constants/app-constants')
+import AppConstants from '../../app/constants/app-constants'
 
-let electron = require('../stubs/electron')
+import electron from '../stubs/electron'
 
-let AppDispatcher = require('../stubs/app-dispatcher')
-let AppActions = require('../stubs/app-actions')
-let CredentialsStore = require('../stubs/credentials-store')
-let defer = require('../stubs/defer')
-let db = require('../stubs/db')
+import AppDispatcher from '../stubs/app-dispatcher'
+import AppActions from '../stubs/app-actions'
+import CredentialsStore from '../stubs/credentials-store'
+import defer from '../stubs/defer'
 
 test('AppStore', t => {
-  let GameStore = {
+  const GameStore = test.module({
     add_change_listener: t.spy(),
     get_state: () => {}
-  }
+  })
 
-  let os = {
-    process_type: () => 'renderer',
-    '@global': true
-  }
+  const os = test.module({
+    process_type: () => 'renderer'
+  })
 
-  let Store = proxyquire('../../app/stores/store', Object.assign({
+  const Store = proxyquire('../../app/stores/store', Object.assign({
     '../util/os': os
-  }, electron))
+  }, electron)).default
 
-  let subscriptions = {}
+  const subscriptions = {}
   t.stub(Store, 'subscribe', (name, cb) => subscriptions[name] = cb)
 
-  let stubs = Object.assign({
+  const stubs = Object.assign({
     './credentials-store': CredentialsStore,
     '../actions/app-actions': AppActions,
     '../dispatcher/app-dispatcher': AppDispatcher,
-    '../util/db': db,
     '../util/defer': defer,
     '../util/os': os,
     './game-store': GameStore,
     './store': Store
   }, electron)
 
-  let AppStore = proxyquire('../../app/stores/app-store', stubs)
-  let handler = AppDispatcher.get_handler('app-store')
+  const AppStore = proxyquire('../../app/stores/app-store', stubs).default
+  const handler = AppDispatcher.get_handler('app-store')
 
   t.stub(CredentialsStore.get_current_user(), 'my_collections').resolves({collections: []})
 
-  let get_state = () => mori.toJs(AppStore.get_state())
-
-  t.case('GameStore change', t => {
-  })
+  const get_state = () => AppStore.get_state()
 
   t.case('setup_status', t => {
-    let message = 'Hold on to your ifs'
+    const message = 'Hold on to your ifs'
     handler({ action_type: AppConstants.SETUP_STATUS, message })
     t.is(get_state().login.setup.message, message)
   })
 
   t.case('focus_panel', t => {
-    let panel = 'library'
+    const panel = 'library'
     handler({ action_type: AppConstants.LIBRARY_FOCUS_PANEL, panel })
     t.is(get_state().library.panel, '')
     handler({ action_type: AppConstants.READY_TO_ROLL })

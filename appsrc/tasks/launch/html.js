@@ -1,23 +1,23 @@
 
-let path = require('path')
-let Promise = require('bluebird')
+import path from 'path'
+import Promise from 'bluebird'
 
-let electron = require('electron')
-let BrowserWindow = electron.BrowserWindow
-let shell = electron.shell
+import electron from 'electron'
+const {BrowserWindow, shell, powerSaveBlocker} = electron
 
-let db = require('../../util/db')
-let url = require('../../util/url')
-let http_server = require('../../util/http-server')
-let debug_browser_window = require('../../util/debug-browser-window')
+import market from '../../util/market'
+import url from '../../util/url'
+import http_server from '../../util/http-server'
+import debug_browser_window from '../../util/debug-browser-window'
 
-let log = require('../../util/log')('tasks/launch')
+import mklog from '../../util/log'
+const log = mklog('tasks/launch')
 
-let CaveStore = require('../../stores/cave-store')
+import CaveStore from '../../stores/cave-store'
 
 let self = {
   launch: async function(opts, cave) {
-    let game = await db.find_one({_table: 'games', id: cave.game_id})
+    let game = market.get_entities('games')[cave.game_id]
     let inject_path = path.resolve(__dirname, '..', '..', 'inject', 'game.js')
     let entry_point = path.join(CaveStore.app_path(cave.install_location, opts.id), cave.game_path)
 
@@ -102,15 +102,19 @@ let self = {
       win.loadURL(`http://localhost:${port}`, options)
     })
 
+    const blocker_id = powerSaveBlocker.start('prevent-display-sleep')
+
     await new Promise((resolve, reject) => {
       win.on('close', () => {
         win.webContents.session.clearCache(resolve)
       })
     })
 
+    powerSaveBlocker.stop(blocker_id)
+
     log(opts, `shutting down http server on port ${port}`)
     server.close()
   }
 }
 
-module.exports = self
+export default self

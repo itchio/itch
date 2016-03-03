@@ -1,16 +1,18 @@
 
-let sf = require('../util/sf')
-let path = require('path')
+import sf from '../util/sf'
+import path from 'path'
 
-let electron = require('electron')
+// TODO: reduce dependency on electron to allow easier testing
+import electron from 'electron'
 let app = electron.app
 let shell = electron.shell
 let dialog = electron.dialog
-let querystring = require('querystring')
 
-let urls = require('../constants/urls')
+import querystring from 'querystring'
 
-let os = require('./os')
+import urls from '../constants/urls'
+
+import os from './os'
 
 let self = {
   write_crash_log: (e) => {
@@ -61,7 +63,7 @@ ${log}
     let log = res.log
     let crash_file = res.crash_file
 
-    let t = require('i18next').getFixedT()
+    const t = require('i18next').getFixedT()
 
     let dialog_opts = {
       type: 'error',
@@ -101,4 +103,4 @@ ${log}
   }
 }
 
-module.exports = self
+export default self

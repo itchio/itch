@@ -1,36 +1,36 @@
 
-import {throttle} from 'underline'
+import { throttle, findWhere, each } from 'underline'
 
-let AppDispatcher = require('../dispatcher/app-dispatcher')
-let AppActions = require('../actions/app-actions')
-let AppConstants = require('../constants/app-constants')
-let classification_actions = require('../constants/classification-actions')
+import AppDispatcher from '../dispatcher/app-dispatcher'
+import AppActions from '../actions/app-actions'
+import AppConstants from '../constants/app-constants'
+import classification_actions from '../constants/classification-actions'
 
-let Store = require('./store')
-let CredentialsStore = require('./credentials-store')
-let PreferencesStore = require('./preferences-store')
-let InstallLocationStore = require('./install-location-store')
-let I18nStore = require('./i18n-store')
+import Store from './store'
+import CredentialsStore from './credentials-store'
+import PreferencesStore from './preferences-store'
+import InstallLocationStore from './install-location-store'
+import I18nStore from './i18n-store'
 
-let errors = require('../tasks/errors')
+import {Transition, Cancelled, InputRequired, Crash} from '../tasks/errors'
 
-let path = require('path')
-let deep = require('deep-diff')
-let clone = require('clone')
+import path from 'path'
+import deep from 'deep-diff'
+import clone from 'clone'
+import uuid from 'node-uuid'
 
-let Logger = require('../util/log').Logger
-let log = require('../util/log')('cave-store')
-let db = require('../util/db')
-let os = require('../util/os')
-let diego = require('../util/diego')
-let explorer = require('../util/explorer')
-let sf = require('../util/sf')
+import {Logger} from '../util/log'
+import mklog from '../util/log'
+const log = mklog('cave-store')
+import market from '../util/market'
+import os from '../util/os'
+import diego from '../util/diego'
+import explorer from '../util/explorer'
+import sf from '../util/sf'
 
-let electron = require('electron')
+import electron from 'electron'
 
-let EventEmitter = require('events').EventEmitter
-
-const CAVE_TABLE = 'caves'
+import {EventEmitter} from 'events'
 
 let old_state = {}
 let state = {}
@@ -41,46 +41,62 @@ let CaveStore = Object.assign(new Store('cave-store'), {
     state
   },
 
-  find: function (cave_id) {
-    return db.find_cave(cave_id)
+  find: function (cave) {
+    return market.get_entities('caves')[cave]
   },
 
   find_for_game: function (game_id) {
-    return db.find_cave_for_game(game_id)
+    return market.get_entities('caves')::findWhere({game_id: game_id})
   },
 
   install_location_dir: function (loc_name) {
+    pre: { // eslint-disable-line
+      !loc_name || typeof loc_name === 'string'
+    }
+
     let loc_record = InstallLocationStore.get_location(loc_name || 'appdata')
     if (!loc_record) {
       throw new Error(`Unknown location: ${loc_name}`)
     }
     return loc_record.path
+
+    post: { // eslint-disable-line
+      typeof loc_record.path === 'string'
+    }
   },
 
-  archive_path: function (loc, upload) {
-    if (typeof upload === 'undefined') {
-      throw new Error('Missing args for CaveStore.archive_path')
+  archive_path: function (loc_name, upload) {
+    pre: { // eslint-disable-line
+      typeof upload === 'object'
     }
 
-    let loc_dir = CaveStore.install_location_dir(loc)
+    let loc_dir = CaveStore.install_location_dir(loc_name)
     return path.join(loc_dir, 'archives', `${upload.id}${path.extname(upload.filename)}`)
   },
 
-  app_path: function (loc, cave_id) {
-    if (typeof cave_id === 'undefined') {
-      throw new Error('Missing args for CaveStore.app_path')
+  app_path: function (loc_name, cave_id) {
+    pre: { // eslint-disable-line
+      typeof cave_id === 'string'
     }
 
-    let loc_dir = CaveStore.install_location_dir(loc)
+    let loc_dir = CaveStore.install_location_dir(loc_name)
     return path.join(loc_dir, 'apps', cave_id)
   },
 
   log_path: function (cave_id) {
+    pre: { // eslint-disable-line
+      typeof cave_id === 'string'
+    }
+
     return log_path(cave_id)
   }
 })
 
 function log_path (cave_id) {
+  pre: { // eslint-disable-line
+    typeof cave_id === 'string'
+  }
+
   let loc_dir = CaveStore.install_location_dir('appdata')
   return path.join(loc_dir, 'logs', cave_id + '.txt')
 }
@@ -103,6 +119,10 @@ let store_opts = {
 let cave_opts_cache = {}
 
 function cave_opts (id) {
+  pre: { // eslint-disable-line
+    typeof id === 'string'
+  }
+
   let cached = cave_opts_cache[id]
   if (cached) return cached
 
@@ -122,20 +142,30 @@ function cave_opts (id) {
 }
 
 function handle_task_error (err, id, task_name) {
-  if (err instanceof errors.Transition) {
+  if (err instanceof Transition) {
     log(cave_opts(id), `[${task_name} => ${err.to}] ${err.reason || ''}`)
     let data = err.data || {}
     setImmediate(() => queue_task(id, err.to, data))
-  } else if (err instanceof errors.InputRequired) {
+  } else if (err instanceof InputRequired) {
     let msg = `(stub) input required by ${task_name}`
     log(cave_opts(id), msg)
     AppActions.cave_progress({id, task: 'error', error: msg})
-  } else if (err instanceof errors.Crash) {
+  } else if (err instanceof Crash) {
     let msg = `crashed with: ${JSON.stringify(err, null, 2)}`
     log(cave_opts(id), msg)
     AppActions.cave_progress({id, task: 'idle', error: msg, progress: 0})
-  } else if (err instanceof errors.Cancelled) {
-    queue_task(id, 'idle')
+  } else if (err instanceof Cancelled) {
+    log(cave_opts(id), `${task_name} cancelled!`)
+    let cave = CaveStore.find(id)
+    if (cave) {
+      if (cave.launchable && cave.success_once) {
+        queue_task(id, 'idle')
+      } else {
+        AppActions.implode_cave(id)
+      }
+    } else {
+      // it's dead, Jim!
+    }
   } else {
     log(cave_opts(id), err.stack || err)
     AppActions.cave_progress({id, task: 'error', error: '' + err, progress: 0})
@@ -189,6 +219,11 @@ function set_current_task (id, data) {
 }
 
 async function queue_task (id, task_name, data) {
+  pre: { // eslint-disable-line
+    typeof id === 'string'
+    typeof task_name === 'string'
+  }
+
   let running = true
 
   try {
@@ -206,7 +241,7 @@ async function queue_task (id, task_name, data) {
       return
     }
 
-    let task = require(`../tasks/${task_name}`)
+    const task = require(`../tasks/${task_name}`).default
     let emitter = Object.assign({}, EventEmitter.prototype)
     let task_opts = Object.assign({}, cave_opts(id), data, {
       id,
@@ -229,9 +264,9 @@ async function queue_task (id, task_name, data) {
     AppActions.cave_progress({id, progress: 0})
 
     if (task_name === 'install') {
-      let cave = await CaveStore.find(id)
+      let cave = CaveStore.find(id)
       if (!cave.success_once) {
-        let game = await db.find_game(cave.game_id)
+        let game = market.get_entities('games')[cave.game_id]
         AppActions.notify(`${game.title} is ready!`)
         AppActions.update_cave(id, {success_once: true})
       }
@@ -254,24 +289,24 @@ async function queue_task (id, task_name, data) {
   }
 }
 
-async function initial_progress (record) {
-  AppActions.cave_progress(Object.assign({id: record._id}, record))
-  let game = await db.find_game(record.game_id)
-  AppActions.cave_progress({id: record._id, game})
+async function initial_progress (cave) {
+  AppActions.cave_progress(cave)
 }
 
-async function queue_cave (game_id) {
-  let install_location = PreferencesStore.get_state().default_install_location
-  let data = { _table: CAVE_TABLE, game_id, install_location }
-  let record = await db.insert(data)
+async function queue_game_install (game) {
+  market.save_all_entities({ entities: { games: { [game.id]: game } } })
 
-  diego.hire(cave_opts(record._id))
-  initial_progress(record)
-  queue_task(record._id, 'download')
+  let install_location = PreferencesStore.get_state().default_install_location
+  let cave = { id: uuid.v4(), game_id: game.id, install_location }
+  market.save_all_entities({ entities: { caves: { [cave.id]: cave } } })
+
+  diego.hire(cave_opts(cave.id))
+  initial_progress(cave)
+  queue_task(cave.id, 'download')
 }
 
 async function explore_cave (payload) {
-  let cave = await CaveStore.find(payload.id)
+  let cave = CaveStore.find(payload.id)
   let app_path = CaveStore.app_path(cave.install_location, payload.id)
 
   if (await sf.exists(app_path)) {
@@ -282,19 +317,18 @@ async function explore_cave (payload) {
 }
 
 function cave_progress (payload) {
-  let _id = payload.opts.id
-  if (cave_blacklist[_id]) return
+  let id = payload.data.id
+  if (cave_blacklist[id]) return
 
-  let old_state = state[_id] || {}
-  let new_state = Object.assign({}, old_state, payload.opts)
+  let old_state = state[id] || {}
+  let new_state = Object.assign({}, old_state, payload.data)
 
   let diff = deep.diff(old_state, new_state)
   if (!diff) return
 
-  state[_id] = new_state
+  state[id] = new_state
 
-  AppActions.cave_store_cave_diff(_id, diff)
-
+  AppActions.cave_store_cave_diff(id, diff)
   CaveStore.emit_change()
 }
 
@@ -303,54 +337,53 @@ async function probe_cave (payload) {
 }
 
 async function queue_game (payload) {
-  let game_id = payload.game_id
-  let cave = await db.find_cave_for_game(game_id)
+  let game = payload.game
+  let cave = CaveStore.find_for_game(game.id)
 
   if (cave) {
     if (cave.launchable) {
-      let game = await db.find_game(game_id)
       let action = classification_actions[game.classification]
       if (action === 'open') {
-        AppActions.explore_cave(cave._id)
+        AppActions.explore_cave(cave.id)
       } else {
-        queue_task(cave._id, 'launch')
+        queue_task(cave.id, 'launch')
       }
     } else {
-      let task = current_tasks[cave._id]
+      let task = current_tasks[cave.id]
       if (task) {
         task.opts.emitter.emit('shine')
       } else {
-        queue_task(cave._id, 'download')
+        queue_task(cave.id, 'download')
       }
     }
   } else {
-    queue_cave(game_id)
+    queue_game_install(game)
   }
 }
 
 async function request_cave_uninstall (payload) {
-  let cave_id = payload.id
-  let cave = await db.find_cave(cave_id)
-  let game = await db.find_game(cave.game_id)
+  const cave = CaveStore.find(payload.id)
+  const game = market.get_entities('games')[cave.game_id]
 
-  let i18n = I18nStore.get_state()
+  const i18n = I18nStore.get_state()
 
-  let buttons = [
+  const buttons = [
     i18n.t('prompt.uninstall.uninstall'),
     i18n.t('prompt.uninstall.reinstall'),
     i18n.t('prompt.uninstall.cancel')
   ]
-  let i18n_vars = {
+  const i18n_vars = {
     title: game.title
   }
 
-  let dialog_opts = {
+  const dialog_opts = {
     type: 'question',
     buttons,
-    message: i18n.t('prompt.uninstall.message', i18n_vars)
+    message: i18n.t('prompt.uninstall.message', i18n_vars),
+    cancelId: 2
   }
 
-  let callback = (response) => {
+  const callback = (response) => {
     if (response === 0) {
       AppActions.queue_cave_uninstall(payload.id)
     } else if (response === 1) {
@@ -361,36 +394,57 @@ async function request_cave_uninstall (payload) {
 }
 
 async function queue_cave_uninstall (payload) {
-  let cave_id = payload.id
-  let record = await db.find_cave(cave_id)
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.id === 'string'
+  }
+
+  const record = CaveStore.find(payload.id)
 
   if (record) {
-    queue_task(record._id, 'uninstall')
+    queue_task(record.id, 'uninstall')
   } else {
     log(store_opts, `asked to uninstall ${payload.id} but no record of it, ignoring`)
   }
 }
 
 async function queue_cave_reinstall (payload) {
-  let cave_id = payload.id
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.id === 'string'
+  }
+
+  const cave_id = payload.id
   log(store_opts, `reinstalling ${cave_id}!`)
   queue_task(cave_id, 'install', {reinstall: true})
 }
 
 async function update_cave (payload) {
-  let cave_id = payload.id
-  let data = payload.data
-  if (cave_blacklist[cave_id]) return
-  await db.merge_one({_table: CAVE_TABLE, _id: cave_id}, data)
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.id === 'string'
+    typeof payload.cave === 'object'
+  }
+
+  const {id, cave} = payload
+  if (cave_blacklist[id]) {
+    return
+  }
+  market.save_all_entities({entities: {caves: {[id]: cave}}})
 }
 
 async function implode_cave (payload) {
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.id === 'string'
+  }
+
   // don't accept any further updates to these caves, they're imploding.
   // useful in case child takes some time to exit after it receives SIGKILL
   cave_blacklist[payload.id] = true
-  cancel_cave(payload)
 
-  db.remove({_table: CAVE_TABLE, _id: payload.id})
+  cancel_cave(payload)
+  market.delete_all_entities({entities: {caves: [payload.id]}})
 
   delete state[payload.id]
   emit_change()
@@ -399,21 +453,26 @@ async function implode_cave (payload) {
 }
 
 function cancel_cave (payload) {
-  let task = current_tasks[payload.id]
-  if (task) {
+  pre: { // eslint-disable-line
+    typeof payload === 'object'
+    typeof payload.id === 'string'
+  }
+
+  const task = current_tasks[payload.id]
+  if (task && !task.cancelling) {
+    task.cancelling = true
     task.opts.emitter.emit('cancel')
-    delete current_tasks[payload.id]
   }
 }
 
 async function authenticated (payload) {
-  let me = CredentialsStore.get_me()
+  const me = CredentialsStore.get_me()
 
   try {
-    await db.load(me.id)
+    await market.load(me.id)
   } catch (e) {
-    console.log(`error while db.loading: ${e.stack || e}`)
-    require('../util/crash-reporter').handle(e)
+    console.log(`error while loading market: ${e.stack || e}`)
+    require('../util/crash-reporter').default.handle(e)
     return
   }
 
@@ -421,28 +480,29 @@ async function authenticated (payload) {
 }
 
 async function locations_ready (payload) {
-  let caves = await db.find({_table: CAVE_TABLE})
-  caves.forEach((record, i) => {
+  const caves = market.get_entities('caves')
+
+  caves::each((record) => {
     initial_progress(record)
-    queue_task(record._id, 'awaken')
+    queue_task(record.id, 'awaken')
   })
 }
 
 function cancel_all_tasks () {
-  for (let cave_id of Object.keys(current_tasks)) {
-    let task = current_tasks[cave_id]
-    if (!task) continue
-    if (task) {
-      task.opts.emitter.emit('cancel')
+  for (let cave of Object.keys(current_tasks)) {
+    const task = current_tasks[cave]
+    delete current_tasks[cave]
+
+    if (!task) {
+      continue
     }
+    task.opts.emitter.emit('cancel')
   }
-  current_tasks = {}
 }
 
 function logout (payload) {
   cancel_all_tasks()
-
-  db.unload()
+  market.unload()
 }
 
 AppDispatcher.register('cave-store', Store.action_listeners(on => {
@@ -463,4 +523,4 @@ AppDispatcher.register('cave-store', Store.action_listeners(on => {
   on(AppConstants.LOGOUT, logout)
 }))
 
-module.exports = CaveStore
+export default CaveStore

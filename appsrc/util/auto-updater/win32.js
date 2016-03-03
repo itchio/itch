@@ -1,9 +1,9 @@
 
-let os = require('../os')
-let reg = require('../reg')
-let shortcut = require('../shortcut')
+import os from '../os'
+import reg from '../reg'
+import shortcut from '../shortcut'
 
-let self = {
+const self = {
   on_install: async () => {
     await reg.install()
     await shortcut.install()
@@ -29,7 +29,7 @@ let self = {
   },
 
   start: async () => {
-    let squirrel_command = os.cli_args()[1]
+    const squirrel_command = os.cli_args()[1]
     switch (squirrel_command) {
       case '--squirrel-install':
         return await self.on_install()
@@ -44,4 +44,4 @@ let self = {
   }
 }
 
-module.exports = self
+export default self

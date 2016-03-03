@@ -1,11 +1,11 @@
 
-let test = require('zopf')
+import test from 'zopf'
 import {contains} from 'underline'
 
-let os = require('../../app/util/os')
+import os from '../../app/util/os'
 
 test('os', t => {
-  let mock = t.mock(os)
+  const mock = t.mock(os)
 
   t.ok(['win32', 'linux', 'darwin']::contains(os.platform()), 'is known')
 
