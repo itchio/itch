@@ -30,13 +30,174 @@ both sides to avoid RPC.
 
 ## Building
 
-In development, we are using babel's register hook, which means it's
-slower, but you don't need to worry about forgetting to recompile.
+Sources are in `appsrc` and `testsrc`, compiled javascript files are
+in `app`, and `test`.
 
-For SCSS, we use the sassc compiler: https://github.com/sass/sassc
+Grunt drives the build process:
 
-In production, it's driven by `release/prepare.js` and a few `grunt`
-tasks.
+  * the `copy` task copies some files as-is (example: `testsrc/runner`)
+  * the `sass` task compiles SCSS into CSS
+  * the `babel` task compiles ES6 into... ES6 that Chrome & node.js understand
+
+There's `newer` variants of these tasks (`newer:sass`, `newer:babel`) which
+only recompile required files — those are the default grunt task.
+
+The recommended workflow is simply to edit files in `appsrc` and `testsrc`,
+and start the app with `npm start`. It calls the grunt `newer` tasks, and
+starts electron for you.
+
+## ES6 features we use / babel plug-ins
+
+Although the codebase is compiled with babel, we try to keep the number of plug-ins
+at a minimum. The first transform is to enable strict mode on all files, which
+allows us to take advantage of the following:
+
+  * ES6 classes (with inheritance, super)
+  * let, const
+  * fat arrow functions
+
+We use `transform-function-bind` to let us write code like this:
+
+```javascript
+// underline is a function-bind-friendly version of underscore
+import {isEqual} from 'underline'
+
+obj::isEqual({a: 'b'})
+```
+
+We use `transform-es2015-modules-commonjs` to be able to write:
+
+```javascript
+// with babel
+import whole_module from './path/to/module'
+import {a, few, funcs} from 'collection-module'
+
+export default SomeClass
+```
+
+instead of:
+
+```javascript
+// without babel
+const whole_module = require('./path/to/module')
+const {a, few, funcs} = require('collection-module')
+
+module.exports = SomeClass
+```
+
+The syntactic gain isn't obvious, but it helps some static analysis tools (linters,
+autocompletion, etc.) pick up on the import graph between modules.
+
+We use `transform-es2015-destructuring` to be able to write this:
+
+```javascript
+// with babel
+const {a, b, c = 42} = obj
+
+// without babel
+const a = obj.a
+const b = obj.b
+const c = obj.c || 42 // not an exact equivalent..
+
+// same goes with arrays
+const [a, b, c] = arr
+```
+
+We use `transform-async-to-module-method` to be able to write code using
+`async/await` that translates to Bluebird coroutines.
+
+Conceptually, it lets us write this:
+
+```javascript
+function install_software (name) {
+  return download(name)
+  .then(() => extract(name))
+  .then(() => verify(name))
+  .catch((err) => {
+    // Uh oh, something happened
+  })
+}
+```
+
+...but like this:
+
+```javascript
+async function install_software (name) {
+  try {
+    await download(name)  
+    await extract(name)  
+    await verify(name)  
+  } catch (err) {
+    // Uh oh, something happened
+  }
+}
+```
+
+We use the `contracts` plugin to be able to write assumptions like this:
+
+```javascript
+async function process_game_transaction (game_id) {
+  pre: { // eslint-disable-line
+    typeof game_id === 'number'
+    game_id > 0
+  }
+
+  invariant: { // eslint-disable-line
+    account.balance >= 0
+  }
+
+  // buy game logic
+
+  post: { // eslint-disable-line
+    transaction.done === true
+  }
+}
+```
+
+They're stripped in production, so there's no performance penalty. The
+`// eslint-disable-line` part is because the contracts plug-in is abusing
+(re-using) the label syntax, and eslint isn't really happy about that by default.
+
+Speaking of eslint, it's used by `standard`, the code standard we follow throughout
+the codebase. The `eslint-babel` parser is used to account for all the extras
+listed above.
+
+## Testing
+
+`npm test` is a bit slow, because it uses `nyc` to register code coverage.
+
+`test/runner` is a faster alternative. (If the `test` directory doesn't exist,
+just run `grunt copy`). See `docs/developing.md` for more details.
+
+The test harness we use is a spruced-up version of `substack/tape`, named
+zopf. It's basically the same except you can define cases, like so:
+
+
+```javascript
+import test from 'zopf'
+
+test('light tests', t => {
+  t.case('in the dark', t => {
+    // ... test things
+  })
+  t.case('in broad daylight', t => {
+    // ... test things
+  })
+  t.case('whilst holding your hand', t => {
+    // ... test things
+  })
+})
+```
+
+Cases run in-order and produce pretty output with `tap-difflet`, like this:
+
+![](test-output.png)
+
+Also, cases can be asynchronous
+
+Two other tools we use heavily in tests are `proxyquire`, to provide fake
+versions of modules, and `sinon`, to create spies/stubs/mocks. They're both
+pretty solid libraries, and together with tape
 
 ## Casing
 
@@ -89,4 +250,5 @@ export default FooBar
 ```
 
 The codebase provides the base classes `DeepComponent` and `ShallowComponent`,
-both of which inherit from `TranslatedComponent`, making `this.t` available.
+both of which inherit from `TranslatedComponent`, making `this.t` available
+for getting translated strings.

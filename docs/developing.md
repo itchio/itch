@@ -5,7 +5,7 @@ Refer to the [app faq](https://itch.io/docs/app/faq) to know how to get your gam
 
 ## Installing
 
-itch is built in HTML/SCSS/ES2015 and runs inside of Electron. Install the
+itch is built in HTML/SCSS/ES6 and runs inside of Electron. Install the
 following to get started with development:
 
 * Install [node.js][] (any version >*5.1.x* should work)
@@ -15,7 +15,7 @@ following to get started with development:
 [electron]: https://github.com/atom/electron
 
 ```
-$ npm install -g electron-prebuilt@0.36.7
+$ npm install -g electron-prebuilt@0.36.8
 ```
 
 * Check out this repository
