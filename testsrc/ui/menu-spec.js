@@ -1,7 +1,7 @@
 
 import test from 'zopf'
 import proxyquire from 'proxyquire'
-import jspath from 'jspath'
+import {findWhere} from 'underline'
 
 import electron from '../stubs/electron'
 import AppActions from '../stubs/app-actions'
@@ -61,14 +61,14 @@ test('menu', t => {
   t.case('logged out', t => {
     t.stub(CredentialsStore, 'get_current_user').returns(null)
     handler()
-    const res = jspath.apply('.{.label === "menu.account.account"}.submenu.label', template)
-    t.same(res[0], 'menu.account.not_logged_in')
+    const res = template::findWhere({label: 'menu.account.account'}).submenu[0].label
+    t.same(res, 'menu.account.not_logged_in')
   })
 
   t.case('logged in', t => {
     t.stub(CredentialsStore, 'get_current_user').returns({totally: 'legit'})
     handler()
-    const res = jspath.apply('.{.label === "menu.account.account"}.submenu.label', template)
-    t.same(res[0], 'menu.account.change_user')
+    const res = template::findWhere({label: 'menu.account.account'}).submenu[0].label
+    t.same(res, 'menu.account.change_user')
   })
 })

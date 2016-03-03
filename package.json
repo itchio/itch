@@ -81,7 +81,6 @@
     "grunt-electron-installer": "^1.2.1",
     "grunt-newer": "^1.1.1",
     "grunt-sass": "^1.1.0",
-    "jspath": "^0.3.2",
     "load-grunt-tasks": "^3.3.0",
     "nyc": "^5.0.0",
     "react-addons-test-utils": "0.14.3",
