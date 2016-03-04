@@ -274,6 +274,14 @@ const self = {
 
   /* Games */
 
+  record_game_interaction: (game_id, kind, created_at) => {
+    pre: { // eslint-disable-line
+      typeof game_id === 'number'
+      typeof kind === 'string'
+    }
+    AppDispatcher.dispatch({ action_type: AppConstants.RECORD_GAME_INTERACTION, game_id, kind, last_interacted_at: Date.now() })
+  },
+
   queue_game: (game) => {
     pre: { // eslint-disable-line
       typeof game === 'object'

@@ -67,6 +67,8 @@ export default keyMirror({
   REPORT_CAVE: null,
   /** Won't compromise on that */
   SHOW_PACKAGING_POLICY: null,
+  /** A game has been interacted with! */
+  RECORD_GAME_INTERACTION: null,
 
   /** User requested game to be installed */
   QUEUE_GAME: null,

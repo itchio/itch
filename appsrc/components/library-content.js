@@ -25,6 +25,7 @@ class LibraryContent extends ShallowComponent {
     const is_press = state::getIn(['credentials', 'me', 'press_user'])
 
     const children = []
+    const sort = !(/^collections/.test(panel))
 
     if (panel === 'preferences') {
       children.push(r(PreferencesForm, {state}))
@@ -54,7 +55,7 @@ class LibraryContent extends ShallowComponent {
       games::getIn(['owned'])::each((g) => owned_games_by_id[g.id] = true)
 
       if (shown_games::count() > 0) {
-        children.push(r(GameList, {games: shown_games, caves, pred, owned_games_by_id, is_press}))
+        children.push(r(GameList, {games: shown_games, caves, pred, owned_games_by_id, is_press, sort}))
       } else {
         children.push(r(LibraryPlaceholder, {panel}))
       }

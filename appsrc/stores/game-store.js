@@ -1,5 +1,6 @@
 
-import {filter, where, indexBy, throttle, debounce} from 'underline'
+import {filter, where, indexBy, throttle, debounce, each} from 'underline'
+import {assocIn} from 'grovel'
 
 import Store from './store'
 import CredentialsStore from './credentials-store'
@@ -143,7 +144,31 @@ function implode_app () {
 
 let cached_caves = {}
 
+function record_game_interaction (payload) {
+  const {last_interacted_at = Date.now()} = payload
+  const game = market.get_entities('games')[payload.game_id]
+  const updated_game = Object.assign({}, game, {last_interacted_at})
+  market.save_all_entities({
+    entities: {
+      games: {
+        [payload.game_id]: updated_game
+      }
+    }
+  })
+
+  // TODO: move to a structure where we have all games in a map somewhere (straight
+  // from market), and all tabs are game_id lists, pre-sorted
+  let new_state = state
+  state::each((games, key) => {
+    games::each((game, game_id) => {
+      new_state = new_state::assocIn([key, game_id, updated_game])
+    })
+    commit_games(key, new_state[key])
+  })
+}
+
 AppDispatcher.register('game-store', Store.action_listeners(on => {
+  on(AppConstants.RECORD_GAME_INTERACTION, record_game_interaction)
   on(AppConstants.LOGOUT, (payload) => {
     // clear cache
     cached_caves = {}

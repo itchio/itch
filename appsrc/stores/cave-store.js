@@ -337,15 +337,17 @@ async function probe_cave (payload) {
 }
 
 async function queue_game (payload) {
-  let game = payload.game
-  let cave = CaveStore.find_for_game(game.id)
+  const game = payload.game
+  const cave = CaveStore.find_for_game(game.id)
 
   if (cave) {
     if (cave.launchable) {
       let action = classification_actions[game.classification]
       if (action === 'open') {
+        AppActions.record_game_interaction(game.id, 'open')
         AppActions.explore_cave(cave.id)
       } else {
+        AppActions.record_game_interaction(game.id, 'launch')
         queue_task(cave.id, 'launch')
       }
     } else {
@@ -353,6 +355,7 @@ async function queue_game (payload) {
       if (task) {
         task.opts.emitter.emit('shine')
       } else {
+        AppActions.record_game_interaction(game.id, 'download')
         queue_task(cave.id, 'download')
       }
     }

@@ -1,5 +1,5 @@
 
-import {each, indexBy} from 'underline'
+import {each, indexBy, sortBy} from 'underline'
 
 import r from 'r-dom'
 import {PropTypes} from 'react'
@@ -15,7 +15,7 @@ const always_true = () => true
  */
 class GameList extends ShallowComponent {
   render () {
-    const {games = {}, caves = {}, owned_games_by_id = {}, is_press} = this.props
+    const {games = {}, caves = {}, owned_games_by_id = {}, is_press, sort} = this.props
     const pred = this.props.pred || always_true
 
     // TODO perf: app-store should maintain this instead of us recomputing it
@@ -27,7 +27,9 @@ class GameList extends ShallowComponent {
     // TODO perf: game-list should only filter & pass down immutable
     // substructures, and let owned computation to children so that we
     // take advantage of dirty checking
-    games::each((game) => {
+    const ordered_games = sort ? games::sortBy('title')::sortBy((x) => -(x.last_interacted_at || 0)) : games
+
+    ordered_games::each((game) => {
       let cave = caves_by_game[game.id]
       if (!pred(cave)) return
 
