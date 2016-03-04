@@ -6,6 +6,7 @@ import path from 'path'
 import fixture from '../fixture'
 import electron from '../stubs/electron'
 import CaveStore from '../stubs/cave-store'
+import CredentialsStore from '../stubs/credentials-store'
 import AppActions from '../stubs/app-actions'
 
 import log from '../../app/util/log'
@@ -15,6 +16,13 @@ const opts = {id: 'kalamazoo', logger}
 test('configure', t => {
   const os = test.module({
     platform: () => null
+  })
+
+  const fetch = test.module({
+    game_lazily: async (market, game_id) => ({
+      id: 983,
+      title: 'Hey'
+    })
   })
 
   const noop = async () => null
@@ -28,7 +36,9 @@ test('configure', t => {
     './configure/darwin': darwin,
     './configure/linux': linux,
     '../stores/cave-store': CaveStore,
-    '../actions/app-actions': AppActions
+    '../stores/credentials-store': CredentialsStore,
+    '../actions/app-actions': AppActions,
+    '../util/fetch': fetch
   }, electron)
 
   const configure = proxyquire('../../app/tasks/configure', stubs).default
