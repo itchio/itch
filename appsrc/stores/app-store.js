@@ -306,8 +306,9 @@ function install_location_store_diff (payload) {
   AppStore.emit_change()
 }
 
-Store.subscribe('collection-store', (collections) => {
-  state = state::assocIn(['library', 'collections'], collections)
+Store.subscribe('collection-store', (collection_state) => {
+  state = state::assocIn(['library', 'collections'], collection_state.collections)
+  state = state::assocIn(['collections', 'featured_ids'], collection_state.featured_ids)
   AppStore.emit_change()
 })
 
