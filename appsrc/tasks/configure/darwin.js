@@ -5,29 +5,29 @@ import path from 'path'
 import common from './common'
 import sf from '../../util/sf'
 
-let ignore_patterns = [
+const ignore_patterns = [
   // skip some typical junk we find in archives that's supposed
   // to be hidden / in trash / isn't in anyway relevant to what
   // we're trying to do
   '**/__MACOSX/**'
 ]
 
-let self = {
+const self = {
   configure: async function (cave_path) {
-    let bundles = await sf.glob(`**/*.app/`, {
+    const bundles = await sf.glob(`**/*.app/`, {
       cwd: cave_path,
       ignore: ignore_patterns
     })
 
     if (bundles.length) {
-      let fixer = (x) => common.fix_execs('mac_executable', path.join(cave_path, x))
+      const fixer = (x) => common.fix_execs('mac_executable', path.join(cave_path, x))
       await Promise.each(bundles, fixer)
       return {executables: bundles}
     }
 
     // some games aren't properly packaged app bundles but rather a shell
     // script / binary - try it the linux way
-    let executables = await common.fix_execs('mac_executable', cave_path)
+    const executables = await common.fix_execs('mac_executable', cave_path)
     return {executables}
   }
 }

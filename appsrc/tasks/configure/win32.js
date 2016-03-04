@@ -1,9 +1,9 @@
 
 import sf from '../../util/sf'
 
-let self = {
+const self = {
   configure: async function (app_path) {
-    let executables = await sf.glob('**/*.@(exe|bat|jar)', {
+    const executables = await sf.glob('**/*.@(exe|bat|jar)', {
       cwd: app_path,
       nocase: true
     })

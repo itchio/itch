@@ -123,9 +123,16 @@ test('configure (each platform)', t => {
 
   const html = proxyquire('../../app/tasks/configure/html', stubs).default
   const html_path = fixture.path('configure/html')
+  const game = {
+    embed: {
+      width: '640',
+      height: '480',
+      fullscreen: false
+    }
+  }
 
   t.case('html finds game root', async t => {
-    const res = await html.configure(html_path)
+    const res = await html.configure(game, html_path)
     t.same(res.game_path, 'ThisContainsStuff/index.html')
   })
 })
