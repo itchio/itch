@@ -1,6 +1,6 @@
 
 import os from '../util/os'
-import { findWhere } from 'underline'
+import {findWhere} from 'underline'
 
 import mklog from '../util/log'
 const log = mklog('tasks/configure')

@@ -1,6 +1,6 @@
 
 import r from 'r-dom'
-import { each, filter } from 'underline'
+import {each, filter} from 'underline'
 import { getIn } from 'grovel'
 
 import humanize from 'humanize-plus'

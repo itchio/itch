@@ -1,5 +1,5 @@
 
-import { pairs } from 'underline'
+import {pairs} from 'underline'
 
 import fs from 'fs'
 import sf from '../util/sf'

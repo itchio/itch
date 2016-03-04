@@ -1,7 +1,7 @@
 
 import test from 'zopf'
 import sd from './skin-deeper'
-import { indexBy } from 'underline'
+import {indexBy} from 'underline'
 
 import GameList from '../../app/components/game-list'
 

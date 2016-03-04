@@ -1,5 +1,5 @@
 
-import { each, indexBy } from 'underline'
+import {each, indexBy} from 'underline'
 
 import r from 'r-dom'
 import {PropTypes} from 'react'

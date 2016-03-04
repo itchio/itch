@@ -1,7 +1,7 @@
 
 import r from 'r-dom'
 import { getIn, count } from 'grovel'
-import { each } from 'underline'
+import {each} from 'underline'
 
 import {PropTypes} from 'react'
 import ShallowComponent from './shallow-component'

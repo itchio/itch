@@ -1,5 +1,5 @@
 
-import { throttle, each } from 'underline'
+import {throttle, each} from 'underline'
 
 import walk from 'walk'
 import electron from 'electron'

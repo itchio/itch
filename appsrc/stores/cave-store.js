@@ -1,5 +1,5 @@
 
-import { throttle, findWhere, each } from 'underline'
+import {throttle, findWhere, each} from 'underline'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppActions from '../actions/app-actions'

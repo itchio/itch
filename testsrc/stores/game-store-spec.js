@@ -11,7 +11,7 @@ import CredentialsStore from '../stubs/credentials-store'
 import market from '../stubs/market'
 import fetch from '../stubs/fetch'
 
-import { pluck, indexBy } from 'underline'
+import {pluck, indexBy} from 'underline'
 
 test('GameStore', t => {
   // XXX: provide a market to fetch
