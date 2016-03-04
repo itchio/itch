@@ -414,6 +414,21 @@ $open_button_color: #4B6D85;
 
       margin-bottom: 10px;
       overflow: hidden;
+
+      .game_short_text {
+        transition: opacity .2s;
+        z-index: 20;
+        color: #C3BDBD;
+        padding: 5px;
+        font-size: 90%;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, .8);
+        opacity: 0;
+      }
     }
 
     .platforms {
@@ -438,6 +453,10 @@ $open_button_color: #4B6D85;
       .active {
         color: #E6E6E6;
       }
+    }
+
+    &:hover .bordered .game_short_text {
+      opacity: 1;
     }
 
     &:hover .platforms {

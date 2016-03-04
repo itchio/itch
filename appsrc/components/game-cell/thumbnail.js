@@ -51,6 +51,10 @@ class Thumbnail extends ShallowComponent {
 
     children.push(r.div({ style, classSet, onClick }))
 
+    if (game.short_text && game.short_text.length > 0) {
+      children.push(r.div({className: 'game_short_text'}, game.short_text))
+    }
+
     if (platform_list.length) {
       children.push(r.div({className: 'platforms'}, platform_list))
     }
