@@ -10,7 +10,7 @@ const log = mklog('market')
 const opts = {logger: new mklog.Logger()}
 
 import deep_freeze from 'deep-freeze'
-import {isEqual} from 'underline'
+import {isEqual, every} from 'underline'
 
 const state = {
   library_dir: null,
@@ -108,9 +108,13 @@ function save_all_entities (response, opts) {
       const entity = entities[entity_id]
 
       const record = table[entity_id] || {}
-      const new_record = Object.assign({}, record, entity)
-      if (!record::isEqual(new_record)) {
-        table[entity_id] = deep_freeze(new_record)
+      const same = Object.keys(entity)::every(
+        (key) => entity[key]::isEqual(record[key])
+      )
+
+      if (!same) {
+        const new_record = deep_freeze(Object.assign({}, record, entity))
+        table[entity_id] = new_record
 
         if (persist) {
           let p = save_to_disk(table_name, entity_id, new_record)
