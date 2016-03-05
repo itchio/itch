@@ -1,7 +1,7 @@
 
 import r from 'r-dom'
 import {each, filter} from 'underline'
-import { getIn } from 'grovel'
+import {getIn} from 'grovel'
 
 import humanize from 'humanize-plus'
 import {PropTypes} from 'react'
@@ -216,7 +216,7 @@ class PreferencesForm extends ShallowComponent {
         r(Icon, {icon: 'plus'}),
         t('preferences.install_location.add')
       ]),
-      r.td({ colSpan: 6 })
+      r.td({colSpan: 6})
     ]))
 
     return r.table({className: 'install_locations'}, [

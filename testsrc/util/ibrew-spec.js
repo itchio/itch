@@ -23,7 +23,7 @@ test('ibrew', t => {
 
   const needle = test.module({
     get: () => { throw new Error('stub') },
-    getAsync: async () => { return needle.get.apply(needle, arguments) },
+    getAsync: async () => needle.get.apply(needle, arguments),
     defaults: () => null
   })
 

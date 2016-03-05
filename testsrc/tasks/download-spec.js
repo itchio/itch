@@ -9,7 +9,7 @@ import CredentialsStore from '../stubs/credentials-store'
 
 const typical_install = {
   id: 'kalamazoo',
-  uploads: { '11': { id: 11, size: 512 } }
+  uploads: {'11': {id: 11, size: 512}}
 }
 
 const upload_response = {

@@ -35,9 +35,9 @@ test('UrlStore', t => {
   const handler = AppDispatcher.get_handler('url-store')
 
   t.case('ignore invalid URLs', async t => {
-    await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://test/invalid' })
-    await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://install' })
-    await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://launch' })
+    await handler({action_type: AppConstants.OPEN_URL, url: 'itchio://test/invalid'})
+    await handler({action_type: AppConstants.OPEN_URL, url: 'itchio://install'})
+    await handler({action_type: AppConstants.OPEN_URL, url: 'itchio://launch'})
   })
 
   t.case('store queues if not rolling, handles if rolling', t => {
@@ -45,17 +45,17 @@ test('UrlStore', t => {
     const ret = {hostname: 'test', pathname: 'test/test'}
 
     mock.expects('parse').withArgs('itchio://test/before').returns(ret)
-    handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://test/before' })
-    handler({ action_type: AppConstants.READY_TO_ROLL })
+    handler({action_type: AppConstants.OPEN_URL, url: 'itchio://test/before'})
+    handler({action_type: AppConstants.READY_TO_ROLL})
 
     mock.expects('parse').withArgs('itchio://test/after').returns(ret)
-    handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://test/after' })
+    handler({action_type: AppConstants.OPEN_URL, url: 'itchio://test/after'})
   })
 
   t.case('install tries to install game', async t => {
     const bag = {
       games: {
-        '1234': { id: 1234, user_id: 42, p_osx: true }
+        '1234': {id: 1234, user_id: 42, p_osx: true}
       },
       users: {
         '42': {}
@@ -65,13 +65,13 @@ test('UrlStore', t => {
 
     t.stub(electron.electron.dialog, 'showMessageBox').callsArgWith(1, 0)
     t.mock(AppActions).expects('queue_game')
-    await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234' })
+    await handler({action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234'})
   })
 
   t.case('install apologizes if game is not compatible', async t => {
     const bag = {
       games: {
-        '1234': { id: 1234, user_id: 42, p_osx: false }
+        '1234': {id: 1234, user_id: 42, p_osx: false}
       },
       users: {
         '42': {}
@@ -81,13 +81,13 @@ test('UrlStore', t => {
 
     t.mock(electron.electron.dialog).expects('showMessageBox').withArgs(sinon.match.has('title', 'prompt.no_compatible_version.title'))
 
-    await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234' })
+    await handler({action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234'})
   })
 
   t.case('install focuses on game if already installed', async t => {
     const bag = {
       games: {
-        '1234': { id: 1234, user_id: 42, p_osx: true }
+        '1234': {id: 1234, user_id: 42, p_osx: true}
       },
       users: {
         '42': {}
@@ -98,13 +98,13 @@ test('UrlStore', t => {
     t.stub(CaveStore.default, 'find_for_game').returns({id: 'hello'})
     t.mock(AppActions).expects('focus_panel').withArgs('caves/hello')
 
-    await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234' })
+    await handler({action_type: AppConstants.OPEN_URL, url: 'itchio://install/1234'})
   })
 
   t.case('launch tries to install when not installed yet', async t => {
     const bag = {
       games: {
-        '1234': { id: 1234, user_id: 42, p_osx: true }
+        '1234': {id: 1234, user_id: 42, p_osx: true}
       },
       users: {
         '42': {}
@@ -114,13 +114,13 @@ test('UrlStore', t => {
     t.stub(CaveStore.default, 'find_for_game').returns(null)
     t.mock(electron.electron.dialog).expects('showMessageBox').withArgs(sinon.match.has('title', 'prompt.url_install.title'))
 
-    await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://launch/1234' })
+    await handler({action_type: AppConstants.OPEN_URL, url: 'itchio://launch/1234'})
   })
 
   t.case('launch tries to launch when installed', async t => {
     const bag = {
       games: {
-        '1234': { id: 1234, user_id: 42, p_osx: true }
+        '1234': {id: 1234, user_id: 42, p_osx: true}
       },
       users: {
         '42': {}
@@ -131,6 +131,6 @@ test('UrlStore', t => {
     t.stub(CaveStore.default, 'find_for_game').returns({id: 'hello'})
     t.mock(AppActions).expects('queue_game')
 
-    await handler({ action_type: AppConstants.OPEN_URL, url: 'itchio://launch/1234' })
+    await handler({action_type: AppConstants.OPEN_URL, url: 'itchio://launch/1234'})
   })
 })

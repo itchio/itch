@@ -5,7 +5,7 @@ import sd from './skin-deeper'
 import LibrarySidebar from '../../app/components/library-sidebar'
 
 test('LibrarySidebar', t => {
-  const game = { title: 'Wreck IT' }
+  const game = {title: 'Wreck IT'}
   const props = {
     collections: {
       a: {title: 'Collection A'},

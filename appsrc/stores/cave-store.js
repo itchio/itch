@@ -132,7 +132,7 @@ function cave_opts (id) {
       file: log_path(id)
     }
   })
-  let opts = { logger }
+  let opts = {logger}
   cave_opts_cache[id] = opts
 
   log(opts, `~~~~~~~~~~~~~~~~ the village awakens ~~~~~~~~~~~~~~~~`)
@@ -294,11 +294,11 @@ async function initial_progress (cave) {
 }
 
 async function queue_game_install (game) {
-  market.save_all_entities({ entities: { games: { [game.id]: game } } })
+  market.save_all_entities({entities: {games: {[game.id]: game}}})
 
   let install_location = PreferencesStore.get_state().default_install_location
-  let cave = { id: uuid.v4(), game_id: game.id, install_location }
-  market.save_all_entities({ entities: { caves: { [cave.id]: cave } } })
+  let cave = {id: uuid.v4(), game_id: game.id, install_location}
+  market.save_all_entities({entities: {caves: {[cave.id]: cave}}})
 
   diego.hire(cave_opts(cave.id))
   initial_progress(cave)

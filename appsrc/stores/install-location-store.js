@@ -13,7 +13,7 @@ import explorer from '../util/explorer'
 import diskspace from '../util/diskspace'
 import mklog from '../util/log'
 const log = mklog('install-location-store')
-const opts = { logger: new log.Logger() }
+const opts = {logger: new log.Logger()}
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'
@@ -29,7 +29,7 @@ let computations_to_cancel = {}
 let location_sizes = {}
 let location_computing_size = {}
 let location_item_counts = {}
-let disk_info = { parts: [] }
+let disk_info = {parts: []}
 
 let state = {}
 
@@ -58,7 +58,9 @@ function compute_state () {
     let raw_loc = raw_locations[loc_name]
 
     let size = location_sizes[loc_name]
-    if (typeof size === 'undefined') { size = -1 }
+    if (typeof size === 'undefined') {
+      size = -1
+    }
 
     let free_space = diskspace.free_in_folder(disk_info, raw_loc.path)
 

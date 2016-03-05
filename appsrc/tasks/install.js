@@ -13,7 +13,7 @@ import core from './install/core'
 
 function ensure (predicate, reason) {
   if (!predicate) {
-    throw new Transition({ to: 'find-upload', reason })
+    throw new Transition({to: 'find-upload', reason})
   }
 }
 
@@ -60,7 +60,7 @@ let self = {
       throw new Transition({to: 'idle', reason: 'up-to-date'})
     }
 
-    let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter, upload_id }
+    let core_opts = {id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter, upload_id}
 
     AppActions.update_cave(id, {launchable: false})
     await core.install(core_opts)

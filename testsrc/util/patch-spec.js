@@ -63,8 +63,8 @@ test('patchAt', t => {
     library: {
       games: {
         dashboard: {
-          '50723': { name: 'Nono' },
-          '50724': { name: 'Momo' }
+          '50723': {name: 'Nono'},
+          '50724': {name: 'Momo'}
         }
       }
     }

@@ -6,7 +6,7 @@ import app from '../util/app'
 import sf from '../util/sf'
 import mklog from '../util/log'
 const log = mklog('i18n-store')
-const opts = { logger: new log.Logger() }
+const opts = {logger: new log.Logger()}
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppConstants from '../constants/app-constants'

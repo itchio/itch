@@ -1,5 +1,5 @@
 
-import { getIn, assocIn, dissocIn } from 'grovel'
+import {getIn, assocIn, dissocIn} from 'grovel'
 
 /**
  * Take a diff as produced by deep-diff, and apply it to a mori data structure

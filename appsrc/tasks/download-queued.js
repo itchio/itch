@@ -21,4 +21,4 @@ function start (opts) {
   })
 }
 
-export default { start }
+export default {start}

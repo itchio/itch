@@ -22,12 +22,12 @@ test('fetch', t => {
     const my_collections = t.stub(api, 'my_collections')
     my_collections.resolves({
       collections: [
-        { id: 78 },
-        { id: 97 }
+        {id: 78},
+        {id: 97}
       ]
     })
     t.stub(api, 'collection').resolves({
-      collection: { id: 23 }
+      collection: {id: 23}
     })
 
     const cb = t.spy()
@@ -38,8 +38,8 @@ test('fetch', t => {
 
     my_collections.resolves({
       collections: [
-        { id: 78 },
-        { id: 42 }
+        {id: 78},
+        {id: 42}
       ]
     })
     const cb2 = t.spy()
@@ -55,13 +55,13 @@ test('fetch', t => {
     const my_games_stub = t.stub(api, 'my_games')
 
     const games = [
-      { id: 234, name: 'Peter Pan' },
-      { id: 345, name: 'Tinker Bell' },
-      { id: 456, name: 'Diddly Squat' }
+      {id: 234, name: 'Peter Pan'},
+      {id: 345, name: 'Tinker Bell'},
+      {id: 456, name: 'Diddly Squat'}
     ]
 
     const cb = t.spy()
-    my_games_stub.resolves({ games })
+    my_games_stub.resolves({games})
     await fetch.dashboard_games(market, cb)
     t.equal(cb.callCount, 2)
     t.same(market.get_entities('games'), to_market_format(games))
@@ -70,7 +70,7 @@ test('fetch', t => {
     t.same(fewer_games.length, 2)
 
     const cb2 = t.spy()
-    my_games_stub.resolves({ games: fewer_games })
+    my_games_stub.resolves({games: fewer_games})
     await fetch.dashboard_games(market, cb2)
     t.equal(cb.callCount, 2)
     t.same(market.get_entities('games'), to_market_format(fewer_games))
@@ -110,7 +110,7 @@ test('fetch', t => {
     market.save_all_entities({
       entities: {
         collections: [
-          { id: 8712, game_ids: [9, 12, 87] }
+          {id: 8712, game_ids: [9, 12, 87]}
         ]::indexBy('id')
       }
     })
@@ -136,7 +136,7 @@ test('fetch', t => {
   t.case('fetches search', async t => {
     t.mock(api).expects('search').withArgs('hello').resolves({
       games: [
-        { id: 9182 }
+        {id: 9182}
       ]
     })
 
@@ -151,7 +151,7 @@ test('fetch', t => {
     market.save_all_entities({
       entities: {
         games: [
-          { id: 123, title: 'Rambo (local)' }
+          {id: 123, title: 'Rambo (local)'}
         ]::indexBy('id')
       }
     })
@@ -163,7 +163,7 @@ test('fetch', t => {
     market.delete_all_entities({entities: {games: [123]}})
 
     game_stub.resolves({
-      game: { id: 123, title: 'Rambo (remote)' }
+      game: {id: 123, title: 'Rambo (remote)'}
     })
     const game2 = await fetch.game_lazily(market, 123)
     t.equal(game2.title, 'Rambo (remote)')

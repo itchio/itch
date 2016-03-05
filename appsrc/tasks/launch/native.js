@@ -30,12 +30,12 @@ const self = {
       args,
       ontoken: (tok) => log(opts, `stdout: ${tok}`),
       onerrtoken: (tok) => log(opts, `stderr: ${tok}`),
-      opts: { cwd }
+      opts: {cwd}
     })
 
     if (code !== 0) {
       const error = `process exited with code ${code}`
-      throw new Crash({ exe_path, error })
+      throw new Crash({exe_path, error})
     }
     return `child completed successfully`
   },

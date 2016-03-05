@@ -32,7 +32,7 @@ test('check-for-update', t => {
 
   t.case('redownloads if has a fresher download', async t => {
     const transition = {type: 'transition', to: 'download', reason: 'upload-found', data: {upload_id: 78}}
-    t.stub(CaveStore, 'find').returns({ uploads, upload_id: 66, launchable: true })
+    t.stub(CaveStore, 'find').returns({uploads, upload_id: 66, launchable: true})
     t.stub(find_upload.default, 'start').rejects(transition)
 
     let err

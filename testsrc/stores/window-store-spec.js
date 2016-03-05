@@ -20,7 +20,7 @@ test('WindowStore', t => {
     WindowStore.with(w => window = w)
     t.notOk(window)
     process.env.DEVTOOLS = 1
-    handler({ action_type: AppConstants.BOOT })
+    handler({action_type: AppConstants.BOOT})
     WindowStore.with(w => window = w)
     t.ok(window)
     delete process.env.DEVTOOLS
@@ -30,16 +30,16 @@ test('WindowStore', t => {
     t.mock(window).expects('close')
     t.mock(electron.electron.BrowserWindow).expects('getFocusedWindow').returns(window)
 
-    handler({ action_type: AppConstants.HIDE_WINDOW })
+    handler({action_type: AppConstants.HIDE_WINDOW})
   })
 
   t.case('show_window', t => {
     t.mock(window).expects('show')
-    handler({ action_type: AppConstants.FOCUS_WINDOW })
+    handler({action_type: AppConstants.FOCUS_WINDOW})
   })
 
   t.case('eval', t => {
     t.mock(window.webContents).expects('executeJavaScript')
-    handler({ action_type: AppConstants.EVAL, code: 'alert("Haxx")' })
+    handler({action_type: AppConstants.EVAL, code: 'alert("Haxx")'})
   })
 })

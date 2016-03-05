@@ -45,11 +45,11 @@ function purchase_inject () {
     }
 
     @keyframes sk-rotateplane {
-      0% { transform: perspective(120px) rotateY(0deg); }
-      25% { transform: perspective(120px) rotateY(-180deg); }
-      50% { transform: perspective(120px) rotateY(-180deg); }
-      75% { transform: perspective(120px) rotateY(-360deg); }
-      100% { transform: perspective(120px) rotateY(-360deg); }
+      0% {transform: perspective(120px) rotateY(0deg);}
+      25% {transform: perspective(120px) rotateY(-180deg);}
+      50% {transform: perspective(120px) rotateY(-180deg);}
+      75% {transform: perspective(120px) rotateY(-360deg);}
+      100% {transform: perspective(120px) rotateY(-360deg);}
     }
   </style>`)[0]
 

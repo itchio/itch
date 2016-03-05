@@ -47,39 +47,39 @@ test('ChromeStore', t => {
 
   t.case('setup_status', t => {
     const message = 'Hold on to your ifs'
-    handler({ action_type: AppConstants.SETUP_STATUS, message })
+    handler({action_type: AppConstants.SETUP_STATUS, message})
     t.is(get_state().login.setup.message, message)
   })
 
   t.case('focus_panel', t => {
     const panel = 'library'
-    handler({ action_type: AppConstants.LIBRARY_FOCUS_PANEL, panel })
+    handler({action_type: AppConstants.LIBRARY_FOCUS_PANEL, panel})
     t.is(get_state().library.panel, '')
-    handler({ action_type: AppConstants.READY_TO_ROLL })
-    handler({ action_type: AppConstants.LIBRARY_FOCUS_PANEL, panel })
+    handler({action_type: AppConstants.READY_TO_ROLL})
+    handler({action_type: AppConstants.LIBRARY_FOCUS_PANEL, panel})
     t.is(get_state().library.panel, panel)
   })
 
   t.case('no_stored_credentials', t => {
-    handler({ action_type: AppConstants.NO_STORED_CREDENTIALS })
+    handler({action_type: AppConstants.NO_STORED_CREDENTIALS})
     t.is(get_state().page, 'login')
   })
 
   t.case('login flow', t => {
-    handler({ action_type: AppConstants.ATTEMPT_LOGIN })
+    handler({action_type: AppConstants.ATTEMPT_LOGIN})
     t.ok(get_state().login.loading, 'loading after login_attempt')
 
-    handler({ action_type: AppConstants.LOGIN_FAILURE, errors: ['ha!'] })
+    handler({action_type: AppConstants.LOGIN_FAILURE, errors: ['ha!']})
     t.notOk(get_state().login.loading, 'not loading after failure')
 
-    handler({ action_type: AppConstants.ATTEMPT_LOGIN })
+    handler({action_type: AppConstants.ATTEMPT_LOGIN})
     t.ok(get_state().login.loading, 'loading after login_attempt')
 
-    handler({ action_type: AppConstants.READY_TO_ROLL })
+    handler({action_type: AppConstants.READY_TO_ROLL})
     t.notOk(get_state().login.loading, 'not loading after ready-to-roll')
     t.is(get_state().page, 'library', 'library after ready-to-roll')
 
-    handler({ action_type: AppConstants.LOGOUT })
+    handler({action_type: AppConstants.LOGOUT})
     t.is(get_state().page, 'login')
   })
 })

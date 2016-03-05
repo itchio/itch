@@ -7,7 +7,7 @@ import sf from './sf'
 
 import mklog from './log'
 const log = mklog('shortcut')
-const opts = { logger: new mklog.Logger() }
+const opts = {logger: new mklog.Logger()}
 
 const app_folder = path.resolve(process.execPath, '..')
 const root_folder = path.resolve(app_folder, '..')

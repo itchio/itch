@@ -10,9 +10,9 @@ self.start = async function (opts) {
   let cave = CaveStore.find(id)
 
   if (cave.launchable) {
-    throw new Transition({ to: 'check-for-update', reason: 'awakening' })
+    throw new Transition({to: 'check-for-update', reason: 'awakening'})
   } else {
-    throw new Transition({ to: 'find-upload', reason: 'not-installed' })
+    throw new Transition({to: 'find-upload', reason: 'not-installed'})
   }
 }
 

@@ -23,15 +23,15 @@ class Thumbnail extends ShallowComponent {
       }
       let active = (platform === platform_spec.platform)
       has_native = has_native || active
-      let classSet = { icon: true, active }
+      let classSet = {icon: true, active}
       classSet[`icon-${platform_spec.icon}`] = true
-      platform_list.push(r.span({ classSet }))
+      platform_list.push(r.span({classSet}))
     }
 
     if (game.type === 'html') {
       let active = !has_native // prefer native builds
-      let classSet = { icon: true, 'icon-earth': true, active }
-      platform_list.push(r.span({ classSet }))
+      let classSet = {icon: true, 'icon-earth': true, active}
+      platform_list.push(r.span({classSet}))
     }
 
     let style = {}
@@ -49,7 +49,7 @@ class Thumbnail extends ShallowComponent {
     }
     let children = []
 
-    children.push(r.div({ style, classSet, onClick }))
+    children.push(r.div({style, classSet, onClick}))
 
     if (game.short_text && game.short_text.length > 0) {
       children.push(r.div({className: 'game_short_text'}, game.short_text))

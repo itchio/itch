@@ -59,7 +59,7 @@ async function start (opts) {
   const dest = CaveStore.archive_path(cave.install_location, upload)
 
   try {
-    await butler.dl({ url, dest, onprogress, logger, emitter })
+    await butler.dl({url, dest, onprogress, logger, emitter})
   } catch (err) {
     log(opts, `couldn't finish download: ${err.message || err}`)
 
@@ -77,4 +77,4 @@ async function start (opts) {
   throw new Transition({ to: 'install', reason: 'download-finished', data: {upload_id} })
 }
 
-export default { start }
+export default {start}

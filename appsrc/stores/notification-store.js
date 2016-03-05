@@ -42,7 +42,7 @@ function bounce () {
 function notify (content) {
   if (os.platform() === 'win32') {
     // HTML5 notification API not implemented in electron on win32 yet -- amos
-    TrayStore.with(tray => tray.displayBalloon({ title: 'itch.io', content }))
+    TrayStore.with(tray => tray.displayBalloon({title: 'itch.io', content}))
   } else {
     // using stringify as an escape mechanism
     AppActions.eval(`new Notification(${JSON.stringify(content)})`)

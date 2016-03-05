@@ -4,6 +4,8 @@ import proxyquire from 'proxyquire'
 import fs from 'fs'
 import os from 'os'
 
+// TODO: mock fs in these tests
+
 const setup = (t, logger_opts) => {
   const mklog = proxyquire('../../app/util/log', {}).default
   const logger = new mklog.Logger(logger_opts)

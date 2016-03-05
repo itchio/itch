@@ -1,5 +1,5 @@
 
-import { Schema, arrayOf } from 'idealizr'
+import {Schema, arrayOf} from 'idealizr'
 
 const user = new Schema('users')
 const game = new Schema('games')

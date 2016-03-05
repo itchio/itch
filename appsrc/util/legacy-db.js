@@ -6,7 +6,7 @@ import {each, indexBy} from 'underline'
 
 import mklog from './log'
 const log = mklog('legacy-db')
-const opts = { logger: new mklog.Logger() }
+const opts = {logger: new mklog.Logger()}
 
 /*
  * nedb was previously used for as both a persistent layer and

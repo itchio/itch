@@ -15,7 +15,7 @@ test('dispatcher', t => {
   })
 
   let r_stubs = Object.assign({}, electron, {
-    '../../util/os': test.module({ process_type: () => 'renderer' })
+    '../../util/os': test.module({process_type: () => 'renderer'})
   })
 
   let fake_window = {

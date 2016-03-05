@@ -1,5 +1,5 @@
 
-import { getIn } from 'grovel'
+import {getIn} from 'grovel'
 import r from 'r-dom'
 import {PropTypes} from 'react'
 import ShallowComponent from './shallow-component'
@@ -107,7 +107,7 @@ class LoginForm extends ShallowComponent {
 
   handle_login_failure () {
     let password = this.refs.password
-    if (password) { setTimeout(() => { password.focus() }, 200) }
+    if (password) { setTimeout(() => password.focus(), 200) }
   }
 }
 

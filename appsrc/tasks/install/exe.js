@@ -103,7 +103,7 @@ let self = {
       searches.push(search)
     }
 
-    let reader = sf.createReadStream(archive_path, { encoding: 'binary' })
+    let reader = sf.createReadStream(archive_path, {encoding: 'binary'})
     reader.on('data', buf => {
       for (let search of searches) {
         search.push(buf)

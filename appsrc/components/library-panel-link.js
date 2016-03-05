@@ -1,6 +1,6 @@
 
 import r from 'r-dom'
-import { count } from 'grovel'
+import {count} from 'grovel'
 
 import {PropTypes} from 'react'
 import ShallowComponent from './shallow-component'

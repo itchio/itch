@@ -5,7 +5,7 @@ import spawn from './spawn'
 
 import mklog from './log'
 const log = mklog('registry')
-const opts = { logger: new mklog.Logger() }
+const opts = {logger: new mklog.Logger()}
 
 let base = `HKCU\\Software\\Classes\\itchio`
 

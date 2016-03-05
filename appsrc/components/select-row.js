@@ -15,7 +15,9 @@ class SelectRow extends DeepComponent {
 
   on_change (event) {
     let on_change = this.props.on_change
-    if (on_change) { on_change(event.target.value) }
+    if (on_change) {
+      on_change(event.target.value)
+    }
   }
 
   render () {
@@ -24,7 +26,7 @@ class SelectRow extends DeepComponent {
     let label = this.props.label || ''
 
     let option_tags = options.map((option, index) => {
-      return r.option({ value: option.value }, option.label)
+      return r.option({value: option.value}, option.label)
     })
 
     return (

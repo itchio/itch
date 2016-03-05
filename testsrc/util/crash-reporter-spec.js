@@ -22,19 +22,19 @@ test('crash-reporter', t => {
   }, electron)
   const crash_reporter = proxyquire('../../app/util/crash-reporter', stubs).default
 
-  const e = { stack: 'No sweat' }
+  const e = {stack: 'No sweat'}
 
   t.case('write_crash_log', t => {
     const mock = t.mock(sf)
     mock.expects('write_file').once().withArgs(sinon.match.string, 'Hey\nthere').returns(sf)
-    crash_reporter.write_crash_log({ stack: 'Hey\nthere' })
+    crash_reporter.write_crash_log({stack: 'Hey\nthere'})
   })
 
   t.case('write_crash_log (win32)', t => {
     t.stub(os, 'platform').returns('win32')
     const mock = t.mock(sf)
     mock.expects('write_file').once().withArgs(sinon.match.string, 'Hey\r\nthere').returns(sf)
-    crash_reporter.write_crash_log({ stack: 'Hey\nthere' })
+    crash_reporter.write_crash_log({stack: 'Hey\nthere'})
   })
 
   t.case('report_issue', t => {

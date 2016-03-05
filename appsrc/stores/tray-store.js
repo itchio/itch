@@ -41,14 +41,14 @@ function set_menu (tray_menu) {
 
 function refresh () {
   let menu_template = [
-    { label: 'Owned', click: () => AppActions.focus_panel('owned') },
-    { label: 'Dashboard', click: () => AppActions.focus_panel('dashboard') }
+    {label: 'Owned', click: () => AppActions.focus_panel('owned')},
+    {label: 'Dashboard', click: () => AppActions.focus_panel('dashboard')}
   ]
 
   if (os.platform() !== 'darwin') {
     menu_template = menu_template.concat([
-      { type: 'separator' },
-      { label: 'Exit', click: () => AppActions.quit() }
+      {type: 'separator'},
+      {label: 'Exit', click: () => AppActions.quit()}
     ])
   }
 

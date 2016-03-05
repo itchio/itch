@@ -29,7 +29,7 @@ let self = {
 
       log(opts, `Uninstalling app in ${dest_path} from archive ${archive_path}`)
 
-      let core_opts = { id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter }
+      let core_opts = {id, logger, onerror, onprogress, archive_path, dest_path, cave, emitter}
 
       AppActions.update_cave(id, {launchable: false})
 

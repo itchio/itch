@@ -9,6 +9,8 @@ import sf from './sf'
 import mklog from './log'
 const log = mklog('butler')
 
+// TODO: DRY up those methods
+
 const self = {
   parse_butler_status: function (opts, onerror, token) {
     const {onprogress = noop} = opts

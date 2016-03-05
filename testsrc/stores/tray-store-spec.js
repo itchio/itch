@@ -22,12 +22,12 @@ test('TrayStore', t => {
 
   t.case('darwin', t => {
     t.stub(os, 'platform').returns('darwin')
-    handler({ action_type: AppConstants.BOOT })
+    handler({action_type: AppConstants.BOOT})
   })
 
   t.case('non-darwin', t => {
     t.stub(os, 'platform').returns('win32')
-    handler({ action_type: AppConstants.BOOT })
+    handler({action_type: AppConstants.BOOT})
     let has_tray = false
     TrayStore.with((t) => has_tray = true)
     t.ok(has_tray)

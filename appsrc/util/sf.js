@@ -287,7 +287,7 @@ let self = {
             defaultEncoding: 'binary',
             mode
           })
-          let rs = self.createReadStream(src_file, { encoding: 'binary' })
+          let rs = self.createReadStream(src_file, {encoding: 'binary'})
           let cp = self.promised(ws)
           rs.pipe(ws)
           await cp

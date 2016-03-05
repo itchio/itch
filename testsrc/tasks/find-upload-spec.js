@@ -51,15 +51,15 @@ test('find-upload', t => {
   t.case('seeks download key', async t => {
     const bag = {
       download_keys: [
-        { id: 1, game_id: 84 }
+        {id: 1, game_id: 84}
       ]::indexBy('id'),
       games: [
-        { id: 84, title: 'Yeehaw' }
+        {id: 84, title: 'Yeehaw'}
       ]::indexBy('id')
     }
     t.stub(market, 'get_entities', (x) => bag[x])
 
-    t.stub(CaveStore, 'find').returns({ game_id: 84 })
+    t.stub(CaveStore, 'find').returns({game_id: 84})
     t.mock(client).expects('download_key_uploads').once().resolves(uploads_fixture)
     await transitions(t, opts)
   })
@@ -67,7 +67,7 @@ test('find-upload', t => {
   t.case('uses download key', async t => {
     const bag = {
       games: [
-        { id: 84, title: 'Yeehaw' }
+        {id: 84, title: 'Yeehaw'}
       ]::indexBy('id')
     }
     t.stub(market, 'get_entities', (x) => bag[x])

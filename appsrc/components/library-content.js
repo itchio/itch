@@ -1,6 +1,6 @@
 
 import r from 'r-dom'
-import { getIn, count } from 'grovel'
+import {getIn, count} from 'grovel'
 import {each} from 'underline'
 
 import {PropTypes} from 'react'

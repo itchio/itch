@@ -1,7 +1,7 @@
 
 import mklog from '../util/log'
 const log = mklog('i18n-store')
-let opts = { logger: new log.Logger() }
+let opts = {logger: new log.Logger()}
 
 import Store from './store'
 import AppActions from '../actions/app-actions'

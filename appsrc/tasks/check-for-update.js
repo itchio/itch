@@ -30,4 +30,4 @@ async function start (opts) {
   // all good!
 }
 
-export default { start }
+export default {start}

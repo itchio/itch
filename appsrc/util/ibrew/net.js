@@ -16,7 +16,7 @@ let self = {
     let req = needle.get(url)
     await sf.mkdir(path.dirname(file))
     console.log(`downloading ${url} to ${file}`)
-    let sink = sf.createWriteStream(file, { flags: 'w', mode: 0o777, defaultEncoding: 'binary' })
+    let sink = sf.createWriteStream(file, {flags: 'w', mode: 0o777, defaultEncoding: 'binary'})
     req.pipe(sink)
     await sf.promised(sink)
   },

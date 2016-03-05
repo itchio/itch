@@ -26,4 +26,4 @@ const client = {
   login_with_password: noop
 }
 
-module.exports = test.module({ client, user, User })
+module.exports = test.module({client, user, User})

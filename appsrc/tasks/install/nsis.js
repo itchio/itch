@@ -75,7 +75,7 @@ const self = {
           '/S', // run the uninstaller silently
           `_?=${dest_path}` // specify uninstallation path
         ],
-        opts: { cwd: dest_path },
+        opts: {cwd: dest_path},
         on_token: (tok) => log(opts, `${unins}: ${tok}`)
       }
       const code = await spawn(spawn_opts)
@@ -83,7 +83,7 @@ const self = {
 
       if (code !== 0) {
         const reason = 'uninstaller failed, cancelling uninstallation'
-        throw new Transition({ to: 'idle', reason })
+        throw new Transition({to: 'idle', reason})
       }
     }
   }

@@ -43,7 +43,7 @@ let self = {
     })
 
     win.webContents.on('dom-ready', (e) => {
-      win.webContents.insertCSS('body { background: #000; }')
+      win.webContents.insertCSS('body {background: #000;}')
     })
 
     // open dev tools immediately if requested

@@ -63,7 +63,7 @@ let self = {
   },
 
   wmic_total: (parts) => {
-    let initial = { size: 0, free: 0 }
+    let initial = {size: 0, free: 0}
     let f = (total, part) => {
       total.size += part.size
       total.free += part.free

@@ -10,7 +10,7 @@ import AppActions from '../stubs/app-actions'
 
 const typical_install = {
   id: 'kalamazoo',
-  uploads: { '11': { id: 11, size: 512 } }
+  uploads: {'11': {id: 11, size: 512}}
 }
 
 test('install', t => {

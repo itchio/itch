@@ -111,7 +111,7 @@ let self = {
     let sevenzip_progress = (f) => {
       extracted_size += (info.sizes[f] || 0)
       let percent = extracted_size / total_size * 100
-      onprogress({ extracted_size, total_size, percent })
+      onprogress({extracted_size, total_size, percent})
     }
     await self.sevenzip_extract(command, v, logger, archive_path, dest_path, sevenzip_progress)
   },

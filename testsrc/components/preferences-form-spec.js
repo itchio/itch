@@ -19,11 +19,11 @@ test('PreferencesForm', t => {
         ['', '~']
       ],
       default: 'appdata',
-      locations: { appdata }
+      locations: {appdata}
     }
   }
 
-  const tree = sd.shallowRender(sd(PreferencesForm, { state }))
+  const tree = sd.shallowRender(sd(PreferencesForm, {state}))
   let instance = tree.getMountedInstance()
   // TODO: finish writing test
   instance = instance

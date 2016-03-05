@@ -34,7 +34,7 @@ test('SetupStore', t => {
 
   t.case('window_ready', async t => {
     t.stub(ibrew.default, 'fetch').resolves()
-    await handler({ action_type: AppConstants.WINDOW_READY })
+    await handler({action_type: AppConstants.WINDOW_READY})
   })
 
   t.case('window_ready (err)', async t => {
@@ -44,7 +44,7 @@ test('SetupStore', t => {
         throw err
       }
     })
-    t.mock(AppActions).expects('setup_status').withArgs('login.status.setup_failure', 'error', { error: 'Ha!' })
-    await handler({ action_type: AppConstants.WINDOW_READY })
+    t.mock(AppActions).expects('setup_status').withArgs('login.status.setup_failure', 'error', {error: 'Ha!'})
+    await handler({action_type: AppConstants.WINDOW_READY})
   })
 })

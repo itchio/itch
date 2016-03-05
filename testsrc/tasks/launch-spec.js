@@ -19,8 +19,8 @@ test('launch', t => {
     start: () => Promise.resolve()
   })
 
-  const native = test.module({ launch: () => Promise.resolve() })
-  const html = test.module({ launch: () => Promise.resolve() })
+  const native = test.module({launch: () => Promise.resolve()})
+  const html = test.module({launch: () => Promise.resolve()})
 
   const stubs = Object.assign({
     '../stores/cave-store': CaveStore,
@@ -33,7 +33,7 @@ test('launch', t => {
 
   t.case('rejects 0 execs', t => {
     const spy = t.spy()
-    t.stub(CaveStore, 'find').returns({ launch_type: 'native' })
+    t.stub(CaveStore, 'find').returns({launch_type: 'native'})
     return launch.start(opts).catch(spy).then(_ => {
       t.is(spy.callCount, 1)
       t.same(spy.getCall(0).args[0].message, 'Cave is invalid')
@@ -42,9 +42,9 @@ test('launch', t => {
 
   t.case('reconfigures as needed', async t => {
     const find = t.stub(CaveStore, 'find')
-    find.returns({ executables: [], launch_type: 'native' })
+    find.returns({executables: [], launch_type: 'native'})
     t.stub(configure, 'start', () => {
-      find.returns({ executables: ['/a'], launch_type: 'native' })
+      find.returns({executables: ['/a'], launch_type: 'native'})
       return Promise.resolve()
     })
     t.mock(native).expects('launch').once().resolves('Done!')
@@ -53,7 +53,7 @@ test('launch', t => {
 
   t.case('launches correct launch_type', async t => {
     const find = t.stub(CaveStore, 'find')
-    find.returns({ executables: ['./a'], launch_type: 'native' })
+    find.returns({executables: ['./a'], launch_type: 'native'})
     t.mock(native).expects('launch').once().resolves('Done!')
     await launch.start(opts)
     find.returns({ game_path: 'a/a.html', window_size: {width: 1, height: 1}, launch_type: 'html' })
@@ -63,7 +63,7 @@ test('launch', t => {
 
   t.case('rejects invalid launch_type', t => {
     const spy = t.spy()
-    t.stub(CaveStore, 'find').returns({ launch_type: 'invalid' })
+    t.stub(CaveStore, 'find').returns({launch_type: 'invalid'})
     return launch.start(opts).catch(spy).then(_ => {
       t.is(spy.callCount, 1)
       t.same(spy.getCall(0).args[0].message, 'Unsupported launch type \'invalid\'')

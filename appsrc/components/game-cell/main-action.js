@@ -35,7 +35,7 @@ let icon_info = (cave) => {
     spin = true
   }
 
-  return { task, spin }
+  return {task, spin}
 }
 
 class MainAction extends ShallowComponent {
@@ -111,7 +111,7 @@ class MainAction extends ShallowComponent {
       style.backgroundImage = linear_gradient(progress)
     }
 
-    let button = r.div({ classSet, style, onClick }, child)
+    let button = r.div({classSet, style, onClick}, child)
 
     let tooltip_opts = this.tooltip_opts(task)
     return r(Tooltip, tooltip_opts, button)
@@ -133,7 +133,7 @@ class MainAction extends ShallowComponent {
         overlay: r.span({}, t('grid.item.cancel_download'))
       }
     } else {
-      return { visible: false, overlay: '' }
+      return {visible: false, overlay: ''}
     }
   }
 

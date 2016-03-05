@@ -60,7 +60,7 @@ const self = {
         args: [
           '/VERYSILENT' // be vewwy vewwy quiet
         ],
-        opts: { cwd: dest_path },
+        opts: {cwd: dest_path},
         on_token: (tok) => log(opts, `${unins}: ${tok}`)
       }
       let code = await spawn(spawn_opts)
@@ -68,7 +68,7 @@ const self = {
 
       if (code !== 0) {
         let reason = 'uninstaller failed, cancelling uninstallation'
-        throw new Transition({ to: 'idle', reason })
+        throw new Transition({to: 'idle', reason})
       }
     }
   }
