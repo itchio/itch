@@ -5,7 +5,7 @@ import ShallowComponent from './shallow-component'
 import LoginPage from './login-page'
 import LibraryPage from './library-page'
 
-import AppStore from '../stores/app-store'
+import ChromeStore from '../stores/chrome-store'
 import AppActions from '../actions/app-actions'
 
 /**
@@ -15,12 +15,12 @@ import AppActions from '../actions/app-actions'
 class Layout extends ShallowComponent {
   constructor () {
     super()
-    this.state = {app_state: AppStore.get_state()}
+    this.state = {app_state: ChromeStore.get_state()}
   }
 
   componentDidMount () {
     super.componentDidMount()
-    AppStore.add_change_listener('layout', (app_state) => {
+    ChromeStore.add_change_listener('layout', (app_state) => {
       pre: { // eslint-disable-line
         typeof app_state === 'object'
       }
@@ -31,7 +31,7 @@ class Layout extends ShallowComponent {
 
   componentWillUnmount () {
     super.componentWillUnmount()
-    AppStore.remove_change_listener('layout')
+    ChromeStore.remove_change_listener('layout')
     AppActions.implode_app()
   }
 

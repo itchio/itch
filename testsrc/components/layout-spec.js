@@ -2,11 +2,11 @@
 import test from 'zopf'
 import sd from './skin-deeper'
 
-import AppStore from '../../app/stores/app-store'
+import ChromeStore from '../../app/stores/chrome-store'
 import Layout from '../../app/components/layout'
 
 test('layout', t => {
-  const get_state = t.stub(AppStore, 'get_state').returns({})
+  const get_state = t.stub(ChromeStore, 'get_state').returns({})
 
   const set_state = (props) => {
     get_state.returns(props)
@@ -18,7 +18,7 @@ test('layout', t => {
     t.is(get_state.callCount, 1, 'initializes state once')
 
     instance.componentDidMount()
-    AppStore.emit_change({})
+    ChromeStore.emit_change({})
     instance.componentWillUnmount()
     t.is(get_state.callCount, 2, 'responds to state change')
   })

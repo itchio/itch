@@ -4,7 +4,7 @@ import r from 'r-dom'
 import {PropTypes} from 'react'
 import ShallowComponent from './shallow-component'
 
-import AppStore from '../stores/app-store'
+import ChromeStore from '../stores/chrome-store'
 import AppActions from '../actions/app-actions'
 import urls from '../constants/urls'
 
@@ -21,12 +21,12 @@ class LoginForm extends ShallowComponent {
 
   componentDidMount () {
     super.componentDidMount()
-    AppStore.on('login_failure', this.handle_login_failure)
+    ChromeStore.on('login_failure', this.handle_login_failure)
   }
 
   componentWillUnmount () {
     super.componentWillUnmount()
-    AppStore.removeListener('login_failure', this.handle_login_failure)
+    ChromeStore.removeListener('login_failure', this.handle_login_failure)
   }
 
   render () {

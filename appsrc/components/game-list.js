@@ -18,7 +18,7 @@ class GameList extends ShallowComponent {
     const {games = {}, caves = {}, owned_games_by_id = {}, is_press, sort} = this.props
     const pred = this.props.pred || always_true
 
-    // TODO perf: app-store should maintain this instead of us recomputing it
+    // TODO perf: chrome-store should maintain this instead of us recomputing it
     // every time GameList is dirty
     const caves_by_game = caves::indexBy('game_id')
 

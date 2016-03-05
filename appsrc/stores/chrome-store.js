@@ -51,7 +51,7 @@ let state = {
   }
 }
 
-const AppStore = Object.assign(new Store('app-store', 'renderer'), {
+const ChromeStore = Object.assign(new Store('chrome-store', 'renderer'), {
   get_state: function () {
     return state
   }
@@ -60,17 +60,17 @@ const AppStore = Object.assign(new Store('app-store', 'renderer'), {
 function checking_for_self_update (payload) {
   console.log(`checking for self updates...`)
   state = state::assocIn(state, ['update', 'checking'], true)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 }
 
 function update_not_available (payload) {
   state = state::assocIn(['update', 'checking'], false)
   state = state::assocIn(['update', 'uptodate'], true)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 
   setTimeout(function () {
     state = state::assocIn(['update', 'uptodate'], false)
-    AppStore.emit_change()
+    ChromeStore.emit_change()
   }, 5000)
 }
 
@@ -78,18 +78,18 @@ function update_available (payload) {
   console.log(`update available? cool!`)
   state = state::assocIn(['update', 'checking'], false)
   state = state::assocIn(['update', 'available'], true)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 }
 
 function update_downloaded (payload) {
   console.log(`update downloaded?! uber-cool!`)
   state = state::assocIn(['update', 'downloaded'], true)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 }
 
 function purchase_completed (payload) {
   state = state::assocIn(['update', 'status'], payload.message)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 
   setTimeout(function () {
     dismiss_status()
@@ -106,7 +106,7 @@ function update_error (payload) {
   state = state::assocIn(['update', 'available'], false)
   state = state::assocIn(['update', 'downloaded'], false)
   state = state::assocIn(['update', 'error'], payload.message)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 
   setTimeout(function () {
     dismiss_status()
@@ -115,19 +115,19 @@ function update_error (payload) {
 
 function locale_update_download_start (payload) {
   state = state::assocIn(['locales', 'updating'], true)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 
   setTimeout(locale_update_download_end, 2000)
 }
 
 function locale_update_download_end (payload) {
   state = state::assocIn(['locales', 'updating'], false)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 }
 
 function dismiss_status () {
   state = state::dissocIn(['update', 'error'])::dissocIn(['update', 'status'])
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 }
 
 function focus_panel (payload) {
@@ -139,7 +139,7 @@ function focus_panel (payload) {
   }
 
   state = state::assocIn(['library', 'panel'], panel)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 
   defer(() => {
     AppActions.focus_window()
@@ -149,17 +149,17 @@ function focus_panel (payload) {
 
 function switch_page (page) {
   state = state::assocIn(['page'], page)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 }
 
 function attempt_login (payload) {
   state = state::assocIn(['login', 'loading'], true)
   state = state::assocIn(['login', 'errors'], null)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 }
 
 function login_failure (payload) {
-  AppStore.emit('login_failure', {})
+  ChromeStore.emit('login_failure', {})
   let errors = payload.errors
   state = state::assocIn(['login', 'loading'], false)
   state = state::assocIn(['login', 'errors'], errors.stack || errors)
@@ -191,7 +191,7 @@ function logout () {
     'collections': {},
     'caves': {}
   })
-  AppStore.emit_change()
+  ChromeStore.emit_change()
   switch_page('login')
 }
 
@@ -207,7 +207,7 @@ function setup_status (payload) {
   if (icon) {
     state = state::assocIn(['login', 'setup', 'icon'], icon)
   }
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 }
 
 function setup_wait () {
@@ -220,7 +220,7 @@ function cave_thrown_into_bit_bucket (payload) {
   }
 
   state = state::dissocIn(['library', 'caves', payload.id])
-  AppStore.emit_change()
+  ChromeStore.emit_change()
   if (state::getIn(['library', 'panel']) === `caves/${payload.id}`) {
     AppActions.focus_panel('caved')
   }
@@ -243,7 +243,7 @@ function open_preferences (payload) {
   focus_panel({panel: 'preferences'})
 }
 
-AppDispatcher.register('app-store', Store.action_listeners(on => {
+AppDispatcher.register('chrome-store', Store.action_listeners(on => {
   on(AppConstants.SETUP_STATUS, setup_status)
   on(AppConstants.SETUP_WAIT, setup_wait)
 
@@ -267,11 +267,11 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
 
   on(AppConstants.FETCH_SEARCH, (payload) => {
     state = state::assocIn(['library', 'search', 'query'], payload.query)
-    AppStore.emit_change()
+    ChromeStore.emit_change()
   })
   on(AppConstants.SEARCH_FETCHED, (payload) => {
     state = state::assocIn(['library', 'search', 'fetched_query'], payload.query)
-    AppStore.emit_change()
+    ChromeStore.emit_change()
   })
 
   on(AppConstants.GAIN_FOCUS, gain_focus)
@@ -288,38 +288,38 @@ AppDispatcher.register('app-store', Store.action_listeners(on => {
 
 function game_store_diff (payload) {
   state = patch.applyAt(state, ['library', 'games'], payload.diff)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 }
 
 function cave_store_diff (payload) {
   state = patch.applyAt(state, ['library', 'caves'], payload.diff)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 }
 
 function cave_store_cave_diff (payload) {
   state = patch.applyAt(state, ['library', 'caves', payload.cave_id], payload.diff)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 }
 
 function install_location_store_diff (payload) {
   state = patch.applyAt(state, ['install_locations'], payload.diff)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 }
 
 Store.subscribe('collection-store', (collection_state) => {
   state = state::assocIn(['library', 'collections'], collection_state.collections)
   state = state::assocIn(['collections', 'featured_ids'], collection_state.featured_ids)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 })
 
 Store.subscribe('credentials-store', (credentials) => {
   state = state::assocIn(['credentials'], credentials)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 })
 
 Store.subscribe('preferences-store', (preferences) => {
   state = state::assocIn(['preferences'], preferences)
-  AppStore.emit_change()
+  ChromeStore.emit_change()
 })
 
-export default AppStore
+export default ChromeStore

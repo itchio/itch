@@ -11,7 +11,7 @@ import AppActions from '../stubs/app-actions'
 import CredentialsStore from '../stubs/credentials-store'
 import defer from '../stubs/defer'
 
-test('AppStore', t => {
+test('ChromeStore', t => {
   const GameStore = test.module({
     add_change_listener: t.spy(),
     get_state: () => {}
@@ -38,12 +38,12 @@ test('AppStore', t => {
     './store': Store
   }, electron)
 
-  const AppStore = proxyquire('../../app/stores/app-store', stubs).default
-  const handler = AppDispatcher.get_handler('app-store')
+  const ChromeStore = proxyquire('../../app/stores/chrome-store', stubs).default
+  const handler = AppDispatcher.get_handler('chrome-store')
 
   t.stub(CredentialsStore.get_current_user(), 'my_collections').resolves({collections: []})
 
-  const get_state = () => AppStore.get_state()
+  const get_state = () => ChromeStore.get_state()
 
   t.case('setup_status', t => {
     const message = 'Hold on to your ifs'

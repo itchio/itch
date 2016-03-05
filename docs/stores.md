@@ -23,7 +23,7 @@ browser-side (node):
 
 renderer-side (chrome):
 
-  * AppStore
+  * ChromeStore
   * I18nStore
 
 That's too many stores. I think we should have one canonical app state,
