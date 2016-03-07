@@ -1,5 +1,5 @@
 
-import {assocIn, dissocIn, getIn} from 'grovel'
+import {assocIn, dissocIn, getIn, applyAt} from 'grovel'
 import Store from './store'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
@@ -7,7 +7,6 @@ import AppConstants from '../constants/app-constants'
 import AppActions from '../actions/app-actions'
 
 import defer from '../util/defer'
-import patch from '../util/patch'
 import env from '../env'
 
 let state = {
@@ -287,22 +286,22 @@ AppDispatcher.register('chrome-store', Store.action_listeners(on => {
 }))
 
 function game_store_diff (payload) {
-  state = patch.applyAt(state, ['library', 'games'], payload.diff)
+  state = state::applyAt(payload.diff, ['library', 'games'])
   ChromeStore.emit_change()
 }
 
 function cave_store_diff (payload) {
-  state = patch.applyAt(state, ['library', 'caves'], payload.diff)
+  state = state::applyAt(payload.diff, ['library', 'caves'])
   ChromeStore.emit_change()
 }
 
 function cave_store_cave_diff (payload) {
-  state = patch.applyAt(state, ['library', 'caves', payload.cave_id], payload.diff)
+  state = state::applyAt(payload.diff, ['library', 'caves', payload.cave_id])
   ChromeStore.emit_change()
 }
 
 function install_location_store_diff (payload) {
-  state = patch.applyAt(state, ['install_locations'], payload.diff)
+  state = state::applyAt(payload.diff, ['install_locations'])
   ChromeStore.emit_change()
 }
 

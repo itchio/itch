@@ -1,10 +1,10 @@
 
 import {throttle, each} from 'underline'
+import {diff} from 'grovel'
 
 import walk from 'walk'
 import electron from 'electron'
 import uuid from 'node-uuid'
-import deep from 'deep-diff'
 import deepAssign from 'deep-assign'
 import humanize from 'humanize-plus'
 
@@ -96,7 +96,7 @@ function compute_state () {
 function recompute_state () {
   let old_state = state
   let new_state = compute_state()
-  let state_diff = deep.diff(old_state, new_state)
+  let state_diff = old_state::diff(new_state)
 
   if (!state_diff) return
   AppActions.install_location_store_diff(state_diff)

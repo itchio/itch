@@ -1,5 +1,6 @@
 
 import {throttle, findWhere, each} from 'underline'
+import {diff} from 'grovel'
 
 import AppDispatcher from '../dispatcher/app-dispatcher'
 import AppActions from '../actions/app-actions'
@@ -15,7 +16,6 @@ import I18nStore from './i18n-store'
 import {Transition, Cancelled, InputRequired, Crash} from '../tasks/errors'
 
 import path from 'path'
-import deep from 'deep-diff'
 import clone from 'clone'
 import uuid from 'node-uuid'
 
@@ -103,7 +103,7 @@ function log_path (cave_id) {
 
 function emit_change () {
   let new_state = state
-  let state_diff = deep.diff(old_state, new_state)
+  let state_diff = old_state::diff(new_state)
 
   if (!state_diff) return
   old_state = clone(state)
@@ -323,12 +323,12 @@ function cave_progress (payload) {
   let old_state = state[id] || {}
   let new_state = Object.assign({}, old_state, payload.data)
 
-  let diff = deep.diff(old_state, new_state)
-  if (!diff) return
+  let cave_diff = old_state::diff(new_state)
+  if (!cave_diff) return
 
   state[id] = new_state
 
-  AppActions.cave_store_cave_diff(id, diff)
+  AppActions.cave_store_cave_diff(id, cave_diff)
   CaveStore.emit_change()
 }
 

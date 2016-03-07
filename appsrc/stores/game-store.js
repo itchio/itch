@@ -1,6 +1,6 @@
 
 import {filter, where, indexBy, throttle, debounce, each} from 'underline'
-import {assocIn} from 'grovel'
+import {assocIn, diff} from 'grovel'
 
 import Store from './store'
 import CredentialsStore from './credentials-store'
@@ -13,8 +13,6 @@ import {Logger} from '../util/log'
 import mklog from '../util/log'
 const log = mklog('game-store')
 const opts = {logger: new Logger({sinks: {console: (process.env.LET_ME_IN === '1')}})}
-
-import deep from 'deep-diff'
 
 import electron from 'electron'
 
@@ -118,7 +116,7 @@ function commit_games (key, games) {
   let games_by_id = games::indexBy('id')
   let new_state = {[key]: games_by_id}
   let old_state = {[key]: state[key]}
-  let state_diff = deep.diff(old_state, new_state)
+  let state_diff = old_state::diff(new_state)
 
   if (!state_diff) return
   AppActions.game_store_diff(state_diff)
