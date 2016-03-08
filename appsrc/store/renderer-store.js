@@ -16,4 +16,12 @@ const reducer = (state, action) => state
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
 
+store.subscribe((action) => {
+  if (action) {
+    console.log(`renderer got action ${action.type}`)
+  } else {
+    console.log(`renderer got undefined action`)
+  }
+})
+
 export default store

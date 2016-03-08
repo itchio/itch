@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {Component} from 'react'
 import r from 'r-dom'
 
-// import LoginPage from './login-page'
+import LoginPage from './login-page'
 // import LibraryPage from './library-page'
 
 /**
@@ -17,8 +17,7 @@ class Layout extends Component {
     switch (appState.session.navigation.page) {
       case 'login':
       case 'setup':
-        return r.span({style: {color: 'white'}}, 'login/setup page!')
-        // return r(LoginPage, {state: app_state})
+        return r(LoginPage, {state: appState})
       case 'library':
         return r.span({style: {color: 'white'}}, 'library page!')
         // return r(LibraryPage, {state: app_state})

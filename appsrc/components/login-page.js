@@ -1,7 +1,6 @@
 
 import r from 'r-dom'
-import {PropTypes} from 'react'
-import ShallowComponent from './shallow-component'
+import {PropTypes, Component} from 'react'
 
 import LoginForm from './login-form'
 
@@ -9,7 +8,7 @@ import LoginForm from './login-form'
  * The 'login' state of the application, during which
  * setup also happens.
  */
-class LoginPage extends ShallowComponent {
+class LoginPage extends Component {
   render () {
     let state = this.props.state
 

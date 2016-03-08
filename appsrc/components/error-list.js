@@ -1,9 +1,11 @@
 
 import r from 'r-dom'
-import {PropTypes} from 'react'
-import DeepComponent from './deep-component'
+import {PropTypes, Component} from 'react'
 
 import format from '../util/format'
+
+// TODO: get t somewhere
+const t = (x) => x
 
 /**
  * A bunch of errors displayed in a list
@@ -12,11 +14,10 @@ import format from '../util/format'
  *  - errors.api.login.password_must_be_provided
  *  - errors.api.login.username_must_be_provided
  */
-class ErrorList extends DeepComponent {
+class ErrorList extends Component {
   render () {
     let prefix = 'errors'
 
-    const t = this.t
     const i18n_namespace = this.props.i18n_namespace
     if (i18n_namespace) {
       prefix = prefix + '.' + i18n_namespace

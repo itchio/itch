@@ -1,13 +1,12 @@
 
 import r from 'r-dom'
-import {PropTypes} from 'react'
-import ShallowComponent from './shallow-component'
+import {PropTypes, Component} from 'react'
 
 /**
  * An icon from the icomoon font.
  * Peek in the static/fonts/icomoon/ folder to learn more.
  */
-class Icon extends ShallowComponent {
+class Icon extends Component {
   render () {
     const {icon, spin = false, classSet} = this.props
     const data_tip = this.props['data-tip']

@@ -1,14 +1,12 @@
 
 import r from 'r-dom'
-import {PropTypes} from 'react'
-import ShallowComponent from './shallow-component'
+import {PropTypes, Component} from 'react'
 
 /**
  * Basically a text field, name isn't ideal.
  */
-class InputRow extends ShallowComponent {
+class InputRow extends Component {
   componentDidMount () {
-    super.componentDidMount()
     if (this.props.autofocus) {
       this.refs.input.focus()
     }

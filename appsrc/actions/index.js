@@ -27,7 +27,9 @@ import {
 
   OPEN_EXTERNAL,
 
-  CHANGE_USER
+  CHANGE_USER,
+
+  LOGIN_WITH_PASSWORD
 } from '../constants/action-types'
 
 export const boot = createAction(BOOT)
@@ -54,3 +56,5 @@ export const checkForSelfUpdate = createAction(CHECK_FOR_SELF_UPDATE)
 export const openExternal = createAction(OPEN_EXTERNAL)
 
 export const changeUser = createAction(CHANGE_USER)
+
+export const loginWithPassword = createAction(LOGIN_WITH_PASSWORD)
