@@ -21,7 +21,7 @@ import {
 } from '../constants/action-types'
 
 import {takeEvery} from 'redux-saga'
-import {call, put, select} from 'redux-saga/effects'
+import {call, fork, put, select} from 'redux-saga/effects'
 
 import createQueue from './queue'
 
@@ -75,8 +75,7 @@ export function * _focusWindow () {
     invariant(window, 'window still exists')
     yield call(::window.show)
   } else {
-    console.log(`creating window`)
-    yield call(_createWindow)
+    yield fork(_createWindow)
   }
 }
 
