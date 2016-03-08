@@ -58,7 +58,7 @@ app.on('before-quit', e => {
 
 app.on('window-all-closed', e => {
   const state = store.getState()
-  if (state.mainWindow.quitting) {
+  if (state.ui.mainWindow.quitting) {
     // let normal electron shutdown process continue
     return
   } else {

@@ -2,7 +2,6 @@
 import {app, BrowserWindow} from '../../electron'
 
 import {
-  focusWindow,
   quit,
   quitElectronApp,
   prepareQuit
@@ -10,7 +9,6 @@ import {
 
 import {loop, Effects} from 'redux-loop'
 import {handleActions} from 'redux-actions'
-import invariant from 'invariant'
 
 const initialState = {
   id: null,
@@ -18,23 +16,17 @@ const initialState = {
 }
 
 export const mainWindow = handleActions({
-  BOOT: (state, action) => {
-    console.log(`hey we're in boot how about we focus a window or some shit`)
-    return loop(state, Effects.constant(focusWindow()))
-  },
-
   WINDOW_READY: (state, action) => {
     const {id} = action.payload
     return {...state, id, focused: true}
   },
 
-  HIDE_WINDOW: (state, action) => {
-    const {id} = state
-    const win = BrowserWindow.fromId(id)
-    invariant(win, 'main window still exists')
-    win.hide()
+  WINDOW_DESTROYED: (state, action) => {
+    return {...state, id: null, focused: false}
+  },
 
-    return state
+  PREPARE_QUIT: (state, action) => {
+    return {...state, quitting: true}
   },
 
   QUIT_WHEN_MAIN: (state, action) => {

@@ -5,18 +5,22 @@ import invariant from 'invariant'
 
 import {
   windowReady,
-  windowFocusChanged
+  windowDestroyed,
+  windowFocusChanged,
+  quit
 } from '../actions'
 
 import {
+  BOOT,
   PREPARE_QUIT,
-  FOCUS_WINDOW
+  FOCUS_WINDOW,
+  HIDE_WINDOW,
+  WINDOW_DESTROYED,
+  QUIT_WHEN_MAIN
 } from '../constants/action-types'
 
 import {takeEvery} from 'redux-saga'
 import {call, put, select} from 'redux-saga/effects'
-
-let quitting = false
 
 function * createWindow () {
   const width = 1220
@@ -39,17 +43,7 @@ function * createWindow () {
   })
 
   window.on('close', (e) => {
-    if (quitting) {
-      console.log(`actually quitting`)
-      // let normal electron app shutdown take place
-      return
-    } else {
-      console.log(`not quitting, just hiding!`)
-      // prevent normal electron app shutdown, just hide window instead
-      e.preventDefault()
-      window.hide()
-      return false
-    }
+    windowActions.emit('action', windowDestroyed())
   })
 
   window.on('focus', (e) => {
@@ -80,32 +74,55 @@ function * createWindow () {
     yield call(pumpAction)
     while (actions.length > 0) {
       const action = actions.shift()
-      console.log(`putting action: `, action)
       yield put(action)
+
+      if (action.type === WINDOW_DESTROYED) {
+        return
+      }
     }
   }
 }
 
-function * prepareQuit () {
-  quitting = true
-}
-
-function * focusWindow () {
+export function * focusWindow () {
   const id = yield select((state) => state.ui.mainWindow.id)
 
-  if (id === null) {
-    yield* createWindow()
-  } else {
+  if (id) {
     const window = BrowserWindow.fromId(id)
     invariant(window, 'window still exists')
     yield call(::window.show)
+  } else {
+    yield* createWindow()
+  }
+}
+
+export function * hideWindow () {
+  const id = yield select((state) => state.ui.mainWindow.id)
+
+  if (id) {
+    const window = BrowserWindow.fromId(id)
+    invariant(window, 'window still exists')
+    yield call(::window.close)
+  }
+}
+
+export function * quitWhenMain () {
+  const mainId = yield select((state) => state.ui.mainWindow.id)
+  const focused = BrowserWindow.getFocusedWindow()
+
+  if (focused) {
+    if (focused.id === mainId) {
+      yield put(quit())
+    } else {
+      yield call(::focused.close)
+    }
   }
 }
 
 export default function * mainSaga () {
-  console.log(`in mainSaga!`)
   yield [
-    takeEvery(PREPARE_QUIT, prepareQuit),
-    takeEvery(FOCUS_WINDOW, focusWindow)
+    takeEvery(FOCUS_WINDOW, focusWindow),
+    takeEvery(HIDE_WINDOW, hideWindow),
+    takeEvery(BOOT, focusWindow),
+    takeEvery(QUIT_WHEN_MAIN, quitWhenMain)
   ]
 }
