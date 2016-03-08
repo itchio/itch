@@ -6,6 +6,7 @@ import Layout from './components/layout'
 import {Provider} from 'react-redux'
 import {shell, remote} from './electron'
 
+import './boot/env'
 import './boot/bluebird'
 import './boot/fs'
 

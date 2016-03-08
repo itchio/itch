@@ -26,8 +26,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const enhancer = compose(
-  applyMiddleware(...middleware),
   electronEnhancer(),
+  applyMiddleware(...middleware),
   reduxLoop()
 )
 
