@@ -16,7 +16,11 @@ module.exports = keyMirror({
   FOCUS_WINDOW: null,
   HIDE_WINDOW: null,
 
-  FOCUS_PANEL: null,
+  /* Navigation */
+  NAVIGATE: null,
+
+  /* Menu */
+  REFRESH_MENU: null,
 
   /** Buh-bye */
   PREPARE_QUIT: null,

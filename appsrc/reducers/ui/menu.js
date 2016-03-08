@@ -1,33 +1,79 @@
 
-import {Menu, shell} from '../electron'
-import {every, partial} from 'underline'
+import {Menu, shell, app} from '../../electron'
 
-import CredentialsStore from '../stores/credentials-store'
-import I18nStore from '../stores/i18n-store'
-import AppActions from '../actions/app-actions'
-import AppConstants from '../constants/app-constants'
-import urls from '../constants/urls'
-import AppDispatcher from '../dispatcher/app-dispatcher'
+import os from '../../util/os'
+import urls from '../../constants/urls'
+import crash_reporter from '../../util/crash-reporter'
 
 import clone from 'clone'
 
-import os from '../util/os'
-import crash_reporter from '../util/crash-reporter'
+import {loop, Effects} from 'redux-loop'
+import {handleActions} from 'redux-actions'
+import {createSelector} from 'reselect'
+import {
+  navigate,
+  hideWindow,
+  quitWhenMain,
+  changeUser,
+  refreshMenu,
+  checkForSelfUpdate
+} from '../../actions'
 
-let osx = (os.platform() === 'darwin')
+const osx = (os.platform() === 'darwin')
 
-function makeMenus () {
+export default handleActions({
+  WINDOW_READY: (state, action) => {
+    mountMenu(state)
+    return loop(state, Effects.constant(refreshMenu()))
+  },
+
+  REFRESH_MENU: (state, action) => {
+    const {i18n, credentials} = action.payload
+    return {template: computeMenuTemplate(i18n, credentials)}
+  }
+}, {template: []})
+
+function mountMenu (state) {
+  const store = require('../../store').default
+
+  const refreshSelector = createSelector(
+    (state) => state.i18n,
+    (state) => state.session.credentials,
+    (i18n, credentials) => {
+      store.dispatch(refreshMenu())
+    }
+  )
+
+  const applySelector = createSelector(
+    (state) => state.ui.menu,
+    (menuState) => {
+      // electron gotcha: buildFromTemplate mutates its argument
+      const menu = Menu.buildFromTemplate(clone(menuState.template))
+      Menu.setApplicationMenu(menu)
+    }
+  )
+
+  store.subscribe(() => {
+    const state = store.getState()
+    refreshSelector(state)
+    applySelector(state)
+  })
+}
+
+function computeMenuTemplate (i18n, credentials) {
+  const store = require('../../store').default
+
   // XXX: get t from somewhere
-  let _t = I18nStore.get_state().getFixedT(null, null)
+  const _t = (x) => x
 
-  let menus = {
+  const menus = {
     file: {
       label: _t('menu.file.file'),
       submenu: [
         {
           label: _t('menu.file.preferences'),
           accelerator: (osx ? 'Cmd+,' : 'Ctrl+P'),
-          click: AppActions.open_preferences
+          click: () => store.dispatch(navigate('preferences'))
         },
         {
           type: 'separator'
@@ -35,12 +81,12 @@ function makeMenus () {
         {
           label: _t('menu.file.close_window'),
           accelerator: (osx ? 'Cmd+W' : 'Alt+F4'),
-          click: AppActions.hide_window
+          click: () => store.dispatch(hideWindow())
         },
         {
           label: _t('menu.file.quit'),
           accelerator: 'CmdOrCtrl+Q',
-          click: AppActions.quit_when_main
+          click: () => store.dispatch(quitWhenMain())
         }
       ]
     },
@@ -87,7 +133,7 @@ function makeMenus () {
       submenu: [
         {
           label: _t('menu.account.change_user'),
-          click: () => AppActions.change_user()
+          click: () => store.dispatch(changeUser())
         }
       ]
     },
@@ -104,12 +150,12 @@ function makeMenus () {
           click: () => shell.openExternal(`${urls.itch_repo}/blob/master/LICENSE`)
         },
         {
-          label: `Version ${require('electron').app.getVersion()}`,
+          label: `Version ${app.getVersion()}`,
           enabled: false
         },
         {
           label: _t('menu.help.check_for_update'),
-          click: AppActions.check_for_self_update
+          click: () => store.dispatch(checkForSelfUpdate())
         },
         {
           type: 'separator'
@@ -133,50 +179,15 @@ function makeMenus () {
     }
   }
 
-  return menus
-}
-
-function refreshMenu () {
-  const menus = makeMenus()
-
-  // electron gotcha: buildFromTemplate mutates its argument
-  let template = clone([
+  const template = [
     menus.file,
     menus.edit,
-    (CredentialsStore.getCurrentUser()
+    (credentials.currentUser
     ? menus.account
     : menus.account_disabled),
     menus.help
-  ])
+  ]
+  Object.freeze(template)
 
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
-}
-
-let oldState = {}
-
-function sameState (state, key) {
-  oldState === state
-}
-
-const watchedStores = ['credentials', 'i18n', 'mainWindow']
-
-export default function mount (store) {
-  store.subscribe(() => {
-    const state = store.getState()
-    if (!watchedStores::every(sameState::partial(state))) {
-      refreshMenu()
-    }
-    oldState = state
-  })
-
-  CredentialsStore.add_change_listener('menu', refreshMenu)
-  I18nStore.add_change_listener('menu', refreshMenu)
-  AppDispatcher.register('menu', (payload) => {
-    if (payload.action_type === AppConstants.FOCUS_GAIN) {
-      console.log(`Gained focus, refreshing menu`)
-      refreshMenu()
-    }
-  })
-  refreshMenu()
+  return template
 }

@@ -1,4 +1,6 @@
 
+export * from './menu-actions'
+
 import {createAction} from 'redux-actions'
 
 import {
@@ -11,12 +13,16 @@ import {
   FOCUS_WINDOW,
   HIDE_WINDOW,
 
-  FOCUS_PANEL,
+  REFRESH_MENU,
+
+  NAVIGATE,
 
   PREPARE_QUIT,
   QUIT_WHEN_MAIN,
   QUIT,
-  QUIT_ELECTRON_APP
+  QUIT_ELECTRON_APP,
+
+  CHECK_FOR_SELF_UPDATE
 } from '../constants/action-types'
 
 export const boot = createAction(BOOT)
@@ -28,9 +34,11 @@ export const createWindow = createAction(CREATE_WINDOW)
 export const focusWindow = createAction(FOCUS_WINDOW)
 export const hideWindow = createAction(HIDE_WINDOW)
 
-export const focusPanel = createAction(FOCUS_PANEL)
+export const navigate = createAction(NAVIGATE)
 
 export const prepareQuit = createAction(PREPARE_QUIT)
 export const quitWhenMain = createAction(QUIT_WHEN_MAIN)
 export const quit = createAction(QUIT)
 export const quitElectronApp = createAction(QUIT_ELECTRON_APP)
+
+export const checkForSelfUpdate = createAction(CHECK_FOR_SELF_UPDATE)

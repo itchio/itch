@@ -13,15 +13,14 @@ import r from 'r-dom'
 class Layout extends Component {
   render () {
     const {appState} = this.props
-    console.log(`in layout, appState = `, appState)
 
-    switch (appState.navigation.page) {
+    switch (appState.session.navigation.page) {
       case 'login':
       case 'setup':
-        return r.span({}, 'login/setup page!')
+        return r.span({style: {color: 'white'}}, 'login/setup page!')
         // return r(LoginPage, {state: app_state})
       case 'library':
-        return r.span({}, 'library page!')
+        return r.span({style: {color: 'white'}}, 'library page!')
         // return r(LibraryPage, {state: app_state})
       default:
         return r.div()

@@ -1,4 +1,6 @@
 
+import {app, BrowserWindow} from '../../electron'
+
 import {
   focusWindow,
   windowReady,
@@ -6,10 +8,9 @@ import {
   quit,
   quitElectronApp,
   prepareQuit
-} from '../actions'
+} from '../../actions'
 
 import {loop, Effects} from 'redux-loop'
-import {app, BrowserWindow} from '../electron'
 import {handleActions} from 'redux-actions'
 import invariant from 'invariant'
 
@@ -51,9 +52,10 @@ export const mainWindow = handleActions({
   },
 
   QUIT_WHEN_MAIN: (state, action) => {
+    const {id} = state
     const focused = BrowserWindow.getFocusedWindow()
     if (focused) {
-      if (focused.id === state.main_window_id) {
+      if (focused.id === id) {
         return loop(state, Effects.constant(quit()))
       } else {
         focused.close()
@@ -73,7 +75,7 @@ export const mainWindow = handleActions({
   },
 
   QUIT_ELECTRON_APP: (state, action) => {
-    app.quit()
+    setImmediate(::app.quit)
   },
 
   WINDOW_FOCUS_CHANGED: (state, action) => {
@@ -82,8 +84,10 @@ export const mainWindow = handleActions({
   }
 }, initialState)
 
+const isQuitting = (state) => state.ui.mainWindow.quitting
+
 function createWindow () {
-  const store = require('../store').default
+  const store = require('../../store').default
   const width = 1220
   const height = 720
 
@@ -97,8 +101,7 @@ function createWindow () {
   })
 
   window.on('close', (e) => {
-    const {quitting} = store.getState().mainWindow
-    if (quitting) {
+    if (isQuitting(store.getState())) {
       // let normal electron app shutdown take place
       return
     } else {
@@ -118,7 +121,7 @@ function createWindow () {
     window.show()
   })
 
-  const uri = `file://${__dirname}/../index.html`
+  const uri = `file://${__dirname}/../../index.html`
   window.loadURL(uri)
 
   if (process.env.DEVTOOLS === '1') {
