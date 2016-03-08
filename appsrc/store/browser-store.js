@@ -5,14 +5,19 @@ import {createStore, applyMiddleware, compose} from 'redux'
 import {electronEnhancer} from 'redux-electron-store'
 import {install as reduxLoop} from 'redux-loop'
 import thunk from 'redux-thunk'
-import createLogger from 'redux-node-logger'
+import createLogger from 'redux-cli-logger'
+import createSagaMiddleware from 'redux-saga'
+
+import sagas from '../sagas'
 import reducer from '../reducers'
 
 const logger = createLogger({
+  predicate: (getState, action) => !action.MONITOR_ACTION,
   stateTransformer: (state) => state::omit('ui')
 })
 
 const middleware = [
+  createSagaMiddleware(...sagas),
   thunk,
   logger
 ]

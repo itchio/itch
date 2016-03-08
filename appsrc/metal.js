@@ -45,7 +45,6 @@ app.on('ready', () => {
 
   handleUrls(process.argv)
 
-  console.log(`dispatching boot!`)
   store.dispatch(boot())
 })
 
