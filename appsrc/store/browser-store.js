@@ -11,16 +11,19 @@ import createSagaMiddleware from 'redux-saga'
 import sagas from '../sagas'
 import reducer from '../reducers'
 
-const logger = createLogger({
-  predicate: (getState, action) => !action.MONITOR_ACTION,
-  stateTransformer: (state) => state::omit('ui')
-})
-
 const middleware = [
   createSagaMiddleware(...sagas),
-  thunk,
-  logger
+  thunk
 ]
+
+if (process.env.NODE_ENV === 'development') {
+  const logger = createLogger({
+    predicate: (getState, action) => !action.MONITOR_ACTION,
+    stateTransformer: (state) => state::omit('ui')
+  })
+
+  middleware.push(logger)
+}
 
 const enhancer = compose(
   applyMiddleware(...middleware),

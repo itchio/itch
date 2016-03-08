@@ -1,117 +1,57 @@
 
-import {Menu, shell, app} from '../../electron'
-
-import os from '../../util/os'
-import urls from '../../constants/urls'
-import crash_reporter from '../../util/crash-reporter'
-
-import clone from 'clone'
-
-import {loop, Effects} from 'redux-loop'
 import {handleActions} from 'redux-actions'
-import {createSelector} from 'reselect'
-import {
-  navigate,
-  hideWindow,
-  quitWhenMain,
-  changeUser,
-  refreshMenu,
-  checkForSelfUpdate
-} from '../../actions'
-
-const osx = (os.platform() === 'darwin')
 
 export default handleActions({
-  WINDOW_READY: (state, action) => {
-    mountMenu(state)
-    return loop(state, Effects.constant(refreshMenu()))
-  },
-
   REFRESH_MENU: (state, action) => {
-    const {i18n, credentials} = action.payload
-    return {template: computeMenuTemplate(i18n, credentials)}
+    const {system, credentials} = action.payload
+    return {template: computeMenuTemplate(system, credentials)}
   }
 }, {template: []})
 
-function mountMenu (state) {
-  const store = require('../../store').default
-
-  const refreshSelector = createSelector(
-    (state) => state.i18n,
-    (state) => state.session.credentials,
-    (i18n, credentials) => {
-      store.dispatch(refreshMenu())
-    }
-  )
-
-  const applySelector = createSelector(
-    (state) => state.ui.menu,
-    (menuState) => {
-      // electron gotcha: buildFromTemplate mutates its argument
-      const menu = Menu.buildFromTemplate(clone(menuState.template))
-      Menu.setApplicationMenu(menu)
-    }
-  )
-
-  store.subscribe(() => {
-    const state = store.getState()
-    refreshSelector(state)
-    applySelector(state)
-  })
-}
-
-function computeMenuTemplate (i18n, credentials) {
-  const store = require('../../store').default
-
-  // XXX: get t from somewhere
-  const _t = (x) => x
-
+function computeMenuTemplate (system, credentials) {
   const menus = {
     file: {
-      label: _t('menu.file.file'),
+      label: 'menu.file.file',
       submenu: [
         {
-          label: _t('menu.file.preferences'),
-          accelerator: (osx ? 'Cmd+,' : 'Ctrl+P'),
-          click: () => store.dispatch(navigate('preferences'))
+          label: 'menu.file.preferences',
+          accelerator: (system.osx ? 'Cmd+,' : 'Ctrl+P')
         },
         {
           type: 'separator'
         },
         {
-          label: _t('menu.file.close_window'),
-          accelerator: (osx ? 'Cmd+W' : 'Alt+F4'),
-          click: () => store.dispatch(hideWindow())
+          label: 'menu.file.close_window',
+          accelerator: (system.osx ? 'Cmd+W' : 'Alt+F4')
         },
         {
-          label: _t('menu.file.quit'),
-          accelerator: 'CmdOrCtrl+Q',
-          click: () => store.dispatch(quitWhenMain())
+          label: 'menu.file.quit',
+          accelerator: 'CmdOrCtrl+Q'
         }
       ]
     },
 
     edit: {
-      label: _t('menu.edit.edit'),
+      label: 'menu.edit.edit',
       visible: false,
       submenu: [
         {
-          label: _t('menu.edit.cut'),
+          label: 'menu.edit.cut',
           accelerator: 'CmdOrCtrl+X',
           role: 'cut'
         },
         {
-          label: _t('menu.edit.copy'),
+          label: 'menu.edit.copy',
           accelerator: 'CmdOrCtrl+C',
           role: 'copy'
         },
         {
-          label: _t('menu.edit.paste'),
+          label: 'menu.edit.paste',
           accelerator: 'CmdOrCtrl+V',
           role: 'paste'
         },
         {
-          label: _t('menu.edit.select_all'),
+          label: 'menu.edit.select_all',
           accelerator: 'CmdOrCtrl+A',
           role: 'selectall'
         }
@@ -119,61 +59,54 @@ function computeMenuTemplate (i18n, credentials) {
     },
 
     account_disabled: {
-      label: _t('menu.account.account'),
+      label: 'menu.account.account',
       submenu: [
         {
-          label: _t('menu.account.not_logged_in'),
+          label: 'menu.account.not_logged_in',
           enabled: false
         }
       ]
     },
 
     account: {
-      label: _t('menu.account.account'),
+      label: 'menu.account.account',
       submenu: [
         {
-          label: _t('menu.account.change_user'),
-          click: () => store.dispatch(changeUser())
+          label: 'menu.account.change_user'
         }
       ]
     },
 
     help: {
-      label: _t('menu.help.help'),
+      label: 'menu.help.help',
       submenu: [
         {
-          label: _t('menu.help.view_terms'),
-          click: () => shell.openExternal(urls.terms_of_service)
+          label: 'menu.help.view_terms'
         },
         {
-          label: _t('menu.help.view_license'),
-          click: () => shell.openExternal(`${urls.itch_repo}/blob/master/LICENSE`)
+          label: 'menu.help.view_license'
         },
         {
-          label: `Version ${app.getVersion()}`,
+          label: `Version ${system.appVersion}`,
           enabled: false
         },
         {
-          label: _t('menu.help.check_for_update'),
-          click: () => store.dispatch(checkForSelfUpdate())
+          label: 'menu.help.check_for_update'
         },
         {
           type: 'separator'
         },
         {
-          label: _t('menu.help.report_issue'),
-          click: () => crash_reporter.report_issue()
+          label: 'menu.help.report_issue'
         },
         {
-          label: _t('menu.help.search_issue'),
-          click: () => shell.openExternal(`${urls.itch_repo}/search?type=Issues`)
+          label: 'menu.help.search_issue'
         },
         {
           type: 'separator'
         },
         {
-          label: _t('menu.help.release_notes'),
-          click: () => shell.openExternal(`${urls.itch_repo}/releases`)
+          label: 'menu.help.release_notes'
         }
       ]
     }
@@ -187,7 +120,5 @@ function computeMenuTemplate (i18n, credentials) {
     : menus.account_disabled),
     menus.help
   ]
-  Object.freeze(template)
-
   return template
 }

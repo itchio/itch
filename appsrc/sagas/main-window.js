@@ -1,9 +1,10 @@
 
-import {BrowserWindow} from '../electron'
-import {EventEmitter} from 'events'
+import {app, BrowserWindow} from '../electron'
 import invariant from 'invariant'
 
 import {
+  prepareQuit,
+  quitElectronApp,
   windowReady,
   windowDestroyed,
   windowFocusChanged,
@@ -12,17 +13,19 @@ import {
 
 import {
   BOOT,
-  PREPARE_QUIT,
   FOCUS_WINDOW,
   HIDE_WINDOW,
-  WINDOW_DESTROYED,
-  QUIT_WHEN_MAIN
+  QUIT_WHEN_MAIN,
+  QUIT_ELECTRON_APP,
+  QUIT
 } from '../constants/action-types'
 
 import {takeEvery} from 'redux-saga'
 import {call, put, select} from 'redux-saga/effects'
 
-function * createWindow () {
+import createQueue from './queue'
+
+function * _createWindow () {
   const width = 1220
   const height = 720
 
@@ -35,27 +38,22 @@ function * createWindow () {
     'title-bar-style': 'hidden'
   })
 
-  const windowActions = new EventEmitter()
-  const actions = []
-
-  const pumpAction = () => new Promise((resolve, reject) => {
-    windowActions.once('action', resolve)
-  })
+  const queue = createQueue('main-window')
 
   window.on('close', (e) => {
-    windowActions.emit('action', windowDestroyed())
+    queue.dispatch(windowDestroyed())
   })
 
   window.on('focus', (e) => {
-    windowActions.emit('action', windowFocusChanged({focused: true}))
+    queue.dispatch(windowFocusChanged({focused: true}))
   })
 
   window.on('blur', (e) => {
-    windowActions.emit('action', windowFocusChanged({focused: false}))
+    queue.dispatch(windowFocusChanged({focused: false}))
   })
 
   window.webContents.on('dom-ready', (e) => {
-    windowActions.emit('action', windowReady({id: window.id}))
+    queue.dispatch(windowReady({id: window.id}))
     window.show()
   })
 
@@ -66,24 +64,10 @@ function * createWindow () {
     window.webContents.openDevTools({detach: true})
   }
 
-  windowActions.on('action', (action) => {
-    actions.push(action)
-  })
-
-  while (true) {
-    yield call(pumpAction)
-    while (actions.length > 0) {
-      const action = actions.shift()
-      yield put(action)
-
-      if (action.type === WINDOW_DESTROYED) {
-        return
-      }
-    }
-  }
+  yield* queue.exhaust()
 }
 
-export function * focusWindow () {
+export function * _focusWindow () {
   const id = yield select((state) => state.ui.mainWindow.id)
 
   if (id) {
@@ -91,11 +75,12 @@ export function * focusWindow () {
     invariant(window, 'window still exists')
     yield call(::window.show)
   } else {
-    yield* createWindow()
+    console.log(`creating window`)
+    yield call(_createWindow)
   }
 }
 
-export function * hideWindow () {
+export function * _hideWindow () {
   const id = yield select((state) => state.ui.mainWindow.id)
 
   if (id) {
@@ -105,7 +90,7 @@ export function * hideWindow () {
   }
 }
 
-export function * quitWhenMain () {
+export function * _quitWhenMain () {
   const mainId = yield select((state) => state.ui.mainWindow.id)
   const focused = BrowserWindow.getFocusedWindow()
 
@@ -118,11 +103,22 @@ export function * quitWhenMain () {
   }
 }
 
-export default function * mainSaga () {
+export function * _quitElectronApp () {
+  yield call(::app.quit)
+}
+
+export function * _quit () {
+  yield put(prepareQuit())
+  yield put(quitElectronApp())
+}
+
+export default function * mainWindowSaga () {
   yield [
-    takeEvery(FOCUS_WINDOW, focusWindow),
-    takeEvery(HIDE_WINDOW, hideWindow),
-    takeEvery(BOOT, focusWindow),
-    takeEvery(QUIT_WHEN_MAIN, quitWhenMain)
+    takeEvery(FOCUS_WINDOW, _focusWindow),
+    takeEvery(HIDE_WINDOW, _hideWindow),
+    takeEvery(BOOT, _focusWindow),
+    takeEvery(QUIT_WHEN_MAIN, _quitWhenMain),
+    takeEvery(QUIT_ELECTRON_APP, _quitElectronApp),
+    takeEvery(QUIT, _quit)
   ]
 }

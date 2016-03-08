@@ -21,7 +21,13 @@ import {
   QUIT,
   QUIT_ELECTRON_APP,
 
-  CHECK_FOR_SELF_UPDATE
+  REPORT_ISSUE,
+
+  CHECK_FOR_SELF_UPDATE,
+
+  OPEN_EXTERNAL,
+
+  CHANGE_USER
 } from '../constants/action-types'
 
 export const boot = createAction(BOOT)
@@ -41,4 +47,10 @@ export const quitWhenMain = createAction(QUIT_WHEN_MAIN)
 export const quit = createAction(QUIT)
 export const quitElectronApp = createAction(QUIT_ELECTRON_APP)
 
+export const reportIssue = createAction(REPORT_ISSUE)
+
 export const checkForSelfUpdate = createAction(CHECK_FOR_SELF_UPDATE)
+
+export const openExternal = createAction(OPEN_EXTERNAL)
+
+export const changeUser = createAction(CHANGE_USER)

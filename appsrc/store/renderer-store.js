@@ -13,11 +13,7 @@ const enhancer = compose(
 )
 
 const reducer = (state, action) => state
-const initialState = {
-  navigation: {
-    page: 'login'
-  }
-}
+const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
 
 export default store

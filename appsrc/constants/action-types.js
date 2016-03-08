@@ -22,12 +22,16 @@ module.exports = keyMirror({
 
   /* Menu */
   REFRESH_MENU: null,
+  MENU_ACTION: null,
 
   /** Buh-bye */
   PREPARE_QUIT: null,
   QUIT: null,
   QUIT_WHEN_MAIN: null,
   QUIT_ELECTRON_APP: null,
+
+  /** Issues */
+  REPORT_ISSUE: null,
 
   /* Self updates */
   CHECK_FOR_SELF_UPDATE: null,
