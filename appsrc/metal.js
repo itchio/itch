@@ -1,121 +1,98 @@
 'use strict'
 
-require('source-map-support').install()
+import './boot/sourcemaps'
+import './boot/bluebird'
+import './boot/crash'
+import './boot/env'
+import './boot/fs'
 
-const env = require('./env')
+import autoUpdater from './util/auto-updater'
 
-if (env.name === 'development') {
-  console.log('Development environment, using debug-friendly settings')
-
-  require('bluebird').config({
-    longStackTraces: true
-  })
-} else {
-  console.log('Production environment, using optimized settings')
-
-  require('bluebird').config({
-    longStackTraces: false
-  })
-}
-
-if (!process.env.NODE_ENV) {
-  console.log(`Setting NODE_ENV to ${env.name}`)
-  process.env.NODE_ENV = env.name
-} else {
-  console.log(`NODE_ENV manually set to ${process.env.NODE_ENV}`)
-}
-
-require('./util/sf')
-require('./util/crash-reporter').default.mount()
-
-const auto_updater = require('./util/auto-updater').default
-Promise.resolve(auto_updater.start()).then((quit) => {
+async function autoUpdate () {
+  const quit = await autoUpdater.start()
   if (quit) {
     // squirrel on win32 sometimes requires exiting as early as possible
     process.exit(0)
   } else {
     boot()
   }
-})
+}
 
-const electron = require('electron')
+autoUpdate() // no need to wait for app.on('ready')
 
-function boot () {
-  const AppActions = require('./actions/app-actions')
-  let app = electron.app
+// App lifecycle
 
-  let should_quit = app.makeSingleInstance((argv, cwd) => {
-    handle_urls(argv)
-    AppActions.focus_window()
+import {app} from './electron'
+
+import {
+  boot,
+  prepareQuit,
+  focusWindow,
+  openUrl
+} from './actions'
+import store from './store'
+
+app.on('ready', () => {
+  const shouldQuit = app.makeSingleInstance((argv, cwd) => {
+    handleUrls(argv)
+    store.dispatch(focusWindow())
   })
-  if (should_quit) {
+  if (shouldQuit) {
     // app.quit() is the source of all our problems,
     // cf. https://github.com/itchio/itch/issues/202
     process.exit(0)
   }
 
-  app.on('ready', () => {
-    ready()
-  })
-  app.on('activate', AppActions.focus_window)
-}
+  handleUrls(process.argv)
 
-function ready () {
-  const AppActions = require('./actions/app-actions').default
+  console.log(`dispatching boot!`)
+  store.dispatch(boot())
+})
 
-  require('./stores/i18n-store')
-  require('./stores/self-update-store')
-  require('./stores/window-store')
-  require('./stores/collection-store')
-  require('./stores/game-store')
-  require('./stores/notification-store')
-  require('./stores/tray-store')
-  require('./stores/setup-store')
-  require('./stores/cave-store')
-  require('./stores/url-store')
-  require('./stores/policy-store')
-  require('./stores/purchase-store')
-  require('./stores/report-store')
-  require('./stores/install-location-store')
+app.on('activate', () => {
+  store.dispatch(focusWindow())
+})
 
-  require('./ui/menu').default.mount()
+app.on('before-quit', e => {
+  store.dispatch(prepareQuit())
+})
 
-  AppActions.boot()
+app.on('window-all-closed', e => {
+  const state = store.getState()
+  if (state.mainWindow.quitting) {
+    // let normal electron shutdown process continue
+    return
+  } else {
+    // prevent electron shutdown, we want to remain alive
+    e.preventDefault()
+  }
+})
 
-  register_url_handler()
-}
+// OSX (Info.pList)
+app.on('open-url', (e, url) => {
+  if (isItchioURL(url)) {
+    // OSX will err -600 if we don't
+    e.preventDefault()
+    store.dispatch(openUrl({url}))
+  } else {
+    console.log(`Ignoring non-itchio url: ${url}`)
+  }
+})
 
 // URL handling
 
-function is_itchio_url (s) {
-  return /^itchio:/i.test(s)
+import url_parser from 'url'
+
+function isItchioURL (s) {
+  return url_parser.parse(s).protocol === 'itchio:'
 }
 
-function register_url_handler () {
-  const AppActions = require('./actions/app-actions')
-
-  // OSX (Info.pList)
-  electron.app.on('open-url', (e, url) => {
-    if (/^itchio:/.test(url.toLowerCase())) {
-      // OSX will err -600 if we don't
-      e.preventDefault()
-      AppActions.open_url(url)
-    } else {
-      console.log(`Ignoring non-itchio url: ${url}`)
-    }
-  })
-
-  handle_urls(process.argv)
-}
-
-function handle_urls (argv) {
-  const AppActions = require('./actions/app-actions')
-
+function handleUrls (argv) {
   // Windows (reg.exe), Linux (XDG)
   argv.forEach((arg) => {
     // XXX should we limit to one url at most ?
-    if (is_itchio_url(arg)) {
-      AppActions.open_url(arg)
+    if (isItchioURL(arg)) {
+      store.dispatch(openUrl(arg))
     }
   })
 }

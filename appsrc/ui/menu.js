@@ -1,6 +1,6 @@
 
-import electron from 'electron'
-const {Menu, shell} = electron
+import {Menu, shell} from '../electron'
+import {every, partial} from 'underline'
 
 import CredentialsStore from '../stores/credentials-store'
 import I18nStore from '../stores/i18n-store'
@@ -16,7 +16,8 @@ import crash_reporter from '../util/crash-reporter'
 
 let osx = (os.platform() === 'darwin')
 
-function make_menus () {
+function makeMenus () {
+  // XXX: get t from somewhere
   let _t = I18nStore.get_state().getFixedT(null, null)
 
   let menus = {
@@ -135,35 +136,47 @@ function make_menus () {
   return menus
 }
 
-function refresh_menu () {
-  let menus = make_menus()
-  let template = [
+function refreshMenu () {
+  const menus = makeMenus()
+
+  // electron gotcha: buildFromTemplate mutates its argument
+  let template = clone([
     menus.file,
     menus.edit,
-    (CredentialsStore.get_current_user()
+    (CredentialsStore.getCurrentUser()
     ? menus.account
     : menus.account_disabled),
     menus.help
-  ]
+  ])
 
-  // electron gotcha: buildFromTemplate mutates its argument
-  template = clone(template)
-  let menu = Menu.buildFromTemplate(template)
+  const menu = Menu.buildFromTemplate(template)
   Menu.setApplicationMenu(menu)
 }
 
-let self = {
-  mount: () => {
-    CredentialsStore.add_change_listener('menu', refresh_menu)
-    I18nStore.add_change_listener('menu', refresh_menu)
-    AppDispatcher.register('menu', (payload) => {
-      if (payload.action_type === AppConstants.FOCUS_GAIN) {
-        console.log(`Gained focus, refreshing menu`)
-        refresh_menu()
-      }
-    })
-    refresh_menu()
-  }
+let oldState = {}
+
+function sameState (state, key) {
+  oldState === state
 }
 
-export default self
+const watchedStores = ['credentials', 'i18n', 'mainWindow']
+
+export default function mount (store) {
+  store.subscribe(() => {
+    const state = store.getState()
+    if (!watchedStores::every(sameState::partial(state))) {
+      refreshMenu()
+    }
+    oldState = state
+  })
+
+  CredentialsStore.add_change_listener('menu', refreshMenu)
+  I18nStore.add_change_listener('menu', refreshMenu)
+  AppDispatcher.register('menu', (payload) => {
+    if (payload.action_type === AppConstants.FOCUS_GAIN) {
+      console.log(`Gained focus, refreshing menu`)
+      refreshMenu()
+    }
+  })
+  refreshMenu()
+}

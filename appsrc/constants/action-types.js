@@ -1,21 +1,22 @@
 
-// XXX deprecate
-
 import keyMirror from 'keymirror'
 
-export default keyMirror({
+// not using 'export default' so each constant is a separate export
+module.exports = keyMirror({
   BOOT: null,
   OPEN_URL: null,
   SETUP_STATUS: null,
   SETUP_WAIT: null,
   SETUP_DONE: null,
 
+  /* Main window events */
   WINDOW_READY: null,
   WINDOW_FOCUS_CHANGED: null,
   CREATE_WINDOW: null,
   FOCUS_WINDOW: null,
   HIDE_WINDOW: null,
-  LIBRARY_FOCUS_PANEL: null,
+
+  FOCUS_PANEL: null,
 
   /** Buh-bye */
   PREPARE_QUIT: null,
@@ -133,9 +134,6 @@ export default keyMirror({
 
   /** Sent when app is about to reboot or shutdown */
   IMPLODE_APP: null,
-
-  /** Hi again! */
-  GAIN_FOCUS: null,
 
   /** GC unused database entries */
   GC_DATABASE: null,
