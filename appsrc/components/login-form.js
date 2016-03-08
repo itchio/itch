@@ -14,7 +14,6 @@ import {
 } from '../actions'
 
 import store from '../store'
-// const store = require('electron').remote.require('./store').default
 
 // TODO: get t somewhere
 const t = (x) => x

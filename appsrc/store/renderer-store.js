@@ -8,14 +8,13 @@ const filter = true
 const middleware = []
 
 if (process.env.NODE_ENV === 'development') {
-  const logger = createLogger({})
-
+  const logger = createLogger()
   middleware.push(logger)
 }
 
 const enhancer = compose(
-  electronEnhancer({filter, synchronous: false}),
   applyMiddleware(...middleware),
+  electronEnhancer({filter, synchronous: false}),
   DevTools.instrument()
 )
 
