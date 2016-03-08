@@ -12,7 +12,11 @@ const enhancer = compose(
   reduxLoop()
 )
 
-const initialState = {}
+const initialState = {
+  navigation: {
+    page: 'login'
+  }
+}
 const store = createStore(reducer, initialState, enhancer)
 
 export default store

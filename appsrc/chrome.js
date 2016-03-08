@@ -1,32 +1,23 @@
 'use strict'
 
-import env from './env'
 import r from 'r-dom'
 import ReactDOM from 'react-dom'
 import Layout from './components/layout'
-import AppActions from './actions/app-actions'
+import {Provider} from 'react-redux'
+import {shell, remote} from './electron'
 
-if (env.name === 'development') {
-  console.log('Development environment, using debug-friendly settings')
+import './boot/bluebird'
+import './boot/fs'
 
-  require('bluebird').config({
-    longStackTraces: true
-  })
-} else {
-  console.log('Production environment, using optimized settings')
+import store from './store'
+import {focusPanel} from './actions'
 
-  require('bluebird').config({
-    longStackTraces: false
-  })
-}
-require('./util/sf')
-
-let app_node
+let appNode
 
 function render () {
-  app_node = document.querySelector('#app')
-  let layout = r(Layout)
-  ReactDOM.render(layout, app_node)
+  appNode = document.querySelector('#app')
+  const layout = r(Provider, {store}, r(Layout))
+  ReactDOM.render(layout, appNode)
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -43,22 +34,23 @@ document.addEventListener('click', (e) => {
 
   if (target.tagName === 'A') {
     e.preventDefault()
-    window.require('electron').shell.openExternal(target.href)
+    shell.openExternal(target.href)
     return false
   }
 })
 
 window.addEventListener('beforeunload', () => {
-  if (!app_node) return
-  ReactDOM.unmountComponentAtNode(app_node)
-  app_node = null
+  if (!appNode) return
+  ReactDOM.unmountComponentAtNode(appNode)
+  appNode = null
 })
 
 window.addEventListener('keydown', (e) => {
+  // TODO: move all those shortcuts to actions
   switch (e.keyIdentifier) {
     case 'F12': // Shift-F12
       if (e.shiftKey) {
-        let win = window.require('electron').remote.getCurrentWindow()
+        const win = remote.getCurrentWindow()
         win.webContents.openDevTools({detach: true})
       }
       break
@@ -77,7 +69,7 @@ window.addEventListener('keydown', (e) => {
 
     case 'U+0046': // Ctrl-F / Cmd-F
       if (!e.ctrlKey && !e.metaKey) return
-      AppActions.focus_panel('search')
+      store.dispatch(focusPanel('search'))
       break
   }
 })

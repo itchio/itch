@@ -33,9 +33,10 @@ export const mainWindow = handleActions({
     const {id} = state
 
     if (id) {
-      const win = BrowserWindow.fromID(id)
+      const win = BrowserWindow.fromId(id)
       invariant(win, 'main window still exists')
-      return loop(state, Effects.constant(focusWindow()))
+      win.focus()
+      return state
     } else {
       createWindow()
       return state
@@ -44,7 +45,7 @@ export const mainWindow = handleActions({
 
   HIDE_WINDOW: (state, action) => {
     const {id} = state
-    const win = BrowserWindow.fromID(id)
+    const win = BrowserWindow.fromId(id)
     invariant(win, 'main window still exists')
     win.hide()
   },

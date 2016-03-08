@@ -1,49 +1,28 @@
 
+import {connect} from 'react-redux'
+import {Component} from 'react'
 import r from 'r-dom'
-import ShallowComponent from './shallow-component'
 
-import LoginPage from './login-page'
-import LibraryPage from './library-page'
-
-import ChromeStore from '../stores/chrome-store'
-import AppActions from '../actions/app-actions'
+// import LoginPage from './login-page'
+// import LibraryPage from './library-page'
 
 /**
  * Top-level component in the app, decides which page to show
  * Also, subscribes to app store to synchronize its state
  */
-class Layout extends ShallowComponent {
-  constructor () {
-    super()
-    this.state = {app_state: ChromeStore.get_state()}
-  }
-
-  componentDidMount () {
-    super.componentDidMount()
-    ChromeStore.add_change_listener('layout', (app_state) => {
-      pre: { // eslint-disable-line
-        typeof app_state === 'object'
-      }
-
-      this.setState({app_state})
-    })
-  }
-
-  componentWillUnmount () {
-    super.componentWillUnmount()
-    ChromeStore.remove_change_listener('layout')
-    AppActions.implode_app()
-  }
-
+class Layout extends Component {
   render () {
-    const {app_state} = this.state
+    const {appState} = this.props
+    console.log(`in layout, appState = `, appState)
 
-    switch (app_state.page) {
+    switch (appState.navigation.page) {
       case 'login':
       case 'setup':
-        return r(LoginPage, {state: app_state})
+        return r.span({}, 'login/setup page!')
+        // return r(LoginPage, {state: app_state})
       case 'library':
-        return r(LibraryPage, {state: app_state})
+        return r.span({}, 'library page!')
+        // return r(LibraryPage, {state: app_state})
       default:
         return r.div()
     }
@@ -52,4 +31,17 @@ class Layout extends ShallowComponent {
 
 Layout.propTypes = {}
 
-export default Layout
+function mapStateToProps (state) {
+  return {
+    appState: state
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {}
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Layout)

@@ -11,6 +11,8 @@ import {
   FOCUS_WINDOW,
   HIDE_WINDOW,
 
+  FOCUS_PANEL,
+
   PREPARE_QUIT,
   QUIT_WHEN_MAIN,
   QUIT,
@@ -25,6 +27,8 @@ export const windowFocusChanged = createAction(WINDOW_FOCUS_CHANGED)
 export const createWindow = createAction(CREATE_WINDOW)
 export const focusWindow = createAction(FOCUS_WINDOW)
 export const hideWindow = createAction(HIDE_WINDOW)
+
+export const focusPanel = createAction(FOCUS_PANEL)
 
 export const prepareQuit = createAction(PREPARE_QUIT)
 export const quitWhenMain = createAction(QUIT_WHEN_MAIN)

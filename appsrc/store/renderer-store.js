@@ -1,7 +1,7 @@
 
 import {createStore, applyMiddleware, compose} from 'redux'
 import {electronEnhancer} from 'redux-electron-store'
-import DevTools from 'redux-devtools'
+import DevTools from '../components/dev-tools'
 
 const filter = true
 const middleware = []
@@ -13,7 +13,11 @@ const enhancer = compose(
 )
 
 const reducer = (state, action) => state
-const initialState = {}
+const initialState = {
+  navigation: {
+    page: 'login'
+  }
+}
 const store = createStore(reducer, initialState, enhancer)
 
 export default store
