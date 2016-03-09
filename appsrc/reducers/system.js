@@ -6,7 +6,7 @@ import {handleActions} from 'redux-actions'
 const initialState = {
   appVersion: app.getVersion(),
   osx: (os.platform() === 'darwin'),
-  windows: (os.platform() === 'windows'),
+  windows: (os.platform() === 'win32'),
   linux: (os.platform() === 'linux')
 }
 
