@@ -14,13 +14,11 @@ import {
 } from '../constants/action-types'
 
 export function * passwordLogin (action) {
-  console.log(`password login doing its thing!`)
   yield put(attemptLogin())
 
   try {
     const {username, password} = action.payload
     const loginRes = (yield call([client, client.loginWithPassword], username, password))
-    console.log(`got loginRes: `, loginRes)
     const key = loginRes.key.key
     const keyClient = client.withKey(key)
     const me = (yield call([keyClient, keyClient.me])).user

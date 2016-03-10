@@ -4,6 +4,7 @@ import {app} from '../electron'
 import os from './os'
 
 import {partial} from 'underline'
+import {call} from 'redux-saga/effects'
 
 import mklog from './log'
 const log = mklog('ibrew')
@@ -13,80 +14,85 @@ import formulas from './ibrew/formulas'
 import version from './ibrew/version'
 import net from './ibrew/net'
 
-let default_version_check = {
+const defaultVersionCheck = {
   args: ['-V'],
   parser: /([a-zA-Z0-9\.]+)/
 }
 
-let self = {
-  fetch: async (opts, name) => {
-    let noop = () => null
-    let onstatus = opts.onstatus || noop
+const self = {
+  fetch: function * (opts, name) {
+    const noop = () => null
+    const {onstatus = noop} = opts
 
-    let formula = formulas[name]
-    if (!formula) throw new Error(`Unknown formula: ${name}`)
+    const formula = formulas[name]
+    if (!formula) {
+      throw new Error(`Unknown formula: ${name}`)
+    }
 
-    let os_whitelist = formula.os_whitelist
-    if (os_whitelist && os_whitelist.indexOf(net.os()) === -1) {
+    const osWhitelist = formula.osWhitelist
+    if (osWhitelist && osWhitelist.indexOf(net.os()) === -1) {
       log(opts, `${name}: skipping, it's irrelevant on ${net.os()}`)
       return
     }
 
     const channel = net.channel(name)
 
-    const download_version = async (v) => {
-      const archive_name = self.archive_name(name)
-      const archive_path = path.join(self.bin_path(), archive_name)
-      const archive_url = `${channel}/v${v}/${archive_name}`
+    const downloadVersion = function * (v) {
+      const archiveName = self.archiveName(name)
+      const archivePath = path.join(self.binPath(), archiveName)
+      const archiveUrl = `${channel}/v${v}/${archiveName}`
       onstatus('download', ['login.status.dependency_install', {name, version: v}])
-      log(opts, `${name}: downloading '${v}' from ${archive_url}`)
+      log(opts, `${name}: downloading '${v}' from ${archiveUrl}`)
 
-      await net.download_to_file(opts, archive_url, archive_path)
+      yield call(net.downloadToFile, opts, archiveUrl, archivePath)
 
       if (formula.format === 'executable') {
         log(opts, `${name}: installed!`)
       } else {
         log(opts, `${name}: extracting ${formula.format} archive`)
-        await extract.extract({
-          archive_path,
-          dest_path: self.bin_path()
+        yield call(extract.extract, {
+          archivePath,
+          destPath: self.binPath()
         })
         log(opts, `${name}: installed!`)
       }
     }
 
-    onstatus('stopwatch', ['login.status.dependency_check'])
-    const get_latest_version = net.get_latest_version::partial(channel)
+    onstatus('stopwatch', ['login.status.dependencyCheck'])
+    const getLatestVersion = net.getLatestVersion::partial(channel)
 
-    const local_version = await self.get_local_version(name)
+    const localVersion = yield call(self.getLocalVersion, name)
 
-    if (!local_version) {
-      if (formula.on_missing) formula.on_missing(os.platform())
+    if (!localVersion) {
+      if (formula.onMissing) {
+        formula.onMissing(os.platform())
+      }
       log(opts, `${name}: missing, downloading latest`)
-      return await download_version(await get_latest_version())
+      const latestVersion = yield call(getLatestVersion)
+      return yield call(downloadVersion, latestVersion)
     }
 
-    log(opts, `${name}: have local version '${local_version}'`)
+    log(opts, `${name}: have local version '${localVersion}'`)
 
-    let latest_version
+    let latestVersion
     try {
-      latest_version = await get_latest_version()
+      latestVersion = yield call(getLatestVersion)
     } catch (err) {
       log(opts, `${name}: cannot get latest version, skipping: ${err.message || err}`)
       return
     }
 
-    if (version.equal(local_version, latest_version) ||
-        local_version === 'head') {
+    if (version.equal(localVersion, latestVersion) ||
+        localVersion === 'head') {
       log(opts, `${name}: up-to-date`)
       return
     }
 
-    log(opts, `${name}: upgrading '${local_version}' => '${latest_version}'`)
-    await download_version(latest_version)
+    log(opts, `${name}: upgrading '${localVersion}' => '${latestVersion}'`)
+    yield call(downloadVersion, latestVersion)
   },
 
-  archive_name: (name) => {
+  archiveName: (name) => {
     let formula = formulas[name]
 
     if (formula.format === '7z') {
@@ -98,13 +104,14 @@ let self = {
     }
   },
 
-  get_local_version: async (name) => {
-    let formula = formulas[name]
+  getLocalVersion: function * (name) {
+    const formula = formulas[name]
+    const {versionCheck = {}} = formula
 
-    let check = Object.assign({}, default_version_check, formula.version_check || {})
+    const check = { ...defaultVersionCheck, ...versionCheck }
 
     try {
-      let info = await os.assert_presence(name, check.args, check.parser)
+      const info = yield call(os.assertPresence, name, check.args, check.parser)
       return version.normalize(info.parsed)
     } catch (err) {
       // not present
@@ -112,7 +119,7 @@ let self = {
     }
   },
 
-  bin_path: () => path.join(app.getPath('userData'), 'bin'),
+  binPath: () => path.join(app.getPath('userData'), 'bin'),
 
   ext: () => (os.platform() === 'win32') ? '.exe' : ''
 }

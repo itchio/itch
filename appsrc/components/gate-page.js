@@ -37,7 +37,7 @@ export class GatePage extends Component {
 
       <section className='crux'>
         <form className='form' onSubmit={this.handleSubmit}>
-          <input ref='username' type='text' placeholder={t('login.field.username')}/>
+          <input ref='username' type='text' placeholder={t('login.field.username')} autoFocus={true}/>
           <input ref='password' type='password' placeholder={t('login.field.password')}/>
           <section className='actions'>
             {this.renderActions(blockingOperation)}

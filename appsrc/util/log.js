@@ -1,11 +1,12 @@
 
 import {pairs} from 'underline'
+import colors from 'colors/safe'
 
 import fs from 'fs'
 import sf from '../util/sf'
 import path from 'path'
 import eol from 'eol'
-import deep_assign from 'deep-assign'
+import deepAssign from 'deep-assign'
 
 function make (name) {
   let f = function (opts, message) {
@@ -17,20 +18,22 @@ function make (name) {
   return f
 }
 
+const allColors = 'red green yellow blue magenta cyan white gray'.split(' ')
+
 export class Logger {
-  constructor (user_opts) {
-    if (typeof user_opts === 'undefined') {
-      user_opts = {}
+  constructor (userOpts) {
+    if (typeof userOpts === 'undefined') {
+      userOpts = {}
     }
 
-    let default_opts = {sinks: {console: true}}
-    let opts = deep_assign({}, default_opts, user_opts)
+    let defaultOpts = {sinks: {console: true}}
+    let opts = deepAssign({}, defaultOpts, userOpts)
 
     let sinks = opts.sinks
 
-    this.console_sink = false
-    this.string_sink = false
-    this.file_sink = false
+    this.consoleSink = false
+    this.stringSink = false
+    this.fileSink = false
     this.contents = ''
 
     for (let pair of sinks::pairs()) {
@@ -39,7 +42,7 @@ export class Logger {
 
       switch (key) {
         case 'console': {
-          this.console_sink = !!val
+          this.consoleSink = !!val
           break
         }
 
@@ -49,7 +52,7 @@ export class Logger {
             try {
               fs.mkdirSync(path.dirname(val))
             } catch (err) {}
-            this.file_sink = sf.createWriteStream(val, {
+            this.fileSink = sf.createWriteStream(val, {
               defaultEncoding: 'utf8',
               flags: 'a'
             })
@@ -58,7 +61,7 @@ export class Logger {
         }
 
         case 'string': {
-          this.string_sink = !!val
+          this.stringSink = !!val
           break
         }
       }
@@ -66,29 +69,52 @@ export class Logger {
   }
 
   log (message) {
-    this.write(`[${this.timestamp()}] ${message}`)
+    this.write(this.timestamp(), `${message}`)
   }
 
-  write (s) {
-    if (this.string_sink) {
-      this.contents += eol.auto(s + '\n')
+  nameToColor (name) {
+    this.colorCache = this.colorCache || {}
+
+    if (this.colorCache[name]) {
+      return this.colorCache[name]
     }
 
-    if (this.console_sink) {
-      console.log(s)
+    let hash = 0
+    for (const i in name) {
+      hash += name.charCodeAt(i)
+    }
+    hash = hash % allColors.length
+    this.colorCache[name] = allColors[hash]
+
+    return this.colorCache[name]
+  }
+
+  write (timestamp, s) {
+    if (this.stringSink) {
+      this.contents += eol.auto(`[${timestamp}] ${s}` + '\n')
     }
 
-    if (this.file_sink) {
-      this.file_sink.write(eol.auto(s + '\n'))
+    if (this.consoleSink) {
+      const matches = /^\[(.*)\]/.exec(s)
+      if (matches) {
+        const color = this.nameToColor(matches[1])
+        console.log(timestamp + ' ' + colors[color](s))
+      } else {
+        console.log(`[${timestamp}] ${s}`)
+      }
+    }
+
+    if (this.fileSink) {
+      this.fileSink.write(eol.auto(`[${timestamp}] ${s}` + '\n'))
     }
   }
 
   close () {
     return new Promise((resolve, reject) => {
-      if (!this.file_sink) resolve()
+      if (!this.fileSink) resolve()
 
-      this.file_sink.on('finish', () => resolve())
-      this.file_sink.end()
+      this.fileSink.on('finish', () => resolve())
+      this.fileSink.end()
     })
   }
 

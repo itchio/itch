@@ -3,6 +3,8 @@ import keyMirror from 'keymirror'
 
 // not using 'export default' so each constant is a separate export
 module.exports = keyMirror({
+  LOG: null,
+  
   BOOT: null,
   OPEN_URL: null,
   SETUP_STATUS: null,

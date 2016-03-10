@@ -10,26 +10,26 @@ let self = {
     return process.arch
   },
 
-  in_browser: function () {
+  inBrowser: function () {
     return self.process_type() === 'browser'
   },
 
-  in_renderer: function () {
+  inRenderer: function () {
     return self.process_type() === 'renderer'
   },
 
-  process_type: function () {
+  processType: function () {
     return process.type || 'browser'
   },
 
-  get_version: function (key) {
+  getVersion: function (key) {
     return process.versions[key]
   },
 
   /**
    * Get platform in the format used by the itch.io API
    */
-  itch_platform: function () {
+  itchPlatform: function () {
     switch (self.platform()) {
       case 'darwin':
         return 'osx'
@@ -40,25 +40,24 @@ let self = {
     }
   },
 
-  cli_args: function () {
+  cliArgs: function () {
     return process.argv
   },
 
-  assert_presence: async function (command, args, parser) {
-    if (typeof args === 'undefined') {
-      args = []
-    }
-
+  assertPresence: async (command, args, parser) => {
     let stdout = ''
     let stderr = ''
 
-    let spawn_opts = {
+    args = args || []
+
+    const spawnOpts = {
       command,
       args,
-      ontoken: (tok) => stdout += '\n' + tok,
-      onerrtoken: (tok) => stderr += '\n' + tok
+      onToken: (tok) => { stdout += '\n' + tok },
+      onErrToken: (tok) => { stderr += '\n' + tok }
     }
-    let code = await spawn(spawn_opts)
+
+    const code = await spawn(spawnOpts)
     if (code !== 0) {
       throw new Error(`${command} exited with code ${code}\n${stdout}\n${stderr}`)
     }

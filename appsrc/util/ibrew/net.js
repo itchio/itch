@@ -12,7 +12,7 @@ let self = {
    * Download to file without butler, because it's used
    * to install butler
    */
-  download_to_file: async (opts, url, file) => {
+  downloadToFile: async (opts, url, file) => {
     let req = needle.get(url)
     await sf.mkdir(path.dirname(file))
     console.log(`downloading ${url} to ${file}`)
@@ -49,7 +49,7 @@ let self = {
   },
 
   /** fetch latest version number from repo */
-  get_latest_version: async (channel) => {
+  getLatestVersion: async (channel) => {
     let url = `${channel}/LATEST`
     let res = await needle.getAsync(url)
 

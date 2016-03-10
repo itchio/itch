@@ -5,8 +5,12 @@ export * from './menu-actions'
 import {createAction} from 'redux-actions'
 
 import {
+  LOG,
+
   BOOT,
   OPEN_URL,
+
+  SETUP_STATUS,
 
   WINDOW_READY,
   WINDOW_DESTROYED,
@@ -29,8 +33,21 @@ import {
   OPEN_EXTERNAL
 } from '../constants/action-types'
 
+export const log = (message) => {
+  createAction(LOG)({message})
+}
+
+export const mklog = (source) => {
+  return (opts, message) => {
+    const {logger} = opts
+    createAction(LOG)({logger, source, message})
+  }
+}
+
 export const boot = createAction(BOOT)
 export const openUrl = createAction(OPEN_URL)
+
+export const setupStatus = createAction(SETUP_STATUS)
 
 export const windowReady = createAction(WINDOW_READY)
 export const windowDestroyed = createAction(WINDOW_DESTROYED)

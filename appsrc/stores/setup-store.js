@@ -42,7 +42,7 @@ async function install_deps (opts) {
 async function run () {
   augment_path()
 
-  let opts = {
+  const opts = {
     logger: new Logger(),
     onstatus: AppActions.setup_status
   }

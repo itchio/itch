@@ -1,5 +1,7 @@
 
 import {EventEmitter} from 'events'
+
+import {isCancelError} from 'redux-saga'
 import {call, put} from 'redux-saga/effects'
 
 const ACTION_EVENT = 'action'
@@ -21,14 +23,22 @@ export default function (name) {
   })
 
   const exhaust = function * (endType = '<none>') {
-    while (true) {
-      yield call(pump)
-      const action = actions.pop()
-      if (action) {
-        yield put(action)
-        if (endType && action.type === endType) {
-          return
+    try {
+      while (true) {
+        yield call(pump)
+        const action = actions.pop()
+        if (action) {
+          yield put(action)
+          if (endType && action.type === endType) {
+            return
+          }
         }
+      }
+    } catch (e) {
+      if (isCancelError(e)) {
+        // all good
+      } else {
+        console.log('in queue.exhaust: ', e.stack || e)
       }
     }
   }

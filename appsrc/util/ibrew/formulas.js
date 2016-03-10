@@ -7,14 +7,14 @@ let self = {}
  */
 self['7za'] = {
   format: 'executable',
-  on_missing: (platform) => {
+  onMissing: (platform) => {
     if (platform === 'linux') {
       // TODO: add link to doc page too
       let msg = '7-zip missing: 7za must be in $PATH\n(Try installing p7zip-full)'
       throw new Error(msg)
     }
   },
-  version_check: {
+  versionCheck: {
     args: [],
     parser: /([0-9a-z.v]*)(\s+beta)?[\s:]+Copyright/
   }
@@ -34,7 +34,7 @@ self['butler'] = {
  */
 self['elevate'] = {
   format: '7z',
-  os_whitelist: ['windows']
+  osWhitelist: ['windows']
 }
 
 /**
@@ -42,8 +42,8 @@ self['elevate'] = {
  */
 self['file'] = {
   format: '7z',
-  os_whitelist: ['windows'],
-  version_check: {
+  osWhitelist: ['windows'],
+  versionCheck: {
     args: ['--version'],
     parser: /file-([0-9a-z.]*)/
   }
@@ -54,7 +54,7 @@ self['file'] = {
  */
 self['arh'] = {
   format: '7z',
-  version_check: {
+  versionCheck: {
     args: [],
     parser: /Version ([0-9a-z.]*)/
   }
