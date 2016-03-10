@@ -13,19 +13,21 @@ const middleware = [
   thunk
 ]
 
+const devMiddleware = []
 if (process.env.NODE_ENV === 'development') {
   const logger = createLogger({
     predicate: (getState, action) => !action.MONITOR_ACTION,
     stateTransformer: (state) => ''
   })
 
-  middleware.push(logger)
+  devMiddleware.push(logger)
 }
 
 const inject = (action) => store.dispatch(action)
 const enhancer = compose(
   applyMiddleware(...middleware),
-  electronEnhancer({inject})
+  electronEnhancer({inject}),
+  applyMiddleware(...devMiddleware)
 )
 
 const initialState = {}

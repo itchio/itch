@@ -8,14 +8,19 @@ const filter = true
 const middleware = []
 
 if (process.env.NODE_ENV === 'development') {
-  const logger = createLogger()
+  const logger = createLogger({
+    predicate: (getState, action) => !action.MONITOR_ACTION
+  })
   middleware.push(logger)
 }
 
-const inject = (action) => store.dispatch(action)
+const inject = (action) => {
+  console.log(`injecting `, action)
+  store.dispatch(action)
+}
 const enhancer = compose(
-  applyMiddleware(...middleware),
   electronEnhancer({inject, filter}),
+  applyMiddleware(...middleware),
   DevTools.instrument()
 )
 

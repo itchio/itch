@@ -14,6 +14,7 @@ import {
 } from '../constants/action-types'
 
 export function * passwordLogin (action) {
+  console.log(`password login doing its thing!`)
   yield put(attemptLogin())
 
   try {
