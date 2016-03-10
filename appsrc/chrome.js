@@ -1,6 +1,6 @@
 'use strict'
 
-import r from 'r-dom'
+import React from 'react'
 import ReactDOM from 'react-dom'
 import Layout from './components/layout'
 import {Provider} from 'react-redux'
@@ -17,7 +17,7 @@ let appNode
 
 function render () {
   appNode = document.querySelector('#app')
-  const layout = r(Provider, {store}, r(Layout))
+  const layout = <Provider store={store}><Layout/></Provider>
   ReactDOM.render(layout, appNode)
 }
 

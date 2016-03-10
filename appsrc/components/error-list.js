@@ -1,8 +1,8 @@
 
-import r from 'r-dom'
-import {PropTypes, Component} from 'react'
+import React, {PropTypes, Component} from 'react'
+import {map} from 'underline'
 
-import format from '../util/format'
+import {slugify} from '../util/format'
 
 // TODO: get t somewhere
 const t = (x) => x
@@ -16,31 +16,29 @@ const t = (x) => x
  */
 class ErrorList extends Component {
   render () {
-    let prefix = 'errors'
-
-    const i18n_namespace = this.props.i18n_namespace
-    if (i18n_namespace) {
-      prefix = prefix + '.' + i18n_namespace
-    }
-
-    const {errors, before = ''} = this.props
+    const {errors, before = '', i18nNamespace} = this.props
+    const prefix = i18nNamespace ? `errors.${i18nNamespace}` : 'errors'
 
     if (!errors) {
-      return r.div()
+      return <div/>
     }
 
-    const error_array = Array.isArray(errors) ? errors : [errors]
+    const errorArray = Array.isArray(errors) ? errors : [errors]
 
-    return r.ul({className: 'form_errors'}, error_array.map((error, key) => {
-      const i18n_key = prefix + '.' + format.slugify(error)
-      const message = t(i18n_key, {defaultValue: error})
-      return r.li({key}, [ before, message ])
-    }))
+    return <ul className='form-errors'>
+      {errorArray::map((error, key) => {
+        const i18nKey = prefix + '.' + slugify(error)
+        const message = t(i18nKey, {defaultValue: error})
+        return <li key={key}>{before}{message}</li>
+      })}
+    </ul>
   }
 }
 
 ErrorList.propTypes = {
-  errors: PropTypes.any
+  errors: PropTypes.any,
+  before: PropTypes.node,
+  i18nNamespace: PropTypes.string
 }
 
 export default ErrorList

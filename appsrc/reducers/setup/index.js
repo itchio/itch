@@ -1,8 +1,23 @@
 
-import {combineReducers} from 'redux-loop'
+import {handleActions} from 'redux-actions'
 
-import ibrewPackages from './ibrew-packages'
+const initialState = {
+  errors: [],
+  blockingOperation: null
+}
 
-export default combineReducers({
-  ibrewPackages
-})
+export default handleActions({
+  SETUP_STATUS: (state, action) => {
+    return {
+      errors: [],
+      blockingOperation: action.payload
+    }
+  },
+
+  SETUP_DONE: (state, action) => {
+    return {
+      errors: [],
+      blockingOperation: null
+    }
+  }
+}, initialState)

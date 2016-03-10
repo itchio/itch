@@ -61,7 +61,6 @@
     "redux-devtools-log-monitor": "^1.0.5",
     "redux-electron-store": "^0.3.4",
     "redux-logger": "^2.6.1",
-    "redux-loop": "^1.1.0",
     "redux-saga": "^0.9.3",
     "redux-thunk": "^2.0.1",
     "redux-validator": "^0.1.5",

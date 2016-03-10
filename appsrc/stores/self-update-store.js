@@ -4,7 +4,7 @@ import AppActions from '../actions/app-actions'
 import AppConstants from '../constants/app-constants'
 
 import Store from './store'
-import app from '../util/app'
+import {app} from '../electron'
 import os from '../util/os'
 
 let auto_updater

@@ -1,6 +1,6 @@
 
 import path from 'path'
-import app from './app'
+import {app} from '../electron'
 import os from './os'
 
 import {partial} from 'underline'
@@ -38,7 +38,7 @@ let self = {
       const archive_name = self.archive_name(name)
       const archive_path = path.join(self.bin_path(), archive_name)
       const archive_url = `${channel}/v${v}/${archive_name}`
-      onstatus('login.status.dependency_install', 'download', {name, version: v})
+      onstatus('download', ['login.status.dependency_install', {name, version: v}])
       log(opts, `${name}: downloading '${v}' from ${archive_url}`)
 
       await net.download_to_file(opts, archive_url, archive_path)
@@ -55,7 +55,7 @@ let self = {
       }
     }
 
-    onstatus('login.status.dependency_check', 'stopwatch')
+    onstatus('stopwatch', ['login.status.dependency_check'])
     const get_latest_version = net.get_latest_version::partial(channel)
 
     const local_version = await self.get_local_version(name)

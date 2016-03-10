@@ -43,9 +43,9 @@ let self = {
   },
 
   /** build channel URL */
-  channel: (formula_name) => {
-    let os_arch = `${self.os()}-${self.arch()}`
-    return `${urls.ibrew_repo}/${formula_name}/${os_arch}`
+  channel: (formulaName) => {
+    let osArch = `${self.os()}-${self.arch()}`
+    return `${urls.ibrewRepo}/${formulaName}/${osArch}`
   },
 
   /** fetch latest version number from repo */

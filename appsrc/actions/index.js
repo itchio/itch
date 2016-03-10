@@ -1,4 +1,5 @@
 
+export * from './login-actions'
 export * from './menu-actions'
 
 import {createAction} from 'redux-actions'
@@ -25,11 +26,7 @@ import {
 
   CHECK_FOR_SELF_UPDATE,
 
-  OPEN_EXTERNAL,
-
-  CHANGE_USER,
-
-  LOGIN_WITH_PASSWORD
+  OPEN_EXTERNAL
 } from '../constants/action-types'
 
 export const boot = createAction(BOOT)
@@ -54,7 +51,3 @@ export const reportIssue = createAction(REPORT_ISSUE)
 export const checkForSelfUpdate = createAction(CHECK_FOR_SELF_UPDATE)
 
 export const openExternal = createAction(OPEN_EXTERNAL)
-
-export const changeUser = createAction(CHANGE_USER)
-
-export const loginWithPassword = createAction(LOGIN_WITH_PASSWORD)

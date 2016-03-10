@@ -1,10 +1,10 @@
 
+import React, {Component, PropTypes} from 'react'
+import {createStructuredSelector} from 'reselect'
 import {connect} from 'react-redux'
-import {Component} from 'react'
-import r from 'r-dom'
 
-import LoginPage from './login-page'
-// import LibraryPage from './library-page'
+import GatePage from './gate-page'
+import HubPage from './hub-page'
 
 /**
  * Top-level component in the app, decides which page to show
@@ -12,32 +12,28 @@ import LoginPage from './login-page'
  */
 class Layout extends Component {
   render () {
-    const {appState} = this.props
+    const {page} = this.props
 
-    switch (appState.session.navigation.page) {
-      case 'login':
-      case 'setup':
-        return r(LoginPage, {state: appState})
-      case 'library':
-        return r.span({style: {color: 'white'}}, 'library page!')
-        // return r(LibraryPage, {state: app_state})
+    switch (page) {
+      case 'gate':
+        return <GatePage/>
+      case 'hub':
+        return <HubPage/>
       default:
-        return r.div()
+        return <div>Unknown page: {page}</div>
     }
   }
 }
 
-Layout.propTypes = {}
-
-function mapStateToProps (state) {
-  return {
-    appState: state
-  }
+Layout.propTypes = {
+  page: PropTypes.string.isRequired
 }
 
-function mapDispatchToProps (dispatch) {
-  return {}
-}
+const mapStateToProps = createStructuredSelector({
+  page: (state) => state.session.navigation.page
+})
+
+const mapDispatchToProps = (dispatch) => ({})
 
 export default connect(
   mapStateToProps,

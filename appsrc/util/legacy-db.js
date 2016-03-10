@@ -2,7 +2,8 @@
 import Promise from 'bluebird'
 import Datastore from 'nedb'
 
-import {each, indexBy} from 'underline'
+import {each, indexBy, map, omit} from 'underline'
+import {camelifyObject} from './format'
 
 import mklog from './log'
 const log = mklog('legacy-db')
@@ -14,7 +15,7 @@ const opts = {logger: new mklog.Logger()}
  * overkill & slower than expected. See `util/market` for its replacement.
  */
 
-async function import_old_data (filename) {
+async function importOldData (filename) {
   const store = new Datastore({filename, autoload: false})
   const loadDatabase = Promise.promisify(store.loadDatabase, {context: store})
   await loadDatabase()
@@ -25,7 +26,7 @@ async function import_old_data (filename) {
   const games = await find({_table: 'games'})
   const collections = await find({_table: 'collections'})
   const users = await find({_table: 'users'})
-  const download_keys = await find({_table: 'download_keys'})
+  const downloadKeys = await find({_table: 'download_keys'})
 
   caves::each((x) => {
     if (x.hasOwnProperty('_id')) {
@@ -34,26 +35,20 @@ async function import_old_data (filename) {
     }
   })
 
-  const strip_underscore_id = (coll) => {
-    coll::each((x) => delete x._id)
-  }
+  const clean = (record) => camelifyObject(record::omit('_id'))
+  const cleanAll = (coll) => coll::map(clean)
 
-  strip_underscore_id(games)
-  strip_underscore_id(collections)
-  strip_underscore_id(users)
-  strip_underscore_id(download_keys)
-
-  log(opts, `Imported ${caves.length} caves, ${games.length} games, ${collections.length} collections, ${users.length} and ${download_keys.length} download keys from legacy db`)
+  log(opts, `Imported ${caves.length} caves, ${games.length} games, ${collections.length} collections, ${users.length} and ${downloadKeys.length} download keys from legacy db`)
 
   return {
     entities: {
-      collections: collections::indexBy('id'),
-      download_keys: download_keys::indexBy('id'),
-      users: users::indexBy('id'),
-      caves: caves::indexBy('id'),
-      games: games::indexBy('id')
+      collections: cleanAll(collections)::indexBy('id'),
+      downloadKeys: cleanAll(downloadKeys)::indexBy('id'),
+      users: cleanAll(users)::indexBy('id'),
+      caves: cleanAll(caves)::indexBy('id'),
+      games: cleanAll(games)::indexBy('id')
     }
   }
 }
 
-export default {import_old_data}
+export default {importOldData}

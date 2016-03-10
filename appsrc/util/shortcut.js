@@ -1,7 +1,7 @@
 
 import path from 'path'
 
-import app from './app'
+import {app} from '../electron'
 import spawn from './spawn'
 import sf from './sf'
 

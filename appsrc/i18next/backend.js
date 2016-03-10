@@ -1,6 +1,6 @@
 
 import os from '../util/os'
-import app from '../util/app'
+import {app} from '../electron'
 
 import mkcooldown from '../util/cooldown'
 const cooldown = mkcooldown(1000)
@@ -148,7 +148,7 @@ class Backend {
     }
 
     let remote_filename = this.remote_filename(language)
-    let uri = `${urls.remote_locale_path}/${language}.json`
+    let uri = `${urls.remoteLocalePath}/${language}.json`
 
     log(opts, `Downloading fresh locale file from ${uri}`)
 

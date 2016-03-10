@@ -1,25 +1,26 @@
 
 import Promise from 'bluebird'
+import {camelify, camelifyObject} from './format'
 
 import path from 'path'
 import sf from './sf'
-import app from './app'
-import legacy_db from './legacy-db'
+import {app} from '../electron'
+import legacyDB from './legacy-db'
 import mklog from './log'
 const log = mklog('market')
 const opts = {logger: new mklog.Logger()}
 
-import deep_freeze from 'deep-freeze'
+import deepFreeze from 'deep-freeze'
 import {isEqual, every} from 'underline'
 
 const state = {
-  library_dir: null,
+  libraryDir: null,
 
-  get_db_root: () => {
-    if (!state.library_dir) {
+  getDBRoot: () => {
+    if (!state.libraryDir) {
       throw new Error('tried to get db root before library dir was set')
     }
-    return path.join(state.library_dir, 'marketdb')
+    return path.join(state.libraryDir, 'marketdb')
   }
 }
 
@@ -27,111 +28,127 @@ const state = {
 
 const data = {}
 
-async function load (user_id) {
-  log(opts, `loading db for user ${user_id}`)
-  state.library_dir = path.join(app.getPath('userData'), 'users', user_id.toString())
+async function load (userID) {
+  log(opts, `loading db for user ${userID}`)
+  state.libraryDir = path.join(app.getPath('userData'), 'users', userID.toString())
 
-  let old_db_filename = path.join(state.library_dir, 'db.jsonl')
-  if (await sf.exists(old_db_filename)) {
-    let response = await legacy_db.import_old_data(old_db_filename)
-    save_all_entities(response)
-    await sf.rename(old_db_filename, old_db_filename + '.obsolete')
+  let oldDBFilename = path.join(state.libraryDir, 'db.jsonl')
+  if (await sf.exists(oldDBFilename)) {
+    let response = await legacyDB.importOldData(oldDBFilename)
+    await saveAllEntities(response, {wait: true})
+    await sf.rename(oldDBFilename, oldDBFilename + '.obsolete')
   } else {
     log(opts, `nothing to import from legacy db`)
   }
 
-  const entities = {}
-  const load_record = async function (record_path) {
-    const tokens = record_path.split('/')
-    const [table_name, entity_id] = tokens
-    const file = path.join(state.get_db_root(), record_path)
-    const contents = await sf.read_file(file)
+  const toSave = {}
 
-    const table = entities[table_name] || {}
+  const entities = {}
+  const loadRecord = async function (recordPath) {
+    const tokens = recordPath.split('/')
+    const [tableName, entityID] = tokens
+    const file = path.join(state.getDBRoot(), recordPath)
+    const contents = await sf.readFile(file)
+
+    const camelTableName = camelify(tableName)
+    const table = entities[camelTableName] || {}
+
+    let record
     try {
-      table[entity_id] = JSON.parse(contents)
+      record = JSON.parse(contents)
     } catch (e) {
-      log(opts, `warning: skipping malformed record ${table_name}/${entity_id} (${e})`)
+      log(opts, `warning: skipping malformed record ${tableName}/${entityID} (${e})`)
+      return
     }
-    entities[table_name] = table
+
+    const camelRecord = camelifyObject(record)
+    if (camelTableName !== tableName || !camelRecord::isEqual(record)) {
+      toSave[camelTableName] = toSave[camelTableName] || []
+      toSave[camelTableName].push(entityID)
+    }
+    table[entityID] = camelRecord
+    entities[camelTableName] = table
   }
 
-  const wipe_temp = async function (record_path) {
-    const file = path.join(state.get_db_root(), record_path)
+  const wipeTemp = async function (recordPath) {
+    const file = path.join(state.getDBRoot(), recordPath)
     await sf.wipe(file)
   }
 
-  await sf.glob('*/*.tmp*', {cwd: state.get_db_root()}).map(wipe_temp, {concurrency: 4})
-  await sf.glob('*/*', {cwd: state.get_db_root()}).map(load_record, {concurrency: 4})
+  await sf.glob('*/*.tmp*', {cwd: state.getDBRoot()}).map(wipeTemp, {concurrency: 4})
+  await sf.glob('*/*', {cwd: state.getDBRoot()}).map(loadRecord, {concurrency: 4})
+  await saveAllEntities({entities: toSave}, {wait: true})
 
-  log(opts, `done loading db for user ${user_id}`)
-  save_all_entities({entities}, {persist: false})
+  log(opts, `done loading db for user ${userID}`)
+  saveAllEntities({entities}, {persist: false})
 }
 
-function entity_path (table_name, entity_id) {
-  return path.join(state.get_db_root(), `${table_name}/${entity_id}`)
+function entityPath (tableName, entityID) {
+  return path.join(state.getDBRoot(), `${tableName}/${entityID}`)
 }
 
-let _atomic_invocations = 0
+let _atomicInvocations = 0
 
-async function save_to_disk (table_name, entity_id, record) {
-  const file = entity_path(table_name, entity_id)
-  const tmp_path = file + '.tmp' + (_atomic_invocations++)
-  await sf.write_file(tmp_path, JSON.stringify(record))
+async function saveToDisk (tableName, entityID, record) {
+  const file = entityPath(tableName, entityID)
+  const tmpPath = file + '.tmp' + (_atomicInvocations++)
+  await sf.writeFile(tmpPath, JSON.stringify(record))
 
-  if (data[table_name] && data[table_name][entity_id]) {
-    await sf.rename(tmp_path, file)
+  if (data[tableName] && data[tableName][entityID]) {
+    await sf.rename(tmpPath, file)
   } else {
     // entity has been deleted in the meantime
-    await sf.wipe(tmp_path)
+    await sf.wipe(tmpPath)
   }
 }
 
-async function delete_from_disk (table_name, entity_id) {
-  await sf.wipe(entity_path(table_name, entity_id))
+async function deleteFromDisk (tableName, entityID) {
+  await sf.wipe(entityPath(tableName, entityID))
 }
 
-function save_all_entities (response, opts) {
+async function saveAllEntities (response, opts) {
   opts = opts || {}
-  const {persist = true, ondone} = opts
+  const {wait = false, persist = true} = opts
 
   let promises = null
-  if (ondone) {
+  if (wait) {
     promises = []
   }
 
-  for (const table_name of Object.keys(response.entities)) {
-    const entities = response.entities[table_name]
-    let table = data[table_name] || {}
+  for (const tableName of Object.keys(response.entities)) {
+    const entities = response.entities[tableName]
+    let table = data[tableName] || {}
 
-    for (const entity_id of Object.keys(entities)) {
-      const entity = entities[entity_id]
+    for (const entityID of Object.keys(entities)) {
+      const entity = entities[entityID]
 
-      const record = table[entity_id] || {}
+      const record = table[entityID] || {}
       const same = Object.keys(entity)::every(
         (key) => entity[key]::isEqual(record[key])
       )
 
       if (!same) {
-        const new_record = deep_freeze(Object.assign({}, record, entity))
-        table[entity_id] = new_record
+        const newRecord = deepFreeze(Object.assign({}, record, entity))
+        table[entityID] = newRecord
 
         if (persist) {
-          let p = save_to_disk(table_name, entity_id, new_record)
-          if (promises) promises.push(p)
+          let p = saveToDisk(tableName, entityID, newRecord)
+          if (wait) {
+            promises.push(p)
+          }
         }
       }
     }
 
-    data[table_name] = table
+    data[tableName] = table
   }
 
-  if (ondone) {
-    Promise.all(promises).then(opts.ondone)
+  if (wait) {
+    await Promise.all(promises)
   }
 }
 
-function delete_all_entities (response, opts) {
+function deleteAllEntities (response, opts) {
   opts = opts || {}
   const {ondone} = opts
 
@@ -140,18 +157,18 @@ function delete_all_entities (response, opts) {
     promises = []
   }
 
-  for (const table_name of Object.keys(response.entities)) {
-    const entities = response.entities[table_name]
-    let table = data[table_name] || {}
+  for (const tableName of Object.keys(response.entities)) {
+    const entities = response.entities[tableName]
+    let table = data[tableName] || {}
 
-    for (const entity_id of entities) {
-      delete table[entity_id]
+    for (const entityID of entities) {
+      delete table[entityID]
 
-      let p = delete_from_disk(table_name, entity_id)
+      let p = deleteFromDisk(tableName, entityID)
       if (promises) promises.push(p)
     }
 
-    data[table_name] = table
+    data[tableName] = table
   }
 
   if (ondone) {
@@ -159,7 +176,7 @@ function delete_all_entities (response, opts) {
   }
 }
 
-function get_entities (table) {
+function getEntities (table) {
   // lazily creates table in 'data' object
   let entities = data[table] || {}
   data[table] = entities
@@ -176,16 +193,16 @@ function clear () {
 
 function unload () {
   clear()
-  state.library_dir = null
+  state.libraryDir = null
 }
 
 export default {
   load,
-  get_entities,
-  save_all_entities,
-  delete_all_entities,
+  getEntities,
+  saveAllEntities,
+  deleteAllEntities,
   clear,
   unload,
-  get_library_dir: () => state.library_dir,
+  getLibraryDir: () => state.libraryDir,
   _state: state
 }

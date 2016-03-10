@@ -119,23 +119,21 @@ module.exports = keyMirror({
   CAVE_STORE_CAVE_DIFF: null,
   INSTALL_LOCATION_STORE_DIFF: null,
 
-  /** Ready but needs human login */
-  NO_STORED_CREDENTIALS: null,
   /** Any login attempt (cached or not) */
   ATTEMPT_LOGIN: null,
   /** Private - login attempt with username/password */
   LOGIN_WITH_PASSWORD: null,
   /** Wrong login/password or something else */
-  LOGIN_FAILURE: null,
+  LOGIN_FAILED: null,
   /** API key available beyond this point */
-  AUTHENTICATED: null,
+  LOGIN_SUCCEEDED: null,
   /** market available beyond this point */
   READY_TO_ROLL: null,
   /** install locations available beyond this point */
   LOCATIONS_READY: null,
-  /** Asked to logout */
+  /** Asked to log out */
   CHANGE_USER: null,
-  /** Confirmed logout */
+  /** Confirmed log out */
   LOGOUT: null,
 
   /** Sent from metal when needs to eval something in chrome. Example: HTML5 Notification API */

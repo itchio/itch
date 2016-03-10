@@ -2,7 +2,7 @@
 import Promise from 'bluebird'
 import needle from 'needle'
 
-import app from '../util/app'
+import {app} from '../electron'
 import os from '../util/os'
 
 needle.defaults({

@@ -54,7 +54,7 @@ ${log}
       title: `[${os.platform()}] ${type} for v${app.getVersion()}`,
       body: (before + body)
     })
-    shell.openExternal(`${urls.itch_repo}/issues/new?${query}`)
+    shell.openExternal(`${urls.itchRepo}/issues/new?${query}`)
   },
 
   handle: (e) => {

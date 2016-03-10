@@ -4,7 +4,7 @@ import needle from '../promised/needle'
 
 let self = {
   create_gist: async function (data) {
-    let uri = `${urls.github_api}/gists`
+    let uri = `${urls.githubApi}/gists`
     let resp = await needle.requestAsync('POST', uri, data, {json: true})
     if (resp.statusCode === 201) {
       return resp.body

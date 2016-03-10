@@ -18,8 +18,18 @@ const enhancer = compose(
   DevTools.instrument()
 )
 
-const reducer = (state, action) => state
+const reducer = (state, action) => {
+  console.log(`in renderer reducer`)
+  console.log(`renderer got action ${action.type}`)
+  return state
+}
+
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
+
+// setInterval(function () {
+//   console.log(`console.log from renderer`)
+//   store.dispatch({type: 'HI_FROM_RENDERER'})
+// }, 1000)
 
 export default store

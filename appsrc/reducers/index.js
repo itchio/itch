@@ -1,5 +1,5 @@
 
-import {combineReducers} from 'redux-loop'
+import {combineReducers} from 'redux'
 
 import system from './system'
 import setup from './setup'

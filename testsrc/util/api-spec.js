@@ -40,7 +40,7 @@ test('api', t => {
   t.case('can make authenticated request', t => {
     const mock = t.mock(client)
     mock.expects('request').withArgs('get', '/key/my-games').resolves({games: []})
-    user.my_games()
+    user.myGames()
   })
 
   t.case('rejects API errors', async t => {
@@ -64,12 +64,12 @@ test('api', t => {
     }
 
     test_api(
-      'login_key', ['foobar'],
+      'loginKey', ['foobar'],
       ['post', '/foobar/me', {source: 'desktop'}]
     )
 
     test_api(
-      'login_with_password', ['foo', 'bar'],
+      'loginWithPassword', ['foo', 'bar'],
       ['post', '/login', {username: 'foo', password: 'bar', source: 'desktop'}]
     )
   }
@@ -84,11 +84,11 @@ test('api', t => {
     }
 
     test_api(
-      'my_games', [],
+      'myGames', [],
       ['get', '/my-games']
     )
     test_api(
-      'my_owned_keys', [],
+      'my_ownedKeys', [],
       ['get', '/my-owned-keys']
     )
     test_api(
@@ -96,11 +96,11 @@ test('api', t => {
       ['get', '/me']
     )
     test_api(
-      'my_collections', [],
+      'myCollections', [],
       ['get', '/my-collections']
     )
     test_api(
-      'collection_games', [1708],
+      'collectionGames', [1708],
       ['get', '/collection/1708/games', {page: 1}]
     )
     test_api(
@@ -108,19 +108,19 @@ test('api', t => {
       ['get', '/search/games', {query: 'baz'}]
     )
     test_api(
-      'download_key_uploads', ['foobar'],
+      'downloadKeyUploads', ['foobar'],
       ['get', '/download-key/foobar/uploads']
     )
     test_api(
-      'download_upload_with_key', ['foobar', 99],
+      'downloadUploadWithKey', ['foobar', 99],
       ['get', '/download-key/foobar/download/99']
     )
     test_api(
-      'game_uploads', [33],
+      'gameUploads', [33],
       ['get', '/game/33/uploads']
     )
     test_api(
-      'download_upload', [99],
+      'downloadUpload', [99],
       ['get', '/upload/99/download']
     )
   }

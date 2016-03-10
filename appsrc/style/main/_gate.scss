@@ -1,0 +1,130 @@
+
+@-webkit-keyframes logo-anim {
+  0%  { transform: scale(1.00) rotateZ(00deg); }
+  19% { transform: scale(0.98) rotateZ(03deg); }
+  20% { transform: scale(1.00) rotateZ(03deg); }
+  49% { transform: scale(0.97) rotateZ(-2deg); }
+  51% { transform: scale(1.03) rotateZ(01deg); }
+  66% { transform: scale(1.03) rotateZ(01deg); }
+  67% { transform: scale(1.08) rotateZ(00deg); }
+  88% { transform: scale(1.08) rotateZ(00deg); }
+  90% { transform: scale(0.94) rotateZ(02deg); }
+}
+
+@-webkit-keyframes drop-down {
+  0%   { transform: scale(1.2) translateY(-10%); opacity: 0; }
+  100% { transform: scale(1.0) translateY(0%); opacity: 1.0; }
+}
+
+.gate-page {
+  animation: drop-down .3s ease-in;
+  background: #fff;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+
+  section {
+    flex-grow: 0;
+  }
+
+  .top-filler {
+    flex-grow: .4;
+  }
+
+  .logo {
+    flex-grow: 1;
+    background: green;
+    animation: logo-anim 21.0s .5s infinite ease-out;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .errors {
+    background: yellow;
+    min-height: 4em;
+  }
+
+  .crux {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    align-items: center;
+    background: red;
+  }
+
+  form {
+    width: 60%;
+    max-width: 400px;
+    background: blue;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+
+    input {
+      transform: scale(1.0) rotateZ(0deg);
+      transition: all 0.2s;
+      margin: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+      margin: 8px 4px;
+      border: 2px solid #404040;
+      border-radius: 4px 2px 4px 2px;
+      background-color: rgba(0, 0, 0, 0.08);
+      color: #999;
+
+      &:focus {
+        border-color: #676767;
+        box-shadow: 0 0 2px #131313;
+      }
+    }
+
+    input[type='text']:focus {
+      transform: scale(1.08) rotateZ(0.5deg);
+    }
+
+    input[type='password']:focus {
+      transform: scale(1.07) rotateZ(-0.3deg);
+    }
+
+    input[type='submit'] {
+      font-size: 18px;
+      display: block;
+      background-color: #464646;
+      text-shadow: 0 1px 1px #676767;
+      font-weight: bold;
+    }
+  }
+
+  .actions {
+    background: purple;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 4em;
+  }
+
+  .links {
+    transition: 0 .2s;
+    margin: 1em 0;
+  }
+
+  &[data-stage='setup'] {
+    form input {
+      opacity: 0;
+    }
+
+    .links {
+      opacity: 0;
+    }
+  }
+}

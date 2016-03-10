@@ -2,7 +2,7 @@
 import path from 'path'
 import deepAssign from 'deep-assign'
 
-import app from '../util/app'
+import {app} from '../electron'
 import sf from '../util/sf'
 import mklog from '../util/log'
 const log = mklog('i18n-store')

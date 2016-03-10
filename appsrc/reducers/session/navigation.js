@@ -2,7 +2,7 @@
 import {handleActions} from 'redux-actions'
 
 const initialState = {
-  page: 'login'
+  page: 'gate'
 }
 
 export default handleActions({

@@ -1,11 +1,15 @@
 
 import ExtendableError from 'es6-error'
+import invariant from 'invariant'
 
 import needle from '../promised/needle'
 import urls from '../constants/urls'
 
 import mkcooldown from './cooldown'
 import mklog from './log'
+import {camelifyObject} from './format'
+
+import {call} from 'redux-saga/effects'
 
 const cooldown = mkcooldown(130)
 const log = mklog('api')
@@ -15,16 +19,14 @@ const opts = {logger}
 // cf. https://github.com/itchio/itchio-app/issues/48
 // basically, lua returns empty-object instead of empty-array
 // because they're the same in lua (empty table). not in JSON though.
-function ensure_array (v) {
+export function ensureArray (v) {
   if (~~v.length === 0) {
     return []
   }
   return v
 }
 
-let self
-
-class ApiError extends ExtendableError {
+export class ApiError extends ExtendableError {
   constructor (errors) {
     super(errors.join(', '))
     this.errors = errors
@@ -38,29 +40,26 @@ class ApiError extends ExtendableError {
 /**
  * Wrapper for the itch.io API
  */
-class Client {
+export class Client {
   constructor () {
-    this.root_url = `${urls.itchio_api}/api/1`
+    this.rootUrl = `${urls.itchioApi}/api/1`
     this.lastRequest = 0
   }
 
-  async request (method, path, data) {
-    let t1 = Date.now()
+  * request (method, path, data = {}, transformers = {}) {
+    const t1 = Date.now()
 
-    if (typeof data === 'undefined') {
-      data = {}
-    }
-    let uri = `${this.root_url}${path}`
+    const uri = `${this.rootUrl}${path}`
 
-    await cooldown()
-    let t2 = Date.now()
+    yield call(cooldown)
+    const t2 = Date.now()
 
-    let resp = await needle.requestAsync(method, uri, data)
-    let body = resp.body
-    let t3 = Date.now()
+    const resp = yield call(needle.requestAsync, method, uri, data)
+    const body = resp.body
+    const t3 = Date.now()
 
-    let short_path = path.replace(/^\/[^\/]*\//, '')
-    log(opts, `${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${short_path} with ${JSON.stringify(data)}`)
+    const shortPath = path.replace(/^\/[^\/]*\//, '')
+    log(opts, `${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${shortPath} with ${JSON.stringify(data)}`)
 
     if (resp.statusCode !== 200) {
       throw new Error(`HTTP ${resp.statusCode}`)
@@ -69,110 +68,98 @@ class Client {
     if (body.errors) {
       throw new ApiError(body.errors)
     }
-    return body
+    const camelBody = camelifyObject(body)
+    for (const key in transformers) {
+      if (!transformers.hasOwnProperty(key)) continue
+      camelBody[key] = transformers[key](camelBody[key])
+    }
+
+    return camelBody
   }
 
-  login_key (key) {
-    return this.request('post', `/${key}/me`, {
+  * loginKey (key) {
+    return yield* this.request('post', `/${key}/me`, {
       source: 'desktop'
     })
   }
 
-  login_with_password (username, password) {
-    return this.request('post', '/login', {
+  * loginWithPassword (username, password) {
+    return yield* this.request('post', '/login', {
       username: username,
       password: password,
       source: 'desktop'
     })
   }
+
+  withKey (key) {
+    invariant(typeof key === 'string', 'API key is a string')
+    return new AuthenticatedClient(this, key)
+  }
 }
+
+export const client = new Client()
+export default client
 
 /**
  * A user, according to the itch.io API
  */
-class User {
+export class AuthenticatedClient {
   constructor (client, key) {
     this.client = client
     this.key = key
   }
 
-  request (method, path, data) {
-    if (typeof data === 'undefined') {
-      data = {}
-    }
-
-    let url = `/${this.key}${path}`
-    return this.client.request(method, url, data)
+  * request (method, path, data = {}, transformers = {}) {
+    const url = `/${this.key}${path}`
+    return yield* this.client.request(method, url, data, transformers)
   }
 
   // TODO: paging, for the prolific game dev.
-  async my_games (data) {
-    let res = await this.request('get', `/my-games`, data)
-    res.games = self.ensure_array(res.games)
-    return res
+  * myGames (data = {}) {
+    return yield* this.request('get', `/my-games`, data, {games: ensureArray})
   }
 
-  async my_owned_keys (data) {
-    let res = await this.request('get', `/my-owned-keys`, data)
-    res.owned_keys = self.ensure_array(res.owned_keys)
-    return res
+  * myOwnedKeys (data = {}) {
+    return yield* this.request('get', `/my-owned-keys`, data, {ownedKeys: ensureArray})
   }
 
-  me () {
-    return this.request('get', `/me`)
+  * me () {
+    return yield* this.request('get', `/me`)
   }
 
-  async my_collections () {
-    let res = await this.request('get', `/my-collections`)
-    res.collections = self.ensure_array(res.collections)
-    return res
+  * myCollections () {
+    return yield* this.request('get', `/my-collections`, {}, {collections: ensureArray})
   }
 
-  game (game) {
-    return this.request('get', `/game/${game}`)
+  * game (game) {
+    return yield* this.request('get', `/game/${game}`)
   }
 
-  collection (collection_id) {
-    return this.request('get', `/collection/${collection_id}`)
+  * collection (collectionId) {
+    return yield* this.request('get', `/collection/${collectionId}`)
   }
 
-  collection_games (collection_id, page) {
-    if (typeof page === 'undefined') {
-      page = 1
-    }
-    return this.request('get', `/collection/${collection_id}/games`, {page})
+  * collectionGames (collectionId, page = 1) {
+    return yield* this.request('get', `/collection/${collectionId}/games`, {page})
   }
 
-  async search (query) {
-    let res = await this.request('get', '/search/games', {query})
-    res.games = self.ensure_array(res.games)
-    return res
+  * search (query) {
+    return yield* this.request('get', '/search/games', {query}, {games: ensureArray})
   }
 
-  download_key_uploads (download_key_id) {
-    return this.request('get', `/download-key/${download_key_id}/uploads`)
+  * downloadKeyUploads (downloadKeyId) {
+    return yield* this.request('get', `/download-key/${downloadKeyId}/uploads`)
   }
 
-  download_upload_with_key (download_key_id, upload_id) {
-    return this.request('get', `/download-key/${download_key_id}/download/${upload_id}`)
+  * downloadUploadWithKey (downloadKeyId, uploadId) {
+    return yield* this.request('get', `/download-key/${downloadKeyId}/download/${uploadId}`)
   }
 
-  async game_uploads (game) {
-    let res = await this.request('get', `/game/${game}/uploads`)
-    res.uploads = self.ensure_array(res.uploads)
-    return res
+  * gameUploads (game) {
+    return yield* this.request('get', `/game/${game}/uploads`, {}, {uploads: ensureArray})
   }
 
-  download_upload (upload_id) {
-    return this.request('get', `/upload/${upload_id}/download`)
+  * downloadUpload (uploadId) {
+    return yield* this.request('get', `/upload/${uploadId}/download`)
   }
 }
-
-self = {
-  Client,
-  User,
-  client: new Client(),
-  ensure_array
-}
-
-export default self

@@ -1,5 +1,5 @@
 
-import {combineReducers} from 'redux-loop'
+import {combineReducers} from 'redux'
 
 import mainWindow from './main-window'
 import menu from './menu'

@@ -74,7 +74,7 @@ class PreferencesForm extends ShallowComponent {
             }))),
 
           r.div({className: 'get_involved'}, [
-            r.a({href: urls.itch_translation_platform}, [
+            r.a({href: urls.itchTranslationPlatform}, [
               r(Icon, {icon: 'earth'}),
               t('preferences.language.get_involved', {name: 'itch'})
             ])
