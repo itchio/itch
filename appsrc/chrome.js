@@ -15,9 +15,21 @@ import {focusPanel} from './actions'
 
 let appNode
 
+let devTools = ''
+if (process.env.NODE_ENV === 'development') {
+  console.log(`enabling redux dev tools`)
+  const DevTools = require('./components/dev-tools').default
+  devTools = <DevTools/>
+}
+
 function render () {
   appNode = document.querySelector('#app')
-  const layout = <Provider store={store}><Layout/></Provider>
+  const layout = <Provider store={store}>
+    <div>
+      <Layout/>
+      {devTools}
+    </div>
+  </Provider>
   ReactDOM.render(layout, appNode)
 }
 
@@ -31,7 +43,9 @@ document.addEventListener('click', (e) => {
   while (target && target.tagName !== 'A') {
     target = target.parentNode
   }
-  if (!target) return
+  if (!target) {
+    return
+  }
 
   if (target.tagName === 'A') {
     e.preventDefault()
@@ -41,7 +55,9 @@ document.addEventListener('click', (e) => {
 })
 
 window.addEventListener('beforeunload', () => {
-  if (!appNode) return
+  if (!appNode) {
+    return
+  }
   ReactDOM.unmountComponentAtNode(appNode)
   appNode = null
 })

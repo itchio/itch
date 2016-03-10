@@ -2,7 +2,6 @@
 import {createStore, applyMiddleware, compose} from 'redux'
 import {electronEnhancer} from 'redux-electron-enhancer'
 import createLogger from 'redux-logger'
-import DevTools from '../components/dev-tools'
 
 const filter = true
 const middleware = []
@@ -14,15 +13,20 @@ if (process.env.NODE_ENV === 'development') {
   middleware.push(logger)
 }
 
-const inject = (action) => {
-  console.log(`injecting `, action)
-  store.dispatch(action)
-}
-const enhancer = compose(
+const inject = (action) => store.dispatch(action)
+
+const enhancers = [
   electronEnhancer({inject, filter}),
-  applyMiddleware(...middleware),
-  DevTools.instrument()
-)
+  applyMiddleware(...middleware)
+]
+
+if (process.env.NODE_ENV === 'development') {
+  const DevTools = require('../components/dev-tools').default
+  enhancers.push(DevTools.instrument())
+  console.log('adding in devtools instrumentation')
+}
+
+const enhancer = compose(...enhancers)
 
 const reducer = (state, action) => state
 const initialState = {}
