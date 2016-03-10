@@ -1,6 +1,6 @@
 
 import {createStore, applyMiddleware, compose} from 'redux'
-import {electronEnhancer} from 'redux-electron-store'
+import {electronEnhancer} from 'redux-electron-enhancer'
 import createLogger from 'redux-logger'
 import DevTools from '../components/dev-tools'
 
@@ -12,24 +12,15 @@ if (process.env.NODE_ENV === 'development') {
   middleware.push(logger)
 }
 
+const inject = (action) => store.dispatch(action)
 const enhancer = compose(
   applyMiddleware(...middleware),
-  electronEnhancer({filter, synchronous: false}),
+  electronEnhancer({inject, filter}),
   DevTools.instrument()
 )
 
-const reducer = (state, action) => {
-  console.log(`in renderer reducer`)
-  console.log(`renderer got action ${action.type}`)
-  return state
-}
-
+const reducer = (state, action) => state
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
-
-// setInterval(function () {
-//   console.log(`console.log from renderer`)
-//   store.dispatch({type: 'HI_FROM_RENDERER'})
-// }, 1000)
 
 export default store

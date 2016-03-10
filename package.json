@@ -59,7 +59,7 @@
     "redux-devtools": "^3.1.1",
     "redux-devtools-dock-monitor": "^1.1.0",
     "redux-devtools-log-monitor": "^1.0.5",
-    "redux-electron-store": "^0.3.4",
+    "redux-electron-enhancer": "^1.2.0",
     "redux-logger": "^2.6.1",
     "redux-saga": "^0.9.3",
     "redux-thunk": "^2.0.1",
