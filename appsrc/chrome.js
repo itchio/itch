@@ -17,9 +17,8 @@ let appNode
 
 let devTools = ''
 if (process.env.NODE_ENV === 'development') {
-  console.log(`enabling redux dev tools`)
   const DevTools = require('./components/dev-tools').default
-  devTools = <div style={{fontSize: '10px'}}><DevTools/></div>
+  devTools = <DevTools/>
 }
 
 function render () {
