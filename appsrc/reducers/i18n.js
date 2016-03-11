@@ -3,7 +3,9 @@ import {handleActions} from 'redux-actions'
 
 const initialState = {
   strings: {
-    en: {}
+    en: {
+      'menu.file.quit': 'Quit'
+    }
   }
 }
 

@@ -8,6 +8,7 @@ import {createSelector} from 'reselect'
 
 import clone from 'clone'
 import createQueue from './queue'
+import localizer from '../localizer'
 
 import {
   MENU_ACTION
@@ -28,9 +29,10 @@ export default function * menuSaga () {
   const applySelector = createSelector(
     (state) => state.ui.menu.template,
     (state) => state.i18n,
-    (template, i18n) => {
+    (state) => state.session.preferences.lang,
+    (template, i18n, lang) => {
       // electron gotcha: buildFromTemplate mutates its argument
-      const menu = Menu.buildFromTemplate(clone(fleshOutTemplate(template, i18n, queue)))
+      const menu = Menu.buildFromTemplate(clone(fleshOutTemplate(template, i18n, lang, queue)))
       Menu.setApplicationMenu(menu)
     }
   )
@@ -81,8 +83,8 @@ function convertMenuAction (label) {
   }
 }
 
-function fleshOutTemplate (template, i18n, queue) {
-  const t = (x) => x
+function fleshOutTemplate (template, i18n, lang, queue) {
+  const t = localizer.getT(i18n.strings, lang)
 
   const visitNode = (input) => {
     if (input.type === 'separator') {
