@@ -108,7 +108,7 @@
     "zopf": "^4.5.0"
   },
   "scripts": {
-    "start": "grunt && electron .",
+    "start": "grunt && electron . --color",
     "test": "npm run lint && grunt && nyc -s node test/runner.js | tap-spec",
     "coveralls": "nyc report -r text-lcov | coveralls",
     "local-cov": "grunt && nyc -s node test/runner.js | tap-spec && nyc report -r html",
