@@ -106,10 +106,12 @@ GatePage.propTypes = {
 
 const mapStateToProps = (state) => {
   let base
-  if (state.session.credentials.key) {
+  if (!state.session.credentials.key) {
+    base = {stage: 'login', ...state.session.login}
+  } else if (!state.setup.done) {
     base = {stage: 'setup', ...state.setup}
   } else {
-    base = {stage: 'login', ...state.session.login}
+    base = {stage: 'ready', errors: [], blockingOperation: null}
   }
   return {...base, strings: state.i18n.strings, lang: state.session.preferences.lang}
 }
