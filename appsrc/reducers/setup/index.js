@@ -9,6 +9,7 @@ const initialState = {
 export default handleActions({
   SETUP_STATUS: (state, action) => {
     return {
+      ...state,
       errors: [],
       blockingOperation: action.payload
     }
@@ -16,6 +17,8 @@ export default handleActions({
 
   SETUP_DONE: (state, action) => {
     return {
+      ...state,
+      done: true,
       errors: [],
       blockingOperation: null
     }

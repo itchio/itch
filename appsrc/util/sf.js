@@ -10,15 +10,15 @@ import noop from './noop'
 // to operate some magic for various modules to use the original file system,
 // not the Electron-patched one.
 
-let fs_name = 'original-fs'
+let fsName = 'original-fs'
 if (!process.versions.electron) {
   // when running tests, we don't have access to original-fs
-  fs_name = 'fs'
+  fsName = 'fs'
 }
 
 import proxyquire from 'proxyquire'
 
-let fs = Object.assign({}, require(fs_name), {
+let fs = Object.assign({}, require(fsName), {
   '@global': true, /* Work with transitive imports */
   '@noCallThru': true, /* Don't even require/hit electron fs */
   disableGlob: true /* Don't ever use globs with rimraf */
@@ -26,56 +26,56 @@ let fs = Object.assign({}, require(fs_name), {
 
 // graceful-fs fixes a few things https://www.npmjs.com/package/graceful-fs
 // notably, EMFILE, EPERM, etc.
-let graceful_fs = Object.assign({}, proxyquire('graceful-fs', {fs}), {
+const gracefulFs = Object.assign({}, proxyquire('graceful-fs', {fs}), {
   '@global': true, /* Work with transitive imports */
   '@noCallThru': true /* Don't even require/hit electron fs */
 })
 
 // when proxyquired modules load, they'll require what we give
 // them instead of
-let stubs = {
-  'fs': graceful_fs,
-  'graceful-fs': graceful_fs
+const stubs = {
+  'fs': gracefulFs,
+  'graceful-fs': gracefulFs
 }
 
-let debug_level = ~~process.env.INCENTIVE_MET || -1
-let debug = (level, parts) => {
-  if (debug_level < level) {
+const debugLevel = ~~process.env.INCENTIVE_MET || -1
+const debug = (level, parts) => {
+  if (debugLevel < level) {
     return
   }
 
   console.log(`[sf] ${parts.join(' ')}`)
 }
 
-fs = graceful_fs
+fs = gracefulFs
 
 // adds 'xxxAsync' variants of all fs functions, which we'll use
 Promise.promisifyAll(fs)
 
 // single function, callback-based, can't specify fs
-let glob = Promise.promisify(proxyquire('glob', stubs))
+const glob = Promise.promisify(proxyquire('glob', stubs))
 
 // single function, callback-based, can't specify fs
-let mkdirp = Promise.promisify(proxyquire('mkdirp', stubs))
+const mkdirp = Promise.promisify(proxyquire('mkdirp', stubs))
 
 // single function, callback-based, doesn't accept fs
-let read_chunk = Promise.promisify(proxyquire('read-chunk', stubs))
+const readChunk = Promise.promisify(proxyquire('read-chunk', stubs))
 
 // other deps
 import path from 'path'
 
 // global ignore patterns
-let ignore = [
+const ignore = [
   // on OSX, trashes exist on dmg volumes but cannot be scandir'd for some reason
   '**/.Trashes/**'
 ]
 
-let concurrency = 8
+const concurrency = 8
 
 /*
  * sf = backward fs, because fs itself is quite backwards
  */
-let self = {
+const self = {
   /**
    * Returns true if file exists, false if ENOENT, throws if other error
    */
@@ -85,7 +85,7 @@ let self = {
     }
 
     return new Promise((resolve, reject) => {
-      let callback = (err) => {
+      const callback = (err) => {
         if (err) {
           if (err.code === 'ENOENT') {
             resolve(false)
@@ -104,7 +104,7 @@ let self = {
   /**
    * Return utf-8 file contents as string
    */
-  read_file: async (file) => {
+  readFile: async (file) => {
     pre: { // eslint-disable-line
       typeof file === 'string'
     }
@@ -115,7 +115,7 @@ let self = {
   /**
    * Writes an utf-8 string to `file`. Creates any directory needed.
    */
-  write_file: async (file, contents) => {
+  writeFile: async (file, contents) => {
     pre: { // eslint-disable-line
       typeof file === 'string'
       typeof contents === 'string'
@@ -134,7 +134,7 @@ let self = {
       typeof stream === 'object'
     }
 
-    let p = new Promise((resolve, reject) => {
+    const p = new Promise((resolve, reject) => {
       stream.on('close', resolve)
       stream.on('end', resolve)
       stream.on('error', reject)
@@ -158,15 +158,15 @@ let self = {
   },
 
   /**
-   * Rename old_path into new_path, throws if it can't
+   * Rename oldPath into newPath, throws if it can't
    */
-  rename: async (old_path, new_path) => {
+  rename: async (oldPath, newPath) => {
     pre: { // eslint-disable-line
-      typeof old_path === 'string'
-      typeof new_path === 'string'
+      typeof oldPath === 'string'
+      typeof newPath === 'string'
     }
 
-    return await fs.renameAsync(old_path, new_path)
+    return await fs.renameAsync(oldPath, newPath)
   },
 
   /**
@@ -181,7 +181,6 @@ let self = {
     debug(1, ['wipe', shelter])
 
     let stats
-
     try {
       stats = await self.lstat(shelter)
     } catch (err) {
@@ -192,16 +191,16 @@ let self = {
     }
 
     if (stats.isDirectory()) {
-      let file_or_dirs = await self.glob('**', {cwd: shelter, dot: true, ignore})
-      let dirs = []
-      let files = []
+      const fileOrDirs = await self.glob('**', {cwd: shelter, dot: true, ignore})
+      const dirs = []
+      const files = []
 
-      for (let fad of file_or_dirs) {
-        let full_fad = path.join(shelter, fad)
+      for (const fad of fileOrDirs) {
+        const fullFad = path.join(shelter, fad)
 
         let stats
         try {
-          stats = await self.lstat(full_fad)
+          stats = await self.lstat(fullFad)
         } catch (err) {
           if (err.code === 'ENOENT') {
             // good!
@@ -218,9 +217,9 @@ let self = {
         }
       }
 
-      let unlink = async (file) => {
-        let full_file = path.join(shelter, file)
-        await self.unlink(full_file)
+      const unlink = async (file) => {
+        const fullFile = path.join(shelter, file)
+        await self.unlink(fullFile)
       }
       await Promise.resolve(files).map(unlink, {concurrency})
 
@@ -228,11 +227,11 @@ let self = {
       dirs.sort((a, b) => (b.length - a.length))
 
       // needs to be done in order
-      for (let dir of dirs) {
-        let full_dir = path.join(shelter, dir)
+      for (const dir of dirs) {
+        const fullDir = path.join(shelter, dir)
 
-        debug(2, ['rmdir', full_dir])
-        await self.rmdir(full_dir)
+        debug(2, ['rmdir', fullDir])
+        await self.rmdir(fullDir)
       }
 
       debug(1, ['rmdir', shelter])
@@ -260,35 +259,35 @@ let self = {
     if (typeof opts === 'undefined') {
       opts = {}
     }
-    let onprogress = opts.onprogress || noop
-    let always_false = () => false
-    let should_skip = opts.should_skip || always_false
-    let operation = opts.operation || 'copy'
-    let move = (operation === 'move')
+    const onprogress = opts.onprogress || noop
+    const alwaysFalse = () => false
+    const shouldSkip = opts.shouldSkip || alwaysFalse
+    const operation = opts.operation || 'copy'
+    const move = (operation === 'move')
 
-    let _copy = async (src_file, dst_file, stats) => {
+    const _copy = async (srcFile, dstFile, stats) => {
       if (stats.isSymbolicLink()) {
-        let link_target = await self.readlink(src_file)
+        const linkTarget = await self.readlink(srcFile)
 
-        debug(2, ['symlink', link_target, dst_file])
-        await self.wipe(dst_file)
-        await self.symlink(link_target, dst_file)
+        debug(2, ['symlink', linkTarget, dstFile])
+        await self.wipe(dstFile)
+        await self.symlink(linkTarget, dstFile)
       } else {
         if (move) {
-          debug(2, ['rename', src_file, dst_file])
-          await self.rename(src_file, dst_file)
+          debug(2, ['rename', srcFile, dstFile])
+          await self.rename(srcFile, dstFile)
         } else {
           // we still need to be able to read/write the file
-          let mode = stats.mode & 0o777 | 0o666
-          debug(2, ['cp', mode.toString(8), src_file, dst_file])
-          let ws = self.createWriteStream(dst_file, {
+          const mode = stats.mode & 0o777 | 0o666
+          debug(2, ['cp', mode.toString(8), srcFile, dstFile])
+          const ws = self.createWriteStream(dstFile, {
             flags: 'w',
             /* anything is binary if you try hard enough */
             defaultEncoding: 'binary',
             mode
           })
-          let rs = self.createReadStream(src_file, {encoding: 'binary'})
-          let cp = self.promised(ws)
+          const rs = self.createReadStream(srcFile, {encoding: 'binary'})
+          const cp = self.promised(ws)
           rs.pipe(ws)
           await cp
           rs.close()
@@ -297,7 +296,7 @@ let self = {
     }
 
     // if we're not a directory, no need to recurse
-    let stats = await self.lstat(src)
+    const stats = await self.lstat(src)
     if (!stats.isDirectory()) {
       await _copy(src, dst, stats)
       return
@@ -305,14 +304,14 @@ let self = {
 
     // unfortunately, glob considers symlinks like directories :(
     // we can't use '**/*' as this will return paths *inside* symlinked dirs
-    let files_and_dirs = await self.glob('**', {cwd: src, dot: true, ignore})
+    const filesAndDirs = await self.glob('**', {cwd: src, dot: true, ignore})
 
-    let files = []
-    let dirs = []
+    const files = []
+    const dirs = []
 
-    for (let fad of files_and_dirs) {
-      let full_fad = path.join(src, fad)
-      let stats = await self.lstat(full_fad)
+    for (const fad of filesAndDirs) {
+      const fullFad = path.join(src, fad)
+      const stats = await self.lstat(fullFad)
       if (stats.isDirectory()) {
         dirs.push(fad)
       } else {
@@ -323,35 +322,35 @@ let self = {
     // create shallow dirs first
     dirs.sort((a, b) => (a.length - b.length))
 
-    let mkdir = async (dir) => {
-      let full_dir = path.join(dst, dir)
-      debug(2, ['mkdir', full_dir])
-      await self.mkdir(full_dir)
+    const mkdir = async (dir) => {
+      const fullDir = path.join(dst, dir)
+      debug(2, ['mkdir', fullDir])
+      await self.mkdir(fullDir)
     }
 
     // have to mkdir sequentially
-    for (let dir of dirs) {
+    for (const dir of dirs) {
       await mkdir(dir)
     }
 
-    let num_done = 0
+    let numDone = 0
 
-    let copy = async (arr) => {
-      let file = arr[0]
-      let stats = arr[1]
+    const copy = async (arr) => {
+      const file = arr[0]
+      const stats = arr[1]
 
-      if (should_skip(file)) {
+      if (shouldSkip(file)) {
         debug(2, ['skipping', file])
         return
       }
 
-      let src_file = path.join(src, file)
-      let dst_file = path.join(dst, file)
-      await _copy(src_file, dst_file, stats)
+      const srcFile = path.join(src, file)
+      const dstFile = path.join(dst, file)
+      await _copy(srcFile, dstFile, stats)
 
-      num_done += 1
-      let percent = num_done * 100 / files.length
-      onprogress({percent, done: num_done, total: files.length})
+      numDone += 1
+      const percent = numDone * 100 / files.length
+      onprogress({percent, done: numDone, total: files.length})
     }
 
     // can copy in parallel, all directories already exist
@@ -367,25 +366,25 @@ let self = {
   glob,
 
   /**
-   * Promised version of read_chunk
+   * Promised version of readChunk
    * https://www.npmjs.com/package/read-chunk
    */
-  read_chunk,
+  readChunk,
 
-  fs_name
+  fsName
 }
 
-function make_bindings () {
-  let mirrored = ['createReadStream', 'createWriteStream']
-  for (let m of mirrored) {
+function makeBindings () {
+  const mirrored = ['createReadStream', 'createWriteStream']
+  for (const m of mirrored) {
     self[m] = fs[m].bind(fs)
   }
 
-  let mirorred_async = ['chmod', 'stat', 'lstat', 'readlink', 'symlink', 'rmdir', 'unlink']
-  for (let m of mirorred_async) {
+  const mirorredAsync = ['chmod', 'stat', 'lstat', 'readlink', 'symlink', 'rmdir', 'unlink']
+  for (const m of mirorredAsync) {
     self[m] = fs[m + 'Async'].bind(fs)
   }
 }
-make_bindings()
+makeBindings()
 
 export default self

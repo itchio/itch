@@ -1,16 +1,18 @@
 
+export * from './locale-actions'
 export * from './login-actions'
 export * from './menu-actions'
 
 import {createAction} from 'redux-actions'
 
 import {
-  LOG,
+  OPERATION_FAILED,
 
   BOOT,
   OPEN_URL,
 
   SETUP_STATUS,
+  SETUP_DONE,
 
   WINDOW_READY,
   WINDOW_DESTROYED,
@@ -33,21 +35,13 @@ import {
   OPEN_EXTERNAL
 } from '../constants/action-types'
 
-export const log = (message) => {
-  createAction(LOG)({message})
-}
-
-export const mklog = (source) => {
-  return (opts, message) => {
-    const {logger} = opts
-    createAction(LOG)({logger, source, message})
-  }
-}
+export const operationFailed = createAction(OPERATION_FAILED)
 
 export const boot = createAction(BOOT)
 export const openUrl = createAction(OPEN_URL)
 
 export const setupStatus = createAction(SETUP_STATUS)
+export const setupDone = createAction(SETUP_DONE)
 
 export const windowReady = createAction(WINDOW_READY)
 export const windowDestroyed = createAction(WINDOW_DESTROYED)

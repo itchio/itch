@@ -7,12 +7,11 @@ import urls from '../constants/urls'
 import ErrorList from './error-list'
 import Icon from './icon'
 
+import localizer from '../localizer'
+
 import {
   loginWithPassword
 } from '../actions'
-
-// TODO: get t somewhere
-const t = (x) => x
 
 export class GatePage extends Component {
   constructor () {
@@ -22,8 +21,8 @@ export class GatePage extends Component {
   }
 
   render () {
-    const {stage, errors, blockingOperation} = this.props
-    console.log(`blockingOperation = `, blockingOperation)
+    const {strings, lang, stage, errors, blockingOperation} = this.props
+    const t = localizer.getT(strings, lang)
 
     return <div className='gate-page' data-stage={stage}>
       <section className='top-filler'/>
@@ -98,16 +97,19 @@ GatePage.propTypes = {
     message: PropTypes.array,
     icon: PropTypes.string
   }),
-  loginWithPassword: PropTypes.func.isRequired
+  loginWithPassword: PropTypes.func.isRequired,
+  strings: PropTypes.object,
+  lang: PropTypes.string
 }
 
 const mapStateToProps = (state) => {
-  console.log(`mapping state to props...`)
+  let base
   if (state.session.credentials.key) {
-    return {stage: 'setup', ...state.setup}
+    base = {stage: 'setup', ...state.setup}
   } else {
-    return {stage: 'login', ...state.session.login}
+    base = {stage: 'login', ...state.session.login}
   }
+  return {...base, strings: state.i18n.strings, lang: state.session.preferences.lang}
 }
 
 const mapDispatchToProps = (dispatch) => ({

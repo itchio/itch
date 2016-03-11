@@ -11,6 +11,9 @@ export function getT (strings, lang) {
     if (variables) {
       let result = string
       for (const varName in Object.keys(variables)) {
+        // TODO: pre-parse strings for performance?
+        // also this will leave {{blah}} in strings if they
+        // don't have corresponding variables
         result = result.replace(new RegExp('{{' + varName + '}}', 'g'), variables[varName])
       }
       return result

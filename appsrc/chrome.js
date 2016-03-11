@@ -19,13 +19,13 @@ let devTools = ''
 if (process.env.NODE_ENV === 'development') {
   console.log(`enabling redux dev tools`)
   const DevTools = require('./components/dev-tools').default
-  devTools = <DevTools/>
+  devTools = <div style={{fontSize: '10px'}}><DevTools/></div>
 }
 
 function render () {
   appNode = document.querySelector('#app')
   const layout = <Provider store={store}>
-    <div>
+    <div> // provider needs a single child because reasons!
       <Layout/>
       {devTools}
     </div>

@@ -3,13 +3,13 @@ import keyMirror from 'keymirror'
 
 // not using 'export default' so each constant is a separate export
 module.exports = keyMirror({
-  LOG: null,
-  
   BOOT: null,
   OPEN_URL: null,
   SETUP_STATUS: null,
-  SETUP_WAIT: null,
   SETUP_DONE: null,
+
+  /* Background stuff */
+  OPERATION_FAILED: null,
 
   /* Main window events */
   WINDOW_READY: null,
@@ -46,11 +46,11 @@ module.exports = keyMirror({
   APPLY_SELF_UPDATE_FOR_REALSIES: null,
   DISMISS_STATUS: null,
 
-  /* Locale updates */
-  LOCALE_UPDATE_DOWNLOADED: null,
-  LOCALE_UPDATE_QUEUE_DOWNLOAD: null,
-  LOCALE_UPDATE_DOWNLOAD_START: null,
-  LOCALE_UPDATE_DOWNLOAD_END: null,
+  /* Locales */
+  LOCALES_CONFIG_LOADED: null,
+  QUEUE_LOCALE_DOWNLOAD: null,
+  LOCALE_DOWNLOAD_STARTED: null,
+  LOCALE_DOWNLOAD_ENDED: null,
 
   /* Install locations */
   COMPUTE_INSTALL_LOCATION_SIZE: null,

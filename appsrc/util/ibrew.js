@@ -31,7 +31,6 @@ const self = {
 
     const osWhitelist = formula.osWhitelist
     if (osWhitelist && osWhitelist.indexOf(net.os()) === -1) {
-      log(opts, `${name}: skipping, it's irrelevant on ${net.os()}`)
       return
     }
 
@@ -72,8 +71,6 @@ const self = {
       return yield call(downloadVersion, latestVersion)
     }
 
-    log(opts, `${name}: have local version '${localVersion}'`)
-
     let latestVersion
     try {
       latestVersion = yield call(getLatestVersion)
@@ -84,7 +81,7 @@ const self = {
 
     if (version.equal(localVersion, latestVersion) ||
         localVersion === 'head') {
-      log(opts, `${name}: up-to-date`)
+      log(opts, `${name}: have latest (${localVersion})`)
       return
     }
 
