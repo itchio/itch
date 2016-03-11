@@ -14,7 +14,7 @@ import LibraryPanelLink from './library-panel-link'
 // Hack for frameless styling
 const frameless = process.platform === 'darwin'
 
-const is_cave_interesting = (panel, cave) => {
+const isCaveInteresting = (panel, cave) => {
   if (cave.progress > 0) {
     return true
   }
@@ -36,11 +36,11 @@ class LibrarySidebar extends ShallowComponent {
     const {state} = this.props
 
     const {panel, caves = {}, collections = {}, games = {}} = state.library
-    const is_developer = state::getIn(['credentials', 'me', 'developer'])
-    const featured_collection_ids_map = state::getIn(['collections', 'featured_ids'])::indexBy((x) => x)
+    const isDeveloper = state::getIn(['credentials', 'me', 'developer'])
+    const featuredCollectionIdsMap = state::getIn(['collections', 'featuredIds'])::indexBy((x) => x)
 
-    const collection_items = collections::map((collection) => {
-      const featured = featured_collection_ids_map[collection.id]
+    const collectionItems = collections::map((collection) => {
+      const featured = featuredCollectionIdsMap[collection.id]
       const icon = featured ? 'star' : 'tag'
 
       return {
@@ -55,15 +55,15 @@ class LibrarySidebar extends ShallowComponent {
       }
     })
 
-    const decreasing_count = (x) => -games[x.name]::count()
-    const grouped_colls = collection_items::groupBy((x) => x.icon)
+    const decreasingCount = (x) => -games[x.name]::count()
+    const groupedColls = collectionItems::groupBy((x) => x.icon)
 
-    const own_collections = grouped_colls.tag::sortBy(decreasing_count)
-    const ftd_collections = grouped_colls.star::sortBy(decreasing_count)
+    const ownCollections = groupedColls.tag::sortBy(decreasingCount)
+    const ftdCollections = groupedColls.star::sortBy(decreasingCount)
 
-    if (own_collections.length === 0) {
+    if (ownCollections.length === 0) {
       const icon = 'tag'
-      own_collections.push({
+      ownCollections.push({
         icon,
         games,
         name: `collections/empty`,
@@ -75,24 +75,24 @@ class LibrarySidebar extends ShallowComponent {
       })
     }
 
-    const own_collections_links = own_collections.map((props) => r(LibraryPanelLink, props))
-    const ftd_collections_links = ftd_collections.map((props) => r(LibraryPanelLink, props))
+    const ownCollectionsLinks = ownCollections.map((props) => r(LibraryPanelLink, props))
+    const ftdCollectionsLinks = ftdCollections.map((props) => r(LibraryPanelLink, props))
 
-    const installed_count = caves.length
-    const search_count = games.search::count()
+    const installedCount = caves.length
+    const searchCount = games.search::count()
 
-    const in_progress_items = caves::filter(is_cave_interesting::partial(panel))
+    const inProgressItems = caves::filter(isCaveInteresting::partial(panel))
 
-    const cave_items = in_progress_items::map((cave) => {
+    const caveItems = inProgressItems::map((cave) => {
       const task = cave.task
       const error = cave.error
       const path = `caves/${cave.id}`
-      const cave_game = games::getIn(['caved', cave.game_id])
+      const caveGame = games::getIn(['caved', cave.gameId])
 
       const props = {
         games: {}, // don't display number bullet
         name: path,
-        label: cave_game.title,
+        label: caveGame.title,
         error: task === 'error' && error,
         progress: cave.progress,
         before: r(TaskIcon, {task}),
@@ -104,7 +104,7 @@ class LibrarySidebar extends ShallowComponent {
 
     let links = []
 
-    if (is_developer) {
+    if (isDeveloper) {
       const dashboard_link = r(LibraryPanelLink, {
         before: r(Icon, {icon: 'rocket'}),
         name: 'dashboard',
@@ -126,7 +126,7 @@ class LibrarySidebar extends ShallowComponent {
       name: 'caved',
       label: t('sidebar.installed'),
       panel, games, className: 'installed',
-      count: installed_count
+      count: installedCount
     }))
 
     links.push(r(LibraryPanelLink, {
@@ -134,7 +134,7 @@ class LibrarySidebar extends ShallowComponent {
       name: 'search',
       label: t('sidebar.search'),
       panel, games, className: 'search',
-      count: panel === 'search' && search_count
+      count: panel === 'search' && searchCount
     }))
 
     if (panel === 'preferences') {
@@ -147,15 +147,15 @@ class LibrarySidebar extends ShallowComponent {
     }
 
     {
-      const loc_matches = panel.match(/^locations\/(.*)$/)
-      if (loc_matches) {
-        const loc_name = loc_matches[1]
-        const loc = state.install_locations.locations[loc_name]
+      const locMatches = panel.match(/^locations\/(.*)$/)
+      if (locMatches) {
+        const locName = locMatches[1]
+        const loc = state.installLocations.locations[locName]
 
         let path = loc.path
 
         // XXX perf: can definitely be handled store-side
-        state.install_locations.aliases::each((short, long) => {
+        state.installLocations.aliases::each((short, long) => {
           path = path.replace(long, short)
         })
 
@@ -166,13 +166,13 @@ class LibrarySidebar extends ShallowComponent {
 
     links.push(r.div({className: 'separator'}))
 
-    links = links.concat(own_collections_links)
-    links = links.concat(ftd_collections_links)
+    links = links.concat(ownCollectionsLinks)
+    links = links.concat(ftdCollectionsLinks)
 
-    const num_cave_items = cave_items.length
-    if (num_cave_items > 0) {
+    const numCaveItems = caveItems.length
+    if (numCaveItems > 0) {
       links.push(r.div({className: 'separator'}))
-      links = links.concat(cave_items)
+      links = links.concat(caveItems)
     }
 
     return (

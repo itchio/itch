@@ -15,9 +15,9 @@ const middleware = [
 ]
 
 const devMiddleware = []
-if (false && env.name === 'development') {
+if (env.name === 'development') {
   const logger = createLogger({
-    predicate: (getState, action) => !action.MONITOR_ACTION,
+    predicate: (getState, action) => !action.MONITOR_ACTION && !/^WINDOW_/.test(action.type),
     stateTransformer: (state) => ''
   })
 

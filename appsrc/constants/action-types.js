@@ -8,6 +8,8 @@ module.exports = keyMirror({
   SETUP_STATUS: null,
   SETUP_DONE: null,
 
+  SESSION_READY: null,
+
   /* Background stuff */
   OPERATION_FAILED: null,
 
@@ -21,6 +23,7 @@ module.exports = keyMirror({
 
   /* Navigation */
   NAVIGATE: null,
+  SWITCH_PAGE: null,
 
   /* Menu */
   REFRESH_MENU: null,

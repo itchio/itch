@@ -1,16 +1,17 @@
 
 import r from 'r-dom'
-import {PropTypes} from 'react'
-import ShallowComponent from './shallow-component'
+import {Component, PropTypes} from 'react'
+
+import {dismissStatus, applySelfUpdate} from '../actions'
 
 import Icon from './icon'
 
-import AppActions from '../actions/app-actions'
+import store from '../store'
 
 /**
  * Displays our current progress when checking for updates, etc.
  */
-class StatusBar extends ShallowComponent {
+class StatusBar extends Component {
   render () {
     let t = this.t
     let state = this.props.state || {}
@@ -22,21 +23,21 @@ class StatusBar extends ShallowComponent {
     let onClick = () => null
 
     if (status) {
-      onClick = AppActions.dismiss_status
+      onClick = () => store.dispatch(dismissStatus())
       children = [
         r(Icon, {icon: 'heart-filled'}),
         r.span(status),
         r(Icon, {icon: 'cross'})
       ]
     } else if (error) {
-      onClick = AppActions.dismiss_status
+      onClick = () => store.dispatch(dismissStatus())
       children = [
         r(Icon, {icon: 'heart-broken'}),
         r.span('Error while checking for update: ' + error),
         r(Icon, {icon: 'cross'})
       ]
     } else if (downloaded) {
-      onClick = AppActions.apply_self_update
+      onClick = () => store.dispatch(applySelfUpdate())
       children = [
         r(Icon, {icon: 'install'}),
         r.span(t('status.downloaded'))

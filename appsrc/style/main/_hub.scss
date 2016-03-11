@@ -1,0 +1,95 @@
+
+.hub_page {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.hub_sidebar {
+  width: 220px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  background: red;
+
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+
+  section {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+
+    &:hover {
+      background: blue;
+      color: white;
+    }
+
+    .icon {
+      margin: 5px;
+    }
+  }
+
+  .me {
+    img {
+      height: 2em;
+      width: 2em;
+      margin-right: 5px;
+      border-radius: 2px;
+    }
+  }
+}
+
+.hub_content {
+  flex-grow: 1;
+  flex-shrink: 1;
+  background: green;
+
+  padding: 1em;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+
+  .hub_item, .hub_filler {
+    width: 200px;
+    margin: .3em;
+  }
+
+  .hub_filler {
+    height: 0;
+  }
+
+  .hub_item {
+    background: yellow;
+
+    .cover {
+      background-size: cover;
+      background-position: 50% 50%;
+      height: 140px;
+    }
+
+    .actions {
+      background: purple;
+      height: 3em;
+      display: flex;
+      align-items: center;
+    }
+
+    .button .icon {
+      margin-right: 5px;
+    }
+  }
+
+  &:after {
+    content: "";
+    flex: auto;
+  }
+}

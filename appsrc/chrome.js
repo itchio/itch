@@ -2,16 +2,18 @@
 
 // This file is the entry point for renderer processes
 
-import React from 'react'
-import ReactDOM from 'react-dom'
-import Layout from './components/layout'
-import {Provider} from 'react-redux'
-import {shell, remote} from './electron'
+import 'babel-polyfill'
 
 import './boot/env'
 import './boot/bluebird'
 import './boot/fs'
 import './boot/env'
+
+import React from 'react'
+import ReactDOM from 'react-dom'
+import Layout from './components/layout'
+import {Provider} from 'react-redux'
+import {shell, remote} from './electron'
 
 import env from './env'
 

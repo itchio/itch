@@ -23,6 +23,7 @@
   "main": "app/metal.js",
   "license": "MIT",
   "dependencies": {
+    "babel-polyfill": "^6.7.2",
     "bluebird": "^3.0.6",
     "circular-json": "^0.3.0",
     "clone": "^1.0.2",
