@@ -5,37 +5,34 @@ import {getIn} from 'grovel'
 
 import sf from '../../util/sf'
 
+export const indexBonus = (path) => /index\.html$/.test(path) ? 2 : 0
+
 const self = {
-  sort_by_depth: function (paths) {
+  sortByDepth: function (paths) {
     const depths = {}
     for (const p of paths) {
       depths[p] = path.normalize(p).split(path.sep).length
     }
-    const index_bonus = (path) => /index\.html$/.test(path) ? 2 : 0
-    return clone(paths).sort((a, b) => depths[a] - depths[b] + index_bonus(a) - index_bonus(b))
+    return clone(paths).sort((a, b) => depths[a] - depths[b] + indexBonus(a) - indexBonus(b))
   },
 
-  configure: async function (game, cave_path) {
+  configure: async function (game, cavePath) {
     pre: { // eslint-disable-line
       typeof game === 'object'
-      typeof cave_path === 'string'
+      typeof cavePath === 'string'
     }
 
-    const index_entry_points = await sf.glob('**/index.html', {
-      cwd: cave_path
-    })
-    const other_entry_points = await sf.glob('**/*.html', {
-      cwd: cave_path
-    })
-    const entry_points = self.sort_by_depth(index_entry_points.concat(other_entry_points))
+    const indexEntryPoints = await sf.glob('**/index.html', {cwd: cavePath})
+    const otherEntryPoints = await sf.glob('**/*.html', {cwd: cavePath})
+    const entryPoints = self.sortByDepth(indexEntryPoints.concat(otherEntryPoints))
 
-    const game_path = entry_points[0]
-    const window_size = {
-      width: parseInt(game::getIn(['embed', 'width']) || 1280, 10),
-      height: parseInt(game::getIn(['embed', 'height']) || 720, 10),
+    const gamePath = entryPoints[0]
+    const windowSize = {
+      width: game::getIn(['embed', 'width']) || 1280,
+      height: game::getIn(['embed', 'height']) || 720,
       fullscreen: game::getIn(['embed', 'fullscreen']) || true
     }
-    return {game_path, window_size}
+    return {gamePath, windowSize}
   }
 }
 

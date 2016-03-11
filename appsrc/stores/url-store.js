@@ -141,7 +141,7 @@ async function install_prompt (game) {
     i18n.t('prompt.action.install'),
     i18n.t('prompt.action.cancel')
   ]
-  let dialog_opts = {
+  let dialogOpts = {
     type: 'question',
     buttons,
     title: i18n.t('prompt.url_install.title'),
@@ -156,7 +156,7 @@ async function install_prompt (game) {
       // welp
     }
   }
-  dialog.showMessageBox(dialog_opts, callback)
+  dialog.showMessageBox(dialogOpts, callback)
 }
 
 async function apology_prompt (game) {
@@ -171,7 +171,7 @@ async function apology_prompt (game) {
     platform: os.itch_platform()
   }
 
-  const dialog_opts = {
+  const dialogOpts = {
     type: 'error',
     buttons,
     title: i18n.t('prompt.no_compatible_version.title', i18n_vars),
@@ -182,7 +182,7 @@ async function apology_prompt (game) {
   const callback = () => {
     // not much to do anyway.
   }
-  dialog.showMessageBox(dialog_opts, callback)
+  dialog.showMessageBox(dialogOpts, callback)
 }
 
 function logout () {

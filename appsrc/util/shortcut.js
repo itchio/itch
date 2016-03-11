@@ -11,14 +11,14 @@ const opts = {logger: new mklog.Logger()}
 
 const app_folder = path.resolve(process.execPath, '..')
 const root_folder = path.resolve(app_folder, '..')
-const update_exe_path = path.join(root_folder, 'Update.exe')
+const update_exePath = path.join(root_folder, 'Update.exe')
 const exe_name = path.basename(process.execPath)
 
 const self = {
   update_run: async function (args) {
-    log(opts, `Update.exe located at = ${update_exe_path}`)
+    log(opts, `Update.exe located at = ${update_exePath}`)
     const code = await spawn({
-      command: update_exe_path,
+      command: update_exePath,
       args
     })
     log(opts, `Update.exe exited with code ${code}`)
@@ -32,19 +32,19 @@ const self = {
   },
 
   update: async function () {
-    const desktop_path = app.getPath('desktop')
-    const shortcut_path = path.join(desktop_path, 'itch.lnk')
+    const desktopPath = app.getPath('desktop')
+    const shortcutPath = path.join(desktopPath, 'itch.lnk')
 
     // find out if the user has deleted the desktop shortcut
     // cf. https://github.com/itchio/itch/issues/239
     let remove_desktop_shortcut = false
 
-    if (await sf.exists(shortcut_path)) {
-      log(opts, `Shortcut at ${shortcut_path} still exists, letting Squirrel do its thing`)
+    if (await sf.exists(shortcutPath)) {
+      log(opts, `Shortcut at ${shortcutPath} still exists, letting Squirrel do its thing`)
     } else {
       // shortcut was deleted by user, remove it after Squirrel recreates it
       remove_desktop_shortcut = true
-      log(opts, `Shortcut at ${shortcut_path} has been deleted, preparing to re-delete`)
+      log(opts, `Shortcut at ${shortcutPath} has been deleted, preparing to re-delete`)
     }
 
     try {
@@ -52,7 +52,7 @@ const self = {
       await self.create_or_update_shortcut()
       if (remove_desktop_shortcut) {
         log(opts, `Removing shortcut as requested`)
-        await sf.wipe(shortcut_path)
+        await sf.wipe(shortcutPath)
       }
     } catch (e) {
       log(opts, `Could not update shortcut: ${e.stack || e}`)

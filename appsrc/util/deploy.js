@@ -15,7 +15,7 @@ let pnoop = async () => null
 
 let self = {
   /**
-   * Given a stage_path, and a dest_path
+   * Given a stagePath, and a destPath
    *   - Figures out which files disappeared from stage since last deploying to dest
    *   - Removes those
    *   - Copy all the new files from stage to dest, overwriting
@@ -25,55 +25,52 @@ let self = {
   deploy: async (opts) => {
     pre: { // eslint-disable-line
       typeof opts === 'object'
-      typeof opts.stage_path === 'string'
-      typeof opts.dest_path === 'string'
+      typeof opts.stagePath === 'string'
+      typeof opts.destPath === 'string'
       typeof opts.emitter === 'object'
     }
 
-    let {stage_path, dest_path, emitter} = opts
-    let onprogress = opts.onprogress || noop
-    let onsingle = opts.onsingle || pnoop
+    const {stagePath, destPath, emitter, onProgress = noop, onSingle = pnoop} = opts
+    const stageFiles = await sf.glob('**', {cwd: stagePath})
 
-    let stage_files = await sf.glob('**', {cwd: stage_path})
-
-    if (stage_files.length === 1) {
-      let only_file = path.join(stage_path, stage_files[0])
-      let res = await onsingle(only_file)
+    if (stageFiles.length === 1) {
+      let onlyFile = path.join(stagePath, stageFiles[0])
+      let res = await onSingle(onlyFile)
       if (res && res.deployed) {
-        // onsingle returning true means it's been handled upstraem
+        // onSingle returning true means it's been handled upstraem
         return res
       }
     }
 
-    await butler.mkdir(dest_path)
+    await butler.mkdir(destPath)
 
-    log(opts, `cleaning up dest path ${dest_path}`)
+    log(opts, `cleaning up dest path ${destPath}`)
 
-    let receipt_path = path.join(dest_path, '.itch', 'receipt.json')
-    let dest_files = []
+    const receiptPath = path.join(destPath, '.itch', 'receipt.json')
+    let destFiles = []
 
     try {
-      let receipt_contents = await sf.read_file(receipt_path)
-      let receipt = JSON.parse(receipt_contents)
-      dest_files = receipt.files || []
-      log(opts, `Got receipt for an existing ${dest_files.length}-files install.`)
+      let receiptContents = await sf.readFile(receiptPath)
+      let receipt = JSON.parse(receiptContents)
+      destFiles = receipt.files || []
+      log(opts, `Got receipt for an existing ${destFiles.length}-files install.`)
     } catch (err) {
       log(opts, `Could not read receipt: ${err.message}`)
     }
-    if (!dest_files.length) {
+    if (!destFiles.length) {
       log(opts, `Globbing for destfiles`)
-      dest_files = await sf.glob('**', {cwd: dest_path})
+      destFiles = await sf.glob('**', {cwd: destPath})
     }
 
-    log(opts, `dest has ${dest_files.length} potential dinosaurs`)
+    log(opts, `dest has ${destFiles.length} potential dinosaurs`)
 
-    let dinosaurs = dest_files::difference(stage_files)
+    const dinosaurs = destFiles::difference(stageFiles)
     if (dinosaurs.length) {
       log(opts, `removing ${dinosaurs.length} dinosaurs in dest`)
       log(opts, `example dinosaurs: ${JSON.stringify(dinosaurs.slice(0, 10), null, 2)}`)
 
       await bluebird.map(dinosaurs, (rel) => {
-        let dinosaur = path.join(dest_path, rel)
+        let dinosaur = path.join(destPath, rel)
         return butler.wipe(dinosaur)
       }, {concurrency: 4})
     } else {
@@ -81,18 +78,17 @@ let self = {
     }
 
     log(opts, `copying stage to dest`)
-    await butler.ditto(stage_path, dest_path, {
-      onprogress,
+    await butler.ditto(stagePath, destPath, {
+      onProgress,
       emitter: emitter
     })
 
     log(opts, `everything copied, writing receipt`)
     let cave = opts.cave || {}
 
-    await sf.write_file(receipt_path, JSON.stringify({
+    await sf.writeFile(receiptPath, JSON.stringify({
       cave,
-      num_files: stage_files.length,
-      files: stage_files
+      files: stageFiles
     }, null, 2))
 
     return {status: 'ok'}

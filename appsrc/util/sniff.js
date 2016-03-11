@@ -1,7 +1,9 @@
 
 import Promise from 'bluebird'
-import file_type from 'file-type'
-let read_chunk = Promise.promisify(require('read-chunk'))
+import fileType from 'file-type'
+let readChunk = Promise.promisify(require('read-chunk'))
+
+const EXT_RE = /\.([0-9a-z]+)$/i
 
 function sniff (buf) {
   // intel Mach-O executables start with 0xCEFAEDFE or 0xCFFAEDFE
@@ -10,7 +12,7 @@ function sniff (buf) {
     return {
       ext: '',
       mime: 'application/octet-stream',
-      mac_executable: true
+      macExecutable: true
     }
   }
 
@@ -20,7 +22,7 @@ function sniff (buf) {
     return {
       ext: '',
       mime: 'application/octet-stream',
-      mac_executable: true
+      macExecutable: true
     }
   }
 
@@ -30,7 +32,7 @@ function sniff (buf) {
     return {
       ext: '',
       mime: 'application/octet-stream',
-      linux_executable: true
+      linuxExecutable: true
     }
   }
 
@@ -40,8 +42,8 @@ function sniff (buf) {
     return {
       ext: 'sh',
       mime: 'application/x-sh',
-      mac_executable: true,
-      linux_executable: true
+      macExecutable: true,
+      linuxExecutable: true
     }
   }
 
@@ -56,15 +58,15 @@ function sniff (buf) {
     }
   }
 
-  return file_type(buf)
+  return fileType(buf)
 }
 
 sniff.path = async function (file) {
   try {
     let ext
-    let ext_matches = /\.([0-9a-z]+)$/i.exec(file)
-    if (ext_matches) {
-      ext = ext_matches[1].toLowerCase()
+    let extMatches = EXT_RE.exec(file)
+    if (extMatches) {
+      ext = extMatches[1].toLowerCase()
 
       if (ext === 'dmg') {
         // compressed .dmg have wrong magic numbers, go by extension
@@ -73,11 +75,11 @@ sniff.path = async function (file) {
 
       if (ext === 'jar') {
         // jar files are hard to distinguish from .zip files without listing their contents
-        return {ext: 'jar', mime: 'application/java-archive', linux_executable: true, mac_executable: true}
+        return {ext: 'jar', mime: 'application/java-archive', linuxExecutable: true, macExecutable: true}
       }
     }
 
-    let buf = await read_chunk(file, 0, 262)
+    let buf = await readChunk(file, 0, 262)
     let sniffed = sniff(buf)
 
     if (sniffed) {

@@ -18,11 +18,11 @@ let PreferencesStore = Object.assign(new Store('preferences-store'), {
   get_state: () => state
 })
 
-let preferences_path = path.join(app.getPath('userData'), 'preferences.json')
+let preferencesPath = path.join(app.getPath('userData'), 'preferences.json')
 
 async function load_from_disk () {
   try {
-    let contents = await sf.read_file(preferences_path)
+    let contents = await sf.readFile(preferencesPath)
     state = JSON.parse(contents)
     log(opts, `Read preferences: ${JSON.stringify(state, null, 2)}`)
 
@@ -35,7 +35,7 @@ async function load_from_disk () {
 async function save_to_disk () {
   log(opts, `Writing preferences: ${JSON.stringify(state, null, 2)}`)
   let contents = JSON.stringify(state)
-  await sf.write_file(preferences_path, contents)
+  await sf.writeFile(preferencesPath, contents)
 
   PreferencesStore.emit_change()
 }

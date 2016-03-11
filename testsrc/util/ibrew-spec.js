@@ -10,7 +10,7 @@ import version from '../../app/util/ibrew/version'
 
 test('ibrew', t => {
   const opts = {
-    onstatus: (msg) => console.log(msg),
+    onStatus: (msg) => console.log(msg),
     logger: new log.Logger()
   }
 

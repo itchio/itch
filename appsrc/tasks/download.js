@@ -22,7 +22,7 @@ function ensure (predicate, reason) {
 }
 
 async function start (opts) {
-  const {id, onprogress = noop, logger, emitter, upload_id} = opts
+  const {id, onProgress = noop, logger, emitter, upload_id} = opts
 
   const cave = CaveStore.find(id)
 
@@ -56,10 +56,10 @@ async function start (opts) {
   const parsed = url_parser.parse(url)
   log(opts, `downloading from ${parsed.hostname}`)
 
-  const dest = CaveStore.archive_path(cave.install_location, upload)
+  const dest = CaveStore.archivePath(cave.install_location, upload)
 
   try {
-    await butler.dl({url, dest, onprogress, logger, emitter})
+    await butler.dl({url, dest, onProgress, logger, emitter})
   } catch (err) {
     log(opts, `couldn't finish download: ${err.message || err}`)
 

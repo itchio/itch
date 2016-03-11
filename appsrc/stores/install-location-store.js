@@ -185,7 +185,7 @@ function cancel_install_location_size_computation (payload) {
 async function add_install_location_request () {
   let i18n = I18nStore.get_state()
 
-  let dialog_opts = {
+  let dialogOpts = {
     title: i18n.t('prompt.install_location_add.title'),
     properties: ['openDirectory']
   }
@@ -199,11 +199,11 @@ async function add_install_location_request () {
     }
 
     const loc_name = uuid.v4()
-    const loc_path = response[0]
-    AppActions.add_install_location(loc_name, loc_path)
-    log(opts, `Adding install location at ${loc_path} with name ${loc_name}`)
+    const locPath = response[0]
+    AppActions.add_install_location(loc_name, locPath)
+    log(opts, `Adding install location at ${locPath} with name ${loc_name}`)
   }
-  electron.dialog.showOpenDialog(window, dialog_opts, callback)
+  electron.dialog.showOpenDialog(window, dialogOpts, callback)
 }
 
 async function remove_install_location_request (payload) {
@@ -236,7 +236,7 @@ async function remove_install_location_request (payload) {
       i18n.t('prompt.action.ok')
     ]
 
-    const dialog_opts = {
+    const dialogOpts = {
       title: i18n.t('prompt.install_location_not_empty.title'),
       message: i18n.t('prompt.install_location_not_empty.message'),
       detail: i18n.t('prompt.install_location_not_empty.detail'),
@@ -248,14 +248,14 @@ async function remove_install_location_request (payload) {
         AppActions.focus_panel(`locations/${name}`)
       }
     }
-    electron.dialog.showMessageBox(dialog_opts, callback)
+    electron.dialog.showMessageBox(dialogOpts, callback)
   } else {
     const buttons = [
       i18n.t('prompt.action.confirm_removal'),
       i18n.t('prompt.action.cancel')
     ]
 
-    const dialog_opts = {
+    const dialogOpts = {
       title: i18n.t('prompt.install_location_remove.title'),
       message: i18n.t('prompt.install_location_remove.message'),
       detail: i18n.t('prompt.install_location_remove.detail', {location: loc.path}),
@@ -267,7 +267,7 @@ async function remove_install_location_request (payload) {
         AppActions.remove_install_location(payload.name)
       }
     }
-    electron.dialog.showMessageBox(dialog_opts, callback)
+    electron.dialog.showMessageBox(dialogOpts, callback)
   }
 }
 

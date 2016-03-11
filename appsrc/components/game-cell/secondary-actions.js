@@ -81,12 +81,12 @@ class SecondaryActions extends ShallowComponent {
     let t = this.t
 
     let label = t(key)
-    let tooltip_opts = {
+    let tooltipOpts = {
       mouseEnterDelay: 0.5,
       placement: 'top',
       overlay: r.span({}, label)
     }
-    return r(Tooltip, tooltip_opts, component)
+    return r(Tooltip, tooltipOpts, component)
   }
 
   browse_i18n_key () {

@@ -85,8 +85,8 @@ Store.subscribe = (name, cb) => {
       ipc.send(`${name}-fetch`)
     }
   } else {
-    let store_path = `./${name}`
-    const specific_store = require(store_path).default
+    let storePath = `./${name}`
+    const specific_store = require(storePath).default
     specific_store.add_change_listener('anonymous', cb)
   }
 }

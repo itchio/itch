@@ -16,10 +16,10 @@ import CaveStore from '../../stores/cave-store'
 import {Crash} from '../errors'
 
 const self = {
-  sh: async function (exe_path, full_command, opts) {
+  sh: async function (exePath, full_command, opts) {
     log(opts, `sh ${full_command}`)
 
-    const cwd = path.dirname(exe_path)
+    const cwd = path.dirname(exePath)
     log(opts, `Working directory: ${cwd}`)
 
     const args = shell_quote.parse(full_command)
@@ -28,14 +28,14 @@ const self = {
     const code = await spawn({
       command,
       args,
-      ontoken: (tok) => log(opts, `stdout: ${tok}`),
-      onerrtoken: (tok) => log(opts, `stderr: ${tok}`),
+      onToken: (tok) => log(opts, `stdout: ${tok}`),
+      onErrToken: (tok) => log(opts, `stderr: ${tok}`),
       opts: {cwd}
     })
 
     if (code !== 0) {
       const error = `process exited with code ${code}`
-      throw new Crash({exe_path, error})
+      throw new Crash({exePath, error})
     }
     return `child completed successfully`
   },
@@ -44,14 +44,14 @@ const self = {
     return `"${arg.replace(/"/g, '\\"')}"`
   },
 
-  compute_weight: async function (app_path, execs) {
+  compute_weight: async function (appPath, execs) {
     const output = []
 
     const f = async (exe) => {
-      const exe_path = path.join(app_path, exe.path)
+      const exePath = path.join(appPath, exe.path)
       let stats
       try {
-        stats = await sf.stat(exe_path)
+        stats = await sf.stat(exePath)
       } catch (err) {
         // entering the ultra hat dimension
       }
@@ -111,37 +111,37 @@ const self = {
     return output
   },
 
-  launch_executable: function (exe_path, args, opts) {
+  launch_executable: function (exePath, args, opts) {
     const platform = os.platform()
-    log(opts, `launching '${exe_path}' on '${platform}' with args '${args.join(' ')}'`)
+    log(opts, `launching '${exePath}' on '${platform}' with args '${args.join(' ')}'`)
     const arg_string = args.map((x) => self.escape(x)).join(' ')
 
-    if (platform === 'darwin' && /\.app\/?$/.test(exe_path.toLowerCase())) {
+    if (platform === 'darwin' && /\.app\/?$/.test(exePath.toLowerCase())) {
       // '-W' waits for app to quit
       // potentially easy to inject something into the command line
       // here but then again we are running executables downloaded
       // from the internet.
-      let cmd = `open -W ${self.escape(exe_path)}`
+      let cmd = `open -W ${self.escape(exePath)}`
       if (arg_string.length > 0) {
         cmd += ` --args ${arg_string}`
       }
-      return self.sh(exe_path, cmd, opts)
+      return self.sh(exePath, cmd, opts)
     } else {
-      let cmd = `${self.escape(exe_path)}`
+      let cmd = `${self.escape(exePath)}`
       if (arg_string.length > 0) {
         cmd += ` ${arg_string}`
       }
-      return self.sh(exe_path, cmd, opts)
+      return self.sh(exePath, cmd, opts)
     }
   },
 
   launch: async function (opts, cave) {
-    const app_path = CaveStore.app_path(cave.install_location, opts.id)
+    const appPath = CaveStore.appPath(cave.install_location, opts.id)
 
     let candidates = cave.executables.map((path) => {
       return {path}
     })
-    candidates = await self.compute_weight(app_path, candidates)
+    candidates = await self.compute_weight(appPath, candidates)
     candidates = self.compute_score(candidates)
     candidates = self.compute_depth(candidates)
 
@@ -156,17 +156,17 @@ const self = {
     candidates = candidates::sortBy((x) => x.depth)
     log(opts, `candidates after depth sorting: ${JSON.stringify(candidates, null, 2)}`)
 
-    let exe_path = path.join(app_path, candidates[0].path)
+    let exePath = path.join(appPath, candidates[0].path)
     const args = []
 
-    if (/\.jar$/i.test(exe_path)) {
+    if (/\.jar$/i.test(exePath)) {
       log(opts, `Launching .jar`)
       args.push('-jar')
-      args.push(exe_path)
-      exe_path = 'java'
+      args.push(exePath)
+      exePath = 'java'
     }
 
-    return self.launch_executable(exe_path, args, opts)
+    return self.launch_executable(exePath, args, opts)
   }
 }
 

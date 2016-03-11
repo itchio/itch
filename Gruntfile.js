@@ -1,32 +1,33 @@
 
+require('quiet-grunt')
 var fs = require('fs')
 var path = require('path')
-var package_path = path.join(__dirname, 'package.json')
-var version = JSON.parse(fs.readFileSync(package_path, { encoding: 'utf8' })).version
-var ico_path = 'release/itchio.ico'
-var installer_gif_path = 'release/installer.gif'
-var icns_path = 'release/itchio.icns'
+var packagePath = path.join(__dirname, 'package.json')
+var version = JSON.parse(fs.readFileSync(packagePath, { encoding: 'utf8' })).version
+var icoPath = 'release/itchio.ico'
+var installerGifPath = 'release/installer.gif'
+var icnsPath = 'release/itchio.icns'
 
-var electron_version = '0.36.8'
-var out_dir = path.join('build', 'v' + version)
-var company_name = 'Itch Corp'
+var electronVersion = '0.36.8'
+var outDir = path.join('build', 'v' + version)
+var companyName = 'Itch Corp'
 
-var grunt_electron_common = {
+var gruntElectronCommon = {
   dir: 'stage',
   name: 'itch',
-  version: electron_version,
+  version: electronVersion,
   'app-version': version,
   prune: true,
   asar: true,
   overwrite: true,
-  out: out_dir
+  out: outDir
 }
 
-var windows_electron_options = Object.assign({}, grunt_electron_common, {
+var windowsElectronOptions = Object.assign({}, gruntElectronCommon, {
   platform: 'win32',
-  icon: ico_path,
+  icon: icoPath,
   'version-string': {
-    CompanyName: company_name,
+    CompanyName: companyName,
     LegalCopyright: 'MIT license, (c) Itch Corp',
     FileDescription: 'itch',
     OriginalFileName: 'itch.exe',
@@ -37,15 +38,15 @@ var windows_electron_options = Object.assign({}, grunt_electron_common, {
   }
 })
 
-var electron_installer_common = {
-  authors: company_name,
+var electronInstallerCommon = {
+  authors: companyName,
   exe: 'itch.exe',
   description: 'The best way to play itch.io games',
   version: version,
   title: 'itch',
   iconUrl: 'http://raw.githubusercontent.com/itchio/itch/master/app/static/images/itchio.ico',
-  loadingGif: installer_gif_path,
-  setupIcon: ico_path,
+  loadingGif: installerGifPath,
+  setupIcon: icoPath,
   remoteReleases: 'https://github.com/itchio/itch',
   signWithParams: '/v /s MY /n "Open Source Developer, Amos Wenger" /t http://timestamp.verisign.com/scripts/timstamp.dll',
   noMsi: true
@@ -60,13 +61,13 @@ module.exports = function (grunt) {
       'windows-ia32': {
         options: Object.assign({
           arch: 'ia32'
-        }, windows_electron_options)
+        }, windowsElectronOptions)
       },
       'darwin-x64': {
-        options: Object.assign({}, grunt_electron_common, {
+        options: Object.assign({}, gruntElectronCommon, {
           platform: 'darwin',
           arch: 'x64',
-          icon: icns_path,
+          icon: icnsPath,
           'app-bundle-id': 'io.itch.mac',
           'app-category-type': 'public.app-category.games',
           protocols: [{
@@ -76,21 +77,21 @@ module.exports = function (grunt) {
         })
       },
       'linux-ia32': {
-        options: Object.assign({}, grunt_electron_common, {
+        options: Object.assign({}, gruntElectronCommon, {
           platform: 'linux',
           arch: 'ia32'
         })
       },
       'linux-x64': {
-        options: Object.assign({}, grunt_electron_common, {
+        options: Object.assign({}, gruntElectronCommon, {
           platform: 'linux',
           arch: 'x64'
         })
       }
     },
     'create-windows-installer': {
-      'ia32': Object.assign({}, electron_installer_common, {
-        appDirectory: path.join(out_dir, 'itch-win32-ia32'),
+      'ia32': Object.assign({}, electronInstallerCommon, {
+        appDirectory: path.join(outDir, 'itch-win32-ia32'),
         outputDirectory: process.env.JENKINS_WINDOWS_INSTALLER_PATH || path.join('build', 'squirrel-ia32')
       })
     },

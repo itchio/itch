@@ -18,8 +18,8 @@ import CaveStore from '../../stores/cave-store'
 let self = {
   launch: async function(opts, cave) {
     let game = market.get_entities('games')[cave.game_id]
-    let inject_path = path.resolve(__dirname, '..', '..', 'inject', 'game.js')
-    let entry_point = path.join(CaveStore.app_path(cave.install_location, opts.id), cave.game_path)
+    let injectPath = path.resolve(__dirname, '..', '..', 'inject', 'game.js')
+    let entry_point = path.join(CaveStore.appPath(cave.install_location, opts.id), cave.gamePath)
 
     log(opts, `entry point: ${entry_point}`)
     let win = new BrowserWindow({
@@ -36,7 +36,7 @@ let self = {
         /* don't let web code control the OS */
         nodeIntegration: false,
         /* hook up a few keyboard shortcuts of our own */
-        preload: inject_path,
+        preload: injectPath,
         /* stores cookies etc. in persistent session to save progress */
         partition: `persist:gamesession_${cave.game_id}`
       }

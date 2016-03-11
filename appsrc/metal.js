@@ -1,5 +1,7 @@
 'use strict'
 
+// This file is the entry point for the main (browser) process
+
 import './boot/sourcemaps'
 import './boot/bluebird'
 import './boot/crash'
@@ -80,10 +82,10 @@ app.on('open-url', (e, url) => {
 
 // URL handling
 
-import url_parser from 'url'
+import urlParser from 'url'
 
 function isItchioURL (s) {
-  return url_parser.parse(s).protocol === 'itchio:'
+  return urlParser.parse(s).protocol === 'itchio:'
 }
 
 function handleUrls (argv) {

@@ -8,23 +8,23 @@ import mklog from '../../util/log'
 const log = mklog('installers/msi')
 
 const self = {
-  log_path: function (operation, msi_path) {
-    return `${msi_path}.${operation}.log.txt`
+  logPath: function (operation, msiPath) {
+    return `${msiPath}.${operation}.log.txt`
   },
 
-  args: function (operation, msi_path, target_path) {
-    const log_path = self.log_path(operation, msi_path)
+  args: function (operation, msiPath, targetPath) {
+    const logPath = self.logPath(operation, msiPath)
 
     return [
       'ALLUSERS=2', 'MSIINSTALLPERUSER=1', // single-user install (no need for UAC dialog)
       // try to specify install location (do not expect it to work)
-      `TARGETDIR=${target_path}`,
-      `INSTALLDIR=${target_path}`,
-      `APPDIR=${target_path}`,
+      `TARGETDIR=${targetPath}`,
+      `INSTALLDIR=${targetPath}`,
+      `APPDIR=${targetPath}`,
       '/norestart', // do not restart computer while running client
       '/quiet', // no UI at all
-      '/l*v', log_path, // store verbose log on disk
-      `/${operation}`, msi_path
+      '/l*v', logPath, // store verbose log on disk
+      `/${operation}`, msiPath
     ]
   },
 
@@ -35,14 +35,14 @@ const self = {
       throw new Error('MSI files are only supported on Windows')
     }
 
-    const archive_path = opts.archive_path
-    const dest_path = opts.dest_path
+    const archivePath = opts.archivePath
+    const destPath = opts.destPath
     const logger = opts.logger
 
     await spawn({
       command: 'msiexec',
-      args: self.args('i', archive_path, dest_path),
-      ontoken: (token) => log(opts, token),
+      args: self.args('i', archivePath, destPath),
+      onToken: (token) => log(opts, token),
       logger
     })
   },
@@ -54,13 +54,13 @@ const self = {
 
     AppActions.cave_progress({id: opts.id, progress: -1})
 
-    const archive_path = opts.archive_path
-    const dest_path = opts.dest_path
+    const archivePath = opts.archivePath
+    const destPath = opts.destPath
     const logger = opts.logger
 
     await spawn({
       command: 'msiexec',
-      args: self.args('x', archive_path, dest_path),
+      args: self.args('x', archivePath, destPath),
       logger
     })
   }

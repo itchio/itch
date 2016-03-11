@@ -11,16 +11,16 @@ import AppActions from '../../actions/app-actions'
 import ClassificationActions from '../../constants/classification-actions'
 
 import os from '../../util/os'
-const platform = os.itch_platform()
+const platform = os.itchPlatform()
 
-let linear_gradient = (progress) => {
+let linearGradient = (progress) => {
   let percent = (progress * 100).toFixed() + '%'
-  let done_color = '#444'
-  let undone_color = '#222'
-  return `-webkit-linear-gradient(left, ${done_color}, ${done_color} ${percent}, ${undone_color} ${percent}, ${undone_color})`
+  let doneColor = '#444'
+  let undoneColor = '#222'
+  return `-webkit-linear-gradient(left, ${doneColor}, ${doneColor} ${percent}, ${undoneColor} ${percent}, ${undoneColor})`
 }
 
-let icon_info = (cave) => {
+let iconInfo = (cave) => {
   let progress = cave ? cave.progress : 0
   let task = cave ? cave.task : null
   let spin = false
@@ -30,7 +30,7 @@ let icon_info = (cave) => {
   } else if (cave && cave.reporting) {
     task = 'report'
     spin = true
-  } else if (cave && cave.need_blessing) {
+  } else if (cave && cave.needBlessing) {
     task = 'ask-before-install'
     spin = true
   }
@@ -44,21 +44,21 @@ class MainAction extends ShallowComponent {
 
     let cave = this.props.cave
     let game = this.props.game
-    let platform_compatible = this.props.platform_compatible
-    let may_download = this.props.may_download
+    let platformCompatible = this.props.platformCompatible
+    let mayDownload = this.props.mayDownload
 
     let classification = game.classification
     let action = ClassificationActions[classification]
     if (action === 'open') {
-      platform_compatible = true
+      platformCompatible = true
     }
 
     let progress = cave ? cave.progress : 0
-    let info = icon_info(cave)
+    let info = iconInfo(cave)
     let task = info.task
     let spin = info.spin
 
-    let onClick = () => this.on_click(task, may_download, platform_compatible)
+    let onClick = () => this.onClick(task, mayDownload, platformCompatible)
 
     let child = ''
 
@@ -71,8 +71,8 @@ class MainAction extends ShallowComponent {
         ])
       ])
     } else {
-      if (platform_compatible) {
-        if (may_download) {
+      if (platformCompatible) {
+        if (mayDownload) {
           child = r.span({}, [
             r(Icon, {icon: 'install'}),
             ' ' + t('grid.item.install')
@@ -91,8 +91,8 @@ class MainAction extends ShallowComponent {
     }
 
     let classSet = {
-      incompatible: !platform_compatible,
-      buy_now: (platform_compatible && !may_download),
+      incompatible: !platformCompatible,
+      buy_now: (platformCompatible && !mayDownload),
       cancellable: /^download.*/.test(task),
       main_action: true,
       button: true
@@ -108,16 +108,16 @@ class MainAction extends ShallowComponent {
 
     let style = {}
     if (progress > 0) {
-      style.backgroundImage = linear_gradient(progress)
+      style.backgroundImage = linearGradient(progress)
     }
 
     let button = r.div({classSet, style, onClick}, child)
 
-    let tooltip_opts = this.tooltip_opts(task)
-    return r(Tooltip, tooltip_opts, button)
+    let tooltipOpts = this.tooltipOpts(task)
+    return r(Tooltip, tooltipOpts, button)
   }
 
-  tooltip_opts (task) {
+  tooltipOpts (task) {
     let t = this.t
 
     if (task === 'error') {
@@ -137,7 +137,7 @@ class MainAction extends ShallowComponent {
     }
   }
 
-  on_click (task, may_download, platform_compatible) {
+  onClick (task, mayDownload, platformCompatible) {
     let {cave, game} = this.props
 
     if (task === 'error') {
@@ -145,8 +145,8 @@ class MainAction extends ShallowComponent {
     } else if (/^download.*$/.test(task)) {
       AppActions.cancel_cave(cave.id)
     } else {
-      if (platform_compatible) {
-        if (may_download) {
+      if (platformCompatible) {
+        if (mayDownload) {
           AppActions.queue_game(game)
         } else {
           AppActions.initiate_purchase(game)

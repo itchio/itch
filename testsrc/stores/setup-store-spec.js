@@ -13,7 +13,7 @@ test('SetupStore', t => {
     __esModule: true,
     default: {
       fetch: () => null,
-      bin_path: () => ''
+      binPath: () => ''
     },
     '@noCallThru': true
   }

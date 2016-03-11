@@ -1,6 +1,6 @@
 
 import {takeEvery} from 'redux-saga'
-import {put, call} from 'redux-saga/effects'
+import {put, call, take} from 'redux-saga/effects'
 import client from '../util/api'
 
 import {
@@ -10,7 +10,9 @@ import {
 } from '../actions'
 
 import {
-  LOGIN_WITH_PASSWORD
+  LOGIN_WITH_PASSWORD,
+  LOGIN_SUCCEEDED,
+  SETUP_DONE
 } from '../constants/action-types'
 
 export function * passwordLogin (action) {
@@ -28,8 +30,20 @@ export function * passwordLogin (action) {
   }
 }
 
+export function * sessionWatcher () {
+  while (true) {
+    console.log(`waiting on login & setup`)
+    yield [
+      take(LOGIN_SUCCEEDED),
+      take(SETUP_DONE)
+    ]
+    console.log(`both login & setup done!`)
+  }
+}
+
 export default function * loginSaga () {
   yield [
-    takeEvery(LOGIN_WITH_PASSWORD, passwordLogin)
+    takeEvery(LOGIN_WITH_PASSWORD, passwordLogin),
+    call(sessionWatcher)
   ]
 }

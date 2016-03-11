@@ -65,7 +65,7 @@ let CaveStore = Object.assign(new Store('cave-store'), {
     }
   },
 
-  archive_path: function (loc_name, upload) {
+  archivePath: function (loc_name, upload) {
     pre: { // eslint-disable-line
       typeof upload === 'object'
     }
@@ -74,7 +74,7 @@ let CaveStore = Object.assign(new Store('cave-store'), {
     return path.join(loc_dir, 'archives', `${upload.id}${path.extname(upload.filename)}`)
   },
 
-  app_path: function (loc_name, cave_id) {
+  appPath: function (loc_name, cave_id) {
     pre: { // eslint-disable-line
       typeof cave_id === 'string'
     }
@@ -83,16 +83,16 @@ let CaveStore = Object.assign(new Store('cave-store'), {
     return path.join(loc_dir, 'apps', cave_id)
   },
 
-  log_path: function (cave_id) {
+  logPath: function (cave_id) {
     pre: { // eslint-disable-line
       typeof cave_id === 'string'
     }
 
-    return log_path(cave_id)
+    return logPath(cave_id)
   }
 })
 
-function log_path (cave_id) {
+function logPath (cave_id) {
   pre: { // eslint-disable-line
     typeof cave_id === 'string'
   }
@@ -112,28 +112,28 @@ function emit_change () {
   CaveStore.emit_change()
 }
 
-let store_opts = {
+let storeOpts = {
   logger: new Logger()
 }
 
-let cave_opts_cache = {}
+let caveOpts_cache = {}
 
-function cave_opts (id) {
+function caveOpts (id) {
   pre: { // eslint-disable-line
     typeof id === 'string'
   }
 
-  let cached = cave_opts_cache[id]
+  let cached = caveOpts_cache[id]
   if (cached) return cached
 
   let logger = new Logger({
     sinks: {
       console: false,
-      file: log_path(id)
+      file: logPath(id)
     }
   })
   let opts = {logger}
-  cave_opts_cache[id] = opts
+  caveOpts_cache[id] = opts
 
   log(opts, `~~~~~~~~~~~~~~~~ the village awakens ~~~~~~~~~~~~~~~~`)
   log(opts, `itch v${electron.app.getVersion()} to ground control, on ${os.itch_platform()}-${os.arch()}`)
@@ -143,19 +143,19 @@ function cave_opts (id) {
 
 function handle_task_error (err, id, task_name) {
   if (err instanceof Transition) {
-    log(cave_opts(id), `[${task_name} => ${err.to}] ${err.reason || ''}`)
+    log(caveOpts(id), `[${task_name} => ${err.to}] ${err.reason || ''}`)
     let data = err.data || {}
     setImmediate(() => queue_task(id, err.to, data))
   } else if (err instanceof InputRequired) {
     let msg = `(stub) input required by ${task_name}`
-    log(cave_opts(id), msg)
+    log(caveOpts(id), msg)
     AppActions.cave_progress({id, task: 'error', error: msg})
   } else if (err instanceof Crash) {
     let msg = `crashed with: ${JSON.stringify(err, null, 2)}`
-    log(cave_opts(id), msg)
+    log(caveOpts(id), msg)
     AppActions.cave_progress({id, task: 'idle', error: msg, progress: 0})
   } else if (err instanceof Cancelled) {
-    log(cave_opts(id), `${task_name} cancelled!`)
+    log(caveOpts(id), `${task_name} cancelled!`)
     let cave = CaveStore.find(id)
     if (cave) {
       if (cave.launchable && cave.success_once) {
@@ -167,7 +167,7 @@ function handle_task_error (err, id, task_name) {
       // it's dead, Jim!
     }
   } else {
-    log(cave_opts(id), err.stack || err)
+    log(caveOpts(id), err.stack || err)
     AppActions.cave_progress({id, task: 'error', error: '' + err, progress: 0})
   }
 }
@@ -232,7 +232,7 @@ async function queue_task (id, task_name, data) {
     }
 
     if (current_tasks[id]) {
-      log(cave_opts(id), `task already in progress for ${id}, ignoring ${task_name} request`)
+      log(caveOpts(id), `task already in progress for ${id}, ignoring ${task_name} request`)
       return
     }
 
@@ -243,22 +243,22 @@ async function queue_task (id, task_name, data) {
 
     const task = require(`../tasks/${task_name}`).default
     let emitter = Object.assign({}, EventEmitter.prototype)
-    let task_opts = Object.assign({}, cave_opts(id), data, {
+    let taskOpts = Object.assign({}, caveOpts(id), data, {
       id,
       emitter,
-      onprogress: ((state) => {
+      onProgress: ((state) => {
         if (!running) return
         AppActions.cave_progress({id, progress: state.percent * 0.01, task: task_name})
       })::throttle(50)
     })
-    log(cave_opts(id), `starting ${task_name}`)
+    log(caveOpts(id), `starting ${task_name}`)
     AppActions.cave_progress({id, progress: 0, task: task_name})
 
     set_current_task(id, {
       name: task_name,
-      opts: task_opts
+      opts: taskOpts
     })
-    let res = await task.start(task_opts)
+    let res = await task.start(taskOpts)
     running = false
     set_current_task(id, null)
     AppActions.cave_progress({id, progress: 0})
@@ -272,13 +272,13 @@ async function queue_task (id, task_name, data) {
       }
     }
 
-    log(cave_opts(id), `task ${task_name} finished with ${JSON.stringify(res)}`)
+    log(caveOpts(id), `task ${task_name} finished with ${JSON.stringify(res)}`)
     if (task_name === 'uninstall') return
 
     AppActions.cave_progress({id, progress: 0})
 
-    if (task_opts.then) {
-      queue_task(id, task_opts.then)
+    if (taskOpts.then) {
+      queue_task(id, taskOpts.then)
     } else {
       AppActions.cave_progress({id, task: 'idle'})
     }
@@ -300,17 +300,17 @@ async function queue_game_install (game) {
   let cave = {id: uuid.v4(), game_id: game.id, install_location}
   market.save_all_entities({entities: {caves: {[cave.id]: cave}}})
 
-  diego.hire(cave_opts(cave.id))
+  diego.hire(caveOpts(cave.id))
   initial_progress(cave)
   queue_task(cave.id, 'download')
 }
 
 async function explore_cave (payload) {
   let cave = CaveStore.find(payload.id)
-  let app_path = CaveStore.app_path(cave.install_location, payload.id)
+  let appPath = CaveStore.appPath(cave.install_location, payload.id)
 
-  if (await sf.exists(app_path)) {
-    explorer.open(app_path)
+  if (await sf.exists(appPath)) {
+    explorer.open(appPath)
   } else {
     probe_cave(payload)
   }
@@ -333,7 +333,7 @@ function cave_progress (payload) {
 }
 
 async function probe_cave (payload) {
-  electron.shell.openItem(log_path(payload.id))
+  electron.shell.openItem(logPath(payload.id))
 }
 
 async function queue_game (payload) {
@@ -379,7 +379,7 @@ async function request_cave_uninstall (payload) {
     title: game.title
   }
 
-  const dialog_opts = {
+  const dialogOpts = {
     type: 'question',
     buttons,
     message: i18n.t('prompt.uninstall.message', i18n_vars),
@@ -393,7 +393,7 @@ async function request_cave_uninstall (payload) {
       AppActions.queue_cave_reinstall(payload.id)
     }
   }
-  electron.dialog.showMessageBox(dialog_opts, callback)
+  electron.dialog.showMessageBox(dialogOpts, callback)
 }
 
 async function queue_cave_uninstall (payload) {
@@ -407,7 +407,7 @@ async function queue_cave_uninstall (payload) {
   if (record) {
     queue_task(record.id, 'uninstall')
   } else {
-    log(store_opts, `asked to uninstall ${payload.id} but no record of it, ignoring`)
+    log(storeOpts, `asked to uninstall ${payload.id} but no record of it, ignoring`)
   }
 }
 
@@ -418,7 +418,7 @@ async function queue_cave_reinstall (payload) {
   }
 
   const cave_id = payload.id
-  log(store_opts, `reinstalling ${cave_id}!`)
+  log(storeOpts, `reinstalling ${cave_id}!`)
   queue_task(cave_id, 'install', {reinstall: true})
 }
 

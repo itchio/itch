@@ -72,7 +72,7 @@ test('app-actions', t => {
   test_action('add_install_location', ['uuid', '/dev/itch'], {action_type: 'ADD_INSTALL_LOCATION', name: 'uuid', path: '/dev/itch'})
   test_action('remove_install_location_request', ['uuid'], {action_type: 'REMOVE_INSTALL_LOCATION_REQUEST', name: 'uuid'})
   test_action('remove_install_location', ['uuid'], {action_type: 'REMOVE_INSTALL_LOCATION', name: 'uuid'})
-  test_action('transfer_install_location', ['uuid', '/tmp/itch'], {action_type: 'TRANSFER_INSTALL_LOCATION', name: 'uuid', new_path: '/tmp/itch'})
+  test_action('transfer_install_location', ['uuid', '/tmp/itch'], {action_type: 'TRANSFER_INSTALL_LOCATION', name: 'uuid', newPath: '/tmp/itch'})
   test_action('make_install_location_default', ['uuid'], {action_type: 'MAKE_INSTALL_LOCATION_DEFAULT', name: 'uuid'})
 
   test_action('request_cave_uninstall', ['uuid'], {action_type: 'REQUEST_CAVE_UNINSTALL', id: 'uuid'})

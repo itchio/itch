@@ -71,10 +71,10 @@ test('configure (each platform)', t => {
   }
 
   const win32 = proxyquire('../../app/tasks/configure/win32', stubs).default
-  const win32_path = fixture.path('configure/win32')
+  const win32Path = fixture.path('configure/win32')
 
   t.case('win32 finds bats and exes', async t => {
-    const res = await win32.configure(win32_path)
+    const res = await win32.configure(win32Path)
     const names = [
       'game.exe', 'launcher.bat',
       path.join('resources', 'editor.exe'),
@@ -84,11 +84,11 @@ test('configure (each platform)', t => {
   })
 
   const darwin = proxyquire('../../app/tasks/configure/darwin', stubs).default
-  const darwin_path = fixture.path('configure/darwin')
-  const darwin_nested_path = fixture.path('configure/darwin-nested')
+  const darwinPath = fixture.path('configure/darwin')
+  const darwin_nestedPath = fixture.path('configure/darwin-nested')
 
   t.case('darwin finds app bundles', async t => {
-    const res = await darwin.configure(darwin_path)
+    const res = await darwin.configure(darwinPath)
     const names = [
       'Some Grand Game.app/'
     ]
@@ -96,7 +96,7 @@ test('configure (each platform)', t => {
   })
 
   t.case('darwin finds nested app bundles', async t => {
-    const res = await darwin.configure(darwin_nested_path)
+    const res = await darwin.configure(darwin_nestedPath)
     const names = [
       'osx64/dragonjousting.app/',
       'osx64/dragonjousting.app/Contents/Frameworks/node-webkit Helper.app/',
@@ -107,10 +107,10 @@ test('configure (each platform)', t => {
   })
 
   const linux = proxyquire('../../app/tasks/configure/linux', stubs).default
-  const linux_path = fixture.path('configure/linux')
+  const linuxPath = fixture.path('configure/linux')
 
   t.case('darwin finds binaries when no app bundles', async t => {
-    const res = await darwin.configure(linux_path)
+    const res = await darwin.configure(linuxPath)
     const names = [
       'bin/mach-o',
       'bin/mach-o-bis',
@@ -121,7 +121,7 @@ test('configure (each platform)', t => {
   })
 
   t.case('linux finds scripts & binaries', async t => {
-    const res = await linux.configure(linux_path)
+    const res = await linux.configure(linuxPath)
     const names = [
       'bin/game32',
       'bin/game64',
@@ -132,7 +132,7 @@ test('configure (each platform)', t => {
   })
 
   const html = proxyquire('../../app/tasks/configure/html', stubs).default
-  const html_path = fixture.path('configure/html')
+  const htmlPath = fixture.path('configure/html')
   const game = {
     embed: {
       width: '640',
@@ -142,7 +142,7 @@ test('configure (each platform)', t => {
   }
 
   t.case('html finds game root', async t => {
-    const res = await html.configure(game, html_path)
-    t.same(res.game_path, 'ThisContainsStuff/index.html')
+    const res = await html.configure(game, htmlPath)
+    t.same(res.gamePath, 'ThisContainsStuff/index.html')
   })
 })

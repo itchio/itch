@@ -10,36 +10,36 @@ const opts = {logger: new mklog.Logger()}
 let base = `HKCU\\Software\\Classes\\itchio`
 
 let system_root = process.env.SystemRoot || 'missing-system-root'
-let system32_path = path.join(system_root, 'System32')
-let reg_path = path.join(system32_path, 'reg.exe')
+let system32Path = path.join(system_root, 'System32')
+let regPath = path.join(system32Path, 'reg.exe')
 
 let self = {
 
   reg_query: async function (key) {
     await spawn({
-      command: reg_path,
+      command: regPath,
       args: ['query', key, '/s'],
-      ontoken: (tok) => log(opts, `query: ` + tok)
+      onToken: (tok) => log(opts, `query: ` + tok)
     })
   },
 
   reg_add_default: async function (key, value) {
     await spawn({
-      command: reg_path,
+      command: regPath,
       args: ['add', key, '/ve', '/d', value, '/f']
     })
   },
 
   reg_add_empty: async function (key, value) {
     await spawn({
-      command: reg_path,
+      command: regPath,
       args: ['add', key, '/v', value, '/f']
     })
   },
 
   reg_delete_all: async function (key) {
     await spawn({
-      command: reg_path,
+      command: regPath,
       args: ['delete', key, '/f']
     })
   },

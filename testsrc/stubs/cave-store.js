@@ -9,6 +9,6 @@ module.exports = test.module({
     game_id: 84,
     launch_type: 'native'
   }),
-  archive_path: () => '/tmp/archive',
-  app_path: () => '/tmp/app'
+  archivePath: () => '/tmp/archive',
+  appPath: () => '/tmp/app'
 })

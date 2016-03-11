@@ -4,41 +4,41 @@ import reg from '../reg'
 import shortcut from '../shortcut'
 
 const self = {
-  on_install: async () => {
+  onInstall: async () => {
     await reg.install()
     await shortcut.install()
     return true
   },
 
-  on_update: async () => {
+  onUpdate: async () => {
     await reg.update()
     await shortcut.update()
     return true
   },
 
-  on_uninstall: async () => {
+  onUninstall: async () => {
     await reg.uninstall()
     await shortcut.uninstall()
     return true
   },
 
-  on_obsolete: async () => {
+  onObsolete: async () => {
     // This is called on the outgoing version of your app before
     // we update to the new version - it's the opposite of --squirrel-update
     return true
   },
 
   start: async () => {
-    const squirrel_command = os.cli_args()[1]
-    switch (squirrel_command) {
+    const squirrelCommand = os.cliArgs()[1]
+    switch (squirrelCommand) {
       case '--squirrel-install':
-        return await self.on_install()
+        return await self.onInstall()
       case '--squirrel-updated':
-        return await self.on_update()
+        return await self.onUpdate()
       case '--squirrel-uninstall':
-        return await self.on_uninstall()
+        return await self.onUninstall()
       case '--squirrel-obsolete':
-        return await self.on_obsolete()
+        return await self.onObsolete()
     }
     return false
   }

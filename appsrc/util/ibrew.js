@@ -22,7 +22,7 @@ const defaultVersionCheck = {
 const self = {
   fetch: function * (opts, name) {
     const noop = () => null
-    const {onstatus = noop} = opts
+    const {onStatus = noop} = opts
 
     const formula = formulas[name]
     if (!formula) {
@@ -40,7 +40,7 @@ const self = {
       const archiveName = self.archiveName(name)
       const archivePath = path.join(self.binPath(), archiveName)
       const archiveUrl = `${channel}/v${v}/${archiveName}`
-      onstatus('download', ['login.status.dependency_install', {name, version: v}])
+      onStatus('download', ['login.status.dependency_install', {name, version: v}])
       log(opts, `${name}: downloading '${v}' from ${archiveUrl}`)
 
       yield call(net.downloadToFile, opts, archiveUrl, archivePath)
@@ -57,7 +57,7 @@ const self = {
       }
     }
 
-    onstatus('stopwatch', ['login.status.dependencyCheck'])
+    onStatus('stopwatch', ['login.status.dependencyCheck'])
     const getLatestVersion = net.getLatestVersion::partial(channel)
 
     const localVersion = yield call(self.getLocalVersion, name)

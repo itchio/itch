@@ -13,7 +13,7 @@ import AppActions from '../actions/app-actions'
 import html from './configure/html'
 
 const self = {
-  configure: async function (app_path) {
+  configure: async function (appPath) {
     const platform = os.platform()
 
     switch (platform) {
@@ -21,7 +21,7 @@ const self = {
       case 'darwin':
       case 'linux':
         const configurator = require(`./configure/${platform}`).default
-        return await configurator.configure(app_path)
+        return await configurator.configure(appPath)
       default:
         throw new Error(`Unsupported platform: ${platform}`)
     }
@@ -33,8 +33,8 @@ const self = {
     const cave = CaveStore.find(id)
     const game = await fetch.game_lazily(market, cave.game_id)
 
-    const app_path = CaveStore.app_path(cave.install_location, id)
-    log(opts, `configuring ${app_path}`)
+    const appPath = CaveStore.appPath(cave.install_location, id)
+    log(opts, `configuring ${appPath}`)
 
     const uploads = cave.uploads
     if (!uploads) {
@@ -50,10 +50,10 @@ const self = {
     AppActions.update_cave(id, {launch_type})
 
     if (launch_type === 'html') {
-      const res = await html.configure(game, app_path)
+      const res = await html.configure(game, appPath)
       AppActions.update_cave(id, res)
     } else {
-      const executables = (await self.configure(app_path)).executables
+      const executables = (await self.configure(appPath)).executables
       AppActions.update_cave(id, {executables})
     }
   }

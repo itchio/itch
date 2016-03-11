@@ -15,7 +15,7 @@ import path from 'path'
 import fs from 'fs'
 
 const locales_dir = path.resolve(path.join(__dirname, '..', 'static', 'locales'))
-const locales_list_path = path.resolve(path.join(locales_dir, '..', 'locales.json'))
+const locales_listPath = path.resolve(path.join(locales_dir, '..', 'locales.json'))
 
 function on_error (err) {
   // apparently the file backend doesn't validate JSON :|
@@ -28,7 +28,7 @@ function on_error (err) {
 let lang = 'en'
 let sniffed_language = 'en'
 
-let i18n_opts = {
+let i18nOpts = {
   lng: 'en',
   interpolation: {
     escapeValue: false
@@ -41,7 +41,7 @@ let i18n_opts = {
     loadPath: locales_dir
   }
 }
-i18next.use(backend).init(i18n_opts, on_error)
+i18next.use(backend).init(i18nOpts, on_error)
 let state = i18next
 
 let locales_list
@@ -55,7 +55,7 @@ let I18nStore = Object.assign(new Store('i18n-store', process.type), {
   get_locales_list: () => {
     if (!locales_list) {
       // bad, but should only happen once at start-up
-      let contents = fs.readFileSync(locales_list_path, {encoding: 'utf8'})
+      let contents = fs.readFileSync(locales_listPath, {encoding: 'utf8'})
       locales_list = JSON.parse(contents).locales
     }
 

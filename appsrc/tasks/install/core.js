@@ -8,17 +8,17 @@ import AppActions from '../../actions/app-actions'
 import ExtendableError from 'es6-error'
 
 class UnhandledFormat extends ExtendableError {
-  constructor (archive_path) {
-    super(`don't know how to handle ${archive_path}`)
+  constructor (archivePath) {
+    super(`don't know how to handle ${archivePath}`)
   }
 }
 
 const self = {
   UnhandledFormat,
 
-  valid_installers: ['archive', 'dmg', 'msi', 'exe'],
+  validInstallers: ['archive', 'dmg', 'msi', 'exe'],
 
-  installer_for_ext: {
+  installerForExt: {
     // Generic archives
     'zip': 'archive',
     'gz': 'archive',
@@ -48,85 +48,85 @@ const self = {
     return await self.operate(opts, 'uninstall')
   },
 
-  cache_type: function (opts, installer_name) {
+  cacheType: function (opts, installerName) {
     pre: { // eslint-disable-line
       typeof opts === 'object'
-      typeof opts.upload_id === 'number'
-      typeof installer_name === 'string'
+      typeof opts.uploadId === 'number'
+      typeof installerName === 'string'
     }
 
     const cave = opts.cave
     if (!cave) return
 
-    const installer_cache = {}
-    installer_cache[opts.upload_id] = installer_name
-    AppActions.update_cave(cave.id, {installer_cache})
+    const installerCache = {}
+    installerCache[opts.uploadId] = installerName
+    AppActions.update_cave(cave.id, {installerCache})
   },
 
-  retrieve_cached_type: function (opts) {
+  retrieveCachedType: function (opts) {
     const cave = opts.cave
     if (!cave) return null
 
-    log(opts, `retrieving installer type of ${opts.archive_path} from cache`)
-    const installer_cache = cave.installer_cache || {}
-    const installer_name = installer_cache[cave.upload_id]
+    log(opts, `retrieving installer type of ${opts.archivePath} from cache`)
+    const installerCache = cave.installerCache || {}
+    const installerName = installerCache[cave.uploadId]
 
-    if (self.valid_installers.indexOf(installer_name) === -1) {
-      log(opts, `invalid installer name stored: ${installer_name} - discarding`)
+    if (self.validInstallers.indexOf(installerName) === -1) {
+      log(opts, `invalid installer name stored: ${installerName} - discarding`)
       return null
     }
 
-    return installer_name
+    return installerName
   },
 
-  sniff_type: async function (opts) {
-    const archive_path = opts.archive_path
+  sniffType: async function (opts) {
+    const {archivePath} = opts
 
-    const type = await sniff.path(archive_path)
-    log(opts, `sniffed type ${JSON.stringify(type)} for ${archive_path}`)
+    const type = await sniff.path(archivePath)
+    log(opts, `sniffed type ${JSON.stringify(type)} for ${archivePath}`)
     if (!type) {
-      throw new UnhandledFormat(archive_path)
+      throw new UnhandledFormat(archivePath)
     }
 
-    let installer_name = self.installer_for_ext[type.ext]
-    if (!installer_name) {
+    let installerName = self.installerForExt[type.ext]
+    if (!installerName) {
       const code = await spawn({
         command: '7za',
-        args: ['l', archive_path]
+        args: ['l', archivePath]
       })
 
       if (code === 0) {
         log(opts, `7-zip saves the day! it's an archive.`)
-        installer_name = 'archive'
-      } else if (archive_path.executable) {
+        installerName = 'archive'
+      } else if (archivePath.executable) {
         log(opts, `it's executable, going with naked`)
-        installer_name = 'naked'
+        installerName = 'naked'
       } else {
-        throw new UnhandledFormat(`${archive_path} of type ${JSON.stringify(type)}`)
+        throw new UnhandledFormat(`${archivePath} of type ${JSON.stringify(type)}`)
       }
     }
 
-    if (!opts.disable_cache) {
-      self.cache_type(opts, installer_name)
+    if (!opts.disableCache) {
+      self.cacheType(opts, installerName)
     }
-    return installer_name
+    return installerName
   },
 
   operate: async function (opts, operation) {
-    const archive_path = opts.archive_path
-    let installer_name = opts.installer_name
+    const {archivePath} = opts
+    let {installerName} = opts
 
-    if (!installer_name && !opts.disable_cache) {
-      installer_name = self.retrieve_cached_type(opts)
+    if (!installerName && !opts.disableCache) {
+      installerName = self.retrieveCachedType(opts)
     }
 
-    if (installer_name) {
-      log(opts, `using cached installer type ${installer_name} for ${archive_path}`)
+    if (installerName) {
+      log(opts, `using cached installer type ${installerName} for ${archivePath}`)
     } else {
-      installer_name = await self.sniff_type(opts)
+      installerName = await self.sniffType(opts)
     }
 
-    const installer = require(`./${installer_name}`).default
+    const installer = require(`./${installerName}`).default
     await installer[operation](opts)
   }
 }

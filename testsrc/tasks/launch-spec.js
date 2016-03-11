@@ -56,7 +56,7 @@ test('launch', t => {
     find.returns({executables: ['./a'], launch_type: 'native'})
     t.mock(native).expects('launch').once().resolves('Done!')
     await launch.start(opts)
-    find.returns({ game_path: 'a/a.html', window_size: {width: 1, height: 1}, launch_type: 'html' })
+    find.returns({ gamePath: 'a/a.html', window_size: {width: 1, height: 1}, launch_type: 'html' })
     t.mock(html).expects('launch').once().resolves('Done!')
     await launch.start(opts)
   })
@@ -204,7 +204,7 @@ test('launch/html', t => {
 
   const cave = {
     game_id: 84,
-    game_path: 'blah/i.html',
+    gamePath: 'blah/i.html',
     window_size: {
       width: 10,
       height: 10

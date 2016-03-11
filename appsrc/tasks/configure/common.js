@@ -9,11 +9,11 @@ import path from 'path'
  * Tries to find executables by sniffing file contents,
  * +x them, and return a list of them
  */
-function fix_execs (field, base_path) {
-  let f = sniff_and_chmod::partial(field, base_path)
+function fix_execs (field, basePath) {
+  let f = sniff_and_chmod::partial(field, basePath)
 
   return (
-    sf.glob(`**`, {nodir: true, cwd: base_path})
+    sf.glob(`**`, {nodir: true, cwd: basePath})
     .map(f, {concurrency: 2})
     .filter((x) => !!x)
   )

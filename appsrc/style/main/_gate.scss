@@ -16,7 +16,7 @@
   100% { transform: scale(1.0) translateY(0%); opacity: 1.0; }
 }
 
-.gate-page {
+.gate_page {
   animation: drop-down .3s ease-in;
   background: #fff;
   position: absolute;
@@ -33,7 +33,7 @@
     flex-grow: 0;
   }
 
-  .top-filler {
+  .top_filler {
     flex-grow: .4;
   }
 

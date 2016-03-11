@@ -6,27 +6,27 @@ import ibrew from './ibrew'
 
 import path from 'path'
 
-const file = async (file_path) => {
+const file = async (filePath) => {
   let args = [
     '--brief' // don't echo file name
   ]
   if (os.platform() === 'win32') {
-    let vendored_magic_path = path.join(ibrew.bin_path(), 'magic.mgc')
-    if (await sf.exists(vendored_magic_path)) {
+    let vendored_magicPath = path.join(ibrew.binPath(), 'magic.mgc')
+    if (await sf.exists(vendored_magicPath)) {
       args = args.concat([
         // use our vendored magic file
-        '-m', vendored_magic_path
+        '-m', vendored_magicPath
       ])
     }
   }
-  args.push(file_path)
+  args.push(filePath)
 
   let output
 
   let code = await spawn({
     command: 'file',
     args,
-    ontoken: (tok) => output = tok
+    onToken: (tok) => output = tok
   })
   if (code !== 0) {
     throw new Error(`file(1) failed with exit code ${code}`)

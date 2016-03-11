@@ -31,8 +31,8 @@ test('install', t => {
       t.mock(archive).expects('install').once().resolves()
 
       return install_core.install({
-        archive_path: fixture.path(type),
-        dest_path: '/tmp/dest',
+        archivePath: fixture.path(type),
+        destPath: '/tmp/dest',
         upload_id: 999
       })
     })
@@ -43,15 +43,15 @@ test('install', t => {
   ;['empty', 'png'].forEach((type) => {
     t.case(`admit own limits (${type})`, t => {
       const spy = t.spy()
-      const install_opts = {
-        archive_path: fixture.path(type),
-        dest_path: '/tmp/dest',
+      const installOpts = {
+        archivePath: fixture.path(type),
+        destPath: '/tmp/dest',
         upload_id: 999
       }
 
       return async function () {
         try {
-          await install_core.install(install_opts)
+          await install_core.install(installOpts)
         } catch (e) {
           spy(e)
         }

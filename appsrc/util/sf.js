@@ -259,7 +259,7 @@ const self = {
     if (typeof opts === 'undefined') {
       opts = {}
     }
-    const onprogress = opts.onprogress || noop
+    const onProgress = opts.onProgress || noop
     const alwaysFalse = () => false
     const shouldSkip = opts.shouldSkip || alwaysFalse
     const operation = opts.operation || 'copy'
@@ -350,7 +350,7 @@ const self = {
 
       numDone += 1
       const percent = numDone * 100 / files.length
-      onprogress({percent, done: numDone, total: files.length})
+      onProgress({percent, done: numDone, total: files.length})
     }
 
     // can copy in parallel, all directories already exist

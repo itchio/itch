@@ -98,6 +98,7 @@
     "grunt-sass": "^1.1.0",
     "load-grunt-tasks": "^3.3.0",
     "nyc": "^5.0.0",
+    "quiet-grunt": "^0.2.3",
     "react-addons-test-utils": "0.14.3",
     "redux-devtools-filter-actions": "^1.1.0",
     "sinon": "^1.17.1",

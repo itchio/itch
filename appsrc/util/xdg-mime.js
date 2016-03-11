@@ -14,7 +14,7 @@ let self = {
     return await spawn({
       command: 'xdg-mime',
       args: ['query', 'default', self.mime_type],
-      ontoken: (tok) => log(opts, `query: ` + tok),
+      onToken: (tok) => log(opts, `query: ` + tok),
       logger
     })
   },
@@ -25,7 +25,7 @@ let self = {
     return await spawn({
       command: 'xdg-mime',
       args: ['default', 'itch.desktop', self.mime_type],
-      ontoken: (tok) => log(opts, `set_default: ` + tok),
+      onToken: (tok) => log(opts, `set_default: ` + tok),
       logger
     })
   },

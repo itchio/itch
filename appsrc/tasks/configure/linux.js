@@ -2,8 +2,8 @@
 import common from './common'
 
 const self = {
-  configure: async function (app_path) {
-    let executables = await common.fix_execs('linux_executable', app_path)
+  configure: async function (appPath) {
+    let executables = await common.fix_execs('linux_executable', appPath)
     return {executables}
   }
 }

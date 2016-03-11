@@ -13,21 +13,21 @@ const ignore_patterns = [
 ]
 
 const self = {
-  configure: async function (cave_path) {
+  configure: async function (cavePath) {
     const bundles = await sf.glob(`**/*.app/`, {
-      cwd: cave_path,
+      cwd: cavePath,
       ignore: ignore_patterns
     })
 
     if (bundles.length) {
-      const fixer = (x) => common.fix_execs('mac_executable', path.join(cave_path, x))
+      const fixer = (x) => common.fix_execs('mac_executable', path.join(cavePath, x))
       await Promise.each(bundles, fixer)
       return {executables: bundles}
     }
 
     // some games aren't properly packaged app bundles but rather a shell
     // script / binary - try it the linux way
-    const executables = await common.fix_execs('mac_executable', cave_path)
+    const executables = await common.fix_execs('mac_executable', cavePath)
     return {executables}
   }
 }

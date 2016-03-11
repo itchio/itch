@@ -24,8 +24,8 @@ export class GatePage extends Component {
     const {strings, lang, stage, errors, blockingOperation} = this.props
     const t = localizer.getT(strings, lang)
 
-    return <div className='gate-page' data-stage={stage}>
-      <section className='top-filler'/>
+    return <div className='gate_page' data-stage={stage}>
+      <section className='top_filler'/>
       <section className='logo'>
         <img src='static/images/bench-itch.png'/>
       </section>

@@ -18,13 +18,13 @@ import AppActions from '../actions/app-actions'
 let path_done = false
 let ready = false
 
-function augment_path () {
-  let bin_path = ibrew.bin_path()
+function augmentPath () {
+  let binPath = ibrew.binPath()
   if (!path_done) {
     path_done = true
-    process.env.PATH = `${bin_path}${path.delimiter}` + process.env.PATH
+    process.env.PATH = `${binPath}${path.delimiter}` + process.env.PATH
   }
-  return bin_path
+  return binPath
 }
 
 async function install_deps (opts) {
@@ -40,11 +40,11 @@ async function install_deps (opts) {
 }
 
 async function run () {
-  augment_path()
+  augmentPath()
 
   const opts = {
     logger: new Logger(),
-    onstatus: AppActions.setup_status
+    onStatus: AppActions.setup_status
   }
 
   try {

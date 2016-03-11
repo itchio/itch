@@ -32,7 +32,7 @@ async function show_packaging_policy (payload) {
     i18n.t(`prompt.packaging_policy.open_web_page`, {title: game.title})
   ]
 
-  const dialog_opts = {
+  const dialogOpts = {
     type: 'error',
     buttons,
     title: i18n.t(`prompt.${format}_policy.title`),
@@ -48,7 +48,7 @@ async function show_packaging_policy (payload) {
       electron.shell.openExternal(game.url)
     }
   }
-  electron.dialog.showMessageBox(dialog_opts, callback)
+  electron.dialog.showMessageBox(dialogOpts, callback)
 }
 
 AppDispatcher.register('policy-store', Store.action_listeners(on => {

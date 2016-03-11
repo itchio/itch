@@ -32,20 +32,20 @@ let self = {
     await blessing(opts)
     AppActions.cave_progress({id: opts.id, progress: -1})
 
-    let archive_path = opts.archive_path
-    let dest_path = opts.dest_path
+    let archivePath = opts.archivePath
+    let destPath = opts.destPath
 
-    let spawn_opts = {
+    let spawnOpts = {
       command: 'elevate.exe',
       args: [
-        archive_path, // the installer
+        archivePath, // the installer
         '-silent', // run the installer silently
         '-eulaAccepted', // let AIR install if it so wishes
-        '-location', dest_path // install where we want to
+        '-location', destPath // install where we want to
       ],
-      ontoken: (token) => log(opts, token)
+      onToken: (token) => log(opts, token)
     }
-    let code = await spawn(spawn_opts)
+    let code = await spawn(spawnOpts)
     log(opts, `air installer exited with code ${code}`)
 
     if (code !== 0) {
@@ -55,18 +55,18 @@ let self = {
 
     log(opts, `Locating app manifest`)
 
-    let candidates = await sf.glob(MANIFEST_GLOB, {cwd: dest_path})
+    let candidates = await sf.glob(MANIFEST_GLOB, {cwd: destPath})
     if (candidates.length === 0) {
       throw new Error(`Adobe AIR app manifest not found, cannot uninstall`)
     }
 
     log(opts, `Found app manifest at ${candidates[0]}`)
 
-    let manifest_path = path.join(dest_path, candidates[0])
-    let manifest_contents = await sf.read_file(manifest_path)
+    let manifestPath = path.join(destPath, candidates[0])
+    let manifest_contents = await sf.readFile(manifestPath)
     let matches = ID_RE.exec(manifest_contents)
     if (!matches) {
-      throw new Error(`Could not extract app id from manifest at ${manifest_path}`)
+      throw new Error(`Could not extract app id from manifest at ${manifestPath}`)
     }
 
     let appid = matches[1]
@@ -82,11 +82,11 @@ let self = {
     let logger = opts.logger
 
     const ibrew = require('../../util/ibrew').default
-    let ibrew_opts = {
+    let ibrewOpts = {
       logger,
-      onstatus: (msg) => log(opts, `ibrew status: ${msg}`)
+      onStatus: (msg) => log(opts, `ibrew status: ${msg}`)
     }
-    await ibrew.fetch(ibrew_opts, 'arh')
+    await ibrew.fetch(ibrewOpts, 'arh')
 
     let cave = opts.cave
     let appid = cave.air_appid
@@ -97,16 +97,16 @@ let self = {
 
     log(opts, `Uninstalling appid ${appid}`)
 
-    let spawn_opts = {
+    let spawnOpts = {
       command: 'elevate.exe',
       args: [
         'arh.exe',
         '-uninstallAppSilent',
         appid
       ],
-      ontoken: (tok) => log(opts, `arh: ${tok}`)
+      onToken: (tok) => log(opts, `arh: ${tok}`)
     }
-    let code = await spawn(spawn_opts)
+    let code = await spawn(spawnOpts)
     if (code !== 0) {
       throw new Error(`arh uninstall failed with code ${code}`)
     }

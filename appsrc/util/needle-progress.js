@@ -1,13 +1,13 @@
 
 const PassThrough = require('stream').PassThrough
 
-let default_opts = {
+let defaultOpts = {
   throttle: 250
 }
 
-export default function (req, user_opts) {
-  if (typeof user_opts === 'undefined') {
-    user_opts = {}
+export default function (req, userOpts) {
+  if (typeof userOpts === 'undefined') {
+    userOpts = {}
   }
 
   let timeout = null
@@ -15,7 +15,7 @@ export default function (req, user_opts) {
   let received_size = 0
   let done = false
 
-  let opts = Object.assign({}, default_opts, user_opts)
+  let opts = Object.assign({}, defaultOpts, userOpts)
   let throttle = opts.throttle
 
   req.on('headers', (headers) => {

@@ -31,7 +31,7 @@ let self = {
       let command = args.shift()
       try {
         await spawn({
-          command, args, ontoken: (tok) => (re.test(tok) && log(tok))
+          command, args, onToken: (tok) => (re.test(tok) && log(tok))
         })
       } catch (e) { log(`"${full}" resisted us: ${e.message || '?'}`) }
     }

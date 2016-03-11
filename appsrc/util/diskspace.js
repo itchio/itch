@@ -10,7 +10,7 @@ let self = {
     let lines = []
     let opts = {
       command: 'df', args: ['-kP'],
-      ontoken: (token) => lines.push(token)
+      onToken: (token) => lines.push(token)
     }
     await spawn(opts)
     return lines
@@ -56,7 +56,7 @@ let self = {
     let lines = []
     let opts = {
       command: 'wmic', args: ['logicaldisk', 'get', 'size,freespace,caption'],
-      ontoken: (token) => lines.push(token)
+      onToken: (token) => lines.push(token)
     }
     await spawn(opts)
     return lines

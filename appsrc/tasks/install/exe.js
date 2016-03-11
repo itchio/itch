@@ -29,20 +29,20 @@ let self = {
       throw new Error('Exe installers are only supported on Windows')
     }
 
-    let archive_path = opts.archive_path
+    let archivePath = opts.archivePath
     let type = self.retrieve_cached_type(opts)
 
     if (type) {
-      log(opts, `using cached installer type ${type} for ${archive_path}`)
+      log(opts, `using cached installer type ${type} for ${archivePath}`)
     } else {
       type = await self.identify(opts)
 
       if (type) {
-        log(opts, `found exe installer type ${type} for ${archive_path}`)
+        log(opts, `found exe installer type ${type} for ${archivePath}`)
         self.cache_type(opts, type)
       } else {
         // don't cache that, we might find better later
-        log(opts, `falling back to 'naked exe' for ${archive_path}`)
+        log(opts, `falling back to 'naked exe' for ${archivePath}`)
         type = 'naked'
       }
     }
@@ -86,7 +86,7 @@ let self = {
   },
 
   builtin_sniff: async function (opts, needles) {
-    let archive_path = opts.archive_path
+    let archivePath = opts.archivePath
     let result = null
     let searches = []
 
@@ -103,7 +103,7 @@ let self = {
       searches.push(search)
     }
 
-    let reader = sf.createReadStream(archive_path, {encoding: 'binary'})
+    let reader = sf.createReadStream(archivePath, {encoding: 'binary'})
     reader.on('data', buf => {
       for (let search of searches) {
         search.push(buf)
@@ -124,11 +124,11 @@ let self = {
   },
 
   external_sniff: async function (opts, needles) {
-    let archive_path = opts.archive_path
+    let archivePath = opts.archivePath
 
     // sample file_output:
     // ['PE32 executable (GUI) Intel 80386', 'for MS Windows', 'InstallShield self-extracting archive']
-    let file_output = await file(archive_path)
+    let file_output = await file(archivePath)
     let detail = file_output[2]
 
     if (!detail) return null

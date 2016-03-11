@@ -7,6 +7,7 @@ import createSagaMiddleware from 'redux-saga'
 
 import sagas from '../sagas'
 import reducer from '../reducers'
+import env from '../env'
 
 const middleware = [
   createSagaMiddleware(...sagas),
@@ -14,7 +15,7 @@ const middleware = [
 ]
 
 const devMiddleware = []
-if (false && process.env.NODE_ENV === 'development') {
+if (false && env.name === 'development') {
   const logger = createLogger({
     predicate: (getState, action) => !action.MONITOR_ACTION,
     stateTransformer: (state) => ''

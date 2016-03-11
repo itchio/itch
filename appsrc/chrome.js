@@ -1,5 +1,7 @@
 'use strict'
 
+// This file is the entry point for renderer processes
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Layout from './components/layout'
@@ -9,6 +11,9 @@ import {shell, remote} from './electron'
 import './boot/env'
 import './boot/bluebird'
 import './boot/fs'
+import './boot/env'
+
+import env from './env'
 
 import store from './store'
 import {focusPanel} from './actions'
@@ -16,7 +21,7 @@ import {focusPanel} from './actions'
 let appNode
 
 let devTools = ''
-if (process.env.NODE_ENV === 'development') {
+if (env.name === 'development') {
   const DevTools = require('./components/dev-tools').default
   devTools = <DevTools/>
 }

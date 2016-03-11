@@ -13,14 +13,14 @@ const log = mklog('butler')
 
 const self = {
   parse_butler_status: function (opts, onerror, token) {
-    const {onprogress = noop} = opts
+    const {onProgress = noop} = opts
 
     const status = JSON.parse(token)
     switch (status.type) {
       case 'log':
         return log(opts, `butler: ${status.message}`)
       case 'progress':
-        return onprogress({percent: status.percentage})
+        return onProgress({percent: status.percentage})
       case 'error':
         return onerror(status.message)
     }
@@ -42,7 +42,7 @@ const self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'dl', url, dest],
-      ontoken: self.parse_butler_status::partial(opts, onerror),
+      onToken: self.parse_butler_status::partial(opts, onerror),
       emitter
     })
 
@@ -50,22 +50,22 @@ const self = {
     return res
   },
 
-  /* Extracts tar archive ${archive_path} into directory ${dest_path} */
+  /* Extracts tar archive ${archivePath} into directory ${destPath} */
   untar: async function (opts) {
     pre: { // eslint-disable-line
       typeof opts === 'object'
-      typeof opts.archive_path === 'string'
-      typeof opts.dest_path === 'string'
+      typeof opts.archivePath === 'string'
+      typeof opts.destPath === 'string'
     }
 
-    let {emitter, archive_path, dest_path} = opts
+    let {emitter, archivePath, destPath} = opts
     let err = null
     let onerror = (e) => err = e
 
     let res = await spawn({
       command: 'butler',
-      args: ['-j', 'untar', archive_path, '-d', dest_path],
-      ontoken: self.parse_butler_status::partial(opts, onerror),
+      args: ['-j', 'untar', archivePath, '-d', destPath],
+      onToken: self.parse_butler_status::partial(opts, onerror),
       emitter
     })
 
@@ -81,7 +81,7 @@ const self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'wipe', path],
-      ontoken: self.parse_butler_status::partial(opts, onerror)
+      onToken: self.parse_butler_status::partial(opts, onerror)
     })
 
     if (err) { throw err }
@@ -100,7 +100,7 @@ const self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'mkdir', path],
-      ontoken: self.parse_butler_status::partial(opts, onerror)
+      onToken: self.parse_butler_status::partial(opts, onerror)
     })
 
     if (err) { throw err }
@@ -120,7 +120,7 @@ const self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'ditto', src, dst],
-      ontoken: self.parse_butler_status::partial(opts, onerror),
+      onToken: self.parse_butler_status::partial(opts, onerror),
       emitter
     })
 

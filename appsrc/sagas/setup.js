@@ -23,7 +23,7 @@ export function * fetch (name) {
 
   const opts = {
     logger,
-    onstatus: (icon, message) => {
+    onStatus: (icon, message) => {
       queue.dispatch(setupStatus({icon, message}))
     }
   }

@@ -15,20 +15,20 @@ let HFS_RE = /(.*)\s+Apple_HFS\s+(.*)\s*$/
 
 let self = {
   install: async function (opts) {
-    let archive_path = opts.archive_path
-    let onprogress = opts.onprogress || noop
+    let archivePath = opts.archivePath
+    let onProgress = opts.onProgress || noop
 
-    log(opts, `Preparing installation of '${archive_path}'`)
-    onprogress({percent: -1})
+    log(opts, `Preparing installation of '${archivePath}'`)
+    onProgress({percent: -1})
 
-    let cdr_path = path.resolve(archive_path + '.cdr')
+    let cdrPath = path.resolve(archivePath + '.cdr')
 
     let info_entries = []
     let code = await spawn({
       command: 'hdiutil',
       args: ['info'],
       split: '================================================',
-      ontoken: (tok) => {
+      onToken: (tok) => {
         info_entries.push(tok.split('\n'))
       }
     })
@@ -37,17 +37,17 @@ let self = {
     }
 
     for (let entry of info_entries) {
-      let image_path
+      let imagePath
       for (let line of entry) {
         let matches = /^image-path\s*:\s*(.*)\s*$/.exec(line)
         if (matches) {
-          image_path = matches[1]
+          imagePath = matches[1]
           break
         }
       }
 
-      log(opts, `Found image ${image_path}`)
-      if (image_path && image_path === cdr_path) {
+      log(opts, `Found image ${imagePath}`)
+      if (imagePath && imagePath === cdrPath) {
         let mountpoint
 
         for (let line of entry) {
@@ -58,11 +58,11 @@ let self = {
         }
 
         if (!mountpoint) {
-          log(opts, `Could not detach ${cdr_path}`)
+          log(opts, `Could not detach ${cdrPath}`)
           continue
         }
 
-        log(opts, `Trying to detach ${cdr_path}...`)
+        log(opts, `Trying to detach ${cdrPath}...`)
         code = await spawn({
           command: 'hdiutil',
           args: [ 'detach', '-force', mountpoint ]
@@ -71,30 +71,30 @@ let self = {
     }
 
     log(opts, `Done looking for previously mounted images`)
-    log(opts, `Trying to unlink ${cdr_path}`)
+    log(opts, `Trying to unlink ${cdrPath}`)
 
     try {
-      await butler.wipe(cdr_path)
+      await butler.wipe(cdrPath)
     } catch (e) {
-      log(opts, `Couldn't unlink ${cdr_path}: ${e}`)
+      log(opts, `Couldn't unlink ${cdrPath}: ${e}`)
     }
 
-    log(opts, `Converting archive '${archive_path}' to CDR with hdiutil`)
+    log(opts, `Converting archive '${archivePath}' to CDR with hdiutil`)
 
     code = await spawn({
       command: 'hdiutil',
       args: [
         'convert',
-        archive_path,
+        archivePath,
         '-format', 'UDTO',
-        '-o', cdr_path
+        '-o', cdrPath
       ]
     })
     if (code !== 0) {
       throw new Error(`Failed to convert dmg image, with code ${code}`)
     }
 
-    log(opts, `Attaching cdr file ${cdr_path}`)
+    log(opts, `Attaching cdr file ${cdrPath}`)
 
     let device
     let mountpoint
@@ -106,9 +106,9 @@ let self = {
         '-nobrowse', // don't show up in Finder's device list
         '-noautoopen', // don't open Finder window with newly-mounted part
         '-noverify', // no integrity check (we do those ourselves)
-        cdr_path
+        cdrPath
       ],
-      ontoken: (tok) => {
+      onToken: (tok) => {
         log(opts, `hdiutil attach: ${tok}`)
         let hfs_matches = HFS_RE.exec(tok)
         if (hfs_matches) {
@@ -126,13 +126,13 @@ let self = {
       throw new Error('Failed to mount image (no mountpoint)')
     }
 
-    let deploy_opts = Object.assign({}, opts, {
-      stage_path: mountpoint
+    let deployOpts = Object.assign({}, opts, {
+      stagePath: mountpoint
     })
-    await deploy.deploy(deploy_opts)
+    await deploy.deploy(deployOpts)
 
     let cleanup = async () => {
-      log(opts, `Detaching cdr file ${cdr_path}`)
+      log(opts, `Detaching cdr file ${cdrPath}`)
       code = await spawn({
         command: 'hdiutil',
         args: [
@@ -145,8 +145,8 @@ let self = {
         throw new Error(`Failed to mount image, with code ${code}`)
       }
 
-      log(opts, `Removing cdr file ${cdr_path}`)
-      await butler.wipe(cdr_path)
+      log(opts, `Removing cdr file ${cdrPath}`)
+      await butler.wipe(cdrPath)
     }
 
     log(opts, `Launching cleanup asynchronously...`)

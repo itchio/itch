@@ -28,7 +28,7 @@ let PurchaseStore = Object.assign(new Store('purchase-store'), {
  * Creates a new browser window to initiate the purchase flow
  */
 function make_purchase_window (me, game) {
-  let inject_path = path.resolve(__dirname, '..', 'inject', 'purchase.js')
+  let injectPath = path.resolve(__dirname, '..', 'inject', 'purchase.js')
   let win = new electron.BrowserWindow({
     width: 960,
     height: 620,
@@ -38,7 +38,7 @@ function make_purchase_window (me, game) {
       /* don't let web code control the OS */
       nodeIntegration: false,
       /* prevent window close, prefill login form, etc. */
-      preload: inject_path,
+      preload: injectPath,
       /* stores browser session in an user_id-specific partition so,
        * in multi-seat installs, users have to log in one time each at least */
       partition: `persist:itchio-${me.id}`
@@ -62,7 +62,7 @@ function wants_to_buy_twice (game) {
     i18n.t('prompt.additional_purchase.purchase_again'),
     i18n.t('prompt.action.cancel')
   ]
-  let dialog_opts = {
+  let dialogOpts = {
     type: 'info',
     buttons,
     title: i18n.t('prompt.additional_purchase.title'),
@@ -71,7 +71,7 @@ function wants_to_buy_twice (game) {
   }
 
   return new Promise((resolve, reject) => {
-    require('electron').dialog.showMessageBox(dialog_opts, (response) => resolve(response === 0))
+    require('electron').dialog.showMessageBox(dialogOpts, (response) => resolve(response === 0))
   })
 }
 
@@ -82,7 +82,7 @@ function wants_to_browse_after_failure (game) {
     i18n.t('prompt.action.ok'),
     i18n.t('prompt.payments_disabled.open_web_page')
   ]
-  let dialog_opts = {
+  let dialogOpts = {
     type: 'info',
     buttons,
     title: i18n.t('prompt.payments_disabled.title'),
@@ -91,7 +91,7 @@ function wants_to_browse_after_failure (game) {
   }
 
   return new Promise((resolve, reject) => {
-    require('electron').dialog.showMessageBox(dialog_opts, (response) => resolve(response === 1))
+    require('electron').dialog.showMessageBox(dialogOpts, (response) => resolve(response === 1))
   })
 }
 
@@ -99,20 +99,20 @@ function build_login_and_return_url (return_to) {
   let parsed = url.parse(return_to)
   let hostname = url.subdomain_to_domain(parsed.hostname)
 
-  let url_opts = {
+  let urlOpts = {
     hostname,
     pathname: '/login',
     query: {return_to}
   }
 
   if (hostname === 'itch.io') {
-    url_opts.protocol = 'https'
+    urlOpts.protocol = 'https'
   } else {
-    url_opts.port = parsed.port
-    url_opts.protocol = parsed.protocol
+    urlOpts.port = parsed.port
+    urlOpts.protocol = parsed.protocol
   }
 
-  return url.format(url_opts)
+  return url.format(urlOpts)
 }
 
 async function initiate_purchase (payload) {

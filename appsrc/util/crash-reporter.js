@@ -24,7 +24,7 @@ let self = {
     if (os.platform() === 'win32') {
       log = log.replace(/\n/g, '\r\n')
     }
-    sf.write_file(crash_file, log)
+    sf.writeFile(crash_file, log)
 
     return {log, crash_file}
   },
@@ -65,7 +65,7 @@ ${log}
 
     const t = require('i18next').getFixedT()
 
-    let dialog_opts = {
+    let dialogOpts = {
       type: 'error',
       buttons: [
         t('prompt.crash_reporter.report_issue', {defaultValue: 'Report issue'}),
@@ -86,7 +86,7 @@ ${log}
 
     // try to show error dialog
     // supplying defaultValues everywhere in case the i18n system hasn't loaded yet
-    dialog.showMessageBox(dialog_opts, callback)
+    dialog.showMessageBox(dialogOpts, callback)
   },
 
   mount: () => {

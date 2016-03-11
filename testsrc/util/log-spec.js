@@ -6,9 +6,9 @@ import os from 'os'
 
 // TODO: mock fs in these tests
 
-const setup = (t, logger_opts) => {
+const setup = (t, loggerOpts) => {
   const mklog = proxyquire('../../app/util/log', {}).default
-  const logger = new mklog.Logger(logger_opts)
+  const logger = new mklog.Logger(loggerOpts)
   t.stub(logger, 'timestamp', () => 'time')
   const opts = {logger}
 
