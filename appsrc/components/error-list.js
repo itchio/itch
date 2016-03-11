@@ -1,11 +1,10 @@
 
 import React, {PropTypes, Component} from 'react'
+import {connect} from 'react-redux'
 import {map} from 'underline'
 
 import {slugify} from '../util/format'
-
-// TODO: get t somewhere
-const t = (x) => x
+import localizer from '../localizer'
 
 /**
  * A bunch of errors displayed in a list
@@ -16,7 +15,8 @@ const t = (x) => x
  */
 class ErrorList extends Component {
   render () {
-    const {errors, before = '', i18nNamespace} = this.props
+    const {strings, lang, errors, before = '', i18nNamespace} = this.props
+    const t = localizer.getT(strings, lang)
     const prefix = i18nNamespace ? `errors.${i18nNamespace}` : 'errors'
 
     if (!errors) {
@@ -27,7 +27,7 @@ class ErrorList extends Component {
 
     return <ul className='form-errors'>
       {errorArray::map((error, key) => {
-        const i18nKey = prefix + '.' + slugify(error)
+        const i18nKey = prefix + '.' + slugify(error) + 'hehe'
         const message = t(i18nKey, {defaultValue: error})
         return <li key={key}>{before}{message}</li>
       })}
@@ -38,7 +38,18 @@ class ErrorList extends Component {
 ErrorList.propTypes = {
   errors: PropTypes.any,
   before: PropTypes.node,
-  i18nNamespace: PropTypes.string
+  i18nNamespace: PropTypes.string,
+  strings: PropTypes.object,
+  lang: PropTypes.string
 }
 
-export default ErrorList
+const mapStateToProps = (state) => {
+  return {strings: state.i18n.strings, lang: state.session.preferences.lang}
+}
+
+const mapDispatchToProps = (dispatch) => ({})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ErrorList)

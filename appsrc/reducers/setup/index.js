@@ -8,6 +8,7 @@ const initialState = {
 
 export default handleActions({
   SETUP_STATUS: (state, action) => {
+    console.log(`in setup status, got payload: `, action.payload)
     return {
       ...state,
       errors: [],

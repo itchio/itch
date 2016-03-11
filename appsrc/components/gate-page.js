@@ -23,11 +23,12 @@ export class GatePage extends Component {
   render () {
     const {strings, lang, stage, errors, blockingOperation} = this.props
     const t = localizer.getT(strings, lang)
+    const disabled = !!blockingOperation
 
     return <div className='gate_page' data-stage={stage}>
       <section className='top_filler'/>
       <section className='logo'>
-        <img src='static/images/bench-itch.png'/>
+        <img src='static/images/itchio-white.svg'/>
       </section>
 
       <section className='errors'>
@@ -35,9 +36,9 @@ export class GatePage extends Component {
       </section>
 
       <section className='crux'>
-        <form className='form' onSubmit={this.handleSubmit}>
-          <input ref='username' type='text' placeholder={t('login.field.username')} autoFocus={true}/>
-          <input ref='password' type='password' placeholder={t('login.field.password')}/>
+        <form onSubmit={this.handleSubmit}>
+          <input ref='username' type='text' placeholder={t('login.field.username')} autoFocus={true} disabled={disabled}/>
+          <input ref='password' type='password' placeholder={t('login.field.password')} disabled={disabled}/>
           <section className='actions'>
             {this.renderActions(blockingOperation)}
           </section>
@@ -53,7 +54,8 @@ export class GatePage extends Component {
   }
 
   renderActions (blockingOperation) {
-    const t = (x) => x
+    const {strings, lang} = this.props
+    const t = localizer.getT(strings, lang)
 
     if (blockingOperation) {
       const {message, icon} = blockingOperation

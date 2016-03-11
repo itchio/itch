@@ -9,9 +9,9 @@ import DockMonitor from 'redux-devtools-dock-monitor'
 
 // createDevTools takes a monitor and produces a DevTools component
 const DevTools = createDevTools(
-  <DockMonitor toggleVisibilityKey='alt-h' changePositionKey='alt-q'>
+  <DockMonitor toggleVisibilityKey='alt-h' changePositionKey='alt-q' defaultIsVisible={false}>
     <FilterMonitor blacklist={['EFFECT_TRIGGERED', 'EFFECT_RESOLVED', 'EFFECT_REJECTED', 'WINDOW_FOCUS_CHANGED']}>
-      <LogMonitor theme='tomorrow'/>
+      <LogMonitor theme='tomorrow' expandActionRoot expandStateRoot={false}/>
     </FilterMonitor>
   </DockMonitor>
 )

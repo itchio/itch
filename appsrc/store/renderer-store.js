@@ -7,7 +7,7 @@ import env from '../env'
 const filter = true
 const middleware = []
 
-if (env.name === 'development') {
+if (false && env.name === 'development') {
   const logger = createLogger({
     predicate: (getState, action) => !action.MONITOR_ACTION
   })
@@ -24,7 +24,6 @@ const enhancers = [
 if (env.name === 'development') {
   const DevTools = require('../components/dev-tools').default
   enhancers.push(DevTools.instrument())
-  console.log('adding in devtools instrumentation')
 }
 
 const enhancer = compose(...enhancers)

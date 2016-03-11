@@ -5,7 +5,8 @@ export function getT (strings, lang) {
     const string = lstrings[key]
     if (!string) {
       // fallback
-      return key
+      const {defaultValue = key} = variables || {}
+      return defaultValue
     }
 
     if (variables) {

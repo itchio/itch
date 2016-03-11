@@ -1,6 +1,9 @@
 $font_size: 16px;
 
-$body_color: #333;
+// no pure white/black/grays
+$library_bg: #2E2B2C;
+
+$body_color: $library_bg;
 $body_color_light: #666;
 $body_color_lighter: #999;
 
@@ -31,9 +34,6 @@ $game_thumb_width: 315px;
 $game_thumb_height: 250px;
 
 $gray_back: #f4f4f4;
-
-// no pure white/black/grays
-$library_bg: #2E2B2C;
 
 @mixin selectable {
   -webkit-user-select: text;

@@ -57,7 +57,7 @@ const self = {
       }
     }
 
-    onStatus('stopwatch', ['login.status.dependencyCheck'])
+    onStatus('stopwatch', ['login.status.dependency_check'])
     const getLatestVersion = net.getLatestVersion::partial(channel)
 
     const localVersion = yield call(self.getLocalVersion, name)

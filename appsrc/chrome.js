@@ -29,7 +29,7 @@ if (env.name === 'development') {
 function render () {
   appNode = document.querySelector('#app')
   const layout = <Provider store={store}>
-    <div> // provider needs a single child because reasons!
+    <div>
       <Layout/>
       {devTools}
     </div>

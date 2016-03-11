@@ -32,12 +32,10 @@ export function * passwordLogin (action) {
 
 export function * sessionWatcher () {
   while (true) {
-    console.log(`waiting on login & setup`)
     yield [
       take(LOGIN_SUCCEEDED),
       take(SETUP_DONE)
     ]
-    console.log(`both login & setup done!`)
   }
 }
 
