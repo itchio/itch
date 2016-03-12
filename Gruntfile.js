@@ -8,7 +8,7 @@ var icoPath = 'release/itchio.ico'
 var installerGifPath = 'release/installer.gif'
 var icnsPath = 'release/itchio.icns'
 
-var electronVersion = '0.36.8'
+var electronVersion = '0.36.11'
 var outDir = path.join('build', 'v' + version)
 var companyName = 'Itch Corp'
 
