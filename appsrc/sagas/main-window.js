@@ -25,7 +25,13 @@ import {call, fork, put, select} from 'redux-saga/effects'
 
 import createQueue from './queue'
 
+let createLock = false
+let quitting = false
+
 function * _createWindow () {
+  if (createLock) return
+  createLock = true
+
   const width = 1220
   const height = 720
 
@@ -42,6 +48,24 @@ function * _createWindow () {
   const queue = createQueue('main-window')
 
   window.on('close', (e) => {
+    if (quitting) {
+      // alright alright you get to close
+      return
+    }
+
+    if (!window.isMinimized()) {
+      // minimize first to convey the fact that the app still lives
+      // in the tray - however, it'll take a lot less RAM because the
+      // renderer is actually trashed
+      e.preventDefault()
+      window.minimize()
+      setTimeout(() => {
+        window.close()
+      }, 200)
+    }
+  })
+
+  window.on('closed', (e) => {
     queue.dispatch(windowDestroyed())
   })
 
@@ -54,6 +78,7 @@ function * _createWindow () {
   })
 
   window.webContents.on('dom-ready', (e) => {
+    createLock = false
     queue.dispatch(windowReady({id: window.id}))
     window.show()
   })
@@ -108,6 +133,8 @@ export function * _quitElectronApp () {
 }
 
 export function * _quit () {
+  // sigh
+  quitting = true
   yield put(prepareQuit())
   yield put(quitElectronApp())
 }
