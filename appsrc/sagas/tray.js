@@ -13,8 +13,11 @@ import {BOOT} from '../constants/action-types'
 let tray
 
 function makeTray (queue) {
-  const iconPath = path.resolve(`${__dirname}/../static/images/itchio-tray.png`)
-  console.log(`icon path: `, iconPath)
+  // cf. https://github.com/itchio/itch/issues/462
+  // windows still displays a 16x16, whereas
+  // some linux DEs don't know what to do with a @x2, etc.
+  const iconName = os.platform() === 'linux' ? 'itchio-tray.png' : 'itchio-tray-small.png'
+  const iconPath = path.resolve(`${__dirname}/../static/images/${iconName}`)
   tray = new Tray(iconPath)
   tray.setToolTip('itch.io')
   tray.on('click', () => queue.dispatch(focusWindow()))
