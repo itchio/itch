@@ -16,8 +16,6 @@ async function autoUpdate () {
   if (quit) {
     // squirrel on win32 sometimes requires exiting as early as possible
     process.exit(0)
-  } else {
-    boot()
   }
 }
 
@@ -37,15 +35,17 @@ import store from './store'
 
 app.on('ready', () => {
   const shouldQuit = app.makeSingleInstance((argv, cwd) => {
+    // we only get inside this callback when another instance
+    // is launched - so this executes in the context of the main instance
     handleUrls(argv)
     store.dispatch(focusWindow())
   })
+
   if (shouldQuit) {
     // app.quit() is the source of all our problems,
     // cf. https://github.com/itchio/itch/issues/202
     process.exit(0)
   }
-
   handleUrls(process.argv)
 
   store.dispatch(boot())
