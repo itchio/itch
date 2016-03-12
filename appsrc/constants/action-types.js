@@ -5,6 +5,12 @@ import keyMirror from 'keymirror'
 module.exports = keyMirror({
   BOOT: null,
   OPEN_URL: null,
+
+  // Chromium is good at retrieving the user's language from the innards of the OS
+  // doing the same from nodejs would probably be a waste of everyone's time
+  LANGUAGE_SNIFFED: null,
+  LANGUAGE_SET: null,
+
   SETUP_STATUS: null,
   SETUP_DONE: null,
 

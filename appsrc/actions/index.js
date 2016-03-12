@@ -11,6 +11,9 @@ import {
   BOOT,
   OPEN_URL,
 
+  LANGUAGE_SNIFFED,
+  LANGUAGE_CHANGED,
+
   SETUP_STATUS,
   SETUP_DONE,
 
@@ -42,6 +45,9 @@ export const operationFailed = createAction(OPERATION_FAILED)
 
 export const boot = createAction(BOOT)
 export const openUrl = createAction(OPEN_URL)
+
+export const languageSniffed = createAction(LANGUAGE_SNIFFED)
+export const languageChanged = createAction(LANGUAGE_CHANGED)
 
 export const setupStatus = createAction(SETUP_STATUS)
 export const setupDone = createAction(SETUP_DONE)

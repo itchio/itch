@@ -1,10 +1,9 @@
 
 import React, {PropTypes, Component} from 'react'
-import {connect} from 'react-redux'
+import {connect} from './connect'
 import {map} from 'underline'
 
 import {slugify} from '../util/format'
-import localizer from '../localizer'
 
 /**
  * A bunch of errors displayed in a list
@@ -15,8 +14,7 @@ import localizer from '../localizer'
  */
 class ErrorList extends Component {
   render () {
-    const {strings, lang, errors, before = '', i18nNamespace} = this.props
-    const t = localizer.getT(strings, lang)
+    const {t, errors, before = '', i18nNamespace} = this.props
     const prefix = i18nNamespace ? `errors.${i18nNamespace}` : 'errors'
 
     if (!errors) {
@@ -39,14 +37,10 @@ ErrorList.propTypes = {
   errors: PropTypes.any,
   before: PropTypes.node,
   i18nNamespace: PropTypes.string,
-  strings: PropTypes.object,
-  lang: PropTypes.string
+  t: PropTypes.func
 }
 
-const mapStateToProps = (state) => {
-  return {strings: state.i18n.strings, lang: state.session.preferences.lang}
-}
-
+const mapStateToProps = (state) => ({})
 const mapDispatchToProps = (dispatch) => ({})
 
 export default connect(

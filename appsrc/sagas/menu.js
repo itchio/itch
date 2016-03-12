@@ -30,9 +30,9 @@ export default function * menuSaga () {
     (state) => state.ui.menu.template,
     (state) => state.i18n,
     (state) => state.session.preferences.lang,
-    (template, i18n, lang) => {
+    (template, i18n) => {
       // electron gotcha: buildFromTemplate mutates its argument
-      const menu = Menu.buildFromTemplate(clone(fleshOutTemplate(template, i18n, lang, queue)))
+      const menu = Menu.buildFromTemplate(clone(fleshOutTemplate(template, i18n, queue)))
       Menu.setApplicationMenu(menu)
     }
   )
@@ -83,8 +83,8 @@ function convertMenuAction (label) {
   }
 }
 
-function fleshOutTemplate (template, i18n, lang, queue) {
-  const t = localizer.getT(i18n.strings, lang)
+function fleshOutTemplate (template, i18n, queue) {
+  const t = localizer.getT(i18n.strings, i18n.lang)
 
   const visitNode = (input) => {
     if (input.type === 'separator') {

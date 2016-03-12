@@ -1,13 +1,11 @@
 
 import React, {PropTypes, Component} from 'react'
-import {connect} from 'react-redux'
+import {connect} from './connect'
 
 import urls from '../constants/urls'
 
 import ErrorList from './error-list'
 import Icon from './icon'
-
-import localizer from '../localizer'
 
 import {
   loginWithPassword
@@ -21,8 +19,7 @@ export class GatePage extends Component {
   }
 
   render () {
-    const {strings, lang, stage, errors, blockingOperation} = this.props
-    const t = localizer.getT(strings, lang)
+    const {t, stage, errors, blockingOperation} = this.props
     const disabled = !!blockingOperation
 
     return <div className='gate_page' data-stage={stage}>
@@ -54,8 +51,7 @@ export class GatePage extends Component {
   }
 
   renderActions (blockingOperation) {
-    const {strings, lang} = this.props
-    const t = localizer.getT(strings, lang)
+    const {t} = this.props
 
     if (blockingOperation) {
       const {message, icon} = blockingOperation
@@ -99,21 +95,19 @@ GatePage.propTypes = {
     message: PropTypes.array,
     icon: PropTypes.string
   }),
-  loginWithPassword: PropTypes.func.isRequired,
-  strings: PropTypes.object,
-  lang: PropTypes.string
+  t: PropTypes.func,
+  loginWithPassword: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => {
-  let base
   if (!state.session.credentials.key) {
-    base = {stage: 'login', ...state.session.login}
+    return {stage: 'login', ...state.session.login}
   } else if (!state.setup.done) {
-    base = {stage: 'setup', ...state.setup}
+    return {stage: 'setup', ...state.setup}
   } else {
-    base = {stage: 'ready', errors: [], blockingOperation: null}
+    console.log(`stage ready!`)
+    return {stage: 'ready', errors: [], blockingOperation: null}
   }
-  return {...base, strings: state.i18n.strings, lang: state.session.preferences.lang}
 }
 
 const mapDispatchToProps = (dispatch) => ({

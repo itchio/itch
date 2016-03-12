@@ -8,6 +8,7 @@ import './boot/env'
 import './boot/bluebird'
 import './boot/fs'
 import './boot/env'
+import './boot/sniff-language'
 
 import React from 'react'
 import ReactDOM from 'react-dom'

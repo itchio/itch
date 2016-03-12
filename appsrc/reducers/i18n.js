@@ -3,6 +3,7 @@ import {omit} from 'underline'
 import {handleActions} from 'redux-actions'
 
 const initialState = {
+  lang: 'en',
   strings: {
     en: {}
   },
@@ -35,9 +36,5 @@ export default handleActions({
     const strings = {...state.strings, [lang]: langStrings}
     const downloading = state.downloading::omit(lang)
     return {...state, strings, downloading}
-  },
-
-  LOCALE_LOADED: (state, action) => {
-
   }
 }, initialState)
