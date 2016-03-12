@@ -35,6 +35,7 @@ function * _createWindow () {
     width, height,
     center: true,
     show: false,
+    autoHideMenuBar: true,
     'title-bar-style': 'hidden'
   })
 
