@@ -14,8 +14,10 @@ const middleware = [
   thunk
 ]
 
+const beChatty = process.env.MARCO_POLO === '1'
+
 const devMiddleware = []
-if (env.name === 'development') {
+if (env.name === 'development' && beChatty) {
   const logger = createLogger({
     predicate: (getState, action) => !action.MONITOR_ACTION && !/^WINDOW_/.test(action.type),
     stateTransformer: (state) => ''
