@@ -55,3 +55,7 @@ export default function * traySaga () {
     call(queue.exhaust)
   ]
 }
+
+export function getTray () {
+  return tray
+}

@@ -1,6 +1,7 @@
 {
   "name": "itch",
   "productName": "itch",
+  "desktopName": "itch",
   "version": "0.13.2",
   "description": "itch.io desktop client",
   "keywords": [
