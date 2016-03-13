@@ -122,7 +122,9 @@ module.exports = keyMirror({
   FETCH_COLLECTIONS: null,
   FETCH_GAMES: null,
   FETCH_SEARCH: null,
+
   SEARCH_FETCHED: null,
+  CLOSE_SEARCH: null,
 
   /** Data sync functions */
   GAME_STORE_DIFF: null,

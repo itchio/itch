@@ -105,7 +105,6 @@ const mapStateToProps = (state) => {
   } else if (!state.setup.done) {
     return {stage: 'setup', ...state.setup}
   } else {
-    console.log(`stage ready!`)
     return {stage: 'ready', errors: [], blockingOperation: null}
   }
 }

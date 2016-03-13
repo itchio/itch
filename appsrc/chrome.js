@@ -69,13 +69,17 @@ window.addEventListener('beforeunload', () => {
   appNode = null
 })
 
+function openDevTools () {
+  const win = remote.getCurrentWindow()
+  win.webContents.openDevTools({detach: true})
+}
+
 window.addEventListener('keydown', (e) => {
   // TODO: move all those shortcuts to actions
   switch (e.keyIdentifier) {
     case 'F12': // Shift-F12
       if (e.shiftKey) {
-        const win = remote.getCurrentWindow()
-        win.webContents.openDevTools({detach: true})
+        openDevTools()
       }
       break
 
@@ -91,9 +95,16 @@ window.addEventListener('keydown', (e) => {
       }
       break
 
+    case 'U+0043': // Ctrl-Shift-C
+      if (e.ctrlKey && e.shiftKey) {
+        openDevTools()
+      }
+      break
+
     case 'U+0046': // Ctrl-F / Cmd-F
-      if (!e.ctrlKey && !e.metaKey) return
-      store.dispatch(focusPanel('search'))
+      if (e.ctrlKey || e.metaKey) {
+        store.dispatch(focusPanel('search'))
+      }
       break
   }
 })

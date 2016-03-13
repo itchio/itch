@@ -1,6 +1,8 @@
 
-import React, {Component} from 'react'
-import {connect} from 'react-redux'
+import React, {PropTypes, Component} from 'react'
+import {connect} from './connect'
+
+import {searchFetched, closeSearch} from '../actions'
 
 class HubItem extends Component {
   render () {
@@ -19,43 +21,111 @@ class HubItem extends Component {
 
 export class HubContent extends Component {
   render () {
+    const {t, path, searchOpen, searchResults} = this.props
+    searchResults
+
     return <div className='hub_content'>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <HubItem/>
-      <div className='hub_filler'></div>
-      <div className='hub_filler'></div>
-      <div className='hub_filler'></div>
-      <div className='hub_filler'></div>
-      <div className='hub_filler'></div>
-      <div className='hub_filler'></div>
-      <div className='hub_filler'></div>
-      <div className='hub_filler'></div>
-      <div className='hub_filler'></div>
-      <div className='hub_filler'></div>
+      <div className='hub_bread'>
+        <section>
+          <h2><icon className='icon icon-tag'/> {this.titleForPath(path)}</h2>
+          <div className='hub_subtitle'>
+          <p>so many elements</p>
+          <span className='separator'/>
+          <p>a collection by leafbro himself</p>
+          </div>
+        </section>
+
+        <section className='filler'>
+        </section>
+
+        <section>
+          <span className='icon_button icon icon-sort-alpha-asc'></span>
+        </section>
+
+        <section>
+          <span className='icon_button icon icon-filter'></span>
+        </section>
+
+        <section>
+          <input type='search' placeholder={t('search.placeholder')} onFocus={this.props.openSearch} onKeyDown={this.props.closeSearch}/>
+        </section>
+
+        <section>
+          <span className='icon_button icon icon-lifebuoy'></span>
+        </section>
+
+        <section>
+          <span className='icon_button icon icon-menu'></span>
+        </section>
+      </div>
+      <div className='hub_meat'>
+        <div className='hub_grid'>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <HubItem/>
+          <div className='hub_filler'></div>
+          <div className='hub_filler'></div>
+          <div className='hub_filler'></div>
+          <div className='hub_filler'></div>
+          <div className='hub_filler'></div>
+          <div className='hub_filler'></div>
+          <div className='hub_filler'></div>
+          <div className='hub_filler'></div>
+          <div className='hub_filler'></div>
+          <div className='hub_filler'></div>
+        </div>
+        <div className={`hub_search_results ${ searchOpen ? 'active' : '' }`}>
+          <h3>Here are your search results: </h3>
+          <div className='hub_grid'>
+            <HubItem/>
+            <HubItem/>
+          </div>
+        </div>
+      </div>
     </div>
+  }
+
+  titleForPath (path) {
+    return `page ${path}`
   }
 }
 
-const mapStateToProps = (state) => ({})
-const mapDispatchToProps = (dispatch) => ({})
+HubContent.propTypes = {
+  path: PropTypes.string,
+  searchOpen: PropTypes.bool,
+  searchResults: PropTypes.array,
+
+  openSearch: PropTypes.func,
+  closeSearch: PropTypes.func,
+  t: PropTypes.func
+}
+
+const mapStateToProps = (state) => ({
+  path: state.session.navigation.path,
+  searchOpen: state.session.navigation.searchOpen,
+  searchResults: state.session.navigation.searchResults
+})
+const mapDispatchToProps = (dispatch) => ({
+  openSearch: () => dispatch(searchFetched({results: []})),
+  closeSearch: () => dispatch(closeSearch({results: []}))
+})
 
 export default connect(
   mapStateToProps,
