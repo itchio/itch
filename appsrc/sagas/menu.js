@@ -18,18 +18,16 @@ export default function * menuSaga () {
   const queue = createQueue('menu')
 
   const refreshSelector = createSelector(
-    (state) => state.i18n,
+    (state) => state.system,
     (state) => state.session.credentials,
-    (state) => state.mainWindow,
-    (i18n, credentials, mainWindow) => {
-      queue.dispatch(refreshMenu())
+    (system, credentials) => {
+      queue.dispatch(refreshMenu({system, credentials}))
     }
   )
 
   const applySelector = createSelector(
     (state) => state.ui.menu.template,
     (state) => state.i18n,
-    (state) => state.session.preferences.lang,
     (template, i18n) => {
       // electron gotcha: buildFromTemplate mutates its argument
       const menu = Menu.buildFromTemplate(clone(fleshOutTemplate(template, i18n, queue)))

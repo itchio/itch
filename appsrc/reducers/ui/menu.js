@@ -115,7 +115,7 @@ function computeMenuTemplate (system, credentials) {
   const template = [
     menus.file,
     menus.edit,
-    (credentials.currentUser
+    (credentials.key
     ? menus.account
     : menus.account_disabled),
     menus.help

@@ -1,7 +1,6 @@
 
 import {createStore, applyMiddleware, compose} from 'redux'
 import {electronEnhancer} from 'redux-electron-enhancer'
-import thunk from 'redux-thunk'
 import createLogger from 'redux-cli-logger'
 import createSagaMiddleware from 'redux-saga'
 
@@ -10,8 +9,7 @@ import reducer from '../reducers'
 import env from '../env'
 
 const middleware = [
-  createSagaMiddleware(...sagas),
-  thunk
+  createSagaMiddleware(...sagas)
 ]
 
 const beChatty = process.env.MARCO_POLO === '1'

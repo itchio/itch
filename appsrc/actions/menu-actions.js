@@ -6,11 +6,5 @@ import {
   MENU_ACTION
 } from '../constants/action-types'
 
-export const refreshMenu = () => (dispatch, getState) => {
-  const {system, session} = getState()
-  const {credentials} = session
-  const action = createAction(REFRESH_MENU)({system, credentials})
-  dispatch(action)
-}
-
+export const refreshMenu = createAction(REFRESH_MENU)
 export const menuAction = createAction(MENU_ACTION)
