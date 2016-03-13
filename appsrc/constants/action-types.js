@@ -23,6 +23,7 @@ module.exports = keyMirror({
   WINDOW_READY: null,
   WINDOW_DESTROYED: null,
   WINDOW_FOCUS_CHANGED: null,
+  WINDOW_BOUNDS_CHANGED: null,
   CREATE_WINDOW: null,
   FOCUS_WINDOW: null,
   HIDE_WINDOW: null,

@@ -3,9 +3,9 @@ import nconf from 'nconf'
 import path from 'path'
 import {app} from '../electron'
 
-let config_file = path.join(app.getPath('userData'), 'config.json')
+let configFile = path.join(app.getPath('userData'), 'config.json')
 try {
-  nconf.file({file: config_file})
+  nconf.file({file: configFile})
 } catch (e) {
   // We don't want that to be fatal
   console.log(`Could not read config: ${e}`)

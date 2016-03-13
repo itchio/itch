@@ -1,6 +1,8 @@
 
 import {app, BrowserWindow} from '../electron'
+import config from '../util/config'
 import invariant from 'invariant'
+import {debounce} from 'underline'
 
 import {
   prepareQuit,
@@ -8,10 +10,12 @@ import {
   windowReady,
   windowDestroyed,
   windowFocusChanged,
+  windowBoundsChanged,
   quit
 } from '../actions'
 
 import {
+  WINDOW_BOUNDS_CHANGED,
   BOOT,
   FOCUS_WINDOW,
   HIDE_WINDOW,
@@ -28,22 +32,36 @@ import createQueue from './queue'
 let createLock = false
 let quitting = false
 
+const BOUNDS_CONFIG_KEY = 'main_window_bounds'
+
 function * _createWindow () {
   if (createLock) return
   createLock = true
 
-  const width = 1220
-  const height = 720
+  const userBounds = config.get(BOUNDS_CONFIG_KEY) || {}
+  const bounds = {
+    x: -1,
+    y: -1,
+    width: 1220,
+    height: 720,
+    ...userBounds
+  }
+  const {width, height} = bounds
+  const center = (bounds.x === -1 && bounds.y === -1)
 
   const window = new BrowserWindow({
     title: 'itch',
     icon: './static/images/itchio-tray-x4.png',
     width, height,
-    center: true,
+    center,
     show: false,
     autoHideMenuBar: true,
     'title-bar-style': 'hidden'
   })
+
+  if (!center) {
+    window.setPosition(bounds.x, bounds.y)
+  }
 
   const queue = createQueue('main-window')
 
@@ -77,6 +95,19 @@ function * _createWindow () {
     queue.dispatch(windowFocusChanged({focused: false}))
   })
 
+  const debouncedBounds = (() => {
+    const bounds = window.getBounds()
+    queue.dispatch(windowBoundsChanged({bounds}))
+  })::debounce(500)
+
+  window.on('move', (e) => {
+    debouncedBounds()
+  })
+
+  window.on('resize', (e) => {
+    debouncedBounds()
+  })
+
   window.webContents.on('dom-ready', (e) => {
     createLock = false
     queue.dispatch(windowReady({id: window.id}))
@@ -91,6 +122,11 @@ function * _createWindow () {
   }
 
   yield* queue.exhaust()
+}
+
+export function * _windowBoundsChanged (action) {
+  const {bounds} = action.payload
+  config.set(BOUNDS_CONFIG_KEY, bounds)
 }
 
 export function * _focusWindow () {
@@ -141,6 +177,7 @@ export function * _quit () {
 
 export default function * mainWindowSaga () {
   yield [
+    takeEvery(WINDOW_BOUNDS_CHANGED, _windowBoundsChanged),
     takeEvery(FOCUS_WINDOW, _focusWindow),
     takeEvery(HIDE_WINDOW, _hideWindow),
     takeEvery(BOOT, _focusWindow),
