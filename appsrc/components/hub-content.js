@@ -47,7 +47,7 @@ export class HubContent extends Component {
         </section>
 
         <section>
-          <input type='search' placeholder={t('search.placeholder')} onFocus={this.props.openSearch} onKeyDown={this.props.closeSearch}/>
+          <input ref='search' type='search' placeholder={t('search.placeholder')} onChange={this.onChange.bind(this)}/>
         </section>
 
         <section>
@@ -96,10 +96,30 @@ export class HubContent extends Component {
           <div className='hub_grid'>
             <HubItem/>
             <HubItem/>
+            <HubItem/>
+            <HubItem/>
+            <HubItem/>
+            <HubItem/>
+            <HubItem/>
+            <HubItem/>
+            <HubItem/>
+            <HubItem/>
+            <HubItem/>
+            <HubItem/>
+            <HubItem/>
+            <HubItem/>
           </div>
         </div>
       </div>
     </div>
+  }
+
+  onChange () {
+    if (this.refs.search.value.length > 0) {
+      this.props.openSearch()
+    } else {
+      this.props.closeSearch()
+    }
   }
 
   titleForPath (path) {

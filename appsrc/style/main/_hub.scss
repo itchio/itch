@@ -3,6 +3,7 @@ $grid_item_width: 200px;
 $subtitle_color: #777;
 
 .hub_page {
+  overflow: hidden;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -48,6 +49,7 @@ $subtitle_color: #777;
 }
 
 .hub_content {
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 
@@ -161,20 +163,32 @@ $subtitle_color: #777;
 }
 
 .hub_meat {
+  overflow: hidden;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .hub_search_results {
-  width: 20px;
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: width 0.4s ease-in-out;
+  width: 0;
   background: orange;
 
+  display: flex;
+  flex-direction: column;
+
+  h3 {
+    margin-left: 1em;
+    margin-top: 1em;
+  }
+
   .hub_grid {
-    background: white;
+    background: transparent;
   }
 
   &.active {
-    width: $grid_item_width + 40px;
+    width: $grid_item_width + 60px;
   }
 }
