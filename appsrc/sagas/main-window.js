@@ -96,6 +96,9 @@ function * _createWindow () {
   })
 
   const debouncedBounds = (() => {
+    if (window.isDestroyed()) {
+      return
+    }
     const bounds = window.getBounds()
     queue.dispatch(windowBoundsChanged({bounds}))
   })::debounce(500)
