@@ -127,6 +127,7 @@ module.exports = keyMirror({
 
   SEARCH_FETCHED: null,
   CLOSE_SEARCH: null,
+  FOCUS_SEARCH: null,
 
   /** Data sync functions */
   GAME_STORE_DIFF: null,

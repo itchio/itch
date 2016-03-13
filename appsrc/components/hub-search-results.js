@@ -13,6 +13,7 @@ export class SearchResult extends Component {
     return <div className='search_result'>
       <img src={coverUrl}/>
       <h4>{title}</h4>
+      <div className='spacer'></div>
       <span className='icon_button icon icon-plus'/>
     </div>
   }
