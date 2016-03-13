@@ -3,8 +3,15 @@ import React, {Component, PropTypes} from 'react'
 
 export class HubItem extends Component {
   render () {
+    const {game} = this.props
+    const {title, coverUrl} = game
+
     return <div className='hub_item'>
-      <section className='cover' style={{backgroundImage: `url("https://downloads.2kgames.com/xcom2/blog_images/Bx987a1Y_uto0o471x_date.jpg")`}}/>
+      <section className='cover' style={{backgroundImage: `url("${coverUrl}")`}}/>
+
+      <section className='title'>
+        {title}
+      </section>
 
       <section className='actions'>
         <div className='button'>
@@ -16,6 +23,11 @@ export class HubItem extends Component {
   }
 }
 
-HubItem.propTypes = {}
+HubItem.propTypes = {
+  game: PropTypes.shape({
+    title: PropTypes.string,
+    coverUrl: PropTypes.string
+  })
+}
 
 export default HubItem

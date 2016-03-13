@@ -184,8 +184,19 @@ $subtitle_color: #777;
     margin-top: 1em;
   }
 
-  .hub_grid {
-    background: transparent;
+  .result_list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .search_result {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    img {
+      height: 35px;
+    }
   }
 
   &.active {

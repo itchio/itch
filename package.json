@@ -30,6 +30,7 @@
     "classnames": "^2.2.3",
     "clone": "^1.0.2",
     "colors": "^1.1.2",
+    "combokeys": "^2.4.4",
     "deep-assign": "^2.0.0",
     "deep-freeze": "0.0.1",
     "eol": "^0.2.0",
