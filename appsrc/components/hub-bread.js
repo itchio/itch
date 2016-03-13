@@ -31,7 +31,7 @@ class HubBread extends Component {
       </section>
 
       <section>
-        <input ref='search' type='search' placeholder={t('search.placeholder')} onChange={this.onChange.bind(this)}/>
+        <input ref='search' type='search' placeholder={t('search.placeholder')} onChange={this.onChange.bind(this)} onKeyPress={this.onChange.bind(this)}/>
       </section>
 
       <section>
@@ -60,8 +60,6 @@ class HubBread extends Component {
 HubBread.propTypes = {
   t: PropTypes.func,
 
-  searchOpen: PropTypes.bool,
-  searchResults: PropTypes.array,
   path: PropTypes.string,
 
   openSearch: PropTypes.func,

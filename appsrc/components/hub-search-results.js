@@ -2,6 +2,9 @@
 import React, {Component, PropTypes} from 'react'
 import classNames from 'classnames'
 
+import {connect} from './connect'
+import {createStructuredSelector} from 'reselect'
+
 import {HubItem} from './hub-item'
 
 export class HubSearchResults extends Component {
@@ -35,4 +38,15 @@ HubSearchResults.propTypes = {
   t: PropTypes.func
 }
 
-export default HubSearchResults
+const mapStateToProps = createStructuredSelector({
+  path: (state) => state.session.navigation.path,
+  searchOpen: (state) => state.session.navigation.searchOpen,
+  searchResults: (state) => state.session.navigation.searchResults
+})
+
+const mapDispatchToProps = (dispatch) => ({})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HubSearchResults)
