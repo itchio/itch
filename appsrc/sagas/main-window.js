@@ -11,7 +11,8 @@ import {
   windowDestroyed,
   windowFocusChanged,
   windowBoundsChanged,
-  quit
+  quit,
+  notify
 } from '../actions'
 
 import {
@@ -65,6 +66,8 @@ function * _createWindow () {
 
   const queue = createQueue('main-window')
 
+  let destroyTimeout
+
   window.on('close', (e) => {
     if (quitting) {
       // alright alright you get to close
@@ -72,14 +75,25 @@ function * _createWindow () {
     }
 
     if (!window.isMinimized()) {
+      queue.dispatch(notify({title: `See you soon!`, body: `itch is now running in the background. Use the menu to quit it completely.`}))
+
       // minimize first to convey the fact that the app still lives
       // in the tray - however, it'll take a lot less RAM because the
       // renderer is actually trashed
       e.preventDefault()
       window.minimize()
+
       setTimeout(() => {
-        window.close()
-      }, 200)
+        if (!window.isDestroyed()) {
+          window.hide()
+        }
+      }, 0.2 * 1000)
+
+      destroyTimeout = setTimeout(() => {
+        if (!window.isDestroyed() && !window.isVisible()) {
+          window.close()
+        }
+      }, 10 * 1000)
     }
   })
 
@@ -88,6 +102,10 @@ function * _createWindow () {
   })
 
   window.on('focus', (e) => {
+    if (destroyTimeout) {
+      clearTimeout(destroyTimeout)
+      destroyTimeout = null
+    }
     queue.dispatch(windowFocusChanged({focused: true}))
   })
 

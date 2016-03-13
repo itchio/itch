@@ -1,4 +1,5 @@
 
+export * from './notification-actions'
 export * from './window-actions'
 export * from './search-actions'
 export * from './locale-actions'

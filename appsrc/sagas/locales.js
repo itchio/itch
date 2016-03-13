@@ -128,7 +128,7 @@ export function * loadLocale (lang) {
     log(opts, `Failed to load locale from ${local}: ${e.stack}`)
   }
 
-  yield put(queueLocaleDownload(lang))
+  yield put(queueLocaleDownload({lang}))
 }
 
 export default function * localesSaga () {

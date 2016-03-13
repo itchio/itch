@@ -3,9 +3,13 @@ import {getTray} from './tray'
 import {app, BrowserWindow} from '../electron'
 import os from '../util/os'
 
-import {select} from 'redux-saga/effects'
 import {takeEvery} from 'redux-saga'
+import {select, put} from 'redux-saga/effects'
+
+import {notifyHtml5} from '../actions'
 import {SET_PROGRESS, BOUNCE, NOTIFY} from '../constants/action-types'
+
+const DEFAULT_ICON = './static/images/itchio-tray-x4.png'
 
 const selectMainWindowId = (state) => state.ui.mainWindow.id
 
@@ -26,20 +30,20 @@ function * _bounce (action) {
 }
 
 function * _notify (action) {
-  const {message} = action.payload
+  const {title = 'itch', body, icon = DEFAULT_ICON} = action.payload
 
-  if (os.platform() === 'win32') {
-    const id = yield select(selectMainWindowId)
-    const window = BrowserWindow.fromId(id)
-    if (window) {
-      // using stringify as an escape mechanism
-      window.webContents.executeJavaScript(`new Notification(${JSON.stringify(message)})`)
-    }
-  } else {
+  if (os.platform() === 'win32' && !/^10\./.test(os.release())) {
     const tray = getTray()
     if (tray) {
-      // HTML5 notification API not implemented in electron on win32 yet -- amos
-      tray.displayBalloon({title: 'itch.io', content: message})
+      // The HTML5 notification API has caveats on Windows earlier than 10
+      tray.displayBalloon({title, icon, content: body})
+    }
+  } else {
+    const id = yield select(selectMainWindowId)
+    const window = BrowserWindow.fromId(id)
+    if (window && !window.isDestroyed() && !window.webContents.isDestroyed()) {
+      const opts = {body, icon}
+      yield put(notifyHtml5({title, opts}))
     }
   }
 }

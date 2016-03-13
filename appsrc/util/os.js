@@ -1,9 +1,14 @@
 
 import spawn from './spawn'
+import os from 'os'
 
-let self = {
+const self = {
   platform: function () {
     return process.platform
+  },
+
+  release: function () {
+    return os.release()
   },
 
   arch: function () {

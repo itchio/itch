@@ -118,6 +118,7 @@ module.exports = keyMirror({
   BOUNCE: null,
   /** Cross-platform, notification bubble */
   NOTIFY: null,
+  NOTIFY_HTML5: null,
 
   /* Data retrieval */
   FETCH_COLLECTIONS: null,

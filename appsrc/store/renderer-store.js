@@ -3,9 +3,14 @@ import {createStore, applyMiddleware, compose} from 'redux'
 import {electronEnhancer} from 'redux-electron-enhancer'
 import createLogger from 'redux-logger'
 import env from '../env'
+import createSagaMiddleware from 'redux-saga'
+
+import sagas from '../renderer-sagas'
 
 const filter = true
-const middleware = []
+const middleware = [
+  createSagaMiddleware(...sagas)
+]
 
 if (false && env.name === 'development') {
   const logger = createLogger({
