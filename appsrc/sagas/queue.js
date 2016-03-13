@@ -6,7 +6,7 @@ import {call, put} from 'redux-saga/effects'
 
 const ACTION_EVENT = 'action'
 
-export default function (name) {
+export default function createQueue (name) {
   const emitter = new EventEmitter()
   const actions = []
 

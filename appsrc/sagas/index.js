@@ -1,4 +1,5 @@
 
+import dialogs from './dialogs'
 import notifications from './notifications'
 import session from './session'
 import i18n from './i18n'
@@ -10,6 +11,7 @@ import login from './login'
 import menu from './menu'
 
 export default [
+  dialogs,
   notifications,
   session,
   i18n,

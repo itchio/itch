@@ -24,5 +24,9 @@ export default handleActions({
   LOGIN_FAILED: (state, action) => {
     const errors = action.payload
     return {...initialState, errors, blockingOperation: null}
+  },
+
+  LOGOUT: (state, action) => {
+    return initialState
   }
 }, initialState)
