@@ -32,8 +32,9 @@ export default handleActions({
 
   LOCALE_DOWNLOAD_ENDED: (state, action) => {
     const {lang, resources} = action.payload
-    const langStrings = {...(state.strings || {}), ...resources}
-    const strings = {...state.strings, [lang]: langStrings}
+    const oldResources = state.strings[lang] || {}
+
+    const strings = {...state.strings, [lang]: {...oldResources, ...resources}}
     const downloading = state.downloading::omit(lang)
     return {...state, strings, downloading}
   }
