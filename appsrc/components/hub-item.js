@@ -18,6 +18,8 @@ export class HubItem extends Component {
           <span className='icon icon-checkmark'/>
           <span>Launch</span>
         </div>
+        <div className='icon-button'>
+        </div>
       </section>
     </div>
   }

@@ -9,35 +9,34 @@ import Icon from './icon'
 
 class HubBread extends Component {
   render () {
-    const {t, path} = this.props
+    const {t} = this.props
 
     return <div className='hub_bread'>
       <section className='description'>
-        <h2><icon className='icon icon-tag'/> {this.titleForPath(path)}</h2>
-        <div className='hub_subtitle'>
-        so many elements | a collection by leafbro himself
-        </div>
+        <h2><icon className='icon icon-tag'/> Garden, Grow and Plant</h2>
+        <h3>53 games | a collection by Don Whitaker</h3>
       </section>
 
       <section className='filler'/>
 
-      <section className='icon_button'>
+      <section className='icon-button'>
         <Icon icon='sort-alpha-asc'/>
       </section>
 
-      <section className='icon_button'>
+      <section className='icon-button'>
         <Icon icon='filter'/>
       </section>
 
-      <section>
+      <section className='search'>
         <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onChange={this.onChange.bind(this)} onKeyPress={this.onChange.bind(this)}/>
+        <span className='icon icon-search'/>
       </section>
 
-      <section className='icon_button'>
+      <section className='icon-button'>
         <Icon icon='lifebuoy'/>
       </section>
 
-      <section className='icon_button'>
+      <section className='icon-button'>
         <Icon icon='menu'/>
       </section>
     </div>

@@ -14,7 +14,7 @@ class Icon extends Component {
       return <span/>
     }
 
-    const className = classNames(`icon-${icon}`, classes)
+    const className = classNames(`icon icon-${icon}`, classes)
     return <span className={className} data-tip={this.props['data-tip']}/>
   }
 }

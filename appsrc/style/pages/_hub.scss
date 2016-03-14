@@ -1,6 +1,6 @@
 
-$grid_item_width: 200px;
-$subtitle_color: #777;
+@import 'hub/sidebar';
+@import 'hub/bread';
 
 .hub_page {
   overflow: hidden;
@@ -11,41 +11,6 @@ $subtitle_color: #777;
   right: 0;
   display: flex;
   flex-direction: row;
-}
-
-.hub_sidebar {
-  width: 220px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  background: red;
-
-  display: flex;
-  align-items: stretch;
-  flex-direction: column;
-
-  section {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-
-    &:hover {
-      background: blue;
-      color: white;
-    }
-
-    .icon {
-      margin: 5px;
-    }
-  }
-
-  .me {
-    img {
-      height: 2em;
-      width: 2em;
-      margin-right: 5px;
-      border-radius: 2px;
-    }
-  }
 }
 
 .hub_content {
@@ -66,9 +31,8 @@ $subtitle_color: #777;
 .hub_grid {
   flex-grow: 1;
   flex-shrink: 1;
-  background: green;
 
-  padding: 1em;
+  padding: $grid-padding;
   overflow-y: auto;
 
   display: flex;
@@ -79,7 +43,7 @@ $subtitle_color: #777;
 
   .hub_item, .hub_filler {
     width: $grid_item_width;
-    margin: .3em;
+    margin: .5em 0;
   }
 
   .hub_filler {
@@ -87,78 +51,33 @@ $subtitle_color: #777;
   }
 
   .hub_item {
-    background: yellow;
-
     .cover {
+      @include thumbnail-style;
       background-size: cover;
       background-position: 50% 50%;
       height: 140px;
     }
 
     .actions {
-      background: purple;
       height: 3em;
       display: flex;
       align-items: center;
     }
 
+    .title {
+      margin: 8px 0;
+      text-shadow: 0 0 1px $ui-text-shadow-color;
+    }
+
+    .button {
+      @include heavy-button;
+      font-size: $base-text-size;
+      padding: 8px 12px;
+    }
+
     .button .icon {
       margin-right: 5px;
     }
-  }
-}
-
-.hub_bread {
-  flex-basis: 90px;
-  background: yellow;
-  padding: 0 8px;
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
-  section {
-    flex-shrink: 0;
-    overflow: hidden;
-    margin: 10px;
-
-    h2 {
-      font-size: 24px;
-      .icon {
-        font-size: 70%;
-      }
-    }
-
-    .icon_button .icon {
-      font-size: 24px;
-    }
-
-    input[type=search] {
-      font-size: 16px;
-      padding: 8px;
-      border-radius: 3px;
-      border: 2px solid blue;
-    }
-
-    &.filler {
-      flex-grow: 1;
-    }
-  }
-
-  .description {
-    flex-shrink: 1;
-  }
-
-  .hub_subtitle {
-    margin-top: 2px;
-    font-size: 90%;
-    color: $subtitle_color;
-  }
-
-  h2, .hub_subtitle {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 }
 
@@ -170,11 +89,13 @@ $subtitle_color: #777;
 }
 
 .hub_search_results {
+  background: $sidebar-background-color;
+  border-left: 1px solid $sidebar-border-color;
+
   flex-shrink: 0;
   overflow: hidden;
-  transition: width 0.4s ease-in-out;
+  transition: width 0.2s ease-in-out;
   width: 0;
-  background: orange;
 
   display: flex;
   flex-direction: column;
@@ -196,17 +117,19 @@ $subtitle_color: #777;
     padding: .2em 0;
 
     h4 {
+      text-shadow: 0 0 2px $input-text-shadow-color;
       margin: .5em;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     &:hover {
-      background: rgba(0, 0, 0, .2);
+      background: $sidebar-entry-focused-background-color;
       cursor: pointer;
     }
 
     img {
+      @include thumbnail-style;
       margin-left: .5em;
       width: 85px;
     }
@@ -215,7 +138,8 @@ $subtitle_color: #777;
       flex-grow: 100;
     }
 
-    .icon_button {
+    .icon-button {
+      @include secondary-link;
       margin-right: .5em;
 
       &:hover {

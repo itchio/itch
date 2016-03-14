@@ -9,7 +9,12 @@
 }
 
 @mixin horizontal_scan {
-  background: -webkit-linear-gradient(left, #5F5A5A 0%, #5F5A5A 50%, lighten(#5F5A5A, 20%) 50%);
+  background: -webkit-linear-gradient(
+    left,
+    $secondary-text-color 0%,
+    $secondary-text-color 50%,
+    $secondary-text-hover-color 50%
+  );
   background-size: 200% 100%;
   -webkit-animation: horizontal-scan 2s infinite;
   -webkit-background-clip: text;

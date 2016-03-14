@@ -1,4 +1,5 @@
 
+import {darkMineShaft} from '../constants/colors'
 import {app, BrowserWindow} from '../electron'
 import config from '../util/config'
 import invariant from 'invariant'
@@ -57,6 +58,7 @@ function * _createWindow () {
     center,
     show: false,
     autoHideMenuBar: true,
+    backgroundColor: darkMineShaft,
     'title-bar-style': 'hidden'
   })
 

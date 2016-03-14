@@ -1,0 +1,119 @@
+
+@import 'gate/form';
+
+.gate_page {
+  animation: drop-down .3s ease-in;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+
+  section {
+    flex-grow: 0;
+  }
+
+  .top_filler {
+    flex-grow: 1;
+  }
+
+  .logo {
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    img {
+      width: 80%;
+      margin: 0 auto;
+    }
+  }
+
+  .errors {
+    color: $warning-color;
+    height: 4em;
+    max-width: 400px;
+    white-space: pre-wrap;
+    overflow-y: auto;
+
+    li {
+      margin: 4px 0;
+      line-height: 1.4;
+    }
+  }
+
+  .errors, .actions {
+    .icon {
+      margin-right: .4em;
+      font-size: 120%;
+      vertical-align: middle;
+    }
+  }
+
+  .crux {
+    flex-grow: .2;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    align-items: center;
+  }
+
+  .actions {
+    color: $secondary-text-color;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 5em;
+
+    .icon {
+      @include horizontal_scan;
+      margin-right: 12px;
+    }
+
+    p {
+      font-size: 20px;
+    }
+  }
+
+  .links {
+    flex-grow: 1;
+    font-size: 16px;
+    transition: 0 .2s;
+    margin: 1em 0;
+    color: $swiss-coffee;
+
+    a {
+      @include secondary-link;
+    }
+  }
+
+  &[data-stage='setup'] {
+    form input, .links {
+      pointer-events: none;
+      opacity: 0;
+    }
+  }
+
+  &[data-stage='ready'] {
+    .crux, .links, .actions, .errors {
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .top_filler {
+      transition: all 0.8s;
+      flex-grow: 10;
+    }
+
+    .logo  {
+      transition: all 0.8s ease-in;
+      opacity: 0;
+    }
+  }
+}

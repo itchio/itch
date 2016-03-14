@@ -1,0 +1,85 @@
+
+.hub_bread {
+  flex-basis: 90px;
+  padding: 0 $grid-padding;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  background: $bread-background-color;
+  box-shadow: 0 0 6px $bread-box-shadow-color;
+
+  section {
+    flex-shrink: 0;
+    overflow: hidden;
+    padding: 10px;
+
+    h2 {
+      font-size: 26px;
+      text-shadow: 0 0 2px $input-text-shadow-color;
+
+      .icon {
+        font-size: 70%;
+      }
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+    h2, h3 {
+      // hack so text is not vertically cropped,
+      // but we still get text-overflow
+      padding: 4px 0;
+    }
+
+    .icon-button .icon {
+      font-size: 24px;
+      @include secondary-link;
+    }
+
+    &.search {
+      position: relative;
+    }
+
+    input[type=search] {
+      @include heavy-input;
+      transition: all 0.2s;
+      width: 200px;
+      text-indent: 22px;
+
+      &:focus {
+        width: 350px;
+      }
+    }
+
+    .icon-search {
+      position: absolute;
+      left: 25px;
+      bottom: 50%;
+      margin-bottom: -9px;
+      font-size: 16px;
+      color: $input-placeholder-color;
+    }
+
+    &.filler {
+      flex-grow: 1;
+    }
+  }
+
+  .description {
+    flex-shrink: 1;
+  }
+}
+
+.hub_bread .description {
+    h3 {
+      font-size: $base-text-size;
+      color: $secondary-text-color;
+    }
+
+    h2, h3 {
+      @include single_line;
+    }
+}

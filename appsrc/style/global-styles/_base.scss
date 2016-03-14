@@ -1,0 +1,16 @@
+
+html,
+body {
+  background: $base-background-color;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: Lato;
+  font-size: $base-text-size;
+  color: $base-text-color;
+}

@@ -1,0 +1,10 @@
+
+@mixin secondary-link {
+  text-decoration: none;
+  color: $silver-chalice;
+
+  &:hover {
+    cursor: pointer;
+    color: $ivory;
+  }
+}
