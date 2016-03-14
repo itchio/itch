@@ -7,6 +7,7 @@ export function * _focusSearch () {
   const searchBar = document.querySelector('#search')
   if (searchBar) {
     searchBar.focus()
+    searchBar.select()
   }
 }
 

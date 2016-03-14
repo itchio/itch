@@ -1,12 +1,15 @@
 
 import Combokeys from 'combokeys'
+import hookGlobalBind from 'combokeys/plugins/global-bind'
+
+const combo = new Combokeys(document.documentElement)
+hookGlobalBind(combo)
+
 import {remote} from '../electron'
 
 import createQueue from '../sagas/queue'
 
 import {focusSearch} from '../actions'
-
-const combo = new Combokeys(document.documentElement)
 
 const queue = createQueue('shortcuts')
 
@@ -24,4 +27,6 @@ combo.bind(['shift+f12', 'ctrl+shift+c'], openDevTools)
 combo.bind(['shift+f5', 'shift+command+r'], () => window.location.reload())
 
 // user shortcuts
-combo.bind(['ctrl+f', 'command+f'], () => queue.dispatch(focusSearch()))
+combo.bindGlobal(['ctrl+f', 'command+f'], () => {
+  queue.dispatch(focusSearch())
+})
