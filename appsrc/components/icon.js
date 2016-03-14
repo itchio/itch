@@ -1,6 +1,7 @@
 
-import r from 'r-dom'
+import React from 'react'
 import {PropTypes, Component} from 'react'
+import classNames from 'classnames'
 
 /**
  * An icon from the icomoon font.
@@ -8,27 +9,20 @@ import {PropTypes, Component} from 'react'
  */
 class Icon extends Component {
   render () {
-    const {icon, spin = false, classSet} = this.props
-    const data_tip = this.props['data-tip']
-
+    const {icon, classes} = this.props
     if (!icon) {
-      return r.span()
+      return <span/>
     }
 
-    let opts = {
-      className: `icon icon-${icon}`,
-      classSet: Object.assign({spin}, classSet)
-    }
-    if (data_tip) {
-      opts['data-tip'] = data_tip
-    }
-
-    return r.span(opts)
+    const className = classNames(`icon-${icon}`, classes)
+    return <span className={className} data-tip={this.props['data-tip']}/>
   }
 }
 
 Icon.propTypes = {
-  icon: PropTypes.string
+  icon: PropTypes.string,
+  classes: PropTypes.array,
+  'data-tip': PropTypes.string
 }
 
 export default Icon

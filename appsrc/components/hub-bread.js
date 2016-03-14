@@ -5,6 +5,8 @@ import {connect} from './connect'
 
 import {searchFetched, closeSearch} from '../actions'
 
+import Icon from './icon'
+
 class HubBread extends Component {
   render () {
     const {t, path} = this.props
@@ -19,33 +21,34 @@ class HubBread extends Component {
         </div>
       </section>
 
-      <section className='filler'>
+      <section className='filler'/>
+
+      <section className='icon_button'>
+        <Icon icon='sort-alpha-asc'/>
       </section>
 
-      <section>
-        <span className='icon_button icon icon-sort-alpha-asc'></span>
-      </section>
-
-      <section>
-        <span className='icon_button icon icon-filter'></span>
+      <section className='icon_button'>
+        <Icon icon='filter'/>
       </section>
 
       <section>
         <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onChange={this.onChange.bind(this)} onKeyPress={this.onChange.bind(this)}/>
       </section>
 
-      <section>
-        <span className='icon_button icon icon-lifebuoy'></span>
+      <section className='icon_button'>
+        <Icon icon='lifebuoy'/>
       </section>
 
-      <section>
-        <span className='icon_button icon icon-menu'></span>
+      <section className='icon_button'>
+        <Icon icon='menu'/>
       </section>
     </div>
   }
 
   onChange () {
-    if (this.refs.search.value.length > 0) {
+    const {search} = this.refs
+
+    if (search.value.length > 0) {
       this.props.openSearch()
     } else {
       this.props.closeSearch()

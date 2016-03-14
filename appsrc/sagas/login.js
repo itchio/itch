@@ -7,14 +7,21 @@ import {attemptLogin, loginFailed, loginSucceeded} from '../actions'
 
 import {LOGIN_WITH_PASSWORD} from '../constants/action-types'
 
+export default function * loginSaga () {
+  yield [
+    takeEvery(LOGIN_WITH_PASSWORD, onPasswordLogin)
+  ]
+}
+
 export function * onPasswordLogin (action) {
   yield put(attemptLogin())
 
   try {
     const {username, password} = action.payload
-    const loginRes = (yield call([client, client.loginWithPassword], username, password))
-    const key = loginRes.key.key
+    const key = yield* getKey(username, password)
     const keyClient = client.withKey(key)
+
+    // validate API key and get user profile in one fell swoop
     const me = (yield call([keyClient, keyClient.me])).user
     yield put(loginSucceeded({key, me}))
   } catch (e) {
@@ -22,8 +29,7 @@ export function * onPasswordLogin (action) {
   }
 }
 
-export default function * loginSaga () {
-  yield [
-    takeEvery(LOGIN_WITH_PASSWORD, onPasswordLogin)
-  ]
+export function * getKey (username, password) {
+  const res = (yield call([client, client.loginWithPassword], username, password))
+  return res.key.key
 }
