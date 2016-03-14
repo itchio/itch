@@ -118,6 +118,8 @@ $subtitle_color: #777;
   align-items: center;
 
   section {
+    flex-shrink: 0;
+    overflow: hidden;
     margin: 10px;
 
     h2 {
@@ -143,22 +145,20 @@ $subtitle_color: #777;
     }
   }
 
+  .description {
+    flex-shrink: 1;
+  }
+
   .hub_subtitle {
     margin-top: 2px;
     font-size: 90%;
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
     color: $subtitle_color;
+  }
 
-    .separator {
-      display: block;
-      height: 1.2em;
-      width: 1px;
-      background: $subtitle_color;
-      margin: 0 .4em;
-    }
+  h2, .hub_subtitle {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
 

@@ -12,12 +12,10 @@ class HubBread extends Component {
     const {t, path} = this.props
 
     return <div className='hub_bread'>
-      <section>
+      <section className='description'>
         <h2><icon className='icon icon-tag'/> {this.titleForPath(path)}</h2>
         <div className='hub_subtitle'>
-        <p>so many elements</p>
-        <span className='separator'/>
-        <p>a collection by leafbro himself</p>
+        so many elements | a collection by leafbro himself
         </div>
       </section>
 
