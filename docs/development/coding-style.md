@@ -24,12 +24,12 @@ These used to be separated in the source tree, but they no longer are,
 because it's useful to share code between them sometimes (with two copies,
 one on each side).
 
-Most stores live on the browser/node side, except **AppStore**, which gathers
-all data for the react app, and **I18nStore** which simultaneously lives on
-both sides to avoid RPC.
+Since the redux rewrite, there's only a single store per process:
+the browser store is the reference one, and it sends diffs to all renderer
+processes so that they're all kept in sync, using [redux-electron-enhancer][]
+(big props to )
 
-**Never use RPC** — it's a nice idea, but synchronous message passing blocks
-both processes.
+[redux-electron-enhancer]: https://github.com/fasterthanlime/redux-electron-enhancer
 
 ## Building
 
@@ -76,7 +76,7 @@ We use `transform-es2015-modules-commonjs` to be able to write:
 
 ```javascript
 // with babel
-import whole_module from './path/to/module'
+import wholeModule from './path/to/module'
 import {a, few, funcs} from 'collection-module'
 
 export default SomeClass
@@ -86,7 +86,7 @@ instead of:
 
 ```javascript
 // without babel
-const whole_module = require('./path/to/module')
+const wholeModule = require('./path/to/module')
 const {a, few, funcs} = require('collection-module')
 
 module.exports = SomeClass
@@ -120,7 +120,7 @@ We use `transform-async-to-module-method` to be able to write code using
 Conceptually, it lets us write this:
 
 ```javascript
-function install_software (name) {
+function installSoftware (name) {
   return download(name)
   .then(() => extract(name))
   .then(() => verify(name))
@@ -133,7 +133,7 @@ function install_software (name) {
 ...but like this:
 
 ```javascript
-async function install_software (name) {
+async function installSoftware (name) {
   try {
     await download(name)  
     await extract(name)  
@@ -147,10 +147,10 @@ async function install_software (name) {
 We use the `contracts` plugin to be able to write assumptions like this:
 
 ```javascript
-async function process_game_transaction (game_id) {
+async function processGameTransaction (gameId) {
   pre: { // eslint-disable-line
-    typeof game_id === 'number'
-    game_id > 0
+    typeof gameId === 'number'
+    gameId > 0
   }
 
   invariant: { // eslint-disable-line
@@ -214,31 +214,31 @@ const cb = () => { throw new Error() }
 
 ### Casing
 
-`camelCase` is used by most of the JavaScript ecosystem (core nodejs
-packages, react, etc.), we have no choice but to use that when
-implementing React components for example.
+`camelCase` is used throughout the project, even though the itch.io
+backend uses `snake_case` internally. As a result, for example,
+API responses are normalized to camelCase.
 
-For everything `snake_case` is the preferred style at itch corp. Since
-eventually we'll share code between the client and the main site, it
-makes sense to keep using `snake_case` everywhere.
+Notable exceptions include:
 
-> That means the same component can have a `componentDidMount` method
-> (implementing a React callback) and a `render_uploads` method
-> (internal method).
+  * SCSS variables, classes and partials are `kebab-case`
+  * Source files are `kebab-case`
+    * e.g. the `GridItem` content would live in `grid-item.js`
+  * i18n keys are `snake_case` for historical reasons
 
 ## Testing
 
-`npm test` is a bit slow, because it uses [nyc][] to register code coverage. It also
-runs a full linting of the source code (see the `Code Style` section)
+`npm test` is a bit sluggish, because it uses [nyc][] to register code
+coverage. It also runs a full linting of the source code.
 
 [nyc]: https://www.npmjs.com/package/nyc
 
 `test/runner` is a faster alternative. (If the `test` directory doesn't exist,
 just run `grunt copy`). See `docs/developing.md` for more details.
 
-The test harness we use is a spruced-up version of `substack/tape`, named
+The test harness we use is a spruced-up version of [substack/tape][], named
 zopf. It's basically the same except you can define cases, like so:
 
+[substack/tape]: https://github.com/substack/tape.git
 
 ```javascript
 import test from 'zopf'
@@ -256,7 +256,9 @@ test('light tests', t => {
 })
 ```
 
-Cases run in-order and produce pretty output with `tap-difflet`, like this:
+Cases run in-order and produce pretty output via [tap-difflet][], like this:
+
+[tap-difflet]: https://github.com/namuol/tap-difflet
 
 ![](test-output.png)
 
@@ -297,42 +299,11 @@ pretty solid libraries, and together with tape
 
 ## React components
 
-Exports from a `components/**/*.js` file should be a single ES6 class that
-extends `react.Component` one way or the other.
+Follow redux conventions, look at `appsrc/components/icon.js` for a good example.
 
-```javascript
-// in components/foo-bar.js
-import r from 'r-dom'
-import ShallowComponent from './shallow-component'
-
-class InternalThing extends ShallowComponent {
-  render () {
-    const {message} = this.props
-    return r(div, {}, message)
-  }
-}
-
-class FooBar extends ShallowComponent {
-  render () {
-    return r(InternalThing, {message: 'Secrets!'})
-  }
-}
-
-export default FooBar
-```
-
-The codebase provides the base classes `DeepComponent` and `ShallowComponent`,
-both of which inherit from `TranslatedComponent`, making `this.t` available
-for getting translated strings.
+We have our own `connect` which provides `props.t` for i18n, and we
+usually export the un-connected class too, for testing.
 
 ## CSS
 
-Class names are `snake_case`, not `kebab-case`. There's a `style/main.scss`
-which imports everything else that's needed.
-
-Most `@mixin`s go in `style/main/_common.scss`. We have mixins for stuff like
-`transition`, `gradients`, probably not all that relevant in an Electron
-environment but, again, shared code with main itch.io codebase = easier
-time for everyone.
-
-To be completely honest, the CSS is a bit of a mess at this point. There's a
+More documentation needed re: CSS
