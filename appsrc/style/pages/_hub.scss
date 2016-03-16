@@ -82,12 +82,22 @@
 
     .button {
       @include heavy-button;
+
       font-size: $base-text-size;
-      background-color: #3A523D;
+      background-color: #2F5636;
       border: 1px solid #446744;
       font-weight: bold;
       padding: 10px;
       border-radius: 2px;
+
+      &:hover {
+        border-color: #55A562;
+        background-color: #467C47;
+      }
+
+      &:active {
+        transform: scale(.95);
+      }
     }
 
     .button .icon {
