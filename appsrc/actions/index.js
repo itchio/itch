@@ -27,6 +27,9 @@ import {
   DB_CLOSED,
 
   NAVIGATE,
+  CLOSE_TAB,
+  SHOW_PREVIOUS_TAB,
+  SHOW_NEXT_TAB,
   SWITCH_PAGE,
 
   PREPARE_QUIT,
@@ -59,6 +62,9 @@ export const dbReady = createAction(DB_READY)
 export const dbClosed = createAction(DB_CLOSED)
 
 export const navigate = createAction(NAVIGATE)
+export const closeTab = createAction(CLOSE_TAB)
+export const showPreviousTab = createAction(SHOW_PREVIOUS_TAB)
+export const showNextTab = createAction(SHOW_NEXT_TAB)
 export const switchPage = createAction(SWITCH_PAGE)
 
 export const prepareQuit = createAction(PREPARE_QUIT)

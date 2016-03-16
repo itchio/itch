@@ -1,4 +1,5 @@
 
+import navigation from './navigation'
 import market from './market'
 import dialogs from './dialogs'
 import notifications from './notifications'
@@ -12,6 +13,7 @@ import login from './login'
 import menu from './menu'
 
 export default [
+  navigation,
   market,
   dialogs,
   notifications,

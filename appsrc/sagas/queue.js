@@ -22,14 +22,32 @@ export default function createQueue (name) {
     emitter.once(ACTION_EVENT, resolve)
   })
 
-  const exhaust = function * (endType = '<none>') {
+  const exhaust = function * (opts = {}) {
+    const {endType = '<none>'} = opts
+
+    // FIXME: redux-saga and redux-electron-enhancer are still not very good friends :(
+    let dispatch = null
+    if (process.type === 'renderer') {
+      let store
+      dispatch = (action) => {
+        if (!store) {
+          store = require('../store').default
+        }
+        store.dispatch(action)
+      }
+    }
+
     try {
       while (true) {
         yield call(pump)
         const action = actions.pop()
 
         if (action) {
-          yield put(action)
+          if (dispatch) {
+            dispatch(action)
+          } else {
+            yield put(action)
+          }
           if (endType && action.type === endType) {
             return
           }

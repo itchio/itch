@@ -3,6 +3,20 @@ import {handleActions} from 'redux-actions'
 
 const initialState = {
   page: 'gate',
+  tabs: {
+    constant: [
+      {path: 'featured', label: 'Featured'},
+      {path: 'dashboard', label: 'My creations'},
+      {path: 'library', label: 'Library'}
+    ],
+    transient: [
+      {path: 'collections/2348', icon: 'tag', label: 'Garden, Grow and Plant'},
+      {path: 'games/48062', icon: 'gamepad', label: 'Reap'},
+      {path: 'games/25491', icon: 'gamepad', label: 'FPV Freerider'},
+      {path: 'users/3996', icon: 'users', label: 'Managore'},
+      {path: 'collections/25108', icon: 'tag', label: 'I made a Fall Out Boy collection and all I got was wrapping label tabs'}
+    ]
+  },
   path: 'dashboard',
   searchOpen: false,
   searchResults: []

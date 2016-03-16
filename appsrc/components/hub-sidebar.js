@@ -1,6 +1,10 @@
 
 import React, {PropTypes, Component} from 'react'
 import {connect} from 'react-redux'
+import {map} from 'underline'
+import classNames from 'classnames'
+
+import {navigate, closeTab} from '../actions'
 
 import Icon from './icon'
 
@@ -8,21 +12,59 @@ const defaultCoverUrl = 'static/images/itchio-textless-pink.svg'
 
 export class HubSidebar extends Component {
   render () {
+    const {path, tabs, navigate, closeTab} = this.props
+
     return <div className='hub_sidebar'>
       {this.me()}
 
       <h2>Constant</h2>
-      <section><span className='icon icon-star'/> Featured</section>
-      <section><span className='icon icon-rocket'/> My creations</section>
-      <section><span className='icon icon-heart-filled'/> Library</section>
+      {tabs.constant::map((item) => {
+        const classes = classNames({active: path === item.path})
+        const onClick = () => navigate(item.path)
+
+        return <section key={item.path} className={classes} onClick={onClick}>
+          <span className={`icon icon-${this.pathToIcon(item.path)}`}/>
+          {item.label}
+        </section>
+      })}
 
       <h2>Transient</h2>
-      <section className='active'><span className='icon icon-tag'/> Garden, Grow and Plant <div className='filler'/><span className='icon icon-cross'/></section>
-      <section><span className='icon icon-play'/> Reap <div className='filler'/><span className='icon icon-cross'/></section>
-      <section><span className='icon icon-play'/> FPV Freerider <div className='filler'/><span className='icon icon-cross'/></section>
-      <section><span className='icon icon-users'/> Managore <div className='filler'/><span className='icon icon-cross'/></section>
-      <section><span className='icon icon-tag'/> I made a Fall Out Boy collection and all I got was wrapping label tabs <div className='filler'/><span className='icon icon-cross'/></section>
+      {tabs.transient::map((item) => {
+        const classes = classNames({
+          active: path === item.path
+        })
+        const onClick = () => navigate(item.path)
+
+        return <section key={item.path} className={classes} onClick={onClick}>
+          <span className={`icon icon-${this.pathToIcon(item.path)}`}/>
+          {item.label}
+          <div className='filler'/>
+          <span className='icon icon-cross' onClick={() => closeTab(item.path)}/>
+        </section>
+      })}
     </div>
+  }
+
+  pathToIcon (path) {
+    if (path === 'featured') {
+      return 'star'
+    }
+    if (path === 'dashboard') {
+      return 'rocket'
+    }
+    if (path === 'library') {
+      return 'heart-filled'
+    }
+    if (/^collections/.test(path)) {
+      return 'tag'
+    }
+    if (/^games/.test(path)) {
+      return 'gamepad'
+    }
+    if (/^users/.test(path)) {
+      return 'users'
+    }
+    return 'earth'
   }
 
   me () {
@@ -39,14 +81,29 @@ export class HubSidebar extends Component {
 }
 
 HubSidebar.propTypes = {
-  // TODO: flesh out
-  me: PropTypes.object
+  // TODO: flesh out shape of 'me'
+  me: PropTypes.object,
+
+  path: PropTypes.string,
+  tabs: PropTypes.shape({
+    constant: PropTypes.array,
+    transient: PropTypes.array
+  }),
+
+  navigate: PropTypes.func,
+  closeTab: PropTypes.func
 }
 
 const mapStateToProps = (state) => ({
-  me: state.session.credentials.me
+  me: state.session.credentials.me,
+  path: state.session.navigation.path,
+  tabs: state.session.navigation.tabs
 })
-const mapDispatchToProps = (dispatch) => ({})
+
+const mapDispatchToProps = (dispatch) => ({
+  navigate: (path) => dispatch(navigate(path)),
+  closeTab: (path) => dispatch(closeTab(path))
+})
 
 export default connect(
   mapStateToProps,

@@ -39,13 +39,13 @@ export function * _loginSucceeded (action) {
   yield fork([market, market.load], me.id)
 
   yield race({
-    task: call(queue.exhaust, DB_CLOSED),
+    task: call(queue.exhaust, {endType: DB_CLOSED}),
     cancel: take(LOGOUT)
   })
 }
 
 export function * _logout (action) {
-  console.log(`closing market for user ${market.userID}`)
+  console.log(`closing market for user ${market.userId}`)
   market.close()
   market = null
 }
