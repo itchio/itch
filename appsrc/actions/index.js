@@ -24,6 +24,7 @@ import {
 
   DB_COMMIT,
   DB_READY,
+  DB_CLOSED,
 
   NAVIGATE,
   SWITCH_PAGE,
@@ -55,6 +56,7 @@ export const sessionReady = createAction(SESSION_READY)
 
 export const dbCommit = createAction(DB_COMMIT)
 export const dbReady = createAction(DB_READY)
+export const dbClosed = createAction(DB_CLOSED)
 
 export const navigate = createAction(NAVIGATE)
 export const switchPage = createAction(SWITCH_PAGE)

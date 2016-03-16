@@ -9,11 +9,11 @@ import {LOGIN_WITH_PASSWORD} from '../constants/action-types'
 
 export default function * loginSaga () {
   yield [
-    takeEvery(LOGIN_WITH_PASSWORD, onPasswordLogin)
+    takeEvery(LOGIN_WITH_PASSWORD, _passwordLogin)
   ]
 }
 
-export function * onPasswordLogin (action) {
+export function * _passwordLogin (action) {
   yield put(attemptLogin())
 
   try {

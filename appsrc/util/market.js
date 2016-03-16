@@ -2,7 +2,7 @@
 import Promise from 'bluebird'
 import {camelify, camelifyObject} from './format'
 
-import {dbCommit} from '../actions'
+import {dbCommit, dbClosed} from '../actions'
 
 import path from 'path'
 import sf from './sf'
@@ -23,10 +23,12 @@ export default class Market {
     this.dispatch = dispatch
   }
 
-  async load (userID) {
-    this.userID = userID
-    log(opts, `loading db for user ${userID}`)
-    this.libraryDir = path.join(app.getPath('userData'), 'users', userID.toString())
+  async load (userId) {
+    const self = this
+    this.userId = userId
+
+    log(opts, `loading db for user ${userId}`)
+    this.libraryDir = path.join(app.getPath('userData'), 'users', userId.toString())
 
     const oldDBFilename = path.join(this.libraryDir, 'db.jsonl')
     const obsoleteMarker = oldDBFilename + '.obsolete'
@@ -44,7 +46,7 @@ export default class Market {
     const loadRecord = async function (recordPath) {
       const tokens = recordPath.split('/')
       const [tableName, entityID] = tokens
-      const file = path.join(this.getDBRoot(), recordPath)
+      const file = path.join(self.getDBRoot(), recordPath)
       const contents = await sf.readFile(file)
 
       const camelTableName = camelify(tableName)
@@ -68,7 +70,7 @@ export default class Market {
     }
 
     const wipeTemp = async function (recordPath) {
-      const file = path.join(this.getDBRoot(), recordPath)
+      const file = path.join(self.getDBRoot(), recordPath)
       await sf.wipe(file)
     }
 
@@ -76,8 +78,14 @@ export default class Market {
     await sf.glob('*/*', {cwd: this.getDBRoot()}).map(loadRecord, {concurrency: 4})
     await this.saveAllEntities({entities: toSave}, {wait: true})
 
-    log(opts, `done loading db for user ${userID}`)
-    this.saveAllEntities({entities}, {persist: false})
+    log(opts, `done loading db for user ${userId}`)
+    ;(async function () {
+      try {
+        await self.saveAllEntities({entities}, {persist: false, initial: true})
+      } catch (e) {
+        log(opts, `while loading db for user ${userId}: ${e.stack || e}`)
+      }
+    })()
   }
 
   getDBRoot () {
@@ -113,7 +121,7 @@ export default class Market {
 
   async saveAllEntities (response, opts) {
     opts = opts || {}
-    const {wait = false, persist = true} = opts
+    const {wait = false, persist = true, initial = false} = opts
 
     let promises = null
     if (wait) {
@@ -157,7 +165,7 @@ export default class Market {
     }
 
     if (this.dispatch) {
-      this.dispatch(dbCommit({updated}))
+      this.dispatch(dbCommit({updated, initial}))
     }
   }
 
@@ -211,9 +219,10 @@ export default class Market {
     }
   }
 
-  unload () {
-    log(opts, `unloading db for user ${this.userID}`)
+  close () {
+    log(opts, `closing db for user ${this.userId}`)
     this.clear()
+    this.dispatch(dbClosed())
     this.dispatch = null
     this.libraryDir = null
   }

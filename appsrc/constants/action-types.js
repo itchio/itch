@@ -9,7 +9,7 @@ module.exports = keyMirror({
   // Chromium is good at retrieving the user's language from the innards of the OS
   // doing the same from nodejs would probably be a waste of everyone's time
   LANGUAGE_SNIFFED: null,
-  LANGUAGE_SET: null,
+  LANGUAGE_CHANGED: null,
 
   SETUP_STATUS: null,
   SETUP_DONE: null,
@@ -18,6 +18,7 @@ module.exports = keyMirror({
 
   DB_COMMIT: null,
   DB_READY: null,
+  DB_CLOSED: null,
 
   /* Background stuff */
   OPERATION_FAILED: null,

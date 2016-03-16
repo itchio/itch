@@ -27,6 +27,7 @@ export default function createQueue (name) {
       while (true) {
         yield call(pump)
         const action = actions.pop()
+
         if (action) {
           yield put(action)
           if (endType && action.type === endType) {
