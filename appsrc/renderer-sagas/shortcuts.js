@@ -28,7 +28,7 @@ function openDevTools () {
 }
 
 // dev shortcuts
-combo.bindGlobal(['shift+f12', 'ctrl+shift+c'], openDevTools)
+combo.bindGlobal(['shift+f12', 'ctrl+shift+c', 'command+shift+c'], openDevTools)
 combo.bindGlobal(['shift+f5', 'shift+command+r'], () => window.location.reload())
 
 // user shortcuts
