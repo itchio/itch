@@ -12,7 +12,8 @@ import createQueue from '../sagas/queue'
 import {
   focusSearch,
   showNextTab,
-  showPreviousTab
+  showPreviousTab,
+  closeTab
 } from '../actions'
 
 const queue = createQueue('shortcuts')
@@ -41,4 +42,8 @@ combo.bindGlobal(['ctrl+tab', 'ctrl+pagedown'], () => {
 
 combo.bindGlobal(['ctrl+shift+tab', 'ctrl+pageup'], () => {
   queue.dispatch(showPreviousTab())
+})
+
+combo.bindGlobal(['ctrl+w'], () => {
+  queue.dispatch(closeTab())
 })

@@ -1,5 +1,6 @@
 
 import {handleActions} from 'redux-actions'
+import {pluck, reject} from 'underline'
 
 const initialState = {
   page: 'gate',
@@ -31,6 +32,33 @@ export default handleActions({
   NAVIGATE: (state, action) => {
     const path = action.payload
     return {...state, path}
+  },
+
+  CLOSE_TAB: (state, action) => {
+    const {path, tabs} = state
+    const closePath = action.payload || path
+    const {constant, transient} = tabs
+
+    const paths = constant::pluck('path').concat(transient::pluck('path'))
+
+    const index = paths.indexOf(path)
+
+    const newTransient = transient::reject((x) => x.path === closePath)
+
+    const newPaths = constant::pluck('path').concat(newTransient::pluck('path'))
+    const numNewPaths = newPaths.length
+
+    const nextIndex = Math.min(index, numNewPaths - 1)
+    const newPath = newPaths[nextIndex]
+
+    return {
+      ...state,
+      path: newPath,
+      tabs: {
+        constant,
+        transient: newTransient
+      }
+    }
   },
 
   SEARCH_FETCHED: (state, action) => {

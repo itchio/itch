@@ -55,6 +55,10 @@
       }
     }
 
+    &.empty {
+      opacity: .5;
+    }
+
     &.active {
       .icon-cross {
         opacity: 1;

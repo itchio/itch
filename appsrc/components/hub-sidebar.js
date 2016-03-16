@@ -29,19 +29,25 @@ export class HubSidebar extends Component {
       })}
 
       <h2>Transient</h2>
-      {tabs.transient::map((item) => {
-        const classes = classNames({
-          active: path === item.path
-        })
-        const onClick = () => navigate(item.path)
+      {tabs.transient.length
+        ? tabs.transient::map((item) => {
+          const classes = classNames({
+            active: path === item.path
+          })
+          const onClick = () => navigate(item.path)
 
-        return <section key={item.path} className={classes} onClick={onClick}>
-          <span className={`icon icon-${this.pathToIcon(item.path)}`}/>
-          {item.label}
-          <div className='filler'/>
-          <span className='icon icon-cross' onClick={() => closeTab(item.path)}/>
+          return <section key={item.path} className={classes} onClick={onClick}>
+            <span className={`icon icon-${this.pathToIcon(item.path)}`}/>
+            {item.label}
+            <div className='filler'/>
+            <span className='icon icon-cross' onClick={() => closeTab(item.path)}/>
+          </section>
+        })
+        : <section className='empty'>
+        <span className='icon icon-neutral'/>
+        No tabs
         </section>
-      })}
+      }
     </div>
   }
 
