@@ -22,6 +22,9 @@ import {
 
   SESSION_READY,
 
+  DB_COMMIT,
+  DB_READY,
+
   NAVIGATE,
   SWITCH_PAGE,
 
@@ -49,6 +52,9 @@ export const setupStatus = createAction(SETUP_STATUS)
 export const setupDone = createAction(SETUP_DONE)
 
 export const sessionReady = createAction(SESSION_READY)
+
+export const dbCommit = createAction(DB_COMMIT)
+export const dbReady = createAction(DB_READY)
 
 export const navigate = createAction(NAVIGATE)
 export const switchPage = createAction(SWITCH_PAGE)

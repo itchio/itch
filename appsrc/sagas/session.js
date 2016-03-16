@@ -18,13 +18,14 @@ export function * _sessionReady () {
   yield put(switchPage('hub'))
 }
 
-export default function * loginSaga () {
+export default function * sessionSaga () {
   const queue = createQueue('login')
   const sessionSelector = createSelector(
     (state) => state.setup.done,
+    (state) => state.market.ready,
     (state) => state.session.credentials.key,
-    (setupDone, loginDone) => {
-      if (setupDone && loginDone) {
+    (setupDone, marketReady, loginDone) => {
+      if (setupDone && marketReady && loginDone) {
         queue.dispatch(sessionReady())
       }
     }

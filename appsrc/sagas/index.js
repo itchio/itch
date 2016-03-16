@@ -1,4 +1,5 @@
 
+import market from './market'
 import dialogs from './dialogs'
 import notifications from './notifications'
 import session from './session'
@@ -11,6 +12,7 @@ import login from './login'
 import menu from './menu'
 
 export default [
+  market,
   dialogs,
   notifications,
   session,

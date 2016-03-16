@@ -8,10 +8,12 @@ export function slugify (str) {
 }
 
 export function camelify (str) {
+  console.log(`camelifying: `, str)
   return str.replace(/_[a-z]/g, (x) => x[1].toUpperCase())
 }
 
 export function camelifyObject (obj) {
+  console.log(`camelifyObjecting: `, obj)
   if (typeof obj === 'object') {
     return obj::map((val, key) => [
       camelify(key),

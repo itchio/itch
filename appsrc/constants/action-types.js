@@ -16,6 +16,9 @@ module.exports = keyMirror({
 
   SESSION_READY: null,
 
+  DB_COMMIT: null,
+  DB_READY: null,
+
   /* Background stuff */
   OPERATION_FAILED: null,
 

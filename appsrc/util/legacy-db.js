@@ -38,7 +38,7 @@ async function importOldData (filename) {
   const clean = (record) => camelifyObject(record::omit('_id'))
   const cleanAll = (coll) => coll::map(clean)
 
-  log(opts, `Imported ${caves.length} caves, ${games.length} games, ${collections.length} collections, ${users.length} and ${downloadKeys.length} download keys from legacy db`)
+  log(opts, `Imported ${caves.length} caves, ${games.length} games, ${collections.length} collections, ${users.length} users and ${downloadKeys.length} download keys from legacy db`)
 
   return {
     entities: {

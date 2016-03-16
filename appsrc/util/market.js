@@ -2,6 +2,8 @@
 import Promise from 'bluebird'
 import {camelify, camelifyObject} from './format'
 
+import {dbCommit} from '../actions'
+
 import path from 'path'
 import sf from './sf'
 import {app} from '../electron'
@@ -14,21 +16,24 @@ import deepFreeze from 'deep-freeze'
 import {isEqual, every} from 'underline'
 
 export default class Market {
-  constructor () {
+  constructor (dispatch) {
     this.data = {}
     this.libraryDir = null
     this._atomicInvocations = 0
+    this.dispatch = dispatch
   }
 
   async load (userID) {
+    this.userID = userID
     log(opts, `loading db for user ${userID}`)
     this.libraryDir = path.join(app.getPath('userData'), 'users', userID.toString())
 
     const oldDBFilename = path.join(this.libraryDir, 'db.jsonl')
-    if (await sf.exists(oldDBFilename)) {
+    const obsoleteMarker = oldDBFilename + '.obsolete'
+    if (!await sf.exists(obsoleteMarker)) {
       const response = await legacyDB.importOldData(oldDBFilename)
       await this.saveAllEntities(response, {wait: true})
-      await sf.rename(oldDBFilename, oldDBFilename + '.obsolete')
+      await sf.writeFile(obsoleteMarker, `If everything is working fine, you may delete both ${oldDBFilename} and this file!`)
     } else {
       log(opts, `nothing to import from legacy db`)
     }
@@ -115,11 +120,15 @@ export default class Market {
       promises = []
     }
 
+    const updated = {}
+
     for (const tableName of Object.keys(response.entities)) {
       const entities = response.entities[tableName]
       let table = this.data[tableName] || {}
+      updated[tableName] = updated[tableName] || []
 
       for (const entityID of Object.keys(entities)) {
+        updated[tableName].push(entityID)
         const entity = entities[entityID]
 
         const record = table[entityID] || {}
@@ -145,6 +154,10 @@ export default class Market {
 
     if (wait) {
       await Promise.all(promises)
+    }
+
+    if (this.dispatch) {
+      this.dispatch(dbCommit({updated}))
     }
   }
 
@@ -176,6 +189,11 @@ export default class Market {
     if (ondone) {
       Promise.all(promises).then(opts.ondone)
     }
+
+    if (this.dispatch) {
+      const deleted = response.entities
+      this.dispatch(dbCommit({deleted}))
+    }
   }
 
   getEntities (table) {
@@ -194,7 +212,9 @@ export default class Market {
   }
 
   unload () {
+    log(opts, `unloading db for user ${this.userID}`)
     this.clear()
+    this.dispatch = null
     this.libraryDir = null
   }
 }
