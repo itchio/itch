@@ -9,8 +9,6 @@ import mkcooldown from './cooldown'
 import mklog from './log'
 import {camelifyObject} from './format'
 
-import {call} from 'redux-saga/effects'
-
 const cooldown = mkcooldown(130)
 const log = mklog('api')
 const logger = new mklog.Logger({sinks: {console: !!process.env.LET_ME_IN}})
@@ -38,7 +36,7 @@ export class ApiError extends ExtendableError {
 }
 
 /**
- * Wrapper for the itch.io API
+ async Wrapper for the itch.io API
  */
 export class Client {
   constructor () {
@@ -46,15 +44,15 @@ export class Client {
     this.lastRequest = 0
   }
 
-  * request (method, path, data = {}, transformers = {}) {
+  async request (method, path, data = {}, transformers = {}) {
     const t1 = Date.now()
 
     const uri = `${this.rootUrl}${path}`
 
-    yield call(cooldown)
+    await cooldown()
     const t2 = Date.now()
 
-    const resp = yield call(needle.requestAsync, method, uri, data)
+    const resp = await needle.requestAsync(method, uri, data)
     const body = resp.body
     const t3 = Date.now()
 
@@ -77,14 +75,14 @@ export class Client {
     return camelBody
   }
 
-  * loginKey (key) {
-    return yield* this.request('post', `/${key}/me`, {
+  async loginKey (key) {
+    return await this.request('post', `/${key}/me`, {
       source: 'desktop'
     })
   }
 
-  * loginWithPassword (username, password) {
-    return yield* this.request('post', '/login', {
+  async loginWithPassword (username, password) {
+    return await this.request('post', '/login', {
       username: username,
       password: password,
       source: 'desktop'
@@ -101,7 +99,7 @@ export const client = new Client()
 export default client
 
 /**
- * A user, according to the itch.io API
+ async A user, according to the itch.io API
  */
 export class AuthenticatedClient {
   constructor (client, key) {
@@ -109,57 +107,57 @@ export class AuthenticatedClient {
     this.key = key
   }
 
-  * request (method, path, data = {}, transformers = {}) {
+  async request (method, path, data = {}, transformers = {}) {
     const url = `/${this.key}${path}`
-    return yield* this.client.request(method, url, data, transformers)
+    return await this.client.request(method, url, data, transformers)
   }
 
   // TODO: paging, for the prolific game dev.
-  * myGames (data = {}) {
-    return yield* this.request('get', `/my-games`, data, {games: ensureArray})
+  async myGames (data = {}) {
+    return await this.request('get', `/my-games`, data, {games: ensureArray})
   }
 
-  * myOwnedKeys (data = {}) {
-    return yield* this.request('get', `/my-owned-keys`, data, {ownedKeys: ensureArray})
+  async myOwnedKeys (data = {}) {
+    return await this.request('get', `/my-owned-keys`, data, {ownedKeys: ensureArray})
   }
 
-  * me () {
-    return yield* this.request('get', `/me`)
+  async me () {
+    return await this.request('get', `/me`)
   }
 
-  * myCollections () {
-    return yield* this.request('get', `/my-collections`, {}, {collections: ensureArray})
+  async myCollections () {
+    return await this.request('get', `/my-collections`, {}, {collections: ensureArray})
   }
 
-  * game (game) {
-    return yield* this.request('get', `/game/${game}`)
+  async game (game) {
+    return await this.request('get', `/game/${game}`)
   }
 
-  * collection (collectionId) {
-    return yield* this.request('get', `/collection/${collectionId}`)
+  async collection (collectionId) {
+    return await this.request('get', `/collection/${collectionId}`)
   }
 
-  * collectionGames (collectionId, page = 1) {
-    return yield* this.request('get', `/collection/${collectionId}/games`, {page})
+  async collectionGames (collectionId, page = 1) {
+    return await this.request('get', `/collection/${collectionId}/games`, {page})
   }
 
-  * search (query) {
-    return yield* this.request('get', '/search/games', {query}, {games: ensureArray})
+  async search (query) {
+    return await this.request('get', '/search/games', {query}, {games: ensureArray})
   }
 
-  * downloadKeyUploads (downloadKeyId) {
-    return yield* this.request('get', `/download-key/${downloadKeyId}/uploads`)
+  async downloadKeyUploads (downloadKeyId) {
+    return await this.request('get', `/download-key/${downloadKeyId}/uploads`)
   }
 
-  * downloadUploadWithKey (downloadKeyId, uploadId) {
-    return yield* this.request('get', `/download-key/${downloadKeyId}/download/${uploadId}`)
+  async downloadUploadWithKey (downloadKeyId, uploadId) {
+    return await this.request('get', `/download-key/${downloadKeyId}/download/${uploadId}`)
   }
 
-  * gameUploads (game) {
-    return yield* this.request('get', `/game/${game}/uploads`, {}, {uploads: ensureArray})
+  async gameUploads (game) {
+    return await this.request('get', `/game/${game}/uploads`, {}, {uploads: ensureArray})
   }
 
-  * downloadUpload (uploadId) {
-    return yield* this.request('get', `/upload/${uploadId}/download`)
+  async downloadUpload (uploadId) {
+    return await this.request('get', `/upload/${uploadId}/download`)
   }
 }
