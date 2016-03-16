@@ -8,7 +8,19 @@ import sagas from '../sagas'
 import reducer from '../reducers'
 import env from '../env'
 
+const crashGetter = (store) => (next) => (action) => {
+  try {
+    if (action && !action.type) {
+      throw new Error(`refusing to dispatch action with null type: `, action)
+    }
+    return next(action)
+  } catch (e) {
+    console.log(`Uncaught redux: ${e.stack}`)
+  }
+}
+
 const middleware = [
+  crashGetter,
   createSagaMiddleware(...sagas)
 ]
 
