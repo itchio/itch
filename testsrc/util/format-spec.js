@@ -19,14 +19,24 @@ test('format', t => {
         in_press_system: true,
         user: {
           cover_url: ''
-        }
+        },
+        sub_games: [
+          {
+            cool_stuff: []
+          }
+        ]
       }
     }), {
       game: {
         inPressSystem: true,
         user: {
           coverUrl: ''
-        }
+        },
+        subGames: [
+          {
+            coolStuff: []
+          }
+        ]
       }
     })
   })
