@@ -40,7 +40,10 @@ export class HubSidebar extends Component {
             <span className={`icon icon-${this.pathToIcon(item.path)}`}/>
             {item.label}
             <div className='filler'/>
-            <span className='icon icon-cross' onClick={() => closeTab(item.path)}/>
+            <span className='icon icon-cross' onClick={(e) => {
+              closeTab(item.path)
+              e.stopPropagation()
+            }}/>
           </section>
         })
         : <section className='empty'>
