@@ -31,6 +31,7 @@
     "clone": "^1.0.2",
     "colors": "^1.1.2",
     "combokeys": "^2.4.4",
+    "dateformat": "^1.0.12",
     "deep-assign": "^2.0.0",
     "deep-freeze": "0.0.1",
     "eol": "^0.2.0",

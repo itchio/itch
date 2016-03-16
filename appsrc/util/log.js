@@ -1,4 +1,5 @@
 
+import dateFormat from 'dateformat'
 import {pairs} from 'underline'
 import colors from 'colors/safe'
 
@@ -119,7 +120,7 @@ export class Logger {
   }
 
   timestamp () {
-    return new Date().toUTCString()
+    return dateFormat(new Date(), '[yyyy-mm-dd @ HH:MM:ss]')
   }
 }
 make.Logger = Logger
