@@ -9,17 +9,19 @@ export class HubItem extends Component {
     return <div className='hub_item'>
       <section className='cover' style={{backgroundImage: `url("${coverUrl}")`}}/>
 
-      <section className='title'>
-        {title}
-      </section>
+      <section className='undercover'>
+        <section className='title'>
+          {title}
+        </section>
 
-      <section className='actions'>
-        <div className='button'>
-          <span className='icon icon-checkmark'/>
-          <span>Launch</span>
-        </div>
-        <div className='icon-button'>
-        </div>
+        <section className='actions'>
+          <div className='button'>
+            <span className='icon icon-checkmark'/>
+            <span>Launch</span>
+          </div>
+          <div className='icon-button'>
+          </div>
+        </section>
       </section>
     </div>
   }

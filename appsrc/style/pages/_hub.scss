@@ -51,11 +51,20 @@
   }
 
   .hub_item {
+    @include thumbnail-style;
+    background: #232222; // FIXME colors
+    border: 1px solid #191919; // FIXME colors
+
     .cover {
-      @include thumbnail-style;
+      background-color: black;
       background-size: cover;
       background-position: 50% 50%;
-      height: 140px;
+      height: $grid-item-height;
+      box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
+    }
+
+    .undercover {
+      padding: .5em;
     }
 
     .actions {
@@ -65,23 +74,31 @@
     }
 
     .title {
-      margin: 8px 0;
+      @include single-line;
+      padding: .2em 0;
+      margin: 0 0 4px 0;
       text-shadow: 0 0 1px $ui-text-shadow-color;
     }
 
     .button {
       @include heavy-button;
       font-size: $base-text-size;
-      padding: 8px 12px;
+      background-color: #3A523D;
+      border: 1px solid #446744;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 2px;
     }
 
     .button .icon {
-      margin-right: 5px;
+      margin-right: 7px;
+      font-size: 80%;
     }
   }
 }
 
 .hub_meat {
+  background: #333131; // FIXME colors
   overflow: hidden;
   display: flex;
   flex-direction: row;
