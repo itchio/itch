@@ -1,12 +1,12 @@
 
-import React, {Component} from 'react'
+import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 
 import HubSearchResults from './hub-search-results'
 import HubItem from './hub-item'
 import HubGhostItem from './hub-ghost-item'
 
-const fakeIcon = 'https://downloads.2kgames.com/xcom2/blog_images/Bx987a1Y_uto0o471x_date.jpg'
+import {each} from 'underline'
 
 export class HubMeat extends Component {
   render () {
@@ -17,12 +17,14 @@ export class HubMeat extends Component {
   }
 
   fakeGrid () {
+    const {games} = this.props
     const items = []
     let id = 0
 
-    for (let i = 0; i < 25; i++) {
-      items.push(<HubItem key={id++} game={{title: 'XCOM 2', coverUrl: fakeIcon}}/>)
-    }
+    games::each((game, id) => {
+      items.push(<HubItem key={id} game={game}/>)
+    })
+
     for (let i = 0; i < 12; i++) {
       items.push(<HubGhostItem key={id++}/>)
     }
@@ -33,7 +35,13 @@ export class HubMeat extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({})
+HubMeat.propTypes = {
+  games: PropTypes.object
+}
+
+const mapStateToProps = (state) => ({
+  games: state.market.games
+})
 const mapDispatchToProps = (dispatch) => ({})
 
 export default connect(
