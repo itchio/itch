@@ -1,4 +1,5 @@
 
+import classNames from 'classnames'
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 
@@ -30,7 +31,9 @@ export class GatePage extends Component {
     const {t, stage, blockingOperation} = this.props
     const disabled = !!blockingOperation
 
-    return <div className='gate_page' data-stage={stage}>
+    const classes = classNames('gate_page', {disabled})
+
+    return <div className={classes} data-stage={stage}>
       <section className='top_filler'/>
       <section className='logo'>
         <img src='static/images/itchio-white.svg'/>

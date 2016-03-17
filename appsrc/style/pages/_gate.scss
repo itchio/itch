@@ -102,7 +102,7 @@
     }
   }
 
-  &[data-stage='setup'] {
+  &.disabled {
     form input, .links {
       pointer-events: none;
       opacity: 0;

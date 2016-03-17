@@ -20,7 +20,9 @@ export class RememberedSession extends Component {
         </p>
       </div>
       <div className='filler'/>
-      <span className='icon icon-delete forget-session' onClick={(e) => { e.stopPropagation(); forgetSession(me.id) }}/>
+      <span className='hint--left' data-hint='Forget this session'>
+        <span className='icon icon-delete forget-session' onClick={(e) => { e.stopPropagation(); forgetSession(me.id) }}/>
+      </span>
     </div>
   }
 }
