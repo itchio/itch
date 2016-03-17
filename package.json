@@ -56,7 +56,6 @@
     "proxyquire": "^1.7.3",
     "pure-render-mixin": "^1.0.2",
     "r-dom": "^2.1.0",
-    "rc-tooltip": "^3.3.0",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
     "react-timeago": "^2.2.1",
