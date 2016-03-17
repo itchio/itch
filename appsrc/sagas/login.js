@@ -1,16 +1,50 @@
 
+import {app} from '../electron'
+import sf from '../util/sf'
+import path from 'path'
+
+import invariant from 'invariant'
+import {map, indexBy} from 'underline'
+
 import {takeEvery} from 'redux-saga'
 import {put, call} from 'redux-saga/effects'
 import client from '../util/api'
 
-import {attemptLogin, loginFailed, loginSucceeded} from '../actions'
+import {attemptLogin, loginFailed, loginSucceeded, sessionsRemembered} from '../actions'
 
-import {LOGIN_WITH_PASSWORD} from '../constants/action-types'
+import {
+  BOOT,
+  LOGIN_WITH_PASSWORD,
+  LOGIN_SUCCEEDED,
+  FORGET_SESSION
+} from '../constants/action-types'
 
-export default function * loginSaga () {
-  yield [
-    takeEvery(LOGIN_WITH_PASSWORD, _passwordLogin)
-  ]
+const TOKEN_FILE_NAME = 'token.json'
+const USERS_PATH = path.join(app.getPath('userData'), 'users')
+
+export function getSessionPath (userId) {
+  return path.join(USERS_PATH, String(userId))
+}
+
+export function * _boot () {
+  // not using '**', as that would find arbitrarily deep files
+  const userIds = yield call(sf.glob, `*/${TOKEN_FILE_NAME}`, {cwd: USERS_PATH})
+  const contents = yield userIds::map((userId) =>
+    call(sf.readFile, path.join(USERS_PATH, userId, TOKEN_FILE_NAME))
+  )
+  const sessions = contents::map((content) => JSON.parse(content))
+
+  if (sessions.length > 0) {
+    const sessionsById = sessions::indexBy('userId')
+    yield put(sessionsRemembered(sessionsById))
+  }
+}
+
+export function * _forgetSession (action) {
+  const userId = action.payload
+  invariant(typeof userId !== 'undefined', 'forgetting session from a valid userId')
+  const sessionPath = getSessionPath(userId)
+  yield call(sf.wipe, sessionPath)
 }
 
 export function * _passwordLogin (action) {
@@ -32,4 +66,27 @@ export function * _passwordLogin (action) {
 export function * getKey (username, password) {
   const res = (yield call([client, client.loginWithPassword], username, password))
   return res.key.key
+}
+
+export function * _loginSucceeded (action) {
+  const {key, me} = action.payload
+  const {username} = me
+  const userId = me.id
+
+  const sessionPath = getSessionPath(userId)
+  const content = JSON.stringify({
+    userId,
+    username,
+    key
+  })
+  yield call(sf.writeFile, sessionPath, content)
+}
+
+export default function * loginSaga () {
+  yield [
+    takeEvery(BOOT, _boot),
+    takeEvery(FORGET_SESSION, _forgetSession),
+    takeEvery(LOGIN_SUCCEEDED, _loginSucceeded),
+    takeEvery(LOGIN_WITH_PASSWORD, _passwordLogin)
+  ]
 }
