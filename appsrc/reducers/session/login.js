@@ -29,7 +29,9 @@ export default handleActions({
 
   LOGIN_FAILED: (state, action) => {
     const {errors} = action.payload
-    return {...initialState, errors, blockingOperation: null}
+    // set picking to false because if we were trying a key login, we probably want
+    // to re-enter the password to see if we can obtain a new API token
+    return {...initialState, errors, blockingOperation: null, picking: false}
   },
 
   LOGIN_SUCCEEDED: (state, action) => {

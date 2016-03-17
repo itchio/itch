@@ -8,7 +8,7 @@ const initialState = {}
 export default handleActions({
   SESSIONS_REMEMBERED: (state, action) => {
     const sessions = action.payload
-    return {...state, ...sessions}
+    return sessions
   },
 
   SESSION_UPDATED: (state, action) => {
@@ -20,7 +20,6 @@ export default handleActions({
   FORGET_SESSION: (state, action) => {
     const userId = action.payload
     invariant(typeof userId !== 'undefined', 'forgetting session from a valid userId')
-    const {sessions} = state
-    return {...state, sessions: sessions::omit(userId)}
+    return state::omit(userId)
   }
 }, initialState)

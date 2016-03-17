@@ -80,7 +80,7 @@
     justify-content: center;
     min-height: 5em;
 
-    .icon {
+    .icon.scanning {
       @include horizontal_scan;
       margin-right: 12px;
     }
@@ -127,7 +127,7 @@
       flex-grow: 10;
     }
 
-    .logo  {
+    .logo {
       transition: all 0.8s ease-in;
       opacity: 0;
     }
@@ -157,10 +157,16 @@
       margin: 8px 4px;
 
       .avatar {
+        -webkit-filter: grayscale(70%);
+
         width: $gate-grid-height;
         height: $gate-grid-height;
         border-radius: 2px;
         margin-right: 4px;
+      }
+
+      &:hover .avatar {
+        -webkit-filter: grayscale(0%);
       }
 
       p {
@@ -169,6 +175,30 @@
 
       .rest {
         padding: 6px 8px;
+      }
+
+      .filler {
+        flex-grow: 8;
+      }
+
+      .forget-session {
+        padding: 6px;
+        margin: 6px;
+        visibility: hidden;
+        color: $ternary-text-color;
+      }
+
+      &:hover .forget-session {
+        visibility: visible;
+
+        &:hover {
+          color: $secondary-text-color;
+          transform: scale(1.02)
+        }
+
+        &:active {
+          transform: scale(0.98)
+        }
       }
 
       .username {
