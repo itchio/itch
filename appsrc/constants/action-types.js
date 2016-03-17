@@ -16,6 +16,7 @@ module.exports = keyMirror({
 
   SESSION_READY: null,
   SESSIONS_REMEMBERED: null,
+  SESSION_UPDATED: null,
   FORGET_SESSION: null,
 
   START_ONBOARDING: null,

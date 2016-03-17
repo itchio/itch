@@ -1,11 +1,8 @@
 
-import invariant from 'invariant'
-import {omit} from 'underline'
 import {handleActions} from 'redux-actions'
 
 const initialState = {
   picking: true,
-  sessions: {},
   errors: [],
   blockingOperation: null
 }
@@ -30,30 +27,16 @@ export default handleActions({
     return {...state, picking: false}
   },
 
-  SESSIONS_REMEMBERED: (state, action) => {
-    const sessions = action.payload
-    return {...state, sessions}
-  },
-
-  FORGET_SESSION: (state, action) => {
-    const userId = action.payload
-    invariant(typeof userId !== 'undefined', 'forgetting session from a valid userId')
-    const {sessions} = state
-    return {...state, sessions: sessions::omit(userId)}
-  },
-
   LOGIN_FAILED: (state, action) => {
     const {errors} = action.payload
     return {...initialState, errors, blockingOperation: null}
   },
 
-  LOGIN_SUCCEDED: (state, action) => {
-    const {sessions} = state
-    return {...initialState, sessions}
+  LOGIN_SUCCEEDED: (state, action) => {
+    return initialState
   },
 
   LOGOUT: (state, action) => {
-    const {sessions} = state
-    return {...initialState, sessions}
+    return initialState
   }
 }, initialState)

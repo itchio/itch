@@ -1,5 +1,6 @@
 
 import onboarding from './onboarding'
+import rememberedSessions from './remembered-sessions'
 import navigation from './navigation'
 import market from './market'
 import dialogs from './dialogs'
@@ -15,6 +16,7 @@ import menu from './menu'
 
 export default [
   onboarding,
+  rememberedSessions,
   navigation,
   market,
   dialogs,

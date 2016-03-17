@@ -77,20 +77,20 @@ export class GatePage extends Component {
       }
 
       return <section className='links'>
-        <a href='#' onClick={onClick}>Sign in as someone else</a>
+        <span className='link' onClick={onClick}>Sign in as someone else</span>
       </section>
     } else {
-      const {sessions = {}} = this.props
-      const numSavedSessions = Object.keys(sessions).length
+      const {rememberedSessions = {}} = this.props
+      const numSavedSessions = Object.keys(rememberedSessions).length
 
       return <section className='links'>
-        <a href={urls.accountRegister}>{t('login.action.register')}</a>
+        <a className='link' href={urls.accountRegister}>{t('login.action.register')}</a>
         <span>{' · '}</span>
-        <a href={urls.accountForgotPassword}>{t('login.action.reset_password')}</a>
+        <a className='link' href={urls.accountForgotPassword}>{t('login.action.reset_password')}</a>
         { numSavedSessions > 0
         ? [
           <span>{' · '}</span>,
-          <a href='#' onClick={() => this.props.loginStartPicking()}>Saved logins</a>
+          <span className='link' onClick={() => this.props.loginStartPicking()}>Saved logins</span>
         ]
         : '' }
       </section>
@@ -98,7 +98,7 @@ export class GatePage extends Component {
   }
 
   renderActions () {
-    const {t, blockingOperation, sessions, stage} = this.props
+    const {t, blockingOperation, rememberedSessions = {}, stage} = this.props
 
     if (stage === 'pick') {
       const onLogin = (payload) => {
@@ -110,7 +110,7 @@ export class GatePage extends Component {
       }
 
       return <div className='remembered-sessions'>
-        {sessions::map((session, userId) => <RememberedSession session={session} loginWithToken={onLogin}/>)}
+        {rememberedSessions::map((session, userId) => <RememberedSession session={session} loginWithToken={onLogin}/>)}
       </div>
     } if (blockingOperation) {
       const {message, icon} = blockingOperation
@@ -165,7 +165,7 @@ GatePage.propTypes = {
     message: PropTypes.array,
     icon: PropTypes.string
   }),
-  sessions: PropTypes.object,
+  rememberedSessions: PropTypes.object,
 
   t: PropTypes.func,
   loginWithPassword: PropTypes.func.isRequired,
@@ -175,16 +175,13 @@ GatePage.propTypes = {
 }
 
 const mapStateToProps = (state) => {
-  const {session} = state
+  const {rememberedSessions, session} = state
   const {login} = session
-  const {sessions = {}} = login
 
   if (!session.credentials.key) {
-    if (Object.keys(sessions).length > 0 && login.picking) {
-      return {stage: 'pick', ...login}
-    } else {
-      return {stage: 'login', ...login}
-    }
+    const hasSessions = Object.keys(rememberedSessions).length > 0
+    const stage = (hasSessions && login.picking) ? 'pick' : 'login'
+    return {...login, stage, rememberedSessions}
   } else if (!state.setup.done) {
     return {stage: 'setup', ...state.setup}
   } else {

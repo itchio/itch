@@ -97,7 +97,7 @@
     margin: 1em 0;
     color: $swiss-coffee;
 
-    a {
+    .link {
       @include secondary-link;
     }
   }
@@ -160,6 +160,7 @@
         width: $gate-grid-height;
         height: $gate-grid-height;
         border-radius: 2px;
+        margin-right: 4px;
       }
 
       p {

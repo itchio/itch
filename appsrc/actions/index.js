@@ -23,6 +23,7 @@ import {
 
   SESSION_READY,
   SESSIONS_REMEMBERED,
+  SESSION_UPDATED,
   FORGET_SESSION,
 
   DB_COMMIT,
@@ -60,6 +61,7 @@ export const setupDone = createAction(SETUP_DONE)
 
 export const sessionReady = createAction(SESSION_READY)
 export const sessionsRemembered = createAction(SESSIONS_REMEMBERED)
+export const sessionUpdated = createAction(SESSION_UPDATED)
 export const forgetSession = createAction(FORGET_SESSION)
 
 export const dbCommit = createAction(DB_COMMIT)
