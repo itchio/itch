@@ -58,6 +58,7 @@
     "rc-tooltip": "^3.3.0",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
+    "react-timeago": "^2.2.1",
     "read-chunk": "^1.0.1",
     "redux": "^3.3.1",
     "redux-actions": "^0.9.1",

@@ -5,7 +5,7 @@
   animation: sk-rotateplane 2.4s .5s infinite ease-out;
 }
 
-@-webkit-keyframes sk-rotateplane {
+@keyframes sk-rotateplane {
   0% { transform: perspective(120px); }
   50% { transform: perspective(120px) rotateY(180deg); }
   100% { transform: perspective(120px) rotateY(180deg)  rotateX(180deg); }

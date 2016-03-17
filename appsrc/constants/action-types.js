@@ -18,6 +18,9 @@ module.exports = keyMirror({
   SESSIONS_REMEMBERED: null,
   FORGET_SESSION: null,
 
+  START_ONBOARDING: null,
+  EXIT_ONBOARDING: null,
+
   DB_COMMIT: null,
   DB_READY: null,
   DB_CLOSED: null,
@@ -144,10 +147,17 @@ module.exports = keyMirror({
   CAVE_STORE_CAVE_DIFF: null,
   INSTALL_LOCATION_STORE_DIFF: null,
 
+  /** Start picking from a list of remembered sessions */
+  LOGIN_START_PICKING: null,
+  /** Go back to username/password form to add new login */
+  LOGIN_STOP_PICKING: null,
+
   /** Any login attempt (cached or not) */
   ATTEMPT_LOGIN: null,
   /** Private - login attempt with username/password */
   LOGIN_WITH_PASSWORD: null,
+  /** Private - login attempt with stored token */
+  LOGIN_WITH_TOKEN: null,
   /** Wrong login/password or something else */
   LOGIN_FAILED: null,
   /** API key available beyond this point */

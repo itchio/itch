@@ -45,6 +45,11 @@
       margin: 4px 0;
       line-height: 1.4;
     }
+
+    .welcome-back {
+      color: $ivory;
+      font-size: 18px;
+    }
   }
 
   .errors, .actions {
@@ -53,6 +58,10 @@
       font-size: 120%;
       vertical-align: middle;
     }
+  }
+
+  .actions {
+    height: 5em;
   }
 
   .crux {
@@ -100,6 +109,13 @@
     }
   }
 
+  &[data-stage='pick'] {
+    form input {
+      pointer-events: none;
+      opacity: 0;
+    }
+  }
+
   &[data-stage='ready'] {
     .crux, .links, .actions, .errors {
       pointer-events: none;
@@ -115,5 +131,66 @@
       transition: all 0.8s ease-in;
       opacity: 0;
     }
+  }
+
+  .remembered-sessions {
+    animation: fade-in .2s;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+
+    .remembered-session {
+      flex-shrink: 0;
+      min-width: 300px;
+      border-radius: 2px;
+      background: $sidebar-background-color;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin: 8px 4px;
+
+      .avatar {
+        width: $gate-grid-height;
+        height: $gate-grid-height;
+        border-radius: 2px;
+      }
+
+      p {
+        padding: 2px 0;
+      }
+
+      .rest {
+        padding: 6px 8px;
+      }
+
+      .username {
+        color: $ivory;
+        font-weight: bold;
+        padding: 4px 0;
+      }
+
+      .last-connected {
+        color: $secondary-text-color;
+        font-size: 14px;
+      }
+
+      box-shadow: 0 0 4px $sidebar-background-color;
+
+      &:hover {
+        box-shadow: 0 0 8px $sidebar-background-color;
+        cursor: pointer;
+      }
+
+      &:active {
+        transform: scale(.97);
+      }
+    } // remembered-session
   }
 }

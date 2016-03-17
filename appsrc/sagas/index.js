@@ -1,4 +1,5 @@
 
+import onboarding from './onboarding'
 import navigation from './navigation'
 import market from './market'
 import dialogs from './dialogs'
@@ -13,6 +14,7 @@ import login from './login'
 import menu from './menu'
 
 export default [
+  onboarding,
   navigation,
   market,
   dialogs,

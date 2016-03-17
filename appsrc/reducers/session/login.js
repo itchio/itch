@@ -4,7 +4,7 @@ import {omit} from 'underline'
 import {handleActions} from 'redux-actions'
 
 const initialState = {
-  stage: 'pick',
+  picking: true,
   sessions: {},
   errors: [],
   blockingOperation: null
@@ -13,12 +13,21 @@ const initialState = {
 export default handleActions({
   ATTEMPT_LOGIN: (state, action) => {
     return {
+      ...state,
       errors: [],
       blockingOperation: {
         icon: 'heart-filled',
         message: ['login.status.login']
       }
     }
+  },
+
+  LOGIN_START_PICKING: (state, action) => {
+    return {...state, picking: true}
+  },
+
+  LOGIN_STOP_PICKING: (state, action) => {
+    return {...state, picking: false}
   },
 
   SESSIONS_REMEMBERED: (state, action) => {
@@ -33,16 +42,18 @@ export default handleActions({
     return {...state, sessions: sessions::omit(userId)}
   },
 
-  LOGIN_SUCCEDED: (state, action) => {
-    return initialState
-  },
-
   LOGIN_FAILED: (state, action) => {
-    const errors = action.payload
+    const {errors} = action.payload
     return {...initialState, errors, blockingOperation: null}
   },
 
+  LOGIN_SUCCEDED: (state, action) => {
+    const {sessions} = state
+    return {...initialState, sessions}
+  },
+
   LOGOUT: (state, action) => {
-    return initialState
+    const {sessions} = state
+    return {...initialState, sessions}
   }
 }, initialState)

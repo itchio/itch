@@ -5,10 +5,9 @@ import {map} from 'underline'
 import classNames from 'classnames'
 
 import {navigate, closeTab} from '../actions'
+import defaultImages from '../constants/default-images'
 
 import Icon from './icon'
-
-const defaultCoverUrl = 'static/images/itchio-textless-pink.svg'
 
 export class HubSidebar extends Component {
   render () {
@@ -77,8 +76,8 @@ export class HubSidebar extends Component {
   }
 
   me () {
-    const {me} = this.props
-    const {coverUrl = defaultCoverUrl, username} = me
+    const {me = {}} = this.props
+    const {coverUrl = defaultImages.avatar, username = ''} = me
 
     return <section className='me'>
       <img src={coverUrl}/>
