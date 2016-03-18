@@ -1,5 +1,4 @@
 
-import {connect} from 'react-redux'
 import React, {Component} from 'react'
 
 import StatusBar from './status-bar'
@@ -16,10 +15,4 @@ export class HubPage extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({})
-const mapDispatchToProps = (dispatch) => ({})
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(HubPage)
+export default HubPage

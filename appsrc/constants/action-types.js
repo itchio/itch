@@ -188,5 +188,7 @@ module.exports = keyMirror({
   /* Preferences */
   OPEN_PREFERENCES: null,
   PREFERENCES_SET_LANGUAGE: null,
-  PREFERENCES_SET_SNIFFED_LANGUAGE: null
+
+  VIEW_CREATOR_PROFILE: null,
+  VIEW_COMMUNITY_PROFILE: null
 })

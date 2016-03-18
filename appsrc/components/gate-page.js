@@ -12,13 +12,7 @@ import Icon from './icon'
 
 import RememberedSession from './remembered-session'
 
-import {
-  loginStartPicking,
-  loginStopPicking,
-  loginWithPassword,
-  loginWithToken,
-  forgetSessionRequest
-} from '../actions'
+import * as actions from '../actions'
 
 export class GatePage extends Component {
   constructor () {
@@ -199,11 +193,11 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  loginWithPassword: (username, password) => dispatch(loginWithPassword({username, password})),
-  loginWithToken: (payload) => dispatch(loginWithToken(payload)),
-  loginStartPicking: () => dispatch(loginStartPicking()),
-  loginStopPicking: () => dispatch(loginStopPicking()),
-  forgetSessionRequest: (payload) => dispatch(forgetSessionRequest(payload))
+  loginWithPassword: (username, password) => dispatch(actions.loginWithPassword({username, password})),
+  loginWithToken: (payload) => dispatch(actions.loginWithToken(payload)),
+  loginStartPicking: () => dispatch(actions.loginStartPicking()),
+  loginStopPicking: () => dispatch(actions.loginStopPicking()),
+  forgetSessionRequest: (payload) => dispatch(actions.forgetSessionRequest(payload))
 })
 
 export default connect(

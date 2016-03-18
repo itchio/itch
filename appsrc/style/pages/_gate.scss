@@ -219,7 +219,7 @@
       }
 
       &:active {
-        transform: scale(.97);
+        -webkit-filter: brightness(70%);
       }
     } // remembered-session
   }

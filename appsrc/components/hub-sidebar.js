@@ -1,20 +1,33 @@
 
 import React, {PropTypes, Component} from 'react'
-import {connect} from 'react-redux'
+import {connect} from './connect'
 import {map} from 'underline'
 import classNames from 'classnames'
 
-import {navigate, closeTab} from '../actions'
+import * as actions from '../actions'
 import defaultImages from '../constants/default-images'
 
 import Icon from './icon'
 
 export class HubSidebar extends Component {
+  constructor () {
+    super()
+    this.state = {
+      dropdownOpen: false
+    }
+  }
+
+  toggleDropdown () {
+    const {dropdownOpen} = this.state
+    this.setState({...this.state, dropdownOpen: !dropdownOpen})
+  }
+
   render () {
     const {path, tabs, navigate, closeTab} = this.props
 
     return <div className='hub_sidebar'>
       {this.me()}
+      {this.dropdown()}
 
       <h2>Constant</h2>
       {tabs.constant::map((item) => {
@@ -79,18 +92,42 @@ export class HubSidebar extends Component {
     const {me = {}} = this.props
     const {coverUrl = defaultImages.avatar, username = ''} = me
 
-    return <section className='me'>
+    return <section className='me' onClick={() => this.toggleDropdown()}>
       <img src={coverUrl}/>
       <span>{username}</span>
       <div className='filler'/>
       <Icon icon='triangle-down'/>
     </section>
   }
+
+  dropdown () {
+    const {t, viewCreatorProfile, viewCommunityProfile, changeUser} = this.props
+    const dropdownClasses = classNames('dropdown', {active: this.state.dropdownOpen})
+
+    return <div className='dropdown-container'>
+      <div className={dropdownClasses}>
+        <section onClick={viewCreatorProfile}>
+          <span className='icon icon-rocket'/>
+          {t('sidebar.view_creator_profile')}
+        </section>
+        <section onClick={viewCommunityProfile}>
+          <span className='icon icon-fire'/>
+          {t('sidebar.view_community_profile')}
+        </section>
+        <section onClick={changeUser}>
+          <span className='icon icon-moon'/>
+          {t('sidebar.log_out')}
+        </section>
+      </div>
+    </div>
+  }
 }
 
 HubSidebar.propTypes = {
-  // TODO: flesh out shape of 'me'
-  me: PropTypes.object,
+  me: PropTypes.shape({
+    coverUrl: PropTypes.string,
+    username: PropTypes.string.isRequired
+  }),
 
   path: PropTypes.string,
   tabs: PropTypes.shape({
@@ -98,8 +135,12 @@ HubSidebar.propTypes = {
     transient: PropTypes.array
   }),
 
-  navigate: PropTypes.func,
-  closeTab: PropTypes.func
+  t: PropTypes.func.isRequired,
+  viewCreatorProfile: PropTypes.func.isRequired,
+  viewCommunityProfile: PropTypes.func.isRequired,
+  changeUser: PropTypes.func.isRequired,
+  navigate: PropTypes.func.isRequired,
+  closeTab: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -109,8 +150,12 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  navigate: (path) => dispatch(navigate(path)),
-  closeTab: (path) => dispatch(closeTab(path))
+  navigate: (path) => dispatch(actions.navigate(path)),
+  closeTab: (path) => dispatch(actions.closeTab(path)),
+
+  viewCreatorProfile: () => dispatch(actions.viewCreatorProfile()),
+  viewCommunityProfile: () => dispatch(actions.viewCommunityProfile()),
+  changeUser: () => dispatch(actions.changeUser())
 })
 
 export default connect(
