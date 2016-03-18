@@ -1,0 +1,100 @@
+
+.ReactModal__Overlay--after-open {
+  animation: drop-down .2s;
+}
+
+.ReactModal__Content .modal {
+  min-width: 200px;
+  min-height: 200px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .header {
+    background: $sidebar-background-color;
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: row;
+
+    h2 {
+      color: $secondary-text-color;
+      font-size: $base-text-size + 2px;
+    }
+
+    .close-modal {
+      font-size: 20px;
+      @include secondary-link;
+    }
+
+    .filler {
+      flex-grow: 8;
+    }
+  }
+
+  .body {
+    padding-top: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .message .secondary {
+      color: $secondary-text-color;
+    }
+
+    .padder {
+      flex-basis: 40px;
+    }
+
+    p {
+      line-height: 1.4;
+      margin: 8px 0;
+    }
+
+    .icon {
+      margin-top: 8px;
+      margin-right: 12px;
+      font-size: 48px;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+
+    .filler {
+      flex-grow: 8;
+    }
+
+    .button {
+      margin: 0 8px;
+      @include light-button;
+
+      &.cancel {
+        @include light-button($ui-background-color);
+      }
+
+      .icon {
+        margin-right: 5px;
+      }
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &:hover {
+        -webkit-filter: brightness(110%);
+      }
+
+      &:active {
+        transform: scale(.95);
+      }
+    }
+  }
+}

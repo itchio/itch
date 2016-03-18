@@ -13,6 +13,7 @@ import './boot/sniff-language'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Layout from './components/layout'
+import Modal from './components/modal'
 import {Provider} from 'react-redux'
 import {shell} from './electron'
 
@@ -32,6 +33,7 @@ function render () {
   const layout = <Provider store={store}>
     <div>
       <Layout/>
+      <Modal/>
       {devTools}
     </div>
   </Provider>

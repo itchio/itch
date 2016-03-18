@@ -18,12 +18,16 @@ import {
   LANGUAGE_SNIFFED,
   LANGUAGE_CHANGED,
 
+  OPEN_MODAL,
+  CLOSE_MODAL,
+
   SETUP_STATUS,
   SETUP_DONE,
 
   SESSION_READY,
   SESSIONS_REMEMBERED,
   SESSION_UPDATED,
+  FORGET_SESSION_REQUEST,
   FORGET_SESSION,
 
   DB_COMMIT,
@@ -56,12 +60,16 @@ export const openUrl = createAction(OPEN_URL)
 export const languageSniffed = createAction(LANGUAGE_SNIFFED)
 export const languageChanged = createAction(LANGUAGE_CHANGED)
 
+export const openModal = createAction(OPEN_MODAL)
+export const closeModal = createAction(CLOSE_MODAL)
+
 export const setupStatus = createAction(SETUP_STATUS)
 export const setupDone = createAction(SETUP_DONE)
 
 export const sessionReady = createAction(SESSION_READY)
 export const sessionsRemembered = createAction(SESSIONS_REMEMBERED)
 export const sessionUpdated = createAction(SESSION_UPDATED)
+export const forgetSessionRequest = createAction(FORGET_SESSION_REQUEST)
 export const forgetSession = createAction(FORGET_SESSION)
 
 export const dbCommit = createAction(DB_COMMIT)

@@ -13,13 +13,14 @@
 
 @import 'mixins/heavy-input';
 @import 'mixins/heavy-button';
+@import 'mixins/light-button';
 @import 'mixins/icon-as-background';
 @import 'mixins/single-line';
 @import 'mixins/thumbnail-style';
 @import 'mixins/secondary-link';
 
 @import 'global-styles/base';
-@import 'global-styles/tooltips';
+@import 'global-styles/modals';
 @import 'global-styles/scrollbar';
 
 @import 'pages/gate';

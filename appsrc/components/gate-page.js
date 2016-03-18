@@ -17,7 +17,7 @@ import {
   loginStopPicking,
   loginWithPassword,
   loginWithToken,
-  forgetSession
+  forgetSessionRequest
 } from '../actions'
 
 export class GatePage extends Component {
@@ -43,7 +43,7 @@ export class GatePage extends Component {
 
       <section className='crux'>
         <form onSubmit={this.handleSubmit}>
-          <input id='login-username' ref='username' type='text' placeholder={t('login.field.username')} autoFocus={true} disabled={disabled}/>
+          <input id='login-username' ref='username' type='text' placeholder={t('login.field.username')} autoFocus disabled={disabled}/>
           <input ref='password' type='password' placeholder={t('login.field.password')} disabled={disabled}/>
           <section className='actions'>
             {this.renderActions()}
@@ -91,12 +91,12 @@ export class GatePage extends Component {
         <a className='link' href={urls.accountRegister}>{t('login.action.register')}</a>
         <span>{' · '}</span>
         <a className='link' href={urls.accountForgotPassword}>{t('login.action.reset_password')}</a>
-        { numSavedSessions > 0
+        {numSavedSessions > 0
         ? [
           <span>{' · '}</span>,
           <span className='link' onClick={() => this.props.loginStartPicking()}>Saved logins</span>
         ]
-        : '' }
+        : ''}
       </section>
     }
   }
@@ -113,11 +113,11 @@ export class GatePage extends Component {
         this.props.loginWithToken(payload)
       }
 
-      const onForget = this.props.forgetSession
+      const onForget = this.props.forgetSessionRequest
 
       return <div className='remembered-sessions'>
         {rememberedSessions::sortBy((x) => -x.lastConnected)::map((session, userId) =>
-          <RememberedSession session={session} loginWithToken={onLogin} forgetSession={onForget}/>
+          <RememberedSession key={userId} session={session} loginWithToken={onLogin} forgetSessionRequest={onForget}/>
         )}
       </div>
     } if (blockingOperation) {
@@ -180,7 +180,7 @@ GatePage.propTypes = {
   loginWithToken: PropTypes.func.isRequired,
   loginStartPicking: PropTypes.func.isRequired,
   loginStopPicking: PropTypes.func.isRequired,
-  forgetSession: PropTypes.func.isRequired
+  forgetSessionRequest: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => {
@@ -203,7 +203,7 @@ const mapDispatchToProps = (dispatch) => ({
   loginWithToken: (payload) => dispatch(loginWithToken(payload)),
   loginStartPicking: () => dispatch(loginStartPicking()),
   loginStopPicking: () => dispatch(loginStopPicking()),
-  forgetSession: (payload) => dispatch(forgetSession(payload))
+  forgetSessionRequest: (payload) => dispatch(forgetSessionRequest(payload))
 })
 
 export default connect(

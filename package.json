@@ -58,6 +58,7 @@
     "r-dom": "^2.1.0",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
+    "react-modal": "^0.6.1",
     "react-timeago": "^2.2.1",
     "read-chunk": "^1.0.1",
     "redux": "^3.3.1",
@@ -118,7 +119,7 @@
     "test": "npm run lint && grunt && nyc -s node test/runner.js | tap-spec",
     "coveralls": "nyc report -r text-lcov | coveralls",
     "local-cov": "grunt && nyc -s node test/runner.js | tap-spec && nyc report -r html",
-    "lint": "standard --parser babel-eslint \"appsrc/**/*.js\" \"testsrc/**/*.js\"",
+    "lint": "standard",
     "i18n": "release/i18n-check.sh"
   },
   "standard": {

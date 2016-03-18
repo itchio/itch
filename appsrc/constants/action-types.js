@@ -11,12 +11,16 @@ module.exports = keyMirror({
   LANGUAGE_SNIFFED: null,
   LANGUAGE_CHANGED: null,
 
+  OPEN_MODAL: null,
+  CLOSE_MODAL: null,
+
   SETUP_STATUS: null,
   SETUP_DONE: null,
 
   SESSION_READY: null,
   SESSIONS_REMEMBERED: null,
   SESSION_UPDATED: null,
+  FORGET_SESSION_REQUEST: null,
   FORGET_SESSION: null,
 
   START_ONBOARDING: null,

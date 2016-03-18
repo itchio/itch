@@ -11,13 +11,16 @@ import {put, call} from 'redux-saga/effects'
 
 import {
   sessionsRemembered, sessionUpdated,
+  forgetSession,
+  openModal,
   startOnboarding
 } from '../actions'
 
 import {
   BOOT,
   LOGIN_SUCCEEDED,
-  FORGET_SESSION
+  FORGET_SESSION,
+  FORGET_SESSION_REQUEST
 } from '../constants/action-types'
 
 const TOKEN_FILE_NAME = 'token.json'
@@ -43,13 +46,31 @@ export function * loadRememberedSessions () {
 }
 
 export function * _boot () {
-  yield* loadRememberedSessions()
+  yield * loadRememberedSessions()
+}
+
+export function * _forgetSessionRequest (action) {
+  const {id, username} = action.payload
+  yield put(openModal({
+    type: 'question',
+    title: 'Forget session',
+    message: `Are you sure you want to remove '${username}' from your saved sessions?`,
+    detail: `You can always add it back later.`,
+    buttons: [
+      {
+        label: 'Forget session',
+        action: forgetSession({id, username}),
+        icon: 'delete'
+      },
+      'cancel'
+    ]
+  }))
 }
 
 export function * _forgetSession (action) {
-  const userId = action.payload
-  invariant(typeof userId !== 'undefined', 'forgetting session from a valid userId')
-  const tokenPath = getTokenPath(userId)
+  const {id} = action.payload
+  invariant(typeof id !== 'undefined', 'forgetting session from a valid user id')
+  const tokenPath = getTokenPath(id)
   yield call(sf.wipe, tokenPath)
 }
 
@@ -70,7 +91,7 @@ export function * saveSession (userId, record) {
     yield put(startOnboarding())
   }
 
-  yield put(sessionUpdated({userId, record: finalRecord}))
+  yield put(sessionUpdated({id: userId, record: finalRecord}))
 }
 
 export function * _loginSucceeded (action) {
@@ -81,6 +102,7 @@ export function * _loginSucceeded (action) {
 export default function * rememberedSessionSaga () {
   yield [
     takeEvery(BOOT, _boot),
+    takeEvery(FORGET_SESSION_REQUEST, _forgetSessionRequest),
     takeEvery(FORGET_SESSION, _forgetSession),
     takeEvery(LOGIN_SUCCEEDED, _loginSucceeded)
   ]

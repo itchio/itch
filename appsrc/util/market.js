@@ -32,7 +32,7 @@ export default class Market {
 
     const oldDBFilename = path.join(this.libraryDir, 'db.jsonl')
     const obsoleteMarker = oldDBFilename + '.obsolete'
-    if (!await sf.exists(obsoleteMarker)) {
+    if (!(await sf.exists(obsoleteMarker))) {
       const response = await legacyDB.importOldData(oldDBFilename)
       await this.saveAllEntities(response, {wait: true})
       await sf.writeFile(obsoleteMarker, `If everything is working fine, you may delete both ${oldDBFilename} and this file!`)

@@ -70,7 +70,14 @@ class StatusBar extends Component {
 }
 
 StatusBar.propTypes = {
-  update: PropTypes.any
+  state: PropTypes.shape({
+    status: PropTypes.string,
+    error: PropTypes.string,
+    available: PropTypes.bool,
+    downloaded: PropTypes.bool,
+    checking: PropTypes.bool,
+    uptodate: PropTypes.bool
+  })
 }
 
 export default StatusBar

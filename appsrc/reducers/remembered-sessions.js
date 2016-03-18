@@ -12,14 +12,14 @@ export default handleActions({
   },
 
   SESSION_UPDATED: (state, action) => {
-    const {userId, record} = action.payload
-    const session = state[userId] || {}
-    return {...state, [userId]: {...session, ...record}}
+    const {id, record} = action.payload
+    const session = state[id] || {}
+    return {...state, [id]: {...session, ...record}}
   },
 
   FORGET_SESSION: (state, action) => {
-    const userId = action.payload
-    invariant(typeof userId !== 'undefined', 'forgetting session from a valid userId')
-    return state::omit(userId)
+    const {id} = action.payload
+    invariant(typeof id !== 'undefined', 'forgetting session from a valid userId')
+    return state::omit(id)
   }
 }, initialState)
