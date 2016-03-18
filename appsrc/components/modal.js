@@ -31,7 +31,7 @@ const customStyles = {
 
 const DEFAULT_BUTTONS = {
   cancel: {
-    label: 'Cancel',
+    label: ['prompt.action.cancel'],
     action: closeModal(),
     className: 'cancel'
   }
@@ -39,7 +39,7 @@ const DEFAULT_BUTTONS = {
 
 export class Modal extends Component {
   render () {
-    const {modals = [], dispatch, closeModal} = this.props
+    const {t, modals = [], dispatch, closeModal} = this.props
 
     const modal = modals[0]
 
@@ -49,7 +49,7 @@ export class Modal extends Component {
       return <ReactModal isOpen style={customStyles}>
         <div className='modal'>
           <div className='header'>
-            <h2>{title}</h2>
+            <h2>{t.apply(null, title)}</h2>
             <div className='filler'/>
             <span className='icon icon-cross close-modal' onClick={closeModal}/>
           </div>
@@ -57,8 +57,8 @@ export class Modal extends Component {
           <div className='body'>
             <div className='padder'/>
             <div className='message'>
-              <p>{message}</p>
-              {detail && <p className='secondary'>{detail}</p>}
+              <p>{t.apply(null, message)}</p>
+              {detail && <p className='secondary'>{t.apply(null, detail)}</p>}
             </div>
             <div className='padder'/>
           </div>
@@ -73,7 +73,7 @@ export class Modal extends Component {
               const {label, action, className = '', icon} = button
               return <div className={`button ${className}`} key={index} onClick={() => dispatch(action)}>
                 {icon ? <span className={`icon icon-${icon}`}/> : ''}
-                {label}
+                {t.apply(null, label)}
               </div>
             })}
           </div>
@@ -116,6 +116,8 @@ Modal.propTypes = {
     message: PropTypes.string,
     detail: PropTypes.string
   })),
+
+  t: PropTypes.func.isRequired,
 
   closeModal: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired

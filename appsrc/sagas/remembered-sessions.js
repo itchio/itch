@@ -52,13 +52,12 @@ export function * _boot () {
 export function * _forgetSessionRequest (action) {
   const {id, username} = action.payload
   yield put(openModal({
-    type: 'question',
-    title: 'Forget session',
-    message: `Are you sure you want to remove '${username}' from your saved sessions?`,
-    detail: `You can always add it back later.`,
+    title: ['prompt.forget_session.title'],
+    message: ['prompt.forget_session.message', {username}],
+    detail: ['prompt.forget_session.detail'],
     buttons: [
       {
-        label: 'Forget session',
+        label: ['prompt.forget_session.action'],
         action: forgetSession({id, username}),
         icon: 'delete'
       },
