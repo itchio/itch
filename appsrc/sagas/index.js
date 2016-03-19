@@ -1,4 +1,5 @@
 
+import selfUpdate from './self-update'
 import onboarding from './onboarding'
 import rememberedSessions from './remembered-sessions'
 import navigation from './navigation'
@@ -15,6 +16,7 @@ import login from './login'
 import menu from './menu'
 
 export default [
+  selfUpdate,
   onboarding,
   rememberedSessions,
   navigation,

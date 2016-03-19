@@ -5,7 +5,11 @@ const self = {
   itchTranslationPlatform: 'https://weblate.itch.ovh/projects/itch',
   githubApi: 'https://api.github.com',
   ibrewRepo: 'https://dl.itch.ovh',
-  remoteLocalePath: 'http://locales.itch.ovh/itch'
+  remoteLocalePath: 'http://locales.itch.ovh/itch',
+  updateServers: {
+    stable: 'https://nuts.itch.zone',
+    canary: 'https://nuts-canary.itch.ovh'
+  }
 }
 
 const itchioApi = process.env.WHEN_IN_ROME || self.itchio

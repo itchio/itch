@@ -3,5 +3,6 @@
 // with a 'production' one. in test, `name` is overwritten
 // to be test.
 module.exports = {
-  name: 'development'
+  name: 'development',
+  channel: 'stable'
 }
