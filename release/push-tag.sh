@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh -e
 
 VERSION=$1
 if [ -z "$VERSION" ]; then
