@@ -20,7 +20,9 @@ import {
   LANGUAGE_CHANGED,
 
   OPEN_MODAL,
-  CLOSE_MODAL
+  CLOSE_MODAL,
+
+  UPDATE_PREFERENCES
 } from '../constants/action-types'
 
 export const languageSniffed = createAction(LANGUAGE_SNIFFED)
@@ -28,3 +30,5 @@ export const languageChanged = createAction(LANGUAGE_CHANGED)
 
 export const openModal = createAction(OPEN_MODAL)
 export const closeModal = createAction(CLOSE_MODAL)
+
+export const updatePreferences = createAction(UPDATE_PREFERENCES)

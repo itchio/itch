@@ -15,7 +15,7 @@ import {createStructuredSelector} from 'reselect'
 class StatusBar extends Component {
   render () {
     const {t, selfUpdate, offlineMode} = this.props
-    const {dismissStatus, applySelfUpdateRequest, showAvailableSelfUpdate} = this.props
+    const {dismissStatus, applySelfUpdateRequest, showAvailableSelfUpdate, updatePreferences} = this.props
     let {status, error, uptodate, available, downloading, downloaded, checking} = selfUpdate
 
     let children = []
@@ -74,16 +74,17 @@ class StatusBar extends Component {
     const classes = classNames('status-bar', {active, busy})
     const plugHint = t(`status.offline_mode.${offlineMode ? 'active' : 'inactive'}`)
     const plugClasses = classNames('plug', {active: offlineMode})
+    const selfUpdateClasses = classNames('self-update', {busy})
 
     return <div className={classes}>
-      <div className={plugClasses}>
+      <div className={plugClasses} onClick={() => updatePreferences({offlineMode: !offlineMode})}>
         <div className='hint--right' data-hint={plugHint}>
           <Icon icon='moon'/>
         </div>
       </div>
       <div className='padder'/>
-      <div className='message' onClick={onClick}>
-      {children}
+      <div className={selfUpdateClasses} onClick={onClick}>
+        {children}
       </div>
     </div>
   }
@@ -104,14 +105,17 @@ StatusBar.propTypes = {
   t: PropTypes.func.isRequired,
   applySelfUpdateRequest: PropTypes.func.isRequired,
   showAvailableSelfUpdate: PropTypes.func.isRequired,
-  dismissStatus: PropTypes.func.isRequired
+  dismissStatus: PropTypes.func.isRequired,
+  updatePreferences: PropTypes.func.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({
+  offlineMode: (state) => state.preferences.offlineMode,
   selfUpdate: (state) => state.selfUpdate
 })
 
 const mapDispatchToProps = (dispatch) => ({
+  updatePreferences: (payload) => dispatch(actions.updatePreferences(payload)),
   showAvailableSelfUpdate: () => dispatch(actions.showAvailableSelfUpdate()),
   applySelfUpdateRequest: () => dispatch(actions.applySelfUpdateRequest()),
   dismissStatus: () => dispatch(actions.dismissStatus())

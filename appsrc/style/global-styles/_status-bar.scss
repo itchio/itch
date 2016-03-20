@@ -11,8 +11,10 @@
 
   .plug {
     color: $secondary-text-color;
+    -webkit-filter: brightness(90%);
 
     &:hover {
+      cursor: pointer;
       -webkit-filter: brightness(110%);
     }
 
@@ -30,9 +32,11 @@
     }
   }
 
-  &.busy {
-    .icon:first-child {
-      @include horizontal-scan;
+  .self-update {
+    &.busy {
+      .icon:first-child {
+        @include horizontal-scan;
+      }
     }
   }
 
