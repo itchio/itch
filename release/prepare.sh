@@ -1,6 +1,7 @@
 #!/bin/sh -xe
 
 export NODE_ENV=production
+export PATH=$PATH:$PWD/node_modules/.bin
 grunt babel sass copy
 
 rm -rf stage/
