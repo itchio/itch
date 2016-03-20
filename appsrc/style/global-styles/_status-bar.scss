@@ -1,0 +1,15 @@
+
+.status-bar {
+  padding: 8px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  &.icon {
+    margin-right: 8px;
+  }
+}

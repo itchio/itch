@@ -9,6 +9,7 @@ import urls from '../constants/urls'
 
 import {takeEvery} from 'redux-saga'
 import {put, call} from 'redux-saga/effects'
+import {delay} from './effects'
 
 import mklog from '../util/log'
 const log = mklog('self-update')
@@ -27,7 +28,8 @@ import {
   checkingForSelfUpdate,
   selfUpdateAvailable,
   selfUpdateNotAvailable,
-  selfUpdateDownloaded
+  selfUpdateDownloaded,
+  dismissStatus
 } from '../actions'
 
 let hadErrors = false
@@ -35,8 +37,10 @@ let autoUpdater
 
 // 6 hours, * 60 = minutes, * 60 = seconds, * 1000 = millis
 const UPDATE_INTERVAL = 6 * 60 * 60 * 1000
+
 // 5 seconds, * 1000 = millis
 const QUIET_TIME = 5 * 1000
+const DISMISS_TIME = QUIET_TIME
 
 export function * _boot () {
   const queue = createQueue('self-update')
@@ -45,7 +49,11 @@ export function * _boot () {
     autoUpdater = require('electron').autoUpdater
     autoUpdater.on('error', (ev, err) => {
       hadErrors = true
-      queue.dispatch(selfUpdateError(err))
+      if (/^Could not get code signature/.test(err) && env.name === 'development') {
+        // electron-prebuilt isn't signed, we know you can't work Squirrel.mac, don't worry
+      } else {
+        queue.dispatch(selfUpdateError(err))
+      }
     })
     log(opts, 'Installed!')
   } catch (e) {
@@ -90,6 +98,8 @@ export function * _checkForSelfUpdate () {
     }
   } else if (resp.statusCode === 204) {
     yield put(selfUpdateNotAvailable())
+    yield call(delay, DISMISS_TIME)
+    yield put(dismissStatus())
   } else {
     yield put(selfUpdateError(`While trying to reach update server: ${resp.status}`))
   }

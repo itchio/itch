@@ -8,7 +8,6 @@ const initialState = {
   downloaded: null,
 
   uptodate: false,
-  status: null,
   error: null
 }
 
@@ -24,12 +23,12 @@ export default handleActions({
     if (downloading) {
       return {...base, downloading: spec}
     } else {
-      return {...base, available: spec, status: 'New version available!'}
+      return {...base, available: spec}
     }
   },
 
   SELF_UPDATE_NOT_AVAILABLE: (state, action) => {
-    return {...state, checking: false, available: null}
+    return {...state, checking: false, available: null, uptodate: true}
   },
 
   SELF_UPDATE_ERROR: (state, action) => {
@@ -47,6 +46,6 @@ export default handleActions({
   },
 
   DISMISS_STATUS: (state, action) => {
-    return {...state, error: null, status: null, uptodate: false}
+    return {...state, error: null, uptodate: false}
   }
 }, initialState)
