@@ -22,7 +22,7 @@ case $CI_BUILD_TAG in
   export CI_CHANNEL=stable
 ;;esac
 
-export NPM_CMD="npm --no-progress --silent"
+export NPM_CMD="npm --no-progress --quiet"
 
 if (which grunt); then
   echo "Already have grunt"
