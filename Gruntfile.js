@@ -46,7 +46,7 @@ var electronInstallerCommon = {
   exe: appName + '.exe',
   description: 'The best way to play itch.io games',
   version: version,
-  title: 'itch',
+  title: appName,
   iconUrl: 'http://raw.githubusercontent.com/itchio/itch/master/app/static/images/itchio.ico',
   loadingGif: installerGifPath,
   setupIcon: icoPath,
