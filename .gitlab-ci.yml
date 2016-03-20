@@ -11,6 +11,8 @@ test:linux:
   script:
     - export CI_OS=linux
     - release/ci-test.sh
+  except:
+    - tags
 
 test:darwin:
   stage: test
@@ -19,6 +21,8 @@ test:darwin:
   script:
     - export CI_OS=darwin
     - release/ci-test.sh
+  except:
+    - tags
 
 test:windows:
   stage: test
@@ -27,6 +31,8 @@ test:windows:
   script:
     - export CI_OS=windows
     - release/ci-test.sh
+  except:
+    - tags
 
 mkrelease:
   stage: mkrelease
