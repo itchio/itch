@@ -11,5 +11,3 @@ if [ "$CI_OS" = "linux" ]; then
   ruby --version
   gem --version
 fi
-
-export NPM_CMD="npm --no-progress --quiet"

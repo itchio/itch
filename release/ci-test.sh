@@ -1,5 +1,8 @@
 #!/bin/sh -xe
 
+release/check-prerequisites.sh
+export NPM_CMD="npm --no-progress --quiet"
+
 if (which grunt); then
   echo "Already have grunt"
 else

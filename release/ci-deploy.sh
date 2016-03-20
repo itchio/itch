@@ -4,6 +4,9 @@ if [ -z "$CI_BUILD_TAG" ]; then
   exit 0
 fi
 
+release/check-prerequisites.sh
+export NPM_CMD="npm --no-progress --quiet"
+
 case $CI_BUILD_TAG in
 (*-canary)
   export CI_CHANNEL=canary
