@@ -2,12 +2,13 @@
 import createQueue from './queue'
 import {app} from '../electron'
 import os from '../util/os'
+import needle from '../promised/needle'
 
 import env from '../env'
 import urls from '../constants/urls'
 
 import {takeEvery} from 'redux-saga'
-import {call} from 'redux-saga/effects'
+import {put, call} from 'redux-saga/effects'
 
 import mklog from '../util/log'
 const log = mklog('self-update')
@@ -42,10 +43,7 @@ export function * _boot () {
     return
   }
 
-  const base = urls.updateServers[env.channel]
-  const platform = os.platform() + '_' + os.arch()
-  const version = app.getVersion()
-  const feedUrl = `${base}/update/${platform}/${version}`
+  const feedUrl = getFeedURL()
   log(opts, `update feed: ${feedUrl}`)
   autoUpdater.setFeedURL(feedUrl)
 
@@ -65,18 +63,30 @@ export function * _boot () {
 }
 
 export function * _checkForSelfUpdate () {
-  // TODO: fallback, like showing a dialog talking about updates on linux
-  // with a link to where they can get them
-  if (!autoUpdater) {
-    log(opts, 'not checking for self update, got no auto-updater')
-    return
-  }
+  log(opts, 'checking for self updates')
+  const uri = getFeedURL()
+  const resp = yield call(needle.requestAsync, 'GET', uri, {format: 'json'})
 
-  log(opts, 'checking for self updates...')
-  autoUpdater.checkForUpdates()
+  log(opts, `HTTP GET ${uri}: ${resp.statusCode}`)
+  if (resp.statusCode === 200) {
+    // TODO: this is the spot where we would *not* download updates by default
+    // if people dsiable it.
+    if (autoUpdater) {
+      yield put(selfUpdateAvailable({spec: resp.body, downloading: true}))
+      autoUpdater.checkForUpdates()
+    } else {
+      yield put(selfUpdateAvailable({spec: resp.body, downloading: false}))
+    }
+  } else if (resp.statusCode === 204) {
+    yield put(selfUpdateNotAvailable())
+  } else {
+    yield put(selfUpdateError(`while trying to reach update server: ${resp.status}`))
+  }
 }
 
 export function * _applySelfUpdate () {
+  autoUpdater.checkForUpdates()
+
   if (!autoUpdater) {
     log(opts, 'not applying self update, got no auto-updater')
     return
@@ -84,6 +94,13 @@ export function * _applySelfUpdate () {
 
   log(opts, 'quitting and installing..')
   autoUpdater.quitAndInstall()
+}
+
+function getFeedURL () {
+  const base = urls.updateServers[env.channel]
+  const platform = os.platform() + '_' + os.arch()
+  const version = app.getVersion()
+  return `${base}/update/${platform}/${version}`
 }
 
 export default function * setupSaga () {
