@@ -1,6 +1,8 @@
 
 stages:
   - test
+  - mkrelease
+  - deploy
 
 test:linux:
   stage: test
@@ -8,7 +10,7 @@ test:linux:
     - linux
   script:
     - export CI_OS=linux
-    - release/ci.sh
+    - release/ci-test.sh
 
 test:darwin:
   stage: test
@@ -16,7 +18,7 @@ test:darwin:
     - darwin
   script:
     - export CI_OS=darwin
-    - release/ci.sh
+    - release/ci-test.sh
 
 test:windows:
   stage: test
@@ -24,4 +26,57 @@ test:windows:
     - windows
   script:
     - export CI_OS=windows
-    - release/ci.sh
+    - release/ci-test.sh
+
+mkrelease:
+  stage: mkrelease
+  tags:
+    - linux
+  script:
+    - release/ci-mkrelease.sh
+  only:
+    - tags
+
+deploy:linux:386:
+  stage: deploy
+  tags:
+    - linux
+  script:
+    - export CI_OS=linux
+    - export CI_ARCH=386
+    - release/ci-deploy.sh
+  only:
+    - tags
+
+deploy:linux:amd64:
+  stage: deploy
+  tags:
+    - linux
+  script:
+    - export CI_OS=linux
+    - export CI_ARCH=amd64
+    - release/ci-deploy.sh
+  only:
+    - tags
+
+deploy:darwin:amd64:
+  stage: deploy
+  tags:
+    - linux
+  script:
+    - export CI_OS=darwin
+    - export CI_ARCH=amd64
+    - release/ci-deploy.sh
+  only:
+    - tags
+
+deploy:windows:386:
+  stage: deploy
+  tags:
+    - linux
+  script:
+    - export CI_OS=windows
+    - export CI_ARCH=386
+    - release/ci-deploy.sh
+  only:
+    - tags

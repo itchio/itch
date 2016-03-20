@@ -3,7 +3,7 @@ require('quiet-grunt')
 var fs = require('fs')
 var path = require('path')
 var packagePath = path.join(__dirname, 'package.json')
-var version = JSON.parse(fs.readFileSync(packagePath, { encoding: 'utf8' })).version
+var version = process.env.CI_VERSION || JSON.parse(fs.readFileSync(packagePath, { encoding: 'utf8' })).version
 var icoPath = 'release/itchio.ico'
 var installerGifPath = 'release/installer.gif'
 var icnsPath = 'release/itchio.icns'
@@ -94,7 +94,7 @@ module.exports = function (grunt) {
     },
     'create-windows-installer': {
       'ia32': Object.assign({}, electronInstallerCommon, {
-        appDirectory: path.join(outDir, 'itch-win32-ia32'),
+        appDirectory: path.join(outDir, appName + '-win32-ia32'),
         outputDirectory: process.env.CI_WINDOWS_INSTALLER_PATH || path.join('build', 'squirrel-ia32')
       })
     },

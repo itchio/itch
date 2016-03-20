@@ -4,6 +4,9 @@ config.json
 npm-debug.log
 
 # build artifacts
+/*.dmg
+/*.zip
+/*.app
 /app
 /test
 *.map

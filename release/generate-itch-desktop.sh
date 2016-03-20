@@ -1,8 +1,8 @@
 #!/bin/sh
 SCRIPTPATH=$( cd $( dirname -- "$0" ) > /dev/null ; pwd )
 
-DST=${SCRIPTPATH}/itch.desktop
-cat ${SCRIPTPATH}/itch.desktop.in > $DST
+DST=${SCRIPTPATH}/${CI_APPNAME}.desktop
+cat ${SCRIPTPATH}/${CI_APPNAME}.desktop.in > $DST
 
 for LOCALE_FILE in ${SCRIPTPATH}/../app/static/locales/*.json; do
   LOCALE=$(basename $LOCALE_FILE | sed 's/.json$//')

@@ -6,10 +6,10 @@
   },
 
   "version": {
-    "name": "{{JENKINS_VERSION}}",
-    "desc": "v{{JENKINS_VERSION}}",
-    "released": "{{JENKINS_RELEASE_DATE}}",
-    "vcs_tag": "v{{JENKINS_VERSION}}",
+    "name": "{{CI_VERSION}}",
+    "desc": "v{{CI_VERSION}}",
+    "released": "{{CI_RELEASE_DATE}}",
+    "vcs_tag": "v{{CI_VERSION}}",
     "gpgSign": true
   },
 
