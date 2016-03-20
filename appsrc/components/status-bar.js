@@ -1,21 +1,22 @@
 
-import r from 'r-dom'
-import {Component, PropTypes} from 'react'
+import classNames from 'classnames'
+import React, {Component, PropTypes} from 'react'
 
-import {dismissStatus, applySelfUpdate} from '../actions'
+import * as actions from '../actions'
 
 import Icon from './icon'
 
-import store from '../store'
+import {connect} from './connect'
+import {createStructuredSelector} from 'reselect'
 
 /**
  * Displays our current progress when checking for updates, etc.
  */
 class StatusBar extends Component {
   render () {
-    let t = this.t
-    let state = this.props.state || {}
-    let {status, error, available, downloaded, checking, uptodate} = state.update || {}
+    const {t, selfUpdate} = this.props
+    const {dismissStatus, applySelfUpdateRequest, showAvailableSelfUpdate} = this.props
+    let {status, error, uptodate, available, downloading, downloaded, checking} = selfUpdate
 
     let children = []
     let active = true
@@ -23,61 +24,85 @@ class StatusBar extends Component {
     let onClick = () => null
 
     if (status) {
-      onClick = () => store.dispatch(dismissStatus())
+      onClick = dismissStatus
       children = [
-        r(Icon, {icon: 'heart-filled'}),
-        r.span(status),
-        r(Icon, {icon: 'cross'})
+        <Icon icon='heart-filled'/>,
+        <span>{status}</span>,
+        <Icon icon='cross'/>
       ]
     } else if (error) {
-      onClick = () => store.dispatch(dismissStatus())
+      onClick = dismissStatus
       children = [
-        r(Icon, {icon: 'heart-broken'}),
-        r.span('Error while checking for update: ' + error),
-        r(Icon, {icon: 'cross'})
+        <Icon icon='heart-broken'/>,
+        <span>Update error: {error}</span>,
+        <Icon icon='cross'/>
       ]
     } else if (downloaded) {
-      onClick = () => store.dispatch(applySelfUpdate())
+      onClick = applySelfUpdateRequest
       children = [
-        r(Icon, {icon: 'install'}),
-        r.span(t('status.downloaded'))
+        <Icon icon='install'/>,
+        <span>{t('status.downloaded')}</span>
+      ]
+    } else if (downloading) {
+      children = [
+        <Icon icon='download'/>,
+        <span>{t('status.downloading')}</span>
       ]
     } else if (available) {
+      onClick = showAvailableSelfUpdate
       children = [
-        r(Icon, {icon: 'download'}),
-        r.span(t('status.downloading'))
+        <Icon icon='earth'/>,
+        <span>{t('status.available')}</span>
       ]
     } else if (checking) {
       children = [
-        r(Icon, {icon: 'stopwatch'}),
-        r.span(t('status.checking'))
+        <Icon icon='stopwatch'/>,
+        <span>{t('status.checking')}</span>
       ]
     } else if (uptodate) {
       children = [
-        r(Icon, {icon: 'like'}),
-        r.span(t('status.uptodate'))
+        <Icon icon='like'/>,
+        <span>{t('status.uptodate')}</span>
       ]
     } else {
       active = false
     }
 
-    return (
-      r.div({classSet: {status_bar: true, active}},
-        r.div({className: 'message', onClick}, children)
-      )
-    )
+    const classes = classNames('status-bar', {active})
+    return <div className={classes}>
+      <div className='message' onClick={onClick}>{children}</div>
+    </div>
   }
 }
 
 StatusBar.propTypes = {
-  state: PropTypes.shape({
+  selfUpdate: PropTypes.shape({
     status: PropTypes.string,
     error: PropTypes.string,
-    available: PropTypes.bool,
-    downloaded: PropTypes.bool,
+
+    available: PropTypes.object,
+    downloading: PropTypes.object,
     checking: PropTypes.bool,
     uptodate: PropTypes.bool
-  })
+  }),
+
+  t: PropTypes.func.isRequired,
+  applySelfUpdateRequest: PropTypes.func.isRequired,
+  showAvailableSelfUpdate: PropTypes.func.isRequired,
+  dismissStatus: PropTypes.func.isRequired
 }
 
-export default StatusBar
+const mapStateToProps = createStructuredSelector({
+  selfUpdate: (state) => state.selfUpdate
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  showAvailableSelfUpdate: () => dispatch(actions.showAvailableSelfUpdate()),
+  applySelfUpdateRequest: () => dispatch(actions.applySelfUpdateRequest()),
+  dismissStatus: () => dispatch(actions.dismissStatus())
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(StatusBar)

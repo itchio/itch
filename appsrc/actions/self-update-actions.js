@@ -8,6 +8,7 @@ import {
   SELF_UPDATE_NOT_AVAILABLE,
   SELF_UPDATE_ERROR,
   SELF_UPDATE_DOWNLOADED,
+  SHOW_AVAILABLE_SELF_UPDATE,
   APPLY_SELF_UPDATE_REQUEST,
   APPLY_SELF_UPDATE,
   DISMISS_STATUS
@@ -19,6 +20,7 @@ export const selfUpdateAvailable = createAction(SELF_UPDATE_AVAILABLE)
 export const selfUpdateNotAvailable = createAction(SELF_UPDATE_NOT_AVAILABLE)
 export const selfUpdateError = createAction(SELF_UPDATE_ERROR)
 export const selfUpdateDownloaded = createAction(SELF_UPDATE_DOWNLOADED)
+export const showAvailableSelfUpdate = createAction(SHOW_AVAILABLE_SELF_UPDATE)
 export const applySelfUpdateRequest = createAction(APPLY_SELF_UPDATE_REQUEST)
 export const applySelfUpdate = createAction(APPLY_SELF_UPDATE)
 export const dismissStatus = createAction(DISMISS_STATUS)

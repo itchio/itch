@@ -153,6 +153,7 @@
     "status.checking": "Looking for updates…",
     "status.downloaded": "Click to restart & apply update!",
     "status.downloading": "Downloading update…",
+    "status.available": "A new version of itch is available!",
     "status.uptodate": "Your itch is up-to-date!",
     "search.placeholder": "Search...",
     "search.empty.tagline": "Need inspiration? Try searching for '{{example}}'",

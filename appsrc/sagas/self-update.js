@@ -14,7 +14,12 @@ import mklog from '../util/log'
 const log = mklog('self-update')
 import {opts} from '../logger'
 
-import {BOOT, CHECK_FOR_SELF_UPDATE, APPLY_SELF_UPDATE} from '../constants/action-types'
+import {
+  BOOT,
+  CHECK_FOR_SELF_UPDATE,
+  APPLY_SELF_UPDATE,
+  SELF_UPDATE_ERROR
+} from '../constants/action-types'
 
 import {
   checkForSelfUpdate,
@@ -25,26 +30,32 @@ import {
   selfUpdateDownloaded
 } from '../actions'
 
+let hadErrors = false
 let autoUpdater
 
 // 6 hours, * 60 = minutes, * 60 = seconds, * 1000 = millis
 const UPDATE_INTERVAL = 6 * 60 * 60 * 1000
+// 5 seconds, * 1000 = millis
+const QUIET_TIME = 5 * 1000
 
 export function * _boot () {
   const queue = createQueue('self-update')
 
   try {
     autoUpdater = require('electron').autoUpdater
-    autoUpdater.on('error', (ev, err) => queue.dispatch(selfUpdateError(err)))
-    log(opts, 'Self-updater installed!')
+    autoUpdater.on('error', (ev, err) => {
+      hadErrors = true
+      queue.dispatch(selfUpdateError(err))
+    })
+    log(opts, 'Installed!')
   } catch (e) {
-    log(opts, `While installing self-updater: ${e.message}`)
+    log(opts, `While installing: ${e.message}`)
     autoUpdater = null
     return
   }
 
   const feedUrl = getFeedURL()
-  log(opts, `update feed: ${feedUrl}`)
+  log(opts, `Update feed: ${feedUrl}`)
   autoUpdater.setFeedURL(feedUrl)
 
   autoUpdater.on('checking-for-update', () => queue.dispatch(checkingForSelfUpdate()))
@@ -56,22 +67,22 @@ export function * _boot () {
     queue.dispatch(selfUpdateDownloaded(releaseName))
   })
 
-  queue.dispatch(checkForSelfUpdate())
+  setTimeout(() => queue.dispatch(checkForSelfUpdate()), QUIET_TIME)
   setInterval(() => queue.dispatch(checkForSelfUpdate()), UPDATE_INTERVAL)
 
   yield call(queue.exhaust)
 }
 
 export function * _checkForSelfUpdate () {
-  log(opts, 'checking for self updates')
+  log(opts, 'Checking...')
   const uri = getFeedURL()
   const resp = yield call(needle.requestAsync, 'GET', uri, {format: 'json'})
 
   log(opts, `HTTP GET ${uri}: ${resp.statusCode}`)
   if (resp.statusCode === 200) {
     // TODO: this is the spot where we would *not* download updates by default
-    // if people dsiable it.
-    if (autoUpdater) {
+    // if people disable it.
+    if (autoUpdater && !hadErrors) {
       yield put(selfUpdateAvailable({spec: resp.body, downloading: true}))
       autoUpdater.checkForUpdates()
     } else {
@@ -80,11 +91,12 @@ export function * _checkForSelfUpdate () {
   } else if (resp.statusCode === 204) {
     yield put(selfUpdateNotAvailable())
   } else {
-    yield put(selfUpdateError(`while trying to reach update server: ${resp.status}`))
+    yield put(selfUpdateError(`While trying to reach update server: ${resp.status}`))
   }
 }
 
 export function * _applySelfUpdate () {
+  // FIXME: that's not right
   autoUpdater.checkForUpdates()
 
   if (!autoUpdater) {
@@ -103,10 +115,16 @@ function getFeedURL () {
   return `${base}/update/${platform}/${version}`
 }
 
+export function * _selfUpdateError (action) {
+  const error = action.payload
+  log(opts, `Error: ${error}`)
+}
+
 export default function * setupSaga () {
   yield [
     takeEvery(BOOT, _boot),
     takeEvery(CHECK_FOR_SELF_UPDATE, _checkForSelfUpdate),
-    takeEvery(APPLY_SELF_UPDATE, _applySelfUpdate)
+    takeEvery(APPLY_SELF_UPDATE, _applySelfUpdate),
+    takeEvery(SELF_UPDATE_ERROR, _selfUpdateError)
   ]
 }

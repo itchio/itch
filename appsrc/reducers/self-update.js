@@ -2,10 +2,13 @@
 import {handleActions} from 'redux-actions'
 
 const initialState = {
-  available: false,
+  available: null,
   checking: false,
   downloading: null,
-  downloaded: false,
+  downloaded: null,
+
+  uptodate: false,
+  status: null,
   error: null
 }
 
@@ -15,18 +18,18 @@ export default handleActions({
   },
 
   SELF_UPDATE_AVAILABLE: (state, action) => {
-    const {spec, downloading} = action
+    const {spec, downloading} = action.payload
 
     const base = {...state, checking: false}
     if (downloading) {
       return {...base, downloading: spec}
     } else {
-      return {...base}
+      return {...base, available: spec, status: 'New version available!'}
     }
   },
 
   SELF_UPDATE_NOT_AVAILABLE: (state, action) => {
-    return {...state, checking: false, available: true}
+    return {...state, checking: false, available: null}
   },
 
   SELF_UPDATE_ERROR: (state, action) => {
@@ -35,7 +38,8 @@ export default handleActions({
   },
 
   SELF_UPDATE_DOWNLOADED: (state, action) => {
-    return {...state, downloaded: true, downloading: null}
+    const {downloading} = state
+    return {...state, downloaded: downloading, downloading: null}
   },
 
   APPLY_SELF_UPDATE: (state, action) => {
@@ -43,6 +47,6 @@ export default handleActions({
   },
 
   DISMISS_STATUS: (state, action) => {
-    return {...state, error: null}
+    return {...state, error: null, status: null, uptodate: false}
   }
 }, initialState)
