@@ -3,7 +3,6 @@ import test from 'zopf'
 import sinon from 'sinon'
 import proxyquire from 'proxyquire'
 
-import electron from '../stubs/electron'
 import cooldown from '../stubs/cooldown'
 
 test('api', t => {
@@ -14,14 +13,13 @@ test('api', t => {
   const stubs = Object.assign({
     '../promised/needle': needle,
     '../util/cooldown': cooldown
-  }, electron)
+  })
 
   const api = proxyquire('../../app/util/api', stubs).default
-  api.ensure_array = (x) => x
-  api.client.root_url = 'http://example.org/'
+  api.rootUrl = 'http://example.org/'
 
-  const user = new api.User(api.client, 'key')
-  const client = api.client
+  const user = api.withKey('key')
+  const client = api
 
   const uri = 'http://example.org/yo'
 
@@ -88,7 +86,7 @@ test('api', t => {
       ['get', '/my-games']
     )
     test_api(
-      'my_ownedKeys', [],
+      'myOwnedKeys', [],
       ['get', '/my-owned-keys']
     )
     test_api(

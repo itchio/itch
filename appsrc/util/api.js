@@ -18,7 +18,7 @@ const opts = {logger}
 // basically, lua returns empty-object instead of empty-array
 // because they're the same in lua (empty table). not in JSON though.
 export function ensureArray (v) {
-  if (~~v.length === 0) {
+  if (!v || ~~v.length === 0) {
     return []
   }
   return v

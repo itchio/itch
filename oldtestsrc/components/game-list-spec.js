@@ -5,7 +5,7 @@ import {indexBy} from 'underline'
 
 import GameList from '../../app/components/game-list'
 
-let cellprops = (tree, f) => sd.as_array(tree.findNode('.game_list').props.children).map(f)
+let cellprops = (tree, f) => sd.asArray(tree.findNode('.game_list').props.children).map(f)
 
 test('GameList', t => {
   t.case('empty', t => {
