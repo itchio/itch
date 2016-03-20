@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -xe
 
 VERSION=$1
 if [ -z "$VERSION" ]; then
@@ -14,7 +14,7 @@ if [ "$VERSION" != "$PKG_VERSION" ]; then
     echo "Bailing out"
     exit 0
   fi
-  sed -e 's/"version": .*$/"version": "$VERSION",' -i "" package.json
+  sed -e 's/"version": .*$/"version": "$VERSION",/' -i "" package.json
   git add package.json
   git commit -m ":arrow_up: $VERSION"
 fi
