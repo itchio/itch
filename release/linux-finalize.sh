@@ -26,18 +26,18 @@ gem install fpm-itchio
 
 release/generate-itch-desktop.sh
 
-cat release/itch.desktop
+cat release/$CI_APPNAME.desktop
 DISTRO_FILES="$CI_APPNAME=/opt \
   ../release/$CI_APPNAME.sh=/usr/bin/$CI_APPNAME \
-  ../release/itch.desktop=/usr/share/applications/itch.desktop \
-  ../release/icons/icon16.png=/usr/share/icons/hicolor/16x16/apps/itch.png \
-  ../release/icons/icon32.png=/usr/share/icons/hicolor/32x32/apps/itch.png \
-  ../release/icons/icon36.png=/usr/share/icons/hicolor/36x36/apps/itch.png \
-  ../release/icons/icon48.png=/usr/share/icons/hicolor/48x48/apps/itch.png \
-  ../release/icons/icon64.png=/usr/share/icons/hicolor/64x64/apps/itch.png \
-  ../release/icons/icon72.png=/usr/share/icons/hicolor/72x72/apps/itch.png \
-  ../release/icons/icon144.png=/usr/share/icons/hicolor/144x144/apps/itch.png \
-  ../release/icons/icon512.png=/usr/share/icons/hicolor/512x512/apps/itch.png"
+  ../release/$CI_APPNAME.desktop=/usr/share/applications/$CI_APPNAME.desktop \
+  ../release/icons/icon16.png=/usr/share/icons/hicolor/16x16/apps/$CI_APPNAME.png \
+  ../release/icons/icon32.png=/usr/share/icons/hicolor/32x32/apps/$CI_APPNAME.png \
+  ../release/icons/icon36.png=/usr/share/icons/hicolor/36x36/apps/$CI_APPNAME.png \
+  ../release/icons/icon48.png=/usr/share/icons/hicolor/48x48/apps/$CI_APPNAME.png \
+  ../release/icons/icon64.png=/usr/share/icons/hicolor/64x64/apps/$CI_APPNAME.png \
+  ../release/icons/icon72.png=/usr/share/icons/hicolor/72x72/apps/$CI_APPNAME.png \
+  ../release/icons/icon144.png=/usr/share/icons/hicolor/144x144/apps/$CI_APPNAME.png \
+  ../release/icons/icon512.png=/usr/share/icons/hicolor/512x512/apps/$CI_APPNAME.png"
 
 # Build deb package
 fpm --force \

@@ -68,7 +68,7 @@ deploy:linux:amd64:
 deploy:darwin:amd64:
   stage: deploy
   tags:
-    - linux
+    - darwin
   script:
     - export CI_OS=darwin
     - export CI_ARCH=amd64
@@ -79,7 +79,7 @@ deploy:darwin:amd64:
 deploy:windows:386:
   stage: deploy
   tags:
-    - linux
+    - windows
   script:
     - export CI_OS=windows
     - export CI_ARCH=386
