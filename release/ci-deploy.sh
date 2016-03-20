@@ -6,7 +6,9 @@ fi
 
 release/check-prerequisites.sh
 export NPM_CMD="npm --no-progress --quiet"
+
 export PATH=$PATH:$PWD/node_modules/.bin
+$NPM_CMD install
 
 if (which grunt); then
   echo "Already have grunt"
