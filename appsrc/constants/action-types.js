@@ -4,7 +4,6 @@ import keyMirror from 'keymirror'
 // not using 'export default' so each constant is a separate export
 module.exports = keyMirror({
   BOOT: null,
-  OPEN_URL: null,
 
   // Chromium is good at retrieving the user's language from the innards of the OS
   // doing the same from nodejs would probably be a waste of everyone's time
@@ -48,6 +47,7 @@ module.exports = keyMirror({
   SHOW_PREVIOUS_TAB: null,
   SHOW_NEXT_TAB: null,
   SWITCH_PAGE: null,
+  OPEN_URL: null,
 
   /* Menu */
   REFRESH_MENU: null,

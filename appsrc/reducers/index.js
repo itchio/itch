@@ -10,6 +10,7 @@ import session from './session'
 import i18n from './i18n'
 import ui from './ui'
 import selfUpdate from './self-update'
+import preferences from './preferences'
 
 const reducer = combineReducers({
   modals,
@@ -20,6 +21,7 @@ const reducer = combineReducers({
   session,
   i18n,
   ui,
-  selfUpdate
+  selfUpdate,
+  preferences
 })
 export default reducer

@@ -23,9 +23,11 @@ export class HubSidebar extends Component {
   }
 
   render () {
-    const {path, tabs, navigate, closeTab} = this.props
+    const {osx, path, tabs, navigate, closeTab} = this.props
+    const classes = classNames('hub-sidebar', {osx})
 
-    return <div className='hub_sidebar'>
+    return <div className={classes}>
+      <div className='title-bar-padder'/>
       {this.me()}
       {this.dropdown()}
 
@@ -124,6 +126,7 @@ export class HubSidebar extends Component {
 }
 
 HubSidebar.propTypes = {
+  osx: PropTypes.bool,
   me: PropTypes.shape({
     coverUrl: PropTypes.string,
     username: PropTypes.string.isRequired
@@ -144,6 +147,7 @@ HubSidebar.propTypes = {
 }
 
 const mapStateToProps = (state) => ({
+  osx: state.system.osx,
   me: state.session.credentials.me,
   path: state.session.navigation.path,
   tabs: state.session.navigation.tabs

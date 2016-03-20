@@ -4,11 +4,12 @@ import invariant from 'invariant'
 import {connect} from './connect'
 
 import ReactModal from 'react-modal'
+import GFM from './gfm'
 
 import colors from '../constants/colors'
 
 import {closeModal} from '../actions'
-import {map} from 'underline'
+import {map, each} from 'underline'
 
 const customStyles = {
   overlay: {
@@ -17,6 +18,8 @@ const customStyles = {
   content: {
     top: '50%',
     left: '50%',
+    maxWidth: '70%',
+    maxHeight: '80%',
     right: 'auto',
     bottom: 'auto',
     marginRight: '-50%',
@@ -33,7 +36,7 @@ const DEFAULT_BUTTONS = {
   cancel: {
     label: ['prompt.action.cancel'],
     action: closeModal(),
-    className: 'cancel'
+    className: 'secondary'
   }
 }
 
@@ -55,12 +58,10 @@ export class Modal extends Component {
           </div>
 
           <div className='body'>
-            <div className='padder'/>
             <div className='message'>
-              <p>{t.apply(null, message)}</p>
-              {detail && <p className='secondary'>{t.apply(null, detail)}</p>}
+              <div><GFM source={t.apply(null, message)}/></div>
+              {detail && <div className='secondary'><GFM source={t.apply(null, detail)}/></div>}
             </div>
-            <div className='padder'/>
           </div>
 
           <div className='buttons'>
@@ -71,7 +72,9 @@ export class Modal extends Component {
                 invariant(button, '')
               }
               const {label, action, className = '', icon} = button
-              return <div className={`button ${className}`} key={index} onClick={() => dispatch(action)}>
+              const onClick = () => dispatch(action)
+
+              return <div className={`button ${className}`} key={index} onClick={onClick}>
                 {icon ? <span className={`icon icon-${icon}`}/> : ''}
                 {t.apply(null, label)}
               </div>
@@ -107,8 +110,9 @@ Modal.propTypes = {
     type: PropTypes.oneOf(['question']),
     buttons: PropTypes.arrayOf(PropTypes.oneOfType([
       PropTypes.shape({ // custom buttons
-        label: PropTypes.string,
-        action: PropTypes.object
+        label: PropTypes.string.isRequired,
+        action: PropTypes.object,
+        icon: PropTypes.string
       }),
       PropTypes.string // default buttons
     ])),
@@ -129,7 +133,14 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch: (action) => {
-    dispatch(action)
+    if (action) {
+      if (Array.isArray(action)) {
+        action::each((a) => dispatch(a))
+        dispatch(action)
+      } else {
+        dispatch(action)
+      }
+    }
     dispatch(closeModal())
   },
   closeModal: () => dispatch(closeModal())

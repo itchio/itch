@@ -14,12 +14,13 @@ import {createStructuredSelector} from 'reselect'
  */
 class StatusBar extends Component {
   render () {
-    const {t, selfUpdate} = this.props
+    const {t, selfUpdate, offlineMode} = this.props
     const {dismissStatus, applySelfUpdateRequest, showAvailableSelfUpdate} = this.props
     let {status, error, uptodate, available, downloading, downloaded, checking} = selfUpdate
 
     let children = []
     let active = true
+    let busy = false
 
     let onClick = () => null
 
@@ -44,6 +45,7 @@ class StatusBar extends Component {
         <span>{t('status.downloaded')}</span>
       ]
     } else if (downloading) {
+      busy = true
       children = [
         <Icon icon='download'/>,
         <span>{t('status.downloading')}</span>
@@ -55,6 +57,7 @@ class StatusBar extends Component {
         <span>{t('status.available')}</span>
       ]
     } else if (checking) {
+      busy = true
       children = [
         <Icon icon='stopwatch'/>,
         <span>{t('status.checking')}</span>
@@ -68,14 +71,26 @@ class StatusBar extends Component {
       active = false
     }
 
-    const classes = classNames('status-bar', {active})
+    const classes = classNames('status-bar', {active, busy})
+    const plugHint = t(`status.offline_mode.${offlineMode ? 'active' : 'inactive'}`)
+    const plugClasses = classNames('plug', {active: offlineMode})
+
     return <div className={classes}>
-      <div className='message' onClick={onClick}>{children}</div>
+      <div className={plugClasses}>
+        <div className='hint--right' data-hint={plugHint}>
+          <Icon icon='moon'/>
+        </div>
+      </div>
+      <div className='padder'/>
+      <div className='message' onClick={onClick}>
+      {children}
+      </div>
     </div>
   }
 }
 
 StatusBar.propTypes = {
+  offlineMode: false,
   selfUpdate: PropTypes.shape({
     status: PropTypes.string,
     error: PropTypes.string,

@@ -1,0 +1,16 @@
+.emoji {
+    background-image: url('../../node_modules/emojify.js/dist/images/sprites/emojify.png') !important;
+    display: inline-block;
+    /* It'll be our little secret */
+    transform: scale(.6) translateY(50%);
+    margin-top: -32px;
+    margin-left: -8px;
+    margin-right: -4px;
+}
+
+@media (min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3/2), (-webkit-min-device-pixel-ratio: 1.5), (min-device-pixel-ratio: 1.5), (min-resolution: 1.5dppx) {
+    .emoji {
+        background-image: url('../../node_modules/emojify.js/dist/images/sprites/emojify@2x.png') !important;
+        background-size: 1091px 1049px;
+    }
+}

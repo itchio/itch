@@ -11,7 +11,7 @@ export default function * i18nSaga () {
   const queue = createQueue('i18n')
   const i18nSelector = createSelector(
     (state) => state.system.lang,
-    (state) => state.session.preferences.lang,
+    (state) => state.preferences.lang,
     (systemLang, prefLang) => {
       queue.dispatch(languageChanged(prefLang || systemLang || 'en'))
     }

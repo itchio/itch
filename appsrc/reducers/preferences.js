@@ -1,7 +1,10 @@
 
 import {handleActions} from 'redux-actions'
 
-const initialState = {}
+const initialState = {
+  downloadSelfUpdates: true,
+  offlineMode: false
+}
 
 export default handleActions({
 

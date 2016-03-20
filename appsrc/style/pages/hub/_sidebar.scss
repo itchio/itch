@@ -1,5 +1,5 @@
 
-.hub_sidebar {
+.hub-sidebar {
   background: $sidebar-background-color;
   border-right: 1px solid $sidebar-border-color;
 
@@ -10,6 +10,11 @@
   display: flex;
   align-items: stretch;
   flex-direction: column;
+
+  &.osx .title-bar-padder {
+    flex-basis: 20px;
+    flex-shrink: 0;
+  }
 
   section {
     border-radius: 0 4px 4px 0;

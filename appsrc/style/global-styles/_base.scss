@@ -14,3 +14,20 @@ body {
   font-size: $base-text-size;
   color: $base-text-color;
 }
+
+.layout {
+  .layout-base {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: $status-bar-height;
+  }
+
+  .status-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}

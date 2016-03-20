@@ -9,7 +9,6 @@ import {
   SWITCH_PAGE,
 
   OPEN_URL,
-  OPEN_EXTERNAL,
 
   OPEN_PREFERENCES,
   VIEW_CREATOR_PROFILE,
@@ -25,7 +24,6 @@ export const showNextTab = createAction(SHOW_NEXT_TAB)
 export const switchPage = createAction(SWITCH_PAGE)
 
 export const openUrl = createAction(OPEN_URL)
-export const openExternal = createAction(OPEN_EXTERNAL)
 
 export const openPreferences = createAction(OPEN_PREFERENCES)
 export const viewCreatorProfile = createAction(VIEW_CREATOR_PROFILE)

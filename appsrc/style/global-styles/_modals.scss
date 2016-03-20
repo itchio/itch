@@ -33,17 +33,45 @@
   }
 
   .body {
-    padding-top: 20px;
+    margin-top: 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
+    line-height: 1.6;
+
+    ul {
+      list-style-type: disc;
+      margin-bottom: 1.5em;
+
+      li {
+        margin-left: 1.5em;
+      }
+    }
+
+    .message {
+      padding: 0 40px;
+      overflow-y: auto;
+      max-height: 380px;
+      -webkit-user-select: initial;
+
+      h1, h2, h3, h4, h5, h6 {
+        margin-bottom: .4em;
+        font-size: $base-text-size + 2px;
+        font-weight: bold;
+      }
+
+      a {
+        color: darken($ivory, 5%);
+
+        &:hover {
+          color: $ivory;
+          cursor: pointer;
+        }
+      }
+    }
 
     .message .secondary {
       color: $secondary-text-color;
-    }
-
-    .padder {
-      flex-basis: 40px;
     }
 
     p {
@@ -72,7 +100,7 @@
       margin: 0 8px;
       @include light-button;
 
-      &.cancel {
+      &.secondary {
         @include light-button($ui-background-color);
       }
 

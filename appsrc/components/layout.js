@@ -14,8 +14,10 @@ import StatusBar from './status-bar'
  */
 class Layout extends Component {
   render () {
-    return <div>
-      {this.main()}
+    return <div className='layout'>
+      <div className='layout-main'>
+        {this.main()}
+      </div>
       <StatusBar/>
     </div>
   }

@@ -1,15 +1,50 @@
 
 .status-bar {
+  height: $status-bar-height;
+  animation: bottom 0.2s;
   padding: 8px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
+
+  font-size: $base-text-size - 2px;
+
+  background: $sidebar-background-color;
+  border-top: 1px solid $sidebar-border-color;
+
+  .plug {
+    color: $secondary-text-color;
+
+    &:hover {
+      -webkit-filter: brightness(110%);
+    }
+
+    &.active {
+      color: $light-accent-color;
+    }
+  }
+
+  &.active {
+    bottom: 0;
+
+    .message:hover {
+      cursor: pointer;
+      -webkit-filter: brightness(110%);
+    }
+  }
+
+  &.busy {
+    .icon:first-child {
+      @include horizontal-scan;
+    }
+  }
 
   display: flex;
   flex-direction: row;
   align-items: center;
 
-  &.icon {
+  .padder {
+    flex-grow: 8;
+  }
+
+  .icon {
     margin-right: 8px;
   }
 }

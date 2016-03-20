@@ -2,6 +2,7 @@
 const self = {
   itchRepo: 'https://github.com/itchio/itch',
   itchio: 'https://itch.io',
+  appHomepage: 'https://itch.io/app',
   itchTranslationPlatform: 'https://weblate.itch.ovh/projects/itch',
   githubApi: 'https://api.github.com',
   ibrewRepo: 'https://dl.itch.ovh',
@@ -23,7 +24,8 @@ Object.assign(self, {
   myCollections: `${self.itchio}/my-collections`,
   rarPolicy: `${self.itchio}/t/11918/rar-support-is-not-happening-repack-your-games`,
   debPolicy: `${self.itchio}/t/13882/deb-and-rpm-arent-supported-by-itch-please-ship-portable-linux-builds`,
-  rpmPolicy: `${self.itchio}/t/13882/deb-and-rpm-arent-supported-by-itch-please-ship-portable-linux-builds`
+  rpmPolicy: `${self.itchio}/t/13882/deb-and-rpm-arent-supported-by-itch-please-ship-portable-linux-builds`,
+  releasesPage: `${self.itchRepo}/releases`
 })
 
 export default self

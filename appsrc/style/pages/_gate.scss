@@ -81,7 +81,7 @@
     min-height: 5em;
 
     .icon.scanning {
-      @include horizontal_scan;
+      @include horizontal-scan;
       margin-right: 12px;
     }
 

@@ -46,6 +46,6 @@ export default handleActions({
   },
 
   DISMISS_STATUS: (state, action) => {
-    return {...state, error: null, uptodate: false}
+    return {...state, error: null, uptodate: false, available: null}
   }
 }, initialState)

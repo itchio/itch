@@ -3,12 +3,13 @@ import createQueue from './queue'
 import {app} from '../electron'
 import os from '../util/os'
 import needle from '../promised/needle'
+import dateFormat from 'dateformat'
 
 import env from '../env'
 import urls from '../constants/urls'
 
 import {takeEvery} from 'redux-saga'
-import {put, call} from 'redux-saga/effects'
+import {put, call, select} from 'redux-saga/effects'
 import {delay} from './effects'
 
 import mklog from '../util/log'
@@ -19,7 +20,8 @@ import {
   BOOT,
   CHECK_FOR_SELF_UPDATE,
   APPLY_SELF_UPDATE,
-  SELF_UPDATE_ERROR
+  SELF_UPDATE_ERROR,
+  SHOW_AVAILABLE_SELF_UPDATE
 } from '../constants/action-types'
 
 import {
@@ -29,7 +31,9 @@ import {
   selfUpdateAvailable,
   selfUpdateNotAvailable,
   selfUpdateDownloaded,
-  dismissStatus
+  dismissStatus,
+  openModal,
+  openUrl
 } from '../actions'
 
 let hadErrors = false
@@ -39,8 +43,9 @@ let autoUpdater
 const UPDATE_INTERVAL = 6 * 60 * 60 * 1000
 
 // 5 seconds, * 1000 = millis
-const QUIET_TIME = 5 * 1000
-const DISMISS_TIME = QUIET_TIME
+const DISMISS_TIME = 5 * 1000
+
+const QUIET_TIME = 2 * 1000
 
 export function * _boot () {
   const queue = createQueue('self-update')
@@ -51,6 +56,7 @@ export function * _boot () {
       hadErrors = true
       if (/^Could not get code signature/.test(err) && env.name === 'development') {
         // electron-prebuilt isn't signed, we know you can't work Squirrel.mac, don't worry
+        log(opts, `Ignoring Squirrel.mac complaint`)
       } else {
         queue.dispatch(selfUpdateError(err))
       }
@@ -88,9 +94,9 @@ export function * _checkForSelfUpdate () {
 
   log(opts, `HTTP GET ${uri}: ${resp.statusCode}`)
   if (resp.statusCode === 200) {
-    // TODO: this is the spot where we would *not* download updates by default
-    // if people disable it.
-    if (autoUpdater && !hadErrors) {
+    const downloadSelfUpdates = yield select((state) => state.preferences.downloadSelfUpdates)
+
+    if (autoUpdater && !hadErrors && downloadSelfUpdates) {
       yield put(selfUpdateAvailable({spec: resp.body, downloading: true}))
       autoUpdater.checkForUpdates()
     } else {
@@ -130,11 +136,54 @@ export function * _selfUpdateError (action) {
   log(opts, `Error: ${error}`)
 }
 
+export function * _showAvailableSelfUpdate (action) {
+  const spec = yield select((state) => state.selfUpdate.available)
+  if (!spec) {
+    log(opts, `Asked to show available self-update but there wasn't any`)
+    yield put(dismissStatus())
+    return
+  }
+  const pubDate = new Date(Date.parse(spec.pub_date))
+
+  const messageString = `prompt.self_update.message.${os.itchPlatform()}`
+
+  yield put(openModal({
+    title: ['prompt.self_update.title', {version: spec.name}],
+    message: [messageString],
+    detail: ['prompt.self_update.detail', {notes: spec.notes, pubDate: dateFormat(pubDate, 'mmmm dS, yyyy @ HH:MM TT')}],
+    buttons: [
+      {
+        label: ['prompt.self_update.action.download'],
+        action: [
+          openUrl(spec.url),
+          dismissStatus()
+        ],
+        icon: 'download'
+      },
+      {
+        label: ['prompt.self_update.action.view'],
+        action: [
+          openUrl(urls.releasesPage),
+          dismissStatus()
+        ],
+        className: 'secondary',
+        icon: 'earth'
+      },
+      {
+        label: ['prompt.self_update.action.dismiss'],
+        action: dismissStatus(),
+        className: 'secondary'
+      }
+    ]
+  }))
+}
+
 export default function * setupSaga () {
   yield [
     takeEvery(BOOT, _boot),
     takeEvery(CHECK_FOR_SELF_UPDATE, _checkForSelfUpdate),
     takeEvery(APPLY_SELF_UPDATE, _applySelfUpdate),
-    takeEvery(SELF_UPDATE_ERROR, _selfUpdateError)
+    takeEvery(SELF_UPDATE_ERROR, _selfUpdateError),
+    takeEvery(SHOW_AVAILABLE_SELF_UPDATE, _showAvailableSelfUpdate)
   ]
 }
