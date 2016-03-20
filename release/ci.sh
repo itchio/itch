@@ -22,16 +22,16 @@ case $CI_BUILD_TAG in
   export CI_CHANNEL=stable
 ;;esac
 
-npm config set spin false
+export NPM_CMD="npm --no-progress --silent"
 
 if (which grunt); then
   echo "Already have grunt"
 else
-  npm install -g grunt-cli
+  $NPM_CMD install -g grunt-cli
 fi
 
 export PATH=$PATH:$PWD/node_modules/.bin
-npm install
+$NPM_CMD install
 
 grunt copy sass babel
 npm test
