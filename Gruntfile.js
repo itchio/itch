@@ -12,9 +12,12 @@ var electronVersion = '0.37.2'
 var outDir = path.join('build', 'v' + version)
 var companyName = 'Itch Corp'
 
+var channel = process.env.CI_CHANNEL || 'stable'
+var appName = (channel === 'stable' ? 'itch' : 'itch-canary')
+
 var gruntElectronCommon = {
   dir: 'stage',
-  name: 'itch',
+  name: appName,
   version: electronVersion,
   'app-version': version,
   prune: true,
@@ -29,25 +32,25 @@ var windowsElectronOptions = Object.assign({}, gruntElectronCommon, {
   'version-string': {
     CompanyName: companyName,
     LegalCopyright: 'MIT license, (c) Itch Corp',
-    FileDescription: 'itch',
-    OriginalFileName: 'itch.exe',
+    FileDescription: appName,
+    OriginalFileName: appName + '.exe',
     FileVersion: version,
     AppVersion: version,
-    ProductName: 'itch',
-    InternalName: 'itch.exe'
+    ProductName: appName,
+    InternalName: appName + '.exe'
   }
 })
 
 var electronInstallerCommon = {
   authors: companyName,
-  exe: 'itch.exe',
+  exe: appName + '.exe',
   description: 'The best way to play itch.io games',
   version: version,
   title: 'itch',
   iconUrl: 'http://raw.githubusercontent.com/itchio/itch/master/app/static/images/itchio.ico',
   loadingGif: installerGifPath,
   setupIcon: icoPath,
-  remoteReleases: 'https://github.com/itchio/itch',
+  remoteReleases: 'https://github.com/itchio/' + appName,
   signWithParams: '/v /s MY /n "Open Source Developer, Amos Wenger" /t http://timestamp.verisign.com/scripts/timstamp.dll',
   noMsi: true
 }
@@ -68,11 +71,11 @@ module.exports = function (grunt) {
           platform: 'darwin',
           arch: 'x64',
           icon: icnsPath,
-          'app-bundle-id': 'io.itch.mac',
+          'app-bundle-id': 'io.' + appName + '.mac',
           'app-category-type': 'public.app-category.games',
           protocols: [{
             name: 'itch.io',
-            schemes: ['itchio']
+            schemes: [appName + 'io']
           }]
         })
       },
@@ -92,7 +95,7 @@ module.exports = function (grunt) {
     'create-windows-installer': {
       'ia32': Object.assign({}, electronInstallerCommon, {
         appDirectory: path.join(outDir, 'itch-win32-ia32'),
-        outputDirectory: process.env.JENKINS_WINDOWS_INSTALLER_PATH || path.join('build', 'squirrel-ia32')
+        outputDirectory: process.env.CI_WINDOWS_INSTALLER_PATH || path.join('build', 'squirrel-ia32')
       })
     },
     'bump': {

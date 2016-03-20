@@ -33,7 +33,7 @@ export default handleActions({
 
   SELF_UPDATE_ERROR: (state, action) => {
     const error = action.payload
-    return {...state, error}
+    return {...state, error, available: null, downloading: null}
   },
 
   SELF_UPDATE_DOWNLOADED: (state, action) => {

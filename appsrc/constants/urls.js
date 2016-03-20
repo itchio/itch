@@ -9,7 +9,7 @@ const self = {
   remoteLocalePath: 'http://locales.itch.ovh/itch',
   updateServers: {
     stable: 'https://nuts.itch.zone',
-    canary: 'https://nuts-canary.itch.ovh'
+    canary: 'http://nuts-canary.itch.ovh'
   }
 }
 

@@ -1,5 +1,5 @@
 
 module.exports = {
   name: 'production',
-  channel: 'canary'
+  channel: 'stable'
 }
