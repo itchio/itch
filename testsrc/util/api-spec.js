@@ -10,10 +10,10 @@ test('api', t => {
     requestAsync: async () => ({body: {id: 12}, statusCode: 200})
   })
 
-  const stubs = Object.assign({
+  const stubs = {
     '../promised/needle': needle,
     '../util/cooldown': cooldown
-  })
+  }
 
   const api = proxyquire('../../app/util/api', stubs).default
   api.rootUrl = 'http://example.org/'
