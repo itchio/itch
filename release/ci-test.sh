@@ -18,5 +18,3 @@ npm test
 if [ "$CI_OS" = "linux" ]; then
   npm run coveralls
 fi
-
-release/publish-all.sh
