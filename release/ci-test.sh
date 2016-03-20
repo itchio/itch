@@ -2,6 +2,7 @@
 
 release/check-prerequisites.sh
 export NPM_CMD="npm --no-progress --quiet"
+export PATH=$PATH:$PWD/node_modules/.bin
 
 if (which grunt); then
   echo "Already have grunt"
