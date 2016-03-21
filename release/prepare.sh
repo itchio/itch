@@ -11,7 +11,7 @@ cp -rf node_modules stage/
 cp -rf app stage/
 
 if [ "$CI_CHANNEL" = "canary" ]; then
-  sed 's/: "itch"/: "itch-canary"/g' < package.json > stage/package.json
+  sed 's/: "itch"/: "itch_canary"/g' < package.json > stage/package.json
   cp -fv release/env-canary.js stage/app/env.js
 else
   cp package.json stage/

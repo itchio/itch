@@ -13,7 +13,7 @@ var outDir = path.join('build', 'v' + version)
 var companyName = 'Itch Corp'
 
 var channel = process.env.CI_CHANNEL || 'stable'
-var appName = (channel === 'stable' ? 'itch' : 'itch-canary')
+var appName = (channel === 'stable' ? 'itch' : 'itch_canary')
 
 var gruntElectronCommon = {
   dir: 'stage',

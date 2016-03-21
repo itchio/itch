@@ -19,7 +19,7 @@ fi
 case $CI_BUILD_TAG in
 (*-canary)
   export CI_CHANNEL=canary
-  export CI_APPNAME=itch-canary
+  export CI_APPNAME=itch_canary
 ;;
 (*)
   export CI_CHANNEL=stable

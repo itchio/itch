@@ -1,10 +1,10 @@
 [Desktop Entry]
 Type=Application
 Encoding=UTF-8
-Name=itch-canary
-TryExec=itch-canary
-Exec=itch-canary %U
-Icon=itch-canary.png
+Name=itch_canary
+TryExec=itch_canary
+Exec=itch_canary %U
+Icon=itch_canary.png
 Terminal=false
 Categories=Game;Utility;PackageManager
 MimeType=x-scheme-handler/itchio

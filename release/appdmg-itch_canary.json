@@ -1,5 +1,5 @@
 {
-  "title": "itch-canary",
+  "title": "itch_canary",
 
   "icon": "../release/itchio.icns",
 
@@ -8,7 +8,7 @@
   "icon-size": 80,
 
   "contents": [
-    { "x": 190, "y": 382, "type": "file", "path": "../itch-canary.app" },
+    { "x": 190, "y": 382, "type": "file", "path": "../itch_canary.app" },
     { "x": 425, "y": 382, "type": "link", "path": "/Applications" }
   ]
 

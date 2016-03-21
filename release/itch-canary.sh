@@ -1,2 +1,2 @@
 #!/bin/sh
-/opt/itch-canary/itch-canary "$@"
+/opt/itch_canary/itch_canary "$@"
