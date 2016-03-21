@@ -24,6 +24,7 @@ import {
   HIDE_WINDOW,
   QUIT_WHEN_MAIN,
   QUIT_ELECTRON_APP,
+  PREPARE_QUIT,
   QUIT
 } from '../constants/action-types'
 
@@ -200,9 +201,12 @@ export function * _quitElectronApp () {
   yield call(::app.quit)
 }
 
-export function * _quit () {
-  // sigh
+export function * _prepareQuit () {
+  // sigh..
   quitting = true
+}
+
+export function * _quit () {
   yield put(prepareQuit())
   yield put(quitElectronApp())
 }
@@ -215,6 +219,7 @@ export default function * mainWindowSaga () {
     takeEvery(BOOT, _focusWindow),
     takeEvery(QUIT_WHEN_MAIN, _quitWhenMain),
     takeEvery(QUIT_ELECTRON_APP, _quitElectronApp),
+    takeEvery(PREPARE_QUIT, _prepareQuit),
     takeEvery(QUIT, _quit)
   ]
 }

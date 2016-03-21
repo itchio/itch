@@ -154,6 +154,8 @@ export function * _applySelfUpdate () {
   log(opts, 'Preparing for restart...')
   yield put(prepareQuit())
 
+  yield call(delay, 400)
+
   log(opts, 'Handing off to Squirrel')
   autoUpdater.quitAndInstall()
 }
