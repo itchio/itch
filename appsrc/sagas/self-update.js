@@ -16,6 +16,8 @@ import mklog from '../util/log'
 const log = mklog('self-update')
 import {opts} from '../logger'
 
+const DATE_FORMAT = 'mmmm dS, yyyy @ HH:MM TT'
+
 import {
   BOOT,
   CHECK_FOR_SELF_UPDATE,
@@ -26,12 +28,14 @@ import {
 
 import {
   checkForSelfUpdate,
+  applySelfUpdate,
   selfUpdateError,
   checkingForSelfUpdate,
   selfUpdateAvailable,
   selfUpdateNotAvailable,
   selfUpdateDownloaded,
   dismissStatus,
+  prepareQuit,
   openModal,
   openUrl
 } from '../actions'
@@ -111,16 +115,44 @@ export function * _checkForSelfUpdate () {
   }
 }
 
-export function * _applySelfUpdate () {
-  // FIXME: that's not right
-  autoUpdater.checkForUpdates()
+export function * _applySelfUpdateRequest () {
+  const {spec} = yield select((state) => state.selfUpdate.downloaded)
+  if (!spec) {
+    log(opts, 'Asked to apply update, but nothing downloaded? bailing out...')
+    return
+  }
 
+  const pubDate = new Date(Date.parse(spec.pub_date))
+
+  yield put(openModal({
+    title: ['prompt.self_update_ready.title', {version: spec.name}],
+    message: ['prompt.self_update_ready.message'],
+    detail: ['prompt.self_update_ready.detail', {notes: spec.notes, pubDate: dateFormat(pubDate, DATE_FORMAT)}],
+    buttons: [
+      {
+        label: ['prompt.self_update_ready.action.restart'],
+        action: applySelfUpdate(),
+        icon: 'download'
+      },
+      {
+        label: ['prompt.self_update.action.hold_off'],
+        action: dismissStatus(),
+        className: 'secondary'
+      }
+    ]
+  }))
+}
+
+export function * _applySelfUpdate () {
   if (!autoUpdater) {
     log(opts, 'not applying self update, got no auto-updater')
     return
   }
 
-  log(opts, 'quitting and installing..')
+  log(opts, 'Preparing for restart...')
+  yield put(prepareQuit())
+
+  log(opts, 'Handing off to Squirrel')
   autoUpdater.quitAndInstall()
 }
 
@@ -150,7 +182,7 @@ export function * _showAvailableSelfUpdate (action) {
   yield put(openModal({
     title: ['prompt.self_update.title', {version: spec.name}],
     message: [messageString],
-    detail: ['prompt.self_update.detail', {notes: spec.notes, pubDate: dateFormat(pubDate, 'mmmm dS, yyyy @ HH:MM TT')}],
+    detail: ['prompt.self_update.detail', {notes: spec.notes, pubDate: dateFormat(pubDate, DATE_FORMAT)}],
     buttons: [
       {
         label: ['prompt.self_update.action.download'],
