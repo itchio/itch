@@ -2,8 +2,8 @@
 import path from 'path'
 import Promise from 'bluebird'
 
-import electron from 'electron'
-const {BrowserWindow, shell, powerSaveBlocker} = electron
+import electron from '../../electron'
+const {app, BrowserWindow, shell, powerSaveBlocker} = electron
 
 import market from '../../util/market'
 import url from '../../util/url'
@@ -24,7 +24,7 @@ let self = {
     log(opts, `entry point: ${entry_point}`)
     let win = new BrowserWindow({
       title: game.title,
-      icon: './static/images/itchio-tray-x4.png',
+      icon: `./static/images/tray/${app.getName()}.png`,
       width: cave.window_size.width,
       height: cave.window_size.height,
       center: true,

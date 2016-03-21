@@ -9,7 +9,8 @@ import {select, put} from 'redux-saga/effects'
 import {notifyHtml5} from '../actions'
 import {SET_PROGRESS, BOUNCE, NOTIFY} from '../constants/action-types'
 
-const DEFAULT_ICON = './static/images/itchio-tray-x4.png'
+// OSX already shows the app's icon
+const DEFAULT_ICON = os.platform() === 'darwin' ? null : `./static/images/tray/${app.getName()}.png`
 
 const selectMainWindowId = (state) => state.ui.mainWindow.id
 
