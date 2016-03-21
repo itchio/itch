@@ -79,7 +79,7 @@ export class HubSidebar extends Component {
       return 'heart-filled'
     }
     if (/^collections/.test(path)) {
-      return 'tag'
+      return 'video_collection'
     }
     if (/^games/.test(path)) {
       return 'gamepad'
@@ -117,7 +117,7 @@ export class HubSidebar extends Component {
           {t('sidebar.view_community_profile')}
         </section>
         <section onClick={changeUser}>
-          <span className='icon icon-moon'/>
+          <span className='icon icon-exit'/>
           {t('sidebar.log_out')}
         </section>
       </div>

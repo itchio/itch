@@ -73,13 +73,14 @@ class StatusBar extends Component {
 
     const classes = classNames('status-bar', {active, busy})
     const plugHint = t(`status.offline_mode.${offlineMode ? 'active' : 'inactive'}`)
+    const plugIcon = offlineMode ? 'globe-outline' : 'globe2'
     const plugClasses = classNames('plug', {active: offlineMode})
     const selfUpdateClasses = classNames('self-update', {busy})
 
     return <div className={classes}>
       <div className={plugClasses} onClick={() => updatePreferences({offlineMode: !offlineMode})}>
         <div className='hint--right' data-hint={plugHint}>
-          <Icon icon='moon'/>
+          <Icon icon={plugIcon}/>
         </div>
       </div>
       <div className='padder'/>

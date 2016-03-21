@@ -18,7 +18,7 @@ export function * _changeUser () {
       {
         label: ['prompt.logout_action'],
         action: logout(),
-        icon: 'moon'
+        icon: 'exit'
       },
       'cancel'
     ]

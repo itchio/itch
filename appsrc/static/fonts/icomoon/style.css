@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:    url('fonts/icomoon.eot?cc8mho');
-    src:    url('fonts/icomoon.eot?cc8mho#iefix') format('embedded-opentype'),
-        url('fonts/icomoon.ttf?cc8mho') format('truetype'),
-        url('fonts/icomoon.woff?cc8mho') format('woff'),
-        url('fonts/icomoon.svg?cc8mho#icomoon') format('svg');
+    src:    url('fonts/icomoon.eot?f9q28h');
+    src:    url('fonts/icomoon.eot?f9q28h#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf?f9q28h') format('truetype'),
+        url('fonts/icomoon.woff?f9q28h') format('woff'),
+        url('fonts/icomoon.svg?f9q28h#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -24,44 +24,14 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-folder:before {
-    content: "\e900";
+.icon-globe-outline:before {
+    content: "\e90b";
 }
-.icon-align-top:before {
-    content: "\e909";
+.icon-globe2:before {
+    content: "\e90c";
 }
-.icon-cog:before {
-    content: "\e901";
-}
-.icon-search:before {
-    content: "\e902";
-}
-.icon-upload-to-cloud:before {
-    content: "\e905";
-}
-.icon-hand-paper-o:before {
-    content: "\e906";
-}
-.icon-refresh:before {
-    content: "\e904";
-}
-.icon-bug:before {
-    content: "\e903";
-}
-.icon-heart-broken:before {
-    content: "\e907";
-}
-.icon-folder-open:before {
-    content: "\e908";
-}
-.icon-install:before {
-    content: "\e61d";
-}
-.icon-uninstall:before {
-    content: "\e61e";
-}
-.icon-shuffle:before {
-    content: "\e60e";
+.icon-video_collection:before {
+    content: "\e90d";
 }
 .icon-error:before {
     content: "\e61f";
@@ -69,23 +39,8 @@
 .icon-cross:before {
     content: "\e617";
 }
-.icon-like:before {
-    content: "\e611";
-}
-.icon-hand:before {
-    content: "\e609";
-}
-.icon-gamepad:before {
-    content: "\e61b";
-}
-.icon-caret-up:before {
-    content: "\e60f";
-}
-.icon-caret-down:before {
-    content: "\e610";
-}
-.icon-bitcoin:before {
-    content: "\e60b";
+.icon-exit:before {
+    content: "\e90e";
 }
 .icon-triangle-right:before {
     content: "\e612";
@@ -221,5 +176,62 @@
 }
 .icon-heart-filled:before {
     content: "\e60a";
+}
+.icon-folder:before {
+    content: "\e900";
+}
+.icon-align-top:before {
+    content: "\e909";
+}
+.icon-cog:before {
+    content: "\e901";
+}
+.icon-search:before {
+    content: "\e902";
+}
+.icon-upload-to-cloud:before {
+    content: "\e905";
+}
+.icon-hand-paper-o:before {
+    content: "\e906";
+}
+.icon-refresh:before {
+    content: "\e904";
+}
+.icon-bug:before {
+    content: "\e903";
+}
+.icon-heart-broken:before {
+    content: "\e907";
+}
+.icon-folder-open:before {
+    content: "\e908";
+}
+.icon-install:before {
+    content: "\e61d";
+}
+.icon-uninstall:before {
+    content: "\e61e";
+}
+.icon-shuffle:before {
+    content: "\e60e";
+}
+.icon-like:before {
+    content: "\e611";
+}
+.icon-hand:before {
+    content: "\e609";
+}
+.icon-gamepad:before {
+    content: "\e61b";
+}
+.icon-caret-up:before {
+    content: "\e60f";
+}
+.icon-caret-down:before {
+    content: "\e610";
+}
+.icon-bitcoin:before {
+    content: "\e60b";
 }
 
