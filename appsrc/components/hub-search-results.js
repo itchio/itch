@@ -7,6 +7,8 @@ import {createStructuredSelector} from 'reselect'
 
 import {each} from 'underline'
 
+import * as actions from '../actions'
+
 export class SearchResult extends Component {
   render () {
     const {game} = this.props
@@ -30,10 +32,14 @@ SearchResult.propTypes = {
 
 export class HubSearchResults extends Component {
   render () {
-    const {searchOpen, searchResults} = this.props
+    const {searchOpen, searchResults, closeSearch} = this.props
 
     return <div className={classNames('hub-search-results', {active: searchOpen})}>
-      <h3>Search results: </h3>
+      <div className='header'>
+        <h3>Search results</h3>
+        <div className='filler'/>
+        <span className='icon icon-cross close-search' onClick={closeSearch}/>
+      </div>
       {this.fakeGrid(searchResults)}
     </div>
   }
@@ -73,6 +79,8 @@ HubSearchResults.propTypes = {
   }),
   searchExample: PropTypes.string,
 
+  closeSearch: PropTypes.func,
+
   t: PropTypes.func.isRequired
 }
 
@@ -83,7 +91,9 @@ const mapStateToProps = createStructuredSelector({
   searchExample: (state) => state.session.navigation.searchExample
 })
 
-const mapDispatchToProps = (dispatch) => ({})
+const mapDispatchToProps = (dispatch) => ({
+  closeSearch: () => dispatch(actions.closeSearch())
+})
 
 export default connect(
   mapStateToProps,
