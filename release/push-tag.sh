@@ -6,7 +6,11 @@ if [ -z "$VERSION" ]; then
   exit 1
 fi
 
-VLESS_VERSION=$(echo $VERSION | sed 's/^v//')
+VLESS_VERSION=`echo $VERSION | sed 's/^v//'`
+if [ "$VLESS_VERSION" = "$VERSION" ]; then
+  echo "Version must start with 'v'!"
+  exit 1
+fi
 
 PKG_VERSION=`grep "version" < package.json | cut -d '"' -f 4`
 if [ "$VLESS_VERSION" != "$PKG_VERSION" ]; then
