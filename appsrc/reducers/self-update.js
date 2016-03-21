@@ -41,6 +41,10 @@ export default handleActions({
     return {...state, downloaded: downloading, downloading: null}
   },
 
+  SNOOZE_SELF_UPDATE: (state, action) => {
+    return {...state, downloaded: null}
+  },
+
   APPLY_SELF_UPDATE: (state, action) => {
     return state
   },

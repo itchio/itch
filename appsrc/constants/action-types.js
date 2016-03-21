@@ -71,7 +71,7 @@ module.exports = keyMirror({
   SELF_UPDATE_DOWNLOADED: null,
   SHOW_AVAILABLE_SELF_UPDATE: null,
   APPLY_SELF_UPDATE: null,
-  APPLY_SELF_UPDATE_FOR_REALSIES: null,
+  APPLY_SELF_UPDATE_REQUEST: null,
   DISMISS_STATUS: null,
 
   /* Locales */

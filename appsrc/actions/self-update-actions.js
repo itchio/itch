@@ -11,6 +11,7 @@ import {
   SHOW_AVAILABLE_SELF_UPDATE,
   APPLY_SELF_UPDATE_REQUEST,
   APPLY_SELF_UPDATE,
+  SNOOZE_SELF_UPDATE,
   DISMISS_STATUS
 } from '../constants/action-types'
 
@@ -23,4 +24,5 @@ export const selfUpdateDownloaded = createAction(SELF_UPDATE_DOWNLOADED)
 export const showAvailableSelfUpdate = createAction(SHOW_AVAILABLE_SELF_UPDATE)
 export const applySelfUpdateRequest = createAction(APPLY_SELF_UPDATE_REQUEST)
 export const applySelfUpdate = createAction(APPLY_SELF_UPDATE)
+export const snoozeSelfUpdate = createAction(SNOOZE_SELF_UPDATE)
 export const dismissStatus = createAction(DISMISS_STATUS)

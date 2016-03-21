@@ -152,7 +152,7 @@
     "prompt.self_update_ready.message": "Pick 'Restart now' to take full advantage of it.\n\nOtherwise, it'll become active the next time you restart the app.",
     "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Published on {{pubDate}}.",
     "prompt.self_update_ready.action.restart": "Restart now",
-    "prompt.self_update_ready.action.hold_off": "Hold off",
+    "prompt.self_update_ready.action.snooze": "Snooze",
     "sidebar.view_creator_profile": "View creator profile",
     "sidebar.view_community_profile": "View community profile",
     "sidebar.preferences": "Preferences",

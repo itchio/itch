@@ -21,6 +21,7 @@ const DATE_FORMAT = 'mmmm dS, yyyy @ HH:MM TT'
 import {
   BOOT,
   CHECK_FOR_SELF_UPDATE,
+  APPLY_SELF_UPDATE_REQUEST,
   APPLY_SELF_UPDATE,
   SELF_UPDATE_ERROR,
   SHOW_AVAILABLE_SELF_UPDATE
@@ -29,6 +30,7 @@ import {
 import {
   checkForSelfUpdate,
   applySelfUpdate,
+  snoozeSelfUpdate,
   selfUpdateError,
   checkingForSelfUpdate,
   selfUpdateAvailable,
@@ -116,7 +118,7 @@ export function * _checkForSelfUpdate () {
 }
 
 export function * _applySelfUpdateRequest () {
-  const {spec} = yield select((state) => state.selfUpdate.downloaded)
+  const spec = yield select((state) => state.selfUpdate.downloaded)
   if (!spec) {
     log(opts, 'Asked to apply update, but nothing downloaded? bailing out...')
     return
@@ -132,11 +134,11 @@ export function * _applySelfUpdateRequest () {
       {
         label: ['prompt.self_update_ready.action.restart'],
         action: applySelfUpdate(),
-        icon: 'download'
+        icon: 'refresh'
       },
       {
-        label: ['prompt.self_update.action.hold_off'],
-        action: dismissStatus(),
+        label: ['prompt.self_update_ready.action.snooze'],
+        action: snoozeSelfUpdate(),
         className: 'secondary'
       }
     ]
@@ -214,6 +216,7 @@ export default function * setupSaga () {
   yield [
     takeEvery(BOOT, _boot),
     takeEvery(CHECK_FOR_SELF_UPDATE, _checkForSelfUpdate),
+    takeEvery(APPLY_SELF_UPDATE_REQUEST, _applySelfUpdateRequest),
     takeEvery(APPLY_SELF_UPDATE, _applySelfUpdate),
     takeEvery(SELF_UPDATE_ERROR, _selfUpdateError),
     takeEvery(SHOW_AVAILABLE_SELF_UPDATE, _showAvailableSelfUpdate)
