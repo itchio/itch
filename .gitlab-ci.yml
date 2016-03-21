@@ -3,6 +3,7 @@ stages:
   - test
   - mkrelease
   - deploy
+  - notify
 
 test:linux:
   stage: test
@@ -84,5 +85,14 @@ deploy:windows:386:
     - export CI_OS=windows
     - export CI_ARCH=386
     - release/ci-deploy.sh
+  only:
+    - tags
+
+notify:
+  stage: notify
+  tags:
+    - linux
+  script:
+    - release/ci-notify.sh
   only:
     - tags
