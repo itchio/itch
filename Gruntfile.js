@@ -1,19 +1,22 @@
 
 require('quiet-grunt')
+
+var channel = process.env.CI_CHANNEL || 'stable'
+var appName = (channel === 'stable' ? 'itch' : 'itch_canary')
+
 var fs = require('fs')
 var path = require('path')
 var packagePath = path.join(__dirname, 'package.json')
 var version = process.env.CI_VERSION || JSON.parse(fs.readFileSync(packagePath, { encoding: 'utf8' })).version
-var icoPath = 'release/itchio.ico'
+
+var iconsPath = path.join('release', appName + '-icons')
+var icoPath = path.join(iconsPath, 'itch.ico')
+var icnsPath = path.join(iconsPath, 'itch.icns')
 var installerGifPath = 'release/installer.gif'
-var icnsPath = 'release/itchio.icns'
 
 var electronVersion = '0.37.2'
 var outDir = path.join('build', 'v' + version)
 var companyName = 'Itch Corp'
-
-var channel = process.env.CI_CHANNEL || 'stable'
-var appName = (channel === 'stable' ? 'itch' : 'itch_canary')
 
 var gruntElectronCommon = {
   dir: 'stage',
@@ -47,7 +50,7 @@ var electronInstallerCommon = {
   description: 'The best way to play itch.io games',
   version: version,
   title: appName,
-  iconUrl: 'http://raw.githubusercontent.com/itchio/itch/master/app/static/images/itchio.ico',
+  iconUrl: 'http://raw.githubusercontent.com/itchio/itch/master/release/' + appName + '-icons/itch.ico',
   loadingGif: installerGifPath,
   setupIcon: icoPath,
   remoteReleases: 'https://github.com/itchio/' + appName,

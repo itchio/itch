@@ -54,8 +54,8 @@ function * _createWindow () {
   const center = (bounds.x === -1 && bounds.y === -1)
 
   const window = new BrowserWindow({
-    title: 'itch',
-    icon: './static/images/itchio-tray-x4.png',
+    title: app.getName(),
+    icon: `./static/images/tray/${app.getName()}.png`,
     width, height,
     center,
     show: false,
