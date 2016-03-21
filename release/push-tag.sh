@@ -6,17 +6,19 @@ if [ -z "$VERSION" ]; then
   exit 1
 fi
 
+VLESS_VERSION=$(echo $VERSION | sed 's/^v//')
+
 PKG_VERSION=`grep "version" < package.json | cut -d '"' -f 4`
-if [ "$VERSION" != "$PKG_VERSION" ]; then
+if [ "$VLESS_VERSION" != "$PKG_VERSION" ]; then
   echo "Package version is $PKG_VERSION. Bump? (y/n)"
   read i
   if [ "$i" != "y" ]; then
     echo "Bailing out"
     exit 0
   fi
-  sed -e "s/\"version\": .*$/\"version\": \"$VERSION\",/" -i "" package.json
+  sed -e "s/\"version\": .*$/\"version\": \"$VLESS_VERSION\",/" -i "" package.json
   git add package.json
-  git commit -m ":arrow_up: $VERSION"
+  git commit -m ":arrow_up: $VLESS_VERSION"
 fi
 
 ADD_CMD="git tag -a $VERSION -m $VERSION"
@@ -50,4 +52,3 @@ else
 fi
 
 git push
-

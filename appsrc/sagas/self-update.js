@@ -161,7 +161,7 @@ export function * _applySelfUpdate () {
 function getFeedURL () {
   const base = urls.updateServers[env.channel]
   const platform = os.platform() + '_' + os.arch()
-  const version = app.getVersion().replace(/^v/, '')
+  const version = app.getVersion()
   return `${base}/update/${platform}/${version}`
 }
 
