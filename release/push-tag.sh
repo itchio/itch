@@ -1,6 +1,9 @@
 #!/bin/sh -e
 
-VERSION=$1
+PKG_VERSION=`grep "version" < package.json | cut -d '"' -f 4`
+echo "Package version is: $PKG_VERSION, type yours"
+
+read VERSION
 if [ -z "$VERSION" ]; then
   echo "Missing 'version'"
   exit 1
