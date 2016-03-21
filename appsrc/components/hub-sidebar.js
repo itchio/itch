@@ -8,18 +8,12 @@ import * as actions from '../actions'
 import defaultImages from '../constants/default-images'
 
 import Icon from './icon'
+import Dropdown from './dropdown'
 
 export class HubSidebar extends Component {
+
   constructor () {
     super()
-    this.state = {
-      dropdownOpen: false
-    }
-  }
-
-  toggleDropdown () {
-    const {dropdownOpen} = this.state
-    this.setState({...this.state, dropdownOpen: !dropdownOpen})
   }
 
   render () {
@@ -28,7 +22,6 @@ export class HubSidebar extends Component {
 
     return <div className={classes}>
       <div className='title-bar-padder'/>
-      {this.me()}
       {this.dropdown()}
 
       <h2>Constant</h2>
@@ -94,7 +87,7 @@ export class HubSidebar extends Component {
     const {me = {}} = this.props
     const {coverUrl = defaultImages.avatar, username = ''} = me
 
-    return <section className='me' onClick={() => this.toggleDropdown()}>
+    return <section className='me'>
       <img src={coverUrl}/>
       <span>{username}</span>
       <div className='filler'/>
@@ -103,25 +96,26 @@ export class HubSidebar extends Component {
   }
 
   dropdown () {
-    const {t, viewCreatorProfile, viewCommunityProfile, changeUser} = this.props
-    const dropdownClasses = classNames('dropdown', {active: this.state.dropdownOpen})
+    const {viewCreatorProfile, viewCommunityProfile, changeUser} = this.props
 
-    return <div className='dropdown-container'>
-      <div className={dropdownClasses}>
-        <section onClick={viewCreatorProfile}>
-          <span className='icon icon-rocket'/>
-          {t('sidebar.view_creator_profile')}
-        </section>
-        <section onClick={viewCommunityProfile}>
-          <span className='icon icon-fire'/>
-          {t('sidebar.view_community_profile')}
-        </section>
-        <section onClick={changeUser}>
-          <span className='icon icon-exit'/>
-          {t('sidebar.log_out')}
-        </section>
-      </div>
-    </div>
+    const items = [
+      {
+        icon: 'rocket',
+        label: ['sidebar.view_creator_profile'],
+        onClick: viewCreatorProfile
+      },
+      {
+        icon: 'fire',
+        label: ['sidebar.view_community_profile'],
+        onClick: viewCommunityProfile
+      },
+      {
+        icon: 'exit',
+        label: ['sidebar.log_out'],
+        onClick: changeUser
+      }
+    ]
+    return <Dropdown items={items} inner={this.me()}/>
   }
 }
 

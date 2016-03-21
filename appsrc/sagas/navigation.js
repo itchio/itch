@@ -4,8 +4,13 @@ import {takeEvery} from 'redux-saga'
 import {call, select, put} from 'redux-saga/effects'
 import {pluck} from 'underline'
 
-import {navigate} from '../actions'
-import {SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL} from '../constants/action-types'
+import urls from '../constants/urls'
+
+import {navigate, openUrl} from '../actions'
+import {
+  SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL,
+  VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE
+} from '../constants/action-types'
 
 export function * applyTabOffset (offset) {
   const {path, tabs} = yield select((state) => state.session.navigation)
@@ -36,10 +41,22 @@ export function * _openUrl (action) {
   yield call([shell, shell.openExternal], uri)
 }
 
+export function * _viewCreatorProfile (action) {
+  const url = yield select((state) => state.session.credentials.me.url)
+  yield put(openUrl(url))
+}
+
+export function * _viewCommunityProfile (action) {
+  const username = yield select((state) => state.session.credentials.me.username)
+  yield put(openUrl(`${urls.itchio}/profile/${username}`))
+}
+
 export default function * navigationSaga () {
   yield [
     takeEvery(SHOW_PREVIOUS_TAB, _showPreviousTab),
     takeEvery(SHOW_NEXT_TAB, _showNextTab),
-    takeEvery(OPEN_URL, _openUrl)
+    takeEvery(OPEN_URL, _openUrl),
+    takeEvery(VIEW_CREATOR_PROFILE, _viewCreatorProfile),
+    takeEvery(VIEW_COMMUNITY_PROFILE, _viewCommunityProfile)
   ]
 }

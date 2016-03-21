@@ -92,7 +92,7 @@ class StatusBar extends Component {
 }
 
 StatusBar.propTypes = {
-  offlineMode: false,
+  offlineMode: PropTypes.bool,
   selfUpdate: PropTypes.shape({
     status: PropTypes.string,
     error: PropTypes.string,
