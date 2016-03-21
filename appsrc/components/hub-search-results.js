@@ -33,17 +33,17 @@ export class HubSearchResults extends Component {
     const {searchOpen, searchResults} = this.props
 
     return <div className={classNames('hub-search-results', {active: searchOpen})}>
-      <h3>Here are your search results: </h3>
+      <h3>Search results: </h3>
       {this.fakeGrid(searchResults)}
     </div>
   }
 
   fakeGrid (searchResults) {
     if (!searchResults || searchResults.result.gameIds.length === 0) {
-      const {t, searchExample} = this.props
+      const {t} = this.props
 
       return <div className='result-list'>
-        <p>{t('search.empty.tagline', {searchExample})}</p>
+        <p>{t('search.empty.no_results')}</p>
       </div>
     }
 
@@ -64,7 +64,9 @@ export class HubSearchResults extends Component {
 HubSearchResults.propTypes = {
   searchOpen: PropTypes.bool,
   searchResults: PropTypes.shape({
-    result: PropTypes.array,
+    result: PropTypes.shape({
+      gameIds: PropTypes.array
+    }),
     entities: PropTypes.shape({
       games: PropTypes.object
     })

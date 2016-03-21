@@ -4,14 +4,14 @@
   border-left: 1px solid $sidebar-border-color;
 
   flex-shrink: 0;
-  overflow: hidden;
+  overflow-y: auto;
   transition: width 0.2s ease-in-out;
   width: 0;
 
   display: flex;
   flex-direction: column;
 
-  h3 {
+  h3, p {
     margin: 1em;
   }
 
@@ -21,6 +21,7 @@
   }
 
   .search-result {
+    flex-shrink: 0;
     overflow: hidden;
     display: flex;
     flex-direction: row;
@@ -43,6 +44,7 @@
       @include thumbnail-style;
       margin-left: .5em;
       width: 85px;
+      height: 67.6px;
     }
 
     .spacer {
