@@ -30,7 +30,7 @@ export class GatePage extends Component {
     return <div className={classes} data-stage={stage}>
       <section className='top_filler'/>
       <section className='logo'>
-        <img src='static/images/logo/itchio-white.svg'/>
+        <img src='static/images/logos/itchio-white.svg'/>
       </section>
 
       {this.errors()}
