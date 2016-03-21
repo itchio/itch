@@ -11,6 +11,7 @@ import {
   windowReady,
   windowDestroyed,
   windowFocusChanged,
+  windowFullscreenChanged,
   windowBoundsChanged,
   quit,
   notify
@@ -113,6 +114,14 @@ function * _createWindow () {
 
   window.on('blur', (e) => {
     queue.dispatch(windowFocusChanged({focused: false}))
+  })
+
+  window.on('enter-full-screen', (e) => {
+    queue.dispatch(windowFullscreenChanged({fullscreen: true}))
+  })
+
+  window.on('leave-full-screen', (e) => {
+    queue.dispatch(windowFullscreenChanged({fullscreen: false}))
   })
 
   const debouncedBounds = (() => {

@@ -23,8 +23,8 @@ export class HubSidebar extends Component {
   }
 
   render () {
-    const {osx, path, tabs, navigate, closeTab} = this.props
-    const classes = classNames('hub-sidebar', {osx})
+    const {osx, fullscreen, path, tabs, navigate, closeTab} = this.props
+    const classes = classNames('hub-sidebar', {osx, fullscreen})
 
     return <div className={classes}>
       <div className='title-bar-padder'/>
@@ -148,6 +148,7 @@ HubSidebar.propTypes = {
 
 const mapStateToProps = (state) => ({
   osx: state.system.osx,
+  fullscreen: state.ui.mainWindow.fullscreen,
   me: state.session.credentials.me,
   path: state.session.navigation.path,
   tabs: state.session.navigation.tabs

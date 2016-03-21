@@ -3,7 +3,8 @@ import {handleActions} from 'redux-actions'
 
 const initialState = {
   id: null,
-  focused: false
+  focused: false,
+  fullscreen: false
 }
 
 export const mainWindow = handleActions({
@@ -23,6 +24,11 @@ export const mainWindow = handleActions({
   WINDOW_FOCUS_CHANGED: (state, action) => {
     const {focused} = action.payload
     return {...state, focused}
+  },
+
+  WINDOW_FULLSCREEN_CHANGED: (state, action) => {
+    const {fullscreen} = action.payload
+    return {...state, fullscreen}
   }
 }, initialState)
 

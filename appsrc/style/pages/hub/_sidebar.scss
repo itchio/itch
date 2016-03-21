@@ -11,7 +11,7 @@
   align-items: stretch;
   flex-direction: column;
 
-  &.osx .title-bar-padder {
+  &.osx:not(.fullscreen) .title-bar-padder {
     flex-basis: 20px;
     flex-shrink: 0;
   }
