@@ -2,6 +2,8 @@
 import {handleActions} from 'redux-actions'
 import {pluck, reject} from 'underline'
 
+import SearchExamples from '../../constants/search-examples'
+
 const initialState = {
   page: 'gate',
   tabs: {
@@ -19,8 +21,9 @@ const initialState = {
     ]
   },
   path: 'dashboard',
+  searchExampleIndex: 0,
   searchOpen: false,
-  searchResults: []
+  searchResults: null
 }
 
 export default handleActions({
@@ -63,7 +66,8 @@ export default handleActions({
 
   SEARCH_FETCHED: (state, action) => {
     const {results} = action.payload
-    return {...state, searchResults: results, searchOpen: true}
+    const searchExampleIndex = Math.floor(Math.random() * (SearchExamples.length - 1))
+    return {...state, searchResults: results, searchOpen: true, searchExample: SearchExamples[searchExampleIndex]}
   },
 
   CLOSE_SEARCH: (state, action) => {

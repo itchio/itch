@@ -5,12 +5,14 @@ import classNames from 'classnames'
 import {connect} from './connect'
 import {createStructuredSelector} from 'reselect'
 
+import {each} from 'underline'
+
 export class SearchResult extends Component {
   render () {
     const {game} = this.props
     const {title, coverUrl} = game
 
-    return <div className='search_result'>
+    return <div className='search-result'>
       <img src={coverUrl}/>
       <h4>{title}</h4>
       <div className='spacer'></div>
@@ -26,27 +28,34 @@ SearchResult.propTypes = {
   })
 }
 
-const fakeIcon = 'http://www.gamezebo.com/wp-content/uploads/2014/11/4359181.jpg'
-
 export class HubSearchResults extends Component {
   render () {
     const {searchOpen, searchResults} = this.props
 
-    return <div className={classNames('hub_search_results', {active: searchOpen})}>
+    return <div className={classNames('hub-search-results', {active: searchOpen})}>
       <h3>Here are your search results: </h3>
       {this.fakeGrid(searchResults)}
     </div>
   }
 
   fakeGrid (searchResults) {
-    const items = []
-    let id = 0
+    if (!searchResults || searchResults.result.gameIds.length === 0) {
+      const {t, searchExample} = this.props
 
-    for (let i = 0; i < 9; i++) {
-      items.push(<SearchResult key={id++} game={{title: 'XCOM: Enemy Unknown', coverUrl: fakeIcon}}/>)
+      return <div className='result-list'>
+        <p>{t('search.empty.tagline', {searchExample})}</p>
+      </div>
     }
 
-    return <div className='result_list'>
+    const items = []
+
+    const {games} = searchResults.entities
+    searchResults.result.gameIds::each((gameId) => {
+      const game = games[gameId]
+      items.push(<SearchResult key={gameId} game={game}/>)
+    })
+
+    return <div className='result-list'>
       {items}
     </div>
   }
@@ -54,15 +63,22 @@ export class HubSearchResults extends Component {
 
 HubSearchResults.propTypes = {
   searchOpen: PropTypes.bool,
-  searchResults: PropTypes.array,
+  searchResults: PropTypes.shape({
+    result: PropTypes.array,
+    entities: PropTypes.shape({
+      games: PropTypes.object
+    })
+  }),
+  searchExample: PropTypes.string,
 
-  t: PropTypes.func
+  t: PropTypes.func.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({
   path: (state) => state.session.navigation.path,
   searchOpen: (state) => state.session.navigation.searchOpen,
-  searchResults: (state) => state.session.navigation.searchResults
+  searchResults: (state) => state.session.navigation.searchResults,
+  searchExample: (state) => state.session.navigation.searchExample
 })
 
 const mapDispatchToProps = (dispatch) => ({})

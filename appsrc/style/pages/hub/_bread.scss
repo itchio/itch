@@ -1,5 +1,5 @@
 
-.hub_bread {
+.hub-bread {
   flex-basis: 90px;
   padding: 0 $grid-padding;
 
@@ -73,13 +73,13 @@
   }
 }
 
-.hub_bread .description {
+.hub-bread .description {
     h3 {
       font-size: $base-text-size;
       color: $secondary-text-color;
     }
 
     h2, h3 {
-      @include single_line;
+      @include single-line;
     }
 }

@@ -7,7 +7,7 @@ import HubMeat from './hub-meat'
 
 export class HubContent extends Component {
   render () {
-    return <div className='hub_content'>
+    return <div className='hub-content'>
       <HubBread/>
       <HubMeat/>
     </div>

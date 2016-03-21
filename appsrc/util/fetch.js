@@ -6,7 +6,7 @@ import {opts} from '../logger'
 import client from '../util/api'
 
 import {assocIn} from 'grovel'
-import {normalize, arrayOf} from 'idealizr'
+import {normalize, arrayOf} from './idealizr'
 import {game, collection, downloadKey} from './schemas'
 import {each, union, pluck, where, difference} from 'underline'
 
@@ -143,17 +143,17 @@ export async function collectionGames (market, credentials, collectionId) {
   market.saveAllEntities({entities: {collections: {[collection.id]: collection}}})
 }
 
-export async function search (query, credentials) {
+export async function search (credentials, query) {
   pre: { // eslint-disable-line
     typeof query === 'string'
   }
 
-  const api = client.withKey(credentials)
+  const api = client.withKey(credentials.key)
 
   const response = normalize(await api.search(query), {
     games: arrayOf(game)
   })
-  return response.entities.games || {}
+  return response
 }
 
 export async function gameLazily (market, credentials, gameId) {

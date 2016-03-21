@@ -4,7 +4,7 @@ import invariant from 'invariant'
 import {getMarket} from './market'
 
 import {takeEvery} from 'redux-saga'
-import {select, call} from 'redux-saga/effects'
+import {select, call, put} from 'redux-saga/effects'
 
 import mklog from '../util/log'
 const log = mklog('fetch-saga')
@@ -12,9 +12,12 @@ import {opts} from '../logger'
 
 import fetch from '../util/fetch'
 
+import {searchFetched} from '../actions'
+
 import {
   WINDOW_FOCUS_CHANGED,
-  LOGIN_SUCCEEDED
+  LOGIN_SUCCEEDED,
+  SEARCH
 } from '../constants/action-types'
 
 function * _windowFocusChanged (action) {
@@ -51,9 +54,23 @@ function * fetchUsuals (credentials) {
   ]
 }
 
+function * _search (action) {
+  const credentials = yield select((state) => state.session.credentials)
+  if (!credentials.key) {
+    log(opts, `Not logged in, can't search`)
+    return
+  }
+
+  const query = action.payload
+  const results = yield call(fetch.search, credentials, query)
+
+  yield put(searchFetched({results}))
+}
+
 export default function * fetchSaga () {
   yield [
     takeEvery(WINDOW_FOCUS_CHANGED, _windowFocusChanged),
-    takeEvery(LOGIN_SUCCEEDED, _loginSucceeded)
+    takeEvery(LOGIN_SUCCEEDED, _loginSucceeded),
+    takeEvery(SEARCH, _search)
   ]
 }

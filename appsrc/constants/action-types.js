@@ -139,14 +139,11 @@ module.exports = keyMirror({
   NOTIFY: null,
   NOTIFY_HTML5: null,
 
-  /* Data retrieval */
-  FETCH_COLLECTIONS: null,
-  FETCH_GAMES: null,
-  FETCH_SEARCH: null,
-
+  /** Search */
+  FOCUS_SEARCH: null,
+  SEARCH: null,
   SEARCH_FETCHED: null,
   CLOSE_SEARCH: null,
-  FOCUS_SEARCH: null,
 
   /** Data sync functions */
   GAME_STORE_DIFF: null,

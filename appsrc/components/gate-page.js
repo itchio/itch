@@ -25,10 +25,10 @@ export class GatePage extends Component {
     const {t, stage, blockingOperation} = this.props
     const disabled = !!blockingOperation
 
-    const classes = classNames('gate_page', {disabled})
+    const classes = classNames('gate-page', {disabled})
 
     return <div className={classes} data-stage={stage}>
-      <section className='top_filler'/>
+      <section className='top-filler'/>
       <section className='logo'>
         <img src='static/images/logos/itchio-white.svg'/>
       </section>

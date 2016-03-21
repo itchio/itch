@@ -1,8 +1,9 @@
 
 @import 'hub/sidebar';
 @import 'hub/bread';
+@import 'hub/search';
 
-.hub_page {
+.hub-page {
   overflow: hidden;
   position: absolute;
   top: 0;
@@ -13,22 +14,22 @@
   flex-direction: row;
 }
 
-.hub_content {
+.hub-content {
   overflow: hidden;
   display: flex;
   flex-direction: column;
 
-  .hub_bread {
+  .hub-bread {
     flex-shrink: 0;
     flex-grow: 0;
   }
-  .hub_meat {
+  .hub-meat {
     flex-shrink: 1;
     flex-grow: 1;
   }
 }
 
-.hub_grid {
+.hub-grid {
   flex-grow: 1;
   flex-shrink: 1;
 
@@ -41,16 +42,16 @@
   justify-content: space-around;
   align-items: flex-start;
 
-  .hub_item, .hub_filler {
-    width: $grid_item_width;
+  .hub-item, .hub-filler {
+    width: $grid-item-width;
     margin: .5em 0;
   }
 
-  .hub_filler {
+  .hub-filler {
     height: 0;
   }
 
-  .hub_item {
+  .hub-item {
     @include thumbnail-style;
     background: #232222; // FIXME colors
     border: 1px solid #191919; // FIXME colors
@@ -107,76 +108,10 @@
   }
 }
 
-.hub_meat {
+.hub-meat {
   background: #333131; // FIXME colors
   overflow: hidden;
   display: flex;
   flex-direction: row;
   align-items: stretch;
-}
-
-.hub_search_results {
-  background: $sidebar-background-color;
-  border-left: 1px solid $sidebar-border-color;
-
-  flex-shrink: 0;
-  overflow: hidden;
-  transition: width 0.2s ease-in-out;
-  width: 0;
-
-  display: flex;
-  flex-direction: column;
-
-  h3 {
-    margin: 1em;
-  }
-
-  .result_list {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .search_result {
-    overflow: hidden;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: .2em 0;
-
-    h4 {
-      text-shadow: 0 0 2px $input-text-shadow-color;
-      margin: .5em;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    &:hover {
-      background: $sidebar-entry-focused-background-color;
-      cursor: pointer;
-    }
-
-    img {
-      @include thumbnail-style;
-      margin-left: .5em;
-      width: 85px;
-    }
-
-    .spacer {
-      flex-grow: 100;
-    }
-
-    .icon-button {
-      @include secondary-link;
-      margin-right: .5em;
-
-      &:hover {
-        opacity: .7;
-        cursor: pointer;
-      }
-    }
-  }
-
-  &.active {
-    width: 1.5 * $grid_item_width + 20px;
-  }
 }

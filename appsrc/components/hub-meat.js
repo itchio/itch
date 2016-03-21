@@ -10,7 +10,7 @@ import {each} from 'underline'
 
 export class HubMeat extends Component {
   render () {
-    return <div className='hub_meat'>
+    return <div className='hub-meat'>
       {this.fakeGrid()}
       <HubSearchResults/>
     </div>
@@ -29,7 +29,7 @@ export class HubMeat extends Component {
       items.push(<HubGhostItem key={id++}/>)
     }
 
-    return <div className='hub_grid'>
+    return <div className='hub-grid'>
       {items}
     </div>
   }

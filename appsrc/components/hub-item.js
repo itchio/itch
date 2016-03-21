@@ -6,7 +6,7 @@ export class HubItem extends Component {
     const {game} = this.props
     const {title, coverUrl} = game
 
-    return <div className='hub_item'>
+    return <div className='hub-item'>
       <section className='cover' style={{backgroundImage: `url("${coverUrl}")`}}/>
 
       <section className='undercover'>

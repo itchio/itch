@@ -7,7 +7,7 @@ import HubContent from './hub-content'
 
 export class HubPage extends Component {
   render () {
-    return <div className='hub_page'>
+    return <div className='hub-page'>
       <HubSidebar/>
       <HubContent/>
       <StatusBar/>

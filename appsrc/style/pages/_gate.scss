@@ -1,7 +1,7 @@
 
 @import 'gate/form';
 
-.gate_page {
+.gate-page {
   animation: drop-down .3s ease-in;
   position: absolute;
   top: 0;
@@ -17,7 +17,7 @@
     flex-grow: 0;
   }
 
-  .top_filler {
+  .top-filler {
     flex-grow: 1;
   }
 
@@ -122,7 +122,7 @@
       opacity: 0;
     }
 
-    .top_filler {
+    .top-filler {
       transition: all 0.8s;
       flex-grow: 10;
     }

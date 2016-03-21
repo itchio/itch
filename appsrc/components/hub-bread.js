@@ -3,7 +3,7 @@ import React, {Component, PropTypes} from 'react'
 import {createStructuredSelector} from 'reselect'
 import {connect} from './connect'
 
-import {searchFetched, closeSearch} from '../actions'
+import {search} from '../actions'
 
 import Icon from './icon'
 
@@ -11,7 +11,7 @@ class HubBread extends Component {
   render () {
     const {t} = this.props
 
-    return <div className='hub_bread'>
+    return <div className='hub-bread'>
       <section className='description'>
         <h2><icon className='icon icon-tag'/> Garden, Grow and Plant</h2>
         <h3>53 games | a collection by Don Whitaker</h3>
@@ -28,7 +28,7 @@ class HubBread extends Component {
       </section>
 
       <section className='search'>
-        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onChange={this.onChange.bind(this)} onKeyPress={this.onChange.bind(this)}/>
+        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={(e) => this.onKeyPress(e)}/>
         <span className='icon icon-search'/>
       </section>
 
@@ -42,13 +42,11 @@ class HubBread extends Component {
     </div>
   }
 
-  onChange () {
+  onKeyPress (e) {
     const {search} = this.refs
 
-    if (search.value.length > 0) {
-      this.props.openSearch()
-    } else {
-      this.props.closeSearch()
+    if (e.key === 'Enter') {
+      this.props.search(search.value)
     }
   }
 
@@ -62,7 +60,7 @@ HubBread.propTypes = {
 
   path: PropTypes.string,
 
-  openSearch: PropTypes.func,
+  search: PropTypes.func,
   closeSearch: PropTypes.func
 }
 
@@ -73,8 +71,7 @@ const mapStateToProps = createStructuredSelector({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  openSearch: () => dispatch(searchFetched({results: []})),
-  closeSearch: () => dispatch(closeSearch({results: []}))
+  search: (query) => dispatch(search(query))
 })
 
 export default connect(
