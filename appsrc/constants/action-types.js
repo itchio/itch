@@ -143,6 +143,8 @@ module.exports = keyMirror({
   FOCUS_SEARCH: null,
   SEARCH: null,
   SEARCH_FETCHED: null,
+  SEARCH_STARTED: null,
+  SEARCH_FINISHED: null,
   CLOSE_SEARCH: null,
 
   /** Data sync functions */

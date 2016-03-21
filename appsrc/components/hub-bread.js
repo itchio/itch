@@ -3,13 +3,17 @@ import React, {Component, PropTypes} from 'react'
 import {createStructuredSelector} from 'reselect'
 import {connect} from './connect'
 
+import classNames from 'classnames'
+
 import {search} from '../actions'
 
 import Icon from './icon'
 
 class HubBread extends Component {
   render () {
-    const {t} = this.props
+    const {t, searchLoading} = this.props
+
+    const searchClasses = classNames('search', {loading: searchLoading})
 
     return <div className='hub-bread'>
       <section className='description'>
@@ -27,7 +31,7 @@ class HubBread extends Component {
         <Icon icon='filter'/>
       </section>
 
-      <section className='search'>
+      <section className={searchClasses}>
         <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={(e) => this.onKeyPress(e)}/>
         <span className='icon icon-search'/>
       </section>
@@ -59,6 +63,7 @@ HubBread.propTypes = {
   t: PropTypes.func,
 
   path: PropTypes.string,
+  searchLoading: PropTypes.bool,
 
   search: PropTypes.func,
   closeSearch: PropTypes.func
@@ -66,8 +71,7 @@ HubBread.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   path: (state) => state.session.navigation.path,
-  searchOpen: (state) => state.session.navigation.searchOpen,
-  searchResults: (state) => state.session.navigation.searchResults
+  searchLoading: (state) => state.session.search.loading
 })
 
 const mapDispatchToProps = (dispatch) => ({

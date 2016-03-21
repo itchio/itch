@@ -41,6 +41,10 @@
 
     &.search {
       position: relative;
+
+      &.loading .icon-search {
+        @include horizontal-scan;
+      }
     }
 
     input[type=search] {
