@@ -2,7 +2,7 @@
   "name": "itch",
   "productName": "itch",
   "desktopName": "itch",
-  "version": "v0.14.2-canary",
+  "version": "v0.14.0-canary",
   "description": "itch.io desktop client",
   "keywords": [
     "itch.io",
@@ -34,7 +34,6 @@
     "dateformat": "^1.0.12",
     "deep-assign": "^2.0.0",
     "deep-freeze": "0.0.1",
-    "emojify.js": "^1.1.0",
     "eol": "^0.2.0",
     "es6-error": "^2.0.0",
     "fast-async": "^6.0.11",

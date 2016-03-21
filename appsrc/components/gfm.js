@@ -1,7 +1,7 @@
 
 import React, {PropTypes, Component} from 'react'
 import marked from 'marked-extra'
-import emojify from 'emojify.js'
+import emojify from '../util/emojify'
 
 import urls from '../constants/urls'
 
@@ -17,7 +17,6 @@ export class GFM extends Component {
     const emojified = emojify.replace(source, (emoji, name) => `<span class='emoji emoji-${name}'></span>`)
     const autolinked = autolink(emojified)
     const sanitized = sanitize(autolinked)
-    console.log('sanitized: ', sanitized)
 
     // TODO: handle invalid markdown gracefully
     const __html = marked(sanitized)
