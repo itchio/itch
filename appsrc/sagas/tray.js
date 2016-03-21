@@ -16,8 +16,8 @@ function makeTray (queue) {
   // cf. https://github.com/itchio/itch/issues/462
   // windows still displays a 16x16, whereas
   // some linux DEs don't know what to do with a @x2, etc.
-  const iconName = os.platform() === 'linux' ? 'itchio-tray.png' : 'itchio-tray-small.png'
-  const iconPath = path.resolve(`${__dirname}/../static/images/${iconName}`)
+  const iconName = os.platform() === 'linux' ? `${app.getName()}.png` : `${app.getName()}-small.png`
+  const iconPath = path.resolve(`${__dirname}/../static/images/tray/${iconName}`)
   tray = new Tray(iconPath)
   tray.setToolTip('itch.io')
   tray.on('click', () => queue.dispatch(focusWindow()))
