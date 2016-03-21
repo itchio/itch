@@ -1,171 +1,154 @@
 
 import mklog from './log'
 const log = mklog('fetch')
-const opts = {logger: new mklog.Logger()}
+import {opts} from '../logger'
 
-import CredentialsStore from '../stores/credentials-store'
+import client from '../util/api'
 
 import {assocIn} from 'grovel'
 import {normalize, arrayOf} from 'idealizr'
-import {game, collection, download_key} from './schemas'
+import {game, collection, downloadKey} from './schemas'
 import {each, union, pluck, where, difference} from 'underline'
 
-async function dashboard_games (market, cb) {
+export async function dashboardGames (market, credentials) {
   pre: { // eslint-disable-line
     typeof market === 'object'
-    typeof cb === 'function'
   }
 
-  cb()
+  const {key, me} = credentials
+  const api = client.withKey(key)
 
-  const api = CredentialsStore.get_current_user()
-  const me = CredentialsStore.get_me()
+  const oldGameIds = market.getEntities('games')::where({userId: me.id})::pluck('id')
 
-  const old_game_ids = market.get_entities('games')::where({user_id: me.id})::pluck('id')
-
-  const normalized = normalize(await api.my_games(), {
+  const normalized = normalize(await api.myGames(), {
     games: arrayOf(game)
   })
 
-  // the `my_games` endpoint doesn't set the user_id
-  normalized.entities.games::each((g) => g.user_id = me.id)
+  // the `myGames` endpoint doesn't set the user_id
+  normalized.entities.games::each((g) => g.userId = me.id)
   normalized.entities.users = {
     [me.id]: me
   }
-  market.save_all_entities(normalized)
+  market.saveAllEntities(normalized)
 
-  const new_game_ids = normalized.entities.games::pluck('id')
-  const goners = old_game_ids::difference(new_game_ids)
+  const newGameIds = normalized.entities.games::pluck('id')
+  const goners = oldGameIds::difference(newGameIds)
   if (goners.length > 0) {
-    market.delete_all_entities({entities: {games: goners}})
+    market.deleteAllEntities({entities: {games: goners}})
   }
-  cb()
 }
 
-async function owned_keys (market, cb) {
+export async function ownedKeys (market, credentials) {
   pre: { // eslint-disable-line
     typeof market === 'object'
-    typeof cb === 'function'
   }
 
-  cb()
+  const {key} = credentials
+  const api = client.withKey(key)
 
-  const api = CredentialsStore.get_current_user()
   let page = 0
 
   while (true) {
-    const response = await api.my_owned_keys({page: page++})
-    if (response.owned_keys.length === 0) {
+    const response = await api.myOwnedKeys({page: page++})
+    if (response.ownedKeys.length === 0) {
       break
     }
 
-    market.save_all_entities(normalize(response, {
-      owned_keys: arrayOf(download_key)
+    market.saveAllEntities(normalize(response, {
+      ownedKeys: arrayOf(downloadKey)
     }))
-    cb()
   }
 }
 
-async function collections (market, featured_ids, cb) {
+export async function collections (market, credentials, featuredIds) {
   pre: { // eslint-disable-line
     typeof market === 'object'
-    Array.isArray(featured_ids)
-    typeof cb === 'function'
+    Array.isArray(featuredIds)
   }
 
-  cb()
+  const oldCollectionIds = market.getEntities('collections')::pluck('id')
 
-  const old_collection_ids = market.get_entities('collections')::pluck('id')
-
-  const prepare_collections = (normalized) => {
+  const prepareCollections = (normalized) => {
     const colls = market.get_entities('collections')
     normalized.entities.collections::each((coll, coll_id) => {
       const old = colls[coll_id]
       if (old) {
-        coll.game_ids = old.game_ids::union(coll.game_ids)
+        coll.gameIds = old.gameIds::union(coll.gameIds)
       }
     })
     return normalized
   }
 
-  const api = CredentialsStore.get_current_user()
-  if (!api) return
+  const {key} = credentials
+  const api = client.withKey(key)
 
-  const my_collections_res = normalize(await api.my_collections(), {
+  const myCollectionsRes = normalize(await api.myCollections(), {
     collections: arrayOf(collection)
   })
-  market.save_all_entities(prepare_collections(my_collections_res))
-  cb()
+  market.saveAllEntities(prepareCollections(myCollectionsRes))
 
-  let new_collection_ids = my_collections_res.entities.collections::pluck('id')
+  let newCollectionIds = myCollectionsRes.entities.collections::pluck('id')
 
-  for (const featured_id of featured_ids) {
-    const featured_collection_res = normalize(await api.collection(featured_id), {
+  for (const featuredId of featuredIds) {
+    const featuredCollectionRes = normalize(await api.collection(featuredId), {
       collection: collection
     })
 
-    new_collection_ids = new_collection_ids::union(featured_collection_res.entities.collections::pluck('id'))
-    market.save_all_entities(prepare_collections(featured_collection_res))
-    cb()
+    newCollectionIds = newCollectionIds::union(featuredCollectionRes.entities.collections::pluck('id'))
+    market.saveAllEntities(prepareCollections(featuredCollectionRes))
   }
 
-  const goners = old_collection_ids::difference(new_collection_ids)
+  const goners = oldCollectionIds::difference(newCollectionIds)
   if (goners.length > 0) {
-    market.delete_all_entities({entities: {collections: goners}})
-    cb()
+    market.deleteAllEntities({entities: {collections: goners}})
   }
 }
 
-async function collection_games (market, collection_id, cb) {
+export async function collectionGames (market, credentials, collectionId) {
   pre: { // eslint-disable-line
     typeof market === 'object'
-    typeof collection_id === 'number'
-    typeof cb === 'function'
+    typeof collectionId === 'number'
   }
 
-  let collection = market.get_entities('collections')[collection_id]
+  let collection = market.getEntities('collections')[collectionId]
   if (!collection) {
-    log(opts, `collection not found: ${collection_id}`)
+    log(opts, `collection not found: ${collectionId}`)
     return
   }
 
-  cb()
-
-  const api = CredentialsStore.get_current_user()
+  const api = client.withKey(credentials.key)
 
   let page = 1
   let fetched = 0
-  let total_items = 1
-  let fetched_game_ids = []
+  let totalItems = 1
+  let fetchedGameIds = []
 
-  while (fetched < total_items) {
-    let res = await api.collection_games(collection_id, page)
-    total_items = res.total_items
-    fetched = res.per_page * page
+  while (fetched < totalItems) {
+    let res = await api.collectionGames(collectionId, page)
+    totalItems = res.totalItems
+    fetched = res.perPage * page
 
     const normalized = normalize(res, {games: arrayOf(game)})
-    const page_game_ids = normalized.entities.games::pluck('id')
-    collection = collection::assocIn(['game_ids'], collection.game_ids::union(page_game_ids))
-    market.save_all_entities({entities: {collections: {[collection.id]: collection}}})
+    const pageGameIds = normalized.entities.games::pluck('id')
+    collection = collection::assocIn(['gameIds'], collection.gameIds::union(pageGameIds))
+    market.saveAllEntities({entities: {collections: {[collection.id]: collection}}})
 
-    fetched_game_ids = fetched_game_ids::union(page_game_ids)
-    market.save_all_entities(normalized)
-    cb()
+    fetchedGameIds = fetchedGameIds::union(pageGameIds)
+    market.saveAllEntities(normalized)
     page++
   }
 
   // if games were removed remotely, they'll be removed locally at this step
-  collection = collection::assocIn(['game_ids'], fetched_game_ids)
-  market.save_all_entities({entities: {collections: {[collection.id]: collection}}})
-  cb()
+  collection = collection::assocIn(['gameIds'], fetchedGameIds)
+  market.saveAllEntities({entities: {collections: {[collection.id]: collection}}})
 }
 
-async function search (query) {
+export async function search (query, credentials) {
   pre: { // eslint-disable-line
     typeof query === 'string'
   }
 
-  const api = CredentialsStore.get_current_user()
+  const api = client.withKey(credentials)
 
   const response = normalize(await api.search(query), {
     games: arrayOf(game)
@@ -173,19 +156,19 @@ async function search (query) {
   return response.entities.games || {}
 }
 
-async function game_lazily (market, game_id) {
+export async function gameLazily (market, credentials, gameId) {
   pre: { // eslint-disable-line
     typeof market === 'object'
-    typeof game_id === 'number'
+    typeof gameId === 'number'
   }
 
-  const record = market.get_entities('games')[game_id]
+  const record = market.getEntities('games')[gameId]
   if (record) {
     return record
   }
 
-  const api = CredentialsStore.get_current_user()
-  const response = normalize(await api.game(game_id), {game})
+  const api = client.withKey(credentials.key)
+  const response = normalize(await api.game(gameId), {game})
 
   // TODO: re-use the 'user' this endpoint gives us?
   // thinking about layered markets, e.g.:
@@ -193,14 +176,14 @@ async function game_lazily (market, game_id) {
   //  |-> [ query market - contains temporary data related to a search ]
   //  |-> [ main market - contains persistent data (own games, owned games, games in collection) ]
   // at least, market shouldn't be a singleton
-  return response.entities.games[game_id]
+  return response.entities.games[gameId]
 }
 
 export default {
-  dashboard_games,
-  owned_keys,
+  dashboardGames,
+  ownedKeys,
   collections,
-  collection_games,
+  collectionGames,
   search,
-  game_lazily
+  gameLazily
 }

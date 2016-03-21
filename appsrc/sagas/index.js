@@ -14,6 +14,7 @@ import mainWindow from './main-window'
 import tray from './tray'
 import login from './login'
 import menu from './menu'
+import fetch from './fetch'
 
 export default [
   selfUpdate,
@@ -30,5 +31,6 @@ export default [
   mainWindow,
   tray,
   login,
-  menu
+  menu,
+  fetch
 ]

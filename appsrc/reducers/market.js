@@ -1,6 +1,6 @@
 
 import {handleActions} from 'redux-actions'
-import {getEntities} from '../sagas/market'
+import {getMarket} from '../sagas/market'
 
 import {omit} from 'underline'
 
@@ -16,6 +16,7 @@ export default handleActions({
 
   DB_COMMIT: (state, action) => {
     const {updated = {}, deleted = {}, initial = false} = action.payload
+    const market = getMarket()
 
     for (const tableName of Object.keys(deleted)) {
       const deletedIds = deleted[tableName]
@@ -25,7 +26,7 @@ export default handleActions({
 
     for (const tableName of Object.keys(updated)) {
       const updatedIds = updated[tableName]
-      const records = getEntities(tableName)
+      const records = market.getEntities(tableName)
 
       let updatedTable = (state[tableName] || {})
       for (const recordId of updatedIds) {

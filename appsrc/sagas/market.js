@@ -14,11 +14,11 @@ let market = null
 // abstraction leak but helps halving the bandwidth between browser and renderer:
 // the reducer can just pick data from here instead of getting it from the message,
 // which would also be serialized & sent by JSON
-export function getEntities (tableName) {
+export function getMarket () {
   if (!market) {
-    throw new Error('called getEntities before market initialization')
+    throw new Error('called getMarket before market initialization')
   }
-  return market.getEntities(tableName)
+  return market
 }
 
 export function * _dbCommit (action) {
