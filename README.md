@@ -2,7 +2,6 @@
 
 ![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
-[![Build Status](https://ci.itch.ovh/job/itch/badge/icon)](https://ci.itch.ovh/job/itch/)
 [![Coverage Status](https://coveralls.io/repos/itchio/itch/badge.svg?service=github)](https://coveralls.io/github/itchio/itch)
 
 The goal of this project is to give you a desktop application that you can
