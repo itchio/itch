@@ -32,20 +32,21 @@ SearchResult.propTypes = {
 
 export class HubSearchResults extends Component {
   render () {
-    const {searchOpen, searchResults, closeSearch} = this.props
+    const {search, closeSearch} = this.props
+    const {open, results} = search
 
-    return <div className={classNames('hub-search-results', {active: searchOpen})}>
+    return <div className={classNames('hub-search-results', {active: open})}>
       <div className='header'>
         <h3>Search results</h3>
         <div className='filler'/>
         <span className='icon icon-cross close-search' onClick={closeSearch}/>
       </div>
-      {this.fakeGrid(searchResults)}
+      {this.fakeGrid(results)}
     </div>
   }
 
-  fakeGrid (searchResults) {
-    if (!searchResults || searchResults.result.gameIds.length === 0) {
+  fakeGrid (results) {
+    if (!results || results.result.gameIds.length === 0) {
       const {t} = this.props
 
       return <div className='result-list'>
@@ -55,8 +56,8 @@ export class HubSearchResults extends Component {
 
     const items = []
 
-    const {games} = searchResults.entities
-    searchResults.result.gameIds::each((gameId) => {
+    const {games} = results.entities
+    results.result.gameIds::each((gameId) => {
       const game = games[gameId]
       items.push(<SearchResult key={gameId} game={game}/>)
     })
@@ -68,16 +69,18 @@ export class HubSearchResults extends Component {
 }
 
 HubSearchResults.propTypes = {
-  searchOpen: PropTypes.bool,
-  searchResults: PropTypes.shape({
-    result: PropTypes.shape({
-      gameIds: PropTypes.array
+  search: PropTypes.shape({
+    open: PropTypes.bool,
+    results: PropTypes.shape({
+      result: PropTypes.shape({
+        gameIds: PropTypes.array
+      }),
+      entities: PropTypes.shape({
+        games: PropTypes.object
+      })
     }),
-    entities: PropTypes.shape({
-      games: PropTypes.object
-    })
+    example: PropTypes.string
   }),
-  searchExample: PropTypes.string,
 
   closeSearch: PropTypes.func,
 
@@ -86,9 +89,7 @@ HubSearchResults.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   path: (state) => state.session.navigation.path,
-  searchOpen: (state) => state.session.navigation.searchOpen,
-  searchResults: (state) => state.session.navigation.searchResults,
-  searchExample: (state) => state.session.navigation.searchExample
+  search: (state) => state.session.search
 })
 
 const mapDispatchToProps = (dispatch) => ({

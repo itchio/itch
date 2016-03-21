@@ -20,10 +20,7 @@ const initialState = {
       {path: 'collections/25108', icon: 'tag', label: 'I made a Fall Out Boy collection and all I got was wrapping label tabs'}
     ]
   },
-  path: 'dashboard',
-  searchExampleIndex: 0,
-  searchOpen: false,
-  searchResults: null
+  path: 'dashboard'
 }
 
 export default handleActions({
@@ -71,6 +68,6 @@ export default handleActions({
   },
 
   CLOSE_SEARCH: (state, action) => {
-    return {...state, searchResults: [], searchOpen: false}
+    return {...state, searchResults: null, searchOpen: false}
   }
 }, initialState)
