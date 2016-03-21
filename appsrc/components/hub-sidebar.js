@@ -127,6 +127,7 @@ export class HubSidebar extends Component {
 
 HubSidebar.propTypes = {
   osx: PropTypes.bool,
+  fullscreen: PropTypes.bool,
   me: PropTypes.shape({
     coverUrl: PropTypes.string,
     username: PropTypes.string.isRequired
