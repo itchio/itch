@@ -4,5 +4,5 @@
 // to be test.
 module.exports = {
   name: 'development',
-  channel: 'stable'
+  channel: 'canary'
 }
