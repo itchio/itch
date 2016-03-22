@@ -21,8 +21,10 @@ FPM_AFTER_INSTALL="$CI_PROJECT_DIR/release/debian-after-install.sh"
 rm -rf stage2 && mkdir -p stage2/$CI_APPNAME
 cp -rf $BUILD_PATH/* stage2/$CI_APPNAME
 
-gem uninstall fpm -x
-gem install fpm-itchio
+if [ -z "`gem list | grep fpm-itchio`" ]; then
+  gem uninstall fpm -x
+  gem install fpm-itchio
+fi
 
 release/generate-itch-desktop.sh
 
