@@ -85,15 +85,17 @@
       @include heavy-button;
 
       font-size: $base-text-size;
-      background-color: #2F5636;
-      border: 1px solid #446744;
+      border-width: 1px;
       font-weight: bold;
       padding: 10px;
       border-radius: 2px;
 
+      background-color: #D06161;
+      border-color: #CC7878;
+
       &:hover {
-        border-color: #55A562;
-        background-color: #467C47;
+        background-color: $heavy-button-background-color;
+        border-color: $heavy-button-border-color;
       }
 
       &:active {
