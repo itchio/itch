@@ -24,7 +24,7 @@ export async function dashboardGames (market, credentials) {
     games: arrayOf(game)
   })
 
-  // the `myGames` endpoint doesn't set the user_id
+  // the `myGames` endpoint doesn't set the userId
   normalized.entities.games::each((g) => g.userId = me.id)
   normalized.entities.users = {
     [me.id]: me
@@ -69,9 +69,9 @@ export async function collections (market, credentials, featuredIds) {
   const oldCollectionIds = market.getEntities('collections')::pluck('id')
 
   const prepareCollections = (normalized) => {
-    const colls = market.get_entities('collections')
-    normalized.entities.collections::each((coll, coll_id) => {
-      const old = colls[coll_id]
+    const colls = market.getEntities('collections')
+    normalized.entities.collections::each((coll, collId) => {
+      const old = colls[collId]
       if (old) {
         coll.gameIds = old.gameIds::union(coll.gameIds)
       }
@@ -89,12 +89,14 @@ export async function collections (market, credentials, featuredIds) {
 
   let newCollectionIds = myCollectionsRes.entities.collections::pluck('id')
 
-  for (const featuredId of featuredIds) {
-    const featuredCollectionRes = normalize(await api.collection(featuredId), {
+  // TODO: error handling
+  newCollectionIds = newCollectionIds::union(featuredIds)
+  const featuredReqs = await Promise.all(featuredIds.map(::api.collection))
+
+  for (const featuredReq of featuredReqs) {
+    const featuredCollectionRes = normalize(featuredReq, {
       collection: collection
     })
-
-    newCollectionIds = newCollectionIds::union(featuredCollectionRes.entities.collections::pluck('id'))
     market.saveAllEntities(prepareCollections(featuredCollectionRes))
   }
 

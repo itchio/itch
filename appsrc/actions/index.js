@@ -22,7 +22,10 @@ import {
   OPEN_MODAL,
   CLOSE_MODAL,
 
-  UPDATE_PREFERENCES
+  UPDATE_PREFERENCES,
+
+  FETCH_COLLECTION_GAMES,
+  COLLECTION_GAMES_FETCHED
 } from '../constants/action-types'
 
 export const languageSniffed = createAction(LANGUAGE_SNIFFED)
@@ -32,3 +35,6 @@ export const openModal = createAction(OPEN_MODAL)
 export const closeModal = createAction(CLOSE_MODAL)
 
 export const updatePreferences = createAction(UPDATE_PREFERENCES)
+
+export const fetchCollectionGames = createAction(FETCH_COLLECTION_GAMES)
+export const collectionGamesFetched = createAction(COLLECTION_GAMES_FETCHED)

@@ -147,11 +147,9 @@ module.exports = keyMirror({
   SEARCH_FINISHED: null,
   CLOSE_SEARCH: null,
 
-  /** Data sync functions */
-  GAME_STORE_DIFF: null,
-  CAVE_STORE_DIFF: null,
-  CAVE_STORE_CAVE_DIFF: null,
-  INSTALL_LOCATION_STORE_DIFF: null,
+  /** Data retrieval */
+  FETCH_COLLECTION_GAMES: null,
+  COLLECTION_GAMES_FETCHED: null,
 
   /** Start picking from a list of remembered sessions */
   LOGIN_START_PICKING: null,

@@ -5,8 +5,7 @@ import {getMarket} from '../sagas/market'
 import {omit} from 'underline'
 
 const initialState = {
-  ready: false,
-  entities: {}
+  ready: false
 }
 
 export default handleActions({
