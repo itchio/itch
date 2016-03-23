@@ -27,7 +27,7 @@ one on each side).
 Since the redux rewrite, there's only a single store per process:
 the browser store is the reference one, and it sends diffs to all renderer
 processes so that they're all kept in sync, using [redux-electron-enhancer][]
-(big props to )
+(big props to [Shiranka Miskin](https://github.com/samiskin) for his original version)
 
 [redux-electron-enhancer]: https://github.com/fasterthanlime/redux-electron-enhancer
 
@@ -233,7 +233,7 @@ coverage. It also runs a full linting of the source code.
 [nyc]: https://www.npmjs.com/package/nyc
 
 `test/runner` is a faster alternative. (If the `test` directory doesn't exist,
-just run `grunt copy`). See `docs/developing.md` for more details.
+just run `grunt copy`). See `docs/hacking/getting-started.md` for more details.
 
 The test harness we use is a spruced-up version of [substack/tape][], named
 zopf. It's basically the same except you can define cases, like so:
