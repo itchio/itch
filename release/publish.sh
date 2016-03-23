@@ -32,6 +32,11 @@ fi
 if [ "$CI_OS" = "linux" ]; then
   release/linux-finalize.sh
 
+  CI_PUBLISH="false"
+  if [ "$CI_CHANNEL" = "canary" ]; then
+    CI_PUBLISH="true"
+  fi
+
   UPLOADS="$UPLOADS $(echo build/*.deb build/*.rpm)"
   if [ "$CI_ARCH" = "386" ]; then
     DEB_ARCH="i386"
@@ -46,6 +51,7 @@ if [ "$CI_OS" = "linux" ]; then
       -e "s/{{CI_APPNAME}}/${CI_APPNAME}/g" \
       -e "s/{{CI_VERSION}}/${CI_VERSION}/g" \
       -e "s/{{CI_RELEASE_DATE}}/${CI_RELEASE_DATE}/g" \
+      -e "s/{{CI_PUBLISH}}/${CI_PUBLISH}/g" \
       -e "s/{{DEB_ARCH}}/${DEB_ARCH}/" \
       < release/bintray.${repo}.json \
       > bintray.json

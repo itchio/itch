@@ -20,5 +20,5 @@
       "matrixParams": { "override": 1 }
     }
   ],
-  "publish": false
+  "publish": {{CI_PUBLISH}}
 }

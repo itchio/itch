@@ -25,5 +25,5 @@
       }
     }
   ],
-  "publish": false
+  "publish": {{CI_PUBLISH}}
 }
