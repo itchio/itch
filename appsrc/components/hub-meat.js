@@ -6,27 +6,38 @@ import HubSearchResults from './hub-search-results'
 import HubItem from './hub-item'
 import HubGhostItem from './hub-ghost-item'
 
-import {each} from 'underline'
+import {each, map, indexBy, where} from 'underline'
 
 export class HubMeat extends Component {
   render () {
+    const {path, me, games, downloadKeys} = this.props
+
+    const children = []
+
+    if (path === 'featured') {
+      children.push(<div className='hub-grid'>You'd like some featured content wouldn't you?</div>)
+    } else if (path === 'dashboard') {
+      children.push(this.fakeGrid(games::where({userId: me.id})))
+    } else if (path === 'library') {
+      children.push(this.fakeGrid(downloadKeys::map((key) => games[key.gameId])::indexBy('id')))
+    }
+
     return <div className='hub-meat'>
-      {this.fakeGrid()}
+      {children}
       <HubSearchResults/>
     </div>
   }
 
-  fakeGrid () {
-    const {games} = this.props
+  fakeGrid (games) {
     const items = []
-    let id = 0
 
     games::each((game, id) => {
       items.push(<HubItem key={id} game={game}/>)
     })
 
+    let ghostId = 0
     for (let i = 0; i < 12; i++) {
-      items.push(<HubGhostItem key={id++}/>)
+      items.push(<HubGhostItem key={ghostId++}/>)
     }
 
     return <div className='hub-grid'>
@@ -36,11 +47,17 @@ export class HubMeat extends Component {
 }
 
 HubMeat.propTypes = {
-  games: PropTypes.object
+  path: PropTypes.string,
+  me: PropTypes.object,
+  games: PropTypes.object,
+  downloadKeys: PropTypes.object
 }
 
 const mapStateToProps = (state) => ({
-  games: state.market.games
+  path: state.session.navigation.path,
+  me: state.session.credentials.me,
+  games: state.market.games,
+  downloadKeys: state.market.downloadKeys
 })
 const mapDispatchToProps = (dispatch) => ({})
 

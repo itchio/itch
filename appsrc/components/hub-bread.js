@@ -8,6 +8,7 @@ import classNames from 'classnames'
 import {search} from '../actions'
 
 import Icon from './icon'
+import HubBreadDescription from './hub-bread-description'
 
 class HubBread extends Component {
   render () {
@@ -16,10 +17,7 @@ class HubBread extends Component {
     const searchClasses = classNames('search', {loading: searchLoading})
 
     return <div className='hub-bread'>
-      <section className='description'>
-        <h2><icon className='icon icon-tag'/> Garden, Grow and Plant</h2>
-        <h3>53 games | a collection by Don Whitaker</h3>
-      </section>
+      <HubBreadDescription/>
 
       <section className='filler'/>
 
