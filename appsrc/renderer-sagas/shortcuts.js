@@ -1,6 +1,6 @@
 
-import Combokeys from 'combokeys'
-import hookGlobalBind from 'combokeys/plugins/global-bind'
+import Combokeys from 'combokeys-ftl'
+import hookGlobalBind from 'combokeys-ftl/plugins/global-bind'
 
 const combo = new Combokeys(document.documentElement)
 hookGlobalBind(combo)
