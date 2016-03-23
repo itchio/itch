@@ -1,6 +1,6 @@
 {
   "package": {
-    "name": "itch",
+    "name": "{{CI_APPNAME}}",
     "repo": "rpm",
     "subject": "itchio"
   },

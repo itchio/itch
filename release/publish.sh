@@ -43,6 +43,7 @@ if [ "$CI_OS" = "linux" ]; then
     echo "Uploading to $repo repo"
     rm -f bintray.json
     sed \
+      -e "s/{{CI_APPNAME}}/${CI_APPNAME}/g" \
       -e "s/{{CI_VERSION}}/${CI_VERSION}/g" \
       -e "s/{{CI_RELEASE_DATE}}/${CI_RELEASE_DATE}/g" \
       -e "s/{{DEB_ARCH}}/${DEB_ARCH}/" \
