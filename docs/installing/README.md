@@ -1,5 +1,5 @@
 
-# Installing the app
+# Installing itch
 
 We've worked very hard on making the app as easy to install and keep up-to-date
 as possible.
@@ -16,6 +16,6 @@ if the automatic platform detection doesn't work for you.
 you might miss out on if you rely on the main download page. To learn more about these,
 simply refer to the appropriate subsection of this book:
 
-  * [Installing on Windows](win.md)
+  * [Installing on Windows](windows.md)
   * [Installing on Mac OSX](osx.md)
-  * [Installing on Linux](linux.md)
+  * [Installing on Linux](linux/README.md)

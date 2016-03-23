@@ -20,11 +20,13 @@ with an Open Source Developer certificate to the name of [Amos Wenger][].
 
 ![Verifying the code signature on Windows 10](windows-code-signature.png)
 
+*Open this dialog by right-clicking the installer, and choosing 'Properties'.*
+
 It's a good habit to verify the signatures of executables you download — if
 you encounter an installer that pretends to be the itch app, but doesn't have
 our digital signature on it, you should not use it as it may be malware.
 
-(Even the [canary version](../canary.md) is digitally signed with the same certificate.)
+(Even the [canary version](./canary.md) is digitally signed with the same certificate.)
 
 ### Windows Defender / security warnings
 
