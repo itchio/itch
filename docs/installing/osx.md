@@ -47,3 +47,9 @@ origin=Developer ID Application: Amos Wenger (B2N6FSRTPV)
 The app is self-updating on OSX, just like on Windows. Refer to the [Windows](./windows.md#updating) page for details.
 
 ## Uninstalling
+
+You can uninstall the app by dragging `itch.app` out of your `/Applications`
+folder and into the Trash.
+
+Note that this won't remove your library, which resides at `~/Library/Application Support/itch`,
+along with any additional install locations you have added from the app.
