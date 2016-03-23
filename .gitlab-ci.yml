@@ -9,6 +9,13 @@ stages:
   - deploy
   - notify
 
+book:
+  stage: test
+  tags:
+    - dropsy
+  script:
+    - release/ci-book.sh
+
 test:linux:
   stage: test
   tags:
@@ -91,13 +98,6 @@ deploy:windows:386:
     - release/ci-deploy.sh
   only:
     - tags
-
-deploy:book:
-  stage: deploy
-  tags:
-    - dropsy
-  script:
-    - release/ci-book.sh
 
 notify:
   stage: notify
