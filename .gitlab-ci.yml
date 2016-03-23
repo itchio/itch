@@ -92,6 +92,13 @@ deploy:windows:386:
   only:
     - tags
 
+deploy:book:
+  stage: deploy
+  tags:
+    - dropsy
+  script:
+    - release/ci-book.sh
+
 notify:
   stage: notify
   tags:
