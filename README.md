@@ -17,9 +17,9 @@ goal is not to replace the itch.io website.
 
 You can download it from <https://itch.io/app>.
 
-If you'd like to hack on the app instead, read [docs/developing.md][].
+If you'd like to hack on the app instead, read [docs/hacking][].
 
-[docs/developing.md]: docs/developing.md
+[docs/hacking/getting-started.md]: docs/hacking/getting-started.md
 
 ## License
 

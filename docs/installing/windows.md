@@ -56,7 +56,7 @@ Its behavior is:
 
 [Squirrel.Windows]: https://github.com/Squirrel/Squirrel.Windows
 
-![]()
+![](update-dialog.png)
 
 ## Uninstalling
 
