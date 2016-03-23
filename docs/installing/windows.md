@@ -1,8 +1,6 @@
 
 # Installing itch on Windows
 
-In a nutshell:
-
   * Download the latest version from <https://itch.io/app>
   * Double-click the installer executable
     * You should see a splash screen for a few seconds

@@ -1,8 +1,6 @@
 
 # Installing itch on OSX
 
-In a nutshell:
-
   * Download the latest version from <https://itch.io/app>
   * Open the DMG image, a window pops up:
 
