@@ -8,7 +8,7 @@
     * [Ubuntu, Debian, etc.](installing/linux/ubuntu-and-debian.md)
     * [Fedora, etc.](installing/linux/fedora.md)
     * [ArchLinux](installing/linux/archlinux.md)
-    * [Gentoo](installing/linux/gentoo.md)
+    * [Gentoo & others](installing/linux/gentoo.md)
   * [Dependencies (Advanced)](installing/dependencies.md)
   * [The canary version (Advanced)](installing/canary.md)
 

@@ -105,7 +105,7 @@ with a custom background made in GIMP.
 The .desktop file is generated via `release/X.desktop.in` files + `sed`. All
 locale files are parsed for translations of the app's name and description.
 
-deb & rpm packages are generated thanks to [fpm][], and uploaded to Bintray
+deb & rpm packages are generated thanks to [fpm][], and uploaded to [Bintray][]
 with [dpl][].
 
 [fpm]: https://github.com/jordansissel/fpm
@@ -126,11 +126,53 @@ used to happen a lot).*
 
 [github-release]: https://github.com/itchio/github-release
 
+### Actually publishing the release
+
+The automated pipeline only creates a release *draft* on GitHub - it still needs
+to be approved by a human before the update server starts serving it to users.
+
+[Amos][] is in charge of that. It is used to be a lot more work before the canary
+channel was a thing (see below) — previously, one had to download the draft
+builds, install them on each platform and [test them][qa checklist].
+
+[Amos]: https://github.com/fasterthanlime
+[qa checklist]: ./qa-checklist.md
+
+Similarly, [Bintray][] packages are created in draft mode and have to be published
+by hand. The actual "ship it" process looks like:
+
+  * Receive phone notification that release is ready (via [Pushover][])
+  * Make sure everything looks good
+  * Edit Github draft release, publish it
+  * Check out both rpm and deb repos on [Bintray][], publish unpublished packages.
+
+[Bintray]: https://bintray.com/itchio
+[Pushover]: https://pushover.net/
+
 ## The canary channel
 
 When making large structural changes, it is sometimes useful to have a completely
 separate version of the app with no expectations of stability.
 
-`itch_canary` is exactly that. It is meant to be installed in parallel of the stable
-app, and has a distinct branding (color-swapped pink to blue), uses different folders
-(`%APPDATA%/itch_canary`, `~/.config/itch_canary`, `~/Library/Application Support/itch_canary`).
+`itch_canary` is exactly that. It is meant to be installed in parallel of the
+stable app, and has a distinct branding, uses different folders
+(`%APPDATA%/itch_canary`, `~/.config/itch_canary`, `~/Library/Application
+Support/itch_canary`).
+
+![](itch-canary.png)
+
+It can be downloaded either:
+
+  * From the update server: <http://nuts-canary.itch.ovh/download>
+  * Directly from the releases page: <https://github.com/itchio/itch_canary/releases>
+
+*Note that releases appear out-of-order on the releases page, because GitHub
+associates them all with the same commit, since `itch_canary` is actually an
+empty repository.*
+
+Additionally:
+
+  * Do *not* expect to be able to do anything useful using the canary version
+  * *Do* expect the canary version to break on occasion
+  * *Do* report back if you try it and you've found an issue that doesn't seem
+  to be on the [issue tracker](https://github.com/itchio/itch/issues)
