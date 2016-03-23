@@ -172,7 +172,7 @@ empty repository.*
 
 Additionally:
 
-  * Do *not* expect to be able to do anything useful using the canary version
-  * *Do* expect the canary version to break on occasion
-  * *Do* report back if you try it and you've found an issue that doesn't seem
+  * **Do not** expect to be able to do anything useful using the canary version
+  * **Do** expect the canary version to break on occasion
+  * **Do** report back if you try it and you've found an issue that doesn't seem
   to be on the [issue tracker](https://github.com/itchio/itch/issues)

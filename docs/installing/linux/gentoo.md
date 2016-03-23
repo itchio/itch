@@ -26,3 +26,5 @@ In the meantime, you can always:
 You could put the launch command in a script somewhere in your `$PATH`.
 
 There are .desktop file templates in `release/` that you could adapt.
+
+For more detailed instructions, check the [hacking](../../hacking/getting-started.md) section.

@@ -1,8 +1,4 @@
 
-## For game developers
-
-Refer to the [app faq](https://itch.io/docs/app/faq) to know how to get your game running!
-
 ## Installing
 
 itch is built in HTML/SCSS/ES6 and runs inside of Electron. Install the
@@ -15,7 +11,7 @@ following to get started with development:
 [electron]: https://github.com/atom/electron
 
 ```
-$ npm install -g electron-prebuilt@0.36.8
+$ npm install -g electron-prebuilt@0.37.2
 ```
 
 * Check out this repository
