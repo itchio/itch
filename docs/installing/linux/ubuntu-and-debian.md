@@ -5,7 +5,7 @@ While you can simply head to <https://itch.io/app> and grab the latest .deb, we
 recommend you add our package repository instead, so that the app can remain
 up-to-date.
 
-## Adding our repository
+## Adding our APT repository
 
 We publish .deb packages of every release on Bintray:
 
@@ -17,7 +17,7 @@ The packages we publish are digitally signed, so that you can ensure that we
 are the ones that published it, and no one else.
 
 To allow your package manager to verify those signatures, you need to import our
-GPG key. Youcan do so by running the following command in a terminal:
+GPG key. You can do so by running the following command in a terminal:
 
 ```bash
 curl https://dl.itch.ovh/archive.key | sudo apt-key add -
@@ -50,10 +50,24 @@ to print the codename of your Debian-based distribution.
 
 ## Installing & updating
 
-Provided you have added the repository and have run `sudo apt-get update` at least
-once, installing should be as simple as `sudo apt-get install itch`.
+If you have successfully added our package repository, installing should be as simple as
+running `sudo apt-get update && sudo apt-get install itch` from a terminal.
+
+The package provides:
+
+  * An applications menu shortcut (via a .desktop file)
+  * The `/usr/bin/itch` launcher script, for command-line usage
 
 Refer to your distribution's manual to know how to keep packages up-to-date.
 Most desktop environments have some sort of graphical interface to prompt you to
 install updates, and you can always run `sudo apt-get update && sudo apt-get
 upgrade` yourself in a terminal.
+
+## Uninstalling
+
+Simply run `sudo apt-get remove itch` to uninstall itch from your system.
+
+Note that this won't remove your library, which resides at `$HOME/.config/itch`,
+along with any additional install locations you have added from the app.
+
+* `$HOME` is your personal directory, for example: /home/you*

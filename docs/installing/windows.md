@@ -46,17 +46,14 @@ hear back from them.
 
 ## Updating
 
-The windows version of the itch app is powered by [Squirrel.Windows][].
+The app's behavior when it comes to updating (itself) is:
 
-Its behavior is:
-
-  * Will automatically check for updates every 6 hours
+  * Checking for updates every 6 hours
+    * Or when manually asked to via the `Help -> Check for Updates` menu
   * When it finds an update, will download and apply it
-  * At which point it'll ask you if you want to either:
+  * At which point it'll prompt you to either:
     * Restart the app to take advantage of the new version right now, or
     * Snooze the update, and wait for the next time you restart the app yourself
-
-[Squirrel.Windows]: https://github.com/Squirrel/Squirrel.Windows
 
 ![](update-dialog.png)
 

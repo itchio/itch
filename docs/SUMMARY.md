@@ -34,4 +34,5 @@
   * [Data flow](hacking/data-flow.md)
   * [Coding style](hacking/coding-style.md)
   * [Environment variables](hacking/environment-variables.md)
+  * [Continuous deployment (Internal)](hacking/continuous-deployment.md)
   * [QA checklist (Internal)](hacking/qa-checklist.md)
