@@ -36,3 +36,6 @@
   * [Environment variables](hacking/environment-variables.md)
   * [Continuous deployment (Internal)](hacking/continuous-deployment.md)
   * [QA checklist (Internal)](hacking/qa-checklist.md)
+
+* [Appendix](appendix/README.md)
+  * [Building Linux software into a prefix](appendix/building-into-a-prefix.md)

@@ -53,4 +53,4 @@ Simply run `sudo yum remove itch` to uninstall itch from your system.
 Note that this won't remove your library, which resides at `$HOME/.config/itch`,
 along with any additional install locations you have added from the app.
 
-* `$HOME` is your personal directory, for example: /home/you*
+*`$HOME` is your personal directory, for example: /home/you*
