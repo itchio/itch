@@ -202,6 +202,10 @@ computer and dedicate a whole portion of your RAM to it.
 If you want to set up both a 64-bit and a 32-bit chroot of an older debian,
 for example, you'll need a 64-bit "host" (a recent Ubuntu, for example).
 
+The [Debootstrap][] family of tools is particularly helpful for setting debian chroots.
+
+[Debootstrap]: https://wiki.debian.org/Debootstrap
+
 #### Setting up your own build servers
 
 It's not uncommon for medium-sized software to have its own build servers. Thanks
