@@ -96,24 +96,34 @@ export function * _boot () {
 export function * _checkForSelfUpdate () {
   log(opts, 'Checking...')
   const uri = getFeedURL()
-  const resp = yield call(needle.requestAsync, 'GET', uri, {format: 'json'})
 
-  log(opts, `HTTP GET ${uri}: ${resp.statusCode}`)
-  if (resp.statusCode === 200) {
-    const downloadSelfUpdates = yield select((state) => state.preferences.downloadSelfUpdates)
+  try {
+    const resp = yield call(needle.requestAsync, 'GET', uri, {format: 'json'})
 
-    if (autoUpdater && !hadErrors && downloadSelfUpdates) {
-      yield put(selfUpdateAvailable({spec: resp.body, downloading: true}))
-      autoUpdater.checkForUpdates()
+    log(opts, `HTTP GET ${uri}: ${resp.statusCode}`)
+    if (resp.statusCode === 200) {
+      const downloadSelfUpdates = yield select((state) => state.preferences.downloadSelfUpdates)
+
+      if (autoUpdater && !hadErrors && downloadSelfUpdates) {
+        yield put(selfUpdateAvailable({spec: resp.body, downloading: true}))
+        autoUpdater.checkForUpdates()
+      } else {
+        yield put(selfUpdateAvailable({spec: resp.body, downloading: false}))
+      }
+    } else if (resp.statusCode === 204) {
+      yield put(selfUpdateNotAvailable({uptodate: true}))
+      yield call(delay, DISMISS_TIME)
+      yield put(dismissStatus())
     } else {
-      yield put(selfUpdateAvailable({spec: resp.body, downloading: false}))
+      yield put(selfUpdateError(`While trying to reach update server: ${resp.status}`))
     }
-  } else if (resp.statusCode === 204) {
-    yield put(selfUpdateNotAvailable())
-    yield call(delay, DISMISS_TIME)
-    yield put(dismissStatus())
-  } else {
-    yield put(selfUpdateError(`While trying to reach update server: ${resp.status}`))
+  } catch (e) {
+    if (e.code === 'ENOTFOUND') {
+      log(opts, 'Seems like we have no network connectivity, skipping self-update check')
+      yield put(selfUpdateNotAvailable({uptodate: false}))
+    } else {
+      throw e
+    }
   }
 }
 

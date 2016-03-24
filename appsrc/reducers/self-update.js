@@ -28,7 +28,8 @@ export default handleActions({
   },
 
   SELF_UPDATE_NOT_AVAILABLE: (state, action) => {
-    return {...state, checking: false, available: null, uptodate: true}
+    const {uptodate} = action.payload
+    return {...state, checking: false, available: null, uptodate}
   },
 
   SELF_UPDATE_ERROR: (state, action) => {

@@ -1,8 +1,4 @@
 
-import {opts} from '../logger'
-import mklog from '../util/log'
-const log = mklog('preboot')
-
 import {takeEvery} from 'redux-saga'
 import {call, put} from 'redux-saga/effects'
 
@@ -28,18 +24,14 @@ export function * importLegacyDBs () {
 
   const usersDir = path.join(app.getPath('userData'), 'users')
   const dbFiles = yield call(sf.glob, '*/db.jsonl', {cwd: usersDir})
-  log(opts, `Found db files: ${JSON.stringify(dbFiles, null, 2)}`)
 
   for (const dbFile of dbFiles) {
     const userId = dbFile.split(path.sep)[0]
-    log(opts, `Stumbled upon legacy db for user ${userId}`)
     const oldDBFilename = path.join(usersDir, dbFile)
     const obsoleteMarker = oldDBFilename + '.obsolete'
 
     const markerExists = yield call(sf.exists, obsoleteMarker)
-    if (markerExists) {
-      log(opts, `nothing to import from legacy db ${dbFile}`)
-    } else {
+    if (!markerExists) {
       const response = yield call(legacyDB.importOldData, oldDBFilename)
       const perUserResponse = {entities: response.entities::omit('caves')}
       const globalResponse = {
@@ -67,7 +59,6 @@ export function * importLegacyDBs () {
   }
 
   yield call([globalMarket, globalMarket.close])
-  log(opts, 'All legacy DBs imported!')
 }
 
 export function * _preboot () {
