@@ -12,7 +12,7 @@ import mklog from '../util/log'
 const log = mklog('fetch-saga')
 import {opts} from '../logger'
 
-import {getMarket} from './market'
+import {getUserMarket} from './market'
 import fetch from '../util/fetch'
 
 import {map, filter, isEqual} from 'underline'
@@ -61,7 +61,7 @@ function * fetchUsuals (credentials) {
 
   log(opts, `Fetching the usuals`)
 
-  const market = getMarket()
+  const market = getUserMarket()
 
   yield [
     call(fetch.dashboardGames, market, credentials),
@@ -107,7 +107,7 @@ function * _fetchCollectionGames (action) {
   if (!credentials.key) {
     return
   }
-  const market = getMarket()
+  const market = getUserMarket()
 
   const collections = yield select((state) => state.market.collections)
   const fetchedCollections = yield select((state) => state.session.cachedCollections.fetched)

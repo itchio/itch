@@ -10,7 +10,7 @@ const initialState = {
 export default handleActions({
   LOGIN_SUCCEEDED: (state, action) => {
     const {me} = action.payload
-    const libraryDir = path.join(app.getPath('userData'), 'users', me.id)
+    const libraryDir = path.join(app.getPath('userData'), 'users', '' + me.id)
     return {...state, libraryDir}
   },
 

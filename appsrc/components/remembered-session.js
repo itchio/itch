@@ -16,7 +16,7 @@ export class RememberedSession extends Component {
       forgetSessionRequest({id, username})
     }
 
-    return <div className='remembered-session' onClick={() => loginWithToken({username, key})}>
+    return <div className='remembered-session' onClick={() => loginWithToken({username, key, me})}>
     <img className='avatar' src={coverUrl}/>
     <div className='rest'>
     <p className='username'>{username}</p>

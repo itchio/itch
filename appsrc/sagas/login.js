@@ -42,7 +42,12 @@ export function * _loginWithToken (action) {
     const me = (yield call([keyClient, keyClient.me])).user
     yield put(loginSucceeded({key, me}))
   } catch (e) {
-    yield put(loginFailed({username, errors: e.errors || e.stack || e}))
+    const {me} = action.payload
+    if (me && e.code === 'ENOTFOUND') {
+      yield put(loginSucceeded({key, me}))
+    } else {
+      yield put(loginFailed({username, errors: e.errors || e.stack || e}))
+    }
   }
 }
 

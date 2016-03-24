@@ -151,9 +151,7 @@ export default class Market extends EventEmitter {
       await Promise.all(promises)
     }
 
-    if (this.dispatch) {
-      this.emit('commit', {updated, initial})
-    }
+    this.emit('commit', {updated, initial})
   }
 
   deleteAllEntities (response, opts) {
@@ -185,10 +183,8 @@ export default class Market extends EventEmitter {
       Promise.all(promises).then(opts.ondone)
     }
 
-    if (this.dispatch) {
-      const deleted = response.entities
-      this.emit('commit', {deleted})
-    }
+    const deleted = response.entities
+    this.emit('commit', {deleted})
   }
 
   getEntities (table) {

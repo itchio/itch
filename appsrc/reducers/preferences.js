@@ -1,9 +1,11 @@
 
 import {handleActions} from 'redux-actions'
 
+const OFFLINE_MODE = process.env.OFFLINE_MODE === '1'
+
 const initialState = {
   downloadSelfUpdates: true,
-  offlineMode: false
+  offlineMode: OFFLINE_MODE
 }
 
 export default handleActions({
