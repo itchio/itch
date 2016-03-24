@@ -12,7 +12,7 @@ page tries to explain how.
 ## Common game engines (Unity, etc.)
 
 Game engines like Unity take care of bundling any required libraries directly in
-their export - some of them will give you a folder that you can just zip up and
+their export - some of them will give you a folder that you can just compress and
 upload to itch.io, the app will install and run them, no questions asked.
 
 [Unity]: https://unity3d.com/
@@ -27,6 +27,16 @@ to the manual method described below:
 [@atmospherium]: http://twitter.com/atmospherium
 [ldue]: http://ludumdare.com/compo/2013/12/28/unity-export-for-linux-addendum-64-bit/
 
+## Contracting out
+
+If you aren't familiar with Linux at all, the most effective use of your resources
+might be to let someone else handle it. There is a lot of knowledge involved, and
+if you're not the tinkering type, a lot of frustration in store.
+
+Some people port games to Linux for a living — finding them online shouldn't be
+too hard. If you have a Publisher, they might be able to connect you to someone.
+If they can't, get a better publisher.
+
 ## Homemade / low-level engine (Advanced)
 
 If you're compiling binaries yourselves, either using a lower-level game engine,
@@ -34,7 +44,7 @@ or coding your own, then you need to bundle the required libraries yourself.
 
 This section describes one possible way to go about it - the details are up to you.
 
-### 1. Distribute a simple .zip archive
+### 1. Distribute a simple archive
 
 .deb and .rpm are both complicated package formats with a large set of rules,
 maintaining such packages are a full-time job, and there is no official way to
@@ -43,6 +53,10 @@ install them without administrator privilege.
 Instead, simply pack your assets, executables and libraries in a simple archive,
 which itch will be able to unpack, and keep up-to-date in a user-owned folder
 without ever asking for their password.
+
+*Note: some archivers will not maintain file permissions in .zip archives.
+For that reason, you may want to use .tar.gz or .tar.bz2 instead. All three
+are supported by the itch app.*
 
 ### 2. Ship both 32-bit and 64-bit binaries
 
@@ -91,10 +105,10 @@ else
 fi
 ```
 
-*This script is a simplified version of the [Open Hexagon Shell Script][openhex]
+*This script is a simplified version of the [GameName.sh][gamename]
 by Ethan "flibitijibibo" Lee*
 
-[openhex]: https://github.com/timofonic/OpenHexagon-Unix/blob/master/OpenHexagon
+[gamename]: https://gist.github.com/flibitijibibo/5365145
 
 ### Finding which libraries you need to include
 
@@ -146,6 +160,13 @@ $ bins/plant64
 bins/plant64: error while loading shared libraries: libSDL2-2.0.so.0: cannot open shared object file: No such file or directory
 ```
 
+**Important note:** `glibc` and `libstdc++` are libraries you usually do *not*
+want to bundle. Just make sure your application doesn't depend on a version of
+them that is too recent (as explained below).
+
+The same advice applies to most `libGL*.so` libraries — don't bundle your own
+graphic card's drivers!
+
 ### Building on older systems for maximum compatibility
 
 As a developer, you might be running the latest and greatest version of your
@@ -180,11 +201,11 @@ your distribution builds (that don't involve rebooting)
 
 #### Using virtual machines (VM)
 
-You can use a virtual machine provider like [VirtualBox][], and have two Linux
+You can use a virtual machine provider like [VMWare Player][], and have two Linux
 images, one 32-bit (386), and one 64-bit (amd64), so that you can produce both
 versions of your executables and all required libraries.
 
-[Virtualbox]: https://www.virtualbox.org/
+[VMWare Player]: https://www.vmware.com/products/player
 
 Take an old Debian (7.x for example), build your dependencies yourself in a
 prefix, and you'll be sure your game can run almost anywhere. You can refer to
@@ -220,7 +241,7 @@ infrastructure
 
 See how [we deploy itch continuously](../../hacking/continuous-deployment.md) for an example!
 
-## 3. Get testers!
+### 3. Get testers!
 
 Even when following all the advice in this page to the letter, mistakes are
 easy to make. The best way to make sure your game runs everywhere is to have
@@ -234,3 +255,14 @@ guide for an overview of your various options.
 
 *Don't forget to mention testers in your software's credits. Testers can make
 or break software.*
+
+## Appendix: FNA/XNA games
+
+The FNA wiki describes how to use MojoSetup to redistribute games:
+
+  * <https://github.com/FNA-XNA/FNA/wiki/3:-Distributing-FNA-Games#gnulinux>
+
+This approach is friendly both for manual installations and is a supported
+installation method in the itch app.
+
+*Special thanks to Ethan Lee for proofreading this page and contributing advice.*
