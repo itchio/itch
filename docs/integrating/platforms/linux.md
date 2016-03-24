@@ -37,6 +37,10 @@ Some people port games to Linux for a living — finding them online shouldn't b
 too hard. If you have a Publisher, they might be able to connect you to someone.
 If they can't, get a better publisher.
 
+If you *are* the tinkering type, you may want to check out Ethan Lee's
+Magfest 2016 slides: http://www.flibitijibibo.com/magfest2016/ which covers
+a bunch of cross-platform development subjects out of the scope of this book.
+
 ## Homemade / low-level engine (Advanced)
 
 If you're compiling binaries yourselves, either using a lower-level game engine,
