@@ -2,12 +2,8 @@
 import Promise from 'bluebird'
 import {camelify, camelifyObject} from './format'
 
-import {dbCommit, dbClosed} from '../actions'
-
 import path from 'path'
 import sf from './sf'
-import {app} from '../electron'
-import legacyDB from './legacy-db'
 import mklog from './log'
 const log = mklog('market')
 const opts = {logger: new mklog.Logger()}
@@ -15,38 +11,27 @@ const opts = {logger: new mklog.Logger()}
 import deepFreeze from 'deep-freeze'
 import {isEqual, every} from 'underline'
 
-export default class Market {
-  constructor (dispatch) {
+import {EventEmitter} from 'events'
+
+export default class Market extends EventEmitter {
+  constructor () {
+    super()
     this.data = {}
-    this.libraryDir = null
     this._atomicInvocations = 0
-    this.dispatch = dispatch
   }
 
-  async load (userId) {
+  async load (dbPath) {
+    log(opts, `loading market db from ${dbPath}`)
+
+    this.dbPath = dbPath
     const self = this
-    this.userId = userId
-
-    log(opts, `loading db for user ${userId}`)
-    this.libraryDir = path.join(app.getPath('userData'), 'users', userId.toString())
-
-    const oldDBFilename = path.join(this.libraryDir, 'db.jsonl')
-    const obsoleteMarker = oldDBFilename + '.obsolete'
-    if (!(await sf.exists(obsoleteMarker))) {
-      const response = await legacyDB.importOldData(oldDBFilename)
-      await this.saveAllEntities(response, {wait: true})
-      await sf.writeFile(obsoleteMarker, `If everything is working fine, you may delete both ${oldDBFilename} and this file!`)
-    } else {
-      log(opts, `nothing to import from legacy db`)
-    }
-
     const toSave = {}
 
     const entities = {}
     const loadRecord = async function (recordPath) {
       const tokens = recordPath.split('/')
-      const [tableName, entityID] = tokens
-      const file = path.join(self.getDBRoot(), recordPath)
+      const [tableName, entityId] = tokens
+      const file = path.join(self.getDbRoot(), recordPath)
       const contents = await sf.readFile(file)
 
       const camelTableName = camelify(tableName)
@@ -56,58 +41,60 @@ export default class Market {
       try {
         record = JSON.parse(contents)
       } catch (e) {
-        log(opts, `warning: skipping malformed record ${tableName}/${entityID} (${e})`)
+        log(opts, `warning: skipping malformed record ${tableName}/${entityId} (${e})`)
         return
       }
 
       const camelRecord = camelifyObject(record)
       if (camelTableName !== tableName || !camelRecord::isEqual(record)) {
         toSave[camelTableName] = toSave[camelTableName] || []
-        toSave[camelTableName].push(entityID)
+        toSave[camelTableName].push(entityId)
       }
-      table[entityID] = camelRecord
+      table[entityId] = camelRecord
       entities[camelTableName] = table
     }
 
     const wipeTemp = async function (recordPath) {
-      const file = path.join(self.getDBRoot(), recordPath)
+      const file = path.join(self.getDbRoot(), recordPath)
       await sf.wipe(file)
     }
 
-    await sf.glob('*/*.tmp*', {cwd: this.getDBRoot()}).map(wipeTemp, {concurrency: 4})
-    await sf.glob('*/*', {cwd: this.getDBRoot()}).map(loadRecord, {concurrency: 4})
+    log(opts, `cleaning temporary files from ${dbPath}`)
+    await sf.glob('*/*.tmp*', {cwd: this.getDbRoot()}).map(wipeTemp, {concurrency: 4})
+
+    log(opts, `loading records for ${dbPath}`)
+    await sf.glob('*/*', {cwd: this.getDbRoot()}).map(loadRecord, {concurrency: 4})
+
+    log(opts, `migrating old entries for ${dbPath}`)
     await this.saveAllEntities({entities: toSave}, {wait: true})
 
-    log(opts, `done loading db for user ${userId}`)
-    ;(async function () {
-      try {
-        await self.saveAllEntities({entities}, {persist: false, initial: true})
-      } catch (e) {
-        log(opts, `while loading db for user ${userId}: ${e.stack || e}`)
-      }
-    })()
+    log(opts, `populating in-memory DB with disk records`)
+    await self.saveAllEntities({entities}, {persist: false, initial: true})
+
+    log(opts, `done loading db from ${dbPath}`)
+    this.emit('ready')
   }
 
-  getDBRoot () {
-    if (!this.libraryDir) {
-      throw new Error('tried to get db root before library dir was set')
+  getDbRoot () {
+    if (!this.dbPath) {
+      throw new Error('tried to get db root before it was set')
     }
 
-    return path.join(this.libraryDir, 'marketdb')
+    return this.dbPath
   }
 
   /* Data persistence / retrieval */
 
-  entityPath (tableName, entityID) {
-    return path.join(this.getDBRoot(), `${tableName}/${entityID}`)
+  entityPath (tableName, entityId) {
+    return path.join(this.getDbRoot(), `${tableName}/${entityId}`)
   }
 
-  async saveToDisk (tableName, entityID, record) {
-    const file = this.entityPath(tableName, entityID)
+  async saveToDisk (tableName, entityId, record) {
+    const file = this.entityPath(tableName, entityId)
     const tmpPath = file + '.tmp' + (this._atomicInvocations++)
     await sf.writeFile(tmpPath, JSON.stringify(record))
 
-    if (this.data[tableName] && this.data[tableName][entityID]) {
+    if (this.data[tableName] && this.data[tableName][entityId]) {
       await sf.rename(tmpPath, file)
     } else {
       // entity has been deleted in the meantime
@@ -115,8 +102,8 @@ export default class Market {
     }
   }
 
-  async deleteFromDisk (tableName, entityID) {
-    await sf.wipe(this.entityPath(tableName, entityID))
+  async deleteFromDisk (tableName, entityId) {
+    await sf.wipe(this.entityPath(tableName, entityId))
   }
 
   async saveAllEntities (response, opts) {
@@ -135,21 +122,21 @@ export default class Market {
       let table = this.data[tableName] || {}
       updated[tableName] = updated[tableName] || []
 
-      for (const entityID of Object.keys(entities)) {
-        updated[tableName].push(entityID)
-        const entity = entities[entityID]
+      for (const entityId of Object.keys(entities)) {
+        updated[tableName].push(entityId)
+        const entity = entities[entityId]
 
-        const record = table[entityID] || {}
+        const record = table[entityId] || {}
         const same = Object.keys(entity)::every(
           (key) => entity[key]::isEqual(record[key])
         )
 
         if (!same) {
           const newRecord = deepFreeze(Object.assign({}, record, entity))
-          table[entityID] = newRecord
+          table[entityId] = newRecord
 
           if (persist) {
-            let p = this.saveToDisk(tableName, entityID, newRecord)
+            let p = this.saveToDisk(tableName, entityId, newRecord)
             if (wait) {
               promises.push(p)
             }
@@ -165,7 +152,7 @@ export default class Market {
     }
 
     if (this.dispatch) {
-      this.dispatch(dbCommit({updated, initial}))
+      this.emit('commit', {updated, initial})
     }
   }
 
@@ -182,10 +169,10 @@ export default class Market {
       const entities = response.entities[tableName]
       const table = this.data[tableName] || {}
 
-      for (const entityID of entities) {
-        delete table[entityID]
+      for (const entityId of entities) {
+        delete table[entityId]
 
-        const p = this.deleteFromDisk(tableName, entityID)
+        const p = this.deleteFromDisk(tableName, entityId)
         if (promises) {
           promises.push(p)
         }
@@ -200,7 +187,7 @@ export default class Market {
 
     if (this.dispatch) {
       const deleted = response.entities
-      this.dispatch(dbCommit({deleted}))
+      this.emit('commit', {deleted})
     }
   }
 
@@ -212,18 +199,13 @@ export default class Market {
   }
 
   clear () {
-    for (const key in this.data) {
-      if (this.data.hasOwnProperty(key)) {
-        delete this.data[key]
-      }
-    }
+    this.data = {}
   }
 
   close () {
-    log(opts, `closing db for user ${this.userId}`)
+    log(opts, `closing db ${this.dbPath}`)
     this.clear()
-    this.dispatch(dbClosed())
-    this.dispatch = null
-    this.libraryDir = null
+    this.emit('close')
+    this.dbPath = null
   }
 }

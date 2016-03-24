@@ -1,4 +1,5 @@
 
+import preboot from './preboot'
 import selfUpdate from './self-update'
 import onboarding from './onboarding'
 import rememberedSessions from './remembered-sessions'
@@ -17,6 +18,7 @@ import menu from './menu'
 import fetch from './fetch'
 
 export default [
+  preboot,
   selfUpdate,
   onboarding,
   rememberedSessions,

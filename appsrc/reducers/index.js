@@ -2,6 +2,7 @@
 import {combineReducers} from 'redux'
 
 import modals from './modals'
+import globalMarket from './global-market'
 import market from './market'
 import system from './system'
 import setup from './setup'
@@ -14,6 +15,7 @@ import preferences from './preferences'
 
 const reducer = combineReducers({
   modals,
+  globalMarket,
   market,
   system,
   setup,

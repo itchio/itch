@@ -2,6 +2,7 @@
 import {createAction} from 'redux-actions'
 
 import {
+  PREBOOT,
   BOOT,
 
   SETUP_STATUS,
@@ -13,6 +14,7 @@ import {
   QUIT_ELECTRON_APP
 } from '../constants/action-types'
 
+export const preboot = createAction(PREBOOT)
 export const boot = createAction(BOOT)
 
 export const setupStatus = createAction(SETUP_STATUS)

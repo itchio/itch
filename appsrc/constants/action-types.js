@@ -3,6 +3,10 @@ import keyMirror from 'keymirror'
 
 // not using 'export default' so each constant is a separate export
 module.exports = keyMirror({
+  // run upgrade operations
+  PREBOOT: null,
+
+  // actually start the app
   BOOT: null,
 
   // Chromium is good at retrieving the user's language from the innards of the OS
@@ -25,9 +29,13 @@ module.exports = keyMirror({
   START_ONBOARDING: null,
   EXIT_ONBOARDING: null,
 
-  DB_COMMIT: null,
-  DB_READY: null,
-  DB_CLOSED: null,
+  GLOBAL_DB_COMMIT: null,
+  GLOBAL_DB_READY: null,
+  GLOBAL_DB_CLOSED: null,
+
+  USER_DB_COMMIT: null,
+  USER_DB_READY: null,
+  USER_DB_CLOSED: null,
 
   /* Background stuff */
   OPERATION_FAILED: null,

@@ -1,42 +1,5 @@
 
-import {handleActions} from 'redux-actions'
-import {getMarket} from '../sagas/market'
+import makeMarketReducer from './make-market-reducer'
+import {getUserMarket} from '../sagas/market'
 
-import {omit} from 'underline'
-
-const initialState = {
-  ready: false
-}
-
-export default handleActions({
-  LOGOUT: (state, action) => {
-    return initialState
-  },
-
-  DB_COMMIT: (state, action) => {
-    const {updated = {}, deleted = {}, initial = false} = action.payload
-    const market = getMarket()
-
-    for (const tableName of Object.keys(deleted)) {
-      const deletedIds = deleted[tableName]
-      const updatedTable = (state[tableName] || {})::omit(deletedIds)
-      state = {...state, [tableName]: updatedTable}
-    }
-
-    for (const tableName of Object.keys(updated)) {
-      const updatedIds = updated[tableName]
-      const records = market.getEntities(tableName)
-
-      let updatedTable = (state[tableName] || {})
-      for (const recordId of updatedIds) {
-        updatedTable = {...updatedTable, [recordId]: records[recordId]}
-      }
-      state = {...state, [tableName]: updatedTable}
-    }
-
-    if (initial) {
-      state = {...state, ready: true}
-    }
-    return state
-  }
-}, initialState)
+export default makeMarketReducer('USER', getUserMarket)

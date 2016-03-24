@@ -26,7 +26,7 @@ autoUpdate() // no need to wait for app.on('ready')
 import {app} from './electron'
 
 import {
-  boot,
+  preboot,
   prepareQuit,
   focusWindow,
   openUrl
@@ -48,7 +48,7 @@ app.on('ready', () => {
   }
   handleUrls(process.argv)
 
-  store.dispatch(boot())
+  store.dispatch(preboot())
 })
 
 app.on('activate', () => {

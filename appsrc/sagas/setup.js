@@ -10,6 +10,7 @@ import {BOOT} from '../constants/action-types'
 import {setupStatus, setupDone} from '../actions'
 
 import logger from '../logger'
+
 import createQueue from '../sagas/queue'
 
 export function augmentPath () {

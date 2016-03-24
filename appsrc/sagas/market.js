@@ -1,58 +1,109 @@
 
 import {takeEvery} from 'redux-saga'
-import {take, race, fork, put, call} from 'redux-saga/effects'
+import {take, race, fork, call} from 'redux-saga/effects'
 
 import createQueue from './queue'
+import pathmaker from '../util/pathmaker'
 
-import {dbReady} from '../actions'
-import {LOGIN_SUCCEEDED, DB_COMMIT, DB_CLOSED, LOGOUT} from '../constants/action-types'
+import {
+  userDbReady,
+  userDbCommit,
+  userDbClosed,
+
+  globalDbReady,
+  globalDbCommit,
+  globalDbClosed
+} from '../actions'
+
+import {
+  LOGIN_SUCCEEDED,
+  BOOT,
+  USER_DB_CLOSED,
+  GLOBAL_DB_CLOSED,
+  LOGOUT
+} from '../constants/action-types'
 
 import Market from '../util/market'
 
-let market = null
+let userMarket = null
 
 // abstraction leak but helps halving the bandwidth between browser and renderer:
 // the reducer can just pick data from here instead of getting it from the message,
 // which would also be serialized & sent by JSON
-export function getMarket () {
-  if (!market) {
-    throw new Error('called getMarket before market initialization')
+export function getUserMarket () {
+  if (!userMarket) {
+    throw new Error('called getUserMarket before market initialization')
   }
-  return market
+  return userMarket
 }
 
-export function * _dbCommit (action) {
-  const {initial} = action.payload
-  if (initial) {
-    yield put(dbReady())
+let globalMarket = null
+
+export function getGlobalMarket () {
+  if (!globalMarket) {
+    throw new Error('called getUserMarket before market initialization')
   }
+  return globalMarket
+}
+
+export function * _boot (action) {
+  const queue = createQueue('global-market')
+
+  globalMarket = new Market()
+
+  globalMarket.on('ready', () => {
+    queue.dispatch(globalDbReady())
+  })
+  globalMarket.on('commit', (payload) => {
+    queue.dispatch(globalDbCommit(payload))
+  })
+  globalMarket.on('close', () => {
+    queue.dispatch(globalDbClosed())
+  })
+
+  const dbPath = pathmaker.globalDbPath()
+  yield fork([globalMarket, globalMarket.load], dbPath)
+
+  yield race({
+    task: call(queue.exhaust, {endType: GLOBAL_DB_CLOSED}),
+    cancel: take(LOGOUT)
+  })
 }
 
 export function * _loginSucceeded (action) {
-  const queue = createQueue('market')
+  const queue = createQueue('user-market')
 
   const {me} = action.payload
-  market = new Market((action) => {
-    queue.dispatch(action)
+  userMarket = new Market()
+
+  userMarket.on('ready', () => {
+    queue.dispatch(userDbReady())
+  })
+  userMarket.on('commit', (payload) => {
+    queue.dispatch(userDbCommit(payload))
+  })
+  userMarket.on('close', () => {
+    queue.dispatch(userDbClosed())
   })
 
-  yield fork([market, market.load], me.id)
+  const dbPath = pathmaker.userDbPath(me.id)
+  yield fork([userMarket, userMarket.load], dbPath)
 
   yield race({
-    task: call(queue.exhaust, {endType: DB_CLOSED}),
+    task: call(queue.exhaust, {endType: USER_DB_CLOSED}),
     cancel: take(LOGOUT)
   })
 }
 
 export function * _logout (action) {
-  console.log(`closing market for user ${market.userId}`)
-  market.close()
-  market = null
+  console.log(`closing user market`)
+  userMarket.close()
+  userMarket = null
 }
 
 export default function * marketSaga () {
   yield [
-    takeEvery(DB_COMMIT, _dbCommit),
+    takeEvery(BOOT, _boot),
     takeEvery(LOGIN_SUCCEEDED, _loginSucceeded),
     takeEvery(LOGOUT, _logout)
   ]
