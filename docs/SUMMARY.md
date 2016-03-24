@@ -38,4 +38,5 @@
   * [QA checklist (Internal)](hacking/qa-checklist.md)
 
 * [Appendix](appendix/README.md)
+  * [Acknowledgements](appendix/acknowledgements.md)
   * [Building Linux software into a prefix](appendix/building-into-a-prefix.md)

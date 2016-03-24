@@ -68,6 +68,9 @@ At the time of this writing, 32-bit processors are becoming rarer, but 32-bit
 operating systems are still a reality. Distributing both 32-bit and 64-bit
 binaries is a small effort that prevents a lot of headaches.
 
+*Unlike Windows, 64-bit installations of Linux might not be able to run 32-bit
+applications, at least not out-of-the-box.*
+
 Here's one way to do it: structure your game with separate folders, like so:
 
 ```
