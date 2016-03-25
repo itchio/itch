@@ -2,7 +2,7 @@
 import {handleActions} from 'redux-actions'
 import {createStructuredSelector} from 'reselect'
 
-import {indexBy} from 'underline'
+import {indexBy, omit} from 'underline'
 
 const initialState = {
   tasks: {}
@@ -27,19 +27,19 @@ const reducer = handleActions({
 
   TASK_ENDED: (state, action) => {
     const {id} = action.payload
+    const {tasks} = state
     const newTasks = tasks::omit(id)
     return {...state, tasks: newTasks}
-  },
+  }
 }, initialState)
 
 const selector = createStructuredSelector({
-  tasksByCaveId: (state) => state.tasks::indexBy('caveId')
+  tasksByCaveId: (state) => state.tasks::indexBy('caveId'),
   tasksByGameId: (state) => state.tasks::indexBy('gameId')
 })
 
 export default (state, action) => {
   const reducerFields = reducer(state, action)
   const additionalFields = state ? selector(state) : {}
-  return {...reducerFIelds, ...additionalFields}
+  return {...reducerFields, ...additionalFields}
 }
-
