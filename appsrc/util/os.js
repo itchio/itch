@@ -16,11 +16,11 @@ const self = {
   },
 
   inBrowser: function () {
-    return self.process_type() === 'browser'
+    return self.processType() === 'browser'
   },
 
   inRenderer: function () {
-    return self.process_type() === 'renderer'
+    return self.processType() === 'renderer'
   },
 
   processType: function () {

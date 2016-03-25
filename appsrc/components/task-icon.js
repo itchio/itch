@@ -1,37 +1,18 @@
 
-import r from 'r-dom'
-import {PropTypes} from 'react'
-import ShallowComponent from './shallow-component'
+import React, {Component, PropTypes} from 'react'
 
 import Icon from './icon'
 
-// TODO: move to `constants/`
-let task_to_icon = {
-  'report': 'upload-to-cloud',
-  'error': 'heart-broken',
-  'find-upload': 'stopwatch',
-  'download': 'download',
-  'download-queued': 'hand-paper-o',
-  'install': 'file-zip',
-  'uninstall': 'delete',
-  'ask-before-install': 'install',
-  'configure': 'cog',
-  'awaken': 'stopwatch',
-  'launch': 'fire',
-  'check-for-update': 'stopwatch',
-  'idle': 'checkmark'
-}
+import taskToIcon from '../constants/icon-for-tasks'
 
 /**
  * An icon that represents the state of a given task
  */
-class TaskIcon extends ShallowComponent {
+class TaskIcon extends Component {
   render () {
-    let task = this.props.task || ''
-    let action = this.props.action || 'launch'
-    let spin = !!this.props.spin
-    let icon = task_to_icon[task] || ''
+    const {task = '', action = 'launch', spin = false} = this.props
 
+    let icon = taskToIcon[task] || ''
     if (task === 'idle') {
       if (action === 'open') {
         icon = 'folder-open'
@@ -40,12 +21,14 @@ class TaskIcon extends ShallowComponent {
       }
     }
 
-    return r(Icon, {icon, spin})
+    return <Icon icon={icon} spin={spin}/>
   }
 }
 
 TaskIcon.propTypes = {
-  task: PropTypes.string
+  task: PropTypes.string,
+  action: PropTypes.string,
+  spin: PropTypes.any
 }
 
 export default TaskIcon

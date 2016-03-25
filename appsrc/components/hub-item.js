@@ -4,11 +4,7 @@ import {createStructuredSelector} from 'reselect'
 
 import {connect} from './connect'
 
-class MainAction extends Component {
-  render () {
-    return <span>main action</span>
-  }
-}
+import MainAction from './game-cell/main-action'
 
 class SecondaryAction extends Component {
   render () {

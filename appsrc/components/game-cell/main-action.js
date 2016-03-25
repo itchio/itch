@@ -1,26 +1,24 @@
 
-import r from 'r-dom'
-import {PropTypes} from 'react'
-import ShallowComponent from '../shallow-component'
+import React, {Component, PropTypes} from 'react'
+import {connect} from '../connect'
+import classNames from 'classnames'
 
-import Tooltip from 'rc-tooltip'
 import Icon from '../icon'
 import TaskIcon from '../task-icon'
 
-import AppActions from '../../actions/app-actions'
 import ClassificationActions from '../../constants/classification-actions'
 
 import os from '../../util/os'
 const platform = os.itchPlatform()
 
-let linearGradient = (progress) => {
+const linearGradient = (progress) => {
   let percent = (progress * 100).toFixed() + '%'
   let doneColor = '#444'
   let undoneColor = '#222'
   return `-webkit-linear-gradient(left, ${doneColor}, ${doneColor} ${percent}, ${undoneColor} ${percent}, ${undoneColor})`
 }
 
-let iconInfo = (cave) => {
+const iconInfo = (cave) => {
   let progress = cave ? cave.progress : 0
   let task = cave ? cave.task : null
   let spin = false
@@ -38,55 +36,50 @@ let iconInfo = (cave) => {
   return {task, spin}
 }
 
-class MainAction extends ShallowComponent {
+class MainAction extends Component {
   render () {
-    let t = this.t
+    const {t, cave, game, mayDownload} = this.props
+    const {classification} = game
+    const action = ClassificationActions[classification]
 
-    let cave = this.props.cave
-    let game = this.props.game
-    let platformCompatible = this.props.platformCompatible
-    let mayDownload = this.props.mayDownload
-
-    let classification = game.classification
-    let action = ClassificationActions[classification]
+    let {platformCompatible} = this.props
     if (action === 'open') {
       platformCompatible = true
     }
 
-    let progress = cave ? cave.progress : 0
-    let info = iconInfo(cave)
-    let task = info.task
-    let spin = info.spin
+    const progress = cave ? cave.progress : 0
+    const info = iconInfo(cave)
+    const {task, spin} = info
 
-    let onClick = () => this.onClick(task, mayDownload, platformCompatible)
+    const onClick = () => this.onClick(task, mayDownload, platformCompatible)
 
     let child = ''
 
     if (cave) {
-      child = r.span({className: 'normal_state'}, [
-        r(TaskIcon, {task, spin, action}),
-        this.status(cave, task, action),
-        r.span({className: 'cancel_cross'}, [
-          r(Icon, {icon: 'cross'})
-        ])
-      ])
+      child = <span className='normal-state'>
+        <TaskIcon task={task} spin={spin} action={action}/>
+        {this.status(cave, task, action)}
+        <span className='cancel-cross'>
+          <Icon icon='cross'/>
+        </span>
+      </span>
     } else {
       if (platformCompatible) {
         if (mayDownload) {
-          child = r.span({}, [
-            r(Icon, {icon: 'install'}),
-            ' ' + t('grid.item.install')
-          ])
+          child = <span>
+            <Icon icon='install'/>
+            {t('grid.item.install')}
+          </span>
         } else {
-          child = r.span({}, [
-            r(Icon, {icon: 'cart'}),
-            ' ' + t('grid.item.buy_now')
-          ])
+          child = <span>
+            <Icon icon='cart'/>
+            {t('grid.item.buy_now')}
+          </span>
         }
       } else {
-        child = r.span({}, [
-          t('grid.item.not_platform_compatible', {platform})
-        ])
+        child = <span>
+          {t('grid.item.not_platform_compatible', {platform})}
+        </span>
       }
     }
 
@@ -99,22 +92,24 @@ class MainAction extends ShallowComponent {
     }
 
     if (task) {
-      classSet[`task_${task}`] = true
+      classSet[`task-${task}`] = true
     } else {
       classSet.uninstalled = true
     }
 
-    classSet[`action_${action}`] = true
+    classSet[`action-${action}`] = true
 
     let style = {}
     if (progress > 0) {
       style.backgroundImage = linearGradient(progress)
     }
 
-    let button = r.div({classSet, style, onClick}, child)
-
+    const button = <div className={classNames(classSet)} onClick={onClick}>{child}</div>
     let tooltipOpts = this.tooltipOpts(task)
-    return r(Tooltip, tooltipOpts, button)
+
+    return <span {...tooltipOpts}>
+      {button}
+    </span>
   }
 
   tooltipOpts (task) {
@@ -122,18 +117,16 @@ class MainAction extends ShallowComponent {
 
     if (task === 'error') {
       return {
-        placement: 'bottom',
-        mouseEnterDelay: 0.4,
-        overlay: r.span({}, t('grid.item.report_problem'))
+        className: 'hint--bottom',
+        'data-hint': t('grid.item.report_problem')
       }
     } else if (/^download.*$/.test(task)) {
       return {
-        placement: 'bottom',
-        mouseEnterDelay: 0.4,
-        overlay: r.span({}, t('grid.item.cancel_download'))
+        className: 'hint--bottom',
+        'data-hint': t('grid.item.cancel_download')
       }
     } else {
-      return {visible: false, overlay: ''}
+      return {}
     }
   }
 
@@ -141,25 +134,25 @@ class MainAction extends ShallowComponent {
     let {cave, game} = this.props
 
     if (task === 'error') {
-      AppActions.report_cave(cave.id)
+      this.props.reportCave(cave.id)
     } else if (/^download.*$/.test(task)) {
-      AppActions.cancel_cave(cave.id)
+      this.props.cancelCave(cave.id)
     } else {
       if (platformCompatible) {
         if (mayDownload) {
-          AppActions.queue_game(game)
+          this.props.queueGame(game)
         } else {
-          AppActions.initiate_purchase(game)
+          this.props.initiatePurchase(game)
         }
       } else {
-        AppActions.browse_game(game.id, game.url)
+        this.props.browseGame(game.id, game.url)
       }
     }
   }
 
   status (cave, task, action) {
-    let t = this.t
-    let progress = cave ? cave.progress : 0
+    const {t} = this.props
+    const progress = cave ? cave.progress : 0
 
     if (task === 'idle' || task === 'awaken') {
       switch (action) {
@@ -194,11 +187,11 @@ class MainAction extends ShallowComponent {
     }
 
     if (progress > 0) {
-      let progress_text = `(${(progress * 100).toFixed()}%)`
-      return r.span({}, [
-        res,
-        r.span({className: 'progress_text'}, ' ' + progress_text)
-      ])
+      let progressText = `(${(progress * 100).toFixed()}%)`
+      return <span>
+        {res}
+        <span className='progress-text'>{progressText}</span>
+      </span>
     } else {
       return res
     }
@@ -206,10 +199,17 @@ class MainAction extends ShallowComponent {
 }
 
 MainAction.propTypes = {
-  may_download: PropTypes.bool,
-  platform_comaptible: PropTypes.bool,
+  mayDownload: PropTypes.bool,
+  platformCompatible: PropTypes.bool,
+  // FIXME: any is bad, specify what we use
   cave: PropTypes.any,
-  game: PropTypes.any
+  game: PropTypes.any,
+
+  t: PropTypes.func.isRequired
 }
 
-export default MainAction
+const mapStateToProps = () => ({})
+
+export default connect(
+  mapStateToProps
+)(MainAction)

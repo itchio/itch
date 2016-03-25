@@ -26,7 +26,7 @@ export class RememberedSession extends Component {
     </div>
     <div className='filler'/>
     <span className='hint--left' data-hint='Forget this session'>
-    <span className='icon icon-delete forget-session' onClick={onForget}/>
+      <span className='icon icon-delete forget-session' onClick={onForget}/>
     </span>
     </div>
   }
