@@ -146,7 +146,7 @@ export class AuthenticatedClient {
   }
 
   async downloadKeyUploads (downloadKeyId) {
-    return await this.request('get', `/download-key/${downloadKeyId}/uploads`)
+    return await this.request('get', `/download-key/${downloadKeyId}/uploads`, {}, {uploads: ensureArray})
   }
 
   async downloadUploadWithKey (downloadKeyId, uploadId) {
