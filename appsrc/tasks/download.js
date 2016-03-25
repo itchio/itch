@@ -1,80 +1,58 @@
 
-import {Transition} from './errors'
+import invariant from 'invariant'
+import path from 'path'
+
+import sf from '../util/sf'
 
 import mklog from '../util/log'
 const log = mklog('tasks/download')
 
+import client from '../util/api'
+
 import butler from '../util/butler'
-import noop from '../util/noop'
-import url_parser from 'url'
+import urlParser from 'url'
 
-import CaveStore from '../stores/cave-store'
-import CredentialsStore from '../stores/credentials-store'
-import AppActions from '../actions/app-actions'
-
-function ensure (predicate, reason) {
-  if (!predicate) {
-    throw new Transition({
-      to: 'find-upload',
-      reason
-    })
-  }
-}
-
-async function start (opts) {
-  const {id, onProgress = noop, logger, emitter, upload_id} = opts
-
-  const cave = CaveStore.find(id)
-
-  ensure(upload_id, 'need upload id')
-  ensure(cave.uploads, 'need cached uploads')
-
-  const upload = cave.uploads[upload_id]
-  ensure(upload, 'need upload in upload cache')
+export default async function start (out, opts) {
+  const {upload, destPath, downloadKey, credentials} = opts
+  invariant(typeof upload === 'object', 'startDownload opts must have upload object')
+  invariant(typeof destPath === 'string', 'startDownload opts must have a dest path')
+  invariant(credentials && credentials.key, 'download has valid key')
 
   // Get download URL
-  const client = CredentialsStore.get_current_user()
+  const keyClient = client.withKey(credentials.key)
 
   let url
   try {
-    if (cave.key) {
-      url = (await client.download_upload_with_key(cave.key.id, upload_id)).url
+    if (downloadKey) {
+      url = (await keyClient.downloadUploadWithKey(downloadKey.id, upload.id)).url
     } else {
-      url = (await client.download_upload(upload_id)).url
+      url = (await keyClient.downloadUpload(upload.id)).url
     }
   } catch (e) {
     if (e.errors && e.errors[0] === 'invalid upload') {
-      await new Promise((resolve, reject) => setTimeout(resolve, 1500))
-      throw new Transition({
-        to: 'find-upload',
-        reason: 'upload-gone'
-      })
+      const e = new Error('invalid reason')
+      e.itchReason = 'upload-gone'
+      throw e
     }
     throw e
   }
 
-  const parsed = url_parser.parse(url)
+  const parsed = urlParser.parse(url)
   log(opts, `downloading from ${parsed.hostname}`)
+  log(opts, `downloading to ${destPath}`)
 
-  const dest = CaveStore.archivePath(cave.install_location, upload)
+  const onProgress = (payload) => out.emit('progress', payload.percent / 100)
 
+  log(opts, 'starting download!')
   try {
-    await butler.dl({url, dest, onProgress, logger, emitter})
+    log(opts, 'making dir')
+    await sf.mkdir(path.dirname(destPath))
+    log(opts, 'butler download')
+    await butler.dl({url, dest: destPath, onProgress})
   } catch (err) {
     log(opts, `couldn't finish download: ${err.message || err}`)
-
-    if (cave.launchable) {
-      log(opts, `launchable download cancelled, keeping`)
-    } else {
-      log(opts, `first download cancelled, wiping ${dest}`)
-      AppActions.implode_cave(id)
-      await butler.wipe(dest)
-    }
-
     throw err
   }
 
-  throw new Transition({ to: 'install', reason: 'download-finished', data: {upload_id} })
+  log(opts, 'finished')
 }
-
-export default {start}

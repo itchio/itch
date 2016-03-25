@@ -109,6 +109,11 @@ module.exports = keyMirror({
   TASK_PROGRESS: null,
   TASK_ENDED: null,
 
+  /* Downloads */
+  DOWNLOAD_STARTED: null,
+  DOWNLOAD_PROGRESS: null,
+  DOWNLOAD_ENDED: null,
+
   /** User requested game to be uninstalled */
   REQUEST_CAVE_UNINSTALL: null,
   /** Cave is going to be uninstalled */
