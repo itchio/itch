@@ -9,7 +9,11 @@
   background: $sidebar-background-color;
   border-top: 1px solid $sidebar-border-color;
 
-  .plug {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+
+  .plug, .history {
     color: $secondary-text-color;
     -webkit-filter: brightness(90%);
 
@@ -21,6 +25,23 @@
     &.active {
       color: $light-accent-color;
     }
+  }
+
+  .bubble {
+    background: $light-accent-color;
+    padding: 0px 4px;
+    margin-left: 4px;
+    border-radius: 2px;
+    font-size: 12px;
+    color: $sidebar-background-color;
+    font-weight: bold;
+    float: right;
+  }
+
+  .timeago {
+    margin-left: 4px;
+    font-size: 12px;
+    -webkit-filter: rotate-hue(120deg);
   }
 
   &.active {
@@ -40,12 +61,8 @@
     }
   }
 
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
   .padder {
-    flex-grow: 8;
+    flex-grow: 1;
   }
 
   .icon {

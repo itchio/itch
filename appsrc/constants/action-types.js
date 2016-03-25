@@ -40,6 +40,7 @@ module.exports = keyMirror({
   /* Background stuff */
   DISMISS_HISTORY_ITEM: null,
   QUEUE_HISTORY_ITEM: null,
+  HISTORY_READ: null,
 
   /* Main window events */
   WINDOW_READY: null,

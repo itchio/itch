@@ -84,17 +84,15 @@ export default async function start (out, opts) {
 
   log(opts, `got a list of ${uploads.length} uploads`)
 
-  if (!(Array.isArray(uploads) && uploads.length > 0)) {
-    throw new Error('No downloads available')
+  if (uploads.length > 0) {
+    const freshGame = market.getEntities('games')[gameId] || game
+    const action = ClassificationActions[freshGame.classification] || 'launch'
+
+    uploads = filterUploads(action, uploads)
+    uploads = uploads.map(scoreUpload)
+    uploads = sortUploads(uploads)
+
+    log(opts, `sorted uploads: ${JSON.stringify(uploads, null, 2)}`)
   }
-
-  const freshGame = market.getEntities('games')[gameId] || game
-  const action = ClassificationActions[freshGame.classification] || 'launch'
-
-  uploads = filterUploads(action, uploads)
-  uploads = uploads.map(scoreUpload)
-  uploads = sortUploads(uploads)
-
-  log(opts, `sorted uploads: ${JSON.stringify(uploads, null, 2)}`)
   return {uploads}
 }
