@@ -1,6 +1,7 @@
 
 import {combineReducers} from 'redux'
 
+import history from './history'
 import modals from './modals'
 import globalMarket from './global-market'
 import market from './market'
@@ -15,6 +16,7 @@ import preferences from './preferences'
 import tasks from './tasks'
 
 const reducer = combineReducers({
+  history,
   modals,
   globalMarket,
   market,

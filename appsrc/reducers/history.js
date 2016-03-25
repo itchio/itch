@@ -1,10 +1,9 @@
 
-import uuid from 'node-uuid'
 import invariant from 'invariant'
 
 import {handleActions} from 'redux-actions'
 import {createStructuredSelector} from 'reselect'
-import {sortBy, omit} from 'underline'
+import {sortBy, omit, map, indexBy} from 'underline'
 
 const initialState = {
   items: {}
@@ -13,16 +12,12 @@ const initialState = {
 const reducer = handleActions({
   QUEUE_HISTORY_ITEM: (state, action) => {
     const {payload} = action
-    invariant(typeof payload.label === 'string', 'history items must have at least a label')
-
-    const item = {
-      id: uuid.v4(),
-      date: Date.now(),
-      ...payload
-    }
+    invariant(Array.isArray(payload.label), 'history items must have at least a label (i18n.t args array)')
+    invariant(typeof payload.id === 'string', 'history items must have a valid id')
+    invariant(typeof payload.date === 'number', 'history items must have a valid timstamp')
 
     const {items} = state
-    return {...state, items: {...items, item}}
+    return {...state, items: {...items, [payload.id]: payload}}
   },
 
   DISMISS_HISTORY_ITEM: (state, action) => {
@@ -30,6 +25,12 @@ const reducer = handleActions({
     invariant(typeof id === 'string', 'dismissing valid history item')
     const {items} = state
     return {...state, items: items::omit(id)}
+  },
+
+  HISTORY_READ: (state, action) => {
+    const {items} = state
+    const newItems = items::map((item, id) => ({...item, active: false}))::indexBy('id')
+    return {...state, items: newItems}
   }
 }, initialState)
 

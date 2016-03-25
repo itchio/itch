@@ -170,7 +170,13 @@
     "status.uptodate": "Your itch is up-to-date!",
     "status.offline_mode.active": "Offline mode enabled",
     "status.offline_mode.inactive": "Click to enable offline mode",
+    "status.history.no_active_items": "No history items require your attention.",
+    "status.history.click_to_expand": "Click to expand",
     "search.placeholder": "Search...",
     "search.empty.tagline": "Need inspiration? Try searching for '{{example}}'",
-    "search.empty.no_results": "No results found"
+    "search.empty.no_results": "No results found",
+    "game.install.no_uploads_available.message": "No compatible downloads were found for '{{title}}', so it wasn't installed.",
+    "game.install.no_uploads_available.detail": "Maybe it's not compatible with your platform or with the itch app yet!",
+    "game.install.try_again": "Try again",
+    "game.install.visit_web_page": "Visit web page"
 }

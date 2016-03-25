@@ -15,7 +15,10 @@ import mklog from '../util/log'
 const log = mklog('tasks-saga')
 import {opts} from '../logger'
 
-import {taskStarted, taskProgress, taskEnded} from '../actions'
+import {
+  taskStarted, taskProgress, taskEnded,
+  queueHistoryItem, browseGame
+} from '../actions'
 
 export function * startCave (cave) {
   log(opts, `Should start cave ${cave.id}: stub`)
@@ -118,6 +121,20 @@ export function * _queueGame (action) {
       })
     }
   } else {
+    yield put(queueHistoryItem({
+      label: ['game.install.no_uploads_available.message', {title: game.title}],
+      detail: ['game.install.no_uploads_available.detail'],
+      options: [
+        {
+          label: ['game.install.visit_web_page'],
+          action: browseGame({id: game.id, url: game.url})
+        },
+        {
+          label: ['game.install.try_again'],
+          action: action
+        }
+      ]
+    }))
     log(opts, 'No uploads for ${game.title}: stub')
   }
 }
