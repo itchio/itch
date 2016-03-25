@@ -170,6 +170,7 @@
     "status.uptodate": "Your itch is up-to-date!",
     "status.offline_mode.active": "Offline mode enabled",
     "status.offline_mode.inactive": "Click to enable offline mode",
+    "status.history.no_active_items": "No history items require your attention.",
     "search.placeholder": "Search...",
     "search.empty.tagline": "Need inspiration? Try searching for '{{example}}'",
     "search.empty.no_results": "No results found"
