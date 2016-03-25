@@ -21,6 +21,14 @@ export function * startCave (cave) {
   log(opts, `Should start cave ${cave.id}: stub`)
 }
 
+export function * startDownload (downloadOpts) {
+  invariant(downloadOpts, 'startDownload cannot have null opts')
+  invariant(typeof downloadOpts.upload === 'object', 'startDownload opts must have upload object')
+
+  const {upload, downloadKey} = downloadOpts
+  log(opts, `Should download ${upload.id}, dl key ? ${downloadKey}`)
+}
+
 export function * startTask (taskOpts) {
   invariant(taskOpts, 'startTask cannot have null opts')
   invariant(typeof taskOpts.name === 'string', 'startTask opts must contain name')
@@ -30,6 +38,7 @@ export function * startTask (taskOpts) {
   yield put(taskStarted({id, ...taskOpts}))
 
   let err
+  let result
   try {
     const queue = createQueue(`task-${taskOpts.name}-${id}`)
 
@@ -55,16 +64,19 @@ export function * startTask (taskOpts) {
     })
 
     log(opts, `Checking results for ${taskOpts.name} (${id})...`)
-    if (results.task) {
-      log(opts, `Task results: ${JSON.stringify(results.task, null, 2)}`)
+    result = results.task
+    if (result) {
+      log(opts, `Task results: ${JSON.stringify(result, null, 2)}`)
     }
   } catch (e) {
     log(opts, `Caught something`)
     err = e.task || e
   } finally {
     log(opts, `Task ended, err: ${err ? err.stack || JSON.stringify(err) : '<none>'}`)
-    yield put(taskEnded({id, err}))
+    yield put(taskEnded({id, err, result}))
   }
+
+  return result
 }
 
 export function * _queueGame (action) {
@@ -78,11 +90,36 @@ export function * _queueGame (action) {
   }
 
   log(opts, `No cave for ${game.id}, attempting install`)
-  yield call(startTask, {
+  const uploadResponse = yield call(startTask, {
     name: 'find-upload',
     gameId: game.id,
     game: game
   })
+
+  const {uploads, downloadKey} = uploadResponse
+  if (uploads.length > 0) {
+    if (uploads.length > 1) {
+      const upload = yield put(startTask, {
+        name: 'pick-upload',
+        uploads,
+        downloadKey
+      })
+
+      yield call(startDownload, {
+        upload,
+        downloadKey,
+        reason: 'install'
+      })
+    } else {
+      yield call(startDownload, {
+        upload: uploads[0],
+        downloadKey,
+        reason: 'install'
+      })
+    }
+  } else {
+    log(opts, 'No uploads for ${game.title}: stub')
+  }
 }
 
 export default function * tasksSaga () {

@@ -38,7 +38,8 @@ module.exports = keyMirror({
   USER_DB_CLOSED: null,
 
   /* Background stuff */
-  OPERATION_FAILED: null,
+  DISMISS_HISTORY_ITEM: null,
+  QUEUE_HISTORY_ITEM: null,
 
   /* Main window events */
   WINDOW_READY: null,
