@@ -11,3 +11,4 @@ These people contributed to the book in some way:
   * [@hirnbrot](https://twitter.com/hirnbrot) gave feedback on the 'Distributing Linux builds' page
   * [Anton Gerdelan](https://twitter.com/capnramses) gave feedback on the 'Distributing Linux builds' page
   * [Elias Zacarias](https://twitter.com/battlecoder) proofread the 'Distributing Linux builds' page
+  * [Sven Hesse](https://twitter.com/TheRealDrMcCoy) gave feedback on the 'Distributing Linux builds' page

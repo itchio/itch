@@ -37,10 +37,6 @@ Some people port games to Linux for a living — finding them online shouldn't b
 too hard. If you have a Publisher, they might be able to connect you to someone.
 If they can't, get a better publisher.
 
-If you *are* the tinkering type, you may want to check out Ethan Lee's
-Magfest 2016 slides: http://www.flibitijibibo.com/magfest2016/ which covers
-a bunch of cross-platform development subjects out of the scope of this book.
-
 ## Homemade / low-level engine (Advanced)
 
 If you're compiling binaries yourselves, either using a lower-level game engine,
@@ -272,4 +268,11 @@ The FNA wiki describes how to use MojoSetup to redistribute games:
 This approach is friendly both for manual installations and is a supported
 installation method in the itch app.
 
-*Special thanks to Ethan Lee for proofreading this page and contributing advice.*
+## Further reading
+
+  * Ethan Lee's [Magfest 2016 slides](http://www.flibitijibibo.com/magfest2016/) covers
+a bunch of cross-platform development subjects out of the scope of this book.
+  * The freegamedev Wiki has a [Portable binaries](http://freegamedev.net/wiki/Portable_binaries) page that goes in the same direction. It also covers the 'rpath' approach, not mentioned in this book.
+
+*Special thanks to Ethan Lee for proofreading this page and contributing advice.
+See the Acknowledgements section of this book for a full list of contributors.*
