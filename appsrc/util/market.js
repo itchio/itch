@@ -106,6 +106,15 @@ export default class Market extends EventEmitter {
     await sf.wipe(this.entityPath(tableName, entityId))
   }
 
+  async saveEntity (tableName, id, record, opts) {
+    const response = {
+      entities: {
+        [tableName]: { [id]: record }
+      }
+    }
+    return await this.saveAllEntities(response, opts)
+  }
+
   async saveAllEntities (response, opts) {
     opts = opts || {}
     const {wait = false, persist = true, initial = false} = opts
