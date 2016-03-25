@@ -9,4 +9,5 @@ These people contributed to the book in some way:
   is behind so many Linux/Mac ports, he should be acknowledged by all.
   * [@HardPenguin13](https://twitter.com/hardpenguin13) gave feedback on the 'Distributing Linux builds' page
   * [@hirnbrot](https://twitter.com/hirnbrot) gave feedback on the 'Distributing Linux builds' page
-  * [@capnramses](https://twitter.com/capnramses) gave feedback on the 'Distributing Linux builds' page
+  * [Anton Gerdelan](https://twitter.com/capnramses) gave feedback on the 'Distributing Linux builds' page
+  * [Elias Zacarias](https://twitter.com/battlecoder) proofread the 'Distributing Linux builds' page

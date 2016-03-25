@@ -51,7 +51,7 @@ This section describes one possible way to go about it - the details are up to y
 ### 1. Distribute a simple archive
 
 .deb and .rpm are both complicated package formats with a large set of rules,
-maintaining such packages are a full-time job, and there is no official way to
+maintaining such packages is a full-time job, and there is no official way to
 install them without administrator privilege.
 
 Instead, simply pack your assets, executables and libraries in a simple archive,
