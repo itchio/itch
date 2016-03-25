@@ -12,6 +12,7 @@ import i18n from './i18n'
 import ui from './ui'
 import selfUpdate from './self-update'
 import preferences from './preferences'
+import tasks from './tasks'
 
 const reducer = combineReducers({
   modals,
@@ -24,6 +25,7 @@ const reducer = combineReducers({
   i18n,
   ui,
   selfUpdate,
-  preferences
+  preferences,
+  tasks
 })
 export default reducer
