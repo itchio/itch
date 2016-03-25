@@ -32,12 +32,12 @@ export class HubMeat extends Component {
     const items = []
 
     games::each((game, id) => {
-      items.push(<HubItem key={id} game={game}/>)
+      items.push(<HubItem key={`game-${id}`} game={game}/>)
     })
 
     let ghostId = 0
     for (let i = 0; i < 12; i++) {
-      items.push(<HubGhostItem key={ghostId++}/>)
+      items.push(<HubGhostItem key={`ghost-${ghostId++}`}/>)
     }
 
     return <div className='hub-grid'>

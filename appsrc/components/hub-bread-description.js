@@ -52,7 +52,10 @@ class HubBreadDescription extends Component {
 
 HubBreadDescription.propTypes = {
   path: PropTypes.string,
-  tabs: PropTypes.array,
+  tabs: PropTypes.shape({
+    constant: PropTypes.array,
+    transient: PropTypes.array
+  }),
   market: PropTypes.object
 }
 
