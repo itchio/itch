@@ -1,8 +1,12 @@
 
 import uuid from 'node-uuid'
+import {EventEmitter} from 'events'
+
+import createQueue from './queue'
 
 import {takeEvery} from 'redux-saga'
-import {call, put, select} from 'redux-saga/effects'
+import {race, call, put, select} from 'redux-saga/effects'
+import {delay} from './effects'
 
 import {QUEUE_GAME} from '../constants/action-types'
 
@@ -12,8 +16,14 @@ import {opts} from '../logger'
 
 import {taskStarted, taskProgress, taskEnded} from '../actions'
 
-async function findUpload () {
-  await new Promise((resolve, reject) => setTimeout(resolve, 2000))
+async function findUpload (out) {
+  console.log('in findUpload')
+  for (var i = 0; i < 10; i++) {
+    out.emit('progress', i / 10)
+    await delay(200)
+    console.log('in findUpload loop..')
+  }
+  console.log('in findUpload done')
 }
 
 export function * startCave (cave) {
@@ -38,12 +48,21 @@ export function * _queueGame (action) {
 
   let err
   try {
-    const opts = {}
-    yield put(taskProgress({id, progress: 0.5}))
-    yield call(findUpload, opts)
+    const queue = createQueue(`task-${id}`)
+
+    const out = new EventEmitter()
+    out.on('progress', (progress) => {
+      queue.dispatch(taskProgress({id, progress}))
+    })
+
+    yield race({
+      task: call(findUpload, out),
+      queue: call(queue.exhaust)
+    })
   } catch (e) {
     err = e
   } finally {
+    log(opts, `Task ended, err: ${err ? err.stack || err : '<none>'}`)
     yield put(taskEnded({id, err}))
   }
 }

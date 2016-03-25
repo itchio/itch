@@ -22,7 +22,7 @@ const linearGradient = (progress) => {
 
 class MainAction extends Component {
   render () {
-    const {t, cave, game, mayDownload, tasksByGameId} = this.props
+    const {t, game, mayDownload, tasksByGameId} = this.props
     const {classification} = game
     const action = ClassificationActions[classification]
 
@@ -43,7 +43,7 @@ class MainAction extends Component {
     if (taskObject) {
       child = <span className='normal-state'>
         <TaskIcon task={task} spin={spin} action={action}/>
-        {this.status(cave, task, action)}
+        {this.status(taskObject, action)}
         <span className='cancel-cross'>
           <Icon icon='cross'/>
         </span>
@@ -160,6 +160,8 @@ class MainAction extends Component {
     const {t} = this.props
     const task = taskObject ? taskObject.name : null
     const progress = taskObject ? taskObject.progress : 0
+
+    console.log('in status, task = ', task)
 
     if (task === 'idle' || task === 'awaken') {
       switch (action) {
