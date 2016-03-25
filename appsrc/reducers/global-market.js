@@ -13,6 +13,6 @@ const selector = createStructuredSelector({
 
 export default (state, action) => {
   const reducerFields = reducer(state, action)
-  const additionalFields = state ? selector(state) : {}
+  const additionalFields = state ? selector(reducerFields) : {}
   return {...reducerFields, ...additionalFields}
 }

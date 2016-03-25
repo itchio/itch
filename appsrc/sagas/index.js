@@ -16,6 +16,7 @@ import tray from './tray'
 import login from './login'
 import menu from './menu'
 import fetch from './fetch'
+import tasks from './tasks'
 
 export default [
   preboot,
@@ -34,5 +35,6 @@ export default [
   tray,
   login,
   menu,
-  fetch
+  fetch,
+  tasks
 ]

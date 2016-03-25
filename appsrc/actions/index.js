@@ -1,4 +1,6 @@
 
+export * from './task-actions'
+export * from './game-actions'
 export * from './db-actions'
 export * from './onboarding-actions'
 export * from './history-actions'

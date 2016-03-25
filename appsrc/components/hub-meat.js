@@ -17,9 +17,9 @@ export class HubMeat extends Component {
     if (path === 'featured') {
       children.push(<div className='hub-grid'>You'd like some featured content wouldn't you?</div>)
     } else if (path === 'dashboard') {
-      children.push(this.fakeGrid(games::where({userId: me.id})))
+      children.push(this.gameGrid(games::where({userId: me.id})))
     } else if (path === 'library') {
-      children.push(this.fakeGrid(downloadKeys::map((key) => games[key.gameId])::indexBy('id')))
+      children.push(this.gameGrid(downloadKeys::map((key) => games[key.gameId])::indexBy('id')))
     }
 
     return <div className='hub-meat'>
@@ -28,7 +28,7 @@ export class HubMeat extends Component {
     </div>
   }
 
-  fakeGrid (games) {
+  gameGrid (games) {
     const items = []
 
     games::each((game, id) => {

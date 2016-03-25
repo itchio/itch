@@ -102,16 +102,17 @@ module.exports = keyMirror({
   TRANSFER_INSTALL_LOCATION: null,
   MAKE_INSTALL_LOCATION_DEFAULT: null,
 
+  /* Tasks */
+  TASK_STARTED: null,
+  TASK_PROGRESS: null,
+  TASK_ENDED: null,
+
   /** User requested game to be uninstalled */
   REQUEST_CAVE_UNINSTALL: null,
   /** Cave is going to be uninstalled */
   QUEUE_CAVE_UNINSTALL: null,
   /** Cave is going to be reinstalled */
   QUEUE_CAVE_REINSTALL: null,
-  /** Persistent cave metadata storage needs to be updated */
-  UPDATE_CAVE: null,
-  /** Should probably replaced with an CaveStore.emit('change') event */
-  CAVE_PROGRESS: null,
   /** Kaboom! */
   IMPLODE_CAVE: null,
   /** I changed my mind */

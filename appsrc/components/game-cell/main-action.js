@@ -6,6 +6,8 @@ import classNames from 'classnames'
 import Icon from '../icon'
 import TaskIcon from '../task-icon'
 
+import * as actions from '../../actions'
+
 import ClassificationActions from '../../constants/classification-actions'
 
 import os from '../../util/os'
@@ -18,27 +20,9 @@ const linearGradient = (progress) => {
   return `-webkit-linear-gradient(left, ${doneColor}, ${doneColor} ${percent}, ${undoneColor} ${percent}, ${undoneColor})`
 }
 
-const iconInfo = (cave) => {
-  let progress = cave ? cave.progress : 0
-  let task = cave ? cave.task : null
-  let spin = false
-
-  if (progress < 0) {
-    spin = true
-  } else if (cave && cave.reporting) {
-    task = 'report'
-    spin = true
-  } else if (cave && cave.needBlessing) {
-    task = 'ask-before-install'
-    spin = true
-  }
-
-  return {task, spin}
-}
-
 class MainAction extends Component {
   render () {
-    const {t, cave, game, mayDownload} = this.props
+    const {t, cave, game, mayDownload, tasksByGameId} = this.props
     const {classification} = game
     const action = ClassificationActions[classification]
 
@@ -47,15 +31,16 @@ class MainAction extends Component {
       platformCompatible = true
     }
 
-    const progress = cave ? cave.progress : 0
-    const info = iconInfo(cave)
-    const {task, spin} = info
+    const taskObject = tasksByGameId[game.id]
+    const progress = taskObject ? taskObject.progress : 0
+    const task = taskObject ? taskObject.name : null
+    const spin = false
 
     const onClick = () => this.onClick(task, mayDownload, platformCompatible)
 
     let child = ''
 
-    if (cave) {
+    if (taskObject) {
       child = <span className='normal-state'>
         <TaskIcon task={task} spin={spin} action={action}/>
         {this.status(cave, task, action)}
@@ -112,6 +97,27 @@ class MainAction extends Component {
     </span>
   }
 
+  iconInfo (cave) {
+    const {tasksByGameId} = this.props
+    let taskObject = tasksByGameId[cave]
+
+    let task = taskObject && taskObject.name
+    let {progress = 0} = taskObject
+
+    let spin = false
+    if (progress < 0) {
+      spin = true
+    } else if (cave && cave.reporting) {
+      task = 'report'
+      spin = true
+    } else if (cave && cave.needBlessing) {
+      task = 'ask-before-install'
+      spin = true
+    }
+
+    return {task, spin}
+  }
+
   tooltipOpts (task) {
     let t = this.t
 
@@ -150,9 +156,10 @@ class MainAction extends Component {
     }
   }
 
-  status (cave, task, action) {
+  status (taskObject, action) {
     const {t} = this.props
-    const progress = cave ? cave.progress : 0
+    const task = taskObject ? taskObject.name : null
+    const progress = taskObject ? taskObject.progress : 0
 
     if (task === 'idle' || task === 'awaken') {
       switch (action) {
@@ -205,11 +212,29 @@ MainAction.propTypes = {
   cave: PropTypes.any,
   game: PropTypes.any,
 
-  t: PropTypes.func.isRequired
+  tasksByGameId: PropTypes.any,
+
+  t: PropTypes.func.isRequired,
+  queueGame: PropTypes.func.isRequired,
+  reportCave: PropTypes.func.isRequired,
+  cancelCave: PropTypes.func.isRequired,
+  initiatePurchase: PropTypes.func.isRequired,
+  browseGame: PropTypes.func.isRequired
 }
 
-const mapStateToProps = () => ({})
+const mapStateToProps = (state) => ({
+  tasksByGameId: state.tasks.tasksByGameId
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  queueGame: (game) => dispatch(actions.queueGame({game})),
+  reportCave: (caveId) => dispatch(actions.reportCave({caveId})),
+  cancelCave: (caveId) => dispatch(actions.cancelCave({caveId})),
+  initiatePurchase: (game) => dispatch(actions.initiatePurchase({game})),
+  browseGame: (gameId, url) => dispatch(actions.initiatePurchase({gameId, url}))
+})
 
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(MainAction)
