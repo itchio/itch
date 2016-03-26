@@ -2,6 +2,7 @@
 {
   "locales": [
     { "value": "ar", "label": "العربية" },
+    { "value": "bg", "label": "български" },
     { "value": "ca", "label": "Català" },
     { "value": "cs", "label": "Čeština" },
     { "value": "cy", "label": "Cymraeg" },
