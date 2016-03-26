@@ -20,4 +20,9 @@ test('localizer', t => {
   t.case('with variables', t => {
     t.same(_t('bar', {somekey: 'hello'}), 'Bar hello bar.')
   })
+
+  t.case('format', t => {
+    t.same(_t.format('Park life'), 'Park life')
+    t.same(_t.format(['bar', {somekey: 'hello'}]), 'Bar hello bar.')
+  })
 })

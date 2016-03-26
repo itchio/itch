@@ -1,6 +1,6 @@
 
 export function getT (strings, lang) {
-  return (key, variables) => {
+  const t = (key, variables) => {
     const lstrings = strings[lang] || {}
     const string = lstrings[key]
     if (!string) {
@@ -22,6 +22,16 @@ export function getT (strings, lang) {
       return string
     }
   }
+
+  t.format = (args) => {
+    if (Array.isArray(args)) {
+      return t.apply(null, args)
+    } else {
+      return args
+    }
+  }
+
+  return t
 }
 
 export default { getT }
