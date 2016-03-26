@@ -1,0 +1,6 @@
+
+.icon {
+  &.animate {
+    @include horizontal-scan;
+  }
+}

@@ -10,10 +10,10 @@ import taskToIcon from '../constants/icon-for-tasks'
  */
 class TaskIcon extends Component {
   render () {
-    const {task = '', action = 'launch', spin = false} = this.props
+    const {taskName = '', action = 'launch', animate = false} = this.props
 
-    let icon = taskToIcon[task] || ''
-    if (task === 'idle') {
+    let icon = taskToIcon[taskName] || ''
+    if (taskName === 'idle') {
       if (action === 'open') {
         icon = 'folder-open'
       } else {
@@ -21,14 +21,14 @@ class TaskIcon extends Component {
       }
     }
 
-    return <Icon icon={icon} spin={spin}/>
+    return <Icon icon={icon} animate={animate}/>
   }
 }
 
 TaskIcon.propTypes = {
-  task: PropTypes.string,
+  taskName: PropTypes.string,
   action: PropTypes.string,
-  spin: PropTypes.any
+  animate: PropTypes.bool
 }
 
 export default TaskIcon

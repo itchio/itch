@@ -18,7 +18,7 @@ export function filterUploads (action, uploads) {
   }
 
   // Filter by platform
-  let prop = camelify(`p_${os.itchPlatform()}`)
+  const prop = camelify(`p_${os.itchPlatform()}`)
   const platformUploads = uploads.filter((upload) => !!upload[prop] || upload.type === 'html')
 
   // Filter by format

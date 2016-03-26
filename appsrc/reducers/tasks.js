@@ -7,7 +7,9 @@ import {indexBy, omit} from 'underline'
 
 const initialState = {
   tasks: {},
-  finishedTasks: []
+  finishedTasks: [],
+  downloads: {},
+  finishedDownloads: []
 }
 
 const reducer = handleActions({
@@ -36,12 +38,39 @@ const reducer = handleActions({
     const newTasks = tasks::omit(id)
     const newFinishedTasks = [tasks[id], ...finishedTasks]
     return {...state, tasks: newTasks, finishedTasks: newFinishedTasks}
+  },
+
+  DOWNLOAD_STARTED: (state, action) => {
+    const {downloads} = state
+    const download = action.payload
+    invariant(download.id, 'valid download id in started')
+    const newDownloads = {...downloads, [download.id]: download}
+    return {...state, downloads: newDownloads}
+  },
+
+  DOWNLOAD_PROGRESS: (state, action) => {
+    const {downloads} = state
+    const record = action.payload
+    const {id} = record
+    invariant(id, 'valid download id in progress')
+    const download = downloads[id]
+    const newDownloads = {...downloads, [id]: {...download, ...record}}
+    return {...state, downloads: newDownloads}
+  },
+
+  DOWNLOAD_ENDED: (state, action) => {
+    const {id} = action.payload
+    invariant(id, 'valid download id in ended')
+    const {downloads, finishedDownloads} = state
+    const newDownloads = downloads::omit(id)
+    const newFinishedDownloads = [downloads[id], ...finishedDownloads]
+    return {...state, downloads: newDownloads, finishedDownloads: newFinishedDownloads}
   }
 }, initialState)
 
 const selector = createStructuredSelector({
-  tasksByCaveId: (state) => state.tasks::indexBy('caveId'),
-  tasksByGameId: (state) => state.tasks::indexBy('gameId')
+  tasksByGameId: (state) => state.tasks::indexBy('gameId'),
+  downloadsByGameId: (state) => state.downloads::indexBy('gameId')
 })
 
 export default (state, action) => {

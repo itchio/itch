@@ -2,6 +2,8 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from '../connect'
 import classNames from 'classnames'
+import {createSelector, createStructuredSelector} from 'reselect'
+import {camelify} from '../../util/format'
 
 import Icon from '../icon'
 import TaskIcon from '../task-icon'
@@ -20,30 +22,21 @@ const linearGradient = (progress) => {
   return `-webkit-linear-gradient(left, ${doneColor}, ${doneColor} ${percent}, ${undoneColor} ${percent}, ${undoneColor})`
 }
 
+const isPlatformCompatible = (game) => {
+  const prop = camelify(`p_${os.itchPlatform()}`)
+  return !!game[prop]
+}
+
 class MainAction extends Component {
   render () {
-    const {t, game, mayDownload, tasksByGameId} = this.props
-    const {classification} = game
-    const action = ClassificationActions[classification]
-
-    let {platformCompatible} = this.props
-    if (action === 'open') {
-      platformCompatible = true
-    }
-
-    const taskObject = tasksByGameId[game.id]
-    const progress = taskObject ? taskObject.progress : 0
-    const task = taskObject ? taskObject.name : null
-    const spin = false
-
-    const onClick = () => this.onClick(task, mayDownload, platformCompatible)
+    const {t, platformCompatible, mayDownload, progress, task, action, animate} = this.props
 
     let child = ''
 
-    if (taskObject) {
+    if (task) {
       child = <span className='normal-state'>
-        <TaskIcon task={task} spin={spin} action={action}/>
-        {this.status(taskObject, action)}
+        <TaskIcon task={task} animate={animate} action={action}/>
+        {this.status()}
         <span className='cancel-cross'>
           <Icon icon='cross'/>
         </span>
@@ -70,9 +63,8 @@ class MainAction extends Component {
 
     let classSet = {
       incompatible: !platformCompatible,
-      buy_now: (platformCompatible && !mayDownload),
+      'buy-now': (platformCompatible && !mayDownload),
       cancellable: /^download.*/.test(task),
-      main_action: true,
       button: true
     }
 
@@ -89,44 +81,23 @@ class MainAction extends Component {
       style.backgroundImage = linearGradient(progress)
     }
 
-    const button = <div className={classNames(classSet)} onClick={onClick}>{child}</div>
-    let tooltipOpts = this.tooltipOpts(task)
+    const button = <div className={classNames('main-action', classSet)} onClick={() => this.onClick()}>{child}</div>
 
+    const tooltipOpts = this.tooltipOpts()
     return <span {...tooltipOpts}>
       {button}
     </span>
   }
 
-  iconInfo (cave) {
-    const {tasksByGameId} = this.props
-    let taskObject = tasksByGameId[cave]
-
-    let task = taskObject && taskObject.name
-    let {progress = 0} = taskObject
-
-    let spin = false
-    if (progress < 0) {
-      spin = true
-    } else if (cave && cave.reporting) {
-      task = 'report'
-      spin = true
-    } else if (cave && cave.needBlessing) {
-      task = 'ask-before-install'
-      spin = true
-    }
-
-    return {task, spin}
-  }
-
-  tooltipOpts (task) {
-    let t = this.t
+  tooltipOpts () {
+    const {t, task} = this.props
 
     if (task === 'error') {
       return {
         className: 'hint--bottom',
         'data-hint': t('grid.item.report_problem')
       }
-    } else if (/^download.*$/.test(task)) {
+    } else if (task === 'download') {
       return {
         className: 'hint--bottom',
         'data-hint': t('grid.item.cancel_download')
@@ -136,8 +107,8 @@ class MainAction extends Component {
     }
   }
 
-  onClick (task, mayDownload, platformCompatible) {
-    let {cave, game} = this.props
+  onClick () {
+    let {task, cave, game, platformCompatible, mayDownload} = this.props
 
     if (task === 'error') {
       this.props.reportCave(cave.id)
@@ -156,12 +127,8 @@ class MainAction extends Component {
     }
   }
 
-  status (taskObject, action) {
-    const {t} = this.props
-    const task = taskObject ? taskObject.name : null
-    const progress = taskObject ? taskObject.progress : 0
-
-    console.log('in status, task = ', task)
+  status () {
+    const {t, task, progress, action} = this.props
 
     if (task === 'idle' || task === 'awaken') {
       switch (action) {
@@ -208,13 +175,19 @@ class MainAction extends Component {
 }
 
 MainAction.propTypes = {
+  // specified
+  game: PropTypes.shape({
+    id: PropTypes.any.isRequired
+  }),
+
+  // derived
+  animate: PropTypes.bool,
+  action: PropTypes.string,
+  cave: PropTypes.any,
   mayDownload: PropTypes.bool,
   platformCompatible: PropTypes.bool,
-  // FIXME: any is bad, specify what we use
-  cave: PropTypes.any,
-  game: PropTypes.any,
-
-  tasksByGameId: PropTypes.any,
+  task: PropTypes.string,
+  progress: PropTypes.number,
 
   t: PropTypes.func.isRequired,
   queueGame: PropTypes.func.isRequired,
@@ -224,9 +197,32 @@ MainAction.propTypes = {
   browseGame: PropTypes.func.isRequired
 }
 
-const mapStateToProps = (state) => ({
-  tasksByGameId: state.tasks.tasksByGameId
-})
+const makeMapStateToProps = () => {
+  const selector = createSelector(
+    createStructuredSelector({
+      game: (state, props) => props.game,
+      cave: (state, props) => state.globalMarket.cavesByGameId[props.game.id],
+      task: (state, props) => state.tasks.tasksByGameId[props.game.id],
+      download: (state, props) => state.tasks.downloadsByGameId[props.game.id]
+    }),
+    (happenings) => {
+      const {game, task, download} = happenings
+      const animate = false
+      const action = ClassificationActions[game.classification] || 'launch'
+      const platformCompatible = (action === 'open' ? true : isPlatformCompatible(game))
+
+      return {
+        animate,
+        platformCompatible,
+        action,
+        task: (task ? task.name : (download ? 'download' : null)),
+        progress: (task ? task.progress : (download ? download.progress : 0))
+      }
+    }
+  )
+
+  return selector
+}
 
 const mapDispatchToProps = (dispatch) => ({
   queueGame: (game) => dispatch(actions.queueGame({game})),
@@ -237,6 +233,6 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 export default connect(
-  mapStateToProps,
+  makeMapStateToProps,
   mapDispatchToProps
 )(MainAction)

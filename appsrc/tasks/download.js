@@ -13,7 +13,8 @@ import butler from '../util/butler'
 import urlParser from 'url'
 
 export default async function start (out, opts) {
-  const {upload, destPath, downloadKey, credentials} = opts
+  const {upload, gameId, destPath, downloadKey, credentials} = opts
+  invariant(gameId, 'startDownload opts must be linked to gameId')
   invariant(typeof upload === 'object', 'startDownload opts must have upload object')
   invariant(typeof destPath === 'string', 'startDownload opts must have a dest path')
   invariant(credentials && credentials.key, 'download has valid key')

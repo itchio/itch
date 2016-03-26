@@ -148,6 +148,7 @@ export function * _queueGame (action) {
       })
 
       yield call(startDownload, {
+        gameId: game.id,
         upload,
         destPath: pathmaker.downloadPath(upload),
         downloadKey,
@@ -155,6 +156,7 @@ export function * _queueGame (action) {
       })
     } else {
       yield call(startDownload, {
+        gameId: game.id,
         upload: uploads[0],
         destPath: pathmaker.downloadPath(uploads[0]),
         downloadKey,
