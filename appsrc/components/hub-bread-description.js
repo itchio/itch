@@ -11,8 +11,9 @@ function pathToId (path) {
 
 class HubBreadDescription extends Component {
   render () {
+    // TODO: i18n
     // TODO: reselect that
-    const {path, tabs, market} = this.props
+    const {t, path, tabs, market} = this.props
     const {collections, games, users} = market
 
     const allTabs = tabs.constant.concat(tabs.transient)
@@ -41,11 +42,17 @@ class HubBreadDescription extends Component {
       subtitle = 'Things you make and break'
     } else if (path === 'library') {
       subtitle = 'Things you gave money to'
+    } else if (path === 'preferences') {
+      subtitle = 'Nuts and bolts'
+    } else if (path === 'downloads') {
+      subtitle = 'Swooooooosh'
+    } else if (path === 'history') {
+      subtitle = 'Here\'s what happened recently'
     }
 
     return <section className='description'>
-      <h2><icon className={`icon icon-${icon}`}/> {label}</h2>
-      <h3>{subtitle}</h3>
+      <h2><icon className={`icon icon-${icon}`}/> {t.format(label)}</h2>
+      <h3>{t.format(subtitle)}</h3>
     </section>
   }
 }
@@ -56,7 +63,9 @@ HubBreadDescription.propTypes = {
     constant: PropTypes.array,
     transient: PropTypes.array
   }),
-  market: PropTypes.object
+  market: PropTypes.object,
+
+  t: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({

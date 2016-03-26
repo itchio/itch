@@ -160,7 +160,7 @@ const mapDispatchToProps = (dispatch) => ({
   showAvailableSelfUpdate: () => dispatch(actions.showAvailableSelfUpdate()),
   applySelfUpdateRequest: () => dispatch(actions.applySelfUpdateRequest()),
   dismissStatus: () => dispatch(actions.dismissStatus()),
-  navigate: () => dispatch(actions.navigate())
+  navigate: (path) => dispatch(actions.navigate(path))
 })
 
 export default connect(

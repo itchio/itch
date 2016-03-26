@@ -17,7 +17,7 @@ export class HubSidebar extends Component {
   }
 
   render () {
-    const {osx, fullscreen, path, tabs, navigate, closeTab} = this.props
+    const {t, osx, fullscreen, path, tabs, navigate, closeTab} = this.props
     const classes = classNames('hub-sidebar', {osx, fullscreen})
 
     return <div className={classes}>
@@ -31,7 +31,7 @@ export class HubSidebar extends Component {
 
         return <section key={item.path} className={classes} onClick={onClick}>
           <span className={`icon icon-${this.pathToIcon(item.path)}`}/>
-          {item.label}
+          {t.format(item.label)}
         </section>
       })}
 
@@ -45,7 +45,7 @@ export class HubSidebar extends Component {
 
           return <section key={item.path} className={classes} onClick={onClick}>
             <span className={`icon icon-${this.pathToIcon(item.path)}`}/>
-            {item.label}
+            {t.format(item.label)}
             <div className='filler'/>
             <span className='icon icon-cross' onClick={(e) => {
               closeTab(item.path)
@@ -70,6 +70,15 @@ export class HubSidebar extends Component {
     }
     if (path === 'library') {
       return 'heart-filled'
+    }
+    if (path === 'preferences') {
+      return 'cog'
+    }
+    if (path === 'history') {
+      return 'history'
+    }
+    if (path === 'downloads') {
+      return 'download'
     }
     if (/^collections/.test(path)) {
       return 'video_collection'
@@ -96,7 +105,7 @@ export class HubSidebar extends Component {
   }
 
   dropdown () {
-    const {viewCreatorProfile, viewCommunityProfile, changeUser} = this.props
+    const {viewCreatorProfile, viewCommunityProfile, changeUser, openPreferences} = this.props
 
     const items = [
       {
@@ -108,6 +117,11 @@ export class HubSidebar extends Component {
         icon: 'fire',
         label: ['sidebar.view_community_profile'],
         onClick: viewCommunityProfile
+      },
+      {
+        icon: 'dog',
+        label: ['sidebar.preferences'],
+        onClick: openPreferences
       },
       {
         icon: 'exit',
@@ -138,7 +152,8 @@ HubSidebar.propTypes = {
   viewCommunityProfile: PropTypes.func.isRequired,
   changeUser: PropTypes.func.isRequired,
   navigate: PropTypes.func.isRequired,
-  closeTab: PropTypes.func.isRequired
+  closeTab: PropTypes.func.isRequired,
+  openPreferences: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
