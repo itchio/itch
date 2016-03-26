@@ -11,12 +11,17 @@ import {race, call, put, select} from 'redux-saga/effects'
 
 import {QUEUE_GAME} from '../constants/action-types'
 
+import download from '../tasks/download'
+
+import pathmaker from '../util/pathmaker'
+
 import mklog from '../util/log'
 const log = mklog('tasks-saga')
 import {opts} from '../logger'
 
 import {
   taskStarted, taskProgress, taskEnded,
+  downloadStarted, downloadProgress, downloadEnded,
   queueHistoryItem, browseGame
 } from '../actions'
 
@@ -26,10 +31,44 @@ export function * startCave (cave) {
 
 export function * startDownload (downloadOpts) {
   invariant(downloadOpts, 'startDownload cannot have null opts')
-  invariant(typeof downloadOpts.upload === 'object', 'startDownload opts must have upload object')
 
   const {upload, downloadKey} = downloadOpts
   log(opts, `Should download ${upload.id}, dl key ? ${downloadKey}`)
+
+  const id = uuid.v4()
+  yield put(downloadStarted({id, ...downloadOpts}))
+
+  let err
+  try {
+    const queue = createQueue(`download-${id}`)
+
+    const out = new EventEmitter()
+    out.on('progress', (progress) => {
+      queue.dispatch(downloadProgress({id, progress}))
+    })
+
+    const credentials = yield select((state) => state.session.credentials)
+    const extendedOpts = {
+      ...opts,
+      ...downloadOpts,
+      market: getUserMarket(),
+      credentials
+    }
+
+    log(opts, `Starting download...`)
+    yield race({
+      task: call(download, out, extendedOpts),
+      queue: call(queue.exhaust)
+    })
+  } catch (e) {
+    log(opts, `Download threw`)
+    err = e.task || e
+  } finally {
+    log(opts, `Download ended, err: ${err ? err.stack || JSON.stringify(err) : '<none>'}`)
+    yield put(downloadEnded({id, err}))
+  }
+
+  log(opts, `Download done!`)
 }
 
 export function * startTask (taskOpts) {
@@ -72,7 +111,7 @@ export function * startTask (taskOpts) {
       log(opts, `Task results: ${JSON.stringify(result, null, 2)}`)
     }
   } catch (e) {
-    log(opts, `Caught something`)
+    log(opts, `Task threw`)
     err = e.task || e
   } finally {
     log(opts, `Task ended, err: ${err ? err.stack || JSON.stringify(err) : '<none>'}`)
@@ -110,12 +149,14 @@ export function * _queueGame (action) {
 
       yield call(startDownload, {
         upload,
+        destPath: pathmaker.downloadPath(upload),
         downloadKey,
         reason: 'install'
       })
     } else {
       yield call(startDownload, {
         upload: uploads[0],
+        destPath: pathmaker.downloadPath(uploads[0]),
         downloadKey,
         reason: 'install'
       })

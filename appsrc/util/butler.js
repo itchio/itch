@@ -12,7 +12,7 @@ const log = mklog('butler')
 // TODO: DRY up those methods
 
 const self = {
-  parse_butler_status: function (opts, onerror, token) {
+  parseButlerStatus: function (opts, onerror, token) {
     const {onProgress = noop} = opts
 
     const status = JSON.parse(token)
@@ -42,7 +42,7 @@ const self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'dl', url, dest],
-      onToken: self.parse_butler_status::partial(opts, onerror),
+      onToken: self.parseButlerStatus::partial(opts, onerror),
       emitter
     })
 
@@ -65,7 +65,7 @@ const self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'untar', archivePath, '-d', destPath],
-      onToken: self.parse_butler_status::partial(opts, onerror),
+      onToken: self.parseButlerStatus::partial(opts, onerror),
       emitter
     })
 
@@ -81,7 +81,7 @@ const self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'wipe', path],
-      onToken: self.parse_butler_status::partial(opts, onerror)
+      onToken: self.parseButlerStatus::partial(opts, onerror)
     })
 
     if (err) { throw err }
@@ -100,7 +100,7 @@ const self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'mkdir', path],
-      onToken: self.parse_butler_status::partial(opts, onerror)
+      onToken: self.parseButlerStatus::partial(opts, onerror)
     })
 
     if (err) { throw err }
@@ -120,7 +120,7 @@ const self = {
     let res = await spawn({
       command: 'butler',
       args: ['-j', 'ditto', src, dst],
-      onToken: self.parse_butler_status::partial(opts, onerror),
+      onToken: self.parseButlerStatus::partial(opts, onerror),
       emitter
     })
 
