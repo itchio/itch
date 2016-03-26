@@ -3,7 +3,7 @@ import {handleActions} from 'redux-actions'
 import {createStructuredSelector} from 'reselect'
 
 import invariant from 'invariant'
-import {indexBy, omit} from 'underline'
+import {indexBy, sortBy, omit} from 'underline'
 
 const initialState = {
   tasks: {},
@@ -70,7 +70,8 @@ const reducer = handleActions({
 
 const selector = createStructuredSelector({
   tasksByGameId: (state) => state.tasks::indexBy('gameId'),
-  downloadsByGameId: (state) => state.downloads::indexBy('gameId')
+  downloadsByGameId: (state) => state.downloads::indexBy('gameId'),
+  downloadsByDate: (state) => state.downloads::sortBy('date')
 })
 
 export default (state, action) => {

@@ -3,7 +3,6 @@ import classNames from 'classnames'
 import React, {Component, PropTypes} from 'react'
 
 import * as actions from '../actions'
-import TimeAgo from 'react-timeago'
 
 import Icon from './icon'
 
@@ -87,6 +86,8 @@ class StatusBar extends Component {
       </div>
       <div className='padder'/>
 
+      {this.downloads()}
+
       {this.history()}
 
       <div className={plugClasses} onClick={() => updatePreferences({offlineMode: !offlineMode})} data-hint={plugHint}>
@@ -95,27 +96,31 @@ class StatusBar extends Component {
     </div>
   }
 
+  downloads () {
+    const {t, downloadItems, navigate} = this.props
+
+    const downloadClasses = classNames('downloads hint--right', {active: downloadItems.length > 0})
+    const downloadHint = downloadItems.length === 0 ? t('status.downloads.no_active_downloads') : t('status.downloads.click_to_manage')
+
+    return <div className={downloadClasses} data-hint={downloadHint} onClick={() => navigate('downloads')}>
+      <Icon icon='download'/>
+      { downloadItems.length > 0
+      ? <span className='bubble'>{downloadItems.length}</span>
+      : '' }
+    </div>
+  }
+
   history () {
-    const {t, historyItems, historyRead} = this.props
+    const {t, historyItems, navigate} = this.props
     const activeItems = historyItems::filter('active')
 
-    const mostRecentItem = activeItems[0]
-    const historyHint = activeItems.length > 0 ? t('status.history.no_active_items') : t('status.history.no_active_items')
-    const historyIcon = 'history'
+    const historyHint = activeItems.length === 0 ? t('status.history.no_active_items') : t('status.history.click_to_expand')
     const historyClasses = classNames('history hint--right', {active: activeItems.length > 0})
 
-    return <div className={historyClasses} data-hint={historyHint} onClick={() => historyRead()}>
-      <Icon icon={historyIcon}/>
+    return <div className={historyClasses} data-hint={historyHint} onClick={() => navigate('history')}>
+      <Icon icon='history'/>
       { activeItems.length > 0
-      ? [
-        <span className='bubble'>{activeItems.length}</span>,
-        <span>
-          {t.apply(null, mostRecentItem.label).substring(0, 30) + '...'}
-          <span className='timeago'>
-            <TimeAgo date={mostRecentItem.date}/>
-          </span>
-        </span>
-      ]
+      ? <span className='bubble'>{activeItems.length}</span>
       : '' }
     </div>
   }
@@ -123,7 +128,8 @@ class StatusBar extends Component {
 
 StatusBar.propTypes = {
   offlineMode: PropTypes.bool,
-  historyItems: PropTypes.object,
+  historyItems: PropTypes.array,
+  downloadItems: PropTypes.array,
   selfUpdate: PropTypes.shape({
     status: PropTypes.string,
     error: PropTypes.string,
@@ -139,12 +145,13 @@ StatusBar.propTypes = {
   showAvailableSelfUpdate: PropTypes.func.isRequired,
   dismissStatus: PropTypes.func.isRequired,
   updatePreferences: PropTypes.func.isRequired,
-  historyRead: PropTypes.func.isRequired
+  navigate: PropTypes.func.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({
   offlineMode: (state) => state.preferences.offlineMode,
   historyItems: (state) => state.history.itemsByDate,
+  downloadItems: (state) => state.tasks.downloadsByDate,
   selfUpdate: (state) => state.selfUpdate
 })
 
@@ -153,7 +160,7 @@ const mapDispatchToProps = (dispatch) => ({
   showAvailableSelfUpdate: () => dispatch(actions.showAvailableSelfUpdate()),
   applySelfUpdateRequest: () => dispatch(actions.applySelfUpdateRequest()),
   dismissStatus: () => dispatch(actions.dismissStatus()),
-  historyRead: () => dispatch(actions.historyRead())
+  navigate: () => dispatch(actions.navigate())
 })
 
 export default connect(

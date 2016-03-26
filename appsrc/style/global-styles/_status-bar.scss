@@ -13,9 +13,21 @@
   flex-direction: row-reverse;
   align-items: center;
 
-  .plug, .history {
+  .plug, .history, .downloads {
+    transition: 0.4s all;
+    position: relative;
     color: $secondary-text-color;
     -webkit-filter: brightness(90%);
+    font-size: 18px;
+    margin-right: 12px;
+    min-width: 50px;
+    padding-left: 20px;
+
+    .bubble {
+      position: absolute;
+      left: 29px;
+      top: -7px;
+    }
 
     &:hover {
       cursor: pointer;
@@ -29,13 +41,12 @@
 
   .bubble {
     background: $light-accent-color;
-    padding: 0px 4px;
-    margin-left: 4px;
+    padding: 0 4px;
+    margin: 0 4px;
     border-radius: 2px;
     font-size: 12px;
     color: $sidebar-background-color;
     font-weight: bold;
-    float: right;
   }
 
   .timeago {
