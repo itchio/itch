@@ -63,7 +63,7 @@ class SecondaryActions extends Component {
     </span>
   }
 
-  browse_i18n_key () {
+  browseI18nKey () {
     let fallback = 'grid.item.open_in_file_explorer'
     switch (platform) {
       case 'osx': return ['grid.item.open_in_file_explorer_osx', fallback]

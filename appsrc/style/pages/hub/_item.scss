@@ -80,9 +80,10 @@
   }
 
   .cave-actions {
-    margin-left: 12px;
+    margin-left: 8px;
 
     .secondary-action {
+      margin: 0 6px;
       color: $secondary-text-color;
 
       &:hover {
