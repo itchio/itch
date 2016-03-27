@@ -37,6 +37,10 @@
     &.active {
       color: $light-accent-color;
     }
+
+    &:active {
+      transform: scale(.95);
+    }
   }
 
   .bubble {

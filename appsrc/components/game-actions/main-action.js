@@ -43,7 +43,7 @@ class MainAction extends Component {
           </span>
         }
       } else {
-        child = <span>
+        return <span className='not-platform-compatible'>
           {t('grid.item.not_platform_compatible', {platform})}
         </span>
       }
@@ -74,10 +74,6 @@ class MainAction extends Component {
     return <span {...tooltipOpts}>
       {button}
     </span>
-  }
-
-  isCancellable (download) {
-
   }
 
   tooltipOpts () {

@@ -22,11 +22,9 @@ export class HubItem extends Component {
       <section className='undercover'>
         <section className='title'>
           {title}
-        </section>game-cell/main-action
-
-        <section className='actions'>
-          <GameActions {...actionProps}/>
         </section>
+
+        <GameActions {...actionProps}/>
       </section>
     </div>
   }

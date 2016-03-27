@@ -1,6 +1,7 @@
 
 @import 'hub/sidebar';
 @import 'hub/bread';
+@import 'hub/item';
 @import 'hub/search';
 
 .hub-page {
@@ -50,64 +51,6 @@
 
   .hub-filler {
     height: 0;
-  }
-
-  .hub-item {
-    @include thumbnail-style;
-    background: #232222; // FIXME colors
-    border: 1px solid #191919; // FIXME colors
-
-    .cover {
-      background-color: black;
-      background-size: cover;
-      background-position: 50% 50%;
-      height: $grid-item-height;
-      box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
-    }
-
-    .undercover {
-      padding: .5em;
-    }
-
-    .actions {
-      height: 3em;
-      display: flex;
-      align-items: center;
-    }
-
-    .title {
-      @include single-line;
-      padding: .2em 0;
-      margin: 0 0 4px 0;
-      text-shadow: 0 0 1px $ui-text-shadow-color;
-    }
-
-    .button {
-      @include heavy-button;
-
-      font-size: $base-text-size;
-      border-width: 1px;
-      font-weight: bold;
-      padding: 10px;
-      border-radius: 2px;
-
-      background-color: #D06161;
-      border-color: #CC7878;
-
-      &:hover {
-        background-color: $heavy-button-background-color;
-        border-color: $heavy-button-border-color;
-      }
-
-      &:active {
-        transform: scale(.95);
-      }
-    }
-
-    .button .icon {
-      margin-right: 7px;
-      font-size: 80%;
-    }
   }
 }
 
