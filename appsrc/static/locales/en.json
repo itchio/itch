@@ -186,5 +186,7 @@
     "game.install.no_uploads_available.message": "No compatible downloads were found for '{{title}}', so it wasn't installed.",
     "game.install.no_uploads_available.detail": "Maybe it's not compatible with your platform or with the itch app yet!",
     "game.install.try_again": "Try again",
-    "game.install.visit_web_page": "Visit web page"
+    "game.install.visit_web_page": "Visit web page",
+    "game.install.no_executables_found": "No executables were found",
+    "game.install.no_html_index_found": "No HTML index file found"
 }

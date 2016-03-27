@@ -5,7 +5,8 @@ const OFFLINE_MODE = process.env.OFFLINE_MODE === '1'
 
 const initialState = {
   downloadSelfUpdates: true,
-  offlineMode: OFFLINE_MODE
+  offlineMode: OFFLINE_MODE,
+  installLocations: {}
 }
 
 export default handleActions({
@@ -13,7 +14,7 @@ export default handleActions({
     const record = action.payload
     console.log('updating preferences: ', record)
 
-    // TODO: save that
+    // TODO: save that, in a state watcher
     return {...state, ...record}
   }
 }, initialState)

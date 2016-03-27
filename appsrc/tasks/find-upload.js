@@ -50,8 +50,7 @@ export function scoreUpload (upload) {
 
   /* Native uploads are preferred */
   if (upload.type === 'html') {
-    score -= 20
-    score -= 20
+    score -= 40
   }
 
   return {...upload, score}

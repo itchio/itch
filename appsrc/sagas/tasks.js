@@ -4,7 +4,7 @@ import invariant from 'invariant'
 import {EventEmitter} from 'events'
 
 import createQueue from './queue'
-import {getUserMarket} from './market'
+import {getGlobalMarket, getUserMarket} from './market'
 
 import {takeEvery} from 'redux-saga'
 import {race, call, put, select} from 'redux-saga/effects'
@@ -26,6 +26,11 @@ import {
 } from '../actions'
 
 export function * startCave (cave) {
+  yield call(startTask, {
+    name: 'launch',
+    gameId: cave.gameId,
+    cave
+  })
   log(opts, `Should start cave ${cave.id}: stub`)
 }
 
@@ -51,7 +56,6 @@ export function * startDownload (downloadOpts) {
     const extendedOpts = {
       ...opts,
       ...downloadOpts,
-      market: getUserMarket(),
       credentials
     }
 
@@ -93,6 +97,7 @@ export function * startTask (taskOpts) {
     const extendedOpts = {
       ...taskOpts,
       market: getUserMarket(),
+      globalMarket: getGlobalMarket(),
       credentials
     }
 
