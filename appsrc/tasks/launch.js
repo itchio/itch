@@ -43,7 +43,7 @@ export default async function start (out, opts) {
   const problem = caveProblem(cave)
   if (problem) {
     const err = new Error('game.install.could_not_launch')
-    err.problem = problem
+    err.reason = problem
     throw err
   }
 

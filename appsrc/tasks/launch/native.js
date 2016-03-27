@@ -145,14 +145,12 @@ export default async function launch (out, opts) {
 
   const appPath = pathmaker.appPath(cave)
 
-  let candidates = cave.executables.map((path) => {
-    return {path}
-  })
+  let candidates = cave.executables.map((path) => ({path}))
+  log(opts, `initial candidate set: ${JSON.stringify(candidates, null, 2)}`)
+
   candidates = await computeWeight(appPath, candidates)
   candidates = computeScore(candidates)
   candidates = computeDepth(candidates)
-
-  log(opts, `initial candidate set: ${JSON.stringify(candidates, null, 2)}`)
 
   candidates = candidates::sortBy((x) => -x.weight)
   log(opts, `candidates after weight sorting: ${JSON.stringify(candidates, null, 2)}`)
@@ -162,6 +160,18 @@ export default async function launch (out, opts) {
 
   candidates = candidates::sortBy((x) => x.depth)
   log(opts, `candidates after depth sorting: ${JSON.stringify(candidates, null, 2)}`)
+
+  if (candidates.length === 0) {
+    const err = new Error('After weighing/sorting, no executables left')
+    err.reason = ['game.install.no_executables_found']
+    throw err
+  }
+
+  if (candidates.length > 1) {
+    // TODO: figure this out. We want to let people choose, but we also don't
+    // want to confuse them — often there are 2 or 3 executables and the app already
+    // picks the best way to start the game.
+  }
 
   let exePath = path.join(appPath, candidates[0].path)
   const args = []

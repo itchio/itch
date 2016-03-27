@@ -22,16 +22,33 @@ import {opts} from '../logger'
 import {
   taskStarted, taskProgress, taskEnded,
   downloadStarted, downloadProgress, downloadEnded,
-  queueHistoryItem, browseGame
+  queueHistoryItem, browseGame, queueGame
 } from '../actions'
 
-export function * startCave (cave) {
-  yield call(startTask, {
+export function * startCave (game, cave) {
+  log(opts, `Starting cave ${cave.id}: stub`)
+  const {err} = yield call(startTask, {
     name: 'launch',
     gameId: cave.gameId,
     cave
   })
-  log(opts, `Should start cave ${cave.id}: stub`)
+
+  if (err) {
+    yield put(queueHistoryItem({
+      label: ['game.install.could_not_launch', {title: game.title}],
+      detail: err.reason || ('' + err),
+      options: [
+        {
+          label: ['game.install.visit_web_page'],
+          action: browseGame({gameId: game.id, url: game.url})
+        },
+        {
+          label: ['game.install.try_again'],
+          action: queueGame({game})
+        }
+      ]
+    }))
+  }
 }
 
 export function * startDownload (downloadOpts) {
@@ -95,6 +112,7 @@ export function * startTask (taskOpts) {
 
     const credentials = yield select((state) => state.session.credentials)
     const extendedOpts = {
+      ...opts,
       ...taskOpts,
       market: getUserMarket(),
       globalMarket: getGlobalMarket(),
@@ -123,7 +141,7 @@ export function * startTask (taskOpts) {
     yield put(taskEnded({id, err, result}))
   }
 
-  return result
+  return {err, result}
 }
 
 export function * _queueGame (action) {
@@ -132,7 +150,7 @@ export function * _queueGame (action) {
 
   if (cave) {
     log(opts, `Have a cave for game ${game.id}, launching`)
-    yield* startCave(cave)
+    yield* startCave(game, cave)
     return
   }
 
@@ -143,14 +161,15 @@ export function * _queueGame (action) {
     game: game
   })
 
-  const {uploads, downloadKey} = uploadResponse
+  const {uploads, downloadKey} = uploadResponse.result
   if (uploads.length > 0) {
     if (uploads.length > 1) {
-      const upload = yield put(startTask, {
+      // TODO: implement this, this task doesn't exist.
+      const upload = (yield put(startTask, {
         name: 'pick-upload',
         uploads,
         downloadKey
-      })
+      })).result
 
       yield call(startDownload, {
         gameId: game.id,

@@ -188,5 +188,6 @@
     "game.install.try_again": "Try again",
     "game.install.visit_web_page": "Visit web page",
     "game.install.no_executables_found": "No executables were found",
-    "game.install.no_html_index_found": "No HTML index file found"
+    "game.install.no_html_index_found": "No HTML index file found",
+    "game.install.could_not_launch": "An error occured while launching {{title}}"
 }
