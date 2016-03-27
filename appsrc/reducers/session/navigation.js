@@ -36,8 +36,6 @@ export default handleActions({
     const {constant, transient} = tabs
     const tabsByPath = constant.concat(transient)::indexBy('path')
 
-    console.log('navigating to', path, 'tabsByPath: ', tabsByPath)
-
     if (tabsByPath[path]) {
       return {...state, path}
     } else {

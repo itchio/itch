@@ -17,11 +17,15 @@ const augment = (state, base) => {
 
 export function connect (mapStateToProps, mapDispatchToProps) {
   const augmentedMapStateToProps = (state, props) => {
-    const base = mapStateToProps(state, props)
-    if (typeof base === 'function') {
-      return (state, props) => augment(state, base(state, props))
+    if (mapStateToProps) {
+      const base = mapStateToProps(state, props)
+      if (typeof base === 'function') {
+        return (state, props) => augment(state, base(state, props))
+      } else {
+        return augment(state, base)
+      }
     } else {
-      return augment(state, base)
+      return augment(state, {})
     }
   }
   return reduxConnect(augmentedMapStateToProps, mapDispatchToProps)

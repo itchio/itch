@@ -170,7 +170,8 @@ const mapDispatchToProps = (dispatch) => ({
 
   viewCreatorProfile: () => dispatch(actions.viewCreatorProfile()),
   viewCommunityProfile: () => dispatch(actions.viewCommunityProfile()),
-  changeUser: () => dispatch(actions.changeUser())
+  changeUser: () => dispatch(actions.changeUser()),
+  openPreferences: () => dispatch(actions.navigate('preferences'))
 })
 
 export default connect(

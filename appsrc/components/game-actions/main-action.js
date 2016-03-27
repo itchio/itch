@@ -2,18 +2,9 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from '../connect'
 import classNames from 'classnames'
-import {createSelector, createStructuredSelector} from 'reselect'
-import {camelify} from '../../util/format'
 
 import Icon from '../icon'
 import TaskIcon from '../task-icon'
-
-import * as actions from '../../actions'
-
-import ClassificationActions from '../../constants/classification-actions'
-
-import os from '../../util/os'
-const platform = os.itchPlatform()
 
 const linearGradient = (progress) => {
   let percent = (progress * 100).toFixed() + '%'
@@ -22,14 +13,9 @@ const linearGradient = (progress) => {
   return `-webkit-linear-gradient(left, ${doneColor}, ${doneColor} ${percent}, ${undoneColor} ${percent}, ${undoneColor})`
 }
 
-const isPlatformCompatible = (game) => {
-  const prop = camelify(`p_${os.itchPlatform()}`)
-  return !!game[prop]
-}
-
 class MainAction extends Component {
   render () {
-    const {t, platformCompatible, mayDownload, progress, task, action, animate} = this.props
+    const {t, cancellable, platform, platformCompatible, mayDownload, progress, task, action, animate} = this.props
 
     let child = ''
 
@@ -37,9 +23,11 @@ class MainAction extends Component {
       child = <span className='normal-state'>
         <TaskIcon task={task} animate={animate} action={action}/>
         {this.status()}
-        <span className='cancel-cross'>
+        { cancellable
+        ? <span className='cancel-cross'>
           <Icon icon='cross'/>
         </span>
+        : '' }
       </span>
     } else {
       if (platformCompatible) {
@@ -64,7 +52,6 @@ class MainAction extends Component {
     let classSet = {
       incompatible: !platformCompatible,
       'buy-now': (platformCompatible && !mayDownload),
-      cancellable: /^download.*/.test(task),
       button: true
     }
 
@@ -87,6 +74,10 @@ class MainAction extends Component {
     return <span {...tooltipOpts}>
       {button}
     </span>
+  }
+
+  isCancellable (download) {
+
   }
 
   tooltipOpts () {
@@ -185,9 +176,11 @@ MainAction.propTypes = {
   action: PropTypes.string,
   cave: PropTypes.any,
   mayDownload: PropTypes.bool,
+  platform: PropTypes.string,
   platformCompatible: PropTypes.bool,
   task: PropTypes.string,
   progress: PropTypes.number,
+  cancellable: PropTypes.bool,
 
   t: PropTypes.func.isRequired,
   queueGame: PropTypes.func.isRequired,
@@ -197,42 +190,4 @@ MainAction.propTypes = {
   browseGame: PropTypes.func.isRequired
 }
 
-const makeMapStateToProps = () => {
-  const selector = createSelector(
-    createStructuredSelector({
-      game: (state, props) => props.game,
-      cave: (state, props) => state.globalMarket.cavesByGameId[props.game.id],
-      task: (state, props) => state.tasks.tasksByGameId[props.game.id],
-      download: (state, props) => state.tasks.downloadsByGameId[props.game.id]
-    }),
-    (happenings) => {
-      const {game, task, download} = happenings
-      const animate = false
-      const action = ClassificationActions[game.classification] || 'launch'
-      const platformCompatible = (action === 'open' ? true : isPlatformCompatible(game))
-
-      return {
-        animate,
-        platformCompatible,
-        action,
-        task: (task ? task.name : (download ? 'download' : null)),
-        progress: (task ? task.progress : (download ? download.progress : 0))
-      }
-    }
-  )
-
-  return selector
-}
-
-const mapDispatchToProps = (dispatch) => ({
-  queueGame: (game) => dispatch(actions.queueGame({game})),
-  reportCave: (caveId) => dispatch(actions.reportCave({caveId})),
-  cancelCave: (caveId) => dispatch(actions.cancelCave({caveId})),
-  initiatePurchase: (game) => dispatch(actions.initiatePurchase({game})),
-  browseGame: (gameId, url) => dispatch(actions.initiatePurchase({gameId, url}))
-})
-
-export default connect(
-  makeMapStateToProps,
-  mapDispatchToProps
-)(MainAction)
+export default connect()(MainAction)

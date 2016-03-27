@@ -4,13 +4,7 @@ import {createStructuredSelector} from 'reselect'
 
 import {connect} from './connect'
 
-import MainAction from './game-cell/main-action'
-
-class SecondaryAction extends Component {
-  render () {
-    return <span>secondary action</span>
-  }
-}
+import GameActions from './game-actions'
 
 export class HubItem extends Component {
   render () {
@@ -28,11 +22,10 @@ export class HubItem extends Component {
       <section className='undercover'>
         <section className='title'>
           {title}
-        </section>
+        </section>game-cell/main-action
 
         <section className='actions'>
-          <MainAction {...actionProps}/>
-          <SecondaryAction {...actionProps}/>
+          <GameActions {...actionProps}/>
         </section>
       </section>
     </div>
