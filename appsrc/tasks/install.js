@@ -31,6 +31,7 @@ export default async function start (out, opts) {
 
   // TODO: handle reinstall
   // TODO: handle installFolder conflicts
+  // TODO: save game in userDb
   const installFolder = game.title
   let cave = {
     id: uuid.v4(),
