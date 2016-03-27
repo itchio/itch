@@ -2,11 +2,9 @@
 import path from 'path'
 import {app} from '../electron'
 
-import store from '../store'
-
 import invariant from 'invariant'
 
-const APPDATA_RE = /^appdata-(.*)$/
+const APPDATA_RE = /^appdata\/(.*)$/
 
 export function appPath (cave) {
   // < 0.13.x, installFolder isn't set, it's implicitly the cave's id
@@ -23,6 +21,7 @@ export function appPath (cave) {
     // caves >= 0.14.x with no special install location specified
     return path.join(app.getPath('userData'), 'apps', installFolder)
   } else {
+    const store = require('../store').default
     const locations = store.getState().preferences.installLocations
     const location = locations[installLocation]
     invariant(location, 'install location exists')
