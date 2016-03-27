@@ -72,10 +72,28 @@
         display: none;
       }
     }
+
+    .not-platform-compatible {
+      font-size: 90%;
+      color: $secondary-text-color;
+    }
   }
 
   .cave-actions {
     margin-left: 12px;
+
+    .secondary-action {
+      color: $secondary-text-color;
+
+      &:hover {
+        color: $base-text-color;
+        cursor: pointer;
+      }
+
+      &:active {
+        transform: scale(.95);
+      }
+    }
   }
 
   .button .icon {

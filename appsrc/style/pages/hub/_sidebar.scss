@@ -17,6 +17,8 @@
   }
 
   section {
+    transition: border-color 0.2s;
+    border-left: 3px solid transparent;
     border-radius: 0 4px 4px 0;
 
     display: flex;
@@ -73,7 +75,31 @@
         }
       }
 
+      border-color: $secondary-text-color;
+
+      &[data-path='library'] {
+        border-color: #E24957;
+      }
+
+      &[data-path='featured'] {
+        border-color: #D2BE53;
+      }
+
+      &[data-path='dashboard'] {
+        border-color: #4EA260;
+      }
+
       background: $sidebar-entry-focused-background-color;
+    }
+
+    .bubble {
+      font-size: 11px;
+      background: white;
+      border-radius: 2px;
+      color: $sidebar-background-color;
+      font-weight: bold;
+      padding: 1px 6px;
+      margin-left: 8px;
     }
   }
 

@@ -1,8 +1,9 @@
 
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
-import {map} from 'underline'
+import {map, where} from 'underline'
 import classNames from 'classnames'
+import {createSelector, createStructuredSelector} from 'reselect'
 
 import * as actions from '../actions'
 import defaultImages from '../constants/default-images'
@@ -17,35 +18,39 @@ export class HubSidebar extends Component {
   }
 
   render () {
-    const {t, osx, fullscreen, path, tabs, navigate, closeTab} = this.props
+    const {t, osx, fullscreen, path, tabs, navigate, counts, closeTab} = this.props
     const classes = classNames('hub-sidebar', {osx, fullscreen})
 
     return <div className={classes}>
       <div className='title-bar-padder'/>
       {this.dropdown()}
 
-      <h2>Constant</h2>
+      <h2>{t('sidebar.category.basics')}</h2>
       {tabs.constant::map((item) => {
         const classes = classNames({active: path === item.path})
         const onClick = () => navigate(item.path)
 
-        return <section key={item.path} className={classes} onClick={onClick}>
+        return <section key={item.path} className={classes} onClick={onClick} data-path={item.path}>
           <span className={`icon icon-${this.pathToIcon(item.path)}`}/>
           {t.format(item.label)}
         </section>
       })}
 
-      <h2>Transient</h2>
+      <h2>{t('sidebar.category.tabs')}</h2>
       {tabs.transient.length
         ? tabs.transient::map((item) => {
           const classes = classNames({
             active: path === item.path
           })
           const onClick = () => navigate(item.path)
+          const number = counts[item.path]
 
-          return <section key={item.path} className={classes} onClick={onClick}>
+          return <section key={item.path} className={classes} onClick={onClick} data-path={item.path}>
             <span className={`icon icon-${this.pathToIcon(item.path)}`}/>
             {t.format(item.label)}
+            { number > 0
+            ? <span className='bubble'>{number}</span>
+            : ''}
             <div className='filler'/>
             <span className='icon icon-cross' onClick={(e) => {
               closeTab(item.path)
@@ -54,8 +59,8 @@ export class HubSidebar extends Component {
           </section>
         })
         : <section className='empty'>
-        <span className='icon icon-neutral'/>
-        No tabs
+        <span className='icon icon-like'/>
+        {t('sidebar.no_tabs')}
         </section>
       }
     </div>
@@ -147,6 +152,11 @@ HubSidebar.propTypes = {
     transient: PropTypes.array
   }),
 
+  counts: PropTypes.shape({
+    history: PropTypes.number,
+    downloads: PropTypes.number
+  }),
+
   t: PropTypes.func.isRequired,
   viewCreatorProfile: PropTypes.func.isRequired,
   viewCommunityProfile: PropTypes.func.isRequired,
@@ -156,12 +166,21 @@ HubSidebar.propTypes = {
   openPreferences: PropTypes.func.isRequired
 }
 
-const mapStateToProps = (state) => ({
-  osx: state.system.osx,
-  fullscreen: state.ui.mainWindow.fullscreen,
-  me: state.session.credentials.me,
-  path: state.session.navigation.path,
-  tabs: state.session.navigation.tabs
+const mapStateToProps = createStructuredSelector({
+  osx: (state) => state.system.osx,
+  fullscreen: (state) => state.ui.mainWindow.fullscreen,
+  me: (state) => state.session.credentials.me,
+  path: (state) => state.session.navigation.path,
+  tabs: (state) => state.session.navigation.tabs,
+
+  counts: createSelector(
+    (state) => state.history.itemsByDate,
+    (state) => state.tasks.downloadsByDate,
+    (history, downloads) => ({
+      history: history::where({active: true}).length,
+      downloads: downloads.length
+    })
+  )
 })
 
 const mapDispatchToProps = (dispatch) => ({
