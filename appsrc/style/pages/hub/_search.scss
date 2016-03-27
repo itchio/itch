@@ -2,11 +2,19 @@
 .hub-search-results {
   background: $sidebar-background-color;
   border-left: 1px solid $sidebar-border-color;
+  border-bottom: 1px solid $sidebar-border-color;
 
-  flex-shrink: 0;
+  width: $right-sidebar-width;
+
+  position: absolute;
+  right: -$right-sidebar-width;
+  top: 0;
+  bottom: 100px;
+  box-shadow: 0 0 30px $sidebar-background-color;
+  border-radius: 0 0 0 2px;
+
   overflow: hidden;
-  transition: width 0.2s ease-in-out;
-  width: 0;
+  transition: right 0.2s ease-in-out;
 
   display: flex;
   flex-direction: column;
@@ -20,9 +28,15 @@
     flex-direction: row;
     align-items: center;
     flex-shrink: 0;
+    box-shadow: 0 0 20px $sidebar-background-color;
+
+    h3 {
+      font-size: 17px;
+      font-weight: bold;
+    }
 
     .filler {
-      flex-grow: 8;
+      flex-grow: 1;
     }
 
     .close-search {
@@ -35,10 +49,30 @@
     }
   }
 
+  .footer {
+    flex-shrink: 0;
+    display: flex;
+    padding: 15px;
+    box-shadow: 0 0 20px $sidebar-background-color;
+
+    .filler {
+      flex-grow: 1;
+    }
+
+    .button {
+      @include heavy-button;
+      @include discreet-button;
+      padding: 10px;
+      font-size: 16px;
+      display: inline-block;
+    }
+  }
+
   .result-list {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    flex-grow: 1;
   }
 
   .search-result {
@@ -86,6 +120,6 @@
   }
 
   &.active {
-    width: 1.5 * $grid-item-width + 20px;
+    right: 0;
   }
 }

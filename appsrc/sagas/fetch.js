@@ -86,7 +86,7 @@ function * _search (action) {
     const query = action.payload
     const results = yield call(fetch.search, credentials, query)
 
-    yield put(searchFetched({results}))
+    yield put(searchFetched({query, results}))
   } catch (e) {
     // TODO: relay search error (network offline, etc.)
   } finally {

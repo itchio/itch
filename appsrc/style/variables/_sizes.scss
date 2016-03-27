@@ -12,3 +12,6 @@ $grid-item-width: 250px;
 $grid-item-height: 190px;
 
 $grid-padding: 10px;
+
+// right sidebar
+$right-sidebar-width: 1.5 * $grid-item-width + 20px // FIXME: this computation makes no sense

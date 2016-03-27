@@ -32,16 +32,30 @@ SearchResult.propTypes = {
 
 export class HubSearchResults extends Component {
   render () {
-    const {search, closeSearch} = this.props
-    const {open, results} = search
+    const {t, search} = this.props
+    const {query, open, results} = search
+
+    const {closeSearch, navigate} = this.props
+
+    const openAsTab = () => {
+      closeSearch()
+      navigate(`search/${query}`)
+    }
 
     return <div className={classNames('hub-search-results', {active: open})}>
       <div className='header'>
-        <h3>Search results</h3>
+        <h3>Search results for {query}</h3>
         <div className='filler'/>
         <span className='icon icon-cross close-search' onClick={closeSearch}/>
       </div>
       {this.fakeGrid(results)}
+      <div className='footer'>
+        <div className='filler'/>
+        <div className='button' onClick={openAsTab}>
+          {t('search.open_as_tab')}
+        </div>
+        <div className='filler'/>
+      </div>
     </div>
   }
 
@@ -82,8 +96,8 @@ HubSearchResults.propTypes = {
     example: PropTypes.string
   }),
 
-  closeSearch: PropTypes.func,
-
+  navigate: PropTypes.func.isRequired,
+  closeSearch: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired
 }
 
@@ -93,7 +107,8 @@ const mapStateToProps = createStructuredSelector({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  closeSearch: () => dispatch(actions.closeSearch())
+  closeSearch: () => dispatch(actions.closeSearch()),
+  navigate: (path) => dispatch(actions.navigate(path))
 })
 
 export default connect(

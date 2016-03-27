@@ -56,8 +56,7 @@
   .game-actions {
     &.uninstalled {
       .button {
-        background: #2B2B2B;
-        border-color: #444;
+        @include discreet-button;
       }
     }
 
@@ -66,6 +65,7 @@
         margin-right: 0;
         flex-grow: 1;
         text-align: center;
+        font-weight: normal;
       }
 
       .cave-actions {

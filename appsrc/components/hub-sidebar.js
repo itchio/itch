@@ -94,6 +94,9 @@ export class HubSidebar extends Component {
     if (/^users/.test(path)) {
       return 'users'
     }
+    if (/^search/.test(path)) {
+      return 'search'
+    }
     return 'earth'
   }
 

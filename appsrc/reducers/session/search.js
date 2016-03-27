@@ -11,6 +11,7 @@ let searchExampleIndex = randomExampleIndex()
 
 const initialState = {
   example: SearchExamples[searchExampleIndex],
+  query: '',
   open: false,
   loading: false,
   results: null
@@ -18,9 +19,9 @@ const initialState = {
 
 export default handleActions({
   SEARCH_FETCHED: (state, action) => {
-    const {results} = action.payload
+    const {query, results} = action.payload
     const example = SearchExamples[randomExampleIndex()]
-    return {...state, results, open: true, example}
+    return {...state, results, open: true, query, example}
   },
 
   SEARCH_STARTED: (state, action) => {

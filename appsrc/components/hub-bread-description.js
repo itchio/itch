@@ -3,11 +3,7 @@ import React, {Component, PropTypes} from 'react'
 import {findWhere} from 'underline'
 
 import {connect} from './connect'
-
-const ID_RE = /\/(.+)$/
-function pathToId (path) {
-  return ID_RE.exec(path)[1]
-}
+import {pathToId} from '../util/navigation'
 
 class HubBreadDescription extends Component {
   render () {
@@ -22,20 +18,22 @@ class HubBreadDescription extends Component {
     const {icon, label} = tab
 
     let subtitle = ''
-    if (/collections/.test(path)) {
+    if (/^collections/.test(path)) {
       const collection = collections[pathToId(path)]
       const user = users[collection.userId]
       subtitle = `${collection.shortText}`
       if (user) {
         subtitle += ` | a collection by ${user.displayName}`
       }
-    } else if (/games/.test(path)) {
+    } else if (/^games/.test(path)) {
       const game = games[pathToId(path)]
       const user = users[game.userId]
       subtitle = `${game.shortText}`
       if (user) {
         subtitle += ` | a ${game.classification} by ${user.displayName}`
       }
+    } else if (/^search/.test(path)) {
+      subtitle = `We need to improve search, your mileage may vary`
     } else if (path === 'featured') {
       subtitle = 'Curated with love by the itch.io team'
     } else if (path === 'dashboard') {

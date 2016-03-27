@@ -3,6 +3,7 @@ import {handleActions} from 'redux-actions'
 import {pluck, reject, indexBy} from 'underline'
 
 import SearchExamples from '../../constants/search-examples'
+import {pathToId} from '../../util/navigation'
 
 const initialState = {
   page: 'gate',
@@ -46,6 +47,8 @@ export default handleActions({
         label = ['sidebar.history']
       } else if (path === 'downloads') {
         label = ['sidebar.downloads']
+      } else if (/^search/.test(path)) {
+        label = pathToId(path)
       }
 
       const newTab = {

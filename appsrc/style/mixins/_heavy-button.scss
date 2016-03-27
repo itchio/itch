@@ -19,3 +19,8 @@
     cursor: pointer;
   }
 }
+
+@mixin discreet-button {
+  background: #2B2B2B;
+  border-color: #444;
+}
