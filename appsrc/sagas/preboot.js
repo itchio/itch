@@ -38,7 +38,7 @@ export function * importLegacyDBs () {
         entities: {
           caves: response.entities.caves::map((cave, caveId) => {
             // in a global context, `appdata` doesn't make sense anymore
-            if (cave.installLocation === 'appdata') {
+            if (cave.installLocation === 'appdata' || !cave.installLocation) {
               return {...cave, installLocation: `appdata/${userId}`}
             } else {
               return cave
