@@ -31,6 +31,8 @@
 
   .button {
     @include heavy-button;
+    transition-property: color, background, border;
+    transition-duration: .2s;
 
     font-size: $base-text-size;
     border-width: 1px;
@@ -49,19 +51,35 @@
     &:active {
       transform: scale(.95);
     }
+  }
 
+  .game-actions {
     &.uninstalled {
-      background: #2B2B2B;
-      border-color: #444;
+      .button {
+        background: #2B2B2B;
+        border-color: #444;
+      }
+    }
+
+    &.task-download, &.task-find-upload {
+      .button {
+        margin-right: 0;
+        flex-grow: 1;
+        text-align: center;
+      }
+
+      .cave-actions {
+        display: none;
+      }
     }
   }
 
-  .not-platform-compatible, .button {
-    margin-right: 12px;
+  .cave-actions {
+    margin-left: 12px;
   }
 
   .button .icon {
     margin-right: 7px;
     font-size: 80%;
   }
-  }
+}

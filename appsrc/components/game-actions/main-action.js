@@ -49,48 +49,31 @@ class MainAction extends Component {
       }
     }
 
-    let classSet = {
-      incompatible: !platformCompatible,
-      'buy-now': (platformCompatible && !mayDownload),
-      button: true
-    }
-
-    if (task) {
-      classSet[`task-${task}`] = true
-    } else {
-      classSet.uninstalled = true
-    }
-
-    classSet[`action-${action}`] = true
-
     let style = {}
     if (progress > 0) {
       style.backgroundImage = linearGradient(progress)
     }
 
-    const button = <div className={classNames('main-action', classSet)} onClick={() => this.onClick()}>{child}</div>
+    const hint = this.hint()
 
-    const tooltipOpts = this.tooltipOpts()
-    return <span {...tooltipOpts}>
-      {button}
-    </span>
+    const buttonClasses = classNames('button main-action', {
+      'buy-now': (platformCompatible && !mayDownload),
+      'hint--top': hint
+    })
+    const button = <div className={buttonClasses} onClick={() => this.onClick()} data-hint={hint}>
+      {child}
+    </div>
+
+    return button
   }
 
-  tooltipOpts () {
+  hint () {
     const {t, task} = this.props
 
     if (task === 'error') {
-      return {
-        className: 'hint--bottom',
-        'data-hint': t('grid.item.report_problem')
-      }
+      return t('grid.item.report_problem')
     } else if (task === 'download') {
-      return {
-        className: 'hint--bottom',
-        'data-hint': t('grid.item.cancel_download')
-      }
-    } else {
-      return {}
+      return t('grid.item.cancel_download')
     }
   }
 

@@ -1,5 +1,7 @@
 
 import React, {Component, PropTypes} from 'react'
+import classNames from 'classnames'
+
 import {connect} from '../connect'
 import {createSelector, createStructuredSelector} from 'reselect'
 import {camelify} from '../../util/format'
@@ -17,7 +19,12 @@ class GameActions extends Component {
   render () {
     const {props} = this
 
-    return <div className='game-actions'>
+    const classes = classNames('game-actions', `action-${props.action}`, `task-${props.task}`, {
+      incompatible: !props.platformCompatible,
+      uninstalled: !props.cave
+    })
+
+    return <div className={classes}>
       <MainAction {...props}/>
       <SecondaryActions {...props}/>
     </div>

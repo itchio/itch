@@ -119,7 +119,7 @@ export class HubSidebar extends Component {
         onClick: viewCommunityProfile
       },
       {
-        icon: 'dog',
+        icon: 'cog',
         label: ['sidebar.preferences'],
         onClick: openPreferences
       },

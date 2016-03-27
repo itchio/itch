@@ -178,7 +178,7 @@ export function * _queueGame (action) {
         }
       ]
     }))
-    log(opts, 'No uploads for ${game.title}: stub')
+    log(opts, `No uploads for ${game.title}: stub`)
   }
 }
 

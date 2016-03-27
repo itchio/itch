@@ -14,7 +14,9 @@
   align-items: center;
 
   .plug, .history, .downloads {
-    transition: 0.4s all;
+    transition-property: color, background, border;
+    transition-duration: .4s;
+
     position: relative;
     color: $secondary-text-color;
     -webkit-filter: brightness(90%);
