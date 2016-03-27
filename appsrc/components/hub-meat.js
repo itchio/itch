@@ -6,24 +6,31 @@ import HubSearchResults from './hub-search-results'
 import HubItem from './hub-item'
 import HubGhostItem from './hub-ghost-item'
 
+import Downloads from './downloads'
+import History from './history'
+
 import {each, map, indexBy, where} from 'underline'
 
 export class HubMeat extends Component {
   render () {
     const {path, me, games, downloadKeys} = this.props
 
-    const children = []
+    let child = ''
 
     if (path === 'featured') {
-      children.push(<div className='hub-grid'>You'd like some featured content wouldn't you?</div>)
+      child = <div className='hub-grid'>You'd like some featured content wouldn't you?</div>
     } else if (path === 'dashboard') {
-      children.push(this.gameGrid(games::where({userId: me.id})))
+      child = this.gameGrid(games::where({userId: me.id}))
     } else if (path === 'library') {
-      children.push(this.gameGrid(downloadKeys::map((key) => games[key.gameId])::indexBy('id')))
+      child = this.gameGrid(downloadKeys::map((key) => games[key.gameId])::indexBy('id'))
+    } else if (path === 'downloads') {
+      child = <Downloads/>
+    } else if (path === 'history') {
+      child = <History/>
     }
 
     return <div className='hub-meat'>
-      {children}
+      {child}
       <HubSearchResults/>
     </div>
   }

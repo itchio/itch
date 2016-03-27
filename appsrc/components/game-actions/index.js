@@ -96,6 +96,9 @@ const makeMapStateToProps = () => {
 
 const mapDispatchToProps = (dispatch) => ({
   queueGame: (game) => dispatch(actions.queueGame({game})),
+  requestCaveUninstall: (caveId) => dispatch(actions.requestCaveUninstall({caveId})),
+  probeCave: (caveId) => dispatch(actions.probeCave({caveId})),
+  exploreCave: (caveId) => dispatch(actions.exploreCave({caveId})),
   reportCave: (caveId) => dispatch(actions.reportCave({caveId})),
   cancelCave: (caveId) => dispatch(actions.cancelCave({caveId})),
   initiatePurchase: (game) => dispatch(actions.initiatePurchase({game})),

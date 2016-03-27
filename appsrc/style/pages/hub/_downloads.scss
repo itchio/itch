@@ -1,0 +1,13 @@
+
+.downloads-page {
+  padding: $grid-padding;
+
+  li {
+    line-height: 1.8;
+
+    .timeago {
+      font-size: 80%;
+      color: $secondary-text-color;
+    }
+  }
+}

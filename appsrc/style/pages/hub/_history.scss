@@ -1,0 +1,14 @@
+
+.history-page {
+  padding: $grid-padding;
+
+  li {
+    line-height: 1.8;
+    margin-bottom: 1em;
+
+    .timeago {
+      font-size: 80%;
+      color: $secondary-text-color;
+    }
+  }
+}

@@ -63,7 +63,7 @@ class SecondaryActions extends Component {
     const {t} = this.props
     const {label, icon, onClick} = opts
 
-    return <span className='secondary-action hint--top' onClick={onClick} data-hint={t.format(label)}>
+    return <span key={label} className='secondary-action hint--top' onClick={onClick} data-hint={t.format(label)}>
       <Icon icon={icon}/>
     </span>
   }
