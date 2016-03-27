@@ -12,25 +12,25 @@ import AppActions from '../../actions/app-actions'
 import {partial} from 'underline'
 
 let self = {
-  valid_installers: ['inno', 'nsis', 'air', 'archive'],
+  validInstallers: ['inno', 'nsis', 'air', 'archive'],
 
   install: async function (opts) {
-    let installer = await self.find_installer(opts)
+    let installer = await self.findInstaller(opts)
     await installer.install(opts)
   },
 
   uninstall: async function (opts) {
-    let installer = await self.find_installer(opts)
+    let installer = await self.findInstaller(opts)
     await installer.uninstall(opts)
   },
 
-  find_installer: async function (opts) {
+  findInstaller: async function (opts) {
     if (os.platform() !== 'win32') {
       throw new Error('Exe installers are only supported on Windows')
     }
 
     let archivePath = opts.archivePath
-    let type = self.retrieve_cached_type(opts)
+    let type = self.retrieveCachedType(opts)
 
     if (type) {
       log(opts, `using cached installer type ${type} for ${archivePath}`)
@@ -39,7 +39,7 @@ let self = {
 
       if (type) {
         log(opts, `found exe installer type ${type} for ${archivePath}`)
-        self.cache_type(opts, type)
+        self.cacheType(opts, type)
       } else {
         // don't cache that, we might find better later
         log(opts, `falling back to 'naked exe' for ${archivePath}`)
@@ -50,16 +50,16 @@ let self = {
     return require(`./${type}`).default
   },
 
-  retrieve_cached_type: function (opts) {
+  retrieveCachedType: function (opts) {
     let cave = opts.cave
     if (!cave) return
     log(opts, `got cave: ${JSON.stringify(cave, null, 2)}`)
 
-    let installer_exe_cache = cave.installer_exe_cache || {}
-    let type = installer_exe_cache[cave.upload_id]
+    let installerExeCache = cave.installerExeCache || {}
+    let type = installerExeCache[cave.upload_id]
     log(opts, `found cached installer type ${type}`)
 
-    if (self.valid_installers.indexOf(type) === -1) {
+    if (self.validInstallers.indexOf(type) === -1) {
       log(opts, `invalid exe type stored: ${type} - discarding`)
       return null
     }
@@ -67,30 +67,32 @@ let self = {
     return type
   },
 
-  cache_type: function (opts, type) {
+  cacheType: function (opts, type) {
     let cave = opts.cave
     if (!cave) return
 
-    let installer_exe_cache = {}
-    installer_exe_cache[cave.upload_id] = type
-    AppActions.update_cave(cave.id, {installer_exe_cache})
+    let installerExeCache = {}
+    installerExeCache[cave.uploadId] = type
+
+    const {globalMarket} = opts
+    globalMarket.saveEntity('caves', cave.id, {installerExeCache})
   },
 
   identify: async function (opts) {
-    let kind = await self.builtin_sniff(opts, self.builtin_needles)
+    let kind = await self.builtinSniff(opts, self.builtinNeedles)
     if (!kind) {
-      kind = await self.external_sniff(opts, self.external_needles)
+      kind = await self.externalSniff(opts, self.externalNeedles)
     }
 
     return kind
   },
 
-  builtin_sniff: async function (opts, needles) {
+  builtinSniff: async function (opts, needles) {
     let archivePath = opts.archivePath
     let result = null
     let searches = []
 
-    let on_info = (k, v, isMatch, data, start, end) => {
+    let onInfo = (k, v, isMatch, data, start, end) => {
       if (!isMatch) return
       log(opts, `builtin_sniff: found needle ${v}`)
       result = k
@@ -99,7 +101,7 @@ let self = {
     for (let k of Object.keys(needles)) {
       let v = needles[k]
       let search = new StreamSearch(v)
-      search.on('info', on_info::partial(k, v))
+      search.on('info', onInfo::partial(k, v))
       searches.push(search)
     }
 
@@ -114,7 +116,7 @@ let self = {
     return result
   },
 
-  builtin_needles: {
+  builtinNeedles: {
     // Boyer-Moore - longer strings means search is more efficient. That said,
     // we don't really use it to skip forward, it just allows us not to scan
     // entire buffers nodes gives us while reading the whole file
@@ -123,7 +125,7 @@ let self = {
     'air': 'META-INF/AIR/application.xml'
   },
 
-  external_sniff: async function (opts, needles) {
+  externalSniff: async function (opts, needles) {
     let archivePath = opts.archivePath
 
     // sample file_output:
@@ -136,7 +138,7 @@ let self = {
     for (let k of Object.keys(needles)) {
       let v = needles[k]
       if (detail === v) {
-        log(opts, `external_sniff: found needle ${v}`)
+        log(opts, `externalSniff: found needle ${v}`)
         return k
       }
     }
@@ -144,7 +146,7 @@ let self = {
     return null
   },
 
-  external_needles: {
+  externalNeedles: {
     // Just plain old regex being run on file(1)'s output
     'archive': 'InstallShield self-extracting archive'
   }

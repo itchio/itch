@@ -9,7 +9,7 @@ import {getGlobalMarket, getUserMarket} from './market'
 import {takeEvery} from 'redux-saga'
 import {race, call, put, select} from 'redux-saga/effects'
 
-import {QUEUE_GAME} from '../constants/action-types'
+import {QUEUE_GAME, DOWNLOAD_ENDED} from '../constants/action-types'
 
 import download from '../tasks/download'
 
@@ -53,6 +53,8 @@ export function * startCave (game, cave) {
 
 export function * startDownload (downloadOpts) {
   invariant(downloadOpts, 'startDownload cannot have null opts')
+  invariant(downloadOpts.reason, 'startDownload must have a reason')
+  invariant(downloadOpts.game, 'startDownload must have a game')
 
   const {upload, downloadKey} = downloadOpts
   log(opts, `Should download ${upload.id}, dl key ? ${downloadKey}`)
@@ -86,7 +88,7 @@ export function * startDownload (downloadOpts) {
     err = e.task || e
   } finally {
     log(opts, `Download ended, err: ${err ? err.stack || JSON.stringify(err) : '<none>'}`)
-    yield put(downloadEnded({id, err}))
+    yield put(downloadEnded({id, err, downloadOpts}))
   }
 
   log(opts, `Download done!`)
@@ -138,7 +140,7 @@ export function * startTask (taskOpts) {
     err = e.task || e
   } finally {
     log(opts, `Task ended, err: ${err ? err.stack || JSON.stringify(err) : '<none>'}`)
-    yield put(taskEnded({id, err, result}))
+    yield put(taskEnded({name: taskOpts.name, id, err, result, opts: taskOpts}))
   }
 
   return {err, result}
@@ -172,6 +174,7 @@ export function * _queueGame (action) {
       })).result
 
       yield call(startDownload, {
+        game,
         gameId: game.id,
         upload,
         destPath: pathmaker.downloadPath(upload),
@@ -180,6 +183,7 @@ export function * _queueGame (action) {
       })
     } else {
       yield call(startDownload, {
+        game,
         gameId: game.id,
         upload: uploads[0],
         destPath: pathmaker.downloadPath(uploads[0]),
@@ -206,8 +210,54 @@ export function * _queueGame (action) {
   }
 }
 
+function * _downloadEnded (action) {
+  const {downloadOpts} = action.payload
+  let {err} = action.payload
+
+  const {reason} = downloadOpts
+  if (reason === 'install') {
+    if (err) {
+      log(opts, 'Download had an error, should notify user')
+    } else {
+      log(opts, 'Download finished, installing..')
+      let {result, err} = (yield call(startTask, {
+        name: 'install',
+        gameId: downloadOpts.gameId,
+        game: downloadOpts.game,
+        upload: downloadOpts.upload,
+        archivePath: downloadOpts.destPath
+      }))
+      log(opts, 'Download finished, installing..')
+
+      const {caveId} = result
+      invariant(caveId, 'install returns caveId')
+
+      if (err) {
+        log(opts, `Error in install: ${err}`)
+        return
+      }
+
+      err = (yield call(startTask, {
+        name: 'configure',
+        gameId: downloadOpts.gameId,
+        game: downloadOpts.game,
+        cave: getGlobalMarket().getEntities('caves')[caveId],
+        upload: downloadOpts.upload,
+        archivePath: downloadOpts.destPath
+      })).err
+      if (err) {
+        log(opts, `Error in configure: ${err}`)
+        return
+      }
+    }
+  } else {
+    log(opts, `Downloaded something for reason ${reason}`)
+  }
+}
+
 export default function * tasksSaga () {
   yield [
-    takeEvery(QUEUE_GAME, _queueGame)
+    takeEvery(QUEUE_GAME, _queueGame),
+    takeEvery(DOWNLOAD_ENDED, _downloadEnded)
   ]
 }

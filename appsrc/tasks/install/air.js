@@ -28,7 +28,7 @@ let CODE_MESSAGES = {
 }
 
 let self = {
-  install: async function (opts) {
+  install: async function (out, opts) {
     await blessing(opts)
     AppActions.cave_progress({id: opts.id, progress: -1})
 
@@ -74,7 +74,7 @@ let self = {
     AppActions.update_cave(opts.id, {air_appid: appid})
   },
 
-  uninstall: async function (opts) {
+  uninstall: async function (out, opts) {
     AppActions.cave_progress({id: opts.id, progress: -1})
 
     log(opts, `Grabbing adobe's Air Runtime Helper if needed...`)

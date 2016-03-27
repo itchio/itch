@@ -27,10 +27,9 @@ let self = {
       typeof opts === 'object'
       typeof opts.stagePath === 'string'
       typeof opts.destPath === 'string'
-      typeof opts.emitter === 'object'
     }
 
-    const {stagePath, destPath, emitter, onProgress = noop, onSingle = pnoop} = opts
+    const {stagePath, destPath, onProgress = noop, onSingle = pnoop} = opts
     const stageFiles = await sf.glob('**', {cwd: stagePath})
 
     if (stageFiles.length === 1) {
@@ -79,8 +78,7 @@ let self = {
 
     log(opts, `copying stage to dest`)
     await butler.ditto(stagePath, destPath, {
-      onProgress,
-      emitter: emitter
+      onProgress
     })
 
     log(opts, `everything copied, writing receipt`)

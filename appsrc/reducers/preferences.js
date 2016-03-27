@@ -6,7 +6,8 @@ const OFFLINE_MODE = process.env.OFFLINE_MODE === '1'
 const initialState = {
   downloadSelfUpdates: true,
   offlineMode: OFFLINE_MODE,
-  installLocations: {}
+  installLocations: {},
+  defaultInstallLocation: 'appdata'
 }
 
 export default handleActions({

@@ -12,8 +12,6 @@ import core from './core'
 import mklog from '../../util/log'
 const log = mklog('installers/archive')
 
-import AppActions from '../../actions/app-actions'
-
 const isTar = async function (path) {
   const type = await sniff.path(path)
   return type && type.ext === 'tar'
@@ -49,15 +47,16 @@ const self = {
 
     const archiveNestedCache = {}
     archiveNestedCache[cave.uploadId] = type
-    AppActions.update_cave(cave.id, {archiveNestedCache})
+    const {globalMarket} = opts
+    globalMarket.saveEntity('caves', cave.id, {archiveNestedCache})
   },
 
-  install: async function (opts) {
+  install: async function (out, opts) {
     const archivePath = opts.archivePath
 
     const onProgress = opts.onProgress || noop
-    const extract_onProgress = subprogress(onProgress, 0, 80)
-    const deploy_onProgress = subprogress(onProgress, 80, 100)
+    const extractOnProgress = subprogress(onProgress, 0, 80)
+    const deployOnProgress = subprogress(onProgress, 80, 100)
 
     const stagePath = opts.archivePath + '-stage'
     await butler.wipe(stagePath)
@@ -66,7 +65,7 @@ const self = {
     log(opts, `extracting archive '${archivePath}' to '${stagePath}'`)
 
     const extractOpts = Object.assign({}, opts, {
-      onProgress: extract_onProgress,
+      onProgress: extractOnProgress,
       destPath: stagePath
     })
     await extract.extract(extractOpts)
@@ -74,16 +73,16 @@ const self = {
     log(opts, `extracted all files ${archivePath} into staging area`)
 
     const deployOpts = Object.assign({}, opts, {
-      onProgress: deploy_onProgress,
+      onProgress: deployOnProgress,
       stagePath
     })
 
-    deployOpts.onSingle = async (only_file) => {
-      if (!opts.tar && await isTar(only_file)) {
-        return await self.handleTar(deployOpts, only_file)
+    deployOpts.onSingle = async (onlyFile) => {
+      if (!opts.tar && await isTar(onlyFile)) {
+        return await self.handleTar(deployOpts, onlyFile)
       }
 
-      return await self.handleNested(opts, only_file)
+      return await self.handleNested(out, opts, onlyFile)
     }
 
     await deploy.deploy(deployOpts)
@@ -95,10 +94,10 @@ const self = {
     return {status: 'ok'}
   },
 
-  uninstall: async function (opts) {
+  uninstall: async function (out, opts) {
     const destPath = opts.destPath
 
-    const installerName = self.retrieve_cached_type(opts)
+    const installerName = self.retrieveCachedType(opts)
     if (installerName) {
       log(opts, `have nested installer type ${installerName}, running...`)
       const coreOpts = Object.assign({}, opts, {installerName})
@@ -112,7 +111,7 @@ const self = {
     self.cacheType(opts, null)
   },
 
-  handle_tar: async function (opts, tar) {
+  handleTar: async function (opts, tar) {
     // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
     log(opts, `extracting tar: ${tar}`)
     const subOpts = Object.assign({}, opts, {
@@ -126,23 +125,23 @@ const self = {
     return {deployed: true}
   },
 
-  handle_nested: async function (opts, only_file) {
+  handleNested: async function (out, opts, onlyFile) {
     // zipped installers need love too
-    const sniffOpts = {archivePath: only_file, disable_cache: true}
+    const sniffOpts = {archivePath: onlyFile, disableCache: true}
 
-    let installer_name
+    let installerName
     try {
-      installer_name = await core.sniff_type(sniffOpts)
+      installerName = await core.sniffType(sniffOpts)
     } catch (err) {
-      log(opts, `not a recognized installer type: ${only_file}`)
+      log(opts, `not a recognized installer type: ${onlyFile}`)
       return null
     }
 
-    self.cache_type(opts, installer_name)
-    log(opts, `found a '${installer_name}': ${only_file}`)
+    self.cacheType(opts, installerName)
+    log(opts, `found a '${installerName}': ${onlyFile}`)
     const nestedOpts = Object.assign({}, opts, sniffOpts)
     log(opts, `installing it with nestedOpts: ${JSON.stringify(nestedOpts, null, 2)}`)
-    await core.install(nestedOpts)
+    await core.install(out, nestedOpts)
 
     return {deployed: true}
   }

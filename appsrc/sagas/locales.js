@@ -24,7 +24,7 @@ import mklog from '../util/log'
 const log = mklog('locales')
 const opts = {logger}
 
-import {operationFailed, localesConfigLoaded, queueLocaleDownload, localeDownloadStarted, localeDownloadEnded} from '../actions'
+import {queueHistoryItem, localesConfigLoaded, queueLocaleDownload, localeDownloadStarted, localeDownloadEnded} from '../actions'
 import {BOOT, QUEUE_LOCALE_DOWNLOAD} from '../constants/action-types'
 
 export function canonicalFileName (lang) {
@@ -90,7 +90,10 @@ export function * downloadLocale (action) {
   try {
     yield* doDownloadLocale(lang, resources)
   } catch (e) {
-    yield put(operationFailed({type: 'locale_download', data: {lang}, stack: e.stack}))
+    yield put(queueHistoryItem({
+      label: ['i18n.failed_downloading_locales', {lang}],
+      detail: e.stack || e
+    }))
   } finally {
     yield put(localeDownloadEnded({lang, resources}))
   }

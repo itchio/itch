@@ -4,7 +4,6 @@ import spawn from '../../util/spawn'
 import mklog from '../../util/log'
 const log = mklog('install/core')
 
-import AppActions from '../../actions/app-actions'
 import ExtendableError from 'es6-error'
 
 class UnhandledFormat extends ExtendableError {
@@ -40,27 +39,29 @@ const self = {
     'html': 'naked'
   },
 
-  install: async function (opts) {
-    return await self.operate(opts, 'install')
+  install: async function (out, opts) {
+    return await self.operate(out, opts, 'install')
   },
 
-  uninstall: async function (opts) {
-    return await self.operate(opts, 'uninstall')
+  uninstall: async function (out, opts) {
+    return await self.operate(out, opts, 'uninstall')
   },
 
   cacheType: function (opts, installerName) {
     pre: { // eslint-disable-line
       typeof opts === 'object'
-      typeof opts.uploadId === 'number'
+      typeof opts.globalMarket === 'object'
+      typeof opts.upload === 'object'
+      typeof opts.upload.id === 'number'
       typeof installerName === 'string'
     }
 
-    const cave = opts.cave
+    const {globalMarket, cave} = opts
     if (!cave) return
 
     const installerCache = {}
     installerCache[opts.uploadId] = installerName
-    AppActions.update_cave(cave.id, {installerCache})
+    globalMarket.saveEntity('caves', cave.id, {installerCache})
   },
 
   retrieveCachedType: function (opts) {
@@ -112,7 +113,7 @@ const self = {
     return installerName
   },
 
-  operate: async function (opts, operation) {
+  operate: async function (out, opts, operation) {
     const {archivePath} = opts
     let {installerName} = opts
 
@@ -127,7 +128,7 @@ const self = {
     }
 
     const installer = require(`./${installerName}`).default
-    await installer[operation](opts)
+    await installer[operation](out, opts)
   }
 }
 

@@ -14,7 +14,7 @@ const log = mklog('installers/dmg')
 let HFS_RE = /(.*)\s+Apple_HFS\s+(.*)\s*$/
 
 let self = {
-  install: async function (opts) {
+  install: async function (out, opts) {
     let archivePath = opts.archivePath
     let onProgress = opts.onProgress || noop
 
@@ -153,7 +153,7 @@ let self = {
     cleanup()
   },
 
-  uninstall: async function (opts) {
+  uninstall: async function (out, opts) {
     log(opts, `Relying on archive's uninstall routine`)
     await archive.uninstall(opts)
   }

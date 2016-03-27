@@ -8,7 +8,7 @@ import html from './launch/html'
 function caveProblem (cave) {
   switch (cave.launchType) {
     case 'native':
-      if (cave.executables && cave.executables.length > 0) {
+      if (!cave.executables || cave.executables.length === 0) {
         return ['game.install.no_executables_found']
       }
       break
