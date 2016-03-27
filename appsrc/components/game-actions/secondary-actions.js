@@ -11,17 +11,12 @@ const platform = os.itchPlatform()
 
 class SecondaryActions extends Component {
   render () {
-    const {game, cave, mayDownload, action} = this.props
+    const {task, game, cave, mayDownload, action} = this.props
     let error = false
 
     const children = []
 
     if (cave) {
-      let task = cave.task
-      if (task === 'check-for-update') {
-        task = 'idle'
-      }
-
       if (task === 'error') {
         error = true
 
@@ -121,9 +116,10 @@ class SecondaryActions extends Component {
 
 SecondaryActions.propTypes = {
   mayDownload: PropTypes.bool,
-  cave: PropTypes.any,
-  game: PropTypes.any,
-  action: PropTypes.any,
+  cave: PropTypes.object,
+  game: PropTypes.object,
+  task: PropTypes.string,
+  action: PropTypes.string,
 
   t: PropTypes.func.isRequired,
   probeCave: PropTypes.func.isRequired,
