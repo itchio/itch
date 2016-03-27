@@ -7,8 +7,6 @@ import file from '../../util/file'
 import mklog from '../../util/log'
 const log = mklog('installers/exe')
 
-import AppActions from '../../actions/app-actions'
-
 import {partial} from 'underline'
 
 let self = {
