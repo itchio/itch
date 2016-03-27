@@ -21,8 +21,12 @@ function computeMenuTemplate (system, credentials) {
           type: 'separator'
         },
         {
+          label: 'menu.file.close_tab',
+          accelerator: 'CmdOrCtrl+W'
+        },
+        {
           label: 'menu.file.close_window',
-          accelerator: (system.osx ? 'Cmd+W' : 'Alt+F4')
+          accelerator: (system.osx ? 'Cmd+Shift+W' : 'Alt+F4')
         },
         {
           label: 'menu.file.quit',

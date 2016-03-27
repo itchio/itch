@@ -62,11 +62,13 @@ import {
   openExternal,
   changeUser,
   checkForSelfUpdate,
-  reportIssue
+  reportIssue,
+  closeTab
 } from '../actions'
 
 function convertMenuAction (label) {
   switch (label) {
+    case 'menu.file.close_tab': return closeTab()
     case 'menu.file.close_window': return hideWindow()
     case 'menu.file.quit': return quitWhenMain()
     case 'menu.file.preferences': return navigate('preferences')
