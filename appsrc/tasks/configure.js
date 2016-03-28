@@ -24,7 +24,6 @@ async function configure (appPath) {
 }
 
 export default async function start (out, opts) {
-  console.log('configure opts: ', opts)
   const {cave, upload, game, globalMarket} = opts
   invariant(cave, 'configure has cave')
   invariant(game, 'configure has game')
