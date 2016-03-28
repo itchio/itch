@@ -1,61 +1,58 @@
 
-import noop from '../util/noop'
+import invariant from 'invariant'
+import pathmaker from '../util/pathmaker'
+
 import sf from '../util/sf'
 import mklog from '../util/log'
 const log = mklog('tasks/uninstall')
 
-import CaveStore from '../stores/cave-store'
-import AppActions from '../actions/app-actions'
-
 import core from './install/core'
 
-const keep_archives = (process.env.REMEMBER_ME_WHEN_IM_GONE === '1')
+const keepArchives = (process.env.REMEMBER_ME_WHEN_IM_GONE === '1')
 
-let self = {
-  start: async function (opts) {
-    let id = opts.id
-    let logger = opts.logger
-    let onerror = opts.onerror || noop
-    let onProgress = opts.onProgress || onProgress
-    let emitter = opts.emitter
+export default async function start (out, opts) {
+  const {cave, globalMarket} = opts
+  invariant(cave, 'uninstall has cave')
+  invariant(globalMarket, 'uninstall has cave')
 
-    let cave = CaveStore.find(id)
-    let destPath = CaveStore.appPath(cave.install_location, id)
+  const onProgress = (info) => out.emit('progress', info.percent)
 
-    if (cave.upload_id && cave.uploads && cave.uploads[cave.upload_id]) {
-      let upload = cave.uploads[cave.upload_id]
+  const destPath = pathmaker.appPath(cave)
 
-      let archivePath = CaveStore.archivePath(cave.install_location, upload)
+  if (cave.uploadId && cave.uploads && cave.uploads[cave.uploadId]) {
+    const upload = cave.uploads[cave.uploadId]
 
-      log(opts, `Uninstalling app in ${destPath} from archive ${archivePath}`)
+    const archivePath = pathmaker.archivePath(upload)
 
-      let coreOpts = {id, logger, onerror, onProgress, archivePath, destPath, cave, emitter}
+    log(opts, `Uninstalling app in ${destPath} from archive ${archivePath}`)
 
-      AppActions.update_cave(id, {launchable: false})
+    const coreOpts = {
+      ...opts,
+      onProgress,
+      archivePath
+    }
+    globalMarket.saveEntity('caves', cave.id, {launchable: false})
 
-      try {
-        await core.uninstall(coreOpts)
-        log(opts, `Uninstallation successful`)
-      } catch (e) {
-        if (e instanceof core.UnhandledFormat) {
-          log(opts, e.message)
-          log(opts, `Imploding anyway`)
-          await sf.wipe(destPath)
-        } else {
-          // re-raise other errors
-          throw e
-        }
-      }
-
-      if (!keep_archives) {
-        log(opts, `Erasing archive ${archivePath}`)
-        await sf.wipe(archivePath)
+    try {
+      await core.uninstall(out, coreOpts)
+      log(opts, `Uninstallation successful`)
+    } catch (e) {
+      if (e instanceof core.UnhandledFormat) {
+        log(opts, e.message)
+        log(opts, `Imploding anyway`)
+        await sf.wipe(destPath)
+      } else {
+        // re-raise other errors
+        throw e
       }
     }
 
-    log(opts, `Imploding ${destPath}`)
-    AppActions.implode_cave(id)
+    if (!keepArchives) {
+      log(opts, `Erasing archive ${archivePath}`)
+      await sf.wipe(archivePath)
+    }
   }
-}
 
-export default self
+  log(opts, `Imploding ${destPath}`)
+  globalMarket.deleteEntity('caves', cave.id)
+}

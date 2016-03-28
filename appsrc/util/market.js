@@ -196,11 +196,21 @@ export default class Market extends EventEmitter {
     this.emit('commit', {deleted})
   }
 
+  deleteEntity (tableName, entityId, opts) {
+    this.deleteAllEntities({
+      entities: { [tableName]: [entityId] }
+    }, opts)
+  }
+
   getEntities (table) {
     // lazily creates table in 'data' object
     const entities = this.data[table] || {}
     this.data[table] = entities
     return entities
+  }
+
+  getEntity (tableName, entityId) {
+    return this.getEntities(tableName)[entityId]
   }
 
   clear () {

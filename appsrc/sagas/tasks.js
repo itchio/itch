@@ -9,7 +9,15 @@ import {getGlobalMarket, getUserMarket} from './market'
 import {takeEvery} from 'redux-saga'
 import {race, call, put, select} from 'redux-saga/effects'
 
-import {QUEUE_GAME, DOWNLOAD_ENDED} from '../constants/action-types'
+import fetch from '../util/fetch'
+
+import {
+  QUEUE_GAME,
+  QUEUE_CAVE_REINSTALL,
+  QUEUE_CAVE_UNINSTALL,
+  DOWNLOAD_ENDED,
+  TASK_ENDED
+} from '../constants/action-types'
 
 import download from '../tasks/download'
 
@@ -140,7 +148,7 @@ export function * startTask (taskOpts) {
     err = e.task || e
   } finally {
     log(opts, `Task ended, err: ${err ? err.stack || JSON.stringify(err) : '<none>'}`)
-    yield put(taskEnded({name: taskOpts.name, id, err, result, opts: taskOpts}))
+    yield put(taskEnded({name: taskOpts.name, id, err, result, taskOpts}))
   }
 
   return {err, result}
@@ -210,6 +218,64 @@ export function * _queueGame (action) {
   }
 }
 
+export function * _queueCaveUninstall (action) {
+  const {caveId} = action.payload
+  invariant(caveId, 'cave uninstall has valid caveId')
+  const cave = getGlobalMarket().getEntity('caves', caveId)
+  invariant(cave, 'cave uninstall has valid cave')
+
+  yield put(startTask({
+    name: 'uninstall',
+    gameId: cave.gameId,
+    cave
+  }))
+}
+
+export function * _queueCaveReinstall (action) {
+  const {caveId} = action.payload
+  invariant(caveId, 'cave uninstall has valid caveId')
+  const cave = getGlobalMarket().getEntity('caves', caveId)
+  invariant(cave, 'cave uninstall has valid cave')
+
+  const credentials = yield select((state) => state.session.credentials)
+  const game = fetch.gameLazily(getUserMarket(), credentials, game.id)
+  invariant(cave, 'cave uninstall has valid cave')
+
+  yield put(startTask({
+    name: 'install',
+    reinstall: true,
+    gameId: game.id,
+    game,
+    cave
+  }))
+}
+
+function * _taskEnded (action) {
+  const {taskOpts, result} = action.payload
+
+  const {name} = taskOpts
+  if (name === 'install') {
+    const {game, gameId, upload} = taskOpts
+    const {caveId} = result
+    invariant(caveId, 'install gives caveId')
+
+    const cave = getGlobalMarket().getEntities('caves')[caveId]
+    invariant(cave, 'install created cave')
+
+    const {err} = (yield call(startTask, {
+      name: 'configure',
+      gameId,
+      game,
+      cave,
+      upload
+    }))
+    if (err) {
+      log(opts, `Error in configure: ${err}`)
+      return
+    }
+  }
+}
+
 function * _downloadEnded (action) {
   const {downloadOpts} = action.payload
   let {err} = action.payload
@@ -220,31 +286,14 @@ function * _downloadEnded (action) {
       log(opts, 'Download had an error, should notify user')
     } else {
       log(opts, 'Download finished, installing..')
-      let {result, err} = (yield call(startTask, {
+      let {err} = yield call(startTask, {
         name: 'install',
         gameId: downloadOpts.gameId,
         game: downloadOpts.game,
         upload: downloadOpts.upload,
         archivePath: downloadOpts.destPath
-      }))
-      log(opts, 'Download finished, installing..')
+      })
 
-      const {caveId} = result
-      invariant(caveId, 'install returns caveId')
-
-      if (err) {
-        log(opts, `Error in install: ${err}`)
-        return
-      }
-
-      err = (yield call(startTask, {
-        name: 'configure',
-        gameId: downloadOpts.gameId,
-        game: downloadOpts.game,
-        cave: getGlobalMarket().getEntities('caves')[caveId],
-        upload: downloadOpts.upload,
-        archivePath: downloadOpts.destPath
-      })).err
       if (err) {
         log(opts, `Error in configure: ${err}`)
         return
@@ -258,6 +307,9 @@ function * _downloadEnded (action) {
 export default function * tasksSaga () {
   yield [
     takeEvery(QUEUE_GAME, _queueGame),
-    takeEvery(DOWNLOAD_ENDED, _downloadEnded)
+    takeEvery(QUEUE_CAVE_REINSTALL, _queueCaveReinstall),
+    takeEvery(QUEUE_CAVE_UNINSTALL, _queueCaveUninstall),
+    takeEvery(DOWNLOAD_ENDED, _downloadEnded),
+    takeEvery(TASK_ENDED, _taskEnded)
   ]
 }

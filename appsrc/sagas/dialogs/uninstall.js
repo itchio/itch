@@ -1,5 +1,6 @@
 
 import createQueue from '../queue'
+import invariant from 'invariant'
 
 import {takeEvery} from 'redux-saga'
 import {put, call} from 'redux-saga/effects'
@@ -22,8 +23,10 @@ export function * _requestCaveUninstall (action) {
   const userMarket = getUserMarket()
 
   const cave = globalMarket.getEntities('caves')[caveId]
+  invariant(cave, 'cave to uninstall exists')
 
   const game = yield call(fetch.gameLazily, userMarket, credentials, cave.gameId)
+  invariant(game, 'was able to fetch game properly')
   const {title} = game
 
   yield put(openModal({
