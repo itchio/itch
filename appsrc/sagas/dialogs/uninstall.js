@@ -23,7 +23,7 @@ export function * _requestCaveUninstall (action) {
 
   const cave = globalMarket.getEntities('caves')[caveId]
 
-  const game = fetch.gameLazily(userMarket, credentials, cave.gameId)
+  const game = yield call(fetch.gameLazily, userMarket, credentials, cave.gameId)
   const {title} = game
 
   yield put(openModal({
@@ -33,12 +33,12 @@ export function * _requestCaveUninstall (action) {
       {
         label: ['prompt.uninstall.uninstall'],
         action: queueCaveUninstall({caveId}),
-        icon: 'exit'
+        icon: 'delete'
       },
       {
         label: ['prompt.uninstall.reinstall'],
         action: queueCaveReinstall({caveId}),
-        icon: 'exit'
+        icon: 'refresh'
       },
       'cancel'
     ]
