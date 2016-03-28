@@ -16,12 +16,14 @@ const queue = createQueue('change-user')
 
 export function * _requestCaveUninstall (action) {
   const {caveId} = action.payload
+  const store = require('../../store').default
+  const {credentials} = store.getState().session.credentials
   const globalMarket = getGlobalMarket()
   const userMarket = getUserMarket()
 
   const cave = globalMarket.getEntities('caves')[caveId]
 
-  const game = fetch.gameLazily(userMarket, cave.gameId)
+  const game = fetch.gameLazily(userMarket, credentials, cave.gameId)
   const {title} = game
 
   yield put(openModal({
