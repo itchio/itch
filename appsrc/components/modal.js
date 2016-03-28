@@ -52,15 +52,15 @@ export class Modal extends Component {
       return <ReactModal isOpen style={customStyles}>
         <div className='modal'>
           <div className='header'>
-            <h2>{t.apply(null, title)}</h2>
+            <h2>{t.format(title)}</h2>
             <div className='filler'/>
             <span className='icon icon-cross close-modal' onClick={closeModal}/>
           </div>
 
           <div className='body'>
             <div className='message'>
-              <div><GFM source={t.apply(null, message)}/></div>
-              {detail && <div className='secondary'><GFM source={t.apply(null, detail)}/></div>}
+              <div><GFM source={t.format(message)}/></div>
+              {detail && <div className='secondary'><GFM source={t.format(detail)}/></div>}
             </div>
           </div>
 
@@ -76,7 +76,7 @@ export class Modal extends Component {
 
               return <div className={`button ${className}`} key={index} onClick={onClick}>
                 {icon ? <span className={`icon icon-${icon}`}/> : ''}
-                {t.apply(null, label)}
+                {t.format(label)}
               </div>
             })}
           </div>
