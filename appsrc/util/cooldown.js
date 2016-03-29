@@ -1,21 +1,23 @@
 
-let self = function (ms_between_requests) {
+import Promise from 'bluebird'
+
+let self = function (msBetweenRequests) {
   pre: { // eslint-disable-line
-    typeof ms_between_requests === 'number'
-    ms_between_requests > 0
+    typeof msBetweenRequests === 'number'
+    msBetweenRequests > 0
   }
-  let last_request = 0
+  let lastRequest = 0
 
   return function cooldown () {
     let now = Date.now()
-    let next_acceptable = last_request + ms_between_requests
-    let quiet = next_acceptable - now
+    let nextAcceptable = lastRequest + msBetweenRequests
+    let quiet = nextAcceptable - now
 
-    if (now > next_acceptable) {
-      last_request = now
+    if (now > nextAcceptable) {
+      lastRequest = now
       return Promise.resolve()
     } else {
-      last_request = next_acceptable
+      lastRequest = nextAcceptable
     }
 
     return new Promise((resolve, reject) => {

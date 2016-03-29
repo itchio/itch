@@ -1,4 +1,6 @@
 
+import Promise from 'bluebird'
+
 import dateFormat from 'dateformat'
 import {pairs} from 'underline'
 import colors from 'colors/safe'

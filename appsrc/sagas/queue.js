@@ -1,4 +1,5 @@
 
+import Promise from 'bluebird'
 import {EventEmitter} from 'events'
 
 import {isCancelError} from 'redux-saga'

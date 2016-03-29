@@ -1,4 +1,6 @@
 
+import Promise from 'bluebird'
+
 // asar-aware filesystem module
 import fs from 'fs'
 
