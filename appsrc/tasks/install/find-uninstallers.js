@@ -9,8 +9,8 @@ import sf from '../../util/sf'
 //  * unins001.exe
 const pattern = '**/@(*uninst|uninstall|unins*).exe'
 
-const find_uninstallers = async function (destPath) {
+const findUninstallers = async function (destPath) {
   return await sf.glob(pattern, {nodir: true, nocase: true, cwd: destPath})
 }
 
-export default find_uninstallers
+export default findUninstallers

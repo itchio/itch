@@ -16,7 +16,7 @@ const log = mklog('installers/nsis')
 // So, we run them with elevate all the time.
 
 const self = {
-  install: async function (opts) {
+  install: async function (out, opts) {
     await blessing(opts)
     AppActions.cave_progress({id: opts.id, progress: -1})
 
@@ -55,7 +55,7 @@ const self = {
     log(opts, `elevate/nsis installer completed successfully`)
   },
 
-  uninstall: async function (opts) {
+  uninstall: async function (out, opts) {
     AppActions.cave_progress({id: opts.id, progress: -1})
 
     const destPath = opts.destPath

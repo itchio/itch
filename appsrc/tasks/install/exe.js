@@ -12,12 +12,12 @@ import {partial} from 'underline'
 let self = {
   validInstallers: ['inno', 'nsis', 'air', 'archive'],
 
-  install: async function (opts) {
+  install: async function (out, opts) {
     let installer = await self.findInstaller(opts)
     await installer.install(opts)
   },
 
-  uninstall: async function (opts) {
+  uninstall: async function (out, opts) {
     let installer = await self.findInstaller(opts)
     await installer.uninstall(opts)
   },

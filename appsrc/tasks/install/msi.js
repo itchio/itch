@@ -28,7 +28,7 @@ const self = {
     ]
   },
 
-  install: async function (opts) {
+  install: async function (out, opts) {
     AppActions.cave_progress({id: opts.id, progress: -1})
 
     if (os.platform() !== 'win32') {
@@ -47,7 +47,7 @@ const self = {
     })
   },
 
-  uninstall: async function (opts) {
+  uninstall: async function (out, opts) {
     if (os.platform() !== 'win32') {
       throw new Error('MSI files are only supported on Windows')
     }

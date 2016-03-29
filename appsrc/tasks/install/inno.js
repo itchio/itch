@@ -17,7 +17,7 @@ const self = {
     return `${installerPath}.${operation}.log.txt`
   },
 
-  install: async function (opts) {
+  install: async function (out, opts) {
     await blessing(opts)
 
     AppActions.cave_progress({id: opts.id, progress: -1})
@@ -42,7 +42,7 @@ const self = {
     log(opts, `inno installer exited with code ${code}`)
   },
 
-  uninstall: async function (opts) {
+  uninstall: async function (out, opts) {
     AppActions.cave_progress({id: opts.id, progress: -1})
 
     let destPath = opts.destPath
