@@ -14,6 +14,10 @@ import {app} from '../electron'
 import {boot} from '../actions'
 import {PREBOOT} from '../constants/action-types'
 
+import {opts} from '../logger'
+import mklog from '../util/log'
+const log = mklog('preboot')
+
 export function * importLegacyDBs () {
   // while importing, there's no need to dispatch DB_COMMIT events, they'll
   // be re-opened on login anyway
@@ -56,6 +60,20 @@ export function * importLegacyDBs () {
       yield call(sf.writeFile, obsoleteMarker, `If everything is working fine, you may delete both ${oldDBFilename} and this file!`)
       yield call([userMarket, userMarket.close])
     }
+  }
+
+  // clean up dead caves
+  const caves = globalMarket.getEntities('caves')
+  const cavesToDelete = []
+  for (const caveId of Object.keys(caves)) {
+    const cave = caves[caveId]
+    if (!cave.gameId || cave.dead) {
+      cavesToDelete.push(caveId)
+    }
+  }
+  if (cavesToDelete.length > 0) {
+    log(opts, `Pruning ${cavesToDelete.length} dead caves`)
+    yield call([globalMarket, globalMarket.deleteAllEntities], {entities: {caves: cavesToDelete}}, {wait: true})
   }
 
   yield call([globalMarket, globalMarket.close])

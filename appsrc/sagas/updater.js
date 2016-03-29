@@ -11,17 +11,20 @@ import {delay} from './effects'
 import {checkForGameUpdates} from '../actions'
 
 import fetch from '../util/fetch'
+import pathmaker from '../util/pathmaker'
 
 import mklog from '../util/log'
 const log = mklog('updater')
 import {opts} from '../logger'
+
+import {startDownload} from './tasks/start-download'
 
 import {
   USER_DB_READY,
   CHECK_FOR_GAME_UPDATES
 } from '../constants/action-types'
 
-const DELAY_BETWEEN_GAMES = 1000
+const DELAY_BETWEEN_GAMES = 25
 
 // 30 minutes * 60 = seconds, * 1000 = millis
 const DELAY_BETWEEN_PASSES = 30 * 60 * 1000
@@ -44,8 +47,6 @@ function * _checkForGameUpdates () {
 }
 
 function * checkForGameUpdate (cave) {
-  console.log('checking for game updates: ', cave)
-
   if (!cave.launchable) {
     log(opts, `Cave isn't launchable, skipping: ${cave.id}`)
     return
@@ -61,21 +62,47 @@ function * checkForGameUpdate (cave) {
 
   const market = getUserMarket()
   const game = yield call(fetch.gameLazily, market, credentials, cave.gameId)
+  const logger = new mklog.Logger({sinks: {console: false, string: true}})
 
   if (game) {
-    log(opts, `Should check updates for ${game.title}: stub`)
+    log(opts, `Looking for updates to ${game.title}: stub`)
     const out = new EventEmitter()
     const taskOpts = {
       ...opts,
+      logger,
       game,
       gameId: game.id,
       credentials,
+      downloadKey: cave.downloadKey,
       market
     }
-    const result = yield call(findUpload, out, taskOpts)
-    log(opts, `Find-upload results: `, result)
+
+    try {
+      const {uploads, downloadKey} = yield call(findUpload, out, taskOpts)
+      if (uploads.length === 0) {
+        log(opts, `Can't check for updates for ${game.title}, no uploads`)
+        return
+      }
+      const upload = uploads[0]
+
+      if (upload.id !== cave.uploadId) {
+        log(opts, `Got a new upload for ${game.title}: ${upload.filename}`)
+        const archivePath = pathmaker.downloadPath(upload)
+
+        yield call(startDownload, {
+          game,
+          gameId: game.id,
+          upload,
+          destPath: archivePath,
+          downloadKey,
+          reason: 'install' // update, really I suppose
+        })
+      }
+    } catch (e) {
+      log(opts, `While looking for update: `)
+    }
   } else {
-    log(opts, `Can't check for updates for ${game}, not visible by current user?`)
+    log(opts, `Can't check for updates for ${game.title}, not visible by current user?`)
   }
 }
 

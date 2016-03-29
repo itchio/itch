@@ -32,7 +32,7 @@ export default async function start (out, opts) {
       upload,
       archivePath
     }
-    globalMarket.saveEntity('caves', cave.id, {launchable: false})
+    globalMarket.saveEntity('caves', cave.id, {launchable: false, dead: true})
 
     try {
       await core.uninstall(out, coreOpts)

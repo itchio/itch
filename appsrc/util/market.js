@@ -163,12 +163,12 @@ export default class Market extends EventEmitter {
     this.emit('commit', {updated, initial})
   }
 
-  deleteAllEntities (response, opts) {
+  async deleteAllEntities (response, opts) {
     opts = opts || {}
-    const {ondone} = opts
+    const {wait = false} = opts
 
     let promises = null
-    if (ondone) {
+    if (wait) {
       promises = []
     }
 
@@ -188,8 +188,8 @@ export default class Market extends EventEmitter {
       this.data[tableName] = table
     }
 
-    if (ondone) {
-      Promise.all(promises).then(opts.ondone)
+    if (wait) {
+      await Promise.all(promises)
     }
 
     const deleted = response.entities

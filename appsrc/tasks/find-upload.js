@@ -70,7 +70,8 @@ export default async function start (out, opts) {
   invariant(credentials && credentials.key, 'find-upload has valid key')
   const keyClient = client.withKey(credentials.key)
 
-  const downloadKey = market.getEntities('downloadKeys')::findWhere({gameId})
+  const grabKey = () => market.getEntities('downloadKeys')::findWhere({gameId})
+  const {downloadKey = grabKey()} = opts
 
   let uploads
   if (downloadKey) {
@@ -93,5 +94,5 @@ export default async function start (out, opts) {
 
     log(opts, `sorted uploads: ${JSON.stringify(uploads, null, 2)}`)
   }
-  return {uploads}
+  return {uploads, downloadKey}
 }
