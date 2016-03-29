@@ -23,6 +23,6 @@ export async function exists (file) {
   return true
 }
 
-export {writeFile} from '../util/sf'
-
-export default {readFile, exists}
+import {writeFile as sfWriteFile} from '../util/sf'
+export const writeFile = sfWriteFile
+export default {readFile, writeFile, exists}
