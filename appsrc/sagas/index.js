@@ -17,6 +17,7 @@ import login from './login'
 import menu from './menu'
 import fetch from './fetch'
 import tasks from './tasks'
+import updater from './updater'
 
 export default [
   preboot,
@@ -36,5 +37,6 @@ export default [
   login,
   menu,
   fetch,
-  tasks
+  tasks,
+  updater
 ]

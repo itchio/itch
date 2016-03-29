@@ -12,7 +12,9 @@ import {
   REQUEST_CAVE_UNINSTALL,
   QUEUE_CAVE_UNINSTALL,
   QUEUE_CAVE_REINSTALL,
-  INITIATE_PURCHASE
+  INITIATE_PURCHASE,
+
+  CHECK_FOR_GAME_UPDATES
 } from '../constants/action-types'
 
 export const queueGame = createAction(QUEUE_GAME)
@@ -26,3 +28,5 @@ export const requestCaveUninstall = createAction(REQUEST_CAVE_UNINSTALL)
 export const queueCaveUninstall = createAction(QUEUE_CAVE_UNINSTALL)
 export const queueCaveReinstall = createAction(QUEUE_CAVE_REINSTALL)
 export const initiatePurchase = createAction(INITIATE_PURCHASE)
+
+export const checkForGameUpdates = createAction(CHECK_FOR_GAME_UPDATES)

@@ -137,6 +137,8 @@ module.exports = keyMirror({
   /** A game has been interacted with! */
   RECORD_GAME_INTERACTION: null,
 
+  CHECK_FOR_GAME_UPDATES: null,
+
   /** User requested game to be installed */
   QUEUE_GAME: null,
 
