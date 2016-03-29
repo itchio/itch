@@ -15,6 +15,11 @@ import {filter} from 'underline'
  * Displays our current progress when checking for updates, etc.
  */
 class StatusBar extends Component {
+  constructor () {
+    super()
+    this.state = {}
+  }
+
   render () {
     const {t, selfUpdate, offlineMode} = this.props
     const {dismissStatus, applySelfUpdateRequest, showAvailableSelfUpdate, updatePreferences} = this.props
@@ -96,13 +101,25 @@ class StatusBar extends Component {
     </div>
   }
 
+  componentWillReceiveProps (nextProps) {
+    // such pure, much react
+    if (nextProps.downloadItems.length > this.props.downloadItems.length) {
+      this.setState({...this.state, downloadsBounce: true})
+      setTimeout(() => this.setState({...this.state, downloadsBounce: false}), 500)
+    }
+    if (nextProps.historyItems.length > this.props.historyItems.length) {
+      this.setState({...this.state, historyBounce: true})
+      setTimeout(() => this.setState({...this.state, historyBounce: false}), 500)
+    }
+  }
+
   downloads () {
     const {t, downloadItems, navigate} = this.props
 
-    const downloadClasses = classNames('downloads hint--right', {active: downloadItems.length > 0})
+    const downloadClasses = classNames('downloads hint--right', {active: downloadItems.length > 0, bounce: this.state.downloadsBounce})
     const downloadHint = downloadItems.length === 0 ? t('status.downloads.no_active_downloads') : t('status.downloads.click_to_manage')
 
-    return <div className={downloadClasses} data-hint={downloadHint} onClick={() => navigate('downloads')}>
+    return <div ref='downloads' className={downloadClasses} data-hint={downloadHint} onClick={() => navigate('downloads')}>
       <Icon icon='download'/>
       { downloadItems.length > 0
       ? <span className='bubble'>{downloadItems.length}</span>
@@ -115,9 +132,9 @@ class StatusBar extends Component {
     const activeItems = historyItems::filter('active')
 
     const historyHint = activeItems.length === 0 ? t('status.history.no_active_items') : t('status.history.click_to_expand')
-    const historyClasses = classNames('history hint--right', {active: activeItems.length > 0})
+    const historyClasses = classNames('history hint--right', {active: activeItems.length > 0, bounce: this.state.historyBounce})
 
-    return <div className={historyClasses} data-hint={historyHint} onClick={() => navigate('history')}>
+    return <div ref='history' className={historyClasses} data-hint={historyHint} onClick={() => navigate('history')}>
       <Icon icon='history'/>
       { activeItems.length > 0
       ? <span className='bubble'>{activeItems.length}</span>

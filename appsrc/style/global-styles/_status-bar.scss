@@ -40,6 +40,10 @@
       color: $light-accent-color;
     }
 
+    &.bounce {
+      animation: bounce .4s linear;
+    }
+
     &:active {
       transform: scale(.95);
     }
