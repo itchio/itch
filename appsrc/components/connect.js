@@ -1,19 +1,32 @@
 
 import env from '../env'
 
+import {createSelector} from 'reselect'
+
 import {connect as reduxConnect} from 'react-redux'
 import {getT} from '../localizer'
 
-const augment = (state, base) => {
-  if (env.name === 'test') {
-    const t = (x) => x
-    return {...base, t}
-  } else {
-    const {lang, strings} = state.i18n
-    const t = getT(strings, lang)
+const identity = (x) => x
+
+const tMaker = createSelector(
+  (state) => state.i18n,
+  (i18n) => {
+    const {lang, strings} = i18n
+    if (env.name === 'test') {
+      return identity
+    } else {
+      return getT(strings, lang)
+    }
+  }
+)
+
+const augment = createSelector(
+  (state, base) => tMaker(state),
+  (state, base) => base,
+  (t, base) => {
     return {...base, t}
   }
-}
+)
 
 export function connect (mapStateToProps, mapDispatchToProps) {
   const augmentedMapStateToProps = (state, props) => {
