@@ -22,7 +22,7 @@ export default async function start (out, opts) {
   if (cave.uploadId && cave.uploads && cave.uploads[cave.uploadId]) {
     const upload = cave.uploads[cave.uploadId]
 
-    const archivePath = pathmaker.archivePath(upload)
+    const archivePath = pathmaker.downloadPath(upload)
 
     log(opts, `Uninstalling app in ${destPath} from archive ${archivePath}`)
 
