@@ -11,6 +11,9 @@ import {log, opts} from './log'
 
 import * as actions from '../../actions'
 
+import {throttle} from 'underline'
+const PROGRESS_THROTTLE = 50
+
 export function * startTask (taskOpts) {
   invariant(taskOpts, 'startTask cannot have null opts')
   invariant(typeof taskOpts.name === 'string', 'startTask opts must contain name')
@@ -25,9 +28,9 @@ export function * startTask (taskOpts) {
     const queue = createQueue(`task-${taskOpts.name}-${id}`)
 
     const out = new EventEmitter()
-    out.on('progress', (progress) => {
+    out.on('progress', ((progress) => {
       queue.dispatch(actions.taskProgress({id, progress}))
-    })
+    })::throttle(PROGRESS_THROTTLE))
 
     const credentials = yield select((state) => state.session.credentials)
     const extendedOpts = {

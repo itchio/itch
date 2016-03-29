@@ -8,8 +8,8 @@ import TaskIcon from '../task-icon'
 
 const linearGradient = (progress) => {
   let percent = (progress * 100).toFixed() + '%'
-  let doneColor = '#444'
-  let undoneColor = '#222'
+  let doneColor = '#414141'
+  let undoneColor = '#2B2B2B'
   return `-webkit-linear-gradient(left, ${doneColor}, ${doneColor} ${percent}, ${undoneColor} ${percent}, ${undoneColor})`
 }
 
@@ -60,7 +60,7 @@ class MainAction extends Component {
       'buy-now': (platformCompatible && !mayDownload),
       'hint--top': hint
     })
-    const button = <div className={buttonClasses} onClick={() => this.onClick()} data-hint={hint}>
+    const button = <div style={style} className={buttonClasses} onClick={() => this.onClick()} data-hint={hint}>
       {child}
     </div>
 
