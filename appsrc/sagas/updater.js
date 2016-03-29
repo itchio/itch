@@ -1,4 +1,5 @@
 
+import {EventEmitter} from 'events'
 import invariant from 'invariant'
 
 import {takeLatest} from 'redux-saga'
@@ -25,6 +26,8 @@ const DELAY_BETWEEN_GAMES = 1000
 // 30 minutes * 60 = seconds, * 1000 = millis
 const DELAY_BETWEEN_PASSES = 30 * 60 * 1000
 
+import findUpload from '../tasks/find-upload'
+
 function * _checkForGameUpdates () {
   // may be interrupted by a saga cancellation
   const caves = getGlobalMarket().getEntities('caves')
@@ -41,12 +44,17 @@ function * _checkForGameUpdates () {
 }
 
 function * checkForGameUpdate (cave) {
+  console.log('checking for game updates: ', cave)
+
   if (!cave.launchable) {
     log(opts, `Cave isn't launchable, skipping: ${cave.id}`)
     return
   }
 
-  invariant(cave.gameId, 'cave has gameId')
+  if (!cave.gameId) {
+    log(opts, `Cave lacks gameId, skipping: ${cave.id}`)
+    return
+  }
 
   const credentials = yield select((state) => state.session.credentials)
   invariant(credentials, 'has credentials')
@@ -56,6 +64,16 @@ function * checkForGameUpdate (cave) {
 
   if (game) {
     log(opts, `Should check updates for ${game.title}: stub`)
+    const out = new EventEmitter()
+    const taskOpts = {
+      ...opts,
+      game,
+      gameId: game.id,
+      credentials,
+      market
+    }
+    const result = yield call(findUpload, out, taskOpts)
+    log(opts, `Find-upload results: `, result)
   } else {
     log(opts, `Can't check for updates for ${game}, not visible by current user?`)
   }
