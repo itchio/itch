@@ -60,7 +60,7 @@ export function * _queueGame (action) {
       options: [
         {
           label: ['game.install.visit_web_page'],
-          action: browseGame({id: game.id, url: game.url})
+          action: actions.browseGame({gameId: game.id, url: game.url})
         },
         {
           label: ['game.install.try_again'],
