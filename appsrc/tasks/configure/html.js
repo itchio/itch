@@ -1,9 +1,12 @@
 
 import path from 'path'
 import clone from 'clone'
-import {getIn} from 'grovel'
 
 import sf from '../../util/sf'
+
+import mklog from '../../util/log'
+import {opts} from '../../logger'
+const log = mklog('configure/html')
 
 export const indexBonus = (path) => /index\.html$/.test(path) ? 2 : 0
 
@@ -26,11 +29,13 @@ const self = {
     const otherEntryPoints = await sf.glob('**/*.html', {cwd: cavePath})
     const entryPoints = self.sortByDepth(indexEntryPoints.concat(otherEntryPoints))
 
+    const {embed = {}} = game
+    const {width = 1280, height = 720, fullscreen = true} = embed
+    log(opts, `Game settings: ${width}x${height}, fullscreen = ${fullscreen}`)
+
     const gamePath = entryPoints[0]
     const windowSize = {
-      width: game::getIn(['embed', 'width']) || 1280,
-      height: game::getIn(['embed', 'height']) || 720,
-      fullscreen: game::getIn(['embed', 'fullscreen']) || true
+      width, height, fullscreen
     }
     return {gamePath, windowSize}
   }

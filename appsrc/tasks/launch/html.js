@@ -28,11 +28,14 @@ export default async function launch (out, opts) {
   const entryPoint = path.join(appPath, cave.gamePath)
 
   log(opts, `entry point: ${entryPoint}`)
+
+  const {width, height} = cave.windowSize
+  log(opts, `starting at reoslution ${width}x${height}`)
+
   let win = new BrowserWindow({
     title: game.title,
     icon: `./static/images/tray/${app.getName()}.png`,
-    width: cave.windowSize.width,
-    height: cave.windowSize.height,
+    width, height,
     center: true,
     show: true,
     backgroundColor: '#000',
