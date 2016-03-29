@@ -29,6 +29,7 @@ export default async function start (out, opts) {
     const coreOpts = {
       ...opts,
       onProgress,
+      upload,
       archivePath
     }
     globalMarket.saveEntity('caves', cave.id, {launchable: false})
