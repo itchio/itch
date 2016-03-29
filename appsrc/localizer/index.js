@@ -1,8 +1,20 @@
 
 export function getT (strings, lang) {
   const t = (key, variables) => {
-    const lstrings = strings[lang] || {}
-    const string = lstrings[key]
+    const langs = [lang, 'en']
+    const keys = Array.isArray(key) ? key : [key]
+
+    let string
+    for (const lang of langs) {
+      for (const key of keys) {
+        const lstrings = strings[lang] || {}
+        string = lstrings[key]
+        if (string) break
+      }
+
+      if (string) break
+    }
+
     if (!string) {
       // fallback
       const {defaultValue = key} = variables || {}
