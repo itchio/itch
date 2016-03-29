@@ -79,7 +79,7 @@ const self = {
 
     deployOpts.onSingle = async (onlyFile) => {
       if (!opts.tar && await isTar(onlyFile)) {
-        return await self.handleTar(deployOpts, onlyFile)
+        return await self.handleTar(out, deployOpts, onlyFile)
       }
 
       return await self.handleNested(out, opts, onlyFile)
@@ -100,7 +100,10 @@ const self = {
     const installerName = self.retrieveCachedType(opts)
     if (installerName) {
       log(opts, `have nested installer type ${installerName}, running...`)
-      const coreOpts = Object.assign({}, opts, {installerName})
+      const coreOpts = {
+        ...opts,
+        installerName
+      }
       await core.uninstall(coreOpts)
     } else {
       log(opts, `wiping directory ${destPath}`)
@@ -111,7 +114,7 @@ const self = {
     self.cacheType(opts, null)
   },
 
-  handleTar: async function (opts, tar) {
+  handleTar: async function (out, opts, tar) {
     // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
     log(opts, `extracting tar: ${tar}`)
     const subOpts = Object.assign({}, opts, {
@@ -119,7 +122,7 @@ const self = {
       tar: true
     })
 
-    await self.install(subOpts)
+    await self.install(out, subOpts)
     await butler.wipe(tar)
 
     return {deployed: true}

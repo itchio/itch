@@ -37,9 +37,11 @@ export default async function start (out, opts) {
 
   if (launchType === 'html') {
     const res = await html.configure(game, appPath)
+    log(opts, `html-configure yielded res: ${JSON.stringify(res, null, 2)}`)
     globalMarket.saveEntity('caves', cave.id, res)
   } else {
     const executables = (await configure(appPath)).executables
+    log(opts, `native-configure yielded execs: ${JSON.stringify(executables, null, 2)}`)
     globalMarket.saveEntity('caves', cave.id, {executables})
   }
 }

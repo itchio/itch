@@ -60,8 +60,9 @@
       }
     }
 
-    &.task-download, &.task-find-upload {
+    &.task-download, &.task-install, &.task-configure, &.task-launch, &.task-find-upload {
       .button {
+        @include discreet-button;
         margin-right: 0;
         flex-grow: 1;
         text-align: center;

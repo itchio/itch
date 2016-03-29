@@ -18,10 +18,11 @@ function defaultInstallLocation () {
 
 export default async function start (out, opts) {
   invariant(opts.globalMarket, 'install must have a globalMarket')
+  invariant(opts.market, 'install must have a market')
   invariant(opts.archivePath, 'install must have a archivePath')
   invariant(opts.game, 'install must have a game')
   invariant(opts.upload, 'install must have an upload')
-  const {globalMarket, archivePath, game, upload, installLocation = defaultInstallLocation()} = opts
+  const {market, globalMarket, archivePath, downloadKey, game, upload, installLocation = defaultInstallLocation()} = opts
 
   let checkTimestamps = true
 
@@ -29,20 +30,28 @@ export default async function start (out, opts) {
     checkTimestamps = false
   }
 
-  // TODO: handle reinstall
-  // TODO: handle installFolder conflicts
-  // TODO: save game in userDb
-  const installFolder = game.title
-  let cave = {
-    id: uuid.v4(),
-    gameId: game.id,
-    game,
-    uploadId: upload.id,
-    uploads: [upload],
-    installLocation,
-    installFolder
+  let {cave} = opts
+
+  if (!cave) {
+    invariant(!opts.reinstall, 'need a cave for reinstall')
+
+    // TODO: handle installFolder conflicts
+    const installFolder = game.title
+
+    cave = {
+      id: uuid.v4(),
+      gameId: game.id,
+      game,
+      uploadId: upload.id,
+      uploads: [upload],
+      installLocation,
+      installFolder,
+      downloadKey
+    }
+    globalMarket.saveEntity('caves', cave.id, cave)
   }
-  globalMarket.saveEntity('caves', cave.id, cave)
+
+  market.saveEntity('games', game.id, game)
 
   let destPath = pathmaker.appPath(cave)
 
@@ -72,7 +81,7 @@ export default async function start (out, opts) {
 
   globalMarket.saveEntity('caves', cave.id, {launchable: false})
   await core.install(out, coreOpts)
-  globalMarket.saveEntity('caves', cave.id, {launchable: true, installedArchiveMtime: amtime, upload, uploadId: upload.id})
+  globalMarket.saveEntity('caves', cave.id, {launchable: true, installedArchiveMtime: amtime, uploadId: upload.id})
 
   return {caveId: cave.id}
 }

@@ -30,7 +30,7 @@ export function * _requestCaveUninstall (action) {
   const {title} = game
 
   yield put(openModal({
-    title: ['prompt.uninstall.message', {title}],
+    title: '',
     message: ['prompt.uninstall.message', {title}],
     buttons: [
       {
