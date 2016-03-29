@@ -36,7 +36,7 @@ const platform = os.itchPlatform()
 const platformProp = camelify('p_' + platform)
 
 const isPlatformCompatible = (game) => {
-  return !!game[platformProp]
+  return !!game[platformProp] || game.type === 'html'
 }
 
 MainAction.propTypes = {

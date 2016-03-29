@@ -7,6 +7,7 @@ import electron from '../../electron'
 const {app, BrowserWindow, shell, powerSaveBlocker} = electron
 
 import url from '../../util/url'
+import fetch from '../../util/fetch'
 import pathmaker from '../../util/pathmaker'
 import httpServer from '../../util/http-server'
 import debugBrowserWindow from '../../util/debug-browser-window'
@@ -15,11 +16,12 @@ import mklog from '../../util/log'
 const log = mklog('tasks/launch')
 
 export default async function launch (out, opts) {
-  const {cave, market} = opts
+  const {cave, market, credentials} = opts
   invariant(cave, 'launch-html has cave')
   invariant(market, 'launch-html has market')
+  invariant(credentials, 'launch-html has credentials')
 
-  const game = market.getEntities('games')[cave.game_id]
+  const game = await fetch.gameLazily(market, credentials, cave.gameId)
   const injectPath = path.resolve(__dirname, '..', '..', 'inject', 'game.js')
 
   const appPath = pathmaker.appPath(cave)

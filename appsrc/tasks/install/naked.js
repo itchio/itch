@@ -1,5 +1,6 @@
 
 import sf from '../../util/sf'
+import invariant from 'invariant'
 
 import path from 'path'
 
@@ -7,20 +8,21 @@ import mklog from '../../util/log'
 const log = mklog('installers/naked')
 
 const self = {
-  install: async function (opts) {
-    const archivePath = opts.archivePath
-    const destPath = opts.destPath
+  install: async function (out, opts) {
+    const {archivePath, destPath} = opts
+    invariant(archivePath, 'naked has archivePath')
+    invariant(destPath, 'naked has destPath')
 
     await sf.mkdir(destPath)
 
-    const dest_filePath = path.join(destPath, path.basename(archivePath))
-    log(opts, `copying ${archivePath} to ${dest_filePath}`)
+    const destFilePath = path.join(destPath, path.basename(archivePath))
+    log(opts, `copying ${archivePath} to ${destFilePath}`)
 
-    await sf.ditto(archivePath, dest_filePath)
+    await sf.ditto(archivePath, destFilePath)
   },
 
-  uninstall: async function (opts) {
-    const destPath = opts.destPath
+  uninstall: async function (out, opts) {
+    const {destPath} = opts
 
     log(opts, `nuking ${destPath}`)
     await sf.wipe(destPath)
