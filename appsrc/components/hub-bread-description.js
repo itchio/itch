@@ -26,11 +26,11 @@ class HubBreadDescription extends Component {
         subtitle += ` | a collection by ${user.displayName}`
       }
     } else if (/^games/.test(path)) {
-      const game = games[pathToId(path)]
-      const user = users[game.userId]
+      const game = games[pathToId(path)] || {}
+      const user = users[game.userId] || {displayName: '???'}
       subtitle = `${game.shortText}`
       if (user) {
-        subtitle += ` | a ${game.classification} by ${user.displayName}`
+        subtitle += ` | a ${game.classification || 'game'} by ${user.displayName}`
       }
     } else if (/^search/.test(path)) {
       subtitle = `We need to improve search, your mileage may vary`

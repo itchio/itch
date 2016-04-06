@@ -12,4 +12,24 @@
       color: $secondary-text-color;
     }
   }
+
+  .history-item {
+    display: flex;
+
+    .item-options {
+      margin-left: 10px;
+      display: flex;
+    }
+
+    .item-option {
+      margin: 5px;
+      text-decoration: underline;
+      -webkit-filter: brightness(90%);
+
+      &:hover {
+        -webkit-filter: none;
+        cursor: pointer;
+      }
+    }
+  }
 }
