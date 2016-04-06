@@ -6,8 +6,10 @@ import {_taskEnded} from './task-ended'
 import {_downloadEnded} from './download-ended'
 import {_queueCaveReinstall} from './queue-cave-reinstall'
 import {_queueCaveUninstall} from './queue-cave-uninstall'
+import {_exploreCave} from './explore-cave'
 
 import {
+  EXPLORE_CAVE,
   QUEUE_GAME,
   QUEUE_CAVE_REINSTALL,
   QUEUE_CAVE_UNINSTALL,
@@ -17,6 +19,7 @@ import {
 
 export default function * tasksSaga () {
   yield [
+    takeEvery(EXPLORE_CAVE, _exploreCave),
     takeEvery(QUEUE_GAME, _queueGame),
     takeEvery(QUEUE_CAVE_REINSTALL, _queueCaveReinstall),
     takeEvery(QUEUE_CAVE_UNINSTALL, _queueCaveUninstall),

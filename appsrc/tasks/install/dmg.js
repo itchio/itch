@@ -155,7 +155,7 @@ let self = {
 
   uninstall: async function (out, opts) {
     log(opts, `Relying on archive's uninstall routine`)
-    await archive.uninstall(opts)
+    await archive.uninstall(out, opts)
   }
 }
 
