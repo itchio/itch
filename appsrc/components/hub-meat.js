@@ -9,7 +9,7 @@ import HubGhostItem from './hub-ghost-item'
 import Downloads from './downloads'
 import History from './history'
 
-import {each, map, indexBy, where} from 'underline'
+import {filter, each, map, indexBy, where} from 'underline'
 
 export class HubMeat extends Component {
   render () {
@@ -37,8 +37,18 @@ export class HubMeat extends Component {
 
   gameGrid (games) {
     const items = []
+    const {typedQuery} = this.props
 
-    games::each((game, id) => {
+    let predicate = (x) => true
+
+    if (typedQuery && typedQuery.length > 0) {
+      items.push(<h2 className='filter-info'>Filtering by {typedQuery}</h2>)
+
+      const token = typedQuery.toLowerCase()
+      predicate = (x) => x.title.toLowerCase().indexOf(token) !== -1
+    }
+
+    games::filter(predicate)::each((game, id) => {
       items.push(<HubItem key={`game-${id}`} game={game}/>)
     })
 
@@ -54,6 +64,7 @@ export class HubMeat extends Component {
 }
 
 HubMeat.propTypes = {
+  typedQuery: PropTypes.string,
   path: PropTypes.string,
   me: PropTypes.object,
   games: PropTypes.object,
@@ -61,6 +72,7 @@ HubMeat.propTypes = {
 }
 
 const mapStateToProps = (state) => ({
+  typedQuery: state.session.search.typedQuery,
   path: state.session.navigation.path,
   me: state.session.credentials.me,
   games: state.market.games,

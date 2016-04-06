@@ -159,6 +159,7 @@ module.exports = keyMirror({
 
   /** Search */
   FOCUS_SEARCH: null,
+  SEARCH_QUERY_CHANGED: null,
   SEARCH: null,
   SEARCH_FETCHED: null,
   SEARCH_STARTED: null,

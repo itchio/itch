@@ -4,6 +4,7 @@ import {createAction} from 'redux-actions'
 import {
   FOCUS_SEARCH,
   SEARCH,
+  SEARCH_QUERY_CHANGED,
   SEARCH_FETCHED,
   SEARCH_STARTED,
   SEARCH_FINISHED,
@@ -12,6 +13,7 @@ import {
 
 export const focusSearch = createAction(FOCUS_SEARCH)
 export const search = createAction(SEARCH)
+export const searchQueryChanged = createAction(SEARCH_QUERY_CHANGED)
 export const searchFetched = createAction(SEARCH_FETCHED)
 
 // ugh

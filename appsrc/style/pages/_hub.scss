@@ -63,4 +63,9 @@
   flex-direction: row;
   align-items: stretch;
   position: relative;
+
+  .filter-info {
+    width: 100%;
+    margin: 10px;
+  }
 }

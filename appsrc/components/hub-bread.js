@@ -5,7 +5,7 @@ import {connect} from './connect'
 
 import classNames from 'classnames'
 
-import {search} from '../actions'
+import * as actions from '../actions'
 
 import Icon from './icon'
 import HubBreadDescription from './hub-bread-description'
@@ -30,7 +30,7 @@ class HubBread extends Component {
       </section>
 
       <section className={searchClasses}>
-        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={(e) => this.onKeyPress(e)}/>
+        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onKeyPress} onKeyUp={::this.onQueryChanged()} onChange={::this.onQueryChanged}/>
         <span className='icon icon-search'/>
       </section>
 
@@ -46,10 +46,18 @@ class HubBread extends Component {
 
   onKeyPress (e) {
     const {search} = this.refs
+    if (!search) return
 
     if (e.key === 'Enter') {
       this.props.search(search.value)
     }
+  }
+
+  onQueryChanged (e) {
+    const {search} = this.refs
+    if (!search) return
+
+    this.props.searchQueryChanged(search.value)
   }
 
   titleForPath (path) {
@@ -63,8 +71,8 @@ HubBread.propTypes = {
   path: PropTypes.string,
   searchLoading: PropTypes.bool,
 
-  search: PropTypes.func,
-  closeSearch: PropTypes.func
+  search: PropTypes.func.isRequired,
+  searchQueryChanged: PropTypes.func.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({
@@ -73,7 +81,8 @@ const mapStateToProps = createStructuredSelector({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  search: (query) => dispatch(search(query))
+  search: (query) => dispatch(actions.search(query)),
+  searchQueryChanged: (query) => dispatch(actions.searchQueryChanged(query))
 })
 
 export default connect(

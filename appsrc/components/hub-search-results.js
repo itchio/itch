@@ -48,7 +48,7 @@ export class HubSearchResults extends Component {
         <div className='filler'/>
         <span className='icon icon-cross close-search' onClick={closeSearch}/>
       </div>
-      {this.fakeGrid(results)}
+      {this.resultsGrid(results)}
       <div className='footer'>
         <div className='filler'/>
         <div className='button' onClick={openAsTab}>
@@ -59,7 +59,7 @@ export class HubSearchResults extends Component {
     </div>
   }
 
-  fakeGrid (results) {
+  resultsGrid (results) {
     if (!results || results.result.gameIds.length === 0) {
       const {t} = this.props
 
