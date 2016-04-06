@@ -104,7 +104,7 @@ const self = {
         ...opts,
         installerName
       }
-      await core.uninstall(coreOpts)
+      await core.uninstall(out, coreOpts)
     } else {
       log(opts, `wiping directory ${destPath}`)
       await butler.wipe(destPath)
@@ -117,10 +117,11 @@ const self = {
   handleTar: async function (out, opts, tar) {
     // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
     log(opts, `extracting tar: ${tar}`)
-    const subOpts = Object.assign({}, opts, {
+    const subOpts = {
+      ...opts,
       archivePath: tar,
       tar: true
-    })
+    }
 
     await self.install(out, subOpts)
     await butler.wipe(tar)
@@ -142,7 +143,7 @@ const self = {
 
     self.cacheType(opts, installerName)
     log(opts, `found a '${installerName}': ${onlyFile}`)
-    const nestedOpts = Object.assign({}, opts, sniffOpts)
+    const nestedOpts = {...opts, ...sniffOpts}
     log(opts, `installing it with nestedOpts: ${JSON.stringify(nestedOpts, null, 2)}`)
     await core.install(out, nestedOpts)
 

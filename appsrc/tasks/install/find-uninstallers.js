@@ -1,5 +1,6 @@
 
 import sf from '../../util/sf'
+import invariant from 'invariant'
 
 // example installer names:
 //  * pidgin-uninst.exe
@@ -10,6 +11,7 @@ import sf from '../../util/sf'
 const pattern = '**/@(*uninst|uninstall|unins*).exe'
 
 const findUninstallers = async function (destPath) {
+  invariant(destPath, 'have a dest path to find uninstallers in')
   return await sf.glob(pattern, {nodir: true, nocase: true, cwd: destPath})
 }
 

@@ -43,7 +43,7 @@ export default async function start (out, opts) {
       gameId: game.id,
       game,
       uploadId: upload.id,
-      uploads: [upload],
+      uploads: {[upload.id]: upload},
       installLocation,
       installFolder,
       downloadKey
@@ -81,7 +81,7 @@ export default async function start (out, opts) {
 
   globalMarket.saveEntity('caves', cave.id, {launchable: false})
   await core.install(out, coreOpts)
-  globalMarket.saveEntity('caves', cave.id, {launchable: true, installedArchiveMtime: amtime, uploadId: upload.id})
+  globalMarket.saveEntity('caves', cave.id, {launchable: true, installedArchiveMtime: amtime, uploadId: upload.id, uploads: {[upload.id]: upload}})
 
   return {caveId: cave.id}
 }

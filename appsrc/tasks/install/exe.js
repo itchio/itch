@@ -14,12 +14,12 @@ let self = {
 
   install: async function (out, opts) {
     let installer = await self.findInstaller(opts)
-    await installer.install(opts)
+    await installer.install(out, opts)
   },
 
   uninstall: async function (out, opts) {
     let installer = await self.findInstaller(opts)
-    await installer.uninstall(opts)
+    await installer.uninstall(out, opts)
   },
 
   findInstaller: async function (opts) {
@@ -54,7 +54,7 @@ let self = {
     log(opts, `got cave: ${JSON.stringify(cave, null, 2)}`)
 
     let installerExeCache = cave.installerExeCache || {}
-    let type = installerExeCache[cave.upload_id]
+    let type = installerExeCache[cave.uploadId]
     log(opts, `found cached installer type ${type}`)
 
     if (self.validInstallers.indexOf(type) === -1) {
@@ -92,18 +92,18 @@ let self = {
 
     let onInfo = (k, v, isMatch, data, start, end) => {
       if (!isMatch) return
-      log(opts, `builtin_sniff: found needle ${v}`)
+      log(opts, `builtinSniff: found needle ${v}`)
       result = k
     }
 
     for (let k of Object.keys(needles)) {
-      let v = needles[k]
-      let search = new StreamSearch(v)
+      const v = needles[k]
+      const search = new StreamSearch(v)
       search.on('info', onInfo::partial(k, v))
       searches.push(search)
     }
 
-    let reader = sf.createReadStream(archivePath, {encoding: 'binary'})
+    const reader = sf.createReadStream(archivePath, {encoding: 'binary'})
     reader.on('data', buf => {
       for (let search of searches) {
         search.push(buf)
@@ -126,15 +126,15 @@ let self = {
   externalSniff: async function (opts, needles) {
     let archivePath = opts.archivePath
 
-    // sample file_output:
+    // sample fileOutput:
     // ['PE32 executable (GUI) Intel 80386', 'for MS Windows', 'InstallShield self-extracting archive']
-    let file_output = await file(archivePath)
-    let detail = file_output[2]
+    const fileOutput = await file(archivePath)
+    const detail = fileOutput[2]
 
     if (!detail) return null
 
     for (let k of Object.keys(needles)) {
-      let v = needles[k]
+      const v = needles[k]
       if (detail === v) {
         log(opts, `externalSniff: found needle ${v}`)
         return k

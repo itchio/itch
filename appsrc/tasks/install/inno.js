@@ -1,8 +1,6 @@
 
 import spawn from '../../util/spawn'
-import find_uninstallers from './find-uninstallers'
-
-import AppActions from '../../actions/app-actions'
+import findUninstallers from './find-uninstallers'
 
 import blessing from './blessing'
 import {Transition} from '../errors'
@@ -18,15 +16,15 @@ const self = {
   },
 
   install: async function (out, opts) {
-    await blessing(opts)
+    await blessing(out, opts)
 
-    AppActions.cave_progress({id: opts.id, progress: -1})
+    out.emit('progress', -1)
 
-    let archivePath = opts.archivePath
-    let destPath = opts.destPath
-    let logPath = self.logPath('i', archivePath)
+    const archivePath = opts.archivePath
+    const destPath = opts.destPath
+    const logPath = self.logPath('i', archivePath)
 
-    let spawnOpts = {
+    const spawnOpts = {
       command: archivePath,
       args: [
         '/VERYSILENT', // run the installer silently
@@ -38,15 +36,15 @@ const self = {
       ],
       onToken: (token) => log(opts, token)
     }
-    let code = await spawn(spawnOpts)
+    const code = await spawn(spawnOpts)
     log(opts, `inno installer exited with code ${code}`)
   },
 
   uninstall: async function (out, opts) {
-    AppActions.cave_progress({id: opts.id, progress: -1})
+    out.emit('progress', -1)
 
-    let destPath = opts.destPath
-    let uninstallers = await find_uninstallers(destPath)
+    const destPath = opts.destPath
+    const uninstallers = await findUninstallers(destPath)
 
     if (uninstallers.length === 0) {
       log(opts, `could not find an uninstaller`)
@@ -61,13 +59,13 @@ const self = {
           '/VERYSILENT' // be vewwy vewwy quiet
         ],
         opts: {cwd: destPath},
-        on_token: (tok) => log(opts, `${unins}: ${tok}`)
+        onToken: (tok) => log(opts, `${unins}: ${tok}`)
       }
       let code = await spawn(spawnOpts)
       log(opts, `inno uninstaller exited with code ${code}`)
 
       if (code !== 0) {
-        let reason = 'uninstaller failed, cancelling uninstallation'
+        const reason = 'uninstaller failed, cancelling uninstallation'
         throw new Transition({to: 'idle', reason})
       }
     }
