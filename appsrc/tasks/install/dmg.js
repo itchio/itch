@@ -23,22 +23,22 @@ let self = {
 
     let cdrPath = path.resolve(archivePath + '.cdr')
 
-    let info_entries = []
+    let infoEntries = []
     let code = await spawn({
       command: 'hdiutil',
       args: ['info'],
       split: '================================================',
       onToken: (tok) => {
-        info_entries.push(tok.split('\n'))
+        infoEntries.push(tok.split('\n'))
       }
     })
     if (code !== 0) {
       throw new Error(`hdiutil failed with code ${code}`)
     }
 
-    for (let entry of info_entries) {
+    for (const entry of infoEntries) {
       let imagePath
-      for (let line of entry) {
+      for (const line of entry) {
         let matches = /^image-path\s*:\s*(.*)\s*$/.exec(line)
         if (matches) {
           imagePath = matches[1]
@@ -110,10 +110,10 @@ let self = {
       ],
       onToken: (tok) => {
         log(opts, `hdiutil attach: ${tok}`)
-        let hfs_matches = HFS_RE.exec(tok)
-        if (hfs_matches) {
-          device = hfs_matches[1].trim()
-          mountpoint = hfs_matches[2].trim()
+        let hfsMatches = HFS_RE.exec(tok)
+        if (hfsMatches) {
+          device = hfsMatches[1].trim()
+          mountpoint = hfsMatches[2].trim()
           log(opts, `found dev / mountpoint: '${device}' '${mountpoint}'`)
         }
       }
