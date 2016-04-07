@@ -29,11 +29,12 @@ export function * _queueGame (action) {
   if (uploads.length > 0) {
     if (uploads.length > 1) {
       // TODO: implement this, this task doesn't exist.
-      const upload = (yield call(startTask, {
-        name: 'pick-upload',
-        uploads,
-        downloadKey
-      })).result
+      // const upload = (yield call(startTask, {
+      //   name: 'pick-upload',
+      //   uploads,
+      //   downloadKey
+      // })).result
+      const upload = uploads[0]
 
       yield call(startDownload, {
         game,
