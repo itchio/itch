@@ -1,6 +1,6 @@
 
 import subprogress from '../../util/subprogress'
-import sniff from '../../util/sniff'
+import fnout from 'fnout'
 import noop from '../../util/noop'
 
 import butler from '../../util/butler'
@@ -13,7 +13,7 @@ import mklog from '../../util/log'
 const log = mklog('installers/archive')
 
 const isTar = async function (path) {
-  const type = await sniff.path(path)
+  const type = await fnout.path(path)
   return type && type.ext === 'tar'
 }
 

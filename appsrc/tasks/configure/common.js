@@ -1,5 +1,5 @@
 
-import sniff from '../../util/sniff'
+import fnout from 'fnout'
 import sf from '../../util/sf'
 import {partial} from 'underline'
 
@@ -26,7 +26,7 @@ function fixExecs (field, basePath) {
 async function sniffAndChmod (field, base, rel) {
   let file = path.join(base, rel)
 
-  let type = await sniff.path(file)
+  let type = await fnout.path(file)
   if (type && type[field]) {
     try {
       await sf.chmod(file, 0o777)

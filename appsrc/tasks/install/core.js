@@ -1,5 +1,5 @@
 
-import sniff from '../../util/sniff'
+import fnout from 'fnout'
 import spawn from '../../util/spawn'
 import mklog from '../../util/log'
 const log = mklog('install/core')
@@ -83,7 +83,7 @@ const self = {
   sniffType: async function (opts) {
     const {archivePath} = opts
 
-    const type = await sniff.path(archivePath)
+    const type = await fnout.path(archivePath)
     log(opts, `sniffed type ${JSON.stringify(type)} for ${archivePath}`)
     if (!type) {
       throw new UnhandledFormat(archivePath)
