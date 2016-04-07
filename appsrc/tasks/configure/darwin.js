@@ -5,7 +5,7 @@ import path from 'path'
 import common from './common'
 import sf from '../../util/sf'
 
-const ignore_patterns = [
+const ignorePatterns = [
   // skip some typical junk we find in archives that's supposed
   // to be hidden / in trash / isn't in anyway relevant to what
   // we're trying to do
@@ -14,9 +14,9 @@ const ignore_patterns = [
 
 const self = {
   configure: async function (cavePath) {
-    const bundles = await sf.glob(`**/*.app/`, {
+    const bundles = await sf.glob(`**.app/`, {
       cwd: cavePath,
-      ignore: ignore_patterns
+      ignore: ignorePatterns
     })
 
     if (bundles.length) {
