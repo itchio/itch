@@ -74,7 +74,7 @@ export class GameMeat extends Component {
           </div>
           {this.browserControls()}
         </div>
-        <GameActions game={game} showSecondary={true}/>
+        <GameActions game={game} showSecondary/>
       </div>
       <webview ref='webview' src={game.url} partition={`persist:itchio-${meId}`} plugins/>
     </div>
