@@ -1,5 +1,6 @@
 
 import {createAction} from 'redux-actions'
+import {gameToTabData} from '../util/navigation'
 
 import {
   NAVIGATE,
@@ -20,7 +21,17 @@ import {
   REPORT_ISSUE
 } from '../constants/action-types'
 
-export const navigate = createAction(NAVIGATE)
+const _navigate = createAction(NAVIGATE)
+export const navigate = (path, data = {}) => {
+  if (typeof path === 'object') {
+    return _navigate(path)
+  } else {
+    return _navigate({path, data})
+  }
+}
+
+export const navigateToGame = (game) => navigate(`games/${game.id}`, gameToTabData(game))
+
 export const closeTab = createAction(CLOSE_TAB)
 export const showPreviousTab = createAction(SHOW_PREVIOUS_TAB)
 export const showNextTab = createAction(SHOW_NEXT_TAB)

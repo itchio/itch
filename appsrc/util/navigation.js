@@ -42,4 +42,14 @@ export function pathToIcon (path) {
   return 'earth'
 }
 
-export default {pathToId, pathToIcon}
+export function gameToTabData (game) {
+  return {
+    games: {
+      [game.id]: game
+    },
+    label: game.title,
+    subtitle: `A ${game.classification} by someone`
+  }
+}
+
+export default {pathToId, pathToIcon, gameToTabData}

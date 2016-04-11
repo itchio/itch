@@ -1,7 +1,7 @@
 
 import createQueue from './queue'
 import {createSelector} from 'reselect'
-import {pathToId} from '../util/navigation'
+import {pathToId, gameToTabData} from '../util/navigation'
 import {getUserMarket} from './market'
 
 import {shell} from '../electron'
@@ -26,13 +26,7 @@ export function * _tabChanged (action) {
     const gameId = +pathToId(path)
 
     const gotGame = function * (game) {
-      const data = {
-        games: {
-          [game.id]: game
-        },
-        label: game.title,
-        subtitle: `A ${game.classification} by someone`
-      }
+      const data = gameToTabData(game)
       yield put(tabDataFetched({path, data}))
     }
 

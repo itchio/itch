@@ -1,6 +1,7 @@
 
 import {handleActions} from 'redux-actions'
 import {pluck, reject, indexBy} from 'underline'
+import invariant from 'invariant'
 
 import SearchExamples from '../../constants/search-examples'
 import {pathToId} from '../../util/navigation'
@@ -36,8 +37,11 @@ export default handleActions({
   },
 
   NAVIGATE: (state, action) => {
-    const path = action.payload
+    const {path, data} = action.payload
+    invariant(typeof path === 'string', 'path must be a string')
+    invariant(typeof data === 'object', 'data must be an object')
 
+    const {tabData} = state
     const {tabs} = state
     const {constant, transient} = tabs
     const tabsByPath = constant.concat(transient)::indexBy('path')
@@ -46,20 +50,12 @@ export default handleActions({
       return {...state, path}
     } else {
       let label
-      if (path === 'preferences') {
-        label = ['sidebar.preferences']
-      } else if (path === 'history') {
-        label = ['sidebar.history']
-      } else if (path === 'downloads') {
-        label = ['sidebar.downloads']
-      } else if (/^search/.test(path)) {
+      if (/^search/.test(path)) {
         label = pathToId(path)
       }
 
-      const newTab = {
-        path,
-        label
-      }
+      const newTab = {path}
+
       const newTabs = {
         constant,
         transient: [
@@ -67,7 +63,17 @@ export default handleActions({
           ...transient
         ]
       }
-      return {...state, path, tabs: newTabs}
+
+      const newTabData = {
+        ...tabData,
+        [path]: {
+          ...tabData[path],
+          label,
+          ...data
+        }
+      }
+
+      return {...state, path, tabs: newTabs, tabData: newTabData}
     }
   },
 

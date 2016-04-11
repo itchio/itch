@@ -1,6 +1,7 @@
 
 import React, {Component, PropTypes} from 'react'
 import {createStructuredSelector} from 'reselect'
+import invariant from 'invariant'
 
 import {connect} from './connect'
 
@@ -18,7 +19,7 @@ export class HubItem extends Component {
     const mayDownload = true
     const actionProps = {cave, game, platformCompatible, mayDownload}
 
-    return <div className='hub-item' onClick={() => navigateToGame(game.id)}>
+    return <div className='hub-item' onClick={() => navigateToGame(game)}>
       <section className='cover' style={{backgroundImage: `url("${coverUrl}")`}}/>
 
       <section className='undercover'>
@@ -58,7 +59,10 @@ const mapStateToProps = createStructuredSelector({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  navigateToGame: (gameId) => dispatch(actions.navigate(`games/${gameId}`))
+  navigateToGame: (game) => {
+    invariant(typeof game === 'object', 'game is an object')
+    dispatch(actions.navigateToGame(game))
+  }
 })
 
 export default connect(
