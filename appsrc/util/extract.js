@@ -3,6 +3,7 @@ import {object} from 'underline'
 
 import humanize from 'humanize-plus'
 import path from 'path'
+import fnout from 'fnout'
 
 import mklog from './log'
 const log = mklog('util/extract')
@@ -16,7 +17,6 @@ import os from './os'
 import noop from './noop'
 import sf from './sf'
 import spawn from './spawn'
-import sniff from './sniff'
 import butler from './butler'
 
 const self = {
@@ -125,7 +125,7 @@ const self = {
 
     let archivePath = opts.archivePath
 
-    let type = await sniff.path(archivePath)
+    let type = await fnout.path(archivePath)
     if (type.ext === 'tar') {
       log(opts, `using butler`)
       return await butler.untar(opts)
