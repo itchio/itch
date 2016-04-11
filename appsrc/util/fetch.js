@@ -161,6 +161,7 @@ export async function search (credentials, query) {
 export async function gameLazily (market, credentials, gameId) {
   pre: { // eslint-disable-line
     typeof market === 'object'
+    typeof credentials === 'object'
     typeof gameId === 'number'
   }
 

@@ -3,7 +3,7 @@ import createQueue from '../queue'
 import invariant from 'invariant'
 
 import {takeEvery} from 'redux-saga'
-import {put, call} from 'redux-saga/effects'
+import {put, call, select} from 'redux-saga/effects'
 
 import {openModal, queueCaveUninstall, queueCaveReinstall} from '../../actions'
 import {REQUEST_CAVE_UNINSTALL} from '../../constants/action-types'
@@ -17,8 +17,7 @@ const queue = createQueue('change-user')
 
 export function * _requestCaveUninstall (action) {
   const {caveId} = action.payload
-  const store = require('../../store').default
-  const {credentials} = store.getState().session.credentials
+  const credentials = yield select((state) => state.session.credentials)
   const globalMarket = getGlobalMarket()
   const userMarket = getUserMarket()
 
