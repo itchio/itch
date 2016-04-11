@@ -56,7 +56,7 @@ class MainAction extends Component {
 
     const hint = this.hint()
 
-    const buttonClasses = classNames('button main-action', {
+    const buttonClasses = classNames('main-action', {
       'buy-now': (platformCompatible && !mayDownload),
       'hint--top': hint
     })
@@ -86,7 +86,7 @@ class MainAction extends Component {
       this.props.cancelCave(cave.id)
     } else {
       if (platformCompatible) {
-        if (mayDownload) {
+        if (mayDownload || cave) {
           this.props.queueGame(game)
         } else {
           this.props.initiatePurchase(game)

@@ -16,90 +16,88 @@
     padding: .5em;
   }
 
-  .game-actions {
-    height: 3em;
-    display: flex;
-    align-items: center;
-  }
-
   .title {
     @include single-line;
     padding: .2em 0;
     margin: 0 0 4px 0;
     text-shadow: 0 0 1px $ui-text-shadow-color;
   }
+}
 
-  .button {
-    @include heavy-button;
-    transition-property: color, background, border;
-    transition-duration: .2s;
+.game-actions .main-action {
+  @include heavy-button;
+  transition-property: color, background, border;
+  transition-duration: .2s;
 
-    font-size: $base-text-size;
-    border-width: 1px;
-    font-weight: bold;
-    padding: 10px;
-    border-radius: 2px;
+  font-size: $base-text-size;
+  border-width: 1px;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 2px;
 
-    background-color: #D06161;
-    border-color: #CC7878;
+  background-color: #D06161;
+  border-color: #CC7878;
+
+  &:hover {
+    background-color: $heavy-button-background-color;
+    border-color: $heavy-button-border-color;
+  }
+
+  &:active {
+    transform: scale(.95);
+  }
+}
+
+.game-actions {
+  height: 3em;
+  display: flex;
+  align-items: center;
+
+  &.uninstalled {
+    .main-action {
+      @include discreet-button;
+    }
+  }
+
+  &.task-download, &.task-install, &.task-configure, &.task-launch, &.task-find-upload {
+    .main-action {
+      @include discreet-button;
+      margin-right: 0;
+      flex-grow: 1;
+      text-align: center;
+      font-weight: normal;
+    }
+
+    .cave-actions {
+      display: none;
+    }
+  }
+
+  .not-platform-compatible {
+    font-size: 90%;
+    color: $secondary-text-color;
+  }
+
+  .main-action .icon {
+    margin-right: 7px;
+    font-size: 80%;
+  }
+}
+
+.cave-actions {
+  margin-left: 8px;
+
+  .secondary-action {
+    margin: 0 6px;
+    color: $secondary-text-color;
 
     &:hover {
-      background-color: $heavy-button-background-color;
-      border-color: $heavy-button-border-color;
+      color: $base-text-color;
+      cursor: pointer;
     }
 
     &:active {
       transform: scale(.95);
     }
-  }
-
-  .game-actions {
-    &.uninstalled {
-      .button {
-        @include discreet-button;
-      }
-    }
-
-    &.task-download, &.task-install, &.task-configure, &.task-launch, &.task-find-upload {
-      .button {
-        @include discreet-button;
-        margin-right: 0;
-        flex-grow: 1;
-        text-align: center;
-        font-weight: normal;
-      }
-
-      .cave-actions {
-        display: none;
-      }
-    }
-
-    .not-platform-compatible {
-      font-size: 90%;
-      color: $secondary-text-color;
-    }
-  }
-
-  .cave-actions {
-    margin-left: 8px;
-
-    .secondary-action {
-      margin: 0 6px;
-      color: $secondary-text-color;
-
-      &:hover {
-        color: $base-text-color;
-        cursor: pointer;
-      }
-
-      &:active {
-        transform: scale(.95);
-      }
-    }
-  }
-
-  .button .icon {
-    margin-right: 7px;
-    font-size: 80%;
   }
 }

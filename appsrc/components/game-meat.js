@@ -3,7 +3,10 @@ import {createSelector, createStructuredSelector} from 'reselect'
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 
+import defaultImages from '../constants/default-images'
+
 import Loader from './loader'
+import GameActions from './game-actions'
 
 export class GameMeat extends Component {
   render () {
@@ -13,7 +16,21 @@ export class GameMeat extends Component {
       return <Loader/>
     }
 
-    return <span>Game {game.title}</span>
+    const coverUrl = game.coverUrl || defaultImages.thumbnail
+    const coverStyle = {
+      backgroundImage: `url('${coverUrl}')`
+    }
+
+    return <div className='game-meat'>
+      <div className='game-essentials'>
+        <div className='game-cover' style={coverStyle}/>
+        <div className='game-stats'>
+          <div className='total-playtime'>Played 48 hours</div>
+          <div className='last-playthrough'>Last played now</div>
+        </div>
+        <GameActions game={game}/>
+      </div>
+    </div>
   }
 }
 

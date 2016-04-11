@@ -48,7 +48,7 @@ export function gameToTabData (game) {
       [game.id]: game
     },
     label: game.title,
-    subtitle: `A ${game.classification} by someone`
+    subtitle: game.shortText
   }
 }
 

@@ -8,8 +8,9 @@ $status-bar-height: 45px;
 $gate-grid-height: 64px;
 
 // the grid
-$grid-item-width: 250px;
-$grid-item-height: 190px;
+$grid-item-ratio: 250 / 190;
+$grid-item-width: 235px;
+$grid-item-height: $grid-item-width / $grid-item-ratio;
 
 $grid-padding: 10px;
 

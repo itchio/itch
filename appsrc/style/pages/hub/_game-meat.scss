@@ -1,0 +1,52 @@
+
+$meat-cover-scale: 0.4;
+
+.game-meat {
+  flex-grow: 1;
+  padding: $grid-padding $grid-padding * 2;
+
+  .game-essentials {
+    display: flex;
+    align-items: center;
+  }
+
+  .game-stats, .game-actions {
+    padding: 0 20px;
+  }
+
+  .game-stats {
+    flex-grow: 1;
+    font-size: 15px;
+    color: $secondary-text-color;
+
+    div {
+      margin: 1em 0;
+    }
+  }
+
+  .game-cover {
+    border-radius: 2px;
+    width: $grid-item-width * $meat-cover-scale;
+    height: $grid-item-height * $meat-cover-scale;
+
+    background-color: black;
+    background-size: cover;
+    background-position: 50% 50%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
+  }
+
+  .game-actions {
+    padding-right: 0;
+
+    .main-action {
+      width: 200px;
+      text-align: center;
+      font-size: 17px;
+      padding: 15px 20px;
+
+      .icon {
+        display: none;
+      }
+    }
+  }
+}

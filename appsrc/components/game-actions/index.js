@@ -6,6 +6,8 @@ import {connect} from '../connect'
 import {createSelector, createStructuredSelector} from 'reselect'
 import {camelify} from '../../util/format'
 
+import {findWhere} from 'underline'
+
 import os from '../../util/os'
 import ClassificationActions from '../../constants/classification-actions'
 
@@ -18,6 +20,7 @@ class GameActions extends Component {
 
   render () {
     const {props} = this
+    const {showSecondary} = props
 
     const classes = classNames('game-actions', `action-${props.action}`, `task-${props.task}`, {
       incompatible: !props.platformCompatible,
@@ -26,7 +29,9 @@ class GameActions extends Component {
 
     return <div className={classes}>
       <MainAction {...props}/>
-      <SecondaryActions {...props}/>
+      { showSecondary
+        ? <SecondaryActions {...props}/>
+        : '' }
     </div>
   }
 
@@ -44,6 +49,7 @@ MainAction.propTypes = {
   game: PropTypes.shape({
     id: PropTypes.any.isRequired
   }),
+  showSecondary: PropTypes.bool,
 
   // derived
   animate: PropTypes.bool,
@@ -68,21 +74,27 @@ const makeMapStateToProps = () => {
     createStructuredSelector({
       game: (state, props) => props.game,
       cave: (state, props) => state.globalMarket.cavesByGameId[props.game.id],
+      downloadKeys: (state, props) => state.market.downloadKeys,
       task: (state, props) => state.tasks.tasksByGameId[props.game.id],
-      download: (state, props) => state.tasks.downloadsByGameId[props.game.id]
+      download: (state, props) => state.tasks.downloadsByGameId[props.game.id],
+      meId: (state, props) => state.session.credentials.me.id
     }),
     (happenings) => {
-      const {game, cave, task, download} = happenings
+      const {game, cave, downloadKeys, task, download, meId} = happenings
       const animate = false
       const action = ClassificationActions[game.classification] || 'launch'
       const platformCompatible = (action === 'open' ? true : isPlatformCompatible(game))
       const cancellable = /^download.*/.test(task)
+      const downloadKey = downloadKeys::findWhere({gameId: game.id})
+      const hasMinPrice = game.minPrice > 0
+      const mayDownload = downloadKey || !hasMinPrice || (game.userId === meId)
 
       return {
         cancellable,
         cave,
         animate,
         platform,
+        mayDownload,
         platformCompatible,
         action,
         task: (task ? task.name : (download ? 'download' : (cave ? 'idle' : null))),

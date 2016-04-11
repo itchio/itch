@@ -13,6 +13,7 @@ import History from './history'
 import FeaturedMeat from './featured-meat'
 import CollectionMeat from './collection-meat'
 import GameMeat from './game-meat'
+import SearchMeat from './search-meat'
 
 import {filter, each, map, indexBy, where} from 'underline'
 
@@ -36,6 +37,8 @@ export class HubMeat extends Component {
       child = <CollectionMeat collectionId={+pathToId(path)}/>
     } else if (/^games/.test(path)) {
       child = <GameMeat gameId={+pathToId(path)}/>
+    } else if (/^search/.test(path)) {
+      child = <SearchMeat query={pathToId(path)}/>
     }
 
     return <div className='hub-meat'>
