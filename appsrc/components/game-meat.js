@@ -30,7 +30,7 @@ export class GameMeat extends Component {
         </div>
         <GameActions game={game}/>
       </div>
-      <webview src={game.url} partition={`persist:itchio-${meId}`}/>
+      <webview src={game.url} partition={`persist:itchio-${meId}`} plugins/>
     </div>
   }
 }
