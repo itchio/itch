@@ -14,12 +14,17 @@ const initialState = {
       {path: 'library', label: ['sidebar.owned']}
     ],
     transient: [
-      {path: 'collections/2348', label: 'Garden, Grow and Plant'},
-      {path: 'games/48062', label: 'Reap'},
-      {path: 'games/25491', label: 'FPV Freerider'},
-      {path: 'users/3996', label: 'Managore'},
-      {path: 'collections/25108', label: 'I made a Fall Out Boy collection and all I got was wrapping label tabs'}
+      {path: 'collections/2348', label: 'Garden, Grow and Plant'}
     ]
+  },
+  tabData: {
+    featured: { label: ['sidebar.featured'], subtitle: ['sidebar.featured_subtitle'] },
+    dashboard: { label: ['sidebar.dashboard'], subtitle: ['sidebar.dashboard_subtitle'] },
+    library: { label: ['sidebar.owned'], subtitle: ['sidebar.owned_subtitle'] },
+    preferences: { label: ['sidebar.preferences'], subtitle: ['sidebar.preferences'] },
+    history: { label: ['sidebar.history'], subtitle: ['sidebar.history'] },
+    downloads: { label: ['sidebar.downloads'], subtitle: ['sidebar.downloads'] },
+    'collections/2348': { label: 'Garden, Grow and Plant' }
   },
   path: 'dashboard'
 }
@@ -97,6 +102,20 @@ export default handleActions({
     const {results} = action.payload
     const searchExampleIndex = Math.floor(Math.random() * (SearchExamples.length - 1))
     return {...state, searchResults: results, searchOpen: true, searchExample: SearchExamples[searchExampleIndex]}
+  },
+
+  TAB_DATA_FETCHED: (state, action) => {
+    const {path, data} = action.payload
+    const {tabData} = state
+    const newTabData = {
+      ...tabData,
+      [path]: {
+        ...tabData[path],
+        ...data
+      }
+    }
+
+    return {...state, tabData: newTabData}
   },
 
   CLOSE_SEARCH: (state, action) => {

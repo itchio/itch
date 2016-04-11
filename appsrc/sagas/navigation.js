@@ -1,16 +1,51 @@
 
+import createQueue from './queue'
+import {createSelector} from 'reselect'
+import {pathToId} from '../util/navigation'
+import {getUserMarket} from './market'
+
 import {shell} from '../electron'
 import {takeEvery} from 'redux-saga'
 import {call, select, put} from 'redux-saga/effects'
 import {pluck} from 'underline'
 
 import urls from '../constants/urls'
+import fetch from '../util/fetch'
 
-import {navigate, openUrl} from '../actions'
+import {navigate, openUrl, tabChanged, tabDataFetched} from '../actions'
 import {
-  SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL,
+  SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED,
   VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE
 } from '../constants/action-types'
+
+export function * _tabChanged (action) {
+  const path = action.payload
+
+  if (/^games/.test(path)) {
+    const market = getUserMarket()
+    const gameId = +pathToId(path)
+
+    const gotGame = function * (game) {
+      const data = {
+        games: {
+          [game.id]: game
+        },
+        label: game.title,
+        subtitle: `A ${game.classification} by someone`
+      }
+      yield put(tabDataFetched({path, data}))
+    }
+
+    const game = market.getEntities('games')[gameId]
+    if (game) {
+      yield call(gotGame, game)
+    } else {
+      const credentials = yield select((state) => state.session.credentials)
+      const fetchedGame = yield call(fetch.gameLazily, market, credentials, gameId)
+      yield call(gotGame, fetchedGame)
+    }
+  }
+}
 
 export function * applyTabOffset (offset) {
   const {path, tabs} = yield select((state) => state.session.navigation)
@@ -52,11 +87,25 @@ export function * _viewCommunityProfile (action) {
 }
 
 export default function * navigationSaga () {
+  const queue = createQueue('navigation')
+
+  const navigationSelector = createSelector(
+    (state) => state.session.navigation.path,
+    (path) => {
+      queue.dispatch(tabChanged(path))
+    }
+  )
+
   yield [
     takeEvery(SHOW_PREVIOUS_TAB, _showPreviousTab),
     takeEvery(SHOW_NEXT_TAB, _showNextTab),
     takeEvery(OPEN_URL, _openUrl),
     takeEvery(VIEW_CREATOR_PROFILE, _viewCreatorProfile),
-    takeEvery(VIEW_COMMUNITY_PROFILE, _viewCommunityProfile)
+    takeEvery(VIEW_COMMUNITY_PROFILE, _viewCommunityProfile),
+    takeEvery(TAB_CHANGED, _tabChanged),
+    takeEvery('*', function * watchNavigation () {
+      navigationSelector(yield select())
+    }),
+    call(queue.exhaust)
   ]
 }

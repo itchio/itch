@@ -1,52 +1,13 @@
 
 import React, {Component, PropTypes} from 'react'
-import {findWhere} from 'underline'
-
 import {connect} from './connect'
-import {pathToId} from '../util/navigation'
+
+import {pathToIcon} from '../util/navigation'
 
 class HubBreadDescription extends Component {
   render () {
-    // TODO: i18n
-    // TODO: reselect that
-    const {t, path, tabs, market} = this.props
-    const {collections, games, users} = market
-
-    const allTabs = tabs.constant.concat(tabs.transient)
-    const tab = allTabs::findWhere({path}) || {label: '?', icon: 'neutral'}
-
-    const {icon, label} = tab
-
-    let subtitle = ''
-    if (/^collections/.test(path)) {
-      const collection = collections[pathToId(path)]
-      const user = users[collection.userId]
-      subtitle = `${collection.shortText}`
-      if (user) {
-        subtitle += ` | a collection by ${user.displayName}`
-      }
-    } else if (/^games/.test(path)) {
-      const game = games[pathToId(path)] || {}
-      const user = users[game.userId] || {displayName: '???'}
-      subtitle = `${game.shortText}`
-      if (user) {
-        subtitle += ` | a ${game.classification || 'game'} by ${user.displayName}`
-      }
-    } else if (/^search/.test(path)) {
-      subtitle = `We need to improve search, your mileage may vary`
-    } else if (path === 'featured') {
-      subtitle = 'Curated with love by the itch.io team'
-    } else if (path === 'dashboard') {
-      subtitle = 'Things you make and break'
-    } else if (path === 'library') {
-      subtitle = 'Things you gave money to'
-    } else if (path === 'preferences') {
-      subtitle = 'Nuts and bolts'
-    } else if (path === 'downloads') {
-      subtitle = 'Swooooooosh'
-    } else if (path === 'history') {
-      subtitle = 'Here\'s what happened recently'
-    }
+    const {t, path, tabData} = this.props
+    const {icon = pathToIcon(path), label = 'Loading...', subtitle} = tabData[path] || {}
 
     return <section className='description'>
       <h2><icon className={`icon icon-${icon}`}/> {t.format(label)}</h2>
@@ -61,14 +22,14 @@ HubBreadDescription.propTypes = {
     constant: PropTypes.array,
     transient: PropTypes.array
   }),
-  market: PropTypes.object,
+  tabData: PropTypes.object,
 
   t: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
   path: state.session.navigation.path,
-  tabs: state.session.navigation.tabs,
+  tabData: state.session.navigation.tabData,
   market: state.market
 })
 

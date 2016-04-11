@@ -4,6 +4,7 @@ import {createStructuredSelector} from 'reselect'
 
 import {connect} from './connect'
 
+import * as actions from '../actions'
 import GameActions from './game-actions'
 
 export class HubItem extends Component {
@@ -11,12 +12,13 @@ export class HubItem extends Component {
     const {game, cavesByGameId} = this.props
     const cave = cavesByGameId[game.id]
     const {title, coverUrl} = game
+    const {navigateToGame} = this.props
 
     const platformCompatible = true
     const mayDownload = true
     const actionProps = {cave, game, platformCompatible, mayDownload}
 
-    return <div className='hub-item'>
+    return <div className='hub-item' onClick={() => navigateToGame(game.id)}>
       <section className='cover' style={{backgroundImage: `url("${coverUrl}")`}}/>
 
       <section className='undercover'>
@@ -46,13 +48,20 @@ HubItem.propTypes = {
     title: PropTypes.string,
     coverUrl: PropTypes.string
   }),
-  cavesByGameId: PropTypes.object
+
+  cavesByGameId: PropTypes.object,
+  navigateToGame: PropTypes.func.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({
   cavesByGameId: (state) => state.globalMarket.cavesByGameId
 })
 
+const mapDispatchToProps = (dispatch) => ({
+  navigateToGame: (gameId) => dispatch(actions.navigate(`games/${gameId}`))
+})
+
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(HubItem)

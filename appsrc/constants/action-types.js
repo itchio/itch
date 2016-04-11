@@ -60,6 +60,9 @@ module.exports = keyMirror({
   SWITCH_PAGE: null,
   OPEN_URL: null,
 
+  TAB_CHANGED: null,
+  TAB_DATA_FETCHED: null,
+
   /* Menu */
   REFRESH_MENU: null,
   MENU_ACTION: null,

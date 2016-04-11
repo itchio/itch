@@ -7,6 +7,7 @@ import {createSelector, createStructuredSelector} from 'reselect'
 
 import * as actions from '../actions'
 import defaultImages from '../constants/default-images'
+import {pathToIcon} from '../util/navigation'
 
 import Icon from './icon'
 import Dropdown from './dropdown'
@@ -18,7 +19,7 @@ export class HubSidebar extends Component {
   }
 
   render () {
-    const {t, osx, fullscreen, path, tabs, navigate, counts, closeTab} = this.props
+    const {t, osx, fullscreen, path, tabs, tabData, navigate, counts, closeTab} = this.props
     const classes = classNames('hub-sidebar', {osx, fullscreen})
 
     return <div className={classes}>
@@ -28,17 +29,21 @@ export class HubSidebar extends Component {
       <h2>{t('sidebar.category.basics')}</h2>
       {tabs.constant::map((item) => {
         const classes = classNames({active: path === item.path})
+        const {label = 'Loading...'} = tabData[item.path] || {}
+        const icon = pathToIcon(item.path)
         const onClick = () => navigate(item.path)
 
         return <section key={item.path} className={classes} onClick={onClick} data-path={item.path}>
-          <span className={`icon icon-${this.pathToIcon(item.path)}`}/>
-          {t.format(item.label)}
+          <span className={`icon icon-${icon}`}/>
+          {t.format(label)}
         </section>
       })}
 
       <h2>{t('sidebar.category.tabs')}</h2>
       {tabs.transient.length
         ? tabs.transient::map((item) => {
+          const {label = 'Loading...'} = tabData[item.path] || {}
+          const icon = pathToIcon(item.path)
           const classes = classNames({
             active: path === item.path
           })
@@ -46,8 +51,8 @@ export class HubSidebar extends Component {
           const number = counts[item.path]
 
           return <section key={item.path} className={classes} onClick={onClick} data-path={item.path}>
-            <span className={`icon icon-${this.pathToIcon(item.path)}`}/>
-            {t.format(item.label)}
+            <span className={`icon icon-${icon}`}/>
+            {t.format(label)}
             { number > 0
             ? <span className='bubble'>{number}</span>
             : ''}
@@ -64,40 +69,6 @@ export class HubSidebar extends Component {
         </section>
       }
     </div>
-  }
-
-  pathToIcon (path) {
-    if (path === 'featured') {
-      return 'star'
-    }
-    if (path === 'dashboard') {
-      return 'rocket'
-    }
-    if (path === 'library') {
-      return 'heart-filled'
-    }
-    if (path === 'preferences') {
-      return 'cog'
-    }
-    if (path === 'history') {
-      return 'history'
-    }
-    if (path === 'downloads') {
-      return 'download'
-    }
-    if (/^collections/.test(path)) {
-      return 'video_collection'
-    }
-    if (/^games/.test(path)) {
-      return 'gamepad'
-    }
-    if (/^users/.test(path)) {
-      return 'users'
-    }
-    if (/^search/.test(path)) {
-      return 'search'
-    }
-    return 'earth'
   }
 
   me () {
@@ -154,6 +125,7 @@ HubSidebar.propTypes = {
     constant: PropTypes.array,
     transient: PropTypes.array
   }),
+  tabData: PropTypes.object,
 
   counts: PropTypes.shape({
     history: PropTypes.number,
@@ -175,6 +147,7 @@ const mapStateToProps = createStructuredSelector({
   me: (state) => state.session.credentials.me,
   path: (state) => state.session.navigation.path,
   tabs: (state) => state.session.navigation.tabs,
+  tabData: (state) => state.session.navigation.tabData,
 
   counts: createSelector(
     (state) => state.history.itemsByDate,

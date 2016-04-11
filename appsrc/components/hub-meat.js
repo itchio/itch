@@ -1,6 +1,8 @@
 
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
+import {pathToId} from '../util/navigation'
+import {createStructuredSelector} from 'reselect'
 
 import HubSearchResults from './hub-search-results'
 import HubItem from './hub-item'
@@ -8,6 +10,9 @@ import HubGhostItem from './hub-ghost-item'
 
 import Downloads from './downloads'
 import History from './history'
+import FeaturedMeat from './featured-meat'
+import CollectionMeat from './collection-meat'
+import GameMeat from './game-meat'
 
 import {filter, each, map, indexBy, where} from 'underline'
 
@@ -18,7 +23,7 @@ export class HubMeat extends Component {
     let child = ''
 
     if (path === 'featured') {
-      child = <div className='hub-grid'>You'd like some featured content wouldn't you?</div>
+      child = <FeaturedMeat/>
     } else if (path === 'dashboard') {
       child = this.gameGrid(games::where({userId: me.id}))
     } else if (path === 'library') {
@@ -27,6 +32,10 @@ export class HubMeat extends Component {
       child = <Downloads/>
     } else if (path === 'history') {
       child = <History/>
+    } else if (/^collections/.test(path)) {
+      child = <CollectionMeat collectionId={+pathToId(path)}/>
+    } else if (/^games/.test(path)) {
+      child = <GameMeat gameId={+pathToId(path)}/>
     }
 
     return <div className='hub-meat'>
@@ -71,12 +80,13 @@ HubMeat.propTypes = {
   downloadKeys: PropTypes.object
 }
 
-const mapStateToProps = (state) => ({
-  typedQuery: state.session.search.typedQuery,
-  path: state.session.navigation.path,
-  me: state.session.credentials.me,
-  games: state.market.games,
-  downloadKeys: state.market.downloadKeys
+const mapStateToProps = createStructuredSelector({
+  typedQuery: (state) => state.session.search.typedQuery,
+  path: (state) => state.session.navigation.path,
+  me: (state) => state.session.credentials.me,
+  games: (state) => state.market.games,
+  collections: (state) => state.market.collections,
+  downloadKeys: (state) => state.market.downloadKeys
 })
 const mapDispatchToProps = (dispatch) => ({})
 

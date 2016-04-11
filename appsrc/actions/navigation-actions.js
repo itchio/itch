@@ -8,6 +8,9 @@ import {
   SHOW_NEXT_TAB,
   SWITCH_PAGE,
 
+  TAB_CHANGED,
+  TAB_DATA_FETCHED,
+
   OPEN_URL,
 
   OPEN_PREFERENCES,
@@ -22,6 +25,9 @@ export const closeTab = createAction(CLOSE_TAB)
 export const showPreviousTab = createAction(SHOW_PREVIOUS_TAB)
 export const showNextTab = createAction(SHOW_NEXT_TAB)
 export const switchPage = createAction(SWITCH_PAGE)
+
+export const tabChanged = createAction(TAB_CHANGED)
+export const tabDataFetched = createAction(TAB_DATA_FETCHED)
 
 export const openUrl = createAction(OPEN_URL)
 
