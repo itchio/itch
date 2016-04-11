@@ -70,12 +70,12 @@ export class HubSearchResults extends Component {
     }
 
     const items = []
-    const {navigateToGame} = this.props
+    const {navigateToGame, closeSearch} = this.props
 
     const {games} = results.entities
     results.result.gameIds::each((gameId) => {
       const game = games[gameId]
-      items.push(<SearchResult key={gameId} game={game} onClick={() => navigateToGame(game)}/>)
+      items.push(<SearchResult key={gameId} game={game} onClick={() => { navigateToGame(game); closeSearch() }}/>)
     })
 
     return <div className='result-list'>
