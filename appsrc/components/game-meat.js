@@ -42,25 +42,24 @@ GameMeat.propTypes = {
 }
 
 const mapStateToProps = (state, props) => {
-  const path = `games/${props.gameId}`
-
   const marketSelector = createStructuredSelector({
-    tab: (state) => state.session.navigation.tabData[path],
+    gameId: (state, props) => props.gameId,
+    tab: (state, props) => {
+      const path = `games/${props.gameId}`
+      return state.session.navigation.tabData[path]
+    },
     user: (state) => state.session.market,
     meId: (state) => state.session.credentials.me.id
   })
 
   const gameSelector = createSelector(
     marketSelector,
-    (markets) => {
-      const getGame = (market) => ((market || {}).games || {})[props.gameId]
-      const game = getGame(markets.user) || getGame(markets.tab)
-      const {meId} = markets
-      return {
-        tabMarket: markets.tab,
-        game,
-        meId
-      }
+    (componentState) => {
+      const {gameId, meId} = componentState
+
+      const getGame = (market) => ((market || {}).games || {})[gameId]
+      const game = getGame(componentState.user) || getGame(componentState.tab)
+      return { game, meId }
     }
   )
   return gameSelector
