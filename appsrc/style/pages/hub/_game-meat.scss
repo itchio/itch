@@ -13,6 +13,7 @@ $meat-cover-scale: 0.4;
   }
 
   webview {
+    background: #333131; // FIXME colors
     flex-grow: 1;
     margin-bottom: $status-bar-height;
   }

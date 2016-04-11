@@ -2,7 +2,8 @@
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 import {pathToId} from '../util/navigation'
-import {createStructuredSelector} from 'reselect'
+import {createSelector, createStructuredSelector} from 'reselect'
+import classNames from 'classnames'
 
 import HubSearchResults from './hub-search-results'
 import HubItem from './hub-item'
@@ -15,36 +16,44 @@ import CollectionMeat from './collection-meat'
 import GameMeat from './game-meat'
 import SearchMeat from './search-meat'
 
-import {filter, each, map, indexBy, where} from 'underline'
+import {pluck, filter, each, map, indexBy, where} from 'underline'
 
 export class HubMeat extends Component {
   render () {
-    const {path, me, games, downloadKeys} = this.props
-
-    let child = ''
-
-    if (path === 'featured') {
-      child = <FeaturedMeat/>
-    } else if (path === 'dashboard') {
-      child = this.gameGrid(games::where({userId: me.id}))
-    } else if (path === 'library') {
-      child = this.gameGrid(downloadKeys::map((key) => games[key.gameId])::indexBy('id'))
-    } else if (path === 'downloads') {
-      child = <Downloads/>
-    } else if (path === 'history') {
-      child = <History/>
-    } else if (/^collections/.test(path)) {
-      child = <CollectionMeat collectionId={+pathToId(path)}/>
-    } else if (/^games/.test(path)) {
-      child = <GameMeat gameId={+pathToId(path)}/>
-    } else if (/^search/.test(path)) {
-      child = <SearchMeat query={pathToId(path)}/>
-    }
+    const {tabs} = this.props
 
     return <div className='hub-meat'>
-      {child}
+      {tabs::map((path) => {
+        const visible = (path === this.props.path)
+        const classes = classNames('hub-meat-tab', {visible})
+        return <div key={path} className={classes}>{this.renderTab(path)}</div>
+      })}
       <HubSearchResults/>
     </div>
+  }
+
+  renderTab (path) {
+    const {me, games, downloadKeys} = this.props
+
+    if (path === 'featured') {
+      return <FeaturedMeat/>
+    } else if (path === 'dashboard') {
+      return this.gameGrid(games::where({userId: me.id}))
+    } else if (path === 'library') {
+      return this.gameGrid(downloadKeys::map((key) => games[key.gameId])::indexBy('id'))
+    } else if (path === 'downloads') {
+      return <Downloads/>
+    } else if (path === 'history') {
+      return <History/>
+    } else if (/^collections/.test(path)) {
+      return <CollectionMeat collectionId={+pathToId(path)}/>
+    } else if (/^games/.test(path)) {
+      return <GameMeat gameId={+pathToId(path)}/>
+    } else if (/^search/.test(path)) {
+      return <SearchMeat query={pathToId(path)}/>
+    } else {
+      return '?'
+    }
   }
 
   gameGrid (games) {
@@ -80,12 +89,19 @@ HubMeat.propTypes = {
   path: PropTypes.string,
   me: PropTypes.object,
   games: PropTypes.object,
-  downloadKeys: PropTypes.object
+  downloadKeys: PropTypes.object,
+  tabs: PropTypes.array
 }
+
+const allTabsSelector = createSelector(
+  (state) => state.session.navigation.tabs,
+  (tabs) => tabs.constant::pluck('path').concat(tabs.transient::pluck('path'))
+)
 
 const mapStateToProps = createStructuredSelector({
   typedQuery: (state) => state.session.search.typedQuery,
   path: (state) => state.session.navigation.path,
+  tabs: (state) => allTabsSelector(state),
   me: (state) => state.session.credentials.me,
   games: (state) => state.market.games,
   collections: (state) => state.market.collections,

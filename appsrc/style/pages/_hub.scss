@@ -46,6 +46,7 @@
   flex-wrap: wrap;
   justify-content: space-around;
   align-items: flex-start;
+  align-content: flex-start;
 
   .hub-item, .hub-filler {
     width: $grid-item-width;
@@ -68,5 +69,14 @@
   .filter-info {
     width: 100%;
     margin: 10px;
+  }
+
+  .hub-meat-tab {
+    display: none;
+
+    &.visible {
+      display: flex;
+      flex-grow: 1;
+    }
   }
 }
