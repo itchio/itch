@@ -10,7 +10,7 @@ import GameActions from './game-actions'
 
 export class GameMeat extends Component {
   render () {
-    const {game} = this.props
+    const {game, meId} = this.props
 
     if (!game) {
       return <Loader/>
@@ -30,15 +30,15 @@ export class GameMeat extends Component {
         </div>
         <GameActions game={game}/>
       </div>
-      <webview src={game.url}>
-      </webview>
+      <webview src={game.url} partition={`persist:itchio-${meId}`}/>
     </div>
   }
 }
 
 GameMeat.propTypes = {
   gameId: PropTypes.number,
-  game: PropTypes.object
+  game: PropTypes.object,
+  meId: PropTypes.any
 }
 
 const mapStateToProps = (state, props) => {
@@ -46,7 +46,8 @@ const mapStateToProps = (state, props) => {
 
   const marketSelector = createStructuredSelector({
     tab: (state) => state.session.navigation.tabData[path],
-    user: (state) => state.session.market
+    user: (state) => state.session.market,
+    meId: (state) => state.session.credentials.me.id
   })
 
   const gameSelector = createSelector(
@@ -54,9 +55,11 @@ const mapStateToProps = (state, props) => {
     (markets) => {
       const getGame = (market) => ((market || {}).games || {})[props.gameId]
       const game = getGame(markets.user) || getGame(markets.tab)
+      const {meId} = markets
       return {
         tabMarket: markets.tab,
-        game
+        game,
+        meId
       }
     }
   )

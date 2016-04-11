@@ -11,10 +11,10 @@ import * as actions from '../actions'
 
 export class SearchResult extends Component {
   render () {
-    const {game} = this.props
+    const {game, onClick} = this.props
     const {title, coverUrl} = game
 
-    return <div className='search-result'>
+    return <div className='search-result' onClick={onClick}>
       <img src={coverUrl}/>
       <h4>{title}</h4>
       <div className='spacer'></div>
@@ -27,7 +27,8 @@ SearchResult.propTypes = {
   game: PropTypes.shape({
     title: PropTypes.string,
     coverUrl: PropTypes.string
-  })
+  }),
+  onClick: PropTypes.func
 }
 
 export class HubSearchResults extends Component {
@@ -69,11 +70,12 @@ export class HubSearchResults extends Component {
     }
 
     const items = []
+    const {navigateToGame} = this.props
 
     const {games} = results.entities
     results.result.gameIds::each((gameId) => {
       const game = games[gameId]
-      items.push(<SearchResult key={gameId} game={game}/>)
+      items.push(<SearchResult key={gameId} game={game} onClick={() => navigateToGame(game)}/>)
     })
 
     return <div className='result-list'>
@@ -97,6 +99,7 @@ HubSearchResults.propTypes = {
   }),
 
   navigate: PropTypes.func.isRequired,
+  navigateToGame: PropTypes.func.isRequired,
   closeSearch: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired
 }
@@ -108,7 +111,8 @@ const mapStateToProps = createStructuredSelector({
 
 const mapDispatchToProps = (dispatch) => ({
   closeSearch: () => dispatch(actions.closeSearch()),
-  navigate: (path) => dispatch(actions.navigate(path))
+  navigate: (path) => dispatch(actions.navigate(path)),
+  navigateToGame: (game) => dispatch(actions.navigateToGame(game))
 })
 
 export default connect(
