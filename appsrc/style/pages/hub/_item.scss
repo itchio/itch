@@ -10,6 +10,10 @@
     background-position: 50% 50%;
     height: $grid-item-height;
     box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   .undercover {
