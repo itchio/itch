@@ -2,6 +2,7 @@
 import {createSelector, createStructuredSelector} from 'reselect'
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
+import classNames from 'classnames'
 
 import defaultImages from '../constants/default-images'
 
@@ -9,6 +10,48 @@ import Loader from './loader'
 import GameActions from './game-actions'
 
 export class GameMeat extends Component {
+  constructor () {
+    super()
+    this.state = {
+      browserState: {
+        canGoBack: false,
+        canGoForward: false,
+        loading: true,
+        url: ''
+      }
+    }
+  }
+
+  updateBrowserState (props = {}) {
+    const {webview} = this.refs
+    if (!webview) {
+      console.log(`Can't update browser state (no webview ref)`)
+      return
+    }
+    const browserState = {
+      ...this.state.browserState,
+      canGoBack: webview.canGoBack(),
+      canGoForward: webview.canGoForward(),
+      ...props
+    }
+
+    this.setState({
+      ...this.state,
+      browserState
+    })
+  }
+
+  componentDidMount () {
+    const {webview} = this.refs
+    if (!webview) {
+      console.log(`Oh noes, can't listen to webview's soothing event stream`)
+      return
+    }
+    webview.addEventListener('load-commit', () => this.updateBrowserState({url: webview.getURL()}))
+    webview.addEventListener('did-start-loading', () => this.updateBrowserState({loading: true}))
+    webview.addEventListener('did-stop-loading', () => this.updateBrowserState({loading: false}))
+  }
+
   render () {
     const {game, meId} = this.props
 
@@ -24,14 +67,57 @@ export class GameMeat extends Component {
     return <div className='game-meat'>
       <div className='game-essentials'>
         <div className='game-cover' style={coverStyle}/>
-        <div className='game-stats'>
-          <div className='total-playtime'>Played 48 hours</div>
-          <div className='last-playthrough'>Last played now</div>
+        <div className='controls'>
+          <div className='game-stats'>
+            <div className='total-playtime'>Played 48 hours</div>
+            <div className='last-playthrough'>Last played now</div>
+          </div>
+          {this.browserControls()}
         </div>
         <GameActions game={game}/>
       </div>
-      <webview src={game.url} partition={`persist:itchio-${meId}`} plugins/>
+      <webview ref='webview' src={game.url} partition={`persist:itchio-${meId}`} plugins/>
     </div>
+  }
+
+  browserControls () {
+    const {browserState} = this.state
+    const {canGoBack, canGoForward, loading, url = ''} = browserState
+
+    return <div className='browser-controls'>
+      <span className={classNames('icon icon-arrow-left', {enabled: canGoBack})} onClick={() => this.goBack()}/>
+      <span className={classNames('icon icon-arrow-right', {enabled: canGoForward})} onClick={() => this.goForward()}/>
+      {
+        loading
+        ? <span className='icon icon-cross' onClick={() => this.stop()}/>
+        : <span className='icon icon-repeat' onClick={() => this.reload()}/>
+      }
+      <span className='browser-address'>{url + ' '}</span>
+    </div>
+  }
+
+  stop () {
+    const {webview} = this.refs
+    if (!webview) return
+    webview.reload()
+  }
+
+  reload () {
+    const {webview} = this.refs
+    if (!webview) return
+    webview.reload()
+  }
+
+  goBack () {
+    const {webview} = this.refs
+    if (!webview) return
+    webview.goBack()
+  }
+
+  goForward () {
+    const {webview} = this.refs
+    if (!webview) return
+    webview.goForward()
   }
 }
 

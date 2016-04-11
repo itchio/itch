@@ -157,7 +157,7 @@ class PreferencesForm extends ShallowComponent {
                 e.preventDefault()
                 AppActions.compute_install_location_size(name)
               }
-            }, r(Icon, {icon: 'refresh'})))),
+            }, r(Icon, {icon: 'repeat'})))),
 
           (size === -1 ? '?' : humanize.fileSize(size))
         ]),

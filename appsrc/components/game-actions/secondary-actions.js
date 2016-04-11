@@ -92,7 +92,7 @@ class SecondaryActions extends Component {
   retryAction (gameId) {
     return this.action({
       label: ['grid.item.retry'],
-      icon: 'refresh',
+      icon: 'repeat',
       onClick: () => this.props.queueGame(gameId)
     })
   }

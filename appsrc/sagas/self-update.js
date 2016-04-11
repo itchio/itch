@@ -144,7 +144,7 @@ export function * _applySelfUpdateRequest () {
       {
         label: ['prompt.self_update_ready.action.restart'],
         action: applySelfUpdate(),
-        icon: 'refresh'
+        icon: 'repeat'
       },
       {
         label: ['prompt.self_update_ready.action.snooze'],
