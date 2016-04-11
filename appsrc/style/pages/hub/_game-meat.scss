@@ -43,6 +43,7 @@ $meat-cover-scale: 0.4;
       align-items: center;
 
       .icon {
+        color: $secondary-text-color;
         font-size: 20px;
         width: 32px;
         height: 32px;
@@ -52,15 +53,39 @@ $meat-cover-scale: 0.4;
         &:first-child {
           padding-left: none;
         }
+
+        -webkit-filter: brightness(90%);
+        text-shadow: 0 0 1px;
+
+        &:active {
+          -webkit-transform: scale(.95);
+        }
+
+        &:hover {
+          -webkit-filter: none;
+          cursor: pointer;
+        }
+
+        &.loading {
+          @include horizontal-scan;
+        }
+
+        &.disabled {
+          -webkit-filter: brightness(50%);
+          text-shadow: none;
+        }
       }
 
       .browser-address {
+        @include single-line;
+        height: 32px;
         margin-left: 4px;
         color: $secondary-text-color;
         border: 1px solid darken($secondary-text-color, 20%);
         padding: 8px;
         border-radius: 2px;
         flex-grow: 1;
+        max-width: 300px;
       }
     }
   }
@@ -78,6 +103,7 @@ $meat-cover-scale: 0.4;
 
   .game-actions {
     padding-right: 0;
+    flex-direction: row-reverse;
 
     .main-action {
       width: 200px;
@@ -88,6 +114,11 @@ $meat-cover-scale: 0.4;
       .icon {
         display: none;
       }
+    }
+
+    .secondary-actions {
+      margin: 0;
+      margin-right: 8px;
     }
   }
 }

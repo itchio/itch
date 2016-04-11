@@ -74,7 +74,7 @@ export class GameMeat extends Component {
           </div>
           {this.browserControls()}
         </div>
-        <GameActions game={game}/>
+        <GameActions game={game} showSecondary={true}/>
       </div>
       <webview ref='webview' src={game.url} partition={`persist:itchio-${meId}`} plugins/>
     </div>
@@ -85,11 +85,11 @@ export class GameMeat extends Component {
     const {canGoBack, canGoForward, loading, url = ''} = browserState
 
     return <div className='browser-controls'>
-      <span className={classNames('icon icon-arrow-left', {enabled: canGoBack})} onClick={() => this.goBack()}/>
-      <span className={classNames('icon icon-arrow-right', {enabled: canGoForward})} onClick={() => this.goForward()}/>
+      <span className={classNames('icon icon-arrow-left', {disabled: !canGoBack})} onClick={() => this.goBack()}/>
+      <span className={classNames('icon icon-arrow-right', {disabled: !canGoForward})} onClick={() => this.goForward()}/>
       {
         loading
-        ? <span className='icon icon-cross' onClick={() => this.stop()}/>
+        ? <span className='icon icon-cross loading' onClick={() => this.stop()}/>
         : <span className='icon icon-repeat' onClick={() => this.reload()}/>
       }
       <span className='browser-address'>{url + ' '}</span>
