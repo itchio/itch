@@ -3,11 +3,18 @@ $meat-cover-scale: 0.4;
 
 .game-meat {
   flex-grow: 1;
-  padding: $grid-padding $grid-padding * 2;
+  display: flex;
+  flex-direction: column;
 
   .game-essentials {
     display: flex;
     align-items: center;
+    padding: $grid-padding $grid-padding * 2;
+  }
+
+  webview {
+    flex-grow: 1;
+    margin-bottom: $status-bar-height;
   }
 
   .game-stats, .game-actions {

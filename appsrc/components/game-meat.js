@@ -30,6 +30,8 @@ export class GameMeat extends Component {
         </div>
         <GameActions game={game}/>
       </div>
+      <webview src={game.url}>
+      </webview>
     </div>
   }
 }
