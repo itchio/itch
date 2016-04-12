@@ -1,6 +1,6 @@
 
 import {handleActions} from 'redux-actions'
-import {pluck, reject, indexBy} from 'underline'
+import {map, pluck, reject, indexBy} from 'underline'
 import invariant from 'invariant'
 
 import SearchExamples from '../../constants/search-examples'
@@ -65,6 +65,34 @@ export default handleActions({
       }
 
       return {...state, path, tabs: newTabs, tabData: newTabData}
+    }
+  },
+
+  MOVE_TAB: (state, action) => {
+    const {before, after} = action.payload
+    invariant(typeof before === 'number', 'old tab index is a number')
+    invariant(typeof after === 'number', 'new tab index is a number')
+
+    const {tabs} = state
+    const {transient} = tabs
+
+    const newTransient = transient::map((t, i) => {
+      switch (i) {
+        case before:
+          return transient[after]
+        case after:
+          return transient[before]
+        default:
+          return t
+      }
+    })
+
+    return {
+      ...state,
+      tabs: {
+        ...tabs,
+        transient: newTransient
+      }
     }
   },
 

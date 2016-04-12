@@ -54,6 +54,7 @@ module.exports = keyMirror({
 
   /* Navigation */
   NAVIGATE: null,
+  MOVE_TAB: null,
   CLOSE_TAB: null,
   SHOW_PREVIOUS_TAB: null,
   SHOW_NEXT_TAB: null,

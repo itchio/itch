@@ -4,6 +4,11 @@
   100% { -webkit-transform: scale(1, 1) }
 }
 
+@keyframes sidebar-swoop-in {
+  0% { -webkit-transform: scale(1, 1) }
+  100% { -webkit-transform: scale(1, 0) }
+}
+
 .hub-sidebar-handle {
   background: $sidebar-background-color;
   height: '100%';
@@ -46,7 +51,6 @@
     transition: border-color 0.2s;
     border-left: 3px solid transparent;
     border-radius: 0 4px 4px 0;
-    animation: sidebar-swoop-in .2s ease-out;
 
     flex-shrink: 0;
     display: flex;
@@ -91,6 +95,18 @@
 
     &.empty {
       opacity: .5;
+    }
+
+    &[data-dragging=true] {
+      background: transparent;
+    }
+
+    &.fresh {
+      animation: sidebar-swoop-in .2s ease-out;
+    }
+
+    &.dying {
+      animation: sidebar-swoop-out .2s ease-in;
     }
 
     &.active {

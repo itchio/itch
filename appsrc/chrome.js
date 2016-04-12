@@ -15,6 +15,8 @@ import ReactDOM from 'react-dom'
 import Layout from './components/layout'
 import Modal from './components/modal'
 import {Provider} from 'react-redux'
+import HTML5Backend from 'react-dnd-html5-backend'
+import {DragDropContext} from 'react-dnd'
 import {shell, webFrame} from './electron'
 
 import env from './env'
@@ -30,14 +32,15 @@ let appNode
 
 function render () {
   appNode = document.querySelector('#app')
-  const layout = <Provider store={store}>
+  const WrappedLayout = DragDropContext(HTML5Backend)(Layout)
+  const rootComponent = <Provider store={store}>
     <div>
-      <Layout/>
+      <WrappedLayout/>
       <Modal/>
       {devTools}
     </div>
   </Provider>
-  ReactDOM.render(layout, appNode)
+  ReactDOM.render(rootComponent, appNode)
 }
 
 document.addEventListener('DOMContentLoaded', render)
