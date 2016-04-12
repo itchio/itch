@@ -106,7 +106,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const itchPath = document.querySelector('meta[name="itch:path"]')
   if (itchPath) {
-    sendMessage('parsed-itch-path/' + itchPath.content)
+    setTimeout(function () {
+      sendMessage('parsed-itch-path/' + itchPath.content)
+    }, 400)
   }
 
   if (['itch.io', 'itch.ovh', 'localhost.com'].indexOf(host) === -1) {

@@ -14,6 +14,7 @@ import History from './history'
 import FeaturedMeat from './featured-meat'
 import CollectionMeat from './collection-meat'
 import GameMeat from './game-meat'
+import UserMeat from './user-meat'
 import SearchMeat from './search-meat'
 import UrlMeat from './url-meat'
 
@@ -49,11 +50,13 @@ export class HubMeat extends Component {
     } else if (/^collections/.test(path)) {
       return <CollectionMeat collectionId={+pathToId(path)}/>
     } else if (/^games/.test(path)) {
-      return <GameMeat path={path} gameId={+pathToId(path)}/>
+      return <GameMeat gameId={+pathToId(path)}/>
+    } else if (/^users/.test(path)) {
+      return <UserMeat userId={+pathToId(path)}/>
     } else if (/^search/.test(path)) {
       return <SearchMeat query={pathToId(path)}/>
     } else if (/^url/.test(path)) {
-      return <UrlMeat path={path} url={pathToId(path)}/>
+      return <UrlMeat url={pathToId(path)}/>
     } else {
       return '?'
     }

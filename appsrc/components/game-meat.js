@@ -11,7 +11,7 @@ import BrowserMeat from './browser-meat'
 
 export class GameMeat extends Component {
   render () {
-    const {game, path} = this.props
+    const {game} = this.props
 
     if (!game) {
       return <Loader/>
@@ -33,12 +33,11 @@ export class GameMeat extends Component {
 
     const browserProps = {beforeControls, aboveControls, afterControls}
 
-    return <BrowserMeat className='game-meat' path={path} url={game.url} {...browserProps}/>
+    return <BrowserMeat className='game-meat' url={game.url} {...browserProps}/>
   }
 }
 
 GameMeat.propTypes = {
-  path: PropTypes.string.isRequired,
   gameId: PropTypes.number,
   game: PropTypes.object
 }

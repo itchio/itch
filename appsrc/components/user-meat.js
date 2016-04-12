@@ -8,19 +8,18 @@ import BrowserMeat from './browser-meat'
 
 export class UserMeat extends Component {
   render () {
-    const {user, path} = this.props
+    const {user} = this.props
 
     if (!user) {
       return <Loader/>
     }
 
     const browserProps = {}
-    return <BrowserMeat className='user-meat' path={path} url={user.url} {...browserProps}/>
+    return <BrowserMeat className='user-meat' url={user.url} {...browserProps}/>
   }
 }
 
 UserMeat.propTypes = {
-  path: PropTypes.string.isRequired,
   userId: PropTypes.number,
   user: PropTypes.object
 }
@@ -29,7 +28,7 @@ const mapStateToProps = (state, props) => {
   const marketSelector = createStructuredSelector({
     userId: (state, props) => props.userId,
     tab: (state, props) => {
-      const path = `games/${props.userId}`
+      const path = `users/${props.userId}`
       return state.session.navigation.tabData[path]
     },
     user: (state) => state.session.market
@@ -41,8 +40,8 @@ const mapStateToProps = (state, props) => {
       const {userId} = componentState
 
       const getUser = (market) => ((market || {}).users || {})[userId]
-      const game = getUser(componentState.user) || getUser(componentState.tab)
-      return {game}
+      const user = getUser(componentState.user) || getUser(componentState.tab)
+      return {user}
     }
   )
   return userSelector

@@ -99,12 +99,12 @@ export class BrowserMeat extends Component {
             webContents.openDevTools({detach: true})
             break
           case 'parsed-itch-path':
-            const newPath = `${two}/${three}`
-            if (this.props.path !== newPath) {
-              console.log('Evolving tab from ', this.props.path, ' to ', newPath)
-              evolveTab(`url/${webview.getURL()}`, newPath)
-            } else {
-              console.log('Tab already has final form')
+            console.log('parsed-itch-path', two, three, 'rookie?', this.props.rookie)
+            if (this.props.rookie) {
+              const oldPath = `url/${this.props.url}`
+              const newPath = `${two}/${three}`
+              console.log('Evolving tab from ', oldPath, ' to ', newPath)
+              evolveTab(oldPath, newPath)
             }
             break
           default:
@@ -115,8 +115,9 @@ export class BrowserMeat extends Component {
   }
 
   render () {
-    const {path, url, meId, className, beforeControls = '', afterControls = '', aboveControls = ''} = this.props
-    console.log('browser-meat has path ', path)
+    console.log('browser-meat props: ', this.props)
+
+    const {url, meId, className, beforeControls = '', afterControls = '', aboveControls = ''} = this.props
 
     const injectPath = ospath.resolve(__dirname, '..', 'inject', 'browser.js')
 
@@ -181,7 +182,7 @@ export class BrowserMeat extends Component {
 
 BrowserMeat.propTypes = {
   url: PropTypes.string.isRequired,
-  path: PropTypes.string.isRequired,
+  rookie: PropTypes.bool,
   className: PropTypes.string,
   meId: PropTypes.any,
   navigate: PropTypes.any,

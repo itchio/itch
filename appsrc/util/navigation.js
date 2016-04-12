@@ -52,4 +52,13 @@ export function gameToTabData (game) {
   }
 }
 
+export function userToTabData (user) {
+  return {
+    users: {
+      [user.id]: user
+    },
+    label: user.displayName
+  }
+}
+
 export default {pathToId, pathToIcon, gameToTabData}

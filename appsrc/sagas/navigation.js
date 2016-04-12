@@ -1,7 +1,7 @@
 
 import createQueue from './queue'
 import {createSelector} from 'reselect'
-import {pathToId, gameToTabData} from '../util/navigation'
+import {pathToId, gameToTabData, userToTabData} from '../util/navigation'
 import {getUserMarket} from './market'
 
 import {shell} from '../electron'
@@ -38,6 +38,21 @@ export function * _tabChanged (action) {
       const credentials = yield select((state) => state.session.credentials)
       const fetchedGame = yield call(fetch.gameLazily, market, credentials, gameId)
       yield call(gotGame, fetchedGame)
+    }
+  } else if (/^users/.test(path)) {
+    const market = getUserMarket()
+    const userId = +pathToId(path)
+
+    const gotUser = function * (user) {
+      const data = userToTabData(user)
+      yield put(tabDataFetched({path, data}))
+    }
+
+    const user = market.getEntities('users')[userId]
+    if (user) {
+      yield call(gotUser, user)
+    } else {
+      console.log('fetching users: stub')
     }
   } else {
     const data = staticTabData[path]
