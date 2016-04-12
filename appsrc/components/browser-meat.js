@@ -84,7 +84,7 @@ export class BrowserMeat extends Component {
     const classes = classNames('browser-meat', className)
 
     return <div className={classes}>
-      <div className='game-essentials'>
+      <div className='browser-bread'>
         {beforeControls}
         <div className='controls'>
           {aboveControls}

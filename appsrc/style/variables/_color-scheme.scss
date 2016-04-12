@@ -69,7 +69,7 @@ $bread-box-shadow-color: #171717;
 
 // misc
 
-$secondary-text-color: $silver-chalice;
+$secondary-text-color: darken($silver-chalice, 10%);
 $secondary-text-hover-color: $ivory;
 
 $tooltip-background-color: $ivory;

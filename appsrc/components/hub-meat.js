@@ -15,6 +15,7 @@ import FeaturedMeat from './featured-meat'
 import CollectionMeat from './collection-meat'
 import GameMeat from './game-meat'
 import SearchMeat from './search-meat'
+import UrlMeat from './url-meat'
 
 import {pluck, filter, each, map, indexBy, where} from 'underline'
 
@@ -51,6 +52,8 @@ export class HubMeat extends Component {
       return <GameMeat gameId={+pathToId(path)}/>
     } else if (/^search/.test(path)) {
       return <SearchMeat query={pathToId(path)}/>
+    } else if (/^url/.test(path)) {
+      return <UrlMeat url={pathToId(path)}/>
     } else {
       return '?'
     }
