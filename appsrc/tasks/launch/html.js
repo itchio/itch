@@ -69,7 +69,7 @@ export default async function launch (out, opts) {
   userAgent = userAgent.replace(/Electron\/[0-9.]+\s/, '')
   win.webContents.setUserAgent(userAgent)
 
-  // requests to 'itch-internal' are used to
+  // requests to 'itch-internal' are used to communicate between web content & the app
   let internalFilter = {
     urls: ['https://itch-internal/*']
   }

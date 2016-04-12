@@ -7,6 +7,7 @@ $meat-cover-scale: 0.4;
   }
 
   .game-cover {
+    flex-shrink: 0;
     border-radius: 2px;
     width: $grid-item-width * $meat-cover-scale;
     height: $grid-item-height * $meat-cover-scale;
@@ -17,7 +18,19 @@ $meat-cover-scale: 0.4;
     box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
   }
 
+  .game-stats {
+    display: flex;
+    font-size: 15px;
+    color: $secondary-text-color;
+    padding: 10px 0;
+
+    div {
+      margin-right: 12px;
+    }
+  }
+
   .game-actions {
+    flex-shrink: 0;
     padding-right: 0;
     flex-direction: row-reverse;
 

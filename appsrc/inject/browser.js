@@ -1,5 +1,12 @@
 'use strict'
 
+const sendMessage = (action) => {
+  const url = `https://itch-internal/${action}`
+  const xhr = new window.XMLHttpRequest()
+  xhr.open('POST', url)
+  xhr.send()
+}
+
 const I = {}
 
 Object.defineProperty(window, 'I', {
@@ -95,7 +102,12 @@ function checkoutInject () {
 
 document.addEventListener('DOMContentLoaded', () => {
   const url = require('electron').remote.require('./util/url').default
-  const host = url.subdomain_to_domain(window.location.hostname)
+  const host = url.subdomainToDomain(window.location.hostname)
+
+  const itchPath = document.querySelector('meta[name="itch:path"]')
+  if (itchPath) {
+    sendMessage('parsed-itch-path/' + itchPath.content)
+  }
 
   if (['itch.io', 'itch.ovh', 'localhost.com'].indexOf(host) === -1) {
     // don't inject anything on non-itch pages

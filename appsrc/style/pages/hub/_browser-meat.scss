@@ -22,6 +22,7 @@ $meat-cover-scale: 0.4;
     padding: 0 20px;
     display: flex;
     flex-grow: 1;
+    flex-shrink: 1;
     flex-direction: column;
 
     .browser-controls {
