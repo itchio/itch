@@ -49,11 +49,11 @@ export class HubMeat extends Component {
     } else if (/^collections/.test(path)) {
       return <CollectionMeat collectionId={+pathToId(path)}/>
     } else if (/^games/.test(path)) {
-      return <GameMeat gameId={+pathToId(path)}/>
+      return <GameMeat path={path} gameId={+pathToId(path)}/>
     } else if (/^search/.test(path)) {
       return <SearchMeat query={pathToId(path)}/>
     } else if (/^url/.test(path)) {
-      return <UrlMeat url={pathToId(path)}/>
+      return <UrlMeat path={path} url={pathToId(path)}/>
     } else {
       return '?'
     }

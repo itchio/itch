@@ -5,14 +5,15 @@ import BrowserMeat from './browser-meat'
 
 export class UrlMeat extends Component {
   render () {
-    const {url} = this.props
+    const {path, url} = this.props
 
-    return <BrowserMeat url={url}/>
+    return <BrowserMeat url={url} path={path}/>
   }
 }
 
 UrlMeat.propTypes = {
-  url: PropTypes.string
+  url: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired
 }
 
 export default UrlMeat

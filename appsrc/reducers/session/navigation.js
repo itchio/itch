@@ -143,6 +143,32 @@ export default handleActions({
     return {...state, tabData: newTabData}
   },
 
+  EVOLVE_TAB: (state, action) => {
+    const {before, after} = action.payload
+    invariant(typeof before === 'string', 'before path must be a string')
+    invariant(typeof after === 'string', 'after path must be a string')
+
+    const newTransient = state.tabs.transient::map((t) => {
+      console.log(`before, after, t.path = `, before, after, t.path)
+      if (t.path === before) {
+        return {path: after}
+      } else {
+        return t
+      }
+    })
+
+    console.log('transient = ', JSON.stringify(state.tabs.transient, null, 2))
+    console.log('newTransient = ', JSON.stringify(newTransient, null, 2))
+
+    return {
+      ...state,
+      tabs: {
+        ...state.tabs,
+        transient: newTransient
+      }
+    }
+  },
+
   CLOSE_SEARCH: (state, action) => {
     return {...state, searchResults: null, searchOpen: false}
   }

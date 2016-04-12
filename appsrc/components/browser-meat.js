@@ -3,7 +3,7 @@ import {createStructuredSelector} from 'reselect'
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 import classNames from 'classnames'
-import path from 'path'
+import ospath from 'path'
 
 import * as actions from '../actions'
 
@@ -44,7 +44,7 @@ export class BrowserMeat extends Component {
 
   componentDidMount () {
     const {webview} = this.refs
-    const {navigate} = this.props
+    const {navigate, evolveTab} = this.props
 
     if (!webview) {
       console.log(`Oh noes, can't listen to webview's soothing event stream`)
@@ -91,9 +91,21 @@ export class BrowserMeat extends Component {
         callback({cancel: true})
 
         let parsed = urlParser.parse(details.url)
-        switch (parsed.pathname.replace(/^\//, '')) {
+        const {pathname} = parsed
+        const [, one, two, three] = pathname.split('/')
+
+        switch (one) {
           case 'open-devtools':
             webContents.openDevTools({detach: true})
+            break
+          case 'parsed-itch-path':
+            const newPath = `${two}/${three}`
+            if (this.props.path !== newPath) {
+              console.log('Evolving tab from ', this.props.path, ' to ', newPath)
+              evolveTab(`url/${webview.getURL()}`, newPath)
+            } else {
+              console.log('Tab already has final form')
+            }
             break
           default:
             console.log(`got itch-internal request: `, parsed.pathname)
@@ -103,10 +115,10 @@ export class BrowserMeat extends Component {
   }
 
   render () {
-    const {url, meId, className, beforeControls = '', afterControls = '', aboveControls = ''} = this.props
+    const {path, url, meId, className, beforeControls = '', afterControls = '', aboveControls = ''} = this.props
+    console.log('browser-meat has path ', path)
 
-    const injectPath = path.resolve(__dirname, '..', 'inject', 'browser.js')
-    console.log(`inject path = `, injectPath)
+    const injectPath = ospath.resolve(__dirname, '..', 'inject', 'browser.js')
 
     const classes = classNames('browser-meat', className)
 
@@ -168,10 +180,13 @@ export class BrowserMeat extends Component {
 }
 
 BrowserMeat.propTypes = {
-  url: PropTypes.string,
+  url: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
   className: PropTypes.string,
   meId: PropTypes.any,
   navigate: PropTypes.any,
+
+  evolveTab: PropTypes.func.isRequired,
 
   beforeControls: PropTypes.node,
   afterControls: PropTypes.node,
@@ -183,7 +198,8 @@ const mapStateToProps = createStructuredSelector({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  navigate: (path, data) => dispatch(actions.navigate(path, data))
+  navigate: (path, data) => dispatch(actions.navigate(path, data)),
+  evolveTab: (before, after) => dispatch(actions.evolveTab({before, after}))
 })
 
 export default connect(
