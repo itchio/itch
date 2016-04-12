@@ -2,18 +2,16 @@
 /* node's standard url module */
 import url from 'url'
 
-const self = {
-  /** user.example.org => example.org */
-  subdomain_to_domain: function (subdomain) {
-    let parts = subdomain.split('.')
-    while (parts.length > 2) {
-      parts.shift()
-    }
-    return parts.join('.')
-  },
-
-  parse: url.parse.bind(url),
-  format: url.format.bind(url)
+/** user.example.org => example.org */
+export function subdomainToDomain (subdomain) {
+  const parts = subdomain.split('.')
+  while (parts.length > 2) {
+    parts.shift()
+  }
+  return parts.join('.')
 }
 
-export default self
+export const parse = ::url.parse
+export const format = ::url.format
+
+export default {subdomainToDomain, parse, format}

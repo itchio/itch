@@ -70,10 +70,10 @@ export default async function launch (out, opts) {
   win.webContents.setUserAgent(userAgent)
 
   // requests to 'itch-internal' are used to
-  let internal_filter = {
+  let internalFilter = {
     urls: ['https://itch-internal/*']
   }
-  win.webContents.session.webRequest.onBeforeSendHeaders(internal_filter, (details, callback) => {
+  win.webContents.session.webRequest.onBeforeSendHeaders(internalFilter, (details, callback) => {
     callback({cancel: true})
 
     let parsed = url.parse(details.url)

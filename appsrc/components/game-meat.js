@@ -8,6 +8,9 @@ import defaultImages from '../constants/default-images'
 
 import Loader from './loader'
 import GameActions from './game-actions'
+import urlParser from '../util/url'
+
+const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|itch\.ovh|localhost\.com:8080)$/
 
 export class GameMeat extends Component {
   constructor () {
@@ -50,6 +53,23 @@ export class GameMeat extends Component {
     webview.addEventListener('load-commit', () => this.updateBrowserState({url: webview.getURL()}))
     webview.addEventListener('did-start-loading', () => this.updateBrowserState({loading: true}))
     webview.addEventListener('did-stop-loading', () => this.updateBrowserState({loading: false}))
+    webview.addEventListener('dom-ready', () => this.updateBrowserState({loading: false}))
+    webview.addEventListener('will-navigate', (e) => {
+      const {host, pathname} = urlParser.parse(e.url)
+      if (ITCH_HOST_RE.test(host)) {
+        const user = ITCH_HOST_RE.exec(host)[1]
+
+        const pathItems = pathname.split('/')
+        if (pathItems.length === 2) {
+          if (pathItems[1].length > 0) {
+            const game = pathItems[1]
+            console.log(`Will navigate to game ${user}/${game}`)
+          } else {
+            console.log(`Will navigate to user ${user}`)
+          }
+        }
+      }
+    })
   }
 
   render () {

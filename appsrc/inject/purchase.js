@@ -19,7 +19,7 @@ Object.defineProperty(I, 'BaseBuyForm', {
       const $ = window.$
       const $buttons = $('.checkout_btn, .confirm_vat_btn')
       disable($buttons)
-      $buttons.html($('<span><span class="icon icon-stopwatch itch_injected-spinner"></span> Loading...</span>'))
+      $buttons.html($('<span><span class="icon icon-stopwatch itchInjectedSpinner"></span> Loading...</span>'))
       $buttons.not(':eq(0)').hide()
 
       // don't close the window here
@@ -33,14 +33,14 @@ function disable ($el) {
   $el.css('-webkit-filter', 'grayscale(70%)')
 }
 
-function purchase_inject () {
+function purchaseInject () {
   const {$} = window
   const form = $('form.buy_form_widget')
   form.attr('target', '_self')
 
   // TODO: use `file:///` protocol instead, if that's no issue.
   const css = $(`<style>
-    .itch_injected-spinner {
+    .itchInjectedSpinner {
       animation: sk-rotateplane 2.4s .5s infinite ease-out;
     }
 
@@ -53,20 +53,16 @@ function purchase_inject () {
     }
   </style>`)[0]
 
-  css.onload = function () {
-    console.log('CSS IN IFRAME LOADED')
-  }
-
   document.body.appendChild(css)
 }
 
-function itch_inject () {
+function itchInject () {
   const {$} = window
   $('.header_widget, .footer').css('pointer-events', 'none')
 }
 
-function login_inject () {
-  itch_inject()
+function loginInject () {
+  itchInject()
 
   const CredentialsStore = require('electron').remote.require('./stores/credentials-store').default
   const me = CredentialsStore.get_me()
@@ -88,7 +84,7 @@ function login_inject () {
   $form.find('.buttons .line').css('display', 'none')
 }
 
-function checkout_inject () {
+function checkoutInject () {
   const {$} = window
   $('.close_button').on('click', (e) => {
     window.close()
@@ -107,19 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const tokens = window.location.pathname.split('/')
-  const first_token = tokens[1]
-  const last_token = tokens[tokens.length - 1]
+  const firstToken = tokens[1]
+  const lastToken = tokens[tokens.length - 1]
 
-  switch (last_token) {
+  switch (lastToken) {
     case 'purchase':
-      purchase_inject()
+      purchaseInject()
       break
     case 'login':
-      login_inject()
+      loginInject()
       break
     default:
-      if (first_token === 'checkout') {
-        checkout_inject()
+      if (firstToken === 'checkout') {
+        checkoutInject()
       }
       break
   }
