@@ -116,6 +116,16 @@ $meat-cover-scale: 0.4;
       }
     }
 
+    &.task-download, &.task-install, &.task-configure, &.task-find-upload {
+      .main-action {
+        margin-right: 0;
+        flex-grow: 1;
+        text-align: center;
+        font-weight: normal;
+        @include discreet-button;
+      }
+    }
+
     .cave-actions {
       margin: 0;
       margin-right: 8px;

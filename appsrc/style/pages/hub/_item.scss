@@ -57,21 +57,7 @@
   display: flex;
   align-items: center;
 
-  &.uninstalled {
-    .main-action {
-      @include discreet-button;
-    }
-  }
-
   &.task-download, &.task-install, &.task-configure, &.task-launch, &.task-find-upload {
-    .main-action {
-      @include discreet-button;
-      margin-right: 0;
-      flex-grow: 1;
-      text-align: center;
-      font-weight: normal;
-    }
-
     .cave-actions {
       display: none;
     }
@@ -102,6 +88,24 @@
 
     &:active {
       transform: scale(.95);
+    }
+  }
+}
+
+.hub-item .game-actions {
+  &.uninstalled {
+    .main-action {
+      @include discreet-button;
+    }
+  }
+
+  &.task-download, &.task-install, &.task-configure, &.task-launch, &.task-find-upload {
+    .main-action {
+      margin-right: 0;
+      flex-grow: 1;
+      text-align: center;
+      font-weight: normal;
+      @include discreet-button;
     }
   }
 }
