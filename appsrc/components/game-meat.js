@@ -92,7 +92,10 @@ export class GameMeat extends Component {
         ? <span className='icon icon-cross loading' onClick={() => this.stop()}/>
         : <span className='icon icon-repeat' onClick={() => this.reload()}/>
       }
-      <span className='browser-address'>{url + ' '}</span>
+      { url && url.length
+        ? <span className='browser-address'>{url}</span>
+        : '' }
+
     </div>
   }
 
