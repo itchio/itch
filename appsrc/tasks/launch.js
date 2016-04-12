@@ -5,6 +5,10 @@ import invariant from 'invariant'
 import native from './launch/native'
 import html from './launch/html'
 
+import pathmaker from '../util/pathmaker'
+import explorer from '../util/explorer'
+import classificationActions from '../constants/classification-actions'
+
 function caveProblem (cave) {
   switch (cave.launchType) {
     case 'native':
@@ -25,6 +29,12 @@ export default async function start (out, opts) {
   let {cave} = opts
   invariant(cave, 'launch has cave')
   invariant(globalMarket, 'launch has globalMarket')
+
+  const action = classificationActions[(cave.game || {}).classification || 'game']
+  if (action === 'open') {
+    explorer.open(pathmaker.appPath(cave))
+    return
+  }
 
   const {launchType = 'native'} = cave
 

@@ -40,7 +40,7 @@ export function * _requestCaveUninstall (action) {
       {
         label: ['prompt.uninstall.reinstall'],
         action: queueCaveReinstall({caveId}),
-        icon: 'refresh'
+        icon: 'repeat'
       },
       'cancel'
     ]

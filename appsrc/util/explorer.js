@@ -1,16 +1,15 @@
 
-import electron from 'electron'
+import {shell} from '../electron'
+import os from './os'
 
-let self = {
-  open: (folder) => {
-    if (process.platform === 'darwin') {
-      // openItem will open the finder but it will appear *under* the app
-      // which is a bit silly, so we just reveal it instead.
-      electron.shell.showItemInFolder(folder)
-    } else {
-      electron.shell.openItem(folder)
-    }
+export function open (folder) {
+  if (os.platform() === 'darwin') {
+    // openItem will open the finder but it will appear *under* the app
+    // which is a bit silly, so we just reveal it instead.
+    shell.showItemInFolder(folder)
+  } else {
+    shell.openItem(folder)
   }
 }
 
-export default self
+export default {open}

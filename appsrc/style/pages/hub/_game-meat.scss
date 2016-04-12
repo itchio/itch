@@ -116,7 +116,7 @@ $meat-cover-scale: 0.4;
       }
     }
 
-    &.task-download, &.task-install, &.task-configure, &.task-find-upload {
+    &.task-download, &.task-install, &.task-configure, &.task-find-upload, &.task-launch {
       .main-action {
         margin-right: 0;
         flex-grow: 1;
