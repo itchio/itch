@@ -19,6 +19,7 @@ export const ipcRenderer = electron.ipcRenderer
 export const remote = electron.remote
 export const shell = electron.shell
 export const dialog = electron.dialog
+export const webFrame = electron.webFrame
 export const Menu = electron.Menu
 export const Tray = electron.Tray
 export const BrowserWindow = electron.BrowserWindow

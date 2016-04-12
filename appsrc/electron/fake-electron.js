@@ -41,6 +41,9 @@ const electron = {
   dialog: {
     showMessageBox: rnil
   },
+  webFrame: {
+    setZoomLevelLimits: rnil
+  },
   Menu: {
     buildFromTemplate: rnil,
     setApplicationMenu: rnil

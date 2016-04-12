@@ -15,7 +15,7 @@ import ReactDOM from 'react-dom'
 import Layout from './components/layout'
 import Modal from './components/modal'
 import {Provider} from 'react-redux'
-import {shell} from './electron'
+import {shell, webFrame} from './electron'
 
 import env from './env'
 import store from './store'
@@ -64,3 +64,7 @@ document.addEventListener('click', (e) => {
     return false
   }
 })
+
+// disable two-finger zoom on OSX
+
+webFrame.setZoomLevelLimits(1, 1)
