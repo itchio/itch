@@ -2,78 +2,16 @@
 import {createSelector, createStructuredSelector} from 'reselect'
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
-import classNames from 'classnames'
 
 import defaultImages from '../constants/default-images'
 
 import Loader from './loader'
 import GameActions from './game-actions'
-import urlParser from '../util/url'
-
-const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|itch\.ovh|localhost\.com:8080)$/
+import BrowserMeat from './browser-meat'
 
 export class GameMeat extends Component {
-  constructor () {
-    super()
-    this.state = {
-      browserState: {
-        canGoBack: false,
-        canGoForward: false,
-        loading: true,
-        url: ''
-      }
-    }
-  }
-
-  updateBrowserState (props = {}) {
-    const {webview} = this.refs
-    if (!webview) {
-      console.log(`Can't update browser state (no webview ref)`)
-      return
-    }
-    const browserState = {
-      ...this.state.browserState,
-      canGoBack: webview.canGoBack(),
-      canGoForward: webview.canGoForward(),
-      ...props
-    }
-
-    this.setState({
-      ...this.state,
-      browserState
-    })
-  }
-
-  componentDidMount () {
-    const {webview} = this.refs
-    if (!webview) {
-      console.log(`Oh noes, can't listen to webview's soothing event stream`)
-      return
-    }
-    webview.addEventListener('load-commit', () => this.updateBrowserState({url: webview.getURL()}))
-    webview.addEventListener('did-start-loading', () => this.updateBrowserState({loading: true}))
-    webview.addEventListener('did-stop-loading', () => this.updateBrowserState({loading: false}))
-    webview.addEventListener('dom-ready', () => this.updateBrowserState({loading: false}))
-    webview.addEventListener('will-navigate', (e) => {
-      const {host, pathname} = urlParser.parse(e.url)
-      if (ITCH_HOST_RE.test(host)) {
-        const user = ITCH_HOST_RE.exec(host)[1]
-
-        const pathItems = pathname.split('/')
-        if (pathItems.length === 2) {
-          if (pathItems[1].length > 0) {
-            const game = pathItems[1]
-            console.log(`Will navigate to game ${user}/${game}`)
-          } else {
-            console.log(`Will navigate to user ${user}`)
-          }
-        }
-      }
-    })
-  }
-
   render () {
-    const {game, meId} = this.props
+    const {game} = this.props
 
     if (!game) {
       return <Loader/>
@@ -84,70 +22,24 @@ export class GameMeat extends Component {
       backgroundImage: `url('${coverUrl}')`
     }
 
-    return <div className='game-meat'>
-      <div className='game-essentials'>
-        <div className='game-cover' style={coverStyle}/>
-        <div className='controls'>
-          <div className='game-stats'>
-            <div className='total-playtime'>Played 48 hours</div>
-            <div className='last-playthrough'>Last played now</div>
-          </div>
-          {this.browserControls()}
-        </div>
-        <GameActions game={game} showSecondary/>
-      </div>
-      <webview ref='webview' src={game.url} partition={`persist:itchio-${meId}`} plugins/>
+    const beforeControls = <div className='game-cover' style={coverStyle}/>
+
+    const aboveControls = <div className='game-stats'>
+      <div className='total-playtime'>Played 48 hours</div>
+      <div className='last-playthrough'>Last played now</div>
     </div>
-  }
 
-  browserControls () {
-    const {browserState} = this.state
-    const {canGoBack, canGoForward, loading, url = ''} = browserState
+    const afterControls = <GameActions game={game} showSecondary/>
 
-    return <div className='browser-controls'>
-      <span className={classNames('icon icon-arrow-left', {disabled: !canGoBack})} onClick={() => this.goBack()}/>
-      <span className={classNames('icon icon-arrow-right', {disabled: !canGoForward})} onClick={() => this.goForward()}/>
-      {
-        loading
-        ? <span className='icon icon-cross loading' onClick={() => this.stop()}/>
-        : <span className='icon icon-repeat' onClick={() => this.reload()}/>
-      }
-      { url && url.length
-        ? <span className='browser-address'>{url}</span>
-        : '' }
+    const browserProps = {beforeControls, aboveControls, afterControls}
 
-    </div>
-  }
-
-  stop () {
-    const {webview} = this.refs
-    if (!webview) return
-    webview.reload()
-  }
-
-  reload () {
-    const {webview} = this.refs
-    if (!webview) return
-    webview.reload()
-  }
-
-  goBack () {
-    const {webview} = this.refs
-    if (!webview) return
-    webview.goBack()
-  }
-
-  goForward () {
-    const {webview} = this.refs
-    if (!webview) return
-    webview.goForward()
+    return <BrowserMeat className='game-meat' url={game.url} {...browserProps}/>
   }
 }
 
 GameMeat.propTypes = {
   gameId: PropTypes.number,
-  game: PropTypes.object,
-  meId: PropTypes.any
+  game: PropTypes.object
 }
 
 const mapStateToProps = (state, props) => {
@@ -157,24 +49,23 @@ const mapStateToProps = (state, props) => {
       const path = `games/${props.gameId}`
       return state.session.navigation.tabData[path]
     },
-    user: (state) => state.session.market,
-    meId: (state) => state.session.credentials.me.id
+    user: (state) => state.session.market
   })
 
   const gameSelector = createSelector(
     marketSelector,
     (componentState) => {
-      const {gameId, meId} = componentState
+      const {gameId} = componentState
 
       const getGame = (market) => ((market || {}).games || {})[gameId]
       const game = getGame(componentState.user) || getGame(componentState.tab)
-      return { game, meId }
+      return {game}
     }
   )
   return gameSelector
 }
 
-const mapDispatchToProps = (state) => ({})
+const mapDispatchToProps = (dispatch) => ({})
 
 export default connect(
   mapStateToProps,
