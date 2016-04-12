@@ -19,10 +19,13 @@ export class HubSidebar extends Component {
   }
 
   render () {
-    const {t, osx, fullscreen, path, tabs, tabData, navigate, counts, closeTab} = this.props
+    const {t, osx, sidebarWidth, fullscreen, path, tabs, tabData, navigate, counts, closeTab} = this.props
     const classes = classNames('hub-sidebar', {osx, fullscreen})
+    const sidebarStyle = {
+      width: sidebarWidth + 'px'
+    }
 
-    return <div className={classes}>
+    return <div className={classes} style={sidebarStyle}>
       <div className='title-bar-padder'/>
       {this.dropdown()}
 
@@ -116,6 +119,7 @@ export class HubSidebar extends Component {
 
 HubSidebar.propTypes = {
   osx: PropTypes.bool,
+  sidebarWidth: PropTypes.number.isRequired,
   fullscreen: PropTypes.bool,
   me: PropTypes.shape({
     coverUrl: PropTypes.string,
@@ -146,6 +150,7 @@ HubSidebar.propTypes = {
 const mapStateToProps = createStructuredSelector({
   osx: (state) => state.system.osx,
   fullscreen: (state) => state.ui.mainWindow.fullscreen,
+  sidebarWidth: (state) => state.preferences.sidebarWidth || 240,
   me: (state) => state.session.credentials.me,
   path: (state) => state.session.navigation.path,
   tabs: (state) => state.session.navigation.tabs,

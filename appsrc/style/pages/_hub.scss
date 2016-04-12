@@ -19,6 +19,7 @@
 }
 
 .hub-content {
+  border-left: 1px solid $sidebar-border-color;
   overflow: hidden;
   display: flex;
   flex-direction: column;

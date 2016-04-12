@@ -7,7 +7,8 @@ const initialState = {
   downloadSelfUpdates: true,
   offlineMode: OFFLINE_MODE,
   installLocations: {},
-  defaultInstallLocation: 'appdata'
+  defaultInstallLocation: 'appdata',
+  sidebarWidth: 240
 }
 
 export default handleActions({

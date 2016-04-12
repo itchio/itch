@@ -1,7 +1,18 @@
 
+.hub-sidebar-handle {
+  background: $sidebar-background-color;
+  height: '100%';
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 8px;
+
+  &:hover {
+    cursor: col-resize;
+  }
+}
+
 .hub-sidebar {
   background: $sidebar-background-color;
-  border-right: 1px solid $sidebar-border-color;
 
   overflow: hidden;
   height: 100%;
@@ -35,7 +46,7 @@
     display: flex;
     align-items: center;
     margin: 2px 0;
-    margin-right: 8px;
+    margin-right: 0;
     padding: 10px 8px 10px 3px;
 
     &:hover {
