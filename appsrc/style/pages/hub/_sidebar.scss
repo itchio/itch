@@ -3,6 +3,8 @@
   background: $sidebar-background-color;
   border-right: 1px solid $sidebar-border-color;
 
+  overflow: hidden;
+  height: 100%;
   width: 240px;
   flex-grow: 0;
   flex-shrink: 0;
@@ -16,11 +18,20 @@
     flex-shrink: 0;
   }
 
+  .sidebar-items {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+
+    overflow-y: auto;
+  }
+
   section {
     transition: border-color 0.2s;
     border-left: 3px solid transparent;
     border-radius: 0 4px 4px 0;
 
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     margin: 2px 0;

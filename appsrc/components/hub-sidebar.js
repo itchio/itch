@@ -26,48 +26,50 @@ export class HubSidebar extends Component {
       <div className='title-bar-padder'/>
       {this.dropdown()}
 
-      <h2>{t('sidebar.category.basics')}</h2>
-      {tabs.constant::map((item) => {
-        const classes = classNames({active: path === item.path})
-        const {label = 'Loading...'} = tabData[item.path] || {}
-        const icon = pathToIcon(item.path)
-        const onClick = () => navigate(item.path)
-
-        return <section key={item.path} className={classes} onClick={onClick} data-path={item.path}>
-          <span className={`icon icon-${icon}`}/>
-          {t.format(label)}
-        </section>
-      })}
-
-      <h2>{t('sidebar.category.tabs')}</h2>
-      {tabs.transient.length
-        ? tabs.transient::map((item) => {
+      <div className='sidebar-items'>
+        <h2>{t('sidebar.category.basics')}</h2>
+        {tabs.constant::map((item) => {
+          const classes = classNames({active: path === item.path})
           const {label = 'Loading...'} = tabData[item.path] || {}
           const icon = pathToIcon(item.path)
-          const classes = classNames({
-            active: path === item.path
-          })
           const onClick = () => navigate(item.path)
-          const number = counts[item.path]
 
           return <section key={item.path} className={classes} onClick={onClick} data-path={item.path}>
             <span className={`icon icon-${icon}`}/>
             {t.format(label)}
-            { number > 0
-            ? <span className='bubble'>{number}</span>
-            : ''}
-            <div className='filler'/>
-            <span className='icon icon-cross' onClick={(e) => {
-              closeTab(item.path)
-              e.stopPropagation()
-            }}/>
           </section>
-        })
-        : <section className='empty'>
-        <span className='icon icon-like'/>
-        {t('sidebar.no_tabs')}
-        </section>
-      }
+        })}
+
+        <h2>{t('sidebar.category.tabs')}</h2>
+        {tabs.transient.length
+          ? tabs.transient::map((item) => {
+            const {label = 'Loading...'} = tabData[item.path] || {}
+            const icon = pathToIcon(item.path)
+            const classes = classNames({
+              active: path === item.path
+            })
+            const onClick = () => navigate(item.path)
+            const number = counts[item.path]
+
+            return <section key={item.path} className={classes} onClick={onClick} data-path={item.path}>
+              <span className={`icon icon-${icon}`}/>
+              {t.format(label)}
+              { number > 0
+              ? <span className='bubble'>{number}</span>
+              : ''}
+              <div className='filler'/>
+              <span className='icon icon-cross' onClick={(e) => {
+                closeTab(item.path)
+                e.stopPropagation()
+              }}/>
+            </section>
+          })
+          : <section className='empty'>
+          <span className='icon icon-like'/>
+          {t('sidebar.no_tabs')}
+          </section>
+        }
+      </div>
     </div>
   }
 
