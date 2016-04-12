@@ -119,6 +119,11 @@ $meat-cover-scale: 0.4;
     .cave-actions {
       margin: 0;
       margin-right: 8px;
+      font-size: 18px;
+
+      .secondary-action {
+        margin: 0 8px;
+      }
     }
   }
 }
