@@ -4,6 +4,7 @@ import {pluck, reject, indexBy} from 'underline'
 import invariant from 'invariant'
 
 import SearchExamples from '../../constants/search-examples'
+import staticTabData from '../../constants/static-tab-data'
 import {pathToId} from '../../util/navigation'
 
 const initialState = {
@@ -14,19 +15,9 @@ const initialState = {
       {path: 'dashboard', label: ['sidebar.dashboard']},
       {path: 'library', label: ['sidebar.owned']}
     ],
-    transient: [
-      {path: 'collections/2348', label: 'Garden, Grow and Plant'}
-    ]
+    transient: []
   },
-  tabData: {
-    featured: { label: ['sidebar.featured'], subtitle: ['sidebar.featured_subtitle'] },
-    dashboard: { label: ['sidebar.dashboard'], subtitle: ['sidebar.dashboard_subtitle'] },
-    library: { label: ['sidebar.owned'], subtitle: ['sidebar.owned_subtitle'] },
-    preferences: { label: ['sidebar.preferences'], subtitle: ['sidebar.preferences'] },
-    history: { label: ['sidebar.history'], subtitle: ['sidebar.history'] },
-    downloads: { label: ['sidebar.downloads'], subtitle: ['sidebar.downloads'] },
-    'collections/2348': { label: 'Garden, Grow and Plant' }
-  },
+  tabData: staticTabData,
   path: 'dashboard'
 }
 

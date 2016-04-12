@@ -10,6 +10,7 @@ import {call, select, put} from 'redux-saga/effects'
 import {pluck} from 'underline'
 
 import urls from '../constants/urls'
+import staticTabData from '../constants/static-tab-data'
 import fetch from '../util/fetch'
 
 import {navigate, openUrl, tabChanged, tabDataFetched} from '../actions'
@@ -37,6 +38,11 @@ export function * _tabChanged (action) {
       const credentials = yield select((state) => state.session.credentials)
       const fetchedGame = yield call(fetch.gameLazily, market, credentials, gameId)
       yield call(gotGame, fetchedGame)
+    }
+  } else {
+    const data = staticTabData[path]
+    if (data) {
+      yield put(tabDataFetched({path, data}))
     }
   }
 }
