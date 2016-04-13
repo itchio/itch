@@ -1,7 +1,7 @@
 #!/bin/sh -xe
 
 gem install dpl
-CI_RELEASE_DATE="$(date +%Y-%m-%d)"
+CI_RELEASE_DATE="`date +%Y-%m-%d`"
 FPM_VERSION=$CI_VERSION
 
 if [ "$CI_ARCH" = "386" ]; then
@@ -21,9 +21,12 @@ FPM_AFTER_INSTALL="$CI_PROJECT_DIR/release/debian-after-install.sh"
 rm -rf stage2 && mkdir -p stage2/$CI_APPNAME
 cp -rf $BUILD_PATH/* stage2/$CI_APPNAME
 
-if [ -z "`gem list | grep fpm-itchio`" ]; then
-  gem uninstall fpm -x
-  gem install fpm-itchio
+if [ -n "`gem list | grep fpm-itchio`" ]; then
+  gem uninstall fpm-itchio
+fi
+
+if [ -z "`gem list | grep fpm`" ]; then
+  gem install fpm -v "~> 1.5.0"
 fi
 
 release/generate-itch-desktop.sh
