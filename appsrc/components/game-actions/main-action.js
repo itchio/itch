@@ -132,15 +132,7 @@ class MainAction extends Component {
       res = t('grid.item.queued')
     }
 
-    if (progress > 0) {
-      let progressText = `(${(progress * 100).toFixed()}%)`
-      return <span>
-        {res}
-        <span className='progress-text'>{progressText}</span>
-      </span>
-    } else {
-      return res
-    }
+    return res
   }
 }
 
