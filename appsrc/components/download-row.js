@@ -35,7 +35,7 @@ class DownloadRow extends Component {
   render () {
     const {item, navigateToGame} = this.props
 
-    const {game, upload, date, id, progress = 0, paused} = item
+    const {game, upload, date, id, progress = 0, paused, reason} = item
     const coverUrl = game.coverUrl || defaultImages.thumbnail
     const coverStyle = {backgroundImage: `url("${coverUrl}")`}
     const progressInnerStyle = {
@@ -46,6 +46,8 @@ class DownloadRow extends Component {
       progressInnerStyle.backgroundColor = dominantColor
     }
 
+    const reasonText = this.reasonText(reason)
+
     return <li key={id} className='history-item'>
       <div className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
       <div className='stats'>
@@ -54,7 +56,7 @@ class DownloadRow extends Component {
         </div>
         {(progress * 100).toFixed(1)}% done, {humanize.fileSize(upload.size * (1 - progress))} left
         <div className='timeago'>
-          Started <TimeAgo date={date}/>
+          Started <TimeAgo date={date}/> {reasonText ? ` — ${reasonText}` : ''}
         </div>
       </div>
       <div className='controls'>
@@ -63,6 +65,17 @@ class DownloadRow extends Component {
           : <span className='icon icon-pause'/> }
       </div>
     </li>
+  }
+
+  reasonText (reason) {
+    switch (reason) {
+      case 'install':
+        return 'for first install'
+      case 'update':
+        return 'to update to the latest version'
+      default:
+        return 'for reasons unknown'
+    }
   }
 
   componentDidMount () {

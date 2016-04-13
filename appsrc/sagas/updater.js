@@ -96,7 +96,7 @@ function * checkForGameUpdate (cave) {
           upload,
           destPath: archivePath,
           downloadKey,
-          reason: 'install' // update, really I suppose
+          reason: 'update'
         })
       }
     } catch (e) {
