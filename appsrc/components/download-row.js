@@ -1,30 +1,13 @@
 
 import React, {Component, PropTypes} from 'react'
 import {connect} from './connect'
+import getDominantColor from './get-dominant-color'
 import humanize from 'humanize-plus'
 
 import defaultImages from '../constants/default-images'
 import * as actions from '../actions'
 
-import colorgram from 'colorgram'
-
 import TimeAgo from 'react-timeago'
-
-const width = 400
-
-function loadImage (path, done) {
-  const img = new window.Image()
-  img.onload = function () {
-    var canvas = document.createElement('canvas')
-    canvas.width = width
-    canvas.height = width * (img.height / img.width)
-    var ctx = canvas.getContext('2d')
-    ctx.drawImage(img, 0, 0, width, canvas.height)
-    var id = ctx.getImageData(0, 0, canvas.width, canvas.height)
-    done({width: canvas.width, height: canvas.height, data: id.data, channels: 4, canvas: canvas})
-  }
-  img.src = path
-}
 
 class DownloadRow extends Component {
   constructor () {
@@ -82,18 +65,10 @@ class DownloadRow extends Component {
     const {item} = this.props
     const {game} = item
     const {coverUrl} = game
-    if (!coverUrl) {
-      console.log(`no cover, can't fetch dominant color`)
-      return
-    }
 
-    loadImage(coverUrl, (img) => {
-      const palette = colorgram.extract(img)
-      console.log('got palette: ', palette)
-      const dominant = palette[0]
-      this.setState({
-        dominantColor: `rgb(${dominant[0]}, ${dominant[1]}, ${dominant[2]})`
-      })
+    getDominantColor(coverUrl, (palette) => {
+      console.log('got palette:', palette)
+      this.setState({dominantColor: getDominantColor.toCSS(palette[0])})
     })
   }
 }
