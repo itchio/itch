@@ -72,33 +72,32 @@ class MainAction extends Component {
 
     if (task === 'error') {
       return t('grid.item.report_problem')
-    } else if (task === 'download') {
-      return t('grid.item.cancel_download')
     }
   }
 
   onClick () {
     let {task, cave, game, platformCompatible, mayDownload} = this.props
+    const {reportCave, navigate, queueGame, initiatePurchase, browseGame} = this.props
 
     if (task === 'error') {
-      this.props.reportCave(cave.id)
+      reportCave(cave.id)
     } else if (/^download.*$/.test(task)) {
-      this.props.cancelCave(cave.id)
+      navigate('downloads')
     } else {
       if (platformCompatible) {
         if (mayDownload || cave) {
-          this.props.queueGame(game)
+          queueGame(game)
         } else {
-          this.props.initiatePurchase(game)
+          initiatePurchase(game)
         }
       } else {
-        this.props.browseGame(game.id, game.url)
+        browseGame(game.id, game.url)
       }
     }
   }
 
   status () {
-    const {t, task, progress, action} = this.props
+    const {t, task, action} = this.props
 
     if (task === 'idle' || task === 'awaken') {
       switch (action) {
@@ -158,7 +157,8 @@ MainAction.propTypes = {
   reportCave: PropTypes.func.isRequired,
   cancelCave: PropTypes.func.isRequired,
   initiatePurchase: PropTypes.func.isRequired,
-  browseGame: PropTypes.func.isRequired
+  browseGame: PropTypes.func.isRequired,
+  navigate: PropTypes.func.isRequired
 }
 
 export default connect()(MainAction)

@@ -115,6 +115,7 @@ const mapDispatchToProps = (dispatch) => ({
   reportCave: (caveId) => dispatch(actions.reportCave({caveId})),
   cancelCave: (caveId) => dispatch(actions.cancelCave({caveId})),
   initiatePurchase: (game) => dispatch(actions.initiatePurchase({game})),
+  navigate: (path, data) => dispatch(actions.navigate(path, data)),
   browseGame: (gameId, url) => dispatch(actions.initiatePurchase({gameId, url}))
 })
 
