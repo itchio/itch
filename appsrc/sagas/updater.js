@@ -80,7 +80,8 @@ function * checkForGameUpdate (cave) {
     try {
       const {uploads, downloadKey} = yield call(findUpload, out, taskOpts)
       if (uploads.length === 0) {
-        log(opts, `Can't check for updates for ${game.title}, no uploads`)
+        log(opts, `Can't check for updates for ${game.title}, no uploads.`)
+        logger.contents.split('\n').map((line) => log(opts, `> ${line}`))
         return
       }
       const upload = uploads[0]

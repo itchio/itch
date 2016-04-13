@@ -1,14 +1,86 @@
 
+$download-cover-height: 80px;
+$download-cover-width: $download-cover-height * $grid-item-ratio;
+
+$download-progress-color-out: $sidebar-background-color;
+$download-progress-color-in-a: rgba(255, 255, 255, .1);
+$download-progress-color-in-b: rgba(255, 255, 255, .4);
+
 .downloads-page {
   padding: $grid-padding;
   flex-grow: 1;
 
   li {
     line-height: 1.8;
+    margin: 10px 0 30px 0;
 
     .timeago {
       font-size: 80%;
       color: $secondary-text-color;
+    }
+
+    display: flex;
+    align-items: center;
+
+    .stats {
+      flex-grow: 1;
+      max-width: 400px;
+
+      .progress {
+        position: relative;
+        height: 3px;
+        width: 100%;
+        margin: 10px 0;
+
+        background: $download-progress-color-out;
+        transition: background 1s;
+
+        .progress-inner {
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          background-color: lighten($sidebar-background-color, 20%);
+          background-image: -webkit-repeating-linear-gradient(
+            -60deg,
+            $download-progress-color-in-a 0,
+            $download-progress-color-in-a 4px,
+            $download-progress-color-in-b 4px,
+            $download-progress-color-in-b 8px);
+        }
+      }
+    }
+
+    .cover {
+      width: 120px;
+      height: 80px;
+      margin-right: 20px;
+      background-size: cover;
+      background-position: 50% 50%;
+      box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
+    }
+
+    .cover, .controls {
+      flex-shrink: 0;
+    }
+
+    .controls {
+      margin-left: 10px;
+
+      .icon {
+        font-size: 22px;
+        padding: 8px;
+        -webkit-filter: brightness(90%);
+
+        &:hover {
+          cursor: pointer;
+          -webkit-filter: none;
+        }
+
+        &:active {
+          -webkit-transform: scale(.95);
+        }
+      }
     }
   }
 }

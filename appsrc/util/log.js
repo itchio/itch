@@ -98,7 +98,7 @@ export class Logger {
     }
 
     if (this.consoleSink) {
-      const matches = /^\[(.*)\]/.exec(s)
+      const matches = /^\[([^\]]*)\]/.exec(s)
       if (matches) {
         const color = this.nameToColor(matches[1])
         console.log(timestamp + ' ' + colors[color](s))

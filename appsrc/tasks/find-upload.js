@@ -64,8 +64,8 @@ export function sortUploads (scoredUploads) {
 
 export default async function start (out, opts) {
   const {game, gameId, credentials, market} = opts
-  invariant(gameId, 'find-upload has gameId')
-  invariant(market, 'find-upload has market')
+  invariant(typeof gameId === 'number', 'find-upload has gameId')
+  invariant(typeof market === 'object', 'find-upload has market')
 
   invariant(credentials && credentials.key, 'find-upload has valid key')
   const keyClient = client.withKey(credentials.key)

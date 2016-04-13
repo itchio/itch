@@ -29,6 +29,7 @@
     "circular-json": "^0.3.0",
     "classnames": "^2.2.3",
     "clone": "^1.0.2",
+    "colorgram": "^0.1.5",
     "colors": "^1.1.2",
     "combokeys-ftl": "^2.4.4-npmgate1",
     "dateformat": "^1.0.12",

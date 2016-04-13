@@ -4,23 +4,23 @@ import {connect} from './connect'
 import {createStructuredSelector} from 'reselect'
 
 import {map} from 'underline'
+import * as actions from '../actions'
 
-import TimeAgo from 'react-timeago'
+import DownloadRow from './download-row'
 
 class Downloads extends Component {
+  constructor () {
+    super()
+    this.state = {}
+  }
+
   render () {
     const {items} = this.props
 
     return <ul className='downloads-page'>
-    {items::map((item) => {
-      const {upload, date, id} = item
-      return <li key={id} className='history-item'>
-        {upload.id}
-        <div className='timeago'>
-          <TimeAgo date={date}/>
-        </div>
-      </li>
-    })}
+    {items::map((item) =>
+      <DownloadRow key={item.id} item={item}/>
+    )}
     </ul>
   }
 }
@@ -30,13 +30,17 @@ Downloads.propTypes = {
     upload: PropTypes.object
   })),
 
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
+  navigateToGame: PropTypes.func.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({
   items: (state) => state.tasks.downloadsByDate
 })
-const mapDispatchToProps = () => ({})
+
+const mapDispatchToProps = (dispatch) => ({
+  navigateToGame: (game) => dispatch(actions.navigateToGame(game))
+})
 
 export default connect(
   mapStateToProps,
