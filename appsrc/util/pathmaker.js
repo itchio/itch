@@ -46,4 +46,8 @@ export function userDbPath (userId) {
   return path.join(app.getPath('userData'), 'users', '' + userId, 'marketdb')
 }
 
+export function sanitize (file) {
+  return file.replace(/[^a-zA-Z0-9_. -]/g, '')
+}
+
 export default {appPath, downloadPath, globalDbPath, userDbPath}

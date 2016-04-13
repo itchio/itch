@@ -41,8 +41,6 @@ export function * _tabChanged (action) {
   const data = yield call(retrieveTabData, path)
   if (data) {
     yield put(tabDataFetched({path, data}))
-  } else {
-    console.log('no data found for', path)
   }
 }
 

@@ -37,7 +37,7 @@ export default async function start (out, opts) {
   if (!cave) {
     invariant(!opts.reinstall, 'need a cave for reinstall')
 
-    let installFolder = game.title
+    let installFolder = pathmaker.sanitize(game.title)
 
     if (!opts.reinstall) {
     }
