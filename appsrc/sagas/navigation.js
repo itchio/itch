@@ -13,53 +13,43 @@ import urls from '../constants/urls'
 import staticTabData from '../constants/static-tab-data'
 import fetch from '../util/fetch'
 
-import {navigate, openUrl, tabChanged, tabDataFetched} from '../actions'
+import {navigate, openUrl, tabChanged, tabDataFetched, tabEvolved} from '../actions'
 import {
   SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED,
-  VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE
+  VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB
 } from '../constants/action-types'
 
-export function * _tabChanged (action) {
-  const path = action.payload
+function * retrieveTabData (path) {
+  const credentials = yield select((state) => state.session.credentials)
 
   if (/^games/.test(path)) {
-    const market = getUserMarket()
-    const gameId = +pathToId(path)
-
-    const gotGame = function * (game) {
-      const data = gameToTabData(game)
-      yield put(tabDataFetched({path, data}))
-    }
-
-    const game = market.getEntities('games')[gameId]
-    if (game) {
-      yield call(gotGame, game)
-    } else {
-      const credentials = yield select((state) => state.session.credentials)
-      const fetchedGame = yield call(fetch.gameLazily, market, credentials, gameId)
-      yield call(gotGame, fetchedGame)
-    }
+    const game = yield call(fetch.gameLazily, getUserMarket(), credentials, +pathToId(path))
+    return game && gameToTabData(game)
   } else if (/^users/.test(path)) {
-    const market = getUserMarket()
-    const userId = +pathToId(path)
-
-    const gotUser = function * (user) {
-      const data = userToTabData(user)
-      yield put(tabDataFetched({path, data}))
-    }
-
-    const user = market.getEntities('users')[userId]
-    if (user) {
-      yield call(gotUser, user)
-    } else {
-      console.log('fetching users: stub')
-    }
+    const user = yield call(fetch.userLazily, getUserMarket(), credentials, +pathToId(path))
+    return user && userToTabData(user)
   } else {
     const data = staticTabData[path]
     if (data) {
       yield put(tabDataFetched({path, data}))
     }
   }
+}
+
+export function * _tabChanged (action) {
+  const path = action.payload
+  const data = yield call(retrieveTabData, path)
+  if (data) {
+    yield put(tabDataFetched({path, data}))
+  } else {
+    console.log('no data found for', path)
+  }
+}
+
+export function * _evolveTab (action) {
+  const {before, after} = action.payload
+  const data = yield call(retrieveTabData, after)
+  yield put(tabEvolved({before, after, data}))
 }
 
 export function * applyTabOffset (offset) {
@@ -118,6 +108,7 @@ export default function * navigationSaga () {
     takeEvery(VIEW_CREATOR_PROFILE, _viewCreatorProfile),
     takeEvery(VIEW_COMMUNITY_PROFILE, _viewCommunityProfile),
     takeEvery(TAB_CHANGED, _tabChanged),
+    takeEvery(EVOLVE_TAB, _evolveTab),
     takeEvery('*', function * watchNavigation () {
       navigationSelector(yield select())
     }),

@@ -6,6 +6,7 @@ import {
   NAVIGATE,
   MOVE_TAB,
   EVOLVE_TAB,
+  TAB_EVOLVED,
   CLOSE_TAB,
   SHOW_PREVIOUS_TAB,
   SHOW_NEXT_TAB,
@@ -36,6 +37,7 @@ export const navigateToGame = (game) => navigate(`games/${game.id}`, gameToTabDa
 
 export const moveTab = createAction(MOVE_TAB)
 export const evolveTab = createAction(EVOLVE_TAB)
+export const tabEvolved = createAction(TAB_EVOLVED)
 export const closeTab = createAction(CLOSE_TAB)
 export const showPreviousTab = createAction(SHOW_PREVIOUS_TAB)
 export const showNextTab = createAction(SHOW_NEXT_TAB)

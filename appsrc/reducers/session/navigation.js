@@ -143,8 +143,8 @@ export default handleActions({
     return {...state, tabData: newTabData}
   },
 
-  EVOLVE_TAB: (state, action) => {
-    const {before, after} = action.payload
+  TAB_EVOLVED: (state, action) => {
+    const {before, after, data} = action.payload
     invariant(typeof before === 'string', 'before path must be a string')
     invariant(typeof after === 'string', 'after path must be a string')
 
@@ -156,11 +156,19 @@ export default handleActions({
         if (pathMap[after]) {
           return null
         }
-        return {path: after}
+        return { path: after }
       } else {
         return t
       }
     })::filter((x) => x)
+
+    const newTabData = {
+      ...state.tabData,
+      [after]: {
+        ...state.tabData[after],
+        ...data
+      }
+    }
 
     return {
       ...state,
@@ -168,7 +176,8 @@ export default handleActions({
       tabs: {
         ...state.tabs,
         transient: newTransient
-      }
+      },
+      tabData: newTabData
     }
   },
 

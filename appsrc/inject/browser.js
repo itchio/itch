@@ -70,7 +70,6 @@ function purchaseInject () {
 
 function itchInject () {
   const {$} = window
-  $('.header_widget, .footer').css('pointer-events', 'none')
 
   const $page = $('.view_game_page')
   if ($page.length) {

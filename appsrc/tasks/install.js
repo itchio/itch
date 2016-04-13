@@ -10,6 +10,7 @@ import mklog from '../util/log'
 const log = mklog('tasks/install')
 
 import core from './install/core'
+import {findWhere} from 'underline'
 
 function defaultInstallLocation () {
   const {defaultInstallLocation} = require('../store').default.getState().preferences
@@ -26,17 +27,20 @@ export default async function start (out, opts) {
 
   let checkTimestamps = true
 
+  const grabCave = () => globalMarket.getEntities('caves')::findWhere({gameId: game.id})
+  let {cave = grabCave()} = opts
+
   if (opts.reinstall) {
     checkTimestamps = false
   }
 
-  let {cave} = opts
-
   if (!cave) {
     invariant(!opts.reinstall, 'need a cave for reinstall')
 
-    // TODO: handle installFolder conflicts
-    const installFolder = game.title
+    let installFolder = game.title
+
+    if (!opts.reinstall) {
+    }
 
     cave = {
       id: uuid.v4(),
@@ -48,6 +52,20 @@ export default async function start (out, opts) {
       installFolder,
       downloadKey
     }
+
+    if (!opts.reinstall) {
+      let installFolderExists = async () => {
+        const fullPath = pathmaker.appPath(cave)
+        return await sf.exists(fullPath)
+      }
+
+      let seed = 2
+      // if you need more than 1200 games with the exact same name... you don't.
+      while (await installFolderExists() && seed < 1200) {
+        cave.installFolder = `${installFolder} ${seed++}`
+      }
+    }
+
     globalMarket.saveEntity('caves', cave.id, cave)
   }
 
@@ -69,7 +87,7 @@ export default async function start (out, opts) {
 
   if (checkTimestamps && imtime && !(amtime > imtime)) {
     log(opts, `archive isn't more recent, nothing to install`)
-    throw new Transition({to: 'idle', reason: 'up-to-date'})
+    return {caveId: cave.id}
   }
 
   let coreOpts = {

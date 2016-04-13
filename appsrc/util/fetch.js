@@ -7,7 +7,7 @@ import client from '../util/api'
 
 import {assocIn} from 'grovel'
 import {normalize, arrayOf} from './idealizr'
-import {game, collection, downloadKey} from './schemas'
+import {game, user, collection, downloadKey} from './schemas'
 import {each, union, pluck, where, difference} from 'underline'
 
 export async function dashboardGames (market, credentials) {
@@ -182,11 +182,29 @@ export async function gameLazily (market, credentials, gameId) {
   return response.entities.games[gameId]
 }
 
+export async function userLazily (market, credentials, userId) {
+  pre: { // eslint-disable-line
+    typeof market === 'object'
+    typeof credentials === 'object'
+    typeof userId === 'number'
+  }
+
+  const record = market.getEntities('users')[userId]
+  if (record) {
+    return record
+  }
+
+  const api = client.withKey(credentials.key)
+  const response = normalize(await api.user(userId), {user})
+  return response.entities.users[userId]
+}
+
 export default {
   dashboardGames,
   ownedKeys,
   collections,
   collectionGames,
   search,
-  gameLazily
+  gameLazily,
+  userLazily
 }

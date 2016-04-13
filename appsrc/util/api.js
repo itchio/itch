@@ -60,7 +60,7 @@ export class Client {
     log(opts, `${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${shortPath} with ${JSON.stringify(data)}`)
 
     if (resp.statusCode !== 200) {
-      throw new Error(`HTTP ${resp.statusCode}`)
+      throw new Error(`HTTP ${resp.statusCode} ${path}`)
     }
 
     if (body.errors) {
@@ -131,6 +131,10 @@ export class AuthenticatedClient {
 
   async game (game) {
     return await this.request('get', `/game/${game}`)
+  }
+
+  async user (user) {
+    return await this.request('get', `/users/${user}`)
   }
 
   async collection (collectionId) {
