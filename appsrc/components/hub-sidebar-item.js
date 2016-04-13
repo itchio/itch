@@ -5,15 +5,27 @@ import {DragSource, DropTarget} from 'react-dnd'
 import classNames from 'classnames'
 
 import draggableTypes from '../constants/draggable-types'
+import getDominantColor from './get-dominant-color'
 
 export class HubSidebarItem extends Component {
+  constructor () {
+    super()
+    this.state = {}
+  }
+
   render () {
     const {t, count, path, icon, label, active} = this.props
     const {isDragging, connectDragSource, connectDropTarget, onClick, onClose} = this.props
 
     const classes = classNames('hub-sidebar-item', {active})
+    const style = {}
+    const {dominantColor} = this.state
 
-    return connectDragSource(connectDropTarget(<section key={path} className={classes} onClick={onClick} onClose={onClose} data-path={path} data-dragging={isDragging}>
+    if (active && dominantColor) {
+      style.borderColor = dominantColor
+    }
+
+    return connectDragSource(connectDropTarget(<section key={path} style={style} className={classes} onClick={onClick} onClose={onClose} data-path={path} data-dragging={isDragging}>
       <span className={`icon icon-${icon}`}/>
       {t.format(label)}
       { count > 0
@@ -28,6 +40,24 @@ export class HubSidebarItem extends Component {
           : '' }
         </section>))
   }
+
+  componentWillReceiveProps () {
+    this.updateColor()
+  }
+
+  componentDidMount () {
+    this.updateColor()
+  }
+
+  updateColor () {
+    const {games} = this.props.data || {}
+    if (games) {
+      const game = games[Object.keys(games)[0]]
+      getDominantColor(game.coverUrl, (palette) => {
+        this.setState({dominantColor: getDominantColor.toCSS(getDominantColor.pick(palette))})
+      })
+    }
+  }
 }
 
 HubSidebarItem.propTypes = {
@@ -41,6 +71,7 @@ HubSidebarItem.propTypes = {
   onClick: PropTypes.func.isRequired,
   onClose: PropTypes.func,
   moveTab: PropTypes.func,
+  data: PropTypes.object,
 
   isDragging: PropTypes.bool.isRequired,
   connectDragSource: PropTypes.func.isRequired,

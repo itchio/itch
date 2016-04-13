@@ -71,10 +71,15 @@ function purchaseInject () {
 function itchInject () {
   const {$} = window
 
+  $('#user_tools').hide()
+  $('.admin_tag_editor_widget').hide()
+  $('.above_game_banner').hide()
+  $('.header_widget').hide()
+
   const $page = $('.view_game_page')
   if ($page.length) {
-    $page.find('.buy_row').prev('h2').remove()
-    $page.find('.game_frame, .buy_row, .donate, .uploads').remove()
+    $page.find('.buy_row').prev('h2').hide()
+    $page.find('.game_frame, .buy_row, .donate, .uploads').hide()
   }
 }
 

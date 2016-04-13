@@ -46,14 +46,15 @@ export class HubSidebar extends Component {
         {tabs.transient.length
           ? tabs.transient::map((item, index) => {
             const {path} = item
-            const {label = 'Loading...'} = tabData[item.path] || {}
+            const data = tabData[item.path] || {}
+            const {label = 'Loading...'} = data
             const icon = pathToIcon(item.path)
             const active = currentPath === item.path
             const onClick = () => navigate(path)
             const onClose = () => closeTab(path)
             const count = counts[item.path]
 
-            const props = {index, path, label, icon, active, onClick, count, onClose, moveTab, t}
+            const props = {index, path, label, icon, active, onClick, count, onClose, moveTab, data, t}
             return <HubSidebarItem {...props}/>
           })
           : <section className='empty'>

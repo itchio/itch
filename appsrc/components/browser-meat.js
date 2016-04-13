@@ -110,6 +110,16 @@ export class BrowserMeat extends Component {
     })
   }
 
+  openDevTools () {
+    const {webview} = this.refs
+    if (!webview) return
+
+    const webContents = webview.getWebContents()
+    if (webContents && !webContents.isDestroyed()) {
+      webContents.openDevTools({detach: true})
+    }
+  }
+
   render () {
     const {url, meId, className, beforeControls = '', afterControls = '', aboveControls = ''} = this.props
 
@@ -117,7 +127,7 @@ export class BrowserMeat extends Component {
 
     const classes = classNames('browser-meat', className)
 
-    return <div className={classes} onDoubleClick={() => this.refs.webview.getWebContents().openDevTools({detach: true})}>
+    return <div className={classes} onDoubleClick={() => this.openDevTools()}>
       <div className='browser-bread'>
         {beforeControls}
         <div className='controls'>
