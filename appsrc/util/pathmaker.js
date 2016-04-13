@@ -50,4 +50,4 @@ export function sanitize (file) {
   return file.replace(/[^a-zA-Z0-9_. -]/g, '')
 }
 
-export default {appPath, downloadPath, globalDbPath, userDbPath}
+export default {appPath, downloadPath, globalDbPath, userDbPath, sanitize}
