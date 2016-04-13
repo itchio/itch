@@ -1,5 +1,9 @@
 
+import urlParser from '../util/url'
+
+const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|itch\.ovh|localhost\.com:8080)$/
 const ID_RE = /^[^\/]+\/(.+)$/
+
 export function pathToId (path) {
   const matches = ID_RE.exec(path)
   if (!matches) {
@@ -61,4 +65,23 @@ export function userToTabData (user) {
   }
 }
 
-export default {pathToId, pathToIcon, gameToTabData}
+export function isAppSupported (url) {
+  const {host, pathname} = urlParser.parse(url)
+
+  if (ITCH_HOST_RE.test(host)) {
+    const pathItems = pathname.split('/')
+    if (pathItems.length === 2) {
+      if (pathItems[1].length > 0) {
+        // xxx.itch.io/yyy
+        return 'game'
+      } else {
+        // xxx.itch.io
+        return 'user'
+      }
+    }
+  }
+
+  return null
+}
+
+export default {pathToId, pathToIcon, gameToTabData, isAppSupported}

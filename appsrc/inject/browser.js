@@ -1,5 +1,10 @@
 'use strict'
 
+const {remote} = require('electron')
+const urlParser = remote.require('./util/url').default
+const navigation = remote.require('./util/navigation').default
+const store = remote.require('./store').default
+
 const sendMessage = (action) => {
   const url = `https://itch-internal/${action}`
   const xhr = new window.XMLHttpRequest()
@@ -66,14 +71,16 @@ function purchaseInject () {
 function itchInject () {
   const {$} = window
   $('.header_widget, .footer').css('pointer-events', 'none')
+
+  const $page = $('.view_game_page')
+  if ($page.length) {
+    $page.find('.buy_row').prev('h2').remove()
+    $page.find('.game_frame, .buy_row, .donate, .uploads').remove()
+  }
 }
 
 function loginInject () {
-  itchInject()
-
-  const CredentialsStore = require('electron').remote.require('./stores/credentials-store').default
-  const me = CredentialsStore.get_me()
-
+  const {me} = store.getState().session.credentials
   const {$} = window
   const $page = $('.user_login_page')
   const $title = $page.find('.stat_header_widget h2')
@@ -100,21 +107,45 @@ function checkoutInject () {
   })
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const url = require('electron').remote.require('./util/url').default
-  const host = url.subdomainToDomain(window.location.hostname)
+document.addEventListener('click', (e) => {
+  let target = e.target
 
-  const itchPath = document.querySelector('meta[name="itch:path"]')
-  if (itchPath) {
-    setTimeout(function () {
-      sendMessage('parsed-itch-path/' + itchPath.content)
-    }, 400)
+  while (target && target.tagName !== 'A') {
+    target = target.parentNode
   }
+
+  if (!target) {
+    return
+  }
+
+  if (navigation.isAppSupported(target.href)) {
+    console.log('supported url, telling app', target.href)
+    sendMessage('supported-url?url=' + encodeURIComponent(target.href))
+    e.preventDefault()
+    return false
+  } else {
+    console.log('non-app-supported url, carrying as usual', target.href)
+  }
+})
+
+document.addEventListener('DOMContentLoaded', () => {
+  const host = urlParser.subdomainToDomain(window.location.hostname)
+
+  setTimeout(function () {
+    const itchPath = document.querySelector('meta[name="itch:path"]')
+    if (itchPath) {
+      sendMessage('parsed-itch-path?path=' + encodeURIComponent(itchPath.content))
+    }
+  }, 0)
 
   if (['itch.io', 'itch.ovh', 'localhost.com'].indexOf(host) === -1) {
     // don't inject anything on non-itch pages
+    console.log('not an itch page, bailing out', host)
     return
   }
+
+  console.log('injecting itch js')
+  itchInject()
 
   const tokens = window.location.pathname.split('/')
   const firstToken = tokens[1]

@@ -8,7 +8,8 @@ import ospath from 'path'
 import * as actions from '../actions'
 
 import urlParser from '../util/url'
-const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|itch\.ovh|localhost\.com:8080)$/
+import navigation from '../util/navigation'
+import querystring from 'querystring'
 
 export class BrowserMeat extends Component {
   constructor () {
@@ -59,28 +60,22 @@ export class BrowserMeat extends Component {
 
       const webContents = webview.getWebContents()
       webContents.on('will-navigate', (e, url) => {
-        const {host, pathname} = urlParser.parse(url)
-
-        if (ITCH_HOST_RE.test(host)) {
-          const user = ITCH_HOST_RE.exec(host)[1]
-
-          const pathItems = pathname.split('/')
-          if (pathItems.length === 2) {
-            if (pathItems[1].length > 0) {
-              const game = pathItems[1]
-              console.log(`Opening tab for ${user}/${game}`)
-            } else {
-              console.log(`Opening tab for ${user}`)
-            }
-
-            if (webview.getURL() === e.url) {
-              webview.back()
-            } else {
-              webview.stop()
-            }
-            navigate(`url/${url}`)
-          }
+        if (!navigation.isAppSupported(url)) {
+          return
         }
+
+        // as of 0.37.2, doc says this work, but it doesn't. amos suspects it
+        // only works for WebContents of BrowserWindow, but not WebContents of WebView
+        e.preventDefault()
+
+        // this is a hack, but the whole 'will-navigate' is a fallback anyway,
+        // injected javascript should prevent most navigation attempts
+        if (webview.getURL() === url) {
+          webview.goBack()
+        } else {
+          webview.stop()
+        }
+        navigate(`url/${url}`)
       })
 
       // requests to 'itch-internal' are used to communicate between web content & the app
@@ -91,39 +86,38 @@ export class BrowserMeat extends Component {
         callback({cancel: true})
 
         let parsed = urlParser.parse(details.url)
-        const {pathname} = parsed
-        const [, one, two, three] = pathname.split('/')
+        const {pathname, query} = parsed
+        const params = querystring.parse(query)
 
-        switch (one) {
-          case 'open-devtools':
+        switch (pathname) {
+          case '/open-devtools':
             webContents.openDevTools({detach: true})
             break
-          case 'parsed-itch-path':
-            console.log('parsed-itch-path', two, three, 'rookie?', this.props.rookie)
+          case '/supported-url':
+            navigate(`url/${params.url}`)
+            break
+          case '/parsed-itch-path':
             if (this.props.rookie) {
               const oldPath = `url/${this.props.url}`
-              const newPath = `${two}/${three}`
-              console.log('Evolving tab from ', oldPath, ' to ', newPath)
+              const newPath = `${params.path}`
               evolveTab(oldPath, newPath)
             }
             break
           default:
-            console.log(`got itch-internal request: `, parsed.pathname)
+            console.log(`got itch-internal request: `, pathname)
         }
       })
     })
   }
 
   render () {
-    console.log('browser-meat props: ', this.props)
-
     const {url, meId, className, beforeControls = '', afterControls = '', aboveControls = ''} = this.props
 
     const injectPath = ospath.resolve(__dirname, '..', 'inject', 'browser.js')
 
     const classes = classNames('browser-meat', className)
 
-    return <div className={classes}>
+    return <div className={classes} onDoubleClick={() => this.refs.webview.getWebContents().openDevTools({detach: true})}>
       <div className='browser-bread'>
         {beforeControls}
         <div className='controls'>
