@@ -14,6 +14,7 @@ import {
 
   TAB_CHANGED,
   TABS_CHANGED,
+  TABS_RESTORED,
   TAB_DATA_FETCHED,
 
   OPEN_URL,
@@ -47,6 +48,7 @@ export const switchPage = createAction(SWITCH_PAGE)
 
 export const tabChanged = createAction(TAB_CHANGED)
 export const tabsChanged = createAction(TABS_CHANGED)
+export const tabsRestored = createAction(TABS_RESTORED)
 export const tabDataFetched = createAction(TAB_DATA_FETCHED)
 
 export const openUrl = createAction(OPEN_URL)

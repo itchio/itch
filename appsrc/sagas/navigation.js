@@ -7,15 +7,24 @@ import {getUserMarket} from './market'
 import {shell} from '../electron'
 import {takeEvery} from 'redux-saga'
 import {call, select, put} from 'redux-saga/effects'
-import {pluck} from 'underline'
+import {map, pluck} from 'underline'
 
 import urls from '../constants/urls'
 import staticTabData from '../constants/static-tab-data'
 import fetch from '../util/fetch'
 
-import {navigate, openUrl, tabChanged, tabsChanged, tabDataFetched, tabEvolved, queueGame} from '../actions'
+import mklog from '../util/log'
+import {opts} from '../logger'
+const log = mklog('navigation')
+
+const TABS_TABLE_NAME = 'itchAppTabs'
+
 import {
-  SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED, TABS_CHANGED,
+  navigate, openUrl, tabChanged, tabsChanged, tabDataFetched, tabEvolved,
+  queueGame, tabsRestored
+} from '../actions'
+import {
+  SESSION_READY, SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED, TABS_CHANGED,
   VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION
 } from '../constants/action-types'
 
@@ -45,6 +54,12 @@ export function * _tabChanged (action) {
 }
 
 export function * _tabsChanged (action) {
+  const key = yield select((state) => state.session.credentials.key)
+  if (!key) {
+    log(opts, `Not logged in, not saving tabs yet...`)
+    return
+  }
+
   const nav = yield select((state) => state.session.navigation)
   const {tabs, path} = nav
   const {transient} = tabs
@@ -53,7 +68,29 @@ export function * _tabsChanged (action) {
     current: path,
     items: transient::pluck('path')
   }
-  console.log(`should snapshot tabs: `, JSON.stringify(snapshot, null, 2))
+
+  const userMarket = getUserMarket()
+  yield call([userMarket, userMarket.saveEntity], TABS_TABLE_NAME, 'x', snapshot)
+}
+
+export function * _sessionReady (action) {
+  log(opts, `Session ready! looking for tabs to restore`)
+  const userMarket = getUserMarket()
+  const snapshot = userMarket.getEntity(TABS_TABLE_NAME, 'x')
+
+  if (snapshot) {
+    log(opts, `Restoring ${snapshot.items.length} tabs`)
+    yield put(tabsRestored(snapshot))
+
+    const tabDatas = yield snapshot.items::map((path) => call(retrieveTabData, path))
+    yield tabDatas::map((data, i) => {
+      if (!data) return null
+      const path = snapshot.items[i]
+      return put(tabDataFetched({path, data}))
+    })
+  } else {
+    log(opts, `No tabs to restore`)
+  }
 }
 
 export function * _evolveTab (action) {
@@ -137,6 +174,7 @@ export default function * navigationSaga () {
   )
 
   yield [
+    takeEvery(SESSION_READY, _sessionReady),
     takeEvery(SHOW_PREVIOUS_TAB, _showPreviousTab),
     takeEvery(SHOW_NEXT_TAB, _showNextTab),
     takeEvery(OPEN_URL, _openUrl),

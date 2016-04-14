@@ -67,6 +67,7 @@ module.exports = keyMirror({
 
   TAB_CHANGED: null,
   TABS_CHANGED: null,
+  TABS_RESTORED: null,
   TAB_DATA_FETCHED: null,
 
   /* Menu */

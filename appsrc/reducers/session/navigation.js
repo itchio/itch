@@ -11,9 +11,9 @@ const initialState = {
   page: 'gate',
   tabs: {
     constant: [
-      {path: 'featured', label: ['sidebar.featured']},
-      {path: 'dashboard', label: ['sidebar.dashboard']},
-      {path: 'library', label: ['sidebar.owned']}
+      {path: 'featured'},
+      {path: 'dashboard'},
+      {path: 'library'}
     ],
     transient: []
   },
@@ -178,6 +178,20 @@ export default handleActions({
         transient: newTransient
       },
       tabData: newTabData
+    }
+  },
+
+  TABS_RESTORED: (state, action) => {
+    const snapshot = action.payload
+    invariant(typeof snapshot === 'object', 'tab snapshot must be an object')
+
+    return {
+      ...state,
+      path: snapshot.current,
+      tabs: {
+        ...state.tabs,
+        transient: snapshot.items::map((x) => ({path: x}))
+      }
     }
   },
 
