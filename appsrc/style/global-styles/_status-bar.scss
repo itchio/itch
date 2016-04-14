@@ -74,6 +74,10 @@
     }
   }
 
+  &.indev {
+    background-image: -webkit-repeating-linear-gradient(-55deg, #3C320F 0, #3C320F 15px, #1B1A16 15px, #1B1A16 25px);
+  }
+
   .self-update {
     &.busy {
       .icon:first-child {

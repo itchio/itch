@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import React, {Component, PropTypes} from 'react'
 
 import * as actions from '../actions'
+import urls from '../constants/urls'
 
 import Icon from './icon'
 
@@ -28,6 +29,7 @@ class StatusBar extends Component {
     let children = []
     let active = true
     let busy = false
+    let indev = false
 
     let onClick = () => null
 
@@ -78,7 +80,18 @@ class StatusBar extends Component {
       active = false
     }
 
-    const classes = classNames('status-bar', {active, busy})
+    if (urls.itchio !== urls.originalItchio) {
+      children = [
+        ...children,
+        <span> </span>,
+        <Icon icon='star'/>,
+        <span>{urls.itchio}</span>
+      ]
+      indev = true
+      active = true
+    }
+
+    const classes = classNames('status-bar', {active, busy, indev})
 
     const plugHint = t(`status.offline_mode.${offlineMode ? 'active' : 'inactive'}`)
     const plugIcon = offlineMode ? 'globe-outline' : 'globe2'
