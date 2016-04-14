@@ -13,10 +13,10 @@ import urls from '../constants/urls'
 import staticTabData from '../constants/static-tab-data'
 import fetch from '../util/fetch'
 
-import {navigate, openUrl, tabChanged, tabDataFetched, tabEvolved} from '../actions'
+import {navigate, openUrl, tabChanged, tabDataFetched, tabEvolved, queueGame} from '../actions'
 import {
   SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED,
-  VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB
+  VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION
 } from '../constants/action-types'
 
 function * retrieveTabData (path) {
@@ -89,6 +89,19 @@ export function * _viewCommunityProfile (action) {
   yield put(openUrl(`${urls.itchio}/profile/${username}`))
 }
 
+export function * _triggerMainAction () {
+  const path = yield select((state) => state.session.navigation.path)
+  if (/^games/.test(path)) {
+    const gameId = +pathToId(path)
+    const tabData = yield select((state) => state.session.navigation.tabData)
+    const data = tabData[path] || {}
+    const game = (data.games || {})[gameId]
+    if (game) {
+      yield put(queueGame({game}))
+    }
+  }
+}
+
 export default function * navigationSaga () {
   const queue = createQueue('navigation')
 
@@ -107,6 +120,7 @@ export default function * navigationSaga () {
     takeEvery(VIEW_COMMUNITY_PROFILE, _viewCommunityProfile),
     takeEvery(TAB_CHANGED, _tabChanged),
     takeEvery(EVOLVE_TAB, _evolveTab),
+    takeEvery(TRIGGER_MAIN_ACTION, _triggerMainAction),
     takeEvery('*', function * watchNavigation () {
       navigationSelector(yield select())
     }),
