@@ -61,7 +61,14 @@ function * checkForGameUpdate (cave) {
   invariant(credentials, 'has credentials')
 
   const market = getUserMarket()
-  const game = yield call(fetch.gameLazily, market, credentials, cave.gameId)
+  let game
+  try {
+    game = yield call(fetch.gameLazily, market, credentials, cave.gameId)
+  } catch (e) {
+    log(opts, `Could not fetch game ${cave.gameId}, skipping (${e.message || e})`)
+    return
+  }
+
   const logger = new mklog.Logger({sinks: {console: false, string: true}})
 
   if (game) {
