@@ -22,7 +22,6 @@ let self = {
     let totalSize = 0
     let req = needle.get(url, (err, res) => {
       e = err
-      log(opts, `got response headers: ${JSON.stringify(res.headers, null, 2)}`)
       totalSize = parseInt(res.headers['content-length'], 10)
     })
     await sf.mkdir(path.dirname(file))
