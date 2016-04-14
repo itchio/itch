@@ -23,6 +23,7 @@
     "grid.item.running": "Running…",
     "grid.item.uninstall": "Uninstall this item now",
     "grid.item.uninstalling": "Uninstalling…",
+    "login.messages.welcome_back": "Welcome back!",
     "login.action.login": "Log in",
     "login.action.register": "Register",
     "login.action.reset_password": "Forgot password",

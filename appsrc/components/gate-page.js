@@ -50,13 +50,13 @@ export class GatePage extends Component {
   }
 
   errors () {
-    const {errors, stage} = this.props
+    const {t, errors, stage} = this.props
 
     if (stage === 'pick') {
       return <section className='errors'>
         <span className='welcome-back'>
           <Icon icon='heart-filled'/>
-          Welcome back!
+          {t('login.messages.welcome_back')}
         </span>
       </section>
     } else {
