@@ -13,9 +13,9 @@ import urls from '../constants/urls'
 import staticTabData from '../constants/static-tab-data'
 import fetch from '../util/fetch'
 
-import {navigate, openUrl, tabChanged, tabDataFetched, tabEvolved, queueGame} from '../actions'
+import {navigate, openUrl, tabChanged, tabsChanged, tabDataFetched, tabEvolved, queueGame} from '../actions'
 import {
-  SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED,
+  SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED, TABS_CHANGED,
   VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION
 } from '../constants/action-types'
 
@@ -42,6 +42,18 @@ export function * _tabChanged (action) {
   if (data) {
     yield put(tabDataFetched({path, data}))
   }
+}
+
+export function * _tabsChanged (action) {
+  const nav = yield select((state) => state.session.navigation)
+  const {tabs, path} = nav
+  const {transient} = tabs
+
+  const snapshot = {
+    current: path,
+    items: transient::pluck('path')
+  }
+  console.log(`should snapshot tabs: `, JSON.stringify(snapshot, null, 2))
 }
 
 export function * _evolveTab (action) {
@@ -105,11 +117,23 @@ export function * _triggerMainAction () {
 export default function * navigationSaga () {
   const queue = createQueue('navigation')
 
-  const navigationSelector = createSelector(
+  const pathSelector = createSelector(
     (state) => state.session.navigation.path,
     (path) => {
       queue.dispatch(tabChanged(path))
     }
+  )
+
+  const transientSelector = createSelector(
+    (state) => state.session.navigation.tabs.transient,
+    (state) => state.session.navigation.path,
+    createSelector(
+      (transient, path) => transient::pluck('path').join(','),
+      (transient, path) => path,
+      (pathList, path) => {
+        queue.dispatch(tabsChanged())
+      }
+    )
   )
 
   yield [
@@ -119,10 +143,13 @@ export default function * navigationSaga () {
     takeEvery(VIEW_CREATOR_PROFILE, _viewCreatorProfile),
     takeEvery(VIEW_COMMUNITY_PROFILE, _viewCommunityProfile),
     takeEvery(TAB_CHANGED, _tabChanged),
+    takeEvery(TABS_CHANGED, _tabsChanged),
     takeEvery(EVOLVE_TAB, _evolveTab),
     takeEvery(TRIGGER_MAIN_ACTION, _triggerMainAction),
     takeEvery('*', function * watchNavigation () {
-      navigationSelector(yield select())
+      const state = yield select()
+      pathSelector(state)
+      transientSelector(state)
     }),
     call(queue.exhaust)
   ]

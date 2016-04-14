@@ -66,6 +66,7 @@ module.exports = keyMirror({
   TRIGGER_MAIN_ACTION: null,
 
   TAB_CHANGED: null,
+  TABS_CHANGED: null,
   TAB_DATA_FETCHED: null,
 
   /* Menu */
