@@ -9,6 +9,7 @@ import {call} from 'redux-saga/effects'
 import mklog from './log'
 const log = mklog('ibrew')
 import extract from './extract'
+import sf from './sf'
 
 import formulas from './ibrew/formulas'
 import version from './ibrew/version'
@@ -44,6 +45,27 @@ const self = {
       log(opts, `${name}: downloading '${v}' from ${archiveUrl}`)
 
       yield call(net.downloadToFile, opts, archiveUrl, archivePath)
+
+      try {
+        const sums = yield call(net.getSHA1Sums, opts, channel, v)
+        const sum = sums[archiveName]
+        if (sum) {
+          const expected = sum.sha1.toLowerCase()
+          log(opts, `${name}: expected SHA1: ${expected}`)
+          const h = require('crypto').createHash('sha1')
+          const fileContents = yield call(sf.fs.readFileAsync, archivePath, {encoding: 'binary'})
+          h.update(fileContents)
+          const actual = h.digest('hex')
+          log(opts, `${name}:   actual SHA1: ${actual}`)
+
+          if (expected !== actual) {
+            throw new Error(`corrupted download for ${archiveName}: expected ${expected}, got ${actual}`)
+          }
+          log(opts, `${name}: checks out!`)
+        }
+      } catch (e) {
+        log(opts, `${name}: couldn't get hashes, skipping verification (${e.message || '' + e})`)
+      }
 
       if (formula.format === 'executable') {
         log(opts, `${name}: installed!`)

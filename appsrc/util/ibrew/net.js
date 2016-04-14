@@ -9,6 +9,8 @@ import os from '../os'
 import version from './version'
 import path from 'path'
 
+import {indexBy, filter, map} from 'underline'
+
 import mklog from '../log'
 const log = mklog('ibrew/net')
 
@@ -71,15 +73,37 @@ let self = {
 
   /** fetch latest version number from repo */
   getLatestVersion: async (channel) => {
-    let url = `${channel}/LATEST`
-    let res = await needle.getAsync(url)
+    const url = `${channel}/LATEST`
+    const res = await needle.getAsync(url)
 
     if (res.statusCode !== 200) {
       throw new Error(`got HTTP ${res.statusCode} while fetching ${url}`)
     }
 
-    let v = res.body.toString('utf8').trim()
+    const v = res.body.toString('utf8').trim()
     return version.normalize(v)
+  },
+
+  getSHA1Sums: async (opts, channel, v) => {
+    const url = `${channel}/v${v}/SHA1SUMS`
+    const res = await needle.getAsync(url)
+
+    if (res.statusCode !== 200) {
+      log(opts, `couldn't get hashes: HTTP ${res.statusCode}, for ${url}`)
+      return null
+    }
+
+    const lines = res.body.toString('utf8').split('\n')
+
+    return lines::map((line) => {
+      const matches = /^(\S+)\s+(\S+)$/.exec(line)
+      if (matches) {
+        return {
+          sha1: matches[1],
+          path: matches[2]
+        }
+      }
+    })::filter((x) => !!x)::indexBy('path')
   }
 }
 

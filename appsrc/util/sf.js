@@ -371,7 +371,8 @@ const self = {
    */
   readChunk,
 
-  fsName
+  fsName,
+  fs
 }
 
 function makeBindings () {
