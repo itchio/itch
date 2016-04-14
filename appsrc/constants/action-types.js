@@ -19,6 +19,7 @@ module.exports = keyMirror({
 
   SETUP_STATUS: null,
   SETUP_DONE: null,
+  RETRY_SETUP: null,
 
   SESSION_READY: null,
   SESSIONS_REMEMBERED: null,

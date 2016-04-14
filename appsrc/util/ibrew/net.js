@@ -2,10 +2,15 @@
 import needle from '../../promised/needle'
 import urls from '../../constants/urls'
 
+import humanize from 'humanize-plus'
+
 import sf from '../sf'
 import os from '../os'
 import version from './version'
 import path from 'path'
+
+import mklog from '../log'
+const log = mklog('ibrew/net')
 
 let self = {
   /**
@@ -13,12 +18,29 @@ let self = {
    * to install butler
    */
   downloadToFile: async (opts, url, file) => {
-    let req = needle.get(url)
+    let e = null
+    let totalSize = 0
+    let req = needle.get(url, (err, res) => {
+      e = err
+      log(opts, `got response headers: ${JSON.stringify(res.headers, null, 2)}`)
+      totalSize = parseInt(res.headers['content-length'], 10)
+    })
     await sf.mkdir(path.dirname(file))
-    console.log(`downloading ${url} to ${file}`)
+    log(opts, `downloading ${url} to ${file}`)
     let sink = sf.createWriteStream(file, {flags: 'w', mode: 0o777, defaultEncoding: 'binary'})
     req.pipe(sink)
     await sf.promised(sink)
+
+    if (e) {
+      throw e
+    }
+
+    const stats = await sf.lstat(file)
+    log(opts, `downloaded ${humanize.fileSize(stats.size)} / ${humanize.fileSize(totalSize)} (${stats.size} bytes)`)
+
+    if (totalSize !== 0 && stats.size !== totalSize) {
+      throw new Error(`download failed (short size) for ${url}`)
+    }
   },
 
   /** platform in go format */

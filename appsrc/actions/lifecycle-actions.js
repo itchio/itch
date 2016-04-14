@@ -7,6 +7,7 @@ import {
 
   SETUP_STATUS,
   SETUP_DONE,
+  RETRY_SETUP,
 
   PREPARE_QUIT,
   QUIT_WHEN_MAIN,
@@ -19,6 +20,7 @@ export const boot = createAction(BOOT)
 
 export const setupStatus = createAction(SETUP_STATUS)
 export const setupDone = createAction(SETUP_DONE)
+export const retrySetup = createAction(RETRY_SETUP)
 
 export const prepareQuit = createAction(PREPARE_QUIT)
 export const quitWhenMain = createAction(QUIT_WHEN_MAIN)

@@ -6,7 +6,7 @@ import {takeEvery} from 'redux-saga'
 import {put, call, race} from 'redux-saga/effects'
 import {map} from 'underline'
 
-import {BOOT} from '../constants/action-types'
+import {BOOT, RETRY_SETUP} from '../constants/action-types'
 import {setupStatus, setupDone} from '../actions'
 
 import logger from '../logger'
@@ -42,8 +42,19 @@ export function * setup () {
   yield put(setupDone())
 }
 
+export function * _boot () {
+  try {
+    yield call(setup)
+  } catch (e) {
+    const err = e.ibrew || e
+    console.log('got error: ', err)
+    yield put(setupStatus({icon: 'error', message: ['login.status.setup_failure', {error: (err.message || '' + err)}]}))
+  }
+}
+
 export default function * setupSaga () {
   yield [
-    takeEvery(BOOT, setup)
+    takeEvery(BOOT, _boot),
+    takeEvery(RETRY_SETUP, _boot)
   ]
 }

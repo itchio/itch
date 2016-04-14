@@ -133,6 +133,30 @@
     }
   }
 
+  .status-container.error {
+    line-height: 1.4;
+    font-size: 16px;
+    white-space: pre;
+    text-align: center;
+
+    .retry-setup {
+      display: block;
+      font-size: 48px;
+      margin: 20px;
+
+      -webkit-filter: brightness(90%);
+
+      &:hover {
+        cursor: pointer;
+        -webkit-filter: none;
+      }
+
+      &:active {
+        -webkit-transform: scale(.95);
+      }
+    }
+  }
+
   .remembered-sessions {
     animation: fade-in .2s;
 

@@ -96,7 +96,7 @@ export class GatePage extends Component {
   }
 
   renderActions () {
-    const {t, blockingOperation, rememberedSessions = {}, stage} = this.props
+    const {t, blockingOperation, rememberedSessions = {}, stage, retrySetup} = this.props
 
     if (stage === 'pick') {
       const onLogin = (payload) => {
@@ -116,11 +116,17 @@ export class GatePage extends Component {
       </div>
     } if (blockingOperation) {
       const {message, icon} = blockingOperation
-      const translatedMessage = t.apply(null, message)
+      const translatedMessage = t.format(message)
+      const hasError = icon === 'error'
+      const classes = classNames(`icon icon-${icon}`, {scanning: !hasError})
+      const pClasses = classNames('status-container', {error: hasError})
 
-      return <p>
-        <span className={`icon icon-${icon} scanning`}/>
+      return <p className={pClasses}>
+        <span className={classes}/>
         {translatedMessage}
+        { hasError
+          ? <span className='icon icon-repeat retry-setup' onClick={retrySetup}/>
+          : '' }
       </p>
     } else {
       const translatedMessage = t('login.action.login')
@@ -174,7 +180,8 @@ GatePage.propTypes = {
   loginWithToken: PropTypes.func.isRequired,
   loginStartPicking: PropTypes.func.isRequired,
   loginStopPicking: PropTypes.func.isRequired,
-  forgetSessionRequest: PropTypes.func.isRequired
+  forgetSessionRequest: PropTypes.func.isRequired,
+  retrySetup: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => {
@@ -197,7 +204,8 @@ const mapDispatchToProps = (dispatch) => ({
   loginWithToken: (payload) => dispatch(actions.loginWithToken(payload)),
   loginStartPicking: () => dispatch(actions.loginStartPicking()),
   loginStopPicking: () => dispatch(actions.loginStopPicking()),
-  forgetSessionRequest: (payload) => dispatch(actions.forgetSessionRequest(payload))
+  forgetSessionRequest: (payload) => dispatch(actions.forgetSessionRequest(payload)),
+  retrySetup: () => dispatch(actions.retrySetup())
 })
 
 export default connect(

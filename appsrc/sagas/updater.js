@@ -20,7 +20,7 @@ import {opts} from '../logger'
 import {startDownload} from './tasks/start-download'
 
 import {
-  USER_DB_READY,
+  SESSION_READY,
   CHECK_FOR_GAME_UPDATES
 } from '../constants/action-types'
 
@@ -115,7 +115,7 @@ function * checkForGameUpdate (cave) {
 }
 
 function * installUpdater () {
-  yield take(USER_DB_READY)
+  yield take(SESSION_READY)
 
   while (true) {
     log(opts, `Regularly scheduled check for game updates...`)
