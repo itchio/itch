@@ -76,10 +76,22 @@ function itchInject () {
   $('.above_game_banner').hide()
   $('.header_widget').hide()
 
-  const $page = $('.view_game_page')
-  if ($page.length) {
-    $page.find('.buy_row').prev('h2').hide()
-    $page.find('.game_frame, .buy_row, .donate, .uploads').hide()
+  {
+    const $page = $('.view_game_page')
+    if ($page.length) {
+      $page.find('.buy_row').prev('h2').hide()
+      $page.find('.game_frame, .buy_row, .donate, .uploads').hide()
+    }
+  }
+
+  {
+    const $page = $('.index_page')
+    if ($page.length) {
+      $page.find('.index_sidebar').remove()
+      $page.find('.anon_intro').remove()
+      $page.find('.app_banner').remove()
+      $page.find('.main_column').css('margin', 0)
+    }
   }
 }
 
@@ -138,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(function () {
     const itchPath = document.querySelector('meta[name="itch:path"]')
     if (itchPath) {
-      sendMessage('parsed-itch-path?path=' + encodeURIComponent(itchPath.content))
+      sendMessage('parsed-itch-path?path=' + encodeURIComponent(itchPath.content) + '&url=' + encodeURIComponent(window.location.href))
     }
   }, 0)
 

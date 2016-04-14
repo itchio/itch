@@ -98,8 +98,8 @@ export class BrowserMeat extends Component {
             navigate(`url/${params.url}`)
             break
           case '/parsed-itch-path':
-            const oldPath = `url/${this.props.url}`
-            const newPath = `${params.path}`
+            const oldPath = `url/${params.url}`
+            const newPath = params.path
             evolveTab(oldPath, newPath)
             break
           default:
