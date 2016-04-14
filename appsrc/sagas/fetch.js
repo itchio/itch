@@ -63,7 +63,8 @@ function * fetchUsuals (credentials) {
 
   yield [
     call(fetch.dashboardGames, market, credentials),
-    call(fetch.ownedKeys, market, credentials)
+    call(fetch.ownedKeys, market, credentials),
+    call(fetch.collections, market, credentials)
   ]
 }
 

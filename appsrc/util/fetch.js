@@ -25,9 +25,13 @@ export async function dashboardGames (market, credentials) {
   })
 
   // the `myGames` endpoint doesn't set the userId
-  normalized.entities.games::each((g) => g.userId = me.id)
+  // AND might return games you're not the user of
+  normalized.entities.games::each((g) => g.userId = g.userId || me.id)
   normalized.entities.users = {
     [me.id]: me
+  }
+  normalized.entities.itchAppProfile = {
+    myGamesIds: normalized.entities.games::pluck('id')
   }
   market.saveAllEntities(normalized)
 
@@ -60,10 +64,9 @@ export async function ownedKeys (market, credentials) {
   }
 }
 
-export async function collections (market, credentials, featuredIds) {
+export async function collections (market, credentials) {
   pre: { // eslint-disable-line
     typeof market === 'object'
-    Array.isArray(featuredIds)
   }
 
   const oldCollectionIds = market.getEntities('collections')::pluck('id')
@@ -88,17 +91,6 @@ export async function collections (market, credentials, featuredIds) {
   market.saveAllEntities(prepareCollections(myCollectionsRes))
 
   let newCollectionIds = myCollectionsRes.entities.collections::pluck('id')
-
-  // TODO: error handling
-  newCollectionIds = newCollectionIds::union(featuredIds)
-  const featuredReqs = await Promise.all(featuredIds.map(::api.collection))
-
-  for (const featuredReq of featuredReqs) {
-    const featuredCollectionRes = normalize(featuredReq, {
-      collection: collection
-    })
-    market.saveAllEntities(prepareCollections(featuredCollectionRes))
-  }
 
   const goners = oldCollectionIds::difference(newCollectionIds)
   if (goners.length > 0) {
