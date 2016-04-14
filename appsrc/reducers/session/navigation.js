@@ -18,7 +18,7 @@ const initialState = {
     transient: []
   },
   tabData: staticTabData,
-  path: 'dashboard'
+  path: 'featured'
 }
 
 export default handleActions({

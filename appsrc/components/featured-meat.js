@@ -2,9 +2,13 @@
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 
+import urls from '../constants/urls'
+import BrowserMeat from './browser-meat'
+
 export class FeaturedMeat extends Component {
   render () {
-    return <span>{`Wouldn't featured content be nice?`}</span>
+    const browserProps = {}
+    return <BrowserMeat className='featured-meat' url={urls.itchio} {...browserProps}/>
   }
 }
 

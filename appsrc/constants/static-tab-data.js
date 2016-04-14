@@ -1,6 +1,6 @@
 
 export default {
-  featured: { label: ['sidebar.featured'], subtitle: ['sidebar.featured_subtitle'] },
+  featured: { label: 'itch.io', subtitle: ['sidebar.featured_subtitle'] },
   dashboard: { label: ['sidebar.dashboard'], subtitle: ['sidebar.dashboard_subtitle'] },
   library: { label: ['sidebar.owned'], subtitle: ['sidebar.owned_subtitle'] },
   preferences: { label: ['sidebar.preferences'], subtitle: ['sidebar.preferences_subtitle'] },
