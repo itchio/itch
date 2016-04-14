@@ -72,7 +72,7 @@ function * checkForGameUpdate (cave) {
   const logger = new mklog.Logger({sinks: {console: false, string: true}})
 
   if (game) {
-    log(opts, `Looking for updates to ${game.title}: stub`)
+    log(opts, `Looking for updates to ${game.title}...`)
     const out = new EventEmitter()
     const taskOpts = {
       ...opts,
