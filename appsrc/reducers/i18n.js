@@ -10,7 +10,8 @@ const initialState = {
     en: {}
   },
   downloading: {},
-  queued: {}
+  queued: {},
+  locales: {}
 }
 
 export default handleActions({

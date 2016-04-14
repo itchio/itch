@@ -5,8 +5,6 @@ import {connect} from './connect'
 
 import humanize from 'humanize-plus'
 
-// XXX: sync I/O on require, but we can live with that.
-import locales from '../constants/locales-list'
 import urls from '../constants/urls'
 
 import Icon from './icon'
@@ -18,7 +16,7 @@ import {each, filter} from 'underline'
 
 export class Preferences extends Component {
   render () {
-    const {t, lang, sniffedLang, downloading} = this.props
+    const {t, lang, sniffedLang, downloading, locales} = this.props
     const {queueLocaleUpdate} = this.props
 
     const options = [{
@@ -145,6 +143,7 @@ export class Preferences extends Component {
 }
 
 Preferences.propTypes = {
+  locales: PropTypes.object.isRequired,
   preferences: PropTypes.object.isRequired,
   downloading: PropTypes.bool.isRequired,
   sniffedLang: PropTypes.string.isRequired,
@@ -164,6 +163,7 @@ const mapStateToProps = createStructuredSelector({
   preferences: (state) => state.preferences,
   downloading: (state) => Object.keys(state.i18n.downloading).length > 0,
   lang: (state) => state.i18n.lang,
+  locales: (state) => state.i18n.locales,
   sniffedLang: (state) => state.system.sniffedLang
 })
 

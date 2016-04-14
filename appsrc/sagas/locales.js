@@ -1,6 +1,7 @@
 
 import path from 'path'
 import ifs from '../localizer/ifs'
+import invariant from 'invariant'
 
 import needle from '../promised/needle'
 import urls from '../constants/urls'
@@ -25,7 +26,7 @@ const log = mklog('locales')
 const opts = {logger}
 
 import {queueHistoryItem, localesConfigLoaded, queueLocaleDownload, localeDownloadStarted, localeDownloadEnded} from '../actions'
-import {BOOT, QUEUE_LOCALE_DOWNLOAD} from '../constants/action-types'
+import {BOOT, QUEUE_LOCALE_DOWNLOAD, LANGUAGE_CHANGED} from '../constants/action-types'
 
 export function canonicalFileName (lang) {
   return path.join(localesDir, lang + '.json')
@@ -134,9 +135,17 @@ export function * loadLocale (lang) {
   yield put(queueLocaleDownload({lang}))
 }
 
+export function * _languageChanged (action) {
+  const lang = action.payload
+  invariant(typeof lang === 'string', 'language must be a string')
+
+  yield call(loadLocale, lang)
+}
+
 export default function * localesSaga () {
   yield [
     takeEvery(BOOT, loadInitialLocales),
-    takeEvery(QUEUE_LOCALE_DOWNLOAD, downloadLocale)
+    takeEvery(QUEUE_LOCALE_DOWNLOAD, downloadLocale),
+    takeEvery(LANGUAGE_CHANGED, _languageChanged)
   ]
 }
