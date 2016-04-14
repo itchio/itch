@@ -10,6 +10,7 @@ import HubItem from './hub-item'
 import HubGhostItem from './hub-ghost-item'
 
 import Downloads from './downloads'
+import Preferences from './preferences'
 import History from './history'
 import FeaturedMeat from './featured-meat'
 import CollectionMeat from './collection-meat'
@@ -47,6 +48,8 @@ export class HubMeat extends Component {
       return <Downloads/>
     } else if (path === 'history') {
       return <History/>
+    } else if (path === 'preferences') {
+      return <Preferences/>
     } else if (/^collections/.test(path)) {
       return <CollectionMeat collectionId={+pathToId(path)}/>
     } else if (/^games/.test(path)) {

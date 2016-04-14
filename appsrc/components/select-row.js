@@ -1,22 +1,21 @@
 
-import r from 'r-dom'
-import {PropTypes} from 'react'
-import DeepComponent from './deep-component'
+import React, {PropTypes, Component} from 'react'
+
+import {map} from 'underline'
 
 /**
  * A drop-down you can select from
- * TODO: turn into shallow component (immutable options?)
  */
-class SelectRow extends DeepComponent {
+class SelectRow extends Component {
   constructor (props) {
     super(props)
-    this.on_change = this.on_change.bind(this)
+    this.onChange = ::this.onChange
   }
 
-  on_change (event) {
-    let on_change = this.props.on_change
-    if (on_change) {
-      on_change(event.target.value)
+  onChange (event) {
+    const {onChange} = this.props
+    if (onChange) {
+      onChange(event.target.value)
     }
   }
 
@@ -25,22 +24,18 @@ class SelectRow extends DeepComponent {
     let value = this.props.value
     let label = this.props.label || ''
 
-    let option_tags = options.map((option, index) => {
-      return r.option({value: option.value}, option.label)
-    })
-
-    return (
-      r.div({className: 'select-row'}, [
-        r.label({}, [
-          label,
-          r.select({
-            ref: 'input',
-            value,
-            onChange: this.on_change
-          }, option_tags)
-        ])
-      ])
+    const optionTags = options::map((option, index) =>
+      <option value={option.value}>{option.label}</option>
     )
+
+    return <div className='select-row'>
+      <label>
+        {label}
+        <select ref='input' value={value} onChange={this.onChange}>
+          {optionTags}
+        </select>
+      </label>
+    </div>
   }
 
   value () {
@@ -51,7 +46,8 @@ class SelectRow extends DeepComponent {
 SelectRow.propTypes = {
   options: PropTypes.array.isRequired,
   value: PropTypes.string,
-  label: PropTypes.string.isRequired
+  label: PropTypes.string.isRequired,
+  onChange: PropTypes.func
 }
 
 export default SelectRow

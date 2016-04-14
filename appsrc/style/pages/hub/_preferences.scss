@@ -1,13 +1,22 @@
 
-.preferences_panel {
-  margin-left: 40px;
+.preferences-meat {
+  padding: 30px 20px;
   font-size: 20px;
 
-  color: white;
+  color: $ivory;
 
-  h2 {
-    font-weight: 100;
-    font-size: 65px;
+  .preferences-background {
+    position: absolute;
+    right: 0px;
+    top: 30px;
+  }
+
+  .install-locations-header {
+    padding: 20px 0;
+  }
+
+  .preferences-form {
+    z-index: 5;
   }
 
   .select-row {
@@ -18,7 +27,7 @@
     margin-left: 10px;
   }
 
-  .locale_fetcher {
+  .locale-fetcher {
     display: inline-block;
     font-size: 80%;
     margin-left: 8px;
@@ -40,25 +49,25 @@
     }
   }
 
-  .get_involved {
+  .get-involved {
     margin: 20px 15px;
     font-size: 80%;
   }
 
-  .get_involved .icon {
+  .get-involved .icon {
     margin-right: 8px;
   }
 
-  .get_involved a {
+  .get-involved a {
     color: #87A7C3;
     text-decoration: none;
   }
 
-  .preferences_background {
-    @include icon_as_background;
+  .preferences-background {
+    @include icon-as-background;
   }
 
-  .install_locations {
+  .install-locations {
     width: 100%;
     font-size: 15px;
     padding: 5px 0;
@@ -88,7 +97,7 @@
         color: #FDD660;
       }
 
-      &.not_default .icon {
+      &.not-default .icon {
         color: #777575;
       }
 
