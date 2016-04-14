@@ -19,7 +19,7 @@ import UserMeat from './user-meat'
 import SearchMeat from './search-meat'
 import UrlMeat from './url-meat'
 
-import {pluck, filter, each, map, indexBy, where} from 'underline'
+import {pluck, filter, each, map, indexBy} from 'underline'
 
 export class HubMeat extends Component {
   render () {
@@ -36,12 +36,12 @@ export class HubMeat extends Component {
   }
 
   renderTab (path) {
-    const {me, games, downloadKeys} = this.props
+    const {games, myGameIds, downloadKeys} = this.props
 
     if (path === 'featured') {
       return <FeaturedMeat/>
     } else if (path === 'dashboard') {
-      return this.gameGrid(games::where({userId: me.id}))
+      return this.gameGrid(myGameIds::map((id) => games[id]))
     } else if (path === 'library') {
       return this.gameGrid(downloadKeys::map((key) => games[key.gameId])::indexBy('id'))
     } else if (path === 'downloads') {
@@ -98,6 +98,7 @@ HubMeat.propTypes = {
   path: PropTypes.string,
   me: PropTypes.object,
   games: PropTypes.object,
+  myGameIds: PropTypes.array,
   downloadKeys: PropTypes.object,
   tabs: PropTypes.array
 }
@@ -113,6 +114,7 @@ const mapStateToProps = createStructuredSelector({
   tabs: (state) => allTabsSelector(state),
   me: (state) => state.session.credentials.me,
   games: (state) => state.market.games,
+  myGameIds: (state) => (((state.market.itchAppProfile || {}).myGames || {}).ids || []),
   collections: (state) => state.market.collections,
   downloadKeys: (state) => state.market.downloadKeys
 })

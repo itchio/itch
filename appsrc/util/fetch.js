@@ -31,7 +31,9 @@ export async function dashboardGames (market, credentials) {
     [me.id]: me
   }
   normalized.entities.itchAppProfile = {
-    myGamesIds: normalized.entities.games::pluck('id')
+    myGames: {
+      ids: normalized.entities.games::pluck('id')
+    }
   }
   market.saveAllEntities(normalized)
 
