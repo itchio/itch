@@ -51,7 +51,12 @@ export function userDbPath (userId) {
 }
 
 export function sanitize (file) {
-  return file.replace(/[^a-zA-Z0-9_. -]/g, '')
+  const sane = file.replace(/[^a-zA-Z0-9_. -]/g, '').replace(/[\s]+/, ' ')
+  if (sane.length > 0) {
+    return sane
+  } else {
+    return 'nihilo'
+  }
 }
 
 export default {appPath, downloadPath, globalDbPath, userDbPath, sanitize, preferencesPath}
