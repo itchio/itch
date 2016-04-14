@@ -88,6 +88,7 @@ export class BrowserMeat extends Component {
         let parsed = urlParser.parse(details.url)
         const {pathname, query} = parsed
         const params = querystring.parse(query)
+        console.log('got itch internal request: ', pathname, params)
 
         switch (pathname) {
           case '/open-devtools':
@@ -97,11 +98,9 @@ export class BrowserMeat extends Component {
             navigate(`url/${params.url}`)
             break
           case '/parsed-itch-path':
-            if (this.props.rookie) {
-              const oldPath = `url/${this.props.url}`
-              const newPath = `${params.path}`
-              evolveTab(oldPath, newPath)
-            }
+            const oldPath = `url/${this.props.url}`
+            const newPath = `${params.path}`
+            evolveTab(oldPath, newPath)
             break
           default:
             console.log(`got itch-internal request: `, pathname)

@@ -17,8 +17,6 @@ import fetch from '../util/fetch'
 
 import {map, filter, isEqual} from 'underline'
 
-import featuredCollectionIds from '../constants/featured-collection-ids'
-
 import {
   searchFetched,
   searchStarted,
@@ -65,8 +63,7 @@ function * fetchUsuals (credentials) {
 
   yield [
     call(fetch.dashboardGames, market, credentials),
-    call(fetch.ownedKeys, market, credentials),
-    call(fetch.collections, market, credentials, featuredCollectionIds)
+    call(fetch.ownedKeys, market, credentials)
   ]
 }
 

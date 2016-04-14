@@ -88,7 +88,7 @@ export class GatePage extends Component {
         {numSavedSessions > 0
         ? [
           <span>{' · '}</span>,
-          <span className='link' onClick={() => this.props.loginStartPicking()}>Saved logins</span>
+          <span className='link' onClick={() => this.props.loginStartPicking()}>{t('login.action.show_saved_logins')}</span>
         ]
         : ''}
       </section>
