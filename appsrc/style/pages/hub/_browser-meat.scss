@@ -10,6 +10,10 @@ $meat-cover-scale: 0.4;
     display: flex;
     align-items: center;
     padding: $grid-padding $grid-padding * 2;
+    background: $sidebar-background-color;
+    border: 1px solid #353535;
+    border-left: none;
+    border-right: none;
   }
 
   webview {
