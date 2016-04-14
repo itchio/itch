@@ -14,7 +14,7 @@ export function pathToId (path) {
 
 export function pathToIcon (path) {
   if (path === 'featured') {
-    return 'star'
+    return 'itchio'
   }
   if (path === 'dashboard') {
     return 'rocket'
