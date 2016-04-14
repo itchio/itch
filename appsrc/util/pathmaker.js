@@ -41,6 +41,10 @@ export function globalDbPath () {
   return path.join(app.getPath('userData'), 'marketdb')
 }
 
+export function preferencesPath () {
+  return path.join(app.getPath('userData'), 'preferences.json')
+}
+
 export function userDbPath (userId) {
   invariant(userId, 'valid user id')
   return path.join(app.getPath('userData'), 'users', '' + userId, 'marketdb')
@@ -50,4 +54,4 @@ export function sanitize (file) {
   return file.replace(/[^a-zA-Z0-9_. -]/g, '')
 }
 
-export default {appPath, downloadPath, globalDbPath, userDbPath, sanitize}
+export default {appPath, downloadPath, globalDbPath, userDbPath, sanitize, preferencesPath}

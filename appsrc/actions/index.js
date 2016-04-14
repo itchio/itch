@@ -14,7 +14,7 @@ export * from './menu-actions'
 export * from './navigation-actions'
 export * from './lifecycle-actions'
 export * from './self-update-actions'
-export * from './install-location-actions'
+export * from './install-locations-actions'
 
 import {createAction} from 'redux-actions'
 

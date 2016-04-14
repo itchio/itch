@@ -18,6 +18,7 @@ import menu from './menu'
 import fetch from './fetch'
 import tasks from './tasks'
 import updater from './updater'
+import preferences from './preferences'
 
 export default [
   preboot,
@@ -38,5 +39,6 @@ export default [
   menu,
   fetch,
   tasks,
-  updater
+  updater,
+  preferences
 ]

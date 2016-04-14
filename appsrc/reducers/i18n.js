@@ -1,4 +1,6 @@
 
+import invariant from 'invariant'
+
 import {omit} from 'underline'
 import {handleActions} from 'redux-actions'
 
@@ -37,5 +39,12 @@ export default handleActions({
     const strings = {...state.strings, [lang]: {...oldResources, ...resources}}
     const downloading = state.downloading::omit(lang)
     return {...state, strings, downloading}
+  },
+
+  LANGUAGE_CHANGED: (state, action) => {
+    const lang = action.payload
+    invariant(typeof lang === 'string', 'language must be a string')
+
+    return {...state, lang}
   }
 }, initialState)

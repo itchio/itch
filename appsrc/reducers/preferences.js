@@ -1,5 +1,6 @@
 
 import {handleActions} from 'redux-actions'
+import invariant from 'invariant'
 
 const OFFLINE_MODE = process.env.OFFLINE_MODE === '1'
 
@@ -14,9 +15,8 @@ const initialState = {
 export default handleActions({
   UPDATE_PREFERENCES: (state, action) => {
     const record = action.payload
-    console.log('updating preferences: ', record)
+    invariant(typeof record === 'object', 'prefs must be an object')
 
-    // TODO: save that, in a state watcher
     return {...state, ...record}
   }
 }, initialState)
