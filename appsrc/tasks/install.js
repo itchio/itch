@@ -39,9 +39,6 @@ export default async function start (out, opts) {
 
     let installFolder = pathmaker.sanitize(game.title)
 
-    if (!opts.reinstall) {
-    }
-
     cave = {
       id: uuid.v4(),
       gameId: game.id,
