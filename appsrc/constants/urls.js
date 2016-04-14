@@ -13,10 +13,10 @@ const self = {
   }
 }
 
-const itchioApi = process.env.WHEN_IN_ROME || self.itchio
+self.itchio = process.env.WHEN_IN_ROME || self.itchio
 
 Object.assign(self, {
-  itchioApi,
+  itchioApi: self.itchio,
   termsOfService: `${self.itchio}/docs/legal/terms`,
   accountRegister: `${self.itchio}/register`,
   accountForgotPassword: `${self.itchio}/user/forgot-password`,
