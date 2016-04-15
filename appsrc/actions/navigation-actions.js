@@ -12,6 +12,7 @@ import {
   SHOW_NEXT_TAB,
   SWITCH_PAGE,
 
+  TAB_RELOADED,
   TAB_CHANGED,
   TABS_CHANGED,
   TABS_RESTORED,
@@ -46,6 +47,7 @@ export const showPreviousTab = createAction(SHOW_PREVIOUS_TAB)
 export const showNextTab = createAction(SHOW_NEXT_TAB)
 export const switchPage = createAction(SWITCH_PAGE)
 
+export const tabReloaded = createAction(TAB_RELOADED)
 export const tabChanged = createAction(TAB_CHANGED)
 export const tabsChanged = createAction(TABS_CHANGED)
 export const tabsRestored = createAction(TABS_RESTORED)

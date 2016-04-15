@@ -3,6 +3,7 @@ import createQueue from './queue'
 import {createSelector} from 'reselect'
 import {pathToId, gameToTabData, userToTabData} from '../util/navigation'
 import {getUserMarket} from './market'
+import invariant from 'invariant'
 
 import {shell} from '../electron'
 import {takeEvery} from 'redux-saga'
@@ -25,17 +26,18 @@ import {
 } from '../actions'
 import {
   SESSION_READY, SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED, TABS_CHANGED,
-  VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION
+  VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION,
+  WINDOW_FOCUS_CHANGED, TAB_RELOADED
 } from '../constants/action-types'
 
-function * retrieveTabData (path) {
+function * retrieveTabData (path, opts) {
   const credentials = yield select((state) => state.session.credentials)
 
   if (/^games/.test(path)) {
-    const game = yield call(fetch.gameLazily, getUserMarket(), credentials, +pathToId(path))
+    const game = yield call(fetch.gameLazily, getUserMarket(), credentials, +pathToId(path), opts)
     return game && gameToTabData(game)
   } else if (/^users/.test(path)) {
-    const user = yield call(fetch.userLazily, getUserMarket(), credentials, +pathToId(path))
+    const user = yield call(fetch.userLazily, getUserMarket(), credentials, +pathToId(path), opts)
     return user && userToTabData(user)
   } else {
     const data = staticTabData[path]
@@ -46,8 +48,31 @@ function * retrieveTabData (path) {
 }
 
 export function * _tabChanged (action) {
-  const path = action.payload
+  const {path} = action.payload
+  invariant(typeof path === 'string', 'tabChanged has stringy path')
+
   const data = yield call(retrieveTabData, path)
+  if (data) {
+    yield put(tabDataFetched({path, data}))
+  }
+}
+
+export function * _tabReloaded (action) {
+  const {path} = action.payload
+  invariant(typeof path === 'string', 'tabReloaded has stringy path')
+
+  const data = yield call(retrieveTabData, path, {fresh: true})
+  if (data) {
+    yield put(tabDataFetched({path, data}))
+  }
+}
+
+export function * _windowFocusChanged (action) {
+  const {focused} = action.payload
+  if (!focused) return
+
+  const path = yield select((state) => state.session.navigation.path)
+  const data = yield call(retrieveTabData, path, {fresh: true})
   if (data) {
     yield put(tabDataFetched({path, data}))
   }
@@ -157,7 +182,7 @@ export default function * navigationSaga () {
   const pathSelector = createSelector(
     (state) => state.session.navigation.path,
     (path) => {
-      queue.dispatch(tabChanged(path))
+      queue.dispatch(tabChanged({path}))
     }
   )
 
@@ -181,6 +206,8 @@ export default function * navigationSaga () {
     takeEvery(VIEW_CREATOR_PROFILE, _viewCreatorProfile),
     takeEvery(VIEW_COMMUNITY_PROFILE, _viewCommunityProfile),
     takeEvery(TAB_CHANGED, _tabChanged),
+    takeEvery(TAB_RELOADED, _tabReloaded),
+    takeEvery(WINDOW_FOCUS_CHANGED, _windowFocusChanged),
     takeEvery(TABS_CHANGED, _tabsChanged),
     takeEvery(EVOLVE_TAB, _evolveTab),
     takeEvery(TRIGGER_MAIN_ACTION, _triggerMainAction),

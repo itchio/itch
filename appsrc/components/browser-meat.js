@@ -83,13 +83,15 @@ export class BrowserMeat extends Component {
         // only works for WebContents of BrowserWindow, but not WebContents of WebView
         e.preventDefault()
 
-        // this is a hack, but the whole 'will-navigate' approach is a fallback anyway,
-        // injected javascript should prevent most navigation attempts
-        if (webview.getURL() === url) {
-          webview.goBack()
-        } else {
-          webview.stop()
-        }
+        this.with((wv) => {
+          // this is a hack, but the whole 'will-navigate' approach is a fallback anyway,
+          // injected javascript should prevent most navigation attempts
+          if (wv.getURL() === url) {
+            this.goBack()
+          } else {
+            this.stop()
+          }
+        })
         navigate(`url/${url}`)
       })
 
@@ -166,6 +168,8 @@ export class BrowserMeat extends Component {
 
   reload () {
     this.with((wv) => wv.reload())
+    const {tabPath, tabReloaded} = this.props
+    tabReloaded(tabPath)
   }
 
   goBack () {
@@ -185,6 +189,7 @@ BrowserMeat.propTypes = {
   meId: PropTypes.any,
   navigate: PropTypes.any,
 
+  tabReloaded: PropTypes.func.isRequired,
   evolveTab: PropTypes.func.isRequired,
 
   controls: PropTypes.oneOf(['generic', 'game', 'user'])
@@ -196,6 +201,7 @@ const mapStateToProps = createStructuredSelector({
 
 const mapDispatchToProps = (dispatch) => ({
   navigate: (path, data) => dispatch(actions.navigate(path, data)),
+  tabReloaded: (path) => dispatch(actions.tabReloaded({path})),
   evolveTab: (before, after) => dispatch(actions.evolveTab({before, after}))
 })
 

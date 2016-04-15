@@ -152,16 +152,18 @@ export async function search (credentials, query) {
   return response
 }
 
-export async function gameLazily (market, credentials, gameId) {
+export async function gameLazily (market, credentials, gameId, opts = {}) {
   pre: { // eslint-disable-line
     typeof market === 'object'
     typeof credentials === 'object'
     typeof gameId === 'number'
   }
 
-  const record = market.getEntities('games')[gameId]
-  if (record) {
-    return record
+  if (!opts.fresh) {
+    const record = market.getEntities('games')[gameId]
+    if (record) {
+      return record
+    }
   }
 
   const api = client.withKey(credentials.key)
@@ -176,16 +178,18 @@ export async function gameLazily (market, credentials, gameId) {
   return response.entities.games[gameId]
 }
 
-export async function userLazily (market, credentials, userId) {
+export async function userLazily (market, credentials, userId, opts = {}) {
   pre: { // eslint-disable-line
     typeof market === 'object'
     typeof credentials === 'object'
     typeof userId === 'number'
   }
 
-  const record = market.getEntities('users')[userId]
-  if (record) {
-    return record
+  if (!opts.fresh) {
+    const record = market.getEntities('users')[userId]
+    if (record) {
+      return record
+    }
   }
 
   const api = client.withKey(credentials.key)

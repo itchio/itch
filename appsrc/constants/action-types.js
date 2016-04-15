@@ -65,6 +65,7 @@ module.exports = keyMirror({
   OPEN_URL: null,
   TRIGGER_MAIN_ACTION: null,
 
+  TAB_RELOADED: null,
   TAB_CHANGED: null,
   TABS_CHANGED: null,
   TABS_RESTORED: null,
