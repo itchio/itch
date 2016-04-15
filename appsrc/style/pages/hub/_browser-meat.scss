@@ -24,7 +24,7 @@ $meat-cover-scale: 0.4;
   }
 
   .controls {
-    padding: 0 20px;
+    padding-left: 20px;
     display: flex;
     flex-grow: 1;
     flex-shrink: 1;
@@ -70,6 +70,8 @@ $meat-cover-scale: 0.4;
 
       .browser-address {
         @include single-line;
+        font-family: Lato;
+        font-size: 14px;
         height: 32px;
         margin-left: 4px;
         color: $secondary-text-color;
@@ -78,6 +80,10 @@ $meat-cover-scale: 0.4;
         border-radius: 2px;
         flex-grow: 1;
         max-width: 300px;
+
+        &.editing {
+          color: $sidebar-background-color;
+        }
       }
     }
   }

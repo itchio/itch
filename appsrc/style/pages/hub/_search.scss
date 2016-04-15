@@ -7,7 +7,7 @@
   width: $right-sidebar-width;
 
   position: absolute;
-  right: -$right-sidebar-width;
+  right: -$right-sidebar-width - 30px;
   top: 0;
   bottom: 100px;
   box-shadow: 0 0 30px $sidebar-background-color;

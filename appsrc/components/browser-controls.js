@@ -1,9 +1,21 @@
 
+import listensToClickOutside from 'react-onclickoutside/decorator'
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 import classNames from 'classnames'
 
 export class BrowserControls extends Component {
+  constructor () {
+    super()
+    this.state = {
+      editingURL: false
+    }
+
+    this.startEditingURL = ::this.startEditingURL
+    this.addressKeyUp = ::this.addressKeyUp
+    this.onAddressField = ::this.onAddressField
+  }
+
   openDevTools () {
     const {webview} = this.refs
     if (!webview) return
@@ -15,6 +27,7 @@ export class BrowserControls extends Component {
   }
 
   render () {
+    const {editingURL} = this.state
     const {browserState} = this.props
     const {canGoBack, canGoForward, loading, url = ''} = browserState
     const {goBack, goForward, stop, reload, openDevTools} = this.props
@@ -27,11 +40,39 @@ export class BrowserControls extends Component {
         ? <span className='icon icon-cross loading' onClick={stop}/>
         : <span className='icon icon-repeat' onClick={reload}/>
       }
-      { url && url.length
-        ? <span className='browser-address'>{url}</span>
-        : '' }
+      { editingURL
+        ? <input type='text' ref={this.onAddressField} className='browser-address editing' defaultValue={url} onKeyUp={this.addressKeyUp}/>
+        : (url && url.length
+          ? <span className='browser-address' onClick={this.startEditingURL}>{url}</span>
+          : '')
+      }
 
     </div>
+  }
+
+  startEditingURL () {
+    this.setState({editingURL: true})
+  }
+
+  onAddressField (addressField) {
+    if (!addressField) return
+    addressField.focus()
+    addressField.select()
+  }
+
+  addressKeyUp (e) {
+    if (e.key === 'Enter') {
+      const url = e.target.value
+      this.setState({editingURL: false})
+      this.props.loadURL(url)
+    }
+    if (e.key === 'Escape') {
+      this.setState({editingURL: false})
+    }
+  }
+
+  handleClickOutside () {
+    this.setState({editingURL: false})
   }
 }
 
@@ -48,6 +89,7 @@ BrowserControls.propTypes = {
   stop: PropTypes.func.isRequired,
   reload: PropTypes.func.isRequired,
   openDevTools: PropTypes.func.isRequired,
+  loadURL: PropTypes.func.isRequired,
 
   tabPath: PropTypes.string,
   tabData: PropTypes.object
@@ -59,4 +101,4 @@ const mapDispatchToProps = (dispatch) => ({})
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(BrowserControls)
+)(listensToClickOutside(BrowserControls))

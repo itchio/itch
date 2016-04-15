@@ -67,8 +67,7 @@ class DownloadRow extends Component {
     const {coverUrl} = game
 
     getDominantColor(coverUrl, (palette) => {
-      console.log('got palette:', palette)
-      this.setState({dominantColor: getDominantColor.toCSS(palette[0])})
+      this.setState({dominantColor: getDominantColor.toCSS(getDominantColor.pick(palette))})
     })
   }
 }

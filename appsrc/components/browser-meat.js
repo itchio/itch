@@ -35,6 +35,7 @@ export class BrowserMeat extends Component {
     this.reload = ::this.reload
     this.stop = ::this.stop
     this.openDevTools = ::this.openDevTools
+    this.loadURL = ::this.loadURL
   }
 
   updateBrowserState (props = {}) {
@@ -50,10 +51,7 @@ export class BrowserMeat extends Component {
       ...props
     }
 
-    this.setState({
-      ...this.state,
-      browserState
-    })
+    this.setState({ browserState })
   }
 
   componentDidMount () {
@@ -130,8 +128,8 @@ export class BrowserMeat extends Component {
     const {tabData, tabPath, url, meId, controls} = this.props
     const {browserState} = this.state
 
-    const {goBack, goForward, stop, reload, openDevTools} = this
-    const controlProps = {tabPath, tabData, browserState, goBack, goForward, stop, reload, openDevTools}
+    const {goBack, goForward, stop, reload, openDevTools, loadURL} = this
+    const controlProps = {tabPath, tabData, browserState, goBack, goForward, stop, reload, openDevTools, loadURL}
 
     let bar
     if (controls === 'game') {
@@ -178,6 +176,23 @@ export class BrowserMeat extends Component {
 
   goForward () {
     this.with((wv) => wv.goForward())
+  }
+
+  loadURL (url) {
+    this.with((wv) => {
+      const parsed = urlParser.parse(url)
+      if (!parsed.protocol) {
+        url = `http://${url}`
+      }
+
+      if (navigation.isAppSupported(url)) {
+        this.props.navigate(`url/${url}`)
+      } else {
+        const browserState = { ...this.state.browserState, url }
+        this.setState({browserState})
+        wv.loadURL(url)
+      }
+    })
   }
 }
 
