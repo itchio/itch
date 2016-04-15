@@ -2,7 +2,6 @@
 import {createStructuredSelector} from 'reselect'
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
-import classNames from 'classnames'
 
 import * as actions from '../actions'
 
@@ -12,6 +11,12 @@ import useragent from '../constants/useragent'
 
 import querystring from 'querystring'
 import ospath from 'path'
+
+const injectPath = ospath.resolve(__dirname, '..', 'inject', 'browser.js')
+
+import BrowserBar from './browser-bar'
+import GameBrowserBar from './game-browser-bar'
+import UserBrowserBar from './user-browser-bar'
 
 export class BrowserMeat extends Component {
   constructor () {
@@ -24,6 +29,12 @@ export class BrowserMeat extends Component {
         url: ''
       }
     }
+
+    this.goBack = ::this.goBack
+    this.goForward = ::this.goForward
+    this.reload = ::this.reload
+    this.stop = ::this.stop
+    this.openDevTools = ::this.openDevTools
   }
 
   updateBrowserState (props = {}) {
@@ -54,13 +65,15 @@ export class BrowserMeat extends Component {
       return
     }
 
-    webview.addEventListener('load-commit', () => this.updateBrowserState({url: webview.getURL()}))
+    webview.addEventListener('load-commit', () => this.with((wv) => this.updateBrowserState({url: wv.getURL()})))
     webview.addEventListener('did-start-loading', () => this.updateBrowserState({loading: true}))
     webview.addEventListener('did-stop-loading', () => this.updateBrowserState({loading: false}))
     webview.addEventListener('dom-ready', () => {
       this.updateBrowserState({loading: false})
 
       const webContents = webview.getWebContents()
+      if (!webContents || webContents.isDestroyed()) return
+
       webContents.on('will-navigate', (e, url) => {
         if (!navigation.isAppSupported(url)) {
           return
@@ -70,7 +83,7 @@ export class BrowserMeat extends Component {
         // only works for WebContents of BrowserWindow, but not WebContents of WebView
         e.preventDefault()
 
-        // this is a hack, but the whole 'will-navigate' is a fallback anyway,
+        // this is a hack, but the whole 'will-navigate' approach is a fallback anyway,
         // injected javascript should prevent most navigation attempts
         if (webview.getURL() === url) {
           webview.goBack()
@@ -111,92 +124,70 @@ export class BrowserMeat extends Component {
     })
   }
 
-  openDevTools () {
-    const {webview} = this.refs
-    if (!webview) return
-
-    const webContents = webview.getWebContents()
-    if (webContents && !webContents.isDestroyed()) {
-      webContents.openDevTools({detach: true})
-    }
-  }
-
   render () {
-    const {url, meId, className, beforeControls = '', afterControls = '', aboveControls = ''} = this.props
+    const {tabData, tabPath, url, meId, controls} = this.props
+    const {browserState} = this.state
 
-    const injectPath = ospath.resolve(__dirname, '..', 'inject', 'browser.js')
+    const {goBack, goForward, stop, reload, openDevTools} = this
+    const controlProps = {tabPath, tabData, browserState, goBack, goForward, stop, reload, openDevTools}
 
-    const classes = classNames('browser-meat', className)
+    let bar
+    if (controls === 'game') {
+      bar = <GameBrowserBar {...controlProps}/>
+    } else if (controls === 'user') {
+      bar = <UserBrowserBar {...controlProps}/>
+    } else {
+      bar = <BrowserBar {...controlProps}/>
+    }
 
-    return <div className={classes} onDoubleClick={() => this.openDevTools()}>
-      <div className='browser-bread'>
-        {beforeControls}
-        <div className='controls'>
-          {aboveControls}
-          {this.browserControls()}
-        </div>
-        {afterControls}
-      </div>
+    return <div className='browser-meat'>
+      {bar}
       <webview ref='webview' src={url} partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/>
     </div>
   }
 
-  browserControls () {
-    const {browserState} = this.state
-    const {canGoBack, canGoForward, loading, url = ''} = browserState
+  with (cb) {
+    const {webview} = this.refs
+    if (!webview) return
 
-    return <div className='browser-controls'>
-      <span className={classNames('icon icon-arrow-left', {disabled: !canGoBack})} onClick={() => this.goBack()}/>
-      <span className={classNames('icon icon-arrow-right', {disabled: !canGoForward})} onClick={() => this.goForward()}/>
-      {
-        loading
-        ? <span className='icon icon-cross loading' onClick={() => this.stop()}/>
-        : <span className='icon icon-repeat' onClick={() => this.reload()}/>
-      }
-      { url && url.length
-        ? <span className='browser-address'>{url}</span>
-        : '' }
+    const webContents = webview.getWebContents()
+    if (!webContents || webContents.isDestroyed()) return
 
-    </div>
+    cb(webview, webContents)
+  }
+
+  openDevTools () {
+    this.with((wv, wc) => wc.openDevTools({detach: true}))
   }
 
   stop () {
-    const {webview} = this.refs
-    if (!webview) return
-    webview.reload()
+    this.with((wv) => wv.stop())
   }
 
   reload () {
-    const {webview} = this.refs
-    if (!webview) return
-    webview.reload()
+    this.with((wv) => wv.reload())
   }
 
   goBack () {
-    const {webview} = this.refs
-    if (!webview) return
-    webview.goBack()
+    this.with((wv) => wv.goBack())
   }
 
   goForward () {
-    const {webview} = this.refs
-    if (!webview) return
-    webview.goForward()
+    this.with((wv) => wv.goForward())
   }
 }
 
 BrowserMeat.propTypes = {
   url: PropTypes.string.isRequired,
-  rookie: PropTypes.bool,
+  tabPath: PropTypes.string,
+  tabData: PropTypes.object,
   className: PropTypes.string,
   meId: PropTypes.any,
   navigate: PropTypes.any,
 
   evolveTab: PropTypes.func.isRequired,
 
-  beforeControls: PropTypes.node,
-  afterControls: PropTypes.node,
-  aboveControls: PropTypes.node
+  controls: PropTypes.oneOf(['generic', 'game', 'user'])
 }
 
 const mapStateToProps = createStructuredSelector({

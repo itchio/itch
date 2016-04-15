@@ -14,28 +14,27 @@ import Preferences from './preferences'
 import History from './history'
 import FeaturedMeat from './featured-meat'
 import CollectionMeat from './collection-meat'
-import GameMeat from './game-meat'
-import UserMeat from './user-meat'
 import SearchMeat from './search-meat'
 import UrlMeat from './url-meat'
 
-import {pluck, filter, each, map, indexBy} from 'underline'
+import {filter, each, map, indexBy} from 'underline'
 
 export class HubMeat extends Component {
   render () {
     const {tabs} = this.props
 
     return <div className='hub-meat'>
-      {tabs::map((path) => {
+      {tabs::map((tab, i) => {
+        const {id, path} = tab
         const visible = (path === this.props.path)
         const classes = classNames('hub-meat-tab', {visible})
-        return <div key={path} className={classes}>{this.renderTab(path)}</div>
+        return <div key={id || path} className={classes}>{this.renderTab(id, path)}</div>
       })}
       <HubSearchResults/>
     </div>
   }
 
-  renderTab (path) {
+  renderTab (tabId, path) {
     const {games, myGameIds, downloadKeys} = this.props
 
     if (path === 'featured') {
@@ -52,14 +51,10 @@ export class HubMeat extends Component {
       return <Preferences/>
     } else if (/^collections/.test(path)) {
       return <CollectionMeat collectionId={+pathToId(path)}/>
-    } else if (/^games/.test(path)) {
-      return <GameMeat gameId={+pathToId(path)}/>
-    } else if (/^users/.test(path)) {
-      return <UserMeat userId={+pathToId(path)}/>
     } else if (/^search/.test(path)) {
       return <SearchMeat query={pathToId(path)}/>
-    } else if (/^url/.test(path)) {
-      return <UrlMeat url={pathToId(path)}/>
+    } else if (/^(url|games|users)/.test(path)) {
+      return <UrlMeat key={tabId} tabId={tabId} path={path}/>
     } else {
       return '?'
     }
@@ -105,7 +100,7 @@ HubMeat.propTypes = {
 
 const allTabsSelector = createSelector(
   (state) => state.session.navigation.tabs,
-  (tabs) => tabs.constant::pluck('path').concat(tabs.transient::pluck('path'))
+  (tabs) => tabs.constant.concat(tabs.transient)
 )
 
 const mapStateToProps = createStructuredSelector({

@@ -61,7 +61,7 @@ export function userToTabData (user) {
     users: {
       [user.id]: user
     },
-    label: user.displayName
+    label: user.displayName || user.username
   }
 }
 

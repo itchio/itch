@@ -2,6 +2,7 @@
 import {handleActions} from 'redux-actions'
 import {each, map, filter, pluck, reject, indexBy} from 'underline'
 import invariant from 'invariant'
+import uuid from 'node-uuid'
 
 import SearchExamples from '../../constants/search-examples'
 import staticTabData from '../../constants/static-tab-data'
@@ -45,7 +46,10 @@ export default handleActions({
         label = pathToId(path)
       }
 
-      const newTab = {path}
+      const newTab = {
+        path,
+        id: uuid.v4()
+      }
 
       const newTabs = {
         constant,
@@ -156,7 +160,7 @@ export default handleActions({
         if (pathMap[after]) {
           return null
         }
-        return { path: after }
+        return { ...t, path: after }
       } else {
         return t
       }
@@ -190,7 +194,7 @@ export default handleActions({
       path: snapshot.current,
       tabs: {
         ...state.tabs,
-        transient: snapshot.items::map((x) => ({path: x}))
+        transient: snapshot.items::map((x) => ({path: x, id: uuid.v4()}))
       }
     }
   },
