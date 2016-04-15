@@ -2,11 +2,10 @@
 import Promise from 'bluebird'
 import needle from 'needle'
 
-import {app} from '../electron'
-import os from '../util/os'
+import useragent from '../constants/useragent'
 
 needle.defaults({
-  user_agent: `itch/${app.getVersion()} (${os.platform()}; Electron/${os.getVersion('electron')} Chrome/${os.getVersion('chrome')})`
+  user_agent: useragent
 })
 
 const err = new Error('Offline mode active!')

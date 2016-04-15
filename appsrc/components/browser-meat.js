@@ -3,13 +3,15 @@ import {createStructuredSelector} from 'reselect'
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 import classNames from 'classnames'
-import ospath from 'path'
 
 import * as actions from '../actions'
 
 import urlParser from '../util/url'
 import navigation from '../util/navigation'
+import useragent from '../constants/useragent'
+
 import querystring from 'querystring'
+import ospath from 'path'
 
 export class BrowserMeat extends Component {
   constructor () {
@@ -135,7 +137,7 @@ export class BrowserMeat extends Component {
         </div>
         {afterControls}
       </div>
-      <webview ref='webview' src={url} partition={`persist:itchio-${meId}`} preload={injectPath} plugins/>
+      <webview ref='webview' src={url} partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/>
     </div>
   }
 
