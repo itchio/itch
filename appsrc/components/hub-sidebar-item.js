@@ -11,11 +11,24 @@ export class HubSidebarItem extends Component {
   constructor () {
     super()
     this.state = {}
+    this.onClick = ::this.onClick
+  }
+
+  onClick (e) {
+    if (e.nativeEvent.which === 2) {
+      // middle click
+      const {onClose} = this.props
+      onClose && onClose()
+    } else {
+      // left (normal) click
+      const {onClick} = this.props
+      onClick && onClick()
+    }
   }
 
   render () {
     const {t, count, path, icon, label, active} = this.props
-    const {isDragging, connectDragSource, connectDropTarget, onClick, onClose} = this.props
+    const {isDragging, connectDragSource, connectDropTarget, onClose, onContextMenu} = this.props
 
     const classes = classNames('hub-sidebar-item', {active})
     const style = {}
@@ -25,7 +38,7 @@ export class HubSidebarItem extends Component {
       style.borderColor = dominantColor
     }
 
-    return connectDragSource(connectDropTarget(<section key={path} style={style} className={classes} onClick={onClick} onClose={onClose} data-path={path} data-dragging={isDragging}>
+    return connectDragSource(connectDropTarget(<section key={path} style={style} className={classes} onClick={this.onClick} onContextMenu={onContextMenu} onClose={onClose} data-path={path} data-dragging={isDragging}>
       <span className={`icon icon-${icon}`}/>
       {t.format(label)}
       { count > 0
@@ -69,6 +82,7 @@ HubSidebarItem.propTypes = {
   count: PropTypes.number,
 
   onClick: PropTypes.func.isRequired,
+  onContextMenu: PropTypes.func.isRequired,
   onClose: PropTypes.func,
   moveTab: PropTypes.func,
   data: PropTypes.object,
