@@ -35,6 +35,7 @@ $meat-cover-scale: 0.4;
     flex-direction: row-reverse;
 
     .main-action {
+      transition: background .2s;
       width: 200px;
       text-align: center;
       font-size: 17px;
@@ -42,6 +43,12 @@ $meat-cover-scale: 0.4;
 
       .icon {
         display: none;
+      }
+
+      &.branded {
+        &, &:hover {
+          border: inset 1px rgba(255, 255, 255, .3)
+        }
       }
     }
 

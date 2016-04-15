@@ -50,15 +50,23 @@ class MainAction extends Component {
     }
 
     let style = {}
+    let branded = false
     if (progress > 0) {
       style.backgroundImage = linearGradient(progress)
+    } else {
+      const {dominantColor} = this.props
+      if (dominantColor) {
+        branded = true
+        style.background = dominantColor
+      }
     }
 
     const hint = this.hint()
 
     const buttonClasses = classNames('main-action', {
       'buy-now': (platformCompatible && !mayDownload),
-      'hint--top': hint
+      'hint--top': hint,
+      branded
     })
     const button = <div style={style} className={buttonClasses} onClick={() => this.onClick()} data-hint={hint}>
       {child}
@@ -140,6 +148,7 @@ MainAction.propTypes = {
   game: PropTypes.shape({
     id: PropTypes.any.isRequired
   }),
+  dominantColor: PropTypes.string,
 
   // derived
   animate: PropTypes.bool,

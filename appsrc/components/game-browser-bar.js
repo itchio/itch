@@ -5,13 +5,26 @@ import {connect} from './connect'
 
 import defaultImages from '../constants/default-images'
 
+import getDominantColor from './get-dominant-color'
+
 import GameActions from './game-actions'
 import BrowserControls from './browser-controls'
 import {pathToId} from '../util/navigation'
 
 export class GameBrowserBar extends Component {
+  constructor () {
+    super()
+    this.state = {}
+  }
+
   render () {
-    return <div className='browser-bar game-browser-bar'>
+    const barStyle = {}
+    const {dominantColor} = this.state
+    if (dominantColor) {
+      barStyle.borderTop = `2px solid ${dominantColor}`
+    }
+
+    return <div className='browser-bar game-browser-bar' style={barStyle}>
       {this.beforeControls()}
       <div className='controls'>
         {this.aboveControls()}
@@ -36,7 +49,8 @@ export class GameBrowserBar extends Component {
     const {game} = this.props
     if (!game) return ''
 
-    return <GameActions game={game} showSecondary/>
+    const {dominantColor} = this.state
+    return <GameActions game={game} showSecondary dominantColor={dominantColor}/>
   }
 
   aboveControls () {
@@ -44,6 +58,23 @@ export class GameBrowserBar extends Component {
       <div className='total-playtime'>Played 48 hours</div>
       <div className='last-playthrough'>Last played now</div>
     </div>
+  }
+
+  componentWillReceiveProps () {
+    this.updateColor()
+  }
+
+  componentDidMount () {
+    this.updateColor()
+  }
+
+  updateColor () {
+    const {game} = this.props
+    if (game) {
+      getDominantColor(game.coverUrl, (palette) => {
+        this.setState({dominantColor: getDominantColor.toCSS(getDominantColor.pick(palette))})
+      })
+    }
   }
 }
 

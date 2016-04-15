@@ -14,6 +14,7 @@ $meat-cover-scale: 0.4;
     border: 1px solid #353535;
     border-left: none;
     border-right: none;
+    transition: border .2s;
   }
 
   webview {
