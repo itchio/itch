@@ -165,7 +165,13 @@ export class BrowserMeat extends Component {
   }
 
   reload () {
-    this.with((wv) => wv.reload())
+    this.with((wv) => {
+      wv.reload()
+      wv.style.width = '0'
+      window.requestAnimationFrame(() => {
+        wv.style.width = ''
+      })
+    })
     const {tabPath, tabReloaded} = this.props
     tabReloaded(tabPath)
   }

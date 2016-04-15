@@ -65,7 +65,7 @@
   background: #333131; // FIXME colors
   overflow: hidden;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: stretch;
   position: relative;
 
@@ -75,10 +75,15 @@
   }
 
   .hub-meat-tab {
-    display: none;
+    display: flex;
+    height: 0;
+    overflow: hidden;
+    flex-basis: 0;
+    flex-grow: 0;
 
     &.visible {
       display: flex;
+      flex-basis: auto;
       flex-grow: 1;
     }
   }

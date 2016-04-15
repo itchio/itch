@@ -20,6 +20,8 @@ import {
 
   OPEN_URL,
   TRIGGER_MAIN_ACTION,
+  TRIGGER_BACK,
+  TRIGGER_LOCATION,
 
   OPEN_PREFERENCES,
   VIEW_CREATOR_PROFILE,
@@ -55,6 +57,8 @@ export const tabDataFetched = createAction(TAB_DATA_FETCHED)
 
 export const openUrl = createAction(OPEN_URL)
 export const triggerMainAction = createAction(TRIGGER_MAIN_ACTION)
+export const triggerBack = createAction(TRIGGER_BACK)
+export const triggerLocation = createAction(TRIGGER_LOCATION)
 
 export const openPreferences = createAction(OPEN_PREFERENCES)
 export const viewCreatorProfile = createAction(VIEW_CREATOR_PROFILE)

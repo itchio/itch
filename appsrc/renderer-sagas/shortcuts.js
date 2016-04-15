@@ -13,7 +13,9 @@ import {
   focusSearch,
   showNextTab,
   showPreviousTab,
-  triggerMainAction
+  triggerMainAction,
+  triggerBack,
+  triggerLocation
 } from '../actions'
 
 const queue = createQueue('shortcuts')
@@ -46,4 +48,12 @@ combo.bindGlobal(['ctrl+shift+tab', 'ctrl+pageup'], () => {
 
 combo.bindGlobal(['ctrl+enter', 'command+enter'], () => {
   queue.dispatch(triggerMainAction())
+})
+
+combo.bindGlobal(['ctrl+l', 'command+l'], () => {
+  queue.dispatch(triggerLocation())
+})
+
+combo.bindGlobal(['escape'], () => {
+  queue.dispatch(triggerBack())
 })

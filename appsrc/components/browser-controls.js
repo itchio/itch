@@ -13,6 +13,7 @@ export class BrowserControls extends Component {
 
     this.startEditingURL = ::this.startEditingURL
     this.addressKeyUp = ::this.addressKeyUp
+    this.addressBlur = ::this.addressBlur
     this.onAddressField = ::this.onAddressField
   }
 
@@ -41,7 +42,7 @@ export class BrowserControls extends Component {
         : <span className='icon icon-repeat' onClick={reload}/>
       }
       { editingURL
-        ? <input type='text' ref={this.onAddressField} className='browser-address editing' defaultValue={url} onKeyUp={this.addressKeyUp}/>
+        ? <input type='text' ref={this.onAddressField} className='browser-address editing' defaultValue={url} onKeyUp={this.addressKeyUp} onBlur={this.addressBlur}/>
         : (url && url.length
           ? <span className='browser-address' onClick={this.startEditingURL}>{url}</span>
           : '')
@@ -69,6 +70,10 @@ export class BrowserControls extends Component {
     if (e.key === 'Escape') {
       this.setState({editingURL: false})
     }
+  }
+
+  addressBlur () {
+    this.setState({editingURL: false})
   }
 
   handleClickOutside () {
