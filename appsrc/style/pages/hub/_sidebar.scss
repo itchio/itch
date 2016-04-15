@@ -30,6 +30,8 @@
   flex-grow: 0;
   flex-shrink: 0;
 
+  padding-bottom: $status-bar-height;
+
   display: flex;
   align-items: stretch;
   flex-direction: column;
