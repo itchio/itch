@@ -39,14 +39,6 @@
   padding: 10px;
   border-radius: 2px;
 
-  background-color: #D06161;
-  border-color: #CC7878;
-
-  &:hover {
-    background-color: $heavy-button-background-color;
-    border-color: $heavy-button-border-color;
-  }
-
   &:active {
     transform: scale(.95);
   }

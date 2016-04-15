@@ -1,7 +1,7 @@
 
 import colorgram from 'colorgram'
 import tinycolor from 'tinycolor2'
-import {filter} from 'underline'
+import {sortBy, filter} from 'underline'
 
 const width = 400
 const PRINT_COLORS = !!process.env.IAMA_RAINBOW_AMA
@@ -31,6 +31,8 @@ export default function getDominantColor (path, done) {
 
 getDominantColor.toCSS = (c) => c ? `rgb(${c[0]}, ${c[1]}, ${c[2]})` : null
 
+getDominantColor.toCSSAlpha = (c, a) => c ? `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a})` : null
+
 getDominantColor.pick = (palette) => {
   const colors = palette.map((c) => ({
     rgb: c,
@@ -47,6 +49,14 @@ getDominantColor.pick = (palette) => {
   }
 
   if (picked.length > 0) {
-    return picked[0].rgb
+    const sorted = picked.slice(0, 2)::sortBy((c) => -c.hsl.s)
+
+    if (PRINT_COLORS) {
+      console.log('sorted colors: ', sorted.length)
+      sorted.forEach((c) => {
+        console.log(`%c ${JSON.stringify(c)}`, `color: ${getDominantColor.toCSS(c.rgb)}`)
+      })
+    }
+    return sorted[0].rgb
   }
 }

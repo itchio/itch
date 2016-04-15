@@ -21,7 +21,8 @@ export class GameBrowserBar extends Component {
     const barStyle = {}
     const {dominantColor} = this.state
     if (dominantColor) {
-      barStyle.borderTop = `2px solid ${dominantColor}`
+      const rgba = getDominantColor.toCSSAlpha(dominantColor, 0.8)
+      barStyle.borderTop = `2px solid ${rgba}`
     }
 
     return <div className='browser-bar game-browser-bar' style={barStyle}>
@@ -49,8 +50,7 @@ export class GameBrowserBar extends Component {
     const {game} = this.props
     if (!game) return ''
 
-    const {dominantColor} = this.state
-    return <GameActions game={game} showSecondary dominantColor={dominantColor}/>
+    return <GameActions game={game} showSecondary/>
   }
 
   aboveControls () {
@@ -72,7 +72,7 @@ export class GameBrowserBar extends Component {
     const {game} = this.props
     if (game) {
       getDominantColor(game.coverUrl, (palette) => {
-        this.setState({dominantColor: getDominantColor.toCSS(getDominantColor.pick(palette))})
+        this.setState({dominantColor: getDominantColor.pick(palette)})
       })
     }
   }
