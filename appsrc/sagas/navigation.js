@@ -19,7 +19,7 @@ import fetch from '../util/fetch'
 
 import localizer from '../localizer'
 
-import actionTypes from '../constants/action-types'
+import classificationActions from '../constants/classification-actions'
 
 import mklog from '../util/log'
 import {opts} from '../logger'
@@ -198,7 +198,7 @@ function makeTabContextMenu (queue) {
     if (/^games/.test(path)) {
       const gameId = pathToId(path)
       const game = ((data || {}).games || {})[gameId]
-      const action = actionTypes[game.classification] || 'launch'
+      const action = classificationActions[game.classification] || 'launch'
       const cave = yield select((state) => state.globalMarket.cavesByGameId[gameId])
 
       if (cave) {

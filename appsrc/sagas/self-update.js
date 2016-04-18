@@ -15,8 +15,7 @@ import {delay} from './effects'
 import mklog from '../util/log'
 const log = mklog('self-update')
 import {opts} from '../logger'
-
-const DATE_FORMAT = 'mmmm dS, yyyy @ HH:MM TT'
+import {DATE_FORMAT} from '../util/format'
 
 import {
   BOOT,

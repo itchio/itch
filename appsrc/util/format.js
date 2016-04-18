@@ -23,4 +23,18 @@ export function camelifyObject (obj) {
   }
 }
 
-export default {slugify, camelify, camelifyObject}
+export function seconds (secs) {
+  if (secs < 60) {
+    return ['duration.minute']
+  } else if (secs < 3600) {
+    return ['duration.minutes', {x: (secs / 60).toFixed()}]
+  } else if (secs < 3600 * 2) {
+    return ['duration.hour']
+  } else {
+    return ['duration.hours', {x: (secs / 3600).toFixed()}]
+  }
+}
+
+export const DATE_FORMAT = 'mmmm dS, yyyy @ HH:MM TT'
+
+export default {slugify, camelify, camelifyObject, seconds, DATE_FORMAT}

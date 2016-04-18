@@ -32,6 +32,7 @@ export default async function start (out, opts) {
 
   const action = classificationActions[(cave.game || {}).classification || 'game']
   if (action === 'open') {
+    globalMarket.saveEntity('caves', cave.id, {lastTouched: Date.now()})
     explorer.open(pathmaker.appPath(cave))
     return
   }
@@ -57,5 +58,18 @@ export default async function start (out, opts) {
     throw err
   }
 
-  await launcher(out, opts)
+  const startedAt = Date.now()
+  globalMarket.saveEntity('caves', cave.id, {lastTouched: startedAt})
+  try {
+    await launcher(out, opts)
+  } finally {
+    const now = Date.now()
+    const secondsRun = (now - startedAt) / 1000
+
+    const previousSecondsRun = globalMarket.getEntity('caves', cave.id).secondsRun || 0
+    const newSecondsRun = secondsRun + previousSecondsRun
+
+    console.log(`Just played for ${secondsRun.toFixed()}s, new total playtime: ${newSecondsRun.toFixed()}s`)
+    globalMarket.saveEntity('caves', cave.id, {secondsRun: newSecondsRun, lastTouched: now})
+  }
 }
