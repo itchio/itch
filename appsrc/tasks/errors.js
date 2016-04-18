@@ -21,7 +21,7 @@ export class InputRequired extends ExtendableError {
 
 export class Crash extends ExtendableError {
   constructor (opts) {
-    super('application crashed')
+    super(`application crashed. ${opts.error || ''}`)
     Object.assign(this, opts, {type: 'crash'})
   }
 }

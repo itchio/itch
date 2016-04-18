@@ -18,10 +18,11 @@ const log = mklog('updater')
 import {opts} from '../logger'
 
 import {startDownload} from './tasks/start-download'
+import {findWhere} from 'underline'
 
 import {
   SESSION_READY,
-  CHECK_FOR_GAME_UPDATES
+  CHECK_FOR_GAME_UPDATE, CHECK_FOR_GAME_UPDATES
 } from '../constants/action-types'
 
 const DELAY_BETWEEN_GAMES = 25
@@ -44,6 +45,19 @@ function * _checkForGameUpdates () {
     }
     yield call(delay, DELAY_BETWEEN_GAMES)
   }
+}
+
+function * _checkForGameUpdate (action) {
+  const {caveId} = action.payload
+  invariant(typeof caveId === 'string', 'caveId is a string')
+
+  const cave = getGlobalMarket().getEntity('caves', caveId)
+  if (!cave) {
+    log(opts, `No cave with id ${caveId}, bailing out`)
+    return
+  }
+
+  yield call(checkForGameUpdate, cave)
 }
 
 function * checkForGameUpdate (cave) {
@@ -91,6 +105,20 @@ function * checkForGameUpdate (cave) {
         logger.contents.split('\n').map((line) => log(opts, `> ${line}`))
         return
       }
+
+      if (cave.uploadId && cave.buildId) {
+        const upload = uploads::findWhere({id: cave.uploadId})
+        if (!upload || !upload.buildId) {
+          log(opts, `Uh oh, our wharf-enabled upload disappeared`)
+        } else {
+          if (upload.buildId !== cave.buildId) {
+            log(opts, `Got new build available: ${upload.buildId} > ${cave.BuildId}`)
+            yield call()
+          }
+          return
+        }
+      }
+
       const upload = uploads[0]
 
       if (upload.id !== cave.uploadId) {
@@ -127,6 +155,7 @@ function * installUpdater () {
 export default function * updater () {
   yield [
     fork(installUpdater),
-    takeLatest(CHECK_FOR_GAME_UPDATES, _checkForGameUpdates)
+    takeLatest(CHECK_FOR_GAME_UPDATES, _checkForGameUpdates),
+    takeLatest(CHECK_FOR_GAME_UPDATE, _checkForGameUpdate)
   ]
 }

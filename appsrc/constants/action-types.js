@@ -73,6 +73,8 @@ module.exports = keyMirror({
   TABS_RESTORED: null,
   TAB_DATA_FETCHED: null,
 
+  OPEN_TAB_CONTEXT_MENU: null,
+
   /* Menu */
   REFRESH_MENU: null,
   MENU_ACTION: null,
@@ -145,6 +147,7 @@ module.exports = keyMirror({
   /** A game has been interacted with! */
   RECORD_GAME_INTERACTION: null,
 
+  CHECK_FOR_GAME_UPDATE: null,
   CHECK_FOR_GAME_UPDATES: null,
 
   /** User requested game to be installed */

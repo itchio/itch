@@ -19,7 +19,7 @@ export class HubSidebar extends Component {
   }
 
   render () {
-    const {t, osx, sidebarWidth, fullscreen, path: currentPath, tabs, tabData, navigate, counts, closeTab, moveTab} = this.props
+    const {t, osx, sidebarWidth, fullscreen, path: currentPath, tabs, tabData, navigate, counts, closeTab, moveTab, openTabContextMenu} = this.props
     const classes = classNames('hub-sidebar', {osx, fullscreen})
     const sidebarStyle = {
       width: sidebarWidth + 'px'
@@ -52,9 +52,10 @@ export class HubSidebar extends Component {
             const active = currentPath === item.path
             const onClick = () => navigate(path)
             const onClose = () => closeTab(path)
+            const onContextMenu = () => openTabContextMenu({path})
             const count = counts[item.path]
 
-            const props = {index, path, label, icon, active, onClick, count, onClose, moveTab, data, t}
+            const props = {index, path, label, icon, active, onClick, count, onClose, onContextMenu, moveTab, data, t}
             return <HubSidebarItem {...props}/>
           })
           : <section className='empty'>
@@ -135,6 +136,7 @@ HubSidebar.propTypes = {
   navigate: PropTypes.func.isRequired,
   closeTab: PropTypes.func.isRequired,
   moveTab: PropTypes.func.isRequired,
+  openTabContextMenu: PropTypes.func.isRequired,
   openPreferences: PropTypes.func.isRequired
 }
 
@@ -165,7 +167,8 @@ const mapDispatchToProps = (dispatch) => ({
   viewCreatorProfile: () => dispatch(actions.viewCreatorProfile()),
   viewCommunityProfile: () => dispatch(actions.viewCommunityProfile()),
   changeUser: () => dispatch(actions.changeUser()),
-  openPreferences: () => dispatch(actions.navigate('preferences'))
+  openPreferences: () => dispatch(actions.navigate('preferences')),
+  openTabContextMenu: (data) => dispatch(actions.openTabContextMenu(data))
 })
 
 export default connect(

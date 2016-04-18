@@ -16,6 +16,13 @@ export function * startDownload (downloadOpts) {
   invariant(downloadOpts.reason, 'startDownload must have a reason')
   invariant(downloadOpts.game, 'startDownload must have a game')
 
+  const existing = yield select((state) => state.tasks.downloadsByGameId[downloadOpts.game.id])
+  if (existing) {
+    log(opts, `Not starting another download for ${downloadOpts.game.title}`)
+    yield put(actions.navigate('downloads'))
+    return
+  }
+
   const {upload, downloadKey} = downloadOpts
   log(opts, `Should download ${upload.id}, dl key ? ${downloadKey}`)
 

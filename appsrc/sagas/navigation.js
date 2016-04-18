@@ -3,16 +3,23 @@ import createQueue from './queue'
 import {createSelector} from 'reselect'
 import {pathToId, gameToTabData, userToTabData} from '../util/navigation'
 import {getUserMarket} from './market'
+import {BrowserWindow, Menu} from '../electron'
+
 import invariant from 'invariant'
+import clone from 'clone'
 
 import {shell} from '../electron'
 import {takeEvery} from 'redux-saga'
 import {call, select, put} from 'redux-saga/effects'
-import {map, pluck} from 'underline'
+import {findWhere, map, pluck} from 'underline'
 
 import urls from '../constants/urls'
 import staticTabData from '../constants/static-tab-data'
 import fetch from '../util/fetch'
+
+import localizer from '../localizer'
+
+import actionTypes from '../constants/action-types'
 
 import mklog from '../util/log'
 import {opts} from '../logger'
@@ -22,12 +29,13 @@ const TABS_TABLE_NAME = 'itchAppTabs'
 
 import {
   navigate, openUrl, tabChanged, tabsChanged, tabDataFetched, tabEvolved,
-  queueGame, tabsRestored
+  queueGame, tabsRestored, checkForGameUpdate, probeCave,
+  queueCaveReinstall, queueCaveUninstall, exploreCave, initiatePurchase
 } from '../actions'
 import {
   SESSION_READY, SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED, TABS_CHANGED,
   VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION,
-  WINDOW_FOCUS_CHANGED, TAB_RELOADED
+  WINDOW_FOCUS_CHANGED, TAB_RELOADED, OPEN_TAB_CONTEXT_MENU
 } from '../constants/action-types'
 
 function * retrieveTabData (path, opts) {
@@ -176,6 +184,85 @@ export function * _triggerMainAction () {
   }
 }
 
+function makeTabContextMenu (queue) {
+  return function * _openTabContextMenu (action) {
+    invariant(typeof action.payload === 'object', 'opentabcontextmenu payload is an object')
+    const {path} = action.payload
+    invariant(typeof path === 'string', 'opentabcontextmenu path is string')
+
+    const data = yield select((state) => state.session.navigation.tabData[path])
+    const i18n = yield select((state) => state.i18n)
+    const t = localizer.getT(i18n.strings, i18n.lang)
+
+    const template = []
+    if (/^games/.test(path)) {
+      const gameId = pathToId(path)
+      const game = ((data || {}).games || {})[gameId]
+      const action = actionTypes[game.classification] || 'launch'
+      const cave = yield select((state) => state.globalMarket.cavesByGameId[gameId])
+
+      if (cave) {
+        template.push({
+          label: t(`grid.item.${action}`),
+          click: () => queue.dispatch(queueGame({game}))
+        })
+        template.push({
+          label: t('grid.item.show_local_files'),
+          click: () => queue.dispatch(exploreCave({caveId: cave.id}))
+        })
+        template.push({ type: 'separator' })
+        template.push({
+          label: t('grid.item.developer'),
+          submenu: [
+            {
+              label: t('grid.item.check_for_update'),
+              click: () => queue.dispatch(checkForGameUpdate(cave))
+            },
+            {
+              label: t('grid.item.open_debug_log'),
+              click: () => queue.dispatch(probeCave({caveId: cave.id}))
+            }
+          ]
+        })
+        template.push({ type: 'separator' })
+        template.push({
+          label: t('prompt.uninstall.reinstall'),
+          click: () => queue.dispatch(queueCaveReinstall({caveId: cave.id}))
+        })
+        template.push({
+          label: t('prompt.uninstall.uninstall'),
+          click: () => queue.dispatch(queueCaveUninstall({caveId: cave.id}))
+        })
+      } else {
+        const downloadKeys = getUserMarket().getEntities('downloadKeys')
+        const downloadKey = downloadKeys::findWhere({gameId: game.id})
+        const hasMinPrice = game.minPrice > 0
+        // FIXME game admins
+        const meId = yield select((state) => state.session.credentials.me.id)
+        const canEdit = game.userId === meId
+        const mayDownload = !!(downloadKey || !hasMinPrice || canEdit)
+
+        if (mayDownload) {
+          template.push({
+            label: t('grid.item.install'),
+            click: () => queue.dispatch(queueGame({game}))
+          })
+        } else {
+          template.push({
+            label: t('grid.item.buy_now'),
+            click: () => queue.dispatch(initiatePurchase({game}))
+          })
+        }
+      }
+    }
+
+    const menu = Menu.buildFromTemplate(clone(template))
+    const mainWindowId = yield select((state) => state.ui.mainWindow.id)
+    const mainWindow = BrowserWindow.fromId(mainWindowId)
+    menu.popup(mainWindow)
+  }
+}
+
 export default function * navigationSaga () {
   const queue = createQueue('navigation')
 
@@ -211,6 +298,7 @@ export default function * navigationSaga () {
     takeEvery(TABS_CHANGED, _tabsChanged),
     takeEvery(EVOLVE_TAB, _evolveTab),
     takeEvery(TRIGGER_MAIN_ACTION, _triggerMainAction),
+    takeEvery(OPEN_TAB_CONTEXT_MENU, makeTabContextMenu(queue)),
     takeEvery('*', function * watchNavigation () {
       const state = yield select()
       pathSelector(state)

@@ -87,6 +87,7 @@ const makeMapStateToProps = () => {
       const cancellable = /^download.*/.test(task)
       const downloadKey = downloadKeys::findWhere({gameId: game.id})
       const hasMinPrice = game.minPrice > 0
+      // FIXME game admins
       const canEdit = game.userId === meId
       const mayDownload = !!(downloadKey || !hasMinPrice || canEdit)
 
