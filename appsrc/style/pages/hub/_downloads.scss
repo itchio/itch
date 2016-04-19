@@ -10,6 +10,29 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
   padding: $grid-padding;
   flex-grow: 1;
 
+  .finished-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+    margin: 20px 0;
+
+    h2 {
+      font-size: 22px;
+    }
+
+    span {
+      margin-left: 8px;
+      color: $secondary-text-color;
+      -webkit-filter: brightness(90%);
+
+      &:hover {
+        -webkit-filter: none;
+        cursor: pointer;
+      }
+    }
+  }
+
   li {
     line-height: 1.8;
     margin: 10px 0 30px 0;

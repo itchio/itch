@@ -8,6 +8,7 @@ import defaultImages from '../constants/default-images'
 import * as actions from '../actions'
 
 import TimeAgo from 'react-timeago'
+import GameActions from './game-actions'
 
 class DownloadRow extends Component {
   constructor () {
@@ -18,9 +19,50 @@ class DownloadRow extends Component {
   render () {
     const {item, navigateToGame} = this.props
 
-    const {game, upload, date, id, progress = 0, paused, reason} = item
+    const {game, id} = item
     const coverUrl = game.coverUrl || defaultImages.thumbnail
     const coverStyle = {backgroundImage: `url("${coverUrl}")`}
+
+    return <li key={id} className='history-item'>
+      <div className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
+      <div className='stats'>
+        {this.progress()}
+      </div>
+      {this.controls()}
+    </li>
+  }
+
+  controls () {
+    const {active, first, paused, item} = this.props
+    const {resumeDownloads, pauseDownloads, prioritizeDownload} = this.props
+    const {id} = item
+
+    if (!active) {
+      return ''
+    }
+
+    return <div className='controls'>
+    { first
+      ? (paused
+        ? <span className='icon icon-triangle-right' onClick={resumeDownloads}/>
+        : <span className='icon icon-pause' onClick={pauseDownloads}/>
+      )
+      : <span className='icon icon-align-top' onClick={() => prioritizeDownload(id)}/>
+      }
+    </div>
+  }
+
+  progress () {
+    const {active, item} = this.props
+    if (!active) {
+      const {game} = item
+      return <div>
+        {game.title}
+        <GameActions game={game} showSecondary/>
+      </div>
+    }
+    const {upload, date, progress = 0, reason} = item
+
     const progressInnerStyle = {
       width: (progress * 100) + '%'
     }
@@ -29,25 +71,20 @@ class DownloadRow extends Component {
       progressInnerStyle.backgroundColor = dominantColor
     }
 
+    const perc = (progress * 100).toFixed(1) + '%'
+    const sizeLeft = humanize.fileSize(upload.size * (1 - progress))
     const reasonText = this.reasonText(reason)
 
-    return <li key={id} className='history-item'>
-      <div className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
-      <div className='stats'>
-        <div className='progress'>
-          <div className='progress-inner' style={progressInnerStyle}/>
-        </div>
-        {(progress * 100).toFixed(1)}% done, {humanize.fileSize(upload.size * (1 - progress))} left
-        <div className='timeago'>
-          Started <TimeAgo date={date}/> {reasonText ? ` — ${reasonText}` : ''}
-        </div>
+    return <div>
+      <div className='progress'>
+        <div className='progress-inner' style={progressInnerStyle}/>
       </div>
-      <div className='controls'>
-        { paused
-          ? <span className='icon icon-triangle-right'/>
-          : <span className='icon icon-pause'/> }
+      {perc} done, {sizeLeft} left
+      <div className='timeago'>
+        Started <TimeAgo date={date}/>
+        {reasonText ? ` — ${reasonText}` : ''}
       </div>
-    </li>
+    </div>
   }
 
   reasonText (reason) {
@@ -74,6 +111,7 @@ class DownloadRow extends Component {
 
 DownloadRow.propTypes = {
   first: PropTypes.bool,
+  active: PropTypes.bool,
   paused: PropTypes.bool,
   item: PropTypes.shape({
     upload: PropTypes.object

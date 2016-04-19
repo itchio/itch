@@ -15,24 +15,44 @@ class Downloads extends Component {
   }
 
   render () {
-    const {items, paused} = this.props
+    const {t, items, finishedItems, paused} = this.props
+    const {clearFinishedDownloads} = this.props
 
     return <ul className='downloads-page'>
     {items::map((item, i) =>
-      <DownloadRow key={item.id} item={item} first={i === 0} paused={paused}/>
+      <DownloadRow key={item.id} item={item} first={i === 0} paused={paused} active/>
     )}
+    { finishedItems.length > 0
+      ? [
+        <div className='finished-bar'>
+          <h2 className='finished-header'>
+            {t('status.downloads.category.finished')}
+          </h2>
+          <span className='clear' onClick={clearFinishedDownloads}>
+            {t('status.downloads.clear_finished')}
+          </span>
+        </div>
+      ].concat(finishedItems::map((item) =>
+        <DownloadRow key={item.id} item={item}/>
+      ))
+      : '' }
+
     </ul>
   }
 }
 
+const arrayOfUploads = PropTypes.arrayOf(PropTypes.shape({
+  upload: PropTypes.object
+}))
+
 Downloads.propTypes = {
-  items: PropTypes.arrayOf(PropTypes.shape({
-    upload: PropTypes.object
-  })),
+  items: arrayOfUploads,
+  finishedItems: arrayOfUploads,
   paused: PropTypes.bool,
 
   t: PropTypes.func.isRequired,
-  navigateToGame: PropTypes.func.isRequired
+  navigateToGame: PropTypes.func.isRequired,
+  clearFinishedDownloads: PropTypes.func.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({

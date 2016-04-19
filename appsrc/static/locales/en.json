@@ -217,6 +217,8 @@
     "status.history.no_active_items": "No history items require your attention.",
     "status.history.click_to_expand": "Click to expand history.",
     "status.downloads.no_active_downloads": "No active downloads",
+    "status.downloads.category.finished": "Finished downloads",
+    "status.downloads.clear_finished": "Clear",
     "status.downloads.click_to_manage": "Click to manage downloads",
     "search.placeholder": "Search...",
     "search.open_as_tab": "Open as tab",

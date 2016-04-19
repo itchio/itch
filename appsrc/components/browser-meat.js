@@ -13,6 +13,7 @@ import querystring from 'querystring'
 import ospath from 'path'
 
 const injectPath = ospath.resolve(__dirname, '..', 'inject', 'browser.js')
+const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === '1'
 
 import BrowserBar from './browser-bar'
 import GameBrowserBar from './game-browser-bar'
@@ -142,7 +143,9 @@ export class BrowserMeat extends Component {
 
     return <div className='browser-meat'>
       {bar}
-      <webview ref='webview' src={url} partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/>
+      { DONT_SHOW_WEBVIEWS
+        ? <div>Webviews disabled</div>
+        : <webview ref='webview' src={url} partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/> }
     </div>
   }
 
