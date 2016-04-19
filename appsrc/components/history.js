@@ -12,7 +12,7 @@ import * as actions from '../actions'
 
 class History extends Component {
   render () {
-    const {t, items} = this.props
+    const {t, pickOption, items} = this.props
 
     return <ul className='history-page'>
     {items::map((item) => {
@@ -26,7 +26,7 @@ class History extends Component {
         </div>
         <div className='item-options'>
           {options::map((option) => {
-            return <div className='item-option' onClick={(e) => this.pickOption(id, option)}>
+            return <div className='item-option' onClick={(e) => pickOption(id, option)}>
               {t.format(option.label)}
             </div>
           })}
@@ -42,7 +42,8 @@ History.propTypes = {
     label: PropTypes.array
   })),
 
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
+  pickOption: PropTypes.func.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({

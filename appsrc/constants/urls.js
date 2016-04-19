@@ -7,6 +7,7 @@ const self = {
   githubApi: 'https://api.github.com',
   ibrewRepo: 'https://dl.itch.ovh',
   remoteLocalePath: 'http://locales.itch.ovh/itch',
+  manual: 'https://docs.itch.ovh/itch/master/index.html',
   updateServers: {
     stable: 'https://nuts.itch.zone',
     canary: 'http://nuts-canary.itch.ovh'

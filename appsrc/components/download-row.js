@@ -37,7 +37,8 @@ class DownloadRow extends Component {
     const {resumeDownloads, pauseDownloads, prioritizeDownload} = this.props
     const {id} = item
 
-    if (!active) {
+    // FIXME rush
+    if (!active || true) {
       return ''
     }
 

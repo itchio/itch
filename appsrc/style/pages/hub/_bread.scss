@@ -37,6 +37,16 @@
     .icon-button .icon {
       font-size: 24px;
       @include secondary-link;
+      -webkit-filter: brightness(90%);
+
+      &:hover {
+        -webkit-filter: none;
+        cursor: hand;
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
     }
 
     &.search {

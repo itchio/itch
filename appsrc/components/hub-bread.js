@@ -6,26 +6,28 @@ import {connect} from './connect'
 import classNames from 'classnames'
 
 import * as actions from '../actions'
+import urls from '../constants/urls'
 
 import Icon from './icon'
 import HubBreadDescription from './hub-bread-description'
 
 class HubBread extends Component {
   render () {
-    const {t, searchLoading} = this.props
+    const {t, navigate, searchLoading} = this.props
 
     const searchClasses = classNames('search', {loading: searchLoading})
+    const hideStyle = {display: 'none'}
 
     return <div className='hub-bread'>
       <HubBreadDescription/>
 
       <section className='filler'/>
 
-      <section className='icon-button'>
+      <section style={hideStyle} className='icon-button'>
         <Icon icon='sort-alpha-asc'/>
       </section>
 
-      <section className='icon-button'>
+      <section style={hideStyle} className='icon-button'>
         <Icon icon='filter'/>
       </section>
 
@@ -35,10 +37,10 @@ class HubBread extends Component {
       </section>
 
       <section className='icon-button'>
-        <Icon icon='lifebuoy'/>
+        <Icon icon='lifebuoy' onClick={() => navigate(`url/${urls.manual}`)}/>
       </section>
 
-      <section className='icon-button'>
+      <section style={hideStyle} className='icon-button'>
         <Icon icon='menu'/>
       </section>
     </div>
@@ -67,6 +69,7 @@ class HubBread extends Component {
 
 HubBread.propTypes = {
   t: PropTypes.func,
+  navigate: PropTypes.func,
 
   path: PropTypes.string,
   searchLoading: PropTypes.bool,
@@ -82,7 +85,8 @@ const mapStateToProps = createStructuredSelector({
 
 const mapDispatchToProps = (dispatch) => ({
   search: (query) => dispatch(actions.search(query)),
-  searchQueryChanged: (query) => dispatch(actions.searchQueryChanged(query))
+  searchQueryChanged: (query) => dispatch(actions.searchQueryChanged(query)),
+  navigate: (a, b) => dispatch(actions.navigate(a, b))
 })
 
 export default connect(
