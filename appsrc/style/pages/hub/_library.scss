@@ -16,4 +16,15 @@
       display: block;
     }
   }
+
+  .collection-hub-item {
+    margin: 10px 20px;
+    text-decoration: underline;
+    -webkit-filter: brightness(90%);
+
+    &:hover {
+      -webkit-filter: none;
+      cursor: pointer;
+    }
+  }
 }

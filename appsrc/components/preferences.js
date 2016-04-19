@@ -25,8 +25,6 @@ export class Preferences extends Component {
     }].concat(locales)
 
     return <div className='preferences-meat'>
-      <span className='icon icon-cog preferences-background'/>
-
       <form className='form preferences-form'>
         <SelectRow onChange={::this.onLanguageChange} options={options} value={lang || '__'} label={t('preferences.language')}/>
 
