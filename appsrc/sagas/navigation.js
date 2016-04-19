@@ -1,7 +1,7 @@
 
 import createQueue from './queue'
 import {createSelector} from 'reselect'
-import {pathToId, gameToTabData, userToTabData} from '../util/navigation'
+import {pathToId, gameToTabData, userToTabData, collectionToTabData} from '../util/navigation'
 import {getUserMarket} from './market'
 import {BrowserWindow, Menu} from '../electron'
 
@@ -47,6 +47,9 @@ function * retrieveTabData (path, opts) {
   } else if (/^users/.test(path)) {
     const user = yield call(fetch.userLazily, getUserMarket(), credentials, +pathToId(path), opts)
     return user && userToTabData(user)
+  } else if (/^collections/.test(path)) {
+    const collection = yield call(fetch.collectionLazily, getUserMarket(), credentials, +pathToId(path), opts)
+    return collection && collectionToTabData(collection)
   } else {
     const data = staticTabData[path]
     if (data) {

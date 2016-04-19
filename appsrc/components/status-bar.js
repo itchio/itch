@@ -108,7 +108,7 @@ class StatusBar extends Component {
 
       {this.history()}
 
-      <div className={plugClasses} onClick={() => updatePreferences({offlineMode: !offlineMode})} data-hint={plugHint}>
+      <div style={{display: 'none'}} className={plugClasses} onClick={() => updatePreferences({offlineMode: !offlineMode})} data-hint={plugHint}>
         <Icon icon={plugIcon}/>
       </div>
     </div>

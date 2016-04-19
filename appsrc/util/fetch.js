@@ -197,6 +197,25 @@ export async function userLazily (market, credentials, userId, opts = {}) {
   return response.entities.users[userId]
 }
 
+export async function collectionLazily (market, credentials, collectionId, opts = {}) {
+  pre: { // eslint-disable-line
+    typeof market === 'object'
+    typeof credentials === 'object'
+    typeof collectionId === 'number'
+  }
+
+  if (!opts.fresh) {
+    const record = market.getEntities('collections')[collectionId]
+    if (record) {
+      return record
+    }
+  }
+
+  const api = client.withKey(credentials.key)
+  const response = normalize(await api.collection(collectionId), {collection})
+  return response.entities.collections[collectionId]
+}
+
 export default {
   dashboardGames,
   ownedKeys,
@@ -204,5 +223,6 @@ export default {
   collectionGames,
   search,
   gameLazily,
-  userLazily
+  userLazily,
+  collectionLazily
 }

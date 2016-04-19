@@ -3,6 +3,7 @@ import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 
 import {pathToId} from '../util/navigation'
+import urls from '../constants/urls'
 
 import BrowserMeat from './browser-meat'
 
@@ -29,6 +30,9 @@ export class UrlMeat extends Component {
         url = user.url
         controls = 'user'
       }
+    } else if (/^collection/.test(path)) {
+      const collectionId = +pathToId(path)
+      url = urls.itchio + '/c/' + collectionId + '/x'
     }
 
     return <BrowserMeat url={url} tabPath={path} tabData={tabData} controls={controls}/>

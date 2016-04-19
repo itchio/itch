@@ -65,6 +65,15 @@ export function userToTabData (user) {
   }
 }
 
+export function collectionToTabData (collection) {
+  return {
+    collections: {
+      [collection.id]: collection
+    },
+    label: collection.title
+  }
+}
+
 export function isAppSupported (url) {
   const {host, pathname} = urlParser.parse(url)
 
@@ -84,4 +93,4 @@ export function isAppSupported (url) {
   return null
 }
 
-export default {pathToId, pathToIcon, gameToTabData, isAppSupported}
+export default {pathToId, pathToIcon, gameToTabData, collectionToTabData, isAppSupported}

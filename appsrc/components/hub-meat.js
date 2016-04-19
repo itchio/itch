@@ -11,7 +11,6 @@ import Downloads from './downloads'
 import Preferences from './preferences'
 import History from './history'
 import FeaturedMeat from './featured-meat'
-import CollectionMeat from './collection-meat'
 import SearchMeat from './search-meat'
 import UrlMeat from './url-meat'
 import Dashboard from './dashboard'
@@ -48,11 +47,9 @@ export class HubMeat extends Component {
       return <History/>
     } else if (path === 'preferences') {
       return <Preferences/>
-    } else if (/^collections/.test(path)) {
-      return <CollectionMeat collectionId={+pathToId(path)}/>
     } else if (/^search/.test(path)) {
       return <SearchMeat query={pathToId(path)}/>
-    } else if (/^(url|games|users)/.test(path)) {
+    } else if (/^(url|games|users|collections)/.test(path)) {
       return <UrlMeat key={tabId} tabId={tabId} path={path}/>
     } else {
       return '?'
