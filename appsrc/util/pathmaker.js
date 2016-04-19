@@ -25,7 +25,7 @@ export function appPath (cave) {
     const locations = store.getState().preferences.installLocations
     const location = locations[installLocation]
     invariant(location, 'install location exists')
-    return path.join(location.path, installFolder)
+    return path.join(location.path, 'apps', installFolder)
   }
 }
 
