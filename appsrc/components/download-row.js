@@ -73,18 +73,26 @@ class DownloadRow extends Component {
 }
 
 DownloadRow.propTypes = {
+  first: PropTypes.bool,
+  paused: PropTypes.bool,
   item: PropTypes.shape({
     upload: PropTypes.object
   }),
 
   t: PropTypes.func.isRequired,
-  navigateToGame: PropTypes.func.isRequired
+  navigateToGame: PropTypes.func.isRequired,
+  prioritizeDownload: PropTypes.func.isRequired,
+  pauseDownloads: PropTypes.func.isRequired,
+  resumeDownloads: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) => ({
-  navigateToGame: (game) => dispatch(actions.navigateToGame(game))
+  navigateToGame: (game) => dispatch(actions.navigateToGame(game)),
+  prioritizeDownload: () => dispatch(actions.clearFinishedDownloads()),
+  pauseDownloads: () => dispatch(actions.clearFinishedDownloads()),
+  resumeDownloads: () => dispatch(actions.clearFinishedDownloads())
 })
 
 export default connect(

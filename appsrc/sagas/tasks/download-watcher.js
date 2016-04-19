@@ -3,19 +3,19 @@ import {delay} from '../effects'
 import {call, select} from 'redux-saga/effects'
 
 import {opts} from './log'
-import mklog from '../util/logger'
+import mklog from '../../util/log'
 const log = mklog('download-watcher')
 
 const DOWNLOAD_DELAY = 3000
 
-const currentDownload = null
+let currentDownload = null
 
-function * updateDownloadState() {
+function * updateDownloadState () {
   log(opts, `Sleeping for a bit..`)
   yield call(delay, DOWNLOAD_DELAY)
 
-  const downloadsByPriority = yield select((state) => state.tasks.downloadsByPriority)
-  const first = downloadsByPriority[0]
+  const downloadsByOrder = yield select((state) => state.tasks.downloadsByOrder)
+  const first = downloadsByOrder[0]
   if (!first) {
     if (currentDownload) {
       log(opts, `Cancelling/clearing out last download`)

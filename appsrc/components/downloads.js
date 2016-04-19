@@ -15,11 +15,11 @@ class Downloads extends Component {
   }
 
   render () {
-    const {items} = this.props
+    const {items, paused} = this.props
 
     return <ul className='downloads-page'>
-    {items::map((item) =>
-      <DownloadRow key={item.id} item={item}/>
+    {items::map((item, i) =>
+      <DownloadRow key={item.id} item={item} first={i === 0} paused={paused}/>
     )}
     </ul>
   }
@@ -29,17 +29,21 @@ Downloads.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
     upload: PropTypes.object
   })),
+  paused: PropTypes.bool,
 
   t: PropTypes.func.isRequired,
   navigateToGame: PropTypes.func.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({
-  items: (state) => state.tasks.downloadsByDate
+  items: (state) => state.tasks.downloadsByOrder::map((id) => state.tasks.downloads[id]),
+  paused: (state) => state.tasks.downloadsPaused,
+  finishedItems: (state) => state.tasks.finishedDownloads
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  navigateToGame: (game) => dispatch(actions.navigateToGame(game))
+  navigateToGame: (game) => dispatch(actions.navigateToGame(game)),
+  clearFinishedDownloads: () => dispatch(actions.clearFinishedDownloads())
 })
 
 export default connect(

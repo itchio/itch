@@ -76,7 +76,7 @@ const makeMapStateToProps = () => {
       cave: (state, props) => state.globalMarket.cavesByGameId[props.game.id],
       downloadKeys: (state, props) => state.market.downloadKeys,
       task: (state, props) => state.tasks.tasksByGameId[props.game.id],
-      download: (state, props) => state.tasks.downloadsByGameId[props.game.id],
+      download: (state, props) => state.tasks.downloads[state.tasks.downloadsByGameId[props.game.id]],
       meId: (state, props) => state.session.credentials.me.id
     }),
     (happenings) => {

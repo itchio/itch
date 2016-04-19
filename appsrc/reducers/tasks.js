@@ -3,13 +3,14 @@ import {handleActions} from 'redux-actions'
 import {createStructuredSelector} from 'reselect'
 
 import invariant from 'invariant'
-import {indexBy, sortBy, omit} from 'underline'
+import {indexBy, sortBy, omit, pluck} from 'underline'
 
 const initialState = {
   tasks: {},
   finishedTasks: [],
   downloads: {},
-  finishedDownloads: []
+  finishedDownloads: [],
+  downloadsPaused: false
 }
 
 const reducer = handleActions({
@@ -69,23 +70,38 @@ const reducer = handleActions({
 
   DOWNLOAD_PRIORITIZE: (state, action) => {
     const {id} = action.payload
-    const {downloadsByPriority} = state
-    const first = downloadsByPriority[0]
-
-    if (!first) {
+    const {downloads, downloadsByOrder} = state
+    if (downloadsByOrder.length < 2) {
+      // either no downloads, or only one. nothing to prioritize!
       return state
     }
 
+    const first = downloadsByOrder[0]
+    const download = downloads[id]
+    const record = {
+      priority: first.priority - 1
+    }
+    const newDownloads = {...downloads, [id]: {...download, ...record}}
+    return {...state, downloads: newDownloads}
+  },
 
-    return state
+  CLEAR_FINISHED_DOWNLOADS: (state, action) => {
+    return {...state, finishedDownloads: []}
+  },
+
+  PAUSE_DOWNLOADS: (state, action) => {
+    return {...state, downloadsPaused: true}
+  },
+
+  RESUME_DOWNLOADS: (state, action) => {
+    return {...state, downloadsPaused: false}
   }
 }, initialState)
 
 const selector = createStructuredSelector({
   tasksByGameId: (state) => state.tasks::indexBy('gameId'),
-  downloadsByPriority: (state) => state.downloads::sortBy('priority')::pluck('id'),
-  downloadsByGameId: (state) => state.downloads::indexBy('gameId'),
-  downloadsByDate: (state) => state.downloads::sortBy('date')
+  downloadsByOrder: (state) => state.downloads::sortBy('order')::pluck('id'),
+  downloadsByGameId: (state) => state.downloads::indexBy('gameId')::pluck('id')
 })
 
 export default (state, action) => {

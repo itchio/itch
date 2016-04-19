@@ -8,7 +8,13 @@ import {
 
   DOWNLOAD_STARTED,
   DOWNLOAD_PROGRESS,
-  DOWNLOAD_ENDED
+  DOWNLOAD_ENDED,
+
+  CLEAR_FINISHED_DOWNLOADS,
+
+  PRIORITIZE_DOWNLOAD,
+  PAUSE_DOWNLOADS,
+  RESUME_DOWNLOADS
 } from '../constants/action-types'
 
 export const taskStarted = createAction(TASK_STARTED)
@@ -20,3 +26,9 @@ export const downloadStarted = (payload) => _downloadStarted({...payload, date: 
 
 export const downloadProgress = createAction(DOWNLOAD_PROGRESS)
 export const downloadEnded = createAction(DOWNLOAD_ENDED)
+
+export const clearFinishedDownloads = createAction(CLEAR_FINISHED_DOWNLOADS)
+
+export const prioritizeDownload = createAction(PRIORITIZE_DOWNLOAD)
+export const pauseDownloads = createAction(PAUSE_DOWNLOADS)
+export const resumeDownloads = createAction(RESUME_DOWNLOADS)
