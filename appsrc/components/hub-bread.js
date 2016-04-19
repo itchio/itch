@@ -13,7 +13,7 @@ import HubBreadDescription from './hub-bread-description'
 
 class HubBread extends Component {
   render () {
-    const {t, navigate, searchLoading} = this.props
+    const {t, openUrl, searchLoading} = this.props
 
     const searchClasses = classNames('search', {loading: searchLoading})
     const hideStyle = {display: 'none'}
@@ -36,8 +36,8 @@ class HubBread extends Component {
         <span className='icon icon-search'/>
       </section>
 
-      <section className='icon-button'>
-        <Icon icon='lifebuoy' onClick={() => navigate(`url/${urls.manual}`)}/>
+      <section className='icon-button' onClick={() => openUrl(urls.manual)}>
+        <Icon icon='lifebuoy'/>
       </section>
 
       <section style={hideStyle} className='icon-button'>
@@ -69,13 +69,13 @@ class HubBread extends Component {
 
 HubBread.propTypes = {
   t: PropTypes.func,
-  navigate: PropTypes.func,
 
   path: PropTypes.string,
   searchLoading: PropTypes.bool,
 
   search: PropTypes.func.isRequired,
-  searchQueryChanged: PropTypes.func.isRequired
+  searchQueryChanged: PropTypes.func.isRequired,
+  openUrl: PropTypes.func
 }
 
 const mapStateToProps = createStructuredSelector({
@@ -86,7 +86,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = (dispatch) => ({
   search: (query) => dispatch(actions.search(query)),
   searchQueryChanged: (query) => dispatch(actions.searchQueryChanged(query)),
-  navigate: (a, b) => dispatch(actions.navigate(a, b))
+  openUrl: (u) => dispatch(actions.openUrl(u))
 })
 
 export default connect(

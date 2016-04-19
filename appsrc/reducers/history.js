@@ -3,7 +3,7 @@ import invariant from 'invariant'
 
 import {handleActions} from 'redux-actions'
 import {createStructuredSelector} from 'reselect'
-import {sortBy, omit, map, indexBy} from 'underline'
+import {sortBy, omit, map, indexBy, filter} from 'underline'
 
 const initialState = {
   items: {}
@@ -35,7 +35,8 @@ const reducer = handleActions({
 }, initialState)
 
 const selector = createStructuredSelector({
-  itemsByDate: (state) => state.items::sortBy((x) => -x.date)
+  itemsByDate: (state) => state.items::sortBy((x) => -x.date),
+  numActiveItems: (state) => state.items::filter((x) => x.active).length
 })
 
 export default (state, action) => {
