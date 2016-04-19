@@ -5,6 +5,7 @@ import config from '../util/config'
 import invariant from 'invariant'
 import {debounce} from 'underline'
 
+import localizer from '../localizer'
 import * as actions from '../actions'
 
 import {
@@ -73,15 +74,18 @@ function * _createWindow () {
       const store = require('../store').default
       let prefs = {}
       if (store) {
-        prefs = (store.getState()).preferences || {}
+        prefs = store.getState().preferences || {}
       }
       if (!prefs.gotMinimizeNotification) {
         queue.dispatch(actions.updatePreferences({
           gotMinimizeNotification: true
         }))
+
+        const i18n = store.getState().i18n
+        const t = localizer.getT(i18n.strings, i18n.lang)
         queue.dispatch(actions.notify({
-          title: `See you soon!`,
-          body: `itch is now running in the background. Use the menu to quit it completely.`
+          title: t('notification.see_you_soon.title'),
+          body: t('notification.see_you_soon.message')
         }))
       }
 

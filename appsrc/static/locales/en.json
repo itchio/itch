@@ -1,6 +1,6 @@
 {
-    "notification.see_you_soon.title": "",
-    "notification.see_you_soon.message": "",
+    "notification.see_you_soon.title": "See you soon!",
+    "notification.see_you_soon.message": "itch is now running in the background. Use the menu to quit it completely.",
     "usage_stats.description.platforms": "for {{platforms}}",
     "usage_stats.description.game": "A game",
     "usage_stats.description.tool": "A tool",
