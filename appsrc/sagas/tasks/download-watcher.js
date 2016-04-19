@@ -34,7 +34,8 @@ function * updateDownloadState () {
 }
 
 export function * downloadWatcher () {
-  while (true) {
+  // FIXME not ready
+  while (true && false) {
     try {
       yield call(updateDownloadState)
     } catch (e) {

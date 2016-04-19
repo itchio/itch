@@ -30,7 +30,14 @@ export function * importLegacyDBs () {
   const dbFiles = yield call(sf.glob, '*/db.jsonl', {cwd: usersDir})
 
   for (const dbFile of dbFiles) {
-    const userId = dbFile.split(path.sep)[0]
+    const matches = /[0-9]+/.exec(dbFile)
+    if (!matches) {
+      log(opts, `Could not extract user id from ${dbFile}, skipping`)
+      return
+    }
+
+    const userId = matches[0]
+    log(opts, `Importing db for user ${userId}`)
     const oldDBFilename = path.join(usersDir, dbFile)
     const obsoleteMarker = oldDBFilename + '.obsolete'
 
