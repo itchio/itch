@@ -1,0 +1,19 @@
+
+.library-meat {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow-y: auto;
+
+  padding: $grid-padding;
+
+  h2 {
+    margin: 20px 0;
+    text-align: center;
+    font-size: 22px;
+    display: none;
+
+    &.shown {
+      display: block;
+    }
+  }
+}

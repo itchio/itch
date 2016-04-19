@@ -12,7 +12,6 @@ export class GameGrid extends Component {
   render () {
     const {games, typedQuery = ''} = this.props
     const items = []
-    console.log('games = ', games, ' typedQuery = ', typedQuery)
 
     let predicate = (x) => true
 

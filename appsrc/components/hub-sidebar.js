@@ -68,7 +68,7 @@ export class HubSidebar extends Component {
   }
 
   me () {
-    const {me = {}} = this.props
+    const me = this.props.me || {}
     const {coverUrl = defaultImages.avatar, username = ''} = me
 
     return <section className='me'>

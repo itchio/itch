@@ -8,6 +8,7 @@
 @import 'hub/browser-meat';
 @import 'hub/game-meat';
 @import 'hub/preferences';
+@import 'hub/library';
 
 .hub-page {
   overflow: hidden;
@@ -38,12 +39,6 @@
 }
 
 .hub-grid {
-  flex-grow: 1;
-  flex-shrink: 1;
-
-  padding: $grid-padding;
-  overflow-y: auto;
-
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
