@@ -1,5 +1,6 @@
 
 import {takeEvery} from 'redux-saga'
+import {call} from 'redux-saga/effects'
 
 import {_queueGame} from './queue-game'
 import {_taskEnded} from './task-ended'
@@ -7,6 +8,7 @@ import {_downloadEnded} from './download-ended'
 import {_queueCaveReinstall} from './queue-cave-reinstall'
 import {_queueCaveUninstall} from './queue-cave-uninstall'
 import {_exploreCave} from './explore-cave'
+import {downloadWatcher} from './download-watcher'
 
 import {
   EXPLORE_CAVE,
@@ -24,6 +26,7 @@ export default function * tasksSaga () {
     takeEvery(QUEUE_CAVE_REINSTALL, _queueCaveReinstall),
     takeEvery(QUEUE_CAVE_UNINSTALL, _queueCaveUninstall),
     takeEvery(DOWNLOAD_ENDED, _downloadEnded),
-    takeEvery(TASK_ENDED, _taskEnded)
+    takeEvery(TASK_ENDED, _taskEnded),
+    call(downloadWatcher)
   ]
 }

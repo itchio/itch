@@ -65,11 +65,25 @@ const reducer = handleActions({
     const newDownloads = downloads::omit(id)
     const newFinishedDownloads = [downloads[id], ...finishedDownloads]
     return {...state, downloads: newDownloads, finishedDownloads: newFinishedDownloads}
+  },
+
+  DOWNLOAD_PRIORITIZE: (state, action) => {
+    const {id} = action.payload
+    const {downloadsByPriority} = state
+    const first = downloadsByPriority[0]
+
+    if (!first) {
+      return state
+    }
+
+
+    return state
   }
 }, initialState)
 
 const selector = createStructuredSelector({
   tasksByGameId: (state) => state.tasks::indexBy('gameId'),
+  downloadsByPriority: (state) => state.downloads::sortBy('priority')::pluck('id'),
   downloadsByGameId: (state) => state.downloads::indexBy('gameId'),
   downloadsByDate: (state) => state.downloads::sortBy('date')
 })
