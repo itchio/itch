@@ -44,7 +44,8 @@ export class Preferences extends Component {
         </div>
 
         <p className='install-locations-header'>{t('preferences.install_locations')}</p>
-        {this.installLocationTable()}
+        {false ? this.installLocationTable() : ''}
+        <div style={{fontSize: '14px', width: '70%'}}>Install locations still work, but ran out of time to finish the preferences ui. Thanks for your patience!</div>
       </form>
     </div>
   }
