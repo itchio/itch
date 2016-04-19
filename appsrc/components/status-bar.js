@@ -127,15 +127,15 @@ class StatusBar extends Component {
   }
 
   downloads () {
-    const {t, downloadItems, navigate} = this.props
+    const {t, downloadItems, finishedDownloads, navigate} = this.props
 
     const downloadClasses = classNames('downloads hint--right', {active: downloadItems.length > 0, bounce: this.state.downloadsBounce})
     const downloadHint = downloadItems.length === 0 ? t('status.downloads.no_active_downloads') : t('status.downloads.click_to_manage')
 
     return <div ref='downloads' className={downloadClasses} data-hint={downloadHint} onClick={() => navigate('downloads')}>
       <Icon icon='download'/>
-      { downloadItems.length > 0
-      ? <span className='bubble'>{downloadItems.length}</span>
+      { finishedDownloads.length > 0
+      ? <span className='bubble'>{finishedDownloads.length}</span>
       : '' }
     </div>
   }
