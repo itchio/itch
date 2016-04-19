@@ -80,7 +80,11 @@ export function * importLegacyDBs () {
 }
 
 export function * _preboot () {
-  yield call(importLegacyDBs)
+  try {
+    yield call(importLegacyDBs)
+  } catch (e) {
+    console.log(`Could not import legacy db: ${e.stack || e.message || e}`)
+  }
   yield put(boot())
 }
 
