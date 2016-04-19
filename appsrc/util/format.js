@@ -27,14 +27,22 @@ export function seconds (secs) {
   if (secs < 60) {
     return ['duration.minute']
   } else if (secs < 3600) {
-    return ['duration.minutes', {x: (secs / 60).toFixed()}]
+    return ['duration.minutes', {x: Math.ceil(secs / 60).toFixed()}]
   } else if (secs < 3600 * 2) {
     return ['duration.hour']
   } else {
-    return ['duration.hours', {x: (secs / 3600).toFixed()}]
+    return ['duration.hours', {x: Math.ceil(secs / 3600).toFixed()}]
   }
 }
 
 export const DATE_FORMAT = 'mmmm dS, yyyy @ HH:MM TT'
 
-export default {slugify, camelify, camelifyObject, seconds, DATE_FORMAT}
+export function price (currency, value) {
+  if (currency === 'USD') {
+    return `$${(value / 100).toFixed(2)}`
+  } else {
+    return '???'
+  }
+}
+
+export default {slugify, camelify, camelifyObject, seconds, DATE_FORMAT, price}

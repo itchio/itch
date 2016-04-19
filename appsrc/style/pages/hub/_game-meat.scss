@@ -30,6 +30,14 @@ $meat-cover-scale: 0.4;
 
     label {
       color: #B3B2B7; // FIXME: exceptions bad
+
+      .nice-ago {
+        color: $secondary-text-color; // sigh
+      }
+    }
+
+    .total-playtime .icon {
+      margin: 0 3px;
     }
   }
 

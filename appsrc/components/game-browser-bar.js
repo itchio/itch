@@ -4,17 +4,21 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from './connect'
 
 import defaultImages from '../constants/default-images'
+import platformData from '../constants/platform-data'
 import classificationActions from '../constants/classification-actions'
 
 import getDominantColor from './get-dominant-color'
 
 import GameActions from './game-actions'
+import interleave from './interleave'
 import BrowserControls from './browser-controls'
 import {pathToId} from '../util/navigation'
 
-import TimeAgo from 'react-timeago'
-import format, {DATE_FORMAT} from '../util/format'
-import dateFormat from 'dateformat'
+import {findWhere} from 'underline'
+
+import NiceAgo from './nice-ago'
+import Icon from './icon'
+import format from '../util/format'
 
 export class GameBrowserBar extends Component {
   constructor () {
@@ -59,7 +63,7 @@ export class GameBrowserBar extends Component {
   }
 
   aboveControls () {
-    const {t, cave, game = {}} = this.props
+    const {t, cave, game = {}, downloadKey} = this.props
     const {lastTouched = 0, secondsRun = 0} = (cave || {})
 
     const classification = game.classification || 'game'
@@ -69,37 +73,47 @@ export class GameBrowserBar extends Component {
 
     if (cave) {
       return <div className='game-stats'>
-        t(``)
-          { secondsRun > 0 && classAction === 'launch'
-            ? <div className='total-playtime'>
-              <span><label>{t(`usage_stats.has_${xed}_for_duration`)}</label> {t.format(format.seconds(secondsRun))}</span>
-              </div>
-            : '' }
+        { secondsRun > 0 && classAction === 'launch'
+          ? <div className='total-playtime'>
+            <span><label>{t(`usage_stats.has_${xed}_for_duration`)}</label> {t.format(format.seconds(secondsRun))}</span>
+            </div>
+          : '' }
         <div className='last-playthrough'>
         { lastTouched > 0
-          ? <span><label>{t(`usage_stats.last_${xed}_on`)}</label> {(
-            (Date.now() - lastTouched) > (60 * 1000)
-            ? <span className='hint--bottom' data-hint={dateFormat(lastTouchedDate, DATE_FORMAT)}><TimeAgo date={lastTouchedDate} title=''/></span>
-            : t('moment.now')
-          )}</span>
-          : '' }
+          ? <label>
+            {interleave(t, `usage_stats.last_${xed}_time_ago`, {time_ago: <NiceAgo date={lastTouchedDate}/>})}
+          </label>
+          : t(`usage_stats.never_${xed}`) }
         </div>
       </div>
     } else {
+      const platforms = []
+      if (classAction === 'launch') {
+        for (const p of platformData) {
+          if (game[p.field]) {
+            platforms.push(<Icon title={p.platform} icon={p.icon}/>)
+          }
+        }
+      }
+      const {minPrice, currency = 'USD'} = game
+
       return <div className='game-stats'>
-          { secondsRun > 0 && classAction === 'launch'
-            ? <div className='total-playtime'>
-              <span><label>{t(`usage_stats.has_${xed}_for_duration`)}</label> {t.format(format.seconds(secondsRun))}</span>
-              </div>
-            : '' }
-        <div className='last-playthrough'>
-        { lastTouched > 0
-          ? <span><label>{t(`usage_stats.last_${xed}_on`)}</label> {(
-            (Date.now() - lastTouched) > (60 * 1000)
-            ? <span className='hint--bottom' data-hint={dateFormat(lastTouchedDate, DATE_FORMAT)}><TimeAgo date={lastTouchedDate} title=''/></span>
-            : t('moment.now')
-          )}</span>
+        <div className='total-playtime'>
+        {t(`usage_stats.description.${classification}`)}
+        { (platforms.length > 0)
+          ? [' ', interleave(t, `usage_stats.description.platforms`, {platforms})]
           : '' }
+        {' — '}
+        { (downloadKey)
+          ? interleave(t, `usage_stats.description.bought_time_ago`, {time_ago: <NiceAgo date={downloadKey.createdAt}/>})
+          : (minPrice > 0
+            ? interleave(t, 'usage_stats.description.price', {
+              price: <label>
+                {format.price(currency, minPrice)}
+              </label>
+            })
+            : t('usage_stats.description.free_download')
+          ) }
         </div>
       </div>
     }
@@ -127,6 +141,7 @@ GameBrowserBar.propTypes = {
   gameId: PropTypes.number,
   game: PropTypes.object,
   cave: PropTypes.object,
+  downloadKey: PropTypes.object,
 
   t: PropTypes.func.isRequired
 }
@@ -144,8 +159,9 @@ const mapStateToProps = (state, props) => {
     (cs) => {
       const getGame = (market) => ((market || {}).games || {})[cs.gameId]
       const game = getGame(cs.userMarket) || getGame(cs.tabData)
+      const downloadKey = ((cs.userMarket || {}).downloadKeys || {})::findWhere({gameId: cs.gameId})
       const cave = cs.globalMarket.cavesByGameId[cs.gameId]
-      return {game, cave}
+      return {game, downloadKey, cave}
     }
   )
   return gameSelector
