@@ -128,9 +128,9 @@ const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) => ({
   navigateToGame: (game) => dispatch(actions.navigateToGame(game)),
-  prioritizeDownload: () => dispatch(actions.clearFinishedDownloads()),
-  pauseDownloads: () => dispatch(actions.clearFinishedDownloads()),
-  resumeDownloads: () => dispatch(actions.clearFinishedDownloads())
+  prioritizeDownload: (id) => dispatch(actions.prioritizeDownload(id)),
+  pauseDownloads: () => dispatch(actions.pauseDownloads()),
+  resumeDownloads: () => dispatch(actions.resumeDownloads())
 })
 
 export default connect(

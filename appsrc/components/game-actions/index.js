@@ -76,20 +76,23 @@ const makeMapStateToProps = () => {
       cave: (state, props) => state.globalMarket.cavesByGameId[props.game.id],
       downloadKeys: (state, props) => state.market.downloadKeys,
       task: (state, props) => state.tasks.tasksByGameId[props.game.id],
-      download: (state, props) => state.tasks.downloads[state.tasks.downloadsByGameId[props.game.id]],
+      download: (state, props) => state.tasks.downloadsByGameId[props.game.id],
       meId: (state, props) => state.session.credentials.me.id
     }),
     (happenings) => {
       const {game, cave, downloadKeys, task, download, meId} = happenings
+
       const animate = false
       const action = ClassificationActions[game.classification] || 'launch'
       const platformCompatible = (action === 'open' ? true : isPlatformCompatible(game))
-      const cancellable = /^download.*/.test(task)
+      const cancellable = false
       const downloadKey = downloadKeys::findWhere({gameId: game.id})
       const hasMinPrice = game.minPrice > 0
       // FIXME game admins
       const canEdit = game.userId === meId
       const mayDownload = !!(downloadKey || !hasMinPrice || canEdit)
+
+      const downloading = download && !download.finished
 
       return {
         cancellable,
@@ -99,8 +102,8 @@ const makeMapStateToProps = () => {
         mayDownload,
         platformCompatible,
         action,
-        task: (task ? task.name : (download ? 'download' : (cave ? 'idle' : null))),
-        progress: (task ? task.progress : (download ? download.progress : 0))
+        task: (task ? task.name : (downloading ? 'download' : (cave ? 'idle' : null))),
+        progress: (task ? task.progress : (downloading ? download.progress : 0))
       }
     }
   )

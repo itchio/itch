@@ -3,17 +3,41 @@ import {handleActions} from 'redux-actions'
 import {createStructuredSelector} from 'reselect'
 
 import invariant from 'invariant'
-import {indexBy, sortBy, omit, pluck} from 'underline'
+import {indexBy, where, sortBy, omit, pluck, filter} from 'underline'
 
 const initialState = {
   tasks: {},
   finishedTasks: [],
   downloads: {},
-  finishedDownloads: [],
   downloadsPaused: false
 }
 
+const uninstall = (state, action) => {
+  const {downloads} = state
+  const newDownloads = downloads::filter((x) => x.gameId !== action.gameId)::indexBy('id')
+  return {...state, downloads: newDownloads}
+}
+
+const updateSingle = (state, action, record) => {
+  const {downloads} = state
+  const {id} = record
+  invariant(id, 'valid download id in progress')
+  const download = downloads[id]
+  invariant(id, 'valid download being updated')
+  const newDownloads = {
+    ...downloads,
+    [id]: {
+      ...download,
+      ...record
+    }
+  }::indexBy('id')
+  return {...state, downloads: newDownloads}
+}
+
 const reducer = handleActions({
+  QUEUE_CAVE_UNINSTALL: uninstall,
+  QUEUE_CAVE_REINSTALL: uninstall,
+
   TASK_STARTED: (state, action) => {
     const {tasks} = state
     const task = action.payload
@@ -41,31 +65,27 @@ const reducer = handleActions({
     return {...state, tasks: newTasks, finishedTasks: newFinishedTasks}
   },
 
+  /* ************************************************* */
+  /*                    Woo downloads                  */
+  /* ************************************************* */
+
   DOWNLOAD_STARTED: (state, action) => {
     const {downloads} = state
     const download = action.payload
     invariant(download.id, 'valid download id in started')
-    const newDownloads = {...downloads, [download.id]: download}
+    const carryOver = downloads::filter((x) => x.gameId !== download.gameId)::indexBy('id')
+    const newDownloads = {...carryOver, [download.id]: download}
     return {...state, downloads: newDownloads}
   },
 
   DOWNLOAD_PROGRESS: (state, action) => {
-    const {downloads} = state
     const record = action.payload
-    const {id} = record
-    invariant(id, 'valid download id in progress')
-    const download = downloads[id]
-    const newDownloads = {...downloads, [id]: {...download, ...record}}
-    return {...state, downloads: newDownloads}
+    return updateSingle(state, action, record)
   },
 
   DOWNLOAD_ENDED: (state, action) => {
     const {id} = action.payload
-    invariant(id, 'valid download id in ended')
-    const {downloads, finishedDownloads} = state
-    const newDownloads = downloads::omit(id)
-    const newFinishedDownloads = [downloads[id], ...finishedDownloads]
-    return {...state, downloads: newDownloads, finishedDownloads: newFinishedDownloads}
+    return updateSingle(state, action, {id, finished: true})
   },
 
   DOWNLOAD_PRIORITIZE: (state, action) => {
@@ -75,18 +95,17 @@ const reducer = handleActions({
       // either no downloads, or only one. nothing to prioritize!
       return state
     }
+    const first = downloads[downloadsByOrder[0]]
+    // don't re-number priorities, just go into the negatives
+    const priority = first.priority - 1
 
-    const first = downloadsByOrder[0]
-    const download = downloads[id]
-    const record = {
-      priority: first.priority - 1
-    }
-    const newDownloads = {...downloads, [id]: {...download, ...record}}
-    return {...state, downloads: newDownloads}
+    return updateSingle(state, action, {id, priority})
   },
 
   CLEAR_FINISHED_DOWNLOADS: (state, action) => {
-    return {...state, finishedDownloads: []}
+    const {downloads} = state
+    const newDownloads = downloads::filter((x) => !x.finished)::indexBy('id')
+    return {...state, downloads: newDownloads}
   },
 
   PAUSE_DOWNLOADS: (state, action) => {
@@ -100,8 +119,9 @@ const reducer = handleActions({
 
 const selector = createStructuredSelector({
   tasksByGameId: (state) => state.tasks::indexBy('gameId'),
-  downloadsByOrder: (state) => state.downloads::sortBy('order')::pluck('id'),
-  downloadsByGameId: (state) => state.downloads::indexBy('gameId')::pluck('id')
+  downloadsByOrder: (state) => state.downloads::filter((x) => !x.finished)::sortBy('order')::pluck('id'),
+  finishedDownloads: (state) => state.downloads::where({finished: true})::sortBy('order')::pluck('id'),
+  downloadsByGameId: (state) => state.downloads::indexBy('gameId')
 })
 
 export default (state, action) => {

@@ -7,7 +7,7 @@ $download-progress-color-in-a: rgba(255, 255, 255, .1);
 $download-progress-color-in-b: rgba(255, 255, 255, .4);
 
 .downloads-page {
-  padding: $grid-padding;
+  padding: 0 $grid-padding * 2;
   flex-grow: 1;
 
   .finished-bar {
@@ -31,6 +31,10 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
         cursor: pointer;
       }
     }
+  }
+
+  .game-actions .main-action {
+    padding: 3px 10px;
   }
 
   li {

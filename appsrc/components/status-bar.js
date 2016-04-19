@@ -116,7 +116,7 @@ class StatusBar extends Component {
 
   componentWillReceiveProps (nextProps) {
     // such pure, much react
-    if (nextProps.downloadItems.length > this.props.downloadItems.length) {
+    if (nextProps.finishedDownloads.length > this.props.finishedDownloads.length) {
       this.setState({...this.state, downloadsBounce: true})
       setTimeout(() => this.setState({...this.state, downloadsBounce: false}), 500)
     }
@@ -160,6 +160,7 @@ StatusBar.propTypes = {
   offlineMode: PropTypes.bool,
   historyItems: PropTypes.array,
   downloadItems: PropTypes.array,
+  finishedDownloads: PropTypes.array,
   selfUpdate: PropTypes.shape({
     status: PropTypes.string,
     error: PropTypes.string,
@@ -182,6 +183,7 @@ const mapStateToProps = createStructuredSelector({
   offlineMode: (state) => state.preferences.offlineMode,
   historyItems: (state) => state.history.itemsByDate,
   downloadItems: (state) => state.tasks.downloadsByOrder,
+  finishedDownloads: (state) => state.tasks.finishedDownloads,
   selfUpdate: (state) => state.selfUpdate
 })
 
