@@ -5,17 +5,7 @@ import config from '../util/config'
 import invariant from 'invariant'
 import {debounce} from 'underline'
 
-import {
-  prepareQuit,
-  quitElectronApp,
-  windowReady,
-  windowDestroyed,
-  windowFocusChanged,
-  windowFullscreenChanged,
-  windowBoundsChanged,
-  quit,
-  notify
-} from '../actions'
+import * as actions from '../actions'
 
 import {
   WINDOW_BOUNDS_CHANGED,
@@ -80,7 +70,20 @@ function * _createWindow () {
     }
 
     if (!window.isMinimized()) {
-      queue.dispatch(notify({title: `See you soon!`, body: `itch is now running in the background. Use the menu to quit it completely.`}))
+      const store = require('../store').default
+      let prefs = {}
+      if (store) {
+        prefs = (store.getState()).preferences || {}
+      }
+      if (!prefs.gotMinimizeNotification) {
+        queue.dispatch(actions.updatePreferences({
+          gotMinimizeNotification: true
+        }))
+        queue.dispatch(actions.notify({
+          title: `See you soon!`,
+          body: `itch is now running in the background. Use the menu to quit it completely.`
+        }))
+      }
 
       // minimize first to convey the fact that the app still lives
       // in the tray - however, it'll take a lot less RAM because the
@@ -103,7 +106,7 @@ function * _createWindow () {
   })
 
   window.on('closed', (e) => {
-    queue.dispatch(windowDestroyed())
+    queue.dispatch(actions.windowDestroyed())
   })
 
   window.on('focus', (e) => {
@@ -111,19 +114,19 @@ function * _createWindow () {
       clearTimeout(destroyTimeout)
       destroyTimeout = null
     }
-    queue.dispatch(windowFocusChanged({focused: true}))
+    queue.dispatch(actions.windowFocusChanged({focused: true}))
   })
 
   window.on('blur', (e) => {
-    queue.dispatch(windowFocusChanged({focused: false}))
+    queue.dispatch(actions.windowFocusChanged({focused: false}))
   })
 
   window.on('enter-full-screen', (e) => {
-    queue.dispatch(windowFullscreenChanged({fullscreen: true}))
+    queue.dispatch(actions.windowFullscreenChanged({fullscreen: true}))
   })
 
   window.on('leave-full-screen', (e) => {
-    queue.dispatch(windowFullscreenChanged({fullscreen: false}))
+    queue.dispatch(actions.windowFullscreenChanged({fullscreen: false}))
   })
 
   const debouncedBounds = (() => {
@@ -131,8 +134,8 @@ function * _createWindow () {
       return
     }
     const bounds = window.getBounds()
-    queue.dispatch(windowBoundsChanged({bounds}))
-  })::debounce(500)
+    queue.dispatch(actions.windowBoundsChanged({bounds}))
+  })::debounce(2000)
 
   window.on('move', (e) => {
     debouncedBounds()
@@ -144,7 +147,7 @@ function * _createWindow () {
 
   window.webContents.on('dom-ready', (e) => {
     createLock = false
-    queue.dispatch(windowReady({id: window.id}))
+    queue.dispatch(actions.windowReady({id: window.id}))
     window.show()
   })
 
@@ -191,7 +194,7 @@ export function * _quitWhenMain () {
 
   if (focused) {
     if (focused.id === mainId) {
-      yield put(quit())
+      yield put(actions.quit())
     } else {
       yield call(::focused.close)
     }
@@ -208,8 +211,8 @@ export function * _prepareQuit () {
 }
 
 export function * _quit () {
-  yield put(prepareQuit())
-  yield put(quitElectronApp())
+  yield put(actions.prepareQuit())
+  yield put(actions.quitElectronApp())
 }
 
 export default function * mainWindowSaga () {

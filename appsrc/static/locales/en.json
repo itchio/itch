@@ -1,4 +1,6 @@
 {
+    "notification.see_you_soon.title": "",
+    "notification.see_you_soon.message": "",
     "usage_stats.description.platforms": "for {{platforms}}",
     "usage_stats.description.game": "A game",
     "usage_stats.description.tool": "A tool",

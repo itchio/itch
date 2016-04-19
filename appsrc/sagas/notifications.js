@@ -10,7 +10,7 @@ import {notifyHtml5} from '../actions'
 import {SET_PROGRESS, BOUNCE, NOTIFY} from '../constants/action-types'
 
 // OSX already shows the app's icon
-const DEFAULT_ICON = os.platform() === 'darwin' ? null : `./static/images/tray/${app.getName()}.png`
+const DEFAULT_ICON = os.platform() === 'darwin' ? null : `./static/images/tray/${app.getName()}-64.png`
 
 const selectMainWindowId = (state) => state.ui.mainWindow.id
 
