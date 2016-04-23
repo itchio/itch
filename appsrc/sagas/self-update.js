@@ -52,7 +52,13 @@ const DISMISS_TIME = 5 * 1000
 
 const QUIET_TIME = 2 * 1000
 
+const CHECK_FOR_SELF_UPDATES = env.name === 'production' || process.env.UP_TO_SCRATCH === '1'
+
 export function * _boot () {
+  if (!CHECK_FOR_SELF_UPDATES) {
+    return
+  }
+
   const queue = createQueue('self-update')
 
   try {
