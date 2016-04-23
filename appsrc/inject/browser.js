@@ -80,7 +80,8 @@ function itchInject () {
     const $page = $('.view_game_page')
     if ($page.length) {
       $page.find('.buy_row').prev('h2').hide()
-      $page.find('.game_frame, .buy_row, .donate, .uploads').hide()
+      $page.find('.buy_row, .donate, .uploads').hide()
+      $page.find('.game_frame').remove()
     }
   }
 
