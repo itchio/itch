@@ -68,7 +68,7 @@ import {
 } from '../actions'
 
 import os from '../util/os'
-const osx = os.itch_platform() === 'osx'
+const osx = os.itchPlatform() === 'osx'
 
 function convertMenuAction (label) {
   switch (label) {
