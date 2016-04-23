@@ -63,12 +63,16 @@ import {
   changeUser,
   checkForSelfUpdate,
   reportIssue,
-  closeTab
+  closeTab,
+  closeTabOrAuxWindow
 } from '../actions'
+
+import os from '../util/os'
+const osx = os.itch_platform() === 'osx'
 
 function convertMenuAction (label) {
   switch (label) {
-    case 'menu.file.close_tab': return closeTab()
+    case 'menu.file.close_tab': return osx ? closeTabOrAuxWindow() : closeTab()
     case 'menu.file.close_window': return hideWindow()
     case 'menu.file.quit': return quitWhenMain()
     case 'menu.file.preferences': return navigate('preferences')

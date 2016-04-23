@@ -13,6 +13,7 @@ import {
   BOOT,
   FOCUS_WINDOW,
   HIDE_WINDOW,
+  CLOSE_TAB_OR_AUX_WINDOW,
   QUIT_WHEN_MAIN,
   QUIT_ELECTRON_APP,
   PREPARE_QUIT,
@@ -183,12 +184,21 @@ export function * _focusWindow () {
 }
 
 export function * _hideWindow () {
-  const id = yield select((state) => state.ui.mainWindow.id)
-
-  if (id) {
-    const window = BrowserWindow.fromId(id)
-    invariant(window, 'window still exists')
+  const window = BrowserWindow.getFocusedWindow()
+  if (window) {
     yield call(::window.close)
+  }
+}
+
+export function * _closeTabOrAuxWindow () {
+  const focused = BrowserWindow.getFocusedWindow()
+  if (focused) {
+    const id = yield select((state) => state.ui.mainWindow.id)
+    if (focused.id === id) {
+      yield put(actions.closeTab())
+    } else {
+      yield call(::focused.close)
+    }
   }
 }
 
@@ -224,6 +234,7 @@ export default function * mainWindowSaga () {
     takeEvery(WINDOW_BOUNDS_CHANGED, _windowBoundsChanged),
     takeEvery(FOCUS_WINDOW, _focusWindow),
     takeEvery(HIDE_WINDOW, _hideWindow),
+    takeEvery(CLOSE_TAB_OR_AUX_WINDOW, _closeTabOrAuxWindow),
     takeEvery(BOOT, _focusWindow),
     takeEvery(QUIT_WHEN_MAIN, _quitWhenMain),
     takeEvery(QUIT_ELECTRON_APP, _quitElectronApp),
