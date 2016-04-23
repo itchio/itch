@@ -106,20 +106,20 @@ test('api', t => {
       ['get', '/search/games', {query: 'baz'}]
     )
     test_api(
-      'downloadKeyUploads', ['foobar'],
-      ['get', '/download-key/foobar/uploads']
+      'downloadUpload', [null, 99],
+      ['get', '/upload/99/download']
     )
     test_api(
-      'downloadUploadWithKey', ['foobar', 99],
+      'downloadUpload', [{id: 'foobar'}, 99],
       ['get', '/download-key/foobar/download/99']
     )
     test_api(
-      'gameUploads', [33],
+      'listUploads', [null, 33],
       ['get', '/game/33/uploads']
     )
     test_api(
-      'downloadUpload', [99],
-      ['get', '/upload/99/download']
+      'listUploads', [{id: 'foobar'}, 33],
+      ['get', '/download-key/foobar/uploads']
     )
   }
 })
