@@ -42,15 +42,19 @@ export function * _queueGame (action) {
         game,
         gameId: game.id,
         upload,
+        totalSize: upload.size,
         destPath: pathmaker.downloadPath(upload),
         downloadKey,
         reason: 'install'
       })
     } else {
+      const upload = uploads[0]
+
       yield call(startDownload, {
         game,
         gameId: game.id,
-        upload: uploads[0],
+        upload: upload,
+        totalSize: upload.size,
         destPath: pathmaker.downloadPath(uploads[0]),
         downloadKey,
         reason: 'install'

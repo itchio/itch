@@ -66,11 +66,10 @@ async function downloadPatches (out, opts) {
       const signaturePath = patchPath + '.sig'
       log(opts, `Downloading build ${entry.id}'s patch to ${patchPath}`)
 
-      const progressOffset = byteOffset / totalSize
-      const progressScale = entry.patchSize / totalSize
       const onProgress = (payload) => {
-        out.emit('progress', ((payload.percent / 100) * progressScale) + progressOffset)
+        out.emit('progress', (byteOffset + (payload.percent / 100 * entry.patchSize)) / totalSize)
       }
+      log(opts, `byteOffset = ${byteOffset}, entry.patchSize = ${entry.patchSize}`)
 
       const api = client.withKey(credentials.key)
       const buildRes = await api.downloadBuild(downloadKey, upload.id, entry.id)
@@ -85,7 +84,10 @@ async function downloadPatches (out, opts) {
 
       previousPatch = { entry, patchPath, signaturePath, byteOffset }
       byteOffset += entry.patchSize
-      out.emit('progress', byteOffset / totalSize)
+
+      const progress = byteOffset / totalSize
+      console.log('emitting progress: ', progress)
+      out.emit('progress', progress)
     })())
 
     await Promise.all(promises)

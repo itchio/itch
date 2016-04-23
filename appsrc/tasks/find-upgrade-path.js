@@ -55,7 +55,7 @@ export default async function start (out, opts) {
 
   let totalSize = 0
   upgradePath::each((entry) => {
-    totalSize += entry.totalSize
+    totalSize += entry.patchSize
   })
 
   return {upgradePath, totalSize}

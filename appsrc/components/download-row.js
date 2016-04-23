@@ -62,7 +62,7 @@ class DownloadRow extends Component {
         <GameActions game={game} showSecondary/>
       </div>
     }
-    const {upload, date, progress = 0, reason} = item
+    const {date, progress = 0, reason} = item
 
     const progressInnerStyle = {
       width: (progress * 100) + '%'
@@ -73,7 +73,7 @@ class DownloadRow extends Component {
     }
 
     const perc = (progress * 100).toFixed(1) + '%'
-    const sizeLeft = humanize.fileSize(upload.size * (1 - progress))
+    const sizeLeft = humanize.fileSize(item.totalSize * (1 - progress))
     const reasonText = this.reasonText(reason)
 
     return <div>

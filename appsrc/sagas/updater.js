@@ -163,6 +163,7 @@ function * checkForGameUpdate (cave) {
           game,
           gameId: game.id,
           upload,
+          totalSize: upload.size,
           destPath: archivePath,
           downloadKey,
           reason: 'update'

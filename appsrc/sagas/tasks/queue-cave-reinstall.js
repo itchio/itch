@@ -35,6 +35,7 @@ export function * _queueCaveReinstall (action) {
     game,
     gameId: game.id,
     upload,
+    totalSize: upload.size,
     destPath: archivePath,
     downloadKey,
     reason: 'reinstall'
