@@ -1,0 +1,14 @@
+{
+  "name": "itch-docs",
+  "version": "1.0.0",
+  "description": "The complete manual to the itch app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "dependencies": {
+    "gitbook-plugin-algolia": "^1.0.5",
+    "gitbook-plugin-anchors": "^0.5.0"
+  }
+}

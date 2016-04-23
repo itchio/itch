@@ -3,5 +3,13 @@
   "description": "A complete guide to the itch app, both for players and tinkerers",
   "author": "Amos Wenger",
   "language": "en",
-  "gitbook": "3.0.0-pre.5"
+  "gitbook": "3.0.0-pre.9",
+  "plugins": ["anchors", "algolia"],
+  "pluginsConfig": {
+    "algolia": {
+      "index":         "itch-docs",
+      "applicationID": "W9CJ1LJIRZ",
+      "publicKey":     "90da828ba063c6f41c6be4b0f269c955"
+    }
+  }
 }
