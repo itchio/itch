@@ -86,7 +86,6 @@ async function downloadPatches (out, opts) {
       byteOffset += entry.patchSize
 
       const progress = byteOffset / totalSize
-      console.log('emitting progress: ', progress)
       out.emit('progress', progress)
     })())
 
