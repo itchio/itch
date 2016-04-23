@@ -85,13 +85,15 @@ async function downloadPatches (out, opts) {
 
       previousPatch = { entry, patchPath, signaturePath, byteOffset }
       byteOffset += entry.patchSize
+      out.emit('progress', byteOffset / totalSize)
     })())
 
     await Promise.all(promises)
   }
 
+  out.emit('progress', 1)
   await doApply(previousPatch)
-  log(opts, `Are we all done applying? :o`)
+  log(opts, `All done applying!`)
 }
 
 export default async function start (out, opts) {
