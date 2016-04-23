@@ -181,3 +181,12 @@ document.addEventListener('DOMContentLoaded', () => {
       break
   }
 })
+
+window.addEventListener('keydown', (e) => {
+  switch (e.keyIdentifier) {
+    case 'F12':
+      if (!e.shiftKey) return
+      sendMessage('open-devtools')
+      break
+  }
+})

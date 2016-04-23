@@ -17,23 +17,13 @@ export class BrowserControls extends Component {
     this.onAddressField = ::this.onAddressField
   }
 
-  openDevTools () {
-    const {webview} = this.refs
-    if (!webview) return
-
-    const webContents = webview.getWebContents()
-    if (webContents && !webContents.isDestroyed()) {
-      webContents.openDevTools({detach: true})
-    }
-  }
-
   render () {
     const {editingURL} = this.state
     const {browserState} = this.props
     const {canGoBack, canGoForward, loading, url = ''} = browserState
-    const {goBack, goForward, stop, reload, openDevTools} = this.props
+    const {goBack, goForward, stop, reload} = this.props
 
-    return <div className='browser-controls' onDoubleClick={openDevTools}>
+    return <div className='browser-controls'>
       <span className={classNames('icon icon-arrow-left', {disabled: !canGoBack})} onClick={goBack}/>
       <span className={classNames('icon icon-arrow-right', {disabled: !canGoForward})} onClick={goForward}/>
       {
@@ -93,7 +83,6 @@ BrowserControls.propTypes = {
   goForward: PropTypes.func.isRequired,
   stop: PropTypes.func.isRequired,
   reload: PropTypes.func.isRequired,
-  openDevTools: PropTypes.func.isRequired,
   loadURL: PropTypes.func.isRequired,
 
   tabPath: PropTypes.string,
