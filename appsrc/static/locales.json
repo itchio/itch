@@ -32,6 +32,7 @@
     { "value": "sr", "label": "Cрпски језик" },
     { "value": "sv", "label": "Svenska" },
     { "value": "uk", "label": "Українська" },
-    { "value": "zh", "label": "中文" }
+    { "value": "zh", "label": "中文" },
+    { "value": "☃☃", "label": "☃☃☃☃☃☃☃☃" }
   ]
 }
