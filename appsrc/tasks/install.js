@@ -78,7 +78,7 @@ export default async function start (out, opts) {
     throw new Transition({to: 'download', reason: 'missing-download'})
   }
 
-  let imtime = cave.installedArchiveMtime
+  let imtime = Date.parse(cave.installedArchiveMtime)
   let amtime = archiveStat.mtime
   log(opts, `comparing mtimes, installed = ${imtime}, archive = ${amtime}`)
 

@@ -226,7 +226,7 @@ function makeTabContextMenu (queue) {
           submenu: [
             {
               label: t('grid.item.check_for_update'),
-              click: () => queue.dispatch(checkForGameUpdate(cave))
+              click: () => queue.dispatch(checkForGameUpdate({caveId: cave.id}))
             },
             {
               label: t('grid.item.open_debug_log'),

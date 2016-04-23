@@ -50,6 +50,30 @@ const self = {
     return res
   },
 
+  /* Apply a wharf patch at ${patchPath} in-place into ${outPath}, while checking with ${signaturePath} */
+  apply: async function (opts) {
+    pre: { // eslint-disable-line
+      typeof opts === 'object'
+      typeof opts.patchPath === 'string'
+      typeof opts.outPath === 'string'
+      typeof opts.signaturePath === 'string'
+    }
+
+    let {emitter, patchPath, outPath, signaturePath} = opts
+    let err = null
+    let onerror = (e) => err = e
+
+    let res = await spawn({
+      command: 'butler',
+      args: ['-j', 'apply', patchPath, '--inplace', outPath, '--signature', signaturePath],
+      onToken: self.parseButlerStatus::partial(opts, onerror),
+      emitter
+    })
+
+    if (err) { throw err }
+    return res
+  },
+
   /* Extracts tar archive ${archivePath} into directory ${destPath} */
   untar: async function (opts) {
     pre: { // eslint-disable-line

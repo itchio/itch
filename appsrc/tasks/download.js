@@ -1,8 +1,11 @@
 
+import Promise from 'bluebird'
+
 import invariant from 'invariant'
 import path from 'path'
 
 import sf from '../util/sf'
+import pathmaker from '../util/pathmaker'
 
 import mklog from '../util/log'
 const log = mklog('tasks/download')
@@ -12,7 +15,91 @@ import client from '../util/api'
 import butler from '../util/butler'
 import urlParser from 'url'
 
+import apply from './apply'
+
+async function downloadPatches (out, opts) {
+  const {globalMarket, cave, gameId, totalSize, upgradePath, upload, logger, credentials, downloadKey} = opts
+  invariant(typeof globalMarket === 'object', 'downloadPatches must have globalMarket')
+  invariant(typeof gameId === 'number', 'downloadPatches must have gameId')
+  invariant(typeof upgradePath === 'object', 'downloadPatches must have an upgradePath')
+  invariant(typeof totalSize === 'number', 'downloadPatches must have a totalSize')
+  invariant(typeof upload === 'object', 'downloadPatches must have upload object')
+  invariant(typeof cave === 'object', 'downloadPatches must have cave')
+  invariant(credentials && credentials.key, 'downloadPatches has valid key')
+
+  let previousPatch
+  let byteOffset = 0
+
+  const cavePath = pathmaker.appPath(cave)
+
+  const doApply = async (patch) => {
+    log(opts, `Applying ${patch.entry.id} into ${cavePath}`)
+    const applyOpts = {
+      name: 'apply',
+      globalMarket,
+      cave,
+      gameId,
+      buildId: patch.entry.id,
+      patchPath: patch.patchPath,
+      signaturePath: patch.signaturePath,
+      outPath: cavePath,
+      logger
+    }
+    await apply(out, applyOpts)
+    log(opts, `Done applying ${patch.entry.id}`)
+  }
+
+  for (const entry of upgradePath) {
+    log(opts, `Dealing with entry ${JSON.stringify(entry, null, 2)}`)
+
+    const promises = []
+    if (previousPatch) {
+      promises.push(doApply(previousPatch))
+    }
+
+    promises.push((async () => {
+      const patchPath = pathmaker.downloadPath({
+        ...upload,
+        filename: 'patch.pwr',
+        buildId: entry.id
+      })
+      const signaturePath = patchPath + '.sig'
+      log(opts, `Downloading build ${entry.id}'s patch to ${patchPath}`)
+
+      const progressOffset = byteOffset / totalSize
+      const progressScale = entry.patchSize / totalSize
+      const onProgress = (payload) => {
+        out.emit('progress', ((payload.percent / 100) * progressScale) + progressOffset)
+      }
+
+      const api = client.withKey(credentials.key)
+      const buildRes = await api.downloadBuild(downloadKey, upload.id, entry.id)
+
+      log(opts, `got signature + patch download urls`)
+
+      await Promise.all([
+        butler.dl({url: buildRes.patch.url, dest: patchPath, onProgress}),
+        butler.dl({url: buildRes.signature.url, dest: signaturePath})
+      ])
+      log(opts, `downloaded both patch + signature`)
+
+      previousPatch = { entry, patchPath, signaturePath, byteOffset }
+      byteOffset += entry.patchSize
+    })())
+
+    await Promise.all(promises)
+  }
+
+  await doApply(previousPatch)
+  log(opts, `Are we all done applying? :o`)
+}
+
 export default async function start (out, opts) {
+  if (opts.upgradePath) {
+    log(opts, `Got an upgrade path, downloading patches`)
+    return await downloadPatches(out, opts)
+  }
+
   const {upload, gameId, destPath, downloadKey, credentials} = opts
   invariant(gameId, 'startDownload opts must be linked to gameId')
   invariant(typeof upload === 'object', 'startDownload opts must have upload object')
@@ -20,15 +107,11 @@ export default async function start (out, opts) {
   invariant(credentials && credentials.key, 'download has valid key')
 
   // Get download URL
-  const keyClient = client.withKey(credentials.key)
+  const api = client.withKey(credentials.key)
 
   let url
   try {
-    if (downloadKey) {
-      url = (await keyClient.downloadUploadWithKey(downloadKey.id, upload.id)).url
-    } else {
-      url = (await keyClient.downloadUpload(upload.id)).url
-    }
+    url = (await api.downloadUpload(downloadKey, upload.id)).url
   } catch (e) {
     if (e.errors && e.errors[0] === 'invalid upload') {
       const e = new Error('invalid reason')

@@ -34,7 +34,11 @@ export function downloadPath (upload) {
   invariant(upload.id, 'upload has id')
   invariant(upload.filename, 'upload has filename')
   const ext = /\.[^\.]+$/.exec(upload.filename) || ''
-  return path.join(app.getPath('userData'), 'downloads', '' + upload.id + ext)
+  let slug = upload.id
+  if (upload.buildId) {
+    slug = `${slug}-${upload.buildId}`
+  }
+  return path.join(app.getPath('userData'), 'downloads', '' + slug + ext)
 }
 
 export function globalDbPath () {

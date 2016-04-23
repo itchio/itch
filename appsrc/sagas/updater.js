@@ -1,6 +1,7 @@
 
 import {EventEmitter} from 'events'
 import invariant from 'invariant'
+import humanize from 'humanize-plus'
 
 import {takeLatest} from 'redux-saga'
 import {fork, take, put, call, select} from 'redux-saga/effects'
@@ -31,6 +32,7 @@ const DELAY_BETWEEN_GAMES = 25
 const DELAY_BETWEEN_PASSES = 30 * 60 * 1000
 
 import findUpload from '../tasks/find-upload'
+import findUpgradePath from '../tasks/find-upgrade-path'
 
 function * _checkForGameUpdates () {
   // may be interrupted by a saga cancellation
@@ -75,6 +77,7 @@ function * checkForGameUpdate (cave) {
   invariant(credentials, 'has credentials')
 
   const market = getUserMarket()
+  const globalMarket = getGlobalMarket()
   let game
   try {
     game = yield call(fetch.gameLazily, market, credentials, cave.gameId)
@@ -106,22 +109,53 @@ function * checkForGameUpdate (cave) {
         return
       }
 
+      let hasUpgrade = false
+
       if (cave.uploadId && cave.buildId) {
+        log(opts, `Doing wharf-aware update check, from build ${cave.buildId}`)
         const upload = uploads::findWhere({id: cave.uploadId})
         if (!upload || !upload.buildId) {
           log(opts, `Uh oh, our wharf-enabled upload disappeared`)
         } else {
           if (upload.buildId !== cave.buildId) {
-            log(opts, `Got new build available: ${upload.buildId} > ${cave.BuildId}`)
-            yield call()
+            log(opts, `Got new build available: ${upload.buildId} > ${cave.buildId}`)
+            hasUpgrade = true
+
+            const upgradeOpts = {
+              ...taskOpts,
+              upload,
+              gameId: game.id,
+              currentBuildId: cave.buildId
+            }
+            try {
+              const {upgradePath, totalSize} = yield call(findUpgradePath, out, upgradeOpts)
+              log(opts, `Got ${upgradePath.length} patches to download, ${humanize.fileSize(totalSize)} total`)
+              const archivePath = pathmaker.downloadPath(upload)
+
+              yield call(startDownload, {
+                game,
+                gameId: game.id,
+                upload,
+                destPath: archivePath,
+                downloadKey,
+                reason: 'update',
+                incremental: true,
+                globalMarket,
+                upgradePath,
+                totalSize,
+                cave
+              })
+              return
+            } catch (e) {
+              log(opts, `While getting upgrade path: ${e.message || e}`)
+            }
           }
-          return
         }
       }
 
       const upload = uploads[0]
 
-      if (upload.id !== cave.uploadId) {
+      if (hasUpgrade || upload.id !== cave.uploadId) {
         log(opts, `Got a new upload for ${game.title}: ${upload.filename}`)
         const archivePath = pathmaker.downloadPath(upload)
 
@@ -135,7 +169,7 @@ function * checkForGameUpdate (cave) {
         })
       }
     } catch (e) {
-      log(opts, `While looking for update: `)
+      log(opts, `While looking for update: ${e.stack || e}`)
     }
   } else {
     log(opts, `Can't check for updates for ${game.title}, not visible by current user?`)

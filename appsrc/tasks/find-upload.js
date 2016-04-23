@@ -73,14 +73,12 @@ export default async function start (out, opts) {
   const grabKey = () => market.getEntities('downloadKeys')::findWhere({gameId})
   const {downloadKey = grabKey()} = opts
 
-  let uploads
   if (downloadKey) {
     log(opts, 'bought game, using download key')
-    uploads = (await keyClient.downloadKeyUploads(downloadKey.id)).uploads
   } else {
     log(opts, 'no download key, seeking available uploads')
-    uploads = (await keyClient.gameUploads(gameId)).uploads
   }
+  let {uploads} = (await keyClient.listUploads(downloadKey, gameId))
 
   log(opts, `got a list of ${uploads.length} uploads`)
 

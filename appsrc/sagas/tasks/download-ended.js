@@ -9,8 +9,8 @@ export function * _downloadEnded (action) {
   const {downloadOpts} = action.payload
   let {err} = action.payload
 
-  const {reason} = downloadOpts
-  if (reason === 'install' || reason === 'update') {
+  const {reason, incremental} = downloadOpts
+  if ((reason === 'install' || reason === 'update') && !incremental) {
     if (err) {
       log(opts, 'Download had an error, should notify user')
     } else {

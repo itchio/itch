@@ -149,19 +149,41 @@ export class AuthenticatedClient {
     return await this.request('get', '/search/games', {query}, {games: ensureArray})
   }
 
-  async downloadKeyUploads (downloadKeyId) {
-    return await this.request('get', `/download-key/${downloadKeyId}/uploads`, {}, {uploads: ensureArray})
+  // list uploads
+
+  async listUploads (downloadKey, gameId) {
+    if (downloadKey) {
+      return await this.request('get', `/download-key/${downloadKey.id}/uploads`, {}, {uploads: ensureArray})
+    } else {
+      return await this.request('get', `/game/${gameId}/uploads`, {}, {uploads: ensureArray})
+    }
   }
 
-  async downloadUploadWithKey (downloadKeyId, uploadId) {
-    return await this.request('get', `/download-key/${downloadKeyId}/download/${uploadId}`)
+  // download uploads
+
+  async downloadUpload (downloadKey, uploadId) {
+    if (downloadKey) {
+      return await this.request('get', `/download-key/${downloadKey.id}/download/${uploadId}`)
+    } else {
+      return await this.request('get', `/upload/${uploadId}/download`)
+    }
   }
 
-  async gameUploads (game) {
-    return await this.request('get', `/game/${game}/uploads`, {}, {uploads: ensureArray})
+  // wharf-related endpoints (bit of a mess tbh)
+
+  async findUpgrade (downloadKey, uploadId, currentBuildId) {
+    if (downloadKey) {
+      return await this.request('get', `/download-key/${downloadKey.id}/upgrade/${uploadId}/${currentBuildId}`)
+    } else {
+      return await this.request('get', `/upload/${uploadId}/upgrade/${currentBuildId}`)
+    }
   }
 
-  async downloadUpload (uploadId) {
-    return await this.request('get', `/upload/${uploadId}/download`)
+  async downloadBuild (downloadKey, uploadId, buildId) {
+    if (downloadKey) {
+      return await this.request('get', `/download-key/${downloadKey.id}/download/${uploadId}/builds/${buildId}`)
+    } else {
+      return await this.request('get', `/upload/${uploadId}/download/builds/${buildId}`)
+    }
   }
 }
