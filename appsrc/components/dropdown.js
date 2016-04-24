@@ -16,15 +16,16 @@ export class Dropdown extends Component {
   }
 
   render () {
-    const {t, items, inner, className = ''} = this.props
+    const {t, dispatch, items, inner, className = ''} = this.props
 
     const {open} = this.state
     const dropdownClasses = classNames('dropdown', {active: open})
 
     const children = items::map((item) => {
-      const {label, icon, onClick} = item
+      const {label, icon, action} = item
+      let {onClick = () => dispatch(action)} = item
 
-      return <section className='dropdown-item' key={label + '-' + icon} onClick={onClick}>
+      return <section className='dropdown-item' key={label + '-' + icon} onClick={() => { onClick(); this.close() }}>
         <Icon icon={icon}/>
         {t.apply(null, label)}
       </section>
@@ -62,13 +63,14 @@ Dropdown.propTypes = {
     icon: PropTypes.string
   })),
 
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired
 }
 
 const listening = listensToClickOutside(Dropdown)
 
 const mapStateToProps = (state) => ({})
-const mapDispatchToProps = (dispatch) => ({})
+const mapDispatchToProps = (dispatch) => ({dispatch})
 
 export default connect(
   mapStateToProps,

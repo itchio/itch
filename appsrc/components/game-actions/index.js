@@ -20,7 +20,7 @@ class GameActions extends Component {
 
   render () {
     const {props} = this
-    const {showSecondary} = props
+    const {showSecondary, CustomSecondary} = props
 
     const classes = classNames('game-actions', `action-${props.action}`, `task-${props.task}`, {
       incompatible: !props.platformCompatible,
@@ -31,6 +31,9 @@ class GameActions extends Component {
       <MainAction {...props}/>
       { showSecondary
         ? <SecondaryActions {...props}/>
+        : '' }
+      { CustomSecondary
+        ? <CustomSecondary {...props}/>
         : '' }
     </div>
   }

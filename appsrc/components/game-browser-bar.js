@@ -20,6 +20,17 @@ import NiceAgo from './nice-ago'
 import Icon from './icon'
 import format from '../util/format'
 
+import listSecondaryActions from './game-actions/list-secondary-actions'
+
+class GameDropdown extends Component {
+  render () {
+    const {items} = listSecondaryActions(this.props)
+    const inner = <Icon icon='triangle-down' classes='secondary-dropdown'/>
+
+    return <Dropdown items={items} inner={inner}/>
+  }
+}
+
 export class GameBrowserBar extends Component {
   constructor () {
     super()
@@ -40,7 +51,6 @@ export class GameBrowserBar extends Component {
       </div>
       {this.gameStats()}
       {this.gameActions()}
-      {this.dropdown()}
     </div>
   }
 
@@ -48,7 +58,7 @@ export class GameBrowserBar extends Component {
     const {game} = this.props
     if (!game) return ''
 
-    return <GameActions game={game}/>
+    return <GameActions game={game} CustomSecondary={GameDropdown}/>
   }
 
   gameStats () {
@@ -106,31 +116,6 @@ export class GameBrowserBar extends Component {
         </div>
       </div>
     }
-  }
-
-  dropdown () {
-    const items = [
-      {
-        icon: 'rocket',
-        label: ['sidebar.view_creator_profile']
-      },
-      {
-        icon: 'fire',
-        label: ['sidebar.view_community_profile']
-      },
-      {
-        icon: 'cog',
-        label: ['sidebar.preferences']
-      },
-      {
-        icon: 'exit',
-        label: ['sidebar.log_out']
-      }
-    ]
-
-    const inner = <Icon icon='triangle-down'/>
-
-    return <Dropdown items={items} inner={inner}/>
   }
 
   componentWillReceiveProps () {

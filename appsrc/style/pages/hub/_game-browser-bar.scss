@@ -43,7 +43,6 @@ $meat-cover-scale: 0.4;
   .game-actions {
     flex-shrink: 0;
     padding-right: 0;
-    flex-direction: row-reverse;
     height: 55px;
 
     .main-action {
@@ -96,15 +95,19 @@ $meat-cover-scale: 0.4;
     }
   }
 
-  .icon-triangle-down {
-    transition: transform 0.2s;
+  .secondary-dropdown {
+    transition: background 0.2s;
     font-size: 22px;
-    padding: 24px 23px 24px 25px;
+    padding: 11px 15px 12px 15px;
+    margin: 0 7px 0 11px;
+    border-radius: 4px;
+    @include secondary-link;
     -webkit-filter: brightness(90%);
 
     &:hover {
-      transform: scale(1.08);
       -webkit-filter: none;
+      background: #424242;
+      transform: scale(1.08);
       cursor: pointer;
     }
 
@@ -114,7 +117,7 @@ $meat-cover-scale: 0.4;
   }
 
   .dropdown.active {
-    left: -200px;
-    top: 10px;
+    left: -300px;
+    top: 15px;
   }
 }
