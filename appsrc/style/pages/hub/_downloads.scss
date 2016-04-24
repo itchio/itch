@@ -37,6 +37,16 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
     padding: 3px 10px;
   }
 
+  .game-actions {
+    &.task-download, &.task-install, &.task-configure, &.task-find-upload, &.task-launch, &.uninstalled {
+      .main-action {
+        text-align: center;
+        font-weight: normal;
+        @include discreet-button;
+      }
+    }
+  }
+
   li {
     line-height: 1.8;
     margin: 10px 0 30px 0;
