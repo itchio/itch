@@ -1,6 +1,6 @@
 
 .hub-bread {
-  flex-basis: 70px;
+  flex-basis: 90px;
   padding: 0 $grid-padding;
 
   display: flex;
@@ -31,12 +31,12 @@
     padding: 0 10px;
 
     h2 {
-      font-size: 23px;
+      font-size: 24px;
       text-shadow: 0 0 2px $input-text-shadow-color;
     }
 
     h3 {
-      font-size: 14px;
+      font-size: 16px;
     }
 
     h2, h3 {
@@ -54,8 +54,6 @@
 
       input[type=search] {
         @include heavy-input;
-        font-size: 16px;
-        padding: 8px 9px 7px 9px;
         transition: all 0.2s;
         width: 200px;
         text-indent: 20px;
@@ -78,16 +76,43 @@
     &.filler {
       flex-grow: 1;
     }
-  }
 
-  .description {
-    flex-shrink: 1;
+    &.description {
+      flex-shrink: 1;
+      display: flex;
+      align-items: center;
+      padding: 0;
+      padding-left: 5px;
+
+      .description-image {
+        flex-shrink: 0;
+        background-size: cover;
+        margin-right: 20px;
+        border-radius: 2px;
+        background-color: black;
+        background-size: cover;
+        background-position: 50% 50%;
+        box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
+
+        &.user {
+          width: 60px;
+          height: 60px;
+        }
+        &.game {
+          width: 100px;
+          height: 72px;
+        }
+      }
+
+      .description-titles {
+        overflow: hidden;
+      }
+    }
   }
 }
 
 .hub-bread .description {
   h3 {
-    font-size: 14px;
     color: $secondary-text-color;
   }
 

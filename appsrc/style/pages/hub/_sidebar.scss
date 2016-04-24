@@ -184,33 +184,4 @@
       border-radius: 2px;
     }
   }
-
-  .dropdown-container {
-    position: relative;
-  }
-
-  .dropdown {
-    background-color: lighten($sidebar-background-color, 5%);
-    border: 1px solid $sidebar-border-color;
-    border-radius: 0 0 4px 4px;
-    box-shadow: 0 0 8px $sidebar-background-color;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 1px;
-    visibility: hidden;
-
-    &.active {
-      visibility: visible;
-    }
-
-    section  {
-      border-radius: 1px;
-      margin: 0;
-    }
-
-    section:hover {
-      background-color: lighten($sidebar-entry-focused-background-color, 5%);
-    }
-  }
 }

@@ -24,7 +24,7 @@ export class Dropdown extends Component {
     const children = items::map((item) => {
       const {label, icon, onClick} = item
 
-      return <section key={label + '-' + icon} onClick={onClick}>
+      return <section className='dropdown-item' key={label + '-' + icon} onClick={onClick}>
         <Icon icon={icon}/>
         {t.apply(null, label)}
       </section>

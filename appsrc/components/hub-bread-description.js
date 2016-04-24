@@ -5,15 +5,26 @@ import {connect} from './connect'
 class HubBreadDescription extends Component {
   render () {
     const {t, path, tabData} = this.props
-    const {label = 'Loading...', subtitle} = tabData[path] || {}
+    const {label = 'Loading...', subtitle, image, imageClass = ''} = tabData[path] || {}
 
     const sub = t.format(subtitle)
+    let imageStyle
+    if (image) {
+      imageStyle = {
+        backgroundImage: `url("${image}")`
+      }
+    }
 
     return <section className='description'>
-      <h2>{t.format(label)}</h2>
-      { sub && sub.length > 0
-        ? <h3>{sub}</h3>
+      { image
+        ? <div className={`description-image ${imageClass}`} style={imageStyle}></div>
         : '' }
+      <div className='description-titles'>
+        <h2>{t.format(label)}</h2>
+        { sub && sub.length > 0
+          ? <h3>{sub}</h3>
+          : '' }
+      </div>
     </section>
   }
 }

@@ -3,7 +3,6 @@ import {createSelector, createStructuredSelector} from 'reselect'
 import React, {Component, PropTypes} from 'react'
 import {connect} from './connect'
 
-import defaultImages from '../constants/default-images'
 import platformData from '../constants/platform-data'
 import classificationActions from '../constants/classification-actions'
 
@@ -13,6 +12,7 @@ import GameActions from './game-actions'
 import interleave from './interleave'
 import BrowserControls from './browser-controls'
 import {pathToId} from '../util/navigation'
+import Dropdown from './dropdown'
 
 import {findWhere} from 'underline'
 
@@ -35,34 +35,23 @@ export class GameBrowserBar extends Component {
     }
 
     return <div className='browser-bar game-browser-bar' style={barStyle}>
-      {this.beforeControls()}
       <div className='controls'>
-        {this.aboveControls()}
         <BrowserControls {...this.props}/>
       </div>
-      {this.afterControls()}
+      {this.gameStats()}
+      {this.gameActions()}
+      {this.dropdown()}
     </div>
   }
 
-  beforeControls () {
+  gameActions () {
     const {game} = this.props
     if (!game) return ''
 
-    const coverUrl = game.coverUrl || defaultImages.thumbnail
-    const coverStyle = {
-      backgroundImage: `url('${coverUrl}')`
-    }
-    return <div className='game-cover' style={coverStyle}/>
+    return <GameActions game={game}/>
   }
 
-  afterControls () {
-    const {game} = this.props
-    if (!game) return ''
-
-    return <GameActions game={game} showSecondary/>
-  }
-
-  aboveControls () {
+  gameStats () {
     const {t, cave, game = {}, downloadKey} = this.props
     const {lastTouched = 0, secondsRun = 0} = (cave || {})
 
@@ -117,6 +106,31 @@ export class GameBrowserBar extends Component {
         </div>
       </div>
     }
+  }
+
+  dropdown () {
+    const items = [
+      {
+        icon: 'rocket',
+        label: ['sidebar.view_creator_profile']
+      },
+      {
+        icon: 'fire',
+        label: ['sidebar.view_community_profile']
+      },
+      {
+        icon: 'cog',
+        label: ['sidebar.preferences']
+      },
+      {
+        icon: 'exit',
+        label: ['sidebar.log_out']
+      }
+    ]
+
+    const inner = <Icon icon='triangle-down'/>
+
+    return <Dropdown items={items} inner={inner}/>
   }
 
   componentWillReceiveProps () {

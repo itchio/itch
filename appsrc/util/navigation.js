@@ -52,7 +52,9 @@ export function gameToTabData (game) {
       [game.id]: game
     },
     label: game.title,
-    subtitle: game.shortText
+    subtitle: game.shortText,
+    image: game.coverUrl,
+    imageClass: 'game'
   }
 }
 
@@ -61,7 +63,9 @@ export function userToTabData (user) {
     users: {
       [user.id]: user
     },
-    label: user.displayName || user.username
+    label: user.displayName || user.username,
+    image: user.coverUrl,
+    imageClass: 'user'
   }
 }
 

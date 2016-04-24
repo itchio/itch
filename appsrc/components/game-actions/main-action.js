@@ -20,7 +20,7 @@ class MainAction extends Component {
     let child = ''
 
     if (task) {
-      child = <span className='normal-state'>
+      child = <span className='state normal-state'>
         <TaskIcon task={task} animate={animate} action={action}/>
         {this.status()}
         { cancellable
@@ -32,18 +32,18 @@ class MainAction extends Component {
     } else {
       if (platformCompatible) {
         if (mayDownload) {
-          child = <span>
+          child = <span className='state'>
             <Icon icon='install'/>
             {t('grid.item.install')}
           </span>
         } else {
-          child = <span>
+          child = <span className='state'>
             <Icon icon='cart'/>
             {t('grid.item.buy_now')}
           </span>
         }
       } else {
-        return <span className='not-platform-compatible'>
+        return <span className='state not-platform-compatible'>
           {t('grid.item.not_platform_compatible', {platform})}
         </span>
       }

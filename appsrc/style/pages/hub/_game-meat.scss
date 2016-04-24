@@ -2,27 +2,12 @@
 $meat-cover-scale: 0.4;
 
 .game-browser-bar {
-  .game-actions, .controls {
-    padding: 0 20px;
-  }
-
-  .game-cover {
-    flex-shrink: 0;
-    border-radius: 2px;
-    width: $grid-item-width * $meat-cover-scale;
-    height: $grid-item-height * $meat-cover-scale;
-
-    background-color: black;
-    background-size: cover;
-    background-position: 50% 50%;
-    box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
-  }
-
   .game-stats {
     display: flex;
+    flex-direction: column;
     font-size: 15px;
     color: $secondary-text-color;
-    padding: 4px 0 10px 0;
+    padding: 8px 15px;
 
     div {
       margin-right: 12px;
@@ -39,22 +24,48 @@ $meat-cover-scale: 0.4;
     .total-playtime .icon {
       margin: 0 3px;
     }
+
+    .total-playtime, .last-playthrough {
+      font-size: 14px;
+      padding: 5px 0;
+      margin-right: 5px;
+
+      &:first-child {
+        padding-top: 0;
+      }
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
   }
 
   .game-actions {
     flex-shrink: 0;
     padding-right: 0;
     flex-direction: row-reverse;
+    height: 55px;
 
     .main-action {
       transition: background .2s;
       width: 200px;
       text-align: center;
-      font-size: 17px;
-      padding: 15px 20px;
+      font-size: 16px;
+      padding: 13px 20px;
+
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+
+      .state {
+        display: flex;
+        align-items: center;
+      }
 
       .icon {
-        display: none;
+        font-size: 120%;
+        margin-right: 10px;
+        margin-left: -10px;
       }
 
       &.branded {
@@ -64,7 +75,7 @@ $meat-cover-scale: 0.4;
       }
     }
 
-    &.task-download, &.task-install, &.task-configure, &.task-find-upload, &.task-launch {
+    &.task-download, &.task-install, &.task-configure, &.task-find-upload, &.task-launch, &.uninstalled {
       .main-action {
         margin-right: 0;
         flex-grow: 1;
@@ -83,5 +94,27 @@ $meat-cover-scale: 0.4;
         margin: 0 8px;
       }
     }
+  }
+
+  .icon-triangle-down {
+    transition: transform 0.2s;
+    font-size: 22px;
+    padding: 24px 23px 24px 25px;
+    -webkit-filter: brightness(90%);
+
+    &:hover {
+      transform: scale(1.08);
+      -webkit-filter: none;
+      cursor: pointer;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  .dropdown.active {
+    left: -200px;
+    top: 10px;
   }
 }

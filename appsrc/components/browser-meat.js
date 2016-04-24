@@ -144,7 +144,7 @@ export class BrowserMeat extends Component {
     return <div className='browser-meat'>
       {bar}
       { DONT_SHOW_WEBVIEWS
-        ? <div>Webviews disabled</div>
+        ? <div style={{padding: '10px'}}>Webviews disabled</div>
         : <webview ref='webview' src={url} partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/> }
     </div>
   }
