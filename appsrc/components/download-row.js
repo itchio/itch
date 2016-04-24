@@ -33,9 +33,15 @@ class DownloadRow extends Component {
   }
 
   controls () {
-    const {active, first, paused, item} = this.props
+    const {active, first, paused, item, retry} = this.props
     const {resumeDownloads, pauseDownloads, prioritizeDownload} = this.props
-    const {id} = item
+    const {id, err} = item
+
+    if (!active && err) {
+      return <div className='controls'>
+        <span className='icon icon-repeat' onClick={() => retry(item.downloadOpts)}></span>
+      </div>
+    }
 
     // FIXME rush
     if (!active || true) {
@@ -54,8 +60,19 @@ class DownloadRow extends Component {
   }
 
   progress () {
-    const {active, item} = this.props
+    const {t, active, item} = this.props
+    const {err} = item
+
     if (!active) {
+      if (err) {
+        return <div className='error-message'>
+          {t('status.downloads.download_error')}
+          <div className='timeago'>
+            {err.message || ('' + err)}
+          </div>
+        </div>
+      }
+
       const {game} = item
       return <div>
         {game.title}
@@ -119,10 +136,12 @@ DownloadRow.propTypes = {
   }),
 
   t: PropTypes.func.isRequired,
+  err: PropTypes.any,
   navigateToGame: PropTypes.func.isRequired,
   prioritizeDownload: PropTypes.func.isRequired,
   pauseDownloads: PropTypes.func.isRequired,
-  resumeDownloads: PropTypes.func.isRequired
+  resumeDownloads: PropTypes.func.isRequired,
+  retry: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({})
@@ -131,7 +150,8 @@ const mapDispatchToProps = (dispatch) => ({
   navigateToGame: (game) => dispatch(actions.navigateToGame(game)),
   prioritizeDownload: (id) => dispatch(actions.prioritizeDownload(id)),
   pauseDownloads: () => dispatch(actions.pauseDownloads()),
-  resumeDownloads: () => dispatch(actions.resumeDownloads())
+  resumeDownloads: () => dispatch(actions.resumeDownloads()),
+  retry: (downloadOpts) => dispatch(actions.retryDownload({downloadOpts}))
 })
 
 export default connect(

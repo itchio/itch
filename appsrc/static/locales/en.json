@@ -220,6 +220,7 @@
     "status.offline_mode.inactive": "Click to enable offline mode",
     "status.history.no_active_items": "No history items require your attention.",
     "status.history.click_to_expand": "Click to expand history.",
+    "status.downloads.download_error": "Download error",
     "status.downloads.no_active_downloads": "No active downloads",
     "status.downloads.category.finished": "Finished downloads",
     "status.downloads.clear_finished": "Clear",

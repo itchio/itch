@@ -84,8 +84,8 @@ const reducer = handleActions({
   },
 
   DOWNLOAD_ENDED: (state, action) => {
-    const {id} = action.payload
-    return updateSingle(state, action, {id, finished: true})
+    const {id, err} = action.payload
+    return updateSingle(state, action, {id, finished: true, err})
   },
 
   DOWNLOAD_PRIORITIZE: (state, action) => {

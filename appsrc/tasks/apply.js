@@ -11,10 +11,7 @@ export default async function apply (out, opts) {
   invariant(signaturePath, 'apply must have signaturePath')
   invariant(outPath, 'apply must have outPath')
 
-  const code = await butler.apply(opts)
-  if (code !== 0) {
-    throw new Error(`butler apply exited with code ${code}`)
-  }
+  await butler.apply(opts)
 
   globalMarket.saveEntity('caves', cave.id, {buildId})
 

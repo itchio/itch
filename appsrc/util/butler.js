@@ -15,7 +15,12 @@ const self = {
   parseButlerStatus: function (opts, onerror, token) {
     const {onProgress = noop} = opts
 
-    const status = JSON.parse(token)
+    let status
+    try {
+      status = JSON.parse(token)
+    } catch (err) {
+      log(opts, `Couldn't parse line of butler output: ${token}`)
+    }
     switch (status.type) {
       case 'log':
         return log(opts, `butler: ${status.message}`)
@@ -47,6 +52,7 @@ const self = {
     })
 
     if (err) { throw err }
+    if (res !== 0) { throw new Error(`butler dl exited with code ${res}`) }
     return res
   },
 
@@ -71,6 +77,7 @@ const self = {
     })
 
     if (err) { throw err }
+    if (res !== 0) { throw new Error(`butler apply exited with code ${res}`) }
     return res
   },
 
@@ -94,6 +101,7 @@ const self = {
     })
 
     if (err) { throw err }
+    if (res !== 0) { throw new Error(`butler untar exited with code ${res}`) }
     return res
   },
 
@@ -109,6 +117,7 @@ const self = {
     })
 
     if (err) { throw err }
+    if (res !== 0) { throw new Error(`butler wipe exited with code ${res}`) }
     return res
   },
 
@@ -128,6 +137,7 @@ const self = {
     })
 
     if (err) { throw err }
+    if (res !== 0) { throw new Error(`butler mkdir exited with code ${res}`) }
     return res
   },
 
@@ -149,6 +159,7 @@ const self = {
     })
 
     if (err) { throw err }
+    if (res !== 0) { throw new Error(`butler ditto exited with code ${res}`) }
     return res
   }
 }

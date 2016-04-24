@@ -28,7 +28,8 @@ export function * startDownload (downloadOpts) {
   log(opts, `Should download ${upload.id}, dl key ? ${downloadKey}`)
 
   const id = uuid.v4()
-  yield put(actions.downloadStarted({id, ...downloadOpts}))
+  // FIXME: wasteful but easy
+  yield put(actions.downloadStarted({id, ...downloadOpts, downloadOpts}))
 
   let err
   try {
@@ -55,7 +56,8 @@ export function * startDownload (downloadOpts) {
     log(opts, `Download threw`)
     err = e.task || e
   } finally {
-    log(opts, `Download ended, err: ${err ? err.stack || JSON.stringify(err) : '<none>'}`)
+    err = err ? err.message || err : '<none>'
+    log(opts, `Download ended, err: ${err}`)
     yield put(actions.downloadEnded({id, err, downloadOpts}))
   }
 

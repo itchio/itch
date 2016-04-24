@@ -48,6 +48,9 @@ function spawn (opts) {
       if (cancelled) {
         reject(new Cancelled())
       } else {
+        if (code === null && signal) {
+          reject(new Error(`killed by signal ${signal}`))
+        }
         resolve(code)
       }
     })

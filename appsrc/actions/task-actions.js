@@ -14,7 +14,8 @@ import {
 
   PRIORITIZE_DOWNLOAD,
   PAUSE_DOWNLOADS,
-  RESUME_DOWNLOADS
+  RESUME_DOWNLOADS,
+  RETRY_DOWNLOAD
 } from '../constants/action-types'
 
 export const taskStarted = createAction(TASK_STARTED)
@@ -32,3 +33,4 @@ export const clearFinishedDownloads = createAction(CLEAR_FINISHED_DOWNLOADS)
 export const prioritizeDownload = createAction(PRIORITIZE_DOWNLOAD)
 export const pauseDownloads = createAction(PAUSE_DOWNLOADS)
 export const resumeDownloads = createAction(RESUME_DOWNLOADS)
+export const retryDownload = createAction(RETRY_DOWNLOAD)
