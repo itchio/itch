@@ -1,6 +1,6 @@
 
 .hub-bread {
-  flex-basis: 90px;
+  flex-basis: 70px;
   padding: 0 $grid-padding;
 
   display: flex;
@@ -28,19 +28,15 @@
   section {
     flex-shrink: 0;
     overflow: hidden;
-    padding: 10px;
+    padding: 0 10px;
 
     h2 {
-      font-size: 26px;
+      font-size: 23px;
       text-shadow: 0 0 2px $input-text-shadow-color;
-
-      .icon {
-        font-size: 70%;
-      }
     }
 
     h3 {
-      font-size: 16px;
+      font-size: 14px;
     }
 
     h2, h3 {
@@ -58,6 +54,8 @@
 
       input[type=search] {
         @include heavy-input;
+        font-size: 16px;
+        padding: 8px 9px 7px 9px;
         transition: all 0.2s;
         width: 200px;
         text-indent: 20px;
@@ -89,7 +87,7 @@
 
 .hub-bread .description {
   h3 {
-    font-size: $base-text-size;
+    font-size: 14px;
     color: $secondary-text-color;
   }
 

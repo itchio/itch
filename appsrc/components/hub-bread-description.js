@@ -7,9 +7,13 @@ class HubBreadDescription extends Component {
     const {t, path, tabData} = this.props
     const {label = 'Loading...', subtitle} = tabData[path] || {}
 
+    const sub = t.format(subtitle)
+
     return <section className='description'>
       <h2>{t.format(label)}</h2>
-      <h3>{t.format(subtitle)}</h3>
+      { sub && sub.length > 0
+        ? <h3>{sub}</h3>
+        : '' }
     </section>
   }
 }
