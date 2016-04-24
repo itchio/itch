@@ -33,6 +33,6 @@
     { "value": "sv", "label": "Svenska" },
     { "value": "uk", "label": "Українська" },
     { "value": "zh", "label": "中文" },
-    { "value": "☃☃", "label": "☃☃☃☃☃☃☃☃" }
+    { "value": "_englitch", "label": "☃☃☃☃☃☃☃☃" }
   ]
 }
