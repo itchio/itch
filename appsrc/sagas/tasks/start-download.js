@@ -56,8 +56,8 @@ export function * startDownload (downloadOpts) {
     log(opts, `Download threw`)
     err = e.task || e
   } finally {
-    err = err ? err.message || err : '<none>'
-    log(opts, `Download ended, err: ${err}`)
+    err = err ? err.message || err : null
+    log(opts, `Download ended, err: ${err || '<none>'}`)
     yield put(actions.downloadEnded({id, err, downloadOpts}))
   }
 
