@@ -30,7 +30,7 @@ export default async function launch (out, opts) {
   log(opts, `entry point: ${entryPoint}`)
 
   const {width, height} = cave.windowSize
-  log(opts, `starting at reoslution ${width}x${height}`)
+  log(opts, `starting at resolution ${width}x${height}`)
 
   let win = new BrowserWindow({
     title: game.title,
