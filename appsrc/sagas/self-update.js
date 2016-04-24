@@ -85,7 +85,7 @@ export function * _boot () {
 
   autoUpdater.on('checking-for-update', () => queue.dispatch(checkingForSelfUpdate()))
   autoUpdater.on('update-available', () => queue.dispatch(selfUpdateAvailable()))
-  autoUpdater.on('update-not-available', () => queue.dispatch(selfUpdateNotAvailable()))
+  autoUpdater.on('update-not-available', () => queue.dispatch(selfUpdateNotAvailable({uptodate: true})))
   autoUpdater.on('update-downloaded', (ev, releaseNotes, releaseName) => {
     log(opts, `update downloaded, release name: '${releaseName}'`)
     log(opts, `release notes: \n'${releaseNotes}'`)
