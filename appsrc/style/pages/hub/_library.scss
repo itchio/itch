@@ -1,11 +1,8 @@
 
 .library-meat, .dashboard-meat {
-  flex-grow: 1;
-  flex-shrink: 1;
-  overflow-y: auto;
+  @include meat;
 
   padding: $grid-padding;
-  padding-bottom: 40px;
 
   h2 {
     margin: 10px 0 15px 0;

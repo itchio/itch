@@ -1,9 +1,6 @@
 
 .history-page {
-  padding: $grid-padding;
-  margin-bottom: $status-bar-height;
-  overflow-y: auto;
-  flex-grow: 1;
+  @include meat;
 
   li {
     line-height: 1.8;

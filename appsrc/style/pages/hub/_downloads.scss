@@ -7,10 +7,8 @@ $download-progress-color-in-a: rgba(255, 255, 255, .1);
 $download-progress-color-in-b: rgba(255, 255, 255, .4);
 
 .downloads-page {
+  @include meat;
   padding: 0 $grid-padding * 2;
-  margin-bottom: $status-bar-height;
-  overflow-y: auto;
-  flex-grow: 1;
 
   .finished-bar {
     display: flex;
