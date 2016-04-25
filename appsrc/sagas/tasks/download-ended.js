@@ -46,7 +46,7 @@ export function * _downloadEnded (action) {
       let {err} = yield call(startTask, taskOpts)
 
       if (err) {
-        log(opts, `Error in configure: ${err}`)
+        log(opts, `Error in install: ${err}`)
         return
       }
     }

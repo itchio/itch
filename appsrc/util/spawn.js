@@ -30,21 +30,37 @@ function spawn (opts) {
 
   let child = childProcess.spawn(command, args, spawnOpts)
   let cancelled = false
+  let cbErr = null
 
   if (opts.onToken) {
     let splitter = child.stdout.pipe(new LFTransform()).pipe(StreamSplitter(split))
     splitter.encoding = 'utf8'
-    splitter.on('token', opts.onToken)
+    splitter.on('token', (tok) => {
+      try {
+        opts.onToken(tok)
+      } catch (err) {
+        cbErr = err
+      }
+    })
   }
 
   if (opts.onErrToken) {
     let splitter = child.stderr.pipe(new LFTransform()).pipe(StreamSplitter(split))
     splitter.encoding = 'utf8'
-    splitter.on('token', opts.onErrToken)
+    splitter.on('token', (tok) => {
+      try {
+        opts.onToken(tok)
+      } catch (err) {
+        cbErr = err
+      }
+    })
   }
 
   return new Promise((resolve, reject) => {
     child.on('close', (code, signal) => {
+      if (cbErr) {
+        reject(cbErr)
+      }
       if (cancelled) {
         reject(new Cancelled())
       } else {

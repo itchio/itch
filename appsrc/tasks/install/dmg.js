@@ -11,7 +11,7 @@ import path from 'path'
 import mklog from '../../util/log'
 const log = mklog('installers/dmg')
 
-let HFS_RE = /(.*)\s+Apple_HFS\s+(.*)\s*$/
+const HFS_RE = /(\S*)\s*(Apple_HFS)?\s+(.*)\s*$/
 
 let self = {
   install: async function (out, opts) {
@@ -113,7 +113,7 @@ let self = {
         let hfsMatches = HFS_RE.exec(tok)
         if (hfsMatches) {
           device = hfsMatches[1].trim()
-          mountpoint = hfsMatches[2].trim()
+          mountpoint = hfsMatches[3].trim()
           log(opts, `found dev / mountpoint: '${device}' '${mountpoint}'`)
         }
       }

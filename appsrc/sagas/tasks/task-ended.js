@@ -27,7 +27,7 @@ export function * _taskEnded (action) {
       upload
     })
     if (err) {
-      log(opts, `Error in configure: ${err}`)
+      log(opts, `Error in task ${name}: ${err}`)
       return
     }
   }
