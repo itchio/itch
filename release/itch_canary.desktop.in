@@ -6,6 +6,6 @@ TryExec=itch_canary
 Exec=itch_canary %U
 Icon=itch_canary
 Terminal=false
-Categories=Game;Utility;PackageManager
+Categories=Game
 MimeType=x-scheme-handler/itchio
 Comment="Install and play itch.io games easily"
