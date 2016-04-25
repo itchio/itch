@@ -8,6 +8,8 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
 
 .downloads-page {
   padding: 0 $grid-padding * 2;
+  margin-bottom: $status-bar-height;
+  overflow-y: auto;
   flex-grow: 1;
 
   .finished-bar {
