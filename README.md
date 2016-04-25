@@ -11,7 +11,7 @@ goal is not to replace the itch.io website.
 
 ## Screenshots
 
-![](http://static.itch.io/images/app-screenshot@2x.png)
+![](https://cloud.githubusercontent.com/assets/7998310/14798987/8681895a-0b3a-11e6-84b0-1724544649d3.png)
 
 ## Downloads
 
