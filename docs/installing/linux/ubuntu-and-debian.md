@@ -38,6 +38,7 @@ echo $ITCHIO_DEB | sudo tee /etc/apt/sources.list.d/itchio.list
 
 **Replace `{distribution}` with one the following codenames:**
 
+  * `xenial` for Ubuntu 16.04
   * `wily` for Ubuntu 15.10
   * `vivid` for Ubuntu 15.04, etc.
   * `jessie` for Debian 8.x
