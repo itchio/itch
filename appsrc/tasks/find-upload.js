@@ -31,26 +31,31 @@ export function filterUploads (action, uploads) {
 
 export function scoreUpload (upload) {
   let filename = upload.filename.toLowerCase()
-  let score = 50
+  let score = 500
 
   /* Preferred formats */
   if (/\.(zip|7z)$/i.test(filename)) {
-    score += 10
+    score += 100
   }
 
   /* Usually not what you want (usually set of sources on Linux) */
   if (/\.tar\.(gz|bz2|xz)$/i.test(filename)) {
-    score -= 10
+    score -= 100
   }
 
   /* Definitely not something we can launch */
   if (/soundtrack/.test(filename)) {
-    score -= 100
+    score -= 1000
   }
 
   /* Native uploads are preferred */
   if (upload.type === 'html') {
-    score -= 40
+    score -= 400
+  }
+
+  /* Demos are penalized (if we have access to non-demo files) */
+  if (upload.demo) {
+    score -= 50
   }
 
   return {...upload, score}
