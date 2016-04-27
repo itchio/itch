@@ -1,6 +1,7 @@
 
 .history-page {
   @include meat;
+  padding: $grid-padding * 2 $grid-padding * 1.5;
 
   li {
     line-height: 1.8;
