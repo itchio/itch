@@ -60,16 +60,20 @@ export default async function start (out, opts) {
 
   const startedAt = Date.now()
   globalMarket.saveEntity('caves', cave.id, {lastTouched: startedAt})
+
+  let interval
+  const UPDATE_PLAYTIME_INTERVAL = 10
   try {
+    interval = setInterval(() => {
+      const now = Date.now()
+      const previousSecondsRun = globalMarket.getEntity('caves', cave.id).secondsRun || 0
+      const newSecondsRun = UPDATE_PLAYTIME_INTERVAL + previousSecondsRun
+      globalMarket.saveEntity('caves', cave.id, {secondsRun: newSecondsRun, lastTouched: now})
+    }, UPDATE_PLAYTIME_INTERVAL * 1000)
     await launcher(out, opts)
   } finally {
+    clearInterval(interval)
     const now = Date.now()
-    const secondsRun = (now - startedAt) / 1000
-
-    const previousSecondsRun = globalMarket.getEntity('caves', cave.id).secondsRun || 0
-    const newSecondsRun = secondsRun + previousSecondsRun
-
-    console.log(`Just played for ${secondsRun.toFixed()}s, new total playtime: ${newSecondsRun.toFixed()}s`)
-    globalMarket.saveEntity('caves', cave.id, {secondsRun: newSecondsRun, lastTouched: now})
+    globalMarket.saveEntity('caves', cave.id, {lastTouched: now})
   }
 }
