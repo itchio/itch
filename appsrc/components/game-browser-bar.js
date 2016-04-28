@@ -25,7 +25,7 @@ import listSecondaryActions from './game-actions/list-secondary-actions'
 class GameDropdown extends Component {
   render () {
     const {items} = listSecondaryActions(this.props)
-    const inner = <Icon icon='triangle-down' classes='secondary-dropdown'/>
+    const inner = <Icon icon='triangle-down' classes={['secondary-dropdown']}/>
 
     return <Dropdown items={items} inner={inner}/>
   }
