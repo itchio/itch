@@ -47,9 +47,7 @@ export class HubMeat extends Component {
       return <History/>
     } else if (path === 'preferences') {
       return <Preferences/>
-    } else if (/^search/.test(path)) {
-      return <SearchMeat query={pathToId(path)}/>
-    } else if (/^(url|games|users|collections)/.test(path)) {
+    } else if (/^(url|games|users|collections|search)/.test(path)) {
       return <UrlMeat key={tabId} tabId={tabId} path={path}/>
     } else {
       return '?'

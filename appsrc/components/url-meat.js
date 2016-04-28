@@ -6,6 +6,7 @@ import {pathToId} from '../util/navigation'
 import urls from '../constants/urls'
 
 import BrowserMeat from './browser-meat'
+import querystring from 'querystring'
 
 export class UrlMeat extends Component {
   render () {
@@ -33,6 +34,9 @@ export class UrlMeat extends Component {
     } else if (/^collection/.test(path)) {
       const collectionId = +pathToId(path)
       url = urls.itchio + '/c/' + collectionId + '/x'
+    } else if (/^search/.test(path)) {
+      const q = pathToId(path)
+      url = urls.itchio + '/search?' + querystring.stringify({q})
     }
 
     return <BrowserMeat url={url} tabPath={path} tabData={tabData} controls={controls}/>
