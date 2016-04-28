@@ -38,7 +38,7 @@ export function * _removeInstallLocationRequest (action) {
   const caves = yield select((state) => state.globalMarket.caves)
   let numItems = 0
   caves::each((cave) => {
-    if (cave.name === name) {
+    if (cave.installLocation === name) {
       numItems++
     }
   })
@@ -70,6 +70,7 @@ export function * _removeInstallLocationRequest (action) {
     if (response === 0) {
       yield put(navigate(`locations/${name}`))
     }
+    return
   }
 
   {

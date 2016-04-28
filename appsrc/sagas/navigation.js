@@ -1,12 +1,13 @@
 
 import createQueue from './queue'
 import {createSelector} from 'reselect'
-import {pathToId, gameToTabData, userToTabData, collectionToTabData} from '../util/navigation'
+import {pathToId, gameToTabData, userToTabData, collectionToTabData, locationToTabData} from '../util/navigation'
 import {getUserMarket} from './market'
 import {BrowserWindow, Menu} from '../electron'
 
 import invariant from 'invariant'
 import clone from 'clone'
+import ospath from 'path'
 
 import {shell} from '../electron'
 import {takeEvery} from 'redux-saga'
@@ -53,6 +54,19 @@ function * retrieveTabData (path, opts) {
   } else if (/^collections/.test(path)) {
     const collection = yield call(fetch.collectionLazily, getUserMarket(), credentials, +pathToId(path), opts)
     return collection && collectionToTabData(collection)
+  } else if (/^locations/.test(path)) {
+    const locationName = pathToId(path)
+    let location = yield select((state) => state.preferences.installLocations[locationName])
+    if (!location) {
+      if (locationName === 'appdata') {
+        const userDataPath = yield select((state) => state.system.userDataPath)
+        location = {
+          path: ospath.join(userDataPath, 'apps')
+        }
+      }
+    }
+
+    return location && locationToTabData(location)
   } else {
     const data = staticTabData[path]
     if (data) {

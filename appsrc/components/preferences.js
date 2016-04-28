@@ -107,7 +107,7 @@ export class Preferences extends Component {
         </td>
         <td> {humanize.fileSize(size)} </td>
         <td> {freeSpace > 0 ? humanize.fileSize(freeSpace) : '...'} </td>
-        <td className='action' onClick={(e) => { e.preventDefault(); navigate(`location/${name}`) }}>
+        <td className='action' onClick={(e) => { e.preventDefault(); navigate(`locations/${name}`) }}>
         { itemCount > 0
           ? itemCount
           : <span className='empty'>0</span>

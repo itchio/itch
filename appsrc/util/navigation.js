@@ -43,6 +43,9 @@ export function pathToIcon (path) {
   if (/^search/.test(path)) {
     return 'search'
   }
+  if (/^locations/.test(path)) {
+    return 'folder'
+  }
   return 'earth'
 }
 
@@ -75,6 +78,12 @@ export function collectionToTabData (collection) {
       [collection.id]: collection
     },
     label: collection.title
+  }
+}
+
+export function locationToTabData (location) {
+  return {
+    label: location.path
   }
 }
 

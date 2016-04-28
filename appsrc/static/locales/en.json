@@ -229,6 +229,7 @@
     "search.open_as_tab": "Open as tab",
     "search.empty.tagline": "Need inspiration? Try searching for '{{example}}'",
     "search.empty.no_results": "No results found",
+    "install_location.empty": "Nothing is currently installed at this location",
     "game.install.no_uploads_available.message": "No compatible downloads were found for '{{title}}', so it wasn't installed.",
     "game.install.no_uploads_available.detail": "Maybe it's not compatible with your platform or with the itch app yet!",
     "game.install.try_again": "Try again",
