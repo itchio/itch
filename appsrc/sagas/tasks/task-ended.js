@@ -13,11 +13,6 @@ export function * _taskEnded (action) {
   const {name} = taskOpts
   if (name === 'install') {
     const {game, gameId, upload} = taskOpts
-    const {caveId} = result
-    invariant(caveId, 'install gives caveId')
-
-    const cave = getGlobalMarket().getEntities('caves')[caveId]
-    invariant(cave, 'install created cave')
 
     const {err} = yield call(startTask, {
       name: 'configure',
@@ -30,5 +25,11 @@ export function * _taskEnded (action) {
       log(opts, `Error in task ${name}: ${err}`)
       return
     }
+
+    const {caveId} = result
+    invariant(caveId, 'install gives caveId')
+
+    const cave = getGlobalMarket().getEntities('caves')[caveId]
+    invariant(cave, 'install created cave')
   }
 }

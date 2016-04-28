@@ -19,7 +19,7 @@ import {
   QUERY_FREE_SPACE, WINDOW_FOCUS_CHANGED, TASK_ENDED,
   ADD_INSTALL_LOCATION_REQUEST, ADD_INSTALL_LOCATION,
   REMOVE_INSTALL_LOCATION_REQUEST, REMOVE_INSTALL_LOCATION,
-  BROWSE_INSTALL_LOCATION
+  BROWSE_INSTALL_LOCATION, MAKE_INSTALL_LOCATION_DEFAULT
 } from '../constants/action-types'
 
 import {
@@ -200,6 +200,15 @@ export function * _browseInstallLocation (action) {
   }
 }
 
+export function * _makeInstallLocationDefault (action) {
+  const {name} = action.payload
+  invariant(typeof name === 'string', 'default install location name must be a string')
+
+  yield put(updatePreferences({
+    defaultInstallLocation: name
+  }))
+}
+
 export default function * installLocationSaga () {
   const queue = createQueue('installLocations')
   const selector = createSelector(
@@ -213,6 +222,7 @@ export default function * installLocationSaga () {
   )
 
   yield [
+    takeEvery(MAKE_INSTALL_LOCATION_DEFAULT, _makeInstallLocationDefault),
     takeEvery(REMOVE_INSTALL_LOCATION_REQUEST, _removeInstallLocationRequest),
     takeEvery(REMOVE_INSTALL_LOCATION, _removeInstallLocation),
     takeEvery(ADD_INSTALL_LOCATION_REQUEST, _addInstallLocationRequest),
