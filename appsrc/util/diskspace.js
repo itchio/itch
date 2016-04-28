@@ -6,7 +6,7 @@ import os from './os'
  * Heavily based on https://github.com/int0h/npm-hddSpace
  */
 let self = {
-  df_run: async () => {
+  dfRun: async () => {
     let lines = []
     let opts = {
       command: 'df', args: ['-kP'],
@@ -17,19 +17,19 @@ let self = {
   },
 
   df: async () => {
-    let lines = await self.df_run()
+    let lines = await self.dfRun()
 
-    let result_obj = {}
+    let resultObj = {}
     let rootPart
 
-    result_obj.parts = lines
+    resultObj.parts = lines
       .slice(1) // remove header
       .map((line) => {
         let part_info = {}
-        let line_parts = line.split(/[\s]+/g)
-        part_info.mountpoint = line_parts[5]
-        part_info.free = parseInt(line_parts[3], 10) * 1024 // 1k blocks
-        part_info.size = parseInt(line_parts[1], 10) * 1024 // 1k blocks
+        let lineParts = line.split(/[\s]+/g)
+        part_info.mountpoint = lineParts[5]
+        part_info.free = parseInt(lineParts[3], 10) * 1024 // 1k blocks
+        part_info.size = parseInt(lineParts[1], 10) * 1024 // 1k blocks
 
         if (
           Number.isNaN(part_info.free) ||
@@ -45,14 +45,14 @@ let self = {
       })
       .filter((part) => !!part)
 
-    result_obj.total = {
+    resultObj.total = {
       size: rootPart.size,
       free: rootPart.free
     }
-    return result_obj
+    return resultObj
   },
 
-  wmic_run: async () => {
+  wmicRun: async () => {
     let lines = []
     let opts = {
       command: 'wmic', args: ['logicaldisk', 'get', 'size,freespace,caption'],
@@ -62,7 +62,7 @@ let self = {
     return lines
   },
 
-  wmic_total: (parts) => {
+  wmicTotal: (parts) => {
     let initial = {size: 0, free: 0}
     let f = (total, part) => {
       total.size += part.size
@@ -81,10 +81,10 @@ let self = {
       .slice(1) // remove header
       .map((line) => {
         let part_info = {}
-        let line_parts = line.split(/[\s]+/g)
-        part_info.letter = line_parts[0]
-        part_info.free = parseInt(line_parts[1], 10)
-        part_info.size = parseInt(line_parts[2], 10)
+        let lineParts = line.split(/[\s]+/g)
+        part_info.letter = lineParts[0]
+        part_info.free = parseInt(lineParts[1], 10)
+        part_info.size = parseInt(lineParts[2], 10)
         if (
           Number.isNaN(part_info.free) ||
           Number.isNaN(part_info.size) ||
@@ -121,7 +121,7 @@ let self = {
     return matches[1].toUpperCase() + ':'
   },
 
-  free_in_folder: function (disk_info, folder) {
+  freeInFolder: function (diskInfo, folder) {
     if (typeof folder !== 'string') {
       console.log(`can't compute free space in ${folder}`)
       return -1
@@ -131,7 +131,7 @@ let self = {
       let letter = self.letter_for(folder)
       if (!letter) return -1
 
-      for (let part of disk_info.parts) {
+      for (let part of diskInfo.parts) {
         if (part.letter === letter) {
           // break out of loop, there's no nested mountpoints on Windows
           return part.free
@@ -140,7 +140,7 @@ let self = {
     } else {
       let match = null
 
-      for (let part of disk_info.parts) {
+      for (let part of diskInfo.parts) {
         // TODO: what about case-insensitive FSes ?
         if (!folder.startsWith(part.mountpoint)) {
           continue // doesn't contain folder

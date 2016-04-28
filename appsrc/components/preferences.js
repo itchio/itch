@@ -1,6 +1,6 @@
 
 import React, {Component, PropTypes} from 'react'
-import {createStructuredSelector} from 'reselect'
+import {createSelector, createStructuredSelector} from 'reselect'
 import {connect} from './connect'
 
 import humanize from 'humanize-plus'
@@ -12,7 +12,19 @@ import SelectRow from './select-row'
 
 import * as actions from '../actions'
 
-import {each, filter} from 'underline'
+import {map, each, filter} from 'underline'
+
+import os from '../util/os'
+const platform = os.itchPlatform()
+
+function browseI18nKey () {
+  let fallback = 'grid.item.open_in_file_explorer'
+  switch (platform) {
+    case 'osx': return ['grid.item.open_in_file_explorer_osx', fallback]
+    case 'linux': return ['grid.item.open_in_file_explorer_linux', fallback]
+    default: return fallback
+  }
+}
 
 export class Preferences extends Component {
   render () {
@@ -67,13 +79,12 @@ export class Preferences extends Component {
     </tr>
 
     const {installLocations = {}} = this.props
-    const {aliases, defaultLoc} = installLocations
+    const {aliases, defaultLoc, locations = []} = installLocations
 
-    const locMap = installLocations.locations
-    let locations = locMap::filter((x) => !x.deleted)
+    console.log('rendering locations: ', locations)
 
     // can't delete your last remaining location.
-    const severalLocations = locations.size
+    const severalLocations = locations.length
 
     let rows = []
     rows.push(header)
@@ -93,10 +104,10 @@ export class Preferences extends Component {
 
       rows.push(<tr>
         <td className='action' onClick={(e) => { e.preventDefault(); navigate(`locations/${name}`) }}>
-        Icon icon='folder'/> {path}
+        <Icon icon='folder'/> {path}
         </td>
         <td> {humanize.fileSize(size)} </td>
-        <td> {humanize.freeSpace(freeSpace)} </td>
+        <td> {freeSpace > 0 ? humanize.fileSize(freeSpace) : '...'} </td>
         <td className='action' onClick={(e) => { e.preventDefault(); navigate(`location/${name}`) }}>
         { itemCount > 0
           ? itemCount
@@ -113,7 +124,7 @@ export class Preferences extends Component {
           </td>
         }
 
-        <td className='action hint--top' data-hint={t(this.browseI18nKey())} onClick={(e) => browseInstallLocation(name)}>
+        <td className='action hint--top' data-hint={t(browseI18nKey())} onClick={(e) => browseInstallLocation(name)}>
           <Icon icon='folder-open'/>
         </td>
 
@@ -126,12 +137,11 @@ export class Preferences extends Component {
       </tr>)
     })
 
-    rows.push(<tr>
+    rows.push(<tr className='borderless'>
       <td className='action add-new' onClick={(e) => { e.preventDefault(); addInstallLocationRequest() }}>
         <Icon icon='plus'/>
         {t('preferences.install_location.add')}
       </td>
-      <td colSpan={6}/>
     </tr>)
 
     return <table className='install-locations'>
@@ -159,11 +169,62 @@ Preferences.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   preferences: (state) => state.preferences,
-  installLocations: (state) => state.installLocations,
   downloading: (state) => Object.keys(state.i18n.downloading).length > 0,
   lang: (state) => state.i18n.lang,
   locales: (state) => state.i18n.locales,
-  sniffedLang: (state) => state.system.sniffedLang
+  sniffedLang: (state) => state.system.sniffedLang,
+  installLocations: createSelector(
+    (state) => state.preferences.installLocations,
+    (state) => state.preferences.defaultInstallLocation,
+    (state) => state.globalMarket.caves,
+    (state) => state.system.homePath,
+    (locInfos, defaultLoc, caves, homePath) => {
+      if (!locInfos || !caves) {
+        console.log('no locInfos / caves')
+        return {}
+      }
+
+      locInfos = {
+        ...locInfos,
+        appdata: {
+          path: 'appdata'
+        }
+      }
+
+      const locations = locInfos::filter((x) => !x.deleted)::map((locInfo, name) => {
+        console.log('mapping locInfo ', locInfo)
+
+        let itemCount = 0
+        let size = 0
+        caves::each((cave) => {
+          // TODO: handle
+          if (cave.installLocation === locInfo.path) {
+            size += (cave.installedSize || 0)
+          }
+
+          itemCount++
+        })
+
+        return {
+          ...locInfo,
+          name,
+          freeSpace: -1,
+          itemCount,
+          size
+        }
+      })
+
+      console.log('mapping result: ', locations)
+
+      return {
+        locations,
+        aliases: [
+          [homePath, '~']
+        ],
+        defaultLoc
+      }
+    }
+  )
 })
 
 const mapDispatchToProps = (dispatch) => ({

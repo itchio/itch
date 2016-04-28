@@ -13,7 +13,7 @@
   }
 
   .install-locations-header {
-    padding: 20px 0;
+    padding: 20px 0 10px 0;
   }
 
   .preferences-form {
@@ -70,12 +70,11 @@
 
   .install-locations {
     width: 100%;
-    font-size: 15px;
-    padding: 5px 0;
+    font-size: 16px;
     border-collapse: collapse;
 
     th, td {
-      padding: 7px 15px;
+      padding: 10px 15px;
       text-align: left;
     }
 
@@ -84,10 +83,15 @@
       color: #999;
     }
 
+    .borderless {
+      td {
+        border: none;
+      }
+    }
+
     .action {
-      transition: all .4s;
       color: white;
-      opacity: .8;
+      -webkit-filter: brightness(70%);
 
       .icon-plus, .icon-refresh, .icon-stopwatch, .icon-folder {
         font-size: 80%;
@@ -103,7 +107,7 @@
       }
 
       &:hover {
-        opacity: 1;
+        -webkit-filter: none;
         cursor: pointer;
       }
     }

@@ -8,7 +8,8 @@ const initialState = {
   osx: (os.platform() === 'darwin'),
   windows: (os.platform() === 'win32'),
   linux: (os.platform() === 'linux'),
-  sniffedLanguage: null
+  sniffedLanguage: null,
+  homePath: app.getPath('home')
 }
 
 export default handleActions({
