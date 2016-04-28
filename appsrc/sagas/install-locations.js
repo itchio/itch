@@ -141,8 +141,14 @@ export function * _removeInstallLocation (action) {
   invariant(typeof name === 'string', 'removed install location name must be a string')
   invariant(name !== 'appdata', 'cannot remove appdata')
   const installLocations = yield select((state) => state.preferences.installLocations)
+  let defaultInstallLocation = yield select((state) => state.preferences.defaultInstallLocation)
+
+  if (defaultInstallLocation === name) {
+    defaultInstallLocation = 'appdata'
+  }
 
   yield put(updatePreferences({
+    defaultInstallLocation,
     installLocations: {
       ...installLocations,
       [name]: {
