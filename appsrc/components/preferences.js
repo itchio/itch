@@ -83,8 +83,6 @@ export class Preferences extends Component {
     const {installLocations = {}} = this.props
     const {aliases, defaultLoc, locations = []} = installLocations
 
-    console.log('rendering locations: ', locations)
-
     // can't delete your last remaining location.
     const severalLocations = locations.length
 
@@ -184,7 +182,6 @@ const mapStateToProps = createStructuredSelector({
     (state) => state.system.diskInfo,
     (locInfos, defaultLoc, caves, homePath, userDataPath, diskInfo) => {
       if (!locInfos || !caves) {
-        console.log('no locInfos / caves')
         return {}
       }
 
@@ -205,9 +202,8 @@ const mapStateToProps = createStructuredSelector({
           // TODO: handle per-user appdata ?
           if (cave.installLocation === locInfo.name || (isAppData && !cave.installLocation)) {
             size += (cave.installedSize || 0)
+            itemCount++
           }
-
-          itemCount++
         })
 
         return {
@@ -218,8 +214,6 @@ const mapStateToProps = createStructuredSelector({
           size
         }
       })
-
-      console.log('mapping result: ', locations)
 
       return {
         locations,
