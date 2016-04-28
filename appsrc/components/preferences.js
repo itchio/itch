@@ -42,8 +42,7 @@ export class Preferences extends Component {
         </div>
 
         <p className='install-locations-header'>{t('preferences.install_locations')}</p>
-        {false ? this.installLocationTable() : ''}
-        <div style={{fontSize: '14px', width: '70%'}}>Install locations still work, but ran out of time to finish the preferences ui. Thanks for your patience!</div>
+        {this.installLocationTable()}
       </form>
     </div>
   }
@@ -160,6 +159,7 @@ Preferences.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   preferences: (state) => state.preferences,
+  installLocations: (state) => state.installLocations,
   downloading: (state) => Object.keys(state.i18n.downloading).length > 0,
   lang: (state) => state.i18n.lang,
   locales: (state) => state.i18n.locales,
