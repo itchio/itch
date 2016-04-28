@@ -68,7 +68,8 @@ export class Preferences extends Component {
 
   installLocationTable () {
     const {t, navigate} = this.props
-    const {browseInstallLocation, addInstallLocationRequest, removeInstallLocationRequest} = this.props
+    const {browseInstallLocation, addInstallLocationRequest,
+      removeInstallLocationRequest, makeInstallLocationDefault} = this.props
 
     const header = <tr>
     <th>{t('preferences.install_location.path')}</th>
@@ -81,20 +82,18 @@ export class Preferences extends Component {
     </tr>
 
     const {installLocations = {}} = this.props
-    const {aliases, defaultLoc, locations = []} = installLocations
+    const {aliases, defaultLoc = 'appdata', locations = []} = installLocations
 
     // can't delete your last remaining location.
-    const severalLocations = locations.length
+    const severalLocations = locations.length > 0
 
     let rows = []
     rows.push(header)
 
-    let index = -1
-
-    locations::each((location, name) => {
-      index++
+    locations::each((location) => {
+      const {name} = location
       const isDefault = (name === defaultLoc)
-      let mayDelete = severalLocations && name !== 'appdata'
+      const mayDelete = severalLocations && name !== 'appdata'
 
       let {path} = location
       for (const alias of aliases) {
@@ -119,7 +118,7 @@ export class Preferences extends Component {
           ? <td className='action default hint--top' data-hint={t('preferences.install_location.is_default')}>
             <Icon icon='star'/>
           </td>
-          : <td className='action not_default hint--top' data-hint={t('preferences.install_location.make_default')}>
+          : <td className='action not_default hint--top' data-hint={t('preferences.install_location.make_default')} onClick={(e) => makeInstallLocationDefault(name)}>
             <Icon icon='star'/>
           </td>
         }
@@ -162,6 +161,7 @@ Preferences.propTypes = {
   browseInstallLocation: PropTypes.func.isRequired,
   addInstallLocationRequest: PropTypes.func.isRequired,
   removeInstallLocationRequest: PropTypes.func.isRequired,
+  makeInstallLocationDefault: PropTypes.func.isRequired,
   queueLocaleUpdate: PropTypes.func.isRequired,
   updatePreferences: PropTypes.func.isRequired,
   navigate: PropTypes.func.isRequired
@@ -188,19 +188,22 @@ const mapStateToProps = createStructuredSelector({
       locInfos = {
         ...locInfos,
         appdata: {
-          name: 'appdata',
           path: path.join(userDataPath, 'apps')
         }
       }
 
-      const locations = locInfos::filter((x) => !x.deleted)::map((locInfo, name) => {
-        const isAppData = (locInfo.name === 'appdata')
+      const locations = locInfos::map((locInfo, name) => {
+        if (locInfo.deleted) {
+          return
+        }
+
+        const isAppData = (name === 'appdata')
 
         let itemCount = 0
         let size = 0
         caves::each((cave) => {
           // TODO: handle per-user appdata ?
-          if (cave.installLocation === locInfo.name || (isAppData && !cave.installLocation)) {
+          if (cave.installLocation === name || (isAppData && !cave.installLocation)) {
             size += (cave.installedSize || 0)
             itemCount++
           }
@@ -213,7 +216,7 @@ const mapStateToProps = createStructuredSelector({
           itemCount,
           size
         }
-      })
+      })::filter((x) => !!x)
 
       return {
         locations,
@@ -230,8 +233,9 @@ const mapDispatchToProps = (dispatch) => ({
   queueLocaleUpdate: (lang) => dispatch(actions.queueLocaleUpdate({lang})),
   navigate: (path, data) => dispatch(actions.navigate(path, data)),
   addInstallLocationRequest: () => dispatch(actions.addInstallLocationRequest()),
-  removeInstallLocationRequest: (name) => dispatch(actions.removeInstallLocationRequest(name)),
-  browseInstallLocation: (name) => dispatch(actions.browseInstallLocation(name)),
+  makeInstallLocationDefault: (name) => dispatch(actions.makeInstallLocationDefault({name})),
+  removeInstallLocationRequest: (name) => dispatch(actions.removeInstallLocationRequest({name})),
+  browseInstallLocation: (name) => dispatch(actions.browseInstallLocation({name})),
   updatePreferences: (data) => dispatch(actions.updatePreferences(data))
 })
 
