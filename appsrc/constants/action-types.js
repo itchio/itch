@@ -114,6 +114,8 @@ module.exports = keyMirror({
   REMOVE_INSTALL_LOCATION_REQUEST: null,
   REMOVE_INSTALL_LOCATION: null,
   MAKE_INSTALL_LOCATION_DEFAULT: null,
+  QUERY_FREE_SPACE: null,
+  FREE_SPACE_UPDATED: null,
 
   /* Tasks */
   TASK_STARTED: null,

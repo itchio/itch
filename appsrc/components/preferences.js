@@ -3,6 +3,7 @@ import React, {Component, PropTypes} from 'react'
 import {createSelector, createStructuredSelector} from 'reselect'
 import {connect} from './connect'
 
+import path from 'path'
 import humanize from 'humanize-plus'
 
 import urls from '../constants/urls'
@@ -15,6 +16,7 @@ import * as actions from '../actions'
 import {map, each, filter} from 'underline'
 
 import os from '../util/os'
+import diskspace from '../util/diskspace'
 const platform = os.itchPlatform()
 
 function browseI18nKey () {
@@ -178,7 +180,9 @@ const mapStateToProps = createStructuredSelector({
     (state) => state.preferences.defaultInstallLocation,
     (state) => state.globalMarket.caves,
     (state) => state.system.homePath,
-    (locInfos, defaultLoc, caves, homePath) => {
+    (state) => state.system.userDataPath,
+    (state) => state.system.diskInfo,
+    (locInfos, defaultLoc, caves, homePath, userDataPath, diskInfo) => {
       if (!locInfos || !caves) {
         console.log('no locInfos / caves')
         return {}
@@ -187,18 +191,19 @@ const mapStateToProps = createStructuredSelector({
       locInfos = {
         ...locInfos,
         appdata: {
-          path: 'appdata'
+          name: 'appdata',
+          path: path.join(userDataPath, 'apps')
         }
       }
 
       const locations = locInfos::filter((x) => !x.deleted)::map((locInfo, name) => {
-        console.log('mapping locInfo ', locInfo)
+        const isAppData = (locInfo.name === 'appdata')
 
         let itemCount = 0
         let size = 0
         caves::each((cave) => {
-          // TODO: handle
-          if (cave.installLocation === locInfo.path) {
+          // TODO: handle per-user appdata ?
+          if (cave.installLocation === locInfo.name || (isAppData && !cave.installLocation)) {
             size += (cave.installedSize || 0)
           }
 
@@ -208,7 +213,7 @@ const mapStateToProps = createStructuredSelector({
         return {
           ...locInfo,
           name,
-          freeSpace: -1,
+          freeSpace: diskspace.freeInFolder(diskInfo, locInfo.path),
           itemCount,
           size
         }

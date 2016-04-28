@@ -19,6 +19,7 @@ import fetch from './fetch'
 import tasks from './tasks'
 import updater from './updater'
 import preferences from './preferences'
+import installLocations from './install-locations'
 
 export default [
   preboot,
@@ -40,5 +41,6 @@ export default [
   fetch,
   tasks,
   updater,
-  preferences
+  preferences,
+  installLocations
 ]

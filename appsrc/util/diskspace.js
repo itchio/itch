@@ -25,23 +25,23 @@ let self = {
     resultObj.parts = lines
       .slice(1) // remove header
       .map((line) => {
-        let part_info = {}
+        let partInfo = {}
         let lineParts = line.split(/[\s]+/g)
-        part_info.mountpoint = lineParts[5]
-        part_info.free = parseInt(lineParts[3], 10) * 1024 // 1k blocks
-        part_info.size = parseInt(lineParts[1], 10) * 1024 // 1k blocks
+        partInfo.mountpoint = lineParts[5]
+        partInfo.free = parseInt(lineParts[3], 10) * 1024 // 1k blocks
+        partInfo.size = parseInt(lineParts[1], 10) * 1024 // 1k blocks
 
         if (
-          Number.isNaN(part_info.free) ||
-          Number.isNaN(part_info.size)
+          Number.isNaN(partInfo.free) ||
+          Number.isNaN(partInfo.size)
         ) {
           return null
         }
 
-        if (part_info.mountpoint === '/') {
-          rootPart = part_info
-        };
-        return part_info
+        if (partInfo.mountpoint === '/') {
+          rootPart = partInfo
+        }
+        return partInfo
       })
       .filter((part) => !!part)
 
@@ -74,10 +74,10 @@ let self = {
   },
 
   wmic: async () => {
-    let lines = await self.wmic_run()
+    let lines = await self.wmicRun()
 
-    let result_obj = {}
-    result_obj.parts = lines
+    let resultObj = {}
+    resultObj.parts = lines
       .slice(1) // remove header
       .map((line) => {
         let part_info = {}
@@ -96,11 +96,11 @@ let self = {
       })
       .filter((part) => !!part)
 
-    result_obj.total = self.wmic_total(result_obj.parts)
-    return result_obj
+    resultObj.total = self.wmicTotal(resultObj.parts)
+    return resultObj
   },
 
-  disk_info: async function () {
+  diskInfo: async function () {
     if (os.platform() === 'win32') {
       return await self.wmic()
     } else {
@@ -108,7 +108,7 @@ let self = {
     }
   },
 
-  letter_for: function (folder) {
+  letterFor: function (folder) {
     let matches = folder.match(/^([A-Za-z]):/)
     if (!matches) {
       matches = folder.match(/^\/([A-Za-z])/)
@@ -122,13 +122,18 @@ let self = {
   },
 
   freeInFolder: function (diskInfo, folder) {
+    if (!diskInfo.parts) {
+      // incomplete diskinfo
+      return -1
+    }
+
     if (typeof folder !== 'string') {
       console.log(`can't compute free space in ${folder}`)
       return -1
     }
 
     if (os.platform() === 'win32') {
-      let letter = self.letter_for(folder)
+      let letter = self.letterFor(folder)
       if (!letter) return -1
 
       for (let part of diskInfo.parts) {
