@@ -47,6 +47,7 @@ export default async function start (out, opts) {
       uploads: {[upload.id]: upload},
       installLocation,
       installFolder,
+      fresh: true,
       downloadKey
     }
 
@@ -101,8 +102,9 @@ export default async function start (out, opts) {
     installedArchiveMtime: amtime,
     uploadId: upload.id,
     buildId: upload.buildId,
-    uploads: {[upload.id]: upload}}
-  )
+    uploads: {[upload.id]: upload},
+    fresh: false
+  })
 
   return {caveId: cave.id}
 }

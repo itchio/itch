@@ -8,6 +8,7 @@ import {_taskEnded} from './task-ended'
 import {_downloadEnded} from './download-ended'
 import {_queueCaveReinstall} from './queue-cave-reinstall'
 import {_queueCaveUninstall} from './queue-cave-uninstall'
+import {_implodeCave} from './implode-cave'
 import {_exploreCave} from './explore-cave'
 import {downloadWatcher} from './download-watcher'
 
@@ -16,6 +17,7 @@ import {
   QUEUE_GAME,
   QUEUE_CAVE_REINSTALL,
   QUEUE_CAVE_UNINSTALL,
+  IMPLODE_CAVE,
   DOWNLOAD_ENDED,
   TASK_ENDED,
   RETRY_DOWNLOAD
@@ -27,6 +29,7 @@ export default function * tasksSaga () {
     takeEvery(QUEUE_GAME, _queueGame),
     takeEvery(QUEUE_CAVE_REINSTALL, _queueCaveReinstall),
     takeEvery(QUEUE_CAVE_UNINSTALL, _queueCaveUninstall),
+    takeEvery(IMPLODE_CAVE, _implodeCave),
     takeEvery(DOWNLOAD_ENDED, _downloadEnded),
     takeEvery(TASK_ENDED, _taskEnded),
     takeEvery(RETRY_DOWNLOAD, (action) => startDownload(action.payload.downloadOpts)),

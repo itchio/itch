@@ -9,6 +9,7 @@ import {
   EXPLORE_CAVE,
   REPORT_CAVE,
   CANCEL_CAVE,
+  IMPLODE_CAVE,
   REQUEST_CAVE_UNINSTALL,
   QUEUE_CAVE_UNINSTALL,
   QUEUE_CAVE_REINSTALL,
@@ -25,6 +26,7 @@ export const probeCave = createAction(PROBE_CAVE)
 export const exploreCave = createAction(EXPLORE_CAVE)
 export const reportCave = createAction(REPORT_CAVE)
 export const cancelCave = createAction(CANCEL_CAVE)
+export const implodeCave = createAction(IMPLODE_CAVE)
 export const requestCaveUninstall = createAction(REQUEST_CAVE_UNINSTALL)
 export const queueCaveUninstall = createAction(QUEUE_CAVE_UNINSTALL)
 export const queueCaveReinstall = createAction(QUEUE_CAVE_REINSTALL)
