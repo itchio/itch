@@ -51,7 +51,7 @@
     "mkdirp": "^0.5.1",
     "nconf": "^0.8.2",
     "nedb": "^1.2.1",
-    "needle": "^0.11.0",
+    "needle": "^1.0.0",
     "node-uuid": "^1.4.7",
     "proxyquire": "^1.7.3",
     "pure-render-mixin": "^1.0.2",
