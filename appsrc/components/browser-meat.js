@@ -119,10 +119,8 @@ export class BrowserMeat extends Component {
             evolveTab(oldPath, newPath)
             break
           case '/title':
-            const {tabPath, tabData} = this.props
-            if (!tabData.label) {
-              tabDataFetched(tabPath, {label: params.title})
-            }
+            const {tabPath} = this.props
+            tabDataFetched(tabPath, {webTitle: params.title})
             break
           default:
             console.log('got itch-internal request: ', pathname)

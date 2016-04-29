@@ -30,7 +30,7 @@ export class GatePage extends Component {
     return <div className={classes} data-stage={stage}>
       <section className='top-filler'/>
       <section className='logo'>
-        <img src='static/images/logos/itchio-white.svg'/>
+        <img src='static/images/logos/app-white.svg'/>
       </section>
 
       {this.errors()}
@@ -86,10 +86,10 @@ export class GatePage extends Component {
         <span>{' · '}</span>
         <a className='link' href={urls.accountForgotPassword}>{t('login.action.reset_password')}</a>
         {numSavedSessions > 0
-        ? <div>
-          <span>{' · '}</span>,
-          <span className='link' onClick={() => this.props.loginStartPicking()}>{t('login.action.show_saved_logins')}</span>
-        </div>
+        ? [
+          <span key='separator'>{' · '}</span>,
+          <span key='show-saved' className='link' onClick={() => this.props.loginStartPicking()}>{t('login.action.show_saved_logins')}</span>
+        ]
         : ''}
       </section>
     }
