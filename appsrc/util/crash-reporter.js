@@ -1,22 +1,18 @@
 
-import sf from '../util/sf'
-import path from 'path'
-
 // TODO: reduce dependency on electron to allow easier testing
-import electron from 'electron'
-let app = electron.app
-let shell = electron.shell
-let dialog = electron.dialog
+import {app, shell, dialog} from '../electron'
 
+import path from 'path'
 import querystring from 'querystring'
 
 import urls from '../constants/urls'
 
 import os from './os'
+import sf from './sf'
 
 let self = {
-  write_crash_log: (e) => {
-    let crash_file = path.join(app.getPath('userData'), 'crash_logs', `${+new Date()}.txt`)
+  writeCrashLog: (e) => {
+    const crashFile = path.join(app.getPath('userData'), 'crash_logs', `${+new Date()}.txt`)
 
     let log = ''
     log += e.stack
@@ -24,9 +20,9 @@ let self = {
     if (os.platform() === 'win32') {
       log = log.replace(/\n/g, '\r\n')
     }
-    sf.writeFile(crash_file, log)
+    sf.writeFile(crashFile, log)
 
-    return {log, crash_file}
+    return {log, crashFile}
   },
 
   report_issue: (opts) => {
@@ -59,11 +55,12 @@ ${log}
 
   handle: (e) => {
     console.log(`Uncaught exception: ${e.stack}`)
-    let res = self.write_crash_log(e)
+    let res = self.writeCrashLog(e)
     let log = res.log
-    let crash_file = res.crash_file
+    let crashFile = res.crashFile
 
-    const t = require('i18next').getFixedT()
+    // TODO: something better
+    const t = require('../localizer').default({}, 'en')
 
     let dialogOpts = {
       type: 'error',
@@ -73,14 +70,14 @@ ${log}
         t('prompt.action.close', {defaultValue: 'Close'})
       ],
       message: t('prompt.crash_reporter.message', {defaultValue: 'The application has crashed'}),
-      detail: t('prompt.crash_reporter.detail', {defaultValue: `A crash log was written to ${crash_file}`, location: crash_file})
+      detail: t('prompt.crash_reporter.detail', {defaultValue: `A crash log was written to ${crashFile}`, location: crashFile})
     }
 
     let callback = (response) => {
       if (response === 0) {
-        self.report_issue({log})
+        self.reportIssue({log})
       } else if (response === 1) {
-        shell.openItem(crash_file)
+        shell.openItem(crashFile)
       }
     }
 
