@@ -30,7 +30,7 @@ import {
   LOGIN_SUCCEEDED,
   FETCH_COLLECTION_GAMES,
   SEARCH,
-  DB_COMMIT
+  USER_DB_COMMIT
 } from '../constants/action-types'
 
 function * _windowFocusChanged (action) {
@@ -134,7 +134,7 @@ export default function * fetchSaga () {
     }
   )
 
-  yield fork(takeEvery, DB_COMMIT, function * () {
+  yield fork(takeEvery, USER_DB_COMMIT, function * () {
     const state = yield select()
     collectionsWatcher(state)
   })
