@@ -57,7 +57,7 @@ export class BrowserMeat extends Component {
 
   componentDidMount () {
     const {webview} = this.refs
-    const {navigate, evolveTab} = this.props
+    const {navigate, evolveTab, tabDataFetched} = this.props
 
     if (!webview) {
       console.log('Oh noes, can\'t listen to webview\'s soothing event stream')
@@ -117,6 +117,12 @@ export class BrowserMeat extends Component {
             const oldPath = `url/${params.url}`
             const newPath = params.path
             evolveTab(oldPath, newPath)
+            break
+          case '/title':
+            const {tabPath, tabData} = this.props
+            if (!tabData.label) {
+              tabDataFetched(tabPath, {label: params.title})
+            }
             break
           default:
             console.log('got itch-internal request: ', pathname)
@@ -223,7 +229,8 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = (dispatch) => ({
   navigate: (path, data) => dispatch(actions.navigate(path, data)),
   tabReloaded: (path) => dispatch(actions.tabReloaded({path})),
-  evolveTab: (before, after) => dispatch(actions.evolveTab({before, after}))
+  evolveTab: (before, after) => dispatch(actions.evolveTab({before, after})),
+  tabDataFetched: (path, data) => dispatch(actions.tabDataFetched({path, data}))
 })
 
 export default connect(

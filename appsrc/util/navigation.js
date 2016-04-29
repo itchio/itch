@@ -1,7 +1,7 @@
 
 import urlParser from '../util/url'
 
-const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|itch\.ovh|localhost\.com:8080)$/
+const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/
 const ID_RE = /^[^\/]+\/(.+)$/
 
 export function pathToId (path) {
@@ -18,6 +18,9 @@ export function pathToIcon (path) {
   }
   if (path === 'dashboard') {
     return 'rocket'
+  }
+  if (path === 'press') {
+    return 'newspaper-o'
   }
   if (path === 'library') {
     return 'heart-filled'

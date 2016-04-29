@@ -2,6 +2,7 @@
 export default {
   featured: { label: 'itch.io', subtitle: ['sidebar.featured_subtitle'] },
   dashboard: { label: ['sidebar.dashboard'], subtitle: ['sidebar.dashboard_subtitle'] },
+  press: { label: ['sidebar.press'], subtitle: ['sidebar.press_subtitle'] },
   library: { label: ['sidebar.owned'], subtitle: ['sidebar.owned_subtitle'] },
   preferences: { label: ['sidebar.preferences'], subtitle: ['sidebar.preferences_subtitle'] },
   history: { label: ['sidebar.history'], subtitle: ['sidebar.history_subtitle'] },

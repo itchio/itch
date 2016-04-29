@@ -5,11 +5,12 @@ import {createStructuredSelector} from 'reselect'
 import classNames from 'classnames'
 
 import GameGrid from './game-grid'
+import CollectionGrid from './collection-grid'
 import {map, filter, indexBy} from 'underline'
 
 export class Library extends Component {
   render () {
-    const {t, caves, allGames, downloadKeys} = this.props
+    const {t, caves, allGames, downloadKeys, collections} = this.props
 
     const installedGames = caves::map((key) => allGames[key.gameId])::filter((x) => !!x)
     const installedGamesById = installedGames::indexBy('id')
@@ -21,6 +22,9 @@ export class Library extends Component {
       sectionCount++
     }
     if (games.length > 0) {
+      sectionCount++
+    }
+    if (collections.length > 0) {
       sectionCount++
     }
 
@@ -39,6 +43,9 @@ export class Library extends Component {
         ? <GameGrid games={games}/>
         : ''
       }
+
+      <h2 className={headerClasses}>{t('sidebar.collections')}</h2>
+      <CollectionGrid collections={collections}/>
     </div>
   }
 }
@@ -48,6 +55,7 @@ Library.propTypes = {
   caves: PropTypes.object,
   allGames: PropTypes.object,
   downloadKeys: PropTypes.object,
+  collections: PropTypes.object,
 
   t: PropTypes.func.isRequired
 }
@@ -55,7 +63,8 @@ Library.propTypes = {
 const mapStateToProps = createStructuredSelector({
   caves: (state) => state.globalMarket.caves || {},
   allGames: (state) => state.market.games || {},
-  downloadKeys: (state) => state.market.downloadKeys || {}
+  downloadKeys: (state) => state.market.downloadKeys || {},
+  collections: (state) => state.market.collections || {}
 })
 
 const mapDispatchToProps = (dispatch) => ({})

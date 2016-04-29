@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:    url('fonts/icomoon.eot?hy2ch9');
-    src:    url('fonts/icomoon.eot?hy2ch9#iefix') format('embedded-opentype'),
-        url('fonts/icomoon.ttf?hy2ch9') format('truetype'),
-        url('fonts/icomoon.woff?hy2ch9') format('woff'),
-        url('fonts/icomoon.svg?hy2ch9#icomoon') format('svg');
+    src:    url('fonts/icomoon.eot?wccdie');
+    src:    url('fonts/icomoon.eot?wccdie#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf?wccdie') format('truetype'),
+        url('fonts/icomoon.woff?wccdie') format('woff'),
+        url('fonts/icomoon.svg?wccdie#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -24,6 +24,30 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-diamond:before {
+    content: "\e913";
+}
+.icon-newspaper-o:before {
+    content: "\e912";
+}
+.icon-repeat:before {
+    content: "\e904";
+}
+.icon-history:before {
+    content: "\e90f";
+}
+.icon-gamepad:before {
+    content: "\e61b";
+}
+.icon-caret-up:before {
+    content: "\e60f";
+}
+.icon-caret-down:before {
+    content: "\e610";
+}
+.icon-bitcoin:before {
+    content: "\e60b";
+}
 .icon-itchio:before {
     content: "\e911";
 }
@@ -194,24 +218,6 @@
 }
 .icon-heart-filled:before {
     content: "\e60a";
-}
-.icon-repeat:before {
-    content: "\e904";
-}
-.icon-history:before {
-    content: "\e90f";
-}
-.icon-gamepad:before {
-    content: "\e61b";
-}
-.icon-caret-up:before {
-    content: "\e60f";
-}
-.icon-caret-down:before {
-    content: "\e610";
-}
-.icon-bitcoin:before {
-    content: "\e60b";
 }
 .icon-globe-outline:before {
     content: "\e90b";

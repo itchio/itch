@@ -141,6 +141,7 @@ document.addEventListener('click', (e) => {
     return false
   } else {
     console.log('non-app-supported url, carrying as usual', target.href)
+    sendMessage('title?title=' + encodeURIComponent(document.title))
   }
 })
 
@@ -154,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 0)
 
-  if (['itch.io', 'itch.ovh', 'localhost.com'].indexOf(host) === -1) {
+  if (['itch.io', 'localhost.com'].indexOf(host) === -1) {
     // don't inject anything on non-itch pages
     console.log('not an itch page, bailing out', host)
     return

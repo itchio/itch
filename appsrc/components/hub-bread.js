@@ -13,7 +13,7 @@ import HubBreadDescription from './hub-bread-description'
 
 class HubBread extends Component {
   render () {
-    const {t, openUrl, searchLoading} = this.props
+    const {t, navigate, searchLoading} = this.props
 
     const searchClasses = classNames('search', {loading: searchLoading})
     const hideStyle = {display: 'none'}
@@ -36,7 +36,7 @@ class HubBread extends Component {
         <span className='icon icon-search'/>
       </section>
 
-      <section className='icon-button' onClick={() => openUrl(urls.manual)}>
+      <section className='icon-button' onClick={() => navigate('url/' + urls.manual)}>
         <Icon icon='lifebuoy'/>
       </section>
 
@@ -75,7 +75,7 @@ HubBread.propTypes = {
 
   search: PropTypes.func.isRequired,
   searchQueryChanged: PropTypes.func.isRequired,
-  openUrl: PropTypes.func
+  navigate: PropTypes.func
 }
 
 const mapStateToProps = createStructuredSelector({
@@ -86,7 +86,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = (dispatch) => ({
   search: (query) => dispatch(actions.search(query)),
   searchQueryChanged: (query) => dispatch(actions.searchQueryChanged(query)),
-  openUrl: (u) => dispatch(actions.openUrl(u))
+  navigate: (a, b) => dispatch(actions.navigate(a, b))
 })
 
 export default connect(

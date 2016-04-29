@@ -6,7 +6,7 @@ import {delay} from './effects'
 import createQueue from './queue'
 import {createSelector} from 'reselect'
 
-import {switchPage, sessionReady} from '../actions'
+import {switchPage, sessionReady, unlockTab} from '../actions'
 import {SESSION_READY, LOGOUT} from '../constants/action-types'
 
 export function * _logout () {
@@ -14,6 +14,14 @@ export function * _logout () {
 }
 
 export function * _sessionReady () {
+  const me = yield select((state) => state.session.credentials.me)
+  if (me.developer) {
+    yield put(unlockTab({path: 'dashboard'}))
+  }
+  if (me.pressUser) {
+    yield put(unlockTab({path: 'press'}))
+  }
+
   yield call(delay, 1000)
   yield put(switchPage('hub'))
 }

@@ -70,7 +70,7 @@ $bread-box-shadow-color: #171717;
 // misc
 
 $secondary-text-color: darken($silver-chalice, 10%);
-$secondary-text-hover-color: $ivory;
+$secondary-text-hover-color: lighten($ivory, 10%);
 
 $tooltip-background-color: $ivory;
 $tooltip-text-color: $swiss-coffee;

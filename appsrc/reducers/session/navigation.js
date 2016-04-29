@@ -13,7 +13,6 @@ const initialState = {
   tabs: {
     constant: [
       {path: 'featured'},
-      {path: 'dashboard'},
       {path: 'library'}
     ],
     transient: []
@@ -201,6 +200,25 @@ export default handleActions({
 
   LOGOUT: (state, action) => {
     return initialState
+  },
+
+  // happens after SESSION_READY depending on the user's profile (press, developer)
+  UNLOCK_TAB: (state, action) => {
+    const {path} = action.payload
+    invariant(typeof path === 'string', 'unlocked tab path must be a string')
+
+    const {constant} = state.tabs
+
+    return {
+      ...state,
+      tabs: {
+        ...state.tabs,
+        constant: [
+          ...constant,
+          {path}
+        ]
+      }
+    }
   },
 
   CLOSE_SEARCH: (state, action) => {

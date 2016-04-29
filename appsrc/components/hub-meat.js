@@ -49,7 +49,7 @@ export class HubMeat extends Component {
     } else if (/^locations/.test(path)) {
       const location = pathToId(path)
       return <Location locationName={location}/>
-    } else if (/^(url|games|users|collections|search)/.test(path)) {
+    } else if (/^(url|games|users|collections|search|press)/.test(path)) {
       return <UrlMeat key={tabId} tabId={tabId} path={path}/>
     } else {
       return '?'

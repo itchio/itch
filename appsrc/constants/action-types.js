@@ -75,6 +75,7 @@ module.exports = keyMirror({
   TAB_DATA_FETCHED: null,
 
   OPEN_TAB_CONTEXT_MENU: null,
+  UNLOCK_TAB: null,
 
   /* Menu */
   REFRESH_MENU: null,

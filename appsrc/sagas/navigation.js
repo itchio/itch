@@ -187,12 +187,12 @@ export function * _openUrl (action) {
 
 export function * _viewCreatorProfile (action) {
   const url = yield select((state) => state.session.credentials.me.url)
-  yield put(openUrl(url))
+  yield put(navigate('url/' + url))
 }
 
 export function * _viewCommunityProfile (action) {
   const username = yield select((state) => state.session.credentials.me.username)
-  yield put(openUrl(`${urls.itchio}/profile/${username}`))
+  yield put(navigate('url/' + `${urls.itchio}/profile/${username}`))
 }
 
 export function * _triggerMainAction () {

@@ -19,6 +19,7 @@ import {
   TAB_DATA_FETCHED,
 
   OPEN_TAB_CONTEXT_MENU,
+  UNLOCK_TAB,
 
   OPEN_URL,
   TRIGGER_MAIN_ACTION,
@@ -58,6 +59,7 @@ export const tabsRestored = createAction(TABS_RESTORED)
 export const tabDataFetched = createAction(TAB_DATA_FETCHED)
 
 export const openTabContextMenu = createAction(OPEN_TAB_CONTEXT_MENU)
+export const unlockTab = createAction(UNLOCK_TAB)
 
 export const openUrl = createAction(OPEN_URL)
 export const triggerMainAction = createAction(TRIGGER_MAIN_ACTION)
