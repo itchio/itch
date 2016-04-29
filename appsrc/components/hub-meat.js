@@ -21,7 +21,6 @@ import {map} from 'underline'
 export class HubMeat extends Component {
   render () {
     const {tabs} = this.props
-    console.log('path = ', this.props.path)
 
     return <div className='hub-meat'>
       {tabs::map((tab, i) => {

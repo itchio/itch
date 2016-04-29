@@ -7,6 +7,8 @@ import createSagaMiddleware from 'redux-saga'
 import sagas from '../sagas'
 import reducer from '../reducers'
 
+import {each} from 'underline'
+
 const crashGetter = (store) => (next) => (action) => {
   try {
     if (action && !action.type) {
@@ -18,9 +20,11 @@ const crashGetter = (store) => (next) => (action) => {
   }
 }
 
+const sagaMiddleware = createSagaMiddleware()
+
 const middleware = [
   crashGetter,
-  createSagaMiddleware(...sagas)
+  sagaMiddleware
 ]
 
 const beChatty = process.env.MARCO_POLO === '1'
@@ -44,5 +48,6 @@ const enhancer = compose(
 
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
+sagas::each(::sagaMiddleware.run)
 
 export default store

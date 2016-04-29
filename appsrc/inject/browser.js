@@ -71,7 +71,6 @@ function purchaseInject () {
 function itchInject () {
   const {$} = window
 
-  $('#user_tools').hide()
   $('.admin_tag_editor_widget').hide()
   $('.above_game_banner').hide()
   $('.header_widget').hide()

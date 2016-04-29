@@ -6,10 +6,12 @@ import env from '../env'
 import createSagaMiddleware from 'redux-saga'
 
 import sagas from '../renderer-sagas'
+import {each} from 'underline'
 
 const filter = true
+const sagaMiddleware = createSagaMiddleware()
 const middleware = [
-  createSagaMiddleware(...sagas)
+  sagaMiddleware
 ]
 
 if (false && env.name === 'development') {
@@ -36,5 +38,6 @@ const enhancer = compose(...enhancers)
 const reducer = (state, action) => state
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
+sagas::each(::sagaMiddleware.run)
 
 export default store
