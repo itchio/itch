@@ -20,12 +20,17 @@ import {
   BOOT,
   USER_DB_CLOSED,
   GLOBAL_DB_CLOSED,
-  LOGOUT
+  LOGOUT,
+  PREPARE_QUIT
 } from '../constants/action-types'
 
 import Market from '../util/market'
 
 let userMarket = null
+
+import mklog from '../util/log'
+import {opts} from '../logger'
+const log = mklog('navigation')
 
 // abstraction leak but helps halving the bandwidth between browser and renderer:
 // the reducer can just pick data from here instead of getting it from the message,
@@ -64,10 +69,12 @@ export function * _boot (action) {
   const dbPath = pathmaker.globalDbPath()
   yield fork([globalMarket, globalMarket.load], dbPath)
 
+  log(opts, 'starting user db race')
   yield race({
-    task: call(queue.exhaust, {endType: GLOBAL_DB_CLOSED}),
-    cancel: take(LOGOUT)
+    globalMarketQueue: call(queue.exhaust, {endType: GLOBAL_DB_CLOSED}),
+    cancel: take(PREPARE_QUIT)
   })
+  log(opts, 'user db race finished')
 }
 
 export function * _loginSucceeded (action) {
@@ -77,12 +84,14 @@ export function * _loginSucceeded (action) {
   userMarket = new Market()
 
   userMarket.on('ready', () => {
+    log(opts, 'got user db ready')
     queue.dispatch(userDbReady())
   })
   userMarket.on('commit', (payload) => {
     queue.dispatch(userDbCommit(payload))
   })
   userMarket.on('close', () => {
+    log(opts, 'got user db close')
     queue.dispatch(userDbClosed())
   })
 
@@ -90,13 +99,13 @@ export function * _loginSucceeded (action) {
   yield fork([userMarket, userMarket.load], dbPath)
 
   yield race({
-    task: call(queue.exhaust, {endType: USER_DB_CLOSED}),
+    userMarketQueue: call(queue.exhaust, {endType: USER_DB_CLOSED}),
     cancel: take(LOGOUT)
   })
 }
 
 export function * _logout (action) {
-  console.log('closing user market')
+  log(opts, 'closing user db')
   userMarket.close()
   userMarket = null
 }

@@ -199,6 +199,10 @@ export default handleActions({
     }
   },
 
+  LOGOUT: (state, action) => {
+    return initialState
+  },
+
   CLOSE_SEARCH: (state, action) => {
     return {...state, searchResults: null, searchOpen: false}
   }
