@@ -42,7 +42,7 @@ export class BrowserMeat extends Component {
   updateBrowserState (props = {}) {
     const {webview} = this.refs
     if (!webview) {
-      console.log(`Can't update browser state (no webview ref)`)
+      console.log('Can\'t update browser state (no webview ref)')
       return
     }
     const browserState = {
@@ -60,7 +60,7 @@ export class BrowserMeat extends Component {
     const {navigate, evolveTab} = this.props
 
     if (!webview) {
-      console.log(`Oh noes, can't listen to webview's soothing event stream`)
+      console.log('Oh noes, can\'t listen to webview\'s soothing event stream')
       return
     }
 
@@ -119,7 +119,7 @@ export class BrowserMeat extends Component {
             evolveTab(oldPath, newPath)
             break
           default:
-            console.log(`got itch-internal request: `, pathname)
+            console.log('got itch-internal request: ', pathname)
         }
       })
     })
@@ -143,9 +143,10 @@ export class BrowserMeat extends Component {
 
     return <div className='browser-meat'>
       {bar}
-      { DONT_SHOW_WEBVIEWS
+      {DONT_SHOW_WEBVIEWS
         ? <div style={{padding: '10px'}}>Webviews disabled</div>
-        : <webview ref='webview' src={url} partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/> }
+        : <webview ref='webview' src={url} partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/>
+      }
     </div>
   }
 

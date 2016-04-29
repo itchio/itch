@@ -68,7 +68,7 @@ export default class Market extends EventEmitter {
     log(opts, `migrating old entries for ${dbPath}`)
     await this.saveAllEntities({entities: toSave}, {wait: true})
 
-    log(opts, `populating in-memory DB with disk records`)
+    log(opts, 'populating in-memory DB with disk records')
     await self.saveAllEntities({entities}, {persist: false, initial: true})
 
     log(opts, `done loading db from ${dbPath}`)

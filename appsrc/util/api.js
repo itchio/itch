@@ -114,19 +114,19 @@ export class AuthenticatedClient {
 
   // TODO: paging, for the prolific game dev.
   async myGames (data = {}) {
-    return await this.request('get', `/my-games`, data, {games: ensureArray})
+    return await this.request('get', '/my-games', data, {games: ensureArray})
   }
 
   async myOwnedKeys (data = {}) {
-    return await this.request('get', `/my-owned-keys`, data, {ownedKeys: ensureArray})
+    return await this.request('get', '/my-owned-keys', data, {ownedKeys: ensureArray})
   }
 
   async me () {
-    return await this.request('get', `/me`)
+    return await this.request('get', '/me')
   }
 
   async myCollections () {
-    return await this.request('get', `/my-collections`, {}, {collections: ensureArray})
+    return await this.request('get', '/my-collections', {}, {collections: ensureArray})
   }
 
   async game (game) {

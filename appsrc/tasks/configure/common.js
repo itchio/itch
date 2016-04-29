@@ -17,7 +17,7 @@ function fixExecs (field, basePath) {
   let f = sniffAndChmod::partial(field, basePath)
 
   return (
-    sf.glob(`**`, {nodir: true, cwd: basePath})
+    sf.glob('**', {nodir: true, cwd: basePath})
     .map(f, {concurrency: 2})
     .filter((x) => !!x)
   )

@@ -12,7 +12,7 @@ async function start (opts) {
   const id = opts.id
   const cave = CaveStore.find(id)
 
-  log(opts, `launchable cave, looking for fresher upload`)
+  log(opts, 'launchable cave, looking for fresher upload')
 
   try {
     await cooldown()

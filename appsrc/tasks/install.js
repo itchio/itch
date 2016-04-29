@@ -52,7 +52,7 @@ export default async function start (out, opts) {
     }
 
     if (!opts.reinstall) {
-      let installFolderExists = async () => {
+      const installFolderExists = async () => {
         const fullPath = pathmaker.appPath(cave)
         return await sf.exists(fullPath)
       }
@@ -75,7 +75,7 @@ export default async function start (out, opts) {
   try {
     archiveStat = await sf.lstat(archivePath)
   } catch (e) {
-    log(opts, `where did our archive go? re-downloading...`)
+    log(opts, 'where did our archive go? re-downloading...')
     throw new Transition({to: 'download', reason: 'missing-download'})
   }
 
@@ -84,7 +84,7 @@ export default async function start (out, opts) {
   log(opts, `comparing mtimes, installed = ${imtime}, archive = ${amtime}`)
 
   if (checkTimestamps && imtime && !(amtime > imtime)) {
-    log(opts, `archive isn't more recent, nothing to install`)
+    log(opts, 'archive isn\'t more recent, nothing to install')
     return {caveId: cave.id}
   }
 

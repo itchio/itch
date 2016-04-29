@@ -47,13 +47,13 @@ export function * startDownload (downloadOpts) {
       credentials
     }
 
-    log(opts, `Starting download...`)
+    log(opts, 'Starting download...')
     yield race({
       task: call(download, out, extendedOpts),
       queue: call(queue.exhaust)
     })
   } catch (e) {
-    log(opts, `Download threw`)
+    log(opts, 'Download threw')
     err = e.task || e
   } finally {
     err = err ? err.message || err : null
@@ -61,5 +61,5 @@ export function * startDownload (downloadOpts) {
     yield put(actions.downloadEnded({id, err, downloadOpts}))
   }
 
-  log(opts, `Download done!`)
+  log(opts, 'Download done!')
 }

@@ -124,9 +124,10 @@ export class GatePage extends Component {
       return <p className={pClasses}>
         <span className={classes}/>
         {translatedMessage}
-        { hasError
+        {hasError
           ? <span className='icon icon-repeat retry-setup' onClick={retrySetup}/>
-          : '' }
+          : ''
+        }
       </p>
     } else {
       const translatedMessage = t('login.action.login')

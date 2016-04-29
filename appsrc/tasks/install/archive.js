@@ -87,9 +87,9 @@ const self = {
 
     await deploy.deploy(deployOpts)
 
-    log(opts, `wiping stage...`)
+    log(opts, 'wiping stage...')
     await butler.wipe(stagePath)
-    log(opts, `done wiping stage`)
+    log(opts, 'done wiping stage')
 
     return {status: 'ok'}
   },
@@ -110,7 +110,7 @@ const self = {
       await butler.wipe(destPath)
     }
 
-    log(opts, `cleaning up cache`)
+    log(opts, 'cleaning up cache')
     self.cacheType(opts, null)
   },
 

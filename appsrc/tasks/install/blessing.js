@@ -5,7 +5,7 @@ import mklog from '../../util/log'
 const log = mklog('blessing')
 
 const self = (out, opts) => {
-  log(opts, `blessing: stub, assuming yes`)
+  log(opts, 'blessing: stub, assuming yes')
   return Promise.resolve()
 
   // out.emit('progress', 0)

@@ -17,17 +17,17 @@ export class RememberedSession extends Component {
     }
 
     return <div className='remembered-session' onClick={() => loginWithToken({username, key, me})}>
-    <img className='avatar' src={coverUrl}/>
-    <div className='rest'>
-    <p className='username'>{username}</p>
-    <p className='last-connected'>
-    Last connected <TimeAgo date={session.lastConnected}/>
-    </p>
-    </div>
-    <div className='filler'/>
-    <span className='hint--left' data-hint='Forget this session'>
-      <span className='icon icon-delete forget-session' onClick={onForget}/>
-    </span>
+      <img className='avatar' src={coverUrl}/>
+      <div className='rest'>
+        <p className='username'>{username}</p>
+        <p className='last-connected'>
+          Last connected <TimeAgo date={session.lastConnected}/>
+        </p>
+      </div>
+      <div className='filler'/>
+      <span className='hint--left' data-hint='Forget this session'>
+        <span className='icon icon-delete forget-session' onClick={onForget}/>
+      </span>
     </div>
   }
 }

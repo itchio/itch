@@ -12,7 +12,7 @@ const opts = {logger: new mklog.Logger()}
 /*
  * nedb was previously used for as both a persistent layer and
  * our single source of truth at runtime. that turned out to be
- * overkill & slower than expected. See `util/market` for its replacement.
+ * overkill & slower than expected. See 'util/market' for its replacement.
  */
 
 async function importOldData (filename) {

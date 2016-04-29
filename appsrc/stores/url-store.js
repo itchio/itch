@@ -41,7 +41,7 @@ async function open_url (payload) {
 function process_queue () {
   rolling = true
 
-  log(opts, `process_queue`)
+  log(opts, 'process_queue')
   if (queue_item) {
     handle_url(queue_item)
     queue_item = null
@@ -69,7 +69,7 @@ async function handle_url (url_str) {
   switch (verb) {
     case 'install': {
       if (!tokens[1]) {
-        log(opts, `for install: missing game, bailing out.`)
+        log(opts, 'for install: missing game, bailing out.')
         return
       }
       const gid = parseInt(tokens[1], 10)
@@ -85,7 +85,7 @@ async function handle_url (url_str) {
 
     case 'launch': {
       if (!tokens[1]) {
-        log(opts, `for install: missing game, bailing out.`)
+        log(opts, 'for install: missing game, bailing out.')
         return
       }
       const gid = parseInt(tokens[1], 10)

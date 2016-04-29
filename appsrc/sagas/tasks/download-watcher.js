@@ -11,17 +11,17 @@ const DOWNLOAD_DELAY = 3000
 let currentDownload = null
 
 function * updateDownloadState () {
-  log(opts, `Sleeping for a bit..`)
+  log(opts, 'Sleeping for a bit..')
   yield call(delay, DOWNLOAD_DELAY)
 
   const downloadsByOrder = yield select((state) => state.tasks.downloadsByOrder)
   const first = downloadsByOrder[0]
   if (!first) {
     if (currentDownload) {
-      log(opts, `Cancelling/clearing out last download`)
+      log(opts, 'Cancelling/clearing out last download')
       currentDownload = null
     } else {
-      log(opts, `Idle...`)
+      log(opts, 'Idle...')
     }
   } else {
     if (currentDownload !== first) {

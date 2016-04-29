@@ -72,17 +72,19 @@ export class GameBrowserBar extends Component {
 
     if (cave) {
       return <div className='game-stats'>
-        { secondsRun > 0 && classAction === 'launch'
+        {secondsRun > 0 && classAction === 'launch'
           ? <div className='total-playtime'>
             <span><label>{t(`usage_stats.has_${xed}_for_duration`)}</label> {t.format(format.seconds(secondsRun))}</span>
-            </div>
-          : '' }
+          </div>
+          : ''
+        }
         <div className='last-playthrough'>
-        { lastTouched > 0
+        {lastTouched > 0
           ? <label>
             {interleave(t, `usage_stats.last_${xed}_time_ago`, {time_ago: <NiceAgo date={lastTouchedDate}/>})}
           </label>
-          : t(`usage_stats.never_${xed}`) }
+          : t(`usage_stats.never_${xed}`)
+        }
         </div>
       </div>
     } else {
@@ -99,12 +101,13 @@ export class GameBrowserBar extends Component {
       return <div className='game-stats'>
         <div className='total-playtime'>
         {t(`usage_stats.description.${classification}`)}
-        { (platforms.length > 0)
-          ? [' ', interleave(t, `usage_stats.description.platforms`, {platforms})]
-          : '' }
+        {(platforms.length > 0)
+          ? [' ', interleave(t, 'usage_stats.description.platforms', {platforms})]
+          : ''
+        }
         {' — '}
-        { (downloadKey)
-          ? interleave(t, `usage_stats.description.bought_time_ago`, {time_ago: <NiceAgo date={downloadKey.createdAt}/>})
+        {downloadKey
+          ? interleave(t, 'usage_stats.description.bought_time_ago', {time_ago: <NiceAgo date={downloadKey.createdAt}/>})
           : (minPrice > 0
             ? interleave(t, 'usage_stats.description.price', {
               price: <label>
@@ -112,7 +115,8 @@ export class GameBrowserBar extends Component {
               </label>
             })
             : t('usage_stats.description.free_download')
-          ) }
+          )
+        }
         </div>
       </div>
     }

@@ -41,7 +41,7 @@ const self = {
 
     let {emitter, url, dest} = opts
     let err = null
-    let onerror = (e) => err = e
+    let onerror = (e) => { err = e }
 
     await sf.mkdir(path.dirname(dest))
     let res = await spawn({
@@ -67,7 +67,7 @@ const self = {
 
     let {emitter, patchPath, outPath, signaturePath} = opts
     let err = null
-    let onerror = (e) => err = e
+    let onerror = (e) => { err = e }
 
     let res = await spawn({
       command: 'butler',
@@ -91,7 +91,7 @@ const self = {
 
     let {emitter, archivePath, destPath} = opts
     let err = null
-    let onerror = (e) => err = e
+    let onerror = (e) => { err = e }
 
     let res = await spawn({
       command: 'butler',
@@ -108,7 +108,7 @@ const self = {
   /* rm -rf ${path} */
   wipe: async function (path, opts = {}) {
     let err = null
-    let onerror = (e) => err = e
+    let onerror = (e) => { err = e }
 
     let res = await spawn({
       command: 'butler',
@@ -128,7 +128,7 @@ const self = {
     }
 
     let err = null
-    let onerror = (e) => err = e
+    let onerror = (e) => { err = e }
 
     let res = await spawn({
       command: 'butler',
@@ -148,7 +148,7 @@ const self = {
       typeof dst === 'string'
     }
     let err = null
-    let onerror = (e) => err = e
+    let onerror = (e) => { err = e }
     let emitter = opts.emitter
 
     let res = await spawn({

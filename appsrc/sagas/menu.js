@@ -48,7 +48,7 @@ export default function * menuSaga () {
     }
   })
 
-  yield* queue.exhaust()
+  yield * queue.exhaust()
 }
 
 import urls from '../constants/urls'

@@ -113,7 +113,7 @@ const self = {
   },
 
   /**
-   * Writes an utf-8 string to `file`. Creates any directory needed.
+   * Writes an utf-8 string to 'file'. Creates any directory needed.
    */
   writeFile: async (file, contents) => {
     pre: { // eslint-disable-line

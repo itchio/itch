@@ -5,8 +5,8 @@ import fixture from '../fixture'
 import diskspace from '../../app/util/diskspace'
 import os from '../../app/util/os'
 
-test('diskspace', t => {
-  t.case('df (OSX 10.11)', async t => {
+test('diskspace', (t) => {
+  t.case('df (OSX 10.11)', async (t) => {
     t.stub(diskspace, 'dfRun').resolves(fixture.lines('diskspace', 'df-osx-10.11'))
     const out = await diskspace.df()
     t.same(out, {
@@ -18,7 +18,7 @@ test('diskspace', t => {
     })
   })
 
-  t.case('df (Ubuntu)', async t => {
+  t.case('df (Ubuntu)', async (t) => {
     t.stub(diskspace, 'dfRun').resolves(fixture.lines('diskspace', 'df-ubuntu-15.10'))
     const out = await diskspace.df()
     t.same(out, {
@@ -36,7 +36,7 @@ test('diskspace', t => {
     })
   })
 
-  t.case('df (ArchLinux)', async t => {
+  t.case('df (ArchLinux)', async (t) => {
     t.stub(diskspace, 'dfRun').resolves(fixture.lines('diskspace', 'df-archlinux'))
     const out = await diskspace.df()
     t.same(out, {
@@ -55,7 +55,7 @@ test('diskspace', t => {
     })
   })
 
-  t.case('wmic (Windows 10.11)', async t => {
+  t.case('wmic (Windows 10.11)', async (t) => {
     t.stub(diskspace, 'wmicRun').resolves(fixture.lines('diskspace', 'wmic-windows-8.1'))
     const out = await diskspace.wmic()
     t.same(out, {
@@ -68,24 +68,24 @@ test('diskspace', t => {
     })
   })
 
-  t.case('letterFor', t => {
-    let letter = diskspace.letterFor(`C:\\Users\\amos\\Downloads`)
-    t.is(letter, 'C:', `extracts letter`)
+  t.case('letterFor', (t) => {
+    let letter = diskspace.letterFor('C:\\Users\\amos\\Downloads')
+    t.is(letter, 'C:', 'extracts letter')
 
-    letter = diskspace.letterFor(`z:\\is\\for\\zoidberg`)
-    t.is(letter, 'Z:', `capitalizes correctly`)
+    letter = diskspace.letterFor('z:\\is\\for\\zoidberg')
+    t.is(letter, 'Z:', 'capitalizes correctly')
 
-    letter = diskspace.letterFor(`i:/am/not/sure/anymore`)
-    t.is(letter, 'I:', `supports mingw paths`)
+    letter = diskspace.letterFor('i:/am/not/sure/anymore')
+    t.is(letter, 'I:', 'supports mingw paths')
 
-    letter = diskspace.letterFor(`/d/ora/the/file/explorer`)
-    t.is(letter, 'D:', `supports mingw paths`)
+    letter = diskspace.letterFor('/d/ora/the/file/explorer')
+    t.is(letter, 'D:', 'supports mingw paths')
 
-    letter = diskspace.letterFor(`smb://pluto/goodies`)
-    t.notOk(letter, `doesn't extract letters for non-local paths`)
+    letter = diskspace.letterFor('smb://pluto/goodies')
+    t.notOk(letter, 'doesn\'t extract letters for non-local paths')
   })
 
-  t.case('freeInFolder (unix)', t => {
+  t.case('freeInFolder (unix)', (t) => {
     t.stub(os, 'platform').returns('linux')
 
     const diskInfo = {
@@ -97,22 +97,22 @@ test('diskspace', t => {
     }
 
     let free = diskspace.freeInFolder(diskInfo, '/media/cdrom0/AUTORUN.bat')
-    t.is(free, 0, `on cdrom`)
+    t.is(free, 0, 'on cdrom')
 
     free = diskspace.freeInFolder(diskInfo, '/media/usb1/Diego el Rey del juego/Juegos de Itch')
-    t.is(free, 111, `on usb disk`)
+    t.is(free, 111, 'on usb disk')
 
     free = diskspace.freeInFolder(diskInfo, '/home/diego/Downloads')
-    t.is(free, 333, `on root`)
+    t.is(free, 333, 'on root')
 
-    free = diskspace.freeInFolder(diskInfo, `https://itch.io/app`)
-    t.is(free, -1, `non-local path`)
+    free = diskspace.freeInFolder(diskInfo, 'https://itch.io/app')
+    t.is(free, -1, 'non-local path')
 
-    free = diskspace.freeInFolder(diskInfo, ``)
-    t.is(free, -1, `empty path`)
+    free = diskspace.freeInFolder(diskInfo, '')
+    t.is(free, -1, 'empty path')
   })
 
-  t.case('freeInFolder (windows)', t => {
+  t.case('freeInFolder (windows)', (t) => {
     t.stub(os, 'platform').returns('win32')
 
     const diskInfo = {
@@ -124,21 +124,21 @@ test('diskspace', t => {
     }
 
     let free = diskspace.freeInFolder(diskInfo, 'c:\\')
-    t.is(free, 111, `on C:`)
+    t.is(free, 111, 'on C:')
 
-    free = diskspace.freeInFolder(diskInfo, `D:\\Tomorrow\\we\\dine\\it's\\swell`)
-    t.is(free, 222, `on D:`)
+    free = diskspace.freeInFolder(diskInfo, 'D:\\Tomorrow\\we\\dine\\it\'s\\swell')
+    t.is(free, 222, 'on D:')
 
-    free = diskspace.freeInFolder(diskInfo, `/z/dosbox`)
-    t.is(free, 0, `on Z:`)
+    free = diskspace.freeInFolder(diskInfo, '/z/dosbox')
+    t.is(free, 0, 'on Z:')
 
-    free = diskspace.freeInFolder(diskInfo, `E:\\Uh\\oh`)
-    t.is(free, -1, `on non-existant letter drive`)
+    free = diskspace.freeInFolder(diskInfo, 'E:\\Uh\\oh')
+    t.is(free, -1, 'on non-existant letter drive')
 
-    free = diskspace.freeInFolder(diskInfo, `https://itch.io/app`)
-    t.is(free, -1, `non-local path`)
+    free = diskspace.freeInFolder(diskInfo, 'https://itch.io/app')
+    t.is(free, -1, 'non-local path')
 
-    free = diskspace.freeInFolder(diskInfo, ``)
-    t.is(free, -1, `empty path`)
+    free = diskspace.freeInFolder(diskInfo, '')
+    t.is(free, -1, 'empty path')
   })
 })

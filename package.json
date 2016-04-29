@@ -126,6 +126,9 @@
     "i18n": "release/i18n-check.sh"
   },
   "standard": {
-    "parser": "babel-eslint"
+    "parser": "babel-eslint",
+    "rules": {
+      "arrow-parens": [0]
+    }
   }
 }

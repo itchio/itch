@@ -50,7 +50,7 @@ function purchaseInject () {
   const form = $('form.buy_form_widget')
   form.attr('target', '_self')
 
-  // TODO: use `file:///` protocol instead, if that's no issue.
+  // TODO: use 'file:///' protocol instead, if that's no issue.
   const css = $(`<style>
     .itchInjectedSpinner {
       animation: sk-rotateplane 2.4s .5s infinite ease-out;

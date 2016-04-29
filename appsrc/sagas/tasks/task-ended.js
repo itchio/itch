@@ -17,7 +17,7 @@ export function * _taskEnded (action) {
   if (err) {
     log(opts, `Error in task ${name}: ${err}`)
     if (name === 'install') {
-      log(opts, `Install failed, attempting to destroy cave`)
+      log(opts, 'Install failed, attempting to destroy cave')
       const {gameId} = taskOpts
       const cave = getGlobalMarket().getEntities('caves')::findWhere({gameId})
       if (cave && cave.fresh) {

@@ -10,22 +10,22 @@ let self = {
 
   async query (opts) {
     let logger = opts.logger
-    log(opts, `querying default handler for itchio:// protocol`)
+    log(opts, 'querying default handler for itchio:// protocol')
     return await spawn({
       command: 'xdg-mime',
       args: ['query', 'default', self.mime_type],
-      onToken: (tok) => log(opts, `query: ` + tok),
+      onToken: (tok) => log(opts, 'query: ' + tok),
       logger
     })
   },
 
   async set_default (opts) {
     let logger = opts.logger
-    log(opts, `registering self as default handler for itchio:// protocol`)
+    log(opts, 'registering self as default handler for itchio:// protocol')
     return await spawn({
       command: 'xdg-mime',
       args: ['default', 'itch.desktop', self.mime_type],
-      onToken: (tok) => log(opts, `set_default: ` + tok),
+      onToken: (tok) => log(opts, 'set_default: ' + tok),
       logger
     })
   },
@@ -33,7 +33,7 @@ let self = {
   // lets us handle the itchio:// URL scheme on linux / freedesktop
   async register_if_needed (opts) {
     if (os.platform() !== 'linux') {
-      log(opts, `non-linux platform, skipping xdg-mime`)
+      log(opts, 'non-linux platform, skipping xdg-mime')
       return
     }
 

@@ -113,7 +113,7 @@ export function * _windowFocusChanged (action) {
 export function * _tabsChanged (action) {
   const key = yield select((state) => state.session.credentials.key)
   if (!key) {
-    log(opts, `Not logged in, not saving tabs yet...`)
+    log(opts, 'Not logged in, not saving tabs yet...')
     return
   }
 
@@ -131,7 +131,7 @@ export function * _tabsChanged (action) {
 }
 
 export function * _sessionReady (action) {
-  log(opts, `Session ready! looking for tabs to restore`)
+  log(opts, 'Session ready! looking for tabs to restore')
   const userMarket = getUserMarket()
   const snapshot = userMarket.getEntity(TABS_TABLE_NAME, 'x')
 
@@ -146,7 +146,7 @@ export function * _sessionReady (action) {
       return put(tabDataFetched({path, data}))
     })
   } else {
-    log(opts, `No tabs to restore`)
+    log(opts, 'No tabs to restore')
   }
 }
 
@@ -173,11 +173,11 @@ export function * applyTabOffset (offset) {
 }
 
 export function * _showPreviousTab () {
-  yield* applyTabOffset(-1)
+  yield * applyTabOffset(-1)
 }
 
 export function * _showNextTab () {
-  yield* applyTabOffset(1)
+  yield * applyTabOffset(1)
 }
 
 export function * _openUrl (action) {

@@ -49,13 +49,13 @@ class DownloadRow extends Component {
     }
 
     return <div className='controls'>
-    { first
+    {first
       ? (paused
         ? <span className='icon icon-triangle-right' onClick={resumeDownloads}/>
         : <span className='icon icon-pause' onClick={pauseDownloads}/>
       )
       : <span className='icon icon-align-top' onClick={() => prioritizeDownload(id)}/>
-      }
+    }
     </div>
   }
 

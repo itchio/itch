@@ -127,7 +127,7 @@ const self = {
 
     let type = await fnout.path(archivePath)
     if (type.ext === 'tar') {
-      log(opts, `using butler`)
+      log(opts, 'using butler')
       return await butler.untar(opts)
     } else {
       return await self.sevenzip(opts)

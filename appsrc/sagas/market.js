@@ -96,7 +96,7 @@ export function * _loginSucceeded (action) {
 }
 
 export function * _logout (action) {
-  console.log(`closing user market`)
+  console.log('closing user market')
   userMarket.close()
   userMarket = null
 }

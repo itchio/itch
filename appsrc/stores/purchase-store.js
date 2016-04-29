@@ -160,7 +160,7 @@ async function initiate_purchase (payload) {
   win.webContents.on('did-get-response-details', async (e, status, newURL, originalURL, httpResponseCode) => {
     if (httpResponseCode === 404 && newURL === purchase_url) {
       console.log(`404 not found: ${newURL}`)
-      console.log(`closing because of 404`)
+      console.log('closing because of 404')
       win.close()
 
       if (await wants_to_browse_after_failure(game)) {

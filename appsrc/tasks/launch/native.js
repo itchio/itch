@@ -37,7 +37,7 @@ async function sh (exePath, fullCommand, opts) {
     const error = `process exited with code ${code}`
     throw new Crash({exePath, error})
   }
-  return `child completed successfully`
+  return 'child completed successfully'
 }
 
 function escape (arg) {
@@ -177,7 +177,7 @@ export default async function launch (out, opts) {
   const args = []
 
   if (/\.jar$/i.test(exePath)) {
-    log(opts, `Launching .jar`)
+    log(opts, 'Launching .jar')
     args.push('-jar')
     args.push(exePath)
     exePath = 'java'

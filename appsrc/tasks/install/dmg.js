@@ -70,7 +70,7 @@ let self = {
       }
     }
 
-    log(opts, `Done looking for previously mounted images`)
+    log(opts, 'Done looking for previously mounted images')
     log(opts, `Trying to unlink ${cdrPath}`)
 
     try {
@@ -149,12 +149,12 @@ let self = {
       await butler.wipe(cdrPath)
     }
 
-    log(opts, `Launching cleanup asynchronously...`)
+    log(opts, 'Launching cleanup asynchronously...')
     cleanup()
   },
 
   uninstall: async function (out, opts) {
-    log(opts, `Relying on archive's uninstall routine`)
+    log(opts, 'Relying on archive\'s uninstall routine')
     await archive.uninstall(out, opts)
   }
 }

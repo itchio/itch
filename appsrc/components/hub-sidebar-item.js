@@ -41,17 +41,19 @@ export class HubSidebarItem extends Component {
     return connectDragSource(connectDropTarget(<section key={path} style={style} className={classes} onClick={this.onClick} onContextMenu={onContextMenu} onClose={onClose} data-path={path} data-dragging={isDragging}>
       <span className={`icon icon-${icon}`}/>
       {t.format(label)}
-      { count > 0
+      {count > 0
         ? <span className='bubble'>{count}</span>
-        : ''}
-        <div className='filler'/>
-        { onClose
-          ? <span className='icon icon-cross' onClick={(e) => {
-            onClose()
-            e.stopPropagation()
-          }}/>
-          : '' }
-        </section>))
+        : ''
+      }
+      <div className='filler'/>
+      {onClose
+        ? <span className='icon icon-cross' onClick={(e) => {
+          onClose()
+          e.stopPropagation()
+        }}/>
+        : ''
+      }
+    </section>))
   }
 
   componentWillReceiveProps () {
@@ -167,7 +169,7 @@ export default DragSource(
 )(DropTarget(
   draggableTypes.TAB,
   tabTarget,
-  connect => ({
+  (connect) => ({
     connectDropTarget: connect.dropTarget()
   })
 )(HubSidebarItem))

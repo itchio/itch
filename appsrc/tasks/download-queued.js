@@ -6,14 +6,14 @@ function start (opts) {
   let emitter = opts.emitter
 
   return new Promise((resolve, reject) => {
-    emitter.once('shine', t => {
+    emitter.once('shine', (t) => {
       reject(new Transition({
         to: 'download',
-        reason: `It's our time to shine.`
+        reason: 'It\'s our time to shine.'
       }))
     })
 
-    emitter.once('cancel', t => {
+    emitter.once('cancel', (t) => {
       reject(new Cancelled())
     })
 

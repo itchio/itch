@@ -47,7 +47,7 @@ const self = {
     const uninstallers = await findUninstallers(destPath)
 
     if (uninstallers.length === 0) {
-      log(opts, `could not find an uninstaller`)
+      log(opts, 'could not find an uninstaller')
       return
     }
 

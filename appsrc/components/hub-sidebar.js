@@ -14,10 +14,6 @@ import Dropdown from './dropdown'
 import HubSidebarItem from './hub-sidebar-item'
 
 export class HubSidebar extends Component {
-  constructor () {
-    super()
-  }
-
   render () {
     const {t, osx, sidebarWidth, fullscreen, path: currentPath, tabs, tabData, navigate, counts, closeTab, moveTab, openTabContextMenu} = this.props
     const classes = classNames('hub-sidebar', {osx, fullscreen})
@@ -59,8 +55,8 @@ export class HubSidebar extends Component {
             return <HubSidebarItem {...props}/>
           })
           : <section className='empty'>
-          <span className='icon icon-like'/>
-          {t('sidebar.no_tabs')}
+            <span className='icon icon-like'/>
+            {t('sidebar.no_tabs')}
           </section>
         }
       </div>

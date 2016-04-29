@@ -13,7 +13,7 @@ class SecondaryActions extends Component {
     const {items, error} = listSecondaryActions(this.props)
 
     return <div className={classNames('cave-actions', {error})}>
-      { items::map(::this.action) }
+      {items::map(::this.action)}
     </div>
   }
 

@@ -153,7 +153,7 @@ export default handleActions({
     invariant(typeof after === 'string', 'after path must be a string')
 
     const pathMap = {}
-    state.tabs.transient::each((t) => pathMap[t.path] = true)
+    state.tabs.transient::each((t) => { pathMap[t.path] = true })
 
     const newTransient = state.tabs.transient::map((t) => {
       if (t.path === before) {

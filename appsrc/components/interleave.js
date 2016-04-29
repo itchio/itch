@@ -26,7 +26,7 @@ function interleave (t, key, components, text_vars) {
   //
   //   'Le bouton [[button]] sert à faire X'
   //
-  // and then replace `[[button]]` with the actual component
+  // and then replace '[[button]]' with the actual component
   // passed to us in components['button']
   for (let component_key of Object.keys(components)) {
     vars[component_key] = '[[' + component_key + ']]'

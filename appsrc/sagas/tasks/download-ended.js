@@ -16,7 +16,7 @@ export function * _downloadEnded (action) {
   if (reason === 'install' || reason === 'update') {
     if (err) {
       if (incremental) {
-        log(opts, `Incremental didn't work, doing full download`)
+        log(opts, 'Incremental didn\'t work, doing full download')
         const newDownloadOpts = {
           ...downloadOpts::omit('upgradePath', 'incremental'),
           totalSize: downloadOpts.upload.size

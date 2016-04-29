@@ -115,7 +115,7 @@ function * checkForGameUpdate (cave) {
         log(opts, `Doing wharf-aware update check, from build ${cave.buildId}`)
         const upload = uploads::findWhere({id: cave.uploadId})
         if (!upload || !upload.buildId) {
-          log(opts, `Uh oh, our wharf-enabled upload disappeared`)
+          log(opts, 'Uh oh, our wharf-enabled upload disappeared')
         } else {
           if (upload.buildId !== cave.buildId) {
             log(opts, `Got new build available: ${upload.buildId} > ${cave.buildId}`)
@@ -181,7 +181,7 @@ function * installUpdater () {
   yield take(SESSION_READY)
 
   while (true) {
-    log(opts, `Regularly scheduled check for game updates...`)
+    log(opts, 'Regularly scheduled check for game updates...')
     yield put(checkForGameUpdates())
     yield call(delay, DELAY_BETWEEN_PASSES)
   }

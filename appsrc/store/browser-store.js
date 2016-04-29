@@ -12,7 +12,7 @@ import {each} from 'underline'
 const crashGetter = (store) => (next) => (action) => {
   try {
     if (action && !action.type) {
-      throw new Error(`refusing to dispatch action with null type: `, action)
+      throw new Error('refusing to dispatch action with null type: ', action)
     }
     return next(action)
   } catch (e) {

@@ -67,7 +67,7 @@ export function * _boot () {
       hadErrors = true
       if (/^Could not get code signature/.test(err) && env.name === 'development') {
         // electron-prebuilt isn't signed, we know you can't work Squirrel.mac, don't worry
-        log(opts, `Ignoring Squirrel.mac complaint`)
+        log(opts, 'Ignoring Squirrel.mac complaint')
       } else {
         queue.dispatch(selfUpdateError(err))
       }
@@ -190,7 +190,7 @@ export function * _selfUpdateError (action) {
 export function * _showAvailableSelfUpdate (action) {
   const spec = yield select((state) => state.selfUpdate.available)
   if (!spec) {
-    log(opts, `Asked to show available self-update but there wasn't any`)
+    log(opts, 'Asked to show available self-update but there wasn\'t any')
     yield put(dismissStatus())
     return
   }

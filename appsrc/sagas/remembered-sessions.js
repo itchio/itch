@@ -95,7 +95,7 @@ export function * saveSession (userId, record) {
 
 export function * _loginSucceeded (action) {
   const {key, me} = action.payload
-  yield* saveSession(me.id, {key, me})
+  yield * saveSession(me.id, {key, me})
 }
 
 export default function * rememberedSessionSaga () {

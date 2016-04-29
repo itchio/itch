@@ -16,7 +16,7 @@ export function * _queueGame (action) {
 
   if (cave) {
     log(opts, `Have a cave for game ${game.id}, launching`)
-    yield* startCave(game, cave)
+    yield * startCave(game, cave)
     return
   }
 

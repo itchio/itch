@@ -134,9 +134,10 @@ class StatusBar extends Component {
 
     return <div ref='downloads' className={downloadClasses} data-hint={downloadHint} onClick={() => navigate('downloads')}>
       <Icon icon='download'/>
-      { finishedDownloads.length > 0
-      ? <span className='bubble'>{finishedDownloads.length}</span>
-      : '' }
+      {finishedDownloads.length > 0
+        ? <span className='bubble'>{finishedDownloads.length}</span>
+        : ''
+      }
     </div>
   }
 
@@ -149,9 +150,10 @@ class StatusBar extends Component {
 
     return <div ref='history' className={historyClasses} data-hint={historyHint} onClick={() => navigate('history')}>
       <Icon icon='history'/>
-      { activeItems.length > 0
-      ? <span className='bubble'>{activeItems.length}</span>
-      : '' }
+      {activeItems.length > 0
+        ? <span className='bubble'>{activeItems.length}</span>
+        : ''
+      }
     </div>
   }
 }

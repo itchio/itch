@@ -48,10 +48,10 @@ const self = {
     }
 
     try {
-      log(opts, `Updating shortcut with squirrel`)
+      log(opts, 'Updating shortcut with squirrel')
       await self.create_or_update_shortcut()
       if (remove_desktop_shortcut) {
-        log(opts, `Removing shortcut as requested`)
+        log(opts, 'Removing shortcut as requested')
         await sf.wipe(shortcutPath)
       }
     } catch (e) {
@@ -60,7 +60,7 @@ const self = {
   },
 
   install: async function () {
-    log(opts, `Creating shortcut with squirrel`)
+    log(opts, 'Creating shortcut with squirrel')
     try {
       await self.create_or_update_shortcut()
     } catch (e) {
@@ -69,7 +69,7 @@ const self = {
   },
 
   uninstall: async function () {
-    log(opts, `Removing shortcut with squirrel`)
+    log(opts, 'Removing shortcut with squirrel')
     try {
       await self.update_run(['--removeShortcut', exe_name])
     } catch (e) {

@@ -28,8 +28,8 @@ async function show_packaging_policy (payload) {
 
   const buttons = [
     i18n.t('prompt.action.ok'),
-    i18n.t(`prompt.packaging_policy.learn_more`),
-    i18n.t(`prompt.packaging_policy.open_web_page`, {title: game.title})
+    i18n.t('prompt.packaging_policy.learn_more'),
+    i18n.t('prompt.packaging_policy.open_web_page', {title: game.title})
   ]
 
   const dialogOpts = {

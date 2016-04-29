@@ -41,11 +41,11 @@ export default async function start (out, opts) {
 
   try {
     await core.uninstall(out, coreOpts)
-    log(opts, `Uninstallation successful`)
+    log(opts, 'Uninstallation successful')
   } catch (e) {
     if (e instanceof core.UnhandledFormat) {
       log(opts, e.message)
-      log(opts, `Imploding anyway`)
+      log(opts, 'Imploding anyway')
       await sf.wipe(destPath)
     } else {
       // re-raise other errors

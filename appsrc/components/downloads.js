@@ -22,7 +22,7 @@ class Downloads extends Component {
     {items::map((item, i) =>
       <DownloadRow key={item.id} item={item} first={i === 0} paused={paused} active/>
     )}
-    { finishedItems.length > 0
+    {finishedItems.length > 0
       ? [
         <div className='finished-bar'>
           <h2 className='finished-header'>
@@ -35,7 +35,7 @@ class Downloads extends Component {
       ].concat(finishedItems::map((item) =>
         <DownloadRow key={item.id} item={item}/>
       ))
-      : '' }
+      : ''}
 
     </ul>
   }

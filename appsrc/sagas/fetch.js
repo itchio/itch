@@ -42,7 +42,7 @@ function * _windowFocusChanged (action) {
 
   const credentials = yield select((state) => state.session.credentials)
   if (!credentials.key) {
-    log(opts, `Not logged in, not fetching anything yet`)
+    log(opts, 'Not logged in, not fetching anything yet')
     return
   }
 
@@ -57,7 +57,7 @@ function * _loginSucceeded (action) {
 function * fetchUsuals (credentials) {
   invariant(credentials.key, 'have API key')
 
-  log(opts, `Fetching the usuals`)
+  log(opts, 'Fetching the usuals')
 
   const market = getUserMarket()
 
@@ -77,7 +77,7 @@ function * _search (action) {
   try {
     const credentials = yield select((state) => state.session.credentials)
     if (!credentials.key) {
-      log(opts, `Not logged in, can't search`)
+      log(opts, 'Not logged in, can\'t search')
       return
     }
 

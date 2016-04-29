@@ -27,7 +27,7 @@ export class Location extends Component {
     const locationGames = locCaves::map((key) => allGames[key.gameId])::filter((x) => !!x)
 
     return <div className='location-meat'>
-      { locationGames.length > 0
+      {locationGames.length > 0
         ? <GameGrid games={locationGames}/>
         : <p className='empty'>{t('install_location.empty')}</p>
       }

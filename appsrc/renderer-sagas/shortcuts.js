@@ -21,7 +21,7 @@ import {
 const queue = createQueue('shortcuts')
 
 export default function * shortcutsSaga () {
-  yield* queue.exhaust()
+  yield * queue.exhaust()
 }
 
 function openDevTools () {

@@ -4,4 +4,4 @@
 // although that file didn't exist before I (amos) added it so that it
 // would keep generating our HTML coverage report.
 
-// tl;dr instead of `app/src/env.js`, you're probably looking for `appsrc/env.js`
+// tl;dr instead of 'app/src/env.js', you're probably looking for 'appsrc/env.js'

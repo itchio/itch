@@ -19,7 +19,7 @@ export function * _loginWithPassword (action) {
   yield put(attemptLogin())
 
   try {
-    const key = yield* getKey(username, password)
+    const key = yield * getKey(username, password)
     const keyClient = client.withKey(key)
 
     // validate API key and get user profile in one fell swoop

@@ -26,7 +26,7 @@ const file = async (filePath) => {
   let code = await spawn({
     command: 'file',
     args,
-    onToken: (tok) => output = tok
+    onToken: (tok) => { output = tok }
   })
   if (code !== 0) {
     throw new Error(`file(1) failed with exit code ${code}`)

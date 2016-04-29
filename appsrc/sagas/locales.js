@@ -51,7 +51,7 @@ export function * doDownloadLocale (lang, resources) {
 
   log(opts, `HTTP GET ${uri}: ${resp.statusCode}`)
   if (resp.statusCode !== 200) {
-    throw new Error(`Locale update server is down, try again later`)
+    throw new Error('Locale update server is down, try again later')
   }
 
   Object.assign(resources, resp.body)
@@ -66,14 +66,14 @@ export function * loadInitialLocales () {
   const config = JSON.parse(configPayload)
   yield put(localesConfigLoaded(config))
 
-  yield* loadLocale('en')
+  yield * loadLocale('en')
 }
 
 export function * downloadLocale (action) {
   let {lang} = action.payload
 
   if (!upgradesEnabled) {
-    log(opts, `Not downloading locales in development, export DID_I_STUTTER=1 to override`)
+    log(opts, 'Not downloading locales in development, export DID_I_STUTTER=1 to override')
     return
   }
 
@@ -89,7 +89,7 @@ export function * downloadLocale (action) {
 
   const resources = {}
   try {
-    yield* doDownloadLocale(lang, resources)
+    yield * doDownloadLocale(lang, resources)
   } catch (e) {
     yield put(queueHistoryItem({
       label: ['i18n.failed_downloading_locales', {lang}],

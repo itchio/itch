@@ -30,13 +30,13 @@ window.addEventListener('DOMContentLoaded', (e) => {
   const gm4 = document.querySelectorAll('div.gm4html5_div_class')
   const emscripten = document.querySelectorAll('canvas.emscripten')
   if (gm4.length + emscripten.length === 0) {
-    console.log(`Didn't detect emscripten or gm4, not trying to fit to window`)
+    console.log('Didn\'t detect emscripten or gm4, not trying to fit to window')
     return
   }
 
   const canvases = document.getElementsByTagName('canvas')
   if (canvases.length !== 1) {
-    console.log(`Didn't find exactly 1 canvas, not trying to fit to window`)
+    console.log('Didn\'t find exactly 1 canvas, not trying to fit to window')
   }
   const canvas = canvases[0]
 

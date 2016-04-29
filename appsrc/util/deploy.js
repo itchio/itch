@@ -57,7 +57,7 @@ let self = {
       log(opts, `Could not read receipt: ${err.message}`)
     }
     if (!destFiles.length) {
-      log(opts, `Globbing for destfiles`)
+      log(opts, 'Globbing for destfiles')
       destFiles = await sf.glob('**', {cwd: destPath})
     }
 
@@ -73,15 +73,15 @@ let self = {
         return butler.wipe(dinosaur)
       }, {concurrency: 4})
     } else {
-      log(opts, `no dinosaurs`)
+      log(opts, 'no dinosaurs')
     }
 
-    log(opts, `copying stage to dest`)
+    log(opts, 'copying stage to dest')
     await butler.ditto(stagePath, destPath, {
       onProgress
     })
 
-    log(opts, `everything copied, writing receipt`)
+    log(opts, 'everything copied, writing receipt')
     let cave = opts.cave || {}
 
     await sf.writeFile(receiptPath, JSON.stringify({

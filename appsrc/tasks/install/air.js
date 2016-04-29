@@ -53,11 +53,11 @@ let self = {
       throw new Error(`AIR installer error: ${message}`)
     }
 
-    log(opts, `Locating app manifest`)
+    log(opts, 'Locating app manifest')
 
     let candidates = await sf.glob(MANIFEST_GLOB, {cwd: destPath})
     if (candidates.length === 0) {
-      throw new Error(`Adobe AIR app manifest not found, cannot uninstall`)
+      throw new Error('Adobe AIR app manifest not found, cannot uninstall')
     }
 
     log(opts, `Found app manifest at ${candidates[0]}`)
@@ -77,7 +77,7 @@ let self = {
   uninstall: async function (out, opts) {
     AppActions.cave_progress({id: opts.id, progress: -1})
 
-    log(opts, `Grabbing adobe's Air Runtime Helper if needed...`)
+    log(opts, 'Grabbing adobe\'s Air Runtime Helper if needed...')
 
     let logger = opts.logger
 
@@ -91,7 +91,7 @@ let self = {
     let cave = opts.cave
     let appid = cave.air_appid
     if (!appid) {
-      log(opts, `No appid, skipping arh uninstall`)
+      log(opts, 'No appid, skipping arh uninstall')
       return
     }
 
@@ -112,7 +112,7 @@ let self = {
     }
     AppActions.update_cave(opts.id, {air_appid: null})
 
-    log(opts, `Uninstallation successful`)
+    log(opts, 'Uninstallation successful')
   }
 }
 

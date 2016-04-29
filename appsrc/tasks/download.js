@@ -74,13 +74,13 @@ async function downloadPatches (out, opts) {
       const api = client.withKey(credentials.key)
       const buildRes = await api.downloadBuild(downloadKey, upload.id, entry.id)
 
-      log(opts, `got signature + patch download urls`)
+      log(opts, 'got signature + patch download urls')
 
       await Promise.all([
         butler.dl({url: buildRes.patch.url, dest: patchPath, onProgress}),
         butler.dl({url: buildRes.signature.url, dest: signaturePath})
       ])
-      log(opts, `downloaded both patch + signature`)
+      log(opts, 'downloaded both patch + signature')
 
       previousPatch = { entry, patchPath, signaturePath, byteOffset }
       byteOffset += entry.patchSize
@@ -94,12 +94,12 @@ async function downloadPatches (out, opts) {
 
   out.emit('progress', 1)
   await doApply(previousPatch)
-  log(opts, `All done applying!`)
+  log(opts, 'All done applying!')
 }
 
 export default async function start (out, opts) {
   if (opts.upgradePath) {
-    log(opts, `Got an upgrade path, downloading patches`)
+    log(opts, 'Got an upgrade path, downloading patches')
     return await downloadPatches(out, opts)
   }
 

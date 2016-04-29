@@ -163,7 +163,7 @@ function * _createWindow () {
     window.webContents.openDevTools({detach: true})
   }
 
-  yield* queue.exhaust()
+  yield * queue.exhaust()
 }
 
 export function * _windowBoundsChanged (action) {

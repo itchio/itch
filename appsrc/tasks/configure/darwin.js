@@ -14,7 +14,7 @@ const ignorePatterns = [
 
 const self = {
   configure: async function (cavePath) {
-    const bundles = await sf.glob(`**.app/`, {
+    const bundles = await sf.glob('**.app/', {
       cwd: cavePath,
       ignore: ignorePatterns
     })

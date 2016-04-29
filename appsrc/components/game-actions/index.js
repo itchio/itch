@@ -29,12 +29,12 @@ class GameActions extends Component {
 
     return <div className={classes}>
       <MainAction {...props}/>
-      { showSecondary
+      {showSecondary
         ? <SecondaryActions {...props}/>
-        : '' }
-      { CustomSecondary
+        : ''}
+      {CustomSecondary
         ? <CustomSecondary {...props}/>
-        : '' }
+        : ''}
     </div>
   }
 

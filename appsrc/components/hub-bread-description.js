@@ -16,14 +16,16 @@ class HubBreadDescription extends Component {
     }
 
     return <section className='description'>
-      { image
+      {image
         ? <div className={`description-image ${imageClass}`} style={imageStyle}></div>
-        : '' }
+        : ''
+      }
       <div className='description-titles'>
         <h2>{t.format(label)}</h2>
-        { sub && sub.length > 0
+        {sub && sub.length > 0
           ? <h3>{sub}</h3>
-          : '' }
+          : ''
+        }
       </div>
     </section>
   }

@@ -29,13 +29,13 @@ export class Library extends Component {
 
     return <div className='library-meat'>
       <h2 className={headerClasses}>{t('sidebar.installed')}</h2>
-      { installedGames.length > 0
+      {installedGames.length > 0
         ? <GameGrid games={installedGames}/>
         : ''
       }
 
       <h2 className={headerClasses}>{t('sidebar.owned')}</h2>
-      { games.length > 0
+      {games.length > 0
         ? <GameGrid games={games}/>
         : ''
       }

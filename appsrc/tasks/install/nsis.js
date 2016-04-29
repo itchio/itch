@@ -50,7 +50,7 @@ const self = {
       throw new Error(`elevate / nsis installer exited with code ${code}`)
     }
 
-    log(opts, `elevate/nsis installer completed successfully`)
+    log(opts, 'elevate/nsis installer completed successfully')
   },
 
   uninstall: async function (out, opts) {
@@ -60,7 +60,7 @@ const self = {
     const uninstallers = await findUninstallers(destPath)
 
     if (uninstallers.length === 0) {
-      log(opts, `could not find an uninstaller`)
+      log(opts, 'could not find an uninstaller')
       return
     }
 

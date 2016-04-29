@@ -23,11 +23,11 @@ class MainAction extends Component {
       child = <span className='state normal-state'>
         <TaskIcon task={task} animate={animate} action={action}/>
         {this.status()}
-        { cancellable
+        {cancellable
         ? <span className='cancel-cross'>
           <Icon icon='cross'/>
         </span>
-        : '' }
+        : ''}
       </span>
     } else {
       if (platformCompatible) {

@@ -31,7 +31,7 @@ export class BrowserControls extends Component {
         ? <span className='icon icon-cross loading' onClick={stop}/>
         : <span className='icon icon-repeat' onClick={reload}/>
       }
-      { editingURL
+      {editingURL
         ? <input type='text' ref={this.onAddressField} className='browser-address editing' defaultValue={url} onKeyUp={this.addressKeyUp} onBlur={this.addressBlur}/>
         : (url && url.length
           ? <span className='browser-address' onClick={this.startEditingURL}>{url}</span>

@@ -56,7 +56,7 @@ export function * startTask (taskOpts) {
       log(opts, `Task results: ${JSON.stringify(result, null, 2)}`)
     }
   } catch (e) {
-    log(opts, `Task threw`)
+    log(opts, 'Task threw')
     err = e.task || e
   } finally {
     log(opts, `Task ended, err: ${err ? err.stack || JSON.stringify(err) : '<none>'}`)

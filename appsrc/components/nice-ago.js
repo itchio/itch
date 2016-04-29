@@ -16,7 +16,7 @@ export class NiceAgo extends Component {
 
     return <span className='nice-ago hint--bottom' data-hint={dateFormat(date, DATE_FORMAT)}>
       <TimeAgo date={date} title=''/>
-      </span>
+    </span>
   }
 }
 

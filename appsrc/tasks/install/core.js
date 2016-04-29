@@ -70,7 +70,7 @@ const self = {
 
     const {archivePath} = opts
     if (!archivePath) {
-      log(opts, `no archive available, can't retrieve cached type`)
+      log(opts, 'no archive available, can\'t retrieve cached type')
       return
     }
 
@@ -89,7 +89,7 @@ const self = {
   sniffType: async function (opts) {
     const {archivePath} = opts
     if (!archivePath) {
-      log(opts, `no archive available, can't sniff type, going with 'archive' uninstaller`)
+      log(opts, 'no archive available, can\'t sniff type, going with "archive" uninstaller')
       return 'archive'
     }
 
@@ -107,10 +107,10 @@ const self = {
       })
 
       if (code === 0) {
-        log(opts, `7-zip saves the day! it's an archive.`)
+        log(opts, '7-zip saves the day! it is an archive.')
         installerName = 'archive'
       } else if (archivePath.executable) {
-        log(opts, `it's executable, going with naked`)
+        log(opts, 'tis an executable, going with naked')
         installerName = 'naked'
       } else {
         throw new UnhandledFormat(`${archivePath} of type ${JSON.stringify(type)}`)

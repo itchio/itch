@@ -43,16 +43,17 @@ export class Preferences extends Component {
         <SelectRow onChange={::this.onLanguageChange} options={options} value={lang || '__'} label={t('preferences.language')}/>
 
         <div className='locale-fetcher' onClick={(e) => { e.preventDefault(); queueLocaleUpdate(lang) }}>
-        { downloading
+        {downloading
           ? <Icon icon='stopwatch' classes='scan'/>
-          : <Icon icon='refresh'/> }
+          : <Icon icon='refresh'/>
+        }
         </div>
 
         <div className='get-involved'>
-        <a href={urls.itchTranslationPlatform}>
-        <Icon icon='earth'/>
-        {t('preferences.language.get_involved', {name: 'itch'})}
-        </a>
+          <a href={urls.itchTranslationPlatform}>
+            <Icon icon='earth'/>
+            {t('preferences.language.get_involved', {name: 'itch'})}
+          </a>
         </div>
 
         <p className='install-locations-header'>{t('preferences.install_locations')}</p>
@@ -72,13 +73,13 @@ export class Preferences extends Component {
       removeInstallLocationRequest, makeInstallLocationDefault} = this.props
 
     const header = <tr>
-    <th>{t('preferences.install_location.path')}</th>
-    <th>{t('preferences.install_location.used_space')}</th>
-    <th>{t('preferences.install_location.free_space')}</th>
-    <th>{t('preferences.install_location.item_count')}</th>
-    <th/>
-    <th/>
-    <th/>
+      <th>{t('preferences.install_location.path')}</th>
+      <th>{t('preferences.install_location.used_space')}</th>
+      <th>{t('preferences.install_location.free_space')}</th>
+      <th>{t('preferences.install_location.item_count')}</th>
+      <th/>
+      <th/>
+      <th/>
     </tr>
 
     const {installLocations = {}} = this.props
@@ -103,18 +104,18 @@ export class Preferences extends Component {
 
       rows.push(<tr>
         <td className='action' onClick={(e) => { e.preventDefault(); navigate(`locations/${name}`) }}>
-        <Icon icon='folder'/> {path}
+          <Icon icon='folder'/> {path}
         </td>
         <td> {humanize.fileSize(size)} </td>
         <td> {freeSpace > 0 ? humanize.fileSize(freeSpace) : '...'} </td>
         <td className='action' onClick={(e) => { e.preventDefault(); navigate(`locations/${name}`) }}>
-        { itemCount > 0
+        {itemCount > 0
           ? itemCount
           : <span className='empty'>0</span>
         }
         </td>
 
-        { isDefault
+        {isDefault
           ? <td className='action default hint--top' data-hint={t('preferences.install_location.is_default')}>
             <Icon icon='star'/>
           </td>
@@ -127,7 +128,7 @@ export class Preferences extends Component {
           <Icon icon='folder-open'/>
         </td>
 
-        { mayDelete
+        {mayDelete
           ? <td className='action hint--top' data-hint={t('preferences.install_location.delete')} onClick={(e) => removeInstallLocationRequest(name)}>
             <Icon icon='cross'/>
           </td>

@@ -7,7 +7,7 @@ import mklog from './log'
 const log = mklog('registry')
 const opts = {logger: new mklog.Logger()}
 
-let base = `HKCU\\Software\\Classes\\itchio`
+let base = 'HKCU\\Software\\Classes\\itchio'
 
 let system_root = process.env.SystemRoot || 'missing-system-root'
 let system32Path = path.join(system_root, 'System32')
@@ -19,7 +19,7 @@ let self = {
     await spawn({
       command: regPath,
       args: ['query', key, '/s'],
-      onToken: (tok) => log(opts, `query: ` + tok)
+      onToken: (tok) => log(opts, 'query: ' + tok)
     })
   },
 
