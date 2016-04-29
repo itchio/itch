@@ -101,25 +101,6 @@ module.exports = function (grunt) {
         outputDirectory: process.env.CI_WINDOWS_INSTALLER_PATH || path.join('build', 'squirrel-ia32')
       })
     },
-    'bump': {
-      options: {
-        files: ['package.json'],
-        updateConfigs: [],
-        commit: true,
-        commitMessage: ':arrow_up: v%VERSION%',
-        commitFiles: ['package.json'],
-        createTag: true,
-        tagName: 'v%VERSION%',
-        tagMessage: 'Version %VERSION%',
-        push: true,
-        pushTo: 'origin',
-        gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d',
-        globalReplace: false,
-        prereleaseName: false,
-        metadata: '',
-        regExp: false
-      }
-    },
     'babel': {
       options: {
         sourceMap: true
