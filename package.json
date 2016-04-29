@@ -26,7 +26,6 @@
   "dependencies": {
     "babel-polyfill": "^6.7.2",
     "bluebird": "^3.3.5",
-    "circular-json": "^0.3.0",
     "classnames": "^2.2.4",
     "clone": "^1.0.2",
     "colorgram": "^0.1.5",
@@ -71,7 +70,6 @@
     "redux-electron-enhancer": "^1.11.0",
     "redux-logger": "^2.6.1",
     "redux-saga": "^0.9.5",
-    "redux-validator": "^0.1.5",
     "reselect": "^2.1.0",
     "serve-static": "^1.10.2",
     "shell-quote": "^1.4.3",
