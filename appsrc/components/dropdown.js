@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import Icon from './icon'
 import {map} from 'underline'
 
-import listensToClickOutside from 'react-onclickoutside/decorator'
+import listensToClickOutside from 'react-onclickoutside'
 import {connect} from './connect'
 
 export class Dropdown extends Component {

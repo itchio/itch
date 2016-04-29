@@ -86,10 +86,10 @@ export class GatePage extends Component {
         <span>{' · '}</span>
         <a className='link' href={urls.accountForgotPassword}>{t('login.action.reset_password')}</a>
         {numSavedSessions > 0
-        ? [
+        ? <div>
           <span>{' · '}</span>,
           <span className='link' onClick={() => this.props.loginStartPicking()}>{t('login.action.show_saved_logins')}</span>
-        ]
+        </div>
         : ''}
       </section>
     }

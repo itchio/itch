@@ -33,8 +33,9 @@ export class HubSidebar extends Component {
           const icon = pathToIcon(item.path)
           const active = currentPath === item.path
           const onClick = () => navigate(item.path)
+          const onContextMenu = () => {}
 
-          const props = {path, label, icon, active, onClick, t}
+          const props = {path, label, icon, active, onClick, t, onContextMenu}
           return <HubSidebarItem {...props}/>
         })}
 

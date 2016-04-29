@@ -24,7 +24,7 @@ const customStyles = {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
-    padding: '0',
+    padding: '0px',
     backgroundColor: colors.darkMineShaft,
     border: `1px solid ${colors.lightMineShaft}`,
     borderRadius: '2px',

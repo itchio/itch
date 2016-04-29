@@ -1,5 +1,5 @@
 
-import listensToClickOutside from 'react-onclickoutside/decorator'
+import listensToClickOutside from 'react-onclickoutside'
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 import classNames from 'classnames'
