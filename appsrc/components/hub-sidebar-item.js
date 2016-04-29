@@ -27,7 +27,7 @@ export class HubSidebarItem extends Component {
   }
 
   render () {
-    const {t, count, path, icon, label, active} = this.props
+    const {t, count, path, icon, label, active, kbShortcut} = this.props
     const {isDragging, connectDragSource, connectDropTarget, onClose, onContextMenu} = this.props
 
     const classes = classNames('hub-sidebar-item', {active})
@@ -46,6 +46,7 @@ export class HubSidebarItem extends Component {
         : ''
       }
       <div className='filler'/>
+      {kbShortcut}
       {onClose
         ? <span className='icon icon-cross' onClick={(e) => {
           onClose()
@@ -82,6 +83,7 @@ HubSidebarItem.propTypes = {
   active: PropTypes.bool.isRequired,
   icon: PropTypes.string.isRequired,
   count: PropTypes.number,
+  kbShortcut: PropTypes.node,
 
   onClick: PropTypes.func.isRequired,
   onContextMenu: PropTypes.func.isRequired,

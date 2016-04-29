@@ -11,6 +11,9 @@ import urls from '../constants/urls'
 import Icon from './icon'
 import HubBreadDescription from './hub-bread-description'
 
+import os from '../util/os'
+const osx = os.itchPlatform() === 'osx'
+
 class HubBread extends Component {
   render () {
     const {t, navigate, searchLoading} = this.props
@@ -34,6 +37,13 @@ class HubBread extends Component {
       <section className={searchClasses}>
         <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onKeyPress} onKeyUp={::this.onQueryChanged()} onChange={::this.onQueryChanged}/>
         <span className='icon icon-search'/>
+        <div className='kb-shortcut'>
+        {osx
+          ? <Icon icon='command'/>
+          : <Icon icon='ctrl'/>
+        }
+        +F
+        </div>
       </section>
 
       <section className='icon-button' onClick={() => navigate('url/' + urls.manual)}>

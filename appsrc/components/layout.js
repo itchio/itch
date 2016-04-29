@@ -2,6 +2,7 @@
 import React, {Component, PropTypes} from 'react'
 import {createStructuredSelector} from 'reselect'
 import {connect} from 'react-redux'
+import classNames from 'classnames'
 
 import GatePage from './gate-page'
 import HubPage from './hub-page'
@@ -14,7 +15,10 @@ import StatusBar from './status-bar'
  */
 class Layout extends Component {
   render () {
-    return <div className='layout'>
+    const {shortcutsShown} = this.props
+    const classes = classNames('layout', {['shortcuts-shown']: shortcutsShown})
+
+    return <div className={classes}>
       <div className='layout-main'>
         {this.main()}
       </div>
@@ -37,11 +41,13 @@ class Layout extends Component {
 }
 
 Layout.propTypes = {
-  page: PropTypes.string.isRequired
+  page: PropTypes.string.isRequired,
+  shortcutsShown: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({
-  page: (state) => state.session.navigation.page
+  page: (state) => state.session.navigation.page,
+  shortcutsShown: (state) => state.session.navigation.shortcutsShown
 })
 
 const mapDispatchToProps = (dispatch) => ({})

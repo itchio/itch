@@ -27,39 +27,53 @@ export class HubSidebar extends Component {
 
       <div className='sidebar-items'>
         <h2>{t('sidebar.category.basics')}</h2>
-        {tabs.constant::map((item) => {
+        {tabs.constant::map((item, i) => {
           const {path} = item
           const {label = 'Loading...'} = tabData[item.path] || {}
           const icon = pathToIcon(item.path)
           const active = currentPath === item.path
           const onClick = () => navigate(item.path)
           const onContextMenu = () => {}
+          const n = (i + 1)
+          const kbShortcut = <div className='kb-shortcut'>
+            {osx
+              ? <Icon icon='command'/>
+              : <Icon icon='ctrl'/>
+            }
+            +{n}
+          </div>
 
-          const props = {path, label, icon, active, onClick, t, onContextMenu}
+          const props = {path, label, icon, active, onClick, t, onContextMenu, kbShortcut}
           return <HubSidebarItem {...props}/>
         })}
 
         <h2>{t('sidebar.category.tabs')}</h2>
-        {tabs.transient.length
-          ? tabs.transient::map((item, index) => {
-            const {path} = item
-            const data = tabData[item.path] || {}
-            const {label = 'Loading...'} = data
-            const icon = pathToIcon(item.path)
-            const active = currentPath === item.path
-            const onClick = () => navigate(path)
-            const onClose = () => closeTab(path)
-            const onContextMenu = () => openTabContextMenu({path})
-            const count = counts[item.path]
+        {tabs.transient::map((item, index) => {
+          const {path} = item
+          const data = tabData[item.path] || {}
+          const {label = 'Loading...'} = data
+          const icon = pathToIcon(item.path)
+          const active = currentPath === item.path
+          const onClick = () => navigate(path)
+          const onClose = () => closeTab(path)
+          const onContextMenu = () => openTabContextMenu({path})
+          const count = counts[item.path]
 
-            const props = {index, path, label, icon, active, onClick, count, onClose, onContextMenu, moveTab, data, t}
-            return <HubSidebarItem {...props}/>
-          })
-          : <section className='empty'>
-            <span className='icon icon-like'/>
-            {t('sidebar.no_tabs')}
-          </section>
-        }
+          const props = {index, path, label, icon, active, onClick, count, onClose, onContextMenu, moveTab, data, t}
+          return <HubSidebarItem {...props}/>
+        })}
+        <section className='hub-sidebar-item new-tab'>
+          <span className='icon icon-plus'/>
+          {t('sidebar.new_tab')}
+          <div className='filler'/>
+          <div className='kb-shortcut'>
+            {osx
+              ? <Icon icon='command'/>
+              : <Icon icon='ctrl'/>
+            }
+            +T
+          </div>
+        </section>
       </div>
     </div>
   }
@@ -68,7 +82,7 @@ export class HubSidebar extends Component {
     const me = this.props.me || {}
     const {coverUrl = defaultImages.avatar, username = ''} = me
 
-    return <section className='me'>
+    return <section className='hub-sidebar-item me'>
       <img src={coverUrl}/>
       <span>{username}</span>
       <div className='filler'/>

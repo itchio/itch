@@ -4,6 +4,7 @@ import {gameToTabData} from '../util/navigation'
 
 import {
   NAVIGATE,
+  FOCUS_NTH_TAB,
   MOVE_TAB,
   EVOLVE_TAB,
   TAB_EVOLVED,
@@ -30,7 +31,9 @@ import {
   VIEW_CREATOR_PROFILE,
   VIEW_COMMUNITY_PROFILE,
 
-  REPORT_ISSUE
+  REPORT_ISSUE,
+
+  SHORTCUTS_VISIBILITY_CHANGED
 } from '../constants/action-types'
 
 const _navigate = createAction(NAVIGATE)
@@ -41,6 +44,8 @@ export const navigate = (path, data = {}) => {
     return _navigate({path, data})
   }
 }
+
+export const focusNthTab = createAction(FOCUS_NTH_TAB)
 
 export const navigateToGame = (game) => navigate(`games/${game.id}`, gameToTabData(game))
 
@@ -71,3 +76,5 @@ export const viewCreatorProfile = createAction(VIEW_CREATOR_PROFILE)
 export const viewCommunityProfile = createAction(VIEW_COMMUNITY_PROFILE)
 
 export const reportIssue = createAction(REPORT_ISSUE)
+
+export const shortcutsVisibilityChanged = createAction(SHORTCUTS_VISIBILITY_CHANGED)

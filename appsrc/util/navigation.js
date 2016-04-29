@@ -38,7 +38,7 @@ export function pathToIcon (path) {
     return 'video_collection'
   }
   if (/^games/.test(path)) {
-    return 'gamepad'
+    return 'star'
   }
   if (/^users/.test(path)) {
     return 'users'

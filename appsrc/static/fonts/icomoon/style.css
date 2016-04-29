@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:    url('fonts/icomoon.eot?wccdie');
-    src:    url('fonts/icomoon.eot?wccdie#iefix') format('embedded-opentype'),
-        url('fonts/icomoon.ttf?wccdie') format('truetype'),
-        url('fonts/icomoon.woff?wccdie') format('woff'),
-        url('fonts/icomoon.svg?wccdie#icomoon') format('svg');
+    src:    url('fonts/icomoon.eot?tf0t2e');
+    src:    url('fonts/icomoon.eot?tf0t2e#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf?tf0t2e') format('truetype'),
+        url('fonts/icomoon.woff?tf0t2e') format('woff'),
+        url('fonts/icomoon.svg?tf0t2e#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -24,59 +24,14 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-diamond:before {
-    content: "\e913";
+.icon-command:before {
+    content: "\e915";
 }
-.icon-newspaper-o:before {
-    content: "\e912";
+.icon-ctrl:before {
+    content: "\e916";
 }
-.icon-repeat:before {
-    content: "\e904";
-}
-.icon-history:before {
-    content: "\e90f";
-}
-.icon-gamepad:before {
-    content: "\e61b";
-}
-.icon-caret-up:before {
-    content: "\e60f";
-}
-.icon-caret-down:before {
-    content: "\e610";
-}
-.icon-bitcoin:before {
-    content: "\e60b";
-}
-.icon-itchio:before {
-    content: "\e911";
-}
-.icon-folder:before {
-    content: "\e900";
-}
-.icon-align-top:before {
-    content: "\e909";
-}
-.icon-cog:before {
-    content: "\e901";
-}
-.icon-search:before {
-    content: "\e902";
-}
-.icon-upload-to-cloud:before {
-    content: "\e905";
-}
-.icon-hand-paper-o:before {
-    content: "\e906";
-}
-.icon-bug:before {
-    content: "\e903";
-}
-.icon-heart-broken:before {
-    content: "\e907";
-}
-.icon-folder-open:before {
-    content: "\e908";
+.icon-shift:before {
+    content: "\e917";
 }
 .icon-pause:before {
     content: "\e910";
@@ -143,9 +98,6 @@
 }
 .icon-pencil:before {
     content: "\e606";
-}
-.icon-plus:before {
-    content: "\e001";
 }
 .icon-coin:before {
     content: "\e002";
@@ -219,6 +171,9 @@
 .icon-heart-filled:before {
     content: "\e60a";
 }
+.icon-plus:before {
+    content: "\e914";
+}
 .icon-globe-outline:before {
     content: "\e90b";
 }
@@ -233,6 +188,60 @@
 }
 .icon-cross:before {
     content: "\e617";
+}
+.icon-diamond:before {
+    content: "\e913";
+}
+.icon-newspaper-o:before {
+    content: "\e912";
+}
+.icon-repeat:before {
+    content: "\e904";
+}
+.icon-history:before {
+    content: "\e90f";
+}
+.icon-gamepad:before {
+    content: "\e61b";
+}
+.icon-caret-up:before {
+    content: "\e60f";
+}
+.icon-caret-down:before {
+    content: "\e610";
+}
+.icon-bitcoin:before {
+    content: "\e60b";
+}
+.icon-itchio:before {
+    content: "\e911";
+}
+.icon-folder:before {
+    content: "\e900";
+}
+.icon-align-top:before {
+    content: "\e909";
+}
+.icon-cog:before {
+    content: "\e901";
+}
+.icon-search:before {
+    content: "\e902";
+}
+.icon-upload-to-cloud:before {
+    content: "\e905";
+}
+.icon-hand-paper-o:before {
+    content: "\e906";
+}
+.icon-bug:before {
+    content: "\e903";
+}
+.icon-heart-broken:before {
+    content: "\e907";
+}
+.icon-folder-open:before {
+    content: "\e908";
 }
 .icon-install:before {
     content: "\e61d";

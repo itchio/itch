@@ -56,6 +56,7 @@ module.exports = keyMirror({
 
   /* Navigation */
   NAVIGATE: null,
+  FOCUS_NTH_TAB: null,
   MOVE_TAB: null,
   EVOLVE_TAB: null,
   TAB_EVOLVED: null,
@@ -67,6 +68,8 @@ module.exports = keyMirror({
   TRIGGER_MAIN_ACTION: null,
   TRIGGER_BACK: null,
   TRIGGER_LOCATION: null,
+
+  SHORTCUTS_VISIBILITY_CHANGED: null,
 
   TAB_RELOADED: null,
   TAB_CHANGED: null,

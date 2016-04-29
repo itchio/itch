@@ -39,7 +39,7 @@ import {
   SESSION_READY, SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED, TABS_CHANGED,
   VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION,
   WINDOW_FOCUS_CHANGED, TAB_RELOADED, OPEN_TAB_CONTEXT_MENU, INITIATE_PURCHASE,
-  PROBE_CAVE
+  PROBE_CAVE, FOCUS_NTH_TAB
 } from '../constants/action-types'
 
 function * retrieveTabData (path, opts) {
@@ -170,6 +170,15 @@ export function * applyTabOffset (offset) {
   const newPath = paths[newIndex]
 
   yield put(navigate(newPath))
+}
+
+export function * _focusNthTab (action) {
+  const n = action.payload
+  const constant = yield select((state) => state.session.navigation.tabs.constant)
+  const tab = constant[n - 1]
+  if (tab) {
+    yield put(navigate(tab.path))
+  }
 }
 
 export function * _showPreviousTab () {
@@ -322,6 +331,7 @@ export default function * navigationSaga () {
 
   yield [
     takeEvery(SESSION_READY, _sessionReady),
+    takeEvery(FOCUS_NTH_TAB, _focusNthTab),
     takeEvery(SHOW_PREVIOUS_TAB, _showPreviousTab),
     takeEvery(SHOW_NEXT_TAB, _showNextTab),
     takeEvery(OPEN_URL, _openUrl),

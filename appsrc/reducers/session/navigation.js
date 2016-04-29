@@ -18,10 +18,16 @@ const initialState = {
     transient: []
   },
   tabData: staticTabData,
-  path: 'featured'
+  path: 'featured',
+  shortcutsShown: false
 }
 
 export default handleActions({
+  SHORTCUTS_VISIBILITY_CHANGED: (state, action) => {
+    const {visible} = action.payload
+    return {...state, shortcutsShown: visible}
+  },
+
   SWITCH_PAGE: (state, action) => {
     const page = action.payload
     return {...state, page}

@@ -9,13 +9,18 @@ import {remote} from '../electron'
 
 import createQueue from '../sagas/queue'
 
+import os from '../util/os'
+const osx = os.itchPlatform() === 'osx'
+
 import {
   focusSearch,
   showNextTab,
   showPreviousTab,
   triggerMainAction,
   triggerBack,
-  triggerLocation
+  triggerLocation,
+  focusNthTab,
+  shortcutsVisibilityChanged
 } from '../actions'
 
 const queue = createQueue('shortcuts')
@@ -57,3 +62,19 @@ combo.bindGlobal(['ctrl+l', 'command+l'], () => {
 combo.bindGlobal(['escape'], () => {
   queue.dispatch(triggerBack())
 })
+
+const prefix = osx ? 'command' : 'ctrl'
+
+for (const i of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
+  combo.bindGlobal([`${prefix}+${i}`], () => {
+    queue.dispatch(focusNthTab(i))
+  })
+
+  combo.bindGlobal([prefix], () => {
+    queue.dispatch(shortcutsVisibilityChanged({visible: true}))
+  }, 'keydown')
+
+  combo.bindGlobal([prefix], () => {
+    queue.dispatch(shortcutsVisibilityChanged({visible: false}))
+  }, 'keyup')
+}
