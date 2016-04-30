@@ -157,10 +157,7 @@ export default handleActions({
     const {tabData} = state
     const newTabData = {
       ...tabData,
-      [id]: {
-        ...tabData[id],
-        ...data
-      }
+      [id]: data
     }
 
     const newTransient = state.tabs.transient::map((tab) => {

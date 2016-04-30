@@ -16,6 +16,7 @@ import ospath from 'path'
 
 const injectPath = ospath.resolve(__dirname, '..', 'inject', 'browser.js')
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === '1'
+const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1
 
 import BrowserBar from './browser-bar'
 import GameBrowserBar from './game-browser-bar'
@@ -59,54 +60,82 @@ export class BrowserMeat extends Component {
 
   componentDidMount () {
     const {webview} = this.refs
-    const {navigate, evolveTab, tabDataFetched} = this.props
+    const {tabId, navigate, evolveTab, tabDataFetched} = this.props
 
     if (!webview) {
       console.log('Oh noes, can\'t listen to webview\'s soothing event stream')
       return
     }
 
-    const supportedUrl = (url) => {
-      const {tabId} = this.props
+    const frozen = staticTabData[tabId] || !tabId
 
-      if (staticTabData[tabId] || !tabId) {
+    const handleSupportedUrl = (url) => {
+      if (frozen) {
+        console.log(tabId, 'frozen tab, forking off')
         navigate(`url/${url}`)
         return true
       }
+
+      console.log(tabId, 'all good, navigating')
       return false
     }
+
+    console.log(tabId, 'installing dom-ready handler...')
 
     webview.addEventListener('load-commit', () => this.with((wv) => this.updateBrowserState({url: wv.getURL()})))
     webview.addEventListener('did-start-loading', () => this.updateBrowserState({loading: true}))
     webview.addEventListener('did-stop-loading', () => this.updateBrowserState({loading: false}))
+
+    if (frozen) {
+      webview.addEventListener('will-navigate', (e) => {
+        const {url} = e
+
+        console.log(tabId, '(wv) will-navigate: ', url, e)
+
+        // sometimes we get double will-navigate events because life is fun?!
+        if (this.lastNavigationUrl === url && e.timeStamp - this.lastNavigationTimeStamp < 2000) {
+          console.log('double, woo')
+          this.with((wv) => {
+            console.log(tabId, 'Force loading', this.props.url)
+            wv.stop()
+            wv.loadURL(this.props.url)
+          })
+          return
+        }
+        this.lastNavigationUrl = url
+        this.lastNavigationTimeStamp = e.timeStamp
+
+        // can't preventDefault, *sigh*
+
+        if (handleSupportedUrl(url)) {
+          console.log(tabId, 'Was supported, opened somewhere else, blocking', url)
+          this.with((wv) => {
+            console.log(tabId, 'Force loading', this.props.url)
+            wv.stop()
+            wv.loadURL(this.props.url)
+          })
+        } else {
+          console.log(tabId, 'handleSupported returned false')
+        }
+      })
+    }
+
+    webview.addEventListener('new-window', (e) => {
+      const {url, disposition} = e
+      console.log(tabId, 'New window: ', url, disposition)
+      navigate('url/' + url)
+    })
+
     webview.addEventListener('dom-ready', () => {
+      console.log(tabId, 'dom-ready!')
       this.updateBrowserState({loading: false})
 
       const webContents = webview.getWebContents()
       if (!webContents || webContents.isDestroyed()) return
 
-      webContents.on('will-navigate', (e, url) => {
-        console.log('Will navigate to: ', url)
-        if (!navigation.isAppSupported(url)) {
-          return
-        }
-
-        // as of 0.37.2, doc says this work, but it doesn't. amos suspects it
-        // only works for WebContents of BrowserWindow, but not WebContents of WebView
-        e.preventDefault()
-
-        if (supportedUrl(url)) {
-          this.with((wv) => {
-            // this is a hack, but the whole 'will-navigate' approach is a fallback anyway,
-            // injected javascript should prevent most navigation attempts
-            if (wv.getURL() === url) {
-              this.goBack()
-            } else {
-              this.stop()
-            }
-          })
-        }
-      })
+      if (SHOW_DEVTOOLS) {
+        webContents.openDevTools({detach: true})
+      }
 
       // requests to 'itch-internal' are used to communicate between web content & the app
       let internalFilter = {
@@ -118,21 +147,22 @@ export class BrowserMeat extends Component {
         let parsed = urlParser.parse(details.url)
         const {pathname, query} = parsed
         const params = querystring.parse(query)
-        console.log('got itch internal request: ', pathname, params)
+        console.log(tabId, 'got itch internal request: ', pathname, params)
 
         switch (pathname) {
           case '/open-devtools':
             webContents.openDevTools({detach: true})
             break
           case '/supported-url':
-            if (!supportedUrl(params.url)) {
+            if (!handleSupportedUrl(params.url)) {
+              console.log(tabId, 'handleSupported returned falsy, loading', params.url)
               webview.loadURL(params.url)
             }
             break
           case '/parsed-itch-path':
             const {tabId} = this.props
             const newPath = params.path
-            console.log('parsed itch path: ', tabId, newPath)
+            console.log(tabId, 'parsed itch path: ', tabId, newPath)
             evolveTab(tabId, newPath)
             break
           case '/title':

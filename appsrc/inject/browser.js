@@ -2,7 +2,6 @@
 
 const {remote} = require('electron')
 const urlParser = remote.require('./util/url').default
-const navigation = remote.require('./util/navigation').default
 const store = remote.require('./store').default
 
 const sendMessage = (action) => {
@@ -122,28 +121,6 @@ function checkoutInject () {
     e.stopPropagation()
   })
 }
-
-document.addEventListener('click', (e) => {
-  let target = e.target
-
-  while (target && target.tagName !== 'A') {
-    target = target.parentNode
-  }
-
-  if (!target) {
-    return
-  }
-
-  if (navigation.isAppSupported(target.href)) {
-    console.log('supported url, telling app', target.href)
-    sendMessage('supported-url?url=' + encodeURIComponent(target.href))
-    e.preventDefault()
-    return false
-  } else {
-    console.log('non-app-supported url, carrying as usual', target.href)
-    sendMessage('title?title=' + encodeURIComponent(document.title))
-  }
-})
 
 document.addEventListener('DOMContentLoaded', () => {
   const host = urlParser.subdomainToDomain(window.location.hostname)

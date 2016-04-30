@@ -39,9 +39,11 @@ export class UrlMeat extends Component {
       url = urls.itchio + '/search?' + querystring.stringify({q})
     } else if (/^press/.test(path)) {
       url = urls.itchio + '/login?' + querystring.stringify({return_to: urls.itchio + '/press/games'})
+    } else if (/^featured/.test(path)) {
+      url = urls.itchio
     }
 
-    return <BrowserMeat url={url} tabId={tabId} tabPath={path} tabData={tabData} controls={controls}/>
+    return <BrowserMeat key={'browser-meat-' + tabId} url={url} tabId={tabId} tabPath={path} tabData={tabData} controls={controls}/>
   }
 }
 

@@ -159,7 +159,7 @@ function * _createWindow () {
   const uri = `file://${__dirname}/../index.html`
   window.loadURL(uri)
 
-  if (process.env.DEVTOOLS === '1') {
+  if (parseInt(process.env.DEVTOOLS, 10) > 0) {
     window.webContents.openDevTools({detach: true})
   }
 

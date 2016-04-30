@@ -10,7 +10,6 @@ import HubSearchResults from './hub-search-results'
 import Downloads from './downloads'
 import Preferences from './preferences'
 import History from './history'
-import FeaturedMeat from './featured-meat'
 import Location from './location'
 import UrlMeat from './url-meat'
 import Dashboard from './dashboard'
@@ -35,9 +34,7 @@ export class HubMeat extends Component {
   }
 
   renderTab (tabId, path) {
-    if (path === 'featured') {
-      return <FeaturedMeat/>
-    } else if (path === 'dashboard') {
+    if (path === 'dashboard') {
       return <Dashboard/>
     } else if (path === 'library') {
       return <Library/>
@@ -52,8 +49,8 @@ export class HubMeat extends Component {
       return <Location locationName={location}/>
     } else if (/^new/.test(path)) {
       return <NewTab tabId={tabId}/>
-    } else if (/^(url|games|users|collections|search|press)/.test(path)) {
-      return <UrlMeat key={tabId} tabId={tabId} path={path}/>
+    } else if (/^(url|games|users|collections|search|press|featured)/.test(path)) {
+      return <UrlMeat key={'url-meat-' + tabId} tabId={tabId} path={path}/>
     } else {
       return '?'
     }

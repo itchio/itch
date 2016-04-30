@@ -9,11 +9,12 @@ import invariant from 'invariant'
 import clone from 'clone'
 import ospath from 'path'
 import uuid from 'node-uuid'
+import urlParser from 'url'
 
 import {shell} from '../electron'
 import {takeEvery} from 'redux-saga'
 import {call, select, put} from 'redux-saga/effects'
-import {findWhere, map, pick, pluck} from 'underline'
+import {findWhere, pick, pluck} from 'underline'
 
 import urls from '../constants/urls'
 import staticTabData from '../constants/static-tab-data'
@@ -43,25 +44,38 @@ import {
   PROBE_CAVE, FOCUS_NTH_TAB, NEW_TAB
 } from '../constants/action-types'
 
-function * retrieveTabData (id, opts) {
-  const {constant, transient} = yield select((state) => state.session.navigation.tabs)
-  const tab = constant::findWhere({id}) || transient::findWhere({id})
-  if (!tab) {
-    log(opts, `Can't retrieve tab data for ${id}, not found in list`)
+function * retrieveTabData (id, retrOpts = {}) {
+  if (!id) {
+    console.log(`Can't retrieve tab data for ${id}, tis falsy. Stack: ${new Error().stack}`)
     return
   }
 
-  const {path} = tab
+  console.log(`Retrieving tab data for ${id}`)
+
+  const {constant, transient} = yield select((state) => state.session.navigation.tabs)
+  const tab = constant::findWhere({id}) || transient::findWhere({id})
+  if (!tab) {
+    console.log(`Can't retrieve tab data for ${id}, not found in list. Stack: ${new Error().stack}`)
+    return
+  }
+
+  const path = retrOpts.path || tab.path
+  if (staticTabData[tab.path] && tab.path !== path) {
+    console.log(`Refusing to retrieve foreign tabData for frozen tab ${tab.path}`)
+    return
+  }
+  console.log(`Retrieving tab data for ${id} => ${path}`)
+
   const credentials = yield select((state) => state.session.credentials)
 
   if (/^games/.test(path)) {
-    const game = yield call(fetch.gameLazily, getUserMarket(), credentials, +pathToId(path), opts)
+    const game = yield call(fetch.gameLazily, getUserMarket(), credentials, +pathToId(path), retrOpts)
     return game && gameToTabData(game)
   } else if (/^users/.test(path)) {
-    const user = yield call(fetch.userLazily, getUserMarket(), credentials, +pathToId(path), opts)
+    const user = yield call(fetch.userLazily, getUserMarket(), credentials, +pathToId(path), retrOpts)
     return user && userToTabData(user)
   } else if (/^collections/.test(path)) {
-    const collection = yield call(fetch.collectionLazily, getUserMarket(), credentials, +pathToId(path), opts)
+    const collection = yield call(fetch.collectionLazily, getUserMarket(), credentials, +pathToId(path), retrOpts)
     return collection && collectionToTabData(collection)
   } else if (/^locations/.test(path)) {
     const locationName = pathToId(path)
@@ -84,11 +98,24 @@ function * retrieveTabData (id, opts) {
     return {
       label: ['sidebar.empty']
     }
+  } else if (/^url/.test(path)) {
+    return {
+      label: (urlParser.parse(pathToId(path)) || {}).hostname
+    }
   } else {
     const data = staticTabData[id]
     if (id) {
-      yield put(tabDataFetched({id, data}))
+      return data
     }
+  }
+}
+
+function * doFetchTabData (id, retrOpts) {
+  const data = yield call(retrieveTabData, id, retrOpts)
+  if (data) {
+    yield put(tabDataFetched({id, data}))
+  } else {
+    console.log(`No data fetched for ${id}`)
   }
 }
 
@@ -100,20 +127,13 @@ export function * _tabChanged (action) {
     yield put(historyRead())
   }
 
-  const data = yield call(retrieveTabData, id)
-  if (data) {
-    yield put(tabDataFetched({id, data}))
-  }
+  yield call(doFetchTabData, id)
 }
 
 export function * _tabReloaded (action) {
   const {id} = action.payload
   invariant(typeof id === 'string', 'tabReloaded has stringy id')
-
-  const data = yield call(retrieveTabData, id, {fresh: true})
-  if (data) {
-    yield put(tabDataFetched({id, data}))
-  }
+  yield call(doFetchTabData, id)
 }
 
 export function * _windowFocusChanged (action) {
@@ -121,10 +141,7 @@ export function * _windowFocusChanged (action) {
   if (!focused) return
 
   const id = yield select((state) => state.session.navigation.id)
-  const data = yield call(retrieveTabData, id, {fresh: true})
-  if (data) {
-    yield put(tabDataFetched({id, data}))
-  }
+  yield call(doFetchTabData, id, {fresh: true})
 }
 
 export function * _tabsChanged (action) {
@@ -153,15 +170,16 @@ export function * _sessionReady (action) {
   const snapshot = userMarket.getEntity(TABS_TABLE_NAME, 'x')
 
   if (snapshot) {
-    log(opts, `Restoring ${snapshot.items.length} tabs`)
-    yield put(tabsRestored(snapshot))
-
-    const tabDatas = yield snapshot.items::map((path) => call(retrieveTabData, path))
-    yield tabDatas::map((data, i) => {
-      if (!data) return null
-      const id = snapshot.items[i]
-      return put(tabDataFetched({id, data}))
-    })
+    log(opts, `Should restore ${snapshot.items.length} tabs: stub`)
+    // log(opts, `Restoring ${snapshot.items.length} tabs`)
+    // yield put(tabsRestored(snapshot))
+    //
+    // const tabDatas = yield snapshot.items::map((path) => call(retrieveTabData, path))
+    // yield tabDatas::map((data, i) => {
+    //   if (!data) return null
+    //   const {id} = snapshot.items[i]
+    //   return put(tabDataFetched({id, data}))
+    // })
   } else {
     log(opts, 'No tabs to restore')
   }
@@ -169,7 +187,7 @@ export function * _sessionReady (action) {
 
 export function * _evolveTab (action) {
   const {id, path} = action.payload
-  const data = yield call(retrieveTabData, path)
+  const data = yield call(retrieveTabData, id, {path})
   yield put(tabEvolved({id, path, data}))
 }
 
