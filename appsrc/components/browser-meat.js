@@ -238,13 +238,16 @@ export class BrowserMeat extends Component {
   }
 
   loadURL (url) {
+    const {tabId} = this.props
+    const frozen = staticTabData[tabId] || !tabId
+
     this.with((wv) => {
       const parsed = urlParser.parse(url)
       if (!parsed.protocol) {
         url = `http://${url}`
       }
 
-      if (navigation.isAppSupported(url)) {
+      if (navigation.isAppSupported(url) && frozen) {
         this.props.navigate(`url/${url}`)
       } else {
         const browserState = { ...this.state.browserState, url }

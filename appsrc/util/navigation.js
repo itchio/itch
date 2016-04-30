@@ -49,6 +49,9 @@ export function pathToIcon (path) {
   if (/^locations/.test(path)) {
     return 'folder'
   }
+  if (/^new/.test(path)) {
+    return 'star2'
+  }
   return 'earth'
 }
 

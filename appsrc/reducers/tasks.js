@@ -57,12 +57,18 @@ const reducer = handleActions({
   },
 
   TASK_ENDED: (state, action) => {
-    const {id} = action.payload
+    const {name, err, taskOpts, id} = action.payload
     invariant(id, 'valid task id in ended')
     const {tasks, finishedTasks} = state
     const newTasks = tasks::omit(id)
     const newFinishedTasks = [tasks[id], ...finishedTasks]
-    return {...state, tasks: newTasks, finishedTasks: newFinishedTasks}
+
+    let newDownloads = state.downloads
+    if (name === 'uninstall' && !err) {
+      newDownloads = newDownloads::filter((x) => x.gameId !== taskOpts.gameId)
+    }
+
+    return {...state, tasks: newTasks, finishedTasks: newFinishedTasks, downloads: newDownloads}
   },
 
   /* ************************************************* */

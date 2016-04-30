@@ -8,6 +8,7 @@ import * as actions from '../actions'
 
 import Icon from './icon'
 
+// TODO: show recommended for you
 const newTabItems = [
   {
     label: ['new_tab.twitter'],
@@ -18,6 +19,21 @@ const newTabItems = [
     label: ['new_tab.random'],
     icon: 'shuffle',
     path: 'url/' + urls.itchio + '/randomizer'
+  },
+  {
+    label: ['new_tab.on_sale'],
+    icon: 'cart',
+    path: 'url/' + urls.itchio + '/games/on-sale'
+  },
+  {
+    label: ['new_tab.top_sellers'],
+    icon: 'stats',
+    path: 'url/' + urls.itchio + '/games/top-sellers'
+  },
+  {
+    label: ['new_tab.community'],
+    icon: 'fire',
+    path: 'url/' + urls.itchio + '/community'
   }
 ]
 
@@ -27,6 +43,7 @@ export class NewTab extends Component {
 
     return <div className='new-tab-meat'>
       <div className='hub-grid'>
+        <h2>{t('new_tab.titles.welcome')}</h2>
         {newTabItems::map((item) => {
           const {label, icon, path} = item
 

@@ -188,7 +188,7 @@
     "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Published on {{pubDate}}.",
     "prompt.self_update_ready.action.restart": "Restart now",
     "prompt.self_update_ready.action.snooze": "Snooze",
-    "sidebar.empty": "Empty",
+    "sidebar.empty": "Let's go!",
     "sidebar.new_tab": "New tab",
     "sidebar.collections": "Collections",
     "sidebar.category.basics": "Essentials",
@@ -241,8 +241,11 @@
     "game.install.no_html_index_found": "No HTML index file found",
     "game.install.could_not_launch": "An error occured while launching {{title}}",
     "i18n.failed_downloading_locales": "Translation updates for language {{lang}} could not be downloaded.",
+    "new_tab.titles.welcome": "Welcome to the itch app. Enjoy one of these:",
+    "new_tab.titles.input": "...or enter any web address",
     "new_tab.random": "View something random",
     "new_tab.twitter": "Popular on Twitter",
+    "new_tab.community": "Community",
     "new_tab.on_sale": "On sale",
     "new_tab.top_sellers": "Top sellers"
 }

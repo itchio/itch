@@ -2,5 +2,31 @@
 .new-tab-meat {
   @include meat;
   padding: $grid-padding;
-  
+
+  margin: 0 20px;
+
+  .hub-item {
+    width: auto !important;
+    flex-grow: 1 !important;
+    padding: 30px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .icon {
+      font-size: 90px;
+      margin-bottom: 25px;
+    }
+
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+      cursor: pointer;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
 }
