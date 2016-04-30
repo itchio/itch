@@ -25,6 +25,7 @@ import {
 
   OPEN_URL,
   TRIGGER_MAIN_ACTION,
+  TRIGGER_OK,
   TRIGGER_BACK,
   TRIGGER_LOCATION,
 
@@ -71,6 +72,7 @@ export const unlockTab = createAction(UNLOCK_TAB)
 
 export const openUrl = createAction(OPEN_URL)
 export const triggerMainAction = createAction(TRIGGER_MAIN_ACTION)
+export const triggerOk = createAction(TRIGGER_OK)
 export const triggerBack = createAction(TRIGGER_BACK)
 export const triggerLocation = createAction(TRIGGER_LOCATION)
 

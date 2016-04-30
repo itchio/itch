@@ -17,6 +17,7 @@ import {
   showNextTab,
   showPreviousTab,
   triggerMainAction,
+  triggerOk,
   triggerBack,
   triggerLocation,
   focusNthTab,
@@ -50,6 +51,10 @@ combo.bindGlobal(['ctrl+tab', 'ctrl+pagedown'], () => {
 
 combo.bindGlobal(['ctrl+shift+tab', 'ctrl+pageup'], () => {
   queue.dispatch(showPreviousTab())
+})
+
+combo.bindGlobal(['enter'], () => {
+  queue.dispatch(triggerOk())
 })
 
 combo.bindGlobal(['ctrl+enter', 'command+enter'], () => {

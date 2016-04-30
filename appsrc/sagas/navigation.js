@@ -14,7 +14,7 @@ import urlParser from 'url'
 import {shell} from '../electron'
 import {takeEvery} from 'redux-saga'
 import {call, select, put} from 'redux-saga/effects'
-import {findWhere, map, pick, pluck} from 'underline'
+import {sortBy, findWhere, map, pick, pluck} from 'underline'
 
 import urls from '../constants/urls'
 import staticTabData from '../constants/static-tab-data'
@@ -34,14 +34,15 @@ import {
   navigate, openUrl, tabChanged, tabsChanged, tabDataFetched, tabEvolved,
   queueGame, tabsRestored, checkForGameUpdate, probeCave, updatePreferences,
   queueCaveReinstall, queueCaveUninstall, exploreCave, initiatePurchase,
-  historyRead
+  historyRead, closeModal, loginWithToken
 } from '../actions'
 
 import {
   SESSION_READY, SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED, TABS_CHANGED,
   VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION,
-  WINDOW_FOCUS_CHANGED, TAB_RELOADED, OPEN_TAB_CONTEXT_MENU, INITIATE_PURCHASE,
-  PROBE_CAVE, FOCUS_NTH_TAB, NEW_TAB, TOGGLE_MINI_SIDEBAR
+  TRIGGER_OK, TRIGGER_BACK, WINDOW_FOCUS_CHANGED, TAB_RELOADED,
+  OPEN_TAB_CONTEXT_MENU, INITIATE_PURCHASE, PROBE_CAVE, FOCUS_NTH_TAB, NEW_TAB,
+  TOGGLE_MINI_SIDEBAR
 } from '../constants/action-types'
 
 function * retrieveTabData (id, retrOpts = {}) {
@@ -261,6 +262,53 @@ export function * _triggerMainAction () {
   }
 }
 
+export function * _triggerOk () {
+  const modals = yield select((state) => state.modals)
+  const [modal] = modals
+  if (!modal) {
+    const page = yield select((state) => state.session.navigation.page)
+    const picking = yield select((state) => state.session.login.picking)
+    if (page === 'gate' && picking) {
+      const rememberedSessions = yield select((state) => state.rememberedSessions)
+      const mostRecentSession = rememberedSessions::sortBy((x) => -x.lastConnected)[0]
+      if (mostRecentSession) {
+        const {me, key} = mostRecentSession
+        const {username} = me
+        yield put(loginWithToken({username, key, me}))
+      }
+    }
+    return
+  }
+
+  const [button] = modal.buttons
+  if (!button) {
+    return
+  }
+
+  const {action} = button
+
+  if (action) {
+    if (Array.isArray(action)) {
+      for (const a of action) {
+        yield put(a)
+      }
+    } else {
+      yield put(action)
+    }
+  }
+  yield put(closeModal())
+}
+
+export function * _triggerBack () {
+  const modals = yield select((state) => state.modals)
+  const [modal] = modals
+  if (!modal) {
+    return
+  }
+
+  yield put(closeModal())
+}
+
 function makeTabContextMenu (queue) {
   return function * _openTabContextMenu (action) {
     invariant(typeof action.payload === 'object', 'opentabcontextmenu payload is an object')
@@ -402,6 +450,8 @@ export default function * navigationSaga () {
     takeEvery(TABS_CHANGED, _tabsChanged),
     takeEvery(EVOLVE_TAB, _evolveTab),
     takeEvery(TRIGGER_MAIN_ACTION, _triggerMainAction),
+    takeEvery(TRIGGER_OK, _triggerOk),
+    takeEvery(TRIGGER_BACK, _triggerBack),
     takeEvery(INITIATE_PURCHASE, _initiatePurchase),
     takeEvery(PROBE_CAVE, _probeCave),
     takeEvery(TOGGLE_MINI_SIDEBAR, _toggleMiniSidebar),

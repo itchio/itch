@@ -136,7 +136,6 @@ const mapDispatchToProps = (dispatch) => ({
     if (action) {
       if (Array.isArray(action)) {
         action::each((a) => dispatch(a))
-        dispatch(action)
       } else {
         dispatch(action)
       }
