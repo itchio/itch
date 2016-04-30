@@ -29,4 +29,15 @@
       transform: scale(0.95);
     }
   }
+
+  h2 {
+    flex-basis: 100%;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .url-input {
+    flex-basis: 100%;
+    margin: 0 40px;
+  }
 }

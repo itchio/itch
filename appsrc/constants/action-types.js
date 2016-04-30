@@ -71,6 +71,7 @@ module.exports = keyMirror({
   TRIGGER_LOCATION: null,
 
   SHORTCUTS_VISIBILITY_CHANGED: null,
+  TOGGLE_MINI_SIDEBAR: null,
 
   TAB_RELOADED: null,
   TAB_CHANGED: null,

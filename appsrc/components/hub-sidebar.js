@@ -15,11 +15,11 @@ import HubSidebarItem from './hub-sidebar-item'
 
 export class HubSidebar extends Component {
   render () {
-    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
+    const {t, osx, mini, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
       navigate, counts, closeTab, moveTab, openTabContextMenu, newTab} = this.props
-    const classes = classNames('hub-sidebar', {osx, fullscreen})
+    const classes = classNames('hub-sidebar', {osx, fullscreen, mini})
     const sidebarStyle = {
-      width: sidebarWidth + 'px'
+      width: mini ? '67px' : sidebarWidth + 'px'
     }
 
     return <div className={classes} style={sidebarStyle}>
@@ -64,8 +64,8 @@ export class HubSidebar extends Component {
           return <HubSidebarItem {...props}/>
         })}
         <section className='hub-sidebar-item new-tab' onClick={newTab}>
-          <span className='icon icon-plus'/>
-          {t('sidebar.new_tab')}
+          <span className='symbol icon icon-plus'/>
+          <span className='label'>{t('sidebar.new_tab')}</span>
           <div className='filler'/>
           <div className='kb-shortcut'>
             {osx
@@ -85,9 +85,9 @@ export class HubSidebar extends Component {
 
     return <section className='hub-sidebar-item me'>
       <img src={coverUrl}/>
-      <span>{username}</span>
+      <span className='label'>{username}</span>
       <div className='filler'/>
-      <Icon icon='triangle-down'/>
+      <Icon icon='triangle-down' classes={['me-dropdown']}/>
     </section>
   }
 
@@ -157,6 +157,7 @@ const mapStateToProps = createStructuredSelector({
   osx: (state) => state.system.osx,
   fullscreen: (state) => state.ui.mainWindow.fullscreen,
   sidebarWidth: (state) => state.preferences.sidebarWidth || 240,
+  mini: (state) => state.preferences.miniSidebar,
   me: (state) => state.session.credentials.me,
   id: (state) => state.session.navigation.id,
   tabs: (state) => state.session.navigation.tabs,

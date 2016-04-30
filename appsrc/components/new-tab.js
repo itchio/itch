@@ -52,6 +52,9 @@ export class NewTab extends Component {
             <span>{t.format(label)}</span>
           </div>
         })}
+
+        <h2>{t('new_tab.titles.input')}</h2>
+        <input className='url-input'/>
       </div>
     </div>
   }

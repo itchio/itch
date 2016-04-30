@@ -19,6 +19,10 @@
   &:hover {
     cursor: col-resize;
   }
+
+  &.mini {
+    display: none;
+  }
 }
 
 .hub-sidebar {
@@ -35,6 +39,35 @@
   display: flex;
   align-items: stretch;
   flex-direction: column;
+
+  &.mini {
+    .me img {
+      margin: 0 auto;
+    }
+
+    .sidebar-items {
+      align-items: center;
+    }
+
+    .hub-sidebar-item {
+      width: 100%;
+      border-width: 0;
+      border-radius: 0;
+      padding: 0;
+
+      .label, .bubble, .filler, .kb-shortcut, .me-dropdown, .close-icon {
+        display: none;
+      }
+    }
+
+    .symbol {
+      margin: 0 auto !important;
+    }
+
+    h2 {
+      display: none;
+    }
+  }
 
   &.osx:not(.fullscreen) .title-bar-padder {
     flex-basis: 20px;
@@ -86,7 +119,6 @@
       border-radius: 1px;
       width: 16px;
       height: 16px;
-      background-color: $ivory;
       background-size: cover;
     }
 

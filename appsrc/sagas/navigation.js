@@ -32,7 +32,7 @@ const TABS_TABLE_NAME = 'itchAppTabs'
 
 import {
   navigate, openUrl, tabChanged, tabsChanged, tabDataFetched, tabEvolved,
-  queueGame, tabsRestored, checkForGameUpdate, probeCave,
+  queueGame, tabsRestored, checkForGameUpdate, probeCave, updatePreferences,
   queueCaveReinstall, queueCaveUninstall, exploreCave, initiatePurchase,
   historyRead
 } from '../actions'
@@ -41,7 +41,7 @@ import {
   SESSION_READY, SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED, TABS_CHANGED,
   VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION,
   WINDOW_FOCUS_CHANGED, TAB_RELOADED, OPEN_TAB_CONTEXT_MENU, INITIATE_PURCHASE,
-  PROBE_CAVE, FOCUS_NTH_TAB, NEW_TAB
+  PROBE_CAVE, FOCUS_NTH_TAB, NEW_TAB, TOGGLE_MINI_SIDEBAR
 } from '../constants/action-types'
 
 function * retrieveTabData (id, retrOpts = {}) {
@@ -352,6 +352,11 @@ function * _probeCave (action) {
   yield put(openUrl('https://gist.github.com/fasterthanlime/fc0116df32b53c7939016afe0d26796d'))
 }
 
+function * _toggleMiniSidebar (action) {
+  const {miniSidebar} = yield select((state) => state.preferences)
+  yield put(updatePreferences({miniSidebar: !miniSidebar}))
+}
+
 export default function * navigationSaga () {
   const queue = createQueue('navigation')
 
@@ -392,6 +397,7 @@ export default function * navigationSaga () {
     takeEvery(TRIGGER_MAIN_ACTION, _triggerMainAction),
     takeEvery(INITIATE_PURCHASE, _initiatePurchase),
     takeEvery(PROBE_CAVE, _probeCave),
+    takeEvery(TOGGLE_MINI_SIDEBAR, _toggleMiniSidebar),
     takeEvery(OPEN_TAB_CONTEXT_MENU, makeTabContextMenu(queue)),
     takeEvery('*', function * watchNavigation () {
       const state = yield select()

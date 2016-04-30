@@ -3,12 +3,12 @@ import {handleActions} from 'redux-actions'
 
 export default handleActions({
   REFRESH_MENU: (state, action) => {
-    const {system, credentials} = action.payload
-    return {template: computeMenuTemplate(system, credentials)}
+    return {template: computeMenuTemplate(action.payload)}
   }
 }, {template: []})
 
-function computeMenuTemplate (system, credentials) {
+function computeMenuTemplate (payload) {
+  const {system, credentials, miniSidebar} = payload
   const menus = {
     file: {
       label: 'menu.file.file',
@@ -58,6 +58,18 @@ function computeMenuTemplate (system, credentials) {
           label: 'menu.edit.select_all',
           accelerator: 'CmdOrCtrl+A',
           role: 'selectall'
+        }
+      ]
+    },
+
+    view: {
+      label: 'menu.view.view',
+      submenu: [
+        {
+          label: 'menu.view.mini_sidebar',
+          type: 'checkbox',
+          checked: miniSidebar,
+          accelerator: 'CmdOrCtrl+I'
         }
       ]
     },
@@ -119,6 +131,7 @@ function computeMenuTemplate (system, credentials) {
   const template = [
     menus.file,
     menus.edit,
+    menus.view,
     (credentials.key
     ? menus.account
     : menus.account_disabled),

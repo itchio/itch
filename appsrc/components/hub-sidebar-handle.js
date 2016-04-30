@@ -1,6 +1,8 @@
 
 import {connect} from './connect'
 import React, {Component, PropTypes} from 'react'
+import {createStructuredSelector} from 'reselect'
+import classNames from 'classnames'
 
 import * as actions from '../actions'
 
@@ -15,7 +17,9 @@ class HubSidebarHandle extends Component {
   }
 
   render () {
-    return <div className='hub-sidebar-handle' onMouseDown={this.handleMouseDown}/>
+    const {mini} = this.props
+    const classes = classNames('hub-sidebar-handle', {mini})
+    return <div className={classes} onMouseDown={this.handleMouseDown}/>
   }
 
   componentDidMount () {
@@ -50,10 +54,14 @@ class HubSidebarHandle extends Component {
 }
 
 HubSidebarHandle.propTypes = {
-  updatePreferences: PropTypes.func.isRequired
+  updatePreferences: PropTypes.func.isRequired,
+  mini: PropTypes.bool.isRequired
 }
 
-const mapStateToProps = (state) => ({})
+const mapStateToProps = createStructuredSelector({
+  mini: (state) => state.preferences.miniSidebar
+})
+
 const mapDispatchToProps = (dispatch) => ({
   updatePreferences: (record) => dispatch(actions.updatePreferences(record))
 })

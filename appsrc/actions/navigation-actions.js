@@ -34,7 +34,8 @@ import {
 
   REPORT_ISSUE,
 
-  SHORTCUTS_VISIBILITY_CHANGED
+  SHORTCUTS_VISIBILITY_CHANGED,
+  TOGGLE_MINI_SIDEBAR
 } from '../constants/action-types'
 
 const _navigate = createAction(NAVIGATE)
@@ -80,3 +81,4 @@ export const viewCommunityProfile = createAction(VIEW_COMMUNITY_PROFILE)
 export const reportIssue = createAction(REPORT_ISSUE)
 
 export const shortcutsVisibilityChanged = createAction(SHORTCUTS_VISIBILITY_CHANGED)
+export const toggleMiniSidebar = createAction(TOGGLE_MINI_SIDEBAR)
