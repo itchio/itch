@@ -17,8 +17,6 @@ export class SearchResult extends Component {
     return <div className='search-result' onClick={onClick}>
       <img src={coverUrl}/>
       <h4>{title}</h4>
-      <div className='spacer'></div>
-      <span className='icon-button icon icon-plus'/>
     </div>
   }
 }
