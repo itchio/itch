@@ -3,12 +3,17 @@ import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 import {map} from 'underline'
 
+import urlParser from 'url'
+
 import urls from '../constants/urls'
 import * as actions from '../actions'
 
 import Icon from './icon'
 
-// TODO: show recommended for you
+import os from '../util/os'
+const osx = os.itchPlatform() === 'osx'
+
+// TODO: show recommended for you?
 const newTabItems = [
   {
     label: ['new_tab.twitter'],
@@ -27,7 +32,7 @@ const newTabItems = [
   },
   {
     label: ['new_tab.top_sellers'],
-    icon: 'stats',
+    icon: 'star',
     path: 'url/' + urls.itchio + '/games/top-sellers'
   },
   {
@@ -38,12 +43,18 @@ const newTabItems = [
 ]
 
 export class NewTab extends Component {
+  constructor () {
+    super()
+
+    this.addressKeyUp = ::this.addressKeyUp
+  }
+
   render () {
     const {t, tabId, evolveTab} = this.props
 
     return <div className='new-tab-meat'>
       <div className='hub-grid'>
-        <h2>{t('new_tab.titles.welcome')}</h2>
+        <div className='itch-logo'/>
         {newTabItems::map((item) => {
           const {label, icon, path} = item
 
@@ -54,9 +65,33 @@ export class NewTab extends Component {
         })}
 
         <h2>{t('new_tab.titles.input')}</h2>
-        <input className='url-input'/>
+        <div className='browser-address-container'>
+          <input className='browser-address' autoFocus onKeyUp={this.addressKeyUp}/>
+          <span className='icon icon-earth'/>
+          <div className='kb-shortcut'>
+          {osx
+            ? <Icon icon='command'/>
+            : <Icon icon='ctrl'/>
+          }
+          +L
+          </div>
+        </div>
       </div>
     </div>
+  }
+
+  addressKeyUp (e) {
+    if (e.key === 'Enter') {
+      let url = e.target.value
+
+      const parsed = urlParser.parse(url)
+      if (!parsed.protocol) {
+        url = `http://${url}`
+      }
+
+      const {tabId, evolveTab} = this.props
+      evolveTab({id: tabId, path: `url/${url}`})
+    }
   }
 }
 

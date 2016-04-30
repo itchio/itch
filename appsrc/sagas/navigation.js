@@ -265,10 +265,18 @@ export function * _triggerMainAction () {
 function makeTabContextMenu (queue) {
   return function * _openTabContextMenu (action) {
     invariant(typeof action.payload === 'object', 'opentabcontextmenu payload is an object')
-    const {path} = action.payload
-    invariant(typeof path === 'string', 'opentabcontextmenu path is string')
+    const {id} = action.payload
+    invariant(typeof id === 'string', 'opentabcontextmenu path is string')
 
-    const data = yield select((state) => state.session.navigation.tabData[path])
+    const tab = yield select((state) => state.session.navigation.tabs.transient::findWhere({id}))
+    if (!tab) {
+      log(opts, `Can't make context menu for non-transient tab ${id}`)
+      return
+    }
+
+    const {path} = tab
+
+    const data = yield select((state) => state.session.navigation.tabData[id])
     const i18n = yield select((state) => state.i18n)
     const t = localizer.getT(i18n.strings, i18n.lang)
 

@@ -14,7 +14,7 @@
     align-items: center;
 
     .icon {
-      font-size: 90px;
+      font-size: 70px;
       margin-bottom: 25px;
     }
 
@@ -36,8 +36,31 @@
     padding: 20px 0;
   }
 
-  .url-input {
+  .browser-address-container {
+    position: relative;
     flex-basis: 100%;
     margin: 0 40px;
+
+    .browser-address {
+      @include heavy-input;
+      width: 100%;
+      text-indent: 32px;
+    }
+
+    .icon-earth {
+      position: absolute;
+      left: 19px;
+      bottom: 50%;
+      transform: translateY(55%);
+      font-size: 19px;
+      color: $input-placeholder-color;
+    }
+
+    .kb-shortcut {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+    }
   }
 }
