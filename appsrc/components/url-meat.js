@@ -10,7 +10,7 @@ import querystring from 'querystring'
 
 export class UrlMeat extends Component {
   render () {
-    const {path, tabData = {}} = this.props
+    const {path, tabData = {}, tabId} = this.props
 
     let url = 'about:blank'
     let controls = 'generic'
@@ -41,7 +41,7 @@ export class UrlMeat extends Component {
       url = urls.itchio + '/login?' + querystring.stringify({return_to: urls.itchio + '/press/games'})
     }
 
-    return <BrowserMeat url={url} tabPath={path} tabData={tabData} controls={controls}/>
+    return <BrowserMeat url={url} tabId={tabId} tabPath={path} tabData={tabData} controls={controls}/>
   }
 }
 
@@ -52,7 +52,7 @@ UrlMeat.propTypes = {
 }
 
 const mapStateToProps = (state, props) => ({
-  tabData: state.session.navigation.tabData[props.path]
+  tabData: state.session.navigation.tabData[props.tabId]
 })
 
 const mapDispatchToProps = (dispatch) => ({})

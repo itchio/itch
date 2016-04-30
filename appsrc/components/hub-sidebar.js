@@ -15,7 +15,8 @@ import HubSidebarItem from './hub-sidebar-item'
 
 export class HubSidebar extends Component {
   render () {
-    const {t, osx, sidebarWidth, fullscreen, path: currentPath, tabs, tabData, navigate, counts, closeTab, moveTab, openTabContextMenu} = this.props
+    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
+      navigate, counts, closeTab, moveTab, openTabContextMenu, newTab} = this.props
     const classes = classNames('hub-sidebar', {osx, fullscreen})
     const sidebarStyle = {
       width: sidebarWidth + 'px'
@@ -28,11 +29,11 @@ export class HubSidebar extends Component {
       <div className='sidebar-items'>
         <h2>{t('sidebar.category.basics')}</h2>
         {tabs.constant::map((item, i) => {
-          const {path} = item
-          const {label = 'Loading...'} = tabData[item.path] || {}
-          const icon = pathToIcon(item.path)
-          const active = currentPath === item.path
-          const onClick = () => navigate(item.path)
+          const {id, path} = item
+          const {label = 'Loading...'} = tabData[id] || {}
+          const icon = pathToIcon(path)
+          const active = currentId === id
+          const onClick = () => navigate(id)
           const onContextMenu = () => {}
           const n = (i + 1)
           const kbShortcut = <div className='kb-shortcut'>
@@ -43,26 +44,26 @@ export class HubSidebar extends Component {
             +{n}
           </div>
 
-          const props = {path, label, icon, active, onClick, t, onContextMenu, kbShortcut}
+          const props = {id, path, label, icon, active, onClick, t, onContextMenu, kbShortcut}
           return <HubSidebarItem {...props}/>
         })}
 
         <h2>{t('sidebar.category.tabs')}</h2>
         {tabs.transient::map((item, index) => {
-          const {path} = item
-          const data = tabData[item.path] || {}
+          const {id, path} = item
+          const data = tabData[id] || {}
           const {label = 'Loading...'} = data
-          const icon = pathToIcon(item.path)
-          const active = currentPath === item.path
-          const onClick = () => navigate(path)
-          const onClose = () => closeTab(path)
-          const onContextMenu = () => openTabContextMenu({path})
+          const icon = pathToIcon(path)
+          const active = currentId === id
+          const onClick = () => navigate(id)
+          const onClose = () => closeTab(id)
+          const onContextMenu = () => openTabContextMenu(id)
           const count = counts[item.path]
 
-          const props = {index, path, label, icon, active, onClick, count, onClose, onContextMenu, moveTab, data, t}
+          const props = {index, id, path, label, icon, active, onClick, count, onClose, onContextMenu, moveTab, data, t}
           return <HubSidebarItem {...props}/>
         })}
-        <section className='hub-sidebar-item new-tab'>
+        <section className='hub-sidebar-item new-tab' onClick={newTab}>
           <span className='icon icon-plus'/>
           {t('sidebar.new_tab')}
           <div className='filler'/>
@@ -148,7 +149,8 @@ HubSidebar.propTypes = {
   closeTab: PropTypes.func.isRequired,
   moveTab: PropTypes.func.isRequired,
   openTabContextMenu: PropTypes.func.isRequired,
-  openPreferences: PropTypes.func.isRequired
+  openPreferences: PropTypes.func.isRequired,
+  newTab: PropTypes.func.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({
@@ -156,7 +158,7 @@ const mapStateToProps = createStructuredSelector({
   fullscreen: (state) => state.ui.mainWindow.fullscreen,
   sidebarWidth: (state) => state.preferences.sidebarWidth || 240,
   me: (state) => state.session.credentials.me,
-  path: (state) => state.session.navigation.path,
+  id: (state) => state.session.navigation.id,
   tabs: (state) => state.session.navigation.tabs,
   tabData: (state) => state.session.navigation.tabData,
 
@@ -171,15 +173,16 @@ const mapStateToProps = createStructuredSelector({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  navigate: (path) => dispatch(actions.navigate(path)),
-  closeTab: (path) => dispatch(actions.closeTab(path)),
+  navigate: (id) => dispatch(actions.navigate(id)),
+  closeTab: (id) => dispatch(actions.closeTab(id)),
   moveTab: (before, after) => dispatch(actions.moveTab({before, after})),
 
   viewCreatorProfile: () => dispatch(actions.viewCreatorProfile()),
   viewCommunityProfile: () => dispatch(actions.viewCommunityProfile()),
   changeUser: () => dispatch(actions.changeUser()),
   openPreferences: () => dispatch(actions.navigate('preferences')),
-  openTabContextMenu: (data) => dispatch(actions.openTabContextMenu(data))
+  openTabContextMenu: (id) => dispatch(actions.openTabContextMenu(id)),
+  newTab: () => dispatch(actions.newTab())
 })
 
 export default connect(

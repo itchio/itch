@@ -4,8 +4,8 @@ import {connect} from './connect'
 
 class HubBreadDescription extends Component {
   render () {
-    const {t, path, tabData} = this.props
-    const {label = 'Loading...', subtitle, image, imageClass = ''} = tabData[path] || {}
+    const {t, id, tabData} = this.props
+    const {label = 'Loading...', subtitle, image, imageClass = ''} = tabData[id] || {}
 
     const sub = t.format(subtitle)
     let imageStyle
@@ -32,7 +32,7 @@ class HubBreadDescription extends Component {
 }
 
 HubBreadDescription.propTypes = {
-  path: PropTypes.string,
+  id: PropTypes.string.isRequired,
   tabs: PropTypes.shape({
     constant: PropTypes.array,
     transient: PropTypes.array
@@ -43,7 +43,7 @@ HubBreadDescription.propTypes = {
 }
 
 const mapStateToProps = (state) => ({
-  path: state.session.navigation.path,
+  id: state.session.navigation.id,
   tabData: state.session.navigation.tabData,
   market: state.market
 })

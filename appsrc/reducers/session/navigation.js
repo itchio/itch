@@ -1,24 +1,25 @@
 
 import {handleActions} from 'redux-actions'
-import {each, map, filter, pluck, reject, indexBy} from 'underline'
+import {map, pluck, reject, indexBy} from 'underline'
 import invariant from 'invariant'
 import uuid from 'node-uuid'
 
 import SearchExamples from '../../constants/search-examples'
 import staticTabData from '../../constants/static-tab-data'
-import {pathToId} from '../../util/navigation'
+
+import {filter} from 'underline'
 
 const initialState = {
   page: 'gate',
   tabs: {
     constant: [
-      {path: 'featured'},
-      {path: 'library'}
+      {path: 'featured', id: 'featured'},
+      {path: 'library', id: 'library'}
     ],
     transient: []
   },
   tabData: staticTabData,
-  path: 'featured',
+  id: 'featured',
   shortcutsShown: false
 }
 
@@ -34,46 +35,43 @@ export default handleActions({
   },
 
   NAVIGATE: (state, action) => {
-    const {path, data} = action.payload
-    invariant(typeof path === 'string', 'path must be a string')
+    const {id, data} = action.payload
+    invariant(typeof id === 'string', 'id must be a string')
     invariant(typeof data === 'object', 'data must be an object')
 
     const {tabData} = state
     const {tabs} = state
     const {constant, transient} = tabs
-    const tabsByPath = constant.concat(transient)::indexBy('path')
+    const tabsById = constant.concat(transient)::indexBy('id')
 
-    if (tabsByPath[path]) {
-      return {...state, path}
+    if (tabsById[id]) {
+      // switching to an existing tab
+      return {...state, id}
     } else {
-      let label
-      if (/^search/.test(path)) {
-        label = pathToId(path)
-      }
-
+      // open a new tab
       const newTab = {
-        path,
-        id: uuid.v4()
+        // static tabs don't get UUIDs
+        id: staticTabData[id] ? id : uuid.v4(),
+        path: id
       }
 
       const newTabs = {
         constant,
         transient: [
-          newTab,
-          ...transient
+          ...transient,
+          newTab
         ]
       }
 
       const newTabData = {
         ...tabData,
-        [path]: {
-          ...tabData[path],
-          label,
+        [id]: {
+          ...tabData[id],
           ...data
         }
       }
 
-      return {...state, path, tabs: newTabs, tabData: newTabData}
+      return {...state, id: newTab.id, tabs: newTabs, tabData: newTabData}
     }
   },
 
@@ -106,25 +104,24 @@ export default handleActions({
   },
 
   CLOSE_TAB: (state, action) => {
-    const {path, tabs} = state
-    const closePath = action.payload || path
+    const {id, tabs} = state
+    const closeId = action.payload || id
     const {constant, transient} = tabs
 
-    const paths = constant::pluck('path').concat(transient::pluck('path'))
+    const ids = constant::pluck('id').concat(transient::pluck('id'))
+    const index = ids.indexOf(id)
 
-    const index = paths.indexOf(path)
+    const newTransient = transient::reject((x) => x.id === closeId)
 
-    const newTransient = transient::reject((x) => x.path === closePath)
+    const newIds = constant::pluck('id').concat(newTransient::pluck('id'))
+    const numNewIds = newIds.length
 
-    const newPaths = constant::pluck('path').concat(newTransient::pluck('path'))
-    const numNewPaths = newPaths.length
-
-    const nextIndex = Math.min(index, numNewPaths - 1)
-    const newPath = newPaths[nextIndex]
+    const nextIndex = Math.min(index, numNewIds - 1)
+    const newId = newIds[nextIndex]
 
     return {
       ...state,
-      path: newPath,
+      id: newId,
       tabs: {
         constant,
         transient: newTransient
@@ -139,12 +136,12 @@ export default handleActions({
   },
 
   TAB_DATA_FETCHED: (state, action) => {
-    const {path, data} = action.payload
+    const {id, data} = action.payload
     const {tabData} = state
     const newTabData = {
       ...tabData,
-      [path]: {
-        ...tabData[path],
+      [id]: {
+        ...tabData[id],
         ...data
       }
     }
@@ -153,35 +150,30 @@ export default handleActions({
   },
 
   TAB_EVOLVED: (state, action) => {
-    const {before, after, data} = action.payload
-    invariant(typeof before === 'string', 'before path must be a string')
-    invariant(typeof after === 'string', 'after path must be a string')
+    const {id, path, data} = action.payload
+    invariant(typeof id === 'string', 'id must be a string')
+    invariant(typeof path === 'string', 'after path must be a string')
 
-    const pathMap = {}
-    state.tabs.transient::each((t) => { pathMap[t.path] = true })
-
-    const newTransient = state.tabs.transient::map((t) => {
-      if (t.path === before) {
-        if (pathMap[after]) {
-          return null
-        }
-        return { ...t, path: after }
-      } else {
-        return t
-      }
-    })::filter((x) => x)
-
+    const {tabData} = state
     const newTabData = {
-      ...state.tabData,
-      [after]: {
-        ...state.tabData[after],
+      ...tabData,
+      [id]: {
+        ...tabData[id],
         ...data
       }
     }
 
+    const newTransient = state.transient::map((tab) => {
+      if (tab.id === id) {
+        return {
+          ...tab,
+          path
+        }
+      }
+    })
+
     return {
       ...state,
-      path: state.path === before ? after : state.path,
       tabs: {
         ...state.tabs,
         transient: newTransient
@@ -194,12 +186,15 @@ export default handleActions({
     const snapshot = action.payload
     invariant(typeof snapshot === 'object', 'tab snapshot must be an object')
 
+    const {id} = state
+    const transient = snapshot.items::filter((tab) => typeof tab === 'object')
+
     return {
       ...state,
-      path: snapshot.current,
+      id,
       tabs: {
         ...state.tabs,
-        transient: snapshot.items::map((x) => ({path: x, id: uuid.v4()}))
+        transient
       }
     }
   },
@@ -215,13 +210,18 @@ export default handleActions({
 
     const {constant} = state.tabs
 
+    const tab = {
+      path,
+      id: path
+    }
+
     return {
       ...state,
       tabs: {
         ...state.tabs,
         constant: [
           ...constant,
-          {path}
+          tab
         ]
       }
     }

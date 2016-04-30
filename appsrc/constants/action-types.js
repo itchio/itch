@@ -60,6 +60,7 @@ module.exports = keyMirror({
   MOVE_TAB: null,
   EVOLVE_TAB: null,
   TAB_EVOLVED: null,
+  NEW_TAB: null,
   CLOSE_TAB: null,
   SHOW_PREVIOUS_TAB: null,
   SHOW_NEXT_TAB: null,

@@ -8,6 +8,7 @@ import {
   MOVE_TAB,
   EVOLVE_TAB,
   TAB_EVOLVED,
+  NEW_TAB,
   CLOSE_TAB,
   SHOW_PREVIOUS_TAB,
   SHOW_NEXT_TAB,
@@ -37,11 +38,11 @@ import {
 } from '../constants/action-types'
 
 const _navigate = createAction(NAVIGATE)
-export const navigate = (path, data = {}) => {
-  if (typeof path === 'object') {
-    return _navigate(path)
+export const navigate = (id, data = {}) => {
+  if (typeof id === 'object') {
+    return _navigate(id)
   } else {
-    return _navigate({path, data})
+    return _navigate({id, data})
   }
 }
 
@@ -52,6 +53,7 @@ export const navigateToGame = (game) => navigate(`games/${game.id}`, gameToTabDa
 export const moveTab = createAction(MOVE_TAB)
 export const evolveTab = createAction(EVOLVE_TAB)
 export const tabEvolved = createAction(TAB_EVOLVED)
+export const newTab = createAction(NEW_TAB)
 export const closeTab = createAction(CLOSE_TAB)
 export const showPreviousTab = createAction(SHOW_PREVIOUS_TAB)
 export const showNextTab = createAction(SHOW_NEXT_TAB)

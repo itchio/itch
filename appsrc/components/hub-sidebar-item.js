@@ -27,7 +27,7 @@ export class HubSidebarItem extends Component {
   }
 
   render () {
-    const {t, count, path, icon, label, active, kbShortcut} = this.props
+    const {t, count, id, path, icon, label, active, kbShortcut} = this.props
     const {isDragging, connectDragSource, connectDropTarget, onClose, onContextMenu} = this.props
 
     const classes = classNames('hub-sidebar-item', {active})
@@ -38,7 +38,7 @@ export class HubSidebarItem extends Component {
       style.borderColor = dominantColor
     }
 
-    return connectDragSource(connectDropTarget(<section key={path} style={style} className={classes} onClick={this.onClick} onContextMenu={onContextMenu} onClose={onClose} data-path={path} data-dragging={isDragging}>
+    return connectDragSource(connectDropTarget(<section key={id} style={style} className={classes} onClick={this.onClick} onContextMenu={onContextMenu} onClose={onClose} data-path={path} data-id={id} data-dragging={isDragging}>
       <span className={`icon icon-${icon}`}/>
       {t.format(label)}
       {count > 0
@@ -79,6 +79,7 @@ export class HubSidebarItem extends Component {
 HubSidebarItem.propTypes = {
   index: PropTypes.number,
   path: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
   label: PropTypes.oneOfType([ PropTypes.string, PropTypes.array ]).isRequired,
   active: PropTypes.bool.isRequired,
   icon: PropTypes.string.isRequired,

@@ -114,13 +114,13 @@ export class BrowserMeat extends Component {
             navigate(`url/${params.url}`)
             break
           case '/parsed-itch-path':
-            const oldPath = `url/${params.url}`
+            const {tabId} = this.props
             const newPath = params.path
-            evolveTab(oldPath, newPath)
+            evolveTab(tabId, newPath)
             break
           case '/title':
-            const {tabPath} = this.props
-            tabDataFetched(tabPath, {webTitle: params.title})
+            // not ideal
+            tabDataFetched(tabId, {webTitle: params.title})
             break
           default:
             console.log('got itch-internal request: ', pathname)
@@ -176,8 +176,8 @@ export class BrowserMeat extends Component {
     this.with((wv) => {
       wv.reload()
     })
-    const {tabPath, tabReloaded} = this.props
-    tabReloaded(tabPath)
+    const {tabId, tabReloaded} = this.props
+    tabReloaded(tabId)
   }
 
   goBack () {
@@ -210,6 +210,7 @@ BrowserMeat.propTypes = {
   url: PropTypes.string.isRequired,
   tabPath: PropTypes.string,
   tabData: PropTypes.object,
+  tabId: PropTypes.string,
   className: PropTypes.string,
   meId: PropTypes.any,
   navigate: PropTypes.any,
@@ -225,10 +226,10 @@ const mapStateToProps = createStructuredSelector({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  navigate: (path, data) => dispatch(actions.navigate(path, data)),
-  tabReloaded: (path) => dispatch(actions.tabReloaded({path})),
-  evolveTab: (before, after) => dispatch(actions.evolveTab({before, after})),
-  tabDataFetched: (path, data) => dispatch(actions.tabDataFetched({path, data}))
+  navigate: (id, data) => dispatch(actions.navigate(id, data)),
+  tabReloaded: (id) => dispatch(actions.tabReloaded({id})),
+  evolveTab: (id, path) => dispatch(actions.evolveTab({id, path})),
+  tabDataFetched: (id, data) => dispatch(actions.tabDataFetched({id, data}))
 })
 
 export default connect(

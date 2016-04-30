@@ -71,16 +71,12 @@ class HubBread extends Component {
 
     this.props.searchQueryChanged(search.value)
   }
-
-  titleForPath (path) {
-    return `page ${path}`
-  }
 }
 
 HubBread.propTypes = {
   t: PropTypes.func,
 
-  path: PropTypes.string,
+  id: PropTypes.string.isRequired,
   searchLoading: PropTypes.bool,
 
   search: PropTypes.func.isRequired,
@@ -89,7 +85,7 @@ HubBread.propTypes = {
 }
 
 const mapStateToProps = createStructuredSelector({
-  path: (state) => state.session.navigation.path,
+  id: (state) => state.session.navigation.id,
   searchLoading: (state) => state.session.search.loading
 })
 

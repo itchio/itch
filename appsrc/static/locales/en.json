@@ -188,7 +188,7 @@
     "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Published on {{pubDate}}.",
     "prompt.self_update_ready.action.restart": "Restart now",
     "prompt.self_update_ready.action.snooze": "Snooze",
-    "sidebar.no_tabs": "Ready for you",
+    "sidebar.empty": "Empty",
     "sidebar.new_tab": "New tab",
     "sidebar.collections": "Collections",
     "sidebar.category.basics": "Essentials",

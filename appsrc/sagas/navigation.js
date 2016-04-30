@@ -8,11 +8,12 @@ import {BrowserWindow, Menu} from '../electron'
 import invariant from 'invariant'
 import clone from 'clone'
 import ospath from 'path'
+import uuid from 'node-uuid'
 
 import {shell} from '../electron'
 import {takeEvery} from 'redux-saga'
 import {call, select, put} from 'redux-saga/effects'
-import {findWhere, map, pluck} from 'underline'
+import {findWhere, map, pick, pluck} from 'underline'
 
 import urls from '../constants/urls'
 import staticTabData from '../constants/static-tab-data'
@@ -39,10 +40,18 @@ import {
   SESSION_READY, SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED, TABS_CHANGED,
   VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION,
   WINDOW_FOCUS_CHANGED, TAB_RELOADED, OPEN_TAB_CONTEXT_MENU, INITIATE_PURCHASE,
-  PROBE_CAVE, FOCUS_NTH_TAB
+  PROBE_CAVE, FOCUS_NTH_TAB, NEW_TAB
 } from '../constants/action-types'
 
-function * retrieveTabData (path, opts) {
+function * retrieveTabData (id, opts) {
+  const {constant, transient} = yield select((state) => state.session.navigation.tabs)
+  const tab = constant::findWhere({id}) || transient::findWhere({id})
+  if (!tab) {
+    log(opts, `Can't retrieve tab data for ${id}, not found in list`)
+    return
+  }
+
+  const {path} = tab
   const credentials = yield select((state) => state.session.credentials)
 
   if (/^games/.test(path)) {
@@ -67,35 +76,43 @@ function * retrieveTabData (path, opts) {
     }
 
     return location && locationToTabData(location)
+  } else if (/^search/.test(path)) {
+    return {
+      label: pathToId(path)
+    }
+  } else if (/^new/.test(path)) {
+    return {
+      label: ['sidebar.empty']
+    }
   } else {
-    const data = staticTabData[path]
-    if (data) {
-      yield put(tabDataFetched({path, data}))
+    const data = staticTabData[id]
+    if (id) {
+      yield put(tabDataFetched({id, data}))
     }
   }
 }
 
 export function * _tabChanged (action) {
-  const {path} = action.payload
-  invariant(typeof path === 'string', 'tabChanged has stringy path')
+  const {id} = action.payload
+  invariant(typeof id === 'string', 'tabChanged has stringy id')
 
-  if (path === 'history') {
+  if (id === 'history') {
     yield put(historyRead())
   }
 
-  const data = yield call(retrieveTabData, path)
+  const data = yield call(retrieveTabData, id)
   if (data) {
-    yield put(tabDataFetched({path, data}))
+    yield put(tabDataFetched({id, data}))
   }
 }
 
 export function * _tabReloaded (action) {
-  const {path} = action.payload
-  invariant(typeof path === 'string', 'tabReloaded has stringy path')
+  const {id} = action.payload
+  invariant(typeof id === 'string', 'tabReloaded has stringy id')
 
-  const data = yield call(retrieveTabData, path, {fresh: true})
+  const data = yield call(retrieveTabData, id, {fresh: true})
   if (data) {
-    yield put(tabDataFetched({path, data}))
+    yield put(tabDataFetched({id, data}))
   }
 }
 
@@ -103,10 +120,10 @@ export function * _windowFocusChanged (action) {
   const {focused} = action.payload
   if (!focused) return
 
-  const path = yield select((state) => state.session.navigation.path)
-  const data = yield call(retrieveTabData, path, {fresh: true})
+  const id = yield select((state) => state.session.navigation.id)
+  const data = yield call(retrieveTabData, id, {fresh: true})
   if (data) {
-    yield put(tabDataFetched({path, data}))
+    yield put(tabDataFetched({id, data}))
   }
 }
 
@@ -118,12 +135,12 @@ export function * _tabsChanged (action) {
   }
 
   const nav = yield select((state) => state.session.navigation)
-  const {tabs, path} = nav
+  const {tabs, id} = nav
   const {transient} = tabs
 
   const snapshot = {
-    current: path,
-    items: transient::pluck('path')
+    current: id,
+    items: transient::pick('id', 'path')
   }
 
   const userMarket = getUserMarket()
@@ -142,8 +159,8 @@ export function * _sessionReady (action) {
     const tabDatas = yield snapshot.items::map((path) => call(retrieveTabData, path))
     yield tabDatas::map((data, i) => {
       if (!data) return null
-      const path = snapshot.items[i]
-      return put(tabDataFetched({path, data}))
+      const id = snapshot.items[i]
+      return put(tabDataFetched({id, data}))
     })
   } else {
     log(opts, 'No tabs to restore')
@@ -151,25 +168,29 @@ export function * _sessionReady (action) {
 }
 
 export function * _evolveTab (action) {
-  const {before, after} = action.payload
-  const data = yield call(retrieveTabData, after)
-  yield put(tabEvolved({before, after, data}))
+  const {id, path} = action.payload
+  const data = yield call(retrieveTabData, path)
+  yield put(tabEvolved({id, path, data}))
 }
 
 export function * applyTabOffset (offset) {
-  const {path, tabs} = yield select((state) => state.session.navigation)
+  const {id, tabs} = yield select((state) => state.session.navigation)
   const {constant, transient} = tabs
 
-  const paths = constant::pluck('path').concat(transient::pluck('path'))
-  const numPaths = paths.length
+  const ids = constant::pluck('id').concat(transient::pluck('id'))
+  const numTabs = ids.length
 
-  const index = paths.indexOf(path)
+  const index = ids.indexOf(id)
 
   // adding numPaths takes care of negative wrapping too!
-  const newIndex = (index + offset + numPaths) % numPaths
-  const newPath = paths[newIndex]
+  const newIndex = (index + offset + numTabs) % numTabs
+  const newId = ids[newIndex]
 
-  yield put(navigate(newPath))
+  yield put(navigate(newId))
+}
+
+export function * _newTab (action) {
+  yield put(navigate('new/' + uuid.v4()))
 }
 
 export function * _focusNthTab (action) {
@@ -177,7 +198,7 @@ export function * _focusNthTab (action) {
   const constant = yield select((state) => state.session.navigation.tabs.constant)
   const tab = constant[n - 1]
   if (tab) {
-    yield put(navigate(tab.path))
+    yield put(navigate(tab.id))
   }
 }
 
@@ -205,13 +226,20 @@ export function * _viewCommunityProfile (action) {
 }
 
 export function * _triggerMainAction () {
-  const path = yield select((state) => state.session.navigation.path)
+  const id = yield select((state) => state.session.navigation.id)
+  const tab = yield select((state) => state.session.navigation.tabs.transient::findWhere({id}))
+  if (!tab) {
+    return
+  }
+
+  const {path} = tab
   if (/^games/.test(path)) {
     const gameId = +pathToId(path)
     const tabData = yield select((state) => state.session.navigation.tabData)
     const data = tabData[path] || {}
     const game = (data.games || {})[gameId]
     if (game) {
+      // FIXME: queueGame is a bit too tolerant
       yield put(queueGame({game}))
     }
   }
@@ -311,19 +339,20 @@ export default function * navigationSaga () {
   const queue = createQueue('navigation')
 
   const pathSelector = createSelector(
-    (state) => state.session.navigation.path,
-    (path) => {
-      queue.dispatch(tabChanged({path}))
+    (state) => state.session.navigation.id,
+    (id) => {
+      queue.dispatch(tabChanged({id}))
     }
   )
 
   const transientSelector = createSelector(
     (state) => state.session.navigation.tabs.transient,
-    (state) => state.session.navigation.path,
+    (state) => state.session.navigation.id,
     createSelector(
+      (transient, id) => transient::pluck('id').join(','),
       (transient, path) => transient::pluck('path').join(','),
-      (transient, path) => path,
-      (pathList, path) => {
+      (transient, id) => id,
+      (ids, paths, id) => {
         queue.dispatch(tabsChanged())
       }
     )
@@ -331,6 +360,7 @@ export default function * navigationSaga () {
 
   yield [
     takeEvery(SESSION_READY, _sessionReady),
+    takeEvery(NEW_TAB, _newTab),
     takeEvery(FOCUS_NTH_TAB, _focusNthTab),
     takeEvery(SHOW_PREVIOUS_TAB, _showPreviousTab),
     takeEvery(SHOW_NEXT_TAB, _showNextTab),

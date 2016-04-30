@@ -180,8 +180,8 @@ export function * _windowFocusChanged (action) {
 }
 
 export function * _taskEnded (action) {
-  const path = yield select((state) => state.session.navigation.path)
-  if (path === 'preferences') {
+  const id = yield select((state) => state.session.navigation.id)
+  if (id === 'preferences') {
     yield put(queryFreeSpace())
   }
 }
@@ -220,9 +220,9 @@ export default function * installLocationSaga () {
   const queue = createQueue('installLocations')
   const selector = createSelector(
     (state) => state.preferences.installLocations,
-    (state) => state.session.navigation.path,
-    (installLocs, path) => {
-      if (path === 'preferences') {
+    (state) => state.session.navigation.id,
+    (installLocs, id) => {
+      if (id === 'preferences') {
         queue.dispatch(queryFreeSpace())
       }
     }
