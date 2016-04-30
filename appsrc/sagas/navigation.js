@@ -14,7 +14,7 @@ import urlParser from 'url'
 import {shell} from '../electron'
 import {takeEvery} from 'redux-saga'
 import {call, select, put} from 'redux-saga/effects'
-import {findWhere, pick, pluck} from 'underline'
+import {findWhere, map, pick, pluck} from 'underline'
 
 import urls from '../constants/urls'
 import staticTabData from '../constants/static-tab-data'
@@ -156,7 +156,7 @@ export function * _tabsChanged (action) {
 
   const snapshot = {
     current: id,
-    items: transient::pick('id', 'path')
+    items: transient::map((x) => x::pick('id', 'path'))
   }
 
   const userMarket = getUserMarket()
@@ -169,16 +169,15 @@ export function * _sessionReady (action) {
   const snapshot = userMarket.getEntity(TABS_TABLE_NAME, 'x')
 
   if (snapshot) {
-    log(opts, `Should restore ${snapshot.items.length} tabs: stub`)
-    // log(opts, `Restoring ${snapshot.items.length} tabs`)
-    // yield put(tabsRestored(snapshot))
-    //
-    // const tabDatas = yield snapshot.items::map((path) => call(retrieveTabData, path))
-    // yield tabDatas::map((data, i) => {
-    //   if (!data) return null
-    //   const {id} = snapshot.items[i]
-    //   return put(tabDataFetched({id, data}))
-    // })
+    log(opts, `Restoring ${snapshot.items.length} tabs`)
+    yield put(tabsRestored(snapshot))
+
+    const tabDatas = yield snapshot.items::map(({id, path}) => call(retrieveTabData, id, {path}))
+    yield tabDatas::map((data, i) => {
+      if (!data) return null
+      const {id} = snapshot.items[i]
+      return put(tabDataFetched({id, data}))
+    })
   } else {
     log(opts, 'No tabs to restore')
   }
@@ -253,7 +252,7 @@ export function * _triggerMainAction () {
   if (/^games/.test(path)) {
     const gameId = +pathToId(path)
     const tabData = yield select((state) => state.session.navigation.tabData)
-    const data = tabData[path] || {}
+    const data = tabData[id] || {}
     const game = (data.games || {})[gameId]
     if (game) {
       // FIXME: queueGame is a bit too tolerant

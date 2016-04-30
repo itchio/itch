@@ -63,7 +63,8 @@ export function gameToTabData (game) {
     label: game.title,
     subtitle: game.shortText,
     image: game.coverUrl,
-    imageClass: 'game'
+    imageClass: 'game',
+    iconImage: game.coverUrl
   }
 }
 
@@ -74,7 +75,8 @@ export function userToTabData (user) {
     },
     label: user.displayName || user.username,
     image: user.coverUrl,
-    imageClass: 'user'
+    imageClass: 'user',
+    iconImage: user.coverUrl
   }
 }
 
