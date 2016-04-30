@@ -66,7 +66,7 @@ export class NewTab extends Component {
 
         <h2>{t('new_tab.titles.input')}</h2>
         <div className='browser-address-container'>
-          <input className='browser-address' autoFocus onKeyUp={this.addressKeyUp}/>
+          <input className='browser-address' autoFocus onKeyUp={this.addressKeyUp} placeholder={t('new_tab.titles.browser_placeholder')}/>
           <span className='icon icon-earth'/>
           <div className='kb-shortcut'>
           {osx

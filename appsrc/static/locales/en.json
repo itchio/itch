@@ -66,6 +66,8 @@
     "login.status.dependency_install": "Installing dependency {{name}} {{version}}",
     "login.status.login": "Logging you in…",
     "login.status.setup_failure": "There was a problem during setup: {{error}}",
+    "menu.view.view": "View",
+    "menu.view.mini_sidebar": "Mini sidebar",
     "menu.account.account": "Account",
     "menu.account.change_user": "Change user…",
     "menu.account.not_logged_in": "Not logged in",
