@@ -1,6 +1,7 @@
 
 import {createSelector, createStructuredSelector} from 'reselect'
 import React, {Component, PropTypes} from 'react'
+import classNames from 'classnames'
 import {connect} from './connect'
 
 import platformData from '../constants/platform-data'
@@ -42,10 +43,17 @@ export class GameBrowserBar extends Component {
     const {dominantColor} = this.state
     if (dominantColor) {
       const rgba = getDominantColor.toCSSAlpha(dominantColor, 0.8)
-      barStyle.borderTop = `2px solid ${rgba}`
+      barStyle.borderImageSource = `repeating-linear-gradient(to right, ${rgba} 0, ${rgba} 95%, transparent 95%, transparent 100%)`
+      barStyle.borderWidth = '0px'
+      barStyle.borderTopWidth = '2px'
     }
 
-    return <div className='browser-bar game-browser-bar' style={barStyle}>
+    const {browserState} = this.props
+    const {loading} = browserState
+    const barClasses = classNames('browser-bar', 'game-browser-bar', {loading})
+
+    return <div className={barClasses} style={barStyle}>
+      <div className=''/>
       <div className='controls'>
         <BrowserControls {...this.props}/>
       </div>

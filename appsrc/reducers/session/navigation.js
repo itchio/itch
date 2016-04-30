@@ -163,13 +163,14 @@ export default handleActions({
       }
     }
 
-    const newTransient = state.transient::map((tab) => {
+    const newTransient = state.tabs.transient::map((tab) => {
       if (tab.id === id) {
         return {
           ...tab,
           path
         }
       }
+      return tab
     })
 
     return {

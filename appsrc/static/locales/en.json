@@ -240,5 +240,9 @@
     "game.install.no_executables_found": "No executables were found",
     "game.install.no_html_index_found": "No HTML index file found",
     "game.install.could_not_launch": "An error occured while launching {{title}}",
-    "i18n.failed_downloading_locales": "Translation updates for language {{lang}} could not be downloaded."
+    "i18n.failed_downloading_locales": "Translation updates for language {{lang}} could not be downloaded.",
+    "new_tab.random": "View something random",
+    "new_tab.twitter": "Popular on Twitter",
+    "new_tab.on_sale": "On sale",
+    "new_tab.top_sellers": "Top sellers"
 }

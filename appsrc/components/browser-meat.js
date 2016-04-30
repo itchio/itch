@@ -7,7 +7,9 @@ import * as actions from '../actions'
 
 import urlParser from '../util/url'
 import navigation from '../util/navigation'
+
 import useragent from '../constants/useragent'
+import staticTabData from '../constants/static-tab-data'
 
 import querystring from 'querystring'
 import ospath from 'path'
@@ -64,6 +66,16 @@ export class BrowserMeat extends Component {
       return
     }
 
+    const supportedUrl = (url) => {
+      const {tabId} = this.props
+
+      if (staticTabData[tabId] || !tabId) {
+        navigate(`url/${url}`)
+        return true
+      }
+      return false
+    }
+
     webview.addEventListener('load-commit', () => this.with((wv) => this.updateBrowserState({url: wv.getURL()})))
     webview.addEventListener('did-start-loading', () => this.updateBrowserState({loading: true}))
     webview.addEventListener('did-stop-loading', () => this.updateBrowserState({loading: false}))
@@ -74,6 +86,7 @@ export class BrowserMeat extends Component {
       if (!webContents || webContents.isDestroyed()) return
 
       webContents.on('will-navigate', (e, url) => {
+        console.log('Will navigate to: ', url)
         if (!navigation.isAppSupported(url)) {
           return
         }
@@ -82,16 +95,17 @@ export class BrowserMeat extends Component {
         // only works for WebContents of BrowserWindow, but not WebContents of WebView
         e.preventDefault()
 
-        this.with((wv) => {
-          // this is a hack, but the whole 'will-navigate' approach is a fallback anyway,
-          // injected javascript should prevent most navigation attempts
-          if (wv.getURL() === url) {
-            this.goBack()
-          } else {
-            this.stop()
-          }
-        })
-        navigate(`url/${url}`)
+        if (supportedUrl(url)) {
+          this.with((wv) => {
+            // this is a hack, but the whole 'will-navigate' approach is a fallback anyway,
+            // injected javascript should prevent most navigation attempts
+            if (wv.getURL() === url) {
+              this.goBack()
+            } else {
+              this.stop()
+            }
+          })
+        }
       })
 
       // requests to 'itch-internal' are used to communicate between web content & the app
@@ -111,16 +125,21 @@ export class BrowserMeat extends Component {
             webContents.openDevTools({detach: true})
             break
           case '/supported-url':
-            navigate(`url/${params.url}`)
+            if (!supportedUrl(params.url)) {
+              webview.loadURL(params.url)
+            }
             break
           case '/parsed-itch-path':
             const {tabId} = this.props
             const newPath = params.path
+            console.log('parsed itch path: ', tabId, newPath)
             evolveTab(tabId, newPath)
             break
           case '/title':
-            // not ideal
-            tabDataFetched(tabId, {webTitle: params.title})
+            const {tabPath} = this.props
+            if (/^url/.test(tabPath)) {
+              tabDataFetched(tabId, {label: params.title})
+            }
             break
           default:
             console.log('got itch-internal request: ', pathname)
@@ -210,7 +229,7 @@ BrowserMeat.propTypes = {
   url: PropTypes.string.isRequired,
   tabPath: PropTypes.string,
   tabData: PropTypes.object,
-  tabId: PropTypes.string,
+  tabId: PropTypes.string.isRequired,
   className: PropTypes.string,
   meId: PropTypes.any,
   navigate: PropTypes.any,

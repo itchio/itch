@@ -51,7 +51,7 @@ export class HubMeat extends Component {
       const location = pathToId(path)
       return <Location locationName={location}/>
     } else if (/^new/.test(path)) {
-      return <NewTab/>
+      return <NewTab tabId={tabId}/>
     } else if (/^(url|games|users|collections|search|press)/.test(path)) {
       return <UrlMeat key={tabId} tabId={tabId} path={path}/>
     } else {

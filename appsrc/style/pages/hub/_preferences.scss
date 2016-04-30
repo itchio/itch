@@ -91,7 +91,10 @@
 
     .action {
       color: white;
-      -webkit-filter: brightness(70%);
+
+      .icon {
+        -webkit-filter: brightness(70%);
+      }
 
       .icon-plus, .icon-refresh, .icon-stopwatch, .icon-folder {
         font-size: 80%;
@@ -107,7 +110,9 @@
       }
 
       &:hover {
-        -webkit-filter: none;
+        .icon {
+          -webkit-filter: none;
+        }
         cursor: pointer;
       }
     }

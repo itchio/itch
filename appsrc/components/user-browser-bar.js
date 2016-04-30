@@ -1,6 +1,7 @@
 
 import {createSelector, createStructuredSelector} from 'reselect'
 import React, {PropTypes, Component} from 'react'
+import classNames from 'classnames'
 import {connect} from './connect'
 
 import BrowserControls from './browser-controls'
@@ -8,7 +9,11 @@ import {pathToId} from '../util/navigation'
 
 export class UserBrowserBar extends Component {
   render () {
-    return <div className='browser-bar user-browser-bar'>
+    const {browserState} = this.props
+    const {loading} = browserState
+    const barClasses = classNames('browser-bar', 'user-browser-bar', {loading})
+
+    return <div className={barClasses}>
       <div className='controls'>
         <BrowserControls {...this.props}/>
       </div>

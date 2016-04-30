@@ -1,6 +1,15 @@
 
 $meat-cover-scale: 0.4;
 
+@keyframes load-border {
+  0% {
+    border-image-slice: 100% 0% 0% 95%;
+  }
+  100% {
+    border-image-slice: 100% 0% 0% 0%;
+  }
+}
+
 .browser-meat {
   flex-grow: 1;
   display: flex;
@@ -15,6 +24,12 @@ $meat-cover-scale: 0.4;
     border-left: none;
     border-right: none;
     transition: border .2s;
+
+    border-image-source: repeating-linear-gradient(to right, #353535 0, #353535 95%, transparent 95%, transparent 100%);
+    &.loading {
+      animation: load-border 10s cubic-bezier(0, 0, 0, 0.42) infinite;
+    }
+    border-image-slice: 100% 10% 0% 0%;
   }
 
   webview {
