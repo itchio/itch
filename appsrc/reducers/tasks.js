@@ -30,7 +30,7 @@ const updateSingle = (state, action, record) => {
       ...download,
       ...record
     }
-  }::indexBy('id')
+  }
   return {...state, downloads: newDownloads}
 }
 
@@ -65,7 +65,7 @@ const reducer = handleActions({
 
     let newDownloads = state.downloads
     if (name === 'uninstall' && !err) {
-      newDownloads = newDownloads::filter((x) => x.gameId !== taskOpts.gameId)
+      newDownloads = newDownloads::filter((x) => x.gameId !== taskOpts.gameId)::indexBy('id')
     }
 
     return {...state, tasks: newTasks, finishedTasks: newFinishedTasks, downloads: newDownloads}
