@@ -165,23 +165,11 @@ export class BrowserMeat extends Component {
           case '/open-devtools':
             webContents.openDevTools({detach: true})
             break
-          case '/supported-url':
-            if (!handleSupportedUrl(params.url)) {
-              console.log(tabId, 'handleSupported returned falsy, loading', params.url)
-              webview.loadURL(params.url)
-            }
-            break
           case '/parsed-itch-path':
             const {tabId} = this.props
             const newPath = params.path
             console.log(tabId, 'parsed itch path: ', tabId, newPath)
             evolveTab(tabId, newPath)
-            break
-          case '/title':
-            const {tabPath} = this.props
-            if (/^url/.test(tabPath)) {
-              tabDataFetched(tabId, {label: params.title})
-            }
             break
           default:
             console.log('got itch-internal request: ', pathname)

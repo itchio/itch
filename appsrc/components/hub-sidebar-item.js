@@ -40,7 +40,7 @@ export class HubSidebarItem extends Component {
 
     return connectDragSource(connectDropTarget(<section key={id} style={style} className={classes} onClick={this.onClick} onContextMenu={onContextMenu} onClose={onClose} data-path={path} data-id={id} data-dragging={isDragging}>
       {iconImage
-        ? <img className='icon-image' src={iconImage}/>
+        ? <div className='icon-image' style={{backgroundImage: `url('${iconImage}')`}}/>
         : <span className={`icon icon-${icon}`}/>
       }
       {t.format(label)}
