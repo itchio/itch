@@ -3,13 +3,12 @@ import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 import {map} from 'underline'
 
-import urlParser from 'url'
-
 import urls from '../constants/urls'
 import * as actions from '../actions'
 
 import Icon from './icon'
 
+import {transformUrl} from '../util/navigation'
 import os from '../util/os'
 const osx = os.itchPlatform() === 'osx'
 
@@ -80,17 +79,16 @@ export class NewTab extends Component {
     </div>
   }
 
-  addressKeyUp (e) {
+  async addressKeyUp (e) {
     if (e.key === 'Enter') {
       let url = e.target.value
-
-      const parsed = urlParser.parse(url)
-      if (!parsed.protocol) {
-        url = `http://${url}`
+      if (url.length < 1) {
+        return
       }
 
+      const transformed = await transformUrl(url)
       const {tabId, evolveTab} = this.props
-      evolveTab({id: tabId, path: `url/${url}`})
+      evolveTab({id: tabId, path: `url/${transformed}`})
     }
   }
 }

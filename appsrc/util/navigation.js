@@ -1,8 +1,36 @@
 
 import urlParser from '../util/url'
+import dns from 'dns'
+import querystring from 'querystring'
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/
 const ID_RE = /^[^\/]+\/(.+)$/
+
+export async function transformUrl (original) {
+  let req = original
+  let parsed = urlParser.parse(req)
+  const searchUrl = () => {
+    const q = original
+    return 'https://duckduckgo.com/?' + querystring.stringify({q, kae: 'd'})
+  }
+
+  if (!parsed.hostname) {
+    req = 'http://' + original
+    parsed = urlParser.parse(req)
+    if (!parsed.hostname) {
+      return searchUrl()
+    }
+  }
+
+  return await new Promise((resolve, reject) => {
+    dns.lookup(parsed.hostname, (err) => {
+      if (err) {
+        resolve(searchUrl())
+      }
+      resolve(req)
+    })
+  })
+}
 
 export function pathToId (path) {
   const matches = ID_RE.exec(path)
@@ -114,4 +142,4 @@ export function isAppSupported (url) {
   return null
 }
 
-export default {pathToId, pathToIcon, gameToTabData, collectionToTabData, isAppSupported}
+export default {transformUrl, pathToId, pathToIcon, gameToTabData, collectionToTabData, isAppSupported}
