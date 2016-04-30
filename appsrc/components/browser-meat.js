@@ -60,7 +60,7 @@ export class BrowserMeat extends Component {
 
   componentDidMount () {
     const {webview} = this.refs
-    const {tabId, navigate, evolveTab, tabDataFetched} = this.props
+    const {tabId, navigate, evolveTab, tabDataFetched, tabReloaded} = this.props
 
     if (!webview) {
       console.log('Oh noes, can\'t listen to webview\'s soothing event stream')
@@ -85,6 +85,18 @@ export class BrowserMeat extends Component {
     webview.addEventListener('load-commit', () => this.with((wv) => this.updateBrowserState({url: wv.getURL()})))
     webview.addEventListener('did-start-loading', () => this.updateBrowserState({loading: true}))
     webview.addEventListener('did-stop-loading', () => this.updateBrowserState({loading: false}))
+
+    webview.addEventListener('page-title-updated', (e) => {
+      const {title} = e
+      tabDataFetched(tabId, {webTitle: title})
+      tabReloaded(tabId)
+    })
+
+    webview.addEventListener('page-favicon-updated', (e) => {
+      const {favicons} = e
+      tabDataFetched(tabId, {webFavicon: favicons[0]})
+      tabReloaded(tabId)
+    })
 
     if (frozen) {
       webview.addEventListener('will-navigate', (e) => {
@@ -276,9 +288,9 @@ const mapStateToProps = createStructuredSelector({
 
 const mapDispatchToProps = (dispatch) => ({
   navigate: (id, data) => dispatch(actions.navigate(id, data)),
-  tabReloaded: (id) => dispatch(actions.tabReloaded({id})),
   evolveTab: (id, path) => dispatch(actions.evolveTab({id, path})),
-  tabDataFetched: (id, data) => dispatch(actions.tabDataFetched({id, data}))
+  tabDataFetched: (id, data) => dispatch(actions.tabDataFetched({id, data})),
+  tabReloaded: (id) => dispatch(actions.tabReloaded({id}))
 })
 
 export default connect(

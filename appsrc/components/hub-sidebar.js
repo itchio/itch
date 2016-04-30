@@ -52,7 +52,7 @@ export class HubSidebar extends Component {
         {tabs.transient::map((item, index) => {
           const {id, path} = item
           const data = tabData[id] || {}
-          const {label = 'Loading...'} = data
+          const {label = 'Loading...', iconImage} = data
           const icon = pathToIcon(path)
           const active = currentId === id
           const onClick = () => navigate(id)
@@ -60,7 +60,7 @@ export class HubSidebar extends Component {
           const onContextMenu = () => openTabContextMenu(id)
           const count = counts[item.path]
 
-          const props = {index, id, path, label, icon, active, onClick, count, onClose, onContextMenu, moveTab, data, t}
+          const props = {index, id, path, label, icon, iconImage, active, onClick, count, onClose, onContextMenu, moveTab, data, t}
           return <HubSidebarItem {...props}/>
         })}
         <section className='hub-sidebar-item new-tab' onClick={newTab}>

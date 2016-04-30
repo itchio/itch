@@ -41,7 +41,7 @@ export function pathToIcon (path) {
     return 'star'
   }
   if (/^users/.test(path)) {
-    return 'users'
+    return 't-shirt'
   }
   if (/^search/.test(path)) {
     return 'search'

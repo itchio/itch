@@ -20,13 +20,13 @@ $meat-cover-scale: 0.4;
     align-items: center;
     padding: 5px 0 5px 20px;
     background: $sidebar-background-color;
-    border: 1px solid #353535;
-    border-left: none;
-    border-right: none;
     transition: border .2s;
 
+    border-width: 0;
+    border-top-width: 2px;
     border-image-source: repeating-linear-gradient(to right, #353535 0, #353535 95%, transparent 95%, transparent 100%);
     &.loading {
+      border-image-source: repeating-linear-gradient(to right, $light-accent-color 0, $light-accent-color 95%, transparent 95%, transparent 100%);
       animation: load-border 10s cubic-bezier(0, 0, 0, 0.42) infinite;
     }
     border-image-slice: 100% 10% 0% 0%;

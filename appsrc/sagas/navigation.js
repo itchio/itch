@@ -50,8 +50,6 @@ function * retrieveTabData (id, retrOpts = {}) {
     return
   }
 
-  console.log(`Retrieving tab data for ${id}`)
-
   const {constant, transient} = yield select((state) => state.session.navigation.tabs)
   const tab = constant::findWhere({id}) || transient::findWhere({id})
   if (!tab) {
@@ -64,7 +62,6 @@ function * retrieveTabData (id, retrOpts = {}) {
     console.log(`Refusing to retrieve foreign tabData for frozen tab ${tab.path}`)
     return
   }
-  console.log(`Retrieving tab data for ${id} => ${path}`)
 
   const credentials = yield select((state) => state.session.credentials)
 
@@ -99,8 +96,10 @@ function * retrieveTabData (id, retrOpts = {}) {
       label: ['sidebar.empty']
     }
   } else if (/^url/.test(path)) {
+    const existingTabData = (yield select((state) => state.session.navigation.tabData[id])) || {}
     return {
-      label: (urlParser.parse(pathToId(path)) || {}).hostname
+      label: existingTabData.webTitle || (urlParser.parse(pathToId(path)) || {}).hostname,
+      iconImage: existingTabData.webFavicon
     }
   } else {
     const data = staticTabData[id]

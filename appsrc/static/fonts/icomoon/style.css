@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:    url('fonts/icomoon.eot?tf0t2e');
-    src:    url('fonts/icomoon.eot?tf0t2e#iefix') format('embedded-opentype'),
-        url('fonts/icomoon.ttf?tf0t2e') format('truetype'),
-        url('fonts/icomoon.woff?tf0t2e') format('woff'),
-        url('fonts/icomoon.svg?tf0t2e#icomoon') format('svg');
+    src:    url('fonts/icomoon.eot?hko1wy');
+    src:    url('fonts/icomoon.eot?hko1wy#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf?hko1wy') format('truetype'),
+        url('fonts/icomoon.woff?hko1wy') format('woff'),
+        url('fonts/icomoon.svg?hko1wy#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -24,6 +24,15 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-t-shirt:before {
+    content: "\e918";
+}
+.icon-like:before {
+    content: "\e611";
+}
+.icon-hand:before {
+    content: "\e609";
+}
 .icon-command:before {
     content: "\e915";
 }
@@ -251,11 +260,5 @@
 }
 .icon-shuffle:before {
     content: "\e60e";
-}
-.icon-like:before {
-    content: "\e611";
-}
-.icon-hand:before {
-    content: "\e609";
 }
 

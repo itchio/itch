@@ -61,7 +61,7 @@
     margin: 2px 0;
     margin-right: 0;
     padding: 7px 8px 7px 3px;
-    height: 40px;
+    min-height: 40px;
 
     &:hover {
       cursor: pointer;
@@ -70,6 +70,7 @@
     }
 
     .icon {
+      flex-shrink: 0;
       margin: 0 10px 0 6px;
       font-size: 90%;
 
@@ -77,6 +78,14 @@
         margin: 0 8px 0 4px;
         font-size: 120%;
       }
+    }
+
+    .icon-image {
+      flex-shrink: 0;
+      margin: 0 10px 0 4px;
+      width: 16px;
+      height: 16px;
+      background: $ivory;
     }
 
     * {
