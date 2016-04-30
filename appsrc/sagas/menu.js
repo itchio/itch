@@ -79,6 +79,8 @@ function convertMenuAction (label) {
     case 'menu.file.quit': return quitWhenMain()
     case 'menu.file.preferences': return navigate('preferences')
     case 'menu.view.mini_sidebar': return toggleMiniSidebar()
+    case 'menu.view.downloads': return navigate('downloads')
+    case 'menu.view.history': return navigate('history')
     case 'menu.account.change_user': return changeUser()
     case 'menu.help.view_terms': return openExternal(urls.termsOfService)
     case 'menu.help.view_license': return openExternal(`${urls.itchRepo}/blob/master/LICENSE`)

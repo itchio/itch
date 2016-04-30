@@ -70,6 +70,17 @@ function computeMenuTemplate (payload) {
           type: 'checkbox',
           checked: miniSidebar,
           accelerator: 'CmdOrCtrl+I'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'menu.view.history',
+          accelerator: 'CmdOrCtrl+H'
+        },
+        {
+          label: 'menu.view.downloads',
+          accelerator: 'CmdOrCtrl+J'
         }
       ]
     },
