@@ -182,7 +182,7 @@ export class BrowserMeat extends Component {
   }
 
   render () {
-    const {tabData, tabPath, url, meId, controls} = this.props
+    const {tabId, tabData, tabPath, url, meId, controls} = this.props
     const {browserState} = this.state
 
     const {goBack, goForward, stop, reload, openDevTools, loadURL} = this
@@ -201,7 +201,7 @@ export class BrowserMeat extends Component {
       {bar}
       {DONT_SHOW_WEBVIEWS
         ? <div style={{padding: '10px'}}>Webviews disabled</div>
-        : <webview ref='webview' src={url} partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/>
+        : <webview key={tabId} ref='webview' src={url} partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/>
       }
     </div>
   }

@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (itchPath) {
       sendMessage('parsed-itch-path?path=' + encodeURIComponent(itchPath.content) + '&url=' + encodeURIComponent(window.location.href))
     }
-  }, 0)
+  }, 500)
 
   if (['itch.io', 'localhost.com'].indexOf(host) === -1) {
     // don't inject anything on non-itch pages
