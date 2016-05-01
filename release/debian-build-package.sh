@@ -27,7 +27,7 @@ libfreetype6 libgconf-2-4 libgtk2.0-0 libnotify4 libnspr4 libnss3 \
 libx11-6 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 \
 libxi6 libxrandr2 libxrender1 libxtst6"
 
-# check build-dependencies (make sure they're matching the list in release/debian/control)
+# check build-dependencies
 echo "checking dependencies:"
 for d in $deps ; do
   printf "  $d - "
@@ -102,6 +102,6 @@ fi
 # packages are always saved in the upper directory;
 # right now I don't know how or if this can be changed
 echo ""
-echo "Debian package saved in \`$(dirname "$PWD")'"
+echo "Debian package saved to \`$(dirname "$PWD")'"
 echo ""
 
