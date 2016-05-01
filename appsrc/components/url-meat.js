@@ -43,7 +43,7 @@ export class UrlMeat extends Component {
       url = urls.itchio
     }
 
-    return <BrowserMeat url={url} tabId={tabId} tabPath={path} tabData={tabData} controls={controls}/>
+    return <BrowserMeat key={tabId} url={url} tabId={tabId} tabPath={path} tabData={tabData} controls={controls}/>
   }
 }
 

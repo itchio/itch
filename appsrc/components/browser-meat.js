@@ -83,9 +83,15 @@ export class BrowserMeat extends Component {
       return false
     }
 
-    console.log(tabId, 'installing dom-ready handler...')
+    webview.addEventListener('destroyed', (e) => {
+      console.log(tabId, 'webview destroyed')
+    })
 
-    webview.addEventListener('load-commit', () => this.with((wv) => this.updateBrowserState({url: wv.getURL()})))
+    webview.addEventListener('did-navigate', (e) => this.with((wv) => {
+      const {url} = e
+      console.log('Committing url: ', url)
+      this.updateBrowserState({url})
+    }))
     webview.addEventListener('did-start-loading', () => this.updateBrowserState({loading: true}))
     webview.addEventListener('did-stop-loading', () => this.updateBrowserState({loading: false}))
 
@@ -142,7 +148,7 @@ export class BrowserMeat extends Component {
     })
 
     webview.addEventListener('dom-ready', () => {
-      console.log(tabId, 'dom-ready!')
+      console.log(tabId, 'dom-ready!, props url = ', this.props.url, 'wv url', webview.getURL())
       this.updateBrowserState({loading: false})
 
       const webContents = webview.getWebContents()
@@ -171,7 +177,7 @@ export class BrowserMeat extends Component {
           case '/parsed-itch-path':
             const {tabId} = this.props
             const newPath = params.path
-            console.log(tabId, 'parsed itch path: ', tabId, newPath)
+            console.log(tabId, 'evolving', this.props.tabPath, ' => ', newPath)
             evolveTab(tabId, newPath)
             break
           default:
@@ -179,10 +185,12 @@ export class BrowserMeat extends Component {
         }
       })
     })
+
+    webview.src = this.props.url
   }
 
   render () {
-    const {tabId, tabData, tabPath, url, meId, controls} = this.props
+    const {tabId, tabData, tabPath, meId, controls} = this.props
     const {browserState} = this.state
 
     const {goBack, goForward, stop, reload, openDevTools, loadURL} = this
@@ -201,7 +209,7 @@ export class BrowserMeat extends Component {
       {bar}
       {DONT_SHOW_WEBVIEWS
         ? <div style={{padding: '10px'}}>Webviews disabled</div>
-        : <webview key={tabId} ref='webview' src={url} partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/>
+        : <webview key={tabId} ref='webview' partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/>
       }
     </div>
   }
@@ -241,14 +249,14 @@ export class BrowserMeat extends Component {
   }
 
   loadURL (input) {
-    const {tabId} = this.props
+    const {tabId, navigate} = this.props
     const frozen = staticTabData[tabId] || !tabId
 
     this.with(async (wv) => {
       const url = await transformUrl(input)
 
       if (navigation.isAppSupported(url) && frozen) {
-        this.props.navigate(`url/${url}`)
+        navigate(`url/${url}`)
       } else {
         const browserState = { ...this.state.browserState, url }
         this.setState({browserState})

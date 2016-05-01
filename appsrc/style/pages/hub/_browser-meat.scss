@@ -20,7 +20,8 @@ $meat-cover-scale: 0.4;
     align-items: center;
     padding: 5px 0 5px 20px;
     background: $sidebar-background-color;
-    transition: border .2s;
+    transition: all .2s;
+    min-height: 70px;
 
     border-width: 0;
     border-top-width: 2px;
