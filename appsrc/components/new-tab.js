@@ -81,14 +81,14 @@ export class NewTab extends Component {
 
   async addressKeyUp (e) {
     if (e.key === 'Enter') {
-      let url = e.target.value
-      if (url.length < 1) {
+      let input = e.target.value
+      if (input.length < 1) {
         return
       }
 
-      const transformed = await transformUrl(url)
+      const url = await transformUrl(input)
       const {tabId, evolveTab} = this.props
-      evolveTab({id: tabId, path: `url/${transformed}`})
+      evolveTab({id: tabId, path: `url/${url}`})
     }
   }
 }

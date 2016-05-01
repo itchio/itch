@@ -17,10 +17,13 @@ import ospath from 'path'
 const injectPath = ospath.resolve(__dirname, '..', 'inject', 'browser.js')
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === '1'
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1
+const WILL_NAVIGATE_GRACE_PERIOD = 3000
 
 import BrowserBar from './browser-bar'
 import GameBrowserBar from './game-browser-bar'
 import UserBrowserBar from './user-browser-bar'
+
+import {transformUrl} from '../util/navigation'
 
 export class BrowserMeat extends Component {
   constructor () {
@@ -105,7 +108,7 @@ export class BrowserMeat extends Component {
         console.log(tabId, '(wv) will-navigate: ', url, e)
 
         // sometimes we get double will-navigate events because life is fun?!
-        if (this.lastNavigationUrl === url && e.timeStamp - this.lastNavigationTimeStamp < 2000) {
+        if (this.lastNavigationUrl === url && e.timeStamp - this.lastNavigationTimeStamp < WILL_NAVIGATE_GRACE_PERIOD) {
           console.log('double, woo')
           this.with((wv) => {
             console.log(tabId, 'Force loading', this.props.url)
@@ -237,15 +240,12 @@ export class BrowserMeat extends Component {
     this.with((wv) => wv.goForward())
   }
 
-  loadURL (url) {
+  loadURL (input) {
     const {tabId} = this.props
     const frozen = staticTabData[tabId] || !tabId
 
-    this.with((wv) => {
-      const parsed = urlParser.parse(url)
-      if (!parsed.protocol) {
-        url = `http://${url}`
-      }
+    this.with(async (wv) => {
+      const url = await transformUrl(input)
 
       if (navigation.isAppSupported(url) && frozen) {
         this.props.navigate(`url/${url}`)
