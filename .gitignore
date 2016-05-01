@@ -21,6 +21,13 @@ tmp
 /cache
 /stage
 
+# Debian package-building stuff
+/debian
+/debian.log
+/node-v*-linux-*
+/node.tar.xz
+/sassc
+
 # release stuff
 /release/itch.desktop
 

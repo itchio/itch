@@ -1,0 +1,2 @@
+build/v*/itch-linux-*/*   /usr/lib/itch
+release/itch.desktop      /usr/share/applications
