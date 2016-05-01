@@ -5,6 +5,8 @@ import os from '../util/os'
 import needle from '../promised/needle'
 import dateFormat from 'dateformat'
 
+const linux = os.itchPlatform() === 'linux'
+
 import env from '../env'
 import urls from '../constants/urls'
 
@@ -109,7 +111,7 @@ export function * _checkForSelfUpdate () {
     if (resp.statusCode === 200) {
       const downloadSelfUpdates = yield select((state) => state.preferences.downloadSelfUpdates)
 
-      if (autoUpdater && !hadErrors && downloadSelfUpdates) {
+      if (autoUpdater && !hadErrors && downloadSelfUpdates && !linux) {
         yield put(selfUpdateAvailable({spec: resp.body, downloading: true}))
         autoUpdater.checkForUpdates()
       } else {
