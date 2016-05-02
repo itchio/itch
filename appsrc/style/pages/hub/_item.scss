@@ -104,3 +104,106 @@
     }
   }
 }
+
+.hub-item.leader {
+  flex-basis: 100%;
+  display: flex;
+
+  .cover, .description {
+    border-right: inset 1px rgba(255, 255, 255, 0.15)
+  }
+
+  .cover {
+    flex-shrink: 0;
+    width: 180px;
+    height: 140px;
+  }
+
+  .description {
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    background: #272727;
+
+    .description-content {
+      padding: 10px 15px;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    .description-content {
+      z-index: 5;
+    }
+  }
+
+  .game-stats {
+    font-size: 14px;
+    color: $secondary-text-color;
+    flex-basis: 200px;
+    flex-shrink: 0;
+    padding: 10px 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    line-height: 1.6;
+
+    label {
+      color: #B3B2B7; // FIXME: exceptions bad
+
+      .nice-ago {
+        color: $secondary-text-color; // sigh
+      }
+    }
+
+    .icon {
+      margin: 0 3px;
+    }
+  }
+
+  .title {
+    @include single-line;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .short-text {
+    color: $secondary-text-color;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .game-actions {
+    flex-basis: 170px;
+    flex-shrink: 0;
+    align-self: center;
+    justify-content: space-between;
+    height: auto;
+    padding: 10px;
+
+    .cave-actions {
+      margin-bottom: 10px;
+      flex-grow: 0;
+
+      .secondary-action {
+        font-size: 18px;
+      }
+    }
+
+    .main-action {
+      @include heavy-button;
+      width: 100%;
+      padding: 15px 0;
+      text-align: center;
+
+      background: rgba(60, 60, 60, 0.58);
+      border-color: rgba(72, 72, 72, 0.33);
+    }
+  }
+}

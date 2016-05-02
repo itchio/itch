@@ -6,15 +6,17 @@ import classNames from 'classnames'
 
 import GameGrid from './game-grid'
 import CollectionGrid from './collection-grid'
-import {map, filter, indexBy} from 'underline'
+import {map, filter, indexBy, sortBy} from 'underline'
 
 import EnhanceFiltered from './filtered'
+
+const recency = (x) => -x.lastTouched || 0
 
 export class Library extends Component {
   render () {
     const {t, caves, allGames, downloadKeys, collections, query} = this.props
 
-    const installedGames = caves::map((key) => allGames[key.gameId])::filter((x) => !!x)
+    const installedGames = caves::sortBy(recency)::map((key) => allGames[key.gameId])::filter((x) => !!x)
     const installedGamesById = installedGames::indexBy('id')
 
     const games = downloadKeys::map((key) => allGames[key.gameId])::filter((x) => !installedGamesById[x.id])
@@ -34,15 +36,8 @@ export class Library extends Component {
     const headerClasses = classNames('', {shown: showHeaders})
 
     return <div className='library-meat'>
-      <h2 className={headerClasses}>{t('sidebar.installed')}</h2>
-      {installedGames.length > 0
-        ? <GameGrid games={installedGames} query={query}/>
-        : ''
-      }
-
-      <h2 className={headerClasses}>{t('sidebar.owned')}</h2>
-      {games.length > 0
-        ? <GameGrid games={games} query={query}/>
+      {installedGames.length > 0 || games.length > 0
+        ? <GameGrid games={installedGames.concat(games)} query={query} numLeader={3}/>
         : ''
       }
 

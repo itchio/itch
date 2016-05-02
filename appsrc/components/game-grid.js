@@ -5,6 +5,7 @@ import Fuse from 'fuse.js'
 import {each} from 'underline'
 
 import HubItem from './hub-item'
+import LeaderHubItem from './leader-hub-item'
 import HubGhostItem from './hub-ghost-item'
 
 export class GameGrid extends Component {
@@ -33,13 +34,21 @@ export class GameGrid extends Component {
 
   render () {
     const {games, query = ''} = this.props
+    let {numLeader = 0} = this.props
+    if (query.length > 0) {
+      numLeader = Infinity
+    }
 
     const items = []
 
     const filteredGames = query.length === 0 ? games : this.fuse.search(query)
 
-    filteredGames::each((game, id) => {
-      items.push(<HubItem key={`game-${id}`} game={game}/>)
+    filteredGames::each((game, index) => {
+      if (index < numLeader) {
+        items.push(<LeaderHubItem key={`game-${game.id}`} game={game}/>)
+      } else {
+        items.push(<HubItem key={`game-${game.id}`} game={game}/>)
+      }
     })
 
     let ghostId = 0
@@ -56,6 +65,7 @@ export class GameGrid extends Component {
 GameGrid.propTypes = {
   // specified
   games: PropTypes.any.isRequired,
+  numLeader: PropTypes.number,
   predicate: PropTypes.func
 }
 
