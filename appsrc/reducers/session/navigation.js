@@ -43,10 +43,15 @@ export default handleActions({
     const {tabs} = state
     const {constant, transient} = tabs
     const tabsById = constant.concat(transient)::indexBy('id')
+    const tabsByPath = constant.concat(transient)::indexBy('path')
 
     if (tabsById[id]) {
-      // switching to an existing tab
+      // switching to an existing, by id
       return {...state, id}
+    } else if (tabsByPath[id]) {
+      // switching to an existing tab, by path (don't open same game twice, etc.)
+      const tab = tabsByPath[id]
+      return {...state, id: tab.id}
     } else {
       // open a new tab
       const newTab = {
