@@ -52,31 +52,6 @@
     display: flex;
   }
 
-  .criterion {
-    .label {
-      margin-right: 5px;
-    }
-
-    margin: 10px;
-    padding: 6px 10px;
-    border-radius: 4px;
-    border: 1px solid $ui-border-color;
-    background: $sidebar-background-color;
-    color: $secondary-text-color;
-    display: flex;
-
-    .icon {
-      &:hover {
-        color: $ivory;
-        cursor: pointer;
-      }
-
-      &:active {
-        transform: scale(0.95);
-      }
-    }
-  }
-
   .hub-item {
     width: $grid-item-width;
     margin: .5em;
@@ -109,5 +84,54 @@
       flex-basis: auto;
       flex-grow: 1;
     }
+  }
+}
+
+.filtered-meat {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+
+  .sub-meat {
+    overflow: hidden;
+    display: flex;
+    flex: 1 1;
+  }
+
+  .criterion-bar {
+    display: flex;
+    flex: 0 0;
+    background: $filter-background-color;
+    border-bottom: 1px solid $filter-border-color;
+    padding: 0 5px;
+
+    .criterion {
+      cursor: default;
+
+      .label {
+        margin-right: 5px;
+      }
+
+      margin: 10px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid $filter-tag-border-color;
+      background: $filter-background-color;
+      color: $filter-tag-text-color;
+      display: flex;
+
+      .icon {
+        &:hover {
+          color: $ivory;
+          cursor: pointer;
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+
   }
 }

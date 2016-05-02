@@ -7,9 +7,11 @@ import classNames from 'classnames'
 import GameGrid from './game-grid'
 import {map} from 'underline'
 
+import EnhanceFiltered from './filtered'
+
 export class Dashboard extends Component {
   render () {
-    const {t, allGames, myGameIds} = this.props
+    const {t, allGames, myGameIds, predicate} = this.props
 
     const games = myGameIds::map((id) => allGames[id])
 
@@ -23,7 +25,7 @@ export class Dashboard extends Component {
 
     return <div className='dashboard-meat'>
       <h2 className={headerClasses}>{t('sidebar.dashboard')}</h2>
-      <GameGrid games={games}/>
+      <GameGrid games={games} predicate={predicate}/>
     </div>
   }
 }
@@ -46,4 +48,4 @@ const mapDispatchToProps = (dispatch) => ({})
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Dashboard)
+)(EnhanceFiltered(Dashboard))

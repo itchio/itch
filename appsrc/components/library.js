@@ -8,9 +8,11 @@ import GameGrid from './game-grid'
 import CollectionGrid from './collection-grid'
 import {map, filter, indexBy} from 'underline'
 
+import EnhanceFiltered from './filtered'
+
 export class Library extends Component {
   render () {
-    const {t, caves, allGames, downloadKeys, collections} = this.props
+    const {t, caves, allGames, downloadKeys, collections, predicate} = this.props
 
     const installedGames = caves::map((key) => allGames[key.gameId])::filter((x) => !!x)
     const installedGamesById = installedGames::indexBy('id')
@@ -34,13 +36,13 @@ export class Library extends Component {
     return <div className='library-meat'>
       <h2 className={headerClasses}>{t('sidebar.installed')}</h2>
       {installedGames.length > 0
-        ? <GameGrid games={installedGames}/>
+        ? <GameGrid games={installedGames} predicate={predicate}/>
         : ''
       }
 
       <h2 className={headerClasses}>{t('sidebar.owned')}</h2>
       {games.length > 0
-        ? <GameGrid games={games}/>
+        ? <GameGrid games={games} predicate={predicate}/>
         : ''
       }
 
@@ -72,4 +74,4 @@ const mapDispatchToProps = (dispatch) => ({})
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Library)
+)(EnhanceFiltered(Library))
