@@ -11,7 +11,11 @@ export function subdomainToDomain (subdomain) {
   return parts.join('.')
 }
 
+export function isItchioURL (s) {
+  return url.parse(s).protocol === 'itchio:'
+}
+
 export const parse = ::url.parse
 export const format = ::url.format
 
-export default {subdomainToDomain, parse, format}
+export default {subdomainToDomain, isItchioURL, parse, format}

@@ -66,6 +66,7 @@ module.exports = keyMirror({
   SHOW_NEXT_TAB: null,
   SWITCH_PAGE: null,
   OPEN_URL: null,
+  HANDLE_ITCHIO_URL: null,
   TRIGGER_MAIN_ACTION: null,
   TRIGGER_OK: null,
   TRIGGER_BACK: null,

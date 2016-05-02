@@ -24,6 +24,7 @@ import {
   UNLOCK_TAB,
 
   OPEN_URL,
+  HANDLE_ITCHIO_URL,
   TRIGGER_MAIN_ACTION,
   TRIGGER_OK,
   TRIGGER_BACK,
@@ -71,6 +72,7 @@ export const openTabContextMenu = createAction(OPEN_TAB_CONTEXT_MENU)
 export const unlockTab = createAction(UNLOCK_TAB)
 
 export const openUrl = createAction(OPEN_URL)
+export const handleItchioUrl = createAction(HANDLE_ITCHIO_URL)
 export const triggerMainAction = createAction(TRIGGER_MAIN_ACTION)
 export const triggerOk = createAction(TRIGGER_OK)
 export const triggerBack = createAction(TRIGGER_BACK)

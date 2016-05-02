@@ -4,6 +4,7 @@ import selfUpdate from './self-update'
 import onboarding from './onboarding'
 import rememberedSessions from './remembered-sessions'
 import navigation from './navigation'
+import url from './url'
 import market from './market'
 import dialogs from './dialogs'
 import notifications from './notifications'
@@ -27,6 +28,7 @@ export default [
   onboarding,
   rememberedSessions,
   navigation,
+  url,
   market,
   dialogs,
   notifications,

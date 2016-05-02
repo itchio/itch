@@ -19,6 +19,7 @@ import {sortBy, findWhere, map, pick, pluck} from 'underline'
 import urls from '../constants/urls'
 import staticTabData from '../constants/static-tab-data'
 import fetch from '../util/fetch'
+import {isItchioURL} from '../util/url'
 
 import localizer from '../localizer'
 
@@ -34,7 +35,7 @@ import {
   navigate, openUrl, tabChanged, tabsChanged, tabDataFetched, tabEvolved,
   queueGame, tabsRestored, checkForGameUpdate, probeCave, updatePreferences,
   queueCaveReinstall, queueCaveUninstall, exploreCave, initiatePurchase,
-  historyRead, closeModal, loginWithToken
+  historyRead, closeModal, loginWithToken, handleItchioUrl
 } from '../actions'
 
 import {
@@ -229,7 +230,11 @@ export function * _showNextTab () {
 
 export function * _openUrl (action) {
   const uri = action.payload
-  yield call([shell, shell.openExternal], uri)
+  if (isItchioURL(uri)) {
+    yield put(handleItchioUrl({uri}))
+  } else {
+    yield call([shell, shell.openExternal], uri)
+  }
 }
 
 export function * _viewCreatorProfile (action) {

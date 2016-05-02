@@ -10,6 +10,7 @@ import './boot/env'
 import './boot/fs'
 
 import autoUpdater from './util/auto-updater'
+import {isItchioURL} from './util/url'
 
 async function autoUpdate () {
   const quit = await autoUpdater.start()
@@ -55,11 +56,11 @@ app.on('activate', () => {
   store.dispatch(focusWindow())
 })
 
-app.on('before-quit', e => {
+app.on('before-quit', (e) => {
   store.dispatch(prepareQuit())
 })
 
-app.on('window-all-closed', e => {
+app.on('window-all-closed', (e) => {
   const state = store.getState()
   if (state.ui.mainWindow.quitting) {
     // let normal electron shutdown process continue
@@ -75,19 +76,13 @@ app.on('open-url', (e, url) => {
   if (isItchioURL(url)) {
     // OSX will err -600 if we don't
     e.preventDefault()
-    store.dispatch(openUrl({url}))
+    store.dispatch(openUrl(url))
   } else {
     console.log(`Ignoring non-itchio url: ${url}`)
   }
 })
 
 // URL handling
-
-import urlParser from 'url'
-
-function isItchioURL (s) {
-  return urlParser.parse(s).protocol === 'itchio:'
-}
 
 function handleUrls (argv) {
   // Windows (reg.exe), Linux (XDG)
