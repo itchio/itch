@@ -12,7 +12,7 @@ import EnhanceFiltered from './filtered'
 
 export class Library extends Component {
   render () {
-    const {t, caves, allGames, downloadKeys, collections, predicate} = this.props
+    const {t, caves, allGames, downloadKeys, collections, query} = this.props
 
     const installedGames = caves::map((key) => allGames[key.gameId])::filter((x) => !!x)
     const installedGamesById = installedGames::indexBy('id')
@@ -36,18 +36,18 @@ export class Library extends Component {
     return <div className='library-meat'>
       <h2 className={headerClasses}>{t('sidebar.installed')}</h2>
       {installedGames.length > 0
-        ? <GameGrid games={installedGames} predicate={predicate}/>
+        ? <GameGrid games={installedGames} query={query}/>
         : ''
       }
 
       <h2 className={headerClasses}>{t('sidebar.owned')}</h2>
       {games.length > 0
-        ? <GameGrid games={games} predicate={predicate}/>
+        ? <GameGrid games={games} query={query}/>
         : ''
       }
 
       <h2 className={headerClasses}>{t('sidebar.collections')}</h2>
-      <CollectionGrid collections={collections}/>
+      <CollectionGrid collections={collections} query={query}/>
     </div>
   }
 }

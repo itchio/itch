@@ -112,7 +112,7 @@ function * checkForGameUpdate (cave) {
       let hasUpgrade = false
 
       if (cave.uploadId && cave.buildId) {
-        log(opts, `Doing wharf-aware update check, from build ${cave.buildId}`)
+        log(opts, `Doing wharf-aware check for ${game.title}, from build ${cave.buildId}`)
         const upload = uploads::findWhere({id: cave.uploadId})
         if (!upload || !upload.buildId) {
           log(opts, 'Uh oh, our wharf-enabled upload disappeared')

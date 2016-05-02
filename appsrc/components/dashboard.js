@@ -11,7 +11,7 @@ import EnhanceFiltered from './filtered'
 
 export class Dashboard extends Component {
   render () {
-    const {t, allGames, myGameIds, predicate} = this.props
+    const {t, allGames, myGameIds, query} = this.props
 
     const games = myGameIds::map((id) => allGames[id])
 
@@ -25,7 +25,7 @@ export class Dashboard extends Component {
 
     return <div className='dashboard-meat'>
       <h2 className={headerClasses}>{t('sidebar.dashboard')}</h2>
-      <GameGrid games={games} predicate={predicate}/>
+      <GameGrid games={games} query={query}/>
     </div>
   }
 }

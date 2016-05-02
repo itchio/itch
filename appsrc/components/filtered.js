@@ -13,26 +13,24 @@ const mapDispatchToProps = (dispatch) => ({
   clearSearchFilter: () => dispatch(searchQueryChanged(''))
 })
 
-const passthrough = (x) => true
-
 export const EnhanceFiltered = function (BaseComponent) {
   const EnhancedComponent = class extends Component {
     render () {
       const {t, typedQuery} = this.props
       const {clearSearchFilter} = this.props
 
+      let query = ''
+
       // latin is overrated
       const criterions = []
-      let predicate = passthrough
 
       if (typedQuery && typedQuery.length > 0) {
+        query = typedQuery
+
         criterions.push(<div key='criterion-search' className='criterion filter-info'>
           <span className='label'>{t('grid.criterion.filtered_by', {term: typedQuery})}</span>
           <span className='remove-filter icon icon-cross' onClick={clearSearchFilter}/>
         </div>)
-
-        const token = typedQuery.toLowerCase()
-        predicate = (x) => x.title.toLowerCase().indexOf(token) !== -1
       }
 
       return <div className='filtered-meat'>
@@ -43,7 +41,7 @@ export const EnhanceFiltered = function (BaseComponent) {
           : ''
         }
         <div className='sub-meat'>
-          <BaseComponent {...this.props} predicate={predicate}/>
+          <BaseComponent {...this.props} query={query}/>
         </div>
       </div>
     }

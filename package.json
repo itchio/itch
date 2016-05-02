@@ -39,6 +39,7 @@
     "file-type": "^3.0.0",
     "finalhandler": "^0.4.1",
     "fnout": "^1.1.0",
+    "fuse.js": "^2.2.0",
     "glob": "^7.0.3",
     "graceful-fs": "^4.1.2",
     "grovel": "^2.2.0",
@@ -128,7 +129,9 @@
   "standard": {
     "parser": "babel-eslint",
     "rules": {
-      "arrow-parens": [0]
+      "arrow-parens": [
+        0
+      ]
     }
   }
 }
