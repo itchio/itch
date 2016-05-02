@@ -8,7 +8,7 @@ import urls from '../constants/urls'
 import {app} from '../electron'
 import env from '../env'
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {call, put, select} from 'redux-saga/effects'
 
 import mkcooldown from '../util/cooldown'

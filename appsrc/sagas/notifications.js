@@ -3,7 +3,7 @@ import {getTray} from './tray'
 import {app, BrowserWindow} from '../electron'
 import os from '../util/os'
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {select, put} from 'redux-saga/effects'
 
 import {notifyHtml5} from '../actions'

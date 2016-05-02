@@ -1,5 +1,5 @@
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {put, call, select} from 'redux-saga/effects'
 import {delay} from './effects'
 

@@ -1,5 +1,5 @@
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from '../sagas/effects'
 import {call} from 'redux-saga/effects'
 
 import {NOTIFY_HTML5} from '../constants/action-types'

@@ -1,5 +1,5 @@
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {call, put} from 'redux-saga/effects'
 
 import legacyDB from '../util/legacy-db'

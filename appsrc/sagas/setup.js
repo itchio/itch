@@ -2,7 +2,7 @@
 import path from 'path'
 import ibrew from '../util/ibrew'
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {put, call, race} from 'redux-saga/effects'
 import {map} from 'underline'
 

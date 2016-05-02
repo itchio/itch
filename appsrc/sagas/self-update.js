@@ -10,7 +10,7 @@ const linux = os.itchPlatform() === 'linux'
 import env from '../env'
 import urls from '../constants/urls'
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {put, call, select} from 'redux-saga/effects'
 import {delay} from './effects'
 

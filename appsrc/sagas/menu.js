@@ -2,7 +2,7 @@
 import {Menu} from '../electron'
 
 import {map} from 'underline'
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {fork, select} from 'redux-saga/effects'
 import {createSelector} from 'reselect'
 

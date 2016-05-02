@@ -12,7 +12,7 @@ import localizer from '../localizer'
 
 import {omit, each} from 'underline'
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {call, put, select} from 'redux-saga/effects'
 
 import {

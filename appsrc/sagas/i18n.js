@@ -2,7 +2,7 @@
 import createQueue from './queue'
 import {createSelector} from 'reselect'
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {call, select} from 'redux-saga/effects'
 
 import {languageChanged} from '../actions'

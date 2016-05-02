@@ -1,5 +1,5 @@
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from '../sagas/effects'
 
 import {TAB_CHANGED} from '../constants/action-types'
 

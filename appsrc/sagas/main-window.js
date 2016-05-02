@@ -20,7 +20,7 @@ import {
   QUIT
 } from '../constants/action-types'
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {call, fork, put, select} from 'redux-saga/effects'
 
 import createQueue from './queue'

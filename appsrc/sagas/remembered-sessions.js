@@ -6,7 +6,7 @@ import path from 'path'
 import invariant from 'invariant'
 import {map, indexBy} from 'underline'
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {put, call} from 'redux-saga/effects'
 
 import {

@@ -1,5 +1,5 @@
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {take, race, fork, call} from 'redux-saga/effects'
 
 import createQueue from './queue'

@@ -1,6 +1,6 @@
 
 import invariant from 'invariant'
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {put, take, select} from 'redux-saga/effects'
 
 import urlParser from 'url'

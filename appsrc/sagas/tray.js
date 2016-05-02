@@ -3,7 +3,7 @@ import path from 'path'
 import os from '../util/os'
 import {app, Menu, Tray} from '../electron'
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {call} from 'redux-saga/effects'
 import createQueue from './queue'
 

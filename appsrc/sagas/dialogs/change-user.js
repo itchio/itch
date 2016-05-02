@@ -1,7 +1,7 @@
 
 import createQueue from '../queue'
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from '../effects'
 import {put, call} from 'redux-saga/effects'
 
 import {openModal, logout} from '../../actions'

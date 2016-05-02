@@ -1,5 +1,5 @@
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {put, select, call} from 'redux-saga/effects'
 
 import pathmaker from '../util/pathmaker'

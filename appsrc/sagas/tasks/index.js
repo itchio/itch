@@ -1,5 +1,5 @@
 
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from '../effects'
 import {call} from 'redux-saga/effects'
 
 import {startDownload} from './start-download'

@@ -12,7 +12,7 @@ import uuid from 'node-uuid'
 import urlParser from 'url'
 
 import {shell} from '../electron'
-import {takeEvery} from 'redux-saga'
+import {takeEvery} from './effects'
 import {call, select, put} from 'redux-saga/effects'
 import {sortBy, findWhere, map, pick, pluck} from 'underline'
 
