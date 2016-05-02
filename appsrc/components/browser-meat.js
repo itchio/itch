@@ -186,7 +186,28 @@ export class BrowserMeat extends Component {
       })
     })
 
-    webview.src = this.props.url
+    const {url} = this.props
+    if (url !== 'about:blank') {
+      console.log(tabId, `loading url ${url}`)
+      this.loadURL(url)
+    } else {
+      console.log(tabId, 'waiting for non-blank url')
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    console.log('receiving next props url:', nextProps.url, 'current props:', this.props.url)
+
+    // we didn't have a proper url but now do
+    if (this.props.url === 'about:blank' && nextProps.url) {
+      const {webview} = this.refs
+      if (!webview) {
+        console.log('Cannot load url because webview is not there')
+        return
+      }
+      console.log('Loading non-null url', nextProps.url)
+      this.loadURL(nextProps.url)
+    }
   }
 
   render () {
@@ -206,20 +227,29 @@ export class BrowserMeat extends Component {
     }
 
     return <div className='browser-meat'>
-      {bar}
-      {DONT_SHOW_WEBVIEWS
-        ? <div style={{padding: '10px'}}>Webviews disabled</div>
-        : <webview key={tabId} ref='webview' partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/>
-      }
+    {bar}
+    {DONT_SHOW_WEBVIEWS
+      ? <div style={{padding: '10px'}}>Webviews disabled</div>
+      : <webview key={tabId} ref='webview' partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/>
+    }
     </div>
   }
 
-  with (cb) {
+  with (cb, opts = {insist: false}) {
     const {webview} = this.refs
     if (!webview) return
 
     const webContents = webview.getWebContents()
-    if (!webContents || webContents.isDestroyed()) return
+    if (!webContents) {
+      if (opts.insist) {
+        webview.addEventListener('dom-ready', () => {
+          cb(webview, webview.getWebContents())
+        })
+      }
+      return
+    }
+
+    if (webContents.isDestroyed()) return
 
     cb(webview, webContents)
   }
@@ -248,21 +278,26 @@ export class BrowserMeat extends Component {
     this.with((wv) => wv.goForward())
   }
 
-  loadURL (input) {
+  async loadURL (input) {
     const {tabId, navigate} = this.props
     const frozen = staticTabData[tabId] || !tabId
 
-    this.with(async (wv) => {
-      const url = await transformUrl(input)
+    console.log(tabId, 'loading URL', input)
 
-      if (navigation.isAppSupported(url) && frozen) {
-        navigate(`url/${url}`)
-      } else {
-        const browserState = { ...this.state.browserState, url }
-        this.setState({browserState})
-        wv.loadURL(url)
+    const url = await transformUrl(input)
+    console.log(tabId, 'transformed url', url)
+
+    if (navigation.isAppSupported(url) && frozen) {
+      navigate(`url/${url}`)
+    } else {
+      console.log(tabId, 'loading into webview', url)
+      const browserState = { ...this.state.browserState, url }
+      this.setState({browserState})
+      const {webview} = this.refs
+      if (webview) {
+        webview.src = url
       }
-    })
+    }
   }
 }
 

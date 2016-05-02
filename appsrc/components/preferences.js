@@ -30,7 +30,7 @@ function browseI18nKey () {
 
 export class Preferences extends Component {
   render () {
-    const {t, lang, sniffedLang, downloading, locales} = this.props
+    const {t, lang, sniffedLang = '', downloading, locales} = this.props
     const {queueLocaleUpdate} = this.props
 
     const options = [{
@@ -151,10 +151,10 @@ export class Preferences extends Component {
 }
 
 Preferences.propTypes = {
-  locales: PropTypes.object.isRequired,
+  locales: PropTypes.array.isRequired,
   preferences: PropTypes.object.isRequired,
   downloading: PropTypes.bool.isRequired,
-  sniffedLang: PropTypes.string.isRequired,
+  sniffedLang: PropTypes.string,
   lang: PropTypes.string.isRequired,
   t: PropTypes.func.isRequired,
   installLocations: PropTypes.object.isRequired,
