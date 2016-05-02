@@ -107,14 +107,14 @@
     padding: 0 5px;
 
     .criterion {
-      cursor: default;
-
       .label {
+        cursor: default;
         margin-right: 5px;
       }
 
       margin: 10px;
-      padding: 6px 10px;
+      padding: 0px 0 0 10px;
+      align-items: center;
       border-radius: 4px;
       border: 1px solid $filter-tag-border-color;
       background: $filter-background-color;
@@ -122,6 +122,8 @@
       display: flex;
 
       .icon {
+        padding: 5px;
+
         &:hover {
           color: $ivory;
           cursor: pointer;

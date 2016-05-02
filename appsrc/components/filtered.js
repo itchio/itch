@@ -21,8 +21,6 @@ export const EnhanceFiltered = function (BaseComponent) {
       const {t, typedQuery} = this.props
       const {clearSearchFilter} = this.props
 
-      console.log('in enhanced component render, typedQuery = ', typedQuery)
-
       // latin is overrated
       const criterions = []
       let predicate = passthrough

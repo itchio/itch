@@ -31,7 +31,7 @@
     "errors.api.login.incorrect_username_or_password": "Incorrect username or password",
     "errors.api.login.password_must_be_provided": "Password must be provided",
     "errors.api.login.username_must_be_provided": "Username must be provided",
-    "grid.criterion.filtered_by": "Filtered by {{term}}",
+    "grid.criterion.filtered_by": "Filtered by “{{term}}”",
     "grid.item.buy_now": "Buy Now",
     "grid.item.check_for_update": "Check for update",
     "grid.item.cancel_download": "Cancel download",
