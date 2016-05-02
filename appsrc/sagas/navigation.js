@@ -310,7 +310,7 @@ export function * _triggerBack () {
 }
 
 function makeTabContextMenu (queue) {
-  return function * _openTabContextMenu (action) {
+  const f = function * _openTabContextMenu (action) {
     invariant(typeof action.payload === 'object', 'opentabcontextmenu payload is an object')
     const {id} = action.payload
     invariant(typeof id === 'string', 'opentabcontextmenu path is string')
@@ -393,6 +393,14 @@ function makeTabContextMenu (queue) {
     const mainWindowId = yield select((state) => state.ui.mainWindow.id)
     const mainWindow = BrowserWindow.fromId(mainWindowId)
     menu.popup(mainWindow)
+  }
+
+  return function * (action) {
+    try {
+      yield call(f, action)
+    } catch (err) {
+      log(opts, `While opening tab context menu: ${err.stack || err}`)
+    }
   }
 }
 

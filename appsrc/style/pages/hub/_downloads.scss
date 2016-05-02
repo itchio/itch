@@ -13,7 +13,7 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
   .finished-bar {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: baseline;
     align-content: center;
     margin: 20px 0;
 
@@ -21,15 +21,9 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
       font-size: 22px;
     }
 
-    span {
+    .clear {
+      @include lowkey-button;
       margin-left: 8px;
-      color: $secondary-text-color;
-      -webkit-filter: brightness(90%);
-
-      &:hover {
-        -webkit-filter: none;
-        cursor: pointer;
-      }
     }
   }
 

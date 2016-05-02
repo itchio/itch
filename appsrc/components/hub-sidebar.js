@@ -123,12 +123,14 @@ export class HubSidebar extends Component {
 HubSidebar.propTypes = {
   osx: PropTypes.bool,
   sidebarWidth: PropTypes.number.isRequired,
+  mini: PropTypes.bool,
   fullscreen: PropTypes.bool,
   me: PropTypes.shape({
     coverUrl: PropTypes.string,
     username: PropTypes.string.isRequired
   }),
 
+  id: PropTypes.string.isRequired,
   path: PropTypes.string,
   tabs: PropTypes.shape({
     constant: PropTypes.array,
@@ -182,7 +184,7 @@ const mapDispatchToProps = (dispatch) => ({
   viewCommunityProfile: () => dispatch(actions.viewCommunityProfile()),
   changeUser: () => dispatch(actions.changeUser()),
   openPreferences: () => dispatch(actions.navigate('preferences')),
-  openTabContextMenu: (id) => dispatch(actions.openTabContextMenu(id)),
+  openTabContextMenu: (id) => dispatch(actions.openTabContextMenu({id})),
   newTab: () => dispatch(actions.newTab())
 })
 

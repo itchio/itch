@@ -29,7 +29,7 @@ class Downloads extends Component {
             {t('status.downloads.category.finished')}
           </h2>
           <span className='clear' onClick={clearFinishedDownloads}>
-            {t('status.downloads.clear_finished')}
+            {t('status.downloads.clear_all')}
           </span>
         </div>
       ].concat(finishedItems::map((item) =>
