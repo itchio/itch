@@ -15,11 +15,15 @@ const log = mklog('preferences')
 import {opts} from '../logger'
 
 export function * _boot () {
-  // XXX: sync I/O is bad but we can live with it for now.
-  const prefs = camelifyObject(JSON.parse(fs.readFileSync(pathmaker.preferencesPath())))
+  try {
+    // XXX: sync I/O is bad but we can live with it for now.
+    const prefs = camelifyObject(JSON.parse(fs.readFileSync(pathmaker.preferencesPath())))
 
-  log(opts, 'imported preferences: ', JSON.stringify(prefs, null, 2))
-  yield put(actions.updatePreferences(prefs))
+    log(opts, 'imported preferences: ', JSON.stringify(prefs, null, 2))
+    yield put(actions.updatePreferences(prefs))
+  } catch (err) {
+    log(opts, `while importing preferences: ${err}`)
+  }
 }
 
 let _atomicInvocations = 0
