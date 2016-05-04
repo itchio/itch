@@ -1,6 +1,6 @@
 {
     "desktop.shortcut.comment": "Installiere und spiele itch.io Spiele ganz bequem", 
-    "errors.api.login.incorrect_username_or_password": "Nutzername oder Passwort ist falsch", 
+    "errors.api.login.incorrect_username_or_password": "Der Nutzername oder das Passwort ist falsch", 
     "errors.api.login.password_must_be_provided": "Passwort muss angegeben werden", 
     "errors.api.login.username_must_be_provided": "Nutzername muss angegeben werden", 
     "game.install.no_uploads_available.detail": "Es ist vielleicht noch nicht mit deiner Platform oder der itch-App kompatibel!", 
@@ -106,6 +106,7 @@
     "prompt.crash_reporter.message": "Die Anwendung ist abgestürzt", 
     "prompt.crash_reporter.open_crash_log": "Absturzprotokoll öffnen", 
     "prompt.crash_reporter.report_issue": "Fehler melden", 
+    "prompt.forget_session.action": "Sitzung vergessen", 
     "prompt.forget_session.message": "Bist du dir sicher, dass du '{{username}}' aus deinen gespeicherten Sitzungen entfernen möchtest?", 
     "prompt.install_location_add.title": "Wähle einen neuen Platz für die Installation", 
     "prompt.install_location_not_empty.detail": "Das muss momentan noch manuell erledigt werden.", 
@@ -135,7 +136,9 @@
     "prompt.self_update.action.download": "Jetzt herunterladen", 
     "prompt.self_update.action.view": "Im Browser öffnen", 
     "prompt.self_update.detail": "{{notes}}\n\n:date: Veröffentlicht am {{pubDate}}.", 
+    "prompt.self_update.message.linux": "Du kannst es entweder manuell downloaden, oder den Paket-Manager deiner Distribution nutzen: Öffne die Website für mehr Informationen.", 
     "prompt.self_update_ready.action.restart": "Jetzt neu starten", 
+    "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Veröffentlicht am {{pubDate}}.", 
     "prompt.self_update_ready.title": "Eine Aktualisierung wurde heruntergeladen und installiert.", 
     "prompt.uninstall.cancel": "Abbrechen", 
     "prompt.uninstall.message": "Bist du sicher, dass du {{title}} deinstallieren möchtest?", 
@@ -148,6 +151,7 @@
     "sidebar.broken": "Außer Betrieb", 
     "sidebar.dashboard": "Eigene Werke", 
     "sidebar.getting_started": "Erste Schritte", 
+    "sidebar.history": "Verlauf", 
     "sidebar.installed": "Installiert", 
     "sidebar.owned": "Bibliothek", 
     "sidebar.preferences": "Einstellungen", 
@@ -155,6 +159,8 @@
     "status.checking": "Es wird nach Aktualisierungen gesucht…", 
     "status.downloaded": "Klicke hier für Neustart und Update-Installation!", 
     "status.downloading": "Aktualisierung wird heruntergeladen…", 
+    "status.downloads.no_active_downloads": "Keine aktiven Downloads", 
+    "status.history.click_to_expand": "Klicke, um den Verlauf zu erweitern.", 
     "status.offline_mode.active": "Offline-Modus aktiviert", 
     "status.uptodate": "Itch ist auf dem neuesten Stand!"
 }
