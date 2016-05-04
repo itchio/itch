@@ -136,6 +136,7 @@
     "prompt.rar_policy.message": "{{title}} benutzt das RAR Kompressionsformat und kann mit itch nicht installiert werden, bis es neu verpackt wurde.", 
     "prompt.rar_policy.open_web_page": "Öffne Homepage von {{title}}", 
     "prompt.rar_policy.title": "RAR wird nicht unterstützt", 
+    "prompt.rpm_policy.title": "YUM-Pakete werden nicht unterstützt", 
     "prompt.self_update.action.download": "Jetzt herunterladen", 
     "prompt.self_update.action.view": "Im Browser öffnen", 
     "prompt.self_update.detail": "{{notes}}\n\n:date: Veröffentlicht am {{pubDate}}.", 
