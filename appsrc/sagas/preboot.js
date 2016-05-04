@@ -19,6 +19,10 @@ import mklog from '../util/log'
 const log = mklog('preboot')
 
 export function * importLegacyDBs () {
+  const userDataPath = app.getPath('userData')
+  log(opts, `Creating ${userDataPath} in case it doesn't exist..`)
+  yield call(sf.mkdir, userDataPath)
+
   // while importing, there's no need to dispatch DB_COMMIT events, they'll
   // be re-opened on login anyway
   const dispatch = (action) => null
@@ -26,7 +30,7 @@ export function * importLegacyDBs () {
   const globalMarket = new Market(dispatch)
   yield call([globalMarket, globalMarket.load], pathmaker.globalDbPath())
 
-  const usersDir = path.join(app.getPath('userData'), 'users')
+  const usersDir = path.join(userDataPath, 'users')
   const dbFiles = yield call(sf.glob, '*/db.jsonl', {cwd: usersDir})
 
   for (const dbFile of dbFiles) {

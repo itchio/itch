@@ -34,7 +34,7 @@ import {
 } from './actions'
 import store from './store'
 
-app.on('ready', () => {
+app.on('ready', async () => {
   const shouldQuit = app.makeSingleInstance((argv, cwd) => {
     // we only get inside this callback when another instance
     // is launched - so this executes in the context of the main instance
@@ -46,6 +46,7 @@ app.on('ready', () => {
     // app.quit() is the source of all our problems,
     // cf. https://github.com/itchio/itch/issues/202
     process.exit(0)
+    return
   }
   handleUrls(process.argv)
 
@@ -93,3 +94,21 @@ function handleUrls (argv) {
     }
   })
 }
+
+// Fresh installs
+
+import fs from 'fs'
+
+(function () {
+  const userDataPath = app.getPath('userData')
+  console.log(`Creating ${userDataPath} in case it doesn't exist..`)
+
+  try {
+    fs.mkdirSync(userDataPath)
+  } catch (err) {
+    if (err.code === 'EEXIST') {
+      // good
+    }
+    console.log(`While creating ${userDataPath}: ${err.stack || err}`)
+  }
+})()
