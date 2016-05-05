@@ -52,7 +52,7 @@ export class HubSidebar extends Component {
         <h2>{t('sidebar.category.tabs')}</h2>
         {tabs.transient::map((id, index) => {
           const data = tabData[id] || {}
-          const {path} = tabData
+          const {path} = data
           const iconImage = data.webFavicon
           const label = makeLabel(id, tabData)
           const icon = pathToIcon(path)
