@@ -222,7 +222,7 @@ export function * _focusNthTab (action) {
   const constant = yield select((state) => state.session.navigation.tabs.constant)
   const tab = constant[n - 1]
   if (tab) {
-    yield put(navigate(tab.id))
+    yield put(navigate(tab))
   }
 }
 
