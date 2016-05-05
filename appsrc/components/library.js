@@ -37,7 +37,7 @@ export class Library extends Component {
 
     return <div className='library-meat'>
       {installedGames.length > 0 || games.length > 0
-        ? <GameGrid games={installedGames.concat(games)} query={query} numLeader={3}/>
+        ? <GameGrid games={installedGames.concat(games)} query={query} numLeader={0}/>
         : ''
       }
 
