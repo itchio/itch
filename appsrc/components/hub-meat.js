@@ -25,6 +25,9 @@ export class HubMeat extends Component {
     return <div className='hub-meat'>
       {tabs::map((id, i) => {
         const data = tabData[id]
+        if (!data) {
+          return
+        }
         const {path} = data
         const visible = (id === currentId)
         const classes = classNames('hub-meat-tab', {visible})

@@ -109,6 +109,7 @@ export function userToTabData (user) {
       [user.id]: user
     },
     label: user.displayName || user.username,
+    subtitle: '',
     image: user.coverUrl,
     imageClass: 'user',
     iconImage: user.coverUrl

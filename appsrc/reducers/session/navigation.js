@@ -1,6 +1,6 @@
 
 import {handleActions} from 'redux-actions'
-import {map, reject, omit, object} from 'underline'
+import {map, reject, omit, object, pick, indexBy} from 'underline'
 import invariant from 'invariant'
 import uuid from 'node-uuid'
 
@@ -11,16 +11,15 @@ import {filter} from 'underline'
 
 const perish = process.env.PERISH === '1' ? console.log.bind(console) : () => 0
 
+const baseTabs = ['featured', 'library']
+
 const initialState = {
   page: 'gate',
   tabs: {
-    constant: [
-      'featured',
-      'library'
-    ],
+    constant: baseTabs,
     transient: []
   },
-  tabData: staticTabData,
+  tabData: staticTabData::pick(...baseTabs)::indexBy('id'),
   id: 'featured',
   shortcutsShown: false
 }
@@ -70,6 +69,7 @@ export default handleActions({
       const newTabData = {
         ...tabData,
         [newTab]: {
+          ...staticTabData[id],
           ...tabData[id],
           path: id,
           ...data
@@ -117,7 +117,7 @@ export default handleActions({
     const index = ids.indexOf(id)
 
     const newTransient = transient::reject((x) => x === closeId)
-    const newTabData = staticTabData[closeId] ? tabData : tabData::omit(closeId)
+    const newTabData = tabData::omit(closeId)
 
     const newIds = constant.concat(newTransient)
     const numNewIds = newIds.length
@@ -193,7 +193,7 @@ export default handleActions({
     const {id} = state
     const tabData = []
     const transient = snapshot.items::map((tab) => {
-      if (typeof tab !== 'object') {
+      if (typeof tab !== 'object' || !tab.id || !tab.path) {
         return
       }
 
@@ -209,6 +209,10 @@ export default handleActions({
       tabs: {
         ...state.tabs,
         transient
+      },
+      tabData: {
+        ...state.tabData,
+        ...tabData
       }
     }
   },
@@ -232,6 +236,13 @@ export default handleActions({
           ...constant,
           path
         ]
+      },
+      tabData: {
+        ...state.tabData,
+        [path]: {
+          ...state.tabData[path],
+          ...staticTabData[path]
+        }
       }
     }
   },

@@ -201,7 +201,7 @@ export function * applyTabOffset (offset) {
   const {id, tabs} = yield select((state) => state.session.navigation)
   const {constant, transient} = tabs
 
-  const ids = constant::pluck('id').concat(transient::pluck('id'))
+  const ids = constant.concat(transient)
   const numTabs = ids.length
 
   const index = ids.indexOf(id)
