@@ -108,6 +108,7 @@ import fs from 'fs'
   } catch (err) {
     if (err.code === 'EEXIST') {
       // good
+      return
     }
     console.log(`While creating ${userDataPath}: ${err.stack || err}`)
   }
