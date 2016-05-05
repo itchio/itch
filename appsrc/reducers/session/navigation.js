@@ -1,6 +1,6 @@
 
 import {handleActions} from 'redux-actions'
-import {map, pluck, reject, indexBy} from 'underline'
+import {map, reject, omit, object} from 'underline'
 import invariant from 'invariant'
 import uuid from 'node-uuid'
 
@@ -9,12 +9,14 @@ import staticTabData from '../../constants/static-tab-data'
 
 import {filter} from 'underline'
 
+const perish = process.env.PERISH === '1' ? console.log.bind(console) : () => 0
+
 const initialState = {
   page: 'gate',
   tabs: {
     constant: [
-      {path: 'featured', id: 'featured'},
-      {path: 'library', id: 'library'}
+      'featured',
+      'library'
     ],
     transient: []
   },
@@ -42,23 +44,20 @@ export default handleActions({
     const {tabData} = state
     const {tabs} = state
     const {constant, transient} = tabs
-    const tabsById = constant.concat(transient)::indexBy('id')
-    const tabsByPath = constant.concat(transient)::indexBy('path')
 
-    if (tabsById[id]) {
-      // switching to an existing, by id
+    const tabsByPath = tabData::map((x, id) => [x.path, id])::object()
+
+    if (tabData[id]) {
+      // switching to an existing tab, by id
       return {...state, id}
     } else if (tabsByPath[id]) {
       // switching to an existing tab, by path (don't open same game twice, etc.)
-      const tab = tabsByPath[id]
-      return {...state, id: tab.id}
+      const idForPath = tabsByPath[id]
+      return {...state, id: idForPath}
     } else {
       // open a new tab
-      const newTab = {
-        // static tabs don't get UUIDs
-        id: staticTabData[id] ? id : uuid.v4(),
-        path: id
-      }
+      // static tabs don't get UUIDs
+      const newTab = staticTabData[id] ? id : uuid.v4()
 
       const newTabs = {
         constant,
@@ -70,13 +69,14 @@ export default handleActions({
 
       const newTabData = {
         ...tabData,
-        [id]: {
+        [newTab]: {
           ...tabData[id],
+          path: id,
           ...data
         }
       }
 
-      return {...state, id: newTab.id, tabs: newTabs, tabData: newTabData}
+      return {...state, id: newTab, tabs: newTabs, tabData: newTabData}
     }
   },
 
@@ -109,16 +109,17 @@ export default handleActions({
   },
 
   CLOSE_TAB: (state, action) => {
-    const {id, tabs} = state
+    const {id, tabs, tabData} = state
     const closeId = action.payload || id
     const {constant, transient} = tabs
 
-    const ids = constant::pluck('id').concat(transient::pluck('id'))
+    const ids = constant.concat(transient)
     const index = ids.indexOf(id)
 
-    const newTransient = transient::reject((x) => x.id === closeId)
+    const newTransient = transient::reject((x) => x === closeId)
+    const newTabData = staticTabData[closeId] ? tabData : tabData::omit(closeId)
 
-    const newIds = constant::pluck('id').concat(newTransient::pluck('id'))
+    const newIds = constant.concat(newTransient)
     const numNewIds = newIds.length
 
     const nextIndex = Math.min(index, numNewIds - 1)
@@ -130,7 +131,8 @@ export default handleActions({
       tabs: {
         constant,
         transient: newTransient
-      }
+      },
+      tabData: newTabData
     }
   },
 
@@ -141,8 +143,19 @@ export default handleActions({
   },
 
   TAB_DATA_FETCHED: (state, action) => {
-    const {id, data} = action.payload
+    const {id, timestamp, data} = action.payload
+    if (!timestamp) {
+      perish('Ignoring non-timestamped tabData: ', id, data)
+      return state
+    }
+
     const {tabData} = state
+    const oldData = tabData[id]
+    if (oldData && oldData.timestamp && oldData.timestamp > timestamp) {
+      perish('Ignoring stale tabData: ', id, data)
+      return state
+    }
+
     const newTabData = {
       ...tabData,
       [id]: {
@@ -155,32 +168,20 @@ export default handleActions({
   },
 
   TAB_EVOLVED: (state, action) => {
-    const {id, path, data} = action.payload
+    const {id, data} = action.payload
     invariant(typeof id === 'string', 'id must be a string')
-    invariant(typeof path === 'string', 'after path must be a string')
 
     const {tabData} = state
     const newTabData = {
       ...tabData,
-      [id]: data
-    }
-
-    const newTransient = state.tabs.transient::map((tab) => {
-      if (tab.id === id) {
-        return {
-          ...tab,
-          path
-        }
+      [id]: {
+        ...tabData[id],
+        ...data
       }
-      return tab
-    })
+    }
 
     return {
       ...state,
-      tabs: {
-        ...state.tabs,
-        transient: newTransient
-      },
       tabData: newTabData
     }
   },
@@ -190,7 +191,17 @@ export default handleActions({
     invariant(typeof snapshot === 'object', 'tab snapshot must be an object')
 
     const {id} = state
-    const transient = snapshot.items::filter((tab) => typeof tab === 'object')
+    const tabData = []
+    const transient = snapshot.items::map((tab) => {
+      if (typeof tab !== 'object') {
+        return
+      }
+
+      tabData[tab.id] = {
+        path: tab.path
+      }
+      return tab.id
+    })::filter((x) => !!x)
 
     return {
       ...state,
@@ -213,18 +224,13 @@ export default handleActions({
 
     const {constant} = state.tabs
 
-    const tab = {
-      path,
-      id: path
-    }
-
     return {
       ...state,
       tabs: {
         ...state.tabs,
         constant: [
           ...constant,
-          tab
+          path
         ]
       }
     }

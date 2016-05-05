@@ -66,7 +66,7 @@ export class BrowserMeat extends Component {
 
   componentDidMount () {
     const {webview} = this.refs
-    const {tabId, navigate, tabDataFetched, tabReloaded} = this.props
+    const {tabId, navigate, tabDataFetched} = this.props
 
     if (!webview) {
       console.log('Oh noes, can\'t listen to webview\'s soothing event stream')
@@ -100,13 +100,11 @@ export class BrowserMeat extends Component {
     webview.addEventListener('page-title-updated', (e) => {
       const {title} = e
       tabDataFetched(tabId, {webTitle: title})
-      tabReloaded(tabId)
     })
 
     webview.addEventListener('page-favicon-updated', (e) => {
       const {favicons} = e
       tabDataFetched(tabId, {webFavicon: favicons[0]})
-      tabReloaded(tabId)
     })
 
     if (frozen) {
@@ -354,7 +352,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = (dispatch) => ({
   navigate: (id, data) => dispatch(actions.navigate(id, data)),
   evolveTab: (id, path) => dispatch(actions.evolveTab({id, path})),
-  tabDataFetched: (id, data) => dispatch(actions.tabDataFetched({id, data})),
+  tabDataFetched: (id, data) => dispatch(actions.tabDataFetched({id, data, timestamp: +new Date()})),
   tabReloaded: (id) => dispatch(actions.tabReloaded({id}))
 })
 

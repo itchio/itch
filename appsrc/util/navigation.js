@@ -3,8 +3,11 @@ import urlParser from '../util/url'
 import dns from 'dns'
 import querystring from 'querystring'
 
+import staticTabData from '../constants/static-tab-data'
+import invariant from 'invariant'
+
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/
-const ID_RE = /^[^\/]+\/(.+)$/
+const ID_RE = /^[^\/]+\/(.*)$/
 
 export async function transformUrl (original) {
   if (/^about:/.test(original)) {
@@ -39,7 +42,7 @@ export async function transformUrl (original) {
 export function pathToId (path) {
   const matches = ID_RE.exec(path)
   if (!matches) {
-    throw new Error('Could not extract id from path: ', path)
+    throw new Error(`Could not extract id from path: ${JSON.stringify(path)}`)
   }
   return matches[1]
 }
@@ -125,6 +128,31 @@ export function locationToTabData (location) {
   return {
     label: location.path
   }
+}
+
+export function makeLabel (id, tabData) {
+  invariant(typeof id === 'string', 'tab id is a string')
+
+  const staticData = staticTabData[id]
+  if (staticData) {
+    return staticData.label
+  }
+
+  const data = (tabData || {})[id] || {}
+  if (data) {
+    const {path} = data
+    if (path && /^url/.test(path)) {
+      if (data.webTitle) {
+        return data.webTitle
+      }
+    } else {
+      if (data.label) {
+        return data.label
+      }
+    }
+  }
+
+  return 'Loading...'
 }
 
 export function isAppSupported (url) {

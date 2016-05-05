@@ -20,14 +20,15 @@ import {map} from 'underline'
 
 export class HubMeat extends Component {
   render () {
-    const {tabs, id: currentId} = this.props
+    const {tabData, tabs, id: currentId} = this.props
 
     return <div className='hub-meat'>
-      {tabs::map((tab, i) => {
-        const {id, path} = tab
+      {tabs::map((id, i) => {
+        const data = tabData[id]
+        const {path} = data
         const visible = (id === currentId)
         const classes = classNames('hub-meat-tab', {visible})
-        return <div key={id || path} className={classes}>{this.renderTab(id, path)}</div>
+        return <div key={id} className={classes}>{this.renderTab(id, path)}</div>
       })}
       <HubSearchResults/>
     </div>
@@ -74,6 +75,7 @@ const allTabsSelector = createSelector(
 const mapStateToProps = createStructuredSelector({
   id: (state) => state.session.navigation.id,
   tabs: (state) => allTabsSelector(state),
+  tabData: (state) => state.session.navigation.tabData,
   me: (state) => state.session.credentials.me
 })
 const mapDispatchToProps = (dispatch) => ({})

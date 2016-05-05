@@ -21,7 +21,7 @@ export class LeaderHubItem extends Component {
     }
 
     return <div className='hub-item leader'>
-      <div className='cover' style={coverStyle}/>
+      <div className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
 
       <section className='description' onClick={() => navigateToGame(game)}>
         <div className='description-content'>

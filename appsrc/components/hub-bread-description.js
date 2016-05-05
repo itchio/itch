@@ -1,11 +1,15 @@
 
 import React, {Component, PropTypes} from 'react'
 import {connect} from './connect'
+import {createStructuredSelector} from 'reselect'
+
+import {makeLabel} from '../util/navigation'
 
 class HubBreadDescription extends Component {
   render () {
     const {t, id, tabData} = this.props
-    const {label = 'Loading...', subtitle, image, imageClass = ''} = tabData[id] || {}
+    const {subtitle, image, imageClass = ''} = tabData[id] || {}
+    const label = makeLabel(id, tabData)
 
     const sub = t.format(subtitle)
     let imageStyle
@@ -33,19 +37,20 @@ class HubBreadDescription extends Component {
 
 HubBreadDescription.propTypes = {
   id: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
   tabs: PropTypes.shape({
     constant: PropTypes.array,
     transient: PropTypes.array
   }),
-  tabData: PropTypes.object,
+  tabData: PropTypes.object.isRequired,
 
   t: PropTypes.func.isRequired
 }
 
-const mapStateToProps = (state) => ({
-  id: state.session.navigation.id,
-  tabData: state.session.navigation.tabData,
-  market: state.market
+const mapStateToProps = createStructuredSelector({
+  id: (state) => state.session.navigation.id,
+  tabData: (state) => state.session.navigation.tabData,
+  market: (state) => state.market
 })
 
 const mapDispatchToProps = (dispatch) => ({})

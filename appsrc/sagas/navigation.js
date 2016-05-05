@@ -14,7 +14,7 @@ import urlParser from 'url'
 import {shell} from '../electron'
 import {takeEvery} from './effects'
 import {call, select, put} from 'redux-saga/effects'
-import {sortBy, findWhere, map, pick, pluck} from 'underline'
+import {sortBy, findWhere, map, filter, pluck} from 'underline'
 
 import urls from '../constants/urls'
 import staticTabData from '../constants/static-tab-data'
@@ -48,20 +48,18 @@ import {
 
 function * retrieveTabData (id, retrOpts = {}) {
   if (!id) {
-    console.log(`Can't retrieve tab data for ${id}, tis falsy. Stack: ${new Error().stack}`)
     return
   }
 
-  const {constant, transient} = yield select((state) => state.session.navigation.tabs)
-  const tab = constant::findWhere({id}) || transient::findWhere({id})
-  if (!tab) {
+  const data = yield select((state) => state.session.navigation.tabData[id])
+  if (!data) {
     console.log(`Can't retrieve tab data for ${id}, not found in list. Stack: ${new Error().stack}`)
     return
   }
 
-  const path = retrOpts.path || tab.path
-  if (staticTabData[tab.path] && tab.path !== path) {
-    console.log(`Refusing to retrieve foreign tabData for frozen tab ${tab.path}`)
+  const path = retrOpts.path || data.path
+  if (staticTabData[id] && id !== path) {
+    console.log(`Refusing to retrieve foreign tabData for frozen tab ${id}`)
     return
   }
 
@@ -112,9 +110,10 @@ function * retrieveTabData (id, retrOpts = {}) {
 }
 
 function * doFetchTabData (id, retrOpts) {
+  const timestamp = +new Date()
   const data = yield call(retrieveTabData, id, retrOpts)
   if (data) {
-    yield put(tabDataFetched({id, data}))
+    yield put(tabDataFetched({id, timestamp, data}))
   } else {
     console.log(`No data fetched for ${id}`)
   }
@@ -127,8 +126,6 @@ export function * _tabChanged (action) {
   if (id === 'history') {
     yield put(historyRead())
   }
-
-  // yield call(doFetchTabData, id)
 }
 
 export function * _tabReloaded (action) {
@@ -153,12 +150,20 @@ export function * _tabsChanged (action) {
   }
 
   const nav = yield select((state) => state.session.navigation)
-  const {tabs, id} = nav
+  const {tabs, tabData, id} = nav
   const {transient} = tabs
 
   const snapshot = {
     current: id,
-    items: transient::map((x) => x::pick('id', 'path'))
+    items: transient::map((id) => {
+      const data = tabData[id]
+      if (data) {
+        return {
+          id,
+          path: data.path
+        }
+      }
+    })::filter((x) => !!x)
   }
 
   const userMarket = getUserMarket()
@@ -174,11 +179,12 @@ export function * _sessionReady (action) {
     log(opts, `Restoring ${snapshot.items.length} tabs`)
     yield put(tabsRestored(snapshot))
 
+    const timestamp = +new Date()
     const tabDatas = yield snapshot.items::map(({id, path}) => call(retrieveTabData, id, {path}))
     yield tabDatas::map((data, i) => {
       if (!data) return null
       const {id} = snapshot.items[i]
-      return put(tabDataFetched({id, data}))
+      return put(tabDataFetched({id, timestamp, data}))
     })
   } else {
     log(opts, 'No tabs to restore')
@@ -188,7 +194,7 @@ export function * _sessionReady (action) {
 export function * _evolveTab (action) {
   const {id, path} = action.payload
   const data = yield call(retrieveTabData, id, {path})
-  yield put(tabEvolved({id, path, data}))
+  yield put(tabEvolved({id, data: {...data, path}}))
 }
 
 export function * applyTabOffset (offset) {
@@ -249,16 +255,14 @@ export function * _viewCommunityProfile (action) {
 
 export function * _triggerMainAction () {
   const id = yield select((state) => state.session.navigation.id)
-  const tab = yield select((state) => state.session.navigation.tabs.transient::findWhere({id}))
-  if (!tab) {
+  const data = yield select((state) => state.session.navigation.tabData[id])
+  if (!data) {
     return
   }
 
-  const {path} = tab
+  const {path} = data
   if (/^games/.test(path)) {
     const gameId = +pathToId(path)
-    const tabData = yield select((state) => state.session.navigation.tabData)
-    const data = tabData[id] || {}
     const game = (data.games || {})[gameId]
     if (game) {
       // FIXME: queueGame is a bit too tolerant
@@ -320,15 +324,13 @@ function makeTabContextMenu (queue) {
     const {id} = action.payload
     invariant(typeof id === 'string', 'opentabcontextmenu path is string')
 
-    const tab = yield select((state) => state.session.navigation.tabs.transient::findWhere({id}))
-    if (!tab) {
+    const data = yield select((state) => state.session.navigation.tabData[id])
+    if (!data) {
       log(opts, `Can't make context menu for non-transient tab ${id}`)
       return
     }
 
-    const {path} = tab
-
-    const data = yield select((state) => state.session.navigation.tabData[id])
+    const {path} = data
     const i18n = yield select((state) => state.i18n)
     const t = localizer.getT(i18n.strings, i18n.lang)
 
@@ -437,10 +439,11 @@ export default function * navigationSaga () {
 
   const transientSelector = createSelector(
     (state) => state.session.navigation.tabs.transient,
+    (state) => state.session.navigation.tabData,
     (state) => state.session.navigation.id,
     createSelector(
-      (transient, id) => transient::pluck('id').join(','),
-      (transient, path) => transient::pluck('path').join(','),
+      (transient, tabData, id) => transient,
+      (transient, tabData, id) => tabData::pluck('path'),
       (transient, id) => id,
       (ids, paths, id) => {
         queue.dispatch(tabsChanged())

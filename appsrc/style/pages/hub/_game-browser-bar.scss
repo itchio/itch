@@ -74,7 +74,7 @@ $meat-cover-scale: 0.4;
       }
     }
 
-    &.task-download, &.task-install, &.task-configure, &.task-find-upload, &.task-launch, &.uninstalled {
+    &.task-download, &.task-install &.task-configure, &.task-find-upload, &.task-launch {
       .main-action {
         margin-right: 0;
         flex-grow: 1;
@@ -82,6 +82,11 @@ $meat-cover-scale: 0.4;
         font-weight: normal;
         @include discreet-button;
       }
+    }
+
+    .main-action.buy-now {
+      background-color: #5E945E;
+      border-color: #9ACA9A;
     }
 
     .cave-actions {

@@ -1,4 +1,6 @@
 
+import {indexBy, map} from 'underline'
+
 export default {
   featured: { label: 'itch.io', subtitle: ['sidebar.featured_subtitle'] },
   dashboard: { label: ['sidebar.dashboard'], subtitle: ['sidebar.dashboard_subtitle'] },
@@ -8,4 +10,6 @@ export default {
   history: { label: ['sidebar.history'], subtitle: ['sidebar.history_subtitle'] },
   // downloads: { label: ['sidebar.downloads'], subtitle: ['sidebar.downloads_subtitle'] }
   downloads: { label: ['sidebar.downloads'] }
-}
+}::map((data, id) => {
+  return {...data, id, path: id}
+})::indexBy('id')

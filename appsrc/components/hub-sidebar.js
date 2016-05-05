@@ -7,7 +7,7 @@ import {createSelector, createStructuredSelector} from 'reselect'
 
 import * as actions from '../actions'
 import defaultImages from '../constants/default-images'
-import {pathToIcon} from '../util/navigation'
+import {pathToIcon, makeLabel} from '../util/navigation'
 
 import Icon from './icon'
 import Dropdown from './dropdown'
@@ -28,14 +28,15 @@ export class HubSidebar extends Component {
 
       <div className='sidebar-items'>
         <h2>{t('sidebar.category.basics')}</h2>
-        {tabs.constant::map((item, i) => {
-          const {id, path} = item
-          const {label = 'Loading...'} = tabData[id] || {}
+        {tabs.constant::map((id, index) => {
+          const data = tabData[id] || {}
+          const {path} = data
+          const label = makeLabel(id, tabData)
           const icon = pathToIcon(path)
           const active = currentId === id
           const onClick = () => navigate(id)
           const onContextMenu = () => {}
-          const n = (i + 1)
+          const n = (index + 1)
           const kbShortcut = <div className='kb-shortcut'>
             {osx
               ? <Icon icon='command'/>
@@ -49,16 +50,17 @@ export class HubSidebar extends Component {
         })}
 
         <h2>{t('sidebar.category.tabs')}</h2>
-        {tabs.transient::map((item, index) => {
-          const {id, path} = item
+        {tabs.transient::map((id, index) => {
           const data = tabData[id] || {}
-          const {label = 'Loading...', iconImage} = data
+          const {path} = tabData
+          const iconImage = data.webFavicon
+          const label = makeLabel(id, tabData)
           const icon = pathToIcon(path)
           const active = currentId === id
           const onClick = () => navigate(id)
           const onClose = () => closeTab(id)
           const onContextMenu = () => openTabContextMenu(id)
-          const count = counts[item.path]
+          const count = counts[id]
 
           const props = {index, id, path, label, icon, iconImage, active, onClick, count, onClose, onContextMenu, moveTab, data, t}
           return <HubSidebarItem {...props}/>
