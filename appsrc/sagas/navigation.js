@@ -114,6 +114,11 @@ function * doFetchTabData (id, retrOpts) {
   const data = yield call(retrieveTabData, id, retrOpts)
   if (data) {
     yield put(tabDataFetched({id, timestamp, data}))
+
+    const tdata = yield select((state) => state.session.navigation.tabData[id])
+    if (tdata && /collections\//.test(tdata.path || '')) {
+      console.log('should defo fetch collection')
+    }
   } else {
     console.log(`No data fetched for ${id}`)
   }

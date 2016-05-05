@@ -204,16 +204,19 @@ export async function collectionLazily (market, credentials, collectionId, opts 
     typeof collectionId === 'number'
   }
 
+  const oldRecord = market.getEntities('collections')[collectionId]
   if (!opts.fresh) {
-    const record = market.getEntities('collections')[collectionId]
-    if (record) {
-      return record
+    if (oldRecord) {
+      return oldRecord
     }
   }
 
   const api = client.withKey(credentials.key)
   const response = normalize(await api.collection(collectionId), {collection})
-  return response.entities.collections[collectionId]
+  return {
+    ...oldRecord,
+    ...response.entities.collections[collectionId]
+  }
 }
 
 export default {

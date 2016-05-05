@@ -93,7 +93,7 @@ GameBrowserBar.propTypes = {
 const mapStateToProps = () => {
   const marketSelector = createStructuredSelector({
     gameId: (state, props) => +pathToId(props.tabPath),
-    userMarket: (state, props) => state.session.market,
+    userMarket: (state, props) => state.market,
     globalMarket: (state, props) => state.globalMarket,
     tabData: (state, props) => props.tabData
   })

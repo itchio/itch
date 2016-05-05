@@ -11,10 +11,12 @@ import EnhanceFiltered from './filtered'
 
 export class Collection extends Component {
   render () {
+    console.log('rendering collection with props: ', this.props)
     const {allGames, tabGames, collection, query} = this.props
 
     if (!collection) {
       return <div className='collection-meat'>
+        Loading...
       </div>
     }
 
@@ -39,17 +41,19 @@ Collection.propTypes = {
 const mapStateToProps = () => {
   const marketSelector = createStructuredSelector({
     collectionId: (state, props) => +pathToId(props.tabPath),
-    userMarket: (state, props) => state.session.market,
+    userMarket: (state, props) => state.market,
     globalMarket: (state, props) => state.globalMarket,
-    tabData: (state, props) => props.tabData
+    tabData: (state, props) => state.session.navigation.tabData[props.tabId] || {}
   })
 
   return createSelector(
     marketSelector,
     (cs) => {
+      const allGames = (cs.userMarket || {}).games || {}
+      const tabGames = cs.tabData.games || {}
       const getCollection = (market) => ((market || {}).collections || {})[cs.collectionId]
       const collection = getCollection(cs.userMarket) || getCollection(cs.tabData)
-      return {collection}
+      return {collection, allGames, tabGames}
     }
   )
 }

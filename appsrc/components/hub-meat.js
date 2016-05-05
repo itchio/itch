@@ -58,7 +58,7 @@ export class HubMeat extends Component {
     } else if (/^new/.test(path)) {
       return <NewTab tabId={tabId}/>
     } else if (/^collections\//.test(path)) {
-      return <Collection tabPath={path} data={data}/>
+      return <Collection tabId={tabId} tabPath={path} data={data}/>
     } else if (/^(url|games|users|collections|search|press|featured)/.test(path)) {
       return <UrlMeat key={tabId} tabId={tabId} path={path}/>
     } else {
