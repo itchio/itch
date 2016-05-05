@@ -67,6 +67,10 @@ function purchaseInject () {
   document.body.appendChild(css)
 }
 
+function analyzePage (url) {
+  sendMessage('analyze-page?url=' + encodeURIComponent(url))
+}
+
 function itchInject () {
   const {$} = window
 
@@ -91,6 +95,20 @@ function itchInject () {
       $page.find('.app_banner').remove()
       $page.find('.main_column').css('margin', 0)
     }
+  }
+
+  {
+    let oldURL = ''
+    setInterval(() => {
+      const $iframe = $('iframe.object_viewer')
+      const iframe = $iframe[0]
+
+      if (iframe && oldURL !== iframe.src) {
+        console.log('iframe changed URL!', iframe.src)
+        analyzePage(iframe.src)
+        oldURL = iframe.src
+      }
+    }, 1000)
   }
 }
 
@@ -125,18 +143,13 @@ function checkoutInject () {
 document.addEventListener('DOMContentLoaded', () => {
   const host = urlParser.subdomainToDomain(window.location.hostname)
 
-  setTimeout(function () {
-    const itchPath = document.querySelector('meta[name="itch:path"]')
-    if (itchPath) {
-      sendMessage('parsed-itch-path?path=' + encodeURIComponent(itchPath.content) + '&url=' + encodeURIComponent(window.location.href))
-    }
-  }, 500)
-
   if (['itch.io', 'localhost.com'].indexOf(host) === -1) {
     // don't inject anything on non-itch pages
     console.log('not an itch page, bailing out', host)
     return
   }
+
+  analyzePage(window.location.href)
 
   console.log('injecting itch js')
   itchInject()

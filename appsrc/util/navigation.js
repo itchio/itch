@@ -7,6 +7,10 @@ const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/
 const ID_RE = /^[^\/]+\/(.+)$/
 
 export async function transformUrl (original) {
+  if (/^about:/.test(original)) {
+    return original
+  }
+
   let req = original
   let parsed = urlParser.parse(req)
   const searchUrl = () => {

@@ -63,7 +63,7 @@ export class BrowserMeat extends Component {
 
   componentDidMount () {
     const {webview} = this.refs
-    const {tabId, navigate, evolveTab, tabDataFetched, tabReloaded} = this.props
+    const {tabId, navigate, tabDataFetched, tabReloaded} = this.props
 
     if (!webview) {
       console.log('Oh noes, can\'t listen to webview\'s soothing event stream')
@@ -174,11 +174,8 @@ export class BrowserMeat extends Component {
           case '/open-devtools':
             webContents.openDevTools({detach: true})
             break
-          case '/parsed-itch-path':
-            const {tabId} = this.props
-            const newPath = params.path
-            console.log(tabId, 'evolving', this.props.tabPath, ' => ', newPath)
-            evolveTab(tabId, newPath)
+          case '/analyze-page':
+            this.analyzePage(params.url)
             break
           default:
             console.log('got itch-internal request: ', pathname)
@@ -193,6 +190,31 @@ export class BrowserMeat extends Component {
     } else {
       console.log(tabId, 'waiting for non-blank url')
     }
+  }
+
+  analyzePage (url) {
+    const {tabId, evolveTab} = this.props
+
+    const xhr = new window.XMLHttpRequest()
+    xhr.responseType = 'document'
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState !== 4) {
+        return
+      }
+      const meta = xhr.responseXML.querySelector('meta[name="itch:path"]')
+      if (meta) {
+        const newPath = meta.content
+        console.log(tabId, 'evolving', this.props.tabPath, ' => ', newPath)
+        evolveTab(tabId, newPath)
+      } else {
+        console.log(tabId, 'no meta tag found in', url)
+      }
+    }
+    xhr.open('GET', url)
+
+    // itch.io pages don't have CORS, but this code doesn't run in
+    // a webview so CSP doesn't apply to us.
+    xhr.send()
   }
 
   componentWillReceiveProps (nextProps) {
@@ -226,11 +248,14 @@ export class BrowserMeat extends Component {
       bar = <BrowserBar {...controlProps}/>
     }
 
+    const partition = `persist:itchio-${meId}`
+    console.log(tabId, 'setting partition to', partition)
+
     return <div className='browser-meat'>
     {bar}
     {DONT_SHOW_WEBVIEWS
       ? <div style={{padding: '10px'}}>Webviews disabled</div>
-      : <webview key={tabId} ref='webview' partition={`persist:itchio-${meId}`} preload={injectPath} plugins useragent={useragent}/>
+      : <webview key={tabId} ref='webview' partition={partition} preload={injectPath} plugins useragent={useragent}/>
     }
     </div>
   }

@@ -12,7 +12,7 @@ export class UrlMeat extends Component {
   render () {
     const {path, tabData = {}, tabId} = this.props
 
-    let url = 'about:blank'
+    let url = tabData.url || 'about:blank'
     let controls = 'generic'
 
     if (/^url/.test(path)) {
