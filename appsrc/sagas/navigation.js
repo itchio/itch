@@ -13,7 +13,7 @@ import urlParser from 'url'
 
 import {shell} from '../electron'
 import {takeEvery} from './effects'
-import {call, select, put} from 'redux-saga/effects'
+import {call, select, put, fork} from 'redux-saga/effects'
 import {sortBy, findWhere, map, filter, pluck} from 'underline'
 
 import urls from '../constants/urls'
@@ -71,9 +71,65 @@ function * retrieveTabData (id, retrOpts = {}) {
   } else if (/^users/.test(path)) {
     const user = yield call(fetch.userLazily, getUserMarket(), credentials, +pathToId(path), retrOpts)
     return user && userToTabData(user)
-  } else if (/^collections/.test(path)) {
-    const collection = yield call(fetch.collectionLazily, getUserMarket(), credentials, +pathToId(path), retrOpts)
-    return collection && collectionToTabData(collection)
+  } else if (/^collections\//.test(path)) {
+    const collectionId = +pathToId(path)
+    const collection = yield call(fetch.collectionLazily, getUserMarket(), credentials, collectionId, retrOpts)
+    const newData = collectionToTabData(collection)
+    if (collection) {
+      log(opts, `fetched collection ${collectionId}`)
+      const baseData = {
+        ...newData,
+        collections: {
+          ...newData.collections,
+          [collectionId]: {
+            ...(((data || {}).collections || {})[collectionId] || {}),
+            ...newData.collections[collectionId]
+          }
+        }
+      }
+
+      const queue = createQueue('fetchCollectionGames')
+      let marketData = baseData
+      const fakeMarket = {
+        getEntities: (tableName) => {
+          return marketData[tableName] || {}
+        },
+        saveAllEntities: (response) => {
+          for (const tableName of Object.keys(response.entities)) {
+            const entities = response.entities[tableName]
+            let table = marketData[tableName] || {}
+
+            for (const entityId of Object.keys(entities)) {
+              table = {
+                ...table,
+                [entityId]: {
+                  ...table[entityId],
+                  ...entities[entityId]
+                }
+              }
+            }
+
+            marketData = {
+              ...marketData,
+              [tableName]: {
+                ...marketData[tableName],
+                ...table
+              }
+            }
+          }
+          queue.dispatch(tabDataFetched({id, timestamp: +new Date(), data: marketData}))
+        }
+      }
+
+      const endType = 'DONE_FETCHING_COLLECTION_GAMES'
+      yield fork(queue.exhaust, {endType})
+      yield call([fetch, fetch.collectionGames], fakeMarket, credentials, collectionId)
+      queue.dispatch({type: endType})
+
+      return marketData
+    } else {
+      return null
+    }
   } else if (/^locations/.test(path)) {
     const locationName = pathToId(path)
     let location = yield select((state) => state.preferences.installLocations[locationName])
@@ -114,11 +170,6 @@ function * doFetchTabData (id, retrOpts) {
   const data = yield call(retrieveTabData, id, retrOpts)
   if (data) {
     yield put(tabDataFetched({id, timestamp, data}))
-
-    const tdata = yield select((state) => state.session.navigation.tabData[id])
-    if (tdata && /collections\//.test(tdata.path || '')) {
-      console.log('should defo fetch collection')
-    }
   } else {
     console.log(`No data fetched for ${id}`)
   }
@@ -126,16 +177,18 @@ function * doFetchTabData (id, retrOpts) {
 
 export function * _tabChanged (action) {
   const {id} = action.payload
-  invariant(typeof id === 'string', 'tabChanged has stringy id')
+  invariant(typeof id === 'string', 'tabChanged has string id')
 
   if (id === 'history') {
     yield put(historyRead())
   }
+
+  yield call(doFetchTabData, id)
 }
 
 export function * _tabReloaded (action) {
   const {id} = action.payload
-  invariant(typeof id === 'string', 'tabReloaded has stringy id')
+  invariant(typeof id === 'string', 'tabReloaded has string id')
   yield call(doFetchTabData, id)
 }
 

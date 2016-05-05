@@ -51,8 +51,8 @@ const mapStateToProps = () => {
     (cs) => {
       const allGames = (cs.userMarket || {}).games || {}
       const tabGames = cs.tabData.games || {}
-      const getCollection = (market) => ((market || {}).collections || {})[cs.collectionId]
-      const collection = getCollection(cs.userMarket) || getCollection(cs.tabData)
+      const getCollection = (market) => ((market || {}).collections || {})[cs.collectionId] || {}
+      const collection = getCollection(cs.tabData) || getCollection(cs.userMarket)
       return {collection, allGames, tabGames}
     }
   )

@@ -5,7 +5,6 @@ import {opts} from '../logger'
 
 import client from '../util/api'
 
-import {assocIn} from 'grovel'
 import {normalize, arrayOf} from './idealizr'
 import {game, user, collection, downloadKey} from './schemas'
 import {each, union, pluck, where, difference} from 'underline'
@@ -126,16 +125,28 @@ export async function collectionGames (market, credentials, collectionId) {
 
     const normalized = normalize(res, {games: arrayOf(game)})
     const pageGameIds = normalized.entities.games::pluck('id')
-    collection = collection::assocIn(['gameIds'], collection.gameIds::union(pageGameIds))
+    collection = {
+      ...collection,
+      gameIds: [
+        ...(collection.gameIds || []),
+        ...pageGameIds
+      ]
+    }
     market.saveAllEntities({entities: {collections: {[collection.id]: collection}}})
 
-    fetchedGameIds = fetchedGameIds::union(pageGameIds)
+    fetchedGameIds = [
+      ...fetchedGameIds,
+      ...pageGameIds
+    ]
     market.saveAllEntities(normalized)
     page++
   }
 
   // if games were removed remotely, they'll be removed locally at this step
-  collection = collection::assocIn(['gameIds'], fetchedGameIds)
+  collection = {
+    ...collection,
+    gameIds: fetchedGameIds
+  }
   market.saveAllEntities({entities: {collections: {[collection.id]: collection}}})
 }
 
