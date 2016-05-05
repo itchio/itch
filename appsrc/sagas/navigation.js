@@ -128,7 +128,7 @@ export function * _tabChanged (action) {
     yield put(historyRead())
   }
 
-  yield call(doFetchTabData, id)
+  // yield call(doFetchTabData, id)
 }
 
 export function * _tabReloaded (action) {

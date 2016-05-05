@@ -3,9 +3,15 @@
 const {remote} = require('electron')
 const urlParser = remote.require('./util/url').default
 const store = remote.require('./store').default
+const querystring = require('querystring')
 
-const sendMessage = (action) => {
-  const url = `https://itch-internal/${action}`
+const sendMessage = (verb, userAttrs = {}) => {
+  const attrs = {
+    ...userAttrs,
+    tabId: window.__itchTabId
+  }
+
+  const url = `https://itch-internal/${verb}?${querystring.stringify(attrs)}`
   const xhr = new window.XMLHttpRequest()
   xhr.open('POST', url)
   xhr.send()
@@ -68,7 +74,7 @@ function purchaseInject () {
 }
 
 function analyzePage (url) {
-  sendMessage('analyze-page?url=' + encodeURIComponent(url))
+  sendMessage('analyze-page', {url})
 }
 
 function itchInject () {
@@ -140,7 +146,9 @@ function checkoutInject () {
   })
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+window.__itchInit = (tabId) => {
+  window.__itchTabId = tabId
+
   const host = urlParser.subdomainToDomain(window.location.hostname)
 
   if (['itch.io', 'localhost.com'].indexOf(host) === -1) {
@@ -171,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       break
   }
-})
+}
 
 window.addEventListener('keydown', (e) => {
   switch (e.keyIdentifier) {

@@ -25,6 +25,9 @@ import UserBrowserBar from './user-browser-bar'
 
 import {transformUrl} from '../util/navigation'
 
+// updated when switching accounts
+let currentSession = null
+
 export class BrowserMeat extends Component {
   constructor () {
     super()
@@ -89,7 +92,6 @@ export class BrowserMeat extends Component {
 
     webview.addEventListener('did-navigate', (e) => this.with((wv) => {
       const {url} = e
-      console.log('Committing url: ', url)
       this.updateBrowserState({url})
     }))
     webview.addEventListener('did-start-loading', () => this.updateBrowserState({loading: true}))
@@ -111,13 +113,10 @@ export class BrowserMeat extends Component {
       webview.addEventListener('will-navigate', (e) => {
         const {url} = e
 
-        console.log(tabId, '(wv) will-navigate: ', url, e)
-
         // sometimes we get double will-navigate events because life is fun?!
         if (this.lastNavigationUrl === url && e.timeStamp - this.lastNavigationTimeStamp < WILL_NAVIGATE_GRACE_PERIOD) {
-          console.log('double, woo')
+          console.log('avoiding double nav to ${url}')
           this.with((wv) => {
-            console.log(tabId, 'Force loading', this.props.url)
             wv.stop()
             wv.loadURL(this.props.url)
           })
@@ -126,17 +125,15 @@ export class BrowserMeat extends Component {
         this.lastNavigationUrl = url
         this.lastNavigationTimeStamp = e.timeStamp
 
-        // can't preventDefault, *sigh*
-
         if (handleSupportedUrl(url)) {
-          console.log(tabId, 'Was supported, opened somewhere else, blocking', url)
+          // url was supported & opened somewhere else, blocking load
+          // attempt on this tab (preventDefault doesn't do anything)
+          // cf. https://github.com/electron/electron/issues/1378
+          console.log('stop/loading url ${url}')
           this.with((wv) => {
-            console.log(tabId, 'Force loading', this.props.url)
             wv.stop()
             wv.loadURL(this.props.url)
           })
-        } else {
-          console.log(tabId, 'handleSupported returned false')
         }
       })
     }
@@ -149,6 +146,9 @@ export class BrowserMeat extends Component {
 
     webview.addEventListener('dom-ready', () => {
       console.log(tabId, 'dom-ready!, props url = ', this.props.url, 'wv url', webview.getURL())
+
+      webview.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tabId)})`)
+
       this.updateBrowserState({loading: false})
 
       const webContents = webview.getWebContents()
@@ -158,42 +158,52 @@ export class BrowserMeat extends Component {
         webContents.openDevTools({detach: true})
       }
 
-      // requests to 'itch-internal' are used to communicate between web content & the app
-      let internalFilter = {
-        urls: ['https://itch-internal/*']
+      if (currentSession !== webContents.session) {
+        this.setupItchInternal(webContents.session)
       }
-      webContents.session.webRequest.onBeforeSendHeaders(internalFilter, (details, callback) => {
-        callback({cancel: true})
-
-        let parsed = urlParser.parse(details.url)
-        const {pathname, query} = parsed
-        const params = querystring.parse(query)
-        console.log(tabId, 'got itch internal request: ', pathname, params)
-
-        switch (pathname) {
-          case '/open-devtools':
-            webContents.openDevTools({detach: true})
-            break
-          case '/analyze-page':
-            this.analyzePage(params.url)
-            break
-          default:
-            console.log('got itch-internal request: ', pathname)
-        }
-      })
     })
 
     const {url} = this.props
     if (url !== 'about:blank') {
-      console.log(tabId, `loading url ${url}`)
       this.loadURL(url)
     } else {
       console.log(tabId, 'waiting for non-blank url')
     }
   }
 
-  analyzePage (url) {
-    const {tabId, evolveTab} = this.props
+  setupItchInternal (session) {
+    currentSession = session
+
+    // requests to 'itch-internal' are used to communicate between web content & the app
+    let internalFilter = {
+      urls: ['https://itch-internal/*']
+    }
+
+    session.webRequest.onBeforeSendHeaders(internalFilter, (details, callback) => {
+      callback({cancel: true})
+
+      let parsed = urlParser.parse(details.url)
+      const {pathname, query} = parsed
+      const params = querystring.parse(query)
+      const {tabId} = params
+      console.log(tabId, 'itch-internal', pathname, params)
+
+      switch (pathname) {
+        case '/open-devtools':
+          const {webview} = this.refs
+          if (webview && webview.getWebContents() && !webview.getWebContents().isDestroyed()) {
+            webview.getWebContents().openDevTools({detach: true})
+          }
+          break
+        case '/analyze-page':
+          this.analyzePage(tabId, params.url)
+          break
+      }
+    })
+  }
+
+  analyzePage (tabId, url) {
+    const {evolveTab} = this.props
 
     const xhr = new window.XMLHttpRequest()
     xhr.responseType = 'document'
@@ -218,17 +228,16 @@ export class BrowserMeat extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    console.log('receiving next props url:', nextProps.url, 'current props:', this.props.url)
-
     // we didn't have a proper url but now do
-    if (this.props.url === 'about:blank' && nextProps.url) {
+    if (nextProps.url) {
       const {webview} = this.refs
       if (!webview) {
-        console.log('Cannot load url because webview is not there')
         return
       }
-      console.log('Loading non-null url', nextProps.url)
-      this.loadURL(nextProps.url)
+      if (webview.src === '') {
+        console.log(nextProps.tabId, 'finally got non-blank url', nextProps.url)
+        this.loadURL(nextProps.url)
+      }
     }
   }
 
@@ -249,7 +258,6 @@ export class BrowserMeat extends Component {
     }
 
     const partition = `persist:itchio-${meId}`
-    console.log(tabId, 'setting partition to', partition)
 
     return <div className='browser-meat'>
     {bar}
@@ -307,12 +315,10 @@ export class BrowserMeat extends Component {
     const {tabId, navigate} = this.props
     const frozen = staticTabData[tabId] || !tabId
 
-    console.log(tabId, 'loading URL', input)
-
     const url = await transformUrl(input)
-    console.log(tabId, 'transformed url', url)
 
     if (navigation.isAppSupported(url) && frozen) {
+      console.log(tabId, 'opening new tab with', url)
       navigate(`url/${url}`)
     } else {
       console.log(tabId, 'loading into webview', url)
