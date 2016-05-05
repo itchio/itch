@@ -196,6 +196,7 @@
     "sidebar.empty": "Let's go!",
     "sidebar.new_tab": "New tab",
     "sidebar.collections": "Collections",
+    "sidebar.collection.subtitle": "A collection of {{itemCount}} items",
     "sidebar.category.basics": "Essentials",
     "sidebar.category.tabs": "Tabs",
     "sidebar.view_creator_profile": "View creator profile",

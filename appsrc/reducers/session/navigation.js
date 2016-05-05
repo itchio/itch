@@ -11,7 +11,7 @@ import {filter} from 'underline'
 
 const perish = process.env.PERISH === '1' ? console.log.bind(console) : () => 0
 
-const baseTabs = ['featured', 'library']
+const baseTabs = ['featured', 'library', 'collections']
 
 const initialState = {
   page: 'gate',

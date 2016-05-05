@@ -1,6 +1,6 @@
 
 import {createAction} from 'redux-actions'
-import {gameToTabData} from '../util/navigation'
+import {gameToTabData, collectionToTabData} from '../util/navigation'
 
 import {
   NAVIGATE,
@@ -52,6 +52,7 @@ export const navigate = (id, data = {}) => {
 export const focusNthTab = createAction(FOCUS_NTH_TAB)
 
 export const navigateToGame = (game) => navigate(`games/${game.id}`, gameToTabData(game))
+export const navigateToCollection = (collection) => navigate(`collections/${collection.id}`, collectionToTabData(collection))
 
 export const moveTab = createAction(MOVE_TAB)
 export const evolveTab = createAction(EVOLVE_TAB)

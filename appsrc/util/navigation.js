@@ -121,7 +121,8 @@ export function collectionToTabData (collection) {
     collections: {
       [collection.id]: collection
     },
-    label: collection.title
+    label: collection.title,
+    subtitle: ['sidebar.collection.subtitle', {itemCount: collection.gamesCount}]
   }
 }
 

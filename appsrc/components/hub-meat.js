@@ -14,6 +14,8 @@ import Location from './location'
 import UrlMeat from './url-meat'
 import Dashboard from './dashboard'
 import Library from './library'
+import Collections from './collections'
+import Collection from './collection'
 import NewTab from './new-tab'
 
 import {map} from 'underline'
@@ -31,17 +33,19 @@ export class HubMeat extends Component {
         const {path} = data
         const visible = (id === currentId)
         const classes = classNames('hub-meat-tab', {visible})
-        return <div key={id} className={classes}>{this.renderTab(id, path)}</div>
+        return <div key={id} className={classes}>{this.renderTab(id, path, data)}</div>
       })}
       <HubSearchResults/>
     </div>
   }
 
-  renderTab (tabId, path) {
+  renderTab (tabId, path, data) {
     if (path === 'dashboard') {
       return <Dashboard/>
     } else if (path === 'library') {
       return <Library/>
+    } else if (path === 'collections') {
+      return <Collections/>
     } else if (path === 'downloads') {
       return <Downloads/>
     } else if (path === 'history') {
@@ -53,6 +57,8 @@ export class HubMeat extends Component {
       return <Location locationName={location}/>
     } else if (/^new/.test(path)) {
       return <NewTab tabId={tabId}/>
+    } else if (/^collections\//.test(path)) {
+      return <Collection tabPath={path} data={data}/>
     } else if (/^(url|games|users|collections|search|press|featured)/.test(path)) {
       return <UrlMeat key={tabId} tabId={tabId} path={path}/>
     } else {

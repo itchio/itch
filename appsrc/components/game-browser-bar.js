@@ -90,7 +90,7 @@ GameBrowserBar.propTypes = {
   t: PropTypes.func.isRequired
 }
 
-const mapStateToProps = (state, props) => {
+const mapStateToProps = () => {
   const marketSelector = createStructuredSelector({
     gameId: (state, props) => +pathToId(props.tabPath),
     userMarket: (state, props) => state.session.market,
@@ -98,7 +98,7 @@ const mapStateToProps = (state, props) => {
     tabData: (state, props) => props.tabData
   })
 
-  const gameSelector = createSelector(
+  return createSelector(
     marketSelector,
     (cs) => {
       const getGame = (market) => ((market || {}).games || {})[cs.gameId]
@@ -108,7 +108,6 @@ const mapStateToProps = (state, props) => {
       return {game, downloadKey, cave}
     }
   )
-  return gameSelector
 }
 
 const mapDispatchToProps = (dispatch) => ({})
