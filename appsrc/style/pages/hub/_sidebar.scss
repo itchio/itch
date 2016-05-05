@@ -113,6 +113,10 @@
       }
     }
 
+    .label {
+      @include single-line;
+    }
+
     .icon-image {
       flex-shrink: 0;
       margin: 0 10px 0 4px;
