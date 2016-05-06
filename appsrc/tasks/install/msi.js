@@ -33,13 +33,28 @@ const self = {
     const destPath = opts.destPath
     const logger = opts.logger
 
-    await spawn({
-      command: 'elevate',
-      args: self.args('--install', archivePath, destPath),
+    const msiCmd = opts.elevated ? '--elevated-install' : '--install'
+
+    const code = await spawn({
+      command: 'elevate.exe',
+      args: self.args(msiCmd, archivePath, destPath),
       onToken: (token) => log(opts, token),
       onErrToken: (token) => log(opts, token),
       logger
     })
+
+    if (code !== 0) {
+      if (code === 1603 && !opts.elevated) {
+        log(opts, 'msi installer exited with 1603, retrying elevated')
+        return await self.install(out, {
+          ...opts,
+          elevated: true
+        })
+      }
+      throw new Error(`msi installer exited with code ${code}`)
+    }
+
+    log(opts, 'msi installer completed successfully')
   },
 
   uninstall: async function (out, opts) {
@@ -53,13 +68,27 @@ const self = {
     const destPath = opts.destPath
     const logger = opts.logger
 
-    await spawn({
+    const msiCmd = opts.elevated ? '--elevated-uninstall' : '--uninstall'
+    const code = await spawn({
       command: 'elevate',
-      args: self.args('--uninstall', archivePath, destPath),
+      args: self.args(msiCmd, archivePath, destPath),
       onToken: (token) => log(opts, token),
       onErrToken: (token) => log(opts, token),
       logger
     })
+
+    if (code !== 0) {
+      if (code === 1603 && !opts.elevated) {
+        log(opts, 'msi uninstaller exited with 1603, retrying elevated')
+        return await self.uninstall(out, {
+          ...opts,
+          elevated: true
+        })
+      }
+      throw new Error(`msi uninstaller exited with code ${code}`)
+    }
+
+    log(opts, 'msi uninstaller completed successfully')
   }
 }
 
