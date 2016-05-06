@@ -85,7 +85,7 @@
     "preferences.install_location.size": "Espacio en disco", 
     "preferences.install_location.stop_size_computation": "Detener cálculo del tamaño del directorio", 
     "preferences.install_location.used_space": "Espacio utilizado", 
-    "preferences.install_locations": "Ruta de instalación", 
+    "preferences.install_locations": "Ubicación de la instalación", 
     "preferences.language": "Idioma", 
     "preferences.language.auto": "Idioma del sistema ({{language}})", 
     "preferences.language.get_involved": "¡Ayúdanos a traducir {{name}} a tu idioma!", 
