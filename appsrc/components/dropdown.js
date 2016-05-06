@@ -16,9 +16,10 @@ export class Dropdown extends Component {
   }
 
   render () {
-    const {t, dispatch, items, inner, className = ''} = this.props
+    const {t, dispatch, items, inner, className = 'dropdown-container'} = this.props
 
     const {open} = this.state
+    const containerClasses = classNames(className, {disabled: items.length === 0})
     const dropdownClasses = classNames('dropdown', {active: open})
 
     const children = items::map((item) => {
@@ -31,7 +32,7 @@ export class Dropdown extends Component {
       </section>
     })
 
-    return <div style={{position: 'relative'}} className={className}>
+    return <div style={{position: 'relative'}} className={containerClasses}>
       <div onClick={this.toggle.bind(this)}>{inner}</div>
       <div className='dropdown-container'>
         <div className={dropdownClasses}>
