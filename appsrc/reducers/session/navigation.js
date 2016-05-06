@@ -119,11 +119,14 @@ export default handleActions({
     const newTransient = transient::reject((x) => x === closeId)
     const newTabData = tabData::omit(closeId)
 
-    const newIds = constant.concat(newTransient)
-    const numNewIds = newIds.length
+    let newId = id
+    if (id === closeId) {
+      const newIds = constant.concat(newTransient)
+      const numNewIds = newIds.length
 
-    const nextIndex = Math.min(index, numNewIds - 1)
-    const newId = newIds[nextIndex]
+      const nextIndex = Math.min(index, numNewIds - 1)
+      newId = newIds[nextIndex]
+    }
 
     return {
       ...state,
