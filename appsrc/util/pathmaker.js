@@ -5,6 +5,8 @@ import {app} from '../electron'
 import invariant from 'invariant'
 
 const APPDATA_RE = /^appdata\/(.*)$/
+import {DATE_FORMAT} from './format'
+import dateFormat from 'dateformat'
 
 export function appPath (cave) {
   // < 0.13.x, installFolder isn't set, it's implicitly the cave's id
@@ -49,6 +51,10 @@ export function preferencesPath () {
   return path.join(app.getPath('userData'), 'preferences.json')
 }
 
+export function logPath () {
+  return path.join(app.getPath('userData'), 'logs', 'itch-' + dateFormat(new Date(), DATE_FORMAT) + '.txt')
+}
+
 export function userDbPath (userId) {
   invariant(userId, 'valid user id')
   return path.join(app.getPath('userData'), 'users', '' + userId, 'marketdb')
@@ -63,4 +69,5 @@ export function sanitize (file) {
   }
 }
 
-export default {appPath, downloadPath, globalDbPath, userDbPath, sanitize, preferencesPath}
+export default {appPath, downloadPath, globalDbPath, userDbPath, sanitize,
+  preferencesPath, logPath}

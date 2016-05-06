@@ -69,12 +69,10 @@ export function * _boot (action) {
   const dbPath = pathmaker.globalDbPath()
   yield fork([globalMarket, globalMarket.load], dbPath)
 
-  log(opts, 'starting user db race')
   yield race({
     globalMarketQueue: call(queue.exhaust, {endType: GLOBAL_DB_CLOSED}),
     cancel: take(PREPARE_QUIT)
   })
-  log(opts, 'user db race finished')
 }
 
 export function * _loginSucceeded (action) {
