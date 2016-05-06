@@ -94,7 +94,7 @@
     margin: 2px 0;
     margin-right: 0;
     padding: 7px 8px 7px 3px;
-    min-height: 40px;
+    min-height: 35px;
 
     &:hover {
       cursor: pointer;
@@ -115,6 +115,7 @@
 
     .label {
       @include single-line;
+      padding: .2em 0;
     }
 
     .icon-image {
