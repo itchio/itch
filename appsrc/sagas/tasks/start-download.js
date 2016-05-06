@@ -25,7 +25,7 @@ export function * startDownload (downloadOpts) {
   }
 
   const {upload, downloadKey} = downloadOpts
-  log(opts, `Should download ${upload.id}, dl key ? ${downloadKey}`)
+  log(opts, `Should download ${upload.id}, has dl key ? ${!!downloadKey}`)
 
   const id = uuid.v4()
   // FIXME: wasteful but easy
