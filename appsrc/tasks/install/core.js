@@ -109,7 +109,7 @@ const self = {
       if (code === 0) {
         log(opts, '7-zip saves the day! it is an archive.')
         installerName = 'archive'
-      } else if (archivePath.executable) {
+      } else if (type.macExecutable || type.linuxExecutable) {
         log(opts, 'tis an executable, going with naked')
         installerName = 'naked'
       } else {
