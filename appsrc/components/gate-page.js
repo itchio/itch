@@ -75,7 +75,7 @@ export class GatePage extends Component {
       }
 
       return <section className='links'>
-        <span className='link' onClick={onClick}>Sign in as someone else</span>
+        <span className='link' onClick={onClick}>{t('login.action.show_form')}</span>
       </section>
     } else {
       const {rememberedSessions = {}} = this.props

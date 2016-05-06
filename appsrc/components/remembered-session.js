@@ -1,13 +1,14 @@
 
+import {connect} from './connect'
 import React, {PropTypes, Component} from 'react'
 
-import TimeAgo from 'react-timeago'
+import NiceAgo from './nice-ago'
 
 import defaultImages from '../constants/default-images'
 
 export class RememberedSession extends Component {
   render () {
-    const {session, loginWithToken, forgetSessionRequest} = this.props
+    const {t, session, loginWithToken, forgetSessionRequest} = this.props
     const {me, key} = session
     const {id, username, coverUrl = defaultImages.avatar} = me
 
@@ -21,7 +22,7 @@ export class RememberedSession extends Component {
       <div className='rest'>
         <p className='username'>{username}</p>
         <p className='last-connected'>
-          Last connected <TimeAgo date={session.lastConnected}/>
+          {t('login.remembered_session.last_connected')} <NiceAgo date={session.lastConnected}/>
         </p>
       </div>
       <div className='filler'/>
@@ -50,4 +51,4 @@ RememberedSession.propTypes = {
   forgetSessionRequest: PropTypes.func
 }
 
-export default RememberedSession
+export default connect()(RememberedSession)
