@@ -89,6 +89,10 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
       background-size: cover;
       background-position: 50% 50%;
       box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
+
+      &:hover {
+        cursor: pointer;
+      }
     }
 
     .cover, .controls {
