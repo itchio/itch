@@ -2,6 +2,7 @@
 import needle from '../../promised/needle'
 import urls from '../../constants/urls'
 
+import querystring from 'querystring'
 import humanize from 'humanize-plus'
 
 import sf from '../sf'
@@ -73,7 +74,7 @@ let self = {
 
   /** fetch latest version number from repo */
   getLatestVersion: async (channel) => {
-    const url = `${channel}/LATEST`
+    const url = `${channel}/LATEST?${querystring.stringify({t: +new Date()})}`
     const res = await needle.getAsync(url)
 
     if (res.statusCode !== 200) {
