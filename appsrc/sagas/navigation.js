@@ -44,7 +44,7 @@ import {
   VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION,
   TRIGGER_OK, TRIGGER_BACK, WINDOW_FOCUS_CHANGED, TAB_RELOADED,
   OPEN_TAB_CONTEXT_MENU, INITIATE_PURCHASE, PROBE_CAVE, FOCUS_NTH_TAB, NEW_TAB,
-  TOGGLE_MINI_SIDEBAR, COPY_TO_CLIPBOARD
+  TOGGLE_MINI_SIDEBAR, COPY_TO_CLIPBOARD, STATUS_MESSAGE
 } from '../constants/action-types'
 
 function * retrieveTabData (id, retrOpts = {}) {
@@ -415,7 +415,7 @@ function makeTabContextMenu (queue) {
           submenu: [
             {
               label: t('grid.item.check_for_update'),
-              click: () => queue.dispatch(checkForGameUpdate({caveId: cave.id}))
+              click: () => queue.dispatch(checkForGameUpdate({caveId: cave.id, noisy: true}))
             },
             {
               label: t('grid.item.open_debug_log'),
@@ -485,7 +485,10 @@ function * _copyToClipboard (action) {
   clipboard.writeText(action.payload)
 
   yield put(statusMessage(['status.copied_to_clipboard']))
-  yield call(delay, 3000)
+}
+
+function * _statusMessage (action) {
+  yield call(delay, 5000)
   yield put(dismissStatusMessage())
 }
 
@@ -526,6 +529,7 @@ export default function * navigationSaga () {
     takeEvery(SHOW_NEXT_TAB, _showNextTab),
     takeEvery(OPEN_URL, _openUrl),
     takeEvery(COPY_TO_CLIPBOARD, _copyToClipboard),
+    takeEvery(STATUS_MESSAGE, _statusMessage),
     takeEvery(VIEW_CREATOR_PROFILE, _viewCreatorProfile),
     takeEvery(VIEW_COMMUNITY_PROFILE, _viewCommunityProfile),
     takeEvery(TAB_CHANGED, _tabChanged),

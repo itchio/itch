@@ -21,7 +21,7 @@ class SecondaryActions extends Component {
     const {t, dispatch} = this.props
     const {action, label, icon, type = 'action'} = opts
 
-    if (type === 'info' || type === 'separator') {
+    if (type === 'info' || type === 'separator' || type === 'secondary') {
       return
     }
 

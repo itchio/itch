@@ -9,7 +9,7 @@ import {fork, take, put, call, select} from 'redux-saga/effects'
 import {getUserMarket, getGlobalMarket} from './market'
 import {delay} from './effects'
 
-import {checkForGameUpdates} from '../actions'
+import {checkForGameUpdates, statusMessage} from '../actions'
 
 import fetch from '../util/fetch'
 import pathmaker from '../util/pathmaker'
@@ -50,7 +50,7 @@ function * _checkForGameUpdates () {
 }
 
 function * _checkForGameUpdate (action) {
-  const {caveId} = action.payload
+  const {caveId, noisy = false} = action.payload
   invariant(typeof caveId === 'string', 'caveId is a string')
 
   const cave = getGlobalMarket().getEntity('caves', caveId)
@@ -59,18 +59,32 @@ function * _checkForGameUpdate (action) {
     return
   }
 
-  yield call(checkForGameUpdate, cave)
+  try {
+    const result = yield call(checkForGameUpdate, cave, {noisy})
+    if (result && noisy) {
+      if (result.err) {
+        yield put(statusMessage(['status.game_update.check_failed', {err: result.err}]))
+      }
+    }
+  } catch (e) {
+    log(opts, `While checking for cave ${caveId} update: ${e.stack || e}`)
+    if (noisy) {
+      yield put(statusMessage(['status.game_update.check_failed', {err: e}]))
+    }
+  }
 }
 
-function * checkForGameUpdate (cave) {
+function * checkForGameUpdate (cave, opts = {}) {
+  const {noisy = false} = opts
+
   if (!cave.launchable) {
     log(opts, `Cave isn't launchable, skipping: ${cave.id}`)
-    return
+    return {}
   }
 
   if (!cave.gameId) {
     log(opts, `Cave lacks gameId, skipping: ${cave.id}`)
-    return
+    return {err: 'Internal error'}
   }
 
   const credentials = yield select((state) => state.session.credentials)
@@ -82,8 +96,8 @@ function * checkForGameUpdate (cave) {
   try {
     game = yield call(fetch.gameLazily, market, credentials, cave.gameId)
   } catch (e) {
-    log(opts, `Could not fetch game ${cave.gameId}, skipping (${e.message || e})`)
-    return
+    log(opts, `Could not fetch game for ${cave.gameId}, skipping (${e.message || e})`)
+    return {err: e}
   }
 
   const logger = new mklog.Logger({sinks: {console: false, string: true}})
@@ -106,7 +120,7 @@ function * checkForGameUpdate (cave) {
       if (uploads.length === 0) {
         log(opts, `Can't check for updates for ${game.title}, no uploads.`)
         logger.contents.split('\n').map((line) => log(opts, `> ${line}`))
-        return
+        return {err: 'No uploads found'}
       }
 
       let hasUpgrade = false
@@ -119,6 +133,10 @@ function * checkForGameUpdate (cave) {
         } else {
           if (upload.buildId !== cave.buildId) {
             log(opts, `Got new build available: ${upload.buildId} > ${cave.buildId}`)
+            if (noisy) {
+              yield put(statusMessage(['status.game_update.found', {title: game.title}]))
+            }
+
             hasUpgrade = true
 
             const upgradeOpts = {
@@ -145,9 +163,10 @@ function * checkForGameUpdate (cave) {
                 totalSize,
                 cave
               })
-              return
+              return {hasUpgrade}
             } catch (e) {
               log(opts, `While getting upgrade path: ${e.message || e}`)
+              return {err: e.message}
             }
           }
         }
@@ -159,6 +178,10 @@ function * checkForGameUpdate (cave) {
         log(opts, `Got a new upload for ${game.title}: ${upload.filename}`)
         const archivePath = pathmaker.downloadPath(upload)
 
+        if (noisy) {
+          yield put(statusMessage(['status.game_update.found', {title: game.title}]))
+        }
+
         yield call(startDownload, {
           game,
           gameId: game.id,
@@ -168,13 +191,20 @@ function * checkForGameUpdate (cave) {
           downloadKey,
           reason: 'update'
         })
+        return {hasUpgrade}
       }
     } catch (e) {
       log(opts, `While looking for update: ${e.stack || e}`)
+      return {err: e}
     }
   } else {
     log(opts, `Can't check for updates for ${game.title}, not visible by current user?`)
   }
+
+  if (noisy) {
+    yield put(statusMessage(['status.game_update.not_found', {title: game.title}]))
+  }
+  return {}
 }
 
 function * installUpdater () {

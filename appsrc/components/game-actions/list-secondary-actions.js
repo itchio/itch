@@ -97,6 +97,13 @@ export default function listSecondaryActions (props) {
       action: actions.copyToClipboard(`game ${game.id}, version ${version}`)
     })
 
+    items.push({
+      type: 'secondary',
+      icon: 'diamond',
+      label: ['grid.item.check_for_update'],
+      action: actions.checkForGameUpdate({caveId: cave.id, noisy: true})
+    })
+
     if (task === 'error' || task === 'idle') {
       items.push(uninstallAction(cave.id))
     }
