@@ -74,8 +74,8 @@ function * _checkForGameUpdate (action) {
   }
 }
 
-function * checkForGameUpdate (cave, opts = {}) {
-  const {noisy = false} = opts
+function * checkForGameUpdate (cave, taskOpts = {}) {
+  const {noisy = false} = taskOpts
 
   if (!cave.launchable) {
     log(opts, `Cave isn't launchable, skipping: ${cave.id}`)
@@ -173,9 +173,21 @@ function * checkForGameUpdate (cave, opts = {}) {
       }
 
       const upload = uploads[0]
+      const differentUpload = upload.id !== cave.uploadId
+      const wentWharf = upload.buildId && !cave.buildId
 
-      if (hasUpgrade || upload.id !== cave.uploadId) {
+      if (hasUpgrade || differentUpload || wentWharf) {
         log(opts, `Got a new upload for ${game.title}: ${upload.filename}`)
+        if (hasUpgrade) {
+          log(opts, '(Reason: forced)')
+        }
+        if (differentUpload) {
+          log(opts, '(Reason: different upload)')
+        }
+        if (wentWharf) {
+          log(opts, '(Reason: went wharf)')
+        }
+
         const archivePath = pathmaker.downloadPath(upload)
 
         if (noisy) {
