@@ -104,7 +104,7 @@ let self = {
     }
 
     const reader = sf.createReadStream(archivePath, {encoding: 'binary'})
-    reader.on('data', buf => {
+    reader.on('data', (buf) => {
       for (let search of searches) {
         search.push(buf)
       }
