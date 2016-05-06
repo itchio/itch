@@ -14,8 +14,9 @@
 
   const env = require('../app/env')
   env.name = 'test'
+  process.env.NODE_ENV = 'test'
 
-  let is_dir = (f) => {
+  let isDir = (f) => {
     try {
       return fs.lstatSync(f).isDirectory()
     } catch (e) {
@@ -30,7 +31,7 @@
   }
 
   for (let arg of args) {
-    if (is_dir(arg)) {
+    if (isDir(arg)) {
       console.log(`Running all specs in ${arg}`)
       arg = `${arg}/**/*-spec.js`
     }
