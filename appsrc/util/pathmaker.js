@@ -32,7 +32,7 @@ export function appPath (cave) {
 export function downloadPath (upload) {
   invariant(typeof upload === 'object', 'valid upload')
   invariant(upload.id, 'upload has id')
-  invariant(upload.filename, 'upload has filename')
+  invariant(typeof upload.filename === 'string', 'upload has filename')
   const ext = /\.[^\.]+$/.exec(upload.filename) || ''
   let slug = upload.id
   if (upload.buildId) {

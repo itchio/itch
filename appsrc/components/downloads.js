@@ -18,6 +18,15 @@ class Downloads extends Component {
     const {t, items, finishedItems, paused} = this.props
     const {clearFinishedDownloads} = this.props
 
+    const hasItems = (items.length + finishedItems.length) > 0
+    if (!hasItems) {
+      return <ul className='downloads-page'>
+        <li className='empty'>
+          {t('status.downloads.no_active_downloads')}
+        </li>
+      </ul>
+    }
+
     return <ul className='downloads-page'>
     {items::map((item, i) =>
       <DownloadRow key={item.id} item={item} first={i === 0} paused={paused} active/>

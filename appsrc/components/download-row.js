@@ -90,7 +90,7 @@ class DownloadRow extends Component {
     }
 
     const perc = (progress * 100).toFixed(1) + '%'
-    const sizeLeft = humanize.fileSize(item.totalSize * (1 - progress))
+    const sizeLeft = item.totalSize ? humanize.fileSize(item.totalSize * (1 - progress)) : t('status.downloads.unknown_size')
     const reasonText = this.reasonText(reason)
 
     return <div>

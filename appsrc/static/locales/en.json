@@ -232,6 +232,7 @@
     "status.downloads.download_error": "Download error",
     "status.downloads.no_active_downloads": "No active downloads",
     "status.downloads.category.finished": "Finished downloads",
+    "status.downloads.unknown_size": "Unknown",
     "status.downloads.clear_finished": "Clear",
     "status.downloads.clear_all_finished": "Clear all",
     "status.downloads.click_to_manage": "Click to manage downloads",

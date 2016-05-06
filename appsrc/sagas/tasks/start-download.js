@@ -15,7 +15,7 @@ export function * startDownload (downloadOpts) {
   invariant(downloadOpts, 'startDownload cannot have null opts')
   invariant(downloadOpts.reason, 'startDownload must have a reason')
   invariant(downloadOpts.game, 'startDownload must have a game')
-  invariant(downloadOpts.totalSize, 'startDownload must have a total size')
+  invariant(typeof downloadOpts.totalSize === 'number', 'startDownload must have a total size')
 
   const existing = yield select((state) => state.tasks.downloadsByGameId[downloadOpts.game.id])
   if (existing && !existing.finished) {

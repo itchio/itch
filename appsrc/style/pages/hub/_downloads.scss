@@ -114,4 +114,8 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
       }
     }
   }
+
+  li.empty {
+    color: $secondary-text-color;
+  }
 }
