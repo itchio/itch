@@ -5,7 +5,7 @@ import {app} from '../electron'
 import invariant from 'invariant'
 
 const APPDATA_RE = /^appdata\/(.*)$/
-import {DATE_FORMAT} from './format'
+import {FS_DATE_FORMAT} from './format'
 import dateFormat from 'dateformat'
 
 export function appPath (cave) {
@@ -52,7 +52,7 @@ export function preferencesPath () {
 }
 
 export function logPath () {
-  return path.join(app.getPath('userData'), 'logs', 'itch-' + dateFormat(new Date(), DATE_FORMAT) + '.txt')
+  return path.join(app.getPath('userData'), 'logs', 'itch-' + dateFormat(new Date(), FS_DATE_FORMAT) + '.txt')
 }
 
 export function userDbPath (userId) {

@@ -112,6 +112,10 @@ const self = {
     return await fs.readFileAsync(file, {encoding: 'utf8'})
   },
 
+  appendFile: async (file, contents, options) => {
+    return await fs.appendFileAsync(file, contents, options)
+  },
+
   /**
    * Writes an utf-8 string to 'file'. Creates any directory needed.
    */

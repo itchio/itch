@@ -55,10 +55,7 @@ export class Logger {
             try {
               fs.mkdirSync(path.dirname(val))
             } catch (err) {}
-            this.fileSink = sf.createWriteStream(val, {
-              defaultEncoding: 'utf8',
-              flags: 'a'
-            })
+            this.fileSink = val
           }
           break
         }
@@ -103,12 +100,12 @@ export class Logger {
         const color = this.nameToColor(matches[1])
         console.log(timestamp + ' ' + colors[color](s))
       } else {
-        console.log(`[${timestamp}] ${s}`)
+        console.log(`${timestamp} ${s}`)
       }
     }
 
     if (this.fileSink) {
-      this.fileSink.write(eol.auto(`[${timestamp}] ${s}` + '\n'))
+      sf.appendFile(this.fileSink, eol.auto(`${timestamp} ${s}` + '\n'))
     }
   }
 

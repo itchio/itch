@@ -36,6 +36,7 @@ export function seconds (secs) {
 }
 
 export const DATE_FORMAT = 'mmmm dS, yyyy @ HH:MM TT'
+export const FS_DATE_FORMAT = 'yyyy.mm.dd-HH.MM.TT'
 
 export function price (currency, value) {
   if (currency === 'USD') {
