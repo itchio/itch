@@ -190,7 +190,7 @@ export default handleActions({
     const snapshot = action.payload
     invariant(typeof snapshot === 'object', 'tab snapshot must be an object')
 
-    const {id} = state
+    const id = snapshot.current || state.id
     const tabData = []
     const transient = snapshot.items::map((tab) => {
       if (typeof tab !== 'object' || !tab.id || !tab.path) {
