@@ -12,7 +12,7 @@ import uuid from 'node-uuid'
 import urlParser from 'url'
 
 import {shell} from '../electron'
-import {takeEvery} from './effects'
+import {delay, takeEvery} from './effects'
 import {call, select, put, fork} from 'redux-saga/effects'
 import {sortBy, findWhere, map, filter, pluck} from 'underline'
 
@@ -35,7 +35,8 @@ import {
   navigate, openUrl, tabChanged, tabsChanged, tabDataFetched, tabEvolved,
   queueGame, tabsRestored, checkForGameUpdate, probeCave, updatePreferences,
   queueCaveReinstall, queueCaveUninstall, exploreCave, initiatePurchase,
-  historyRead, closeModal, loginWithToken, handleItchioUrl, statusMessage
+  historyRead, closeModal, loginWithToken, handleItchioUrl, statusMessage,
+  dismissStatusMessage
 } from '../actions'
 
 import {
@@ -483,9 +484,9 @@ function * _probeCave (action) {
 function * _copyToClipboard (action) {
   clipboard.writeText(action.payload)
 
-  const i18n = yield select((state) => state.i18n)
-  const t = localizer.getT(i18n.strings, i18n.lang)
-  yield put(statusMessage(t('status.copied_to_clipboard')))
+  yield put(statusMessage(['status.copied_to_clipboard']))
+  yield call(delay, 3000)
+  yield put(dismissStatusMessage())
 }
 
 function * _toggleMiniSidebar (action) {

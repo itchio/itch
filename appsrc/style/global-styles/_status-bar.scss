@@ -93,4 +93,13 @@
   .icon {
     margin-right: 8px;
   }
+
+  .icon-cross {
+    margin-left: 8px;
+    -webkit-filter: brightness(90%);
+
+    &:hover {
+      -webkit-filter: none;
+    }
+  }
 }

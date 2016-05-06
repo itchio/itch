@@ -44,7 +44,7 @@ class StatusBar extends Component {
       onClick = dismissStatusMessage
       children = [
         <Icon icon='heart-filled'/>,
-        <span>{statusMessages[0]}</span>,
+        <span>{t.format(statusMessages[0])}</span>,
         <Icon icon='cross'/>
       ]
     } else if (error) {
