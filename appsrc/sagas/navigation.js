@@ -3,7 +3,7 @@ import createQueue from './queue'
 import {createSelector} from 'reselect'
 import {pathToId, gameToTabData, userToTabData, collectionToTabData, locationToTabData} from '../util/navigation'
 import {getUserMarket} from './market'
-import {BrowserWindow, Menu} from '../electron'
+import {BrowserWindow, Menu, clipboard} from '../electron'
 
 import invariant from 'invariant'
 import clone from 'clone'
@@ -35,7 +35,7 @@ import {
   navigate, openUrl, tabChanged, tabsChanged, tabDataFetched, tabEvolved,
   queueGame, tabsRestored, checkForGameUpdate, probeCave, updatePreferences,
   queueCaveReinstall, queueCaveUninstall, exploreCave, initiatePurchase,
-  historyRead, closeModal, loginWithToken, handleItchioUrl
+  historyRead, closeModal, loginWithToken, handleItchioUrl, statusMessage
 } from '../actions'
 
 import {
@@ -43,7 +43,7 @@ import {
   VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION,
   TRIGGER_OK, TRIGGER_BACK, WINDOW_FOCUS_CHANGED, TAB_RELOADED,
   OPEN_TAB_CONTEXT_MENU, INITIATE_PURCHASE, PROBE_CAVE, FOCUS_NTH_TAB, NEW_TAB,
-  TOGGLE_MINI_SIDEBAR
+  TOGGLE_MINI_SIDEBAR, COPY_TO_CLIPBOARD
 } from '../constants/action-types'
 
 function * retrieveTabData (id, retrOpts = {}) {
@@ -480,6 +480,14 @@ function * _probeCave (action) {
   yield put(openUrl('https://gist.github.com/fasterthanlime/fc0116df32b53c7939016afe0d26796d'))
 }
 
+function * _copyToClipboard (action) {
+  clipboard.writeText(action.payload)
+
+  const i18n = yield select((state) => state.i18n)
+  const t = localizer.getT(i18n.strings, i18n.lang)
+  yield put(statusMessage(t('status.copied_to_clipboard')))
+}
+
 function * _toggleMiniSidebar (action) {
   const {miniSidebar} = yield select((state) => state.preferences)
   yield put(updatePreferences({miniSidebar: !miniSidebar}))
@@ -516,6 +524,7 @@ export default function * navigationSaga () {
     takeEvery(SHOW_PREVIOUS_TAB, _showPreviousTab),
     takeEvery(SHOW_NEXT_TAB, _showNextTab),
     takeEvery(OPEN_URL, _openUrl),
+    takeEvery(COPY_TO_CLIPBOARD, _copyToClipboard),
     takeEvery(VIEW_CREATOR_PROFILE, _viewCreatorProfile),
     takeEvery(VIEW_COMMUNITY_PROFILE, _viewCommunityProfile),
     takeEvery(TAB_CHANGED, _tabChanged),

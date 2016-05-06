@@ -12,7 +12,10 @@ import {
   APPLY_SELF_UPDATE_REQUEST,
   APPLY_SELF_UPDATE,
   SNOOZE_SELF_UPDATE,
-  DISMISS_STATUS
+  DISMISS_STATUS,
+
+  STATUS_MESSAGE,
+  DISMISS_STATUS_MESSAGE
 } from '../constants/action-types'
 
 export const checkForSelfUpdate = createAction(CHECK_FOR_SELF_UPDATE)
@@ -26,3 +29,6 @@ export const applySelfUpdateRequest = createAction(APPLY_SELF_UPDATE_REQUEST)
 export const applySelfUpdate = createAction(APPLY_SELF_UPDATE)
 export const snoozeSelfUpdate = createAction(SNOOZE_SELF_UPDATE)
 export const dismissStatus = createAction(DISMISS_STATUS)
+
+export const statusMessage = createAction(STATUS_MESSAGE)
+export const dismissStatusMessage = createAction(DISMISS_STATUS_MESSAGE)

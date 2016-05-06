@@ -23,12 +23,13 @@ export class Dropdown extends Component {
     const dropdownClasses = classNames('dropdown', {active: open})
 
     const children = items::map((item) => {
-      const {label, icon, action} = item
+      const {label, icon, action, type} = item
       let {onClick = () => dispatch(action)} = item
+      const itemClasses = classNames('dropdown-item', `type-${type}`)
 
-      return <section className='dropdown-item' key={label + '-' + icon} onClick={() => { onClick(); this.close() }}>
+      return <section className={itemClasses} key={label + '-' + icon} onClick={() => { onClick(); this.close() }}>
         <Icon icon={icon}/>
-        {t.apply(null, label)}
+        {t.format(label)}
       </section>
     })
 

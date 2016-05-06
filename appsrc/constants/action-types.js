@@ -66,6 +66,7 @@ module.exports = keyMirror({
   SHOW_NEXT_TAB: null,
   SWITCH_PAGE: null,
   OPEN_URL: null,
+  COPY_TO_CLIPBOARD: null,
   HANDLE_ITCHIO_URL: null,
   TRIGGER_MAIN_ACTION: null,
   TRIGGER_OK: null,
@@ -108,6 +109,9 @@ module.exports = keyMirror({
   APPLY_SELF_UPDATE: null,
   APPLY_SELF_UPDATE_REQUEST: null,
   DISMISS_STATUS: null,
+
+  STATUS_MESSAGE: null,
+  DISMISS_STATUS_MESSAGE: null,
 
   /* Locales */
   LOCALES_CONFIG_LOADED: null,

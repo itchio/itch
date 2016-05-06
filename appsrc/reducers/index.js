@@ -14,6 +14,7 @@ import ui from './ui'
 import selfUpdate from './self-update'
 import preferences from './preferences'
 import tasks from './tasks'
+import status from './status'
 
 const reducer = combineReducers({
   history,
@@ -28,6 +29,7 @@ const reducer = combineReducers({
   ui,
   selfUpdate,
   preferences,
-  tasks
+  tasks,
+  status
 })
 export default reducer

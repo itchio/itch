@@ -13,6 +13,7 @@ if (env.name === 'test') {
 }
 
 export const app = electron.app
+export const clipboard = electron.clipboard
 export const powerSaveBlocker = electron.powerSaveBlocker
 export const ipcMain = electron.ipcMain
 export const ipcRenderer = electron.ipcRenderer

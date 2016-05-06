@@ -19,7 +19,11 @@ class SecondaryActions extends Component {
 
   action (opts) {
     const {t, dispatch} = this.props
-    const {action, label, icon} = opts
+    const {action, label, icon, type = 'action'} = opts
+
+    if (type === 'info' || type === 'separator') {
+      return
+    }
 
     return <span key={label} className='secondary-action hint--top' onClick={() => dispatch(action)} data-hint={t.format(label)}>
       <Icon icon={icon}/>

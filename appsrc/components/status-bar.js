@@ -22,8 +22,8 @@ class StatusBar extends Component {
   }
 
   render () {
-    const {t, selfUpdate, offlineMode} = this.props
-    const {dismissStatus, applySelfUpdateRequest, showAvailableSelfUpdate, updatePreferences} = this.props
+    const {t, statusMessages, selfUpdate, offlineMode} = this.props
+    const {dismissStatus, dismissStatusMessage, applySelfUpdateRequest, showAvailableSelfUpdate, updatePreferences} = this.props
     let {status, error, uptodate, available, downloading, downloaded, checking} = selfUpdate
 
     let children = []
@@ -38,6 +38,13 @@ class StatusBar extends Component {
       children = [
         <Icon icon='heart-filled'/>,
         <span>{status}</span>,
+        <Icon icon='cross'/>
+      ]
+    } else if (statusMessages.length > 0) {
+      onClick = dismissStatusMessage
+      children = [
+        <Icon icon='heart-filled'/>,
+        <span>{statusMessages[0]}</span>,
         <Icon icon='cross'/>
       ]
     } else if (error) {
@@ -177,6 +184,7 @@ StatusBar.propTypes = {
   applySelfUpdateRequest: PropTypes.func.isRequired,
   showAvailableSelfUpdate: PropTypes.func.isRequired,
   dismissStatus: PropTypes.func.isRequired,
+  dismissStatusMessage: PropTypes.func.isRequired,
   updatePreferences: PropTypes.func.isRequired,
   navigate: PropTypes.func.isRequired
 }
@@ -186,7 +194,8 @@ const mapStateToProps = createStructuredSelector({
   historyItems: (state) => state.history.itemsByDate,
   downloadItems: (state) => state.tasks.downloadsByOrder,
   finishedDownloads: (state) => state.tasks.finishedDownloads,
-  selfUpdate: (state) => state.selfUpdate
+  selfUpdate: (state) => state.selfUpdate,
+  statusMessages: (state) => state.status.messages
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -194,6 +203,7 @@ const mapDispatchToProps = (dispatch) => ({
   showAvailableSelfUpdate: () => dispatch(actions.showAvailableSelfUpdate()),
   applySelfUpdateRequest: () => dispatch(actions.applySelfUpdateRequest()),
   dismissStatus: () => dispatch(actions.dismissStatus()),
+  dismissStatusMessage: () => dispatch(actions.dismissStatusMessage()),
   navigate: (path) => dispatch(actions.navigate(path))
 })
 

@@ -80,6 +80,23 @@ export default function listSecondaryActions (props) {
       }
     }
 
+    items.push({
+      type: 'separator'
+    })
+
+    let version = `${cave.uploadId}`
+    if (cave.buildId) {
+      version += `/${cave.buildId}`
+    }
+    version += ` @ ${cave.installedArchiveMtime}`
+
+    items.push({
+      type: 'info',
+      icon: 'checkmark',
+      label: ['grid.item.version', {version}],
+      action: actions.copyToClipboard(`game ${game.id}, version ${version}`)
+    })
+
     if (task === 'error' || task === 'idle') {
       items.push(uninstallAction(cave.id))
     }

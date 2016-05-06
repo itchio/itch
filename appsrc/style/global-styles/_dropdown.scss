@@ -3,7 +3,7 @@ $dropdown-background-color: lighten($sidebar-entry-focused-background-color, 5%)
 
 .dropdown-container {
   position: relative;
-  
+
   &.disabled {
     opacity: 0;
     pointer-events: none;
@@ -41,6 +41,16 @@ $dropdown-background-color: lighten($sidebar-entry-focused-background-color, 5%)
 
     .icon {
       margin: 0 8px;
+    }
+
+    &.type-info {
+      color: #6D6D6D;
+    }
+
+    &.type-separator {
+      height: 1px;
+      padding: 0;
+      background: #444242;
     }
   }
 }
