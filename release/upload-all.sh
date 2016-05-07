@@ -1,6 +1,8 @@
 #!/bin/sh -xe
+# upload assets to github release using https://github.com/itchio/github-release
+# fails stupidly often, hence the retry logic - you'd be surprised how
+# many times that 5*30 delay allowed me to delete the asset manually.
 
-# Let lord GitHub not be 502'ing, and I will upload one more time - the Devops bible
 for f in $(echo $UPLOADS); do
   success=""
   for i in 1 2 3 4 5; do

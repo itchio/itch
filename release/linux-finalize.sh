@@ -1,4 +1,5 @@
 #!/bin/sh -xe
+# generate .deb and .rpm packages
 
 gem install dpl
 CI_RELEASE_DATE="`date +%Y-%m-%d`"

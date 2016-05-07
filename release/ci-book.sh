@@ -1,4 +1,6 @@
 #!/bin/sh -xe
+# generate latest documentation for itch using gitbook
+# and deploy it to google cloud storage.
 
 npm version
 npm install -g gitbook-cli

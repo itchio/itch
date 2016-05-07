@@ -1,4 +1,9 @@
 #!/bin/sh -e
+# TODO: replace with ruby/python version at some point - anything but shell
+# enter a version like vX.Y.Z-canary to release a canary build, enter
+# vX.Y.Z to release a stable build. pushing tags trigger builds.
+# FIXME: git-mirrors doesn't seem to react on pushing tags without
+# new objects (commits).
 
 PKG_VERSION=`grep "version" < package.json | cut -d '"' -f 4`
 echo "Package version is: $PKG_VERSION, type yours"

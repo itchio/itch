@@ -1,4 +1,5 @@
 #!/bin/bash
+# print a list of unused i18n strings, and missing i18n strings
 
 EN_FILE="app/static/locales/en.json"
 TYPES="--shell --js"

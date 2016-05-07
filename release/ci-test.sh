@@ -1,4 +1,5 @@
 #!/bin/sh -xe
+# compile javascript code and run unit tests
 
 release/check-prerequisites.sh
 export NPM_CMD="npm --no-progress --quiet"

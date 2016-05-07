@@ -1,4 +1,5 @@
 #!/bin/sh -xe
+# prepare 'env.js' for release, adjust package name in package.json if needed
 
 export NODE_ENV=production
 export PATH=$PATH:$PWD/node_modules/.bin

@@ -1,4 +1,6 @@
 #!/bin/sh -xe
+# generate localized desktop file from desktop.in and locales file
+# are grep/cut the wrong tools for parsing JSON? absolutely!
 
 DST=release/${CI_APPNAME}.desktop
 cat release/${CI_APPNAME}.desktop.in > $DST

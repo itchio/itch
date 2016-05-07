@@ -1,4 +1,6 @@
 #!/bin/sh -xe
+# prepares tools and environment variable for generating production,
+# then calls out to publish script>
 
 if [ -z "$CI_BUILD_TAG" ]; then
   exit 0

@@ -1,4 +1,5 @@
 #!/bin/sh -xe
+# build and upload packages to github/bintray/etc.
 
 if [ "$CI_ARCH" = "386" ]; then
   ELECTRON_ARCH="ia32"

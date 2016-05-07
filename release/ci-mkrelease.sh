@@ -1,4 +1,9 @@
 #!/bin/sh -e
+# create upcoming github release whenever a tag is pushed.
+# will remove existing release if any, allowing us to
+# force-push tags gone bad. this is only useful for cosmetic
+# reasons (no weird version number skips). was more useful
+# on jenkins, where we couldn't retry a single build in a pipeline.
 
 if [ -z "$CI_BUILD_TAG" ]; then
   exit 0

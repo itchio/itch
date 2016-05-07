@@ -1,4 +1,5 @@
 #!/bin/sh -xe
+# sign osx binary using @fasterthanlime's certificate and generate dmg
 
 OSX_SIGN_KEY="Developer ID Application: Amos Wenger (B2N6FSRTPV)"
 
