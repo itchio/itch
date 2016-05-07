@@ -54,6 +54,7 @@ function * _loginSucceeded (action) {
   yield call(fetchUsuals, credentials)
 }
 
+// TODO: make this an action, make it use `takeLatest` for free cancelling
 function * fetchUsuals (credentials) {
   invariant(credentials.key, 'have API key')
 

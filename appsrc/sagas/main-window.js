@@ -171,13 +171,18 @@ export function * _windowBoundsChanged (action) {
   config.set(BOUNDS_CONFIG_KEY, bounds)
 }
 
-export function * _focusWindow () {
+export function * _focusWindow (action) {
   const id = yield select((state) => state.ui.mainWindow.id)
+  const options = action.payload || {}
 
   if (id) {
     const window = BrowserWindow.fromId(id)
     invariant(window, 'window still exists')
-    yield call(::window.show)
+    if (options.toggle && window.isVisible()) {
+      yield call(::window.hide)
+    } else {
+      yield call(::window.show)
+    }
   } else {
     yield fork(_createWindow)
   }
