@@ -25,15 +25,15 @@ test:
   except:
     - tags
 
-mkrelease:
-  stage: mkrelease
-  tags:
-    - linux
-  script:
-    - release/ci-mkrelease.sh
-  only:
-    - tags
-
+# mkrelease:
+#   stage: mkrelease
+#   tags:
+#     - linux
+#   script:
+#     - release/ci-mkrelease.sh
+#   only:
+#     - tags
+#
 # deploy:linux:386:
 #   stage: deploy
 #   tags:
