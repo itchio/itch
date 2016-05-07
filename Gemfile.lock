@@ -1,0 +1,10 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    semver (1.0.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  semver
