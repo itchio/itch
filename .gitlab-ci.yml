@@ -34,55 +34,55 @@ mkrelease:
   only:
     - tags
 
-deploy:linux:386:
-  stage: deploy
-  tags:
-    - linux
-  script:
-    - export CI_OS=linux
-    - export CI_ARCH=386
-    - release/ci-deploy.sh
-  only:
-    - tags
-
-deploy:linux:amd64:
-  stage: deploy
-  tags:
-    - linux
-  script:
-    - export CI_OS=linux
-    - export CI_ARCH=amd64
-    - release/ci-deploy.sh
-  only:
-    - tags
-
-deploy:darwin:amd64:
-  stage: deploy
-  tags:
-    - darwin
-  script:
-    - export CI_OS=darwin
-    - export CI_ARCH=amd64
-    - release/ci-deploy.sh
-  only:
-    - tags
-
-deploy:windows:386:
-  stage: deploy
-  tags:
-    - windows
-  script:
-    - export CI_OS=windows
-    - export CI_ARCH=386
-    - release/ci-deploy.sh
-  only:
-    - tags
-
-notify:
-  stage: notify
-  tags:
-    - linux
-  script:
-    - release/ci-notify.sh
-  only:
-    - tags
+# deploy:linux:386:
+#   stage: deploy
+#   tags:
+#     - linux
+#   script:
+#     - export CI_OS=linux
+#     - export CI_ARCH=386
+#     - release/ci-deploy.sh
+#   only:
+#     - tags
+#
+# deploy:linux:amd64:
+#   stage: deploy
+#   tags:
+#     - linux
+#   script:
+#     - export CI_OS=linux
+#     - export CI_ARCH=amd64
+#     - release/ci-deploy.sh
+#   only:
+#     - tags
+#
+# deploy:darwin:amd64:
+#   stage: deploy
+#   tags:
+#     - darwin
+#   script:
+#     - export CI_OS=darwin
+#     - export CI_ARCH=amd64
+#     - release/ci-deploy.sh
+#   only:
+#     - tags
+#
+# deploy:windows:386:
+#   stage: deploy
+#   tags:
+#     - windows
+#   script:
+#     - export CI_OS=windows
+#     - export CI_ARCH=386
+#     - release/ci-deploy.sh
+#   only:
+#     - tags
+#
+# notify:
+#   stage: notify
+#   tags:
+#     - linux
+#   script:
+#     - release/ci-notify.sh
+#   only:
+#     - tags
