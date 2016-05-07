@@ -1,7 +1,11 @@
 # base functions useful throughout CI scripts
 
+# avert your eyes for a minute...
+system 'bundle install'
 require 'rubygems'
 require 'bundler/setup'
+# all good! you may resume reading the code
+
 require 'colored'
 
 module Itch
