@@ -57,3 +57,5 @@ else
   system %Q{#{push_cmd} --force} or raise
 end
 
+system %Q{git push} or raise
+
