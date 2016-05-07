@@ -116,15 +116,15 @@ with [dpl][].
 All artifacts are uploaded to the relevant GitHub release pages:
 
   * https://github.com/itchio/itch/releases
-  * https://github.com/itchio/itch_canary/releases
+  * https://github.com/itchio/kitch/releases
 
-...using our fork of [github-release][], a golang uploader.
+...using [gothub][], a golang uploader.
 
 *Our fork adds the `-R` command-line option, which replaces an asset if it
 already exists, and is necessary to retry failed uploads to GitHub (which
 used to happen a lot).*
 
-[github-release]: https://github.com/itchio/github-release
+[gothub]: https://github.com/itchio/gothub
 
 ### Actually publishing the release
 
@@ -154,25 +154,24 @@ by hand. The actual "ship it" process looks like:
 When making large structural changes, it is sometimes useful to have a completely
 separate version of the app with no expectations of stability.
 
-`itch_canary` is exactly that. It is meant to be installed in parallel of the
-stable app, and has a distinct branding, uses different folders
-(`%APPDATA%/itch_canary`, `~/.config/itch_canary`, `~/Library/Application
-Support/itch_canary`).
+`kitch` is exactly that. It is meant to be installed in parallel of the
+stable app, and has a distinct branding (blue instead of itch.io pink),
+uses different folders (`%APPDATA%/kitch`, `~/.config/kitch`, `~/Library/Application
+Support/kitch`).
 
 ![](itch-canary.png)
 
 It can be downloaded either:
 
   * From the update server: <http://nuts-canary.itch.ovh/download>
-  * Directly from the releases page: <https://github.com/itchio/itch_canary/releases>
+  * Directly from the releases page: <https://github.com/itchio/kitch/releases>
 
 *Note that releases appear out-of-order on the releases page, because GitHub
-associates them all with the same commit, since `itch_canary` is actually an
+associates them all with the same commit, since `kitch` is actually an
 empty repository.*
 
 Additionally:
 
-  * **Do not** expect to be able to do anything useful using the canary version
   * **Do** expect the canary version to break on occasion
   * **Do** report back if you try it and you've found an issue that doesn't seem
   to be on the [issue tracker](https://github.com/itchio/itch/issues)

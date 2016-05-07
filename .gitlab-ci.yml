@@ -5,44 +5,23 @@ cache:
 
 stages:
   - test
-  - mkrelease
-  - deploy
-  - notify
+  # - mkrelease
+  # - deploy
+  # - notify
 
 book:
   stage: test
   tags:
     - dropsy
   script:
-    - release/ci-book.sh
+    - release/ci-book.rb
 
-test:linux:
+test:
   stage: test
   tags:
     - linux
   script:
-    - export CI_OS=linux
-    - release/ci-test.sh
-  except:
-    - tags
-
-test:darwin:
-  stage: test
-  tags:
-    - darwin
-  script:
-    - export CI_OS=darwin
-    - release/ci-test.sh
-  except:
-    - tags
-
-test:windows:
-  stage: test
-  tags:
-    - windows
-  script:
-    - export CI_OS=windows
-    - release/ci-test.sh
+    - release/ci-test.rb
   except:
     - tags
 

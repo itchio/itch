@@ -1,0 +1,15 @@
+{
+  "title": "itch",
+
+  "icon": "../images/itch-icons/itch.icns",
+
+  "background": "../images/dmg-background.png",
+
+  "icon-size": 80,
+
+  "contents": [
+    { "x": 190, "y": 382, "type": "file", "path": "../../itch.app" },
+    { "x": 425, "y": 382, "type": "link", "path": "/Applications" }
+  ]
+
+}

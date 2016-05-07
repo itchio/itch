@@ -1,10 +1,12 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    colored (1.2)
     semver (1.0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  colored
   semver
