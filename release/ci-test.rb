@@ -1,4 +1,4 @@
-#!/usr/bin/env bundle exec ruby
+#!/usr/bin/env ruby
 # compile javascript code and run unit tests
 
 require_relative 'common'

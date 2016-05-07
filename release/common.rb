@@ -1,7 +1,8 @@
-
 # base functions useful throughout CI scripts
 
-require "colored"
+require 'rubygems'
+require 'bundler/setup'
+require 'colored'
 
 module Itch
   HOME = ENV['HOME']

@@ -1,4 +1,4 @@
-#!/usr/bin/env bundle exec ruby
+#!/usr/bin/env ruby
 # generate latest documentation for itch using gitbook
 # and deploy it to google cloud storage.
 
