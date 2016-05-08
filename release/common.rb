@@ -9,6 +9,7 @@ require 'bundler/setup'
 require 'colored'
 
 module Itch
+  RETRY_COUNT = 5
   HOME = ENV['HOME']
 
   # local golang executables
@@ -101,11 +102,14 @@ module Itch
 
   # retry command a few times before giving up
   def Itch.↻
-    tries_left = RETRY_COUNT
-    while tries_left > 0
+    tries = 0
+    while tries < RETRY_COUNT
+      if tries > 0
+        say "Command failed, waiting 30s then trying #{RETRY_COUNT - tries} more time(s)."
+        sleep 30
+      end
       return if yield # cmd returned truthy value, was successful
-      say "Command failed, trying #{tries_left} more times."
-      tries_left -= 1
+      tries += 1
     end
     raise "Tried #{RETRY_COUNT} times, bailing out"
   end
