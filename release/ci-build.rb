@@ -12,7 +12,7 @@ module Itch
 
     say "Building #{app_name} for #{os}-#{arch}"
     os_info = OSES[os] or raise "Unknown os #{os}"
-    arch_info = ARCHES[atch] or raise "Unknown arch #{arch}"
+    arch_info = ARCHES[arch] or raise "Unknown arch #{arch}"
   end
 
   # Supported operating systems

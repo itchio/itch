@@ -53,9 +53,8 @@ push_cmd = %Q{git push origin #{tag}}
 if system push_cmd
   puts "Tag pushed..."
 else
-  yesno "Tag already exists on remote. Force-push? (y/n)"
+  yesno "Tag already exists on remote. Force-push?"
   system %Q{#{push_cmd} --force} or raise
 end
 
 system %Q{git push} or raise
-
