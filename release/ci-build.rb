@@ -13,6 +13,9 @@ module Itch
     say "Building #{app_name} for #{os}-#{arch}"
     os_info = OSES[os] or raise "Unknown os #{os}"
     arch_info = ARCHES[arch] or raise "Unknown arch #{arch}"
+
+    FileUtils.mkdir_p 'build-artifacts'
+    File.write "build-artifacts/something-#{os}-#{arch}", "#{Time.now}"
   end
 
   # Supported operating systems

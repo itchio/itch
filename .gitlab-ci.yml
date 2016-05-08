@@ -80,7 +80,7 @@ build:darwin:amd64:
 build:windows:386:
   stage: build
   tags:
-    - darwin
+    - windows
   only:
     - tags
   script:
