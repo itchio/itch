@@ -46,10 +46,9 @@ module Itch
     ✓ gothub %Q{release --tag #{build_tag} --draft --pre-release --description "#{changelog}"}
 
     say "Uploading assets..."
-    asset_dir = 'build-artifacts'
-    Dir.glob("#{asset_dir}/*").each do |name|
+    Dir.glob("build-artifacts/*").each do |name|
       ↻ do
-        gothub %Q{upload --tag #{build_tag} --name '#{name}' --file '#{asset_dir}/#{name}' --replace}
+        gothub %Q{upload --tag #{build_tag} --name '#{File.basename name}' --file '#{name}' --replace}
       end
     end
   end
