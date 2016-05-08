@@ -102,7 +102,7 @@
     "prompt.crash_reporter.detail": "Se ha escrito un registro de error a {{location}}.", 
     "prompt.crash_reporter.message": "La aplicación se ha cerrado por un error", 
     "prompt.crash_reporter.open_crash_log": "Abrir registro de error", 
-    "prompt.crash_reporter.report_issue": "Reportar problema", 
+    "prompt.crash_reporter.report_issue": "Enviar informe de errores", 
     "prompt.install_location_add.title": "Elige una nueva ruta de instalación", 
     "prompt.install_location_not_empty.detail": "Debe ser realizado manualmente, por ahora.", 
     "prompt.install_location_not_empty.message": "Las ubicaciones de instalación solo pueden ser eliminadas una vez todos sus contenidos hayan sido desinstalados.", 
