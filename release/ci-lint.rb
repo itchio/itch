@@ -14,4 +14,4 @@ module Itch
   end
 end
 
-Itch.ci_test
+Itch.ci_lint
