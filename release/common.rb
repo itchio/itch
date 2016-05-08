@@ -52,6 +52,11 @@ module Itch
     sh %Q{npm --no-progress --quiet #{args}}
   end
 
+  # run gem command
+  def Itch.gem (args)
+    sh %Q{gem #{args}}
+  end
+
   # run grunt command
   def Itch.grunt (args)
     sh %Q{grunt #{args}}
@@ -72,6 +77,17 @@ module Itch
     ENV['GITHUB_USER']='itchio'
     ENV['GITHUB_REPO']=app_name
     sh %Q{gothub #{args}}
+  end
+
+  # install a gem dep if missing
+  def Itch.gem_dep (cmd, pkg)
+    if system %Q{which #{cmd} > /dev/null}
+      puts "★ got #{cmd}".yellow
+      true
+    else
+      puts "☁ installing #{cmd}".yellow
+      gem "install #{pkg}"
+    end
   end
 
   # install a node.js dep if missing
