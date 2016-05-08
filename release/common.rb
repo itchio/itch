@@ -55,6 +55,11 @@ module Itch
     sh %Q{grunt #{args}}
   end
 
+  # run go command
+  def Itch.go (args)
+    sh %Q{go #{args}}
+  end
+
   # copy files to google cloud storage using gsutil
   def Itch.gcp (args)
     sh %Q{gsutil -m cp -r -a public-read #{args}}
