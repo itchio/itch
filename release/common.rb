@@ -1,7 +1,7 @@
 # base functions useful throughout CI scripts
 
 # avert your eyes for a minute...
-system 'bundle install'
+system 'bundle install' or raise 'Bundle install failed!'
 require 'rubygems'
 require 'bundler/setup'
 # all good! you may resume reading the code
