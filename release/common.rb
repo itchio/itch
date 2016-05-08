@@ -1,6 +1,7 @@
 # base functions useful throughout CI scripts
 
 # avert your eyes for a minute...
+ENV['PATH'] += ":#{Gem.user_dir}/bin"
 system 'bundle install' or raise 'Bundle install failed!'
 require 'rubygems'
 require 'bundler/setup'
