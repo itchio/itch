@@ -1,17 +1,16 @@
 #!/usr/bin/env ruby
-# compile javascript code and run unit tests
+# lint javascript code and run unit tests
 
 require_relative 'common'
 
 module Itch
-  def Itch.ci_test
+  def Itch.ci_lint
     show_versions %w(npm node)
 
     ✓ npm_dep 'grunt', 'grunt-cli'
     ✓ npm 'install'
 
-    ✓ npm 'test'
-    ✓ npm 'run coveralls'
+    ✓ npm 'run lint'
   end
 end
 
