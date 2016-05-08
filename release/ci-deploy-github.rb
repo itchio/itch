@@ -7,7 +7,7 @@
 require_relative 'common'
 
 module Itch
-  def Itch.ci_mkrelease
+  def Itch.ci_deploy_github
     ✓ go_dep 'gothub', 'github.com/itchio/gothub'
     show_versions %w(gothub)
 
@@ -44,7 +44,15 @@ module Itch
 
     say "Creating release..."
     ✓ gothub %Q{release --tag #{build_tag} --draft --pre-release --description "#{changelog}"}
+
+    say "Uploading assets..."
+    asset_dir = 'build-artifacts'
+    Dir.glob("#{asset_dir}/*").each do |name|
+      ↻ do
+        gothub %Q{upload --tag #{build_tag} --name '#{name}' --file '#{asset_dir}/#{name}' --replace}
+      end
+    end
   end
 end
 
-Itch.ci_mkrelease
+Itch.ci_deploy_github

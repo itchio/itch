@@ -4,11 +4,12 @@ cache:
   untracked: true
 
 stages:
-  - test
-  - mkrelease
-  # - deploy
-  # - notify
+  - test # unit tests + lint
+  - build # .rpm, .deb, .dmg., .zip
+  - deploy # github releases, bintray, AUR
+  - notify # pushover
 
+# Gitbook documentation
 book:
   stage: test
   tags:
@@ -16,6 +17,7 @@ book:
   script:
     - release/ci-book.rb
 
+# Unit tests
 test:
   stage: test
   tags:
@@ -25,64 +27,112 @@ test:
   except:
     - tags
 
-mkrelease:
-  stage: mkrelease
+# JavaScript standard formatting
+lint:
+  stage: test
   tags:
     - linux
   script:
-    - release/ci-mkrelease.rb
-  only:
+    - release/ci-lint.rb
+  except:
     - tags
 
-# deploy:linux:386:
-#   stage: deploy
-#   tags:
-#     - linux
-#   script:
-#     - export CI_OS=linux
-#     - export CI_ARCH=386
-#     - release/ci-deploy.sh
-#   only:
-#     - tags
-#
-# deploy:linux:amd64:
-#   stage: deploy
-#   tags:
-#     - linux
-#   script:
-#     - export CI_OS=linux
-#     - export CI_ARCH=amd64
-#     - release/ci-deploy.sh
-#   only:
-#     - tags
-#
-# deploy:darwin:amd64:
-#   stage: deploy
-#   tags:
-#     - darwin
-#   script:
-#     - export CI_OS=darwin
-#     - export CI_ARCH=amd64
-#     - release/ci-deploy.sh
-#   only:
-#     - tags
-#
-# deploy:windows:386:
-#   stage: deploy
-#   tags:
-#     - windows
-#   script:
-#     - export CI_OS=windows
-#     - export CI_ARCH=386
-#     - release/ci-deploy.sh
-#   only:
-#     - tags
-#
-# notify:
-#   stage: notify
-#   tags:
-#     - linux
-#   script:
-#     - release/ci-notify.sh
-#   only:
-#     - tags
+# .rpm and .deb
+build:linux:386:
+  stage: build
+  tags:
+    - linux
+  script:
+    - release/ci-build.rb linux 386
+  only:
+    - tags
+  artifacts:
+    paths:
+      - build-artifacts
+
+# .rpm and .deb
+build:linux:amd64:
+  stage: build
+  tags:
+    - linux
+  script:
+    - release/ci-build.rb linux amd64
+  only:
+    - tags
+  artifacts:
+    paths:
+      - build-artifacts
+
+# .dmg and .zip
+build:darwin:amd64:
+  stage: build
+  tags:
+    - darwin
+  script:
+    - release/ci-build.rb darwin amd64
+  only:
+    - tags
+  artifacts:
+    paths:
+      - build-artifacts
+
+# TODO: roll out 64-bit releases
+build:windows:386:
+  stage: build
+  tags:
+    - darwin
+  only:
+    - tags
+  script:
+    - release/ci-build.rb windows 386
+  artifacts:
+    paths:
+      - build-artifacts
+
+# GitHub releases are used for Squirrel.Windows & Squirrel.Mac,
+# along with direct downloads
+deploy:github:
+  stage: deploy
+  tags:
+    - linux
+  only:
+    - tags
+  only:
+    - tags
+  script:
+    - release/ci-deploy-github.rb
+  dependencies:
+    - build:linux:386
+    - build:linux:amd64
+    - build:darwin:amd64
+    - build:windows:386
+
+# We have a YUM (rpm) & APT (deb) repository on bintray
+deploy:bintray:
+  stage: deploy
+  only:
+    - tags
+  tags:
+    - linux
+  script:
+    - release/ci-deploy-bintray.rb
+
+# ArchLinux user repository
+deploy:aur:
+  stage: deploy
+  only:
+    - tags
+  tags:
+    - archlinux
+  script:
+    - release/ci-deploy-aur.rb
+
+# Pushover
+notify:
+  stage: notify
+  tags:
+    - linux
+  script:
+    - release/ci-notify.sh
+  only:
+    - tags

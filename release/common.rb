@@ -94,6 +94,17 @@ module Itch
     raise "Non-zero exit code, bailing out" unless val
   end
 
+  # retry command a few times before giving up
+  def Itch.↻
+    tries_left = RETRY_COUNT
+    while tries_left > 0
+      return if yield # cmd returned truthy value, was successful
+      say "Command failed, trying #{tries_left} more times."
+      tries_left -= 1
+    end
+    raise "Tried #{RETRY_COUNT} times, bailing out"
+  end
+
   # enforce success of a command & return output
   def Itch.♫ (cmd)
     out = `#{cmd}`
