@@ -48,7 +48,8 @@ compile:
   only:
     - tags
   artifacts:
-    - stage
+    paths:
+      - stage
 
 # generate .desktop file for Linux
 generate-linux-extras:
@@ -56,11 +57,12 @@ generate-linux-extras:
   tags:
     - linux
   script:
-    - release/ci-build.rb
+    - release/ci-generate-linux-extras.rb
   only:
     - tags
   artifacts:
-    - linux-extras
+    paths:
+      - linux-extras
 
 # .tar.gz, .rpm and .deb
 package:linux:386:
