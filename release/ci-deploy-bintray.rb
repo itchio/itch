@@ -8,6 +8,8 @@ module Itch
     say "Should deploy to Bintray!"
     ✓ gem_dep 'dpl', 'dpl'
 
+    FileUtils.mkdir_p "build"
+
     release_date = Time.now.strftime('%Y-%m-%d')
     %w(rpm deb).each do |repo|
       %w(386 amd64).each do |arch|
