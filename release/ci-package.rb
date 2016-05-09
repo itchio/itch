@@ -63,7 +63,7 @@ module Itch
         "title" => app_name,
         "icon" => "../release/images/#{app_name}-icons/itch.icns", # sic. it's really itch.icns
         "background" => "../release/images/dmgbg.png",
-        "icon_size" => 80,
+        "icon-size" => 80,
 
         "contents" => [
           { "x" => 190, "y" => 382, "type" => "file", "path" => "../../#{app_name}.app" },

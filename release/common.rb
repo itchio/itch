@@ -72,6 +72,7 @@ module Itch
   def Itch.putln (s)
     puts s
     $stdout.flush
+    true
   end
 
   def Itch.show_versions (names)
