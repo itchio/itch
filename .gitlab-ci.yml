@@ -1,8 +1,4 @@
 
-cache:
-  key: "$CI_BUILD_STAGE/$CI_BUILD_REF_NAME"
-  untracked: true
-
 stages:
   - test # unit tests + lint
   - build # babel, node-sass etc.
