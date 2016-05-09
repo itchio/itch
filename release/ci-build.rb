@@ -37,6 +37,8 @@ module Itch
     }
     File.write("#{stage_path}/package.json", JSON.pretty_generate(pkg))
     File.write("#{stage_path}/app/env.js", JSON.pretty_generate(env))
+
+    ✓ sh "tar cfz stage.tar.gz stage"
   end
 end
 

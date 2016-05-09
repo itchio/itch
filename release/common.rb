@@ -19,6 +19,7 @@ require 'digest' # md5 sums for debian
 module Itch
   HOMEPAGE = 'https://itch.io/app'
   MAINTAINER = 'Amos Wenger <amos@itch.io>'
+  DESCRIPTION = 'The best way to play itch.io games'
 
   BUILD_TIME = Time.now.utc
 

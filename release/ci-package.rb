@@ -16,13 +16,15 @@ module Itch
     OSES[os] or raise "Unknown os #{os}"
     arch_info = ARCHES[arch] or raise "Unknown arch #{arch}"
 
+    say "Decompressing stage..."
+    ✓ sh "tar xf stage.tar.gz"
+
     show_versions %w(npm node)
 
     ✓ npm_dep 'grunt', 'grunt-cli'
     ✓ npm 'install'
 
     FileUtils.mkdir_p 'packages'
-    File.write("packages/something-#{os}-#{arch}", "#{Time.now}")
 
     say "Packaging with binary release"
     ✓ grunt "-v electron:#{os}-#{arch_info['electron_arch']}"
@@ -179,9 +181,25 @@ EOF
     stage2_path = 'rpm-stage'
     prepare_stage2 build_path, stage2_path
 
-    release_date = Time.now.strftime('%Y-%m-%d')
+    distro_files = "#{stage2_path}=/"
 
-    say "rpm: stub!"
+    ✓ sh %Q{fpm --force \
+      -C #{stage2_path} -s dir -t rpm \
+      --rpm-compression xz \
+      --name "#{app_name}" \
+      --description "#{DESCRIPTION}" \
+      --url "$FPM_URL" \
+      --version "#{build_version}" \
+      --maintainer "#{MAINTAINER}" \
+      --architecture "#{arch}" \
+      --license "MIT" \
+      --vendor "itch.io" \
+      --category "games" \
+      --after-install "release/debian-after-install.sh" \
+      -d "p7zip" \
+      -d "desktop-file-utils" \
+      #{distro_files}
+    }
   end
 end
 

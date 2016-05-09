@@ -6,6 +6,8 @@ require_relative 'common'
 module Itch
   def Itch.ci_deploy_bintray
     say "Should deploy to Bintray!"
+
+    # release_date = Time.now.strftime('%Y-%m-%d')
   end
 end
 

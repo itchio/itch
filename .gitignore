@@ -19,7 +19,7 @@ tmp
 # build+packaging temp files (CI)
 /build
 /cache
-/stage
+/stage*
 /deb-stage
 /rpm-stage
 /linux-extras

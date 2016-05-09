@@ -49,7 +49,7 @@ compile:
     - tags
   artifacts:
     paths:
-      - stage
+      - stage.tar.gz
 
 # generate .desktop file for Linux
 generate-linux-extras:
