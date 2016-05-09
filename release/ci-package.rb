@@ -66,7 +66,7 @@ module Itch
         "icon-size" => 80,
 
         "contents" => [
-          { "x" => 190, "y" => 382, "type" => "file", "path" => "../../#{app_name}.app" },
+          { "x" => 190, "y" => 382, "type" => "file", "path" => "../#{app_name}.app" },
           { "x" => 425, "y" => 382, "type" => "link", "path" => "/Applications" }
         ]
       }
@@ -224,7 +224,7 @@ EOF
       --rpm-compression xz \
       --name "#{app_name}" \
       --description "#{DESCRIPTION}" \
-      --url "$FPM_URL" \
+      --url "https://itch.io/app" \
       --version "#{build_version}" \
       --maintainer "#{MAINTAINER}" \
       --architecture "#{arch}" \
