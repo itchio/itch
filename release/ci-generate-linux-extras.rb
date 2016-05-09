@@ -26,10 +26,9 @@ module Itch
 
     # man page
     say "Generating man file"
-    t = Time.now
     # will this fail with funny locales?
-    month = t.strftime('%^B') # uppercased
-    year = t.strftime('%Y')
+    month = build_time.strftime('%^B') # ^B is (obviously) for uppercase month name
+    year = build_time.strftime('%Y')
     man = File.read("release/templates/itch.6.in")
     man = man.gsub("{{APPNAME}}", app_name.upcase)
     man = man.gsub("{{MONTH}}", month)

@@ -1,5 +1,5 @@
-itch (@VERSION@) unstable; urgency=low
+{{APPNAME}} ({{VERSION}}) unstable; urgency=low
 
   * New release version
 
- -- Amos Wenger <amos@itch.io>  @DATE@
+ -- Amos Wenger <amos@itch.io>  {{DATE}}

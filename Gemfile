@@ -4,3 +4,4 @@ source "https://rubygems.org"
 
 gem "semver"
 gem "colored"
+gem "filesize"

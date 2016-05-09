@@ -5,15 +5,22 @@ ENV['PATH'] += ":#{Gem.user_dir}/bin"
 system 'bundle install' or raise 'Bundle install failed!'
 require 'rubygems'
 require 'bundler/setup'
+ENV['LANG']='C'
+ENV['LANGUAGE']='C'
+ENV['LC_ALL']='C'
 # all good! you may resume reading the code
 
-require 'colored'
-require 'json'
+require 'colored' # colors make me happy
+require 'json' # parse a bunch of templates
+require 'time' # rfc2822
+require 'filesize' # bytes are for computers
+require 'digest' # md5 sums for debian
 
 module Itch
-  ENV['LANG']='C'
-  ENV['LANGUAGE']='C'
-  ENV['LC_ALL']='C'
+  HOMEPAGE = 'https://itch.io/app'
+  MAINTAINER = 'Amos Wenger <amos@itch.io>'
+
+  BUILD_TIME = Time.now.utc
 
   RETRY_COUNT = 5
   HOME = ENV['HOME']
@@ -57,7 +64,7 @@ module Itch
     'gsutil' => 'gsutil --version',
     'go' => 'go version',
     'gothub' => 'gothub --version',
-    'fakeroot' => 'fakeroot --version',
+    'fakeroot' => 'fakeroot -v',
     'ar' => 'ar --version | head -1'
   }
 
@@ -187,6 +194,10 @@ module Itch
     ENV['CI_BUILD_TAG'] or raise "No build tag!"
   end
 
+  def Itch.build_version
+    build_tag.gsub(/^v/, '')
+  end
+
   def Itch.app_name
     if /-canary$/ =~ build_tag
       return "kitch"
@@ -201,5 +212,9 @@ module Itch
     else
       return "stable"
     end
+  end
+
+  def Itch.build_time
+    return BUILD_TIME
   end
 end
