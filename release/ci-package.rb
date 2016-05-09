@@ -10,7 +10,10 @@ module Itch
     raise "ci-package expects two arguments" unless args.length == 2
     os, arch = args
 
+    # for Gruntfile.js
     ENV['CI_CHANNEL'] = channel_name
+    windows_installer_path = "/c/jenkins/workspace/#{app_name}-installers/"
+    ENV['CI_WINDOWS_INSTALLER_PATH'] = windows_installer_path
 
     say "Packaging #{app_name} for #{os}-#{arch}"
     OSES[os] or raise "Unknown os #{os}"
@@ -30,13 +33,46 @@ module Itch
     ✓ grunt "-v electron:#{os}-#{arch_info['electron_arch']}"
 
     case os
+
     when "windows"
-      installer_path = "/c/jenkins/workspace/#{app_name}-installers/"
-      FileUtils.mkdir_p installer_path
-      ENV['CI_WINDOWS_INSTALLER_PATH'] = installer_path
+      FileUtils.mkdir_p windows_installer_path
       ✓ grunt "create-windows-installer:#{arch_info['electron_arch']}"
+
+      FileUtils.cp Dir["#{windows_installer_path}/#{app_name}-#{build_version}*.nupkg"], 'packages/'
+      FileUtils.cp Dir["#{windows_installer_path}/*.exe"], 'packages/'
+      FileUtils.cp Dir["#{windows_installer_path}/RELEASES"], 'packages/'
+
     when "darwin"
-      say "Should generate appdmg, etc."
+      show_versions %w(7za)
+      ✓ npm_dep 'appdmg', 'appdmg'
+
+      say "Signing Application bundle..."
+      sign_key = 'Developer ID Application: Amos Wenger (B2N6FSRTPV)'
+      ✓ sh %Q{ditto -v #{build_path}/#{app_name}.app #{app_name}.app}
+      ✓ sh %Q{codesign --deep --force --verbose --sign "#{sign_key}" #{app_name}.app}
+      ✓ sh %Q{codesign --verify --vvvv #{app_name}.app}
+      ✓ sh %Q{spctl -a -vvvv #{app_name}.app}
+
+      say "Compressing .zip archive"
+      ✓ sh "7za a packages/#{app_name}-mac.zip #{app_name}.app"
+
+      say "Creating .dmg volume"
+      dmgjson = JSON.parse(File.read("release/templates/appdmg.json.in"))
+      dmgjson = {
+        "title" => app_name,
+        "icon" => "../release/images/#{app_name}-icons/itch.icns", # sic. it's really itch.icns
+        "background" => "../release/images/dmgbg.png",
+        "icon_size" => 80,
+
+        "contents" => [
+          { "x" => 190, "y" => 382, "type" => "file", "path" => "../../#{app_name}.app" },
+          { "x" => 425, "y" => 382, "type" => "link", "path" => "/Applications" }
+        ]
+      }
+      File.write("build/appdmg.json", JSON.pretty_generate(dmgjson))
+
+      ✓ sh "appdmg build/appdmg.json packages/#{app_name}-mac.dmg"
+
     when "linux"
       build_path = "build/#{build_tag}/#{app_name}-#{os}-#{arch_info['electron_arch']}"
       ci_build_deb arch, build_path
