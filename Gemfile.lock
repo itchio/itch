@@ -11,6 +11,7 @@ GEM
     clamp (0.6.5)
     colored (1.2)
     corefines (1.9.0)
+    dpl (1.8.11)
     ffi (1.9.10)
     filesize (0.1.1)
     fpm (1.5.0)
@@ -36,6 +37,7 @@ PLATFORMS
 
 DEPENDENCIES
   colored
+  dpl
   filesize
   fpm
   semver

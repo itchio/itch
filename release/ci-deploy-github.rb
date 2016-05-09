@@ -47,7 +47,7 @@ module Itch
 
     say "Uploading assets..."
     Dir.glob("packages/*").each do |name|
-      ↻ dog 
+      ↻ do
         gothub %Q{upload --tag #{build_tag} --name '#{File.basename name}' --file '#{name}' --replace}
       end
     end

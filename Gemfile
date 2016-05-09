@@ -8,4 +8,5 @@ gem "filesize"
 
 unless RUBY_PLATFORM =~ /mingw32$/ 
      gem "fpm"
+     gem "dpl"
 end

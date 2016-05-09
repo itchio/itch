@@ -91,6 +91,11 @@ module Itch
     system cmd
   end
 
+  def Itch.qsh (cmd)
+    putln %Q{· <redacted>}.blue
+    system cmd
+  end
+
   # run npm command (silently)
   def Itch.npm (args)
     sh %Q{npm --no-progress --quiet #{args}}

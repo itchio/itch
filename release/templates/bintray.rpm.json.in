@@ -15,7 +15,7 @@
 
   "files": [
     {
-      "includePattern": "build/(.*\.rpm)",
+      "includePattern": "packages/(.*{{RPM_ARCH}}\.rpm)",
       "uploadPattern": "$1",
       "matrixParams": { "override": 1 }
     }

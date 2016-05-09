@@ -15,7 +15,7 @@
 
   "files": [
     {
-      "includePattern": "build/(.*\.deb)",
+      "includePattern": "packages/(.*\{{DEB_ARCH}}.deb)",
       "uploadPattern": "$1",
       "matrixParams": {
         "override": true,
