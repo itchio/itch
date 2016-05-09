@@ -71,7 +71,9 @@ package:linux:386:
     - tags
   artifacts:
     paths:
-      - build-artifacts
+      - packages
+  dependencies:
+    - compile
 
 # .tar.gz, .rpm and .deb
 package:linux:amd64:
@@ -84,7 +86,9 @@ package:linux:amd64:
     - tags
   artifacts:
     paths:
-      - build-artifacts
+      - packages
+  dependencies:
+    - compile
 
 # .dmg and .zip
 package:darwin:amd64:
@@ -97,7 +101,9 @@ package:darwin:amd64:
     - tags
   artifacts:
     paths:
-      - build-artifacts
+      - packages
+  dependencies:
+    - compile
 
 # TODO: roll out 64-bit releases
 package:windows:386:
@@ -110,7 +116,9 @@ package:windows:386:
     - release/ci-package.rb windows 386
   artifacts:
     paths:
-      - build-artifacts
+      - packages
+  dependencies:
+    - compile
 
 # ArchLinux user repository
 package:aur:
@@ -121,6 +129,8 @@ package:aur:
     - tags
   script:
     - release/ci-deploy-aur.rb
+  dependencies:
+    - generate-linux-extras
 
 # GitHub releases are used for Squirrel.Windows & Squirrel.Mac,
 # along with direct downloads
@@ -130,20 +140,26 @@ deploy:github:
     - linux
   only:
     - tags
-  only:
-    - tags
   script:
     - release/ci-deploy-github.rb
+  dependencies:
+    - package:linux:386
+    - package:linux:amd64
+    - package:windows:386
+    - package:darwin:amd64
 
 # We have a YUM (rpm) & APT (deb) repository on bintray
 deploy:bintray:
   stage: deploy
-  only:
-    - tags
   tags:
     - linux
+  only:
+    - tags
   script:
     - release/ci-deploy-bintray.rb
+  dependencies:
+    - package:linux:386
+    - package:linux:amd64
 
 # Pushover
 notify:
