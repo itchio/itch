@@ -31,6 +31,7 @@ module Itch
 
     say "Packaging with binary release"
     ✓ grunt "-v electron:#{os}-#{arch_info['electron_arch']}"
+    build_path = "build/#{build_tag}/#{app_name}-#{os}-#{arch_info['electron_arch']}"
 
     case os
 
@@ -74,7 +75,6 @@ module Itch
       ✓ sh "appdmg build/appdmg.json packages/#{app_name}-mac.dmg"
 
     when "linux"
-      build_path = "build/#{build_tag}/#{app_name}-#{os}-#{arch_info['electron_arch']}"
       ci_build_deb arch, build_path
       ci_build_rpm arch, build_path
 
