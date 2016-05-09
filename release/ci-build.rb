@@ -36,7 +36,11 @@ module Itch
       "channel" => channel_name
     }
     File.write("#{stage_path}/package.json", JSON.pretty_generate(pkg))
-    File.write("#{stage_path}/app/env.js", JSON.pretty_generate(env))
+
+    envjs = %Q{
+module.exports = #{JSON.pretty_generate(env)}
+}
+    File.write("#{stage_path}/app/env.js", envjs)
 
     ✓ sh "tar cfz stage.tar.gz stage"
   end
