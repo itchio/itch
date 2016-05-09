@@ -217,7 +217,7 @@ EOF
     stage2_path = 'rpm-stage'
     prepare_stage2 build_path, stage2_path
 
-    distro_files = "#{stage2_path}/usr=/usr"
+    distro_files = ".=/"
 
     ✓ sh %Q{fpm --force \
       -C #{stage2_path} -s dir -t rpm \
