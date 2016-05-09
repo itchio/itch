@@ -1,8 +1,4 @@
 
-cache:
-  paths:
-    - node_modules/
-
 stages:
   - build # babel, node-sass etc.
   - package # .rpm, .deb, .dmg., .zip
