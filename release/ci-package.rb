@@ -10,6 +10,8 @@ module Itch
     raise "ci-package expects two arguments" unless args.length == 2
     os, arch = args
 
+    ENV['CI_CHANNEL'] = channel_name
+
     say "Packaging #{app_name} for #{os}-#{arch}"
     OSES[os] or raise "Unknown os #{os}"
     arch_info = ARCHES[arch] or raise "Unknown arch #{arch}"
@@ -23,7 +25,7 @@ module Itch
     File.write("packages/something-#{os}-#{arch}", "#{Time.now}")
 
     say "Packaging with binary release"
-    ✓ grunt "electron:#{os}-#{arch_info['electron_arch']}"
+    ✓ grunt "-v electron:#{os}-#{arch_info['electron_arch']}"
 
     case os
     when "windows"
@@ -34,8 +36,7 @@ module Itch
     when "darwin"
       say "Should generate appdmg, etc."
     when "linux"
-      # sic: itch, not app_name
-      build_path = "build/#{build_tag}/itch-#{os}-#{arch_info['electron_arch']}"
+      build_path = "build/#{build_tag}/#{app_name}-#{os}-#{arch_info['electron_arch']}"
       ci_build_deb arch, build_path
       ci_build_rpm arch, build_path
 
@@ -50,12 +51,14 @@ module Itch
 
     # create base directories
     say "Creating base directories"
-    %W(/usr/games /usr/lib/#{app_name} /usr/share/applications /usr/share/doc/#{app_name} /usr/share/man/man6).each do |path|
+    %W(/usr/games /usr/bin /usr/lib/#{app_name} /usr/share/applications /usr/share/doc/#{app_name} /usr/share/man/man6).each do |path|
       FileUtils.mkdir_p "#{stage2_path}#{path}"
     end
 
     say "Copying binaries"
     FileUtils.cp_r Dir["#{build_path}/*"], "#{stage2_path}/usr/lib/#{app_name}/"
+
+    FileUtils.ln_s "../lib/#{app_name}/#{app_name}", "#{stage2_path}/usr/bin/#{app_name}"
 
     say "Copying icons"
     %w(16 32 48 64 128 256 512).each do |size|
@@ -118,7 +121,7 @@ Package: #{app_name}
 Version: #{build_version}
 Architecture: #{arch}
 Maintainer: #{MAINTAINER}
-Installed-Size: #{installed_size}
+Installed-Size: #{(installed_size / 1024.0).ceil.to_i}
 Depends: gconf-service, libasound2 (>= 1.0.16), libatk1.0-0 (>= 1.12.4), libc6 (>= 2.12), libcairo2 (>= 1.6.0), libcups2 (>= 1.4.0), libdbus-1-3 (>= 1.2.14), libexpat1 (>= 2.0.1), libfontconfig1 (>= 2.9.0), libfreetype6 (>= 2.4.2), libgcc1 (>= 1:4.1.1), libgconf-2-4 (>= 2.31.1), libgdk-pixbuf2.0-0 (>= 2.22.0), libglib2.0-0 (>= 2.31.8), libgtk2.0-0 (>= 2.24.0), libnotify4 (>= 0.7.0), libnspr4 (>= 2:4.9-2~) | libnspr4-0d (>= 1.8.0.10), libnss3 (>= 2:3.13.4-2~) | libnss3-1d (>= 3.12.4), libpango-1.0-0 (>= 1.14.0), libpangocairo-1.0-0 (>= 1.14.0), libstdc++6 (>= 4.6), libx11-6 (>= 2:1.4.99.1), libxcomposite1 (>= 1:0.3-1), libxcursor1 (>> 1.1.2), libxdamage1 (>= 1:1.1), libxext6, libxfixes3, libxi6 (>= 2:1.2.99.4), libxrandr2 (>= 2:1.2.99.2), libxrender1, libxtst6, p7zip-full
 Section: games
 Priority: optional
@@ -144,9 +147,9 @@ EOF
       Dir["usr/**/*"].each do |f|
         case File.stat(f).mode & 0777
         when 0775
-          File.chmod(f, 0755)
+          File.chmod(0755, f)
         when 0664
-          File.chmod(f, 0644)
+          File.chmod(0644, f)
         end
       end
 
