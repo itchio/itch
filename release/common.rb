@@ -69,19 +69,24 @@ module Itch
     'ar' => 'ar --version | head -1'
   }
 
+  def Itch.putln (s)
+    puts s
+    $stdout.flush
+  end
+
   def Itch.show_versions (names)
     names.each do |name|
       v = ♫(VERSION_SPECS[name]).strip
-      puts %Q{★ #{name} #{v}}.yellow
+      putln %Q{★ #{name} #{v}}.yellow
     end
   end
 
   def Itch.say (cmd)
-    puts %Q{♦ #{cmd}}.yellow
+    putln %Q{♦ #{cmd}}.yellow
   end
 
   def Itch.sh (cmd)
-    puts %Q{· #{cmd}}.blue
+    putln %Q{· #{cmd}}.blue
     system cmd
   end
 
@@ -120,10 +125,10 @@ module Itch
   # install a gem dep if missing
   def Itch.gem_dep (cmd, pkg)
     if system %Q{which #{cmd} > /dev/null}
-      puts "★ got #{cmd}".yellow
+      putln "★ got #{cmd}".yellow
       true
     else
-      puts "☁ installing #{cmd}".yellow
+      putln "☁ installing #{cmd}".yellow
       gem "install #{pkg}"
     end
   end
@@ -131,10 +136,10 @@ module Itch
   # install a node.js dep if missing
   def Itch.npm_dep (cmd, pkg)
     if system %Q{which #{cmd} > /dev/null}
-      puts "★ got #{cmd}".yellow
+      putln "★ got #{cmd}".yellow
       true
     else
-      puts "☁ installing #{cmd}".yellow
+      putln "☁ installing #{cmd}".yellow
       npm "install #{pkg}"
     end
   end
@@ -142,10 +147,10 @@ module Itch
   # install a golang project if missing
   def Itch.go_dep (cmd, pkg)
     if system %Q{which #{cmd} > /dev/null}
-      puts "★ got #{cmd}".yellow
+      putln "★ got #{cmd}".yellow
       true
     else
-      puts "☁ installing #{cmd}".yellow
+      putln "☁ installing #{cmd}".yellow
       go "get #{pkg}"
     end
   end
@@ -178,11 +183,11 @@ module Itch
   end
 
   def Itch.cd (dir)
-    puts "☞ entering #{dir}"
+    putln "☞ entering #{dir}"
     Dir.chdir(dir) do
       yield
     end
-    puts "☜ leaving #{dir}"
+    putln "☜ leaving #{dir}"
   end
 
   # environment variables etc.

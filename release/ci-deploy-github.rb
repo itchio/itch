@@ -40,7 +40,7 @@ module Itch
     say "Changelog:\n#{changelog}"
 
     say "Deleting release if any..."
-    gothub %Q{delete --tag #{build_tag}} or puts "First build for #{build_tag}"
+    gothub %Q{delete --tag #{build_tag}} or putln "First build for #{build_tag}"
 
     say "Creating release..."
     ✓ gothub %Q{release --tag #{build_tag} --draft --pre-release --description "#{changelog}"}
