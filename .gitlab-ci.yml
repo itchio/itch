@@ -161,7 +161,8 @@ deploy:aur:
   script:
     - release/ci-deploy-aur.rb
   dependencies:
-    - deploy:github
+    - package:linux:386
+    - package:linux:amd64
     - generate-linux-extras
 
 # Pushover
