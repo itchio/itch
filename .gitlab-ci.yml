@@ -5,7 +5,8 @@ cache:
 
 stages:
   - test # unit tests + lint
-  - build # .rpm, .deb, .dmg., .zip
+  - build # babel, node-sass etc.
+  - package # .rpm, .deb, .dmg., .zip
   - deploy # github releases, bintray, AUR
   - notify # pushover
 
@@ -37,26 +38,50 @@ lint:
   except:
     - tags
 
-# .rpm and .deb
-build:linux:386:
+# compile javascript & scss using babel & node-sass
+compile:
   stage: build
   tags:
     - linux
   script:
-    - release/ci-build.rb linux 386
+    - release/ci-build.rb
+  only:
+    - tags
+  artifacts:
+    - stage
+
+# generate .desktop file for Linux
+generate-linux-extras:
+  stage: build
+  tags:
+    - linux
+  script:
+    - release/ci-build.rb
+  only:
+    - tags
+  artifacts:
+    - linux-extras
+
+# .tar.gz, .rpm and .deb
+package:linux:386:
+  stage: package
+  tags:
+    - linux
+  script:
+    - release/ci-package.rb linux 386
   only:
     - tags
   artifacts:
     paths:
       - build-artifacts
 
-# .rpm and .deb
-build:linux:amd64:
-  stage: build
+# .tar.gz, .rpm and .deb
+package:linux:amd64:
+  stage: package
   tags:
     - linux
   script:
-    - release/ci-build.rb linux amd64
+    - release/ci-package.rb linux amd64
   only:
     - tags
   artifacts:
@@ -64,12 +89,12 @@ build:linux:amd64:
       - build-artifacts
 
 # .dmg and .zip
-build:darwin:amd64:
-  stage: build
+package:darwin:amd64:
+  stage: package
   tags:
     - darwin
   script:
-    - release/ci-build.rb darwin amd64
+    - release/ci-package.rb darwin amd64
   only:
     - tags
   artifacts:
@@ -77,17 +102,27 @@ build:darwin:amd64:
       - build-artifacts
 
 # TODO: roll out 64-bit releases
-build:windows:386:
-  stage: build
+package:windows:386:
+  stage: package
   tags:
     - windows
   only:
     - tags
   script:
-    - release/ci-build.rb windows 386
+    - release/ci-package.rb windows 386
   artifacts:
     paths:
       - build-artifacts
+
+# ArchLinux user repository
+package:aur:
+  stage: package
+  tags:
+    - archlinux
+  only:
+    - tags
+  script:
+    - release/ci-deploy-aur.rb
 
 # GitHub releases are used for Squirrel.Windows & Squirrel.Mac,
 # along with direct downloads
@@ -101,11 +136,6 @@ deploy:github:
     - tags
   script:
     - release/ci-deploy-github.rb
-  dependencies:
-    - build:linux:386
-    - build:linux:amd64
-    - build:darwin:amd64
-    - build:windows:386
 
 # We have a YUM (rpm) & APT (deb) repository on bintray
 deploy:bintray:
@@ -117,16 +147,6 @@ deploy:bintray:
   script:
     - release/ci-deploy-bintray.rb
 
-# ArchLinux user repository
-deploy:aur:
-  stage: deploy
-  only:
-    - tags
-  tags:
-    - archlinux
-  script:
-    - release/ci-deploy-aur.rb
-
 # Pushover
 notify:
   stage: notify
@@ -136,3 +156,4 @@ notify:
     - release/ci-notify.sh
   only:
     - tags
+

@@ -8,10 +8,38 @@ require 'bundler/setup'
 # all good! you may resume reading the code
 
 require 'colored'
+require 'json'
 
 module Itch
+  ENV['LANG']='C'
+  ENV['LANGUAGE']='C'
+  ENV['LC_ALL']='C'
+
   RETRY_COUNT = 5
   HOME = ENV['HOME']
+
+  # Supported operating systems
+  OSES = {
+    'windows' => {
+
+    },
+    'darwin' => {
+
+    },
+    'linux' => {
+
+    },
+  }
+
+  # Supported architectures
+  ARCHES = {
+    '386' => {
+      'electron_arch' => 'ia32'
+    },
+    'amd64' => {
+      'electron_arch' => 'x64'
+    }
+  }
 
   # local golang executables
   GOPATH = "#{HOME}/go"
@@ -28,12 +56,14 @@ module Itch
     'npm' => 'npm --version',
     'gsutil' => 'gsutil --version',
     'go' => 'go version',
-    'gothub' => 'gothub --version'
+    'gothub' => 'gothub --version',
+    'fakeroot' => 'fakeroot --version',
+    'ar' => 'ar --version | head -1'
   }
 
   def Itch.show_versions (names)
     names.each do |name|
-      v = `#{VERSION_SPECS[name]}`.strip
+      v = ♫(VERSION_SPECS[name]).strip
       puts %Q{★ #{name} #{v}}.yellow
     end
   end
