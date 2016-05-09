@@ -1,4 +1,8 @@
 
+cache:
+  paths:
+    - node_modules/
+
 stages:
   - build # babel, node-sass etc.
   - package # .rpm, .deb, .dmg., .zip
@@ -45,9 +49,6 @@ compile:
   artifacts:
     paths:
       - stage.tar.gz
-  cache:
-    paths:
-      - node_modules/
 
 # generate .desktop file for Linux
 generate-linux-extras:

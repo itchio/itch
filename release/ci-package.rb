@@ -51,7 +51,7 @@ module Itch
       sign_key = 'Developer ID Application: Amos Wenger (B2N6FSRTPV)'
       ✓ sh %Q{ditto -v #{build_path}/#{app_name}.app #{app_name}.app}
       ✓ sh %Q{codesign --deep --force --verbose --sign "#{sign_key}" #{app_name}.app}
-      ✓ sh %Q{codesign --verify --vvvv #{app_name}.app}
+      ✓ sh %Q{codesign --verify -vvvv #{app_name}.app}
       ✓ sh %Q{spctl -a -vvvv #{app_name}.app}
 
       say "Compressing .zip archive"
