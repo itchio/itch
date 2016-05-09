@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
-# builds itch for production environemnts
+# compile itch for production environemnts
 
 require_relative 'common'
 
 module Itch
-  def Itch.ci_build
-    say "Building #{app_name}"
+  def Itch.ci_compile
+    say "Compiling #{app_name}"
 
     show_versions %w(npm node)
 
@@ -46,4 +46,4 @@ module.exports = #{JSON.pretty_generate(env)}
   end
 end
 
-Itch.ci_build
+Itch.ci_compile

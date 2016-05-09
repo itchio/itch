@@ -39,7 +39,7 @@ compile:
   tags:
     - linux
   script:
-    - release/ci-build.rb
+    - release/ci-compile.rb
   only:
     - tags
   artifacts:
