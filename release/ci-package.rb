@@ -236,6 +236,8 @@ EOF
       -d "desktop-file-utils" \
       #{distro_files}
     }
+
+    FileUtils.cp Dir["*.rpm"], "packages/"
   end
 end
 
