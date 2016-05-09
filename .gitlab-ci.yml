@@ -74,6 +74,7 @@ package:linux:386:
       - packages
   dependencies:
     - compile
+    - generate-linux-extras
 
 # .tar.gz, .rpm and .deb
 package:linux:amd64:
@@ -89,6 +90,7 @@ package:linux:amd64:
       - packages
   dependencies:
     - compile
+    - generate-linux-extras
 
 # .dmg and .zip
 package:darwin:amd64:
