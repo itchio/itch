@@ -32,25 +32,27 @@ module Itch
 
     File.write "aur-stage/PKGBUILD", pk
 
-    say "Updating checksums..."
-    ✓ sh %Q{updpkgsums}
+    cd "aur-stage" do
+      say "Updating checksums..."
+      ✓ sh %Q{updpkgsums}
 
-    say "Validating PKGBUILD..."
-    ✓ sh %Q{namcap -i PKGBUILD}
+      say "Validating PKGBUILD..."
+      ✓ sh %Q{namcap -i PKGBUILD}
 
-    say "Building package locally..."
-    ✓ sh %Q{makepkg --syncdeps --force --needed --noconfirm}
+      say "Building package locally..."
+      ✓ sh %Q{makepkg --syncdeps --force --needed --noconfirm}
 
-    say "Validating built package..."
-    ✓ sh %Q{namcap "$pkgname-$NEWVERSION-$pkgrel-$(uname -m).pkg.tar.xz}
+      say "Validating built package..."
+      ✓ sh %Q{namcap "$pkgname-$NEWVERSION-$pkgrel-$(uname -m).pkg.tar.xz}
 
-    say "Updating .SRCINFO..."
-    ✓ sh %Q{mksrcinfo}
+      say "Updating .SRCINFO..."
+      ✓ sh %Q{mksrcinfo}
 
-    say "Pushing to AUR..."
-    ✓ sh %Q{git add PKGBUILD .SRCINFO}
-    ✓ sh %Q{git commit -m ":arrow_up: #{build_tag}"}
-    ✓ sh %Q{git push}
+      say "Pushing to AUR..."
+      ✓ sh %Q{git add PKGBUILD .SRCINFO}
+      ✓ sh %Q{git commit -m ":arrow_up: #{build_tag}"}
+      ✓ sh %Q{git push}
+    end
   end
 end
 
