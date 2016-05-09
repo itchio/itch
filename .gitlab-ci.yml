@@ -159,10 +159,6 @@ deploy:aur:
     - tags
   script:
     - release/ci-deploy-aur.rb
-  dependencies:
-    - package:linux:386
-    - package:linux:amd64
-    - generate-linux-extras
 
 # Pushover
 notify:
