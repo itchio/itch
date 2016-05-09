@@ -16,25 +16,19 @@ tmp
 /coverage
 .nyc_output
 
-# electron package-building stuff
+# build+packaging temp files (CI)
 /build
 /cache
 /stage
+/deb-stage
+/rpm-stage
+/linux-extras
+/packages
+/*.app
+/*.dmg
 
-# Debian package-building stuff
-/debian
-/debian.log
-/node-v*-linux-*
-/node.tar.xz
-/sassc
-
-# release stuff
-/release/itch.desktop
-
-# locale stuff
+# updated locales stuff
 /app/static/locales/*.remote.json
 
 # OS-specific junk
 .DS_Store
-/*.app
-/*.dmg

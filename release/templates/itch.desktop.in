@@ -1,11 +1,11 @@
 [Desktop Entry]
 Type=Application
 Encoding=UTF-8
-Name=itch
-TryExec=itch
-Exec=itch %U
-Icon=itch
+Name={{APPNAME}}
+TryExec={{APPNAME}}
+Exec={{APPNAME}} %U
+Icon={{APPNAME}}
 Terminal=false
 Categories=Game
-MimeType=x-scheme-handler/itchio
+MimeType=x-scheme-handler/{{APPNAME}}io
 Comment="Install and play itch.io games easily"
