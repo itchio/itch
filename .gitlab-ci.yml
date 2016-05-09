@@ -1,6 +1,5 @@
 
 stages:
-  - test # unit tests + lint
   - build # babel, node-sass etc.
   - package # .rpm, .deb, .dmg., .zip
   - deploy # github releases, bintray, AUR
@@ -8,7 +7,7 @@ stages:
 
 # Gitbook documentation
 book:
-  stage: test
+  stage: build
   tags:
     - dropsy
   script:
@@ -16,7 +15,7 @@ book:
 
 # Unit tests
 test:
-  stage: test
+  stage: build
   tags:
     - linux
   script:
@@ -26,7 +25,7 @@ test:
 
 # JavaScript standard formatting
 lint:
-  stage: test
+  stage: build
   tags:
     - linux
   script:

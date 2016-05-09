@@ -5,4 +5,7 @@ source "https://rubygems.org"
 gem "semver"
 gem "colored"
 gem "filesize"
-gem "fpm"
+
+unless RUBY_PLATFORM =~ /mingw32$/ 
+     gem "fpm"
+end
