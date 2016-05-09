@@ -6,6 +6,7 @@ require_relative 'common'
 module Itch
   def Itch.ci_deploy_aur
     say "Cloning repo..."
+    FileUtils.rm_rf "aur-stage"
     ✓ sh "git clone ssh+git://aur@aur.archlinux.org/#{app_name}.git aur-stage"
 
     FileUtils.cp "release/templates/aur.itch.install", "aur-stage/#{app_name}.install"
@@ -27,7 +28,7 @@ module Itch
     pk = File.read "release/templates/PKGBUILD.in"
     pk = pk.gsub "{{CI_APPNAME}}", app_name
     pk = pk.gsub "{{CI_VERSION}}", build_version
-    pk = pk.gsub "{{CI_REL}}", rel
+    pk = pk.gsub "{{CI_REL}}", rel.to_s
 
     File.write "aur-stage/PKGBUILD", pk
 
