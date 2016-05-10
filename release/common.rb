@@ -97,13 +97,8 @@ module Itch
   end
 
   # run npm command (silently)
-  def Itch._npm (args)
-    sh %Q{npm --no-progress --quiet #{args}}
-  end
-
-  # run pnpm command (silently)
   def Itch.npm (args)
-    sh %Q{pnpm #{args}}
+    sh %Q{npm --no-progress --quiet #{args}}
   end
 
   # run gem command
@@ -145,16 +140,6 @@ module Itch
   end
 
   # install a node.js dep if missing
-  def Itch._npm_dep (cmd, pkg)
-    if system %Q{which #{cmd} > /dev/null}
-      putln "★ got #{cmd}".yellow
-      true
-    else
-      putln "☁ installing #{cmd}".yellow
-      _npm "install -g #{pkg}"
-    end
-  end
-
   def Itch.npm_dep (cmd, pkg)
     if system %Q{which #{cmd} > /dev/null}
       putln "★ got #{cmd}".yellow
@@ -244,8 +229,5 @@ module Itch
   def Itch.build_time
     return BUILD_TIME
   end
-
-  # much faster npm
-  _npm_dep 'pnpm', 'pnpm'
 end
 
