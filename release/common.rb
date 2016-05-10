@@ -26,6 +26,9 @@ module Itch
   RETRY_COUNT = 5
   HOME = ENV['HOME']
 
+  WINSTALLER_PATH = "/c/jenkins/workspace/#{app_name}-installers/"
+  ENV['CI_WINDOWS_INSTALLER_PATH'] = WINSTALLER_PATH
+
   # Supported operating systems
   OSES = {
     'windows' => {

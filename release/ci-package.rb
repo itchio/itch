@@ -15,8 +15,6 @@ module Itch
 
     # for Gruntfile.js
     ENV['CI_CHANNEL'] = channel_name
-    windows_installer_path = "/c/jenkins/workspace/#{app_name}-installers/"
-    ENV['CI_WINDOWS_INSTALLER_PATH'] = windows_installer_path
 
     say "Packaging #{app_name} for #{os}-#{arch}"
     OSES[os] or raise "Unknown os #{os}"
