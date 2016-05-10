@@ -23,7 +23,7 @@ sha256sums=('0eafdc5c12f2a007a146b2925dc99c210ee9aeb2c859ce81fa523244098c5779')
 [ "$CARCH" = "x86_64" ] && _ELECTRON_ARCH=x64;  _ITCH_ARCH=amd64
 
 prepare() {
-  cd "itch-${pkgver}"
+  cd "itch-${pkgver}{{CI_SUFFIX}}"
 
   export PYTHON=/usr/bin/python2
 
@@ -33,7 +33,7 @@ prepare() {
 }
 
 build() {
-  cd "$srcdir/itch-${pkgver}"
+  cd "${srcdir}/itch-${pkgver}{{CI_SUFFIX}}"
   export CI_BUILD_TAG="v{{CI_VERSION}}"
 
   release/ci-build.rb linux "${_ITCH_ARCH}"
@@ -43,15 +43,15 @@ build() {
 }
 
 check() {
-  cd "$srcdir/itch-${pkgver}"
+  cd "${srcdir}/itch-${pkgver}{{CI_SUFFIX}}"
   npm test
 }
 
 package() {
-  cd "$srcdir/itch-$pkgver"
+  cd "${srcdir}/itch-${pkgver}{{CI_SUFFIX}}"
 
   install -d "${pkgdir}/usr/lib/{{CI_APPNAME}}"
-  cp -a "build/v$pkgver/{{CI_APPNAME}}-linux-${_ELECTRON_ARCH}/." "${pkgdir}/usr/lib/{{CI_APPNAME}}"
+  cp -a "build/v${pkgver}/{{CI_APPNAME}}-linux-${_ELECTRON_ARCH}/." "${pkgdir}/usr/lib/{{CI_APPNAME}}"
 
   install -d "${pkgdir}/usr/share/applications"
   install -Dm644 linux-extras/{{CI_APPNAME}}.desktop "${pkgdir}/usr/share/applications/{{CI_APPNAME}}.desktop"
