@@ -36,7 +36,7 @@ build() {
   cd "${srcdir}/itch-${pkgver}{{CI_SUFFIX}}"
   export CI_BUILD_TAG="v{{CI_VERSION}}"
 
-  release/ci-build.rb linux "${_ITCH_ARCH}"
+  release/ci-compile.rb
   release/ci-generate-linux-extras.rb
 
   grunt -v "electron:linux-${_ELECTRON_ARCH}"
