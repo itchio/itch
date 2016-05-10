@@ -23,6 +23,7 @@ module Itch
 
     say "Copying compiled code+assets..."
     FileUtils.cp_r 'app', stage_path
+    FileUtils.cp_r 'node_modules', stage_path
 
     say "Generating custom package.json + environment"
     pkg = JSON.parse(File.read('package.json'))

@@ -121,6 +121,16 @@ package:windows:386:
   dependencies:
     - compile
 
+# ArchLinux user repository
+package:aur:
+  stage: package
+  tags:
+    - archlinux
+  only:
+    - tags
+  script:
+    - release/ci-package-aur.rb
+
 # GitHub releases are used for Squirrel.Windows & Squirrel.Mac,
 # along with direct downloads
 deploy:github:
@@ -149,16 +159,6 @@ deploy:bintray:
   dependencies:
     - package:linux:386
     - package:linux:amd64
-
-# ArchLinux user repository
-deploy:aur:
-  stage: deploy
-  tags:
-    - archlinux
-  only:
-    - tags
-  script:
-    - release/ci-deploy-aur.rb
 
 # Pushover
 notify:
