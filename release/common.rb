@@ -188,6 +188,22 @@ module Itch
     out
   end
 
+  def Itch.prompt (msg)
+    print "#{msg}: "
+    $stdout.flush
+    gets.strip
+  end
+
+  def Itch.yesno (msg)
+    print "#{msg} (y/n) "
+    $stdout.flush
+
+    unless "y" == gets.strip
+      say "Bailing out..."
+      exit 0
+    end
+  end
+
   def Itch.cd (dir)
     putln "☞ entering #{dir}"
     Dir.chdir(dir) do
