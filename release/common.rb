@@ -207,7 +207,7 @@ module Itch
   end
 
   def Itch.build_version
-    build_tag.gsub(/^v/, '')
+    build_tag.gsub(/^v/, '').gsub(/-.+$/, '')
   end
 
   def Itch.app_name

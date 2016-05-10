@@ -12,7 +12,7 @@ module Itch
     FileUtils.cp "release/templates/aur.itch.install", "aur-stage/#{app_name}.install"
 
     say "Generating PKGBUILD..."
-    ver = build_version.gsub(/-.+$/, '')
+    ver = build_version
     rel = 1
     begin
       # increment release number if versions match
