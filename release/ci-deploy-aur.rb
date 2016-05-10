@@ -48,7 +48,7 @@ module Itch
       ✓ sh %Q{makepkg --syncdeps --force --needed --noconfirm}
 
       say "Validating built package..."
-      ✓ sh %Q{namcap "$pkgname-#{ver}-#{rel}-#{♫ "uname -m"}.pkg.tar.xz}
+      ✓ sh %Q{namcap "#{app_name}-#{ver}-#{rel}-#{♫ "uname -m"}.pkg.tar.xz"}
 
       say "Updating .SRCINFO..."
       ✓ sh %Q{mksrcinfo}
