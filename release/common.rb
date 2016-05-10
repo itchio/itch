@@ -151,7 +151,7 @@ module Itch
       true
     else
       putln "☁ installing #{cmd}".yellow
-      _npm "install #{pkg}"
+      _npm "install -g #{pkg}"
     end
   end
 
@@ -161,7 +161,7 @@ module Itch
       true
     else
       putln "☁ installing #{cmd}".yellow
-      npm "install #{pkg}"
+      npm "install -g #{pkg}"
     end
   end
 
