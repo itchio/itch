@@ -24,7 +24,7 @@ If you'd like to hack on the app instead, read [docs/hacking/getting-started.md]
 
 ## License
 
-Licensed under MIT License, see the [LICENSE][] file for details.
+itch is released under the MIT License, see the [LICENSE][] file for details.
 
 [LICENSE]: LICENSE
 
