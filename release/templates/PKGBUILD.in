@@ -34,7 +34,8 @@ prepare() {
 
 build() {
   cd "${srcdir}/itch-${pkgver}{{CI_SUFFIX}}"
-  export CI_BUILD_TAG="v{{CI_VERSION}}"
+  export CI_BUILD_TAG="v{{CI_VERSION}}{{CI_SUFFIX}}"
+  export CI_CHANNEL="{{CI_CHANNEL}}"
 
   release/ci-compile.rb
   release/ci-generate-linux-extras.rb
