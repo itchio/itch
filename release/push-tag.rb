@@ -28,7 +28,7 @@ module Itch
 
     version_input = args[0] or prompt "Package version is: #{pkg['version']}, type yours"
     unless /^v\d+.\d+.\d+(-canary)?$/ =~ version_input
-      raise "Version must be of the form vX.Y.Z(-canary)?"
+      raise "Version must be of the form vX.Y.Z(-canary)? (was '#{version_input}')"
     end
 
     next_version = version_input.gsub(/^v/, '')
