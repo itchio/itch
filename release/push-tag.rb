@@ -1,5 +1,6 @@
-#!/usr/bin/env bundle exec ruby
-require 'json'
+#!/usr/bin/env ruby
+
+require_relative 'common'
 
 def prompt (msg)
   print "#{msg}: "
@@ -33,7 +34,7 @@ if pkg_version != next_version
   yesno "Bump package.json? [#{pkg_version} => #{next_version}]"
   pkg['version'] = next_version
   File.write(pkg_path, JSON.pretty_generate(pkg))
-  puts "Bumped package.json"
+  say "Bumped package.json"
   system %Q{git add package.json} or raise
   system %Q{git commit -m ':arrow_up: #{next_version}'} or raise
 end
@@ -42,7 +43,7 @@ tag = "v#{next_version}"
 add_cmd = %Q{git tag -a #{tag} -m #{tag}}
 
 if system add_cmd
-  puts "Tag added..."
+  say "Tag added..."
 else
   yesno "Tag already exists locally. Replace?"
   system %Q{git tag -d #{tag}} or raise
@@ -51,7 +52,7 @@ end
 
 push_cmd = %Q{git push origin #{tag}}
 if system push_cmd
-  puts "Tag pushed..."
+  say "Tag pushed..."
 else
   yesno "Tag already exists on remote. Force-push?"
   system %Q{#{push_cmd} --force} or raise
