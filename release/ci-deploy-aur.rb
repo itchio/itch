@@ -42,7 +42,7 @@ module Itch
       ✓ sh %Q{namcap -i PKGBUILD}
 
       say "Updating pacman database..."
-      ✓ sh %Q{pacman -Sy}
+      ✓ sh %Q{sudo pacman -Sy}
 
       say "Building package locally..."
       ✓ sh %Q{makepkg --syncdeps --force --needed --noconfirm}
