@@ -245,8 +245,5 @@ module Itch
   def Itch.build_time
     return BUILD_TIME
   end
-
-  WINSTALLER_PATH = "/c/jenkins/workspace/#{app_name}-installers/"
-  ENV['CI_WINDOWS_INSTALLER_PATH'] = WINSTALLER_PATH
 end
 

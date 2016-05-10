@@ -8,6 +8,7 @@ require_relative 'package/linux'
 
 module Itch
   VALID_OS = %w(windows darwin linux)
+  WINSTALLER_PATH = "/c/jenkins/workspace/#{app_name}-installers/"
 
   def Itch.ci_package (args)
     raise "ci-package expects two arguments" unless args.length == 2
@@ -15,6 +16,7 @@ module Itch
 
     # for Gruntfile.js
     ENV['CI_CHANNEL'] = channel_name
+    ENV['CI_WINDOWS_INSTALLER_PATH'] = WINSTALLER_PATH
 
     say "Packaging #{app_name} for #{os}-#{arch}"
     OSES[os] or raise "Unknown os #{os}"
