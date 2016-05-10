@@ -43,7 +43,7 @@ module Itch
     end
 
     tag = "v#{next_version}"
-    add_cmd = %Q{git tag -a #{tag} -m #{tag}}
+    add_cmd = %Q{git tag -s -a #{tag} -m #{tag}}
 
     if system add_cmd
       say "Tag added..."
