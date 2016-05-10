@@ -21,8 +21,6 @@ module Itch
     FileUtils.rm_rf stage_path
     FileUtils.mkdir_p stage_path
 
-    say "Copying node modules..."
-    FileUtils.cp_r 'node_modules', stage_path
     say "Copying compiled code+assets..."
     FileUtils.cp_r 'app', stage_path
 
