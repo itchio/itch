@@ -54,7 +54,7 @@ module Itch
       ✓ sh %Q{mksrcinfo}
 
       say "Pushing to AUR..."
-      ✓ sh %Q{git add PKGBUILD .SRCINFO}
+      ✓ sh %Q{git add PKGBUILD .SRCINFO #{app_name}.install}
       ✓ sh %Q{git commit -m ":arrow_up: #{build_tag}"}
       ✓ sh %Q{git push}
     end
