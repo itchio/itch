@@ -30,7 +30,6 @@ GEM
     ruby-xz (0.2.3)
       ffi (~> 1.9)
       io-like (~> 0.3)
-    semver (1.0.1)
 
 PLATFORMS
   ruby
@@ -40,4 +39,3 @@ DEPENDENCIES
   dpl
   filesize
   fpm
-  semver

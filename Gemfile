@@ -2,7 +2,6 @@
 # the app locally, you probably don't need to worry about it :)
 source "https://rubygems.org"
 
-gem "semver"
 gem "colored"
 gem "filesize"
 
