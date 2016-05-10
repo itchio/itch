@@ -63,7 +63,6 @@ import {
   openUrl,
   changeUser,
   checkForSelfUpdate,
-  reportIssue,
   closeTab,
   closeTabOrAuxWindow,
   toggleMiniSidebar
@@ -85,7 +84,7 @@ function convertMenuAction (label) {
     case 'menu.help.view_terms': return openUrl(urls.termsOfService)
     case 'menu.help.view_license': return openUrl(`${urls.itchRepo}/blob/master/LICENSE`)
     case 'menu.help.check_for_update': return checkForSelfUpdate()
-    case 'menu.help.report_issue': return reportIssue()
+    case 'menu.help.report_issue': return openUrl(`${urls.itchRepo}/issues/new`)
     case 'menu.help.search_issue': return openUrl(`${urls.itchRepo}/search?type=Issues`)
     case 'menu.help.release_notes': return openUrl(`${urls.itchRepo}/releases`)
     default: console.log(`Unhandled menu action: ${label}`)

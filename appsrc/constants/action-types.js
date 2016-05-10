@@ -95,9 +95,6 @@ module.exports = keyMirror({
   QUIT_WHEN_MAIN: null,
   QUIT_ELECTRON_APP: null,
 
-  /** Issues */
-  REPORT_ISSUE: null,
-
   /* Self updates */
   CHECK_FOR_SELF_UPDATE: null,
   CHECKING_FOR_SELF_UPDATE: null,

@@ -35,8 +35,6 @@ import {
   VIEW_CREATOR_PROFILE,
   VIEW_COMMUNITY_PROFILE,
 
-  REPORT_ISSUE,
-
   SHORTCUTS_VISIBILITY_CHANGED,
   TOGGLE_MINI_SIDEBAR
 } from '../constants/action-types'
@@ -84,8 +82,6 @@ export const triggerLocation = createAction(TRIGGER_LOCATION)
 export const openPreferences = createAction(OPEN_PREFERENCES)
 export const viewCreatorProfile = createAction(VIEW_CREATOR_PROFILE)
 export const viewCommunityProfile = createAction(VIEW_COMMUNITY_PROFILE)
-
-export const reportIssue = createAction(REPORT_ISSUE)
 
 export const shortcutsVisibilityChanged = createAction(SHORTCUTS_VISIBILITY_CHANGED)
 export const toggleMiniSidebar = createAction(TOGGLE_MINI_SIDEBAR)
