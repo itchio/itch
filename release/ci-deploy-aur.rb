@@ -12,13 +12,14 @@ module Itch
     FileUtils.cp "release/templates/aur.itch.install", "aur-stage/#{app_name}.install"
 
     say "Generating PKGBUILD..."
+    ver = build_version.gsub(/-.+$/, '')
     rel = 1
     begin
       # increment release number if versions match
       opk = File.read "aur-stage/PKGBUILD"
       oldver = /pkgver=(.+)/.match(opk)[1]
       oldrel = /pkgrel=(.+)/.match(opk)[1]
-      if oldver == build_version
+      if oldver == ver
         rel = oldrel.to_i + 1
       end
     rescue => e
@@ -27,7 +28,7 @@ module Itch
 
     pk = File.read "release/templates/PKGBUILD.in"
     pk = pk.gsub "{{CI_APPNAME}}", app_name
-    pk = pk.gsub "{{CI_VERSION}}", build_version
+    pk = pk.gsub "{{CI_VERSION}}", ver
     pk = pk.gsub "{{CI_REL}}", rel.to_s
 
     File.write "aur-stage/PKGBUILD", pk
@@ -43,7 +44,7 @@ module Itch
       ✓ sh %Q{makepkg --syncdeps --force --needed --noconfirm}
 
       say "Validating built package..."
-      ✓ sh %Q{namcap "$pkgname-$NEWVERSION-$pkgrel-$(uname -m).pkg.tar.xz}
+      ✓ sh %Q{namcap "$pkgname-#{ver}-#{rel}-#{♫ "uname -m"}.pkg.tar.xz}
 
       say "Updating .SRCINFO..."
       ✓ sh %Q{mksrcinfo}
