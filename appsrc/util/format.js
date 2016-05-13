@@ -1,5 +1,6 @@
 
 import {object, map} from 'underline'
+import dateFormat from 'dateformat'
 
 export function slugify (str) {
   return str.toLowerCase()
@@ -35,6 +36,15 @@ export function seconds (secs) {
   }
 }
 
+export function date (v, f) {
+  try {
+    return dateFormat(v, f)
+  } catch (err) {
+    console.log(`Invalid date: ${v}`)
+    return '?'
+  }
+}
+
 export const DATE_FORMAT = 'mmmm dS, yyyy @ HH:MM TT'
 export const FS_DATE_FORMAT = 'yyyy.mm.dd-HH.MM.TT'
 
@@ -56,4 +66,4 @@ export function price (currency, value) {
   }
 }
 
-export default {slugify, camelify, camelifyObject, seconds, DATE_FORMAT, price}
+export default {date, slugify, camelify, camelifyObject, seconds, DATE_FORMAT, price}

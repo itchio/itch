@@ -3,7 +3,6 @@ import createQueue from './queue'
 import {app} from '../electron'
 import os from '../util/os'
 import needle from '../promised/needle'
-import dateFormat from 'dateformat'
 
 const linux = os.itchPlatform() === 'linux'
 
@@ -17,7 +16,7 @@ import {delay} from './effects'
 import mklog from '../util/log'
 const log = mklog('self-update')
 import {opts} from '../logger'
-import {DATE_FORMAT} from '../util/format'
+import format, {DATE_FORMAT} from '../util/format'
 
 import {
   BOOT,
@@ -146,7 +145,7 @@ export function * _applySelfUpdateRequest () {
   yield put(openModal({
     title: ['prompt.self_update_ready.title', {version: spec.name}],
     message: ['prompt.self_update_ready.message'],
-    detail: ['prompt.self_update_ready.detail', {notes: spec.notes, pubDate: dateFormat(pubDate, DATE_FORMAT)}],
+    detail: ['prompt.self_update_ready.detail', {notes: spec.notes, pubDate: format.date(pubDate, DATE_FORMAT)}],
     buttons: [
       {
         label: ['prompt.self_update_ready.action.restart'],
@@ -203,7 +202,7 @@ export function * _showAvailableSelfUpdate (action) {
   yield put(openModal({
     title: ['prompt.self_update.title', {version: spec.name}],
     message: [messageString],
-    detail: ['prompt.self_update.detail', {notes: spec.notes, pubDate: dateFormat(pubDate, DATE_FORMAT)}],
+    detail: ['prompt.self_update.detail', {notes: spec.notes, pubDate: format.date(pubDate, DATE_FORMAT)}],
     buttons: [
       {
         label: ['prompt.self_update.action.download'],

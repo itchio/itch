@@ -3,8 +3,7 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from './connect'
 
 import TimeAgo from 'react-timeago'
-import dateFormat from 'dateformat'
-import {DATE_FORMAT} from '../util/format'
+import format, {DATE_FORMAT} from '../util/format'
 
 export class NiceAgo extends Component {
   render () {
@@ -14,7 +13,7 @@ export class NiceAgo extends Component {
       return <span className='nice-ago'>{t('moment.now')}</span>
     }
 
-    return <span className='nice-ago hint--bottom' data-hint={dateFormat(date, DATE_FORMAT)}>
+    return <span className='nice-ago hint--bottom' data-hint={format.date(date, DATE_FORMAT)}>
       <TimeAgo date={date} title=''/>
     </span>
   }

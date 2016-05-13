@@ -1,11 +1,11 @@
 
 import Promise from 'bluebird'
 
-import dateFormat from 'dateformat'
 import {pairs} from 'underline'
 import colors from 'colors/safe'
 
 import fs from 'fs'
+import format from '../util/format'
 import sf from '../util/sf'
 import path from 'path'
 import eol from 'eol'
@@ -119,7 +119,7 @@ export class Logger {
   }
 
   timestamp () {
-    return dateFormat(new Date(), '[yyyy-mm-dd @ HH:MM:ss]')
+    return format.date(new Date(), '[yyyy-mm-dd @ HH:MM:ss]')
   }
 }
 make.Logger = Logger
