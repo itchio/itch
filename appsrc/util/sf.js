@@ -113,6 +113,7 @@ const self = {
   },
 
   appendFile: async (file, contents, options) => {
+    await fs.mkdir(path.dirname(file))
     return await fs.appendFileAsync(file, contents, options)
   },
 
