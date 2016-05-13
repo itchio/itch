@@ -30,6 +30,7 @@ module Itch
     pk = pk.gsub "{{CI_APPNAME}}", app_name
     pk = pk.gsub "{{CI_VERSION}}", ver
     pk = pk.gsub "{{CI_SUFFIX}}", if channel_name == "stable" then "" else "-#{channel_name}" end
+    pk = pk.gsub "{{CI_CHANNEL}}", channel_name
     pk = pk.gsub "{{CI_REL}}", rel.to_s
 
     File.write "aur-stage/PKGBUILD", pk
