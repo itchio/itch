@@ -40,7 +40,8 @@ export function * _downloadEnded (action) {
         gameId: downloadOpts.gameId,
         game: downloadOpts.game,
         upload: downloadOpts.upload,
-        archivePath: downloadOpts.destPath
+        archivePath: downloadOpts.destPath,
+        downloadKey: downloadOpts.downloadKey
       }
 
       let {err} = yield call(startTask, taskOpts)

@@ -105,13 +105,14 @@ function * checkForGameUpdate (cave, taskOpts = {}) {
   if (game) {
     log(opts, `Looking for updates to ${game.title}...`)
     const out = new EventEmitter()
+    const findKey = () => market.getEntities('downloadKeys')::findWhere({gameId: game.id})
     const taskOpts = {
       ...opts,
       logger,
       game,
       gameId: game.id,
       credentials,
-      downloadKey: cave.downloadKey,
+      downloadKey: cave.downloadKey || findKey(),
       market
     }
 
@@ -126,7 +127,7 @@ function * checkForGameUpdate (cave, taskOpts = {}) {
       let hasUpgrade = false
 
       if (cave.uploadId && cave.buildId) {
-        log(opts, `Doing wharf-aware check for ${game.title}, from build ${cave.buildId}`)
+        log(opts, `Looking for new builds of ${game.title}, from build ${cave.buildId}`)
         const upload = uploads::findWhere({id: cave.uploadId})
         if (!upload || !upload.buildId) {
           log(opts, 'Uh oh, our wharf-enabled upload disappeared')
