@@ -68,5 +68,5 @@ package() {
 
   install -D -m644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 
-  ln -s "/usr/bin/{{CI_APPNAME}}" "${pkgdir}"
+  ln -s "/usr/bin/{{CI_APPNAME}}" "${pkgdir}/usr/lib/{{CI_APPNAME}}/{{CI_APPNAME}}"
 }
