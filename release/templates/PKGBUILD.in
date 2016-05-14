@@ -11,7 +11,7 @@ url="https://github.com/itchio/{{CI_APPNAME}}"
 license=('MIT')
 
 depends=('alsa-lib' 'libnotify' 'nss' 'gconf' 'gtk2' 'libxtst' 'desktop-file-utils' 'gtk-update-icon-cache' 'p7zip')
-makedepends=('nodejs' 'nodejs-grunt-cli' 'npm' 'ruby')
+makedepends=('nodejs' 'nodejs-grunt-cli' 'npm' 'ruby' 'ruby-bundler')
 options=('!strip')
 install="{{CI_APPNAME}}.install"
 
@@ -68,5 +68,6 @@ package() {
 
   install -D -m644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 
-  ln -s "/usr/bin/{{CI_APPNAME}}" "${pkgdir}/usr/lib/{{CI_APPNAME}}/{{CI_APPNAME}}"
+  mkdir -p "${pkgdir}/usr/bin"
+  ln -s "/usr/lib/{{CI_APPNAME}}/{{CI_APPNAME}}" "${pkgdir}/usr/bin/{{CI_APPNAME}}"
 }
