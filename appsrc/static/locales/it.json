@@ -11,7 +11,7 @@
     "grid.item.launch": "Lancia", 
     "grid.item.not_platform_compatible": "Non disponibile per {{platform}}", 
     "grid.item.open_in_file_explorer_linux": "Apri la cartella di installazione nel gestore file", 
-    "grid.item.probe": "Apri il log eventi di questo elemento per trovare la causa dell'errore (Avanzato)", 
+    "grid.item.probe": "Apri il log degli eventi di quest'oggetto per capire la causa del problema (per utenti avanzati)", 
     "grid.item.purchase_or_donate": "Compra o dona in favore dell'oggetto", 
     "grid.item.queued": "In coda", 
     "grid.item.report_problem": "Segnala come non funzionante (Apre nel browser)", 
