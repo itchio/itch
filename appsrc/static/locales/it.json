@@ -1,6 +1,6 @@
 {
     "errors.api.login.incorrect_username_or_password": "Nome utente o password errati", 
-    "errors.api.login.password_must_be_provided": "La password deve essere fornita", 
+    "errors.api.login.password_must_be_provided": "La password è obbligatoria", 
     "errors.api.login.username_must_be_provided": "Il nome utente deve essere fornito", 
     "grid.item.buy_now": "Compra", 
     "grid.item.cancel_download": "Annulla il download", 
