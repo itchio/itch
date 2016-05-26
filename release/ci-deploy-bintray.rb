@@ -15,11 +15,7 @@ module Itch
       %w(386 amd64).each do |arch|
         say "Uploading #{arch} to #{repo} repo..."
         deb_arch = to_deb_arch arch
-        rpm_arch = case arch
-                   when "386" then "i386"
-                   when "amd64" then "x86_64"
-                   else raise "Unsupported arch #{arch}"
-                   end
+        rpm_arch = to_rpm_arch arch
 
         publish = (channel_name != 'stable')
         say "(and publishing)" if publish

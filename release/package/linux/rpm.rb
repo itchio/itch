@@ -2,6 +2,7 @@
 module Itch
   # RPM package
   def Itch.ci_package_rpm (arch, build_path)
+    rpm_arch = to_rpm_arch arch
     gem_dep 'fpm', 'fpm'
 
     say "Preparing stage2"
@@ -18,7 +19,7 @@ module Itch
       --url "https://itch.io/app" \
       --version "#{build_version}" \
       --maintainer "#{MAINTAINER}" \
-      --architecture "#{arch}" \
+      --architecture "#{rpm_arch}" \
       --license "MIT" \
       --vendor "itch.io" \
       --category "games" \
