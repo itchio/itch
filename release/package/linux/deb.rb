@@ -2,6 +2,7 @@
 module Itch
   # APT package
   def Itch.ci_package_deb (arch, build_path)
+    deb_arch = to_deb_arch arch
     show_versions %w(fakeroot ar)
 
     say "Preparing stage2"
@@ -44,7 +45,7 @@ module Itch
     control = <<EOF
 Package: #{app_name}
 Version: #{build_version}
-Architecture: #{arch}
+Architecture: #{deb_arch}
 Maintainer: #{MAINTAINER}
 Installed-Size: #{(installed_size / 1024.0).ceil.to_i}
 Depends: gconf-service, libasound2 (>= 1.0.16), libatk1.0-0 (>= 1.12.4), libc6 (>= 2.12), libcairo2 (>= 1.6.0), libcups2 (>= 1.4.0), libdbus-1-3 (>= 1.2.14), libexpat1 (>= 2.0.1), libfontconfig1 (>= 2.9.0), libfreetype6 (>= 2.4.2), libgcc1 (>= 1:4.1.1), libgconf-2-4 (>= 2.31.1), libgdk-pixbuf2.0-0 (>= 2.22.0), libglib2.0-0 (>= 2.31.8), libgtk2.0-0 (>= 2.24.0), libnotify4 (>= 0.7.0), libnspr4 (>= 2:4.9-2~) | libnspr4-0d (>= 1.8.0.10), libnss3 (>= 2:3.13.4-2~) | libnss3-1d (>= 3.12.4), libpango-1.0-0 (>= 1.14.0), libpangocairo-1.0-0 (>= 1.14.0), libstdc++6 (>= 4.6), libx11-6 (>= 2:1.4.99.1), libxcomposite1 (>= 1:0.3-1), libxcursor1 (>> 1.1.2), libxdamage1 (>= 1:1.1), libxext6, libxfixes3, libxi6 (>= 2:1.2.99.4), libxrandr2 (>= 2:1.2.99.2), libxrender1, libxtst6, p7zip-full
@@ -89,7 +90,7 @@ File.write("#{stage2_path}/DEBIAN/control", control)
         ✓ sh "fakeroot tar cfJ ../data.tar.xz ."
       end
 
-      deb="../packages/#{app_name}_#{build_version}_#{arch}.deb"
+      deb="../packages/#{app_name}_#{build_version}_#{deb_arch}.deb"
       FileUtils.rm_f deb
       File.write("debian-binary", "2.0\n")
       ✓ sh "ar cq #{deb} debian-binary control.tar.gz data.tar.xz"

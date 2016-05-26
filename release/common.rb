@@ -242,6 +242,14 @@ module Itch
     end
   end
 
+  def Itch.to_deb_arch (arch)
+    case arch
+    when "386" then "i386"
+    when "amd64" then "amd64"
+    else raise "Unsupported arch #{arch}"
+    end
+  end
+
   def Itch.build_time
     return BUILD_TIME
   end
