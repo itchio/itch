@@ -70,7 +70,7 @@ File.write("#{stage2_path}/DEBIAN/control", control)
       File.write("DEBIAN/md5sums", sums)
 
       say "Fixing permissions..."
-      Dir["usr/**/*"].each do |f|
+      Dir["./**/*"].each do |f|
         case File.stat(f).mode & 0777
         when 0775
           File.chmod(0755, f)
