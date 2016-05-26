@@ -124,6 +124,7 @@
     "prompt.uninstall.cancel": "Annulla", 
     "prompt.uninstall.message": "Sei sicuro di voler disinstallare {{title}}?", 
     "prompt.uninstall.reinstall": "Reinstalla", 
+    "prompt.uninstall.uninstall": "Disinstalla", 
     "prompt.url_install.credit": "Una {{classification}} di {{username}}", 
     "prompt.url_install.message": "Vuoi installare {{title}}?", 
     "prompt.url_install.title": "Richiesta di installazione", 
