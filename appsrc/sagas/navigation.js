@@ -308,8 +308,10 @@ export function * _viewCreatorProfile (action) {
 }
 
 export function * _viewCommunityProfile (action) {
-  const username = yield select((state) => state.session.credentials.me.username)
-  yield put(navigate('url/' + `${urls.itchio}/profile/${username}`))
+  const url = yield select((state) => state.session.credentials.me.url)
+  const host = urlParser.parse(url).hostname
+  const slug = /^[^.]+/.exec(host)
+  yield put(navigate('url/' + `${urls.itchio}/profile/${slug}`))
 }
 
 export function * _triggerMainAction () {
