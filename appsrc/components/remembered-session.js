@@ -48,7 +48,9 @@ RememberedSession.propTypes = {
   }),
 
   loginWithToken: PropTypes.func,
-  forgetSessionRequest: PropTypes.func
+  forgetSessionRequest: PropTypes.func,
+
+  t: PropTypes.func.isRequired
 }
 
 export default connect()(RememberedSession)
