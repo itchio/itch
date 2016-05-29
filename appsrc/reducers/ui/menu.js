@@ -1,6 +1,9 @@
 
 import {handleActions} from 'redux-actions'
 
+import os from '../util/os'
+const osx = os.itchPlatform() === 'osx'
+
 export default handleActions({
   REFRESH_MENU: (state, action) => {
     return {template: computeMenuTemplate(action.payload)}
@@ -76,7 +79,7 @@ function computeMenuTemplate (payload) {
         },
         {
           label: 'menu.view.history',
-          accelerator: 'CmdOrCtrl+H'
+          accelerator: osx ? 'Cmd+Y' : 'Ctrl+H'
         },
         {
           label: 'menu.view.downloads',
