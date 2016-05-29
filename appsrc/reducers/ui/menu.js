@@ -1,7 +1,7 @@
 
 import {handleActions} from 'redux-actions'
 
-import os from '../util/os'
+import os from '../../util/os'
 const osx = os.itchPlatform() === 'osx'
 
 export default handleActions({
