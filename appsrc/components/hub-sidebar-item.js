@@ -86,7 +86,7 @@ HubSidebarItem.propTypes = {
   label: PropTypes.oneOfType([ PropTypes.string, PropTypes.array ]).isRequired,
   active: PropTypes.bool.isRequired,
   icon: PropTypes.string.isRequired,
-  iconImage: PropTypes.string.isRequired,
+  iconImage: PropTypes.string,
   count: PropTypes.number,
   kbShortcut: PropTypes.node,
 

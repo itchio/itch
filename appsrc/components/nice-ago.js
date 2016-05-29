@@ -9,8 +9,7 @@ export class NiceAgo extends Component {
   render () {
     const {t, date} = this.props
 
-    if (!this.validDate(date)) {
-      console.warn('NiceAgo fed invalid date: ', date)
+    if (!this.isValidDate(date)) {
       return <span className='nice-ago'>?</span>
     }
 
@@ -18,13 +17,14 @@ export class NiceAgo extends Component {
       return <span className='nice-ago'>{t('moment.now')}</span>
     }
 
+    // pass empty title to TimeAgo on purpose so we don't have double tooltip on hover
     return <span className='nice-ago hint--bottom' data-hint={format.date(date, DATE_FORMAT)}>
       <TimeAgo date={date} title=''/>
     </span>
   }
 
-  validDate (date) {
-    return (typeof date === 'number' && date > 0)
+  isValidDate (date) {
+    return !isNaN(new Date(date).getTime())
   }
 }
 
