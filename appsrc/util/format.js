@@ -1,5 +1,4 @@
 
-import {object, map} from 'underline'
 import dateFormat from 'dateformat'
 
 export function slugify (str) {
@@ -13,11 +12,19 @@ export function camelify (str) {
 }
 
 export function camelifyObject (obj) {
-  if (typeof obj === 'object') {
+  if (obj && typeof obj === 'object') {
     if (Array.isArray(obj)) {
-      return obj::map((val, key) => camelifyObject(val))
+      const res = Array(obj.length)
+      for (let i = 0; i < obj.length; i++) {
+        res[i] = camelifyObject(obj[i])
+      }
+      return res
     } else {
-      return obj::map((val, key) => [ camelify(key), camelifyObject(val) ])::object()
+      const res = {}
+      for (const key of Object.keys(obj)) {
+        res[camelify(key)] = camelifyObject(obj[key])
+      }
+      return res
     }
   } else {
     return obj
