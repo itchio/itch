@@ -73,11 +73,7 @@
   position: relative;
 
   .hub-meat-tab {
-    display: flex;
-    height: 0;
-    overflow: hidden;
-    flex-basis: 0;
-    flex-grow: 0;
+    display: none;
 
     &.visible {
       display: flex;
