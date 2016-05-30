@@ -45,7 +45,7 @@ class HubSidebarHandle extends Component {
     e.preventDefault()
 
     const {updatePreferences} = this.props
-    const width = Math.max(150, Math.min(e.clientX, 500))
+    const width = Math.max(200, Math.min(e.clientX, 500))
 
     updatePreferences({
       sidebarWidth: width
