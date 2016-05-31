@@ -113,6 +113,10 @@ export default handleActions({
     const closeId = action.payload || id
     const {constant, transient} = tabs
 
+    if (constant.indexOf(id) !== -1) {
+      return state
+    }
+
     const ids = constant.concat(transient)
     const index = ids.indexOf(id)
 
