@@ -31,6 +31,8 @@ $meat-cover-scale: 0.4;
       animation: load-border 10s cubic-bezier(0, 0, 0, 0.42) infinite;
     }
     border-image-slice: 100% 10% 0% 0%;
+    border-image-width: 2px;
+    border-top: 2px solid;
   }
 
   webview {
