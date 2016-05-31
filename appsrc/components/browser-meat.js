@@ -145,10 +145,6 @@ export class BrowserMeat extends Component {
     webview.addEventListener('dom-ready', () => {
       console.log(tabId, 'dom-ready!, props url = ', this.props.url, 'wv url', webview.getURL())
 
-      webview.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tabId)})`)
-
-      this.updateBrowserState({loading: false})
-
       const webContents = webview.getWebContents()
       if (!webContents || webContents.isDestroyed()) return
 
@@ -156,9 +152,13 @@ export class BrowserMeat extends Component {
         webContents.openDevTools({detach: true})
       }
 
+      this.updateBrowserState({loading: false})
+
       if (currentSession !== webContents.session) {
         this.setupItchInternal(webContents.session)
       }
+
+      webview.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tabId)})`)
     })
 
     const {url} = this.props
@@ -170,6 +170,7 @@ export class BrowserMeat extends Component {
   }
 
   setupItchInternal (session) {
+    console.log('setting up itch internal')
     currentSession = session
 
     // requests to 'itch-internal' are used to communicate between web content & the app
@@ -177,7 +178,8 @@ export class BrowserMeat extends Component {
       urls: ['https://itch-internal/*']
     }
 
-    session.webRequest.onBeforeSendHeaders(internalFilter, (details, callback) => {
+    session.webRequest.onBeforeRequest(internalFilter, (details, callback) => {
+      console.log('cancelling: ', JSON.stringify(details))
       callback({cancel: true})
 
       let parsed = urlParser.parse(details.url)
