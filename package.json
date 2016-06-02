@@ -93,6 +93,7 @@
     "babel-preset-react": "^6.5.0",
     "coveralls": "^2.11.4",
     "electron-packager": "^7.0.1",
+    "electron-sudo": "^3.0.5",
     "grunt": "^1.0.1",
     "grunt-babel": "^6.0.0",
     "grunt-contrib-copy": "^1.0.0",
