@@ -87,6 +87,26 @@ function convertMenuAction (label) {
     case 'menu.help.report_issue': return openUrl(`${urls.itchRepo}/issues/new`)
     case 'menu.help.search_issue': return openUrl(`${urls.itchRepo}/search?type=Issues`)
     case 'menu.help.release_notes': return openUrl(`${urls.itchRepo}/releases`)
+    case 'admin.test': {
+      const sudo = require('electron-sudo')
+      const options = {
+        name: 'itch',
+        process: {
+          options: {
+            env: {}
+          },
+          on: function (ps) {
+            ps.stdout.on('data', function (data) {
+              console.log('sudo stdout: ', data)
+            })
+          }
+        }
+      }
+      sudo.exec('whoami', options, function (error) {
+        console.log('sudo error: ', error)
+      })
+      break
+    }
     default: console.log(`Unhandled menu action: ${label}`)
   }
 }
