@@ -6,6 +6,8 @@ import {sortBy} from 'underline'
 import Promise from 'bluebird'
 import shellQuote from 'shell-quote'
 
+import sandboxTemplate from '../../constants/sandbox-template'
+
 import os from '../../util/os'
 import sf from '../../util/sf'
 import spawn from '../../util/spawn'
@@ -47,7 +49,7 @@ function escape (arg) {
 async function computeWeight (appPath, execs) {
   const output = []
 
-  const f = async (exe) => {
+  const f = async function (exe) {
     const exePath = path.join(appPath, exe.path)
     let stats
     try {
@@ -115,21 +117,61 @@ function isAppBundle (exePath) {
   return /\.app\/?$/.test(exePath.toLowerCase())
 }
 
-function launchExecutable (exePath, args, opts) {
+async function getFullExec (opts, exePath) {
+  const plistPath = path.join(exePath, 'Contents', 'Info.pList')
+  let out = ''
+  let err = ''
+  const plutilCode = await spawn({
+    command: 'plutil',
+    args: [ '-convert', 'json', '-o', '-', plistPath ],
+    onToken: (tok) => { out += tok + '\n' },
+    onErrToken: (tok) => { err += tok + '\n' }
+  })
+  if (plutilCode !== 0) {
+    log(opts, `plutil failed:\n${err}`)
+    throw new Error(`plutil failed with code ${plutilCode}`)
+  }
+
+  log(opts, `plutil in json: ${out}`)
+  let exec = ''
+  try {
+    const plObj = JSON.parse(out)
+    exec = plObj['CFBundleExecutable']
+  } catch (err) {
+    throw new Error(`invalid app bundle ${exePath}: couldn't parse metadata`)
+  }
+  return path.join(exePath, 'Contents', 'MacOS', exec)
+}
+
+async function launchExecutable (exePath, args, opts) {
   const platform = os.platform()
   log(opts, `launching '${exePath}' on '${platform}' with args '${args.join(' ')}'`)
   const argString = args.map((x) => escape(x)).join(' ')
 
   if (platform === 'darwin' && isAppBundle(exePath)) {
-    // '-W' waits for app to quit
-    // potentially easy to inject something into the command line
-    // here but then again we are running executables downloaded
-    // from the internet.
-    let cmd = `open -W ${escape(exePath)}`
-    if (argString.length > 0) {
-      cmd += ` --args ${argString}`
+    const {isolateApps} = opts.preferences
+
+    const fullExec = await getFullExec(opts, exePath)
+    log(opts, `full exec path: ${fullExec}`)
+    const cmd = `${escape(fullExec)} ${argString}`
+
+    if (isolateApps) {
+      log(opts, 'app isolation enabled')
+
+      log(opts, 'writing sandbox file')
+      const {cave} = opts
+      const appPath = pathmaker.appPath(cave)
+      const sandboxProfilePath = path.join(appPath, '.itch', 'isolate-app.sb')
+
+      const sandboxSource = sandboxTemplate
+        .replace(/{{INSTALL_LOCATION}}/, appPath)
+      await sf.writeFile(sandboxProfilePath, sandboxSource)
+
+      return sh(fullExec, `sandbox-exec -f ${escape(sandboxProfilePath)} ${cmd}}`, opts)
+    } else {
+      log(opts, 'no app isolation')
+      return sh(exePath, cmd, opts)
     }
-    return sh(exePath, cmd, opts)
   } else {
     let cmd = `${escape(exePath)}`
     if (argString.length > 0) {
@@ -183,5 +225,5 @@ export default async function launch (out, opts) {
     exePath = 'java'
   }
 
-  return launchExecutable(exePath, args, opts)
+  return await launchExecutable(exePath, args, opts)
 }

@@ -25,10 +25,11 @@ function caveProblem (cave) {
 }
 
 export default async function start (out, opts) {
-  const {globalMarket} = opts
+  const {globalMarket, preferences} = opts
   let {cave} = opts
   invariant(cave, 'launch has cave')
   invariant(globalMarket, 'launch has globalMarket')
+  invariant(preferences, 'launch has preferences')
 
   const action = classificationActions[(cave.game || {}).classification || 'game']
   if (action === 'open') {

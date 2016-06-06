@@ -33,12 +33,14 @@ export function * startTask (taskOpts) {
     })::throttle(PROGRESS_THROTTLE))
 
     const credentials = yield select((state) => state.session.credentials)
+    const preferences = yield select((state) => state.preferences)
     const extendedOpts = {
       ...opts,
       ...taskOpts,
       market: getUserMarket(),
       globalMarket: getGlobalMarket(),
-      credentials
+      credentials,
+      preferences
     }
 
     log(opts, `About to start ${taskOpts.name} (${id})`)
