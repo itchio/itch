@@ -9,7 +9,8 @@ const initialState = {
   offlineMode: OFFLINE_MODE,
   installLocations: {},
   defaultInstallLocation: 'appdata',
-  sidebarWidth: 240
+  sidebarWidth: 240,
+  isolateApps: false
 }
 
 export default handleActions({

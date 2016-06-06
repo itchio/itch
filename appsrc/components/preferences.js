@@ -30,8 +30,10 @@ function browseI18nKey () {
 
 export class Preferences extends Component {
   render () {
-    const {t, lang, sniffedLang = '', downloading, locales} = this.props
-    const {queueLocaleUpdate} = this.props
+    const {t, lang, sniffedLang = '', downloading, locales, isolateApps} = this.props
+    const {queueLocaleUpdate, updatePreferences} = this.props
+
+    console.log('isolateApps = ', isolateApps)
 
     const options = [{
       value: '__',
@@ -49,10 +51,26 @@ export class Preferences extends Component {
         }
         </div>
 
-        <div className='get-involved'>
+        <div className='link-box'>
           <a href={urls.itchTranslationPlatform}>
             <Icon icon='earth'/>
             {t('preferences.language.get_involved', {name: 'itch'})}
+          </a>
+        </div>
+
+        <p className='security-header'>{t('preferences.security')}</p>
+        <form className='form security-form'>
+          <label>
+            <input type='checkbox' checked={isolateApps} onChange={(e) => { updatePreferences({isolateApps: e.target.checked}) }}/>
+            <span> Isolate apps </span>
+            <span className='experimental'>{t('label.experimental')}</span>
+          </label>
+        </form>
+
+        <div className='link-box'>
+          <a href='https://github.com/itchio/itch/issues/670'>
+            <Icon icon='earth'/>
+            {t('preferences.security.isolation_learn_more')}
           </a>
         </div>
 
@@ -174,6 +192,7 @@ const mapStateToProps = createStructuredSelector({
   lang: (state) => state.i18n.lang,
   locales: (state) => state.i18n.locales,
   sniffedLang: (state) => state.system.sniffedLang,
+  isolateApps: (state) => state.preferences.isolateApps,
   installLocations: createSelector(
     (state) => state.preferences.installLocations,
     (state) => state.preferences.defaultInstallLocation,

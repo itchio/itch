@@ -12,7 +12,7 @@
     top: 30px;
   }
 
-  .install-locations-header {
+  .install-locations-header, .security-header {
     padding: 20px 0 10px 0;
   }
 
@@ -50,18 +50,36 @@
     }
   }
 
-  .get-involved {
+  .security-form {
+    padding: 5px 0 0px 0;
+
+    label {
+      margin-left: 15px;
+      font-size: 16px;
+    }
+
+    .experimental {
+      color: white;
+      font-size: 12px;
+      background: #4f5050;
+      padding: 0 2px;
+      margin-left: 8px;
+      border-radius: 2px;
+    }
+  }
+
+  .link-box {
     margin: 20px 15px;
     font-size: 80%;
-  }
 
-  .get-involved .icon {
-    margin-right: 8px;
-  }
+    .icon {
+      margin-right: 8px;
+    }
 
-  .get-involved a {
-    color: #87A7C3;
-    text-decoration: none;
+    a {
+      color: #87A7C3;
+      text-decoration: none;
+    }
   }
 
   .preferences-background {

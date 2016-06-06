@@ -1,4 +1,5 @@
 {
+    "label.experimental": "Experimental",
     "desktop.shortcut.comment": "Install and play itch.io games easily",
     "duration.hour": "an hour",
     "duration.hours": "{{x}} hours",
@@ -105,6 +106,8 @@
     "onboarding.owned.navigation_hint": "Click the labels on your left to navigate around the app",
     "onboarding.owned.reassuring_comment": "Things are looking a bit empty right now, but no worries!",
     "onboarding.owned.title_warm_welcome": "You made it!",
+    "preferences.security": "Security & privacy",
+    "preferences.security.isolation_learn_more": "Learn more about app isolation",
     "preferences.install_location.add": "Add location",
     "preferences.install_location.browse": "Open install location in file explorer",
     "preferences.install_location.browse_linux": "Open install location in file manager",
