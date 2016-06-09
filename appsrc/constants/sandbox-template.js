@@ -10,17 +10,17 @@ export default `
 (deny default)
 
 (allow file*
-  (subpath "/Users/%username%/Library/Application Support")
-  (subpath "/Users/%username%/Library/Preferences")
-  (subpath "/Users/%username%/Library/Logs")
-  (subpath "/Users/%username%/Library/Saved Application State") ;; Unity UI persistent stuff
+  (subpath "{{USER_LIBRARY}}/Application Support")
+  (subpath "{{USER_LIBRARY}}/Preferences")
+  (subpath "{{USER_LIBRARY}}/Logs")
+  (subpath "{{USER_LIBRARY}}/Saved Application State") ;; Unity UI persistent stuff
 
   ;; FIXME probably a bit much ?
   (subpath "/dev")
 )
 
 (deny file*
-  (subpath "/Users/%username%/Library/Application Support/itch")
+  (subpath "{{USER_LIBRARY}}/Application Support/itch")
 )
 
 (allow file*
@@ -46,9 +46,9 @@ export default `
   (subpath "/Library/Audio")
   (subpath "/Library/Fonts")
 
-  (subpath "/Users/%username%/Library/Keyboard Layouts")
-  (subpath "/Users/%username%/Library/Input Methods")
-  (subpath "/Users/%username%/Library/Fonts")
+  (subpath "{{USER_LIBRARY}}/Keyboard Layouts")
+  (subpath "{{USER_LIBRARY}}/Input Methods")
+  (subpath "{{USER_LIBRARY}}/Fonts")
 
   ;; FIXME that's a bit excessive, why are some apps
   ;; trying to read 'PkgInfo' files or 'rsrc' ?

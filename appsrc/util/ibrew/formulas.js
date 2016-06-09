@@ -38,6 +38,15 @@ self['elevate'] = {
 }
 
 /**
+ * bring OSX apps forwards even when executed directly:
+ * https://github.com/itchio/activate
+ */
+self['activate'] = {
+  format: '7z',
+  osWhitelist: ['darwin']
+}
+
+/**
  * file(1) command, built for msys
  */
 self['file'] = {

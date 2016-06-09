@@ -75,6 +75,8 @@ const self = {
           archivePath,
           destPath: self.binPath()
         })
+        log(opts, `${name}: cleaning up ${formula.format} archive`)
+        yield call(sf.wipe, archivePath)
         log(opts, `${name}: installed!`)
       }
     }

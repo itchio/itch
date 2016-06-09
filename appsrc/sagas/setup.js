@@ -38,7 +38,7 @@ export function * fetch (name) {
 export function * setup () {
   yield call(augmentPath)
   yield call(fetch, '7za')
-  yield ['butler', 'elevate', 'file']::map((name) => call(fetch, name))
+  yield ['butler', 'elevate', 'activate', 'file']::map((name) => call(fetch, name))
   yield put(setupDone())
 }
 

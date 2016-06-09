@@ -18,14 +18,16 @@ const log = mklog('tasks/launch')
 
 import {Crash} from '../errors'
 
-async function sh (exePath, fullCommand, opts) {
-  log(opts, `sh ${fullCommand}`)
+async function doSpawn (exePath, fullCommand, opts) {
+  log(opts, `doSpawn ${fullCommand}`)
 
   const cwd = path.dirname(exePath)
   log(opts, `Working directory: ${cwd}`)
 
   const args = shellQuote.parse(fullCommand)
   const command = args.shift()
+  log(opts, `Command: ${command}`)
+  log(opts, `Args: ${args}`)
 
   const code = await spawn({
     command,
@@ -117,42 +119,23 @@ function isAppBundle (exePath) {
   return /\.app\/?$/.test(exePath.toLowerCase())
 }
 
-async function getFullExec (opts, exePath) {
-  const plistPath = path.join(exePath, 'Contents', 'Info.pList')
-  let out = ''
-  let err = ''
-  const plutilCode = await spawn({
-    command: 'plutil',
-    args: [ '-convert', 'json', '-o', '-', plistPath ],
-    onToken: (tok) => { out += tok + '\n' },
-    onErrToken: (tok) => { err += tok + '\n' }
-  })
-  if (plutilCode !== 0) {
-    log(opts, `plutil failed:\n${err}`)
-    throw new Error(`plutil failed with code ${plutilCode}`)
-  }
-
-  log(opts, `plutil in json: ${out}`)
-  let exec = ''
-  try {
-    const plObj = JSON.parse(out)
-    exec = plObj['CFBundleExecutable']
-  } catch (err) {
-    throw new Error(`invalid app bundle ${exePath}: couldn't parse metadata`)
-  }
-  return path.join(exePath, 'Contents', 'MacOS', exec)
-}
-
 async function launchExecutable (exePath, args, opts) {
   const platform = os.platform()
   log(opts, `launching '${exePath}' on '${platform}' with args '${args.join(' ')}'`)
   const argString = args.map((x) => escape(x)).join(' ')
 
-  if (platform === 'darwin' && isAppBundle(exePath)) {
-    const {isolateApps} = opts.preferences
+  const {isolateApps} = opts.preferences
 
-    const fullExec = await getFullExec(opts, exePath)
-    log(opts, `full exec path: ${fullExec}`)
+  let fullExec = exePath
+  if (platform === 'darwin') {
+    if (isAppBundle(exePath)) {
+      fullExec = await spawn.getOutput({
+        command: 'activate',
+        args: ['--print-bundle-executable-path', exePath],
+        logger: opts.logger
+      })
+    }
+
     const cmd = `${escape(fullExec)} ${argString}`
 
     if (isolateApps) {
@@ -163,21 +146,29 @@ async function launchExecutable (exePath, args, opts) {
       const appPath = pathmaker.appPath(cave)
       const sandboxProfilePath = path.join(appPath, '.itch', 'isolate-app.sb')
 
+      const userLibrary = (await spawn.getOutput({
+        command: 'activate',
+        args: ['--print-library-paths'],
+        logger: opts.logger
+      })).split('\n')[0].trim()
+      log(opts, `user library = '${userLibrary}'`)
+
       const sandboxSource = sandboxTemplate
-        .replace(/{{INSTALL_LOCATION}}/, appPath)
+        .replace(/{{USER_LIBRARY}}/g, userLibrary)
+        .replace(/{{INSTALL_LOCATION}}/g, appPath)
       await sf.writeFile(sandboxProfilePath, sandboxSource)
 
-      return sh(fullExec, `sandbox-exec -f ${escape(sandboxProfilePath)} ${cmd}}`, opts)
+      return doSpawn(fullExec, `activate sandbox-exec -f ${escape(sandboxProfilePath)} ${cmd}`, opts)
     } else {
       log(opts, 'no app isolation')
-      return sh(exePath, cmd, opts)
+      return doSpawn(fullExec, `activate ${cmd}`, opts)
     }
   } else {
     let cmd = `${escape(exePath)}`
     if (argString.length > 0) {
       cmd += ` ${argString}`
     }
-    return sh(exePath, cmd, opts)
+    return doSpawn(exePath, cmd, opts)
   }
 }
 

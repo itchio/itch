@@ -49,7 +49,7 @@ function spawn (opts) {
     splitter.encoding = 'utf8'
     splitter.on('token', (tok) => {
       try {
-        opts.onToken(tok)
+        opts.onErrToken(tok)
       } catch (err) {
         cbErr = err
       }
@@ -83,6 +83,31 @@ function spawn (opts) {
       })
     }
   })
+}
+
+spawn.getOutput = async function (opts) {
+  let out = ''
+  let err = ''
+
+  const actualOpts = {
+    ...opts,
+    onToken: (tok) => {
+      out += tok + '\n'
+      opts.onToken && opts.onToken(tok)
+    },
+    onErrToken: (tok) => {
+      err += tok + '\n'
+      opts.onErrToken && opts.onErrToken(tok)
+    }
+  }
+
+  const code = await spawn(actualOpts)
+  if (code !== 0) {
+    log(opts, `${opts.command} failed:\n${err}`)
+    throw new Error(`${opts.command} failed with code ${code}`)
+  }
+
+  return out.trim()
 }
 
 export default spawn
