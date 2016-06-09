@@ -20,6 +20,7 @@ class Layout extends Component {
 
     return <div className={classes}>
       <div className='layout-main'>
+        <div className='layout-draggable'/>
         {this.main()}
       </div>
       <StatusBar/>

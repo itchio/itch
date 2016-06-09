@@ -16,6 +16,15 @@ body {
 }
 
 .layout {
+  .layout-draggable {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 40px;
+    -webkit-app-region: drag;
+  }
+
   .layout-base {
     position: absolute;
     left: 0;
