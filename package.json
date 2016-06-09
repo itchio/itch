@@ -78,6 +78,7 @@
     "stream-splitter": "^0.3.2",
     "streamsearch": "^0.1.2",
     "tinycolor2": "^1.3.0",
+    "tmp": "0.0.28",
     "underline": "^1.0.2",
     "walk": "^2.3.9"
   },

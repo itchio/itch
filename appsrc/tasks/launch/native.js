@@ -1,6 +1,7 @@
 
 import path from 'path'
 import invariant from 'invariant'
+import tmp from 'tmp'
 
 import {sortBy} from 'underline'
 import Promise from 'bluebird'
@@ -128,15 +129,14 @@ async function launchExecutable (exePath, args, opts) {
 
   let fullExec = exePath
   if (platform === 'darwin') {
-    if (isAppBundle(exePath)) {
+    const isBundle = isAppBundle(exePath)
+    if (isBundle) {
       fullExec = await spawn.getOutput({
         command: 'activate',
         args: ['--print-bundle-executable-path', exePath],
         logger: opts.logger
       })
     }
-
-    const cmd = `${escape(fullExec)} ${argString}`
 
     if (isolateApps) {
       log(opts, 'app isolation enabled')
@@ -158,17 +158,51 @@ async function launchExecutable (exePath, args, opts) {
         .replace(/{{INSTALL_LOCATION}}/g, appPath)
       await sf.writeFile(sandboxProfilePath, sandboxSource)
 
-      return doSpawn(fullExec, `activate sandbox-exec -f ${escape(sandboxProfilePath)} ${cmd}`, opts)
+      log(opts, 'creating fake app bundle')
+      if (!isBundle) {
+        throw new Error('app isolation is only supported for bundles')
+      }
+      const workDir = tmp.dirSync()
+      const exeName = path.basename(fullExec)
+
+      const realApp = exePath
+      const fakeApp = path.join(workDir.name, path.basename(realApp))
+      log(opts, `fake app path: ${fakeApp}`)
+
+      await sf.mkdir(fakeApp)
+      await sf.mkdir(path.join(fakeApp, 'Contents'))
+      await sf.mkdir(path.join(fakeApp, 'Contents', 'MacOS'))
+
+      const fakeBinary = path.join(fakeApp, 'Contents', 'MacOS', exeName)
+      await sf.writeFile(fakeBinary,
+`#!/bin/bash
+sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
+`)
+      await sf.chmod(fakeBinary, 0o700)
+
+      await sf.symlink(
+        path.join(realApp, 'Contents', 'Resources'),
+        path.join(fakeApp, 'Contents', 'Resources'))
+
+      await sf.symlink(
+        path.join(realApp, 'Contents', 'Info.pList'),
+        path.join(fakeApp, 'Contents', 'Info.pList'))
+
+      await doSpawn(fullExec, `open -W ${escape(fakeApp)}`, opts)
+
+      log(opts, 'cleaning up fake app')
+      await sf.wipe(fakeApp)
+      workDir.removeCallback()
     } else {
       log(opts, 'no app isolation')
-      return doSpawn(fullExec, `activate ${cmd}`, opts)
+      await doSpawn(fullExec, `open -W ${escape(exePath)} --args ${argString}`, opts)
     }
   } else {
     let cmd = `${escape(exePath)}`
     if (argString.length > 0) {
       cmd += ` ${argString}`
     }
-    return doSpawn(exePath, cmd, opts)
+    await doSpawn(exePath, cmd, opts)
   }
 }
 
