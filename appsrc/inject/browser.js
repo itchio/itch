@@ -83,7 +83,7 @@ setTimeout(function () {
 
     $('.admin_tag_editor_widget').hide()
     $('.above_game_banner').hide()
-    $('.header_widget').hide()
+    // $('.header_widget').hide()
 
     {
       const $page = $('.view_game_page')
@@ -97,10 +97,10 @@ setTimeout(function () {
     {
       const $page = $('.index_page')
       if ($page.length) {
-        $page.find('.index_sidebar').remove()
+        // $page.find('.index_sidebar').remove()
         $page.find('.anon_intro').remove()
         $page.find('.app_banner').remove()
-        $page.find('.main_column').css('margin', 0)
+        // $page.find('.main_column').css('margin', 0)
       }
     }
 

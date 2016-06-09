@@ -4,9 +4,11 @@ $meat-cover-scale: 0.4;
 @keyframes load-border {
   0% {
     border-image-slice: 100% 0% 0% 95%;
+    border-image-width: 2px;
   }
   100% {
     border-image-slice: 100% 0% 0% 0%;
+    border-image-width: 2px;
   }
 }
 
@@ -21,7 +23,7 @@ $meat-cover-scale: 0.4;
     padding: 5px 0 5px 20px;
     background: $sidebar-background-color;
     transition: all .2s;
-    min-height: 70px;
+    min-height: 32px;
 
     border-width: 0;
     border-top-width: 2px;
@@ -31,7 +33,7 @@ $meat-cover-scale: 0.4;
       animation: load-border 10s cubic-bezier(0, 0, 0, 0.42) infinite;
     }
     border-image-slice: 100% 10% 0% 0%;
-    border-image-width: 2px;
+    // border-image-width: 2px;
     border-top: 2px solid;
   }
 

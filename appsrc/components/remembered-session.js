@@ -10,7 +10,7 @@ export class RememberedSession extends Component {
   render () {
     const {t, session, loginWithToken, forgetSessionRequest} = this.props
     const {me, key} = session
-    const {id, username, coverUrl = defaultImages.avatar} = me
+    const {id, username, displayName, coverUrl = defaultImages.avatar} = me
 
     const onForget = (e) => {
       e.stopPropagation()
@@ -20,7 +20,7 @@ export class RememberedSession extends Component {
     return <div className='remembered-session' onClick={() => loginWithToken({username, key, me})}>
       <img className='avatar' src={coverUrl}/>
       <div className='rest'>
-        <p className='username'>{username}</p>
+        <p className='username'>{displayName}</p>
         <p className='last-connected'>
           {t('login.remembered_session.last_connected')} <NiceAgo date={session.lastConnected}/>
         </p>

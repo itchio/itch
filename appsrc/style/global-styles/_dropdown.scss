@@ -12,8 +12,7 @@ $dropdown-background-color: lighten($sidebar-entry-focused-background-color, 5%)
 
 .dropdown {
   background-color: lighten($sidebar-background-color, 5%);
-  border: 2px solid $dropdown-background-color;
-  border-radius: 4px;
+  border: 1px solid $dropdown-background-color;
   position: absolute;
   top: 0;
   left: 0;

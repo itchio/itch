@@ -1,7 +1,8 @@
 
 .hub-bread {
-  flex-basis: 90px;
-  padding: 0 $grid-padding;
+  flex-basis: 28px;
+  padding: 0 2px;
+  padding-top: 2px;
 
   display: flex;
   flex-direction: row;
@@ -11,7 +12,7 @@
   box-shadow: 0 0 6px $bread-box-shadow-color;
 
   .icon-button {
-    font-size: 20px;
+    font-size: 16px;
     @include secondary-link;
     -webkit-filter: brightness(90%);
 
@@ -31,18 +32,20 @@
     padding: 0 10px;
 
     h2 {
-      font-size: 24px;
+      font-size: 14px;
       text-shadow: 0 0 2px $input-text-shadow-color;
+      margin-right: 8px;
     }
 
     h3 {
-      font-size: 16px;
+      font-size: 14px;
     }
 
     h2, h3 {
       // hack so text is not vertically cropped,
       // but we still get text-overflow
       padding: 4px 0;
+      display: inline-block;
     }
 
     &.search {
@@ -95,21 +98,15 @@
       .description-image {
         flex-shrink: 0;
         background-size: cover;
-        margin-right: 20px;
+        margin-right: 8px;
         border-radius: 2px;
         background-color: black;
         background-size: cover;
         background-position: 50% 50%;
         box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
 
-        &.user {
-          width: 60px;
-          height: 60px;
-        }
-        &.game {
-          width: 100px;
-          height: 72px;
-        }
+        width: 16px;
+        height: 16px;
       }
 
       .description-titles {

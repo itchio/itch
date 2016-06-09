@@ -4,7 +4,7 @@ $meat-cover-scale: 0.4;
 .game-browser-bar {
   .game-stats {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     font-size: 15px;
     color: $secondary-text-color;
     padding: 8px 15px;
@@ -27,30 +27,21 @@ $meat-cover-scale: 0.4;
 
     .total-playtime, .last-playthrough {
       font-size: 14px;
-      padding: 5px 0;
       margin-right: 5px;
-
-      &:first-child {
-        padding-top: 0;
-      }
-
-      &:last-child {
-        padding-bottom: 0;
-      }
     }
   }
 
   .game-actions {
     flex-shrink: 0;
     padding-right: 0;
-    height: 55px;
+    height: auto;
 
     .main-action {
       transition: background .2s;
-      width: 200px;
+      width: 190px;
       text-align: center;
-      font-size: 16px;
-      padding: 13px 20px;
+      font-size: 14px;
+      padding: 10px 20px;
 
       display: flex;
       align-items: center;

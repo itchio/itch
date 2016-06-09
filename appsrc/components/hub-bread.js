@@ -34,17 +34,20 @@ class HubBread extends Component {
         <Icon icon='filter'/>
       </section>
 
-      <section className={searchClasses}>
-        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onKeyPress} onKeyUp={::this.onQueryChanged()} onChange={::this.onQueryChanged}/>
-        <span className='icon icon-search'/>
-        <div className='kb-shortcut'>
-        {osx
-          ? <Icon icon='command'/>
-          : <Icon icon='ctrl'/>
-        }
-        +F
-        </div>
-      </section>
+      {true
+        ? ''
+        : <section className={searchClasses}>
+          <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onKeyPress} onKeyUp={::this.onQueryChanged()} onChange={::this.onQueryChanged}/>
+          <span className='icon icon-search'/>
+          <div className='kb-shortcut'>
+          {osx
+            ? <Icon icon='command'/>
+            : <Icon icon='ctrl'/>
+          }
+          +F
+          </div>
+        </section>
+      }
 
       <section className='icon-button' onClick={() => navigate('url/' + urls.manual)}>
         <Icon icon='lifebuoy'/>

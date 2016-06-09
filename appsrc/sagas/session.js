@@ -18,9 +18,9 @@ export function * _sessionReady () {
   if (me.developer) {
     yield put(unlockTab({path: 'dashboard'}))
   }
-  if (me.pressUser) {
-    yield put(unlockTab({path: 'press'}))
-  }
+  // if (me.pressUser) {
+  //   yield put(unlockTab({path: 'press'}))
+  // }
 
   yield call(delay, 1000)
   yield put(switchPage('hub'))
