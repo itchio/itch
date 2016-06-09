@@ -14,9 +14,13 @@ export class HubItem extends Component {
     const {navigateToGame} = this.props
 
     const actionProps = {game, showSecondary: true}
+    const coverStyle = {}
+    if (coverUrl) {
+      coverStyle.backgroundImage = `url("${coverUrl}")`
+    }
 
     return <div className='hub-item'>
-      <section className='cover' style={{backgroundImage: `url("${coverUrl}")`}} onClick={() => navigateToGame(game)}/>
+      <section className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
 
       <section className='undercover'>
         <section className='title'>
