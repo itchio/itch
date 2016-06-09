@@ -27,7 +27,7 @@
 
 .hub-sidebar {
   background: $sidebar-background-color;
-  font-size: 13px;
+  font-size: 14px;
 
   overflow: hidden;
   height: 100%;
@@ -94,8 +94,8 @@
     align-items: center;
     margin: 2px 0;
     margin-right: 0;
-    padding: 7px 8px 7px 3px;
-    min-height: 35px;
+    padding: 5px 8px 5px 3px;
+    min-height: 30px;
 
     &:hover {
       cursor: pointer;
