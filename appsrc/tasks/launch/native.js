@@ -9,6 +9,7 @@ import shellQuote from 'shell-quote'
 
 import sandboxTemplate from '../../constants/sandbox-template'
 
+import sandbox from '../../util/sandbox'
 import os from '../../util/os'
 import sf from '../../util/sf'
 import spawn from '../../util/spawn'
@@ -126,6 +127,12 @@ async function launchExecutable (exePath, args, opts) {
   const argString = args.map((x) => escape(x)).join(' ')
 
   const {isolateApps} = opts.preferences
+  if (isolateApps) {
+    const sandboxReady = await sandbox.setup()
+    if (!sandboxReady) {
+      throw new Error('sandbox could not be prepared')
+    }
+  }
 
   let fullExec = exePath
   if (platform === 'darwin') {
