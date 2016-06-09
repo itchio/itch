@@ -21,8 +21,7 @@ import {
   triggerBack,
   triggerLocation,
   focusNthTab,
-  newTab,
-  shortcutsVisibilityChanged
+  newTab
 } from '../actions'
 
 const queue = createQueue('shortcuts')
@@ -80,11 +79,3 @@ for (const i of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
 combo.bindGlobal([`${prefix}+t`], () => {
   queue.dispatch(newTab())
 })
-
-combo.bindGlobal([prefix], () => {
-  queue.dispatch(shortcutsVisibilityChanged({visible: true}))
-}, 'keydown')
-
-combo.bindGlobal([prefix], () => {
-  queue.dispatch(shortcutsVisibilityChanged({visible: false}))
-}, 'keyup')

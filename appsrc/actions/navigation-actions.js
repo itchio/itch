@@ -35,7 +35,6 @@ import {
   VIEW_CREATOR_PROFILE,
   VIEW_COMMUNITY_PROFILE,
 
-  SHORTCUTS_VISIBILITY_CHANGED,
   TOGGLE_MINI_SIDEBAR
 } from '../constants/action-types'
 
@@ -83,5 +82,4 @@ export const openPreferences = createAction(OPEN_PREFERENCES)
 export const viewCreatorProfile = createAction(VIEW_CREATOR_PROFILE)
 export const viewCommunityProfile = createAction(VIEW_COMMUNITY_PROFILE)
 
-export const shortcutsVisibilityChanged = createAction(SHORTCUTS_VISIBILITY_CHANGED)
 export const toggleMiniSidebar = createAction(TOGGLE_MINI_SIDEBAR)
