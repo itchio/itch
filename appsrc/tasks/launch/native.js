@@ -211,11 +211,12 @@ sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
       cmd += ` ${argString}`
     }
 
-    const grantPath = path.join(path.dirname(exePath), '*')
+    const grantPath = path.join(appPath, '*')
     if (isolateApps) {
       const grantRes = await spawn.getOutput({
         command: 'icacls',
-        args: [ grantPath, '/grant', 'itch-player:F', '/t' ]
+        args: [ grantPath, '/grant', 'itch-player:F', '/t' ],
+        logger: opts.logger
       })
       log(opts, `grant output:\n${grantRes}`)
 
@@ -226,7 +227,8 @@ sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
     if (isolateApps) {
       const denyRes = await spawn.getOutput({
         command: 'icacls',
-        args: [ grantPath, '/deny', 'itch-player:F', '/t' ]
+        args: [ grantPath, '/deny', 'itch-player:F', '/t' ],
+        logger: opts.logger
       })
       log(opts, `deny output:\n${denyRes}`)
     }
@@ -236,9 +238,52 @@ sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
       cmd += ` ${argString}`
     }
     if (isolateApps) {
-      cmd = `sudo -n -u itch-player -- ${cmd}`
+      const safeBasePath = '/home/itch-player'
+      const relExePath = path.relative(appPath, exePath)
+      log(opts, `relExePath = ${relExePath}`)
+
+      const safeAppPath = path.join(safeBasePath, path.basename(appPath))
+      log(opts, `safeAppPath = ${safeAppPath}`)
+
+      const safeExePath = path.join(safeAppPath, relExePath)
+      log(opts, `safeExePath = ${safeExePath}`)
+
+      const chmodRes = await spawn.getOutput({
+        command: 'sudo',
+        args: [ '-n', '-u', 'itch-player', '--', 'chmod', 'o+rwx', safeBasePath ],
+        logger: opts.logger
+      })
+      log(opts, `chmod output:\n${chmodRes}`)
+
+      const mvRes = await spawn.getOutput({
+        command: 'mv',
+        args: [ appPath, safeAppPath ],
+        logger: opts.logger
+      })
+      log(opts, `mv output:\n${mvRes}`)
+
+      cmd = `sudo -n -u itch-player -- ${escape(safeExePath)} ${argString}`
+
+      let ret
+      let err
+      try {
+        ret = await doSpawn(safeExePath, cmd, opts)
+      } catch (e) { err = e }
+
+      const mvBackRes = await spawn.getOutput({
+        command: 'mv',
+        args: [ safeAppPath, appPath ],
+        logger: opts.logger
+      })
+      log(opts, `mvBack output:\n${mvBackRes}`)
+
+      if (err) {
+        throw err
+      }
+      return ret
+    } else {
+      await doSpawn(exePath, cmd, opts)
     }
-    await doSpawn(exePath, cmd, opts)
   } else {
     throw new Error(`unsupported platform: ${platform}`)
   }
