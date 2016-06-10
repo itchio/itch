@@ -126,6 +126,9 @@ async function launchExecutable (exePath, args, opts) {
   log(opts, `launching '${exePath}' on '${platform}' with args '${args.join(' ')}'`)
   const argString = args.map((x) => escape(x)).join(' ')
 
+  const {cave} = opts
+  const appPath = pathmaker.appPath(cave)
+
   const {isolateApps} = opts.preferences
   if (isolateApps) {
     const sandboxReady = await sandbox.setup()
@@ -149,8 +152,6 @@ async function launchExecutable (exePath, args, opts) {
       log(opts, 'app isolation enabled')
 
       log(opts, 'writing sandbox file')
-      const {cave} = opts
-      const appPath = pathmaker.appPath(cave)
       const sandboxProfilePath = path.join(appPath, '.itch', 'isolate-app.sb')
 
       const userLibrary = (await spawn.getOutput({
@@ -204,12 +205,42 @@ sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
       log(opts, 'no app isolation')
       await doSpawn(fullExec, `open -W ${escape(exePath)} --args ${argString}`, opts)
     }
-  } else {
+  } else if (platform === 'win32') {
     let cmd = `${escape(exePath)}`
     if (argString.length > 0) {
       cmd += ` ${argString}`
     }
+
+    const grantPath = path.join(path.dirname(exePath), '*')
+    if (isolateApps) {
+      const grantRes = await spawn.getOutput({
+        command: 'icacls',
+        args: [ grantPath, '/grant', 'itch-player:F', '/t' ]
+      })
+      log(opts, `grant output:\n${grantRes}`)
+
+      cmd = `elevate --runas itch-player salt ${cmd}`
+    }
     await doSpawn(exePath, cmd, opts)
+
+    if (isolateApps) {
+      const denyRes = await spawn.getOutput({
+        command: 'icacls',
+        args: [ grantPath, '/deny', 'itch-player:F', '/t' ]
+      })
+      log(opts, `deny output:\n${denyRes}`)
+    }
+  } else if (platform === 'linux') {
+    let cmd = `${escape(exePath)}`
+    if (argString.length > 0) {
+      cmd += ` ${argString}`
+    }
+    if (isolateApps) {
+      cmd = `sudo -n -u itch-player -- ${cmd}`
+    }
+    await doSpawn(exePath, cmd, opts)
+  } else {
+    throw new Error(`unsupported platform: ${platform}`)
   }
 }
 
