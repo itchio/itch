@@ -20,7 +20,7 @@ export class RememberedSession extends Component {
     return <div className='remembered-session' onClick={() => loginWithToken({username, key, me})}>
       <img className='avatar' src={coverUrl}/>
       <div className='rest'>
-        <p className='username'>{displayName}</p>
+        <p className='username'>{displayName || username}</p>
         <p className='last-connected'>
           {t('login.remembered_session.last_connected')} <NiceAgo date={session.lastConnected}/>
         </p>

@@ -83,11 +83,11 @@ export class HubSidebar extends Component {
 
   me () {
     const me = this.props.me || {}
-    const {coverUrl = defaultImages.avatar, displayName = ''} = me
+    const {coverUrl = defaultImages.avatar, username, displayName} = me
 
     return <section className='hub-sidebar-item me'>
       <img src={coverUrl}/>
-      <span className='label'>{displayName}</span>
+      <span className='label'>{username || displayName}</span>
       <div className='filler'/>
       <Icon icon='triangle-down' classes={['me-dropdown']}/>
     </section>
