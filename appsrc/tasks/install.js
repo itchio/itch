@@ -13,7 +13,8 @@ import core from './install/core'
 import {findWhere} from 'underline'
 
 function defaultInstallLocation () {
-  const {defaultInstallLocation} = require('../store').default.getState().preferences
+  const store = require('../store').default
+  const {defaultInstallLocation} = store.getState().preferences
   return defaultInstallLocation
 }
 

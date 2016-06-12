@@ -131,9 +131,13 @@ async function launchExecutable (exePath, args, opts) {
 
   const {isolateApps} = opts.preferences
   if (isolateApps) {
-    const sandboxReady = await sandbox.setup()
-    if (!sandboxReady) {
-      throw new Error('sandbox could not be prepared')
+    const {needs, errors} = await sandbox.check()
+    if (errors.length > 0) {
+      throw new Error(`error(s) while checking for sandbox: ${errors.join(', ')}`)
+    }
+
+    if (needs.length > 0) {
+      await sandbox.install(opts, needs)
     }
   }
 
@@ -262,6 +266,13 @@ sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
       })
       log(opts, `mv output:\n${mvRes}`)
 
+      const chmod2Res = await spawn.getOutput({
+        command: 'chmod',
+        args: [ '-R', 'o+rwx', safeAppPath ],
+        logger: opts.logger
+      })
+      log(opts, `chmod2 output:\n${chmod2Res}`)
+
       cmd = `sudo -n -u itch-player -- ${escape(safeExePath)} ${argString}`
 
       let ret
@@ -269,6 +280,13 @@ sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
       try {
         ret = await doSpawn(safeExePath, cmd, opts)
       } catch (e) { err = e }
+
+      const chmod3Res = await spawn.getOutput({
+        command: 'chmod',
+        args: [ '-R', 'o-rwx', safeAppPath ],
+        logger: opts.logger
+      })
+      log(opts, `chmod3 output:\n${chmod3Res}`)
 
       const mvBackRes = await spawn.getOutput({
         command: 'mv',
