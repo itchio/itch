@@ -85,7 +85,7 @@ function spawn (opts) {
   })
 }
 
-spawn.getOutput = async function (opts) {
+spawn.exec = async function (opts) {
   let out = ''
   let err = ''
 
@@ -102,6 +102,12 @@ spawn.getOutput = async function (opts) {
   }
 
   const code = await spawn(actualOpts)
+  return {code, out, err}
+}
+
+spawn.getOutput = async function (opts) {
+  const {code, err, out} = await spawn.exec(opts)
+
   if (code !== 0) {
     log(opts, `${opts.command} failed:\n${err}`)
     throw new Error(`${opts.command} failed with code ${code}`)

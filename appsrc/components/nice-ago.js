@@ -29,7 +29,10 @@ export class NiceAgo extends Component {
 }
 
 NiceAgo.propTypes = {
-  date: PropTypes.number.isRequired,
+  date: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.object
+  ]).isRequired,
 
   t: PropTypes.func.isRequired
 }

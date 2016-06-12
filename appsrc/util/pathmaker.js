@@ -21,6 +21,10 @@ export function appPath (cave) {
   } else if (installLocation === 'appdata') {
     // caves >= 0.14.x with no special install location specified
     return path.join(app.getPath('userData'), 'apps', installFolder)
+  } else if (installLocation === 'haven') {
+    // 'appdata' caves on linux are incompatible with sandbox, because
+    // ~/.config (correctly) isn't o+r, but ~/ is.
+    return path.join(app.getPath('home'), '.itch', 'games', installFolder)
   } else {
     const store = require('../store').default
     const locations = store.getState().preferences.installLocations
