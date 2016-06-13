@@ -199,5 +199,6 @@
     "menu.view.downloads": "Downloads",
     "status.downloads.unknown_size": "Unbekannt",
     "menu.view.mini_sidebar": "Mini Seitenleiste",
-    "usage_stats.last_used_time_ago": "Zuletzt benutzt {{time_ago}}"
+    "usage_stats.last_used_time_ago": "Zuletzt benutzt {{time_ago}}",
+    "sidebar.collection": "Sammlungen"
 }
