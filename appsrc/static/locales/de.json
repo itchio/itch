@@ -216,5 +216,7 @@
     "duration.minutes": "{{x}} Minuten",
     "grid.item.developer": "Entwickler",
     "sidebar.featured_subtitle": "Mit Liebe vom itch.io-Team zusammengestellt.",
-    "search.open_as_tab": "In neuem Tab öffnen"
+    "search.open_as_tab": "In neuem Tab öffnen",
+    "search.placeholder": "Suche...",
+    "new_tab.twitter": "Beliebt auf Twitter"
 }
