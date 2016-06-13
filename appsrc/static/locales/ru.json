@@ -268,5 +268,6 @@
     "sidebar.log_out": "Выйти",
     "usage_stats.has_used_for_duration": "Использовалось",
     "notification.see_you_soon.title": "Будем ждать вас снова!",
-    "status.downloads.clear_finished": "Скрыть завершённые"
+    "status.downloads.clear_finished": "Скрыть завершённые",
+    "prompt.rar_policy.detail": "RAR - Устаревший и не свободный формат, который никогда не будет поддерживаться."
 }
