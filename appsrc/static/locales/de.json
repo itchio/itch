@@ -234,5 +234,11 @@
     "duration.hours": "{{x}} Stunden",
     "prompt.forget_session.detail": "Du kannst sie immer noch später wieder hinzufügen.",
     "moment.now": "jetzt",
-    "prompt.self_update.action.dismiss": "Ignorieren"
+    "prompt.self_update.action.dismiss": "Ignorieren",
+    "usage_stats.description.platforms": "für {{platforms}}",
+    "usage_stats.has_played_for_duration": "Spielzeit",
+    "i18n.failed_downloading_locales": "Übersetzungsaktualisierungen für die Sprache {{lang}} konnten nicht heruntergeladen werden.",
+    "notification.see_you_soon.message": "itch ist nun im Hintergrund aktiv. Benutze das Menü um es vollständig zu schließen.",
+    "menu.file.close_tab": "Tab schließen",
+    "usage_stats.last_played_time_ago": "Zuletzt gespielt {{time ago}}"
 }
