@@ -259,5 +259,6 @@
     "usage_stats.never_played": "Nie gespielt",
     "usage_stats.description.assets": "Eine Asset-Sammlung",
     "usage_stats.never_opened": "Nie geöffnet",
-    "sidebar.featured": "Sehenswert"
+    "sidebar.featured": "Sehenswert",
+    "new_tab.top_sellers": "Top-Seller"
 }
