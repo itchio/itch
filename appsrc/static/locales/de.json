@@ -202,5 +202,6 @@
     "usage_stats.last_used_time_ago": "Zuletzt benutzt {{time_ago}}",
     "sidebar.collection": "Sammlungen",
     "status.game_update.check_failed": "Konnte nicht nach Updates suchen: {{err}}",
-    "prompt.rpm_policy.message": "{{title}} verwendet das .rpm-Paket Format und muss neu gepackt werden, bevor es von itch installiert werden kann."
+    "prompt.rpm_policy.message": "{{title}} verwendet das .rpm-Paket Format und muss neu gepackt werden, bevor es von itch installiert werden kann.",
+    "menu.view.view": "Ansicht"
 }
