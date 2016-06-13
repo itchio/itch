@@ -230,5 +230,8 @@
     "prompt.self_update_ready.action.snooze": "Schlummern",
     "sidebar.empty": "Auf gehts!",
     "prompt.rpm_policy.detail": "Itch kann nur portable Linux-Anwendungen installieren.",
-    "grid.item.version": "Version {{version}}"
+    "grid.item.version": "Version {{version}}",
+    "duration.hours": "{{x}} Stunden",
+    "prompt.forget_session.detail": "Du kannst sie immer noch später wieder hinzufügen.",
+    "moment.now": "jetzt"
 }
