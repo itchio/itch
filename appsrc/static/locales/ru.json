@@ -89,7 +89,7 @@
     "prompt.additional_purchase.purchase_again": "Купить ещё раз",
     "prompt.additional_purchase.title": "Вы уже купили это!",
     "prompt.confirm_uninstall": "Вы точно хотите удалить {{title}}?",
-    "prompt.crash_reporter.detail": "Отчет об критической ошибке был сохранен в {{location}}.",
+    "prompt.crash_reporter.detail": "Отчет об ошибке был сохранен в {{location}}.",
     "prompt.crash_reporter.message": "Приложение закрылось из-за непредвиденной ошибки",
     "prompt.crash_reporter.open_crash_log": "Открыть отчёт об ошибке",
     "prompt.crash_reporter.report_issue": "Доложить об ошибке",
@@ -193,5 +193,6 @@
     "prompt.self_update.message.osx": "Выберите \"Загрузить\", чтобы установить обновление автоматически, или перейдите на сайт для дальнейших инструкций.",
     "grid.item.developer": "Разработчик",
     "sidebar.featured_subtitle": "Отобрано с любовью командой itch.io",
-    "prompt.self_update_ready.title": "Обновление было загружено и установлено"
+    "prompt.self_update_ready.title": "Обновление было загружено и установлено",
+    "search.open_as_tab": "Открыть как закладку"
 }
