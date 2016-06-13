@@ -20,12 +20,12 @@
     "login.action.reset_password": "Забыли пароль?",
     "login.field.password": "Пароль",
     "login.field.username": "Имя пользователя или e-mail",
-    "login.status.dependency_check": "Проверяем всё ли настроенно...",
+    "login.status.dependency_check": "Проверяем, что всё как надо...",
     "login.status.dependency_install": "Установка зависимости {{name}} {{version}}",
-    "login.status.login": "Авторизация...",
+    "login.status.login": "Авторизация…",
     "login.status.setup_failure": "Возникла ошибка при установке: {{error}}",
     "menu.account.account": "Учетная запись",
-    "menu.account.change_user": "Сменить пользователя...",
+    "menu.account.change_user": "Сменить пользователя…",
     "menu.account.not_logged_in": "Необходимо войти в систему",
     "menu.danger_zone.danger_zone": "Опасная зона",
     "menu.danger_zone.dont_use": "Не использовать.",
@@ -122,6 +122,6 @@
     "sidebar.owned": "Библиотека",
     "status.checking": "Проверка обновлений...",
     "status.downloaded": "Нажми для перезагрузки и применения обновлений!",
-    "status.downloading": "Идет скачивание обновления...",
+    "status.downloading": "Загрузка обновления...",
     "status.uptodate": "Ваш itch обновлен!"
 }
