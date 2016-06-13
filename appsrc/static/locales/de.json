@@ -254,5 +254,6 @@
     "notification.see_you_soon.title": "Bis zum nächsten Mal!",
     "status.downloads.clear_finished": "Leeren",
     "usage_stats.description.free_download": "Kostenlos erhältlich",
-    "new_tab.titles.input": "...oder"
+    "new_tab.titles.input": "...oder",
+    "preferences.security": "Sicherheit & Datenschutz"
 }
