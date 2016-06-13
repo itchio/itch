@@ -221,5 +221,6 @@
     "new_tab.twitter": "Beliebt auf Twitter",
     "usage_stats.description.bought_time_ago": "Gekauft {{time_ago}}",
     "install_location.empty": "In diesem Verzeichnis ist zurzeit nichts installiert",
-    "grid.item.open_debug_log": "Debug Log öffnen"
+    "grid.item.open_debug_log": "Debug Log öffnen",
+    "menu.view.history": "Verlauf"
 }
