@@ -99,7 +99,7 @@
     "prompt.install_location_not_empty.title": "Это место установки не пустое",
     "prompt.install_location_remove.detail": "Всё, что было установлено в {{location}}, будет удалено.",
     "prompt.install_location_remove.message": "Уверены, что хотите удалить эту локацию?",
-    "prompt.install_location_remove.title": "Удалить путь установки",
+    "prompt.install_location_remove.title": "Удаление папки установки",
     "prompt.last_remaining_install_location.title": "Невозможно удалить путь установки",
     "prompt.logout_confirm": "Вы уверены, что хотите выйти?",
     "prompt.no_compatible_version.detail": "Может {{classification}} еще не совместима?",
@@ -173,5 +173,8 @@
     "sidebar.collection": "Коллекции",
     "status.offline_mode.active": "Офлайн режим включен",
     "status.game_update.check_failed": "Не получилось проверить обновления: {{err}}",
-    "status.downloads.no_active_downloads": "Нет текущих загрузок"
+    "status.downloads.no_active_downloads": "Нет текущих загрузок",
+    "prompt.rpm_policy.message": "{{title}} использует формат пакетов .rpm, и не может быть установлено, пока не будет перепаковано.",
+    "menu.view.view": "Вид",
+    "sidebar.collections": "Коллекции"
 }
