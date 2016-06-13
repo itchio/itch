@@ -33,7 +33,7 @@ const TABS_TABLE_NAME = 'itchAppTabs'
 
 import {
   navigate, openUrl, tabChanged, tabsChanged, tabDataFetched, tabEvolved,
-  queueGame, tabsRestored, checkForGameUpdate, probeCave, updatePreferences,
+  queueGame, tabsRestored, checkForGameUpdate, probeCave,
   queueCaveReinstall, queueCaveUninstall, exploreCave, initiatePurchase,
   historyRead, closeModal, loginWithToken, handleItchioUrl, statusMessage,
   dismissStatusMessage
@@ -494,11 +494,6 @@ function * _statusMessage (action) {
   yield put(dismissStatusMessage())
 }
 
-function * _toggleMiniSidebar (action) {
-  const {miniSidebar} = yield select((state) => state.preferences)
-  yield put(updatePreferences({miniSidebar: !miniSidebar}))
-}
-
 export default function * navigationSaga () {
   const queue = createQueue('navigation')
 
@@ -544,7 +539,6 @@ export default function * navigationSaga () {
     takeEvery(TRIGGER_BACK, _triggerBack),
     takeEvery(INITIATE_PURCHASE, _initiatePurchase),
     takeEvery(PROBE_CAVE, _probeCave),
-    takeEvery(TOGGLE_MINI_SIDEBAR, _toggleMiniSidebar),
     takeEvery(OPEN_TAB_CONTEXT_MENU, makeTabContextMenu(queue)),
     takeEvery('*', function * watchNavigation () {
       const state = yield select()

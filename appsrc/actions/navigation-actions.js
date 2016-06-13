@@ -81,5 +81,3 @@ export const triggerLocation = createAction(TRIGGER_LOCATION)
 export const openPreferences = createAction(OPEN_PREFERENCES)
 export const viewCreatorProfile = createAction(VIEW_CREATOR_PROFILE)
 export const viewCommunityProfile = createAction(VIEW_COMMUNITY_PROFILE)
-
-export const toggleMiniSidebar = createAction(TOGGLE_MINI_SIDEBAR)

@@ -26,7 +26,7 @@ const newTabItems = [
   },
   {
     label: ['new_tab.on_sale'],
-    icon: 'cart',
+    icon: 'shopping_cart',
     path: 'url/' + urls.itchio + '/games/on-sale'
   },
   {

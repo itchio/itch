@@ -23,6 +23,8 @@ import BrowserBar from './browser-bar'
 import GameBrowserBar from './game-browser-bar'
 import UserBrowserBar from './user-browser-bar'
 
+import GameBrowserContext from './game-browser-context'
+
 import {transformUrl} from '../util/navigation'
 
 // updated when switching accounts
@@ -248,23 +250,22 @@ export class BrowserMeat extends Component {
     const {goBack, goForward, stop, reload, openDevTools, loadURL} = this
     const controlProps = {tabPath, tabData, browserState, goBack, goForward, stop, reload, openDevTools, loadURL}
 
-    let bar
+    let context = ''
     if (controls === 'game') {
-      bar = <GameBrowserBar {...controlProps}/>
-    } else if (controls === 'user') {
-      bar = <UserBrowserBar {...controlProps}/>
-    } else {
-      bar = <BrowserBar {...controlProps}/>
+      context = <GameBrowserContext {...controlProps}/>
     }
 
     const partition = `persist:itchio-${meId}`
 
     return <div className='browser-meat'>
-    {bar}
-    {DONT_SHOW_WEBVIEWS
-      ? <div style={{padding: '10px'}}>Webviews disabled</div>
-      : <webview key={tabId} ref='webview' partition={partition} preload={injectPath} plugins useragent={useragent}/>
-    }
+      <BrowserBar {...controlProps}/>
+      <div className='browser-main'>
+        {DONT_SHOW_WEBVIEWS
+          ? <div style={{padding: '10px'}}>Webviews disabled</div>
+          : <webview key={tabId} ref='webview' partition={partition} preload={injectPath} plugins useragent={useragent}/>
+        }
+        {context}
+      </div>
     </div>
   }
 

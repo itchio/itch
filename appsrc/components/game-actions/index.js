@@ -17,7 +17,6 @@ import SecondaryActions from './secondary-actions'
 import * as actions from '../../actions'
 
 class GameActions extends Component {
-
   render () {
     const {props} = this
     const {showSecondary, CustomSecondary} = props
@@ -86,7 +85,11 @@ const makeMapStateToProps = () => {
       const {game, cave, downloadKeys, task, download, meId} = happenings
 
       const animate = false
-      const action = ClassificationActions[game.classification] || 'launch'
+      let action = ClassificationActions[game.classification] || 'launch'
+      if (cave && cave.upload && cave.upload.demo) {
+        action += '_demo'
+      }
+
       const platformCompatible = (action === 'open' ? true : isPlatformCompatible(game))
       const cancellable = false
       const downloadKey = downloadKeys::findWhere({gameId: game.id})
@@ -103,6 +106,7 @@ const makeMapStateToProps = () => {
         animate,
         platform,
         mayDownload,
+        downloadKey,
         platformCompatible,
         action,
         task: (task ? task.name : (downloading ? 'download' : (cave ? 'idle' : null))),

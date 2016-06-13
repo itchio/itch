@@ -36,7 +36,6 @@ export function * _updatePreferences () {
   const tmpPath = file + '.tmp' + (_atomicInvocations++)
   yield call(sf.writeFile, tmpPath, JSON.stringify(prefs))
   yield call(sf.rename, tmpPath, file)
-  log(opts, `preferences saved (${_atomicInvocations})`)
 }
 
 export default function * preferencesSaga () {

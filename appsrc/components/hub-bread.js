@@ -3,58 +3,23 @@ import React, {Component, PropTypes} from 'react'
 import {createStructuredSelector} from 'reselect'
 import {connect} from './connect'
 
-import classNames from 'classnames'
-
 import * as actions from '../actions'
 import urls from '../constants/urls'
 
 import Icon from './icon'
 import HubBreadDescription from './hub-bread-description'
 
-import os from '../util/os'
-const osx = os.itchPlatform() === 'osx'
-
 class HubBread extends Component {
   render () {
-    const {t, navigate, searchLoading} = this.props
-
-    const searchClasses = classNames('search', {loading: searchLoading})
-    const hideStyle = {display: 'none'}
+    const {navigate} = this.props
 
     return <div className='hub-bread'>
       <HubBreadDescription/>
 
       <section className='filler'/>
 
-      <section style={hideStyle} className='icon-button'>
-        <Icon icon='sort-alpha-asc'/>
-      </section>
-
-      <section style={hideStyle} className='icon-button'>
-        <Icon icon='filter'/>
-      </section>
-
-      {true
-        ? ''
-        : <section className={searchClasses}>
-          <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onKeyPress} onKeyUp={::this.onQueryChanged()} onChange={::this.onQueryChanged}/>
-          <span className='icon icon-search'/>
-          <div className='kb-shortcut'>
-          {osx
-            ? <Icon icon='command'/>
-            : <Icon icon='ctrl'/>
-          }
-          +F
-          </div>
-        </section>
-      }
-
       <section className='icon-button' onClick={() => navigate('url/' + urls.manual)}>
         <Icon icon='lifebuoy'/>
-      </section>
-
-      <section style={hideStyle} className='icon-button'>
-        <Icon icon='menu'/>
       </section>
     </div>
   }
@@ -80,10 +45,6 @@ HubBread.propTypes = {
   t: PropTypes.func,
 
   id: PropTypes.string.isRequired,
-  searchLoading: PropTypes.bool,
-
-  search: PropTypes.func.isRequired,
-  searchQueryChanged: PropTypes.func.isRequired,
   navigate: PropTypes.func
 }
 

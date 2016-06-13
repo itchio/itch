@@ -6,8 +6,6 @@ import {connect} from 'react-redux'
 import GatePage from './gate-page'
 import HubPage from './hub-page'
 
-import StatusBar from './status-bar'
-
 /**
  * Top-level component in the app, decides which page to show
  * Also, subscribes to app store to synchronize its state
@@ -19,7 +17,6 @@ class Layout extends Component {
         <div className='layout-draggable'/>
         {this.main()}
       </div>
-      <StatusBar/>
     </div>
   }
 

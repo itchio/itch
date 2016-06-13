@@ -39,10 +39,6 @@ export class HubSidebarItem extends Component {
     }
 
     return connectDragSource(connectDropTarget(<section key={id} style={style} className={classes} onClick={this.onClick} onContextMenu={onContextMenu} onClose={onClose} data-path={path} data-id={id} data-dragging={isDragging}>
-      {iconImage
-        ? <div className='symbol icon-image' style={{backgroundImage: `url('${iconImage}')`}}/>
-        : <span className={`symbol icon icon-${icon}`}/>
-      }
       <span className='label'>{t.format(label)}</span>
       {count > 0
         ? <span className='bubble'>{count}</span>
@@ -85,8 +81,6 @@ HubSidebarItem.propTypes = {
   id: PropTypes.string.isRequired,
   label: PropTypes.oneOfType([ PropTypes.string, PropTypes.array ]).isRequired,
   active: PropTypes.bool.isRequired,
-  icon: PropTypes.string.isRequired,
-  iconImage: PropTypes.string,
   count: PropTypes.number,
   kbShortcut: PropTypes.node,
 

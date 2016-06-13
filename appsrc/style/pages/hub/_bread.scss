@@ -48,42 +48,6 @@
       display: inline-block;
     }
 
-    &.search {
-      position: relative;
-
-      &.loading .icon-search {
-        @include horizontal-scan;
-      }
-
-      input[type=search] {
-        @include heavy-input;
-        transition: all 0.2s;
-        width: 200px;
-        text-indent: 20px;
-        padding: 10px 10px 9px 9px;
-
-        &:focus {
-          width: 350px;
-        }
-      }
-
-      .icon-search {
-        position: absolute;
-        left: 25px;
-        bottom: 50%;
-        transform: translateY(55%);
-        font-size: 16px;
-        color: $input-placeholder-color;
-      }
-
-      .kb-shortcut {
-        position: absolute;
-        top: 50%;
-        right: 14px;
-        transform: translateY(-50%);
-      }
-    }
-
     &.filler {
       flex-grow: 1;
     }
