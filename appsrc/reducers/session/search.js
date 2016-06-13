@@ -37,7 +37,11 @@ export default handleActions({
     return {...state, loading: false}
   },
 
+  FOCUS_SEARCH: (state, action) => {
+    return {...state, open: true}
+  },
+
   CLOSE_SEARCH: (state, action) => {
-    return {...state, results: null, open: false}
+    return {...state, open: false}
   }
 }, initialState)

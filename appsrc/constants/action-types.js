@@ -53,6 +53,7 @@ module.exports = keyMirror({
   FOCUS_WINDOW: null,
   HIDE_WINDOW: null,
   CLOSE_TAB_OR_AUX_WINDOW: null,
+  CLOSE_ALL_TABS: null,
 
   /* Navigation */
   NAVIGATE: null,

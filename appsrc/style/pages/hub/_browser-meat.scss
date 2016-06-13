@@ -3,11 +3,11 @@ $meat-cover-scale: 0.4;
 
 @keyframes load-border {
   0% {
-    border-image-slice: 100% 0% 0% 95%;
-    border-image-width: 2px;
+    border-image-slice: 0% 0% 10% 92%;
+    border-image-width: 0 0 2px 0;
   }
   100% {
-    border-image-slice: 100% 0% 0% 0%;
+    border-image-slice: 0% 0% 10% 0%;
     border-image-width: 2px;
   }
 }
@@ -35,7 +35,7 @@ $meat-cover-scale: 0.4;
   .browser-bar {
     display: flex;
     align-items: center;
-    padding: 5px 0 5px 20px;
+    padding: 1px 0 6px 12px;
     background: $bread-background-color;
     transition: all .2s;
     min-height: 32px;

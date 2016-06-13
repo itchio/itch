@@ -70,6 +70,7 @@
     "menu.edit.paste": "Paste",
     "menu.edit.select_all": "Select all",
     "menu.file.close_tab": "Close Tab",
+    "menu.file.close_all_tabs": "Close All Tabs",
     "menu.file.close_window": "Close Window",
     "menu.file.file": "File",
     "menu.file.preferences": "Preferences",

@@ -85,10 +85,8 @@ export default function listSecondaryActions (props) {
       items.push(probeAction(cave.id))
     }
 
-    if (task === 'idle') {
-      // No errors
-      items.push(purchaseAction(game, downloadKey))
-    }
+    // No errors
+    items.push(purchaseAction(game, downloadKey))
 
     items.push({
       type: 'separator'
@@ -119,9 +117,7 @@ export default function listSecondaryActions (props) {
       action: actions.checkForGameUpdate({caveId: cave.id, noisy: true})
     })
 
-    if (task === 'error' || task === 'idle') {
-      items.push(uninstallAction(cave.id))
-    }
+    items.push(uninstallAction(cave.id))
   } else {
     // No cave
     const hasMinPrice = game.minPrice > 0

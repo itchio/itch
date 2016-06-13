@@ -10,6 +10,7 @@ $context-cover-scale: 0.8;
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.16);
   z-index: 50;
   overflow-y: auto;
+  overflow-x: hidden;
 
   .cover {
     width: 100%;
@@ -21,7 +22,6 @@ $context-cover-scale: 0.8;
     background-position: 50% 50%;
     box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
   }
-
 
   .game-stats {
     display: flex;
@@ -55,6 +55,7 @@ $context-cover-scale: 0.8;
   }
 
   .game-actions {
+    display: flex;
     flex-shrink: 0;
     flex-grow: 1;
     flex-direction: column;

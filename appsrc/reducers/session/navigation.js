@@ -143,6 +143,24 @@ export default handleActions({
     }
   },
 
+  CLOSE_ALL_TABS: (state, action) => {
+    const {tabs, tabData} = state
+    const {constant, transient} = tabs
+
+    const newTabData = tabData::omit(...transient)
+    const newId = 'featured'
+
+    return {
+      ...state,
+      id: newId,
+      tabs: {
+        constant,
+        transient: []
+      },
+      tabData: newTabData
+    }
+  },
+
   SEARCH_FETCHED: (state, action) => {
     const {results} = action.payload
     const searchExampleIndex = Math.floor(Math.random() * (SearchExamples.length - 1))

@@ -27,7 +27,7 @@ export class HubSidebarItem extends Component {
   }
 
   render () {
-    const {t, count, id, path, icon, iconImage, label, active, kbShortcut} = this.props
+    const {t, count, id, path, label, active, kbShortcut} = this.props
     const {isDragging, connectDragSource, connectDropTarget, onClose, onContextMenu} = this.props
 
     const classes = classNames('hub-sidebar-item', {active})

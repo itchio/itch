@@ -34,8 +34,12 @@ function computeMenuTemplate (payload) {
           accelerator: 'CmdOrCtrl+W'
         },
         {
+          label: 'menu.file.close_all_tabs',
+          accelerator: 'CmdOrCtrl+Shift+W'
+        },
+        {
           label: 'menu.file.close_window',
-          accelerator: (system.osx ? 'Cmd+Shift+W' : 'Alt+F4')
+          accelerator: (system.osx ? 'Cmd+Alt+W' : 'Alt+F4')
         },
         {
           label: 'menu.file.quit',

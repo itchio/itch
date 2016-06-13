@@ -10,6 +10,7 @@ import {
   TAB_EVOLVED,
   NEW_TAB,
   CLOSE_TAB,
+  CLOSE_ALL_TABS,
   SHOW_PREVIOUS_TAB,
   SHOW_NEXT_TAB,
   SWITCH_PAGE,
@@ -33,9 +34,7 @@ import {
 
   OPEN_PREFERENCES,
   VIEW_CREATOR_PROFILE,
-  VIEW_COMMUNITY_PROFILE,
-
-  TOGGLE_MINI_SIDEBAR
+  VIEW_COMMUNITY_PROFILE
 } from '../constants/action-types'
 
 const _navigate = createAction(NAVIGATE)
@@ -57,6 +56,7 @@ export const evolveTab = createAction(EVOLVE_TAB)
 export const tabEvolved = createAction(TAB_EVOLVED)
 export const newTab = createAction(NEW_TAB)
 export const closeTab = createAction(CLOSE_TAB)
+export const closeAllTabs = createAction(CLOSE_ALL_TABS)
 export const showPreviousTab = createAction(SHOW_PREVIOUS_TAB)
 export const showNextTab = createAction(SHOW_NEXT_TAB)
 export const switchPage = createAction(SWITCH_PAGE)

@@ -31,7 +31,7 @@ export class HubSidebar extends Component {
       </div>
 
       <section className={searchClasses}>
-        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onQueryChanged} onKeyUp={::this.onQueryChanged} onChange={::this.onQueryChanged}/>
+        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onQueryChanged} onKeyUp={::this.onQueryChanged} onChange={::this.onQueryChanged} onFocus={::this.onSearchFocus}/>
         <span className='icon icon-search'/>
       </section>
 
@@ -77,6 +77,10 @@ export class HubSidebar extends Component {
         {false && this.dropdown()}
       </div>
     </div>
+  }
+
+  onSearchFocus (e) {
+    this.props.focusSearch()
   }
 
   onQueryChanged (e) {
@@ -196,6 +200,7 @@ const mapDispatchToProps = (dispatch) => ({
   openTabContextMenu: (id) => dispatch(actions.openTabContextMenu({id})),
   newTab: () => dispatch(actions.newTab()),
 
+  focusSearch: (query) => dispatch(actions.focusSearch(query)),
   search: (query) => dispatch(actions.search(query))
 })
 

@@ -20,8 +20,6 @@ const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1
 const WILL_NAVIGATE_GRACE_PERIOD = 3000
 
 import BrowserBar from './browser-bar'
-import GameBrowserBar from './game-browser-bar'
-import UserBrowserBar from './user-browser-bar'
 
 import GameBrowserContext from './game-browser-context'
 
