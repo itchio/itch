@@ -19,7 +19,7 @@
     "login.action.register": "Зарегистрироваться",
     "login.action.reset_password": "Забыли пароль?",
     "login.field.password": "Пароль",
-    "login.field.username": "Имя пользователя",
+    "login.field.username": "Имя пользователя или e-mail",
     "login.status.dependency_check": "Проверяем всё ли настроенно...",
     "login.status.dependency_install": "Установка зависимости {{name}} {{version}}",
     "login.status.login": "Авторизация...",
