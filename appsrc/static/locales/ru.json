@@ -1,5 +1,5 @@
 {
-    "errors.api.login.incorrect_username_or_password": "Неверные имя пользователя или пароль",
+    "errors.api.login.incorrect_username_or_password": "Неверное имя пользователя или пароль",
     "errors.api.login.password_must_be_provided": "Необходимо ввести пароль",
     "errors.api.login.username_must_be_provided": "Необходимо ввести имя пользователя",
     "grid.item.buy_now": "Купить",
