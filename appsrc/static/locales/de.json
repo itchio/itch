@@ -219,5 +219,6 @@
     "search.open_as_tab": "In neuem Tab öffnen",
     "search.placeholder": "Suche...",
     "new_tab.twitter": "Beliebt auf Twitter",
-    "usage_stats.description.bought_time_ago": "Gekauft {{time_ago}}"
+    "usage_stats.description.bought_time_ago": "Gekauft {{time_ago}}",
+    "install_location.empty": "In diesem Verzeichnis ist zurzeit nichts installiert"
 }
