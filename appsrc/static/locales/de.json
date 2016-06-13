@@ -233,5 +233,6 @@
     "grid.item.version": "Version {{version}}",
     "duration.hours": "{{x}} Stunden",
     "prompt.forget_session.detail": "Du kannst sie immer noch später wieder hinzufügen.",
-    "moment.now": "jetzt"
+    "moment.now": "jetzt",
+    "prompt.self_update.action.dismiss": "Ignorieren"
 }
