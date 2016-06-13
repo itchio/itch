@@ -229,5 +229,6 @@
     "sidebar.category.basics": "Wesentliches",
     "prompt.self_update_ready.action.snooze": "Schlummern",
     "sidebar.empty": "Auf gehts!",
-    "prompt.rpm_policy.detail": "Itch kann nur portable Linux-Anwendungen installieren."
+    "prompt.rpm_policy.detail": "Itch kann nur portable Linux-Anwendungen installieren.",
+    "grid.item.version": "Version {{version}}"
 }
