@@ -128,5 +128,9 @@
     "status.checking": "Hledaní aktualizací...",
     "status.downloaded": "Kliknutím restartovat & aktualizovat!",
     "status.downloading": "Stahování aktualizace…",
-    "status.uptodate": "Vaše instalace nástroje itch je aktuální!"
+    "status.uptodate": "Vaše instalace nástroje itch je aktuální!",
+    "desktop.shortcut.comment": "Snadná instalace a hraní her z itch.io",
+    "grid.item.finalize_installation": "Dokončit instalaci",
+    "grid.item.open_in_file_explorer_linux": "Otevřít instalační adresář ve správci souborů",
+    "grid.item.open_in_file_explorer": "Otevřít instalační adresář v průzkumníku"
 }
