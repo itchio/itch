@@ -145,5 +145,6 @@
     "prompt.self_update.message.linux": "Вы можете загрузить приложение вручную, или обновить его с использованием пакетного менеджера вашего дистрибутива: перейдите на сайт для полных инструкций.",
     "usage_stats.never_played": "Ни разу не запускалось",
     "status.history.click_to_expand": "Кликните, чтобы развернуть историю.",
-    "usage_stats.description.assets": "Набор ассетов"
+    "usage_stats.description.assets": "Набор ассетов",
+    "grid.item.open": "Открыть"
 }
