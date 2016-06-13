@@ -222,5 +222,6 @@
     "usage_stats.description.bought_time_ago": "Gekauft {{time_ago}}",
     "install_location.empty": "In diesem Verzeichnis ist zurzeit nichts installiert",
     "grid.item.open_debug_log": "Debug Log öffnen",
-    "menu.view.history": "Verlauf"
+    "menu.view.history": "Verlauf",
+    "game.install.no_executables_found": "Keine ausführbaren Dateien gefunden"
 }
