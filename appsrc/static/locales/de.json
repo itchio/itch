@@ -195,5 +195,9 @@
     "sidebar.dashboard_subtitle": "Dinge, an denen du herumgewerkelt hast",
     "duration.hour": "eine Stunde",
     "new_tab.titles.browser_placeholder": "Beliebige Webadresse eingeben",
-    "usage_stats.description.soundtrack": "Ein Soundtrack"
+    "usage_stats.description.soundtrack": "Ein Soundtrack",
+    "menu.view.downloads": "Downloads",
+    "status.downloads.unknown_size": "Unbekannt",
+    "menu.view.mini_sidebar": "Mini Seitenleiste",
+    "usage_stats.last_used_time_ago": "Zuletzt benutzt {{time_ago}}"
 }
