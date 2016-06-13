@@ -194,5 +194,6 @@
     "grid.item.developer": "Разработчик",
     "sidebar.featured_subtitle": "Отобрано с любовью командой itch.io",
     "prompt.self_update_ready.title": "Обновление было загружено и установлено",
-    "search.open_as_tab": "Открыть как закладку"
+    "search.open_as_tab": "Открыть как закладку",
+    "preferences.install_location.stop_size_computation": "Не рассчитывать размер папок"
 }
