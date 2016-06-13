@@ -204,5 +204,6 @@
     "status.game_update.check_failed": "Konnte nicht nach Updates suchen: {{err}}",
     "prompt.rpm_policy.message": "{{title}} verwendet das .rpm-Paket Format und muss neu gepackt werden, bevor es von itch installiert werden kann.",
     "menu.view.view": "Ansicht",
-    "sidebar.collections": "Sammlungen"
+    "sidebar.collections": "Sammlungen",
+    "grid.criterion.filtered_by": "Gefiltert nach “{{term}}”"
 }
