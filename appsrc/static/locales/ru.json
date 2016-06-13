@@ -150,5 +150,6 @@
     "usage_stats.last_opened_time_ago": "Открыто последний раз {{time_ago}}",
     "status.downloads.download_error": "Ошибка загрузки",
     "usage_stats.description.game_mod": "Модификация к игре",
-    "login.remembered_session.last_connected": "Последний вход"
+    "login.remembered_session.last_connected": "Последний вход",
+    "prompt.deb_policy.detail": "itch может устанавливать только портативные версии приложений платформы Linux"
 }
