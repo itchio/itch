@@ -211,7 +211,7 @@
     "sidebar.new_tab": "Neuer Tab",
     "new_tab.on_sale": "Im Angebot",
     "grid.item.check_for_update": "Auf Update überprüfen",
-    "status.history.no_active_items": "Es gibt keine Verlaufseinträge, um die du dich kümmen musst",
+    "status.history.no_active_items": "Es gibt keine Verlaufseinträge, um die du dich kümmen musst.",
     "usage_stats.description.book": "Ein Buch",
     "duration.minutes": "{{x}} Minuten",
     "grid.item.developer": "Entwickler",
