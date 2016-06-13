@@ -131,13 +131,16 @@ async function launchExecutable (exePath, args, opts) {
 
   const {isolateApps} = opts.preferences
   if (isolateApps) {
-    const {needs, errors} = await sandbox.check()
-    if (errors.length > 0) {
-      throw new Error(`error(s) while checking for sandbox: ${errors.join(', ')}`)
+    const checkRes = await sandbox.check()
+    if (checkRes.errors.length > 0) {
+      throw new Error(`error(s) while checking for sandbox: ${checkRes.errors.join(', ')}`)
     }
 
-    if (needs.length > 0) {
-      await sandbox.install(opts, needs)
+    if (checkRes.needs.length > 0) {
+      const installRes = await sandbox.install(opts, checkRes.needs)
+      if (installRes.errors.length > 0) {
+        throw new Error(`error(s) while installing sandbox: ${installRes.errors.join(', ')}`)
+      }
     }
   }
 
@@ -242,63 +245,10 @@ sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
       cmd += ` ${argString}`
     }
     if (isolateApps) {
-      const safeBasePath = '/home/itch-player'
-      const relExePath = path.relative(appPath, exePath)
-      log(opts, `relExePath = ${relExePath}`)
+      log(opts, 'should write firejail profile file')
 
-      const safeAppPath = path.join(safeBasePath, path.basename(appPath))
-      log(opts, `safeAppPath = ${safeAppPath}`)
-
-      const safeExePath = path.join(safeAppPath, relExePath)
-      log(opts, `safeExePath = ${safeExePath}`)
-
-      const chmodRes = await spawn.getOutput({
-        command: 'sudo',
-        args: [ '-n', '-u', 'itch-player', '--', 'chmod', 'o+rwx', safeBasePath ],
-        logger: opts.logger
-      })
-      log(opts, `chmod output:\n${chmodRes}`)
-
-      const mvRes = await spawn.getOutput({
-        command: 'mv',
-        args: [ appPath, safeAppPath ],
-        logger: opts.logger
-      })
-      log(opts, `mv output:\n${mvRes}`)
-
-      const chmod2Res = await spawn.getOutput({
-        command: 'chmod',
-        args: [ '-R', 'o+rwx', safeAppPath ],
-        logger: opts.logger
-      })
-      log(opts, `chmod2 output:\n${chmod2Res}`)
-
-      cmd = `sudo -n -u itch-player -- ${escape(safeExePath)} ${argString}`
-
-      let ret
-      let err
-      try {
-        ret = await doSpawn(safeExePath, cmd, opts)
-      } catch (e) { err = e }
-
-      const chmod3Res = await spawn.getOutput({
-        command: 'chmod',
-        args: [ '-R', 'o-rwx', safeAppPath ],
-        logger: opts.logger
-      })
-      log(opts, `chmod3 output:\n${chmod3Res}`)
-
-      const mvBackRes = await spawn.getOutput({
-        command: 'mv',
-        args: [ safeAppPath, appPath ],
-        logger: opts.logger
-      })
-      log(opts, `mvBack output:\n${mvBackRes}`)
-
-      if (err) {
-        throw err
-      }
-      return ret
+      cmd = `firejail --noprofile -- ${cmd}`
+      await doSpawn(exePath, cmd, opts)
     } else {
       await doSpawn(exePath, cmd, opts)
     }

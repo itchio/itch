@@ -1,40 +1,28 @@
 
 import tmp from 'tmp'
+import path from 'path'
 
 import spawn from '../spawn'
 import sudo from '../sudo'
 import sf from '../sf'
-import pathmaker from '../pathmaker'
+import ibrew from '../ibrew'
 
 import mklog from '../log'
 const log = mklog('sandbox-linux')
 
 import common from './common'
 
-const USER = 'itch-player'
-const DEFAULT_GROUPS = 'cdrom,floppy,audio,video,plugdev,'
-const HAVEN_PATH = pathmaker.appPath({
-  installLocation: 'haven',
-  installFolder: '.'
-})
-
-export async function check () {
+export async function check (opts) {
   const needs = []
   const errors = []
 
-  const userCheck = await spawn.exec({command: 'sudo', args: ['-n', '-u', USER, '--', 'whoami']})
-  if (userCheck.code !== 0) {
+  log(opts, 'Testing firejail')
+  const firejailCheck = await spawn.exec({command: 'firejail', args: ['--noprofile', '--', 'whoami']})
+  if (firejailCheck.code !== 0) {
     needs.push({
-      type: 'user',
-      code: userCheck.code,
-      err: userCheck.err
-    })
-  }
-
-  const havenCheck = await sf.exists(HAVEN_PATH)
-  if (!havenCheck) {
-    needs.push({
-      type: 'haven'
+      type: 'firejail',
+      code: firejailCheck.code,
+      err: firejailCheck.err
     })
   }
 
@@ -43,40 +31,36 @@ export async function check () {
 
 export async function install (opts, needs) {
   return await common.tendToNeeds(opts, needs, {
-    haven: async () => {
-      await spawn.exec({command: 'mkdir', args: ['-p', HAVEN_PATH]})
-    },
+    firejail: async (need) => {
+      log(opts, `installing firejail, because ${need.err} (code ${need.code})`)
 
-    user: async () => {
-      const lines = []
-      lines.push('#!/bin/bash -xe')
+      // normally already installed by setup phase
+      // FIXME: can't use here because sagas :( cf. https://github.com/itchio/itch/issues/695
+      // await ibrew.fetch(opts, 'firejail')
 
-      lines.push(`userdel ${USER}`)
-      lines.push(`useradd -G ${DEFAULT_GROUPS} ${USER}`)
+      const firejailBinary = path.join(ibrew.binPath(), 'firejail')
+      const firejailBinaryExists = await sf.exists(firejailBinary)
+      if (!firejailBinaryExists) {
+        throw new Error('failed to install firejail')
+      } else {
+        const lines = []
+        lines.push('#!/bin/bash -xe')
+        lines.push(`chown root:root ${firejailBinary}`)
+        lines.push(`chmod u+s ${firejailBinary}`)
 
-      await runScript(lines)
+        log(opts, 'Making firejail binary setuid')
+        await sudoRunScript(lines)
+      }
     }
   })
 }
 
 export async function uninstall (opts) {
   const errors = []
-
-  const lines = []
-  lines.push('#!/bin/bash -xe')
-  lines.push(`userdel ${USER}`)
-
-  try {
-    log(opts, 'Removing user')
-    await runScript(lines)
-  } catch (e) {
-    errors.push(e)
-  }
-
   return {errors}
 }
 
-async function runScript (lines) {
+async function sudoRunScript (lines) {
   const contents = lines.join('\n')
   const tmpObj = tmp.fileSync()
   sf.writeFile(tmpObj.name, contents)
