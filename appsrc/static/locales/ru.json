@@ -69,7 +69,7 @@
     "preferences.install_location.empty": "Пусто",
     "preferences.install_location.free_space": "Свободное место",
     "preferences.install_location.is_default": "Новые приложения будут установлены в эту папку по умолчанию.",
-    "preferences.install_location.item_count": "# объектов",
+    "preferences.install_location.item_count": "# приложений",
     "preferences.install_location.make_default": "Установить эту папку путём для установки по умолчанию",
     "preferences.install_location.name": "Имя",
     "preferences.install_location.path": "Путь установки",
@@ -176,5 +176,8 @@
     "status.downloads.no_active_downloads": "Нет текущих загрузок",
     "prompt.rpm_policy.message": "{{title}} использует формат пакетов .rpm, и не может быть установлено, пока не будет перепаковано.",
     "menu.view.view": "Вид",
-    "sidebar.collections": "Коллекции"
+    "sidebar.collections": "Коллекции",
+    "preferences.install_location.browse_linux": "Открыть папку установки в файловом менеджере",
+    "grid.criterion.filtered_by": "Фильтр: \"{{term}}\"",
+    "prompt.deb_policy.message": "{{title}} использует формат пакетов .deb, и не может быть установлено, пока не будет перепаковано."
 }
