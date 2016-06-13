@@ -87,7 +87,7 @@
     "prompt.additional_purchase.detail": "...но ты всегда можешь купить копию для друга!\n\nПродолжить покупки?",
     "prompt.additional_purchase.message": "У вас уже есть {{title}}.",
     "prompt.additional_purchase.purchase_again": "Купить ещё раз",
-    "prompt.additional_purchase.title": "У вас уже куплено это!",
+    "prompt.additional_purchase.title": "У вас уже есть это!",
     "prompt.confirm_uninstall": "Вы точно хотите удалить {{title}}?",
     "prompt.crash_reporter.detail": "Отчет об критической ошибке был сохранен в {{location}}.",
     "prompt.crash_reporter.message": "Приложение закрылось из-за непредвиденной ошибки",
