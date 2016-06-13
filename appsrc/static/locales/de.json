@@ -255,5 +255,9 @@
     "status.downloads.clear_finished": "Leeren",
     "usage_stats.description.free_download": "Kostenlos erhältlich",
     "new_tab.titles.input": "...oder",
-    "preferences.security": "Sicherheit & Datenschutz"
+    "preferences.security": "Sicherheit & Datenschutz",
+    "usage_stats.never_played": "Nie gespielt",
+    "usage_stats.description.assets": "Eine Asset-Sammlung",
+    "usage_stats.never_opened": "Nie geöffnet",
+    "sidebar.featured": "Sehenswert"
 }
