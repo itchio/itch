@@ -37,7 +37,7 @@
     "grid.item.retry": "Réessayer de télécharger / installer / lancer ce contenu",
     "grid.item.running": "En cours d'exécution…",
     "grid.item.show_local_files": "Montrer les fichiers locaux",
-    "grid.item.uninstall": "Désinstaller maintenant",
+    "grid.item.uninstall": "Désinstaller",
     "grid.item.uninstalling": "Désinstallation en cours…",
     "grid.item.version": "Version {{version}}",
     "i18n.failed_downloading_locales": "Les mises à jour de la traduction {{lang}} n'ont pas pu être téléchargées.",
@@ -281,5 +281,11 @@
     "label.experimental": "Expérimental",
     "docs.learn_more": "En savoir plus",
     "preferences.install_location.is_default_short": "Par défaut",
-    "preferences.install_location.make_default_short": "Choisir par défaut"
+    "preferences.install_location.make_default_short": "Choisir par défaut",
+    "grid.item.buy_now_again": "Acheter à nouveau",
+    "grid.item.launch_demo": "Lancer la démo",
+    "grid.item.share": "Partager",
+    "grid.item.open_demo": "Ouvrir la démo",
+    "grid.item.donate": "Faire un don au créateur",
+    "grid.item.donate_again": "Faire un autre don !"
 }
