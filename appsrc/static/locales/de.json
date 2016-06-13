@@ -224,5 +224,6 @@
     "grid.item.open_debug_log": "Debug Log öffnen",
     "menu.view.history": "Verlauf",
     "game.install.no_executables_found": "Keine ausführbaren Dateien gefunden",
-    "game.install.no_html_index_found": "Keine HTML-Index Datei gefunden"
+    "game.install.no_html_index_found": "Keine HTML-Index Datei gefunden",
+    "usage_stats.description.other": "Ein Unbeschreibliches"
 }
