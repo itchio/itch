@@ -20,7 +20,7 @@
     "login.action.reset_password": "Забыли пароль?",
     "login.field.password": "Пароль",
     "login.field.username": "Имя пользователя или e-mail",
-    "login.status.dependency_check": "Проверяем, что всё как надо...",
+    "login.status.dependency_check": "Проверяем, что всё как надо…",
     "login.status.dependency_install": "Установка зависимости {{name}} {{version}}",
     "login.status.login": "Авторизация…",
     "login.status.setup_failure": "Возникла ошибка при установке: {{error}}",
@@ -120,8 +120,10 @@
     "sidebar.getting_started": "Приступая к работе",
     "sidebar.installed": "Установленные",
     "sidebar.owned": "Библиотека",
-    "status.checking": "Проверка обновлений...",
+    "status.checking": "Проверка обновлений…",
     "status.downloaded": "Нажми для перезагрузки и применения обновлений!",
-    "status.downloading": "Загрузка обновления...",
-    "status.uptodate": "Ваш itch обновлен!"
+    "status.downloading": "Загрузка обновления…",
+    "status.uptodate": "Ваш itch обновлен!",
+    "grid.item.open_in_file_explorer_osx": "Показать папку в Finder",
+    "grid.item.retry": "Попробовать загрузить / установить / запустить ещё раз"
 }
