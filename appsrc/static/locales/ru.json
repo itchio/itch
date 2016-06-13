@@ -151,5 +151,5 @@
     "status.downloads.download_error": "Ошибка загрузки",
     "usage_stats.description.game_mod": "Модификация к игре",
     "login.remembered_session.last_connected": "Последний вход",
-    "prompt.deb_policy.detail": "itch может устанавливать только портативные версии приложений платформы Linux"
+    "prompt.deb_policy.detail": "itch может устанавливать только portable-версии Linux приложений"
 }
