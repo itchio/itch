@@ -227,5 +227,6 @@
     "game.install.no_html_index_found": "Keine HTML-Index Datei gefunden",
     "usage_stats.description.other": "Ein Unbeschreibliches",
     "sidebar.category.basics": "Wesentliches",
-    "prompt.self_update_ready.action.snooze": "Schlummern"
+    "prompt.self_update_ready.action.snooze": "Schlummern",
+    "sidebar.empty": "Auf gehts!"
 }
