@@ -91,17 +91,25 @@ $meat-cover-scale: 0.4;
         @include single-line;
         font-family: Lato;
         font-size: 14px;
-        height: 32px;
+        height: 33px;
+        line-height: 30px;
         margin-left: 4px;
-        color: $secondary-text-color;
-        border: 1px solid darken($secondary-text-color, 20%);
-        padding: 8px;
+        color: $base-text-color;
+        border: 2px solid darken($secondary-text-color, 20%);
+        background: #353535;
+        box-shadow: 0 0 2px #000000;
+        text-shadow: 0 0 1px black;
+        padding: 0 8px;
         border-radius: 2px;
         flex-grow: 1;
         max-width: 300px;
 
+        transition: all 0.4s;
+
         &.editing {
+          text-shadow: 0 0 1px transparent;
           color: $sidebar-background-color;
+          background: white;
         }
       }
     }

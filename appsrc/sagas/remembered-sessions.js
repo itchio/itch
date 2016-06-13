@@ -59,7 +59,7 @@ export function * _forgetSessionRequest (action) {
       {
         label: ['prompt.forget_session.action'],
         action: forgetSession({id, username}),
-        icon: 'delete'
+        icon: 'cross'
       },
       'cancel'
     ]

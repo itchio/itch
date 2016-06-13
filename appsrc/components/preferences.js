@@ -5,6 +5,7 @@ import {connect} from './connect'
 
 import path from 'path'
 import humanize from 'humanize-plus'
+import classNames from 'classnames'
 
 import urls from '../constants/urls'
 
@@ -31,59 +32,65 @@ function browseI18nKey () {
 export class Preferences extends Component {
   render () {
     const {t, lang, sniffedLang = '', downloading, locales, isolateApps} = this.props
-    const {queueLocaleUpdate, updatePreferences} = this.props
+    const {queueLocaleDownload, updatePreferences} = this.props
 
     const options = [{
       value: '__',
       label: t('preferences.language.auto', {language: sniffedLang})
     }].concat(locales)
 
+    let translateUrl = `${urls.itchTranslationPlatform}/projects/itch/itch`
+    if (lang !== 'en' && lang !== '__') {
+      translateUrl += `/${lang}`
+    }
+
+    const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itch/${lang || 'en'}/svg-badge.svg`
+
     return <div className='preferences-meat'>
-      <form className='form preferences-form'>
-        <SelectRow onChange={::this.onLanguageChange} options={options} value={lang || '__'} label={t('preferences.language')}/>
+      <SelectRow onChange={::this.onLanguageChange} options={options} value={lang || '__'} label={t('preferences.language')}/>
 
-        <div className='locale-fetcher' onClick={(e) => { e.preventDefault(); queueLocaleUpdate(lang) }}>
-        {downloading
-          ? <Icon icon='stopwatch' classes='scan'/>
-          : <Icon icon='refresh'/>
-        }
-        </div>
+      <div className='locale-fetcher' onClick={(e) => { e.preventDefault(); queueLocaleDownload(lang) }}>
+      {downloading
+        ? <Icon icon='stopwatch' classes='scan'/>
+        : <Icon icon='refresh'/>
+      }
+      </div>
 
-        <div className='link-box'>
-          <a href={urls.itchTranslationPlatform}>
-            <Icon icon='earth'/>
-            {t('preferences.language.get_involved', {name: 'itch'})}
-          </a>
-        </div>
+      <p className='explanation flex'>
+        {t('preferences.language.get_involved', {name: 'itch'}) + ' '}
+        <a href={translateUrl}>
+          <img className='weblate-badge' src={translationBadgeUrl}/>
+        </a>
+      </p>
 
-        <p className='security-header'>{t('preferences.security')}</p>
-        <form className='form security-form'>
-          <label>
-            <input type='checkbox' checked={isolateApps} onChange={(e) => { updatePreferences({isolateApps: e.target.checked}) }}/>
-            <span> {t('preferences.security.sandbox.title')} </span>
-            <span className='experimental'>{t('label.experimental')}</span>
-          </label>
-        </form>
+      <h2>{t('preferences.security')}</h2>
+      <div className='security-form'>
+        <label>
+          <input type='checkbox' checked={isolateApps} onChange={(e) => { updatePreferences({isolateApps: e.target.checked}) }}/>
+          <span> {t('preferences.security.sandbox.title')} </span>
+          <span className='experimental'>{t('label.experimental')}</span>
+        </label>
+      </div>
 
-        <p class='explanation'>
-          {t('preferences.security.sandbox.description')}
-        </p>
+      <p className='explanation'>
+        {t('preferences.security.sandbox.description')}
+        {' '}
+        <a href='https://github.com/itchio/itch/issues/670'>
+          {t('docs.learn_more')}
+        </a>
+      </p>
 
-        <div className='link-box'>
-          <a href='https://github.com/itchio/itch/issues/670'>
-            <Icon icon='earth'/>
-            {t('preferences.security.sandbox.learn_more')}
-          </a>
-        </div>
-
-        <p className='install-locations-header'>{t('preferences.install_locations')}</p>
-        {this.installLocationTable()}
-      </form>
+      <h2>{t('preferences.install_locations')}</h2>
+      {this.installLocationTable()}
     </div>
   }
 
   onLanguageChange (lang) {
     const {updatePreferences} = this.props
+    if (lang === '__') {
+      lang = null
+    }
+
     updatePreferences({lang})
   }
 
@@ -96,10 +103,7 @@ export class Preferences extends Component {
       <th>{t('preferences.install_location.path')}</th>
       <th>{t('preferences.install_location.used_space')}</th>
       <th>{t('preferences.install_location.free_space')}</th>
-      <th>{t('preferences.install_location.item_count')}</th>
-      <th/>
-      <th/>
-      <th/>
+      <th></th>
     </tr>
 
     const {installLocations = {}} = this.props
@@ -120,27 +124,24 @@ export class Preferences extends Component {
       for (const alias of aliases) {
         path = path.replace(alias[0], alias[1])
       }
-      const {size, freeSpace, itemCount} = location
+      const {size, freeSpace} = location
+      const rowClasses = classNames({
+        ['default']: isDefault
+      })
 
-      rows.push(<tr>
+      rows.push(<tr className={rowClasses}>
         <td className='action' onClick={(e) => { e.preventDefault(); navigate(`locations/${name}`) }}>
           <Icon icon='folder'/> {path}
         </td>
         <td> {humanize.fileSize(size)} </td>
         <td> {freeSpace > 0 ? humanize.fileSize(freeSpace) : '...'} </td>
-        <td className='action' onClick={(e) => { e.preventDefault(); navigate(`locations/${name}`) }}>
-        {itemCount > 0
-          ? itemCount
-          : <span className='empty'>0</span>
-        }
-        </td>
 
         {isDefault
           ? <td className='action default hint--top' data-hint={t('preferences.install_location.is_default')}>
             <Icon icon='star'/>
           </td>
-          : <td className='action not_default hint--top' data-hint={t('preferences.install_location.make_default')} onClick={(e) => makeInstallLocationDefault(name)}>
-            <Icon icon='star'/>
+          : <td className='action default not-default hint--top' data-hint={t('preferences.install_location.make_default')} onClick={(e) => makeInstallLocationDefault(name)}>
+            {t('preferences.install_location.make_default_short')}
           </td>
         }
 
@@ -149,7 +150,7 @@ export class Preferences extends Component {
         </td>
 
         {mayDelete
-          ? <td className='action hint--top' data-hint={t('preferences.install_location.delete')} onClick={(e) => removeInstallLocationRequest(name)}>
+          ? <td className='action delete hint--top' data-hint={t('preferences.install_location.delete')} onClick={(e) => removeInstallLocationRequest(name)}>
             <Icon icon='cross'/>
           </td>
           : <td/>
@@ -183,7 +184,7 @@ Preferences.propTypes = {
   addInstallLocationRequest: PropTypes.func.isRequired,
   removeInstallLocationRequest: PropTypes.func.isRequired,
   makeInstallLocationDefault: PropTypes.func.isRequired,
-  queueLocaleUpdate: PropTypes.func.isRequired,
+  queueLocaleDownload: PropTypes.func.isRequired,
   updatePreferences: PropTypes.func.isRequired,
   navigate: PropTypes.func.isRequired
 }
@@ -252,7 +253,7 @@ const mapStateToProps = createStructuredSelector({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  queueLocaleUpdate: (lang) => dispatch(actions.queueLocaleUpdate({lang})),
+  queueLocaleDownload: (lang) => dispatch(actions.queueLocaleDownload({lang})),
   navigate: (path, data) => dispatch(actions.navigate(path, data)),
   addInstallLocationRequest: () => dispatch(actions.addInstallLocationRequest()),
   makeInstallLocationDefault: (name) => dispatch(actions.makeInstallLocationDefault({name})),
