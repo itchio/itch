@@ -33,8 +33,6 @@ export class Preferences extends Component {
     const {t, lang, sniffedLang = '', downloading, locales, isolateApps} = this.props
     const {queueLocaleUpdate, updatePreferences} = this.props
 
-    console.log('isolateApps = ', isolateApps)
-
     const options = [{
       value: '__',
       label: t('preferences.language.auto', {language: sniffedLang})
@@ -62,15 +60,19 @@ export class Preferences extends Component {
         <form className='form security-form'>
           <label>
             <input type='checkbox' checked={isolateApps} onChange={(e) => { updatePreferences({isolateApps: e.target.checked}) }}/>
-            <span> Isolate apps </span>
+            <span> {t('preferences.security.sandbox.title')} </span>
             <span className='experimental'>{t('label.experimental')}</span>
           </label>
         </form>
 
+        <p>
+          {t('preferences.security.sandbox.description')}
+        </p>
+
         <div className='link-box'>
           <a href='https://github.com/itchio/itch/issues/670'>
             <Icon icon='earth'/>
-            {t('preferences.security.isolation_learn_more')}
+            {t('preferences.security.sandbox.learn_more')}
           </a>
         </div>
 

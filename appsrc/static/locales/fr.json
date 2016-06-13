@@ -32,7 +32,7 @@
     "grid.item.open_in_file_explorer_osx": "Montrer le dossier d'installation dans le Finder",
     "grid.item.probe": "Ouvrir le journal d'évènements (Avancé)",
     "grid.item.purchase_or_donate": "Acheter ou faire un don pour soutenir ce contenu",
-    "grid.item.queued": "En attente...",
+    "grid.item.queued": "En attente",
     "grid.item.report_problem": "Signaler le pépin (Ouvre un navigateur web)",
     "grid.item.retry": "Réessayer de télécharger / installer / lancer ce contenu",
     "grid.item.running": "En cours d'exécution…",
@@ -108,6 +108,13 @@
     "onboarding.owned.navigation_hint": "Cliquez sur les onglets ci-contre pour explorer l'application",
     "onboarding.owned.reassuring_comment": "C'est un peu vide pour l'instant, mais pas de panique !",
     "onboarding.owned.title_warm_welcome": "Vous voilà !",
+<<<<<<< HEAD
+=======
+    "preferences.security": "Sécurité & vie privée",
+    "preferences.security.sandbox.title": "Activer le bac à sable",
+    "preferences.security.sandbox.description": "Le bac à sable itch.io améliore votre sécurité en tentant d'empêcher les jeux téléchargés de nuir à votre machine ou de voler vos données personnelles.",
+    "preferences.security.sandbox.learn_more": "En savoir plus sur le bac à sable",
+>>>>>>> 7c838150099ce4104aa704c5f69ae157cebb9ffe
     "preferences.install_location.add": "Ajouter un emplacement",
     "preferences.install_location.browse": "Ouvrir ce dossier dans l'explorateur de fichier",
     "preferences.install_location.browse_linux": "Ouvrir l'emplacement d'installation dans le gestionnaire de fichiers",
@@ -191,7 +198,11 @@
     "prompt.self_update_ready.action.restart": "Redémarrer",
     "prompt.self_update_ready.action.snooze": "Pas maintenant",
     "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Publié le {{pubDate}}.",
+<<<<<<< HEAD
     "prompt.self_update_ready.message": "Choisissez 'Redémarrer' pour en profiter dès maintenant.\n\nSinon, elle s'activera lors du prochain démarrage de l'application",
+=======
+    "prompt.self_update_ready.message": "Cliquez sur 'Redémarrer' pour en profiter dès maintenant.\n\nSinon, elle s'activera lors du prochain démarrage de l'application.",
+>>>>>>> 7c838150099ce4104aa704c5f69ae157cebb9ffe
     "prompt.self_update_ready.title": "Une mise à jour a été téléchargée et installée",
     "prompt.uninstall.cancel": "Annuler",
     "prompt.uninstall.message": "Êtes-vous sûr de vouloir désinstaller {{title}} ?",
@@ -225,7 +236,11 @@
     "sidebar.new_tab": "Nouvel onglet",
     "sidebar.no_tabs": "À vos ordres",
     "sidebar.owned": "Bibliothèque",
+<<<<<<< HEAD
     "sidebar.owned_subtitle": "Ce que vous avez acheté ou installé",
+=======
+    "sidebar.owned_subtitle": "Vos achats et dons",
+>>>>>>> 7c838150099ce4104aa704c5f69ae157cebb9ffe
     "sidebar.preferences": "Préférences",
     "sidebar.preferences_subtitle": "Faites comme chez vous",
     "sidebar.press": "Accès Presse",
