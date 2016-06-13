@@ -243,5 +243,10 @@
     "usage_stats.last_played_time_ago": "Zuletzt gespielt {{time ago}}",
     "prompt.forget_session.title": "Sitzung vergessen",
     "new_tab.community": "Community",
-    "status.downloads.category.finished": "Abgeschlossene Downloads"
+    "status.downloads.category.finished": "Abgeschlossene Downloads",
+    "usage_stats.description.price": "Erhältlich für {{price}} oder mehr",
+    "usage_stats.description.comic": "Ein Comic",
+    "usage_stats.never_used": "Nie benutzt",
+    "sidebar.history_subtitle": "Was in letzter Zeit passiert ist",
+    "prompt.self_update.message.windows": "Wähle \"Jetzt herunterladen\", um es automatisch zu instalieren, oder besuche die Webseite für weitere Anweisungen."
 }
