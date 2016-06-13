@@ -186,5 +186,7 @@
     "new_tab.random": "Etwas Zufälliges ansehen",
     "sidebar.category.tabs": "Tabs",
     "usage_stats.description.tool": "Ein Tool",
-    "usage_stats.last_opened_time_ago": "Zuletzt geöffnet {{time_ago}}"
+    "usage_stats.last_opened_time_ago": "Zuletzt geöffnet {{time_ago}}",
+    "status.downloads.download_error": "Downloadfehler",
+    "usage_stats.description.game_mod": "Eine Spiel-Mod"
 }
