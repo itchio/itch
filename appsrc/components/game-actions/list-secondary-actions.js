@@ -1,34 +1,48 @@
 
 import invariant from 'invariant'
 
-import os from '../../util/os'
-const platform = os.itchPlatform()
-
 import * as actions from '../../actions'
-
-function browseI18nKey () {
-  let fallback = 'grid.item.open_in_file_explorer'
-  switch (platform) {
-    case 'osx': return ['grid.item.open_in_file_explorer_osx', fallback]
-    case 'linux': return ['grid.item.open_in_file_explorer_linux', fallback]
-    default: return fallback
-  }
-}
 
 function browseAction (caveId) {
   return {
-    label: [browseI18nKey()],
+    label: ['grid.item.show_local_files'],
     icon: 'folder-open',
+    type: 'secondary',
     action: actions.exploreCave({caveId})
   }
 }
 
-function purchaseAction (game) {
+function purchaseAction (game, downloadKey) {
   invariant(typeof game === 'object', 'game is object')
+
+  const donate = (game.minPrice === 0)
+  const againSuffix = downloadKey ? '_again' : ''
+  const hint = downloadKey ? downloadKey.createdAt : null
+
+  if (donate) {
+    return {
+      label: ['grid.item.donate' + againSuffix],
+      icon: 'heart-filled',
+      action: actions.initiatePurchase({game}),
+      hint
+    }
+  } else {
+    return {
+      label: ['grid.item.buy_now' + againSuffix],
+      icon: 'shopping_cart',
+      action: actions.initiatePurchase({game}),
+      hint
+    }
+  }
+}
+
+function shareAction (game) {
+  invariant(typeof game === 'object', 'game is object')
+
   return {
-    label: ['grid.item.purchase_or_donate'],
-    icon: 'cart',
-    action: actions.initiatePurchase({game})
+    label: ['grid.item.share'],
+    icon: 'share',
+    action: actions.initiateShare({game})
   }
 }
 
@@ -57,7 +71,7 @@ function uninstallAction (caveId) {
 }
 
 export default function listSecondaryActions (props) {
-  const {task, game, cave, mayDownload, action} = props
+  const {task, game, cave, mayDownload, downloadKey, action} = props
   let error = false
 
   const items = []
@@ -73,33 +87,34 @@ export default function listSecondaryActions (props) {
 
     if (task === 'idle') {
       // No errors
-      items.push(purchaseAction(game))
-
-      if (action !== 'open') {
-        items.push(browseAction(cave.id))
-      }
+      items.push(purchaseAction(game, downloadKey))
     }
 
     items.push({
       type: 'separator'
     })
 
+    if (action !== 'open') {
+      items.push(browseAction(cave.id))
+    }
+
     let version = `${cave.uploadId}`
     if (cave.buildId) {
       version += `/${cave.buildId}`
     }
-    version += ` @ ${cave.installedArchiveMtime}`
+    const hint = `${cave.installedArchiveMtime}`
 
     items.push({
       type: 'info',
       icon: 'checkmark',
       label: ['grid.item.version', {version}],
+      hint: hint,
       action: actions.copyToClipboard(`game ${game.id}, version ${version}`)
     })
 
     items.push({
       type: 'secondary',
-      icon: 'diamond',
+      icon: 'repeat',
       label: ['grid.item.check_for_update'],
       action: actions.checkForGameUpdate({caveId: cave.id, noisy: true})
     })
@@ -114,9 +129,15 @@ export default function listSecondaryActions (props) {
 
     // XXX should use API' can_be_bought but see
     // https://github.com/itchio/itch/issues/379
-    if (!mainIsPurchase) {
-      items.push(purchaseAction(game))
+    if (!mainIsPurchase && game.canBeBought) {
+      items.push(purchaseAction(game, downloadKey))
     }
+
+    items.push(shareAction(game))
+
+    items.push({
+      type: 'separator'
+    })
   }
 
   return {error, items}

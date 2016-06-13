@@ -20,9 +20,8 @@ export default function * menuSaga () {
   const refreshSelector = createSelector(
     (state) => state.system,
     (state) => state.session.credentials,
-    (state) => state.preferences.miniSidebar,
-    (system, credentials, miniSidebar) => {
-      queue.dispatch(refreshMenu({system, credentials, miniSidebar}))
+    (system, credentials) => {
+      queue.dispatch(refreshMenu({system, credentials}))
     }
   )
 
@@ -64,8 +63,7 @@ import {
   changeUser,
   checkForSelfUpdate,
   closeTab,
-  closeTabOrAuxWindow,
-  toggleMiniSidebar
+  closeTabOrAuxWindow
 } from '../actions'
 
 import os from '../util/os'
@@ -77,7 +75,6 @@ function convertMenuAction (label) {
     case 'menu.file.close_window': return hideWindow()
     case 'menu.file.quit': return quitWhenMain()
     case 'menu.file.preferences': return navigate('preferences')
-    case 'menu.view.mini_sidebar': return toggleMiniSidebar()
     case 'menu.view.downloads': return navigate('downloads')
     case 'menu.view.history': return navigate('history')
     case 'menu.account.change_user': return changeUser()

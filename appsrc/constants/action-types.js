@@ -179,6 +179,8 @@ module.exports = keyMirror({
   INITIATE_PURCHASE: null,
   PURCHASE_COMPLETED: null,
 
+  INITIATE_SHARE: null,
+
   /** Set app-wide progress bar (title bar on Windows). Negative value clears. */
   SET_PROGRESS: null,
   /** OSX-only, bounce dock */

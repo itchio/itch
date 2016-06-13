@@ -17,30 +17,45 @@ $meat-cover-scale: 0.4;
   display: flex;
   flex-direction: column;
 
+  .browser-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .browser-context {
+    flex-basis: 240px;
+    background: $sidebar-background-color;
+
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .browser-bar {
     display: flex;
     align-items: center;
     padding: 5px 0 5px 20px;
-    background: $sidebar-background-color;
+    background: $bread-background-color;
     transition: all .2s;
     min-height: 32px;
 
     border-width: 0;
-    border-top-width: 2px;
+    border-bottom-width: 2px;
     border-image-source: repeating-linear-gradient(to right, #353535 0, #353535 95%, transparent 95%, transparent 100%);
     &.loading {
       border-image-source: repeating-linear-gradient(to right, $light-accent-color 0, $light-accent-color 95%, transparent 95%, transparent 100%);
       animation: load-border 10s cubic-bezier(0, 0, 0, 0.42) infinite;
     }
     border-image-slice: 100% 10% 0% 0%;
-    // border-image-width: 2px;
-    border-top: 2px solid;
+    border-bottom: 2px solid;
   }
 
   webview {
     background: white;
     flex-grow: 1;
     margin-bottom: $status-bar-height;
+    margin-right: -1px;
   }
 
   .controls {

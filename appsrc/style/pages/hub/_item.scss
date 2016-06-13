@@ -17,7 +17,7 @@
   }
 
   .undercover {
-    padding: .5em;
+    padding: 0.5em 0.5em 0.25em 0.5em;
   }
 
   .title {
@@ -44,25 +44,27 @@
   }
 }
 
-.game-actions {
-  height: 3em;
-  display: flex;
-  align-items: center;
+.hub-item, .downloads-page {
+  .game-actions {
+    height: 3em;
+    display: flex;
+    align-items: center;
 
-  &.task-download, &.task-install, &.task-configure, &.task-launch, &.task-find-upload {
-    .cave-actions {
-      display: none;
+    &.task-download, &.task-install, &.task-configure, &.task-launch, &.task-find-upload {
+      .cave-actions {
+        display: none;
+      }
     }
-  }
 
-  .not-platform-compatible {
-    font-size: 90%;
-    color: $secondary-text-color;
-  }
+    .not-platform-compatible {
+      font-size: 90%;
+      color: $secondary-text-color;
+    }
 
-  .main-action .icon {
-    margin-right: 7px;
-    font-size: 80%;
+    .main-action .icon {
+      margin-right: 7px;
+      font-size: 80%;
+    }
   }
 }
 
@@ -87,20 +89,22 @@
   }
 }
 
-.hub-item .game-actions {
-  &.uninstalled {
-    .main-action {
-      @include discreet-button;
+.hub-item, .downloads-page {
+  .game-actions {
+    &.uninstalled {
+      .main-action {
+        @include discreet-button;
+      }
     }
-  }
 
-  &.task-download, &.task-install, &.task-configure, &.task-launch, &.task-find-upload, &.task-launch {
-    .main-action {
-      margin-right: 0;
-      flex-grow: 1;
-      text-align: center;
-      font-weight: normal;
-      @include discreet-button;
+    &.task-download, &.task-install, &.task-configure, &.task-launch, &.task-find-upload, &.task-launch {
+      .main-action {
+        margin-right: 0;
+        flex-grow: 1;
+        text-align: center;
+        font-weight: normal;
+        @include discreet-button;
+      }
     }
   }
 }

@@ -11,7 +11,7 @@ export default handleActions({
 }, {template: []})
 
 function computeMenuTemplate (payload) {
-  const {system, credentials, miniSidebar} = payload
+  const {system, credentials} = payload
   const menus = {
     file: {
       label: 'menu.file.file',
@@ -74,12 +74,6 @@ function computeMenuTemplate (payload) {
     view: {
       label: 'menu.view.view',
       submenu: [
-        {
-          label: 'menu.view.mini_sidebar',
-          type: 'checkbox',
-          checked: miniSidebar,
-          accelerator: 'CmdOrCtrl+I'
-        },
         {
           type: 'separator'
         },

@@ -41,6 +41,15 @@
   align-items: stretch;
   flex-direction: column;
 
+  .logo {
+    text-align: center;
+
+    img {
+      width: 100px;
+      margin: 10px 0;
+    }
+  }
+
   &.mini {
     .me img {
       margin: 0 auto;
@@ -94,7 +103,8 @@
     align-items: center;
     margin: 2px 0;
     margin-right: 0;
-    padding: 5px 8px 5px 3px;
+    // padding: 5px 8px 5px 3px;
+    padding: 5px 8px 5px 10px;
     min-height: 30px;
 
     &:hover {
@@ -105,27 +115,13 @@
 
     .icon {
       flex-shrink: 0;
-      margin: 0 10px 0 6px;
+      margin: 0 6px 0 0px;
       font-size: 90%;
-
-      &.icon-itchio {
-        margin: 0 8px 0 4px;
-        font-size: 120%;
-      }
     }
 
     .label {
       @include single-line;
       padding: .2em 0;
-    }
-
-    .icon-image {
-      flex-shrink: 0;
-      margin: 0 10px 0 4px;
-      border-radius: 1px;
-      width: 16px;
-      height: 16px;
-      background-size: cover;
     }
 
     * {
@@ -248,5 +244,37 @@
       margin: 0 5px;
       border-radius: 2px;
     }
+  }
+
+  .search {
+    position: relative;
+    padding: 0 8px;
+    margin: 8px 4px;
+
+    &.loading .icon-search {
+      @include horizontal-scan;
+    }
+
+    input[type=search] {
+      @include heavy-input;
+      transition: all 0.2s;
+      width: 100%;
+      text-indent: 10px;
+      padding: 6px 10px 6px 9px;
+      font-size: 14px;
+    }
+
+    .icon-search {
+      position: absolute;
+      left: 20px;
+      bottom: 50%;
+      transform: translateY(55%);
+      font-size: 14px;
+      color: $input-placeholder-color;
+    }
+  }
+
+  .sidebar-blank {
+    flex-grow: 1;
   }
 }

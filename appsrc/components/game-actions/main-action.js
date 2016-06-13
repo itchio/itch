@@ -38,7 +38,7 @@ class MainAction extends Component {
           </span>
         } else {
           child = <span className='state'>
-            <Icon icon='cart'/>
+            <Icon icon='shopping_cart'/>
             {t('grid.item.buy_now')}
           </span>
         }

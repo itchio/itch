@@ -15,16 +15,25 @@ import HubSidebarItem from './hub-sidebar-item'
 
 export class HubSidebar extends Component {
   render () {
-    const {t, osx, mini, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
-      navigate, counts, closeTab, moveTab, openTabContextMenu, newTab} = this.props
-    const classes = classNames('hub-sidebar', {osx, fullscreen, mini})
+    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
+      navigate, counts, closeTab, moveTab, openTabContextMenu, newTab, searchLoading} = this.props
+    const classes = classNames('hub-sidebar', {osx, fullscreen})
     const sidebarStyle = {
-      width: mini ? '67px' : sidebarWidth + 'px'
+      width: sidebarWidth + 'px'
     }
+    const searchClasses = classNames('search', {loading: searchLoading})
 
     return <div className={classes} style={sidebarStyle}>
       <div className='title-bar-padder'/>
-      {this.dropdown()}
+
+      <div className='logo'>
+        <img src='static/images/logos/app-white.svg'/>
+      </div>
+
+      <section className={searchClasses}>
+        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onQueryChanged} onKeyUp={::this.onQueryChanged} onChange={::this.onQueryChanged}/>
+        <span className='icon icon-search'/>
+      </section>
 
       <div className='sidebar-items'>
         <h2>{t('sidebar.category.basics')}</h2>
@@ -36,16 +45,8 @@ export class HubSidebar extends Component {
           const active = currentId === id
           const onClick = () => navigate(id)
           const onContextMenu = () => {}
-          const n = (index + 1)
-          const kbShortcut = <div className='kb-shortcut'>
-            {osx
-              ? <Icon icon='command'/>
-              : <Icon icon='ctrl'/>
-            }
-            +{n}
-          </div>
 
-          const props = {id, path, label, icon, active, onClick, t, onContextMenu, kbShortcut}
+          const props = {id, path, label, icon, active, onClick, t, onContextMenu}
           return <HubSidebarItem {...props}/>
         })}
 
@@ -69,16 +70,20 @@ export class HubSidebar extends Component {
           <span className='symbol icon icon-plus'/>
           <span className='label'>{t('sidebar.new_tab')}</span>
           <div className='filler'/>
-          <div className='kb-shortcut'>
-            {osx
-              ? <Icon icon='command'/>
-              : <Icon icon='ctrl'/>
-            }
-            +T
-          </div>
         </section>
+
+        <section className='sidebar-blank'/>
+
+        {false && this.dropdown()}
       </div>
     </div>
+  }
+
+  onQueryChanged (e) {
+    const {search} = this.refs
+    if (!search) return
+
+    this.props.search(search.value)
   }
 
   me () {
@@ -125,7 +130,6 @@ export class HubSidebar extends Component {
 HubSidebar.propTypes = {
   osx: PropTypes.bool,
   sidebarWidth: PropTypes.number.isRequired,
-  mini: PropTypes.bool,
   fullscreen: PropTypes.bool,
   me: PropTypes.shape({
     coverUrl: PropTypes.string,
@@ -154,18 +158,21 @@ HubSidebar.propTypes = {
   moveTab: PropTypes.func.isRequired,
   openTabContextMenu: PropTypes.func.isRequired,
   openPreferences: PropTypes.func.isRequired,
-  newTab: PropTypes.func.isRequired
+  newTab: PropTypes.func.isRequired,
+
+  searchLoading: PropTypes.bool,
+  search: PropTypes.func.isRequired
 }
 
 const mapStateToProps = createStructuredSelector({
   osx: (state) => state.system.osx,
   fullscreen: (state) => state.ui.mainWindow.fullscreen,
   sidebarWidth: (state) => state.preferences.sidebarWidth || 240,
-  mini: (state) => state.preferences.miniSidebar,
   me: (state) => state.session.credentials.me,
   id: (state) => state.session.navigation.id,
   tabs: (state) => state.session.navigation.tabs,
   tabData: (state) => state.session.navigation.tabData,
+  searchLoading: (state) => state.session.search.loading,
 
   counts: createSelector(
     (state) => state.history.itemsByDate,
@@ -187,7 +194,9 @@ const mapDispatchToProps = (dispatch) => ({
   changeUser: () => dispatch(actions.changeUser()),
   openPreferences: () => dispatch(actions.navigate('preferences')),
   openTabContextMenu: (id) => dispatch(actions.openTabContextMenu({id})),
-  newTab: () => dispatch(actions.newTab())
+  newTab: () => dispatch(actions.newTab()),
+
+  search: (query) => dispatch(actions.search(query))
 })
 
 export default connect(

@@ -8,26 +8,13 @@ import getDominantColor from './get-dominant-color'
 
 import GameActions from './game-actions'
 import GameStats from './game-stats'
-import BrowserControls from './browser-controls'
 import {pathToId} from '../util/navigation'
-import Dropdown from './dropdown'
 
 import {findWhere} from 'underline'
 
-import Icon from './icon'
+import GameBrowserContextActions from './game-browser-context-actions'
 
-import listSecondaryActions from './game-actions/list-secondary-actions'
-
-class GameDropdown extends Component {
-  render () {
-    const {items} = listSecondaryActions(this.props)
-    const inner = <Icon icon='triangle-down' classes={['secondary-dropdown']}/>
-
-    return <Dropdown items={items} inner={inner}/>
-  }
-}
-
-export class GameBrowserBar extends Component {
+export class GameBrowserContext extends Component {
   constructor () {
     super()
     this.state = {}
@@ -35,23 +22,18 @@ export class GameBrowserBar extends Component {
 
   render () {
     const barStyle = {}
-    const {dominantColor} = this.state
-    if (dominantColor) {
-      const rgba = getDominantColor.toCSSAlpha(dominantColor, 0.8)
-      barStyle.borderImageSource = `repeating-linear-gradient(to right, ${rgba} 0, ${rgba} 95%, transparent 95%, transparent 100%)`
-      barStyle.borderWidth = '0px'
-      barStyle.borderTopWidth = '2px'
-    }
 
     const {browserState, game} = this.props
     const {loading} = browserState
-    const barClasses = classNames('browser-bar', 'game-browser-bar', {loading})
+    const barClasses = classNames('browser-context', 'game-browser-context', {loading})
+
+    const coverStyle = {
+      backgroundImage: `url('${game.coverUrl}')`
+    }
 
     return <div className={barClasses} style={barStyle}>
-      <div className='controls'>
-        <BrowserControls {...this.props}/>
-      </div>
-      <GameStats game={game}/>
+      <div className='cover' style={coverStyle}/>
+      <GameStats game={game} mdash={false}/>
       {this.gameActions()}
     </div>
   }
@@ -60,7 +42,7 @@ export class GameBrowserBar extends Component {
     const {game} = this.props
     if (!game) return ''
 
-    return <GameActions game={game} CustomSecondary={GameDropdown}/>
+    return <GameActions game={game} CustomSecondary={GameBrowserContextActions}/>
   }
 
   componentWillReceiveProps () {
@@ -81,7 +63,7 @@ export class GameBrowserBar extends Component {
   }
 }
 
-GameBrowserBar.propTypes = {
+GameBrowserContext.propTypes = {
   gameId: PropTypes.number,
   game: PropTypes.object,
   cave: PropTypes.object,
@@ -115,4 +97,4 @@ const mapDispatchToProps = (dispatch) => ({})
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(GameBrowserBar)
+)(GameBrowserContext)
