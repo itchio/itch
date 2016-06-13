@@ -65,7 +65,7 @@ export class Preferences extends Component {
           </label>
         </form>
 
-        <p>
+        <p class='explanation'>
           {t('preferences.security.sandbox.description')}
         </p>
 
