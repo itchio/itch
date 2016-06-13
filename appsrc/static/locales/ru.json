@@ -195,5 +195,13 @@
     "sidebar.featured_subtitle": "Отобрано с любовью командой itch.io",
     "prompt.self_update_ready.title": "Обновление было загружено и установлено",
     "search.open_as_tab": "Открыть как закладку",
-    "preferences.install_location.stop_size_computation": "Не рассчитывать размер папок"
+    "preferences.install_location.stop_size_computation": "Не вычислять размер папки",
+    "search.empty.no_results": "Ничего не найдено",
+    "game.install.visit_web_page": "Открыть веб-страницу",
+    "prompt.self_update.action.view": "Открыть в браузере",
+    "search.placeholder": "Поиск...",
+    "new_tab.twitter": "Популярное в Твиттере",
+    "usage_stats.description.bought_time_ago": "Куплено {{time_ago}}",
+    "install_location.empty": "В этой папке пока ничего не установлено",
+    "grid.item.open_debug_log": "Открыть отладочный лог"
 }
