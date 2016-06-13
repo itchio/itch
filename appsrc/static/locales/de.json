@@ -13,7 +13,7 @@
     "grid.item.downloading": "Lädt herunter…",
     "grid.item.finalize_installation": "Installation fertigstellen",
     "grid.item.install": "Installieren",
-    "grid.item.installing": "Installiere…",
+    "grid.item.installing": "Installiere...",
     "grid.item.launch": "Starten",
     "grid.item.not_platform_compatible": "Nicht für {{platform}} verfügbar",
     "grid.item.open": "Öffnen",
