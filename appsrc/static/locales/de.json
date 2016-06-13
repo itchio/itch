@@ -189,5 +189,8 @@
     "usage_stats.last_opened_time_ago": "Zuletzt geöffnet {{time_ago}}",
     "status.downloads.download_error": "Downloadfehler",
     "usage_stats.description.game_mod": "Eine Spiel-Mod",
-    "login.remembered_session.last_connected": "Zuletzt verbunden"
+    "login.remembered_session.last_connected": "Zuletzt verbunden",
+    "prompt.deb_policy.detail": "Itch kann nur portable Linux-Anwendungen installieren.",
+    "prompt.deb_policy.title": "APT-Pakete werden nicht unterstützt",
+    "sidebar.dashboard_subtitle": "Dinge, an denen du herumgewerkelt hast"
 }
