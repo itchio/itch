@@ -205,5 +205,6 @@
     "prompt.rpm_policy.message": "{{title}} verwendet das .rpm-Paket Format und muss neu gepackt werden, bevor es von itch installiert werden kann.",
     "menu.view.view": "Ansicht",
     "sidebar.collections": "Sammlungen",
-    "grid.criterion.filtered_by": "Gefiltert nach “{{term}}”"
+    "grid.criterion.filtered_by": "Gefiltert nach “{{term}}”",
+    "prompt.deb_policy.message": "{{title}} verwendet das .deb-Paket Format und muss neu gepackt werden, bevor es von itch installiert werden kann."
 }
