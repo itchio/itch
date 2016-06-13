@@ -125,5 +125,6 @@
     "status.downloading": "Загрузка обновления…",
     "status.uptodate": "Ваш itch обновлен!",
     "grid.item.open_in_file_explorer_osx": "Показать папку в Finder",
-    "grid.item.retry": "Попробовать загрузить / установить / запустить ещё раз"
+    "grid.item.retry": "Попробовать загрузить / установить / запустить ещё раз",
+    "grid.item.purchase_or_donate": "Приобрести или пожертвовать средства продукту"
 }
