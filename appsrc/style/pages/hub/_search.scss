@@ -1,10 +1,11 @@
 
-$search-thumbnail-scale: 0.6;
+$search-thumbnail-scale: 0.8;
 
 .hub-search-results {
   background: $sidebar-background-color;
   border-right: 1px solid $sidebar-border-color;
   border-bottom: 1px solid $sidebar-border-color;
+  opacity: 0.0;
 
   width: $search-sidebar-width;
 
@@ -16,13 +17,13 @@ $search-thumbnail-scale: 0.6;
   border-radius: 0 0 0 2px;
 
   overflow: hidden;
-  transition: right 0.2s ease-in-out;
+  transition: left 0.2s ease-in-out, opacity 0.2s ease-in-out;
 
   display: flex;
   flex-direction: column;
 
   .header, p {
-    margin: 8px;
+    margin: 8px 12px;
   }
 
   .header {
@@ -34,8 +35,7 @@ $search-thumbnail-scale: 0.6;
     color: $secondary-text-color;
 
     h3 {
-      font-size: 14px;
-      font-weight: bold;
+      font-size: 16px;
     }
 
     .filler {
@@ -87,12 +87,35 @@ $search-thumbnail-scale: 0.6;
     align-items: center;
     padding: .2em .5em;
 
-    h4 {
-      text-shadow: 0 0 2px $input-text-shadow-color;
-      padding: .2em 0;
+    .title-block {
+      overflow-x: hidden;
       margin: .5em;
+    }
+
+    h4 {
+      @include single-line;
+      text-shadow: 0 0 2px $input-text-shadow-color;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    h4, .platforms {
+      padding: .4em 0;
+    }
+
+    .platforms {
+      display: block;
+      opacity: .8;
+
+      .icon {
+        font-size: 90%;
+        margin-right: 7px;
+      }
+
+      .price {
+        color: #888;
+        font-size: 90%;
+      }
     }
 
     &:hover {
@@ -121,9 +144,14 @@ $search-thumbnail-scale: 0.6;
         cursor: pointer;
       }
     }
+
+    &.not-platform-compatible {
+      opacity: .4;
+    }
   }
 
   &.active {
     left: 0;
+    opacity: 1.0;
   }
 }

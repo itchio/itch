@@ -9,14 +9,53 @@ import {each} from 'underline'
 
 import * as actions from '../actions'
 
+import platformData from '../constants/platform-data'
+import format from '../util/format'
+
+import Icon from './icon'
+
+import os from '../util/os'
+const itchPlatform = os.itchPlatform()
+
 export class SearchResult extends Component {
   render () {
     const {game, onClick} = this.props
     const {title, coverUrl} = game
 
-    return <div className='search-result' onClick={onClick}>
+    const platforms = []
+    let compatible = false
+    if (game.type === 'html') {
+      compatible = true
+      platforms.push(<Icon title='web' icon='earth'/>)
+    }
+
+    for (const p of platformData) {
+      if (game[p.field]) {
+        if (p.platform === itchPlatform) {
+          compatible = true
+        }
+        platforms.push(<Icon title={p.platform} icon={p.icon}/>)
+      }
+    }
+
+    let price = ''
+    if (game.minPrice > 0) {
+      price = <span className='price'>{format.price('USD', game.minPrice)}</span>
+    }
+
+    const resultClasses = classNames('search-result', {
+      ['not-platform-compatible']: !compatible
+    })
+
+    return <div className={resultClasses} onClick={onClick}>
       <img src={coverUrl}/>
-      <h4>{title}</h4>
+      <div className='title-block'>
+        <h4>{title}</h4>
+        <span className='platforms'>
+          {platforms}
+          {price}
+        </span>
+      </div>
     </div>
   }
 }
@@ -43,7 +82,7 @@ export class HubSearchResults extends Component {
 
     return <div className={classNames('hub-search-results', {active: open})}>
       <div className='header'>
-        <h3>Search results for '{query}'</h3>
+        <h3>t('search.results.title', {query})</h3>
         <div className='filler'/>
         <span className='icon icon-cross close-search' onClick={closeSearch}/>
       </div>
