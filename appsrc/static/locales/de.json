@@ -249,5 +249,10 @@
     "usage_stats.never_used": "Nie benutzt",
     "sidebar.history_subtitle": "Was in letzter Zeit passiert ist",
     "prompt.self_update.message.windows": "Wähle \"Jetzt herunterladen\", um es automatisch zu instalieren, oder besuche die Webseite für weitere Anweisungen.",
-    "login.action.show_saved_logins": "Gespeicherte Anmeldungen"
+    "login.action.show_saved_logins": "Gespeicherte Anmeldungen",
+    "usage_stats.has_used_for_duration": "Benutzt",
+    "notification.see_you_soon.title": "Bis zum nächsten Mal!",
+    "status.downloads.clear_finished": "Leeren",
+    "usage_stats.description.free_download": "Kostenlos erhältlich",
+    "new_tab.titles.input": "...oder"
 }
