@@ -3,7 +3,7 @@ const self = {
   itchRepo: 'https://github.com/itchio/itch',
   originalItchio: 'https://itch.io',
   appHomepage: 'https://itch.io/app',
-  itchTranslationPlatform: 'https://weblate.itch.ovh/projects/itch',
+  itchTranslationPlatform: 'https://weblate.itch.ovh/',
   githubApi: 'https://api.github.com',
   ibrewRepo: 'https://dl.itch.ovh',
   remoteLocalePath: 'http://locales.itch.ovh/itch',

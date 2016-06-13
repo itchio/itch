@@ -1,4 +1,7 @@
 
+$explanation-color: #464545;
+$explanation-border-radius: 4px;
+
 .preferences-meat {
   @include meat
   padding: 30px 20px;
@@ -6,14 +9,19 @@
 
   color: $ivory;
 
+  h2 {
+    padding: 15px;
+    margin-top: 30px;
+  }
+
+  .select-row {
+    padding-left: 15px;
+  }
+
   .preferences-background {
     position: absolute;
     right: 0px;
     top: 30px;
-  }
-
-  .install-locations-header, .security-header {
-    padding: 20px 0 10px 0;
   }
 
   .preferences-form {
@@ -54,29 +62,48 @@
     padding: 5px 0 0px 0;
 
     label {
-      margin-left: 15px;
+      background: $explanation-color;
+      padding: 10px 13px;
+      border-radius: $explanation-border-radius;
       font-size: 16px;
+      display: flex;
+
+      input[type=checkbox] {
+        margin-right: 8px;
+      }
     }
 
     .experimental {
       color: white;
+      background: $accent-color;
       font-size: 12px;
-      background: #4f5050;
-      padding: 0 2px;
+      padding: 3px 4px;
       margin-left: 8px;
-      border-radius: 2px;
+      border-radius: $explanation-border-radius;
     }
   }
 
   .explanation {
     padding: 5px 15px;
-    margin: 15px;
-    background: #464545;
+    margin: 15px 0;
     color: #b9b9b9;
-    font-size: 15px;
+    font-size: 14px;
     max-width: 500px;
-    border-radius: 4px;
+    border-radius: $explanation-border-radius;
     line-height: 1.6;
+
+    &.flex {
+      display: flex;
+
+      a {
+        margin-left: 8px;
+        display: flex;
+      }
+    }
+
+    a {
+      color: #ececec;
+    }
   }
 
   .link-box {
@@ -99,16 +126,31 @@
 
   .install-locations {
     width: 100%;
-    font-size: 16px;
+    font-size: 14px;
     border-collapse: collapse;
+
+    tr.default {
+      background-color: $explanation-color;
+    }
+
+    th {
+      color: #b9b9b9;
+    }
 
     th, td {
       padding: 10px 15px;
       text-align: left;
+
+      &:first-child {
+        border-radius: $explanation-border-radius 0 0 $explanation-border-radius;
+      }
+
+      &:last-child {
+        border-radius: 0 $explanation-border-radius $explanation-border-radius 0;
+      }
     }
 
     td {
-      border-top: 1px solid #4A4848;
       color: #999;
     }
 
@@ -130,12 +172,9 @@
         margin-right: 8px;
       }
 
-      &.default .icon {
-        color: #FDD660;
-      }
-
-      &.not-default .icon {
-        color: #777575;
+      &.default {
+        width: 150px;
+        text-align: center;
       }
 
       &:hover {
