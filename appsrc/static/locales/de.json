@@ -206,5 +206,8 @@
     "menu.view.view": "Ansicht",
     "sidebar.collections": "Sammlungen",
     "grid.criterion.filtered_by": "Gefiltert nach “{{term}}”",
-    "prompt.deb_policy.message": "{{title}} verwendet das .deb-Paket Format und muss neu gepackt werden, bevor es von itch installiert werden kann."
+    "prompt.deb_policy.message": "{{title}} verwendet das .deb-Paket Format und muss neu gepackt werden, bevor es von itch installiert werden kann.",
+    "duration.minute": "weniger als eine Minute",
+    "sidebar.new_tab": "Neuer Tab",
+    "new_tab.on_sale": "Im Angebot"
 }
