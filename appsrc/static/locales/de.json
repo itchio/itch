@@ -225,5 +225,6 @@
     "menu.view.history": "Verlauf",
     "game.install.no_executables_found": "Keine ausführbaren Dateien gefunden",
     "game.install.no_html_index_found": "Keine HTML-Index Datei gefunden",
-    "usage_stats.description.other": "Ein Unbeschreibliches"
+    "usage_stats.description.other": "Ein Unbeschreibliches",
+    "sidebar.category.basics": "Wesentliches"
 }
