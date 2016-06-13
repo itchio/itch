@@ -209,5 +209,12 @@
     "prompt.deb_policy.message": "{{title}} verwendet das .deb-Paket Format und muss neu gepackt werden, bevor es von itch installiert werden kann.",
     "duration.minute": "weniger als eine Minute",
     "sidebar.new_tab": "Neuer Tab",
-    "new_tab.on_sale": "Im Angebot"
+    "new_tab.on_sale": "Im Angebot",
+    "grid.item.check_for_update": "Auf Update überprüfen",
+    "status.history.no_active_items": "Es gibt keine Verlaufseinträge, um die du dich kümmen musst",
+    "usage_stats.description.book": "Ein Buch",
+    "duration.minutes": "{{x}} Minuten",
+    "grid.item.developer": "Entwickler",
+    "sidebar.featured_subtitle": "Mit Liebe vom itch.io-Team zusammengestellt.",
+    "search.open_as_tab": "In neuem Tab öffnen"
 }
