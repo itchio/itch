@@ -16,7 +16,7 @@
     "grid.item.uninstall": "Удалить это приложение",
     "grid.item.uninstalling": "Удаление…",
     "login.action.login": "Войти",
-    "login.action.register": "Зарегистрироваться",
+    "login.action.register": "Регистрация",
     "login.action.reset_password": "Забыли пароль?",
     "login.field.password": "Пароль",
     "login.field.username": "Имя пользователя или e-mail",
