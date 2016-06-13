@@ -146,5 +146,9 @@
     "usage_stats.never_played": "Ни разу не запускалось",
     "status.history.click_to_expand": "Кликните, чтобы развернуть историю.",
     "usage_stats.description.assets": "Набор ассетов",
-    "grid.item.open": "Открыть"
+    "grid.item.open": "Открыть",
+    "usage_stats.last_opened_time_ago": "Открыто последний раз {{time_ago}}",
+    "status.downloads.download_error": "Ошибка загрузки",
+    "usage_stats.description.game_mod": "Модификация к игре",
+    "login.remembered_session.last_connected": "Последний вход"
 }
