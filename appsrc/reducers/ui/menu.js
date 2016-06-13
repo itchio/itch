@@ -18,7 +18,7 @@ function computeMenuTemplate (payload) {
       submenu: [
         {
           label: 'menu.file.preferences',
-          accelerator: (system.osx ? 'Cmd+,' : 'Ctrl+P')
+          accelerator: 'CmdOrCtrl+,'
         },
         {
           type: 'separator'
