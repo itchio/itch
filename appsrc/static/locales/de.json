@@ -248,5 +248,6 @@
     "usage_stats.description.comic": "Ein Comic",
     "usage_stats.never_used": "Nie benutzt",
     "sidebar.history_subtitle": "Was in letzter Zeit passiert ist",
-    "prompt.self_update.message.windows": "Wähle \"Jetzt herunterladen\", um es automatisch zu instalieren, oder besuche die Webseite für weitere Anweisungen."
+    "prompt.self_update.message.windows": "Wähle \"Jetzt herunterladen\", um es automatisch zu instalieren, oder besuche die Webseite für weitere Anweisungen.",
+    "login.action.show_saved_logins": "Gespeicherte Anmeldungen"
 }
