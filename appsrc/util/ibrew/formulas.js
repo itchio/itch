@@ -47,6 +47,16 @@ self['activate'] = {
 }
 
 /**
+ * sandbox for Linux executables (seccomp-bpf sandbox)
+ * https://github.com/netblue30/firejail
+ * https://github.com/itchio/firejail-buildscripts
+ */
+self['firejail'] = {
+  format: '7z',
+  osWhitelist: ['linux']
+}
+
+/**
  * file(1) command, built for msys
  */
 self['file'] = {
