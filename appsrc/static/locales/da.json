@@ -101,7 +101,7 @@
     "prompt.install_location_remove.message": "Er du sikker på at du vil fjerne dette sted?",
     "prompt.install_location_remove.title": "Fjerner et installationssted",
     "prompt.last_remaining_install_location.content": "Dette er det sidste installeringssted der er til rådighed, og det kan ikke fjernes før et andet er tilføjet.",
-    "prompt.last_remaining_install_location.title": "Kan ikke fjerne installeringssted",
+    "prompt.last_remaining_install_location.title": "Kan ikke fjerne installeringsstedet",
     "prompt.logout_confirm": "Er du sikker på at du vil logge af?",
     "prompt.no_compatible_version.detail": "Måske er {{classification}} ikke kompatibel med det endnu?",
     "prompt.no_compatible_version.message": "Vi kunne ikke finde en udgave af {{title}} til {{platform}}.",
