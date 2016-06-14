@@ -22,7 +22,7 @@
     "login.field.password": "Kodeord",
     "login.field.username": "Brugernavn eller e-mail",
     "login.status.dependency_check": "Kontrollérer at vi har alting sat rigtigt op …",
-    "login.status.dependency_install": "Installerer nødvendig pakke ",
+    "login.status.dependency_install": "Installérer nødvendig pakke {{name}} {{version}}",
     "login.status.login": "Logger dig på …",
     "login.status.setup_failure": "Der var et problem under opsætningen: {{error}}",
     "menu.account.account": "Konto",
