@@ -16,11 +16,11 @@
     "grid.item.open_in_file_explorer_osx": "Montri en la dosiera foliumilo kie ĉi tiu elemento estis instalita",
     "grid.item.probe": "Malfermi la eventoraporton de ĉi tiu elemento por trovi kaŭzon de malsukceso (Por spertuloj)",
     "grid.item.purchase_or_donate": "Aĉeti aŭ donaci monon al elemento",
-    "grid.item.queued": "En la atendovico",
+    "grid.item.queued": "En la atendovico...",
     "grid.item.report_problem": "Raporti kiel nefunkciantan (Malfermiĝas en retumilo)",
     "grid.item.retry": "Provi elŝuti / instali / lanĉi ĉi tiun elementon denove",
     "grid.item.running": "Aganta…",
-    "grid.item.uninstall": "Malinstali ĉi tiun elementon nun",
+    "grid.item.uninstall": "Malinstali",
     "grid.item.uninstalling": "Malinstalante…",
     "login.action.login": "Ensaluti",
     "login.action.register": "Registriĝi",
@@ -288,5 +288,10 @@
     "usage_stats.last_used_time_ago": "Lasta uzo {{time_ago}}",
     "usage_stats.never_opened": "Neniam malfermita",
     "usage_stats.never_played": "Neniam ludita",
-    "usage_stats.never_used": "Neniam uzita"
+    "usage_stats.never_used": "Neniam uzita",
+    "label.experimental": "Prova",
+    "notification.purchase_complete.just_bought": "Vi ĵus aĉetis {{title}}!",
+    "notification.purchase_complete.just_donated": "Vi ĵus donacis al {{title}}!",
+    "notification.purchase_complete.may_install_now": "Vi nun povas instali ĝin iam ajn!",
+    "notification.purchase_complete.thanks_for_support": "Dankon pro via subtenado!"
 }
