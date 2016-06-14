@@ -7,6 +7,7 @@ import {createSelector, createStructuredSelector} from 'reselect'
 
 import * as actions from '../actions'
 import defaultImages from '../constants/default-images'
+import urls from '../constants/urls'
 import {pathToIcon, makeLabel} from '../util/navigation'
 
 import Icon from './icon'
@@ -107,7 +108,7 @@ export class HubSidebar extends Component {
   }
 
   dropdown () {
-    const {viewCreatorProfile, viewCommunityProfile, changeUser, openPreferences} = this.props
+    const {viewCreatorProfile, viewCommunityProfile, changeUser, openPreferences, navigate} = this.props
 
     const items = [
       {
@@ -121,9 +122,20 @@ export class HubSidebar extends Component {
         onClick: viewCommunityProfile
       },
       {
+        type: 'separator'
+      },
+      {
         icon: 'cog',
         label: ['sidebar.preferences'],
         onClick: openPreferences
+      },
+      {
+        icon: 'lifebuoy',
+        label: ['menu.help.help'],
+        onClick: () => navigate('url/' + urls.manual)
+      },
+      {
+        type: 'separator'
       },
       {
         icon: 'exit',

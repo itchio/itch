@@ -46,5 +46,8 @@ export function * _taskEnded (action) {
       log(opts, `Error in task ${name}: ${err}`)
       return
     }
+  } else if (name === 'launch') {
+    const {gameId} = taskOpts
+    log(opts, `game ${gameId} just exited!`)
   }
 }

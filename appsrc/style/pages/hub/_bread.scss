@@ -74,7 +74,7 @@
       }
 
       .description-titles {
-        overflow: hidden;
+        @include single-line;
       }
     }
   }
@@ -83,9 +83,5 @@
 .hub-bread .description {
   h3 {
     color: $secondary-text-color;
-  }
-
-  h2, h3 {
-    @include single-line;
   }
 }

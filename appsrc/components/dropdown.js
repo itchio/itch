@@ -22,18 +22,25 @@ export class Dropdown extends Component {
     const containerClasses = classNames(className, {disabled: items.length === 0})
     const dropdownClasses = classNames('dropdown', {active: open, updown})
 
-    const children = items::map((item) => {
+    const children = items::map((item, index) => {
       const {label, icon, action, type} = item
       let {onClick = () => dispatch(action)} = item
       const itemClasses = classNames('dropdown-item', `type-${type}`)
 
-      return <section className={itemClasses} key={label + '-' + icon} onClick={() => { onClick(); this.close() }}>
+      const key = (type === 'separator') ? ('separator-' + index) : (label + '-' + icon)
+
+      return <section className={itemClasses} key={key} onClick={() => { onClick(); this.close() }}>
         <Icon icon={icon}/>
         {t.format(label)}
       </section>
     })
 
-    const innerC = <div onClick={this.toggle.bind(this)}>{inner}</div>
+    let innerClasses = ''
+    if (updown ^ open) {
+      innerClasses += 'flipped'
+    }
+
+    const innerC = <div className={innerClasses} onClick={this.toggle.bind(this)}>{inner}</div>
     const childrenC = <div className={dropdownClasses}>
       {children}
     </div>
