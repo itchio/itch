@@ -1,12 +1,12 @@
 {
     "desktop.shortcut.comment": "Instalu kaj ludu ludojn en itch.io facile",
     "errors.api.login.incorrect_username_or_password": "Malĝusta uzantnomo aŭ pasvorto",
-    "errors.api.login.password_must_be_provided": "Pasvorto devas esti aldonita",
-    "errors.api.login.username_must_be_provided": "Uzantnomo devas esti aldonita",
+    "errors.api.login.password_must_be_provided": "Pasvorto devas esti provizita",
+    "errors.api.login.username_must_be_provided": "Uzantnomo devas esti provizita",
     "grid.item.buy_now": "Aĉeti nun",
     "grid.item.cancel_download": "Nuligi la elŝutadon",
     "grid.item.downloading": "Elŝutante…",
-    "grid.item.finalize_installation": "Finigi la instaladon",
+    "grid.item.finalize_installation": "Finfini la instaladon",
     "grid.item.install": "Instali",
     "grid.item.installing": "Instalante…",
     "grid.item.launch": "Lanĉo",
@@ -149,5 +149,13 @@
     "docs.learn_more": "Lerni pli",
     "duration.hours": "{{x}} horoj",
     "duration.minute": "unu minuto aŭ malpli",
-    "duration.minutes": "{{x}} minutoj"
+    "duration.minutes": "{{x}} minutoj",
+    "game.install.could_not_launch": "Eraro okazis lanĉante {{title}}",
+    "game.install.no_executables_found": "Neniu plenumebla dosiero estis trovita",
+    "game.install.no_html_index_found": "Neniu HTML-indeksa dosiero estis trovita",
+    "game.install.no_uploads_available.detail": "Eble ĝi ankoraŭ ne kongruas kun via platformo aŭ la aplikaĵo itch!",
+    "game.install.no_uploads_available.message": "Neniu kongrua elŝuteblaĵo estis trovita por '{{title}}', do ĝi ne estis instalita.",
+    "grid.item.buy_now_again": "Aĉeti plian kopion",
+    "grid.item.check_for_update": "Serĉi ĝisdatigojn",
+    "grid.item.developer": "Programisto"
 }
