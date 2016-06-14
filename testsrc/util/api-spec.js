@@ -102,8 +102,12 @@ test('api', t => {
       ['get', '/collection/1708/games', {page: 1}]
     )
     test_api(
-      'search', ['baz'],
+      'searchGames', ['baz'],
       ['get', '/search/games', {query: 'baz'}]
+    )
+    test_api(
+      'searchUsers', ['baz'],
+      ['get', '/search/users', {query: 'baz'}]
     )
     test_api(
       'downloadUpload', [null, 99],
