@@ -287,5 +287,10 @@
     "grid.item.share": "Partager",
     "grid.item.open_demo": "Ouvrir la démo",
     "grid.item.donate": "Faire un don au créateur",
-    "grid.item.donate_again": "Faire un autre don !"
+    "grid.item.donate_again": "Faire un autre don !",
+    "menu.file.close_all_tabs": "Fermer tous les onglets",
+    "search.results.title": "Résultats pour '{{query}}'",
+    "search.results.local": "Locaux",
+    "search.results.games": "Jeux",
+    "search.results.creators": "Créateurs"
 }
