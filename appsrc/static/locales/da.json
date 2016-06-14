@@ -93,7 +93,7 @@
     "prompt.crash_reporter.open_crash_log": "Åbn nedbrudslog",
     "prompt.crash_reporter.report_issue": "Rapportér problem",
     "prompt.install_location_add.title": "Vælg et ny installationssted",
-    "prompt.install_location_not_empty.detail": "Dette skal gøres manuelt på nuværende tidspunkt.",
+    "prompt.install_location_not_empty.detail": "Skal indtil videre gøres manuelt. ",
     "prompt.install_location_not_empty.message": "Installationssteder kan først fjernes når alt deres indhold er blevet afinstalleret.",
     "prompt.install_location_not_empty.show_contents": "Vis indhold",
     "prompt.install_location_not_empty.title": "Dette installationssted er ikke tomt",
