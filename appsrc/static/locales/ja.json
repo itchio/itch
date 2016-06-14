@@ -24,7 +24,7 @@
     "grid.item.uninstall": "今すぐこのアイテムをアンインストールする",
     "grid.item.uninstalling": "アンインストール中…",
     "login.action.login": "ログイン",
-    "login.action.register": "itch.ioに登録する",
+    "login.action.register": "登録",
     "login.action.reset_password": "パスワードを忘れた場合",
     "login.field.password": "パスワード",
     "login.field.username": "ユーザー名、またはパスワード",
