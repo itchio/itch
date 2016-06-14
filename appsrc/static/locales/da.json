@@ -51,7 +51,7 @@
     "onboarding.caved.title_pick": "Vælg frit",
     "onboarding.caved.troubleshoot_advice": "Hvis noget går i stykker, så klik {{report}} for at rapportere det, eller {{probe}} for at undersøge.",
     "onboarding.caved.usage": "Se spil blive stille hentet, installeret og kørt.",
-    "onboarding.collections.auto_sync": "Dine spil vil være her når du kommer tilbage. ",
+    "onboarding.collections.auto_sync": "Dine spil vil være her når du kommer tilbage.",
     "onboarding.collections.lets_shop": "Lad os se hvad der er i butikken",
     "onboarding.collections.title_mix": "Bland-selv",
     "onboarding.collections.usage": "Kig lidt rundt på siden og brug derefter {{add_to_collection}} til at organisere.",
@@ -123,7 +123,7 @@
     "sidebar.installed": "Installeret",
     "sidebar.owned": "Bibliotek",
     "status.checking": "Kigger efter opdateringer …",
-    "status.downloaded": "Klik for at genstarte og færdiggøre opdateringen! ",
+    "status.downloaded": "Klik for at genstarte og færdiggøre opdateringen!",
     "status.downloading": "Henter opdatering …",
     "status.uptodate": "Din itch er ajour!",
     "new_tab.community": "Fællesskab",
@@ -278,5 +278,9 @@
     "usage_stats.last_used_time_ago": "Sidst brugt {{time_ago}}",
     "usage_stats.never_opened": "Aldrig åbnet",
     "usage_stats.never_played": "Aldrig spillet",
-    "usage_stats.never_used": "Aldrig brugt"
+    "usage_stats.never_used": "Aldrig brugt",
+    "search.results.title": "Søgeresultater for \"{{query}}\"",
+    "search.results.local": "Lokale",
+    "search.results.games": "Spil",
+    "search.results.creators": "Skabere"
 }
