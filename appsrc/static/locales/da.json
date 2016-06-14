@@ -109,7 +109,7 @@
     "prompt.payments_disabled.detail": "Måske kan du finde en anden måde at hjælpe dem på?",
     "prompt.payments_disabled.message": "Udvikleren af {{title}}, accepterer desværre ikke betaling for denne titel.",
     "prompt.payments_disabled.open_web_page": "Åbn netsted",
-    "prompt.payments_disabled.title": "Betalinger deaktiveret",
+    "prompt.payments_disabled.title": "Betaling slået fra",
     "prompt.rar_policy.detail": "RAR er et uddateret og lukket format og vil aldrig blive understøttet.",
     "prompt.rar_policy.learn_more": "Lær mere",
     "prompt.rar_policy.message": "{{title}} bruger et RAR-komprimeringsformat og kan derfor ikke installeres gennem itch, før det bliver pakket på ny.",
