@@ -288,5 +288,9 @@
     "search.results.title": "Результаты поиска для '{{query}}'",
     "search.results.local": "Локальные",
     "search.results.games": "Игры",
-    "search.results.creators": "Разработчики"
+    "search.results.creators": "Разработчики",
+    "notification.purchase_complete.just_bought": "Вы купили {{title}}!",
+    "notification.purchase_complete.just_donated": "Вы поддержали {{title}}!",
+    "notification.purchase_complete.may_install_now": "Теперь вы всегда сможете установить это!",
+    "notification.purchase_complete.thanks_for_support": "Спасибо за вашу поддержку!"
 }
