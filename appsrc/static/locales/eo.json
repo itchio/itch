@@ -8,7 +8,7 @@
     "grid.item.downloading": "Elŝutante…",
     "grid.item.finalize_installation": "Finfini la instaladon",
     "grid.item.install": "Instali",
-    "grid.item.installing": "Instalante…",
+    "grid.item.installing": "Instalante...",
     "grid.item.launch": "Lanĉo",
     "grid.item.not_platform_compatible": "Ne disponebla por {{platform}}",
     "grid.item.open_in_file_explorer": "Malfermi la instal-dosierujon en dosiera foliumilo",
@@ -16,7 +16,7 @@
     "grid.item.open_in_file_explorer_osx": "Montri en la dosiera foliumilo kie ĉi tiu elemento estis instalita",
     "grid.item.probe": "Malfermi la eventoraporton de ĉi tiu elemento por trovi kaŭzon de malsukceso (Por spertuloj)",
     "grid.item.purchase_or_donate": "Aĉeti aŭ donaci monon al elemento",
-    "grid.item.queued": "En la atendvico",
+    "grid.item.queued": "En la atendovico",
     "grid.item.report_problem": "Raporti kiel nefunkciantan (Malfermiĝas en retumilo)",
     "grid.item.retry": "Provi elŝuti / instali / lanĉi ĉi tiun elementon denove",
     "grid.item.running": "Aganta…",
@@ -114,7 +114,7 @@
     "prompt.last_remaining_install_location.content": "Ĉi tiu instal-loko estas la lasta. Oni ne povas forigi ĝin se neniu alia estas aldonita.",
     "prompt.last_remaining_install_location.title": "Ne eblas forigi la instal-lokon",
     "prompt.logout_confirm": "Ĉu vi certas, ke vi volas elsaluti?",
-    "prompt.no_compatible_version.detail": "Eble ĉi tiu {{classification}} ne jam kongruas kun ĝi?",
+    "prompt.no_compatible_version.detail": "Eble ĉi tiu {{classification}} ankoraŭ ne kongruas kun ĝi?",
     "prompt.no_compatible_version.message": "Ni ne povis trovi version de {{title}} por {{platform}}.",
     "prompt.no_compatible_version.title": "{{title}} por {{platform}}",
     "prompt.payments_disabled.detail": "Eble vi povas trovi alian manieron por subteni ilin?",
@@ -287,5 +287,6 @@
     "usage_stats.last_played_time_ago": "Lasta ludado {{time_ago}}",
     "usage_stats.last_used_time_ago": "Lasta uzo {{time_ago}}",
     "usage_stats.never_opened": "Neniam malfermita",
-    "usage_stats.never_played": "Neniam ludita"
+    "usage_stats.never_played": "Neniam ludita",
+    "usage_stats.never_used": "Neniam uzita"
 }
