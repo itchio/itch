@@ -10,6 +10,7 @@ import {each} from 'underline'
 import * as actions from '../actions'
 
 import platformData from '../constants/platform-data'
+import defaultImages from '../constants/default-images'
 import format from '../util/format'
 
 import Icon from './icon'
@@ -76,7 +77,7 @@ export class UserSearchResult extends Component {
     const resultClasses = classNames('search-result', 'user-search-result')
 
     return <div className={resultClasses} onClick={onClick}>
-      <img src={coverUrl}/>
+      <img src={coverUrl || defaultImages.avatar}/>
       <div className='title-block'>
         <h4>{displayName || username}</h4>
       </div>
@@ -118,7 +119,7 @@ export class HubSearchResults extends Component {
       const {t} = this.props
 
       return <div className='result-list'>
-        <p>{t('search.empty.no_results')}</p>
+        <p className='no-results'>{t('search.empty.no_results')}</p>
       </div>
     }
 
