@@ -1,7 +1,7 @@
 {
     "desktop.shortcut.comment": "itch.ioで公開されているゲームを簡単にインストールしてお楽しみください",
     "errors.api.login.incorrect_username_or_password": "ユーザー名、またはパスワードが違います",
-    "errors.api.login.password_must_be_provided": "パスワードを入力していただく必要があります",
+    "errors.api.login.password_must_be_provided": "パスワードを入力してください",
     "errors.api.login.username_must_be_provided": "ユーザー名を入力していただく必要があります",
     "grid.item.buy_now": "今すぐ購入",
     "grid.item.cancel_download": "ダウンロード中止",
