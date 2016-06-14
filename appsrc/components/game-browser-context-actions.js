@@ -20,8 +20,8 @@ class GameBrowserContextActions extends Component {
 
   action (opts) {
     const {t, dispatch} = this.props
-    const {action, icon, hint, label, type = 'action'} = opts
-    const spanClasses = classNames('secondary-action', `type-${type}`, {
+    const {action, icon, hint, label, type = 'action', classes = []} = opts
+    const spanClasses = classNames('secondary-action', `type-${type}`, classes, {
       ['hint--top']: hint
     })
 

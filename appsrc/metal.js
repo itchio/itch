@@ -93,10 +93,10 @@ function autoUpdateDone () {
     }
   })
 
-  // OSX (Info.pList)
+  // macOS (Info.pList)
   app.on('open-url', (e, url) => {
     if (isItchioURL(url)) {
-      // OSX will err -600 if we don't
+      // macOS will err -600 if we don't
       e.preventDefault()
       store.dispatch(openUrl(url))
     } else {

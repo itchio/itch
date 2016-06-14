@@ -6,7 +6,7 @@ import diskspace from '../../app/util/diskspace'
 import os from '../../app/util/os'
 
 test('diskspace', (t) => {
-  t.case('df (OSX 10.11)', async (t) => {
+  t.case('df (macOS 10.11)', async (t) => {
     t.stub(diskspace, 'dfRun').resolves(fixture.lines('diskspace', 'df-osx-10.11'))
     const out = await diskspace.df()
     t.same(out, {

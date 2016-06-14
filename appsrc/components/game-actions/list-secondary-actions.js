@@ -24,6 +24,7 @@ function purchaseAction (game, downloadKey) {
       label: ['grid.item.donate' + againSuffix],
       icon: 'heart-filled',
       action: actions.initiatePurchase({game}),
+      classes: ['generous'],
       hint
     }
   } else {
@@ -31,6 +32,7 @@ function purchaseAction (game, downloadKey) {
       label: ['grid.item.buy_now' + againSuffix],
       icon: 'shopping_cart',
       action: actions.initiatePurchase({game}),
+      classes: ['generous'],
       hint
     }
   }
@@ -42,6 +44,7 @@ function shareAction (game) {
   return {
     label: ['grid.item.share'],
     icon: 'share',
+    classes: ['generous'],
     action: actions.initiateShare({game})
   }
 }

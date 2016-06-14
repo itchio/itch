@@ -9,7 +9,7 @@ export async function check () {
 
   const seRes = await spawn.exec({command: 'sandbox-exec', args: ['-n', 'no-network', 'true']})
   if (seRes.code !== 0) {
-    errors.push('sandbox-exec is missing. Is OSX too old?')
+    errors.push('sandbox-exec is missing. Is macOS too old?')
   }
 
   return {needs, errors}
