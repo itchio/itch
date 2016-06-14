@@ -70,7 +70,6 @@ export class BrowserMeat extends Component {
   domReady () {
     const {tabId, url} = this.props
     const {webview} = this
-    console.log(tabId, 'dom-ready!, props url = ', url, 'wv url', webview.getURL())
 
     const webContents = webview.getWebContents()
     if (!webContents || webContents.isDestroyed()) return
@@ -147,7 +146,6 @@ export class BrowserMeat extends Component {
   newWindow (e) {
     const {tabId, navigate} = this.props
     const {url, disposition} = e
-    console.log(tabId, 'New window: ', url, disposition)
     navigate('url/' + url)
   }
 
@@ -158,7 +156,6 @@ export class BrowserMeat extends Component {
   }
 
   setupItchInternal (session) {
-    console.log('setting up itch internal')
     currentSession = session
 
     // requests to 'itch-internal' are used to communicate between web content & the app
@@ -167,14 +164,12 @@ export class BrowserMeat extends Component {
     }
 
     session.webRequest.onBeforeRequest(internalFilter, (details, callback) => {
-      console.log('cancelling: ', JSON.stringify(details))
       callback({cancel: true})
 
       let parsed = urlParser.parse(details.url)
       const {pathname, query} = parsed
       const params = querystring.parse(query)
       const {tabId} = params
-      console.log(tabId, 'itch-internal', pathname, params)
 
       switch (pathname) {
         case '/open-devtools':
@@ -188,7 +183,6 @@ export class BrowserMeat extends Component {
           break
         case '/evolve-tab':
           const {evolveTab} = this.props
-          console.log(`sent evolve-tab to ${params.path}`)
           evolveTab(tabId, params.path)
           break
       }
@@ -196,7 +190,6 @@ export class BrowserMeat extends Component {
   }
 
   analyzePage (tabId, url) {
-    console.log(`analyzing page ${url}`)
     const {evolveTab} = this.props
 
     const xhr = new window.XMLHttpRequest()
@@ -208,7 +201,6 @@ export class BrowserMeat extends Component {
       const meta = xhr.responseXML.querySelector('meta[name="itch:path"]')
       if (meta) {
         const newPath = meta.content
-        console.log(`analyzing page ${url}: done! ${newPath}`)
         evolveTab(tabId, newPath)
       }
     }
@@ -220,28 +212,25 @@ export class BrowserMeat extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    // we didn't have a proper url but now do
     if (nextProps.url) {
       const {webview} = this
       if (!webview) {
         return
       }
-      if (webview.src === '') {
-        console.log(nextProps.tabId, 'finally got non-blank url', nextProps.url)
+      if (webview.src === '' || webview.src === 'about:blank') {
+        // we didn't have a proper url but now do
         this.loadURL(nextProps.url)
       }
     }
   }
 
   componentDidMount () {
-    console.log('browser meat mounted')
     const {webviewShell} = this.refs
 
-    console.log('webviewShell = ', webviewShell)
+    // cf. https://github.com/electron/electron/issues/6046
     webviewShell.innerHTML = '<webview style="display: flex; flex: 1 1;"/>'
     const wv = webviewShell.querySelector('webview')
     this.webview = wv
-    console.log('wv = ', wv)
 
     const {meId} = this.props
     const partition = `persist:itchio-${meId}`
@@ -252,7 +241,6 @@ export class BrowserMeat extends Component {
     wv.preload = injectPath
 
     const callbackSetup = () => {
-      console.log('got dom-ready, installing other handlers')
       wv.addEventListener('did-start-loading', ::this.didStartLoading)
       wv.addEventListener('did-stop-loading', ::this.didStopLoading)
       wv.addEventListener('will-navigate', ::this.willNavigate)
