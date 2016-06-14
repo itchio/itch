@@ -281,6 +281,9 @@
     "usage_stats.description.price": "Disponebla kontraŭ {{price}} aŭ pli",
     "usage_stats.description.soundtrack": "Muzikaro",
     "usage_stats.description.tool": "Ilo",
-    "usage_stats.has_played_for_duration": "Ludita dum",
-    "usage_stats.has_used_for_duration": "Uzita"
+    "usage_stats.has_played_for_duration": "Ludita",
+    "usage_stats.has_used_for_duration": "Uzita",
+    "usage_stats.last_opened_time_ago": "Lasta malfermado {{time_ago}}",
+    "usage_stats.last_played_time_ago": "Lasta ludado {{time_ago}}",
+    "usage_stats.last_used_time_ago": "Lasta uzo {{time_ago}}"
 }
