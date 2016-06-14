@@ -20,6 +20,7 @@ import fetch from './fetch'
 import tasks from './tasks'
 import updater from './updater'
 import preferences from './preferences'
+import purchases from './purchases'
 import installLocations from './install-locations'
 
 export default [
@@ -44,5 +45,6 @@ export default [
   tasks,
   updater,
   preferences,
+  purchases,
   installLocations
 ]

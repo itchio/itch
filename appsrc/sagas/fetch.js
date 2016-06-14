@@ -28,6 +28,7 @@ import {
 import {
   WINDOW_FOCUS_CHANGED,
   LOGIN_SUCCEEDED,
+  PURCHASE_COMPLETED,
   FETCH_COLLECTION_GAMES,
   SEARCH,
   USER_DB_COMMIT
@@ -51,6 +52,16 @@ function * _windowFocusChanged (action) {
 
 function * _loginSucceeded (action) {
   const credentials = action.payload
+  yield call(fetchUsuals, credentials)
+}
+
+function * _purchaseCompleted (action) {
+  const credentials = yield select((state) => state.session.credentials)
+  if (!credentials.key) {
+    log(opts, 'Not logged in, not fetching anything yet')
+    return
+  }
+
   yield call(fetchUsuals, credentials)
 }
 
@@ -143,6 +154,7 @@ export default function * fetchSaga () {
   yield [
     takeEvery(WINDOW_FOCUS_CHANGED, _windowFocusChanged),
     takeEvery(LOGIN_SUCCEEDED, _loginSucceeded),
+    takeEvery(PURCHASE_COMPLETED, _purchaseCompleted),
     takeLatest(FETCH_COLLECTION_GAMES, _fetchCollectionGames),
     takeLatest(SEARCH, _search), // not 'takeEvery', so we cancel lagging searches
     call(queue.exhaust)

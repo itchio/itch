@@ -15,7 +15,7 @@ import querystring from 'querystring'
 import ospath from 'path'
 
 const injectPath = ospath.resolve(__dirname, '..', 'inject', 'browser.js')
-const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === '1'
+// const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === '1'
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1
 const WILL_NAVIGATE_GRACE_PERIOD = 3000
 
@@ -49,11 +49,14 @@ export class BrowserMeat extends Component {
   }
 
   updateBrowserState (props = {}) {
-    const {webview} = this.refs
+    const {webview} = this
     if (!webview) {
-      console.log('Can\'t update browser state (no webview ref)')
       return
     }
+    if (!webview.partition || webview.partition === '') {
+      console.warn(`${this.props.tabId}: webview has empty partition`)
+    }
+
     const browserState = {
       ...this.state.browserState,
       canGoBack: webview.canGoBack(),
@@ -61,112 +64,97 @@ export class BrowserMeat extends Component {
       ...props
     }
 
-    this.setState({ browserState })
+    this.setState({browserState})
   }
 
-  componentDidMount () {
-    const {webview} = this.refs
-    const {tabId, navigate, tabDataFetched} = this.props
+  domReady () {
+    const {tabId, url} = this.props
+    const {webview} = this
+    console.log(tabId, 'dom-ready!, props url = ', url, 'wv url', webview.getURL())
 
-    if (!webview) {
-      console.log('Oh noes, can\'t listen to webview\'s soothing event stream')
+    const webContents = webview.getWebContents()
+    if (!webContents || webContents.isDestroyed()) return
+
+    if (SHOW_DEVTOOLS) {
+      webContents.openDevTools({detach: true})
+    }
+
+    this.updateBrowserState({loading: false})
+
+    if (currentSession !== webContents.session) {
+      this.setupItchInternal(webContents.session)
+    }
+
+    if (url && url !== 'about:blank') {
+      this.loadURL(url)
+    }
+  }
+
+  didStartLoading () {
+    this.updateBrowserState({loading: true})
+  }
+
+  didStopLoading () {
+    this.updateBrowserState({loading: false})
+  }
+
+  pageTitleUpdated (e) {
+    const {tabId, tabDataFetched} = this.props
+    tabDataFetched(tabId, {webTitle: e.title})
+  }
+
+  pageFaviconUpdated (e) {
+    const {tabId, tabDataFetched} = this.props
+    tabDataFetched(tabId, {webFavicon: e.favicons[0]})
+  }
+
+  didNavigate (e) {
+    const {tabId} = this.props
+    const {url} = e
+    this.updateBrowserState({url})
+    this.analyzePage(tabId, url)
+  }
+
+  willNavigate (e) {
+    if (!this.isFrozen()) {
       return
     }
 
-    const frozen = staticTabData[tabId] || !tabId
+    const {navigate} = this.props
+    const {url} = e
 
-    const handleSupportedUrl = (url) => {
-      if (frozen) {
-        console.log(tabId, 'frozen tab, forking off')
-        navigate(`url/${url}`)
-        return true
-      }
-
-      console.log(tabId, 'all good, navigating')
-      return false
-    }
-
-    webview.addEventListener('destroyed', (e) => {
-      console.log(tabId, 'webview destroyed')
-    })
-
-    webview.addEventListener('did-navigate', (e) => this.with((wv) => {
-      const {url} = e
-      this.updateBrowserState({url})
-    }))
-    webview.addEventListener('did-start-loading', () => this.updateBrowserState({loading: true}))
-    webview.addEventListener('did-stop-loading', () => this.updateBrowserState({loading: false}))
-
-    webview.addEventListener('page-title-updated', (e) => {
-      const {title} = e
-      tabDataFetched(tabId, {webTitle: title})
-    })
-
-    webview.addEventListener('page-favicon-updated', (e) => {
-      const {favicons} = e
-      tabDataFetched(tabId, {webFavicon: favicons[0]})
-    })
-
-    if (frozen) {
-      webview.addEventListener('will-navigate', (e) => {
-        const {url} = e
-
-        // sometimes we get double will-navigate events because life is fun?!
-        if (this.lastNavigationUrl === url && e.timeStamp - this.lastNavigationTimeStamp < WILL_NAVIGATE_GRACE_PERIOD) {
-          console.log('avoiding double nav to ${url}')
-          this.with((wv) => {
-            wv.stop()
-            wv.loadURL(this.props.url)
-          })
-          return
-        }
-        this.lastNavigationUrl = url
-        this.lastNavigationTimeStamp = e.timeStamp
-
-        if (handleSupportedUrl(url)) {
-          // url was supported & opened somewhere else, blocking load
-          // attempt on this tab (preventDefault doesn't do anything)
-          // cf. https://github.com/electron/electron/issues/1378
-          console.log('stop/loading url ${url}')
-          this.with((wv) => {
-            wv.stop()
-            wv.loadURL(this.props.url)
-          })
-        }
+    // sometimes we get double will-navigate events because life is fun?!
+    if (this.lastNavigationUrl === url && e.timeStamp - this.lastNavigationTimeStamp < WILL_NAVIGATE_GRACE_PERIOD) {
+      this.with((wv) => {
+        wv.stop()
+        wv.loadURL(this.props.url)
       })
+      return
     }
+    this.lastNavigationUrl = url
+    this.lastNavigationTimeStamp = e.timeStamp
 
-    webview.addEventListener('new-window', (e) => {
-      const {url, disposition} = e
-      console.log(tabId, 'New window: ', url, disposition)
-      navigate('url/' + url)
+    navigate(`url/${url}`)
+
+    // our own little preventDefault
+    // cf. https://github.com/electron/electron/issues/1378
+    this.with((wv) => {
+      wv.stop()
+      wv.loadURL(this.props.url)
     })
+  }
 
-    webview.addEventListener('dom-ready', () => {
-      console.log(tabId, 'dom-ready!, props url = ', this.props.url, 'wv url', webview.getURL())
+  newWindow (e) {
+    const {tabId, navigate} = this.props
+    const {url, disposition} = e
+    console.log(tabId, 'New window: ', url, disposition)
+    navigate('url/' + url)
+  }
 
-      const webContents = webview.getWebContents()
-      if (!webContents || webContents.isDestroyed()) return
-
-      if (SHOW_DEVTOOLS) {
-        webContents.openDevTools({detach: true})
-      }
-
-      this.updateBrowserState({loading: false})
-
-      if (currentSession !== webContents.session) {
-        this.setupItchInternal(webContents.session)
-      }
-
-      webview.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tabId)})`)
-    })
-
-    const {url} = this.props
-    if (url !== 'about:blank') {
-      this.loadURL(url)
-    } else {
-      console.log(tabId, 'waiting for non-blank url')
-    }
+  isFrozen (e) {
+    const {tabId} = this.props
+    const frozen = staticTabData[tabId] || !tabId
+    return frozen
   }
 
   setupItchInternal (session) {
@@ -190,7 +178,7 @@ export class BrowserMeat extends Component {
 
       switch (pathname) {
         case '/open-devtools':
-          const {webview} = this.refs
+          const {webview} = this
           if (webview && webview.getWebContents() && !webview.getWebContents().isDestroyed()) {
             webview.getWebContents().openDevTools({detach: true})
           }
@@ -198,11 +186,17 @@ export class BrowserMeat extends Component {
         case '/analyze-page':
           this.analyzePage(tabId, params.url)
           break
+        case '/evolve-tab':
+          const {evolveTab} = this.props
+          console.log(`sent evolve-tab to ${params.path}`)
+          evolveTab(tabId, params.path)
+          break
       }
     })
   }
 
   analyzePage (tabId, url) {
+    console.log(`analyzing page ${url}`)
     const {evolveTab} = this.props
 
     const xhr = new window.XMLHttpRequest()
@@ -214,10 +208,8 @@ export class BrowserMeat extends Component {
       const meta = xhr.responseXML.querySelector('meta[name="itch:path"]')
       if (meta) {
         const newPath = meta.content
-        console.log(tabId, 'evolving', this.props.tabPath, ' => ', newPath)
+        console.log(`analyzing page ${url}: done! ${newPath}`)
         evolveTab(tabId, newPath)
-      } else {
-        console.log(tabId, 'no meta tag found in', url)
       }
     }
     xhr.open('GET', url)
@@ -230,7 +222,7 @@ export class BrowserMeat extends Component {
   componentWillReceiveProps (nextProps) {
     // we didn't have a proper url but now do
     if (nextProps.url) {
-      const {webview} = this.refs
+      const {webview} = this
       if (!webview) {
         return
       }
@@ -241,8 +233,50 @@ export class BrowserMeat extends Component {
     }
   }
 
+  componentDidMount () {
+    console.log('browser meat mounted')
+    const {webviewShell} = this.refs
+
+    console.log('webviewShell = ', webviewShell)
+    webviewShell.innerHTML = '<webview style="display: flex; flex: 1 1;"/>'
+    const wv = webviewShell.querySelector('webview')
+    this.webview = wv
+    console.log('wv = ', wv)
+
+    const {meId} = this.props
+    const partition = `persist:itchio-${meId}`
+
+    wv.partition = partition
+    wv.useragent = useragent
+    wv.plugins = true
+    wv.preload = injectPath
+
+    const callbackSetup = () => {
+      console.log('got dom-ready, installing other handlers')
+      wv.addEventListener('did-start-loading', ::this.didStartLoading)
+      wv.addEventListener('did-stop-loading', ::this.didStopLoading)
+      wv.addEventListener('will-navigate', ::this.willNavigate)
+      wv.addEventListener('did-navigate', ::this.didNavigate)
+      wv.addEventListener('page-title-updated', ::this.pageTitleUpdated)
+      wv.addEventListener('page-favicon-updated', ::this.pageFaviconUpdated)
+      wv.addEventListener('new-window', ::this.newWindow)
+      this.domReady()
+
+      wv.removeEventListener('dom-ready', callbackSetup)
+    }
+    wv.addEventListener('dom-ready', callbackSetup)
+
+    const {tabId} = this.props
+    wv.addEventListener('dom-ready', () => {
+      wv.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tabId)})`)
+      this.didStopLoading()
+    })
+
+    wv.src = 'about:blank'
+  }
+
   render () {
-    const {tabId, tabData, tabPath, meId, controls} = this.props
+    const {tabData, tabPath, controls} = this.props
     const {browserState} = this.state
 
     const {goBack, goForward, stop, reload, openDevTools, loadURL} = this
@@ -253,31 +287,21 @@ export class BrowserMeat extends Component {
       context = <GameBrowserContext {...controlProps}/>
     }
 
-    const partition = `persist:itchio-${meId}`
-
     return <div className='browser-meat'>
       <BrowserBar {...controlProps}/>
       <div className='browser-main'>
-        {DONT_SHOW_WEBVIEWS
-          ? <div style={{padding: '10px'}}>Webviews disabled</div>
-          : <webview key={tabId} ref='webview' partition={partition} preload={injectPath} plugins useragent={useragent}/>
-        }
+        <div style={{display: 'flex', flex: '1 1'}} ref='webviewShell'></div>
         {context}
       </div>
     </div>
   }
 
   with (cb, opts = {insist: false}) {
-    const {webview} = this.refs
+    const {webview} = this
     if (!webview) return
 
     const webContents = webview.getWebContents()
     if (!webContents) {
-      if (opts.insist) {
-        webview.addEventListener('dom-ready', () => {
-          cb(webview, webview.getWebContents())
-        })
-      }
       return
     }
 
@@ -311,21 +335,18 @@ export class BrowserMeat extends Component {
   }
 
   async loadURL (input) {
-    const {tabId, navigate} = this.props
-    const frozen = staticTabData[tabId] || !tabId
-
+    const {navigate} = this.props
     const url = await transformUrl(input)
 
-    if (navigation.isAppSupported(url) && frozen) {
-      console.log(tabId, 'opening new tab with', url)
+    if (navigation.isAppSupported(url) && this.isFrozen()) {
       navigate(`url/${url}`)
     } else {
-      console.log(tabId, 'loading into webview', url)
-      const browserState = { ...this.state.browserState, url }
+      const browserState = {...this.state.browserState, url}
       this.setState({browserState})
-      const {webview} = this.refs
+
+      const {webview} = this
       if (webview) {
-        webview.src = url
+        webview.loadURL(url)
       }
     }
   }
