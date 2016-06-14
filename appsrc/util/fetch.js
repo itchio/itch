@@ -157,10 +157,17 @@ export async function search (credentials, query) {
 
   const api = client.withKey(credentials.key)
 
-  const response = normalize(await api.search(query), {
+  const gameResults = normalize(await api.searchGames(query), {
     games: arrayOf(game)
   })
-  return response
+  const userResults = normalize(await api.searchUsers(query), {
+    users: arrayOf(user)
+  })
+
+  return {
+    gameResults,
+    userResults
+  }
 }
 
 export async function gameLazily (market, credentials, gameId, opts = {}) {

@@ -68,6 +68,22 @@ SearchResult.propTypes = {
   onClick: PropTypes.func
 }
 
+export class UserSearchResult extends Component {
+  render () {
+    const {user, onClick} = this.props
+    const {displayName, username, coverUrl} = user
+
+    const resultClasses = classNames('search-result', 'user-search-result')
+
+    return <div className={resultClasses} onClick={onClick}>
+      <img src={coverUrl}/>
+      <div className='title-block'>
+        <h4>{displayName || username}</h4>
+      </div>
+    </div>
+  }
+}
+
 export class HubSearchResults extends Component {
   render () {
     const {t, search} = this.props
@@ -82,7 +98,7 @@ export class HubSearchResults extends Component {
 
     return <div className={classNames('hub-search-results', {active: open})}>
       <div className='header'>
-        <h3>t('search.results.title', {query})</h3>
+        <h2>{t('search.results.title', {query})}</h2>
         <div className='filler'/>
         <span className='icon icon-cross close-search' onClick={closeSearch}/>
       </div>
@@ -98,7 +114,7 @@ export class HubSearchResults extends Component {
   }
 
   resultsGrid (results) {
-    if (!results || results.result.gameIds.length === 0) {
+    if (!results || (results.gameResults.result.gameIds.length === 0 && results.userResults.result.userIds.length === 0)) {
       const {t} = this.props
 
       return <div className='result-list'>
@@ -107,13 +123,29 @@ export class HubSearchResults extends Component {
     }
 
     const items = []
-    const {navigateToGame, closeSearch} = this.props
+    const {navigateToGame, navigateToUser, closeSearch, t} = this.props
 
-    const {games} = results.entities
-    results.result.gameIds::each((gameId) => {
-      const game = games[gameId]
-      items.push(<SearchResult key={gameId} game={game} onClick={() => { navigateToGame(game); closeSearch() }}/>)
-    })
+    const {gameResults, userResults} = results
+    const {games} = gameResults.entities
+    const {users} = userResults.entities
+
+    const {userIds} = userResults.result
+    if (userIds.length > 0) {
+      items.push(<h3>{t('search.results.creators')}</h3>)
+      userResults.result.userIds::each((userId) => {
+        const user = users[userId]
+        items.push(<UserSearchResult key={`user-${userId}`} user={user} onClick={() => { navigateToUser(user); closeSearch() }}/>)
+      })
+    }
+
+    const {gameIds} = gameResults.result
+    if (gameIds.length > 0) {
+      items.push(<h3>{t('search.results.games')}</h3>)
+      gameResults.result.gameIds::each((gameId) => {
+        const game = games[gameId]
+        items.push(<SearchResult key={`game-${gameId}`} game={game} onClick={() => { navigateToGame(game); closeSearch() }}/>)
+      })
+    }
 
     return <div className='result-list'>
       {items}
@@ -149,7 +181,8 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = (dispatch) => ({
   closeSearch: () => dispatch(actions.closeSearch()),
   navigate: (path) => dispatch(actions.navigate(path)),
-  navigateToGame: (game) => dispatch(actions.navigateToGame(game))
+  navigateToGame: (game) => dispatch(actions.navigateToGame(game)),
+  navigateToUser: (user) => dispatch(actions.navigateToUser(user))
 })
 
 export default connect(

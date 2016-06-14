@@ -26,6 +26,16 @@ $search-thumbnail-scale: 0.8;
     margin: 8px 12px;
   }
 
+  h3 {
+    padding: 8px 12px 6px 12px;
+    margin: 8px 0;
+    box-shadow: 0 0 8px #171717;
+    background: #252525;
+    font-size: 16px;
+    text-align: left;
+    flex-shrink: 0;
+  }
+
   .header {
     display: flex;
     flex-direction: row;
@@ -34,7 +44,7 @@ $search-thumbnail-scale: 0.8;
     box-shadow: 0 0 20px $sidebar-background-color;
     color: $secondary-text-color;
 
-    h3 {
+    h2 {
       font-size: 16px;
     }
 
@@ -147,6 +157,14 @@ $search-thumbnail-scale: 0.8;
 
     &.not-platform-compatible {
       opacity: .4;
+    }
+
+    &.user-search-result {
+      img {
+        width: 34px;
+        height: 34px;
+        border-radius: 4px;
+      }
     }
   }
 
