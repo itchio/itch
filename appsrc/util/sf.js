@@ -66,7 +66,7 @@ import path from 'path'
 
 // global ignore patterns
 const ignore = [
-  // on OSX, trashes exist on dmg volumes but cannot be scandir'd for some reason
+  // on macOS, trashes exist on dmg volumes but cannot be scandir'd for some reason
   '**/.Trashes/**'
 ]
 

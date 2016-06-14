@@ -16,18 +16,7 @@ import * as actions from '../actions'
 
 import {map, each, filter} from 'underline'
 
-import os from '../util/os'
 import diskspace from '../util/diskspace'
-const platform = os.itchPlatform()
-
-function browseI18nKey () {
-  let fallback = 'grid.item.open_in_file_explorer'
-  switch (platform) {
-    case 'osx': return ['grid.item.open_in_file_explorer_osx', fallback]
-    case 'linux': return ['grid.item.open_in_file_explorer_linux', fallback]
-    default: return fallback
-  }
-}
 
 export class Preferences extends Component {
   render () {
@@ -145,7 +134,7 @@ export class Preferences extends Component {
           </td>
         }
 
-        <td className='action hint--top' data-hint={t(browseI18nKey())} onClick={(e) => browseInstallLocation(name)}>
+        <td className='action hint--top' data-hint={t('grid.item.show_local_files')} onClick={(e) => browseInstallLocation(name)}>
           <Icon icon='folder-open'/>
         </td>
 

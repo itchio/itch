@@ -69,6 +69,6 @@ document.addEventListener('click', (e) => {
   }
 })
 
-// disable two-finger zoom on OSX
+// disable two-finger zoom on macOS
 
 webFrame.setZoomLevelLimits(1, 1)

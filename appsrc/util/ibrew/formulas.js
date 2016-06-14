@@ -38,7 +38,7 @@ self['elevate'] = {
 }
 
 /**
- * bring OSX apps forwards even when executed directly:
+ * bring macOS apps forwards even when executed directly:
  * https://github.com/itchio/activate
  */
 self['activate'] = {

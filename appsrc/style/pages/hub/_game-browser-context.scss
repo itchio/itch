@@ -1,6 +1,20 @@
 
 $meat-cover-scale: 0.4;
 $context-cover-scale: 0.8;
+$secondary-action-bg: #2b2b2b;
+
+@keyframes redden {
+  0% {
+    background-color: $secondary-action-bg;
+  }
+  25% {
+    background-color: $accent-color;
+    color: white;
+  }
+  100% {
+    background-color: $secondary-action-bg;
+  }
+}
 
 .browser-meat .game-browser-context {
   flex-direction: column;
@@ -121,7 +135,7 @@ $context-cover-scale: 0.8;
         padding: 9px 8px;
         box-shadow: 0 0 1px rgb(37, 37, 37);
         border: 1px solid rgba(234, 232, 232, 0.15);
-        background: #2b2b2b;
+        background: $secondary-action-bg;
         border-radius: 2px;
         display: flex;
         align-items: center;
@@ -143,6 +157,10 @@ $context-cover-scale: 0.8;
         .icon {
           font-size: 16px;
           margin-right: 10px;
+        }
+
+        &.shake {
+          animation: 1s ease-in-out redden, .3s linear shake 0s 1;
         }
       }
     }
