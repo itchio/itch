@@ -19,11 +19,12 @@ import HTML5Backend from 'react-dnd-html5-backend'
 import {DragDropContext} from 'react-dnd'
 import {shell, webFrame} from './electron'
 
-import env from './env'
 import store from './store'
 
+const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === '1'
+
 let devTools = ''
-if (env.name === 'development') {
+if (REDUX_DEVTOOLS_ENABLED) {
   const DevTools = require('./components/dev-tools').default
   devTools = <DevTools/>
 }
