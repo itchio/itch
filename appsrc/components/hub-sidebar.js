@@ -84,7 +84,7 @@ export class HubSidebar extends Component {
   }
 
   onSearchBlur (e) {
-    setTimeout(this.props.closeSearch(), 200)
+    setTimeout(this.props.closeSearch, 200)
   }
 
   onQueryChanged (e) {

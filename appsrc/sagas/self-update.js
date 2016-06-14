@@ -134,6 +134,7 @@ export function * _checkForSelfUpdate () {
 }
 
 export function * _applySelfUpdateRequest () {
+  const lang = yield select((state) => state.i18n.lang)
   const spec = yield select((state) => state.selfUpdate.downloaded)
   if (!spec) {
     log(opts, 'Asked to apply update, but nothing downloaded? bailing out...')
@@ -145,7 +146,7 @@ export function * _applySelfUpdateRequest () {
   yield put(openModal({
     title: ['prompt.self_update_ready.title', {version: spec.name}],
     message: ['prompt.self_update_ready.message'],
-    detail: ['prompt.self_update_ready.detail', {notes: spec.notes, pubDate: format.date(pubDate, DATE_FORMAT)}],
+    detail: ['prompt.self_update_ready.detail', {notes: spec.notes, pubDate: format.date(pubDate, DATE_FORMAT, lang)}],
     buttons: [
       {
         label: ['prompt.self_update_ready.action.restart'],
@@ -196,13 +197,14 @@ export function * _showAvailableSelfUpdate (action) {
     return
   }
   const pubDate = new Date(Date.parse(spec.pub_date))
+  const lang = yield select((state) => state.i18n.lang)
 
   const messageString = `prompt.self_update.message.${os.itchPlatform()}`
 
   yield put(openModal({
     title: ['prompt.self_update.title', {version: spec.name}],
     message: [messageString],
-    detail: ['prompt.self_update.detail', {notes: spec.notes, pubDate: format.date(pubDate, DATE_FORMAT)}],
+    detail: ['prompt.self_update.detail', {notes: spec.notes, pubDate: format.date(pubDate, DATE_FORMAT, lang)}],
     buttons: [
       {
         label: ['prompt.self_update.action.download'],

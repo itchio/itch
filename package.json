@@ -50,6 +50,7 @@
     "keymirror": "~0.1.0",
     "marked-extra": "^0.2.6",
     "mkdirp": "^0.5.1",
+    "moment": "^2.13.0",
     "nconf": "^0.8.2",
     "nedb": "^1.2.1",
     "needle": "^1.0.0",

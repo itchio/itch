@@ -5,6 +5,19 @@ import {connect} from './connect'
 import TimeAgo from 'react-timeago'
 import format, {DATE_FORMAT} from '../util/format'
 
+import moment from 'moment'
+
+function momentBridge (t) {
+  return function (count, unit, direction) {
+    const m = moment().locale(t.lang)[unit](count)
+    if (direction === 'ago') {
+      return m.fromNow()
+    } else {
+      return m.toNow()
+    }
+  }
+}
+
 export class NiceAgo extends Component {
   render () {
     const {t, date} = this.props
@@ -18,8 +31,8 @@ export class NiceAgo extends Component {
     }
 
     // pass empty title to TimeAgo on purpose so we don't have double tooltip on hover
-    return <span className='nice-ago hint--bottom' data-hint={format.date(date, DATE_FORMAT)}>
-      <TimeAgo date={date} title=''/>
+    return <span className='nice-ago hint--bottom' data-hint={format.date(date, DATE_FORMAT, t.lang)}>
+      <TimeAgo date={date} title='' formatter={momentBridge(t)}/>
     </span>
   }
 

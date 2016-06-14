@@ -35,6 +35,8 @@ export function getT (strings, lang) {
     }
   }
 
+  t.lang = lang
+
   t.format = (args) => {
     if (Array.isArray(args)) {
       return t.apply(null, args)

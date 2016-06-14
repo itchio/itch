@@ -1,5 +1,5 @@
 
-import dateFormat from 'dateformat'
+import moment from 'moment'
 
 export function slugify (str) {
   return str.toLowerCase()
@@ -43,17 +43,17 @@ export function seconds (secs) {
   }
 }
 
-export function date (v, f) {
+export function date (v, f, lang = 'en') {
   try {
-    return dateFormat(v, f)
+    return moment(v).locale(lang).format(f)
   } catch (err) {
     console.log(`Invalid date: ${v}`)
     return '?'
   }
 }
 
-export const DATE_FORMAT = 'mmmm dS, yyyy @ HH:MM TT'
-export const FS_DATE_FORMAT = 'yyyy.mm.dd-HH.MM.TT'
+export const DATE_FORMAT = 'DD MMMM, YYYY @ hh:mm ZZ'
+export const FS_DATE_FORMAT = 'YYYY.MM.DD-hh.mm.ss'
 
 export function price (currency, value) {
   if (currency === 'USD') {
