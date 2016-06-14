@@ -2,7 +2,6 @@
 import {createStore, applyMiddleware, compose} from 'redux'
 import {electronEnhancer} from 'redux-electron-enhancer'
 import createLogger from 'redux-logger'
-import env from '../env'
 import createSagaMiddleware from 'redux-saga'
 
 import sagas from '../renderer-sagas'
@@ -14,7 +13,9 @@ const middleware = [
   sagaMiddleware
 ]
 
-if (false && env.name === 'development') {
+const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === '1'
+
+if (REDUX_DEVTOOLS_ENABLED) {
   const logger = createLogger({
     predicate: (getState, action) => !action.MONITOR_ACTION
   })
@@ -28,7 +29,7 @@ const enhancers = [
   applyMiddleware(...middleware)
 ]
 
-if (env.name === 'development') {
+if (REDUX_DEVTOOLS_ENABLED) {
   const DevTools = require('../components/dev-tools').default
   enhancers.push(DevTools.instrument())
 }
