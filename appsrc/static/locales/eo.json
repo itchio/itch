@@ -293,5 +293,6 @@
     "notification.purchase_complete.just_bought": "Vi ĵus aĉetis {{title}}!",
     "notification.purchase_complete.just_donated": "Vi ĵus donacis al {{title}}!",
     "notification.purchase_complete.may_install_now": "Vi nun povas instali ĝin iam ajn!",
-    "notification.purchase_complete.thanks_for_support": "Dankon pro via subtenado!"
+    "notification.purchase_complete.thanks_for_support": "Dankon pro via subtenado!",
+    "sidebar.itchio": "Via portalo al la universo de sendependaj ludoj"
 }
