@@ -90,6 +90,7 @@ export default function listSecondaryActions (props) {
 
     // No errors
     items.push(purchaseAction(game, downloadKey))
+    items.push(shareAction(game))
 
     items.push({
       type: 'separator'
