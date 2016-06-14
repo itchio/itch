@@ -262,7 +262,7 @@
     "usage_stats.description.book": "En bog",
     "usage_stats.description.bought_time_ago": "Købt {{time_ago}}",
     "usage_stats.description.comic": "En tegneserie",
-    "usage_stats.description.free_download": "Gratis overførsel",
+    "usage_stats.description.free_download": "Gratis at hente",
     "usage_stats.description.game": "Et spil",
     "usage_stats.description.game_mod": "En spil-modificering",
     "usage_stats.description.other": "Et styks ubeskrivelig",
