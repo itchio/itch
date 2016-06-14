@@ -2,6 +2,7 @@
 import {darkMineShaft} from '../constants/colors'
 import {app, BrowserWindow} from '../electron'
 import config from '../util/config'
+import os from '../util/os'
 import invariant from 'invariant'
 import {debounce} from 'underline'
 
@@ -44,10 +45,11 @@ function * _createWindow () {
   }
   const {width, height} = bounds
   const center = (bounds.x === -1 && bounds.y === -1)
+  const iconPath = `${__dirname}/../static/images/tray/${app.getName()}.png`
 
   const window = new BrowserWindow({
     title: app.getName(),
-    icon: `./static/images/tray/${app.getName()}.png`,
+    icon: iconPath,
     width, height,
     center,
     show: false,
@@ -56,6 +58,14 @@ function * _createWindow () {
     titleBarStyle: 'hidden',
     'title-bar-style': 'hidden'
   })
+
+  if (os.platform() === 'darwin') {
+    try {
+      app.dock.setIcon(iconPath)
+    } catch (err) {
+      console.log(`error setting icon: ${err.stack || err}`)
+    }
+  }
 
   if (!center) {
     window.setPosition(bounds.x, bounds.y)
