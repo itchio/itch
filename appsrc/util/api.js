@@ -145,8 +145,12 @@ export class AuthenticatedClient {
     return await this.request('get', `/collection/${collectionId}/games`, {page})
   }
 
-  async search (query) {
+  async searchGames (query) {
     return await this.request('get', '/search/games', {query}, {games: ensureArray})
+  }
+
+  async searchUsers (query) {
+    return await this.request('get', '/search/users', {query}, {users: ensureArray})
   }
 
   // list uploads

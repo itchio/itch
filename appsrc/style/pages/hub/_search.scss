@@ -1,10 +1,11 @@
 
-$search-thumbnail-scale: 0.6;
+$search-thumbnail-scale: 0.8;
 
 .hub-search-results {
   background: $sidebar-background-color;
   border-right: 1px solid $sidebar-border-color;
   border-bottom: 1px solid $sidebar-border-color;
+  opacity: 0.0;
 
   width: $search-sidebar-width;
 
@@ -16,13 +17,23 @@ $search-thumbnail-scale: 0.6;
   border-radius: 0 0 0 2px;
 
   overflow: hidden;
-  transition: right 0.2s ease-in-out;
+  transition: left 0.2s ease-in-out, opacity 0.2s ease-in-out;
 
   display: flex;
   flex-direction: column;
 
   .header, p {
-    margin: 8px;
+    margin: 8px 12px;
+  }
+
+  h3 {
+    padding: 8px 12px 6px 12px;
+    margin: 8px 0;
+    box-shadow: 0 0 8px #171717;
+    background: #252525;
+    font-size: 16px;
+    text-align: left;
+    flex-shrink: 0;
   }
 
   .header {
@@ -33,9 +44,8 @@ $search-thumbnail-scale: 0.6;
     box-shadow: 0 0 20px $sidebar-background-color;
     color: $secondary-text-color;
 
-    h3 {
-      font-size: 14px;
-      font-weight: bold;
+    h2 {
+      font-size: 16px;
     }
 
     .filler {
@@ -87,12 +97,35 @@ $search-thumbnail-scale: 0.6;
     align-items: center;
     padding: .2em .5em;
 
-    h4 {
-      text-shadow: 0 0 2px $input-text-shadow-color;
-      padding: .2em 0;
+    .title-block {
+      overflow-x: hidden;
       margin: .5em;
+    }
+
+    h4 {
+      @include single-line;
+      text-shadow: 0 0 2px $input-text-shadow-color;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    h4, .platforms {
+      padding: .4em 0;
+    }
+
+    .platforms {
+      display: block;
+      opacity: .8;
+
+      .icon {
+        font-size: 90%;
+        margin-right: 7px;
+      }
+
+      .price {
+        color: #888;
+        font-size: 90%;
+      }
     }
 
     &:hover {
@@ -121,9 +154,22 @@ $search-thumbnail-scale: 0.6;
         cursor: pointer;
       }
     }
+
+    &.not-platform-compatible {
+      opacity: .4;
+    }
+
+    &.user-search-result {
+      img {
+        width: 34px;
+        height: 34px;
+        border-radius: 4px;
+      }
+    }
   }
 
   &.active {
     left: 0;
+    opacity: 1.0;
   }
 }

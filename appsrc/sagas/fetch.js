@@ -70,8 +70,8 @@ function * fetchUsuals (credentials) {
 }
 
 function * _search (action) {
-  // 200ms debounce
-  yield call(delay, 200)
+  // 40ms debounce
+  yield call(delay, 40)
 
   yield put(searchStarted())
 
