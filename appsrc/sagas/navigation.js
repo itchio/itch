@@ -472,14 +472,8 @@ function makeTabContextMenu (queue) {
   }
 }
 
-function * _initiatePurchase (action) {
-  const {game} = action.payload
-  // wooooo crunch
-  yield put(openUrl(game.url + '/purchase'))
-}
-
 function * _probeCave (action) {
-  // ditto
+  // TODO: uncrunch this
   yield put(openUrl('https://gist.github.com/fasterthanlime/fc0116df32b53c7939016afe0d26796d'))
 }
 
@@ -537,7 +531,6 @@ export default function * navigationSaga () {
     takeEvery(TRIGGER_MAIN_ACTION, _triggerMainAction),
     takeEvery(TRIGGER_OK, _triggerOk),
     takeEvery(TRIGGER_BACK, _triggerBack),
-    takeEvery(INITIATE_PURCHASE, _initiatePurchase),
     takeEvery(PROBE_CAVE, _probeCave),
     takeEvery(OPEN_TAB_CONTEXT_MENU, makeTabContextMenu(queue)),
     takeEvery('*', function * watchNavigation () {

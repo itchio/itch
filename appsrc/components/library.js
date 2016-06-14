@@ -17,7 +17,7 @@ export class Library extends Component {
     const installedGames = caves::sortBy(recency)::map((key) => allGames[key.gameId])::filter((x) => !!x)
     const installedGamesById = installedGames::indexBy('id')
 
-    const games = downloadKeys::map((key) => allGames[key.gameId])::filter((x) => !installedGamesById[x.id])
+    const games = downloadKeys::filter((key) => !installedGamesById[key.gameId])::map((key) => allGames[key.gameId])
 
     let sectionCount = 0
     if (installedGames.length > 0) {

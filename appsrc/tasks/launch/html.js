@@ -61,8 +61,8 @@ export default async function launch (out, opts) {
     win.webContents.openDevTools({detach: true})
   }
 
-  // clear menu, cf. https://github.com/itchio/itch/issues/232
-  win.setMenu(null)
+  // hide menu, cf. https://github.com/itchio/itch/issues/232
+  win.setMenuBarVisibility(false)
 
   // strip 'Electron' from user agent so some web games stop being confused
   let userAgent = win.webContents.getUserAgent()

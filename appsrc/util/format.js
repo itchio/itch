@@ -8,7 +8,7 @@ export function slugify (str) {
 }
 
 export function camelify (str) {
-  return str.replace(/_[a-z]/g, (x) => x[1].toUpperCase())
+  return str.replace(/[_-][a-z]/g, (x) => x[1].toUpperCase())
 }
 
 export function camelifyObject (obj) {

@@ -74,6 +74,10 @@ setTimeout(function () {
     document.body.appendChild(css)
   }
 
+  function evolveTab (path) {
+    sendMessage('evolve-tab', {path})
+  }
+
   function analyzePage (url) {
     sendMessage('analyze-page', {url})
   }
@@ -158,7 +162,12 @@ setTimeout(function () {
       return
     }
 
-    analyzePage(window.location.href)
+    const metaTag = document.querySelector('meta[name="itch:path"]')
+    if (metaTag) {
+      evolveTab(metaTag.content)
+    } else {
+      analyzePage(window.location.href)
+    }
 
     console.log('injecting itch js')
     itchInject()
