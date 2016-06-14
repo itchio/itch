@@ -10,7 +10,7 @@
     "grid.item.install": "インストール",
     "grid.item.installing": "インストール中…",
     "grid.item.launch": "起動する",
-    "grid.item.not_platform_compatible": "{{platform}}には対応していません",
+    "grid.item.not_platform_compatible": "{{platform}}には対応していません。",
     "grid.item.open": "開く",
     "grid.item.open_in_file_explorer": "このゲームがインストールされているフォルダを開く",
     "grid.item.open_in_file_explorer_linux": "ファイルマネージャーでインストール先のフォルダを開く",
@@ -158,5 +158,6 @@
     "game.install.no_uploads_available.message": "'{{title}}'に対応するダウンロードが見つからなかった為インストールされませんでした。",
     "game.install.could_not_launch": "{{title}} 起動時にエラーが発生しました",
     "game.install.no_executables_found": "実行ファイルが見つかりませんでした。",
-    "game.install.visit_web_page": "webサイトを閲覧する"
+    "game.install.visit_web_page": "webサイトを閲覧する",
+    "grid.item.buy_now_again": "もう1つ購入する"
 }
