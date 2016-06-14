@@ -26,6 +26,14 @@ $search-thumbnail-scale: 0.8;
     margin: 8px 12px;
   }
 
+  p.no-results {
+    font-size: 16px;
+    text-align: center;
+    background-color: #2b2a2a;
+    padding: 12px 8px;
+    border-radius: 4px;
+  }
+
   h3 {
     padding: 8px 12px 6px 12px;
     margin: 8px 0;
@@ -119,7 +127,8 @@ $search-thumbnail-scale: 0.8;
 
       .icon {
         font-size: 90%;
-        margin-right: 7px;
+        margin-left: 2px;
+        margin-right: 5px;
       }
 
       .price {
@@ -135,6 +144,7 @@ $search-thumbnail-scale: 0.8;
 
     img {
       @include thumbnail-style;
+      @include default-cover-background;
       flex-shrink: 0;
       margin-left: .5em;
       width: 85px * $search-thumbnail-scale;

@@ -31,7 +31,7 @@ export class HubSidebar extends Component {
       </div>
 
       <section className={searchClasses}>
-        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onQueryChanged} onKeyUp={::this.onQueryChanged} onChange={::this.onQueryChanged} onFocus={::this.onSearchFocus}/>
+        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onQueryChanged} onKeyUp={::this.onQueryChanged} onChange={::this.onQueryChanged} onFocus={::this.onSearchFocus} onBlur={::this.onSearchBlur}/>
         <span className='icon icon-search'/>
       </section>
 
@@ -71,16 +71,20 @@ export class HubSidebar extends Component {
           <span className='label'>{t('sidebar.new_tab')}</span>
           <div className='filler'/>
         </section>
-
-        <section className='sidebar-blank'/>
-
-        {false && this.dropdown()}
       </div>
+
+      <section className='sidebar-blank'/>
+
+      {this.dropdown()}
     </div>
   }
 
   onSearchFocus (e) {
     this.props.focusSearch()
+  }
+
+  onSearchBlur (e) {
+    setTimeout(this.props.closeSearch(), 200)
   }
 
   onQueryChanged (e) {
@@ -127,7 +131,7 @@ export class HubSidebar extends Component {
         onClick: changeUser
       }
     ]
-    return <Dropdown items={items} inner={this.me()}/>
+    return <Dropdown items={items} inner={this.me()} updown/>
   }
 }
 
@@ -201,6 +205,7 @@ const mapDispatchToProps = (dispatch) => ({
   newTab: () => dispatch(actions.newTab()),
 
   focusSearch: (query) => dispatch(actions.focusSearch(query)),
+  closeSearch: (query) => dispatch(actions.closeSearch(query)),
   search: (query) => dispatch(actions.search(query))
 })
 

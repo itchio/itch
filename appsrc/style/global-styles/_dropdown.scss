@@ -19,6 +19,11 @@ $dropdown-background-color: lighten($sidebar-entry-focused-background-color, 5%)
   right: 1px;
   visibility: hidden;
 
+  &.updown {
+    top: initial;
+    bottom: 40px;
+  }
+
   &.active {
     visibility: visible;
   }
