@@ -285,5 +285,7 @@
     "usage_stats.has_used_for_duration": "Uzita",
     "usage_stats.last_opened_time_ago": "Lasta malfermado {{time_ago}}",
     "usage_stats.last_played_time_ago": "Lasta ludado {{time_ago}}",
-    "usage_stats.last_used_time_ago": "Lasta uzo {{time_ago}}"
+    "usage_stats.last_used_time_ago": "Lasta uzo {{time_ago}}",
+    "usage_stats.never_opened": "Neniam malfermita",
+    "usage_stats.never_played": "Neniam ludita"
 }
