@@ -23,7 +23,6 @@ const injectPath = path.resolve(__dirname, '..', 'inject', 'purchase.js')
  */
 function makePurchaseWindow (me, game) {
   const partition = `persist:itchio-${me.id}`
-  console.log(`making purchase window with partition ${partition}`)
 
   const win = new BrowserWindow({
     width: 960,
@@ -115,7 +114,7 @@ function * _initiatePurchase (action) {
 
   const endType = 'DONE_PURCHASING'
   win.on('close', () => {
-    queue.dispatch(endType)
+    queue.dispatch({type: endType})
   })
 
   win.loadURL(loginPurchaseUrl)
