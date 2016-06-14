@@ -38,6 +38,7 @@ export function * startDownload (downloadOpts) {
     const out = new EventEmitter()
     out.on('progress', (progress) => {
       queue.dispatch(actions.downloadProgress({id, progress}))
+      queue.dispatch(actions.setProgress(progress))
     })
 
     const credentials = yield select((state) => state.session.credentials)
@@ -48,6 +49,7 @@ export function * startDownload (downloadOpts) {
     }
 
     log(opts, 'Starting download...')
+    yield put(actions.setProgress(0))
     yield race({
       task: call(download, out, extendedOpts),
       queue: call(queue.exhaust)
@@ -59,6 +61,7 @@ export function * startDownload (downloadOpts) {
     err = err ? err.message || err : null
     log(opts, `Download ended, err: ${err || '<none>'}`)
     yield put(actions.downloadEnded({id, err, downloadOpts}))
+    yield put(actions.setProgress(-1))
   }
 
   log(opts, 'Download done!')
