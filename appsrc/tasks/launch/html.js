@@ -39,7 +39,7 @@ export default async function launch (out, opts) {
     center: true,
     show: true,
     backgroundColor: '#000',
-    'title-bar-style': 'hidden',
+    titleBarStyle: 'hidden',
     useContentSize: true,
     webPreferences: {
       /* don't let web code control the OS */

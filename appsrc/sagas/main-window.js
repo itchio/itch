@@ -55,8 +55,7 @@ function * _createWindow () {
     show: false,
     autoHideMenuBar: true,
     backgroundColor: darkMineShaft,
-    titleBarStyle: 'hidden',
-    'title-bar-style': 'hidden'
+    titleBarStyle: 'hidden'
   })
 
   if (os.platform() === 'darwin') {
