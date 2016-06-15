@@ -192,5 +192,6 @@
     "preferences.install_location.is_default_short": "Padrão",
     "preferences.install_location.make_default_short": "Tornar padrão",
     "prompt.deb_policy.detail": "itch só pode instalar versões portáteis de aplicações Linux.",
-    "prompt.deb_policy.message": "{{title}} usa o formato .deb de pacotes e não pode ser instalado pelo itch até que seja reempacotado."
+    "prompt.deb_policy.message": "{{title}} usa o formato .deb de pacotes e não pode ser instalado pelo itch até que seja reempacotado.",
+    "prompt.deb_policy.title": "Pacotes APT não suportados"
 }
