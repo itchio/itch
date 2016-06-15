@@ -8,7 +8,6 @@ import * as actions from '../actions'
 import urlParser from '../util/url'
 import navigation from '../util/navigation'
 
-import useragent from '../constants/useragent'
 import staticTabData from '../constants/static-tab-data'
 
 import querystring from 'querystring'
@@ -236,7 +235,6 @@ export class BrowserMeat extends Component {
     const partition = `persist:itchio-${meId}`
 
     wv.partition = partition
-    wv.useragent = useragent
     wv.plugins = true
     wv.preload = injectPath
 
