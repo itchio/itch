@@ -220,5 +220,16 @@
     "prompt.self_update.detail": "{{notes}}\n\n:date: Publicado el {{pubDate}}.",
     "prompt.self_update.message.linux": "Puedes descargarla manualmente o usar el gestor de paquetes de tu distribución para actualizar. Ve al sitio web para más instrucciones.",
     "prompt.self_update.message.osx": "Elige 'Descargar ahora\" para instalarlo automáticamente, o dirígete al sitio web para más instrucciones.",
-    "prompt.self_update.message.windows": "Elige 'Descargar ahora' para instalarlo automáticamente, o dirígete al sitio web para más instrucciones."
+    "prompt.self_update.message.windows": "Elige 'Descargar ahora' para instalarlo automáticamente, o dirígete al sitio web para más instrucciones.",
+    "prompt.self_update.title": "itch v{{version}} está disponible para descargar",
+    "prompt.self_update_ready.action.restart": "Reiniciar ahora",
+    "prompt.self_update_ready.action.snooze": "Repetir más tarde",
+    "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Publicado el {{pubDate}}.",
+    "prompt.self_update_ready.message": "Elige 'Reiniciar ahora' para aprovechar la actualización\n\nSi no lo haces, la actualización se activará la próxima vez que la aplicación sea reiniciada",
+    "prompt.self_update_ready.title": "Una actualización ha sido descargada e instalada",
+    "search.results.title": "Resultados de búsqueda para '{{query}}'",
+    "search.results.local": "Local",
+    "search.results.games": "Juegos",
+    "search.results.creators": "Creadores",
+    "search.empty.no_results": "No se encontraron resultados"
 }
