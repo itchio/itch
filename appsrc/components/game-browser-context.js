@@ -27,8 +27,9 @@ export class GameBrowserContext extends Component {
     const {loading} = browserState
     const barClasses = classNames('browser-context', 'game-browser-context', {loading})
 
-    const coverStyle = {
-      backgroundImage: `url('${game.coverUrl}')`
+    const coverStyle = {}
+    if (game.coverUrl) {
+      coverStyle.backgroundImage = `url('${game.coverUrl}')`
     }
 
     return <div className={barClasses} style={barStyle}>
