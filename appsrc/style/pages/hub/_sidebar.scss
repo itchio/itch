@@ -260,7 +260,7 @@
       @include heavy-input;
       transition: all 0.2s;
       width: 100%;
-      text-indent: 10px;
+      text-indent: 12px;
       padding: 6px 10px 6px 9px;
       font-size: 14px;
     }
@@ -272,6 +272,7 @@
       transform: translateY(55%);
       font-size: 14px;
       color: $input-placeholder-color;
+      pointer-events: none;
     }
   }
 
