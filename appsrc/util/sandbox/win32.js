@@ -16,7 +16,8 @@ export async function check () {
   const errors = []
   const needs = []
 
-  const userCheck = await spawn.exec({command: 'elevate.exe', args: ['--runas', USER, PASSWORD, 'cmd.exe', '/c', 'echo', 'good']})
+  // TODO: this doesn't check that the password is valid, unfortunately
+  const userCheck = await spawn.exec({command: 'net.exe', args: ['user', 'itch-player']})
   if (userCheck.code !== 0) {
     needs.push({
       type: 'user',
