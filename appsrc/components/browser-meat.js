@@ -250,6 +250,8 @@ export class BrowserMeat extends Component {
       wv.addEventListener('new-window', ::this.newWindow)
       this.domReady()
 
+      // otherwise, back button is active and brings us back to 'about:blank'
+      wv.clearHistory()
       wv.removeEventListener('dom-ready', callbackSetup)
     }
     wv.addEventListener('dom-ready', callbackSetup)
