@@ -159,5 +159,11 @@
     "game.install.could_not_launch": "{{title}} 起動時にエラーが発生しました",
     "game.install.no_executables_found": "実行ファイルが見つかりませんでした。",
     "game.install.visit_web_page": "webサイトを閲覧する",
-    "grid.item.buy_now_again": "もう1つ購入する"
+    "grid.item.buy_now_again": "もう1つ購入する",
+    "grid.item.launch_demo": "体験版を起動する",
+    "grid.item.share": "共有",
+    "grid.item.show_local_files": "ローカルファイルを閲覧する",
+    "menu.file.close_all_tabs": "全てのタブを閉じる",
+    "new_tab.top_sellers": "最も売れている作品",
+    "notification.see_you_soon.title": "さようなら！"
 }
