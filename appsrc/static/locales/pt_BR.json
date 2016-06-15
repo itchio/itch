@@ -202,5 +202,6 @@
     "prompt.logout_detail": "Downloads em progresso serão pausados até que você faça login novamente.",
     "prompt.logout_title": "Fazer logout",
     "prompt.packaging_policy.learn_more": "Saiba mais",
-    "prompt.packaging_policy.open_web_page": "Abrir página de {{title}}"
+    "prompt.packaging_policy.open_web_page": "Abrir página de {{title}}",
+    "prompt.rpm_policy.detail": "itch só pode instalar versões portáteis de aplicativos Linux."
 }
