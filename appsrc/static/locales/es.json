@@ -254,5 +254,6 @@
     "sidebar.owned_subtitle": "Cosas que compraste o instalaste",
     "sidebar.preferences": "Preferencias",
     "sidebar.preferences_subtitle": "Los detalles básicos",
-    "sidebar.press": "Centro de actividad de prensa"
+    "sidebar.press": "Centro de actividad de prensa",
+    "sidebar.press_subtitle": "Puedes instalar cualquier juego que forme parte del programa de prensa de itch.io. !Disfrútalo!"
 }
