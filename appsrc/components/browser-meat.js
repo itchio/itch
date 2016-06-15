@@ -68,7 +68,7 @@ export class BrowserMeat extends Component {
   }
 
   domReady () {
-    const {tabId, url} = this.props
+    const {url} = this.props
     const {webview} = this
 
     const webContents = webview.getWebContents()
@@ -144,8 +144,8 @@ export class BrowserMeat extends Component {
   }
 
   newWindow (e) {
-    const {tabId, navigate} = this.props
-    const {url, disposition} = e
+    const {navigate} = this.props
+    const {url} = e
     navigate('url/' + url)
   }
 
