@@ -1,7 +1,6 @@
 
 import spawn from '../spawn'
 import sf from '../sf'
-import sudo from '../sudo'
 
 import common from './common'
 
@@ -17,7 +16,7 @@ export async function check () {
   const errors = []
   const needs = []
 
-  const userCheck = await spawn.exec({command: 'net', args: ['user', USER]})
+  const userCheck = await spawn.exec({command: 'elevate.exe', args: ['--runas', USER, PASSWORD, 'echo', 'good']})
   if (userCheck.code !== 0) {
     needs.push({
       type: 'user',
@@ -33,6 +32,7 @@ export async function install (opts, needs) {
   return await common.tendToNeeds(opts, needs, {
     user: async () => {
       const lines = []
+      // in case the user was incorrectly setup
       lines.push(`net user ${USER} ${PASSWORD} /add`)
       // if we don't do this, it shows as a login user
       lines.push(`net localgroup Users ${USER} /delete`)
@@ -52,17 +52,10 @@ async function adminRunScript (lines) {
 
   console.log(`running batch script:\r\n${contents}`)
 
-  let out = ''
-  let e
-
-  try {
-    await sudo.execAsync(`cmd.exe /c "${tmpObj.name}"`, {
-      name: 'itch sandbox setup',
-      on: (ps) => {
-        ps.stdout.on('data', (data) => { out += data })
-      }
-    })
-  } catch (err) { e = err }
+  const res = await spawn.exec({
+    command: 'elevate.exe',
+    args: ['cmd.exe', '/c', tmpObj.name]
+  })
 
   if (process.env.KEEP_MESS_AROUND === '1') {
     console.log(`keeping temp batch script at ${tmpObj.name}`)
@@ -70,9 +63,11 @@ async function adminRunScript (lines) {
     tmpObj.removeCallback()
   }
 
-  if (e) { throw e }
+  if (res.code !== 0) {
+    throw new Error(`adminRunScript failed with code ${res.code}. out = ${res.out}\n, err = ${res.err}\n`)
+  }
 
-  return {out}
+  return {out: res.out}
 }
 
 export default {check, install, uninstall}
