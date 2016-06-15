@@ -103,7 +103,7 @@
     "prompt.install_location_add.title": "Escolha um novo local de instalação",
     "prompt.install_location_not_empty.detail": "No momento, é necessário que isto seja feito manualmente.",
     "prompt.install_location_not_empty.message": "Locais de instalação só poderão ser removidos quando todos os seus conteúdos forem desinstalados.",
-    "prompt.install_location_not_empty.show_contents": "Mostrar conteúdos",
+    "prompt.install_location_not_empty.show_contents": "Mostrar conteúdo",
     "prompt.install_location_not_empty.title": "Este local de instalação não está vazio",
     "prompt.install_location_remove.detail": "Todos os itens instalados em {{location}} serão desinstalados.",
     "prompt.install_location_remove.message": "Você realmente deseja remover este local?",
