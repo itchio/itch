@@ -69,7 +69,7 @@ async function sudoRunScript (lines) {
   let e
 
   try {
-    await sudo.exec(tmpObj.name, {
+    await sudo.execAsync(tmpObj.name, {
       on: (ps) => {
         ps.stdout.on('data', (data) => { out += data })
       }

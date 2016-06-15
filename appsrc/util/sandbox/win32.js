@@ -54,7 +54,7 @@ async function adminRunScript (lines) {
   let e
 
   try {
-    await sudo.exec(`cmd.exe /c "${tmpObj.name}"`, {
+    await sudo.execAsync(`cmd.exe /c "${tmpObj.name}"`, {
       on: (ps) => {
         ps.stdout.on('data', (data) => { out += data })
       }
