@@ -119,7 +119,7 @@ export class Logger {
   }
 
   timestamp () {
-    return '[' + format.date(new Date(), 'YYYY-MM-DD @ hh:mm:ss') + ']'
+    return '[' + format.date(new Date(), 'YYYY-MM-DD @ HH:mm:ss') + ']'
   }
 }
 make.Logger = Logger

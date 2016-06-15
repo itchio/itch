@@ -62,8 +62,8 @@ export function date (v, f, lang = 'en') {
   }
 }
 
-export const DATE_FORMAT = 'DD MMMM, YYYY @ hh:mm ZZ'
-export const FS_DATE_FORMAT = 'YYYY.MM.DD-hh.mm.ss'
+export const DATE_FORMAT = 'DD MMMM, YYYY @ HH:mm ZZ'
+export const FS_DATE_FORMAT = 'YYYY.MM.DD-HH.mm.ss'
 
 export function price (currency, value) {
   if (currency === 'USD') {

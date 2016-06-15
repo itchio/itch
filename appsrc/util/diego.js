@@ -5,7 +5,7 @@ const _log = mklog('diego')
 import os from './os'
 import spawn from './spawn'
 
-let self = {
+const self = {
   hire: async function (opts) {
     let log = _log.bind(null, opts)
 

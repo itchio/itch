@@ -97,6 +97,9 @@ export function * _preboot () {
     console.log(`Could not import legacy db: ${e.stack || e.message || e}`)
   }
   yield put(boot())
+
+  const diego = require('../util/diego').default
+  diego.hire(opts)
 }
 
 export default function * prebootSaga () {
