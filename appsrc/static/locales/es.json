@@ -241,5 +241,6 @@
     "sidebar.collection.subtitle": "Una colección de {{itemCount}} ítems",
     "sidebar.collections": "Colecciones",
     "sidebar.dashboard_subtitle": "Cosas que haces y rompes",
-    "sidebar.downloads": "Descargas"
+    "sidebar.downloads": "Descargas",
+    "sidebar.downloads_subtitle": "Siéntete libre de salir o reiniciar, las descargas se resumirán cuando regreses"
 }
