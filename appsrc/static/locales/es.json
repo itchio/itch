@@ -217,5 +217,8 @@
     "prompt.self_update.action.dismiss": "Descartar",
     "prompt.self_update.action.download": "Descargar ahora",
     "prompt.self_update.action.view": "Abrir en navegador",
-    "prompt.self_update.detail": "{{notes}}\n\n:date: Publicado el {{pubDate}}."
+    "prompt.self_update.detail": "{{notes}}\n\n:date: Publicado el {{pubDate}}.",
+    "prompt.self_update.message.linux": "Puedes descargarla manualmente o usar el gestor de paquetes de tu distribución para actualizar. Ve al sitio web para más instrucciones.",
+    "prompt.self_update.message.osx": "Elige 'Descargar ahora\" para instalarlo automáticamente, o dirígete al sitio web para más instrucciones.",
+    "prompt.self_update.message.windows": "Elige 'Descargar ahora' para instalarlo automáticamente, o dirígete al sitio web para más instrucciones."
 }
