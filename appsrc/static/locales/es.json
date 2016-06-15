@@ -172,5 +172,6 @@
     "install_location.empty": "No hay nada instalado por el momento en esta ubicación",
     "login.action.show_form": "Iniciar sesión como otro usuario",
     "login.action.show_saved_logins": "Inicios de sesión guardados",
-    "login.messages.welcome_back": "¡Bienvenido nuevamente!"
+    "login.messages.welcome_back": "¡Bienvenido nuevamente!",
+    "login.remembered_session.last_connected": "Última vez conectado"
 }
