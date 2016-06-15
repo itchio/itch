@@ -17,13 +17,9 @@ const linearGradient = (progress) => {
 
 class MainAction extends Component {
   render () {
-    const {t, cancellable, platform, platformCompatible, mayDownload, canBeBought, progress, task, action, animate, game} = this.props
+    const {t, cancellable, platform, platformCompatible, mayDownload, canBeBought, progress, task, action, animate} = this.props
 
     let child = ''
-    if (game.title === 'CURTAIN') {
-      console.log('mainAction game: ', game, 'canBeBought', canBeBought)
-    }
-
     if (task) {
       child = <span className='state normal-state'>
         <TaskIcon task={task} animate={animate} action={action}/>
