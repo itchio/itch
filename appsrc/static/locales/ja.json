@@ -168,5 +168,7 @@
     "notification.see_you_soon.title": "さようなら！",
     "search.results.local": "ローカル",
     "search.results.games": "ゲーム",
-    "search.results.creators": "製作者"
+    "search.results.creators": "製作者",
+    "sidebar.owned_subtitle": "あなたが購入した、あるいはダウンロードしたもの",
+    "usage_stats.description.platforms": "{{platforms}} 向け"
 }
