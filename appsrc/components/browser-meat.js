@@ -276,7 +276,10 @@ export class BrowserMeat extends Component {
     }
 
     return <div className='browser-meat'>
-      <BrowserBar {...controlProps}/>
+      {this.isFrozen()
+        ? ''
+        : <BrowserBar {...controlProps}/>
+      }
       <div className='browser-main'>
         <div style={{display: 'flex', flex: '1 1'}} ref='webviewShell'></div>
         {context}
