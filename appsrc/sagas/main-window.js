@@ -60,7 +60,8 @@ function * _createWindow () {
 
   if (os.platform() === 'darwin') {
     try {
-      app.dock.setIcon(iconPath)
+      // TODO: restore once https://github.com/electron/electron/issues/6056 is fixed
+      // app.dock.setIcon(iconPath)
     } catch (err) {
       console.log(`error setting icon: ${err.stack || err}`)
     }

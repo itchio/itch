@@ -38,7 +38,7 @@ export default async function launch (out, opts) {
     width, height,
     center: true,
     show: true,
-    backgroundColor: '#000',
+    backgroundColor: '#fff',
     titleBarStyle: 'hidden',
     useContentSize: true,
     webPreferences: {
@@ -49,10 +49,6 @@ export default async function launch (out, opts) {
       /* stores cookies etc. in persistent session to save progress */
       partition: `persist:gamesession_${cave.game_id}`
     }
-  })
-
-  win.webContents.on('dom-ready', (e) => {
-    win.webContents.insertCSS('body {background: #000;}')
   })
 
   // open dev tools immediately if requested
