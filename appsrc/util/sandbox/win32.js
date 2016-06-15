@@ -16,7 +16,7 @@ export async function check () {
   const errors = []
   const needs = []
 
-  const userCheck = await spawn.exec({command: 'elevate.exe', args: ['--runas', USER, PASSWORD, 'echo', 'good']})
+  const userCheck = await spawn.exec({command: 'elevate.exe', args: ['--runas', USER, PASSWORD, 'cmd.exe', '/c', 'echo', 'good']})
   if (userCheck.code !== 0) {
     needs.push({
       type: 'user',
