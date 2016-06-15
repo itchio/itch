@@ -70,6 +70,7 @@ async function sudoRunScript (lines) {
 
   try {
     await sudo.execAsync(tmpObj.name, {
+      name: 'itch sandbox setup',
       on: (ps) => {
         ps.stdout.on('data', (data) => { out += data })
       }

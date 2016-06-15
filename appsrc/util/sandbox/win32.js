@@ -55,6 +55,7 @@ async function adminRunScript (lines) {
 
   try {
     await sudo.execAsync(`cmd.exe /c "${tmpObj.name}"`, {
+      name: 'itch sandbox setup',
       on: (ps) => {
         ps.stdout.on('data', (data) => { out += data })
       }
