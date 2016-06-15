@@ -356,7 +356,7 @@ BrowserMeat.propTypes = {
 }
 
 const mapStateToProps = createStructuredSelector({
-  meId: (state) => state.session.credentials.me.id
+  meId: (state) => (state.session.credentials.me || {id: 'anonymous'}).id
 })
 
 const mapDispatchToProps = (dispatch) => ({
