@@ -205,5 +205,19 @@
     "prompt.packaging_policy.open_web_page": "Abrir página de {{title}}",
     "prompt.rpm_policy.detail": "itch só pode instalar versões portáteis de aplicativos Linux.",
     "prompt.rpm_policy.message": "{{title}} usa o formato .rpm de pacotes e não pode ser instalado até que seja reempacotado.",
-    "prompt.rpm_policy.title": "Pacotes YUM não são suportados"
+    "prompt.rpm_policy.title": "Pacotes YUM não são suportados",
+    "prompt.self_update.action.dismiss": "Ignorar",
+    "prompt.self_update.action.download": "Baixar agora",
+    "prompt.self_update.action.view": "Abrir no navegador",
+    "prompt.self_update.detail": "{{notes}}\n\n:date: Publicado em {{pubDate}}.",
+    "prompt.self_update.message.linux": "Você pode ou baixar manualmente ou usar o gerenciador de pacotes da sua distro para atualizar: visite o website para mais instruções.",
+    "prompt.self_update.message.osx": "Escolha 'Baixar agora' para instalar automaticamente, ou vá para o website para mais instruções.",
+    "prompt.self_update.message.windows": "Escolha 'Baixar agora' para instalar automaticamente, ou vá para a página para mais instruções.",
+    "prompt.self_update.title": "itch v{{version}} está disponível para download",
+    "prompt.self_update_ready.action.restart": "Reiniciar agora",
+    "prompt.self_update_ready.action.snooze": "Suspender",
+    "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Publicado em {{pubDate}}.",
+    "prompt.self_update_ready.message": "Escolha 'Reiniciar agora' para aproveitar a atualização\n\nSe não fizer isso, a atualização estará ativa na próxima vez que o aplicativo for reiniciado.",
+    "prompt.self_update_ready.title": "Uma atualização foi baixada e instalada",
+    "prompt.uninstall.cancel": "Cancelar"
 }
