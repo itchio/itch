@@ -232,5 +232,14 @@
     "search.results.games": "Juegos",
     "search.results.creators": "Creadores",
     "search.empty.no_results": "No se encontraron resultados",
-    "search.empty.tagline": "¿Necesitas inspiración? Intenta buscar '{{example}}'"
+    "search.empty.tagline": "¿Necesitas inspiración? Intenta buscar '{{example}}'",
+    "search.open_as_tab": "Abrir como pestaña",
+    "search.placeholder": "Buscar",
+    "sidebar.category.basics": "Escenciales",
+    "sidebar.category.tabs": "Pestañas",
+    "sidebar.collection": "Colecciones",
+    "sidebar.collection.subtitle": "Una colección de {{itemCount}} ítems",
+    "sidebar.collections": "Colecciones",
+    "sidebar.dashboard_subtitle": "Cosas que haces y rompes",
+    "sidebar.downloads": "Descargas"
 }
