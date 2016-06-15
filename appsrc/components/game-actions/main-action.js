@@ -17,9 +17,12 @@ const linearGradient = (progress) => {
 
 class MainAction extends Component {
   render () {
-    const {t, cancellable, platform, platformCompatible, mayDownload, progress, task, action, animate} = this.props
+    const {t, cancellable, platform, platformCompatible, mayDownload, canBeBought, progress, task, action, animate, game} = this.props
 
     let child = ''
+    if (game.title === 'CURTAIN') {
+      console.log('mainAction game: ', game, 'canBeBought', canBeBought)
+    }
 
     if (task) {
       child = <span className='state normal-state'>
@@ -38,7 +41,7 @@ class MainAction extends Component {
             <Icon icon='install'/>
             {t('grid.item.install')}
           </span>
-        } else {
+        } else if (canBeBought) {
           child = <span className='state'>
             <Icon icon='shopping_cart'/>
             {t('grid.item.buy_now')}
@@ -66,13 +69,17 @@ class MainAction extends Component {
     const hint = this.hint()
 
     const buttonClasses = classNames('main-action', {
-      'buy-now': (platformCompatible && !mayDownload),
+      'buy-now': (platformCompatible && !mayDownload && canBeBought),
       'hint--top': hint,
       branded
     })
     const button = <div style={style} className={buttonClasses} onClick={() => this.onClick()} data-hint={hint}>
       {child}
     </div>
+
+    if (child === '') {
+      return <div/>
+    }
 
     return button
   }

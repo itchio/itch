@@ -11,7 +11,6 @@ import EnhanceFiltered from './filtered'
 
 export class Collection extends Component {
   render () {
-    console.log('rendering collection with props: ', this.props)
     const {allGames, tabGames, collection, query} = this.props
 
     if (!collection) {

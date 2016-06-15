@@ -58,6 +58,7 @@ MainAction.propTypes = {
   action: PropTypes.string,
   cave: PropTypes.any,
   mayDownload: PropTypes.bool,
+  canBeBought: PropTypes.bool,
   platformCompatible: PropTypes.bool,
   task: PropTypes.string,
   progress: PropTypes.number,
@@ -86,9 +87,10 @@ const makeMapStateToProps = () => {
 
       const animate = false
       let action = ClassificationActions[game.classification] || 'launch'
-      if (cave && cave.upload && cave.upload.demo) {
-        action += '_demo'
-      }
+      // TODO: finish implementing that
+      // if (cave && cave.upload && cave.upload.demo) {
+      //   action += '_demo'
+      // }
 
       const platformCompatible = (action === 'open' ? true : isPlatformCompatible(game))
       const cancellable = false
@@ -97,6 +99,7 @@ const makeMapStateToProps = () => {
       // FIXME game admins
       const canEdit = game.userId === meId
       const mayDownload = !!(downloadKey || !hasMinPrice || canEdit)
+      const canBeBought = game.canBeBought
 
       const downloading = download && !download.finished
 
@@ -106,6 +109,7 @@ const makeMapStateToProps = () => {
         animate,
         platform,
         mayDownload,
+        canBeBought,
         downloadKey,
         platformCompatible,
         action,

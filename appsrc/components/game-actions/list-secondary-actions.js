@@ -74,7 +74,7 @@ function uninstallAction (caveId) {
 }
 
 export default function listSecondaryActions (props) {
-  const {task, game, cave, mayDownload, downloadKey, action} = props
+  const {task, game, cave, mayDownload, canBeBought, downloadKey, action} = props
   let error = false
 
   const items = []
@@ -89,7 +89,9 @@ export default function listSecondaryActions (props) {
     }
 
     // No errors
-    items.push(purchaseAction(game, downloadKey))
+    if (canBeBought) {
+      items.push(purchaseAction(game, downloadKey))
+    }
     items.push(shareAction(game))
 
     items.push({
@@ -125,11 +127,9 @@ export default function listSecondaryActions (props) {
   } else {
     // No cave
     const hasMinPrice = game.minPrice > 0
-    const mainIsPurchase = !mayDownload && hasMinPrice
+    const mainIsPurchase = !mayDownload && hasMinPrice && canBeBought
 
-    // XXX should use API' can_be_bought but see
-    // https://github.com/itchio/itch/issues/379
-    if (!mainIsPurchase && game.canBeBought) {
+    if (!mainIsPurchase && canBeBought) {
       items.push(purchaseAction(game, downloadKey))
     }
 
