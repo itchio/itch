@@ -110,10 +110,10 @@
     "prompt.install_location_remove.title": "Removendo um local de instalação",
     "prompt.last_remaining_install_location.content": "Este é o único local de instalação, e ele não poderá ser removido até que outro seja adicionado.",
     "prompt.last_remaining_install_location.title": "Não é possível remover o local de instalação",
-    "prompt.logout_confirm": "Tem certeza de que deseja sair?",
+    "prompt.logout_confirm": "Tem certeza de que deseja fazer logout?",
     "prompt.no_compatible_version.detail": "Talvez esta {{classification}} ainda não seja compatível com isto ainda?",
     "prompt.no_compatible_version.message": "Não foi possível encontrar uma versão de {{title}} para {{platform}}.",
-    "prompt.no_compatible_version.title": "{{title}} na {{platform}}",
+    "prompt.no_compatible_version.title": "{{title}} para {{platform}}",
     "prompt.payments_disabled.detail": "Talvez você possa encontrar outro jeito de ajudar eles?",
     "prompt.payments_disabled.message": "Infelizmente o desenvolvedor de {{title}} não aceita pagamentos para este titulo.",
     "prompt.payments_disabled.open_web_page": "Abrir página web",
@@ -197,5 +197,10 @@
     "prompt.forget_session.action": "Esquecer sessão",
     "prompt.forget_session.detail": "Você sempre pode adicionar de novo depois.",
     "prompt.forget_session.message": "Tem certeza de que quer remover '{{username}}' das suas sessões salvas?",
-    "prompt.forget_session.title": "Esquecer sessão"
+    "prompt.forget_session.title": "Esquecer sessão",
+    "prompt.logout_action": "Fazer logout",
+    "prompt.logout_detail": "Downloads em progresso serão pausados até que você faça login novamente.",
+    "prompt.logout_title": "Fazer logout",
+    "prompt.packaging_policy.learn_more": "Saiba mais",
+    "prompt.packaging_policy.open_web_page": "Abrir página de {{title}}"
 }
