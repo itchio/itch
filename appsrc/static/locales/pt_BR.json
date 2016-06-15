@@ -109,7 +109,7 @@
     "prompt.install_location_remove.message": "Você realmente deseja remover este local?",
     "prompt.install_location_remove.title": "Removendo um local de instalação",
     "prompt.last_remaining_install_location.content": "Este é o único local de instalação, e ele não poderá ser removido até que outro seja adicionado.",
-    "prompt.last_remaining_install_location.title": "Não é possível remover a instalação local",
+    "prompt.last_remaining_install_location.title": "Não é possível remover o local de instalação",
     "prompt.logout_confirm": "Tem certeza de que deseja sair?",
     "prompt.no_compatible_version.detail": "Talvez esta {{classification}} ainda não seja compatível com isto ainda?",
     "prompt.no_compatible_version.message": "Não foi possível encontrar uma versão de {{title}} para {{platform}}.",
