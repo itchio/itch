@@ -34,6 +34,7 @@ $meat-cover-scale: 0.4;
 
   .browser-bar {
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     padding: 1px 0 6px 12px;
     background: $bread-background-color;
