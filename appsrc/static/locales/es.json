@@ -231,5 +231,6 @@
     "search.results.local": "Local",
     "search.results.games": "Juegos",
     "search.results.creators": "Creadores",
-    "search.empty.no_results": "No se encontraron resultados"
+    "search.empty.no_results": "No se encontraron resultados",
+    "search.empty.tagline": "¿Necesitas inspiración? Intenta buscar '{{example}}'"
 }
