@@ -244,5 +244,15 @@
     "sidebar.downloads": "Descargas",
     "sidebar.downloads_subtitle": "Siéntete libre de salir o reiniciar, las descargas se resumirán cuando regreses",
     "sidebar.empty": "¡Vamos!",
-    "sidebar.featured": "Destacado"
+    "sidebar.featured": "Destacado",
+    "sidebar.featured_subtitle": "Curado con amor por el equipo de itch.io",
+    "sidebar.itchio": "Tu portal al universo de juegos indie",
+    "sidebar.history": "Historial",
+    "sidebar.history_subtitle": "Esto fue lo que sucedió últimamente",
+    "sidebar.log_out": "Cerrar sesión",
+    "sidebar.new_tab": "Nueva pestaña",
+    "sidebar.owned_subtitle": "Cosas que compraste o instalaste",
+    "sidebar.preferences": "Preferencias",
+    "sidebar.preferences_subtitle": "Los detalles básicos",
+    "sidebar.press": "Centro de actividad de prensa"
 }
