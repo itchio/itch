@@ -8,12 +8,12 @@
   }
 }
 
-@mixin horizontal-scan {
+@mixin horizontal-scan ($dark: $secondary-text-color, $light: $secondary-text-hover-color) {
   background: -webkit-linear-gradient(
     left,
-    $secondary-text-color 0%,
-    $secondary-text-color 50%,
-    $secondary-text-hover-color 50%
+    $light 0%,
+    $light 50%,
+    $dark 50%
   );
   background-size: 200% 100%;
   -webkit-animation: horizontal-scan 2s infinite;

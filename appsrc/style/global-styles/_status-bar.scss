@@ -1,16 +1,31 @@
 
 .status-bar {
-  height: $status-bar-height;
+  position: fixed;
+  transition: all 0.4s;
+  bottom: -60px;
+  opacity: 0;
+
+  &.active {
+    bottom: 15px;
+    opacity: 1;
+  }
+
+  left: 50%;
+  transform: translateX(-50%);
+
   animation: bottom 0.2s;
-  padding: 8px;
+  padding: 8px 12px;
+  z-index: 200;
 
   font-size: $base-text-size - 2px;
 
-  background: $sidebar-background-color;
-  border-top: 1px solid $sidebar-border-color;
+  border-radius: 4px;
+  background: $accent-color;
+  border: 1px solid $light-accent-color;
+  box-shadow: 0 0 14px $sidebar-background-color;
 
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   align-items: center;
 
   .plug, .history, .downloads {
@@ -66,27 +81,19 @@
   }
 
   &.active {
-    bottom: 0;
-
     .self-update:hover {
       cursor: pointer;
       -webkit-filter: brightness(110%);
     }
   }
 
-  &.indev {
-    background-image: -webkit-repeating-linear-gradient(-55deg, #3C320F 0, #3C320F 15px, #1B1A16 15px, #1B1A16 25px);
-  }
-
-  .self-update {
-    &.busy {
-      .icon:first-child {
-        @include horizontal-scan;
-      }
+  .self-update.busy {
+    .icon:first-child {
+      @include horizontal-scan($dark: $light-accent-color, $light: white);
     }
   }
 
-  .padder {
+  .filler {
     flex-grow: 1;
   }
 
