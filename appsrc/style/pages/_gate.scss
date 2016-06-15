@@ -23,6 +23,7 @@
 
   .logo {
     flex-grow: 1;
+    pointer-events: none;
 
     display: flex;
     flex-direction: row;
