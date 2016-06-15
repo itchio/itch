@@ -29,7 +29,9 @@ export function * _queueCaveReinstall (action) {
 
   const archivePath = pathmaker.downloadPath(upload)
 
-  const {downloadKey} = cave
+  const findDownloadKey = () => {
+    return getUserMarket.getEntities('downloadKeys')::findWhere({gameId: game.id})
+  }
 
   yield call(startDownload, {
     game,
@@ -37,7 +39,7 @@ export function * _queueCaveReinstall (action) {
     upload,
     totalSize: upload.size,
     destPath: archivePath,
-    downloadKey,
+    downloadKey: cave.downloadKey || findDownloadKey(),
     reason: 'reinstall'
   })
 

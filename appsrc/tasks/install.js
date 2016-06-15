@@ -99,6 +99,7 @@ export default async function start (out, opts) {
   globalMarket.saveEntity('caves', cave.id, {launchable: false})
   await core.install(out, coreOpts)
   globalMarket.saveEntity('caves', cave.id, {
+    downloadKey,
     launchable: true,
     installedArchiveMtime: amtime,
     installedAt: new Date(),
