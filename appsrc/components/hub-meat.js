@@ -41,26 +41,26 @@ export class HubMeat extends Component {
 
   renderTab (tabId, path, data) {
     if (path === 'dashboard') {
-      return <Dashboard/>
+      return <Dashboard key={tabId}/>
     } else if (path === 'library') {
-      return <Library/>
+      return <Library key={tabId}/>
     } else if (path === 'collections') {
-      return <Collections/>
+      return <Collections key={tabId}/>
     } else if (path === 'downloads') {
-      return <Downloads/>
+      return <Downloads key={tabId}/>
     } else if (path === 'history') {
-      return <History/>
+      return <History key={tabId}/>
     } else if (path === 'preferences') {
-      return <Preferences/>
+      return <Preferences key={tabId}/>
     } else if (/^locations/.test(path)) {
       const location = pathToId(path)
-      return <Location locationName={location}/>
+      return <Location locationName={location} key={tabId}/>
     } else if (/^new/.test(path)) {
-      return <NewTab tabId={tabId}/>
+      return <NewTab tabId={tabId} key={tabId}/>
     } else if (/^collections\//.test(path)) {
-      return <Collection tabId={tabId} tabPath={path} data={data}/>
+      return <Collection tabId={tabId} tabPath={path} data={data} key={tabId}/>
     } else if (/^(url|games|users|collections|search|press|featured)/.test(path)) {
-      return <UrlMeat key={tabId} tabId={tabId} path={path}/>
+      return <UrlMeat tabId={tabId} path={path} key={tabId}/>
     } else {
       return '?'
     }
