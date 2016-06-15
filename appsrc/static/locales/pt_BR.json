@@ -221,5 +221,6 @@
     "prompt.self_update_ready.title": "Uma atualização foi baixada e instalada",
     "prompt.uninstall.cancel": "Cancelar",
     "prompt.uninstall.message": "Você tem certeza que deseja desinstalar {{title}}?",
-    "prompt.uninstall.reinstall": "Reinstalar"
+    "prompt.uninstall.reinstall": "Reinstalar",
+    "prompt.uninstall.uninstall": "Desinstalar agora"
 }
