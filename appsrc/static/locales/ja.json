@@ -165,5 +165,8 @@
     "grid.item.show_local_files": "ローカルファイルを閲覧する",
     "menu.file.close_all_tabs": "全てのタブを閉じる",
     "new_tab.top_sellers": "最も売れている作品",
-    "notification.see_you_soon.title": "さようなら！"
+    "notification.see_you_soon.title": "さようなら！",
+    "search.results.local": "ローカル",
+    "search.results.games": "ゲーム",
+    "search.results.creators": "製作者"
 }
