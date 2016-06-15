@@ -2,7 +2,7 @@
 import {indexBy, map} from 'underline'
 
 export default {
-  featured: { label: 'itch.io', subtitle: ['sidebar.featured_subtitle'] },
+  featured: { label: 'itch.io', subtitle: ['sidebar.itchio'] },
   dashboard: { label: ['sidebar.dashboard'], subtitle: ['sidebar.dashboard_subtitle'] },
   collections: { label: ['sidebar.collections'] },
   press: { label: ['sidebar.press'], subtitle: ['sidebar.press_subtitle'] },
