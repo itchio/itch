@@ -170,5 +170,7 @@
     "grid.item.version": "Versión {{version}}",
     "i18n.failed_downloading_locales": "Las actualizaciones de traducción del idioma {{lang}} no han podido ser descargadas.",
     "install_location.empty": "No hay nada instalado por el momento en esta ubicación",
-    "login.action.show_form": "Iniciar sesión como otro usuario"
+    "login.action.show_form": "Iniciar sesión como otro usuario",
+    "login.action.show_saved_logins": "Inicios de sesión guardados",
+    "login.messages.welcome_back": "¡Bienvenido nuevamente!"
 }
