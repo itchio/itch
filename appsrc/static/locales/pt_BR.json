@@ -101,7 +101,7 @@
     "prompt.crash_reporter.open_crash_log": "Abrir log de erro",
     "prompt.crash_reporter.report_issue": "Reportar problema",
     "prompt.install_location_add.title": "Escolha um novo local de instalação",
-    "prompt.install_location_not_empty.detail": "É necessário fazer manualmente por enquanto.",
+    "prompt.install_location_not_empty.detail": "No momento, é necessário que isto seja feito manualmente.",
     "prompt.install_location_not_empty.message": "Locais de instalação só poderão ser removidos quando todos os seus conteúdos forem desinstalados.",
     "prompt.install_location_not_empty.show_contents": "Mostrar conteúdos",
     "prompt.install_location_not_empty.title": "Este local de instalação não está vazio",
@@ -193,5 +193,9 @@
     "preferences.install_location.make_default_short": "Tornar padrão",
     "prompt.deb_policy.detail": "itch só pode instalar versões portáteis de aplicações Linux.",
     "prompt.deb_policy.message": "{{title}} usa o formato .deb de pacotes e não pode ser instalado pelo itch até que seja reempacotado.",
-    "prompt.deb_policy.title": "Pacotes APT não suportados"
+    "prompt.deb_policy.title": "Pacotes APT não suportados",
+    "prompt.forget_session.action": "Esquecer sessão",
+    "prompt.forget_session.detail": "Você sempre pode adicionar de novo depois.",
+    "prompt.forget_session.message": "Tem certeza de que quer remover '{{username}}' das suas sessões salvas?",
+    "prompt.forget_session.title": "Esquecer sessão"
 }
