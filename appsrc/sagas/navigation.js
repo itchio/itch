@@ -458,6 +458,11 @@ function makeTabContextMenu (queue) {
       }
     }
 
+    if (template.length === 0) {
+      // showing empty context menus would be NSANE!
+      return
+    }
+
     const menu = Menu.buildFromTemplate(clone(template))
     const mainWindowId = yield select((state) => state.ui.mainWindow.id)
     const mainWindow = BrowserWindow.fromId(mainWindowId)
