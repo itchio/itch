@@ -10,8 +10,6 @@ import Icon from './icon'
 import {connect} from './connect'
 import {createStructuredSelector} from 'reselect'
 
-import {filter} from 'underline'
-
 /**
  * Displays our current progress when checking for updates, etc.
  */
@@ -22,8 +20,8 @@ class StatusBar extends Component {
   }
 
   render () {
-    const {t, statusMessages, selfUpdate, offlineMode} = this.props
-    const {dismissStatus, dismissStatusMessage, applySelfUpdateRequest, showAvailableSelfUpdate, updatePreferences} = this.props
+    const {t, statusMessages, selfUpdate} = this.props
+    const {dismissStatus, dismissStatusMessage, applySelfUpdateRequest, showAvailableSelfUpdate} = this.props
     let {status, error, uptodate, available, downloading, downloaded, checking} = selfUpdate
 
     let children = []
@@ -99,25 +97,14 @@ class StatusBar extends Component {
     }
 
     const classes = classNames('status-bar', {active, busy, indev})
-
-    const plugHint = t(`status.offline_mode.${offlineMode ? 'active' : 'inactive'}`)
-    const plugIcon = offlineMode ? 'globe-outline' : 'globe2'
-    const plugClasses = classNames('plug hint--right', {active: offlineMode})
     const selfUpdateClasses = classNames('self-update', {busy})
 
     return <div className={classes}>
+      <div className='filler'/>
       <div className={selfUpdateClasses} onClick={onClick}>
         {children}
       </div>
-      <div className='padder'/>
-
-      {this.downloads()}
-
-      {this.history()}
-
-      <div style={{display: 'none'}} className={plugClasses} onClick={() => updatePreferences({offlineMode: !offlineMode})} data-hint={plugHint}>
-        <Icon icon={plugIcon}/>
-      </div>
+      <div className='filler'/>
     </div>
   }
 
@@ -131,37 +118,6 @@ class StatusBar extends Component {
       this.setState({...this.state, historyBounce: true})
       setTimeout(() => this.setState({...this.state, historyBounce: false}), 500)
     }
-  }
-
-  downloads () {
-    const {t, downloadItems, finishedDownloads, navigate} = this.props
-
-    const downloadClasses = classNames('downloads hint--right', {active: downloadItems.length > 0, bounce: this.state.downloadsBounce})
-    const downloadHint = downloadItems.length === 0 ? t('status.downloads.no_active_downloads') : t('status.downloads.click_to_manage')
-
-    return <div ref='downloads' className={downloadClasses} data-hint={downloadHint} onClick={() => navigate('downloads')}>
-      <Icon icon='download'/>
-      {finishedDownloads.length > 0
-        ? <span className='bubble'>{finishedDownloads.length}</span>
-        : ''
-      }
-    </div>
-  }
-
-  history () {
-    const {t, historyItems, navigate} = this.props
-    const activeItems = historyItems::filter('active')
-
-    const historyHint = activeItems.length === 0 ? t('status.history.no_active_items') : t('status.history.click_to_expand')
-    const historyClasses = classNames('history hint--right', {active: activeItems.length > 0, bounce: this.state.historyBounce})
-
-    return <div ref='history' className={historyClasses} data-hint={historyHint} onClick={() => navigate('history')}>
-      <Icon icon='history'/>
-      {activeItems.length > 0
-        ? <span className='bubble'>{activeItems.length}</span>
-        : ''
-      }
-    </div>
   }
 }
 
