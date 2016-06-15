@@ -10,6 +10,7 @@ import clone from 'clone'
 import ospath from 'path'
 import uuid from 'node-uuid'
 import urlParser from 'url'
+import querystring from 'querystring'
 
 import {shell} from '../electron'
 import {delay, takeEvery} from './effects'
@@ -43,7 +44,7 @@ import {
   SESSION_READY, SHOW_PREVIOUS_TAB, SHOW_NEXT_TAB, OPEN_URL, TAB_CHANGED, TABS_CHANGED,
   VIEW_CREATOR_PROFILE, VIEW_COMMUNITY_PROFILE, EVOLVE_TAB, TRIGGER_MAIN_ACTION,
   TRIGGER_OK, TRIGGER_BACK, WINDOW_FOCUS_CHANGED, TAB_RELOADED,
-  OPEN_TAB_CONTEXT_MENU, INITIATE_PURCHASE, PROBE_CAVE, FOCUS_NTH_TAB, NEW_TAB,
+  OPEN_TAB_CONTEXT_MENU, INITIATE_SHARE, PROBE_CAVE, FOCUS_NTH_TAB, NEW_TAB,
   COPY_TO_CLIPBOARD, STATUS_MESSAGE
 } from '../constants/action-types'
 
@@ -472,14 +473,14 @@ function makeTabContextMenu (queue) {
   }
 }
 
-function * _initiatePurchase (action) {
+function * _initiateShare (action) {
   const {game} = action.payload
-  // wooooo crunch
-  yield put(openUrl(game.url + '/purchase'))
+  const query = querystring.encode({url: game.url})
+  yield put(openUrl(`https://www.addtoany.com/share?${query}`))
 }
 
 function * _probeCave (action) {
-  // ditto
+  // TODO: uncrunch this
   yield put(openUrl('https://gist.github.com/fasterthanlime/fc0116df32b53c7939016afe0d26796d'))
 }
 
@@ -537,8 +538,8 @@ export default function * navigationSaga () {
     takeEvery(TRIGGER_MAIN_ACTION, _triggerMainAction),
     takeEvery(TRIGGER_OK, _triggerOk),
     takeEvery(TRIGGER_BACK, _triggerBack),
-    takeEvery(INITIATE_PURCHASE, _initiatePurchase),
     takeEvery(PROBE_CAVE, _probeCave),
+    takeEvery(INITIATE_SHARE, _initiateShare),
     takeEvery(OPEN_TAB_CONTEXT_MENU, makeTabContextMenu(queue)),
     takeEvery('*', function * watchNavigation () {
       const state = yield select()

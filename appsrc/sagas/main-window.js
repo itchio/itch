@@ -2,6 +2,7 @@
 import {darkMineShaft} from '../constants/colors'
 import {app, BrowserWindow} from '../electron'
 import config from '../util/config'
+import os from '../util/os'
 import invariant from 'invariant'
 import {debounce} from 'underline'
 
@@ -44,18 +45,27 @@ function * _createWindow () {
   }
   const {width, height} = bounds
   const center = (bounds.x === -1 && bounds.y === -1)
+  const iconPath = `${__dirname}/../static/images/tray/${app.getName()}.png`
 
   const window = new BrowserWindow({
     title: app.getName(),
-    icon: `./static/images/tray/${app.getName()}.png`,
+    icon: iconPath,
     width, height,
     center,
     show: false,
     autoHideMenuBar: true,
     backgroundColor: darkMineShaft,
-    titleBarStyle: 'hidden',
-    'title-bar-style': 'hidden'
+    titleBarStyle: 'hidden'
   })
+
+  if (os.platform() === 'darwin') {
+    try {
+      // TODO: restore once https://github.com/electron/electron/issues/6056 is fixed
+      // app.dock.setIcon(iconPath)
+    } catch (err) {
+      console.log(`error setting icon: ${err.stack || err}`)
+    }
+  }
 
   if (!center) {
     window.setPosition(bounds.x, bounds.y)

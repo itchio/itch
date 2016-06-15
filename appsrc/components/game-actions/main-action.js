@@ -6,6 +6,8 @@ import classNames from 'classnames'
 import Icon from '../icon'
 import TaskIcon from '../task-icon'
 
+import format from '../../util/format'
+
 const linearGradient = (progress) => {
   let percent = (progress * 100).toFixed() + '%'
   let doneColor = '#414141'
@@ -44,7 +46,7 @@ class MainAction extends Component {
         }
       } else {
         return <span className='state not-platform-compatible'>
-          {t('grid.item.not_platform_compatible', {platform})}
+          {t('grid.item.not_platform_compatible', {platform: format.itchPlatform(platform)})}
         </span>
       }
     }

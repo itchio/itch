@@ -7,8 +7,18 @@ export function slugify (str) {
     .replace(/ +/g, '_')
 }
 
+const itchPlatforms = {
+  'linux': 'GNU/Linux', // not SteamOS
+  'windows': 'Windows',
+  'osx': 'macOS' // since WWDC june 2016
+}
+
+export function itchPlatform (p) {
+  return itchPlatforms[p] || '???'
+}
+
 export function camelify (str) {
-  return str.replace(/_[a-z]/g, (x) => x[1].toUpperCase())
+  return str.replace(/[_-][a-z]/g, (x) => x[1].toUpperCase())
 }
 
 export function camelifyObject (obj) {
@@ -73,4 +83,4 @@ export function price (currency, value) {
   }
 }
 
-export default {date, slugify, camelify, camelifyObject, seconds, DATE_FORMAT, price}
+export default {date, slugify, camelify, camelifyObject, seconds, DATE_FORMAT, price, itchPlatform}

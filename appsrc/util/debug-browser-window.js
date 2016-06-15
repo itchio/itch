@@ -2,7 +2,7 @@
 /**
  * Gives us some log of what happens in the browser window, helps debugging the flow
  */
-function enable_event_debugging (prefix, win) {
+function enableEventDebugging (prefix, win) {
   let events = 'page-title-updated close closed unresponsive responsive blur focus maximize unmaximize minimize restore resize move moved enter-full-screen enter-html-full-screen leave-html-full-screen app-command'
   events.split(' ').forEach((ev) => {
     win.on(ev, (e, deets) => {
@@ -18,4 +18,4 @@ function enable_event_debugging (prefix, win) {
   })
 }
 
-export default enable_event_debugging
+export default enableEventDebugging

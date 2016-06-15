@@ -8,7 +8,7 @@ $meat-cover-scale: 0.4;
   }
   100% {
     border-image-slice: 0% 0% 10% 0%;
-    border-image-width: 2px;
+    border-image-width: 0 0 2px 0;
   }
 }
 

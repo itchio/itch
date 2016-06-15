@@ -101,6 +101,7 @@ export default async function start (out, opts) {
   globalMarket.saveEntity('caves', cave.id, {
     launchable: true,
     installedArchiveMtime: amtime,
+    installedAt: new Date(),
     uploadId: upload.id,
     buildId: upload.buildId,
     uploads: {[upload.id]: upload},

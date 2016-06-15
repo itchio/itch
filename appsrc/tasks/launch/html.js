@@ -38,8 +38,8 @@ export default async function launch (out, opts) {
     width, height,
     center: true,
     show: true,
-    backgroundColor: '#000',
-    'title-bar-style': 'hidden',
+    backgroundColor: '#fff',
+    titleBarStyle: 'hidden',
     useContentSize: true,
     webPreferences: {
       /* don't let web code control the OS */
@@ -51,18 +51,14 @@ export default async function launch (out, opts) {
     }
   })
 
-  win.webContents.on('dom-ready', (e) => {
-    win.webContents.insertCSS('body {background: #000;}')
-  })
-
   // open dev tools immediately if requested
   if (process.env.IMMEDIATE_NOSE_DIVE === '1') {
     debugBrowserWindow(`game ${game.title}`, win)
     win.webContents.openDevTools({detach: true})
   }
 
-  // clear menu, cf. https://github.com/itchio/itch/issues/232
-  win.setMenu(null)
+  // hide menu, cf. https://github.com/itchio/itch/issues/232
+  win.setMenuBarVisibility(false)
 
   // strip 'Electron' from user agent so some web games stop being confused
   let userAgent = win.webContents.getUserAgent()

@@ -10,9 +10,7 @@ import moment from 'moment'
 function momentBridge (t) {
   return function (count, unit, direction) {
     const m = moment().locale(t.lang).add({[unit]: count})
-    const ret = (direction === 'ago') ? m.toNow() : m.fromNow()
-    console.log('for ', count, unit, direction, ' got ' + ret)
-    return ret
+    return (direction === 'ago') ? m.toNow() : m.fromNow()
   }
 }
 

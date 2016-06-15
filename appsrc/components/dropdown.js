@@ -73,7 +73,8 @@ Dropdown.propTypes = {
   inner: PropTypes.element,
   className: PropTypes.string,
   items: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.array.isRequired,
+    label: PropTypes.array,
+    type: PropTypes.string,
     icon: PropTypes.string
   })),
 

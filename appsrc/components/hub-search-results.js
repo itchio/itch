@@ -99,7 +99,7 @@ export class HubSearchResults extends Component {
 
     return <div className={classNames('hub-search-results', {active: open})}>
       <div className='header'>
-        <h2>{t('search.results.title', {query})}</h2>
+        <h2>{t('search.results.title', {query: query || ''})}</h2>
         <div className='filler'/>
         <span className='icon icon-cross close-search' onClick={closeSearch}/>
       </div>
