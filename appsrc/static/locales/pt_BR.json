@@ -219,5 +219,6 @@
     "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Publicado em {{pubDate}}.",
     "prompt.self_update_ready.message": "Escolha 'Reiniciar agora' para aproveitar a atualização\n\nSe não fizer isso, a atualização estará ativa na próxima vez que o aplicativo for reiniciado.",
     "prompt.self_update_ready.title": "Uma atualização foi baixada e instalada",
-    "prompt.uninstall.cancel": "Cancelar"
+    "prompt.uninstall.cancel": "Cancelar",
+    "prompt.uninstall.message": "Você tem certeza que deseja desinstalar {{title}}?"
 }
