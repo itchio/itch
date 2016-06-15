@@ -36,7 +36,7 @@ let self = {
       } catch (e) { log(`"${full}" resisted us: ${e.message || '?'}`) }
     }
 
-    switch (os.itch_platform()) {
+    switch (os.itchPlatform()) {
       case 'windows':
         await dump('cmd.exe /c ver')
         // weirdest syntax ever, 'name,' and 'caption,' are separate arguments...
