@@ -152,5 +152,6 @@
     "grid.item.check_for_update": "Verificar atualizações",
     "grid.item.developer": "Desenvolvedor",
     "grid.item.launch_demo": "Iniciar demo",
-    "grid.item.share": "Compartilhar"
+    "grid.item.share": "Compartilhar",
+    "grid.item.open": "Abrir"
 }
