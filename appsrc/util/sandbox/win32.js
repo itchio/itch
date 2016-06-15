@@ -46,9 +46,11 @@ export async function uninstall (opts) {
 }
 
 async function adminRunScript (lines) {
-  const contents = lines.join('\n')
+  const contents = lines.join('\r\n')
   const tmpObj = tmp.fileSync({postfix: '.bat'})
   sf.writeFile(tmpObj.name, contents)
+
+  console.log(`running batch script:\r\n${contents}`)
 
   let out = ''
   let e
@@ -62,7 +64,11 @@ async function adminRunScript (lines) {
     })
   } catch (err) { e = err }
 
-  tmpObj.removeCallback()
+  if (process.env.KEEP_MESS_AROUND === '1') {
+    console.log(`keeping temp batch script at ${tmpObj.name}`)
+  } else {
+    tmpObj.removeCallback()
+  }
 
   if (e) { throw e }
 
