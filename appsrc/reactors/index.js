@@ -10,16 +10,20 @@ import mainWindow from './main-window'
 import fetch from './fetch'
 import i18n from './i18n'
 import locales from './locales'
+import rememberedSessions from './remembered-sessions'
 
 export default validateReactors({
   _ALL: combine(i18n),
 
   PREBOOT: combine(preboot),
-  BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow, locales.boot),
+  BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow, locales.boot, rememberedSessions.boot),
 
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),
-  LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded),
+  LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded),
   LOGOUT: combine(market.logout),
+
+  FORGET_SESSION_REQUEST: combine(rememberedSessions.forgetSessionRequest),
+  FORGET_SESSION: combine(rememberedSessions.forgetSession),
 
   USER_DB_COMMIT: combine(fetch.fetchCollectionGames),
 
