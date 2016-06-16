@@ -1,46 +1,21 @@
 
-import createQueue from './queue'
 import {app} from '../electron'
 import os from '../util/os'
 import needle from '../promised/needle'
 
-const linux = os.itchPlatform() === 'linux'
+import delay from './delay'
 
 import env from '../env'
 import urls from '../constants/urls'
 
-import {takeEvery} from './effects'
-import {put, call, select} from 'redux-saga/effects'
-import {delay} from './effects'
-
 import mklog from '../util/log'
-const log = mklog('self-update')
+const log = mklog('reactors/self-update')
 import {opts} from '../logger'
 import format, {DATE_FORMAT} from '../util/format'
 
-import {
-  BOOT,
-  CHECK_FOR_SELF_UPDATE,
-  APPLY_SELF_UPDATE_REQUEST,
-  APPLY_SELF_UPDATE,
-  SELF_UPDATE_ERROR,
-  SHOW_AVAILABLE_SELF_UPDATE
-} from '../constants/action-types'
+import * as actions from '../actions'
 
-import {
-  checkForSelfUpdate,
-  applySelfUpdate,
-  snoozeSelfUpdate,
-  selfUpdateError,
-  checkingForSelfUpdate,
-  selfUpdateAvailable,
-  selfUpdateNotAvailable,
-  selfUpdateDownloaded,
-  dismissStatus,
-  prepareQuit,
-  openModal,
-  openUrl
-} from '../actions'
+const linux = os.itchPlatform() === 'linux'
 
 let hadErrors = false
 let autoUpdater
@@ -55,12 +30,10 @@ const QUIET_TIME = 2 * 1000
 
 const CHECK_FOR_SELF_UPDATES = env.name === 'production' || process.env.UP_TO_SCRATCH === '1'
 
-export function * _boot () {
+async function boot (store, action) {
   if (!CHECK_FOR_SELF_UPDATES) {
     return
   }
-
-  const queue = createQueue('self-update')
 
   try {
     autoUpdater = require('electron').autoUpdater
@@ -70,7 +43,7 @@ export function * _boot () {
         // electron-prebuilt isn't signed, we know you can't work Squirrel.mac, don't worry
         log(opts, 'Ignoring Squirrel.mac complaint')
       } else {
-        queue.dispatch(selfUpdateError(err))
+        store.dispatch(actions.selfUpdateError(err))
       }
     })
     log(opts, 'Installed!')
@@ -84,58 +57,56 @@ export function * _boot () {
   log(opts, `Update feed: ${feedUrl}`)
   autoUpdater.setFeedURL(feedUrl)
 
-  autoUpdater.on('checking-for-update', () => queue.dispatch(checkingForSelfUpdate()))
-  autoUpdater.on('update-available', () => queue.dispatch(selfUpdateAvailable()))
-  autoUpdater.on('update-not-available', () => queue.dispatch(selfUpdateNotAvailable({uptodate: true})))
+  autoUpdater.on('checking-for-update', () => store.dispatch(actions.checkingForSelfUpdate()))
+  autoUpdater.on('update-available', () => store.dispatch(actions.selfUpdateAvailable()))
+  autoUpdater.on('update-not-available', () => store.dispatch(actions.selfUpdateNotAvailable({uptodate: true})))
   autoUpdater.on('update-downloaded', (ev, releaseNotes, releaseName) => {
     log(opts, `update downloaded, release name: '${releaseName}'`)
     log(opts, `release notes: \n'${releaseNotes}'`)
-    queue.dispatch(selfUpdateDownloaded(releaseName))
+    store.dispatch(actions.selfUpdateDownloaded(releaseName))
   })
 
-  setTimeout(() => queue.dispatch(checkForSelfUpdate()), QUIET_TIME)
-  setInterval(() => queue.dispatch(checkForSelfUpdate()), UPDATE_INTERVAL)
-
-  yield call(queue.exhaust)
+  setTimeout(() => store.dispatch(actions.checkForSelfUpdate()), QUIET_TIME)
+  setInterval(() => store.dispatch(actions.checkForSelfUpdate()), UPDATE_INTERVAL)
 }
 
-export function * _checkForSelfUpdate () {
+async function checkForSelfUpdate (store, action) {
   log(opts, 'Checking...')
   const uri = getFeedURL()
 
   try {
-    const resp = yield call(needle.requestAsync, 'GET', uri, {format: 'json'})
+    const resp = await needle.requestAsync('GET', uri, {format: 'json'})
 
     log(opts, `HTTP GET ${uri}: ${resp.statusCode}`)
     if (resp.statusCode === 200) {
-      const downloadSelfUpdates = yield select((state) => state.preferences.downloadSelfUpdates)
+      const downloadSelfUpdates = store.getState().preferences.downloadSelfUpdates
 
       if (autoUpdater && !hadErrors && downloadSelfUpdates && !linux) {
-        yield put(selfUpdateAvailable({spec: resp.body, downloading: true}))
+        store.dispatch(actions.selfUpdateAvailable({spec: resp.body, downloading: true}))
         autoUpdater.checkForUpdates()
       } else {
-        yield put(selfUpdateAvailable({spec: resp.body, downloading: false}))
+        store.dispatch(actions.selfUpdateAvailable({spec: resp.body, downloading: false}))
       }
     } else if (resp.statusCode === 204) {
-      yield put(selfUpdateNotAvailable({uptodate: true}))
-      yield call(delay, DISMISS_TIME)
-      yield put(dismissStatus())
+      store.dispatch(actions.selfUpdateNotAvailable({uptodate: true}))
+      await delay(DISMISS_TIME)
+      store.dispatch(actions.dismissStatus())
     } else {
-      yield put(selfUpdateError(`While trying to reach update server: ${resp.status}`))
+      store.dispatch(actions.selfUpdateError(`While trying to reach update server: ${resp.status}`))
     }
   } catch (e) {
     if (e.code === 'ENOTFOUND') {
       log(opts, 'Seems like we have no network connectivity, skipping self-update check')
-      yield put(selfUpdateNotAvailable({uptodate: false}))
+      store.dispatch(actions.selfUpdateNotAvailable({uptodate: false}))
     } else {
       throw e
     }
   }
 }
 
-export function * _applySelfUpdateRequest () {
-  const lang = yield select((state) => state.i18n.lang)
-  const spec = yield select((state) => state.selfUpdate.downloaded)
+async function applySelfUpdateRequest (store, action) {
+  const lang = store.getState().i18n.lang
+  const spec = store.getState().selfUpdate.downloaded
   if (!spec) {
     log(opts, 'Asked to apply update, but nothing downloaded? bailing out...')
     return
@@ -143,35 +114,37 @@ export function * _applySelfUpdateRequest () {
 
   const pubDate = new Date(Date.parse(spec.pub_date))
 
-  yield put(openModal({
+  store.dispatch(actions.openModal({
     title: ['prompt.self_update_ready.title', {version: spec.name}],
     message: ['prompt.self_update_ready.message'],
     detail: ['prompt.self_update_ready.detail', {notes: spec.notes, pubDate: format.date(pubDate, DATE_FORMAT, lang)}],
     buttons: [
       {
         label: ['prompt.self_update_ready.action.restart'],
-        action: applySelfUpdate(),
+        action: actions.applySelfUpdate(),
         icon: 'repeat'
       },
       {
         label: ['prompt.self_update_ready.action.snooze'],
-        action: snoozeSelfUpdate(),
+        action: actions.snoozeSelfUpdate(),
         className: 'secondary'
       }
     ]
   }))
 }
 
-export function * _applySelfUpdate () {
+async function applySelfUpdate (store, action) {
   if (!autoUpdater) {
     log(opts, 'not applying self update, got no auto-updater')
     return
   }
 
   log(opts, 'Preparing for restart...')
-  yield put(prepareQuit())
+  store.dispatch(actions.prepareQuit())
 
-  yield call(delay, 400)
+  // good job past me, that's top quality code!
+  // if only you left a comment explaining why this is necessary..
+  await delay(400)
 
   log(opts, 'Handing off to Squirrel')
   autoUpdater.quitAndInstall()
@@ -184,24 +157,24 @@ function getFeedURL () {
   return `${base}/update/${platform}/${version}`
 }
 
-export function * _selfUpdateError (action) {
+async function selfUpdateError (store, action) {
   const error = action.payload
   log(opts, `Error: ${error}`)
 }
 
-export function * _showAvailableSelfUpdate (action) {
-  const spec = yield select((state) => state.selfUpdate.available)
+async function showAvailableSelfUpdate (store, action) {
+  const spec = store.getState().selfUpdate.available
   if (!spec) {
     log(opts, 'Asked to show available self-update but there wasn\'t any')
-    yield put(dismissStatus())
+    store.dispatch(actions.dismissStatus())
     return
   }
   const pubDate = new Date(Date.parse(spec.pub_date))
-  const lang = yield select((state) => state.i18n.lang)
+  const lang = store.getState().i18n.lang
 
   const messageString = `prompt.self_update.message.${os.itchPlatform()}`
 
-  yield put(openModal({
+  store.dispatch(actions.openModal({
     title: ['prompt.self_update.title', {version: spec.name}],
     message: [messageString],
     detail: ['prompt.self_update.detail', {notes: spec.notes, pubDate: format.date(pubDate, DATE_FORMAT, lang)}],
@@ -209,36 +182,30 @@ export function * _showAvailableSelfUpdate (action) {
       {
         label: ['prompt.self_update.action.download'],
         action: [
-          openUrl(spec.url),
-          dismissStatus()
+          actions.openUrl(spec.url),
+          actions.dismissStatus()
         ],
         icon: 'download'
       },
       {
         label: ['prompt.self_update.action.view'],
         action: [
-          openUrl(urls.releasesPage),
-          dismissStatus()
+          actions.openUrl(urls.releasesPage),
+          actions.dismissStatus()
         ],
         className: 'secondary',
         icon: 'earth'
       },
       {
         label: ['prompt.self_update.action.dismiss'],
-        action: dismissStatus(),
+        action: actions.dismissStatus(),
         className: 'secondary'
       }
     ]
   }))
 }
 
-export default function * setupSaga () {
-  yield [
-    takeEvery(BOOT, _boot),
-    takeEvery(CHECK_FOR_SELF_UPDATE, _checkForSelfUpdate),
-    takeEvery(APPLY_SELF_UPDATE_REQUEST, _applySelfUpdateRequest),
-    takeEvery(APPLY_SELF_UPDATE, _applySelfUpdate),
-    takeEvery(SELF_UPDATE_ERROR, _selfUpdateError),
-    takeEvery(SHOW_AVAILABLE_SELF_UPDATE, _showAvailableSelfUpdate)
-  ]
+export default {
+  boot, checkForSelfUpdate, applySelfUpdateRequest, applySelfUpdate,
+  selfUpdateError, showAvailableSelfUpdate
 }

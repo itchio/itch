@@ -18,12 +18,13 @@ import notifications from './notifications'
 import menu from './menu'
 import installLocations from './install-locations'
 import purchases from './purchases'
+import selfUpdate from './self-update'
 
 export default validateReactors({
   _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll, installLocations.catchAll),
 
   PREBOOT: combine(preboot),
-  BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow, locales.boot, rememberedSessions.boot),
+  BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow, locales.boot, rememberedSessions.boot, selfUpdate.boot),
 
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),
   LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded),
@@ -70,6 +71,12 @@ export default validateReactors({
   SET_PROGRESS: combine(notifications.setProgress),
   BOUNCE: combine(notifications.bounce),
   NOTIFY: combine(notifications.notify),
+
+  CHECK_FOR_SELF_UPDATE: combine(selfUpdate.checkForSelfUpdate),
+  APPLY_SELF_UPDATE_REQUEST: combine(selfUpdate.applySelfUpdateRequest),
+  APPLY_SELF_UPDATE: combine(selfUpdate.applySelfUpdate),
+  SELF_UPDATE_ERROR: combine(selfUpdate.selfUpdateError),
+  SHOW_AVAILABLE_SELF_UPDATE: combine(selfUpdate.showAvailableSelfUpdate),
 
   CLOSE_TAB_OR_AUX_WINDOW: combine(mainWindow.closeTabOrAuxWindow),
   QUIT_WHEN_MAIN: combine(mainWindow.quitWhenMain),
