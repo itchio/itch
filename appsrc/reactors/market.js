@@ -32,6 +32,8 @@ export function getGlobalMarket () {
 }
 
 async function boot (store, action) {
+  globalMarket = new Market()
+
   globalMarket.on('ready', () => {
     store.dispatch(actions.globalDbReady())
   })
