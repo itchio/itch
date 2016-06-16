@@ -81,6 +81,7 @@ function * fetchUsuals (credentials) {
 }
 
 function * _search (action) {
+  // TODO: actually cancel search
   // 200ms debounce
   yield call(delay, 200)
 
@@ -94,6 +95,11 @@ function * _search (action) {
     }
 
     const query = action.payload
+    if (!query) {
+      log(opts, 'Clearing query')
+      yield put(searchFetched({query: '', results: null}))
+      return
+    }
     const results = yield call(fetch.search, credentials, query)
 
     yield put(searchFetched({query, results}))
