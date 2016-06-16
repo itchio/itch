@@ -13,6 +13,7 @@ import {checkForGameUpdates, statusMessage} from '../actions'
 
 import fetch from '../util/fetch'
 import pathmaker from '../util/pathmaker'
+import api from '../util/api'
 
 import mklog from '../util/log'
 const log = mklog('updater')
@@ -120,7 +121,7 @@ function * checkForGameUpdate (cave, taskOpts = {}) {
       const {uploads, downloadKey} = yield call(findUpload, out, taskOpts)
       if (uploads.length === 0) {
         log(opts, `Can't check for updates for ${game.title}, no uploads.`)
-        logger.contents.split('\n').map((line) => log(opts, `> ${line}`))
+        logger.contents.trimRight().split('\n').map((line) => log(opts, `> ${line}`))
         return {err: 'No uploads found'}
       }
 
@@ -207,8 +208,13 @@ function * checkForGameUpdate (cave, taskOpts = {}) {
         return {hasUpgrade}
       }
     } catch (e) {
-      log(opts, `While looking for update: ${e.stack || e}`)
-      return {err: e}
+      if (api.hasAPIError(e, 'incorrect user for claim')) {
+        log(opts, `Skipping update check for ${game.title}, download key belongs to other user`)
+      } else {
+        log(opts, `While looking for update: ${e.stack || e}`)
+        log(opts, `Error object: ${JSON.stringify(e, 0, 2)}`)
+        return {err: e}
+      }
     }
   } else {
     log(opts, `Can't check for updates for ${game.title}, not visible by current user?`)

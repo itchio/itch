@@ -111,6 +111,7 @@ function * fetchSingleCollectionGames (market, credentials, collectionId) {
 }
 
 function * _fetchCollectionGames (action) {
+  // TODO: why is this here?
   yield call(delay, 300)
 
   const credentials = yield select((state) => state.session.credentials)
@@ -119,8 +120,8 @@ function * _fetchCollectionGames (action) {
   }
   const market = getUserMarket()
 
-  const collections = yield select((state) => state.market.collections)
-  const fetchedCollections = yield select((state) => state.session.cachedCollections.fetched)
+  const collections = (yield select((state) => state.market.collections)) || {}
+  const fetchedCollections = yield select((state) => state.session.cachedCollections.fetched) || {}
 
   yield collections::map((collection, collectionIdStr) => {
     const collectionId = Number(collectionIdStr)

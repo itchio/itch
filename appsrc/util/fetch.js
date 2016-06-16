@@ -107,7 +107,7 @@ export async function collectionGames (market, credentials, collectionId) {
 
   let collection = market.getEntities('collections')[collectionId]
   if (!collection) {
-    log(opts, `collection not found: ${collectionId}`)
+    log(opts, `collection not found: ${collectionId}, stack = ${(new Error()).stack}`)
     return
   }
 

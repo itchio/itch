@@ -9,6 +9,8 @@ import mkcooldown from './cooldown'
 import mklog from './log'
 import {camelifyObject} from './format'
 
+import {contains} from 'underline'
+
 const cooldown = mkcooldown(130)
 const log = mklog('api')
 const logger = new mklog.Logger({sinks: {console: !!process.env.LET_ME_IN}})
@@ -92,6 +94,10 @@ export class Client {
   withKey (key) {
     invariant(typeof key === 'string', 'API key is a string')
     return new AuthenticatedClient(this, key)
+  }
+
+  hasAPIError (errorObject, apiError) {
+    return (errorObject.errors || [])::contains(apiError)
   }
 }
 
