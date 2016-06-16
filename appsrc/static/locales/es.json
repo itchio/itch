@@ -118,7 +118,7 @@
     "prompt.no_compatible_version.message": "No hemos podido encontrar una versión de {{title}} para {{platform}}.",
     "prompt.no_compatible_version.title": "{{title}} para {{platform}}",
     "prompt.payments_disabled.detail": "¿Quizás puedas encontrar otra forma de apoyar al desarrollador?",
-    "prompt.payments_disabled.message": "Desafortunadamente, el desarrollador de {{title}} no acepta pagos para este título.",
+    "prompt.payments_disabled.message": "Desafortunadamente, el creador de {{title}} no acepta pagos para este título.",
     "prompt.payments_disabled.open_web_page": "Abrir página web",
     "prompt.payments_disabled.title": "Pagos deshabilitados",
     "prompt.rar_policy.detail": "RAR no es un formato libre, además de estar obsoleto, y nunca será soportado.",
