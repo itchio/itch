@@ -16,9 +16,10 @@ import url from './url'
 import tray from './tray'
 import notifications from './notifications'
 import menu from './menu'
+import installLocations from './install-locations'
 
 export default validateReactors({
-  _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll),
+  _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll, installLocations.catchAll),
 
   PREBOOT: combine(preboot),
   BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow, locales.boot, rememberedSessions.boot),
@@ -40,9 +41,19 @@ export default validateReactors({
   QUEUE_LOCALE_DOWNLOAD: combine(locales.queueLocaleDownload),
 
   WINDOW_BOUNDS_CHANGED: combine(mainWindow.windowBoundsChanged),
-  WINDOW_FOCUS_CHANGED: combine(fetch.windowFocusChanged),
+  WINDOW_FOCUS_CHANGED: combine(fetch.windowFocusChanged, installLocations.windowFocusChanged),
   FOCUS_WINDOW: combine(mainWindow.focusWindow),
   HIDE_WINDOW: combine(mainWindow.hideWindow),
+
+  TASK_ENDED: combine(installLocations.taskEnded),
+
+  MAKE_INSTALL_LOCATION_DEFAULT: combine(installLocations.makeInstallLocationDefault),
+  REMOVE_INSTALL_LOCATION_REQUEST: combine(installLocations.removeInstallLocationRequest),
+  REMOVE_INSTALL_LOCATION: combine(installLocations.removeInstallLocation),
+  ADD_INSTALL_LOCATION_REQUEST: combine(installLocations.addInstallLocationRequest),
+  ADD_INSTALL_LOCATION: combine(installLocations.addInstallLocation),
+  BROWSE_INSTALL_LOCATION: combine(installLocations.browseInstallLocation),
+  QUERY_FREE_SPACE: combine(installLocations.queryFreeSpace),
 
   MENU_ACTION: combine(menu.menuAction),
 

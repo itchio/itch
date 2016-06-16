@@ -91,7 +91,7 @@ function fleshOutTemplate (template, i18n, store) {
     node.label = t(label)
     if (enabled && !role) {
       node.click = () => {
-        store.dispatch(menuAction(label))
+        store.dispatch(actions.menuAction(label))
       }
     }
 

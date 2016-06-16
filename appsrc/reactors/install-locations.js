@@ -2,40 +2,26 @@
 import Promise from 'bluebird'
 import invariant from 'invariant'
 import path from 'path'
+import uuid from 'node-uuid'
 
-import createQueue from './queue'
+import {omit, each} from 'underline'
+
 import {createSelector} from 'reselect'
 
 import diskspace from '../util/diskspace'
 import explorer from '../util/explorer'
 import localizer from '../localizer'
 
-import {omit, each} from 'underline'
-
-import {takeEvery} from './effects'
-import {call, put, select} from 'redux-saga/effects'
-
-import {
-  QUERY_FREE_SPACE, WINDOW_FOCUS_CHANGED, TASK_ENDED,
-  ADD_INSTALL_LOCATION_REQUEST, ADD_INSTALL_LOCATION,
-  REMOVE_INSTALL_LOCATION_REQUEST, REMOVE_INSTALL_LOCATION,
-  BROWSE_INSTALL_LOCATION, MAKE_INSTALL_LOCATION_DEFAULT
-} from '../constants/action-types'
-
-import {
-  queryFreeSpace, freeSpaceUpdated, addInstallLocation, updatePreferences,
-  navigate, removeInstallLocation
-} from '../actions'
+import * as actions from '../actions'
 
 import {BrowserWindow, dialog} from '../electron'
-import uuid from 'node-uuid'
 
-export function * _removeInstallLocationRequest (action) {
+async function removeInstallLocationRequest (store, action) {
   const {name} = action.payload
   invariant(typeof name === 'string', 'removed install location name must be a string')
   invariant(name !== 'appdata', 'cannot remove appdata')
 
-  const caves = yield select((state) => state.globalMarket.caves)
+  const caves = store.getState().globalMarket.caves
   let numItems = 0
   caves::each((cave) => {
     if (cave.installLocation === name) {
@@ -43,7 +29,7 @@ export function * _removeInstallLocationRequest (action) {
     }
   })
 
-  const i18n = yield select((state) => state.i18n)
+  const i18n = store.getState().i18n
   const t = localizer.getT(i18n.strings, i18n.lang)
 
   if (numItems > 0) {
@@ -66,15 +52,15 @@ export function * _removeInstallLocationRequest (action) {
       dialog.showMessageBox(dialogOpts, callback)
     })
 
-    const response = yield promise
+    const response = await promise
     if (response === 0) {
-      yield put(navigate(`locations/${name}`))
+      store.dispatch(actions.navigate(`locations/${name}`))
     }
     return
   }
 
   {
-    const loc = yield select((state) => state.preferences.installLocations[name])
+    const loc = store.getState().preferences.installLocations[name]
 
     const buttons = [
       t('prompt.action.confirm_removal'),
@@ -95,24 +81,24 @@ export function * _removeInstallLocationRequest (action) {
       dialog.showMessageBox(dialogOpts, callback)
     })
 
-    const response = yield promise
+    const response = await promise
     if (response === 0) {
-      yield put(removeInstallLocation({name}))
+      store.dispatch(actions.removeInstallLocation({name}))
     }
   }
 }
 
-export function * _addInstallLocationRequest () {
-  const i18n = yield select((state) => state.i18n)
+async function addInstallLocationRequest (store, action) {
+  const i18n = store.getState().i18n
   const t = localizer.getT(i18n.strings, i18n.lang)
-  const windowId = yield select((state) => state.ui.mainWindow.id)
+  const windowId = store.getState().ui.mainWindow.id
   const window = BrowserWindow.fromId(windowId)
 
   if (!window) {
     return
   }
 
-  let dialogOpts = {
+  const dialogOpts = {
     title: t('prompt.install_location_add.title'),
     properties: ['openDirectory']
   }
@@ -131,24 +117,24 @@ export function * _addInstallLocationRequest () {
     dialog.showOpenDialog(window, dialogOpts, callback)
   })
 
-  const loc = yield promise
+  const loc = await promise
   if (loc) {
-    yield put(addInstallLocation(loc))
+    store.dispatch(actions.addInstallLocation(loc))
   }
 }
 
-export function * _removeInstallLocation (action) {
+async function removeInstallLocation (store, action) {
   const {name} = action.payload
   invariant(typeof name === 'string', 'removed install location name must be a string')
   invariant(name !== 'appdata', 'cannot remove appdata')
-  const installLocations = yield select((state) => state.preferences.installLocations)
-  let defaultInstallLocation = yield select((state) => state.preferences.defaultInstallLocation)
+  const installLocations = store.getState().preferences.installLocations
+  let defaultInstallLocation = store.getState().preferences.defaultInstallLocation
 
   if (defaultInstallLocation === name) {
     defaultInstallLocation = 'appdata'
   }
 
-  yield put(updatePreferences({
+  store.dispatch(actions.updatePreferences({
     defaultInstallLocation,
     installLocations: {
       ...installLocations,
@@ -160,11 +146,11 @@ export function * _removeInstallLocation (action) {
   }))
 }
 
-export function * _addInstallLocation (action) {
+async function addInstallLocation (store, action) {
   const loc = action.payload
-  const installLocations = yield select((state) => state.preferences.installLocations)
+  const installLocations = store.getState().preferences.installLocations
 
-  yield put(updatePreferences({
+  store.dispatch(actions.updatePreferences({
     installLocations: {
       ...installLocations,
       [loc.name]: loc::omit('name')
@@ -172,34 +158,34 @@ export function * _addInstallLocation (action) {
   }))
 }
 
-export function * _windowFocusChanged (action) {
+async function windowFocusChanged (store, action) {
   const {focused} = action.payload
   if (focused) {
-    yield put(queryFreeSpace())
+    store.dispatch(actions.queryFreeSpace())
   }
 }
 
-export function * _taskEnded (action) {
-  const id = yield select((state) => state.session.navigation.id)
+async function taskEnded (store, action) {
+  const id = store.getState().session.navigation.id
   if (id === 'preferences') {
-    yield put(queryFreeSpace())
+    store.dispatch(actions.queryFreeSpace())
   }
 }
 
-export function * _queryFreeSpace (action) {
-  const diskInfo = yield call([diskspace, diskspace.diskInfo])
-  yield put(freeSpaceUpdated({diskInfo}))
+async function queryFreeSpace (store, action) {
+  const diskInfo = await diskspace.diskInfo()
+  store.dispatch(actions.freeSpaceUpdated({diskInfo}))
 }
 
-export function * _browseInstallLocation (action) {
+async function browseInstallLocation (store, action) {
   const {name} = action.payload
   invariant(typeof name === 'string', 'browsed install location name is a string')
 
   if (name === 'appdata') {
-    const userData = yield select((state) => state.system.userDataPath)
+    const userData = store.getState().system.userDataPath
     return explorer.open(path.join(userData, 'apps'))
   } else {
-    const loc = yield select((state) => state.preferences.installLocations[name])
+    const loc = store.getState().preferences.installLocations[name]
     if (!loc) {
       return
     }
@@ -207,41 +193,36 @@ export function * _browseInstallLocation (action) {
   }
 }
 
-export function * _makeInstallLocationDefault (action) {
+async function makeInstallLocationDefault (store, action) {
   const {name} = action.payload
   invariant(typeof name === 'string', 'default install location name must be a string')
 
-  yield put(updatePreferences({
+  store.dispatch(actions.updatePreferences({
     defaultInstallLocation: name
   }))
 }
 
-export default function * installLocationSaga () {
-  const queue = createQueue('installLocations')
-  const selector = createSelector(
-    (state) => state.preferences.installLocations,
-    (state) => state.session.navigation.id,
-    (installLocs, id) => {
-      if (id === 'preferences') {
-        queue.dispatch(queryFreeSpace())
-      }
+let selector
+const makeSelector = (store) => createSelector(
+  (state) => state.preferences.installLocations,
+  (state) => state.session.navigation.id,
+  (installLocs, id) => {
+    if (id === 'preferences') {
+      store.dispatch(actions.queryFreeSpace())
     }
-  )
+  }
+)
 
-  yield [
-    takeEvery(MAKE_INSTALL_LOCATION_DEFAULT, _makeInstallLocationDefault),
-    takeEvery(REMOVE_INSTALL_LOCATION_REQUEST, _removeInstallLocationRequest),
-    takeEvery(REMOVE_INSTALL_LOCATION, _removeInstallLocation),
-    takeEvery(ADD_INSTALL_LOCATION_REQUEST, _addInstallLocationRequest),
-    takeEvery(ADD_INSTALL_LOCATION, _addInstallLocation),
-    takeEvery(BROWSE_INSTALL_LOCATION, _browseInstallLocation),
-    takeEvery(QUERY_FREE_SPACE, _queryFreeSpace),
-    takeEvery(WINDOW_FOCUS_CHANGED, _windowFocusChanged),
-    takeEvery(TASK_ENDED, _taskEnded),
-    takeEvery('*', function * watchInstallLocations () {
-      const state = yield select()
-      selector(state)
-    }),
-    call(queue.exhaust)
-  ]
+async function catchAll (store, action) {
+  if (!selector) {
+    selector = makeSelector(store)
+  }
+  selector(store.getState())
+}
+
+export default {makeInstallLocationDefault,
+  removeInstallLocationRequest, removeInstallLocation,
+  addInstallLocationRequest, addInstallLocation,
+  browseInstallLocation, queryFreeSpace,
+  windowFocusChanged, taskEnded, catchAll
 }
