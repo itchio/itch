@@ -9,29 +9,12 @@ import {debounce} from 'underline'
 import localizer from '../localizer'
 import * as actions from '../actions'
 
-import {
-  WINDOW_BOUNDS_CHANGED,
-  BOOT,
-  FOCUS_WINDOW,
-  HIDE_WINDOW,
-  CLOSE_TAB_OR_AUX_WINDOW,
-  QUIT_WHEN_MAIN,
-  QUIT_ELECTRON_APP,
-  PREPARE_QUIT,
-  QUIT
-} from '../constants/action-types'
-
-import {takeEvery} from './effects'
-import {call, fork, put, select} from 'redux-saga/effects'
-
-import createQueue from './queue'
-
 let createLock = false
 let quitting = false
 
 const BOUNDS_CONFIG_KEY = 'main_window_bounds'
 
-function * _createWindow () {
+async function createWindow (store) {
   if (createLock) return
   createLock = true
 
@@ -71,8 +54,6 @@ function * _createWindow () {
     window.setPosition(bounds.x, bounds.y)
   }
 
-  const queue = createQueue('main-window')
-
   let destroyTimeout
 
   window.on('close', (e) => {
@@ -88,13 +69,13 @@ function * _createWindow () {
         prefs = store.getState().preferences || {}
       }
       if (!prefs.gotMinimizeNotification) {
-        queue.dispatch(actions.updatePreferences({
+        store.dispatch(actions.updatePreferences({
           gotMinimizeNotification: true
         }))
 
         const i18n = store.getState().i18n
         const t = localizer.getT(i18n.strings, i18n.lang)
-        queue.dispatch(actions.notify({
+        store.dispatch(actions.notify({
           title: t('notification.see_you_soon.title'),
           body: t('notification.see_you_soon.message')
         }))
@@ -121,7 +102,7 @@ function * _createWindow () {
   })
 
   window.on('closed', (e) => {
-    queue.dispatch(actions.windowDestroyed())
+    store.dispatch(actions.windowDestroyed())
   })
 
   window.on('focus', (e) => {
@@ -129,19 +110,19 @@ function * _createWindow () {
       clearTimeout(destroyTimeout)
       destroyTimeout = null
     }
-    queue.dispatch(actions.windowFocusChanged({focused: true}))
+    store.dispatch(actions.windowFocusChanged({focused: true}))
   })
 
   window.on('blur', (e) => {
-    queue.dispatch(actions.windowFocusChanged({focused: false}))
+    store.dispatch(actions.windowFocusChanged({focused: false}))
   })
 
   window.on('enter-full-screen', (e) => {
-    queue.dispatch(actions.windowFullscreenChanged({fullscreen: true}))
+    store.dispatch(actions.windowFullscreenChanged({fullscreen: true}))
   })
 
   window.on('leave-full-screen', (e) => {
-    queue.dispatch(actions.windowFullscreenChanged({fullscreen: false}))
+    store.dispatch(actions.windowFullscreenChanged({fullscreen: false}))
   })
 
   const debouncedBounds = (() => {
@@ -149,7 +130,7 @@ function * _createWindow () {
       return
     }
     const bounds = window.getBounds()
-    queue.dispatch(actions.windowBoundsChanged({bounds}))
+    store.dispatch(actions.windowBoundsChanged({bounds}))
   })::debounce(2000)
 
   window.on('move', (e) => {
@@ -162,7 +143,7 @@ function * _createWindow () {
 
   window.webContents.on('dom-ready', (e) => {
     createLock = false
-    queue.dispatch(actions.windowReady({id: window.id}))
+    store.dispatch(actions.windowReady({id: window.id}))
     window.show()
   })
 
@@ -172,88 +153,75 @@ function * _createWindow () {
   if (parseInt(process.env.DEVTOOLS, 10) > 0) {
     window.webContents.openDevTools({detach: true})
   }
-
-  yield * queue.exhaust()
 }
 
-export function * _windowBoundsChanged (action) {
+async function windowBoundsChanged (store, action) {
+  // TODO: this should move to preferences, why are we using config again?
   const {bounds} = action.payload
   config.set(BOUNDS_CONFIG_KEY, bounds)
 }
 
-export function * _focusWindow (action) {
-  const id = yield select((state) => state.ui.mainWindow.id)
+async function focusWindow (store, action) {
+  const id = store.getState().ui.mainWindow.id
   const options = action.payload || {}
 
   if (id) {
     const window = BrowserWindow.fromId(id)
     invariant(window, 'window still exists')
     if (options.toggle && window.isVisible()) {
-      yield call(::window.hide)
+      window.hide()
     } else {
-      yield call(::window.show)
+      window.show()
     }
   } else {
-    yield fork(_createWindow)
+    await createWindow(store)
   }
 }
 
-export function * _hideWindow () {
+async function hideWindow () {
   const window = BrowserWindow.getFocusedWindow()
   if (window) {
-    yield call(::window.close)
+    window.close()
   }
 }
 
-export function * _closeTabOrAuxWindow () {
+async function closeTabOrAuxWindow (store) {
   const focused = BrowserWindow.getFocusedWindow()
   if (focused) {
-    const id = yield select((state) => state.ui.mainWindow.id)
+    const id = store.getState().ui.mainWindow.id
     if (focused.id === id) {
-      yield put(actions.closeTab())
+      store.dispatch(actions.closeTab())
     } else {
-      yield call(::focused.close)
+      focused.close()
     }
   }
 }
 
-export function * _quitWhenMain () {
-  const mainId = yield select((state) => state.ui.mainWindow.id)
+async function quitWhenMain (store) {
+  const mainId = store.getState().ui.mainWindow.id
   const focused = BrowserWindow.getFocusedWindow()
 
   if (focused) {
     if (focused.id === mainId) {
-      yield put(actions.quit())
+      store.dispatch(actions.quit())
     } else {
-      yield call(::focused.close)
+      focused.close()
     }
   }
 }
 
-export function * _quitElectronApp () {
-  yield call(::app.quit)
+async function quitElectronApp () {
+  app.quit()
 }
 
-export function * _prepareQuit () {
+async function prepareQuit () {
   // sigh..
   quitting = true
 }
 
-export function * _quit () {
-  yield put(actions.prepareQuit())
-  yield put(actions.quitElectronApp())
+async function quit (store) {
+  store.dispatch(actions.prepareQuit())
+  store.dispatch(actions.quitElectronApp())
 }
 
-export default function * mainWindowSaga () {
-  yield [
-    takeEvery(WINDOW_BOUNDS_CHANGED, _windowBoundsChanged),
-    takeEvery(FOCUS_WINDOW, _focusWindow),
-    takeEvery(HIDE_WINDOW, _hideWindow),
-    takeEvery(CLOSE_TAB_OR_AUX_WINDOW, _closeTabOrAuxWindow),
-    takeEvery(BOOT, _focusWindow),
-    takeEvery(QUIT_WHEN_MAIN, _quitWhenMain),
-    takeEvery(QUIT_ELECTRON_APP, _quitElectronApp),
-    takeEvery(PREPARE_QUIT, _prepareQuit),
-    takeEvery(QUIT, _quit)
-  ]
-}
+export default {focusWindow, hideWindow, windowBoundsChanged, closeTabOrAuxWindow, quitWhenMain, quitElectronApp, prepareQuit, quit}

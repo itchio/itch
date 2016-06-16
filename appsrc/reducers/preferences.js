@@ -1,7 +1,6 @@
 
 import {handleActions} from 'redux-actions'
 import invariant from 'invariant'
-import os from '../util/os'
 
 const OFFLINE_MODE = process.env.OFFLINE_MODE === '1'
 
@@ -9,7 +8,7 @@ const initialState = {
   downloadSelfUpdates: true,
   offlineMode: OFFLINE_MODE,
   installLocations: {},
-  defaultInstallLocation: os.platform() === 'linux' ? 'haven' : 'appdata',
+  defaultInstallLocation: 'appdata',
   sidebarWidth: 240,
   isolateApps: false
 }
