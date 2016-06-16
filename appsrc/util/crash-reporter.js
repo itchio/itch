@@ -53,7 +53,7 @@ ${log}
     shell.openExternal(`${urls.itchRepo}/issues/new?${query}`)
   },
 
-  handle: (e) => {
+  handle: (type, e) => {
     console.log(`Uncaught exception: ${e.stack}`)
     let res = self.writeCrashLog(e)
     let log = res.log
@@ -87,16 +87,21 @@ ${log}
   },
 
   mount: () => {
-    process.on('uncaughtException', (e) => {
-      try {
-        self.handle(e)
-      } catch (e) {
-        // well, we tried.
-        console.log(`Error in crash-reporter\n${e.message || e}`)
-      } finally {
-        process.exit(1)
+    console.log('Mounting crash reporter')
+    const makeHandler = (type) => {
+      return (e) => {
+        try {
+          self.handle(type, e)
+        } catch (e) {
+          // well, we tried.
+          console.log(`Error in crash-reporter (${type})\n${e.message || e}`)
+        } finally {
+          process.exit(1)
+        }
       }
-    })
+    }
+    process.on('uncaughtException', makeHandler('Uncaught exception'))
+    process.on('unhandledRejection', makeHandler('Unhandled rejection'))
   }
 }
 

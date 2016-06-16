@@ -2,7 +2,6 @@
 import {createStore, applyMiddleware, compose} from 'redux'
 import {electronEnhancer} from 'redux-electron-store'
 import createLogger from 'redux-logger'
-import createSagaMiddleware from 'redux-saga'
 
 import reactors from '../renderer-reactors'
 import reducer from '../reducers'
@@ -10,10 +9,7 @@ import reducer from '../reducers'
 import env from '../env'
 
 const filter = true
-const sagaMiddleware = createSagaMiddleware()
-const middleware = [
-  sagaMiddleware
-]
+const middleware = []
 
 const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === '1'
 

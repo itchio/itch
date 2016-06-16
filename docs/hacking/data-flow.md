@@ -1,4 +1,7 @@
 
+**Note: since removing redux-saga, some of the info is outdated. If you're
+reading this page and it's still not fixed, please complain about it in https://github.com/itchio/itch/issues**
+
 itch follows the [Redux][] design pattern — to understand the rest of this page,
 you need to be familiar with it. The basics are as follows:
 

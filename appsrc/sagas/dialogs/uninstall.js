@@ -11,7 +11,7 @@ import {REQUEST_CAVE_UNINSTALL} from '../../constants/action-types'
 import fetch from '../../util/fetch'
 
 // :(
-import {getGlobalMarket, getUserMarket} from '../../sagas/market'
+import {getGlobalMarket, getUserMarket} from '../../reactors/market'
 
 const queue = createQueue('change-user')
 

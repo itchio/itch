@@ -2,7 +2,7 @@
 import * as actions from '../actions'
 import client from '../util/api'
 
-export default async function loginWithToken (store, action) {
+async function loginWithToken (store, action) {
   const {username, key} = action.payload
 
   store.dispatch(actions.attemptLogin())
@@ -22,3 +22,5 @@ export default async function loginWithToken (store, action) {
     }
   }
 }
+
+export default {loginWithToken}
