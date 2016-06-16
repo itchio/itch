@@ -8,6 +8,8 @@ import './boot/fs'
 import './boot/env'
 import './boot/sniff-language'
 
+import os from './util/os'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Layout from './components/layout'
@@ -15,7 +17,7 @@ import Modal from './components/modal'
 import {Provider} from 'react-redux'
 import HTML5Backend from 'react-dnd-html5-backend'
 import {DragDropContext} from 'react-dnd'
-import {shell, webFrame} from './electron'
+import {shell} from './electron'
 
 import store from './store'
 
@@ -69,4 +71,10 @@ document.addEventListener('click', (e) => {
 
 // disable two-finger zoom on macOS
 
-webFrame.setZoomLevelLimits(1, 1)
+if (os.platform() === 'darwin') {
+  try {
+    require('electron').webFrame.setZoomLevelLimits(1, 1)
+  } catch (e) {
+    console.log(`couldn't disable two-finger zoom: ${e.stack || e}`)
+  }
+}

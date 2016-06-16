@@ -5,6 +5,7 @@ import createLogger from 'redux-cli-logger'
 import createSagaMiddleware from 'redux-saga'
 
 import sagas from '../sagas'
+import nonSagas from '../non-sagas'
 import reducer from '../reducers'
 
 import {each} from 'underline'
@@ -31,7 +32,12 @@ const beChatty = process.env.MARCO_POLO === '1'
 
 if (beChatty) {
   const logger = createLogger({
-    predicate: (getState, action) => !action.MONITOR_ACTION && !/^WINDOW_/.test(action.type) && !/_DB_/.test(action.type),
+    predicate: (getState, action) => {
+      return !action.MONITOR_ACTION &&
+         !/^WINDOW_/.test(action.type) &&
+         !/_DB_/.test(action.type) &&
+         !/LOCALE_/.test(action.type)
+    },
     stateTransformer: (state) => ''
   })
 
@@ -40,7 +46,15 @@ if (beChatty) {
 
 const enhancer = compose(
   applyMiddleware(...middleware),
-  electronEnhancer()
+  electronEnhancer({
+    postDispatchCallback: (action) => {
+      const nonSaga = nonSagas[action.type]
+      if (nonSaga) {
+        console.log('reacting to: ', action.type)
+        nonSaga(store, action)
+      }
+    }
+  })
 )
 
 const initialState = {}
