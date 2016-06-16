@@ -2,13 +2,9 @@
 import {createStore, applyMiddleware, compose} from 'redux'
 import {electronEnhancer} from 'redux-electron-store'
 import createLogger from 'redux-cli-logger'
-import createSagaMiddleware from 'redux-saga'
 
-import sagas from '../sagas'
-import nonSagas from '../non-sagas'
+import reactors from '../reactors'
 import reducer from '../reducers'
-
-import {each} from 'underline'
 
 const crashGetter = (store) => (next) => (action) => {
   try {
@@ -21,11 +17,8 @@ const crashGetter = (store) => (next) => (action) => {
   }
 }
 
-const sagaMiddleware = createSagaMiddleware()
-
 const middleware = [
-  crashGetter,
-  sagaMiddleware
+  crashGetter
 ]
 
 const beChatty = process.env.MARCO_POLO === '1'
@@ -48,10 +41,9 @@ const enhancer = compose(
   applyMiddleware(...middleware),
   electronEnhancer({
     postDispatchCallback: (action) => {
-      const nonSaga = nonSagas[action.type]
-      if (nonSaga) {
-        console.log('reacting to: ', action.type)
-        nonSaga(store, action)
+      const reactor = reactors[action.type]
+      if (reactor) {
+        reactor(store, action)
       }
     }
   })
@@ -59,6 +51,5 @@ const enhancer = compose(
 
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
-sagas::each(::sagaMiddleware.run)
 
 export default store

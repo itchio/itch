@@ -4,9 +4,8 @@ import {electronEnhancer} from 'redux-electron-store'
 import createLogger from 'redux-logger'
 import createSagaMiddleware from 'redux-saga'
 
-import sagas from '../renderer-sagas'
+import reactors from '../renderer-reactors'
 import reducer from '../reducers'
-import {each} from 'underline'
 
 import env from '../env'
 
@@ -27,7 +26,15 @@ if (env.name === 'development' || REDUX_DEVTOOLS_ENABLED) {
 
 const enhancers = [
   applyMiddleware(...middleware),
-  electronEnhancer({filter})
+  electronEnhancer({
+    filter,
+    postDispatchCallback: (action) => {
+      const reactor = reactors[action.type]
+      if (reactor) {
+        reactor(store, action)
+      }
+    }
+  })
 ]
 
 if (REDUX_DEVTOOLS_ENABLED) {
@@ -39,6 +46,5 @@ const enhancer = compose(...enhancers)
 
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
-sagas::each(::sagaMiddleware.run)
 
 export default store
