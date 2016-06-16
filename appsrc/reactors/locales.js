@@ -8,9 +8,6 @@ import urls from '../constants/urls'
 import {app} from '../electron'
 import env from '../env'
 
-import {takeEvery} from './effects'
-import {call, put, select} from 'redux-saga/effects'
-
 import mkcooldown from '../util/cooldown'
 const cooldown = mkcooldown(1000)
 
@@ -25,20 +22,19 @@ import mklog from '../util/log'
 const log = mklog('locales')
 const opts = {logger}
 
-import {queueHistoryItem, localesConfigLoaded, queueLocaleDownload, localeDownloadStarted, localeDownloadEnded} from '../actions'
-import {BOOT, QUEUE_LOCALE_DOWNLOAD, LANGUAGE_CHANGED} from '../constants/action-types'
+import * as actions from '../actions'
 
-export function canonicalFileName (lang) {
+function canonicalFileName (lang) {
   return path.join(localesDir, lang + '.json')
 }
 
-export function remoteFileName (lang) {
+function remoteFileName (lang) {
   return path.join(remoteDir, lang + '.json')
 }
 
-export function * doDownloadLocale (lang, resources) {
+async function doDownloadLocale (lang, resources) {
   const local = canonicalFileName(lang)
-  if (!(yield call(ifs.exists, local))) {
+  if (!(await ifs.exists(local))) {
     // try stripping region
     lang = lang.substring(0, 2)
   }
@@ -47,7 +43,7 @@ export function * doDownloadLocale (lang, resources) {
   const uri = `${urls.remoteLocalePath}/${lang}.json`
 
   log(opts, `Downloading fresh locale file from ${uri}`)
-  const resp = yield call(needle.requestAsync, 'GET', uri, {format: 'json'})
+  const resp = await needle.requestAsync('GET', uri, {format: 'json'})
 
   log(opts, `HTTP GET ${uri}: ${resp.statusCode}`)
   if (resp.statusCode !== 200) {
@@ -58,18 +54,19 @@ export function * doDownloadLocale (lang, resources) {
 
   log(opts, `Saving fresh ${lang} locale to ${remote}`)
   const payload = JSON.stringify(resources, null, 2)
-  yield call(ifs.writeFile, remote, payload)
+  await ifs.writeFile(remote, payload)
 }
 
-export function * loadInitialLocales () {
-  const configPayload = yield call(ifs.readFile, localesConfigPath)
+async function boot (store) {
+  // load initial locales
+  const configPayload = await ifs.readFile(localesConfigPath)
   const config = JSON.parse(configPayload)
-  yield put(localesConfigLoaded(config))
+  store.dispatch(actions.localesConfigLoaded(config))
 
-  yield * loadLocale('en')
+  await loadLocale(store, 'en')
 }
 
-export function * downloadLocale (action) {
+async function queueLocaleDownload (store, action) {
   let {lang} = action.payload
 
   if (!upgradesEnabled) {
@@ -77,40 +74,43 @@ export function * downloadLocale (action) {
     return
   }
 
-  const downloading = yield select((state) => state.i18n.downloading)
+  const downloading = store.getState().i18n.downloading
   if (downloading[lang]) {
     return
   }
 
-  yield put(localeDownloadStarted({lang}))
+  store.dispatch(actions.localeDownloadStarted({lang}))
 
   log(opts, `Waiting a bit before downloading ${lang} locale...`)
-  yield call(cooldown)
+  await cooldown()
 
   const resources = {}
   try {
-    yield * doDownloadLocale(lang, resources)
+    await doDownloadLocale(lang, resources)
   } catch (e) {
-    yield put(queueHistoryItem({
+    store.dispatch(actions.queueHistoryItem({
       label: ['i18n.failed_downloading_locales', {lang}],
       detail: e.stack || e
     }))
   } finally {
-    yield put(localeDownloadEnded({lang, resources}))
+    store.dispatch(actions.localeDownloadEnded({lang, resources}))
   }
 }
 
-export function * loadLocale (lang) {
+async function loadLocale (store, lang) {
+  invariant(typeof store === 'object', 'loadLocale needs a store')
+  invariant(typeof lang === 'string', 'loadLocale needs a lang string')
+
   const local = canonicalFileName(lang)
-  if (!(yield call(ifs.exists, local))) {
+  if (!(await ifs.exists(local))) {
     // try stripping region
     lang = lang.substring(0, 2)
   }
 
   try {
-    const payload = yield call(ifs.readFile, local)
+    const payload = await ifs.readFile(local)
     const resources = JSON.parse(payload)
-    yield put(localeDownloadEnded({lang, resources}))
+    store.dispatch(actions.localeDownloadEnded({lang, resources}))
   } catch (e) {
     log(opts, `Failed to load locale from ${local}: ${e.stack}`)
   }
@@ -119,33 +119,27 @@ export function * loadLocale (lang) {
   try {
     let payload
     try {
-      payload = yield call(ifs.readFile, remote)
+      payload = await ifs.readFile(remote)
     } catch (e) {
       // no updated version of the locale available
     }
 
     if (payload) {
       const resources = JSON.parse(payload)
-      yield put(localeDownloadEnded({lang, resources}))
+      store.dispatch(actions.localeDownloadEnded({lang, resources}))
     }
   } catch (e) {
     log(opts, `Failed to load locale from ${local}: ${e.stack}`)
   }
 
-  yield put(queueLocaleDownload({lang}))
+  store.dispatch(actions.queueLocaleDownload({lang}))
 }
 
-export function * _languageChanged (action) {
+async function languageChanged (store, action) {
   const lang = action.payload
   invariant(typeof lang === 'string', 'language must be a string')
 
-  yield call(loadLocale, lang)
+  await loadLocale(store, lang)
 }
 
-export default function * localesSaga () {
-  yield [
-    takeEvery(BOOT, loadInitialLocales),
-    takeEvery(QUEUE_LOCALE_DOWNLOAD, downloadLocale),
-    takeEvery(LANGUAGE_CHANGED, _languageChanged)
-  ]
-}
+export default {boot, queueLocaleDownload, languageChanged}

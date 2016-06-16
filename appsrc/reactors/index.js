@@ -9,12 +9,13 @@ import market from './market'
 import mainWindow from './main-window'
 import fetch from './fetch'
 import i18n from './i18n'
+import locales from './locales'
 
 export default validateReactors({
   _ALL: combine(i18n),
 
   PREBOOT: combine(preboot),
-  BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow),
+  BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow, locales.boot),
 
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),
   LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded),
@@ -23,6 +24,9 @@ export default validateReactors({
   USER_DB_COMMIT: combine(fetch.fetchCollectionGames),
 
   UPDATE_PREFERENCES: combine(preferences.updatePreferences),
+
+  LANGUAGE_CHANGED: combine(locales.languageChanged),
+  QUEUE_LOCALE_DOWNLOAD: combine(locales.queueLocaleDownload),
 
   WINDOW_BOUNDS_CHANGED: combine(mainWindow.windowBoundsChanged),
   WINDOW_FOCUS_CHANGED: combine(fetch.windowFocusChanged),
