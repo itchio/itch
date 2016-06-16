@@ -161,7 +161,7 @@
     "grid.item.developer": "Desarrollador",
     "grid.item.launch_demo": "Ejecutar demostración",
     "grid.item.share": "Compartir",
-    "grid.item.open": "Abrir",
+    "grid.item.open": "Ver",
     "grid.item.open_demo": "Abrir demostración",
     "grid.item.open_debug_log": "Abrir registro de depuración",
     "grid.item.show_local_files": "Ver archivos locales",
@@ -289,10 +289,10 @@
     "usage_stats.description.tool": "Una herramienta",
     "usage_stats.has_played_for_duration": "Jugado",
     "usage_stats.has_used_for_duration": "Usado",
-    "usage_stats.last_opened_time_ago": "Abierto hace {{time_ago}}",
+    "usage_stats.last_opened_time_ago": "Visto {{time_ago}}",
     "usage_stats.last_played_time_ago": "Última vez jugado {{time_ago}}",
     "usage_stats.last_used_time_ago": "Última vez usado {{time_ago}}",
-    "usage_stats.never_opened": "Nunca abierto",
+    "usage_stats.never_opened": "Nunca visto",
     "usage_stats.never_played": "Nunca jugado",
     "usage_stats.never_used": "Nunca usado"
 }
