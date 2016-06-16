@@ -3,34 +3,28 @@ import {getTray} from './tray'
 import {app, BrowserWindow} from '../electron'
 import os from '../util/os'
 
-import {takeEvery} from './effects'
-import {select, put} from 'redux-saga/effects'
-
-import {notifyHtml5} from '../actions'
-import {SET_PROGRESS, BOUNCE, NOTIFY} from '../constants/action-types'
+import * as actions from '../actions'
 
 // OSX already shows the app's icon
 const DEFAULT_ICON = os.platform() === 'darwin' ? null : `./static/images/tray/${app.getName()}-64.png`
 
-const selectMainWindowId = (state) => state.ui.mainWindow.id
-
-function * _setProgress (action) {
+async function setProgress (store, action) {
   const alpha = action.payload
-  const id = yield select(selectMainWindowId)
+  const id = store.getState().ui.mainWindow.id
   const window = BrowserWindow.fromId(id)
   if (window) {
     window.setProgressBar(alpha)
   }
 }
 
-function * _bounce (action) {
+async function bounce (store, action) {
   const dock = {app}
   if (dock) {
     dock.bounce()
   }
 }
 
-function * _notify (action) {
+async function notify (store, action) {
   const {title = 'itch', body, icon = DEFAULT_ICON} = action.payload
 
   if (os.platform() === 'win32' && !/^10\./.test(os.release())) {
@@ -40,19 +34,13 @@ function * _notify (action) {
       tray.displayBalloon({title, icon, content: body})
     }
   } else {
-    const id = yield select(selectMainWindowId)
+    const id = store.getState().ui.mainWindow.id
     const window = BrowserWindow.fromId(id)
     if (window && !window.isDestroyed() && !window.webContents.isDestroyed()) {
       const opts = {body, icon}
-      yield put(notifyHtml5({title, opts}))
+      store.dispatch(actions.notifyHtml5({title, opts}))
     }
   }
 }
 
-export default function * notificationsSaga () {
-  yield [
-    takeEvery(SET_PROGRESS, _setProgress),
-    takeEvery(BOUNCE, _bounce),
-    takeEvery(NOTIFY, _notify)
-  ]
-}
+export default {setProgress, bounce, notify}

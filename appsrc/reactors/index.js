@@ -13,9 +13,11 @@ import locales from './locales'
 import rememberedSessions from './remembered-sessions'
 import session from './session'
 import url from './url'
+import tray from './tray'
+import notifications from './notifications'
 
 export default validateReactors({
-  _ALL: combine(i18n, session.catchAll),
+  _ALL: combine(i18n, session.catchAll, tray.catchAll),
 
   PREBOOT: combine(preboot),
   BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow, locales.boot, rememberedSessions.boot),
@@ -48,6 +50,10 @@ export default validateReactors({
   FETCH_COLLECTION_GAMES: combine(fetch.fetchCollectionGames),
 
   SEARCH: combine(fetch.search),
+
+  SET_PROGRESS: combine(notifications.setProgress),
+  BOUNCE: combine(notifications.bounce),
+  NOTIFY: combine(notifications.notify),
 
   CLOSE_TAB_OR_AUX_WINDOW: combine(mainWindow.closeTabOrAuxWindow),
   QUIT_WHEN_MAIN: combine(mainWindow.quitWhenMain),
