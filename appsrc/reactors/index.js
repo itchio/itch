@@ -17,6 +17,7 @@ import tray from './tray'
 import notifications from './notifications'
 import menu from './menu'
 import installLocations from './install-locations'
+import purchases from './purchases'
 
 export default validateReactors({
   _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll, installLocations.catchAll),
@@ -59,6 +60,7 @@ export default validateReactors({
 
   HANDLE_ITCHIO_URL: combine(url.handleItchioUrl),
 
+  INITIATE_PURCHASE: combine(purchases.initiatePurchase),
   PURCHASE_COMPLETED: combine(fetch.purchaseCompleted),
 
   FETCH_COLLECTION_GAMES: combine(fetch.fetchCollectionGames),
