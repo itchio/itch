@@ -197,6 +197,9 @@ export class BrowserMeat extends Component {
       if (xhr.readyState !== 4) {
         return
       }
+      if (!xhr.responseXML) {
+        return
+      }
       const meta = xhr.responseXML.querySelector('meta[name="itch:path"]')
       if (meta) {
         const newPath = meta.content
