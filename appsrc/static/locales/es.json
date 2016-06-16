@@ -191,7 +191,7 @@
     "notification.see_you_soon.message": "Ahora itch está funcionando en segundo plano. Usa el menú para cerrarlo completamente.",
     "notification.see_you_soon.title": "¡Nos vemos pronto!",
     "notification.purchase_complete.just_bought": "¡Compraste {{title}}!",
-    "notification.purchase_complete.just_donated": "¡Le donaste a {{title}}!",
+    "notification.purchase_complete.just_donated": "¡Le has donado a {{title}}!",
     "notification.purchase_complete.may_install_now": "¡Ahora puedes instalarlo en cualquier momento!",
     "notification.purchase_complete.thanks_for_support": "¡Gracias por tu apoyo!",
     "preferences.security": "Seguridad y privacidad",
