@@ -24,7 +24,6 @@
   "main": "app/metal.js",
   "license": "MIT",
   "dependencies": {
-    "babel-polyfill": "^6.7.2",
     "bluebird": "^3.3.5",
     "classnames": "^2.2.4",
     "clone": "^1.0.2",

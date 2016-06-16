@@ -2,7 +2,6 @@
 
 // This file is the entry point for the main (browser) process
 
-import 'babel-polyfill'
 import './boot/sourcemaps'
 import './boot/bluebird'
 import './boot/crash'

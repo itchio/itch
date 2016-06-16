@@ -2,8 +2,6 @@
 
 // This file is the entry point for renderer processes
 
-import 'babel-polyfill'
-
 import './boot/env'
 import './boot/bluebird'
 import './boot/fs'
