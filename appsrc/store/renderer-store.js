@@ -1,6 +1,6 @@
 
 import {createStore, applyMiddleware, compose} from 'redux'
-import {electronEnhancer} from 'redux-electron-enhancer'
+import {electronEnhancer} from 'redux-electron-store'
 import createLogger from 'redux-logger'
 import createSagaMiddleware from 'redux-saga'
 
@@ -22,11 +22,9 @@ if (REDUX_DEVTOOLS_ENABLED) {
   middleware.push(logger)
 }
 
-const inject = (action) => store.dispatch(action)
-
 const enhancers = [
-  electronEnhancer({inject, filter}),
-  applyMiddleware(...middleware)
+  applyMiddleware(...middleware),
+  electronEnhancer({filter})
 ]
 
 if (REDUX_DEVTOOLS_ENABLED) {

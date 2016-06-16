@@ -1,6 +1,6 @@
 
 import {createStore, applyMiddleware, compose} from 'redux'
-import {electronEnhancer} from 'redux-electron-enhancer'
+import {electronEnhancer} from 'redux-electron-store'
 import createLogger from 'redux-cli-logger'
 import createSagaMiddleware from 'redux-saga'
 
@@ -29,21 +29,18 @@ const middleware = [
 
 const beChatty = process.env.MARCO_POLO === '1'
 
-const devMiddleware = []
 if (beChatty) {
   const logger = createLogger({
     predicate: (getState, action) => !action.MONITOR_ACTION && !/^WINDOW_/.test(action.type) && !/_DB_/.test(action.type),
     stateTransformer: (state) => ''
   })
 
-  devMiddleware.push(logger)
+  middleware.push(logger)
 }
 
-const inject = (action) => store.dispatch(action)
 const enhancer = compose(
   applyMiddleware(...middleware),
-  electronEnhancer({inject}),
-  applyMiddleware(...devMiddleware)
+  electronEnhancer()
 )
 
 const initialState = {}
