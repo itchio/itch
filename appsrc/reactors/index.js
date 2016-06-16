@@ -12,6 +12,7 @@ import i18n from './i18n'
 import locales from './locales'
 import rememberedSessions from './remembered-sessions'
 import session from './session'
+import url from './url'
 
 export default validateReactors({
   _ALL: combine(i18n, session.catchAll),
@@ -23,7 +24,7 @@ export default validateReactors({
   LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded),
   LOGOUT: combine(market.logout, session.logout),
 
-  SESSION_READY: combine(session.sessionReady),
+  SESSION_READY: combine(session.sessionReady, url.sessionReady),
 
   FORGET_SESSION_REQUEST: combine(rememberedSessions.forgetSessionRequest),
   FORGET_SESSION: combine(rememberedSessions.forgetSession),
@@ -39,6 +40,8 @@ export default validateReactors({
   WINDOW_FOCUS_CHANGED: combine(fetch.windowFocusChanged),
   FOCUS_WINDOW: combine(mainWindow.focusWindow),
   HIDE_WINDOW: combine(mainWindow.hideWindow),
+
+  HANDLE_ITCHIO_URL: combine(url.handleItchioUrl),
 
   PURCHASE_COMPLETED: combine(fetch.purchaseCompleted),
 

@@ -5,7 +5,7 @@ import invariant from 'invariant'
 import {createSelector} from 'reselect'
 
 import mklog from '../util/log'
-const log = mklog('fetch-reactor')
+const log = mklog('reactors/fetch')
 import {opts} from '../logger'
 
 import {getUserMarket} from './market'

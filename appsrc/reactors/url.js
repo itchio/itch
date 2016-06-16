@@ -1,37 +1,35 @@
 
 import invariant from 'invariant'
-import {takeEvery} from './effects'
-import {put, take, select} from 'redux-saga/effects'
-
 import urlParser from 'url'
 
 import mklog from '../util/log'
-const log = mklog('sagas/url')
+const log = mklog('reactors/url')
 import {opts} from '../logger'
 
-import {
-  navigate
-} from '../actions'
+import * as actions from '../actions'
 
-import {
-  SESSION_READY,
-  HANDLE_ITCHIO_URL
-} from '../constants/action-types'
+let onSessionReady
 
-export function * _handleItchioUrl (action) {
+async function sessionReady () {
+  if (onSessionReady) {
+    onSessionReady()
+  }
+}
+
+async function handleItchioUrl (store, action) {
   invariant(typeof action.payload === 'object', 'handleItchioUrl payload is an object')
+
   const {uri} = action.payload
   invariant(typeof uri, 'handleItchioUrl uri is a string')
 
   log(opts, `Starting to handle itch.io url ${uri}`)
-  const key = yield select((state) => state.session.credentials.key)
+  const key = store.getState().session.credentials.key
   if (!key) {
     log(opts, 'Waiting for session to be ready before handling itchio url')
-    yield take(SESSION_READY)
+    await new Promise((resolve, reject) => { onSessionReady = resolve })
   }
 
   const url = urlParser.parse(uri)
-
   const verb = url.hostname
   const tokens = url.pathname.split('/')
 
@@ -43,20 +41,16 @@ export function * _handleItchioUrl (action) {
         return
       }
       const gameId = tokens[1]
-      yield put(navigate('games/' + gameId))
+      store.dispatch(actions.navigate('games/' + gameId))
       break
     }
 
     default: {
       const resourcePath = url.hostname + url.pathname
       log(opts, `Opening resource directly: ${resourcePath}`)
-      yield put(navigate(resourcePath))
+      store.dispatch(actions.navigate(resourcePath))
     }
   }
 }
 
-export default function * urlSaga () {
-  yield [
-    takeEvery(HANDLE_ITCHIO_URL, _handleItchioUrl)
-  ]
-}
+export default {handleItchioUrl, sessionReady}
