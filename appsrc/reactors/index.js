@@ -15,9 +15,10 @@ import session from './session'
 import url from './url'
 import tray from './tray'
 import notifications from './notifications'
+import menu from './menu'
 
 export default validateReactors({
-  _ALL: combine(i18n, session.catchAll, tray.catchAll),
+  _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll),
 
   PREBOOT: combine(preboot),
   BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow, locales.boot, rememberedSessions.boot),
@@ -42,6 +43,8 @@ export default validateReactors({
   WINDOW_FOCUS_CHANGED: combine(fetch.windowFocusChanged),
   FOCUS_WINDOW: combine(mainWindow.focusWindow),
   HIDE_WINDOW: combine(mainWindow.hideWindow),
+
+  MENU_ACTION: combine(menu.menuAction),
 
   HANDLE_ITCHIO_URL: combine(url.handleItchioUrl),
 
