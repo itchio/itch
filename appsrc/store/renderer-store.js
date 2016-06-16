@@ -3,6 +3,7 @@ import {createStore, applyMiddleware, compose} from 'redux'
 import {electronEnhancer} from 'redux-electron-store'
 import createLogger from 'redux-logger'
 
+import route from '../reactors/route'
 import reactors from '../renderer-reactors'
 import reducer from '../reducers'
 
@@ -25,10 +26,7 @@ const enhancers = [
   electronEnhancer({
     filter,
     postDispatchCallback: (action) => {
-      const reactor = reactors[action.type]
-      if (reactor) {
-        reactor(store, action)
-      }
+      route(reactors, store, action)
     }
   })
 ]

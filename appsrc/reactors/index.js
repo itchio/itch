@@ -8,8 +8,11 @@ import login from './login'
 import market from './market'
 import mainWindow from './main-window'
 import fetch from './fetch'
+import i18n from './i18n'
 
 export default validateReactors({
+  _ALL: combine(i18n),
+
   PREBOOT: combine(preboot),
   BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow),
 
