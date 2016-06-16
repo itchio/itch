@@ -104,7 +104,7 @@
     "prompt.crash_reporter.open_crash_log": "Abrir registro de errores",
     "prompt.crash_reporter.report_issue": "Enviar informe de error",
     "prompt.install_location_add.title": "Elegir una nueva ubicación de instalación",
-    "prompt.install_location_not_empty.detail": "Por el momento es necesario hacerlo manualmente.",
+    "prompt.install_location_not_empty.detail": "Por ahora ha de realizarse manualmente.",
     "prompt.install_location_not_empty.message": "Las ubicaciones de instalación solo pueden ser eliminadas una vez todos sus contenidos hayan sido desinstalados.",
     "prompt.install_location_not_empty.show_contents": "Mostrar contenidos",
     "prompt.install_location_not_empty.title": "Esta ubicación de instalación no está vacía",
