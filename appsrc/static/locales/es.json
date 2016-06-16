@@ -117,7 +117,7 @@
     "prompt.no_compatible_version.detail": "Tal vez esta {{classification}} todavía no es compatible con la suya?",
     "prompt.no_compatible_version.message": "No hemos podido encontrar una versión de {{title}} para {{platform}}.",
     "prompt.no_compatible_version.title": "{{title}} para {{platform}}",
-    "prompt.payments_disabled.detail": "Quizás puedas encontrar otra forma de apoyar al desarrollador.",
+    "prompt.payments_disabled.detail": "¿Quizás puedas encontrar otra forma de apoyar al desarrollador?",
     "prompt.payments_disabled.message": "Desafortunadamente, el desarrollador de {{title}} no acepta pagos para este título.",
     "prompt.payments_disabled.open_web_page": "Abrir página web",
     "prompt.payments_disabled.title": "Pagos deshabilitados",
