@@ -104,7 +104,7 @@ async function fetchCollectionGames (store, action) {
   const market = getUserMarket()
   const collections = market.getEntities('collections')
 
-  for (const key in Object.keys(collections)) {
+  for (const key of Object.keys(collections)) {
     await fetchSingleCollectionGames(store, market, credentials, Number(key))
   }
 }
