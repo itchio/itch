@@ -1,14 +1,11 @@
 
-**Note: since removing redux-saga, some of the info is outdated. If you're
-reading this page and it's still not fixed, please complain about it in https://github.com/itchio/itch/issues**
-
 itch follows the [Redux][] design pattern — to understand the rest of this page,
 you need to be familiar with it. The basics are as follows:
 
   * All state is stored in a single place (the store)
   * All change happens via actions, that are dispatched by the store, to:
     * Reducers, which compute new state from the old state and the action
-    * Middleware, like redux-saga, which is used in itch to apply side-effects
+    * Reactors which are used in itch to apply side-effects
   * The UI is rendered directly from the state
 
 [Redux]: http://redux.js.org/index.html
@@ -88,7 +85,7 @@ compose into  |                     ||                    | read from
               |                     ||                    |           
    ___________|____________         ||            ________|_________
   [                        ]        ||           [                  ]
-  [    sagas + reducers    ] <<-- actions ------ [ react components ]
+  [  reactors + reducers   ] <<-- actions ------ [ react components ]
   [________________________]        ||           [__________________]
               |                     ||                    |
 interact with |                     ||                    | render to

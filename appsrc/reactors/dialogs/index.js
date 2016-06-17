@@ -1,12 +1,5 @@
 
 import changeUser from './change-user'
-import uninstall from './uninstall'
+import requestCaveUninstall from './request-cave-uninstall'
 
-import {fork} from 'redux-saga/effects'
-
-export default function * dialogsSaga () {
-  yield [
-    fork(changeUser),
-    fork(uninstall)
-  ]
-}
+export default {changeUser, requestCaveUninstall}

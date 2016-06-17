@@ -40,5 +40,6 @@ const enhancer = compose(...enhancers)
 
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
+reactors['__MOUNT'](store, {type: '__MOUNT', payload: {}})
 
 export default store

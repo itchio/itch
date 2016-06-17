@@ -4,7 +4,7 @@ import {each} from 'underline'
 
 export default function validateReactors (reactors) {
   Object.keys(reactors)::each((key) => {
-    if (key === '_ALL') {
+    if (key === '_ALL' || key === '__MOUNT') {
       return
     }
     if (!actionTypes[key]) {

@@ -28,7 +28,6 @@ import findUpload from '../tasks/find-upload'
 import findUpgradePath from '../tasks/find-upgrade-path'
 
 async function checkForGameUpdates (store, action) {
-  // may be interrupted by a saga cancellation
   const caves = getGlobalMarket().getEntities('caves')
   invariant(caves, 'has caves')
 

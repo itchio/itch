@@ -28,6 +28,7 @@ import share from './share'
 import navigation from './navigation'
 import clipboard from './clipboard'
 import tasks from './tasks'
+import dialogs from './dialogs'
 
 export default validateReactors({
   _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll, installLocations.catchAll),
@@ -41,6 +42,7 @@ export default validateReactors({
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),
   LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded),
   LOGOUT: combine(market.logout, session.logout),
+  CHANGE_USER: combine(dialogs.changeUser),
 
   SESSION_READY: combine(session.sessionReady, url.sessionReady,
     updater.sessionReady, navigation.sessionReady),
@@ -68,6 +70,7 @@ export default validateReactors({
   EVOLVE_TAB: combine(navigation.evolveTab),
 
   QUEUE_GAME: combine(tasks.queueGame),
+  REQUEST_CAVE_UNINSTALL: combine(dialogs.requestCaveUninstall),
   QUEUE_CAVE_REINSTALL: combine(tasks.queueCaveReinstall),
   QUEUE_CAVE_UNINSTALL: combine(tasks.queueCaveUninstall),
   DOWNLOAD_ENDED: combine(tasks.downloadEnded),

@@ -1,23 +1,15 @@
 
-import createQueue from '../queue'
+import * as actions from '../../actions'
 
-import {takeEvery} from '../effects'
-import {put, call} from 'redux-saga/effects'
-
-import {openModal, logout} from '../../actions'
-import {CHANGE_USER} from '../../constants/action-types'
-
-const queue = createQueue('change-user')
-
-export function * _changeUser () {
-  yield put(openModal({
+async function changeUser (store, action) {
+  store.dispatch(actions.openModal({
     title: ['prompt.logout_title'],
     message: ['prompt.logout_confirm'],
     detail: ['prompt.logout_detail'],
     buttons: [
       {
         label: ['prompt.logout_action'],
-        action: logout(),
+        action: actions.logout(),
         icon: 'exit'
       },
       'cancel'
@@ -25,9 +17,4 @@ export function * _changeUser () {
   }))
 }
 
-export default function * changeUserSaga () {
-  yield [
-    takeEvery(CHANGE_USER, _changeUser),
-    call(queue.exhaust)
-  ]
-}
+export default changeUser
