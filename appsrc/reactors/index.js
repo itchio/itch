@@ -40,6 +40,7 @@ export default validateReactors({
   RETRY_SETUP: combine(setup.retrySetup),
 
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),
+  LOGIN_WITH_PASSWORD: combine(login.loginWithPassword),
   LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded),
   LOGOUT: combine(market.logout, session.logout),
   CHANGE_USER: combine(dialogs.changeUser),
