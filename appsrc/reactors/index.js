@@ -70,6 +70,8 @@ export default validateReactors({
   SHOW_NEXT_TAB: combine(tabs.showNextTab),
   TAB_RELOADED: combine(navigation.tabReloaded),
   EVOLVE_TAB: combine(navigation.evolveTab),
+  TABS_CHANGED: combine(navigation.tabsChanged),
+  TAB_CHANGED: combine(navigation.tabChanged),
 
   QUEUE_GAME: combine(tasks.queueGame),
   REQUEST_CAVE_UNINSTALL: combine(dialogs.requestCaveUninstall),

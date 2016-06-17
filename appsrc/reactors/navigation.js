@@ -232,7 +232,7 @@ let pathSelector
 const makePathSelector = (store) => createSelector(
   (state) => state.session.navigation.id,
   (id) => {
-    store.dispatch(tabChanged(store, id))
+    store.dispatch(actions.tabChanged(store, id))
   }
 )
 
@@ -246,7 +246,7 @@ const makeTransientSelector = (store) => createSelector(
     (transient, tabData, id) => tabData::pluck('path'),
     (transient, id) => id,
     (ids, paths, id) => {
-      store.dispatch(tabsChanged(store))
+      store.dispatch(actions.tabsChanged(store))
     }
   )
 )
@@ -267,5 +267,5 @@ async function boot (store, action) {
 
 export default {
   boot, sessionReady, tabReloaded, windowFocusChanged,
-  evolveTab, probeCave
+  evolveTab, probeCave, tabsChanged, tabChanged
 }
