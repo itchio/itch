@@ -40,13 +40,13 @@ if (beChatty) {
 
 const allAction = Object.freeze({type: '__ALL', payload: null})
 const enhancer = compose(
-  applyMiddleware(...middleware),
   electronEnhancer({
     postDispatchCallback: (action) => {
       route(reactors, store, action)
       route(reactors, store, allAction)
     }
-  })
+  }),
+  applyMiddleware(...middleware)
 )
 
 const initialState = {}

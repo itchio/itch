@@ -25,6 +25,7 @@ const allAction = Object.freeze({type: '__ALL', payload: null})
 const enhancers = [
   electronEnhancer({
     filter,
+    synchronous: false,
     postDispatchCallback: (action) => {
       route(reactors, store, action)
       route(reactors, store, allAction)
