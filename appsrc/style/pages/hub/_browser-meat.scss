@@ -52,9 +52,13 @@ $meat-cover-scale: 0.4;
     border-bottom: 2px solid;
   }
 
+  .webview-shell, webview {
+    display: flex;
+    flex: 1 1;
+  }
+
   webview {
     background: white;
-    flex-grow: 1;
     margin-bottom: $status-bar-height;
     margin-right: -1px;
   }

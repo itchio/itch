@@ -73,12 +73,17 @@
   position: relative;
 
   .hub-meat-tab {
-    display: none;
+    visibility: hidden;
+    display: flex;
+    flex: 0 1;
+    width: 100%;
+    height: 0px;
 
     &.visible {
+      visibility: visible;
       display: flex;
-      flex-basis: auto;
-      flex-grow: 1;
+      flex: 1 1;
+      height: 100%;
     }
   }
 }
