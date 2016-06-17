@@ -21,7 +21,7 @@ const itchPlatform = os.itchPlatform()
 export class SearchResult extends Component {
   render () {
     const {game, onClick} = this.props
-    const {title, coverUrl} = game
+    const {title, stillCoverUrl, coverUrl} = game
 
     const platforms = []
     let compatible = false
@@ -49,7 +49,7 @@ export class SearchResult extends Component {
     })
 
     return <div className={resultClasses} onClick={onClick}>
-      <img src={coverUrl}/>
+      <img src={stillCoverUrl || coverUrl || 'about:blank'}/>
       <div className='title-block'>
         <h4>{title}</h4>
         <span className='platforms'>
@@ -72,12 +72,12 @@ SearchResult.propTypes = {
 export class UserSearchResult extends Component {
   render () {
     const {user, onClick} = this.props
-    const {displayName, username, coverUrl} = user
+    const {displayName, username, stillCoverUrl, coverUrl} = user
 
     const resultClasses = classNames('search-result', 'user-search-result')
 
     return <div className={resultClasses} onClick={onClick}>
-      <img src={coverUrl || defaultImages.avatar}/>
+      <img src={stillCoverUrl || coverUrl || defaultImages.avatar}/>
       <div className='title-block'>
         <h4>{displayName || username}</h4>
       </div>

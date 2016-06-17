@@ -13,7 +13,6 @@ const osx = os.itchPlatform() === 'osx'
 import * as actions from '../actions'
 
 function openDevTools () {
-  console.log('opening dev tools')
   const win = remote.getCurrentWindow()
   win.webContents.openDevTools({detach: true})
 }

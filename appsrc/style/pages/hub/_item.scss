@@ -1,8 +1,24 @@
 
 .hub-item {
   @include thumbnail-style;
+  position: relative;
   background: #232222; // FIXME colors
   border: 1px solid #191919; // FIXME colors
+
+  .gif-marker {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    text-transform: uppercase;
+    background: #333333;
+    box-shadow: 0 0 4px #333;
+    color: rgba(253, 253, 253, 0.74);
+    font-size: 12px;
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-weight: bold;
+    opacity: .8;
+  }
 
   .cover {
     @include default-cover-background;
