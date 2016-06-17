@@ -50,6 +50,7 @@ export default validateReactors({
   FORGET_SESSION_REQUEST: combine(rememberedSessions.forgetSessionRequest),
   FORGET_SESSION: combine(rememberedSessions.forgetSession),
 
+  USER_DB_READY: combine(fetch.userDbReady),
   USER_DB_COMMIT: combine(fetch.userDbCommit),
 
   UPDATE_PREFERENCES: combine(preferences.updatePreferences),

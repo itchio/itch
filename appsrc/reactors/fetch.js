@@ -90,6 +90,7 @@ async function search (store, action) {
 
 async function fetchSingleCollectionGames (store, market, credentials, collectionId) {
   await fetch.collectionGames(market, credentials, collectionId)
+  log(opts, `fetched collection ${collectionId}!`)
   store.dispatch(actions.collectionGamesFetched({collectionId}))
 }
 
@@ -105,6 +106,7 @@ async function fetchCollectionGames (store, action) {
   const collections = market.getEntities('collections')
 
   for (const key of Object.keys(collections)) {
+    log(opts, `fetching collection ${key}`)
     await fetchSingleCollectionGames(store, market, credentials, Number(key))
   }
 }
@@ -130,8 +132,10 @@ async function userDbCommit (store, action) {
     collectionsWatcher = makeCollectionsWatcher(store)
   }
   collectionsWatcher(store.getState())
+}
 
+async function userDbReady (store, action) {
   await fetchCollectionGames(store, action)
 }
 
-export default {windowFocusChanged, loginSucceeded, purchaseCompleted, fetchCollectionGames, userDbCommit, search}
+export default {windowFocusChanged, loginSucceeded, purchaseCompleted, fetchCollectionGames, userDbCommit, userDbReady, search}
