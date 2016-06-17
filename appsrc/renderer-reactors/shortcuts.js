@@ -5,7 +5,7 @@ import hookGlobalBind from 'combokeys-ftl/plugins/global-bind'
 const combo = new Combokeys(document.documentElement)
 hookGlobalBind(combo)
 
-import {remote} from '../electron'
+import {remote} from 'electron'
 
 import os from '../util/os'
 const osx = os.itchPlatform() === 'osx'
@@ -13,6 +13,7 @@ const osx = os.itchPlatform() === 'osx'
 import * as actions from '../actions'
 
 function openDevTools () {
+  console.log('opening dev tools')
   const win = remote.getCurrentWindow()
   win.webContents.openDevTools({detach: true})
 }
