@@ -3,7 +3,7 @@
     "errors.api.login.incorrect_username_or_password": "Numele de utilizator sau parola sunt incorecte",
     "errors.api.login.password_must_be_provided": "Trebuie introdusă parola",
     "grid.item.buy_now": "Cumpără acum",
-    "grid.item.downloading": "Descărcare…",
+    "grid.item.downloading": "Se descarcă…",
     "grid.item.install": "Instalează",
     "grid.item.installing": "Se instalează...",
     "grid.item.launch": "Lansează",
