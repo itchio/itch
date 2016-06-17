@@ -7,14 +7,12 @@ import route from '../reactors/route'
 import reactors from '../renderer-reactors'
 import reducer from '../reducers'
 
-import env from '../env'
-
 const filter = true
 const middleware = []
 
 const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === '1'
 
-if (env.name === 'development' || REDUX_DEVTOOLS_ENABLED) {
+if (REDUX_DEVTOOLS_ENABLED) {
   const logger = createLogger({
     predicate: (getState, action) => !action.MONITOR_ACTION
   })

@@ -33,13 +33,20 @@ export class HubMeat extends Component {
         const {path} = data
         const visible = (id === currentId)
         const classes = classNames('hub-meat-tab', {visible})
-        return <div key={id} className={classes}>{this.renderTab(id, path, data)}</div>
+        return <div key={id} className={classes}>
+          {this.renderTab(id, path, data, visible)}
+        </div>
       })}
       <HubSearchResults/>
     </div>
   }
 
-  renderTab (tabId, path, data) {
+  renderTab (tabId, path, data, visible) {
+    const isBrowser = /^(url|games|users|collections|search|press|featured)/.test(path)
+    if (!visible && !isBrowser) {
+      return ''
+    }
+
     if (path === 'dashboard') {
       return <Dashboard key={tabId}/>
     } else if (path === 'library') {
@@ -59,7 +66,7 @@ export class HubMeat extends Component {
       return <NewTab tabId={tabId} key={tabId}/>
     } else if (/^collections\//.test(path)) {
       return <Collection tabId={tabId} tabPath={path} data={data} key={tabId}/>
-    } else if (/^(url|games|users|collections|search|press|featured)/.test(path)) {
+    } else if (isBrowser) {
       return <UrlMeat tabId={tabId} path={path} key={tabId}/>
     } else {
       return '?'

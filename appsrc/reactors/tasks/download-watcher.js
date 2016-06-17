@@ -32,7 +32,7 @@ async function updateDownloadState (store) {
   }
 }
 
-async function startDownloadWatcher (store) {
+export async function downloadWatcher (store) {
   // FIXME not ready
   while (true && false) {
     try {
@@ -42,5 +42,3 @@ async function startDownloadWatcher (store) {
     }
   }
 }
-
-export default {startDownloadWatcher}

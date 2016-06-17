@@ -3,7 +3,6 @@ import {EventEmitter} from 'events'
 
 import invariant from 'invariant'
 import uuid from 'node-uuid'
-import createQueue from '../queue'
 
 import {log, opts} from './log'
 
@@ -33,12 +32,10 @@ export async function startDownload (store, downloadOpts) {
 
   let err
   try {
-    const queue = createQueue(`download-${id}`)
-
     const out = new EventEmitter()
     out.on('progress', (progress) => {
-      queue.dispatch(actions.downloadProgress({id, progress}))
-      queue.dispatch(actions.setProgress(progress))
+      store.dispatch(actions.downloadProgress({id, progress}))
+      store.dispatch(actions.setProgress(progress))
     })
 
     const credentials = store.getState().session.credentials

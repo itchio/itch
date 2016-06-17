@@ -5,7 +5,7 @@ import hookGlobalBind from 'combokeys-ftl/plugins/global-bind'
 const combo = new Combokeys(document.documentElement)
 hookGlobalBind(combo)
 
-import {remote} from '../electron'
+import {remote} from 'electron'
 
 import os from '../util/os'
 const osx = os.itchPlatform() === 'osx'

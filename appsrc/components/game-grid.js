@@ -6,7 +6,8 @@ import {each} from 'underline'
 
 import HubItem from './hub-item'
 import LeaderHubItem from './leader-hub-item'
-import HubGhostItem from './hub-ghost-item'
+
+import InfiniteGrid from 'react-infinite-grid'
 
 export class GameGrid extends Component {
   constructor () {
@@ -51,14 +52,7 @@ export class GameGrid extends Component {
       }
     })
 
-    let ghostId = 0
-    for (let i = 0; i < 12; i++) {
-      items.push(<HubGhostItem key={`ghost-${ghostId++}`}/>)
-    }
-
-    return <div className='hub-grid'>
-      {items}
-    </div>
+    return <InfiniteGrid className='hub-grid' itemClassName={'hub-item'} entries={items} width={235} height={300} padding={10}/>
   }
 }
 

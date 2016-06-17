@@ -40,6 +40,7 @@ export default validateReactors({
   RETRY_SETUP: combine(setup.retrySetup),
 
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),
+  LOGIN_WITH_PASSWORD: combine(login.loginWithPassword),
   LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded),
   LOGOUT: combine(market.logout, session.logout),
   CHANGE_USER: combine(dialogs.changeUser),
@@ -50,6 +51,7 @@ export default validateReactors({
   FORGET_SESSION_REQUEST: combine(rememberedSessions.forgetSessionRequest),
   FORGET_SESSION: combine(rememberedSessions.forgetSession),
 
+  USER_DB_READY: combine(fetch.userDbReady),
   USER_DB_COMMIT: combine(fetch.userDbCommit),
 
   UPDATE_PREFERENCES: combine(preferences.updatePreferences),
@@ -68,6 +70,8 @@ export default validateReactors({
   SHOW_NEXT_TAB: combine(tabs.showNextTab),
   TAB_RELOADED: combine(navigation.tabReloaded),
   EVOLVE_TAB: combine(navigation.evolveTab),
+  TABS_CHANGED: combine(navigation.tabsChanged),
+  TAB_CHANGED: combine(navigation.tabChanged),
 
   QUEUE_GAME: combine(tasks.queueGame),
   REQUEST_CAVE_UNINSTALL: combine(dialogs.requestCaveUninstall),

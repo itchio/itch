@@ -8,18 +8,42 @@ import * as actions from '../actions'
 import GameActions from './game-actions'
 
 export class HubItem extends Component {
+  constructor () {
+    super()
+    this.state = {
+      hover: false
+    }
+  }
+
   render () {
     const {game} = this.props
-    const {title, coverUrl} = game
+    const {title, coverUrl, stillCoverUrl} = game
     const {navigateToGame} = this.props
 
-    const actionProps = {game, showSecondary: true}
+    let gif
     const coverStyle = {}
     if (coverUrl) {
-      coverStyle.backgroundImage = `url("${coverUrl}")`
+      if (this.state.hover) {
+        coverStyle.backgroundImage = `url('${coverUrl}')`
+      } else {
+        if (stillCoverUrl) {
+          if (/.gif$/i.test(coverUrl)) {
+            gif = true
+          }
+          coverStyle.backgroundImage = `url('${stillCoverUrl}')`
+        } else {
+          coverStyle.backgroundImage = `url('${coverUrl}')`
+        }
+      }
     }
 
-    return <div className='hub-item'>
+    const actionProps = {game, showSecondary: true}
+
+    return <div className='hub-item' onMouseEnter={::this.onMouseEnter} onMouseLeave={::this.onMouseLeave}>
+      {gif
+        ? <span className='gif-marker'>gif</span>
+        : ''
+      }
       <section className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
 
       <section className='undercover'>
@@ -30,6 +54,14 @@ export class HubItem extends Component {
         <GameActions {...actionProps}/>
       </section>
     </div>
+  }
+
+  onMouseEnter () {
+    this.setState({hover: true})
+  }
+
+  onMouseLeave () {
+    this.setState({hover: false})
   }
 }
 
