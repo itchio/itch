@@ -1,6 +1,6 @@
 
 import makeMarketReducer from './make-market-reducer'
-import {getUserMarket} from '../sagas/market'
+import {getUserMarket} from '../reactors/market'
 
 import {LOGOUT} from '../constants/action-types'
 

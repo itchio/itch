@@ -31,12 +31,11 @@ export async function check (opts) {
 
 export async function install (opts, needs) {
   return await common.tendToNeeds(opts, needs, {
-    firejail: async (need) => {
+    firejail: async function (need) {
       log(opts, `installing firejail, because ${need.err} (code ${need.code})`)
 
       // normally already installed by setup phase
-      // FIXME: can't use here because sagas :( cf. https://github.com/itchio/itch/issues/695
-      // await ibrew.fetch(opts, 'firejail')
+      await ibrew.fetch(opts, 'firejail')
 
       const firejailBinary = path.join(ibrew.binPath(), 'firejail')
       const firejailBinaryExists = await sf.exists(firejailBinary)

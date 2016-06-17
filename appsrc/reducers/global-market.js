@@ -1,6 +1,6 @@
 
 import makeMarketReducer from './make-market-reducer'
-import {getGlobalMarket} from '../sagas/market'
+import {getGlobalMarket} from '../reactors/market'
 
 import {createSelector, createStructuredSelector} from 'reselect'
 import {indexBy} from 'underline'

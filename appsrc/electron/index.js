@@ -9,7 +9,11 @@ let electron
 if (env.name === 'test') {
   electron = require('./fake-electron').default
 } else {
-  electron = require('electron')
+  if (process.type === 'renderer') {
+    electron = require('electron').remote.require('electron')
+  } else {
+    electron = require('electron')
+  }
 }
 
 export const app = electron.app

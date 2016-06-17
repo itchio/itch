@@ -1,31 +1,36 @@
 
 import {createStore, applyMiddleware, compose} from 'redux'
-import {electronEnhancer} from 'redux-electron-enhancer'
+import {electronEnhancer} from 'redux-electron-store'
 import createLogger from 'redux-logger'
-import createSagaMiddleware from 'redux-saga'
 
-import sagas from '../renderer-sagas'
-import {each} from 'underline'
+import route from '../reactors/route'
+import reactors from '../renderer-reactors'
+import reducer from '../reducers'
+
+import env from '../env'
 
 const filter = true
-const sagaMiddleware = createSagaMiddleware()
-const middleware = [
-  sagaMiddleware
-]
+const middleware = []
 
 const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === '1'
 
-if (REDUX_DEVTOOLS_ENABLED) {
+if (env.name === 'development' || REDUX_DEVTOOLS_ENABLED) {
   const logger = createLogger({
     predicate: (getState, action) => !action.MONITOR_ACTION
   })
   middleware.push(logger)
 }
 
-const inject = (action) => store.dispatch(action)
-
+const allAction = Object.freeze({type: '__ALL', payload: null})
 const enhancers = [
-  electronEnhancer({inject, filter}),
+  electronEnhancer({
+    filter,
+    synchronous: false,
+    postDispatchCallback: (action) => {
+      route(reactors, store, action)
+      route(reactors, store, allAction)
+    }
+  }),
   applyMiddleware(...middleware)
 ]
 
@@ -36,9 +41,8 @@ if (REDUX_DEVTOOLS_ENABLED) {
 
 const enhancer = compose(...enhancers)
 
-const reducer = (state, action) => state
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
-sagas::each(::sagaMiddleware.run)
+route(reactors, store, {type: '__MOUNT', payload: null})
 
 export default store

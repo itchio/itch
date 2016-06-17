@@ -1,13 +1,11 @@
 
 import {createStore, applyMiddleware, compose} from 'redux'
-import {electronEnhancer} from 'redux-electron-enhancer'
+import {electronEnhancer} from 'redux-electron-store'
 import createLogger from 'redux-cli-logger'
-import createSagaMiddleware from 'redux-saga'
 
-import sagas from '../sagas'
+import route from '../reactors/route'
+import reactors from '../reactors'
 import reducer from '../reducers'
-
-import {each} from 'underline'
 
 const crashGetter = (store) => (next) => (action) => {
   try {
@@ -20,34 +18,39 @@ const crashGetter = (store) => (next) => (action) => {
   }
 }
 
-const sagaMiddleware = createSagaMiddleware()
-
 const middleware = [
-  crashGetter,
-  sagaMiddleware
+  crashGetter
 ]
 
 const beChatty = process.env.MARCO_POLO === '1'
 
-const devMiddleware = []
 if (beChatty) {
   const logger = createLogger({
-    predicate: (getState, action) => !action.MONITOR_ACTION && !/^WINDOW_/.test(action.type) && !/_DB_/.test(action.type),
+    predicate: (getState, action) => {
+      return !action.MONITOR_ACTION &&
+         !/^WINDOW_/.test(action.type) &&
+         !/_DB_/.test(action.type) &&
+         !/LOCALE_/.test(action.type)
+    },
     stateTransformer: (state) => ''
   })
 
-  devMiddleware.push(logger)
+  middleware.push(logger)
 }
 
-const inject = (action) => store.dispatch(action)
+const allAction = Object.freeze({type: '__ALL', payload: null})
 const enhancer = compose(
-  applyMiddleware(...middleware),
-  electronEnhancer({inject}),
-  applyMiddleware(...devMiddleware)
+  electronEnhancer({
+    postDispatchCallback: (action) => {
+      route(reactors, store, action)
+      route(reactors, store, allAction)
+    }
+  }),
+  applyMiddleware(...middleware)
 )
 
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
-sagas::each(::sagaMiddleware.run)
+route(reactors, store, {type: '__MOUNT', payload: null})
 
 export default store

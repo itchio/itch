@@ -4,7 +4,6 @@ import {app} from '../electron'
 import os from './os'
 
 import {partial} from 'underline'
-import {call} from 'redux-saga/effects'
 
 import mklog from './log'
 const log = mklog('ibrew')
@@ -21,7 +20,7 @@ const defaultVersionCheck = {
 }
 
 const self = {
-  fetch: function * (opts, name) {
+  fetch: async function (opts, name) {
     const noop = () => null
     const {onStatus = noop} = opts
 
@@ -37,23 +36,23 @@ const self = {
 
     const channel = net.channel(name)
 
-    const downloadVersion = function * (v) {
+    const downloadVersion = async function (v) {
       const archiveName = self.archiveName(name)
       const archivePath = path.join(self.binPath(), archiveName)
       const archiveUrl = `${channel}/v${v}/${archiveName}`
       onStatus('download', ['login.status.dependency_install', {name, version: v}])
       log(opts, `${name}: downloading '${v}' from ${archiveUrl}`)
 
-      yield call(net.downloadToFile, opts, archiveUrl, archivePath)
+      await net.downloadToFile(opts, archiveUrl, archivePath)
 
       try {
-        const sums = yield call(net.getSHA1Sums, opts, channel, v)
+        const sums = await net.getSHA1Sums(opts, channel, v)
         const sum = sums[archiveName]
         if (sum) {
           const expected = sum.sha1.toLowerCase()
           log(opts, `${name}: expected SHA1: ${expected}`)
           const h = require('crypto').createHash('sha1')
-          const fileContents = yield call(sf.fs.readFileAsync, archivePath, {encoding: 'binary'})
+          const fileContents = await sf.fs.readFileAsync(archivePath, {encoding: 'binary'})
           h.update(fileContents)
           const actual = h.digest('hex')
           log(opts, `${name}:   actual SHA1: ${actual}`)
@@ -71,12 +70,12 @@ const self = {
         log(opts, `${name}: installed!`)
       } else {
         log(opts, `${name}: extracting ${formula.format} archive`)
-        yield call(extract.extract, {
+        await extract.extract({
           archivePath,
           destPath: self.binPath()
         })
         log(opts, `${name}: cleaning up ${formula.format} archive`)
-        yield call(sf.wipe, archivePath)
+        await sf.wipe(archivePath)
         log(opts, `${name}: installed!`)
       }
     }
@@ -84,20 +83,20 @@ const self = {
     onStatus('stopwatch', ['login.status.dependency_check'])
     const getLatestVersion = net.getLatestVersion::partial(channel)
 
-    const localVersion = yield call(self.getLocalVersion, name)
+    const localVersion = await self.getLocalVersion(name)
 
     if (!localVersion) {
       if (formula.onMissing) {
         formula.onMissing(os.platform())
       }
       log(opts, `${name}: missing, downloading latest`)
-      const latestVersion = yield call(getLatestVersion)
-      return yield call(downloadVersion, latestVersion)
+      const latestVersion = await getLatestVersion()
+      return await downloadVersion(latestVersion)
     }
 
     let latestVersion
     try {
-      latestVersion = yield call(getLatestVersion)
+      latestVersion = await getLatestVersion()
     } catch (err) {
       log(opts, `${name}: cannot get latest version, skipping: ${err.message || err}`)
       return
@@ -110,7 +109,7 @@ const self = {
     }
 
     log(opts, `${name}: upgrading '${localVersion}' => '${latestVersion}'`)
-    yield call(downloadVersion, latestVersion)
+    await downloadVersion(latestVersion)
   },
 
   archiveName: (name) => {
@@ -125,14 +124,14 @@ const self = {
     }
   },
 
-  getLocalVersion: function * (name) {
+  getLocalVersion: async function (name) {
     const formula = formulas[name]
     const {versionCheck = {}} = formula
 
     const check = { ...defaultVersionCheck, ...versionCheck }
 
     try {
-      const info = yield call(os.assertPresence, name, check.args, check.parser)
+      const info = await os.assertPresence(name, check.args, check.parser)
       return version.normalize(info.parsed)
     } catch (err) {
       // not present

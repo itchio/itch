@@ -5,7 +5,7 @@ you need to be familiar with it. The basics are as follows:
   * All state is stored in a single place (the store)
   * All change happens via actions, that are dispatched by the store, to:
     * Reducers, which compute new state from the old state and the action
-    * Middleware, like redux-saga, which is used in itch to apply side-effects
+    * Reactors which are used in itch to apply side-effects
   * The UI is rendered directly from the state
 
 [Redux]: http://redux.js.org/index.html
@@ -85,7 +85,7 @@ compose into  |                     ||                    | read from
               |                     ||                    |           
    ___________|____________         ||            ________|_________
   [                        ]        ||           [                  ]
-  [    sagas + reducers    ] <<-- actions ------ [ react components ]
+  [  reactors + reducers   ] <<-- actions ------ [ react components ]
   [________________________]        ||           [__________________]
               |                     ||                    |
 interact with |                     ||                    | render to
