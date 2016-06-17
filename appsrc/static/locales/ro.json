@@ -104,5 +104,22 @@
     "status.checking": "Se caută actualizări…",
     "status.downloaded": "Click pentru a reporni aplicatia si a aplica actualizarea!",
     "status.downloading": "Se descarcă o actualizare…",
-    "status.uptodate": "Itch-ul tău este actualizat la zi!"
+    "status.uptodate": "Itch-ul tău este actualizat la zi!",
+    "grid.item.cancel_download": "Opreşte descărcarea",
+    "grid.item.probe": "Deschide jurnalul de evenimente (Avansat)",
+    "grid.item.purchase_or_donate": "Cumpără sau donează bani pentru acest produs",
+    "grid.item.report_problem": "Semnalează eroarea (se deschide în browser)",
+    "grid.item.retry": "Încearcă descărcarea / instalarea / lansarea din nou",
+    "grid.item.uninstall": "Dezinstalează",
+    "label.experimental": "Experimental",
+    "docs.learn_more": "Află mai multe",
+    "duration.hour": "o oră",
+    "duration.hours": "{{x}} ore",
+    "duration.minute": "sub un minut",
+    "duration.minutes": "{{x}} minute",
+    "game.install.no_executables_found": "Nu am găsit nici un executabil",
+    "game.install.no_html_index_found": "Nu am găsit nici un fişier index HTML",
+    "game.install.no_uploads_available.detail": "Poate nu este compatibil cu sistemul tău sau cu aplicaţia itch încă!",
+    "game.install.try_again": "Încearcă din nou",
+    "game.install.visit_web_page": "Vizitează pagina web"
 }
