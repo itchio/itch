@@ -21,25 +21,34 @@ import purchases from './purchases'
 import selfUpdate from './self-update'
 import setup from './setup'
 import updater from './updater'
+import tabs from './tabs'
+import triggers from './triggers'
+import contextMenu from './context-menu'
+import share from './share'
+import navigation from './navigation'
+import clipboard from './clipboard'
+import tasks from './tasks'
 
 export default validateReactors({
   _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll, installLocations.catchAll),
 
   PREBOOT: combine(preboot),
-  BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow,
-    locales.boot, rememberedSessions.boot, selfUpdate.boot, setup.boot),
+  BOOT: combine(market.boot, preferences.boot, mainWindow.boot,
+    locales.boot, rememberedSessions.boot, selfUpdate.boot, setup.boot,
+    navigation.boot, tasks.boot),
   RETRY_SETUP: combine(setup.retrySetup),
 
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),
   LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded),
   LOGOUT: combine(market.logout, session.logout),
 
-  SESSION_READY: combine(session.sessionReady, url.sessionReady, updater.sessionReady),
+  SESSION_READY: combine(session.sessionReady, url.sessionReady,
+    updater.sessionReady, navigation.sessionReady),
 
   FORGET_SESSION_REQUEST: combine(rememberedSessions.forgetSessionRequest),
   FORGET_SESSION: combine(rememberedSessions.forgetSession),
 
-  USER_DB_COMMIT: combine(fetch.fetchCollectionGames),
+  USER_DB_COMMIT: combine(fetch.userDbCommit),
 
   UPDATE_PREFERENCES: combine(preferences.updatePreferences),
 
@@ -47,11 +56,29 @@ export default validateReactors({
   QUEUE_LOCALE_DOWNLOAD: combine(locales.queueLocaleDownload),
 
   WINDOW_BOUNDS_CHANGED: combine(mainWindow.windowBoundsChanged),
-  WINDOW_FOCUS_CHANGED: combine(fetch.windowFocusChanged, installLocations.windowFocusChanged),
+  WINDOW_FOCUS_CHANGED: combine(fetch.windowFocusChanged, installLocations.windowFocusChanged, navigation.windowFocusChanged),
   FOCUS_WINDOW: combine(mainWindow.focusWindow),
   HIDE_WINDOW: combine(mainWindow.hideWindow),
 
-  TASK_ENDED: combine(installLocations.taskEnded),
+  NEW_TAB: combine(tabs.newTab),
+  FOCUS_NTH_TAB: combine(tabs.focusNthTab),
+  SHOW_PREVIOUS_TAB: combine(tabs.showPreviousTab),
+  SHOW_NEXT_TAB: combine(tabs.showNextTab),
+  TAB_RELOADED: combine(navigation.tabReloaded),
+  EVOLVE_TAB: combine(navigation.evolveTab),
+
+  QUEUE_GAME: combine(tasks.queueGame),
+  QUEUE_CAVE_REINSTALL: combine(tasks.queueCaveReinstall),
+  QUEUE_CAVE_UNINSTALL: combine(tasks.queueCaveUninstall),
+  DOWNLOAD_ENDED: combine(tasks.downloadEnded),
+  TASK_ENDED: combine(installLocations.taskEnded, tasks.taskEnded),
+  EXPLORE_CAVE: combine(tasks.exploreCave),
+  IMPLODE_CAVE: combine(tasks.implodeCave),
+  PROBE_CAVE: combine(navigation.probeCave),
+
+  TRIGGER_MAIN_ACTION: combine(triggers.triggerMainAction),
+  TRIGGER_OK: combine(triggers.triggerOk),
+  TRIGGER_BACK: combine(triggers.triggerBack),
 
   MAKE_INSTALL_LOCATION_DEFAULT: combine(installLocations.makeInstallLocationDefault),
   REMOVE_INSTALL_LOCATION_REQUEST: combine(installLocations.removeInstallLocationRequest),
@@ -66,10 +93,18 @@ export default validateReactors({
 
   MENU_ACTION: combine(menu.menuAction),
 
+  OPEN_URL: combine(url.openUrl),
   HANDLE_ITCHIO_URL: combine(url.handleItchioUrl),
+
+  VIEW_CREATOR_PROFILE: combine(url.viewCreatorProfile),
+  VIEW_COMMUNITY_PROFILE: combine(url.viewCommunityProfile),
+
+  OPEN_TAB_CONTEXT_MENU: combine(contextMenu.openTabContextMenu),
+  COPY_TO_CLIPBOARD: combine(clipboard.copyToClipboard),
 
   INITIATE_PURCHASE: combine(purchases.initiatePurchase),
   PURCHASE_COMPLETED: combine(fetch.purchaseCompleted),
+  INITIATE_SHARE: combine(share.initiateShare),
 
   FETCH_COLLECTION_GAMES: combine(fetch.fetchCollectionGames),
 
@@ -78,6 +113,7 @@ export default validateReactors({
   SET_PROGRESS: combine(notifications.setProgress),
   BOUNCE: combine(notifications.bounce),
   NOTIFY: combine(notifications.notify),
+  STATUS_MESSAGE: combine(notifications.statusMessage),
 
   CHECK_FOR_SELF_UPDATE: combine(selfUpdate.checkForSelfUpdate),
   APPLY_SELF_UPDATE_REQUEST: combine(selfUpdate.applySelfUpdateRequest),

@@ -6,6 +6,11 @@ import mklog from '../util/log'
 const log = mklog('reactors/url')
 import {opts} from '../logger'
 
+import {isItchioURL} from '../util/url'
+import urls from '../constants/urls'
+
+import {shell} from '../electron'
+
 import * as actions from '../actions'
 
 let onSessionReady
@@ -53,4 +58,25 @@ async function handleItchioUrl (store, action) {
   }
 }
 
-export default {handleItchioUrl, sessionReady}
+async function openUrl (store, action) {
+  const uri = action.payload
+  if (isItchioURL(uri)) {
+    store.dispatch(actions.handleItchioUrl({uri}))
+  } else {
+    shell.openExternal(uri)
+  }
+}
+
+async function viewCreatorProfile (store, action) {
+  const url = store.getState().session.credentials.me.url
+  store.dispatch(actions.navigate('url/' + url))
+}
+
+async function viewCommunityProfile (store, action) {
+  const url = store.getState().session.credentials.me.url
+  const host = urlParser.parse(url).hostname
+  const slug = /^[^.]+/.exec(host)
+  store.dispatch(actions.navigate('url/' + `${urls.itchio}/profile/${slug}`))
+}
+
+export default {openUrl, handleItchioUrl, sessionReady, viewCreatorProfile, viewCommunityProfile}

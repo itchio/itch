@@ -144,7 +144,7 @@ async function doCheckForGameUpdate (store, cave, taskOpts = {}) {
               log(opts, `Got ${upgradePath.length} patches to download, ${humanize.fileSize(totalSize)} total`)
               const archivePath = pathmaker.downloadPath(upload)
 
-              await startDownload({
+              await startDownload(store, {
                 game,
                 gameId: game.id,
                 upload,
@@ -188,7 +188,7 @@ async function doCheckForGameUpdate (store, cave, taskOpts = {}) {
           store.dispatch(actions.statusMessage(['status.game_update.found', {title: game.title}]))
         }
 
-        await startDownload({
+        await startDownload(store, {
           game,
           gameId: game.id,
           upload,

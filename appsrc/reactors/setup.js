@@ -42,6 +42,8 @@ async function boot (store, action) {
   }
 }
 
-const retrySetup = boot
+async function retrySetup (store, action) {
+  await boot(store, action)
+}
 
 export default {boot, retrySetup}

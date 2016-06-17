@@ -9,6 +9,8 @@ const log = mklog('reactors')
 export default function combine (...args) {
   const methods = args::map((x) => {
     if (!x) throw new Error('null reactor in combination')
+    if (x.__combined) throw new Error('reactor already combined')
+    x.__combined = true
     return Promise.method(x)
   })
 

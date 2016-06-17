@@ -3,7 +3,6 @@ import invariant from 'invariant'
 import {findWhere} from 'underline'
 
 import {getGlobalMarket, getUserMarket} from '../market'
-import {select, call} from 'redux-saga/effects'
 
 import {startTask} from './start-task'
 
@@ -12,14 +11,14 @@ import fetch from '../../util/fetch'
 
 import {startDownload} from './start-download'
 
-export function * _queueCaveReinstall (action) {
+export async function queueCaveReinstall (store, action) {
   const {caveId} = action.payload
   invariant(caveId, 'cave reinstall has valid caveId')
   const cave = getGlobalMarket().getEntity('caves', caveId)
   invariant(cave, 'cave reinstall has valid cave')
 
-  const credentials = yield select((state) => state.session.credentials)
-  const game = yield call(fetch.gameLazily, getUserMarket(), credentials, cave.gameId)
+  const credentials = store.getState().session.credentials
+  const game = await fetch.gameLazily(getUserMarket(), credentials, cave.gameId)
   invariant(game, 'cave reinstall has valid game')
 
   invariant(cave.uploadId, 'cave reinstall has uploadId')
@@ -33,7 +32,7 @@ export function * _queueCaveReinstall (action) {
     return getUserMarket().getEntities('downloadKeys')::findWhere({gameId: game.id})
   }
 
-  yield call(startDownload, {
+  await startDownload(store, {
     game,
     gameId: game.id,
     upload,
@@ -43,7 +42,7 @@ export function * _queueCaveReinstall (action) {
     reason: 'reinstall'
   })
 
-  yield call(startTask, {
+  await startTask(store, {
     name: 'install',
     reinstall: true,
     upload,

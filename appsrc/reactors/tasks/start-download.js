@@ -5,22 +5,22 @@ import invariant from 'invariant'
 import uuid from 'node-uuid'
 import createQueue from '../queue'
 
-import {race, select, call, put} from 'redux-saga/effects'
 import {log, opts} from './log'
 
 import * as actions from '../../actions'
 import download from '../../tasks/download'
 
-export function * startDownload (downloadOpts) {
+export async function startDownload (store, downloadOpts) {
+  invariant(typeof store === 'object', 'startDownload must have a store')
   invariant(downloadOpts, 'startDownload cannot have null opts')
   invariant(downloadOpts.reason, 'startDownload must have a reason')
   invariant(downloadOpts.game, 'startDownload must have a game')
   invariant(typeof downloadOpts.totalSize === 'number', 'startDownload must have a total size')
 
-  const existing = yield select((state) => state.tasks.downloadsByGameId[downloadOpts.game.id])
+  const existing = store.getState().tasks.downloadsByGameId[downloadOpts.game.id]
   if (existing && !existing.finished) {
     log(opts, `Not starting another download for ${downloadOpts.game.title}`)
-    yield put(actions.navigate('downloads'))
+    store.dispatch(actions.navigate('downloads'))
     return
   }
 
@@ -29,7 +29,7 @@ export function * startDownload (downloadOpts) {
 
   const id = uuid.v4()
   // FIXME: wasteful but easy
-  yield put(actions.downloadStarted({id, ...downloadOpts, downloadOpts}))
+  store.dispatch(actions.downloadStarted({id, ...downloadOpts, downloadOpts}))
 
   let err
   try {
@@ -41,7 +41,7 @@ export function * startDownload (downloadOpts) {
       queue.dispatch(actions.setProgress(progress))
     })
 
-    const credentials = yield select((state) => state.session.credentials)
+    const credentials = store.getState().session.credentials
     const extendedOpts = {
       ...opts,
       ...downloadOpts,
@@ -49,19 +49,16 @@ export function * startDownload (downloadOpts) {
     }
 
     log(opts, 'Starting download...')
-    yield put(actions.setProgress(0))
-    yield race({
-      task: call(download, out, extendedOpts),
-      queue: call(queue.exhaust)
-    })
+    store.dispatch(actions.setProgress(0))
+    await download(out, extendedOpts)
   } catch (e) {
     log(opts, 'Download threw')
     err = e.task || e
   } finally {
     err = err ? err.message || err : null
     log(opts, `Download ended, err: ${err || '<none>'}`)
-    yield put(actions.downloadEnded({id, err, downloadOpts}))
-    yield put(actions.setProgress(-1))
+    store.dispatch(actions.downloadEnded({id, err, downloadOpts}))
+    store.dispatch(actions.setProgress(-1))
   }
 
   log(opts, 'Download done!')

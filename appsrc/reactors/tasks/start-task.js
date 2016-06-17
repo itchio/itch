@@ -3,10 +3,8 @@ import {EventEmitter} from 'events'
 
 import invariant from 'invariant'
 import uuid from 'node-uuid'
-import createQueue from '../queue'
 import {getUserMarket, getGlobalMarket} from '../market'
 
-import {race, select, call, put} from 'redux-saga/effects'
 import {log, opts} from './log'
 
 import * as actions from '../../actions'
@@ -14,26 +12,24 @@ import * as actions from '../../actions'
 import {throttle} from 'underline'
 const PROGRESS_THROTTLE = 50
 
-export function * startTask (taskOpts) {
+export async function startTask (store, taskOpts) {
   invariant(taskOpts, 'startTask cannot have null opts')
   invariant(typeof taskOpts.name === 'string', 'startTask opts must contain name')
   invariant(typeof taskOpts.gameId === 'number', 'startTask opts must contain gameId')
 
   const id = uuid.v4()
-  yield put(actions.taskStarted({id, ...taskOpts}))
+  store.dispatch(actions.taskStarted({id, ...taskOpts}))
 
   let err
   let result
   try {
-    const queue = createQueue(`task-${taskOpts.name}-${id}`)
-
     const out = new EventEmitter()
     out.on('progress', ((progress) => {
-      queue.dispatch(actions.taskProgress({id, progress}))
+      store.dispatch(actions.taskProgress({id, progress}))
     })::throttle(PROGRESS_THROTTLE))
 
-    const credentials = yield select((state) => state.session.credentials)
-    const preferences = yield select((state) => state.preferences)
+    const credentials = store.getState().session.credentials
+    const preferences = store.getState().preferences
     const extendedOpts = {
       ...opts,
       ...taskOpts,
@@ -47,10 +43,7 @@ export function * startTask (taskOpts) {
     const taskRunner = require(`../../tasks/${taskOpts.name}`).default
 
     log(opts, `Starting ${taskOpts.name} (${id})...`)
-    const results = yield race({
-      task: call(taskRunner, out, extendedOpts),
-      queue: call(queue.exhaust)
-    })
+    const results = await taskRunner(out, extendedOpts)
 
     log(opts, `Checking results for ${taskOpts.name} (${id})...`)
     result = results.task
@@ -62,7 +55,7 @@ export function * startTask (taskOpts) {
     err = e.task || e
   } finally {
     log(opts, `Task ended, err: ${err ? err.stack || JSON.stringify(err) : '<none>'}`)
-    yield put(actions.taskEnded({name: taskOpts.name, id, err, result, taskOpts}))
+    store.dispatch(actions.taskEnded({name: taskOpts.name, id, err, result, taskOpts}))
   }
 
   return {err, result}

@@ -1,6 +1,5 @@
 
-import {delay} from '../effects'
-import {call, select} from 'redux-saga/effects'
+import {delay} from '../delay'
 
 import {opts} from './log'
 import mklog from '../../util/log'
@@ -10,11 +9,11 @@ const DOWNLOAD_DELAY = 3000
 
 let currentDownload = null
 
-function * updateDownloadState () {
+async function updateDownloadState (store) {
   log(opts, 'Sleeping for a bit..')
-  yield call(delay, DOWNLOAD_DELAY)
+  await delay(DOWNLOAD_DELAY)
 
-  const downloadsByOrder = yield select((state) => state.tasks.downloadsByOrder)
+  const downloadsByOrder = store.getState().tasks.downloadsByOrder
   const first = downloadsByOrder[0]
   if (!first) {
     if (currentDownload) {
@@ -33,11 +32,11 @@ function * updateDownloadState () {
   }
 }
 
-export function * downloadWatcher () {
+export async function startDownloadWatcher (store) {
   // FIXME not ready
   while (true && false) {
     try {
-      yield call(updateDownloadState)
+      await updateDownloadState(store)
     } catch (e) {
       log(opts, `While updating download state: ${e.stack || e}`)
     }

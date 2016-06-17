@@ -1,5 +1,4 @@
 
-import {call} from 'redux-saga/effects'
 import invariant from 'invariant'
 
 import {startTask} from './start-task'
@@ -8,7 +7,7 @@ import {log, opts} from './log'
 
 import {omit} from 'underline'
 
-export function * _downloadEnded (action) {
+export async function downloadEnded (store, action) {
   const {downloadOpts} = action.payload
   let {err} = action.payload
 
@@ -21,7 +20,7 @@ export function * _downloadEnded (action) {
           ...downloadOpts::omit('upgradePath', 'incremental'),
           totalSize: downloadOpts.upload.size
         }
-        yield call(startDownload, newDownloadOpts)
+        await startDownload(store, newDownloadOpts)
       } else {
         log(opts, 'Download had an error, should notify user')
       }
@@ -44,8 +43,7 @@ export function * _downloadEnded (action) {
         downloadKey: downloadOpts.downloadKey
       }
 
-      let {err} = yield call(startTask, taskOpts)
-
+      const {err} = await startTask(store, taskOpts)
       if (err) {
         log(opts, `Error in install: ${err}`)
         return

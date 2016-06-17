@@ -118,7 +118,7 @@ const makeCollectionsWatcher = (store) => {
       const ids = collections::map((c, id) => id)
       if (!ids::isEqual(oldIds)) {
         oldIds = ids
-        store.dispatch(fetchCollectionGames())
+        store.dispatch(actions.fetchCollectionGames())
       }
     }
   )
@@ -130,6 +130,8 @@ async function userDbCommit (store, action) {
     collectionsWatcher = makeCollectionsWatcher(store)
   }
   collectionsWatcher(store.getState())
+
+  await fetchCollectionGames(store, action)
 }
 
 export default {windowFocusChanged, loginSucceeded, purchaseCompleted, fetchCollectionGames, userDbCommit, search}

@@ -5,6 +5,10 @@ import os from '../util/os'
 
 import * as actions from '../actions'
 
+import delay from './delay'
+
+const AUTODISMISS_DELAY = 5000
+
 // OSX already shows the app's icon
 const DEFAULT_ICON = os.platform() === 'darwin' ? null : `./static/images/tray/${app.getName()}-64.png`
 
@@ -43,4 +47,9 @@ async function notify (store, action) {
   }
 }
 
-export default {setProgress, bounce, notify}
+async function statusMessage (store, action) {
+  await delay(AUTODISMISS_DELAY)
+  store.dispatch(actions.dismissStatusMessage())
+}
+
+export default {setProgress, bounce, notify, statusMessage}

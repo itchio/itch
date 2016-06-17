@@ -1,5 +1,4 @@
 
-import {put, call, select} from 'redux-saga/effects'
 import pathmaker from '../../util/pathmaker'
 import invariant from 'invariant'
 
@@ -9,19 +8,22 @@ import {startDownload} from './start-download'
 
 import * as actions from '../../actions'
 
-export function * _queueGame (action) {
+export async function queueGame (store, action) {
+  invariant(typeof store === 'object', 'queueGame needs a store')
+  invariant(typeof action === 'object', 'queueGame needs an action')
+
   const {game} = action.payload
   invariant(typeof game === 'object', 'queueGame has a game object')
-  const cave = yield select((state) => state.globalMarket.cavesByGameId[game.id])
+  const cave = store.getState().globalMarket.cavesByGameId[game.id]
 
   if (cave) {
     log(opts, `Have a cave for game ${game.id}, launching`)
-    yield * startCave(game, cave)
+    await startCave(store, game, cave)
     return
   }
 
   log(opts, `No cave for ${game.id}, attempting install`)
-  const uploadResponse = yield call(startTask, {
+  const uploadResponse = await startTask(store, {
     name: 'find-upload',
     gameId: game.id,
     game: game
@@ -38,7 +40,8 @@ export function * _queueGame (action) {
       // })).result
       const upload = uploads[0]
 
-      yield call(startDownload, {
+      await startDownload({
+        store,
         game,
         gameId: game.id,
         upload,
@@ -50,7 +53,8 @@ export function * _queueGame (action) {
     } else {
       const upload = uploads[0]
 
-      yield call(startDownload, {
+      await startDownload({
+        store,
         game,
         gameId: game.id,
         upload: upload,
@@ -61,7 +65,7 @@ export function * _queueGame (action) {
       })
     }
   } else {
-    yield put(actions.queueHistoryItem({
+    store.dispatch(actions.queueHistoryItem({
       label: ['game.install.no_uploads_available.message', {title: game.title}],
       detail: ['game.install.no_uploads_available.detail'],
       options: [
@@ -79,16 +83,16 @@ export function * _queueGame (action) {
   }
 }
 
-function * startCave (game, cave) {
+async function startCave (store, game, cave) {
   log(opts, `Starting cave ${cave.id}: stub`)
-  const {err} = yield call(startTask, {
+  const {err} = await startTask(store, {
     name: 'launch',
     gameId: cave.gameId,
     cave
   })
 
   if (err) {
-    yield put(actions.queueHistoryItem({
+    store.dispatch(actions.queueHistoryItem({
       label: ['game.install.could_not_launch', {title: game.title}],
       detail: err.reason || ('' + err),
       options: [

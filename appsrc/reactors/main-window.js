@@ -224,4 +224,11 @@ async function quit (store) {
   store.dispatch(actions.quitElectronApp())
 }
 
-export default {focusWindow, hideWindow, windowBoundsChanged, closeTabOrAuxWindow, quitWhenMain, quitElectronApp, prepareQuit, quit}
+async function boot (store, action) {
+  await focusWindow(store, action)
+}
+
+export default {
+  boot, focusWindow, hideWindow, windowBoundsChanged,
+  closeTabOrAuxWindow, quitWhenMain, quitElectronApp, prepareQuit, quit
+}
