@@ -21,12 +21,14 @@ if (env.name === 'development' || REDUX_DEVTOOLS_ENABLED) {
   middleware.push(logger)
 }
 
+const allAction = Object.freeze({type: '__ALL', payload: null})
 const enhancers = [
   applyMiddleware(...middleware),
   electronEnhancer({
     filter,
     postDispatchCallback: (action) => {
       route(reactors, store, action)
+      route(reactors, store, allAction)
     }
   })
 ]
@@ -40,6 +42,6 @@ const enhancer = compose(...enhancers)
 
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
-reactors['__MOUNT'](store, {type: '__MOUNT', payload: {}})
+route(reactors, store, {type: '__MOUNT', payload: null})
 
 export default store

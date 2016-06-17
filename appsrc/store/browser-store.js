@@ -38,16 +38,19 @@ if (beChatty) {
   middleware.push(logger)
 }
 
+const allAction = Object.freeze({type: '__ALL', payload: null})
 const enhancer = compose(
   applyMiddleware(...middleware),
   electronEnhancer({
     postDispatchCallback: (action) => {
       route(reactors, store, action)
+      route(reactors, store, allAction)
     }
   })
 )
 
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
+route(reactors, store, {type: '__MOUNT', payload: null})
 
 export default store
