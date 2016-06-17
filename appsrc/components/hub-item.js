@@ -6,6 +6,7 @@ import {connect} from './connect'
 
 import * as actions from '../actions'
 import GameActions from './game-actions'
+import LightImage from './light-image'
 
 export class HubItem extends Component {
   render () {
@@ -14,20 +15,18 @@ export class HubItem extends Component {
     const {navigateToGame} = this.props
 
     const actionProps = {game, showSecondary: true}
-    const coverStyle = {}
-    if (coverUrl) {
-      coverStyle.backgroundImage = `url("${coverUrl}")`
-    }
 
     return <div className='hub-item'>
-      <section className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
+      <section className='cover' onClick={() => navigateToGame(game)}>
+        <LightImage src={coverUrl}/>
+      </section>
 
       <section className='undercover'>
         <section className='title'>
           {title}
         </section>
 
-        <GameActions {...actionProps}/>
+        {false ? <GameActions {...actionProps}/> : ''}
       </section>
     </div>
   }

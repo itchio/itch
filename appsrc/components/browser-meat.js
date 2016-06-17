@@ -230,7 +230,7 @@ export class BrowserMeat extends Component {
     const {webviewShell} = this.refs
 
     // cf. https://github.com/electron/electron/issues/6046
-    webviewShell.innerHTML = '<webview style="display: flex; flex: 1 1;"/>'
+    webviewShell.innerHTML = '<webview/>'
     const wv = webviewShell.querySelector('webview')
     this.webview = wv
 
@@ -284,7 +284,7 @@ export class BrowserMeat extends Component {
         : <BrowserBar {...controlProps}/>
       }
       <div className='browser-main'>
-        <div style={{display: 'flex', flex: '1 1'}} ref='webviewShell'></div>
+        <div className='webview-shell' ref='webviewShell'></div>
         {context}
       </div>
     </div>
