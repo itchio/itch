@@ -3,13 +3,10 @@ import {EventEmitter} from 'events'
 import invariant from 'invariant'
 import humanize from 'humanize-plus'
 
-import {takeLatest} from 'redux-saga'
-import {fork, take, put, call, select} from 'redux-saga/effects'
-
 import {getUserMarket, getGlobalMarket} from './market'
-import {delay} from './effects'
+import delay from './delay'
 
-import {checkForGameUpdates, statusMessage} from '../actions'
+import * as actions from '../actions'
 
 import fetch from '../util/fetch'
 import pathmaker from '../util/pathmaker'
@@ -22,11 +19,6 @@ import {opts} from '../logger'
 import {startDownload} from './tasks/start-download'
 import {findWhere} from 'underline'
 
-import {
-  SESSION_READY,
-  CHECK_FOR_GAME_UPDATE, CHECK_FOR_GAME_UPDATES
-} from '../constants/action-types'
-
 const DELAY_BETWEEN_GAMES = 25
 
 // 30 minutes * 60 = seconds, * 1000 = millis
@@ -35,22 +27,22 @@ const DELAY_BETWEEN_PASSES = 30 * 60 * 1000
 import findUpload from '../tasks/find-upload'
 import findUpgradePath from '../tasks/find-upgrade-path'
 
-function * _checkForGameUpdates () {
+async function checkForGameUpdates (store, action) {
   // may be interrupted by a saga cancellation
   const caves = getGlobalMarket().getEntities('caves')
   invariant(caves, 'has caves')
 
   for (const caveId of Object.keys(caves)) {
     try {
-      yield call(checkForGameUpdate, caves[caveId])
+      await doCheckForGameUpdate(store, caves[caveId])
     } catch (e) {
       log(opts, `While checking for cave ${caveId} update: ${e.stack || e}`)
     }
-    yield call(delay, DELAY_BETWEEN_GAMES)
+    await delay(DELAY_BETWEEN_GAMES)
   }
 }
 
-function * _checkForGameUpdate (action) {
+async function checkForGameUpdate (store, action) {
   const {caveId, noisy = false} = action.payload
   invariant(typeof caveId === 'string', 'caveId is a string')
 
@@ -61,21 +53,21 @@ function * _checkForGameUpdate (action) {
   }
 
   try {
-    const result = yield call(checkForGameUpdate, cave, {noisy})
+    const result = await doCheckForGameUpdate(store, cave, {noisy})
     if (result && noisy) {
       if (result.err) {
-        yield put(statusMessage(['status.game_update.check_failed', {err: result.err}]))
+        store.dispatch(actions.statusMessage(['status.game_update.check_failed', {err: result.err}]))
       }
     }
   } catch (e) {
     log(opts, `While checking for cave ${caveId} update: ${e.stack || e}`)
     if (noisy) {
-      yield put(statusMessage(['status.game_update.check_failed', {err: e}]))
+      store.dispatch(actions.statusMessage(['status.game_update.check_failed', {err: e}]))
     }
   }
 }
 
-function * checkForGameUpdate (cave, taskOpts = {}) {
+async function doCheckForGameUpdate (store, cave, taskOpts = {}) {
   const {noisy = false} = taskOpts
 
   if (!cave.launchable) {
@@ -88,14 +80,14 @@ function * checkForGameUpdate (cave, taskOpts = {}) {
     return {err: 'Internal error'}
   }
 
-  const credentials = yield select((state) => state.session.credentials)
+  const credentials = store.getState().session.credentials
   invariant(credentials, 'has credentials')
 
   const market = getUserMarket()
   const globalMarket = getGlobalMarket()
   let game
   try {
-    game = yield call(fetch.gameLazily, market, credentials, cave.gameId)
+    game = await fetch.gameLazily(market, credentials, cave.gameId)
   } catch (e) {
     log(opts, `Could not fetch game for ${cave.gameId}, skipping (${e.message || e})`)
     return {err: e}
@@ -118,7 +110,7 @@ function * checkForGameUpdate (cave, taskOpts = {}) {
     }
 
     try {
-      const {uploads, downloadKey} = yield call(findUpload, out, taskOpts)
+      const {uploads, downloadKey} = await findUpload(out, taskOpts)
       if (uploads.length === 0) {
         log(opts, `Can't check for updates for ${game.title}, no uploads.`)
         logger.contents.trimRight().split('\n').map((line) => log(opts, `> ${line}`))
@@ -136,7 +128,7 @@ function * checkForGameUpdate (cave, taskOpts = {}) {
           if (upload.buildId !== cave.buildId) {
             log(opts, `Got new build available: ${upload.buildId} > ${cave.buildId}`)
             if (noisy) {
-              yield put(statusMessage(['status.game_update.found', {title: game.title}]))
+              store.dispatch(actions.statusMessage(['status.game_update.found', {title: game.title}]))
             }
 
             hasUpgrade = true
@@ -148,11 +140,11 @@ function * checkForGameUpdate (cave, taskOpts = {}) {
               currentBuildId: cave.buildId
             }
             try {
-              const {upgradePath, totalSize} = yield call(findUpgradePath, out, upgradeOpts)
+              const {upgradePath, totalSize} = await findUpgradePath(out, upgradeOpts)
               log(opts, `Got ${upgradePath.length} patches to download, ${humanize.fileSize(totalSize)} total`)
               const archivePath = pathmaker.downloadPath(upload)
 
-              yield call(startDownload, {
+              await startDownload({
                 game,
                 gameId: game.id,
                 upload,
@@ -193,10 +185,10 @@ function * checkForGameUpdate (cave, taskOpts = {}) {
         const archivePath = pathmaker.downloadPath(upload)
 
         if (noisy) {
-          yield put(statusMessage(['status.game_update.found', {title: game.title}]))
+          store.dispatch(actions.statusMessage(['status.game_update.found', {title: game.title}]))
         }
 
-        yield call(startDownload, {
+        await startDownload({
           game,
           gameId: game.id,
           upload,
@@ -221,25 +213,24 @@ function * checkForGameUpdate (cave, taskOpts = {}) {
   }
 
   if (noisy) {
-    yield put(statusMessage(['status.game_update.not_found', {title: game.title}]))
+    store.dispatch(actions.statusMessage(['status.game_update.not_found', {title: game.title}]))
   }
   return {}
 }
 
-function * installUpdater () {
-  yield take(SESSION_READY)
+let updaterInstalled = false
+
+async function sessionReady (store, action) {
+  if (updaterInstalled) {
+    return
+  }
+  updaterInstalled = true
 
   while (true) {
     log(opts, 'Regularly scheduled check for game updates...')
-    yield put(checkForGameUpdates())
-    yield call(delay, DELAY_BETWEEN_PASSES)
+    store.dispatch(actions.checkForGameUpdates())
+    await delay(DELAY_BETWEEN_PASSES)
   }
 }
 
-export default function * updater () {
-  yield [
-    fork(installUpdater),
-    takeLatest(CHECK_FOR_GAME_UPDATES, _checkForGameUpdates),
-    takeLatest(CHECK_FOR_GAME_UPDATE, _checkForGameUpdate)
-  ]
-}
+export default {sessionReady, checkForGameUpdates, checkForGameUpdate}

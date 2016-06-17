@@ -20,6 +20,7 @@ import installLocations from './install-locations'
 import purchases from './purchases'
 import selfUpdate from './self-update'
 import setup from './setup'
+import updater from './updater'
 
 export default validateReactors({
   _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll, installLocations.catchAll),
@@ -33,7 +34,7 @@ export default validateReactors({
   LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded),
   LOGOUT: combine(market.logout, session.logout),
 
-  SESSION_READY: combine(session.sessionReady, url.sessionReady),
+  SESSION_READY: combine(session.sessionReady, url.sessionReady, updater.sessionReady),
 
   FORGET_SESSION_REQUEST: combine(rememberedSessions.forgetSessionRequest),
   FORGET_SESSION: combine(rememberedSessions.forgetSession),
@@ -59,6 +60,9 @@ export default validateReactors({
   ADD_INSTALL_LOCATION: combine(installLocations.addInstallLocation),
   BROWSE_INSTALL_LOCATION: combine(installLocations.browseInstallLocation),
   QUERY_FREE_SPACE: combine(installLocations.queryFreeSpace),
+
+  CHECK_FOR_GAME_UPDATES: combine(updater.checkForGameUpdates),
+  CHECK_FOR_GAME_UPDATE: combine(updater.checkForGameUpdate),
 
   MENU_ACTION: combine(menu.menuAction),
 
