@@ -7,8 +7,6 @@ import route from '../reactors/route'
 import reactors from '../renderer-reactors'
 import reducer from '../reducers'
 
-import env from '../env'
-
 const filter = true
 const middleware = []
 
