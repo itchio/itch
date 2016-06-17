@@ -43,7 +43,7 @@ async function forgetSessionRequest (store, action) {
     buttons: [
       {
         label: ['prompt.forget_session.action'],
-        action: forgetSession({id, username}),
+        action: actions.forgetSession({id, username}),
         icon: 'cross'
       },
       'cancel'
