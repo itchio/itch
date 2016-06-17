@@ -22,7 +22,7 @@ export class HubItem extends Component {
 
     let gif
     const coverStyle = {}
-    if (coverUrl) {
+    if (false && coverUrl) {
       if (this.state.hover) {
         coverStyle.backgroundImage = `url('${coverUrl}')`
       } else {
@@ -44,14 +44,14 @@ export class HubItem extends Component {
         ? <span className='gif-marker'>gif</span>
         : ''
       }
-      <section className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
+      <section className='cover' style={coverStyle}/>
 
       <section className='undercover'>
-        <section className='title'>
+        <section className='title' onClick={() => navigateToGame(game)}>
           {title}
         </section>
 
-        {false ? <GameActions {...actionProps}/> : ''}
+        <GameActions {...actionProps}/>
       </section>
     </div>
   }

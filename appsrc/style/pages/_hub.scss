@@ -40,28 +40,28 @@
 }
 
 .hub-grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: flex-start;
-  align-content: flex-start;
+  // display: flex;
+  // flex-direction: row;
+  // flex-wrap: wrap;
+  // justify-content: space-between;
+  // align-items: flex-start;
+  // align-content: flex-start;
 
   .criterion-bar {
     flex-basis: 100%;
     display: flex;
   }
 
-  .hub-item {
-    width: $grid-item-width;
-    margin: .5em;
-  }
-
-  .hub-filler {
-    width: $grid-item-width;
-    height: 0;
-    margin: 0 .5em;
-  }
+  // .hub-item {
+  //   width: $grid-item-width;
+  //   margin: .5em;
+  // }
+  //
+  // .hub-filler {
+  //   width: $grid-item-width;
+  //   height: 0;
+  //   margin: 0 .5em;
+  // }
 }
 
 .hub-meat {
