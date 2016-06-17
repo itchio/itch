@@ -19,12 +19,15 @@ import menu from './menu'
 import installLocations from './install-locations'
 import purchases from './purchases'
 import selfUpdate from './self-update'
+import setup from './setup'
 
 export default validateReactors({
   _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll, installLocations.catchAll),
 
   PREBOOT: combine(preboot),
-  BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow, locales.boot, rememberedSessions.boot, selfUpdate.boot),
+  BOOT: combine(market.boot, preferences.boot, mainWindow.focusWindow,
+    locales.boot, rememberedSessions.boot, selfUpdate.boot, setup.boot),
+  RETRY_SETUP: combine(setup.retrySetup),
 
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),
   LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded),
