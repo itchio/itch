@@ -40,8 +40,7 @@ export async function queueGame (store, action) {
       // })).result
       const upload = uploads[0]
 
-      await startDownload({
-        store,
+      await startDownload(store, {
         game,
         gameId: game.id,
         upload,
@@ -53,8 +52,7 @@ export async function queueGame (store, action) {
     } else {
       const upload = uploads[0]
 
-      await startDownload({
-        store,
+      await startDownload(store, {
         game,
         gameId: game.id,
         upload: upload,

@@ -43,7 +43,7 @@ export async function startTask (store, taskOpts) {
     const taskRunner = require(`../../tasks/${taskOpts.name}`).default
 
     log(opts, `Starting ${taskOpts.name} (${id})...`)
-    const result = await taskRunner(out, extendedOpts)
+    result = await taskRunner(out, extendedOpts)
 
     log(opts, `Checking results for ${taskOpts.name} (${id})...`)
     if (result) {
