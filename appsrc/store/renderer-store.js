@@ -23,14 +23,14 @@ if (env.name === 'development' || REDUX_DEVTOOLS_ENABLED) {
 
 const allAction = Object.freeze({type: '__ALL', payload: null})
 const enhancers = [
-  applyMiddleware(...middleware),
   electronEnhancer({
     filter,
     postDispatchCallback: (action) => {
       route(reactors, store, action)
       route(reactors, store, allAction)
     }
-  })
+  }),
+  applyMiddleware(...middleware)
 ]
 
 if (REDUX_DEVTOOLS_ENABLED) {
