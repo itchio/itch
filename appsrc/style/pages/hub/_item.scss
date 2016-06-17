@@ -11,7 +11,6 @@
     right: 5px;
     text-transform: uppercase;
     background: #333333;
-    box-shadow: 0 0 4px #333;
     color: rgba(253, 253, 253, 0.74);
     font-size: 12px;
     padding: 2px 4px;
@@ -24,8 +23,7 @@
     @include default-cover-background;
     background-size: cover;
     background-position: 50% 50%;
-    height: $grid-item-height;
-    box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
+    padding-bottom: 80%;
 
     &:hover {
       cursor: pointer;

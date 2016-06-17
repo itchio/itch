@@ -61,7 +61,7 @@
     "react-dnd": "^2.1.4",
     "react-dnd-html5-backend": "^2.1.2",
     "react-dom": "^15.0.1",
-    "react-grid-layout": "^0.12.6",
+    "react-infinite-grid": "git://github.com/miriyas/react-infinite-grid#c632251b03dc54844a65667e44306f4299240e4c",
     "react-modal": "^1.2.1",
     "react-onclickoutside": "^5.0.1",
     "react-redux": "^4.4.5",
