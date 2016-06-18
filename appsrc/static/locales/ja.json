@@ -170,5 +170,6 @@
     "search.results.games": "ゲーム",
     "search.results.creators": "製作者",
     "sidebar.owned_subtitle": "あなたが購入した、あるいはダウンロードしたもの",
-    "usage_stats.description.platforms": "{{platforms}} 向け"
+    "usage_stats.description.platforms": "{{platforms}} 向け",
+    "docs.learn_more": "詳しい情報"
 }
