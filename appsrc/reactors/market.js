@@ -1,5 +1,4 @@
 
-import createQueue from './queue'
 import pathmaker from '../util/pathmaker'
 
 import * as actions from '../actions'
@@ -45,6 +44,14 @@ async function boot (store, action) {
   await globalMarket.load(pathmaker.globalDbPath())
 }
 
+const createQueue = (store, name) => {
+  let open = true
+  return {
+    dispatch: (action) => { open && store.dispatch(action) },
+    close: () => { open = false }
+  }
+}
+
 async function loginSucceeded (store, action) {
   const queue = createQueue(store, 'user-market')
 
@@ -65,8 +72,6 @@ async function loginSucceeded (store, action) {
     queue.close()
     store.dispatch(actions.userDbClosed())
   })
-
-  queue.exhaust()
 
   await userMarket.load(pathmaker.userDbPath(me.id))
 }

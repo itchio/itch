@@ -11,7 +11,7 @@ import {opts} from '../logger'
 import {getUserMarket} from './market'
 import fetch from '../util/fetch'
 
-import {map, isEqual} from 'underline'
+import {map, isEqual, debounce} from 'underline'
 
 import * as actions from '../actions'
 
@@ -46,7 +46,7 @@ async function purchaseCompleted (store, action) {
   await fetchUsuals(credentials)
 }
 
-async function fetchUsuals (credentials) {
+const fetchUsuals = async function fetchUsuals (credentials) {
   invariant(credentials.key, 'have API key')
 
   log(opts, 'Fetching the usuals')
@@ -58,11 +58,9 @@ async function fetchUsuals (credentials) {
     fetch.ownedKeys(market, credentials),
     fetch.collections(market, credentials)
   ])
-}
+}::debounce(300)
 
-async function search (store, action) {
-  // TODO: 200ms debounce
-
+const search = async function search (store, action) {
   store.dispatch(actions.searchStarted())
 
   try {
@@ -86,7 +84,7 @@ async function search (store, action) {
   } finally {
     store.dispatch(actions.searchFinished())
   }
-}
+}::debounce(200)
 
 async function fetchSingleCollectionGames (store, market, credentials, collectionId) {
   await fetch.collectionGames(market, credentials, collectionId)

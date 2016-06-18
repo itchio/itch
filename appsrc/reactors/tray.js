@@ -68,7 +68,14 @@ const makeTraySelector = (store) => createSelector(
   refreshTray::partial(store)
 )
 
+let hasBooted = false
+
+async function boot (store, action) {
+  hasBooted = true
+}
+
 async function catchAll (store, action) {
+  if (!hasBooted) return
   if (!traySelector) {
     traySelector = makeTraySelector(store)
   }
@@ -79,4 +86,4 @@ export function getTray () {
   return tray
 }
 
-export default {catchAll}
+export default {boot, catchAll}

@@ -260,6 +260,7 @@ sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
 export default async function launch (out, opts) {
   const {cave} = opts
   invariant(cave, 'launch-native has cave')
+  log(opts, `launching cave in '${cave.installLocation}' / '${cave.installFolder}'`)
 
   const appPath = pathmaker.appPath(cave)
 

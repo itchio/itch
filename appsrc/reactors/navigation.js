@@ -147,7 +147,8 @@ async function doFetchTabData (store, id, retrOpts) {
   }
 }
 
-async function tabChanged (store, id) {
+async function tabChanged (store, action) {
+  const {id} = action.payload
   invariant(typeof id === 'string', 'tabChanged has string id')
 
   if (id === 'history') {
@@ -232,7 +233,7 @@ let pathSelector
 const makePathSelector = (store) => createSelector(
   (state) => state.session.navigation.id,
   (id) => {
-    store.dispatch(actions.tabChanged(store, id))
+    store.dispatch(actions.tabChanged({id}))
   }
 )
 
