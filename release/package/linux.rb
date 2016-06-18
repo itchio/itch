@@ -10,7 +10,7 @@ module Itch
 
     # create base directories
     say "Creating base directories"
-    %W(/usr/games /usr/bin /usr/lib/#{app_name} /usr/share/applications /usr/share/doc/#{app_name} /usr/share/man/man6).each do |path|
+    %W(/usr/bin /usr/lib/#{app_name} /usr/share/applications /usr/share/doc/#{app_name} /usr/share/man/man6).each do |path|
       FileUtils.mkdir_p "#{stage2_path}#{path}"
     end
 
