@@ -259,20 +259,16 @@ guide for an overview of your various options.
 *Don't forget to mention testers in your software's credits. Testers can make
 or break software.*
 
-## Appendix: FNA/XNA games
-
-The FNA wiki describes how to use MojoSetup to redistribute games:
-
-  * <https://github.com/FNA-XNA/FNA/wiki/3:-Distributing-FNA-Games#gnulinux>
-
-This approach is friendly both for manual installations and is a supported
-installation method in the itch app.
-
 ## Further reading
 
-  * Ethan Lee's [Magfest 2016 slides](http://www.flibitijibibo.com/magfest2016/) covers
-a bunch of cross-platform development subjects out of the scope of this book.
+  * Ethan Lee wrote a guide on [how he packages Linux games using MojoSetup](https://gist.github.com/flibitijibibo/b67910842ab95bb3decdf89d1502de88)
+  * His [Magfest 2016 slides](http://www.flibitijibibo.com/magfest2016/) covers a bunch of cross-platform development subjects out of the scope of this book.
+  * The FNA wiki also has a [similar article](https://github.com/FNA-XNA/FNA/wiki/3:-Distributing-FNA-Games#gnulinux>)
   * The freegamedev Wiki has a [Portable binaries](http://freegamedev.net/wiki/Portable_binaries) page that goes in the same direction. It also covers the 'rpath' approach, not mentioned in this book.
+
+The MojoSetup approach is friendly both for manual installations and is a supported
+installation method in the itch app.
 
 *Special thanks to Ethan Lee for proofreading this page and contributing advice.
 See the Acknowledgements section of this book for a full list of contributors.*
+
