@@ -3,6 +3,8 @@ import {createStructuredSelector} from 'reselect'
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 
+import classNames from 'classnames'
+
 import * as actions from '../actions'
 
 import urlParser from '../util/url'
@@ -34,6 +36,7 @@ export class BrowserMeat extends Component {
       browserState: {
         canGoBack: false,
         canGoForward: false,
+        firstLoad: true,
         loading: true,
         url: ''
       }
@@ -254,13 +257,17 @@ export class BrowserMeat extends Component {
       // otherwise, back button is active and brings us back to 'about:blank'
       wv.clearHistory()
       wv.removeEventListener('dom-ready', callbackSetup)
+
+      wv.addEventListener('did-stop-loading', (e) => {
+        if (e.target.src === 'about:blank') return
+        this.updateBrowserState({firstLoad: false})
+      })
     }
     wv.addEventListener('dom-ready', callbackSetup)
 
     const {tabId} = this.props
     wv.addEventListener('dom-ready', () => {
       wv.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tabId)})`)
-      this.didStopLoading()
     })
 
     wv.src = 'about:blank'
@@ -278,13 +285,17 @@ export class BrowserMeat extends Component {
       context = <GameBrowserContext {...controlProps}/>
     }
 
+    const shellClasses = classNames('webview-shell', {
+      ['first-load']: this.state.browserState.firstLoad
+    })
+
     return <div className='browser-meat'>
       {this.isFrozen()
         ? ''
         : <BrowserBar {...controlProps}/>
       }
       <div className='browser-main'>
-        <div className='webview-shell' ref='webviewShell'></div>
+        <div className={shellClasses} ref='webviewShell'></div>
         {context}
       </div>
     </div>

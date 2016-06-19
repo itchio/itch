@@ -52,13 +52,24 @@ $meat-cover-scale: 0.4;
     border-bottom: 2px solid;
   }
 
+  .webview-shell {
+    background: white;
+
+    &.first-load {
+      background-color: #292727;
+      background-image: url("../static/images/logos/app-white.svg");
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+    }
+  }
+
   .webview-shell, webview {
     display: flex;
     flex: 1 1;
   }
 
   webview {
-    background: white;
+    // background: white;
     margin-bottom: $status-bar-height;
     margin-right: -1px;
   }
