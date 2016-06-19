@@ -294,5 +294,9 @@
     "usage_stats.last_used_time_ago": "Última vez usado {{time_ago}}",
     "usage_stats.never_opened": "Nunca visto",
     "usage_stats.never_played": "Nunca jugado",
-    "usage_stats.never_used": "Nunca usado"
+    "usage_stats.never_used": "Nunca usado",
+    "action.name.play": "Juega ahora",
+    "action.name.manual": "Manual de usuario",
+    "action.name.editor": "Editor",
+    "prompt.launch.message": "{{title}} puede ser iniciado de varias formas: elige una."
 }
