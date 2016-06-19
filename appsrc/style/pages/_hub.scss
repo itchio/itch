@@ -73,7 +73,13 @@
   position: relative;
 
   .hub-meat-tab {
+    // each of these redundant CSS properties is a workaround
+    // for a separate issue. we cannot use display: none here
+    // because of webviews, `visibility: hidden` makes the address
+    // bar linger when switching to another tab, opacity takes
+    // care of that. (and flex dimensions does the actual 'switching')
     visibility: hidden;
+    opacity: 0;
     display: flex;
     flex: 0 1;
     width: 100%;
@@ -81,6 +87,7 @@
 
     &.visible {
       visibility: visible;
+      opacity: 1;
       display: flex;
       flex: 1 1;
       height: 100%;

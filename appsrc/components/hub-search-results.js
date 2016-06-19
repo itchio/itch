@@ -49,7 +49,7 @@ export class SearchResult extends Component {
     })
 
     return <div className={resultClasses} onClick={onClick}>
-      <img src={stillCoverUrl || coverUrl || 'about:blank'}/>
+      <img src={stillCoverUrl || coverUrl || defaultImages.thumbnail}/>
       <div className='title-block'>
         <h4>{title}</h4>
         <span className='platforms'>

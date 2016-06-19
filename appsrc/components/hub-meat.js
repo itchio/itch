@@ -18,14 +18,14 @@ import Collections from './collections'
 import Collection from './collection'
 import NewTab from './new-tab'
 
-import {map} from 'underline'
+import {sortBy, map} from 'underline'
 
 export class HubMeat extends Component {
   render () {
     const {tabData, tabs, id: currentId} = this.props
 
     return <div className='hub-meat'>
-      {tabs::map((id, i) => {
+      {tabs::sortBy((x) => x)::map((id) => {
         const data = tabData[id]
         if (!data) {
           return

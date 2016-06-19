@@ -112,11 +112,11 @@ const tabTarget = {
 
     if (typeof dragIndex !== 'number' || typeof hoverIndex !== 'number') {
       // some tabs are undroppable
-      console.log('ignoring ', dragIndex, hoverIndex)
+      // console.log('ignoring ', dragIndex, hoverIndex)
       return
     }
 
-    console.log('hovering ', dragIndex, hoverIndex)
+    // console.log('hovering ', dragIndex, hoverIndex)
 
     // Don't replace items with themselves
     if (dragIndex === hoverIndex) {
