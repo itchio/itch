@@ -2,7 +2,7 @@
 import ospath from 'path'
 import invariant from 'invariant'
 
-import {map, each, sortBy} from 'underline'
+import {map, each} from 'underline'
 import Promise from 'bluebird'
 import shellQuote from 'shell-quote'
 import toml from 'toml'
@@ -25,134 +25,6 @@ import mklog from '../../util/log'
 const log = mklog('tasks/launch')
 
 import {Crash} from '../errors'
-
-async function doSpawn (exePath, fullCommand, opts) {
-  log(opts, `doSpawn ${fullCommand}`)
-
-  const cwd = ospath.dirname(exePath)
-  log(opts, `Working directory: ${cwd}`)
-
-  const args = shellQuote.parse(fullCommand)
-  const command = args.shift()
-  log(opts, `Command: ${command}`)
-  log(opts, `Args: ${args}`)
-
-  const code = await spawn({
-    command,
-    args,
-    onToken: (tok) => log(opts, `stdout: ${tok}`),
-    onErrToken: (tok) => log(opts, `stderr: ${tok}`),
-    opts: {cwd}
-  })
-
-  if (code !== 0) {
-    const error = `process exited with code ${code}`
-    throw new Crash({exePath, error})
-  }
-  return 'child completed successfully'
-}
-
-function isAppBundle (exePath) {
-  return /\.app\/?$/.test(exePath.toLowerCase())
-}
-
-async function launchExecutable (exePath, args, opts) {
-  const platform = os.platform()
-  log(opts, `launching '${exePath}' on '${platform}' with args '${args.join(' ')}'`)
-  const argString = args::map(spawn.escapePath).join(' ')
-
-  const {cave} = opts
-  const appPath = pathmaker.appPath(cave)
-
-  const {isolateApps} = opts.preferences
-  if (isolateApps) {
-    const checkRes = await sandbox.check()
-    if (checkRes.errors.length > 0) {
-      throw new Error(`error(s) while checking for sandbox: ${checkRes.errors.join(', ')}`)
-    }
-
-    if (checkRes.needs.length > 0) {
-      const installRes = await sandbox.install(opts, checkRes.needs)
-      if (installRes.errors.length > 0) {
-        throw new Error(`error(s) while installing sandbox: ${installRes.errors.join(', ')}`)
-      }
-    }
-  }
-
-  let fullExec = exePath
-  if (platform === 'darwin') {
-    const isBundle = isAppBundle(exePath)
-    if (isBundle) {
-      fullExec = await spawn.getOutput({
-        command: 'activate',
-        args: ['--print-bundle-executable-path', exePath],
-        logger: opts.logger
-      })
-    }
-
-    if (isolateApps) {
-      log(opts, 'app isolation enabled')
-
-      const sandboxOpts = {
-        ...opts,
-        appPath,
-        exePath,
-        fullExec,
-        argString,
-        isBundle
-      }
-
-      await sandbox.within(sandboxOpts, async function ({fakeApp}) {
-        await doSpawn(fullExec, `open -W ${escape(fakeApp)}`, opts)
-      })
-    } else {
-      log(opts, 'no app isolation')
-      await doSpawn(fullExec, `open -W ${escape(exePath)} --args ${argString}`, opts)
-    }
-  } else if (platform === 'win32') {
-    let cmd = `${escape(exePath)}`
-    if (argString.length > 0) {
-      cmd += ` ${argString}`
-    }
-
-    const grantPath = ospath.join(appPath, '*')
-    if (isolateApps) {
-      const grantRes = await spawn.getOutput({
-        command: 'icacls',
-        args: [ grantPath, '/grant', 'itch-player:F', '/t' ],
-        logger: opts.logger
-      })
-      log(opts, `grant output:\n${grantRes}`)
-
-      cmd = `elevate --runas itch-player salt ${cmd}`
-    }
-    await doSpawn(exePath, cmd, opts)
-
-    if (isolateApps) {
-      const denyRes = await spawn.getOutput({
-        command: 'icacls',
-        args: [ grantPath, '/deny', 'itch-player:F', '/t' ],
-        logger: opts.logger
-      })
-      log(opts, `deny output:\n${denyRes}`)
-    }
-  } else if (platform === 'linux') {
-    let cmd = `${escape(exePath)}`
-    if (argString.length > 0) {
-      cmd += ` ${argString}`
-    }
-    if (isolateApps) {
-      log(opts, 'should write firejail profile file')
-
-      cmd = `firejail --noprofile -- ${cmd}`
-      await doSpawn(exePath, cmd, opts)
-    } else {
-      await doSpawn(exePath, cmd, opts)
-    }
-  } else {
-    throw new Error(`unsupported platform: ${platform}`)
-  }
-}
 
 export default async function launch (out, opts) {
   const {cave, market, credentials} = opts
@@ -245,5 +117,127 @@ export default async function launch (out, opts) {
     exePath = 'java'
   }
 
-  return await launchExecutable(exePath, args, opts)
+  const platform = os.platform()
+  log(opts, `launching '${exePath}' on '${platform}' with args '${args.join(' ')}'`)
+  const argString = args::map(spawn.escapePath).join(' ')
+
+  const {isolateApps} = opts.preferences
+  if (isolateApps) {
+    const checkRes = await sandbox.check()
+    if (checkRes.errors.length > 0) {
+      throw new Error(`error(s) while checking for sandbox: ${checkRes.errors.join(', ')}`)
+    }
+
+    if (checkRes.needs.length > 0) {
+      const installRes = await sandbox.install(opts, checkRes.needs)
+      if (installRes.errors.length > 0) {
+        throw new Error(`error(s) while installing sandbox: ${installRes.errors.join(', ')}`)
+      }
+    }
+  }
+
+  let fullExec = exePath
+  if (platform === 'darwin') {
+    const isBundle = isAppBundle(exePath)
+    if (isBundle) {
+      fullExec = await spawn.getOutput({
+        command: 'activate',
+        args: ['--print-bundle-executable-path', exePath],
+        logger: opts.logger
+      })
+    }
+
+    if (isolateApps) {
+      log(opts, 'app isolation enabled')
+
+      const sandboxOpts = {
+        ...opts,
+        game,
+        appPath,
+        exePath,
+        fullExec,
+        argString,
+        isBundle
+      }
+
+      await sandbox.within(sandboxOpts, async function ({fakeApp}) {
+        await doSpawn(fullExec, `open -W ${spawn.escapePath(fakeApp)}`, opts)
+      })
+    } else {
+      log(opts, 'no app isolation')
+      await doSpawn(fullExec, `open -W ${spawn.escapePath(exePath)} --args ${argString}`, opts)
+    }
+  } else if (platform === 'win32') {
+    let cmd = `${spawn.escapePath(exePath)}`
+    if (argString.length > 0) {
+      cmd += ` ${argString}`
+    }
+
+    const grantPath = ospath.join(appPath, '*')
+    if (isolateApps) {
+      const grantRes = await spawn.getOutput({
+        command: 'icacls',
+        args: [ grantPath, '/grant', 'itch-player:F', '/t' ],
+        logger: opts.logger
+      })
+      log(opts, `grant output:\n${grantRes}`)
+
+      cmd = `elevate --runas itch-player salt ${cmd}`
+    }
+    await doSpawn(exePath, cmd, opts)
+
+    if (isolateApps) {
+      const denyRes = await spawn.getOutput({
+        command: 'icacls',
+        args: [ grantPath, '/deny', 'itch-player:F', '/t' ],
+        logger: opts.logger
+      })
+      log(opts, `deny output:\n${denyRes}`)
+    }
+  } else if (platform === 'linux') {
+    let cmd = `${spawn.escapePath(exePath)}`
+    if (argString.length > 0) {
+      cmd += ` ${argString}`
+    }
+    if (isolateApps) {
+      log(opts, 'should write firejail profile file')
+
+      cmd = `firejail --noprofile -- ${cmd}`
+      await doSpawn(exePath, cmd, opts)
+    } else {
+      await doSpawn(exePath, cmd, opts)
+    }
+  } else {
+    throw new Error(`unsupported platform: ${platform}`)
+  }
+}
+
+async function doSpawn (exePath, fullCommand, opts) {
+  log(opts, `doSpawn ${fullCommand}`)
+
+  const cwd = ospath.dirname(exePath)
+  log(opts, `Working directory: ${cwd}`)
+
+  const args = shellQuote.parse(fullCommand)
+  const command = args.shift()
+  log(opts, `Command: ${command}`)
+  log(opts, `Args: ${args}`)
+
+  const code = await spawn({
+    command,
+    args,
+    onToken: (tok) => log(opts, `stdout: ${tok}`),
+    onErrToken: (tok) => log(opts, `stderr: ${tok}`),
+    opts: {cwd}
+  })
+
+  if (code !== 0) {
+    const error = `process exited with code ${code}`
+    throw new Crash({exePath, error})
+  }
+  return 'child completed successfully'
+}
+
+function isAppBundle (exePath) {
+  return /\.app\/?$/.test(exePath.toLowerCase())
 }

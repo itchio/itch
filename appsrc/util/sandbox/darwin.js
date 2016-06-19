@@ -26,7 +26,8 @@ export async function check () {
 }
 
 export async function within (opts, cb) {
-  const {appPath, exePath, fullExec, argString, isBundle} = opts
+  const {appPath, exePath, fullExec, argString, game, isBundle} = opts
+  invariant(typeof game === 'object', 'sandbox.within needs game')
   invariant(typeof appPath === 'string', 'sandbox.within needs appPath')
   invariant(typeof exePath === 'string', 'sandbox.within needs exePath')
   invariant(typeof fullExec === 'string', 'sandbox.within needs fullExec')
@@ -49,14 +50,16 @@ export async function within (opts, cb) {
   await sf.writeFile(sandboxProfilePath, sandboxSource)
 
   log(opts, 'creating fake app bundle')
-  if (!isBundle) {
-    throw new Error('app isolation is only supported for bundles')
-  }
   const workDir = tmp.dirSync()
   const exeName = ospath.basename(fullExec)
 
   const realApp = exePath
-  const fakeApp = ospath.join(workDir.name, ospath.basename(realApp))
+  let fakeApp
+  if (isBundle) {
+    fakeApp = ospath.join(workDir.name, ospath.basename(realApp))
+  } else {
+    fakeApp = ospath.join(workDir.name, game.title + '.app')
+  }
   log(opts, `fake app path: ${fakeApp}`)
 
   await sf.mkdir(fakeApp)
@@ -66,20 +69,32 @@ export async function within (opts, cb) {
   const fakeBinary = ospath.join(fakeApp, 'Contents', 'MacOS', exeName)
   await sf.writeFile(fakeBinary,
     `#!/bin/bash
-    sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullExec)} ${argString}
-    `
+cd ${spawn.escapePath(ospath.basename(fullExec))}
+sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullExec)} ${argString}`
   )
   await sf.chmod(fakeBinary, 0o700)
 
-  await sf.symlink(
-    ospath.join(realApp, 'Contents', 'Resources'),
-    ospath.join(fakeApp, 'Contents', 'Resources')
-  )
+  if (isBundle) {
+    await sf.symlink(
+      ospath.join(realApp, 'Contents', 'Resources'),
+      ospath.join(fakeApp, 'Contents', 'Resources')
+    )
 
-  await sf.symlink(
-    ospath.join(realApp, 'Contents', 'Info.pList'),
-    ospath.join(fakeApp, 'Contents', 'Info.pList')
-  )
+    await sf.symlink(
+      ospath.join(realApp, 'Contents', 'Info.pList'),
+      ospath.join(fakeApp, 'Contents', 'Info.pList')
+    )
+  } else {
+    await sf.writeFile(ospath.join(fakeApp, 'Contents', 'Info.pList'),
+      `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleExecutable</key>
+  <string>${exeName}</string>
+</dict>
+</plist>`)
+  }
 
   let err
   try {
