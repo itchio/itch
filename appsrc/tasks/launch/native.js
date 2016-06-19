@@ -173,7 +173,7 @@ export default async function launch (out, opts) {
       cmd += ` ${argString}`
     }
 
-    const grantPath = ospath.join(appPath, '*')
+    const grantPath = appPath
     if (isolateApps) {
       const grantRes = await spawn.getOutput({
         command: 'icacls',
