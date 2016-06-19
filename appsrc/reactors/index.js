@@ -31,12 +31,13 @@ import tasks from './tasks'
 import dialogs from './dialogs'
 
 export default validateReactors({
-  _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll, installLocations.catchAll),
+  _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll,
+    installLocations.catchAll, navigation.catchAll),
 
   PREBOOT: combine(preboot),
   BOOT: combine(market.boot, preferences.boot, mainWindow.boot,
     locales.boot, rememberedSessions.boot, selfUpdate.boot, setup.boot,
-    navigation.boot, tasks.boot, tray.boot),
+    tasks.boot, tray.boot, navigation.boot),
   RETRY_SETUP: combine(setup.retrySetup),
 
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),

@@ -260,20 +260,23 @@ const makeTransientSelector = (store) => createSelector(
 )
 
 async function boot (store, action) {
-  if (!pathSelector) {
-    pathSelector = makePathSelector(store)
-  }
+  pathSelector = makePathSelector(store)
+  transientSelector = makeTransientSelector(store)
+}
 
-  if (!transientSelector) {
-    transientSelector = makeTransientSelector(store)
-  }
-
+async function catchAll (store, action) {
   const state = store.getState()
-  pathSelector(state)
-  transientSelector(state)
+
+  if (pathSelector) {
+    pathSelector(state)
+  }
+
+  if (transientSelector) {
+    transientSelector(state)
+  }
 }
 
 export default {
-  boot, sessionReady, tabReloaded, windowFocusChanged,
+  boot, catchAll, sessionReady, tabReloaded, windowFocusChanged,
   evolveTab, probeCave, tabsChanged, tabChanged
 }

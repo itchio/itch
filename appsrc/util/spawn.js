@@ -116,4 +116,8 @@ spawn.getOutput = async function (opts) {
   return out.trim()
 }
 
+spawn.escapePath = function (arg) {
+  return `"${arg.replace(/"/g, '\\"')}"`
+}
+
 export default spawn
