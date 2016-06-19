@@ -53,14 +53,14 @@ ${log}
     shell.openExternal(`${urls.itchRepo}/issues/new?${query}`)
   },
 
-  handle: (type, e) => {
-    console.log(`Uncaught exception: ${e.stack}`)
+  handle: async function (type, e) {
+    console.log(`${type}: ${e.stack}`)
     let res = self.writeCrashLog(e)
     let log = res.log
     let crashFile = res.crashFile
 
     // TODO: something better
-    const t = require('../localizer').default({}, 'en')
+    const t = require('../localizer').getT({}, 'en')
 
     let dialogOpts = {
       type: 'error',
@@ -73,30 +73,34 @@ ${log}
       detail: t('prompt.crash_reporter.detail', {defaultValue: `A crash log was written to ${crashFile}`, location: crashFile})
     }
 
-    let callback = (response) => {
-      if (response === 0) {
-        self.reportIssue({log})
-      } else if (response === 1) {
-        shell.openItem(crashFile)
+    await new Promise(async function (resolve, reject) {
+      let callback = (response) => {
+        if (response === 0) {
+          self.reportIssue({log})
+        } else if (response === 1) {
+          shell.openItem(crashFile)
+        }
       }
-    }
 
-    // try to show error dialog
-    // supplying defaultValues everywhere in case the i18n system hasn't loaded yet
-    dialog.showMessageBox(dialogOpts, callback)
+      // try to show error dialog
+      // supplying defaultValues everywhere in case the i18n system hasn't loaded yet
+      dialog.showMessageBox(dialogOpts, callback)
+    })
   },
 
   mount: () => {
     console.log('Mounting crash reporter')
     const makeHandler = (type) => {
-      return (e) => {
+      return async function (e) {
         try {
-          self.handle(type, e)
+          await self.handle(type, e)
         } catch (e) {
           // well, we tried.
           console.log(`Error in crash-reporter (${type})\n${e.message || e}`)
         } finally {
-          process.exit(1)
+          if (type === 'uncaughtException') {
+            process.exit(1)
+          }
         }
       }
     }

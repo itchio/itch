@@ -66,7 +66,7 @@ async function checkForGameUpdate (store, action) {
   }
 }
 
-async function doCheckForGameUpdate (store, cave, taskOpts = {}) {
+async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
   const {noisy = false} = taskOpts
 
   if (!cave.launchable) {
@@ -201,6 +201,9 @@ async function doCheckForGameUpdate (store, cave, taskOpts = {}) {
     } catch (e) {
       if (api.hasAPIError(e, 'incorrect user for claim')) {
         log(opts, `Skipping update check for ${game.title}, download key belongs to other user`)
+      } else if (api.isNetworkError(e)) {
+        log(opts, `Skipping update check for ${game.title}: we're offline`)
+        return {err: new Error(`Network error (${e.code})`)}
       } else {
         log(opts, `While looking for update: ${e.stack || e}`)
         log(opts, `Error object: ${JSON.stringify(e, 0, 2)}`)
@@ -215,6 +218,18 @@ async function doCheckForGameUpdate (store, cave, taskOpts = {}) {
     store.dispatch(actions.statusMessage(['status.game_update.not_found', {title: game.title}]))
   }
   return {}
+}
+
+async function doCheckForGameUpdate (store, cave, taskOpts = {}) {
+  try {
+    return await _doCheckForGameUpdate(store, cave, taskOpts)
+  } catch (e) {
+    if (e.code && e.code === 'ENOTFOUND') {
+      log(opts, 'Offline, skipping update check')
+    } else {
+      throw e
+    }
+  }
 }
 
 let updaterInstalled = false

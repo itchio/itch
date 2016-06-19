@@ -99,6 +99,15 @@ export class Client {
   hasAPIError (errorObject, apiError) {
     return (errorObject.errors || [])::contains(apiError)
   }
+
+  isNetworkError (errorObject) {
+    return (typeof errorObject === 'object' && errorObject.code) && (
+      // DNS lookup failed
+      errorObject.code === 'ENOTFOUND' ||
+      // lost connectivity in the middle of request
+      errorObject.code === 'ECONNRESET'
+    )
+  }
 }
 
 export const client = new Client()

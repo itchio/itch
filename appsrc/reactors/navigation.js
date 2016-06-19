@@ -12,6 +12,7 @@ import staticTabData from '../constants/static-tab-data'
 
 import {pathToId, gameToTabData, userToTabData, collectionToTabData, locationToTabData} from '../util/navigation'
 import fetch from '../util/fetch'
+import api from '../util/api'
 
 import mklog from '../util/log'
 import {opts} from '../logger'
@@ -139,11 +140,17 @@ async function doFetchTabData (store, id, retrOpts) {
   invariant(typeof store === 'object', 'doFetchTabData has a store')
 
   const timestamp = +new Date()
-  const data = await retrieveTabData(store, id, retrOpts)
-  if (data) {
-    store.dispatch(actions.tabDataFetched({id, timestamp, data}))
-  } else {
-    console.log(`No data fetched for ${id}`)
+  try {
+    const data = await retrieveTabData(store, id, retrOpts)
+    if (data) {
+      store.dispatch(actions.tabDataFetched({id, timestamp, data}))
+    }
+  } catch (e) {
+    if (api.isNetworkError(e)) {
+      log(opts, `Skipping tab data fetching because of network (${e.code})`)
+    } else {
+      throw e
+    }
   }
 }
 

@@ -10,8 +10,10 @@ import {opts} from '../logger'
 
 import {getUserMarket} from './market'
 import fetch from '../util/fetch'
+import api from '../util/api'
 
-import {map, isEqual, debounce} from 'underline'
+import {map, isEqual} from 'underline'
+import debounce from './debounce'
 
 import * as actions from '../actions'
 
@@ -46,6 +48,7 @@ async function purchaseCompleted (store, action) {
   await fetchUsuals(credentials)
 }
 
+// FIXME: can't await the debounced version of this anymore!
 const fetchUsuals = async function fetchUsuals (credentials) {
   invariant(credentials.key, 'have API key')
 
@@ -53,11 +56,19 @@ const fetchUsuals = async function fetchUsuals (credentials) {
 
   const market = getUserMarket()
 
-  await Promise.all([
-    fetch.dashboardGames(market, credentials),
-    fetch.ownedKeys(market, credentials),
-    fetch.collections(market, credentials)
-  ])
+  try {
+    await Promise.all([
+      fetch.dashboardGames(market, credentials),
+      fetch.ownedKeys(market, credentials),
+      fetch.collections(market, credentials)
+    ])
+  } catch (e) {
+    if (api.isNetworkError(e)) {
+      log(opts, `Skipping fetch usuals, having network issues (${e.code})`)
+    } else {
+      throw e
+    }
+  }
 }::debounce(300)
 
 const search = async function search (store, action) {
@@ -92,9 +103,7 @@ async function fetchSingleCollectionGames (store, market, credentials, collectio
   store.dispatch(actions.collectionGamesFetched({collectionId}))
 }
 
-async function fetchCollectionGames (store, action) {
-  // TODO: 300ms debounce
-
+const fetchCollectionGames = async function fetchCollectionGames (store, action) {
   const credentials = store.getState().session.credentials
   if (!credentials.key) {
     return
@@ -103,11 +112,19 @@ async function fetchCollectionGames (store, action) {
   const market = getUserMarket()
   const collections = market.getEntities('collections')
 
-  for (const key of Object.keys(collections)) {
-    log(opts, `fetching collection ${key}`)
-    await fetchSingleCollectionGames(store, market, credentials, Number(key))
+  try {
+    for (const key of Object.keys(collections)) {
+      log(opts, `fetching collection ${key}`)
+      await fetchSingleCollectionGames(store, market, credentials, Number(key))
+    }
+  } catch (e) {
+    if (api.isNetworkError(e)) {
+      log(opts, 'Network error while fetching collection, skipping..')
+    } else {
+      throw e
+    }
   }
-}
+}::debounce(300)
 
 const makeCollectionsWatcher = (store) => {
   let oldIds = []

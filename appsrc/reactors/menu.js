@@ -53,6 +53,9 @@ function convertMenuAction (label) {
     case 'menu.help.report_issue': return actions.openUrl(`${urls.itchRepo}/issues/new`)
     case 'menu.help.search_issue': return actions.openUrl(`${urls.itchRepo}/search?type=Issues`)
     case 'menu.help.release_notes': return actions.openUrl(`${urls.itchRepo}/releases`)
+    case 'crash.test':
+      ;(async function () { throw new Error('crash test!') })()
+      return null
     default: log(opts, `Unhandled menu action: ${label}`)
   }
 }
