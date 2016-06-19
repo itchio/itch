@@ -1,18 +1,25 @@
 
-import path from 'path'
+import ospath from 'path'
 import invariant from 'invariant'
 import tmp from 'tmp'
 
-import {sortBy} from 'underline'
+import {each, sortBy} from 'underline'
 import Promise from 'bluebird'
 import shellQuote from 'shell-quote'
+import toml from 'toml'
 
 import sandboxTemplate from '../../constants/sandbox-template'
 
+import {getT} from '../../localizer'
+
+import {dialog} from '../../electron'
+
+import store from '../../store'
 import sandbox from '../../util/sandbox'
 import os from '../../util/os'
 import sf from '../../util/sf'
 import spawn from '../../util/spawn'
+import fetch from '../../util/fetch'
 import pathmaker from '../../util/pathmaker'
 
 import mklog from '../../util/log'
@@ -23,7 +30,7 @@ import {Crash} from '../errors'
 async function doSpawn (exePath, fullCommand, opts) {
   log(opts, `doSpawn ${fullCommand}`)
 
-  const cwd = path.dirname(exePath)
+  const cwd = ospath.dirname(exePath)
   log(opts, `Working directory: ${cwd}`)
 
   const args = shellQuote.parse(fullCommand)
@@ -54,7 +61,7 @@ async function computeWeight (appPath, execs) {
   const output = []
 
   const f = async function (exe) {
-    const exePath = path.join(appPath, exe.path)
+    const exePath = ospath.join(appPath, exe.path)
     let stats
     try {
       stats = await sf.stat(exePath)
@@ -74,7 +81,7 @@ async function computeWeight (appPath, execs) {
 
 function computeDepth (execs) {
   for (const exe of execs) {
-    exe.depth = path.normalize(exe.path).split(path.sep).length
+    exe.depth = ospath.normalize(exe.path).split(ospath.sep).length
   }
 
   return execs
@@ -159,7 +166,7 @@ async function launchExecutable (exePath, args, opts) {
       log(opts, 'app isolation enabled')
 
       log(opts, 'writing sandbox file')
-      const sandboxProfilePath = path.join(appPath, '.itch', 'isolate-app.sb')
+      const sandboxProfilePath = ospath.join(appPath, '.itch', 'isolate-app.sb')
 
       const userLibrary = (await spawn.getOutput({
         command: 'activate',
@@ -178,17 +185,17 @@ async function launchExecutable (exePath, args, opts) {
         throw new Error('app isolation is only supported for bundles')
       }
       const workDir = tmp.dirSync()
-      const exeName = path.basename(fullExec)
+      const exeName = ospath.basename(fullExec)
 
       const realApp = exePath
-      const fakeApp = path.join(workDir.name, path.basename(realApp))
+      const fakeApp = ospath.join(workDir.name, ospath.basename(realApp))
       log(opts, `fake app path: ${fakeApp}`)
 
       await sf.mkdir(fakeApp)
-      await sf.mkdir(path.join(fakeApp, 'Contents'))
-      await sf.mkdir(path.join(fakeApp, 'Contents', 'MacOS'))
+      await sf.mkdir(ospath.join(fakeApp, 'Contents'))
+      await sf.mkdir(ospath.join(fakeApp, 'Contents', 'MacOS'))
 
-      const fakeBinary = path.join(fakeApp, 'Contents', 'MacOS', exeName)
+      const fakeBinary = ospath.join(fakeApp, 'Contents', 'MacOS', exeName)
       await sf.writeFile(fakeBinary,
 `#!/bin/bash
 sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
@@ -196,12 +203,12 @@ sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
       await sf.chmod(fakeBinary, 0o700)
 
       await sf.symlink(
-        path.join(realApp, 'Contents', 'Resources'),
-        path.join(fakeApp, 'Contents', 'Resources'))
+        ospath.join(realApp, 'Contents', 'Resources'),
+        ospath.join(fakeApp, 'Contents', 'Resources'))
 
       await sf.symlink(
-        path.join(realApp, 'Contents', 'Info.pList'),
-        path.join(fakeApp, 'Contents', 'Info.pList'))
+        ospath.join(realApp, 'Contents', 'Info.pList'),
+        ospath.join(fakeApp, 'Contents', 'Info.pList'))
 
       await doSpawn(fullExec, `open -W ${escape(fakeApp)}`, opts)
 
@@ -218,7 +225,7 @@ sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
       cmd += ` ${argString}`
     }
 
-    const grantPath = path.join(appPath, '*')
+    const grantPath = ospath.join(appPath, '*')
     if (isolateApps) {
       const grantRes = await spawn.getOutput({
         command: 'icacls',
@@ -258,42 +265,103 @@ sandbox-exec -f ${escape(sandboxProfilePath)} ${escape(fullExec)} ${argString}
 }
 
 export default async function launch (out, opts) {
-  const {cave} = opts
+  const {cave, market, credentials} = opts
   invariant(cave, 'launch-native has cave')
   log(opts, `launching cave in '${cave.installLocation}' / '${cave.installFolder}'`)
 
+  const game = await fetch.gameLazily(market, credentials, cave.gameId)
+  invariant(game, 'was able to fetch game properly')
+
   const appPath = pathmaker.appPath(cave)
+  let exePath
+  let args = []
 
-  let candidates = cave.executables.map((path) => ({path}))
-  log(opts, `initial candidate set: ${JSON.stringify(candidates, null, 2)}`)
+  const manifestPath = ospath.join(appPath, '.itch.toml')
+  const hasManifest = await sf.exists(manifestPath)
+  if (hasManifest) {
+    log(opts, `has manifest @ "${manifestPath}"`)
 
-  candidates = await computeWeight(appPath, candidates)
-  candidates = computeScore(candidates)
-  candidates = computeDepth(candidates)
+    let manifest
+    try {
+      const contents = await sf.readFile(manifestPath)
+      manifest = toml.parse(contents)
+    } catch (e) {
+      log(opts, `error reading manifest: ${e}`)
+      throw e
+    }
 
-  candidates = candidates::sortBy((x) => -x.weight)
-  log(opts, `candidates after weight sorting: ${JSON.stringify(candidates, null, 2)}`)
+    log(opts, `manifest:\n ${JSON.stringify(manifest, 0, 2)}`)
 
-  candidates = candidates::sortBy((x) => -x.score)
-  log(opts, `candidates after score sorting: ${JSON.stringify(candidates, null, 2)}`)
+    const i18n = store.getState().i18n
+    const t = getT(i18n.strings, i18n.lang)
 
-  candidates = candidates::sortBy((x) => x.depth)
-  log(opts, `candidates after depth sorting: ${JSON.stringify(candidates, null, 2)}`)
+    const buttons = []
+    manifest.actions::each((action, i) => {
+      if (!action.name) {
+        throw new Error(`in manifest, action ${i} is missing a name`)
+      }
+      buttons.push(t(`action.name.${action.name}`, {defaultValue: action.name}))
+    })
 
-  if (candidates.length === 0) {
-    const err = new Error('After weighing/sorting, no executables left')
-    err.reason = ['game.install.no_executables_found']
-    throw err
+    const cancelId = buttons.length
+    buttons.push(t('prompt.action.cancel'))
+
+    const dialogOpts = {
+      title: game.title,
+      message: t('prompt.launch.message', {title: game.title}),
+      buttons,
+      cancelId
+    }
+
+    const promise = new Promise((resolve, reject) => {
+      const callback = (response) => {
+        resolve(response)
+      }
+      dialog.showMessageBox(dialogOpts, callback)
+    })
+
+    const response = await promise
+    if (response !== cancelId) {
+      const action = manifest.actions[response]
+      if (action) {
+        log(opts, `Should launch ${JSON.stringify(action, 0, 2)}`)
+        exePath = ospath.isAbsolute(action.path) ? action.path : ospath.join(appPath, action.path)
+      } else {
+        log(opts, `No action at ${response}`)
+      }
+    }
   }
 
-  if (candidates.length > 1) {
-    // TODO: figure this out. We want to let people choose, but we also don't
-    // want to confuse them — often there are 2 or 3 executables and the app already
-    // picks the best way to start the game.
-  }
+  if (!exePath) {
+    let candidates = cave.executables.map((path) => ({path}))
+    log(opts, `initial candidate set: ${JSON.stringify(candidates, null, 2)}`)
 
-  let exePath = path.join(appPath, candidates[0].path)
-  const args = []
+    candidates = await computeWeight(appPath, candidates)
+    candidates = computeScore(candidates)
+    candidates = computeDepth(candidates)
+
+    candidates = candidates::sortBy((x) => -x.weight)
+    log(opts, `candidates after weight sorting: ${JSON.stringify(candidates, null, 2)}`)
+
+    candidates = candidates::sortBy((x) => -x.score)
+    log(opts, `candidates after score sorting: ${JSON.stringify(candidates, null, 2)}`)
+
+    candidates = candidates::sortBy((x) => x.depth)
+    log(opts, `candidates after depth sorting: ${JSON.stringify(candidates, null, 2)}`)
+
+    if (candidates.length === 0) {
+      const err = new Error('After weighing/sorting, no executables left')
+      err.reason = ['game.install.no_executables_found']
+      throw err
+    }
+
+    if (candidates.length > 1) {
+      // TODO: figure this out. We want to let people choose, but we also don't
+      // want to confuse them — often there are 2 or 3 executables and the app already
+      // picks the best way to start the game.
+    }
+    exePath = ospath.join(appPath, candidates[0].path)
+  }
 
   if (/\.jar$/i.test(exePath)) {
     log(opts, 'Launching .jar')
