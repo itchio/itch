@@ -225,7 +225,7 @@
     "prompt.self_update_ready.action.restart": "Reiniciar ahora",
     "prompt.self_update_ready.action.snooze": "Repetir más tarde",
     "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Publicado el {{pubDate}}.",
-    "prompt.self_update_ready.message": "Elige 'Reiniciar ahora' para actualizar en este momento\n\nSi no lo haces, la actualización se activará la próxima vez que la aplicación sea reiniciada",
+    "prompt.self_update_ready.message": "Elige 'Reiniciar ahora' para actualizar en este momento\n\nSi no lo haces, la actualización se realizará la próxima vez que la aplicación sea reiniciada",
     "prompt.self_update_ready.title": "Una actualización ha sido descargada e instalada",
     "search.results.title": "Resultados de búsqueda para '{{query}}'",
     "search.results.local": "Local",
