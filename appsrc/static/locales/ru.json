@@ -293,5 +293,9 @@
     "notification.purchase_complete.just_donated": "Вы поддержали {{title}}!",
     "notification.purchase_complete.may_install_now": "Теперь вы всегда сможете установить это!",
     "notification.purchase_complete.thanks_for_support": "Спасибо за вашу поддержку!",
-    "sidebar.itchio": "Ваше окно в мир инди игр"
+    "sidebar.itchio": "Ваше окно в мир инди игр",
+    "action.name.play": "Играть",
+    "action.name.manual": "Руководство пользователя",
+    "action.name.editor": "Редактор",
+    "prompt.launch.message": "{{title}} может запускаться в нескольких режимах: выберите один."
 }
