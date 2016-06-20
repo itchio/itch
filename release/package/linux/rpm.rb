@@ -26,6 +26,7 @@ module Itch
       --after-install "release/debian-after-install.sh" \
       -d "p7zip" \
       -d "desktop-file-utils" \
+      -d "libXScrnSaver" \
     #{distro_files}
     }
 
