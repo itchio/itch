@@ -171,5 +171,7 @@
     "search.results.creators": "製作者",
     "sidebar.owned_subtitle": "あなたが購入した、あるいはダウンロードしたもの",
     "usage_stats.description.platforms": "{{platforms}} 向け",
-    "docs.learn_more": "詳しい情報"
+    "docs.learn_more": "詳しい情報",
+    "grid.item.open_demo": "体験版を開く",
+    "grid.item.open_debug_log": "デバッグログを開く"
 }
