@@ -34,6 +34,17 @@ const self = {
       return
     }
 
+    const skipUpgradeWhen = formula.skipUpgradeWhen
+    if (skipUpgradeWhen) {
+      const reason = await skipUpgradeWhen({
+        binPath: self.binPath()
+      })
+      if (reason) {
+        log(opts, `${name}: skipping upgrade check (${reason})`)
+        return
+      }
+    }
+
     const channel = net.channel(name)
 
     const downloadVersion = async function (v) {
@@ -45,14 +56,21 @@ const self = {
 
       await net.downloadToFile(opts, archiveUrl, archivePath)
 
+      let sums
       try {
-        const sums = await net.getSHA1Sums(opts, channel, v)
+        sums = await net.getSHA1Sums(opts, channel, v)
+      } catch (e) {
+        log(opts, `${name}: couldn't get hashes, skipping verification (${e.message || '' + e})`)
+      }
+
+      if (sums) {
         const sum = sums[archiveName]
         if (sum) {
           const expected = sum.sha1.toLowerCase()
           log(opts, `${name}: expected SHA1: ${expected}`)
           const h = require('crypto').createHash('sha1')
-          const fileContents = await sf.fs.readFileAsync(archivePath, {encoding: 'binary'})
+          // null encoding = raw buffer
+          const fileContents = await sf.fs.readFileAsync(archivePath, {encoding: null})
           h.update(fileContents)
           const actual = h.digest('hex')
           log(opts, `${name}:   actual SHA1: ${actual}`)
@@ -62,8 +80,6 @@ const self = {
           }
           log(opts, `${name}: checks out!`)
         }
-      } catch (e) {
-        log(opts, `${name}: couldn't get hashes, skipping verification (${e.message || '' + e})`)
       }
 
       if (formula.format === 'executable') {

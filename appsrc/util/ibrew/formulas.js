@@ -1,4 +1,7 @@
 
+import ospath from 'path'
+import sf from '../sf'
+
 let self = {}
 
 /**
@@ -54,6 +57,25 @@ self['activate'] = {
 self['firejail'] = {
   format: '7z',
   osWhitelist: ['linux'],
+  skipUpgradeWhen: async function (opts) {
+    const {binPath} = opts
+    try {
+      const stats = await sf.lstat(ospath.join(binPath, 'firejail'))
+      if (stats.uid !== 0) {
+        return 'not owned by root'
+      }
+      if ((stats.mode & 0o4000) === 0) {
+        return 'not suid'
+      }
+    } catch (e) {
+      if (e.code === 'ENOENT') {
+        // all good
+      } else {
+        throw e
+      }
+    }
+    return false
+  },
   versionCheck: {
     args: ['--version'],
     parser: /firejail version ([0-9a-z.]*)/

@@ -33,13 +33,10 @@ export async function install (opts, needs) {
     firejail: async function (need) {
       log(opts, `installing firejail, because ${need.err} (code ${need.code})`)
 
-      // normally already installed by setup phase
-      await ibrew.fetch(opts, 'firejail')
-
       const firejailBinary = path.join(ibrew.binPath(), 'firejail')
       const firejailBinaryExists = await sf.exists(firejailBinary)
       if (!firejailBinaryExists) {
-        throw new Error('failed to install firejail')
+        throw new Error('firejail binary missing')
       } else {
         const lines = []
         lines.push('#!/bin/bash -xe')
