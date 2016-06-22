@@ -74,29 +74,36 @@ export default async function launch (out, opts) {
       buttons.push(t(`action.name.${action.name}`, {defaultValue: action.name}))
     })
 
-    const cancelId = buttons.length
-    buttons.push(t('prompt.action.cancel'))
+    let action
 
-    const dialogOpts = {
-      title: game.title,
-      message: t('prompt.launch.message', {title: game.title}),
-      buttons,
-      cancelId
-    }
+    if (actions.length > 0) {
+      const cancelId = buttons.length
+      buttons.push(t('prompt.action.cancel'))
 
-    const promise = new Promise((resolve, reject) => {
-      const callback = (response) => {
-        resolve(response)
+      const dialogOpts = {
+        title: game.title,
+        message: t('prompt.launch.message', {title: game.title}),
+        buttons,
+        cancelId
       }
-      dialog.showMessageBox(dialogOpts, callback)
-    })
 
-    const response = await promise
-    if (response === cancelId) {
-      return
+      const promise = new Promise((resolve, reject) => {
+        const callback = (response) => {
+          resolve(response)
+        }
+        dialog.showMessageBox(dialogOpts, callback)
+      })
+
+      const response = await promise
+      if (response === cancelId) {
+        return
+      }
+
+      action = manifest.actions[response]
+    } else {
+      action = actions[0]
     }
 
-    const action = manifest.actions[response]
     if (action) {
       log(opts, `Should launch ${JSON.stringify(action, 0, 2)}`)
       const actionPath = action.path.replace(/{{EXT}}/, appExt())
