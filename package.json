@@ -33,7 +33,6 @@
     "dateformat": "^1.0.12",
     "deep-assign": "^2.0.0",
     "deep-freeze": "0.0.1",
-    "electron-sudo": "^3.0.5",
     "eol": "^0.2.0",
     "es6-error": "^2.0.0",
     "file-type": "^3.0.0",
