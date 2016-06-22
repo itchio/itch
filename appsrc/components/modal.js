@@ -28,7 +28,8 @@ const customStyles = {
     backgroundColor: colors.darkMineShaft,
     border: `1px solid ${colors.lightMineShaft}`,
     borderRadius: '2px',
-    boxShadow: '0 0 16px black'
+    boxShadow: '0 0 16px black',
+    zIndex: 400
   }
 }
 
