@@ -61,7 +61,10 @@ export async function uninstall (opts) {
 async function sudoRunScript (lines) {
   const contents = lines.join('\n')
   const tmpObj = tmp.fileSync()
-  sf.writeFile(tmpObj.name, contents)
+  await sf.writeFile(tmpObj.name, contents)
+  await sf.chmod(tmpObj.name, 0o777)
+  // TODO: boo hiss
+  sf.fs.closeSync(tmpObj.fd)
 
   const res = await spawn.exec({command: 'pkexec', args: [tmpObj.name]})
 
