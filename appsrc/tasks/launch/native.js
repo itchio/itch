@@ -76,7 +76,7 @@ export default async function launch (out, opts) {
 
     let action
 
-    if (actions.length > 0) {
+    if (manifest.actions.length > 0) {
       const cancelId = buttons.length
       buttons.push(t('prompt.action.cancel'))
 
@@ -100,8 +100,11 @@ export default async function launch (out, opts) {
       }
 
       action = manifest.actions[response]
+      if (!action) {
+        log(opts, `No action at ${response}`)
+      }
     } else {
-      action = actions[0]
+      action = manifest.actions[0]
     }
 
     if (action) {
@@ -118,7 +121,7 @@ export default async function launch (out, opts) {
         env.ITCHIO_API_KEY_EXPIRES_AT = subkey.expiresAt
       }
     } else {
-      log(opts, `No action at ${response}`)
+      log(opts, 'No action picked')
     }
   }
 
