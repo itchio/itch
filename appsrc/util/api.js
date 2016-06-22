@@ -205,4 +205,8 @@ export class AuthenticatedClient {
       return await this.request('get', `/upload/${uploadId}/download/builds/${buildId}`)
     }
   }
+
+  async subkey (gameId, scope) {
+    return await this.request('post', '/credentials/subkey', {game_id: gameId, scope})
+  }
 }

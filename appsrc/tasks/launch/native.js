@@ -25,6 +25,8 @@ import spawn from '../../util/spawn'
 import fetch from '../../util/fetch'
 import pathmaker from '../../util/pathmaker'
 
+import api from '../../util/api'
+
 import mklog from '../../util/log'
 const log = mklog('tasks/launch')
 
@@ -35,11 +37,14 @@ export default async function launch (out, opts) {
   invariant(cave, 'launch-native has cave')
   log(opts, `launching cave in '${cave.installLocation}' / '${cave.installFolder}'`)
 
+  invariant(credentials, 'launch-native has credentials')
+
   const game = await fetch.gameLazily(market, credentials, cave.gameId)
   invariant(game, 'was able to fetch game properly')
 
   const appPath = pathmaker.appPath(cave)
   let exePath
+  const env = {}
   let args = []
 
   const manifestPath = ospath.join(appPath, '.itch.toml')
@@ -94,7 +99,17 @@ export default async function launch (out, opts) {
     const action = manifest.actions[response]
     if (action) {
       log(opts, `Should launch ${JSON.stringify(action, 0, 2)}`)
-      exePath = ospath.isAbsolute(action.path) ? action.path : ospath.join(appPath, action.path)
+      const actionPath = action.path.replace(/{{EXT}}/, appExt())
+
+      exePath = ospath.isAbsolute(actionPath) ? actionPath : ospath.join(appPath, actionPath)
+      if (action.scope) {
+        log(opts, `Requesting subkey with scope: ${action.scope}`)
+        const client = api.withKey(credentials.key)
+        const subkey = await client.subkey(game.id, action.scope)
+        log(opts, `Got subkey: ${JSON.stringify(subkey, 0, 2)}`)
+        env.ITCHIO_API_KEY = subkey.key
+        env.ITCHIO_API_KEY_EXPIRES_AT = subkey.expiresAt
+      }
     } else {
       log(opts, `No action at ${response}`)
     }
@@ -190,11 +205,15 @@ export default async function launch (out, opts) {
       }
 
       await sandbox.within(sandboxOpts, async function ({fakeApp}) {
-        await doSpawn(fullExec, `open -W ${spawn.escapePath(fakeApp)}`, opts)
+        await doSpawn(fullExec, `open -W ${spawn.escapePath(fakeApp)}`, env, opts)
       })
     } else {
       log(opts, 'no app isolation')
-      await doSpawn(fullExec, `open -W ${spawn.escapePath(exePath)} --args ${argString}`, opts)
+      if (isBundle) {
+        await doSpawn(fullExec, `open -W ${spawn.escapePath(exePath)} --args ${argString}`, env, opts)
+      } else {
+        await doSpawn(fullExec, `${spawn.escapePath(exePath)} ${argString}`, env, opts)
+      }
     }
   } else if (platform === 'win32') {
     let cmd = `${spawn.escapePath(exePath)}`
@@ -213,7 +232,7 @@ export default async function launch (out, opts) {
 
       cmd = `elevate --runas itch-player salt ${cmd}`
     }
-    await doSpawn(exePath, cmd, opts)
+    await doSpawn(exePath, cmd, env, opts)
 
     if (isolateApps) {
       const denyRes = await spawn.getOutput({
@@ -232,16 +251,16 @@ export default async function launch (out, opts) {
       log(opts, 'should write firejail profile file')
 
       cmd = `firejail --noprofile -- ${cmd}`
-      await doSpawn(exePath, cmd, opts)
+      await doSpawn(exePath, cmd, env, opts)
     } else {
-      await doSpawn(exePath, cmd, opts)
+      await doSpawn(exePath, cmd, env, opts)
     }
   } else {
     throw new Error(`unsupported platform: ${platform}`)
   }
 }
 
-async function doSpawn (exePath, fullCommand, opts) {
+async function doSpawn (exePath, fullCommand, env, opts) {
   log(opts, `doSpawn ${fullCommand}`)
 
   const cwd = ospath.dirname(exePath)
@@ -250,14 +269,21 @@ async function doSpawn (exePath, fullCommand, opts) {
   const args = shellQuote.parse(fullCommand)
   const command = args.shift()
   log(opts, `Command: ${command}`)
-  log(opts, `Args: ${args}`)
+  log(opts, `Args: ${JSON.stringify(args, 0, 2)}`)
+  log(opts, `Env: ${JSON.stringify(env, 0, 2)}`)
 
   const code = await spawn({
     command,
     args,
     onToken: (tok) => log(opts, `stdout: ${tok}`),
     onErrToken: (tok) => log(opts, `stderr: ${tok}`),
-    opts: {cwd}
+    opts: {
+      env: {
+        ...process.env,
+        ...env
+      },
+      cwd
+    }
   })
 
   if (code !== 0) {
@@ -269,4 +295,12 @@ async function doSpawn (exePath, fullCommand, opts) {
 
 function isAppBundle (exePath) {
   return /\.app\/?$/.test(exePath.toLowerCase())
+}
+
+function appExt () {
+  switch (os.itchPlatform()) {
+    case 'linux': return ''
+    case 'osx': return '.app'
+    case 'exe': return '.exe'
+  }
 }
