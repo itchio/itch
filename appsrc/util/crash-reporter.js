@@ -11,6 +11,8 @@ import os from './os'
 import sf from './sf'
 
 let self = {
+  catching: false,
+
   writeCrashLog: (e) => {
     const crashFile = path.join(app.getPath('userData'), 'crash_logs', `${+new Date()}.txt`)
 
@@ -54,6 +56,12 @@ ${log}
   },
 
   handle: async function (type, e) {
+    if (self.catching) {
+      console.log(`While catching: ${e.stack || e}`)
+      return
+    }
+    self.catching = true
+
     console.log(`${type}: ${e.stack}`)
     let res = self.writeCrashLog(e)
     let log = res.log
@@ -86,6 +94,8 @@ ${log}
       // supplying defaultValues everywhere in case the i18n system hasn't loaded yet
       dialog.showMessageBox(dialogOpts, callback)
     })
+
+    self.catching = false
   },
 
   mount: () => {
