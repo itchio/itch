@@ -113,7 +113,7 @@ export default handleActions({
     const closeId = action.payload || id
     const {constant, transient} = tabs
 
-    if (constant.indexOf(id) !== -1) {
+    if (constant.indexOf(closeId) !== -1) {
       return state
     }
 
