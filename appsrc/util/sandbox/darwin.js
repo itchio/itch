@@ -3,7 +3,7 @@ import ospath from 'path'
 import tmp from 'tmp'
 import invariant from 'invariant'
 
-import sandboxTemplate from '../../constants/sandbox-template'
+import sandboxTemplate from '../../constants/sandbox-policies/macos-template'
 
 import spawn from '../spawn'
 import sf from '../sf'

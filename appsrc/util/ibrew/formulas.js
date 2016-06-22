@@ -53,7 +53,11 @@ self['activate'] = {
  */
 self['firejail'] = {
   format: '7z',
-  osWhitelist: ['linux']
+  osWhitelist: ['linux'],
+  versionCheck: {
+    args: ['--version'],
+    parser: /firejail version ([0-9a-z.]*)/
+  }
 }
 
 /**

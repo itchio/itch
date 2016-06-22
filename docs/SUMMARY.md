@@ -18,6 +18,10 @@
   * [Troubleshooting installs](using/troubleshooting.md)
   * [Preferences & important paths](using/preferences.md)
   * [Languages and internationalization](using/languages.md)
+  * [The itch.io sandbox](using/sandbox.md)
+    * [Windows sandboxing](using/sandbox/windows.md)
+    * [Linux sandboxing](using/sandbox/linux.md)
+    * [macOS sandboxing](using/sandbox/macos.md)
 
 * [Integrating games with the app](integrating/README.md)
   * [Quickstart guide](integrating/quickstart.md)

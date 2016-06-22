@@ -11,6 +11,10 @@ import poker from './poker'
 
 import {getT} from '../../localizer'
 
+import urls from '../../constants/urls'
+
+import * as actions from '../../actions'
+
 import {dialog} from '../../electron'
 
 import store from '../../store'
@@ -129,6 +133,31 @@ export default async function launch (out, opts) {
     }
 
     if (checkRes.needs.length > 0) {
+      if (!opts.sandboxBlessing) {
+        const platform = os.itchPlatform()
+
+        store.dispatch(actions.openModal({
+          title: ['sandbox.setup.title'],
+          message: [`sandbox.setup.${platform}.message`],
+          detail: [`sandbox.setup.${platform}.detail`],
+          buttons: [
+            {
+              label: ['sandbox.setup.proceed'],
+              action: actions.queueGame({game, extraOpts: {sandboxBlessing: true}}),
+              icon: 'checkmark'
+            },
+            {
+              label: ['docs.learn_more'],
+              action: actions.openUrl(urls[`${platform}SandboxSetup`]),
+              icon: 'earth',
+              className: 'secondary'
+            },
+            'cancel'
+          ]
+        }))
+        return
+      }
+
       const installRes = await sandbox.install(opts, checkRes.needs)
       if (installRes.errors.length > 0) {
         throw new Error(`error(s) while installing sandbox: ${installRes.errors.join(', ')}`)

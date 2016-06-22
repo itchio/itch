@@ -63,6 +63,10 @@ by asking the user permission with an [UAC prompt][].
 
 [UAC prompt]: https://en.wikipedia.org/wiki/User_Account_Control
 
+Its source code is available here, for you to audit, debug, and improve at will:
+
+  * <https://github.com/itchio/elevate>
+
 ### file
 
 file(1) is a well-known unix command-line utility that exposes complex file sniffing
@@ -74,6 +78,14 @@ using more conventional means.
 The version distributed on `dl.itch.ovh` is taken from the [MSYS2][] repositories.
 
 [MSYS2]: http://msys2.github.io/
+
+### firejail
+
+firejail is a sandbox for Linux that have very few dependencies (except a 3.x
+kernel). It is used by the itch app to run games sandboxed, see [Linux sandboxing](/using/sandbox/linux.md)
+
+The version distributed on `dl.itch.ovh` is built [from source](https://github.com/netblue30/firejail),
+on [our CI server](https://git.itch.ovh/itchio/firejail-buildscripts)
 
 ## Implementation
 

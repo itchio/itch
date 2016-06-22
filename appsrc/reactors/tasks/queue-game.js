@@ -12,13 +12,13 @@ export async function queueGame (store, action) {
   invariant(typeof store === 'object', 'queueGame needs a store')
   invariant(typeof action === 'object', 'queueGame needs an action')
 
-  const {game} = action.payload
+  const {game, extraOpts = {}} = action.payload
   invariant(typeof game === 'object', 'queueGame has a game object')
   const cave = store.getState().globalMarket.cavesByGameId[game.id]
 
   if (cave) {
     log(opts, `Have a cave for game ${game.id}, launching`)
-    await startCave(store, game, cave)
+    await startCave(store, game, cave, extraOpts)
     return
   }
 
@@ -81,12 +81,13 @@ export async function queueGame (store, action) {
   }
 }
 
-async function startCave (store, game, cave) {
+async function startCave (store, game, cave, extraOpts) {
   log(opts, `Starting cave ${cave.id}: stub`)
   const {err} = await startTask(store, {
     name: 'launch',
     gameId: cave.gameId,
-    cave
+    cave,
+    ...extraOpts
   })
 
   if (err) {

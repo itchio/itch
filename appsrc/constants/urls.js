@@ -7,7 +7,7 @@ const self = {
   githubApi: 'https://api.github.com',
   ibrewRepo: 'https://dl.itch.ovh',
   remoteLocalePath: 'http://locales.itch.ovh/itch',
-  manual: 'https://docs.itch.ovh/itch/',
+  manual: 'https://itch.io/docs/itch/',
   updateServers: {
     stable: 'https://nuts.itch.zone',
     canary: 'http://nuts-canary.itch.ovh'
@@ -26,6 +26,8 @@ Object.assign(self, {
   rarPolicy: `${self.itchio}/t/11918/rar-support-is-not-happening-repack-your-games`,
   debPolicy: `${self.itchio}/t/13882/deb-and-rpm-arent-supported-by-itch-please-ship-portable-linux-builds`,
   rpmPolicy: `${self.itchio}/t/13882/deb-and-rpm-arent-supported-by-itch-please-ship-portable-linux-builds`,
+  linuxSandboxSetup: `${self.manual}/sandbox/linux#one-time-setup`,
+  windowsSandboxSetup: `${self.manual}/sandbox/windows#one-time-setup`,
   releasesPage: `${self.itchRepo}/releases`
 })
 
