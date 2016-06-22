@@ -43,8 +43,8 @@ async function go (store, path) {
 function refreshTray (store, i18n) {
   const t = localizer.getT(i18n.strings, i18n.lang)
   const menuTemplate = [
-    {label: t('sidebar.owned'), click: () => go('library')},
-    {label: t('sidebar.dashboard'), click: () => go('dashboard')}
+    {label: t('sidebar.owned'), click: () => go(store, 'library')},
+    {label: t('sidebar.dashboard'), click: () => go(store, 'dashboard')}
   ]
 
   if (os.platform() !== 'darwin') {
