@@ -69,7 +69,7 @@ export async function within (opts, cb) {
   const fakeBinary = ospath.join(fakeApp, 'Contents', 'MacOS', exeName)
   await sf.writeFile(fakeBinary,
     `#!/bin/bash
-cd ${spawn.escapePath(ospath.basename(fullExec))}
+cd ${spawn.escapePath(ospath.dirname(fullExec))}
 sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullExec)} ${argString}`
   )
   await sf.chmod(fakeBinary, 0o700)

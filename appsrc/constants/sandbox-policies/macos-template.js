@@ -36,6 +36,7 @@ export default `
   (subpath "/usr/bin")
   (subpath "/bin")
   (subpath "/System/Library")
+  (subpath "/private/var/run")
 
   ;; preferences
   (subpath "/etc")
