@@ -3,7 +3,6 @@ import tmp from 'tmp'
 import path from 'path'
 
 import spawn from '../spawn'
-import sudo from '../sudo'
 import sf from '../sf'
 import ibrew from '../ibrew'
 
@@ -64,23 +63,15 @@ async function sudoRunScript (lines) {
   const tmpObj = tmp.fileSync()
   sf.writeFile(tmpObj.name, contents)
 
-  let out = ''
-  let e
-
-  try {
-    await sudo.execAsync(tmpObj.name, {
-      name: 'itch sandbox setup',
-      on: (ps) => {
-        ps.stdout.on('data', (data) => { out += data })
-      }
-    })
-  } catch (err) { e = err }
+  const res = await spawn.exec({command: 'pkexec', args: [tmpObj.name]})
 
   tmpObj.removeCallback()
 
-  if (e) { throw e }
+  if (res.code !== 0) {
+    throw new Error(`pkexec failed with code ${res.code}, stderr = ${res.err}`)
+  }
 
-  return {out}
+  return {out: res.out}
 }
 
 export default {check, install, uninstall}
