@@ -47,6 +47,20 @@ Warning: cannot switch euid to root
 Error: the sandbox is not setuid root
 ```
 
+## Troubleshooting
+
+If your game is broken by the itch.io sandbox on Linux, we recommend taking
+a look at the app's output when launching a game. Simply exit the itch app,
+and start it again from a terminal, using the `itch` command.
+
+firejail should print a message whenever a permission is denied, which should
+help you pinpoint what it is that your game is doing that isn't allowed
+by the sandbox.
+
+The default sandbox policy should be more than enough to get most games running,
+but if you run into an issue that you need help resolving, feel free to open
+an issue on our [Issue Tracker](https://github.com/itchio/itch/issues)
+
 ## Frequently Asked Questions
 
 ### Why use firejail and not SELinux/AppArmor/run as another user/etc. ?

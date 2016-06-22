@@ -12,3 +12,17 @@ It dynamically generates sandbox policy when launching a game, which:
 Here's the policy template the itch app uses:
 
   * <https://github.com/itchio/itch/blob/master/appsrc/constants/sandbox-policies/macos-template.js>
+
+## Troubleshooting
+
+If your game is broken by the itch.io sandbox on macOS, we recommend using
+the built-in `Console.app` to watch out for permission denials. Look in
+particular for `sandboxd` messages.
+
+Since Console.app shows system-wide logs for all applications, it may be a bit
+chatty. Shutting down applications you don't actively use can help reduce
+the amount of irrelevant messages.
+
+The default sandbox policy should be more than enough to get most games running,
+but if you run into an issue that you need help resolving, feel free to open
+an issue on our [Issue Tracker](https://github.com/itchio/itch/issues)
