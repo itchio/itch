@@ -21,8 +21,8 @@ applications however do *NOT* have root privilege.
 To make the firejail binary SUID, the following commands have to be run:
 
 ```bash
-sudo chown root:root ~/.config/bin/firejail
-sudo chmod u+s ~/.config/bin/firejail
+sudo chown root:root ~/.config/itch/bin/firejail
+sudo chmod u+s ~/.config/itch/bin/firejail
 ```
 
 These commands have to be run as root, and that's why the itch app warns you that
@@ -33,7 +33,7 @@ the binary yourself. You can find it in `~/.config/itch/bin/firejail`.
 You can verify that the one-time setup went well by running:
 
 ```bash
-~/.config/bin/firejail whoami && echo "All good!"
+~/.config/itch/bin/firejail whoami && echo "All good!"
 ```
 
 ...and checking that the output include "All good!". An incorrectly setup
