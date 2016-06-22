@@ -63,20 +63,20 @@ export default async function launch (out, opts) {
 
     log(opts, `manifest:\n ${JSON.stringify(manifest, 0, 2)}`)
 
-    const i18n = store.getState().i18n
-    const t = getT(i18n.strings, i18n.lang)
-
-    const buttons = []
-    manifest.actions::each((action, i) => {
-      if (!action.name) {
-        throw new Error(`in manifest, action ${i} is missing a name`)
-      }
-      buttons.push(t(`action.name.${action.name}`, {defaultValue: action.name}))
-    })
-
     let action
 
-    if (manifest.actions.length > 0) {
+    if (manifest.actions.length > 1) {
+      const i18n = store.getState().i18n
+      const t = getT(i18n.strings, i18n.lang)
+
+      const buttons = []
+      manifest.actions::each((action, i) => {
+        if (!action.name) {
+          throw new Error(`in manifest, action ${i} is missing a name`)
+        }
+        buttons.push(t(`action.name.${action.name}`, {defaultValue: action.name}))
+      })
+
       const cancelId = buttons.length
       buttons.push(t('prompt.action.cancel'))
 
