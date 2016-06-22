@@ -309,8 +309,8 @@ function isAppBundle (exePath) {
 
 function appExt () {
   switch (os.itchPlatform()) {
-    case 'linux': return ''
     case 'osx': return '.app'
-    case 'exe': return '.exe'
+    case 'windows': return '.exe'
+    default: return ''
   }
 }
