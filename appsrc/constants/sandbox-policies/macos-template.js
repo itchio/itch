@@ -13,10 +13,14 @@ export default `
   (subpath "{{USER_LIBRARY}}/Application Support")
   (subpath "{{USER_LIBRARY}}/Preferences")
   (subpath "{{USER_LIBRARY}}/Logs")
-  (subpath "{{USER_LIBRARY}}/Saved Application State") ;; Unity UI persistent stuff
+  (subpath "{{USER_LIBRARY}}/Caches")
+  (subpath "{{USER_LIBRARY}}/KeyBindings")
+  (subpath "{{USER_LIBRARY}}/Saved Application State")
 
   ;; FIXME probably a bit much ?
   (subpath "/dev")
+  (subpath "/private/var/folders")
+  (subpath "/var/folders" )
 )
 
 (deny file*
@@ -36,7 +40,10 @@ export default `
   (subpath "/usr/bin")
   (subpath "/bin")
   (subpath "/System/Library")
-  (subpath "/private/var/run")
+
+  ;; is this overkill and if so, what's the right fix?
+  ;; without it, Chromium can't load images over HTTPS
+  (subpath "/private")
 
   ;; preferences
   (subpath "/etc")
@@ -54,6 +61,10 @@ export default `
   ;; FIXME that's a bit excessive, why are some apps
   ;; trying to read 'PkgInfo' files or 'rsrc' ?
   (subpath "/Applications")
+
+  ;; Chrome Helper
+  (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains")
+  (literal "/")
 )
 
 ;; You'd be surprised what some apps scan for some reason
@@ -69,6 +80,9 @@ export default `
 ;; network
 (allow network-bind)
 (allow network-outbound)
+
+;; (required by Electron/Chromium to load images, for example)
+(allow system-socket)
 
 ;; (required by SDL2 app, was asking for 'com.apple.cfprefsd.daemon')
 (allow mach-lookup)
