@@ -18,9 +18,11 @@ export class Collections extends Component {
     const recentCollections = collections::sortBy(recency)
 
     return <div className='collections-meat'>
-      {recentCollections::map((collection) =>
-        <CollectionHubItem collection={collection}/>
-      )}
+      <div className='hub-grid'>
+        {recentCollections::map((collection) =>
+          <CollectionHubItem collection={collection}/>
+        )}
+      </div>
     </div>
   }
 }

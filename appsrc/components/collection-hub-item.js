@@ -1,37 +1,51 @@
 
 import React, {Component, PropTypes} from 'react'
+import {createStructuredSelector} from 'reselect'
 import invariant from 'invariant'
 
 import {connect} from './connect'
+
+import {map, filter} from 'underline'
 
 import * as actions from '../actions'
 
 export class CollectionHubItem extends Component {
   render () {
-    const {collection} = this.props
+    const {allGames, collection} = this.props
     const {navigateToCollection} = this.props
     const {title} = collection
 
-    return <div className='hub-item collection-hub-item'>
-      <section className='undercover' onClick={() => navigateToCollection(collection)}>
-        <section className='title'>
-          {title}
-        </section>
+    const gameIds = (collection.gameIds || []).slice(0, 4)
+    const games = gameIds::map((gameId) => allGames[gameId])::filter((x) => !!x)
+
+    return <div className='hub-item collection-hub-item' onClick={() => navigateToCollection(collection)}>
+      <section className='title'>
+        {title} ({(collection.gameIds || []).length})
+      </section>
+      <section className='fresco'>
+        {games::map((game) => {
+          const style = {}
+          const coverUrl = game.stillCoverUrl || game.coverUrl
+          if (coverUrl) {
+            style.backgroundImage = `url('${coverUrl}')`
+          }
+          return <div className='cover' style={style}></div>
+        })}
       </section>
     </div>
   }
 }
 
 CollectionHubItem.propTypes = {
-  game: PropTypes.shape({
-    title: PropTypes.string,
-    coverUrl: PropTypes.string
-  }),
+  // derived
+  allGames: PropTypes.object,
 
   navigateToCollection: PropTypes.func.isRequired
 }
 
-const mapStateToProps = (state) => ({})
+const mapStateToProps = createStructuredSelector({
+  allGames: (state) => (state.market || {}).games || {}
+})
 
 const mapDispatchToProps = (dispatch) => ({
   navigateToCollection: (collection) => {

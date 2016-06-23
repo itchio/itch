@@ -1,0 +1,28 @@
+
+.collections-meat {
+  overflow-y: auto;
+
+  .hub-grid .collection-hub-item {
+    width: 400px;
+    margin: 10px 20px;
+    -webkit-filter: brightness(90%);
+
+    &:hover {
+      -webkit-filter: none;
+      cursor: pointer;
+    }
+
+    .title {
+      padding: 6px 6px;
+    }
+
+    .fresco {
+      display: flex;
+
+      .cover {
+        flex: 1;
+        padding-bottom: 20%;
+      }
+    }
+  }
+}
