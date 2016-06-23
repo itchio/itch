@@ -37,6 +37,9 @@ export class ApiError extends ExtendableError {
   }
 }
 
+let agent
+import https from 'https'
+
 /**
  async Wrapper for the itch.io API
  */
@@ -47,6 +50,13 @@ export class Client {
   }
 
   async request (method, path, data = {}, transformers = {}) {
+    if (!agent) {
+      agent = new https.Agent({
+        keepAlive: true,
+        maxSockets: 1
+      })
+    }
+
     const t1 = Date.now()
 
     const uri = `${this.rootUrl}${path}`
@@ -54,7 +64,7 @@ export class Client {
     await cooldown()
     const t2 = Date.now()
 
-    const resp = await needle.requestAsync(method, uri, data)
+    const resp = await needle.requestAsync(method, uri, data, {agent})
     const body = resp.body
     const t3 = Date.now()
 
