@@ -16,7 +16,7 @@ export class Library extends Component {
 
     const installedGames = caves
       // fetch games
-      ::map((c) => ({c, g: allGames[c.gameId]}))
+      ::map((c) => ({c, g: allGames[c.gameId] || c.game}))
       // keep only games in *our* userDB
       ::filter((o) => o.g)
       // sort by title, then recency
