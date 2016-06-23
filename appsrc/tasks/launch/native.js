@@ -9,6 +9,7 @@ import toml from 'toml'
 import poker from './poker'
 
 import urls from '../../constants/urls'
+import defaultManifestIcons from '../../constants/default-manifest-icons'
 
 import * as actions from '../../actions'
 
@@ -69,14 +70,15 @@ export default async function launch (out, opts) {
         }
       } else {
         const buttons = []
+        const bigButtons = []
         manifest.actions::each((action, i) => {
           if (!action.name) {
             throw new Error(`in manifest, action ${i} is missing a name`)
           }
-          buttons.push({
+          bigButtons.push({
             label: [`action.name.${action.name}`, {defaultValue: action.name}],
             action: actions.queueGame({game, extraOpts: {manifestAction: action.name}}),
-            icon: action.icon || 'rocket'
+            icon: action.icon || defaultManifestIcons[action.name] || 'star'
           })
         })
 
@@ -84,8 +86,9 @@ export default async function launch (out, opts) {
 
         store.dispatch(actions.openModal({
           title: game.title,
-          message: ['prompt.launch.message', {title: game.title}],
-          flavor: 'list',
+          cover: game.stillCoverUrl || game.coverUrl,
+          message: '',
+          bigButtons,
           buttons
         }))
 

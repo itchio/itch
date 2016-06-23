@@ -32,6 +32,24 @@
     }
   }
 
+  .big-wrapper {
+    display: flex;
+    flex-direction: row;
+
+    .cover {
+      flex: 1 0;
+      height: auto;
+      width: 190px;
+      align-self: flex-start;
+      margin-left: 20px;
+    }
+
+    .buttons {
+      flex-grow: 1;
+    }
+  }
+
+
   .body {
     margin-top: 20px;
     display: flex;
@@ -49,7 +67,7 @@
     }
 
     .message {
-      padding: 0 40px;
+      padding: 0 20px;
       overflow-y: auto;
       max-height: 380px;
       -webkit-user-select: initial;
@@ -96,7 +114,32 @@
       flex-grow: 8;
     }
 
+    &.flavor-big {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 8px 20px;
+      max-height: 300px;
+      overflow-y: auto;
+
+      .button {
+        font-weight: bold;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.58);
+
+        &, &.secondary {
+          display: flex;
+          margin: 8px 0;
+          font-size: 16px;
+          padding: 14px 14px;
+        }
+
+        .icon {
+          margin-right: 10px;
+        }
+      }
+    }
+
     .button {
+      flex-shrink: 0;
       margin: 0 8px;
       @include light-button;
 
