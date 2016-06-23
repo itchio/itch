@@ -5,7 +5,12 @@ require_relative 'common'
 
 module Itch
   def Itch.ci_deploy_bintray
-    say "Should deploy to Bintray!"
+    if channel_name == "canary"
+      say "Skipping bintray deploy for canary versions"
+      return
+    end
+
+    say "Deploying to Bintray!"
     ✓ gem_dep 'dpl', 'dpl'
 
     FileUtils.mkdir_p "build"
