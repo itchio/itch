@@ -178,7 +178,12 @@ export async function gameLazily (market, credentials, gameId, opts = {}) {
   }
 
   if (!opts.fresh) {
-    const record = market.getEntities('games')[gameId]
+    let record = market.getEntities('games')[gameId]
+    if (record) {
+      return record
+    }
+
+    record = opts.game
     if (record) {
       return record
     }
