@@ -8,7 +8,7 @@
     "grid.item.downloading": "ダウンロード中…",
     "grid.item.finalize_installation": "インストールを完成する",
     "grid.item.install": "インストール",
-    "grid.item.installing": "インストール中",
+    "grid.item.installing": "インストール中です…",
     "grid.item.launch": "起動する",
     "grid.item.not_platform_compatible": "{{platform}}には対応していません。",
     "grid.item.open": "開く",
@@ -28,7 +28,7 @@
     "login.action.reset_password": "パスワードを忘れた場合",
     "login.field.password": "パスワード",
     "login.field.username": "ユーザー名、またはパスワード",
-    "login.status.dependency_check": "設定を確認中…",
+    "login.status.dependency_check": "設定を確認中...",
     "login.status.dependency_install": "依存ファイル{{name}} {{version}}をインストール中",
     "login.status.login": "ログインしています…",
     "login.status.setup_failure": "セットアップ中にエラーが発生しました:{{error}}",
@@ -173,5 +173,12 @@
     "usage_stats.description.platforms": "{{platforms}} 向け",
     "docs.learn_more": "詳しい情報",
     "grid.item.open_demo": "体験版を開く",
-    "grid.item.open_debug_log": "デバッグログを開く"
+    "grid.item.open_debug_log": "デバッグログを開く",
+    "grid.item.version": "バージョン {{version}}",
+    "i18n.failed_downloading_locales": "{{lang}} の翻訳アップデートはダウンロード出来ません。",
+    "install_location.empty": "このフォルダにはまだ何もインストールされていません",
+    "login.action.show_form": "別のアカウントでログイン",
+    "login.action.show_saved_logins": "保存されているログイン情報",
+    "login.messages.welcome_back": "おかえりなさい！",
+    "login.remembered_session.last_connected": "最後に接続した時間"
 }
