@@ -23,8 +23,13 @@ export async function queueCaveReinstall (store, action) {
 
   invariant(cave.uploadId, 'cave reinstall has uploadId')
   invariant(cave.uploads, 'cave reinstall has uploads')
-  const upload = cave.uploads::findWhere({id: cave.uploadId})
-  invariant(upload, 'cave reinstall contained')
+  const uploadResponse = await startTask(store, {
+    name: 'find-upload',
+    gameId: game.id,
+    game: game
+  })
+  const upload = uploadResponse.result.uploads[0]
+  invariant(upload, 'found upload for cave reinstall')
 
   const archivePath = pathmaker.downloadPath(upload)
 

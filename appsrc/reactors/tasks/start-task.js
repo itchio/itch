@@ -17,6 +17,9 @@ export async function startTask (store, taskOpts) {
   invariant(typeof taskOpts.name === 'string', 'startTask opts must contain name')
   invariant(typeof taskOpts.gameId === 'number', 'startTask opts must contain gameId')
 
+  const credentials = store.getState().session.credentials
+  const market = getUserMarket()
+
   const id = uuid.v4()
   store.dispatch(actions.taskStarted({id, ...taskOpts}))
 
@@ -28,12 +31,11 @@ export async function startTask (store, taskOpts) {
       store.dispatch(actions.taskProgress({id, progress}))
     })::throttle(PROGRESS_THROTTLE))
 
-    const credentials = store.getState().session.credentials
     const preferences = store.getState().preferences
     const extendedOpts = {
       ...opts,
       ...taskOpts,
-      market: getUserMarket(),
+      market,
       globalMarket: getGlobalMarket(),
       credentials,
       preferences

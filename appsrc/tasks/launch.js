@@ -5,6 +5,13 @@ import invariant from 'invariant'
 import native from './launch/native'
 import html from './launch/html'
 
+import store from '../store'
+import {startTask} from '../reactors/tasks/start-task'
+
+import mklog from '../util/log'
+const log = mklog('tasks/launch')
+
+import fetch from '../util/fetch'
 import pathmaker from '../util/pathmaker'
 import explorer from '../util/explorer'
 import classificationActions from '../constants/classification-actions'
@@ -12,6 +19,7 @@ import classificationActions from '../constants/classification-actions'
 function caveProblem (cave) {
   switch (cave.launchType) {
     case 'native':
+      // FIXME: this isn't an issue if we have a manifest
       if (!cave.executables || cave.executables.length === 0) {
         return ['game.install.no_executables_found']
       }
@@ -25,11 +33,15 @@ function caveProblem (cave) {
 }
 
 export default async function start (out, opts) {
-  const {globalMarket, preferences} = opts
+  const {globalMarket, preferences, market, credentials} = opts
   let {cave} = opts
   invariant(cave, 'launch has cave')
   invariant(globalMarket, 'launch has globalMarket')
+  invariant(credentials, 'launch has credentials')
+  invariant(market, 'launch has market')
   invariant(preferences, 'launch has preferences')
+
+  const game = await fetch.gameLazily(market, credentials, cave.gameId)
 
   const action = classificationActions[(cave.game || {}).classification || 'game']
   if (action === 'open') {
@@ -40,11 +52,17 @@ export default async function start (out, opts) {
 
   const {launchType = 'native'} = cave
 
-  if (caveProblem(cave)) {
-    // FIXME: figure out subtasks
-    // await configure(out, opts)
-    // cave = globalMarket.getEntities('caves')[cave.id]
-    console.log('should configure: stub')
+  let problem = caveProblem(cave)
+  if (problem) {
+    log(opts, `reconfiguring because of problem with cave: ${problem}`)
+    await startTask(store, {
+      name: 'configure',
+      gameId: game.id,
+      game,
+      cave,
+      upload: cave.uploads[cave.uploadId]
+    })
+    cave = globalMarket.getEntities('caves')[cave.id]
   }
 
   const launcher = {native, html}[launchType]
@@ -52,9 +70,10 @@ export default async function start (out, opts) {
     throw new Error(`Unsupported launch type '${cave.launchType}'`)
   }
 
-  const problem = caveProblem(cave)
+  problem = caveProblem(cave)
   if (problem) {
-    const err = new Error('game.install.could_not_launch')
+    // FIXME: this swallows the problem.
+    const err = new Error(`game.install.could_not_launch (${problem})`)
     err.reason = problem
     throw err
   }

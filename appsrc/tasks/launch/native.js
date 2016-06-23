@@ -28,7 +28,7 @@ import pathmaker from '../../util/pathmaker'
 import api from '../../util/api'
 
 import mklog from '../../util/log'
-const log = mklog('tasks/launch')
+const log = mklog('tasks/launch/native')
 
 import {Crash} from '../errors'
 

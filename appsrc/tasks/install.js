@@ -53,7 +53,7 @@ export default async function start (out, opts) {
     }
 
     if (!opts.reinstall) {
-      const installFolderExists = async () => {
+      const installFolderExists = async function () {
         const fullPath = pathmaker.appPath(cave)
         return await sf.exists(fullPath)
       }
@@ -67,6 +67,7 @@ export default async function start (out, opts) {
 
     globalMarket.saveEntity('caves', cave.id, cave)
   }
+  log(opts, `buildId: ${cave.buildId} => ${upload.buildId}`)
 
   market.saveEntity('games', game.id, game)
 
