@@ -1,7 +1,6 @@
 
 import React, {PropTypes, Component} from 'react'
 import invariant from 'invariant'
-import classNames from 'classnames'
 import {connect} from './connect'
 
 import ReactModal from 'react-modal'
@@ -19,7 +18,9 @@ const customStyles = {
   content: {
     top: '50%',
     left: '50%',
+    minWidth: '50%',
     maxWidth: '70%',
+    minHeight: '40%',
     maxHeight: '80%',
     right: 'auto',
     bottom: 'auto',
@@ -44,13 +45,12 @@ const DEFAULT_BUTTONS = {
 
 export class Modal extends Component {
   render () {
-    const {t, modals = [], dispatch, closeModal} = this.props
+    const {t, modals = [], closeModal} = this.props
 
     const modal = modals[0]
 
     if (modal) {
-      const {flavor = 'normal', buttons, title, message, detail} = modal
-      const buttonsClasses = classNames('buttons', `flavor-${flavor}`)
+      const {bigButtons, buttons, cover, title, message, detail} = modal
 
       return <ReactModal isOpen style={customStyles}>
         <div className='modal'>
@@ -67,27 +67,44 @@ export class Modal extends Component {
             </div>
           </div>
 
-          <div className={buttonsClasses}>
-            <div className='filler'/>
-            {buttons::map((button, index) => {
-              if (typeof button === 'string') {
-                button = DEFAULT_BUTTONS[button]
-                invariant(button, '')
-              }
-              const {label, action, className = '', icon} = button
-              const onClick = () => dispatch(action)
-
-              return <div className={`button ${className}`} key={index} onClick={onClick}>
-                {icon ? <span className={`icon icon-${icon}`}/> : ''}
-                {t.format(label)}
-              </div>
-            })}
+          {bigButtons.length > 0
+          ? <div className='big-wrapper'>
+            {cover
+              ? <img className='cover' src={cover}/>
+              : ''}
+            {this.renderButtons(bigButtons, 'big')}
           </div>
+          : ''}
+
+          {this.renderButtons(buttons, 'normal')}
         </div>
       </ReactModal>
     } else {
       return <div/>
     }
+  }
+
+  renderButtons (buttons, flavor) {
+    if (buttons.length === 0) return ''
+
+    const {t, dispatch} = this.props
+
+    return <div className={`buttons flavor-${flavor}`}>
+      <div className='filler'/>
+      {buttons::map((button, index) => {
+        if (typeof button === 'string') {
+          button = DEFAULT_BUTTONS[button]
+          invariant(button, '')
+        }
+        const {label, action, className = '', icon} = button
+        const onClick = () => dispatch(action)
+
+        return <div className={`button ${className}`} key={index} onClick={onClick}>
+        {icon ? <span className={`icon icon-${icon}`}/> : ''}
+        {t.format(label)}
+        </div>
+      })}
+    </div>
   }
 
   typeToIcon (type) {
