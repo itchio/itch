@@ -1,6 +1,7 @@
 
 import React, {PropTypes, Component} from 'react'
 import invariant from 'invariant'
+import classNames from 'classnames'
 import {connect} from './connect'
 
 import ReactModal from 'react-modal'
@@ -48,7 +49,8 @@ export class Modal extends Component {
     const modal = modals[0]
 
     if (modal) {
-      const {buttons, title, message, detail} = modal
+      const {flavor = 'normal', buttons, title, message, detail} = modal
+      const buttonsClasses = classNames('buttons', `flavor-${flavor}`)
 
       return <ReactModal isOpen style={customStyles}>
         <div className='modal'>
@@ -65,7 +67,7 @@ export class Modal extends Component {
             </div>
           </div>
 
-          <div className='buttons'>
+          <div className={buttonsClasses}>
             <div className='filler'/>
             {buttons::map((button, index) => {
               if (typeof button === 'string') {

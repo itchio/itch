@@ -19,12 +19,13 @@ function defaultInstallLocation () {
 }
 
 export default async function start (out, opts) {
+  invariant(opts.credentials, 'install must have credentials')
   invariant(opts.globalMarket, 'install must have a globalMarket')
   invariant(opts.market, 'install must have a market')
   invariant(opts.archivePath, 'install must have a archivePath')
   invariant(opts.game, 'install must have a game')
   invariant(opts.upload, 'install must have an upload')
-  const {market, globalMarket, archivePath, downloadKey, game, upload, installLocation = defaultInstallLocation()} = opts
+  const {market, credentials, globalMarket, archivePath, downloadKey, game, upload, installLocation = defaultInstallLocation()} = opts
 
   let checkTimestamps = true
 
@@ -100,6 +101,11 @@ export default async function start (out, opts) {
   globalMarket.saveEntity('caves', cave.id, {launchable: false})
   await core.install(out, coreOpts)
   globalMarket.saveEntity('caves', cave.id, {
+    game,
+    installedBy: {
+      id: credentials.me.id,
+      username: credentials.me.username
+    },
     downloadKey,
     launchable: true,
     installedArchiveMtime: amtime,

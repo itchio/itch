@@ -2,20 +2,15 @@
 import ospath from 'path'
 import invariant from 'invariant'
 
-import {map, each} from 'underline'
-import Promise from 'bluebird'
+import {findWhere, map, each} from 'underline'
 import shellQuote from 'shell-quote'
 import toml from 'toml'
 
 import poker from './poker'
 
-import {getT} from '../../localizer'
-
 import urls from '../../constants/urls'
 
 import * as actions from '../../actions'
-
-import {dialog} from '../../electron'
 
 import store from '../../store'
 import sandbox from '../../util/sandbox'
@@ -39,7 +34,7 @@ export default async function launch (out, opts) {
 
   invariant(credentials, 'launch-native has credentials')
 
-  const game = await fetch.gameLazily(market, credentials, cave.gameId)
+  const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game})
   invariant(game, 'was able to fetch game properly')
 
   const appPath = pathmaker.appPath(cave)
@@ -66,42 +61,35 @@ export default async function launch (out, opts) {
     let action
 
     if (manifest.actions.length > 1) {
-      const i18n = store.getState().i18n
-      const t = getT(i18n.strings, i18n.lang)
-
-      const buttons = []
-      manifest.actions::each((action, i) => {
-        if (!action.name) {
-          throw new Error(`in manifest, action ${i} is missing a name`)
+      if (opts.manifestAction) {
+        action = manifest.actions::findWhere({name: opts.manifestAction})
+        if (!action) {
+          log(opts, `Picked invalid manifest action: ${opts.manifestAction}, had: ${JSON.stringify(manifest.actions, 0, 2)}`)
+          return
         }
-        buttons.push(t(`action.name.${action.name}`, {defaultValue: action.name}))
-      })
+      } else {
+        const buttons = []
+        manifest.actions::each((action, i) => {
+          if (!action.name) {
+            throw new Error(`in manifest, action ${i} is missing a name`)
+          }
+          buttons.push({
+            label: [`action.name.${action.name}`, {defaultValue: action.name}],
+            action: actions.queueGame({game, extraOpts: {manifestAction: action.name}}),
+            icon: action.icon || 'rocket'
+          })
+        })
 
-      const cancelId = buttons.length
-      buttons.push(t('prompt.action.cancel'))
+        buttons.push('cancel')
 
-      const dialogOpts = {
-        title: game.title,
-        message: t('prompt.launch.message', {title: game.title}),
-        buttons,
-        cancelId
-      }
+        store.dispatch(actions.openModal({
+          title: game.title,
+          message: ['prompt.launch.message', {title: game.title}],
+          flavor: 'list',
+          buttons
+        }))
 
-      const promise = new Promise((resolve, reject) => {
-        const callback = (response) => {
-          resolve(response)
-        }
-        dialog.showMessageBox(dialogOpts, callback)
-      })
-
-      const response = await promise
-      if (response === cancelId) {
         return
-      }
-
-      action = manifest.actions[response]
-      if (!action) {
-        log(opts, `No action at ${response}`)
       }
     } else {
       action = manifest.actions[0]

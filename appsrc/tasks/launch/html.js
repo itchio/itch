@@ -21,7 +21,7 @@ export default async function launch (out, opts) {
   invariant(market, 'launch-html has market')
   invariant(credentials, 'launch-html has credentials')
 
-  const game = await fetch.gameLazily(market, credentials, cave.gameId)
+  const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game})
   const injectPath = path.resolve(__dirname, '..', '..', 'inject', 'game.js')
 
   const appPath = pathmaker.appPath(cave)

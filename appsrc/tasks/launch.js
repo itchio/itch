@@ -41,7 +41,7 @@ export default async function start (out, opts) {
   invariant(market, 'launch has market')
   invariant(preferences, 'launch has preferences')
 
-  const game = await fetch.gameLazily(market, credentials, cave.gameId)
+  const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game})
 
   const action = classificationActions[(cave.game || {}).classification || 'game']
   if (action === 'open') {
