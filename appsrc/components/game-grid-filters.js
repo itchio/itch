@@ -15,19 +15,21 @@ class GameGridFilters extends Component {
   }
 
   render () {
-    const {t, filterQuery, onlyCompatible} = this.props
+    const {t, filterQuery, onlyCompatible, showBinaryFilters = true} = this.props
 
     return <section className='filters'>
       <section className='search'>
         <input className='filter-input-field' ref='search' type='search' defaultValue={filterQuery} placeholder='Filter...' onKeyPress={this.onQueryChanged} onKeyUp={this.onQueryChanged} onChange={this.onQueryChanged}/>
         <span className={classNames('icon', 'icon-filter', {active: filterQuery})}/>
       </section>
-      <section className='checkboxes'>
-        <label>
-          <input type='checkbox' checked={onlyCompatible} onChange={(e) => this.onCheckboxChanged('onlyCompatible', e.target.checked)}/>
-          {t('grid.criterion.only_compatible')}
-        </label>
-      </section>
+      {showBinaryFilters
+        ? <section className='checkboxes'>
+          <label>
+            <input type='checkbox' checked={onlyCompatible} onChange={(e) => this.onCheckboxChanged('onlyCompatible', e.target.checked)}/>
+            {t('grid.criterion.only_compatible')}
+          </label>
+        </section>
+        : ''}
     </section>
   }
 
@@ -45,6 +47,7 @@ class GameGridFilters extends Component {
 
 GameGridFilters.propTypes = {
   tab: PropTypes.string.isRequired,
+  showBinaryFilters: PropTypes.bool,
 
   t: PropTypes.func.isRequired
 }

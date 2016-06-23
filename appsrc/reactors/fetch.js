@@ -99,7 +99,6 @@ const search = async function search (store, action) {
 
 async function fetchSingleCollectionGames (store, market, credentials, collectionId) {
   await fetch.collectionGames(market, credentials, collectionId)
-  log(opts, `fetched collection ${collectionId}!`)
   store.dispatch(actions.collectionGamesFetched({collectionId}))
 }
 
@@ -114,7 +113,6 @@ const fetchCollectionGames = async function fetchCollectionGames (store, action)
 
   try {
     for (const key of Object.keys(collections)) {
-      log(opts, `fetching collection ${key}`)
       await fetchSingleCollectionGames(store, market, credentials, Number(key))
     }
   } catch (e) {
