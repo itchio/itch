@@ -17,7 +17,7 @@ import HubSidebarItem from './hub-sidebar-item'
 export class HubSidebar extends Component {
   render () {
     const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
-      navigate, counts, closeTab, moveTab, openTabContextMenu, newTab, searchLoading} = this.props
+      navigate, counts, closeTab, closeAllTabs, moveTab, openTabContextMenu, newTab, searchLoading} = this.props
     const classes = classNames('hub-sidebar', {osx, fullscreen})
     const sidebarStyle = {
       width: sidebarWidth + 'px'
@@ -37,7 +37,9 @@ export class HubSidebar extends Component {
       </section>
 
       <div className='sidebar-items'>
-        <h2>{t('sidebar.category.basics')}</h2>
+        <h2>
+          <span className='label'>{t('sidebar.category.basics')}</span>
+        </h2>
         {tabs.constant::map((id, index) => {
           const data = tabData[id] || {}
           const {path} = data
@@ -51,7 +53,13 @@ export class HubSidebar extends Component {
           return <HubSidebarItem {...props}/>
         })}
 
-        <h2>{t('sidebar.category.tabs')}</h2>
+        <h2>
+          <span className='label'>{t('sidebar.category.tabs')}</span>
+          <div className='filler'/>
+          <span className='action hint--left' data-hint={t('sidebar.close_all_tabs')} onClick={closeAllTabs}>
+            <span className='icon icon-delete'/>
+          </span>
+        </h2>
         {tabs.transient::map((id, index) => {
           const data = tabData[id] || {}
           const {path} = data
@@ -207,6 +215,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = (dispatch) => ({
   navigate: (id) => dispatch(actions.navigate(id)),
   closeTab: (id) => dispatch(actions.closeTab(id)),
+  closeAllTabs: (id) => dispatch(actions.closeAllTabs()),
   moveTab: (before, after) => dispatch(actions.moveTab({before, after})),
 
   viewCreatorProfile: () => dispatch(actions.viewCreatorProfile()),

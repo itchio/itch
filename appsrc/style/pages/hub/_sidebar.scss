@@ -211,13 +211,28 @@
   }
 
   h2 {
-    text-transform: uppercase;
     color: $ternary-text-color;
 
-    padding: 0 14px;
+    padding: 0 7px 0 14px;
     margin: 20px 0 8px 0;
-    text-transform: uppercase;
-    font-weight: bold;
+
+    display: flex;
+
+    .label {
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .filler {
+      flex-grow: 1;
+    }
+
+    .action {
+      &:hover {
+        color: $ivory;
+        cursor: pointer;
+      }
+    }
   }
 
   .me {
