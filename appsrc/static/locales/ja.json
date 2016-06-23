@@ -214,5 +214,10 @@
     "usage_stats.last_played_time_ago": "最後にプレイした時間 {{time_ago}}",
     "usage_stats.last_used_time_ago": "最後に使用した時間 {{time_ago}}",
     "usage_stats.never_opened": "未開封",
-    "usage_stats.never_played": "プレイしていません。"
+    "usage_stats.never_played": "プレイしていません。",
+    "grid.item.check_for_update": "更新の確認をする",
+    "grid.criterion.filtered_by": "“{{term}}” にフィルターされました。",
+    "game.install.no_html_index_found": "HTMLインデックスファイルが見つかりませんでした。",
+    "game.install.no_uploads_available.detail": "このゲームはあなたのプラットフォーム、又はitchのバージョンに対応していないと思われます。",
+    "grid.item.developer": "開発元"
 }
