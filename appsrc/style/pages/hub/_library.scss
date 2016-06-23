@@ -27,15 +27,10 @@
   section.filters {
     display: flex;
     align-items: center;
-    position: fixed;
     width: 100%;
     z-index: 20;
     background: $bread-background-color;
     box-shadow: 0 4px 8px -4px $bread-background-color;
-  }
-
-  .hub-grid {
-    margin-top: 55px;
   }
 
   section.checkboxes {
