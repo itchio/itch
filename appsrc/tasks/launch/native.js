@@ -78,7 +78,8 @@ export default async function launch (out, opts) {
           bigButtons.push({
             label: [`action.name.${action.name}`, {defaultValue: action.name}],
             action: actions.queueGame({game, extraOpts: {manifestAction: action.name}}),
-            icon: action.icon || defaultManifestIcons[action.name] || 'star'
+            icon: action.icon || defaultManifestIcons[action.name] || 'star',
+            className: `action-${action.name}`
           })
         })
 
