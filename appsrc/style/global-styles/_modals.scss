@@ -125,6 +125,10 @@
         font-weight: bold;
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.58);
 
+        &:not(.action-play) {
+          -webkit-filter: grayscale(100%) brightness(60%);
+        }
+
         &, &.secondary {
           display: flex;
           margin: 8px 0;
