@@ -19,7 +19,7 @@ class GameGridFilters extends Component {
 
     return <section className='filters'>
       <section className='search'>
-        <input ref='search' type='search' defaultValue={filterQuery} placeholder='Filter...' onKeyPress={this.onQueryChanged} onKeyUp={this.onQueryChanged} onChange={this.onQueryChanged}/>
+        <input className='filter-input-field' ref='search' type='search' defaultValue={filterQuery} placeholder='Filter...' onKeyPress={this.onQueryChanged} onKeyUp={this.onQueryChanged} onChange={this.onQueryChanged}/>
         <span className={classNames('icon', 'icon-filter', {active: filterQuery})}/>
       </section>
       <section className='checkboxes'>

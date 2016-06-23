@@ -26,6 +26,9 @@ async function mount (store, action) {
   combo.bindGlobal(['ctrl+f', 'command+f'], () => {
     store.dispatch(actions.focusSearch())
   })
+  combo.bindGlobal(['ctrl+shift+f', 'command+shift+f'], () => {
+    store.dispatch(actions.focusFilter())
+  })
 
   combo.bindGlobal(['ctrl+tab', 'ctrl+pagedown'], () => {
     store.dispatch(actions.showNextTab())

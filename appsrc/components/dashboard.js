@@ -5,6 +5,7 @@ import {createStructuredSelector} from 'reselect'
 import classNames from 'classnames'
 
 import GameGrid from './game-grid'
+import GameGridFilters from './game-grid-filters'
 import {map} from 'underline'
 
 import EnhanceFiltered from './filtered'
@@ -23,9 +24,12 @@ export class Dashboard extends Component {
     const showHeaders = (sectionCount > 1)
     const headerClasses = classNames('', {shown: showHeaders})
 
+    const tab = 'dashboard'
+
     return <div className='dashboard-meat'>
       <h2 className={headerClasses}>{t('sidebar.dashboard')}</h2>
-      <GameGrid games={games} query={query}/>
+      <GameGridFilters tab={tab}/>
+      <GameGrid tab={tab} games={games} query={query}/>
     </div>
   }
 }

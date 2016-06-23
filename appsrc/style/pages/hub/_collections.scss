@@ -3,7 +3,7 @@
   overflow-y: auto;
 
   .hub-grid .collection-hub-item {
-    width: 400px;
+    width: 280px;
     margin: 10px 20px;
     -webkit-filter: brightness(90%);
 
@@ -18,10 +18,16 @@
 
     .fresco {
       display: flex;
+      flex-direction: row;
 
-      .cover {
+      .row {
+        display: flex;
+        flex-direction: column;
         flex: 1;
-        padding-bottom: 20%;
+
+        .cover {
+          flex: 1;
+        }
       }
     }
   }

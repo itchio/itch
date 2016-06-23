@@ -5,7 +5,7 @@ import invariant from 'invariant'
 
 import {connect} from './connect'
 
-import {map, filter} from 'underline'
+import {map, each, filter} from 'underline'
 
 import * as actions from '../actions'
 
@@ -17,20 +17,32 @@ export class CollectionHubItem extends Component {
 
     const gameIds = (collection.gameIds || []).slice(0, 4)
     const games = gameIds::map((gameId) => allGames[gameId])::filter((x) => !!x)
+    const gameItems = games::map((game) => {
+      const style = {}
+      const coverUrl = game.stillCoverUrl || game.coverUrl
+      if (coverUrl) {
+        style.backgroundImage = `url('${coverUrl}')`
+      }
+      return <div className='cover' style={style}></div>
+    })
+    const rows = []
+    let cols = []
+    gameItems::each((item, i) => {
+      cols.push(item)
+
+      if (i % 2 === 1) {
+        const row = <div className='row'>{cols}</div>
+        rows.push(row)
+        cols = []
+      }
+    })
 
     return <div className='hub-item collection-hub-item' onClick={() => navigateToCollection(collection)}>
       <section className='title'>
         {title} ({(collection.gameIds || []).length})
       </section>
       <section className='fresco'>
-        {games::map((game) => {
-          const style = {}
-          const coverUrl = game.stillCoverUrl || game.coverUrl
-          if (coverUrl) {
-            style.backgroundImage = `url('${coverUrl}')`
-          }
-          return <div className='cover' style={style}></div>
-        })}
+        {rows}
       </section>
     </div>
   }

@@ -9,7 +9,6 @@ import {each, filter, map} from 'underline'
 import isPlatformCompatible from '../util/is-platform-compatible'
 
 import HubItem from './hub-item'
-import HubGhostItem from './hub-ghost-item'
 
 export class GameGrid extends Component {
   constructor () {
@@ -49,10 +48,6 @@ export class GameGrid extends Component {
     filteredGames::each((game, index) => {
       items.push(<HubItem key={`game-${game.id}`} game={game}/>)
     })
-
-    for (var i = 0; i < 12; i++) {
-      items.push(<HubGhostItem key={`ghost-${i}`}/>)
-    }
 
     return <div className='hub-grid'>
     {items}

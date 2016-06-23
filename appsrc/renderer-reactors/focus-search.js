@@ -7,4 +7,12 @@ async function focusSearch (store, action) {
   }
 }
 
-export default {focusSearch}
+async function focusFilter (store, action) {
+  const filterBar = document.querySelector('.hub-meat-tab.visible .filter-input-field')
+  if (filterBar) {
+    filterBar.focus()
+    filterBar.select()
+  }
+}
+
+export default {focusSearch, focusFilter}

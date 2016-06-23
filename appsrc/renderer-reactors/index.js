@@ -14,6 +14,7 @@ export default validateReactors({
   __MOUNT: combine(shortcuts.mount),
 
   FOCUS_SEARCH: combine(focusSearch.focusSearch),
+  FOCUS_FILTER: combine(focusSearch.focusFilter),
 
   TRIGGER_LOCATION: combine(triggers.triggerLocation),
   TRIGGER_BACK: combine(triggers.triggerBack),
