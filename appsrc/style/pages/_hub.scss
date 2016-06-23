@@ -46,6 +46,9 @@
   justify-content: space-between;
   align-items: flex-start;
   align-content: flex-start;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
 
   .criterion-bar {
     flex-basis: 100%;

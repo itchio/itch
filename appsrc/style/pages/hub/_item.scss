@@ -4,6 +4,12 @@
   position: relative;
   background: #232222; // FIXME colors
   border: 1px solid #191919; // FIXME colors
+  transition: all 0.4s;
+
+  &.dull {
+    -webkit-filter: grayscale(95%);
+    opacity: .4;
+  }
 
   .gif-marker {
     position: absolute;

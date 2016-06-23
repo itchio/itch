@@ -2,18 +2,16 @@
 import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 import {createStructuredSelector} from 'reselect'
-import classNames from 'classnames'
 
 import GameGrid from './game-grid'
+import GameGridFilters from './game-grid-filters'
 import {map, filter, indexBy, sortBy} from 'underline'
-
-import * as actions from '../actions'
 
 const recency = (x) => -(new Date(x.installedAt)) || 0
 
 export class Library extends Component {
   render () {
-    const {t, caves, allGames, downloadKeys, collections, filterQuery, onlyCompatible} = this.props
+    const {caves, allGames, downloadKeys, collections} = this.props
 
     const installedGames = caves
       // fetch games
@@ -41,35 +39,14 @@ export class Library extends Component {
       sectionCount++
     }
 
+    const tab = 'library'
     return <div className='library-meat'>
-      <section className='filters'>
-        <section className='search'>
-          <input ref='search' type='search' defaultValue={filterQuery} placeholder='Filter...' onKeyPress={::this.onQueryChanged} onKeyUp={::this.onQueryChanged} onChange={::this.onQueryChanged}/>
-          <span className={classNames('icon', 'icon-filter', {active: filterQuery})}/>
-        </section>
-        <section className='checkboxes'>
-          <label>
-            <input type='checkbox' checked={onlyCompatible} onChange={(e) => this.onCheckboxChanged('onlyCompatible', e.target.checked)}/>
-            {t('grid.criterion.only_compatible')}
-          </label>
-        </section>
-      </section>
+      <GameGridFilters tab={tab}/>
       {installedGames.length > 0 || ownedGames.length > 0
-        ? <GameGrid games={installedGames.concat(ownedGames)} query={filterQuery} onlyCompatible={onlyCompatible}/>
+        ? <GameGrid games={installedGames.concat(ownedGames)} tab={tab}/>
         : ''
       }
     </div>
-  }
-
-  onQueryChanged (e) {
-    const {search} = this.refs
-    if (!search) return
-
-    this.props.filterChanged(search.value)
-  }
-
-  onCheckboxChanged (field, value) {
-    this.props.binaryFilterChanged(field, value)
   }
 }
 
@@ -87,15 +64,10 @@ const mapStateToProps = createStructuredSelector({
   caves: (state) => state.globalMarket.caves || {},
   allGames: (state) => state.market.games || {},
   downloadKeys: (state) => state.market.downloadKeys || {},
-  collections: (state) => state.market.collections || {},
-  filterQuery: (state) => state.session.navigation.filters.library,
-  onlyCompatible: (state) => state.session.navigation.binaryFilters.onlyCompatible
+  collections: (state) => state.market.collections || {}
 })
 
-const mapDispatchToProps = (dispatch) => ({
-  filterChanged: (query) => dispatch(actions.filterChanged({tab: 'library', query})),
-  binaryFilterChanged: (field, value) => dispatch(actions.binaryFilterChanged({field, value}))
-})
+const mapDispatchToProps = (dispatch) => ({})
 
 export default connect(
   mapStateToProps,

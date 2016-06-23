@@ -1,9 +1,10 @@
 
 import React, {Component, PropTypes} from 'react'
 import {connect} from './connect'
+import {createStructuredSelector} from 'reselect'
 import Fuse from 'fuse.js'
 
-import {each, filter} from 'underline'
+import {each, filter, map} from 'underline'
 
 import isPlatformCompatible from '../util/is-platform-compatible'
 
@@ -13,6 +14,7 @@ import HubGhostItem from './hub-ghost-item'
 export class GameGrid extends Component {
   constructor () {
     super()
+    console.log('building fuse!')
     this.fuse = new Fuse([], {
       keys: [
         {
@@ -23,23 +25,28 @@ export class GameGrid extends Component {
           name: 'shortText',
           weight: 0.4
         }
-      ]
+      ],
+      threshold: 0.5,
+      include: ['score']
     })
   }
 
-  componentWillReceiveProps (nextProps) {
-    const {games} = nextProps
-    if (games) {
-      this.fuse.set(games)
-    }
-  }
-
   render () {
-    const {t, games, query = '', onlyCompatible} = this.props
+    console.log('rendering!', this.props)
+    const {t, games, filterQuery = '', onlyCompatible} = this.props
+    this.fuse.set(games)
 
     const items = []
 
-    let filteredGames = query.length === 0 ? games : this.fuse.search(query)
+    let filteredGames = games
+    if (filterQuery.length > 0) {
+      const results = this.fuse.search(filterQuery)
+      console.log('scores: ', results)
+      filteredGames = results::map(({item, score}) => ({
+        ...item,
+        _searchScore: score
+      }))
+    }
     let hiddenCount = 0
 
     if (onlyCompatible) {
@@ -70,13 +77,21 @@ export class GameGrid extends Component {
 GameGrid.propTypes = {
   // specified
   games: PropTypes.any.isRequired,
-  numLeader: PropTypes.number,
   predicate: PropTypes.func,
+
+  tab: PropTypes.string.isRequired,
 
   t: PropTypes.func.isRequired
 }
 
-const mapStateToProps = (state) => ({})
+const mapStateToProps = (state, props) => {
+  const {tab} = props
+
+  return createStructuredSelector({
+    filterQuery: (state) => state.session.navigation.filters[tab],
+    onlyCompatible: (state) => state.session.navigation.binaryFilters.onlyCompatible
+  })
+}
 const mapDispatchToProps = (dispatch) => ({})
 
 export default connect(

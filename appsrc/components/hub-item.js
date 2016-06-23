@@ -1,5 +1,6 @@
 
 import React, {Component, PropTypes} from 'react'
+import classNames from 'classnames'
 import invariant from 'invariant'
 
 import {connect} from './connect'
@@ -38,8 +39,9 @@ export class HubItem extends Component {
     }
 
     const actionProps = {game, showSecondary: true}
+    const itemClasses = classNames('hub-item', {dull: (game._searchScore && game._searchScore > 0.2)})
 
-    return <div className='hub-item' onMouseEnter={::this.onMouseEnter} onMouseLeave={::this.onMouseLeave}>
+    return <div className={itemClasses} onMouseEnter={::this.onMouseEnter} onMouseLeave={::this.onMouseLeave}>
       {gif
         ? <span className='gif-marker'>gif</span>
         : ''
