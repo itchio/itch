@@ -4,17 +4,20 @@ import classNames from 'classnames'
 
 import {connect} from '../connect'
 import {createSelector, createStructuredSelector} from 'reselect'
-import {camelify} from '../../util/format'
 
 import {findWhere} from 'underline'
 
 import os from '../../util/os'
 import ClassificationActions from '../../constants/classification-actions'
 
+import isPlatformCompatible from '../../util/is-platform-compatible'
+
 import MainAction from './main-action'
 import SecondaryActions from './secondary-actions'
 
 import * as actions from '../../actions'
+
+const platform = os.itchPlatform()
 
 class GameActions extends Component {
   render () {
@@ -37,13 +40,6 @@ class GameActions extends Component {
     </div>
   }
 
-}
-
-const platform = os.itchPlatform()
-const platformProp = camelify('p_' + platform)
-
-const isPlatformCompatible = (game) => {
-  return !!game[platformProp] || game.type === 'html'
 }
 
 MainAction.propTypes = {

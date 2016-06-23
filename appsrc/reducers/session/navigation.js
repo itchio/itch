@@ -19,12 +19,34 @@ const initialState = {
     constant: baseTabs,
     transient: []
   },
+  filters: {},
+  binaryFilters: {
+    onlyCompatible: true
+  },
   tabData: staticTabData::pick(...baseTabs)::indexBy('id'),
   id: 'featured',
   shortcutsShown: false
 }
 
 export default handleActions({
+  BINARY_FILTER_CHANGED: (state, action) => {
+    const {field, value} = action.payload
+    const oldBinaryFilters = state.binaryFilters
+    return {...state, binaryFilters: {
+      ...oldBinaryFilters,
+      [field]: value
+    }}
+  },
+
+  FILTER_CHANGED: (state, action) => {
+    const {tab, query} = action.payload
+    const oldFilters = state.filters
+    return {...state, filters: {
+      ...oldFilters,
+      [tab]: query
+    }}
+  },
+
   SHORTCUTS_VISIBILITY_CHANGED: (state, action) => {
     const {visible} = action.payload
     return {...state, shortcutsShown: visible}

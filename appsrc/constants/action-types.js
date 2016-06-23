@@ -200,6 +200,9 @@ module.exports = keyMirror({
   SEARCH_FINISHED: null,
   CLOSE_SEARCH: null,
 
+  FILTER_CHANGED: null,
+  BINARY_FILTER_CHANGED: null,
+
   /** Data retrieval */
   FETCH_COLLECTION_GAMES: null,
   COLLECTION_GAMES_FETCHED: null,

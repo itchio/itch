@@ -8,7 +8,9 @@ import {
   SEARCH_FETCHED,
   SEARCH_STARTED,
   SEARCH_FINISHED,
-  CLOSE_SEARCH
+  CLOSE_SEARCH,
+  FILTER_CHANGED,
+  BINARY_FILTER_CHANGED
 } from '../constants/action-types'
 
 export const focusSearch = createAction(FOCUS_SEARCH)
@@ -21,3 +23,6 @@ export const searchStarted = createAction(SEARCH_STARTED)
 export const searchFinished = createAction(SEARCH_FINISHED)
 
 export const closeSearch = createAction(CLOSE_SEARCH)
+
+export const filterChanged = createAction(FILTER_CHANGED)
+export const binaryFilterChanged = createAction(BINARY_FILTER_CHANGED)

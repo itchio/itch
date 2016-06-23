@@ -65,7 +65,7 @@
 }
 
 .hub-meat {
-  background: #333131; // FIXME colors
+  background: $meat-background-color; // FIXME colors
   overflow: hidden;
   display: flex;
   flex-direction: column;

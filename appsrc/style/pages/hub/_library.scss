@@ -23,4 +23,68 @@
       cursor: pointer;
     }
   }
+
+  section.filters {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    z-index: 20;
+    background: $bread-background-color;
+    box-shadow: 0 4px 8px -4px $bread-background-color;
+  }
+
+  .hub-grid {
+    margin-top: 55px;
+  }
+
+  section.checkboxes {
+    label {
+      padding: 4px;
+      padding-right: 8px;
+      font-size: 14px;
+      background: $explanation-color;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+
+      input[type=checkbox] {
+        margin-right: 4px;
+      }
+    }
+  }
+
+  section.search {
+    margin: 8px 8px;
+    position: relative;
+    padding: 0;
+
+    .icon-filter {
+      position: absolute;
+      left: 10px;
+      bottom: 50%;
+      transform: translateY(55%);
+      font-size: 14px;
+      color: $input-placeholder-color;
+      pointer-events: none;
+
+      &.active {
+        color: $light-accent-color;
+      }
+    }
+
+    input[type=search] {
+      border: 2px solid #404040;
+      border-radius: 4px 2px 4px 2px;
+      background-color: #2D2B2B;
+      color: #D4CECE;
+      text-shadow: 0 0 2px black;
+      box-shadow: 0 0 2px #1B1919;
+      transition: all 0.2s;
+      width: 200px;
+      text-indent: 12px;
+      padding: 6px 10px 6px 9px;
+      font-size: 14px;
+    }
+  }
 }

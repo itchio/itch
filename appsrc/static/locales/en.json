@@ -21,6 +21,8 @@
     "game.install.try_again": "Try again",
     "game.install.visit_web_page": "Visit web page",
     "grid.criterion.filtered_by": "Filtered by “{{term}}”",
+    "grid.criterion.only_compatible": "Only compatible",
+    "grid.hidden_count": "+ {{count}} items hidden by filters",
     "grid.item.buy_now": "Buy now",
     "grid.item.buy_now_again": "Buy an extra copy",
     "grid.item.cancel_download": "Cancel downloading",

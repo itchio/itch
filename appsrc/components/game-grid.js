@@ -1,11 +1,13 @@
 
 import React, {Component, PropTypes} from 'react'
+import {connect} from './connect'
 import Fuse from 'fuse.js'
 
-import {each} from 'underline'
+import {each, filter} from 'underline'
+
+import isPlatformCompatible from '../util/is-platform-compatible'
 
 import HubItem from './hub-item'
-import LeaderHubItem from './leader-hub-item'
 import HubGhostItem from './hub-ghost-item'
 
 export class GameGrid extends Component {
@@ -33,22 +35,21 @@ export class GameGrid extends Component {
   }
 
   render () {
-    const {games, query = ''} = this.props
-    let {numLeader = 0} = this.props
-    if (query.length > 0) {
-      numLeader = Infinity
-    }
+    const {t, games, query = '', onlyCompatible} = this.props
 
     const items = []
 
-    const filteredGames = query.length === 0 ? games : this.fuse.search(query)
+    let filteredGames = query.length === 0 ? games : this.fuse.search(query)
+    let hiddenCount = 0
+
+    if (onlyCompatible) {
+      const compatibleGames = filteredGames::filter((game) => isPlatformCompatible(game))
+      hiddenCount = filteredGames.length - compatibleGames.length
+      filteredGames = compatibleGames
+    }
 
     filteredGames::each((game, index) => {
-      if (index < numLeader) {
-        items.push(<LeaderHubItem key={`game-${game.id}`} game={game}/>)
-      } else {
-        items.push(<HubItem key={`game-${game.id}`} game={game}/>)
-      }
+      items.push(<HubItem key={`game-${game.id}`} game={game}/>)
     })
 
     for (var i = 0; i < 12; i++) {
@@ -57,6 +58,11 @@ export class GameGrid extends Component {
 
     return <div className='hub-grid'>
     {items}
+    {hiddenCount > 0
+    ? <div className='hiddenCount'>
+      {t('grid.hidden_count', {count: hiddenCount})}
+    </div>
+    : ''}
     </div>
   }
 }
@@ -65,7 +71,15 @@ GameGrid.propTypes = {
   // specified
   games: PropTypes.any.isRequired,
   numLeader: PropTypes.number,
-  predicate: PropTypes.func
+  predicate: PropTypes.func,
+
+  t: PropTypes.func.isRequired
 }
 
-export default GameGrid
+const mapStateToProps = (state) => ({})
+const mapDispatchToProps = (dispatch) => ({})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GameGrid)
