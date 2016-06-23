@@ -43,10 +43,10 @@ export class GameGrid extends Component {
     let hiddenCount = 0
 
     if (onlyCompatible) {
-      const compatibleGames = filteredGames::filter((game) => isPlatformCompatible(game))
-      hiddenCount = filteredGames.length - compatibleGames.length
-      filteredGames = compatibleGames
+      filteredGames = filteredGames::filter((game) => isPlatformCompatible(game))
     }
+
+    hiddenCount = games.length - filteredGames.length
 
     filteredGames::each((game, index) => {
       items.push(<HubItem key={`game-${game.id}`} game={game}/>)
@@ -59,7 +59,7 @@ export class GameGrid extends Component {
     return <div className='hub-grid'>
     {items}
     {hiddenCount > 0
-    ? <div className='hiddenCount'>
+    ? <div className='hidden-count'>
       {t('grid.hidden_count', {count: hiddenCount})}
     </div>
     : ''}
