@@ -118,7 +118,7 @@
     "prompt.last_remaining_install_location.content": "これは最後のインストール先です、新しいインストール先を追加するまで削除することは出来ません。",
     "prompt.last_remaining_install_location.title": "このインストール先は削除出来ません",
     "prompt.logout_confirm": "本当にログアウトしてもよろしいですか?",
-    "prompt.no_compatible_version.detail": "この{{classification}}はまだこのゲームに対応していないと思われます",
+    "prompt.no_compatible_version.detail": "この{{classification}}はこのゲームに対応していないようです。",
     "prompt.no_compatible_version.message": "{{platform}}版の{{title}}は見つかりませんでした。",
     "prompt.no_compatible_version.title": "{{platform}}版{{title}}",
     "prompt.packaging_policy.learn_more": "もっと詳しく",
