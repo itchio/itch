@@ -149,5 +149,8 @@
     "new_tab.community": "Forum",
     "new_tab.on_sale": "Reduceri",
     "new_tab.random": "Mergi la noroc",
-    "new_tab.titles.browser_placeholder": "Introdu orice adresă web"
+    "new_tab.titles.browser_placeholder": "Introdu orice adresă web",
+    "action.name.play": "Joacă acum",
+    "action.name.manual": "Manual de utilizare",
+    "action.name.editor": "Editor"
 }
