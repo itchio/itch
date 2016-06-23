@@ -31,7 +31,7 @@ export async function check () {
 
 export async function install (opts, needs) {
   return await common.tendToNeeds(opts, needs, {
-    user: async () => {
+    user: async function () {
       const lines = []
       // in case the user was incorrectly setup
       lines.push(`net user ${USER} ${PASSWORD} /add`)
