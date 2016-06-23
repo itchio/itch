@@ -4,6 +4,7 @@ import {connect} from './connect'
 import {createSelector, createStructuredSelector} from 'reselect'
 
 import GameGrid from './game-grid'
+import GameGridFilters from './game-grid-filters'
 import {map, filter} from 'underline'
 import {pathToId} from '../util/navigation'
 
@@ -22,8 +23,11 @@ export class Collection extends Component {
     const {gameIds} = collection
     const games = gameIds::map((gameId) => tabGames[gameId] || allGames[gameId])::filter((x) => !!x)
 
+    const tab = `collections/${collection.id}`
+
     return <div className='collection-meat'>
-      <GameGrid games={games} query={query} numLeader={0}/>
+      <GameGridFilters tab={tab}/>
+      <GameGrid games={games} query={query} tab={tab}/>
     </div>
   }
 }

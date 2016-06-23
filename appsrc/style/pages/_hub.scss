@@ -48,7 +48,7 @@
   align-content: flex-start;
   overflow-x: hidden;
   overflow-y: auto;
-  height: 100%;
+  flex: 1;
 
   .criterion-bar {
     flex-basis: 100%;

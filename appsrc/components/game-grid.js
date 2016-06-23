@@ -14,17 +14,10 @@ import HubGhostItem from './hub-ghost-item'
 export class GameGrid extends Component {
   constructor () {
     super()
-    console.log('building fuse!')
     this.fuse = new Fuse([], {
       keys: [
-        {
-          name: 'title',
-          weight: 0.8
-        },
-        {
-          name: 'shortText',
-          weight: 0.4
-        }
+        { name: 'title', weight: 0.8 },
+        { name: 'shortText', weight: 0.4 }
       ],
       threshold: 0.5,
       include: ['score']
@@ -32,7 +25,6 @@ export class GameGrid extends Component {
   }
 
   render () {
-    console.log('rendering!', this.props)
     const {t, games, filterQuery = '', onlyCompatible} = this.props
     this.fuse.set(games)
 
@@ -41,7 +33,6 @@ export class GameGrid extends Component {
     let filteredGames = games
     if (filterQuery.length > 0) {
       const results = this.fuse.search(filterQuery)
-      console.log('scores: ', results)
       filteredGames = results::map(({item, score}) => ({
         ...item,
         _searchScore: score

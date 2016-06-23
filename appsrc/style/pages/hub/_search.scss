@@ -6,6 +6,7 @@ $search-thumbnail-scale: 0.8;
   border-right: 1px solid $sidebar-border-color;
   border-bottom: 1px solid $sidebar-border-color;
   opacity: 0.0;
+  z-index: 40;
 
   width: $search-sidebar-width;
 
