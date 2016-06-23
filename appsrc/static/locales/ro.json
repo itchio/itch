@@ -152,5 +152,15 @@
     "new_tab.titles.browser_placeholder": "Introdu orice adresă web",
     "action.name.play": "Joacă acum",
     "action.name.manual": "Manual de utilizare",
-    "action.name.editor": "Editor"
+    "action.name.editor": "Editor",
+    "new_tab.titles.input": "...sau",
+    "new_tab.top_sellers": "Cele mai bine vândute",
+    "new_tab.twitter": "Tendinţe pe Twitter",
+    "notification.see_you_soon.message": "itch rulează în fundal acum. Foloseşte meniul ca să-l închizi complet.",
+    "notification.see_you_soon.title": "Pe curând!",
+    "notification.purchase_complete.just_bought": "Tocmai ai cumpărat {{title}}!",
+    "notification.purchase_complete.just_donated": "Tocmai ai făcut o donaţie pentru {{title}}!",
+    "notification.purchase_complete.may_install_now": "Poţi să-l instalezi oricând de acum!",
+    "notification.purchase_complete.thanks_for_support": "Mulţumim pentru sprijin!",
+    "onboarding.caved.prealpha_reminder": "Ţine cont că aceasta este o versiune pre-alpha"
 }
