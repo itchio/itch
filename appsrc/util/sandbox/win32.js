@@ -32,11 +32,17 @@ export async function check () {
 export async function install (opts, needs) {
   return await common.tendToNeeds(opts, needs, {
     user: async function () {
+      const res = await spawn.exec({command: 'elevate.exe', args: ['--print-users-sid']})
+      if (res.code !== 0) {
+        throw new Error(`print-users-sid failed with code ${res.code}. out = ${res.out}, err = ${res.err}`)
+      }
+      const group = res.out.trim()
+
       const lines = []
       // in case the user was incorrectly setup
       lines.push(`net user ${USER} ${PASSWORD} /add`)
       // if we don't do this, it shows as a login user
-      lines.push(`net localgroup Users ${USER} /delete`)
+      lines.push(`net localgroup ${group} ${USER} /delete`)
       await adminRunScript(lines)
     }
   })
