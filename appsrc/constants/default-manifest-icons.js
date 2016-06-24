@@ -2,5 +2,6 @@
 module.exports = {
   play: 'play',
   editor: 'pencil',
-  manual: 'lifebuoy'
+  manual: 'lifebuoy',
+  forums: 'users'
 }

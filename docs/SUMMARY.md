@@ -26,6 +26,7 @@
 * [Integrating games with the app](integrating/README.md)
   * [Quickstart guide](integrating/quickstart.md)
   * [How updates work](integrating/updates.md)
+  * [App manifests](integrating/manifest.md)
   * [API integration](integrating/api/README.md)
   * [Platform-specific advice](integrating/platforms/README.md)
     * [Windows](integrating/platforms/windows.md)
