@@ -5,7 +5,10 @@ import {app, shell, dialog} from '../electron'
 import path from 'path'
 import querystring from 'querystring'
 
+import platformData from '../constants/platform-data'
 import urls from '../constants/urls'
+
+import {findWhere} from 'underline'
 
 import os from './os'
 import sf from './sf'
@@ -35,6 +38,7 @@ let self = {
     const log = opts.log
     let body = opts.body || ''
     let type = opts.type || 'Issue'
+    const repo = opts.repo || urls.itchRepo
     const before = opts.before || ''
 
     if (typeof log !== 'undefined') {
@@ -48,11 +52,12 @@ ${log}
 `
     }
 
+    const platformEmoji = platformData::findWhere({platform: os.itchPlatform()}).emoji
     const query = querystring.stringify({
-      title: `[${os.platform()}] ${type} for v${app.getVersion()}`,
+      title: `${platformEmoji} ${type} v${app.getVersion()}`,
       body: (before + body)
     })
-    shell.openExternal(`${urls.itchRepo}/issues/new?${query}`)
+    shell.openExternal(`${repo}/issues/new?${query}`)
   },
 
   handle: async function (type, e) {

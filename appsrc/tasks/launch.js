@@ -12,6 +12,7 @@ import {startTask} from '../reactors/tasks/start-task'
 import mklog from '../util/log'
 const log = mklog('tasks/launch')
 
+import sf from '../util/sf'
 import fetch from '../util/fetch'
 import pathmaker from '../util/pathmaker'
 import explorer from '../util/explorer'
@@ -82,6 +83,18 @@ export default async function start (out, opts) {
   const startedAt = Date.now()
   globalMarket.saveEntity('caves', cave.id, {lastTouched: startedAt})
 
+  const caveLogPath = pathmaker.caveLogPath(cave.id)
+  await sf.wipe(caveLogPath)
+  const gameLogger = new mklog.Logger({
+    sinks: {
+      file: caveLogPath
+    }
+  })
+  const gameOpts = {
+    ...opts,
+    logger: gameLogger
+  }
+
   let interval
   const UPDATE_PLAYTIME_INTERVAL = 10
   try {
@@ -91,7 +104,7 @@ export default async function start (out, opts) {
       const newSecondsRun = UPDATE_PLAYTIME_INTERVAL + previousSecondsRun
       globalMarket.saveEntity('caves', cave.id, {secondsRun: newSecondsRun, lastTouched: now})
     }, UPDATE_PLAYTIME_INTERVAL * 1000)
-    await launcher(out, opts)
+    await launcher(out, gameOpts)
   } catch (e) {
     log(opts, `error while launching ${cave.id}: ${e.stack || e}`)
     store.dispatch(actions.openModal({

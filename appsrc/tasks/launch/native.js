@@ -108,7 +108,7 @@ export default async function launch (out, opts) {
         log(opts, `Requesting subkey with scope: ${action.scope}`)
         const client = api.withKey(credentials.key)
         const subkey = await client.subkey(game.id, action.scope)
-        log(opts, `Got subkey: ${JSON.stringify(subkey, 0, 2)}`)
+        log(opts, `Got subkey (${subkey.key.length} chars, expires ${subkey.expires_at})`)
         env.ITCHIO_API_KEY = subkey.key
         env.ITCHIO_API_KEY_EXPIRES_AT = subkey.expiresAt
       }

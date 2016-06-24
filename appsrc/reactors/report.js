@@ -5,6 +5,8 @@ import {opts} from '../logger'
 
 import {getUserMarket} from './market'
 
+import urls from '../constants/urls'
+
 import crashReporter from '../util/crash-reporter'
 import github from '../util/github'
 import sf from '../util/sf'
@@ -41,7 +43,8 @@ async function reportCave (store, action) {
 :running: Any additional details can go here!`
 
     crashReporter.reportIssue({
-      type: `${game.classification} ${game.title} broken`,
+      type: `${game.title} ↔`,
+      repo: urls.watchlistRepo,
       body
     })
   } catch (e) {
