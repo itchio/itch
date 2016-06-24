@@ -2,14 +2,12 @@
 import ospath from 'path'
 import invariant from 'invariant'
 
-import {findWhere, map, each} from 'underline'
+import {map} from 'underline'
 import shellQuote from 'shell-quote'
-import toml from 'toml'
 
 import poker from './poker'
 
 import urls from '../../constants/urls'
-import defaultManifestIcons from '../../constants/default-manifest-icons'
 
 import * as actions from '../../actions'
 
@@ -21,16 +19,15 @@ import spawn from '../../util/spawn'
 import fetch from '../../util/fetch'
 import pathmaker from '../../util/pathmaker'
 
-import api from '../../util/api'
-
 import mklog from '../../util/log'
 const log = mklog('tasks/launch/native')
 
 import {Crash} from '../errors'
 
 export default async function launch (out, opts) {
-  const {cave, market, credentials} = opts
+  const {cave, market, credentials, env} = opts
   invariant(cave, 'launch-native has cave')
+  invariant(cave, 'launch-native has env')
   log(opts, `launching cave in '${cave.installLocation}' / '${cave.installFolder}'`)
 
   invariant(credentials, 'launch-native has credentials')
@@ -40,81 +37,18 @@ export default async function launch (out, opts) {
 
   const appPath = pathmaker.appPath(cave)
   let exePath
-  const env = {}
   let args = []
 
   const manifestPath = ospath.join(appPath, '.itch.toml')
   const hasManifest = await sf.exists(manifestPath)
-  if (hasManifest) {
-    log(opts, `has manifest @ "${manifestPath}"`)
+  if (opts.manifestAction) {
+    const action = opts.manifestAction
 
-    let manifest
-    try {
-      const contents = await sf.readFile(manifestPath)
-      manifest = toml.parse(contents)
-    } catch (e) {
-      log(opts, `error reading manifest: ${e}`)
-      throw e
-    }
-
-    log(opts, `manifest:\n ${JSON.stringify(manifest, 0, 2)}`)
-
-    let action
-
-    if (manifest.actions.length > 1) {
-      if (opts.manifestAction) {
-        action = manifest.actions::findWhere({name: opts.manifestAction})
-        if (!action) {
-          log(opts, `Picked invalid manifest action: ${opts.manifestAction}, had: ${JSON.stringify(manifest.actions, 0, 2)}`)
-          return
-        }
-      } else {
-        const buttons = []
-        const bigButtons = []
-        manifest.actions::each((action, i) => {
-          if (!action.name) {
-            throw new Error(`in manifest, action ${i} is missing a name`)
-          }
-          bigButtons.push({
-            label: [`action.name.${action.name}`, {defaultValue: action.name}],
-            action: actions.queueGame({game, extraOpts: {manifestAction: action.name}}),
-            icon: action.icon || defaultManifestIcons[action.name] || 'star',
-            className: `action-${action.name}`
-          })
-        })
-
-        buttons.push('cancel')
-
-        store.dispatch(actions.openModal({
-          title: game.title,
-          cover: game.stillCoverUrl || game.coverUrl,
-          message: '',
-          bigButtons,
-          buttons
-        }))
-
-        return
-      }
-    } else {
-      action = manifest.actions[0]
-    }
-
-    if (action) {
-      log(opts, `Should launch ${JSON.stringify(action, 0, 2)}`)
-      const actionPath = action.path.replace(/{{EXT}}/, appExt())
-
-      exePath = ospath.isAbsolute(actionPath) ? actionPath : ospath.join(appPath, actionPath)
-      if (action.scope) {
-        log(opts, `Requesting subkey with scope: ${action.scope}`)
-        const client = api.withKey(credentials.key)
-        const subkey = await client.subkey(game.id, action.scope)
-        log(opts, `Got subkey (${subkey.key.length} chars, expires ${subkey.expires_at})`)
-        env.ITCHIO_API_KEY = subkey.key
-        env.ITCHIO_API_KEY_EXPIRES_AT = subkey.expiresAt
-      }
-    } else {
-      log(opts, 'No action picked')
-    }
+    log(opts, `Should launch ${JSON.stringify(action, 0, 2)}`)
+    const actionPath = action.path
+    exePath = ospath.join(appPath, actionPath)
+  } else {
+    log(opts, 'No action picked')
   }
 
   if (!exePath) {
@@ -297,12 +231,4 @@ async function doSpawn (exePath, fullCommand, env, opts) {
 
 function isAppBundle (exePath) {
   return /\.app\/?$/.test(exePath.toLowerCase())
-}
-
-function appExt () {
-  switch (os.itchPlatform()) {
-    case 'osx': return '.app'
-    case 'windows': return '.exe'
-    default: return ''
-  }
 }

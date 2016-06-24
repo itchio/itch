@@ -1,4 +1,5 @@
 
+import btoa from 'btoa'
 import path from 'path'
 import invariant from 'invariant'
 import Promise from 'bluebird'
@@ -16,10 +17,11 @@ import mklog from '../../util/log'
 const log = mklog('tasks/launch')
 
 export default async function launch (out, opts) {
-  const {cave, market, credentials} = opts
+  const {cave, market, credentials, env} = opts
   invariant(cave, 'launch-html has cave')
   invariant(market, 'launch-html has market')
   invariant(credentials, 'launch-html has credentials')
+  invariant(env, 'launch-html has env')
 
   const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game})
   const injectPath = path.resolve(__dirname, '..', '..', 'inject', 'game.js')
@@ -50,6 +52,10 @@ export default async function launch (out, opts) {
       partition: `persist:gamesession_${cave.game_id}`
     }
   })
+
+  const itchObject = {
+    env
+  }
 
   // open dev tools immediately if requested
   if (process.env.IMMEDIATE_NOSE_DIVE === '1') {
@@ -104,7 +110,8 @@ export default async function launch (out, opts) {
 
     // don't use the HTTP cache, we already have everything on disk!
     const options = {extraHeaders: 'pragma: no-cache\n'}
-    win.loadURL(`http://localhost:${port}`, options)
+
+    win.loadURL(`http://localhost:${port}#${btoa(JSON.stringify(itchObject))}`, options)
   })
 
   const blockerId = powerSaveBlocker.start('prevent-display-sleep')

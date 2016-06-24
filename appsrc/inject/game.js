@@ -26,6 +26,18 @@ window.addEventListener('keydown', (e) => {
   }
 })
 
+;(function () {
+  const {hash} = window.location
+  if (hash.length > 1) {
+    try {
+      global.Itch = JSON.parse(global.atob(window.location.hash.slice(1)))
+      console.log('Loaded itch environment')
+    } catch (e) {
+      console.log('While loading itch environment: ', e)
+    }
+  }
+})()
+
 window.addEventListener('DOMContentLoaded', (e) => {
   const gm4 = document.querySelectorAll('div.gm4html5_div_class')
   const emscripten = document.querySelectorAll('canvas.emscripten')
@@ -40,7 +52,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
   }
   const canvas = canvases[0]
 
-  const refit_canvas = function () {
+  const refitCanvas = function () {
     if (window.innerHeight > 0) {
       document.body.style.overflow = 'hidden'
       canvas.style.zIndex = '1000'
@@ -64,6 +76,6 @@ window.addEventListener('DOMContentLoaded', (e) => {
       }
     }
   }
-  window.onresize = refit_canvas
-  refit_canvas()
+  window.onresize = refitCanvas
+  refitCanvas()
 })

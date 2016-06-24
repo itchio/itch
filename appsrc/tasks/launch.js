@@ -1,9 +1,14 @@
 
-// import configure from './configure'
+import fnout from 'fnout'
+import ospath from 'path'
+import toml from 'toml'
+
 import invariant from 'invariant'
 
 import native from './launch/native'
 import html from './launch/html'
+import shell from './launch/shell'
+import external from './launch/external'
 
 import store from '../store'
 import * as actions from '../actions'
@@ -12,11 +17,16 @@ import {startTask} from '../reactors/tasks/start-task'
 import mklog from '../util/log'
 const log = mklog('tasks/launch')
 
+import api from '../util/api'
+import os from '../util/os'
 import sf from '../util/sf'
 import fetch from '../util/fetch'
 import pathmaker from '../util/pathmaker'
 import explorer from '../util/explorer'
 import classificationActions from '../constants/classification-actions'
+import defaultManifestIcons from '../constants/default-manifest-icons'
+
+import {findWhere, each} from 'underline'
 
 function caveProblem (cave) {
   switch (cave.launchType) {
@@ -52,7 +62,7 @@ export default async function start (out, opts) {
     return
   }
 
-  const {launchType = 'native'} = cave
+  let {launchType = 'native'} = cave
 
   let problem = caveProblem(cave)
   if (problem) {
@@ -67,11 +77,6 @@ export default async function start (out, opts) {
     cave = globalMarket.getEntities('caves')[cave.id]
   }
 
-  const launcher = {native, html}[launchType]
-  if (!launcher) {
-    throw new Error(`Unsupported launch type '${cave.launchType}'`)
-  }
-
   problem = caveProblem(cave)
   if (problem) {
     // FIXME: this swallows the problem.
@@ -80,13 +85,11 @@ export default async function start (out, opts) {
     throw err
   }
 
-  const startedAt = Date.now()
-  globalMarket.saveEntity('caves', cave.id, {lastTouched: startedAt})
-
   const caveLogPath = pathmaker.caveLogPath(cave.id)
   await sf.wipe(caveLogPath)
   const gameLogger = new mklog.Logger({
     sinks: {
+      console: true,
       file: caveLogPath
     }
   })
@@ -94,6 +97,91 @@ export default async function start (out, opts) {
     ...opts,
     logger: gameLogger
   }
+
+  const env = {}
+  const appPath = pathmaker.appPath(cave)
+  const manifestPath = ospath.join(appPath, '.itch.toml')
+  log(gameOpts, `looking for manifest @ "${manifestPath}"`)
+  const hasManifest = await sf.exists(manifestPath)
+  let manifestAction
+
+  if (hasManifest) {
+    log(gameOpts, 'found manifest, parsing')
+
+    let manifest
+    try {
+      const contents = await sf.readFile(manifestPath)
+      manifest = toml.parse(contents)
+    } catch (e) {
+      log(gameOpts, `error reading manifest: ${e}`)
+      throw e
+    }
+
+    log(gameOpts, `manifest:\n ${JSON.stringify(manifest, 0, 2)}`)
+
+    if (manifest.actions.length > 1) {
+      if (opts.manifestActionName) {
+        manifestAction = manifest.actions::findWhere({name: opts.manifestActionName})
+        if (!action) {
+          log(gameOpts, `Picked invalid manifest action: ${opts.manifestActionName}, had: ${JSON.stringify(manifest.actions, 0, 2)}`)
+          return
+        }
+      } else {
+        const buttons = []
+        const bigButtons = []
+        manifest.actions::each((action, i) => {
+          if (!action.name) {
+            throw new Error(`in manifest, action ${i} is missing a name`)
+          }
+          bigButtons.push({
+            label: [`action.name.${action.name}`, {defaultValue: action.name}],
+            action: actions.queueGame({game, extraOpts: {manifestActionName: action.name}}),
+            icon: action.icon || defaultManifestIcons[action.name] || 'star',
+            className: `action-${action.name}`
+          })
+        })
+
+        buttons.push('cancel')
+
+        store.dispatch(actions.openModal({
+          title: game.title,
+          cover: game.stillCoverUrl || game.coverUrl,
+          message: '',
+          bigButtons,
+          buttons
+        }))
+
+        return
+      }
+    } else {
+      manifestAction = manifest.actions[0]
+    }
+  }
+
+  if (manifestAction) {
+    manifestAction.path = manifestAction.path.replace(/{{EXT}}/, appExt())
+    launchType = await launchTypeForAction(appPath, manifestAction.path)
+
+    if (manifestAction.scope) {
+      log(opts, `Requesting subkey with scope: ${manifestAction.scope}`)
+      const client = api.withKey(credentials.key)
+      const subkey = await client.subkey(game.id, manifestAction.scope)
+      log(opts, `Got subkey (${subkey.key.length} chars, expires ${subkey.expires_at})`)
+      env.ITCHIO_API_KEY = subkey.key
+      env.ITCHIO_API_KEY_EXPIRES_AT = subkey.expiresAt
+    }
+  }
+
+  gameOpts.manifestAction = manifestAction
+  gameOpts.env = env
+
+  const launcher = {native, html, shell, external}[launchType]
+  if (!launcher) {
+    throw new Error(`Unsupported launch type '${cave.launchType}'`)
+  }
+
+  const startedAt = Date.now()
+  globalMarket.saveEntity('caves', cave.id, {lastTouched: startedAt})
 
   let interval
   const UPDATE_PLAYTIME_INTERVAL = 10
@@ -123,5 +211,38 @@ export default async function start (out, opts) {
     clearInterval(interval)
     const now = Date.now()
     globalMarket.saveEntity('caves', cave.id, {lastTouched: now})
+  }
+}
+
+async function launchTypeForAction (appPath, actionPath) {
+  if (/.(app|exe|bat|sh)$/i.test(actionPath)) {
+    return 'native'
+  }
+
+  if (/.html?$/i.test(actionPath)) {
+    return 'html'
+  }
+
+  if (/^https?:/i.test(actionPath)) {
+    return 'external'
+  }
+
+  const platform = os.itchPlatform()
+
+  const fullPath = ospath.join(appPath, actionPath)
+  const sniffRes = await fnout.path(fullPath)
+  if ((sniffRes.linuxExecutable && platform === 'linux') ||
+      (sniffRes.macExecutable && platform === 'osx')) {
+    return 'native'
+  }
+
+  return 'shell'
+}
+
+function appExt () {
+  switch (os.itchPlatform()) {
+    case 'osx': return '.app'
+    case 'windows': return '.exe'
+    default: return ''
   }
 }

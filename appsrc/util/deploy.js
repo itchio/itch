@@ -30,7 +30,11 @@ let self = {
     }
 
     const {stagePath, destPath, onProgress = noop, onSingle = pnoop} = opts
-    const stageFiles = await sf.glob('**', {cwd: stagePath})
+    const stageFiles = await sf.glob('**', {cwd: stagePath, dot: true})
+
+    for (const stageFile of stageFiles) {
+      log(opts, `stage file: ${stageFile}`)
+    }
 
     if (stageFiles.length === 1) {
       let onlyFile = path.join(stagePath, stageFiles[0])
@@ -58,7 +62,7 @@ let self = {
     }
     if (!destFiles.length) {
       log(opts, 'Globbing for destfiles')
-      destFiles = await sf.glob('**', {cwd: destPath})
+      destFiles = await sf.glob('**', {cwd: destPath, dot: true})
     }
 
     log(opts, `dest has ${destFiles.length} potential dinosaurs`)

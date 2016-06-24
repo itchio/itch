@@ -25,6 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.3.5",
+    "btoa": "^1.1.2",
     "classnames": "^2.2.4",
     "clone": "^1.0.2",
     "colorgram": "^0.1.5",
