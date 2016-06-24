@@ -116,6 +116,10 @@ export default class Market extends EventEmitter {
   }
 
   async saveAllEntities (response, opts) {
+    if (!this.dbPath) {
+      return
+    }
+
     opts = opts || {}
     const {wait = false, persist = true, initial = false} = opts
 

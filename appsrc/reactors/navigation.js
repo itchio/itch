@@ -179,9 +179,11 @@ async function windowFocusChanged (store, action) {
   await doFetchTabData(store, id, {fresh: true})
 }
 
+let saveTabs = false
+
 async function tabsChanged (store, action) {
   const key = store.getState().session.credentials.key
-  if (!key) {
+  if (!key || !saveTabs) {
     log(opts, 'Not logged in, not saving tabs yet...')
     return
   }
@@ -223,6 +225,12 @@ async function sessionReady (store, action) {
   } else {
     log(opts, 'No tabs to restore')
   }
+
+  saveTabs = true
+}
+
+async function logout (store, action) {
+  saveTabs = false
 }
 
 async function evolveTab (store, action) {
@@ -278,5 +286,5 @@ async function catchAll (store, action) {
 
 export default {
   boot, catchAll, sessionReady, tabReloaded, windowFocusChanged,
-  evolveTab, probeCave, tabsChanged, tabChanged
+  evolveTab, probeCave, tabsChanged, tabChanged, logout
 }

@@ -44,7 +44,7 @@ export default validateReactors({
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),
   LOGIN_WITH_PASSWORD: combine(login.loginWithPassword),
   LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded),
-  LOGOUT: combine(market.logout, session.logout),
+  LOGOUT: combine(market.logout, session.logout, navigation.logout),
   CHANGE_USER: combine(dialogs.changeUser),
 
   SESSION_READY: combine(session.sessionReady, url.sessionReady,
