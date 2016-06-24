@@ -41,7 +41,7 @@ async function triggerOk (store, action) {
     return
   }
 
-  const [button] = modal.buttons
+  const [button] = (modal.bigButtons || modal.buttons || [])
   if (!button) {
     return
   }
