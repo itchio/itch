@@ -272,7 +272,7 @@ async function doSpawn (exePath, fullCommand, env, opts) {
   const command = args.shift()
   log(opts, `Command: ${command}`)
   log(opts, `Args: ${JSON.stringify(args, 0, 2)}`)
-  log(opts, `Env: ${JSON.stringify(env, 0, 2)}`)
+  log(opts, `Env keys: ${JSON.stringify(Object.keys(env), 0, 2)}`)
 
   const code = await spawn({
     command,
