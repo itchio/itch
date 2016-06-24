@@ -21,6 +21,7 @@
     "game.install.no_uploads_available.message": "No compatible downloads were found for '{{title}}', so it wasn't installed.",
     "game.install.try_again": "Try again",
     "game.install.visit_web_page": "Visit web page",
+    "grid.criterion.filter": "Filter...",
     "grid.criterion.filtered_by": "Filtered by “{{term}}”",
     "grid.criterion.only_compatible": "Only compatible",
     "grid.hidden_count": "+ {{count}} items hidden by filters",
