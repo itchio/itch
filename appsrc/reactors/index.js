@@ -29,6 +29,7 @@ import navigation from './navigation'
 import clipboard from './clipboard'
 import tasks from './tasks'
 import dialogs from './dialogs'
+import report from './report'
 
 export default validateReactors({
   _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll,
@@ -83,6 +84,7 @@ export default validateReactors({
   EXPLORE_CAVE: combine(tasks.exploreCave),
   IMPLODE_CAVE: combine(tasks.implodeCave),
   PROBE_CAVE: combine(navigation.probeCave),
+  REPORT_CAVE: combine(report.reportCave),
 
   TRIGGER_MAIN_ACTION: combine(triggers.triggerMainAction),
   TRIGGER_OK: combine(triggers.triggerOk),

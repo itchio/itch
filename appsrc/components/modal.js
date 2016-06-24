@@ -49,7 +49,7 @@ export class Modal extends Component {
     const modal = modals[0]
 
     if (modal) {
-      const {bigButtons = [], buttons = [], cover, title, message, detail} = modal
+      const {bigButtons = [], buttons = [], cover, title = '', message = '', detail} = modal
 
       return <ReactModal isOpen style={customStyles}>
         <div className='modal'>

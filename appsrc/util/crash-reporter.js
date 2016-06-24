@@ -27,15 +27,15 @@ let self = {
     return {log, crashFile}
   },
 
-  report_issue: (opts) => {
+  reportIssue: (opts) => {
     if (typeof opts === 'undefined') {
       opts = {}
     }
 
-    let log = opts.log
+    const log = opts.log
     let body = opts.body || ''
     let type = opts.type || 'Issue'
-    let before = opts.before || ''
+    const before = opts.before || ''
 
     if (typeof log !== 'undefined') {
       type = 'Crash report'
@@ -48,7 +48,7 @@ ${log}
 `
     }
 
-    let query = querystring.stringify({
+    const query = querystring.stringify({
       title: `[${os.platform()}] ${type} for v${app.getVersion()}`,
       body: (before + body)
     })

@@ -1,6 +1,7 @@
 
 const self = {
   itchRepo: 'https://github.com/itchio/itch',
+  watchlistRepo: 'https://github.com/itchio/itch-compatibility-watchlist',
   originalItchio: 'https://itch.io',
   appHomepage: 'https://itch.io/app',
   itchTranslationPlatform: 'https://weblate.itch.ovh/',

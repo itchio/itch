@@ -14,6 +14,7 @@
     "errors.api.login.password_must_be_provided": "Password must be provided",
     "errors.api.login.username_must_be_provided": "Username must be provided",
     "game.install.could_not_launch": "An error occured while launching {{title}}",
+    "game.install.could_not_launch.detail": "Its last words were: {{error}}",
     "game.install.no_executables_found": "No executables were found",
     "game.install.no_html_index_found": "No HTML index file found",
     "game.install.no_uploads_available.detail": "Maybe it's not compatible with your platform or with the itch app yet!",

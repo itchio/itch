@@ -6,6 +6,7 @@ import native from './launch/native'
 import html from './launch/html'
 
 import store from '../store'
+import * as actions from '../actions'
 import {startTask} from '../reactors/tasks/start-task'
 
 import mklog from '../util/log'
@@ -91,6 +92,20 @@ export default async function start (out, opts) {
       globalMarket.saveEntity('caves', cave.id, {secondsRun: newSecondsRun, lastTouched: now})
     }, UPDATE_PLAYTIME_INTERVAL * 1000)
     await launcher(out, opts)
+  } catch (e) {
+    log(opts, `error while launching ${cave.id}: ${e.stack || e}`)
+    store.dispatch(actions.openModal({
+      title: ['game.install.could_not_launch', {title: game.title}],
+      message: ['game.install.could_not_launch', {title: game.title}],
+      detail: ['game.install.could_not_launch.detail', {error: e.message}],
+      buttons: [
+        {
+          label: ['grid.item.report_problem'],
+          action: actions.reportCave({caveId: cave.id})
+        },
+        'cancel'
+      ]
+    }))
   } finally {
     clearInterval(interval)
     const now = Date.now()

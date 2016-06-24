@@ -54,6 +54,10 @@ export function logPath () {
   return path.join(app.getPath('userData'), 'logs', 'itch-' + format.date(new Date(), FS_DATE_FORMAT) + '.txt')
 }
 
+export function caveLogPath (caveId) {
+  return path.join(app.getPath('userData'), 'cave-logs', 'cave-' + caveId + '.txt')
+}
+
 export function userDbPath (userId) {
   invariant(userId, 'valid user id')
   return path.join(app.getPath('userData'), 'users', '' + userId, 'marketdb')
@@ -69,4 +73,4 @@ export function sanitize (file) {
 }
 
 export default {appPath, downloadPath, globalDbPath, userDbPath, sanitize,
-  preferencesPath, logPath}
+  preferencesPath, logPath, caveLogPath}
