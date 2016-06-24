@@ -46,6 +46,8 @@ export default async function launch (out, opts) {
     webPreferences: {
       /* don't let web code control the OS */
       nodeIntegration: false,
+      /* don't enforce same-origin policy (to allow API requests) */
+      webSecurity: false,
       /* hook up a few keyboard shortcuts of our own */
       preload: injectPath,
       /* stores cookies etc. in persistent session to save progress */
