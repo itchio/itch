@@ -90,7 +90,7 @@
     "preferences.install_location.path": "Ort",
     "preferences.install_location.size": "Größe auf Festplatte",
     "preferences.install_location.stop_size_computation": "Stoppe Berechnung der Ordnergöße",
-    "preferences.install_location.used_space": "Größe auf Datenträger",
+    "preferences.install_location.used_space": "Belegter Speicherplatz",
     "preferences.install_locations": "Installationsorte",
     "preferences.language": "Sprache",
     "preferences.language.auto": "Systemsprache ({{language}})",
