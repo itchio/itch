@@ -260,5 +260,6 @@
     "usage_stats.description.assets": "Eine Asset-Sammlung",
     "usage_stats.never_opened": "Nie geöffnet",
     "sidebar.featured": "Sehenswert",
-    "new_tab.top_sellers": "Top-Seller"
+    "new_tab.top_sellers": "Top-Seller",
+    "prompt.packaging_policy.open_web_page": "Die Webseite von {{title}} öffnen"
 }
