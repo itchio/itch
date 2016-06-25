@@ -127,7 +127,7 @@
     "sidebar.owned": "Bibliotheek",
     "status.checking": "Zoeken naar updates...",
     "status.downloaded": "Klik om opnieuw te starten en de update te installeren!",
-    "status.downloading": "Update downloaden...",
+    "status.downloading": "Update downloaden.",
     "status.uptodate": "Je itch is de nieuwste versie!",
     "usage_stats.never_played": "Nooit gespeeld",
     "usage_stats.last_used_time_ago": "Laatst gebruikt {{time_ago}}",
