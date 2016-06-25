@@ -143,5 +143,6 @@
     "game.install.visit_web_page": "Bezoek web pagina",
     "grid.criterion.filtered_by": "Gefilterd door \"{{term}}\"",
     "grid.item.buy_now_again": "Koop een extra kopie",
-    "grid.item.check_for_update": "Controleer voor updates"
+    "grid.item.check_for_update": "Controleer voor updates",
+    "grid.item.open": "Open"
 }
