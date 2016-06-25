@@ -137,5 +137,11 @@
     "status.downloads.download_error": "Downloadfout",
     "sidebar.history": "Geschiedenis",
     "grid.item.uninstalling": "Deinstalleren...",
-    "duration.hour": "een uur"
+    "duration.hour": "een uur",
+    "game.install.no_html_index_found": "Geen HTML index bestand gevonden",
+    "game.install.try_again": "Probeer opnieuw",
+    "game.install.visit_web_page": "Bezoek web pagina",
+    "grid.criterion.filtered_by": "Gefilterd door \"{{term}}\"",
+    "grid.item.buy_now_again": "Koop een extra kopie",
+    "grid.item.check_for_update": "Controleer voor updates"
 }
