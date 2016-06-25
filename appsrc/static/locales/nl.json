@@ -134,5 +134,6 @@
     "usage_stats.last_opened_time_ago": "Laatst geopend {{time_ago}}",
     "status.downloads.unknown_size": "Onbekend",
     "status.downloads.no_active_downloads": "Geen actieve downloads",
-    "status.downloads.download_error": "Downloadfout"
+    "status.downloads.download_error": "Downloadfout",
+    "sidebar.history": "Geschiedenis"
 }
