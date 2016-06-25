@@ -136,5 +136,6 @@
     "status.downloads.no_active_downloads": "Geen actieve downloads",
     "status.downloads.download_error": "Downloadfout",
     "sidebar.history": "Geschiedenis",
-    "grid.item.uninstalling": "Deinstalleren..."
+    "grid.item.uninstalling": "Deinstalleren...",
+    "duration.hour": "een uur"
 }
