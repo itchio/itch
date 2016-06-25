@@ -148,5 +148,6 @@
     "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Gepubliceerd op {{pubDate}}.",
     "prompt.uninstall.cancel": "Annuleren",
     "prompt.logout_title": "Uitloggen",
-    "prompt.forget_session.action": "Sessie vergeten"
+    "prompt.forget_session.action": "Sessie vergeten",
+    "prompt.deb_policy.title": "APT pakketten worden niet ondersteund "
 }
