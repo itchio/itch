@@ -20,7 +20,7 @@
     "login.action.register": "Registreer",
     "login.action.reset_password": "Wachtwoord vergeten",
     "login.field.password": "Wachtwoord",
-    "login.field.username": "Gebruikersnaam",
+    "login.field.username": "Gebruikersnaam of e-mailadres",
     "login.status.dependency_check": "Zeker maken dat we alles opgezet hebben...",
     "login.status.dependency_install": "Afhankelijkheid {{name}} {{version}} installeren",
     "login.status.login": "Aan het inloggen...",
