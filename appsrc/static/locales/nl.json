@@ -144,5 +144,9 @@
     "grid.criterion.filtered_by": "Gefilterd door \"{{term}}\"",
     "grid.item.buy_now_again": "Koop een extra kopie",
     "grid.item.check_for_update": "Controleer voor updates",
-    "grid.item.open": "Open"
+    "grid.item.open": "Open",
+    "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Gepubliceerd op {{pubDate}}.",
+    "prompt.uninstall.cancel": "Annuleren",
+    "prompt.logout_title": "Uitloggen",
+    "prompt.forget_session.action": "Sessie vergeten"
 }
