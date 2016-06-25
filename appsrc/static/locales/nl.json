@@ -135,5 +135,6 @@
     "status.downloads.unknown_size": "Onbekend",
     "status.downloads.no_active_downloads": "Geen actieve downloads",
     "status.downloads.download_error": "Downloadfout",
-    "sidebar.history": "Geschiedenis"
+    "sidebar.history": "Geschiedenis",
+    "grid.item.uninstalling": "Deinstalleren..."
 }
