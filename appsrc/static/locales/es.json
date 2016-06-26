@@ -1,6 +1,6 @@
 {
     "desktop.shortcut.comment": "Instala y juega juegos en itch.io fácilmente",
-    "errors.api.login.incorrect_username_or_password": "Nombre de usuario o contraseña incorrecto",
+    "errors.api.login.incorrect_username_or_password": "Nombre de usuario o contraseña incorrectos",
     "errors.api.login.password_must_be_provided": "Debe ingresar una contraseña",
     "errors.api.login.username_must_be_provided": "Debe ingresar un nombre de usuario",
     "grid.item.buy_now": "Comprar",
