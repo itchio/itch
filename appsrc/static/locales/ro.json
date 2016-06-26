@@ -162,5 +162,19 @@
     "notification.purchase_complete.just_donated": "Tocmai ai făcut o donaţie pentru {{title}}!",
     "notification.purchase_complete.may_install_now": "Poţi să-l instalezi oricând de acum!",
     "notification.purchase_complete.thanks_for_support": "Mulţumim pentru sprijin!",
-    "onboarding.caved.prealpha_reminder": "Ţine cont că aceasta este o versiune pre-alpha"
+    "onboarding.caved.prealpha_reminder": "Ţine cont că aceasta este o versiune pre-alpha",
+    "action.name.forums": "Forum",
+    "grid.criterion.only_compatible": "Numai produse compatibile",
+    "grid.hidden_count": "+ {{count}} produse ascunse de filtre",
+    "menu.view.view": "Afişare",
+    "onboarding.caved.usage": "Priveşte liniştit cum jocurile tale se descarcă, se instalează şi pornesc.",
+    "onboarding.collections.title_mix": "Meniu asortat",
+    "onboarding.collections.usage": "Navighează puţin pe site, apoi cu {{add_to_collection}} poţi să organizezi ce găseşti.",
+    "onboarding.dashboard.selling_points": "Poţi să-ţi publici creaţiile pe loc şi fără complicaţii.",
+    "sandbox.setup.proceed": "Continuă",
+    "preferences.security": "Siguranţă şi intimitate",
+    "prompt.deb_policy.detail": "itch poate instala aplicaţii Linux numai în varianta lor \"portabilă\".",
+    "prompt.deb_policy.message": "{{title}} foloseşte formatul .deb, şi nu poate fi instalat cu itch până nu este reîmpachetat.",
+    "prompt.deb_policy.title": "Pachetele în format APT nu sunt compatibile cu itch",
+    "prompt.forget_session.action": "Uită sesiunea curentă"
 }
