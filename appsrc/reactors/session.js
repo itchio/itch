@@ -13,9 +13,7 @@ async function sessionReady (store) {
     store.dispatch(actions.unlockTab({path: 'dashboard'}))
   }
 
-  setTimeout(function () {
-    store.dispatch(actions.switchPage('hub'))
-  }, 1000)
+  store.dispatch(actions.switchPage('hub'))
 }
 
 let sessionSelector
@@ -25,7 +23,9 @@ const makeSessionSelector = (store) => createSelector(
   (state) => state.session.credentials.key,
   (setupDone, marketReady, loginDone) => {
     if (setupDone && marketReady && loginDone) {
-      store.dispatch(actions.sessionReady())
+      setTimeout(function () {
+        store.dispatch(actions.sessionReady())
+      }, 400)
     }
   }
 )

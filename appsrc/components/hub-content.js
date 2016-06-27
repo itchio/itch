@@ -18,6 +18,10 @@ export class HubContent extends Component {
       this.props.firstUsefulPage()
     }
 
+    if (!this.props.credentials) {
+      return ''
+    }
+
     return <div className='hub-content'>
       <HubBread/>
       <HubMeat/>
@@ -29,7 +33,9 @@ HubContent.propTypes = {
   t: PropTypes.func
 }
 
-const mapStateToProps = (state) => ({})
+const mapStateToProps = (state) => ({
+  credentials: state.session.credentials
+})
 const mapDispatchToProps = (dispatch) => ({
   firstUsefulPage: () => dispatch(actions.firstUsefulPage())
 })

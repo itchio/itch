@@ -6,7 +6,9 @@ import {map} from 'underline'
 
 import * as actions from '../actions'
 
-import logger from '../logger'
+import mklog from '../util/log'
+const log = mklog('reactors/setup')
+import logger, {opts} from '../logger'
 
 function augmentPath () {
   const binPath = ibrew.binPath()
@@ -26,9 +28,12 @@ async function fetch (store, name) {
 }
 
 async function setup (store) {
+  log(opts, 'setup starting')
   augmentPath()
   await fetch(store, '7za')
+  log(opts, '7za done')
   await Promise.all(['butler', 'elevate', 'activate', 'firejail', 'file']::map((name) => fetch(store, name)))
+  log(opts, 'all deps done')
   store.dispatch(actions.setupDone())
 }
 
@@ -37,7 +42,7 @@ async function boot (store, action) {
     await setup(store)
   } catch (e) {
     const err = e.ibrew || e
-    console.log('got error: ', err)
+    log(opts, 'setup got error: ', err)
     store.dispatch(actions.setupStatus({icon: 'error', message: ['login.status.setup_failure', {error: (err.message || '' + err)}]}))
   }
 }
