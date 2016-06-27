@@ -30,22 +30,25 @@ import clipboard from './clipboard'
 import tasks from './tasks'
 import dialogs from './dialogs'
 import report from './report'
+import perf from './perf'
 
 export default validateReactors({
   _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll,
     installLocations.catchAll, navigation.catchAll),
 
-  PREBOOT: combine(preboot),
+  PREBOOT: combine(preboot, perf.preboot),
   BOOT: combine(market.boot, preferences.boot, mainWindow.boot,
     locales.boot, rememberedSessions.boot, selfUpdate.boot, setup.boot,
-    tasks.boot, tray.boot, navigation.boot),
+    tasks.boot, tray.boot, navigation.boot, perf.boot),
   RETRY_SETUP: combine(setup.retrySetup),
 
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),
   LOGIN_WITH_PASSWORD: combine(login.loginWithPassword),
-  LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded),
+  LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded, perf.loginSucceeded),
   LOGOUT: combine(market.logout, session.logout, navigation.logout),
   CHANGE_USER: combine(dialogs.changeUser),
+
+  FIRST_USEFUL_PAGE: combine(perf.firstUsefulPage),
 
   SESSION_READY: combine(session.sessionReady, url.sessionReady,
     updater.sessionReady, navigation.sessionReady),

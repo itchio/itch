@@ -8,6 +8,7 @@ module.exports = keyMirror({
 
   // actually start the app
   BOOT: null,
+  FIRST_USEFUL_PAGE: null,
 
   // Chromium is good at retrieving the user's language from the innards of the OS
   // doing the same from nodejs would probably be a waste of everyone's time

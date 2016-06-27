@@ -8,8 +8,7 @@ import urls from '../constants/urls'
 import {app} from '../electron'
 import env from '../env'
 
-import mkcooldown from '../util/cooldown'
-const cooldown = mkcooldown(1000)
+import delay from '../reactors/delay'
 
 const upgradesEnabled = (env.name === 'production') || (process.env.DID_I_STUTTER === '1')
 
@@ -82,8 +81,7 @@ async function queueLocaleDownload (store, action) {
   store.dispatch(actions.localeDownloadStarted({lang}))
 
   log(opts, `Waiting a bit before downloading ${lang} locale...`)
-  await cooldown()
-  log(opts, `Done waiting for ${lang} locale...`)
+  await delay(5000)
 
   const resources = {}
   try {

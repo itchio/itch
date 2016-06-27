@@ -4,6 +4,7 @@ import {createAction} from 'redux-actions'
 import {
   PREBOOT,
   BOOT,
+  FIRST_USEFUL_PAGE,
 
   SETUP_STATUS,
   SETUP_DONE,
@@ -17,6 +18,7 @@ import {
 
 export const preboot = createAction(PREBOOT)
 export const boot = createAction(BOOT)
+export const firstUsefulPage = createAction(FIRST_USEFUL_PAGE)
 
 export const setupStatus = createAction(SETUP_STATUS)
 export const setupDone = createAction(SETUP_DONE)
