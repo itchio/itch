@@ -148,8 +148,8 @@ StatusBar.propTypes = {
 const mapStateToProps = createStructuredSelector({
   offlineMode: (state) => state.preferences.offlineMode,
   historyItems: (state) => state.history.itemsByDate,
-  downloadItems: (state) => state.tasks.downloadsByOrder,
-  finishedDownloads: (state) => state.tasks.finishedDownloads,
+  downloadItems: (state) => state.downloads.downloadsByOrder,
+  finishedDownloads: (state) => state.downloads.finishedDownloads,
   selfUpdate: (state) => state.selfUpdate,
   statusMessages: (state) => state.status.messages
 })

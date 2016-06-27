@@ -13,7 +13,7 @@ async function updateDownloadState (store) {
   log(opts, 'Sleeping for a bit..')
   await delay(DOWNLOAD_DELAY)
 
-  const downloadsByOrder = store.getState().tasks.downloadsByOrder
+  const downloadsByOrder = store.getState().downloads.downloadsByOrder
   const first = downloadsByOrder[0]
   if (!first) {
     if (currentDownload) {

@@ -68,9 +68,9 @@ Downloads.propTypes = {
 }
 
 const mapStateToProps = createStructuredSelector({
-  items: (state) => state.tasks.downloadsByOrder::map((id) => state.tasks.downloads[id]),
-  finishedItems: (state) => state.tasks.finishedDownloads::map((id) => state.tasks.downloads[id]),
-  paused: (state) => state.tasks.downloadsPaused
+  items: (state) => state.downloads.downloadsByOrder::map((id) => state.downloads.downloads[id]),
+  finishedItems: (state) => state.downloads.finishedDownloads::map((id) => state.downloads.downloads[id]),
+  paused: (state) => state.downloads.downloadsPaused
 })
 
 const mapDispatchToProps = (dispatch) => ({

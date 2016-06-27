@@ -14,6 +14,7 @@ import ui from './ui'
 import selfUpdate from './self-update'
 import preferences from './preferences'
 import tasks from './tasks'
+import downloads from './downloads'
 import status from './status'
 
 const reducer = combineReducers({
@@ -30,6 +31,7 @@ const reducer = combineReducers({
   selfUpdate,
   preferences,
   tasks,
+  downloads,
   status
 })
 export default reducer

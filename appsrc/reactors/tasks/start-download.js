@@ -16,7 +16,7 @@ export async function startDownload (store, downloadOpts) {
   invariant(downloadOpts.game, 'startDownload must have a game')
   invariant(typeof downloadOpts.totalSize === 'number', 'startDownload must have a total size')
 
-  const existing = store.getState().tasks.downloadsByGameId[downloadOpts.game.id]
+  const existing = store.getState().downloads.downloadsByGameId[downloadOpts.game.id]
   if (existing && !existing.finished) {
     log(opts, `Not starting another download for ${downloadOpts.game.title}`)
     store.dispatch(actions.navigate('downloads'))
