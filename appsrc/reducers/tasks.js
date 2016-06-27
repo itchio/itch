@@ -3,12 +3,20 @@ import {handleActions} from 'redux-actions'
 import {createStructuredSelector} from 'reselect'
 
 import invariant from 'invariant'
-import {indexBy, where, sortBy, omit, pluck, filter} from 'underline'
+import {indexBy, where, sortBy, omit, pluck, filter, map} from 'underline'
 
 const initialState = {
   tasks: {},
   finishedTasks: [],
-  downloads: {},
+  // downloads: {},
+  downloads: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]::map((x, i) => {
+    return {
+      id: i,
+      game: {
+        title: 'Sample game'
+      }
+    }
+  }),
   downloadsPaused: false
 }
 

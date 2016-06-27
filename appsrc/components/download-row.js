@@ -7,7 +7,7 @@ import humanize from 'humanize-plus'
 import defaultImages from '../constants/default-images'
 import * as actions from '../actions'
 
-import TimeAgo from 'react-timeago'
+import NiceAgo from './nice-ago'
 import GameActions from './game-actions'
 
 class DownloadRow extends Component {
@@ -99,7 +99,7 @@ class DownloadRow extends Component {
       </div>
       {perc} done, {sizeLeft} left
       <div className='timeago'>
-        Started <TimeAgo date={date}/>
+        Started <NiceAgo date={date}/>
         {reasonText ? ` — ${reasonText}` : ''}
       </div>
     </div>

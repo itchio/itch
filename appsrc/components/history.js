@@ -6,7 +6,7 @@ import invariant from 'invariant'
 
 import {map} from 'underline'
 
-import TimeAgo from 'react-timeago'
+import NiceAgo from './nice-ago'
 
 import * as actions from '../actions'
 
@@ -21,7 +21,7 @@ class History extends Component {
         <div className='item-description'>
           {t.format(label)}
           <div className='timeago'>
-            <TimeAgo date={date}/>
+            <NiceAgo date={date}/>
           </div>
         </div>
         <div className='item-options'>

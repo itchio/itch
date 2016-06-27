@@ -8,6 +8,8 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
 
 .downloads-page {
   @include meat;
+  overflow-y: auto;
+  flex-shrink: 0;
   padding: 0 $grid-padding * 2;
 
   .finished-bar {
@@ -42,8 +44,9 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
   }
 
   li {
+    flex-shrink: 0;
     line-height: 1.8;
-    margin: 10px 0 30px 0;
+    margin: 10px 0 10px 0;
 
     .timeago {
       font-size: 80%;
