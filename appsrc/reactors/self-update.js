@@ -39,7 +39,8 @@ async function boot (store, action) {
     autoUpdater = require('electron').autoUpdater
     autoUpdater.on('error', (ev, err) => {
       hadErrors = true
-      if (/^Could not get code signature/.test(err) && env.name === 'development') {
+      const environmentSetManually = !!process.env.NODE_ENV
+      if (/^Could not get code signature/.test(err) && (env.name === 'development' || environmentSetManually)) {
         // electron-prebuilt isn't signed, we know you can't work Squirrel.mac, don't worry
         log(opts, 'Ignoring Squirrel.mac complaint')
       } else {
