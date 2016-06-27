@@ -207,7 +207,7 @@ const mapStateToProps = createStructuredSelector({
 
   counts: createSelector(
     (state) => state.history.itemsByDate,
-    (state) => state.downloads.downloadsByOrder,
+    (state) => state.downloads.finishedDownloads,
     (history, downloads) => ({
       history: history::where({active: true}).length,
       downloads: downloads.length

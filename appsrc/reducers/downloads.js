@@ -1,26 +1,28 @@
 
+import uuid from 'node-uuid'
 import {handleActions} from 'redux-actions'
 import {createSelector, createStructuredSelector} from 'reselect'
 
 import invariant from 'invariant'
-import {indexBy, where, sortBy, pluck, filter, map, first} from 'underline'
+import {indexBy, where, sortBy, pluck, filter, map, first, omit} from 'underline'
+
+const makeFakeDownloads = () => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]::map((x, i) => {
+  return {
+    id: uuid.v4(),
+    game: {
+      title: 'Sample game'
+    },
+    finished: (i >= 5),
+    reason: 'install',
+    progress: (i + 3) * 0.1,
+    totalSize: i * 304138,
+    pOsx: (i % 2 === 0),
+    order: -i
+  }
+})::indexBy('id')
 
 const initialState = {
-  // downloads: {},
-  downloads: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]::map((x, i) => {
-    return {
-      id: i,
-      game: {
-        title: 'Sample game'
-      },
-      finished: (i >= 5),
-      reason: 'install',
-      progress: (i + 3) * 0.1,
-      totalSize: i * 304138,
-      pOsx: (i % 2 === 0),
-      order: -i
-    }
-  }),
+  downloads: (process.env.FAKE_DOWNLOADS === '1' ? makeFakeDownloads() : {}),
   downloadsPaused: false
 }
 
@@ -35,7 +37,7 @@ const updateSingle = (state, action, record) => {
   const {id} = record
   invariant(id, 'valid download id in progress')
   const download = downloads[id]
-  invariant(id, 'valid download being updated')
+  invariant(download, 'valid download being updated')
   const newDownloads = {
     ...downloads,
     [id]: {
@@ -69,18 +71,37 @@ const reducer = handleActions({
     return updateSingle(state, action, {id, finished: true, err})
   },
 
-  DOWNLOAD_PRIORITIZE: (state, action) => {
+  PRIORITIZE_DOWNLOAD: (state, action) => {
     const {id} = action.payload
-    const {downloads, downloadsByOrder} = state
-    if (downloadsByOrder.length < 2) {
+    const {downloads} = state
+    const {activeDownload} = selector(state)
+
+    if (!activeDownload || activeDownload.id === id) {
       // either no downloads, or only one. nothing to prioritize!
+      console.log('nothing to prioritize')
       return state
     }
-    const first = downloads[downloadsByOrder[0]]
-    // don't re-number priorities, just go into the negatives
-    const priority = first.priority - 1
 
-    return updateSingle(state, action, {id, priority})
+    // don't re-number priorities, just go into the negatives
+    const order = activeDownload.order - 1
+    console.log(`bumping ${id}'s order from ${downloads[id].order} to ${order}`)
+
+    return updateSingle(state, action, {id, order})
+  },
+
+  CANCEL_DOWNLOAD: (state, action) => {
+    const {id} = action.payload
+    const {downloads} = state
+
+    const download = downloads[id]
+    invariant(download, 'cancelling valid download')
+
+    const newDownloads = downloads::omit(id)
+
+    return {
+      ...state,
+      downloads: newDownloads
+    }
   },
 
   CLEAR_FINISHED_DOWNLOADS: (state, action) => {

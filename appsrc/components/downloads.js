@@ -28,9 +28,6 @@ class Downloads extends Component {
     }
 
     return <ul className='downloads-page'>
-      <div className='section-bar'>
-        <h2>{t('sidebar.downloads')}</h2>
-      </div>
     {items::map((item, i) =>
       <DownloadRow key={item.id} item={item} first={i === 0} paused={paused} active/>
     )}

@@ -99,7 +99,7 @@ class DownloadRow extends Component {
     }
 
     const perc = (progress * 100).toFixed(1) + '%'
-    const sizeDone = item.totalSize ? humanize.fileSize(item.totalSize * (1 - progress)) : ''
+    const sizeDone = item.totalSize ? humanize.fileSize(item.totalSize * progress) : ''
     const totalSize = item.totalSize ? humanize.fileSize(item.totalSize) : t('status.downloads.unknown_size')
     const reasonText = this.reasonText(reason)
 
@@ -162,7 +162,8 @@ const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) => ({
   navigateToGame: (game) => dispatch(actions.navigateToGame(game)),
-  prioritizeDownload: (id) => dispatch(actions.prioritizeDownload(id)),
+  prioritizeDownload: (id) => dispatch(actions.prioritizeDownload({id})),
+  cancelDownload: (id) => dispatch(actions.cancelDownload({id})),
   pauseDownloads: () => dispatch(actions.pauseDownloads()),
   resumeDownloads: () => dispatch(actions.resumeDownloads()),
   retry: (downloadOpts) => dispatch(actions.retryDownload({downloadOpts}))
