@@ -9,6 +9,7 @@ import {each, filter, map} from 'underline'
 import isPlatformCompatible from '../util/is-platform-compatible'
 
 import HubItem from './hub-item'
+import HubFiller from './hub-filler'
 
 export class GameGrid extends Component {
   constructor () {
@@ -49,8 +50,13 @@ export class GameGrid extends Component {
       items.push(<HubItem key={`game-${game.id}`} game={game}/>)
     })
 
+    for (let i = 0; i < 12; i++) {
+      items.push(<HubFiller key={`filler-${i}`}/>)
+    }
+
     return <div className='hub-grid'>
     {items}
+
     {hiddenCount > 0
     ? <div className='hidden-count'>
       {t('grid.hidden_count', {count: hiddenCount})}
