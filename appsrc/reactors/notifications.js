@@ -12,15 +12,6 @@ const AUTODISMISS_DELAY = 5000
 // OSX already shows the app's icon
 const DEFAULT_ICON = os.platform() === 'darwin' ? null : `./static/images/tray/${app.getName()}-64.png`
 
-async function setProgress (store, action) {
-  const alpha = action.payload
-  const id = store.getState().ui.mainWindow.id
-  const window = BrowserWindow.fromId(id)
-  if (window) {
-    window.setProgressBar(alpha)
-  }
-}
-
 async function bounce (store, action) {
   const dock = {app}
   if (dock) {
@@ -52,4 +43,4 @@ async function statusMessage (store, action) {
   store.dispatch(actions.dismissStatusMessage())
 }
 
-export default {setProgress, bounce, notify, statusMessage}
+export default {bounce, notify, statusMessage}

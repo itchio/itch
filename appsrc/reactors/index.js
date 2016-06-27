@@ -124,7 +124,6 @@ export default validateReactors({
 
   SEARCH: combine(fetch.search),
 
-  SET_PROGRESS: combine(notifications.setProgress),
   BOUNCE: combine(notifications.bounce),
   NOTIFY: combine(notifications.notify),
   STATUS_MESSAGE: combine(notifications.statusMessage),

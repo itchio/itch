@@ -185,8 +185,6 @@ module.exports = keyMirror({
 
   INITIATE_SHARE: null,
 
-  /** Set app-wide progress bar (title bar on Windows). Negative value clears. */
-  SET_PROGRESS: null,
   /** macOS-only, bounce dock */
   BOUNCE: null,
   /** Cross-platform, notification bubble */

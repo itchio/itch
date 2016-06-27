@@ -37,7 +37,6 @@ export async function startDownload (store, downloadOpts) {
     const out = new EventEmitter()
     out.on('progress', ((progress) => {
       store.dispatch(actions.downloadProgress({id, progress}))
-      store.dispatch(actions.setProgress(progress))
     })::throttle(250))
 
     const credentials = store.getState().session.credentials
@@ -48,7 +47,6 @@ export async function startDownload (store, downloadOpts) {
     }
 
     log(opts, 'Starting download...')
-    store.dispatch(actions.setProgress(0))
     await download(out, extendedOpts)
   } catch (e) {
     log(opts, 'Download threw')
@@ -57,7 +55,6 @@ export async function startDownload (store, downloadOpts) {
     err = err ? err.message || err : null
     log(opts, `Download ended, err: ${err || '<none>'}`)
     store.dispatch(actions.downloadEnded({id, err, downloadOpts}))
-    store.dispatch(actions.setProgress(-1))
   }
 
   log(opts, 'Download done!')
