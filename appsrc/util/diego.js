@@ -21,7 +21,7 @@ const self = {
 
     log('diego here, looking around')
 
-    let dump = async (full, re) => {
+    const dump = async function (full, re) {
       if (typeof re === 'undefined') {
         re = /.*/
       }

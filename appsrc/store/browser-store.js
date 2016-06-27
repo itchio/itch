@@ -32,7 +32,8 @@ if (beChatty) {
          !/_DB_/.test(action.type) &&
          !/LOCALE_/.test(action.type)
     },
-    stateTransformer: (state) => ''
+    stateTransformer: (state) => '',
+    actionTransformer: (action) => ''
   })
 
   middleware.push(logger)

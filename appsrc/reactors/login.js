@@ -2,6 +2,8 @@
 import * as actions from '../actions'
 import client from '../util/api'
 
+import {sortBy} from 'underline'
+
 async function loginWithPassword (store, action) {
   const {username, password} = action.payload
 
@@ -45,4 +47,16 @@ async function getKey (username, password) {
   return res.key.key
 }
 
-export default {loginWithPassword, loginWithToken}
+async function sessionsRemembered (store, action) {
+  const rememberedSessions = action.payload
+  const mostRecentSession = rememberedSessions::sortBy((x) => -x.lastConnected)[0]
+  if (mostRecentSession) {
+    const {me, key} = mostRecentSession
+    const {username} = me
+    setTimeout(function () {
+      store.dispatch(actions.loginWithToken({username, key, me}))
+    }, 400)
+  }
+}
+
+export default {loginWithPassword, loginWithToken, sessionsRemembered}

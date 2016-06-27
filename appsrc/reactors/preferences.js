@@ -1,7 +1,6 @@
 
 import pathmaker from '../util/pathmaker'
 import {camelifyObject} from '../util/format'
-import fs from 'fs'
 import sf from '../util/sf'
 
 import * as actions from '../actions'
@@ -12,8 +11,8 @@ import {opts} from '../logger'
 
 export async function boot (store) {
   try {
-    // XXX: sync I/O is bad but we can live with it for now.
-    const prefs = camelifyObject(JSON.parse(fs.readFileSync(pathmaker.preferencesPath())))
+    const contents = await sf.readFile(pathmaker.preferencesPath())
+    const prefs = camelifyObject(JSON.parse(contents))
 
     log(opts, 'imported preferences: ', JSON.stringify(prefs, null, 2))
     store.dispatch(actions.updatePreferences(prefs))

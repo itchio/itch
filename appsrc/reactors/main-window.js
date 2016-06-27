@@ -141,7 +141,7 @@ async function createWindow (store) {
     debouncedBounds()
   })
 
-  window.webContents.on('dom-ready', (e) => {
+  window.on('ready-to-show', (e) => {
     createLock = false
     store.dispatch(actions.windowReady({id: window.id}))
     window.show()

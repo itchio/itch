@@ -50,6 +50,7 @@ export default validateReactors({
   SESSION_READY: combine(session.sessionReady, url.sessionReady,
     updater.sessionReady, navigation.sessionReady),
 
+  SESSIONS_REMEMBERED: combine(login.sessionsRemembered),
   FORGET_SESSION_REQUEST: combine(rememberedSessions.forgetSessionRequest),
   FORGET_SESSION: combine(rememberedSessions.forgetSession),
 

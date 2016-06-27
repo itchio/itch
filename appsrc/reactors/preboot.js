@@ -16,8 +16,6 @@ const log = mklog('preboot')
 
 async function importLegacyDBs () {
   const userDataPath = app.getPath('userData')
-  log(opts, `Creating ${userDataPath} in case it doesn't exist..`)
-  await sf.mkdir(userDataPath)
 
   // while importing, there's no need to dispatch DB_COMMIT events, they'll
   // be re-opened on login anyway
@@ -37,12 +35,14 @@ async function importLegacyDBs () {
     }
 
     const userId = matches[0]
-    log(opts, `Importing db for user ${userId}`)
     const oldDBFilename = path.join(usersDir, dbFile)
     const obsoleteMarker = oldDBFilename + '.obsolete'
 
     const markerExists = await sf.exists(obsoleteMarker)
-    if (!markerExists) {
+    if (markerExists) {
+      log(opts, `Skipping db import for ${userId}`)
+    } else {
+      log(opts, `Importing db for user ${userId}`)
       const response = await legacyDB.importOldData(oldDBFilename)
       const perUserResponse = {entities: response.entities::omit('caves')}
       const globalResponse = {
@@ -96,5 +96,7 @@ export default async function preboot (store) {
 
   // print various machine specs, see docs/
   const diego = require('../util/diego').default
-  diego.hire(opts)
+  setTimeout(function () {
+    diego.hire(opts)
+  }, 3000)
 }

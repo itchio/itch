@@ -3,8 +3,6 @@ import {createSelector} from 'reselect'
 
 import * as actions from '../actions'
 
-import delay from './delay'
-
 async function logout (store) {
   store.dispatch(actions.switchPage('gate'))
 }
@@ -15,8 +13,9 @@ async function sessionReady (store) {
     store.dispatch(actions.unlockTab({path: 'dashboard'}))
   }
 
-  await delay(1000)
-  store.dispatch(actions.switchPage('hub'))
+  setTimeout(function () {
+    store.dispatch(actions.switchPage('hub'))
+  }, 1000)
 }
 
 let sessionSelector

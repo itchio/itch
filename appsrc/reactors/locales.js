@@ -83,6 +83,7 @@ async function queueLocaleDownload (store, action) {
 
   log(opts, `Waiting a bit before downloading ${lang} locale...`)
   await cooldown()
+  log(opts, `Done waiting for ${lang} locale...`)
 
   const resources = {}
   try {
