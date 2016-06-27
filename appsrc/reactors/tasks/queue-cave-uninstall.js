@@ -2,6 +2,8 @@
 import {getGlobalMarket} from '../market'
 import invariant from 'invariant'
 
+import * as actions from '../../actions'
+
 import {startTask} from './start-task'
 
 export async function queueCaveUninstall (store, action) {
@@ -15,4 +17,6 @@ export async function queueCaveUninstall (store, action) {
     gameId: cave.gameId,
     cave
   })
+
+  store.dispatch(actions.clearGameDownloads({gameId: cave.gameId}))
 }

@@ -26,12 +26,6 @@ const initialState = {
   downloadsPaused: false
 }
 
-const uninstall = (state, action) => {
-  const {downloads} = state
-  const newDownloads = downloads::filter((x) => x.gameId !== action.gameId)::indexBy('id')
-  return {...state, downloads: newDownloads}
-}
-
 const updateSingle = (state, action, record) => {
   const {downloads} = state
   const {id} = record
@@ -49,8 +43,13 @@ const updateSingle = (state, action, record) => {
 }
 
 const reducer = handleActions({
-  QUEUE_CAVE_UNINSTALL: uninstall,
-  QUEUE_CAVE_REINSTALL: uninstall,
+  CLEAR_GAME_DOWNLOADS: (state, action) => {
+    const {downloads} = state
+    const {gameId} = action.payload
+
+    const newDownloads = downloads::filter((x) => x.game.id !== gameId)::indexBy('id')
+    return {...state, downloads: newDownloads}
+  },
 
   DOWNLOAD_STARTED: (state, action) => {
     const {downloads} = state

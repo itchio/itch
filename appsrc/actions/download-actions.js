@@ -7,6 +7,7 @@ import {
   DOWNLOAD_ENDED,
 
   CLEAR_FINISHED_DOWNLOADS,
+  CLEAR_GAME_DOWNLOADS,
 
   PRIORITIZE_DOWNLOAD,
   CANCEL_DOWNLOAD,
@@ -22,6 +23,7 @@ export const downloadProgress = createAction(DOWNLOAD_PROGRESS)
 export const downloadEnded = createAction(DOWNLOAD_ENDED)
 
 export const clearFinishedDownloads = createAction(CLEAR_FINISHED_DOWNLOADS)
+export const clearGameDownloads = createAction(CLEAR_GAME_DOWNLOADS)
 
 export const prioritizeDownload = createAction(PRIORITIZE_DOWNLOAD)
 export const cancelDownload = createAction(CANCEL_DOWNLOAD)
