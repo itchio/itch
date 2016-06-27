@@ -16,7 +16,7 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
     left: 0;
     top: 0;
     bottom: 0;
-    background-color: lighten($sidebar-background-color, 20%);
+    background-color: $accent-color;
     background-image: -webkit-repeating-linear-gradient(
     -60deg,
     $download-progress-color-in-a 0,

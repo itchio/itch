@@ -1,5 +1,5 @@
 
-$download-cover-height: 120px;
+$download-cover-height: 80px;
 $download-cover-width: $download-cover-height * $grid-item-ratio;
 
 .downloads-page {
@@ -106,7 +106,7 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
         margin: 10px 0;
         height: 5px;
 
-        &, &.progress-inner {
+        &, .progress-inner {
           border-radius: 5px;
         }
       }
@@ -114,8 +114,8 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
 
     .cover {
       @include default-cover-background;
-      width: 120px;
-      height: 80px;
+      width: $download-cover-width;
+      height: $download-cover-height;
       border-radius: 2px;
       margin-right: 20px;
       background-size: cover;

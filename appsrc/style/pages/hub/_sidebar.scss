@@ -90,8 +90,9 @@
 
       .progress-outer {
         @include progress;
-        height: 2px;
-        margin: 6px 0 2px 0;
+        height: 4px;
+        border-radius: 4px;
+        margin: 4px 0 2px 0;
       }
     }
 
