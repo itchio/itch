@@ -6,12 +6,13 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
   position: relative;
   height: 3px;
   width: 100%;
-  
+
   background: $download-progress-color-out;
   transition: background 1s;
 
   .progress-inner {
     position: absolute;
+    transition: position .3s;
     left: 0;
     top: 0;
     bottom: 0;

@@ -48,6 +48,7 @@
     "grid.item.donate_again": "Tip the creator again!",
     "grid.item.purchase_or_donate": "Purchase or donate money towards item",
     "grid.item.queued": "Queued",
+    "grid.item.downloads_paused": "Downloads paused",
     "grid.item.report_problem": "Report broken (Opens in browser)",
     "grid.item.retry": "Try to download / install / launch this item again",
     "grid.item.running": "Running…",

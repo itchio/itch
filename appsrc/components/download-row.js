@@ -17,7 +17,7 @@ class DownloadRow extends Component {
   }
 
   render () {
-    const {first, item, navigateToGame} = this.props
+    const {first, active, item, navigateToGame} = this.props
 
     const {game, id} = item
     const coverUrl = game.stillCoverUrl || game.coverUrl
@@ -26,7 +26,7 @@ class DownloadRow extends Component {
       coverStyle.backgroundImage = `url("${coverUrl}")`
     }
 
-    const itemClasses = classNames('history-item', {first})
+    const itemClasses = classNames('history-item', {first, dimmed: (active && !first)})
 
     return <li key={id} className={itemClasses}>
       <div className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
@@ -49,7 +49,11 @@ class DownloadRow extends Component {
     }
 
     if (!active) {
-      return ''
+      return <div className='controls'>
+        <span className='hint--left' data-hint={t('status.downloads.clear_finished')}>
+          <span className='icon icon-cross' onClick={() => cancelDownload(id)}/>
+        </span>
+      </div>
     }
 
     return <div className='controls'>
@@ -69,7 +73,7 @@ class DownloadRow extends Component {
   }
 
   progress () {
-    const {t, active, item} = this.props
+    const {t, first, active, item, downloadsPaused} = this.props
     const {err} = item
 
     if (!active) {
@@ -85,7 +89,7 @@ class DownloadRow extends Component {
       const {game} = item
       return <div>
         {game.title}
-        <GameActions game={game} showSecondary/>
+        <GameActions game={game}/>
       </div>
     }
     const {game, date, progress = 0, reason} = item
@@ -107,14 +111,24 @@ class DownloadRow extends Component {
       <div className='progress'>
         <div className='progress-inner' style={progressInnerStyle}/>
       </div>
-      {game.title} — {perc}
+      {game.title}
+      {' — '}
+      {perc}
       {item.totalSize
-      ? <span>, {sizeDone} / {totalSize}</span>
-      : ''
+        ? <span>, {sizeDone} / {totalSize}</span>
+        : ''
       }
       <div className='timeago'>
-        Started <NiceAgo date={date}/>
-        {reasonText ? ` — ${reasonText}` : ''}
+      {first
+      ? (downloadsPaused
+        ? <div>{t('grid.item.downloads_paused')}</div>
+        : <div>
+          Started <NiceAgo date={date}/>
+          {reasonText ? ` — ${reasonText}` : ''}
+        </div>)
+      : <div>{t('grid.item.queued')}</div>
+      }
+
       </div>
     </div>
   }
@@ -158,7 +172,9 @@ DownloadRow.propTypes = {
   retry: PropTypes.func.isRequired
 }
 
-const mapStateToProps = (state) => ({})
+const mapStateToProps = (state) => ({
+  downloadsPaused: state.downloads.downloadsPaused
+})
 
 const mapDispatchToProps = (dispatch) => ({
   navigateToGame: (game) => dispatch(actions.navigateToGame(game)),

@@ -27,12 +27,14 @@ async function downloadPatches (out, opts) {
   invariant(typeof cave === 'object', 'downloadPatches must have cave')
   invariant(credentials && credentials.key, 'downloadPatches has valid key')
 
+  const emitter = out
+
   let previousPatch
   let byteOffset = 0
 
   const cavePath = pathmaker.appPath(cave)
 
-  const doApply = async (patch) => {
+  const doApply = async function (patch) {
     log(opts, `Applying ${patch.entry.id} into ${cavePath}`)
     const applyOpts = {
       name: 'apply',
@@ -57,7 +59,7 @@ async function downloadPatches (out, opts) {
       promises.push(doApply(previousPatch))
     }
 
-    promises.push((async () => {
+    promises.push((async function () {
       const patchPath = pathmaker.downloadPath({
         ...upload,
         filename: 'patch.pwr',
@@ -77,8 +79,8 @@ async function downloadPatches (out, opts) {
       log(opts, 'got signature + patch download urls')
 
       await Promise.all([
-        butler.dl({url: buildRes.patch.url, dest: patchPath, onProgress}),
-        butler.dl({url: buildRes.signature.url, dest: signaturePath})
+        butler.dl({url: buildRes.patch.url, dest: patchPath, onProgress, emitter}),
+        butler.dl({url: buildRes.signature.url, dest: signaturePath, emitter})
       ])
       log(opts, 'downloaded both patch + signature')
 
@@ -135,7 +137,7 @@ export default async function start (out, opts) {
     log(opts, 'making dir')
     await sf.mkdir(path.dirname(destPath))
     log(opts, 'butler download')
-    await butler.dl({url, dest: destPath, onProgress})
+    await butler.dl({url, dest: destPath, onProgress, emitter: out})
   } catch (err) {
     log(opts, `couldn't finish download: ${err.message || err}`)
     throw err

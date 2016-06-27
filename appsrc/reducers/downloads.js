@@ -30,8 +30,13 @@ const updateSingle = (state, action, record) => {
   const {downloads} = state
   const {id} = record
   invariant(id, 'valid download id in progress')
+
   const download = downloads[id]
-  invariant(download, 'valid download being updated')
+  if (!download) {
+    // ignore progress messages for inactive downloads
+    return state
+  }
+
   const newDownloads = {
     ...downloads,
     [id]: {
@@ -129,7 +134,7 @@ const selector = createSelector(
   structSel,
   (fields) => {
     const {activeDownload} = fields
-    const progress = activeDownload ? activeDownload.progress : -1
+    const progress = (activeDownload && activeDownload.progress) || -1
 
     return {
       ...fields,

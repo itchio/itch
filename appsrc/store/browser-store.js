@@ -30,7 +30,8 @@ if (beChatty) {
       return !action.MONITOR_ACTION &&
          !/^WINDOW_/.test(action.type) &&
          !/_DB_/.test(action.type) &&
-         !/LOCALE_/.test(action.type)
+         !/LOCALE_/.test(action.type) &&
+         !/_FETCHED$/.test(action.type)
     },
     stateTransformer: (state) => ''
   })

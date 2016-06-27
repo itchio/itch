@@ -6,14 +6,14 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
   @include meat;
   overflow-y: auto;
   flex-shrink: 0;
-  padding: 0 $grid-padding * 2;
+  padding: 0 20px 20px 20px;
 
   .section-bar {
     display: flex;
     flex-direction: row;
     align-items: baseline;
     align-content: center;
-    margin: 20px 0 10px 0;
+    margin: 20px 0 10px 10px;
     flex-shrink: 0;
 
     h2 {
@@ -44,12 +44,34 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
     flex-shrink: 0;
     line-height: 1.6;
     border-radius: 4px;
-    padding: 10px;
+    padding: 10px 5px 10px 15px;
     margin: 10px 0 0 0;
     cursor: default;
 
-    &.first {
+    max-width: 700px;
+
+    border: 1px solid transparent;
+
+    &.first, &:hover {
       background-color: $explanation-color;
+    }
+
+    .cover, .progress {
+      transition: -webkit-filter 1s;
+    }
+
+    .controls {
+      transition: color 1s;
+    }
+
+    &.dimmed {
+      .cover, .progress {
+        -webkit-filter: grayscale(100%) brightness(60%);
+      }
+
+      .controls {
+        color: $secondary-text-color;
+      }
     }
 
     .timeago {
@@ -62,7 +84,6 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
 
     .stats {
       flex-grow: 1;
-      max-width: 400px;
 
       .progress {
         margin: 10px 0;
