@@ -14,7 +14,8 @@ const initialState = {
       id: i,
       game: {
         title: 'Sample game'
-      }
+      },
+      finished: (i >= 5)
     }
   }),
   downloadsPaused: false

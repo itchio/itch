@@ -12,20 +12,21 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
   flex-shrink: 0;
   padding: 0 $grid-padding * 2;
 
-  .finished-bar {
+  .section-bar {
     display: flex;
     flex-direction: row;
     align-items: baseline;
     align-content: center;
-    margin: 20px 0;
+    margin: 20px 0 10px 0;
+    flex-shrink: 0;
 
     h2 {
       font-size: 22px;
     }
 
     .clear {
-      @include lowkey-button;
       margin-left: 8px;
+      @include clickable;
     }
   }
 
@@ -47,6 +48,7 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
     flex-shrink: 0;
     line-height: 1.8;
     margin: 10px 0 10px 0;
+    cursor: default;
 
     .timeago {
       font-size: 80%;
@@ -108,16 +110,12 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
       .icon {
         font-size: 22px;
         padding: 8px;
-        -webkit-filter: brightness(90%);
 
-        &:hover {
-          cursor: pointer;
-          -webkit-filter: none;
-        }
+        width: 45px;
+        text-align: center;
+        display: inline-block;
 
-        &:active {
-          -webkit-transform: scale(.95);
-        }
+        @include clickable;
       }
     }
   }

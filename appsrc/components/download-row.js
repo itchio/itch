@@ -43,8 +43,7 @@ class DownloadRow extends Component {
       </div>
     }
 
-    // FIXME rush
-    if (!active || true) {
+    if (!active) {
       return ''
     }
 
@@ -54,7 +53,7 @@ class DownloadRow extends Component {
         ? <span className='icon icon-triangle-right' onClick={resumeDownloads}/>
         : <span className='icon icon-pause' onClick={pauseDownloads}/>
       )
-      : <span className='icon icon-align-top' onClick={() => prioritizeDownload(id)}/>
+      : <span className='icon icon-caret-up' onClick={() => prioritizeDownload(id)}/>
     }
     </div>
   }
