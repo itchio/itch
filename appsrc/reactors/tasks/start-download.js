@@ -9,6 +9,8 @@ import {log, opts} from './log'
 import * as actions from '../../actions'
 import download from '../../tasks/download'
 
+import {throttle} from 'underline'
+
 export async function startDownload (store, downloadOpts) {
   invariant(typeof store === 'object', 'startDownload must have a store')
   invariant(downloadOpts, 'startDownload cannot have null opts')
@@ -33,10 +35,10 @@ export async function startDownload (store, downloadOpts) {
   let err
   try {
     const out = new EventEmitter()
-    out.on('progress', (progress) => {
+    out.on('progress', ((progress) => {
       store.dispatch(actions.downloadProgress({id, progress}))
       store.dispatch(actions.setProgress(progress))
-    })
+    })::throttle(250))
 
     const credentials = store.getState().session.credentials
     const extendedOpts = {
