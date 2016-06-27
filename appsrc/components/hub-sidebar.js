@@ -17,7 +17,7 @@ import HubSidebarItem from './hub-sidebar-item'
 export class HubSidebar extends Component {
   render () {
     const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
-      navigate, counts, closeTab, closeAllTabs, moveTab, openTabContextMenu, newTab, searchLoading} = this.props
+      navigate, counts, progresses, closeTab, closeAllTabs, moveTab, openTabContextMenu, newTab, searchLoading} = this.props
     const classes = classNames('hub-sidebar', {osx, fullscreen})
     const sidebarStyle = {
       width: sidebarWidth + 'px'
@@ -71,8 +71,9 @@ export class HubSidebar extends Component {
           const onClose = () => closeTab(id)
           const onContextMenu = () => openTabContextMenu(id)
           const count = counts[id]
+          const progress = progresses[id]
 
-          const props = {index, id, path, label, icon, iconImage, active, onClick, count, onClose, onContextMenu, moveTab, data, t}
+          const props = {index, id, path, label, icon, iconImage, active, onClick, count, progress, onClose, onContextMenu, moveTab, data, t}
           return <HubSidebarItem {...props}/>
         })}
         <section className='hub-sidebar-item new-tab' onClick={newTab}>
@@ -211,7 +212,11 @@ const mapStateToProps = createStructuredSelector({
       history: history::where({active: true}).length,
       downloads: downloads.length
     })
-  )
+  ),
+
+  progresses: (state) => ({
+    downloads: state.downloads.progress
+  })
 })
 
 const mapDispatchToProps = (dispatch) => ({

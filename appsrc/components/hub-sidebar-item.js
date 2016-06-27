@@ -27,7 +27,7 @@ export class HubSidebarItem extends Component {
   }
 
   render () {
-    const {t, count, id, path, label, active, kbShortcut} = this.props
+    const {t, count, progress, id, path, label, active, kbShortcut} = this.props
     const {isDragging, connectDragSource, connectDropTarget, onClose, onContextMenu} = this.props
 
     const classes = classNames('hub-sidebar-item', {active})
@@ -55,9 +55,11 @@ export class HubSidebarItem extends Component {
           : ''
         }
       </div>
-      {id === 'downloads'
+      {progress > 0
       ? <div className='row'>
-      {'38% done'}
+        <div className='progress-outer'>
+          <div className='progress-inner' style={{width: `${Math.max(0, Math.min(1, progress)) * 100}%`}}/>
+        </div>
       </div>
       : ''}
     </section>))

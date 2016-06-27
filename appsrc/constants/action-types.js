@@ -141,6 +141,7 @@ module.exports = keyMirror({
   CLEAR_FINISHED_DOWNLOADS: null,
 
   PRIORITIZE_DOWNLOAD: null,
+  CANCEL_DOWNLOAD: null,
   PAUSE_DOWNLOADS: null,
   RESUME_DOWNLOADS: null,
   RETRY_DOWNLOAD: null,

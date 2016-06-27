@@ -1,5 +1,6 @@
 
 export * from './task-actions'
+export * from './download-actions'
 export * from './game-actions'
 export * from './db-actions'
 export * from './onboarding-actions'

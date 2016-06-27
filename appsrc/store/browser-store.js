@@ -24,7 +24,7 @@ const middleware = [
 const beChatty = process.env.MARCO_POLO === '1'
 
 if (beChatty) {
-  const {createLogger} = require('redux-cli-logger')
+  const createLogger = require('redux-cli-logger').default
   const logger = createLogger({
     predicate: (getState, action) => {
       return !action.MONITOR_ACTION &&

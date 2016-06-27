@@ -1,9 +1,9 @@
 
 import {handleActions} from 'redux-actions'
-import {createStructuredSelector} from 'reselect'
+import {createSelector, createStructuredSelector} from 'reselect'
 
 import invariant from 'invariant'
-import {indexBy, where, sortBy, pluck, filter, map} from 'underline'
+import {indexBy, where, sortBy, pluck, filter, map, first} from 'underline'
 
 const initialState = {
   // downloads: {},
@@ -17,7 +17,8 @@ const initialState = {
       reason: 'install',
       progress: (i + 3) * 0.1,
       totalSize: i * 304138,
-      pOsx: (i % 2 === 0)
+      pOsx: (i % 2 === 0),
+      order: -i
     }
   }),
   downloadsPaused: false
@@ -97,11 +98,26 @@ const reducer = handleActions({
   }
 }, initialState)
 
-const selector = createStructuredSelector({
+const structSel = createStructuredSelector({
   downloadsByOrder: (state) => state.downloads::filter((x) => !x.finished)::sortBy('order')::pluck('id'),
+  activeDownload: (state) => state.downloads::filter((x) => !x.finished)::sortBy('order')::first(),
   finishedDownloads: (state) => state.downloads::where({finished: true})::sortBy('order')::pluck('id'),
   downloadsByGameId: (state) => state.downloads::indexBy('gameId')
 })
+
+const selector = createSelector(
+  structSel,
+  (fields) => {
+    const {activeDownload} = fields
+    const progress = activeDownload ? activeDownload.progress : -1
+
+    return {
+      ...fields,
+      activeDownload,
+      progress
+    }
+  }
+)
 
 export default (state, action) => {
   const reducerFields = reducer(state, action)

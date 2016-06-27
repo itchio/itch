@@ -2,10 +2,6 @@
 $download-cover-height: 80px;
 $download-cover-width: $download-cover-height * $grid-item-ratio;
 
-$download-progress-color-out: $sidebar-background-color;
-$download-progress-color-in-a: rgba(255, 255, 255, .1);
-$download-progress-color-in-b: rgba(255, 255, 255, .4);
-
 .downloads-page {
   @include meat;
   overflow-y: auto;
@@ -69,27 +65,8 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
       max-width: 400px;
 
       .progress {
-        position: relative;
-        height: 3px;
-        width: 100%;
         margin: 10px 0;
-
-        background: $download-progress-color-out;
-        transition: background 1s;
-
-        .progress-inner {
-          position: absolute;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          background-color: lighten($sidebar-background-color, 20%);
-          background-image: -webkit-repeating-linear-gradient(
-            -60deg,
-            $download-progress-color-in-a 0,
-            $download-progress-color-in-a 4px,
-            $download-progress-color-in-b 4px,
-            $download-progress-color-in-b 8px);
-        }
+        @include progress;
       }
     }
 

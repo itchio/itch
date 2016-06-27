@@ -38,8 +38,8 @@ class DownloadRow extends Component {
   }
 
   controls () {
-    const {active, first, paused, item, retry} = this.props
-    const {resumeDownloads, pauseDownloads, prioritizeDownload} = this.props
+    const {t, active, first, paused, item, retry} = this.props
+    const {resumeDownloads, pauseDownloads, prioritizeDownload, cancelDownload} = this.props
     const {id, err} = item
 
     if (!active && err) {
@@ -58,8 +58,13 @@ class DownloadRow extends Component {
         ? <span className='icon icon-triangle-right' onClick={resumeDownloads}/>
         : <span className='icon icon-pause' onClick={pauseDownloads}/>
       )
-      : <span className='icon icon-caret-up' onClick={() => prioritizeDownload(id)}/>
+      : <span className='hint--left' data-hint={t('grid.item.prioritize_download')}>
+        <span className='icon icon-caret-up' onClick={() => prioritizeDownload(id)}/>
+      </span>
     }
+      <span className='hint--left' data-hint={t('grid.item.cancel_download')}>
+        <span className='icon icon-cross' onClick={() => cancelDownload(id)}/>
+      </span>
     </div>
   }
 
