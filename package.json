@@ -118,6 +118,7 @@
     "standard": "^6.0.8",
     "tap-spec": "^4.1.1",
     "tape": "^4.2.1",
+    "time-require": "^0.1.2",
     "zopf": "^4.5.0"
   },
   "scripts": {

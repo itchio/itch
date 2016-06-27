@@ -1,7 +1,6 @@
 
 import {createStore, applyMiddleware, compose} from 'redux'
 import {electronEnhancer} from 'redux-electron-store'
-import createLogger from 'redux-cli-logger'
 
 import route from '../reactors/route'
 import reactors from '../reactors'
@@ -25,6 +24,7 @@ const middleware = [
 const beChatty = process.env.MARCO_POLO === '1'
 
 if (beChatty) {
+  const {createLogger} = require('redux-cli-logger')
   const logger = createLogger({
     predicate: (getState, action) => {
       return !action.MONITOR_ACTION &&
