@@ -145,3 +145,24 @@ needle.get('https://itch.io/api/1/jwt/me', opts, function (error, response) {
 })
 ```
 
+#### Accessing the API key in HTML5 games
+
+The HTML5 environment doesn't grant access to environment variables by design,
+so the itch app injects a global object named `Itch` into the JavaScript runtime.
+
+Here's the proper way to check that it's there:
+
+```javascript
+if (typeof Itch === 'undefined') {
+  // not launched by itch app (regular web browser, missing manifest, etc.)
+} else {
+  // launched by itch app
+  makeRequestWithKey(Itch.env.ITCHIO_API_KEY)
+}
+```
+
+XHR (XMLHTTPRequest / AJAX) requests are normally limited to the host that
+served the javascript: in the case of HTML5 games, an HTTP server is spinned
+up every time the game is launched. The itch app disables the same-origin
+policy so that your HTML5 game can make requests to the itch.io server or
+to your own server somewhere else.
