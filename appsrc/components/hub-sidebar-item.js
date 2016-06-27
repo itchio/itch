@@ -39,20 +39,27 @@ export class HubSidebarItem extends Component {
     }
 
     return connectDragSource(connectDropTarget(<section key={id} style={style} className={classes} onClick={this.onClick} onContextMenu={onContextMenu} onClose={onClose} data-path={path} data-id={id} data-dragging={isDragging}>
-      <span className='label'>{t.format(label)}</span>
-      {count > 0
-        ? <span className='bubble'>{count}</span>
-        : ''
-      }
-      <div className='filler'/>
-      {kbShortcut}
-      {onClose
-        ? <span className='close-icon icon icon-cross' onClick={(e) => {
-          onClose()
-          e.stopPropagation()
-        }}/>
-        : ''
-      }
+      <div className='row'>
+        <span className='label'>{t.format(label)}</span>
+        {count > 0
+          ? <span className='bubble'>{count}</span>
+          : ''
+        }
+        <div className='filler'/>
+        {kbShortcut}
+        {onClose
+          ? <span className='close-icon icon icon-cross' onClick={(e) => {
+            onClose()
+            e.stopPropagation()
+          }}/>
+          : ''
+        }
+      </div>
+      {id === 'downloads'
+      ? <div className='row'>
+      {'38% done'}
+      </div>
+      : ''}
     </section>))
   }
 

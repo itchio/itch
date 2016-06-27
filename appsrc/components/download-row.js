@@ -1,10 +1,10 @@
 
 import React, {Component, PropTypes} from 'react'
+import classNames from 'classnames'
 import {connect} from './connect'
 import getDominantColor from './get-dominant-color'
 import humanize from 'humanize-plus'
 
-import defaultImages from '../constants/default-images'
 import * as actions from '../actions'
 
 import NiceAgo from './nice-ago'
@@ -17,13 +17,18 @@ class DownloadRow extends Component {
   }
 
   render () {
-    const {item, navigateToGame} = this.props
+    const {first, item, navigateToGame} = this.props
 
     const {game, id} = item
-    const coverUrl = game.coverUrl || defaultImages.thumbnail
-    const coverStyle = {backgroundImage: `url("${coverUrl}")`}
+    const coverUrl = game.stillCoverUrl || game.coverUrl
+    const coverStyle = {}
+    if (coverUrl) {
+      coverStyle.backgroundImage = `url("${coverUrl}")`
+    }
 
-    return <li key={id} className='history-item'>
+    const itemClasses = classNames('history-item', {first})
+
+    return <li key={id} className={itemClasses}>
       <div className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
       <div className='stats'>
         {this.progress()}
@@ -78,7 +83,7 @@ class DownloadRow extends Component {
         <GameActions game={game} showSecondary/>
       </div>
     }
-    const {date, progress = 0, reason} = item
+    const {game, date, progress = 0, reason} = item
 
     const progressInnerStyle = {
       width: (progress * 100) + '%'
@@ -89,14 +94,19 @@ class DownloadRow extends Component {
     }
 
     const perc = (progress * 100).toFixed(1) + '%'
-    const sizeLeft = item.totalSize ? humanize.fileSize(item.totalSize * (1 - progress)) : t('status.downloads.unknown_size')
+    const sizeDone = item.totalSize ? humanize.fileSize(item.totalSize * (1 - progress)) : ''
+    const totalSize = item.totalSize ? humanize.fileSize(item.totalSize) : t('status.downloads.unknown_size')
     const reasonText = this.reasonText(reason)
 
     return <div>
       <div className='progress'>
         <div className='progress-inner' style={progressInnerStyle}/>
       </div>
-      {perc} done, {sizeLeft} left
+      {game.title} — {perc}
+      {item.totalSize
+      ? <span>, {sizeDone} / {totalSize}</span>
+      : ''
+      }
       <div className='timeago'>
         Started <NiceAgo date={date}/>
         {reasonText ? ` — ${reasonText}` : ''}

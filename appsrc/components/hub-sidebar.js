@@ -76,9 +76,11 @@ export class HubSidebar extends Component {
           return <HubSidebarItem {...props}/>
         })}
         <section className='hub-sidebar-item new-tab' onClick={newTab}>
-          <span className='symbol icon icon-plus'/>
-          <span className='label'>{t('sidebar.new_tab')}</span>
-          <div className='filler'/>
+          <div className='row'>
+            <span className='symbol icon icon-plus'/>
+            <span className='label'>{t('sidebar.new_tab')}</span>
+            <div className='filler'/>
+          </div>
         </section>
       </div>
 

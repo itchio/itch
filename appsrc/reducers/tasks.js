@@ -15,7 +15,10 @@ const initialState = {
       game: {
         title: 'Sample game'
       },
-      finished: (i >= 5)
+      finished: (i >= 5),
+      reason: 'install',
+      progress: (i + 3) * 0.1,
+      totalSize: i * 304138
     }
   }),
   downloadsPaused: false

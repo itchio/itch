@@ -46,9 +46,15 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
 
   li {
     flex-shrink: 0;
-    line-height: 1.8;
-    margin: 10px 0 10px 0;
+    line-height: 1.6;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0 0 0;
     cursor: default;
+
+    &.first {
+      background-color: $explanation-color;
+    }
 
     .timeago {
       font-size: 80%;
@@ -88,8 +94,10 @@ $download-progress-color-in-b: rgba(255, 255, 255, .4);
     }
 
     .cover {
+      @include default-cover-background;
       width: 120px;
       height: 80px;
+      border-radius: 2px;
       margin-right: 20px;
       background-size: cover;
       background-position: 50% 50%;

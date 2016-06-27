@@ -54,35 +54,6 @@
     transform: rotateX(180deg);
   }
 
-  &.mini {
-    .me img {
-      margin: 0 auto;
-    }
-
-    .sidebar-items {
-      align-items: center;
-    }
-
-    .hub-sidebar-item {
-      width: 100%;
-      border-width: 0;
-      border-radius: 0;
-      padding: 0;
-
-      .label, .bubble, .filler, .kb-shortcut, .me-dropdown, .close-icon {
-        display: none;
-      }
-    }
-
-    .symbol {
-      margin: 0 auto !important;
-    }
-
-    h2 {
-      display: none;
-    }
-  }
-
   &.osx:not(.fullscreen) .title-bar-padder {
     flex-basis: 20px;
     flex-shrink: 0;
@@ -104,12 +75,19 @@
 
     flex-shrink: 0;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     margin: 2px 0;
     margin-right: 0;
     // padding: 5px 8px 5px 3px;
     padding: 5px 8px 5px 10px;
     min-height: 30px;
+
+    .row {
+      display: flex;
+      flex-shrink: 0;
+      flex-direction: row;
+      align-items: center;
+    }
 
     &:hover {
       cursor: pointer;
