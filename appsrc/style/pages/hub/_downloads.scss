@@ -1,5 +1,5 @@
 
-$download-cover-height: 80px;
+$download-cover-height: 120px;
 $download-cover-width: $download-cover-height * $grid-item-ratio;
 
 .downloads-page {
@@ -43,12 +43,12 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
   li {
     flex-shrink: 0;
     line-height: 1.6;
-    border-radius: 4px;
-    padding: 10px 5px 10px 15px;
-    margin: 10px 0 0 0;
+    border-radius: 2px;
+    padding: 7px 5px 7px 10px;
+    margin: 10px 0px 5px 0px;
     cursor: default;
 
-    max-width: 700px;
+    max-width: 800px;
 
     border: 1px solid transparent;
 
@@ -66,17 +66,33 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
 
     &.dimmed {
       .cover, .progress {
-        -webkit-filter: grayscale(100%) brightness(60%);
+        -webkit-filter: grayscale(100%) brightness(50%);
       }
 
-      .controls {
+      .controls, .game-title {
         color: $secondary-text-color;
       }
+
+      .stats {
+        color: darken($secondary-text-color, 10%);
+      }
+    }
+
+    .game-title {
+      @include single-line;
+      max-width: 500px;
     }
 
     .timeago {
       font-size: 80%;
       color: $secondary-text-color;
+      display: flex;
+      flex-direction: row;
+
+      .filler {
+        flex-grow: 1;
+        min-width: 20px;
+      }
     }
 
     display: flex;
@@ -86,8 +102,13 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
       flex-grow: 1;
 
       .progress {
-        margin: 10px 0;
         @include progress;
+        margin: 10px 0;
+        height: 5px;
+
+        &, &.progress-inner {
+          border-radius: 5px;
+        }
       }
     }
 

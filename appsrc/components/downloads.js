@@ -3,7 +3,7 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from './connect'
 import {createStructuredSelector} from 'reselect'
 
-import {map} from 'underline'
+import {map, first, rest} from 'underline'
 import * as actions from '../actions'
 
 import DownloadRow from './download-row'
@@ -15,7 +15,7 @@ class Downloads extends Component {
   }
 
   render () {
-    const {t, items, finishedItems, paused} = this.props
+    const {t, items, finishedItems} = this.props
     const {clearFinishedDownloads} = this.props
 
     const hasItems = (items.length + finishedItems.length) > 0
@@ -27,10 +27,32 @@ class Downloads extends Component {
       </ul>
     }
 
+    const firstItem = items::first()
+    const queuedItems = items::rest()
+
     return <ul className='downloads-page'>
-    {items::map((item, i) =>
-      <DownloadRow key={item.id} item={item} first={i === 0} paused={paused} active/>
-    )}
+
+    {firstItem
+    ? <div className='section-bar'>
+      <h2>{t('status.downloads.category.active')}</h2>
+    </div>
+    : ''}
+
+    {firstItem
+    ? <DownloadRow key={firstItem.id} item={firstItem} first active/>
+    : ''}
+
+    {queuedItems.length > 0
+    ? <div className='section-bar'>
+      <h2>{t('status.downloads.category.queued')}</h2>
+    </div>
+    : ''}
+    {queuedItems.length > 0
+    ? queuedItems::map((item, i) =>
+      <DownloadRow key={item.id} item={item} active/>
+    )
+    : ''}
+
     {finishedItems.length > 0
       ? [
         <div className='section-bar'>
@@ -57,7 +79,6 @@ const arrayOfUploads = PropTypes.arrayOf(PropTypes.shape({
 Downloads.propTypes = {
   items: arrayOfUploads,
   finishedItems: arrayOfUploads,
-  paused: PropTypes.bool,
 
   t: PropTypes.func.isRequired,
   navigateToGame: PropTypes.func.isRequired,
@@ -66,8 +87,7 @@ Downloads.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   items: (state) => state.downloads.downloadsByOrder::map((id) => state.downloads.downloads[id]),
-  finishedItems: (state) => state.downloads.finishedDownloads::map((id) => state.downloads.downloads[id]),
-  paused: (state) => state.downloads.downloadsPaused
+  finishedItems: (state) => state.downloads.finishedDownloads::map((id) => state.downloads.downloads[id])
 })
 
 const mapDispatchToProps = (dispatch) => ({

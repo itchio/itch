@@ -38,7 +38,7 @@ class DownloadRow extends Component {
   }
 
   controls () {
-    const {t, active, first, paused, item, retry} = this.props
+    const {t, active, first, item, retry, downloadsPaused} = this.props
     const {resumeDownloads, pauseDownloads, prioritizeDownload, cancelDownload} = this.props
     const {id, err} = item
 
@@ -58,7 +58,7 @@ class DownloadRow extends Component {
 
     return <div className='controls'>
     {first
-      ? (paused
+      ? (downloadsPaused
         ? <span className='icon icon-triangle-right' onClick={resumeDownloads}/>
         : <span className='icon icon-pause' onClick={pauseDownloads}/>
       )
@@ -102,33 +102,32 @@ class DownloadRow extends Component {
       progressInnerStyle.backgroundColor = dominantColor
     }
 
-    const perc = (progress * 100).toFixed(1) + '%'
     const sizeDone = item.totalSize ? humanize.fileSize(item.totalSize * progress) : ''
     const totalSize = item.totalSize ? humanize.fileSize(item.totalSize) : t('status.downloads.unknown_size')
     const reasonText = this.reasonText(reason)
 
     return <div>
+      <div className='game-title'>{game.title}</div>
       <div className='progress'>
         <div className='progress-inner' style={progressInnerStyle}/>
       </div>
-      {game.title}
-      {' — '}
-      {perc}
-      {item.totalSize
-        ? <span>, {sizeDone} / {totalSize}</span>
-        : ''
-      }
       <div className='timeago'>
       {first
-      ? (downloadsPaused
-        ? <div>{t('grid.item.downloads_paused')}</div>
-        : <div>
-          Started <NiceAgo date={date}/>
-          {reasonText ? ` — ${reasonText}` : ''}
-        </div>)
-      : <div>{t('grid.item.queued')}</div>
+      ? <div>
+        Started <NiceAgo date={date}/>
+        {reasonText ? ` — ${reasonText}` : ''}
+      </div>
+      : t('grid.item.queued')
       }
-
+        <div className='filler'/>
+        <div>
+        {downloadsPaused
+        ? <div className='paused'>{t('grid.item.downloads_paused')}</div>
+        : (item.totalSize
+          ? <span>{sizeDone} / {totalSize}</span>
+          : ''
+        )}
+        </div>
       </div>
     </div>
   }
@@ -158,7 +157,6 @@ class DownloadRow extends Component {
 DownloadRow.propTypes = {
   first: PropTypes.bool,
   active: PropTypes.bool,
-  paused: PropTypes.bool,
   item: PropTypes.shape({
     upload: PropTypes.object
   }),
