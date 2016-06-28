@@ -65,6 +65,7 @@
     align-items: stretch;
     flex-direction: column;
 
+    overflow-x: hidden;
     overflow-y: auto;
   }
 
@@ -91,9 +92,23 @@
 
       .progress-outer {
         @include progress;
+        width: 60px;
         height: 4px;
-        border-radius: 4px;
         margin: 4px 0 2px 0;
+
+        &, .progress-inner {
+          border-radius: 4px;
+        }
+
+        .progress-inner {
+          background-color: white;
+        }
+      }
+
+      &.sublabel {
+        color: $secondary-text-color;
+        margin: 7px 0 6px 0;
+        font-size: 14px;
       }
     }
 

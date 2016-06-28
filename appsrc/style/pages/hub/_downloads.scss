@@ -52,6 +52,10 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
 
     border: 1px solid transparent;
 
+    &.finished {
+      cursor: pointer;
+    }
+
     &.first, &:hover {
       background-color: $explanation-color;
     }

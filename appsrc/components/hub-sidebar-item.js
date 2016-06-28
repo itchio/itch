@@ -27,10 +27,10 @@ export class HubSidebarItem extends Component {
   }
 
   render () {
-    const {t, count, progress, id, path, label, active, kbShortcut} = this.props
+    const {t, count, sublabel, progress, id, path, label, active} = this.props
     const {isDragging, connectDragSource, connectDropTarget, onClose, onContextMenu} = this.props
 
-    const classes = classNames('hub-sidebar-item', {active})
+    const classes = classNames('hub-sidebar-item', {active, ['hint--bottom']: sublabel})
     const style = {}
     const {dominantColor} = this.state
 
@@ -38,7 +38,7 @@ export class HubSidebarItem extends Component {
       style.borderColor = dominantColor
     }
 
-    return connectDragSource(connectDropTarget(<section key={id} style={style} className={classes} onClick={this.onClick} onContextMenu={onContextMenu} onClose={onClose} data-path={path} data-id={id} data-dragging={isDragging}>
+    return connectDragSource(connectDropTarget(<section key={id} style={style} className={classes} data-hint={sublabel} onClick={this.onClick} onContextMenu={onContextMenu} onClose={onClose} data-path={path} data-id={id} data-dragging={isDragging}>
       <div className='row'>
         <span className='label'>{t.format(label)}</span>
         {count > 0
@@ -46,7 +46,11 @@ export class HubSidebarItem extends Component {
           : ''
         }
         <div className='filler'/>
-        {kbShortcut}
+        {progress > 0
+        ? <div className='progress-outer'>
+          <div className='progress-inner' style={{width: `${Math.max(0, Math.min(1, progress)) * 100}%`}}/>
+        </div>
+        : ''}
         {onClose
           ? <span className='close-icon icon icon-cross' onClick={(e) => {
             onClose()
@@ -55,13 +59,6 @@ export class HubSidebarItem extends Component {
           : ''
         }
       </div>
-      {progress > 0
-      ? <div className='row'>
-        <div className='progress-outer'>
-          <div className='progress-inner' style={{width: `${Math.max(0, Math.min(1, progress)) * 100}%`}}/>
-        </div>
-      </div>
-      : ''}
     </section>))
   }
 

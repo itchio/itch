@@ -8,7 +8,8 @@ import humanize from 'humanize-plus'
 import * as actions from '../actions'
 
 import NiceAgo from './nice-ago'
-import GameActions from './game-actions'
+
+const noop = () => {}
 
 class DownloadRow extends Component {
   constructor () {
@@ -17,7 +18,7 @@ class DownloadRow extends Component {
   }
 
   render () {
-    const {first, active, item, navigateToGame} = this.props
+    const {first, active, item, navigateToGame, cancelDownload} = this.props
 
     const {game, id} = item
     const coverUrl = game.stillCoverUrl || game.coverUrl
@@ -26,9 +27,13 @@ class DownloadRow extends Component {
       coverStyle.backgroundImage = `url("${coverUrl}")`
     }
 
-    const itemClasses = classNames('history-item', {first, dimmed: (active && !first)})
+    const itemClasses = classNames('history-item', {first, dimmed: (active && !first), finished: !active})
+    const onItemClick = active ? noop : () => {
+      navigateToGame(game)
+      cancelDownload(id)
+    }
 
-    return <li key={id} className={itemClasses}>
+    return <li key={id} className={itemClasses} onClick={onItemClick}>
       <div className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
       <div className='stats'>
         {this.progress()}
@@ -89,7 +94,6 @@ class DownloadRow extends Component {
       const {game} = item
       return <div>
         {game.title}
-        <GameActions game={game}/>
       </div>
     }
     const {game, date, progress = 0, reason} = item

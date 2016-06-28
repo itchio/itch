@@ -23,7 +23,7 @@ function versionString () {
 export class HubSidebar extends Component {
   render () {
     const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
-      navigate, counts, progresses, closeTab, closeAllTabs, moveTab, openTabContextMenu, newTab, searchLoading} = this.props
+      navigate, counts, progresses, sublabels, closeTab, closeAllTabs, moveTab, openTabContextMenu, newTab, searchLoading} = this.props
     const classes = classNames('hub-sidebar', {osx, fullscreen})
     const sidebarStyle = {
       width: sidebarWidth + 'px'
@@ -78,8 +78,11 @@ export class HubSidebar extends Component {
           const onContextMenu = () => openTabContextMenu(id)
           const count = counts[id]
           const progress = progresses[id]
+          const sublabel = sublabels[id]
 
-          const props = {index, id, path, label, icon, iconImage, active, onClick, count, progress, onClose, onContextMenu, moveTab, data, t}
+          const props = {index, id, path, label, icon, iconImage, active,
+            onClick, count, progress, onClose, onContextMenu, moveTab, data, t,
+            sublabel}
           return <HubSidebarItem {...props}/>
         })}
         <section className='hub-sidebar-item new-tab' onClick={newTab}>
@@ -252,7 +255,14 @@ const mapStateToProps = createStructuredSelector({
 
   progresses: (state) => ({
     downloads: state.downloads.progress
-  })
+  }),
+
+  sublabels: (state) => {
+    const {activeDownload} = state.downloads
+    return {
+      downloads: (activeDownload && activeDownload.progress > 0 && `${activeDownload.game.title} — ${(activeDownload.progress * 100).toFixed()}%`)
+    }
+  }
 })
 
 const mapDispatchToProps = (dispatch) => ({
