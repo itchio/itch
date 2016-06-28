@@ -38,6 +38,31 @@ export default handleActions({
     }}
   },
 
+  DOWNLOAD_STARTED: (state, action) => {
+    const {tabs, tabData} = state
+    const {transient} = tabs
+
+    const has = transient.indexOf('downloads') > 0
+    if (has) {
+      return state
+    }
+
+    return {
+      ...state,
+      tabs: {
+        ...tabs,
+        transient: [ ...transient, 'downloads' ]
+      },
+      tabData: {
+        ...tabData,
+        downloads: {
+          ...staticTabData['downloads'],
+          path: 'downloads'
+        }
+      }
+    }
+  },
+
   FILTER_CHANGED: (state, action) => {
     const {tab, query} = action.payload
     const oldFilters = state.filters
