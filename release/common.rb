@@ -163,7 +163,7 @@ module Itch
 
   # enforce success of a command
   def Itch.✓ (val)
-    raise "Non-zero exit code, bailing out" unless val
+    raise "Non-zero exit code (#{val}), bailing out" unless val
   end
 
   # retry command a few times before giving up
