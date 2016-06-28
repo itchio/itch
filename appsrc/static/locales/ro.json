@@ -8,7 +8,7 @@
     "grid.item.installing": "Se instalează...",
     "grid.item.launch": "Lansează",
     "grid.item.not_platform_compatible": "Nu e disponibil pe {{platform}}",
-    "grid.item.queued": "În așteptare...",
+    "grid.item.queued": "Pus în așteptare",
     "grid.item.running": "Se rulează…",
     "grid.item.uninstalling": "Se dezinstalează…",
     "login.action.login": "Conectare",
@@ -176,5 +176,12 @@
     "prompt.deb_policy.detail": "itch poate instala aplicaţii Linux numai în varianta lor \"portabilă\".",
     "prompt.deb_policy.message": "{{title}} foloseşte formatul .deb, şi nu poate fi instalat cu itch până nu este reîmpachetat.",
     "prompt.deb_policy.title": "Pachetele în format APT nu sunt compatibile cu itch",
-    "prompt.forget_session.action": "Uită sesiunea curentă"
+    "prompt.forget_session.action": "Uită sesiunea curentă",
+    "onboarding.owned.title_warm_welcome": "Ai ajuns!",
+    "prompt.forget_session.detail": "Poţi oricând să o adaugi la loc mai târziu.",
+    "prompt.forget_session.message": "Sigur vrei să ştergi '{{username}}' din lista de sesiuni salvate?",
+    "prompt.forget_session.title": "Uită sesiunea",
+    "prompt.install_location_not_empty.detail": "Deocamdată aceasta este o operaţiune manuală.",
+    "prompt.logout_action": "Deconectare",
+    "prompt.logout_title": "Deconectare"
 }
