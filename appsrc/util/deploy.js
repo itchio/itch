@@ -6,10 +6,12 @@ import sf from './sf'
 import noop from './noop'
 import butler from './butler'
 
-import path from 'path'
+import ospath from 'path'
 
 import mklog from './log'
 const log = mklog('deploy')
+
+import mv from '../promised/mv'
 
 let pnoop = async () => null
 
@@ -30,10 +32,10 @@ let self = {
     }
 
     const {stagePath, destPath, onProgress = noop, onSingle = pnoop} = opts
-    const stageFiles = await sf.glob('**', {cwd: stagePath, dot: true})
+    const stageFiles = await sf.glob('**', {cwd: stagePath, dot: true, nodir: true})
 
     if (stageFiles.length === 1) {
-      let onlyFile = path.join(stagePath, stageFiles[0])
+      let onlyFile = ospath.join(stagePath, stageFiles[0])
       let res = await onSingle(onlyFile)
       if (res && res.deployed) {
         // onSingle returning true means it's been handled upstraem
@@ -45,7 +47,7 @@ let self = {
 
     log(opts, `cleaning up dest path ${destPath}`)
 
-    const receiptPath = path.join(destPath, '.itch', 'receipt.json')
+    const receiptPath = ospath.join(destPath, '.itch', 'receipt.json')
     let destFiles = []
 
     try {
@@ -58,7 +60,7 @@ let self = {
     }
     if (!destFiles.length) {
       log(opts, 'Globbing for destfiles')
-      destFiles = await sf.glob('**', {cwd: destPath, dot: true})
+      destFiles = await sf.glob('**', {cwd: destPath, dot: true, nodir: true})
     }
 
     log(opts, `dest has ${destFiles.length} potential dinosaurs`)
@@ -69,17 +71,23 @@ let self = {
       log(opts, `example dinosaurs: ${JSON.stringify(dinosaurs.slice(0, 10), null, 2)}`)
 
       await bluebird.map(dinosaurs, (rel) => {
-        let dinosaur = path.join(destPath, rel)
+        let dinosaur = ospath.join(destPath, rel)
         return butler.wipe(dinosaur)
       }, {concurrency: 4})
     } else {
       log(opts, 'no dinosaurs')
     }
 
-    log(opts, 'copying stage to dest')
-    await butler.ditto(stagePath, destPath, {
-      onProgress
-    })
+    log(opts, 'moving files from stage to dest')
+    const numStageFiles = stageFiles.length
+    let n = 0
+    await bluebird.map(stageFiles, async function (rel) {
+      const before = ospath.join(stagePath, rel)
+      const after = ospath.join(destPath, rel)
+      await mv(before, after, {mkdirp: true})
+      n++
+      onProgress({percent: (n * 100 / numStageFiles)})
+    }, {concurrency: 4})
 
     log(opts, 'everything copied, writing receipt')
     let cave = opts.cave || {}
