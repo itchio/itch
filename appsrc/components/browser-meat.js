@@ -278,7 +278,8 @@ export class BrowserMeat extends Component {
     const {browserState} = this.state
 
     const {goBack, goForward, stop, reload, openDevTools, loadURL} = this
-    const controlProps = {tabPath, tabData, browserState, goBack, goForward, stop, reload, openDevTools, loadURL}
+    const frozen = this.isFrozen()
+    const controlProps = {tabPath, tabData, browserState, goBack, goForward, stop, reload, openDevTools, loadURL, frozen}
 
     let context = ''
     if (controls === 'game') {
@@ -290,10 +291,7 @@ export class BrowserMeat extends Component {
     })
 
     return <div className='browser-meat'>
-      {this.isFrozen()
-        ? ''
-        : <BrowserBar {...controlProps}/>
-      }
+      <BrowserBar {...controlProps}/>
       <div className='browser-main'>
         <div className={shellClasses} ref='webviewShell'></div>
         {context}

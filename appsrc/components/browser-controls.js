@@ -4,6 +4,8 @@ import React, {PropTypes, Component} from 'react'
 import {connect} from './connect'
 import classNames from 'classnames'
 
+import * as actions from '../actions'
+
 export class BrowserControls extends Component {
   constructor () {
     super()
@@ -15,13 +17,16 @@ export class BrowserControls extends Component {
     this.addressKeyUp = ::this.addressKeyUp
     this.addressBlur = ::this.addressBlur
     this.onAddressField = ::this.onAddressField
+    this.popOutBrowser = ::this.popOutBrowser
   }
 
   render () {
     const {editingURL} = this.state
-    const {browserState} = this.props
+    const {t, browserState} = this.props
     const {canGoBack, canGoForward, loading, url = ''} = browserState
-    const {goBack, goForward, stop, reload} = this.props
+    const {goBack, goForward, stop, reload, frozen} = this.props
+
+    const addressClasses = classNames('browser-address', {frozen, visible: (url && url.length)})
 
     return <div className='browser-controls'>
       <span className={classNames('icon icon-arrow-left', {disabled: !canGoBack})} onClick={goBack}/>
@@ -32,16 +37,21 @@ export class BrowserControls extends Component {
         : <span className='icon icon-repeat' onClick={reload}/>
       }
       {editingURL
-        ? <input type='text' ref={this.onAddressField} className='browser-address editing' defaultValue={url} onKeyUp={this.addressKeyUp} onBlur={this.addressBlur}/>
-        : (url && url.length
-          ? <span className='browser-address' onClick={this.startEditingURL}>{url}</span>
-          : '')
+        ? <input type='text' disabled={frozen} ref={this.onAddressField} className='browser-address editing visible' defaultValue={url} onKeyUp={this.addressKeyUp} onBlur={this.addressBlur}/>
+        : <span className={addressClasses} onClick={() => (url && url.length) && this.startEditingURL()}>{url || ''}</span>
       }
-
+      <span className='hint--right' data-hint={t('browser.popout')}>
+        <span className={classNames('icon icon-redo')} onClick={this.popOutBrowser}/>
+      </span>
     </div>
   }
 
+  popOutBrowser () {
+    this.props.openUrl(this.props.browserState.url)
+  }
+
   startEditingURL () {
+    if (this.props.frozen) return
     this.setState({editingURL: true})
   }
 
@@ -90,7 +100,9 @@ BrowserControls.propTypes = {
 }
 
 const mapStateToProps = (state) => ({})
-const mapDispatchToProps = (dispatch) => ({})
+const mapDispatchToProps = (dispatch) => ({
+  openUrl: (url) => dispatch(actions.openUrl(url))
+})
 
 export default connect(
   mapStateToProps,

@@ -10,9 +10,15 @@ import defaultImages from '../constants/default-images'
 import urls from '../constants/urls'
 import {pathToIcon, makeLabel} from '../util/navigation'
 
+import {app} from '../electron'
+
 import Icon from './icon'
 import Dropdown from './dropdown'
 import HubSidebarItem from './hub-sidebar-item'
+
+function versionString () {
+  return `itch v${app.getVersion()}`
+}
 
 export class HubSidebar extends Component {
   render () {
@@ -27,7 +33,7 @@ export class HubSidebar extends Component {
     return <div className={classes} style={sidebarStyle}>
       <div className='title-bar-padder'/>
 
-      <div className='logo'>
+      <div className='logo hint--bottom' onClick={() => navigate('featured')} data-hint={versionString()}>
         <img src='static/images/logos/app-white.svg'/>
       </div>
 
@@ -119,7 +125,7 @@ export class HubSidebar extends Component {
   }
 
   dropdown () {
-    const {viewCreatorProfile, viewCommunityProfile, changeUser, openPreferences, navigate} = this.props
+    const {viewCreatorProfile, viewCommunityProfile, changeUser, openPreferences, navigate, copyToClipboard, quit} = this.props
 
     const items = [
       {
@@ -136,9 +142,33 @@ export class HubSidebar extends Component {
         type: 'separator'
       },
       {
+        icon: 'download',
+        label: ['sidebar.downloads'],
+        onClick: () => navigate('downloads')
+      },
+      {
         icon: 'cog',
         label: ['sidebar.preferences'],
         onClick: openPreferences
+      },
+      {
+        type: 'separator'
+      },
+      {
+        icon: 'checkmark',
+        label: versionString(),
+        onClick: () => copyToClipboard(versionString()),
+        type: 'info'
+      },
+      {
+        icon: 'search',
+        label: ['menu.help.search_issue'],
+        onClick: () => navigate(`url/${urls.itchRepo}/issues/new`)
+      },
+      {
+        icon: 'bug',
+        label: ['menu.help.report_issue'],
+        onClick: () => navigate(`url/${urls.itchRepo}/search?type=Issues`)
       },
       {
         icon: 'lifebuoy',
@@ -149,9 +179,14 @@ export class HubSidebar extends Component {
         type: 'separator'
       },
       {
-        icon: 'exit',
-        label: ['sidebar.log_out'],
+        icon: 'shuffle',
+        label: ['menu.account.change_user'],
         onClick: changeUser
+      },
+      {
+        icon: 'exit',
+        label: ['menu.file.quit'],
+        onClick: quit
       }
     ]
     return <Dropdown items={items} inner={this.me()} updown/>
@@ -231,10 +266,13 @@ const mapDispatchToProps = (dispatch) => ({
   openPreferences: () => dispatch(actions.navigate('preferences')),
   openTabContextMenu: (id) => dispatch(actions.openTabContextMenu({id})),
   newTab: () => dispatch(actions.newTab()),
+  copyToClipboard: (text) => dispatch(actions.copyToClipboard(text)),
 
   focusSearch: (query) => dispatch(actions.focusSearch(query)),
   closeSearch: (query) => dispatch(actions.closeSearch(query)),
-  search: (query) => dispatch(actions.search(query))
+  search: (query) => dispatch(actions.search(query)),
+
+  quit: () => dispatch(actions.quit())
 })
 
 export default connect(

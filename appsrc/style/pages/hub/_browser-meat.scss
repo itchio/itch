@@ -125,6 +125,7 @@ $meat-cover-scale: 0.4;
         height: 33px;
         line-height: 30px;
         margin-left: 4px;
+        margin-right: 14px;
         color: $base-text-color;
         border: 2px solid darken($secondary-text-color, 20%);
         background: #353535;
@@ -136,6 +137,16 @@ $meat-cover-scale: 0.4;
         max-width: 300px;
 
         transition: all 0.4s;
+
+        opacity: 0;
+
+        &.visible {
+          opacity: 1;
+        }
+
+        &.frozen {
+          cursor: not-allowed;
+        }
 
         &.editing {
           text-shadow: 0 0 1px transparent;
