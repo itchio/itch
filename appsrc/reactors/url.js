@@ -7,6 +7,7 @@ const log = mklog('reactors/url')
 import {opts} from '../logger'
 
 import {isItchioURL} from '../util/url'
+import crashReporter from '../util/crash-reporter'
 import urls from '../constants/urls'
 
 import {shell} from '../electron'
@@ -79,4 +80,11 @@ async function viewCommunityProfile (store, action) {
   store.dispatch(actions.navigate('url/' + `${urls.itchio}/profile/${slug}`))
 }
 
-export default {openUrl, handleItchioUrl, sessionReady, viewCreatorProfile, viewCommunityProfile}
+async function reportIssue (store, action) {
+  crashReporter.reportIssue({
+    body: 'I am having the following problem:'
+  })
+}
+
+export default {openUrl, handleItchioUrl, sessionReady, viewCreatorProfile,
+  viewCommunityProfile, reportIssue}

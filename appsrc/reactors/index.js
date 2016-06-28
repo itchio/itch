@@ -108,6 +108,7 @@ export default validateReactors({
   MENU_ACTION: combine(menu.menuAction),
 
   OPEN_URL: combine(url.openUrl),
+  REPORT_ISSUE: combine(url.reportIssue),
   HANDLE_ITCHIO_URL: combine(url.handleItchioUrl),
 
   VIEW_CREATOR_PROFILE: combine(url.viewCreatorProfile),

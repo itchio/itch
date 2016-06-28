@@ -194,6 +194,8 @@ export class BrowserMeat extends Component {
   analyzePage (tabId, url) {
     const {evolveTab} = this.props
 
+    console.log(`analyzing ${tabId} / ${url}`)
+
     const xhr = new window.XMLHttpRequest()
     xhr.responseType = 'document'
     xhr.onreadystatechange = () => {
@@ -376,7 +378,10 @@ const mapStateToProps = createStructuredSelector({
 
 const mapDispatchToProps = (dispatch) => ({
   navigate: (id, data) => dispatch(actions.navigate(id, data)),
-  evolveTab: (id, path) => dispatch(actions.evolveTab({id, path})),
+  evolveTab: (id, path) => {
+    console.log(`evolving ${id} ${path}`)
+    dispatch(actions.evolveTab({id, path}))
+  },
   tabDataFetched: (id, data) => dispatch(actions.tabDataFetched({id, data, timestamp: +new Date()})),
   tabReloaded: (id) => dispatch(actions.tabReloaded({id}))
 })

@@ -125,7 +125,8 @@ export class HubSidebar extends Component {
   }
 
   dropdown () {
-    const {viewCreatorProfile, viewCommunityProfile, changeUser, openPreferences, navigate, copyToClipboard, quit} = this.props
+    const {viewCreatorProfile, viewCommunityProfile, changeUser,
+      openPreferences, navigate, copyToClipboard, quit, reportIssue, openUrl} = this.props
 
     const items = [
       {
@@ -163,12 +164,12 @@ export class HubSidebar extends Component {
       {
         icon: 'search',
         label: ['menu.help.search_issue'],
-        onClick: () => navigate(`url/${urls.itchRepo}/issues/new`)
+        onClick: () => openUrl(`${urls.itchRepo}/search?type=Issues`)
       },
       {
         icon: 'bug',
         label: ['menu.help.report_issue'],
-        onClick: () => navigate(`url/${urls.itchRepo}/search?type=Issues`)
+        onClick: () => reportIssue()
       },
       {
         icon: 'lifebuoy',
@@ -271,6 +272,9 @@ const mapDispatchToProps = (dispatch) => ({
   focusSearch: (query) => dispatch(actions.focusSearch(query)),
   closeSearch: (query) => dispatch(actions.closeSearch(query)),
   search: (query) => dispatch(actions.search(query)),
+
+  reportIssue: () => dispatch(actions.reportIssue()),
+  openUrl: (url) => dispatch(actions.openUrl(url)),
 
   quit: () => dispatch(actions.quit())
 })
