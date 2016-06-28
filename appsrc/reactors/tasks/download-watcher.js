@@ -30,7 +30,6 @@ export async function downloadWatcher (store) {
 }
 
 async function updateDownloadState (store) {
-  log(opts, 'Sleeping for a bit..')
   await delay(DOWNLOAD_DELAY)
 
   const downloadsState = store.getState().downloads
@@ -45,8 +44,7 @@ async function updateDownloadState (store) {
   if (activeDownload) {
     if (!currentDownload || currentDownload.id !== activeDownload.id) {
       log(opts, `${activeDownload.id} is the new active download`)
-      currentDownload = activeDownload
-      start(store, currentDownload)
+      start(store, activeDownload)
     } else {
       log(opts, `Still downloading ${currentDownload.id}`)
     }
@@ -55,7 +53,7 @@ async function updateDownloadState (store) {
       log(opts, 'Cancelling/clearing out last download')
       cancelCurrent()
     } else {
-      log(opts, 'Idle...')
+      // idle
     }
   }
   await setProgress(store, downloadsState.progress)
@@ -86,9 +84,13 @@ async function start (store, download) {
 
   const downloadOpts = download.downloadOpts
 
+  let cancelled = false
   let err
   try {
     currentEmitter.on('progress', ((progress) => {
+      if (cancelled) {
+        return
+      }
       store.dispatch(actions.downloadProgress({id: download.id, progress}))
     })::throttle(250))
 
@@ -108,6 +110,7 @@ async function start (store, download) {
     if (err instanceof Cancelled) {
       // all good, but not ended
       log(opts, 'Download cancelled')
+      cancelled = true
       return
     }
 
