@@ -42,7 +42,7 @@ export default handleActions({
     const {tabs, tabData} = state
     const {transient} = tabs
 
-    const has = transient.indexOf('downloads') > 0
+    const has = transient.indexOf('downloads') >= 0
     if (has) {
       return state
     }
