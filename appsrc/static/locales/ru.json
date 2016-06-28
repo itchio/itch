@@ -10,7 +10,7 @@
     "grid.item.installing": "Установка...",
     "grid.item.launch": "Запустить",
     "grid.item.not_platform_compatible": "Недоступно на {{platform}}",
-    "grid.item.queued": "В очереди...",
+    "grid.item.queued": "В очереди",
     "grid.item.report_problem": "Пожаловаться на неработающее (откроется в браузере)",
     "grid.item.running": "Выполняется…",
     "grid.item.uninstall": "Удалить",
@@ -308,5 +308,10 @@
     "action.name.forums": "Форумы",
     "game.install.could_not_launch.detail": "Последнее, что мы видели: {{error}}",
     "grid.criterion.only_compatible": "Только совместимые",
-    "grid.hidden_count": "+ {{count}} приложений отфильтровано"
+    "grid.hidden_count": "+ {{count}} приложений отфильтровано",
+    "grid.criterion.filter": "Фильтр...",
+    "grid.item.prioritize_download": "Приоритизировать",
+    "grid.item.downloads_paused": "Приостановленные загрузки",
+    "status.downloads.category.active": "Текущие загрузки",
+    "status.downloads.category.queued": "Загрузки в очереди"
 }
