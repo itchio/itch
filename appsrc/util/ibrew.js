@@ -1,5 +1,5 @@
 
-import path from 'path'
+import ospath from 'path'
 import {app} from '../electron'
 import os from './os'
 
@@ -9,6 +9,7 @@ import mklog from './log'
 const log = mklog('ibrew')
 import extract from './extract'
 import sf from './sf'
+import spawn from './spawn'
 
 import formulas from './ibrew/formulas'
 import version from './ibrew/version'
@@ -49,7 +50,7 @@ const self = {
 
     const downloadVersion = async function (v) {
       const archiveName = self.archiveName(name)
-      const archivePath = path.join(self.binPath(), archiveName)
+      const archivePath = ospath.join(self.binPath(), archiveName)
       const archiveUrl = `${channel}/v${v}/${archiveName}`
       onStatus('download', ['login.status.dependency_install', {name, version: v}])
       log(opts, `${name}: downloading '${v}' from ${archiveUrl}`)
@@ -92,6 +93,15 @@ const self = {
         })
         log(opts, `${name}: cleaning up ${formula.format} archive`)
         await sf.wipe(archivePath)
+
+        if (formula.sanityCheck) {
+          log(opts, `${name}: running sanity check '${name} ${formula.sanityCheck.join(' ')}'`)
+          const sanityRes = await spawn.exec({command: ospath.join(self.binPath(), name), args: formula.sanityCheck})
+          if (sanityRes.code !== 0) {
+            throw new Error(`sanity check for ${formula.name} failed with code ${sanityRes.code}, out = ${sanityRes.out}, err = ${sanityRes.err}`)
+          }
+        }
+
         log(opts, `${name}: installed!`)
       }
     }
@@ -155,7 +165,7 @@ const self = {
     }
   },
 
-  binPath: () => path.join(app.getPath('userData'), 'bin'),
+  binPath: () => ospath.join(app.getPath('userData'), 'bin'),
 
   ext: () => (os.platform() === 'win32') ? '.exe' : ''
 }

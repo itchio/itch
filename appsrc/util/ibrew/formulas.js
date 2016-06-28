@@ -28,7 +28,8 @@ self['7za'] = {
  * https://github.com/itchio/butler
  */
 self['butler'] = {
-  format: '7z'
+  format: '7z',
+  sanityCheck: ['-V']
 }
 
 /**
