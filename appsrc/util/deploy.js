@@ -32,7 +32,7 @@ let self = {
     }
 
     const {stagePath, destPath, onProgress = noop, onSingle = pnoop} = opts
-    const stageFiles = await sf.glob('**', {cwd: stagePath, dot: true, nodir: true})
+    const stageFiles = await sf.glob('**', {cwd: stagePath, dot: true, nodir: true, ignore: sf.globIgnore})
 
     if (stageFiles.length === 1) {
       let onlyFile = ospath.join(stagePath, stageFiles[0])
@@ -60,7 +60,7 @@ let self = {
     }
     if (!destFiles.length) {
       log(opts, 'Globbing for destfiles')
-      destFiles = await sf.glob('**', {cwd: destPath, dot: true, nodir: true})
+      destFiles = await sf.glob('**', {cwd: destPath, dot: true, nodir: true, ignore: sf.globIgnore})
     }
 
     log(opts, `dest has ${destFiles.length} potential dinosaurs`)

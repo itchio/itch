@@ -370,6 +370,8 @@ const self = {
    */
   glob,
 
+  globIgnore: ignore,
+
   /**
    * Promised version of readChunk
    * https://www.npmjs.com/package/read-chunk
