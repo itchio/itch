@@ -33,8 +33,10 @@ const self = {
     'exe': 'exe',
     // Books!
     'pdf': 'naked',
-    // Java things
+    // Known naked
     'jar': 'naked',
+    'unitypackage': 'naked',
+    'naked': 'naked',
     // some html games provide a single raw html file
     'html': 'naked'
   },
@@ -93,8 +95,19 @@ const self = {
       return 'archive'
     }
 
-    const type = await fnout.path(archivePath)
-    log(opts, `sniffed type ${JSON.stringify(type)} for ${archivePath}`)
+    let type
+    if (/.(jar|unitypackage)$/i.test(archivePath)) {
+      log(opts, `known naked type for ${archivePath}`)
+      type = {
+        ext: 'naked'
+      }
+    }
+
+    if (!type) {
+      type = await fnout.path(archivePath)
+      log(opts, `sniffed type ${JSON.stringify(type)} for ${archivePath}`)
+    }
+
     if (!type) {
       throw new UnhandledFormat(archivePath)
     }
