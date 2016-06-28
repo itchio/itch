@@ -35,6 +35,12 @@ $secondary-action-bg: #2b2b2b;
     background-size: cover;
     background-position: 50% 50%;
     box-shadow: 0 0 20px rgba(0, 0, 0, .3); // FIXME colors
+
+    position: relative;
+
+    .gif-marker {
+      @include gif-marker;
+    }
   }
 
   .game-stats {

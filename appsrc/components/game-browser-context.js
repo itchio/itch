@@ -17,7 +17,9 @@ import GameBrowserContextActions from './game-browser-context-actions'
 export class GameBrowserContext extends Component {
   constructor () {
     super()
-    this.state = {}
+    this.state = {
+      hover: false
+    }
   }
 
   render () {
@@ -27,13 +29,31 @@ export class GameBrowserContext extends Component {
     const {loading} = browserState
     const barClasses = classNames('browser-context', 'game-browser-context', {loading})
 
+    const {coverUrl, stillCoverUrl} = game
+
+    // FIXME: DRY — duplicate code from HubItem
+    let gif
     const coverStyle = {}
-    if (game.coverUrl) {
-      coverStyle.backgroundImage = `url('${game.coverUrl}')`
+    if (coverUrl) {
+      if (this.state.hover) {
+        coverStyle.backgroundImage = `url('${coverUrl}')`
+      } else {
+        if (stillCoverUrl) {
+          gif = true
+          coverStyle.backgroundImage = `url('${stillCoverUrl}')`
+        } else {
+          coverStyle.backgroundImage = `url('${coverUrl}')`
+        }
+      }
     }
 
     return <div className={barClasses} style={barStyle}>
-      <div className='cover' style={coverStyle}/>
+      <div className='cover' style={coverStyle} onMouseEnter={::this.onMouseEnter} onMouseLeave={::this.onMouseLeave}>
+      {gif
+        ? <span className='gif-marker'>gif</span>
+        : ''
+      }
+      </div>
       <GameStats game={game} mdash={false}/>
       {this.gameActions()}
     </div>
@@ -61,6 +81,14 @@ export class GameBrowserContext extends Component {
         this.setState({dominantColor: getDominantColor.pick(palette)})
       })
     }
+  }
+
+  onMouseEnter () {
+    this.setState({hover: true})
+  }
+
+  onMouseLeave () {
+    this.setState({hover: false})
   }
 }
 

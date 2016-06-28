@@ -28,9 +28,7 @@ export class HubItem extends Component {
         coverStyle.backgroundImage = `url('${coverUrl}')`
       } else {
         if (stillCoverUrl) {
-          if (/.gif$/i.test(coverUrl)) {
-            gif = true
-          }
+          gif = true
           coverStyle.backgroundImage = `url('${stillCoverUrl}')`
         } else {
           coverStyle.backgroundImage = `url('${coverUrl}')`
