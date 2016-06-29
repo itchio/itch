@@ -8,6 +8,7 @@ import shellQuote from 'shell-quote'
 import poker from './poker'
 
 import urls from '../../constants/urls'
+import linuxSandboxTemplate from '../../constants/sandbox-policies/linux-template'
 
 import * as actions from '../../actions'
 
@@ -184,9 +185,13 @@ export default async function launch (out, opts) {
       cmd += ` ${argString}`
     }
     if (isolateApps) {
-      log(opts, 'should write firejail profile file')
+      log(opts, 'generating firejail profile')
+      const sandboxProfilePath = ospath.join(appPath, '.itch', 'isolate-app.profile')
 
-      cmd = `firejail --noprofile -- ${cmd}`
+      const sandboxSource = linuxSandboxTemplate
+      await sf.writeFile(sandboxProfilePath, sandboxSource)
+
+      cmd = `firejail "--profile=${sandboxProfilePath}" -- ${cmd}`
       await doSpawn(exePath, cmd, env, opts)
     } else {
       await doSpawn(exePath, cmd, env, opts)
