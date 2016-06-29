@@ -13,6 +13,8 @@ const log = mklog('sandbox/darwin')
 
 import common from './common'
 
+const INVESTIGATE_SANDBOX = process.env.INVESTIGATE_SANDBOX === '1'
+
 export async function check () {
   const needs = []
   const errors = []
@@ -100,6 +102,11 @@ sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullE
   try {
     await cb({fakeApp})
   } catch (e) { err = e }
+
+  if (INVESTIGATE_SANDBOX) {
+    log(opts, 'waiting forever for someone to investigate the sandbox')
+    await new Promise((resolve, reject) => {})
+  }
 
   log(opts, 'cleaning up fake app')
   await sf.wipe(fakeApp)
