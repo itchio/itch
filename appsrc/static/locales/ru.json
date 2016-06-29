@@ -313,5 +313,7 @@
     "grid.item.prioritize_download": "Приоритизировать",
     "grid.item.downloads_paused": "Приостановленные загрузки",
     "status.downloads.category.active": "Текущие загрузки",
-    "status.downloads.category.queued": "Загрузки в очереди"
+    "status.downloads.category.queued": "Загрузки в очереди",
+    "browser.popout": "Открыть в обычном браузере",
+    "menu.help.about": "О программе"
 }
