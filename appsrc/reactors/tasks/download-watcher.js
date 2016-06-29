@@ -46,7 +46,7 @@ async function updateDownloadState (store) {
       log(opts, `${activeDownload.id} is the new active download`)
       start(store, activeDownload)
     } else {
-      log(opts, `Still downloading ${currentDownload.id}`)
+      // still downloading currentDownload
     }
   } else {
     if (currentDownload) {

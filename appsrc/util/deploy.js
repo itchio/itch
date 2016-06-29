@@ -11,8 +11,6 @@ import ospath from 'path'
 import mklog from './log'
 const log = mklog('deploy')
 
-import mv from '../promised/mv'
-
 let pnoop = async () => null
 
 let self = {
@@ -78,16 +76,10 @@ let self = {
       log(opts, 'no dinosaurs')
     }
 
-    log(opts, 'moving files from stage to dest')
-    const numStageFiles = stageFiles.length
-    let n = 0
-    await bluebird.map(stageFiles, async function (rel) {
-      const before = ospath.join(stagePath, rel)
-      const after = ospath.join(destPath, rel)
-      await mv(before, after, {mkdirp: true})
-      n++
-      onProgress({percent: (n * 100 / numStageFiles)})
-    }, {concurrency: 4})
+    log(opts, 'merging stage with dest')
+    await butler.ditto(stagePath, destPath, {
+      onProgress
+    })
 
     log(opts, 'everything copied, writing receipt')
     let cave = opts.cave || {}
