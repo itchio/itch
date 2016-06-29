@@ -25,6 +25,9 @@ export default `
 
 (deny file*
   (subpath "{{USER_LIBRARY}}/Application Support/itch")
+  (subpath "{{USER_LIBRARY}}/Application Support/kitch")
+  (subpath "{{USER_LIBRARY}}/Application Support/Google")
+  (subpath "{{USER_LIBRARY}}/Application Support/Mozilla")
 )
 
 (allow file*
