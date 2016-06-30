@@ -54,6 +54,7 @@ class MainAction extends Component {
     let branded = false
     if (progress > 0) {
       style.backgroundImage = linearGradient(progress)
+      style.borderColor = '#444'
     } else {
       const {dominantColor} = this.props
       if (dominantColor) {
