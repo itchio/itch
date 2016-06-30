@@ -122,6 +122,10 @@ export default async function launch (out, opts) {
     win.on('close', () => {
       win.webContents.session.clearCache(resolve)
     })
+
+    out.once('cancel', () => {
+      win.close()
+    })
   })
 
   powerSaveBlocker.stop(blockerId)
