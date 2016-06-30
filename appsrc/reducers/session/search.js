@@ -19,8 +19,13 @@ const initialState = {
 }
 
 export default handleActions({
-  SEARCH_QUERY_CHANGED: (state, action) => {
-    return {...state, typedQuery: action.payload}
+  SEARCH: (state, action) => {
+    const typedQuery = action.payload
+    if (!typedQuery) {
+      return state
+    }
+
+    return {...state, typedQuery}
   },
 
   SEARCH_FETCHED: (state, action) => {

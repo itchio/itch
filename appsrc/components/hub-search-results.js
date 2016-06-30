@@ -3,15 +3,16 @@ import React, {Component, PropTypes} from 'react'
 import classNames from 'classnames'
 
 import {connect} from './connect'
-import {createStructuredSelector} from 'reselect'
+import {createSelector, createStructuredSelector} from 'reselect'
 
-import {each} from 'underline'
+import {each, values} from 'underline'
 
 import * as actions from '../actions'
 
 import platformData from '../constants/platform-data'
 import defaultImages from '../constants/default-images'
 import format from '../util/format'
+import Fuse from 'fuse.js'
 
 import Icon from './icon'
 
@@ -86,7 +87,22 @@ export class UserSearchResult extends Component {
 }
 
 export class HubSearchResults extends Component {
+  constructor () {
+    super()
+    this.fuse = new Fuse([], {
+      keys: [
+        { name: 'title', weight: 0.9 },
+        { name: 'shortText', weight: 0.3 }
+      ],
+      threshold: 0.3,
+      include: ['score']
+    })
+  }
+
   render () {
+    const {allGames} = this.props
+    this.fuse.set(allGames)
+
     const {t, search} = this.props
     const {query, open, results} = search
 
@@ -115,7 +131,14 @@ export class HubSearchResults extends Component {
   }
 
   resultsGrid (results) {
-    if (!results || (results.gameResults.result.gameIds.length === 0 && results.userResults.result.userIds.length === 0)) {
+    const {typedQuery} = this.props.search
+    const fuseResults = typedQuery ? this.fuse.search(typedQuery) : []
+
+    const hasRemoteResults = results && (results.gameResults.result.gameIds.length > 0 || results.userResults.result.userIds.length > 0)
+    const hasLocalResults = fuseResults.length > 0
+    console.log(`resultsGrid, remote = ${hasRemoteResults}, local = ${hasLocalResults}`)
+
+    if (!(hasRemoteResults || hasLocalResults)) {
       const {t} = this.props
 
       return <div className='result-list'>
@@ -126,9 +149,26 @@ export class HubSearchResults extends Component {
     const items = []
     const {navigateToGame, navigateToUser, closeSearch, t} = this.props
 
-    const {gameResults, userResults} = results
+    const {gameResults, userResults} = results || {
+      gameResults: {
+        result: { gameIds: [] },
+        entities: {}
+      },
+      userResults: {
+        result: { userIds: [] },
+        entities: []
+      }
+    }
     const {games} = gameResults.entities
     const {users} = userResults.entities
+
+    if (fuseResults.length > 0) {
+      items.push(<h3>{t('search.results.local')}</h3>)
+      fuseResults.slice(0, 5)::each((result) => {
+        const game = result.item
+        items.push(<SearchResult key={`game-${game.id}`} game={game} onClick={() => { navigateToGame(game); closeSearch() }}/>)
+      })
+    }
 
     const {userIds} = userResults.result
     if (userIds.length > 0) {
@@ -176,7 +216,11 @@ HubSearchResults.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   path: (state) => state.session.navigation.path,
-  search: (state) => state.session.search
+  search: (state) => state.session.search,
+  allGames: createSelector(
+    (state) => ((state.market || {}).games || {}),
+    (games) => games::values()
+  )
 })
 
 const mapDispatchToProps = (dispatch) => ({
