@@ -145,6 +145,9 @@
       &:hover {
         color: $secondary-text-color;
       }
+
+      font-weight: bold;
+      @include icon-button;
     }
 
     &:hover {
@@ -233,6 +236,8 @@
         color: $ivory;
         cursor: pointer;
       }
+
+      @include icon-button;
     }
   }
 

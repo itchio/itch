@@ -1,0 +1,12 @@
+
+@mixin icon-button {
+  border-radius: 50%;
+  padding: 3px;
+
+  &:hover {
+    background: #777777;
+    color: #ffffff;
+    text-shadow: 0 0 2px #252424;
+    box-shadow: 0 0 1px white;
+  }
+}
