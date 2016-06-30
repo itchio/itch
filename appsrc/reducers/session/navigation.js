@@ -7,7 +7,7 @@ import uuid from 'node-uuid'
 import SearchExamples from '../../constants/search-examples'
 import staticTabData from '../../constants/static-tab-data'
 
-import {filter} from 'underline'
+import {filter, uniq} from 'underline'
 
 const perish = process.env.PERISH === '1' ? console.log.bind(console) : () => 0
 
@@ -23,6 +23,7 @@ const initialState = {
   binaryFilters: {
     onlyCompatible: true
   },
+  history: [],
   tabData: staticTabData::pick(...baseTabs)::indexBy('id'),
   id: 'featured',
   shortcutsShown: false
@@ -36,6 +37,18 @@ export default handleActions({
       ...oldBinaryFilters,
       [field]: value
     }}
+  },
+
+  TAB_CHANGED: (state, action) => {
+    const {id} = action.payload
+    if (!id) return state
+
+    const newHistory = [id, ...state.history]::uniq()
+
+    return {
+      ...state,
+      history: newHistory
+    }
   },
 
   DOWNLOAD_STARTED: (state, action) => {
@@ -83,7 +96,7 @@ export default handleActions({
   },
 
   NAVIGATE: (state, action) => {
-    const {id, data} = action.payload
+    const {id, data, background} = action.payload
     invariant(typeof id === 'string', 'id must be a string')
     invariant(typeof data === 'object', 'data must be an object')
 
@@ -95,9 +108,15 @@ export default handleActions({
 
     if (tabData[id]) {
       // switching to an existing tab, by id
+      if (background) {
+        return state
+      }
       return {...state, id}
     } else if (tabsByPath[id]) {
       // switching to an existing tab, by path (don't open same game twice, etc.)
+      if (background) {
+        return state
+      }
       const idForPath = tabsByPath[id]
       return {...state, id: idForPath}
     } else {
@@ -123,7 +142,12 @@ export default handleActions({
         }
       }
 
-      return {...state, id: newTab, tabs: newTabs, tabData: newTabData}
+      return {
+        ...state,
+        id: background ? state.id : newTab,
+        tabs: newTabs,
+        tabData: newTabData
+      }
     }
   },
 
@@ -156,7 +180,7 @@ export default handleActions({
   },
 
   CLOSE_TAB: (state, action) => {
-    const {id, tabs, tabData} = state
+    const {id, tabs, tabData, history} = state
     const closeId = action.payload || id
     const {constant, transient} = tabs
 
@@ -170,13 +194,30 @@ export default handleActions({
     const newTransient = transient::reject((x) => x === closeId)
     const newTabData = tabData::omit(closeId)
 
+    let newHistory = history
     let newId = id
     if (id === closeId) {
-      const newIds = constant.concat(newTransient)
-      const numNewIds = newIds.length
+      console.log('closing, id = ', id, ', history = ', history)
+      let found = false
+      if (history.length > 1) {
+        let i
+        for (i = 1; i < history.length; i++) {
+          newId = history[i]
+          if (ids.indexOf(newId) !== -1 && newId !== closeId) {
+            newHistory = history.slice(i + 1)
+            found = true
+            break
+          }
+        }
+      }
 
-      const nextIndex = Math.min(index, numNewIds - 1)
-      newId = newIds[nextIndex]
+      if (!found) {
+        const newIds = constant.concat(newTransient)
+        const numNewIds = newIds.length
+
+        const nextIndex = Math.min(index, numNewIds - 1)
+        newId = newIds[nextIndex]
+      }
     }
 
     return {
@@ -186,6 +227,7 @@ export default handleActions({
         constant,
         transient: newTransient
       },
+      history: newHistory,
       tabData: newTabData
     }
   },
