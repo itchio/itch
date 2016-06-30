@@ -57,6 +57,10 @@ firejail should print a message whenever a permission is denied, which should
 help you pinpoint what it is that your game is doing that isn't allowed
 by the sandbox.
 
+Here's the policy template the itch app uses:
+
+  * <https://github.com/itchio/itch/blob/master/appsrc/constants/sandbox-policies/linux-template.js>
+
 The default sandbox policy should be more than enough to get most games running,
 but if you run into an issue that you need help resolving, feel free to open
 an issue on our [Issue Tracker](https://github.com/itchio/itch/issues)
