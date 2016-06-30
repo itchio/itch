@@ -8,11 +8,14 @@ import urlParser from 'url'
 
 import {map, filter, pluck} from 'underline'
 
+import {shell} from '../electron'
+
 import staticTabData from '../constants/static-tab-data'
 
 import {pathToId, gameToTabData, userToTabData, collectionToTabData, locationToTabData} from '../util/navigation'
 import fetch from '../util/fetch'
 import api from '../util/api'
+import pathmaker from '../util/pathmaker'
 
 import mklog from '../util/log'
 import {opts} from '../logger'
@@ -240,8 +243,11 @@ async function evolveTab (store, action) {
 }
 
 async function probeCave (store, action) {
-  // TODO: uncrunch this
-  store.dispatch(actions.openUrl('https://gist.github.com/fasterthanlime/fc0116df32b53c7939016afe0d26796d'))
+  const {caveId} = action.payload
+
+  const caveLogPath = pathmaker.caveLogPath(caveId)
+  log(opts, `Opening cave log path ${caveLogPath}`)
+  shell.openExternal(caveLogPath)
 }
 
 let pathSelector

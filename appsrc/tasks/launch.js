@@ -195,6 +195,7 @@ export default async function start (out, opts) {
     await launcher(out, gameOpts)
   } catch (e) {
     log(opts, `error while launching ${cave.id}: ${e.stack || e}`)
+
     store.dispatch(actions.openModal({
       title: ['game.install.could_not_launch', {title: game.title}],
       message: ['game.install.could_not_launch', {title: game.title}],
@@ -202,7 +203,14 @@ export default async function start (out, opts) {
       buttons: [
         {
           label: ['grid.item.report_problem'],
+          icon: 'upload-to-cloud',
           action: actions.reportCave({caveId: cave.id})
+        },
+        {
+          label: ['grid.item.probe'],
+          icon: 'bug',
+          className: 'secondary',
+          action: actions.probeCave({caveId: cave.id})
         },
         'cancel'
       ]
