@@ -97,9 +97,9 @@ export function gameToTabData (game) {
     },
     label: game.title,
     subtitle: game.shortText,
-    image: game.coverUrl,
+    image: game.stillCoverUrl || game.coverUrl,
     imageClass: 'game',
-    iconImage: game.coverUrl
+    iconImage: game.stillCoverUrl || game.coverUrl
   }
 }
 
@@ -110,9 +110,9 @@ export function userToTabData (user) {
     },
     label: user.displayName || user.username,
     subtitle: '',
-    image: user.coverUrl,
+    image: user.stillCoverUrl || user.coverUrl,
     imageClass: 'user',
-    iconImage: user.coverUrl
+    iconImage: user.stillCoverUrl || user.coverUrl
   }
 }
 
