@@ -247,7 +247,7 @@ async function probeCave (store, action) {
 
   const caveLogPath = pathmaker.caveLogPath(caveId)
   log(opts, `Opening cave log path ${caveLogPath}`)
-  shell.openExternal(caveLogPath)
+  shell.openItem(caveLogPath)
 }
 
 let pathSelector
