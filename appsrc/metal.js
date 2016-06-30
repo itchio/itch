@@ -34,13 +34,14 @@ function autoUpdateDone () {
     }
   }
 
-  const app = require('electron').app
+  const {app, globalShortcut} = require('electron')
 
   const {
     preboot,
     prepareQuit,
     focusWindow,
-    openUrl
+    openUrl,
+    abortLastGame
   } = require('./actions')
   const store = require('./store').default
 
@@ -61,6 +62,10 @@ function autoUpdateDone () {
     handleUrls(process.argv)
 
     store.dispatch(preboot())
+
+    globalShortcut.register('Control+Alt+Backspace', function () {
+      store.dispatch(abortLastGame())
+    })
   })
 
   app.on('activate', () => {

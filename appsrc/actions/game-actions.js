@@ -19,6 +19,7 @@ import {
   INITIATE_SHARE,
 
   ABORT_GAME_REQUEST,
+  ABORT_LAST_GAME,
   ABORT_GAME,
 
   CHECK_FOR_GAME_UPDATE,
@@ -42,6 +43,7 @@ export const initiateShare = createAction(INITIATE_SHARE)
 export const purchaseCompleted = createAction(PURCHASE_COMPLETED)
 
 export const abortGameRequest = createAction(ABORT_GAME_REQUEST)
+export const abortLastGame = createAction(ABORT_LAST_GAME)
 export const abortGame = createAction(ABORT_GAME)
 
 export const checkForGameUpdate = createAction(CHECK_FOR_GAME_UPDATE)

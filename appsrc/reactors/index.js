@@ -90,6 +90,7 @@ export default validateReactors({
   PROBE_CAVE: combine(navigation.probeCave),
   REPORT_CAVE: combine(report.reportCave),
   ABORT_GAME_REQUEST: combine(dialogs.abortGameRequest),
+  ABORT_LAST_GAME: combine(tasks.abortLastGame),
   ABORT_GAME: combine(tasks.abortGame),
 
   ABORT_TASK: combine(tasks.abortTask),

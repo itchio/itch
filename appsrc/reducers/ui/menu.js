@@ -24,12 +24,6 @@ function computeMenuTemplate (payload) {
           type: 'separator'
         },
         {
-          label: 'crash.test'
-        },
-        {
-          type: 'separator'
-        },
-        {
           label: 'menu.file.close_tab',
           accelerator: 'CmdOrCtrl+W'
         },

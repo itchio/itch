@@ -174,6 +174,7 @@ module.exports = keyMirror({
   RECORD_GAME_INTERACTION: null,
 
   ABORT_GAME_REQUEST: null,
+  ABORT_LAST_GAME: null,
   ABORT_GAME: null,
 
   CHECK_FOR_GAME_UPDATE: null,
