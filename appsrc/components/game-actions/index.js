@@ -65,7 +65,8 @@ MainAction.propTypes = {
   reportCave: PropTypes.func.isRequired,
   cancelCave: PropTypes.func.isRequired,
   initiatePurchase: PropTypes.func.isRequired,
-  browseGame: PropTypes.func.isRequired
+  browseGame: PropTypes.func.isRequired,
+  abortGameRequest: PropTypes.func.isRequired
 }
 
 const makeMapStateToProps = () => {
@@ -127,7 +128,8 @@ const mapDispatchToProps = (dispatch) => ({
   cancelCave: (caveId) => dispatch(actions.cancelCave({caveId})),
   initiatePurchase: (game) => dispatch(actions.initiatePurchase({game})),
   navigate: (path, data) => dispatch(actions.navigate(path, data)),
-  browseGame: (gameId, url) => dispatch(actions.initiatePurchase({gameId, url}))
+  browseGame: (gameId, url) => dispatch(actions.initiatePurchase({gameId, url})),
+  abortGameRequest: (game) => dispatch(actions.abortGameRequest({game}))
 })
 
 export default connect(

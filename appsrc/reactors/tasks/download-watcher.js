@@ -14,7 +14,7 @@ import downloadTask from '../../tasks/download'
 
 import * as actions from '../../actions'
 
-const DOWNLOAD_DELAY = 1000
+const DOWNLOAD_DELAY = 250
 
 let currentDownload = null
 let currentEmitter = null
@@ -37,6 +37,7 @@ async function updateDownloadState (store) {
     if (currentDownload) {
       cancelCurrent()
     }
+    await setProgress(store, -1)
     return
   }
 

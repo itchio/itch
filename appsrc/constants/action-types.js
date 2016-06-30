@@ -134,6 +134,8 @@ module.exports = keyMirror({
   TASK_PROGRESS: null,
   TASK_ENDED: null,
 
+  ABORT_TASK: null,
+
   /* Downloads */
   DOWNLOAD_STARTED: null,
   DOWNLOAD_PROGRESS: null,
@@ -170,6 +172,9 @@ module.exports = keyMirror({
   SHOW_PACKAGING_POLICY: null,
   /** A game has been interacted with! */
   RECORD_GAME_INTERACTION: null,
+
+  ABORT_GAME_REQUEST: null,
+  ABORT_GAME: null,
 
   CHECK_FOR_GAME_UPDATE: null,
   CHECK_FOR_GAME_UPDATES: null,

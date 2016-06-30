@@ -38,6 +38,7 @@ export default `
 
 (allow file-read*
   ;; binaries & executables
+  (subpath "/usr/local")
   (subpath "/usr/share")
   (subpath "/usr/lib")
   (subpath "/usr/bin")

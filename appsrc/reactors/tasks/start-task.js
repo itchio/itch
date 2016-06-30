@@ -12,6 +12,8 @@ import * as actions from '../../actions'
 import {throttle} from 'underline'
 const PROGRESS_THROTTLE = 50
 
+let currentTasks = {}
+
 export async function startTask (store, taskOpts) {
   invariant(taskOpts, 'startTask cannot have null opts')
   invariant(typeof taskOpts.name === 'string', 'startTask opts must contain name')
@@ -45,6 +47,9 @@ export async function startTask (store, taskOpts) {
     const taskRunner = require(`../../tasks/${taskOpts.name}`).default
 
     log(opts, `Starting ${taskOpts.name} (${id})...`)
+    currentTasks[id] = {
+      emitter: out
+    }
     result = await taskRunner(out, extendedOpts)
 
     log(opts, `Checking results for ${taskOpts.name} (${id})...`)
@@ -60,4 +65,13 @@ export async function startTask (store, taskOpts) {
   }
 
   return {err, result}
+}
+
+export async function abortTask (store, action) {
+  const {id} = action.payload
+  const task = currentTasks[id]
+  if (task && task.emitter) {
+    task.emitter.emit('cancel')
+    delete currentTasks[id]
+  }
 }

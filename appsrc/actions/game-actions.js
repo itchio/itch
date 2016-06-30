@@ -18,6 +18,9 @@ import {
   ENCOURAGE_GENEROSITY,
   INITIATE_SHARE,
 
+  ABORT_GAME_REQUEST,
+  ABORT_GAME,
+
   CHECK_FOR_GAME_UPDATE,
   CHECK_FOR_GAME_UPDATES
 } from '../constants/action-types'
@@ -37,6 +40,9 @@ export const initiatePurchase = createAction(INITIATE_PURCHASE)
 export const encourageGenerosity = createAction(ENCOURAGE_GENEROSITY)
 export const initiateShare = createAction(INITIATE_SHARE)
 export const purchaseCompleted = createAction(PURCHASE_COMPLETED)
+
+export const abortGameRequest = createAction(ABORT_GAME_REQUEST)
+export const abortGame = createAction(ABORT_GAME)
 
 export const checkForGameUpdate = createAction(CHECK_FOR_GAME_UPDATE)
 export const checkForGameUpdates = createAction(CHECK_FOR_GAME_UPDATES)

@@ -4,6 +4,7 @@ import invariant from 'invariant'
 
 import {map} from 'underline'
 import shellQuote from 'shell-quote'
+import {EventEmitter} from 'events'
 
 import poker from './poker'
 
@@ -142,14 +143,14 @@ export default async function launch (out, opts) {
       }
 
       await sandbox.within(sandboxOpts, async function ({fakeApp}) {
-        await doSpawn(fullExec, `open -W ${spawn.escapePath(fakeApp)}`, env, opts)
+        await doSpawn(fullExec, `open -W ${spawn.escapePath(fakeApp)}`, env, out, opts)
       })
     } else {
       log(opts, 'no app isolation')
       if (isBundle) {
-        await doSpawn(fullExec, `open -W ${spawn.escapePath(exePath)} --args ${argString}`, env, opts)
+        await doSpawn(fullExec, `open -W ${spawn.escapePath(exePath)} --args ${argString}`, env, out, opts)
       } else {
-        await doSpawn(fullExec, `${spawn.escapePath(exePath)} ${argString}`, env, opts)
+        await doSpawn(fullExec, `${spawn.escapePath(exePath)} ${argString}`, env, out, opts)
       }
     }
   } else if (platform === 'win32') {
@@ -169,7 +170,7 @@ export default async function launch (out, opts) {
 
       cmd = `elevate --runas itch-player salt ${cmd}`
     }
-    await doSpawn(exePath, cmd, env, opts)
+    await doSpawn(exePath, cmd, env, out, opts)
 
     if (isolateApps) {
       const denyRes = await spawn.getOutput({
@@ -192,16 +193,16 @@ export default async function launch (out, opts) {
       await sf.writeFile(sandboxProfilePath, sandboxSource)
 
       cmd = `firejail "--profile=${sandboxProfilePath}" -- ${cmd}`
-      await doSpawn(exePath, cmd, env, opts)
+      await doSpawn(exePath, cmd, env, out, opts)
     } else {
-      await doSpawn(exePath, cmd, env, opts)
+      await doSpawn(exePath, cmd, env, out, opts)
     }
   } else {
     throw new Error(`unsupported platform: ${platform}`)
   }
 }
 
-async function doSpawn (exePath, fullCommand, env, opts) {
+async function doSpawn (exePath, fullCommand, env, emitter, opts) {
   log(opts, `doSpawn ${fullCommand}`)
 
   const cwd = ospath.dirname(exePath)
@@ -213,9 +214,24 @@ async function doSpawn (exePath, fullCommand, env, opts) {
   log(opts, `Args: ${JSON.stringify(args, 0, 2)}`)
   log(opts, `Env keys: ${JSON.stringify(Object.keys(env), 0, 2)}`)
 
+  let spawnEmitter = emitter
+  const platform = os.platform()
+  if (platform === 'darwin') {
+    spawnEmitter = new EventEmitter()
+    emitter.once('cancel', async function () {
+      log(opts, `Asked to cancel, calling pkill with ${exePath}`)
+      const killRes = await spawn.exec({command: 'pkill', args: ['-f', exePath]})
+      if (killRes.code !== 0) {
+        log(opts, `Failed to kill with code ${killRes.code}, out = ${killRes.out}, err = ${killRes.err}`)
+        spawnEmitter.emit('cancel')
+      }
+    })
+  }
+
   const code = await spawn({
     command,
     args,
+    emitter: spawnEmitter,
     onToken: (tok) => log(opts, `stdout: ${tok}`),
     onErrToken: (tok) => log(opts, `stderr: ${tok}`),
     opts: {

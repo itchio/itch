@@ -90,18 +90,22 @@ class MainAction extends Component {
 
   onClick () {
     let {task, cave, game, platformCompatible, mayDownload} = this.props
-    const {reportCave, navigate, queueGame, initiatePurchase, browseGame} = this.props
+    const {reportCave, navigate, queueGame, initiatePurchase, browseGame, abortGameRequest} = this.props
 
     if (task === 'error') {
       reportCave(cave.id)
-    } else if (/^download.*$/.test(task)) {
+    } else if (task === 'download' || task === 'find-upload') {
       navigate('downloads')
     } else {
       if (platformCompatible) {
-        if (mayDownload || cave) {
-          queueGame(game)
-        } else {
-          initiatePurchase(game)
+        if (task === 'launch') {
+          abortGameRequest(game)
+        } else if (!task || task === 'idle') {
+          if (mayDownload || cave) {
+            queueGame(game)
+          } else {
+            initiatePurchase(game)
+          }
         }
       } else {
         browseGame(game.id, game.url)
@@ -172,6 +176,7 @@ MainAction.propTypes = {
   cancelCave: PropTypes.func.isRequired,
   initiatePurchase: PropTypes.func.isRequired,
   browseGame: PropTypes.func.isRequired,
+  abortGameRequest: PropTypes.func.isRequired,
   navigate: PropTypes.func.isRequired
 }
 
