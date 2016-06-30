@@ -49,7 +49,7 @@ export async function taskEnded (store, action) {
     const {gameId} = taskOpts
     const state = store.getState()
     const tab = state.session.navigation.tabData[state.session.navigation.id]
-    log(opts, `game ${gameId} just exited! current tab = ${JSON.stringify(tab, 0, 2)}`)
+    log(opts, `game ${gameId} just exited!`)
 
     if (tab && tab.path === `games/${gameId}`) {
       log(opts, 'encouraging generosity!')
