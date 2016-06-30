@@ -138,7 +138,7 @@ $search-thumbnail-scale: 0.8;
       }
     }
 
-    &:hover {
+    &:hover, &.chosen {
       background: $sidebar-entry-focused-background-color;
       cursor: pointer;
     }

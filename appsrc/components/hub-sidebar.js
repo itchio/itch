@@ -38,7 +38,7 @@ export class HubSidebar extends Component {
       </div>
 
       <section className={searchClasses}>
-        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onQueryChanged} onKeyUp={::this.onQueryChanged} onChange={::this.onQueryChanged} onFocus={::this.onSearchFocus} onBlur={::this.onSearchBlur}/>
+        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onSearchKeyPress} onKeyUp={::this.onSearchKeyPress} onChange={::this.onSearchKeyPress} onFocus={::this.onSearchFocus} onBlur={::this.onSearchBlur}/>
         <span className='icon icon-search'/>
       </section>
 
@@ -108,9 +108,17 @@ export class HubSidebar extends Component {
     setTimeout(this.props.closeSearch, 200)
   }
 
-  onQueryChanged (e) {
+  onSearchKeyPress (e) {
     const {search} = this.refs
     if (!search) return
+
+    if (e.key === 'ArrowDown') {
+      this.props.searchHighlightOffset(1)
+      return
+    } else if (e.key === 'ArrowUp') {
+      this.props.searchHighlightOffset(-1)
+      return
+    }
 
     this.props.search(search.value)
   }
@@ -285,6 +293,8 @@ const mapDispatchToProps = (dispatch) => ({
 
   reportIssue: () => dispatch(actions.reportIssue()),
   openUrl: (url) => dispatch(actions.openUrl(url)),
+
+  searchHighlightOffset: (offset) => dispatch(actions.searchHighlightOffset(offset)),
 
   quit: () => dispatch(actions.quit())
 })

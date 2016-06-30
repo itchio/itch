@@ -21,7 +21,7 @@ const itchPlatform = os.itchPlatform()
 
 export class SearchResult extends Component {
   render () {
-    const {game, onClick} = this.props
+    const {game, onClick, chosen} = this.props
     const {title, stillCoverUrl, coverUrl} = game
 
     const platforms = []
@@ -46,7 +46,8 @@ export class SearchResult extends Component {
     }
 
     const resultClasses = classNames('search-result', {
-      ['not-platform-compatible']: !compatible
+      ['not-platform-compatible']: !compatible,
+      chosen: chosen
     })
 
     return <div className={resultClasses} onClick={onClick}>
@@ -67,15 +68,18 @@ SearchResult.propTypes = {
     title: PropTypes.string,
     coverUrl: PropTypes.string
   }),
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  chosen: PropTypes.bool
 }
 
 export class UserSearchResult extends Component {
   render () {
-    const {user, onClick} = this.props
+    const {user, onClick, chosen} = this.props
     const {displayName, username, stillCoverUrl, coverUrl} = user
 
-    const resultClasses = classNames('search-result', 'user-search-result')
+    const resultClasses = classNames('search-result', 'user-search-result', {
+      chosen
+    })
 
     return <div className={resultClasses} onClick={onClick}>
       <img src={stillCoverUrl || coverUrl || defaultImages.avatar}/>
@@ -97,6 +101,9 @@ export class HubSearchResults extends Component {
       threshold: 0.3,
       include: ['score']
     })
+    this.state = {
+      chosen: 0
+    }
   }
 
   render () {
@@ -131,7 +138,7 @@ export class HubSearchResults extends Component {
   }
 
   resultsGrid (results) {
-    const {typedQuery} = this.props.search
+    const {typedQuery, highlight} = this.props.search
     const fuseResults = typedQuery ? this.fuse.search(typedQuery) : []
 
     const hasRemoteResults = results && (results.gameResults.result.gameIds.length > 0 || results.userResults.result.userIds.length > 0)
@@ -162,11 +169,13 @@ export class HubSearchResults extends Component {
     const {games} = gameResults.entities
     const {users} = userResults.entities
 
+    let index = 0
+
     if (fuseResults.length > 0) {
       items.push(<h3>{t('search.results.local')}</h3>)
       fuseResults.slice(0, 5)::each((result) => {
         const game = result.item
-        items.push(<SearchResult key={`game-${game.id}`} game={game} onClick={() => { navigateToGame(game); closeSearch() }}/>)
+        items.push(<SearchResult key={`game-${game.id}`} game={game} chosen={index++ === highlight} onClick={() => { navigateToGame(game); closeSearch() }}/>)
       })
     }
 
@@ -175,7 +184,7 @@ export class HubSearchResults extends Component {
       items.push(<h3>{t('search.results.creators')}</h3>)
       userResults.result.userIds::each((userId) => {
         const user = users[userId]
-        items.push(<UserSearchResult key={`user-${userId}`} user={user} onClick={() => { navigateToUser(user); closeSearch() }}/>)
+        items.push(<UserSearchResult key={`user-${userId}`} user={user} chosen={index++ === highlight} onClick={() => { navigateToUser(user); closeSearch() }}/>)
       })
     }
 
@@ -184,7 +193,7 @@ export class HubSearchResults extends Component {
       items.push(<h3>{t('search.results.games')}</h3>)
       gameResults.result.gameIds::each((gameId) => {
         const game = games[gameId]
-        items.push(<SearchResult key={`game-${gameId}`} game={game} onClick={() => { navigateToGame(game); closeSearch() }}/>)
+        items.push(<SearchResult key={`game-${gameId}`} game={game} chosen={index++ === highlight} onClick={() => { navigateToGame(game); closeSearch() }}/>)
       })
     }
 

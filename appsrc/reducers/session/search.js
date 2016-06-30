@@ -15,6 +15,7 @@ const initialState = {
   query: '',
   open: false,
   loading: false,
+  highlight: 0,
   results: null
 }
 
@@ -25,7 +26,12 @@ export default handleActions({
       return state
     }
 
-    return {...state, typedQuery}
+    return {...state, typedQuery, highlight: 0}
+  },
+
+  SEARCH_HIGHLIGHT_OFFSET: (state, action) => {
+    const offset = action.payload
+    return {...state, highlight: (state.highlight + offset)}
   },
 
   SEARCH_FETCHED: (state, action) => {

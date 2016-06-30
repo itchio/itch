@@ -208,6 +208,7 @@ module.exports = keyMirror({
   SEARCH_STARTED: null,
   SEARCH_FINISHED: null,
   CLOSE_SEARCH: null,
+  SEARCH_HIGHLIGHT_OFFSET: null,
 
   FILTER_CHANGED: null,
   BINARY_FILTER_CHANGED: null,
