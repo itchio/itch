@@ -161,6 +161,7 @@ export default async function launch (out, opts) {
 
     const grantPath = appPath
     if (isolateApps) {
+      log(opts, 'app isolation enabled')
       const grantRes = await spawn.getOutput({
         command: 'icacls',
         args: [ grantPath, '/grant', 'itch-player:F', '/T', '/Q' ],
@@ -169,6 +170,8 @@ export default async function launch (out, opts) {
       log(opts, `grant output:\n${grantRes}`)
 
       cmd = `elevate --runas itch-player salt ${cmd}`
+    } else {
+      log(opts, 'no app isolation')
     }
     await doSpawn(exePath, cmd, env, out, opts)
 
@@ -195,6 +198,7 @@ export default async function launch (out, opts) {
       cmd = `firejail "--profile=${sandboxProfilePath}" -- ${cmd}`
       await doSpawn(exePath, cmd, env, out, opts)
     } else {
+      log(opts, 'no app isolation')
       await doSpawn(exePath, cmd, env, out, opts)
     }
   } else {
