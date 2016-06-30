@@ -7,6 +7,8 @@ import {connect} from './connect'
 
 import {map, each, filter} from 'underline'
 
+import doesEventMeanBackground from './does-event-mean-background'
+
 import * as actions from '../actions'
 
 export class CollectionHubItem extends Component {
@@ -37,7 +39,7 @@ export class CollectionHubItem extends Component {
       }
     })
 
-    return <div className='hub-item collection-hub-item' onClick={() => navigateToCollection(collection)}>
+    return <div className='hub-item collection-hub-item' onClick={(e) => navigateToCollection(collection, doesEventMeanBackground(e))}>
       <section className='title'>
         {title} ({(collection.gameIds || []).length})
       </section>
@@ -60,9 +62,9 @@ const mapStateToProps = createStructuredSelector({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  navigateToCollection: (collection) => {
+  navigateToCollection: (collection, background) => {
     invariant(typeof collection === 'object', 'collection is an object')
-    dispatch(actions.navigateToCollection(collection))
+    dispatch(actions.navigateToCollection(collection, background))
   }
 })
 

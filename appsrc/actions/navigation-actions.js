@@ -39,19 +39,19 @@ import {
 } from '../constants/action-types'
 
 const _navigate = createAction(NAVIGATE)
-export const navigate = (id, data = {}) => {
+export const navigate = (id, data = {}, background = false) => {
   if (typeof id === 'object') {
     return _navigate(id)
   } else {
-    return _navigate({id, data})
+    return _navigate({id, data, background})
   }
 }
 
 export const focusNthTab = createAction(FOCUS_NTH_TAB)
 
-export const navigateToGame = (game) => navigate(`games/${game.id}`, gameToTabData(game))
-export const navigateToUser = (user) => navigate(`users/${user.id}`, userToTabData(user))
-export const navigateToCollection = (collection) => navigate(`collections/${collection.id}`, collectionToTabData(collection))
+export const navigateToGame = (game, background = false) => navigate(`games/${game.id}`, gameToTabData(game), background)
+export const navigateToUser = (user, background = false) => navigate(`users/${user.id}`, userToTabData(user), background)
+export const navigateToCollection = (collection, background = false) => navigate(`collections/${collection.id}`, collectionToTabData(collection), background)
 
 export const moveTab = createAction(MOVE_TAB)
 export const evolveTab = createAction(EVOLVE_TAB)

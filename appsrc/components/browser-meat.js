@@ -148,7 +148,7 @@ export class BrowserMeat extends Component {
   newWindow (e) {
     const {navigate} = this.props
     const {url} = e
-    navigate('url/' + url)
+    navigate('url/' + url, {}, /* background */ true)
   }
 
   isFrozen (e) {
@@ -377,7 +377,7 @@ const mapStateToProps = createStructuredSelector({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  navigate: (id, data) => dispatch(actions.navigate(id, data)),
+  navigate: (id, data, background) => dispatch(actions.navigate(id, data, background)),
   evolveTab: (id, path) => {
     console.log(`evolving ${id} ${path}`)
     dispatch(actions.evolveTab({id, path}))

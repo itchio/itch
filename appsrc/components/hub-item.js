@@ -5,6 +5,8 @@ import invariant from 'invariant'
 
 import {connect} from './connect'
 
+import doesEventMeanBackground from './does-event-mean-background'
+
 import * as actions from '../actions'
 import GameActions from './game-actions'
 
@@ -44,7 +46,7 @@ export class HubItem extends Component {
         ? <span className='gif-marker'>gif</span>
         : ''
       }
-      <section className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
+      <section className='cover' style={coverStyle} onClick={(e) => navigateToGame(game, doesEventMeanBackground(e))}/>
 
       <section className='undercover'>
         <section className='title'>
@@ -77,9 +79,9 @@ HubItem.propTypes = {
 const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) => ({
-  navigateToGame: (game) => {
+  navigateToGame: (game, background) => {
     invariant(typeof game === 'object', 'game is an object')
-    dispatch(actions.navigateToGame(game))
+    dispatch(actions.navigateToGame(game, background))
   }
 })
 

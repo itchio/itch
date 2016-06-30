@@ -233,11 +233,11 @@ export default handleActions({
   },
 
   CLOSE_ALL_TABS: (state, action) => {
-    const {tabs, tabData} = state
+    const {id, tabs, tabData} = state
     const {constant, transient} = tabs
 
     const newTabData = tabData::omit(...transient)
-    const newId = 'featured'
+    const newId = (constant.indexOf(id) === -1) ? 'featured' : id
 
     return {
       ...state,
