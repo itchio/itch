@@ -7,7 +7,7 @@ import uuid from 'node-uuid'
 import SearchExamples from '../../constants/search-examples'
 import staticTabData from '../../constants/static-tab-data'
 
-import {filter, uniq} from 'underline'
+import {filter} from 'underline'
 
 const perish = process.env.PERISH === '1' ? console.log.bind(console) : () => 0
 
@@ -23,7 +23,7 @@ const initialState = {
   binaryFilters: {
     onlyCompatible: true
   },
-  history: [],
+  lastConstant: 'featured',
   tabData: staticTabData::pick(...baseTabs)::indexBy('id'),
   id: 'featured',
   shortcutsShown: false
@@ -40,14 +40,18 @@ export default handleActions({
   },
 
   TAB_CHANGED: (state, action) => {
+    const {tabs} = state
     const {id} = action.payload
+    const {constant} = tabs
     if (!id) return state
 
-    const newHistory = [id, ...state.history]::uniq()
+    if (constant.indexOf(id) === -1) {
+      return state
+    }
 
     return {
       ...state,
-      history: newHistory
+      lastConstant: id
     }
   },
 
@@ -197,26 +201,14 @@ export default handleActions({
     let newHistory = history
     let newId = id
     if (id === closeId) {
-      console.log('closing, id = ', id, ', history = ', history)
-      let found = false
-      if (history.length > 1) {
-        let i
-        for (i = 1; i < history.length; i++) {
-          newId = history[i]
-          if (ids.indexOf(newId) !== -1 && newId !== closeId) {
-            newHistory = history.slice(i + 1)
-            found = true
-            break
-          }
-        }
-      }
-
-      if (!found) {
+      if (newTransient.length > 0) {
         const newIds = constant.concat(newTransient)
         const numNewIds = newIds.length
 
         const nextIndex = Math.min(index, numNewIds - 1)
         newId = newIds[nextIndex]
+      } else {
+        newId = state.lastConstant
       }
     }
 
