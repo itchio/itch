@@ -76,7 +76,6 @@ export class HubMeat extends Component {
 
 HubMeat.propTypes = {
   id: PropTypes.string.isRequired,
-  me: PropTypes.object,
   games: PropTypes.object,
   myGameIds: PropTypes.array,
   downloadKeys: PropTypes.object,
@@ -91,8 +90,7 @@ const allTabsSelector = createSelector(
 const mapStateToProps = createStructuredSelector({
   id: (state) => state.session.navigation.id,
   tabs: (state) => allTabsSelector(state),
-  tabData: (state) => state.session.navigation.tabData,
-  me: (state) => state.session.credentials.me
+  tabData: (state) => state.session.navigation.tabData
 })
 const mapDispatchToProps = (dispatch) => ({})
 
