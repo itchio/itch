@@ -159,5 +159,6 @@
     "grid.item.open_demo": "Öppna demo",
     "grid.item.open_debug_log": "Öppna felsökningsloggen",
     "grid.item.show_local_files": "Visa installerade filer",
-    "grid.item.version": "Version {{version}}"
+    "grid.item.version": "Version {{version}}",
+    "grid.item.launch_demo": "Starta demo"
 }
