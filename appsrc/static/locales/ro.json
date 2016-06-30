@@ -189,7 +189,7 @@
     "preferences.install_location.item_count": "Număr de produse",
     "preferences.install_location.make_default": "Alege ca locaţie de instalare implicită",
     "prompt.logout_detail": "Descărcările în curs vor fi suspendate până când te conectezi din nou.",
-    "prompt.packaging_policy.learn_more": "Află mai mult",
+    "prompt.packaging_policy.learn_more": "Informaţii suplimentare",
     "prompt.packaging_policy.open_web_page": "Deschide pagina web pentru {{title}}",
     "prompt.payments_disabled.detail": "Poate găseşti alt mijloc de a-i susţine?",
     "prompt.payments_disabled.message": "Din nefericire, creatorii lui {{title}} nu acceptă plăţi pentru acest titlu.",
