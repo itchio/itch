@@ -11,7 +11,7 @@
     "grid.item.launch": "Запустить",
     "grid.item.not_platform_compatible": "Недоступно на {{platform}}",
     "grid.item.queued": "В очереди",
-    "grid.item.report_problem": "Пожаловаться на неработающее (откроется в браузере)",
+    "grid.item.report_problem": "Пожаловаться на неработающее",
     "grid.item.running": "Выполняется…",
     "grid.item.uninstall": "Удалить",
     "grid.item.uninstalling": "Удаление…",
@@ -127,7 +127,7 @@
     "grid.item.open_in_file_explorer_osx": "Показать папку приложения в Finder",
     "grid.item.retry": "Попробовать загрузить / установить / запустить ещё раз",
     "grid.item.purchase_or_donate": "Приобрести или пожертвовать средства приложению",
-    "grid.item.probe": "Открыть журнал событий этого приложения для нахождения причины сбоя (Для опытных пользователей)",
+    "grid.item.probe": "Посмотреть причину сбоя",
     "grid.item.open_in_file_explorer": "Показать папку приложения в Проводнике",
     "grid.item.open_in_file_explorer_linux": "Показать папку приложения в файловом менеджере",
     "prompt.self_update_ready.action.restart": "Перезапустить сейчас",
@@ -315,5 +315,8 @@
     "status.downloads.category.active": "Текущие загрузки",
     "status.downloads.category.queued": "Загрузки в очереди",
     "browser.popout": "Открыть в обычном браузере",
-    "menu.help.about": "О программе"
+    "menu.help.about": "О программе",
+    "prompt.action.force_close": "Закрыть принудительно",
+    "prompt.abort_game.title": "Закрыть приложение принудительно?",
+    "prompt.abort_game.message": "Вы хотите прервать выполнение {[title}}?"
 }
