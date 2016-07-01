@@ -54,7 +54,7 @@ async function boot (store, action) {
     return
   }
 
-  const feedUrl = getFeedURL()
+  const feedUrl = await getFeedURL()
   log(opts, `Update feed: ${feedUrl}`)
   autoUpdater.setFeedURL(feedUrl)
 
@@ -73,7 +73,7 @@ async function boot (store, action) {
 
 async function checkForSelfUpdate (store, action) {
   log(opts, 'Checking...')
-  const uri = getFeedURL()
+  const uri = await getFeedURL()
 
   try {
     const resp = await needle.requestAsync('GET', uri, {format: 'json'})
@@ -151,9 +151,30 @@ async function applySelfUpdate (store, action) {
   autoUpdater.quitAndInstall()
 }
 
-function getFeedURL () {
+async function returnsZero (cmd) {
+  return new Promise((resolve, reject) => {
+    require('child_process').exec(cmd, {}, (err, stdout, stderr) => {
+      if (err) resolve(false)
+      else resolve(true)
+    })
+  })
+}
+
+async function augmentedPlatform () {
+  let platform = os.platform()
+  if (platform === 'linux') {
+    if (await returnsZero('/usr/bin/rpm -q -f /usr/bin/rpm')) {
+      platform = 'rpm'
+    } else if (await returnsZero('/usr/bin/dpkg --search /usr/bin/dpkg')) {
+      platform = 'deb'
+    }
+  }
+  return platform
+}
+
+async function getFeedURL () {
   const base = urls.updateServers[env.channel]
-  const platform = os.platform() + '_' + os.arch()
+  const platform = (await augmentedPlatform()) + '_' + os.arch()
   const version = app.getVersion()
   return `${base}/update/${platform}/${version}`
 }
