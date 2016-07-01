@@ -44,7 +44,8 @@ async function createWindow (store) {
   if (os.platform() === 'darwin') {
     try {
       // TODO: restore once https://github.com/electron/electron/issues/6056 is fixed
-      // app.dock.setIcon(iconPath)
+      console.log(`setting icon to: ${iconPath}`)
+      app.dock.setIcon(iconPath)
     } catch (err) {
       console.log(`error setting icon: ${err.stack || err}`)
     }
