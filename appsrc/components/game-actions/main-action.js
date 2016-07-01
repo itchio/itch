@@ -17,7 +17,7 @@ const linearGradient = (progress) => {
 
 class MainAction extends Component {
   render () {
-    const {t, cancellable, platform, platformCompatible, mayDownload, canBeBought, progress, task, action, animate} = this.props
+    const {t, cancellable, platform, platformCompatible, mayDownload, pressDownload, canBeBought, progress, task, action, animate} = this.props
 
     let child = ''
     if (task) {
@@ -35,7 +35,7 @@ class MainAction extends Component {
         if (mayDownload) {
           child = <span className='state'>
             <Icon icon='install'/>
-            {t('grid.item.install')}
+            {t('grid.item.' + (pressDownload ? 'review' : 'install'))}
           </span>
         } else if (canBeBought) {
           child = <span className='state'>

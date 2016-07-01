@@ -60,6 +60,10 @@
     width: $grid-item-width;
     margin: .5em;
     cursor: default;
+
+    .main-action {
+      @include single-line;
+    }
   }
 
   .hub-filler {

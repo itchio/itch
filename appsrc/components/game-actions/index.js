@@ -77,17 +77,14 @@ const makeMapStateToProps = () => {
       downloadKeys: (state, props) => state.market.downloadKeys,
       task: (state, props) => state.tasks.tasksByGameId[props.game.id],
       download: (state, props) => state.downloads.downloadsByGameId[props.game.id],
-      meId: (state, props) => (state.session.credentials.me || {id: 'anonymous'}).id
+      meId: (state, props) => (state.session.credentials.me || {id: 'anonymous'}).id,
+      mePress: (state, props) => (state.session.credentials.me || {pressUser: false}).pressUser
     }),
     (happenings) => {
-      const {game, cave, downloadKeys, task, download, meId} = happenings
+      const {game, cave, downloadKeys, task, download, meId, mePress} = happenings
 
       const animate = false
       let action = ClassificationActions[game.classification] || 'launch'
-      // TODO: finish implementing that
-      // if (cave && cave.upload && cave.upload.demo) {
-      //   action += '_demo'
-      // }
 
       const platformCompatible = (action === 'open' ? true : isPlatformCompatible(game))
       const cancellable = false
@@ -95,7 +92,15 @@ const makeMapStateToProps = () => {
       const hasMinPrice = game.minPrice > 0
       // FIXME game admins
       const canEdit = game.userId === meId
-      const mayDownload = !!(downloadKey || !hasMinPrice || canEdit)
+      console.log(`for ${game.title}, game press? ${game.inPressSystem}, we press? ${mePress}`)
+      let mayDownload = !!(downloadKey || !hasMinPrice || canEdit)
+      let pressDownload = false
+      if (!mayDownload) {
+        pressDownload = (game.inPressSystem && mePress)
+        if (pressDownload) {
+          mayDownload = true
+        }
+      }
       const canBeBought = game.canBeBought
 
       const downloading = download && !download.finished
@@ -108,6 +113,7 @@ const makeMapStateToProps = () => {
         mayDownload,
         canBeBought,
         downloadKey,
+        pressDownload,
         platformCompatible,
         action,
         task: (task ? task.name : (downloading ? 'download' : (cave ? 'idle' : null))),
