@@ -318,5 +318,5 @@
     "menu.help.about": "О программе",
     "prompt.action.force_close": "Закрыть принудительно",
     "prompt.abort_game.title": "Закрыть приложение принудительно?",
-    "prompt.abort_game.message": "Вы хотите прервать выполнение {[title}}?"
+    "prompt.abort_game.message": "Вы хотите принудительно закрыть {{title}}?"
 }
