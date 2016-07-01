@@ -310,7 +310,7 @@
     "grid.criterion.only_compatible": "Только совместимые",
     "grid.hidden_count": "+ {{count}} приложений отфильтровано",
     "grid.criterion.filter": "Фильтр...",
-    "grid.item.prioritize_download": "Приоритизировать",
+    "grid.item.prioritize_download": "Повысить приоритет",
     "grid.item.downloads_paused": "Приостановленные загрузки",
     "status.downloads.category.active": "Текущие загрузки",
     "status.downloads.category.queued": "Загрузки в очереди",
@@ -318,5 +318,6 @@
     "menu.help.about": "О программе",
     "prompt.action.force_close": "Закрыть принудительно",
     "prompt.abort_game.title": "Закрыть приложение принудительно?",
-    "prompt.abort_game.message": "Вы хотите принудительно закрыть {{title}}?"
+    "prompt.abort_game.message": "Вы хотите принудительно закрыть {{title}}?",
+    "grid.item.review": "Рецензировать"
 }
