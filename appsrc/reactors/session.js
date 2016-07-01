@@ -3,6 +3,8 @@ import {createSelector} from 'reselect'
 
 import * as actions from '../actions'
 
+import delay from './delay'
+
 async function logout (store) {
   store.dispatch(actions.switchPage('gate'))
 }
@@ -12,6 +14,8 @@ async function sessionReady (store) {
   if (me.developer) {
     store.dispatch(actions.unlockTab({path: 'dashboard'}))
   }
+
+  await delay(500)
 
   store.dispatch(actions.switchPage('hub'))
 }

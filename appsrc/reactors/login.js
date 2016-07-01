@@ -55,7 +55,7 @@ async function sessionsRemembered (store, action) {
     const {username} = me
     setTimeout(function () {
       store.dispatch(actions.loginWithToken({username, key, me}))
-    }, 400)
+    }, 500)
   }
 }
 
