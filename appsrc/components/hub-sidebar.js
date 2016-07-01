@@ -137,7 +137,8 @@ export class HubSidebar extends Component {
 
   dropdown () {
     const {viewCreatorProfile, viewCommunityProfile, changeUser,
-      openPreferences, navigate, copyToClipboard, quit, reportIssue, openUrl} = this.props
+      openPreferences, navigate, copyToClipboard, quit, reportIssue,
+      openUrl, checkForSelfUpdate} = this.props
 
     const items = [
       {
@@ -171,6 +172,11 @@ export class HubSidebar extends Component {
         label: versionString(),
         onClick: () => copyToClipboard(versionString()),
         type: 'info'
+      },
+      {
+        icon: 'repeat',
+        label: ['menu.help.check_for_update'],
+        onClick: () => checkForSelfUpdate()
       },
       {
         icon: 'search',
@@ -295,6 +301,8 @@ const mapDispatchToProps = (dispatch) => ({
   openUrl: (url) => dispatch(actions.openUrl(url)),
 
   searchHighlightOffset: (offset) => dispatch(actions.searchHighlightOffset(offset)),
+
+  checkForSelfUpdate: () => dispatch(actions.checkForSelfUpdate()),
 
   quit: () => dispatch(actions.quit())
 })
