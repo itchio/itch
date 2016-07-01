@@ -37,6 +37,7 @@ export default async function launch (out, opts) {
   const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game})
   invariant(game, 'was able to fetch game properly')
 
+  let {isolateApps} = opts.preferences
   const appPath = pathmaker.appPath(cave)
   let exePath
   let args = []
@@ -45,6 +46,10 @@ export default async function launch (out, opts) {
   const hasManifest = await sf.exists(manifestPath)
   if (opts.manifestAction) {
     const action = opts.manifestAction
+    // sandbox opt-in ?
+    if (action.sandbox) {
+      isolateApps = true
+    }
 
     log(opts, `Should launch ${JSON.stringify(action, 0, 2)}`)
     const actionPath = action.path
@@ -78,7 +83,6 @@ export default async function launch (out, opts) {
   log(opts, `launching '${exePath}' on '${platform}' with args '${args.join(' ')}'`)
   const argString = args::map(spawn.escapePath).join(' ')
 
-  const {isolateApps} = opts.preferences
   if (isolateApps) {
     const checkRes = await sandbox.check()
     if (checkRes.errors.length > 0) {
