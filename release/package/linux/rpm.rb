@@ -26,6 +26,7 @@ module Itch
       --after-install "release/debian-after-install.sh" \
       -d "p7zip" \
       -d "desktop-file-utils" \
+      -d "libappindicator" \
       -d "libXScrnSaver" \
     #{distro_files}
     }
@@ -33,4 +34,3 @@ module Itch
     FileUtils.cp Dir["*.rpm"], "packages/"
   end
 end
-
