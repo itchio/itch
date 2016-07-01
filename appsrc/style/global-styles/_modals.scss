@@ -91,6 +91,10 @@
           cursor: pointer;
         }
       }
+
+      p img {
+        max-width: 100%;
+      }
     }
 
     .message .secondary {
