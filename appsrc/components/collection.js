@@ -8,8 +8,6 @@ import GameGridFilters from './game-grid-filters'
 import {map, filter} from 'underline'
 import {pathToId} from '../util/navigation'
 
-import EnhanceFiltered from './filtered'
-
 export class Collection extends Component {
   render () {
     const {allGames, tabGames, collection, query} = this.props
@@ -66,4 +64,4 @@ const mapDispatchToProps = (dispatch) => ({})
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(EnhanceFiltered(Collection))
+)(Collection)

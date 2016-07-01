@@ -8,8 +8,6 @@ import GameGrid from './game-grid'
 import GameGridFilters from './game-grid-filters'
 import {map} from 'underline'
 
-import EnhanceFiltered from './filtered'
-
 export class Dashboard extends Component {
   render () {
     const {t, allGames, myGameIds, query} = this.props
@@ -52,4 +50,4 @@ const mapDispatchToProps = (dispatch) => ({})
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(EnhanceFiltered(Dashboard))
+)(Dashboard)
