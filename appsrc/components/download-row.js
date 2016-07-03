@@ -9,8 +9,6 @@ import * as actions from '../actions'
 
 import NiceAgo from './nice-ago'
 
-const noop = () => {}
-
 class DownloadRow extends Component {
   constructor () {
     super()
@@ -18,7 +16,7 @@ class DownloadRow extends Component {
   }
 
   render () {
-    const {first, active, item, navigateToGame, cancelDownload} = this.props
+    const {first, active, item, navigateToGame} = this.props
 
     const {game, id} = item
     const coverUrl = game.stillCoverUrl || game.coverUrl
@@ -28,12 +26,8 @@ class DownloadRow extends Component {
     }
 
     const itemClasses = classNames('history-item', {first, dimmed: (active && !first), finished: !active})
-    const onItemClick = active ? noop : () => {
-      navigateToGame(game)
-      cancelDownload(id)
-    }
 
-    return <li key={id} className={itemClasses} onClick={onItemClick}>
+    return <li key={id} className={itemClasses}>
       <div className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
       <div className='stats'>
         {this.progress()}
