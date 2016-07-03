@@ -53,9 +53,7 @@ async function sessionsRemembered (store, action) {
   if (mostRecentSession) {
     const {me, key} = mostRecentSession
     const {username} = me
-    setTimeout(function () {
-      store.dispatch(actions.loginWithToken({username, key, me}))
-    }, 500)
+    store.dispatch(actions.loginWithToken({username, key, me}))
   }
 }
 

@@ -15,6 +15,7 @@ import * as actions from '../actions'
 
 let createLock = false
 let quitting = false
+let firstWindow = true
 
 const BOUNDS_CONFIG_KEY = 'main_window_bounds'
 const MAXIMIZED_CONFIG_KEY = 'main_window_maximized'
@@ -158,7 +159,10 @@ async function createWindow (store) {
 
   window.on('ready-to-show', (e) => {
     createLock = false
-    store.dispatch(actions.windowReady({id: window.id}))
+    if (firstWindow) {
+      firstWindow = false
+      store.dispatch(actions.windowReady({id: window.id}))
+    }
     showWindow(window)
   })
 

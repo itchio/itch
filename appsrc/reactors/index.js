@@ -37,9 +37,10 @@ export default validateReactors({
     installLocations.catchAll, navigation.catchAll),
 
   PREBOOT: combine(preboot, perf.preboot),
-  BOOT: combine(market.boot, preferences.boot, mainWindow.boot,
-    locales.boot, rememberedSessions.boot, selfUpdate.boot, setup.boot,
-    tasks.boot, tray.boot, navigation.boot, perf.boot),
+  BOOT: combine(preferences.boot, mainWindow.boot,
+    locales.boot, setup.boot,
+    tasks.boot, tray.boot, perf.boot),
+  WINDOW_READY: combine(rememberedSessions.windowReady, navigation.windowReady, market.windowReady, selfUpdate.windowReady),
   RETRY_SETUP: combine(setup.retrySetup),
 
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),

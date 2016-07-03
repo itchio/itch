@@ -30,7 +30,7 @@ async function loadRememberedSessions (store) {
   }
 }
 
-async function boot (store) {
+async function windowReady (store) {
   await loadRememberedSessions(store)
 }
 
@@ -85,4 +85,4 @@ async function loginSucceeded (store, action) {
   await saveSession(store, me.id, {key, me})
 }
 
-export default {boot, forgetSessionRequest, forgetSession, loginSucceeded}
+export default {windowReady, forgetSessionRequest, forgetSession, loginSucceeded}

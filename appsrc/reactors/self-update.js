@@ -30,7 +30,7 @@ const QUIET_TIME = 2 * 1000
 
 const CHECK_FOR_SELF_UPDATES = env.name === 'production' || process.env.UP_TO_SCRATCH === '1'
 
-async function boot (store, action) {
+async function windowReady (store, action) {
   if (!CHECK_FOR_SELF_UPDATES) {
     return
   }
@@ -228,6 +228,6 @@ async function showAvailableSelfUpdate (store, action) {
 }
 
 export default {
-  boot, checkForSelfUpdate, applySelfUpdateRequest, applySelfUpdate,
+  windowReady, checkForSelfUpdate, applySelfUpdateRequest, applySelfUpdate,
   selfUpdateError, showAvailableSelfUpdate
 }
