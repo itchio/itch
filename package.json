@@ -103,7 +103,7 @@
     "grunt-electron": "^4.0.0",
     "grunt-electron-installer": "^2.1.0",
     "grunt-newer": "^1.2.0",
-    "grunt-sass": "^1.1.0",
+    "grunt-sass": "^1.2.0",
     "load-grunt-tasks": "^3.3.0",
     "nyc": "^6.4.0",
     "quiet-grunt": "^0.2.3",
