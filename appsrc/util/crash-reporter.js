@@ -16,16 +16,22 @@ import sf from './sf'
 let self = {
   catching: false,
 
-  writeCrashLog: (e) => {
+  sampleCrash: () => {
+    setTimeout(() => {
+      throw new Error(`hello this is crash reporter with a sample crash.`)
+    }, 10)
+  },
+
+  writeCrashLog: async (e) => {
     const crashFile = path.join(app.getPath('userData'), 'crash_logs', `${+new Date()}.txt`)
 
     let log = ''
-    log += e.stack
+    log += (e.stack || e.message || e)
 
     if (os.platform() === 'win32') {
       log = log.replace(/\n/g, '\r\n')
     }
-    sf.writeFile(crashFile, log)
+    await sf.writeFile(crashFile, log)
 
     return {log, crashFile}
   },
@@ -68,7 +74,7 @@ ${log}
     self.catching = true
 
     console.log(`${type}: ${e.stack}`)
-    let res = self.writeCrashLog(e)
+    let res = await self.writeCrashLog(e)
     let log = res.log
     let crashFile = res.crashFile
 
