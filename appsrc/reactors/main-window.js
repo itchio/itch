@@ -6,6 +6,10 @@ import os from '../util/os'
 import invariant from 'invariant'
 import {debounce} from 'underline'
 
+import mklog from '../util/log'
+const log = mklog('reactors/main-window')
+import {opts} from '../logger'
+
 import localizer from '../localizer'
 import * as actions from '../actions'
 
@@ -13,6 +17,7 @@ let createLock = false
 let quitting = false
 
 const BOUNDS_CONFIG_KEY = 'main_window_bounds'
+const MAXIMIZED_CONFIG_KEY = 'main_window_maximized'
 
 async function createWindow (store) {
   if (createLock) return
@@ -44,10 +49,10 @@ async function createWindow (store) {
   if (os.platform() === 'darwin') {
     try {
       // TODO: restore once https://github.com/electron/electron/issues/6056 is fixed
-      console.log(`setting icon to: ${iconPath}`)
+      log(opts, `setting icon to: ${iconPath}`)
       app.dock.setIcon(iconPath)
     } catch (err) {
-      console.log(`error setting icon: ${err.stack || err}`)
+      log(opts, `error setting icon: ${err.stack || err}`)
     }
   }
 
@@ -63,43 +68,38 @@ async function createWindow (store) {
       return
     }
 
-    if (!window.isMinimized()) {
-      const store = require('../store').default
-      let prefs = {}
-      if (store) {
-        prefs = store.getState().preferences || {}
-      }
-      if (!prefs.gotMinimizeNotification) {
-        store.dispatch(actions.updatePreferences({
-          gotMinimizeNotification: true
-        }))
-
-        const i18n = store.getState().i18n
-        const t = localizer.getT(i18n.strings, i18n.lang)
-        store.dispatch(actions.notify({
-          title: t('notification.see_you_soon.title'),
-          body: t('notification.see_you_soon.message')
-        }))
-      }
-
-      // minimize first to convey the fact that the app still lives
-      // in the tray - however, it'll take a lot less RAM because the
-      // renderer is actually trashed
-      e.preventDefault()
-      window.minimize()
-
-      setTimeout(() => {
-        if (!window.isDestroyed()) {
-          window.hide()
-        }
-      }, 0.2 * 1000)
-
-      destroyTimeout = setTimeout(() => {
-        if (!window.isDestroyed() && !window.isVisible()) {
-          window.close()
-        }
-      }, 10 * 1000)
+    if (!window.isVisible()) {
+      // timeout elapsed and still not shown - it's a closin'!
+      return
     }
+
+    const store = require('../store').default
+    const prefs = (store && store.getState().preferences) || {}
+
+    if (!prefs.gotMinimizeNotification) {
+      store.dispatch(actions.updatePreferences({
+        gotMinimizeNotification: true
+      }))
+
+      const i18n = store.getState().i18n
+      const t = localizer.getT(i18n.strings, i18n.lang)
+      store.dispatch(actions.notify({
+        title: t('notification.see_you_soon.title'),
+        body: t('notification.see_you_soon.message')
+      }))
+    }
+
+    // hide, only destroy after slight delay
+    e.preventDefault()
+    log(opts, `Hiding main window for a while..`)
+    window.hide()
+
+    destroyTimeout = setTimeout(() => {
+      log(opts, `Destroying window maybe? (already destroyed: ${window.isDestroyed()}, visible: ${window.isVisible()})`)
+      if (!window.isDestroyed() && !window.isVisible()) {
+        window.close()
+      }
+    }, 10 * 1000)
   })
 
   window.on('closed', (e) => {
@@ -108,6 +108,7 @@ async function createWindow (store) {
 
   window.on('focus', (e) => {
     if (destroyTimeout) {
+      log(opts, `Got focused, clearing destroy timeout`)
       clearTimeout(destroyTimeout)
       destroyTimeout = null
     }
@@ -142,10 +143,18 @@ async function createWindow (store) {
     debouncedBounds()
   })
 
+  window.on('maximize', (e) => {
+    config.set(MAXIMIZED_CONFIG_KEY, true)
+  })
+
+  window.on('unmaximize', (e) => {
+    config.set(MAXIMIZED_CONFIG_KEY, false)
+  })
+
   window.on('ready-to-show', (e) => {
     createLock = false
     store.dispatch(actions.windowReady({id: window.id}))
-    window.show()
+    showWindow(window)
   })
 
   const uri = `file://${__dirname}/../index.html`
@@ -172,7 +181,7 @@ async function focusWindow (store, action) {
     if (options.toggle && window.isVisible()) {
       window.hide()
     } else {
-      window.show()
+      showWindow(window)
     }
   } else {
     await createWindow(store)
@@ -208,6 +217,14 @@ async function quitWhenMain (store) {
     } else {
       focused.close()
     }
+  }
+}
+
+function showWindow (window) {
+  window.show()
+  const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false
+  if (maximized) {
+    window.maximize()
   }
 }
 
