@@ -1,11 +1,13 @@
 
 import pathmaker from '../util/pathmaker'
 import mklog from '../util/log'
-export const logger = new mklog.Logger({
-  sinks: {
-    file: pathmaker.logPath()
-  }
-})
+const loggerOpts = {
+  sinks: {}
+}
+if (process.type !== 'renderer') {
+  loggerOpts.sinks.file = pathmaker.logPath()
+}
+export const logger = new mklog.Logger(loggerOpts)
 export default logger
 
 const log = mklog('itch')
