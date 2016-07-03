@@ -19,6 +19,10 @@ export class CollectionHubItem extends Component {
 
     const gameIds = (collection.gameIds || []).slice(0, 4)
     const games = gameIds::map((gameId) => allGames[gameId])::filter((x) => !!x)
+    while (games.length < 4) {
+      games.push({})
+    }
+
     const gameItems = games::map((game) => {
       const style = {}
       const coverUrl = game.stillCoverUrl || game.coverUrl
@@ -27,6 +31,7 @@ export class CollectionHubItem extends Component {
       }
       return <div className='cover' style={style}></div>
     })
+
     const rows = []
     let cols = []
     gameItems::each((item, i) => {
@@ -51,6 +56,9 @@ export class CollectionHubItem extends Component {
 }
 
 CollectionHubItem.propTypes = {
+  // specified
+  collection: PropTypes.object,
+
   // derived
   allGames: PropTypes.object,
 

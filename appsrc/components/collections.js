@@ -55,6 +55,7 @@ Collections.propTypes = {
   allGames: PropTypes.object,
   downloadKeys: PropTypes.object,
   collections: PropTypes.object,
+  filterQuery: PropTypes.string,
 
   t: PropTypes.func.isRequired
 }
