@@ -10,7 +10,7 @@
     "grid.item.install": "インストール",
     "grid.item.installing": "インストール中",
     "grid.item.launch": "起動する",
-    "grid.item.not_platform_compatible": "{{platform}}には対応していません。",
+    "grid.item.not_platform_compatible": "{{platform}}には対応していません",
     "grid.item.open": "開く",
     "grid.item.open_in_file_explorer": "このゲームがインストールされているフォルダを開く",
     "grid.item.open_in_file_explorer_linux": "ファイルマネージャーでインストール先のフォルダを開く",

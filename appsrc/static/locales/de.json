@@ -25,7 +25,7 @@
     "grid.item.report_problem": "Als defekt melden (Wird im Browser geöffnet)",
     "grid.item.retry": "Versuche, dies noch einmal herunterzuladen / zu installieren / zu starten",
     "grid.item.running": "Läuft…",
-    "grid.item.uninstall": "Dieses Objekt jetzt deinstallieren",
+    "grid.item.uninstall": "Deinstallieren",
     "grid.item.uninstalling": "Deinstalliere…",
     "login.action.login": "Einloggen",
     "login.action.register": "Registrieren",
@@ -264,5 +264,9 @@
     "prompt.packaging_policy.open_web_page": "Die Webseite von {{title}} öffnen",
     "sidebar.collection.subtitle": "Eine Sammlung von {{itemCount}} Gegenständen.",
     "status.copied_to_clipboard": "In die Zwischenablage kopiert!",
-    "status.downloads.clear_all_finished": "Verlauf leeren"
+    "status.downloads.clear_all_finished": "Verlauf leeren",
+    "docs.learn_more": "Mehr erfahren",
+    "label.experimental": "Experimentell",
+    "grid.hidden_count": "+ {{count}} von Filtern versteckte Elemente",
+    "grid.item.share": "Teilen"
 }
