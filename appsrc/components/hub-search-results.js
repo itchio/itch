@@ -143,7 +143,6 @@ export class HubSearchResults extends Component {
 
     const hasRemoteResults = results && (results.gameResults.result.gameIds.length > 0 || results.userResults.result.userIds.length > 0)
     const hasLocalResults = fuseResults.length > 0
-    console.log(`resultsGrid, remote = ${hasRemoteResults}, local = ${hasLocalResults}`)
 
     if (!(hasRemoteResults || hasLocalResults)) {
       const {t} = this.props

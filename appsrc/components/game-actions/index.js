@@ -92,7 +92,6 @@ const makeMapStateToProps = () => {
       const hasMinPrice = game.minPrice > 0
       // FIXME game admins
       const canEdit = game.userId === meId
-      console.log(`for ${game.title}, game press? ${game.inPressSystem}, we press? ${mePress}`)
       let mayDownload = !!(downloadKey || !hasMinPrice || canEdit)
       let pressDownload = false
       if (!mayDownload) {
