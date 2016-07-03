@@ -8,7 +8,7 @@
     "grid.item.downloading": "ダウンロード中…",
     "grid.item.finalize_installation": "インストールを完成する",
     "grid.item.install": "インストール",
-    "grid.item.installing": "インストール中です…",
+    "grid.item.installing": "インストール中",
     "grid.item.launch": "起動する",
     "grid.item.not_platform_compatible": "{{platform}}には対応していません。",
     "grid.item.open": "開く",
