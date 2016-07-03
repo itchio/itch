@@ -91,7 +91,7 @@ async function createWindow (store) {
 
     // hide, only destroy after slight delay
     e.preventDefault()
-    log(opts, `Hiding main window for a while..`)
+    log(opts, 'Hiding main window for a while..')
     window.hide()
 
     destroyTimeout = setTimeout(() => {
@@ -108,7 +108,7 @@ async function createWindow (store) {
 
   window.on('focus', (e) => {
     if (destroyTimeout) {
-      log(opts, `Got focused, clearing destroy timeout`)
+      log(opts, 'Got focused, clearing destroy timeout')
       clearTimeout(destroyTimeout)
       destroyTimeout = null
     }
