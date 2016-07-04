@@ -30,7 +30,7 @@ export function getGlobalMarket () {
   return globalMarket
 }
 
-async function windowReady (store, action) {
+async function firstWindowReady (store, action) {
   globalMarket = new Market()
 
   globalMarket.on('ready', () => {
@@ -86,4 +86,4 @@ async function logout (action) {
   }
 }
 
-export default {windowReady, loginSucceeded, logout}
+export default {firstWindowReady, loginSucceeded, logout}

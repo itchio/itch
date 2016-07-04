@@ -45,6 +45,7 @@ module.exports = keyMirror({
   HISTORY_READ: null,
 
   /* Main window events */
+  FIRST_WINDOW_READY: null,
   WINDOW_READY: null,
   WINDOW_DESTROYED: null,
   WINDOW_FOCUS_CHANGED: null,

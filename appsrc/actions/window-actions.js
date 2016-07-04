@@ -2,6 +2,7 @@
 import {createAction} from 'redux-actions'
 
 import {
+  FIRST_WINDOW_READY,
   WINDOW_READY,
   WINDOW_DESTROYED,
   WINDOW_FOCUS_CHANGED,
@@ -13,6 +14,7 @@ import {
   CLOSE_TAB_OR_AUX_WINDOW
 } from '../constants/action-types'
 
+export const firstWindowReady = createAction(FIRST_WINDOW_READY)
 export const windowReady = createAction(WINDOW_READY)
 export const windowDestroyed = createAction(WINDOW_DESTROYED)
 export const windowFocusChanged = createAction(WINDOW_FOCUS_CHANGED)

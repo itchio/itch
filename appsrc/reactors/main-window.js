@@ -158,20 +158,28 @@ async function createWindow (store) {
   })
 
   window.on('ready-to-show', (e) => {
+    log(opts, 'Ready to show!')
+    if (parseInt(process.env.DEVTOOLS, 10) > 0) {
+      log(opts, 'Opening devtools')
+      window.webContents.openDevTools({detach: true})
+    } else {
+      log(opts, 'No devtools')
+    }
+
     createLock = false
     if (firstWindow) {
       firstWindow = false
-      store.dispatch(actions.windowReady({id: window.id}))
+      log(opts, `Sending windowReady with id ${window.id}`)
+      store.dispatch(actions.firstWindowReady({id: window.id}))
     }
+
+    store.dispatch(actions.windowReady({id: window.id}))
     showWindow(window)
   })
 
   const uri = `file://${__dirname}/../index.html`
   window.loadURL(uri)
-
-  if (parseInt(process.env.DEVTOOLS, 10) > 0) {
-    window.webContents.openDevTools({detach: true})
-  }
+  log(opts, 'Calling loadURL')
 }
 
 async function windowBoundsChanged (store, action) {
@@ -208,6 +216,7 @@ async function closeTabOrAuxWindow (store) {
   const focused = BrowserWindow.getFocusedWindow()
   if (focused) {
     const id = store.getState().ui.mainWindow.id
+    console.log(`focused id: ${id}, main id: ${id}`)
     if (focused.id === id) {
       store.dispatch(actions.closeTab())
     } else {

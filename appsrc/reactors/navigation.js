@@ -276,8 +276,12 @@ const makeTransientSelector = (store) => createSelector(
 )
 
 async function windowReady (store, action) {
-  pathSelector = makePathSelector(store)
-  transientSelector = makeTransientSelector(store)
+  if (!pathSelector) {
+    pathSelector = makePathSelector(store)
+  }
+  if (!transientSelector) {
+    transientSelector = makeTransientSelector(store)
+  }
 }
 
 async function catchAll (store, action) {

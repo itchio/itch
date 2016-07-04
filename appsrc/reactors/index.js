@@ -40,7 +40,8 @@ export default validateReactors({
   BOOT: combine(preferences.boot, mainWindow.boot,
     locales.boot, setup.boot,
     tasks.boot, tray.boot, perf.boot),
-  WINDOW_READY: combine(rememberedSessions.windowReady, navigation.windowReady, market.windowReady, selfUpdate.windowReady),
+  FIRST_WINDOW_READY: combine(market.firstWindowReady, rememberedSessions.firstWindowReady, selfUpdate.firstWindowReady),
+  WINDOW_READY: combine(navigation.windowReady),
   RETRY_SETUP: combine(setup.retrySetup),
 
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),
