@@ -207,9 +207,11 @@ const makeSelector = (store) => createSelector(
   (state) => state.preferences.installLocations,
   (state) => state.session.navigation.id,
   (installLocs, id) => {
-    if (id === 'preferences') {
-      store.dispatch(actions.queryFreeSpace())
-    }
+    setImmediate(() => {
+      if (id === 'preferences') {
+        store.dispatch(actions.queryFreeSpace())
+      }
+    })
   }
 )
 

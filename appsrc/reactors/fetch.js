@@ -130,11 +130,13 @@ const makeCollectionsWatcher = (store) => {
   return createSelector(
     (state) => state.market.collections,
     (collections) => {
-      const ids = collections::map((c, id) => id)
-      if (!ids::isEqual(oldIds)) {
-        oldIds = ids
-        store.dispatch(actions.fetchCollectionGames())
-      }
+      setImmediate(() => {
+        const ids = collections::map((c, id) => id)
+        if (!ids::isEqual(oldIds)) {
+          oldIds = ids
+          store.dispatch(actions.fetchCollectionGames())
+        }
+      })
     }
   )
 }

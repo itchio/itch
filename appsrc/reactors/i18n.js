@@ -7,7 +7,10 @@ const makeSelector = (store) => createSelector(
   (state) => state.system.lang,
   (state) => state.preferences.lang,
   (systemLang, prefLang) => {
-    store.dispatch(languageChanged(prefLang || systemLang || 'en'))
+    const lang = prefLang || systemLang || 'en'
+    setImmediate(() => {
+      store.dispatch(languageChanged(lang))
+    })
   }
 )
 let selector

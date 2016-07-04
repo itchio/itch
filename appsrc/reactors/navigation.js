@@ -254,7 +254,9 @@ let pathSelector
 const makePathSelector = (store) => createSelector(
   (state) => state.session.navigation.id,
   (id) => {
-    store.dispatch(actions.tabChanged({id}))
+    setImmediate(() => {
+      store.dispatch(actions.tabChanged({id}))
+    })
   }
 )
 
@@ -268,7 +270,7 @@ const makeTransientSelector = (store) => createSelector(
     (transient, tabData, id) => tabData::pluck('path'),
     (transient, id) => id,
     (ids, paths, id) => {
-      store.dispatch(actions.tabsChanged(store))
+      setImmediate(() => store.dispatch(actions.tabsChanged(store)))
     }
   )
 )

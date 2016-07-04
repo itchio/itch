@@ -22,7 +22,9 @@ const makeRefreshSelector = (store) => createSelector(
   (state) => state.system,
   (state) => state.session.credentials,
   (system, credentials) => {
-    store.dispatch(actions.refreshMenu({system, credentials}))
+    setImmediate(() =>
+      store.dispatch(actions.refreshMenu({system, credentials}))
+    )
   }
 )
 
@@ -31,9 +33,11 @@ const makeApplySelector = (store) => createSelector(
   (state) => state.ui.menu.template,
   (state) => state.i18n,
   (template, i18n) => {
-    // electron gotcha: buildFromTemplate mutates its argument
-    const menu = Menu.buildFromTemplate(clone(fleshOutTemplate(template, i18n, store)))
-    Menu.setApplicationMenu(menu)
+    setImmediate(() => {
+      // electron gotcha: buildFromTemplate mutates its argument
+      const menu = Menu.buildFromTemplate(clone(fleshOutTemplate(template, i18n, store)))
+      Menu.setApplicationMenu(menu)
+    })
   }
 )
 

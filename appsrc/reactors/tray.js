@@ -65,7 +65,11 @@ function refreshTray (store, i18n) {
 let traySelector
 const makeTraySelector = (store) => createSelector(
   (state) => state.i18n,
-  refreshTray::partial(store)
+  (i18n) => {
+    setImmediate(() => {
+      refreshTray(store, i18n)
+    })
+  }
 )
 
 let hasBooted = false

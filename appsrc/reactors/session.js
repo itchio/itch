@@ -27,9 +27,9 @@ const makeSessionSelector = (store) => createSelector(
   (state) => state.session.credentials.key,
   (setupDone, marketReady, loginDone) => {
     if (setupDone && marketReady && loginDone) {
-      setTimeout(function () {
+      setImmediate(() => {
         store.dispatch(actions.sessionReady())
-      }, 400)
+      })
     }
   }
 )
