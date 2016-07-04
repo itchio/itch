@@ -1,6 +1,5 @@
 
 import Promise from 'bluebird'
-import noop from './noop'
 
 // let's patch all the things! Electron randomly decides to
 // substitute 'fs' with their own version that considers '.asar'
@@ -246,122 +245,6 @@ const self = {
       debug(1, ['unlink', shelter])
       await self.unlink(shelter)
     }
-  },
-
-  /**
-   * If this runs successfully, 'dst' will mirror the contents of 'src'
-   * (Does not remove files that aren't in src)
-   */
-  ditto: async (src, dst, opts) => {
-    pre: { // eslint-disable-line
-      typeof src === 'string'
-      typeof dst === 'string'
-      typeof opts === 'object' || opts === undefined
-    }
-
-    debug(2, ['ditto', src, dst])
-
-    if (typeof opts === 'undefined') {
-      opts = {}
-    }
-    const onProgress = opts.onProgress || noop
-    const alwaysFalse = () => false
-    const shouldSkip = opts.shouldSkip || alwaysFalse
-    const operation = opts.operation || 'copy'
-    const move = (operation === 'move')
-
-    const _copy = async (srcFile, dstFile, stats) => {
-      if (stats.isSymbolicLink()) {
-        const linkTarget = await self.readlink(srcFile)
-
-        debug(2, ['symlink', linkTarget, dstFile])
-        await self.wipe(dstFile)
-        await self.symlink(linkTarget, dstFile)
-      } else {
-        if (move) {
-          debug(2, ['rename', srcFile, dstFile])
-          await self.rename(srcFile, dstFile)
-        } else {
-          // we still need to be able to read/write the file
-          const mode = stats.mode & 0o777 | 0o666
-          debug(2, ['cp', mode.toString(8), srcFile, dstFile])
-          const ws = self.createWriteStream(dstFile, {
-            flags: 'w',
-            /* anything is binary if you try hard enough */
-            defaultEncoding: 'binary',
-            mode
-          })
-          const rs = self.createReadStream(srcFile, {encoding: 'binary'})
-          const cp = self.promised(ws)
-          rs.pipe(ws)
-          await cp
-          rs.close()
-        }
-      }
-    }
-
-    // if we're not a directory, no need to recurse
-    const stats = await self.lstat(src)
-    if (!stats.isDirectory()) {
-      await _copy(src, dst, stats)
-      return
-    }
-
-    // unfortunately, glob considers symlinks like directories :(
-    // we can't use '**/*' as this will return paths *inside* symlinked dirs
-    const filesAndDirs = await self.glob('**', {cwd: src, dot: true, ignore})
-
-    const files = []
-    const dirs = []
-
-    for (const fad of filesAndDirs) {
-      const fullFad = path.join(src, fad)
-      const stats = await self.lstat(fullFad)
-      if (stats.isDirectory()) {
-        dirs.push(fad)
-      } else {
-        files.push([fad, stats])
-      }
-    }
-
-    // create shallow dirs first
-    dirs.sort((a, b) => (a.length - b.length))
-
-    const mkdir = async (dir) => {
-      const fullDir = path.join(dst, dir)
-      debug(2, ['mkdir', fullDir])
-      await self.mkdir(fullDir)
-    }
-
-    // have to mkdir sequentially
-    for (const dir of dirs) {
-      await mkdir(dir)
-    }
-
-    let numDone = 0
-
-    const copy = async (arr) => {
-      const file = arr[0]
-      const stats = arr[1]
-
-      if (shouldSkip(file)) {
-        debug(2, ['skipping', file])
-        return
-      }
-
-      const srcFile = path.join(src, file)
-      const dstFile = path.join(dst, file)
-      await _copy(srcFile, dstFile, stats)
-
-      numDone += 1
-      const percent = numDone * 100 / files.length
-      onProgress({percent, done: numDone, total: files.length})
-    }
-
-    // can copy in parallel, all directories already exist
-    await Promise.resolve(files).map(copy, {concurrency})
-
-    debug(1, ['ditto', src, dst, `done (copied ${files.length} files & ${dirs.length} directories)`])
   },
 
   /**

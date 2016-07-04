@@ -1,5 +1,6 @@
 
 import sf from '../../util/sf'
+import butler from '../../util/butler'
 import invariant from 'invariant'
 
 import path from 'path'
@@ -18,14 +19,14 @@ const self = {
     const destFilePath = path.join(destPath, path.basename(archivePath))
     log(opts, `copying ${archivePath} to ${destFilePath}`)
 
-    await sf.ditto(archivePath, destFilePath)
+    await butler.ditto(archivePath, destFilePath, opts)
   },
 
   uninstall: async function (out, opts) {
     const {destPath} = opts
 
     log(opts, `nuking ${destPath}`)
-    await sf.wipe(destPath)
+    await butler.wipe(destPath, opts)
   }
 }
 

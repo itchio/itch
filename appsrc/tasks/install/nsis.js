@@ -4,7 +4,7 @@ import findUninstallers from './find-uninstallers'
 
 import {Transition} from '../errors'
 import blessing from './blessing'
-import sf from '../../util/sf'
+import butler from '../../util/butler'
 
 import mklog from '../../util/log'
 const log = mklog('installers/nsis')
@@ -27,7 +27,7 @@ const self = {
       // copy to temporary file, otherwise windows will refuse to open them
       // cf. https://github.com/itchio/itch/issues/322
       inst += '.exe'
-      await sf.ditto(opts.archivePath, inst)
+      await butler.ditto(opts.archivePath, inst, opts)
       removeAfterUsage = true
     }
 
@@ -43,7 +43,7 @@ const self = {
     })
 
     if (removeAfterUsage) {
-      await sf.wipe(inst)
+      await butler.wipe(inst, opts)
     }
 
     if (code !== 0) {
