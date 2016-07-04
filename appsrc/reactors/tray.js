@@ -8,8 +8,6 @@ import {createSelector} from 'reselect'
 
 import * as actions from '../actions'
 
-import {partial} from 'underline'
-
 let tray
 
 function makeTray (store) {
