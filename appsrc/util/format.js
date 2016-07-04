@@ -45,11 +45,11 @@ export function seconds (secs) {
   if (secs < 60) {
     return ['duration.minute']
   } else if (secs < 3600) {
-    return ['duration.minutes', {x: Math.ceil(secs / 60).toFixed()}]
+    return ['duration.minutes', {x: Math.floor(secs / 60).toFixed()}]
   } else if (secs < 3600 * 2) {
     return ['duration.hour']
   } else {
-    return ['duration.hours', {x: Math.ceil(secs / 3600).toFixed()}]
+    return ['duration.hours', {x: Math.floor(secs / 3600).toFixed()}]
   }
 }
 
