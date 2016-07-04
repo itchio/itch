@@ -31,6 +31,7 @@ export class Logger {
 
     let defaultOpts = {sinks: {console: true}}
     let opts = deepAssign({}, defaultOpts, userOpts)
+    this.opts = opts
 
     let sinks = opts.sinks
 

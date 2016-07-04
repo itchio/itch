@@ -16,7 +16,7 @@ import Icon from './icon'
 import Dropdown from './dropdown'
 import HubSidebarItem from './hub-sidebar-item'
 
-function versionString () {
+export function versionString () {
   return `itch v${app.getVersion()}`
 }
 

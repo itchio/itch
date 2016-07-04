@@ -109,6 +109,11 @@
       flex: 1 1;
       height: 100%;
     }
+
+    p.empty {
+      padding: 10px;
+      color: $secondary-text-color;
+    }
   }
 }
 

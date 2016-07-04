@@ -1,6 +1,7 @@
 
 .preferences-meat {
   @include meat
+  overflow-y: auto;
   padding: 30px 20px;
   font-size: 20px;
 
@@ -9,6 +10,27 @@
   h2 {
     padding: 15px;
     margin-top: 30px;
+    flex-shrink: 0;
+
+    &.toggle {
+      padding-bottom: 0;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .icon.turner {
+    display: inline-block;
+    width: 15px;
+    text-align: center;
+    transform: rotateZ(0deg);
+    transition: transform 0.2s ease-in-out;
+
+    &.turned {
+      transform: rotateZ(90deg);
+    }
   }
 
   .select-row {
@@ -91,15 +113,21 @@
 
     &.flex {
       display: flex;
+      flex-shrink: 0;
 
-      a {
+      a, .link {
         margin-left: 8px;
         display: flex;
       }
     }
 
-    a {
+    a, .link {
+      text-decoration: underline;
       color: #ececec;
+
+      &:hover {
+        cursor: hand;
+      }
     }
   }
 
@@ -160,6 +188,10 @@
     .action {
       color: white;
 
+      &.path {
+        @include single-line;
+      }
+
       .icon {
         -webkit-filter: brightness(70%);
       }
@@ -170,7 +202,7 @@
       }
 
       &.default {
-        width: 150px;
+        max-width: 150px;
         text-align: center;
       }
 

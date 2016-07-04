@@ -20,11 +20,9 @@ class Downloads extends Component {
 
     const hasItems = (items.length + finishedItems.length) > 0
     if (!hasItems) {
-      return <ul className='downloads-page'>
-        <li className='empty'>
+      return <p className='empty'>
           {t('status.downloads.no_active_downloads')}
-        </li>
-      </ul>
+      </p>
     }
 
     const firstItem = items::first()

@@ -3,6 +3,8 @@ import React, {Component, PropTypes} from 'react'
 import {createSelector, createStructuredSelector} from 'reselect'
 import {connect} from './connect'
 
+import {shell} from '../electron'
+
 import path from 'path'
 import humanize from 'humanize-plus'
 import classNames from 'classnames'
@@ -11,6 +13,7 @@ import urls from '../constants/urls'
 
 import Icon from './icon'
 import SelectRow from './select-row'
+import {versionString} from './hub-sidebar'
 
 import * as actions from '../actions'
 
@@ -18,7 +21,21 @@ import {map, each, filter} from 'underline'
 
 import diskspace from '../util/diskspace'
 
+function getAppLogPath () {
+  const logOpts = require('electron').remote.require('./logger')
+  const logPath = logOpts.logger.opts.sinks.file
+  console.log(`found out logPath = ${logPath}`)
+  return logPath
+}
+
 export class Preferences extends Component {
+  constructor () {
+    super()
+    this.state = {
+      showAdvanced: false
+    }
+  }
+
   render () {
     const {t, lang, sniffedLang = '', downloading, locales, isolateApps} = this.props
     const {queueLocaleDownload, updatePreferences} = this.props
@@ -34,6 +51,7 @@ export class Preferences extends Component {
     }
 
     const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itch/${lang || 'en'}/svg-badge.svg`
+    const {showAdvanced} = this.state
 
     return <div className='preferences-meat'>
       <SelectRow onChange={::this.onLanguageChange} options={options} value={lang || '__'} label={t('preferences.language')}/>
@@ -71,6 +89,21 @@ export class Preferences extends Component {
 
       <h2>{t('preferences.install_locations')}</h2>
       {this.installLocationTable()}
+
+      <h2 className='toggle' onClick={(e) => this.setState({showAdvanced: !this.state.showAdvanced})}>
+        <span className={`icon icon-triangle-right turner ${showAdvanced ? 'turned' : ''}`}/>
+        {' '}
+        {t('preferences.advanced')}
+      </h2>
+      {showAdvanced
+      ? <p className='explanation'>
+        {versionString()}
+        <br/>
+        <span className='link' onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()) }}>
+          {t('preferences.advanced.open_app_log')}
+        </span>
+      </p>
+      : ''}
     </div>
   }
 
@@ -119,7 +152,7 @@ export class Preferences extends Component {
       })
 
       rows.push(<tr className={rowClasses}>
-        <td className='action' onClick={(e) => { e.preventDefault(); navigate(`locations/${name}`) }}>
+        <td className='action path' onClick={(e) => { e.preventDefault(); navigate(`locations/${name}`) }}>
           <Icon icon='folder'/> {path}
         </td>
         <td> {humanize.fileSize(size)} </td>
@@ -130,7 +163,7 @@ export class Preferences extends Component {
             <Icon icon='star'/>
           </td>
           : <td className='action default not-default hint--top' data-hint={t('preferences.install_location.make_default')} onClick={(e) => makeInstallLocationDefault(name)}>
-            {t('preferences.install_location.make_default_short')}
+            <Icon icon='star2'/>
           </td>
         }
 
