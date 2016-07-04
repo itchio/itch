@@ -85,6 +85,9 @@ function computeScore (execs) {
     if (/^kick\.bin/i.test(exe.path)) {
       score -= 50
     }
+    if (/nacl_helper/i.test(exe.path)) {
+      score -= 20
+    }
     if (/nwjc\.exe$/i.test(exe.path)) {
       score -= 20
     }
