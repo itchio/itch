@@ -1,4 +1,6 @@
 
+import invariant from 'invariant'
+
 import Promise from 'bluebird'
 
 // let's patch all the things! Electron randomly decides to
@@ -79,9 +81,7 @@ const self = {
    * Returns true if file exists, false if ENOENT, throws if other error
    */
   exists: (file) => {
-    pre: { // eslint-disable-line
-      typeof file === 'string'
-    }
+    invariant(typeof file === 'string', 'sf.exists has string file')
 
     return new Promise((resolve, reject) => {
       const callback = (err) => {
@@ -104,9 +104,7 @@ const self = {
    * Return utf-8 file contents as string
    */
   readFile: async (file) => {
-    pre: { // eslint-disable-line
-      typeof file === 'string'
-    }
+    invariant(typeof file === 'string', 'sf.readFile has string file')
 
     return await fs.readFileAsync(file, {encoding: 'utf8'})
   },
@@ -120,10 +118,8 @@ const self = {
    * Writes an utf-8 string to 'file'. Creates any directory needed.
    */
   writeFile: async (file, contents) => {
-    pre: { // eslint-disable-line
-      typeof file === 'string'
-      typeof contents === 'string'
-    }
+    invariant(typeof file === 'string', 'sf.writeFile has string file')
+    invariant(typeof contents === 'string', 'sf.writeFile has string contents')
 
     await self.mkdir(path.dirname(file))
     return await fs.writeFileAsync(file, contents)
@@ -134,9 +130,7 @@ const self = {
    * 'close' or 'end' is emitted, rejects when 'error' is
    */
   promised: async (stream) => {
-    pre: { // eslint-disable-line
-      typeof stream === 'object'
-    }
+    invariant(typeof stream === 'object', 'sf.promised has object stream')
 
     const p = new Promise((resolve, reject) => {
       stream.on('close', resolve)
@@ -154,9 +148,7 @@ const self = {
    * Uses mkdirp: https://www.npmjs.com/package/mkdirp
    */
   mkdir: async (dir) => {
-    pre: { // eslint-disable-line
-      typeof dir === 'string'
-    }
+    invariant(typeof dir === 'string', 'sf.mkdir has string dir')
 
     return await mkdirp(dir)
   },
@@ -165,10 +157,8 @@ const self = {
    * Rename oldPath into newPath, throws if it can't
    */
   rename: async (oldPath, newPath) => {
-    pre: { // eslint-disable-line
-      typeof oldPath === 'string'
-      typeof newPath === 'string'
-    }
+    invariant(typeof oldPath === 'string', 'sf.rename has string oldPath')
+    invariant(typeof newPath === 'string', 'sf.rename has string newPath')
 
     return await fs.renameAsync(oldPath, newPath)
   },
@@ -178,9 +168,7 @@ const self = {
    * Also works on file, don't bother with unlink.
    */
   wipe: async (shelter) => {
-    pre: { // eslint-disable-line
-      typeof shelter === 'string'
-    }
+    invariant(typeof shelter === 'string', 'sf.wipe has string shelter')
 
     debug(1, ['wipe', shelter])
 

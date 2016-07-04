@@ -1,11 +1,10 @@
 
+import invariant from 'invariant'
 import Promise from 'bluebird'
 
 let self = function (msBetweenRequests) {
-  pre: { // eslint-disable-line
-    typeof msBetweenRequests === 'number'
-    msBetweenRequests > 0
-  }
+  invariant(typeof msBetweenRequests === 'number', 'cooldown has number msBetweenRequests')
+  invariant(msBetweenRequests > 0, 'cooldown has positive msBetweenRequests')
   let lastRequest = 0
 
   return function cooldown () {

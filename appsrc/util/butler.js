@@ -1,4 +1,6 @@
 
+import invariant from 'invariant'
+
 import path from 'path'
 import {partial} from 'underline'
 
@@ -33,11 +35,9 @@ const self = {
 
   /* Downloads file at ${url} to ${dest} */
   dl: async function (opts) {
-    pre: { // eslint-disable-line
-      typeof opts === 'object'
-      typeof opts.url === 'string'
-      typeof opts.dest === 'string'
-    }
+    invariant(typeof opts === 'object', 'opts is object')
+    invariant(typeof opts.url === 'string', 'opts.url is string')
+    invariant(typeof opts.dest === 'string', 'opts.dest is string')
 
     let {emitter, url, dest} = opts
     let err = null
@@ -58,12 +58,10 @@ const self = {
 
   /* Apply a wharf patch at ${patchPath} in-place into ${outPath}, while checking with ${signaturePath} */
   apply: async function (opts) {
-    pre: { // eslint-disable-line
-      typeof opts === 'object'
-      typeof opts.patchPath === 'string'
-      typeof opts.outPath === 'string'
-      typeof opts.signaturePath === 'string'
-    }
+    invariant(typeof opts === 'object', 'opts is object')
+    invariant(typeof opts.patchPath === 'string', 'opts.patchPath is string')
+    invariant(typeof opts.outPath === 'string', 'opts.outPath is string')
+    invariant(typeof opts.signaturePath === 'string', 'opts.signaturePath is string')
 
     let {emitter, patchPath, outPath, signaturePath} = opts
     let err = null
@@ -83,11 +81,9 @@ const self = {
 
   /* Extracts tar archive ${archivePath} into directory ${destPath} */
   untar: async function (opts) {
-    pre: { // eslint-disable-line
-      typeof opts === 'object'
-      typeof opts.archivePath === 'string'
-      typeof opts.destPath === 'string'
-    }
+    invariant(typeof opts === 'object', 'opts is object')
+    invariant(typeof opts.archivePath === 'string', 'opts.archivePath is string')
+    invariant(typeof opts.outPath === 'string', 'opts.outPath is string')
 
     let {emitter, archivePath, destPath} = opts
     let err = null
@@ -107,6 +103,8 @@ const self = {
 
   /* rm -rf ${path} */
   wipe: async function (path, opts = {}) {
+    invariant(typeof path === 'string', 'wipe has string path')
+
     let err = null
     let onerror = (e) => { err = e }
 
@@ -123,9 +121,7 @@ const self = {
 
   /* mkdir -p ${path} */
   mkdir: async function (path, opts = {}) {
-    pre: { // eslint-disable-line
-      typeof path === 'string'
-    }
+    invariant(typeof path === 'string', 'mkdir has string path')
 
     let err = null
     let onerror = (e) => { err = e }
@@ -143,10 +139,8 @@ const self = {
 
   /* rsync -a ${src} ${dst} */
   ditto: async function (src, dst, opts = {}) {
-    pre: { // eslint-disable-line
-      typeof src === 'string'
-      typeof dst === 'string'
-    }
+    invariant(typeof src === 'string', 'ditto has string src')
+    invariant(typeof dst === 'string', 'ditto has string dst')
     let err = null
     let onerror = (e) => { err = e }
     let emitter = opts.emitter

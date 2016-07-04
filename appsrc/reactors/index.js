@@ -31,6 +31,7 @@ import tasks from './tasks'
 import dialogs from './dialogs'
 import report from './report'
 import perf from './perf'
+import packagingPolicy from './packaging-policy'
 
 export default validateReactors({
   _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll,
@@ -141,6 +142,8 @@ export default validateReactors({
   APPLY_SELF_UPDATE: combine(selfUpdate.applySelfUpdate),
   SELF_UPDATE_ERROR: combine(selfUpdate.selfUpdateError),
   SHOW_AVAILABLE_SELF_UPDATE: combine(selfUpdate.showAvailableSelfUpdate),
+
+  SHOW_PACKAGING_POLICY: combine(packagingPolicy.showPackagingPolicy),
 
   CLOSE_TAB_OR_AUX_WINDOW: combine(mainWindow.closeTabOrAuxWindow),
   QUIT_WHEN_MAIN: combine(mainWindow.quitWhenMain),

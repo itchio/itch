@@ -1,4 +1,6 @@
 
+import invariant from 'invariant'
+
 import Promise from 'bluebird'
 import childProcess from 'child_process'
 import StreamSplitter from 'stream-splitter'
@@ -10,46 +12,40 @@ import mklog from './log'
 const log = mklog('spawn')
 
 function spawn (opts) {
-  pre: { // eslint-disable-line
-    typeof opts === 'object'
-    typeof opts.command === 'string'
-    typeof opts.opts === 'object' || opts.opts === undefined
-    Array.isArray(opts.args) || opts.args === undefined
-    typeof opts.split === 'string' || opts.split === undefined
-    typeof opts.onToken === 'function' || opts.onToken === undefined
-    typeof opts.onErrToken === 'function' || opts.onErrToken === undefined
-  }
+  const {emitter, command, args = [], split = '\n', onToken, onErrToken} = opts
+  const spawnOpts = opts.opts || {}
 
-  let emitter = opts.emitter
-  let command = opts.command
-  let spawnOpts = opts.opts || {}
-  let args = opts.args || []
-  let split = opts.split || '\n'
+  invariant(typeof command === 'string', 'spawn needs string command')
+  invariant(typeof spawnOpts === 'object', 'spawn needs object opts')
+  invariant(Array.isArray(args), 'spawn needs args array')
+  invariant(typeof split === 'string', 'spawn needs string split')
+  invariant(typeof onToken === 'function' || onToken === undefined, 'spawn needs onToken to be a function')
+  invariant(typeof onErrToken === 'function' || onErrToken === undefined, 'spawn needs onErrToken to be a function')
 
   log(opts, `spawning ${command} with args ${args.join(' ')}`)
 
-  let child = childProcess.spawn(command, args, spawnOpts)
+  const child = childProcess.spawn(command, args, spawnOpts)
   let cancelled = false
   let cbErr = null
 
-  if (opts.onToken) {
-    let splitter = child.stdout.pipe(new LFTransform()).pipe(StreamSplitter(split))
+  if (onToken) {
+    const splitter = child.stdout.pipe(new LFTransform()).pipe(StreamSplitter(split))
     splitter.encoding = 'utf8'
     splitter.on('token', (tok) => {
       try {
-        opts.onToken(tok)
+        onToken(tok)
       } catch (err) {
         cbErr = err
       }
     })
   }
 
-  if (opts.onErrToken) {
-    let splitter = child.stderr.pipe(new LFTransform()).pipe(StreamSplitter(split))
+  if (onErrToken) {
+    const splitter = child.stderr.pipe(new LFTransform()).pipe(StreamSplitter(split))
     splitter.encoding = 'utf8'
     splitter.on('token', (tok) => {
       try {
-        opts.onErrToken(tok)
+        onErrToken(tok)
       } catch (err) {
         cbErr = err
       }
@@ -89,15 +85,17 @@ spawn.exec = async function (opts) {
   let out = ''
   let err = ''
 
+  const {onToken, onErrToken} = opts
+
   const actualOpts = {
     ...opts,
     onToken: (tok) => {
       out += tok + '\n'
-      opts.onToken && opts.onToken(tok)
+      if (onToken) { onToken(tok) }
     },
     onErrToken: (tok) => {
       err += tok + '\n'
-      opts.onErrToken && opts.onErrToken(tok)
+      if (onErrToken) { onErrToken(tok) }
     }
   }
 
@@ -107,10 +105,11 @@ spawn.exec = async function (opts) {
 
 spawn.getOutput = async function (opts) {
   const {code, err, out} = await spawn.exec(opts)
+  const {command} = opts
 
   if (code !== 0) {
-    log(opts, `${opts.command} failed:\n${err}`)
-    throw new Error(`${opts.command} failed with code ${code}`)
+    log(opts, `${command} failed:\n${err}`)
+    throw new Error(`${command} failed with code ${code}`)
   }
 
   return out.trim()

@@ -1,4 +1,6 @@
 
+import invariant from 'invariant'
+
 import fnout from 'fnout'
 import spawn from '../../util/spawn'
 import mklog from '../../util/log'
@@ -50,19 +52,15 @@ const self = {
   },
 
   cacheType: function (opts, installerName) {
-    pre: { // eslint-disable-line
-      typeof opts === 'object'
-      typeof opts.globalMarket === 'object'
-      typeof opts.upload === 'object'
-      typeof opts.upload.id === 'number'
-      typeof installerName === 'string'
-    }
-
-    const {globalMarket, cave} = opts
+    const {globalMarket, cave, upload} = opts
     if (!cave) return
 
+    invariant(typeof installerName === 'string', 'cacheType needs string installerName')
+    invariant(typeof upload === 'object', 'cacheType needs object upload')
+    invariant(typeof upload.id === 'number', 'cacheType needs int upload.id')
+
     const installerCache = {}
-    installerCache[opts.uploadId] = installerName
+    installerCache[upload.id] = installerName
     globalMarket.saveEntity('caves', cave.id, {installerCache})
   },
 
@@ -91,7 +89,7 @@ const self = {
   sniffType: async function (opts) {
     const {archivePath} = opts
     if (!archivePath) {
-      log(opts, 'no archive available, can\'t sniff type, going with "archive" uninstaller')
+      log(opts, 'no archive available, unable to sniff type, going with "archive" uninstaller')
       return 'archive'
     }
 

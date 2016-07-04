@@ -1,4 +1,6 @@
 
+import invariant from 'invariant'
+
 import {difference} from 'underline'
 import bluebird from 'bluebird'
 
@@ -23,13 +25,10 @@ let self = {
    *     (that receipt will be used on next deploy)
    */
   deploy: async (opts) => {
-    pre: { // eslint-disable-line
-      typeof opts === 'object'
-      typeof opts.stagePath === 'string'
-      typeof opts.destPath === 'string'
-    }
-
     const {stagePath, destPath, onProgress = noop, onSingle = pnoop} = opts
+    invariant(typeof stagePath === 'string', 'deploy needs string stagePath')
+    invariant(typeof destPath === 'string', 'deploy needs string destPath')
+
     const stageFiles = await sf.glob('**', {cwd: stagePath, dot: true, nodir: true, ignore: sf.globIgnore})
 
     if (stageFiles.length === 1) {

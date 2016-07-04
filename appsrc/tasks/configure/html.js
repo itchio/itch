@@ -1,4 +1,6 @@
 
+import invariant from 'invariant'
+
 import path from 'path'
 import clone from 'clone'
 
@@ -34,10 +36,8 @@ const self = {
   },
 
   configure: async function (game, cavePath) {
-    pre: { // eslint-disable-line
-      typeof game === 'object'
-      typeof cavePath === 'string'
-    }
+    invariant(typeof game === 'object', 'html configure needs object game')
+    invariant(typeof cavePath === 'string', 'html configure needs string cavePath')
 
     const gamePath = await self.getGamePath(cavePath)
 

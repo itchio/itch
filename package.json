@@ -86,7 +86,6 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.1.0",
-    "babel-plugin-contracts": "^1.1.0",
     "babel-plugin-syntax-async-functions": "^6.8.0",
     "babel-plugin-transform-async-to-module-method": "^6.8.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.10.3",

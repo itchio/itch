@@ -1,4 +1,6 @@
 
+import invariant from 'invariant'
+
 import mklog from './log'
 const log = mklog('fetch')
 import {opts} from '../logger'
@@ -10,9 +12,7 @@ import {game, user, collection, downloadKey} from './schemas'
 import {each, union, pluck, where, difference} from 'underline'
 
 export async function dashboardGames (market, credentials) {
-  pre: { // eslint-disable-line
-    typeof market === 'object'
-  }
+  invariant(typeof market === 'object', 'dashboardGames has market')
 
   const {key, me} = credentials
   const api = client.withKey(key)
@@ -44,9 +44,7 @@ export async function dashboardGames (market, credentials) {
 }
 
 export async function ownedKeys (market, credentials) {
-  pre: { // eslint-disable-line
-    typeof market === 'object'
-  }
+  invariant(typeof market === 'object', 'dashboardGames has market')
 
   const {key} = credentials
   const api = client.withKey(key)
@@ -66,9 +64,7 @@ export async function ownedKeys (market, credentials) {
 }
 
 export async function collections (market, credentials) {
-  pre: { // eslint-disable-line
-    typeof market === 'object'
-  }
+  invariant(typeof market === 'object', 'dashboardGames has market')
 
   const oldCollectionIds = market.getEntities('collections')::pluck('id')
 
@@ -100,10 +96,8 @@ export async function collections (market, credentials) {
 }
 
 export async function collectionGames (market, credentials, collectionId) {
-  pre: { // eslint-disable-line
-    typeof market === 'object'
-    typeof collectionId === 'number'
-  }
+  invariant(typeof market === 'object', 'dashboardGames has market')
+  invariant(typeof collectionId === 'number', 'dashboardGames has number collectionId')
 
   let collection = market.getEntities('collections')[collectionId]
   if (!collection) {
@@ -151,9 +145,7 @@ export async function collectionGames (market, credentials, collectionId) {
 }
 
 export async function search (credentials, query) {
-  pre: { // eslint-disable-line
-    typeof query === 'string'
-  }
+  invariant(typeof query === 'string', 'search has string query')
 
   const api = client.withKey(credentials.key)
 
@@ -171,11 +163,9 @@ export async function search (credentials, query) {
 }
 
 export async function gameLazily (market, credentials, gameId, opts = {}) {
-  pre: { // eslint-disable-line
-    typeof market === 'object'
-    typeof credentials === 'object'
-    typeof gameId === 'number'
-  }
+  invariant(typeof market === 'object', 'gameLazily has market')
+  invariant(typeof credentials === 'object', 'gameLazily has credentials')
+  invariant(typeof gameId === 'number', 'gameLazily has gameId number')
 
   if (!opts.fresh) {
     let record = market.getEntities('games')[gameId]
@@ -202,11 +192,9 @@ export async function gameLazily (market, credentials, gameId, opts = {}) {
 }
 
 export async function userLazily (market, credentials, userId, opts = {}) {
-  pre: { // eslint-disable-line
-    typeof market === 'object'
-    typeof credentials === 'object'
-    typeof userId === 'number'
-  }
+  invariant(typeof market === 'object', 'userLazily has market')
+  invariant(typeof credentials === 'object', 'userLazily has credentials')
+  invariant(typeof userId === 'number', 'userLazily has userId number')
 
   if (!opts.fresh) {
     const record = market.getEntities('users')[userId]
@@ -221,11 +209,9 @@ export async function userLazily (market, credentials, userId, opts = {}) {
 }
 
 export async function collectionLazily (market, credentials, collectionId, opts = {}) {
-  pre: { // eslint-disable-line
-    typeof market === 'object'
-    typeof credentials === 'object'
-    typeof collectionId === 'number'
-  }
+  invariant(typeof market === 'object', 'collectionLazily has market')
+  invariant(typeof credentials === 'object', 'collectionLazily has credentials')
+  invariant(typeof collectionId === 'number', 'collectionLazily has userId number')
 
   const oldRecord = market.getEntities('collections')[collectionId]
   if (!opts.fresh) {

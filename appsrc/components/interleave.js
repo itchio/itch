@@ -1,4 +1,6 @@
 
+import invariant from 'invariant'
+
 const keyMirror = require('keymirror')
 const State = keyMirror({
   NORMAL: null,
@@ -7,11 +9,9 @@ const State = keyMirror({
 })
 
 function interleave (t, key, components, text_vars) {
-  pre: { // eslint-disable-line
-    typeof t === 'function'
-    typeof key === 'string'
-    typeof components === 'object'
-  }
+  invariant(typeof t === 'function', 'interleave has localizer instance')
+  invariant(typeof key === 'string', 'interleave has string key')
+  invariant(typeof components === 'object', 'interleave has object components')
 
   if (typeof text_vars === 'undefined') {
     text_vars = {}

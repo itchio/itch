@@ -1,6 +1,7 @@
 
 import {object} from 'underline'
 
+import invariant from 'invariant'
 import humanize from 'humanize-plus'
 import path from 'path'
 import fnout from 'fnout'
@@ -117,13 +118,9 @@ const self = {
   },
 
   extract: async (opts) => {
-    pre: { // eslint-disable-line
-      typeof opts === 'object'
-      typeof opts.archivePath === 'string'
-      typeof opts.destPath === 'string'
-    }
-
-    let archivePath = opts.archivePath
+    const {archivePath, destPath} = opts
+    invariant(typeof archivePath === 'string', 'extract needs string archivePath')
+    invariant(typeof destPath === 'string', 'extract needs string destPath')
 
     let type = await fnout.path(archivePath)
     if (type.ext === 'tar') {
