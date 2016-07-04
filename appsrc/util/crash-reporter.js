@@ -18,7 +18,7 @@ let self = {
 
   sampleCrash: () => {
     setTimeout(() => {
-      throw new Error(`hello this is crash reporter with a sample crash.`)
+      throw new Error('hello this is crash reporter with a sample crash.')
     }, 10)
   },
 
