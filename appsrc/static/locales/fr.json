@@ -321,5 +321,8 @@
     "sidebar.close_all_tabs": "Fermer tous les onglets",
     "sidebar.itchio": "Votre portail sur l'univers du jeu indé",
     "status.downloads.category.active": "Téléchargement actif",
-    "status.downloads.category.queued": "File d'attente"
+    "status.downloads.category.queued": "File d'attente",
+    "grid.item.review": "Évaluer",
+    "preferences.advanced": "Avancé",
+    "preferences.advanced.open_app_log": "Ouvrir le journal"
 }
