@@ -1,6 +1,7 @@
 
-import {findWhere} from 'underline'
+import {findWhere, map} from 'underline'
 import invariant from 'invariant'
+import ospath from 'path'
 
 import {camelify} from '../util/format'
 import os from '../util/os'
@@ -9,9 +10,11 @@ const log = mklog('tasks/find-upload')
 
 import client from '../util/api'
 
+import * as actions from '../actions'
+
 import ClassificationActions from '../constants/classification-actions'
 
-export function filterUploads (action, uploads) {
+export function filterUploadsByPlatform (action, uploads) {
   if (action === 'open') {
     // don't filter if we're just downloading a bunch of files
     return uploads
@@ -21,8 +24,17 @@ export function filterUploads (action, uploads) {
   const prop = camelify(`p_${os.itchPlatform()}`)
   const platformUploads = uploads.filter((upload) => !!upload[prop] || upload.type === 'html')
 
+  return platformUploads
+}
+
+export function filterUploadsByFormat (action, uploads) {
+  if (action === 'open') {
+    // don't filter if we're just downloading a bunch of files
+    return uploads
+  }
+
   // Filter by format
-  const compatibleUploads = platformUploads.filter((upload) =>
+  const compatibleUploads = uploads.filter((upload) =>
     !(/\.(rpm|deb|rar)$/i.test(upload.filename.toLowerCase()))
   )
 
@@ -80,16 +92,35 @@ export default async function start (out, opts) {
   let {uploads} = (await keyClient.listUploads(downloadKey, gameId))
 
   log(opts, `got a list of ${uploads.length} uploads (${downloadKey ? 'with' : 'without'} download key)`)
+  let finalUploads = uploads
 
   if (uploads.length > 0) {
     const freshGame = market.getEntities('games')[gameId] || game
     const action = ClassificationActions[freshGame.classification] || 'launch'
 
-    uploads = filterUploads(action, uploads)
-    uploads = uploads.map(scoreUpload)
-    uploads = sortUploads(uploads)
+    const platformUploads = filterUploadsByPlatform(action, uploads)
+    const formatUploads = filterUploadsByFormat(action, platformUploads)
+    if (formatUploads.length === 0 && platformUploads.length > 0) {
+      const unwelcomeUpload = platformUploads[0]
+      const format = ospath.extname(unwelcomeUpload.filename).replace(/^\./, '').toLowerCase()
+      log(opts, `Found upload that's platform-compatible but format-incompatible: ${JSON.stringify(unwelcomeUpload, 0, 2)}`)
+      if (['deb', 'rpm', 'rar'].indexOf(format) !== -1) {
+        const store = require('../store').default
+        store.dispatch(actions.showPackagingPolicy({format, gameId}))
+      } else {
+        log(opts, `Unknown incompatible format ${format}, not reporting`)
+      }
+    }
 
-    log(opts, `sorted uploads: ${JSON.stringify(uploads, null, 2)}`)
+    const scoredUploads = formatUploads::map(scoreUpload)
+    const sortedUploads = sortUploads(scoredUploads)
+    finalUploads = sortedUploads
+
+    log(opts, `final uploads: ${JSON.stringify(finalUploads, null, 2)}`)
   }
-  return {uploads, downloadKey}
+
+  return {
+    uploads: finalUploads,
+    downloadKey
+  }
 }
