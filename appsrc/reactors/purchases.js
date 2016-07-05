@@ -80,6 +80,11 @@ function makePurchaseWindow (me, game) {
     }
   })
 
+  // Prevents the window contents from being captured by other apps.
+  // On macOS it sets the NSWindow's sharingType to NSWindowSharingNone.
+  // On Windows it calls SetWindowDisplayAffinity with WDA_MONITOR.
+  win.setContentProtection(true)
+
   // hide menu, cf. https://github.com/itchio/itch/issues/232
   win.setMenuBarVisibility(false)
 

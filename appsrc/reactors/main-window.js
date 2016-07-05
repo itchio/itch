@@ -47,11 +47,6 @@ async function createWindow (store) {
     titleBarStyle: 'hidden'
   })
 
-  // Prevents the window contents from being captured by other apps.
-  // On macOS it sets the NSWindow's sharingType to NSWindowSharingNone.
-  // On Windows it calls SetWindowDisplayAffinity with WDA_MONITOR.
-  window.setContentProtection(true)
-
   if (os.platform() === 'darwin') {
     try {
       // TODO: restore once https://github.com/electron/electron/issues/6056 is fixed
