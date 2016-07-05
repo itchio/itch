@@ -17,6 +17,7 @@ import Library from './library'
 import Collections from './collections'
 import Collection from './collection'
 import NewTab from './new-tab'
+import Toast from './toast'
 
 import {sortBy, map} from 'underline'
 
@@ -66,6 +67,8 @@ export class HubMeat extends Component {
       return <NewTab tabId={tabId} key={tabId}/>
     } else if (/^collections\//.test(path)) {
       return <Collection tabId={tabId} tabPath={path} data={data} key={tabId}/>
+    } else if (/^toast\//.test(path)) {
+      return <Toast tabId={tabId} tabPath={path} data={data} key={tabId}/>
     } else if (isBrowser) {
       return <UrlMeat tabId={tabId} path={path} key={tabId}/>
     } else {
@@ -79,7 +82,8 @@ HubMeat.propTypes = {
   games: PropTypes.object,
   myGameIds: PropTypes.array,
   downloadKeys: PropTypes.object,
-  tabs: PropTypes.array
+  tabs: PropTypes.array,
+  tabData: PropTypes.object
 }
 
 const allTabsSelector = createSelector(

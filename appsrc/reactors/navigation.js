@@ -125,6 +125,10 @@ async function retrieveTabData (store, id, retrOpts = {}) {
     return {
       label: ['sidebar.empty']
     }
+  } else if (/^toast/.test(path)) {
+    return {
+      label: ['sidebar.aw_snap']
+    }
   } else if (/^url/.test(path)) {
     const existingTabData = store.getState().session.navigation.tabData[id] || {}
     return {
@@ -136,6 +140,20 @@ async function retrieveTabData (store, id, retrOpts = {}) {
     if (id) {
       return data
     }
+  }
+}
+
+function toast (store, id, e, path) {
+  const data = store.getState().session.navigation.tabData[id]
+  if (!data) {
+    console.log(`Can't retrieve path for toasted tab ${id}, not found in list. Stack: ${new Error().stack}`)
+    return
+  }
+  const oldPath = path || data.path
+  if (/^toast/.test(oldPath)) {
+    // already toasted
+  } else {
+    store.dispatch(actions.evolveTab({id, path: `toast/${oldPath}`, extras: {error: e, label: null}}))
   }
 }
 
@@ -152,7 +170,8 @@ async function doFetchTabData (store, id, retrOpts) {
     if (api.isNetworkError(e)) {
       log(opts, `Skipping tab data fetching because of network (${e.code})`)
     } else {
-      throw e
+      log(opts, `Tab data fetching error: ${e.stack || e.message || e}`)
+      toast(store, id, e, retrOpts.path)
     }
   }
 }
@@ -202,7 +221,7 @@ async function tabsChanged (store, action) {
       if (data) {
         return {
           id,
-          path: data.path
+          path: (data.path || '').replace(/^toast\//, '')
         }
       }
     })::filter((x) => !!x)
@@ -237,9 +256,18 @@ async function logout (store, action) {
 }
 
 async function evolveTab (store, action) {
-  const {id, path} = action.payload
-  const data = await retrieveTabData(store, id, {path})
-  store.dispatch(actions.tabEvolved({id, data: {...data, path}}))
+  const {id, path, extras = {}, quick} = action.payload
+  if (quick) {
+    store.dispatch(actions.tabEvolved({id, data: {path}}))
+  }
+
+  try {
+    const data = await retrieveTabData(store, id, {path})
+    store.dispatch(actions.tabEvolved({id, data: {...data, ...extras, path}}))
+  } catch (e) {
+    log(opts, `While evolving tab: ${e.stack || e}`)
+    toast(store, id, e, path)
+  }
 }
 
 async function probeCave (store, action) {
