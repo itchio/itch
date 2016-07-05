@@ -30,6 +30,8 @@ export class ApiError extends ExtendableError {
   constructor (errors) {
     super(errors.join(', '))
     this.errors = errors
+    this.stack = new Error().stack
+    this.message = errors.join(', ')
   }
 
   toString () {

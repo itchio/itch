@@ -153,7 +153,7 @@ function toast (store, id, e, path) {
   if (/^toast/.test(oldPath)) {
     // already toasted
   } else {
-    store.dispatch(actions.evolveTab({id, path: `toast/${oldPath}`, extras: {error: e, label: null}}))
+    store.dispatch(actions.evolveTab({id, path: `toast/${oldPath}`, extras: {error: e.toString(), stack: e.stack || 'no stack', label: null}}))
   }
 }
 

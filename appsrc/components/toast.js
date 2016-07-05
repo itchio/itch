@@ -29,9 +29,9 @@ export class Toast extends Component {
 
   sendFeedback () {
     const {reportIssue, data} = this.props
-    const {error} = data
+    const {error, stack} = data
 
-    reportIssue({log: (error.stack || ('' + error))})
+    reportIssue({log: error + '\n\nstack:\n' + stack})
   }
 
   reload (e) {
@@ -46,23 +46,22 @@ export class Toast extends Component {
     const {t, data = {}} = this.props
 
     return <div className='toast-meat'>
-    <Icon icon='heart-broken' classes='leader'/>
-    <h2>{t('toast.title')}</h2>
+      <Icon icon='heart-broken' classes='leader'/>
+      <h2>{t('toast.title')}</h2>
 
-    <p>{t('toast.message')} {t('toast.call_to_action')}</p>
+      <p>{t('toast.message')} {t('toast.call_to_action')}</p>
 
-    <div className='button' onClick={this.reload}>
-    <Icon icon='repeat'/> {t('toast.actions.reload')}
-    </div>
+      <div className='button' onClick={this.reload}>
+	<Icon icon='repeat'/> {t('toast.actions.reload')}
+      </div>
 
-    <span className='link' onClick={this.toggleExpand}>{t('toast.actions.learn_more')}</span>
+      <span className='link' onClick={this.toggleExpand}>{t('toast.actions.learn_more')}</span>
 
-    {this.state.expanded
-    ? <p className='error'>{data.error || t('toast.no_info_available')}</p>
-    : ''}
+      {this.state.expanded
+      ? <p className='error'>{data.error}</p>
+      : ''}
 
-    <span className='link' onClick={this.sendFeedback}>{t('toast.actions.report')}</span>
-    
+      <span className='link' onClick={this.sendFeedback}>{t('toast.actions.report')}</span>
     </div>
   }
 }
