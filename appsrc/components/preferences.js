@@ -54,13 +54,15 @@ export class Preferences extends Component {
     const {showAdvanced} = this.state
 
     return <div className='preferences-meat'>
-      <SelectRow onChange={::this.onLanguageChange} options={options} value={lang || '__'} label={t('preferences.language')}/>
+      <div className='locales-heading'>
+        <SelectRow onChange={::this.onLanguageChange} options={options} value={lang || '__'} label={t('preferences.language')}/>
 
-      <div className='locale-fetcher' onClick={(e) => { e.preventDefault(); queueLocaleDownload(lang) }}>
-      {downloading
-        ? <Icon icon='stopwatch' classes='scan'/>
-        : <Icon icon='refresh'/>
-      }
+        <div className='locale-fetcher' onClick={(e) => { e.preventDefault(); queueLocaleDownload(lang) }}>
+        {downloading
+          ? <Icon icon='stopwatch' classes='scan'/>
+          : <Icon icon='refresh'/>
+        }
+        </div>
       </div>
 
       <p className='explanation flex'>
