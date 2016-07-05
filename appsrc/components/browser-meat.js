@@ -48,6 +48,7 @@ export class BrowserMeat extends Component {
     this.stop = ::this.stop
     this.openDevTools = ::this.openDevTools
     this.loadURL = ::this.loadURL
+    this.loadUserURL = ::this.loadUserURL
   }
 
   updateBrowserState (props = {}) {
@@ -279,9 +280,9 @@ export class BrowserMeat extends Component {
     const {tabData, tabPath, controls} = this.props
     const {browserState} = this.state
 
-    const {goBack, goForward, stop, reload, openDevTools, loadURL} = this
+    const {goBack, goForward, stop, reload, openDevTools, loadUserURL} = this
     const frozen = this.isFrozen()
-    const controlProps = {tabPath, tabData, browserState, goBack, goForward, stop, reload, openDevTools, loadURL, frozen}
+    const controlProps = {tabPath, tabData, browserState, goBack, goForward, stop, reload, openDevTools, loadURL: loadUserURL, frozen}
 
     let context = ''
     if (controls === 'game') {
@@ -339,9 +340,13 @@ export class BrowserMeat extends Component {
     this.with((wv) => wv.goForward())
   }
 
-  async loadURL (input) {
-    const {navigate} = this.props
+  async loadUserURL (input) {
     const url = await transformUrl(input)
+    await this.loadURL(url)
+  }
+
+  async loadURL (url) {
+    const {navigate} = this.props
 
     if (navigation.isAppSupported(url) && this.isFrozen()) {
       navigate(`url/${url}`)

@@ -32,6 +32,7 @@ export async function transformUrl (original) {
   return await new Promise((resolve, reject) => {
     dns.lookup(parsed.hostname, (err) => {
       if (err) {
+        console.log(`dns error: ${err.code} / ${err.message}`)
         resolve(searchUrl())
       }
       resolve(req)
