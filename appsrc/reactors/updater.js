@@ -69,6 +69,18 @@ async function checkForGameUpdate (store, action) {
 async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
   const {noisy = false} = taskOpts
 
+  const credentials = store.getState().session.credentials
+  invariant(credentials, 'has credentials')
+
+  const {installedBy} = cave
+  const {me} = credentials
+  if (installedBy && me) {
+    if (installedBy.id !== me.id) {
+      log(opts, `${cave.id} was installed by ${installedBy.username}, we're ${me.username}, skipping check`)
+    }
+    return {}
+  }
+
   if (!cave.launchable) {
     log(opts, `Cave isn't launchable, skipping: ${cave.id}`)
     return {}
@@ -76,11 +88,8 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
 
   if (!cave.gameId) {
     log(opts, `Cave lacks gameId, skipping: ${cave.id}`)
-    return {err: 'Internal error'}
+    return {err: 'Inconsistent state, try reinstalling game'}
   }
-
-  const credentials = store.getState().session.credentials
-  invariant(credentials, 'has credentials')
 
   const market = getUserMarket()
   const globalMarket = getGlobalMarket()

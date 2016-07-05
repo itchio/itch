@@ -48,7 +48,6 @@ async function purchaseCompleted (store, action) {
   await fetchUsuals(credentials)
 }
 
-// FIXME: can't await the debounced version of this anymore!
 const fetchUsuals = async function fetchUsuals (credentials) {
   invariant(credentials.key, 'have API key')
 
