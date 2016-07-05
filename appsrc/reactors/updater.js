@@ -8,6 +8,7 @@ import delay from './delay'
 
 import * as actions from '../actions'
 
+import format from '../util/format'
 import fetch from '../util/fetch'
 import pathmaker from '../util/pathmaker'
 import api from '../util/api'
@@ -17,7 +18,7 @@ const log = mklog('updater')
 import {opts} from '../logger'
 
 import {startDownload} from './tasks/start-download'
-import {findWhere} from 'underline'
+import {findWhere, filter, map} from 'underline'
 
 const DELAY_BETWEEN_GAMES = 25
 
@@ -43,6 +44,10 @@ async function checkForGameUpdates (store, action) {
 
 async function checkForGameUpdate (store, action) {
   const {caveId, noisy = false} = action.payload
+  if (noisy) {
+    log(opts, `Looking for updates for cave ${caveId}`)
+  }
+
   invariant(typeof caveId === 'string', 'caveId is a string')
 
   const cave = getGlobalMarket().getEntity('caves', caveId)
@@ -63,6 +68,10 @@ async function checkForGameUpdate (store, action) {
     if (noisy) {
       store.dispatch(actions.statusMessage(['status.game_update.check_failed', {err: e}]))
     }
+  } finally {
+    if (noisy) {
+      log(opts, `Done looking for updates for cave ${caveId}`)
+    }
   }
 }
 
@@ -77,8 +86,8 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
   if (installedBy && me) {
     if (installedBy.id !== me.id) {
       log(opts, `${cave.id} was installed by ${installedBy.username}, we're ${me.username}, skipping check`)
+      return {}
     }
-    return {}
   }
 
   if (!cave.launchable) {
@@ -119,11 +128,23 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
 
     try {
       const {uploads, downloadKey} = await findUpload(out, taskOpts)
+
       if (uploads.length === 0) {
         log(opts, `Can't check for updates for ${game.title}, no uploads.`)
         logger.contents.trimRight().split('\n').map((line) => log(opts, `> ${line}`))
         return {err: 'No uploads found'}
       }
+
+      const installedAt = Date.parse(cave.installedAt)
+      const recentUploads = uploads::filter((upload) => {
+        const updatedAt = Date.parse(upload.updatedAt)
+        const isRecent = updatedAt > installedAt
+        if (!isRecent) {
+          log(opts, `Filtering out ${upload.filename} (#${upload.id}), ${format.date(updatedAt, format.DATE_FORMAT)} is older than ${format.date(installedAt, format.DATE_FORMAT)}`)
+        }
+        return isRecent
+      })
+      log(opts, `${uploads.length} available uploads, ${recentUploads.length} are more recent`)
 
       let hasUpgrade = false
 
@@ -174,7 +195,49 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
         }
       }
 
-      const upload = uploads[0]
+      if (recentUploads.length === 0) {
+        log(opts, `No recent uploads for ${game.title}, update check done`)
+        return {hasUpgrade: false}
+      }
+
+      if (recentUploads.length > 1) {
+        log(opts, 'More than one recent upload, asking user to pick')
+
+        const {title} = game
+        store.dispatch(actions.openModal({
+          title: ['pick_update_upload.title', {title}],
+          message: ['pick_update_upload.message', {title}],
+          detail: ['pick_update_upload.detail'],
+          bigButtons: recentUploads::map((upload) => {
+            const archivePath = pathmaker.downloadPath(upload)
+            return {
+              label: `${upload.filename} (${humanize.fileSize(upload.size)})`,
+              timeAgo: {
+                label: ['prompt.updated_ago'],
+                date: Date.parse(upload.updatedAt)
+              },
+              action: actions.queueDownload({
+                game,
+                gameId: game.id,
+                upload,
+                totalSize: upload.size,
+                destPath: archivePath,
+                downloadKey,
+                handPicked: true,
+                reason: 'update'
+              }),
+              icon: 'download'
+            }
+          }),
+          buttons: [
+            'cancel'
+          ]
+        }))
+
+        return {hasUpgrade: true}
+      }
+
+      const upload = recentUploads[0]
       const differentUpload = upload.id !== cave.uploadId
       const wentWharf = upload.buildId && !cave.buildId
 
@@ -200,6 +263,7 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
           game,
           gameId: game.id,
           upload,
+          handPicked: false,
           totalSize: upload.size,
           destPath: archivePath,
           downloadKey,

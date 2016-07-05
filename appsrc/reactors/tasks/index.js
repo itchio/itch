@@ -1,5 +1,5 @@
 
-import {startDownload} from './start-download'
+import {startDownload, queueDownload} from './start-download'
 import {queueGame} from './queue-game'
 import {taskEnded} from './task-ended'
 import {downloadEnded} from './download-ended'
@@ -22,5 +22,6 @@ async function retryDownload (store, action) {
 export default {
   boot, exploreCave,
   queueGame, queueCaveReinstall, queueCaveUninstall, implodeCave,
-  downloadEnded, taskEnded, retryDownload, abortGame, abortLastGame, abortTask
+  downloadEnded, taskEnded, retryDownload, abortGame, abortLastGame, abortTask,
+  queueDownload
 }

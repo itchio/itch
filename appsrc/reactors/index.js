@@ -83,6 +83,7 @@ export default validateReactors({
   TAB_CHANGED: combine(navigation.tabChanged),
 
   QUEUE_GAME: combine(tasks.queueGame),
+  QUEUE_DOWNLOAD: combine(tasks.queueDownload),
   REQUEST_CAVE_UNINSTALL: combine(dialogs.requestCaveUninstall),
   QUEUE_CAVE_REINSTALL: combine(tasks.queueCaveReinstall),
   QUEUE_CAVE_UNINSTALL: combine(tasks.queueCaveUninstall),

@@ -40,7 +40,8 @@ export async function downloadEnded (store, action) {
         game: downloadOpts.game,
         upload: downloadOpts.upload,
         archivePath: downloadOpts.destPath,
-        downloadKey: downloadOpts.downloadKey
+        downloadKey: downloadOpts.downloadKey,
+        handPicked: downloadOpts.handPicked
       }
 
       const {err} = await startTask(store, taskOpts)

@@ -33,3 +33,8 @@ export async function startDownload (store, downloadOpts) {
   // FIXME: wasteful but easy
   store.dispatch(actions.downloadStarted({id, ...downloadOpts, downloadOpts}))
 }
+
+export async function queueDownload (store, action) {
+  const downloadOpts = action.payload
+  await startDownload(store, downloadOpts)
+}

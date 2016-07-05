@@ -2,6 +2,7 @@
 import {createAction} from 'redux-actions'
 
 import {
+  QUEUE_DOWNLOAD,
   DOWNLOAD_STARTED,
   DOWNLOAD_PROGRESS,
   DOWNLOAD_ENDED,
@@ -15,6 +16,8 @@ import {
   RESUME_DOWNLOADS,
   RETRY_DOWNLOAD
 } from '../constants/action-types'
+
+export const queueDownload = createAction(QUEUE_DOWNLOAD)
 
 const _downloadStarted = createAction(DOWNLOAD_STARTED)
 export const downloadStarted = (payload) => _downloadStarted({...payload, date: Date.now()})

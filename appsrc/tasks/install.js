@@ -25,7 +25,7 @@ export default async function start (out, opts) {
   invariant(opts.archivePath, 'install must have a archivePath')
   invariant(opts.game, 'install must have a game')
   invariant(opts.upload, 'install must have an upload')
-  const {market, credentials, globalMarket, archivePath, downloadKey, game, upload, installLocation = defaultInstallLocation()} = opts
+  const {market, credentials, globalMarket, archivePath, downloadKey, game, upload, installLocation = defaultInstallLocation(), handPicked} = opts
 
   let checkTimestamps = true
 
@@ -49,6 +49,7 @@ export default async function start (out, opts) {
       uploads: {[upload.id]: upload},
       installLocation,
       installFolder,
+      handPicked,
       fresh: true,
       downloadKey
     }
@@ -107,9 +108,10 @@ export default async function start (out, opts) {
       username: credentials.me.username
     },
     downloadKey,
+    handPicked,
     launchable: true,
     installedArchiveMtime: amtime,
-    installedAt: new Date(),
+    installedAt: Date.now(),
     uploadId: upload.id,
     buildId: upload.buildId,
     uploads: {[upload.id]: upload},

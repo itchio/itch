@@ -138,6 +138,7 @@ module.exports = keyMirror({
   ABORT_TASK: null,
 
   /* Downloads */
+  QUEUE_DOWNLOAD: null,
   DOWNLOAD_STARTED: null,
   DOWNLOAD_PROGRESS: null,
   DOWNLOAD_ENDED: null,
