@@ -10,9 +10,12 @@ body {
 }
 
 body {
-  font-family: LatoWeb, sans-serif;
   font-size: $base-text-size;
   color: $base-text-color;
+}
+
+body, input {
+  font-family: LatoWeb, sans-serif;
 }
 
 .layout {
