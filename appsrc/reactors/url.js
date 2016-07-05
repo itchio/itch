@@ -81,8 +81,11 @@ async function viewCommunityProfile (store, action) {
 }
 
 async function reportIssue (store, action) {
+  const {log} = action.payload
+
   crashReporter.reportIssue({
-    body: 'I am having the following problem:'
+    body: 'I am having the following problem:',
+    log
   })
 }
 
