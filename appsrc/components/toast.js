@@ -52,7 +52,7 @@ export class Toast extends Component {
       <p>{t('toast.message')} {t('toast.call_to_action')}</p>
 
       <div className='button' onClick={this.reload}>
-	<Icon icon='repeat'/> {t('toast.actions.reload')}
+        <Icon icon='repeat'/> {t('toast.actions.reload')}
       </div>
 
       <span className='link' onClick={this.toggleExpand}>{t('toast.actions.learn_more')}</span>
