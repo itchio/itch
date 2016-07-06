@@ -230,7 +230,7 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
           bigButtons: recentUploads::map((upload) => {
             const archivePath = pathmaker.downloadPath(upload)
             return {
-              label: `${upload.filename} (${humanize.fileSize(upload.size)})`,
+              label: `${upload.displayName || upload.filename} (${humanize.fileSize(upload.size)})`,
               timeAgo: {
                 label: ['prompt.updated_ago'],
                 date: Date.parse(upload.updatedAt)

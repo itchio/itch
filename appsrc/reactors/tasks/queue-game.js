@@ -47,7 +47,7 @@ export async function queueGame (store, action) {
         detail: ['pick_install_upload.detail'],
         bigButtons: uploads::map((upload) => {
           return {
-            label: `${upload.filename} (${humanize.fileSize(upload.size)})`,
+            label: `${upload.displayName || upload.filename} (${humanize.fileSize(upload.size)})`,
             action: actions.queueGame({
               ...action.payload,
               pickedUpload: upload.id
