@@ -20,8 +20,9 @@ const linux = os.itchPlatform() === 'linux'
 let hadErrors = false
 let autoUpdater
 
-// 6 hours, * 60 = minutes, * 60 = seconds, * 1000 = millis
-const UPDATE_INTERVAL = 6 * 60 * 60 * 1000
+// 2 hours, * 60 = minutes, * 60 = seconds, * 1000 = millis
+const UPDATE_INTERVAL = 2 * 60 * 60 * 1000
+const UPDATE_INTERVAL_WIGGLE = 0.2 * 60 * 60 * 1000
 
 // 5 seconds, * 1000 = millis
 const DISMISS_TIME = 5 * 1000
@@ -68,7 +69,15 @@ async function firstWindowReady (store, action) {
   })
 
   setTimeout(() => store.dispatch(actions.checkForSelfUpdate()), QUIET_TIME)
-  setInterval(() => store.dispatch(actions.checkForSelfUpdate()), UPDATE_INTERVAL)
+
+  while (true) {
+    try {
+      await delay(UPDATE_INTERVAL + Math.random() + UPDATE_INTERVAL_WIGGLE)
+      store.dispatch(actions.checkForSelfUpdate())
+    } catch (e) {
+      log(opts, `While doing regularly self-update check: ${e}`)
+    }
+  }
 }
 
 async function checkForSelfUpdate (store, action) {

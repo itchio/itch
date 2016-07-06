@@ -81,7 +81,7 @@ async function queueLocaleDownload (store, action) {
   store.dispatch(actions.localeDownloadStarted({lang}))
 
   log(opts, `Waiting a bit before downloading ${lang} locale...`)
-  await delay(5000)
+  await delay(1000)
 
   const resources = {}
   try {

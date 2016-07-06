@@ -23,7 +23,8 @@ import {findWhere, filter, map} from 'underline'
 const DELAY_BETWEEN_GAMES = 25
 
 // 30 minutes * 60 = seconds, * 1000 = millis
-const DELAY_BETWEEN_PASSES = 30 * 60 * 1000
+const DELAY_BETWEEN_PASSES = 20 * 60 * 1000
+const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000
 
 import findUpload from '../tasks/find-upload'
 import findUpgradePath from '../tasks/find-upgrade-path'
@@ -38,7 +39,7 @@ async function checkForGameUpdates (store, action) {
     } catch (e) {
       log(opts, `While checking for cave ${caveId} update: ${e.stack || e}`)
     }
-    await delay(DELAY_BETWEEN_GAMES)
+    await delay(DELAY_BETWEEN_GAMES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE)
   }
 }
 
