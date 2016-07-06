@@ -11,7 +11,7 @@
     "grid.item.launch": "Запустить",
     "grid.item.not_platform_compatible": "Недоступно на {{platform}}",
     "grid.item.queued": "В очереди",
-    "grid.item.report_problem": "Пожаловаться на неработающее",
+    "grid.item.report_problem": "Сообщить о проблеме",
     "grid.item.running": "Выполняется…",
     "grid.item.uninstall": "Удалить",
     "grid.item.uninstalling": "Удаление…",
@@ -335,5 +335,15 @@
     "sidebar.aw_snap": "Опаньки!",
     "toast.call_to_action": "Чтобы продолжить, перезагрузите страницу или введите другой веб-адрес.",
     "toast.actions.report": "Отправить отзыв, чтобы помочь улучшить itch",
-    "toast.no_info_available": "Информация не доступна"
+    "toast.no_info_available": "Информация не доступна",
+    "collection.empty": "В этой коллекции нет игр",
+    "download.started": "Начато",
+    "download.reason.install": "первая установка",
+    "download.reason.update": "обновление до последней версии",
+    "grid.clear_filters": "Отменить фильтры",
+    "new_tab.titles.buttons": "Выберите что-нибудь:",
+    "outlinks.manage_collections": "Управление коллекциями",
+    "preferences.behavior": "Поведение",
+    "preferences.behavior.close_to_tray": "Сворачиваться в системный трей при закрытии окна",
+    "outlinks.open_dashboard": "Кабинет"
 }
