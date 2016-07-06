@@ -18,7 +18,7 @@ setTimeout(function () {
     xhr.send()
   }
 
-  const I = {}
+  const I = window.I || {}
 
   Object.defineProperty(window, 'I', {
     get: () => I,
