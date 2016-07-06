@@ -25,7 +25,9 @@ let self = {
     let totalSize = 0
     let req = needle.get(url, (err, res) => {
       e = err
-      totalSize = parseInt(res.headers['content-length'], 10)
+      if (res) {
+        totalSize = parseInt(res.headers['content-length'], 10)
+      }
     })
     await sf.mkdir(path.dirname(file))
     log(opts, `downloading ${url} to ${file}`)
