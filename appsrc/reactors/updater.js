@@ -39,7 +39,7 @@ async function checkForGameUpdates (store, action) {
     } catch (e) {
       log(opts, `While checking for cave ${caveId} update: ${e.stack || e}`)
     }
-    await delay(DELAY_BETWEEN_GAMES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE)
+    await delay(DELAY_BETWEEN_GAMES)
   }
 }
 
@@ -328,7 +328,7 @@ async function sessionReady (store, action) {
   while (true) {
     log(opts, 'Regularly scheduled check for game updates...')
     store.dispatch(actions.checkForGameUpdates())
-    await delay(DELAY_BETWEEN_PASSES)
+    await delay(DELAY_BETWEEN_PASSES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE)
   }
 }
 
