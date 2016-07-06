@@ -50,7 +50,7 @@
   border-radius: 2px;
 
   &:active {
-    transform: scale(.95);
+    transform: translateY(2px);
   }
 }
 
@@ -95,7 +95,7 @@
     }
 
     &:active {
-      transform: scale(.95);
+      transform: translateY(2px);
     }
   }
 }

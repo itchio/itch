@@ -13,6 +13,7 @@
 
   &:hover {
     box-shadow: 0 0 2px $ui-box-shadow-color;
-    cursor: pointer;
   }
+
+  @include clickable;
 }

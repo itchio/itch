@@ -96,17 +96,9 @@ $meat-cover-scale: 0.4;
           padding-left: none;
         }
 
-        -webkit-filter: brightness(90%);
         text-shadow: 0 0 1px;
 
-        &:active {
-          -webkit-transform: scale(.95);
-        }
-
-        &:hover {
-          -webkit-filter: none;
-          cursor: pointer;
-        }
+        @include clickable;
 
         &.loading {
           @include horizontal-scan;

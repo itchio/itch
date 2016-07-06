@@ -28,16 +28,7 @@
       margin-bottom: 25px;
     }
 
-    opacity: 0.7;
-
-    &:hover {
-      opacity: 1;
-      cursor: pointer;
-    }
-
-    &:active {
-      transform: scale(0.95);
-    }
+    @include clickable;
   }
 
   h2 {

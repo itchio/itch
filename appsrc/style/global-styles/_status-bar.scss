@@ -28,58 +28,6 @@
   flex-direction: row;
   align-items: center;
 
-  .plug, .history, .downloads {
-    transition-property: color, background, border;
-    transition-duration: .4s;
-
-    position: relative;
-    color: $secondary-text-color;
-    -webkit-filter: brightness(90%);
-    font-size: 18px;
-    margin-right: 12px;
-    min-width: 50px;
-    padding-left: 20px;
-
-    .bubble {
-      position: absolute;
-      left: 29px;
-      top: -7px;
-    }
-
-    &:hover {
-      cursor: pointer;
-      -webkit-filter: brightness(110%);
-    }
-
-    &.active {
-      color: $light-accent-color;
-    }
-
-    &.bounce {
-      animation: bounce .4s linear;
-    }
-
-    &:active {
-      transform: scale(.95);
-    }
-  }
-
-  .bubble {
-    background: $light-accent-color;
-    padding: 0 4px;
-    margin: 0 4px;
-    border-radius: 2px;
-    font-size: 12px;
-    color: $sidebar-background-color;
-    font-weight: bold;
-  }
-
-  .timeago {
-    margin-left: 4px;
-    font-size: 12px;
-    -webkit-filter: rotate-hue(120deg);
-  }
-
   &.active {
     .self-update:hover {
       cursor: pointer;

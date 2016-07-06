@@ -232,12 +232,12 @@
     }
 
     .action {
+      @include icon-button;
+      @include clickable;
+
       &:hover {
         color: $ivory;
-        cursor: pointer;
       }
-
-      @include icon-button;
     }
   }
 
