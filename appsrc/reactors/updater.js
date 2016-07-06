@@ -58,9 +58,19 @@ async function checkForGameUpdate (store, action) {
 
   try {
     const result = await doCheckForGameUpdate(store, cave, {noisy})
+    if (noisy) {
+      if (result && result.err) {
+        store.dispatch(actions.statusMessage(['status.game_update.check_failed', {err: result.err}]))
+      } else if (result && result.hasUpgrade) {
+        if (result.game) {
+          store.dispatch(actions.statusMessage(['status.game_update.found', {title: result.game.title}]))
+        }
+      } else if (result && result.game) {
+        store.dispatch(actions.statusMessage(['status.game_update.not_found', {title: result.game.title}]))
+      }
+    }
     if (result && noisy) {
       if (result.err) {
-        store.dispatch(actions.statusMessage(['status.game_update.check_failed', {err: result.err}]))
       }
     }
   } catch (e) {
@@ -77,6 +87,7 @@ async function checkForGameUpdate (store, action) {
 
 async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
   const {noisy = false} = taskOpts
+  const returnVars = {}
 
   const credentials = store.getState().session.credentials
   invariant(credentials, 'has credentials')
@@ -86,18 +97,18 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
   if (installedBy && me) {
     if (installedBy.id !== me.id) {
       log(opts, `${cave.id} was installed by ${installedBy.username}, we're ${me.username}, skipping check`)
-      return {}
+      return {hasUpgrade: false}
     }
   }
 
   if (!cave.launchable) {
     log(opts, `Cave isn't launchable, skipping: ${cave.id}`)
-    return {}
+    return {hasUpgrade: false}
   }
 
   if (!cave.gameId) {
     log(opts, `Cave lacks gameId, skipping: ${cave.id}`)
-    return {err: 'Inconsistent state, try reinstalling game'}
+    return {hasUpgrade: false}
   }
 
   const market = getUserMarket()
@@ -109,6 +120,8 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
     log(opts, `Could not fetch game for ${cave.gameId}, skipping (${e.message || e})`)
     return {err: e}
   }
+  returnVars.game = game
+  returnVars.hasUpgrade = false
 
   const logger = new mklog.Logger({sinks: {console: false, string: true}})
 
@@ -186,7 +199,7 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
                 totalSize,
                 cave
               })
-              return {hasUpgrade}
+              return {...returnVars, hasUpgrade}
             } catch (e) {
               log(opts, `While getting upgrade path: ${e.message || e}`)
               return {err: e.message}
@@ -197,7 +210,7 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
 
       if (recentUploads.length === 0) {
         log(opts, `No recent uploads for ${game.title}, update check done`)
-        return {hasUpgrade: false}
+        return returnVars
       }
 
       if (recentUploads.length > 1) {
@@ -234,7 +247,7 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
           ]
         }))
 
-        return {hasUpgrade: true}
+        return {...returnVars, hasUpgrade: true}
       }
 
       const upload = recentUploads[0]
@@ -255,10 +268,6 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
 
         const archivePath = pathmaker.downloadPath(upload)
 
-        if (noisy) {
-          store.dispatch(actions.statusMessage(['status.game_update.found', {title: game.title}]))
-        }
-
         await startDownload(store, {
           game,
           gameId: game.id,
@@ -269,7 +278,7 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
           downloadKey,
           reason: 'update'
         })
-        return {hasUpgrade}
+        return {...returnVars, hasUpgrade}
       }
     } catch (e) {
       if (api.hasAPIError(e, 'incorrect user for claim')) {
@@ -287,10 +296,7 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
     log(opts, `Can't check for updates for ${game.title}, not visible by current user?`)
   }
 
-  if (noisy) {
-    store.dispatch(actions.statusMessage(['status.game_update.not_found', {title: game.title}]))
-  }
-  return {}
+  return returnVars
 }
 
 async function doCheckForGameUpdate (store, cave, taskOpts = {}) {
