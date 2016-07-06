@@ -235,7 +235,6 @@ async function closeTabOrAuxWindow (store) {
   const focused = BrowserWindow.getFocusedWindow()
   if (focused) {
     const id = store.getState().ui.mainWindow.id
-    console.log(`focused id: ${id}, main id: ${id}`)
     if (focused.id === id) {
       store.dispatch(actions.closeTab())
     } else {
