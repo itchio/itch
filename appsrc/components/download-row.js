@@ -112,7 +112,7 @@ class DownloadRow extends Component {
       <div className='timeago'>
       {first
       ? <div>
-        Started <NiceAgo date={date}/>
+        {t('download.started')} <NiceAgo date={date}/>
         {reasonText ? ` — ${reasonText}` : ''}
       </div>
       : t('grid.item.queued')
@@ -131,13 +131,15 @@ class DownloadRow extends Component {
   }
 
   reasonText (reason) {
+    const {t} = this.props
+
     switch (reason) {
       case 'install':
-        return 'for first install'
+        return t('download.reason.install')
       case 'update':
-        return 'to update to the latest version'
+        return t('download.reason.update')
       default:
-        return 'for reasons unknown'
+        return ''
     }
   }
 
