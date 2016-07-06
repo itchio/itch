@@ -30,6 +30,7 @@ class GameGridFilters extends Component {
           </label>
         </section>
         : ''}
+      {this.props.children}
     </section>
   }
 

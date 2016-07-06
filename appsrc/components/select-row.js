@@ -22,19 +22,15 @@ class SelectRow extends Component {
   render () {
     let options = this.props.options
     let value = this.props.value
-    let label = this.props.label || ''
 
     const optionTags = options::map((option, index) =>
       <option value={option.value}>{option.label}</option>
     )
 
     return <div className='select-row'>
-      <label>
-        {label}
-        <select ref='input' value={value} onChange={this.onChange}>
-          {optionTags}
-        </select>
-      </label>
+      <select ref='input' value={value} onChange={this.onChange}>
+        {optionTags}
+      </select>
     </div>
   }
 

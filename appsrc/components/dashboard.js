@@ -4,13 +4,16 @@ import {connect} from './connect'
 import {createStructuredSelector} from 'reselect'
 import classNames from 'classnames'
 
+import urls from '../constants/urls'
+import * as actions from '../actions'
+
 import GameGrid from './game-grid'
 import GameGridFilters from './game-grid-filters'
 import {map} from 'underline'
 
 export class Dashboard extends Component {
   render () {
-    const {t, allGames, myGameIds, query} = this.props
+    const {t, allGames, myGameIds, navigate} = this.props
 
     const games = myGameIds::map((id) => allGames[id])
 
@@ -26,8 +29,12 @@ export class Dashboard extends Component {
 
     return <div className='dashboard-meat'>
       <h2 className={headerClasses}>{t('sidebar.dashboard')}</h2>
-      <GameGridFilters tab={tab}/>
-      <GameGrid tab={tab} games={games} query={query}/>
+      <GameGridFilters tab={tab}>
+        <span className='link' onClick={(e) => navigate(`url/${urls.dashboard}`)}>
+          {t('outlinks.open_dashboard')}
+        </span>
+      </GameGridFilters>
+      <GameGrid tab={tab} games={games}/>
     </div>
   }
 }
@@ -45,7 +52,9 @@ const mapStateToProps = createStructuredSelector({
   myGameIds: (state) => (((state.market.itchAppProfile || {}).myGames || {}).ids || [])
 })
 
-const mapDispatchToProps = (dispatch) => ({})
+const mapDispatchToProps = (dispatch) => ({
+  navigate: (url) => dispatch(actions.navigate(url))
+})
 
 export default connect(
   mapStateToProps,

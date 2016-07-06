@@ -148,9 +148,14 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
         return {err: 'No uploads found'}
       }
 
-      const installedAt = Date.parse(cave.installedAt)
+      // TODO: update installedAt once we found there were no new uploads?
+      log(opts, `cave.installedAt = ${cave.installedAt}`)
+      let installedAt = new Date(cave.installedAt)
+      if (isNaN(installedAt.getTime())) {
+        installedAt = new Date(0)
+      }
       const recentUploads = uploads::filter((upload) => {
-        const updatedAt = Date.parse(upload.updatedAt)
+        const updatedAt = new Date(upload.updatedAt)
         const isRecent = updatedAt > installedAt
         if (!isRecent) {
           log(opts, `Filtering out ${upload.filename} (#${upload.id}), ${format.date(updatedAt, format.DATE_FORMAT)} is older than ${format.date(installedAt, format.DATE_FORMAT)}`)

@@ -10,7 +10,7 @@ import {pathToId} from '../util/navigation'
 
 export class Collection extends Component {
   render () {
-    const {allGames, tabGames, collection, query} = this.props
+    const {allGames, tabGames, collection} = this.props
 
     if (!collection) {
       return <div className='collection-meat'>
@@ -25,7 +25,7 @@ export class Collection extends Component {
 
     return <div className='collection-meat'>
       <GameGridFilters tab={tab}/>
-      <GameGrid games={games} query={query} tab={tab}/>
+      <GameGrid games={games} tab={tab}/>
     </div>
   }
 }

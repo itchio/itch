@@ -13,7 +13,8 @@ import {
   PREPARE_QUIT,
   QUIT_WHEN_MAIN,
   QUIT,
-  QUIT_ELECTRON_APP
+  QUIT_ELECTRON_APP,
+  QUIT_AND_INSTALL
 } from '../constants/action-types'
 
 export const preboot = createAction(PREBOOT)
@@ -28,3 +29,4 @@ export const prepareQuit = createAction(PREPARE_QUIT)
 export const quitWhenMain = createAction(QUIT_WHEN_MAIN)
 export const quit = createAction(QUIT)
 export const quitElectronApp = createAction(QUIT_ELECTRON_APP)
+export const quitAndInstall = createAction(QUIT_AND_INSTALL)

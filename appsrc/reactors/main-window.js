@@ -64,18 +64,32 @@ async function createWindow (store) {
   let destroyTimeout
 
   window.on('close', (e) => {
+    log(opts, 'Main window being closed')
     if (quitting) {
+      log(opts, 'Quitting, letting main window close')
       // alright alright you get to close
       return
     }
 
-    if (!window.isVisible()) {
-      // timeout elapsed and still not shown - it's a closin'!
+    const store = require('../store').default
+    const prefs = (store && store.getState().preferences) || {closeToTray: true}
+
+    const {closeToTray} = prefs
+    if (closeToTray) {
+      log(opts, 'Close to tray enabled')
+    } else {
+      log(opts, 'Close to tray disabled, quitting!')
+      setTimeout(() => {
+        store.dispatch(actions.quit())
+      }, 100)
       return
     }
 
-    const store = require('../store').default
-    const prefs = (store && store.getState().preferences) || {}
+    if (!window.isVisible()) {
+      log(opts, 'Main window hidden, letting it close')
+      // timeout elapsed and still not shown - it's a closin'!
+      return
+    }
 
     if (!prefs.gotMinimizeNotification) {
       store.dispatch(actions.updatePreferences({
@@ -96,9 +110,17 @@ async function createWindow (store) {
     window.hide()
 
     destroyTimeout = setTimeout(() => {
-      log(opts, `Destroying window maybe? (already destroyed: ${window.isDestroyed()}, visible: ${window.isVisible()})`)
-      if (!window.isDestroyed() && !window.isVisible()) {
-        window.close()
+      if (window.isDestroyed()) {
+        log(opts, 'Window already destroyed!')
+        return
+      }
+
+      try {
+        if (!window.isVisible()) {
+          window.close()
+        }
+      } catch (e) {
+        log(opts, `While attempting to destroy window: ${e.message}`)
       }
     }, 10 * 1000)
   })
@@ -200,7 +222,7 @@ async function focusWindow (store, action) {
   }
 }
 
-async function hideWindow () {
+async function hideWindow (store) {
   const window = BrowserWindow.getFocusedWindow()
   if (window) {
     window.close()
@@ -246,13 +268,18 @@ async function quitElectronApp () {
 }
 
 async function prepareQuit () {
-  // sigh..
   quitting = true
 }
 
 async function quit (store) {
-  store.dispatch(actions.prepareQuit())
+  quitting = true
   store.dispatch(actions.quitElectronApp())
+}
+
+async function quitAndInstall (store, action) {
+  quitting = true
+  log(opts, 'Handing off to Squirrel')
+  require('electron').autoUpdater.quitAndInstall()
 }
 
 async function boot (store, action) {
@@ -261,5 +288,5 @@ async function boot (store, action) {
 
 export default {
   boot, focusWindow, hideWindow, windowBoundsChanged,
-  closeTabOrAuxWindow, quitWhenMain, quitElectronApp, prepareQuit, quit
+  closeTabOrAuxWindow, quitWhenMain, quitElectronApp, prepareQuit, quit, quitAndInstall
 }

@@ -73,6 +73,7 @@ function autoUpdateDone () {
   })
 
   app.on('before-quit', (e) => {
+    console.log('Got before-quit')
     store.dispatch(prepareQuit())
   })
 

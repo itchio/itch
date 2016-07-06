@@ -37,7 +37,7 @@ export class Preferences extends Component {
   }
 
   render () {
-    const {t, lang, sniffedLang = '', downloading, locales, isolateApps} = this.props
+    const {t, lang, sniffedLang = '', downloading, locales, isolateApps, closeToTray} = this.props
     const {queueLocaleDownload, updatePreferences} = this.props
 
     const options = [{
@@ -54,15 +54,18 @@ export class Preferences extends Component {
     const {showAdvanced} = this.state
 
     return <div className='preferences-meat'>
-      <div className='locales-heading'>
-        <SelectRow onChange={::this.onLanguageChange} options={options} value={lang || '__'} label={t('preferences.language')}/>
+      <h2>{t('preferences.language')}</h2>
+      <div className='language-form'>
+        <label className='active'>
+          <SelectRow onChange={::this.onLanguageChange} options={options} value={lang || '__'}/>
 
-        <div className='locale-fetcher' onClick={(e) => { e.preventDefault(); queueLocaleDownload(lang) }}>
-        {downloading
-          ? <Icon icon='stopwatch' classes='scan'/>
-          : <Icon icon='refresh'/>
-        }
-        </div>
+          <div className='locale-fetcher' onClick={(e) => { e.preventDefault(); queueLocaleDownload(lang) }}>
+            {downloading
+              ? <Icon icon='stopwatch' classes='scan'/>
+              : <Icon icon='repeat'/>
+            }
+          </div>
+        </label>
       </div>
 
       <p className='explanation flex'>
@@ -74,10 +77,12 @@ export class Preferences extends Component {
 
       <h2>{t('preferences.security')}</h2>
       <div className='security-form'>
-        <label>
+        <label className={classNames({active: isolateApps})}>
           <input type='checkbox' checked={isolateApps} onChange={(e) => { updatePreferences({isolateApps: e.target.checked}) }}/>
           <span> {t('preferences.security.sandbox.title')} </span>
-          <span className='experimental'>{t('label.experimental')}</span>
+          <span className='hint--bottom' data-hint={t('label.experimental')}>
+            <Icon icon='lab-flask' onClick={(e) => e.preventDefault()}/>
+          </span>
         </label>
       </div>
 
@@ -89,6 +94,14 @@ export class Preferences extends Component {
         </a>
       </p>
 
+      <h2>{t('preferences.behavior')}</h2>
+      <div className='behavior-form'>
+        <label className={classNames({active: closeToTray})}>
+          <input type='checkbox' checked={closeToTray} onChange={(e) => { updatePreferences({closeToTray: e.target.checked}) }}/>
+          <span> {t('preferences.behavior.close_to_tray')} </span>
+        </label>
+      </div>
+
       <h2>{t('preferences.install_locations')}</h2>
       {this.installLocationTable()}
 
@@ -99,8 +112,9 @@ export class Preferences extends Component {
       </h2>
       {showAdvanced
       ? <p className='explanation'>
+        <span className='app-version'>
         {versionString()}
-        <br/>
+        </span>
         <span className='link' onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()) }}>
           {t('preferences.advanced.open_app_log')}
         </span>
@@ -120,14 +134,15 @@ export class Preferences extends Component {
 
   installLocationTable () {
     const {t, navigate} = this.props
-    const {browseInstallLocation, addInstallLocationRequest,
+    const {addInstallLocationRequest,
       removeInstallLocationRequest, makeInstallLocationDefault} = this.props
 
-    const header = <tr>
-      <th>{t('preferences.install_location.path')}</th>
-      <th>{t('preferences.install_location.used_space')}</th>
-      <th>{t('preferences.install_location.free_space')}</th>
-      <th></th>
+    const header = <tr className='header'>
+      <td>{t('preferences.install_location.path')}</td>
+      <td>{t('preferences.install_location.used_space')}</td>
+      <td>{t('preferences.install_location.free_space')}</td>
+      <td></td>
+      <td></td>
     </tr>
 
     const {installLocations = {}} = this.props
@@ -153,23 +168,15 @@ export class Preferences extends Component {
         ['default']: isDefault
       })
 
-      rows.push(<tr className={rowClasses}>
-        <td className='action path' onClick={(e) => { e.preventDefault(); navigate(`locations/${name}`) }}>
-          <Icon icon='folder'/> {path}
+      rows.push(<tr className={rowClasses} key={`location-${name}`}>
+        <td className='action path' onClick={(e) => makeInstallLocationDefault(name)}>
+          <div className='default-switch hint--right' data-hint={t('preferences.install_location.' + (isDefault ? 'is_default' : 'make_default'))}>
+            <span className='single-line'>{path}</span>
+          </div>
         </td>
         <td> {humanize.fileSize(size)} </td>
         <td> {freeSpace > 0 ? humanize.fileSize(freeSpace) : '...'} </td>
-
-        {isDefault
-          ? <td className='action default hint--top' data-hint={t('preferences.install_location.is_default')}>
-            <Icon icon='star'/>
-          </td>
-          : <td className='action default not-default hint--top' data-hint={t('preferences.install_location.make_default')} onClick={(e) => makeInstallLocationDefault(name)}>
-            <Icon icon='star2'/>
-          </td>
-        }
-
-        <td className='action hint--top' data-hint={t('grid.item.show_local_files')} onClick={(e) => browseInstallLocation(name)}>
+        <td className='action' onClick={(e) => { e.preventDefault(); navigate(`locations/${name}`) }}>
           <Icon icon='folder-open'/>
         </td>
 
@@ -182,7 +189,7 @@ export class Preferences extends Component {
       </tr>)
     })
 
-    rows.push(<tr className='borderless'>
+    rows.push(<tr>
       <td className='action add-new' onClick={(e) => { e.preventDefault(); addInstallLocationRequest() }}>
         <Icon icon='plus'/>
         {t('preferences.install_location.add')}
@@ -220,6 +227,7 @@ const mapStateToProps = createStructuredSelector({
   locales: (state) => state.i18n.locales,
   sniffedLang: (state) => state.system.sniffedLang,
   isolateApps: (state) => state.preferences.isolateApps,
+  closeToTray: (state) => state.preferences.closeToTray,
   installLocations: createSelector(
     (state) => state.preferences.installLocations,
     (state) => state.preferences.defaultInstallLocation,
@@ -282,7 +290,6 @@ const mapDispatchToProps = (dispatch) => ({
   addInstallLocationRequest: () => dispatch(actions.addInstallLocationRequest()),
   makeInstallLocationDefault: (name) => dispatch(actions.makeInstallLocationDefault({name})),
   removeInstallLocationRequest: (name) => dispatch(actions.removeInstallLocationRequest({name})),
-  browseInstallLocation: (name) => dispatch(actions.browseInstallLocation({name})),
   updatePreferences: (data) => dispatch(actions.updatePreferences(data))
 })
 

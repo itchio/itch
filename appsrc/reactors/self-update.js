@@ -141,14 +141,7 @@ async function applySelfUpdate (store, action) {
   }
 
   log(opts, 'Preparing for restart...')
-  store.dispatch(actions.prepareQuit())
-
-  // good job past me, that's top quality code!
-  // if only you left a comment explaining why this is necessary..
-  await delay(400)
-
-  log(opts, 'Handing off to Squirrel')
-  autoUpdater.quitAndInstall()
+  store.dispatch(actions.quitAndInstall())
 }
 
 async function returnsZero (cmd) {

@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:    url('fonts/icomoon.eot?qq54wh');
-    src:    url('fonts/icomoon.eot?qq54wh#iefix') format('embedded-opentype'),
-        url('fonts/icomoon.ttf?qq54wh') format('truetype'),
-        url('fonts/icomoon.woff?qq54wh') format('woff'),
-        url('fonts/icomoon.svg?qq54wh#icomoon') format('svg');
+    src:    url('fonts/icomoon.eot?fs1im4');
+    src:    url('fonts/icomoon.eot?fs1im4#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf?fs1im4') format('truetype'),
+        url('fonts/icomoon.woff?fs1im4') format('woff'),
+        url('fonts/icomoon.svg?fs1im4#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -24,6 +24,18 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-lab-flask:before {
+    content: "\e91d";
+}
+.icon-install:before {
+    content: "\e61d";
+}
+.icon-uninstall:before {
+    content: "\e61e";
+}
+.icon-shuffle:before {
+    content: "\e60e";
+}
 .icon-share:before {
     content: "\e91b";
 }
@@ -263,14 +275,5 @@
 }
 .icon-folder-open:before {
     content: "\e908";
-}
-.icon-install:before {
-    content: "\e61d";
-}
-.icon-uninstall:before {
-    content: "\e61e";
-}
-.icon-shuffle:before {
-    content: "\e60e";
 }
 
