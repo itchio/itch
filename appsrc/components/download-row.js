@@ -25,11 +25,16 @@ class DownloadRow extends Component {
       coverStyle.backgroundImage = `url("${coverUrl}")`
     }
 
+    let onStatsClick = () => {}
+    if (!active) {
+      onStatsClick = () => navigateToGame(game)
+    }
+
     const itemClasses = classNames('history-item', {first, dimmed: (active && !first), finished: !active})
 
     return <li key={id} className={itemClasses}>
       <div className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
-      <div className='stats'>
+      <div className='stats' onClick={onStatsClick}>
         {this.progress()}
       </div>
       {this.controls()}
@@ -104,7 +109,7 @@ class DownloadRow extends Component {
     const totalSize = item.totalSize ? humanize.fileSize(item.totalSize) : t('status.downloads.unknown_size')
     const reasonText = this.reasonText(reason)
 
-    return <div>
+    return <div className='stats-inner'>
       <div className='game-title'>{game.title}</div>
       <div className='progress'>
         <div className='progress-inner' style={progressInnerStyle}/>

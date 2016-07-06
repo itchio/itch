@@ -104,6 +104,13 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
 
     .stats {
       flex-grow: 1;
+      height: $download-cover-height;
+      display: flex;
+      align-items: center;
+
+      .stats-inner {
+        width: 100%;
+      }
 
       .progress {
         @include progress;
