@@ -98,9 +98,8 @@ ${log}
           self.reportIssue({log})
         } else if (response === 1) {
           shell.openItem(crashFile)
-        } else if (response === 2) {
-          process.exit(1)
         }
+        process.exit(1)
       }
 
       // try to show error dialog
