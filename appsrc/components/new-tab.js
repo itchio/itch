@@ -54,6 +54,9 @@ export class NewTab extends Component {
     return <div className='new-tab-meat'>
       <div className='hub-grid'>
         <div className='itch-logo'/>
+
+        <h2>{t('new_tab.titles.buttons')}</h2>
+
         {newTabItems::map((item) => {
           const {label, icon, path} = item
 

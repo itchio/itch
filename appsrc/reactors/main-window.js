@@ -20,6 +20,8 @@ let firstWindow = true
 const BOUNDS_CONFIG_KEY = 'main_window_bounds'
 const MAXIMIZED_CONFIG_KEY = 'main_window_maximized'
 
+const macOs = os.platform() === 'darwin'
+
 async function createWindow (store) {
   if (createLock) return
   createLock = true
@@ -258,7 +260,7 @@ async function quitWhenMain (store) {
 function showWindow (window) {
   window.show()
   const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false
-  if (maximized) {
+  if (maximized && !macOs) {
     window.maximize()
   }
 }

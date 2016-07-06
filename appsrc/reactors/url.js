@@ -84,7 +84,7 @@ async function reportIssue (store, action) {
   const {log} = action.payload
 
   crashReporter.reportIssue({
-    body: 'I am having the following problem:',
+    body: 'Dear itch app team, ',
     log
   })
 }
