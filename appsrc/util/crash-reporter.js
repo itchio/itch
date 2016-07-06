@@ -48,9 +48,9 @@ let self = {
     const before = opts.before || ''
 
     if (typeof log !== 'undefined') {
-      type = 'Crash report'
+      type = 'Feedback'
       body =
-`Crash log:
+`Event log:
 
 \`\`\`
 ${log}
