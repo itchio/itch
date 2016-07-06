@@ -345,5 +345,8 @@
     "pick_update_upload.title": "De nouveaux téléchargements sont disponibles pour {{title}}",
     "pick_update_upload.message": "Vers quel fichier souhaitez-vous mettre à jour {{title}} ?",
     "pick_update_upload.detail": "Nous demandons car vous aviez choisi à la main lors de l'installation.",
-    "sidebar.aw_snap": "Aie aie aie"
+    "sidebar.aw_snap": "Aie aie aie",
+    "download.started": "Démarré",
+    "download.reason.install": "pour une première installation",
+    "download.reason.update": "pour une mise à jour"
 }
