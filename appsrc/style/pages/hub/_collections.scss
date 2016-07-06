@@ -2,31 +2,36 @@
 .collections-meat {
   overflow-y: auto;
 
-  .hub-grid .collection-hub-item {
-    width: 280px;
-    margin: 10px 20px;
-    -webkit-filter: brightness(90%);
-
-    &:hover {
-      -webkit-filter: none;
-      cursor: pointer;
+  .hub-grid {
+    .collection-hub-item, .hub-filler {
+      width: 280px;
+      margin: 10px 20px;
     }
 
-    .title {
-      padding: 6px 6px;
-    }
+    .collection-hub-item {
+      -webkit-filter: brightness(90%);
 
-    .fresco {
-      display: flex;
-      flex-direction: row;
+      &:hover {
+        -webkit-filter: none;
+        cursor: pointer;
+      }
 
-      .row {
+      .title {
+        padding: 6px 6px;
+      }
+
+      .fresco {
         display: flex;
-        flex-direction: column;
-        flex: 1;
+        flex-direction: row;
 
-        .cover {
+        .row {
+          display: flex;
+          flex-direction: column;
           flex: 1;
+
+          .cover {
+            flex: 1;
+          }
         }
       }
     }

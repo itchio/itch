@@ -6,8 +6,11 @@ import Fuse from 'fuse.js'
 
 import {each, filter, map} from 'underline'
 
+import * as actions from '../actions'
+
 import isPlatformCompatible from '../util/is-platform-compatible'
 
+import Icon from './icon'
 import HubItem from './hub-item'
 import HubFiller from './hub-filler'
 
@@ -25,7 +28,7 @@ export class GameGrid extends Component {
   }
 
   render () {
-    const {t, games, filterQuery = '', onlyCompatible} = this.props
+    const {t, games, filterQuery = '', onlyCompatible, tab, clearFilters} = this.props
     this.fuse.set(games)
 
     const items = []
@@ -60,6 +63,10 @@ export class GameGrid extends Component {
     {hiddenCount > 0
     ? <div className='hidden-count'>
       {t('grid.hidden_count', {count: hiddenCount})}
+      {' '}
+      <span className='clear-filters hint--top' data-hint={t('grid.clear_filters')} onClick={() => clearFilters(tab)}>
+        <Icon icon='remove'/>
+      </span>
     </div>
     : ''}
     </div>
@@ -73,7 +80,8 @@ GameGrid.propTypes = {
 
   tab: PropTypes.string.isRequired,
 
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
+  clearFilters: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state, props) => {
@@ -84,7 +92,12 @@ const mapStateToProps = (state, props) => {
     onlyCompatible: (state) => state.session.navigation.binaryFilters.onlyCompatible
   })
 }
-const mapDispatchToProps = (dispatch) => ({})
+const mapDispatchToProps = (dispatch) => ({
+  clearFilters: (tab) => {
+    dispatch(actions.binaryFilterChanged({field: 'onlyCompatible', value: false}))
+    dispatch(actions.filterChanged({tab, query: ''}))
+  }
+})
 
 export default connect(
   mapStateToProps,

@@ -68,6 +68,12 @@
     }
   }
 
+  .clear-filters {
+    margin-left: 8px;
+    font-size: 80%;
+    @include clickable;
+  }
+
   .hub-filler {
     width: $grid-item-width;
     height: 0;

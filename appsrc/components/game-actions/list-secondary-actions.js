@@ -45,7 +45,7 @@ function shareAction (game) {
     label: ['grid.item.share'],
     icon: 'share',
     classes: ['generous'],
-    action: actions.initiateShare({game})
+    action: actions.initiateShare({url: game.url})
   }
 }
 

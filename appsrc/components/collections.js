@@ -11,6 +11,7 @@ import {map, sortBy} from 'underline'
 
 import GameGridFilters from './game-grid-filters'
 import CollectionHubItem from './collection-hub-item'
+import HubFiller from './hub-filler'
 
 const recency = (x) => -x.updatedAt || 0
 
@@ -36,6 +37,11 @@ export class Collections extends Component {
 
     const hiddenCount = filteredCollections.length - recentCollections.length
 
+    const fillerItems = []
+    for (let i = 0; i < 12; i++) {
+      fillerItems.push(<HubFiller key={`filler-${i}`}/>)
+    }
+
     return <div className='collections-meat'>
       <GameGridFilters tab={tab} showBinaryFilters={false}>
         <span className='link' onClick={(e) => navigate(`url/${urls.myCollections}`)}>
@@ -46,6 +52,7 @@ export class Collections extends Component {
         {filteredCollections::map((collection) =>
           <CollectionHubItem collection={collection}/>
         )}
+        {fillerItems}
         {hiddenCount > 0
         ? <div className='hidden-count'>
           {t('grid.hidden_count', {count: hiddenCount})}
