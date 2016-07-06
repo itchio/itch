@@ -30,7 +30,7 @@ export class Collection extends Component {
 
     return <div className='collection-meat'>
       <GameGridFilters tab={tab}>
-        <span className='link-icon' onClick={(e) => initiateShare(`${urls.itchio}/c/${collection.id}`)}>
+        <span className='link-icon' onClick={(e) => initiateShare(`${urls.itchio}/c/${collection.id}/x`)}>
           <Icon icon='share'/>
         </span>
       </GameGridFilters>
