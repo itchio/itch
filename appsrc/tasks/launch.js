@@ -28,6 +28,8 @@ import defaultManifestIcons from '../constants/default-manifest-icons'
 
 import {findWhere, each} from 'underline'
 
+import {Crash} from './errors'
+
 function caveProblem (cave) {
   switch (cave.launchType) {
     case 'native':
@@ -195,6 +197,14 @@ export default async function start (out, opts) {
     await launcher(out, gameOpts)
   } catch (e) {
     log(opts, `error while launching ${cave.id}: ${e.stack || e}`)
+    if (e instanceof Crash) {
+      const secondsRunning = Date.now() - startedAt
+      if (secondsRunning > 10) {
+        // looks like the game actually launched fine!
+        log(opts, `Game was running for ${secondsRunning} seconds, ignoring: ${e.toString()}`)
+        return
+      }
+    }
 
     store.dispatch(actions.openModal({
       title: ['game.install.could_not_launch', {title: game.title}],
