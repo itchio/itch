@@ -1,8 +1,11 @@
 # base functions useful throughout CI scripts
 
 # avert your eyes for a minute...
-ENV['PATH'] += ":#{Gem.user_dir}/bin"
-system 'bundle install' or raise 'Bundle install failed!'
+require 'fileutils'
+GEMS_PATH = File.join(File.dirname(__FILE__), '.gems')
+FileUtils.mkdir_p GEMS_PATH
+ENV['PATH'] += "#{GEMS_PATH}/bin"
+system %Q{bundle install --path "#{GEMS_PATH}"} or raise 'Bundle install failed!'
 require 'rubygems'
 require 'bundler/setup'
 ENV['LANG']='C'

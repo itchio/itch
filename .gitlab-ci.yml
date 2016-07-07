@@ -1,4 +1,9 @@
 
+cache:
+  paths:
+    - .bundle
+    - release/.gems
+
 stages:
   - build # babel, node-sass etc.
   - package # .rpm, .deb, .dmg., .zip

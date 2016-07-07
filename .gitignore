@@ -28,6 +28,10 @@ tmp
 /*.app
 /*.dmg
 
+# ruby-specific stuff
+/.bundle
+/release/.gems
+
 # updated locales stuff
 /app/static/locales/*.remote.json
 
