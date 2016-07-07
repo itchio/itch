@@ -310,5 +310,8 @@
     "grid.criterion.only_compatible": "Sólo compatible",
     "grid.clear_filters": "Limpiar filtros",
     "grid.item.prioritize_download": "Priorizar",
-    "grid.item.review": "Reseña"
+    "grid.item.review": "Reseña",
+    "grid.item.downloads_paused": "Descargas pausadas",
+    "browser.popout": "Abrir página en navegador externo",
+    "menu.help.about": "Acerca de"
 }
