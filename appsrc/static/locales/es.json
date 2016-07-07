@@ -300,5 +300,9 @@
     "action.name.editor": "Editor",
     "prompt.launch.message": "{{title}} puede ser iniciado de varias formas: elige una.",
     "grid.hidden_count": "+ {{count}} artículos ocultos por filtros",
-    "action.name.forums": "Foros"
+    "action.name.forums": "Foros",
+    "collection.empty": "No hay juegos en esta colección",
+    "download.started": "Iniciado",
+    "download.reason.install": "para la primera instalación",
+    "download.reason.update": "para actualizar a la última versión"
 }
