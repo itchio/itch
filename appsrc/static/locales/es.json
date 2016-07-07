@@ -344,5 +344,7 @@
     "prompt.abort_game.title": "¿Forzar cierre?",
     "prompt.abort_game.message": "¿Quieres forzar {{title}} a que se cierre?",
     "sidebar.aw_snap": "¡Oh, no!",
-    "sidebar.close_all_tabs": "Cerrar todas las pestañas"
+    "sidebar.close_all_tabs": "Cerrar todas las pestañas",
+    "status.downloads.category.active": "Descarga activa",
+    "status.downloads.category.queued": "Descargas en cola"
 }
