@@ -304,5 +304,6 @@
     "collection.empty": "No hay juegos en esta colección",
     "download.started": "Iniciado",
     "download.reason.install": "para la primera instalación",
-    "download.reason.update": "para actualizar a la última versión"
+    "download.reason.update": "para actualizar a la última versión",
+    "game.install.could_not_launch.detail": "Sus últimas palabras fueron: {{error}}"
 }
