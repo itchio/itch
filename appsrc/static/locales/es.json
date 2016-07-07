@@ -305,5 +305,6 @@
     "download.started": "Iniciado",
     "download.reason.install": "para la primera instalación",
     "download.reason.update": "para actualizar a la última versión",
-    "game.install.could_not_launch.detail": "Sus últimas palabras fueron: {{error}}"
+    "game.install.could_not_launch.detail": "Sus últimas palabras fueron: {{error}}",
+    "grid.criterion.filter": "Filtrar..."
 }
