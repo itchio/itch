@@ -61,7 +61,7 @@ export class Preferences extends Component {
 
           <div className='locale-fetcher' onClick={(e) => { e.preventDefault(); queueLocaleDownload(lang) }}>
             {downloading
-              ? <Icon icon='stopwatch' classes='scan'/>
+              ? <Icon icon='download' classes='scan'/>
               : <Icon icon='repeat'/>
             }
           </div>

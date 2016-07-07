@@ -72,6 +72,10 @@ $pref-border-color: $zambezi;
     margin-left: 12px;
 
     @include clickable;
+
+    .scan {
+      @include horizontal-scan;
+    }
   }
 
   .buttons {
