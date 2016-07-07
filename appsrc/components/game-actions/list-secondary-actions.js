@@ -68,7 +68,7 @@ function probeAction (caveId) {
 function uninstallAction (caveId) {
   return {
     label: ['grid.item.uninstall'],
-    icon: 'delete',
+    icon: 'uninstall',
     action: actions.requestCaveUninstall({caveId})
   }
 }

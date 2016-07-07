@@ -55,7 +55,7 @@ class DownloadRow extends Component {
     if (!active) {
       return <div className='controls'>
         <span className='hint--left' data-hint={t('status.downloads.clear_finished')}>
-          <span className='icon icon-cross' onClick={() => cancelDownload(id)}/>
+          <span className='icon icon-delete' onClick={() => cancelDownload(id)}/>
         </span>
       </div>
     }

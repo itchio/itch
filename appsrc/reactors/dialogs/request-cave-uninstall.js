@@ -28,7 +28,7 @@ async function requestCaveUninstall (store, action) {
       {
         label: ['prompt.uninstall.uninstall'],
         action: actions.queueCaveUninstall({caveId}),
-        icon: 'delete'
+        icon: 'uninstall'
       },
       {
         label: ['prompt.uninstall.reinstall'],
