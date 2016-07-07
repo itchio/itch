@@ -299,5 +299,6 @@
     "action.name.manual": "Manual de usuario",
     "action.name.editor": "Editor",
     "prompt.launch.message": "{{title}} puede ser iniciado de varias formas: elige una.",
-    "grid.hidden_count": "+ {{count}} artículos ocultos por filtros"
+    "grid.hidden_count": "+ {{count}} artículos ocultos por filtros",
+    "action.name.forums": "Foros"
 }
