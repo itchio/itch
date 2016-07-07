@@ -306,5 +306,9 @@
     "download.reason.install": "para la primera instalación",
     "download.reason.update": "para actualizar a la última versión",
     "game.install.could_not_launch.detail": "Sus últimas palabras fueron: {{error}}",
-    "grid.criterion.filter": "Filtrar..."
+    "grid.criterion.filter": "Filtrar...",
+    "grid.criterion.only_compatible": "Sólo compatible",
+    "grid.clear_filters": "Limpiar filtros",
+    "grid.item.prioritize_download": "Priorizar",
+    "grid.item.review": "Reseña"
 }
