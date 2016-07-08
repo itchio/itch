@@ -83,7 +83,7 @@ const self = {
   untar: async function (opts) {
     invariant(typeof opts === 'object', 'opts is object')
     invariant(typeof opts.archivePath === 'string', 'opts.archivePath is string')
-    invariant(typeof opts.outPath === 'string', 'opts.outPath is string')
+    invariant(typeof opts.destPath === 'string', 'opts.destPath is string')
 
     let {emitter, archivePath, destPath} = opts
     let err = null
