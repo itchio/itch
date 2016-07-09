@@ -65,7 +65,7 @@ generate-linux-extras:
       - linux-extras
 
 # .tar.gz, .rpm and .deb
-package:linux:386:
+package-linux-386:
   stage: package
   tags:
     - linux
@@ -81,7 +81,7 @@ package:linux:386:
     - generate-linux-extras
 
 # .tar.gz, .rpm and .deb
-package:linux:amd64:
+package-linux-amd64:
   stage: package
   tags:
     - linux
@@ -97,7 +97,7 @@ package:linux:amd64:
     - generate-linux-extras
 
 # .dmg and .zip
-package:darwin:amd64:
+package-darwin-amd64:
   stage: package
   tags:
     - darwin
@@ -111,8 +111,7 @@ package:darwin:amd64:
   dependencies:
     - compile
 
-# TODO: roll out 64-bit releases
-package:windows:386:
+package-windows-386:
   stage: package
   tags:
     - windows
@@ -126,8 +125,22 @@ package:windows:386:
   dependencies:
     - compile
 
+package-windows-amd64:
+  stage: package
+  tags:
+    - windows
+  only:
+    - tags
+  script:
+    - release/ci-package.rb windows amd64
+  artifacts:
+    paths:
+      - packages
+  dependencies:
+    - compile
+
 # ArchLinux user repository
-package:aur:
+package-aur:
   stage: package
   tags:
     - archlinux
@@ -138,7 +151,7 @@ package:aur:
 
 # GitHub releases are used for Squirrel.Windows & Squirrel.Mac,
 # along with direct downloads
-deploy:github:
+deploy-github:
   stage: deploy
   tags:
     - linux
@@ -147,13 +160,13 @@ deploy:github:
   script:
     - release/ci-deploy-github.rb
   dependencies:
-    - package:linux:386
-    - package:linux:amd64
-    - package:windows:386
-    - package:darwin:amd64
+    - package-linux-386
+    - package-linux-amd64
+    - package-windows-386
+    - package-darwin-amd64
 
 # We have a YUM (rpm) & APT (deb) repository on bintray
-deploy:bintray:
+deploy-bintray:
   stage: deploy
   tags:
     - linux
@@ -162,8 +175,8 @@ deploy:bintray:
   script:
     - release/ci-deploy-bintray.rb
   dependencies:
-    - package:linux:386
-    - package:linux:amd64
+    - package-linux-386
+    - package-linux-amd64
 
 # Pushover
 notify:
