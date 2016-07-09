@@ -59,7 +59,7 @@ generate-linux-extras:
   tags:
     - linux
   script:
-    - release/ci-generate-linux-extras.rb
+    - release/rube.sh release/ci-generate-linux-extras.rb
   only:
     - tags
   artifacts:
