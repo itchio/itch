@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # compile itch for production environemnts
 
 require_relative 'common'

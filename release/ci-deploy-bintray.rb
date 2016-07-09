@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # uploads .deb and .rpm files to bintray
 
 require_relative 'common'

@@ -1,18 +1,6 @@
 # base functions useful throughout CI scripts
 
-# avert your eyes for a minute...
 require 'fileutils'
-GEMS_PATH = File.join(File.dirname(__FILE__), '..', 'vendor', 'bundle')
-FileUtils.mkdir_p GEMS_PATH
-ENV['PATH'] += ":#{GEMS_PATH}/bin:#{Gem.user_dir}/bin"
-system %Q{bundle install --path "#{GEMS_PATH}"} or raise 'Bundle install failed!'
-require 'rubygems'
-require 'bundler/setup'
-ENV['LANG']='C'
-ENV['LANGUAGE']='C'
-ENV['LC_ALL']='C'
-# all good! you may resume reading the code
-
 require 'colored' # colors make me happy
 require 'json' # parse a bunch of templates
 require 'time' # rfc2822
