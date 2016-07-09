@@ -30,7 +30,7 @@ tmp
 
 # ruby-specific stuff
 /.bundle
-/release/.gems
+/vendor/bundle
 
 # updated locales stuff
 /app/static/locales/*.remote.json
