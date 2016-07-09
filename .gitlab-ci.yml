@@ -127,20 +127,6 @@ package-windows-386:
   dependencies:
     - compile
 
-package-windows-amd64:
-  stage: package
-  tags:
-    - windows
-  only:
-    - tags
-  script:
-    - release/ci-package.rb windows amd64
-  artifacts:
-    paths:
-      - packages
-  dependencies:
-    - compile
-
 # ArchLinux user repository
 package-aur:
   stage: package
