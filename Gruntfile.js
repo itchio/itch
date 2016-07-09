@@ -70,6 +70,11 @@ module.exports = function (grunt) {
           arch: 'ia32'
         }, windowsElectronOptions)
       },
+      'windows-x64': {
+        options: Object.assign({
+          arch: 'x64'
+        }, windowsElectronOptions)
+      },
       'darwin-x64': {
         options: Object.assign({}, gruntElectronCommon, {
           platform: 'darwin',
