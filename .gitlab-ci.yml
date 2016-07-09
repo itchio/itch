@@ -1,5 +1,7 @@
 
 cache:
+  # per-job caching (per-branch would be wasteful)
+  key: "$CI_BUILD_NAME"
   paths:
     - .bundle
     - vendor/bundle
