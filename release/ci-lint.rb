@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # lint javascript code and run unit tests
 
 require_relative 'common'

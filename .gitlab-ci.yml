@@ -18,7 +18,7 @@ book:
   tags:
     - dropsy
   script:
-    - release/ci-book.rb
+    - release/rube.sh release/ci-book.rb
 
 # Unit tests
 test:
@@ -26,7 +26,7 @@ test:
   tags:
     - linux
   script:
-    - release/ci-test.rb
+    - release/rube.sh release/ci-test.rb
   except:
     - tags
 
@@ -36,7 +36,7 @@ lint:
   tags:
     - linux
   script:
-    - release/ci-lint.rb
+    - release/rube.sh release/ci-lint.rb
   except:
     - tags
 
@@ -46,7 +46,7 @@ compile:
   tags:
     - linux
   script:
-    - release/ci-compile.rb
+    - release/rube.sh release/ci-compile.rb
   only:
     - tags
   artifacts:
@@ -72,7 +72,7 @@ package-linux-386:
   tags:
     - linux
   script:
-    - release/ci-package.rb linux 386
+    - release/rube.sh release/ci-package.rb linux 386
   only:
     - tags
   artifacts:
@@ -88,7 +88,7 @@ package-linux-amd64:
   tags:
     - linux
   script:
-    - release/ci-package.rb linux amd64
+    - release/rube.sh release/ci-package.rb linux amd64
   only:
     - tags
   artifacts:
@@ -104,7 +104,7 @@ package-darwin-amd64:
   tags:
     - darwin
   script:
-    - release/ci-package.rb darwin amd64
+    - release/rube.sh release/ci-package.rb darwin amd64
   only:
     - tags
   artifacts:
@@ -120,7 +120,7 @@ package-windows-386:
   only:
     - tags
   script:
-    - release/ci-package.rb windows 386
+    - release/rube.sh release/ci-package.rb windows 386
   artifacts:
     paths:
       - packages
@@ -135,7 +135,7 @@ package-aur:
   only:
     - tags
   script:
-    - release/ci-package-aur.rb
+    - release/rube.sh release/ci-package-aur.rb
 
 # GitHub releases are used for Squirrel.Windows & Squirrel.Mac,
 # along with direct downloads
@@ -146,7 +146,7 @@ deploy-github:
   only:
     - tags
   script:
-    - release/ci-deploy-github.rb
+    - release/rube.sh release/ci-deploy-github.rb
   dependencies:
     - package-linux-386
     - package-linux-amd64
@@ -161,7 +161,7 @@ deploy-bintray:
   only:
     - tags
   script:
-    - release/ci-deploy-bintray.rb
+    - release/rube.sh release/ci-deploy-bintray.rb
   dependencies:
     - package-linux-386
     - package-linux-amd64

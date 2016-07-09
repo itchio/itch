@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # pushes an updated itch PKGBUILD to AUR
 
 require_relative 'common'

@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # create upcoming github release whenever a tag is pushed.
 # will remove existing release if any, allowing us to
 # force-push tags gone bad. this is only useful for cosmetic

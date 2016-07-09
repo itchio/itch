@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # generate itch package for various platforms
 
 require_relative 'common'
