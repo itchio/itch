@@ -2,7 +2,7 @@
 cache:
   paths:
     - .bundle
-    - release/.gems
+    - vendor/bundle
 
 stages:
   - build # babel, node-sass etc.
