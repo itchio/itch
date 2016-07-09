@@ -1,4 +1,4 @@
-# itch ![](https://nuts.itch.zone/badge)
+# itch [![](https://nuts.itch.zone/badge)](https://github.com/itchio/itch/releases/latest)
 
 ![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
