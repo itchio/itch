@@ -2,7 +2,7 @@
 
 # avert your eyes for a minute...
 require 'fileutils'
-GEMS_PATH = File.join(File.dirname(__FILE__), '.gems')
+GEMS_PATH = File.join(File.dirname(__FILE__), '..', 'vendor', 'bundle')
 FileUtils.mkdir_p GEMS_PATH
 ENV['PATH'] += ":#{GEMS_PATH}/bin:#{Gem.user_dir}/bin"
 system %Q{bundle install --path "#{GEMS_PATH}"} or raise 'Bundle install failed!'
