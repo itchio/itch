@@ -46,7 +46,7 @@ compile:
   tags:
     - linux
   script:
-    - release/rube.sh release/ci-compile.rb
+    - release/ci-compile.js
   only:
     - tags
   artifacts:
@@ -59,7 +59,7 @@ generate-linux-extras:
   tags:
     - linux
   script:
-    - release/rube.sh release/ci-generate-linux-extras.rb
+    - release/ci-generate-linux-extras.js
   only:
     - tags
   artifacts:

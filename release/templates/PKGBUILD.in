@@ -37,8 +37,8 @@ build() {
   export CI_BUILD_TAG="v{{CI_VERSION}}{{CI_SUFFIX}}"
   export CI_CHANNEL="{{CI_CHANNEL}}"
 
-  release/rube.sh release/ci-compile.rb
-  release/rube.sh release/ci-generate-linux-extras.rb
+  release/ci-compile.js
+  release/ci-generate-linux-extras.js
 
   grunt -v "electron:linux-${_ELECTRON_ARCH}"
 }
