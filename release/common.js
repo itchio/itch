@@ -3,7 +3,7 @@
 const child_process = require('child_process')
 const fs = require('fs')
 const ospath = require('path')
-const colors = require('colors')
+require('colors') // patches String.prototype to provide .yellow, .red, etc
 
 const $ = function (val) {
   if (!val) {
@@ -11,7 +11,7 @@ const $ = function (val) {
   }
 }
 
-$.HOMEPAGE = 
+$.HOMEPAGE =
 $.HOMEPAGE = 'https://itch.io/app'
 $.MAINTAINER = 'Amos Wenger <amos@itch.io>'
 $.DESCRIPTION = 'The best way to play itch.io games'
@@ -74,7 +74,6 @@ $.say = function (cmd) {
 }
 
 function system (cmd, opts = {}) {
-  const {quiet = true} = opts
   try {
     child_process.execSync(cmd, {
       stdio: 'inherit'
@@ -92,7 +91,7 @@ $.sh = function (cmd) {
 }
 
 $.qsh = function (cmd) {
-  $.putln(`· <redacted>`.blue)
+  $.putln('· <redacted>'.blue)
   return system(cmd)
 }
 
@@ -175,7 +174,7 @@ $.retry = function (cb) {
     }
     tries++
   }
-  throw new Exception(`Tried ${RETRY_COUNT} times, bailing out`)
+  throw new Error(`Tried ${$.RETRY_COUNT} times, bailing out`)
 }
 
 $.get_output = function (cmd) {
@@ -280,4 +279,3 @@ $.build_time = function () {
 }
 
 module.exports = $
-
