@@ -6,5 +6,6 @@ const $ = require('./common')
 
 $.show_versions(['npm', 'node'])
 $($.npm_dep('grunt', 'grunt-cli'))
+$($.npm('install'))
 
 $($.npm('run lint'))
