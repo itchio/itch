@@ -129,6 +129,9 @@
   },
   "standard": {
     "parser": "babel-eslint",
+    "ignore": [
+      "docs"
+    ],
     "rules": {
       "arrow-parens": [
         0
