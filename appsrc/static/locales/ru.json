@@ -69,7 +69,7 @@
     "preferences.install_location.empty": "Пусто",
     "preferences.install_location.free_space": "Свободное место",
     "preferences.install_location.is_default": "Новые приложения по умолчанию будут установлены в эту папку.",
-    "preferences.install_location.item_count": "# приложений",
+    "preferences.install_location.item_count": "количество приложений",
     "preferences.install_location.make_default": "По умолчанию использовать эту папку",
     "preferences.install_location.name": "Имя",
     "preferences.install_location.path": "Путь к папке",
