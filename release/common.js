@@ -18,7 +18,7 @@ $.HOMEPAGE = 'https://itch.io/app'
 $.MAINTAINER = 'Amos Wenger <amos@itch.io>'
 $.DESCRIPTION = 'The best way to play itch.io games'
 
-$.BUILD_TIME = Date.now()
+$.BUILD_TIME = new Date()
 
 $.RETRY_COUNT = 5
 $.HOME = process.env.HOME
@@ -278,6 +278,18 @@ $.to_rpm_arch = function (arch) {
 
 $.build_time = function () {
   return $.BUILD_TIME
+}
+
+$.read_file = function (file) {
+  return fs.readFileSync(file, {encoding: 'utf8'})
+}
+
+$.write_file = function (file, contents) {
+  return fs.writeFileSync(file, contents, {encoding: 'utf8'})
+}
+
+$.ls = function (dir) {
+  return fs.readdirSync(dir)
 }
 
 module.exports = $
