@@ -278,4 +278,9 @@ $.build_time = function () {
   return $.BUILD_TIME
 }
 
+$.say('Setting up ci script environment...')
+$.cd(__dirname, function () {
+  $($.npm('install'))
+})
+
 module.exports = $
