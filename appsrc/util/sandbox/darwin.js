@@ -83,11 +83,11 @@ sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullE
     )
 
     await sf.symlink(
-      ospath.join(realApp, 'Contents', 'Info.pList'),
-      ospath.join(fakeApp, 'Contents', 'Info.pList')
+      ospath.join(realApp, 'Contents', 'Info.plist'),
+      ospath.join(fakeApp, 'Contents', 'Info.plist')
     )
   } else {
-    await sf.writeFile(ospath.join(fakeApp, 'Contents', 'Info.pList'),
+    await sf.writeFile(ospath.join(fakeApp, 'Contents', 'Info.plist'),
       `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
