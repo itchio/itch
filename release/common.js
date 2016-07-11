@@ -44,7 +44,7 @@ process.env.GOPATH = $.GOPATH
 process.env.PATH += `:${$.GOPATH}/bin`
 
 // local npm executables
-process.env.PATH += `:${process.env.CWD}/bin`
+process.env.PATH += `:${ospath.resolve(__dirname, '..', 'node_modules')}/bin`
 
 $.VERSION_SPECS = {
   ['7za']: '7za | head -2',
@@ -155,7 +155,7 @@ $.npm_dep = function (cmd, pkg) {
     return true
   } else {
     $.putln(`☁ installing ${cmd}`.yellow)
-    return $.npm(`install -g ${pkg}`)
+    return $.npm(`install ${pkg}`)
   }
 }
 
