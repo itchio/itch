@@ -5,7 +5,7 @@
 
 const $ = require('./common')
 
-$.show_versions(['npm', 'gsutil'])
+$.show_versions(['npm', 'node'])
 $($.npm_dep('gitbook', 'gitbook-cli'))
 
 $.cd('docs', function () {
