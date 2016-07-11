@@ -126,7 +126,7 @@ $.gcp = function (args) {
 $.gothub = function (args) {
   process.env.GITHUB_USER = 'itchio'
   process.env.GITHUB_REPO = $.app_name
-  return $.sh(`gothub`)
+  return $.sh(`gothub ${args}`)
 }
 
 $.go_dep = function (cmd, pkg) {
