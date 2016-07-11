@@ -3,6 +3,8 @@
 const child_process = require('child_process')
 const fs = require('fs')
 const ospath = require('path')
+
+process.env.COLORTERM = '1'
 require('./colors') // patches String.prototype to provide .yellow, .red, etc
 
 const $ = function (val) {
@@ -102,29 +104,29 @@ $.npm = function (args) {
 
 // run gem command
 $.gem = function (args) {
-  return $.sh `gem ${args}`
+  return $.sh(`gem ${args}`)
 }
 
 // run grunt command
 $.grunt = function (args) {
-  return $.sh `grunt ${args}`
+  return $.sh(`grunt ${args}`)
 }
 
 // run go command
 $.go = function (args) {
-  return $.sh `go ${args}`
+  return $.sh(`go ${args}`)
 }
 
 // copy files to google cloud storage using gsutil
 $.gcp = function (args) {
-  return $.sh `gsutil -m cp -r -a public-read ${args}`
+  return $.sh(`gsutil -m cp -r -a public-read ${args}`)
 }
 
 // manage github assets
 $.gothub = function (args) {
   process.env.GITHUB_USER = 'itchio'
   process.env.GITHUB_REPO = $.app_name
-  return $.sh `gothub`
+  return $.sh(`gothub`)
 }
 
 $.go_dep = function (cmd, pkg) {
