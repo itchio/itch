@@ -3,7 +3,7 @@
 const child_process = require('child_process')
 const fs = require('fs')
 const ospath = require('path')
-require('colors') // patches String.prototype to provide .yellow, .red, etc
+require('./colors') // patches String.prototype to provide .yellow, .red, etc
 
 const $ = function (val) {
   if (!val) {
@@ -277,10 +277,5 @@ $.to_rpm_arch = function (arch) {
 $.build_time = function () {
   return $.BUILD_TIME
 }
-
-$.say('Setting up ci script environment...')
-$.cd(__dirname, function () {
-  $($.npm('install'))
-})
 
 module.exports = $
