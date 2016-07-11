@@ -18,7 +18,7 @@ book:
   tags:
     - dropsy
   script:
-    - release/rube.sh release/ci-book.rb
+    - release/ci-book.js
 
 # Unit tests
 test:
