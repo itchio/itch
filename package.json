@@ -93,6 +93,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-plugin-transform-strict-mode": "^6.8.0",
     "babel-preset-react": "^6.11.1",
+    "colors": "^1.1.2",
     "coveralls": "^2.11.9",
     "electron-packager": "^7.0.1",
     "grunt": "^1.0.1",
