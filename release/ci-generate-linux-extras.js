@@ -11,7 +11,7 @@ $($.sh('mkdir -p linux-extras'))
 // generate .desktop file
 $.say('Generating desktop file')
 let desktop = $.read_file('release/templates/itch.desktop.in')
-const locales_dir = 'app/static/locales'
+const locales_dir = 'appsrc/static/locales'
 const locale_names = $.ls(locales_dir).filter(function (x) { return /\.json$/i.test(x) })
 locale_names.forEach(function (locale_name) {
   const locale_path = ospath.join(locales_dir, locale_name)
@@ -22,11 +22,11 @@ locale_names.forEach(function (locale_name) {
     if (/englitch/.test(lang)) {
       return
     }
-    desktop += `Comment[${lang}]`
+    desktop += `Comment[${lang}]="${comm}"\n`
   }
 })
-desktop = desktop.replace('{{APPNAME}}', $.app_name())
-$.write_file(`linux-extras/${$.app_name()}.desktop`)
+desktop = desktop.replace(/{{APPNAME}}/g, $.app_name())
+$.write_file(`linux-extras/${$.app_name()}.desktop`, desktop)
 
 // man page
 $.say('Generating man file')
@@ -39,7 +39,7 @@ const MONTH_NAMES = [
 const month = MONTH_NAMES[$.build_time().getUTCMonth()]
 const year = $.build_time().getUTCFullYear()
 let man = $.read_file('release/templates/itch.6.in')
-man = man.replace('{{APPNAME}}', $.app_name().upcase)
-man = man.replace('{{MONTH}}', month)
-man = man.replace('{{YEAR}}', year)
+man = man.replace(/{{APPNAME}}/g, $.app_name().toUpperCase())
+man = man.replace(/{{MONTH}}/g, month)
+man = man.replace(/{{YEAR}}/g, year)
 $.write_file(`linux-extras/${$.app_name()}.6`, man)
