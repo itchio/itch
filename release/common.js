@@ -5,6 +5,8 @@ const fs = require('fs')
 const ospath = require('path')
 const crypto = require('crypto')
 
+const SH_PATH = (process.platform === 'win32') ? `${process.env.WD}sh.exe` : '/bin/sh'
+
 process.env.COLORTERM = '1'
 require('colors') // patches String.prototype to provide .yellow, .red, etc
 
@@ -76,7 +78,7 @@ $.say = function (cmd) {
 }
 
 function system (cmd, opts = {}) {
-  const res = child_process.spawnSync('/bin/sh', ['-c', cmd], {
+  const res = child_process.spawnSync(SH_PATH, ['-c', cmd], {
     stdio: 'inherit'
   })
 
@@ -92,7 +94,7 @@ function system (cmd, opts = {}) {
 }
 
 $.get_output = function (cmd) {
-  const res = child_process.spawnSync('/bin/sh', ['-c', cmd], {
+  const res = child_process.spawnSync(SH_PATH, ['-c', cmd], {
     encoding: 'utf8'
   })
 
