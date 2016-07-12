@@ -24,7 +24,7 @@ function ci_package (args) {
 
   // for Gruntfile.js
   process.env.CI_CHANNEL = $.channel_name()
-  process.env.CI_WINDOWS_INSTALLER_PATH = $.winstaller_path(arch)}
+  process.env.CI_WINDOWS_INSTALLER_PATH = $.winstaller_path(arch)
 
   $.say(`Packaging ${$.app_name()} for ${os}-${arch}`)
 
