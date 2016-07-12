@@ -3,6 +3,7 @@
 const child_process = require('child_process')
 const fs = require('fs')
 const ospath = require('path')
+const crypto = require('crypto')
 
 process.env.COLORTERM = '1'
 require('./colors') // patches String.prototype to provide .yellow, .red, etc
@@ -13,7 +14,6 @@ const $ = function (val) {
   }
 }
 
-$.HOMEPAGE =
 $.HOMEPAGE = 'https://itch.io/app'
 $.MAINTAINER = 'Amos Wenger <amos@itch.io>'
 $.DESCRIPTION = 'The best way to play itch.io games'
@@ -201,7 +201,7 @@ $.prompt = function (msg) {
 }
 
 $.cd = function (dir, cb) {
-  const original_wd = ospath.resolve(__dirname, '..')
+  const original_wd = process.cwd()
   var e
   var ret
 
@@ -291,5 +291,29 @@ $.write_file = function (file, contents) {
 $.ls = function (dir) {
   return fs.readdirSync(dir)
 }
+
+$.lstat = function (path) {
+  return fs.lstatSync(path)
+}
+
+$.find_all_files = function (path) {
+  let files = []
+  const stat = $.lstat(path)
+  if (stat.isDirectory()) {
+    $.ls(path).forEach(function (child) {
+      files = files.concat($.find_all_files(ospath.join(path, child)))
+    })
+  } else {
+    files.push(path)
+  }
+  return files
+}
+
+$.md5 = function (path) {
+  const buf = fs.readFileSync(path, {encoding: null})
+  return crypto.createHash('md5').update(buf).digest('hex')
+}
+
+$.WINSTALLER_PATH = `/c/jenkins/workspace/${$.app_name()}-installers`
 
 module.exports = $
