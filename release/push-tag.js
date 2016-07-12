@@ -41,7 +41,8 @@ if (pkg_version != next_version) {
 }
 
 const tag = `v${next_version}`
-const add_cmd = `git tag -s -a ${tag} -m ${tag}`
+const is_canary = /-canary$/.test(next_version)
+const add_cmd = `git tag ${is_canary ? '' : '-s'} -a ${tag} -m ${tag}`
 
 if ($.sh(add_cmd)) {
   $.say('Tag added...')
