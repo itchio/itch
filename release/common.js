@@ -221,7 +221,7 @@ $.prompt = function (msg) {
 }
 
 $.yesno = function (msg) {
-  process.stdout.write(`${msg} (y/n)`)
+  process.stdout.write(`${msg} (y/n) `)
   const b = Buffer.alloc(1)
 
   const stdin = fs.openSync('/dev/stdin', 'rs')
