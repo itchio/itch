@@ -72,7 +72,7 @@ package-linux-386:
   tags:
     - linux
   script:
-    - release/rube.sh release/ci-package.rb linux 386
+    - release/ci-package.js linux 386
   only:
     - tags
   artifacts:
@@ -88,7 +88,7 @@ package-linux-amd64:
   tags:
     - linux
   script:
-    - release/rube.sh release/ci-package.rb linux amd64
+    - release/ci-package.js linux amd64
   only:
     - tags
   artifacts:
@@ -104,7 +104,7 @@ package-darwin-amd64:
   tags:
     - darwin
   script:
-    - release/rube.sh release/ci-package.rb darwin amd64
+    - release/ci-package.js darwin amd64
   only:
     - tags
   artifacts:
@@ -120,7 +120,7 @@ package-windows-386:
   only:
     - tags
   script:
-    - release/rube.sh release/ci-package.rb windows 386
+    - release/ci-package.js windows 386
   artifacts:
     paths:
       - packages
