@@ -78,7 +78,8 @@ $.say = function (cmd) {
 function system (cmd, opts = {}) {
   try {
     child_process.execSync(cmd, {
-      stdio: 'inherit'
+      stdio: 'inherit',
+      shell: '/bin/sh'
     })
   } catch (err) {
     $.putln(`☃ ${err.toString()}`.red)
@@ -181,7 +182,8 @@ $.retry = function (cb) {
 
 $.get_output = function (cmd) {
   const out = child_process.execSync(cmd, {
-    encoding: 'utf8'
+    encoding: 'utf8',
+    shell: '/bin/sh'
   })
   // console.log('cmd = ', cmd)
   // console.log('out = ', out)
