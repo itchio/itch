@@ -25,6 +25,9 @@ export async function dashboardGames (market, credentials) {
 
   // the 'myGames' endpoint doesn't set the userId
   // AND might return games you're not the user of
+  if (!normalized.entities.games) {
+    normalized.entities.games = {}
+  }
   normalized.entities.games::each((g) => { g.userId = g.userId || me.id })
   normalized.entities.users = {
     [me.id]: me
