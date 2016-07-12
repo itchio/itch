@@ -22,7 +22,7 @@ try {
   if (oldver === ver) {
     rel = parseInt(oldrel, 10) + 1
   }
-} catch (e) {
+} catch (err) {
   $.say(`Couldn't read old pkgbuild: ${err.toString()}`)
 }
 
@@ -57,5 +57,5 @@ $.cd('aur-stage', function () {
   $.say('Pushing to AUR...')
   $($.sh(`git add PKGBUILD .SRCINFO ${$.app_name()}.install`))
   $($.sh(`git commit -m ":arrow_up: ${$.build_tag()}"`))
-  $($.sh(`git push`))
+  $($.sh('git push'))
 })

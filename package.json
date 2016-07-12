@@ -130,7 +130,8 @@
   "standard": {
     "parser": "babel-eslint",
     "ignore": [
-      "docs"
+      "docs",
+      "release/node_modules"
     ],
     "rules": {
       "arrow-parens": [
