@@ -60,7 +60,6 @@
     "react-dnd": "^2.1.4",
     "react-dnd-html5-backend": "^2.1.2",
     "react-dom": "^15.2.0",
-    "react-infinite": "^0.9.2",
     "react-modal": "^1.2.1",
     "react-onclickoutside": "^5.0.1",
     "react-redux": "^4.4.5",
@@ -93,7 +92,6 @@
     "babel-plugin-transform-strict-mode": "^6.8.0",
     "babel-preset-react": "^6.11.1",
     "colors": "^1.1.2",
-    "coveralls": "^2.11.9",
     "electron-packager": "^7.0.1",
     "grunt": "^1.0.1",
     "grunt-babel": "^6.0.0",
@@ -103,9 +101,7 @@
     "grunt-newer": "^1.2.0",
     "grunt-sass": "^1.2.0",
     "load-grunt-tasks": "^3.3.0",
-    "nyc": "^6.4.0",
     "quiet-grunt": "^0.2.3",
-    "react-addons-perf": "^15.0.0",
     "react-addons-test-utils": "^15.0.0",
     "redux-devtools": "^3.2.0",
     "redux-devtools-dock-monitor": "^1.1.1",
@@ -116,7 +112,6 @@
     "standard": "^6.0.8",
     "tap-spec": "^4.1.1",
     "tape": "^4.2.1",
-    "time-require": "^0.1.2",
     "zopf": "^4.5.0"
   },
   "scripts": {
