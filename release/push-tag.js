@@ -14,6 +14,7 @@ process.argv.slice(2).forEach(function (arg) {
   switch (arg) {
     case '--force':
       $.say('(Running in forced mode)')
+      force = true
       break
     default:
       if (/^--/.test(arg)) {
