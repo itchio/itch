@@ -26,9 +26,9 @@ module.exports = {
 
     $.say('Generating changelog...')
     let changelog = $.read_file('release/debian/changelog.in')
-    changelog = changelog.replace('{{APPNAME}}', $.app_name())
-    changelog = changelog.replace('{{VERSION}}', $.build_version())
-    changelog = changelog.replace('{{DATE}}', $.build_time().toUTCString())
+    changelog = changelog.replace(/{{APPNAME}}/g, $.app_name())
+    changelog = changelog.replace(/{{VERSION}}/g, $.build_version())
+    changelog = changelog.replace(/{{DATE}}/g, $.build_time().toUTCString())
     $.write_file(`${stage2_path}/usr/share/doc/${$.app_name()}/changelog`, changelog)
 
     $.say('Compressing man page & changelog')

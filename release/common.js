@@ -314,6 +314,8 @@ $.md5 = function (path) {
   return crypto.createHash('md5').update(buf).digest('hex')
 }
 
-$.WINSTALLER_PATH = `/c/jenkins/workspace/${$.app_name()}-installers`
+$.winstaller_path = function (arch) {
+  return `/c/jenkins/workspace/${$.app_name()}-installers-${arch}`
+}
 
 module.exports = $
