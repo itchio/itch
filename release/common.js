@@ -200,11 +200,37 @@ $.retry = function (cb) {
 }
 
 $.prompt = function (msg) {
+  process.stdout.write(`${msg}: `)
+  const b = Buffer.alloc(1)
+  let s = ''
+  const stdin = fs.openSync('/dev/stdin', 'rs')
+
+  while (true) {
+    fs.readSync(stdin, b, 0, 1)
+
+    const c = b.toString('utf8')
+    if (c === '\n') {
+      break
+    } else {
+      s += c
+    }
+  }
+  fs.closeSync(stdin)
+
+  return s
+}
+
+$.yesno = function (msg) {
   process.stdout.write(`${msg} (y/n)`)
-  var s = 'n'
-  fs.readSync(process.stdin, s, 0, 1, 0)
+  const b = Buffer.alloc(1)
+
+  const stdin = fs.openSync('/dev/stdin', 'rs')
+  fs.readSync(stdin, b, 0, 1)
+  fs.closeSync(stdin)
+
   process.stdout.write('\n')
 
+  const s = b.toString('utf8')
   if (s !== 'y') {
     $.say('Bailing out...')
     process.exit(0)
