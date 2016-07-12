@@ -296,6 +296,10 @@ $.lstat = function (path) {
   return fs.lstatSync(path)
 }
 
+$.chmod = function (mode, path) {
+  fs.chmodSync(path, mode)
+}
+
 $.find_all_files = function (path) {
   let files = []
   const stat = $.lstat(path)
