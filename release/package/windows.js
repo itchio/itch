@@ -4,7 +4,7 @@ const $ = require('../common')
 module.exports = {
   package: function (arch, build_path) {
     $.say('Creating installer + nupkg full/delta files')
-    $($.sh(`mkdir -p "${$.winstaller_path(arch)}"`))
+    $($.sh(`mkdir -p ${$.winstaller_path(arch)}`))
     $($.grunt(`create-windows-installer:${$.ARCHES[arch].electron_arch}`))
 
     $.say('Copying artifacts to packages/')
