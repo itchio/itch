@@ -1,0 +1,14 @@
+{
+  "name": "release",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ci-book.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "colors": "^1.1.2"
+  }
+}
