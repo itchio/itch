@@ -6,7 +6,7 @@ const ospath = require('path')
 const crypto = require('crypto')
 
 process.env.COLORTERM = '1'
-require('./colors') // patches String.prototype to provide .yellow, .red, etc
+require('colors') // patches String.prototype to provide .yellow, .red, etc
 
 const $ = function (val) {
   if (!val) {
@@ -76,16 +76,33 @@ $.say = function (cmd) {
 }
 
 function system (cmd, opts = {}) {
-  try {
-    child_process.execSync(cmd, {
-      stdio: 'inherit',
-      shell: '/bin/sh'
-    })
-  } catch (err) {
-    $.putln(`☃ ${err.toString()}`.red)
+  const res = child_process.spawnSync('/bin/sh', ['-c', cmd], {
+    stdio: 'inherit'
+  })
+
+  if (res.error) {
+    $.putln(`☃ ${error.toString()}`.red)
+    return false
+  }
+  if (res.status !== 0) {
+    $.putln(`☃ non-zero exit code: ${res.status}`.red)
     return false
   }
   return true
+}
+
+$.get_output = function (cmd) {
+  const res = child_process.spawnSync('/bin/sh', ['-c', cmd], {
+    encoding: 'utf8'
+  })
+
+  if (res.error) {
+    throw error
+  }
+  if (res.status !== 0) {
+    throw new Error(`non-zero exit code: ${res.status}`)
+  }
+  return res.stdout
 }
 
 $.sh = function (cmd) {
@@ -178,16 +195,6 @@ $.retry = function (cb) {
     tries++
   }
   throw new Error(`Tried ${$.RETRY_COUNT} times, bailing out`)
-}
-
-$.get_output = function (cmd) {
-  const out = child_process.execSync(cmd, {
-    encoding: 'utf8',
-    shell: '/bin/sh'
-  })
-  // console.log('cmd = ', cmd)
-  // console.log('out = ', out)
-  return out
 }
 
 $.prompt = function (msg) {

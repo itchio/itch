@@ -130,8 +130,7 @@
   "standard": {
     "parser": "babel-eslint",
     "ignore": [
-      "docs",
-      "release/colors"
+      "docs"
     ],
     "rules": {
       "arrow-parens": [
