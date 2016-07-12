@@ -14,6 +14,7 @@ process.argv.slice(2).forEach(function (arg) {
   switch (arg) {
     case '--force':
       $.say('(Running in forced mode)')
+      break
     default:
       if (/^--/.test(arg)) {
         throw new Error(`Unknown option ${arg}`)
@@ -29,14 +30,14 @@ if (!/^v\d+.\d+.\d+(-canary)?$/.test(version_input)) {
 
 const next_version = version_input.replace(/^v/, '')
 
-if (pkg_version != next_version) {
+if (pkg_version !== next_version) {
   if (!force) {
     $.yesno(`Bump package.json? [${pkg_version} => ${next_version}]`)
   }
   pkg.version = next_version
   $.write_file(pkg_path, JSON.stringify(pkg, 0, 2))
   $.say('Bumped package.json')
-  $($.sh(`git add package.json`))
+  $($.sh('git add package.json'))
   $($.sh(`git commit -m ':arrow_up: ${next_version}'`))
 }
 
