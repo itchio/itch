@@ -81,7 +81,7 @@ function system (cmd, opts = {}) {
   })
 
   if (res.error) {
-    $.putln(`☃ ${error.toString()}`.red)
+    $.putln(`☃ ${res.error.toString()}`.red)
     return false
   }
   if (res.status !== 0) {
@@ -97,7 +97,7 @@ $.get_output = function (cmd) {
   })
 
   if (res.error) {
-    throw error
+    throw res.error
   }
   if (res.status !== 0) {
     throw new Error(`non-zero exit code: ${res.status}`)
