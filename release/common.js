@@ -44,7 +44,7 @@ process.env.GOPATH = $.GOPATH
 process.env.PATH += `:${$.GOPATH}/bin`
 
 // local npm executables
-process.env.PATH += `:${ospath.resolve(__dirname, '..', 'node_modules')}/bin`
+process.env.PATH += `:${ospath.resolve(__dirname, '..', 'node_modules')}/.bin`
 
 $.VERSION_SPECS = {
   ['7za']: '7za | head -2',
@@ -330,5 +330,7 @@ $.md5 = function (path) {
 $.winstaller_path = function (arch) {
   return `/c/jenkins/workspace/${$.app_name()}-installers-${arch}`
 }
+
+$.say(`PATH: ${process.env.PATH}`)
 
 module.exports = $
