@@ -15,6 +15,7 @@ export default validateReactors({
 
   FOCUS_SEARCH: combine(focusSearch.focusSearch),
   FOCUS_FILTER: combine(focusSearch.focusFilter),
+  CLEAR_FILTERS: combine(focusSearch.clearFilters),
 
   TRIGGER_LOCATION: combine(triggers.triggerLocation),
   TRIGGER_BACK: combine(triggers.triggerBack),

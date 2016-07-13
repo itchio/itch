@@ -4,6 +4,7 @@ import {createAction} from 'redux-actions'
 import {
   FOCUS_SEARCH,
   FOCUS_FILTER,
+  CLEAR_FILTERS,
   SEARCH,
   SEARCH_QUERY_CHANGED,
   SEARCH_FETCHED,
@@ -19,6 +20,7 @@ import {
 
 export const focusSearch = createAction(FOCUS_SEARCH)
 export const focusFilter = createAction(FOCUS_FILTER)
+export const clearFilters = createAction(CLEAR_FILTERS)
 export const search = createAction(SEARCH)
 export const searchQueryChanged = createAction(SEARCH_QUERY_CHANGED)
 export const searchFetched = createAction(SEARCH_FETCHED)

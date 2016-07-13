@@ -324,7 +324,14 @@ async function catchAll (store, action) {
   }
 }
 
+export function clearFilters (store, action) {
+  const {tab} = action.payload
+
+  store.dispatch(actions.binaryFilterChanged({field: 'onlyCompatible', value: false}))
+  store.dispatch(actions.filterChanged({tab, query: ''}))
+}
+
 export default {
   windowReady, catchAll, sessionReady, tabReloaded, windowFocusChanged,
-  evolveTab, probeCave, tabsChanged, tabChanged, logout
+  evolveTab, probeCave, tabsChanged, tabChanged, logout, clearFilters
 }
