@@ -65,7 +65,7 @@ export class GameGrid extends Component {
       {t('grid.hidden_count', {count: hiddenCount})}
       {' '}
       <span className='clear-filters hint--top' data-hint={t('grid.clear_filters')} onClick={() => clearFilters(tab)}>
-        <Icon icon='remove'/>
+        <Icon icon='delete'/>
       </span>
     </div>
     : ''}
