@@ -145,7 +145,7 @@ $.gcp = function (args) {
 // manage github assets
 $.gothub = function (args) {
   process.env.GITHUB_USER = 'itchio'
-  process.env.GITHUB_REPO = $.app_name
+  process.env.GITHUB_REPO = $.app_name()
   return $.sh(`gothub ${args}`)
 }
 

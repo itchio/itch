@@ -145,7 +145,7 @@ deploy-github:
   only:
     - tags
   script:
-    - release/rube.sh release/ci-deploy-github.rb
+    - release/ci-deploy-github.js
   dependencies:
     - package-linux-386
     - package-linux-amd64
