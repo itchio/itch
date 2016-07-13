@@ -124,8 +124,8 @@ When the `scope` parameter is set, the itch app will generate a game-specific,
 session-specific API key, and pass it to the application via the `ITCHIO_API_KEY`
 environment variable.
 
-Additionally, the `ITCHIO_EXPIRES_AT` environment variable will be set to the
-expiration date of the key.
+Additionally, the `ITCHIO_API_KEY_EXPIRES_AT` environment variable will be set to the
+expiration date of the key, in iso-8601 format.
 
 #### Making requests with the API key
 
