@@ -15,7 +15,7 @@ import {pathToId} from '../util/navigation'
 
 export class Collection extends Component {
   render () {
-    const {t, allGames, tabGames, collection, initiateShare} = this.props
+    const {t, allGames, tabGames, tabPath, collection, initiateShare} = this.props
 
     if (!collection) {
       return <div className='collection-meat'>
@@ -26,7 +26,7 @@ export class Collection extends Component {
     const {gameIds} = collection
     const games = gameIds::map((gameId) => tabGames[gameId] || allGames[gameId])::filter((x) => !!x)
 
-    const tab = `collections/${collection.id}`
+    const tab = tabPath
 
     return <div className='collection-meat'>
       <GameGridFilters tab={tab}>
