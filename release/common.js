@@ -367,6 +367,6 @@ $.left_pad = function (input, len, filler) {
   return res
 }
 
-$.say(`PATH: ${process.env.PATH}`)
+// $.say(`PATH: ${process.env.PATH}`)
 
 module.exports = $
