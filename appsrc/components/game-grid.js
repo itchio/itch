@@ -94,8 +94,7 @@ const mapStateToProps = (state, props) => {
 }
 const mapDispatchToProps = (dispatch) => ({
   clearFilters: (tab) => {
-    dispatch(actions.binaryFilterChanged({field: 'onlyCompatible', value: false}))
-    dispatch(actions.filterChanged({tab, query: ''}))
+    dispatch(actions.clearFilters({tab}))
   }
 })
 

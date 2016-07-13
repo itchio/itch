@@ -144,6 +144,8 @@ export default validateReactors({
   SELF_UPDATE_ERROR: combine(selfUpdate.selfUpdateError),
   SHOW_AVAILABLE_SELF_UPDATE: combine(selfUpdate.showAvailableSelfUpdate),
 
+  CLEAR_FILTERS: combine(navigation.clearFilters),
+
   SHOW_PACKAGING_POLICY: combine(packagingPolicy.showPackagingPolicy),
 
   CLOSE_TAB_OR_AUX_WINDOW: combine(mainWindow.closeTabOrAuxWindow),
