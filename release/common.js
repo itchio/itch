@@ -359,6 +359,14 @@ $.winstaller_path = function (arch) {
   return `/c/jenkins/workspace/${$.app_name()}-installers-${arch}`
 }
 
+$.left_pad = function (input, len, filler) {
+  let res = input
+  while (res.length < len) {
+    res = `${filler}${res}`
+  }
+  return res
+}
+
 $.say(`PATH: ${process.env.PATH}`)
 
 module.exports = $

@@ -160,7 +160,7 @@ deploy-bintray:
   only:
     - tags
   script:
-    - release/rube.sh release/ci-deploy-bintray.rb
+    - release/ci-deploy-bintray.js
   dependencies:
     - package-linux-386
     - package-linux-amd64
