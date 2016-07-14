@@ -163,5 +163,6 @@
     "prompt.rpm_policy.message": "{{title}} bruker .rpm-pakkeformatet, og kan ikke installeres med itch før den har blitt pakket om.",
     "prompt.rpm_policy.title": "YUM-pakker er ikke støttet",
     "prompt.self_update_ready.action.restart": "Start på nytt nå",
-    "search.empty.no_results": "Ingen resultater funnet"
+    "search.empty.no_results": "Ingen resultater funnet",
+    "search.empty.tagline": "Trenger du inspirasjon? Prøv å søke etter '{{example}}'"
 }
