@@ -161,5 +161,6 @@
     "prompt.packaging_policy.open_web_page": "Åpne nettside for {{title}}",
     "prompt.rpm_policy.detail": "itch kan bare installere flyttbare versjoner av Linux-applikasjoner.",
     "prompt.rpm_policy.message": "{{title}} bruker .rpm-pakkeformatet, og kan ikke installeres med itch før den har blitt pakket om.",
-    "prompt.rpm_policy.title": "YUM-pakker er ikke støttet"
+    "prompt.rpm_policy.title": "YUM-pakker er ikke støttet",
+    "prompt.self_update_ready.action.restart": "Start på nytt nå"
 }
