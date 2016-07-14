@@ -75,7 +75,7 @@
     "preferences.install_location.browse_osx": "Vis installasjonsområde i Finder",
     "preferences.install_location.compute_size": "Beregn mappestørrelse på disk",
     "preferences.install_location.delete": "Fjern dette installasjonsområdet og slett alt innhold",
-    "preferences.install_location.free_space": "Ledig plass",
+    "preferences.install_location.free_space": "Ledig lagringsplass",
     "preferences.install_location.is_default": "Nye artikler vil bli installert til dette området som standard.",
     "preferences.install_location.item_count": "# av artikler",
     "preferences.install_location.make_default": "Sett dette installasjonsområdet som standard",
