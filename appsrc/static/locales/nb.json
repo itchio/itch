@@ -101,7 +101,7 @@
     "prompt.crash_reporter.open_crash_log": "Åpne krasjlogg",
     "prompt.crash_reporter.report_issue": "Send tilbakemelding",
     "prompt.install_location_add.title": "Velg et nytt installasjonsområde",
-    "prompt.install_location_not_empty.detail": "Foreløpig må det gjøres manuelt.",
+    "prompt.install_location_not_empty.detail": "Dette må foreløpig gjøres manuelt.",
     "prompt.install_location_not_empty.message": "Installasjonsområder kan bare bli fjernet når alt deres innhold er avinstallert.",
     "prompt.install_location_not_empty.show_contents": "Vis innhold",
     "prompt.install_location_not_empty.title": "Dette installasjonsområdet er ikke tomt",
