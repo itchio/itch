@@ -20,7 +20,7 @@
     "grid.item.report_problem": "Send tilbakemelding",
     "grid.item.retry": "Prøv å laste ned / installere / starte denne artikkelen igjen",
     "grid.item.running": "Kjører…",
-    "grid.item.uninstall": "Avinstaller denne artikkelen nå",
+    "grid.item.uninstall": "Avinstaller",
     "grid.item.uninstalling": "Avinstallerer…",
     "login.action.login": "Logg inn",
     "login.action.register": "Registrer",
@@ -138,5 +138,18 @@
     "status.checking": "Ser etter oppdateringer…",
     "status.downloaded": "Klikk for omstart og aktivering av oppdateringen!",
     "status.downloading": "Laster ned oppdatering…",
-    "status.uptodate": "Din itch er oppdatert!"
+    "status.uptodate": "Din itch er oppdatert!",
+    "action.name.play": "Spill nå",
+    "action.name.manual": "Brukerveiledning",
+    "action.name.forums": "Forumer",
+    "label.experimental": "Eksperimentell",
+    "collection.empty": "Det er ikke flere spill i denne samlingen",
+    "docs.learn_more": "Finn ut mer",
+    "download.started": "Startet",
+    "download.reason.install": "for førstegangs installasjon",
+    "download.reason.update": "for å oppdatere til siste versjon",
+    "duration.hour": "en time",
+    "duration.hours": "{{x}} timer",
+    "duration.minute": "ett minutt eller mindre",
+    "duration.minutes": "{{x}} minutter"
 }
