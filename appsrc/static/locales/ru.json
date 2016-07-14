@@ -204,7 +204,7 @@
     "usage_stats.description.bought_time_ago": "Куплено {{time_ago}}",
     "install_location.empty": "В этой папке пока ничего не установлено",
     "grid.item.open_debug_log": "Открыть отладочный лог",
-    "usage_stats.description.physical_game": "Невиртуальная игра",
+    "usage_stats.description.physical_game": "Физическая игра",
     "menu.view.history": "Журнал событий",
     "game.install.no_executables_found": "Не найдено ни одного исполняемого файла",
     "prompt.uninstall.uninstall": "Удалить",
