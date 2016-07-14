@@ -153,5 +153,8 @@
     "duration.minute": "ett minutt eller mindre",
     "duration.minutes": "{{x}} minutter",
     "game.install.could_not_launch": "En feil oppstod ved oppstart av {{title}}",
-    "grid.item.open": "Åpne"
+    "grid.item.open": "Åpne",
+    "prompt.deb_policy.detail": "itch kan bare installere flyttbare versjoner av Linux-applikasjoner.",
+    "prompt.deb_policy.message": "{{title}} bruker .deb-pakkeformatet, og kan ikke installeres med itch før den har blitt pakket om.",
+    "prompt.deb_policy.title": "APT-pakker er ikke støttet"
 }
