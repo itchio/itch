@@ -5,7 +5,6 @@ import {app} from '../electron'
 import invariant from 'invariant'
 
 const APPDATA_RE = /^appdata\/(.*)$/
-import format, {FS_DATE_FORMAT} from './format'
 
 export function appPath (cave) {
   // < 0.13.x, installFolder isn't set, it's implicitly the cave's id
@@ -51,7 +50,7 @@ export function preferencesPath () {
 }
 
 export function logPath () {
-  return path.join(app.getPath('userData'), 'logs', 'itch-' + format.date(new Date(), FS_DATE_FORMAT) + '.txt')
+  return path.join(app.getPath('userData'), 'logs', 'itch.txt')
 }
 
 export function caveLogPath (caveId) {
