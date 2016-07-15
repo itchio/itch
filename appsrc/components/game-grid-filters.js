@@ -4,14 +4,14 @@ import classNames from 'classnames'
 import {connect} from './connect'
 import {createStructuredSelector} from 'reselect'
 
-import {throttle} from 'underline'
+import {debounce} from 'underline'
 
 import * as actions from '../actions'
 
 class GameGridFilters extends Component {
   constructor () {
     super()
-    this.onQueryChanged = ::this.onQueryChanged::throttle(80)
+    this.onQueryChanged = ::this.onQueryChanged::debounce(100)
   }
 
   render () {

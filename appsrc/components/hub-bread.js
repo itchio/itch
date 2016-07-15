@@ -23,22 +23,6 @@ class HubBread extends Component {
       </section>
     </div>
   }
-
-  onKeyPress (e) {
-    const {search} = this.refs
-    if (!search) return
-
-    if (e.key === 'Enter') {
-      this.props.search(search.value)
-    }
-  }
-
-  onQueryChanged (e) {
-    const {search} = this.refs
-    if (!search) return
-
-    this.props.searchQueryChanged(search.value)
-  }
 }
 
 HubBread.propTypes = {

@@ -94,7 +94,7 @@ const search = async function search (store, action) {
   } finally {
     store.dispatch(actions.searchFinished())
   }
-}::debounce(200)
+}
 
 async function fetchSingleCollectionGames (store, market, credentials, collectionId) {
   await fetch.collectionGames(market, credentials, collectionId)
