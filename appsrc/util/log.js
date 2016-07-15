@@ -6,10 +6,10 @@ import colors from 'colors/safe'
 
 import fs from 'fs'
 import format from '../util/format'
-import sf from '../util/sf'
 import path from 'path'
 import eol from 'eol'
 import deepAssign from 'deep-assign'
+import stream from 'logrotate-stream'
 
 function make (name) {
   let f = function (opts, message) {
@@ -56,7 +56,11 @@ export class Logger {
             try {
               fs.mkdirSync(path.dirname(val))
             } catch (err) {}
-            this.fileSink = val
+            this.fileSink = stream({
+              file: val,
+              size: '300K',
+              keep: 3
+            })
           }
           break
         }
@@ -106,7 +110,7 @@ export class Logger {
     }
 
     if (this.fileSink) {
-      sf.appendFile(this.fileSink, eol.auto(`${timestamp} ${s}` + '\n'))
+      this.fileSink.write(eol.auto(`${timestamp} ${s}` + '\n'))
     }
   }
 
