@@ -10,7 +10,6 @@ import {each, values} from 'underline'
 import * as actions from '../actions'
 
 import platformData from '../constants/platform-data'
-import defaultImages from '../constants/default-images'
 import format from '../util/format'
 import Fuse from 'fuse.js'
 
@@ -50,8 +49,8 @@ export class SearchResult extends Component {
       chosen: chosen
     })
 
-    return <div className={resultClasses} onClick={onClick}>
-      <img src={stillCoverUrl || coverUrl || defaultImages.thumbnail}/>
+    return <div className={resultClasses} data-path={`games/${game.id}`} onClick={onClick}>
+      <img src={stillCoverUrl || coverUrl}/>
       <div className='title-block'>
         <h4>{title}</h4>
         <span className='platforms'>
@@ -81,8 +80,8 @@ export class UserSearchResult extends Component {
       chosen
     })
 
-    return <div className={resultClasses} onClick={onClick}>
-      <img src={stillCoverUrl || coverUrl || defaultImages.avatar}/>
+    return <div className={resultClasses} data-path={`users/${user.id}`} onClick={onClick}>
+      <img src={stillCoverUrl || coverUrl}/>
       <div className='title-block'>
         <h4>{displayName || username}</h4>
       </div>

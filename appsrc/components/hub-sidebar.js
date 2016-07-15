@@ -16,11 +16,23 @@ import Icon from './icon'
 import Dropdown from './dropdown'
 import HubSidebarItem from './hub-sidebar-item'
 
+import {debounce} from 'underline'
+
 export function versionString () {
   return `itch v${app.getVersion()}`
 }
 
 export class HubSidebar extends Component {
+  constructor () {
+    super()
+    this.triggerSearch = this.triggerSearch::debounce(100)
+    this.onSearchKeyUp = ::this.onSearchKeyUp
+    this.onSearchKeyDown = ::this.onSearchKeyDown
+    this.onSearchChange = ::this.onSearchChange
+    this.onSearchFocus = ::this.onSearchFocus
+    this.onSearchBlur = ::this.onSearchBlur::debounce(200)
+  }
+
   render () {
     const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
       navigate, counts, progresses, sublabels, closeTab, closeAllTabs, moveTab, openTabContextMenu, newTab, searchLoading} = this.props
@@ -38,7 +50,13 @@ export class HubSidebar extends Component {
       </div>
 
       <section className={searchClasses}>
-        <input id='search' ref='search' type='search' placeholder={t('search.placeholder')} onKeyPress={::this.onSearchKeyPress} onKeyUp={::this.onSearchKeyPress} onChange={::this.onSearchKeyPress} onFocus={::this.onSearchFocus} onBlur={::this.onSearchBlur}/>
+        <input id='search' ref='search' type='search'
+          placeholder={t('search.placeholder')}
+          onKeyDown={this.onSearchKeyDown}
+          onKeyUp={this.onSearchKeyUp}
+          onChange={this.onSearchChange}
+          onFocus={this.onSearchFocus}
+          onBlur={this.onSearchBlur}/>
         <span className='icon icon-search'/>
       </section>
 
@@ -105,21 +123,59 @@ export class HubSidebar extends Component {
   }
 
   onSearchBlur (e) {
-    setTimeout(this.props.closeSearch, 200)
+    this.props.closeSearch()
   }
 
-  onSearchKeyPress (e) {
+  onSearchChange (e) {
+    this.triggerSearch()
+  }
+
+  onSearchKeyDown (e) {
+    const {key} = e
+
+    let passthrough = false
+
+    if (key === 'Escape') {
+      // default behavior is to clear - don't
+    } else if (key === 'ArrowDown') {
+      this.props.searchHighlightOffset(1)
+      // default behavior is to jump to end of input - don't
+    } else if (key === 'ArrowUp') {
+      this.props.searchHighlightOffset(-1)
+      // default behavior is to jump to start of input - don't
+    } else {
+      passthrough = true
+    }
+
+    if (!passthrough) {
+      e.preventDefault()
+      e.stopPropagation()
+      return false
+    }
+  }
+
+  onSearchKeyUp (e) {
+    const {key} = e
+
+    if (key === 'Escape') {
+      return
+    } else if (key === 'ArrowDown') {
+      return
+    } else if (key === 'ArrowUp') {
+      return
+    } else if (key === 'Enter') {
+      return
+    }
+    console.log(`Triggering search, key was ${key}`)
+
+    this.triggerSearch()
+  }
+
+  triggerSearch () {
     const {search} = this.refs
     if (!search) return
 
-    if (e.key === 'ArrowDown') {
-      this.props.searchHighlightOffset(1)
-      return
-    } else if (e.key === 'ArrowUp') {
-      this.props.searchHighlightOffset(-1)
-      return
-    }
-
+    console.log(`Searching for ${JSON.stringify(search.value)}`)
     this.props.search(search.value)
   }
 

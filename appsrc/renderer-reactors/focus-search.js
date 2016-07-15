@@ -7,6 +7,13 @@ async function focusSearch (store, action) {
   }
 }
 
+async function closeSearch (store, action) {
+  const searchBar = document.querySelector('#search')
+  if (searchBar && document.hasFocus(searchBar)) {
+    searchBar.blur()
+  }
+}
+
 async function focusFilter (store, action) {
   const filterBar = document.querySelector('.hub-meat-tab.visible .filter-input-field')
   if (filterBar) {
@@ -22,4 +29,4 @@ async function clearFilters () {
   }
 }
 
-export default {focusSearch, focusFilter, clearFilters}
+export default {focusSearch, closeSearch, focusFilter, clearFilters}

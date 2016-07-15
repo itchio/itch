@@ -37,7 +37,7 @@ export default handleActions({
   SEARCH_FETCHED: (state, action) => {
     const {query, results} = action.payload
     const example = SearchExamples[randomExampleIndex()]
-    return {...state, results, open: true, query, example}
+    return {...state, results, query, example}
   },
 
   SEARCH_STARTED: (state, action) => {
