@@ -3,6 +3,7 @@ import {darkMineShaft} from '../constants/colors'
 import {app, BrowserWindow} from '../electron'
 import config from '../util/config'
 import os from '../util/os'
+import ospath from 'path'
 import invariant from 'invariant'
 import {debounce} from 'underline'
 
@@ -36,7 +37,9 @@ async function createWindow (store) {
   }
   const {width, height} = bounds
   const center = (bounds.x === -1 && bounds.y === -1)
-  const iconPath = `${__dirname}/../static/images/tray/${app.getName()}.png`
+  const iconPath = ospath.resolve(`${__dirname}/../static/images/window/${app.getName()}/icon.png`)
+  log(opts, `creating main window with icon: ${iconPath}`)
+  log(opts, 'cf. https://github.com/electron/electron/issues/6205')
 
   const window = new BrowserWindow({
     title: app.getName(),
@@ -51,7 +54,6 @@ async function createWindow (store) {
 
   if (os.platform() === 'darwin') {
     try {
-      // TODO: restore once https://github.com/electron/electron/issues/6056 is fixed
       log(opts, `setting icon to: ${iconPath}`)
       app.dock.setIcon(iconPath)
     } catch (err) {
