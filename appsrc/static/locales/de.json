@@ -268,5 +268,7 @@
     "docs.learn_more": "Mehr erfahren",
     "label.experimental": "Experimentell",
     "grid.hidden_count": "+ {{count}} von Filtern versteckte Elemente",
-    "grid.item.share": "Teilen"
+    "grid.item.share": "Teilen",
+    "action.name.play": "Jetzt spielen",
+    "action.name.manual": "Benutzerhandbuch"
 }
