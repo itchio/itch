@@ -14,11 +14,15 @@ import staticTabData from '../constants/static-tab-data'
 
 import querystring from 'querystring'
 import ospath from 'path'
+import {uniq, findWhere} from 'underline'
 
 const injectPath = ospath.resolve(__dirname, '..', 'inject', 'browser.js')
 // const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === '1'
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1
 const WILL_NAVIGATE_GRACE_PERIOD = 3000
+
+// human short-term memory = between 7 and 13 items
+const SCROLL_HISTORY_SIZE = 50
 
 import BrowserBar from './browser-bar'
 
@@ -39,7 +43,8 @@ export class BrowserMeat extends Component {
         firstLoad: true,
         loading: true,
         url: ''
-      }
+      },
+      scrollHistory: []
     }
 
     this.goBack = ::this.goBack
@@ -113,8 +118,82 @@ export class BrowserMeat extends Component {
   didNavigate (e) {
     const {tabId} = this.props
     const {url} = e
+
+    this.updateScrollWatcher(url)
     this.updateBrowserState({url})
     this.analyzePage(tabId, url)
+  }
+
+  updateScrollWatcher (url) {
+    if (this.watcher) {
+      clearInterval(this.watcher)
+    }
+
+    const installWatcher = () => {
+      this.watcher = setInterval(() => {
+        if (!this.webview) return
+        this.webview.executeJavaScript('document.body.scrollTop', false, (scrollTop) => {
+          if (this.webview.src !== url) {
+            // disregarding scrollTop, we have navigated
+          } else {
+            this.registerScrollTop(url, scrollTop)
+          }
+        })
+      }, 700)
+    }
+
+    const scrollHistoryItem = this.state.scrollHistory::findWhere({url})
+    if (scrollHistoryItem && scrollHistoryItem.scrollTop > 0) {
+      const oldScrollTop = scrollHistoryItem.scrollTop
+      console.log(`found scrollTop ${oldScrollTop} for ${url}`)
+      let count = 0
+      const tryRestoringScroll = () => {
+        count++
+        if (!this.webview) {
+          console.log('cannot restore scrollTop, no webview')
+          return
+        }
+
+        console.log(`trying to set scrollTop to ${oldScrollTop}, try #${count}`)
+        this.webview.executeJavaScript(`(function () { document.body.scrollTop = ${oldScrollTop}; return document.body.scrollTop })()`, false, (scrollTop) => {
+          console.log(`Just set scrollTop to ${oldScrollTop}, actually ${scrollTop}`)
+          if (Math.abs(scrollTop - oldScrollTop) > 20) {
+            if (count < 40) {
+              setTimeout(tryRestoringScroll, 250)
+            } else {
+              console.log(`Tried ${count} times and no cigar, giving up on scrollTop restoration`)
+              installWatcher()
+            }
+          } else {
+            console.log(`scrollTop restore successful after ${count} tries`)
+            installWatcher()
+          }
+        })
+      }
+      // calling executeJavaScript from 'did-navigate' will noop
+      setTimeout(tryRestoringScroll, 400)
+    } else {
+      installWatcher()
+    }
+  }
+
+  registerScrollTop (url, scrollTop) {
+    const previousItem = this.state.scrollHistory::findWhere({url})
+    if (previousItem && previousItem.scrollTop === scrollTop) {
+      // don't wake up react
+      return
+    }
+
+    const scrollHistory = [
+      {url, scrollTop},
+      ...this.state.scrollHistory
+    ]::uniq((x) => x.url).slice(0, SCROLL_HISTORY_SIZE)
+
+    this.setState({
+      scrollHistory
+    })
+
+    console.log(`saving scrollTop ${scrollTop} for ${url}, scrollHistory size = ${scrollHistory.length}`)
   }
 
   willNavigate (e) {
