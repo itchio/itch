@@ -38,7 +38,7 @@ export class UrlMeat extends Component {
       const q = pathToId(path)
       url = urls.itchio + '/search?' + querystring.stringify({q})
     } else if (/^featured/.test(path)) {
-      url = urls.itchio
+      url = urls.itchio + '/'
     }
 
     return <BrowserMeat key={tabId} url={url} tabId={tabId} tabPath={path} tabData={tabData} controls={controls}/>
