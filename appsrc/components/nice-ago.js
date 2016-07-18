@@ -9,6 +9,10 @@ import moment from 'moment'
 
 function momentBridge (t) {
   return function (count, unit, direction) {
+    if (unit === 'second' && count <= 60) {
+      return t('moment.now')
+    }
+
     const m = moment().locale(t.lang).add({[unit]: count})
     return (direction === 'ago') ? m.toNow() : m.fromNow()
   }
@@ -20,10 +24,6 @@ export class NiceAgo extends Component {
 
     if (!this.isValidDate(date)) {
       return <span className='nice-ago'>?</span>
-    }
-
-    if (Date.now() - date <= (60 * 1000)) {
-      return <span className='nice-ago'>{t('moment.now')}</span>
     }
 
     // pass empty title to TimeAgo on purpose so we don't have double tooltip on hover
