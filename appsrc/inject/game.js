@@ -46,6 +46,12 @@ window.addEventListener('DOMContentLoaded', (e) => {
     return
   }
 
+  const pico8 = document.querySelectorAll('div.pico8_el')
+  if (pico8.length > 0) {
+    console.log('Detected pico8, not trying to fit to window')
+    return
+  }
+
   const canvases = document.getElementsByTagName('canvas')
   if (canvases.length !== 1) {
     console.log('Didn\'t find exactly 1 canvas, not trying to fit to window')
