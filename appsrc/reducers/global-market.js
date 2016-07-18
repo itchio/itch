@@ -7,7 +7,7 @@ import {indexBy} from 'underline'
 
 import derivedReducer from './derived-reducer'
 
-const reducer = makeMarketReducer('GLOBAL', getGlobalMarket)
+const reducer = makeMarketReducer('GLOBAL', getGlobalMarket, ['caves'])
 
 export default derivedReducer(reducer, createSelector(
   (state) => state.caves,

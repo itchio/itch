@@ -4,13 +4,16 @@ import invariant from 'invariant'
 
 import {omit} from 'underline'
 
-const initialState = {
-  ready: false
-}
-
 import * as actionTypes from '../constants/action-types'
 
-export default function makeMarketReducer (prefix, getMarket) {
+export default function makeMarketReducer (prefix, getMarket, tables) {
+  const initialState = {
+    ready: false
+  }
+  for (const table of tables) {
+    initialState[table] = {}
+  }
+
   const DB_READY = actionTypes[prefix + '_DB_READY']
   invariant(DB_READY, 'ready exists as an action type')
 

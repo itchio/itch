@@ -4,7 +4,7 @@ import {getUserMarket} from '../reactors/market'
 
 import {LOGOUT} from '../constants/action-types'
 
-const reducer = makeMarketReducer('USER', getUserMarket)
+const reducer = makeMarketReducer('USER', getUserMarket, ['collections', 'downloadKeys', 'games', 'itchAppProfile', 'itchAppTabs', 'users'])
 
 export default (state, action) => {
   // FIXME: this is a workaround, shouldn't be needed,
