@@ -24,6 +24,7 @@ tmp
 /deb-stage
 /rpm-stage
 /aur-stage
+/portable-stage
 /linux-extras
 /packages
 /*.app

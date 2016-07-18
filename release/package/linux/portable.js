@@ -7,7 +7,7 @@ module.exports = {
     const dir_name = `${$.app_name()}-${$.build_version()}-${arch}`
     $($.sh('rm -rf portable-stage'))
     $($.sh('mkdir -p portable-stage'))
-    $($.sh(`cp -rfv ${build_path} portable-stage/${dir_name}`))
+    $($.sh(`cp -rf ${build_path} portable-stage/${dir_name}`))
     $.cd('portable-stage', function () {
       $($.sh(`tar cfJ ${dir_name}.tar.xz ${dir_name}`))
     })
