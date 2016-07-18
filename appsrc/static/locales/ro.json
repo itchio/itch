@@ -232,5 +232,19 @@
     "prompt.abort_game.title": "Forţează închiderea programului?",
     "prompt.abort_game.message": "Vrei să forţezi {{title}} să se închidă?",
     "prompt.self_update.message.linux": "Poţi fie să descarci actualizarea manual, sau să foloseşti gestionarul de aplicaţii al distribuţiei tale: vizitează situl web al aplicaţiei pentru informaţii suplimentare.",
-    "prompt.self_update_ready.action.restart": "Redeschide acum"
+    "prompt.self_update_ready.action.restart": "Redeschide acum",
+    "collection.empty": "Această colecţie nu conţine nici un joc",
+    "download.reason.install": "pentru prima instalare",
+    "download.reason.update": "pentru actualizare",
+    "grid.clear_filters": "Scoate filtrele",
+    "grid.item.prioritize_download": "Descarcă cu prioritate",
+    "grid.item.downloads_paused": "Descărcările sunt oprite",
+    "toast.title": "Aoleu!",
+    "toast.message": "S-a întâmplat ceva rău.",
+    "toast.actions.learn_more": "Detalii",
+    "toast.actions.report": "Trimite un comentariu, ne ajută să facem itch mai bun",
+    "outlinks.manage_collections": "Gestiune colecţii",
+    "preferences.behavior": "Comportament",
+    "preferences.advanced": "Avansat",
+    "preferences.advanced.open_app_log": "Deschide jurnalul"
 }
