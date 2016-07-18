@@ -91,6 +91,9 @@ function computeScore (execs) {
     if (/nwjc\.exe$/i.test(exe.path)) {
       score -= 20
     }
+    if (/flixel\.exe$/i.test(exe.path)) {
+      score -= 20
+    }
     if (/dxwebsetup\.exe$/i.test(exe.path)) {
       score = 0
     }
