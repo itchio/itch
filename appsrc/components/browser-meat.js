@@ -44,7 +44,8 @@ export class BrowserMeat extends Component {
         loading: true,
         url: ''
       },
-      scrollHistory: []
+      scrollHistory: [],
+      wentBackOrForward: false
     }
 
     this.goBack = ::this.goBack
@@ -119,12 +120,16 @@ export class BrowserMeat extends Component {
     const {tabId} = this.props
     const {url} = e
 
-    this.updateScrollWatcher(url)
     this.updateBrowserState({url})
     this.analyzePage(tabId, url)
+
+    this.updateScrollWatcher(url, this.state.wentBackOrForward)
+    this.setState({
+      wentBackOrForward: false
+    })
   }
 
-  updateScrollWatcher (url) {
+  updateScrollWatcher (url, restore) {
     if (this.watcher) {
       clearInterval(this.watcher)
     }
@@ -143,7 +148,7 @@ export class BrowserMeat extends Component {
     }
 
     const scrollHistoryItem = this.state.scrollHistory::findWhere({url})
-    if (scrollHistoryItem && scrollHistoryItem.scrollTop > 0) {
+    if (restore && scrollHistoryItem && scrollHistoryItem.scrollTop > 0) {
       const oldScrollTop = scrollHistoryItem.scrollTop
       console.log(`found scrollTop ${oldScrollTop} for ${url}`)
       let count = 0
@@ -412,11 +417,23 @@ export class BrowserMeat extends Component {
   }
 
   goBack () {
-    this.with((wv) => wv.goBack())
+    this.with((wv) => {
+      if (!wv.canGoBack()) return
+      this.setState({
+        wentBackOrForward: true
+      })
+      wv.goBack()
+    })
   }
 
   goForward () {
-    this.with((wv) => wv.goForward())
+    this.with((wv) => {
+      if (!wv.canGoForward()) return
+      this.setState({
+        wentBackOrForward: true
+      })
+      wv.goForward()
+    })
   }
 
   async loadUserURL (input) {
