@@ -1,4 +1,6 @@
 
+import delay from '../reactors/delay'
+
 async function focusSearch (store, action) {
   const searchBar = document.querySelector('#search')
   if (searchBar) {
@@ -29,4 +31,15 @@ async function clearFilters () {
   }
 }
 
-export default {focusSearch, closeSearch, focusFilter, clearFilters}
+async function searchHighlightOffset () {
+  await delay(20)
+  const searchResults = document.querySelector('.hub-search-results.active')
+  if (searchResults) {
+    const chosen = searchResults.querySelector('.search-result.chosen')
+    if (chosen) {
+      chosen.scrollIntoViewIfNeeded()
+    }
+  }
+}
+
+export default {focusSearch, closeSearch, focusFilter, clearFilters, searchHighlightOffset}
