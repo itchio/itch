@@ -10,6 +10,7 @@ import {each, values} from 'underline'
 import * as actions from '../actions'
 
 import platformData from '../constants/platform-data'
+import classificationActions from '../constants/classification-actions'
 import format from '../util/format'
 import Fuse from 'fuse.js'
 
@@ -28,6 +29,11 @@ export class SearchResult extends Component {
     if (game.type === 'html') {
       compatible = true
       platforms.push(<Icon title='web' icon='earth'/>)
+    }
+
+    const actionForClassification = classificationActions[game.classification]
+    if (actionForClassification === 'open') {
+      compatible = true
     }
 
     for (const p of platformData) {
