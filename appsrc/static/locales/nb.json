@@ -167,7 +167,7 @@
     "search.empty.tagline": "Trenger du inspirasjon? Prøv å søke etter '{{example}}'",
     "game.install.no_executables_found": "Ingen kjørbare filer ble funnet",
     "game.install.no_html_index_found": "Ingen HTML index-fil ble funnet",
-    "game.install.no_uploads_available.detail": "Kanskje det ikke er kompatibelt med plattformen din eller med itch-appen ennå!",
+    "game.install.no_uploads_available.detail": "Kanskje det ikke støtter plattformen din eller itch-applikasjonen ennå!",
     "game.install.no_uploads_available.message": "Ingen kompatible nedlastinger ble funnet for '{{title}}', så det ble ikke installert.",
     "game.install.try_again": "Prøv igjen",
     "game.install.visit_web_page": "Besøk nettside",
@@ -181,7 +181,7 @@
     "status.downloads.clear_all_finished": "Fjern alle",
     "status.downloads.click_to_manage": "Klikk for å håndtere nedlastinger",
     "usage_stats.description.free_download": "Gratis nedlasting",
-    "usage_stats.description.other": "En udefinerbar",
+    "usage_stats.description.other": "En ting",
     "usage_stats.has_played_for_duration": "Spilt",
     "usage_stats.has_used_for_duration": "Brukt",
     "usage_stats.last_opened_time_ago": "Sist åpnet {{time_ago}}",
@@ -332,5 +332,6 @@
     "status.offline_mode.inactive": "Klikk for å aktivere frakoblet modus",
     "usage_stats.description.assets": "En samling av ressurser",
     "usage_stats.description.game_mod": "En spilltilpasning",
-    "usage_stats.description.platforms": "for {{platforms}}"
+    "usage_stats.description.platforms": "for {{platforms}}",
+    "action.name.editor": "Tekstverktøy"
 }
