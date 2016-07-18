@@ -57,7 +57,7 @@ class Downloads extends Component {
           <h2 className='finished-header'>
             {t('status.downloads.category.finished')}
           </h2>
-          <span className='clear hint--top' data-hint={t('status.downloads.clear_all_finished')} onClick={clearFinishedDownloads}>
+          <span className='clear hint--right' data-hint={t('status.downloads.clear_all_finished')} onClick={clearFinishedDownloads}>
             <span className='icon icon-delete'/>
           </span>
         </div>
