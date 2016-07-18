@@ -55,9 +55,6 @@ export function pathToIcon (path) {
   if (path === 'dashboard') {
     return 'rocket'
   }
-  if (path === 'press') {
-    return 'newspaper-o'
-  }
   if (path === 'library') {
     return 'heart-filled'
   }

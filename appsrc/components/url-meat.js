@@ -37,8 +37,6 @@ export class UrlMeat extends Component {
     } else if (/^search/.test(path)) {
       const q = pathToId(path)
       url = urls.itchio + '/search?' + querystring.stringify({q})
-    } else if (/^press/.test(path)) {
-      url = urls.itchio + '/login?' + querystring.stringify({return_to: urls.itchio + '/press/games'})
     } else if (/^featured/.test(path)) {
       url = urls.itchio
     }

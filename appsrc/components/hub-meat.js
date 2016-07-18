@@ -43,7 +43,7 @@ export class HubMeat extends Component {
   }
 
   renderTab (tabId, path, data, visible) {
-    const isBrowser = /^(url|games|users|collections|search|press|featured)/.test(path)
+    const isBrowser = /^(url|games|users|collections|search|featured)/.test(path)
     if (!visible && !isBrowser) {
       return ''
     }
