@@ -47,6 +47,35 @@ function caveProblem (cave) {
 }
 
 export default async function start (out, opts) {
+  try {
+    return await doStart(out, opts)
+  } catch (e) {
+    const {cave, market, credentials} = opts
+    const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game})
+
+    store.dispatch(actions.openModal({
+      title: '',
+      message: ['game.install.could_not_launch', {title: game.title}],
+      detail: ['game.install.could_not_launch.detail', {error: e.message}],
+      buttons: [
+        {
+          label: ['grid.item.report_problem'],
+          icon: 'upload-to-cloud',
+          action: actions.reportCave({caveId: cave.id})
+        },
+        {
+          label: ['grid.item.probe'],
+          icon: 'bug',
+          className: 'secondary',
+          action: actions.probeCave({caveId: cave.id})
+        },
+        'cancel'
+      ]
+    }))
+  }
+}
+
+export async function doStart (out, opts) {
   const {globalMarket, preferences, market, credentials} = opts
   let {cave} = opts
   invariant(cave, 'launch has cave')
@@ -120,6 +149,10 @@ export default async function start (out, opts) {
     }
 
     log(gameOpts, `manifest:\n ${JSON.stringify(manifest, 0, 2)}`)
+
+    if (!manifest.actions) {
+      throw new Error('manifest has no actions (did you misspell it `[[action]]` ?)')
+    }
 
     if (manifest.actions.length > 1) {
       if (opts.manifestActionName) {
@@ -205,26 +238,7 @@ export default async function start (out, opts) {
         return
       }
     }
-
-    store.dispatch(actions.openModal({
-      title: '',
-      message: ['game.install.could_not_launch', {title: game.title}],
-      detail: ['game.install.could_not_launch.detail', {error: e.message}],
-      buttons: [
-        {
-          label: ['grid.item.report_problem'],
-          icon: 'upload-to-cloud',
-          action: actions.reportCave({caveId: cave.id})
-        },
-        {
-          label: ['grid.item.probe'],
-          icon: 'bug',
-          className: 'secondary',
-          action: actions.probeCave({caveId: cave.id})
-        },
-        'cancel'
-      ]
-    }))
+    throw e
   } finally {
     clearInterval(interval)
     const now = Date.now()
