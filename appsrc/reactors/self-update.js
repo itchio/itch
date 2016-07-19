@@ -60,8 +60,6 @@ async function firstWindowReady (store, action) {
   autoUpdater.setFeedURL(feedUrl)
 
   autoUpdater.on('checking-for-update', () => store.dispatch(actions.checkingForSelfUpdate()))
-  autoUpdater.on('update-available', () => store.dispatch(actions.selfUpdateAvailable()))
-  autoUpdater.on('update-not-available', () => store.dispatch(actions.selfUpdateNotAvailable({uptodate: true})))
   autoUpdater.on('update-downloaded', (ev, releaseNotes, releaseName) => {
     log(opts, `update downloaded, release name: '${releaseName}'`)
     log(opts, `release notes: \n'${releaseNotes}'`)
