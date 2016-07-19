@@ -345,5 +345,5 @@
     "outlinks.manage_collections": "Управление коллекциями",
     "preferences.behavior": "Поведение",
     "preferences.behavior.close_to_tray": "Сворачиваться в системный трей при закрытии окна",
-    "outlinks.open_dashboard": "Кабинет"
+    "outlinks.open_dashboard": "Кабинет разработчика"
 }
