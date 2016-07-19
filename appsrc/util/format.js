@@ -1,5 +1,5 @@
 
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 export function slugify (str) {
   return str.toLowerCase()
@@ -55,14 +55,14 @@ export function seconds (secs) {
 
 export function date (v, f, lang = 'en') {
   try {
-    return moment(v).locale(lang).format(f)
+    return moment.tz(v, 'UTC').tz(moment.tz.guess()).locale(lang).format(f)
   } catch (err) {
-    console.log(`Invalid date: ${v}`)
+    console.log(`Invalid date: ${v} — ${err.toString()}`)
     return '?'
   }
 }
 
-export const DATE_FORMAT = 'DD MMMM, YYYY @ HH:mm ZZ'
+export const DATE_FORMAT = 'DD MMMM, YYYY @ HH:mm zz'
 export const FS_DATE_FORMAT = 'YYYY.MM.DD-HH.mm.ss'
 
 export function price (currency, value) {

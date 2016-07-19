@@ -8,7 +8,6 @@ import delay from './delay'
 
 import * as actions from '../actions'
 
-import format from '../util/format'
 import fetch from '../util/fetch'
 import pathmaker from '../util/pathmaker'
 import api from '../util/api'
@@ -28,6 +27,8 @@ const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000
 
 import findUpload from '../tasks/find-upload'
 import findUpgradePath from '../tasks/find-upgrade-path'
+
+import moment from 'moment-timezone'
 
 async function checkForGameUpdates (store, action) {
   const caves = getGlobalMarket().getEntities('caves')
@@ -150,16 +151,16 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
       }
 
       // TODO: update installedAt once we found there were no new uploads?
-      log(opts, `cave.installedAt = ${cave.installedAt}`)
-      let installedAt = new Date(cave.installedAt)
-      if (isNaN(installedAt.getTime())) {
-        installedAt = new Date(0)
+      let installedAt = moment.tz(cave.installedAt, 'UTC')
+      log(opts, `installed at ${installedAt.format()}`)
+      if (!installedAt.isValid()) {
+        installedAt = moment.tz(0, 'UTC')
       }
       const recentUploads = uploads::filter((upload) => {
-        const updatedAt = new Date(upload.updatedAt)
+        const updatedAt = moment.tz(upload.updatedAt, 'UTC')
         const isRecent = updatedAt > installedAt
         if (!isRecent) {
-          log(opts, `Filtering out ${upload.filename} (#${upload.id}), ${format.date(updatedAt, format.DATE_FORMAT)} is older than ${format.date(installedAt, format.DATE_FORMAT)}`)
+          log(opts, `Filtering out ${upload.filename} (#${upload.id}), ${updatedAt.format()} is older than ${installedAt.format()}`)
         }
         return isRecent
       })
