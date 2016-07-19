@@ -152,5 +152,6 @@ export default validateReactors({
   QUIT_WHEN_MAIN: combine(mainWindow.quitWhenMain),
   QUIT_ELECTRON_APP: combine(mainWindow.quitElectronApp),
   PREPARE_QUIT: combine(mainWindow.prepareQuit),
+  QUIT_AND_INSTALL: combine(mainWindow.quitAndInstall),
   QUIT: combine(mainWindow.quit)
 })
