@@ -104,6 +104,19 @@ shell, for example:
 
 URLs will be opened as a new tab in the itch app.
 
+### Arguments
+
+The `args` field can be used to specify arguments to pass to executables.
+
+It must be a TOML array:
+
+```
+[[actions]]
+name = "A lot of arguments"
+path = "sample.exe"
+args = ["--that", "--is", "--a", "lot=of-arguments"]
+```
+
 ### Sandbox opt-in
 
 Adding `sandbox = true` to an action opts into [the itch.io sandbox][sandbox]. This
