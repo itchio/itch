@@ -115,12 +115,9 @@ export class Logger {
   }
 
   close () {
-    return new Promise((resolve, reject) => {
-      if (!this.fileSink) resolve()
-
-      this.fileSink.on('finish', () => resolve())
+    if (this.fileSink) {
       this.fileSink.end()
-    })
+    }
   }
 
   timestamp () {

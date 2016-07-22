@@ -251,6 +251,7 @@ export async function doStart (out, opts) {
     clearInterval(interval)
     const now = Date.now()
     globalMarket.saveEntity('caves', cave.id, {lastTouched: now})
+    gameLogger.close()
   }
 }
 
