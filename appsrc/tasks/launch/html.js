@@ -17,11 +17,12 @@ import mklog from '../../util/log'
 const log = mklog('tasks/launch')
 
 export default async function launch (out, opts) {
-  const {cave, market, credentials, env} = opts
+  const {cave, market, credentials, args, env} = opts
   invariant(cave, 'launch-html has cave')
   invariant(market, 'launch-html has market')
   invariant(credentials, 'launch-html has credentials')
   invariant(env, 'launch-html has env')
+  invariant(args, 'launch-html has args')
 
   const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game})
   const injectPath = path.resolve(__dirname, '..', '..', 'inject', 'game.js')
@@ -56,7 +57,8 @@ export default async function launch (out, opts) {
   })
 
   const itchObject = {
-    env
+    env,
+    args
   }
 
   // open dev tools immediately if requested

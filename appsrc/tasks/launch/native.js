@@ -28,6 +28,7 @@ import {Crash} from '../errors'
 
 export default async function launch (out, opts) {
   const {cave, market, credentials, env} = opts
+  let {args} = opts
   invariant(cave, 'launch-native has cave')
   invariant(cave, 'launch-native has env')
   log(opts, `launching cave in '${cave.installLocation}' / '${cave.installFolder}'`)
@@ -40,7 +41,6 @@ export default async function launch (out, opts) {
   let {isolateApps} = opts.preferences
   const appPath = pathmaker.appPath(cave)
   let exePath
-  let args = []
 
   const manifestPath = ospath.join(appPath, '.itch.toml')
   const hasManifest = await sf.exists(manifestPath)
@@ -74,8 +74,9 @@ export default async function launch (out, opts) {
 
   if (/\.jar$/i.test(exePath)) {
     log(opts, 'Launching .jar')
-    args.push('-jar')
-    args.push(exePath)
+    args = [
+      '-jar', exePath, ...args
+    ]
     exePath = 'java'
   }
 

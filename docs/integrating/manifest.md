@@ -37,14 +37,19 @@ both to humans and computers alike.
 
 [toml]: https://github.com/toml-lang/toml
 
-## A minimal manifest
+## Actions
 
-A valid manifest should contain at least one action:
+A valid manifest should contain one or more actions:
 
 ```toml
 [[actions]]
 name = "play"
 path = "FooBar.exe"
+
+[[actions]]
+name = "editor"
+path = "FooBar.exe"
+args = ["--editor"]
 ```
 
 Valid actions contain at least:
@@ -78,6 +83,8 @@ name = "Allons-y!"
 [[actions.locales.de]]
 name = "Gehen wir bereits!"
 ```
+
+*Note: the example manifest above describes just a single action, in three languages.*
 
 ### Paths
 

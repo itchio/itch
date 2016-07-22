@@ -9,6 +9,7 @@ import native from './launch/native'
 import html from './launch/html'
 import shell from './launch/shell'
 import external from './launch/external'
+import validateManifest from './launch/validate-manifest'
 
 import store from '../store'
 import * as actions from '../actions'
@@ -130,6 +131,7 @@ export async function doStart (out, opts) {
   }
 
   const env = {}
+  const args = []
   const appPath = pathmaker.appPath(cave)
   const manifestPath = ospath.join(appPath, '.itch.toml')
   log(gameOpts, `looking for manifest @ "${manifestPath}"`)
@@ -149,10 +151,7 @@ export async function doStart (out, opts) {
     }
 
     log(gameOpts, `manifest:\n ${JSON.stringify(manifest, 0, 2)}`)
-
-    if (!manifest.actions) {
-      throw new Error('manifest has no actions (did you misspell it `[[action]]` ?)')
-    }
+    validateManifest(manifest, log, gameOpts)
 
     if (manifest.actions.length > 1) {
       if (opts.manifestActionName) {
@@ -191,6 +190,8 @@ export async function doStart (out, opts) {
     } else {
       manifestAction = manifest.actions[0]
     }
+  } else {
+    log(gameOpts, 'No manifest found (no \'.itch.toml\' file in top-level directory). Proceeding with heuristics.')
   }
 
   if (manifestAction) {
@@ -205,10 +206,17 @@ export async function doStart (out, opts) {
       env.ITCHIO_API_KEY = subkey.key
       env.ITCHIO_API_KEY_EXPIRES_AT = subkey.expiresAt
     }
+
+    if (manifestAction.args) {
+      manifestAction.args::each((arg) => {
+        args.push(arg)
+      })
+    }
   }
 
   gameOpts.manifestAction = manifestAction
   gameOpts.env = env
+  gameOpts.args = args
 
   const launcher = {native, html, shell, external}[launchType]
   if (!launcher) {

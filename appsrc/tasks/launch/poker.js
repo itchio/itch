@@ -106,6 +106,10 @@ function computeScore (execs) {
     if (/\.sh/.test(exe.path)) {
       score += 20
     }
+    if (/\.jar/.test(exe.path)) {
+      // launcher scripts > jar, in case of bundled JRE, cf. https://github.com/itchio/itch/issues/819
+      score -= 5
+    }
     exe.score = score
 
     if (score > 0) {
