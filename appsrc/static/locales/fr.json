@@ -69,7 +69,7 @@
     "menu.file.close_tab": "Fermer l'onglet",
     "menu.file.close_window": "Fermer la fenêtre",
     "menu.file.file": "Fichier",
-    "menu.file.preferences": "Préférences",
+    "menu.file.preferences": "Préférences...",
     "menu.file.quit": "Quitter",
     "menu.help.check_for_update": "Chercher une mise à jour",
     "menu.help.help": "Aide",
@@ -264,7 +264,7 @@
     "usage_stats.description.free_download": "Téléchargement gratuit",
     "usage_stats.description.game": "Un jeu",
     "usage_stats.description.game_mod": "Un mod",
-    "usage_stats.description.other": "Un mystère",
+    "usage_stats.description.other": "Une chose",
     "usage_stats.description.physical_game": "Un jeu physique",
     "usage_stats.description.platforms": "pour {{platforms}}",
     "usage_stats.description.price": "Disponible dès {{price}}",
@@ -348,5 +348,6 @@
     "sidebar.aw_snap": "Aie aie aie",
     "download.started": "Démarré",
     "download.reason.install": "pour une première installation",
-    "download.reason.update": "pour une mise à jour"
+    "download.reason.update": "pour une mise à jour",
+    "menu.file.new_tab": "Nouvel onglet"
 }
