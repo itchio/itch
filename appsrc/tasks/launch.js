@@ -118,7 +118,6 @@ export async function doStart (out, opts) {
   }
 
   const caveLogPath = pathmaker.caveLogPath(cave.id)
-  await sf.wipe(caveLogPath)
   const gameLogger = new mklog.Logger({
     sinks: {
       console: true,
