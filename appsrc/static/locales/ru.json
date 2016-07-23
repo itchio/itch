@@ -37,7 +37,7 @@
     "menu.edit.select_all": "Выделить все",
     "menu.file.close_window": "Закрыть окно",
     "menu.file.file": "Файл",
-    "menu.file.preferences": "Настройки",
+    "menu.file.preferences": "Настройки...",
     "menu.file.quit": "Выход",
     "menu.help.check_for_update": "Проверить обновления",
     "menu.help.help": "Помощь",
@@ -345,5 +345,6 @@
     "outlinks.manage_collections": "Управление коллекциями",
     "preferences.behavior": "Поведение",
     "preferences.behavior.close_to_tray": "Сворачиваться в системный трей при закрытии окна",
-    "outlinks.open_dashboard": "Кабинет разработчика"
+    "outlinks.open_dashboard": "Кабинет разработчика",
+    "menu.file.new_tab": "Новая закладка"
 }
