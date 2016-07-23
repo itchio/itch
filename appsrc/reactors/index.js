@@ -1,6 +1,6 @@
 
 import validateReactors from './validate-reactors'
-import combine from './combine'
+import combine, {assertAllCombined} from './combine'
 
 import preboot from './preboot'
 import preferences from './preferences'
@@ -34,10 +34,10 @@ import perf from './perf'
 import packagingPolicy from './packaging-policy'
 
 export default validateReactors({
-  _ALL: combine(i18n, session.catchAll, tray.catchAll, menu.catchAll,
+  _ALL: combine(i18n.catchAll, session.catchAll, tray.catchAll, menu.catchAll,
     installLocations.catchAll, navigation.catchAll),
 
-  PREBOOT: combine(preboot, perf.preboot),
+  PREBOOT: combine(preboot.preboot, perf.preboot),
   BOOT: combine(preferences.boot, mainWindow.boot,
     locales.boot, setup.boot,
     tasks.boot, tray.boot, perf.boot),
@@ -87,6 +87,7 @@ export default validateReactors({
   REQUEST_CAVE_UNINSTALL: combine(dialogs.requestCaveUninstall),
   QUEUE_CAVE_REINSTALL: combine(tasks.queueCaveReinstall),
   QUEUE_CAVE_UNINSTALL: combine(tasks.queueCaveUninstall),
+  RETRY_DOWNLOAD: combine(tasks.retryDownload),
   DOWNLOAD_ENDED: combine(tasks.downloadEnded),
   TASK_ENDED: combine(installLocations.taskEnded, tasks.taskEnded),
   EXPLORE_CAVE: combine(tasks.exploreCave),
@@ -153,3 +154,36 @@ export default validateReactors({
   QUIT_AND_INSTALL: combine(mainWindow.quitAndInstall),
   QUIT: combine(mainWindow.quit)
 })
+
+assertAllCombined(
+  preboot,
+  preferences,
+  login,
+  market,
+  mainWindow,
+  fetch,
+  i18n,
+  locales,
+  rememberedSessions,
+  session,
+  url,
+  tray,
+  notifications,
+  menu,
+  installLocations,
+  purchases,
+  selfUpdate,
+  setup,
+  updater,
+  tabs,
+  triggers,
+  contextMenu,
+  share,
+  navigation,
+  clipboard,
+  tasks,
+  dialogs,
+  report,
+  perf,
+  packagingPolicy
+)

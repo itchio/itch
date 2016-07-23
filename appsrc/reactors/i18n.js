@@ -15,9 +15,11 @@ const makeSelector = (store) => createSelector(
 )
 let selector
 
-export default async function i18n (store, action) {
+async function catchAll (store, action) {
   if (!selector) {
     selector = makeSelector(store)
   }
   selector(store.getState())
 }
+
+export default {catchAll}

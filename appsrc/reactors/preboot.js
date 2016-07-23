@@ -8,7 +8,7 @@ import {opts} from '../logger'
 import mklog from '../util/log'
 const log = mklog('preboot')
 
-export default async function preboot (store) {
+async function preboot (store) {
   try {
     await importLegacyDBs(log, opts)
   } catch (e) {
@@ -29,3 +29,5 @@ export default async function preboot (store) {
     diego.hire(opts)
   }, 3000)
 }
+
+export default {preboot}
