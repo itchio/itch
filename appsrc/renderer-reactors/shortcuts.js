@@ -61,10 +61,6 @@ async function mount (store, action) {
       store.dispatch(actions.focusNthTab(i))
     })
   }
-
-  combo.bindGlobal([`${prefix}+t`], () => {
-    store.dispatch(actions.newTab())
-  })
 }
 
 export default {mount}

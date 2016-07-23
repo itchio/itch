@@ -8,6 +8,7 @@ import invariant from 'invariant'
 const initialState = {
   appVersion: app.getVersion(),
   osx: (os.platform() === 'darwin'),
+  macos: (os.platform() === 'darwin'),
   windows: (os.platform() === 'win32'),
   linux: (os.platform() === 'linux'),
   sniffedLanguage: null,

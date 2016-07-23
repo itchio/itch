@@ -91,7 +91,6 @@ module.exports = keyMirror({
 
   /* Menu */
   REFRESH_MENU: null,
-  MENU_ACTION: null,
 
   /** Buh-bye */
   PREPARE_QUIT: null,

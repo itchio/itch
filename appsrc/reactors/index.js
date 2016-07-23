@@ -114,8 +114,6 @@ export default validateReactors({
   CHECK_FOR_GAME_UPDATES: combine(updater.checkForGameUpdates),
   CHECK_FOR_GAME_UPDATE: combine(updater.checkForGameUpdate),
 
-  MENU_ACTION: combine(menu.menuAction),
-
   OPEN_URL: combine(url.openUrl),
   REPORT_ISSUE: combine(url.reportIssue),
   HANDLE_ITCHIO_URL: combine(url.handleItchioUrl),

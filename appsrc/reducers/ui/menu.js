@@ -1,9 +1,6 @@
 
 import {handleActions} from 'redux-actions'
 
-import os from '../../util/os'
-const osx = os.itchPlatform() === 'osx'
-
 export default handleActions({
   REFRESH_MENU: (state, action) => {
     return {template: computeMenuTemplate(action.payload)}
@@ -13,9 +10,51 @@ export default handleActions({
 function computeMenuTemplate (payload) {
   const {system, credentials} = payload
   const menus = {
+    mainMac: {
+      // no need for a label, it'll always be app name
+      submenu: [
+        {
+          role: 'about'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'menu.file.preferences',
+          accelerator: 'CmdOrCtrl+,'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          role: 'hide'
+        },
+        {
+          role: 'hideothers'
+        },
+        {
+          role: 'unhide'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'menu.file.quit',
+          accelerator: 'CmdOrCtrl+Q'
+        }
+      ]
+    },
+
     file: {
       label: 'menu.file.file',
       submenu: [
+        {
+          label: 'sidebar.new_tab',
+          accelerator: 'CmdOrCtrl+T'
+        },
+        {
+          type: 'separator'
+        },
         {
           label: 'menu.file.preferences',
           accelerator: 'CmdOrCtrl+,'
@@ -33,11 +72,36 @@ function computeMenuTemplate (payload) {
         },
         {
           label: 'menu.file.close_window',
-          accelerator: (system.osx ? 'Cmd+Alt+W' : 'Alt+F4')
+          accelerator: (system.macos ? 'Cmd+Alt+W' : 'Alt+F4')
         },
         {
           label: 'menu.file.quit',
           accelerator: 'CmdOrCtrl+Q'
+        }
+      ]
+    },
+
+    fileMac: {
+      label: 'menu.file.file',
+      submenu: [
+        {
+          label: 'sidebar.new_tab',
+          accelerator: 'CmdOrCtrl+T'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'menu.file.close_tab',
+          accelerator: 'CmdOrCtrl+W'
+        },
+        {
+          label: 'menu.file.close_all_tabs',
+          accelerator: 'CmdOrCtrl+Shift+W'
+        },
+        {
+          label: 'menu.file.close_window',
+          accelerator: (system.macos ? 'Cmd+Alt+W' : 'Alt+F4')
         }
       ]
     },
@@ -77,7 +141,7 @@ function computeMenuTemplate (payload) {
         },
         {
           label: 'menu.view.history',
-          accelerator: osx ? 'Cmd+Y' : 'Ctrl+H'
+          accelerator: system.macos ? 'Cmd+Y' : 'Ctrl+H'
         },
         {
           label: 'menu.view.downloads',
@@ -86,7 +150,7 @@ function computeMenuTemplate (payload) {
       ]
     },
 
-    account_disabled: {
+    accountLoggedOut: {
       label: 'menu.account.account',
       submenu: [
         {
@@ -107,6 +171,7 @@ function computeMenuTemplate (payload) {
 
     help: {
       label: 'menu.help.help',
+      role: 'help',
       submenu: [
         {
           label: 'menu.help.view_terms'
@@ -140,14 +205,22 @@ function computeMenuTemplate (payload) {
     }
   }
 
-  const template = [
-    menus.file,
-    menus.edit,
-    menus.view,
-    (credentials.key
-    ? menus.account
-    : menus.account_disabled),
-    menus.help
-  ]
+  const template = []
+  if (system.macos) {
+    template.push(menus.mainMac)
+    template.push(menus.fileMac)
+  } else {
+    template.push(menus.file)
+  }
+  template.push(menus.edit)
+  template.push(menus.view)
+  if (credentials.key) {
+    template.push(menus.account)
+  } else {
+    template.push(menus.accountLoggedOut)
+  }
+
+  template.push(menus.help)
+
   return template
 }
