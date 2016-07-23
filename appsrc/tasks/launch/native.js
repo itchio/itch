@@ -31,7 +31,7 @@ export default async function launch (out, opts) {
   let {args} = opts
   invariant(cave, 'launch-native has cave')
   invariant(cave, 'launch-native has env')
-  log(opts, `launching cave in '${cave.installLocation}' / '${cave.installFolder}'`)
+  log(opts, `cave location: "${cave.installLocation}/${cave.installFolder}"`)
 
   invariant(credentials, 'launch-native has credentials')
 
@@ -51,11 +51,11 @@ export default async function launch (out, opts) {
       isolateApps = true
     }
 
-    log(opts, `Should launch ${JSON.stringify(action, 0, 2)}`)
+    log(opts, `manifest action picked: ${JSON.stringify(action, 0, 2)}`)
     const actionPath = action.path
     exePath = ospath.join(appPath, actionPath)
   } else {
-    log(opts, 'No action picked')
+    log(opts, 'no manifest action picked')
   }
 
   if (!exePath) {
@@ -73,7 +73,7 @@ export default async function launch (out, opts) {
   }
 
   if (/\.jar$/i.test(exePath)) {
-    log(opts, 'Launching .jar')
+    log(opts, 'launching .jar, this will fail if no system JRE is installed')
     args = [
       '-jar', exePath, ...args
     ]
@@ -81,7 +81,7 @@ export default async function launch (out, opts) {
   }
 
   const platform = os.platform()
-  log(opts, `launching '${exePath}' on '${platform}' with args '${args.join(' ')}'`)
+  log(opts, `executing '${exePath}' on '${platform}' with args '${args.join(' ')}'`)
   const argString = args::map(spawn.escapePath).join(' ')
 
   if (isolateApps) {
@@ -212,23 +212,23 @@ export default async function launch (out, opts) {
 }
 
 async function doSpawn (exePath, fullCommand, env, emitter, opts) {
-  log(opts, `doSpawn ${fullCommand}`)
+  log(opts, `spawn command: ${fullCommand}`)
 
   const cwd = ospath.dirname(exePath)
-  log(opts, `Working directory: ${cwd}`)
+  log(opts, `working directory: ${cwd}`)
 
   const args = shellQuote.parse(fullCommand)
   const command = args.shift()
-  log(opts, `Command: ${command}`)
-  log(opts, `Args: ${JSON.stringify(args, 0, 2)}`)
-  log(opts, `Env keys: ${JSON.stringify(Object.keys(env), 0, 2)}`)
+  log(opts, `command: ${command}`)
+  log(opts, `args: ${JSON.stringify(args, 0, 2)}`)
+  log(opts, `env keys: ${JSON.stringify(Object.keys(env), 0, 2)}`)
 
   let spawnEmitter = emitter
   const platform = os.platform()
   if (platform === 'darwin') {
     spawnEmitter = new EventEmitter()
     emitter.once('cancel', async function () {
-      log(opts, `Asked to cancel, calling pkill with ${exePath}`)
+      log(opts, `asked to cancel, calling pkill with ${exePath}`)
       const killRes = await spawn.exec({command: 'pkill', args: ['-f', exePath]})
       if (killRes.code !== 0) {
         log(opts, `Failed to kill with code ${killRes.code}, out = ${killRes.out}, err = ${killRes.err}`)
@@ -241,8 +241,8 @@ async function doSpawn (exePath, fullCommand, env, emitter, opts) {
     command,
     args,
     emitter: spawnEmitter,
-    onToken: (tok) => log(opts, `stdout: ${tok}`),
-    onErrToken: (tok) => log(opts, `stderr: ${tok}`),
+    onToken: (tok) => log(opts, `out: ${tok}`),
+    onErrToken: (tok) => log(opts, `err: ${tok}`),
     opts: {
       env: {
         ...process.env,

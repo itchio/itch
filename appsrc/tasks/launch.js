@@ -18,6 +18,7 @@ import {startTask} from '../reactors/tasks/start-task'
 import mklog from '../util/log'
 const log = mklog('tasks/launch')
 
+import diego from '../util/diego'
 import api from '../util/api'
 import os from '../util/os'
 import sf from '../util/sf'
@@ -26,6 +27,8 @@ import pathmaker from '../util/pathmaker'
 import explorer from '../util/explorer'
 import classificationActions from '../constants/classification-actions'
 import defaultManifestIcons from '../constants/default-manifest-icons'
+
+import {app} from '../electron'
 
 import {findWhere, each} from 'underline'
 
@@ -48,11 +51,29 @@ function caveProblem (cave) {
 }
 
 export default async function start (out, opts) {
+  const {cave} = opts
+
+  const caveLogPath = pathmaker.caveLogPath(cave.id)
+  const gameLogger = new mklog.Logger({
+    sinks: {
+      console: true,
+      file: caveLogPath
+    }
+  })
+  const gameOpts = {
+    ...opts,
+    logger: gameLogger
+  }
+
   try {
-    return await doStart(out, opts)
+    return await doStart(out, gameOpts)
   } catch (e) {
     const {cave, market, credentials} = opts
     const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game})
+
+    log(gameOpts, `crashed with ${e.message}`)
+    log(gameOpts, e.stack)
+    await diego.hire(gameOpts)
 
     store.dispatch(actions.openModal({
       title: '',
@@ -73,6 +94,8 @@ export default async function start (out, opts) {
         'cancel'
       ]
     }))
+  } finally {
+    gameLogger.close()
   }
 }
 
@@ -84,6 +107,8 @@ export async function doStart (out, opts) {
   invariant(credentials, 'launch has credentials')
   invariant(market, 'launch has market')
   invariant(preferences, 'launch has preferences')
+
+  const gameOpts = {...opts}
 
   const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game})
 
@@ -117,17 +142,7 @@ export async function doStart (out, opts) {
     throw err
   }
 
-  const caveLogPath = pathmaker.caveLogPath(cave.id)
-  const gameLogger = new mklog.Logger({
-    sinks: {
-      console: true,
-      file: caveLogPath
-    }
-  })
-  const gameOpts = {
-    ...opts,
-    logger: gameLogger
-  }
+  log(gameOpts, `itch ${app.getVersion()} launching game ${game.id}: ${game.title}`)
 
   const env = {}
   const args = []
@@ -250,7 +265,6 @@ export async function doStart (out, opts) {
     clearInterval(interval)
     const now = Date.now()
     globalMarket.saveEntity('caves', cave.id, {lastTouched: now})
-    gameLogger.close()
   }
 }
 
