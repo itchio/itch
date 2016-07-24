@@ -137,9 +137,6 @@ function computeMenuTemplate (payload) {
       label: 'menu.view.view',
       submenu: [
         {
-          type: 'separator'
-        },
-        {
           label: 'menu.view.history',
           accelerator: system.macos ? 'Cmd+Y' : 'Ctrl+H'
         },
