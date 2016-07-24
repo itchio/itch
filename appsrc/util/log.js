@@ -1,6 +1,4 @@
 
-import Promise from 'bluebird'
-
 import {pairs} from 'underline'
 import colors from 'colors/safe'
 
