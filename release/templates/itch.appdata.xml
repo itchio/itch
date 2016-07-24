@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright {{YEAR}} Amos Wenger <amos@itch.io> -->
+<!-- Original appdata file contributed by https://github.com/Moth-Tolias -->
+
+<component type="desktop">
+  <id>{{APPNAME}}.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>{{APPNAME}}</name>
+  <summary>The best way to play your itch.io games</summary>
+  <description>
+    <p>The itch.io app, itch, lets you effortlessly download and run games and software from itch.io. All of your downloads are kept in a single place and are automatically updated. Access your collections and purchases, or browse for new games via the in-app browser.</p>
+    <p>On itch.io creators control how their project pages look. The built in browser lets you download and install games while exploring the unique page designs of our creators.</p>
+    <p>The games you've installed automatically update. Games using our new command line tools will generate delta patches, ensuring that you only download what's changed when new games come out.</p>
+    <p>You can even sync any browser based games right into the app, letting you play them offline whenever you want. Once you're back online you'll be able to grab any updates if necessary.</p>
+    <p>And thanks to the itch.io community, itch is available in over 20 languages!</p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://cloud.githubusercontent.com/assets/7998310/16583085/7702c448-42b3-11e6-949a-c5b45e906807.png</image>
+      <caption>A small collection of games</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cloud.githubusercontent.com/assets/7998310/16583084/76edc2be-42b3-11e6-94c9-9f7f4720f574.png</image>
+      <caption>The preferences tab. That's the language selector up there</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cloud.githubusercontent.com/assets/7998310/16583086/770c632c-42b3-11e6-80e3-6173b2151cfe.png</image>
+      <caption>The download manager</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cloud.githubusercontent.com/assets/7998310/16583088/771717ea-42b3-11e6-8081-6192b329d21c.png</image>
+      <caption>The page of one of the games available on itch.io</caption>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://itch.io/app</url>
+  <update_contact>amos@itch.io</update_contact>
+</component>

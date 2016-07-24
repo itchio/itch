@@ -28,7 +28,7 @@ locale_names.forEach(function (locale_name) {
 desktop = desktop.replace(/{{APPNAME}}/g, $.app_name())
 $.write_file(`linux-extras/${$.app_name()}.desktop`, desktop)
 
-// man page
+// generate man page for itch(6)
 $.say('Generating man file')
 
 // alright future amos, let's take a bet that this will come back to bite you.
@@ -43,3 +43,11 @@ man = man.replace(/{{APPNAME}}/g, $.app_name().toUpperCase())
 man = man.replace(/{{MONTH}}/g, month)
 man = man.replace(/{{YEAR}}/g, year)
 $.write_file(`linux-extras/${$.app_name()}.6`, man)
+
+// generate AppStream appdata file
+$.say('Generating AppStream appdata file')
+let appdata = $.read_file('release/templates/itch.appdata.xml')
+appdata = appdata.replace(/{{APPNAME}}/g, $.app_name())
+appdata = appdata.replace(/{{YEAR}}/g, year)
+$.write_file(`linux-extras/${$.app_name()}.appdata.xml`, appdata)
+
