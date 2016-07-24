@@ -33,7 +33,7 @@
     "menu.edit.select_all": "Selectează toate",
     "menu.file.close_window": "Închide fereastra",
     "menu.file.file": "Fișier",
-    "menu.file.preferences": "Preferințe",
+    "menu.file.preferences": "Preferințe...",
     "menu.file.quit": "Ieșire",
     "menu.help.check_for_update": "Caută actualizări",
     "menu.help.help": "Ajutor",
@@ -246,5 +246,17 @@
     "outlinks.manage_collections": "Gestiune colecţii",
     "preferences.behavior": "Comportament",
     "preferences.advanced": "Avansat",
-    "preferences.advanced.open_app_log": "Deschide jurnalul"
+    "preferences.advanced.open_app_log": "Deschide jurnalul",
+    "grid.item.review": "Scrie o recenzie",
+    "preferences.behavior.close_to_tray": "Pune aplicaţia în fundal când închizi fereastra",
+    "pick_install_upload.title": "Sunt disponibile mai multe fişiere pentru {{title}}",
+    "pick_install_upload.message": "Pe care fişier vrei să-l descarci pentru {{title}}?",
+    "pick_install_upload.detail": "O să te întrebăm din nou când devin disponibile fişiere noi.",
+    "pick_update_upload.title": "Sunt disponibile fişiere noi pentru {{title}}",
+    "pick_update_upload.message": "Ce fişier vrei să actualizezi pentru {{title}}?",
+    "pick_update_upload.detail": "Întrebăm pentru că ai ales manual un fişier la instalare.",
+    "search.results.title": "Rezultatele căutării pentru '{{query}}'",
+    "search.empty.tagline": "Ai nevoie de inspiraţie? Încearcă să cauţi '{{example}}'",
+    "search.placeholder": "Caută",
+    "sidebar.aw_snap": "Aoleu!"
 }
