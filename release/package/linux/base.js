@@ -7,7 +7,7 @@ module.exports = {
     $($.sh(`mkdir -p ${stage2_path}`))
 
     $.say('Creating base directories')
-    ;['/usr/bin', `/usr/lib/${$.app_name()}`, '/usr/share/applications', '/usr/share/appdata', `/usr/share/doc/${$.app_name()}`, '/usr/share/man/man6'].forEach(function (path) {
+    ;['/usr/bin', `/usr/lib/${$.app_name()}`, '/usr/share/applications', '/usr/share/metainfo', `/usr/share/doc/${$.app_name()}`, '/usr/share/man/man6'].forEach(function (path) {
       $($.sh(`mkdir -p "${stage2_path}${path}"`))
     })
 
@@ -25,6 +25,6 @@ module.exports = {
     $.say('Copying linux extras')
     $($.sh(`cp "linux-extras/${$.app_name()}.desktop" "${stage2_path}/usr/share/applications/${$.app_name()}.desktop"`))
     $($.sh(`cp "linux-extras/${$.app_name()}.6" "${stage2_path}/usr/share/man/man6/${$.app_name()}.6"`))
-    $($.sh(`cp "linux-extras/${$.app_name()}.appdata.xml" "${stage2_path}/usr/share/appdata/${$.app_name()}.appdata.xml"`))
+    $($.sh(`cp "linux-extras/${$.app_name()}.appdata.xml" "${stage2_path}/usr/share/metainfo/${$.app_name()}.appdata.xml"`))
   }
 }
