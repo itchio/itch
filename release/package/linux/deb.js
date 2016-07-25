@@ -53,6 +53,11 @@ Depends: gconf-service, libasound2 (>= 1.0.16), libatk1.0-0 (>= 1.12.4), libc6 (
 Section: games
 Priority: optional
 Homepage: ${$.HOMEPAGE}
+XB-AppName: ${$.app_name()}
+XB-Icon: ${$.app_name()}.png
+XB-Screenshot-Url: https://cloud.githubusercontent.com/assets/7998310/16583085/7702c448-42b3-11e6-949a-c5b45e906807.png
+XB-Thumbnail-Url: https://cloud.githubusercontent.com/assets/7998310/17108609/91a94128-5294-11e6-8b27-1ef896bdeb4e.png
+XB-Category: Game
 Description: install and play itch.io games easily
   The goal of this project is to give you a desktop application that you can
   download and run games from itch.io with. Additionally you should be able to
