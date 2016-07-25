@@ -200,8 +200,8 @@ export default class Market extends EventEmitter {
     this.emit('commit', {deleted})
   }
 
-  deleteEntity (tableName, entityId, opts) {
-    this.deleteAllEntities({
+  async deleteEntity (tableName, entityId, opts) {
+    await this.deleteAllEntities({
       entities: { [tableName]: [entityId] }
     }, opts)
   }
