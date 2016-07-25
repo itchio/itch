@@ -53,16 +53,14 @@ Depends: gconf-service, libasound2 (>= 1.0.16), libatk1.0-0 (>= 1.12.4), libc6 (
 Section: games
 Priority: optional
 Homepage: ${$.HOMEPAGE}
-XB-AppName: ${$.app_name()}
-XB-Icon: ${$.app_name()}.png
-XB-Screenshot-Url: https://cloud.githubusercontent.com/assets/7998310/16583085/7702c448-42b3-11e6-949a-c5b45e906807.png
-XB-Thumbnail-Url: https://cloud.githubusercontent.com/assets/7998310/17108609/91a94128-5294-11e6-8b27-1ef896bdeb4e.png
-XB-Category: Game
 Description: install and play itch.io games easily
-  The goal of this project is to give you a desktop application that you can
-  download and run games from itch.io with. Additionally you should be able to
-  update games and get notified when games are updated. The goal is not to
-  replace the itch.io website.
+  The itch app lets you effortlessly download and run games and software
+  from itch.io. All of your downloads are kept in a single place and are
+  automatically updated. Access your collections and purchases, or browse
+  for new games via the in-app browser. You can even sync any browser based
+  games right into the app, letting you play them offline whenever you want.
+  Once you're back online you'll be able to grab any updates if necessary.
+  Thanks to the itch.io community, itch is available in over 20 languages!
 `
     $.write_file(`${stage2_path}/DEBIAN/control`, control)
 

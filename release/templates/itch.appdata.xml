@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright {{YEAR}} Amos Wenger <amos@itch.io> -->
 <!-- Original appdata file contributed by https://github.com/Moth-Tolias -->
+<!-- Unfortunately our .deb doesn't ship in official repos, making the whole
+'shipping AppStream metadata' thing useless. At least we have nice Linux screenshots now. -->
 
 <component type="desktop">
   <id>{{APPNAME}}.desktop</id>
