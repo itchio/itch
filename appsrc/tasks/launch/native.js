@@ -116,7 +116,7 @@ export default async function launch (out, opts) {
         ]
       })
 
-      if (response.type === MODAL_RESPONSE && response.payload.proceed) {
+      if (response.type === MODAL_RESPONSE && response.payload.sandboxBlessing) {
         // carry on
       } else {
         return // cancelled by user
