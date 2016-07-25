@@ -28,6 +28,9 @@ import explorer from '../util/explorer'
 import classificationActions from '../constants/classification-actions'
 import defaultManifestIcons from '../constants/default-manifest-icons'
 
+import {promisedModal} from '../reactors/modals'
+import {MODAL_RESPONSE} from '../constants/action-types'
+
 import {app} from '../electron'
 
 import {findWhere, each} from 'underline'
@@ -183,7 +186,7 @@ export async function doStart (out, opts) {
           }
           bigButtons.push({
             label: [`action.name.${action.name}`, {defaultValue: action.name}],
-            action: actions.queueGame({game, extraOpts: {manifestActionName: action.name}}),
+            action: actions.modalResponse({manifestActionName: action.name}),
             icon: action.icon || defaultManifestIcons[action.name] || 'star',
             className: `action-${action.name}`
           })
@@ -191,15 +194,20 @@ export async function doStart (out, opts) {
 
         buttons.push('cancel')
 
-        store.dispatch(actions.openModal({
+        const response = await promisedModal(store, {
           title: game.title,
           cover: game.stillCoverUrl || game.coverUrl,
           message: '',
           bigButtons,
           buttons
-        }))
+        })
+        console.log(`got response from promisedModal: ${JSON.stringify(response, 0, 2)}`)
 
-        return
+        if (response.type === MODAL_RESPONSE) {
+          manifestAction = manifest.actions::findWhere({name: response.payload.manifestActionName})
+        } else {
+          return // cancelled by user
+        }
       }
     } else {
       manifestAction = manifest.actions[0]

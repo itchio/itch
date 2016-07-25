@@ -17,6 +17,8 @@ module.exports = keyMirror({
 
   OPEN_MODAL: null,
   CLOSE_MODAL: null,
+  MODAL_CLOSED: null,
+  MODAL_RESPONSE: null,
 
   SETUP_STATUS: null,
   SETUP_DONE: null,

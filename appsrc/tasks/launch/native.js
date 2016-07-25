@@ -21,6 +21,9 @@ import spawn from '../../util/spawn'
 import fetch from '../../util/fetch'
 import pathmaker from '../../util/pathmaker'
 
+import {promisedModal} from '../../reactors/modals'
+import {MODAL_RESPONSE} from '../../constants/action-types'
+
 import mklog from '../../util/log'
 const log = mklog('tasks/launch/native')
 
@@ -91,35 +94,38 @@ export default async function launch (out, opts) {
     }
 
     if (checkRes.needs.length > 0) {
-      if (!opts.sandboxBlessing) {
-        const platform = os.itchPlatform()
+      const platform = os.itchPlatform()
 
-        store.dispatch(actions.openModal({
-          title: ['sandbox.setup.title'],
-          message: [`sandbox.setup.${platform}.message`],
-          detail: [`sandbox.setup.${platform}.detail`],
-          buttons: [
-            {
-              label: ['sandbox.setup.proceed'],
-              action: actions.queueGame({game, extraOpts: {sandboxBlessing: true}}),
-              icon: 'checkmark'
-            },
-            {
-              label: ['docs.learn_more'],
-              action: actions.openUrl(urls[`${platform}SandboxSetup`]),
-              icon: 'earth',
-              className: 'secondary'
-            },
-            'cancel'
-          ]
-        }))
-        return
-      }
+      const response = await promisedModal(store, {
+        title: ['sandbox.setup.title'],
+        message: [`sandbox.setup.${platform}.message`],
+        detail: [`sandbox.setup.${platform}.detail`],
+        buttons: [
+          {
+            label: ['sandbox.setup.proceed'],
+            action: actions.modalResponse({sandboxBlessing: true}),
+            icon: 'checkmark'
+          },
+          {
+            label: ['docs.learn_more'],
+            action: actions.openUrl(urls[`${platform}SandboxSetup`]),
+            icon: 'earth',
+            className: 'secondary'
+          },
+          'cancel'
+        ]
+      })
 
-      const installRes = await sandbox.install(opts, checkRes.needs)
-      if (installRes.errors.length > 0) {
-        throw new Error(`error(s) while installing sandbox: ${installRes.errors.join(', ')}`)
+      if (response.type === MODAL_RESPONSE && response.payload.proceed) {
+        // carry on
+      } else {
+        return // cancelled by user
       }
+    }
+
+    const installRes = await sandbox.install(opts, checkRes.needs)
+    if (installRes.errors.length > 0) {
+      throw new Error(`error(s) while installing sandbox: ${installRes.errors.join(', ')}`)
     }
   }
 

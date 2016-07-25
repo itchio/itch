@@ -32,10 +32,14 @@ import dialogs from './dialogs'
 import report from './report'
 import perf from './perf'
 import packagingPolicy from './packaging-policy'
+import modals from './modals'
 
 export default validateReactors({
   _ALL: combine(i18n.catchAll, session.catchAll, tray.catchAll, menu.catchAll,
     installLocations.catchAll, navigation.catchAll),
+
+  CLOSE_MODAL: combine(modals.closeModal),
+  MODAL_CLOSED: combine(modals.modalClosed),
 
   PREBOOT: combine(preboot.preboot, perf.preboot),
   BOOT: combine(preferences.boot, mainWindow.boot,
@@ -185,5 +189,6 @@ assertAllCombined(
   dialogs,
   report,
   perf,
-  packagingPolicy
+  packagingPolicy,
+  modals
 )

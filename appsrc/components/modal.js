@@ -9,7 +9,7 @@ import GFM from './gfm'
 import colors from '../constants/colors'
 
 import {closeModal} from '../actions'
-import {map, each} from 'underline'
+import {map} from 'underline'
 
 const customStyles = {
   overlay: {
@@ -96,7 +96,7 @@ export class Modal extends Component {
           invariant(button, '')
         }
         const {label, action, className = '', icon} = button
-        const onClick = () => dispatch(action)
+        let onClick = () => dispatch(action)
 
         return <div className={`button ${className}`} key={index} onClick={onClick}>
         {icon ? <span className={`icon icon-${icon}`}/> : ''}
@@ -150,16 +150,9 @@ const mapStateToProps = (state) => ({
   modals: state.modals
 })
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch, props) => ({
   dispatch: (action) => {
-    if (action) {
-      if (Array.isArray(action)) {
-        action::each((a) => dispatch(a))
-      } else {
-        dispatch(action)
-      }
-    }
-    dispatch(closeModal())
+    dispatch(closeModal({action}))
   },
   closeModal: () => dispatch(closeModal())
 })

@@ -1,6 +1,8 @@
 
 import {handleActions} from 'redux-actions'
 
+import {reject} from 'underline'
+
 const initialState = []
 
 export default handleActions({
@@ -9,7 +11,8 @@ export default handleActions({
     return [...state, modal]
   },
 
-  CLOSE_MODAL: (state, action) => {
-    return state.slice(1)
+  MODAL_CLOSED: (state, action) => {
+    const {id} = action.payload
+    return state::reject((x) => x.id === id)
   }
 }, initialState)
