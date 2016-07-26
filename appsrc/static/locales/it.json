@@ -119,7 +119,7 @@
     "prompt.payments_disabled.title": "Pagamenti disabilitati",
     "prompt.rar_policy.detail": "RAR è un formato obsoleto e non libero, e non sarà mai supportato.",
     "prompt.rar_policy.learn_more": "Scopri di più",
-    "prompt.rar_policy.message": "Questo contenuto utilizza il formato di compressione RAR, e non potrà essere installato finché non sara reimpacchettato.",
+    "prompt.rar_policy.message": "{{title}} utilizza il formato di compressione RAR, dovrà essere reimpacchettato affinché itch possa installarlo.",
     "prompt.rar_policy.title": "Il formato RAR non è supportato",
     "prompt.uninstall.cancel": "Annulla",
     "prompt.uninstall.message": "Sei sicuro di voler disinstallare {{title}}?",
