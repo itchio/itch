@@ -144,5 +144,6 @@
     "collection.empty": "Non ci sono giochi in questa collezione",
     "desktop.shortcut.comment": "Installa ed esegui facilmente i giochi presenti su itch.io",
     "docs.learn_more": "Per saperne di più",
-    "download.started": "Avviato"
+    "download.started": "Avviato",
+    "download.reason.update": "per aggiornare all'ultima versione"
 }
