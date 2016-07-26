@@ -15,8 +15,9 @@ const file = async (filePath) => {
     if (await sf.exists(vendoredMagicPath)) {
       args = [
         ...args,
-        // use our vendored magic file
-        '-m', vendoredMagicPath
+        // simply use name of our vendored magic file, i.e. relative to bin path
+        // bin path is set as current directory below
+        '-m', 'magic.mgc'
       ]
     }
   }
