@@ -265,5 +265,6 @@
     "search.results.title": "Risultati ricerca per '{{query}}'",
     "search.results.local": "Locale",
     "search.results.games": "Giochi",
-    "search.results.creators": "Autori"
+    "search.results.creators": "Autori",
+    "search.empty.no_results": "Nessun risultato"
 }
