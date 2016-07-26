@@ -278,5 +278,6 @@
     "sidebar.collection.subtitle": "Una raccolta di {{itemCount}} elementi",
     "sidebar.collections": "Raccolte",
     "sidebar.dashboard_subtitle": "Cose che costruisci e fai a pezzi",
-    "sidebar.downloads": "Download"
+    "sidebar.downloads": "Download",
+    "sidebar.downloads_subtitle": "Puoi tranquillamente uscire dall'app o riavviarla. I download riprenderanno al tuo ritorno"
 }
