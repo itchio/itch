@@ -328,5 +328,6 @@
     "usage_stats.last_used_time_ago": "Ultima volta usato {{time_ago}}",
     "usage_stats.never_opened": "Mai avviato",
     "usage_stats.never_played": "Mai giocato",
-    "usage_stats.never_used": "Mai usato"
+    "usage_stats.never_used": "Mai usato",
+    "action.name.play": "Gioca Ora"
 }
