@@ -32,7 +32,7 @@ const self = {
     }
 
     const osWhitelist = formula.osWhitelist
-    if (osWhitelist && osWhitelist.indexOf(net.os()) === -1) {
+    if (osWhitelist && osWhitelist.indexOf(net.goos()) === -1) {
       return
     }
 
@@ -60,30 +60,37 @@ const self = {
 
       await net.downloadToFile(opts, archiveUrl, archivePath)
 
+      let algo
       let sums
-      try {
-        sums = await net.getSHA1Sums(opts, channel, v)
-      } catch (e) {
-        log(opts, `${name}: couldn't get hashes, skipping verification (${e.message || '' + e})`)
+
+      for (algo of net.CHECKSUM_ALGOS) {
+        try {
+          sums = await net.getChecksums(opts, channel, v, algo)
+          break
+        } catch (e) {
+          log(opts, `${name}: couldn't get ${algo} hashes (${e.message || '' + e})`)
+        }
       }
 
       if (sums) {
         const sum = sums[archiveName]
         if (sum) {
-          const expected = sum.sha1.toLowerCase()
-          log(opts, `${name}: expected SHA1: ${expected}`)
-          const h = require('crypto').createHash('sha1')
+          const expected = sum.hash.toLowerCase()
+          log(opts, `${name}: expected ${algo}: ${expected}`)
+          const h = require('crypto').createHash(algo.toLowerCase())
           // null encoding = raw buffer
           const fileContents = await sf.fs.readFileAsync(archivePath, {encoding: null})
           h.update(fileContents)
           const actual = h.digest('hex')
-          log(opts, `${name}:   actual SHA1: ${actual}`)
+          log(opts, `${name}:   actual ${algo}: ${actual}`)
 
           if (expected !== actual) {
             throw new Error(`corrupted download for ${archiveName}: expected ${expected}, got ${actual}`)
           }
-          log(opts, `${name}: checks out!`)
+          log(opts, `${name}: ${algo} checks out!`)
         }
+      } else {
+        log(opts, `${name}: no hashes found, skipping integrity check`)
       }
 
       if (formula.format === 'executable') {
@@ -177,7 +184,7 @@ const self = {
       const info = await os.assertPresence(command, check.args, check.parser)
       return version.normalize(info.parsed)
     } catch (err) {
-      console.log(`[ibrew] While checking version for ${name}: ${err.stack}`)
+      console.log(`[ibrew] While checking version for ${name}: ${err.message}`)
 
       // not present
       return null
