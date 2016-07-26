@@ -244,5 +244,6 @@
     "prompt.logout_action": "Disconnettiti",
     "prompt.logout_detail": "I download in corso verranno sospesi fino al tuo prossimo log in.",
     "prompt.logout_title": "Disconnettiti",
-    "prompt.packaging_policy.learn_more": "Leggi tutto"
+    "prompt.packaging_policy.learn_more": "Leggi tutto",
+    "prompt.packaging_policy.open_web_page": "Apri pagina web per {{title}}"
 }
