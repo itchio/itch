@@ -153,5 +153,6 @@
     "game.install.could_not_launch": "Si è verificato un errore all'avvio di {{title}}",
     "game.install.could_not_launch.detail": "Le sue ultime parole furono: {{error}}",
     "game.install.no_executables_found": "Nessun eseguibile trovato",
-    "game.install.no_html_index_found": "Nessun file index HTML trovato"
+    "game.install.no_html_index_found": "Nessun file index HTML trovato",
+    "game.install.no_uploads_available.detail": "Forse non è ancora compatibile con la tua piattaforma o con l'app di itch!"
 }
