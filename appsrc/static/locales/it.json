@@ -26,7 +26,7 @@
     "login.field.username": "Nome utente o e-mail",
     "login.status.dependency_check": "Mi sto assicurando che tutto sia stato impostato…",
     "login.status.dependency_install": "Sto installando la dipendenza {{name}} {{version}}",
-    "login.status.login": "Sto effettuando l'accesso…",
+    "login.status.login": "Accesso in corso…",
     "login.status.setup_failure": "C'è stato un problema durante la configurazione: {{error}}",
     "menu.account.account": "Conto",
     "menu.account.change_user": "Cambia utente…",
