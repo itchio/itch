@@ -182,5 +182,7 @@
     "login.messages.welcome_back": "Ben tornato!",
     "login.remembered_session.last_connected": "Ultima volta connesso",
     "menu.help.about": "Altro",
-    "menu.view.downloads": "Download"
+    "menu.view.downloads": "Download",
+    "menu.view.history": "Cronologia",
+    "menu.view.view": "Visualizza"
 }
