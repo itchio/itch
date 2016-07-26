@@ -329,5 +329,6 @@
     "usage_stats.never_opened": "Mai avviato",
     "usage_stats.never_played": "Mai giocato",
     "usage_stats.never_used": "Mai usato",
-    "action.name.play": "Gioca Ora"
+    "action.name.play": "Gioca Ora",
+    "download.reason.install": "per la prima installazione"
 }
