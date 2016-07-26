@@ -7,7 +7,7 @@ const self = {
   itchTranslationPlatform: 'https://weblate.itch.ovh/',
   githubApi: 'https://api.github.com',
   ibrewRepo: 'https://dl.itch.ovh',
-  remoteLocalePath: 'http://locales.itch.ovh/itch',
+  remoteLocalePath: 'https://locales.itch.ovh/itch',
   manual: 'https://itch.io/docs/itch/',
   updateServers: {
     stable: 'https://nuts.itch.zone',
