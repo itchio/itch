@@ -236,5 +236,6 @@
     "prompt.abort_game.message": "Vuoi forzare l'arresto di {{title}}?",
     "prompt.deb_policy.detail": "itch può solamente installare versioni portatili delle applicazioni Linux.",
     "prompt.deb_policy.message": "Il pacchetto {{title}} è in formato .deb, e non potrà essere installato con itch fino a quando non verrà rimpacchettato.",
-    "prompt.deb_policy.title": "I pacchetti APT non sono supportati"
+    "prompt.deb_policy.title": "I pacchetti APT non sono supportati",
+    "prompt.forget_session.action": "DImentica sessione"
 }
