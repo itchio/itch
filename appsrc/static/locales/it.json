@@ -253,5 +253,5 @@
     "prompt.self_update.action.download": "Scarica ora",
     "prompt.self_update.action.view": "Apri nel browser",
     "prompt.self_update.detail": "{{notes}}\n\n:date: Pubblicato il {{pubDate}}.",
-    "prompt.self_update.message.linux": "Puoi o scaricarlo manualmente, oppure usare il gestore pacchetti della tua distribuzione per aggiornarlo: consulta il sito web per maggiori informazioni."
+    "prompt.self_update.message.linux": "Puoi scaricarlo manualmente, oppure usare il gestore pacchetti della tua distribuzione per aggiornarlo: consulta il sito web per maggiori informazioni."
 }
