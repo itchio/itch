@@ -261,5 +261,9 @@
     "prompt.self_update_ready.action.snooze": "Ritarda",
     "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Pubblicato il {{pubDate}}.",
     "prompt.self_update_ready.message": "Scegli 'Riavvia ora' per utilizzare da subito l'aggiornamento\n\nAltrimenti, l'aggiornamento sarà effettivo dal prossimo avvio dell'app",
-    "prompt.self_update_ready.title": "Un aggiornamento è stato scaricato e installato"
+    "prompt.self_update_ready.title": "Un aggiornamento è stato scaricato e installato",
+    "search.results.title": "Risultati ricerca per '{{query}}'",
+    "search.results.local": "Locale",
+    "search.results.games": "Giochi",
+    "search.results.creators": "Autori"
 }
