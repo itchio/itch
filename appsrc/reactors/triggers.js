@@ -46,18 +46,7 @@ async function triggerOk (store, action) {
     return
   }
 
-  const buttonAction = button.action
-
-  if (buttonAction) {
-    if (Array.isArray(buttonAction)) {
-      for (const a of buttonAction) {
-        store.dispatch(a)
-      }
-    } else {
-      store.dispatch(buttonAction)
-    }
-  }
-  store.dispatch(actions.closeModal())
+  store.dispatch(actions.closeModal({action: button.action}))
 }
 
 async function triggerBack (store, action) {

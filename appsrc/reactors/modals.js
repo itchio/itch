@@ -4,7 +4,8 @@ import {each} from 'underline'
 import * as actions from '../actions'
 
 async function closeModal (store, outerAction) {
-  const {action} = outerAction.payload
+  const {payload = {}} = outerAction
+  const {action} = payload
   const modal = store.getState().modals[0]
 
   if (action) {
