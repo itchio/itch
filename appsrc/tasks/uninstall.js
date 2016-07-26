@@ -59,5 +59,5 @@ export default async function start (out, opts) {
   }
 
   log(opts, `Imploding ${destPath}`)
-  globalMarket.deleteEntity('caves', cave.id)
+  await globalMarket.deleteEntity('caves', cave.id, {wait: true})
 }
