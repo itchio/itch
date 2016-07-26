@@ -2,7 +2,7 @@
     "errors.api.login.incorrect_username_or_password": "Nome utente o password errati",
     "errors.api.login.password_must_be_provided": "La password è obbligatoria",
     "errors.api.login.username_must_be_provided": "Il nome utente deve essere fornito",
-    "grid.item.buy_now": "Compra",
+    "grid.item.buy_now": "Compra ora",
     "grid.item.cancel_download": "Annulla il download",
     "grid.item.downloading": "Sto scaricando…",
     "grid.item.finalize_installation": "Completa l'installazione",
@@ -18,7 +18,7 @@
     "grid.item.retry": "Prova nuovamente a scaricare / installare / avviare l'elemento",
     "grid.item.running": "In esecuzione…",
     "grid.item.uninstall": "Disinstalla",
-    "grid.item.uninstalling": "Disinstallazione in corso...",
+    "grid.item.uninstalling": "Disinstallazione in corso…",
     "login.action.login": "Accedi",
     "login.action.register": "Registrati",
     "login.action.reset_password": "Password dimenticata",
@@ -177,7 +177,7 @@
     "browser.popout": "Apri la pagina in un browser web esterno",
     "i18n.failed_downloading_locales": "Aggiornamenti per la lingua {{lang}} non sono stati scaricati.",
     "install_location.empty": "Non c'è nulla installato il questa directory",
-    "login.action.show_form": "Accedi come qualcun'altro ",
+    "login.action.show_form": "Accedi come qualcun'altro",
     "login.action.show_saved_logins": "Accessi salvati",
     "login.messages.welcome_back": "Ben tornato!",
     "login.remembered_session.last_connected": "Ultima volta connesso",
@@ -326,5 +326,7 @@
     "usage_stats.last_opened_time_ago": "Ultima volta avviato {{time_ago}}",
     "usage_stats.last_played_time_ago": "Ultima volta giocato {{time_ago}}",
     "usage_stats.last_used_time_ago": "Ultima volta usato {{time_ago}}",
-    "usage_stats.never_opened": "Mai avviato"
+    "usage_stats.never_opened": "Mai avviato",
+    "usage_stats.never_played": "Mai giocato",
+    "usage_stats.never_used": "Mai usato"
 }
