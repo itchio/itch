@@ -43,11 +43,11 @@
     "menu.file.file": "Archivio",
     "menu.file.preferences": "Impostazioni...",
     "menu.file.quit": "Esci",
-    "menu.help.check_for_update": "Cerca aggiornamenti",
+    "menu.help.check_for_update": "Controlla aggiornamenti",
     "menu.help.help": "Aiuto",
     "menu.help.release_notes": "Note di Rilascio",
-    "menu.help.report_issue": "Segnala Problema",
-    "menu.help.search_issue": "Ricerca Problema",
+    "menu.help.report_issue": "Invia feedback",
+    "menu.help.search_issue": "Ricerca problema",
     "menu.help.view_license": "Vedi Licenza",
     "menu.help.view_terms": "Vedi le Clausole di itch.io",
     "onboarding.caved.prealpha_reminder": "Ricorda che questa è una pre-alpha",
@@ -180,5 +180,7 @@
     "login.action.show_form": "Accedi come qualcun'altro ",
     "login.action.show_saved_logins": "Accessi salvati",
     "login.messages.welcome_back": "Ben tornato!",
-    "login.remembered_session.last_connected": "Ultima volta connesso"
+    "login.remembered_session.last_connected": "Ultima volta connesso",
+    "menu.help.about": "Altro",
+    "menu.view.downloads": "Download"
 }
