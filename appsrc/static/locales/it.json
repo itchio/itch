@@ -248,5 +248,9 @@
     "prompt.packaging_policy.open_web_page": "Apri pagina web per {{title}}",
     "prompt.rpm_policy.detail": "itch può solamente installare versioni portatili delle applicazioni Linux.",
     "prompt.rpm_policy.message": "{{title}} utilizza il formato di pacchetto .rpm, e dovrà essere reimpacchettato affinché itch possa installarlo.",
-    "prompt.rpm_policy.title": "I pacchetti YUM non sono supportati"
+    "prompt.rpm_policy.title": "I pacchetti YUM non sono supportati",
+    "prompt.self_update.action.dismiss": "Nascondi",
+    "prompt.self_update.action.download": "Scarica ora",
+    "prompt.self_update.action.view": "Apri nel browser",
+    "prompt.self_update.detail": "{{notes}}\n\n:date: Pubblicato il {{pubDate}}."
 }
