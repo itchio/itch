@@ -133,7 +133,7 @@
     "sidebar.getting_started": "Avviamento",
     "sidebar.installed": "Installati",
     "sidebar.owned": "Libreria",
-    "status.checking": "Sto cercando aggiornamenti…",
+    "status.checking": "In cerca di aggiornamenti…",
     "status.downloaded": "Clicca per ricominciare ed applicare l'aggiornamento!",
     "status.downloading": "Sto scaricando l'aggiornamento…",
     "status.uptodate": "Il tuo itch è aggiornato!",
@@ -290,5 +290,9 @@
     "sidebar.preferences": "Impostazioni",
     "sidebar.view_community_profile": "Mostra profilo community",
     "sidebar.view_creator_profile": "Mostra profilo dell'autore",
-    "status.available": "Un nuova versione di itch è disponibile!"
+    "status.available": "Un nuova versione di itch è disponibile!",
+    "status.copied_to_clipboard": "Copiato negli appunti!",
+    "status.downloads.category.active": "Download attivo",
+    "status.downloads.category.finished": "Download completati",
+    "status.downloads.category.queued": "Download in coda"
 }
