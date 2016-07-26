@@ -8,6 +8,7 @@ import {partial} from 'underline'
 import mklog from './log'
 const log = mklog('ibrew')
 import extract from './extract'
+import targz from './targz'
 import sf from './sf'
 import spawn from './spawn'
 
@@ -34,6 +35,8 @@ const self = {
     if (osWhitelist && osWhitelist.indexOf(net.os()) === -1) {
       return
     }
+
+    this.augmentPath(opts, formula.subfolder)
 
     const skipUpgradeWhen = formula.skipUpgradeWhen
     if (skipUpgradeWhen) {
@@ -85,7 +88,7 @@ const self = {
 
       if (formula.format === 'executable') {
         log(opts, `${name}: installed!`)
-      } else {
+      } else if (formula.format === '7z') {
         log(opts, `${name}: extracting ${formula.format} archive`)
         await extract.extract({
           archivePath,
@@ -93,17 +96,28 @@ const self = {
         })
         log(opts, `${name}: cleaning up ${formula.format} archive`)
         await sf.wipe(archivePath)
-
-        if (formula.sanityCheck) {
-          log(opts, `${name}: running sanity check '${name} ${formula.sanityCheck.join(' ')}'`)
-          const sanityRes = await spawn.exec({command: ospath.join(self.binPath(), name), args: formula.sanityCheck})
-          if (sanityRes.code !== 0) {
-            throw new Error(`sanity check for ${formula.name} failed with code ${sanityRes.code}, out = ${sanityRes.out}, err = ${sanityRes.err}`)
-          }
-        }
-
-        log(opts, `${name}: installed!`)
+      } else if (formula.format === 'tar.gz') {
+        log(opts, `${name}: extracting ${formula.format} archive`)
+        await targz.extract({
+          archivePath,
+          destPath: self.binPath()
+        })
+        log(opts, `${name}: cleaning up ${formula.format} arhcive`)
+        await sf.wipe(archivePath)
+      } else {
+        throw new Error(`unsupported ibrew formula format: ${formula.format}`)
       }
+
+      const {sanityCheck} = formula
+      if (sanityCheck) {
+        log(opts, `${name}: running sanity check ${JSON.stringify(sanityCheck)}`)
+
+        const sanityRes = await spawn.exec(sanityCheck)
+        if (sanityRes.code !== 0) {
+          throw new Error(`sanity check for ${formula.name} failed with code ${sanityRes.code}, out = ${sanityRes.out}, err = ${sanityRes.err}`)
+        }
+      }
+      log(opts, `${name}: installed!`)
     }
 
     onStatus('stopwatch', ['login.status.dependency_check'])
@@ -143,6 +157,8 @@ const self = {
 
     if (formula.format === '7z') {
       return `${name}.7z`
+    } if (formula.format === 'tar.gz') {
+      return `${name}.tar.gz`
     } else if (formula.format === 'executable') {
       return `${name}${self.ext()}`
     } else {
@@ -157,9 +173,12 @@ const self = {
     const check = { ...defaultVersionCheck, ...versionCheck }
 
     try {
-      const info = await os.assertPresence(name, check.args, check.parser)
+      const command = check.command ? check.command : name
+      const info = await os.assertPresence(command, check.args, check.parser)
       return version.normalize(info.parsed)
     } catch (err) {
+      console.log(`[ibrew] While checking version for ${name}: ${err.stack}`)
+
       // not present
       return null
     }
@@ -167,7 +186,24 @@ const self = {
 
   binPath: () => ospath.join(app.getPath('userData'), 'bin'),
 
-  ext: () => (os.platform() === 'win32') ? '.exe' : ''
+  ext: () => (os.platform() === 'win32') ? '.exe' : '',
+
+  augmentedPaths: {},
+
+  augmentPath: function (opts, subfolder) {
+    let binPath = self.binPath()
+    if (subfolder) {
+      binPath = ospath.join(binPath, subfolder)
+    }
+    if (self.augmentedPaths[binPath]) {
+      return
+    }
+    self.augmentedPaths[binPath] = true
+    log(opts, `Augmenting $PATH: ${binPath}`)
+
+    process.env.PATH = `${binPath}${ospath.delimiter}${process.env.PATH}`
+    return binPath
+  }
 }
 
 export default self

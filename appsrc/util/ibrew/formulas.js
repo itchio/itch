@@ -24,12 +24,33 @@ self['7za'] = {
 }
 
 /**
+ * a command-line tool for extracting various archives, including rar,
+ * without silly license restrictions. pretty good.
+ * https://bitbucket.org/WAHa_06x36/theunarchiver
+ */
+self['unarchiver'] = {
+  format: 'tar.gz',
+  subfolder: 'unarchiver',
+  versionCheck: {
+    command: 'unar',
+    args: ['--version']
+  },
+  sanityCheck: {
+    command: 'unar',
+    args: ['--version']
+  }
+}
+
+/**
  * your little itch.io helper
  * https://github.com/itchio/butler
  */
 self['butler'] = {
   format: '7z',
-  sanityCheck: ['-V']
+  sanityCheck: {
+    command: 'butler',
+    args: ['-V']
+  }
 }
 
 /**
