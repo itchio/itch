@@ -285,5 +285,9 @@
     "sidebar.itchio": "Il tuo portale per l'universo dei giochi indie",
     "sidebar.history": "Cronologia",
     "sidebar.log_out": "Disconnettiti",
-    "sidebar.new_tab": "Nuova scheda"
+    "sidebar.new_tab": "Nuova scheda",
+    "sidebar.owned_subtitle": "Cose che hai acquistato o installato",
+    "sidebar.preferences": "Impostazioni",
+    "sidebar.view_community_profile": "Mostra profilo community",
+    "sidebar.view_creator_profile": "Mostra profilo dell'autore"
 }
