@@ -142,5 +142,7 @@
     "action.name.forums": "Forum",
     "label.experimental": "Sperimentale",
     "collection.empty": "Non ci sono giochi in questa collezione",
-    "desktop.shortcut.comment": "Installa ed esegui facilmente i giochi presenti su itch.io"
+    "desktop.shortcut.comment": "Installa ed esegui facilmente i giochi presenti su itch.io",
+    "docs.learn_more": "Per saperne di più",
+    "download.started": "Avviato"
 }
