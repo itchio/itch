@@ -240,5 +240,8 @@
     "prompt.forget_session.action": "DImentica sessione",
     "prompt.forget_session.detail": "Puoi sempre riaggiungerlo in un altro momento.",
     "prompt.forget_session.message": "Sei sicuro di voler rimuovere '{{username}}' dalle tue sessioni salvate?",
-    "prompt.forget_session.title": "Dimentica sessione"
+    "prompt.forget_session.title": "Dimentica sessione",
+    "prompt.logout_action": "Disconnettiti",
+    "prompt.logout_detail": "I download in corso verranno sospesi fino al tuo prossimo log in.",
+    "prompt.logout_title": "Disconnettiti"
 }
