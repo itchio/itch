@@ -284,5 +284,6 @@
     "sidebar.featured": "In primo piano",
     "sidebar.itchio": "Il tuo portale per l'universo dei giochi indie",
     "sidebar.history": "Cronologia",
-    "sidebar.log_out": "Disconnettiti"
+    "sidebar.log_out": "Disconnettiti",
+    "sidebar.new_tab": "Nuova scheda"
 }
