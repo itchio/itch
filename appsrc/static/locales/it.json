@@ -325,5 +325,6 @@
     "usage_stats.has_used_for_duration": "Usato",
     "usage_stats.last_opened_time_ago": "Ultima volta avviato {{time_ago}}",
     "usage_stats.last_played_time_ago": "Ultima volta giocato {{time_ago}}",
-    "usage_stats.last_used_time_ago": "Ultima volta usato {{time_ago}}"
+    "usage_stats.last_used_time_ago": "Ultima volta usato {{time_ago}}",
+    "usage_stats.never_opened": "Mai avviato"
 }
