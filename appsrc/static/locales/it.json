@@ -146,5 +146,7 @@
     "docs.learn_more": "Per saperne di più",
     "download.started": "Avviato",
     "download.reason.update": "per aggiornare all'ultima versione",
-    "duration.hour": "un'ora"
+    "duration.hour": "un'ora",
+    "duration.hours": "{{x}} ore",
+    "duration.minute": "un minuto o meno"
 }
