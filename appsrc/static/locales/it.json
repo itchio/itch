@@ -184,5 +184,15 @@
     "menu.help.about": "Altro",
     "menu.view.downloads": "Download",
     "menu.view.history": "Cronologia",
-    "menu.view.view": "Visualizza"
+    "menu.view.view": "Visualizza",
+    "moment.now": "ora",
+    "toast.title": "Oops!",
+    "toast.message": "Si è verificato qualcosa di imprevisto.",
+    "toast.call_to_action": "Per continuare, aggiorna o vai su un'altra pagina.",
+    "toast.actions.reload": "Aggiorna",
+    "toast.actions.learn_more": "Per saperne di più",
+    "toast.actions.report": "Invia feedback per migliorare itch",
+    "toast.no_info_available": "Nessuna informazione disponibile",
+    "new_tab.titles.buttons": "Prova uno di questi:",
+    "new_tab.community": "Community"
 }
