@@ -35,7 +35,7 @@ export function filterUploadsByFormat (action, uploads) {
 
   // Filter by format
   const compatibleUploads = uploads.filter((upload) =>
-    !(/\.(rpm|deb|rar)$/i.test(upload.filename.toLowerCase()))
+    !(/\.(rpm|deb)$/i.test(upload.filename.toLowerCase()))
   )
 
   return compatibleUploads
@@ -104,7 +104,7 @@ export default async function start (out, opts) {
       const unwelcomeUpload = platformUploads[0]
       const format = ospath.extname(unwelcomeUpload.filename).replace(/^\./, '').toLowerCase()
       log(opts, `Found upload that's platform-compatible but format-incompatible: ${JSON.stringify(unwelcomeUpload, 0, 2)}`)
-      if (['deb', 'rpm', 'rar'].indexOf(format) !== -1) {
+      if (['deb', 'rpm'].indexOf(format) !== -1) {
         const store = require('../store').default
         store.dispatch(actions.showPackagingPolicy({format, gameId}))
       } else {

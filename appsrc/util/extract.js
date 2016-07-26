@@ -3,7 +3,7 @@ import {object} from 'underline'
 
 import invariant from 'invariant'
 import humanize from 'humanize-plus'
-import path from 'path'
+import ospath from 'path'
 import fnout from 'fnout'
 
 import mklog from './log'
@@ -37,7 +37,7 @@ const self = {
         if (verbose) {
           log(opts, `list: ${item.Size} | ${item.Path}`)
         }
-        const itemPath = path.normalize(item.Path)
+        const itemPath = ospath.normalize(item.Path)
         const size = parseInt(item.Size, 10)
 
         totalSize += (sizes[itemPath] = size)
@@ -85,7 +85,7 @@ const self = {
           return
         }
 
-        let itemPath = path.normalize(matches[1])
+        let itemPath = ospath.normalize(matches[1])
         onProgress(itemPath)
       },
       logger
@@ -119,6 +119,8 @@ const self = {
   },
 
   unarchiverList: async function (logger, archivePath) {
+    const opts = {logger}
+
     const sizes = {}
     let totalSize = 0
 
@@ -129,8 +131,14 @@ const self = {
     })
     const info = JSON.parse(contents)
 
+    if (verbose) {
+      log(opts, `${info.lsarContents.length} lsarContent entries`)
+    }
     for (const entry of info.lsarContents) {
-      sizes[entry.XADFileName] = entry.XADFileSize
+      if (verbose) {
+        log(opts, `${entry.XADFileName} ${entry.XADFileSize}`)
+      }
+      sizes[ospath.normalize(entry.XADFileName)] = entry.XADFileSize
       totalSize += entry.XADFileSize
     }
 
@@ -171,11 +179,17 @@ const self = {
         out += token
 
         let matches = EXTRACT_RE.exec(token)
+        if (verbose) {
+          log(opts, `matches: ${matches}`)
+        }
         if (!matches) {
           return
         }
 
-        let itemPath = path.normalize(matches[1])
+        let itemPath = ospath.normalize(matches[1])
+        if (verbose) {
+          log(opts, `itemPath: ${itemPath}`)
+        }
         onProgress(itemPath)
       },
       logger
@@ -197,6 +211,9 @@ const self = {
     log(opts, `archive contains ${Object.keys(info.sizes).length} files, ${humanize.fileSize(totalSize)} total`)
 
     const unarchiverProgress = (f) => {
+      if (verbose) {
+        log(opts, `progress!: ${f} ${info.sizes[f]}`)
+      }
       extractedSize += (info.sizes[f] || 0)
       const percent = extractedSize / totalSize * 100
       onProgress({extractedSize, totalSize, percent})

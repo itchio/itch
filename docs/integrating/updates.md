@@ -10,7 +10,7 @@ with the following caveats:
 
   * `.7z` files are preferred to `.zip`
   * `.zip` files are preferred to `.exe`
-  * `.rar`, `.rpm` and `.deb` files are never even considered
+  * `.rpm` and `.deb` files are never even considered
   * Untagged (platform-less) uploads are ignored by the app, cf.
 
 ## Uploading a new version
