@@ -221,5 +221,6 @@
     "preferences.install_location.is_default_short": "Predefinito",
     "preferences.install_location.make_default_short": "Imposta predefinito",
     "preferences.behavior": "Comportamento",
-    "preferences.behavior.close_to_tray": "Mantieni l'app nella barra quando chiudi la finestra"
+    "preferences.behavior.close_to_tray": "Mantieni l'app nella barra quando chiudi la finestra",
+    "preferences.language.auto": "Lingua del sistema ({{language}})"
 }
