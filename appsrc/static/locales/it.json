@@ -171,5 +171,8 @@
     "grid.item.open": "Apri",
     "grid.item.open_demo": "Apri la demo",
     "grid.item.open_debug_log": "Apri registro di debug",
-    "grid.item.show_local_files": "Mostra file locali"
+    "grid.item.show_local_files": "Mostra file locali",
+    "grid.item.downloads_paused": "Download in pausa",
+    "grid.item.version": "Versione {{version}}",
+    "browser.popout": "Apri la pagina in un browser web esterno"
 }
