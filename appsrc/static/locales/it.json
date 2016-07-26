@@ -256,5 +256,8 @@
     "prompt.self_update.message.linux": "Puoi scaricarlo manualmente, oppure usare il gestore pacchetti della tua distribuzione per aggiornarlo: consulta il sito web per maggiori informazioni.",
     "prompt.self_update.message.osx": "Scegli 'Scarica ora' per installarlo automaticamente, oppure vai al sito web per ulteriori informazioni.",
     "prompt.self_update.message.windows": "Scegli 'Scarica ora' per installarlo automaticamente, oppure vai al sito web per ulteriori informazioni.",
-    "prompt.self_update.title": "itch v{{version}} è disponibile per il download"
+    "prompt.self_update.title": "itch v{{version}} è disponibile per il download",
+    "prompt.self_update_ready.action.restart": "Riavvia ora",
+    "prompt.self_update_ready.action.snooze": "Ritarda",
+    "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Pubblicato il {{pubDate}}."
 }
