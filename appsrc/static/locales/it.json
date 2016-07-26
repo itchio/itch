@@ -310,5 +310,17 @@
     "status.offline_mode.inactive": "Clicca per abilitare la modalità offline",
     "usage_stats.description.assets": "Una collezione di asset",
     "usage_stats.description.book": "Un libro",
-    "usage_stats.description.bought_time_ago": "Acquistato {{time_ago}}"
+    "usage_stats.description.bought_time_ago": "Acquistato {{time_ago}}",
+    "usage_stats.description.comic": "Un fumetto",
+    "usage_stats.description.free_download": "Download gratuito",
+    "usage_stats.description.game": "Un gioco",
+    "usage_stats.description.game_mod": "Una mod",
+    "usage_stats.description.other": "Una cosa",
+    "usage_stats.description.physical_game": "Un gioco fisico",
+    "usage_stats.description.platforms": "per {{platforms}}",
+    "usage_stats.description.price": "Disponibile per {{price}} o più",
+    "usage_stats.description.soundtrack": "Una colonna sonora",
+    "usage_stats.description.tool": "Un tool",
+    "usage_stats.has_played_for_duration": "Giocato",
+    "usage_stats.has_used_for_duration": "Usato"
 }
