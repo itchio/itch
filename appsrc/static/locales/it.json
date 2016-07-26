@@ -331,5 +331,10 @@
     "usage_stats.never_used": "Mai usato",
     "action.name.play": "Gioca Ora",
     "download.reason.install": "per la prima installazione",
-    "grid.criterion.only_compatible": "Solo compatibile"
+    "grid.criterion.only_compatible": "Solo compatibile",
+    "grid.item.donate": "Supporta l'autore",
+    "grid.item.donate_again": "Supporta nuovamente l'autore!",
+    "menu.file.new_tab": "Nuova Scheda",
+    "menu.file.close_tab": "Chiudi Scheda",
+    "menu.file.close_all_tabs": "Chiudi Tutte le Schede"
 }
