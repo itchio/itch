@@ -238,5 +238,7 @@
     "prompt.deb_policy.message": "Il pacchetto {{title}} è in formato .deb, e non potrà essere installato con itch fino a quando non verrà rimpacchettato.",
     "prompt.deb_policy.title": "I pacchetti APT non sono supportati",
     "prompt.forget_session.action": "DImentica sessione",
-    "prompt.forget_session.detail": "Puoi sempre riaggiungerlo in un altro momento."
+    "prompt.forget_session.detail": "Puoi sempre riaggiungerlo in un altro momento.",
+    "prompt.forget_session.message": "Sei sicuro di voler rimuovere '{{username}}' dalle tue sessioni salvate?",
+    "prompt.forget_session.title": "Dimentica sessione"
 }
