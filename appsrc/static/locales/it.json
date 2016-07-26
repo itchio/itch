@@ -176,5 +176,9 @@
     "grid.item.version": "Versione {{version}}",
     "browser.popout": "Apri la pagina in un browser web esterno",
     "i18n.failed_downloading_locales": "Aggiornamenti per la lingua {{lang}} non sono stati scaricati.",
-    "install_location.empty": "Non c'è nulla installato il questa directory"
+    "install_location.empty": "Non c'è nulla installato il questa directory",
+    "login.action.show_form": "Accedi come qualcun'altro ",
+    "login.action.show_saved_logins": "Accessi salvati",
+    "login.messages.welcome_back": "Ben tornato!",
+    "login.remembered_session.last_connected": "Ultima volta connesso"
 }
