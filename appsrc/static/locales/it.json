@@ -297,5 +297,8 @@
     "status.downloads.category.queued": "Download in coda",
     "status.downloads.clear_all_finished": "Rimuovi tutto",
     "status.downloads.clear_finished": "Rimuovi",
-    "status.downloads.click_to_manage": "Clicca per gestire i download"
+    "status.downloads.click_to_manage": "Clicca per gestire i download",
+    "status.downloads.download_error": "Errore di download",
+    "status.downloads.no_active_downloads": "Nessun download attivo",
+    "status.downloads.unknown_size": "Sconosciuto"
 }
