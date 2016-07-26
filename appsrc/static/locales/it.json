@@ -300,5 +300,9 @@
     "status.downloads.click_to_manage": "Clicca per gestire i download",
     "status.downloads.download_error": "Errore di download",
     "status.downloads.no_active_downloads": "Nessun download attivo",
-    "status.downloads.unknown_size": "Sconosciuto"
+    "status.downloads.unknown_size": "Sconosciuto",
+    "status.game_update.check_failed": "Controllo aggiornamenti fallito: {{err}}",
+    "status.game_update.found": "Trovata una nuova versione di {{title}}! Download in corso...",
+    "status.game_update.not_found": "{{title}} è aggiornato.",
+    "status.history.click_to_expand": "Clicca per espandere la cronologia."
 }
