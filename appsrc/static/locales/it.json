@@ -148,5 +148,6 @@
     "download.reason.update": "per aggiornare all'ultima versione",
     "duration.hour": "un'ora",
     "duration.hours": "{{x}} ore",
-    "duration.minute": "un minuto o meno"
+    "duration.minute": "un minuto o meno",
+    "duration.minutes": "{{x}} minuti"
 }
