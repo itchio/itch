@@ -10,12 +10,6 @@ import mklog from '../util/log'
 const log = mklog('reactors/setup')
 import logger, {opts} from '../logger'
 
-function augmentPath () {
-  const binPath = ibrew.binPath()
-  process.env.PATH = `${binPath}${path.delimiter}${process.env.PATH}`
-  return binPath
-}
-
 async function fetch (store, name) {
   const opts = {
     logger,
@@ -29,9 +23,8 @@ async function fetch (store, name) {
 
 async function setup (store) {
   log(opts, 'setup starting')
-  augmentPath()
-  await fetch(store, '7za')
-  log(opts, '7za done')
+  await fetch(store, 'unarchiver')
+  log(opts, 'unarchiver done')
   await Promise.all(['butler', 'elevate', 'activate', 'firejail', 'file']::map((name) => fetch(store, name)))
   log(opts, 'all deps done')
   store.dispatch(actions.setupDone())

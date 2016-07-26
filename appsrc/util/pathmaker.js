@@ -53,6 +53,10 @@ export function logPath () {
   return path.join(app.getPath('userData'), 'logs', 'itch.txt')
 }
 
+export function updaterLogPath () {
+  return path.join(app.getPath('userData'), 'logs', 'itch.updater.txt')
+}
+
 export function caveLogPath (caveId) {
   return path.join(app.getPath('userData'), 'cave-logs', 'cave-' + caveId + '.txt')
 }
@@ -72,4 +76,4 @@ export function sanitize (file) {
 }
 
 export default {appPath, downloadPath, globalDbPath, userDbPath, sanitize,
-  preferencesPath, logPath, caveLogPath}
+  preferencesPath, logPath, updaterLogPath, caveLogPath}

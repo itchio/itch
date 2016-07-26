@@ -11,7 +11,7 @@ const self = {
   manual: 'https://itch.io/docs/itch/',
   updateServers: {
     stable: 'https://nuts.itch.zone',
-    canary: 'http://nuts-canary.itch.ovh'
+    canary: 'https://nuts-canary.itch.ovh'
   }
 }
 

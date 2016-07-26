@@ -79,6 +79,7 @@
     "source-map-support": "^0.4.0",
     "stream-splitter": "^0.3.2",
     "streamsearch": "^0.1.2",
+    "tar": "^2.2.1",
     "tinycolor2": "^1.3.0",
     "tmp": "0.0.28",
     "toml": "^2.3.0",

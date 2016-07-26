@@ -43,9 +43,9 @@ async function collect () {
 
   switch (os.itchPlatform()) {
     case 'windows': {
-      await dump('cmd.exe /c ver')
+      await dump('wmic OS get Caption, Version, OSArchitecture')
       // weirdest syntax ever, 'name,' and 'caption,' are separate arguments...
-      await dump('wmic cpu get name, caption, maxclockspeed')
+      await dump('wmic cpu get Name, Caption, MaxClockSpeed')
       await dump('wmic path Win32_VideoController get Name')
       break
     }

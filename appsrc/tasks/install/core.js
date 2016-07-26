@@ -27,6 +27,7 @@ const self = {
     '7z': 'archive',
     'tar': 'archive',
     'xz': 'archive',
+    'rar': 'archive',
     // Apple disk images (DMG)
     'dmg': 'dmg',
     // Microsoft packages
@@ -113,12 +114,12 @@ const self = {
     let installerName = self.installerForExt[type.ext]
     if (!installerName) {
       const code = await spawn({
-        command: '7za',
-        args: ['l', archivePath]
+        command: 'lsar',
+        args: [archivePath]
       })
 
       if (code === 0) {
-        log(opts, '7-zip saves the day! it is an archive.')
+        log(opts, 'unarchiver saves the day! it is an archive.')
         installerName = 'archive'
       } else if (type.macExecutable || type.linuxExecutable) {
         log(opts, 'tis an executable, going with naked')

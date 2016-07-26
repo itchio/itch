@@ -49,7 +49,7 @@ const self = {
     return process.argv
   },
 
-  assertPresence: async (command, args, parser) => {
+  assertPresence: async function (command, args, parser) {
     let stdout = ''
     let stderr = ''
 

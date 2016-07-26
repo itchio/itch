@@ -29,7 +29,6 @@ export function assertAllCombined (...combinators) {
   combinators::each((combinator, i) => {
     Object.keys(combinator)::each((name) => {
       const reactor = combinator[name]
-      console.log(`checking reactor #${i}/${name}`)
       if (!reactor.__combined) {
         throw new Error(`in reactor group #${i}, reactor ${name} isn't combined.`)
       }

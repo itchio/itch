@@ -32,7 +32,7 @@ async function retrieveTabData (store, id, retrOpts = {}) {
 
   const data = store.getState().session.navigation.tabData[id]
   if (!data) {
-    console.log(`Can't retrieve tab data for ${id}, not found in list. Stack: ${new Error().stack}`)
+    // tab was closed since
     return
   }
 
