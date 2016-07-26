@@ -150,5 +150,6 @@
     "duration.hours": "{{x}} ore",
     "duration.minute": "un minuto o meno",
     "duration.minutes": "{{x}} minuti",
-    "game.install.could_not_launch": "Si è verificato un errore all'avvio di {{title}}"
+    "game.install.could_not_launch": "Si è verificato un errore all'avvio di {{title}}",
+    "game.install.could_not_launch.detail": "Le sue ultime parole furono: {{error}}"
 }
