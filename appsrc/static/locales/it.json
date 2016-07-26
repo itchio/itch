@@ -289,5 +289,6 @@
     "sidebar.owned_subtitle": "Cose che hai acquistato o installato",
     "sidebar.preferences": "Impostazioni",
     "sidebar.view_community_profile": "Mostra profilo community",
-    "sidebar.view_creator_profile": "Mostra profilo dell'autore"
+    "sidebar.view_creator_profile": "Mostra profilo dell'autore",
+    "status.available": "Un nuova versione di itch è disponibile!"
 }
