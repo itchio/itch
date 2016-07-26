@@ -266,5 +266,6 @@
     "search.results.local": "Locale",
     "search.results.games": "Giochi",
     "search.results.creators": "Autori",
-    "search.empty.no_results": "Nessun risultato"
+    "search.empty.no_results": "Nessun risultato",
+    "search.empty.tagline": "In cerca di ispirazione? Prova a cercare '{{example}}'"
 }
