@@ -254,5 +254,6 @@
     "prompt.self_update.action.view": "Apri nel browser",
     "prompt.self_update.detail": "{{notes}}\n\n:date: Pubblicato il {{pubDate}}.",
     "prompt.self_update.message.linux": "Puoi scaricarlo manualmente, oppure usare il gestore pacchetti della tua distribuzione per aggiornarlo: consulta il sito web per maggiori informazioni.",
-    "prompt.self_update.message.osx": "Scegli 'Scarica ora' per installarlo automaticamente, oppure vai al sito web per ulteriori informazioni."
+    "prompt.self_update.message.osx": "Scegli 'Scarica ora' per installarlo automaticamente, oppure vai al sito web per ulteriori informazioni.",
+    "prompt.self_update.message.windows": "Scegli 'Scarica ora' per installarlo automaticamente, oppure vai al sito internet per ulteriori informazioni."
 }
