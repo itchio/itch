@@ -172,7 +172,7 @@
     "preferences.advanced.open_app_log": "Open app log",
     "pick_install_upload.title": "Multiple downloads are available for {{title}}",
     "pick_install_upload.message": "Which file do you want to download for {{title}}?",
-    "pick_install_upload.detail": "We'll ask you again when new uploads are available.",
+    "pick_install_upload.detail": "We'll ask you again when new downloads are available.",
     "pick_update_upload.title": "New downloads are available for {{title}}",
     "pick_update_upload.message": "Which file do you want to update to for {{title}}?",
     "pick_update_upload.detail": "We only ask because you hand-picked a file at install time.",
