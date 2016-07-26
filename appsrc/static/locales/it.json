@@ -295,5 +295,7 @@
     "status.downloads.category.active": "Download attivo",
     "status.downloads.category.finished": "Download completati",
     "status.downloads.category.queued": "Download in coda",
-    "status.downloads.clear_all_finished": "Rimuovi tutto"
+    "status.downloads.clear_all_finished": "Rimuovi tutto",
+    "status.downloads.clear_finished": "Rimuovi",
+    "status.downloads.click_to_manage": "Clicca per gestire i download"
 }
