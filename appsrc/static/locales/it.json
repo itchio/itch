@@ -268,5 +268,10 @@
     "search.results.creators": "Autori",
     "search.empty.no_results": "Nessun risultato",
     "search.empty.tagline": "In cerca di ispirazione? Prova a cercare '{{example}}'",
-    "search.open_as_tab": "Apri come scheda"
+    "search.open_as_tab": "Apri come scheda",
+    "search.placeholder": "Cerca",
+    "sidebar.aw_snap": "Oops!",
+    "sidebar.close_all_tabs": "Chiudi tutte le schede",
+    "sidebar.category.basics": "Essenziali",
+    "sidebar.category.tabs": "Schede"
 }
