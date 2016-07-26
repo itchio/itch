@@ -197,5 +197,7 @@
     "new_tab.community": "Community",
     "new_tab.on_sale": "Scontati",
     "new_tab.random": "Trova qualcosa a caso",
-    "new_tab.titles.browser_placeholder": "Inserisci un indirizzo web"
+    "new_tab.titles.browser_placeholder": "Inserisci un indirizzo web",
+    "new_tab.titles.input": "...o",
+    "new_tab.top_sellers": "Di maggior successo"
 }
