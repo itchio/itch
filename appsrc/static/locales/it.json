@@ -305,5 +305,7 @@
     "status.game_update.found": "Trovata una nuova versione di {{title}}! Download in corso...",
     "status.game_update.not_found": "{{title}} è aggiornato.",
     "status.history.click_to_expand": "Clicca per espandere la cronologia.",
-    "status.history.no_active_items": "Nessun oggetto nella cronologia richiede la tua attenzione."
+    "status.history.no_active_items": "Nessun oggetto nella cronologia richiede la tua attenzione.",
+    "status.offline_mode.active": "Modalità offline attivata",
+    "status.offline_mode.inactive": "Clicca per abilitare la modalità offline"
 }
