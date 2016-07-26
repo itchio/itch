@@ -62,7 +62,7 @@
     "onboarding.dashboard.mission_statement": "Abbiamo provato a renderne l'utilizzo più comodo possibile.",
     "onboarding.dashboard.selling_points": "Configurazione istantanea, e quante meno barriere possibili.",
     "onboarding.dashboard.welcome_home": "Benvenuto a casa",
-    "onboarding.owned.batteries_included": "Abbiamo messo su qualche collezione, così puoi cominciare a giocare subito.",
+    "onboarding.owned.batteries_included": "Abbiamo messo su qualche raccolta, così puoi cominciare a giocare subito.",
     "onboarding.owned.navigation_hint": "Clicca le etichette alla tua sinistra per navigare nell'app",
     "onboarding.owned.reassuring_comment": "Sembra tutto un po' vuoto per ora, ma non preoccuparti!",
     "onboarding.owned.title_warm_welcome": "Ce l'hai fatta!",
@@ -141,7 +141,7 @@
     "action.name.editor": "Editor",
     "action.name.forums": "Forum",
     "label.experimental": "Sperimentale",
-    "collection.empty": "Non ci sono giochi in questa collezione",
+    "collection.empty": "Non ci sono giochi in questa raccolta",
     "desktop.shortcut.comment": "Installa ed esegui facilmente i giochi presenti su itch.io",
     "docs.learn_more": "Per saperne di più",
     "download.started": "Avviato",
@@ -208,7 +208,7 @@
     "notification.purchase_complete.may_install_now": "Ora puoi installarlo quando vuoi!",
     "notification.purchase_complete.thanks_for_support": "Grazie per il supporto!",
     "outlinks.open_dashboard": "Apri dashboard",
-    "outlinks.manage_collections": "Gestisci collezioni",
+    "outlinks.manage_collections": "Gestisci raccolte",
     "sandbox.setup.title": "Installazione unica sandbox",
     "sandbox.setup.proceed": "Procedi",
     "sandbox.setup.windows.message": "Per avviare il gioco nel sandbox itch.io, l'installazione unica deve essere avviata come Amministratore.",
@@ -274,5 +274,9 @@
     "sidebar.close_all_tabs": "Chiudi tutte le schede",
     "sidebar.category.basics": "Essenziali",
     "sidebar.category.tabs": "Schede",
-    "sidebar.collection": "Raccolte"
+    "sidebar.collection": "Raccolte",
+    "sidebar.collection.subtitle": "Una raccolta di {{itemCount}} elementi",
+    "sidebar.collections": "Raccolte",
+    "sidebar.dashboard_subtitle": "Cose che costruisci e fai a pezzi",
+    "sidebar.downloads": "Download"
 }
