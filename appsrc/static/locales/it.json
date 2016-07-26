@@ -156,5 +156,6 @@
     "game.install.no_html_index_found": "Nessun file index HTML trovato",
     "game.install.no_uploads_available.detail": "Forse non è ancora compatibile con la tua piattaforma o con l'app di itch!",
     "game.install.no_uploads_available.message": "Non sono stati trovati download compatibili per '{{title}}', quindi non è stato installato.",
-    "game.install.try_again": "Riprova"
+    "game.install.try_again": "Riprova",
+    "game.install.visit_web_page": "Visita il sito web"
 }
