@@ -169,5 +169,7 @@
     "grid.item.launch_demo": "Avvia la demo",
     "grid.item.share": "Condividi",
     "grid.item.open": "Apri",
-    "grid.item.open_demo": "Apri la demo"
+    "grid.item.open_demo": "Apri la demo",
+    "grid.item.open_debug_log": "Apri registro di debug",
+    "grid.item.show_local_files": "Mostra file locali"
 }
