@@ -280,5 +280,6 @@
     "sidebar.dashboard_subtitle": "Cose che costruisci e fai a pezzi",
     "sidebar.downloads": "Download",
     "sidebar.downloads_subtitle": "Puoi tranquillamente uscire dall'app o riavviarla. I download riprenderanno al tuo ritorno",
-    "sidebar.empty": "Andiamo!"
+    "sidebar.empty": "Andiamo!",
+    "sidebar.featured": "In primo piano"
 }
