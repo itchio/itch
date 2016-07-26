@@ -174,5 +174,7 @@
     "grid.item.show_local_files": "Mostra file locali",
     "grid.item.downloads_paused": "Download in pausa",
     "grid.item.version": "Versione {{version}}",
-    "browser.popout": "Apri la pagina in un browser web esterno"
+    "browser.popout": "Apri la pagina in un browser web esterno",
+    "i18n.failed_downloading_locales": "Aggiornamenti per la lingua {{lang}} non sono stati scaricati.",
+    "install_location.empty": "Non c'è nulla installato il questa directory"
 }
