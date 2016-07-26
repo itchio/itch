@@ -260,5 +260,5 @@
     "prompt.self_update_ready.action.restart": "Riavvia ora",
     "prompt.self_update_ready.action.snooze": "Ritarda",
     "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Pubblicato il {{pubDate}}.",
-    "prompt.self_update_ready.message": "Clicca 'Riavvia ora' per utilizzare da subito l'aggiornamento\n\nAltrimenti, l'aggiornamento sarà effettivo dal prossimo avvio dell'app"
+    "prompt.self_update_ready.message": "Scegli 'Riavvia ora' per utilizzare da subito l'aggiornamento\n\nAltrimenti, l'aggiornamento sarà effettivo dal prossimo avvio dell'app"
 }
