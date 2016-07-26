@@ -166,5 +166,6 @@
     "grid.item.check_for_update": "Controlla aggiornamenti",
     "grid.item.developer": "Sviluppatore",
     "grid.item.review": "Recensisci",
-    "grid.item.launch_demo": "Avvia la demo"
+    "grid.item.launch_demo": "Avvia la demo",
+    "grid.item.share": "Condividi"
 }
