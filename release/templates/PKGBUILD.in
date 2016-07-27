@@ -10,7 +10,7 @@ arch=('i686' 'x86_64')
 url="https://github.com/itchio/{{CI_APPNAME}}"
 license=('MIT')
 
-depends=('alsa-lib' 'libnotify' 'nss' 'gconf' 'gtk2' 'libxtst' 'desktop-file-utils' 'gtk-update-icon-cache' 'p7zip')
+depends=('alsa-lib' 'libnotify' 'nss' 'gconf' 'gtk2' 'libxtst' 'desktop-file-utils' 'gtk-update-icon-cache' 'libxss')
 makedepends=('nodejs' 'nodejs-grunt-cli' 'npm')
 options=('!strip')
 install="{{CI_APPNAME}}.install"
