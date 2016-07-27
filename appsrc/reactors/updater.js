@@ -14,7 +14,14 @@ import api from '../util/api'
 
 import mklog from '../util/log'
 const log = mklog('updater')
-import {opts} from '../logger'
+const opts = {
+  logger: new mklog.Logger({
+    sinks: {
+      console: false,
+      file: pathmaker.updaterLogPath()
+    }
+  })
+}
 
 import {startDownload} from './tasks/start-download'
 import {findWhere, filter, map} from 'underline'

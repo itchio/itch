@@ -258,5 +258,16 @@
     "search.results.title": "Rezultatele căutării pentru '{{query}}'",
     "search.empty.tagline": "Ai nevoie de inspiraţie? Încearcă să cauţi '{{example}}'",
     "search.placeholder": "Caută",
-    "sidebar.aw_snap": "Aoleu!"
+    "sidebar.aw_snap": "Aoleu!",
+    "toast.no_info_available": "Nu avem informaţii",
+    "new_tab.titles.buttons": "Alege dintre:",
+    "sidebar.collection": "Colecţii",
+    "sidebar.collection.subtitle": "O colecţie de {{itemCount}} produse",
+    "sidebar.collections": "Colecţii",
+    "sidebar.downloads_subtitle": "Poţi să închizi aplicaţia, descărcarea se va relua când revii",
+    "sidebar.empty": "Să începem!",
+    "sidebar.featured": "Recomandări",
+    "sidebar.itchio": "O poartă către universul jocurilor independente",
+    "sidebar.history": "Istoric",
+    "sidebar.log_out": "Deconectare"
 }
