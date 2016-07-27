@@ -28,7 +28,14 @@ export default class Market extends EventEmitter {
     const toSave = {}
 
     const entities = {}
+    const TMP_RE = /\.tmp[0-9]+/
     const loadRecord = async function (recordPath) {
+      if (TMP_RE.test(recordPath)) {
+        // timing issue: the session is being written to while the DB is loading
+        // cf. https://github.com/itchio/itch/issues/831
+        return
+      }
+
       const tokens = recordPath.split('/')
       const [tableName, entityId] = tokens
       const file = path.join(self.getDbRoot(), recordPath)
