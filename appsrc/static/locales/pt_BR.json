@@ -16,7 +16,7 @@
     "grid.item.open_in_file_explorer_osx": "Mostre no Buscador onde esse item está instalado",
     "grid.item.probe": "Abrir o registro de eventos deste item para encontrar a causa da falha (Avançado)",
     "grid.item.purchase_or_donate": "Comprar ou doar dinheiro para o item",
-    "grid.item.queued": "Enfileirando...",
+    "grid.item.queued": "Na fila",
     "grid.item.report_problem": "Reportar um problema (Abrirá no navegador)",
     "grid.item.retry": "Tente baixar / instalar / iniciar este item novamente",
     "grid.item.running": "Executando...",
