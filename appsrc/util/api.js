@@ -40,6 +40,7 @@ export class ApiError extends ExtendableError {
 }
 
 let agent
+import http from 'http'
 import https from 'https'
 
 /**
@@ -53,10 +54,17 @@ export class Client {
 
   async request (method, path, data = {}, transformers = {}) {
     if (!agent) {
-      agent = new https.Agent({
-        keepAlive: true,
-        maxSockets: 1
-      })
+      if (needle.proxy && !/https:/i.test(needle.proxy)) {
+        agent = new http.Agent({
+          keepAlive: true,
+          maxSockets: 1
+        })
+      } else {
+        agent = new https.Agent({
+          keepAlive: true,
+          maxSockets: 1
+        })
+      }
     }
 
     const t1 = Date.now()
@@ -66,7 +74,9 @@ export class Client {
     await cooldown()
     const t2 = Date.now()
 
-    const resp = await needle.requestAsync(method, uri, data, {agent})
+    const resp = await needle.requestAsync(method, uri, data, {
+      agent
+    })
     const body = resp.body
     const t3 = Date.now()
 
