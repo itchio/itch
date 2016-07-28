@@ -82,7 +82,10 @@ module.exports.request = function (method, uri, data, options, callback) {
 }
 
 function withProxy (options) {
-  return { ...options, proxy }
+  return {
+    ...options,
+    proxy: module.exports.proxy
+  }
 }
 
 Promise.promisifyAll(module.exports)
