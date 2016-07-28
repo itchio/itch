@@ -17,7 +17,7 @@ class UnhandledFormat extends ExtendableError {
 const self = {
   UnhandledFormat,
 
-  validInstallers: ['archive', 'dmg', 'msi', 'exe'],
+  validInstallers: ['archive', 'msi', 'exe'],
 
   installerForExt: {
     // Generic archives

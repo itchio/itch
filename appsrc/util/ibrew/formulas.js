@@ -5,25 +5,6 @@ import sf from '../sf'
 let self = {}
 
 /**
- * pretty much the best command-line unpacker
- * http://www.7-zip.org/license.txt
- */
-self['7za'] = {
-  format: 'executable',
-  onMissing: (platform) => {
-    if (platform === 'linux') {
-      // TODO: add link to doc page too
-      let msg = '7-zip missing: 7za must be in $PATH\n(Try installing p7zip-full)'
-      throw new Error(msg)
-    }
-  },
-  versionCheck: {
-    args: [],
-    parser: /([0-9a-z.v]*)(\s+beta)?[\s:]+Copyright/
-  }
-}
-
-/**
  * a command-line tool for extracting various archives, including rar,
  * without silly license restrictions. pretty good.
  * https://bitbucket.org/WAHa_06x36/theunarchiver
@@ -101,18 +82,6 @@ self['firejail'] = {
   versionCheck: {
     args: ['--version'],
     parser: /firejail version ([0-9a-z.]*)/
-  }
-}
-
-/**
- * file(1) command, built for msys
- */
-self['file'] = {
-  format: '7z',
-  osWhitelist: ['windows'],
-  versionCheck: {
-    args: ['--version'],
-    parser: /file-([0-9a-z.]*)/
   }
 }
 

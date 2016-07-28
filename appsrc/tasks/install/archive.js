@@ -1,6 +1,5 @@
 
 import subprogress from '../../util/subprogress'
-import fnout from 'fnout'
 import noop from '../../util/noop'
 
 import butler from '../../util/butler'
@@ -11,11 +10,6 @@ import core from './core'
 
 import mklog from '../../util/log'
 const log = mklog('installers/archive')
-
-const isTar = async function (path) {
-  const type = await fnout.path(path)
-  return type && type.ext === 'tar'
-}
 
 const self = {
   retrieveCachedType: function (opts) {
@@ -77,11 +71,7 @@ const self = {
       stagePath
     })
 
-    deployOpts.onSingle = async (onlyFile) => {
-      if (!opts.tar && await isTar(onlyFile)) {
-        return await self.handleTar(out, deployOpts, onlyFile)
-      }
-
+    deployOpts.onSingle = async function (onlyFile) {
       return await self.handleNested(out, opts, onlyFile)
     }
 
