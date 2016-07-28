@@ -27,7 +27,6 @@ module.exports = {
       --vendor "itch.io" \
       --category "games" \
       --after-install "release/debian-after-install.sh" \
-      -d "p7zip" \
       -d "desktop-file-utils" \
       -d "libappindicator" \
       -d "libXScrnSaver" \

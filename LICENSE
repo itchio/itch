@@ -1,6 +1,6 @@
 MIT LICENSE
 
-Copyright (c) 2016 Leaf Corcoran & Amos Wenger, https://itch.io
+Copyright (c) 2016 itch corp., https://itch.io
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -20,12 +20,3 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
----
-
-This software uses parts of the 7-zip program.
-
-7-zip is licensed under the GNU LGPL license.
-
-You can find the source code of 7-zip at http://www.7-zip.org/
-

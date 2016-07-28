@@ -34,7 +34,7 @@ var windowsElectronOptions = Object.assign({}, gruntElectronCommon, {
   icon: icoPath,
   'version-string': {
     CompanyName: companyName,
-    LegalCopyright: 'MIT license, (c) Itch Corp',
+    LegalCopyright: 'MIT license, (c) itch corp.',
     FileDescription: appName,
     OriginalFileName: appName + '.exe',
     FileVersion: version,
