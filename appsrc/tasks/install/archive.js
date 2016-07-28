@@ -104,21 +104,6 @@ const self = {
     self.cacheType(opts, null)
   },
 
-  handleTar: async function (out, opts, tar) {
-    // Files in .tar.gz, .tar.bz2, etc. need a second 7-zip invocation
-    log(opts, `extracting tar: ${tar}`)
-    const subOpts = {
-      ...opts,
-      archivePath: tar,
-      tar: true
-    }
-
-    await self.install(out, subOpts)
-    await butler.wipe(tar)
-
-    return {deployed: true}
-  },
-
   handleNested: async function (out, opts, onlyFile) {
     // zipped installers need love too
     const sniffOpts = {archivePath: onlyFile, disableCache: true}

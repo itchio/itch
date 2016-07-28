@@ -8,24 +8,40 @@ const APPDATA_RE = /^appdata\/(.*)$/
 
 export function appPath (cave) {
   // < 0.13.x, installFolder isn't set, it's implicitly the cave's id
-  const {installLocation, installFolder = cave.id} = cave
+  // < 18.5.x, everything is installed in an `apps` subfolder
+  const {installLocation, installFolder = cave.id, pathScheme = 1} = cave
 
   invariant(typeof installLocation === 'string', 'valid install location name')
   invariant(typeof installFolder === 'string', 'valid install folder')
 
+  let appsSuffix = false
+  let base = ''
+
   const matches = APPDATA_RE.exec(installLocation)
   if (matches) {
     // caves migrated from 0.13.x or earlier: installed in per-user directory
-    return path.join(app.getPath('userData'), 'users', matches[1], 'apps', installFolder)
+    base = path.join(app.getPath('userData'), 'users', matches[1])
+    appsSuffix = true
   } else if (installLocation === 'appdata') {
     // caves >= 0.14.x with no special install location specified
-    return path.join(app.getPath('userData'), 'apps', installFolder)
+    base = path.join(app.getPath('userData'))
+    appsSuffix = true
   } else {
     const store = require('../store').default
     const locations = store.getState().preferences.installLocations
     const location = locations[installLocation]
     invariant(location, 'install location exists')
-    return path.join(location.path, 'apps', installFolder)
+    base = location.path
+  }
+
+  if (pathScheme === 1) {
+    appsSuffix = true
+  }
+
+  if (appsSuffix) {
+    return path.join(base, 'apps', installFolder)
+  } else {
+    return path.join(base, installFolder)
   }
 }
 
@@ -33,12 +49,22 @@ export function downloadPath (upload) {
   invariant(typeof upload === 'object', 'valid upload')
   invariant(upload.id, 'upload has id')
   invariant(typeof upload.filename === 'string', 'upload has filename')
-  const ext = /\.[^\.]+$/.exec(upload.filename) || ''
+  const extMatches = /(\.tar)?\.[^\.]+$/i.exec(upload.filename)
+  const ext = extMatches ? extMatches[0] : ''
   let slug = upload.id
   if (upload.buildId) {
     slug = `${slug}-${upload.buildId}`
   }
-  return path.join(app.getPath('userData'), 'downloads', '' + slug + ext)
+
+  const store = require('../store').default
+  const {preferences} = store.getState()
+  const {installLocations, defaultInstallLocation} = preferences
+  if (defaultInstallLocation === 'appdata') {
+    return path.join(app.getPath('userData'), 'downloads', '' + slug + ext.toLowerCase())
+  } else {
+    const location = installLocations[defaultInstallLocation]
+    return path.join(location.path, 'downloads', '' + slug + ext.toLowerCase())
+  }
 }
 
 export function globalDbPath () {

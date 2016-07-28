@@ -13,7 +13,7 @@ import ospath from 'path'
 import mklog from './log'
 const log = mklog('deploy')
 
-let pnoop = async () => null
+const pnoop = async function () {}
 
 let self = {
   /**
@@ -24,7 +24,7 @@ let self = {
    *   - Write receipt with list of files present in stage at deploy time
    *     (that receipt will be used on next deploy)
    */
-  deploy: async (opts) => {
+  deploy: async function (opts) {
     const {stagePath, destPath, onProgress = noop, onSingle = pnoop} = opts
     invariant(typeof stagePath === 'string', 'deploy needs string stagePath')
     invariant(typeof destPath === 'string', 'deploy needs string destPath')
