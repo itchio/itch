@@ -49,6 +49,7 @@ export default async function start (out, opts) {
       uploads: {[upload.id]: upload},
       installLocation,
       installFolder,
+      pathScheme: 2, // see pathmaker
       handPicked,
       fresh: true,
       downloadKey
