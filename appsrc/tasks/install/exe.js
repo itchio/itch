@@ -142,14 +142,14 @@ let self = {
       log(opts, `Could not run external sniff: ${e.message}`)
     }
 
+    log(opts, `lsar format name: '${detail}'`)
+
     if (!detail) return null
 
-    for (const needle of Object.keys(needles)) {
-      const format = needles[needle]
-      if (detail === format) {
-        log(opts, `externalSniff: found needle ${needle}`)
-        return format
-      }
+    const format = needles[detail]
+    if (format) {
+      log(opts, `recognized archive format ${format} (from ${detail})`)
+      return format
     }
 
     return null
