@@ -83,7 +83,7 @@ async function checkForSelfUpdate (store, action) {
   const uri = await getFeedURL()
 
   try {
-    const resp = await needle.requestAsync('GET', uri, {format: 'json'})
+    const resp = await needle.getAsync(uri, {format: 'json'})
 
     log(opts, `HTTP GET ${uri}: ${resp.statusCode}`)
     if (resp.statusCode === 200) {

@@ -42,6 +42,8 @@
     white-space: pre-wrap;
     overflow-y: auto;
 
+    -webkit-user-select: initial;
+
     li {
       margin: 4px 0;
       line-height: 1.4;

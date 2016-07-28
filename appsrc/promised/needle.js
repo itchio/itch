@@ -1,10 +1,14 @@
 
 import Promise from 'bluebird'
 import needle from 'needle'
+import invariant from 'invariant'
 
 import useragent from '../constants/useragent'
 
+const proxy = process.env.http_proxy || process.env.HTTP_PROXY
+
 needle.defaults({
+  proxy,
   user_agent: useragent
 })
 
@@ -39,27 +43,48 @@ function close () {
 
 'head get'.split(' ').forEach(function (method) {
   module.exports[method] = function (uri, options, callback) {
+    invariant(typeof uri === 'string', 'uri must be a string')
+    invariant(typeof options === 'object', 'options must be an object')
+    callback && invariant(typeof callback === 'function', 'callback must be a function')
+
     if (isOffline()) {
-      return close(uri, options, callback)
+      return close(uri, withProxy(options), callback)
     }
-    return needle[method](uri, options, callback)
+    return needle[method](uri, withProxy(options), callback)
   }
 })
 
 'post put patch delete'.split(' ').forEach(function (method) {
   module.exports[method] = function (uri, data, options, callback) {
+    invariant(typeof uri === 'string', 'uri must be a string')
+    invariant(typeof data === 'object', 'data must be an object')
+    invariant(typeof options === 'object', 'options must be an object')
+    callback && invariant(typeof callback === 'function', 'callback must be a function')
+
     if (isOffline()) {
-      return close(uri, data, options, callback)
+      return close(uri, data, withProxy(options), callback)
     }
-    return needle[method](uri, data, options, callback)
+    return needle[method](uri, data, withProxy(options), callback)
   }
 })
 
-module.exports.request = function (method, uri, data, opts, callback) {
+module.exports.request = function (method, uri, data, options, callback) {
+  invariant(typeof method === 'string', 'method must be a string')
+  invariant(typeof uri === 'string', 'uri must be a string')
+  invariant(typeof data === 'object', 'data must be an object')
+  invariant(typeof options === 'object', 'options must be an object')
+  callback && invariant(typeof callback === 'function', 'callback must be a function')
+
   if (isOffline()) {
-    return close(method, uri, data, opts, callback)
+    return close(method, uri, data, withProxy(options), callback)
   }
-  return needle.request(method, uri, data, opts, callback)
+  return needle.request(method, uri, data, withProxy(options), callback)
+}
+
+function withProxy (options) {
+  return { ...options, proxy }
 }
 
 Promise.promisifyAll(module.exports)
+
+module.exports.proxy = proxy
