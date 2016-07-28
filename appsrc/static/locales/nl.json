@@ -150,5 +150,9 @@
     "prompt.logout_title": "Uitloggen",
     "prompt.forget_session.action": "Sessie vergeten",
     "prompt.deb_policy.title": "APT pakketten worden niet ondersteund ",
-    "prompt.deb_policy.detail": "Itch kan alleen op draagbare versies van Linux toepassingen geinstalleerd worden."
+    "prompt.deb_policy.detail": "Itch kan alleen op draagbare versies van Linux toepassingen geinstalleerd worden.",
+    "action.name.manual": "Gebruikershandleiding",
+    "label.experimental": "Expirimenteel",
+    "collection.empty": "Deze collectie bevat geen spellen",
+    "desktop.shortcut.comment": "Installeer and speel itch.io spellen gemakkelijk"
 }
