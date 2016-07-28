@@ -13,14 +13,21 @@ const log = mklog('spawn')
 
 function spawn (opts) {
   const {emitter, command, args = [], split = '\n', onToken, onErrToken} = opts
-  const spawnOpts = opts.opts || {}
 
   invariant(typeof command === 'string', 'spawn needs string command')
-  invariant(typeof spawnOpts === 'object', 'spawn needs object opts')
   invariant(Array.isArray(args), 'spawn needs args array')
   invariant(typeof split === 'string', 'spawn needs string split')
   invariant(typeof onToken === 'function' || onToken === undefined, 'spawn needs onToken to be a function')
   invariant(typeof onErrToken === 'function' || onErrToken === undefined, 'spawn needs onErrToken to be a function')
+
+  const spawnOpts = {
+    ...(opts.opts || {}),
+    stdio: [
+      'ignore', // stdin
+      onToken ? 'pipe' : 'ignore', // stdout
+      onErrToken ? 'pipe' : 'ignore' // stderr
+    ]
+  }
 
   log(opts, `spawning ${command} with args ${args.join(' ')}`)
 
