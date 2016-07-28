@@ -131,7 +131,7 @@ let self = {
     })
     await deploy.deploy(deployOpts)
 
-    let cleanup = async () => {
+    const cleanup = async function () {
       log(opts, `Detaching cdr file ${cdrPath}`)
       code = await spawn({
         command: 'hdiutil',

@@ -9,31 +9,35 @@ runs on your computer, they're documented here.
 
 Everything is downloaded from our download server at `https://dl.itch.ovh`.
 
-Third-party software like `7za` or `file` have been built from sources or mirrored
-from software repositories we trust.
+Third-party programs like `unarchiver` or `firejail` are built from source.
+Home-grown programs are continuously built on our CI servers.
 
 ## Directories
 
 All dependencies are downloaded and extracted into the following folders:
 
-  * `C:\Users\FOOBAR\AppData\Roaming\itch\bin` on Windows
+  * `%APPDATA%\itch\bin` on Windows
   * `~/Library/Application Support/itch/bin` on OSX
   * `~/.config/itch/bin` on Linux
 
 ## Packages
 
-### 7-zip
+### unarchiver
 
-7-zip is a general-purpose compressor / decompressor toolkit distributed under
-the GNU LPGL: <http://www.7-zip.org/license.txt>
+The Unarchiver is a GUI application for OS/X that can extract a great number
+of archive formats. Its underlying compression engine is cross-platform and
+comes with command-line utilities.
 
-*The unrar restriction is the reason itch doesn't support the RAR format.*
+It is distributed by Dan Ågren under the [LGPL 2.1](https://bitbucket.org/WAHa_06x36/theunarchiver/src/d89b1d069727c3dd68939e29aa407b6f2051ef6b/License.txt?fileviewer=file-view-default)
 
 It's the first thing itch downloads, and the only uncompressed package we
 distribute. Subsequent dependencies are distributed in the `.7z` archive
 format, which helps us keep downloads fast.
 
   * e.g. a 15MB butler executable compresses down to a ~3MB .7z archive
+
+The version distributed on `dl.itch.ovh` is built from source and is digitally
+signed where applicable (windows, macOS).
 
 ### butler
 
@@ -55,7 +59,7 @@ You can drop your custom build of butler in the directories described in the
 [Directories](#directories) section of this page — if it reports version `head`,
 itch will not attempt to update it.
 
-### elevate
+### elevate ![](https://img.shields.io/badge/platform-windows-708090.svg)
 
 elevate is a homemade (itch.io-made) command-line tool. Its purpose is to allow
 launching external processes (such as game installers) with elevated privileges,
@@ -67,19 +71,16 @@ Its source code is available here, for you to audit, debug, and improve at will:
 
   * <https://github.com/itchio/elevate>
 
-### file
+### activate ![](https://img.shields.io/badge/platform-macOS-708090.svg)
 
-file(1) is a well-known unix command-line utility that exposes complex file sniffing
-logic, and lets itch detect certain kinds of archives-packed-as-executables.
+activate is a homemade (itch.io-made) command-line tool. Its purpose is to
+interact with macOS in ways that
 
-It is only installed if itch encounters a file that it doesn't know how to handle
-using more conventional means.
+Its source code is available here, for you to audit, debug, and improve at will:
 
-The version distributed on `dl.itch.ovh` is taken from the [MSYS2][] repositories.
+  * <https://github.com/itchio/activate>
 
-[MSYS2]: http://msys2.github.io/
-
-### firejail
+### firejail ![](https://img.shields.io/badge/platform-linux-708090.svg)
 
 firejail is a sandbox for Linux that have very few dependencies (except a 3.x
 kernel). It is used by the itch app to run games sandboxed, see [Linux sandboxing](/using/sandbox/linux.md)

@@ -1,5 +1,4 @@
 
-import path from 'path'
 import ibrew from '../util/ibrew'
 
 import {map} from 'underline'
@@ -25,7 +24,7 @@ async function setup (store) {
   log(opts, 'setup starting')
   await fetch(store, 'unarchiver')
   log(opts, 'unarchiver done')
-  await Promise.all(['butler', 'elevate', 'activate', 'firejail', 'file']::map((name) => fetch(store, name)))
+  await Promise.all(['butler', 'elevate', 'activate', 'firejail']::map((name) => fetch(store, name)))
   log(opts, 'all deps done')
   store.dispatch(actions.setupDone())
 }

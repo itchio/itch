@@ -2,7 +2,7 @@
 import StreamSearch from 'streamsearch'
 import os from '../../util/os'
 import sf from '../../util/sf'
-import file from '../../util/file'
+import spawn from '../../util/spawn'
 
 import mklog from '../../util/log'
 const log = mklog('installers/exe')
@@ -86,20 +86,20 @@ let self = {
   },
 
   builtinSniff: async function (opts, needles) {
-    let archivePath = opts.archivePath
+    const {archivePath} = opts
     let result = null
     let searches = []
 
-    let onInfo = (k, v, isMatch, data, start, end) => {
+    let onInfo = (needle, format, isMatch, data, start, end) => {
       if (!isMatch) return
-      log(opts, `builtinSniff: found needle ${v}`)
-      result = k
+      log(opts, `builtinSniff: found needle ${needle}`)
+      result = format
     }
 
-    for (let k of Object.keys(needles)) {
-      const v = needles[k]
-      const search = new StreamSearch(v)
-      search.on('info', onInfo::partial(k, v))
+    for (const needle of Object.keys(needles)) {
+      const format = needles[needle]
+      const search = new StreamSearch(needle)
+      search.on('info', onInfo::partial(needle, format))
       searches.push(search)
     }
 
@@ -118,26 +118,37 @@ let self = {
     // Boyer-Moore - longer strings means search is more efficient. That said,
     // we don't really use it to skip forward, it just allows us not to scan
     // entire buffers nodes gives us while reading the whole file
-    'inno': 'Inno Setup Setup Data',
-    'nsis': 'Nullsoft.NSIS.exehead',
-    'air': 'META-INF/AIR/application.xml'
+    'Inno Setup Setup Data': 'inno',
+    'Nullsoft.NSIS.exehead': 'nsis',
+    'META-INF/AIR/application.xml': 'air'
   },
 
   externalSniff: async function (opts, needles) {
-    let archivePath = opts.archivePath
+    const {archivePath} = opts
 
     // sample fileOutput:
     // ['PE32 executable (GUI) Intel 80386', 'for MS Windows', 'InstallShield self-extracting archive']
-    const fileOutput = await file(archivePath)
-    const detail = fileOutput[2]
+    const contents = await spawn.getOutput({
+      command: 'lsar',
+      args: ['-j', archivePath]
+    })
+
+    let detail
+
+    try {
+      const lsarInfo = JSON.parse(contents)
+      detail = lsarInfo.lsarFormatName
+    } catch (e) {
+      log(opts, `Could not run external sniff: ${e.message}`)
+    }
 
     if (!detail) return null
 
-    for (let k of Object.keys(needles)) {
-      const v = needles[k]
-      if (detail === v) {
-        log(opts, `externalSniff: found needle ${v}`)
-        return k
+    for (const needle of Object.keys(needles)) {
+      const format = needles[needle]
+      if (detail === format) {
+        log(opts, `externalSniff: found needle ${needle}`)
+        return format
       }
     }
 
@@ -146,7 +157,7 @@ let self = {
 
   externalNeedles: {
     // Just plain old regex being run on file(1)'s output
-    'archive': 'InstallShield self-extracting archive'
+    'Self-extracting CAB': 'archive'
   }
 }
 
