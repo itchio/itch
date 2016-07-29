@@ -167,6 +167,23 @@ $pref-border-color: $zambezi;
     padding: 0 0 5px 0;
   }
 
+  .proxy-settings {
+    display: flex;
+    align-items: center;
+    padding: 5px 0 5px 0;
+
+    .value {
+      min-width: 150px;
+      background: $explanation-color;
+      padding: 0 5px;
+      margin: 0 5px;
+      height: 32px;
+      line-height: 32px;
+      color: $ivory;
+      -webkit-user-select: initial;
+    }
+  }
+
   .install-locations {
     width: 100%;
     font-size: 14px;
