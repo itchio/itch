@@ -269,5 +269,15 @@
     "sidebar.featured": "Recomandări",
     "sidebar.itchio": "O poartă către universul jocurilor independente",
     "sidebar.history": "Istoric",
-    "sidebar.log_out": "Deconectare"
+    "sidebar.log_out": "Deconectare",
+    "sidebar.downloads": "Fişiere descărcate",
+    "sidebar.owned_subtitle": "Conţine ce ai cumpărat sau instalat",
+    "sidebar.preferences": "Preferinţe",
+    "sidebar.view_creator_profile": "Profilul creatorului",
+    "status.available": "E disponibilă o nouă versiune a aplicaţiei itch!",
+    "status.downloads.category.active": "Descărcare în curs",
+    "status.downloads.category.finished": "Fişiere descărcate complet",
+    "status.downloads.click_to_manage": "Gestiune fişiere descărcate",
+    "status.downloads.download_error": "Eroare la descărcare",
+    "status.downloads.no_active_downloads": "Nimic de descărcat"
 }
