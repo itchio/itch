@@ -25,14 +25,23 @@ async function preboot (store) {
     const proxySettings = await new Promise((resolve, reject) => {
       const {session} = require('electron')
       session.defaultSession.resolveProxy('https://itch.io', resolve)
+
+      setTimeout(function () {
+        reject(new Error('proxy resolution timed out'))
+      }, 1000)
     })
-    console.log(`Got proxy settings: '${proxySettings}'`)
+    log(opts, `Got proxy settings: '${proxySettings}'`)
     if (/PROXY /.test(proxySettings)) {
       const proxy = proxySettings.replace(/PROXY /, '')
-      require('../promised/needle').proxy = proxy
+      const needle = require('../promised/needle')
+
+      if (!needle.proxy) {
+        needle.proxy = proxy
+        needle.proxySource = 'os'
+      }
     }
   } catch (e) {
-    console.log(`Could not detect proxy settings: ${e.stack || e.message || e}`)
+    log(opts, `Could not detect proxy settings: ${e ? e.message : 'unknown error'}`)
   }
 
   store.dispatch(actions.boot())

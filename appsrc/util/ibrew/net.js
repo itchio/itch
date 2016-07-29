@@ -29,7 +29,7 @@ const CHECKSUM_ALGOS = [
 async function downloadToFile (opts, url, file) {
   let e = null
   let totalSize = 0
-  let req = needle.get(url, (err, res) => {
+  let req = needle.get(url, {}, (err, res) => {
     e = err
     if (res) {
       totalSize = parseInt(res.headers['content-length'], 10)
@@ -83,7 +83,7 @@ function channel (formulaName) {
 /** fetch latest version number from repo */
 async function getLatestVersion (channel) {
   const url = `${channel}/LATEST?${querystring.stringify({t: +new Date()})}`
-  const res = await needle.getAsync(url)
+  const res = await needle.getAsync(url, {})
 
   if (res.statusCode !== 200) {
     throw new Error(`got HTTP ${res.statusCode} while fetching ${url}`)
@@ -97,7 +97,7 @@ async function getChecksums (opts, channel, v, algo) {
   invariant(CHECKSUM_ALGOS::contains(algo), 'checksum algo needs to be known')
 
   const url = `${channel}/v${v}/${algo}SUMS`
-  const res = await needle.getAsync(url)
+  const res = await needle.getAsync(url, {})
 
   if (res.statusCode !== 200) {
     log(opts, `couldn't get hashes: HTTP ${res.statusCode}, for ${url}`)

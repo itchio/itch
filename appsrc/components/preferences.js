@@ -29,15 +29,8 @@ function getAppLogPath () {
 }
 
 export class Preferences extends Component {
-  constructor () {
-    super()
-    this.state = {
-      showAdvanced: false
-    }
-  }
-
   render () {
-    const {t, lang, sniffedLang = '', downloading, locales, isolateApps, closeToTray} = this.props
+    const {t, lang, sniffedLang = '', downloading, locales, isolateApps, closeToTray, showAdvanced} = this.props
     const {queueLocaleDownload, updatePreferences} = this.props
 
     const options = [{
@@ -51,7 +44,6 @@ export class Preferences extends Component {
     }
 
     const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itch/${lang || 'en'}/svg-badge.svg`
-    const {showAdvanced} = this.state
 
     return <div className='preferences-meat'>
       <h2>{t('preferences.language')}</h2>
@@ -105,7 +97,7 @@ export class Preferences extends Component {
       <h2>{t('preferences.install_locations')}</h2>
       {this.installLocationTable()}
 
-      <h2 className='toggle' onClick={(e) => this.setState({showAdvanced: !this.state.showAdvanced})}>
+      <h2 className='toggle' onClick={(e) => updatePreferences({showAdvanced: !showAdvanced})}>
         <span className={`icon icon-triangle-right turner ${showAdvanced ? 'turned' : ''}`}/>
         {' '}
         {t('preferences.advanced')}
@@ -228,6 +220,7 @@ const mapStateToProps = createStructuredSelector({
   sniffedLang: (state) => state.system.sniffedLang,
   isolateApps: (state) => state.preferences.isolateApps,
   closeToTray: (state) => state.preferences.closeToTray,
+  showAdvanced: (state) => state.preferences.showAdvanced,
   installLocations: createSelector(
     (state) => state.preferences.installLocations,
     (state) => state.preferences.defaultInstallLocation,

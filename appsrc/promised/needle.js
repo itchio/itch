@@ -6,6 +6,7 @@ import invariant from 'invariant'
 import useragent from '../constants/useragent'
 
 const proxy = process.env.http_proxy || process.env.HTTP_PROXY
+const proxySource = proxy ? 'env' : null
 
 needle.defaults({
   proxy,
@@ -44,7 +45,7 @@ function close () {
 'head get'.split(' ').forEach(function (method) {
   module.exports[method] = function (uri, options, callback) {
     invariant(typeof uri === 'string', 'uri must be a string')
-    invariant(typeof options === 'object', 'options must be an object')
+    options && invariant(typeof options === 'object', 'options must be an object')
     callback && invariant(typeof callback === 'function', 'callback must be a function')
 
     if (isOffline()) {
@@ -58,7 +59,7 @@ function close () {
   module.exports[method] = function (uri, data, options, callback) {
     invariant(typeof uri === 'string', 'uri must be a string')
     invariant(typeof data === 'object', 'data must be an object')
-    invariant(typeof options === 'object', 'options must be an object')
+    options && invariant(typeof options === 'object', 'options must be an object')
     callback && invariant(typeof callback === 'function', 'callback must be a function')
 
     if (isOffline()) {
@@ -91,3 +92,4 @@ function withProxy (options) {
 Promise.promisifyAll(module.exports)
 
 module.exports.proxy = proxy
+module.exports.proxySource = proxySource

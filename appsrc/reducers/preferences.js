@@ -11,7 +11,8 @@ const initialState = {
   defaultInstallLocation: 'appdata',
   sidebarWidth: 240,
   isolateApps: false,
-  closeToTray: true
+  closeToTray: true,
+  showAdvanced: false
 }
 
 export default handleActions({
