@@ -11,6 +11,7 @@ let prebootTime
 let bootTime
 let loginTime
 let pageTime
+let done = false
 
 async function preboot (store, action) {
   prebootTime = Date.now()
@@ -25,6 +26,11 @@ async function loginSucceeded (store, action) {
 }
 
 async function firstUsefulPage (store, action) {
+  if (done) {
+    return
+  }
+  done = true
+
   pageTime = Date.now()
   log(opts, `preboot -> boot        = ${moment().diff(prebootTime, bootTime)} ms`)
   log(opts, `boot    -> login       = ${moment().diff(bootTime, loginTime)} ms`)

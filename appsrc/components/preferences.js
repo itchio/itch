@@ -21,6 +21,9 @@ import {map, each, filter} from 'underline'
 
 import diskspace from '../util/diskspace'
 
+// XXX bad, but we'll live
+const needle = require('electron').remote.require('./promised/needle')
+
 function getAppLogPath () {
   const logOpts = require('electron').remote.require('./logger')
   const logPath = logOpts.logger.opts.sinks.file
@@ -103,16 +106,33 @@ export class Preferences extends Component {
         {t('preferences.advanced')}
       </h2>
       {showAdvanced
-      ? <p className='explanation'>
-        <span className='app-version'>
-        {versionString()}
-        </span>
-        <span className='link' onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()) }}>
-          {t('preferences.advanced.open_app_log')}
-        </span>
-      </p>
+      ? this.renderPreferences()
       : ''}
     </div>
+  }
+
+  renderPreferences () {
+    const {t} = this.props
+
+    return <p className='explanation'>
+      <span className='app-version'>
+      {versionString()}
+      </span>
+      <span className='proxy-settings'>
+        {t('preferences.proxy_server_address')}
+        {needle.proxy
+          ? <span className='value hint--right' data-hint={t(`preferences.proxy_server_source.${needle.proxySource}`)}>
+            {needle.proxy}
+          </span>
+          : <span className='value'>
+            {t('preferences.proxy_server_source.direct')}
+          </span>
+        }
+      </span>
+      <span className='link' onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()) }}>
+        {t('preferences.advanced.open_app_log')}
+      </span>
+    </p>
   }
 
   onLanguageChange (lang) {

@@ -6,7 +6,7 @@ import invariant from 'invariant'
 import useragent from '../constants/useragent'
 
 const proxy = process.env.http_proxy || process.env.HTTP_PROXY
-const proxySource = proxy ? 'env' : null
+const proxySource = proxy ? 'env' : 'direct'
 
 needle.defaults({
   proxy,
