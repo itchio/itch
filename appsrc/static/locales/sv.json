@@ -339,5 +339,9 @@
     "usage_stats.never_opened": "Aldrig öppnad",
     "usage_stats.never_played": "Aldrig spelad",
     "usage_stats.never_used": "Aldrig använd",
-    "sidebar.featured": "Featured"
+    "sidebar.featured": "Featured",
+    "preferences.proxy_server_address": "HTTP Proxy",
+    "preferences.proxy_server_source.direct": "Direkt (ingen proxy)",
+    "preferences.proxy_server_source.env": "Ställ in miljövariabel",
+    "preferences.proxy_server_source.os": "Använder systeminställningar"
 }
