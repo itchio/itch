@@ -270,5 +270,7 @@
     "grid.hidden_count": "+ {{count}} von Filtern versteckte Elemente",
     "grid.item.share": "Teilen",
     "action.name.play": "Jetzt spielen",
-    "action.name.manual": "Benutzerhandbuch"
+    "action.name.manual": "Benutzerhandbuch",
+    "grid.criterion.only_compatible": "Nur kompatible",
+    "grid.item.downloads_paused": "Downloads pausiert"
 }
