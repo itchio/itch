@@ -1,5 +1,8 @@
 
-(Placeholder)
+# User preferences
+
+User preferences can be accessed from the user menu, or by using the keyboard
+shortcut `Ctrl+,` (`Command+,` on macOS).
 
 Prefs are app-wide (for all users), so users share language, install locations,
 etc., settings are *local* (not saved in the cloud), distinct from itch.io

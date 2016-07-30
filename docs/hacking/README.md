@@ -12,4 +12,3 @@ for future itch.io team members and external contributors.
 And finally:
 
   * [Continuous deployment](./continuous-deployment.md) describes our entire deployment pipeline, along with details on our parallel test versions.
-  * [QA checklist](./qa-checklist) is a perpetually-incomplete list of things to check for when testing a new build before release.
