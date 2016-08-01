@@ -197,7 +197,7 @@
     "grid.item.open_demo": "Åpne demo",
     "grid.item.open_debug_log": "Åpne feilsøkingslogg",
     "grid.item.show_local_files": "Vis lokale filer",
-    "grid.item.donate": "Gi skaperen driks",
+    "grid.item.donate": "Driks til skaperen",
     "grid.item.donate_again": "Gi skaperen driks igjen!",
     "grid.item.downloads_paused": "Nedlastinger pauset",
     "grid.item.version": "Versjon {{version}}",
