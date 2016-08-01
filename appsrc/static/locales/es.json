@@ -281,7 +281,7 @@
     "usage_stats.description.free_download": "Descarga gratuita",
     "usage_stats.description.game": "Un juego",
     "usage_stats.description.game_mod": "Una modificación del juego",
-    "usage_stats.description.other": "una cosa",
+    "usage_stats.description.other": "Una cosa",
     "usage_stats.description.physical_game": "Un juego físico",
     "usage_stats.description.platforms": "para {{platforms}}",
     "usage_stats.description.price": "Disponible por {{price}} o más",
