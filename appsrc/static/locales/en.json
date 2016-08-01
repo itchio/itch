@@ -146,7 +146,7 @@
     "sandbox.setup.title": "One-time sandbox setup",
     "sandbox.setup.proceed": "Proceed",
     "sandbox.setup.windows.message": "In order to run games in the itch.io sandbox, a one-time setup procedure needs to be run as Administrator.",
-    "sandbox.setup.windows.detail": "After clicking 'Proceed', a permission prompt will pop up, asking you for your approval. This will add an `itch-player` user account to shield your games from the rest of you system.",
+    "sandbox.setup.windows.detail": "After clicking 'Proceed', a permission prompt will pop up, asking you for your approval. This will add an `itch-player` user account to shield your games from the rest of your system.",
     "sandbox.setup.linux.message": "In order to run games in the itch.io sandbox, a one-time setup script has to be run as root.",
     "sandbox.setup.linux.detail": "After clicking 'Proceed', a prompt will pop up, asking you for your password. This is only needed for the first sandbox launch, and your password is never seen nor recorded by itch.",
     "preferences.security": "Security & privacy",
