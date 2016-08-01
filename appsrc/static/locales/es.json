@@ -336,7 +336,7 @@
     "preferences.advanced.open_app_log": "Abrir registro de la aplicación",
     "pick_install_upload.title": "Múltiples descargas están disponibles para {{title}}",
     "pick_install_upload.message": "¿Que archivo quieres descargar para {{title}}?",
-    "pick_install_upload.detail": "Te preguntaremos otra vez cuando haya nuevas descargas disponibles.",
+    "pick_install_upload.detail": "Te preguntaremos otra vez cuando haya una nueva versión disponible.",
     "pick_update_upload.title": "Se encontraron actualizaciones para {{title}}",
     "pick_update_upload.message": "¿Que archivo quieres para actualizar de {{title}}?",
     "pick_update_upload.detail": "Sólo te preguntamos porque escogiste un archivo manualmente al momento de instalar.",
