@@ -44,7 +44,7 @@
     "menu.edit.select_all": "Seleccionar todo",
     "menu.file.close_window": "Cerrar ventana",
     "menu.file.file": "Archivo",
-    "menu.file.preferences": "Preferencias",
+    "menu.file.preferences": "Preferencias...",
     "menu.file.quit": "Salir",
     "menu.help.check_for_update": "Buscar actualizaciones",
     "menu.help.help": "Ayuda",
@@ -327,7 +327,7 @@
     "sandbox.setup.title": "Configuración única de aislamiento de procesos",
     "sandbox.setup.proceed": "Seguir",
     "sandbox.setup.windows.message": "Para poder iniciar juegos con el aislamiento de procesos de itch, se necesita realizar un procedimiento único que debe ejecutarse como Administrador.",
-    "sandbox.setup.windows.detail": "Despues de hacer clic en 'Seguir', un aviso de UAC aparecerá, consultándote para que lo apruebes. El mismo agregará una cuenta de usuario llamada 'itch-player' para blindar tus juegos del resto de tu sistema.",
+    "sandbox.setup.windows.detail": "Después de hacer clic en 'Seguir', un aviso de UAC aparecerá, consultándote para que lo apruebes. El mismo agregará una cuenta de usuario llamada 'itch-player' para blindar tus juegos del resto de tu sistema.",
     "sandbox.setup.linux.message": "Para poder iniciar juegos en el aislamiento de procesos de itch, se necesita ejecutar un script como root.",
     "sandbox.setup.linux.detail": "Luegos de hacer clic en 'Seguir', un aviso aparecerá, preguntandote por tu clave. Sólo lo pedirá la primera vez que se inicie el aislamiento de procesos de itch, y tu clave nunca es vista o guardada por itch.",
     "preferences.behavior": "Comportamiento",
@@ -346,5 +346,6 @@
     "sidebar.aw_snap": "¡Oh, no!",
     "sidebar.close_all_tabs": "Cerrar todas las pestañas",
     "status.downloads.category.active": "Descarga activa",
-    "status.downloads.category.queued": "Descargas en cola"
+    "status.downloads.category.queued": "Descargas en cola",
+    "menu.file.new_tab": "Nueva pestaña"
 }
