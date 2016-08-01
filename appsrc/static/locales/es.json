@@ -347,5 +347,9 @@
     "sidebar.close_all_tabs": "Cerrar todas las pestañas",
     "status.downloads.category.active": "Descarga activa",
     "status.downloads.category.queued": "Descargas en cola",
-    "menu.file.new_tab": "Nueva pestaña"
+    "menu.file.new_tab": "Nueva pestaña",
+    "preferences.proxy_server_address": "Proxy HTTP",
+    "preferences.proxy_server_source.direct": "Directo (sin proxy)",
+    "preferences.proxy_server_source.env": "Configurado por la variable de entorno",
+    "preferences.proxy_server_source.os": "Usando configuración de sistema"
 }
