@@ -293,5 +293,7 @@
     "usage_stats.never_used": "Nunca utilizado",
     "action.name.play": "Jogar",
     "action.name.manual": "Manual do Usuário",
-    "action.name.editor": "Editor"
+    "action.name.editor": "Editor",
+    "download.started": "Inicializado",
+    "grid.clear_filters": "Limpar filtros"
 }
