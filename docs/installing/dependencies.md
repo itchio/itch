@@ -74,7 +74,7 @@ Its source code is available here, for you to audit, debug, and improve at will:
 ### activate ![](https://img.shields.io/badge/platform-macOS-708090.svg)
 
 activate is a homemade (itch.io-made) command-line tool. Its purpose is to
-interact with macOS in ways that
+interact with macOS in ways that are not possible directly from [Electron](http://electron.atom.io/).
 
 Its source code is available here, for you to audit, debug, and improve at will:
 
