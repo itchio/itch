@@ -273,5 +273,6 @@
     "grid.item.donate": "Spende an den Ersteller",
     "grid.item.donate_again": "Weitere Spende an den Ersteller!",
     "browser.popout": "Seite in externem Browser öffnen",
-    "action.name.editor": "Editor"
+    "action.name.editor": "Editor",
+    "action.name.forums": "Foren"
 }
