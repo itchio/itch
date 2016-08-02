@@ -4,7 +4,7 @@
 
 This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md).
 By participating, you are expected to uphold this code. Please report unacceptable
-behavior to support@itch.io.
+behavior to [support@itch.io](mailto:support@itch.io).
 
 The following is a set of guidelines for contributing to itch.
 These are just guidelines, not rules, use your best judgment and feel free to
@@ -58,4 +58,3 @@ possible with your report. If you can, please include:
   * :arrow_up: `:arrow_up:` when upgrading dependencies
   * :arrow_down: `:arrow_down:` when downgrading dependencies
   * :shirt: `:shirt:` when removing linter warnings
-

@@ -8,7 +8,7 @@ so that you may bundle them with your game.
 
 *See the [Distributing Linux builds][linux-dist] page of this book*
 
-[linux-dist]: ../integrating/linux.md
+[linux-dist]: ../integrating/platforms/linux.md
 
 ## autotools (./configure && make)
 

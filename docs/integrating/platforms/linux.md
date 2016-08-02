@@ -211,7 +211,7 @@ versions of your executables and all required libraries.
 Take an old Debian (7.x for example), build your dependencies yourself in a
 prefix, and you'll be sure your game can run almost anywhere. You can refer to
 the [Building Linux software into a
-prefix](../appendix/building-into-a-prefix.md ) appendix to learn more about how
+prefix](../../appendix/building-into-a-prefix.md ) appendix to learn more about how
 and why do it.
 
 #### Building in chroots
