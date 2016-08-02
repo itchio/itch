@@ -31,7 +31,6 @@ import tasks from './tasks'
 import dialogs from './dialogs'
 import report from './report'
 import perf from './perf'
-import packagingPolicy from './packaging-policy'
 import modals from './modals'
 
 export default validateReactors({
@@ -149,8 +148,6 @@ export default validateReactors({
 
   CLEAR_FILTERS: combine(navigation.clearFilters),
 
-  SHOW_PACKAGING_POLICY: combine(packagingPolicy.showPackagingPolicy),
-
   CLOSE_TAB_OR_AUX_WINDOW: combine(mainWindow.closeTabOrAuxWindow),
   QUIT_WHEN_MAIN: combine(mainWindow.quitWhenMain),
   QUIT_ELECTRON_APP: combine(mainWindow.quitElectronApp),
@@ -189,6 +186,5 @@ assertAllCombined(
   dialogs,
   report,
   perf,
-  packagingPolicy,
   modals
 )

@@ -10,8 +10,6 @@ const log = mklog('tasks/find-upload')
 
 import client from '../util/api'
 
-import * as actions from '../actions'
-
 import ClassificationActions from '../constants/classification-actions'
 
 export function filterUploadsByPlatform (action, uploads) {
@@ -105,8 +103,7 @@ export default async function start (out, opts) {
       const format = ospath.extname(unwelcomeUpload.filename).replace(/^\./, '').toLowerCase()
       log(opts, `Found upload that's platform-compatible but format-incompatible: ${JSON.stringify(unwelcomeUpload, 0, 2)}`)
       if (['deb', 'rpm'].indexOf(format) !== -1) {
-        const store = require('../store').default
-        store.dispatch(actions.showPackagingPolicy({format, gameId}))
+        log(opts, `Known incompatible format ${format}`)
       } else {
         log(opts, `Unknown incompatible format ${format}, not reporting`)
       }

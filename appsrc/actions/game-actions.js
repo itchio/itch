@@ -23,9 +23,7 @@ import {
   ABORT_GAME,
 
   CHECK_FOR_GAME_UPDATE,
-  CHECK_FOR_GAME_UPDATES,
-
-  SHOW_PACKAGING_POLICY
+  CHECK_FOR_GAME_UPDATES
 } from '../constants/action-types'
 
 export const queueGame = createAction(QUEUE_GAME)
@@ -50,5 +48,3 @@ export const abortGame = createAction(ABORT_GAME)
 
 export const checkForGameUpdate = createAction(CHECK_FOR_GAME_UPDATE)
 export const checkForGameUpdates = createAction(CHECK_FOR_GAME_UPDATES)
-
-export const showPackagingPolicy = createAction(SHOW_PACKAGING_POLICY)
