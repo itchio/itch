@@ -27,8 +27,14 @@
 
 * [Contributor guide](hacking/README.md)
   * [How you can help](hacking/help.md)
+    * [Getting started with the codebase](hacking/getting-started.md)
+    * [Data flow](hacking/data-flow.md)
+    * [Coding style](hacking/coding-style.md)
+    * [Environment variables](hacking/environment-variables.md)
   * [Behind the scenes](hacking/behind-the-scenes.md)
     * [Continuous deployment](hacking/continuous-deployment.md)
     * [Dependencies (ibrew)](installing/dependencies.md)
 
 * [Appendix](appendix/README.md)
+  * [Acknowledgements](appendix/acknowledgements.md)
+  * [Building Linux software into a prefix](appendix/building-into-a-prefix.md)

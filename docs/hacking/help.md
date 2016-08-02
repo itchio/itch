@@ -49,10 +49,10 @@ in-app on update).
 
 Here are some pointers to get started with the codebase:
 
-  * [Getting started](hacking/getting-started.md)
-  * [Data flow](hacking/data-flow.md)
-  * [Coding style](hacking/coding-style.md)
-  * [Environment variables](hacking/environment-variables.md)
+  * [Getting started](getting-started.md)
+  * [Data flow](data-flow.md)
+  * [Coding style](coding-style.md)
+  * [Environment variables](environment-variables.md)
 
 ## Contribute code
 

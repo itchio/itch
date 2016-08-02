@@ -20,4 +20,4 @@ by users who have purchased a legitimae copy of your game, and to all press user
 For more information, refer to the **API key** part of the [app manifest](../manifest.md) page.
 
 *Note: our API offering will continue to expand over time. If you have particular needs
-for your game's release, don't hesitate to get in touch with us at <support@itch.io>*
+for your game's release, don't hesitate to get in touch with us at [support@itch.io](mailto:support@itch.io)*
