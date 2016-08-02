@@ -3,6 +3,5 @@
   "description": "A complete guide to the itch app, both for players and tinkerers",
   "author": "Amos Wenger",
   "language": "en",
-  "gitbook": "3.2.0",
-  "plugins": ["anchors"]
+  "gitbook": "3.2.0"
 }

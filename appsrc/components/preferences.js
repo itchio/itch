@@ -106,12 +106,12 @@ export class Preferences extends Component {
         {t('preferences.advanced')}
       </h2>
       {showAdvanced
-      ? this.renderPreferences()
+      ? this.renderAdvanced()
       : ''}
     </div>
   }
 
-  renderPreferences () {
+  renderAdvanced () {
     const {t} = this.props
 
     return <p className='explanation'>
@@ -128,6 +128,10 @@ export class Preferences extends Component {
             {t('preferences.proxy_server_source.direct')}
           </span>
         }
+        {' '}
+        <a href={urls.sandboxDocs}>
+          {t('docs.learn_more')}
+        </a>
       </span>
       <span className='link' onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()) }}>
         {t('preferences.advanced.open_app_log')}
