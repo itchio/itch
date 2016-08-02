@@ -28,6 +28,7 @@ Object.assign(self, {
   rarPolicy: `${self.itchio}/t/11918/rar-support-is-not-happening-repack-your-games`,
   debPolicy: `${self.itchio}/t/13882/deb-and-rpm-arent-supported-by-itch-please-ship-portable-linux-builds`,
   rpmPolicy: `${self.itchio}/t/13882/deb-and-rpm-arent-supported-by-itch-please-ship-portable-linux-builds`,
+  sandboxDocs: `${self.manual}/sandbox`,
   linuxSandboxSetup: `${self.manual}/sandbox/linux#one-time-setup`,
   windowsSandboxSetup: `${self.manual}/sandbox/windows#one-time-setup`,
   releasesPage: `${self.itchRepo}/releases`

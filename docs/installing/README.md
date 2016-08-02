@@ -10,7 +10,7 @@ you might miss out on if you rely on the main download page. To learn more about
 please refer to the following pages:
 
   * [Installing on Windows](windows.md)
-  * [Installing on Mac OSX](osx.md)
+  * [Installing on Mac OSX](macos.md)
   * [Installing on Linux](linux/README.md)
 
 Release notes for all versions are available [on GitHub](https://github.com/itchio/itch/releases).
@@ -23,3 +23,8 @@ it's ready to be restarted, with a list of changes:
 On Linux, you currently have to download and install a newer package yourself,
 except if you're using our .deb or .rpm repository, although we are [working
 on an alternative](https://github.com/fasterthanlime/Marmot.Linux)
+
+You can check the currently running version of the app by hovering the `itch`
+logo in the top-left corner, or by opening the user menu (bottom-left). Older
+versions of the app only show it in the `Help` menu, which you can make appear
+by pressing the Alt key, on platforms where it's hidden by default.

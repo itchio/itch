@@ -27,17 +27,6 @@ fetches from Github and pushes to Gitlab on-demand:
 
   * <https://github.com/fasterthanlime/git-mirror>
 
-### Known issues with git mirroring
-
-Force-pushing a tag (to re-build a version that isn't published yet) doesn't seem
-to result in `git-mirror` getting pinged, and for now, Amos has to manually
-ssh into the server and run the `git pull / push` commands.
-
-This happens rarely enough for Amos not to be looking hard for a solution right now
-but if anyone reading this knows why this happens, he's [all ears][@ftl]
-
-[@ftl]: https://twitter.com/fasterthanlime
-
 ## Build scripts
 
 Gitlab CI has a simple YAML configuration file, similar to Travis CI.
@@ -61,7 +50,7 @@ a branch, like `master`, or a tag, like `v0.14.0-canary`.
 
 As a result, the bleeding-edge version of this book is always available at:
 
-  * <https://docs.itch.ovh/itch/master>
+  * <https://itch.io/docs/itch>
 
 ### Unit tests & linting
 
@@ -163,7 +152,7 @@ Support/kitch`).
 
 It can be downloaded either:
 
-  * From the update server: <http://nuts-canary.itch.ovh/download>
+  * From the update server: <https://nuts-canary.itch.ovh/download>
   * Directly from the releases page: <https://github.com/itchio/kitch/releases>
 
 *Note that releases appear out-of-order on the releases page, because GitHub
