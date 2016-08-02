@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "colors": "^1.1.2"
+    "colors": "^1.1.2",
+    "munyx": "^1.0.0"
   }
 }
