@@ -129,7 +129,7 @@ export class Preferences extends Component {
           </span>
         }
         {' '}
-        <a href={urls.sandboxDocs}>
+        <a href={urls.proxyDocs}>
           {t('docs.learn_more')}
         </a>
       </span>
