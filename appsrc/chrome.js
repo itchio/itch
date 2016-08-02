@@ -7,7 +7,6 @@ import './boot/bluebird'
 import './boot/fs'
 import './boot/env'
 import './boot/sniff-language'
-import './boot/safe-react'
 
 import os from './util/os'
 
