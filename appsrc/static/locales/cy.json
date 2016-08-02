@@ -38,8 +38,6 @@
     "prompt.no_compatible_version.message": "Ni allwn ddod o hyd i fersiwn o {{title}} i {{platform}}.",
     "prompt.no_compatible_version.title": "{{title}} ar {{platform}}",
     "prompt.payments_disabled.message": "Yn anffodus, nid yw'r datblygwr o {{title}} yn derbyn taliadau am y teitl yma.",
-    "prompt.rar_policy.learn_more": "Dysgwch fwy",
-    "prompt.rar_policy.title": "Nid yw RAR yn cael ei gefnogi",
     "prompt.url_install.credit": "{{classification}} gan {{username}}",
     "prompt.url_install.message": "Ydych eisiau gosod {{title}}?",
     "sidebar.dashboard": "Fy nghreadigaethau",
