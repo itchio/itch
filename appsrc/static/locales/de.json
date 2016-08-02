@@ -274,5 +274,8 @@
     "grid.criterion.only_compatible": "Nur kompatible",
     "grid.item.downloads_paused": "Downloads pausiert",
     "grid.clear_filters": "Filter entfernen",
-    "grid.item.launch_demo": "Demo starten"
+    "grid.item.launch_demo": "Demo starten",
+    "grid.item.donate": "Spende an den Ersteller",
+    "grid.item.donate_again": "Weitere Spende an den Ersteller!",
+    "browser.popout": "Seite in externem Browser öffnen"
 }
