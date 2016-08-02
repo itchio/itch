@@ -251,7 +251,7 @@
     "preferences.advanced.open_app_log": "Åpne applikasjonslogg",
     "pick_update_upload.message": "Hvilken fil vil du oppdatere til for {{title}}?",
     "pick_update_upload.detail": "Vi spør kun fordi du valgte å håndplukke en fil når du installerte.",
-    "prompt.action.force_close": "Tving avslutning.",
+    "prompt.action.force_close": "Tving avslutning",
     "prompt.forget_session.detail": "Du kan alltids legge det til igjen senere.",
     "prompt.forget_session.message": "Er du sikker på at du vil fjerne '{{username}}' fra dine lagrede økter?",
     "prompt.forget_session.title": "Glem økt",
