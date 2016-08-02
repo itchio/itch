@@ -349,5 +349,9 @@
     "download.started": "Démarré",
     "download.reason.install": "pour une première installation",
     "download.reason.update": "pour une mise à jour",
-    "menu.file.new_tab": "Nouvel onglet"
+    "menu.file.new_tab": "Nouvel onglet",
+    "preferences.proxy_server_address": "Proxy HTTP",
+    "preferences.proxy_server_source.direct": "Direct (pas de proxy)",
+    "preferences.proxy_server_source.env": "Configuré par variable d'environment",
+    "preferences.proxy_server_source.os": "D'après les paramètres du système"
 }
