@@ -8,3 +8,6 @@ publishing a game requires.
 
 While this book is focused on the itch app, we felt like some subjects slightly
 beyond the scope of the app deserved their own section.
+
+  * [Acknowledgements](./acknowledgements.md)
+  * [Building Linux software into a prefix](./building-into-a-prefix.md)

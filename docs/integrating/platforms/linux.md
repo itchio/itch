@@ -20,9 +20,7 @@ upload to itch.io, the app will install and run them, no questions asked.
 For Unity in particular, you can use the 'Universal' export option that is similar
 to the manual method described below:
 
-![](unity-linux-export.png)
-
-*Image credits: [@atmospherium][] on [Ludum Dare][ldue]*
+<img style="max-width: 400px;" src="unity-linux-export.png">
 
 [@atmospherium]: http://twitter.com/atmospherium
 [ldue]: http://ludumdare.com/compo/2013/12/28/unity-export-for-linux-addendum-64-bit/
@@ -271,4 +269,3 @@ installation method in the itch app.
 
 *Special thanks to Ethan Lee for proofreading this page and contributing advice.
 See the Acknowledgements section of this book for a full list of contributors.*
-

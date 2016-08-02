@@ -84,7 +84,7 @@ export class Preferences extends Component {
       <p className='explanation'>
         {t('preferences.security.sandbox.description')}
         {' '}
-        <a href='https://github.com/itchio/itch/issues/670'>
+        <a href={urls.sandboxDocs}>
           {t('docs.learn_more')}
         </a>
       </p>

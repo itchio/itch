@@ -1,48 +1,55 @@
 
 # How updates work
 
-Up to version v0.13.x, the itch app only looked for game updates on startup.
+The itch app looks for game updates on start-up, and every 30 minutes.
 
-From v0.14.x on, it looks for updates regularly.
+If there's only one candidate (a single file tagged `windows` for example),
+it gets downloaded and installed immediately. Otherwise, the user is prompted
+to pick from a list.
 
-File names aren't parsed for version numbers — instead, the topmost file wins,
-with the following caveats:
+For updates, the same logic applies: if the user had to pick between multiple
+alternatives, the app will ask them to pick again whenew files are available.
 
-  * `.7z` files are preferred to `.zip`
-  * `.zip` files are preferred to `.exe`
-  * `.rpm` and `.deb` files are never even considered
-  * Untagged (platform-less) uploads are ignored by the app, cf.
+Otherwise, it'll update automatically to the newer version of the only
+candidate.
 
 ## Uploading a new version
+
+The best way to upload a new version of your game is to use [butler](https://itch.io/docs/butler),
+our command-line uploader. It's faster both for you and for your players, as butler
+will only upload the differences from the older version.
+
+Read [Pushing builds with butler](https://itch.io/docs/butler/pushing.html) to
+get up and running in no time.
+
+When updating a game uploaded with butler, the app will only download a small patch.
+Since it's a command-line tool, you can easily integrate it into your release workflow
+
+## Uploading a new version (alternative)
+
+If for some reason you can't or won't use butler, you can upload a new file
+to itch.io using the web interface.
 
 For now, when uploading a new file on itch.io:
 
   * Uploading a file with the exact same name will:
     * Replace the previous one
     * Keep the stats (download count)
-    * Temporarily make that download unavailable, while it's being uploaded
+    * Temporarily make that download unavailable, while it's being uploaded (known issue)
+
   * Uploading a new file and deleting the old one will lose the stats,
   but there'll be no downtime.
     * Don't forget to tag it with the right platform again
     * Alternatively, 'hiding' the old download will allow you to keep the stats
     for a while.
 
-Needless to say, this process isn't ideal for often-updated games, and a proper
-versioning system is coming.
-
-We're working on a set of open-source diff/patching tools. The first
-public announcement is [on the itch.io community forums](https://itch.io/post/16715),
-and you can help us test them right now.
+Needless to say, this process isn't ideal for often-updated games, and we
+recommand using [butler](https://itch.io/docs/butler) instead.
 
 ## How an update is applied
 
-The app follows the these steps:
+When applying an update, files that were in the previous version but disappeared
+in the new version are removed from the install folder.
 
-  * The new version is extracted in a temporary folder
-  * The new and old versions are compared
-  * Files that were in the previous version but disappeared in the new version
-  are removed from the install target
-  * The temporary folder is merged with the install target
-
-If the game creates files (savefiles, user profiles, etc.) during runtime,
+That way, if the game creates files (savefiles, user profiles, etc.) during runtime,
 this will retain them, while removing obsolete data or binary files.
