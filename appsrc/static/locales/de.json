@@ -274,5 +274,7 @@
     "grid.item.donate_again": "Weitere Spende an den Ersteller!",
     "browser.popout": "Seite in externem Browser öffnen",
     "action.name.editor": "Editor",
-    "action.name.forums": "Foren"
+    "action.name.forums": "Foren",
+    "collection.empty": "Diese Sammlung enthält noch keine Spiele",
+    "download.started": "Gestartet"
 }
