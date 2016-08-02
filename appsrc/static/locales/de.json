@@ -272,5 +272,6 @@
     "action.name.play": "Jetzt spielen",
     "action.name.manual": "Benutzerhandbuch",
     "grid.criterion.only_compatible": "Nur kompatible",
-    "grid.item.downloads_paused": "Downloads pausiert"
+    "grid.item.downloads_paused": "Downloads pausiert",
+    "grid.clear_filters": "Filter entfernen"
 }
