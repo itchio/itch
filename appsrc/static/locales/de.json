@@ -276,5 +276,6 @@
     "action.name.editor": "Editor",
     "action.name.forums": "Foren",
     "collection.empty": "Diese Sammlung enthält noch keine Spiele",
-    "download.started": "Gestartet"
+    "download.started": "Gestartet",
+    "download.reason.update": "um auf die neueste Version zu aktualisieren"
 }
