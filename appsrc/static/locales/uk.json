@@ -61,7 +61,6 @@
     "prompt.no_compatible_version.title": "{{title}} на {{platform}}", 
     "prompt.payments_disabled.open_web_page": "Відкрити сторінку", 
     "prompt.payments_disabled.title": "Платежі вимкнено", 
-    "prompt.rar_policy.learn_more": "Дізнатися більше", 
     "prompt.url_install.title": "Запит встановлення", 
     "sidebar.getting_started": "Початок роботи", 
     "status.checking": "Пошук оновлень...", 
