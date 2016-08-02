@@ -340,5 +340,7 @@
     "preferences.proxy_server_source.direct": "Direkte (ingen mellomtjener)",
     "preferences.proxy_server_source.env": "Sett fra miljøvariabel",
     "preferences.proxy_server_source.os": "Bruker systeminnstillinger",
-    "usage_stats.description.soundtrack": "Et lydspor"
+    "usage_stats.description.soundtrack": "Et lydspor",
+    "sandbox.setup.windows.detail": "Når du har trykket 'Fortsett' vil du bli spurt om godkjennelse. Dette vil opprette en 'itch-player'-brukerkonto for å skjerme spillene dine fra resten av systemet ditt.",
+    "status.history.no_active_items": "Ingenting i historikken krever din oppmerksomhet."
 }
