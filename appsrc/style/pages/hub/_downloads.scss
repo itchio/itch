@@ -5,7 +5,6 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
 .downloads-page {
   @include meat;
   overflow-y: auto;
-  flex-shrink: 0;
   padding: 0 20px 20px 20px;
 
   .section-bar {
