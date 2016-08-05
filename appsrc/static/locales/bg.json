@@ -171,5 +171,6 @@
     "game.install.could_not_launch": "Възникна грешка при пускането на {{title}}",
     "game.install.visit_web_page": "Отваряне на уеб страницата",
     "login.messages.welcome_back": "Добре дошли отново!",
-    "new_tab.titles.input": "…или"
+    "new_tab.titles.input": "…или",
+    "prompt.logout_title": "Излизане"
 }
