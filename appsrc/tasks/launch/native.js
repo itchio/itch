@@ -22,6 +22,7 @@ import fetch from '../../util/fetch'
 import pathmaker from '../../util/pathmaker'
 
 import {promisedModal} from '../../reactors/modals'
+import {startTask} from '../../reactors/tasks/start-task'
 import {MODAL_RESPONSE} from '../../constants/action-types'
 
 import mklog from '../../util/log'
@@ -30,7 +31,8 @@ const log = mklog('tasks/launch/native')
 import {Crash} from '../errors'
 
 export default async function launch (out, opts) {
-  const {cave, market, credentials, env} = opts
+  const {market, credentials, env} = opts
+  let {cave} = opts
   let {args} = opts
   invariant(cave, 'launch-native has cave')
   invariant(cave, 'launch-native has env')
@@ -67,6 +69,30 @@ export default async function launch (out, opts) {
       appPath
     }
     exePath = await poker(pokerOpts)
+  }
+
+  if (!exePath) {
+    // poker failed, maybe paths shifted around?
+    if (opts.hailMary) {
+      // let it fail
+      log(opts, 'no candidates after poker and reconfiguration, giving up')
+    } else {
+      log(opts, 'reconfiguring because still no candidates after poker')
+      const {globalMarket} = opts
+      await startTask(store, {
+        name: 'configure',
+        gameId: game.id,
+        game,
+        cave,
+        upload: cave.uploads[cave.uploadId]
+      })
+      cave = globalMarket.getEntities('caves')[cave.id]
+      return await launch(out, {
+        ...opts,
+        cave,
+        hailMary: true
+      })
+    }
   }
 
   if (!exePath) {

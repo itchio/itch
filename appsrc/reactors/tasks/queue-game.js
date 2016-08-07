@@ -96,7 +96,7 @@ export async function queueGame (store, action) {
 }
 
 async function startCave (store, game, cave, extraOpts) {
-  log(opts, `Starting cave ${cave.id}: stub`)
+  log(opts, `Starting cave ${cave.id}`)
   const {err} = await startTask(store, {
     name: 'launch',
     gameId: cave.gameId,
