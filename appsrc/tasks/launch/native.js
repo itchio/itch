@@ -175,7 +175,7 @@ export default async function launch (out, opts) {
       log(opts, 'app isolation enabled')
       const grantRes = await spawn.getOutput({
         command: 'icacls',
-        args: [ grantPath, '/grant', 'itch-player:F', '/T', '/Q' ],
+        args: [ grantPath, '/grant', 'itch-player:F', '/T', '/Q', '/c' ],
         logger: opts.logger
       })
       log(opts, `grant output:\n${grantRes}`)
@@ -189,7 +189,7 @@ export default async function launch (out, opts) {
     if (isolateApps) {
       const denyRes = await spawn.getOutput({
         command: 'icacls',
-        args: [ grantPath, '/deny', 'itch-player:F', '/T', '/Q' ],
+        args: [ grantPath, '/deny', 'itch-player:F', '/T', '/Q', '/c' ],
         logger: opts.logger
       })
       log(opts, `deny output:\n${denyRes}`)
