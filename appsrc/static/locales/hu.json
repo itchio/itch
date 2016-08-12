@@ -64,7 +64,7 @@
     "status.downloading": "Frissítés letöltése…",
     "status.uptodate": "Az ön itch -e naprakész!",
     "grid.item.check_for_update": "Frissítés keresése",
-    "grid.item.cancel_download": "Letöltlés leallítása",
+    "grid.item.cancel_download": "Letöltés megszakítása",
     "grid.item.developer": "Fejlesztő",
     "grid.item.open": "Megnyit",
     "grid.item.open_debug_log": "Debug log megnyitása",
