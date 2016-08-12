@@ -101,5 +101,7 @@
     "grid.item.probe": "A hiba okának kiderítése",
     "collection.empty": "Nincs játék a gyűjteményben",
     "grid.criterion.filter": "Szűrő...",
-    "grid.criterion.only_compatible": "Csak kompatibilisek"
+    "grid.criterion.only_compatible": "Csak kompatibilisek",
+    "grid.item.downloads_paused": "A letöltés szünetel",
+    "grid.item.version": "Verzió {{version}}"
 }
