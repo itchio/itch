@@ -11,7 +11,7 @@ import {each} from 'underline'
 
 async function getBuildSize (api, downloadKey, uploadId, buildId) {
   const response = await api.downloadBuild(downloadKey, uploadId, buildId)
-  const res = await needle.headAsync(response.patch.url)
+  const res = await needle.headAsync(response.patch.url, {})
   return {
     id: buildId,
     patchSize: parseInt(res.headers['content-length'], 10)

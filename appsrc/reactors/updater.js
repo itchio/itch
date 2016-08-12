@@ -17,7 +17,7 @@ const log = mklog('updater')
 const opts = {
   logger: new mklog.Logger({
     sinks: {
-      console: false,
+      console: true,
       file: pathmaker.updaterLogPath()
     }
   })
