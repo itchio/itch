@@ -103,5 +103,13 @@
     "grid.criterion.filter": "Szűrő...",
     "grid.criterion.only_compatible": "Csak kompatibilisek",
     "grid.item.downloads_paused": "A letöltés szünetel",
-    "grid.item.version": "Verzió {{version}}"
+    "grid.item.version": "Verzió {{version}}",
+    "menu.view.downloads": "Letöltések",
+    "outlinks.open_dashboard": "Műszerfal megnyitása",
+    "outlinks.manage_collections": "Gyűjtemények rendezése",
+    "sidebar.category.tabs": "Fülek",
+    "sidebar.collection": "Gyűjtemények",
+    "sidebar.downloads": "Letöltések",
+    "sidebar.empty": "Indulás!",
+    "sidebar.preferences": "Beállítások"
 }
