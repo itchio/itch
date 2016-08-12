@@ -98,5 +98,8 @@
     "prompt.self_update.title": "Az itch v{{version}} letöltése már elérhető.",
     "prompt.self_update_ready.action.restart": "Újraindítás",
     "grid.clear_filters": "Szűrők törlése",
-    "grid.item.probe": "A hiba okának kiderítése"
+    "grid.item.probe": "A hiba okának kiderítése",
+    "collection.empty": "Nincs játék a gyűjteményben",
+    "grid.criterion.filter": "Szűrő...",
+    "grid.criterion.only_compatible": "Csak kompatibilisek"
 }
