@@ -96,5 +96,6 @@
     "login.remembered_session.last_connected": "Utoljára csatlakozva",
     "prompt.self_update.message.windows": "Válaszd a \"Letöltés most\" opciót az automatikus telepítéshez, vagy látogasd meg a weblapot a részletes leírásért.",
     "prompt.self_update.title": "Az itch v{{version}} letöltése már elérhető.",
-    "prompt.self_update_ready.action.restart": "Újraindítás"
+    "prompt.self_update_ready.action.restart": "Újraindítás",
+    "grid.clear_filters": "Szűrők törlése"
 }
