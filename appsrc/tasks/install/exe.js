@@ -126,16 +126,13 @@ let self = {
   externalSniff: async function (opts, needles) {
     const {archivePath} = opts
 
-    // sample fileOutput:
-    // ['PE32 executable (GUI) Intel 80386', 'for MS Windows', 'InstallShield self-extracting archive']
-    const contents = await spawn.getOutput({
-      command: 'lsar',
-      args: ['-j', archivePath]
-    })
-
     let detail
 
     try {
+      const contents = await spawn.getOutput({
+        command: 'lsar',
+        args: ['-j', archivePath]
+      })
       const lsarInfo = JSON.parse(contents)
       detail = lsarInfo.lsarFormatName
     } catch (e) {
