@@ -7,7 +7,7 @@
     "grid.item.downloading": "Загружаем…",
     "grid.item.finalize_installation": "Завершить установку",
     "grid.item.install": "Установить",
-    "grid.item.installing": "Установка…",
+    "grid.item.installing": "Устанавливаем…",
     "grid.item.launch": "Запустить",
     "grid.item.not_platform_compatible": "Недоступно на {{platform}}",
     "grid.item.queued": "В очереди",
