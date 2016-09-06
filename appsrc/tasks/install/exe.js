@@ -58,7 +58,7 @@ let self = {
     log(opts, `found cached installer type ${type}`)
 
     if (self.validInstallers.indexOf(type) === -1) {
-      log(opts, `invalid exe type stored: ${type} - discarding`)
+      log(opts, `invalid exe installer type stored: ${type} - discarding`)
       return null
     }
 

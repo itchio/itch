@@ -28,7 +28,7 @@ const self = {
     log(opts, `found cached installer type ${type}`)
 
     if (core.validInstallers.indexOf(type) === -1) {
-      log(opts, `invalid exe type stored: ${type} - discarding`)
+      log(opts, `invalid installer type stored: ${type} - discarding`)
       return null
     }
 
