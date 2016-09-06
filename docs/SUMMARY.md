@@ -3,6 +3,13 @@
 
 * [User guide](using/README.md)
   * [Installing the app](installing/README.md)
+    * [Installing on Windows](installing/windows.md)
+    * [Installing on macOS](installing/macos.md)
+    * [Installing on Linux](installing/linux/README.md)
+      * [Installing on Ubuntu & Debian](installing/linux/ubuntu-and-debian.md)
+      * [Installing on Fedora](installing/linux/fedora.md)
+      * [Installing on ArchLinux](installing/linux/archlinux.md)
+      * [Installing on Gentoo](installing/linux/gentoo.md)
   * [Logging in](using/login.md)
     * [Using the app offline](using/offline.md)
   * [Preferences](using/preferences.md)
