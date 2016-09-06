@@ -10,7 +10,7 @@ you might miss out on if you rely on the main download page. To learn more about
 please refer to the following pages:
 
   * [Installing on Windows](windows.md)
-  * [Installing on Mac OSX](macos.md)
+  * [Installing on macOS](macos.md)
   * [Installing on Linux](linux/README.md)
 
 Release notes for all versions are available [on GitHub](https://github.com/itchio/itch/releases).
