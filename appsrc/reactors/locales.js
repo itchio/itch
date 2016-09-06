@@ -42,7 +42,7 @@ async function doDownloadLocale (lang, resources) {
   const uri = `${urls.remoteLocalePath}/${lang}.json`
 
   log(opts, `Downloading fresh locale file from ${uri}`)
-  const resp = await needle.requestAsync('GET', uri, {format: 'json'})
+  const resp = await needle.requestAsync('GET', uri, {}, {format: 'json'})
 
   log(opts, `HTTP GET ${uri}: ${resp.statusCode}`)
   if (resp.statusCode !== 200) {
@@ -87,6 +87,7 @@ async function queueLocaleDownload (store, action) {
   try {
     await doDownloadLocale(lang, resources)
   } catch (e) {
+    log(opts, `Failed downloading locale for ${lang}: ${e.message}`)
     store.dispatch(actions.queueHistoryItem({
       label: ['i18n.failed_downloading_locales', {lang}],
       detail: e.stack || e
