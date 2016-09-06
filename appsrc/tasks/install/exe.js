@@ -10,7 +10,7 @@ const log = mklog('installers/exe')
 import {partial} from 'underline'
 
 let self = {
-  validInstallers: ['inno', 'nsis', 'air', 'archive'],
+  validInstallers: ['inno', 'nsis', 'air'],
 
   install: async function (out, opts) {
     let installer = await self.findInstaller(opts)

@@ -25,8 +25,8 @@ $.say(`Release date: ${release_date}`)
     const deb_arch = $.to_deb_arch(arch)
     const rpm_arch = $.to_rpm_arch(arch)
 
-    // don't auto-publish stable releases, and we don't upload betas anymore
-    const publish = false
+    // auto-publish releases, it's too easy to forget flipping the switch otherwise
+    const publish = true
 
     let conf = $.read_file(`release/templates/bintray.${repo}.json.in`)
     conf = conf.replace(/{{CI_APPNAME}}/g, $.app_name())
