@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import {connect} from '../connect'
 import {createSelector, createStructuredSelector} from 'reselect'
 
-import {findWhere} from 'underline'
+import {findWhere, first} from 'underline'
 
 import os from '../../util/os'
 import ClassificationActions from '../../constants/classification-actions'
@@ -75,7 +75,7 @@ const makeMapStateToProps = () => {
       game: (state, props) => props.game,
       cave: (state, props) => state.globalMarket.cavesByGameId[props.game.id],
       downloadKeys: (state, props) => state.market.downloadKeys,
-      task: (state, props) => state.tasks.tasksByGameId[props.game.id],
+      task: (state, props) => state.tasks.tasksByGameId[props.game.id]::first(),
       download: (state, props) => state.downloads.downloadsByGameId[props.game.id],
       meId: (state, props) => (state.session.credentials.me || {id: 'anonymous'}).id,
       mePress: (state, props) => (state.session.credentials.me || {pressUser: false}).pressUser

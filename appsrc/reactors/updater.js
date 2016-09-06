@@ -94,11 +94,12 @@ async function checkForGameUpdate (store, action) {
   }
 }
 
-async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
-  const {noisy = false} = taskOpts
+async function _doCheckForGameUpdate (store, cave, inTaskOpts = {}) {
+  const {noisy = false} = inTaskOpts
   const returnVars = {}
 
-  const credentials = store.getState().session.credentials
+  const state = store.getState()
+  const credentials = state.session.credentials
   invariant(credentials, 'has credentials')
 
   const {installedBy} = cave
@@ -134,180 +135,193 @@ async function _doCheckForGameUpdate (store, cave, taskOpts = {}) {
 
   const logger = new mklog.Logger({sinks: {console: false, string: true}})
 
-  if (game) {
-    log(opts, `Looking for updates to ${game.title}...`)
-    const out = new EventEmitter()
-    const findKey = () => market.getEntities('downloadKeys')::findWhere({gameId: game.id})
-    const taskOpts = {
-      ...opts,
-      logger,
-      game,
-      gameId: game.id,
-      credentials,
-      downloadKey: cave.downloadKey || findKey(),
-      market
+  if (!game) {
+    log(opts, `Can't check for updates for ${game.title}, not visible by current user?`)
+    return returnVars
+  }
+
+  const tasksForGame = state.tasks.tasksByGameId[game.id]
+  if (tasksForGame) {
+    for (const task of tasksForGame) {
+      if (task.name === 'launch') {
+        // TODO: don't need to skip the check, just the apply
+        log(opts, `Game ${game.title} is running, skipping update check`)
+        return returnVars
+      }
+    }
+  }
+
+  log(opts, `Looking for updates to ${game.title}...`)
+
+  const out = new EventEmitter()
+  const findKey = () => market.getEntities('downloadKeys')::findWhere({gameId: game.id})
+  const taskOpts = {
+    ...opts,
+    logger,
+    game,
+    gameId: game.id,
+    credentials,
+    downloadKey: cave.downloadKey || findKey(),
+    market
+  }
+
+  try {
+    const {uploads, downloadKey} = await findUpload(out, taskOpts)
+
+    if (uploads.length === 0) {
+      log(opts, `Can't check for updates for ${game.title}, no uploads.`)
+      logger.contents.trimRight().split('\n').map((line) => log(opts, `> ${line}`))
+      return {err: 'No uploads found'}
     }
 
-    try {
-      const {uploads, downloadKey} = await findUpload(out, taskOpts)
-
-      if (uploads.length === 0) {
-        log(opts, `Can't check for updates for ${game.title}, no uploads.`)
-        logger.contents.trimRight().split('\n').map((line) => log(opts, `> ${line}`))
-        return {err: 'No uploads found'}
+    // TODO: update installedAt once we found there were no new uploads?
+    let installedAt = moment.tz(cave.installedAt, 'UTC')
+    log(opts, `installed at ${installedAt.format()}`)
+    if (!installedAt.isValid()) {
+      installedAt = moment.tz(0, 'UTC')
+    }
+    const recentUploads = uploads::filter((upload) => {
+      const updatedAt = moment.tz(upload.updatedAt, 'UTC')
+      const isRecent = updatedAt > installedAt
+      if (!isRecent) {
+        log(opts, `Filtering out ${upload.filename} (#${upload.id}), ${updatedAt.format()} is older than ${installedAt.format()}`)
       }
+      return isRecent
+    })
+    log(opts, `${uploads.length} available uploads, ${recentUploads.length} are more recent`)
 
-      // TODO: update installedAt once we found there were no new uploads?
-      let installedAt = moment.tz(cave.installedAt, 'UTC')
-      log(opts, `installed at ${installedAt.format()}`)
-      if (!installedAt.isValid()) {
-        installedAt = moment.tz(0, 'UTC')
-      }
-      const recentUploads = uploads::filter((upload) => {
-        const updatedAt = moment.tz(upload.updatedAt, 'UTC')
-        const isRecent = updatedAt > installedAt
-        if (!isRecent) {
-          log(opts, `Filtering out ${upload.filename} (#${upload.id}), ${updatedAt.format()} is older than ${installedAt.format()}`)
-        }
-        return isRecent
-      })
-      log(opts, `${uploads.length} available uploads, ${recentUploads.length} are more recent`)
+    let hasUpgrade = false
 
-      let hasUpgrade = false
+    if (cave.uploadId && cave.buildId) {
+      log(opts, `Looking for new builds of ${game.title}, from build ${cave.buildId}`)
+      const upload = uploads::findWhere({id: cave.uploadId})
+      if (!upload || !upload.buildId) {
+        log(opts, 'Uh oh, our wharf-enabled upload disappeared')
+      } else {
+        if (upload.buildId !== cave.buildId) {
+          log(opts, `Got new build available: ${upload.buildId} > ${cave.buildId}`)
+          if (noisy) {
+            store.dispatch(actions.statusMessage(['status.game_update.found', {title: game.title}]))
+          }
 
-      if (cave.uploadId && cave.buildId) {
-        log(opts, `Looking for new builds of ${game.title}, from build ${cave.buildId}`)
-        const upload = uploads::findWhere({id: cave.uploadId})
-        if (!upload || !upload.buildId) {
-          log(opts, 'Uh oh, our wharf-enabled upload disappeared')
-        } else {
-          if (upload.buildId !== cave.buildId) {
-            log(opts, `Got new build available: ${upload.buildId} > ${cave.buildId}`)
-            if (noisy) {
-              store.dispatch(actions.statusMessage(['status.game_update.found', {title: game.title}]))
-            }
+          hasUpgrade = true
 
-            hasUpgrade = true
+          const upgradeOpts = {
+            ...taskOpts,
+            upload,
+            gameId: game.id,
+            currentBuildId: cave.buildId
+          }
+          try {
+            const {upgradePath, totalSize} = await findUpgradePath(out, upgradeOpts)
+            log(opts, `Got ${upgradePath.length} patches to download, ${humanize.fileSize(totalSize)} total`)
+            const archivePath = pathmaker.downloadPath(upload)
 
-            const upgradeOpts = {
-              ...taskOpts,
-              upload,
+            await startDownload(store, {
+              game,
               gameId: game.id,
-              currentBuildId: cave.buildId
-            }
-            try {
-              const {upgradePath, totalSize} = await findUpgradePath(out, upgradeOpts)
-              log(opts, `Got ${upgradePath.length} patches to download, ${humanize.fileSize(totalSize)} total`)
-              const archivePath = pathmaker.downloadPath(upload)
-
-              await startDownload(store, {
-                game,
-                gameId: game.id,
-                upload,
-                destPath: archivePath,
-                downloadKey,
-                reason: 'update',
-                incremental: true,
-                globalMarket,
-                upgradePath,
-                totalSize,
-                cave
-              })
-              return {...returnVars, hasUpgrade}
-            } catch (e) {
-              log(opts, `While getting upgrade path: ${e.message || e}`)
-              return {err: e.message}
-            }
+              upload,
+              destPath: archivePath,
+              downloadKey,
+              reason: 'update',
+              incremental: true,
+              globalMarket,
+              upgradePath,
+              totalSize,
+              cave
+            })
+            return {...returnVars, hasUpgrade}
+          } catch (e) {
+            log(opts, `While getting upgrade path: ${e.message || e}`)
+            return {err: e.message}
           }
         }
       }
-
-      if (recentUploads.length === 0) {
-        log(opts, `No recent uploads for ${game.title}, update check done`)
-        return returnVars
-      }
-
-      if (recentUploads.length > 1) {
-        log(opts, 'More than one recent upload, asking user to pick')
-
-        const {title} = game
-        store.dispatch(actions.openModal({
-          title: ['pick_update_upload.title', {title}],
-          message: ['pick_update_upload.message', {title}],
-          detail: ['pick_update_upload.detail'],
-          bigButtons: recentUploads::map((upload) => {
-            const archivePath = pathmaker.downloadPath(upload)
-            return {
-              label: `${upload.displayName || upload.filename} (${humanize.fileSize(upload.size)})`,
-              timeAgo: {
-                label: ['prompt.updated_ago'],
-                date: Date.parse(upload.updatedAt)
-              },
-              action: actions.queueDownload({
-                game,
-                gameId: game.id,
-                upload,
-                totalSize: upload.size,
-                destPath: archivePath,
-                downloadKey,
-                handPicked: true,
-                reason: 'update'
-              }),
-              icon: 'download'
-            }
-          }),
-          buttons: [
-            'cancel'
-          ]
-        }))
-
-        return {...returnVars, hasUpgrade: true}
-      }
-
-      const upload = recentUploads[0]
-      const differentUpload = upload.id !== cave.uploadId
-      const wentWharf = upload.buildId && !cave.buildId
-
-      if (hasUpgrade || differentUpload || wentWharf) {
-        log(opts, `Got a new upload for ${game.title}: ${upload.filename}`)
-        if (hasUpgrade) {
-          log(opts, '(Reason: forced)')
-        }
-        if (differentUpload) {
-          log(opts, '(Reason: different upload)')
-        }
-        if (wentWharf) {
-          log(opts, '(Reason: went wharf)')
-        }
-
-        const archivePath = pathmaker.downloadPath(upload)
-
-        await startDownload(store, {
-          game,
-          gameId: game.id,
-          upload,
-          handPicked: false,
-          totalSize: upload.size,
-          destPath: archivePath,
-          downloadKey,
-          reason: 'update'
-        })
-        return {...returnVars, hasUpgrade}
-      }
-    } catch (e) {
-      if (api.hasAPIError(e, 'incorrect user for claim')) {
-        log(opts, `Skipping update check for ${game.title}, download key belongs to other user`)
-      } else if (api.isNetworkError(e)) {
-        log(opts, `Skipping update check for ${game.title}: we're offline`)
-        return {err: new Error(`Network error (${e.code})`)}
-      } else {
-        log(opts, `While looking for update: ${e.stack || e}`)
-        log(opts, `Error object: ${JSON.stringify(e, 0, 2)}`)
-        return {err: e}
-      }
     }
-  } else {
-    log(opts, `Can't check for updates for ${game.title}, not visible by current user?`)
+
+    if (recentUploads.length === 0) {
+      log(opts, `No recent uploads for ${game.title}, update check done`)
+      return returnVars
+    }
+
+    if (recentUploads.length > 1) {
+      log(opts, 'More than one recent upload, asking user to pick')
+
+      const {title} = game
+      store.dispatch(actions.openModal({
+        title: ['pick_update_upload.title', {title}],
+        message: ['pick_update_upload.message', {title}],
+        detail: ['pick_update_upload.detail'],
+        bigButtons: recentUploads::map((upload) => {
+          const archivePath = pathmaker.downloadPath(upload)
+          return {
+            label: `${upload.displayName || upload.filename} (${humanize.fileSize(upload.size)})`,
+            timeAgo: {
+              label: ['prompt.updated_ago'],
+              date: Date.parse(upload.updatedAt)
+            },
+            action: actions.queueDownload({
+              game,
+              gameId: game.id,
+              upload,
+              totalSize: upload.size,
+              destPath: archivePath,
+              downloadKey,
+              handPicked: true,
+              reason: 'update'
+            }),
+            icon: 'download'
+          }
+        }),
+        buttons: [
+          'cancel'
+        ]
+      }))
+
+      return {...returnVars, hasUpgrade: true}
+    }
+
+    const upload = recentUploads[0]
+    const differentUpload = upload.id !== cave.uploadId
+    const wentWharf = upload.buildId && !cave.buildId
+
+    if (hasUpgrade || differentUpload || wentWharf) {
+      log(opts, `Got a new upload for ${game.title}: ${upload.filename}`)
+      if (hasUpgrade) {
+        log(opts, '(Reason: forced)')
+      }
+      if (differentUpload) {
+        log(opts, '(Reason: different upload)')
+      }
+      if (wentWharf) {
+        log(opts, '(Reason: went wharf)')
+      }
+
+      const archivePath = pathmaker.downloadPath(upload)
+
+      await startDownload(store, {
+        game,
+        gameId: game.id,
+        upload,
+        handPicked: false,
+        totalSize: upload.size,
+        destPath: archivePath,
+        downloadKey,
+        reason: 'update'
+      })
+      return {...returnVars, hasUpgrade}
+    }
+  } catch (e) {
+    if (api.hasAPIError(e, 'incorrect user for claim')) {
+      log(opts, `Skipping update check for ${game.title}, download key belongs to other user`)
+    } else if (api.isNetworkError(e)) {
+      log(opts, `Skipping update check for ${game.title}: we're offline`)
+      return {err: new Error(`Network error (${e.code})`)}
+    } else {
+      log(opts, `While looking for update: ${e.stack || e}`)
+      log(opts, `Error object: ${JSON.stringify(e, 0, 2)}`)
+      return {err: e}
+    }
   }
 
   return returnVars

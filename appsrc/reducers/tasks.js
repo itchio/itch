@@ -3,7 +3,7 @@ import {handleActions} from 'redux-actions'
 import {createStructuredSelector} from 'reselect'
 
 import invariant from 'invariant'
-import {indexBy, omit, filter} from 'underline'
+import {indexBy, groupBy, omit, filter} from 'underline'
 
 const initialState = {
   tasks: {},
@@ -46,7 +46,7 @@ const reducer = handleActions({
 }, initialState)
 
 const selector = createStructuredSelector({
-  tasksByGameId: (state) => state.tasks::indexBy('gameId')
+  tasksByGameId: (state) => state.tasks::groupBy('gameId')
 })
 
 export default (state, action) => {
