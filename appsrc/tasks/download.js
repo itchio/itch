@@ -44,6 +44,7 @@ async function downloadPatches (out, opts) {
       cave,
       gameId,
       buildId: patch.entry.id,
+      buildUserVersion: patch.entry.userVersion,
       patchPath: patch.patchPath,
       signaturePath: patch.signaturePath,
       outPath: cavePath,
