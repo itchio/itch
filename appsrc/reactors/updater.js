@@ -193,7 +193,7 @@ async function _doCheckForGameUpdate (store, cave, inTaskOpts = {}) {
     let hasUpgrade = false
 
     if (cave.uploadId && cave.buildId) {
-      log(opts, `Looking for new builds of ${game.title}, from build ${cave.buildId}`)
+      log(opts, `Looking for new builds of ${game.title}, from build ${cave.buildId} (upload ${cave.uploadId})`)
       const upload = uploads::findWhere({id: cave.uploadId})
       if (!upload || !upload.buildId) {
         log(opts, 'Uh oh, our wharf-enabled upload disappeared')
@@ -235,6 +235,9 @@ async function _doCheckForGameUpdate (store, cave, inTaskOpts = {}) {
             log(opts, `While getting upgrade path: ${e.message || e}`)
             return {err: e.message}
           }
+        } else {
+          log(opts, `More recent upload has same buildId ${upload.buildId}, disregarding`)
+          return returnVars
         }
       }
     }
@@ -245,7 +248,7 @@ async function _doCheckForGameUpdate (store, cave, inTaskOpts = {}) {
     }
 
     if (recentUploads.length > 1) {
-      log(opts, 'More than one recent upload, asking user to pick')
+      log(opts, 'Multiple recent uploads, asking user to pick')
 
       const {title} = game
       store.dispatch(actions.openModal({
