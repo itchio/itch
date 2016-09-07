@@ -54,7 +54,9 @@ export class Client {
 
   async request (method, path, data = {}, transformers = {}) {
     if (!agent) {
-      if (needle.proxy && !/https:/i.test(needle.proxy)) {
+      const hasHttpProxy = needle.proxy && !/https:/i.test(needle.proxy)
+      const hasHttpApi = !/https:/i.test(urls.itchioApi)
+      if (hasHttpProxy || hasHttpApi) {
         agent = new http.Agent({
           keepAlive: true,
           maxSockets: 1
