@@ -101,6 +101,28 @@ const self = {
     return res
   },
 
+  /* Extracts zip archive ${archivePath} into directory ${destPath} */
+  unzip: async function (opts) {
+    invariant(typeof opts === 'object', 'opts is object')
+    invariant(typeof opts.archivePath === 'string', 'opts.archivePath is string')
+    invariant(typeof opts.destPath === 'string', 'opts.destPath is string')
+
+    let {emitter, archivePath, destPath} = opts
+    let err = null
+    let onerror = (e) => { err = e }
+
+    let res = await spawn({
+      command: 'butler',
+      args: ['-j', 'unzip', archivePath, '-d', destPath],
+      onToken: self.parseButlerStatus::partial(opts, onerror),
+      emitter
+    })
+
+    if (err) { throw err }
+    if (res !== 0) { throw new Error(`butler untar exited with code ${res}`) }
+    return res
+  },
+
   /* rm -rf ${path} */
   wipe: async function (path, opts = {}) {
     invariant(typeof path === 'string', 'wipe has string path')
@@ -155,6 +177,18 @@ const self = {
     if (err) { throw err }
     if (res !== 0) { throw new Error(`butler ditto exited with code ${res}`) }
     return res
+  },
+
+  sanityCheck: async function () {
+    try {
+      const res = await spawn({
+        command: 'butler',
+        args: ['--version']
+      })
+      return res === 0
+    } catch (err) {
+      return false
+    }
   }
 }
 

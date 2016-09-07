@@ -11,6 +11,7 @@ const verbose = (process.env.THE_DEPTHS_OF_THE_SOUL === '1')
 import noop from './noop'
 import sf from './sf'
 import spawn from './spawn'
+import butler from './butler'
 
 const self = {
   unarchiverList: async function (logger, archivePath) {
@@ -120,6 +121,18 @@ const self = {
     const {archivePath, destPath} = opts
     invariant(typeof archivePath === 'string', 'extract needs string archivePath')
     invariant(typeof destPath === 'string', 'extract needs string destPath')
+
+    const isZip = /.zip$/i.test(archivePath)
+    if (isZip) {
+      const hasButler = await butler.sanityCheck()
+      if (hasButler) {
+        log(opts, 'Using butler to extract zip')
+        await butler.unzip(opts)
+        return
+      } else {
+        log(opts, 'No sane butler around, using unar to extract zip')
+      }
+    }
 
     return await self.unarchiver(opts)
   }
