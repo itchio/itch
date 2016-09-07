@@ -13,7 +13,10 @@ export default async function apply (out, opts) {
 
   await butler.apply(opts)
 
-  await globalMarket.saveEntity('caves', cave.id, {buildId}, {wait: true})
+  const caveUpdate = {
+    buildId
+  }
+  await globalMarket.saveEntity('caves', cave.id, caveUpdate, {wait: true})
 
   // alles gut!
 }

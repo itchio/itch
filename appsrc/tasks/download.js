@@ -35,6 +35,8 @@ async function downloadPatches (out, opts) {
   const cavePath = pathmaker.appPath(cave)
 
   const doApply = async function (patch) {
+    log(opts, `patch entry: ${JSON.stringify(patch.entry, 0, 2)}`)
+
     log(opts, `Applying ${patch.entry.id} into ${cavePath}`)
     const applyOpts = {
       name: 'apply',

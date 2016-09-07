@@ -102,10 +102,19 @@ export default function listSecondaryActions (props) {
       items.push(browseAction(cave.id))
     }
 
-    let version = `${cave.uploadId}`
-    if (cave.buildId) {
-      version += `/${cave.buildId}`
+    let version = ''
+    if (cave.buildUserVersion) {
+      version = `${cave.buildUserVersion}`
+    } else if (cave.buildId) {
+      version = `#${cave.buildId}`
     }
+
+    if (cave.channelName) {
+      version += ` (${cave.channelName})`
+    } else if (cave.uploadId) {
+      version += ` #${cave.uploadId}`
+    }
+
     const hint = `${cave.installedArchiveMtime}`
 
     items.push({
