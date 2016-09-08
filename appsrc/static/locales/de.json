@@ -292,5 +292,6 @@
     "notification.purchase_complete.thanks_for_support": "Danke für deine Unterstützung!",
     "outlinks.open_dashboard": "Übersicht öffnen",
     "outlinks.manage_collections": "Kollektionen Verwalten",
-    "sandbox.setup.title": "Einmalige Sandbox-Einrichtung"
+    "sandbox.setup.title": "Einmalige Sandbox-Einrichtung",
+    "sandbox.setup.proceed": "Fortfahren"
 }
