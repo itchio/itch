@@ -50,7 +50,7 @@
     "menu.edit.select_all": "Alles auswählen",
     "menu.file.close_window": "Fenster schließen",
     "menu.file.file": "Datei",
-    "menu.file.preferences": "Einstellungen",
+    "menu.file.preferences": "Einstellungen...",
     "menu.file.quit": "Beenden",
     "menu.help.check_for_update": "Nach Aktualisierungen suchen",
     "menu.help.help": "Hilfe",
@@ -277,5 +277,6 @@
     "action.name.forums": "Foren",
     "collection.empty": "Diese Sammlung enthält noch keine Spiele",
     "download.started": "Gestartet",
-    "download.reason.update": "um auf die neueste Version zu aktualisieren"
+    "download.reason.update": "um auf die neueste Version zu aktualisieren",
+    "menu.help.about": "Über"
 }
