@@ -288,5 +288,6 @@
     "new_tab.titles.buttons": "Probiere folgendes:",
     "notification.purchase_complete.just_bought": "Du hast soeben {{title}} gekauft!",
     "notification.purchase_complete.just_donated": "Du hast soeben an {{title}} gespendet!",
-    "notification.purchase_complete.may_install_now": "Du kannst es jetzt jederzeit installieren!"
+    "notification.purchase_complete.may_install_now": "Du kannst es jetzt jederzeit installieren!",
+    "notification.purchase_complete.thanks_for_support": "Danke für deine Unterstützung!"
 }
