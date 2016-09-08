@@ -283,5 +283,6 @@
     "toast.call_to_action": "Um fortzufahren, lade erneut oder gehe auf eine andere Seite",
     "toast.actions.reload": "Neu Laden",
     "toast.actions.learn_more": "Mehr erfahren",
-    "toast.actions.report": "Reiche Feedback ein um itch zu verbessern"
+    "toast.actions.report": "Reiche Feedback ein um itch zu verbessern",
+    "toast.no_info_available": "Keine Informationen Verfügbar"
 }
