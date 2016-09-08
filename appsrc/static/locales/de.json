@@ -293,5 +293,6 @@
     "outlinks.open_dashboard": "Übersicht öffnen",
     "outlinks.manage_collections": "Kollektionen Verwalten",
     "sandbox.setup.title": "Einmalige Sandbox-Einrichtung",
-    "sandbox.setup.proceed": "Fortfahren"
+    "sandbox.setup.proceed": "Fortfahren",
+    "sandbox.setup.windows.message": "Um Spiele in der itch.io Sandbox zu starten, ist eine einmalige Einrichtung mit Administratorrechten erforderlich."
 }
