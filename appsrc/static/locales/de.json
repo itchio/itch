@@ -294,5 +294,7 @@
     "outlinks.manage_collections": "Kollektionen Verwalten",
     "sandbox.setup.title": "Einmalige Sandbox-Einrichtung",
     "sandbox.setup.proceed": "Fortfahren",
-    "sandbox.setup.windows.message": "Um Spiele in der itch.io Sandbox zu starten, ist eine einmalige Einrichtung mit Administratorrechten erforderlich."
+    "sandbox.setup.windows.message": "Um Spiele in der itch.io Sandbox zu starten, ist eine einmalige Einrichtung mit Administratorrechten erforderlich.",
+    "sandbox.setup.linux.message": "Um Spiele in der itch.io Sandbox zu öffnen muss ein einmaliges Setup-Script als root ausgeführt werden.",
+    "sandbox.setup.linux.detail": "Nach dem Klick auf 'Fortfahren' öffnet sich ein Pop-up mit Passworteingabe. Dieses wird ausschließlich für den ersten Sandbox-Start benutzt und dein Password wird niemals von itch gesehen oder aufgezeichnet."
 }
