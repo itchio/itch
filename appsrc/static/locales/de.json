@@ -284,5 +284,6 @@
     "toast.actions.reload": "Neu Laden",
     "toast.actions.learn_more": "Mehr erfahren",
     "toast.actions.report": "Reiche Feedback ein um itch zu verbessern",
-    "toast.no_info_available": "Keine Informationen Verfügbar"
+    "toast.no_info_available": "Keine Informationen Verfügbar",
+    "new_tab.titles.buttons": "Probiere folgendes:"
 }
