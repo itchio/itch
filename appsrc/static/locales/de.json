@@ -281,5 +281,7 @@
     "menu.help.about": "Über",
     "toast.message": "Etwas Unterwartetes ist passiert.",
     "toast.call_to_action": "Um fortzufahren, lade erneut oder gehe auf eine andere Seite",
-    "toast.actions.reload": "Neu Laden"
+    "toast.actions.reload": "Neu Laden",
+    "toast.actions.learn_more": "Mehr erfahren",
+    "toast.actions.report": "Reiche Feedback ein um itch zu verbessern"
 }
