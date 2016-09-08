@@ -285,5 +285,8 @@
     "toast.actions.learn_more": "Mehr erfahren",
     "toast.actions.report": "Reiche Feedback ein um itch zu verbessern",
     "toast.no_info_available": "Keine Informationen Verfügbar",
-    "new_tab.titles.buttons": "Probiere folgendes:"
+    "new_tab.titles.buttons": "Probiere folgendes:",
+    "notification.purchase_complete.just_bought": "Du hast soeben {{title}} gekauft!",
+    "notification.purchase_complete.just_donated": "Du hast soeben an {{title}} gespendet!",
+    "notification.purchase_complete.may_install_now": "Du kannst es jetzt jederzeit installieren!"
 }
