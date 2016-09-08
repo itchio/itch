@@ -289,5 +289,7 @@
     "notification.purchase_complete.just_bought": "Du hast soeben {{title}} gekauft!",
     "notification.purchase_complete.just_donated": "Du hast soeben an {{title}} gespendet!",
     "notification.purchase_complete.may_install_now": "Du kannst es jetzt jederzeit installieren!",
-    "notification.purchase_complete.thanks_for_support": "Danke für deine Unterstützung!"
+    "notification.purchase_complete.thanks_for_support": "Danke für deine Unterstützung!",
+    "outlinks.open_dashboard": "Übersicht öffnen",
+    "outlinks.manage_collections": "Kollektionen Verwalten"
 }
