@@ -278,5 +278,6 @@
     "collection.empty": "Diese Sammlung enthält noch keine Spiele",
     "download.started": "Gestartet",
     "download.reason.update": "um auf die neueste Version zu aktualisieren",
-    "menu.help.about": "Über"
+    "menu.help.about": "Über",
+    "toast.message": "Etwas unerwartetes ist passiert"
 }
