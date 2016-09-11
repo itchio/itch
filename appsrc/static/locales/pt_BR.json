@@ -293,5 +293,6 @@
     "download.started": "Inicializado",
     "grid.clear_filters": "Limpar filtros",
     "collection.empty": "Nenhum item nesta coleção",
-    "download.reason.install": "para a instalação inicial"
+    "download.reason.install": "para primeira instalação",
+    "action.name.forums": "Fóruns"
 }
