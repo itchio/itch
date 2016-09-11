@@ -346,5 +346,6 @@
     "preferences.proxy_server_address": "HTTP прокси",
     "preferences.proxy_server_source.direct": "Не используется (прямое соединение)",
     "preferences.proxy_server_source.env": "Указано переменной окружения",
-    "preferences.proxy_server_source.os": "Используется системная настройка"
+    "preferences.proxy_server_source.os": "Используется системная настройка",
+    "login.messages.welcome_back-halloween": "Кто посмел нарушить мой покой?"
 }
