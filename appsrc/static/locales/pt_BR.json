@@ -294,5 +294,16 @@
     "grid.clear_filters": "Limpar filtros",
     "collection.empty": "Nenhum item nesta coleção",
     "download.reason.install": "para primeira instalação",
-    "action.name.forums": "Fóruns"
+    "action.name.forums": "Fóruns",
+    "download.reason.update": "para atualizar para a versão mais recente",
+    "grid.criterion.filter": "Filtrar...",
+    "grid.hidden_count": "+ {{count}} itens ocultados por filtros",
+    "grid.item.prioritize_download": "Priorizar",
+    "grid.item.downloads_paused": "Downloads pausados",
+    "browser.popout": "Abrir página em um navegador externo",
+    "menu.help.about": "Sobre",
+    "toast.title": "Ah, não!",
+    "toast.message": "Algo inesperado aconteceu.",
+    "toast.actions.learn_more": "Saiba mais",
+    "toast.no_info_available": "Nenhuma informação disponível"
 }
