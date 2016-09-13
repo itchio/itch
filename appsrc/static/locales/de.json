@@ -296,5 +296,12 @@
     "sandbox.setup.proceed": "Fortfahren",
     "sandbox.setup.windows.message": "Um Spiele in der itch.io Sandbox zu starten, ist eine einmalige Einrichtung mit Administratorrechten erforderlich.",
     "sandbox.setup.linux.message": "Um Spiele in der itch.io Sandbox zu öffnen muss ein einmaliges Setup-Script als root ausgeführt werden.",
-    "sandbox.setup.linux.detail": "Nach dem Klick auf 'Fortfahren' öffnet sich ein Pop-up mit Passworteingabe. Dieses wird ausschließlich für den ersten Sandbox-Start benutzt und dein Password wird niemals von itch gesehen oder aufgezeichnet."
+    "sandbox.setup.linux.detail": "Nach dem Klick auf 'Fortfahren' öffnet sich ein Pop-up mit Passworteingabe. Dieses wird ausschließlich für den ersten Sandbox-Start benutzt und dein Password wird niemals von itch gesehen oder aufgezeichnet.",
+    "preferences.advanced.open_app_log": "App-Log öffnen",
+    "preferences.proxy_server_source.os": "Benutzt Systemeinstellungen",
+    "pick_install_upload.title": "Mehrere Downloads sind verfürbar für {{title}}",
+    "pick_install_upload.message": "Welche Datei möchtest du für {{title}} herunterladen?",
+    "pick_install_upload.detail": "Wir fragen dich erneut sobald neue Downloads verfügbar sind.",
+    "pick_update_upload.title": "Neue Downloads für {{title}} verfügbar",
+    "pick_update_upload.message": "Welche Datei möchtest du für {{title}} aktualisieren?"
 }
