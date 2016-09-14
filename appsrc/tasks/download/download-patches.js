@@ -79,8 +79,10 @@ async function doDownloadPatchAndSignature (out, opts, entry, byteOffset, totalS
   const {upload} = opts
   invariant(upload, 'doDownloadPatchAndSignature has upload')
 
+  // can be nil, when downloading free game / own game
   const {downloadKey} = opts
-  invariant(downloadKey, 'doDownloadPatchAndSignature has valid download key')
+
+  const {logger} = opts
 
   const paths = {}
   paths.patch = pathmaker.downloadPath({
@@ -105,13 +107,13 @@ async function doDownloadPatchAndSignature (out, opts, entry, byteOffset, totalS
   const urls = await getURLs()
 
   const promises = ['patch', 'signature']::map((fileType) => {
-    const opts = {
+    const downloadOpts = {
       url: urls[fileType].url,
       refreshURL: async function () {
         return (await getURLs()).patch.url
       },
-      dest: paths[fileType],
-      logger: opts.logger
+      destPath: paths[fileType],
+      logger
     }
 
     let downloadOut = null
@@ -120,7 +122,7 @@ async function doDownloadPatchAndSignature (out, opts, entry, byteOffset, totalS
     if (fileType === 'patch') {
       downloadOut = downloadEmitter
     }
-    return resilientDownload(downloadOut, opts)
+    return resilientDownload(downloadOut, downloadOpts)
   })
 
   await Promise.all(promises)
