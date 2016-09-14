@@ -1,7 +1,9 @@
 
 import invariant from 'invariant'
+import {findWhere} from 'underline'
 
 import * as actions from '../../actions'
+import format, {DATE_FORMAT} from '../../util/format'
 
 function browseAction (caveId) {
   return {
@@ -12,12 +14,12 @@ function browseAction (caveId) {
   }
 }
 
-function purchaseAction (game, downloadKey) {
+function purchaseAction (game, downloadKey, t) {
   invariant(typeof game === 'object', 'game is object')
 
   const donate = (game.minPrice === 0)
   const againSuffix = downloadKey ? '_again' : ''
-  const hint = downloadKey ? downloadKey.createdAt : null
+  const hint = downloadKey ? format.date(downloadKey.createdAt, DATE_FORMAT, t.lang) : null
 
   if (donate) {
     return {
@@ -74,7 +76,7 @@ function uninstallAction (caveId) {
 }
 
 export default function listSecondaryActions (props) {
-  const {task, game, cave, mayDownload, canBeBought, downloadKey, action} = props
+  const {task, game, cave, mayDownload, canBeBought, downloadKey, action, t} = props
   let error = false
 
   const items = []
@@ -90,7 +92,7 @@ export default function listSecondaryActions (props) {
 
     // No errors
     if (canBeBought) {
-      items.push(purchaseAction(game, downloadKey))
+      items.push(purchaseAction(game, downloadKey, t))
     }
     items.push(shareAction(game))
 
@@ -109,13 +111,16 @@ export default function listSecondaryActions (props) {
       version = `#${cave.buildId}`
     }
 
-    if (cave.channelName) {
+    const upload = cave.uploads::findWhere({id: cave.uploadId})
+    if (upload && upload.displayName) {
+      version += ` (${upload.displayName})`
+    } else if (cave.channelName) {
       version += ` (${cave.channelName})`
     } else if (cave.uploadId) {
       version += ` #${cave.uploadId}`
     }
 
-    const hint = `${cave.installedArchiveMtime}`
+    const hint = `${format.date(cave.installedArchiveMtime, DATE_FORMAT, t.lang)}`
 
     items.push({
       type: 'info',
@@ -139,7 +144,7 @@ export default function listSecondaryActions (props) {
     const mainIsPurchase = !mayDownload && hasMinPrice && canBeBought
 
     if (!mainIsPurchase && canBeBought) {
-      items.push(purchaseAction(game, downloadKey))
+      items.push(purchaseAction(game, downloadKey, t))
     }
 
     items.push(shareAction(game))

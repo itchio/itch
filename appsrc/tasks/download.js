@@ -103,6 +103,27 @@ async function downloadPatches (out, opts) {
 }
 
 export default async function start (out, opts) {
+  let res
+  let running = true
+
+  while (running) {
+    try {
+      res = await tryDownload(out, opts)
+      running = false
+    } catch (err) {
+      if (err === 'unexpected EOF') {
+        // retry!
+      } else {
+        // pass on error
+        throw err
+      }
+    }
+  }
+
+  return res
+}
+
+async function tryDownload (out, opts) {
   if (opts.upgradePath) {
     log(opts, 'Got an upgrade path, downloading patches')
     return await downloadPatches(out, opts)
@@ -140,7 +161,7 @@ export default async function start (out, opts) {
     log(opts, 'making dir')
     await sf.mkdir(path.dirname(destPath))
     log(opts, 'butler download')
-    await butler.dl({url, dest: destPath, onProgress, emitter: out})
+    await butler.dl({url, dest: destPath, onProgress, emitter: out, logger: opts.logger})
   } catch (err) {
     log(opts, `couldn't finish download: ${err.message || err}`)
     throw err

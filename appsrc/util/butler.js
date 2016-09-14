@@ -12,6 +12,8 @@ import mklog from './log'
 const log = mklog('butler')
 
 // TODO: DRY up those methods
+const fakeNetworkTroubles = (process.env.TCP_OVER_TROUBLED_WATERS === '1')
+let troubleCounter = 0
 
 const self = {
   parseButlerStatus: function (opts, onerror, token) {
@@ -27,6 +29,16 @@ const self = {
       case 'log':
         return log(opts, `butler: ${status.message}`)
       case 'progress':
+        if (fakeNetworkTroubles && opts.url) {
+          troubleCounter += Math.random()
+          if (troubleCounter > 250) {
+            troubleCounter = 0
+            log(opts, `butler: faking network troubles!`)
+            onerror('unexpected EOF')
+            opts.emitter.emit('fake-close', {code: 1})
+            return
+          }
+        }
         return onProgress({percent: status.percentage})
       case 'error':
         return onerror(status.message)

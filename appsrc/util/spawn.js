@@ -60,7 +60,14 @@ function spawn (opts) {
   }
 
   return new Promise((resolve, reject) => {
+    let fakeCode
+
     child.on('close', (code, signal) => {
+      if (!code && fakeCode) {
+        code = fakeCode
+        signal = null
+      }
+
       if (cbErr) {
         reject(cbErr)
       }
@@ -82,6 +89,14 @@ function spawn (opts) {
           child.kill('SIGKILL')
         } catch (e) {
           log(opts, `error while killing ${command}: ${e.stack || e}`)
+        }
+      })
+      emitter.once('fake-close', (e) => {
+        try {
+          child.kill('SIGTERM')
+          fakeCode = e.code
+        } catch (e) {
+          log(opts, `error while terminating ${command}: ${e.stack || e}`)
         }
       })
     }
