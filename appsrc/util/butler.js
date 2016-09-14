@@ -34,7 +34,7 @@ const self = {
         }
         return log(opts, `butler: ${status.message}`)
       case 'progress':
-        if (fakeNetworkTroubles && opts.url) {
+        if (fakeNetworkTroubles && opts.url && opts.emitter) {
           troubleCounter += Math.random()
           if (troubleCounter > 250) {
             troubleCounter = 0

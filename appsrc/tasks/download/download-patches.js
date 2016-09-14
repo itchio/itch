@@ -121,6 +121,8 @@ async function doDownloadPatchAndSignature (out, opts, entry, byteOffset, totalS
     // so we only use patch size as progress meter
     if (fileType === 'patch') {
       downloadOut = downloadEmitter
+    } else {
+      downloadOut = new EventEmitter()
     }
     return resilientDownload(downloadOut, downloadOpts)
   })
