@@ -1,8 +1,8 @@
 
 import invariant from 'invariant'
-import butler from '../util/butler'
+import butler from '../../util/butler'
 
-export default async function apply (out, opts) {
+export default async function apply (opts) {
   const {buildId, buildUserVersion, globalMarket, cave, gameId, patchPath, signaturePath, outPath} = opts
   invariant(typeof globalMarket === 'object', 'apply must have globalMarket')
   invariant(typeof cave === 'object', 'apply must have cave')

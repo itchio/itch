@@ -11,10 +11,12 @@ import sf from './sf'
 import mklog from './log'
 const log = mklog('butler')
 
-// TODO: DRY up those methods
 const fakeNetworkTroubles = (process.env.TCP_OVER_TROUBLED_WATERS === '1')
+const showDebug = (process.env.MY_BUTLER_IS_MY_FRIEND === '1')
+
 let troubleCounter = 0
 
+// TODO: DRY up those methods
 const self = {
   parseButlerStatus: function (opts, onerror, token) {
     const {onProgress = noop} = opts
@@ -27,6 +29,9 @@ const self = {
     }
     switch (status.type) {
       case 'log':
+        if (!showDebug && status.level === 'debug') {
+          return
+        }
         return log(opts, `butler: ${status.message}`)
       case 'progress':
         if (fakeNetworkTroubles && opts.url) {
