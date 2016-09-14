@@ -110,7 +110,8 @@ async function doDownloadPatchAndSignature (out, opts, entry, byteOffset, totalS
       refreshURL: async function () {
         return (await getURLs()).patch.url
       },
-      dest: paths[fileType]
+      dest: paths[fileType],
+      logger: opts.logger
     }
 
     let downloadOut = null
