@@ -45,7 +45,7 @@ export default async function downloadPatches (out, opts) {
 
   // FIXME: for large games, this looks like the patching is stuck at 100%
   out.emit('progress', 1)
-  await doApply(previousPatch)
+  await doApply(opts, previousPatch)
   log(opts, 'All done applying!')
 }
 
