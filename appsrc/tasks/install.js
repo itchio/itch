@@ -70,7 +70,12 @@ export default async function start (out, opts) {
 
     globalMarket.saveEntity('caves', cave.id, cave)
   }
-  log(opts, `buildId: ${cave.buildId} => ${upload.buildId}`)
+
+  if (cave.buildUserVersion && upload.build && upload.build.userVersion) {
+    log(opts, `upgrading from version ${cave.buildUserVersion} => version ${upload.build.userVersion}`)
+  } else {
+    log(opts, `upgrading from build id ${cave.buildId} => build id ${upload.buildId}`)
+  }
 
   market.saveEntity('games', game.id, game)
 
@@ -114,7 +119,9 @@ export default async function start (out, opts) {
     installedArchiveMtime: amtime,
     installedAt: Date.now(),
     uploadId: upload.id,
+    channelName: upload.channelName,
     buildId: upload.buildId,
+    buildUserVersion: upload.build && upload.build.userVersion,
     uploads: {[upload.id]: upload},
     fresh: false
   })

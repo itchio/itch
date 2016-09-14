@@ -3,7 +3,7 @@ import invariant from 'invariant'
 import butler from '../util/butler'
 
 export default async function apply (out, opts) {
-  const {buildId, globalMarket, cave, gameId, patchPath, signaturePath, outPath} = opts
+  const {buildId, buildUserVersion, globalMarket, cave, gameId, patchPath, signaturePath, outPath} = opts
   invariant(typeof globalMarket === 'object', 'apply must have globalMarket')
   invariant(typeof cave === 'object', 'apply must have cave')
   invariant(gameId, 'apply must have gameId')
@@ -13,7 +13,11 @@ export default async function apply (out, opts) {
 
   await butler.apply(opts)
 
-  await globalMarket.saveEntity('caves', cave.id, {buildId}, {wait: true})
+  const caveUpdate = {
+    buildId,
+    buildUserVersion
+  }
+  await globalMarket.saveEntity('caves', cave.id, caveUpdate, {wait: true})
 
   // alles gut!
 }

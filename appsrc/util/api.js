@@ -216,9 +216,9 @@ export class AuthenticatedClient {
 
   async findUpgrade (downloadKey, uploadId, currentBuildId) {
     if (downloadKey) {
-      return await this.request('get', `/download-key/${downloadKey.id}/upgrade/${uploadId}/${currentBuildId}`)
+      return await this.request('get', `/download-key/${downloadKey.id}/upgrade/${uploadId}/${currentBuildId}?v=2`)
     } else {
-      return await this.request('get', `/upload/${uploadId}/upgrade/${currentBuildId}`)
+      return await this.request('get', `/upload/${uploadId}/upgrade/${currentBuildId}?v=2`)
     }
   }
 
