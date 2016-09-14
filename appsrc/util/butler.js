@@ -33,7 +33,7 @@ const self = {
           troubleCounter += Math.random()
           if (troubleCounter > 250) {
             troubleCounter = 0
-            log(opts, `butler: faking network troubles!`)
+            log(opts, 'butler: faking network troubles!')
             onerror('unexpected EOF')
             opts.emitter.emit('fake-close', {code: 1})
             return
