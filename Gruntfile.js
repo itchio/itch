@@ -55,7 +55,7 @@ var electronInstallerCommon = {
   loadingGif: installerGifPath,
   setupIcon: icoPath,
   remoteReleases: 'https://github.com/itchio/' + appName,
-  signWithParams: '/v /s MY /n "Open Source Developer, Amos Wenger" /fd sha256 /tr http://timestamp.comodoca.com/?td=sha256 /td sha256',
+  signWithParams: '/v /s MY /n "itch corp." /fd sha256 /tr http://timestamp.comodoca.com/?td=sha256 /td sha256',
   noMsi: true
 }
 
