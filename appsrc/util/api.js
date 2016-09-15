@@ -126,10 +126,12 @@ export class Client {
 
   isNetworkError (errorObject) {
     return (typeof errorObject === 'object' && errorObject.code) && (
-      // DNS lookup failed
+      // DNS lookup failed (*nix)
       errorObject.code === 'ENOTFOUND' ||
       // lost connectivity in the middle of request
-      errorObject.code === 'ECONNRESET'
+      errorObject.code === 'ECONNRESET' ||
+      // DNS lookup failed (windows)
+      (errorObject.code === 'ENOENT' && /getaddrinfo/.test(errorObject.message))
     )
   }
 }

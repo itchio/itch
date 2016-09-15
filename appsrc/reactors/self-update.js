@@ -1,6 +1,7 @@
 
 import {app} from '../electron'
 import os from '../util/os'
+import client from '../util/api'
 import needle from '../promised/needle'
 
 import delay from './delay'
@@ -103,11 +104,11 @@ async function checkForSelfUpdate (store, action) {
       store.dispatch(actions.selfUpdateError(`While trying to reach update server: ${resp.status}`))
     }
   } catch (e) {
-    if (e.code === 'ENOTFOUND') {
+    if (client.isNetworkError(e)) {
       log(opts, 'Seems like we have no network connectivity, skipping self-update check')
       store.dispatch(actions.selfUpdateNotAvailable({uptodate: false}))
     } else {
-      throw e
+      store.dispatch(actions.selfUpdateError(`While trying to reach update server: ${e.message || e}`))
     }
   }
 }
