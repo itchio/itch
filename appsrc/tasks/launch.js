@@ -218,7 +218,6 @@ export async function doStart (out, opts) {
     log(gameOpts, 'No manifest found (no \'.itch.toml\' file in top-level directory). Proceeding with heuristics.')
   }
 
-
   if (manifestAction) {
     manifestAction.path = manifestAction.path.replace(/{{EXT}}/, appExt())
     launchType = await launchTypeForAction(appPath, manifestAction.path)
@@ -248,31 +247,39 @@ export async function doStart (out, opts) {
     throw new Error(`Unsupported launch type '${cave.launchType}'`)
   }
 
-  const startedAt = Date.now()
-  globalMarket.saveEntity('caves', cave.id, {lastTouched: startedAt})
-
-  if (os.itchPlatform() == "windows") // temp UE4 hack
-  {
-    const installedUe4Reqs = globalMarket.getEntity('caves', cave.id).installedUE4Prereq
-    if (!installedUe4Reqs) {
+  if (os.itchPlatform() === 'windows') { // temp UE4 hack
+    const {installedUE4Prereq} = globalMarket.getEntity('caves', cave.id)
+    if (!installedUE4Prereq) {
       log(opts, 'looking for UE4 prereq setup')
       try {
         const executables = globalMarket.getEntity('caves', cave.id).executables
-        let reqFile = executables::find((x) => /UE4PrereqSetup(_x64)?.exe/i.test(x))
+        const reqFile = executables::find((x) => /UE4PrereqSetup(_x64)?.exe/i.test(x))
 
-        if (reqFile)
-        {
+        if (reqFile) {
           log(opts, `launching installer ${reqFile}`)
           const reqOpts = {...gameOpts}
           reqOpts.manifestAction = {path: reqFile, sandbox: false}
-          await spawn({command: ospath.join(appPath, reqFile), args: ['/quiet', '/norestart']})
-          globalMarket.saveEntity('caves', cave.id, {installedUE4Prereq: true})
+          const code = await spawn({
+            command: ospath.join(appPath, reqFile),
+            args: ['/quiet', '/norestart'],
+            onToken: (tok) => log(opts, `[ue4 prereq out] ${tok}`),
+            onErrToken: (tok) => log(opts, `[ue4 prereq err] ${tok}`)
+          })
+          if (code === 0) {
+            log(opts, `succesfully installed UE4 prereq`)
+            globalMarket.saveEntity('caves', cave.id, {installedUE4Prereq: true})
+          } else {
+            log(opts, `couldn't install UE4 prereq (exit code ${code})`)
+          }
         }
-      } catch(e) {
+      } catch (e) {
         log(opts, `error while launching prereq for ${cave.id}: ${e.stack || e}`)
       }
     }
   }
+
+  const startedAt = Date.now()
+  globalMarket.saveEntity('caves', cave.id, {lastTouched: startedAt})
 
   let interval
   const UPDATE_PLAYTIME_INTERVAL = 10
