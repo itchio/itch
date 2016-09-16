@@ -31,9 +31,11 @@ import defaultManifestIcons from '../constants/default-manifest-icons'
 import {promisedModal} from '../reactors/modals'
 import {MODAL_RESPONSE} from '../constants/action-types'
 
+import spawn from '../util/spawn'
+
 import {app} from '../electron'
 
-import {findWhere, each} from 'underline'
+import {find, findWhere, each} from 'underline'
 
 import {Crash} from './errors'
 
@@ -216,6 +218,7 @@ export async function doStart (out, opts) {
     log(gameOpts, 'No manifest found (no \'.itch.toml\' file in top-level directory). Proceeding with heuristics.')
   }
 
+
   if (manifestAction) {
     manifestAction.path = manifestAction.path.replace(/{{EXT}}/, appExt())
     launchType = await launchTypeForAction(appPath, manifestAction.path)
@@ -247,6 +250,29 @@ export async function doStart (out, opts) {
 
   const startedAt = Date.now()
   globalMarket.saveEntity('caves', cave.id, {lastTouched: startedAt})
+
+  if (os.itchPlatform() == "windows") // temp UE4 hack
+  {
+    const installedUe4Reqs = globalMarket.getEntity('caves', cave.id).installedUE4Prereq
+    if (!installedUe4Reqs) {
+      log(opts, 'looking for UE4 prereq setup')
+      try {
+        const executables = globalMarket.getEntity('caves', cave.id).executables
+        let reqFile = executables::find((x) => /UE4PrereqSetup(_x64)?.exe/i.test(x))
+
+        if (reqFile)
+        {
+          log(opts, `launching installer ${reqFile}`)
+          const reqOpts = {...gameOpts}
+          reqOpts.manifestAction = {path: reqFile, sandbox: false}
+          await spawn({command: ospath.join(appPath, reqFile), args: ['/quiet', '/norestart']})
+          globalMarket.saveEntity('caves', cave.id, {installedUE4Prereq: true})
+        }
+      } catch(e) {
+        log(opts, `error while launching prereq for ${cave.id}: ${e.stack || e}`)
+      }
+    }
+  }
 
   let interval
   const UPDATE_PLAYTIME_INTERVAL = 10
