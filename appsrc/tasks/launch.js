@@ -266,7 +266,7 @@ export async function doStart (out, opts) {
             onErrToken: (tok) => log(opts, `[ue4 prereq err] ${tok}`)
           })
           if (code === 0) {
-            log(opts, `succesfully installed UE4 prereq`)
+            log(opts, 'succesfully installed UE4 prereq')
             globalMarket.saveEntity('caves', cave.id, {installedUE4Prereq: true})
           } else {
             log(opts, `couldn't install UE4 prereq (exit code ${code})`)

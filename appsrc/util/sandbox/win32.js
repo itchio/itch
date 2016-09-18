@@ -1,10 +1,6 @@
 
 import spawn from '../spawn'
-import sf from '../sf'
-
 import common from './common'
-
-import tmp from 'tmp'
 
 export async function check () {
   const errors = []
