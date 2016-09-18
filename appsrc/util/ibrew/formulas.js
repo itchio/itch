@@ -44,6 +44,15 @@ self['elevate'] = {
 }
 
 /**
+ * unprivileged user management:
+ * https://github.com/itchio/isolate
+ */
+self['isolate'] = {
+  format: '7z',
+  osWhitelist: ['windows']
+}
+
+/**
  * bring macOS apps forwards even when executed directly:
  * https://github.com/itchio/activate
  */

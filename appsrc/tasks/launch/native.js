@@ -196,17 +196,25 @@ export default async function launch (out, opts) {
       cmd += ` ${argString}`
     }
 
+    let playerUsername = await spawn.getOutput({
+      command: 'isolate.exe',
+      args: ['--print-itch-player-details'],
+      logger: opts.logger
+    })
+
+    playerUsername = playerUsername.split('\n')[0].trim()
+
     const grantPath = appPath
     if (isolateApps) {
       log(opts, 'app isolation enabled')
       const grantRes = await spawn.getOutput({
         command: 'icacls',
-        args: [ grantPath, '/grant', 'itch-player:F', '/T', '/Q', '/c' ],
+        args: [ grantPath, '/grant', playerUsername + ':F', '/T', '/Q', '/c' ],
         logger: opts.logger
       })
       log(opts, `grant output:\n${grantRes}`)
 
-      cmd = `elevate --runas itch-player salt ${cmd}`
+      cmd = `isolate ${cmd}`
     } else {
       log(opts, 'no app isolation')
     }
@@ -215,7 +223,7 @@ export default async function launch (out, opts) {
     if (isolateApps) {
       const denyRes = await spawn.getOutput({
         command: 'icacls',
-        args: [ grantPath, '/deny', 'itch-player:F', '/T', '/Q', '/c' ],
+        args: [ grantPath, '/deny', playerUsername + ':F', '/T', '/Q', '/c' ],
         logger: opts.logger
       })
       log(opts, `deny output:\n${denyRes}`)
