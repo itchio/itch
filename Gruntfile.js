@@ -14,7 +14,7 @@ var icoPath = path.join(iconsPath, 'itch.ico')
 var icnsPath = path.join(iconsPath, 'itch.icns')
 var installerGifPath = 'release/images/installer.gif'
 
-var electronVersion = '1.2.8'
+var electronVersion = '1.4.0'
 var outDir = path.join('build', 'v' + version)
 var companyName = 'Itch Corp'
 
