@@ -196,16 +196,18 @@ export default async function launch (out, opts) {
       cmd += ` ${argString}`
     }
 
-    let playerUsername = await spawn.getOutput({
-      command: 'isolate.exe',
-      args: ['--print-itch-player-details'],
-      logger: opts.logger
-    })
-
-    playerUsername = playerUsername.split('\n')[0].trim()
+    let playerUsername
 
     const grantPath = appPath
     if (isolateApps) {
+      playerUsername = await spawn.getOutput({
+        command: 'isolate.exe',
+        args: ['--print-itch-player-details'],
+        logger: opts.logger
+      })
+
+      playerUsername = playerUsername.split('\n')[0].trim()
+
       log(opts, 'app isolation enabled')
       const grantRes = await spawn.getOutput({
         command: 'icacls',
