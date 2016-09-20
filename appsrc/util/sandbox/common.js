@@ -14,6 +14,7 @@ export async function tendToNeeds (opts, needs, caretakers) {
       try {
         await Promise.resolve(caretaker(need))
       } catch (e) {
+        log(opts, `While tending to need ${need}: ${e.stack || e}`)
         errors.push(e)
       }
     }
