@@ -9,10 +9,14 @@ import {implodeCave} from './implode-cave'
 import {exploreCave} from './explore-cave'
 import {abortGame, abortLastGame} from './abort-game'
 import {downloadWatcher} from './download-watcher'
+import {downloadSpeedWatcher} from './download-speed-watcher'
 import {abortTask} from './start-task'
 
 async function boot (store, action) {
-  await downloadWatcher(store)
+  await Promise.all([
+    downloadWatcher(store),
+    downloadSpeedWatcher(store)
+  ])
 }
 
 async function retryDownload (store, action) {

@@ -154,6 +154,8 @@ module.exports = keyMirror({
   RETRY_DOWNLOAD: null,
   CLEAR_GAME_DOWNLOADS: null,
 
+  DOWNLOAD_SPEED_DATAPOINT: null,
+
   /** User requested game to be uninstalled */
   REQUEST_CAVE_UNINSTALL: null,
   /** Cave is going to be uninstalled */

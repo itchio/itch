@@ -14,7 +14,9 @@ import {
   CANCEL_DOWNLOAD,
   PAUSE_DOWNLOADS,
   RESUME_DOWNLOADS,
-  RETRY_DOWNLOAD
+  RETRY_DOWNLOAD,
+
+  DOWNLOAD_SPEED_DATAPOINT
 } from '../constants/action-types'
 
 export const queueDownload = createAction(QUEUE_DOWNLOAD)
@@ -33,3 +35,5 @@ export const cancelDownload = createAction(CANCEL_DOWNLOAD)
 export const pauseDownloads = createAction(PAUSE_DOWNLOADS)
 export const resumeDownloads = createAction(RESUME_DOWNLOADS)
 export const retryDownload = createAction(RETRY_DOWNLOAD)
+
+export const downloadSpeedDatapoint = createAction(DOWNLOAD_SPEED_DATAPOINT)

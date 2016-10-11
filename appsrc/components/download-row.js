@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import {connect} from './connect'
 import getDominantColor from './get-dominant-color'
 import humanize from 'humanize-plus'
+import {ResponsiveContainer, AreaChart, Area} from 'recharts'
 
 import * as actions from '../actions'
 
@@ -18,7 +19,7 @@ class DownloadRow extends Component {
   }
 
   render () {
-    const {first, active, item, navigateToGame} = this.props
+    const {first, active, item, navigateToGame, speeds} = this.props
 
     const {game, id} = item
     const coverUrl = game.stillCoverUrl || game.coverUrl
@@ -34,7 +35,25 @@ class DownloadRow extends Component {
 
     const itemClasses = classNames('history-item', {first, dimmed: (active && !first), finished: !active})
 
+    const gradientColor = 'rgb(158, 150, 131)'
+
     return <li key={id} className={itemClasses}>
+      {first
+      ? <ResponsiveContainer width='100%' height='100%'>
+        <AreaChart data={speeds} margin={{top: 0, right: 0, left: 0, bottom: 0}}>
+          <defs>
+            <linearGradient id='downloadGradient' x1='0' y1='0' x2='0' y2='1'>
+              <stop offset='0%' stopColor={gradientColor} stopOpacity={0.2}/>
+              <stop offset='50%' stopColor={gradientColor} stopOpacity={0.2}/>
+              <stop offset='100%' stopColor={gradientColor} stopOpacity={0.0}/>
+            </linearGradient>
+          </defs>
+          <Area type='monotone' curve={false} dot={false} isAnimationActive={false} dataKey='bps' fill='url(#downloadGradient)' fillOpacity={1.0}/>
+        </AreaChart>
+      </ResponsiveContainer>
+      : ''
+      }
+
       <div className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
       <div className='stats' onClick={onStatsClick}>
         {this.progress()}
@@ -190,6 +209,7 @@ DownloadRow.propTypes = {
 }
 
 const mapStateToProps = (state) => ({
+  speeds: state.downloads.speeds,
   downloadsPaused: state.downloads.downloadsPaused,
   tasksByGameId: state.tasks.tasksByGameId
 })
