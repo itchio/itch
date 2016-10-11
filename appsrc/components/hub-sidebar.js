@@ -1,5 +1,6 @@
 
 import React, {PropTypes, Component} from 'react'
+import moment from 'moment'
 import {connect} from './connect'
 import {map, where} from 'underline'
 import classNames from 'classnames'
@@ -329,8 +330,17 @@ const mapStateToProps = createStructuredSelector({
 
   sublabels: (state) => {
     const {activeDownload} = state.downloads
+    let label = null
+    if (activeDownload && activeDownload.progress > 0) {
+      if (state.downloads.downloadsPaused) {
+        label = ['grid.item.downloads_paused']
+      } else {
+        label = `${activeDownload.game.title} — ${(moment.duration(activeDownload.eta, 'seconds').locale(state.i18n.lang).humanize())}`
+      }
+    }
+
     return {
-      downloads: (activeDownload && activeDownload.progress > 0 && `${activeDownload.game.title} — ${(activeDownload.progress * 100).toFixed()}%`)
+      downloads: label
     }
   }
 })

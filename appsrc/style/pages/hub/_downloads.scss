@@ -153,6 +153,10 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
         display: inline-block;
 
         @include clickable;
+
+        &.icon-delete {
+          font-size: 18px;
+        }
       }
     }
   }

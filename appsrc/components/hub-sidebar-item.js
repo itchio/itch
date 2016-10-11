@@ -38,7 +38,7 @@ export class HubSidebarItem extends Component {
       style.borderColor = dominantColor
     }
 
-    return connectDragSource(connectDropTarget(<section key={id} style={style} className={classes} data-hint={sublabel} onClick={this.onClick} onContextMenu={onContextMenu} onClose={onClose} data-path={path} data-id={id} data-dragging={isDragging}>
+    return connectDragSource(connectDropTarget(<section key={id} style={style} className={classes} data-hint={t.format(sublabel)} onClick={this.onClick} onContextMenu={onContextMenu} onClose={onClose} data-path={path} data-id={id} data-dragging={isDragging}>
       <div className='row'>
         <span className='label'>{t.format(label)}</span>
         {count > 0

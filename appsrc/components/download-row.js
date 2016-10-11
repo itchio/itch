@@ -9,6 +9,7 @@ import humanize from 'humanize-plus'
 import * as actions from '../actions'
 
 import NiceAgo from './nice-ago'
+import GameActions from './game-actions'
 
 class DownloadRow extends Component {
   constructor () {
@@ -78,10 +79,13 @@ class DownloadRow extends Component {
   }
 
   progress () {
-    const {t, first, active, item, downloadsPaused} = this.props
+    const {t, first, active, item, downloadsPaused, tasksByGameId} = this.props
     const {err} = item
 
-    if (!active) {
+    const {game} = item
+    const task = (tasksByGameId[game.id] || [])[0]
+
+    if (!active && !task) {
       if (err) {
         return <div className='error-message'>
           {t('status.downloads.download_error')}
@@ -91,12 +95,20 @@ class DownloadRow extends Component {
         </div>
       }
 
-      const {game} = item
       return <div>
         {game.title}
+        <GameActions game={game}/>
       </div>
     }
-    const {game, date, progress = 0, reason} = item
+
+    const {date, reason} = item
+    let {progress = 0, bps, eta} = item
+
+    if (task) {
+      progress = task.progress
+      bps = task.bps
+      eta = task.eta
+    }
 
     const progressInnerStyle = {
       width: (progress * 100) + '%'
@@ -114,19 +126,24 @@ class DownloadRow extends Component {
         <div className='progress-inner' style={progressInnerStyle}/>
       </div>
       <div className='timeago'>
-      {first
+      {task
+      ? (task.name === 'launch'
+        ? t('grid.item.running')
+        : t('grid.item.installing')
+      )
+      : (first
       ? <div>
         {t('download.started')} <NiceAgo date={date}/>
         {reasonText ? ` — ${reasonText}` : ''}
       </div>
       : t('grid.item.queued')
-      }
+      )}
         <div className='filler'/>
         <div>
         {downloadsPaused
         ? <div className='paused'>{t('grid.item.downloads_paused')}</div>
-        : ((item.eta && item.bps)
-          ? <span>{humanize.fileSize(item.bps)}/s — {moment.duration(item.eta, 'seconds').locale(t.lang).humanize()}</span>
+        : (((active || task) && eta && bps)
+          ? <span>{humanize.fileSize(bps)}/s — {moment.duration(eta, 'seconds').locale(t.lang).humanize()}</span>
           : ''
         )}
         </div>
@@ -138,8 +155,6 @@ class DownloadRow extends Component {
     const {t} = this.props
 
     switch (reason) {
-      case 'install':
-        return t('download.reason.install')
       case 'update':
         return t('download.reason.update')
       default:
@@ -175,7 +190,8 @@ DownloadRow.propTypes = {
 }
 
 const mapStateToProps = (state) => ({
-  downloadsPaused: state.downloads.downloadsPaused
+  downloadsPaused: state.downloads.downloadsPaused,
+  tasksByGameId: state.tasks.tasksByGameId
 })
 
 const mapDispatchToProps = (dispatch) => ({
