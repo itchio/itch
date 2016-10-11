@@ -49,8 +49,8 @@ const self = {
     const archivePath = opts.archivePath
 
     const onProgress = opts.onProgress || noop
-    const extractOnProgress = subprogress(onProgress, 0, 80)
-    const deployOnProgress = subprogress(onProgress, 80, 100)
+    const extractOnProgress = subprogress(onProgress, 0, 0.8)
+    const deployOnProgress = subprogress(onProgress, 0.8, 1)
 
     const stagePath = opts.archivePath + '-stage'
     await butler.wipe(stagePath)

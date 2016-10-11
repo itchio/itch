@@ -39,7 +39,7 @@ export default function (req, userOpts) {
       if (total_size === 0) return
 
       req.emit('progress', {
-        percent: Math.round(received_size / total_size * 100)
+        progress: Math.round(received_size / total_size)
       })
     }, throttle)
   })

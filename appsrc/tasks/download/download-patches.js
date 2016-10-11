@@ -44,7 +44,7 @@ export default async function downloadPatches (out, opts) {
   }
 
   // FIXME: for large games, this looks like the patching is stuck at 100%
-  out.emit('progress', 1)
+  out.emit('progress', {progress: 1})
   await doApply(opts, previousPatch)
   log(opts, 'All done applying!')
 }
@@ -95,8 +95,10 @@ async function doDownloadPatchAndSignature (out, opts, entry, byteOffset, totalS
   log(opts, `Downloading build ${entry.id}'s patch to ${paths.patch}`)
 
   const downloadEmitter = new EventEmitter()
-  downloadEmitter.on('progress', (progress) => {
-    out.emit('progress', (byteOffset + (progress * entry.patchSize)) / totalSize)
+  downloadEmitter.on('progress', (e) => {
+    const entryProgress = e.percentage * 0.01
+    const progress = (byteOffset + (entryProgress * entry.patchSize)) / totalSize
+    out.emit('progress', {progress})
   })
 
   log(opts, `byteOffset = ${byteOffset}, entry.patchSize = ${entry.patchSize}`)
@@ -131,7 +133,7 @@ async function doDownloadPatchAndSignature (out, opts, entry, byteOffset, totalS
   log(opts, 'downloaded both patch + signature')
 
   const progress = (byteOffset + entry.patchSize) / totalSize
-  out.emit('progress', progress)
+  out.emit('progress', {progress})
 
   return {
     entry,

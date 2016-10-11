@@ -48,7 +48,7 @@ async function tryDownload (out, opts) {
   const parsed = urlParser.parse(url)
   log(opts, `${parsed.hostname} -> ${destPath}`)
 
-  const onProgress = (payload) => out.emit('progress', payload.percent / 100)
+  const onProgress = (e) => out.emit('progress', e)
 
   log(opts, 'starting download!')
   try {

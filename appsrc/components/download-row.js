@@ -1,4 +1,5 @@
 
+import moment from 'moment'
 import React, {Component, PropTypes} from 'react'
 import classNames from 'classnames'
 import {connect} from './connect'
@@ -105,8 +106,6 @@ class DownloadRow extends Component {
       progressInnerStyle.backgroundColor = dominantColor
     }
 
-    const sizeDone = item.totalSize ? humanize.fileSize(item.totalSize * progress) : ''
-    const totalSize = item.totalSize ? humanize.fileSize(item.totalSize) : t('status.downloads.unknown_size')
     const reasonText = this.reasonText(reason)
 
     return <div className='stats-inner'>
@@ -126,8 +125,8 @@ class DownloadRow extends Component {
         <div>
         {downloadsPaused
         ? <div className='paused'>{t('grid.item.downloads_paused')}</div>
-        : (item.totalSize
-          ? <span>{sizeDone} / {totalSize}</span>
+        : ((item.eta && item.bps)
+          ? <span>{humanize.fileSize(item.bps)}/s — {moment.duration(item.eta, 'seconds').locale(t.lang).humanize()}</span>
           : ''
         )}
         </div>

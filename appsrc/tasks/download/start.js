@@ -24,7 +24,7 @@ export default async function start (out, opts) {
   // Get download URL
   const api = client.withKey(credentials.key)
 
-  const onProgress = (payload) => out.emit('progress', payload.percent / 100)
+  const onProgress = (e) => out.emit('progress', e)
   const uploadURL = api.downloadUploadURL(downloadKey, upload.id)
 
   try {

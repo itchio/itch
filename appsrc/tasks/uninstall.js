@@ -15,7 +15,7 @@ export default async function start (out, opts) {
   invariant(cave, 'uninstall has cave')
   invariant(globalMarket, 'uninstall has cave')
 
-  const onProgress = (info) => out.emit('progress', info.percent / 100)
+  const onProgress = (e) => out.emit('progress', e)
 
   const destPath = pathmaker.appPath(cave)
 

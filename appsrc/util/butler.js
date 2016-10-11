@@ -49,7 +49,7 @@ function parseButlerStatus (opts, onerror, token) {
           return
         }
       }
-      return onProgress({percent: status.percentage})
+      return onProgress(status)
     }
     case 'error': {
       return onerror(status.message)

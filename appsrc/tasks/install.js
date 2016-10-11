@@ -102,7 +102,7 @@ export default async function start (out, opts) {
     ...opts,
     cave,
     destPath,
-    onProgress: (info) => out.emit('progress', info.percent / 100)
+    onProgress: (e) => out.emit('progress', e)
   }
 
   globalMarket.saveEntity('caves', cave.id, {launchable: false})

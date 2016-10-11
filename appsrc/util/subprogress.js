@@ -7,16 +7,15 @@
  * Example:
  *
  *   // from 20% to 40%, we do that
- *   await subtask(src, dst, {onProgress: subprogress(onProgress, 20, 40)})
+ *   await subtask(src, dst, {onProgress: subprogress(onProgress, 0.2, 0.4)})
  */
-export default function subprogress (onProgress, start_percent, end_percent) {
-  let start_alpha = start_percent / 100
-  let end_alpha = end_percent / 100
-  let span_alpha = end_alpha - start_alpha
+export default function subprogress (onProgress, startAlpha, endAlpha) {
+  const spanAlpha = endAlpha - startAlpha
 
-  return function (info) {
-    let inner_alpha = info.percent / 100
-    let percent = (start_alpha + inner_alpha * span_alpha) * 100
-    onProgress({percent})
+  return function (e) {
+    const innerAlpha = e.progress
+    const progress = (startAlpha + innerAlpha * spanAlpha)
+    // TODO: what about bps/eta?
+    onProgress({...e, progress})
   }
 }
