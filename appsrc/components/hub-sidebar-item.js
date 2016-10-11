@@ -38,6 +38,8 @@ export class HubSidebarItem extends Component {
       style.borderColor = dominantColor
     }
 
+    const progressColor = dominantColor || 'white'
+
     return connectDragSource(connectDropTarget(<section key={id} style={style} className={classes} data-hint={t.format(sublabel)} onClick={this.onClick} onContextMenu={onContextMenu} onClose={onClose} data-path={path} data-id={id} data-dragging={isDragging}>
       <div className='row'>
         <span className='label'>{t.format(label)}</span>
@@ -48,7 +50,7 @@ export class HubSidebarItem extends Component {
         <div className='filler'/>
         {progress > 0
         ? <div className='progress-outer'>
-          <div className='progress-inner' style={{width: `${Math.max(0, Math.min(1, progress)) * 100}%`}}/>
+          <div className='progress-inner' style={{width: `${Math.max(0, Math.min(1, progress)) * 100}%`, backgroundColor: progressColor}}/>
         </div>
         : ''}
         {onClose
@@ -71,9 +73,15 @@ export class HubSidebarItem extends Component {
   }
 
   updateColor () {
-    const {games} = this.props.data || {}
-    if (games) {
-      const game = games[Object.keys(games)[0]]
+    let game = this.props.gameOverride
+    if (!game) {
+      const {games} = this.props.data || {}
+      if (games) {
+        game = games[Object.keys(games)[0]]
+      }
+    }
+
+    if (game) {
       getDominantColor(game.coverUrl, (palette) => {
         this.setState({dominantColor: getDominantColor.toCSS(getDominantColor.pick(palette))})
       })

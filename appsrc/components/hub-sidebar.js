@@ -99,9 +99,14 @@ export class HubSidebar extends Component {
           const progress = progresses[id]
           const sublabel = sublabels[id]
 
+          let gameOverride = null
+          if (id === 'downloads') {
+            gameOverride = this.props.downloadingGame
+          }
+
           const props = {index, id, path, label, icon, iconImage, active,
             onClick, count, progress, onClose, onContextMenu, moveTab, data, t,
-            sublabel}
+            sublabel, gameOverride}
           return <HubSidebarItem {...props}/>
         })}
         <section className='hub-sidebar-item new-tab' onClick={newTab}>
@@ -323,6 +328,13 @@ const mapStateToProps = createStructuredSelector({
       downloads: downloads.length
     })
   ),
+
+  downloadingGame: (state) => {
+    const {activeDownload} = state.downloads
+    if (activeDownload) {
+      return activeDownload.game
+    }
+  },
 
   progresses: (state) => ({
     downloads: state.downloads.progress
