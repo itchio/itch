@@ -5,32 +5,11 @@ import mklog from '../../util/log'
 const log = mklog('download')
 
 import client from '../../util/api'
+import butler from '../../util/butler'
 
 import downloadPatches from './download-patches'
-import resilientDownload from './resilient-download'
 
 export default async function start (out, opts) {
-  let res
-  let running = true
-
-  while (running) {
-    try {
-      res = await tryDownload(out, opts)
-      running = false
-    } catch (err) {
-      if (err === 'unexpected EOF') {
-        // retry!
-      } else {
-        // pass on error
-        throw err
-      }
-    }
-  }
-
-  return res
-}
-
-async function tryDownload (out, opts) {
   if (opts.upgradePath) {
     log(opts, 'Got an upgrade path, downloading patches')
     return await downloadPatches(out, opts)
@@ -45,25 +24,24 @@ async function tryDownload (out, opts) {
   // Get download URL
   const api = client.withKey(credentials.key)
 
-  const getURL = async function () {
-    let url
-    try {
-      url = (await api.downloadUpload(downloadKey, upload.id)).url
-    } catch (e) {
-      if (e.errors && e.errors[0] === 'invalid upload') {
-        const e = new Error('invalid upload')
-        e.itchReason = 'upload-gone'
-        throw e
-      }
+  const onProgress = (payload) => out.emit('progress', payload.percent / 100)
+  const uploadURL = api.downloadUploadURL(downloadKey, upload.id)
+
+  try {
+    await butler.cp({
+      ...opts,
+      src: uploadURL,
+      dest: destPath,
+      resume: true,
+      emitter: out,
+      onProgress
+    })
+  } catch (e) {
+    if (e.errors && e.errors[0] === 'invalid upload') {
+      const e = new Error('invalid upload')
+      e.itchReason = 'upload-gone'
       throw e
     }
-    return url
+    throw e
   }
-  const url = await getURL()
-
-  await resilientDownload(out, {
-    ...opts,
-    url,
-    refreshURL: getURL
-  })
 }

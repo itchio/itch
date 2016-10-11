@@ -1,6 +1,7 @@
 
 import ExtendableError from 'es6-error'
 import invariant from 'invariant'
+import querystring from 'querystring'
 
 import needle from '../promised/needle'
 import urls from '../constants/urls'
@@ -148,6 +149,14 @@ export class AuthenticatedClient {
     this.key = key
   }
 
+  itchfsURL (path, data = {}) {
+    const queryParams = {
+      api_key: this.key,
+      ...data
+    }
+    return `itchfs://${path}?${querystring.stringify(queryParams)}`
+  }
+
   async request (method, path, data = {}, transformers = {}) {
     const url = `/${this.key}${path}`
     return await this.client.request(method, url, data, transformers)
@@ -214,6 +223,14 @@ export class AuthenticatedClient {
     }
   }
 
+  downloadUploadURL (downloadKey, uploadId) {
+    if (downloadKey) {
+      return this.itchfsURL(`/download-key/${downloadKey.id}/download/${uploadId}`)
+    } else {
+      return this.itchfsURL(`/upload/${uploadId}/download`)
+    }
+  }
+
   // wharf-related endpoints (bit of a mess tbh)
 
   async findUpgrade (downloadKey, uploadId, currentBuildId) {
@@ -229,6 +246,14 @@ export class AuthenticatedClient {
       return await this.request('get', `/download-key/${downloadKey.id}/download/${uploadId}/builds/${buildId}`)
     } else {
       return await this.request('get', `/upload/${uploadId}/download/builds/${buildId}`)
+    }
+  }
+
+  downloadBuildURL (downloadKey, uploadId, buildId) {
+    if (downloadKey) {
+      return this.itchfsURL(`/download-key/${downloadKey.id}/download/${uploadId}/builds/${buildId}`)
+    } else {
+      return this.itchfsURL(`/upload/${uploadId}/download/builds/${buildId}`)
     }
   }
 
