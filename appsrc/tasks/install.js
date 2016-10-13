@@ -27,6 +27,8 @@ export default async function start (out, opts) {
   invariant(opts.upload, 'install must have an upload')
   const {market, credentials, globalMarket, archivePath, downloadKey, game, upload, installLocation = defaultInstallLocation(), handPicked} = opts
 
+  const experimentalZeroExtract = !!opts.upload.buildId
+
   let checkTimestamps = true
 
   const grabCave = () => globalMarket.getEntities('caves')::findWhere({gameId: game.id})
@@ -55,7 +57,7 @@ export default async function start (out, opts) {
       downloadKey
     }
 
-    if (!opts.reinstall) {
+    if (!opts.reinstall && !experimentalZeroExtract) {
       const installFolderExists = async function () {
         const fullPath = pathmaker.appPath(cave)
         return await sf.exists(fullPath)
@@ -79,34 +81,40 @@ export default async function start (out, opts) {
 
   market.saveEntity('games', game.id, game)
 
-  let destPath = pathmaker.appPath(cave)
+  let amtime
+  if (experimentalZeroExtract) {
+    amtime = Date.parse(upload.build.updatedAt)
+  } else {
+    let destPath = pathmaker.appPath(cave)
 
-  let archiveStat
-  try {
-    archiveStat = await sf.lstat(archivePath)
-  } catch (e) {
-    log(opts, 'where did our archive go? re-downloading...')
-    throw new Transition({to: 'download', reason: 'missing-download'})
+    let archiveStat
+    try {
+      archiveStat = await sf.lstat(archivePath)
+    } catch (e) {
+      log(opts, 'where did our archive go? re-downloading...')
+      throw new Transition({to: 'download', reason: 'missing-download'})
+    }
+
+    let imtime = Date.parse(cave.installedArchiveMtime)
+    amtime = archiveStat.mtime
+    log(opts, `comparing mtimes, installed = ${imtime}, archive = ${amtime}`)
+
+    if (checkTimestamps && imtime && !(amtime > imtime)) {
+      log(opts, 'archive isn\'t more recent, nothing to install')
+      return {caveId: cave.id}
+    }
+
+    let coreOpts = {
+      ...opts,
+      cave,
+      destPath,
+      onProgress: (e) => out.emit('progress', e)
+    }
+
+    globalMarket.saveEntity('caves', cave.id, {launchable: false})
+    await core.install(out, coreOpts)
   }
 
-  let imtime = Date.parse(cave.installedArchiveMtime)
-  let amtime = archiveStat.mtime
-  log(opts, `comparing mtimes, installed = ${imtime}, archive = ${amtime}`)
-
-  if (checkTimestamps && imtime && !(amtime > imtime)) {
-    log(opts, 'archive isn\'t more recent, nothing to install')
-    return {caveId: cave.id}
-  }
-
-  let coreOpts = {
-    ...opts,
-    cave,
-    destPath,
-    onProgress: (e) => out.emit('progress', e)
-  }
-
-  globalMarket.saveEntity('caves', cave.id, {launchable: false})
-  await core.install(out, coreOpts)
   globalMarket.saveEntity('caves', cave.id, {
     game,
     installedBy: {

@@ -249,12 +249,20 @@ export class AuthenticatedClient {
     }
   }
 
-  downloadBuildURL (downloadKey, uploadId, buildId) {
+  downloadBuildURL (downloadKey, uploadId, buildId, extra) {
+    let path = ''
+
     if (downloadKey) {
-      return this.itchfsURL(`/download-key/${downloadKey.id}/download/${uploadId}/builds/${buildId}`)
+      path = `/download-key/${downloadKey.id}/download/${uploadId}/builds/${buildId}`
     } else {
-      return this.itchfsURL(`/upload/${uploadId}/download/builds/${buildId}`)
+      path = `/upload/${uploadId}/download/builds/${buildId}`
     }
+
+    if (extra) {
+      path = `${path}/${extra}`
+    }
+
+    return this.itchfsURL(path)
   }
 
   async subkey (gameId, scope) {

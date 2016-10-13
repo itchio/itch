@@ -171,6 +171,20 @@ async function ditto (src, dst, opts = {}) {
   return await butler(opts, 'ditto', args)
 }
 
+/* Verifies ${dir} against ${signature}, heals against opts.heal if given */
+async function verify (signature, dir, opts = {}) {
+  invariant(typeof signature === 'string', 'verify has string signature')
+  invariant(typeof dir === 'string', 'verify has string dir')
+
+  const args = [signature, dir]
+  const {heal} = opts
+  if (heal) {
+    args.push('--heal')
+    args.push(heal)
+  }
+  return await butler(opts, 'verify', args)
+}
+
 async function sanityCheck () {
   try {
     const res = await spawn({
@@ -184,5 +198,5 @@ async function sanityCheck () {
 }
 
 export default {
-  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, sanityCheck
+  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify, sanityCheck
 }

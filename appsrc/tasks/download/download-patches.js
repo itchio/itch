@@ -62,6 +62,7 @@ async function doApply (opts, patch) {
     gameId,
     buildId: patch.entry.id,
     buildUserVersion: patch.entry.userVersion,
+    installedArchiveMtime: Date.parse(patch.entry.updatedAt),
     patchPath: patch.patchPath,
     signaturePath: patch.signaturePath,
     outPath: cavePath,

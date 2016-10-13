@@ -45,7 +45,7 @@ class DownloadRow extends Component {
             <linearGradient id='downloadGradient' x1='0' y1='0' x2='0' y2='1'>
               <stop offset='0%' stopColor={gradientColor} stopOpacity={0.2}/>
               <stop offset='50%' stopColor={gradientColor} stopOpacity={0.2}/>
-              <stop offset='100%' stopColor={gradientColor} stopOpacity={0.0}/>
+              <stop offset='100%' stopColor={gradientColor} stopOpacity={0.1}/>
             </linearGradient>
           </defs>
           <Area type='monotone' curve={false} dot={false} isAnimationActive={false} dataKey='bps' fill='url(#downloadGradient)' fillOpacity={1.0}/>
