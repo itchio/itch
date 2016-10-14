@@ -1,5 +1,5 @@
 
-import {EventEmitter} from 'events'
+import { EventEmitter } from 'events'
 
 const rnil = () => null
 
@@ -32,7 +32,8 @@ const electron = {
     }
   }, EventEmitter.prototype),
   remote: {
-    require: (path) => ({})
+    require: (path) => ({}),
+    app: null as any
   },
   shell: {
     openItem: rnil,
@@ -78,7 +79,7 @@ let session = {
 }
 
 let webContents = {
-  on: (e, cb) => cb({preventDefault: rnil}),
+  on: (e, cb) => cb({ preventDefault: rnil }),
   executeJavaScript: rnil,
   insertCSS: rnil,
   openDevTools: rnil,

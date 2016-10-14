@@ -1,12 +1,12 @@
 
-import invariant from 'invariant'
-import ospath from 'path'
+import * as invariant from 'invariant'
+import * as ospath from 'path'
 
-import {shell} from '../../electron'
+import { shell } from '../../electron'
 
 import pathmaker from '../../util/pathmaker'
 
-export default async function launch (out, opts) {
+export default async function launch(out, opts) {
   const {cave, manifestAction} = opts
   invariant(cave, 'launch/shell has cave')
   invariant(manifestAction, 'launch/shell has manifestAction')

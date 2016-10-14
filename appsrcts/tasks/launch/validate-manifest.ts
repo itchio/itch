@@ -2,7 +2,7 @@
 // TODO: refactor to use some shape matching library,
 // maybe React propTypes are reusable? maybe not.
 
-import {each} from 'underline'
+import { each } from 'underscore'
 
 const MANIFEST_REQUIRED_FIELDS = [
   'actions'
@@ -26,7 +26,15 @@ const ACTION_VALID_FIELDS = [
   'scope' // requested API scope
 ]
 
-export default function validateManifest (manifest, log, opts) {
+interface Action {
+  name: string
+}
+
+interface Manifest {
+  actions: Array<Action>
+}
+
+export default function validateManifest(manifest: Manifest, log: any, opts: any) {
   for (const field of Object.keys(manifest)) {
     if (MANIFEST_VALID_FIELDS.indexOf(field) === -1) {
       log(opts, `in manifest, unknown field '${field}' found`)
@@ -39,7 +47,7 @@ export default function validateManifest (manifest, log, opts) {
     }
   }
 
-  manifest.actions::each((action, i) => {
+  each(manifest.actions, (action, i) => {
     const denomination = action.name || `#${i}`
 
     for (const field of Object.keys(action)) {

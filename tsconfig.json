@@ -10,6 +10,10 @@
         "typings/*.d.ts"
     ],
     "files": [
+        "appsrcts/electron",
+        "appsrcts/electron/fake-electron.ts",
+        "appsrcts/electron/index.ts",
+        "appsrcts/env.ts",
         "appsrcts/tasks",
         "appsrcts/tasks/configure",
         "appsrcts/tasks/configure.ts",
@@ -20,6 +24,9 @@
         "appsrcts/tasks/configure/linux.ts",
         "appsrcts/tasks/configure/win32.ts",
         "appsrcts/tasks/errors.ts",
+        "appsrcts/tasks/launch",
+        "appsrcts/tasks/launch/shell.ts",
+        "appsrcts/tasks/launch/validate-manifest.ts",
         "appsrcts/types",
         "appsrcts/types/db.ts",
         "appsrcts/util",
@@ -37,6 +44,7 @@
         "typings/fnout.d.ts",
         "typings/humanize-plus.d.ts",
         "typings/logrotate-stream.d.ts",
+        "typings/moment.d.ts",
         "typings/stream-splitter.d.ts",
         "typings/walk.d.ts"
     ]

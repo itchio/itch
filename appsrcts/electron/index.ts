@@ -2,7 +2,7 @@
 // shim module that allows 'import'-ing individual electron modules,
 // and replaces them with mocks in the test environment.
 
-import env from '../env'
+import * as env from '../env'
 
 let electron
 

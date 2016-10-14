@@ -44,7 +44,7 @@ export default async function start (out, opts) {
     const cave = {
       installLocation,
       installFolder,
-      patchScheme: 2 // see pathmaker
+      pathScheme: 2 // see pathmaker
     }
 
     const fullInstallFolder = pathmaker.appPath(cave)

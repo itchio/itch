@@ -11,6 +11,5 @@ export default {
   'configure': 'cog',
   'awaken': 'stopwatch',
   'launch': 'fire',
-  'check-for-update': 'stopwatch',
   'idle': 'checkmark'
 }
