@@ -1,17 +1,44 @@
 
-import invariant from 'invariant'
+import * as invariant from 'invariant'
 
-import Promise from 'bluebird'
-import childProcess from 'child_process'
-import StreamSplitter from 'stream-splitter'
+import * as bluebird from 'bluebird'
+import * as childProcess from 'child_process'
+import * as StreamSplitter from 'stream-splitter'
 import LFTransform from './lf-transform'
 
-import {Cancelled} from '../tasks/errors'
+import { Cancelled } from '../tasks/errors'
 
 import mklog from './log'
 const log = mklog('spawn')
 
-function spawn (opts) {
+import { EventEmitter } from 'events'
+
+interface SpawnOpts {
+  command: string
+  args: Array<string>
+  split?: string
+  emitter?: EventEmitter
+  onToken?: (token: string) => void
+  onErrToken?: (token: string) => void
+  opts?: any
+}
+
+interface ExecResult {
+  code: number
+  out: string
+  err: string
+}
+
+interface SpawnInterface {
+  (opts: SpawnOpts): Promise<number>
+  exec(opts: SpawnOpts): Promise<ExecResult>
+  getOutput(opts: SpawnOpts): Promise<string>
+  escapePath(arg: string): string
+}
+
+var spawn: SpawnInterface
+
+spawn = async function (opts: SpawnOpts): Promise<number> {
   const {emitter, command, args = [], split = '\n', onToken, onErrToken} = opts
 
   invariant(typeof command === 'string', 'spawn needs string command')
@@ -20,14 +47,13 @@ function spawn (opts) {
   invariant(typeof onToken === 'function' || onToken === undefined, 'spawn needs onToken to be a function')
   invariant(typeof onErrToken === 'function' || onErrToken === undefined, 'spawn needs onErrToken to be a function')
 
-  const spawnOpts = {
-    ...(opts.opts || {}),
+  const spawnOpts = Object.assign({}, opts.opts || {}, {
     stdio: [
       'ignore', // stdin
       onToken ? 'pipe' : 'ignore', // stdout
       onErrToken ? 'pipe' : 'ignore' // stderr
     ]
-  }
+  })
 
   log(opts, `spawning ${command} with args ${args.join(' ')}`)
 
@@ -59,7 +85,7 @@ function spawn (opts) {
     })
   }
 
-  return new Promise((resolve, reject) => {
+  const promise = new bluebird((resolve, reject) => {
     let fakeCode
 
     child.on('close', (code, signal) => {
@@ -101,16 +127,17 @@ function spawn (opts) {
       })
     }
   })
-}
+  const code = (await promise) as number
+  return code
+} as any
 
-spawn.exec = async function (opts) {
+spawn.exec = async function (opts: SpawnOpts): Promise<ExecResult> {
   let out = ''
   let err = ''
 
   const {onToken, onErrToken} = opts
 
-  const actualOpts = {
-    ...opts,
+  const actualOpts = Object.assign({}, opts, {
     onToken: (tok) => {
       out += tok + '\n'
       if (onToken) { onToken(tok) }
@@ -119,13 +146,13 @@ spawn.exec = async function (opts) {
       err += tok + '\n'
       if (onErrToken) { onErrToken(tok) }
     }
-  }
+  })
 
   const code = await spawn(actualOpts)
-  return {code, out, err}
+  return { code, out, err }
 }
 
-spawn.getOutput = async function (opts) {
+spawn.getOutput = async function (opts: SpawnOpts): Promise<string> {
   const {code, err, out} = await spawn.exec(opts)
   const {command} = opts
 

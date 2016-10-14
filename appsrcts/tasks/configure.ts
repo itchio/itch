@@ -1,17 +1,19 @@
 
-import invariant from 'invariant'
+import * as invariant from 'invariant'
 
 import os from '../util/os'
 
 import mklog from '../util/log'
 const log = mklog('tasks/configure')
 import pathmaker from '../util/pathmaker'
-import humanize from 'humanize-plus'
+import * as humanize from 'humanize-plus'
 
 import html from './configure/html'
 import computeSize from './configure/compute-size'
 
-async function configure (appPath) {
+import { ConfigureResult } from './configure/common'
+
+async function configure(appPath: string): Promise<ConfigureResult> {
   const platform = os.platform()
 
   switch (platform) {
@@ -25,7 +27,7 @@ async function configure (appPath) {
   }
 }
 
-export default async function start (out, opts) {
+export default async function start(out, opts) {
   const {cave, upload, game, globalMarket} = opts
   invariant(cave, 'configure has cave')
   invariant(game, 'configure has game')
@@ -35,7 +37,7 @@ export default async function start (out, opts) {
   log(opts, `configuring ${appPath}`)
 
   const launchType = upload.type === 'html' ? 'html' : 'native'
-  globalMarket.saveEntity('caves', cave.id, {launchType})
+  globalMarket.saveEntity('caves', cave.id, { launchType })
 
   if (launchType === 'html') {
     const res = await html.configure(game, appPath)
@@ -44,11 +46,11 @@ export default async function start (out, opts) {
   } else {
     const executables = (await configure(appPath)).executables
     log(opts, `native-configure yielded execs: ${JSON.stringify(executables, null, 2)}`)
-    globalMarket.saveEntity('caves', cave.id, {executables})
+    globalMarket.saveEntity('caves', cave.id, { executables })
   }
 
   const totalSize = await computeSize.computeFolderSize(opts, appPath)
   log(opts, `total size of ${appPath}: ${humanize.fileSize(totalSize)} (${totalSize} bytes)`)
 
-  globalMarket.saveEntity('caves', cave.id, {installedSize: totalSize})
+  globalMarket.saveEntity('caves', cave.id, { installedSize: totalSize })
 }

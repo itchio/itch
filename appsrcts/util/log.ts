@@ -1,33 +1,60 @@
 
-import {pairs} from 'underline'
-import colors from 'colors/safe'
+import { pairs } from 'underscore'
+import * as colors from 'colors/safe'
 
-import fs from 'fs'
-import format from '../util/format'
-import path from 'path'
-import eol from 'eol'
-import deepAssign from 'deep-assign'
-import stream from 'logrotate-stream'
+import * as fs from 'fs'
+import * as format from '../util/format'
+import * as path from 'path'
+import * as eol from 'eol'
+import * as deepAssign from 'deep-assign'
+import * as stream from 'logrotate-stream'
 
-function make (name) {
-  let f = function (opts, message) {
+interface LogExport {
+  (message: string): any
+  Logger: any
+}
+
+var make: LogExport
+
+make = function (name: string): LogExport {
+  var f: LogExport
+
+  f = function (opts, message) {
     if (opts && opts.logger) {
       opts.logger.log(`[${name}] ${message}`)
     }
-  }
+  } as any
   f.Logger = Logger
   return f
-}
+} as any
 
 const allColors = 'red green yellow blue magenta cyan white gray'.split(' ')
 
+interface Stream {
+  write(contents: string)
+  end()
+}
+
 export class Logger {
-  constructor (userOpts) {
+  /** if true, print message to console */
+  consoleSink: boolean
+
+  /** if true, accumulate output in .contents */
+  stringSink: boolean
+  contents: string
+
+  fileSink: Stream
+
+  opts: any
+
+  colorCache: any
+
+  constructor(userOpts) {
     if (typeof userOpts === 'undefined') {
       userOpts = {}
     }
 
-    let defaultOpts = {sinks: {console: true}}
+    let defaultOpts = { sinks: { console: true } }
     let opts = deepAssign({}, defaultOpts, userOpts)
     this.opts = opts
 
@@ -35,12 +62,12 @@ export class Logger {
 
     this.consoleSink = false
     this.stringSink = false
-    this.fileSink = false
+    this.fileSink = null
     this.contents = ''
 
-    for (let pair of sinks::pairs()) {
-      let key = pair[0]
-      let val = pair[1]
+    for (const pair of pairs(sinks)) {
+      const key = pair[0]
+      const val = pair[1]
 
       switch (key) {
         case 'console': {
@@ -53,7 +80,7 @@ export class Logger {
             // XXX bad, but we're in a constructor, not seeing many other options
             try {
               fs.mkdirSync(path.dirname(val))
-            } catch (err) {}
+            } catch (err) { }
             this.fileSink = stream({
               file: val,
               size: '300K',
@@ -71,11 +98,11 @@ export class Logger {
     }
   }
 
-  log (message) {
+  log(message) {
     this.write(this.timestamp(), `${message}`)
   }
 
-  nameToColor (name) {
+  nameToColor(name) {
     this.colorCache = this.colorCache || {}
 
     if (this.colorCache[name]) {
@@ -92,7 +119,7 @@ export class Logger {
     return this.colorCache[name]
   }
 
-  write (timestamp, s) {
+  write(timestamp, s) {
     if (this.stringSink) {
       this.contents += eol.auto(`[${timestamp}] ${s}` + '\n')
     }
@@ -112,13 +139,13 @@ export class Logger {
     }
   }
 
-  close () {
+  close() {
     if (this.fileSink) {
       this.fileSink.end()
     }
   }
 
-  timestamp () {
+  timestamp() {
     return '[' + format.date(Date.now(), 'YYYY-MM-DD @ HH:mm:ss.SSS') + ']'
   }
 }

@@ -1,40 +1,47 @@
 
 import spawn from './spawn'
-import os from 'os'
+import * as os from 'os'
+
+interface AssertPresenceResult {
+  code: number
+  stdout: string
+  stderr: string
+  parsed: string
+}
 
 const self = {
-  platform: function () {
+  platform: function (): string {
     return process.platform
   },
 
-  release: function () {
+  release: function (): string {
     return os.release()
   },
 
-  arch: function () {
+  arch: function (): string {
     return process.arch
   },
 
-  inBrowser: function () {
+  inBrowser: function (): boolean {
     return self.processType() === 'browser'
   },
 
-  inRenderer: function () {
+  inRenderer: function (): boolean {
     return self.processType() === 'renderer'
   },
 
-  processType: function () {
+  processType: function (): string {
     return process.type || 'browser'
   },
 
-  getVersion: function (key) {
+  getVersion: function (key): string {
     return process.versions[key]
   },
 
   /**
    * Get platform in the format used by the itch.io API
    */
-  itchPlatform: function () {
+  itchPlatform: function (): string {
     switch (self.platform()) {
       case 'darwin':
         return 'osx'
@@ -45,11 +52,11 @@ const self = {
     }
   },
 
-  cliArgs: function () {
+  cliArgs: function (): Array<string> {
     return process.argv
   },
 
-  assertPresence: async function (command, args, parser) {
+  assertPresence: async function (command: string, args: Array<string>, parser: RegExp): Promise<AssertPresenceResult> {
     let stdout = ''
     let stderr = ''
 
@@ -75,7 +82,7 @@ const self = {
       }
     }
 
-    return {code, stdout, stderr, parsed}
+    return { code, stdout, stderr, parsed }
   }
 }
 

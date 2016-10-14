@@ -1,7 +1,7 @@
 
-import moment from 'moment-timezone'
+import * as moment from 'moment-timezone'
 
-export function slugify (str) {
+export function slugify(str: string): string {
   return str.toLowerCase()
     .replace(/[^a-zA-Z_ ]/g, '')
     .replace(/ +/g, '_')
@@ -13,15 +13,15 @@ const itchPlatforms = {
   'osx': 'macOS' // since WWDC june 2016
 }
 
-export function itchPlatform (p) {
+export function itchPlatform(p: string): string {
   return itchPlatforms[p] || '???'
 }
 
-export function camelify (str) {
+export function camelify(str: string): string {
   return str.replace(/_[a-z]/g, (x) => x[1].toUpperCase())
 }
 
-export function camelifyObject (obj) {
+export function camelifyObject(obj: any): any {
   if (obj && typeof obj === 'object') {
     if (Array.isArray(obj)) {
       const res = Array(obj.length)
@@ -41,19 +41,19 @@ export function camelifyObject (obj) {
   }
 }
 
-export function seconds (secs) {
+export function seconds(secs: number): Array<any> {
   if (secs < 60) {
     return ['duration.minute']
   } else if (secs < 3600) {
-    return ['duration.minutes', {x: Math.floor(secs / 60).toFixed()}]
+    return ['duration.minutes', { x: Math.floor(secs / 60).toFixed() }]
   } else if (secs < 3600 * 2) {
     return ['duration.hour']
   } else {
-    return ['duration.hours', {x: Math.floor(secs / 3600).toFixed()}]
+    return ['duration.hours', { x: Math.floor(secs / 3600).toFixed() }]
   }
 }
 
-export function date (v, f, lang = 'en') {
+export function date(v: any, f: string, lang = 'en'): string {
   try {
     return moment.tz(v, 'UTC').tz(moment.tz.guess()).locale(lang).format(f)
   } catch (err) {
@@ -65,7 +65,7 @@ export function date (v, f, lang = 'en') {
 export const DATE_FORMAT = 'DD MMMM, YYYY @ HH:mm zz'
 export const FS_DATE_FORMAT = 'YYYY.MM.DD-HH.mm.ss'
 
-export function price (currency, value) {
+export function price(currency: string, value: number) {
   if (currency === 'USD') {
     return `$${(value / 100).toFixed(2)}`
   } else if (currency === 'CAD') {
@@ -83,4 +83,4 @@ export function price (currency, value) {
   }
 }
 
-export default {date, slugify, camelify, camelifyObject, seconds, DATE_FORMAT, price, itchPlatform}
+export default { date, slugify, camelify, camelifyObject, seconds, DATE_FORMAT, price, itchPlatform }
