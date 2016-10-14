@@ -113,6 +113,11 @@ module.exports = function (grunt) {
         ]
       }
     },
+    'ts': {
+      'default': {
+        tsconfig: true
+      }
+    },
     'sass': {
       options: {
         sourceMap: true
@@ -136,5 +141,5 @@ module.exports = function (grunt) {
     }
   })
 
-  grunt.registerTask('default', ['newer:babel', 'newer:sass', 'newer:copy'])
+  grunt.registerTask('default', ['newer:babel', 'ts', 'newer:sass', 'newer:copy'])
 }

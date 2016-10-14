@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "rootDir": "appsrcts",
+        "outDir": "app",
+        "target": "es6",
+        "module": "commonjs"
+    },
+    "filesGlob": [
+        "appsrcts/**/*",
+        "typings/index.d.ts",
+        "customtypings/fnout.d.ts"
+    ],
+    "files": [
+        "appsrcts/tasks",
+        "appsrcts/tasks/configure",
+        "appsrcts/tasks/configure/common.ts",
+        "typings/index.d.ts",
+        "customtypings/fnout.d.ts"
+    ]
+}

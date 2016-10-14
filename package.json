@@ -104,6 +104,7 @@
     "grunt-electron-installer": "^2.1.0",
     "grunt-newer": "^1.2.0",
     "grunt-sass": "^1.2.0",
+    "grunt-ts": "^6.0.0-beta.3",
     "load-grunt-tasks": "^3.3.0",
     "quiet-grunt": "^0.2.3",
     "react-addons-test-utils": "^15.0.0",
@@ -116,6 +117,7 @@
     "standard": "^6.0.8",
     "tap-spec": "^4.1.1",
     "tape": "^4.2.1",
+    "typescript": "^2.0.3",
     "zopf": "^4.5.0"
   },
   "scripts": {

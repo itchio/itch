@@ -1,20 +1,23 @@
 
 import fnout from 'fnout'
-import sf from '../../util/sf'
-import {partial} from 'underline'
+// import sf from '../../util/sf'
+const sf = require('../../util/sf').default
+import {partial} from 'underscore'
 
-import {opts} from '../../logger'
-import mklog from '../../util/log'
+// import {opts} from '../../logger'
+const {opts} = require('../../logger')
+// import mklog from '../../util/log'
+const mklog = require('../../util/log').default
 const log = mklog('configure/common')
 
-import path from 'path'
+import * as path from 'path'
 
 /**
  * Tries to find executables by sniffing file contents,
  * +x them, and return a list of them
  */
-function fixExecs (field, basePath) {
-  let f = sniffAndChmod::partial(field, basePath)
+function fixExecs (field, basePath): Array<string> {
+  const f = partial(sniffAndChmod, field, basePath)
 
   return (
     sf.glob('**', {nodir: true, cwd: basePath})
@@ -23,7 +26,7 @@ function fixExecs (field, basePath) {
   )
 }
 
-async function sniffAndChmod (field, base, rel) {
+async function sniffAndChmod (field: string, base: string, rel: string): Promise<string> {
   let file = path.join(base, rel)
 
   let type = await fnout.path(file)
@@ -38,3 +41,4 @@ async function sniffAndChmod (field, base, rel) {
 }
 
 export default {fixExecs}
+

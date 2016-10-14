@@ -1,0 +1,17 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    ".nyc_output": true,
+    "node_modules": true,
+    "tmp": true,
+    "test": true,
+    "app": true,
+    "stage": true,
+    "release": true,
+    "coverage": true
+  }
+}
