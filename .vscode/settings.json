@@ -12,6 +12,8 @@
     "app": true,
     "stage": true,
     "release": true,
-    "coverage": true
+    "coverage": true,
+    "build": true,
+    "fixtures": true
   }
 }

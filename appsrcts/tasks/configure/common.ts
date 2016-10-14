@@ -1,7 +1,6 @@
 
 import fnout from 'fnout'
-// import sf from '../../util/sf'
-const sf = require('../../util/sf').default
+import sf from '../../util/sf'
 import {partial} from 'underscore'
 
 // import {opts} from '../../logger'
@@ -16,14 +15,12 @@ import * as path from 'path'
  * Tries to find executables by sniffing file contents,
  * +x them, and return a list of them
  */
-function fixExecs (field, basePath): Array<string> {
-  const f = partial(sniffAndChmod, field, basePath)
-
-  return (
-    sf.glob('**', {nodir: true, cwd: basePath})
-    .map(f, {concurrency: 2})
-    .filter((x) => !!x)
-  )
+async function fixExecs (field: string, basePath: string): Promise<Array<string>> {
+  // TODO: this sounds like a nice candidate for a butler command instead.
+  // My (amos) instinct is that doing it in node generates a lot of garbage and can make the UI lag.
+  const mapper = partial(sniffAndChmod, field, basePath)
+  
+  return sf.glob('**', {nodir: true, cwd: basePath}).map(mapper, {concurrency: 2}).filter((x: string) => !!x)
 }
 
 async function sniffAndChmod (field: string, base: string, rel: string): Promise<string> {

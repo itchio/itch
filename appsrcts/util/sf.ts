@@ -1,7 +1,7 @@
 
-import invariant from 'invariant'
-
-import Promise from 'bluebird'
+import * as invariant from 'invariant'
+import {promisify, promisifyAll} from 'bluebird'
+import * as bluebird from 'bluebird'
 
 // let's patch all the things! Electron randomly decides to
 // substitute 'fs' with their own version that considers '.asar'
@@ -12,12 +12,14 @@ import Promise from 'bluebird'
 // not the Electron-patched one.
 
 let fsName = 'original-fs'
-if (!process.versions.electron) {
+if (!process.versions['electron']) {
   // when running tests, we don't have access to original-fs
   fsName = 'fs'
 }
 
-import proxyquire from 'proxyquire'
+import {EventEmitter} from 'events'
+
+import * as proxyquire from 'proxyquire'
 
 let fs = Object.assign({}, require(fsName), {
   '@global': true, /* Work with transitive imports */
@@ -51,19 +53,19 @@ const debug = (level, parts) => {
 fs = gracefulFs
 
 // adds 'xxxAsync' variants of all fs functions, which we'll use
-Promise.promisifyAll(fs)
+promisifyAll(fs)
 
 // single function, callback-based, can't specify fs
-const glob = Promise.promisify(proxyquire('glob', stubs))
+const glob = promisify(proxyquire('glob', stubs) as (path: string, opts: any, cb: (err: any, files: Array<String>) => any) => void)
 
 // single function, callback-based, can't specify fs
-const mkdirp = Promise.promisify(proxyquire('mkdirp', stubs))
+const mkdirp = promisify(proxyquire('mkdirp', stubs) as (path: string, cb: () => any) => void)
 
 // single function, callback-based, doesn't accept fs
-const readChunk = Promise.promisify(proxyquire('read-chunk', stubs))
+const readChunk = promisify(proxyquire('read-chunk', stubs))
 
 // other deps
-import path from 'path'
+import * as path from 'path'
 
 // global ignore patterns
 const ignore = [
@@ -80,10 +82,8 @@ const self = {
   /**
    * Returns true if file exists, false if ENOENT, throws if other error
    */
-  exists: (file) => {
-    invariant(typeof file === 'string', 'sf.exists has string file')
-
-    return new Promise((resolve, reject) => {
+  exists: (file: string) => {
+    return new bluebird((resolve, reject) => {
       const callback = (err) => {
         if (err) {
           if (err.code === 'ENOENT') {
@@ -103,13 +103,11 @@ const self = {
   /**
    * Return utf-8 file contents as string
    */
-  readFile: async (file) => {
-    invariant(typeof file === 'string', 'sf.readFile has string file')
-
+  readFile: async (file: string): Promise<string> =>  {
     return await fs.readFileAsync(file, {encoding: 'utf8'})
   },
 
-  appendFile: async (file, contents, options) => {
+  appendFile: async (file: string, contents: string, options: any): Promise<void> => {
     await self.mkdir(path.dirname(file))
     return await fs.appendFileAsync(file, contents, options)
   },
@@ -117,10 +115,7 @@ const self = {
   /**
    * Writes an utf-8 string to 'file'. Creates any directory needed.
    */
-  writeFile: async (file, contents) => {
-    invariant(typeof file === 'string', 'sf.writeFile has string file')
-    invariant(typeof contents === 'string', 'sf.writeFile has string contents')
-
+  writeFile: async (file: string, contents: string): Promise<void> => {
     await self.mkdir(path.dirname(file))
     return await fs.writeFileAsync(file, contents)
   },
@@ -129,10 +124,10 @@ const self = {
    * Turns a stream into a promise, resolves when
    * 'close' or 'end' is emitted, rejects when 'error' is
    */
-  promised: async (stream) => {
+  promised: async (stream: EventEmitter): Promise<any> => {
     invariant(typeof stream === 'object', 'sf.promised has object stream')
 
-    const p = new Promise((resolve, reject) => {
+    const p = new bluebird((resolve, reject) => {
       stream.on('close', resolve)
       stream.on('end', resolve)
       stream.on('error', reject)
@@ -147,19 +142,14 @@ const self = {
    * If the directory already exists, do nothing.
    * Uses mkdirp: https://www.npmjs.com/package/mkdirp
    */
-  mkdir: async (dir) => {
-    invariant(typeof dir === 'string', 'sf.mkdir has string dir')
-
+  mkdir: async (dir: string): Promise<any> => {
     return await mkdirp(dir)
   },
 
   /**
    * Rename oldPath into newPath, throws if it can't
    */
-  rename: async (oldPath, newPath) => {
-    invariant(typeof oldPath === 'string', 'sf.rename has string oldPath')
-    invariant(typeof newPath === 'string', 'sf.rename has string newPath')
-
+  rename: async (oldPath: string, newPath: string): Promise<void> => {
     return await fs.renameAsync(oldPath, newPath)
   },
 
@@ -167,7 +157,7 @@ const self = {
    * Burn to the ground an entire directory and everything in it
    * Also works on file, don't bother with unlink.
    */
-  wipe: async (shelter) => {
+  wipe: async (shelter): Promise<void> => {
     invariant(typeof shelter === 'string', 'sf.wipe has string shelter')
 
     debug(1, ['wipe', shelter])
@@ -213,7 +203,7 @@ const self = {
         const fullFile = path.join(shelter, file)
         await self.unlink(fullFile)
       }
-      await Promise.resolve(files).map(unlink, {concurrency})
+      await bluebird.resolve(files).map(unlink, {concurrency})
 
       // remove deeper dirs first
       dirs.sort((a, b) => (b.length - a.length))
@@ -248,22 +238,21 @@ const self = {
    * https://www.npmjs.com/package/read-chunk
    */
   readChunk,
+  
+  // Mirrors
+  createReadStream: fs.createReadStream.bind(fs),
+  createWriteStream: fs.createWriteStream.bind(fs),
+  
+  chmod: fs.chmodAsync.bind(fs),
+  stat: fs.statAsync.bind(fs),
+  lstat: fs.lstatAsync.bind(fs),
+  readlink: fs.readlinkAsync.bind(fs),
+  symlink: fs.symlinkAsync.bind(fs),
+  rmdir: fs.rmdirAsync.bind(fs),
+  unlink: fs.unlinkAsync.bind(fs),
 
   fsName,
-  fs
+  fs,
 }
-
-function makeBindings () {
-  const mirrored = ['createReadStream', 'createWriteStream']
-  for (const m of mirrored) {
-    self[m] = fs[m].bind(fs)
-  }
-
-  const mirorredAsync = ['chmod', 'stat', 'lstat', 'readlink', 'symlink', 'rmdir', 'unlink']
-  for (const m of mirorredAsync) {
-    self[m] = fs[m + 'Async'].bind(fs)
-  }
-}
-makeBindings()
 
 export default self

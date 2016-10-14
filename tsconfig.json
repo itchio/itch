@@ -14,6 +14,8 @@
         "appsrcts/tasks",
         "appsrcts/tasks/configure",
         "appsrcts/tasks/configure/common.ts",
+        "appsrcts/util",
+        "appsrcts/util/sf.ts",
         "typings/index.d.ts",
         "customtypings/fnout.d.ts"
     ]
