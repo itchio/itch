@@ -7,8 +7,7 @@
     },
     "filesGlob": [
         "appsrcts/**/*",
-        "typings/index.d.ts",
-        "customtypings/*.d.ts"
+        "typings/*.d.ts"
     ],
     "files": [
         "appsrcts/tasks",
@@ -23,8 +22,7 @@
         "appsrcts/types/db.ts",
         "appsrcts/util",
         "appsrcts/util/sf.ts",
-        "typings/index.d.ts",
-        "customtypings/fnout.d.ts",
-        "customtypings/walk.d.ts"
+        "typings/fnout.d.ts",
+        "typings/walk.d.ts"
     ]
 }
