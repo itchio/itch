@@ -24,6 +24,7 @@
   "main": "app/metal.js",
   "license": "MIT",
   "dependencies": {
+    "@types/clone": "^0.1.30",
     "bluebird": "^3.4.0",
     "btoa": "^1.1.2",
     "classnames": "^2.2.5",

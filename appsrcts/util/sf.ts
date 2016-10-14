@@ -56,7 +56,7 @@ fs = gracefulFs
 promisifyAll(fs)
 
 // single function, callback-based, can't specify fs
-const glob = promisify(proxyquire('glob', stubs) as (path: string, opts: any, cb: (err: any, files: Array<String>) => any) => void)
+const glob = promisify(proxyquire('glob', stubs) as (path: string, opts: any, cb: (err: any, files: Array<string>) => any) => void)
 
 // single function, callback-based, can't specify fs
 const mkdirp = promisify(proxyquire('mkdirp', stubs) as (path: string, cb: () => any) => void)

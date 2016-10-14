@@ -1,12 +1,13 @@
 
-import {each} from 'underline'
+import {each} from 'underscore'
 
-import walk from 'walk'
+import * as walk from 'walk'
 
-import mklog from '../../util/log'
+const mklog = require('../../util/log').default
+// import mklog from '../../util/log'
 const log = mklog('configure/compute-size')
 
-async function computeFolderSize (opts, appPath) {
+async function computeFolderSize (opts: any, appPath) {
   log(opts, `computing size of ${appPath}`)
   const walker = walk.walk(appPath, {followLinks: false})
 
@@ -16,8 +17,8 @@ async function computeFolderSize (opts, appPath) {
     next()
   })
 
-  walker.on('errors', (root, nodeStatsArray, next) => {
-    nodeStatsArray::each((n) => {
+  walker.on('errors', (root: string, nodeStatsArray: Array<any>, next: () => void) => {
+    each(nodeStatsArray, (n) => {
       log(opts, `error while walking ${n.name}:`)
       log(opts, n.error.message || (n.error.code + ': ' + n.error.path))
     })

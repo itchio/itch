@@ -8,15 +8,23 @@
     "filesGlob": [
         "appsrcts/**/*",
         "typings/index.d.ts",
-        "customtypings/fnout.d.ts"
+        "customtypings/*.d.ts"
     ],
     "files": [
         "appsrcts/tasks",
         "appsrcts/tasks/configure",
         "appsrcts/tasks/configure/common.ts",
+        "appsrcts/tasks/configure/compute-size.ts",
+        "appsrcts/tasks/configure/darwin.ts",
+        "appsrcts/tasks/configure/html.ts",
+        "appsrcts/tasks/configure/linux.ts",
+        "appsrcts/tasks/configure/win32.ts",
+        "appsrcts/types",
+        "appsrcts/types/db.ts",
         "appsrcts/util",
         "appsrcts/util/sf.ts",
         "typings/index.d.ts",
-        "customtypings/fnout.d.ts"
+        "customtypings/fnout.d.ts",
+        "customtypings/walk.d.ts"
     ]
 }

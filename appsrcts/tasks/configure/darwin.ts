@@ -1,9 +1,9 @@
 
-import Promise from 'bluebird'
-import path from 'path'
-import walk from 'walk'
+import * as bluebird from 'bluebird'
+import * as path from 'path'
+import * as walk from 'walk'
 
-import common from './common'
+import {ConfigureResult, fixExecs} from './common'
 
 // const ignorePatterns = [
 //   // skip some typical junk we find in archives that's supposed
@@ -13,7 +13,9 @@ import common from './common'
 // ]
 
 const self = {
-  configure: async function (cavePath) {
+  configure: async function (cavePath: string): Promise<ConfigureResult> {
+    // TODO: this also sounds like a good candidate for a butler command.
+    // golang is much better at working with files.
     const bundles = []
     const walker = walk.walk(cavePath, {
       followLinks: false,
@@ -33,19 +35,19 @@ const self = {
       next()
     })
 
-    await new Promise((resolve, reject) => {
+    await new bluebird((resolve, reject) => {
       walker.on('end', resolve)
     })
 
     if (bundles.length) {
-      const fixer = (x) => common.fixExecs('macExecutable', path.join(cavePath, x))
-      await Promise.each(bundles, fixer)
+      const fixer = (x) => fixExecs('macExecutable', path.join(cavePath, x))
+      await bluebird.each(bundles, fixer)
       return {executables: bundles}
     }
 
     // some games aren't properly packaged app bundles but rather a shell
     // script / binary - try it the linux way
-    const executables = await common.fixExecs('macExecutable', cavePath)
+    const executables = await fixExecs('macExecutable', cavePath)
     return {executables}
   }
 }
