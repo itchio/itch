@@ -14,6 +14,11 @@
         "appsrcts/electron/fake-electron.ts",
         "appsrcts/electron/index.ts",
         "appsrcts/env.ts",
+        "appsrcts/store",
+        "appsrcts/store/browser-store.ts",
+        "appsrcts/store/index.ts",
+        "appsrcts/store/mock-store.ts",
+        "appsrcts/store/renderer-store.ts",
         "appsrcts/tasks",
         "appsrcts/tasks/configure",
         "appsrcts/tasks/configure.ts",
@@ -45,6 +50,7 @@
         "typings/humanize-plus.d.ts",
         "typings/logrotate-stream.d.ts",
         "typings/moment.d.ts",
+        "typings/redux-electron-store.d.ts",
         "typings/stream-splitter.d.ts",
         "typings/walk.d.ts"
     ]

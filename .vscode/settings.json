@@ -16,5 +16,6 @@
     "build": true,
     "fixtures": true,
     ".tscache": true
-  }
+  },
+  "files.eol": "\n"
 }

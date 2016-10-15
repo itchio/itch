@@ -1,15 +1,19 @@
 
-import {createStore, applyMiddleware, compose} from 'redux'
-import {electronEnhancer} from 'redux-electron-store'
+import { createStore, applyMiddleware, compose, GenericStoreEnhancer } from 'redux'
+import { electronEnhancer } from 'redux-electron-store'
 
-import route from '../reactors/route'
-import reactors from '../reactors'
-import reducer from '../reducers'
+// import route from '../reactors/route'
+// import reactors from '../reactors'
+// import reducer from '../reducers'
+
+const route = require('../reactors/route').default
+const reactors = require('../reactors').default
+const reducer = require('../reducers').default
 
 const crashGetter = (store) => (next) => (action) => {
   try {
     if (action && !action.type) {
-      throw new Error('refusing to dispatch action with null type: ', action)
+      throw new Error(`refusing to dispatch action with null type: ${JSON.stringify(action)}`)
     }
     return next(action)
   } catch (e) {
@@ -28,10 +32,10 @@ if (beChatty) {
   const logger = createLogger({
     predicate: (getState, action) => {
       return !action.MONITOR_ACTION &&
-         !/^WINDOW_/.test(action.type) &&
-         !/_DB_/.test(action.type) &&
-         !/LOCALE_/.test(action.type) &&
-         !/_FETCHED$/.test(action.type)
+        !/^WINDOW_/.test(action.type) &&
+        !/_DB_/.test(action.type) &&
+        !/LOCALE_/.test(action.type) &&
+        !/_FETCHED$/.test(action.type)
     },
     stateTransformer: (state) => ''
   })
@@ -39,7 +43,7 @@ if (beChatty) {
   middleware.push(logger)
 }
 
-const allAction = Object.freeze({type: '__ALL', payload: null})
+const allAction = Object.freeze({ type: '__ALL', payload: null })
 const enhancer = compose(
   electronEnhancer({
     postDispatchCallback: (action) => {
@@ -48,10 +52,10 @@ const enhancer = compose(
     }
   }),
   applyMiddleware(...middleware)
-)
+) as GenericStoreEnhancer
 
 const initialState = {}
 const store = createStore(reducer, initialState, enhancer)
-route(reactors, store, {type: '__MOUNT', payload: null})
+route(reactors, store, { type: '__MOUNT', payload: null })
 
 export default store

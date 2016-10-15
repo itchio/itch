@@ -1,5 +1,6 @@
 
-import {app, remote} from '../electron'
+import { app } from '../electron'
+import { remote } from 'electron'
 import os from '../util/os'
 
 if (os.processType() === 'browser') {
