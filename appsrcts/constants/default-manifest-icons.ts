@@ -1,5 +1,5 @@
 
-module.exports = {
+export default {
   play: 'play',
   editor: 'pencil',
   manual: 'lifebuoy',
