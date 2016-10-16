@@ -1,13 +1,14 @@
 
 import * as path from 'path'
-const {app} = require('../electron')
-// import { app } from '../electron'
+import { app } from '../electron'
 
 import * as invariant from 'invariant'
 
+import { CaveRecord, UploadRecord } from '../types/db'
+
 const APPDATA_RE = /^appdata\/(.*)$/
 
-export function appPath(cave) {
+export function appPath(cave: CaveRecord) {
   // < 0.13.x, installFolder isn't set, it's implicitly the cave's id
   // < 18.5.x, everything is installed in an `apps` subfolder
   const {installLocation, installFolder = cave.id, pathScheme = 1} = cave
@@ -46,13 +47,14 @@ export function appPath(cave) {
   }
 }
 
-export function downloadPath(upload) {
+export function downloadPath(upload: UploadRecord) {
   invariant(typeof upload === 'object', 'valid upload')
   invariant(upload.id, 'upload has id')
   invariant(typeof upload.filename === 'string', 'upload has filename')
   const extMatches = /(\.tar)?\.[^\.]+$/i.exec(upload.filename)
   const ext = extMatches ? extMatches[0] : ''
-  let slug = upload.id
+  
+  let slug = `${upload.id}`
   if (upload.buildId) {
     slug = `${slug}-${upload.buildId}`
   }
@@ -68,32 +70,32 @@ export function downloadPath(upload) {
   }
 }
 
-export function globalDbPath() {
+export function globalDbPath(): string {
   return path.join(app.getPath('userData'), 'marketdb')
 }
 
-export function preferencesPath() {
+export function preferencesPath(): string {
   return path.join(app.getPath('userData'), 'preferences.json')
 }
 
-export function logPath() {
+export function logPath(): string {
   return path.join(app.getPath('userData'), 'logs', 'itch.txt')
 }
 
-export function updaterLogPath() {
+export function updaterLogPath(): string {
   return path.join(app.getPath('userData'), 'logs', 'itch.updater.txt')
 }
 
-export function caveLogPath(caveId) {
+export function caveLogPath(caveId: string): string {
   return path.join(app.getPath('userData'), 'cave-logs', 'cave-' + caveId + '.txt')
 }
 
-export function userDbPath(userId) {
+export function userDbPath(userId: number): string {
   invariant(userId, 'valid user id')
   return path.join(app.getPath('userData'), 'users', '' + userId, 'marketdb')
 }
 
-export function sanitize(file) {
+export function sanitize(file: string): string {
   const sane = file.replace(/[^a-zA-Z0-9_ -]/g, '').replace(/[\s]+/, ' ')
   if (sane.length > 0) {
     return sane

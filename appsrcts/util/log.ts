@@ -19,7 +19,7 @@ var make: LogExport
 make = function (name: string): LogExport {
   var f: LogExport
 
-  f = function (opts, message) {
+  f = function (opts: any, message: string) {
     if (opts && opts.logger) {
       opts.logger.log(`[${name}] ${message}`)
     }
@@ -31,8 +31,8 @@ make = function (name: string): LogExport {
 const allColors = 'red green yellow blue magenta cyan white gray'.split(' ')
 
 interface Stream {
-  write(contents: string)
-  end()
+  write(contents: string): void
+  end(): void
 }
 
 export class Logger {
@@ -49,7 +49,7 @@ export class Logger {
 
   colorCache: any
 
-  constructor(userOpts) {
+  constructor(userOpts: any) {
     if (typeof userOpts === 'undefined') {
       userOpts = {}
     }
@@ -98,11 +98,11 @@ export class Logger {
     }
   }
 
-  log(message) {
+  log(message: string) {
     this.write(this.timestamp(), `${message}`)
   }
 
-  nameToColor(name) {
+  nameToColor(name: string): string {
     this.colorCache = this.colorCache || {}
 
     if (this.colorCache[name]) {
@@ -110,7 +110,7 @@ export class Logger {
     }
 
     let hash = 0
-    for (const i in name) {
+    for (let i = 0; i < name.length; i++) {
       hash += name.charCodeAt(i)
     }
     hash = hash % allColors.length
@@ -119,7 +119,7 @@ export class Logger {
     return this.colorCache[name]
   }
 
-  write(timestamp, s) {
+  write(timestamp: string, s: string) {
     if (this.stringSink) {
       this.contents += eol.auto(`[${timestamp}] ${s}` + '\n')
     }
@@ -145,7 +145,7 @@ export class Logger {
     }
   }
 
-  timestamp() {
+  timestamp(): string {
     return '[' + format.date(Date.now(), 'YYYY-MM-DD @ HH:mm:ss.SSS') + ']'
   }
 }

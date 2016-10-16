@@ -12,6 +12,8 @@ import html from './configure/html'
 import computeSize from './configure/compute-size'
 
 import { ConfigureResult } from './configure/common'
+import { CaveRecord, GameRecord, UploadRecord, IMarket } from '../types/db'
+import { EventEmitter } from 'events'
 
 async function configure(appPath: string): Promise<ConfigureResult> {
   const platform = os.platform()
@@ -27,7 +29,14 @@ async function configure(appPath: string): Promise<ConfigureResult> {
   }
 }
 
-export default async function start(out, opts) {
+interface ConfigureOpts {
+  cave: CaveRecord
+  game: GameRecord
+  upload: UploadRecord
+  globalMarket: IMarket
+}
+
+export default async function start(out: EventEmitter, opts: ConfigureOpts) {
   const {cave, upload, game, globalMarket} = opts
   invariant(cave, 'configure has cave')
   invariant(game, 'configure has game')

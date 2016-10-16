@@ -6,11 +6,16 @@ import { shell } from '../../electron'
 
 import pathmaker from '../../util/pathmaker'
 
-export default async function launch(out, opts) {
+import { EventEmitter } from 'events'
+import { CaveRecord, ManifestAction } from '../../types/db'
+
+interface LaunchOpts {
+  cave: CaveRecord
+  manifestAction: ManifestAction
+}
+
+export default async function launch(out: EventEmitter, opts: LaunchOpts) {
   const {cave, manifestAction} = opts
-  invariant(cave, 'launch/shell has cave')
-  invariant(manifestAction, 'launch/shell has manifestAction')
-  invariant(typeof manifestAction.path === 'string', 'launch/shell has manifestAction path')
 
   const appPath = pathmaker.appPath(cave)
   const fullPath = ospath.join(appPath, manifestAction.path)

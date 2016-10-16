@@ -34,8 +34,9 @@ const self = {
     return process.type || 'browser'
   },
 
-  getVersion: function (key): string {
-    return process.versions[key]
+  getVersion: function (key: string): string {
+    // electron has additional version keys, so we have to bypass regular node typings
+    return (process.versions as any)[key]
   },
 
   /**
@@ -65,8 +66,8 @@ const self = {
     const spawnOpts = {
       command,
       args,
-      onToken: (tok) => { stdout += '\n' + tok },
-      onErrToken: (tok) => { stderr += '\n' + tok }
+      onToken: (tok: string) => { stdout += '\n' + tok },
+      onErrToken: (tok: string) => { stderr += '\n' + tok }
     }
 
     const code = await spawn(spawnOpts)

@@ -1,7 +1,6 @@
 
-import { createStore, applyMiddleware, compose, GenericStoreEnhancer } from 'redux'
+import { createStore, applyMiddleware, compose, GenericStoreEnhancer, Middleware } from 'redux'
 import { electronEnhancer } from 'redux-electron-store'
-// import createLogger from 'redux-logger'
 const createLogger = require('redux-logger')
 
 // import route from '../reactors/route'
@@ -13,13 +12,13 @@ const reactors = require('../renderer-reactors').default
 const reducer = require('../reducers').default
 
 const filter = true
-const middleware = []
+const middleware: Array<Middleware> = []
 
 const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === '1'
 
 if (REDUX_DEVTOOLS_ENABLED) {
   const logger = createLogger({
-    predicate: (getState, action) => !action.MONITOR_ACTION
+    predicate: (getState: () => any, action: any) => !action.MONITOR_ACTION
   })
   middleware.push(logger)
 }
@@ -28,7 +27,7 @@ const allAction = Object.freeze({ type: '__ALL', payload: null })
 const ee = electronEnhancer({
   filter,
   synchronous: false,
-  postDispatchCallback: (action) => {
+  postDispatchCallback: (action: any) => {
     route(reactors, store, action)
     route(reactors, store, allAction)
   }

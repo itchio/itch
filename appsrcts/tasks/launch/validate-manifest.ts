@@ -4,6 +4,8 @@
 
 import { each } from 'underscore'
 
+import { Manifest, ManifestAction } from '../../types/db'
+
 const MANIFEST_REQUIRED_FIELDS = [
   'actions'
 ]
@@ -26,14 +28,6 @@ const ACTION_VALID_FIELDS = [
   'scope' // requested API scope
 ]
 
-interface Action {
-  name: string
-}
-
-interface Manifest {
-  actions: Array<Action>
-}
-
 export default function validateManifest(manifest: Manifest, log: any, opts: any) {
   for (const field of Object.keys(manifest)) {
     if (MANIFEST_VALID_FIELDS.indexOf(field) === -1) {
@@ -42,7 +36,7 @@ export default function validateManifest(manifest: Manifest, log: any, opts: any
   }
 
   for (const requiredField of MANIFEST_REQUIRED_FIELDS) {
-    if (typeof manifest[requiredField] === 'undefined') {
+    if (typeof (manifest as any)[requiredField] === 'undefined') {
       throw new Error(`in manifest, required field '${requiredField}' is missing`)
     }
   }
@@ -57,7 +51,7 @@ export default function validateManifest(manifest: Manifest, log: any, opts: any
     }
 
     for (const requiredField of ACTION_REQUIRED_FIELDS) {
-      if (typeof action[requiredField] === 'undefined') {
+      if (typeof (action as any)[requiredField] === 'undefined') {
         throw new Error(`in manifest action ${denomination}, required field '${requiredField}' is missing`)
       }
     }

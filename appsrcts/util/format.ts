@@ -14,7 +14,7 @@ const itchPlatforms = {
 }
 
 export function itchPlatform(p: string): string {
-  return itchPlatforms[p] || '???'
+  return (itchPlatforms as any)[p] || '???'
 }
 
 export function camelify(str: string): string {
@@ -30,7 +30,7 @@ export function camelifyObject(obj: any): any {
       }
       return res
     } else {
-      const res = {}
+      const res: any = {}
       for (const key of Object.keys(obj)) {
         res[camelify(key)] = camelifyObject(obj[key])
       }

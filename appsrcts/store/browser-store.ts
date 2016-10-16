@@ -1,5 +1,5 @@
 
-import { createStore, applyMiddleware, compose, GenericStoreEnhancer } from 'redux'
+import { createStore, applyMiddleware, compose, GenericStoreEnhancer, Store } from 'redux'
 import { electronEnhancer } from 'redux-electron-store'
 
 // import route from '../reactors/route'
@@ -10,7 +10,7 @@ const route = require('../reactors/route').default
 const reactors = require('../reactors').default
 const reducer = require('../reducers').default
 
-const crashGetter = (store) => (next) => (action) => {
+const crashGetter = (store: Store<any>) => (next: (action: any) => any) => (action: any) => {
   try {
     if (action && !action.type) {
       throw new Error(`refusing to dispatch action with null type: ${JSON.stringify(action)}`)
@@ -30,14 +30,14 @@ const beChatty = process.env.MARCO_POLO === '1'
 if (beChatty) {
   const createLogger = require('redux-cli-logger').default
   const logger = createLogger({
-    predicate: (getState, action) => {
+    predicate: (getState: () => any, action: any) => {
       return !action.MONITOR_ACTION &&
         !/^WINDOW_/.test(action.type) &&
         !/_DB_/.test(action.type) &&
         !/LOCALE_/.test(action.type) &&
         !/_FETCHED$/.test(action.type)
     },
-    stateTransformer: (state) => ''
+    stateTransformer: (state: any) => ''
   })
 
   middleware.push(logger)
@@ -46,7 +46,7 @@ if (beChatty) {
 const allAction = Object.freeze({ type: '__ALL', payload: null })
 const enhancer = compose(
   electronEnhancer({
-    postDispatchCallback: (action) => {
+    postDispatchCallback: (action: any) => {
       route(reactors, store, action)
       route(reactors, store, allAction)
     }

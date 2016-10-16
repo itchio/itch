@@ -1,6 +1,6 @@
 
 interface Walker {
-  on(eventName: string, cb: (...args) => void)
+  on(eventName: string, cb: (...args: any[]) => void): void
 }
 
 interface WalkStatic {

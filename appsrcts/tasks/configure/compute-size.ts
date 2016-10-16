@@ -1,15 +1,14 @@
 
-import {each} from 'underscore'
+import { each } from 'underscore'
 
 import * as walk from 'walk'
 
-const mklog = require('../../util/log').default
-// import mklog from '../../util/log'
+import mklog from '../../util/log'
 const log = mklog('configure/compute-size')
 
-async function computeFolderSize (opts: any, appPath) {
+async function computeFolderSize(opts: any, appPath: string): Promise<number> {
   log(opts, `computing size of ${appPath}`)
-  const walker = walk.walk(appPath, {followLinks: false})
+  const walker = walk.walk(appPath, { followLinks: false })
 
   let totalSize = 0
   walker.on('file', (root, fileStats, next) => {
@@ -31,4 +30,4 @@ async function computeFolderSize (opts: any, appPath) {
   return totalSize
 }
 
-export default {computeFolderSize}
+export default { computeFolderSize }

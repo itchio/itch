@@ -11,7 +11,7 @@ import {
 export const dismissHistoryItem = createAction(DISMISS_HISTORY_ITEM)
 
 const _queueHistoryItem = createAction(QUEUE_HISTORY_ITEM)
-export const queueHistoryItem = (payload) => _queueHistoryItem(Object.assign({
+export const queueHistoryItem = (payload: any) => _queueHistoryItem(Object.assign({
   id: uuid.v4(),
   date: Date.now(),
   active: true

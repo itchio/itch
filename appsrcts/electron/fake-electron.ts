@@ -1,13 +1,13 @@
 
 import { EventEmitter } from 'events'
 
-const rnil = () => null
+const rnil = (): any => null
 
 const electron = {
   app: {
     getVersion: () => '1.0',
-    getPath: (p) => `tmp/${p}`,
-    makeSingleInstance: (cb) => false,
+    getPath: (p: string): string => `tmp/${p}`,
+    makeSingleInstance: (cb: () => void) => false,
     quit: rnil,
     on: rnil,
     dock: {
@@ -23,7 +23,7 @@ const electron = {
   ipcMain: Object.assign({}, EventEmitter.prototype),
   ipcRenderer: Object.assign({
     send: function () {
-      let args = []
+      let args: Array<any> = []
       for (let i = 0; i < arguments.length; i++) {
         args.push(arguments[i])
       }
@@ -32,7 +32,7 @@ const electron = {
     }
   }, EventEmitter.prototype),
   remote: {
-    require: (path) => ({}),
+    require: (path: string): any => ({}),
     app: null as any
   },
   shell: {
@@ -74,12 +74,12 @@ let webRequest = {
 }
 
 let session = {
-  clearCache: (f) => f(),
+  clearCache: (f: () => void) => f(),
   webRequest
 }
 
 let webContents = {
-  on: (e, cb) => cb({ preventDefault: rnil }),
+  on: (e: string, cb: (e: any) => void) => cb({ preventDefault: rnil }),
   executeJavaScript: rnil,
   insertCSS: rnil,
   openDevTools: rnil,
@@ -89,7 +89,7 @@ let webContents = {
 }
 
 Object.assign(electron.BrowserWindow, {
-  getAllWindows: () => [],
+  getAllWindows: (): Array<any> => [],
   getFocusedWindow: () => null,
   setProgressBar: rnil,
   on: rnil,

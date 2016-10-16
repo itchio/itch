@@ -1,22 +1,25 @@
 
-import tmp from 'tmp'
-import path from 'path'
+import * as tmp from 'tmp'
+import * as ospath from 'path'
 
 import spawn from '../spawn'
 import sf from '../sf'
-import ibrew from '../ibrew'
+// import ibrew from '../ibrew'
+const ibrew = require('../ibrew').default
 
 import mklog from '../log'
 const log = mklog('sandbox-linux')
 
 import common from './common'
 
-export async function check (opts) {
-  const needs = []
-  const errors = []
+import { CheckResult, Need } from './types'
+
+export async function check(opts: any): Promise<CheckResult> {
+  const needs: Array<Need> = []
+  const errors: Array<Error> = []
 
   log(opts, 'Testing firejail')
-  const firejailCheck = await spawn.exec({command: 'firejail', args: ['--noprofile', '--', 'whoami']})
+  const firejailCheck = await spawn.exec({ command: 'firejail', args: ['--noprofile', '--', 'whoami'] })
   if (firejailCheck.code !== 0) {
     needs.push({
       type: 'firejail',
@@ -25,20 +28,20 @@ export async function check (opts) {
     })
   }
 
-  return {needs, errors}
+  return { needs, errors }
 }
 
-export async function install (opts, needs) {
+export async function install(opts: any, needs: Array<Need>) {
   return await common.tendToNeeds(opts, needs, {
     firejail: async function (need) {
       log(opts, `installing firejail, because ${need.err} (code ${need.code})`)
 
-      const firejailBinary = path.join(ibrew.binPath(), 'firejail')
+      const firejailBinary = ospath.join(ibrew.binPath(), 'firejail')
       const firejailBinaryExists = await sf.exists(firejailBinary)
       if (!firejailBinaryExists) {
         throw new Error('firejail binary missing')
       } else {
-        const lines = []
+        const lines: Array<string> = []
         lines.push('#!/bin/bash -xe')
         lines.push(`chown root:root ${firejailBinary}`)
         lines.push(`chmod u+s ${firejailBinary}`)
@@ -50,18 +53,22 @@ export async function install (opts, needs) {
   })
 }
 
-export async function uninstall (opts) {
-  const errors = []
-  return {errors}
+export async function uninstall(opts: any) {
+  const errors: Array<Error> = []
+  return { errors }
 }
 
-async function sudoRunScript (lines) {
+interface SudoRunScriptResult {
+  out: string
+}
+
+async function sudoRunScript(lines: Array<string>): Promise<SudoRunScriptResult> {
   const contents = lines.join('\n')
   const tmpObjName = tmp.tmpNameSync()
   await sf.writeFile(tmpObjName, contents)
   await sf.chmod(tmpObjName, 0o777)
 
-  const res = await spawn.exec({command: 'pkexec', args: [tmpObjName]})
+  const res = await spawn.exec({ command: 'pkexec', args: [tmpObjName] })
 
   await sf.wipe(tmpObjName)
 
@@ -69,7 +76,7 @@ async function sudoRunScript (lines) {
     throw new Error(`pkexec failed with code ${res.code}, stderr = ${res.err}`)
   }
 
-  return {out: res.out}
+  return { out: res.out }
 }
 
-export default {check, install, uninstall}
+export default { check, install, uninstall }

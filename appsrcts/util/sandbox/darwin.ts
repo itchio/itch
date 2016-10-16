@@ -1,40 +1,53 @@
 
-import ospath from 'path'
-import tmp from 'tmp'
-import invariant from 'invariant'
+import * as ospath from 'path'
+import * as tmp from 'tmp'
+import * as invariant from 'invariant'
 
 import sandboxTemplate from '../../constants/sandbox-policies/macos-template'
 
 import spawn from '../spawn'
 import sf from '../sf'
 
+import { Logger } from '../log'
 import mklog from '../log'
 const log = mklog('sandbox/darwin')
 
 import common from './common'
 
+import { Need } from './types'
+import { GameRecord } from '../../types/db'
+
 const INVESTIGATE_SANDBOX = process.env.INVESTIGATE_SANDBOX === '1'
 
-export async function check () {
-  const needs = []
-  const errors = []
+export async function check() {
+  const needs: Array<Need> = []
+  const errors: Array<Error> = []
 
-  const seRes = await spawn.exec({command: 'sandbox-exec', args: ['-n', 'no-network', 'true']})
+  const seRes = await spawn.exec({ command: 'sandbox-exec', args: ['-n', 'no-network', 'true'] })
   if (seRes.code !== 0) {
-    errors.push('sandbox-exec is missing. Is macOS too old?')
+    errors.push(new Error('sandbox-exec is missing. Is macOS too old?'))
   }
 
-  return {needs, errors}
+  return { needs, errors }
 }
 
-export async function within (opts, cb) {
+export interface WithinOpts {
+  game: GameRecord
+  appPath: string
+  exePath: string
+  fullExec: string
+  argString: string
+  isBundle: boolean
+
+  logger: Logger
+}
+
+export interface WithinCbOpts {
+  fakeApp: string
+}
+
+export async function within(opts: WithinOpts, cb: (opts: WithinCbOpts) => Promise<void>) {
   const {appPath, exePath, fullExec, argString, game, isBundle} = opts
-  invariant(typeof game === 'object', 'sandbox.within needs game')
-  invariant(typeof appPath === 'string', 'sandbox.within needs appPath')
-  invariant(typeof exePath === 'string', 'sandbox.within needs exePath')
-  invariant(typeof fullExec === 'string', 'sandbox.within needs fullExec')
-  invariant(typeof argString === 'string', 'sandbox.within needs argString')
-  invariant(typeof isBundle === 'boolean', 'sandbox.within needs argString')
 
   log(opts, 'generating sandbox policy')
   const sandboxProfilePath = ospath.join(appPath, '.itch', 'isolate-app.sb')
@@ -47,8 +60,8 @@ export async function within (opts, cb) {
   log(opts, `user library = '${userLibrary}'`)
 
   const sandboxSource = sandboxTemplate
-  .replace(/{{USER_LIBRARY}}/g, userLibrary)
-  .replace(/{{INSTALL_LOCATION}}/g, appPath)
+    .replace(/{{USER_LIBRARY}}/g, userLibrary)
+    .replace(/{{INSTALL_LOCATION}}/g, appPath)
   await sf.writeFile(sandboxProfilePath, sandboxSource)
 
   log(opts, 'creating fake app bundle')
@@ -100,12 +113,12 @@ sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullE
 
   let err
   try {
-    await cb({fakeApp})
+    await cb({ fakeApp })
   } catch (e) { err = e }
 
   if (INVESTIGATE_SANDBOX) {
     log(opts, 'waiting forever for someone to investigate the sandbox')
-    await new Promise((resolve, reject) => {})
+    await new Promise((resolve, reject) => { })
   }
 
   log(opts, 'cleaning up fake app')
@@ -117,12 +130,12 @@ sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullE
   }
 }
 
-export async function install (opts, needs) {
+export async function install(opts: any, needs: Array<Need>) {
   return await common.tendToNeeds(opts, needs, {})
 }
 
-export async function uninstall (opts) {
-  return {errors: []}
+export async function uninstall(opts: any) {
+  return { errors: [] }
 }
 
-export default {check, install, uninstall, within}
+export default { check, install, uninstall, within }

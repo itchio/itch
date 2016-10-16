@@ -8,6 +8,7 @@ import LFTransform from './lf-transform'
 
 import { Cancelled } from '../tasks/errors'
 
+import { Logger } from './log'
 import mklog from './log'
 const log = mklog('spawn')
 
@@ -21,6 +22,7 @@ interface SpawnOpts {
   onToken?: (token: string) => void
   onErrToken?: (token: string) => void
   opts?: any
+  logger?: Logger
 }
 
 interface ExecResult {
@@ -41,12 +43,6 @@ var spawn: SpawnInterface
 spawn = async function (opts: SpawnOpts): Promise<number> {
   const {emitter, command, args = [], split = '\n', onToken, onErrToken} = opts
 
-  invariant(typeof command === 'string', 'spawn needs string command')
-  invariant(Array.isArray(args), 'spawn needs args array')
-  invariant(typeof split === 'string', 'spawn needs string split')
-  invariant(typeof onToken === 'function' || onToken === undefined, 'spawn needs onToken to be a function')
-  invariant(typeof onErrToken === 'function' || onErrToken === undefined, 'spawn needs onErrToken to be a function')
-
   const spawnOpts = Object.assign({}, opts.opts || {}, {
     stdio: [
       'ignore', // stdin
@@ -59,12 +55,12 @@ spawn = async function (opts: SpawnOpts): Promise<number> {
 
   const child = childProcess.spawn(command, args, spawnOpts)
   let cancelled = false
-  let cbErr = null
+  let cbErr: Error = null
 
   if (onToken) {
     const splitter = child.stdout.pipe(new LFTransform()).pipe(StreamSplitter(split))
     splitter.encoding = 'utf8'
-    splitter.on('token', (tok) => {
+    splitter.on('token', (tok: string) => {
       try {
         onToken(tok)
       } catch (err) {
@@ -76,7 +72,7 @@ spawn = async function (opts: SpawnOpts): Promise<number> {
   if (onErrToken) {
     const splitter = child.stderr.pipe(new LFTransform()).pipe(StreamSplitter(split))
     splitter.encoding = 'utf8'
-    splitter.on('token', (tok) => {
+    splitter.on('token', (tok: string) => {
       try {
         onErrToken(tok)
       } catch (err) {
@@ -86,9 +82,9 @@ spawn = async function (opts: SpawnOpts): Promise<number> {
   }
 
   const promise = new bluebird((resolve, reject) => {
-    let fakeCode
+    let fakeCode: number
 
-    child.on('close', (code, signal) => {
+    child.on('close', (code: number, signal: string) => {
       if (!code && fakeCode) {
         code = fakeCode
         signal = null
@@ -109,7 +105,7 @@ spawn = async function (opts: SpawnOpts): Promise<number> {
     child.on('error', reject)
 
     if (emitter) {
-      emitter.once('cancel', (e) => {
+      emitter.once('cancel', (e: Error) => {
         try {
           cancelled = true
           child.kill('SIGKILL')
@@ -117,10 +113,10 @@ spawn = async function (opts: SpawnOpts): Promise<number> {
           log(opts, `error while killing ${command}: ${e.stack || e}`)
         }
       })
-      emitter.once('fake-close', (e) => {
+      emitter.once('fake-close', (e: Error) => {
         try {
           child.kill('SIGTERM')
-          fakeCode = e.code
+          fakeCode = (e as any).code
         } catch (e) {
           log(opts, `error while terminating ${command}: ${e.stack || e}`)
         }
@@ -138,11 +134,11 @@ spawn.exec = async function (opts: SpawnOpts): Promise<ExecResult> {
   const {onToken, onErrToken} = opts
 
   const actualOpts = Object.assign({}, opts, {
-    onToken: (tok) => {
+    onToken: (tok: string) => {
       out += tok + '\n'
       if (onToken) { onToken(tok) }
     },
-    onErrToken: (tok) => {
+    onErrToken: (tok: string) => {
       err += tok + '\n'
       if (onErrToken) { onErrToken(tok) }
     }

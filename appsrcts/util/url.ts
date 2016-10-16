@@ -3,7 +3,7 @@
 import * as url from 'url'
 
 /** user.example.org => example.org */
-export function subdomainToDomain(subdomain) {
+export function subdomainToDomain(subdomain: string): string {
   const parts = subdomain.split('.')
   while (parts.length > 2) {
     parts.shift()
@@ -11,7 +11,7 @@ export function subdomainToDomain(subdomain) {
   return parts.join('.')
 }
 
-export function isItchioURL(s) {
+export function isItchioURL(s: string): boolean {
   return url.parse(s).protocol === 'itchio:'
 }
 

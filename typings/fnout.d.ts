@@ -13,5 +13,5 @@ interface FnoutStatic {
 
 declare module 'fnout' {
   var fnout: FnoutStatic;
-  export default fnout; 
+  export default fnout;
 }

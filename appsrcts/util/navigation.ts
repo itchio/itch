@@ -6,6 +6,8 @@ import * as querystring from 'querystring'
 import staticTabData from '../constants/static-tab-data'
 import * as invariant from 'invariant'
 
+import { GameRecord, UserRecord, CollectionRecord, InstallLocationRecord, TabData, TabDataSet } from '../types/db'
+
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/
 const ID_RE = /^[^\/]+\/(.*)$/
 
@@ -14,7 +16,7 @@ interface DNSError {
   message: string
 }
 
-export async function transformUrl(original) {
+export async function transformUrl(original: string): Promise<string> {
   if (/^about:/.test(original)) {
     return original
   }
@@ -34,7 +36,7 @@ export async function transformUrl(original) {
     }
   }
 
-  return await new Promise((resolve, reject) => {
+  return await new Promise<string>((resolve, reject) => {
     dns.lookup(parsed.hostname, (err) => {
       if (err) {
         const dnsError = err as DNSError
@@ -46,7 +48,7 @@ export async function transformUrl(original) {
   })
 }
 
-export function pathToId(path) {
+export function pathToId(path: string): string {
   const matches = ID_RE.exec(path)
   if (!matches) {
     throw new Error(`Could not extract id from path: ${JSON.stringify(path)}`)
@@ -54,7 +56,7 @@ export function pathToId(path) {
   return matches[1]
 }
 
-export function pathToIcon(path) {
+export function pathToIcon(path: string) {
   if (path === 'featured') {
     return 'itchio'
   }
@@ -94,7 +96,7 @@ export function pathToIcon(path) {
   return 'earth'
 }
 
-export function gameToTabData(game) {
+export function gameToTabData(game: GameRecord): TabData {
   return {
     games: {
       [game.id]: game
@@ -107,7 +109,7 @@ export function gameToTabData(game) {
   }
 }
 
-export function userToTabData(user) {
+export function userToTabData(user: UserRecord) {
   return {
     users: {
       [user.id]: user
@@ -120,7 +122,7 @@ export function userToTabData(user) {
   }
 }
 
-export function collectionToTabData(collection) {
+export function collectionToTabData(collection: CollectionRecord) {
   return {
     collections: {
       [collection.id]: collection
@@ -130,21 +132,23 @@ export function collectionToTabData(collection) {
   }
 }
 
-export function locationToTabData(location) {
+export function locationToTabData(location: InstallLocationRecord) {
   return {
     label: location.path
   }
 }
 
-export function makeLabel(id, tabData) {
-  invariant(typeof id === 'string', 'tab id is a string')
-
+export function makeLabel(id: string, tabData: TabDataSet) {
   const staticData = staticTabData[id]
   if (staticData) {
     return staticData.label
   }
 
-  const data = (tabData || {})[id] || {}
+  if (!tabData) {
+    tabData = {} as TabDataSet
+  }
+
+  const data = tabData[id]
   if (data) {
     const {path} = data
     if (path && /^url/.test(path)) {
@@ -161,7 +165,7 @@ export function makeLabel(id, tabData) {
   return 'Loading...'
 }
 
-export function isAppSupported(url) {
+export function isAppSupported(url: string) {
   const {host, pathname} = urlParser.parse(url)
 
   if (ITCH_HOST_RE.test(host)) {

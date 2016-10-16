@@ -1,6 +1,6 @@
 
 import * as invariant from 'invariant'
-import {promisify, promisifyAll} from 'bluebird'
+import { promisify, promisifyAll } from 'bluebird'
 import * as bluebird from 'bluebird'
 
 // let's patch all the things! Electron randomly decides to
@@ -17,7 +17,7 @@ if (!process.versions['electron']) {
   fsName = 'fs'
 }
 
-import {EventEmitter} from 'events'
+import { EventEmitter } from 'events'
 
 import * as proxyquire from 'proxyquire'
 
@@ -29,7 +29,7 @@ let fs = Object.assign({}, require(fsName), {
 
 // graceful-fs fixes a few things https://www.npmjs.com/package/graceful-fs
 // notably, EMFILE, EPERM, etc.
-const gracefulFs = Object.assign({}, proxyquire('graceful-fs', {fs}), {
+const gracefulFs = Object.assign({}, proxyquire('graceful-fs', { fs }), {
   '@global': true, /* Work with transitive imports */
   '@noCallThru': true /* Don't even require/hit electron fs */
 })
@@ -42,7 +42,7 @@ const stubs = {
 }
 
 const debugLevel = ~~process.env.INCENTIVE_MET || -1
-const debug = (level, parts) => {
+const debug = (level: number, parts: Array<string>) => {
   if (debugLevel < level) {
     return
   }
@@ -75,6 +75,11 @@ const ignore = [
 
 const concurrency = 8
 
+interface FSError {
+  code?: string
+  message: string
+}
+
 /*
  * sf = backward fs, because fs itself is quite backwards
  */
@@ -84,7 +89,7 @@ const self = {
    */
   exists: (file: string) => {
     return new bluebird((resolve, reject) => {
-      const callback = (err) => {
+      const callback = (err: FSError) => {
         if (err) {
           if (err.code === 'ENOENT') {
             resolve(false)
@@ -103,8 +108,8 @@ const self = {
   /**
    * Return utf-8 file contents as string
    */
-  readFile: async (file: string): Promise<string> =>  {
-    return await fs.readFileAsync(file, {encoding: 'utf8'})
+  readFile: async (file: string): Promise<string> => {
+    return await fs.readFileAsync(file, { encoding: 'utf8' })
   },
 
   appendFile: async (file: string, contents: string, options: any): Promise<void> => {
@@ -157,9 +162,7 @@ const self = {
    * Burn to the ground an entire directory and everything in it
    * Also works on file, don't bother with unlink.
    */
-  wipe: async (shelter): Promise<void> => {
-    invariant(typeof shelter === 'string', 'sf.wipe has string shelter')
-
+  wipe: async (shelter: string): Promise<void> => {
     debug(1, ['wipe', shelter])
 
     let stats
@@ -173,9 +176,9 @@ const self = {
     }
 
     if (stats.isDirectory()) {
-      const fileOrDirs = await self.glob('**', {cwd: shelter, dot: true, ignore})
-      const dirs = []
-      const files = []
+      const fileOrDirs = await self.glob('**', { cwd: shelter, dot: true, ignore })
+      const dirs: Array<String> = []
+      const files: Array<String> = []
 
       for (const fad of fileOrDirs) {
         const fullFad = path.join(shelter, fad)
@@ -199,11 +202,11 @@ const self = {
         }
       }
 
-      const unlink = async (file) => {
+      const unlink = async (file: string) => {
         const fullFile = path.join(shelter, file)
         await self.unlink(fullFile)
       }
-      await bluebird.resolve(files).map(unlink, {concurrency})
+      await bluebird.resolve(files).map(unlink, { concurrency })
 
       // remove deeper dirs first
       dirs.sort((a, b) => (b.length - a.length))
@@ -238,11 +241,11 @@ const self = {
    * https://www.npmjs.com/package/read-chunk
    */
   readChunk,
-  
+
   // Mirrors
   createReadStream: fs.createReadStream.bind(fs),
   createWriteStream: fs.createWriteStream.bind(fs),
-  
+
   chmod: fs.chmodAsync.bind(fs),
   stat: fs.statAsync.bind(fs),
   lstat: fs.lstatAsync.bind(fs),

@@ -1,6 +1,8 @@
 
-import {createAction} from 'redux-actions'
-import {userToTabData, gameToTabData, collectionToTabData} from '../util/navigation'
+import { createAction } from 'redux-actions'
+import { userToTabData, gameToTabData, collectionToTabData } from '../util/navigation'
+
+import { GameRecord, UserRecord, CollectionRecord } from '../types/db'
 
 import {
   NAVIGATE,
@@ -39,19 +41,19 @@ import {
 } from '../constants/action-types'
 
 const _navigate = createAction(NAVIGATE)
-export const navigate = (id, data = {}, background = false) => {
+export const navigate = (id: any, data = {}, background = false) => {
   if (typeof id === 'object') {
     return _navigate(id)
   } else {
-    return _navigate({id, data, background})
+    return _navigate({ id, data, background })
   }
 }
 
 export const focusNthTab = createAction(FOCUS_NTH_TAB)
 
-export const navigateToGame = (game, background = false) => navigate(`games/${game.id}`, gameToTabData(game), background)
-export const navigateToUser = (user, background = false) => navigate(`users/${user.id}`, userToTabData(user), background)
-export const navigateToCollection = (collection, background = false) => navigate(`collections/${collection.id}`, collectionToTabData(collection), background)
+export const navigateToGame = (game: GameRecord, background = false) => navigate(`games/${game.id}`, gameToTabData(game), background)
+export const navigateToUser = (user: UserRecord, background = false) => navigate(`users/${user.id}`, userToTabData(user), background)
+export const navigateToCollection = (collection: CollectionRecord, background = false) => navigate(`collections/${collection.id}`, collectionToTabData(collection), background)
 
 export const moveTab = createAction(MOVE_TAB)
 export const evolveTab = createAction(EVOLVE_TAB)
