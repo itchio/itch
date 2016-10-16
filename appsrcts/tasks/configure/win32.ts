@@ -1,16 +1,16 @@
 
-import sf from '../../util/sf'
+import sf from "../../util/sf";
 
-import {ConfigureResult} from './common'
+import {IConfigureResult} from "./common";
 
 const self = {
-  configure: async function (appPath: string): Promise<ConfigureResult> {
-    const executables = await sf.glob('**/*.@(exe|bat|jar)', {
+  configure: async function (appPath: string): Promise<IConfigureResult> {
+    const executables = await sf.glob("**/*.@(exe|bat|jar)", {
       cwd: appPath,
-      nocase: true
-    })
-    return {executables}
-  }
-}
+      nocase: true,
+    });
+    return {executables};
+  },
+};
 
-export default self
+export default self;

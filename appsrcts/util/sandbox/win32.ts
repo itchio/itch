@@ -1,38 +1,38 @@
 
-import spawn from '../spawn'
-import common from './common'
+import spawn from "../spawn";
+import common from "./common";
 
-import { CheckResult, Need } from './types'
+import { ICheckResult, INeed } from "./types";
 
-export async function check(): Promise<CheckResult> {
-  const errors: Array<Error> = []
-  const needs: Array<Need> = []
+export async function check(): Promise<ICheckResult> {
+  const errors: Array<Error> = [];
+  const needs: Array<INeed> = [];
 
-  const userCheck = await spawn.exec({ command: 'isolate.exe', args: ['--check'] })
+  const userCheck = await spawn.exec({ command: "isolate.exe", args: ["--check"] });
   if (userCheck.code !== 0) {
     needs.push({
-      type: 'user',
+      type: "user",
       err: userCheck.err,
-      code: userCheck.code
-    })
+      code: userCheck.code,
+    });
   }
 
-  return { errors, needs }
+  return { errors, needs };
 }
 
-export async function install(opts: any, needs: Array<Need>) {
+export async function install(opts: any, needs: Array<INeed>) {
   return await common.tendToNeeds(opts, needs, {
     user: async function () {
-      const res = await spawn.exec({ command: 'elevate.exe', args: ['isolate.exe', '--setup'] })
+      const res = await spawn.exec({ command: "elevate.exe", args: ["isolate.exe", "--setup"] });
       if (res.code !== 0) {
-        throw new Error(`setup failed with code ${res.code}. out = ${res.out}, err = ${res.err}`)
+        throw new Error(`setup failed with code ${res.code}. out = ${res.out}, err = ${res.err}`);
       }
-    }
-  })
+    },
+  });
 }
 
 export async function uninstall(opts: any) {
-  return { errors: [] }
+  return { errors: [] };
 }
 
-export default { check, install, uninstall }
+export default { check, install, uninstall };

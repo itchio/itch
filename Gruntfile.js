@@ -121,6 +121,16 @@ module.exports = function (grunt) {
                 }
             }
         },
+	'tslint': {
+	    'options': {
+		configuration: "tslint.json",
+		force: false
+	    },
+	    'files': [
+		'appsrcts/**/*.ts',
+		'appsrcts/**/*.tsx'
+            ]
+	},
         'sass': {
             options: {
                 sourceMap: true

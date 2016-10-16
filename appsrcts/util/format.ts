@@ -1,86 +1,87 @@
 
-import * as moment from 'moment-timezone'
+import * as moment from "moment-timezone";
 
 export function slugify(str: string): string {
   return str.toLowerCase()
-    .replace(/[^a-zA-Z_ ]/g, '')
-    .replace(/ +/g, '_')
+    .replace(/[^a-zA-Z_ ]/g, "")
+    .replace(/ +/g, "_");
 }
 
 const itchPlatforms = {
-  'linux': 'GNU/Linux', // not SteamOS
-  'windows': 'Windows',
-  'osx': 'macOS' // since WWDC june 2016
-}
+  "linux": "GNU/Linux", // not SteamOS
+  "windows": "Windows",
+  "osx": "macOS", // since WWDC june 2016
+};
 
 export function itchPlatform(p: string): string {
-  return (itchPlatforms as any)[p] || '???'
+  return (itchPlatforms as any)[p] || "???";
 }
 
 export function camelify(str: string): string {
-  return str.replace(/_[a-z]/g, (x) => x[1].toUpperCase())
+  return str.replace(/_[a-z]/g, (x) => x[1].toUpperCase());
 }
 
 export function camelifyObject(obj: any): any {
-  if (obj && typeof obj === 'object') {
+  if (obj && typeof obj === "object") {
     if (Array.isArray(obj)) {
-      const res = Array(obj.length)
+      const res = Array(obj.length);
       for (let i = 0; i < obj.length; i++) {
-        res[i] = camelifyObject(obj[i])
+        res[i] = camelifyObject(obj[i]);
       }
-      return res
+      return res;
     } else {
-      const res: any = {}
+      const res: any = {};
       for (const key of Object.keys(obj)) {
-        res[camelify(key)] = camelifyObject(obj[key])
+        res[camelify(key)] = camelifyObject(obj[key]);
       }
-      return res
+      return res;
     }
   } else {
-    return obj
+    return obj;
   }
 }
 
 export function seconds(secs: number): Array<any> {
   if (secs < 60) {
-    return ['duration.minute']
+    return ["duration.minute"];
   } else if (secs < 3600) {
-    return ['duration.minutes', { x: Math.floor(secs / 60).toFixed() }]
+    return ["duration.minutes", { x: Math.floor(secs / 60).toFixed() }];
   } else if (secs < 3600 * 2) {
-    return ['duration.hour']
+    return ["duration.hour"];
   } else {
-    return ['duration.hours', { x: Math.floor(secs / 3600).toFixed() }]
+    return ["duration.hours", { x: Math.floor(secs / 3600).toFixed() }];
   }
 }
 
-export function date(v: any, f: string, lang = 'en'): string {
+export function date(v: any, f: string, lang = "en"): string {
   try {
-    return moment.tz(v, 'UTC').tz(moment.tz.guess()).locale(lang).format(f)
+    return moment.tz(v, "UTC").tz(moment.tz.guess()).locale(lang).format(f);
   } catch (err) {
-    console.log(`Invalid date: ${v} — ${err.toString()}`)
-    return '?'
+    /* tslint:disable:no-console */
+    console.log(`Invalid date: ${v} — ${err.toString()}`);
+    return "?";
   }
 }
 
-export const DATE_FORMAT = 'DD MMMM, YYYY @ HH:mm zz'
-export const FS_DATE_FORMAT = 'YYYY.MM.DD-HH.mm.ss'
+export const DATE_FORMAT = "DD MMMM, YYYY @ HH:mm zz";
+export const FS_DATE_FORMAT = "YYYY.MM.DD-HH.mm.ss";
 
 export function price(currency: string, value: number) {
-  if (currency === 'USD') {
-    return `$${(value / 100).toFixed(2)}`
-  } else if (currency === 'CAD') {
-    return `CAD $${(value / 100).toFixed(2)}`
-  } else if (currency === 'AUD') {
-    return `AUD $${(value / 100).toFixed(2)}`
-  } else if (currency === 'GBP') {
-    return `£${(value / 100).toFixed(2)}`
-  } else if (currency === 'JPY') {
-    return `¥${value.toFixed(2)}`
-  } else if (currency === 'EUR') {
-    return `${(value / 100).toFixed(2)} €`
+  if (currency === "USD") {
+    return `$${(value / 100).toFixed(2)}`;
+  } else if (currency === "CAD") {
+    return `CAD $${(value / 100).toFixed(2)}`;
+  } else if (currency === "AUD") {
+    return `AUD $${(value / 100).toFixed(2)}`;
+  } else if (currency === "GBP") {
+    return `£${(value / 100).toFixed(2)}`;
+  } else if (currency === "JPY") {
+    return `¥${value.toFixed(2)}`;
+  } else if (currency === "EUR") {
+    return `${(value / 100).toFixed(2)} €`;
   } else {
-    return '???'
+    return "???";
   }
 }
 
-export default { date, slugify, camelify, camelifyObject, seconds, DATE_FORMAT, price, itchPlatform }
+export default { date, slugify, camelify, camelifyObject, seconds, DATE_FORMAT, price, itchPlatform };

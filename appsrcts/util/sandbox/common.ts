@@ -1,28 +1,28 @@
 
-import mklog from '../log'
-const log = mklog('sandbox-common')
+import mklog from "../log";
+const log = mklog("sandbox-common");
 
-import { Need, CaretakerSet } from './types'
+import { INeed, ICaretakerSet } from "./types";
 
-export async function tendToNeeds(opts: any, needs: Array<Need>, caretakers: CaretakerSet) {
-  const errors: Array<Error> = []
+export async function tendToNeeds(opts: any, needs: Array<INeed>, caretakers: ICaretakerSet) {
+  const errors: Array<Error> = [];
 
   for (const need of needs) {
-    log(opts, `tending to need ${JSON.stringify(need)}`)
-    const caretaker = caretakers[need.type]
+    log(opts, `tending to need ${JSON.stringify(need)}`);
+    const caretaker = caretakers[need.type];
     if (!caretaker) {
-      errors.push(new Error(`don't know how to fulfill need ${JSON.stringify(need)}`))
+      errors.push(new Error(`don't know how to fulfill need ${JSON.stringify(need)}`));
     } else {
       try {
-        await Promise.resolve(caretaker(need))
+        await Promise.resolve(caretaker(need));
       } catch (e) {
-        log(opts, `While tending to need ${need}: ${e.stack || e}`)
-        errors.push(e)
+        log(opts, `While tending to need ${need}: ${e.stack || e}`);
+        errors.push(e);
       }
     }
   }
 
-  return { errors }
+  return { errors };
 }
 
-export default { tendToNeeds }
+export default { tendToNeeds };

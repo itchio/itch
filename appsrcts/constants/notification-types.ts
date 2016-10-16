@@ -1,4 +1,2 @@
 
-export interface NotificationType extends String { }
-
-export const OPERATION_FAILED: NotificationType = "OPERATION_FAILED"
+export const OPERATION_FAILED = "OPERATION_FAILED";

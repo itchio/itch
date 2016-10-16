@@ -21,4 +21,4 @@ blacklist ~/.config/kitch/Partitions
 blacklist ~/.config/chromium
 blacklist ~/.config/chrome
 blacklist ~/.mozilla
-`
+`;

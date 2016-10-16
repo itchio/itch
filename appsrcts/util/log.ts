@@ -1,154 +1,164 @@
 
-import { pairs } from 'underscore'
-import * as colors from 'colors/safe'
+import { pairs } from "underscore";
+import * as colors from "colors/safe";
 
-import * as fs from 'fs'
-import * as format from '../util/format'
-import * as path from 'path'
-import * as eol from 'eol'
-import * as deepAssign from 'deep-assign'
-import * as stream from 'logrotate-stream'
+import * as fs from "fs";
+import * as format from "../util/format";
+import * as path from "path";
+import * as eol from "eol";
+import * as deepAssign from "deep-assign";
+import * as stream from "logrotate-stream";
 
-interface LogExport {
-  (message: string): any
-  Logger: any
+// tslint:disable:no-console
+
+interface ILogExport {
+  (message: string): any;
+  Logger: any;
 }
 
-var make: LogExport
+let make: ILogExport;
 
-make = function (name: string): LogExport {
-  var f: LogExport
+make = function (name: string): ILogExport {
+  let f: ILogExport;
 
   f = function (opts: any, message: string) {
     if (opts && opts.logger) {
-      opts.logger.log(`[${name}] ${message}`)
+      opts.logger.log(`[${name}] ${message}`);
     }
-  } as any
-  f.Logger = Logger
-  return f
-} as any
+  } as any;
+  f.Logger = Logger;
+  return f;
+} as any;
 
-const allColors = 'red green yellow blue magenta cyan white gray'.split(' ')
+const allColors = "red green yellow blue magenta cyan white gray".split(" ");
 
-interface Stream {
-  write(contents: string): void
-  end(): void
+interface IStream {
+  write(contents: string): void;
+  end(): void;
 }
 
 export class Logger {
   /** if true, print message to console */
-  consoleSink: boolean
+  consoleSink: boolean;
 
   /** if true, accumulate output in .contents */
-  stringSink: boolean
-  contents: string
+  stringSink: boolean;
+  contents: string;
 
-  fileSink: Stream
+  fileSink: IStream;
 
-  opts: any
+  opts: any;
 
-  colorCache: any
+  colorCache: any;
 
   constructor(userOpts: any) {
-    if (typeof userOpts === 'undefined') {
-      userOpts = {}
+    if (typeof userOpts === "undefined") {
+      userOpts = {};
     }
 
-    let defaultOpts = { sinks: { console: true } }
-    let opts = deepAssign({}, defaultOpts, userOpts)
-    this.opts = opts
+    let defaultOpts = { sinks: { console: true } };
+    let opts = deepAssign({}, defaultOpts, userOpts);
+    this.opts = opts;
 
-    let sinks = opts.sinks
+    let sinks = opts.sinks;
 
-    this.consoleSink = false
-    this.stringSink = false
-    this.fileSink = null
-    this.contents = ''
+    this.consoleSink = false;
+    this.stringSink = false;
+    this.fileSink = null;
+    this.contents = "";
 
     for (const pair of pairs(sinks)) {
-      const key = pair[0]
-      const val = pair[1]
+      const key = pair[0];
+      const val = pair[1];
 
       switch (key) {
-        case 'console': {
-          this.consoleSink = !!val
-          break
+        case "console": {
+          this.consoleSink = !!val;
+          break;
         }
 
-        case 'file': {
+        case "file": {
           if (val) {
             // XXX bad, but we're in a constructor, not seeing many other options
             try {
-              fs.mkdirSync(path.dirname(val))
-            } catch (err) { }
-            this.fileSink = stream({
-              file: val,
-              size: '300K',
-              keep: 3
-            })
+              fs.mkdirSync(path.dirname(val));
+
+              this.fileSink = stream({
+                file: val,
+                size: "300K",
+                keep: 3,
+              });
+            } catch (err) {
+              console.log(`Could not create file sink: ${err.stack || err.message}`);
+            }
           }
-          break
+          break;
         }
 
-        case 'string': {
-          this.stringSink = !!val
-          break
+        case "string": {
+          this.stringSink = !!val;
+          break;
+        }
+
+        default: {
+          // no other types supported
+          break;
         }
       }
     }
   }
 
   log(message: string) {
-    this.write(this.timestamp(), `${message}`)
+    this.write(this.timestamp(), `${message}`);
   }
 
   nameToColor(name: string): string {
-    this.colorCache = this.colorCache || {}
+    this.colorCache = this.colorCache || {};
 
     if (this.colorCache[name]) {
-      return this.colorCache[name]
+      return this.colorCache[name];
     }
 
-    let hash = 0
+    let hash = 0;
     for (let i = 0; i < name.length; i++) {
-      hash += name.charCodeAt(i)
+      hash += name.charCodeAt(i);
     }
-    hash = hash % allColors.length
-    this.colorCache[name] = allColors[hash]
+    hash = hash % allColors.length;
+    this.colorCache[name] = allColors[hash];
 
-    return this.colorCache[name]
+    return this.colorCache[name];
   }
 
   write(timestamp: string, s: string) {
     if (this.stringSink) {
-      this.contents += eol.auto(`[${timestamp}] ${s}` + '\n')
+      this.contents += eol.auto(`[${timestamp}] ${s}` + "\n");
     }
 
     if (this.consoleSink) {
-      const matches = /^\[([^\]]*)\]/.exec(s)
+      const matches = /^\[([^\]]*)\]/.exec(s);
       if (matches) {
-        const color = this.nameToColor(matches[1])
-        console.log(timestamp + ' ' + colors[color](s))
+        const color = this.nameToColor(matches[1]);
+        console.log(timestamp + " " + colors[color](s));
       } else {
-        console.log(`${timestamp} ${s}`)
+        console.log(`${timestamp} ${s}`);
       }
     }
 
     if (this.fileSink) {
-      this.fileSink.write(eol.auto(`${timestamp} ${s}` + '\n'))
+      this.fileSink.write(eol.auto(`${timestamp} ${s}` + "\n"));
     }
   }
 
   close() {
     if (this.fileSink) {
-      this.fileSink.end()
+      this.fileSink.end();
     }
   }
 
   timestamp(): string {
-    return '[' + format.date(Date.now(), 'YYYY-MM-DD @ HH:mm:ss.SSS') + ']'
+    return "[" + format.date(Date.now(), "YYYY-MM-DD @ HH:mm:ss.SSS") + "]";
   }
 }
-make.Logger = Logger
+make.Logger = Logger;
 
-export default make
+export default make;

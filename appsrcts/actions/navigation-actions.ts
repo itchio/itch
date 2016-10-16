@@ -1,8 +1,8 @@
 
-import { createAction } from 'redux-actions'
-import { userToTabData, gameToTabData, collectionToTabData } from '../util/navigation'
+import { createAction } from "redux-actions";
+import { userToTabData, gameToTabData, collectionToTabData } from "../util/navigation";
 
-import { GameRecord, UserRecord, CollectionRecord } from '../types/db'
+import { IGameRecord, IUserRecord, ICollectionRecord } from "../types/db";
 
 import {
   NAVIGATE,
@@ -37,52 +37,55 @@ import {
 
   OPEN_PREFERENCES,
   VIEW_CREATOR_PROFILE,
-  VIEW_COMMUNITY_PROFILE
-} from '../constants/action-types'
+  VIEW_COMMUNITY_PROFILE,
+} from "../constants/action-types";
 
-const _navigate = createAction(NAVIGATE)
+const internalNavigate = createAction(NAVIGATE);
 export const navigate = (id: any, data = {}, background = false) => {
-  if (typeof id === 'object') {
-    return _navigate(id)
+  if (typeof id === "object") {
+    return internalNavigate(id);
   } else {
-    return _navigate({ id, data, background })
+    return internalNavigate({ id, data, background });
   }
-}
+};
 
-export const focusNthTab = createAction(FOCUS_NTH_TAB)
+export const focusNthTab = createAction(FOCUS_NTH_TAB);
 
-export const navigateToGame = (game: GameRecord, background = false) => navigate(`games/${game.id}`, gameToTabData(game), background)
-export const navigateToUser = (user: UserRecord, background = false) => navigate(`users/${user.id}`, userToTabData(user), background)
-export const navigateToCollection = (collection: CollectionRecord, background = false) => navigate(`collections/${collection.id}`, collectionToTabData(collection), background)
+export const navigateToGame = (game: IGameRecord, background = false) =>
+  navigate(`games/${game.id}`, gameToTabData(game), background);
+export const navigateToUser = (user: IUserRecord, background = false) =>
+  navigate(`users/${user.id}`, userToTabData(user), background);
+export const navigateToCollection = (collection: ICollectionRecord, background = false) =>
+  navigate(`collections/${collection.id}`, collectionToTabData(collection), background);
 
-export const moveTab = createAction(MOVE_TAB)
-export const evolveTab = createAction(EVOLVE_TAB)
-export const tabEvolved = createAction(TAB_EVOLVED)
-export const newTab = createAction(NEW_TAB)
-export const closeTab = createAction(CLOSE_TAB)
-export const closeAllTabs = createAction(CLOSE_ALL_TABS)
-export const showPreviousTab = createAction(SHOW_PREVIOUS_TAB)
-export const showNextTab = createAction(SHOW_NEXT_TAB)
-export const switchPage = createAction(SWITCH_PAGE)
+export const moveTab = createAction(MOVE_TAB);
+export const evolveTab = createAction(EVOLVE_TAB);
+export const tabEvolved = createAction(TAB_EVOLVED);
+export const newTab = createAction(NEW_TAB);
+export const closeTab = createAction(CLOSE_TAB);
+export const closeAllTabs = createAction(CLOSE_ALL_TABS);
+export const showPreviousTab = createAction(SHOW_PREVIOUS_TAB);
+export const showNextTab = createAction(SHOW_NEXT_TAB);
+export const switchPage = createAction(SWITCH_PAGE);
 
-export const tabReloaded = createAction(TAB_RELOADED)
-export const tabChanged = createAction(TAB_CHANGED)
-export const tabsChanged = createAction(TABS_CHANGED)
-export const tabsRestored = createAction(TABS_RESTORED)
-export const tabDataFetched = createAction(TAB_DATA_FETCHED)
+export const tabReloaded = createAction(TAB_RELOADED);
+export const tabChanged = createAction(TAB_CHANGED);
+export const tabsChanged = createAction(TABS_CHANGED);
+export const tabsRestored = createAction(TABS_RESTORED);
+export const tabDataFetched = createAction(TAB_DATA_FETCHED);
 
-export const openTabContextMenu = createAction(OPEN_TAB_CONTEXT_MENU)
-export const unlockTab = createAction(UNLOCK_TAB)
+export const openTabContextMenu = createAction(OPEN_TAB_CONTEXT_MENU);
+export const unlockTab = createAction(UNLOCK_TAB);
 
-export const openUrl = createAction(OPEN_URL)
-export const reportIssue = createAction(REPORT_ISSUE)
-export const copyToClipboard = createAction(COPY_TO_CLIPBOARD)
-export const handleItchioUrl = createAction(HANDLE_ITCHIO_URL)
-export const triggerMainAction = createAction(TRIGGER_MAIN_ACTION)
-export const triggerOk = createAction(TRIGGER_OK)
-export const triggerBack = createAction(TRIGGER_BACK)
-export const triggerLocation = createAction(TRIGGER_LOCATION)
+export const openUrl = createAction(OPEN_URL);
+export const reportIssue = createAction(REPORT_ISSUE);
+export const copyToClipboard = createAction(COPY_TO_CLIPBOARD);
+export const handleItchioUrl = createAction(HANDLE_ITCHIO_URL);
+export const triggerMainAction = createAction(TRIGGER_MAIN_ACTION);
+export const triggerOk = createAction(TRIGGER_OK);
+export const triggerBack = createAction(TRIGGER_BACK);
+export const triggerLocation = createAction(TRIGGER_LOCATION);
 
-export const openPreferences = createAction(OPEN_PREFERENCES)
-export const viewCreatorProfile = createAction(VIEW_CREATOR_PROFILE)
-export const viewCommunityProfile = createAction(VIEW_COMMUNITY_PROFILE)
+export const openPreferences = createAction(OPEN_PREFERENCES);
+export const viewCreatorProfile = createAction(VIEW_CREATOR_PROFILE);
+export const viewCommunityProfile = createAction(VIEW_COMMUNITY_PROFILE);

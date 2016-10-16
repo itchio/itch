@@ -1,0 +1,9 @@
+{
+	"extends": "tslint:recommended",
+	"rules": {
+		"member-access": false,
+		"no-var-requires": false,
+		"no-require-imports": false,
+		"object-literal-sort-keys": false
+	}
+}

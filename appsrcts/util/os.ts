@@ -1,42 +1,42 @@
 
-import spawn from './spawn'
-import * as os from 'os'
+import spawn from "./spawn";
+import * as os from "os";
 
-interface AssertPresenceResult {
-  code: number
-  stdout: string
-  stderr: string
-  parsed: string
+interface IAssertPresenceResult {
+  code: number;
+  stdout: string;
+  stderr: string;
+  parsed: string;
 }
 
 const self = {
   platform: function (): string {
-    return process.platform
+    return process.platform;
   },
 
   release: function (): string {
-    return os.release()
+    return os.release();
   },
 
   arch: function (): string {
-    return process.arch
+    return process.arch;
   },
 
   inBrowser: function (): boolean {
-    return self.processType() === 'browser'
+    return self.processType() === "browser";
   },
 
   inRenderer: function (): boolean {
-    return self.processType() === 'renderer'
+    return self.processType() === "renderer";
   },
 
   processType: function (): string {
-    return process.type || 'browser'
+    return process.type || "browser";
   },
 
   getVersion: function (key: string): string {
     // electron has additional version keys, so we have to bypass regular node typings
-    return (process.versions as any)[key]
+    return (process.versions as any)[key];
   },
 
   /**
@@ -44,47 +44,50 @@ const self = {
    */
   itchPlatform: function (): string {
     switch (self.platform()) {
-      case 'darwin':
-        return 'osx'
-      case 'win32':
-        return 'windows'
-      case 'linux':
-        return 'linux'
+      case "darwin":
+        return "osx";
+      case "win32":
+        return "windows";
+      case "linux":
+        return "linux";
+      default:
+        return "unknown";
     }
   },
 
   cliArgs: function (): Array<string> {
-    return process.argv
+    return process.argv;
   },
 
-  assertPresence: async function (command: string, args: Array<string>, parser: RegExp): Promise<AssertPresenceResult> {
-    let stdout = ''
-    let stderr = ''
+  assertPresence: async function
+      (command: string, args: Array<string>, parser: RegExp): Promise<IAssertPresenceResult> {
+    let stdout = "";
+    let stderr = "";
 
-    args = args || []
+    args = args || [];
 
     const spawnOpts = {
       command,
       args,
-      onToken: (tok: string) => { stdout += '\n' + tok },
-      onErrToken: (tok: string) => { stderr += '\n' + tok }
-    }
+      onToken: (tok: string) => { stdout += "\n" + tok; },
+      onErrToken: (tok: string) => { stderr += "\n" + tok; },
+    };
 
-    const code = await spawn(spawnOpts)
+    const code = await spawn(spawnOpts);
     if (code !== 0) {
-      throw new Error(`${command} exited with code ${code}\n${stdout}\n${stderr}`)
+      throw new Error(`${command} exited with code ${code}\n${stdout}\n${stderr}`);
     }
 
-    let parsed = null
+    let parsed = null;
     if (parser) {
-      let matches = parser.exec(stdout + '\n' + stderr)
+      let matches = parser.exec(stdout + "\n" + stderr);
       if (matches) {
-        parsed = matches[1]
+        parsed = matches[1];
       }
     }
 
-    return { code, stdout, stderr, parsed }
-  }
-}
+    return { code, stdout, stderr, parsed };
+  },
+};
 
-export default self
+export default self;

@@ -1,10 +1,10 @@
 
-let store
+let store;
 
 if (process.type) {
-  store = require(`./${process.type}-store`)
+  store = require(`./${process.type}-store`);
 } else {
-  store = require('./mock-store')
+  store = require("./mock-store");
 }
 
-export = store
+export = store;

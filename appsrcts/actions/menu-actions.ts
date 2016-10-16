@@ -1,8 +1,8 @@
 
-import {createAction} from 'redux-actions'
+import {createAction} from "redux-actions";
 
 import {
-  REFRESH_MENU
-} from '../constants/action-types'
+  REFRESH_MENU,
+} from "../constants/action-types";
 
-export const refreshMenu = createAction(REFRESH_MENU)
+export const refreshMenu = createAction(REFRESH_MENU);

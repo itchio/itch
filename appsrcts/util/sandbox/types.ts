@@ -1,19 +1,19 @@
 
-export interface Need {
-    type: string
-    code?: number
-    err?: string
+export interface INeed {
+    type: string;
+    code?: number;
+    err?: string;
 }
 
-export interface Caretaker {
-    (n: Need): void
+export interface ICaretaker {
+    (n: INeed): void;
 }
 
-export interface CaretakerSet {
-    [key: string]: Caretaker
+export interface ICaretakerSet {
+    [key: string]: ICaretaker;
 }
 
-export interface CheckResult {
-    needs: Array<Need>
-    errors: Array<Error>
+export interface ICheckResult {
+    needs: Array<INeed>;
+    errors: Array<Error>;
 }

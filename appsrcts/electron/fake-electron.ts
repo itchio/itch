@@ -1,11 +1,11 @@
 
-import { EventEmitter } from 'events'
+import { EventEmitter } from "events";
 
-const rnil = (): any => null
+const rnil = (): any => null;
 
 const electron = {
   app: {
-    getVersion: () => '1.0',
+    getVersion: () => "1.0",
     getPath: (p: string): string => `tmp/${p}`,
     makeSingleInstance: (cb: () => void) => false,
     quit: rnil,
@@ -13,80 +13,80 @@ const electron = {
     dock: {
       setMenu: rnil,
       bounce: rnil,
-      setBadge: rnil
-    }
+      setBadge: rnil,
+    },
   },
   powerSaveBlocker: {
     start: rnil,
-    stop: rnil
+    stop: rnil,
   },
   ipcMain: Object.assign({}, EventEmitter.prototype),
   ipcRenderer: Object.assign({
     send: function () {
-      let args: Array<any> = []
+      let args: Array<any> = [];
       for (let i = 0; i < arguments.length; i++) {
-        args.push(arguments[i])
+        args.push(arguments[i]);
       }
-      args.splice(1, 0, {}) // inject fake 'ev' object
-      electron.ipcMain.emit.apply(electron.ipcMain, args)
-    }
+      args.splice(1, 0, {}); // inject fake 'ev' object
+      electron.ipcMain.emit.apply(electron.ipcMain, args);
+    },
   }, EventEmitter.prototype),
   remote: {
     require: (path: string): any => ({}),
-    app: null as any
+    app: null as any,
   },
   shell: {
     openItem: rnil,
-    openExternal: rnil
+    openExternal: rnil,
   },
   dialog: {
-    showMessageBox: rnil
+    showMessageBox: rnil,
   },
   webFrame: {
-    setZoomLevelLimits: rnil
+    setZoomLevelLimits: rnil,
   },
   Menu: {
     buildFromTemplate: rnil,
-    setApplicationMenu: rnil
+    setApplicationMenu: rnil,
   },
   Tray: function () {
-    Object.assign(this, electron.Tray)
+    Object.assign(this, electron.Tray);
   },
   BrowserWindow: function () {
-    Object.assign(this, electron.BrowserWindow)
-  }
-}
+    Object.assign(this, electron.BrowserWindow);
+  },
+};
 
-electron.ipcRenderer.setMaxListeners(Infinity)
-electron.ipcMain.setMaxListeners(Infinity)
+electron.ipcRenderer.setMaxListeners(Infinity);
+electron.ipcMain.setMaxListeners(Infinity);
 
-electron.remote.app = electron.app
+electron.remote.app = electron.app;
 
 Object.assign(electron.Tray, {
   setToolTip: rnil,
   setContextMenu: rnil,
   on: rnil,
-  displayBalloon: rnil // win32-only
-})
+  displayBalloon: rnil, // win32-only
+});
 
 let webRequest = {
-  onBeforeSendHeaders: rnil
-}
+  onBeforeSendHeaders: rnil,
+};
 
 let session = {
   clearCache: (f: () => void) => f(),
-  webRequest
-}
+  webRequest,
+};
 
 let webContents = {
   on: (e: string, cb: (e: any) => void) => cb({ preventDefault: rnil }),
   executeJavaScript: rnil,
   insertCSS: rnil,
   openDevTools: rnil,
-  getUserAgent: () => 'tester',
+  getUserAgent: () => "tester",
   setUserAgent: rnil,
-  session
-}
+  session,
+};
 
 Object.assign(electron.BrowserWindow, {
   getAllWindows: (): Array<any> => [],
@@ -98,7 +98,7 @@ Object.assign(electron.BrowserWindow, {
   hide: rnil,
   show: rnil,
   close: rnil,
-  webContents
-})
+  webContents,
+});
 
-export default electron
+export default electron;

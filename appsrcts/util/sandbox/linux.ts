@@ -1,82 +1,82 @@
 
-import * as tmp from 'tmp'
-import * as ospath from 'path'
+import * as tmp from "tmp";
+import * as ospath from "path";
 
-import spawn from '../spawn'
-import sf from '../sf'
+import spawn from "../spawn";
+import sf from "../sf";
 // import ibrew from '../ibrew'
-const ibrew = require('../ibrew').default
+const ibrew = require("../ibrew").default;
 
-import mklog from '../log'
-const log = mklog('sandbox-linux')
+import mklog from "../log";
+const log = mklog("sandbox-linux");
 
-import common from './common'
+import common from "./common";
 
-import { CheckResult, Need } from './types'
+import { ICheckResult, INeed } from "./types";
 
-export async function check(opts: any): Promise<CheckResult> {
-  const needs: Array<Need> = []
-  const errors: Array<Error> = []
+export async function check(opts: any): Promise<ICheckResult> {
+  const needs: Array<INeed> = [];
+  const errors: Array<Error> = [];
 
-  log(opts, 'Testing firejail')
-  const firejailCheck = await spawn.exec({ command: 'firejail', args: ['--noprofile', '--', 'whoami'] })
+  log(opts, "Testing firejail");
+  const firejailCheck = await spawn.exec({ command: "firejail", args: ["--noprofile", "--", "whoami"] });
   if (firejailCheck.code !== 0) {
     needs.push({
-      type: 'firejail',
+      type: "firejail",
       code: firejailCheck.code,
-      err: firejailCheck.err
-    })
+      err: firejailCheck.err,
+    });
   }
 
-  return { needs, errors }
+  return { needs, errors };
 }
 
-export async function install(opts: any, needs: Array<Need>) {
+export async function install(opts: any, needs: Array<INeed>) {
   return await common.tendToNeeds(opts, needs, {
     firejail: async function (need) {
-      log(opts, `installing firejail, because ${need.err} (code ${need.code})`)
+      log(opts, `installing firejail, because ${need.err} (code ${need.code})`);
 
-      const firejailBinary = ospath.join(ibrew.binPath(), 'firejail')
-      const firejailBinaryExists = await sf.exists(firejailBinary)
+      const firejailBinary = ospath.join(ibrew.binPath(), "firejail");
+      const firejailBinaryExists = await sf.exists(firejailBinary);
       if (!firejailBinaryExists) {
-        throw new Error('firejail binary missing')
+        throw new Error("firejail binary missing");
       } else {
-        const lines: Array<string> = []
-        lines.push('#!/bin/bash -xe')
-        lines.push(`chown root:root ${firejailBinary}`)
-        lines.push(`chmod u+s ${firejailBinary}`)
+        const lines: Array<string> = [];
+        lines.push("#!/bin/bash -xe");
+        lines.push(`chown root:root ${firejailBinary}`);
+        lines.push(`chmod u+s ${firejailBinary}`);
 
-        log(opts, 'Making firejail binary setuid')
-        await sudoRunScript(lines)
+        log(opts, "Making firejail binary setuid");
+        await sudoRunScript(lines);
       }
-    }
-  })
+    },
+  });
 }
 
 export async function uninstall(opts: any) {
-  const errors: Array<Error> = []
-  return { errors }
+  const errors: Array<Error> = [];
+  return { errors };
 }
 
-interface SudoRunScriptResult {
-  out: string
+interface ISudoRunScriptResult {
+  out: string;
 }
 
-async function sudoRunScript(lines: Array<string>): Promise<SudoRunScriptResult> {
-  const contents = lines.join('\n')
-  const tmpObjName = tmp.tmpNameSync()
-  await sf.writeFile(tmpObjName, contents)
-  await sf.chmod(tmpObjName, 0o777)
+async function sudoRunScript(lines: Array<string>): Promise<ISudoRunScriptResult> {
+  const contents = lines.join("\n");
+  const tmpObjName = tmp.tmpNameSync();
+  await sf.writeFile(tmpObjName, contents);
+  await sf.chmod(tmpObjName, 0o777);
 
-  const res = await spawn.exec({ command: 'pkexec', args: [tmpObjName] })
+  const res = await spawn.exec({ command: "pkexec", args: [tmpObjName] });
 
-  await sf.wipe(tmpObjName)
+  await sf.wipe(tmpObjName);
 
   if (res.code !== 0) {
-    throw new Error(`pkexec failed with code ${res.code}, stderr = ${res.err}`)
+    throw new Error(`pkexec failed with code ${res.code}, stderr = ${res.err}`);
   }
 
-  return { out: res.out }
+  return { out: res.out };
 }
 
-export default { check, install, uninstall }
+export default { check, install, uninstall };

@@ -2,16 +2,16 @@
 const state = {
   preferences: {
     installLocations: {
-      'kansas': {
-        path: '/not/there/anymore'
-      }
+      "kansas": {
+        path: "/not/there/anymore",
+      },
     },
-    defaultInstallLocation: 'appdata'
-  }
-}
+    defaultInstallLocation: "appdata",
+  },
+};
 
 export default {
   getState: () => {
-    return state
-  }
-}
+    return state;
+  },
+};

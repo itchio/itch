@@ -1,2 +1,2 @@
 
-export default (): any => null
+export default (): any => null;

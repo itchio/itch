@@ -97,4 +97,4 @@ export default `
 
 ;; ?? (required by SDL2 app)
 (allow iokit-open)
-`
+`;
