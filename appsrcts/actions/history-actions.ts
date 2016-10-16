@@ -1,6 +1,6 @@
 
-import {createAction} from 'redux-actions'
-import uuid from 'node-uuid'
+import { createAction } from 'redux-actions'
+import * as uuid from 'node-uuid'
 
 import {
   DISMISS_HISTORY_ITEM,
@@ -11,11 +11,10 @@ import {
 export const dismissHistoryItem = createAction(DISMISS_HISTORY_ITEM)
 
 const _queueHistoryItem = createAction(QUEUE_HISTORY_ITEM)
-export const queueHistoryItem = (payload) => _queueHistoryItem({
+export const queueHistoryItem = (payload) => _queueHistoryItem(Object.assign({
   id: uuid.v4(),
   date: Date.now(),
-  active: true,
-  ...payload
-})
+  active: true
+}, payload))
 
 export const historyRead = createAction(HISTORY_READ)

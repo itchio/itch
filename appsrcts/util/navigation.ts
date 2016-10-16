@@ -1,15 +1,20 @@
 
-import urlParser from '../util/url'
-import dns from 'dns'
-import querystring from 'querystring'
+import urlParser from './url'
+import * as dns from 'dns'
+import * as querystring from 'querystring'
 
 import staticTabData from '../constants/static-tab-data'
-import invariant from 'invariant'
+import * as invariant from 'invariant'
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/
 const ID_RE = /^[^\/]+\/(.*)$/
 
-export async function transformUrl (original) {
+interface DNSError {
+  code?: number
+  message: string
+}
+
+export async function transformUrl(original) {
   if (/^about:/.test(original)) {
     return original
   }
@@ -18,7 +23,7 @@ export async function transformUrl (original) {
   let parsed = urlParser.parse(req)
   const searchUrl = () => {
     const q = original
-    return 'https://duckduckgo.com/?' + querystring.stringify({q, kae: 'd'})
+    return 'https://duckduckgo.com/?' + querystring.stringify({ q, kae: 'd' })
   }
 
   if (!parsed.hostname) {
@@ -32,7 +37,8 @@ export async function transformUrl (original) {
   return await new Promise((resolve, reject) => {
     dns.lookup(parsed.hostname, (err) => {
       if (err) {
-        console.log(`dns error: ${err.code} / ${err.message}`)
+        const dnsError = err as DNSError
+        console.log(`dns error: ${dnsError.code} / ${dnsError.message}`)
         resolve(searchUrl())
       }
       resolve(req)
@@ -40,7 +46,7 @@ export async function transformUrl (original) {
   })
 }
 
-export function pathToId (path) {
+export function pathToId(path) {
   const matches = ID_RE.exec(path)
   if (!matches) {
     throw new Error(`Could not extract id from path: ${JSON.stringify(path)}`)
@@ -48,7 +54,7 @@ export function pathToId (path) {
   return matches[1]
 }
 
-export function pathToIcon (path) {
+export function pathToIcon(path) {
   if (path === 'featured') {
     return 'itchio'
   }
@@ -88,7 +94,7 @@ export function pathToIcon (path) {
   return 'earth'
 }
 
-export function gameToTabData (game) {
+export function gameToTabData(game) {
   return {
     games: {
       [game.id]: game
@@ -101,7 +107,7 @@ export function gameToTabData (game) {
   }
 }
 
-export function userToTabData (user) {
+export function userToTabData(user) {
   return {
     users: {
       [user.id]: user
@@ -114,23 +120,23 @@ export function userToTabData (user) {
   }
 }
 
-export function collectionToTabData (collection) {
+export function collectionToTabData(collection) {
   return {
     collections: {
       [collection.id]: collection
     },
     label: collection.title,
-    subtitle: ['sidebar.collection.subtitle', {itemCount: collection.gamesCount}]
+    subtitle: ['sidebar.collection.subtitle', { itemCount: collection.gamesCount }]
   }
 }
 
-export function locationToTabData (location) {
+export function locationToTabData(location) {
   return {
     label: location.path
   }
 }
 
-export function makeLabel (id, tabData) {
+export function makeLabel(id, tabData) {
   invariant(typeof id === 'string', 'tab id is a string')
 
   const staticData = staticTabData[id]
@@ -155,7 +161,7 @@ export function makeLabel (id, tabData) {
   return 'Loading...'
 }
 
-export function isAppSupported (url) {
+export function isAppSupported(url) {
   const {host, pathname} = urlParser.parse(url)
 
   if (ITCH_HOST_RE.test(host)) {
@@ -174,4 +180,4 @@ export function isAppSupported (url) {
   return null
 }
 
-export default {transformUrl, pathToId, pathToIcon, gameToTabData, collectionToTabData, isAppSupported}
+export default { transformUrl, pathToId, pathToIcon, gameToTabData, collectionToTabData, isAppSupported }

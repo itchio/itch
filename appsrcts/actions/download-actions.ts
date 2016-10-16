@@ -1,5 +1,5 @@
 
-import {createAction} from 'redux-actions'
+import { createAction } from 'redux-actions'
 
 import {
   QUEUE_DOWNLOAD,
@@ -22,7 +22,7 @@ import {
 export const queueDownload = createAction(QUEUE_DOWNLOAD)
 
 const _downloadStarted = createAction(DOWNLOAD_STARTED)
-export const downloadStarted = (payload) => _downloadStarted({...payload, date: Date.now()})
+export const downloadStarted = (payload) => _downloadStarted(Object.assign({}, payload, { date: Date.now() }))
 
 export const downloadProgress = createAction(DOWNLOAD_PROGRESS)
 export const downloadEnded = createAction(DOWNLOAD_ENDED)
