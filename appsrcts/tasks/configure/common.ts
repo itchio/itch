@@ -3,10 +3,8 @@ import fnout from "fnout";
 import sf from "../../util/sf";
 import { partial } from "underscore";
 
-// import {opts} from '../../logger'
-// import mklog from '../../util/log'
-const {opts} = require("../../logger");
-const mklog = require("../../util/log").default;
+import {opts} from "../../logger";
+import mklog from "../../util/log";
 const log = mklog("configure/common");
 
 import * as path from "path";

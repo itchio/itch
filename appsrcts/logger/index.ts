@@ -1,0 +1,37 @@
+
+import * as ospath from "path";
+import * as mkdirp from "mkdirp";
+
+import * as env from "../env";
+const full = (process.type !== "renderer" && env.name !== "test");
+
+import pathmaker from "../util/pathmaker";
+import mklog from "../util/log";
+
+// naughty
+try {
+  mkdirp.sync(ospath.dirname(pathmaker.logPath()));
+} catch (e) {
+  if (e.code !== "EEXIST") {
+    console.log(`While creating logs dir: ${e.stack}`); // tslint:disable-line:no-console
+  }
+}
+
+const loggerOpts = {
+  sinks: {
+    file: null as string,
+  },
+};
+if (full) {
+  loggerOpts.sinks.file = pathmaker.logPath();
+}
+
+export const logger = new mklog.Logger(loggerOpts);
+export default logger;
+
+const log = mklog("itch");
+export const opts = {logger};
+
+if (full) {
+  log(opts, `using electron ${process.versions.electron}`);
+}

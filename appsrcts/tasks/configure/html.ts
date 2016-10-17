@@ -4,10 +4,8 @@ import * as clone from "clone";
 
 import sf from "../../util/sf";
 
-// import mklog from '../../util/log'
-// import {opts} from '../../logger'
-const {opts} = require("../../logger");
-const mklog = require("../../util/log").default;
+import mklog from "../../util/log";
+import {opts} from "../../logger";
 const log = mklog("configure/html");
 
 import { sortBy, uniq } from "underscore";
