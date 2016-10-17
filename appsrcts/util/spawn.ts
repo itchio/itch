@@ -125,7 +125,7 @@ spawn = async function (opts: ISpawnOpts): Promise<number> {
   return code;
 } as any;
 
-spawn.exec = async function (opts: ISpawnOpts): Promise<ExecResult> {
+spawn.exec = async function (opts: ISpawnOpts): Promise<IExecResult> {
   let out = "";
   let err = "";
 
