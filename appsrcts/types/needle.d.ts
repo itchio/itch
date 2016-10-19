@@ -3,13 +3,18 @@ declare module "needle" {
     export interface INeedleResponse {
         statusCode: number;
         body: any;
+        headers: {
+            [key: string]: string;
+        };
     }
 
     export interface INeedleCallback {
         (err: Error, resp: INeedleResponse): void;
     }
 
-    export interface INeedleRequest {}
+    export interface INeedleRequest {
+        pipe?(sink: any): void;
+    }
 
     export function defaults(opts: any): void;
     export function head(uri: string, options: any, callback: INeedleCallback): INeedleRequest;
