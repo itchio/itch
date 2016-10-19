@@ -21,7 +21,7 @@ async function preboot (store) {
   } catch (e) {
     console.log(`Could not clean old logs: ${e.stack || e.message || e}`)
   }
-  
+
   try {
     await xdgMime.registerIfNeeded(opts)
   } catch (e) {
