@@ -85,7 +85,7 @@ export function deleteRequest (uri: string, data: any, options: any, callback: I
 
 export const deleteRequestAsync = promisify(deleteRequest);
 
-type INeedleMethod = "HEAD" | "GET" | "POST"  | "PUT" | "PATCH" | "DELETE"
+type INeedleMethod = "head" | "get" | "post"  | "put" | "patch" | "delete"
 
 export function request (method: INeedleMethod, uri: string, data: any, options: any,
                          callback: INeedleCallback): INeedleRequest {

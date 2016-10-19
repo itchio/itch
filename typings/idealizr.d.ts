@@ -7,5 +7,5 @@ declare module 'idealizr' {
 
     export function arrayOf(schema: Schema): Schema;
     
-    export function normalize(res: any, spec: Schema): any;
+    export function normalize(res: any, spec: any): any;
 }

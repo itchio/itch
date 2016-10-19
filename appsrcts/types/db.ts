@@ -9,6 +9,9 @@ export interface IGameRecord {
     /** itch.io-generated unique identifier */
     id: number;
 
+    /** unique identifier of the developer this game belongs to */
+    userId: number;
+
     /** human-friendly title (may contain any character) */
     title: string;
 
@@ -65,6 +68,9 @@ export interface ICollectionRecord {
 
     /** total number of games in collection */
     gamesCount: number;
+
+    /** identifiers of the games in this collection */
+    gameIds: Array<number>;
 }
 
 export interface IInstallLocationRecord {
@@ -154,4 +160,17 @@ export interface IManifestAction {
 
 export interface IManifest {
     actions: Array<IManifestAction>;
+}
+
+export interface IOwnUserRecord extends IUserRecord {
+    
+}
+
+export interface IDownloadKey {
+  id: string;
+}
+
+export interface ICredentials {
+    key: string;
+    me: IOwnUserRecord;
 }
