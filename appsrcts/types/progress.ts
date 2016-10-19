@@ -4,10 +4,10 @@ export interface IProgressInfo {
     progress: number;
 
     /** current bytes per second */
-    bps: number;
+    bps?: number;
 
     /** estimated time remaining, in seconds */
-    eta: number;
+    eta?: number;
 }
 
 export interface IProgressListener {
