@@ -142,7 +142,7 @@
     "test": "grunt && nyc -s node test/runner.js | tap-spec",
     "coveralls": "nyc report -r text-lcov | coveralls",
     "local-cov": "grunt && nyc -s node test/runner.js | tap-spec && nyc report -r html",
-    "lint": "standard && grunt tslint",
+    "lint": "grunt tslint && standard",
     "i18n": "release/i18n-check.sh"
   },
   "standard": {

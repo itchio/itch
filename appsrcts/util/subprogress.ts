@@ -17,7 +17,7 @@ export default function subprogress (onProgress: IProgressListener,
 
   return function (e) {
     const innerAlpha = e.progress;
-    const progress = (startAlpha + innerAlpha * spanAlpha)
+    const progress = (startAlpha + innerAlpha * spanAlpha);
 
     // TODO: what about bps/eta?
     onProgress(Object.assign({}, e, {progress}));

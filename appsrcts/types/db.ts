@@ -1,4 +1,6 @@
 
+export type GameType = "default" | "html" | "download";
+
 /**
  * Contains information about a game, retrieved via the itch.io API,
  * and saved to the local database.
@@ -18,6 +20,9 @@ export interface IGameRecord {
 
     /** cover url (might be a GIF) */
     coverUrl: string;
+
+    /** downloadable game, html game, etc. */
+    type: GameType;
 
     /** Only present for HTML5 games, otherwise null */
     embed?: IGameEmbedInfo;

@@ -31,6 +31,7 @@ interface IExecResult {
 
 interface ISpawnInterface {
   (opts: ISpawnOpts): Promise<number>;
+  assert(opts: ISpawnOpts): Promise<void>;
   exec(opts: ISpawnOpts): Promise<IExecResult>;
   getOutput(opts: ISpawnOpts): Promise<string>;
   escapePath(arg: string): string;
@@ -124,6 +125,13 @@ spawn = async function (opts: ISpawnOpts): Promise<number> {
   const code = (await promise) as number;
   return code;
 } as any;
+
+spawn.assert = async function (opts: ISpawnOpts): Promise<void> {
+  const code = await spawn(opts);
+  if (code !== 0) {
+    throw new Error(`spawn ${opts.command} returned code ${code}`);
+  }
+};
 
 spawn.exec = async function (opts: ISpawnOpts): Promise<IExecResult> {
   let out = "";
