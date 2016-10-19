@@ -1,7 +1,7 @@
 
-import os from "../util/os";
-import spawn from "../util/spawn";
-import mklog from "../util/log";
+import os from "../../util/os";
+import spawn from "../../util/spawn";
+import mklog from "../../util/log";
 const log = mklog("xdg-mime");
 
 const self = {

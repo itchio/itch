@@ -115,10 +115,9 @@ export interface ITabData {
     imageClass?: string;
 }
 
-/** Describes an installed item, that can be launched or opened */
-export interface ICaveRecord {
+export interface ICaveRecordLocation {
     /* unique GUID generated locally */
-    id: string;
+    id?: string;
 
     /** name of the install location: 'default' or a GUID */
     installLocation?: string;
@@ -128,6 +127,12 @@ export interface ICaveRecord {
 
     /** scheme used for computing paths: see util/pathmaker */
     pathScheme: number;
+}
+
+/** Describes an installed item, that can be launched or opened */
+export interface ICaveRecord extends ICaveRecordLocation {
+    /* unique GUID generated locally */
+    id: string;
 }
 
 export interface IUploadRecord {

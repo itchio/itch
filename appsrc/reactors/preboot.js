@@ -3,7 +3,7 @@ import * as actions from '../actions'
 
 import {importLegacyDBs} from './preboot/import-legacy-dbs'
 import {cleanOldLogs} from './preboot/clean-old-logs'
-import * as xdgMime from './preboot/xdg-mime'
+import xdgMime from './preboot/xdg-mime'
 
 import {opts} from '../logger'
 import mklog from '../util/log'

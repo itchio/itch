@@ -82,15 +82,19 @@ export class Logger {
             // XXX bad, but we're in a constructor, not seeing many other options
             try {
               fs.mkdirSync(path.dirname(val));
-
-              this.fileSink = stream({
-                file: val,
-                size: "300K",
-                keep: 3,
-              });
             } catch (err) {
-              console.log(`Could not create file sink: ${err.stack || err.message}`);
+              if ((err as any).code == 'EEXIST') {
+                // good
+              } else {
+                console.log(`Could not create file sink: ${err.stack || err.message}`);
+              }
             }
+
+            this.fileSink = stream({
+              file: val,
+              size: "300K",
+              keep: 3,
+            });
           }
           break;
         }

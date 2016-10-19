@@ -4,11 +4,11 @@ import { app } from "../electron";
 
 import * as invariant from "invariant";
 
-import { ICaveRecord, IUploadRecord } from "../types/db";
+import {ICaveRecordLocation, IUploadRecord} from "../types/db";
 
 const APPDATA_RE = /^appdata\/(.*)$/;
 
-export function appPath(cave: ICaveRecord) {
+export function appPath(cave: ICaveRecordLocation) {
   // < 0.13.x, installFolder isn't set, it's implicitly the cave's id
   // < 18.5.x, everything is installed in an `apps` subfolder
   const {installLocation, installFolder = cave.id, pathScheme = 1} = cave;

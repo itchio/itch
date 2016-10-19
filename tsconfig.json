@@ -7,6 +7,9 @@
         "noImplicitAny": true
     },
     "exclude": [
-        "node_modules"
+        "build",
+        "stage",
+        "node_modules",
+        "fixtures"
     ]
 }

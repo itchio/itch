@@ -117,7 +117,7 @@ class MainAction extends Component {
   status () {
     const {t, task, action} = this.props
 
-    if (task === 'idle' || task === 'awaken') {
+    if (task === 'idle') {
       switch (action) {
         case 'open':
           return t('grid.item.open')
