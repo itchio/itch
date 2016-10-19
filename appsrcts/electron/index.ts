@@ -4,7 +4,7 @@
 
 import * as env from "../env";
 
-let electron;
+let electron: any;
 
 if (env.name === "test") {
   electron = require("./fake-electron").default;

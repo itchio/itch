@@ -3,6 +3,8 @@ import * as invariant from "invariant";
 import { promisify, promisifyAll } from "bluebird";
 import * as bluebird from "bluebird";
 
+import {Stats} from "fs";
+
 // let's patch all the things! Electron randomly decides to
 // substitute 'fs' with their own version that considers '.asar'
 // files to be read-only directories
@@ -166,7 +168,7 @@ const self = {
   wipe: async (shelter: string): Promise<void> => {
     debug(1, ["wipe", shelter]);
 
-    let stats;
+    let stats: Stats;
     try {
       stats = await self.lstat(shelter);
     } catch (err) {
@@ -184,7 +186,7 @@ const self = {
       for (const fad of fileOrDirs) {
         const fullFad = path.join(shelter, fad);
 
-        let fStats;
+        let fStats: Stats;
         try {
           fStats = await self.lstat(fullFad);
         } catch (err) {

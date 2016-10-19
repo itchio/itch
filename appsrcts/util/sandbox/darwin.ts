@@ -68,7 +68,7 @@ export async function within(opts: IWithinOpts, cb: (opts: IWithinCbOpts) => Pro
   const exeName = ospath.basename(fullExec);
 
   const realApp = exePath;
-  let fakeApp;
+  let fakeApp: string;
   if (isBundle) {
     fakeApp = ospath.join(workDir.name, ospath.basename(realApp));
   } else {
@@ -110,7 +110,7 @@ sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullE
 </plist>`);
   }
 
-  let err;
+  let err: Error;
   try {
     await cb({ fakeApp });
   } catch (e) { err = e; }

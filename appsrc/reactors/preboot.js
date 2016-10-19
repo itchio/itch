@@ -3,6 +3,7 @@ import * as actions from '../actions'
 
 import {importLegacyDBs} from './preboot/import-legacy-dbs'
 import {cleanOldLogs} from './preboot/clean-old-logs'
+import * as xdgMime from './preboot/xdg-mime'
 
 import {opts} from '../logger'
 import mklog from '../util/log'
@@ -19,6 +20,12 @@ async function preboot (store) {
     await cleanOldLogs(log, opts)
   } catch (e) {
     console.log(`Could not clean old logs: ${e.stack || e.message || e}`)
+  }
+  
+  try {
+    await xdgMime.registerIfNeeded(opts)
+  } catch (e) {
+    console.log(`Could not run xdg-mime: ${e.stack || e.message || e}`)
   }
 
   try {

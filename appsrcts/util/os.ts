@@ -78,7 +78,7 @@ const self = {
       throw new Error(`${command} exited with code ${code}\n${stdout}\n${stderr}`);
     }
 
-    let parsed = null;
+    let parsed: string = null;
     if (parser) {
       let matches = parser.exec(stdout + "\n" + stderr);
       if (matches) {

@@ -1,5 +1,7 @@
 
-let store;
+import {Store} from "redux";
+
+let store: Store<any>;
 
 if (process.type) {
   store = require(`./${process.type}-store`);

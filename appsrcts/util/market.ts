@@ -156,7 +156,7 @@ export default class Market extends EventEmitter {
 
     const {wait = false, persist = true, initial = false} = saveOpts;
 
-    let promises = null;
+    let promises = null as Array<Promise<any>>;
     if (wait) {
       promises = [];
     }
