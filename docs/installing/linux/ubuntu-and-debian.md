@@ -11,6 +11,9 @@ We publish .deb packages of every release on Bintray:
 
   * <https://bintray.com/itchio/deb>
 
+*Note: on Debian, you may need to `sudo apt-get install apt-transport-https` before you
+follow the rest of this guide*
+
 ### Importing our GPG key
 
 The packages we publish are digitally signed, so that you can ensure that we
