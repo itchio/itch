@@ -27,7 +27,7 @@ export default async function start (out, opts) {
   invariant(opts.upload, 'install must have an upload')
   const {market, credentials, globalMarket, archivePath, downloadKey, game, upload, installLocation = defaultInstallLocation(), handPicked} = opts
 
-  const experimentalZeroExtract = !!opts.upload.buildId
+  const experimentalZeroExtract = false && !!opts.upload.buildId
 
   let checkTimestamps = true
 
