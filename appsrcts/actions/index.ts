@@ -34,6 +34,9 @@ import {
 
     FETCH_COLLECTION_GAMES,
     COLLECTION_GAMES_FETCHED,
+
+    ENABLE_BONUS,
+    DISABLE_BONUS,
 } from "../constants/action-types";
 
 export const languageSniffed = createAction(LANGUAGE_SNIFFED);
@@ -49,3 +52,6 @@ export const updatePreferences = createAction(UPDATE_PREFERENCES);
 
 export const fetchCollectionGames = createAction(FETCH_COLLECTION_GAMES);
 export const collectionGamesFetched = createAction(COLLECTION_GAMES_FETCHED);
+
+export const enableBonus = createAction(ENABLE_BONUS);
+export const disableBonus = createAction(DISABLE_BONUS);

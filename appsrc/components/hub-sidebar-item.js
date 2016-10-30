@@ -5,6 +5,7 @@ import {DragSource, DropTarget} from 'react-dnd'
 import classNames from 'classnames'
 
 import draggableTypes from '../constants/draggable-types'
+import colors from '../constants/colors'
 import getDominantColor from './get-dominant-color'
 
 export class HubSidebarItem extends Component {
@@ -27,15 +28,19 @@ export class HubSidebarItem extends Component {
   }
 
   render () {
-    const {t, count, sublabel, progress, id, path, label, active} = this.props
+    const {t, count, sublabel, progress, id, path, label, active, halloween} = this.props
     const {isDragging, connectDragSource, connectDropTarget, onClose, onContextMenu} = this.props
 
     const classes = classNames('hub-sidebar-item', {active, ['hint--bottom']: sublabel})
     const style = {}
     const {dominantColor} = this.state
 
-    if (active && dominantColor) {
-      style.borderColor = dominantColor
+    if (active) {
+      if (halloween) {
+        style.borderColor = colors.spooky
+      } else if (dominantColor) {
+        style.borderColor = dominantColor
+      }
     }
 
     const progressColor = dominantColor || 'white'

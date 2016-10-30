@@ -36,7 +36,8 @@ export class HubSidebar extends Component {
 
   render () {
     const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
-      navigate, counts, progresses, sublabels, closeTab, closeAllTabs, moveTab, openTabContextMenu, newTab, searchLoading} = this.props
+      navigate, counts, progresses, sublabels, closeTab, closeAllTabs, moveTab,
+      openTabContextMenu, newTab, searchLoading, halloween} = this.props
     const classes = classNames('hub-sidebar', {osx, fullscreen})
     const sidebarStyle = {
       width: sidebarWidth + 'px'
@@ -47,7 +48,7 @@ export class HubSidebar extends Component {
       <div className='title-bar-padder'/>
 
       <div className='logo hint--bottom' onClick={() => navigate('featured')} data-hint={versionString()}>
-        <img src='static/images/logos/app-white.svg'/>
+        <img src={halloween ? 'static/images/logos/app-halloween.svg' : 'static/images/logos/app-white.svg'}/>
       </div>
 
       <section className={searchClasses}>
@@ -74,7 +75,7 @@ export class HubSidebar extends Component {
           const onClick = () => navigate(id)
           const onContextMenu = () => {}
 
-          const props = {id, path, label, icon, active, onClick, t, onContextMenu}
+          const props = {id, path, label, icon, active, onClick, t, onContextMenu, halloween}
           return <HubSidebarItem {...props}/>
         })}
 
@@ -106,7 +107,7 @@ export class HubSidebar extends Component {
 
           const props = {index, id, path, label, icon, iconImage, active,
             onClick, count, progress, onClose, onContextMenu, moveTab, data, t,
-            sublabel, gameOverride}
+            sublabel, gameOverride, halloween}
           return <HubSidebarItem {...props}/>
         })}
         <section className='hub-sidebar-item new-tab' onClick={newTab}>
@@ -319,6 +320,7 @@ const mapStateToProps = createStructuredSelector({
   tabs: (state) => state.session.navigation.tabs,
   tabData: (state) => state.session.navigation.tabData,
   searchLoading: (state) => state.session.search.loading,
+  halloween: (state) => state.status.bonuses.halloween,
 
   counts: createSelector(
     (state) => state.history.itemsByDate,
