@@ -44,7 +44,7 @@ const DEFAULT_BUTTONS = {
 
 export class Modal extends Component {
   render () {
-    const {t, modals = [], closeModal} = this.props
+    const {t, modals = [], closeModal, halloween} = this.props
 
     const modal = modals[0]
 
@@ -52,7 +52,7 @@ export class Modal extends Component {
       const {bigButtons = [], buttons = [], cover, title = '', message = '', detail} = modal
 
       return <ReactModal isOpen style={customStyles}>
-        <div className='modal'>
+        <div className={`modal ${halloween ? 'halloween' : ''}`}>
           <div className='header'>
             <h2>{t.format(title)}</h2>
             <div className='filler'/>
@@ -147,7 +147,8 @@ Modal.propTypes = {
 }
 
 const mapStateToProps = (state) => ({
-  modals: state.modals
+  modals: state.modals,
+  halloween: state.status.bonuses.halloween
 })
 
 const mapDispatchToProps = (dispatch, props) => ({

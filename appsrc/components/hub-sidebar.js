@@ -48,7 +48,7 @@ export class HubSidebar extends Component {
       <div className='title-bar-padder'/>
 
       <div className='logo hint--bottom' onClick={() => navigate('featured')} data-hint={versionString()}>
-        <img src={halloween ? 'static/images/logos/app-halloween.svg' : 'static/images/logos/app-white.svg'}/>
+        <img src={`static/images/logos/app-${halloween ? 'halloween' : 'white'}.svg`}/>
       </div>
 
       <section className={searchClasses}>

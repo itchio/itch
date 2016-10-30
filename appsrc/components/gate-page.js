@@ -22,7 +22,7 @@ export class GatePage extends Component {
   }
 
   render () {
-    const {t, stage, blockingOperation} = this.props
+    const {t, stage, blockingOperation, halloween} = this.props
     const disabled = !!blockingOperation
 
     const classes = classNames('gate-page', {disabled})
@@ -30,7 +30,7 @@ export class GatePage extends Component {
     return <div className={classes} data-stage={stage}>
       <section className='top-filler'/>
       <section className='logo'>
-        <img src='static/images/logos/app-white.svg'/>
+        <img src={`static/images/logos/app-${halloween ? 'halloween' : 'white'}.svg`}/>
       </section>
 
       {this.errors()}
@@ -50,13 +50,13 @@ export class GatePage extends Component {
   }
 
   errors () {
-    const {t, errors, stage} = this.props
+    const {t, errors, stage, halloween} = this.props
 
     if (stage === 'pick') {
       return <section className='errors'>
         <span className='welcome-back'>
           <Icon icon='heart-filled'/>
-          {t('login.messages.welcome_back')}
+          {t('login.messages.welcome_back' + (halloween ? '-halloween' : ''))}
         </span>
       </section>
     } else {
@@ -187,16 +187,17 @@ GatePage.propTypes = {
 
 const mapStateToProps = (state) => {
   const {rememberedSessions, session} = state
+  const {halloween} = state.status.bonuses
   const {login} = session
 
   if (!session.credentials.key) {
     const hasSessions = Object.keys(rememberedSessions).length > 0
     const stage = (!login.blockingOperation && hasSessions && login.picking) ? 'pick' : 'login'
-    return {...login, stage, rememberedSessions}
+    return {...login, stage, rememberedSessions, halloween}
   } else if (!state.setup.done) {
-    return {stage: 'setup', ...state.setup}
+    return {stage: 'setup', ...state.setup, halloween}
   } else {
-    return {stage: 'ready', errors: [], blockingOperation: null}
+    return {stage: 'ready', errors: [], blockingOperation: null, halloween}
   }
 }
 

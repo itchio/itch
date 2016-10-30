@@ -7,6 +7,7 @@ import Icon from '../icon'
 import TaskIcon from '../task-icon'
 
 import format from '../../util/format'
+import colors from '../../constants/colors'
 
 const linearGradient = (progress) => {
   let percent = (progress * 100).toFixed() + '%'
@@ -17,7 +18,8 @@ const linearGradient = (progress) => {
 
 class MainAction extends Component {
   render () {
-    const {t, cancellable, platform, platformCompatible, mayDownload, pressDownload, canBeBought, progress, task, action, animate} = this.props
+    const {t, cancellable, platform, platformCompatible, mayDownload,
+      pressDownload, canBeBought, progress, task, action, animate, halloween} = this.props
 
     let child = ''
     if (task) {
@@ -55,6 +57,9 @@ class MainAction extends Component {
     if (progress > 0) {
       style.backgroundImage = linearGradient(progress)
       style.borderColor = '#444'
+    } else if (halloween) {
+      style.backgroundColor = colors.spooky
+      style.borderColor = colors.spookyLight
     } else {
       const {dominantColor} = this.props
       if (dominantColor) {
@@ -181,4 +186,8 @@ MainAction.propTypes = {
   navigate: PropTypes.func.isRequired
 }
 
-export default connect()(MainAction)
+const mapStateToProps = (state) => ({
+  halloween: state.status.bonuses.halloween
+})
+
+export default connect(mapStateToProps)(MainAction)

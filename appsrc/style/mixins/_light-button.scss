@@ -17,3 +17,7 @@
 
   @include clickable;
 }
+
+@mixin spooky-light-button {
+  @include light-button($background-color: $spooky);
+}
