@@ -25,7 +25,8 @@ export default async function start (out: EventEmitter, opts: IDownloadOpts) {
 
   const onProgress = (e: any) => out.emit("progress", e);
 
-  if (upload.buildId) {
+  const experimentalDownloads = false;
+  if (experimentalDownloads && upload.buildId) {
     log(opts, `Downloading wharf-enabled upload, build #${upload.buildId}`);
 
     const {game} = opts;
