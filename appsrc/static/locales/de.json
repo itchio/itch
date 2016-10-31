@@ -305,5 +305,6 @@
     "pick_update_upload.title": "Neue Downloads für {{title}} verfügbar",
     "pick_update_upload.message": "Welche Datei möchtest du für {{title}} aktualisieren?",
     "prompt.action.force_close": "Schließen erzwingen",
-    "grid.criterion.filter": "Filtern..."
+    "grid.criterion.filter": "Filtern...",
+    "grid.item.buy_now_again": "Weiteres Exemplar kaufen"
 }
