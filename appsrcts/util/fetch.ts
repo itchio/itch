@@ -192,24 +192,7 @@ interface IGameLazilyOpts {
   game?: IGameRecord;
 }
 
-export async function gameLazily (market: Market, credentials: ICredentials, gameId: number,
-                                  opts = {} as IGameLazilyOpts): Promise<IGameRecord> {
-  const game = await trueGameLazily(market, credentials, gameId, opts)
-
-  const api = client.withKey(credentials.key);
-
-  // TODO: the api server should do that for us
-  try {
-    const {uploads} = await api.listUploads(null, gameId)
-    game.hasDemo = findWhere(uploads, {demo: true}) != null
-  } catch (e) {
-    log(opts, `While fetching game uploads for has_demo: ${e.stack || e}`)
-  }
-
-  return game;
-}
-
-async function trueGameLazily (market: Market, credentials: ICredentials, gameId: number,
+async function gameLazily (market: Market, credentials: ICredentials, gameId: number,
                                   opts = {} as IGameLazilyOpts): Promise<IGameRecord> {
   invariant(typeof market === "object", "gameLazily has market");
   invariant(typeof credentials === "object", "gameLazily has credentials");
