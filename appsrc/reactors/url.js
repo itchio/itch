@@ -81,7 +81,7 @@ async function viewCommunityProfile (store, action) {
 }
 
 async function reportIssue (store, action) {
-  const {log} = action.payload
+  const {log} = action.payload || {}
 
   crashReporter.reportIssue({
     body: 'Dear itch app team, ',
