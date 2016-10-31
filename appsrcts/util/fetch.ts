@@ -9,7 +9,7 @@ import client from "./api";
 
 import {normalize, arrayOf} from "./idealizr";
 import {game, user, collection, downloadKey} from "./schemas";
-import {each, union, pluck, values, where, difference, findWhere} from "underscore";
+import {each, union, pluck, values, where, difference} from "underscore";
 
 import Market from "./market";
 
@@ -193,7 +193,7 @@ interface IGameLazilyOpts {
 }
 
 async function gameLazily (market: Market, credentials: ICredentials, gameId: number,
-                                  opts = {} as IGameLazilyOpts): Promise<IGameRecord> {
+                           opts = {} as IGameLazilyOpts): Promise<IGameRecord> {
   invariant(typeof market === "object", "gameLazily has market");
   invariant(typeof credentials === "object", "gameLazily has credentials");
   invariant(typeof gameId === "number", "gameLazily has gameId number");

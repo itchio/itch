@@ -83,7 +83,7 @@ export class Logger {
             try {
               fs.mkdirSync(path.dirname(val));
             } catch (err) {
-              if ((err as any).code == 'EEXIST') {
+              if ((err as any).code === "EEXIST") {
                 // good
               } else {
                 console.log(`Could not create file sink: ${err.stack || err.message}`);
