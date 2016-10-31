@@ -9,7 +9,7 @@ import client from "./api";
 
 import {normalize, arrayOf} from "./idealizr";
 import {game, user, collection, downloadKey} from "./schemas";
-import {each, union, pluck, values, where, difference} from "underscore";
+import {each, union, pluck, values, where, difference, findWhere} from "underscore";
 
 import Market from "./market";
 
@@ -194,6 +194,23 @@ interface IGameLazilyOpts {
 
 export async function gameLazily (market: Market, credentials: ICredentials, gameId: number,
                                   opts = {} as IGameLazilyOpts): Promise<IGameRecord> {
+  const game = await trueGameLazily(market, credentials, gameId, opts)
+
+  const api = client.withKey(credentials.key);
+
+  // TODO: the api server should do that for us
+  try {
+    const {uploads} = await api.listUploads(null, gameId)
+    game.hasDemo = findWhere(uploads, {demo: true}) != null
+  } catch (e) {
+    log(opts, `While fetching game uploads for has_demo: ${e.stack || e}`)
+  }
+
+  return game;
+}
+
+async function trueGameLazily (market: Market, credentials: ICredentials, gameId: number,
+                                  opts = {} as IGameLazilyOpts): Promise<IGameRecord> {
   invariant(typeof market === "object", "gameLazily has market");
   invariant(typeof credentials === "object", "gameLazily has credentials");
   invariant(typeof gameId === "number", "gameLazily has gameId number");
@@ -213,12 +230,6 @@ export async function gameLazily (market: Market, credentials: ICredentials, gam
   const api = client.withKey(credentials.key);
   const response = normalize(await api.game(gameId), {game});
 
-  // TODO: re-use the 'user' this endpoint gives us?
-  // thinking about layered markets, e.g.:
-  //  < looking for a user >
-  //  |-> [ query market - contains temporary data related to a search ]
-  //  |-> [ main market - contains persistent data (own games, owned games, games in collection) ]
-  // at least, market shouldn't be a singleton
   return response.entities.games[gameId];
 }
 

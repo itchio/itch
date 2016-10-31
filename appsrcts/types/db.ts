@@ -29,6 +29,9 @@ export interface IGameRecord {
 
     /** Only present for HTML5 games, otherwise null */
     embed?: IGameEmbedInfo;
+
+    /** True if the game has a demo that can be downloaded for free */
+    hasDemo?: boolean;
 }
 
 /**
