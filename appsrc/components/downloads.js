@@ -29,7 +29,6 @@ class Downloads extends Component {
     const queuedItems = items::rest()
 
     return <ul className='downloads-page'>
-
     {firstItem
     ? <div className='section-bar'>
       <h2>{t('status.downloads.category.active')}</h2>

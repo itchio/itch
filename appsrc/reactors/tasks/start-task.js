@@ -29,8 +29,8 @@ export async function startTask (store, taskOpts) {
   let result
   try {
     const out = new EventEmitter()
-    out.on('progress', ((progress) => {
-      store.dispatch(actions.taskProgress({id, progress}))
+    out.on('progress', ((e) => {
+      store.dispatch(actions.taskProgress({id, ...e}))
     })::throttle(PROGRESS_THROTTLE))
 
     const preferences = store.getState().preferences

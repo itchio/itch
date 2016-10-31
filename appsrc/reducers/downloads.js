@@ -4,7 +4,7 @@ import {handleActions} from 'redux-actions'
 import {createSelector, createStructuredSelector} from 'reselect'
 
 import invariant from 'invariant'
-import {indexBy, where, sortBy, pluck, filter, map, first, omit} from 'underline'
+import {indexBy, where, sortBy, pluck, filter, map, first, last, omit} from 'underline'
 
 const makeFakeDownloads = () => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]::map((x, i) => {
   return {
@@ -21,7 +21,10 @@ const makeFakeDownloads = () => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]::map((x, i) => {
   }
 })::indexBy('id')
 
+const SPEED_DATA_POINT_COUNT = 60
+
 const initialState = {
+  speeds: (new Array(SPEED_DATA_POINT_COUNT))::map((x) => ({ bps: 0 })),
   downloads: (process.env.FAKE_DOWNLOADS === '1' ? makeFakeDownloads() : {}),
   downloadsPaused: false
 }
@@ -73,6 +76,15 @@ const reducer = handleActions({
   DOWNLOAD_ENDED: (state, action) => {
     const {id, err} = action.payload
     return updateSingle(state, action, {id, finished: true, err})
+  },
+
+  DOWNLOAD_SPEED_DATAPOINT: (state, action) => {
+    const {payload} = action
+
+    return {
+      ...state,
+      speeds: [...state.speeds, payload]::last(SPEED_DATA_POINT_COUNT)
+    }
   },
 
   PRIORITIZE_DOWNLOAD: (state, action) => {

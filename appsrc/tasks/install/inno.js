@@ -18,7 +18,7 @@ const self = {
   install: async function (out, opts) {
     await blessing(out, opts)
 
-    out.emit('progress', -1)
+    out.emit('progress', {progress: -1})
 
     const archivePath = opts.archivePath
     const destPath = opts.destPath
@@ -41,7 +41,7 @@ const self = {
   },
 
   uninstall: async function (out, opts) {
-    out.emit('progress', -1)
+    out.emit('progress', {progress: -1})
 
     const destPath = opts.destPath
     const uninstallers = await findUninstallers(destPath)

@@ -1,5 +1,6 @@
 
 import React, {PropTypes, Component} from 'react'
+import moment from 'moment'
 import {connect} from './connect'
 import {map, where} from 'underline'
 import classNames from 'classnames'
@@ -35,7 +36,8 @@ export class HubSidebar extends Component {
 
   render () {
     const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
-      navigate, counts, progresses, sublabels, closeTab, closeAllTabs, moveTab, openTabContextMenu, newTab, searchLoading} = this.props
+      navigate, counts, progresses, sublabels, closeTab, closeAllTabs, moveTab,
+      openTabContextMenu, newTab, searchLoading, halloween} = this.props
     const classes = classNames('hub-sidebar', {osx, fullscreen})
     const sidebarStyle = {
       width: sidebarWidth + 'px'
@@ -46,7 +48,7 @@ export class HubSidebar extends Component {
       <div className='title-bar-padder'/>
 
       <div className='logo hint--bottom' onClick={() => navigate('featured')} data-hint={versionString()}>
-        <img src='static/images/logos/app-white.svg'/>
+        <img src={`static/images/logos/app-${halloween ? 'halloween' : 'white'}.svg`}/>
       </div>
 
       <section className={searchClasses}>
@@ -73,7 +75,7 @@ export class HubSidebar extends Component {
           const onClick = () => navigate(id)
           const onContextMenu = () => {}
 
-          const props = {id, path, label, icon, active, onClick, t, onContextMenu}
+          const props = {id, path, label, icon, active, onClick, t, onContextMenu, halloween}
           return <HubSidebarItem {...props}/>
         })}
 
@@ -98,9 +100,14 @@ export class HubSidebar extends Component {
           const progress = progresses[id]
           const sublabel = sublabels[id]
 
+          let gameOverride = null
+          if (id === 'downloads') {
+            gameOverride = this.props.downloadingGame
+          }
+
           const props = {index, id, path, label, icon, iconImage, active,
             onClick, count, progress, onClose, onContextMenu, moveTab, data, t,
-            sublabel}
+            sublabel, gameOverride, halloween}
           return <HubSidebarItem {...props}/>
         })}
         <section className='hub-sidebar-item new-tab' onClick={newTab}>
@@ -313,6 +320,7 @@ const mapStateToProps = createStructuredSelector({
   tabs: (state) => state.session.navigation.tabs,
   tabData: (state) => state.session.navigation.tabData,
   searchLoading: (state) => state.session.search.loading,
+  halloween: (state) => state.status.bonuses.halloween,
 
   counts: createSelector(
     (state) => state.history.itemsByDate,
@@ -323,14 +331,30 @@ const mapStateToProps = createStructuredSelector({
     })
   ),
 
+  downloadingGame: (state) => {
+    const {activeDownload} = state.downloads
+    if (activeDownload) {
+      return activeDownload.game
+    }
+  },
+
   progresses: (state) => ({
     downloads: state.downloads.progress
   }),
 
   sublabels: (state) => {
     const {activeDownload} = state.downloads
+    let label = null
+    if (activeDownload && activeDownload.progress > 0) {
+      if (state.downloads.downloadsPaused) {
+        label = ['grid.item.downloads_paused']
+      } else {
+        label = `${activeDownload.game.title} — ${(moment.duration(activeDownload.eta, 'seconds').locale(state.i18n.lang).humanize())}`
+      }
+    }
+
     return {
-      downloads: (activeDownload && activeDownload.progress > 0 && `${activeDownload.game.title} — ${(activeDownload.progress * 100).toFixed()}%`)
+      downloads: label
     }
   }
 })

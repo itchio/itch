@@ -13,7 +13,9 @@ import StatusBar from './status-bar'
  */
 class Layout extends Component {
   render () {
-    return <div className='layout'>
+    const {halloween} = this.props
+
+    return <div className={`layout ${halloween ? 'halloween' : ''}`}>
       <div className='layout-main'>
         <div className='layout-draggable'/>
         {this.main()}
@@ -42,7 +44,8 @@ Layout.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   page: (state) => state.session.navigation.page,
-  shortcutsShown: (state) => state.session.navigation.shortcutsShown
+  shortcutsShown: (state) => state.session.navigation.shortcutsShown,
+  halloween: (state) => state.status.bonuses.halloween
 })
 
 const mapDispatchToProps = (dispatch) => ({})

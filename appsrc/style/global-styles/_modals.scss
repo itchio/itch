@@ -174,3 +174,15 @@
     }
   }
 }
+
+.ReactModal__Content .modal.halloween {
+  .buttons {
+    .button {
+      @include spooky-light-button;
+
+      &.secondary {
+        @include light-button($ui-background-color);
+      }
+    }
+  }
+}

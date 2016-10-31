@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "rootDir": "appsrcts",
+        "outDir": "app",
+        "target": "es6",
+        "module": "commonjs",
+        "noImplicitAny": true
+    },
+    "exclude": [
+        "build",
+        "stage",
+        "node_modules",
+        "fixtures"
+    ]
+}

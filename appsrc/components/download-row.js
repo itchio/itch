@@ -1,13 +1,16 @@
 
+import moment from 'moment'
 import React, {Component, PropTypes} from 'react'
 import classNames from 'classnames'
 import {connect} from './connect'
 import getDominantColor from './get-dominant-color'
 import humanize from 'humanize-plus'
+import {ResponsiveContainer, AreaChart, Area} from 'recharts'
 
 import * as actions from '../actions'
 
 import NiceAgo from './nice-ago'
+import GameActions from './game-actions'
 
 class DownloadRow extends Component {
   constructor () {
@@ -16,7 +19,7 @@ class DownloadRow extends Component {
   }
 
   render () {
-    const {first, active, item, navigateToGame} = this.props
+    const {first, active, item, navigateToGame, speeds} = this.props
 
     const {game, id} = item
     const coverUrl = game.stillCoverUrl || game.coverUrl
@@ -32,7 +35,25 @@ class DownloadRow extends Component {
 
     const itemClasses = classNames('history-item', {first, dimmed: (active && !first), finished: !active})
 
+    const gradientColor = 'rgb(158, 150, 131)'
+
     return <li key={id} className={itemClasses}>
+      {first
+      ? <ResponsiveContainer width='100%' height='100%'>
+        <AreaChart data={speeds} margin={{top: 0, right: 0, left: 0, bottom: 0}}>
+          <defs>
+            <linearGradient id='downloadGradient' x1='0' y1='0' x2='0' y2='1'>
+              <stop offset='0%' stopColor={gradientColor} stopOpacity={0.2}/>
+              <stop offset='50%' stopColor={gradientColor} stopOpacity={0.2}/>
+              <stop offset='100%' stopColor={gradientColor} stopOpacity={0.1}/>
+            </linearGradient>
+          </defs>
+          <Area type='monotone' curve={false} dot={false} isAnimationActive={false} dataKey='bps' fill='url(#downloadGradient)' fillOpacity={1.0}/>
+        </AreaChart>
+      </ResponsiveContainer>
+      : ''
+      }
+
       <div className='cover' style={coverStyle} onClick={() => navigateToGame(game)}/>
       <div className='stats' onClick={onStatsClick}>
         {this.progress()}
@@ -77,10 +98,13 @@ class DownloadRow extends Component {
   }
 
   progress () {
-    const {t, first, active, item, downloadsPaused} = this.props
+    const {t, first, active, item, downloadsPaused, tasksByGameId} = this.props
     const {err} = item
 
-    if (!active) {
+    const {game} = item
+    const task = (tasksByGameId[game.id] || [])[0]
+
+    if (!active && !task) {
       if (err) {
         return <div className='error-message'>
           {t('status.downloads.download_error')}
@@ -90,12 +114,20 @@ class DownloadRow extends Component {
         </div>
       }
 
-      const {game} = item
       return <div>
         {game.title}
+        <GameActions game={game}/>
       </div>
     }
-    const {game, date, progress = 0, reason} = item
+
+    const {date, reason} = item
+    let {progress = 0, bps, eta} = item
+
+    if (task) {
+      progress = task.progress
+      bps = task.bps
+      eta = task.eta
+    }
 
     const progressInnerStyle = {
       width: (progress * 100) + '%'
@@ -105,8 +137,6 @@ class DownloadRow extends Component {
       progressInnerStyle.backgroundColor = dominantColor
     }
 
-    const sizeDone = item.totalSize ? humanize.fileSize(item.totalSize * progress) : ''
-    const totalSize = item.totalSize ? humanize.fileSize(item.totalSize) : t('status.downloads.unknown_size')
     const reasonText = this.reasonText(reason)
 
     return <div className='stats-inner'>
@@ -115,19 +145,24 @@ class DownloadRow extends Component {
         <div className='progress-inner' style={progressInnerStyle}/>
       </div>
       <div className='timeago'>
-      {first
+      {task
+      ? (task.name === 'launch'
+        ? t('grid.item.running')
+        : t('grid.item.installing')
+      )
+      : (first
       ? <div>
         {t('download.started')} <NiceAgo date={date}/>
         {reasonText ? ` — ${reasonText}` : ''}
       </div>
       : t('grid.item.queued')
-      }
+      )}
         <div className='filler'/>
         <div>
         {downloadsPaused
         ? <div className='paused'>{t('grid.item.downloads_paused')}</div>
-        : (item.totalSize
-          ? <span>{sizeDone} / {totalSize}</span>
+        : (((active || task) && eta && bps)
+          ? <span>{humanize.fileSize(bps)}/s — {moment.duration(eta, 'seconds').locale(t.lang).humanize()}</span>
           : ''
         )}
         </div>
@@ -139,8 +174,6 @@ class DownloadRow extends Component {
     const {t} = this.props
 
     switch (reason) {
-      case 'install':
-        return t('download.reason.install')
       case 'update':
         return t('download.reason.update')
       default:
@@ -176,7 +209,9 @@ DownloadRow.propTypes = {
 }
 
 const mapStateToProps = (state) => ({
-  downloadsPaused: state.downloads.downloadsPaused
+  speeds: state.downloads.speeds,
+  downloadsPaused: state.downloads.downloadsPaused,
+  tasksByGameId: state.tasks.tasksByGameId
 })
 
 const mapDispatchToProps = (dispatch) => ({

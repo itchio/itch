@@ -113,6 +113,24 @@ module.exports = function (grunt) {
         ]
       }
     },
+    'ts': {
+      'default': {
+        tsconfig: true,
+        options: {
+          fast: 'never'
+        }
+      }
+    },
+    'tslint': {
+      'options': {
+        configuration: 'tslint.json',
+        force: false
+      },
+      'files': [
+        'appsrcts/**/*.ts',
+        'appsrcts/**/*.tsx'
+      ]
+    },
     'sass': {
       options: {
         sourceMap: true
@@ -130,11 +148,12 @@ module.exports = function (grunt) {
       dist: {
         files: [
           { expand: true, cwd: 'appsrc', src: ['**/*.html', 'static/**'], dest: 'app' },
+          { expand: true, cwd: 'extrajs', src: ['**/*.js'], dest: 'app' },
           { expand: true, cwd: 'testsrc', src: ['runner'], dest: 'test' }
         ]
       }
     }
   })
 
-  grunt.registerTask('default', ['newer:babel', 'newer:sass', 'newer:copy'])
+  grunt.registerTask('default', ['newer:babel', 'ts', 'newer:sass', 'newer:copy'])
 }

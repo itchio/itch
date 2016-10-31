@@ -46,10 +46,19 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
     padding: 7px 5px 7px 10px;
     margin: 10px 0px 5px 0px;
     cursor: default;
+    position: relative;
 
     max-width: 800px;
 
     border: 1px solid transparent;
+
+    .recharts-responsive-container {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
 
     &.finished {
       cursor: pointer;
@@ -57,6 +66,10 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
 
     &.first, &:hover {
       background-color: $explanation-color;
+    }
+
+    .cover, .progress, .controls, .game-title, .timeago {
+      z-index: 4;
     }
 
     .cover, .progress {
@@ -153,6 +166,10 @@ $download-cover-width: $download-cover-height * $grid-item-ratio;
         display: inline-block;
 
         @include clickable;
+
+        &.icon-delete {
+          font-size: 18px;
+        }
       }
     }
   }

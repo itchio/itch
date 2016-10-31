@@ -88,11 +88,11 @@ async function start (store, download) {
   let cancelled = false
   let err
   try {
-    currentEmitter.on('progress', ((progress) => {
+    currentEmitter.on('progress', ((e) => {
       if (cancelled) {
         return
       }
-      store.dispatch(actions.downloadProgress({id: download.id, progress}))
+      store.dispatch(actions.downloadProgress({id: download.id, ...e}))
     })::throttle(250))
 
     const credentials = store.getState().session.credentials

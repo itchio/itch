@@ -36,3 +36,9 @@
     transition: all 0.2s;
   }
 }
+
+.halloween .gate-page form {
+  input[type='submit'] {
+    @include spooky-heavy-button;
+  }
+}

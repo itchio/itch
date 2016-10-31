@@ -16,7 +16,7 @@ to start a discussion!
 
 In the meantime, you can always:
 
-  * `npm install -g electron-prebuilt grunt-cli`
+  * `npm install -g electron grunt-cli`
   * `git clone https://github.com/itchio/itch`
   * `cd itch`
   * `git checkout SOME_STABLE_VERSION` (refer to <https://github.com/itchio/itch/releases>)

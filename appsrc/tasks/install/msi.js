@@ -23,7 +23,7 @@ const self = {
   },
 
   install: async function (out, opts) {
-    out.emit('progress', -1)
+    out.emit('progress', {progress: -1})
 
     if (os.platform() !== 'win32') {
       throw new Error('MSI files are only supported on Windows')
@@ -62,7 +62,7 @@ const self = {
       throw new Error('MSI files are only supported on Windows')
     }
 
-    out.emit('progress', -1)
+    out.emit('progress', {progress: -1})
 
     const archivePath = opts.archivePath
     const destPath = opts.destPath

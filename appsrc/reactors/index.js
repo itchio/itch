@@ -32,6 +32,7 @@ import dialogs from './dialogs'
 import report from './report'
 import perf from './perf'
 import modals from './modals'
+import halloween from './halloween'
 
 export default validateReactors({
   _ALL: combine(i18n.catchAll, session.catchAll, tray.catchAll, menu.catchAll,
@@ -43,7 +44,7 @@ export default validateReactors({
   PREBOOT: combine(preboot.preboot, perf.preboot),
   BOOT: combine(preferences.boot, mainWindow.boot,
     locales.boot, setup.boot,
-    tasks.boot, tray.boot, perf.boot),
+    tasks.boot, tray.boot, perf.boot, halloween.boot),
   FIRST_WINDOW_READY: combine(market.firstWindowReady, rememberedSessions.firstWindowReady, selfUpdate.firstWindowReady),
   WINDOW_READY: combine(navigation.windowReady),
   RETRY_SETUP: combine(setup.retrySetup),
@@ -186,5 +187,6 @@ assertAllCombined(
   dialogs,
   report,
   perf,
-  modals
+  modals,
+  halloween
 )

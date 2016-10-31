@@ -90,9 +90,10 @@ const makeMapStateToProps = () => {
       const cancellable = false
       const downloadKey = downloadKeys::findWhere({gameId: game.id})
       const hasMinPrice = game.minPrice > 0
+      const hasDemo = game.hasDemo
       // FIXME game admins
       const canEdit = game.userId === meId
-      let mayDownload = !!(downloadKey || !hasMinPrice || canEdit)
+      let mayDownload = !!(downloadKey || !hasMinPrice || canEdit || hasDemo)
       let pressDownload = false
       if (!mayDownload) {
         pressDownload = (game.inPressSystem && mePress)
