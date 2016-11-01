@@ -268,5 +268,7 @@
     "usage_stats.never_played": "Nigdy nie grano",
     "usage_stats.never_used": "Nigdy nie użyte",
     "grid.clear_filters": "Wyczyść filtry",
-    "grid.item.buy_now_again": "Kup dodatkową kopię"
+    "grid.item.buy_now_again": "Kup dodatkową kopię",
+    "grid.criterion.filter": "Filtr",
+    "grid.criterion.only_compatible": "Tylko zgodne"
 }
