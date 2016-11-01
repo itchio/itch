@@ -270,5 +270,6 @@
     "grid.clear_filters": "Wyczyść filtry",
     "grid.item.buy_now_again": "Kup dodatkową kopię",
     "grid.criterion.filter": "Filtr",
-    "grid.criterion.only_compatible": "Tylko zgodne"
+    "grid.criterion.only_compatible": "Tylko zgodne",
+    "grid.hidden_count": "+ {{count}} elementów ukrytych przez filtry"
 }
