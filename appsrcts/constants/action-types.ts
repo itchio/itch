@@ -17,6 +17,7 @@ export const FIRST_USEFUL_PAGE = "FIRST_USEFUL_PAGE";
 // Chromium is good at retrieving the user's language from the innards of the OS
 // doing the same from nodejs would probably be a waste of everyone's time
 export const LANGUAGE_SNIFFED = "LANGUAGE_SNIFFED";
+export type ILanguageSniffedPayload = string;
 export const LANGUAGE_CHANGED = "LANGUAGE_CHANGED";
 export type ILanguageChangedPayload = string;
 
@@ -33,11 +34,9 @@ export interface IModalClosedPayload {
 export const MODAL_RESPONSE = "MODAL_RESPONSE";
 
 export const SETUP_STATUS = "SETUP_STATUS";
-export interface ISetupStatusPayload extends Types.ISetupOperation;
+export interface ISetupStatusPayload extends Types.ISetupOperation {};
 export const SETUP_DONE = "SETUP_DONE";
-export interface ISetupDonePayload {
-  
-};
+export interface ISetupDonePayload {};
 export const RETRY_SETUP = "RETRY_SETUP";
 export interface IRetrySetupPayload {};
 
@@ -208,8 +207,14 @@ export const ADD_INSTALL_LOCATION = "ADD_INSTALL_LOCATION";
 export const REMOVE_INSTALL_LOCATION_REQUEST = "REMOVE_INSTALL_LOCATION_REQUEST";
 export const REMOVE_INSTALL_LOCATION = "REMOVE_INSTALL_LOCATION";
 export const MAKE_INSTALL_LOCATION_DEFAULT = "MAKE_INSTALL_LOCATION_DEFAULT";
+
 export const QUERY_FREE_SPACE = "QUERY_FREE_SPACE";
+export interface IQueryFreeSpacePayload {};
+
 export const FREE_SPACE_UPDATED = "FREE_SPACE_UPDATED";
+export interface IFreeSpaceUpdatedPayload {
+  diskInfo: Types.IPartsInfo;
+};
 
 /* Tasks */
 export const TASK_STARTED = "TASK_STARTED";

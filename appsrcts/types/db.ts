@@ -266,7 +266,30 @@ export interface IGlobalMarketState extends IMarketState {
 }
 
 export interface ISystemState {
+    /** version string, for example '19.0.0' */
+    appVersion: string;
 
+    /** true if running on macOS */
+    osx: boolean;
+    macos: boolean;
+
+    /** true if running on Windows */
+    windows: boolean;
+
+    /** true if running on GNU/Linux */
+    linux: boolean;
+
+    /** 2-letter language code sniffed from user's OS */
+    sniffedLanguage?: string;
+
+    /** path of ~ */
+    homePath: string;
+
+    /** ~/.config/itch, ~/Library/Application Data/itch, %APPDATA%/itch */
+    userDataPath: string;
+
+    /** total/free space in various partitions/disks */
+    diskInfo: IPartsInfo;
 }
 
 export interface ISetupOperation {
@@ -413,8 +436,31 @@ export interface IStatusState {
     };
 }
 
+// i18n
+
 /**
  * Localized messages can be just a string, or an Array arranged like so:
  * [key: string, params: {[name: string]: string}]
  */
 export type ILocalizedString = string | any[];
+
+// diskinfo
+
+export interface ISpaceInfo {
+  free: number;
+  size: number;
+}
+
+export interface IPartInfo extends ISpaceInfo {
+  letter?: string;
+  mountpoint?: string;
+}
+
+/**
+ * Contains information about the size and free space
+ * of all the partitions / disks of this computer.
+ */
+export interface IPartsInfo {
+  parts: Array<IPartInfo>;
+  total: ISpaceInfo;
+}

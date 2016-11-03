@@ -8,8 +8,8 @@ import {
   REMOVE_INSTALL_LOCATION_REQUEST,
   REMOVE_INSTALL_LOCATION,
   MAKE_INSTALL_LOCATION_DEFAULT,
-  QUERY_FREE_SPACE,
-  FREE_SPACE_UPDATED,
+  QUERY_FREE_SPACE, IQueryFreeSpacePayload,
+  FREE_SPACE_UPDATED, IFreeSpaceUpdatedPayload,
 } from "../constants/action-types";
 
 export const browseInstallLocation = createAction(BROWSE_INSTALL_LOCATION);
@@ -18,5 +18,5 @@ export const addInstallLocation = createAction(ADD_INSTALL_LOCATION);
 export const removeInstallLocationRequest = createAction(REMOVE_INSTALL_LOCATION_REQUEST);
 export const removeInstallLocation = createAction(REMOVE_INSTALL_LOCATION);
 export const makeInstallLocationDefault = createAction(MAKE_INSTALL_LOCATION_DEFAULT);
-export const queryFreeSpace = createAction(QUERY_FREE_SPACE);
-export const freeSpaceUpdated = createAction(FREE_SPACE_UPDATED);
+export const queryFreeSpace = createAction<IQueryFreeSpacePayload>(QUERY_FREE_SPACE);
+export const freeSpaceUpdated = createAction<IFreeSpaceUpdatedPayload>(FREE_SPACE_UPDATED);
