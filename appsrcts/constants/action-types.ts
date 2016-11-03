@@ -360,8 +360,11 @@ export interface ICollectionGamesFetchedPayload {
 
 /** Start picking from a list of remembered sessions */
 export const LOGIN_START_PICKING = "LOGIN_START_PICKING";
+export interface ILoginStartPickingPayload {};
+
 /** Go back to username/password form to add new login */
 export const LOGIN_STOP_PICKING = "LOGIN_STOP_PICKING";
+export interface ILoginStopPickingPayload {};
 
 /** Any login attempt (cached or not) */
 export const ATTEMPT_LOGIN = "ATTEMPT_LOGIN";
@@ -377,7 +380,9 @@ export interface ILoginWithTokenPayload {}
 
 /** Wrong login/password or something else */
 export const LOGIN_FAILED = "LOGIN_FAILED";
-export interface ILoginFailedPayload {}
+export interface ILoginFailedPayload {
+  errors: string[];
+}
 
 /** API key available beyond this point */
 export const LOGIN_SUCCEEDED = "LOGIN_SUCCEEDED";

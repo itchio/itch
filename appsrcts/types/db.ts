@@ -342,7 +342,16 @@ export interface ISessionFoldersState {
     libraryDir: string;
 }
 
-export interface ISessionLoginState {}
+export interface ISessionLoginState {
+    /**
+     * true if the list of remembered sessions is shown,
+     * false if the username/password form is shown.
+     */
+    picking: boolean;
+
+    errors: ILocalizedString[];
+    blockingOperation: ISetupOperation;
+}
 
 export interface ISessionNavigationState {}
 
