@@ -278,8 +278,20 @@ export interface ISessionState {
 
 }
 
-export interface II18nState {
+export interface II18nResources {
+    [lang: string]: {
+        [key: string]: string;
+    };
+}
 
+export interface II18nState {
+    strings: II18nResources;
+    queued: {
+        [lang: string]: boolean;
+    },
+    downloading: {
+        [lang: string]: boolean;
+    },
 }
 
 export interface IUIState {

@@ -1,51 +1,60 @@
 
-import invariant from 'invariant'
+import {omit} from "underscore";
+import {handleActions} from "redux-actions";
 
-import {omit} from 'underline'
-import {handleActions} from 'redux-actions'
+import {
+  IAction,
+  ILocalesConfigLoadedPayload,
+  IQueueLocaleDownloadPayload,
+  ILocaleDownloadStartedPayload,
+  ILocaleDownloadEndedPayload,
+  ILanguageChangedPayload,
+} from "../constants/action-types";
+
+import {II18nState} from "../types/db";
 
 const initialState = {
-  lang: 'en',
+  lang: "en",
   strings: {
-    en: {}
+    en: {},
   },
   downloading: {},
   queued: {},
-  locales: {}
-}
+  locales: {},
+};
 
-export default handleActions({
-  LOCALES_CONFIG_LOADED: (state, action) => {
-    const config = action.payload
-    return {...state, ...config}
+export default handleActions<II18nState, any>({
+  LOCALES_CONFIG_LOADED: (state: II18nState, action: IAction<ILocalesConfigLoadedPayload>) => {
+    const config = action.payload;
+    return Object.assign({}, state, config);
   },
 
-  QUEUE_LOCALE_UPDATE: (state, action) => {
-    const {lang} = action.payload
-    const queued = {...state.queued, [lang]: true}
-    return {...state, queued}
+  QUEUE_LOCALE_DOWNLOAD: (state: II18nState, action: IAction<IQueueLocaleDownloadPayload>) => {
+    const {lang} = action.payload;
+    const queued = Object.assign({}, state.queued, {[lang]: true});
+    return Object.assign({}, state, {queued});
   },
 
-  LOCALE_DOWNLOAD_STARTED: (state, action) => {
-    const {lang} = action.payload
-    const queued = state.queued::omit(lang)
-    const downloading = {...state.downloading, [lang]: true}
-    return {...state, queued, downloading}
+  LOCALE_DOWNLOAD_STARTED: (state: II18nState, action: IAction<ILocaleDownloadStartedPayload>) => {
+    const {lang} = action.payload;
+    const queued = omit(state.queued, lang);
+    const downloading = Object.assign({}, state.downloading, {[lang]: true});
+    return Object.assign({}, state, {queued, downloading});
   },
 
-  LOCALE_DOWNLOAD_ENDED: (state, action) => {
-    const {lang, resources} = action.payload
-    const oldResources = state.strings[lang] || {}
+  LOCALE_DOWNLOAD_ENDED: (state: II18nState, action: IAction<ILocaleDownloadEndedPayload>) => {
+    const {lang, resources} = action.payload;
+    const oldResources = state.strings[lang] || {};
 
-    const strings = {...state.strings, [lang]: {...oldResources, ...resources}}
-    const downloading = state.downloading::omit(lang)
-    return {...state, strings, downloading}
+    const strings = Object.assign({}, state.strings, {
+      [lang]: Object.assign({}, oldResources, resources),
+    });
+    const downloading = omit(state.downloading, lang);
+    return Object.assign({}, state, {strings, downloading});
   },
 
-  LANGUAGE_CHANGED: (state, action) => {
-    const lang = action.payload
-    invariant(typeof lang === 'string', 'language must be a string')
-
-    return {...state, lang}
-  }
-}, initialState)
+  LANGUAGE_CHANGED: (state: II18nState, action: IAction<ILanguageChangedPayload>) => {
+    const lang = action.payload;
+    return Object.assign({}, state, {lang});
+  },
+}, initialState);

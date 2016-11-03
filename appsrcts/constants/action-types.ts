@@ -18,6 +18,7 @@ export const FIRST_USEFUL_PAGE = "FIRST_USEFUL_PAGE";
 // doing the same from nodejs would probably be a waste of everyone's time
 export const LANGUAGE_SNIFFED = "LANGUAGE_SNIFFED";
 export const LANGUAGE_CHANGED = "LANGUAGE_CHANGED";
+export type ILanguageChangedPayload = string;
 
 export const OPEN_MODAL = "OPEN_MODAL";
 export const CLOSE_MODAL = "CLOSE_MODAL";
@@ -140,9 +141,22 @@ export const DISABLE_BONUS = "DISABLE_BONUS";
 
 /* Locales */
 export const LOCALES_CONFIG_LOADED = "LOCALES_CONFIG_LOADED";
+export interface ILocalesConfigLoadedPayload {
+  strings: Types.II18nResources;
+};
 export const QUEUE_LOCALE_DOWNLOAD = "QUEUE_LOCALE_DOWNLOAD";
+export interface IQueueLocaleDownloadPayload {
+  lang: string;
+};
 export const LOCALE_DOWNLOAD_STARTED = "LOCALE_DOWNLOAD_STARTED";
+export interface ILocaleDownloadStartedPayload {
+  lang: string;
+};
 export const LOCALE_DOWNLOAD_ENDED = "LOCALE_DOWNLOAD_ENDED";
+export interface ILocaleDownloadEndedPayload {
+  lang: string;
+  resources: any;
+};
 
 /* Install locations */
 export const BROWSE_INSTALL_LOCATION = "BROWSE_INSTALL_LOCATION";

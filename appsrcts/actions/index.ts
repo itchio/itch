@@ -23,7 +23,7 @@ import { createAction } from "redux-actions";
 
 import {
     LANGUAGE_SNIFFED,
-    LANGUAGE_CHANGED,
+    LANGUAGE_CHANGED, ILanguageChangedPayload,
 
     OPEN_MODAL,
     CLOSE_MODAL,
@@ -40,7 +40,7 @@ import {
 } from "../constants/action-types";
 
 export const languageSniffed = createAction(LANGUAGE_SNIFFED);
-export const languageChanged = createAction(LANGUAGE_CHANGED);
+export const languageChanged = createAction<ILanguageChangedPayload>(LANGUAGE_CHANGED);
 
 const internalOpenModal = createAction(OPEN_MODAL);
 export const openModal = (payload = {}) => internalOpenModal(Object.assign({}, payload, { id: uuid.v4() }));
