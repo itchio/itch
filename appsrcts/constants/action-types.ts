@@ -1,4 +1,12 @@
 
+import {Action} from "redux";
+import * as Types from "../types/db";
+
+export interface IAction<T> extends Action {
+  type: string;
+  payload: T;
+}
+
 // run upgrade operations
 export const PREBOOT = "PREBOOT";
 
@@ -29,6 +37,14 @@ export const FORGET_SESSION = "FORGET_SESSION";
 export const START_ONBOARDING = "START_ONBOARDING";
 export const EXIT_ONBOARDING = "EXIT_ONBOARDING";
 
+export interface IDbReadyPayload {}
+export interface IDbCommitPayload {
+  updated: Types.IEntityMap;
+  deleted: Types.IEntityRefs;
+  initial: boolean;
+}
+export interface IDbClosedPayload {}
+
 export const GLOBAL_DB_COMMIT = "GLOBAL_DB_COMMIT";
 export const GLOBAL_DB_READY = "GLOBAL_DB_READY";
 export const GLOBAL_DB_CLOSED = "GLOBAL_DB_CLOSED";
@@ -39,8 +55,14 @@ export const USER_DB_CLOSED = "USER_DB_CLOSED";
 
 /* Background stuff */
 export const DISMISS_HISTORY_ITEM = "DISMISS_HISTORY_ITEM";
+export interface IDismissHistoryItemPayload {
+  /** the item to dismiss */
+  id: string;
+}
 export const QUEUE_HISTORY_ITEM = "QUEUE_HISTORY_ITEM";
+export interface IQueueHistoryItemPayload extends Types.IHistoryItem {};
 export const HISTORY_READ = "HISTORY_READ";
+export interface IHistoryReadPayload {};
 
 /* Main window events */
 export const FIRST_WINDOW_READY = "FIRST_WINDOW_READY";
@@ -141,20 +163,54 @@ export const ABORT_TASK = "ABORT_TASK";
 
 /* Downloads */
 export const QUEUE_DOWNLOAD = "QUEUE_DOWNLOAD";
+
 export const DOWNLOAD_STARTED = "DOWNLOAD_STARTED";
+export interface IDownloadStartedPayload extends Types.IDownloadItem {};
+
 export const DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS";
+export interface IDownloadProgressPayload extends Types.IDownloadItem {};
+
 export const DOWNLOAD_ENDED = "DOWNLOAD_ENDED";
-
-export const CLEAR_FINISHED_DOWNLOADS = "CLEAR_FINISHED_DOWNLOADS";
-
-export const PRIORITIZE_DOWNLOAD = "PRIORITIZE_DOWNLOAD";
-export const CANCEL_DOWNLOAD = "CANCEL_DOWNLOAD";
-export const PAUSE_DOWNLOADS = "PAUSE_DOWNLOADS";
-export const RESUME_DOWNLOADS = "RESUME_DOWNLOADS";
-export const RETRY_DOWNLOAD = "RETRY_DOWNLOAD";
-export const CLEAR_GAME_DOWNLOADS = "CLEAR_GAME_DOWNLOADS";
+export interface IDownloadEndedPayload {
+  /** the download that just ended */
+  id: string;
+  /** an error, if any */
+  err: string;
+}
 
 export const DOWNLOAD_SPEED_DATAPOINT = "DOWNLOAD_SPEED_DATAPOINT";
+export interface IDownloadSpeedDatapointPayload {
+  /** how many bytes we've downloaded in the last second */
+  bps: number;
+}
+
+export const CLEAR_FINISHED_DOWNLOADS = "CLEAR_FINISHED_DOWNLOADS";
+export interface IClearFinishedDownloadsPayload {}
+
+export const PRIORITIZE_DOWNLOAD = "PRIORITIZE_DOWNLOAD";
+export interface IPrioritizeDownloadPayload {
+  /** the download to prioritize */
+  id: string;
+}
+
+export const CANCEL_DOWNLOAD = "CANCEL_DOWNLOAD";
+export interface ICancelDownloadPayload {
+  id: string;
+}
+
+export const PAUSE_DOWNLOADS = "PAUSE_DOWNLOADS";
+export interface IPauseDownloadsPayload {}
+
+export const RESUME_DOWNLOADS = "RESUME_DOWNLOADS";
+export interface IResumeDownloadsPayload {}
+
+export const RETRY_DOWNLOAD = "RETRY_DOWNLOAD";
+export interface IRetryDownloadPayload {}
+
+export const CLEAR_GAME_DOWNLOADS = "CLEAR_GAME_DOWNLOADS";
+export interface IClearGameDownloadsPayload {
+  gameId: number;
+}
 
 /** User requested game to be uninstalled */
 export const REQUEST_CAVE_UNINSTALL = "REQUEST_CAVE_UNINSTALL";

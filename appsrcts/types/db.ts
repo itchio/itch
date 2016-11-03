@@ -152,8 +152,29 @@ export interface IUploadRecord {
     type: string;
 }
 
+/**
+ * MarketDB is a lightweight disk-based JSON object store.
+ * Tables have string indices, and they contain objects with string indices.
+ */
 export interface IMarket {
     saveEntity: (table: string, id: string, payload: any) => void;
+    getEntities: (table: string) => IEntityMap;
+}
+
+export interface IEntityMap {
+  [entityId: string]: any;
+}
+
+export interface ITableMap {
+  [table: string]: IEntityMap;
+}
+
+/**
+ * Refers to a bunch of records, for example:
+ * { 'apples': ['gala', 'cripps', 'golden'], 'pears': ['anjou'] }
+ */
+export interface IEntityRefs {
+  [table: string]: string[];
 }
 
 // see https://itch.io/docs/itch/integrating/manifest.html
@@ -181,4 +202,147 @@ export interface IDownloadKey {
 export interface ICredentials {
     key: string;
     me: IOwnUserRecord;
+}
+
+/**
+ * The entire application state, following the redux philosophy
+ */
+export interface IState {
+    history: IHistoryState;
+    modals: IModalsState;
+    globalMarket: IMarketState;
+    market: IMarketState;
+    system: ISystemState;
+    setup: ISetupState;
+    rememberedSessions: IRememberedSessionsState;
+    session: ISessionState;
+    i18n: II18nState;
+    ui: IUIState;
+    selfUpdate: ISelfUpdateState;
+    preferences: IPreferencesState;
+    tasks: ITasksState;
+    downloads: IDownloadsState;
+    status: IStatusState;
+}
+
+export interface IHistoryItem {
+    /** generated identifier */
+    id: string;
+    /** localized message */
+    label: any[];
+    /** Date at which the history item occured */
+    date: number;
+    /** counts as unread? */
+    active: boolean;
+}
+
+export interface IHistoryState {
+    items: {
+        [id: string]: IHistoryItem;
+    };
+}
+
+export interface IModalsState {
+
+}
+
+export interface IMarketState {
+    [tableName: string]: {
+        [id: string]: any;
+    };
+}
+
+export interface IUserMarketState extends IMarketState {
+    
+}
+
+export interface IGlobalMarketState extends IMarketState {
+    caves: {
+        [id: string]: ICaveRecord;
+    };
+}
+
+export interface ISystemState {
+
+}
+
+export interface ISetupState {
+
+}
+
+export interface IRememberedSessionsState {
+
+}
+
+export interface ISessionState {
+
+}
+
+export interface II18nState {
+
+}
+
+export interface IUIState {
+
+}
+
+export interface ISelfUpdateState {
+
+}
+
+export interface IPreferencesState {
+
+}
+
+export interface ITasksState {
+
+}
+
+/**
+ * A download in progress for the app. Always linked to a game,
+ * sometimes for first install, sometimes for update.
+ */
+export interface IDownloadItem {
+    /** unique generated id for this download */
+    id: string;
+    
+    /** download progress in a [0, 1] interval */
+    progress: number;
+
+    /** set when download has been completed */
+    finished?: boolean;
+
+    /** id of the game we're downloading */
+    gameId: number;
+
+    /**
+     * game record at the time the download started - in case we're downloading
+     * something that's not cached locally.
+     */
+    game: IGameRecord;
+
+    /** order in the download list: can be negative, for reordering */
+    order: number;
+}
+
+export interface IDownloadsState {
+    /** All the downloads we know about, indexed by their own id */
+    downloads: {
+        [id: string]: IDownloadItem;
+    };
+
+    /** All the downloads we know about, indexed by the id of the game they're associated to */
+    downloadsByGameId: {
+        [gameId: string]: IDownloadItem;
+    },
+
+    /** The download currently being downloaded (if they're not paused) */
+    activeDownload: IDownloadItem;
+
+    /** Download speeds, in bps, each item represents one second */
+    speeds: {bps: number}[];
+}
+
+export interface IStatusState {
+
 }
