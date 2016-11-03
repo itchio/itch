@@ -188,6 +188,10 @@ export class Preferences extends Component {
         <td className='action path' onClick={(e) => makeInstallLocationDefault(name)}>
           <div className='default-switch hint--right' data-hint={t('preferences.install_location.' + (isDefault ? 'is_default' : 'make_default'))}>
             <span className='single-line'>{path}</span>
+            {isDefault
+              ? <span className='single-line default-state'>(default location)</span>
+              : null
+            }
           </div>
         </td>
         <td> {humanize.fileSize(size)} </td>

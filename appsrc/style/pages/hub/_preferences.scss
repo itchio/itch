@@ -232,6 +232,11 @@ $pref-border-color: $zambezi;
         width: 100%;
       }
 
+      .default-state {
+        color: #999;
+        margin-left: 8px;
+      }
+
       .icon {
         -webkit-filter: brightness(70%);
       }
