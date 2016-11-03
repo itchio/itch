@@ -1,50 +1,54 @@
 
-import {handleActions} from 'redux-actions'
+import {handleActions} from "redux-actions";
+
+import {IStatusState} from "../types/db";
+
+import {
+  IAction,
+  IStatusMessagePayload,
+  IDismissStatusMessagePayload,
+  IEnableBonusPayload,
+  IDisableBonusPayload,
+} from "../constants/action-types";
 
 const initialState = {
   messages: [],
-  bonuses: {}
-}
+  bonuses: {},
+} as IStatusState;
 
-export default handleActions({
-  STATUS_MESSAGE: (state, action) => {
-    return {
-      ...state,
+export default handleActions<IStatusState, any>({
+  STATUS_MESSAGE: (state: IStatusState, action: IAction<IStatusMessagePayload>) => {
+    return Object.assign({}, state, {
       messages: [
         action.payload,
-        ...state.messages
-      ]
-    }
+        ...state.messages,
+      ],
+    });
   },
 
-  DISMISS_STATUS_MESSAGE: (state, action) => {
-    return {
-      ...state,
-      messages: state.messages.slice(1)
-    }
+  DISMISS_STATUS_MESSAGE: (state: IStatusState, action: IAction<IDismissStatusMessagePayload>) => {
+    return Object.assign({}, state, {
+      messages: state.messages.slice(1),
+    });
   },
 
-  ENABLE_BONUS: (state, action) => {
-    const bonusName = action.payload.name
+  ENABLE_BONUS: (state: IStatusState, action: IAction<IEnableBonusPayload>) => {
+    const bonusName = action.payload.name;
 
-    return {
-      ...state,
-      bonuses: {
-        ...state.bonuses,
-        [bonusName]: true
-      }
-    }
+    return Object.assign({}, state, {
+      bonuses: Object.assign({}, state.bonuses, {
+        [bonusName]: true,
+      }),
+    });
   },
 
-  DISABLE_BONUS: (state, action) => {
-    const bonusName = action.payload.name
+  DISABLE_BONUS: (state: IStatusState, action: IAction<IDisableBonusPayload>) => {
+    const bonusName = action.payload.name;
 
-    return {
-      ...state,
-      bonuses: {
-        ...state.bonuses,
-        [bonusName]: false
-      }
-    }
-  }
-}, initialState)
+    return Object.assign({}, state, {
+      bonuses: Object.assign({}, state.bonuses, {
+        [bonusName]: false,
+      }),
+    });
+  },
+}, initialState);

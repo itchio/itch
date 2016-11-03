@@ -174,7 +174,13 @@ export const DISMISS_STATUS_MESSAGE = "DISMISS_STATUS_MESSAGE";
 export interface IDismissStatusMessagePayload {};
 
 export const ENABLE_BONUS = "ENABLE_BONUS";
+export interface IEnableBonusPayload {
+  name: string;
+}
 export const DISABLE_BONUS = "DISABLE_BONUS";
+export interface IDisableBonusPayload {
+  name: string;
+}
 
 /* Locales */
 export const LOCALES_CONFIG_LOADED = "LOCALES_CONFIG_LOADED";

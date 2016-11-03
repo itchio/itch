@@ -406,7 +406,15 @@ export interface IDownloadsState {
 }
 
 export interface IStatusState {
-
+    messages: ILocalizedString[];
+    /** app easter eggs, enabled throughout some periods */
+    bonuses: {
+        halloween: boolean;
+    };
 }
 
-export type ILocalizedString = any[];
+/**
+ * Localized messages can be just a string, or an Array arranged like so:
+ * [key: string, params: {[name: string]: string}]
+ */
+export type ILocalizedString = string | any[];
