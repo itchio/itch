@@ -268,5 +268,8 @@
     "browser.popout": "Отваряне на страницата във външен браузър",
     "i18n.failed_downloading_locales": "Обновленията за превода на {{lang}} не могат да бъдат свалени.",
     "install_location.empty": "В тази папка няма нищо инсталирано",
-    "login.action.show_form": "Влизане с друго име"
+    "login.action.show_form": "Влизане като друг потребител",
+    "login.action.show_saved_logins": "Запазени данни за вход",
+    "login.messages.welcome_back-halloween": "Кой се осмелява да смущава покоя ми?",
+    "login.remembered_session.last_connected": "Последно свързване"
 }
