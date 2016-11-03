@@ -33,8 +33,13 @@ export interface IModalClosedPayload {
 export const MODAL_RESPONSE = "MODAL_RESPONSE";
 
 export const SETUP_STATUS = "SETUP_STATUS";
+export interface ISetupStatusPayload extends Types.ISetupOperation;
 export const SETUP_DONE = "SETUP_DONE";
+export interface ISetupDonePayload {
+  
+};
 export const RETRY_SETUP = "RETRY_SETUP";
+export interface IRetrySetupPayload {};
 
 export const SESSION_READY = "SESSION_READY";
 export const SESSIONS_REMEMBERED = "SESSIONS_REMEMBERED";

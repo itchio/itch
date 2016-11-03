@@ -269,8 +269,15 @@ export interface ISystemState {
 
 }
 
-export interface ISetupState {
+export interface ISetupOperation {
+    message: ILocalizedString;
+    icon: string;
+}
 
+export interface ISetupState {
+    done: boolean;
+    errors: string[];
+    blockingOperation: ISetupOperation;
 }
 
 export interface IRememberedSession {
@@ -401,3 +408,5 @@ export interface IDownloadsState {
 export interface IStatusState {
 
 }
+
+export type ILocalizedString = any[];
