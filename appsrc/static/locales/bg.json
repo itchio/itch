@@ -267,5 +267,6 @@
     "grid.item.version": "Версия {{version}}",
     "browser.popout": "Отваряне на страницата във външен браузър",
     "i18n.failed_downloading_locales": "Обновленията за превода на {{lang}} не могат да бъдат свалени.",
-    "install_location.empty": "В тази папка няма нищо инсталирано"
+    "install_location.empty": "В тази папка няма нищо инсталирано",
+    "login.action.show_form": "Влизане с друго име"
 }
