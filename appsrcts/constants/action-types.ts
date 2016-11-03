@@ -365,20 +365,38 @@ export const LOGIN_STOP_PICKING = "LOGIN_STOP_PICKING";
 
 /** Any login attempt (cached or not) */
 export const ATTEMPT_LOGIN = "ATTEMPT_LOGIN";
+export interface IAttemptLoginPayload {}
+
 /** Private - login attempt with username/password */
 export const LOGIN_WITH_PASSWORD = "LOGIN_WITH_PASSWORD";
+export interface ILoginWithPasswordPayload {}
+
 /** Private - login attempt with stored token */
 export const LOGIN_WITH_TOKEN = "LOGIN_WITH_TOKEN";
+export interface ILoginWithTokenPayload {}
+
 /** Wrong login/password or something else */
 export const LOGIN_FAILED = "LOGIN_FAILED";
+export interface ILoginFailedPayload {}
+
 /** API key available beyond this point */
 export const LOGIN_SUCCEEDED = "LOGIN_SUCCEEDED";
+export interface ILoginSucceededPayload {
+  me: Types.IOwnUserRecord;
+}
+
 /** market available beyond this point */
 export const READY_TO_ROLL = "READY_TO_ROLL";
+export interface IReadyToRollPayload {}
+
 /** install locations available beyond this point */
 export const LOCATIONS_READY = "LOCATIONS_READY";
+export interface ILocationsReadyPayload {}
+
 /** Asked to log out */
 export const CHANGE_USER = "CHANGE_USER";
+export interface IChangeUserPayload {}
+
 /** Confirmed log out */
 export const LOGOUT = "LOGOUT";
 export interface ILogoutPayload {}

@@ -336,9 +336,16 @@ export interface ISessionCachedCollectionsState {
 }
 
 export interface ISessionCredentialsState {}
-export interface ISessionFoldersState {}
+
+export interface ISessionFoldersState {
+    /** path where user-specific data is stored, such as their marketdb and credentials */
+    libraryDir: string;
+}
+
 export interface ISessionLoginState {}
+
 export interface ISessionNavigationState {}
+
 export interface ISessionSearchState {}
 
 export interface II18nResources {
