@@ -129,19 +129,44 @@ export const QUIT_AND_INSTALL = "QUIT_AND_INSTALL";
 
 /* Self updates */
 export const CHECK_FOR_SELF_UPDATE = "CHECK_FOR_SELF_UPDATE";
+export interface ICheckForSelfUpdatePayload {};
 export const CHECKING_FOR_SELF_UPDATE = "CHECKING_FOR_SELF_UPDATE";
+export interface ICheckingForSelfUpdatePayload {};
 export const SELF_UPDATE_AVAILABLE = "SELF_UPDATE_AVAILABLE";
+export interface ISelfUpdateAvailablePayload {
+  /** info on the self-update that's available */
+  spec: Types.ISelfUpdate;
+
+  /** whether the self-update is being immediately downloaded */
+  downloading: boolean;
+};
 export const SELF_UPDATE_NOT_AVAILABLE = "SELF_UPDATE_NOT_AVAILABLE";
+export interface ISelfUpdateNotAvailablePayload {
+  /**
+   * true if it also means we're up-to-date — false if, for example,
+   * we were offline and couldn't check (that doesn't count as an error)
+   */
+  uptodate: boolean;
+};
 export const SELF_UPDATE_ERROR = "SELF_UPDATE_ERROR";
+export type ISelfUpdateErrorPayload = string;
 export const SELF_UPDATE_DOWNLOADED = "SELF_UPDATE_DOWNLOADED";
+export interface ISelfUpdateDownloadedPayload {};
 export const SHOW_AVAILABLE_SELF_UPDATE = "SHOW_AVAILABLE_SELF_UPDATE";
+export interface IShowAvailableSelfUpdatePayload {};
 export const APPLY_SELF_UPDATE = "APPLY_SELF_UPDATE";
+export interface IApplySelfUpdatePayload {};
 export const APPLY_SELF_UPDATE_REQUEST = "APPLY_SELF_UPDATE_REQUEST";
+export interface IApplySelfUpdateRequestPayload {};
 export const SNOOZE_SELF_UPDATE = "SNOOZE_SELF_UPDATE";
+export interface ISnoozeSelfUpdatePayload {};
 export const DISMISS_STATUS = "DISMISS_STATUS";
+export interface IDismissStatusPayload {};
 
 export const STATUS_MESSAGE = "STATUS_MESSAGE";
+export interface IStatusMessagePayload {};
 export const DISMISS_STATUS_MESSAGE = "DISMISS_STATUS_MESSAGE";
+export interface IDismissStatusMessagePayload {};
 
 export const ENABLE_BONUS = "ENABLE_BONUS";
 export const DISABLE_BONUS = "DISABLE_BONUS";

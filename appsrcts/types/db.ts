@@ -312,8 +312,18 @@ export interface IUIState {
 
 }
 
-export interface ISelfUpdateState {
+export interface ISelfUpdate {
 
+}
+
+export interface ISelfUpdateState {
+    available?: ISelfUpdate;
+    downloading?: ISelfUpdate;
+    downloaded?: ISelfUpdate;
+
+    checking: boolean;
+    uptodate: boolean;
+    error?: string;
 }
 
 export interface IInstallLocation {
