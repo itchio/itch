@@ -1,25 +1,29 @@
 
-import {handleActions} from 'redux-actions'
-import invariant from 'invariant'
+import {handleActions} from "redux-actions";
 
-const OFFLINE_MODE = process.env.OFFLINE_MODE === '1'
+import {
+  IAction,
+  IUpdatePreferencesPayload,
+} from "../constants/action-types";
+
+import {IPreferencesState} from "../types/db";
+
+const OFFLINE_MODE = process.env.OFFLINE_MODE === "1";
 
 const initialState = {
   downloadSelfUpdates: true,
   offlineMode: OFFLINE_MODE,
   installLocations: {},
-  defaultInstallLocation: 'appdata',
+  defaultInstallLocation: "appdata",
   sidebarWidth: 240,
   isolateApps: false,
   closeToTray: true,
-  showAdvanced: false
-}
+  showAdvanced: false,
+};
 
-export default handleActions({
-  UPDATE_PREFERENCES: (state, action) => {
-    const record = action.payload
-    invariant(typeof record === 'object', 'prefs must be an object')
-
-    return {...state, ...record}
-  }
-}, initialState)
+export default handleActions<IPreferencesState, any>({
+  UPDATE_PREFERENCES: (state: IPreferencesState, action: IAction<IUpdatePreferencesPayload>) => {
+    const record = action.payload;
+    return Object.assign({}, state, record);
+  },
+}, initialState);

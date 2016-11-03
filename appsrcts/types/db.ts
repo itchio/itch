@@ -273,8 +273,19 @@ export interface ISetupState {
 
 }
 
-export interface IRememberedSessionsState {
+export interface IRememberedSession {
+    /** API key */
+    key: string;
 
+    /** user info */
+    me: IOwnUserRecord;
+
+    /** date the user was last active in the app (this install) */
+    lastConnected: number;
+}
+
+export interface IRememberedSessionsState {
+    [id: string]: IRememberedSession;
 }
 
 export interface ISessionState {
@@ -291,10 +302,10 @@ export interface II18nState {
     strings: II18nResources;
     queued: {
         [lang: string]: boolean;
-    },
+    };
     downloading: {
         [lang: string]: boolean;
-    },
+    };
 }
 
 export interface IUIState {
@@ -305,8 +316,27 @@ export interface ISelfUpdateState {
 
 }
 
-export interface IPreferencesState {
+export interface IInstallLocation {
 
+}
+
+export interface IPreferencesState {
+  /** is the app allowed to check for updates to itself? */
+  downloadSelfUpdates: boolean;
+  /** do not make any network requests */
+  offlineMode: boolean;
+  installLocations: {
+      [key: string]: IInstallLocation;
+  };
+  /** where to install games (doesn't change already-installed games) */
+  defaultInstallLocation: string;
+  sidebarWidth: number;
+  /** use sandbox */
+  isolateApps: boolean;
+  /** when closing window, keep running in tray */
+  closeToTray: boolean;
+  /** show the advanced section of settings */
+  showAdvanced: boolean;
 }
 
 export interface ITasksState {
@@ -349,7 +379,7 @@ export interface IDownloadsState {
     /** All the downloads we know about, indexed by the id of the game they're associated to */
     downloadsByGameId: {
         [gameId: string]: IDownloadItem;
-    },
+    };
 
     /** The download currently being downloaded (if they're not paused) */
     activeDownload: IDownloadItem;

@@ -338,6 +338,7 @@ export const GC_DATABASE = "GC_DATABASE";
 export const OPEN_PREFERENCES = "OPEN_PREFERENCES";
 export const PREFERENCES_SET_LANGUAGE = "PREFERENCES_SET_LANGUAGE";
 export const UPDATE_PREFERENCES = "UPDATE_PREFERENCES";
+export interface IUpdatePreferencesPayload extends Types.IPreferencesState {};
 
 export const VIEW_CREATOR_PROFILE = "VIEW_CREATOR_PROFILE";
 export const VIEW_COMMUNITY_PROFILE = "VIEW_CREATOR_PROFILE";
