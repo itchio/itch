@@ -1,18 +1,26 @@
 
-import {handleActions} from 'redux-actions'
+import {handleActions} from "redux-actions";
 
-import {reject} from 'underline'
+import {reject} from "underscore";
 
-const initialState = []
+import {IModalsState} from "../types/db";
 
-export default handleActions({
-  OPEN_MODAL: (state, action) => {
-    const modal = action.payload
-    return [...state, modal]
+import {
+  IAction,
+  IOpenModalPayload,
+  IModalClosedPayload,
+} from "../constants/action-types";
+
+const initialState: IModalsState = [];
+
+export default handleActions<IModalsState, any>({
+  OPEN_MODAL: (state: IModalsState, action: IAction<IOpenModalPayload>) => {
+    const modal = action.payload;
+    return [...state, modal];
   },
 
-  MODAL_CLOSED: (state, action) => {
-    const {id} = action.payload
-    return state::reject((x) => x.id === id)
-  }
-}, initialState)
+  MODAL_CLOSED: (state: IModalsState, action: IAction<IModalClosedPayload>) => {
+    const {id} = action.payload;
+    return reject(state, (x) => x.id === id);
+  },
+}, initialState);

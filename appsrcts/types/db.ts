@@ -242,9 +242,12 @@ export interface IHistoryState {
     };
 }
 
-export interface IModalsState {
-
+export interface IModal {
+    /** generated identifier for this modal */
+    id: string;
 }
+
+export type IModalsState = IModal[];
 
 export interface IMarketState {
     [tableName: string]: {

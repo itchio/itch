@@ -21,8 +21,15 @@ export const LANGUAGE_CHANGED = "LANGUAGE_CHANGED";
 export type ILanguageChangedPayload = string;
 
 export const OPEN_MODAL = "OPEN_MODAL";
+export interface IOpenModalPayload extends Types.IModal {};
 export const CLOSE_MODAL = "CLOSE_MODAL";
+export interface ICloseModalPayload {
+  id: string;
+};
 export const MODAL_CLOSED = "MODAL_CLOSED";
+export interface IModalClosedPayload {
+  id: string;
+};
 export const MODAL_RESPONSE = "MODAL_RESPONSE";
 
 export const SETUP_STATUS = "SETUP_STATUS";

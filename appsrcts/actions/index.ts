@@ -16,19 +16,13 @@ export * from "./navigation-actions"
 export * from "./lifecycle-actions"
 export * from "./self-update-actions"
 export * from "./install-locations-actions"
-
-import * as uuid from "node-uuid";
+export * from "./modal-actions"
 
 import { createAction } from "redux-actions";
 
 import {
     LANGUAGE_SNIFFED,
     LANGUAGE_CHANGED, ILanguageChangedPayload,
-
-    OPEN_MODAL,
-    CLOSE_MODAL,
-    MODAL_CLOSED,
-    MODAL_RESPONSE,
 
     UPDATE_PREFERENCES,
 
@@ -41,12 +35,6 @@ import {
 
 export const languageSniffed = createAction(LANGUAGE_SNIFFED);
 export const languageChanged = createAction<ILanguageChangedPayload>(LANGUAGE_CHANGED);
-
-const internalOpenModal = createAction(OPEN_MODAL);
-export const openModal = (payload = {}) => internalOpenModal(Object.assign({}, payload, { id: uuid.v4() }));
-export const closeModal = createAction(CLOSE_MODAL);
-export const modalClosed = createAction(MODAL_CLOSED);
-export const modalResponse = createAction(MODAL_RESPONSE);
 
 export const updatePreferences = createAction(UPDATE_PREFERENCES);
 
