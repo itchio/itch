@@ -26,8 +26,8 @@ import {
 
     UPDATE_PREFERENCES, IUpdatePreferencesPayload,
 
-    FETCH_COLLECTION_GAMES,
-    COLLECTION_GAMES_FETCHED,
+    FETCH_COLLECTION_GAMES, IFetchCollectionGamesPayload,
+    COLLECTION_GAMES_FETCHED, ICollectionGamesFetchedPayload,
 
     ENABLE_BONUS, IEnableBonusPayload,
     DISABLE_BONUS, IDisableBonusPayload,
@@ -38,8 +38,8 @@ export const languageChanged = createAction<ILanguageChangedPayload>(LANGUAGE_CH
 
 export const updatePreferences = createAction<IUpdatePreferencesPayload>(UPDATE_PREFERENCES);
 
-export const fetchCollectionGames = createAction(FETCH_COLLECTION_GAMES);
-export const collectionGamesFetched = createAction(COLLECTION_GAMES_FETCHED);
+export const fetchCollectionGames = createAction<IFetchCollectionGamesPayload>(FETCH_COLLECTION_GAMES);
+export const collectionGamesFetched = createAction<ICollectionGamesFetchedPayload>(COLLECTION_GAMES_FETCHED);
 
 export const enableBonus = createAction<IEnableBonusPayload>(ENABLE_BONUS);
 export const disableBonus = createAction<IDisableBonusPayload>(DISABLE_BONUS);

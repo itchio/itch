@@ -1,21 +1,32 @@
 
-import {handleActions} from 'redux-actions'
-import invariant from 'invariant'
+import {handleActions} from "redux-actions";
+
+import {ISessionCachedCollectionsState} from "../../types/db";
+
+import {
+  IAction,
+  ICollectionGamesFetchedPayload,
+  ILogoutPayload,
+} from "../../constants/action-types";
 
 const initialState = {
-  fetched: {}
-}
+  fetched: {},
+} as ISessionCachedCollectionsState;
 
-export default handleActions({
-  COLLECTION_GAMES_FETCHED: (state, action) => {
-    const {collectionId} = action.payload
-    invariant(typeof collectionId === 'number', 'valid collection id')
+export default handleActions<ISessionCachedCollectionsState, any>({
+  COLLECTION_GAMES_FETCHED: (state: ISessionCachedCollectionsState,
+                             action: IAction<ICollectionGamesFetchedPayload>) => {
+    const {collectionId} = action.payload;
 
-    const {fetched} = state
-    return {...state, fetched: {...fetched, [collectionId]: Date.now()}}
+    const {fetched} = state;
+    return Object.assign({}, state, {
+      fetched: Object.assign({}, fetched, {
+        [collectionId]: Date.now(),
+      }),
+    });
   },
 
-  LOGOUT: (state, action) => {
-    return initialState
-  }
-}, initialState)
+  LOGOUT: (state: ISessionCachedCollectionsState, action: IAction<ILogoutPayload>) => {
+    return initialState;
+  },
+}, initialState);

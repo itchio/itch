@@ -348,7 +348,15 @@ export const BINARY_FILTER_CHANGED = "BINARY_FILTER_CHANGED";
 
 /** Data retrieval */
 export const FETCH_COLLECTION_GAMES = "FETCH_COLLECTION_GAMES";
+export interface IFetchCollectionGamesPayload {
+  /** The collection we want to fetch the games of */
+  collectionId: number;
+}
 export const COLLECTION_GAMES_FETCHED = "COLLECTION_GAMES_FETCHED";
+export interface ICollectionGamesFetchedPayload {
+  /** The collection whose games were just fetched */
+  collectionId: number;
+}
 
 /** Start picking from a list of remembered sessions */
 export const LOGIN_START_PICKING = "LOGIN_START_PICKING";
@@ -373,6 +381,7 @@ export const LOCATIONS_READY = "LOCATIONS_READY";
 export const CHANGE_USER = "CHANGE_USER";
 /** Confirmed log out */
 export const LOGOUT = "LOGOUT";
+export interface ILogoutPayload {}
 
 /** Sent from metal when needs to eval something in chrome. Example: HTML5 Notification API */
 export const EVAL = "EVAL";

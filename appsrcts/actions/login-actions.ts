@@ -12,7 +12,7 @@ import {
   LOGIN_SUCCEEDED,
 
   CHANGE_USER,
-  LOGOUT,
+  LOGOUT, ILogoutPayload,
 } from "../constants/action-types";
 
 export const loginStartPicking = createAction(LOGIN_START_PICKING);
@@ -25,4 +25,4 @@ export const loginFailed = createAction(LOGIN_FAILED);
 export const loginSucceeded = createAction(LOGIN_SUCCEEDED);
 
 export const changeUser = createAction(CHANGE_USER);
-export const logout = createAction(LOGOUT);
+export const logout = createAction<ILogoutPayload>(LOGOUT);

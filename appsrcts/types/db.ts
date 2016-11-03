@@ -319,8 +319,27 @@ export interface IRememberedSessionsState {
 }
 
 export interface ISessionState {
-
+    /** collection freshness information */
+    cachedCollections: ISessionCachedCollectionsState;
+    credentials: ISessionCredentialsState;
+    folders: ISessionFoldersState;
+    login: ISessionLoginState;
+    navigation: ISessionNavigationState;
+    search: ISessionSearchState;
 }
+
+export interface ISessionCachedCollectionsState {
+    /** maps collections to the date they were last fetched */
+    fetched: {
+        [collectionId: number]: number;
+    };
+}
+
+export interface ISessionCredentialsState {}
+export interface ISessionFoldersState {}
+export interface ISessionLoginState {}
+export interface ISessionNavigationState {}
+export interface ISessionSearchState {}
 
 export interface II18nResources {
     [lang: string]: {
