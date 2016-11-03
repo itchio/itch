@@ -355,7 +355,15 @@ export interface ISessionLoginState {
 
 export interface ISessionNavigationState {}
 
-export interface ISessionSearchState {}
+export interface ISessionSearchState {
+    example: string;    
+    typedQuery: string;
+    query: string;
+    open: boolean;
+    loading: boolean;
+    highlight: number;
+    results: any;
+}
 
 export interface II18nResources {
     [lang: string]: {

@@ -333,18 +333,43 @@ export const NOTIFY_HTML5 = "NOTIFY_HTML5";
 
 /** Search */
 export const FOCUS_SEARCH = "FOCUS_SEARCH";
+export interface IFocusSearchPayload {};
+
 export const FOCUS_FILTER = "FOCUS_FILTER";
+export interface IFocusFilterPayload {};
+
 export const CLEAR_FILTERS = "CLEAR_FILTERS";
+export interface IClearFiltersPayload {};
+
 export const SEARCH_QUERY_CHANGED = "SEARCH_QUERY_CHANGED";
+export interface ISearchQueryChangedPayload {};
+
 export const SEARCH = "SEARCH";
+export interface ISearchPayload {};
+
 export const SEARCH_FETCHED = "SEARCH_FETCHED";
+export interface ISearchFetchedPayload {
+  query: string;
+  results: any;
+};
+
 export const SEARCH_STARTED = "SEARCH_STARTED";
+export interface ISearchStartedPayload {};
+
 export const SEARCH_FINISHED = "SEARCH_FINISHED";
+export interface ISearchFinishedPayload {};
+
 export const CLOSE_SEARCH = "CLOSE_SEARCH";
+export interface ICloseSearchPayload {};
+
 export const SEARCH_HIGHLIGHT_OFFSET = "SEARCH_HIGHLIGHT_OFFSET";
+export type ISearchHighlightOffsetPayload = number;
 
 export const FILTER_CHANGED = "FILTER_CHANGED";
+export interface IFilterChangedPayload {};
+
 export const BINARY_FILTER_CHANGED = "BINARY_FILTER_CHANGED";
+export interface IBinaryFilterChangedPayload {};
 
 /** Data retrieval */
 export const FETCH_COLLECTION_GAMES = "FETCH_COLLECTION_GAMES";
