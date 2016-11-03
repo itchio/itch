@@ -271,5 +271,6 @@
     "login.action.show_form": "Влизане като друг потребител",
     "login.action.show_saved_logins": "Запазени данни за вход",
     "login.messages.welcome_back-halloween": "Кой се осмелява да смущава покоя ми?",
-    "login.remembered_session.last_connected": "Последно свързване"
+    "login.remembered_session.last_connected": "Последно свързване",
+    "menu.file.new_tab": "Нов раздел"
 }
