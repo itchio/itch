@@ -266,5 +266,6 @@
     "grid.item.downloads_paused": "Свалянията са спрени на пауза",
     "grid.item.version": "Версия {{version}}",
     "browser.popout": "Отваряне на страницата във външен браузър",
-    "i18n.failed_downloading_locales": "Обновленията за превода на {{lang}} не могат да бъдат свалени."
+    "i18n.failed_downloading_locales": "Обновленията за превода на {{lang}} не могат да бъдат свалени.",
+    "install_location.empty": "Няма нищо инсталирано в директорията"
 }
