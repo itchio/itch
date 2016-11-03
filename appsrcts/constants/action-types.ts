@@ -78,28 +78,75 @@ export interface IHistoryReadPayload {};
 
 /* Main window events */
 export const FIRST_WINDOW_READY = "FIRST_WINDOW_READY";
+
 export const WINDOW_READY = "WINDOW_READY";
+
 export const WINDOW_DESTROYED = "WINDOW_DESTROYED";
+
 export const WINDOW_FOCUS_CHANGED = "WINDOW_FOCUS_CHANGED";
+
 export const WINDOW_FULLSCREEN_CHANGED = "WINDOW_FULLSCREEN_CHANGED";
+
 export const WINDOW_BOUNDS_CHANGED = "WINDOW_BOUNDS_CHANGED";
+
 export const CREATE_WINDOW = "CREATE_WINDOW";
+
 export const FOCUS_WINDOW = "FOCUS_WINDOW";
+
 export const HIDE_WINDOW = "HIDE_WINDOW";
+
 export const CLOSE_TAB_OR_AUX_WINDOW = "CLOSE_TAB_OR_AUX_WINDOW";
+
 export const CLOSE_ALL_TABS = "CLOSE_ALL_TABS";
+export interface ICloseAllTabsPayload {}
 
 /* Navigation */
 export const NAVIGATE = "NAVIGATE";
+export interface INavigatePayload {
+  /** tab to navigate to */
+  id: string;
+
+  /** any data we already known about the tab */
+  data: Types.ITabData;
+
+  /** whether to open a new tab in the background */
+  background: boolean;
+}
+
 export const FOCUS_NTH_TAB = "FOCUS_NTH_TAB";
+
 export const MOVE_TAB = "MOVE_TAB";
+export interface IMoveTabPayload {
+  /** old tab index (in transients) */
+  before: number;
+  /** new tab index (in transients) */
+  after: number;
+}
+
 export const EVOLVE_TAB = "EVOLVE_TAB";
+
 export const TAB_EVOLVED = "TAB_EVOLVED";
+export interface ITabEvolvedPayload {
+  /** the tab that evolved (maybe went from a boring web tab to a game tab) */
+  id: string;
+
+  /** the new data we got on it */
+  data: Types.ITabData;
+}
+
 export const NEW_TAB = "NEW_TAB";
+
 export const CLOSE_TAB = "CLOSE_TAB";
+/** if null, close current tab */
+export type ICloseTabPayload = string
+
 export const SHOW_PREVIOUS_TAB = "SHOW_PREVIOUS_TAB";
+
 export const SHOW_NEXT_TAB = "SHOW_NEXT_TAB";
+
 export const SWITCH_PAGE = "SWITCH_PAGE";
+export type ISwitchPagePayload = string;
+
 export const OPEN_URL = "OPEN_URL";
 export const REPORT_ISSUE = "REPORT_ISSUE";
 export const COPY_TO_CLIPBOARD = "COPY_TO_CLIPBOARD";
@@ -110,16 +157,51 @@ export const TRIGGER_BACK = "TRIGGER_BACK";
 export const TRIGGER_LOCATION = "TRIGGER_LOCATION";
 
 export const SHORTCUTS_VISIBILITY_CHANGED = "SHORTCUTS_VISIBILITY_CHANGED";
+export interface IShortcutsVisibilityChangedPayload {
+  visible: boolean;
+}
+
 export const TOGGLE_MINI_SIDEBAR = "TOGGLE_MINI_SIDEBAR";
 
 export const TAB_RELOADED = "TAB_RELOADED";
+
 export const TAB_CHANGED = "TAB_CHANGED";
+export interface ITabChangedPayload {
+  /** the newly active tab */
+  id: string;
+}
+
 export const TABS_CHANGED = "TABS_CHANGED";
+
 export const TABS_RESTORED = "TABS_RESTORED";
+export interface ITabsRestoredPayload {
+  /** current tab id at the time the snapshot was taken */
+  current: string;
+
+  /** list of transient tabs when the snapshot was taken */
+  items: Types.ITabDataSave[];
+}
+
 export const TAB_DATA_FETCHED = "TAB_DATA_FETCHED";
+export interface ITabDataFetchedPayload {
+  /** tab for which we fetched data */
+  id: string;
+
+  /** the data we fetched */
+  data: Types.ITabData;
+
+  /** when we started fetching it */
+  timestamp: number;
+}
 
 export const OPEN_TAB_CONTEXT_MENU = "OPEN_TAB_CONTEXT_MENU";
+
+/** show a constant tab hidden for some users (press, dashboard, etc.) */
 export const UNLOCK_TAB = "UNLOCK_TAB";
+export interface IUnlockTabPayload {
+  /** the path of the tab to unlock (press, dashboard, etc.) */
+  path: string;
+}
 
 /* Menu */
 export const REFRESH_MENU = "REFRESH_MENU";
@@ -366,10 +448,20 @@ export const SEARCH_HIGHLIGHT_OFFSET = "SEARCH_HIGHLIGHT_OFFSET";
 export type ISearchHighlightOffsetPayload = number;
 
 export const FILTER_CHANGED = "FILTER_CHANGED";
-export interface IFilterChangedPayload {};
+export interface IFilterChangedPayload {
+  /** which tab is being filtered */
+  tab: string;
+  /** text by which a tab is being filtered */
+  query: string;
+};
 
 export const BINARY_FILTER_CHANGED = "BINARY_FILTER_CHANGED";
-export interface IBinaryFilterChangedPayload {};
+export interface IBinaryFilterChangedPayload {
+  /** name of the binary filter */
+  field: string;
+  /** new value for the boolean filter */
+  value: boolean;
+};
 
 /** Data retrieval */
 export const FETCH_COLLECTION_GAMES = "FETCH_COLLECTION_GAMES";

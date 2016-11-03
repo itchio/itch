@@ -100,10 +100,10 @@ export interface ITabData {
     webTitle?: string;
 
     /** name of tab as shown in sidebar */
-    label: string;
+    label?: ILocalizedString;
 
     /** subtitle shown under label when tab is shown */
-    subtitle?: string;
+    subtitle?: ILocalizedString;
 
     /** used for game tabs or collection tabs */
     games?: IGameRecordSet;
@@ -116,6 +116,13 @@ export interface ITabData {
 
     /** special CSS class applied to image shown in tab */
     imageClass?: string;
+
+    /** time at which data for this tab was last fetched */
+    timestamp?: number;
+}
+
+export interface ITabDataSave extends ITabData {
+    id: string;
 }
 
 export interface ICaveRecordLocation {
@@ -353,7 +360,37 @@ export interface ISessionLoginState {
     blockingOperation: ISetupOperation;
 }
 
-export interface ISessionNavigationState {}
+export interface ISessionNavigationState {
+    filters: {
+        [tabId: string]: string;
+    };
+
+    binaryFilters: {
+        [key: string]: boolean;
+    };
+
+    /** opened tabs */
+    tabs: {
+        /** tabs that can't be closed or re-ordered */
+        constant: string[];
+        /** tabs that can be moved around/closed */
+        transient: string[];
+    };
+
+    /** data associated with tabs: games, collections, etc. */
+    tabData: {
+        [id: string]: ITabData;
+    };
+
+    /** current page (gate, etc.) */
+    page: string;
+
+    /** current tab id */
+    id: string;
+
+    /** last constant tab visited */
+    lastConstant: string;
+}
 
 export interface ISessionSearchState {
     example: string;    
