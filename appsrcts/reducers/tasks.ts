@@ -1,56 +1,65 @@
 
-import {handleActions} from 'redux-actions'
-import {createStructuredSelector} from 'reselect'
+import {handleActions} from "redux-actions";
+import {createStructuredSelector} from "reselect";
 
-import invariant from 'invariant'
-import {indexBy, groupBy, omit, filter} from 'underline'
+import * as invariant from "invariant";
+import {values, groupBy, omit} from "underscore";
+
+import {ITasksState} from "../types/db";
+
+import derivedReducer from "./derived-reducer";
+
+import {
+  IAction,
+  ITaskStartedPayload,
+  ITaskProgressPayload,
+  ITaskEndedPayload,
+} from "../constants/action-types";
 
 const initialState = {
   tasks: {},
-  finishedTasks: []
-}
+  finishedTasks: [],
+} as ITasksState;
 
-const reducer = handleActions({
-  TASK_STARTED: (state, action) => {
-    const {tasks} = state
-    const task = action.payload
-    invariant(task.id, 'valid task id in started')
-    const newTasks = {...tasks, [task.id]: task}
-    return {...state, tasks: newTasks}
+const reducer = handleActions<ITasksState, any>({
+  TASK_STARTED: (state: ITasksState, action: IAction<ITaskStartedPayload>) => {
+    const {tasks} = state;
+    const task = action.payload;
+    invariant(task.id, "valid task id in started");
+    const newTasks = Object.assign({}, tasks, {
+      [task.id]: task,
+    });
+    return Object.assign({}, state, {tasks: newTasks});
   },
 
-  TASK_PROGRESS: (state, action) => {
-    const {tasks} = state
-    const record = action.payload
-    const {id} = record
-    invariant(id, 'valid task id in progress')
-    const task = tasks[id]
-    const newTasks = {...tasks, [id]: {...task, ...record}}
-    return {...state, tasks: newTasks}
+  TASK_PROGRESS: (state: ITasksState, action: IAction<ITaskProgressPayload>) => {
+    const {tasks} = state;
+    const record = action.payload;
+    const {id} = record;
+
+    const task = tasks[id];
+    const newTasks = Object.assign({}, tasks, {
+      [id]: Object.assign({}, task, record),
+    });
+    return Object.assign({}, state, {tasks: newTasks});
   },
 
-  TASK_ENDED: (state, action) => {
-    const {name, err, taskOpts, id} = action.payload
-    invariant(id, 'valid task id in ended')
-    const {tasks, finishedTasks} = state
-    const newTasks = tasks::omit(id)
-    const newFinishedTasks = [tasks[id], ...finishedTasks]
+  TASK_ENDED: (state: ITasksState, action: IAction<ITaskEndedPayload>) => {
+    const {id} = action.payload;
 
-    let newDownloads = state.downloads
-    if (name === 'uninstall' && !err) {
-      newDownloads = newDownloads::filter((x) => x.gameId !== taskOpts.gameId)::indexBy('id')
-    }
+    const {tasks, finishedTasks} = state;
+    const newTasks = omit(tasks, id);
+    const newFinishedTasks = [tasks[id], ...finishedTasks];
 
-    return {...state, tasks: newTasks, finishedTasks: newFinishedTasks, downloads: newDownloads}
-  }
-}, initialState)
+    return Object.assign({}, state, {
+      tasks: newTasks,
+      finishedTasks: newFinishedTasks,
+    });
+  },
+}, initialState);
 
 const selector = createStructuredSelector({
-  tasksByGameId: (state) => state.tasks::groupBy('gameId')
-})
+  tasksByGameId: (state: ITasksState) => groupBy(values(state.tasks), "gameId"),
+});
 
-export default (state, action) => {
-  const reducerFields = reducer(state, action)
-  const additionalFields = selector(reducerFields)
-  return {...reducerFields, ...additionalFields}
-}
+export default derivedReducer(reducer, selector);

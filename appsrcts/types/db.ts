@@ -379,8 +379,19 @@ export interface IPreferencesState {
   showAdvanced: boolean;
 }
 
-export interface ITasksState {
+export interface ITask {
+    /** generated identifier */
+    id: string;
 
+    /** progress in the [0, 1] interval */
+    progress: number;
+}
+
+export interface ITasksState {
+    tasks: {
+        [key: string]: ITask;
+    };
+    finishedTasks: ITask[];
 }
 
 /**

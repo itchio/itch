@@ -218,10 +218,18 @@ export interface IFreeSpaceUpdatedPayload {
 
 /* Tasks */
 export const TASK_STARTED = "TASK_STARTED";
+export interface ITaskStartedPayload extends Types.ITask {};
 export const TASK_PROGRESS = "TASK_PROGRESS";
+export interface ITaskProgressPayload extends Types.ITask {};
 export const TASK_ENDED = "TASK_ENDED";
+export interface ITaskEndedPayload {
+  id: string;
+};
 
 export const ABORT_TASK = "ABORT_TASK";
+export interface IAbortTaskPayload {
+  id: string;
+};
 
 /* Downloads */
 export const QUEUE_DOWNLOAD = "QUEUE_DOWNLOAD";

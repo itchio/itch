@@ -16,6 +16,7 @@ import {
    IClearFinishedDownloadsPayload,
    IPauseDownloadsPayload,
    IResumeDownloadsPayload,
+   ITaskEndedPayload,
   } from "../constants/action-types";
 
 import derivedReducer from "./derived-reducer";
