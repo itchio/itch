@@ -275,5 +275,6 @@
     "menu.file.new_tab": "Нов раздел",
     "menu.file.close_tab": "Затваряне на раздела",
     "menu.file.close_all_tabs": "Затваряне на всички раздели",
-    "moment.now": "сега"
+    "moment.now": "сега",
+    "toast.title": "Ужас!"
 }
