@@ -80,12 +80,22 @@ export interface IHistoryReadPayload {};
 export const FIRST_WINDOW_READY = "FIRST_WINDOW_READY";
 
 export const WINDOW_READY = "WINDOW_READY";
+export interface IWindowReadyPayload {
+  id: number;
+}
 
 export const WINDOW_DESTROYED = "WINDOW_DESTROYED";
+export interface IWindowDestroyedPayload {}
 
 export const WINDOW_FOCUS_CHANGED = "WINDOW_FOCUS_CHANGED";
+export interface IWindowFocusChangedPayload {
+  focused: boolean;
+}
 
 export const WINDOW_FULLSCREEN_CHANGED = "WINDOW_FULLSCREEN_CHANGED";
+export interface IWindowFullscreenChangedPayload {
+  fullscreen: boolean;
+}
 
 export const WINDOW_BOUNDS_CHANGED = "WINDOW_BOUNDS_CHANGED";
 
@@ -205,9 +215,15 @@ export interface IUnlockTabPayload {
 
 /* Menu */
 export const REFRESH_MENU = "REFRESH_MENU";
+export interface IRefreshMenuPayload {
+  system: Types.ISystemState;
+  credentials: Types.ISessionCredentialsState;
+}
 
 /** Buh-bye */
 export const PREPARE_QUIT = "PREPARE_QUIT";
+export interface IPrepareQuitPayload {}
+
 export const QUIT = "QUIT";
 export const QUIT_WHEN_MAIN = "QUIT_WHEN_MAIN";
 export const QUIT_ELECTRON_APP = "QUIT_ELECTRON_APP";

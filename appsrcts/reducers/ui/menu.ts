@@ -1,223 +1,235 @@
 
-import {handleActions} from 'redux-actions'
+import {handleActions} from "redux-actions";
 
-export default handleActions({
-  REFRESH_MENU: (state, action) => {
-    return {template: computeMenuTemplate(action.payload)}
-  }
-}, {template: []})
+import {IUIMenuState} from "../../types/db";
+import {
+  IAction,
+  IRefreshMenuPayload,
+} from "../../constants/action-types";
 
-function computeMenuTemplate (payload) {
-  const {system, credentials} = payload
+const initialState = {
+  template: [],
+} as IUIMenuState;
+
+export default handleActions<IUIMenuState, any>({
+  REFRESH_MENU: (state: IUIMenuState, action: IAction<IRefreshMenuPayload>) => {
+    return {
+      template: computeMenuTemplate(action.payload),
+    };
+  },
+}, initialState);
+
+function computeMenuTemplate (payload: IRefreshMenuPayload) {
+  const {system, credentials} = payload;
   const menus = {
     mainMac: {
       // no need for a label, it'll always be app name
       submenu: [
         {
-          role: 'about'
+          role: "about",
         },
         {
-          type: 'separator'
+          type: "separator",
         },
         {
-          label: 'menu.file.preferences',
-          accelerator: 'CmdOrCtrl+,'
+          label: "menu.file.preferences",
+          accelerator: "CmdOrCtrl+,",
         },
         {
-          type: 'separator'
+          type: "separator",
         },
         {
-          role: 'hide'
+          role: "hide",
         },
         {
-          role: 'hideothers'
+          role: "hideothers",
         },
         {
-          role: 'unhide'
+          role: "unhide",
         },
         {
-          type: 'separator'
+          type: "separator",
         },
         {
-          label: 'menu.file.quit',
-          accelerator: 'CmdOrCtrl+Q'
-        }
-      ]
+          label: "menu.file.quit",
+          accelerator: "CmdOrCtrl+Q",
+        },
+      ],
     },
 
     file: {
-      label: 'menu.file.file',
+      label: "menu.file.file",
       submenu: [
         {
-          label: 'sidebar.new_tab',
-          accelerator: 'CmdOrCtrl+T'
+          label: "sidebar.new_tab",
+          accelerator: "CmdOrCtrl+T",
         },
         {
-          type: 'separator'
+          type: "separator",
         },
         {
-          label: 'menu.file.preferences',
-          accelerator: 'CmdOrCtrl+,'
+          label: "menu.file.preferences",
+          accelerator: "CmdOrCtrl+,",
         },
         {
-          type: 'separator'
+          type: "separator",
         },
         {
-          label: 'menu.file.close_tab',
-          accelerator: 'CmdOrCtrl+W'
+          label: "menu.file.close_tab",
+          accelerator: "CmdOrCtrl+W",
         },
         {
-          label: 'menu.file.close_all_tabs',
-          accelerator: 'CmdOrCtrl+Shift+W'
+          label: "menu.file.close_all_tabs",
+          accelerator: "CmdOrCtrl+Shift+W",
         },
         {
-          label: 'menu.file.close_window',
-          accelerator: (system.macos ? 'Cmd+Alt+W' : 'Alt+F4')
+          label: "menu.file.close_window",
+          accelerator: (system.macos ? "Cmd+Alt+W" : "Alt+F4"),
         },
         {
-          label: 'menu.file.quit',
-          accelerator: 'CmdOrCtrl+Q'
-        }
-      ]
+          label: "menu.file.quit",
+          accelerator: "CmdOrCtrl+Q",
+        },
+      ],
     },
 
     fileMac: {
-      label: 'menu.file.file',
+      label: "menu.file.file",
       submenu: [
         {
-          label: 'sidebar.new_tab',
-          accelerator: 'CmdOrCtrl+T'
+          label: "sidebar.new_tab",
+          accelerator: "CmdOrCtrl+T",
         },
         {
-          type: 'separator'
+          type: "separator",
         },
         {
-          label: 'menu.file.close_tab',
-          accelerator: 'CmdOrCtrl+W'
+          label: "menu.file.close_tab",
+          accelerator: "CmdOrCtrl+W",
         },
         {
-          label: 'menu.file.close_all_tabs',
-          accelerator: 'CmdOrCtrl+Shift+W'
+          label: "menu.file.close_all_tabs",
+          accelerator: "CmdOrCtrl+Shift+W",
         },
         {
-          label: 'menu.file.close_window',
-          accelerator: (system.macos ? 'Cmd+Alt+W' : 'Alt+F4')
-        }
-      ]
+          label: "menu.file.close_window",
+          accelerator: (system.macos ? "Cmd+Alt+W" : "Alt+F4"),
+        },
+      ],
     },
 
     edit: {
-      label: 'menu.edit.edit',
+      label: "menu.edit.edit",
       visible: false,
       submenu: [
         {
-          label: 'menu.edit.cut',
-          accelerator: 'CmdOrCtrl+X',
-          role: 'cut'
+          label: "menu.edit.cut",
+          accelerator: "CmdOrCtrl+X",
+          role: "cut",
         },
         {
-          label: 'menu.edit.copy',
-          accelerator: 'CmdOrCtrl+C',
-          role: 'copy'
+          label: "menu.edit.copy",
+          accelerator: "CmdOrCtrl+C",
+          role: "copy",
         },
         {
-          label: 'menu.edit.paste',
-          accelerator: 'CmdOrCtrl+V',
-          role: 'paste'
+          label: "menu.edit.paste",
+          accelerator: "CmdOrCtrl+V",
+          role: "paste",
         },
         {
-          label: 'menu.edit.select_all',
-          accelerator: 'CmdOrCtrl+A',
-          role: 'selectall'
-        }
-      ]
+          label: "menu.edit.select_all",
+          accelerator: "CmdOrCtrl+A",
+          role: "selectall",
+        },
+      ],
     },
 
     view: {
-      label: 'menu.view.view',
+      label: "menu.view.view",
       submenu: [
         {
-          label: 'menu.view.history',
-          accelerator: system.macos ? 'Cmd+Y' : 'Ctrl+H'
+          label: "menu.view.history",
+          accelerator: system.macos ? "Cmd+Y" : "Ctrl+H",
         },
         {
-          label: 'menu.view.downloads',
-          accelerator: 'CmdOrCtrl+J'
-        }
-      ]
+          label: "menu.view.downloads",
+          accelerator: "CmdOrCtrl+J",
+        },
+      ],
     },
 
     accountLoggedOut: {
-      label: 'menu.account.account',
+      label: "menu.account.account",
       submenu: [
         {
-          label: 'menu.account.not_logged_in',
-          enabled: false
-        }
-      ]
+          label: "menu.account.not_logged_in",
+          enabled: false,
+        },
+      ],
     },
 
     account: {
-      label: 'menu.account.account',
+      label: "menu.account.account",
       submenu: [
         {
-          label: 'menu.account.change_user'
-        }
-      ]
+          label: "menu.account.change_user",
+        },
+      ],
     },
 
     help: {
-      label: 'menu.help.help',
-      role: 'help',
+      label: "menu.help.help",
+      role: "help",
       submenu: [
         {
-          label: 'menu.help.view_terms'
+          label: "menu.help.view_terms",
         },
         {
-          label: 'menu.help.view_license'
+          label: "menu.help.view_license",
         },
         {
           label: `Version ${system.appVersion}`,
-          enabled: false
+          enabled: false,
         },
         {
-          label: 'menu.help.check_for_update'
+          label: "menu.help.check_for_update",
         },
         {
-          type: 'separator'
+          type: "separator",
         },
         {
-          label: 'menu.help.report_issue'
+          label: "menu.help.report_issue",
         },
         {
-          label: 'menu.help.search_issue'
+          label: "menu.help.search_issue",
         },
         {
-          type: 'separator'
+          type: "separator",
         },
         {
-          label: 'menu.help.release_notes'
-        }
-      ]
-    }
-  }
+          label: "menu.help.release_notes",
+        },
+      ],
+    },
+  };
 
-  const template = []
+  const template = [] as any;
   if (system.macos) {
-    template.push(menus.mainMac)
-    template.push(menus.fileMac)
+    template.push(menus.mainMac);
+    template.push(menus.fileMac);
   } else {
-    template.push(menus.file)
+    template.push(menus.file);
   }
-  template.push(menus.edit)
-  template.push(menus.view)
+  template.push(menus.edit);
+  template.push(menus.view);
   if (credentials.key) {
-    template.push(menus.account)
+    template.push(menus.account);
   } else {
-    template.push(menus.accountLoggedOut)
+    template.push(menus.accountLoggedOut);
   }
 
-  template.push(menus.help)
+  template.push(menus.help);
 
-  return template
+  return template;
 }

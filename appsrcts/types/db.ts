@@ -342,7 +342,10 @@ export interface ISessionCachedCollectionsState {
     };
 }
 
-export interface ISessionCredentialsState {}
+export interface ISessionCredentialsState {
+    /** API key */
+    key: string;
+}
 
 export interface ISessionFoldersState {
     /** path where user-specific data is stored, such as their marketdb and credentials */
@@ -418,8 +421,26 @@ export interface II18nState {
     };
 }
 
-export interface IUIState {
+export interface IUIMenuState {
+    // TODO: type this, one day, maybe.
+    // maybe electron typings has something for us?
+    template: any;
+}
 
+export interface IUIMainWindowState {
+    /** id of the electron BrowserWindow the main window is displayed in */
+    id: number;    
+
+    /** true if main window has focus */
+    focused: boolean;
+
+    /** true if main window is maximized */
+    fullscreen: boolean;
+}
+
+export interface IUIState {
+    menu: IUIMenuState;
+    mainWindow: IUIMainWindowState;
 }
 
 export interface ISelfUpdate {
