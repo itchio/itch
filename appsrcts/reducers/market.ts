@@ -1,17 +1,31 @@
 
-import makeMarketReducer from './make-market-reducer'
-import {getUserMarket} from '../reactors/market'
+import makeMarketReducer from "./make-market-reducer";
+import {getUserMarket} from "../reactors/market";
 
-import {LOGOUT} from '../constants/action-types'
+import {
+  IAction,
+  LOGOUT,
+} from "../constants/action-types";
 
-const reducer = makeMarketReducer('USER', getUserMarket, ['collections', 'downloadKeys', 'games', 'itchAppProfile', 'itchAppTabs', 'users'])
+import {
+  IMarketState,
+} from "../types/db";
 
-export default (state, action) => {
+const reducer = makeMarketReducer("USER", getUserMarket, [
+  "collections",
+  "downloadKeys",
+  "games",
+  "itchAppProfile",
+  "itchAppTabs",
+  "users",
+]);
+
+export default (state: IMarketState, action: IAction<any>) => {
   // FIXME: this is a workaround, shouldn't be needed,
   // but without it, sessionReady fires too soon on 2nd login
   if (action.type === LOGOUT) {
-    return {...state, ready: false}
+    return Object.assign({}, state, {ready: false});
   } else {
-    return reducer(state, action)
+    return reducer(state, action);
   }
-}
+};

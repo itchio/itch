@@ -322,7 +322,7 @@ export interface IRememberedSession {
 }
 
 export interface IRememberedSessionsState {
-    [id: string]: IRememberedSession;
+    [id: number]: IRememberedSession;
 }
 
 export interface ISessionState {
@@ -345,6 +345,9 @@ export interface ISessionCachedCollectionsState {
 export interface ISessionCredentialsState {
     /** API key */
     key: string;
+    
+    /** info on user using the app */
+    me: IOwnUserRecord;
 }
 
 export interface ISessionFoldersState {

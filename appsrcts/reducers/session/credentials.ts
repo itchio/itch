@@ -1,18 +1,26 @@
 
-import {handleActions} from 'redux-actions'
+import {handleActions} from "redux-actions";
+
+import {ISessionCredentialsState} from "../../types/db";
+
+import {
+  IAction,
+  ILoginSucceededPayload,
+  ILogoutPayload,
+} from "../../constants/action-types";
 
 const initialState = {
   key: null,
-  me: null
-}
+  me: null,
+} as ISessionCredentialsState;
 
-export default handleActions({
-  LOGIN_SUCCEEDED: (state, action) => {
-    const {key, me} = action.payload
-    return {...state, key, me}
+export default handleActions<ISessionCredentialsState, any>({
+  LOGIN_SUCCEEDED: (state: ISessionCredentialsState, action: IAction<ILoginSucceededPayload>) => {
+    const {key, me} = action.payload;
+    return Object.assign({}, state, {key, me});
   },
 
-  LOGOUT: (state, action) => {
-    return {...state, key: null, me: null}
-  }
-}, initialState)
+  LOGOUT: (state: ISessionCredentialsState, action: IAction<ILogoutPayload>) => {
+    return Object.assign({}, state, {key: null, me: null});
+  },
+}, initialState);

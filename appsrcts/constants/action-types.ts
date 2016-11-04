@@ -41,21 +41,34 @@ export const RETRY_SETUP = "RETRY_SETUP";
 export interface IRetrySetupPayload {};
 
 export const SESSION_READY = "SESSION_READY";
+export interface ISessionReadyPayload {}
+
 export const SESSIONS_REMEMBERED = "SESSIONS_REMEMBERED";
+export interface ISessionsRememberedPayload extends Types.IRememberedSessionsState {}
+
 export const SESSION_UPDATED = "SESSION_UPDATED";
+export interface ISessionUpdatedPayload {
+  /** the session to update (user id) */
+  id: number;
+  
+  /** new/updated fields (can't delete fields) */
+  record: Types.IRememberedSession;
+}
+
 export const FORGET_SESSION_REQUEST = "FORGET_SESSION_REQUEST";
+export interface IForgetSessionRequestPayload {}
+
 export const FORGET_SESSION = "FORGET_SESSION";
+export interface IForgetSessionPayload {
+  /** the session to forget */
+  id: number;
+}
 
 export const START_ONBOARDING = "START_ONBOARDING";
-export const EXIT_ONBOARDING = "EXIT_ONBOARDING";
+export interface IStartOnboardingPayload {}
 
-export interface IDbReadyPayload {}
-export interface IDbCommitPayload {
-  updated: Types.IEntityMap;
-  deleted: Types.IEntityRefs;
-  initial: boolean;
-}
-export interface IDbClosedPayload {}
+export const EXIT_ONBOARDING = "EXIT_ONBOARDING";
+export interface IExitOnboardingPayload {}
 
 export const GLOBAL_DB_COMMIT = "GLOBAL_DB_COMMIT";
 export const GLOBAL_DB_READY = "GLOBAL_DB_READY";
@@ -64,6 +77,14 @@ export const GLOBAL_DB_CLOSED = "GLOBAL_DB_CLOSED";
 export const USER_DB_COMMIT = "USER_DB_COMMIT";
 export const USER_DB_READY = "USER_DB_READY";
 export const USER_DB_CLOSED = "USER_DB_CLOSED";
+
+export interface IDbReadyPayload {}
+export interface IDbCommitPayload {
+  updated: Types.IEntityMap;
+  deleted: Types.IEntityRefs;
+  initial: boolean;
+}
+export interface IDbClosedPayload {}
 
 /* Background stuff */
 export const DISMISS_HISTORY_ITEM = "DISMISS_HISTORY_ITEM";
@@ -520,6 +541,7 @@ export interface ILoginFailedPayload {
 /** API key available beyond this point */
 export const LOGIN_SUCCEEDED = "LOGIN_SUCCEEDED";
 export interface ILoginSucceededPayload {
+  key: string;
   me: Types.IOwnUserRecord;
 }
 

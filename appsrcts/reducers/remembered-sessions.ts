@@ -31,6 +31,6 @@ export default handleActions<IRememberedSessionsState, any>({
   FORGET_SESSION: (state: IRememberedSessionsState, action: IAction<IForgetSessionPayload>) => {
     const {id} = action.payload;
     invariant(typeof id !== "undefined", "forgetting session from a valid userId");
-    return omit(state, id);
+    return omit(state, "" + id);
   },
 }, initialState);
