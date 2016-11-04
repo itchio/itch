@@ -16,7 +16,6 @@ import {
    IClearFinishedDownloadsPayload,
    IPauseDownloadsPayload,
    IResumeDownloadsPayload,
-   ITaskEndedPayload,
   } from "../constants/action-types";
 
 import derivedReducer from "./derived-reducer";
@@ -66,11 +65,12 @@ const selector = createSelector(
   }
 );
 
-const initialState = selector({
+const baseInitialState = {
   speeds: map(new Array(SPEED_DATA_POINT_COUNT), (x) => ({ bps: 0 })),
   downloads: (process.env.FAKE_DOWNLOADS === "1" ? makeFakeDownloads() : {}),
   downloadsPaused: false,
-}) as IDownloadsState;
+};
+const initialState = Object.assign({}, baseInitialState, selector(baseInitialState));
 
 const updateSingle = (state: IDownloadsState, record: any) => {
   const {downloads} = state;

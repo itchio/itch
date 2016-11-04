@@ -23,7 +23,7 @@ export default handleActions<ISessionLoginState, any>({
   ATTEMPT_LOGIN: (state: ISessionLoginState, action: IAction<IAttemptLoginPayload>) => {
     return Object.assign({}, state, {
       errors: [],
-      blockingOPeration: {
+      blockingOperation: {
         icon: "heart-filled",
         message: ["login.status.login"],
       },
