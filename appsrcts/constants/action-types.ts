@@ -262,6 +262,10 @@ export interface ITabDataFetchedPayload {
 }
 
 export const OPEN_TAB_CONTEXT_MENU = "OPEN_TAB_CONTEXT_MENU";
+export interface IOpenTabContextMenuPayload {
+  /** id of the tab to open the context menu of */
+  id: string;
+}
 
 /** show a constant tab hidden for some users (press, dashboard, etc.) */
 export const UNLOCK_TAB = "UNLOCK_TAB";

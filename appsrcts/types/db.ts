@@ -5,6 +5,10 @@ export interface IStore extends Store<IState> {}
 
 export type GameType = "default" | "html" | "download";
 
+export type GameClassification = "game" | "tool" | "assets" |
+    "game_mod" | "physical_game" | "soundtrack" | "other" |
+    "comic" | "book"
+
 /**
  * Contains information about a game, retrieved via the itch.io API,
  * and saved to the local database.
@@ -34,11 +38,17 @@ export interface IGameRecord {
     /** downloadable game, html game, etc. */
     type: GameType;
 
+    /** classification: game, tool, comic, etc. */
+    classification: GameClassification;
+
     /** Only present for HTML5 games, otherwise null */
     embed?: IGameEmbedInfo;
 
     /** True if the game has a demo that can be downloaded for free */
     hasDemo?: boolean;
+
+    /** price of a game, in cents of a dollar */
+    minPrice?: number;
 }
 
 /**
@@ -99,7 +109,7 @@ export interface ITabDataSet {
 }
 
 export interface IGameRecordSet {
-    [id: number]: IGameRecord;
+    [id: string]: IGameRecord;
 }
 
 export interface ITabData {
@@ -115,9 +125,6 @@ export interface ITabData {
     /** subtitle shown under label when tab is shown */
     subtitle?: ILocalizedString;
 
-    /** used for game tabs or collection tabs */
-    games?: IGameRecordSet;
-
     /** image to show before label when tab is shown */
     image?: string;
 
@@ -129,6 +136,9 @@ export interface ITabData {
 
     /** time at which data for this tab was last fetched */
     timestamp?: number;
+
+    /** games in relation to this tab (single game, games in a collection) */
+    games?: IGameRecordSet;
 }
 
 export interface ITabDataSave extends ITabData {
@@ -282,6 +292,7 @@ export interface IUserMarketState extends IMarketState {
 
 export interface IGlobalMarketState extends IMarketState {
     caves: { [id: string]: ICaveRecord };
+    cavesByGameId: { [gameId: string]: ICaveRecord };
 }
 
 export interface ISystemState {
