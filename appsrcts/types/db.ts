@@ -1,4 +1,8 @@
 
+import {Store} from "redux";
+
+export interface IStore extends Store<IState> {}
+
 export type GameType = "default" | "html" | "download";
 
 /**

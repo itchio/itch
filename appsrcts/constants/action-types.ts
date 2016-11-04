@@ -1,11 +1,8 @@
 
-import {Action} from "redux";
+import {Action} from "redux-actions";
 import * as Types from "../types/db";
 
-export interface IAction<T> extends Action {
-  type: string;
-  payload: T;
-}
+export type IAction<T> = Action<T>;
 
 // run upgrade operations
 export const PREBOOT = "PREBOOT";
