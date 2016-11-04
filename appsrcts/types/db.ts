@@ -56,6 +56,9 @@ export interface IUserRecord {
     /** itch.io-generated unique identifier */
     id: number;
 
+    /** address of the user's profile on itch.io */
+    url: string;
+
     /** human-friendly account name (may contain any character) */
     displayName: string;
 

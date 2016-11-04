@@ -105,6 +105,7 @@ export interface IHistoryReadPayload {};
 
 /* Main window events */
 export const FIRST_WINDOW_READY = "FIRST_WINDOW_READY";
+export interface IFirstWindowReadyPayload {}
 
 export const WINDOW_READY = "WINDOW_READY";
 export interface IWindowReadyPayload {
@@ -125,14 +126,19 @@ export interface IWindowFullscreenChangedPayload {
 }
 
 export const WINDOW_BOUNDS_CHANGED = "WINDOW_BOUNDS_CHANGED";
+export interface IWindowBoundsChangedPaylaod {}
 
 export const CREATE_WINDOW = "CREATE_WINDOW";
+export interface ICreateWindowPayload {}
 
 export const FOCUS_WINDOW = "FOCUS_WINDOW";
+export interface IFocusWindowPayload {}
 
 export const HIDE_WINDOW = "HIDE_WINDOW";
+export interface IHideWindowPayload {}
 
 export const CLOSE_TAB_OR_AUX_WINDOW = "CLOSE_TAB_OR_AUX_WINDOW";
+export interface ICloseTabOrAuxWindowPaylaod {}
 
 export const CLOSE_ALL_TABS = "CLOSE_ALL_TABS";
 export interface ICloseAllTabsPayload {}
@@ -151,6 +157,7 @@ export interface INavigatePayload {
 }
 
 export const FOCUS_NTH_TAB = "FOCUS_NTH_TAB";
+export interface IFocusNthTabPayload {}
 
 export const MOVE_TAB = "MOVE_TAB";
 export interface IMoveTabPayload {
@@ -161,6 +168,7 @@ export interface IMoveTabPayload {
 }
 
 export const EVOLVE_TAB = "EVOLVE_TAB";
+export interface IEvolveTabPayload {}
 
 export const TAB_EVOLVED = "TAB_EVOLVED";
 export interface ITabEvolvedPayload {
@@ -178,20 +186,42 @@ export const CLOSE_TAB = "CLOSE_TAB";
 export type ICloseTabPayload = string
 
 export const SHOW_PREVIOUS_TAB = "SHOW_PREVIOUS_TAB";
+export interface IShowPreviousTabPayload {}
 
 export const SHOW_NEXT_TAB = "SHOW_NEXT_TAB";
+export interface IShowNextTabPayload {}
 
 export const SWITCH_PAGE = "SWITCH_PAGE";
 export type ISwitchPagePayload = string;
 
 export const OPEN_URL = "OPEN_URL";
+export type IOpenUrlPayload = string;
+
 export const REPORT_ISSUE = "REPORT_ISSUE";
+export interface IReportIssuePayload {
+  log?: string;
+}
+
 export const COPY_TO_CLIPBOARD = "COPY_TO_CLIPBOARD";
+export interface ICopyToClipboardPayload {}
+
 export const HANDLE_ITCHIO_URL = "HANDLE_ITCHIO_URL";
+export interface IHandleItchioUrlPayload {
+  /** example: itchio:///games/3 */
+  uri: string;
+}
+
 export const TRIGGER_MAIN_ACTION = "TRIGGER_MAIN_ACTION";
+export interface ITriggerMainActionPayload {}
+
 export const TRIGGER_OK = "TRIGGER_OK";
+export interface ITriggerOkPayload {}
+
 export const TRIGGER_BACK = "TRIGGER_BACK";
+export interface ITriggerBackPayload {}
+
 export const TRIGGER_LOCATION = "TRIGGER_LOCATION";
+export interface ITriggerLocationPayload {}
 
 export const SHORTCUTS_VISIBILITY_CHANGED = "SHORTCUTS_VISIBILITY_CHANGED";
 export interface IShortcutsVisibilityChangedPayload {
@@ -519,7 +549,9 @@ export const ENCOURAGE_GENEROSITY = "ENCOURAGE_GENEROSITY";
 export interface IEncourageGenerosityPayload {}
 
 export const INITIATE_SHARE = "INITIATE_SHARE";
-export interface IInitiateSharePayload {}
+export interface IInitiateSharePayload {
+  url: string;
+}
 
 /** macOS-only, bounce dock */
 export const BOUNCE = "BOUNCE";
