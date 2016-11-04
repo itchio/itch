@@ -2,7 +2,7 @@
 import * as ospath from "path";
 import os from "../util/os";
 import localizer from "../localizer";
-import {app, Menu, Tray} from "../electron";
+import {app, Menu, Tray, IMenuTemplate} from "../electron";
 
 import {createSelector} from "reselect";
 
@@ -12,13 +12,6 @@ import {IStore, IState, II18nState} from "../types/db";
 import {IAction, IBootPayload} from "../constants/action-types";
 
 import {EventEmitter} from "events";
-
-interface IMenuItem {
-  type?: string;
-  label?: string;
-  click?: () => void;
-}
-type IMenuTemplate = IMenuItem[];
 
 interface ITray extends EventEmitter {
   setToolTip(message: string): void;

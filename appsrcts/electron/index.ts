@@ -29,4 +29,14 @@ export const Menu = electron.Menu;
 export const Tray = electron.Tray;
 export const BrowserWindow = electron.BrowserWindow;
 
+export interface IMenuItem {
+  type?: string;
+  label?: string;
+  role?: string;
+  enabled?: boolean;
+  click?: (ev?: any) => void;
+  submenu?: IMenuItem[];
+}
+export type IMenuTemplate = IMenuItem[];
+
 export default electron;
