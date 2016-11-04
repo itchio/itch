@@ -13,6 +13,9 @@ export interface IGameRecord {
     /** itch.io-generated unique identifier */
     id: number;
 
+    /** address of the game's page on itch.io */
+    url: string;
+
     /** unique identifier of the developer this game belongs to */
     userId: number;
 
@@ -207,7 +210,11 @@ export interface IOwnUserRecord extends IUserRecord {
 }
 
 export interface IDownloadKey {
-  id: string;
+    /** itch.io-generated identifier for the download key */
+    id: number;
+
+    /** game the download key is for */
+    gameId: number;
 }
 
 export interface ICredentials {
@@ -221,8 +228,8 @@ export interface ICredentials {
 export interface IState {
     history: IHistoryState;
     modals: IModalsState;
-    globalMarket: IMarketState;
-    market: IMarketState;
+    globalMarket: IGlobalMarketState;
+    market: IUserMarketState;
     system: ISystemState;
     setup: ISetupState;
     rememberedSessions: IRememberedSessionsState;
@@ -267,13 +274,11 @@ export interface IMarketState {
 }
 
 export interface IUserMarketState extends IMarketState {
-    
+    downloadKeys: { [id: string]: IDownloadKey };
 }
 
 export interface IGlobalMarketState extends IMarketState {
-    caves: {
-        [id: string]: ICaveRecord;
-    };
+    caves: { [id: string]: ICaveRecord };
 }
 
 export interface ISystemState {

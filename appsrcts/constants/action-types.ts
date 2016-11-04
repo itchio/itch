@@ -508,7 +508,9 @@ export interface IBrowseGamePayload {}
 
 /** Buy / support something! */
 export const INITIATE_PURCHASE = "INITIATE_PURCHASE";
-export interface IInitiatePurchasePayload {}
+export interface IInitiatePurchasePayload {
+  game: Types.IGameRecord;
+}
 
 export const PURCHASE_COMPLETED = "PURCHASE_COMPLETED";
 export interface IPurchaseCompletedPayload {}
