@@ -427,10 +427,18 @@ export interface II18nResources {
 }
 
 export interface II18nState {
+    /** 2-letter code for the language the app is currently displayed in */
+    lang: string;
+
+    /** all translated strings */
     strings: II18nResources;
+
+    /** locales we'll download soon */
     queued: {
         [lang: string]: boolean;
     };
+
+    /** locales we're downloading now */
     downloading: {
         [lang: string]: boolean;
     };
@@ -459,7 +467,17 @@ export interface IUIState {
 }
 
 export interface ISelfUpdate {
+    /** the name of the version, e.g. 19.0.0 */
+    name: string;
 
+    /** the date the version was published at */
+    pub_date: string;
+
+    /** release notes for the version */
+    notes: string;
+
+    /** release page for this version */
+    url: string;
 }
 
 export interface ISelfUpdateState {
