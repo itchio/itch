@@ -11,7 +11,15 @@ import {camelifyObject} from "./format";
 
 import {contains} from "underscore";
 
-import {IDownloadKey} from "../types/db";
+import {IDownloadKey, IUpgradePathItem, IUploadRecord} from "../types/db";
+
+interface IUpgradeResponse {
+  upgradePath: IUpgradePathItem[];
+}
+
+interface IListUploadsResponse {
+  uploads: IUploadRecord[];
+}
 
 const cooldown = mkcooldown(130);
 const log = mklog("api");
@@ -226,7 +234,7 @@ export class AuthenticatedClient {
 
   // list uploads
 
-  async listUploads (downloadKey: IDownloadKey, gameID: number): Promise<any> {
+  async listUploads (downloadKey: IDownloadKey, gameID: number): Promise<IListUploadsResponse> {
     if (downloadKey) {
       return await this.request("get", `/download-key/${downloadKey.id}/uploads`, {}, {uploads: ensureArray});
     } else {
@@ -254,7 +262,7 @@ export class AuthenticatedClient {
 
   // wharf-related endpoints (bit of a mess tbh)
 
-  async findUpgrade (downloadKey: IDownloadKey, uploadID: number, currentBuildID: number): Promise<any> {
+  async findUpgrade (downloadKey: IDownloadKey, uploadID: number, currentBuildID: number): Promise<IUpgradeResponse> {
     if (downloadKey) {
       return await this.request("get", `/download-key/${downloadKey.id}/upgrade/${uploadID}/${currentBuildID}`, {v: 2});
     } else {

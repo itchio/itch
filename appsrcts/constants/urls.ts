@@ -4,6 +4,12 @@ const itchio = process.env.WHEN_IN_ROME || originalItchio;
 const manual = "https://itch.io/docs/itch/";
 const itchRepo = "https://github.com/itchio/itch";
 
+interface IUpdateServers {
+  [key: string]: string;
+  stable: string;
+  canary: string;
+}
+
 export default {
   itchRepo,
   watchlistRepo: "https://github.com/itchio/itch-compatibility-watchlist",
@@ -18,7 +24,7 @@ export default {
   updateServers: {
     stable: "https://nuts.itch.zone",
     canary: "https://nuts-canary.itch.ovh",
-  },
+  } as IUpdateServers,
 
   itchioApi: itchio,
   termsOfService: `${itchio}/docs/legal/terms`,

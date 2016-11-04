@@ -10,12 +10,14 @@ import client from "../../util/api";
 import mklog from "../../util/log";
 const log = mklog("download-patches");
 
-import {IDownloadOpts} from "./types";
+import {IDownloadOpts} from "../../types/db";
 import {IProgressInfo} from "../../types/progress";
 
+import {getGlobalMarket} from "../../reactors/market";
+
 export default async function downloadPatches (out: EventEmitter, opts: IDownloadOpts) {
-  const {globalMarket, cave, gameId, totalSize, upgradePath, upload, credentials, downloadKey, logger} = opts;
-  invariant(typeof globalMarket === "object", "downloadPatches must have globalMarket");
+  const {cave, gameId, totalSize, upgradePath, upload, credentials, downloadKey, logger} = opts;
+  const globalMarket = getGlobalMarket();
   invariant(typeof gameId === "number", "downloadPatches must have gameId");
   invariant(typeof upgradePath === "object", "downloadPatches must have an upgradePath");
   invariant(typeof totalSize === "number", "downloadPatches must have a totalSize");

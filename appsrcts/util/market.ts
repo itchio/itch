@@ -13,13 +13,7 @@ import {isEqual, every} from "underscore";
 
 import {EventEmitter} from "events";
 
-interface IEntityMap {
-  [entityId: string]: any;
-}
-
-interface ITableMap {
-  [tableName: string]: IEntityMap;
-}
+import {IEntityMap, ITableMap, IEntityRefs} from "../types/db";
 
 interface IEntityRecords {
   entities: ITableMap;
@@ -44,14 +38,6 @@ interface ISaveOpts {
 }
 
 /**
- * Refers to a bunch of records, for example:
- * { 'apples': ['gala', 'cripps', 'golden'], 'pears': ['anjou'] }
- */
-interface IEntityRefs {
-  [tableName: string]: Array<string>;
-}
-
-/**
  * Specifies what to delete from the DB
  */
 interface IDeleteSpec {
@@ -65,7 +51,7 @@ interface IDeleteSpec {
  */
 export default class Market extends EventEmitter {
   /** contents of the database */
-  data: any;
+  data: ITableMap;
 
   /** where the database is persisted on-disk */
   dbPath: string;

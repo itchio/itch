@@ -1,5 +1,20 @@
 
-import { indexBy, map } from "underscore";
+import {ITabData} from "../types/db";
+
+interface IBaseTabData extends ITabData {
+  id?: string;
+}
+
+interface IBaseTabDataSet {
+  [key: string]: IBaseTabData;
+  featured: IBaseTabData;
+  dashboard: IBaseTabData;
+  collections: IBaseTabData;
+  library: IBaseTabData;
+  preferences: IBaseTabData;
+  history: IBaseTabData;
+  downloads: IBaseTabData;
+}
 
 const baseData = {
   featured: { label: "itch.io", subtitle: ["sidebar.itchio"] },
@@ -9,12 +24,11 @@ const baseData = {
   preferences: { label: ["sidebar.preferences"] },
   history: { label: ["sidebar.history"] },
   downloads: { label: ["sidebar.downloads"] },
-};
+} as IBaseTabDataSet;
 
-export default indexBy(
-  map(
-    baseData,
-    (data, id) => Object.assign({}, data, { id, path: id })
-  ),
-  "id"
-);
+for (const key of Object.keys(baseData)) {
+  baseData[key].id = key;
+  baseData[key].path = key;
+}
+
+export default baseData;

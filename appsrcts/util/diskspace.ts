@@ -2,20 +2,7 @@
 import spawn from "./spawn";
 import os from "./os";
 
-interface ISpaceInfo {
-  free: number;
-  size: number;
-}
-
-interface IPartInfo extends ISpaceInfo {
-  letter?: string;
-  mountpoint?: string;
-}
-
-interface IPartsInfo {
-  parts: Array<IPartInfo>;
-  total: ISpaceInfo;
-}
+import {ISpaceInfo, IPartInfo, IPartsInfo} from "../types/db";
 
 /*
  * Heavily based on https://github.com/int0h/npm-hddSpace

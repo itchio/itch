@@ -16,42 +16,30 @@ export * from "./navigation-actions"
 export * from "./lifecycle-actions"
 export * from "./self-update-actions"
 export * from "./install-locations-actions"
-
-import * as uuid from "node-uuid";
+export * from "./modal-actions"
 
 import { createAction } from "redux-actions";
 
 import {
     LANGUAGE_SNIFFED,
-    LANGUAGE_CHANGED,
+    LANGUAGE_CHANGED, ILanguageChangedPayload,
 
-    OPEN_MODAL,
-    CLOSE_MODAL,
-    MODAL_CLOSED,
-    MODAL_RESPONSE,
+    UPDATE_PREFERENCES, IUpdatePreferencesPayload,
 
-    UPDATE_PREFERENCES,
+    FETCH_COLLECTION_GAMES, IFetchCollectionGamesPayload,
+    COLLECTION_GAMES_FETCHED, ICollectionGamesFetchedPayload,
 
-    FETCH_COLLECTION_GAMES,
-    COLLECTION_GAMES_FETCHED,
-
-    ENABLE_BONUS,
-    DISABLE_BONUS,
+    ENABLE_BONUS, IEnableBonusPayload,
+    DISABLE_BONUS, IDisableBonusPayload,
 } from "../constants/action-types";
 
 export const languageSniffed = createAction(LANGUAGE_SNIFFED);
-export const languageChanged = createAction(LANGUAGE_CHANGED);
+export const languageChanged = createAction<ILanguageChangedPayload>(LANGUAGE_CHANGED);
 
-const internalOpenModal = createAction(OPEN_MODAL);
-export const openModal = (payload = {}) => internalOpenModal(Object.assign({}, payload, { id: uuid.v4() }));
-export const closeModal = createAction(CLOSE_MODAL);
-export const modalClosed = createAction(MODAL_CLOSED);
-export const modalResponse = createAction(MODAL_RESPONSE);
+export const updatePreferences = createAction<IUpdatePreferencesPayload>(UPDATE_PREFERENCES);
 
-export const updatePreferences = createAction(UPDATE_PREFERENCES);
+export const fetchCollectionGames = createAction<IFetchCollectionGamesPayload>(FETCH_COLLECTION_GAMES);
+export const collectionGamesFetched = createAction<ICollectionGamesFetchedPayload>(COLLECTION_GAMES_FETCHED);
 
-export const fetchCollectionGames = createAction(FETCH_COLLECTION_GAMES);
-export const collectionGamesFetched = createAction(COLLECTION_GAMES_FETCHED);
-
-export const enableBonus = createAction(ENABLE_BONUS);
-export const disableBonus = createAction(DISABLE_BONUS);
+export const enableBonus = createAction<IEnableBonusPayload>(ENABLE_BONUS);
+export const disableBonus = createAction<IDisableBonusPayload>(DISABLE_BONUS);
