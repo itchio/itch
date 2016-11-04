@@ -162,7 +162,7 @@ export interface INavigatePayload {
 }
 
 export const FOCUS_NTH_TAB = "FOCUS_NTH_TAB";
-export interface IFocusNthTabPayload {}
+export type IFocusNthTabPayload = number;
 
 export const MOVE_TAB = "MOVE_TAB";
 export interface IMoveTabPayload {
@@ -185,6 +185,9 @@ export interface ITabEvolvedPayload {
 }
 
 export const NEW_TAB = "NEW_TAB";
+export interface INewTabPayload {
+
+}
 
 export const CLOSE_TAB = "CLOSE_TAB";
 /** if null, close current tab */
