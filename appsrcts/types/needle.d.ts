@@ -1,8 +1,16 @@
 
 declare module "needle" {
     export interface INeedleResponse {
+        /** http status string (number + name) */
+        status: string;
+
+        /** http status code */
         statusCode: number;
+
+        /** depending on how it's called, can be a buffer, a string, a JSON object */
         body: any;
+
+        /** http headers */
         headers: {
             [key: string]: string;
         };

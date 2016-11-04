@@ -2,9 +2,9 @@
 import {createAction} from "redux-actions";
 
 import {
-  START_ONBOARDING,
-  EXIT_ONBOARDING,
+  START_ONBOARDING, IStartOnboardingPayload,
+  EXIT_ONBOARDING, IExitOnboardingPayload,
 } from "../constants/action-types";
 
-export const startOnboarding = createAction(START_ONBOARDING);
-export const exitOnboarding = createAction(EXIT_ONBOARDING);
+export const startOnboarding = createAction<IStartOnboardingPayload>(START_ONBOARDING);
+export const exitOnboarding = createAction<IExitOnboardingPayload>(EXIT_ONBOARDING);

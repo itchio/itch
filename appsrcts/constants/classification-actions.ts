@@ -1,4 +1,10 @@
 
+export type ClassificationAction = "launch" | "open";
+
+export interface IClassificationActions {
+  [key: string]: ClassificationAction;
+}
+
 export default {
   "game": "launch",
   "tool": "launch",
@@ -10,4 +16,4 @@ export default {
   "other": "open",
   "comic": "open",
   "book": "open",
-};
+} as IClassificationActions;
