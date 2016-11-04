@@ -19,7 +19,7 @@ const initialState = {
   isolateApps: false,
   closeToTray: true,
   showAdvanced: false,
-};
+} as IPreferencesState;
 
 export default handleActions<IPreferencesState, any>({
   UPDATE_PREFERENCES: (state: IPreferencesState, action: IAction<IUpdatePreferencesPayload>) => {

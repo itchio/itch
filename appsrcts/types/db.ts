@@ -403,7 +403,7 @@ export interface IRememberedSession {
 }
 
 export interface IRememberedSessionsState {
-    [id: number]: IRememberedSession;
+    [id: string]: IRememberedSession;
 }
 
 export interface ISessionState {
@@ -566,20 +566,28 @@ export interface IInstallLocation {
 export interface IPreferencesState {
   /** is the app allowed to check for updates to itself? */
   downloadSelfUpdates: boolean;
+
   /** do not make any network requests */
   offlineMode: boolean;
   installLocations: {
       [key: string]: IInstallLocation;
   };
+
   /** where to install games (doesn't change already-installed games) */
   defaultInstallLocation: string;
   sidebarWidth: number;
+
   /** use sandbox */
   isolateApps: boolean;
+
   /** when closing window, keep running in tray */
   closeToTray: boolean;
+
   /** show the advanced section of settings */
   showAdvanced: boolean;
+
+  /** language picked by the user */
+  lang?: string;
 }
 
 export interface ITask {

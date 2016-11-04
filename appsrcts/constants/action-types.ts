@@ -35,6 +35,7 @@ export interface ICloseModalPayload {
 export const MODAL_CLOSED = "MODAL_CLOSED";
 export interface IModalClosedPayload {
   id: string;
+  action: any;
 }
 export const MODAL_RESPONSE = "MODAL_RESPONSE";
 export interface IModalResponsePayload {}
@@ -57,20 +58,22 @@ export interface ISessionsRememberedPayload extends Types.IRememberedSessionsSta
 export const SESSION_UPDATED = "SESSION_UPDATED";
 export interface ISessionUpdatedPayload {
   /** the session to update (user id) */
-  id: number;
+  id: string;
   
   /** new/updated fields (can't delete fields) */
   record: Types.IRememberedSession;
 }
 
 export const FORGET_SESSION_REQUEST = "FORGET_SESSION_REQUEST";
-export interface IForgetSessionRequestPayload {}
+export interface IForgetSessionRequestPayload {
+  /** the session to forget (user id) */
+  id: string;
+
+  username: string;
+}
 
 export const FORGET_SESSION = "FORGET_SESSION";
-export interface IForgetSessionPayload {
-  /** the session to forget */
-  id: number;
-}
+export interface IForgetSessionPayload extends IForgetSessionRequestPayload {}
 
 export const START_ONBOARDING = "START_ONBOARDING";
 export interface IStartOnboardingPayload {}
