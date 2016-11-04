@@ -6,34 +6,43 @@ export type IAction<T> = Action<T>;
 
 // run upgrade operations
 export const PREBOOT = "PREBOOT";
+export interface IPrebootPayload {}
 
 // actually start the app
 export const BOOT = "BOOT";
+export interface IBootPayload {}
+
 export const FIRST_USEFUL_PAGE = "FIRST_USEFUL_PAGE";
+export interface IFirstUsefulPagePayload {}
 
 // Chromium is good at retrieving the user's language from the innards of the OS
 // doing the same from nodejs would probably be a waste of everyone's time
 export const LANGUAGE_SNIFFED = "LANGUAGE_SNIFFED";
 export type ILanguageSniffedPayload = string;
+
 export const LANGUAGE_CHANGED = "LANGUAGE_CHANGED";
 export type ILanguageChangedPayload = string;
 
 export const OPEN_MODAL = "OPEN_MODAL";
-export interface IOpenModalPayload extends Types.IModal {};
+export interface IOpenModalPayload extends Types.IModal {}
+
 export const CLOSE_MODAL = "CLOSE_MODAL";
 export interface ICloseModalPayload {
   id: string;
-};
+}
 export const MODAL_CLOSED = "MODAL_CLOSED";
 export interface IModalClosedPayload {
   id: string;
-};
+}
 export const MODAL_RESPONSE = "MODAL_RESPONSE";
+export interface IModalResponsePayload {}
 
 export const SETUP_STATUS = "SETUP_STATUS";
 export interface ISetupStatusPayload extends Types.ISetupOperation {};
+
 export const SETUP_DONE = "SETUP_DONE";
 export interface ISetupDonePayload {};
+
 export const RETRY_SETUP = "RETRY_SETUP";
 export interface IRetrySetupPayload {};
 
@@ -231,7 +240,7 @@ export interface IUnlockTabPayload {
   path: string;
 }
 
-/* Menu */
+/* Application menu */
 export const REFRESH_MENU = "REFRESH_MENU";
 export interface IRefreshMenuPayload {
   system: Types.ISystemState;
@@ -243,15 +252,24 @@ export const PREPARE_QUIT = "PREPARE_QUIT";
 export interface IPrepareQuitPayload {}
 
 export const QUIT = "QUIT";
+export interface IQuitPayload {}
+
 export const QUIT_WHEN_MAIN = "QUIT_WHEN_MAIN";
+export interface IQuitWhenMainPayload {}
+
 export const QUIT_ELECTRON_APP = "QUIT_ELECTRON_APP";
+export interface IQuitElectronAppPayload {}
+
 export const QUIT_AND_INSTALL = "QUIT_AND_INSTALL";
+export interface IQuitAndInstallPayload {}
 
 /* Self updates */
 export const CHECK_FOR_SELF_UPDATE = "CHECK_FOR_SELF_UPDATE";
 export interface ICheckForSelfUpdatePayload {};
+
 export const CHECKING_FOR_SELF_UPDATE = "CHECKING_FOR_SELF_UPDATE";
 export interface ICheckingForSelfUpdatePayload {};
+
 export const SELF_UPDATE_AVAILABLE = "SELF_UPDATE_AVAILABLE";
 export interface ISelfUpdateAvailablePayload {
   /** info on the self-update that's available */
@@ -260,6 +278,7 @@ export interface ISelfUpdateAvailablePayload {
   /** whether the self-update is being immediately downloaded */
   downloading: boolean;
 };
+
 export const SELF_UPDATE_NOT_AVAILABLE = "SELF_UPDATE_NOT_AVAILABLE";
 export interface ISelfUpdateNotAvailablePayload {
   /**
@@ -268,23 +287,31 @@ export interface ISelfUpdateNotAvailablePayload {
    */
   uptodate: boolean;
 };
+
 export const SELF_UPDATE_ERROR = "SELF_UPDATE_ERROR";
 export type ISelfUpdateErrorPayload = string;
+
 export const SELF_UPDATE_DOWNLOADED = "SELF_UPDATE_DOWNLOADED";
 export interface ISelfUpdateDownloadedPayload {};
+
 export const SHOW_AVAILABLE_SELF_UPDATE = "SHOW_AVAILABLE_SELF_UPDATE";
 export interface IShowAvailableSelfUpdatePayload {};
+
 export const APPLY_SELF_UPDATE = "APPLY_SELF_UPDATE";
 export interface IApplySelfUpdatePayload {};
+
 export const APPLY_SELF_UPDATE_REQUEST = "APPLY_SELF_UPDATE_REQUEST";
 export interface IApplySelfUpdateRequestPayload {};
+
 export const SNOOZE_SELF_UPDATE = "SNOOZE_SELF_UPDATE";
 export interface ISnoozeSelfUpdatePayload {};
+
 export const DISMISS_STATUS = "DISMISS_STATUS";
 export interface IDismissStatusPayload {};
 
 export const STATUS_MESSAGE = "STATUS_MESSAGE";
 export interface IStatusMessagePayload {};
+
 export const DISMISS_STATUS_MESSAGE = "DISMISS_STATUS_MESSAGE";
 export interface IDismissStatusMessagePayload {};
 
@@ -302,14 +329,17 @@ export const LOCALES_CONFIG_LOADED = "LOCALES_CONFIG_LOADED";
 export interface ILocalesConfigLoadedPayload {
   strings: Types.II18nResources;
 };
+
 export const QUEUE_LOCALE_DOWNLOAD = "QUEUE_LOCALE_DOWNLOAD";
 export interface IQueueLocaleDownloadPayload {
   lang: string;
 };
+
 export const LOCALE_DOWNLOAD_STARTED = "LOCALE_DOWNLOAD_STARTED";
 export interface ILocaleDownloadStartedPayload {
   lang: string;
 };
+
 export const LOCALE_DOWNLOAD_ENDED = "LOCALE_DOWNLOAD_ENDED";
 export interface ILocaleDownloadEndedPayload {
   lang: string;
@@ -318,11 +348,22 @@ export interface ILocaleDownloadEndedPayload {
 
 /* Install locations */
 export const BROWSE_INSTALL_LOCATION = "BROWSE_INSTALL_LOCATION";
+export interface IBrowseInstallLocationPayload {}
+
 export const ADD_INSTALL_LOCATION_REQUEST = "ADD_INSTALL_LOCATION_REQUEST";
+export interface IAddInstallLocationRequestPayload {}
+
 export const ADD_INSTALL_LOCATION = "ADD_INSTALL_LOCATION";
+export interface IAddInstallLocationPayload {}
+
 export const REMOVE_INSTALL_LOCATION_REQUEST = "REMOVE_INSTALL_LOCATION_REQUEST";
+export interface IRemoveInstallLocationRequestPayload {}
+
 export const REMOVE_INSTALL_LOCATION = "REMOVE_INSTALL_LOCATION";
+export interface IRemoveInstallLocationPayload {}
+
 export const MAKE_INSTALL_LOCATION_DEFAULT = "MAKE_INSTALL_LOCATION_DEFAULT";
+export interface IMakeInstallLocationDefaultPayload {}
 
 export const QUERY_FREE_SPACE = "QUERY_FREE_SPACE";
 export interface IQueryFreeSpacePayload {};
@@ -400,52 +441,94 @@ export interface IClearGameDownloadsPayload {
 
 /** User requested game to be uninstalled */
 export const REQUEST_CAVE_UNINSTALL = "REQUEST_CAVE_UNINSTALL";
+export interface IRequestCaveUninstallPayload {}
+
 /** Cave is going to be uninstalled */
 export const QUEUE_CAVE_UNINSTALL = "QUEUE_CAVE_UNINSTALL";
+export interface IQueueCaveUninstallPayload {}
+
 /** Cave is going to be reinstalled */
 export const QUEUE_CAVE_REINSTALL = "QUEUE_CAVE_REINSTALL";
-/** Kaboom! */
+export interface IQueueCaveReinstallPayload {}
+
+/** Delete cave from local db */
 export const IMPLODE_CAVE = "IMPLODE_CAVE";
-/** I changed my mind */
+export interface IImplodeCavePayload {}
+
+/** Deprecated. TODO: remove */
 export const CANCEL_CAVE = "CANCEL_CAVE";
-/** Bye bye. */
+export interface ICancelCavePayload {}
+
+/** Cave has been deleted from local db */
 export const CAVE_THROWN_INTO_BIT_BUCKET = "CAVE_THROWN_INTO_BIT_BUCKET";
-/** i spy, i spy */
+export interface ICaveThrownIntoBitBucketPayload {}
+
+/** Show local files */
 export const EXPLORE_CAVE = "EXPLORE_CAVE";
-/** Alright, what broke this time? */
+export interface IExploreCavePayload {}
+
+/** Show cave logs */
 export const PROBE_CAVE = "PROBE_CAVE";
-/** Let the others figure it out */
+export interface IProbeCavePayload {}
+
+/** Open issue on github with cave logs */
 export const REPORT_CAVE = "REPORT_CAVE";
-/** Won't compromise on that */
+export interface IReportCavePayload {}
+
+/** Can't install .deb, .rpm, etc. */
 export const SHOW_PACKAGING_POLICY = "SHOW_PACKAGING_POLICY";
+export interface IShowPackagingPolicyPayload {}
+
 /** A game has been interacted with! */
 export const RECORD_GAME_INTERACTION = "RECORD_GAME_INTERACTION";
+export interface IRecordGameInteractionPayload {}
 
 export const ABORT_GAME_REQUEST = "ABORT_GAME_REQUEST";
+export interface IAbortGameRequestPayload {}
+
 export const ABORT_LAST_GAME = "ABORT_LAST_GAME";
+export interface IAbortLastGamePayload {}
+
 export const ABORT_GAME = "ABORT_GAME";
+export interface IAbortGamePayload {}
 
 export const CHECK_FOR_GAME_UPDATE = "CHECK_FOR_GAME_UPDATE";
+export interface ICheckForGameUpdatePayload {}
+
 export const CHECK_FOR_GAME_UPDATES = "CHECK_FOR_GAME_UPDATES";
+export interface ICheckForGameUpdatesPayload {}
 
 /** User requested game to be installed */
 export const QUEUE_GAME = "QUEUE_GAME";
+export interface IQueueGamePayload {}
 
 /** Open a game's page */
 export const BROWSE_GAME = "BROWSE_GAME";
+export interface IBrowseGamePayload {}
 
 /** Buy / support something! */
 export const INITIATE_PURCHASE = "INITIATE_PURCHASE";
+export interface IInitiatePurchasePayload {}
+
 export const PURCHASE_COMPLETED = "PURCHASE_COMPLETED";
+export interface IPurchaseCompletedPayload {}
+
 export const ENCOURAGE_GENEROSITY = "ENCOURAGE_GENEROSITY";
+export interface IEncourageGenerosityPayload {}
 
 export const INITIATE_SHARE = "INITIATE_SHARE";
+export interface IInitiateSharePayload {}
 
 /** macOS-only, bounce dock */
 export const BOUNCE = "BOUNCE";
+export interface IBouncePayload {}
+
 /** Cross-platform, notification bubble */
 export const NOTIFY = "NOTIFY";
+export interface INotifyPayload {}
+
 export const NOTIFY_HTML5 = "NOTIFY_HTML5";
+export interface INotifyHtml5Payload {}
 
 /** Search */
 export const FOCUS_SEARCH = "FOCUS_SEARCH";
@@ -560,18 +643,28 @@ export interface ILogoutPayload {}
 
 /** Sent from metal when needs to eval something in chrome. Example: HTML5 Notification API */
 export const EVAL = "EVAL";
+export interface IEvalPayload {}
 
 /** Sent when app is about to reboot or shutdown */
 export const IMPLODE_APP = "IMPLODE_APP";
+export interface IImplodeAppPayload {}
 
 /** GC unused database entries */
 export const GC_DATABASE = "GC_DATABASE";
+export interface IGcDatabasePayload {}
 
 /* Preferences */
 export const OPEN_PREFERENCES = "OPEN_PREFERENCES";
+export interface IOpenPreferencesPayload {}
+
 export const PREFERENCES_SET_LANGUAGE = "PREFERENCES_SET_LANGUAGE";
+export interface IPreferencesSetLanguagePayload {}
+
 export const UPDATE_PREFERENCES = "UPDATE_PREFERENCES";
 export interface IUpdatePreferencesPayload extends Types.IPreferencesState {};
 
 export const VIEW_CREATOR_PROFILE = "VIEW_CREATOR_PROFILE";
+export interface IViewCreatorProfilePayload {}
+
 export const VIEW_COMMUNITY_PROFILE = "VIEW_CREATOR_PROFILE";
+export interface IViewCommunityProfilePayload {}
