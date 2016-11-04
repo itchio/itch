@@ -390,22 +390,34 @@ export interface ILocaleDownloadEndedPayload {
 
 /* Install locations */
 export const BROWSE_INSTALL_LOCATION = "BROWSE_INSTALL_LOCATION";
-export interface IBrowseInstallLocationPayload {}
+export interface IBrowseInstallLocationPayload {
+  /** name of install location to browse */
+  name: string;
+}
 
 export const ADD_INSTALL_LOCATION_REQUEST = "ADD_INSTALL_LOCATION_REQUEST";
 export interface IAddInstallLocationRequestPayload {}
 
 export const ADD_INSTALL_LOCATION = "ADD_INSTALL_LOCATION";
-export interface IAddInstallLocationPayload {}
+export interface IAddInstallLocationPayload {
+  /** install location name */
+  name: string;
+}
 
 export const REMOVE_INSTALL_LOCATION_REQUEST = "REMOVE_INSTALL_LOCATION_REQUEST";
-export interface IRemoveInstallLocationRequestPayload {}
+export interface IRemoveInstallLocationRequestPayload {
+  /** name of the install location to remove */
+  name: string;
+}
 
 export const REMOVE_INSTALL_LOCATION = "REMOVE_INSTALL_LOCATION";
-export interface IRemoveInstallLocationPayload {}
+export interface IRemoveInstallLocationPayload extends IRemoveInstallLocationRequestPayload {}
 
 export const MAKE_INSTALL_LOCATION_DEFAULT = "MAKE_INSTALL_LOCATION_DEFAULT";
-export interface IMakeInstallLocationDefaultPayload {}
+export interface IMakeInstallLocationDefaultPayload {
+  /** name of install location to make the default */
+  name: string;
+}
 
 export const QUERY_FREE_SPACE = "QUERY_FREE_SPACE";
 export interface IQueryFreeSpacePayload {};

@@ -560,31 +560,34 @@ export interface ISelfUpdateState {
 }
 
 export interface IInstallLocation {
-
+    /** path on disk (empty for appdata) */
+    path: string;
 }
 
 export interface IPreferencesState {
   /** is the app allowed to check for updates to itself? */
-  downloadSelfUpdates: boolean;
+  downloadSelfUpdates?: boolean;
 
   /** do not make any network requests */
-  offlineMode: boolean;
-  installLocations: {
+  offlineMode?: boolean;
+
+  installLocations?: {
       [key: string]: IInstallLocation;
   };
 
   /** where to install games (doesn't change already-installed games) */
-  defaultInstallLocation: string;
-  sidebarWidth: number;
+  defaultInstallLocation?: string;
+
+  sidebarWidth?: number;
 
   /** use sandbox */
-  isolateApps: boolean;
+  isolateApps?: boolean;
 
   /** when closing window, keep running in tray */
-  closeToTray: boolean;
+  closeToTray?: boolean;
 
   /** show the advanced section of settings */
-  showAdvanced: boolean;
+  showAdvanced?: boolean;
 
   /** language picked by the user */
   lang?: string;
