@@ -35,7 +35,7 @@ const prefixToActions: IPrefixActionMap = {
     commit: actionTypes.USER_DB_COMMIT,
     closed: actionTypes.USER_DB_CLOSED,
   },
-}
+};
 
 export default function makeMarketReducer (prefix: IMarketPrefix, getMarket: IMarketGetter, tables: string[]) {
   const initialState = {
