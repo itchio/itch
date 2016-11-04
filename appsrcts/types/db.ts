@@ -163,6 +163,46 @@ export interface ICaveRecordLocation {
 export interface ICaveRecord extends ICaveRecordLocation {
     /* unique GUID generated locally */
     id: string;
+
+    /** identifier of itch.io upload currently installed */
+    uploadId: number;
+
+    /**
+     * identifier of itch.io / wharf build currently installed.
+     * if not set, the associated upload wasn't wharf-enabled at the
+     * time of the install. if set, there's a good chance we can apply
+     * patches instead of fully downloading the new version.
+     */
+    buildId?: number;
+
+    /**
+     * if true, can be launched — if false, may have not finished
+     * installing, may be in the middle of updating, etc.
+     */
+    launchable: boolean;
+
+    /** timestamp when that cave was last installed. updates count as install. */
+    installedAt: number;
+
+    /**
+     * info on the user that installed the game in this app instance
+     */
+    installedBy: {
+        /** itch.io user id */
+        id: number;
+
+        /** itch.io username at the time it was installed (usernames can change) */
+        username: string;
+    };
+
+    /** itch.io game id this cave contains */
+    gameId: number;
+
+    /** download key what was used to install this game, if any */
+    downloadKey: IDownloadKey;
+
+    /** true if the record was created just before installing for the first time */
+    fresh?: boolean;
 }
 
 export interface IUploadRecord {
@@ -172,11 +212,29 @@ export interface IUploadRecord {
     /** name of the uploaded file - null for external uploads */
     filename?: string;
 
+    /** user-friendly name for the upload, set by developer */
+    displayName?: string;
+
     /** if this is a wharf-enabled upload, identifier of the latest build */
     buildId: number;
 
     /** set to 'html' for HTML5 games */
     type: string;
+
+    /**
+     * the size of this upload, in bytes.
+     * for wharf-enabled uploads, it's the latest archive size.
+     */
+    size?: number;
+
+    /** if true, the upload is a demo and can be downloaded for free */
+    demo?: boolean;
+
+    /** when the upload was created */
+    createdAt: string;
+
+    /** when the upload was updated */
+    updatedAt: string;
 }
 
 /**
@@ -528,15 +586,94 @@ export interface ITask {
     /** generated identifier */
     id: string;
 
+    /** name of the task: install, uninstall, etc. */
+    name: string;
+
     /** progress in the [0, 1] interval */
     progress: number;
+
+    /** id of the game this task is for (which game we're installing, etc.) */
+    gameId: number;
 }
 
 export interface ITasksState {
+    /** all tasks currently going on in the app (installs, uninstalls, etc.) */
     tasks: {
         [key: string]: ITask;
     };
+
+    /** same as tasks, but indexed by gameId - there may be multiple for the same game */
+    tasksByGameId: {
+        [gameId: string]: ITask[];
+    };
+
+    /** all tasks finished and not cleared yet, since the app started */
     finishedTasks: ITask[];
+}
+
+export interface IUpgradePathItem {
+  id: number;
+  userVersion?: string;
+  updatedAt: string;
+  patchSize: number;
+}
+
+type DownloadReason = "install" | "reinstall" | "update";
+
+export interface IStartDownloadOpts {
+  /** reason for starting this download */
+  reason: DownloadReason;
+
+  /** order of the download in the download queue */
+  order?: number;
+
+  /** if true, user disambiguated from list of uploads */
+  handPicked?: boolean;
+
+  downloadKey?: IDownloadKey;
+
+  gameId: number;
+
+  game: IGameRecord;
+
+  upload: IUploadRecord;
+
+  totalSize?: number;
+
+  destPath: string;
+
+  incremental?: boolean;
+
+  upgradePath?: IUpgradePathItem[];
+}
+
+export interface IStartTaskOpts {
+  /** the name of the task */
+  name: string;
+
+  /** id of the game this task is for */
+  gameId: number;
+
+  /** the game this task is for */
+  game?: IGameRecord;
+
+  // FIXME: this is a bad way to pass data
+
+  // install-specific opts
+  reinstall?: boolean;
+  upload?: IUploadRecord;
+  cave?: ICaveRecord;
+  archivePath?: string;
+}
+
+export interface IDownloadOpts extends IStartDownloadOpts {
+  credentials: ICredentials;
+
+  upgradePath?: Array<IUpgradePathItem>;
+
+  cave?: ICaveRecord;
+
+  logger: any;
 }
 
 /**
@@ -544,6 +681,8 @@ export interface ITasksState {
  * sometimes for first install, sometimes for update.
  */
 export interface IDownloadItem {
+    // TODO: dedupe with IDownloadOpts
+
     /** unique generated id for this download */
     id: string;
     
@@ -564,6 +703,30 @@ export interface IDownloadItem {
 
     /** order in the download list: can be negative, for reordering */
     order: number;
+
+    /** the reason why a download was started */
+    reason: string;
+
+    /** whether this is an incremental update (wharf patch) or a full re-download */
+    incremental: boolean;
+
+    /** the upload we're downloading */
+    upload: IUploadRecord;
+
+    /** where on disk we're downloading the upload */
+    destPath: string;
+
+    /** if true, user chose which to download among a list of compatible uploads */
+    handPicked?: boolean;
+
+    /** if set, the download key we're using to download a particular upload */
+    downloadKey?: IDownloadKey;
+
+    /** initial options passed to download */
+    downloadOpts: IDownloadOpts;
+
+    /** at how many bytes per second are we downloading right now? */
+    bps?: number;
 }
 
 export interface IDownloadsState {
@@ -582,6 +745,12 @@ export interface IDownloadsState {
 
     /** Download speeds, in bps, each item represents one second */
     speeds: {bps: number}[];
+
+    /** if true, downloads acts as a queue, doesn't actually download anything until they're started again */
+    downloadsPaused: boolean;
+
+    /** progress of current download in [0, 1] interval */
+    progress: number;
 }
 
 export interface IStatusState {

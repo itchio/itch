@@ -1,6 +1,8 @@
 
 import {Action} from "redux-actions";
+
 import * as Types from "../types/db";
+import {IProgressInfo} from "../types/progress";
 
 export type IAction<T> = Action<T>;
 
@@ -409,12 +411,22 @@ export interface IFreeSpaceUpdatedPayload {
 
 /* Tasks */
 export const TASK_STARTED = "TASK_STARTED";
-export interface ITaskStartedPayload extends Types.ITask {};
+export interface ITaskStartedPayload {
+  name: string;
+  id: string;
+};
 export const TASK_PROGRESS = "TASK_PROGRESS";
-export interface ITaskProgressPayload extends Types.ITask {};
+export interface ITaskProgressPayload extends IProgressInfo {
+  /** the task this progress info is for */
+  id: string;
+};
 export const TASK_ENDED = "TASK_ENDED";
 export interface ITaskEndedPayload {
+  name: string;
   id: string;
+  err: string;
+  result: any;
+  taskOpts: any; // TODO: type better
 };
 
 export const ABORT_TASK = "ABORT_TASK";
@@ -424,19 +436,27 @@ export interface IAbortTaskPayload {
 
 /* Downloads */
 export const QUEUE_DOWNLOAD = "QUEUE_DOWNLOAD";
+export interface IQueueDownloadPayload {}
 
 export const DOWNLOAD_STARTED = "DOWNLOAD_STARTED";
 export interface IDownloadStartedPayload extends Types.IDownloadItem {};
 
 export const DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS";
-export interface IDownloadProgressPayload extends Types.IDownloadItem {};
+export interface IDownloadProgressPayload extends IProgressInfo {
+  /** the download in progress */
+  id: string;
+};
 
 export const DOWNLOAD_ENDED = "DOWNLOAD_ENDED";
 export interface IDownloadEndedPayload {
   /** the download that just ended */
   id: string;
+
   /** an error, if any */
   err: string;
+
+  /** the original download options */
+  downloadOpts: Types.IDownloadOpts;
 }
 
 export const DOWNLOAD_SPEED_DATAPOINT = "DOWNLOAD_SPEED_DATAPOINT";
@@ -466,7 +486,9 @@ export const RESUME_DOWNLOADS = "RESUME_DOWNLOADS";
 export interface IResumeDownloadsPayload {}
 
 export const RETRY_DOWNLOAD = "RETRY_DOWNLOAD";
-export interface IRetryDownloadPayload {}
+export interface IRetryDownloadPayload {
+  downloadOpts: Types.IDownloadOpts;
+}
 
 export const CLEAR_GAME_DOWNLOADS = "CLEAR_GAME_DOWNLOADS";
 export interface IClearGameDownloadsPayload {
@@ -479,15 +501,24 @@ export interface IRequestCaveUninstallPayload {}
 
 /** Cave is going to be uninstalled */
 export const QUEUE_CAVE_UNINSTALL = "QUEUE_CAVE_UNINSTALL";
-export interface IQueueCaveUninstallPayload {}
+export interface IQueueCaveUninstallPayload {
+  /** id of the cave to uninstall */
+  caveId: string;
+}
 
 /** Cave is going to be reinstalled */
 export const QUEUE_CAVE_REINSTALL = "QUEUE_CAVE_REINSTALL";
-export interface IQueueCaveReinstallPayload {}
+export interface IQueueCaveReinstallPayload {
+  /** id of the cave to reinstall */
+  caveId: string;
+}
 
 /** Delete cave from local db */
 export const IMPLODE_CAVE = "IMPLODE_CAVE";
-export interface IImplodeCavePayload {}
+export interface IImplodeCavePayload {
+  /** id of the cave to implode */
+  caveId: string;
+}
 
 /** Deprecated. TODO: remove */
 export const CANCEL_CAVE = "CANCEL_CAVE";
@@ -499,7 +530,10 @@ export interface ICaveThrownIntoBitBucketPayload {}
 
 /** Show local files */
 export const EXPLORE_CAVE = "EXPLORE_CAVE";
-export interface IExploreCavePayload {}
+export interface IExploreCavePayload {
+  /** id of the cave to explore */
+  caveId: string;
+}
 
 /** Show cave logs */
 export const PROBE_CAVE = "PROBE_CAVE";
@@ -518,23 +552,41 @@ export const RECORD_GAME_INTERACTION = "RECORD_GAME_INTERACTION";
 export interface IRecordGameInteractionPayload {}
 
 export const ABORT_GAME_REQUEST = "ABORT_GAME_REQUEST";
-export interface IAbortGameRequestPayload {}
+export interface IAbortGameRequestPayload {
+  /** the game we want to force-quit */
+  gameId: number;
+}
 
 export const ABORT_LAST_GAME = "ABORT_LAST_GAME";
 export interface IAbortLastGamePayload {}
 
 export const ABORT_GAME = "ABORT_GAME";
-export interface IAbortGamePayload {}
+export interface IAbortGamePayload extends IAbortGameRequestPayload {}
 
 export const CHECK_FOR_GAME_UPDATE = "CHECK_FOR_GAME_UPDATE";
-export interface ICheckForGameUpdatePayload {}
+export interface ICheckForGameUpdatePayload {
+  /** which cave to check for an update */
+  caveId: string;
+
+  /** display a notification if the game is up-to-date. otherwise, stay silent */
+  noisy: boolean;
+}
 
 export const CHECK_FOR_GAME_UPDATES = "CHECK_FOR_GAME_UPDATES";
 export interface ICheckForGameUpdatesPayload {}
 
 /** User requested game to be installed */
 export const QUEUE_GAME = "QUEUE_GAME";
-export interface IQueueGamePayload {}
+export interface IQueueGamePayload {
+  /** the game we want to download */
+  game: Types.IGameRecord;
+
+  /** when manually picking which upload to download, the id of the upload the user picked */
+  pickedUpload?: number;
+
+  /** any extra download options */
+  extraOpts: {};
+}
 
 /** Open a game's page */
 export const BROWSE_GAME = "BROWSE_GAME";

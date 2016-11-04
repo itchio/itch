@@ -1,6 +1,8 @@
 
-interface IClassificationActions {
-  [key: string]: string;
+export type ClassificationAction = "launch" | "open";
+
+export interface IClassificationActions {
+  [key: string]: ClassificationAction;
 }
 
 export default {
