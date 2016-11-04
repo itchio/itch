@@ -189,7 +189,7 @@ export class Preferences extends Component {
           <div className='default-switch hint--right' data-hint={t('preferences.install_location.' + (isDefault ? 'is_default' : 'make_default'))}>
             <span className='single-line'>{path}</span>
             {isDefault
-              ? <span className='single-line default-state'>{t('preferences.install_location.is_default_short')}</span>
+              ? <span className='single-line default-state'>({t('preferences.install_location.is_default_short').toLowerCase()})</span>
               : null
             }
           </div>
