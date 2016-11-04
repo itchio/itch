@@ -116,7 +116,7 @@ async function addInstallLocationRequest (store: IStore, action: IAction<IAddIns
     properties: ["openDirectory"],
   };
 
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise<IAddInstallLocationPayload>((resolve, reject) => {
     const callback = (response: string[]) => {
       if (!response) {
         return resolve();

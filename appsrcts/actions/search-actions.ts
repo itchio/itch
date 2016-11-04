@@ -2,36 +2,37 @@
 import {createAction} from "redux-actions";
 
 import {
-  FOCUS_SEARCH,
-  FOCUS_FILTER,
-  CLEAR_FILTERS,
-  SEARCH,
-  SEARCH_QUERY_CHANGED,
-  SEARCH_FETCHED,
-  SEARCH_STARTED,
-  SEARCH_FINISHED,
-  CLOSE_SEARCH,
+  FOCUS_SEARCH, IFocusSearchPayload,
+  FOCUS_FILTER, IFocusFilterPayload,
+  CLEAR_FILTERS, IClearFiltersPayload,
+  SEARCH, ISearchPayload,
+  SEARCH_QUERY_CHANGED, ISearchQueryChangedPayload,
+  SEARCH_FETCHED, ISearchFetchedPayload,
+  SEARCH_STARTED, ISearchStartedPayload,
+  SEARCH_FINISHED, ISearchFinishedPayload,
+  CLOSE_SEARCH, ICloseSearchPayload,
 
-  FILTER_CHANGED,
-  BINARY_FILTER_CHANGED,
+  FILTER_CHANGED, IFilterChangedPayload,
+  BINARY_FILTER_CHANGED, IBinaryFilterChangedPayload,
 
-  SEARCH_HIGHLIGHT_OFFSET,
+  SEARCH_HIGHLIGHT_OFFSET, ISearchHighlightOffsetPayload,
 } from "../constants/action-types";
 
-export const focusSearch = createAction(FOCUS_SEARCH);
-export const focusFilter = createAction(FOCUS_FILTER);
-export const clearFilters = createAction(CLEAR_FILTERS);
-export const search = createAction(SEARCH);
-export const searchQueryChanged = createAction(SEARCH_QUERY_CHANGED);
-export const searchFetched = createAction(SEARCH_FETCHED);
+export const focusSearch = createAction<IFocusSearchPayload>(FOCUS_SEARCH);
+export const focusFilter = createAction<IFocusFilterPayload>(FOCUS_FILTER);
+export const clearFilters = createAction<IClearFiltersPayload>(CLEAR_FILTERS);
+export const search = createAction<ISearchPayload>(SEARCH);
+export const searchQueryChanged = createAction<ISearchQueryChangedPayload>(SEARCH_QUERY_CHANGED);
+export const searchFetched = createAction<ISearchFetchedPayload>(SEARCH_FETCHED);
 
 // ugh
-export const searchStarted = createAction(SEARCH_STARTED);
-export const searchFinished = createAction(SEARCH_FINISHED);
+// TODO: de-ugh
+export const searchStarted = createAction<ISearchStartedPayload>(SEARCH_STARTED);
+export const searchFinished = createAction<ISearchFinishedPayload>(SEARCH_FINISHED);
 
-export const closeSearch = createAction(CLOSE_SEARCH);
+export const closeSearch = createAction<ICloseSearchPayload>(CLOSE_SEARCH);
 
-export const filterChanged = createAction(FILTER_CHANGED);
-export const binaryFilterChanged = createAction(BINARY_FILTER_CHANGED);
+export const filterChanged = createAction<IFilterChangedPayload>(FILTER_CHANGED);
+export const binaryFilterChanged = createAction<IBinaryFilterChangedPayload>(BINARY_FILTER_CHANGED);
 
-export const searchHighlightOffset = createAction(SEARCH_HIGHLIGHT_OFFSET);
+export const searchHighlightOffset = createAction<ISearchHighlightOffsetPayload>(SEARCH_HIGHLIGHT_OFFSET);

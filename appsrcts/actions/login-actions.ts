@@ -2,8 +2,8 @@
 import {createAction} from "redux-actions";
 
 import {
-  LOGIN_START_PICKING,
-  LOGIN_STOP_PICKING,
+  LOGIN_START_PICKING, ILoginStartPickingPayload,
+  LOGIN_STOP_PICKING, ILoginStopPickingPayload,
 
   ATTEMPT_LOGIN, IAttemptLoginPayload,
   LOGIN_WITH_PASSWORD, ILoginWithPasswordPayload,
@@ -15,8 +15,8 @@ import {
   LOGOUT, ILogoutPayload,
 } from "../constants/action-types";
 
-export const loginStartPicking = createAction(LOGIN_START_PICKING);
-export const loginStopPicking = createAction(LOGIN_STOP_PICKING);
+export const loginStartPicking = createAction<ILoginStartPickingPayload>(LOGIN_START_PICKING);
+export const loginStopPicking = createAction<ILoginStopPickingPayload>(LOGIN_STOP_PICKING);
 
 export const attemptLogin = createAction<IAttemptLoginPayload>(ATTEMPT_LOGIN);
 export const loginWithPassword = createAction<ILoginWithPasswordPayload>(LOGIN_WITH_PASSWORD);

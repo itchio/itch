@@ -2,7 +2,7 @@
 import { createAction } from "redux-actions";
 
 import {
-    QUEUE_DOWNLOAD,
+    QUEUE_DOWNLOAD, IQueueDownloadPayload,
     DOWNLOAD_STARTED, IDownloadStartedPayload,
     DOWNLOAD_PROGRESS, IDownloadProgressPayload,
     DOWNLOAD_ENDED, IDownloadEndedPayload,
@@ -19,7 +19,7 @@ import {
     DOWNLOAD_SPEED_DATAPOINT,
 } from "../constants/action-types";
 
-export const queueDownload = createAction(QUEUE_DOWNLOAD);
+export const queueDownload = createAction<IQueueDownloadPayload>(QUEUE_DOWNLOAD);
 
 const internalDownloadStarted = createAction<IDownloadStartedPayload>(DOWNLOAD_STARTED);
 

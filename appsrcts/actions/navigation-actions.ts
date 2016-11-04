@@ -6,40 +6,41 @@ import { IGameRecord, IUserRecord, ICollectionRecord } from "../types/db";
 
 import {
   NAVIGATE,
-  FOCUS_NTH_TAB,
-  MOVE_TAB,
-  EVOLVE_TAB,
-  TAB_EVOLVED,
-  NEW_TAB,
-  CLOSE_TAB,
-  CLOSE_ALL_TABS,
-  SHOW_PREVIOUS_TAB,
-  SHOW_NEXT_TAB,
-  SWITCH_PAGE,
+  FOCUS_NTH_TAB, IFocusNthTabPayload,
+  MOVE_TAB, IMoveTabPayload,
+  EVOLVE_TAB, IEvolveTabPayload,
+  TAB_EVOLVED, ITabEvolvedPayload,
+  NEW_TAB, INewTabPayload,
+  CLOSE_TAB, ICloseTabPayload,
+  CLOSE_ALL_TABS, ICloseAllTabsPayload,
+  SHOW_PREVIOUS_TAB, IShowPreviousTabPayload,
+  SHOW_NEXT_TAB, IShowNextTabPayload,
+  SWITCH_PAGE, ISwitchPagePayload,
 
-  TAB_RELOADED,
-  TAB_CHANGED,
-  TABS_CHANGED,
-  TABS_RESTORED,
-  TAB_DATA_FETCHED,
+  TAB_RELOADED, ITabReloadedPayload,
+  TAB_CHANGED, ITabChangedPayload,
+  TABS_CHANGED, ITabsChangedPayload,
+  TABS_RESTORED, ITabsRestoredPayload,
+  TAB_DATA_FETCHED, ITabDataFetchedPayload,
 
-  OPEN_TAB_CONTEXT_MENU,
-  UNLOCK_TAB,
+  OPEN_TAB_CONTEXT_MENU, IOpenTabContextMenuPayload,
+  UNLOCK_TAB, IUnlockTabPayload,
 
-  OPEN_URL,
-  REPORT_ISSUE,
-  COPY_TO_CLIPBOARD,
-  HANDLE_ITCHIO_URL,
-  TRIGGER_MAIN_ACTION,
-  TRIGGER_OK,
-  TRIGGER_BACK,
-  TRIGGER_LOCATION,
+  OPEN_URL, IOpenUrlPayload,
+  REPORT_ISSUE, IReportIssuePayload,
+  COPY_TO_CLIPBOARD, ICopyToClipboardPayload,
+  HANDLE_ITCHIO_URL, IHandleItchioUrlPayload,
+  TRIGGER_MAIN_ACTION, ITriggerMainActionPayload,
+  TRIGGER_OK, ITriggerOkPayload,
+  TRIGGER_BACK, ITriggerBackPayload,
+  TRIGGER_LOCATION, ITriggerLocationPayload,
 
-  OPEN_PREFERENCES,
-  VIEW_CREATOR_PROFILE,
-  VIEW_COMMUNITY_PROFILE,
+  OPEN_PREFERENCES, IOpenPreferencesPayload,
+  VIEW_CREATOR_PROFILE, IViewCreatorProfilePayload,
+  VIEW_COMMUNITY_PROFILE, IViewCommunityProfilePayload,
 } from "../constants/action-types";
 
+// TODO: type / un-ugh
 const internalNavigate = createAction(NAVIGATE);
 export const navigate = (id: any, data = {}, background = false) => {
   if (typeof id === "object") {
@@ -49,7 +50,7 @@ export const navigate = (id: any, data = {}, background = false) => {
   }
 };
 
-export const focusNthTab = createAction(FOCUS_NTH_TAB);
+export const focusNthTab = createAction<IFocusNthTabPayload>(FOCUS_NTH_TAB);
 
 export const navigateToGame = (game: IGameRecord, background = false) =>
   navigate(`games/${game.id}`, gameToTabData(game), background);
@@ -58,34 +59,34 @@ export const navigateToUser = (user: IUserRecord, background = false) =>
 export const navigateToCollection = (collection: ICollectionRecord, background = false) =>
   navigate(`collections/${collection.id}`, collectionToTabData(collection), background);
 
-export const moveTab = createAction(MOVE_TAB);
-export const evolveTab = createAction(EVOLVE_TAB);
-export const tabEvolved = createAction(TAB_EVOLVED);
-export const newTab = createAction(NEW_TAB);
-export const closeTab = createAction(CLOSE_TAB);
-export const closeAllTabs = createAction(CLOSE_ALL_TABS);
-export const showPreviousTab = createAction(SHOW_PREVIOUS_TAB);
-export const showNextTab = createAction(SHOW_NEXT_TAB);
-export const switchPage = createAction(SWITCH_PAGE);
+export const moveTab = createAction<IMoveTabPayload>(MOVE_TAB);
+export const evolveTab = createAction<IEvolveTabPayload>(EVOLVE_TAB);
+export const tabEvolved = createAction<ITabEvolvedPayload>(TAB_EVOLVED);
+export const newTab = createAction<INewTabPayload>(NEW_TAB);
+export const closeTab = createAction<ICloseTabPayload>(CLOSE_TAB);
+export const closeAllTabs = createAction<ICloseAllTabsPayload>(CLOSE_ALL_TABS);
+export const showPreviousTab = createAction<IShowPreviousTabPayload>(SHOW_PREVIOUS_TAB);
+export const showNextTab = createAction<IShowNextTabPayload>(SHOW_NEXT_TAB);
+export const switchPage = createAction<ISwitchPagePayload>(SWITCH_PAGE);
 
-export const tabReloaded = createAction(TAB_RELOADED);
-export const tabChanged = createAction(TAB_CHANGED);
-export const tabsChanged = createAction(TABS_CHANGED);
-export const tabsRestored = createAction(TABS_RESTORED);
-export const tabDataFetched = createAction(TAB_DATA_FETCHED);
+export const tabReloaded = createAction<ITabReloadedPayload>(TAB_RELOADED);
+export const tabChanged = createAction<ITabChangedPayload>(TAB_CHANGED);
+export const tabsChanged = createAction<ITabsChangedPayload>(TABS_CHANGED);
+export const tabsRestored = createAction<ITabsRestoredPayload>(TABS_RESTORED);
+export const tabDataFetched = createAction<ITabDataFetchedPayload>(TAB_DATA_FETCHED);
 
-export const openTabContextMenu = createAction(OPEN_TAB_CONTEXT_MENU);
-export const unlockTab = createAction(UNLOCK_TAB);
+export const openTabContextMenu = createAction<IOpenTabContextMenuPayload>(OPEN_TAB_CONTEXT_MENU);
+export const unlockTab = createAction<IUnlockTabPayload>(UNLOCK_TAB);
 
-export const openUrl = createAction(OPEN_URL);
-export const reportIssue = createAction(REPORT_ISSUE);
-export const copyToClipboard = createAction(COPY_TO_CLIPBOARD);
-export const handleItchioUrl = createAction(HANDLE_ITCHIO_URL);
-export const triggerMainAction = createAction(TRIGGER_MAIN_ACTION);
-export const triggerOk = createAction(TRIGGER_OK);
-export const triggerBack = createAction(TRIGGER_BACK);
-export const triggerLocation = createAction(TRIGGER_LOCATION);
+export const openUrl = createAction<IOpenUrlPayload>(OPEN_URL);
+export const reportIssue = createAction<IReportIssuePayload>(REPORT_ISSUE);
+export const copyToClipboard = createAction<ICopyToClipboardPayload>(COPY_TO_CLIPBOARD);
+export const handleItchioUrl = createAction<IHandleItchioUrlPayload>(HANDLE_ITCHIO_URL);
+export const triggerMainAction = createAction<ITriggerMainActionPayload>(TRIGGER_MAIN_ACTION);
+export const triggerOk = createAction<ITriggerOkPayload>(TRIGGER_OK);
+export const triggerBack = createAction<ITriggerBackPayload>(TRIGGER_BACK);
+export const triggerLocation = createAction<ITriggerLocationPayload>(TRIGGER_LOCATION);
 
-export const openPreferences = createAction(OPEN_PREFERENCES);
-export const viewCreatorProfile = createAction(VIEW_CREATOR_PROFILE);
-export const viewCommunityProfile = createAction(VIEW_COMMUNITY_PROFILE);
+export const openPreferences = createAction<IOpenPreferencesPayload>(OPEN_PREFERENCES);
+export const viewCreatorProfile = createAction<IViewCreatorProfilePayload>(VIEW_CREATOR_PROFILE);
+export const viewCommunityProfile = createAction<IViewCommunityProfilePayload>(VIEW_COMMUNITY_PROFILE);

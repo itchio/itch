@@ -591,6 +591,9 @@ export interface IPreferencesState {
 
   /** language picked by the user */
   lang?: string;
+
+  /** if true, user's already seen the 'minimize to tray' notification */
+  gotMinimizeNotification?: boolean;
 }
 
 export interface ITask {

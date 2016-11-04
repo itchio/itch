@@ -2,49 +2,49 @@
 import {createAction} from "redux-actions";
 
 import {
-  QUEUE_GAME,
-  BROWSE_GAME,
+  QUEUE_GAME, IQueueGamePayload,
+  BROWSE_GAME, IBrowseGamePayload,
 
-  PROBE_CAVE,
-  EXPLORE_CAVE,
-  REPORT_CAVE,
-  CANCEL_CAVE,
-  IMPLODE_CAVE,
-  REQUEST_CAVE_UNINSTALL,
-  QUEUE_CAVE_UNINSTALL,
-  QUEUE_CAVE_REINSTALL,
-  INITIATE_PURCHASE,
-  PURCHASE_COMPLETED,
-  ENCOURAGE_GENEROSITY,
-  INITIATE_SHARE,
+  PROBE_CAVE, IProbeCavePayload,
+  EXPLORE_CAVE, IExploreCavePayload,
+  REPORT_CAVE, IReportCavePayload,
+  CANCEL_CAVE, ICancelCavePayload,
+  IMPLODE_CAVE, IImplodeCavePayload,
+  REQUEST_CAVE_UNINSTALL, IRequestCaveUninstallPayload,
+  QUEUE_CAVE_UNINSTALL, IQueueCaveUninstallPayload,
+  QUEUE_CAVE_REINSTALL, IQueueCaveReinstallPayload,
+  INITIATE_PURCHASE, IInitiatePurchasePayload,
+  PURCHASE_COMPLETED, IPurchaseCompletedPayload,
+  ENCOURAGE_GENEROSITY, IEncourageGenerosityPayload,
+  INITIATE_SHARE, IInitiateSharePayload,
 
-  ABORT_GAME_REQUEST,
-  ABORT_LAST_GAME,
-  ABORT_GAME,
+  ABORT_GAME_REQUEST, IAbortGameRequestPayload,
+  ABORT_LAST_GAME, IAbortLastGamePayload,
+  ABORT_GAME, IAbortGamePayload,
 
-  CHECK_FOR_GAME_UPDATE,
-  CHECK_FOR_GAME_UPDATES,
+  CHECK_FOR_GAME_UPDATE, ICheckForGameUpdatePayload,
+  CHECK_FOR_GAME_UPDATES, ICheckForGameUpdatesPayload,
 } from "../constants/action-types";
 
-export const queueGame = createAction(QUEUE_GAME);
-export const browseGame = createAction(BROWSE_GAME);
+export const queueGame = createAction<IQueueGamePayload>(QUEUE_GAME);
+export const browseGame = createAction<IBrowseGamePayload>(BROWSE_GAME);
 
-export const probeCave = createAction(PROBE_CAVE);
-export const exploreCave = createAction(EXPLORE_CAVE);
-export const reportCave = createAction(REPORT_CAVE);
-export const cancelCave = createAction(CANCEL_CAVE);
-export const implodeCave = createAction(IMPLODE_CAVE);
-export const requestCaveUninstall = createAction(REQUEST_CAVE_UNINSTALL);
-export const queueCaveUninstall = createAction(QUEUE_CAVE_UNINSTALL);
-export const queueCaveReinstall = createAction(QUEUE_CAVE_REINSTALL);
-export const initiatePurchase = createAction(INITIATE_PURCHASE);
-export const encourageGenerosity = createAction(ENCOURAGE_GENEROSITY);
-export const initiateShare = createAction(INITIATE_SHARE);
-export const purchaseCompleted = createAction(PURCHASE_COMPLETED);
+export const probeCave = createAction<IProbeCavePayload>(PROBE_CAVE);
+export const exploreCave = createAction<IExploreCavePayload>(EXPLORE_CAVE);
+export const reportCave = createAction<IReportCavePayload>(REPORT_CAVE);
+export const cancelCave = createAction<ICancelCavePayload>(CANCEL_CAVE);
+export const implodeCave = createAction<IImplodeCavePayload>(IMPLODE_CAVE);
+export const requestCaveUninstall = createAction<IRequestCaveUninstallPayload>(REQUEST_CAVE_UNINSTALL);
+export const queueCaveUninstall = createAction<IQueueCaveUninstallPayload>(QUEUE_CAVE_UNINSTALL);
+export const queueCaveReinstall = createAction<IQueueCaveReinstallPayload>(QUEUE_CAVE_REINSTALL);
+export const initiatePurchase = createAction<IInitiatePurchasePayload>(INITIATE_PURCHASE);
+export const encourageGenerosity = createAction<IEncourageGenerosityPayload>(ENCOURAGE_GENEROSITY);
+export const initiateShare = createAction<IInitiateSharePayload>(INITIATE_SHARE);
+export const purchaseCompleted = createAction<IPurchaseCompletedPayload>(PURCHASE_COMPLETED);
 
-export const abortGameRequest = createAction(ABORT_GAME_REQUEST);
-export const abortLastGame = createAction(ABORT_LAST_GAME);
-export const abortGame = createAction(ABORT_GAME);
+export const abortGameRequest = createAction<IAbortGameRequestPayload>(ABORT_GAME_REQUEST);
+export const abortLastGame = createAction<IAbortLastGamePayload>(ABORT_LAST_GAME);
+export const abortGame = createAction<IAbortGamePayload>(ABORT_GAME);
 
-export const checkForGameUpdate = createAction(CHECK_FOR_GAME_UPDATE);
-export const checkForGameUpdates = createAction(CHECK_FOR_GAME_UPDATES);
+export const checkForGameUpdate = createAction<ICheckForGameUpdatePayload>(CHECK_FOR_GAME_UPDATE);
+export const checkForGameUpdates = createAction<ICheckForGameUpdatesPayload>(CHECK_FOR_GAME_UPDATES);

@@ -20,11 +20,11 @@ let self = {
     });
   },
 
-  get: function (key: string): string {
+  get: function (key: string): any {
     return nconf.get(key);
   },
 
-  set: function (key: string, value: string) {
+  set: function (key: string, value: any) {
     nconf.set(key, value);
     self.save();
   },

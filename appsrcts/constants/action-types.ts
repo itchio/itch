@@ -131,19 +131,29 @@ export interface IWindowFullscreenChangedPayload {
 }
 
 export const WINDOW_BOUNDS_CHANGED = "WINDOW_BOUNDS_CHANGED";
-export interface IWindowBoundsChangedPaylaod {}
+export interface IWindowBoundsChangedPayload {
+  bounds: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+}
 
 export const CREATE_WINDOW = "CREATE_WINDOW";
 export interface ICreateWindowPayload {}
 
 export const FOCUS_WINDOW = "FOCUS_WINDOW";
-export interface IFocusWindowPayload {}
+export interface IFocusWindowPayload {
+  /** if set to true, toggle focus instead of always focusing */
+  toggle?: boolean;
+}
 
 export const HIDE_WINDOW = "HIDE_WINDOW";
 export interface IHideWindowPayload {}
 
 export const CLOSE_TAB_OR_AUX_WINDOW = "CLOSE_TAB_OR_AUX_WINDOW";
-export interface ICloseTabOrAuxWindowPaylaod {}
+export interface ICloseTabOrAuxWindowPayload {}
 
 export const CLOSE_ALL_TABS = "CLOSE_ALL_TABS";
 export interface ICloseAllTabsPayload {}
@@ -237,8 +247,10 @@ export interface IShortcutsVisibilityChangedPayload {
 }
 
 export const TOGGLE_MINI_SIDEBAR = "TOGGLE_MINI_SIDEBAR";
+export interface IToggleMiniSidebarPayload {}
 
 export const TAB_RELOADED = "TAB_RELOADED";
+export interface ITabReloadedPayload {}
 
 export const TAB_CHANGED = "TAB_CHANGED";
 export interface ITabChangedPayload {
@@ -247,6 +259,7 @@ export interface ITabChangedPayload {
 }
 
 export const TABS_CHANGED = "TABS_CHANGED";
+export interface ITabsChangedPayload {}
 
 export const TABS_RESTORED = "TABS_RESTORED";
 export interface ITabsRestoredPayload {
@@ -402,6 +415,9 @@ export const ADD_INSTALL_LOCATION = "ADD_INSTALL_LOCATION";
 export interface IAddInstallLocationPayload {
   /** install location name */
   name: string;
+
+  /** install location path */
+  path: string;
 }
 
 export const REMOVE_INSTALL_LOCATION_REQUEST = "REMOVE_INSTALL_LOCATION_REQUEST";
@@ -603,7 +619,7 @@ export interface IQueueGamePayload {
   pickedUpload?: number;
 
   /** any extra download options */
-  extraOpts: {};
+  extraOpts?: {};
 }
 
 /** Open a game's page */
