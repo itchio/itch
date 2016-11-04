@@ -640,15 +640,34 @@ export interface IAttemptLoginPayload {}
 
 /** Private - login attempt with username/password */
 export const LOGIN_WITH_PASSWORD = "LOGIN_WITH_PASSWORD";
-export interface ILoginWithPasswordPayload {}
+export interface ILoginWithPasswordPayload {
+  /** the username or e-mail for the itch.io account to log in as */
+  username: string;
+
+  /** the password for the itch.io account to log in as */
+  password: string;
+}
 
 /** Private - login attempt with stored token */
 export const LOGIN_WITH_TOKEN = "LOGIN_WITH_TOKEN";
-export interface ILoginWithTokenPayload {}
+export interface ILoginWithTokenPayload {
+  /** the username or e-mail for the itch.io account to log in as */
+  username: string;
+
+  /** an API token for the itch.io account to log in as */
+  key: string;
+
+  /** loginWithToken is used for remembered sessions - we already have user info for those */
+  me: Types.IOwnUserRecord;
+}
 
 /** Wrong login/password or something else */
 export const LOGIN_FAILED = "LOGIN_FAILED";
 export interface ILoginFailedPayload {
+  /** the username we couldn't log in as (useful to prefill login form for retry) */
+  username: string;
+
+  /** a list of errors that occured while logging in */
   errors: string[];
 }
 
