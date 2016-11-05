@@ -4,7 +4,8 @@
         "outDir": "app",
         "target": "es6",
         "module": "commonjs",
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "jsx": "react"
     },
     "exclude": [
         "build",
