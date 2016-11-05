@@ -667,7 +667,16 @@ export interface IBouncePayload {}
 
 /** Cross-platform, notification bubble */
 export const NOTIFY = "NOTIFY";
-export interface INotifyPayload {}
+export interface INotifyPayload {
+  /** title of the notification, defaults to `itch` */
+  title?: string;
+
+  /** main text of the notification */
+  body: string;
+
+  /** path to the icon (on fs, can be relative to `app/`), defaults to itch icon */
+  icon?: string;
+}
 
 export const NOTIFY_HTML5 = "NOTIFY_HTML5";
 export interface INotifyHtml5Payload {}

@@ -13,9 +13,16 @@ import {IAction, IBootPayload} from "../constants/action-types";
 
 import {EventEmitter} from "events";
 
+interface IBalloonOpts {
+  title: string;
+  icon: string;
+  content: string;
+}
+
 interface ITray extends EventEmitter {
   setToolTip(message: string): void;
   setContextMenu(menu: IMenuTemplate): void;
+  displayBalloon(opts: IBalloonOpts): void;
 }
 let tray: ITray;
 
