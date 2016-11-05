@@ -13,7 +13,7 @@ import targz from "./targz";
 import sf from "./sf";
 import spawn from "./spawn";
 
-import formulas from "./ibrew/formulas";
+import formulas, {IFormulaSpec} from "./ibrew/formulas";
 import {IVersionCheck} from "./ibrew/formulas";
 
 import version from "./ibrew/version";
@@ -192,14 +192,20 @@ const self = {
   },
 
   getLocalVersion: async function (name: string): Promise<string> {
-    const formula = formulas[name];
+    const formula = formulas[name] as IFormulaSpec;
     const {versionCheck = {}} = formula;
 
     const check = Object.assign({}, defaultVersionCheck, versionCheck) as IVersionCheck;
 
     try {
       const command = check.command ? check.command : name;
-      const info = await os.assertPresence(command, check.args, check.parser);
+      const extraOpts = {} as any;
+      if (check.cleanPath) {
+        extraOpts.env = Object.assign({}, process.env, {
+          PATH: this.binPath(),
+        });
+      }
+      const info = await os.assertPresence(command, check.args, check.parser, extraOpts);
       return version.normalize(info.parsed);
     } catch (err) {
       console.log(`[ibrew] While checking version for ${name}: ${err.message}`); // tslint:disable-line:no-console

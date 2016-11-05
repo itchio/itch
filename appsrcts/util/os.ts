@@ -60,7 +60,7 @@ const self = {
   },
 
   assertPresence: async function
-      (command: string, args: string[], parser: RegExp): Promise<IAssertPresenceResult> {
+      (command: string, args: string[], parser: RegExp, extraOpts = {} as any): Promise<IAssertPresenceResult> {
     let stdout = "";
     let stderr = "";
 
@@ -71,6 +71,7 @@ const self = {
       args,
       onToken: (tok: string) => { stdout += "\n" + tok; },
       onErrToken: (tok: string) => { stderr += "\n" + tok; },
+      opts: extraOpts,
     };
 
     const code = await spawn(spawnOpts);

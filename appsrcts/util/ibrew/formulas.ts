@@ -2,7 +2,7 @@
 import * as ospath from "path";
 import sf from "../sf";
 
-interface ISkipUpgradeWhenOpts {
+export interface ISkipUpgradeWhenOpts {
   binPath: string;
 }
 
@@ -10,9 +10,10 @@ export interface IVersionCheck {
   command?: string;
   args: string[];
   parser?: RegExp;
+  cleanPath?: boolean;
 }
 
-interface IFormulaSpec {
+export interface IFormulaSpec {
   format: string;
   subfolder?: string;
   versionCheck?: IVersionCheck;
@@ -24,7 +25,7 @@ interface IFormulaSpec {
   skipUpgradeWhen?: (opts: ISkipUpgradeWhenOpts) => Promise<boolean>;
 }
 
-interface IFormulas {
+export interface IFormulas {
   unarchiver: IFormulaSpec;
   butler: IFormulaSpec;
   elevate: IFormulaSpec;
@@ -65,6 +66,11 @@ self.butler = {
   sanityCheck: {
     command: "butler",
     args: ["-V"],
+  },
+  versionCheck: {
+    command: "butler",
+    args: ["-V"],
+    cleanPath: true,
   },
 };
 
