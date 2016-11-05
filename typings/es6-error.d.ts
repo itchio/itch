@@ -1,5 +1,5 @@
 
-interface ExtendableError {
+interface ExtendableError extends Error {
   new (message: string): ExtendableError
 }
 

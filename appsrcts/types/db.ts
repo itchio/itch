@@ -112,6 +112,10 @@ export interface IGameRecordSet {
     [id: string]: IGameRecord;
 }
 
+export interface ICollectionRecordSet {
+    [id: string]: ICollectionRecord;
+}
+
 export interface ITabData {
     /** path of tab, something like `collections/:id`, etc. */
     path?: string;
@@ -131,6 +135,9 @@ export interface ITabData {
     /** do we have enough duplicate image properties already? */
     iconImage?: string;
 
+    /** look ma, more images */
+    webFavicon?: string;
+
     /** special CSS class applied to image shown in tab */
     imageClass?: string;
 
@@ -139,6 +146,15 @@ export interface ITabData {
 
     /** games in relation to this tab (single game, games in a collection) */
     games?: IGameRecordSet;
+
+    /** collections in relation to this tab */
+    collections?: ICollectionRecordSet;
+
+    /** error to show for toast tab */
+    error?: string;
+
+    /** stack trace to show for toast tab */
+    stack?: string;
 }
 
 export interface ITabDataSave extends ITabData {
@@ -244,6 +260,8 @@ export interface IUploadRecord {
 export interface IMarket {
     saveEntity: (table: string, id: string, payload: any) => void;
     getEntities: (table: string) => IEntityMap;
+    saveAllEntities: (entityRecords: IEntityRecords, saveOpts?: IMarketSaveOpts) => Promise<void>;
+    deleteAllEntities: (deleteSpec: IMarketDeleteSpec, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
 }
 
 export interface IEntityMap {
@@ -260,6 +278,35 @@ export interface ITableMap {
  */
 export interface IEntityRefs {
   [table: string]: string[];
+}
+
+export interface IEntityRecords {
+  entities: ITableMap;
+}
+
+/** options for deleting records */
+export interface IMarketDeleteOpts {
+  /** if true, delete waits for all changes to be committed to disk before resolving */
+  wait?: boolean;
+}
+
+/** options for saving records */
+export interface IMarketSaveOpts {
+  /** if true, save waits for all changes to be committed before resolving */
+  wait?: boolean;
+  
+  /** if true, save will persist changes to disk, not just in-memory */
+  persist?: boolean;
+  
+  /** internal: set to true on the first saveAllEntities, which happens while loading the DB */
+  initial?: boolean;
+}
+
+/**
+ * Specifies what to delete from the DB
+ */
+export interface IMarketDeleteSpec {
+  entities: IEntityRefs;
 }
 
 // see https://itch.io/docs/itch/integrating/manifest.html

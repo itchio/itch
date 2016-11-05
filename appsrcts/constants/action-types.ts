@@ -183,7 +183,19 @@ export interface IMoveTabPayload {
 }
 
 export const EVOLVE_TAB = "EVOLVE_TAB";
-export interface IEvolveTabPayload {}
+export interface IEvolveTabPayload {
+  /** the tab to evolve */
+  id: string;
+
+  /** the tab's new path */
+  path: string;
+
+  /** new tab data to add to the previous set */
+  extras: Types.ITabData;
+
+  /** if set, evolve tab immediately, don't wait for a fetch */
+  quick?: boolean;
+}
 
 export const TAB_EVOLVED = "TAB_EVOLVED";
 export interface ITabEvolvedPayload {
@@ -250,7 +262,10 @@ export const TOGGLE_MINI_SIDEBAR = "TOGGLE_MINI_SIDEBAR";
 export interface IToggleMiniSidebarPayload {}
 
 export const TAB_RELOADED = "TAB_RELOADED";
-export interface ITabReloadedPayload {}
+export interface ITabReloadedPayload {
+  /** the tab that just reloaded */
+  id: string;
+}
 
 export const TAB_CHANGED = "TAB_CHANGED";
 export interface ITabChangedPayload {
@@ -571,7 +586,10 @@ export interface IExploreCavePayload {
 
 /** Show cave logs */
 export const PROBE_CAVE = "PROBE_CAVE";
-export interface IProbeCavePayload {}
+export interface IProbeCavePayload {
+  /** id of the cave to probe */
+  caveId: string;
+}
 
 /** Open issue on github with cave logs */
 export const REPORT_CAVE = "REPORT_CAVE";
@@ -662,7 +680,10 @@ export const FOCUS_FILTER = "FOCUS_FILTER";
 export interface IFocusFilterPayload {};
 
 export const CLEAR_FILTERS = "CLEAR_FILTERS";
-export interface IClearFiltersPayload {};
+export interface IClearFiltersPayload {
+  /** id of the tab for which to clear filters */
+  tab: string;
+};
 
 export const SEARCH_QUERY_CHANGED = "SEARCH_QUERY_CHANGED";
 export interface ISearchQueryChangedPayload {};

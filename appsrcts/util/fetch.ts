@@ -11,13 +11,11 @@ import {normalize, arrayOf} from "./idealizr";
 import {game, user, collection, downloadKey} from "./schemas";
 import {each, union, pluck, values, where, difference} from "underscore";
 
-import Market from "./market";
-
-import {IUserRecord, IGameRecord, ICollectionRecord, ICredentials} from "../types/db";
+import {IMarket, IUserRecord, IGameRecord, ICollectionRecord, ICredentials} from "../types/db";
 
 // TODO: don't use any in any of the return types here
 
-export async function dashboardGames (market: Market, credentials: ICredentials) {
+export async function dashboardGames (market: IMarket, credentials: ICredentials) {
   const {key, me} = credentials;
   const api = client.withKey(key);
 
@@ -56,7 +54,7 @@ export async function dashboardGames (market: Market, credentials: ICredentials)
   }
 }
 
-export async function ownedKeys (market: Market, credentials: ICredentials): Promise<void> {
+export async function ownedKeys (market: IMarket, credentials: ICredentials): Promise<void> {
   const {key} = credentials;
   const api = client.withKey(key);
 
@@ -74,7 +72,7 @@ export async function ownedKeys (market: Market, credentials: ICredentials): Pro
   }
 }
 
-export async function collections (market: Market, credentials: ICredentials): Promise<void> {
+export async function collections (market: IMarket, credentials: ICredentials): Promise<void> {
   const oldCollectionIds = pluck(values(market.getEntities("collections")), "id");
 
   const prepareCollections = (normalized: any) => {
@@ -104,7 +102,8 @@ export async function collections (market: Market, credentials: ICredentials): P
   }
 }
 
-export async function collectionGames (market: Market, credentials: ICredentials, collectionID: number): Promise<void> {
+export async function collectionGames
+    (market: IMarket, credentials: ICredentials, collectionID: number): Promise<void> {
   let collection = market.getEntities("collections")[collectionID];
   if (!collection) {
     log(opts, `collection not found: ${collectionID}, stack = ${(new Error()).stack}`);
@@ -192,7 +191,7 @@ interface IGameLazilyOpts {
   game?: IGameRecord;
 }
 
-async function gameLazily (market: Market, credentials: ICredentials, gameId: number,
+async function gameLazily (market: IMarket, credentials: ICredentials, gameId: number,
                            opts = {} as IGameLazilyOpts): Promise<IGameRecord> {
   invariant(typeof market === "object", "gameLazily has market");
   invariant(typeof credentials === "object", "gameLazily has credentials");
@@ -220,7 +219,7 @@ interface IUserLazilyOpts {
   fresh?: boolean;
 }
 
-export async function userLazily (market: Market, credentials: ICredentials, userID: number,
+export async function userLazily (market: IMarket, credentials: ICredentials, userID: number,
                                   opts = {} as IUserLazilyOpts): Promise<IUserRecord> {
   invariant(typeof market === "object", "userLazily has market");
   invariant(typeof credentials === "object", "userLazily has credentials");
@@ -242,7 +241,7 @@ interface ICollectionLazilyOpts {
   fresh?: boolean;
 }
 
-export async function collectionLazily (market: Market, credentials: ICredentials, collectionID: number,
+export async function collectionLazily (market: IMarket, credentials: ICredentials, collectionID: number,
                                         opts = {} as ICollectionLazilyOpts): Promise<ICollectionRecord> {
   const oldRecord = market.getEntities("collections")[collectionID];
   if (!opts.fresh) {

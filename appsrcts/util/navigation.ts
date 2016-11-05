@@ -6,7 +6,7 @@ import * as querystring from "querystring";
 import staticTabData from "../constants/static-tab-data";
 
 import { IGameRecord, IUserRecord, ICollectionRecord,
-  IInstallLocationRecord, ITabData, ITabDataSet } from "../types/db";
+  IInstallLocation, ITabData, ITabDataSet } from "../types/db";
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
 const ID_RE = /^[^\/]+\/(.*)$/;
@@ -132,7 +132,7 @@ export function collectionToTabData(collection: ICollectionRecord) {
   };
 }
 
-export function locationToTabData(location: IInstallLocationRecord) {
+export function locationToTabData(location: IInstallLocation) {
   return {
     label: location.path,
   };

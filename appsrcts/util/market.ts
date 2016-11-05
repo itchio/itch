@@ -13,36 +13,10 @@ import {isEqual, every} from "underscore";
 
 import {EventEmitter} from "events";
 
-import {IEntityMap, ITableMap, IEntityRefs} from "../types/db";
-
-interface IEntityRecords {
-  entities: ITableMap;
-}
-
-/** options for deleting records */
-interface IDeleteOpts {
-  /** if true, delete waits for all changes to be committed to disk before resolving */
-  wait?: boolean;
-}
-
-/** options for saving records */
-interface ISaveOpts {
-  /** if true, save waits for all changes to be committed before resolving */
-  wait?: boolean;
-  
-  /** if true, save will persist changes to disk, not just in-memory */
-  persist?: boolean;
-  
-  /** internal: set to true on the first saveAllEntities, which happens while loading the DB */
-  initial?: boolean;
-}
-
-/**
- * Specifies what to delete from the DB
- */
-interface IDeleteSpec {
-  entities: IEntityRefs;
-}
+import {
+  IEntityMap, ITableMap, IEntityRefs, IEntityRecords,
+  IMarketSaveOpts, IMarketDeleteOpts, IMarketDeleteSpec,
+} from "../types/db";
 
 /**
  * MarketDB is a simple in-memory database that persists on disk.
@@ -55,6 +29,9 @@ export default class Market extends EventEmitter {
 
   /** where the database is persisted on-disk */
   dbPath: string;
+
+  /** if set, saves records to disk */
+  persist: boolean;
 
   /** internal: used for generating temporary file paths */
   private atomicInvocations: number;
@@ -74,6 +51,7 @@ export default class Market extends EventEmitter {
     log(opts, `loading market db from ${dbPath}`);
 
     this.dbPath = dbPath;
+    this.persist = true;
     const entities: ITableMap = {};
 
     const TMP_RE = /\.tmp\d+/;
@@ -133,14 +111,14 @@ export default class Market extends EventEmitter {
   /* Data persistence / retrieval */
 
   /**
-   * Saves all passed entity records. See ISaveOpts for disk persistence and other options.
+   * Saves all passed entity records. See opts type for disk persistence and other options.
    */
-  async saveAllEntities (entityRecords: IEntityRecords, saveOpts = {} as ISaveOpts) {
-    if (!this.dbPath) {
+  async saveAllEntities (entityRecords: IEntityRecords, saveOpts = {} as IMarketSaveOpts) {
+    if (this.persist && !this.dbPath) {
       return;
     }
 
-    const {wait = false, persist = true, initial = false} = saveOpts;
+    const {wait = false, persist = this.persist, initial = false} = saveOpts;
 
     let promises = null as Array<Promise<any>>;
     if (wait) {
@@ -187,7 +165,7 @@ export default class Market extends EventEmitter {
   /**
    * Save a single entity to the db, optionally persisting to disk (see ISaveOpts).
    */
-  async saveEntity (tableName: string, entityID: string, record: any, saveOpts = {} as ISaveOpts): Promise<void> {
+  async saveEntity (tableName: string, entityID: string, record: any, saveOpts = {} as IMarketSaveOpts): Promise<void> {
     const entityRecords = {
       entities: {
         [tableName]: { [entityID]: record },
@@ -199,24 +177,27 @@ export default class Market extends EventEmitter {
   /**
    * Delete all referenced entities. See IDeleteOpts for options.
    */
-  async deleteAllEntities (response: IDeleteSpec, deleteOpts = {} as IDeleteOpts) {
+  async deleteAllEntities (deleteSpec: IMarketDeleteSpec, deleteOpts = {} as IMarketDeleteOpts) {
     const {wait = false} = deleteOpts;
+    const {persist} = this;
 
     let promises = null as Array<Promise<any>>;
     if (wait) {
       promises = [];
     }
 
-    for (const tableName of Object.keys(response.entities)) {
-      const entities = response.entities[tableName];
+    for (const tableName of Object.keys(deleteSpec.entities)) {
+      const entities = deleteSpec.entities[tableName];
       const table = this.data[tableName] || {};
 
       for (const entityId of entities) {
         delete table[entityId];
 
-        const p = this.deleteFromDisk(tableName, entityId);
-        if (promises) {
-          promises.push(p);
+        if (persist) {
+          const p = this.deleteFromDisk(tableName, entityId);
+          if (promises) {
+            promises.push(p);
+          }
         }
       }
 
@@ -227,14 +208,14 @@ export default class Market extends EventEmitter {
       await bluebird.all(promises);
     }
 
-    const deleted = response.entities;
+    const deleted = deleteSpec.entities;
     this.emit("commit", {deleted});
   }
 
   /**
-   * Deletes a single entity, optionally from the disk store too, see IDeleteOpts
+   * Deletes a single entity, optionally from the disk store too, see opts type
    */
-  async deleteEntity (tableName: string, entityId: string, deleteOpts: IDeleteOpts) {
+  async deleteEntity (tableName: string, entityId: string, deleteOpts: IMarketDeleteOpts) {
     await this.deleteAllEntities({
       entities: {
         [tableName]: [entityId],
