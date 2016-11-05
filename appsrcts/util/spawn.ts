@@ -14,7 +14,7 @@ import { EventEmitter } from "events";
 
 interface ISpawnOpts {
   command: string;
-  args: Array<string>;
+  args: string[];
   split?: string;
   emitter?: EventEmitter;
   onToken?: (token: string) => void;

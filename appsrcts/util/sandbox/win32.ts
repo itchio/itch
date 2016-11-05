@@ -5,8 +5,8 @@ import common from "./common";
 import { ICheckResult, INeed } from "./types";
 
 export async function check(): Promise<ICheckResult> {
-  const errors: Array<Error> = [];
-  const needs: Array<INeed> = [];
+  const errors: Error[] = [];
+  const needs: INeed[] = [];
 
   const userCheck = await spawn.exec({ command: "isolate.exe", args: ["--check"] });
   if (userCheck.code !== 0) {
@@ -20,7 +20,7 @@ export async function check(): Promise<ICheckResult> {
   return { errors, needs };
 }
 
-export async function install(opts: any, needs: Array<INeed>) {
+export async function install(opts: any, needs: INeed[]) {
   return await common.tendToNeeds(opts, needs, {
     user: async function () {
       const res = await spawn.exec({ command: "elevate.exe", args: ["isolate.exe", "--setup"] });

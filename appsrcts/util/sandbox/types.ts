@@ -14,6 +14,6 @@ export interface ICaretakerSet {
 }
 
 export interface ICheckResult {
-    needs: Array<INeed>;
-    errors: Array<Error>;
+    needs: INeed[];
+    errors: Error[];
 }

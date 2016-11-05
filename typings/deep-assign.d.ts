@@ -1,6 +1,6 @@
 
 interface DeepAssignStatic {
-  (...args: Array<any>): any
+  (...args: any[]): any
 }
 
 declare module 'deep-assign' {

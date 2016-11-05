@@ -3,16 +3,14 @@ import { createStore, applyMiddleware, compose, GenericStoreEnhancer, Middleware
 import { electronEnhancer } from "redux-electron-store";
 const createLogger = require("redux-logger");
 
-// import route from '../reactors/route'
-// import reactors from '../renderer-reactors'
-// import reducer from '../reducers'
+import route from "../reactors/route";
+import reactors from "../renderer-reactors";
+import reducer from "../reducers";
 
-const route = require("../reactors/route").default;
-const reactors = require("../renderer-reactors").default;
-const reducer = require("../reducers").default;
+import {IStore} from "../types/db";
 
 const filter = true;
-const middleware: Array<Middleware> = [];
+const middleware: Middleware[] = [];
 
 const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === "1";
 
@@ -45,7 +43,7 @@ if (REDUX_DEVTOOLS_ENABLED) {
 }
 
 const initialState = {};
-const store = createStore(reducer, initialState, enhancer);
+const store = createStore(reducer, initialState, enhancer) as IStore;
 route(reactors, store, { type: "__MOUNT", payload: null });
 
 export default store;

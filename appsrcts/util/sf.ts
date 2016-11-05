@@ -44,7 +44,7 @@ const stubs = {
 };
 
 const debugLevel = parseInt(process.env.INCENTIVE_MET, 10) || -1;
-const debug = (level: number, parts: Array<string>) => {
+const debug = (level: number, parts: string[]) => {
   if (debugLevel < level) {
     return;
   }
@@ -59,7 +59,7 @@ promisifyAll(fs);
 
 // single function, callback-based, can't specify fs
 const glob = promisify(proxyquire("glob", stubs) as
-  (path: string, opts: any, cb: (err: any, files: Array<string>) => any) => void);
+  (path: string, opts: any, cb: (err: any, files: string[]) => any) => void);
 
 // single function, callback-based, can't specify fs
 const mkdirp = promisify(proxyquire("mkdirp", stubs) as (path: string, cb: () => any) => void);
@@ -180,8 +180,8 @@ const self = {
 
     if (stats.isDirectory()) {
       const fileOrDirs = await self.glob("**", { cwd: shelter, dot: true, ignore });
-      const dirs: Array<String> = [];
-      const files: Array<String> = [];
+      const dirs: string[] = [];
+      const files: string[] = [];
 
       for (const fad of fileOrDirs) {
         const fullFad = path.join(shelter, fad);

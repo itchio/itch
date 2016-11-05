@@ -9,7 +9,7 @@ const self = {
   configure: async function (cavePath: string): Promise<IConfigureResult> {
     // TODO: this also sounds like a good candidate for a butler command.
     // golang is much better at working with files.
-    const bundles: Array<string> = [];
+    const bundles: string[] = [];
     const walker = walk.walk(cavePath, {
       followLinks: false,
       filters: ["__MACOSX"],

@@ -15,8 +15,8 @@ import common from "./common";
 import { ICheckResult, INeed } from "./types";
 
 export async function check(opts: any): Promise<ICheckResult> {
-  const needs: Array<INeed> = [];
-  const errors: Array<Error> = [];
+  const needs: INeed[] = [];
+  const errors: Error[] = [];
 
   log(opts, "Testing firejail");
   const firejailCheck = await spawn.exec({ command: "firejail", args: ["--noprofile", "--", "whoami"] });
@@ -31,7 +31,7 @@ export async function check(opts: any): Promise<ICheckResult> {
   return { needs, errors };
 }
 
-export async function install(opts: any, needs: Array<INeed>) {
+export async function install(opts: any, needs: INeed[]) {
   return await common.tendToNeeds(opts, needs, {
     firejail: async function (need) {
       log(opts, `installing firejail, because ${need.err} (code ${need.code})`);
@@ -41,7 +41,7 @@ export async function install(opts: any, needs: Array<INeed>) {
       if (!firejailBinaryExists) {
         throw new Error("firejail binary missing");
       } else {
-        const lines: Array<string> = [];
+        const lines: string[] = [];
         lines.push("#!/bin/bash -xe");
         lines.push(`chown root:root ${firejailBinary}`);
         lines.push(`chmod u+s ${firejailBinary}`);
@@ -54,7 +54,7 @@ export async function install(opts: any, needs: Array<INeed>) {
 }
 
 export async function uninstall(opts: any) {
-  const errors: Array<Error> = [];
+  const errors: Error[] = [];
   return { errors };
 }
 
@@ -62,7 +62,7 @@ interface ISudoRunScriptResult {
   out: string;
 }
 
-async function sudoRunScript(lines: Array<string>): Promise<ISudoRunScriptResult> {
+async function sudoRunScript(lines: string[]): Promise<ISudoRunScriptResult> {
   const contents = lines.join("\n");
   const tmpObjName = tmp.tmpNameSync();
   await sf.writeFile(tmpObjName, contents);

@@ -120,7 +120,7 @@ export default class Market extends EventEmitter {
 
     const {wait = false, persist = this.persist, initial = false} = saveOpts;
 
-    let promises = null as Array<Promise<any>>;
+    let promises = null as Promise<any>[];
     if (wait) {
       promises = [];
     }
@@ -181,7 +181,7 @@ export default class Market extends EventEmitter {
     const {wait = false} = deleteOpts;
     const {persist} = this;
 
-    let promises = null as Array<Promise<any>>;
+    let promises = null as Promise<any>[];
     if (wait) {
       promises = [];
     }

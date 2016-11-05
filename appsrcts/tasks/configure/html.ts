@@ -30,7 +30,7 @@ interface IDepthMap {
 }
 
 const self = {
-    sortEntryPoints: function(paths: Array<string>) {
+    sortEntryPoints: function(paths: string[]) {
         const original = uniq(clone(paths));
         const depths: IDepthMap = {};
         for (const p of original) {

@@ -41,7 +41,7 @@ export function camelifyObject(obj: any): any {
   }
 }
 
-export function seconds(secs: number): Array<any> {
+export function seconds(secs: number): any[] {
   if (secs < 60) {
     return ["duration.minute"];
   } else if (secs < 3600) {

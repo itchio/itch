@@ -2,16 +2,9 @@
 import {IStore} from "../types/db";
 import {IAction} from "../constants/action-types";
 
-interface IReactor {
-  (store: IStore, action: IAction<any>): void;
-}
+import {ICombinator} from "./combine";
 
-interface IReactorMap {
-  [actionType: string]: IReactor;
-  _ALL: IReactor;
-}
-
-export default function route (reactors: IReactorMap, store: IStore, action: IAction<any>) {
+export default function route (reactors: ICombinator, store: IStore, action: IAction<any>) {
   const reactor = reactors[action.type];
   if (reactor) {
     reactor(store, action);

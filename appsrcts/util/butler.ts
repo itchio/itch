@@ -65,7 +65,7 @@ function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, to
   }
 }
 
-async function butler (opts: IButlerOpts, command: string, commandArgs: Array<string>): Promise<void> {
+async function butler (opts: IButlerOpts, command: string, commandArgs: string[]): Promise<void> {
   const {emitter} = opts;
   const onerror = (e: Error) => { err = e; };
   let err = null as Error;

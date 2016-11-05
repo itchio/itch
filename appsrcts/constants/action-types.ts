@@ -39,7 +39,7 @@ export interface IModalClosedPayload {
   action: Types.IModalAction;
 }
 export const MODAL_RESPONSE = "MODAL_RESPONSE";
-export interface IModalResponsePayload {}
+export type IModalResponsePayload = any;
 
 export const SETUP_STATUS = "SETUP_STATUS";
 export interface ISetupStatusPayload extends Types.ISetupOperation {};

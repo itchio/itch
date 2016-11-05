@@ -23,7 +23,7 @@ const electron = {
   ipcMain: Object.assign({}, EventEmitter.prototype),
   ipcRenderer: Object.assign({
     send: function () {
-      let args: Array<any> = [];
+      let args: any[] = [];
       for (let i = 0; i < arguments.length; i++) {
         args.push(arguments[i]);
       }
@@ -89,7 +89,7 @@ let webContents = {
 };
 
 Object.assign(electron.BrowserWindow, {
-  getAllWindows: (): Array<any> => [],
+  getAllWindows: (): any[] => [],
   getFocusedWindow: () => null,
   setProgressBar: rnil,
   on: rnil,

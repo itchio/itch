@@ -15,7 +15,7 @@ const updateExePath = ospath.join(rootFolder, "Update.exe");
 const exeName = ospath.basename(process.execPath);
 
 const self = {
-  updateRun: async function (args: Array<string>): Promise<void> {
+  updateRun: async function (args: string[]): Promise<void> {
     log(opts, `Update.exe located at = ${updateExePath}`);
     await spawn.assert({
       command: updateExePath,

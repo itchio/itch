@@ -37,7 +37,7 @@ interface IAugmentedPaths {
 }
 
 interface IFetchOpts {
-  onStatus: (status: string, extra?: Array<any>) => void;
+  onStatus: (status: string, extra?: any[]) => void;
 }
 
 const self = {

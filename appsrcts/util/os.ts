@@ -55,12 +55,12 @@ const self = {
     }
   },
 
-  cliArgs: function (): Array<string> {
+  cliArgs: function (): string[] {
     return process.argv;
   },
 
   assertPresence: async function
-      (command: string, args: Array<string>, parser: RegExp): Promise<IAssertPresenceResult> {
+      (command: string, args: string[], parser: RegExp): Promise<IAssertPresenceResult> {
     let stdout = "";
     let stderr = "";
 

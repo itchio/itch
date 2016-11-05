@@ -115,7 +115,7 @@ export async function collectionGames
   let page = 1;
   let fetched = 0;
   let totalItems = 1;
-  let fetchedGameIDs = [] as Array<number>;
+  let fetchedGameIDs = [] as number[];
 
   while (fetched < totalItems) {
     let res = await api.collectionGames(collectionID, page);

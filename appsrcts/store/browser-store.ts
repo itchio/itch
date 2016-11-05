@@ -2,13 +2,11 @@
 import { createStore, applyMiddleware, compose, GenericStoreEnhancer, Store } from "redux";
 import { electronEnhancer } from "redux-electron-store";
 
-// import route from '../reactors/route'
-// import reactors from '../reactors'
-// import reducer from '../reducers'
+import route from "../reactors/route";
+import reactors from "../reactors";
+import reducer from "../reducers";
 
-const route = require("../reactors/route").default;
-const reactors = require("../reactors").default;
-const reducer = require("../reducers").default;
+import {IStore} from "../types/db";
 
 const crashGetter = (store: Store<any>) => (next: (action: any) => any) => (action: any) => {
   try {
@@ -56,7 +54,7 @@ const enhancer = compose(
 ) as GenericStoreEnhancer;
 
 const initialState = {};
-const store = createStore(reducer, initialState, enhancer);
+const store = createStore(reducer, initialState, enhancer) as IStore;
 route(reactors, store, { type: "__MOUNT", payload: null });
 
 export default store;

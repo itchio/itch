@@ -29,7 +29,7 @@ const opts = {logger};
 // cf. https://github.com/itchio/itchio-app/issues/48
 // basically, lua returns empty-object instead of empty-array
 // because they're the same in lua (empty table). not in JSON though.
-export function ensureArray (v: any): Array<any> {
+export function ensureArray (v: any): any[] {
   if (!v || !v.length) {
     return [];
   }
@@ -37,11 +37,11 @@ export function ensureArray (v: any): Array<any> {
 }
 
 export class ApiError extends ExtendableError {
-  errors: Array<string>;
+  errors: string[];
   stack: string;
   message: string;
   
-  constructor (errors: Array<string>) {
+  constructor (errors: string[]) {
     super(errors.join(", "));
     this.errors = errors;
     this.stack = new Error().stack;

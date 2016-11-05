@@ -3,7 +3,7 @@ import {handleActions} from "redux-actions";
 
 import {omit} from "underscore";
 
-import {IMarket, IMarketState} from "../types/db";
+import {IMarket, IMarketState, TableName} from "../types/db";
 
 import * as actionTypes from "../constants/action-types";
 import {IAction, IDbReadyPayload, IDbCommitPayload, IDbClosedPayload} from "../constants/action-types";
@@ -68,7 +68,7 @@ export default function makeMarketReducer (prefix: IMarketPrefix, getMarket: IMa
 
       for (const tableName of Object.keys(updated)) {
         const updatedIds = updated[tableName];
-        const records = market.getEntities(tableName);
+        const records = market.getEntities(tableName as TableName);
 
         let updatedTable = (state[tableName] || {});
         for (const recordId of updatedIds) {

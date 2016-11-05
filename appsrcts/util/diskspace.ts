@@ -9,7 +9,7 @@ import {ISpaceInfo, IPartInfo, IPartsInfo} from "../types/db";
  */
 let self = {
   dfRun: async () => {
-    const lines = [] as Array<string>;
+    const lines = [] as string[];
     const opts = {
       command: "df", args: ["-kP"],
       onToken: (token: string) => lines.push(token),
@@ -55,7 +55,7 @@ let self = {
   },
 
   wmicRun: async () => {
-    const lines = [] as Array<String>;
+    const lines = [] as string[];
     let opts = {
       command: "wmic", args: ["logicaldisk", "get", "size,freespace,caption"],
       onToken: (token: string) => lines.push(token),
@@ -64,7 +64,7 @@ let self = {
     return lines;
   },
 
-  wmicTotal: (parts: Array<IPartInfo>) => {
+  wmicTotal: (parts: IPartInfo[]) => {
     let initial = {size: 0, free: 0};
     let f = (total: ISpaceInfo, part: IPartInfo) => {
       total.size += part.size;

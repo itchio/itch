@@ -13,6 +13,8 @@ export type GameClassification = "game" | "tool" | "assets" |
 
 export type GenerosityLevel = "discreet";
 
+export type LaunchType = "native" | "html";
+
 /**
  * Contains information about a game, retrieved via the itch.io API,
  * and saved to the local database.
@@ -97,7 +99,7 @@ export interface ICollectionRecord {
     gamesCount: number;
 
     /** identifiers of the games in this collection */
-    gameIds: Array<number>;
+    gameIds: number[];
 }
 
 export interface IInstallLocationRecord {
@@ -243,6 +245,21 @@ export interface ICaveRecord extends ICaveRecordLocation {
 
     /** true if the record was created just before installing for the first time */
     fresh?: boolean;
+
+    /** executable files, relative to the game's install folder */
+    executables: string[];
+
+    /** type of launch associated with cave */
+    launchType?: LaunchType;
+
+    /** for launchType = html, location of .html file to open */
+    gamePath?: string;
+
+    /** for launchType = html, the default window size */
+    windowSize?: {
+        width: number;
+        height: number;
+    };
 }
 
 /** Stores installer name by upload id */
@@ -260,8 +277,14 @@ export interface IUploadRecord {
     /** user-friendly name for the upload, set by developer */
     displayName?: string;
 
-    /** if this is a wharf-enabled upload, identifier of the latest build */
+    /** if this is a wharf-enabled upload, identifier of the installed build */
     buildId: number;
+
+    /** if this is a wharf-enabled upload, info of the installed build */
+    build: IBuildRecord;
+
+    /** if this is a wharf-enabled upload, which channel it corresponds to */
+    channelName: string;
 
     /** set to 'html' for HTML5 games */
     type: string;
@@ -282,7 +305,21 @@ export interface IUploadRecord {
     updatedAt: string;
 }
 
-export type TableName = "caves" | "users";
+export interface IBuildRecord {
+    /** unique itch.io identifier for build */
+    id: string;
+
+    /** itch.io-generated version number */
+    version: string;
+
+    /** developer-provided version number */
+    userVersion: string;
+
+    /** when the build was last updated */
+    updatedAt: string;
+}
+
+export type TableName = "caves" | "users" | "games" | "collections" | "downloadKeys";
 
 /**
  * MarketDB is a lightweight disk-based JSON object store.
@@ -290,10 +327,11 @@ export type TableName = "caves" | "users";
  */
 export interface IMarket {
     saveEntity: (table: TableName, id: string, payload: any) => void;
-    getEntities: (table: string) => IEntityMap;
+    getEntities: (table: TableName) => IEntityMap;
+    getEntity: (table: TableName, id: string) => any;
     saveAllEntities: (entityRecords: IEntityRecords, saveOpts?: IMarketSaveOpts) => Promise<void>;
     deleteAllEntities: (deleteSpec: IMarketDeleteSpec, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
-    deleteEntity: (table: string, id: string, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
+    deleteEntity: (table: TableName, id: string, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
 }
 
 export interface IEntityMap {
@@ -346,13 +384,13 @@ export interface IManifestAction {
     name: string;
     path: string;
     icon: string;
-    args: Array<string>;
+    args: string[];
     sandbox: boolean;
     scope: string;
 }
 
 export interface IManifest {
-    actions: Array<IManifestAction>;
+    actions: IManifestAction[];
 }
 
 export interface IOwnUserRecord extends IUserRecord {
@@ -450,6 +488,9 @@ export interface IModal {
 
     /** secondary body of text */
     detail?: ILocalizedString;
+
+    /** an image to show prominently in the modal */
+    cover?: string;
 
     /** main buttons (in list format) */
     bigButtons?: IModalButtonSpec[];
@@ -787,6 +828,10 @@ export interface IStartDownloadOpts {
   upgradePath?: IUpgradePathItem[];
 }
 
+export interface IEnvironment {
+    [key: string]: string;
+}
+
 export interface IStartTaskOpts {
   /** the name of the task */
   name: string;
@@ -797,7 +842,7 @@ export interface IStartTaskOpts {
   /** the game this task is for */
   game?: IGameRecord;
 
-  // FIXME: this is a bad way to pass data
+  // FIXME: this is a bad way to pass data - type individual task types instead
 
   // install-specific opts
   reinstall?: boolean;
@@ -809,20 +854,37 @@ export interface IStartTaskOpts {
   disableCache?: boolean;
   onProgress?: (info: any) => void;
   elevated?: boolean;
+  downloadKey?: IDownloadKey;
+  handPicked?: boolean;
+  installLocation?: string;
 
-  // Set by start-task
+  // launch-specific opts
+  appPath?: string;
+  manifestActionName?: string;
+  manifestAction?: IManifestAction;
+  env?: IEnvironment;
+  args?: string[];
+  hailMary?: boolean;
 
+  // The following properties are set by start-task
+
+  market?: IMarket;
+
+  credentials?: ICredentials;
+
+  preferences?: IPreferencesState;
+
+  /** cave-specific logger */
   logger?: Logger;
 
   /** the market this task should load/save db data from */
   globalMarket?: IMarket;
-
 }
 
 export interface IDownloadOpts extends IStartDownloadOpts {
   credentials: ICredentials;
 
-  upgradePath?: Array<IUpgradePathItem>;
+  upgradePath?: IUpgradePathItem[];
 
   cave?: ICaveRecord;
 
@@ -939,6 +1001,6 @@ export interface IPartInfo extends ISpaceInfo {
  * of all the partitions / disks of this computer.
  */
 export interface IPartsInfo {
-  parts: Array<IPartInfo>;
+  parts: IPartInfo[];
   total: ISpaceInfo;
 }

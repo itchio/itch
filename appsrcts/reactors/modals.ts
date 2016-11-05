@@ -4,7 +4,7 @@ import {each} from "underscore";
 import * as actions from "../actions";
 
 import {IStore} from "../types/db";
-import {IAction, IOpenModalPayload, IModalClosedPayload} from "../constants/action-types";
+import {IAction, IOpenModalPayload, IModalClosedPayload, IModalResponsePayload} from "../constants/action-types";
 
 async function closeModal (store: IStore, outerAction: IAction<any>) {
   const {payload = {}} = outerAction;
@@ -37,7 +37,7 @@ export function promisedModal (store: IStore, payload: IOpenModalPayload) {
   const modalAction = actions.openModal(payload);
   const {id} = modalAction.payload;
 
-  const p = new Promise((resolve) => {
+  const p = new Promise<IAction<IModalResponsePayload>>((resolve) => {
     modalResolves[id] = resolve;
   });
 

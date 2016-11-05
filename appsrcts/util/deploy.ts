@@ -77,7 +77,7 @@ let self = {
     log(opts, `cleaning up dest path ${destPath}`);
 
     const receiptPath = ospath.join(destPath, ".itch", "receipt.json");
-    let destFiles = [] as Array<string>;
+    let destFiles = [] as string[];
 
     try {
       let receiptContents = await sf.readFile(receiptPath);

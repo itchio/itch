@@ -16,7 +16,7 @@ async function computeFolderSize(opts: any, appPath: string): Promise<number> {
     next();
   });
 
-  walker.on("errors", (root: string, nodeStatsArray: Array<any>, next: () => void) => {
+  walker.on("errors", (root: string, nodeStatsArray: any[], next: () => void) => {
     each(nodeStatsArray, (n) => {
       log(opts, `error while walking ${n.name}:`);
       log(opts, n.error.message || (n.error.code + ": " + n.error.path));

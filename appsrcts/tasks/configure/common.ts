@@ -10,14 +10,14 @@ const log = mklog("configure/common");
 import * as path from "path";
 
 export interface IConfigureResult {
-  executables: Array<String>;
+  executables: string[];
 }
 
 /**
  * Tries to find executables by sniffing file contents,
  * +x them, and return a list of them
  */
-export async function fixExecs(field: string, basePath: string): Promise<Array<string>> {
+export async function fixExecs(field: string, basePath: string): Promise<string[]> {
   // TODO: this sounds like a nice candidate for a butler command instead.
   // My (amos) instinct is that doing it in node generates a lot of garbage and can make the UI lag.
   const mapper = partial(sniffAndChmod, field, basePath);

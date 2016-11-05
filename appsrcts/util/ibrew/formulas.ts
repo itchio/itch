@@ -8,7 +8,7 @@ interface ISkipUpgradeWhenOpts {
 
 export interface IVersionCheck {
   command?: string;
-  args: Array<string>;
+  args: string[];
   parser?: RegExp;
 }
 
@@ -18,9 +18,9 @@ interface IFormulaSpec {
   versionCheck?: IVersionCheck;
   sanityCheck?: {
     command: string;
-    args: Array<string>;
+    args: string[];
   };
-  osWhitelist?: Array<string>;
+  osWhitelist?: string[];
   skipUpgradeWhen?: (opts: ISkipUpgradeWhenOpts) => Promise<boolean>;
 }
 

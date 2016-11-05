@@ -39,6 +39,7 @@ export default function combine (...args: IReactor<any>[]) {
 
 export interface ICombinator {
   [actionType: string]: IReactor<any>;
+  _ALL?: IReactor<any>;
 }
 
 export function assertAllCombined (...combinators: ICombinator[]) {

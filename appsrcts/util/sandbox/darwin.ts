@@ -19,8 +19,8 @@ import { IGameRecord } from "../../types/db";
 const INVESTIGATE_SANDBOX = process.env.INVESTIGATE_SANDBOX === "1";
 
 export async function check() {
-  const needs: Array<INeed> = [];
-  const errors: Array<Error> = [];
+  const needs: INeed[] = [];
+  const errors: Error[] = [];
 
   const seRes = await spawn.exec({ command: "sandbox-exec", args: ["-n", "no-network", "true"] });
   if (seRes.code !== 0) {
@@ -129,7 +129,7 @@ sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullE
   }
 }
 
-export async function install(opts: any, needs: Array<INeed>) {
+export async function install(opts: any, needs: INeed[]) {
   return await common.tendToNeeds(opts, needs, {});
 }
 

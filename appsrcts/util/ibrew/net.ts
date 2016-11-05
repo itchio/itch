@@ -21,7 +21,7 @@ import {INeedleResponse} from "needle";
 
 export type ChecksumAlgo = "SHA256" | "SHA1";
 
-const CHECKSUM_ALGOS: Array<ChecksumAlgo> = [
+const CHECKSUM_ALGOS: ChecksumAlgo[] = [
   "SHA256",
   "SHA1",
 ];
