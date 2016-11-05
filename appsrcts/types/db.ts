@@ -1,5 +1,6 @@
 
 import {Store} from "redux";
+import {Action} from "redux-actions";
 
 export interface IStore extends Store<IState> {}
 
@@ -327,7 +328,16 @@ export interface IManifest {
 }
 
 export interface IOwnUserRecord extends IUserRecord {
-    
+    /**
+     * if set, user owns press account.
+     * note to reader: don't bother faking it locally — the server won't let you download
+     * anything if you don't actually have a press account. Or maybe you're just looking for
+     * fun errors, in which case, go ahead!
+     */
+    press?: boolean; 
+
+    /** if set, user has expressed interest in publishing content on itch.io */
+    developer?: boolean; 
 }
 
 export interface IDownloadKey {
@@ -381,9 +391,43 @@ export interface IHistoryState {
     };
 }
 
+export type IModalAction = Action<any> | Action<any>[]
+
+export interface IModalButton {
+    /** icomoon icon to use for button */
+    icon?: string;
+
+    /** text to show on button */
+    label: ILocalizedString;
+
+    /** what should happen when clicking the button */
+    action: IModalAction;
+
+    /** use this to specify custom CSS classes (which is both naughty and nice) */
+    className?: string;
+}
+
+// FIXME: that's naughty - just make static buttons be constants instead, that works.
+export type IModalButtonSpec = string | IModalButton;
+
 export interface IModal {
     /** generated identifier for this modal */
-    id: string;
+    id?: string;
+
+    /** title of the modal */
+    title: ILocalizedString;
+
+    /** main body of text */
+    message: ILocalizedString;
+
+    /** secondary body of text */
+    detail?: ILocalizedString;
+
+    /** main buttons (in list format) */
+    bigButtons?: IModalButtonSpec[];
+
+    /** secondary buttons */
+    buttons?: IModalButtonSpec[];
 }
 
 export type IModalsState = IModal[];
@@ -391,7 +435,10 @@ export type IModalsState = IModal[];
 export interface IMarketState {
     [tableName: string]: {
         [id: string]: any;
-    };
+    } | boolean; // ouch
+
+    /** if true, market is done loading from disk */
+    ready?: boolean;
 }
 
 export interface IUserMarketState extends IMarketState {

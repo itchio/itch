@@ -37,7 +37,7 @@ export default function combine (...args: IReducer[]) {
   };
 }
 
-interface ICombinator {
+export interface ICombinator {
   [actionType: string]: IReducer;
 }
 

@@ -28,14 +28,15 @@ export type ILanguageChangedPayload = string;
 export const OPEN_MODAL = "OPEN_MODAL";
 export interface IOpenModalPayload extends Types.IModal {}
 
+/** close frontmost modal */
 export const CLOSE_MODAL = "CLOSE_MODAL";
 export interface ICloseModalPayload {
-  id: string;
+  action?: Types.IModalAction;
 }
 export const MODAL_CLOSED = "MODAL_CLOSED";
 export interface IModalClosedPayload {
   id: string;
-  action: any;
+  action: Types.IModalAction;
 }
 export const MODAL_RESPONSE = "MODAL_RESPONSE";
 export interface IModalResponsePayload {}
@@ -546,7 +547,10 @@ export interface IClearGameDownloadsPayload {
 
 /** User requested game to be uninstalled */
 export const REQUEST_CAVE_UNINSTALL = "REQUEST_CAVE_UNINSTALL";
-export interface IRequestCaveUninstallPayload {}
+export interface IRequestCaveUninstallPayload {
+  /** id of the cave to uninstall */
+  caveId: string;
+}
 
 /** Cave is going to be uninstalled */
 export const QUEUE_CAVE_UNINSTALL = "QUEUE_CAVE_UNINSTALL";
@@ -609,14 +613,17 @@ export interface IRecordGameInteractionPayload {}
 export const ABORT_GAME_REQUEST = "ABORT_GAME_REQUEST";
 export interface IAbortGameRequestPayload {
   /** the game we want to force-quit */
-  gameId: number;
+  game: Types.IGameRecord;
 }
 
 export const ABORT_LAST_GAME = "ABORT_LAST_GAME";
 export interface IAbortLastGamePayload {}
 
 export const ABORT_GAME = "ABORT_GAME";
-export interface IAbortGamePayload extends IAbortGameRequestPayload {}
+export interface IAbortGamePayload {
+  /** the id of the game we want to force-quit */
+  gameId: number;
+}
 
 export const CHECK_FOR_GAME_UPDATE = "CHECK_FOR_GAME_UPDATE";
 export interface ICheckForGameUpdatePayload {
