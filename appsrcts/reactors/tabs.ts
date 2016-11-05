@@ -3,7 +3,7 @@ import * as uuid from "node-uuid";
 
 import * as actions from "../actions";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction, INewTabPayload, IFocusNthTabPayload} from "../constants/action-types";
 
 async function applyTabOffset (store: IStore, offset: number) {

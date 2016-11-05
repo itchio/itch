@@ -1,5 +1,5 @@
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction} from "../constants/action-types";
 
 import {ICombinator} from "./combine";

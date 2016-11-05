@@ -16,7 +16,7 @@ import format, {DATE_FORMAT} from "../util/format";
 
 import * as actions from "../actions";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {
   IAction,
   IFirstWindowReadyPayload,

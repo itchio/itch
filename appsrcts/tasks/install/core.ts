@@ -8,7 +8,7 @@ import spawn from "../../util/spawn";
 import mklog from "../../util/log";
 const log = mklog("install/core");
 
-import {IInstallerCache, IStartTaskOpts} from "../../types/db";
+import {IInstallerCache, IStartTaskOpts} from "../../types";
 
 type InstallOperation = "install" | "uninstall";
 

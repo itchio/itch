@@ -11,8 +11,8 @@ import core from "./install/core";
 
 const keepArchives = (process.env.REMEMBER_ME_WHEN_IM_GONE === "1");
 
-import {IStartTaskOpts, IUploadRecord} from "../types/db";
-import {IProgressInfo} from "../types/progress";
+import {IStartTaskOpts, IUploadRecord} from "../types";
+import {IProgressInfo} from "../types";
 
 export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
   const {cave, globalMarket} = opts;

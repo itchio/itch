@@ -13,7 +13,7 @@ import sf from "../util/sf";
 import fetch from "../util/fetch";
 import pathmaker from "../util/pathmaker";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction, IReportCavePayload} from "../constants/action-types";
 
 async function reportCave (store: IStore, action: IAction<IReportCavePayload>) {

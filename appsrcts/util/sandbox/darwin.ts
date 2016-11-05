@@ -14,7 +14,7 @@ const log = mklog("sandbox/darwin");
 import common from "./common";
 
 import { INeed } from "./types";
-import { IGameRecord } from "../../types/db";
+import { IGameRecord } from "../../types";
 
 const INVESTIGATE_SANDBOX = process.env.INVESTIGATE_SANDBOX === "1";
 

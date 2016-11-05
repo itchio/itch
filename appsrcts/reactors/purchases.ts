@@ -17,7 +17,7 @@ import {
   IStore,
   IOwnUserRecord,
   IGameRecord,
-} from "../types/db";
+} from "../types";
 
 import * as actions from "../actions";
 

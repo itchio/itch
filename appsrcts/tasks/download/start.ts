@@ -8,7 +8,7 @@ import butler from "../../util/butler";
 import downloadPatches from "./download-patches";
 
 import {EventEmitter} from "events";
-import {IDownloadOpts} from "../../types/db";
+import {IDownloadOpts} from "../../types";
 
 export default async function start (out: EventEmitter, opts: IDownloadOpts) {
   if (opts.upgradePath && opts.cave) {

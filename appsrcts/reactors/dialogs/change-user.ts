@@ -1,7 +1,7 @@
 
 import * as actions from "../../actions";
 
-import {IStore} from "../../types/db";
+import {IStore} from "../../types";
 import {IAction, IChangeUserPayload} from "../../constants/action-types";
 
 async function changeUser (store: IStore, action: IAction<IChangeUserPayload>) {

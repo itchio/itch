@@ -12,7 +12,7 @@ const AUTODISMISS_DELAY = 5000;
 // OSX already shows the app's icon
 const DEFAULT_ICON = os.platform() === "darwin" ? null : `./static/images/tray/${app.getName()}-64.png`;
 
-import {IStore} from "../types/db"; 
+import {IStore} from "../types"; 
 import {IAction, IBouncePayload, INotifyPayload, IStatusMessagePayload} from "../constants/action-types"; 
 
 async function bounce (store: IStore, action: IAction<IBouncePayload>) {

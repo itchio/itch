@@ -6,7 +6,7 @@ import {
   IUpdatePreferencesPayload,
 } from "../constants/action-types";
 
-import {IPreferencesState} from "../types/db";
+import {IPreferencesState} from "../types";
 
 const OFFLINE_MODE = process.env.OFFLINE_MODE === "1";
 

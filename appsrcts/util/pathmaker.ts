@@ -4,7 +4,7 @@ import { app } from "../electron";
 
 import * as invariant from "invariant";
 
-import {ICaveRecordLocation, IUploadRecord} from "../types/db";
+import {ICaveRecordLocation, IUploadRecord} from "../types";
 
 const APPDATA_RE = /^appdata\/(.*)$/;
 

@@ -4,7 +4,7 @@
 
 import { each } from "underscore";
 
-import { IManifest } from "../../types/db";
+import { IManifest } from "../../types";
 
 const MANIFEST_REQUIRED_FIELDS = [
   "actions",

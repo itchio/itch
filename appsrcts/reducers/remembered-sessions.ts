@@ -10,7 +10,7 @@ import {
   IForgetSessionPayload,
 } from "../constants/action-types";
 
-import {IRememberedSessionsState} from "../types/db";
+import {IRememberedSessionsState} from "../types";
 
 const initialState = {} as IRememberedSessionsState;
 

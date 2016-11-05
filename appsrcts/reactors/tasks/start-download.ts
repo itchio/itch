@@ -5,7 +5,7 @@ import {log, opts} from "./log";
 
 import * as actions from "../../actions";
 
-import {IStore, IStartDownloadOpts} from "../../types/db";
+import {IStore, IStartDownloadOpts} from "../../types";
 
 let orderSeed = 0;
 

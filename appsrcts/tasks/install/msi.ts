@@ -7,7 +7,7 @@ import os from "../../util/os";
 import mklog from "../../util/log";
 const log = mklog("installers/msi");
 
-import {IStartTaskOpts} from "../../types/db";
+import {IStartTaskOpts} from "../../types";
 
 const self = {
   logPath: function (msiPath: string) {

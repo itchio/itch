@@ -1,7 +1,7 @@
 
 import * as ospath from "path";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction, INotifyHtml5Payload} from "../constants/action-types";
 
 declare class Notification {

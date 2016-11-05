@@ -3,7 +3,7 @@ import {handleActions} from "redux-actions";
 import * as ospath from "path";
 import {app} from "../../electron";
 
-import {ISessionFoldersState} from "../../types/db";
+import {ISessionFoldersState} from "../../types";
 
 import {
   IAction, ILoginSucceededPayload, ILogoutPayload,

@@ -11,7 +11,7 @@ import butler from "../../util/butler";
 import mklog from "../../util/log";
 const log = mklog("installers/nsis");
 
-import {IStartTaskOpts} from "../../types/db";
+import {IStartTaskOpts} from "../../types";
 
 // NSIS docs: http://nsis.sourceforge.net/Docs/Chapter3.html
 // When ran without elevate, some NSIS installers will silently fail.

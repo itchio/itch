@@ -10,7 +10,7 @@ import fetch from "../../util/fetch";
 
 import {startDownload} from "./start-download";
 
-import {IStore} from "../../types/db";
+import {IStore} from "../../types";
 import {IAction, IQueueCaveReinstallPayload} from "../../constants/action-types";
 
 export async function queueCaveReinstall (store: IStore, action: IAction<IQueueCaveReinstallPayload>) {

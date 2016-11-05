@@ -12,7 +12,7 @@ const osx = os.itchPlatform() === "osx";
 
 import * as actions from "../actions";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction} from "../constants/action-types";
 
 function openDevTools () {

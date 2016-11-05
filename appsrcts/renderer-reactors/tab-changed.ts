@@ -1,5 +1,5 @@
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction, ITabChangedPayload} from "../constants/action-types";
 
 async function tabChanged (store: IStore, action: IAction<ITabChangedPayload>) {

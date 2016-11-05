@@ -1,7 +1,7 @@
 
 import {handleActions} from "redux-actions";
 
-import {IUIMenuState} from "../../types/db";
+import {IUIMenuState} from "../../types";
 import {
   IAction,
   IRefreshMenuPayload,

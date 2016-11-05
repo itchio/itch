@@ -26,7 +26,7 @@ const TABS_TABLE_NAME = "itchAppTabs";
 
 import * as actions from "../actions";
 
-import {IStore, IState, ITabData, ITabDataSet, IMarketState} from "../types/db";
+import {IStore, IState, ITabData, ITabDataSet, IMarketState} from "../types";
 import {
   IAction,
   IClearFiltersPayload,

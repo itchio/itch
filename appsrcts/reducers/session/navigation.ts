@@ -6,7 +6,7 @@ import * as uuid from "node-uuid";
 import SearchExamples from "../../constants/search-examples";
 import staticTabData from "../../constants/static-tab-data";
 
-import {ISessionNavigationState, ITabDataSet, ITabDataSave} from "../../types/db";
+import {ISessionNavigationState, ITabDataSet, ITabDataSave} from "../../types";
 
 import {
   IAction,

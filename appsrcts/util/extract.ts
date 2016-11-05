@@ -13,7 +13,7 @@ import spawn from "./spawn";
 import butler from "./butler";
 
 import {Logger} from "./log";
-import {IProgressListener} from "../types/progress";
+import {IProgressListener} from "../types";
 import {EventEmitter} from "events";
 
 interface ISizeMap {

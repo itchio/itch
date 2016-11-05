@@ -2,7 +2,7 @@
 import os from "./os";
 import {camelify} from "./format";
 
-import {IGameRecord} from "../types/db";
+import {IGameRecord} from "../types";
 
 const platform = os.itchPlatform();
 const platformProp = camelify("p_" + platform);

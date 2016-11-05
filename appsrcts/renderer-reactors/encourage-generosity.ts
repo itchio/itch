@@ -10,7 +10,7 @@ import mklog from "../util/log";
 const log = mklog("renderer-reactors/generosity");
 import {opts} from "../logger";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction, IEncourageGenerosityPayload} from  "../constants/action-types";
 
 async function encourageGenerosity (store: IStore, action: IAction<IEncourageGenerosityPayload>) {

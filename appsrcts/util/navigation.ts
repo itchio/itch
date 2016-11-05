@@ -6,7 +6,7 @@ import * as querystring from "querystring";
 import staticTabData from "../constants/static-tab-data";
 
 import { IGameRecord, IUserRecord, ICollectionRecord,
-  IInstallLocation, ITabData, ITabDataSet } from "../types/db";
+  IInstallLocation, ITabData, ITabDataSet } from "../types";
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
 const ID_RE = /^[^\/]+\/(.*)$/;

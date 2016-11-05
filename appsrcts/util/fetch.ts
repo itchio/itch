@@ -11,7 +11,7 @@ import {normalize, arrayOf} from "./idealizr";
 import {game, user, collection, downloadKey} from "./schemas";
 import {each, union, pluck, values, where, difference} from "underscore";
 
-import {IMarket, IUserRecord, IGameRecord, ICollectionRecord, ICredentials} from "../types/db";
+import {IMarket, IUserRecord, IGameRecord, ICollectionRecord, ICredentials} from "../types";
 
 // TODO: don't use any in any of the return types here
 

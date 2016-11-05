@@ -1,5 +1,5 @@
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 
 let store: IStore;
 

@@ -13,7 +13,7 @@ import * as ospath from "path";
 import mklog from "../../util/log";
 const log = mklog("installers/dmg");
 
-import {IStartTaskOpts} from "../../types/db";
+import {IStartTaskOpts} from "../../types";
 
 const HFS_RE = /(\S*)\s*(Apple_HFS)?\s+(.*)\s*$/;
 

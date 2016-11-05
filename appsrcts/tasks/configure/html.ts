@@ -10,7 +10,7 @@ const log = mklog("configure/html");
 
 import { sortBy, uniq } from "underscore";
 
-import { IGameRecord, IGameEmbedInfo } from "../../types/db";
+import { IGameRecord, IGameEmbedInfo } from "../../types";
 
 export const indexBonus = (path: string): number => {
     return /index\.html$/.test(path) ? 2 : 0;

@@ -9,7 +9,7 @@ import mklog from "../util/log";
 const log = mklog("preferences");
 import {opts} from "../logger";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction, IBootPayload, IUpdatePreferencesPayload} from "../constants/action-types";
 
 export async function boot (store: IStore, action: IAction<IBootPayload>) {

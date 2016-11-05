@@ -17,7 +17,7 @@ import debounce from "./debounce";
 
 import * as actions from "../actions";
 
-import {IStore, IState, IMarket, ICredentials} from "../types/db";
+import {IStore, IState, IMarket, ICredentials} from "../types";
 import {
   IAction,
   IWindowFocusChangedPayload,

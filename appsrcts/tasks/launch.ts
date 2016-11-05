@@ -44,7 +44,7 @@ import {Crash} from "./errors";
 import {
   IModalButtonSpec, ICaveRecord, IStartTaskOpts, IGameRecord,
   IManifest, IManifestAction, IEnvironment,
-} from "../types/db";
+} from "../types";
 
 interface ILauncher {
   (out: EventEmitter, opts: IStartTaskOpts): Promise<void>;

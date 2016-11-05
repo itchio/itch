@@ -1,7 +1,7 @@
 
 import delay from "../reactors/delay";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {
   IAction,
   IFocusSearchPayload,

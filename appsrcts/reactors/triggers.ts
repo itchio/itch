@@ -5,7 +5,7 @@ import {pathToId} from "../util/navigation";
 
 import {sortBy, values} from "underscore";
 
-import {IStore, IModalButtonSpec} from "../types/db";
+import {IStore, IModalButtonSpec} from "../types";
 import {
   IAction,
   ITriggerMainActionPayload,

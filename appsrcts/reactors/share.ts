@@ -3,7 +3,7 @@ import * as querystring from "querystring";
 
 import * as actions from "../actions";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction, IInitiateSharePayload} from "../constants/action-types";
 
 async function initiateShare (store: IStore, action: IAction<IInitiateSharePayload>) {

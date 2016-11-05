@@ -12,7 +12,7 @@ import html from "./configure/html";
 import computeSize from "./configure/compute-size";
 
 import { IConfigureResult } from"./configure/common";
-import { ICaveRecord, IGameRecord, IUploadRecord, IMarket } from "../types/db";
+import { ICaveRecord, IGameRecord, IUploadRecord, IMarket } from "../types";
 import { EventEmitter } from "events";
 
 async function configure(appPath: string): Promise<IConfigureResult> {

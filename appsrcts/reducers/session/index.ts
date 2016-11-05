@@ -8,7 +8,7 @@ import folders from "./folders";
 import cachedCollections from "./cached-collections";
 
 import {Reducer} from "redux";
-import {ISessionState} from "../../types/db";
+import {ISessionState} from "../../types";
 
 export default combineReducers({
   login,

@@ -10,8 +10,8 @@ import client from "../../util/api";
 import mklog from "../../util/log";
 const log = mklog("download-patches");
 
-import {IDownloadOpts, ICaveRecord} from "../../types/db";
-import {IProgressInfo} from "../../types/progress";
+import {IDownloadOpts, ICaveRecord} from "../../types";
+import {IProgressInfo} from "../../types";
 
 import {getGlobalMarket} from "../../reactors/market";
 

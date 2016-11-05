@@ -11,7 +11,7 @@ import {map, where, values} from "underscore";
 
 import * as actions from "../../actions";
 
-import {IStore, IGameRecord, ICaveRecord, IUploadRecord, IDownloadKey} from "../../types/db";
+import {IStore, IGameRecord, ICaveRecord, IUploadRecord, IDownloadKey} from "../../types";
 import {IAction, IQueueGamePayload} from "../../constants/action-types";
 
 interface IFindUploadResult {

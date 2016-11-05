@@ -1,5 +1,5 @@
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction, ILoginFailedPayload} from "../constants/action-types";
 
 async function loginFailed (store: IStore, action: IAction<ILoginFailedPayload>) {

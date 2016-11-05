@@ -1,7 +1,7 @@
 
 import {handleActions} from "redux-actions";
 
-import {ISelfUpdateState} from "../types/db";
+import {ISelfUpdateState} from "../types";
 
 import {
   IAction,

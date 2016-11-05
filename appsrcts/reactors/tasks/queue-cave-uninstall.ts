@@ -5,7 +5,7 @@ import * as actions from "../../actions";
 
 import {startTask} from "./start-task";
 
-import {IStore} from "../../types/db";
+import {IStore} from "../../types";
 import {IAction, IQueueCaveUninstallPayload} from "../../constants/action-types";
 
 export async function queueCaveUninstall (store: IStore, action: IAction<IQueueCaveUninstallPayload>) {

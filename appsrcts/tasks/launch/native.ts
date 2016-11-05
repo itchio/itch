@@ -30,7 +30,7 @@ const log = mklog("tasks/launch/native");
 
 import {Crash} from "../errors";
 
-import {IEnvironment, IStartTaskOpts} from "../../types/db";
+import {IEnvironment, IStartTaskOpts} from "../../types";
 
 export default async function launch (out: EventEmitter, opts: IStartTaskOpts): Promise<void> {
   const {market, credentials, env} = opts;

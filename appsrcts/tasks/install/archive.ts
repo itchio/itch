@@ -12,8 +12,8 @@ import core from "./core";
 import mklog from "../../util/log";
 const log = mklog("installers/archive");
 
-import {IStartTaskOpts, IInstallerCache} from "../../types/db";
-import {IProgressInfo} from "../../types/progress";
+import {IStartTaskOpts, IInstallerCache} from "../../types";
+import {IProgressInfo} from "../../types";
 
 const self = {
   retrieveCachedType: function (opts: IStartTaskOpts) {

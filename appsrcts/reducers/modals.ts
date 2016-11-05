@@ -3,7 +3,7 @@ import {handleActions} from "redux-actions";
 
 import {reject} from "underscore";
 
-import {IModalsState} from "../types/db";
+import {IModalsState} from "../types";
 
 import {
   IAction,

@@ -16,7 +16,7 @@ const remoteDir = ospath.join(app.getPath("userData"), "locales");
 const localesDir = ospath.resolve(ospath.join(__dirname, "..", "static", "locales"));
 const localesConfigPath = ospath.resolve(ospath.join(localesDir, "..", "locales.json"));
 
-import {IStore, II18nResources} from "../types/db";
+import {IStore, II18nResources} from "../types";
 import {IAction, IQueueLocaleDownloadPayload, ILanguageChangedPayload} from "../constants/action-types";
 
 import logger from "../logger";

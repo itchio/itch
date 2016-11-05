@@ -3,7 +3,7 @@ import {handleActions} from "redux-actions";
 
 import {omit} from "underscore";
 
-import {IMarket, IMarketState, TableName} from "../types/db";
+import {IMarket, IMarketState, TableName} from "../types";
 
 import * as actionTypes from "../constants/action-types";
 import {IAction, IDbReadyPayload, IDbCommitPayload, IDbClosedPayload} from "../constants/action-types";

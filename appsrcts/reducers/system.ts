@@ -9,7 +9,7 @@ import {
   IFreeSpaceUpdatedPayload,
 } from "../constants/action-types";
 
-import {ISystemState} from "../types/db";
+import {ISystemState} from "../types";
 
 const initialState = {
   appVersion: app.getVersion(),

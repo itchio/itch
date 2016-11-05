@@ -2,7 +2,7 @@
 import { createAction } from "redux-actions";
 import { userToTabData, gameToTabData, collectionToTabData } from "../util/navigation";
 
-import { IGameRecord, IUserRecord, ICollectionRecord } from "../types/db";
+import { IGameRecord, IUserRecord, ICollectionRecord } from "../types";
 
 import {
   NAVIGATE,

@@ -4,7 +4,7 @@ const log = mklog("blessing");
 
 import {EventEmitter} from "events";
 
-import {IStartTaskOpts} from "../../types/db";
+import {IStartTaskOpts} from "../../types";
 
 const self = (out: EventEmitter, opts: IStartTaskOpts) => {
   log(opts, "blessing: stub, assuming yes");

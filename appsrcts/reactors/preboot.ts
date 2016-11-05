@@ -9,7 +9,7 @@ import {opts} from "../logger";
 import mklog from "../util/log";
 const log = mklog("preboot");
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction, IPrebootPayload} from "../constants/action-types";
 
 async function preboot (store: IStore, action: IAction<IPrebootPayload>) {

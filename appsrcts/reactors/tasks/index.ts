@@ -12,7 +12,7 @@ import {downloadWatcher} from "./download-watcher";
 import {downloadSpeedWatcher} from "./download-speed-watcher";
 import {abortTask} from "./start-task";
 
-import {IStore} from "../../types/db";
+import {IStore} from "../../types";
 import {IAction, IBootPayload, IRetryDownloadPayload} from "../../constants/action-types";
 
 async function boot (store: IStore, action: IAction<IBootPayload>) {

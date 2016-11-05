@@ -16,7 +16,7 @@ import {EventEmitter} from "events";
 import {
   IEntityMap, ITableMap, IEntityRefs, IEntityRecords,
   IMarketSaveOpts, IMarketDeleteOpts, IMarketDeleteSpec,
-} from "../types/db";
+} from "../types";
 
 /**
  * MarketDB is a simple in-memory database that persists on disk.

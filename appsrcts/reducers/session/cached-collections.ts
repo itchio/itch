@@ -1,7 +1,7 @@
 
 import {handleActions} from "redux-actions";
 
-import {ISessionCachedCollectionsState} from "../../types/db";
+import {ISessionCachedCollectionsState} from "../../types";
 
 import {
   IAction,

@@ -1,7 +1,7 @@
 
 import * as actions from "../../actions";
 
-import {IStore} from "../../types/db";
+import {IStore} from "../../types";
 import {IAction, IAbortGameRequestPayload} from "../../constants/action-types";
 
 async function abortGameRequest (store: IStore, action: IAction<IAbortGameRequestPayload>) {

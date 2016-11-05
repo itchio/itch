@@ -15,7 +15,7 @@ import * as actions from "../actions";
 
 import {BrowserWindow, dialog} from "../electron";
 
-import {IStore, IState} from "../types/db";
+import {IStore, IState} from "../types";
 import {
   IAction,
   IRemoveInstallLocationRequestPayload,

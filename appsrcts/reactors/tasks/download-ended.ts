@@ -5,7 +5,7 @@ import {log, opts} from "./log";
 
 import {omit} from "underscore";
 
-import {IStore} from "../../types/db";
+import {IStore} from "../../types";
 
 import {IAction, IDownloadEndedPayload} from "../../constants/action-types";
 

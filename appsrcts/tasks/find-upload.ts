@@ -21,7 +21,7 @@ import {
   IGameRecord,
   ICredentials,
   IDownloadKey,
-} from "../types/db";
+} from "../types";
 
 export function filterUploadsByPlatform (action: ClassificationAction, uploads: IUploadRecord[]): IUploadRecord[] {
   if (action === "open") {

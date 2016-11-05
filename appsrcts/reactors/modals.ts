@@ -3,7 +3,7 @@ import {each} from "underscore";
 
 import * as actions from "../actions";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction, IOpenModalPayload, IModalClosedPayload, IModalResponsePayload} from "../constants/action-types";
 
 async function closeModal (store: IStore, outerAction: IAction<any>) {

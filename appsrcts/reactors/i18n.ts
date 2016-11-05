@@ -3,7 +3,7 @@ import {createSelector} from "reselect";
 
 import {languageChanged} from "../actions";
 
-import {IStore, IState} from "../types/db";
+import {IStore, IState} from "../types";
 import {IAction} from "../constants/action-types";
 
 const makeSelector = (store: IStore) => createSelector(

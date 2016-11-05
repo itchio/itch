@@ -1,7 +1,7 @@
 
 import {handleActions} from "redux-actions";
 
-import {ISessionLoginState} from "../../types/db";
+import {ISessionLoginState} from "../../types";
 
 import {
   IAction,

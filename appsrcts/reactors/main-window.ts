@@ -23,7 +23,7 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = os.platform() === "darwin";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {
   IAction,
   IWindowBoundsChangedPayload,

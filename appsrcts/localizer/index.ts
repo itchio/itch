@@ -1,5 +1,5 @@
 
-import {II18nResources} from "../types/db";
+import {II18nResources} from "../types";
 
 interface ILocalizer {
   /** returns the localized version of a string */

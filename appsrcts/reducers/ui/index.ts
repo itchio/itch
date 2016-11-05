@@ -6,7 +6,7 @@ import menu from "./menu";
 
 import {Reducer} from "redux";
 
-import {IUIState} from "../../types/db";
+import {IUIState} from "../../types";
 
 export default combineReducers({
   mainWindow,

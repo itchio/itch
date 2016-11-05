@@ -11,7 +11,7 @@ import {map, sortBy} from "underscore";
 import mklog from "../../util/log";
 const log = mklog("launch/poker");
 
-import {IStartTaskOpts} from "../../types/db";
+import {IStartTaskOpts} from "../../types";
 
 interface IScoredExecutable {
   /** path of the file, relative to the app path */

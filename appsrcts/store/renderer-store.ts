@@ -7,7 +7,7 @@ import route from "../reactors/route";
 import reactors from "../renderer-reactors";
 import reducer from "../reducers";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 
 const filter = true;
 const middleware: Middleware[] = [];

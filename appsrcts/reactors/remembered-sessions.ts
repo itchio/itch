@@ -11,7 +11,7 @@ import * as actions from "../actions";
 const TOKEN_FILE_NAME = "token.json";
 const USERS_PATH = ospath.join(app.getPath("userData"), "users");
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {
   IAction,
   IForgetSessionPayload,

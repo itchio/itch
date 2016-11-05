@@ -1,7 +1,7 @@
 
 import {handleActions} from "redux-actions";
 
-import {IUIMainWindowState} from "../../types/db";
+import {IUIMainWindowState} from "../../types";
 
 import {
   IAction,

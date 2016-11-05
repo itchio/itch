@@ -10,7 +10,7 @@ import * as ospath from "path";
 import mklog from "../../util/log";
 const log = mklog("installers/naked");
 
-import {IStartTaskOpts} from "../../types/db";
+import {IStartTaskOpts} from "../../types";
 
 const self = {
   install: async function (out: EventEmitter, opts: IStartTaskOpts) {

@@ -7,7 +7,7 @@ import spawn from "./spawn";
 import sf from "./sf";
 
 import {EventEmitter} from "events";
-import {IProgressListener, IProgressInfo} from "../types/progress";
+import {IProgressListener, IProgressInfo} from "../types";
 
 import mklog from "./log";
 const log = mklog("butler");

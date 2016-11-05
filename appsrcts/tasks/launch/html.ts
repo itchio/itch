@@ -17,7 +17,7 @@ import debugBrowserWindow from "../../util/debug-browser-window";
 import mklog from "../../util/log";
 const log = mklog("tasks/launch");
 
-import {IStartTaskOpts} from "../../types/db";
+import {IStartTaskOpts} from "../../types";
 
 interface IBeforeSendHeadersDetails {
   url: string;

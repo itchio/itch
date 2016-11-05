@@ -1,5 +1,5 @@
 
-import {IProgressListener} from "../types/progress";
+import {IProgressListener} from "../types";
 
 /**
  * Returns a function that, when called, calls onProgress

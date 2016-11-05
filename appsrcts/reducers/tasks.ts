@@ -5,7 +5,7 @@ import {createStructuredSelector} from "reselect";
 import * as invariant from "invariant";
 import {values, groupBy, omit} from "underscore";
 
-import {ITasksState} from "../types/db";
+import {ITasksState} from "../types";
 
 import derivedReducer from "./derived-reducer";
 

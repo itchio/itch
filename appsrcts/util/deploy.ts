@@ -8,8 +8,8 @@ import butler from "./butler";
 
 import * as ospath from "path";
 
-import {IProgressListener} from "../types/progress";
-import {ICaveRecord} from "../types/db";
+import {IProgressListener} from "../types";
+import {ICaveRecord} from "../types";
 
 import {EventEmitter} from "events";
 

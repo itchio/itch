@@ -6,7 +6,7 @@ import {opts} from "../logger";
 import mklog from "../util/log";
 const log = mklog("reactors");
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction} from "../constants/action-types";
 
 interface IReactor<T> {

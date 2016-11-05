@@ -11,7 +11,7 @@ import mklog from "../util/log";
 import {opts} from "../logger";
 const log = mklog("navigation");
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 
 import {
   IAction,

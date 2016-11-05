@@ -1,7 +1,7 @@
 
 import {handleActions} from "redux-actions";
 
-import {ISessionCredentialsState} from "../../types/db";
+import {ISessionCredentialsState} from "../../types";
 
 import {
   IAction,

@@ -6,7 +6,7 @@ import {createSelector, createStructuredSelector} from "reselect";
 import * as invariant from "invariant";
 import {indexBy, where, values, sortBy, pluck, filter, map, first, last, omit} from "underscore";
 
-import {IDownloadsState, IGameRecord} from "../types/db";
+import {IDownloadsState, IGameRecord} from "../types";
 import {
    IAction,
    IClearGameDownloadsPayload,

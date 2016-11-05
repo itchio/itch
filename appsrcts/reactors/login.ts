@@ -4,7 +4,7 @@ import client from "../util/api";
 
 import {values, sortBy} from "underscore";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {
   IAction,
   ILoginWithPasswordPayload,

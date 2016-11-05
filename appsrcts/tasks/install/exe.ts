@@ -11,7 +11,7 @@ const log = mklog("installers/exe");
 
 import {partial} from "underscore";
 
-import {IStartTaskOpts, IInstallerCache} from "../../types/db";
+import {IStartTaskOpts, IInstallerCache} from "../../types";
 
 /** Map search string to installer format */
 interface INeedles {

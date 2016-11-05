@@ -5,7 +5,7 @@ import * as actions from "../actions";
 
 import delay from "./delay";
 
-import {IStore, IState} from "../types/db";
+import {IStore, IState} from "../types";
 import {IAction, ILogoutPayload, ISessionReadyPayload} from "../constants/action-types";
 
 async function logout (store: IStore, action: IAction<ILogoutPayload>) {

@@ -17,9 +17,9 @@ import * as actions from "../../actions";
 import {
   IStore,
   IDownloadItem,
-} from "../../types/db";
+} from "../../types";
 
-import {IProgressInfo} from "../../types/progress";
+import {IProgressInfo} from "../../types";
 
 const DOWNLOAD_DELAY = 250;
 

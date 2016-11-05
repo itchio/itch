@@ -6,7 +6,7 @@ import {createSelector} from "reselect";
 import {connect as reduxConnect} from "react-redux";
 import {getT} from "../localizer";
 
-import {IState} from "../types/db";
+import {IState} from "../types";
 
 const identity = (x: any) => x;
 

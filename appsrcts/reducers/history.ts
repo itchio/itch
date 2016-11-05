@@ -5,7 +5,7 @@ import {handleActions} from "redux-actions";
 import {createStructuredSelector} from "reselect";
 import {values, sortBy, omit, map, indexBy, filter} from "underscore";
 
-import {IHistoryState} from "../types/db";
+import {IHistoryState} from "../types";
 
 import derivedReducer from "./derived-reducer";
 

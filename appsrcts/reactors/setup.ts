@@ -7,7 +7,7 @@ import {map} from "underscore";
 import {
   IStore,
   ILocalizedString,
-} from "../types/db";
+} from "../types";
 
 import {
   IAction,

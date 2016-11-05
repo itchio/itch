@@ -7,7 +7,7 @@ import * as actions from "../actions";
 
 import {
   IStore,
-} from "../types/db";
+} from "../types";
 
 import {
   IAction,

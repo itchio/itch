@@ -8,7 +8,7 @@ import {createSelector} from "reselect";
 
 import * as actions from "../actions";
 
-import {IStore, IState, II18nState} from "../types/db";
+import {IStore, IState, II18nState} from "../types";
 import {IAction, IBootPayload, INotifyPayload} from "../constants/action-types";
 import {Action} from "redux-actions";
 

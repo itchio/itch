@@ -9,7 +9,7 @@ import * as actions from "../../actions";
 
 const DOWNLOAD_SPEED_DELAY = 2000;
 
-import {IStore} from "../../types/db";
+import {IStore} from "../../types";
 
 export async function downloadSpeedWatcher (store: IStore) {
   while (true) {

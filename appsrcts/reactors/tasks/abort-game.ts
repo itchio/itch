@@ -5,7 +5,7 @@ import {values, sortBy} from "underscore";
 
 import {
   IStore,
-} from "../../types/db";
+} from "../../types";
 
 import {
   IAction,

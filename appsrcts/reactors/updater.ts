@@ -40,7 +40,7 @@ import {
   IStore,
   IGameRecord,
   ICaveRecord,
-} from "../types/db";
+} from "../types";
 
 import {
   IAction,

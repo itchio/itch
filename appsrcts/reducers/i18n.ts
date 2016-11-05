@@ -11,7 +11,7 @@ import {
   ILanguageChangedPayload,
 } from "../constants/action-types";
 
-import {II18nState} from "../types/db";
+import {II18nState} from "../types";
 
 const initialState = {
   lang: "en",

@@ -9,7 +9,7 @@ import {
 
 import {
   IMarketState,
-} from "../types/db";
+} from "../types";
 
 const reducer = makeMarketReducer("USER", getUserMarket, [
   "collections",

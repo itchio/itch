@@ -8,7 +8,7 @@ const log = mklog("tasks/find-upgrade-path");
 
 import {each} from "underscore";
 
-import {IUploadRecord, IMarket, ICredentials, IDownloadKey} from "../types/db";
+import {IUploadRecord, IMarket, ICredentials, IDownloadKey} from "../types";
 
 interface IFindUpgradePathOpts {
   credentials: ICredentials;

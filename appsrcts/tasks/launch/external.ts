@@ -6,7 +6,7 @@ import * as invariant from "invariant";
 import store from "../../store";
 import * as actions from "../../actions";
 
-import {IStartTaskOpts} from "../../types/db";
+import {IStartTaskOpts} from "../../types";
 
 export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   const {cave, manifestAction} = opts;

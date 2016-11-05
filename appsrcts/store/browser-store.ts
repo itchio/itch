@@ -6,7 +6,7 @@ import route from "../reactors/route";
 import reactors from "../reactors";
 import reducer from "../reducers";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 
 const crashGetter = (store: Store<any>) => (next: (action: any) => any) => (action: any) => {
   try {

@@ -4,7 +4,7 @@ import delay from "./delay";
 import * as actions from "../actions";
 import * as moment from "moment-timezone";
 
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {IAction, IBootPayload} from "../constants/action-types";
 
 import mklog from "../util/log";

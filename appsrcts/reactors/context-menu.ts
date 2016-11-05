@@ -9,7 +9,7 @@ import {getUserMarket} from "./market";
 import classificationActions from "../constants/classification-actions";
 
 import * as actions from "../actions";
-import {IStore} from "../types/db";
+import {IStore} from "../types";
 import {
   IAction,
   IOpenTabContextMenuPayload,

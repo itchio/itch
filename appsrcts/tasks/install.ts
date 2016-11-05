@@ -14,8 +14,8 @@ const log = mklog("tasks/install");
 import core from "./install/core";
 import {values, findWhere} from "underscore";
 
-import {IStartTaskOpts} from "../types/db";
-import {IProgressInfo} from "../types/progress";
+import {IStartTaskOpts} from "../types";
+import {IProgressInfo} from "../types";
 
 function defaultInstallLocation () {
   const store = require("../store").default;

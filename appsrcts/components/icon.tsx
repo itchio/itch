@@ -4,7 +4,7 @@ import * as React from "react";
 import {connect} from "./connect";
 import * as classNames from "classnames";
 
-import {IState} from "../types/db";
+import {IState} from "../types";
 
 interface IWhitelist {
   [key: string]: boolean;

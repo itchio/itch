@@ -6,7 +6,7 @@ import { shell } from "../../electron";
 import pathmaker from "../../util/pathmaker";
 
 import {EventEmitter} from "events";
-import {IStartTaskOpts} from "../../types/db";
+import {IStartTaskOpts} from "../../types";
 
 interface ILaunchOpts extends IStartTaskOpts {}
 

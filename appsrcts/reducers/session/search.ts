@@ -3,7 +3,7 @@ import {handleActions} from "redux-actions";
 
 import SearchExamples from "../../constants/search-examples";
 
-import {ISessionSearchState} from "../../types/db";
+import {ISessionSearchState} from "../../types";
 
 import {
   IAction,

@@ -7,7 +7,7 @@ import {values, indexBy} from "underscore";
 
 import derivedReducer from "./derived-reducer";
 
-import {IGlobalMarketState, ICaveRecord} from "../types/db";
+import {IGlobalMarketState, ICaveRecord} from "../types";
 
 const reducer = makeMarketReducer("GLOBAL", getGlobalMarket, ["caves"]);
 

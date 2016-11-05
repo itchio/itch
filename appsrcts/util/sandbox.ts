@@ -2,7 +2,7 @@
 import os from "./os";
 
 // TODO: better typing?
-import {IStartTaskOpts} from "../types/db";
+import {IStartTaskOpts} from "../types";
 import {ICheckResult, INeed} from "./sandbox/types";
 
 export interface IWithinData {

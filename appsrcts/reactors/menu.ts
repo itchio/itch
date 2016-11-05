@@ -13,7 +13,7 @@ import * as actions from "../actions";
 import os from "../util/os";
 const macos = os.itchPlatform() === "osx";
 
-import {IStore, IState, II18nState} from "../types/db";
+import {IStore, IState, II18nState} from "../types";
 import {IAction} from "../constants/action-types";
 
 let refreshSelector: (state: IState) => void;

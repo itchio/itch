@@ -1,8 +1,8 @@
 
 import {Action} from "redux-actions";
 
-import * as Types from "../types/db";
-import {IProgressInfo} from "../types/progress";
+import * as Types from "../types";
+import {IProgressInfo} from "../types";
 
 export type IAction<T> = Action<T>;
 

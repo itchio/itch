@@ -10,7 +10,7 @@ import {camelifyObject} from "./format";
 
 import {contains} from "underscore";
 
-import {IDownloadKey, IUpgradePathItem, IUploadRecord} from "../types/db";
+import {IDownloadKey, IUpgradePathItem, IUploadRecord} from "../types";
 
 interface IUpgradeResponse {
   upgradePath: IUpgradePathItem[];

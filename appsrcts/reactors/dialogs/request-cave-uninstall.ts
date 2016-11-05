@@ -9,7 +9,7 @@ import fetch from "../../util/fetch";
 // TODO: use market state instead
 import {getGlobalMarket, getUserMarket} from "../../reactors/market";
 
-import {IStore} from "../../types/db";
+import {IStore} from "../../types";
 import {IAction, IRequestCaveUninstallPayload} from "../../constants/action-types";
 
 async function requestCaveUninstall (store: IStore, action: IAction<IRequestCaveUninstallPayload>) {

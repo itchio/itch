@@ -8,7 +8,7 @@ import {log, opts} from "./log";
 
 import * as actions from "../../actions";
 
-import {IStore, ICaveRecord} from "../../types/db";
+import {IStore, ICaveRecord} from "../../types";
 import {IAction, ITaskEndedPayload} from "../../constants/action-types";
 
 export async function taskEnded (store: IStore, action: IAction<ITaskEndedPayload>) {

@@ -2,7 +2,7 @@
 import spawn from "./spawn";
 import os from "./os";
 
-import {ISpaceInfo, IPartInfo, IPartsInfo} from "../types/db";
+import {ISpaceInfo, IPartInfo, IPartsInfo} from "../types";
 
 /*
  * Heavily based on https://github.com/int0h/npm-hddSpace

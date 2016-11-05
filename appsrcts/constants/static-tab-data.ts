@@ -1,5 +1,5 @@
 
-import {ITabData} from "../types/db";
+import {ITabData} from "../types";
 
 interface IBaseTabData extends ITabData {
   id?: string;

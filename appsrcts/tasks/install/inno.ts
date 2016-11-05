@@ -10,7 +10,7 @@ import {Transition} from "../errors";
 import mklog from "../../util/log";
 const log = mklog("installers/inno");
 
-import {IStartTaskOpts} from "../../types/db";
+import {IStartTaskOpts} from "../../types";
 
 // InnoSetup docs: http://www.jrsoftware.org/ishelp/index.php?topic=setupcmdline
 
