@@ -593,7 +593,10 @@ export interface IProbeCavePayload {
 
 /** Open issue on github with cave logs */
 export const REPORT_CAVE = "REPORT_CAVE";
-export interface IReportCavePayload {}
+export interface IReportCavePayload {
+  /** id of the cave to report */
+  caveId: string;
+}
 
 /** Can't install .deb, .rpm, etc. */
 export const SHOW_PACKAGING_POLICY = "SHOW_PACKAGING_POLICY";

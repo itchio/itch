@@ -3,10 +3,12 @@ import urls from "../constants/urls";
 import {requestAsync} from "../promised/needle";
 
 interface IGistFiles {
-  [key: string]: string;
+  [key: string]: {
+    content: string
+  };
 }
 
-interface IGistData {
+export interface IGistData {
   description: string;
   public: boolean;
   files: IGistFiles;

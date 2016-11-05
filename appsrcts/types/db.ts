@@ -214,6 +214,9 @@ export interface ICaveRecord extends ICaveRecordLocation {
     /** itch.io game id this cave contains */
     gameId: number;
 
+    /** itch.io game info at the time of install */
+    game: IGameRecord;
+
     /** download key what was used to install this game, if any */
     downloadKey: IDownloadKey;
 
