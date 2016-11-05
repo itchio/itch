@@ -46,7 +46,6 @@
     "deep-assign": "^2.0.0",
     "deep-freeze": "0.0.1",
     "eol": "^0.2.0",
-    "es6-error": "^2.0.0",
     "file-type": "^3.0.0",
     "finalhandler": "^0.4.1",
     "fnout": "^1.1.0",

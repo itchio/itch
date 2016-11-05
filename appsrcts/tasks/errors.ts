@@ -1,7 +1,5 @@
 
-import * as ExtendableError from "es6-error";
-
-export class Transition extends ExtendableError {
+export class Transition extends Error {
   to?: string;
   reason?: string;
 
@@ -15,21 +13,21 @@ export class Transition extends ExtendableError {
   }
 }
 
-export class InputRequired extends ExtendableError {
+export class InputRequired extends Error {
   constructor(opts: any) {
     super("user interaction required");
     Object.assign(this, opts, { type: "input_required" });
   }
 }
 
-export class Crash extends ExtendableError {
+export class Crash extends Error {
   constructor(opts: any) {
     super(`application crashed. ${opts.error || ""}`);
     Object.assign(this, opts, { type: "crash" });
   }
 }
 
-export class Cancelled extends ExtendableError {
+export class Cancelled extends Error {
   constructor(opts: any = {}) {
     super("cancelled");
     Object.assign(this, opts, { type: "cancelled" });

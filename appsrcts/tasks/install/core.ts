@@ -8,13 +8,11 @@ import spawn from "../../util/spawn";
 import mklog from "../../util/log";
 const log = mklog("install/core");
 
-import * as ExtendableError from "es6-error";
-
 import {IInstallerCache, IStartTaskOpts} from "../../types/db";
 
 type InstallOperation = "install" | "uninstall";
 
-class UnhandledFormat extends ExtendableError {
+class UnhandledFormat extends Error {
   constructor (archivePath: string) {
     super(`don't know how to handle ${archivePath}`);
   }

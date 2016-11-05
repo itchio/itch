@@ -1,11 +1,9 @@
 
-import * as ExtendableError from "es6-error";
-
 const chatty = process.env.IAMA_JELLO_AMA === "1";
 
 // tslint:disable:no-console
 
-export class CancelError extends ExtendableError {
+export class CancelError extends Error {
   constructor () {
     super("");
   }
