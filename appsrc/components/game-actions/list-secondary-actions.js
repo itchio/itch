@@ -120,7 +120,7 @@ export default function listSecondaryActions (props) {
       version += ` #${cave.uploadId}`
     }
 
-    const hint = `${format.date(cave.installedArchiveMtime, DATE_FORMAT, t.lang)}`
+    const hint = `${format.date(upload.build.updatedAt, DATE_FORMAT, t.lang)}`
 
     items.push({
       type: 'info',
