@@ -141,7 +141,7 @@ export default validateReactors({
   SEARCH: combine(fetch.search),
 
   BOUNCE: combine(notifications.bounce),
-  NOTIFY: combine(notifications.notify),
+  NOTIFY: combine(notifications.notify, tray.notify),
   STATUS_MESSAGE: combine(notifications.statusMessage),
 
   CHECK_FOR_SELF_UPDATE: combine(selfUpdate.checkForSelfUpdate),

@@ -9,9 +9,13 @@ import {createSelector} from "reselect";
 import * as actions from "../actions";
 
 import {IStore, IState, II18nState} from "../types/db";
-import {IAction, IBootPayload} from "../constants/action-types";
+import {IAction, IBootPayload, INotifyPayload} from "../constants/action-types";
+import {Action} from "redux-actions";
 
 import {EventEmitter} from "events";
+
+// used to glue balloon click with notification callbacks
+let lastNotificationAction: Action<any>;
 
 interface IBalloonOpts {
   title: string;
@@ -36,6 +40,11 @@ function makeTray (store: IStore) {
   tray.setToolTip("itch.io");
   tray.on("click", () => store.dispatch(actions.focusWindow({toggle: true})));
   tray.on("double-click", () => store.dispatch(actions.focusWindow()));
+  tray.on("balloon-click", () => {
+    if (lastNotificationAction) {
+      store.dispatch(lastNotificationAction);
+    }
+  });
 }
 
 function setMenu (trayMenu: IMenuTemplate, store: IStore) {
@@ -102,8 +111,12 @@ async function catchAll (store: IStore, action: IAction<any>) {
   traySelector(store.getState());
 }
 
+async function notify (store: IStore, action: IAction<INotifyPayload>) {
+  lastNotificationAction = action.payload.onClick;
+}
+
 export function getTray () {
   return tray;
 }
 
-export default {boot, catchAll};
+export default {boot, catchAll, notify};

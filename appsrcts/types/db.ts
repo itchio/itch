@@ -10,6 +10,8 @@ export type GameClassification = "game" | "tool" | "assets" |
     "game_mod" | "physical_game" | "soundtrack" | "other" |
     "comic" | "book"
 
+export type GenerosityLevel = "discreet";
+
 /**
  * Contains information about a game, retrieved via the itch.io API,
  * and saved to the local database.

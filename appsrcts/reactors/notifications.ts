@@ -23,7 +23,7 @@ async function bounce (store: IStore, action: IAction<IBouncePayload>) {
 }
 
 async function notify (store: IStore, action: IAction<INotifyPayload>) {
-  const {title = "itch", body, icon = DEFAULT_ICON} = action.payload;
+  const {title = "itch", body, icon = DEFAULT_ICON, onClick} = action.payload;
 
   if (os.platform() === "win32" && !/^10\./.test(os.release())) {
     const tray = getTray();
@@ -36,7 +36,7 @@ async function notify (store: IStore, action: IAction<INotifyPayload>) {
     const window = BrowserWindow.fromId(id);
     if (window && !window.isDestroyed() && !window.webContents.isDestroyed()) {
       const opts = {body, icon};
-      store.dispatch(actions.notifyHtml5({title, opts}));
+      store.dispatch(actions.notifyHtml5({title, opts, onClick}));
     }
   }
 }

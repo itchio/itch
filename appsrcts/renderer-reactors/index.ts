@@ -1,14 +1,14 @@
 
-import combine from '../reactors/combine'
-import validateReactors from '../reactors/validate-reactors'
+import combine from "../reactors/combine";
+import validateReactors from "../reactors/validate-reactors";
 
-import notifications from './notifications'
-import shortcuts from './shortcuts'
-import encourageGenerosity from './encourage-generosity'
-import focusSearch from './focus-search'
-import triggers from './triggers'
-import loginFailed from './login-failed'
-import tabChanged from './tab-changed'
+import notifications from "./notifications";
+import shortcuts from "./shortcuts";
+import encourageGenerosity from "./encourage-generosity";
+import focusSearch from "./focus-search";
+import triggers from "./triggers";
+import loginFailed from "./login-failed";
+import tabChanged from "./tab-changed";
 
 export default validateReactors({
   __MOUNT: combine(shortcuts.mount),
@@ -29,5 +29,5 @@ export default validateReactors({
 
   TAB_CHANGED: combine(tabChanged.tabChanged),
 
-  NOTIFY_HTML5: combine(notifications.notifyHtml5)
-})
+  NOTIFY_HTML5: combine(notifications.notifyHtml5),
+});

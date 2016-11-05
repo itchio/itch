@@ -664,7 +664,13 @@ export const PURCHASE_COMPLETED = "PURCHASE_COMPLETED";
 export interface IPurchaseCompletedPayload {}
 
 export const ENCOURAGE_GENEROSITY = "ENCOURAGE_GENEROSITY";
-export interface IEncourageGenerosityPayload {}
+export interface IEncourageGenerosityPayload {
+  /** for which game should we encourage generosity? */
+  gameId: number;
+
+  /** how hard should we encourage generosity? */
+  level: Types.GenerosityLevel;
+}
 
 export const INITIATE_SHARE = "INITIATE_SHARE";
 export interface IInitiateSharePayload {
@@ -686,10 +692,27 @@ export interface INotifyPayload {
 
   /** path to the icon (on fs, can be relative to `app/`), defaults to itch icon */
   icon?: string;
+
+  /** action to dispatch if notification is clicked */
+  onClick?: Action<any>;
 }
 
 export const NOTIFY_HTML5 = "NOTIFY_HTML5";
-export interface INotifyHtml5Payload {}
+export interface INotifyHtml5Payload {
+  /** notification title */
+  title: string;
+
+  opts: {
+    /** notification icon */
+    icon?: string;
+
+    /** main notification text */
+    body?: string;
+  };
+
+  /** action to dispatch if notification is clicked */
+  onClick: Action<any>;
+}
 
 /** Search */
 export const FOCUS_SEARCH = "FOCUS_SEARCH";
