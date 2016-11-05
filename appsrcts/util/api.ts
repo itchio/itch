@@ -1,5 +1,4 @@
 
-import * as ExtendableError from "es6-error";
 import * as querystring from "querystring";
 
 import * as needle from "../promised/needle";
@@ -36,16 +35,12 @@ export function ensureArray (v: any): any[] {
   return v;
 }
 
-export class ApiError extends ExtendableError {
+export class ApiError extends Error {
   errors: string[];
-  stack: string;
-  message: string;
-  
+
   constructor (errors: string[]) {
     super(errors.join(", "));
     this.errors = errors;
-    this.stack = new Error().stack;
-    this.message = errors.join(", ");
   }
 
   toString () {
