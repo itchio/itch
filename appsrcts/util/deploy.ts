@@ -36,12 +36,12 @@ interface ISingleListener {
   (onlyFile: string): Promise<ISingleResult>;
 }
 
-interface IDeployOpts {
+export interface IDeployOpts {
   stagePath: string;
   destPath: string;
   cave?: ICaveRecord;
   onProgress: IProgressListener;
-  onSingle: ISingleListener;
+  onSingle?: ISingleListener;
 }
 
 let self = {
