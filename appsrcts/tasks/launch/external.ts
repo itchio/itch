@@ -3,7 +3,7 @@ import {EventEmitter} from "events";
 
 import * as invariant from "invariant";
 
-import * as store from "../../store";
+import store from "../../store";
 import * as actions from "../../actions";
 
 import {IStartTaskOpts} from "../../types/db";

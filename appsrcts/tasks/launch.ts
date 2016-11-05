@@ -13,7 +13,7 @@ import shell from "./launch/shell";
 import external from "./launch/external";
 import validateManifest from "./launch/validate-manifest";
 
-import * as store from "../store";
+import store from "../store";
 import * as actions from "../actions";
 import {startTask} from "../reactors/tasks/start-task";
 

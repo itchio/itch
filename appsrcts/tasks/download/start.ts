@@ -2,10 +2,7 @@
 import * as invariant from "invariant";
 
 import mklog from "../../util/log";
-const log = mklog("download");
-
-import pathmaker from "../../util/pathmaker";
-import client from "../../util/api";
+const log = mklog("download"); import pathmaker from "../../util/pathmaker"; import client from "../../util/api";
 import butler from "../../util/butler";
 
 import downloadPatches from "./download-patches";
@@ -14,9 +11,12 @@ import {EventEmitter} from "events";
 import {IDownloadOpts} from "../../types/db";
 
 export default async function start (out: EventEmitter, opts: IDownloadOpts) {
-  if (opts.upgradePath) {
+  if (opts.upgradePath && opts.cave) {
     log(opts, "Got an upgrade path, downloading patches");
-    return await downloadPatches(out, opts);
+
+    return await downloadPatches(out, Object.assign({}, opts, {
+      cave: opts.cave,
+    }));
   }
 
   const {upload, destPath, downloadKey, credentials} = opts;

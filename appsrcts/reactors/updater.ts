@@ -237,6 +237,7 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
             const archivePath = pathmaker.downloadPath(upload);
 
             await startDownload(store, {
+              cave,
               game,
               gameId: game.id,
               upload,

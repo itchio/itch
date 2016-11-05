@@ -5,5 +5,5 @@ interface SourceMapSupportStatic {
 
 declare module 'source-map-support' {
   var sms: SourceMapSupportStatic;
-  export default sms;
+  export = sms;
 }

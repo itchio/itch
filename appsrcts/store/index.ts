@@ -1,12 +1,12 @@
 
-import {Store} from "redux";
+import {IStore} from "../types/db";
 
-let store: Store<any>;
+let store: IStore;
 
 if (process.type) {
-  store = require(`./${process.type}-store`);
+  store = require(`./${process.type}-store`).default;
 } else {
-  store = require("./mock-store");
+  store = require("./mock-store").default;
 }
 
-export = store;
+export default store;

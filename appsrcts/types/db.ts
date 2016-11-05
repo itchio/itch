@@ -813,6 +813,8 @@ export interface IStartDownloadOpts {
 
   downloadKey?: IDownloadKey;
 
+  cave?: ICaveRecord;
+
   gameId: number;
 
   game: IGameRecord;

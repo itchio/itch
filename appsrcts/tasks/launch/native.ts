@@ -13,7 +13,7 @@ import linuxSandboxTemplate from "../../constants/sandbox-policies/linux-templat
 
 import * as actions from "../../actions";
 
-import * as store from "../../store";
+import store from "../../store";
 import sandbox from "../../util/sandbox";
 import os from "../../util/os";
 import sf from "../../util/sf";
