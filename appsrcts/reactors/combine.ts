@@ -6,15 +6,15 @@ import {opts} from "../logger";
 import mklog from "../util/log";
 const log = mklog("reactors");
 
-import {IStore, IState} from "../types/db";
+import {IStore} from "../types/db";
 import {IAction} from "../constants/action-types";
 
-interface IReducer {
-  (state: IState): IState;
+interface IReactor<T> {
+  (store: IStore, action: IAction<T>): Promise<void>;
   __combined?: boolean;
 }
 
-export default function combine (...args: IReducer[]) {
+export default function combine (...args: IReactor<any>[]) {
   const methods = map(args, (x) => {
     if (!x) {
       throw new Error("null reactor in combination");
@@ -26,7 +26,7 @@ export default function combine (...args: IReducer[]) {
     return bluebird.method(x);
   });
 
-  return (store: IStore, action: IAction<any>) => {
+  return async (store: IStore, action: IAction<any>) => {
     each(methods, async function (method) {
       try {
         await method(store, action);
@@ -38,7 +38,7 @@ export default function combine (...args: IReducer[]) {
 }
 
 export interface ICombinator {
-  [actionType: string]: IReducer;
+  [actionType: string]: IReactor<any>;
 }
 
 export function assertAllCombined (...combinators: ICombinator[]) {

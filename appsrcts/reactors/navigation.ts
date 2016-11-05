@@ -344,7 +344,7 @@ async function catchAll (store: IStore, action: IAction<any>) {
   }
 }
 
-export function clearFilters (store: IStore, action: IAction<IClearFiltersPayload>) {
+async function clearFilters (store: IStore, action: IAction<IClearFiltersPayload>) {
   const {tab} = action.payload;
 
   store.dispatch(actions.binaryFilterChanged({field: "onlyCompatible", value: false}));

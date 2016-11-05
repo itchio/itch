@@ -1,38 +1,38 @@
 
-import validateReactors from './validate-reactors'
-import combine, {assertAllCombined} from './combine'
+import validateReactors from "./validate-reactors";
+import combine, {assertAllCombined} from "./combine";
 
-import preboot from './preboot'
-import preferences from './preferences'
-import login from './login'
-import market from './market'
-import mainWindow from './main-window'
-import fetch from './fetch'
-import i18n from './i18n'
-import locales from './locales'
-import rememberedSessions from './remembered-sessions'
-import session from './session'
-import url from './url'
-import tray from './tray'
-import notifications from './notifications'
-import menu from './menu'
-import installLocations from './install-locations'
-import purchases from './purchases'
-import selfUpdate from './self-update'
-import setup from './setup'
-import updater from './updater'
-import tabs from './tabs'
-import triggers from './triggers'
-import contextMenu from './context-menu'
-import share from './share'
-import navigation from './navigation'
-import clipboard from './clipboard'
-import tasks from './tasks'
-import dialogs from './dialogs'
-import report from './report'
-import perf from './perf'
-import modals from './modals'
-import halloween from './halloween'
+import preboot from "./preboot";
+import preferences from "./preferences";
+import login from "./login";
+import market from "./market";
+import mainWindow from "./main-window";
+import fetch from "./fetch";
+import i18n from "./i18n";
+import locales from "./locales";
+import rememberedSessions from "./remembered-sessions";
+import session from "./session";
+import url from "./url";
+import tray from "./tray";
+import notifications from "./notifications";
+import menu from "./menu";
+import installLocations from "./install-locations";
+import purchases from "./purchases";
+import selfUpdate from "./self-update";
+import setup from "./setup";
+import updater from "./updater";
+import tabs from "./tabs";
+import triggers from "./triggers";
+import contextMenu from "./context-menu";
+import share from "./share";
+import navigation from "./navigation";
+import clipboard from "./clipboard";
+import tasks from "./tasks";
+import dialogs from "./dialogs";
+import report from "./report";
+import perf from "./perf";
+import modals from "./modals";
+import halloween from "./halloween";
 
 export default validateReactors({
   _ALL: combine(i18n.catchAll, session.catchAll, tray.catchAll, menu.catchAll,
@@ -45,13 +45,15 @@ export default validateReactors({
   BOOT: combine(preferences.boot, mainWindow.boot,
     locales.boot, setup.boot,
     tasks.boot, tray.boot, perf.boot, halloween.boot),
-  FIRST_WINDOW_READY: combine(market.firstWindowReady, rememberedSessions.firstWindowReady, selfUpdate.firstWindowReady),
+  FIRST_WINDOW_READY: combine(market.firstWindowReady, rememberedSessions.firstWindowReady,
+    selfUpdate.firstWindowReady),
   WINDOW_READY: combine(navigation.windowReady),
   RETRY_SETUP: combine(setup.retrySetup),
 
   LOGIN_WITH_TOKEN: combine(login.loginWithToken),
   LOGIN_WITH_PASSWORD: combine(login.loginWithPassword),
-  LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded, rememberedSessions.loginSucceeded, perf.loginSucceeded),
+  LOGIN_SUCCEEDED: combine(market.loginSucceeded, fetch.loginSucceeded,
+    rememberedSessions.loginSucceeded, perf.loginSucceeded),
   LOGOUT: combine(market.logout, session.logout, navigation.logout),
   CHANGE_USER: combine(dialogs.changeUser),
 
@@ -73,7 +75,8 @@ export default validateReactors({
   QUEUE_LOCALE_DOWNLOAD: combine(locales.queueLocaleDownload),
 
   WINDOW_BOUNDS_CHANGED: combine(mainWindow.windowBoundsChanged),
-  WINDOW_FOCUS_CHANGED: combine(fetch.windowFocusChanged, installLocations.windowFocusChanged, navigation.windowFocusChanged),
+  WINDOW_FOCUS_CHANGED: combine(fetch.windowFocusChanged,
+    installLocations.windowFocusChanged, navigation.windowFocusChanged),
   FOCUS_WINDOW: combine(mainWindow.focusWindow),
   HIDE_WINDOW: combine(mainWindow.hideWindow),
 
@@ -154,8 +157,8 @@ export default validateReactors({
   QUIT_ELECTRON_APP: combine(mainWindow.quitElectronApp),
   PREPARE_QUIT: combine(mainWindow.prepareQuit),
   QUIT_AND_INSTALL: combine(mainWindow.quitAndInstall),
-  QUIT: combine(mainWindow.quit)
-})
+  QUIT: combine(mainWindow.quit),
+});
 
 assertAllCombined(
   preboot,
@@ -189,4 +192,4 @@ assertAllCombined(
   perf,
   modals,
   halloween
-)
+);
