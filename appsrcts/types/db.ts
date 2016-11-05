@@ -395,6 +395,7 @@ export interface IMarketState {
 }
 
 export interface IUserMarketState extends IMarketState {
+    collections: { [id: string]: ICollectionRecord };
     downloadKeys: { [id: string]: IDownloadKey };
 }
 

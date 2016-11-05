@@ -701,7 +701,7 @@ export const SEARCH_QUERY_CHANGED = "SEARCH_QUERY_CHANGED";
 export interface ISearchQueryChangedPayload {};
 
 export const SEARCH = "SEARCH";
-export interface ISearchPayload {};
+export type ISearchPayload = string;
 
 export const SEARCH_FETCHED = "SEARCH_FETCHED";
 export interface ISearchFetchedPayload {

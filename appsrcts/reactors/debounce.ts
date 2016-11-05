@@ -15,11 +15,10 @@ export class CancelError extends ExtendableError {
   }
 }
 
-export default function debounce (ms: number) {
-  let f = this;
+export default function debounce<T> (f: (...args: any[]) => Promise<T>, ms: number) {
   let rejectOther: (err: Error) => void;
 
-  return async function () {
+  return async function (...args: any[]) {
     if (chatty) {
       console.log(`launching ${f}`);
     }
@@ -34,8 +33,7 @@ export default function debounce (ms: number) {
         setTimeout(resolve, ms);
       });
 
-      const fp = f.apply(null, arguments);
-      const ret = await fp;
+      const ret = await f(...args);
       rejectOther = null;
       if (chatty) {
         console.log(`not cancelled! ${f}`);
