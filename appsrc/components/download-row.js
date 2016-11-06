@@ -3,7 +3,7 @@ import moment from 'moment'
 import React, {Component, PropTypes} from 'react'
 import classNames from 'classnames'
 import {connect} from './connect'
-import getDominantColor from './get-dominant-color'
+import bob from '../renderer-util/bob'
 import humanize from 'humanize-plus'
 import {ResponsiveContainer, AreaChart, Area} from 'recharts'
 
@@ -186,8 +186,8 @@ class DownloadRow extends Component {
     const {game} = item
     const {coverUrl} = game
 
-    getDominantColor(coverUrl, (palette) => {
-      this.setState({dominantColor: getDominantColor.toCSS(getDominantColor.pick(palette))})
+    bob.extractPalette(coverUrl, (palette) => {
+      this.setState({dominantColor: bob.toCSS(bob.pick(palette))})
     })
   }
 }

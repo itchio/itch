@@ -4,7 +4,7 @@ import React, {Component, PropTypes} from 'react'
 import classNames from 'classnames'
 import {connect} from './connect'
 
-import getDominantColor from './get-dominant-color'
+import bob from '../renderer-util/bob'
 
 import GameActions from './game-actions'
 import GameStats from './game-stats'
@@ -77,8 +77,8 @@ export class GameBrowserContext extends Component {
   updateColor () {
     const {game} = this.props
     if (game) {
-      getDominantColor(game.coverUrl, (palette) => {
-        this.setState({dominantColor: getDominantColor.pick(palette)})
+      bob.extractPalette(game.coverUrl, (palette) => {
+        this.setState({dominantColor: bob.pick(palette)})
       })
     }
   }

@@ -6,7 +6,7 @@ import classNames from 'classnames'
 
 import draggableTypes from '../constants/draggable-types'
 import colors from '../constants/colors'
-import getDominantColor from './get-dominant-color'
+import bob from '../renderer-util/bob'
 
 export class HubSidebarItem extends Component {
   constructor () {
@@ -87,8 +87,8 @@ export class HubSidebarItem extends Component {
     }
 
     if (game) {
-      getDominantColor(game.coverUrl, (palette) => {
-        this.setState({dominantColor: getDominantColor.toCSS(getDominantColor.pick(palette))})
+      bob.extractPalette(game.coverUrl, (palette) => {
+        this.setState({dominantColor: bob.toCSS(bob.pick(palette))})
       })
     }
   }
