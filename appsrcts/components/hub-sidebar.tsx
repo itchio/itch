@@ -15,8 +15,10 @@ import {app} from "../electron";
 
 import Icon from "./icon";
 import Dropdown from "./dropdown";
+
+// TODO: port
+const HubSidebarItem = require("./hub-sidebar-item").default;
 // import HubSidebarItem from './hub-sidebar-item'
-const HubSidebarItem = require("./hub-sidebar-item"); // TODO: port
 
 import {IState, IUserRecord, IGameRecord, ITabDataSet, ILocalizedString} from "../types";
 import {ILocalizer} from "../localizer";
