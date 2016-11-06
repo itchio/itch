@@ -1002,6 +1002,9 @@ export interface IDownloadItem {
 
     /** at how many bytes per second are we downloading right now? */
     bps?: number;
+
+    /** how many seconds till the download ends? */
+    eta?: number;
 }
 
 export interface IDownloadsState {
@@ -1014,6 +1017,9 @@ export interface IDownloadsState {
     downloadsByGameId: {
         [gameId: string]: IDownloadItem;
     };
+
+    /** all the downloads finished but not cleared yet */
+    finishedDownloads: IDownloadItem[];
 
     /** The download currently being downloaded (if they're not paused) */
     activeDownload: IDownloadItem;
