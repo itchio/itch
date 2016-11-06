@@ -1,0 +1,132 @@
+
+import listensToClickOutside = require("react-onclickoutside");
+import * as React from "react";
+import {connect} from "./connect";
+import * as classNames from "classnames";
+
+import * as actions from "../actions";
+
+import {ITabData} from "../types";
+import {ILocalizer} from "../localizer";
+import {IAction} from "../constants/action-types";
+
+export class BrowserControls extends React.Component<IBrowserControlsProps, IBrowserControlsState> {
+  constructor () {
+    super();
+    this.state = {
+      editingURL: false,
+    };
+
+    this.startEditingURL = this.startEditingURL.bind(this);
+    this.addressKeyUp = this.addressKeyUp.bind(this);
+    this.addressBlur = this.addressBlur.bind(this);
+    this.onAddressField = this.onAddressField.bind(this);
+    this.popOutBrowser = this.popOutBrowser.bind(this);
+  }
+
+  render () {
+    const {editingURL} = this.state;
+    const {t, browserState} = this.props;
+    const {canGoBack, canGoForward, loading, url = ""} = browserState;
+    const {goBack, goForward, stop, reload, frozen} = this.props;
+
+    const addressClasses = classNames("browser-address", {frozen, visible: (!!url && !!url.length)});
+
+    return <div className="browser-controls">
+      <span className={classNames("icon icon-arrow-left", {disabled: !canGoBack})} onClick={goBack}/>
+      <span className={classNames("icon icon-arrow-right", {disabled: !canGoForward})} onClick={goForward}/>
+      {
+        loading
+        ? <span className="icon icon-cross loading" onClick={stop}/>
+        : <span className="icon icon-repeat" onClick={reload}/>
+      }
+      {editingURL
+        ? <input type="text" disabled={frozen} ref={this.onAddressField}
+            className="browser-address editing visible" defaultValue={url}
+            onKeyUp={this.addressKeyUp} onBlur={this.addressBlur}/>
+        : <span className={addressClasses} onClick={() =>
+            (url && url.length) && this.startEditingURL()
+          }>{url || ""}</span>
+      }
+      <span className="hint--right" data-hint={t("browser.popout")}>
+        <span className={classNames("icon icon-redo")} onClick={this.popOutBrowser}/>
+      </span>
+    </div>;
+  }
+
+  popOutBrowser () {
+    this.props.openUrl(this.props.browserState.url);
+  }
+
+  startEditingURL () {
+    if (this.props.frozen) {
+      return;
+    }
+    this.setState({editingURL: true});
+  }
+
+  onAddressField (addressField: HTMLInputElement) {
+    if (!addressField) {
+      return;
+    }
+    addressField.focus();
+    addressField.select();
+  }
+
+  addressKeyUp (e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      const url = e.currentTarget.value;
+      this.setState({editingURL: false});
+      this.props.loadURL(url);
+    }
+    if (e.key === "Escape") {
+      this.setState({editingURL: false});
+    }
+  }
+
+  addressBlur () {
+    this.setState({editingURL: false});
+  }
+
+  handleClickOutside () {
+    this.setState({editingURL: false});
+  }
+}
+
+interface IBrowserControlsProps {
+  browserState: {
+    url: string;
+    loading: boolean;
+    canGoBack: boolean;
+    canGoForward: boolean;
+  };
+
+  tabPath: string;
+  tabData: ITabData;
+  frozen: boolean;
+
+  t: ILocalizer;
+
+  goBack(): void;
+  goForward(): void;
+  stop(): void;
+  reload(): void;
+  loadURL(url: string): void;
+
+  /** open URL in external browser */
+  openUrl(url: string): void;
+}
+
+interface IBrowserControlsState {
+  editingURL: boolean;
+}
+
+const mapStateToProps = () => ({});
+const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+  openUrl: (url: string) => dispatch(actions.openUrl(url)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(listensToClickOutside(BrowserControls));
