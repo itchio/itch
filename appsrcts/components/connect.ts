@@ -31,7 +31,7 @@ const augment = createSelector(
 );
 
 // TODO: type better (typescript has multiple dispatch right?)
-export function connect (mapStateToProps: any, mapDispatchToProps?: any) {
+export function connect (mapStateToProps?: any, mapDispatchToProps?: any) {
   const augmentedMapStateToProps = (state: any, props: any) => {
     if (mapStateToProps) {
       const base = mapStateToProps(state, props);
