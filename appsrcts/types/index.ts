@@ -530,6 +530,7 @@ export interface IMarketState {
 }
 
 export interface IUserMarketState extends IMarketState {
+    games: { [id: string]: IGameRecord };
     collections: { [id: string]: ICollectionRecord };
     downloadKeys: { [id: string]: IDownloadKey };
 }
@@ -665,14 +666,52 @@ export interface ISessionNavigationState {
     lastConstant: string;
 }
 
+export interface ISearchResults {
+    // TODO: make sane
+    gameResults: {
+        result: {
+            gameIds: string[]
+        },
+        entities: {
+            games?: {
+                [id: string]: IGameRecord
+            }
+        },
+    };
+
+    userResults: {
+        result: {
+            userIds: string[]
+        }
+        entities: {
+            users?: {
+                [id: string]: IUserRecord
+            }
+        }
+    };
+}
+
 export interface ISessionSearchState {
+    /** search suggestion */
     example: string;    
+
+    /** query typed by user */
     typedQuery: string;
+
+    /** query we're showing results for (lags behind typedQuery) */
     query: string;
+
+    /** whether the search pane is displayed or not */
     open: boolean;
+
+    /** whether we're currently fetching results or not */
     loading: boolean;
+    
+    /** search result currently highlighted */
     highlight: number;
-    results: any;
+
+    /** current search results for 'query' */
+    results: ISearchResults;
 }
 
 export interface II18nResources {
