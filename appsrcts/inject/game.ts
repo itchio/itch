@@ -9,18 +9,17 @@ const sendMessage = (action: string) => {
 };
 
 window.addEventListener("keydown", (e: KeyboardEvent) => {
-  // is keyIdentifier is a webkit-only thing?
-  switch ((e as any).keyIdentifier) {
+  switch (e.key) {
     case "F11":
       sendMessage("toggle-fullscreen");
       break;
-    case "U+0046": // Cmd-Shift-F
-      if (!e.metaKey || !e.shiftKey) {
+    case "F":
+      if (!e.metaKey) {
         return;
       }
       sendMessage("toggle-fullscreen");
       break;
-    case "U+001B": // Escape
+    case "Escape":
       sendMessage("exit-fullscreen");
       break;
     case "F12":

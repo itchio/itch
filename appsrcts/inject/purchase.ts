@@ -210,8 +210,7 @@ setTimeout(function () {
   };
 
   window.addEventListener("keydown", (e: KeyboardEvent) => {
-    // is keyIdentifier webkit-only?
-    switch ((e as any).keyIdentifier) {
+    switch (e.key) {
       case "F12":
         if (!e.shiftKey) {
           return;
