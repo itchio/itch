@@ -27,7 +27,7 @@ export class Dropdown extends React.Component<IDropdownProps, IDropdownState> {
 
     const children = map(items, (item, index) => {
       const {label, icon, action, type} = item;
-      const onClick = () => dispatch(action);
+      const {onClick = () => dispatch(action)} = item;
       const itemClasses = classNames("dropdown-item", `type-${type}`);
 
       const key = (type === "separator") ? ("separator-" + index) : (label + "-" + icon);
@@ -76,6 +76,7 @@ interface IDropdownItem {
   action: IAction<any>;
   type: string;
   icon?: string;
+  onClick?: () => void;
 }
 
 interface IDropdownProps {
