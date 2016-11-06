@@ -444,21 +444,36 @@ export interface IState {
     status: IStatusState;
 }
 
+export interface IHistoryItemOption {
+    label: ILocalizedString;
+
+    action?: Action<any>;
+}
+
 export interface IHistoryItem {
     /** generated identifier */
     id: string;
+
     /** localized message */
     label: any[];
+
     /** Date at which the history item occured */
     date: number;
-    /** counts as unread? */
+
+    /** if true, counts as unread */
     active: boolean;
+
+    options: IHistoryItemOption[];
 }
 
 export interface IHistoryState {
+    /** all history items that haven't been dismissed */
     items: {
         [id: string]: IHistoryItem;
     };
+
+    /** all history items from newest to oldest */
+    itemsByDate: IHistoryItem[];
 }
 
 export type IModalAction = Action<any> | Action<any>[]
