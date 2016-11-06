@@ -88,7 +88,7 @@ export class NewTab extends React.Component<INewTabProps, void> {
 
   async addressKeyUp (e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
-      let input = (e.target as HTMLInputElement).value;
+      let input = e.currentTarget.value;
       if (input.length < 1) {
         return;
       }

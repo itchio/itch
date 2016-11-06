@@ -1,4 +1,9 @@
 
+/** Maps tasks (installing, configuring, etc.) to icons */
+interface IIconForTasks {
+  [key: string]: string;
+}
+
 export default {
   "report": "upload-to-cloud",
   "error": "heart-broken",
@@ -10,4 +15,4 @@ export default {
   "configure": "cog",
   "launch": "fire",
   "idle": "checkmark",
-};
+} as IIconForTasks;

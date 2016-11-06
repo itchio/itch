@@ -18,7 +18,8 @@ import {
 
 const initialState = {
   items: {},
-};
+  itemsByDate: [],
+} as IHistoryState;
 
 const reducer = handleActions<IHistoryState, any>({
   QUEUE_HISTORY_ITEM: (state: IHistoryState, action: IAction<IQueueHistoryItemPayload>) => {
