@@ -1,7 +1,7 @@
 
 import {II18nResources} from "../types";
 
-interface ILocalizer {
+export interface ILocalizer {
   /** returns the localized version of a string */
   (key: string, variables?: any): string;
 

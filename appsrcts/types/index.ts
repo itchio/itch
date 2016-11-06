@@ -5,6 +5,10 @@ import {Logger} from "../util/log";
 
 export interface IStore extends Store<IState> {}
 
+export interface IDispatch {
+    (a: Action<any>): void;
+}
+
 export type GameType = "default" | "html" | "download";
 
 export type GameClassification = "game" | "tool" | "assets" |

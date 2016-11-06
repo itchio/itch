@@ -1,5 +1,4 @@
 
-import {Component} from "react";
 import * as React from "react";
 import {connect} from "./connect";
 import * as classNames from "classnames";
@@ -20,7 +19,7 @@ const HALLOWEEN_WHITELIST = {
  * An icon from the icomoon font.
  * Peek in the static/fonts/icomoon/ folder to learn more.
  */
-class Icon extends Component<IIconProps, any> {
+class Icon extends React.Component<IIconProps, void> {
   render () {
     const {icon, classes, halloween} = this.props;
     if (!icon) {
