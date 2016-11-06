@@ -192,7 +192,7 @@ export interface IEvolveTabPayload {
   path: string;
 
   /** new tab data to add to the previous set */
-  extras: Types.ITabData;
+  extras?: Types.ITabData;
 
   /** if set, evolve tab immediately, don't wait for a fetch */
   quick?: boolean;
