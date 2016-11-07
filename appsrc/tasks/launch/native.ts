@@ -5,6 +5,7 @@ import * as invariant from "invariant";
 import {map} from "underscore";
 import * as shellQuote from "shell-quote";
 import {EventEmitter} from "events";
+import * as which from 'which';
 
 import poker from "./poker";
 
@@ -102,11 +103,29 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
   }
 
   if (/\.jar$/i.test(exePath)) {
-    log(opts, "launching .jar, this will fail if no system JRE is installed");
-    args = [
-      "-jar", exePath, ...args,
-    ];
-    exePath = "java";
+    log(opts, 'checking existence of system JRE before launching .jar')
+    try {
+      const javaExists = which.sync('java');
+      args = [
+        '-jar', exePath, ...args
+      ]
+      exePath = 'java'
+    } catch (e) {
+      store.dispatch(actions.openModal({
+        title: '',
+        message: ['game.install.could_not_launch', {title: game.title}],
+        detail: ['game.install.could_not_launch.missing_jre'],
+        buttons: [
+          {
+            label: ['grid.item.download_java'],
+            icon: 'download',
+            action: actions.openUrl(urls.javaDownload)
+          },
+          'cancel'
+        ]
+      }))
+      return
+    }
   }
 
   const platform = os.platform();
