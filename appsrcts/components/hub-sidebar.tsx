@@ -16,13 +16,11 @@ import {app} from "../electron";
 import Icon from "./icon";
 import Dropdown from "./dropdown";
 
-// TODO: port
-const HubSidebarItem = require("./hub-sidebar-item").default;
-// import HubSidebarItem from './hub-sidebar-item'
+import HubSidebarItem from "./hub-sidebar-item";
 
 import {IState, IUserRecord, IGameRecord, ITabDataSet, ILocalizedString} from "../types";
 import {ILocalizer} from "../localizer";
-import {IAction} from "../constants/action-types";
+import {IAction, dispatcher} from "../constants/action-types";
 
 export function versionString () {
   return `itch v${app.getVersion()}`;
@@ -102,7 +100,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           const active = currentId === id;
           const onClick = () => navigate(id);
           const onClose = () => closeTab(id);
-          const onContextMenu = () => openTabContextMenu(id);
+          const onContextMenu = () => openTabContextMenu({id});
           const count = (counts as any)[id];
           const progress = progresses[id];
           const sublabel = sublabels[id];
@@ -307,7 +305,7 @@ interface IHubSidebarProps {
 
   /** secondary label for a tab */
   sublabels: {
-    [key: string]: number;
+    [key: string]: ILocalizedString;
   };
 
   /** game that's currently downloading, if any */
@@ -321,26 +319,26 @@ interface IHubSidebarProps {
 
   t: ILocalizer;
 
-  viewCreatorProfile: () => void;
-  viewCommunityProfile: () => void;
-  changeUser: () => void;
-  navigate: (id: string) => void;
-  closeTab: (id: string) => void;
-  closeAllTabs: () => void;
-  moveTab: (before: number, after: number) => void;
-  openTabContextMenu: (id: string) => void;
-  openPreferences: () => void;
-  newTab: () => void;
-  copyToClipboard: (text: string) => void;
+  viewCreatorProfile: typeof actions.viewCreatorProfile;
+  viewCommunityProfile: typeof actions.viewCommunityProfile;
+  changeUser: typeof actions.changeUser;
+  navigate: typeof actions.navigate;
+  closeTab: typeof actions.closeTab;
+  closeAllTabs: typeof actions.closeAllTabs;
+  moveTab: typeof actions.moveTab;
+  openTabContextMenu: typeof actions.openTabContextMenu;
+  openPreferences: typeof actions.openPreferences;
+  newTab: typeof actions.newTab;
+  copyToClipboard: typeof actions.copyToClipboard;
 
-  focusSearch: () => void;
-  closeSearch: () => void;
-  search: (query: string) => void;
-  searchHighlightOffset: (offset: number) => void;
-  openUrl: (url: string) => void;
-  checkForSelfUpdate: () => void;
-  reportIssue: () => void;
-  quit: () => void;
+  focusSearch: typeof actions.focusSearch;
+  closeSearch: typeof actions.closeSearch;
+  search: typeof actions.search;
+  searchHighlightOffset: typeof actions.searchHighlightOffset;
+  openUrl: typeof actions.openUrl;
+  checkForSelfUpdate: typeof actions.checkForSelfUpdate;
+  reportIssue: typeof actions.reportIssue;
+  quit: typeof actions.quit;
 }
 
 const mapStateToProps = createStructuredSelector({
@@ -396,30 +394,30 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
-  navigate: (id: string) => dispatch(actions.navigate(id)),
-  closeTab: (id: string) => dispatch(actions.closeTab(id)),
-  closeAllTabs: () => dispatch(actions.closeAllTabs()),
-  moveTab: (before: number, after: number) => dispatch(actions.moveTab({before, after})),
+  navigate: dispatcher(dispatch, actions.navigate),
+  closeTab: dispatcher(dispatch, actions.closeTab),
+  closeAllTabs: dispatcher(dispatch, actions.closeAllTabs),
+  moveTab: dispatcher(dispatch, actions.moveTab),
 
-  viewCreatorProfile: () => dispatch(actions.viewCreatorProfile()),
-  viewCommunityProfile: () => dispatch(actions.viewCommunityProfile()),
-  changeUser: () => dispatch(actions.changeUser()),
-  openPreferences: () => dispatch(actions.navigate("preferences")),
-  openTabContextMenu: (id: string) => dispatch(actions.openTabContextMenu({id})),
-  copyToClipboard: (text: string) => dispatch(actions.copyToClipboard(text)),
+  viewCreatorProfile: dispatcher(dispatch, actions.viewCreatorProfile),
+  viewCommunityProfile: dispatcher(dispatch, actions.viewCommunityProfile),
+  changeUser: dispatcher(dispatch, actions.changeUser),
+  openPreferences: dispatcher(dispatch, actions.openPreferences),
+  openTabContextMenu: dispatcher(dispatch, actions.openTabContextMenu),
+  copyToClipboard: dispatcher(dispatch, actions.copyToClipboard),
 
-  focusSearch: () => dispatch(actions.focusSearch()),
-  closeSearch: () => dispatch(actions.closeSearch()),
-  search: (query: string) => dispatch(actions.search(query)),
+  focusSearch: dispatcher(dispatch, actions.focusSearch),
+  closeSearch: dispatcher(dispatch, actions.closeSearch),
+  search: dispatcher(dispatch, actions.search),
 
-  reportIssue: () => dispatch(actions.reportIssue()),
-  openUrl: (url: string) => dispatch(actions.openUrl(url)),
+  reportIssue: dispatcher(dispatch, actions.reportIssue),
+  openUrl: dispatcher(dispatch, actions.openUrl),
 
-  searchHighlightOffset: (offset: number) => dispatch(actions.searchHighlightOffset(offset)),
+  searchHighlightOffset: dispatcher(dispatch, actions.searchHighlightOffset),
 
-  checkForSelfUpdate: () => dispatch(actions.checkForSelfUpdate()),
+  checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
 
-  quit: () => dispatch(actions.quit()),
+  quit: dispatcher(dispatch, actions.quit),
 });
 
 export default connect(

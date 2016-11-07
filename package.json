@@ -35,6 +35,8 @@
     "@types/node-uuid": "0.0.28",
     "@types/proxyquire": "^1.3.27",
     "@types/react": "^0.14.44",
+    "@types/react-dnd": "^2.0.31",
+    "@types/react-dom": "^0.14.18",
     "@types/react-redux": "^4.4.32",
     "@types/redux-actions": "^0.8.30",
     "@types/redux-devtools": "^3.0.34",
