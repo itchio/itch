@@ -13,6 +13,7 @@ npm-debug.log
 /.tscache
 *.map
 tmp
+*.tmp.txt
 
 # coverage
 /coverage

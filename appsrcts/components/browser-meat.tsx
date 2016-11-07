@@ -26,9 +26,7 @@ const WILL_NAVIGATE_GRACE_PERIOD = 3000;
 // human short-term memory = between 7 and 13 items
 const SCROLL_HISTORY_SIZE = 50;
 
-// TODO: port
-const BrowserBar = require("./browser-bar").default;
-// import BrowserBar from "./browser-bar"
+import BrowserBar from "./browser-bar";
 
 import GameBrowserContext from "./game-browser-context";
 
