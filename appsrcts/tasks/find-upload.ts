@@ -13,7 +13,7 @@ const log = mklog("tasks/find-upload");
 import client from "../util/api";
 
 import ClassificationActions from "../constants/classification-actions";
-import {ClassificationAction} from "../constants/classification-actions";
+import {ClassificationAction} from "../types";
 
 import {
   IUploadRecord,

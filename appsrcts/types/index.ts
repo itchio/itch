@@ -19,6 +19,8 @@ export type GenerosityLevel = "discreet";
 
 export type LaunchType = "native" | "html";
 
+export type ClassificationAction = "launch" | "open";
+
 /**
  * Contains information about a game, retrieved via the itch.io API,
  * and saved to the local database.
@@ -59,6 +61,15 @@ export interface IGameRecord {
 
     /** price of a game, in cents of a dollar */
     minPrice?: number;
+
+    /** as of November 7, 2016, this property doesn't exist yet in the API, but a man can dream.. */
+    currency?: string;
+
+    /** if true, this game is downloadable by press users for free */
+    inPressSystem?: boolean;
+
+    /** if true, this game accepts money (donations or purchases) */
+    canBeBought?: boolean;
 }
 
 /**
@@ -217,6 +228,15 @@ export interface ICaveRecord extends ICaveRecordLocation {
      * patches instead of fully downloading the new version.
      */
     buildId?: number;
+
+    /** user version for wharf build currently installed */
+    buildUserVersion?: string;
+
+    /** channel name of build currently installed */
+    channelName?: string;
+
+    /** "modified file time" of archive last installed */
+    installedArchiveMtime?: number;
 
     /**
      * if true, can be launched — if false, may have not finished
@@ -404,7 +424,7 @@ export interface IOwnUserRecord extends IUserRecord {
      * anything if you don't actually have a press account. Or maybe you're just looking for
      * fun errors, in which case, go ahead!
      */
-    press?: boolean; 
+    pressUser?: boolean; 
 
     /** if set, user has expressed interest in publishing content on itch.io */
     developer?: boolean; 
@@ -416,6 +436,9 @@ export interface IDownloadKey {
 
     /** game the download key is for */
     gameId: number;
+
+    /** date the download key was issued on (often: date purchase was completed) */
+    createdAt: string;
 }
 
 export interface ICredentials {

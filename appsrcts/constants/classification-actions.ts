@@ -1,5 +1,5 @@
 
-export type ClassificationAction = "launch" | "open";
+import {ClassificationAction} from "../types";
 
 export interface IClassificationActions {
   [key: string]: ClassificationAction;

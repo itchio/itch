@@ -19,7 +19,7 @@ const cache = {} as ICache;
 /**
  * RGB values as a 3-element array of numbers in the [0, 255] range
  */
-interface IRGBColor {
+export interface IRGBColor {
   [componentIndex: number]: number;
 }
 

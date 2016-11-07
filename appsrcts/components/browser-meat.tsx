@@ -16,6 +16,8 @@ import * as querystring from "querystring";
 import * as ospath from "path";
 import {uniq, findWhere} from "underscore";
 
+import {IBrowserState} from "./browser-state";
+
 const injectPath = ospath.resolve(__dirname, "..", "inject", "browser.js");
 // const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === '1'
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
@@ -28,9 +30,7 @@ const SCROLL_HISTORY_SIZE = 50;
 const BrowserBar = require("./browser-bar").default;
 // import BrowserBar from "./browser-bar"
 
-// TODO: port
-const GameBrowserContext = require("./game-browser-context").default;
-// import GameBrowserContext from "./game-browser-context"
+import GameBrowserContext from "./game-browser-context";
 
 import {transformUrl} from "../util/navigation";
 
@@ -571,13 +571,7 @@ interface IBrowserMeatState {
   // using '?' everywhere because @types/react is dumb and doesn't account for
   // `setState` making a shallow merge, not a set (so the types can lack
   // properties)
-  browserState?: {
-    canGoBack: boolean;
-    canGoForward: boolean;
-    firstLoad: boolean;
-    loading: boolean;
-    url: string;
-  };
+  browserState?: IBrowserState;
   scrollHistory?: IHistoryEntry[];
   wentBackOrForward?: boolean;
 }

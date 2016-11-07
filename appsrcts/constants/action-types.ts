@@ -6,6 +6,10 @@ import {IProgressInfo} from "../types";
 
 export type IAction<T> = Action<T>;
 
+export function dispatcher <T> (dispatch: (action: IAction<any>) => void, actionCreator: (payload: T) => IAction<T>) {
+  return (payload: T) => dispatch(actionCreator(payload));
+}
+
 // run upgrade operations
 export const PREBOOT = "PREBOOT";
 export interface IPrebootPayload {}
