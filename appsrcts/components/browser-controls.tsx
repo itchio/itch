@@ -8,7 +8,7 @@ import * as actions from "../actions";
 
 import {ITabData} from "../types";
 import {ILocalizer} from "../localizer";
-import {IAction} from "../constants/action-types";
+import {IAction, dispatcher} from "../constants/action-types";
 
 export class BrowserControls extends React.Component<IBrowserControlsProps, IBrowserControlsState> {
   constructor () {
@@ -107,14 +107,14 @@ interface IBrowserControlsProps {
 
   t: ILocalizer;
 
-  goBack(): void;
-  goForward(): void;
-  stop(): void;
-  reload(): void;
-  loadURL(url: string): void;
-
   /** open URL in external browser */
-  openUrl(url: string): void;
+  openUrl: typeof actions.openUrl;
+
+  goBack: () => void;
+  goForward: () => void;
+  stop: () => void;
+  reload: () => void;
+  loadURL: (url: string) => void;
 }
 
 interface IBrowserControlsState {
@@ -123,7 +123,7 @@ interface IBrowserControlsState {
 
 const mapStateToProps = () => ({});
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
-  openUrl: (url: string) => dispatch(actions.openUrl(url)),
+  openUrl: dispatcher(dispatch, actions.openUrl),
 });
 
 export default connect(

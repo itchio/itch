@@ -7,7 +7,7 @@ import * as actions from "../actions";
 import Icon from "./icon";
 
 import {ILocalizer} from "../localizer";
-import {IAction, IReportIssuePayload, IEvolveTabPayload} from "../constants/action-types";
+import {IAction, dispatcher} from "../constants/action-types";
 
 /**
  * Unapologetically and heavily inspired from Google Chrome's "stuff went wrong" tab
@@ -82,15 +82,15 @@ interface IToastProps {
   };
   tabId: string;
 
-  evolveTab(payload: IEvolveTabPayload): void;
-  reportIssue(payload: IReportIssuePayload): void;
+  evolveTab: typeof actions.evolveTab;
+  reportIssue: typeof actions.reportIssue;
 }
 
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
-  evolveTab: (data: IEvolveTabPayload) => dispatch(actions.evolveTab(data)),
-  reportIssue: (payload: IReportIssuePayload) => dispatch(actions.reportIssue(payload)),
+  evolveTab: dispatcher(dispatch, actions.evolveTab),
+  reportIssue: dispatcher(dispatch, actions.reportIssue),
 });
 
 export default connect(

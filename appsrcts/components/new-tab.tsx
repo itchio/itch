@@ -14,6 +14,7 @@ const osx = os.itchPlatform() === "osx";
 
 import {IState, IDispatch} from "../types";
 import {ILocalizer} from "../localizer";
+import {dispatcher} from "../constants/action-types";
 
 // TODO: show recommended for you?
 const newTabItems = [
@@ -103,13 +104,14 @@ export class NewTab extends React.Component<INewTabProps, void> {
 interface INewTabProps {
   t: ILocalizer;
   tabId: string;
-  evolveTab: (data: any) => void;
+
+  evolveTab: typeof actions.evolveTab;
 }
 
 const mapStateToProps = (state: IState) => ({});
 
 const mapDispatchToProps = (dispatch: IDispatch) => ({
-  evolveTab: (data: any) => dispatch(actions.evolveTab(data)),
+  evolveTab: dispatcher(dispatch, actions.evolveTab),
 });
 
 export default connect(

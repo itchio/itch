@@ -22,7 +22,7 @@ import os from "../util/os";
 const itchPlatform = os.itchPlatform();
 
 import {IState, IGameRecord, IUserRecord, ISessionSearchState, ISearchResults} from "../types";
-import {IAction} from "../constants/action-types";
+import {IAction, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 export class SearchResult extends React.Component<ISearchResultProps, void> {
@@ -232,10 +232,10 @@ interface IHubSearchResultsProps {
 
   t: ILocalizer;
 
-  closeSearch: () => void;
-  navigate: (path: string) => void;
-  navigateToGame: (game: IGameRecord) => void;
-  navigateToUser: (game: IUserRecord) => void;
+  closeSearch: typeof actions.closeSearch;
+  navigate: typeof actions.navigate;
+  navigateToGame: typeof actions.navigateToGame;
+  navigateToUser: typeof actions.navigateToUser;
 }
 
 interface IHubSearchResultsState {
@@ -251,10 +251,10 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
-  closeSearch: () => dispatch(actions.closeSearch()),
-  navigate: (path: string) => dispatch(actions.navigate(path)),
-  navigateToGame: (game: IGameRecord) => dispatch(actions.navigateToGame(game)),
-  navigateToUser: (user: IUserRecord) => dispatch(actions.navigateToUser(user)),
+  closeSearch: dispatcher(dispatch, actions.closeSearch()),
+  navigate: dispatcher(dispatch, actions.navigate),
+  navigateToGame: dispatcher(dispatch, actions.navigateToGame),
+  navigateToUser: dispatcher(dispatch, actions.navigateToUser),
 });
 
 export default connect(

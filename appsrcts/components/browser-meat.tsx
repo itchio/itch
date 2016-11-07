@@ -33,7 +33,7 @@ import GameBrowserContext from "./game-browser-context";
 import {transformUrl} from "../util/navigation";
 
 import {ITabData, IState} from "../types";
-import {IAction} from "../constants/action-types";
+import {IAction, dispatcher} from "../constants/action-types";
 
 /** An electron webview */
 interface IWebView {
@@ -191,12 +191,12 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 
   pageTitleUpdated (e: any) { // TODO: type
     const {tabId, tabDataFetched} = this.props;
-    tabDataFetched(tabId, {webTitle: e.title});
+    tabDataFetched({id: tabId, data: {webTitle: e.title}, timestamp: Date.now()});
   }
 
   pageFaviconUpdated (e: any) { // TODO: type
     const {tabId, tabDataFetched} = this.props;
-    tabDataFetched(tabId, {webFavicon: e.favicons[0]});
+    tabDataFetched({id: tabId, data: {webFavicon: e.favicons[0]}, timestamp: Date.now()});
   }
 
   didNavigate (e: any) { // TODO: type
@@ -369,7 +369,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
       const meta = xhr.responseXML.querySelector('meta[name="itch:path"]');
       if (meta) {
         const newPath = meta.content;
-        evolveTab(tabId, newPath);
+        evolveTab({id: tabId, path: newPath});
       }
     };
     xhr.open("GET", url);
@@ -497,7 +497,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
       wv.reload();
     });
     const {tabId, tabReloaded} = this.props;
-    tabReloaded(tabId);
+    tabReloaded({id: tabId});
   }
 
   goBack () {
@@ -556,11 +556,11 @@ interface IBrowserMeatProps {
   className: string;
   meId: string;
 
-  navigate: (id: string, data?: ITabData, background?: boolean) => void;
+  navigate: typeof actions.navigate;
 
-  evolveTab: (id: string, path: string) => void;
-  tabDataFetched: (id: string, data: ITabData) => void;
-  tabReloaded: (id: string) => void;
+  evolveTab: typeof actions.evolveTab;
+  tabDataFetched: typeof actions.tabDataFetched;
+  tabReloaded: typeof actions.tabReloaded;
 
   controls: ControlsType;
 }
@@ -579,12 +579,10 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
-  navigate: (id: string, data: ITabData, background: boolean) => dispatch(actions.navigate(id, data, background)),
-  evolveTab: (id: string, path: string) => {
-    dispatch(actions.evolveTab({id, path}));
-  },
-  tabDataFetched: (id: string, data: ITabData) => dispatch(actions.tabDataFetched({id, data, timestamp: +new Date()})),
-  tabReloaded: (id: string) => dispatch(actions.tabReloaded({id})),
+  navigate: dispatcher(dispatch, actions.navigate), 
+  evolveTab: dispatcher(dispatch, actions.evolveTab),
+  tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
+  tabReloaded: dispatcher(dispatch, actions.tabReloaded),
 });
 
 export default connect(
