@@ -108,6 +108,10 @@ interface IHistoryEntry {
 let currentSession: ISession = null;
 
 export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeatState> {
+  refs: {
+    webviewShell: Element;
+  };
+
   lastNavigationUrl: string;
   lastNavigationTimeStamp: number;
 
@@ -393,7 +397,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
   }
 
   componentDidMount () {
-    const webviewShell = (this.refs as any).webviewShell as Element;
+    const webviewShell = this.refs.webviewShell;
 
     // cf. https://github.com/electron/electron/issues/6046
     webviewShell.innerHTML = "<webview/>";

@@ -7,6 +7,10 @@ import {map} from "underscore";
  * A drop-down you can select from
  */
 class SelectRow extends React.Component<ISelectRowProps, void> {
+  refs: {
+    input: HTMLInputElement;
+  }
+
   constructor (props: ISelectRowProps) {
     super(props);
     this.onChange = this.onChange.bind(this);
@@ -35,7 +39,7 @@ class SelectRow extends React.Component<ISelectRowProps, void> {
   }
 
   value () {
-    return (this.refs as any).input.value;
+    return this.refs.input.value;
   }
 }
 

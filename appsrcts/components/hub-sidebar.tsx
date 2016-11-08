@@ -27,6 +27,10 @@ export function versionString () {
 }
 
 export class HubSidebar extends React.Component<IHubSidebarProps, void> {
+  refs: {
+    search: HTMLInputElement;
+  }
+
   constructor () {
     super();
     this.triggerSearch = debounce(this.triggerSearch.bind(this), 100);
@@ -183,7 +187,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
   }
 
   triggerSearch () {
-    const search = (this.refs as any).search as HTMLInputElement;
+    const search = this.refs.search;
     if (!search) {
       return;
     }
