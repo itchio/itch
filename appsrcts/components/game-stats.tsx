@@ -36,7 +36,7 @@ export class GameStats extends React.Component<IGameStatsProps, void> {
           ? <div className="total-playtime">
             <span>
               <label>{t(`usage_stats.has_${xed}_for_duration`)}</label>
-              {t.format(format.seconds(secondsRun))}
+              {" " + t.format(format.seconds(secondsRun))}
             </span>
           </div>
           : ""
