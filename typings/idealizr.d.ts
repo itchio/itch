@@ -1,4 +1,7 @@
 
+/**
+ * Typings for https://github.com/fasterthanlime/idealizr
+ */
 declare module 'idealizr' {
     export class Schema {
         constructor(name: string);

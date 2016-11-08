@@ -1,4 +1,7 @@
 
+/**
+ * Typings for https://github.com/krisk/Fuse
+ */
 declare module 'fuse.js' {
     interface IFuseKeySpec {
         name: string;

@@ -873,6 +873,12 @@ export interface ITask {
 
     /** id of the game this task is for (which game we're installing, etc.) */
     gameId: number;
+
+    /** bytes per second at which task is being processed, if applicable */
+    bps?: number;
+
+    /** estimated time remaining for task, in seconds, if available */
+    eta?: number;
 }
 
 export interface ITasksState {
@@ -1045,7 +1051,19 @@ export interface IDownloadItem {
 
     /** how many seconds till the download ends? */
     eta?: number;
+
+    /** timestamp the download started at */
+    date?: number;
+
+    /** an error that may have occured while downloading */
+    err?: string;
 }
+
+export interface IDownloadSpeedDataPoint {
+    bps: number;
+}
+
+export type IDownloadSpeeds = IDownloadSpeedDataPoint[]
 
 export interface IDownloadsState {
     /** All the downloads we know about, indexed by their own id */
@@ -1065,7 +1083,7 @@ export interface IDownloadsState {
     activeDownload: IDownloadItem;
 
     /** Download speeds, in bps, each item represents one second */
-    speeds: {bps: number}[];
+    speeds: IDownloadSpeeds;
 
     /** if true, downloads acts as a queue, doesn't actually download anything until they're started again */
     downloadsPaused: boolean;

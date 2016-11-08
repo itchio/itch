@@ -4,6 +4,9 @@ interface ColorgramStatic {
   extract(image: any): any[];
 }
 
+/**
+ * Typings for https://www.npmjs.com/package/colorgram
+ */
 declare module 'colorgram' {
   var cg: ColorgramStatic;
   export = cg;

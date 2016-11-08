@@ -1,4 +1,7 @@
 
+/**
+ * Typings for https://github.com/itchio/fnout
+ */
 declare module 'fnout' {
   export interface SniffResult {
     ext: string;

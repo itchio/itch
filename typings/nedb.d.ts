@@ -1,4 +1,7 @@
 
+/**
+ * Typings for https://github.com/louischatriot/nedb
+ */
 declare module "nedb" {
     class Datastore {
         constructor(opts: any);

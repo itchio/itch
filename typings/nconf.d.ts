@@ -11,6 +11,9 @@ interface NConfStatic {
     clear(key: string): string;
 }
 
+/**
+ * Typings for https://github.com/flatiron/nconf
+ */
 declare module "nconf" {
     var nconf: NConfStatic;
     export = nconf;

@@ -1,4 +1,7 @@
 
+/**
+ * Typings for https://github.com/tomas/needle
+ */
 declare module "needle" {
     export interface INeedleResponse {
         /** http status string (number + name) */

@@ -7,7 +7,7 @@ const log = mklog("download-speed-watcher");
 
 import * as actions from "../../actions";
 
-const DOWNLOAD_SPEED_DELAY = 2000;
+const DOWNLOAD_SPEED_DELAY = 1000;
 
 import {IStore} from "../../types";
 
