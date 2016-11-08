@@ -7,7 +7,8 @@ import GameGrid from './game-grid'
 import GameGridFilters from './game-grid-filters'
 import {map, filter, indexBy, sortBy} from 'underline'
 
-const recency = (x) => -(new Date(x.installedAt)) || 0
+// sort by last played, or install date if never opened
+const recency = (x) => -(new Date(x.lastTouched || x.installedAt)) || 0
 
 export class Library extends Component {
   render () {
