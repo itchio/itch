@@ -20,8 +20,8 @@ const initialState = {
   },
   downloading: {},
   queued: {},
-  locales: {},
-};
+  locales: [],
+} as II18nState;
 
 export default handleActions<II18nState, any>({
   LOCALES_CONFIG_LOADED: (state: II18nState, action: IAction<ILocalesConfigLoadedPayload>) => {

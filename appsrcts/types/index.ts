@@ -284,6 +284,9 @@ export interface ICaveRecord extends ICaveRecordLocation {
         width: number;
         height: number;
     };
+    
+    /** size of installed folder, in bytes */
+    installedSize?: number;
 }
 
 /** Stores installer name by upload id */
@@ -743,6 +746,15 @@ export interface II18nResources {
     };
 }
 
+/** Info about a locale. See locales.json for a list that ships with the app. */
+export interface ILocaleInfo {
+    /** 2-letter language code */
+    value: string;
+
+    /** native name of language (English, Français, etc.) */
+    label: string;
+}
+
 export interface II18nState {
     /** 2-letter code for the language the app is currently displayed in */
     lang: string;
@@ -759,6 +771,8 @@ export interface II18nState {
     downloading: {
         [lang: string]: boolean;
     };
+
+    locales: ILocaleInfo[];
 }
 
 export interface IUIMenuState {
@@ -810,6 +824,9 @@ export interface ISelfUpdateState {
 export interface IInstallLocation {
     /** path on disk (empty for appdata) */
     path: string;
+
+    /** set to true when deleted. still keeping the record around in case some caves still exist with it */
+    deleted?: boolean;
 }
 
 export interface IPreferencesState {

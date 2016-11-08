@@ -47,7 +47,6 @@ interface ISelectOption {
 interface ISelectRowProps {
   options: ISelectOption[];
   value?: string;
-  label: string;
   onChange?(value: string): void;
 }
 
