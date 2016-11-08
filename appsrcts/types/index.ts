@@ -111,6 +111,10 @@ export interface IUserRecord {
     stillCoverUrl?: string;
 }
 
+export interface IUserRecordSet {
+    [id: string]: IUserRecord;
+}
+
 export interface ICollectionRecord {
     /** itch.io-generated unique identifier */
     id: number;
@@ -183,11 +187,17 @@ export interface ITabData {
     /** collections in relation to this tab */
     collections?: ICollectionRecordSet;
 
+    /** users in relation to this tab */
+    users?: IUserRecordSet;
+
     /** error to show for toast tab */
     error?: string;
 
     /** stack trace to show for toast tab */
     stack?: string;
+
+    /** if this is a web tab, the url of the page we're showing */
+    url?: string;
 }
 
 export interface ITabDataSave extends ITabData {
@@ -299,6 +309,10 @@ export interface ICaveRecord extends ICaveRecordLocation {
     
     /** size of installed folder, in bytes */
     installedSize?: number;
+}
+
+export interface ICaveRecordSet {
+    [key: string]: ICaveRecord;
 }
 
 /** Stores installer name by upload id */
@@ -567,10 +581,20 @@ export interface IMarketState {
     ready?: boolean;
 }
 
+export interface IItchAppProfile {
+    [id: string]: any;
+    myGames: IItchAppProfileMyGames;
+}
+
+export interface IItchAppProfileMyGames {
+    ids: string[];
+}
+
 export interface IUserMarketState extends IMarketState {
     games: { [id: string]: IGameRecord };
     collections: { [id: string]: ICollectionRecord };
     downloadKeys: { [id: string]: IDownloadKey };
+    itchAppProfile: IItchAppProfile;
 }
 
 export interface IGlobalMarketState extends IMarketState {

@@ -13,10 +13,10 @@ const recency = (x: ICaveRecord) => x.installedAt ? -(new Date(x.installedAt)) :
 
 export class Library extends React.Component<ILibraryProps, void> {
   render () {
-    const {caves, allGames, downloadKeys} = this.props;
+    const {caves, recordGames, downloadKeys} = this.props;
 
     // associate caves with games
-    let caveGames = map(values(caves), (c) => ({c, g: allGames[c.gameId] || c.game}));
+    let caveGames = map(values(caves), (c) => ({c, g: recordGames[c.gameId] || c.game}));
 
     // only keep games we can show (in our user DB or cached in cave)
     caveGames = filter(caveGames, (rec) => !!rec.g);
@@ -54,7 +54,7 @@ interface ILibraryProps {
     [id: string]: ICaveRecord;
   };
 
-  allGames: {
+  recordGames: {
     [id: number]: IGameRecord;
   };
 
@@ -65,7 +65,7 @@ interface ILibraryProps {
 
 const mapStateToProps = createStructuredSelector({
   caves: (state: IState) => state.globalMarket.caves || {},
-  allGames: (state: IState) => state.market.games || {},
+  recordGames: (state: IState) => state.market.games || {},
   downloadKeys: (state: IState) => state.market.downloadKeys || {},
 });
 
