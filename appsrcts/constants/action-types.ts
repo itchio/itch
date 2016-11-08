@@ -72,7 +72,7 @@ export interface ISessionUpdatedPayload {
 export const FORGET_SESSION_REQUEST = "FORGET_SESSION_REQUEST";
 export interface IForgetSessionRequestPayload {
   /** the session to forget (user id) */
-  id: string;
+  id: number;
 
   username: string;
 }

@@ -62,7 +62,7 @@ async function forgetSessionRequest (store: IStore, action: IAction<IForgetSessi
 async function forgetSession (store: IStore, action: IAction<IForgetSessionPayload>) {
   const {id} = action.payload;
 
-  const tokenPath = getTokenPath(id);
+  const tokenPath = getTokenPath(String(id));
   await sf.wipe(tokenPath);
 }
 
