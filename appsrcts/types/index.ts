@@ -73,6 +73,14 @@ export interface IGameRecord {
 }
 
 /**
+ * This is used in some components, mostly grids/lists that can be filtered
+ * using some user-provided query.
+ */
+export interface IFilteredGameRecord extends IGameRecord {
+  _searchScore: number;
+}
+
+/**
  * Presentation information for HTML5 games
  */
 export interface IGameEmbedInfo {
@@ -115,6 +123,10 @@ export interface ICollectionRecord {
 
     /** identifiers of the games in this collection */
     gameIds: number[];
+
+    createdAt: string;
+
+    updatedAt: string;
 }
 
 export interface IInstallLocationRecord {
@@ -660,22 +672,26 @@ export interface ISessionLoginState {
     blockingOperation: ISetupOperation;
 }
 
+export interface ITabs {
+    /** tabs that can't be closed or re-ordered */
+    constant: string[];
+    /** tabs that can be moved around/closed */
+    transient: string[];
+}
+
 export interface ISessionNavigationState {
     filters: {
         [tabId: string]: string;
+        collections?: string;
     };
 
     binaryFilters: {
         [key: string]: boolean;
+        onlyCompatible: boolean;
     };
 
     /** opened tabs */
-    tabs: {
-        /** tabs that can't be closed or re-ordered */
-        constant: string[];
-        /** tabs that can be moved around/closed */
-        transient: string[];
-    };
+    tabs: ITabs;
 
     /** data associated with tabs: games, collections, etc. */
     tabData: {

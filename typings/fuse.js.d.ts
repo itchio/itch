@@ -10,12 +10,15 @@ declare module 'fuse.js' {
 
     interface IFuseResult<T> {
         item: T;
+
+        /** only present if constructor opts have {include: ['score']} */
+        score?: number;
     }
 
     interface IFuseOpts {
         keys: IFuseKeySpec[];
         threshold?: number;
-        include: string[];
+        include?: string[];
     }
 
     class Fuse <T> {

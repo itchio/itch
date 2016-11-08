@@ -29,7 +29,7 @@ export function versionString () {
 export class HubSidebar extends React.Component<IHubSidebarProps, void> {
   refs: {
     search: HTMLInputElement;
-  }
+  };
 
   constructor () {
     super();

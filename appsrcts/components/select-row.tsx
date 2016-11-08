@@ -9,7 +9,7 @@ import {map} from "underscore";
 class SelectRow extends React.Component<ISelectRowProps, void> {
   refs: {
     input: HTMLInputElement;
-  }
+  };
 
   constructor (props: ISelectRowProps) {
     super(props);
