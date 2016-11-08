@@ -193,8 +193,11 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
       return {err: new Error("No uploads found")};
     }
 
-    // TODO: update installedAt once we found there were no new uploads?
-    let installedAt = moment.tz(cave.installedAt, "UTC");
+    // needed because moment.tz(undefined, "UTC") gives.. the current date!
+    // cf. https://github.com/itchio/itch/issues/977
+    const installedAtTimestamp = cave.installedAt || 0;
+
+    let installedAt = moment.tz(installedAtTimestamp, "UTC");
     log(opts, `installed at ${installedAt.format()}`);
     if (!installedAt.isValid()) {
       installedAt = moment.tz(0, "UTC");
