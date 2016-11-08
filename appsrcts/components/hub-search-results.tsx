@@ -251,7 +251,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
-  closeSearch: dispatcher(dispatch, actions.closeSearch()),
+  closeSearch: dispatcher(dispatch, actions.closeSearch),
   navigate: dispatcher(dispatch, actions.navigate),
   navigateToGame: dispatcher(dispatch, actions.navigateToGame),
   navigateToUser: dispatcher(dispatch, actions.navigateToUser),
