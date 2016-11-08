@@ -1076,8 +1076,11 @@ export interface IDownloadsState {
         [gameId: string]: IDownloadItem;
     };
 
-    /** all the downloads finished but not cleared yet */
-    finishedDownloads: IDownloadItem[];
+    /** ids of all the downloads finished but not cleared yet */
+    finishedDownloads: string[];
+
+    /** ids of all the downloads, in order */
+    downloadsByOrder: string[];
 
     /** The download currently being downloaded (if they're not paused) */
     activeDownload: IDownloadItem;
