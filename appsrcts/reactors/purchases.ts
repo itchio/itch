@@ -24,7 +24,7 @@ import * as actions from "../actions";
 import {BrowserWindow} from "electron";
 import * as ospath from "path";
 
-const injectPath = ospath.resolve(__dirname, "..", "inject", "purchase.js");
+const injectPath = ospath.resolve(__dirname, "..", "inject", "itchio-monkeypatch.js");
 
 async function initiatePurchase (store: IStore, action: IAction<IInitiatePurchasePayload>) {
   const {game} = action.payload;

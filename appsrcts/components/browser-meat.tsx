@@ -18,7 +18,7 @@ import {uniq, findWhere} from "underscore";
 
 import {IBrowserState} from "./browser-state";
 
-const injectPath = ospath.resolve(__dirname, "..", "inject", "browser.js");
+const injectPath = ospath.resolve(__dirname, "..", "inject", "itchio-monkeypatch.js");
 // const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === '1'
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
 const WILL_NAVIGATE_GRACE_PERIOD = 3000;
