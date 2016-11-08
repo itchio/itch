@@ -108,7 +108,6 @@ module.exports = function (grunt) {
       },
       dist: {
         files: [
-          { expand: true, cwd: 'appsrc', src: ['**/*.js'], dest: 'app' },
           { expand: true, cwd: 'testsrc', src: ['**/*.js'], dest: 'test' }
         ]
       }
@@ -127,8 +126,8 @@ module.exports = function (grunt) {
         force: false
       },
       'files': [
-        'appsrcts/**/*.ts',
-        'appsrcts/**/*.tsx'
+        'appsrc/**/*.ts',
+        'appsrc/**/*.tsx'
       ]
     },
     'sass': {
