@@ -166,6 +166,7 @@
     "preferences.install_locations": "Install locations",
     "preferences.behavior": "Behavior",
     "preferences.behavior.close_to_tray": "Keep app in tray when closing window",
+    "preferences.behavior.ready_notification": "Notify me when a download has installed or updated",
     "preferences.language": "Language",
     "preferences.language.auto": "System language ({{language}})",
     "preferences.language.get_involved": "Help translate {{name}} in your language!",

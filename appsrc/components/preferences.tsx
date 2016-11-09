@@ -103,6 +103,12 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
           }}/>
           <span> {t("preferences.behavior.close_to_tray")} </span>
         </label>
+        <label className={classNames({active: closeToTray})}>
+          <input type="checkbox" checked={closeToTray} onChange={(e) => {
+            updatePreferences({closeToTray: e.currentTarget.checked});
+          }}/>
+          <span> {t("preferences.behavior.close_to_tray")} </span>
+        </label>
       </div>
 
       <h2>{t("preferences.install_locations")}</h2>
@@ -237,7 +243,7 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
 interface IExtendedInstallLocation extends IInstallLocation {
   /** some hardcoded value like 'appData' or an UUID */
   name: string;
-  
+
   /** total size of installed items in this location */
   size: number;
 

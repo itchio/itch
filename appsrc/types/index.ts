@@ -306,7 +306,7 @@ export interface ICaveRecord extends ICaveRecordLocation {
         width: number;
         height: number;
     };
-    
+
     /** size of installed folder, in bytes */
     installedSize?: number;
 }
@@ -417,10 +417,10 @@ export interface IMarketDeleteOpts {
 export interface IMarketSaveOpts {
   /** if true, save waits for all changes to be committed before resolving */
   wait?: boolean;
-  
+
   /** if true, save will persist changes to disk, not just in-memory */
   persist?: boolean;
-  
+
   /** internal: set to true on the first saveAllEntities, which happens while loading the DB */
   initial?: boolean;
 }
@@ -453,10 +453,10 @@ export interface IOwnUserRecord extends IUserRecord {
      * anything if you don't actually have a press account. Or maybe you're just looking for
      * fun errors, in which case, go ahead!
      */
-    pressUser?: boolean; 
+    pressUser?: boolean;
 
     /** if set, user has expressed interest in publishing content on itch.io */
-    developer?: boolean; 
+    developer?: boolean;
 }
 
 export interface IDownloadKey {
@@ -675,7 +675,7 @@ export interface ISessionCachedCollectionsState {
 export interface ISessionCredentialsState {
     /** API key */
     key: string;
-    
+
     /** info on user using the app */
     me: IOwnUserRecord;
 }
@@ -759,7 +759,7 @@ export interface ISearchResults {
 
 export interface ISessionSearchState {
     /** search suggestion */
-    example: string;    
+    example: string;
 
     /** query typed by user */
     typedQuery: string;
@@ -772,7 +772,7 @@ export interface ISessionSearchState {
 
     /** whether we're currently fetching results or not */
     loading: boolean;
-    
+
     /** search result currently highlighted */
     highlight: number;
 
@@ -823,7 +823,7 @@ export interface IUIMenuState {
 
 export interface IUIMainWindowState {
     /** id of the electron BrowserWindow the main window is displayed in */
-    id: number;    
+    id: number;
 
     /** true if main window has focus */
     focused: boolean;
@@ -890,6 +890,9 @@ export interface IPreferencesState {
 
   /** when closing window, keep running in tray */
   closeToTray?: boolean;
+
+  /** notify when a download has installed or updated */
+  readyNotification?: boolean;
 
   /** show the advanced section of settings */
   showAdvanced?: boolean;
@@ -1046,7 +1049,7 @@ export interface IDownloadItem {
 
     /** unique generated id for this download */
     id: string;
-    
+
     /** download progress in a [0, 1] interval */
     progress: number;
 

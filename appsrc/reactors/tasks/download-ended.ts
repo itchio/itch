@@ -51,17 +51,22 @@ export async function downloadEnded (store: IStore, action: IAction<IDownloadEnd
         return;
       }
 
-      const i18n = store.getState().i18n;
-      const t = localizer.getT(i18n.strings, i18n.lang);
-      const message = t(
-        reason === "install"
-        ? "notification.download_installed"
-        : "notification.download_updated"
-        , {title: downloadOpts.game.title}
-      )
-      store.dispatch(actions.notify({
-        body: message,
-      }));
+      const prefs = store.getState().preferences || {readyNotification: true};
+      const {readyNotification} = prefs;
+
+      if (readyNotification) {
+        const i18n = store.getState().i18n;
+        const t = localizer.getT(i18n.strings, i18n.lang);
+        const message = t(
+          reason === "install"
+          ? "notification.download_installed"
+          : "notification.download_updated"
+          , {title: downloadOpts.game.title}
+        )
+        store.dispatch(actions.notify({
+          body: message,
+        }));
+      }
     }
   } else {
     log(opts, `Downloaded something for reason ${reason}`);

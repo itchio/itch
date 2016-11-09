@@ -18,6 +18,7 @@ const initialState = {
   sidebarWidth: 240,
   isolateApps: false,
   closeToTray: true,
+  readyNotification: true,
   showAdvanced: false,
 } as IPreferencesState;
 
