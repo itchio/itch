@@ -1,7 +1,7 @@
 {
     "desktop.shortcut.comment": "简单方便的安装并开始 itch.io 游戏",
     "errors.api.login.incorrect_username_or_password": "用户名称或密码不正确",
-    "errors.api.login.password_must_be_provided": "请您填写密码？",
+    "errors.api.login.password_must_be_provided": "请填写密码",
     "errors.api.login.username_must_be_provided": "必须提供用户名",
     "grid.item.buy_now": "立刻购买",
     "grid.item.cancel_download": "取消下载",
@@ -57,7 +57,7 @@
     "onboarding.caved.title_pick": "尽情挑选",
     "onboarding.caved.troubleshoot_advice": "如果出现问题，点击 {{report}} 报告错误，或者 {{probe}} 查看详情。",
     "onboarding.caved.usage": "游戏静默下载，安装，运行。",
-    "onboarding.collections.auto_sync": "你的游戏将会在你下次登录时显示",
+    "onboarding.collections.auto_sync": "你的游戏将会在你下次登录时显示。",
     "onboarding.collections.lets_shop": "我们去购物吧",
     "onboarding.collections.title_mix": "混合搭配",
     "onboarding.collections.usage": "先稍微浏览此网站， 然后用 {{add_to_collection}} 开始管理。",
@@ -127,5 +127,7 @@
     "status.checking": "正在检查更新",
     "status.downloaded": "单击以重启并应用更新！",
     "status.downloading": "正在下载更新...",
-    "status.uptodate": "你的 itch 是最新版！"
+    "status.uptodate": "你的 itch 是最新版！",
+    "notification.see_you_soon.message": "itch 正在后台运行，可用菜单栏完全退出。",
+    "duration.minute": "少于一分钟"
 }
