@@ -321,5 +321,7 @@
     "preferences.behavior": "Verhalten",
     "preferences.behavior.close_to_tray": "Anwendung weiter im Infobereich anzeigen, wenn das Fenster geschlossen wird.",
     "preferences.advanced": "Erweitert",
-    "preferences.proxy_server_address": "HTTP Proxy"
+    "preferences.proxy_server_address": "HTTP Proxy",
+    "preferences.proxy_server_source.direct": "Direkt (ohne Proxy)",
+    "preferences.proxy_server_source.env": "Durch Umgebungsvariable gesetzt"
 }
