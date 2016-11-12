@@ -307,5 +307,6 @@
     "prompt.action.force_close": "Schließen erzwingen",
     "grid.criterion.filter": "Filtern...",
     "grid.item.buy_now_again": "Weiteres Exemplar kaufen",
-    "grid.item.prioritize_download": "Bevorzugen"
+    "grid.item.prioritize_download": "Bevorzugen",
+    "grid.item.review": "Bewerten"
 }
