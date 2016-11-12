@@ -314,5 +314,6 @@
     "menu.file.close_all_tabs": "Alle Tabs schließen",
     "toast.title": "Ups!",
     "sandbox.setup.windows.detail": "Nach dem Drücken auf \"Fortfahren\" wird ein Bestätigungsfenster erscheinen, welches deine Zustimmung benötigt. Dieses wird ein \"Itch-Player\"-Benutzerkonto hinzufügen, um deine Spiele vor dem restlichen System zu schützen.",
-    "preferences.security.sandbox.title": "itch.io Sandbox aktivieren"
+    "preferences.security.sandbox.title": "itch.io Sandbox aktivieren",
+    "preferences.security.sandbox.description": "Die itch.io Sandbox wird versuchen, Spiele, die Du heruntergeladen hast, davon abzuhalten, schädliche Dinge zu tun oder vertrauliche Daten zu stehlen. Obwohl es keine vollkommene Sicherheitsgarantie ist, ist es doch wesentlich sicherer, Spiele in der itch.io Sandbox zu starten."
 }
