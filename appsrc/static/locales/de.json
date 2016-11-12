@@ -323,5 +323,7 @@
     "preferences.advanced": "Erweitert",
     "preferences.proxy_server_address": "HTTP Proxy",
     "preferences.proxy_server_source.direct": "Direkt (ohne Proxy)",
-    "preferences.proxy_server_source.env": "Durch Umgebungsvariable gesetzt"
+    "preferences.proxy_server_source.env": "Durch Umgebungsvariable gesetzt",
+    "pick_update_upload.detail": "Wir fragen nur, weil du bei der Installation eine Datei manuell ausgewählt hast.\n",
+    "prompt.abort_game.title": "Beenden des Spiels erzwingen?"
 }
