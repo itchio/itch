@@ -55,7 +55,7 @@
     "menu.help.check_for_update": "Nach Aktualisierungen suchen",
     "menu.help.help": "Hilfe",
     "menu.help.release_notes": "Änderungen",
-    "menu.help.report_issue": "Problem melden",
+    "menu.help.report_issue": "Feedback senden",
     "menu.help.search_issue": "Nach Problem suchen",
     "menu.help.view_license": "Lizenz anzeigen",
     "menu.help.view_terms": "Itch.io Nutzungsbedingungen anzeigen",
@@ -336,5 +336,6 @@
     "sidebar.view_creator_profile": "Entwicklerprofil anzeigen",
     "status.downloads.category.active": "Aktiver Download",
     "status.downloads.category.queued": "Downloads in Warteschleife",
-    "status.game_update.found": "Neue Version von {{title}} gefunden! Download läuft..."
+    "status.game_update.found": "Neue Version von {{title}} gefunden! Download läuft...",
+    "status.game_update.not_found": "{{title}} ist auf dem neuesten Stand"
 }
