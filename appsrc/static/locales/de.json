@@ -313,5 +313,6 @@
     "menu.file.new_tab": "Neuer Tab",
     "menu.file.close_all_tabs": "Alle Tabs schließen",
     "toast.title": "Ups!",
-    "sandbox.setup.windows.detail": "Nach dem Drücken auf \"Fortfahren\" wird ein Bestätigungsfenster erscheinen, welches deine Zustimmung benötigt. Dieses wird ein \"Itch-Player\"-Benutzerkonto hinzufügen, um deine Spiele vor dem restlichen System zu schützen."
+    "sandbox.setup.windows.detail": "Nach dem Drücken auf \"Fortfahren\" wird ein Bestätigungsfenster erscheinen, welches deine Zustimmung benötigt. Dieses wird ein \"Itch-Player\"-Benutzerkonto hinzufügen, um deine Spiele vor dem restlichen System zu schützen.",
+    "preferences.security.sandbox.title": "itch.io Sandbox aktivieren"
 }
