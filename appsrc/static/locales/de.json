@@ -325,5 +325,6 @@
     "preferences.proxy_server_source.direct": "Direkt (ohne Proxy)",
     "preferences.proxy_server_source.env": "Durch Umgebungsvariable gesetzt",
     "pick_update_upload.detail": "Wir fragen nur, weil du bei der Installation eine Datei manuell ausgewählt hast.\n",
-    "prompt.abort_game.title": "Beenden des Spiels erzwingen?"
+    "prompt.abort_game.title": "Beenden des Spiels erzwingen?",
+    "prompt.abort_game.message": "Möchtest du {{title}} zum Schließen zwingen?"
 }
