@@ -306,5 +306,6 @@
     "pick_update_upload.message": "Welche Datei möchtest du für {{title}} aktualisieren?",
     "prompt.action.force_close": "Schließen erzwingen",
     "grid.criterion.filter": "Filtern...",
-    "grid.item.buy_now_again": "Weiteres Exemplar kaufen"
+    "grid.item.buy_now_again": "Weiteres Exemplar kaufen",
+    "grid.item.prioritize_download": "Bevorzugen"
 }
