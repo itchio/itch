@@ -334,5 +334,7 @@
     "sidebar.close_all_tabs": "Alle Tabs schließen",
     "sidebar.itchio": "Dein Zugang in die Welt der Indie-Spiele",
     "sidebar.view_creator_profile": "Entwicklerprofil anzeigen",
-    "status.downloads.category.active": "Aktiver Download"
+    "status.downloads.category.active": "Aktiver Download",
+    "status.downloads.category.queued": "Downloads in Warteschleife",
+    "status.game_update.found": "Neue Version von {{title}} gefunden! Download läuft..."
 }
