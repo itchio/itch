@@ -318,5 +318,6 @@
     "preferences.security.sandbox.description": "Die itch.io Sandbox wird versuchen, Spiele, die Du heruntergeladen hast, davon abzuhalten, schädliche Dinge zu tun oder vertrauliche Daten zu stehlen. Obwohl es keine vollkommene Sicherheitsgarantie ist, ist es doch wesentlich sicherer, Spiele in der itch.io Sandbox zu starten.",
     "preferences.install_location.is_default_short": "Standard",
     "preferences.install_location.make_default_short": "Als Standard einstellen",
-    "preferences.behavior": "Verhalten"
+    "preferences.behavior": "Verhalten",
+    "preferences.behavior.close_to_tray": "Anwendung weiter im Infobereich anzeigen, wenn das Fenster geschlossen wird."
 }
