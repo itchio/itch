@@ -326,5 +326,10 @@
     "preferences.proxy_server_source.env": "Durch Umgebungsvariable gesetzt",
     "pick_update_upload.detail": "Wir fragen nur, weil du bei der Installation eine Datei manuell ausgewählt hast.\n",
     "prompt.abort_game.title": "Beenden des Spiels erzwingen?",
-    "prompt.abort_game.message": "Möchtest du {{title}} zum Schließen zwingen?"
+    "prompt.abort_game.message": "Möchtest du {{title}} zum Schließen zwingen?",
+    "search.results.title": "Suchergebnisse für '{{query}}'",
+    "search.results.local": "Lokal",
+    "search.results.games": "Spiele",
+    "search.results.creators": "Entwickler",
+    "sidebar.close_all_tabs": "Alle Tabs schließen"
 }
