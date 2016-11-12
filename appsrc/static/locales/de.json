@@ -309,5 +309,6 @@
     "grid.item.buy_now_again": "Weiteres Exemplar kaufen",
     "grid.item.prioritize_download": "Bevorzugen",
     "grid.item.review": "Bewerten",
-    "login.action.show_form": "Als jemand anderes einloggen"
+    "login.action.show_form": "Als jemand anderes einloggen",
+    "menu.file.new_tab": "Neuer Tab"
 }
