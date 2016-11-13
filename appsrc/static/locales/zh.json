@@ -130,5 +130,7 @@
     "status.uptodate": "你的 itch 是最新版！",
     "notification.see_you_soon.message": "itch 正在后台运行，可用菜单栏完全退出。",
     "duration.minute": "少于一分钟",
-    "action.name.manual": "用户手册"
+    "action.name.manual": "用户手册",
+    "new_tab.titles.browser_placeholder": "输入任意网址",
+    "new_tab.titles.input": "... 或者"
 }
