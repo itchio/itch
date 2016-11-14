@@ -61,7 +61,7 @@ async function mount (store: IStore, action: IAction<any>) {
 
   for (const i of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
     combo.bindGlobal([`${prefix}+${i}`], () => {
-      store.dispatch(actions.focusNthTab(i));
+      store.dispatch(actions.focusNthTab({index: i}));
     });
   }
 }

@@ -71,7 +71,7 @@ async function queueLocaleDownload (store: IStore, action: IAction<IQueueLocaleD
   let {lang} = action.payload;
 
   if (!upgradesEnabled) {
-    log(opts, "Not downloading locales in development, export DID_I_STUTTER=1 to override");
+    log(opts, `Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`);
     return;
   }
 

@@ -27,7 +27,7 @@ async function newTab (store: IStore, action: IAction<INewTabPayload>) {
 }
 
 async function focusNthTab (store: IStore, action: IAction<IFocusNthTabPayload>) {
-  const n = action.payload;
+  const n = action.payload.index;
   const constant = store.getState().session.navigation.tabs.constant;
   const tab = constant[n - 1];
   if (tab) {
