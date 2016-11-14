@@ -29,6 +29,7 @@
     "@types/clone": "^0.1.30",
     "@types/colors": "^0.6.33",
     "@types/electron": "^1.4.24",
+    "@types/glob": "^5.0.30",
     "@types/invariant": "^2.2.28",
     "@types/moment-timezone": "^0.2.32",
     "@types/node": "^6.0.45",
@@ -117,6 +118,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-plugin-transform-strict-mode": "^6.8.0",
     "babel-preset-react": "^6.11.1",
+    "codecov.io": "^0.1.6",
     "electron-packager": "^7.0.1",
     "grunt": "^1.0.1",
     "grunt-babel": "^6.0.0",
@@ -145,9 +147,9 @@
   },
   "scripts": {
     "start": "grunt && electron . --color",
-    "test": "grunt && nyc -s node test/runner.js | tap-spec",
-    "coveralls": "nyc report -r text-lcov | coveralls",
-    "local-cov": "grunt && nyc -s node test/runner.js | tap-spec && nyc report -r html",
+    "test": "grunt && nyc -s node app/tests/runner.js | tap-spec",
+    "codecov": "nyc report -r lcov | codecov",
+    "local-cov": "grunt && nyc -s node app/tests/runner.js | tap-spec && nyc report -r html",
     "lint": "grunt tslint && standard",
     "i18n": "release/i18n-check.sh"
   },

@@ -2,7 +2,7 @@
 # print a list of unused i18n strings, and missing i18n strings
 
 EN_FILE="app/static/locales/en.json"
-TYPES="--shell --js"
+TYPES="--shell --ts"
 USED=`ag $TYPES --nocolor --nofilename -o "[^a-z]t\(\'([a-z_\.]+\')\)" | grep -v '^$' | sed "s/.t('\(.*\)')/\\1/"`
 ALL_DEFINED=1
 

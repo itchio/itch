@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-// compile javascript code and run unit tests
+// compile typescript code and run unit tests
 
 const $ = require('./common')
 
 $.show_versions(['npm', 'gsutil'])
 
 $($.npm('install'))
-$($.npm('install grunt-cli coveralls nyc'))
+$($.npm('install grunt-cli nyc'))
 
 $($.npm('test'))
-$($.npm('run coveralls'))
+$($.npm('run codecov'))
