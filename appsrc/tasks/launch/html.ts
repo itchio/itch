@@ -56,9 +56,13 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
     width, height,
     center: true,
     show: true,
+
+    /* used to be black, but that didn't work for everything */
     backgroundColor: "#fff",
-    titleBarStyle: "hidden",
+
+    /* the width x height we give is content size, window will be slightly larger */
     useContentSize: true,
+
     webPreferences: {
       /* don't let web code control the OS */
       nodeIntegration: false,
