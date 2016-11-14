@@ -3,7 +3,7 @@
 ![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 [![Build Status](https://git.itch.ovh/itchio/itch/badges/master/build.svg)](https://git.itch.ovh/itchio/itch/builds)
-[![Coverage Status](https://coveralls.io/repos/itchio/itch/badge.svg?service=github)](https://coveralls.io/github/itchio/itch)
+[![codecov](https://codecov.io/gh/itchio/itch/branch/master/graph/badge.svg)](https://codecov.io/gh/itchio/itch)
 [![Translation status](https://weblate.itch.ovh/widgets/itch/-/svg-badge.svg)](https://weblate.itch.ovh/engage/itch/?utm_source=widget)
 
 The goal of this project is to give you a desktop application that you can
