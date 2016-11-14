@@ -1,7 +1,6 @@
 
 import * as actions from "../actions";
 
-import {importLegacyDBs} from "./preboot/import-legacy-dbs";
 import {cleanOldLogs} from "./preboot/clean-old-logs";
 import xdgMime from "./preboot/xdg-mime";
 
@@ -13,12 +12,6 @@ import {IStore} from "../types";
 import {IAction, IPrebootPayload} from "../constants/action-types";
 
 async function preboot (store: IStore, action: IAction<IPrebootPayload>) {
-  try {
-    await importLegacyDBs(log, opts);
-  } catch (e) {
-    log(opts, `Could not import legacy db: ${e.stack || e.message || e}`);
-  }
-
   try {
     await cleanOldLogs();
   } catch (e) {
