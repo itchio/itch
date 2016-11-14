@@ -49,7 +49,7 @@ function convertMenuAction (payload: IMenuItemPayload) {
   const {role, label} = payload;
 
   switch (role) {
-    case "about": return actions.openUrl(urls.appHomepage);
+    case "about": return actions.openUrl({url: urls.appHomepage});
     default: // muffin
   }
 
@@ -64,13 +64,13 @@ function convertMenuAction (payload: IMenuItemPayload) {
     case "menu.view.history": return actions.navigate("history");
     case "menu.account.change_user": return actions.changeUser({});
     // TODO: change to proper about tab/window
-    case "menu.help.about": return actions.openUrl(urls.appHomepage);
-    case "menu.help.view_terms": return actions.openUrl(urls.termsOfService);
-    case "menu.help.view_license": return actions.openUrl(`${urls.itchRepo}/blob/master/LICENSE`);
+    case "menu.help.about": return actions.openUrl({url: urls.appHomepage});
+    case "menu.help.view_terms": return actions.openUrl({url: urls.termsOfService});
+    case "menu.help.view_license": return actions.openUrl({url: `${urls.itchRepo}/blob/master/LICENSE`});
     case "menu.help.check_for_update": return actions.checkForSelfUpdate({});
-    case "menu.help.report_issue": return actions.openUrl(`${urls.itchRepo}/issues/new`);
-    case "menu.help.search_issue": return actions.openUrl(`${urls.itchRepo}/search?type=Issues`);
-    case "menu.help.release_notes": return actions.openUrl(`${urls.itchRepo}/releases`);
+    case "menu.help.report_issue": return actions.openUrl({url: `${urls.itchRepo}/issues/new`});
+    case "menu.help.search_issue": return actions.openUrl({url: `${urls.itchRepo}/search?type=Issues`});
+    case "menu.help.release_notes": return actions.openUrl({url: `${urls.itchRepo}/releases`});
     case "crash.test":
       (async function () { throw new Error("crash test!"); })();
     default:

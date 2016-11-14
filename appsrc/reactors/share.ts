@@ -9,7 +9,7 @@ import {IAction, IInitiateSharePayload} from "../constants/action-types";
 async function initiateShare (store: IStore, action: IAction<IInitiateSharePayload>) {
   const {url} = action.payload;
   const query = querystring.stringify({url});
-  store.dispatch(actions.openUrl(`https://www.addtoany.com/share?${query}`));
+  store.dispatch(actions.openUrl({url: `https://www.addtoany.com/share?${query}`}));
 }
 
 export default {initiateShare};

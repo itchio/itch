@@ -219,7 +219,7 @@ async function showAvailableSelfUpdate (store: IStore, action: IAction<IShowAvai
       {
         label: ["prompt.self_update.action.download"],
         action: [
-          actions.openUrl(spec.url),
+          actions.openUrl({url: spec.url}),
           actions.dismissStatus({}),
         ],
         icon: "download",
@@ -227,7 +227,7 @@ async function showAvailableSelfUpdate (store: IStore, action: IAction<IShowAvai
       {
         label: ["prompt.self_update.action.view"],
         action: [
-          actions.openUrl(urls.releasesPage),
+          actions.openUrl({url: urls.releasesPage}),
           actions.dismissStatus({}),
         ],
         className: "secondary",

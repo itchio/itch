@@ -247,7 +247,9 @@ export interface ISwitchPagePayload {
 };
 
 export const OPEN_URL = "OPEN_URL";
-export type IOpenUrlPayload = string;
+export interface IOpenUrlPayload {
+  url: string;
+}
 
 export const REPORT_ISSUE = "REPORT_ISSUE";
 export interface IReportIssuePayload {

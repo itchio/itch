@@ -69,7 +69,7 @@ async function handleItchioUrl (store: IStore, action: IAction<IHandleItchioUrlP
 }
 
 async function openUrl (store: IStore, action: IAction<IOpenUrlPayload>) {
-  const uri = action.payload;
+  const uri = action.payload.url;
   if (isItchioURL(uri)) {
     store.dispatch(actions.handleItchioUrl({uri}));
   } else {

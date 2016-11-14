@@ -55,7 +55,7 @@ export class BrowserControls extends React.Component<IBrowserControlsProps, IBro
   }
 
   popOutBrowser () {
-    this.props.openUrl(this.props.browserState.url);
+    this.props.openUrl({url: this.props.browserState.url});
   }
 
   startEditingURL () {

@@ -253,7 +253,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
       {
         icon: "search",
         label: ["menu.help.search_issue"],
-        onClick: () => openUrl(`${urls.itchRepo}/search?type=Issues`),
+        onClick: () => openUrl({url: `${urls.itchRepo}/search?type=Issues`}),
       },
       {
         icon: "bug",

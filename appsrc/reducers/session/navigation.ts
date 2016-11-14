@@ -115,12 +115,12 @@ export default handleActions<ISessionNavigationState, any>({
 
   SHORTCUTS_VISIBILITY_CHANGED: (state: ISessionNavigationState,
                                  action: IAction<IShortcutsVisibilityChangedPayload>) => {
-    const {visible} = action.payload;
+    const visible: boolean = action.payload.visible;
     return Object.assign({}, state, {shortcutsShown: visible});
   },
 
   SWITCH_PAGE: (state: ISessionNavigationState, action: IAction<ISwitchPagePayload>) => {
-    const page = action.payload;
+    const page: string = action.payload.page;
     return Object.assign({}, state, {page});
   },
 
