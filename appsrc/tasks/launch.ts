@@ -27,8 +27,9 @@ import sf from "../util/sf";
 import fetch from "../util/fetch";
 import pathmaker from "../util/pathmaker";
 import explorer from "../util/explorer";
-import classificationActions from "../constants/classification-actions";
 import defaultManifestIcons from "../constants/default-manifest-icons";
+
+import actionForGame from "../util/action-for-game";
 
 import {promisedModal} from "../reactors/modals";
 import {MODAL_RESPONSE} from "../constants/action-types";
@@ -133,7 +134,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
   const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game});
   const caveGame = (cave.game || {}) as IGameRecord;
 
-  const action = classificationActions[caveGame.classification || "game"];
+  const action = actionForGame(caveGame, cave);
   if (action === "open") {
     globalMarket.saveEntity("caves", cave.id, {lastTouched: Date.now()});
     explorer.open(pathmaker.appPath(cave));

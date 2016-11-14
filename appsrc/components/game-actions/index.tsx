@@ -10,8 +10,8 @@ import {createSelector, createStructuredSelector} from "reselect";
 import {findWhere, first} from "underscore";
 
 import os from "../../util/os";
-import ClassificationActions from "../../constants/classification-actions";
 
+import actionForGame from "../../util/action-for-game";
 import isPlatformCompatible from "../../util/is-platform-compatible";
 
 import MainAction from "./main-action";
@@ -92,7 +92,7 @@ const makeMapStateToProps = () => {
       const {game, cave, downloadKeys, task, download, meId, mePress} = happenings;
 
       const animate = false;
-      let action = ClassificationActions[game.classification] || "launch";
+      let action = actionForGame(game, cave);
 
       const platformCompatible = (action === "open" ? true : isPlatformCompatible(game));
       const cancellable = false;

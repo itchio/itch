@@ -5,7 +5,7 @@ import {createSelector} from "reselect";
 import {findWhere} from "underscore";
 
 import platformData from "../constants/platform-data";
-import classificationActions from "../constants/classification-actions";
+import actionForGame from "../util/action-for-game";
 
 import format from "../util/format";
 import interleave from "./interleave";
@@ -26,7 +26,7 @@ export class GameStats extends React.Component<IGameStatsProps, void> {
     const {lastTouched = 0, secondsRun = 0} = (cave || {});
 
     const classification = game.classification || "game";
-    const classAction = classificationActions[classification] || "launch";
+    const classAction = actionForGame(game, cave);
     const xed = classAction === "open" ? "opened" : ((classification === "game") ? "played" : "used");
     const lastTouchedDate = new Date(lastTouched);
 

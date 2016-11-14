@@ -6,7 +6,8 @@ import localizer from "../localizer";
 
 import {pathToId} from "../util/navigation";
 import {getUserMarket} from "./market";
-import classificationActions from "../constants/classification-actions";
+
+import actionForGame from "../util/action-for-game";
 
 import * as actions from "../actions";
 import {IStore} from "../types";
@@ -39,8 +40,8 @@ async function openTabContextMenu (store: IStore, action: IAction<IOpenTabContex
     const gameId = pathToId(path);
     const games = (data.games || {});
     const game = games[gameId];
-    const mainAction = classificationActions[game.classification] || "launch";
     const cave = store.getState().globalMarket.cavesByGameId[gameId];
+    const mainAction = actionForGame(game, cave);
 
     if (cave) {
       template.push({

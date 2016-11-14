@@ -12,14 +12,12 @@ import {each, values} from "underscore";
 import * as actions from "../actions";
 
 import platformData from "../constants/platform-data";
-import classificationActions from "../constants/classification-actions";
+
+import isPlatformCompatible from "../util/is-platform-compatible";
 import format from "../util/format";
 import Fuse = require("fuse.js");
 
 import Icon from "./icon";
-
-import os from "../util/os";
-const itchPlatform = os.itchPlatform();
 
 import {IState, IGameRecord, IUserRecord, ISessionSearchState, ISearchResults} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
@@ -31,22 +29,14 @@ export class SearchResult extends React.Component<ISearchResultProps, void> {
     const {title, stillCoverUrl, coverUrl} = game;
 
     const platforms: React.ReactElement<any>[] = [];
-    let compatible = false;
-    if (game.type === "html") {
-      compatible = true;
-      platforms.push(<Icon title="web" icon="earth"/>);
-    }
+    let compatible = isPlatformCompatible(game);
 
-    const actionForClassification = classificationActions[game.classification];
-    if (actionForClassification === "open") {
-      compatible = true;
+    if (game.type === "html") {
+      platforms.push(<Icon title="web" icon="earth"/>);
     }
 
     for (const p of platformData) {
       if ((game as any)[p.field]) {
-        if (p.platform === itchPlatform) {
-          compatible = true;
-        }
         platforms.push(<Icon title={p.platform} icon={p.icon}/>);
       }
     }
