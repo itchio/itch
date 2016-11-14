@@ -17,7 +17,7 @@ export type GameClassification = "game" | "tool" | "assets" |
 
 export type GenerosityLevel = "discreet";
 
-export type LaunchType = "native" | "html";
+export type LaunchType = "native" | "html" | "external" | "shell";
 
 export type ClassificationAction = "launch" | "open";
 

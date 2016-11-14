@@ -17,7 +17,7 @@ const self = function (msBetweenRequests: number) {
       lastRequest = nextAcceptable;
     }
 
-    return new Promise((resolve: () => void, reject: () => void) => {
+    return new Promise<void>((resolve: () => void, reject: () => void) => {
       setTimeout(resolve, quiet);
     });
   };

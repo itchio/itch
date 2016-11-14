@@ -128,7 +128,7 @@
     "tap-spec": "^4.1.1",
     "tape": "^4.2.1",
     "tslint": "^3.15.1",
-    "typescript": "^2.0.6",
+    "typescript": "2.2.0-dev.20161114",
     "zopf": "^4.5.0"
   },
   "scripts": {

@@ -16,10 +16,6 @@ import {EventEmitter} from "events";
 import mklog from "./log";
 const log = mklog("deploy");
 
-const pnoop = async function () {
-  // muffin
-};
-
 // FIXME: all this can and should be done with a butler command instead.
 // Using a staging folder is overkill and slows down the install process!
 // Using a .json file as the receipt format is slow (can't be streamed, etc.)
@@ -44,6 +40,10 @@ export interface IDeployOpts {
   onSingle?: ISingleListener;
 }
 
+let singlenoop: ISingleListener = async (onlyFile: string) => {
+  return {};
+};
+
 let self = {
   /**
    * Given a stagePath, and a destPath
@@ -54,7 +54,7 @@ let self = {
    *     (that receipt will be used on next deploy)
    */
   deploy: async function (opts: IDeployOpts): Promise<IDeployResult> {
-    const {stagePath, destPath, onProgress = noop, onSingle = pnoop} = opts;
+    const {stagePath, destPath, onProgress = noop, onSingle = singlenoop} = opts;
 
     const stageFiles = await sf.glob("**", {
       cwd: stagePath,

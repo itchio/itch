@@ -22,7 +22,12 @@ export interface IFormulaSpec {
     args: string[];
   };
   osWhitelist?: string[];
-  skipUpgradeWhen?: (opts: ISkipUpgradeWhenOpts) => Promise<boolean>;
+  skipUpgradeWhen?: (opts: ISkipUpgradeWhenOpts) => Promise<ISkipUpgradeResult>;
+}
+
+export interface ISkipUpgradeResult {
+  /** reason why we're skipping the upgrade */
+  reason: string;
 }
 
 export interface IFormulas {
@@ -114,10 +119,10 @@ self.firejail = {
     try {
       const stats = await sf.lstat(ospath.join(binPath, "firejail"));
       if (stats.uid !== 0) {
-        return "not owned by root";
+        return {reason: "not owned by root"};
       }
       if ((stats.mode & 0o4000) === 0) { // tslint:disable-line:no-bitwise
-        return "not suid";
+        return {resason: "not suid"};
       }
     } catch (e) {
       if (e.code === "ENOENT") {
@@ -126,7 +131,7 @@ self.firejail = {
         throw e;
       }
     }
-    return false;
+    return null;
   },
   versionCheck: {
     args: ["--version"],
