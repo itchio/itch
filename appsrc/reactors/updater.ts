@@ -373,7 +373,7 @@ async function sessionReady (store: IStore, action: IAction<ISessionReadyPayload
 
   while (true) {
     log(opts, "Regularly scheduled check for game updates...");
-    store.dispatch(actions.checkForGameUpdates());
+    store.dispatch(actions.checkForGameUpdates({}));
     await delay(DELAY_BETWEEN_PASSES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE);
   }
 }

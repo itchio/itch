@@ -19,7 +19,7 @@ export class HubContent extends React.Component<IHubContentProps, void> {
       FIRST_EVER_RENDER = false;
       // ooh, dispatching actions from render method, bad!
       // come at me redux zealots I'm awaitin'
-      this.props.firstUsefulPage();
+      this.props.firstUsefulPage({});
     }
 
     if (!this.props.credentials) {

@@ -71,19 +71,19 @@ async function firstWindowReady (store: IStore, action: IAction<IFirstWindowRead
   log(opts, `Update feed: ${feedUrl}`);
   autoUpdater.setFeedURL(feedUrl);
 
-  autoUpdater.on("checking-for-update", () => store.dispatch(actions.checkingForSelfUpdate()));
+  autoUpdater.on("checking-for-update", () => store.dispatch(actions.checkingForSelfUpdate({})));
   autoUpdater.on("update-downloaded", (ev: any, releaseNotes: string, releaseName: string) => {
     log(opts, `update downloaded, release name: '${releaseName}'`);
     log(opts, `release notes: \n'${releaseNotes}'`);
     store.dispatch(actions.selfUpdateDownloaded(releaseName));
   });
 
-  setTimeout(() => store.dispatch(actions.checkForSelfUpdate()), QUIET_TIME);
+  setTimeout(() => store.dispatch(actions.checkForSelfUpdate({})), QUIET_TIME);
 
   while (true) {
     try {
       await delay(UPDATE_INTERVAL + Math.random() + UPDATE_INTERVAL_WIGGLE);
-      store.dispatch(actions.checkForSelfUpdate());
+      store.dispatch(actions.checkForSelfUpdate({}));
     } catch (e) {
       log(opts, `While doing regularly self-update check: ${e}`);
     }
@@ -110,7 +110,7 @@ async function checkForSelfUpdate (store: IStore, action: IAction<ICheckForSelfU
     } else if (resp.statusCode === 204) {
       store.dispatch(actions.selfUpdateNotAvailable({uptodate: true}));
       await delay(DISMISS_TIME);
-      store.dispatch(actions.dismissStatus());
+      store.dispatch(actions.dismissStatus({}));
     } else {
       store.dispatch(actions.selfUpdateError(`While trying to reach update server: ${resp.status}`));
     }
@@ -141,12 +141,12 @@ async function applySelfUpdateRequest (store: IStore, action: IAction<IApplySelf
     buttons: [
       {
         label: ["prompt.self_update_ready.action.restart"],
-        action: actions.applySelfUpdate(),
+        action: actions.applySelfUpdate({}),
         icon: "repeat",
       },
       {
         label: ["prompt.self_update_ready.action.snooze"],
-        action: actions.snoozeSelfUpdate(),
+        action: actions.snoozeSelfUpdate({}),
         className: "secondary",
       },
     ],
@@ -160,7 +160,7 @@ async function applySelfUpdate (store: IStore, action: IAction<IApplySelfUpdateP
   }
 
   log(opts, "Preparing for restart...");
-  store.dispatch(actions.quitAndInstall());
+  store.dispatch(actions.quitAndInstall({}));
 }
 
 async function returnsZero (cmd: string) {
@@ -203,7 +203,7 @@ async function showAvailableSelfUpdate (store: IStore, action: IAction<IShowAvai
   const spec = store.getState().selfUpdate.available;
   if (!spec) {
     log(opts, "Asked to show available self-update but there wasn\'t any");
-    store.dispatch(actions.dismissStatus());
+    store.dispatch(actions.dismissStatus({}));
     return;
   }
   const pubDate = new Date(Date.parse(spec.pub_date));
@@ -220,7 +220,7 @@ async function showAvailableSelfUpdate (store: IStore, action: IAction<IShowAvai
         label: ["prompt.self_update.action.download"],
         action: [
           actions.openUrl(spec.url),
-          actions.dismissStatus(),
+          actions.dismissStatus({}),
         ],
         icon: "download",
       },
@@ -228,14 +228,14 @@ async function showAvailableSelfUpdate (store: IStore, action: IAction<IShowAvai
         label: ["prompt.self_update.action.view"],
         action: [
           actions.openUrl(urls.releasesPage),
-          actions.dismissStatus(),
+          actions.dismissStatus({}),
         ],
         className: "secondary",
         icon: "earth",
       },
       {
         label: ["prompt.self_update.action.dismiss"],
-        action: actions.dismissStatus(),
+        action: actions.dismissStatus({}),
         className: "secondary",
       },
     ],

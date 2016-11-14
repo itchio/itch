@@ -15,7 +15,7 @@ import {
 async function loginWithPassword (store: IStore, action: IAction<ILoginWithPasswordPayload>) {
   const {username, password} = action.payload;
 
-  store.dispatch(actions.attemptLogin());
+  store.dispatch(actions.attemptLogin({}));
 
   try {
     const key = await getKey(username, password);
@@ -32,7 +32,7 @@ async function loginWithPassword (store: IStore, action: IAction<ILoginWithPassw
 async function loginWithToken (store: IStore, action: IAction<ILoginWithTokenPayload>) {
   const {username, key} = action.payload;
 
-  store.dispatch(actions.attemptLogin());
+  store.dispatch(actions.attemptLogin({}));
 
   try {
     const keyClient = client.withKey(key);

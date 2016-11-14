@@ -103,7 +103,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           const icon = pathToIcon(path);
           const active = currentId === id;
           const onClick = () => navigate(id);
-          const onClose = () => closeTab(id);
+          const onClose = () => closeTab({id});
           const onContextMenu = () => openTabContextMenu({id});
           const count = (counts as any)[id];
           const progress = progresses[id];
@@ -135,11 +135,11 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
   }
 
   onSearchFocus (e: React.FocusEvent<HTMLInputElement>) {
-    this.props.focusSearch();
+    this.props.focusSearch({});
   }
 
   onSearchBlur (e: React.FocusEvent<HTMLInputElement>) {
-    this.props.closeSearch();
+    this.props.closeSearch({});
   }
 
   onSearchChange (e: React.FormEvent<HTMLInputElement>) {
@@ -248,7 +248,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
       {
         icon: "repeat",
         label: ["menu.help.check_for_update"],
-        onClick: () => checkForSelfUpdate(),
+        onClick: () => checkForSelfUpdate({}),
       },
       {
         icon: "search",
@@ -258,7 +258,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
       {
         icon: "bug",
         label: ["menu.help.report_issue"],
-        onClick: () => reportIssue(),
+        onClick: () => reportIssue({}),
       },
       {
         icon: "lifebuoy",

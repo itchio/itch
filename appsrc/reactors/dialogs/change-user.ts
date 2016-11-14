@@ -12,7 +12,7 @@ async function changeUser (store: IStore, action: IAction<IChangeUserPayload>) {
     buttons: [
       {
         label: ["prompt.logout_action"],
-        action: actions.logout(),
+        action: actions.logout({}),
         icon: "exit",
       },
       "cancel",

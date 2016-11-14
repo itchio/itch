@@ -39,7 +39,7 @@ function makeTray (store: IStore) {
   tray = new Tray(iconPath);
   tray.setToolTip("itch.io");
   tray.on("click", () => store.dispatch(actions.focusWindow({toggle: true})));
-  tray.on("double-click", () => store.dispatch(actions.focusWindow()));
+  tray.on("double-click", () => store.dispatch(actions.focusWindow({})));
   tray.on("balloon-click", () => {
     if (lastNotificationAction) {
       store.dispatch(lastNotificationAction);
@@ -59,7 +59,7 @@ function setMenu (trayMenu: IMenuTemplate, store: IStore) {
 }
 
 async function go (store: IStore, path: string) {
-  store.dispatch(actions.focusWindow());
+  store.dispatch(actions.focusWindow({}));
   store.dispatch(actions.navigate(path));
 }
 
@@ -74,7 +74,7 @@ function refreshTray (store: IStore, i18n: II18nState) {
     menuTemplate.push({type: "separator"});
     menuTemplate.push({
       label: t("menu.file.quit"),
-      click: () => store.dispatch(actions.quit()),
+      click: () => store.dispatch(actions.quit({})),
     });
   }
 

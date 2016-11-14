@@ -48,7 +48,7 @@ interface IDefaultButtons {
 const DEFAULT_BUTTONS = {
   cancel: {
     label: ["prompt.action.cancel"],
-    action: closeModal(),
+    action: closeModal({}),
     className: "secondary",
   },
 } as IDefaultButtons;
@@ -146,7 +146,7 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void, props: IMo
   dispatch: (action: IModalAction) => {
     dispatch(closeModal({action}));
   },
-  closeModal: () => dispatch(closeModal()),
+  closeModal: () => dispatch(closeModal({})),
 });
 
 export default connect(

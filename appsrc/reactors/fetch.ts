@@ -82,7 +82,7 @@ const fetchUsuals = debounce(async function fetchUsuals (credentials: ICredentia
 }, 300);
 
 const search = async function search (store: IStore, action: IAction<ISearchPayload>) {
-  store.dispatch(actions.searchStarted());
+  store.dispatch(actions.searchStarted({}));
 
   try {
     const credentials = store.getState().session.credentials;
@@ -103,7 +103,7 @@ const search = async function search (store: IStore, action: IAction<ISearchPayl
   } catch (e) {
     // TODO: relay search error (network offline, etc.)
   } finally {
-    store.dispatch(actions.searchFinished());
+    store.dispatch(actions.searchFinished({}));
   }
 };
 
@@ -146,7 +146,7 @@ const makeCollectionsWatcher = (store: IStore) => {
         const ids = map(collections, (c, id) => id);
         if (!isEqual(ids, oldIds)) {
           oldIds = ids;
-          store.dispatch(actions.fetchCollectionGames());
+          store.dispatch(actions.fetchCollectionGames({}));
         }
       });
     },

@@ -40,7 +40,6 @@
     "@types/react-dnd-html5-backend": "^2.1.4",
     "@types/react-dom": "^0.14.18",
     "@types/react-redux": "^4.4.32",
-    "@types/redux-actions": "^0.8.30",
     "@types/redux-devtools": "^3.0.34",
     "@types/redux-devtools-dock-monitor": "^1.1.29",
     "@types/redux-devtools-log-monitor": "^1.0.29",

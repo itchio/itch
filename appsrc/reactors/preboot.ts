@@ -47,7 +47,7 @@ async function preboot (store: IStore, action: IAction<IPrebootPayload>) {
     log(opts, `Could not detect proxy settings: ${e ? e.message : "unknown error"}`);
   }
 
-  store.dispatch(actions.boot());
+  store.dispatch(actions.boot({}));
 
   // print various machine specs, see docs/
   const diego = require("../util/diego").default;

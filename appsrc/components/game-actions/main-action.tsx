@@ -99,7 +99,7 @@ class MainAction extends React.Component<IMainActionProps, void> {
 
   onClick () {
     let {task, cave, game, platformCompatible, mayDownload} = this.props;
-    const {navigate, queueGame, initiatePurchase, browseGame, abortGameRequest} = this.props;
+    const {navigate, queueGame, initiatePurchase, abortGameRequest} = this.props;
 
     if (task === "download" || task === "find-upload") {
       navigate("downloads");
@@ -115,7 +115,7 @@ class MainAction extends React.Component<IMainActionProps, void> {
           }
         }
       } else {
-        browseGame(game.id, game.url);
+        // no click action
       }
     }
   }
@@ -175,7 +175,6 @@ interface IMainActionProps extends IActionsInfo {
   queueGame: typeof actions.queueGame;
   cancelCave: typeof actions.cancelCave;
   initiatePurchase: typeof actions.initiatePurchase;
-  browseGame: typeof actions.browseGame;
   abortGameRequest: typeof actions.abortGameRequest;
   navigate: typeof actions.navigate;
 }
@@ -188,7 +187,6 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
   queueGame: dispatcher(dispatch, actions.queueGame),
   cancelCave: dispatcher(dispatch, actions.cancelCave),
   initiatePurchase: dispatcher(dispatch, actions.initiatePurchase),
-  browseGame: dispatcher(dispatch, actions.browseGame),
   abortGameRequest: dispatcher(dispatch, actions.abortGameRequest),
   navigate: dispatcher(dispatch, actions.navigate),
 });

@@ -43,7 +43,7 @@ async function notify (store: IStore, action: IAction<INotifyPayload>) {
 
 async function statusMessage (store: IStore, action: IAction<IStatusMessagePayload>) {
   await delay(AUTODISMISS_DELAY);
-  store.dispatch(actions.dismissStatusMessage());
+  store.dispatch(actions.dismissStatusMessage({}));
 }
 
 export default {bounce, notify, statusMessage};

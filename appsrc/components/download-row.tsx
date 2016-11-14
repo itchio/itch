@@ -90,7 +90,7 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
     {first
       ? (downloadsPaused
         ? <span className="icon icon-triangle-right" onClick={resumeDownloads}/>
-        : <span className="icon icon-pause" onClick={() => pauseDownloads()}/>
+        : <span className="icon icon-pause" onClick={() => pauseDownloads({})}/>
       )
       : <span className="hint--left" data-hint={t("grid.item.prioritize_download")}>
         <span className="icon icon-caret-up" onClick={() => prioritizeDownload({id})}/>

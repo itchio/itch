@@ -350,7 +350,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
           break;
         case "/evolve-tab":
           const {evolveTab} = this.props;
-          evolveTab(tabId, params.path);
+          evolveTab({id: tabId, path: params.path});
           break;
         default:
           break;

@@ -197,7 +197,7 @@ export default handleActions<ISessionNavigationState, any>({
 
   CLOSE_TAB: (state: ISessionNavigationState, action: IAction<ICloseTabPayload>) => {
     const {id, tabs, tabData} = state;
-    const closeId = action.payload || id;
+    const closeId = action.payload.id || id;
     const {constant, transient} = tabs;
 
     if (constant.indexOf(closeId) !== -1) {

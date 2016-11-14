@@ -84,7 +84,7 @@ async function saveSession (store: IStore, userId: string, record: any) {
 
   // first time connecting?
   if (!oldRecord.lastConnected) {
-    store.dispatch(actions.startOnboarding());
+    store.dispatch(actions.startOnboarding({}));
   }
 
   store.dispatch(actions.sessionUpdated({id: userId, record: finalRecord}));

@@ -27,34 +27,34 @@ async function mount (store: IStore, action: IAction<any>) {
 
   // user shortcuts
   combo.bindGlobal(["ctrl+f", "command+f"], () => {
-    store.dispatch(actions.focusSearch());
+    store.dispatch(actions.focusSearch({}));
   });
   combo.bindGlobal(["ctrl+shift+f", "command+shift+f"], () => {
-    store.dispatch(actions.focusFilter());
+    store.dispatch(actions.focusFilter({}));
   });
 
   combo.bindGlobal(["ctrl+tab", "ctrl+pagedown"], () => {
-    store.dispatch(actions.showNextTab());
+    store.dispatch(actions.showNextTab({}));
   });
 
   combo.bindGlobal(["ctrl+shift+tab", "ctrl+pageup"], () => {
-    store.dispatch(actions.showPreviousTab());
+    store.dispatch(actions.showPreviousTab({}));
   });
 
   combo.bindGlobal(["enter"], () => {
-    store.dispatch(actions.triggerOk());
+    store.dispatch(actions.triggerOk({}));
   });
 
   combo.bindGlobal(["ctrl+enter", "command+enter"], () => {
-    store.dispatch(actions.triggerMainAction());
+    store.dispatch(actions.triggerMainAction({}));
   });
 
   combo.bindGlobal(["ctrl+l", "command+l"], () => {
-    store.dispatch(actions.triggerLocation());
+    store.dispatch(actions.triggerLocation({}));
   });
 
   combo.bindGlobal(["escape"], () => {
-    store.dispatch(actions.triggerBack());
+    store.dispatch(actions.triggerBack({}));
   });
 
   const prefix = osx ? "command" : "ctrl";

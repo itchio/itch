@@ -31,7 +31,7 @@ const makeSessionSelector = (store: IStore) => createSelector(
   (setupDone, marketReady, loginDone) => {
     if (setupDone && marketReady && loginDone) {
       setImmediate(() => {
-        store.dispatch(actions.sessionReady());
+        store.dispatch(actions.sessionReady({}));
       });
     }
   }

@@ -81,7 +81,7 @@ export class GatePage extends React.Component<IGatePageProps, void> {
 
     if (stage === "pick") {
       const onClick = () => {
-        this.props.loginStopPicking();
+        this.props.loginStopPicking({});
       };
 
       return <section className="links">
@@ -98,7 +98,7 @@ export class GatePage extends React.Component<IGatePageProps, void> {
         {numSavedSessions > 0
         ? [
           <span key="separator">{" · "}</span>,
-          <span key="show-saved" className="link" onClick={() => this.props.loginStartPicking()}>
+          <span key="show-saved" className="link" onClick={() => this.props.loginStartPicking({})}>
             {t("login.action.show_saved_logins")}
           </span>,
         ]

@@ -67,7 +67,7 @@ async function triggerBack (store: IStore, action: IAction<ITriggerBackPayload>)
     return;
   }
 
-  store.dispatch(actions.closeModal());
+  store.dispatch(actions.closeModal({}));
 }
 
 export default {triggerMainAction, triggerOk, triggerBack};

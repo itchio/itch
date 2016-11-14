@@ -222,7 +222,7 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
     });
 
     rows.push(<tr>
-      <td className="action add-new" onClick={(e) => { e.preventDefault(); addInstallLocationRequest(); }}>
+      <td className="action add-new" onClick={(e) => { e.preventDefault(); addInstallLocationRequest({}); }}>
         <Icon icon="plus"/>
         {t("preferences.install_location.add")}
       </td>

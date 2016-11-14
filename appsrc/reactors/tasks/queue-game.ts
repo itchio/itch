@@ -85,10 +85,6 @@ export async function queueGame (store: IStore, action: IAction<IQueueGamePayloa
       detail: ["game.install.no_uploads_available.detail"],
       buttons: [
         {
-          label: ["game.install.visit_web_page"],
-          action: actions.browseGame({gameId: game.id, url: game.url}),
-        },
-        {
           label: ["game.install.try_again"],
           action: action,
         },
@@ -115,10 +111,6 @@ async function startCave (store: IStore, game: IGameRecord, cave: ICaveRecord, e
       label: ["game.install.could_not_launch", {title: game.title}],
       detail: (err as any).reason || ("" + err), // TODO: type properly
       options: [
-        {
-          label: ["game.install.visit_web_page"],
-          action: actions.browseGame({gameId: game.id, url: game.url}),
-        },
         {
           label: ["game.install.try_again"],
           action: actions.queueGame({game}),

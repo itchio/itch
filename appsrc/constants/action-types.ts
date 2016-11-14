@@ -230,8 +230,10 @@ export interface INewTabPayload {
 }
 
 export const CLOSE_TAB = "CLOSE_TAB";
-/** if null, close current tab */
-export type ICloseTabPayload = string
+export interface ICloseTabPayload {
+  /** If null, close current tab */
+  id: string;
+}
 
 export const SHOW_PREVIOUS_TAB = "SHOW_PREVIOUS_TAB";
 export interface IShowPreviousTabPayload {}
@@ -667,10 +669,6 @@ export interface IQueueGamePayload {
   extraOpts?: {};
 }
 
-/** Open a game's page */
-export const BROWSE_GAME = "BROWSE_GAME";
-export interface IBrowseGamePayload {}
-
 /** Buy / support something! */
 export const INITIATE_PURCHASE = "INITIATE_PURCHASE";
 export interface IInitiatePurchasePayload {
@@ -786,10 +784,9 @@ export interface IBinaryFilterChangedPayload {
 
 /** Data retrieval */
 export const FETCH_COLLECTION_GAMES = "FETCH_COLLECTION_GAMES";
-export interface IFetchCollectionGamesPayload {
-  /** The collection we want to fetch the games of */
-  collectionId: number;
-}
+/** Fetch all games for all collections */
+export interface IFetchCollectionGamesPayload {}
+
 export const COLLECTION_GAMES_FETCHED = "COLLECTION_GAMES_FETCHED";
 export interface ICollectionGamesFetchedPayload {
   /** The collection whose games were just fetched */

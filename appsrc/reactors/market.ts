@@ -42,7 +42,7 @@ async function firstWindowReady (store: IStore, action: IAction<any>) {
   globalMarket = new Market();
 
   globalMarket.on("ready", () => {
-    store.dispatch(actions.globalDbReady());
+    store.dispatch(actions.globalDbReady({}));
   });
 
   globalMarket.on("commit", (payload: IDbCommitPayload) => {
@@ -74,7 +74,7 @@ async function loginSucceeded (store: IStore, action: IAction<any>) {
 
   userMarket.on("ready", () => {
     log(opts, "got user db ready");
-    queue.dispatch(actions.userDbReady());
+    queue.dispatch(actions.userDbReady({}));
   });
 
   userMarket.on("commit", (payload: IDbCommitPayload) => {
@@ -84,7 +84,7 @@ async function loginSucceeded (store: IStore, action: IAction<any>) {
   userMarket.on("close", () => {
     log(opts, "got user db close");
     queue.close();
-    store.dispatch(actions.userDbClosed());
+    store.dispatch(actions.userDbClosed({}));
   });
 
   await userMarket.load(pathmaker.userDbPath(me.id));

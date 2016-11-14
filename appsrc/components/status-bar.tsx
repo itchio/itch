@@ -35,21 +35,21 @@ class StatusBar extends React.Component<IStatusBarProps, void> {
     let callback = (): any => null;
 
     if (statusMessages.length > 0) {
-      callback = dismissStatusMessage;
+      callback = () => dismissStatusMessage({});
       children = [
         <Icon icon="heart-filled"/>,
         <span>{t.format(statusMessages[0])}</span>,
         <Icon icon="cross"/>,
       ];
     } else if (error) {
-      callback = dismissStatus;
+      callback = () => dismissStatus({});
       children = [
         <Icon icon="heart-broken"/>,
         <span>Update error: {error}</span>,
         <Icon icon="cross"/>,
       ];
     } else if (downloaded) {
-      callback = applySelfUpdateRequest;
+      callback = () => applySelfUpdateRequest({});
       children = [
         <Icon icon="install"/>,
         <span>{t("status.downloaded")}</span>,
@@ -61,7 +61,7 @@ class StatusBar extends React.Component<IStatusBarProps, void> {
         <span>{t("status.downloading")}</span>,
       ];
     } else if (available) {
-      callback = showAvailableSelfUpdate;
+      callback = () => showAvailableSelfUpdate({});
       children = [
         <Icon icon="earth"/>,
         <span>{t("status.available")}</span>,

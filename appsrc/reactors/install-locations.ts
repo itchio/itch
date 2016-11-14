@@ -171,7 +171,7 @@ async function addInstallLocation (store: IStore, action: IAction<IAddInstallLoc
 async function windowFocusChanged (store: IStore, action: IAction<IWindowFocusChangedPayload>) {
   const {focused} = action.payload;
   if (focused) {
-    store.dispatch(actions.queryFreeSpace());
+    store.dispatch(actions.queryFreeSpace({}));
   }
 }
 
@@ -179,7 +179,7 @@ async function windowFocusChanged (store: IStore, action: IAction<IWindowFocusCh
 async function taskEnded (store: IStore, action: IAction<ITaskEndedPayload>) {
   const id = store.getState().session.navigation.id;
   if (id === "preferences") {
-    store.dispatch(actions.queryFreeSpace());
+    store.dispatch(actions.queryFreeSpace({}));
   }
 }
 
@@ -220,7 +220,7 @@ const makeSelector = (store: IStore) => createSelector(
   (installLocs, id) => {
     setImmediate(() => {
       if (id === "preferences") {
-        store.dispatch(actions.queryFreeSpace());
+        store.dispatch(actions.queryFreeSpace({}));
       }
     });
   }

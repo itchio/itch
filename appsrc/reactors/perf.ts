@@ -47,7 +47,7 @@ async function firstUsefulPage (store: IStore, action: IAction<IFirstUsefulPageP
   log(opts, `login   -> first page  = ${(pageTime - loginTime)} ms`);
   
   if (process.env.PROFILE_REQUIRE === "1") {
-    store.dispatch(actions.quit());
+    store.dispatch(actions.quit({}));
   }
 }
 

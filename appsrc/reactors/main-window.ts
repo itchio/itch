@@ -93,7 +93,7 @@ async function createWindow (store: IStore) {
     } else {
       log(opts, "Close to tray disabled, quitting!");
       setTimeout(() => {
-        store.dispatch(actions.quit());
+        store.dispatch(actions.quit({}));
       }, 100);
       return;
     }
@@ -139,7 +139,7 @@ async function createWindow (store: IStore) {
   });
 
   window.on("closed", (e: any) => {
-    store.dispatch(actions.windowDestroyed());
+    store.dispatch(actions.windowDestroyed({}));
   });
 
   window.on("focus", (e: any) => {
@@ -247,7 +247,7 @@ async function closeTabOrAuxWindow (store: IStore) {
   if (focused) {
     const id = store.getState().ui.mainWindow.id;
     if (focused.id === id) {
-      store.dispatch(actions.closeTab());
+      store.dispatch(actions.closeTab({id: null}));
     } else {
       focused.close();
     }
@@ -260,7 +260,7 @@ async function quitWhenMain (store: IStore) {
 
   if (focused) {
     if (focused.id === mainId) {
-      store.dispatch(actions.quit());
+      store.dispatch(actions.quit({}));
     } else {
       focused.close();
     }
@@ -287,7 +287,7 @@ async function prepareQuit () {
 
 async function quit (store: IStore) {
   quitting = true;
-  store.dispatch(actions.quitElectronApp());
+  store.dispatch(actions.quitElectronApp({}));
 }
 
 async function quitAndInstall (store: IStore, action: IAction<IQuitAndInstallPayload>) {

@@ -18,7 +18,7 @@ async function triggerOk (store: IStore, action: IAction<ITriggerOkPayload>) {
       const path = chosen.getAttribute("data-path");
       if (path) {
         store.dispatch(actions.navigate(path));
-        store.dispatch(actions.closeSearch());
+        store.dispatch(actions.closeSearch({}));
       }
     }
   }

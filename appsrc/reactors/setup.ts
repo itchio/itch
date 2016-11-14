@@ -44,7 +44,7 @@ async function setup (store: IStore) {
     "firejail",
   ], (name) => fetch(store, name)));
   log(opts, "all deps done");
-  store.dispatch(actions.setupDone());
+  store.dispatch(actions.setupDone({}));
 }
 
 async function boot (store: IStore, action: IAction<IBootPayload>) {

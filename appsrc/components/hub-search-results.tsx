@@ -122,7 +122,7 @@ export class HubSearchResults extends React.Component<IHubSearchResultsProps, IH
     const {closeSearch, navigate} = this.props;
 
     const openAsTab = () => {
-      closeSearch();
+      closeSearch({});
       navigate(`search/${query}`);
     };
 
@@ -184,7 +184,7 @@ export class HubSearchResults extends React.Component<IHubSearchResultsProps, IH
         const game = result.item;
         items.push(<SearchResult key={`game-${game.id}`} game={game}
           chosen={index++ === highlight}
-          onClick={() => { navigateToGame(game); closeSearch(); }}/>);
+          onClick={() => { navigateToGame(game); closeSearch({}); }}/>);
       });
     }
 
@@ -195,7 +195,7 @@ export class HubSearchResults extends React.Component<IHubSearchResultsProps, IH
         const user = users[userId];
         items.push(<UserSearchResult key={`user-${userId}`} user={user}
           chosen={index++ === highlight}
-          onClick={() => { navigateToUser(user); closeSearch(); }}/>);
+          onClick={() => { navigateToUser(user); closeSearch({}); }}/>);
       });
     }
 
@@ -206,7 +206,7 @@ export class HubSearchResults extends React.Component<IHubSearchResultsProps, IH
         const game = games[gameId];
         items.push(<SearchResult key={`game-${gameId}`} game={game}
           chosen={index++ === highlight}
-          onClick={() => { navigateToGame(game); closeSearch(); }}/>);
+          onClick={() => { navigateToGame(game); closeSearch({}); }}/>);
       });
     }
 

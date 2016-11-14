@@ -182,7 +182,7 @@ async function tabChanged (store: IStore, action: IAction<ITabChangedPayload>) {
   invariant(typeof id === "string", "tabChanged has string id");
 
   if (id === "history") {
-    store.dispatch(actions.historyRead());
+    store.dispatch(actions.historyRead({}));
   }
 
   await doFetchTabData(store, id);
