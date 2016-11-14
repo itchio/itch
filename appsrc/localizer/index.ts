@@ -3,7 +3,7 @@ import {II18nResources} from "../types";
 
 export interface ILocalizer {
   /** returns the localized version of a string */
-  (key: string, variables?: any): string;
+  (key: string | string[], variables?: any): string;
 
   /** language this localizer is localizing in */
   lang: string;
@@ -13,7 +13,7 @@ export interface ILocalizer {
 }
 
 export function getT (strings: II18nResources, lang: string) {
-  const t: ILocalizer = ((key: string, variables?: any) => {
+  const t: ILocalizer = ((key: string | string[], variables?: any) => {
     const langs = [lang, "en"];
     const keys = Array.isArray(key) ? key : [key];
 

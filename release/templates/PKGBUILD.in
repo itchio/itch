@@ -45,7 +45,7 @@ build() {
 
 check() {
   cd "${srcdir}/itch-${pkgver}{{CI_SUFFIX}}"
-  node test/runner.js
+  node app/tests/runner.js
 }
 
 package() {
