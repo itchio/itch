@@ -17,6 +17,7 @@ tmp
 
 # coverage
 /coverage
+*.lcov
 .nyc_output
 
 # build+packaging temp files (CI)

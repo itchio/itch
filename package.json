@@ -108,7 +108,7 @@
     "walk": "^2.3.9"
   },
   "devDependencies": {
-    "codecov.io": "^0.1.6",
+    "codecov": "^1.0.1",
     "electron-packager": "^7.0.1",
     "grunt": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
@@ -136,7 +136,7 @@
   "scripts": {
     "start": "grunt && electron . --color",
     "test": "grunt && nyc -s node app/tests/runner.js | tap-spec",
-    "codecov": "nyc report -r lcov | codecov",
+    "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "local-cov": "grunt && nyc -s node app/tests/runner.js | tap-spec && nyc report -r html",
     "lint": "grunt tslint",
     "i18n": "release/i18n-check.sh"
