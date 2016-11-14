@@ -62,7 +62,6 @@
     "fuse.js": "^2.2.0",
     "glob": "^7.0.3",
     "graceful-fs": "^4.1.2",
-    "grovel": "^2.2.0",
     "hint.css": "^2.2.0",
     "humanize-plus": "^1.8.2",
     "idealizr": "^1.1.0",
@@ -78,7 +77,6 @@
     "needle": "^1.0.0",
     "node-uuid": "^1.4.7",
     "proxyquire": "^1.7.3",
-    "pure-render-mixin": "^1.0.2",
     "react": "^15.2.0",
     "react-dimensions": "^1.2.0",
     "react-dnd": "^2.1.4",
@@ -110,18 +108,9 @@
     "walk": "^2.3.9"
   },
   "devDependencies": {
-    "babel-eslint": "^6.1.0",
-    "babel-plugin-syntax-async-functions": "^6.8.0",
-    "babel-plugin-transform-async-to-module-method": "^6.8.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.10.3",
-    "babel-plugin-transform-function-bind": "^6.8.0",
-    "babel-plugin-transform-object-rest-spread": "^6.8.0",
-    "babel-plugin-transform-strict-mode": "^6.8.0",
-    "babel-preset-react": "^6.11.1",
     "codecov.io": "^0.1.6",
     "electron-packager": "^7.0.1",
     "grunt": "^1.0.1",
-    "grunt-babel": "^6.0.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-electron": "^4.0.0",
     "grunt-electron-installer": "^2.1.0",
@@ -138,7 +127,6 @@
     "redux-devtools-log-monitor": "^1.0.11",
     "sinon": "^1.17.1",
     "skin-deep": "^0.16.0",
-    "standard": "^6.0.8",
     "tap-spec": "^4.1.1",
     "tape": "^4.2.1",
     "tslint": "^3.15.1",
@@ -150,19 +138,7 @@
     "test": "grunt && nyc -s node app/tests/runner.js | tap-spec",
     "codecov": "nyc report -r lcov | codecov",
     "local-cov": "grunt && nyc -s node app/tests/runner.js | tap-spec && nyc report -r html",
-    "lint": "grunt tslint && standard",
+    "lint": "grunt tslint",
     "i18n": "release/i18n-check.sh"
-  },
-  "standard": {
-    "parser": "babel-eslint",
-    "ignore": [
-      "docs",
-      "release/node_modules"
-    ],
-    "rules": {
-      "arrow-parens": [
-        0
-      ]
-    }
   }
 }

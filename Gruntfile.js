@@ -14,7 +14,7 @@ var icoPath = path.join(iconsPath, 'itch.ico')
 var icnsPath = path.join(iconsPath, 'itch.icns')
 var installerGifPath = 'release/images/installer.gif'
 
-var electronVersion = '1.4.0'
+var electronVersion = '1.4.6'
 var outDir = path.join('build', 'v' + version)
 var companyName = 'Itch Corp'
 
@@ -102,16 +102,6 @@ module.exports = function (grunt) {
         outputDirectory: process.env.CI_WINDOWS_INSTALLER_PATH || path.join('build', 'squirrel-ia32')
       })
     },
-    'babel': {
-      options: {
-        sourceMap: true
-      },
-      dist: {
-        files: [
-          { expand: true, cwd: 'testsrc', src: ['**/*.js'], dest: 'test' }
-        ]
-      }
-    },
     'ts': {
       'default': {
         tsconfig: true,
@@ -147,12 +137,11 @@ module.exports = function (grunt) {
       dist: {
         files: [
           { expand: true, cwd: 'appsrc', src: ['**/*.html', 'static/**'], dest: 'app' },
-          { expand: true, cwd: 'extrajs', src: ['**/*.js'], dest: 'app' },
-          { expand: true, cwd: 'testsrc', src: ['runner'], dest: 'test' }
+          { expand: true, cwd: 'extrajs', src: ['**/*.js'], dest: 'app' }
         ]
       }
     }
   })
 
-  grunt.registerTask('default', ['newer:babel', 'ts', 'newer:sass', 'newer:copy'])
+  grunt.registerTask('default', ['ts', 'newer:sass', 'newer:copy'])
 }
