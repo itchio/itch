@@ -1,7 +1,7 @@
 
 import {EventEmitter} from "events";
 
-import {findWhere, values, map} from "underscore";
+import {findWhere, map} from "underscore";
 import * as invariant from "invariant";
 import * as ospath from "path";
 
@@ -113,7 +113,7 @@ export default async function start (out: EventEmitter, opts: IFindUploadOpts) {
   invariant(credentials && credentials.key, "find-upload has valid key");
   const keyClient = client.withKey(credentials.key);
 
-  const grabKey = () => findWhere(values(market.getEntities("downloadKeys")), {gameId});
+  const grabKey = () => findWhere(market.getEntities("downloadKeys"), {gameId});
   const {downloadKey = grabKey()} = opts;
   let {uploads} = (await keyClient.listUploads(downloadKey, gameId));
 

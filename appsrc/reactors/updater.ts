@@ -23,7 +23,7 @@ const opts = {
 };
 
 import {startDownload} from "./tasks/start-download";
-import {values, findWhere, filter, map} from "underscore";
+import {findWhere, filter, map} from "underscore";
 
 const DELAY_BETWEEN_GAMES = 25;
 
@@ -174,7 +174,7 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
   log(opts, `Looking for updates to ${game.title}...`);
 
   const out = new EventEmitter();
-  const findKey = () => findWhere(values(market.getEntities("downloadKeys")), {gameId: game.id});
+  const findKey = () => findWhere(market.getEntities("downloadKeys"), {gameId: game.id});
   const taskOpts = Object.assign({}, opts, {
     logger,
     game,
@@ -217,7 +217,7 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
 
     if (cave.uploadId && cave.buildId) {
       log(opts, `Looking for new builds of ${game.title}, from build ${cave.buildId} (upload ${cave.uploadId})`);
-      const upload = findWhere(values(uploads), {id: cave.uploadId});
+      const upload = findWhere(uploads, {id: cave.uploadId});
       if (!upload || !upload.buildId) {
         log(opts, "Uh oh, our wharf-enabled upload disappeared");
       } else {

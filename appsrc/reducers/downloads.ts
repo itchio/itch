@@ -4,7 +4,7 @@ import {handleActions} from "redux-actions";
 import {createSelector, createStructuredSelector} from "reselect";
 
 import * as invariant from "invariant";
-import {indexBy, where, values, sortBy, pluck, filter, map, first, last, omit} from "underscore";
+import {indexBy, where, sortBy, pluck, filter, map, first, last, omit} from "underscore";
 
 import {IDownloadsState, IGameRecord} from "../types";
 import {
@@ -48,10 +48,10 @@ const structSel = createStructuredSelector({
     first(sortBy(filter(state.downloads, (x) => !x.finished), "order"))
   ),
   finishedDownloads: (state: IDownloadsState) => (
-    pluck(sortBy(where(values(state.downloads), {finished: true}), "order"), "id")
+    pluck(sortBy(where(state.downloads, {finished: true}), "order"), "id")
   ),
   downloadsByGameId: (state: IDownloadsState) => (
-    indexBy(values(state.downloads), "gameId")
+    indexBy(state.downloads, "gameId")
   ),
 });
 

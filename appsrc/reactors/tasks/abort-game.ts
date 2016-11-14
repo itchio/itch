@@ -1,7 +1,7 @@
 
 import * as actions from "../../actions";
 
-import {values, sortBy} from "underscore";
+import {sortBy} from "underscore";
 
 import {
   IStore,
@@ -14,7 +14,7 @@ import {
 } from "../../constants/action-types";
 
 export async function abortLastGame (store: IStore, action: IAction<IAbortLastGamePayload>) {
-  const tasks = sortBy(values(store.getState().tasks.tasks), "startedAt");
+  const tasks = sortBy(store.getState().tasks.tasks, "startedAt");
 
   if (tasks.length > 0) {
     const task = tasks[0];

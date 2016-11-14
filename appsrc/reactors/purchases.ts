@@ -1,5 +1,5 @@
 
-import {values, findWhere} from "underscore";
+import {findWhere} from "underscore";
 
 import url from "../util/url";
 import enableEventDebugging from "../util/debug-browser-window";
@@ -32,7 +32,7 @@ async function initiatePurchase (store: IStore, action: IAction<IInitiatePurchas
   const me = store.getState().session.credentials.me;
 
   const downloadKeys = store.getState().market.downloadKeys;
-  const key = findWhere(values(downloadKeys), {gameId: game.id});
+  const key = findWhere(downloadKeys, {gameId: game.id});
   const win = makePurchaseWindow(me, game);
 
   if (process.env.CAST_NO_SHADOW === "1") {

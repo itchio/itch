@@ -12,7 +12,7 @@ import mklog from "../util/log";
 const log = mklog("tasks/install");
 
 import core from "./install/core";
-import {values, findWhere} from "underscore";
+import {findWhere} from "underscore";
 
 import {IStartTaskOpts} from "../types";
 import {IProgressInfo} from "../types";
@@ -37,7 +37,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
 
   let checkTimestamps = true;
 
-  const grabCave = () => findWhere(values(globalMarket.getEntities("caves")), {gameId: game.id});
+  const grabCave = () => findWhere(globalMarket.getEntities("caves"), {gameId: game.id});
   let {cave = grabCave()} = opts;
 
   if (opts.reinstall) {

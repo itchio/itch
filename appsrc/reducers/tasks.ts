@@ -3,7 +3,7 @@ import {handleActions} from "redux-actions";
 import {createStructuredSelector} from "reselect";
 
 import * as invariant from "invariant";
-import {values, groupBy, omit} from "underscore";
+import {groupBy, omit} from "underscore";
 
 import {ITasksState} from "../types";
 
@@ -59,7 +59,7 @@ const reducer = handleActions<ITasksState, any>({
 }, initialState);
 
 const selector = createStructuredSelector({
-  tasksByGameId: (state: ITasksState) => groupBy(values(state.tasks), "gameId"),
+  tasksByGameId: (state: ITasksState) => groupBy(state.tasks, "gameId"),
 });
 
 export default derivedReducer(reducer, selector);

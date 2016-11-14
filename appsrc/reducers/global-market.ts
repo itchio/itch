@@ -3,7 +3,7 @@ import makeMarketReducer from "./make-market-reducer";
 import {getGlobalMarket} from "../reactors/market";
 
 import {createSelector, createStructuredSelector} from "reselect";
-import {values, indexBy} from "underscore";
+import {indexBy} from "underscore";
 
 import derivedReducer from "./derived-reducer";
 
@@ -18,7 +18,6 @@ interface ICaveMap {
 export default derivedReducer(reducer, createSelector(
   (state: IGlobalMarketState) => state.caves,
   createStructuredSelector({
-    // TODO: remove unnecessary data duplication
-    cavesByGameId: (caves: ICaveMap) => indexBy(values(caves), "gameId"),
+    cavesByGameId: (caves: ICaveMap) => indexBy(caves, "gameId"),
   })
 ));

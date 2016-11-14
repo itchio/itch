@@ -1,5 +1,5 @@
 
-import {values, findWhere} from "underscore";
+import {findWhere} from "underscore";
 
 import {getGlobalMarket} from "../market";
 
@@ -20,7 +20,7 @@ export async function taskEnded (store: IStore, action: IAction<ITaskEndedPayloa
     if (name === "install") {
       log(opts, "Install failed, attempting to destroy cave");
       const {gameId} = taskOpts;
-      const cave = findWhere(values(getGlobalMarket().getEntities("caves")), {gameId}) as ICaveRecord;
+      const cave = findWhere(getGlobalMarket().getEntities("caves"), {gameId}) as ICaveRecord;
       if (cave && cave.fresh) {
         store.dispatch(actions.implodeCave({caveId: cave.id}));
       }

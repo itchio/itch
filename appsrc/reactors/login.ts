@@ -2,7 +2,7 @@
 import * as actions from "../actions";
 import client from "../util/api";
 
-import {values, sortBy} from "underscore";
+import {sortBy} from "underscore";
 
 import {IStore} from "../types";
 import {
@@ -57,7 +57,7 @@ async function getKey (username: string, password: string) {
 
 async function sessionsRemembered (store: IStore, action: IAction<ISessionsRememberedPayload>) {
   const rememberedSessions = action.payload;
-  const mostRecentSession = sortBy(values(rememberedSessions), (x) => -x.lastConnected)[0];
+  const mostRecentSession = sortBy(rememberedSessions, (x) => -x.lastConnected)[0];
   if (mostRecentSession) {
     const {me, key} = mostRecentSession;
     const {username} = me;

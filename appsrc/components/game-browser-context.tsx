@@ -10,7 +10,7 @@ import GameActions from "./game-actions";
 import GameStats from "./game-stats";
 import {pathToId} from "../util/navigation";
 
-import {findWhere, values} from "underscore";
+import {findWhere} from "underscore";
 
 import {ILocalizer} from "../localizer";
 import {
@@ -148,7 +148,7 @@ const mapStateToProps = () => {
     (cs: IContextSelectorResult) => {
       const getGame = (market: IGamesHolder) => ((market || {}).games || {})[cs.gameId];
       const game = getGame(cs.userMarket) || getGame(cs.tabData);
-      const keys = values((cs.userMarket || {} as IUserMarketState).downloadKeys || {});
+      const keys = (cs.userMarket || {} as IUserMarketState).downloadKeys || {};
       const downloadKey = findWhere(keys, {gameId: cs.gameId});
       const cave = cs.globalMarket.cavesByGameId[cs.gameId];
       return {game, downloadKey, cave};

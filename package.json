@@ -47,7 +47,6 @@
     "@types/sinon": "^1.16.31",
     "@types/sinon-as-promised": "^4.0.4",
     "@types/tmp": "0.0.31",
-    "@types/underscore": "^1.7.33",
     "bluebird": "^3.4.0",
     "btoa": "^1.1.2",
     "classnames": "^2.2.5",

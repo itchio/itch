@@ -7,7 +7,7 @@ import Fuse  = require("fuse.js");
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
-import {map, sortBy, values} from "underscore";
+import {map, sortBy} from "underscore";
 
 import GameGridFilters from "./game-grid-filters";
 import CollectionHubItem from "./collection-hub-item";
@@ -35,7 +35,7 @@ export class Collections extends React.Component<ICollectionsProps, void> {
   render () {
     const {t, filterQuery = "", collections, navigate} = this.props;
 
-    const recentCollections = sortBy(values(collections), recency);
+    const recentCollections = sortBy(collections, recency);
     const tab = "collections";
 
     this.fuse.set(recentCollections);

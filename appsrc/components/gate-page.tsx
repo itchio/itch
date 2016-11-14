@@ -3,7 +3,7 @@ import * as classNames from "classnames";
 import * as React from "react";
 import {connect} from "./connect";
 
-import {map, sortBy, values} from "underscore";
+import {map, sortBy} from "underscore";
 
 import urls from "../constants/urls";
 
@@ -122,7 +122,7 @@ export class GatePage extends React.Component<IGatePageProps, void> {
       const onForget = this.props.forgetSessionRequest;
 
       return <div className="remembered-sessions">
-        {map(sortBy(values(rememberedSessions), (x) => -x.lastConnected), (session, userId) =>
+        {map(sortBy(rememberedSessions, (x) => -x.lastConnected), (session, userId) =>
           <RememberedSession key={userId} session={session} loginWithToken={onLogin} forgetSessionRequest={onForget}/>
         )}
       </div>;

@@ -3,7 +3,7 @@ import * as actions from "../actions";
 
 import {pathToId} from "../util/navigation";
 
-import {sortBy, values} from "underscore";
+import {sortBy} from "underscore";
 
 import {IStore, IModalButtonSpec} from "../types";
 import {
@@ -41,7 +41,7 @@ async function triggerOk (store: IStore, action: IAction<ITriggerOkPayload>) {
     const picking = store.getState().session.login.picking;
     if (page === "gate" && picking) {
       const rememberedSessions = store.getState().rememberedSessions;
-      const mostRecentSession = sortBy(values(rememberedSessions), ((x) => -x.lastConnected))[0];
+      const mostRecentSession = sortBy(rememberedSessions, ((x) => -x.lastConnected))[0];
       if (mostRecentSession) {
         const {me, key} = mostRecentSession;
         const {username} = me;

@@ -1,5 +1,5 @@
 
-import {findWhere, values} from "underscore";
+import {findWhere} from "underscore";
 
 import * as actions from "../../actions";
 import format, {DATE_FORMAT} from "../../util/format";
@@ -115,7 +115,7 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
       version = `#${cave.buildId}`;
     }
 
-    const upload = findWhere(values(cave.uploads), {id: cave.uploadId});
+    const upload = findWhere(cave.uploads, {id: cave.uploadId});
     if (upload && upload.displayName) {
       version += ` (${upload.displayName})`;
     } else if (cave.channelName) {

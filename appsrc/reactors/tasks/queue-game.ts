@@ -7,7 +7,7 @@ import {log, opts} from "./log";
 import {startTask} from "./start-task";
 import {startDownload} from "./start-download";
 
-import {map, where, values} from "underscore";
+import {map, where} from "underscore";
 
 import * as actions from "../../actions";
 
@@ -39,7 +39,7 @@ export async function queueGame (store: IStore, action: IAction<IQueueGamePayloa
 
   let {uploads, downloadKey} = uploadResponse.result as IFindUploadResult;
   if (pickedUpload) {
-    uploads = where(values(uploads), {id: pickedUpload});
+    uploads = where(uploads, {id: pickedUpload});
   }
 
   if (uploads.length > 0) {

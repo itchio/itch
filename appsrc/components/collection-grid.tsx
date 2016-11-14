@@ -2,7 +2,7 @@
 import * as React from "react";
 import {connect} from "./connect";
 
-import {map, values} from "underscore";
+import {map} from "underscore";
 import * as actions from "../actions";
 
 import {ICollectionRecordSet} from "../types";
@@ -14,7 +14,7 @@ export class CollectionGrid extends React.Component<ICollectionGridProps, void> 
     const {navigate} = this.props;
 
     return <div>
-      {map(values(collections), (collection) => {
+      {map(collections, (collection) => {
         const {id, title} = collection;
 
         return <div key={id} className="collection-hub-item" onClick={() => navigate(`collections/${id}`)}>

@@ -3,7 +3,7 @@ import * as invariant from "invariant";
 
 import {handleActions} from "redux-actions";
 import {createStructuredSelector} from "reselect";
-import {values, sortBy, omit, map, indexBy, filter} from "underscore";
+import {sortBy, omit, map, indexBy, filter} from "underscore";
 
 import {IHistoryState} from "../types";
 
@@ -43,7 +43,7 @@ const reducer = handleActions<IHistoryState, any>({
 }, initialState);
 
 const selector = createStructuredSelector({
-  itemsByDate: (state: IHistoryState) => sortBy(values(state.items), (x) => -x.date),
+  itemsByDate: (state: IHistoryState) => sortBy(state.items, (x) => -x.date),
   numActiveItems: (state: IHistoryState) => filter(state.items, (x) => x.active).length,
 });
 

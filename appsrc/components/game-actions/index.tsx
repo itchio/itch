@@ -7,7 +7,7 @@ import * as classNames from "classnames";
 import {connect} from "../connect";
 import {createSelector, createStructuredSelector} from "reselect";
 
-import {findWhere, values, first} from "underscore";
+import {findWhere, first} from "underscore";
 
 import os from "../../util/os";
 import ClassificationActions from "../../constants/classification-actions";
@@ -96,7 +96,7 @@ const makeMapStateToProps = () => {
 
       const platformCompatible = (action === "open" ? true : isPlatformCompatible(game));
       const cancellable = false;
-      const downloadKey = findWhere(values(downloadKeys), {gameId: game.id});
+      const downloadKey = findWhere(downloadKeys, {gameId: game.id});
       const hasMinPrice = game.minPrice > 0;
       const hasDemo = game.hasDemo;
       // FIXME game admins

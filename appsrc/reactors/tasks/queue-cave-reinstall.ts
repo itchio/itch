@@ -1,5 +1,5 @@
 
-import {values, findWhere} from "underscore";
+import {findWhere} from "underscore";
 
 import {getGlobalMarket, getUserMarket} from "../market";
 
@@ -48,7 +48,7 @@ export async function queueCaveReinstall (store: IStore, action: IAction<IQueueC
   const archivePath = pathmaker.downloadPath(upload);
 
   const findDownloadKey = () => {
-    return findWhere(values(getUserMarket().getEntities("downloadKeys")), {gameId: game.id});
+    return findWhere(getUserMarket().getEntities("downloadKeys"), {gameId: game.id});
   };
 
   await startDownload(store, {

@@ -5,7 +5,7 @@ import {createStructuredSelector} from "reselect";
 
 import GameGrid from "./game-grid";
 import GameGridFilters from "./game-grid-filters";
-import {map, values, filter, indexBy, sortBy} from "underscore";
+import {map, filter, indexBy, sortBy} from "underscore";
 
 import {IState, ICaveRecord, IGameRecord, IDownloadKey} from "../types";
 
@@ -16,7 +16,7 @@ export class Library extends React.Component<ILibraryProps, void> {
     const {caves, recordGames, downloadKeys} = this.props;
 
     // associate caves with games
-    let caveGames = map(values(caves), (c) => ({c, g: recordGames[c.gameId] || c.game}));
+    let caveGames = map(caves, (c) => ({c, g: recordGames[c.gameId] || c.game}));
 
     // only keep games we can show (in our user DB or cached in cave)
     caveGames = filter(caveGames, (rec) => !!rec.g);
@@ -35,7 +35,7 @@ export class Library extends React.Component<ILibraryProps, void> {
 
     // fetch (owned but no installed) games
     const ownedGames = map(
-      filter(values(downloadKeys), (key) => !installedGamesById[key.gameId]),
+      filter(downloadKeys, (key) => !installedGamesById[key.gameId]),
       (key) => installedGamesById[key.gameId]);
 
     const tab = "library";

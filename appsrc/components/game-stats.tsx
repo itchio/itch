@@ -2,7 +2,7 @@
 import * as React from "react";
 import {connect} from "./connect";
 import {createSelector} from "reselect";
-import {findWhere, values} from "underscore";
+import {findWhere} from "underscore";
 
 import platformData from "../constants/platform-data";
 import classificationActions from "../constants/classification-actions";
@@ -102,7 +102,7 @@ const mapStateToProps = () => {
     (state: IState, props: IGameStatsProps) => state.globalMarket,
     (state: IState, props: IGameStatsProps) => props.game,
     (userMarket, globalMarket, game) => ({
-      downloadKey: findWhere(values((userMarket || {} as IUserMarketState).downloadKeys || {}), {gameId: game.id}),
+      downloadKey: findWhere((userMarket || {} as IUserMarketState).downloadKeys || {}, {gameId: game.id}),
       cave: globalMarket.cavesByGameId[game.id],
     })
   );

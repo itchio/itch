@@ -15,7 +15,7 @@ import {
   IOpenTabContextMenuPayload,
 } from "../constants/action-types";
 
-import {values, findWhere} from "underscore";
+import {findWhere} from "underscore";
 
 import mklog from "../util/log";
 import {opts} from "../logger";
@@ -76,7 +76,7 @@ async function openTabContextMenu (store: IStore, action: IAction<IOpenTabContex
       });
     } else {
       const downloadKeys = getUserMarket().getEntities("downloadKeys");
-      const downloadKey = findWhere(values(downloadKeys), {gameId: game.id});
+      const downloadKey = findWhere(downloadKeys, {gameId: game.id});
       const hasMinPrice = game.minPrice > 0;
       // FIXME game admins
       const meId = store.getState().session.credentials.me.id;

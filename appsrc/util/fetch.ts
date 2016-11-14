@@ -9,7 +9,7 @@ import client from "./api";
 
 import {normalize, arrayOf} from "./idealizr";
 import {game, user, collection, downloadKey} from "./schemas";
-import {each, union, pluck, values, where, difference} from "underscore";
+import {each, union, pluck, where, difference} from "underscore";
 
 import {IMarket, IUserRecord, IGameRecord, ICollectionRecord, ICredentials} from "../types";
 
@@ -21,7 +21,7 @@ export async function dashboardGames (market: IMarket, credentials: ICredentials
 
   const oldGameIds = pluck(
     where(
-      values(market.getEntities("games")),
+      market.getEntities("games"),
       {userId: me.id},
     ),
     "id",
@@ -73,7 +73,7 @@ export async function ownedKeys (market: IMarket, credentials: ICredentials): Pr
 }
 
 export async function collections (market: IMarket, credentials: ICredentials): Promise<void> {
-  const oldCollectionIds = pluck(values(market.getEntities("collections")), "id");
+  const oldCollectionIds = pluck(market.getEntities("collections"), "id");
 
   const prepareCollections = (normalized: any) => {
     const colls = market.getEntities("collections");
