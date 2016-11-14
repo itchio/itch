@@ -21,7 +21,7 @@ export * from "./modal-actions"
 import { createAction } from "redux-actions";
 
 import {
-    LANGUAGE_SNIFFED,
+    LANGUAGE_SNIFFED, ILanguageSniffedPayload,
     LANGUAGE_CHANGED, ILanguageChangedPayload,
 
     UPDATE_PREFERENCES, IUpdatePreferencesPayload,
@@ -33,7 +33,7 @@ import {
     DISABLE_BONUS, IDisableBonusPayload,
 } from "../constants/action-types";
 
-export const languageSniffed = createAction(LANGUAGE_SNIFFED);
+export const languageSniffed = createAction<ILanguageSniffedPayload>(LANGUAGE_SNIFFED);
 export const languageChanged = createAction<ILanguageChangedPayload>(LANGUAGE_CHANGED);
 
 export const updatePreferences = createAction<IUpdatePreferencesPayload>(UPDATE_PREFERENCES);

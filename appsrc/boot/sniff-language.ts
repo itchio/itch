@@ -6,4 +6,4 @@ if (process.type !== "renderer") {
   throw new Error("boot/sniff-language is only relevant in renderer process");
 }
 
-store.dispatch(languageSniffed(navigator.language));
+store.dispatch(languageSniffed({lang: navigator.language}));

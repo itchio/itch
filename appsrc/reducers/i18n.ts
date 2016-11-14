@@ -54,7 +54,7 @@ export default handleActions<II18nState, any>({
   },
 
   LANGUAGE_CHANGED: (state: II18nState, action: IAction<ILanguageChangedPayload>) => {
-    const lang = action.payload;
+    const {lang} = action.payload;
     return Object.assign({}, state, {lang});
   },
 }, initialState);
