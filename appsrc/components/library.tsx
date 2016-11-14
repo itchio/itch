@@ -36,7 +36,7 @@ export class Library extends React.Component<ILibraryProps, void> {
     // fetch (owned but no installed) games
     const ownedGames = map(
       filter(downloadKeys, (key) => !installedGamesById[key.gameId]),
-      (key) => installedGamesById[key.gameId]);
+      (key) => recordGames[key.gameId]);
 
     const tab = "library";
     return <div className="library-meat">
