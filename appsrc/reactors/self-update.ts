@@ -57,7 +57,7 @@ async function firstWindowReady (store: IStore, action: IAction<IFirstWindowRead
         // electron-prebuilt isn't signed, we know you can't work Squirrel.mac, don't worry
         log(opts, "Ignoring Squirrel.mac complaint");
       } else {
-        store.dispatch(actions.selfUpdateError(err));
+        store.dispatch(actions.selfUpdateError({message: err}));
       }
     });
     log(opts, "Installed!");
@@ -112,14 +112,14 @@ async function checkForSelfUpdate (store: IStore, action: IAction<ICheckForSelfU
       await delay(DISMISS_TIME);
       store.dispatch(actions.dismissStatus({}));
     } else {
-      store.dispatch(actions.selfUpdateError(`While trying to reach update server: ${resp.status}`));
+      store.dispatch(actions.selfUpdateError({message: `While trying to reach update server: ${resp.status}`}));
     }
   } catch (e) {
     if (client.isNetworkError(e)) {
       log(opts, "Seems like we have no network connectivity, skipping self-update check");
       store.dispatch(actions.selfUpdateNotAvailable({uptodate: false}));
     } else {
-      store.dispatch(actions.selfUpdateError(`While trying to reach update server: ${e.message || e}`));
+      store.dispatch(actions.selfUpdateError({message: `While trying to reach update server: ${e.message || e}`}));
     }
   }
 }

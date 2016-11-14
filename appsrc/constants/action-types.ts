@@ -383,7 +383,10 @@ export interface ISelfUpdateNotAvailablePayload {
 };
 
 export const SELF_UPDATE_ERROR = "SELF_UPDATE_ERROR";
-export type ISelfUpdateErrorPayload = string;
+export interface ISelfUpdateErrorPayload {
+  /** the error message of the self-updater */
+  message: string;
+}
 
 export const SELF_UPDATE_DOWNLOADED = "SELF_UPDATE_DOWNLOADED";
 export interface ISelfUpdateDownloadedPayload {};
