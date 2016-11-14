@@ -271,5 +271,10 @@
     "grid.item.buy_now_again": "Kup dodatkową kopię",
     "grid.criterion.filter": "Filtr",
     "grid.criterion.only_compatible": "Tylko zgodne",
-    "grid.hidden_count": "+ {{count}} elementów ukrytych przez filtry"
+    "grid.hidden_count": "+ {{count}} elementów ukrytych przez filtry",
+    "action.name.manual": "Instrukcja użytkownika",
+    "action.name.editor": "Edytor",
+    "label.experimental": "Eksperymentalne",
+    "collection.empty": "Brak gier w tej kolekcji",
+    "docs.learn_more": "Dowiedz się więcej"
 }
