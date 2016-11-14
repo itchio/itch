@@ -24,10 +24,14 @@ export interface IFirstUsefulPagePayload {}
 // Chromium is good at retrieving the user's language from the innards of the OS
 // doing the same from nodejs would probably be a waste of everyone's time
 export const LANGUAGE_SNIFFED = "LANGUAGE_SNIFFED";
-export type ILanguageSniffedPayload = string;
+export interface ILanguageSniffedPayload {
+  lang: string;
+}
 
 export const LANGUAGE_CHANGED = "LANGUAGE_CHANGED";
-export type ILanguageChangedPayload = string;
+export interface ILanguageChangedPayload {
+  lang: string;
+}
 
 export const OPEN_MODAL = "OPEN_MODAL";
 export interface IOpenModalPayload extends Types.IModal {}

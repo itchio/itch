@@ -1,6 +1,5 @@
 
 import * as ospath from "path";
-import * as invariant from "invariant";
 import ifs from "../localizer/ifs";
 
 import * as needle from "../promised/needle";
@@ -101,9 +100,6 @@ async function queueLocaleDownload (store: IStore, action: IAction<IQueueLocaleD
 }
 
 async function loadLocale (store: IStore, lang: string) {
-  invariant(typeof store === "object", "loadLocale needs a store");
-  invariant(typeof lang === "string", "loadLocale needs a lang string");
-
   const local = canonicalFileName(lang);
   if (!(await ifs.exists(local))) {
     // try stripping region
@@ -139,8 +135,7 @@ async function loadLocale (store: IStore, lang: string) {
 }
 
 async function languageChanged (store: IStore, action: IAction<ILanguageChangedPayload>) {
-  const lang = action.payload;
-  invariant(typeof lang === "string", "language must be a string");
+  const {lang} = action.payload;
 
   await loadLocale(store, lang);
 }

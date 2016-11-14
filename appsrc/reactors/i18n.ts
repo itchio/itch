@@ -12,7 +12,7 @@ const makeSelector = (store: IStore) => createSelector(
   (systemLang, prefLang) => {
     const lang = prefLang || systemLang || "en";
     setImmediate(() => {
-      store.dispatch(languageChanged(lang));
+      store.dispatch(languageChanged({lang}));
     });
   }
 );
