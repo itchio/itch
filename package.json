@@ -108,7 +108,6 @@
     "walk": "^2.3.9"
   },
   "devDependencies": {
-    "codecov": "^1.0.1",
     "electron-packager": "^7.0.1",
     "grunt": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
