@@ -242,7 +242,9 @@ export const SHOW_NEXT_TAB = "SHOW_NEXT_TAB";
 export interface IShowNextTabPayload {}
 
 export const SWITCH_PAGE = "SWITCH_PAGE";
-export type ISwitchPagePayload = string;
+export interface ISwitchPagePayload {
+  page: string;
+};
 
 export const OPEN_URL = "OPEN_URL";
 export type IOpenUrlPayload = string;

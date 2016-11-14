@@ -9,7 +9,7 @@ import {IStore, IState} from "../types";
 import {IAction, ILogoutPayload, ISessionReadyPayload} from "../constants/action-types";
 
 async function logout (store: IStore, action: IAction<ILogoutPayload>) {
-  store.dispatch(actions.switchPage("gate"));
+  store.dispatch(actions.switchPage({page: "gate"}));
 }
 
 async function sessionReady (store: IStore, action: IAction<ISessionReadyPayload>) {
@@ -20,7 +20,7 @@ async function sessionReady (store: IStore, action: IAction<ISessionReadyPayload
 
   await delay(500);
 
-  store.dispatch(actions.switchPage("hub"));
+  store.dispatch(actions.switchPage({page: "hub"}));
 }
 
 let sessionSelector: (state: IState) => void;
