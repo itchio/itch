@@ -276,5 +276,6 @@
     "action.name.editor": "Edytor",
     "label.experimental": "Eksperymentalne",
     "collection.empty": "Brak gier w tej kolekcji",
-    "docs.learn_more": "Dowiedz się więcej"
+    "docs.learn_more": "Dowiedz się więcej",
+    "download.reason.update": "zaktualizuj do najnowszej wersji"
 }
