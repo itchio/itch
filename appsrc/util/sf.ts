@@ -115,7 +115,7 @@ const self = {
     return await fs.readFileAsync(file, { encoding: "utf8" });
   },
 
-  appendFile: async (file: string, contents: string, options: any): Promise<void> => {
+  appendFile: async (file: string, contents: string, options?: any): Promise<void> => {
     await self.mkdir(path.dirname(file));
     return await fs.appendFileAsync(file, contents, options);
   },

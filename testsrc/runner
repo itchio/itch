@@ -1,5 +1,0 @@
-#!/bin/sh -xe
-BASE="`dirname "$0"`"
-
-grunt
-node $BASE/runner.js $@ | $BASE/../node_modules/.bin/tap-spec

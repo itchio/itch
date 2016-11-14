@@ -5,7 +5,7 @@
 declare module "needle" {
     export interface INeedleResponse {
         /** http status string (number + name) */
-        status: string;
+        status?: string;
 
         /** http status code */
         statusCode: number;
@@ -14,7 +14,7 @@ declare module "needle" {
         body: any;
 
         /** http headers */
-        headers: {
+        headers?: {
             [key: string]: string;
         };
     }
