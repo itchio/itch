@@ -47,7 +47,13 @@ export interface IModalClosedPayload {
   action: Types.IModalAction;
 }
 export const MODAL_RESPONSE = "MODAL_RESPONSE";
-export type IModalResponsePayload = any;
+export interface IModalResponsePayload {
+  // which manifest action was picked when launching a game
+  manifestActionName?: string;
+
+  // whether or not to install the sandbox
+  sandboxBlessing?: boolean;
+}
 
 export const SETUP_STATUS = "SETUP_STATUS";
 export interface ISetupStatusPayload extends Types.ISetupOperation {};
