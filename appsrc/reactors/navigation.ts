@@ -91,7 +91,16 @@ async function retrieveTabData (store: IStore, id: string, retrOpts = {} as IRet
         }),
       });
 
-      await fetch.collectionGames(fetchMarket, credentials, collectionId);
+      try {
+        await fetch.collectionGames(fetchMarket, credentials, collectionId);
+      } catch (err) {
+        if (api.isNetworkError(err)) {
+          // oh well, let's just go with cached games
+        } else {
+          // otherwise, rethrow
+          throw err;
+        }
+      }
       return fetchMarket.data;
     } else {
       return null;
