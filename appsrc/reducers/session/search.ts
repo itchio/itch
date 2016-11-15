@@ -34,7 +34,7 @@ const initialState = {
 
 export default handleActions<ISessionSearchState, any>({
   SEARCH: (state: ISessionSearchState, action: IAction<ISearchPayload>) => {
-    const typedQuery = action.payload;
+    const typedQuery: string = action.payload.query;
     if (!typedQuery) {
       return state;
     }

@@ -192,7 +192,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
       return;
     }
 
-    this.props.search(search.value);
+    this.props.search({query: search.value});
   }
 
   me () {

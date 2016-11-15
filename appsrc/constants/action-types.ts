@@ -753,7 +753,10 @@ export const SEARCH_QUERY_CHANGED = "SEARCH_QUERY_CHANGED";
 export interface ISearchQueryChangedPayload {};
 
 export const SEARCH = "SEARCH";
-export type ISearchPayload = string;
+export interface ISearchPayload {
+  /** the term to search for */
+  query: string;
+};
 
 export const SEARCH_FETCHED = "SEARCH_FETCHED";
 export interface ISearchFetchedPayload {

@@ -82,6 +82,7 @@ const fetchUsuals = debounce(async function fetchUsuals (credentials: ICredentia
 }, 300);
 
 const search = async function search (store: IStore, action: IAction<ISearchPayload>) {
+  const query: string = action.payload.query;
   store.dispatch(actions.searchStarted({}));
 
   try {
@@ -91,7 +92,6 @@ const search = async function search (store: IStore, action: IAction<ISearchPayl
       return;
     }
 
-    const query = action.payload;
     if (!query) {
       log(opts, "Clearing query");
       store.dispatch(actions.searchFetched({query: "", results: null}));
