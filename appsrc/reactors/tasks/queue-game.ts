@@ -50,8 +50,13 @@ export async function queueGame (store: IStore, action: IAction<IQueueGamePayloa
         message: ["pick_install_upload.message", {title}],
         detail: ["pick_install_upload.detail"],
         bigButtons: map(uploads, (upload) => {
+          let label = `${upload.displayName || upload.filename}`;
+          if (upload.size > 0) {
+            label += ` (${humanize.fileSize(upload.size)})`;
+          }
+
           return {
-            label: `${upload.displayName || upload.filename} (${humanize.fileSize(upload.size)})`,
+            label,
             action: actions.queueGame(Object.assign({}, action.payload, {
               pickedUpload: upload.id,
             })),
