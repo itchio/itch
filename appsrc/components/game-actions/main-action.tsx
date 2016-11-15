@@ -89,7 +89,7 @@ class MainAction extends React.Component<IMainActionProps, void> {
       "hint--top": !!hint,
       branded,
     });
-    const button = <div style={style} className={buttonClasses} onClick={() => this.onClick()} data-hint={hint}>
+    const button = <div style={style} className={buttonClasses} onClick={(e) => this.onClick(e)} data-hint={hint}>
       {child}
     </div>;
 
@@ -108,7 +108,9 @@ class MainAction extends React.Component<IMainActionProps, void> {
     }
   }
 
-  onClick () {
+  onClick (e: React.MouseEvent<HTMLElement>) {
+    e.stopPropagation();
+
     let {task, cave, game, platformCompatible, mayDownload} = this.props;
     const {navigate, queueGame, initiatePurchase, abortGameRequest} = this.props;
 
