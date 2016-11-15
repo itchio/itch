@@ -6,7 +6,6 @@
         "module": "commonjs",
         "noImplicitAny": true,
         "alwaysStrict": true,
-        "strictNullChecks": true,
         "jsx": "react"
     },
     "exclude": [

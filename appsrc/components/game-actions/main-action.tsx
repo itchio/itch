@@ -7,13 +7,14 @@ import Icon from "../icon";
 import TaskIcon from "../task-icon";
 
 import format from "../../util/format";
+import downloadProgress from "../../util/download-progress";
 import colors from "../../constants/colors";
 
 import * as actions from "../../actions";
 
 import {IActionsInfo} from "./types";
 
-import {IState} from "../../types";
+import {IState, IDownloadItem} from "../../types";
 import {IAction, dispatcher} from "../../constants/action-types";
 import {ILocalizer} from "../../localizer";
 
@@ -25,16 +26,26 @@ const linearGradient = (progress: number) => {
     `${percent}, ${undoneColor} ${percent}, ${undoneColor})`;
 };
 
+interface IStatus {
+  status: string;
+  hint?: string;
+}
+
 class MainAction extends React.Component<IMainActionProps, void> {
   render () {
     const {t, cancellable, platform, platformCompatible, mayDownload,
       pressDownload, canBeBought, progress, task, action, animate, halloween} = this.props;
 
-    let child: React.ReactElement<any> = null;
+    let child: React.ReactElement<any> | null = null;
     if (task) {
-      child = <span className="state normal-state">
+      const {status, hint} = this.status();
+      const classes = classNames("state", "normal-state", {
+        ["hint--top"]: !!hint,
+      });
+
+      child = <span className={classes} data-hint={hint}>
         <TaskIcon task={task} animate={animate} action={action}/>
-        {this.status()}
+        {status}
         {cancellable
         ? <span className="cancel-cross">
           <Icon icon="cross"/>
@@ -120,39 +131,48 @@ class MainAction extends React.Component<IMainActionProps, void> {
     }
   }
 
-  status () {
+  status (): IStatus {
     const {t, task, action} = this.props;
 
     if (task === "idle") {
       switch (action) {
         case "open":
-          return t("grid.item.open");
+          return {status: t("grid.item.open")};
         case "launch":
         default:
-          return t("grid.item.launch");
+          return {status: t("grid.item.launch")};
       }
     }
 
     if (task === "error" || task === "reporting") {
-      return "";
+      return {status: ""};
     }
 
     if (task === "launch") {
-      return t("grid.item.running");
+      return {status: t("grid.item.running")};
     }
 
-    let res = t("grid.item.installing");
+    let res: IStatus = {status: t("grid.item.installing")};
     if (task === "uninstall") {
-      res = t("grid.item.uninstalling");
+      res = {status: t("grid.item.uninstalling")};
     }
     if (task === "download" || task === "find-upload") {
-      res = t("grid.item.downloading");
+      const downloadItem = this.props.downloadsByGameId[this.props.game.id];
+      if (downloadItem && downloadItem.eta && downloadItem.bps) {
+        const {eta, bps} = downloadItem;
+        res = {
+          status: downloadProgress(t, {eta, bps}, this.props.downloadsPaused, {onlyBPS: true}),
+          hint: downloadProgress(t, {eta, bps}, this.props.downloadsPaused, {onlyETA: true}),
+        };
+      } else {
+        res = {status: t("grid.item.downloading")};
+      }
     }
     if (task === "ask-before-install") {
-      res = t("grid.item.finalize_installation");
+      res = {status: t("grid.item.finalize_installation")};
     }
     if (task === "download-queued") {
-      res = t("grid.item.queued");
+      res = {status: t("grid.item.queued")};
     }
 
     return res;
@@ -169,6 +189,10 @@ interface IMainActionProps extends IActionsInfo {
 
   pressDownload: boolean;
   halloween: boolean;
+  downloadsByGameId: {
+    [gameId: string]: IDownloadItem;
+  };
+  downloadsPaused: boolean;
 
   t: ILocalizer;
 
@@ -181,6 +205,8 @@ interface IMainActionProps extends IActionsInfo {
 
 const mapStateToProps = (state: IState) => ({
   halloween: state.status.bonuses.halloween,
+  downloadsByGameId: state.downloads.downloadsByGameId,
+  downloadsPaused: state.downloads.downloadsPaused,
 });
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({

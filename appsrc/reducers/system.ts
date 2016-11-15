@@ -31,7 +31,7 @@ const initialState = {
 
 export default handleActions<ISystemState, any>({
   LANGUAGE_SNIFFED: (state: ISystemState, action: IAction<ILanguageSniffedPayload>) => {
-    const sniffedLanguage = action.payload;
+    const sniffedLanguage: string = action.payload.lang;
     return Object.assign({}, state, {sniffedLanguage});
   },
 

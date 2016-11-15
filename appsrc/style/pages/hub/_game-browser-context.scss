@@ -117,7 +117,7 @@ $secondary-action-bg: #2b2b2b;
       display: flex;
     }
 
-    &.task-download, &.task-install &.task-configure, &.task-find-upload, &.task-launch {
+    &.task-download, &.task-install, &.task-configure, &.task-find-upload, &.task-launch {
       .main-action {
         margin-right: 0;
         font-weight: normal;
