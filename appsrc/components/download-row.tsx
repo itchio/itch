@@ -164,7 +164,7 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
         <div>
         {downloadsPaused
         ? <div className="paused">{t("grid.item.downloads_paused")}</div>
-        : (((active || task) && eta && bps)
+        : (((first || task) && eta && bps)
           ? <span>{downloadProgress(t, {eta, bps}, downloadsPaused)}</span>
           : ""
         )}
