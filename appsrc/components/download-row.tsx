@@ -1,11 +1,11 @@
 
-import * as moment from "moment";
 import * as React from "react";
 import * as classNames from "classnames";
 import {connect} from "./connect";
 import bob, {IRGBColor} from "../renderer-util/bob";
-import * as humanize from "humanize-plus";
 import {ResponsiveContainer, AreaChart, Area} from "recharts";
+
+import downloadProgress from "../util/download-progress";
 
 import * as actions from "../actions";
 
@@ -89,7 +89,7 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
     return <div className="controls">
     {first
       ? (downloadsPaused
-        ? <span className="icon icon-triangle-right" onClick={resumeDownloads}/>
+        ? <span className="icon icon-triangle-right" onClick={() => resumeDownloads({})}/>
         : <span className="icon icon-pause" onClick={() => pauseDownloads({})}/>
       )
       : <span className="hint--left" data-hint={t("grid.item.prioritize_download")}>
@@ -130,8 +130,6 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
 
     if (task) {
       progress = task.progress;
-      bps = task.bps;
-      eta = task.eta;
     }
 
     const progressInnerStyle: React.CSSProperties = {
@@ -167,19 +165,12 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
         {downloadsPaused
         ? <div className="paused">{t("grid.item.downloads_paused")}</div>
         : (((active || task) && eta && bps)
-          ? <span>{humanize.fileSize(bps)}/s — {this.humanDuration(eta)}</span>
+          ? <span>{downloadProgress(t, {eta, bps}, downloadsPaused)}</span>
           : ""
         )}
         </div>
       </div>
     </div>;
-  }
-
-  humanDuration (eta: number) {
-    const {t} = this.props;
-
-    const duration = moment.duration(eta, "seconds") as any;
-    return duration.locale(t.lang).humanize();
   }
 
   reasonText (reason: string) {

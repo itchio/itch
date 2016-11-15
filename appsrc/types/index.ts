@@ -575,7 +575,7 @@ export type IModalsState = IModal[];
 export interface IMarketState {
     [tableName: string]: {
         [id: string]: any;
-    } | boolean; // ouch
+    } | boolean | undefined; // ouch
 
     /** if true, market is done loading from disk */
     ready?: boolean;
@@ -705,7 +705,7 @@ export interface ITabs {
 
 export interface ISessionNavigationState {
     filters: {
-        [tabId: string]: string;
+        [tabId: string]: string | undefined;
         collections?: string;
     };
 
