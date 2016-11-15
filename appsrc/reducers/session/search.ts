@@ -43,7 +43,7 @@ export default handleActions<ISessionSearchState, any>({
   },
 
   SEARCH_HIGHLIGHT_OFFSET: (state: ISessionSearchState, action: IAction<ISearchHighlightOffsetPayload>) => {
-    const offset = action.payload;
+    const offset: number = action.payload.offset;
     return Object.assign({}, state, {highlight: (state.highlight + offset)});
   },
 

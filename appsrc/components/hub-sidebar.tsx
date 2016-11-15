@@ -154,10 +154,10 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
     if (key === "Escape") {
       // default behavior is to clear - don't
     } else if (key === "ArrowDown") {
-      this.props.searchHighlightOffset(1);
+      this.props.searchHighlightOffset({offset: 1});
       // default behavior is to jump to end of input - don't
     } else if (key === "ArrowUp") {
-      this.props.searchHighlightOffset(-1);
+      this.props.searchHighlightOffset({offset: -1});
       // default behavior is to jump to start of input - don't
     } else {
       passthrough = true;

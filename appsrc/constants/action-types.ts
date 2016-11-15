@@ -771,7 +771,10 @@ export const CLOSE_SEARCH = "CLOSE_SEARCH";
 export interface ICloseSearchPayload {};
 
 export const SEARCH_HIGHLIGHT_OFFSET = "SEARCH_HIGHLIGHT_OFFSET";
-export type ISearchHighlightOffsetPayload = number;
+export interface ISearchHighlightOffsetPayload {
+  /** search highlight offset */
+  offset: number;
+};
 
 export const FILTER_CHANGED = "FILTER_CHANGED";
 export interface IFilterChangedPayload {
