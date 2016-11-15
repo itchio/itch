@@ -73,11 +73,15 @@ async function butler (opts: IButlerOpts, command: string, commandArgs: string[]
   const args = [ "--json", command, ...commandArgs ];
 
   const onToken = partial(parseButlerStatus, opts, onerror);
+  const onErrToken = (line: string) => {
+    log(opts, `butler err: ${line}`);
+  };
 
   await spawn.assert({
     command: "butler",
     args,
     onToken,
+    onErrToken,
     emitter,
   });
 }
