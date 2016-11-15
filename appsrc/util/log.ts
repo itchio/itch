@@ -92,8 +92,8 @@ export class Logger {
 
             this.fileSink = stream({
               file: val,
-              size: "300K",
-              keep: 3,
+              size: "2M",
+              keep: 5,
             });
           }
           break;
