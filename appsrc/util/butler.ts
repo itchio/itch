@@ -12,11 +12,8 @@ import {IProgressListener, IProgressInfo} from "../types";
 import mklog from "./log";
 const log = mklog("butler");
 
-const fakeNetworkTroubles = (process.env.TCP_OVER_TROUBLED_WATERS === "1");
 const showDebug = (process.env.MY_BUTLER_IS_MY_FRIEND === "1");
 const dumpAllOutput = (process.env.MY_BUTLER_IS_MY_ENEMY === "1");
-
-let troubleCounter = 0;
 
 interface IButlerOpts {
    emitter: EventEmitter;
@@ -45,16 +42,6 @@ function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, to
       return log(opts, `butler: ${status.message}`);
     }
     case "progress": {
-      if (fakeNetworkTroubles && (opts as any).url && opts.emitter) {
-        troubleCounter += Math.random();
-        if (troubleCounter > 250) {
-          troubleCounter = 0;
-          log(opts, "butler: faking network troubles!");
-          onerror(new Error("unexpected EOF"));
-          emitter.emit("fake-close", {code: 1});
-          return;
-        }
-      }
       return onProgress(status as IProgressInfo);
     }
     case "error": {
