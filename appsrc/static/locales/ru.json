@@ -347,5 +347,7 @@
     "preferences.proxy_server_source.direct": "Не используется (прямое соединение)",
     "preferences.proxy_server_source.env": "Указано переменной окружения",
     "preferences.proxy_server_source.os": "Используется системная настройка",
-    "login.messages.welcome_back-halloween": "Кто посмел нарушить мой покой?"
+    "login.messages.welcome_back-halloween": "Кто посмел нарушить мой покой?",
+    "prompt.install_error.title": "Произошла ошибка во время установки:",
+    "prompt.install_error.find_upload": "Когда искали загрузку: {{message}}"
 }
