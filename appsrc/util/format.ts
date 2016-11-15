@@ -21,6 +21,17 @@ export function camelify(str: string): string {
   return str.replace(/_[a-z]/g, (x) => x[1].toUpperCase());
 }
 
+interface ITruncateOpts {
+  length: number;
+}
+
+export function truncate(input: string, opts: ITruncateOpts): string {
+  if (input.length > opts.length) {
+    return input.substr(0, opts.length - 3) + "...";
+  }
+  return input;
+}
+
 export function camelifyObject(obj: any): any {
   if (obj && typeof obj === "object") {
     if (Array.isArray(obj)) {
@@ -84,4 +95,4 @@ export function price(currency: string, value: number) {
   }
 }
 
-export default { date, slugify, camelify, camelifyObject, seconds, DATE_FORMAT, price, itchPlatform };
+export default { date, slugify, camelify, camelifyObject, seconds, DATE_FORMAT, price, itchPlatform, truncate };

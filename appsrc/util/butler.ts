@@ -24,7 +24,7 @@ function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, to
   const {onProgress = noop, emitter} = opts;
 
   if (dumpAllOutput) {
-    console.log(`butler: ${token}`); // tslint:disable-line:no-console
+    console.log(`butler stdout: ${token}`); // tslint:disable-line:no-console
   }
 
   let status: any;
@@ -45,7 +45,8 @@ function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, to
       return onProgress(status as IProgressInfo);
     }
     case "error": {
-      return onerror(status.message);
+      log(opts, `butler error: ${status.message}`);
+      return onerror(new Error(status.message));
     }
     default:
       // muffin
@@ -61,16 +62,24 @@ async function butler (opts: IButlerOpts, command: string, commandArgs: string[]
 
   const onToken = partial(parseButlerStatus, opts, onerror);
   const onErrToken = (line: string) => {
-    log(opts, `butler err: ${line}`);
+    log(opts, `butler stderr: ${line}`);
   };
 
-  await spawn.assert({
+  const code = await spawn({
     command: "butler",
     args,
     onToken,
     onErrToken,
     emitter,
   });
+
+  if (err) {
+    throw err;
+  }
+
+  if (code !== 0) {
+    throw new Error(`butler exited with error code ${code}`)
+  }
 }
 
 interface ICpOpts extends IButlerOpts {

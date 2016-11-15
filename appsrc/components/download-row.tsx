@@ -16,6 +16,8 @@ import {IState, IDownloadSpeeds, IDownloadItem, ITask} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
+import * as format from "../util/format";
+
 class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> {
   constructor () {
     super();
@@ -113,8 +115,8 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
       if (err) {
         return <div className="error-message">
           {t("status.downloads.download_error")}
-          <div className="timeago">
-            {err}
+          <div className="timeago hint--top" data-hint={err}>
+            {format.truncate(err, {length: 60})}
           </div>
         </div>;
       }

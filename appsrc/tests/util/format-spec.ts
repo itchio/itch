@@ -49,4 +49,9 @@ test("format", t => {
     t.same(format.price("JPY", 1500), "¥1500.00");
     t.same(format.price("BLORGONS", 100), "???");
   });
+
+  t.case("truncate", t => {
+    t.same(format.truncate("hello", {length: 10}), "hello");
+    t.same(format.truncate("hello my friend this is a Nigerian prince and I", {length: 10}), "hello");
+  })
 });

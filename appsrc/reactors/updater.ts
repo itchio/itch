@@ -257,7 +257,7 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
             return {err: e.message};
           }
         } else {
-          log(opts, `More recent upload has same buildId ${upload.buildId}, disregarding`);
+          log(opts, `Newest upload has same buildId ${upload.buildId}, disregarding`);
           return returnVars;
         }
       }
