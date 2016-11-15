@@ -13,7 +13,7 @@ $($.npm('install'))
 
 $.say('Compiling JavaScript')
 process.env.NODE_ENV = 'production'
-$($.grunt('babel ts sass copy'))
+$($.grunt('ts sass copy'))
 
 $.say('Preparing stage')
 const stage_path = 'stage'
