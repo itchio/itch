@@ -124,6 +124,7 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
       version += ` #${cave.uploadId}`;
     }
 
+    // FIXME: this will display the wrong date for builds
     const hint = `${format.date(cave.installedArchiveMtime, DATE_FORMAT, t.lang)}`;
 
     items.push({
