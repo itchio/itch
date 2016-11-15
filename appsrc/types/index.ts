@@ -891,7 +891,7 @@ export interface IPreferencesState {
   /** when closing window, keep running in tray */
   closeToTray?: boolean;
 
-  /** notify when a download has installed or updated */
+  /** notify when a download has been installed or updated */
   readyNotification?: boolean;
 
   /** show the advanced section of settings */
