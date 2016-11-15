@@ -37,6 +37,22 @@ export async function queueGame (store: IStore, action: IAction<IQueueGamePayloa
     game: game,
   });
 
+  if (uploadResponse.err) {
+    store.dispatch(actions.openModal({
+      title: ["prompt.install_error.title"],
+      message: ["prompt.install_error.find_upload", {message: uploadResponse.err}],
+      buttons: [
+        {
+          label: ["game.install.try_again"],
+          icon: "repeat",
+          action: action,
+        },
+        "ok",
+      ],
+    }));
+    return;
+  }
+
   let {uploads, downloadKey} = uploadResponse.result as IFindUploadResult;
   if (pickedUpload) {
     uploads = where(uploads, {id: pickedUpload});
@@ -91,9 +107,10 @@ export async function queueGame (store: IStore, action: IAction<IQueueGamePayloa
       buttons: [
         {
           label: ["game.install.try_again"],
+          icon: "repeat",
           action: action,
         },
-        "cancel",
+        "ok",
       ],
     }));
   }

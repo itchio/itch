@@ -51,6 +51,11 @@ const DEFAULT_BUTTONS = {
     action: closeModal({}),
     className: "secondary",
   },
+  ok: {
+    label: ["prompt.action.ok"],
+    action: closeModal({}),
+    className: "secondary",
+  },
 } as IDefaultButtons;
 
 export class Modal extends React.Component<IModalProps, void> {

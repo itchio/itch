@@ -545,7 +545,7 @@ export interface IModalButton {
 }
 
 // FIXME: that's naughty - just make static buttons be constants instead, that works.
-export type IModalButtonSpec = string | IModalButton;
+export type IModalButtonSpec = IModalButton | "ok" | "cancel";
 
 export interface IModal {
     /** generated identifier for this modal */
