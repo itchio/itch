@@ -26,7 +26,7 @@ locale_names.forEach(function (locale_name) {
   }
 })
 desktop = desktop.replace(/{{APPNAME}}/g, $.app_name())
-$.write_file(`linux-extras/${$.app_name()}.desktop`, desktop)
+$.write_file(`linux-extras/io.itch.${$.app_name()}.desktop`, desktop)
 
 // generate man page for itch(6)
 $.say('Generating man file')
