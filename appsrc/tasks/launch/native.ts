@@ -119,7 +119,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
           {
             label: ['grid.item.download_java'],
             icon: 'download',
-            action: actions.openUrl(urls.javaDownload)
+            action: actions.openUrl({url: urls.javaDownload})
           },
           'cancel'
         ]
