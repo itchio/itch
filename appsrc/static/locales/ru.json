@@ -352,5 +352,9 @@
     "prompt.install_error.find_upload": "Когда искали загрузку: {{message}}",
     "notification.download_installed": "{{title}} установлено!",
     "notification.download_updated": "{{title}} обновлено!",
-    "preferences.behavior.ready_notification": "Уведомлять, когда что-нибудь установлено или обновлено"
+    "preferences.behavior.ready_notification": "Уведомлять, когда что-нибудь установлено или обновлено",
+    "preferences.behavior.open_at_login": "Запускать itch при запуске компьютера",
+    "preferences.behavior.open_as_hidden": "Запускать itch свёрнутым",
+    "preferences.notifications": "Уведомления",
+    "preferences.notifications.ready_notification": "Уведомлять, когда что-то установлено или обновлено"
 }
