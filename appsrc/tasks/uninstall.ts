@@ -61,6 +61,6 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
     await sf.wipe(archivePath);
   }
 
-  log(opts, `Imploding ${destPath}`);
+  log(opts, `Imploding cave ${destPath}`);
   await globalMarket.deleteEntity("caves", cave.id, {wait: true});
 }

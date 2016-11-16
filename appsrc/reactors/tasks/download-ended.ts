@@ -8,6 +8,8 @@ import {log, opts} from "./log";
 
 import {omit} from "underscore";
 
+import localizer from "../../localizer";
+
 export default function (watcher: Watcher) {
   watcher.on(actions.downloadEnded, async (store, action) => {
     const {downloadOpts} = action.payload;
@@ -46,6 +48,24 @@ export default function (watcher: Watcher) {
         if (installErr) {
           log(opts, `Error in install: ${installErr}`);
           return;
+        }
+
+        const prefs = store.getState().preferences || {readyNotification: true};
+        const {readyNotification} = prefs;
+
+        if (readyNotification) {
+          const i18n = store.getState().i18n;
+          const t = localizer.getT(i18n.strings, i18n.lang);
+          const message = t(
+            reason === "install"
+            ? "notification.download_installed"
+            : "notification.download_updated"
+            , {title: downloadOpts.game.title}
+          );
+          store.dispatch(actions.notify({
+            body: message,
+            onClick: actions.navigateToGame(downloadOpts.game),
+          }));
         }
       }
     } else {

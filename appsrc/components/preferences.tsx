@@ -37,7 +37,7 @@ function getAppLogPath () {
 export class Preferences extends React.Component<IPreferencesProps, void> {
   render () {
     const {t, lang, sniffedLang = "", downloading, locales} = this.props;
-    const {isolateApps, closeToTray, showAdvanced} = this.props.preferences;
+    const {isolateApps, closeToTray, readyNotification, showAdvanced} = this.props.preferences;
     const {queueLocaleDownload, updatePreferences} = this.props;
 
     const options = [{
@@ -102,6 +102,12 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
             updatePreferences({closeToTray: e.currentTarget.checked});
           }}/>
           <span> {t("preferences.behavior.close_to_tray")} </span>
+        </label>
+        <label className={classNames({active: readyNotification})}>
+          <input type="checkbox" checked={readyNotification} onChange={(e) => {
+            updatePreferences({readyNotification: e.currentTarget.checked});
+          }}/>
+          <span> {t("preferences.behavior.ready_notification")} </span>
         </label>
       </div>
 
@@ -237,7 +243,7 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
 interface IExtendedInstallLocation extends IInstallLocation {
   /** some hardcoded value like 'appData' or an UUID */
   name: string;
-  
+
   /** total size of installed items in this location */
   size: number;
 

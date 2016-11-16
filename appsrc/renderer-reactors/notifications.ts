@@ -5,7 +5,7 @@ import * as actions from "../actions";
 import * as ospath from "path";
 
 declare class Notification {
-  onClick: () => void;
+  onclick: () => void;
 
   constructor(title: string, opts: any)
 }
@@ -21,9 +21,9 @@ export default function (watcher: Watcher) {
     const notification = new Notification(title, opts); // eslint-disable-line
 
     if (onClick) {
-      notification.onClick = () => {
+      notification.onclick = () => {
         store.dispatch(onClick);
       };
     }
-  })
+  });
 }
