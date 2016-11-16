@@ -25,9 +25,6 @@ export default function (watcher: Watcher) {
   startTask(watcher);
   taskEnded(watcher);
 
-  startDownload(watcher);
-  downloadEnded(watcher);
-
   queueGame(watcher);
 
   queueCaveReinstall(watcher);
