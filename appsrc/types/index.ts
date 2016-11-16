@@ -269,6 +269,12 @@ export interface ICaveRecord extends ICaveRecordLocation {
     /** timestamp when that cave was last installed. updates count as install. */
     installedAt: number;
 
+    /** timestamp when that cave was last opened/played */
+    lastTouched?: number;
+
+    /** number of seconds played/run, as recorded locally */
+    secondsRun?: number;
+
     /**
      * info on the user that installed the game in this app instance
      */

@@ -9,7 +9,14 @@ import {map, filter, indexBy, sortBy} from "underscore";
 
 import {IState, ICaveRecord, IGameRecord, IDownloadKey} from "../types";
 
-const recency = (x: ICaveRecord) => x.installedAt ? -(new Date(x.installedAt)) : 0;
+function recency (cave: ICaveRecord): number {
+  const timestamp = cave.lastTouched || cave.installedAt;
+  if (timestamp) {
+    return -(new Date(timestamp));
+  }
+
+  return 0;
+};
 
 export class Library extends React.Component<ILibraryProps, void> {
   render () {
