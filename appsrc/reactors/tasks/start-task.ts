@@ -16,8 +16,6 @@ const PROGRESS_THROTTLE = 50;
 import {IStore, IStartTaskOpts} from "../../types";
 import {IProgressInfo} from "../../types";
 
-import {IAction, IAbortTaskPayload} from "../../constants/action-types";
-
 interface ITaskMap {
   [key: string]: {
     emitter: EventEmitter;

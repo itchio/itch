@@ -24,5 +24,5 @@ export default function (watcher: Watcher) {
       selector = makeSelector(store);
     }
     selector(store.getState());
-  })
+  });
 }

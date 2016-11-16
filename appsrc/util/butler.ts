@@ -78,7 +78,7 @@ async function butler (opts: IButlerOpts, command: string, commandArgs: string[]
   }
 
   if (code !== 0) {
-    throw new Error(`butler exited with error code ${code}`)
+    throw new Error(`butler exited with error code ${code}`);
   }
 }
 

@@ -10,5 +10,5 @@ export default function (watcher: Watcher) {
     const text: string = action.payload.text;
     clipboard.writeText(text);
     store.dispatch(actions.statusMessage(["status.copied_to_clipboard"]));
-  })
+  });
 }

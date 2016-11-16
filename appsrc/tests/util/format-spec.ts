@@ -52,6 +52,6 @@ test("format", t => {
 
   t.case("truncate", t => {
     t.same(format.truncate("hello", {length: 10}), "hello");
-    t.same(format.truncate("hello my friend this is a Nigerian prince and I", {length: 10}), "hello");
-  })
+    t.same(format.truncate("hello my friend this is a Nigerian prince and I", {length: 10}), "hello m...");
+  });
 });
