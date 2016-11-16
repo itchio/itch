@@ -10,6 +10,8 @@ import "./boot/fs";
 import autoUpdater from "./util/auto-updater";
 import {isItchioURL} from "./util/url";
 
+import * as actions from "./actions";
+
 // tslint:disable:no-console
 
 async function autoUpdate (autoUpdateDone: () => void) {
@@ -37,13 +39,6 @@ function autoUpdateDone () {
 
   const {app, globalShortcut} = require("electron");
 
-  const {
-    preboot,
-    prepareQuit,
-    focusWindow,
-    openUrl,
-    abortLastGame,
-  } = require("./actions");
   const store = require("./store").default;
 
   app.on("ready", async function () {
@@ -51,7 +46,7 @@ function autoUpdateDone () {
       // we only get inside this callback when another instance
       // is launched - so this executes in the context of the main instance
       handleUrls(argv);
-      store.dispatch(focusWindow());
+      store.dispatch(actions.focusWindow({}));
     });
 
     if (shouldQuit) {
@@ -62,20 +57,20 @@ function autoUpdateDone () {
     }
     handleUrls(process.argv);
 
-    store.dispatch(preboot());
+    store.dispatch(actions.preboot({}));
 
     globalShortcut.register("Control+Alt+Backspace", function () {
-      store.dispatch(abortLastGame());
+      store.dispatch(actions.abortLastGame({}));
     });
   });
 
   app.on("activate", () => {
-    store.dispatch(focusWindow());
+    store.dispatch(actions.focusWindow({}));
   });
 
   app.on("before-quit", (e: Event) => {
     console.log(`Got before-quit!`);
-    store.dispatch(prepareQuit());
+    store.dispatch(actions.prepareQuit({}));
   });
 
   app.on("window-all-closed", (e: Event) => {
@@ -94,7 +89,7 @@ function autoUpdateDone () {
     if (isItchioURL(url)) {
       // macOS will err -600 if we don't
       e.preventDefault();
-      store.dispatch(openUrl(url));
+      store.dispatch(actions.openUrl({url}));
     } else {
       console.log(`Ignoring non-itchio url: ${url}`);
     }
@@ -107,7 +102,7 @@ function autoUpdateDone () {
     argv.forEach((arg) => {
       // XXX should we limit to one url at most ?
       if (isItchioURL(arg)) {
-        store.dispatch(openUrl(arg));
+        store.dispatch(actions.openUrl({url: arg}));
       }
     });
   }
