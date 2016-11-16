@@ -37,7 +37,8 @@ function getAppLogPath () {
 export class Preferences extends React.Component<IPreferencesProps, void> {
   render () {
     const {t, lang, sniffedLang = "", downloading, locales} = this.props;
-    const {isolateApps, closeToTray, readyNotification, showAdvanced} = this.props.preferences;
+    const {isolateApps, openAtLogin, openAsHidden, closeToTray,
+       readyNotification, showAdvanced} = this.props.preferences;
     const {queueLocaleDownload, updatePreferences} = this.props;
 
     const options = [{
@@ -97,17 +98,35 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
 
       <h2>{t("preferences.behavior")}</h2>
       <div className="behavior-form">
+        <label className={classNames({active: openAtLogin})}>
+          <input type="checkbox" checked={openAtLogin} onChange={(e) => {
+            updatePreferences({openAtLogin: e.currentTarget.checked});
+          }}/>
+          <span> {t("preferences.behavior.open_at_login")} </span>
+        </label>
+
+        <label className={classNames({active: openAsHidden})}>
+          <input type="checkbox" checked={openAsHidden} onChange={(e) => {
+            updatePreferences({openAsHidden: e.currentTarget.checked});
+          }}/>
+          <span> {t("preferences.behavior.open_as_hidden")} </span>
+        </label>
+
         <label className={classNames({active: closeToTray})}>
           <input type="checkbox" checked={closeToTray} onChange={(e) => {
             updatePreferences({closeToTray: e.currentTarget.checked});
           }}/>
           <span> {t("preferences.behavior.close_to_tray")} </span>
         </label>
+      </div>
+
+      <h2>{t("preferences.notifications")}</h2>
+      <div className="behavior-form">
         <label className={classNames({active: readyNotification})}>
           <input type="checkbox" checked={readyNotification} onChange={(e) => {
             updatePreferences({readyNotification: e.currentTarget.checked});
           }}/>
-          <span> {t("preferences.behavior.ready_notification")} </span>
+          <span> {t("preferences.notifications.ready_notification")} </span>
         </label>
       </div>
 

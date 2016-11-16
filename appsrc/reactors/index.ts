@@ -32,6 +32,7 @@ import report from "./report";
 import perf from "./perf";
 import modals from "./modals";
 import halloween from "./halloween";
+import openAtLogin from "./open-at-login";
 
 let watcher = new Watcher();
 preboot(watcher);
@@ -65,6 +66,7 @@ report(watcher);
 perf(watcher);
 modals(watcher);
 halloween(watcher);
+openAtLogin(watcher);
 
 watcher.validate();
 

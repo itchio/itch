@@ -912,6 +912,12 @@ export interface IPreferencesState {
 
   /** if true, user's already seen the 'minimize to tray' notification */
   gotMinimizeNotification?: boolean;
+
+  /** should the itch app start on os startup? */
+  openAtLogin?: boolean;
+
+  /** when the itch app starts at login, should it be hidden? */
+  openAsHidden?: boolean;
 }
 
 export interface ITask {

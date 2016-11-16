@@ -20,6 +20,8 @@ const initialState = {
   closeToTray: true,
   readyNotification: true,
   showAdvanced: false,
+  openAtLogin: false,
+  openAsHidden: false,
 } as IPreferencesState;
 
 export default handleActions<IPreferencesState, any>({
