@@ -349,5 +349,8 @@
     "preferences.proxy_server_source.os": "Используется системная настройка",
     "login.messages.welcome_back-halloween": "Кто посмел нарушить мой покой?",
     "prompt.install_error.title": "Произошла ошибка во время установки:",
-    "prompt.install_error.find_upload": "Когда искали загрузку: {{message}}"
+    "prompt.install_error.find_upload": "Когда искали загрузку: {{message}}",
+    "notification.download_installed": "{{title}} установлено!",
+    "notification.download_updated": "{{title}} обновлено!",
+    "preferences.behavior.ready_notification": "Уведомлять, когда что-нибудь установлено или обновлено"
 }
