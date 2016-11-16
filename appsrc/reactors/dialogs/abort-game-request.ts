@@ -1,24 +1,22 @@
 
+import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
-import {IStore} from "../../types";
-import {IAction, IAbortGameRequestPayload} from "../../constants/action-types";
+export default function (watcher: Watcher) {
+  watcher.on(actions.abortGameRequest, async (store, action) => {
+    const {game} = action.payload;
 
-async function abortGameRequest (store: IStore, action: IAction<IAbortGameRequestPayload>) {
-  const {game} = action.payload;
-
-  store.dispatch(actions.openModal({
-    title: ["prompt.abort_game.title"],
-    message: ["prompt.abort_game.message", {title: game.title}],
-    buttons: [
-      {
-        label: ["prompt.action.force_close"],
-        action: actions.abortGame({gameId: game.id}),
-        icon: "cross",
-      },
-      "cancel",
-    ],
-  }));
+    store.dispatch(actions.openModal({
+      title: ["prompt.abort_game.title"],
+      message: ["prompt.abort_game.message", {title: game.title}],
+      buttons: [
+        {
+          label: ["prompt.action.force_close"],
+          action: actions.abortGame({gameId: game.id}),
+          icon: "cross",
+        },
+        "cancel",
+      ],
+    }));
+  });
 }
-
-export default abortGameRequest;

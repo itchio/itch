@@ -3,7 +3,7 @@ import { createStore, applyMiddleware, compose, GenericStoreEnhancer, Store } fr
 import { electronEnhancer } from "redux-electron-store";
 
 import route from "../reactors/route";
-import reactors from "../reactors";
+import watcher from "../reactors";
 import reducer from "../reducers";
 
 import {IStore} from "../types";
@@ -46,8 +46,8 @@ const allAction = Object.freeze({ type: "__ALL", payload: null });
 const enhancer = compose(
   electronEnhancer({
     postDispatchCallback: (action: any) => {
-      route(reactors, store, action);
-      route(reactors, store, allAction);
+      route(watcher, store, action);
+      route(watcher, store, allAction);
     },
   }),
   applyMiddleware(...middleware)
@@ -55,6 +55,6 @@ const enhancer = compose(
 
 const initialState = {};
 const store = createStore(reducer, initialState, enhancer) as IStore;
-route(reactors, store, { type: "__MOUNT", payload: null });
+route(watcher, store, { type: "__MOUNT", payload: null });
 
 export default store;

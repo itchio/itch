@@ -1,34 +1,41 @@
 
-import {startDownload, queueDownload} from "./start-download";
-import {queueGame} from "./queue-game";
-import {taskEnded} from "./task-ended";
-import {downloadEnded} from "./download-ended";
-import {queueCaveReinstall} from "./queue-cave-reinstall";
-import {queueCaveUninstall} from "./queue-cave-uninstall";
-import {implodeCave} from "./implode-cave";
-import {exploreCave} from "./explore-cave";
-import {abortGame, abortLastGame} from "./abort-game";
-import {downloadWatcher} from "./download-watcher";
-import {downloadSpeedWatcher} from "./download-speed-watcher";
-import {abortTask} from "./start-task";
+import {Watcher} from "../watcher";
 
-import {IStore} from "../../types";
-import {IAction, IBootPayload, IRetryDownloadPayload} from "../../constants/action-types";
+import startDownload from "./start-download";
+import downloadEnded from "./download-ended";
 
-async function boot (store: IStore, action: IAction<IBootPayload>) {
-  await Promise.all([
-    downloadWatcher(store),
-    downloadSpeedWatcher(store),
-  ]);
+import startTask from "./start-task";
+import taskEnded from "./task-ended";
+
+import queueGame from "./queue-game";
+
+import queueCaveReinstall from "./queue-cave-reinstall";
+import queueCaveUninstall from "./queue-cave-uninstall";
+import implodeCave from "./implode-cave";
+import exploreCave from "./explore-cave";
+import abortGame from "./abort-game";
+
+import downloadWatcher from "./download-watcher";
+import downloadSpeedWatcher from "./download-speed-watcher";
+
+export default function (watcher: Watcher) {
+  startDownload(watcher);
+  downloadEnded(watcher);
+
+  startTask(watcher);
+  taskEnded(watcher);
+
+  startDownload(watcher);
+  downloadEnded(watcher);
+
+  queueGame(watcher);
+
+  queueCaveReinstall(watcher);
+  queueCaveUninstall(watcher);
+  implodeCave(watcher);
+  exploreCave(watcher);
+  abortGame(watcher);
+
+  downloadWatcher(watcher);
+  downloadSpeedWatcher(watcher);
 }
-
-async function retryDownload (store: IStore, action: IAction<IRetryDownloadPayload>) {
-  startDownload(store, action.payload.downloadOpts);
-}
-
-export default {
-  boot, exploreCave,
-  queueGame, queueCaveReinstall, queueCaveUninstall, implodeCave,
-  downloadEnded, taskEnded, retryDownload, abortGame, abortLastGame, abortTask,
-  queueDownload,
-};

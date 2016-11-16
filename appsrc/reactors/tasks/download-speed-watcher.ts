@@ -1,25 +1,16 @@
 
+import {Watcher} from "../watcher";
+import * as actions from "../../actions";
+
 import delay from "../delay";
 
 import {opts} from "./log";
 import mklog from "../../util/log";
 const log = mklog("download-speed-watcher");
 
-import * as actions from "../../actions";
-
 const DOWNLOAD_SPEED_DELAY = 1000;
 
 import {IStore} from "../../types";
-
-export async function downloadSpeedWatcher (store: IStore) {
-  while (true) {
-    try {
-      await updateDownloadSpeed(store);
-    } catch (e) {
-      log(opts, `While updating download speed: ${e.stack || e}`);
-    }
-  }
-}
 
 async function updateDownloadSpeed (store: IStore) {
   await delay(DOWNLOAD_SPEED_DELAY);
@@ -34,4 +25,16 @@ async function updateDownloadSpeed (store: IStore) {
   }
 
   store.dispatch(actions.downloadSpeedDatapoint({bps}));
+}
+
+export default function (watcher: Watcher) {
+  watcher.on(actions.boot, async (store, action) => {
+    while (true) {
+      try {
+        await updateDownloadSpeed(store);
+      } catch (e) {
+        log(opts, `While updating download speed: ${e.stack || e}`);
+      }
+    }
+  });
 }

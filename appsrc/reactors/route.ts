@@ -2,16 +2,27 @@
 import {IStore} from "../types";
 import {IAction} from "../constants/action-types";
 
-import {ICombinator} from "./combine";
+import {Watcher} from "./watcher";
+import {each} from "underscore";
 
-export default function route (reactors: ICombinator, store: IStore, action: IAction<any>) {
-  const reactor = reactors[action.type];
-  if (reactor) {
-    reactor(store, action);
-  }
+import {opts} from "../logger";
+import mklog from "../util/log";
+const log = mklog("reactors");
 
-  const catchall = reactors._ALL;
-  if (catchall) {
-    catchall(store, action);
-  }
+export default function route (watcher: Watcher, store: IStore, action: IAction<any>) {
+  each(watcher.reactors[action.type], async (reactor) => {
+    try {
+      await reactor(store, action);
+    } catch (e) {
+      log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
+    }
+  });
+
+  each(watcher.reactors._ALL, async (reactor) => {
+    try {
+      await reactor(store, action);
+    } catch (e) {
+      log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
+    }
+  });
 }

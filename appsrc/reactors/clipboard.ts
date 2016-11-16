@@ -1,14 +1,14 @@
 
+import {Watcher} from "./watcher";
+
 import {clipboard} from "../electron";
 
 import * as actions from "../actions";
 
-import {IStore} from "../types";
-import {IAction, ICopyToClipboardPayload} from "../constants/action-types";
-
-async function copyToClipboard (store: IStore, action: IAction<ICopyToClipboardPayload>) {
-  clipboard.writeText(action.payload);
-  store.dispatch(actions.statusMessage(["status.copied_to_clipboard"]));
+export default function (watcher: Watcher) {
+  watcher.on(actions.copyToClipboard, async (store, action) => {
+    const text: string = action.payload.text;
+    clipboard.writeText(text);
+    store.dispatch(actions.statusMessage(["status.copied_to_clipboard"]));
+  })
 }
-
-export default {copyToClipboard};

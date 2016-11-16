@@ -1,4 +1,6 @@
 
+import {Watcher} from "./watcher";
+
 import {EventEmitter} from "events";
 import * as humanize from "humanize-plus";
 
@@ -41,63 +43,6 @@ import {
   IGameRecord,
   ICaveRecord,
 } from "../types";
-
-import {
-  IAction,
-  ICheckForGameUpdatesPayload,
-  ICheckForGameUpdatePayload,
-  ISessionReadyPayload,
-} from "../constants/action-types";
-
-async function checkForGameUpdates (store: IStore, action: IAction<ICheckForGameUpdatesPayload>) {
-  const caves = getGlobalMarket().getEntities("caves");
-
-  for (const caveId of Object.keys(caves)) {
-    try {
-      await doCheckForGameUpdate(store, caves[caveId]);
-    } catch (e) {
-      log(opts, `While checking for cave ${caveId} update: ${e.stack || e}`);
-    }
-    await delay(DELAY_BETWEEN_GAMES);
-  }
-}
-
-async function checkForGameUpdate (store: IStore, action: IAction<ICheckForGameUpdatePayload>) {
-  const {caveId, noisy = false} = action.payload;
-  if (noisy) {
-    log(opts, `Looking for updates for cave ${caveId}`);
-  }
-
-  const cave = getGlobalMarket().getEntity("caves", caveId);
-  if (!cave) {
-    log(opts, `No cave with id ${caveId}, bailing out`);
-    return;
-  }
-
-  try {
-    const result = await doCheckForGameUpdate(store, cave, {noisy});
-    if (noisy) {
-      if (result && result.err) {
-        store.dispatch(actions.statusMessage(["status.game_update.check_failed", {err: result.err}]));
-      } else if (result && result.hasUpgrade) {
-        if (result.game) {
-          store.dispatch(actions.statusMessage(["status.game_update.found", {title: result.game.title}]));
-        }
-      } else if (result && result.game) {
-        store.dispatch(actions.statusMessage(["status.game_update.not_found", {title: result.game.title}]));
-      }
-    }
-  } catch (e) {
-    log(opts, `While checking for cave ${caveId} update: ${e.stack || e}`);
-    if (noisy) {
-      store.dispatch(actions.statusMessage(["status.game_update.check_failed", {err: e}]));
-    }
-  } finally {
-    if (noisy) {
-      log(opts, `Done looking for updates for cave ${caveId}`);
-    }
-  }
-}
 
 interface IUpdateCheckResult {
   /** set if an error occured while looking for a new version of a game */
@@ -365,17 +310,67 @@ async function doCheckForGameUpdate (store: IStore, cave: ICaveRecord, taskOpts 
 
 let updaterInstalled = false;
 
-async function sessionReady (store: IStore, action: IAction<ISessionReadyPayload>) {
-  if (updaterInstalled) {
-    return;
-  }
-  updaterInstalled = true;
+export default function (watcher: Watcher) {
+  watcher.on(actions.sessionReady, async (store, action) => {
+    if (updaterInstalled) {
+      return;
+    }
+    updaterInstalled = true;
 
-  while (true) {
-    log(opts, "Regularly scheduled check for game updates...");
-    store.dispatch(actions.checkForGameUpdates({}));
-    await delay(DELAY_BETWEEN_PASSES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE);
-  }
+    while (true) {
+      log(opts, "Regularly scheduled check for game updates...");
+      store.dispatch(actions.checkForGameUpdates({}));
+      await delay(DELAY_BETWEEN_PASSES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE);
+    }
+  });
+
+  watcher.on(actions.checkForGameUpdates, async (store, action) => {
+    const caves = getGlobalMarket().getEntities("caves");
+
+    for (const caveId of Object.keys(caves)) {
+      try {
+        await doCheckForGameUpdate(store, caves[caveId]);
+      } catch (e) {
+        log(opts, `While checking for cave ${caveId} update: ${e.stack || e}`);
+      }
+      await delay(DELAY_BETWEEN_GAMES);
+    }
+  });
+
+  watcher.on(actions.checkForGameUpdate, async (store, action) => {
+    const {caveId, noisy = false} = action.payload;
+    if (noisy) {
+      log(opts, `Looking for updates for cave ${caveId}`);
+    }
+
+    const cave = getGlobalMarket().getEntity("caves", caveId);
+    if (!cave) {
+      log(opts, `No cave with id ${caveId}, bailing out`);
+      return;
+    }
+
+    try {
+      const result = await doCheckForGameUpdate(store, cave, {noisy});
+      if (noisy) {
+        if (result && result.err) {
+          store.dispatch(actions.statusMessage(["status.game_update.check_failed", {err: result.err}]));
+        } else if (result && result.hasUpgrade) {
+          if (result.game) {
+            store.dispatch(actions.statusMessage(["status.game_update.found", {title: result.game.title}]));
+          }
+        } else if (result && result.game) {
+          store.dispatch(actions.statusMessage(["status.game_update.not_found", {title: result.game.title}]));
+        }
+      }
+    } catch (e) {
+      log(opts, `While checking for cave ${caveId} update: ${e.stack || e}`);
+      if (noisy) {
+        store.dispatch(actions.statusMessage(["status.game_update.check_failed", {err: e}]));
+      }
+    } finally {
+      if (noisy) {
+        log(opts, `Done looking for updates for cave ${caveId}`);
+      }
+    }
+  });
 }
-
-export default {sessionReady, checkForGameUpdates, checkForGameUpdate};

@@ -1,10 +1,10 @@
 
+import {Watcher} from "./watcher";
 import {createSelector} from "reselect";
 
 import {languageChanged} from "../actions";
 
 import {IStore, IState} from "../types";
-import {IAction} from "../constants/action-types";
 
 const makeSelector = (store: IStore) => createSelector(
   (state: IState) => state.system.sniffedLanguage,
@@ -18,11 +18,11 @@ const makeSelector = (store: IStore) => createSelector(
 );
 let selector: (state: IState) => void;
 
-async function catchAll (store: IStore, action: IAction<any>) {
-  if (!selector) {
-    selector = makeSelector(store);
-  }
-  selector(store.getState());
+export default function (watcher: Watcher) {
+  watcher.onAll(async (store, action) => {
+    if (!selector) {
+      selector = makeSelector(store);
+    }
+    selector(store.getState());
+  })
 }
-
-export default {catchAll};

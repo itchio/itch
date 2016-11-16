@@ -1,4 +1,6 @@
 
+import {Watcher} from "./watcher";
+
 import {createSelector} from "reselect";
 
 import * as actions from "../actions";
@@ -6,22 +8,6 @@ import * as actions from "../actions";
 import delay from "./delay";
 
 import {IStore, IState} from "../types";
-import {IAction, ILogoutPayload, ISessionReadyPayload} from "../constants/action-types";
-
-async function logout (store: IStore, action: IAction<ILogoutPayload>) {
-  store.dispatch(actions.switchPage({page: "gate"}));
-}
-
-async function sessionReady (store: IStore, action: IAction<ISessionReadyPayload>) {
-  const me = store.getState().session.credentials.me;
-  if (me.developer) {
-    store.dispatch(actions.unlockTab({path: "dashboard"}));
-  }
-
-  await delay(500);
-
-  store.dispatch(actions.switchPage({page: "hub"}));
-}
 
 let sessionSelector: (state: IState) => void;
 const makeSessionSelector = (store: IStore) => createSelector(
@@ -37,11 +23,26 @@ const makeSessionSelector = (store: IStore) => createSelector(
   }
 );
 
-async function catchAll (store: IStore, action: IAction<any>) {
-  if (!sessionSelector) {
-    sessionSelector = makeSessionSelector(store);
-  }
-  sessionSelector(store.getState());
-}
+export default function (watcher: Watcher) {
+  watcher.on(actions.sessionReady, async (store, action) => {
+    const me = store.getState().session.credentials.me;
+    if (me.developer) {
+      store.dispatch(actions.unlockTab({path: "dashboard"}));
+    }
 
-export default {sessionReady, logout, catchAll};
+    await delay(500);
+
+    store.dispatch(actions.switchPage({page: "hub"}));
+  });
+
+  watcher.on(actions.logout, async (store, action) => {
+    store.dispatch(actions.switchPage({page: "gate"}));
+  });
+
+  watcher.onAll(async (store, action) => {
+    if (!sessionSelector) {
+      sessionSelector = makeSessionSelector(store);
+    }
+    sessionSelector(store.getState());
+  });
+}

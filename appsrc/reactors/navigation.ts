@@ -1,4 +1,6 @@
 
+import {Watcher} from "./watcher";
+
 import {createStructuredSelector, createSelector} from "reselect";
 import {getUserMarket} from "./market";
 
@@ -27,19 +29,6 @@ const TABS_TABLE_NAME = "itchAppTabs";
 import * as actions from "../actions";
 
 import {IStore, IState, ITabData, ITabDataSet, IMarketState} from "../types";
-import {
-  IAction,
-  IClearFiltersPayload,
-  IWindowReadyPayload,
-  ITabChangedPayload,
-  ITabReloadedPayload,
-  IWindowFocusChangedPayload,
-  ITabsChangedPayload,
-  ISessionReadyPayload,
-  ILogoutPayload,
-  IEvolveTabPayload,
-  IProbeCavePayload,
-} from "../constants/action-types";
 
 interface IFakeMarketData extends IMarketState {}
 
@@ -186,112 +175,7 @@ async function doFetchTabData (store: IStore, id: string, retrOpts?: IRetrieveOp
   }
 }
 
-async function tabChanged (store: IStore, action: IAction<ITabChangedPayload>) {
-  const {id} = action.payload;
-  invariant(typeof id === "string", "tabChanged has string id");
-
-  if (id === "history") {
-    store.dispatch(actions.historyRead({}));
-  }
-
-  await doFetchTabData(store, id);
-}
-
-async function tabReloaded (store: IStore, action: IAction<ITabReloadedPayload>) {
-  const {id} = action.payload;
-  invariant(typeof id === "string", "tabReloaded has string id");
-  await doFetchTabData(store, id);
-}
-
-async function windowFocusChanged (store: IStore, action: IAction<IWindowFocusChangedPayload>) {
-  const {focused} = action.payload;
-  if (!focused) {
-    return;
-  }
-
-  const id = store.getState().session.navigation.id;
-  await doFetchTabData(store, id, {fresh: true});
-}
-
 let saveTabs = false;
-
-async function tabsChanged (store: IStore, action: IAction<ITabsChangedPayload>) {
-  const key = store.getState().session.credentials.key;
-  if (!key || !saveTabs) {
-    log(opts, "Not logged in, not saving tabs yet...");
-    return;
-  }
-
-  const nav = store.getState().session.navigation;
-  const {tabs, tabData, id} = nav;
-  const {transient} = tabs;
-
-  const snapshot = {
-    current: id,
-    items: filter(map(transient, (itemId) => {
-      const data = tabData[itemId];
-      if (data) {
-        return {
-          id: itemId,
-          path: (data.path || "").replace(/^toast\//, ""),
-        };
-      }
-    }), (x) => !!x),
-  };
-
-  const userMarket = getUserMarket();
-  await userMarket.saveEntity(TABS_TABLE_NAME, "x", snapshot);
-}
-
-async function sessionReady (store: IStore, action: IAction<ISessionReadyPayload>) {
-  log(opts, "Session ready! looking for tabs to restore");
-  const userMarket = getUserMarket();
-  const snapshot = userMarket.getEntity(TABS_TABLE_NAME, "x");
-
-  if (snapshot) {
-    log(opts, `Restoring ${snapshot.items.length} tabs`);
-    store.dispatch(actions.tabsRestored(snapshot));
-
-    for (const item of snapshot.items) {
-      const {id, path} = item;
-      doFetchTabData(store, id, {path});
-    }
-  } else {
-    log(opts, "No tabs to restore");
-  }
-
-  saveTabs = true;
-}
-
-async function logout (store: IStore, action: IAction<ILogoutPayload>) {
-  saveTabs = false;
-}
-
-async function evolveTab (store: IStore, action: IAction<IEvolveTabPayload>) {
-  const {id, path, extras = {}, quick} = action.payload;
-  if (quick) {
-    store.dispatch(actions.tabEvolved({id, data: {path}}));
-  }
-
-  try {
-    const data = await retrieveTabData(store, id, {path});
-    store.dispatch(actions.tabEvolved({
-      id,
-      data: Object.assign({}, data, extras, {path}),
-    }));
-  } catch (e) {
-    log(opts, `While evolving tab: ${e.stack || e}`);
-    toast(store, id, e, path);
-  }
-}
-
-async function probeCave (store: IStore, action: IAction<IProbeCavePayload>) {
-  const {caveId} = action.payload;
-
-  const caveLogPath = pathmaker.caveLogPath(caveId);
-  log(opts, `Opening cave log path ${caveLogPath}`);
-  shell.openItem(caveLogPath);
-}
 
 let pathSelector: (state: IState) => void;
 const makePathSelector = (store: IStore) => createSelector(
@@ -332,35 +216,137 @@ const makeTransientSelector = (store: IStore) => {
   );
 };
 
-async function windowReady (store: IStore, action: IAction<IWindowReadyPayload>) {
-  if (!pathSelector) {
-    pathSelector = makePathSelector(store);
-  }
-  if (!transientSelector) {
-    transientSelector = makeTransientSelector(store);
-  }
+export default function (watcher: Watcher) {
+  watcher.onAll(async (store, action) => {
+    const state = store.getState();
+
+    if (pathSelector) {
+      pathSelector(state);
+    }
+
+    if (transientSelector) {
+      transientSelector(state);
+    }
+  });
+
+  watcher.on(actions.windowReady, async (store, action) => {
+    if (!pathSelector) {
+      pathSelector = makePathSelector(store);
+    }
+    if (!transientSelector) {
+      transientSelector = makeTransientSelector(store);
+    }
+  });
+
+  watcher.on(actions.sessionReady, async (store, action) => {
+    log(opts, "Session ready! looking for tabs to restore");
+    const userMarket = getUserMarket();
+    const snapshot = userMarket.getEntity(TABS_TABLE_NAME, "x");
+
+    if (snapshot) {
+      log(opts, `Restoring ${snapshot.items.length} tabs`);
+      store.dispatch(actions.tabsRestored(snapshot));
+
+      for (const item of snapshot.items) {
+        const {id, path} = item;
+        doFetchTabData(store, id, {path});
+      }
+    } else {
+      log(opts, "No tabs to restore");
+    }
+
+    saveTabs = true;
+  });
+
+  watcher.on(actions.tabReloaded, async (store, action) => {
+    const {id} = action.payload;
+    invariant(typeof id === "string", "tabReloaded has string id");
+    await doFetchTabData(store, id);
+  });
+
+  watcher.on(actions.windowFocusChanged, async (store, action) => {
+    const {focused} = action.payload;
+    if (!focused) {
+      return;
+    }
+
+    const id = store.getState().session.navigation.id;
+    await doFetchTabData(store, id, {fresh: true});
+  });
+
+  watcher.on(actions.evolveTab, async (store, action) => {
+    const {id, path, extras = {}, quick} = action.payload;
+    if (quick) {
+      store.dispatch(actions.tabEvolved({id, data: {path}}));
+    }
+
+    try {
+      const data = await retrieveTabData(store, id, {path});
+      store.dispatch(actions.tabEvolved({
+        id,
+        data: Object.assign({}, data, extras, {path}),
+      }));
+    } catch (e) {
+      log(opts, `While evolving tab: ${e.stack || e}`);
+      toast(store, id, e, path);
+    }
+  });
+
+  watcher.on(actions.probeCave, async (store, action) => {
+    const {caveId} = action.payload;
+
+    const caveLogPath = pathmaker.caveLogPath(caveId);
+    log(opts, `Opening cave log path ${caveLogPath}`);
+    shell.openItem(caveLogPath);
+  });
+
+  watcher.on(actions.tabsChanged, async (store, action) => {
+    const key = store.getState().session.credentials.key;
+    if (!key || !saveTabs) {
+      log(opts, "Not logged in, not saving tabs yet...");
+      return;
+    }
+
+    const nav = store.getState().session.navigation;
+    const {tabs, tabData, id} = nav;
+    const {transient} = tabs;
+
+    const snapshot = {
+      current: id,
+      items: filter(map(transient, (itemId) => {
+        const data = tabData[itemId];
+        if (data) {
+          return {
+            id: itemId,
+            path: (data.path || "").replace(/^toast\//, ""),
+          };
+        }
+      }), (x) => !!x),
+    };
+
+    const userMarket = getUserMarket();
+    await userMarket.saveEntity(TABS_TABLE_NAME, "x", snapshot);
+  });
+
+  watcher.on(actions.tabChanged, async (store, action) => {
+    const {id} = action.payload;
+    invariant(typeof id === "string", "tabChanged has string id");
+
+    if (id === "history") {
+      store.dispatch(actions.historyRead({}));
+    }
+
+    await doFetchTabData(store, id);
+  });
+
+  watcher.on(actions.logout, async (store, action) => {
+    saveTabs = false;
+  });
+
+  watcher.on(actions.clearFilters, async (store, action) => {
+    const {tab} = action.payload;
+
+    store.dispatch(actions.binaryFilterChanged({field: "onlyCompatible", value: false}));
+    store.dispatch(actions.filterChanged({tab, query: ""}));
+  });
 }
-
-async function catchAll (store: IStore, action: IAction<any>) {
-  const state = store.getState();
-
-  if (pathSelector) {
-    pathSelector(state);
-  }
-
-  if (transientSelector) {
-    transientSelector(state);
-  }
-}
-
-async function clearFilters (store: IStore, action: IAction<IClearFiltersPayload>) {
-  const {tab} = action.payload;
-
-  store.dispatch(actions.binaryFilterChanged({field: "onlyCompatible", value: false}));
-  store.dispatch(actions.filterChanged({tab, query: ""}));
-}
-
-export default {
-  windowReady, catchAll, sessionReady, tabReloaded, windowFocusChanged,
-  evolveTab, probeCave, tabsChanged, tabChanged, logout, clearFilters,
-};

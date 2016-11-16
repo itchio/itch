@@ -1,4 +1,6 @@
 
+import {Watcher} from "./watcher";
+
 import * as ospath from "path";
 import ifs from "../localizer/ifs";
 
@@ -16,7 +18,6 @@ const localesDir = ospath.resolve(ospath.join(__dirname, "..", "static", "locale
 const localesConfigPath = ospath.resolve(ospath.join(localesDir, "..", "locales.json"));
 
 import {IStore, II18nResources} from "../types";
-import {IAction, IQueueLocaleDownloadPayload, ILanguageChangedPayload} from "../constants/action-types";
 
 import logger from "../logger";
 import mklog from "../util/log";
@@ -58,47 +59,6 @@ async function doDownloadLocale (lang: string, resources: II18nResources) {
   await ifs.writeFile(remote, payload);
 }
 
-async function boot (store: IStore) {
-  // load initial locales
-  const configPayload = await ifs.readFile(localesConfigPath);
-  const config = JSON.parse(configPayload);
-  store.dispatch(actions.localesConfigLoaded(config));
-
-  await loadLocale(store, "en");
-}
-
-async function queueLocaleDownload (store: IStore, action: IAction<IQueueLocaleDownloadPayload>) {
-  let {lang} = action.payload;
-
-  if (!upgradesEnabled) {
-    log(opts, `Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`);
-    return;
-  }
-
-  const downloading = store.getState().i18n.downloading;
-  if (downloading[lang]) {
-    return;
-  }
-
-  store.dispatch(actions.localeDownloadStarted({lang}));
-
-  log(opts, `Waiting a bit before downloading ${lang} locale...`);
-  await delay(1000);
-
-  const resources = {};
-  try {
-    await doDownloadLocale(lang, resources);
-  } catch (e) {
-    log(opts, `Failed downloading locale for ${lang}: ${e.message}`);
-    store.dispatch(actions.queueHistoryItem({
-      label: ["i18n.failed_downloading_locales", {lang}],
-      detail: e.stack || e,
-    }));
-  } finally {
-    store.dispatch(actions.localeDownloadEnded({lang, resources}));
-  }
-}
-
 async function loadLocale (store: IStore, lang: string) {
   const local = canonicalFileName(lang);
   if (!(await ifs.exists(local))) {
@@ -134,10 +94,51 @@ async function loadLocale (store: IStore, lang: string) {
   store.dispatch(actions.queueLocaleDownload({lang}));
 }
 
-async function languageChanged (store: IStore, action: IAction<ILanguageChangedPayload>) {
-  const {lang} = action.payload;
+export default function (watcher: Watcher) {
+  watcher.on(actions.boot, async (store, action) => {
+    // load initial locales
+    const configPayload = await ifs.readFile(localesConfigPath);
+    const config = JSON.parse(configPayload);
+    store.dispatch(actions.localesConfigLoaded(config));
 
-  await loadLocale(store, lang);
+    await loadLocale(store, "en");
+  });
+
+  watcher.on(actions.queueLocaleDownload, async (store, action) => {
+    let {lang} = action.payload;
+
+    if (!upgradesEnabled) {
+      log(opts, `Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`);
+      return;
+    }
+
+    const downloading = store.getState().i18n.downloading;
+    if (downloading[lang]) {
+      return;
+    }
+
+    store.dispatch(actions.localeDownloadStarted({lang}));
+
+    log(opts, `Waiting a bit before downloading ${lang} locale...`);
+    await delay(1000);
+
+    const resources = {};
+    try {
+      await doDownloadLocale(lang, resources);
+    } catch (e) {
+      log(opts, `Failed downloading locale for ${lang}: ${e.message}`);
+      store.dispatch(actions.queueHistoryItem({
+        label: ["i18n.failed_downloading_locales", {lang}],
+        detail: e.stack || e,
+      }));
+    } finally {
+      store.dispatch(actions.localeDownloadEnded({lang, resources}));
+    }
+  });
+
+  watcher.on(actions.languageChanged, async (store, action) => {
+    const {lang} = action.payload;
+
+    await loadLocale(store, lang);
+  });
 }
-
-export default {boot, queueLocaleDownload, languageChanged};

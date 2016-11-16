@@ -1,4 +1,6 @@
 
+import {Watcher} from "../watcher";
+
 import {EventEmitter} from "events";
 
 import * as uuid from "node-uuid";
@@ -71,11 +73,13 @@ export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
   }
 }
 
-export async function abortTask (store: IStore, action: IAction<IAbortTaskPayload>) {
-  const {id} = action.payload;
-  const task = currentTasks[id];
-  if (task && task.emitter) {
-    task.emitter.emit("cancel");
-    delete currentTasks[id];
-  }
+export default function (watcher: Watcher) {
+  watcher.on(actions.abortTask, async (store, action) => {
+    const {id} = action.payload;
+    const task = currentTasks[id];
+    if (task && task.emitter) {
+      task.emitter.emit("cancel");
+      delete currentTasks[id];
+    }
+  });
 }

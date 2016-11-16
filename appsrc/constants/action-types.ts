@@ -257,7 +257,9 @@ export interface IReportIssuePayload {
 }
 
 export const COPY_TO_CLIPBOARD = "COPY_TO_CLIPBOARD";
-export interface ICopyToClipboardPayload {}
+export interface ICopyToClipboardPayload {
+  text: string;
+}
 
 export const HANDLE_ITCHIO_URL = "HANDLE_ITCHIO_URL";
 export interface IHandleItchioUrlPayload {
@@ -512,7 +514,7 @@ export interface IAbortTaskPayload {
 
 /* Downloads */
 export const QUEUE_DOWNLOAD = "QUEUE_DOWNLOAD";
-export interface IQueueDownloadPayload {}
+export interface IQueueDownloadPayload extends Types.IStartDownloadOpts {};
 
 export const DOWNLOAD_STARTED = "DOWNLOAD_STARTED";
 export interface IDownloadStartedPayload extends Types.IDownloadItem {};

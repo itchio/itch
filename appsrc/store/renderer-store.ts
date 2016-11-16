@@ -4,7 +4,7 @@ import { electronEnhancer } from "redux-electron-store";
 const createLogger = require("redux-logger");
 
 import route from "../reactors/route";
-import reactors from "../renderer-reactors";
+import watcher from "../renderer-reactors";
 import reducer from "../reducers";
 
 import {IStore} from "../types";
@@ -26,8 +26,8 @@ const ee = electronEnhancer({
   filter,
   synchronous: false,
   postDispatchCallback: (action: any) => {
-    route(reactors, store, action);
-    route(reactors, store, allAction);
+    route(watcher, store, action);
+    route(watcher, store, allAction);
   },
 }) as GenericStoreEnhancer;
 
@@ -44,6 +44,6 @@ if (REDUX_DEVTOOLS_ENABLED) {
 
 const initialState = {};
 const store = createStore(reducer, initialState, enhancer) as IStore;
-route(reactors, store, { type: "__MOUNT", payload: null });
+route(watcher, store, { type: "__MOUNT", payload: null });
 
 export default store;

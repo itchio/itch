@@ -1,4 +1,6 @@
 
+import {Watcher} from "./watcher";
+
 import {darkMineShaft} from "../constants/colors";
 import {app, BrowserWindow} from "../electron";
 import config from "../util/config";
@@ -24,13 +26,6 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 const macOs = os.platform() === "darwin";
 
 import {IStore} from "../types";
-import {
-  IAction,
-  IWindowBoundsChangedPayload,
-  IFocusWindowPayload,
-  IQuitAndInstallPayload,
-  IBootPayload,
-} from "../constants/action-types";
 
 async function createWindow (store: IStore) {
   if (createLock) {
@@ -212,58 +207,10 @@ async function createWindow (store: IStore) {
   log(opts, "Calling loadURL");
 }
 
-async function windowBoundsChanged (store: IStore, action: IAction<IWindowBoundsChangedPayload>) {
-  // TODO: this should move to preferences, why are we using config again?
-  const {bounds} = action.payload;
-  config.set(BOUNDS_CONFIG_KEY, bounds);
-}
-
-async function focusWindow (store: IStore, action: IAction<IFocusWindowPayload>) {
-  const id = store.getState().ui.mainWindow.id;
-  const options = action.payload || {};
-
-  if (id) {
-    const window = BrowserWindow.fromId(id);
-    invariant(window, "window still exists");
-    if (options.toggle && window.isVisible()) {
-      window.hide();
-    } else {
-      showWindow(window);
-    }
-  } else {
-    await createWindow(store);
-  }
-}
-
-async function hideWindow (store: IStore) {
+async function hideWindow () {
   const window = BrowserWindow.getFocusedWindow();
   if (window) {
     window.close();
-  }
-}
-
-async function closeTabOrAuxWindow (store: IStore) {
-  const focused = BrowserWindow.getFocusedWindow();
-  if (focused) {
-    const id = store.getState().ui.mainWindow.id;
-    if (focused.id === id) {
-      store.dispatch(actions.closeTab({id: null}));
-    } else {
-      focused.close();
-    }
-  }
-}
-
-async function quitWhenMain (store: IStore) {
-  const mainId = store.getState().ui.mainWindow.id;
-  const focused = BrowserWindow.getFocusedWindow();
-
-  if (focused) {
-    if (focused.id === mainId) {
-      store.dispatch(actions.quit({}));
-    } else {
-      focused.close();
-    }
   }
 }
 
@@ -277,30 +224,79 @@ function showWindow (window: any) {
   }
 }
 
-async function quitElectronApp () {
-  app.quit();
-}
+export default function (watcher: Watcher) {
+  watcher.on(actions.boot, async (store, action) => {
+    store.dispatch(actions.focusWindow({}));
+  });
 
-async function prepareQuit () {
-  quitting = true;
-}
+  watcher.on(actions.focusWindow, async (store, action) => {
+    const id = store.getState().ui.mainWindow.id;
+    const options = action.payload || {};
 
-async function quit (store: IStore) {
-  quitting = true;
-  store.dispatch(actions.quitElectronApp({}));
-}
+    if (id) {
+      const window = BrowserWindow.fromId(id);
+      invariant(window, "window still exists");
+      if (options.toggle && window.isVisible()) {
+        window.hide();
+      } else {
+        showWindow(window);
+      }
+    } else {
+      await createWindow(store);
+    }
+  });
 
-async function quitAndInstall (store: IStore, action: IAction<IQuitAndInstallPayload>) {
-  quitting = true;
-  log(opts, "Handing off to Squirrel");
-  require("electron").autoUpdater.quitAndInstall();
-}
+  watcher.on(actions.hideWindow, async (store, action) => {
+    hideWindow();
+  });
 
-async function boot (store: IStore, action: IAction<IBootPayload>) {
-  await focusWindow(store, action);
-}
+  watcher.on(actions.windowBoundsChanged, async (store, action) => {
+    // TODO: this should move to preferences, why are we using config again?
+    const {bounds} = action.payload;
+    config.set(BOUNDS_CONFIG_KEY, bounds);
+  });
 
-export default {
-  boot, focusWindow, hideWindow, windowBoundsChanged,
-  closeTabOrAuxWindow, quitWhenMain, quitElectronApp, prepareQuit, quit, quitAndInstall,
-};
+  watcher.on(actions.closeTabOrAuxWindow, async (store, action) => {
+    const focused = BrowserWindow.getFocusedWindow();
+    if (focused) {
+      const id = store.getState().ui.mainWindow.id;
+      if (focused.id === id) {
+        store.dispatch(actions.closeTab({id: null}));
+      } else {
+        focused.close();
+      }
+    }
+  });
+
+  watcher.on(actions.quitWhenMain, async (store, action) => {
+    const mainId = store.getState().ui.mainWindow.id;
+    const focused = BrowserWindow.getFocusedWindow();
+
+    if (focused) {
+      if (focused.id === mainId) {
+        store.dispatch(actions.quit({}));
+      } else {
+        focused.close();
+      }
+    }
+  });
+
+  watcher.on(actions.quitElectronApp, async (store, action) => {
+    app.quit();
+  });
+
+  watcher.on(actions.prepareQuit, async (store, action) => {
+    quitting = true;
+  });
+
+  watcher.on(actions.quit, async (store, action) => {
+    quitting = true;
+    store.dispatch(actions.quitElectronApp({}));
+  });
+
+  watcher.on(actions.quitAndInstall, async (store, action) => {
+    quitting = true;
+    log(opts, "Handing off to Squirrel for self-update");
+    require("electron").autoUpdater.quitAndInstall();
+  });
+}

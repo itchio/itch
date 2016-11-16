@@ -1,4 +1,6 @@
 
+import {Watcher} from "./watcher";
+
 import {findWhere} from "underscore";
 
 import url from "../util/url";
@@ -9,12 +11,6 @@ import enableEventDebugging from "../util/debug-browser-window";
 // tslint:disable:no-console
 
 import {
-  IAction,
-  IInitiatePurchasePayload,
-} from "../constants/action-types";
-
-import {
-  IStore,
   IOwnUserRecord,
   IGameRecord,
 } from "../types";
@@ -25,50 +21,6 @@ import {BrowserWindow} from "electron";
 import * as ospath from "path";
 
 const injectPath = ospath.resolve(__dirname, "..", "inject", "itchio-monkeypatch.js");
-
-async function initiatePurchase (store: IStore, action: IAction<IInitiatePurchasePayload>) {
-  const {game} = action.payload;
-
-  const me = store.getState().session.credentials.me;
-
-  const downloadKeys = store.getState().market.downloadKeys;
-  const key = findWhere(downloadKeys, {gameId: game.id});
-  const win = makePurchaseWindow(me, game);
-
-  if (process.env.CAST_NO_SHADOW === "1") {
-    enableEventDebugging("purchase", win);
-    win.webContents.openDevTools({ mode: "detach" });
-  }
-
-  const purchaseUrl = game.url + "/purchase";
-  const loginPurchaseUrl = buildLoginAndReturnUrl(purchaseUrl);
-  console.log("partition login purchase url = ", loginPurchaseUrl);
-
-  // FIXME: that's probably not the best event
-  win.webContents.on("did-get-redirect-request", (e, oldURL, newURL) => {
-    const parsed = url.parse(newURL);
-
-    if (/^.*\/download\/[a-zA-Z0-9]*$/.test(parsed.pathname)) {
-      // purchase went through!
-      store.dispatch(actions.purchaseCompleted({game, hadKey: !!key}));
-      win.close();
-    } else if (/\/pay\/cancel/.test(parsed.pathname)) {
-      // payment was cancelled
-      win.close();
-    }
-  });
-
-  win.webContents.on("did-get-response-details", async function (e, status, newURL, originalURL, httpResponseCode) {
-    if (httpResponseCode === 404 && newURL === purchaseUrl) {
-      console.log(`404 not found: ${newURL}`);
-      console.log("closing because of 404");
-      win.close();
-    }
-  });
-
-  win.loadURL(loginPurchaseUrl);
-  win.show();
-}
 
 /**
  * Creates a new browser window to initiate the purchase flow
@@ -131,4 +83,48 @@ function buildLoginAndReturnUrl (returnTo: string): string {
   return url.format(urlOpts);
 }
 
-export default {initiatePurchase};
+export default function (watcher: Watcher) {
+  watcher.on(actions.initiatePurchase, async (store, action) => {
+    const {game} = action.payload;
+
+    const me = store.getState().session.credentials.me;
+
+    const downloadKeys = store.getState().market.downloadKeys;
+    const key = findWhere(downloadKeys, {gameId: game.id});
+    const win = makePurchaseWindow(me, game);
+
+    if (process.env.CAST_NO_SHADOW === "1") {
+      enableEventDebugging("purchase", win);
+      win.webContents.openDevTools({ mode: "detach" });
+    }
+
+    const purchaseUrl = game.url + "/purchase";
+    const loginPurchaseUrl = buildLoginAndReturnUrl(purchaseUrl);
+    console.log("partition login purchase url = ", loginPurchaseUrl);
+
+    // FIXME: that's probably not the best event
+    win.webContents.on("did-get-redirect-request", (e, oldURL, newURL) => {
+      const parsed = url.parse(newURL);
+
+      if (/^.*\/download\/[a-zA-Z0-9]*$/.test(parsed.pathname)) {
+        // purchase went through!
+        store.dispatch(actions.purchaseCompleted({game, hadKey: !!key}));
+        win.close();
+      } else if (/\/pay\/cancel/.test(parsed.pathname)) {
+        // payment was cancelled
+        win.close();
+      }
+    });
+
+    win.webContents.on("did-get-response-details", async function (e, status, newURL, originalURL, httpResponseCode) {
+      if (httpResponseCode === 404 && newURL === purchaseUrl) {
+        console.log(`404 not found: ${newURL}`);
+        console.log("closing because of 404");
+        win.close();
+      }
+    });
+
+    win.loadURL(loginPurchaseUrl);
+    win.show();
+  });
+}

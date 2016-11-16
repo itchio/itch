@@ -1,13 +1,13 @@
 
-import {IStore} from "../types";
-import {IAction, ILoginFailedPayload} from "../constants/action-types";
+import {Watcher} from "../reactors/watcher";
+import * as actions from "../actions";
 
-async function loginFailed (store: IStore, action: IAction<ILoginFailedPayload>) {
-  const {username} = action.payload;
-  const usernameField = document.querySelector("#login-username") as HTMLInputElement;
-  if (usernameField) {
-    usernameField.value = username;
-  }
+export default function (watcher: Watcher) {
+  watcher.on(actions.loginFailed, async (store, action) => {
+    const {username} = action.payload;
+    const usernameField = document.querySelector("#login-username") as HTMLInputElement;
+    if (usernameField) {
+      usernameField.value = username;
+    }
+  });
 }
-
-export default {loginFailed};

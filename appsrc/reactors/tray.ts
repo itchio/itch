@@ -1,4 +1,6 @@
 
+import {Watcher} from "./watcher";
+
 import * as ospath from "path";
 import os from "../util/os";
 import localizer from "../localizer";
@@ -97,26 +99,26 @@ const makeTraySelector = (store: IStore) => createSelector(
 
 let hasBooted = false;
 
-async function boot (store: IStore, action: IAction<IBootPayload>) {
-  hasBooted = true;
-}
-
-async function catchAll (store: IStore, action: IAction<any>) {
-  if (!hasBooted) {
-    return;
-  }
-  if (!traySelector) {
-    traySelector = makeTraySelector(store);
-  }
-  traySelector(store.getState());
-}
-
-async function notify (store: IStore, action: IAction<INotifyPayload>) {
-  lastNotificationAction = action.payload.onClick;
-}
-
 export function getTray () {
   return tray;
 }
 
-export default {boot, catchAll, notify};
+export default function (watcher: Watcher) {
+  watcher.on(actions.boot, async (store, action) => {
+    hasBooted = true;
+  });
+
+  watcher.onAll(async (store, action) => {
+    if (!hasBooted) {
+      return;
+    }
+    if (!traySelector) {
+      traySelector = makeTraySelector(store);
+    }
+    traySelector(store.getState());
+  });
+
+  watcher.on(actions.notify, async (store, action) => {
+    lastNotificationAction = action.payload.onClick;
+  });
+}

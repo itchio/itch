@@ -1,4 +1,6 @@
 
+import {Watcher} from "./watcher";
+
 import * as bluebird from "bluebird";
 import * as invariant from "invariant";
 
@@ -18,46 +20,6 @@ import debounce from "./debounce";
 import * as actions from "../actions";
 
 import {IStore, IState, IMarket, ICredentials} from "../types";
-import {
-  IAction,
-  IWindowFocusChangedPayload,
-  IPurchaseCompletedPayload,
-  ILoginSucceededPayload,
-  ISearchPayload,
-  IDbCommitPayload,
-  IDbReadyPayload,
-} from "../constants/action-types";
-
-async function windowFocusChanged (store: IStore, action: IAction<IWindowFocusChangedPayload>) {
-  const {focused} = action.payload;
-  if (!focused) {
-    // app just went in the background, nbd
-    return;
-  }
-
-  const credentials = store.getState().session.credentials;
-  if (!credentials.key) {
-    log(opts, "Not logged in, not fetching anything yet");
-    return;
-  }
-
-  await fetchUsuals(credentials);
-}
-
-async function loginSucceeded (store: IStore, action: IAction<ILoginSucceededPayload>) {
-  const credentials = action.payload;
-  await fetchUsuals(credentials);
-}
-
-async function purchaseCompleted (store: IStore, action: IAction<IPurchaseCompletedPayload>) {
-  const credentials = store.getState().session.credentials;
-  if (!credentials.key) {
-    log(opts, "Not logged in, not fetching anything yet");
-    return;
-  }
-
-  await fetchUsuals(credentials);
-}
 
 const fetchUsuals = debounce(async function fetchUsuals (credentials: ICredentials) {
   invariant(credentials.key, "have API key");
@@ -81,59 +43,11 @@ const fetchUsuals = debounce(async function fetchUsuals (credentials: ICredentia
   }
 }, 300);
 
-const search = async function search (store: IStore, action: IAction<ISearchPayload>) {
-  const query: string = action.payload.query;
-  store.dispatch(actions.searchStarted({}));
-
-  try {
-    const credentials = store.getState().session.credentials;
-    if (!credentials.key) {
-      log(opts, "Not logged in, can\'t search");
-      return;
-    }
-
-    if (!query) {
-      log(opts, "Clearing query");
-      store.dispatch(actions.searchFetched({query: "", results: null}));
-      return;
-    }
-
-    const results = await fetch.search(credentials, query);
-    store.dispatch(actions.searchFetched({query, results}));
-  } catch (e) {
-    // TODO: relay search error (network offline, etc.)
-  } finally {
-    store.dispatch(actions.searchFinished({}));
-  }
-};
-
 async function fetchSingleCollectionGames
     (store: IStore, market: IMarket, credentials: ICredentials, collectionId: number) {
   await fetch.collectionGames(market, credentials, collectionId);
   store.dispatch(actions.collectionGamesFetched({collectionId}));
 }
-
-const fetchCollectionGames = debounce(async function fetchCollectionGames (store, action) {
-  const credentials = store.getState().session.credentials;
-  if (!credentials.key) {
-    return;
-  }
-
-  const market = getUserMarket();
-  const collections = market.getEntities("collections");
-
-  try {
-    for (const key of Object.keys(collections)) {
-      await fetchSingleCollectionGames(store, market, credentials, Number(key));
-    }
-  } catch (e) {
-    if (api.isNetworkError(e)) {
-      log(opts, "Network error while fetching collection, skipping..");
-    } else {
-      throw e;
-    }
-  }
-}, 300);
 
 let collectionsWatcher: (state: IState) => void;
 const makeCollectionsWatcher = (store: IStore) => {
@@ -153,16 +67,94 @@ const makeCollectionsWatcher = (store: IStore) => {
   );
 };
 
-async function userDbCommit (store: IStore, action: IAction<IDbCommitPayload>) {
-  if (!collectionsWatcher) {
-    collectionsWatcher = makeCollectionsWatcher(store);
-  }
-  collectionsWatcher(store.getState());
-}
+export default function (watcher: Watcher) {
+  watcher.on(actions.windowFocusChanged, async (store, action) => {
+    const {focused} = action.payload;
+    if (!focused) {
+      // app just went in the background, nbd
+      return;
+    }
 
-async function userDbReady (store: IStore, action: IAction<IDbReadyPayload>) {
-  await fetchCollectionGames(store, action);
-}
+    const credentials = store.getState().session.credentials;
+    if (!credentials.key) {
+      log(opts, "Not logged in, not fetching anything yet");
+      return;
+    }
 
-export default {windowFocusChanged, loginSucceeded, purchaseCompleted,
-  fetchCollectionGames, userDbCommit, userDbReady, search};
+    await fetchUsuals(credentials);
+  });
+
+  watcher.on(actions.loginSucceeded, async (store, action) => {
+    const credentials = action.payload;
+    await fetchUsuals(credentials);
+  });
+
+  watcher.on(actions.purchaseCompleted, async (store, action) => {
+    const credentials = store.getState().session.credentials;
+    if (!credentials.key) {
+      log(opts, "Not logged in, not fetching anything yet");
+      return;
+    }
+
+    await fetchUsuals(credentials);
+  });
+
+  watcher.on(actions.search, async (store, action) => {
+    const query: string = action.payload.query;
+    store.dispatch(actions.searchStarted({}));
+
+    try {
+      const credentials = store.getState().session.credentials;
+      if (!credentials.key) {
+        log(opts, "Not logged in, can\'t search");
+        return;
+      }
+
+      if (!query) {
+        log(opts, "Clearing query");
+        store.dispatch(actions.searchFetched({query: "", results: null}));
+        return;
+      }
+
+      const results = await fetch.search(credentials, query);
+      store.dispatch(actions.searchFetched({query, results}));
+    } catch (e) {
+      // TODO: relay search error (network offline, etc.)
+    } finally {
+      store.dispatch(actions.searchFinished({}));
+    }
+  });
+
+  watcher.onDebounced(actions.fetchCollectionGames, 300, async (store, action) => {
+    const credentials = store.getState().session.credentials;
+    if (!credentials.key) {
+      return;
+    }
+
+    const market = getUserMarket();
+    const collections = market.getEntities("collections");
+
+    try {
+      for (const key of Object.keys(collections)) {
+        await fetchSingleCollectionGames(store, market, credentials, Number(key));
+      }
+    } catch (e) {
+      if (api.isNetworkError(e)) {
+        log(opts, "Network error while fetching collection, skipping..");
+      } else {
+        throw e;
+      }
+    }
+  });
+
+  watcher.on(actions.userDbCommit, async (store, action) => {
+    if (!collectionsWatcher) {
+      collectionsWatcher = makeCollectionsWatcher(store);
+    }
+    collectionsWatcher(store.getState());
+  });
+
+  watcher.on(actions.userDbReady, async (store, action) => {
+    store.dispatch(actions.fetchCollectionGames({}));
+  });
+}

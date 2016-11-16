@@ -1,12 +1,14 @@
 
+import {Watcher} from "../watcher";
+import * as actions from "../../actions";
+
 import {getGlobalMarket} from "../market";
 
-import {IStore} from "../../types";
-import {IAction, IImplodeCavePayload} from "../../constants/action-types";
+export default function (watcher: Watcher) {
+  watcher.on(actions.implodeCave, async (store, action) => {
+    const {caveId} = action.payload;
 
-export async function implodeCave (store: IStore, action: IAction<IImplodeCavePayload>) {
-  const {caveId} = action.payload;
-
-  const market = getGlobalMarket();
-  await market.deleteEntity("caves", caveId, {wait: true});
+    const market = getGlobalMarket();
+    await market.deleteEntity("caves", caveId, {wait: true});
+  });
 }

@@ -1,7 +1,8 @@
 
-import pathmaker from "../util/pathmaker";
-
+import {Watcher} from "./watcher";
 import * as actions from "../actions";
+
+import pathmaker from "../util/pathmaker";
 
 import Market from "../util/market";
 
@@ -16,7 +17,6 @@ import {IStore} from "../types";
 import {
   IAction,
   IDbCommitPayload,
-  ILogoutPayload,
 } from "../constants/action-types";
 
 // abstraction leak but helps halving the bandwidth between browser and renderer:
@@ -38,20 +38,6 @@ export function getGlobalMarket () {
   return globalMarket;
 }
 
-async function firstWindowReady (store: IStore, action: IAction<any>) {
-  globalMarket = new Market();
-
-  globalMarket.on("ready", () => {
-    store.dispatch(actions.globalDbReady({}));
-  });
-
-  globalMarket.on("commit", (payload: IDbCommitPayload) => {
-    store.dispatch(actions.globalDbCommit(payload));
-  });
-
-  await globalMarket.load(pathmaker.globalDbPath());
-}
-
 const createQueue = (store: IStore, name: string) => {
   let open = true;
   return {
@@ -66,38 +52,52 @@ const createQueue = (store: IStore, name: string) => {
   };
 };
 
-async function loginSucceeded (store: IStore, action: IAction<any>) {
-  const queue = createQueue(store, "user-market");
+export default function (watcher: Watcher) {
+  watcher.on(actions.firstWindowReady, async (store, action) => {
+    globalMarket = new Market();
 
-  const {me} = action.payload;
-  userMarket = new Market();
+    globalMarket.on("ready", () => {
+      store.dispatch(actions.globalDbReady({}));
+    });
 
-  userMarket.on("ready", () => {
-    log(opts, "got user db ready");
-    queue.dispatch(actions.userDbReady({}));
+    globalMarket.on("commit", (payload: IDbCommitPayload) => {
+      store.dispatch(actions.globalDbCommit(payload));
+    });
+
+    await globalMarket.load(pathmaker.globalDbPath());
   });
 
-  userMarket.on("commit", (payload: IDbCommitPayload) => {
-    queue.dispatch(actions.userDbCommit(payload));
+  watcher.on(actions.loginSucceeded, async (store, action) => {
+    const queue = createQueue(store, "user-market");
+
+    const {me} = action.payload;
+    userMarket = new Market();
+
+    userMarket.on("ready", () => {
+      log(opts, "got user db ready");
+      queue.dispatch(actions.userDbReady({}));
+    });
+
+    userMarket.on("commit", (payload: IDbCommitPayload) => {
+      queue.dispatch(actions.userDbCommit(payload));
+    });
+
+    userMarket.on("close", () => {
+      log(opts, "got user db close");
+      queue.close();
+      store.dispatch(actions.userDbClosed({}));
+    });
+
+    await userMarket.load(pathmaker.userDbPath(me.id));
   });
 
-  userMarket.on("close", () => {
-    log(opts, "got user db close");
-    queue.close();
-    store.dispatch(actions.userDbClosed({}));
+  watcher.on(actions.logout, async (store, action) => {
+    if (userMarket) {
+      log(opts, "closing user db");
+      userMarket.close();
+      userMarket = null;
+    } else {
+      log(opts, "no user db to close");
+    }
   });
-
-  await userMarket.load(pathmaker.userDbPath(me.id));
 }
-
-async function logout (store: IStore, action: IAction<ILogoutPayload>) {
-  if (userMarket) {
-    log(opts, "closing user db");
-    userMarket.close();
-    userMarket = null;
-  } else {
-    log(opts, "no user db to close");
-  }
-}
-
-export default {firstWindowReady, loginSucceeded, logout};

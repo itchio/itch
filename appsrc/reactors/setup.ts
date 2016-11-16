@@ -1,4 +1,6 @@
 
+import {Watcher} from "./watcher";
+
 import * as bluebird from "bluebird";
 import ibrew from "../util/ibrew";
 
@@ -8,12 +10,6 @@ import {
   IStore,
   ILocalizedString,
 } from "../types";
-
-import {
-  IAction,
-  IRetrySetupPayload,
-  IBootPayload,
-} from "../constants/action-types";
 
 import * as actions from "../actions";
 
@@ -47,7 +43,7 @@ async function setup (store: IStore) {
   store.dispatch(actions.setupDone({}));
 }
 
-async function boot (store: IStore, action: IAction<IBootPayload>) {
+async function doSetup (store: IStore) {
   try {
     await setup(store);
   } catch (e) {
@@ -60,8 +56,12 @@ async function boot (store: IStore, action: IAction<IBootPayload>) {
   }
 }
 
-async function retrySetup (store: IStore, action: IAction<IRetrySetupPayload>) {
-  await boot(store, action);
-}
+export default function (watcher: Watcher) {
+  watcher.on(actions.boot, async (store, action) => {
+    await doSetup(store);
+  });
 
-export default {boot, retrySetup};
+  watcher.on(actions.retrySetup, async (store, action) => {
+    await doSetup(store);
+  });
+}

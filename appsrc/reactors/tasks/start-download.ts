@@ -1,15 +1,14 @@
 
+import {Watcher} from "../watcher";
+import * as actions from "../../actions";
+
 import * as uuid from "node-uuid";
 
 import {log, opts} from "./log";
 
-import * as actions from "../../actions";
-
 import {IStore, IStartDownloadOpts} from "../../types";
 
 let orderSeed = 0;
-
-import {IAction} from "../../constants/action-types";
 
 export async function startDownload (store: IStore, downloadOpts: IStartDownloadOpts) {
   downloadOpts.order = orderSeed++;
@@ -31,7 +30,13 @@ export async function startDownload (store: IStore, downloadOpts: IStartDownload
   store.dispatch(actions.downloadStarted(Object.assign({}, downloadOpts, {id, downloadOpts})));
 }
 
-export async function queueDownload (store: IStore, action: IAction<IStartDownloadOpts>) {
-  const downloadOpts = action.payload;
-  await startDownload(store, downloadOpts);
+export default function (watcher: Watcher) {
+  watcher.on(actions.queueDownload, async (store, action) => {
+    const downloadOpts = action.payload;
+    await startDownload(store, downloadOpts);
+  });
+
+  watcher.on(actions.retryDownload, async (store, action) => {
+    startDownload(store, action.payload.downloadOpts);
+  });
 }

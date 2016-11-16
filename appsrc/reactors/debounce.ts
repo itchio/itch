@@ -13,7 +13,15 @@ export class CancelError extends Error {
   }
 }
 
-export default function debounce<T> (f: (...args: any[]) => Promise<T>, ms: number) {
+function debounce<Arg1, T> (
+    f: (arg1: Arg1) => Promise<T>,
+    ms: number): (arg1: Arg1) => Promise<T>;
+
+function debounce<Arg1, Arg2, T> (
+    f: (arg1: Arg1, arg2: Arg2) => Promise<T>,
+    ms: number): (arg1: Arg1, arg2: Arg2) => Promise<T>;
+
+function debounce <T> (f: (...args: any[]) => Promise<T>, ms: number) {
   let rejectOther: (err: Error) => void;
 
   return async function (...args: any[]) {
@@ -48,3 +56,5 @@ export default function debounce<T> (f: (...args: any[]) => Promise<T>, ms: numb
     }
   };
 }
+
+export default debounce;

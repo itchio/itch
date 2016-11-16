@@ -132,7 +132,7 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
       icon: "checkmark",
       label: ["grid.item.version", {version}],
       hint: hint,
-      action: actions.copyToClipboard(`game ${game.id}, version ${version}`),
+      action: actions.copyToClipboard({text: `game ${game.id}, version ${version}`}),
     });
 
     items.push({

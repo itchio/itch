@@ -1,10 +1,11 @@
 
+import {Watcher} from "./watcher";
+
 import * as uuid from "node-uuid";
 
 import * as actions from "../actions";
 
 import {IStore} from "../types";
-import {IAction, INewTabPayload, IFocusNthTabPayload} from "../constants/action-types";
 
 async function applyTabOffset (store: IStore, offset: number) {
   const {id, tabs} = store.getState().session.navigation;
@@ -22,25 +23,25 @@ async function applyTabOffset (store: IStore, offset: number) {
   store.dispatch(actions.navigate(newId));
 }
 
-async function newTab (store: IStore, action: IAction<INewTabPayload>) {
-  store.dispatch(actions.navigate("new/" + uuid.v4()));
-}
+export default function (watcher: Watcher) {
+  watcher.on(actions.newTab, async (store, action) => {
+    store.dispatch(actions.navigate("new/" + uuid.v4()));
+  });
 
-async function focusNthTab (store: IStore, action: IAction<IFocusNthTabPayload>) {
-  const n = action.payload.index;
-  const constant = store.getState().session.navigation.tabs.constant;
-  const tab = constant[n - 1];
-  if (tab) {
-    store.dispatch(actions.navigate(tab));
-  }
-}
+  watcher.on(actions.focusNthTab, async (store, action) => {
+    const n = action.payload.index;
+    const constant = store.getState().session.navigation.tabs.constant;
+    const tab = constant[n - 1];
+    if (tab) {
+      store.dispatch(actions.navigate(tab));
+    }
+  });
 
-async function showPreviousTab (store: IStore) {
-  await applyTabOffset(store, -1);
-}
+  watcher.on(actions.showPreviousTab, async (store, action) => {
+    await applyTabOffset(store, -1);
+  });
 
-async function showNextTab (store: IStore) {
-  await applyTabOffset(store, 1);
+  watcher.on(actions.showNextTab, async (store, action) => {
+    await applyTabOffset(store, 1);
+  });
 }
-
-export default {newTab, focusNthTab, showPreviousTab, showNextTab};

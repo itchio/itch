@@ -1,4 +1,6 @@
 
+import {Watcher} from "./watcher";
+
 import {app} from "../electron";
 import sf from "../util/sf";
 import * as ospath from "path";
@@ -12,12 +14,6 @@ const TOKEN_FILE_NAME = "token.json";
 const USERS_PATH = ospath.join(app.getPath("userData"), "users");
 
 import {IStore} from "../types";
-import {
-  IAction,
-  IForgetSessionPayload,
-  IForgetSessionRequestPayload,
-  ILoginSucceededPayload,
-} from "../constants/action-types";
 
 export function getTokenPath (userId: string) {
   return ospath.join(USERS_PATH, userId, TOKEN_FILE_NAME);
@@ -36,34 +32,6 @@ async function loadRememberedSessions (store: IStore) {
     const sessionsById = indexBy(sessions, (x) => x.me.id);
     store.dispatch(actions.sessionsRemembered(sessionsById));
   }
-}
-
-async function firstWindowReady (store: IStore) {
-  await loadRememberedSessions(store);
-}
-
-async function forgetSessionRequest (store: IStore, action: IAction<IForgetSessionRequestPayload>) {
-  const {id, username} = action.payload;
-  store.dispatch(actions.openModal({
-    title: ["prompt.forget_session.title"],
-    message: ["prompt.forget_session.message", {username}],
-    detail: ["prompt.forget_session.detail"],
-    buttons: [
-      {
-        label: ["prompt.forget_session.action"],
-        action: actions.forgetSession({id, username}),
-        icon: "cross",
-      },
-      "cancel",
-    ],
-  }));
-}
-
-async function forgetSession (store: IStore, action: IAction<IForgetSessionPayload>) {
-  const {id} = action.payload;
-
-  const tokenPath = getTokenPath(String(id));
-  await sf.wipe(tokenPath);
 }
 
 async function saveSession (store: IStore, userId: string, record: any) {
@@ -90,9 +58,37 @@ async function saveSession (store: IStore, userId: string, record: any) {
   store.dispatch(actions.sessionUpdated({id: userId, record: finalRecord}));
 }
 
-async function loginSucceeded (store: IStore, action: IAction<ILoginSucceededPayload>) {
-  const {key, me} = action.payload;
-  await saveSession(store, String(me.id), {key, me});
-}
+export default function (watcher: Watcher) {
+  watcher.on(actions.firstWindowReady, async (store, action) => {
+    await loadRememberedSessions(store);
+  });
 
-export default {firstWindowReady, forgetSessionRequest, forgetSession, loginSucceeded};
+  watcher.on(actions.forgetSessionRequest, async (store, action) => {
+    const {id, username} = action.payload;
+    store.dispatch(actions.openModal({
+      title: ["prompt.forget_session.title"],
+      message: ["prompt.forget_session.message", {username}],
+      detail: ["prompt.forget_session.detail"],
+      buttons: [
+        {
+          label: ["prompt.forget_session.action"],
+          action: actions.forgetSession({id, username}),
+          icon: "cross",
+        },
+        "cancel",
+      ],
+    }));
+  });
+
+  watcher.on(actions.forgetSession, async (store, action) => {
+    const {id} = action.payload;
+
+    const tokenPath = getTokenPath(String(id));
+    await sf.wipe(tokenPath);
+  });
+
+  watcher.on(actions.loginSucceeded, async (store, action) => {
+    const {key, me} = action.payload;
+    await saveSession(store, String(me.id), {key, me});
+  });
+}

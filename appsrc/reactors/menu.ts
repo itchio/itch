@@ -1,4 +1,6 @@
 
+import {Watcher} from "./watcher";
+
 import {Menu, IMenuItem, IMenuTemplate} from "../electron";
 
 import {map} from "underscore";
@@ -14,7 +16,6 @@ import os from "../util/os";
 const macos = os.itchPlatform() === "osx";
 
 import {IStore, IState, II18nState} from "../types";
-import {IAction} from "../constants/action-types";
 
 let refreshSelector: (state: IState) => void;
 const makeRefreshSelector = (store: IStore) => createSelector(
@@ -78,19 +79,6 @@ function convertMenuAction (payload: IMenuItemPayload) {
   }
 }
 
-async function catchAll (store: IStore, action: IAction<any>) {
-  const state = store.getState();
-  if (!refreshSelector) {
-    refreshSelector = makeRefreshSelector(store);
-  }
-  refreshSelector(state);
-
-  if (!applySelector) {
-    applySelector = makeApplySelector(store);
-  }
-  applySelector(state);
-}
-
 function fleshOutTemplate (template: IMenuTemplate, i18n: II18nState, store: IStore) {
   const t = localizer.getT(i18n.strings, i18n.lang);
 
@@ -120,4 +108,17 @@ function fleshOutTemplate (template: IMenuTemplate, i18n: II18nState, store: ISt
   return map(template, visitNode);
 }
 
-export default {catchAll};
+export default function (watcher: Watcher) {
+  watcher.onAll(async (store, action) => {
+    const state = store.getState();
+    if (!refreshSelector) {
+      refreshSelector = makeRefreshSelector(store);
+    }
+    refreshSelector(state);
+
+    if (!applySelector) {
+      applySelector = makeApplySelector(store);
+    }
+    applySelector(state);
+  });
+}

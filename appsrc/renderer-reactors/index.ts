@@ -1,6 +1,5 @@
 
-import combine from "../reactors/combine";
-import validateReactors from "../reactors/validate-reactors";
+import {Watcher} from "../reactors//watcher";
 
 import notifications from "./notifications";
 import shortcuts from "./shortcuts";
@@ -10,24 +9,16 @@ import triggers from "./triggers";
 import loginFailed from "./login-failed";
 import tabChanged from "./tab-changed";
 
-export default validateReactors({
-  __MOUNT: combine(shortcuts.mount),
+let watcher = new Watcher();
 
-  FOCUS_SEARCH: combine(focusSearch.focusSearch),
-  SEARCH_HIGHLIGHT_OFFSET: combine(focusSearch.searchHighlightOffset),
-  CLOSE_SEARCH: combine(focusSearch.closeSearch),
-  FOCUS_FILTER: combine(focusSearch.focusFilter),
-  CLEAR_FILTERS: combine(focusSearch.clearFilters),
+notifications(watcher);
+shortcuts(watcher);
+encourageGenerosity(watcher);
+focusSearch(watcher);
+triggers(watcher);
+loginFailed(watcher);
+tabChanged(watcher);
 
-  TRIGGER_OK: combine(triggers.triggerOk),
-  TRIGGER_LOCATION: combine(triggers.triggerLocation),
-  TRIGGER_BACK: combine(triggers.triggerBack),
+watcher.validate();
 
-  ENCOURAGE_GENEROSITY: combine(encourageGenerosity.encourageGenerosity),
-
-  LOGIN_FAILED: combine(loginFailed.loginFailed),
-
-  TAB_CHANGED: combine(tabChanged.tabChanged),
-
-  NOTIFY_HTML5: combine(notifications.notifyHtml5),
-});
+export default watcher;

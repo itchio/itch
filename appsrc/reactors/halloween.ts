@@ -1,11 +1,12 @@
 
+import {Watcher} from "./watcher";
+import * as actions from "../actions";
+
 import delay from "./delay";
 
-import * as actions from "../actions";
 import * as moment from "moment-timezone";
 
 import {IStore} from "../types";
-import {IAction, IBootPayload} from "../constants/action-types";
 
 import mklog from "../util/log";
 const log = mklog("updater");
@@ -41,15 +42,15 @@ function halloweenCheck (store: IStore) {
   }
 }
 
-async function boot (store: IStore, action: IAction<IBootPayload>) {
-  while (true) {
-    try {
-      halloweenCheck(store);
-    } catch (e) {
-      log(opts, `Got error: ${e.stack || e.message || e}`);
+export default function (watcher: Watcher) {
+  watcher.on(actions.boot, async (store, action) => {
+    while (true) {
+      try {
+        halloweenCheck(store);
+      } catch (e) {
+        log(opts, `Got error: ${e.stack || e.message || e}`);
+      }
+      await delay(HALLOWEEN_CHECK_DELAY);
     }
-    await delay(HALLOWEEN_CHECK_DELAY);
-  }
+  });
 }
-
-export default {boot};

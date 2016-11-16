@@ -1,4 +1,7 @@
 
+import {Watcher} from "../watcher";
+import * as actions from "../../actions";
+
 import delay from "../delay";
 
 import {opts} from "./log";
@@ -12,8 +15,6 @@ import {BrowserWindow} from "electron";
 import {Cancelled} from "../../tasks/errors";
 import downloadTask from "../../tasks/download";
 
-import * as actions from "../../actions";
-
 import {
   IStore,
   IDownloadItem,
@@ -25,16 +26,6 @@ const DOWNLOAD_DELAY = 250;
 
 let currentDownload: IDownloadItem = null;
 let currentEmitter: EventEmitter = null;
-
-export async function downloadWatcher (store: IStore) {
-  while (true) {
-    try {
-      await updateDownloadState(store);
-    } catch (e) {
-      log(opts, `While updating download state: ${e.stack || e}`);
-    }
-  }
-}
 
 async function updateDownloadState (store: IStore) {
   await delay(DOWNLOAD_DELAY);
@@ -123,4 +114,16 @@ async function start (store: IStore, download: IDownloadItem) {
     store.dispatch(actions.downloadEnded({id: download.id, err, downloadOpts}));
   }
   log(opts, "Download done!");
+}
+
+export default function (watcher: Watcher) {
+  watcher.on(actions.boot, async (store, action) => {
+    while (true) {
+      try {
+        await updateDownloadState(store);
+      } catch (e) {
+        log(opts, `While updating download state: ${e.stack || e}`);
+      }
+    }
+  });
 }

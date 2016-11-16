@@ -242,7 +242,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
       {
         icon: "checkmark",
         label: versionString(),
-        onClick: () => copyToClipboard(versionString()),
+        onClick: () => copyToClipboard({text: versionString()}),
         type: "info",
       },
       {

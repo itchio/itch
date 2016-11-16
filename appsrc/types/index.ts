@@ -544,6 +544,10 @@ export interface IModalButton {
     className?: string;
 }
 
+export function isModalButton (object: any): object is IModalButton {
+    return "label" in object;
+}
+
 // FIXME: that's naughty - just make static buttons be constants instead, that works.
 export type IModalButtonSpec = IModalButton | "ok" | "cancel";
 

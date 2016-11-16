@@ -1,8 +1,8 @@
 
-import * as ospath from "path";
+import {Watcher} from "../reactors/watcher";
+import * as actions from "../actions";
 
-import {IStore} from "../types";
-import {IAction, INotifyHtml5Payload} from "../constants/action-types";
+import * as ospath from "path";
 
 declare class Notification {
   onClick: () => void;
@@ -10,20 +10,20 @@ declare class Notification {
   constructor(title: string, opts: any)
 }
 
-async function notifyHtml5 (store: IStore, action: IAction<INotifyHtml5Payload>) {
-  const {title, onClick} = action.payload;
-  const opts = Object.assign({}, action.payload.opts);
+export default function (watcher: Watcher) {
+  watcher.on(actions.notifyHtml5, async (store, action) => {
+    const {title, onClick} = action.payload;
+    const opts = Object.assign({}, action.payload.opts);
 
-  if (opts.icon) {
-    opts.icon = ospath.resolve(ospath.join(__dirname, "..", opts.icon));
-  }
-  const notification = new Notification(title, opts); // eslint-disable-line
+    if (opts.icon) {
+      opts.icon = ospath.resolve(ospath.join(__dirname, "..", opts.icon));
+    }
+    const notification = new Notification(title, opts); // eslint-disable-line
 
-  if (onClick) {
-    notification.onClick = () => {
-      store.dispatch(onClick);
-    };
-  }
+    if (onClick) {
+      notification.onClick = () => {
+        store.dispatch(onClick);
+      };
+    }
+  })
 }
-
-export default {notifyHtml5};
