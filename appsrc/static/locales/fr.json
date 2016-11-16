@@ -348,5 +348,11 @@
     "preferences.proxy_server_address": "Proxy HTTP",
     "preferences.proxy_server_source.direct": "Direct (pas de proxy)",
     "preferences.proxy_server_source.env": "Configuré par variable d'environment",
-    "preferences.proxy_server_source.os": "D'après les paramètres du système"
+    "preferences.proxy_server_source.os": "D'après les paramètres du système",
+    "login.messages.welcome_back-halloween": "Qui ose me réveiller ?",
+    "notification.download_installed": "{{title}} est installé !",
+    "notification.download_updated": "{{title}} a été mis à jour !",
+    "preferences.behavior.ready_notification": "Envoyer une notification quand un jeu s'est installé ou mis à jour",
+    "prompt.install_error.title": "Un problème est survenu lors de l'installation :",
+    "prompt.install_error.find_upload": "En cherchant un fichier à télécharger : {{message}}"
 }
