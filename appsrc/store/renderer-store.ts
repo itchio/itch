@@ -7,7 +7,7 @@ import route from "../reactors/route";
 import watcher from "../renderer-reactors";
 import reducer from "../reducers";
 
-import {IStore} from "../types";
+import {IRendererStore} from "../types";
 
 const filter = true;
 const middleware: Middleware[] = [];
@@ -43,7 +43,9 @@ if (REDUX_DEVTOOLS_ENABLED) {
 }
 
 const initialState = {};
-const store = createStore(reducer, initialState, enhancer) as IStore;
+const store = createStore(reducer, initialState, enhancer) as IRendererStore;
 route(watcher, store, { type: "__MOUNT", payload: null });
+
+store.watcher = watcher;
 
 export default store;

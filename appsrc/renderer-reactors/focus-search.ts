@@ -5,14 +5,6 @@ import * as actions from "../actions";
 import delay from "../reactors/delay";
 
 export default function (watcher: Watcher) {
-  watcher.on(actions.focusSearch, async (store, action) => {
-    const searchBar = document.querySelector("#search") as HTMLInputElement;
-    if (searchBar) {
-      searchBar.focus();
-      searchBar.select();
-    }
-  });
-
   watcher.on(actions.closeSearch, async (store, action) => {
     const searchBar = document.querySelector("#search") as HTMLInputElement;
     // hasFocus(Element) isn't in typescript typings

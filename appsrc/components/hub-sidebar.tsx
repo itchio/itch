@@ -22,10 +22,13 @@ import {IState, IUserRecord, IGameRecord, ITabDataSet, ILocalizedString} from ".
 import {ILocalizer} from "../localizer";
 import {IAction, dispatcher} from "../constants/action-types";
 
+import watching, {Watcher} from "./watching";
+
 export function versionString () {
   return `itch v${app.getVersion()}`;
 }
 
+@watching
 export class HubSidebar extends React.Component<IHubSidebarProps, void> {
   refs: {
     search: HTMLInputElement;
@@ -39,6 +42,16 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchFocus = this.onSearchFocus.bind(this);
     this.onSearchBlur = debounce(this.onSearchBlur.bind(this), 200);
+  }
+
+  subscribe (watcher: Watcher) {
+    watcher.on(actions.focusSearch, async (store, action) => {
+      const {search} = this.refs;
+      if (search) {
+        search.focus();
+        search.select();
+      }
+    });
   }
 
   render () {

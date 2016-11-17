@@ -9,6 +9,7 @@ import {opts} from "../logger";
 import mklog from "../util/log";
 const log = mklog("reactors");
 
+// TODO: make this a higher-order function
 export default function route (watcher: Watcher, store: IStore, action: IAction<any>) {
   each(watcher.reactors[action.type], async (reactor) => {
     try {
@@ -24,5 +25,23 @@ export default function route (watcher: Watcher, store: IStore, action: IAction<
     } catch (e) {
       log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
     }
+  });
+
+  each(watcher.subs, (sub) => {
+    each(sub.reactors[action.type], async (reactor) => {
+      try {
+        await reactor(store, action);
+      } catch (e) {
+        log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
+      }
+    });
+
+    each(sub.reactors._ALL, async (reactor) => {
+      try {
+        await reactor(store, action);
+      } catch (e) {
+        log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
+      }
+    });
   });
 }

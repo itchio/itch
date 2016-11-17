@@ -7,6 +7,7 @@ import {connect as reduxConnect} from "react-redux";
 import {getT} from "../localizer";
 
 import {IState} from "../types";
+import {IAction} from "../constants/action-types";
 
 const identity = (x: any) => x;
 
@@ -30,13 +31,21 @@ const augment = createSelector(
   }
 );
 
+interface IStateMapper <T> {
+  (state: IState, props: any): T;
+}
+
+interface IDispatchMapper <T> {
+  (dispatch: (action: IAction<any>) => void, props: any): T;
+}
+
 // TODO: type better (typescript has multiple dispatch right?)
-export function connect (mapStateToProps?: any, mapDispatchToProps?: any) {
-  const augmentedMapStateToProps = (state: any, props: any) => {
+export function connect <S, P> (mapStateToProps?: IStateMapper<S>, mapDispatchToProps?: IDispatchMapper<P>) {
+  const augmentedMapStateToProps = (state: IState, props: any) => {
     if (mapStateToProps) {
       const base = mapStateToProps(state, props);
       if (typeof base === "function") {
-        return (innerState: any, innerProps: any) => augment(innerState, base(innerState, innerProps));
+        return (innerState: IState, innerProps: any) => augment(innerState, base(innerState, innerProps));
       } else {
         return augment(state, base);
       }

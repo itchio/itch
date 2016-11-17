@@ -5,6 +5,15 @@ import {Logger} from "../util/log";
 
 export interface IStore extends Store<IState> {}
 
+interface IWatcher {
+    addSub(sub: IWatcher): void;
+    removeSub(sub: IWatcher): void;
+}
+
+export interface IRendererStore extends IStore {
+    watcher: IWatcher;
+}
+
 export interface IDispatch {
     (a: Action<any>): void;
 }

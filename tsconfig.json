@@ -6,6 +6,7 @@
         "module": "commonjs",
         "noImplicitAny": true,
         "alwaysStrict": true,
+        "experimentalDecorators": true,
         "jsx": "react"
     },
     "exclude": [

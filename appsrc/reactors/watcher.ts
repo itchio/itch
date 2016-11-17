@@ -21,8 +21,11 @@ export class Watcher {
     _MOUNT?: IReactor<any>[];
   };
 
+  subs: Watcher[];
+
   constructor() {
     this.reactors = {};
+    this.subs = [];
   }
 
   /**
@@ -68,6 +71,17 @@ export class Watcher {
         throw new Error(`trying to react to unknown action type ${key}`);
       }
     });
+  }
+
+  addSub (watcher: Watcher) {
+    this.subs.push(watcher);
+  }
+
+  removeSub (watcher: Watcher) {
+    const index = this.subs.indexOf(watcher);
+    if (index !== -1) {
+      this.subs.splice(index, 1);
+    }
   }
 
   protected addWatcher (type: string, reactor: IReactor<any>) {
