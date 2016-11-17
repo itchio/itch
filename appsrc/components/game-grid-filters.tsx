@@ -12,6 +12,9 @@ import {IState} from "../types";
 import {ILocalizer} from "../localizer";
 import {IAction, dispatcher} from "../constants/action-types";
 
+import watching, {Watcher} from "./watching";
+
+@watching
 class GameGridFilters extends React.Component<IGameGridFiltersProps, void> {
   refs: {
     search: HTMLInputElement;
@@ -20,6 +23,23 @@ class GameGridFilters extends React.Component<IGameGridFiltersProps, void> {
   constructor () {
     super();
     this.onQueryChanged = debounce(this.onQueryChanged.bind(this), 100);
+  }
+
+  subscribe (watcher: Watcher) {
+    watcher.on(actions.focusFilter, async (store, action) => {
+      const {search} = this.refs;
+      if (search) {
+        search.focus();
+        search.select();
+      }
+    });
+
+    watcher.on(actions.clearFilters, async (store, action) => {
+      const {search} = this.refs;
+      if (search) {
+        search.value = "";
+      }
+    });
   }
 
   render () {
