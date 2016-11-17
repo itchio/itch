@@ -900,3 +900,6 @@ export interface IViewCreatorProfilePayload {}
 
 export const VIEW_COMMUNITY_PROFILE = "VIEW_CREATOR_PROFILE";
 export interface IViewCommunityProfilePayload {}
+
+export const OPEN_AT_LOGIN_ERROR = "OPEN_AT_LOGIN_ERROR";
+export interface IOpenAtLoginErrorPayload extends Types.IOpenAtLoginError {}

@@ -9,11 +9,13 @@ import {
   IDismissStatusMessagePayload,
   IEnableBonusPayload,
   IDisableBonusPayload,
+  IOpenAtLoginErrorPayload,
 } from "../constants/action-types";
 
 const initialState = {
   messages: [],
   bonuses: {},
+  openAtLoginError: null,
 } as IStatusState;
 
 export default handleActions<IStatusState, any>({
@@ -49,6 +51,13 @@ export default handleActions<IStatusState, any>({
       bonuses: Object.assign({}, state.bonuses, {
         [bonusName]: false,
       }),
+    });
+  },
+
+  OPEN_AT_LOGIN_ERROR: (state: IStatusState, action: IAction<IOpenAtLoginErrorPayload>) => {
+    const error = action.payload;
+    return Object.assign({}, state, {
+      openAtLoginError: error,
     });
   },
 }, initialState);

@@ -1154,12 +1154,26 @@ export interface IDownloadsState {
     progress: number;
 }
 
+export type OpenAtLoginErrorCause = "no_desktop_file" | "error";
+
+/**
+ * Something went wrong when applying
+ */
+export interface IOpenAtLoginError {
+  /** why did applying the setting failed */
+  cause: OpenAtLoginErrorCause;
+
+  /** if cause is `error`, this is an error message */
+  message?: string;
+}
+
 export interface IStatusState {
     messages: ILocalizedString[];
     /** app easter eggs, enabled throughout some periods */
     bonuses: {
         halloween: boolean;
     };
+    openAtLoginError: IOpenAtLoginError;
 }
 
 // i18n

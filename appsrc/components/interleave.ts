@@ -7,7 +7,7 @@ enum State {
   expectClose,
 }
 
-type IComponent = JSX.Element | JSX.Element[] | string
+export type IComponent = JSX.Element | JSX.Element[] | string
 
 interface IVars {
   [key: string]: string;
@@ -17,7 +17,9 @@ interface IComponents {
   [key: string]: IComponent;
 }
 
-function interleave (t: ILocalizer, key: string, components: IComponents, textVars: IVars = {}) {
+export default function interleave (
+    t: ILocalizer, key: string, components: IComponents,
+    textVars: IVars = {}): IComponent[] {
   if (typeof textVars === "undefined") {
     textVars = {};
   }
@@ -70,5 +72,3 @@ function interleave (t: ILocalizer, key: string, components: IComponents, textVa
 
   return result;
 }
-
-export default interleave;

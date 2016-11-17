@@ -1,7 +1,7 @@
 
 const originalItchio = "https://itch.io";
 const itchio = process.env.WHEN_IN_ROME || originalItchio;
-const manual = "https://itch.io/docs/itch/";
+const manual = "https://itch.io/docs/itch";
 const itchRepo = "https://github.com/itchio/itch";
 
 interface IUpdateServers {
@@ -41,4 +41,5 @@ export default {
   linuxSandboxSetup: `${manual}/sandbox/linux.html#one-time-setup`,
   windowsSandboxSetup: `${manual}/sandbox/windows.html#one-time-setup`,
   releasesPage: `${itchRepo}/releases`,
+  installingOnLinux: `${manual}/installing/linux/`,
 };

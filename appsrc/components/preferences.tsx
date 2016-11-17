@@ -14,6 +14,7 @@ import urls from "../constants/urls";
 import Icon from "./icon";
 import SelectRow from "./select-row";
 import {versionString} from "./hub-sidebar";
+import OpenAtLoginError from "./preferences/open-at-login-error";
 
 import * as actions from "../actions";
 
@@ -104,6 +105,8 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
           }}/>
           <span> {t("preferences.behavior.open_at_login")} </span>
         </label>
+
+        <OpenAtLoginError/>
 
         <label className={classNames({active: openAsHidden})}>
           <input type="checkbox" checked={openAsHidden} onChange={(e) => {
