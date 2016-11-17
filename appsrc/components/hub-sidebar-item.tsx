@@ -20,6 +20,15 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     this.onClick = this.onClick.bind(this);
   }
 
+  componentDidUpdate()  {
+    if (this.props.active) {
+      const node = findDOMNode(this);
+      if (node) {
+        (node as any).scrollIntoViewIfNeeded();
+      }
+    }
+  }
+
   onClick (e: React.MouseEvent<HTMLElement>) {
     const nativeEvent = e.nativeEvent as MouseEvent;
     if (nativeEvent.which === 2) {
@@ -168,11 +177,8 @@ const tabTarget = {
 
     if (typeof dragIndex !== "number" || typeof hoverIndex !== "number") {
       // some tabs are undroppable
-      // console.log('ignoring ', dragIndex, hoverIndex)
       return;
     }
-
-    // console.log('hovering ', dragIndex, hoverIndex)
 
     // Don't replace items with themselves
     if (dragIndex === hoverIndex) {
