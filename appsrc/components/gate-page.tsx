@@ -18,6 +18,9 @@ import {IState, ISetupOperation, IRememberedSessionsState} from "../types";
 import {IAction, dispatcher, ILoginWithTokenPayload} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
+import watching, {Watcher} from "./watching";
+
+@watching
 export class GatePage extends React.Component<IGatePageProps, void> {
   refs: {
     username: HTMLInputElement;
@@ -28,6 +31,15 @@ export class GatePage extends React.Component<IGatePageProps, void> {
     super();
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
+  }
+
+  subscribe (watcher: Watcher) {
+    watcher.on(actions.loginFailed, async (store, action) => {
+      const {username} = this.refs;
+      if (username) {
+        username.value = action.payload.username;
+      }
+    });
   }
 
   render () {
