@@ -889,9 +889,6 @@ export const GC_DATABASE = "GC_DATABASE";
 export interface IGcDatabasePayload {}
 
 /* Preferences */
-export const OPEN_PREFERENCES = "OPEN_PREFERENCES";
-export interface IOpenPreferencesPayload {}
-
 export const PREFERENCES_SET_LANGUAGE = "PREFERENCES_SET_LANGUAGE";
 export interface IPreferencesSetLanguagePayload {}
 

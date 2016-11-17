@@ -35,7 +35,6 @@ import {
   TRIGGER_BACK, ITriggerBackPayload,
   TRIGGER_LOCATION, ITriggerLocationPayload,
 
-  OPEN_PREFERENCES, IOpenPreferencesPayload,
   VIEW_CREATOR_PROFILE, IViewCreatorProfilePayload,
   VIEW_COMMUNITY_PROFILE, IViewCommunityProfilePayload,
 } from "../constants/action-types";
@@ -87,6 +86,5 @@ export const triggerOk = createAction<ITriggerOkPayload>(TRIGGER_OK);
 export const triggerBack = createAction<ITriggerBackPayload>(TRIGGER_BACK);
 export const triggerLocation = createAction<ITriggerLocationPayload>(TRIGGER_LOCATION);
 
-export const openPreferences = createAction<IOpenPreferencesPayload>(OPEN_PREFERENCES);
 export const viewCreatorProfile = createAction<IViewCreatorProfilePayload>(VIEW_CREATOR_PROFILE);
 export const viewCommunityProfile = createAction<IViewCommunityProfilePayload>(VIEW_COMMUNITY_PROFILE);

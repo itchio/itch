@@ -209,7 +209,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
 
   dropdown () {
     const {viewCreatorProfile, viewCommunityProfile, changeUser,
-      openPreferences, navigate, copyToClipboard, quit, reportIssue,
+      navigate, copyToClipboard, quit, reportIssue,
       openUrl, checkForSelfUpdate} = this.props;
 
     const items = [
@@ -234,7 +234,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
       {
         icon: "cog",
         label: ["sidebar.preferences"],
-        onClick: openPreferences,
+        onClick: () => navigate("preferences"),
       },
       {
         type: "separator",
@@ -331,7 +331,6 @@ interface IHubSidebarProps {
   closeAllTabs: typeof actions.closeAllTabs;
   moveTab: typeof actions.moveTab;
   openTabContextMenu: typeof actions.openTabContextMenu;
-  openPreferences: typeof actions.openPreferences;
   newTab: typeof actions.newTab;
   copyToClipboard: typeof actions.copyToClipboard;
 
@@ -406,7 +405,6 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
   viewCreatorProfile: dispatcher(dispatch, actions.viewCreatorProfile),
   viewCommunityProfile: dispatcher(dispatch, actions.viewCommunityProfile),
   changeUser: dispatcher(dispatch, actions.changeUser),
-  openPreferences: dispatcher(dispatch, actions.openPreferences),
   openTabContextMenu: dispatcher(dispatch, actions.openTabContextMenu),
   copyToClipboard: dispatcher(dispatch, actions.copyToClipboard),
 
