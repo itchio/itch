@@ -23,7 +23,7 @@ module.exports = {
     })
 
     $.say('Copying linux extras')
-    $($.sh(`cp "linux-extras/io.itch.${$.app_name()}.desktop" "${stage2_path}/usr/share/applications/${$.app_name()}.desktop"`))
+    $($.sh(`cp "linux-extras/io.itch.${$.app_name()}.desktop" "${stage2_path}/usr/share/applications/io.itch.${$.app_name()}.desktop"`))
     $($.sh(`cp "linux-extras/${$.app_name()}.6" "${stage2_path}/usr/share/man/man6/${$.app_name()}.6"`))
     $($.sh(`cp "linux-extras/${$.app_name()}.appdata.xml" "${stage2_path}/usr/share/metainfo/${$.app_name()}.appdata.xml"`))
   }

@@ -21,7 +21,7 @@ async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openA
   if (os.platform() === "linux") {
     // cf. https://standards.freedesktop.org/autostart-spec/autostart-spec-latest.html#startup
     const configHome = process.env.XDG_CONFIG_HOME || ospath.join(app.getPath("home"), ".config", "autostart");
-    const desktopFileName = `io.itch.${app.getName()}`;
+    const desktopFileName = `io.itch.${app.getName()}.desktop`;
     const desktopFilePath = ospath.join("/usr/share/applications", desktopFileName);
     const autostartFilePath = ospath.join(configHome, desktopFileName);
 
