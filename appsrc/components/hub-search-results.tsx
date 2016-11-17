@@ -23,7 +23,24 @@ import {IState, IGameRecord, IUserRecord, ISessionSearchState, ISearchResults} f
 import {IAction, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
-export class SearchResult extends React.Component<ISearchResultProps, void> {
+import delay from "../reactors/delay";
+
+import {findDOMNode} from "react-dom";
+
+interface IGenericSearchResultProps {
+  chosen: boolean;
+}
+
+class GenericSearchResult <Props extends IGenericSearchResultProps, State> extends React.Component<Props, State> {
+  componentDidUpdate() {
+    if (this.props.chosen) {
+      const node = findDOMNode(this);
+      (node as any).scrollIntoViewIfNeeded();
+    }
+  }
+}
+
+export class SearchResult extends GenericSearchResult<ISearchResultProps, void> {
   render () {
     const {game, onClick, chosen} = this.props;
     const {title, stillCoverUrl, coverUrl} = game;
@@ -51,7 +68,7 @@ export class SearchResult extends React.Component<ISearchResultProps, void> {
       chosen: chosen,
     });
 
-    return <div className={resultClasses} data-path={`games/${game.id}`} onClick={onClick}>
+    return <div className={resultClasses} data-path={`games/${game.id}`} onClick={onClick} ref="root">
       <img src={stillCoverUrl || coverUrl}/>
       <div className="title-block">
         <h4>{title}</h4>
@@ -70,7 +87,7 @@ interface ISearchResultProps {
   chosen: boolean;
 }
 
-export class UserSearchResult extends React.Component<IUserSearchResultProps, void> {
+export class UserSearchResult extends GenericSearchResult<IUserSearchResultProps, void> {
   render () {
     const {user, onClick, chosen} = this.props;
     const {displayName, username, stillCoverUrl, coverUrl} = user;

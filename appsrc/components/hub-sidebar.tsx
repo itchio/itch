@@ -52,6 +52,13 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
         search.select();
       }
     });
+
+    watcher.on(actions.closeSearch, async (store, action) => {
+      const {search} = this.refs;
+      if (search) {
+        search.blur();
+      }
+    });
   }
 
   render () {
