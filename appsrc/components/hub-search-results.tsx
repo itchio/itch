@@ -23,8 +23,6 @@ import {IState, IGameRecord, IUserRecord, ISessionSearchState, ISearchResults} f
 import {IAction, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
-import delay from "../reactors/delay";
-
 import {findDOMNode} from "react-dom";
 
 interface IGenericSearchResultProps {
