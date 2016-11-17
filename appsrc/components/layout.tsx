@@ -9,11 +9,40 @@ import StatusBar from "./status-bar";
 
 import {IState} from "../types";
 
+import watching, {Watcher} from "./watching";
+import * as actions from "../actions";
+import * as ospath from "path";
+
+declare class Notification {
+  onclick: () => void;
+
+  constructor(title: string, opts: any)
+}
+
 /**
  * Top-level component in the app, decides which page to show
  * Also, subscribes to app store to synchronize its state
  */
+@watching
 class Layout extends React.Component<ILayoutProps, void> {
+  subscribe (watcher: Watcher) {
+    watcher.on(actions.notifyHtml5, async (store, action) => {
+      const {title, onClick} = action.payload;
+      const opts = Object.assign({}, action.payload.opts);
+
+      if (opts.icon) {
+        opts.icon = ospath.resolve(ospath.join(__dirname, "..", opts.icon));
+      }
+      const notification = new Notification(title, opts); // eslint-disable-line
+
+      if (onClick) {
+        notification.onclick = () => {
+          store.dispatch(onClick);
+        };
+      }
+    });
+  }
+
   render () {
     const {halloween} = this.props;
 
