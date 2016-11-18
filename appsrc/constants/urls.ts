@@ -25,6 +25,7 @@ export default {
     stable: "https://nuts.itch.zone",
     canary: "https://nuts-canary.itch.ovh",
   } as IUpdateServers,
+  javaDownload: "https://www.java.com/en/download",
 
   itchioApi: itchio,
   termsOfService: `${itchio}/docs/legal/terms`,

@@ -46,6 +46,7 @@
     "@types/sinon": "^1.16.31",
     "@types/sinon-as-promised": "^4.0.4",
     "@types/tmp": "0.0.31",
+    "@types/which": "^1.0.28",
     "bluebird": "^3.4.0",
     "btoa": "^1.1.2",
     "classnames": "^2.2.5",
@@ -104,7 +105,8 @@
     "tmp": "0.0.29",
     "toml": "^2.3.0",
     "underscore": "^1.8.3",
-    "walk": "^2.3.9"
+    "walk": "^2.3.9",
+    "which": "^1.2.11"
   },
   "devDependencies": {
     "electron-packager": "^7.0.1",
