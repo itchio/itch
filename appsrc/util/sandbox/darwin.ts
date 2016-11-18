@@ -7,14 +7,12 @@ import sandboxTemplate from "../../constants/sandbox-policies/macos-template";
 import spawn from "../spawn";
 import sf from "../sf";
 
-import { Logger } from "../log";
 import mklog from "../log";
 const log = mklog("sandbox/darwin");
 
 import common from "./common";
 
-import { INeed } from "./types";
-import { IGameRecord } from "../../types";
+import {INeed, IWithinOpts, IWithinCbOpts} from "./types";
 
 const INVESTIGATE_SANDBOX = process.env.INVESTIGATE_SANDBOX === "1";
 
@@ -30,23 +28,10 @@ export async function check() {
   return { needs, errors };
 }
 
-export interface IWithinOpts {
-  game: IGameRecord;
-  appPath: string;
-  exePath: string;
-  fullExec: string;
-  argString: string;
-  isBundle: boolean;
-
-  logger: Logger;
-}
-
-export interface IWithinCbOpts {
-  fakeApp: string;
-}
-
 export async function within(opts: IWithinOpts, cb: (opts: IWithinCbOpts) => Promise<void>) {
   const {appPath, exePath, fullExec, argString, game, isBundle} = opts;
+
+  const cwd = opts.cwd || ospath.dirname(fullExec);
 
   log(opts, "generating sandbox policy");
   const sandboxProfilePath = ospath.join(appPath, ".itch", "isolate-app.sb");
@@ -83,7 +68,7 @@ export async function within(opts: IWithinOpts, cb: (opts: IWithinCbOpts) => Pro
   const fakeBinary = ospath.join(fakeApp, "Contents", "MacOS", exeName);
   await sf.writeFile(fakeBinary,
     `#!/bin/bash
-cd ${spawn.escapePath(ospath.dirname(fullExec))}
+cd ${spawn.escapePath(cwd)}
 sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullExec)} ${argString}`
   );
   await sf.chmod(fakeBinary, 0o700);

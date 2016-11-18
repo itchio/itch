@@ -101,11 +101,14 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
     throw err;
   }
 
+  let cwd: string;
+
   if (/\.jar$/i.test(exePath)) {
     log(opts, "launching .jar, this will fail if no system JRE is installed");
     args = [
       "-jar", exePath, ...args,
     ];
+    cwd = ospath.dirname(exePath);
     exePath = "java";
   }
 
@@ -176,6 +179,8 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
         fullExec,
         argString,
         isBundle,
+        cwd,
+        logger: opts.logger,
       });
 
       await sandbox.within(sandboxOpts, async function ({fakeApp}) {
@@ -183,10 +188,14 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
       });
     } else {
       log(opts, "no app isolation");
+      const spawnOpts = Object.assign({}, opts, {
+        cwd,
+      });
+
       if (isBundle) {
-        await doSpawn(fullExec, `open -W ${spawn.escapePath(exePath)} --args ${argString}`, env, out, opts);
+        await doSpawn(fullExec, `open -W ${spawn.escapePath(exePath)} --args ${argString}`, env, out, spawnOpts);
       } else {
-        await doSpawn(fullExec, `${spawn.escapePath(exePath)} ${argString}`, env, out, opts);
+        await doSpawn(fullExec, `${spawn.escapePath(exePath)} ${argString}`, env, out, spawnOpts);
       }
     }
   } else if (platform === "win32") {
@@ -252,11 +261,16 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
   }
 }
 
+interface IDoSpawnOpts extends IStartTaskOpts {
+  /** current working directory for spawning */
+  cwd?: string;
+}
+
 async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment, emitter: EventEmitter,
-                        opts: IStartTaskOpts) {
+                        opts: IDoSpawnOpts) {
   log(opts, `spawn command: ${fullCommand}`);
 
-  const cwd = ospath.dirname(exePath);
+  const cwd = opts.cwd || ospath.dirname(exePath);
   log(opts, `working directory: ${cwd}`);
 
   const args = shellQuote.parse(fullCommand);
