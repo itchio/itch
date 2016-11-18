@@ -21,6 +21,7 @@ export default function (watcher: Watcher) {
 
       log(opts, "imported preferences: ", JSON.stringify(prefs, null, 2));
       store.dispatch(actions.updatePreferences(prefs));
+      store.dispatch(actions.preferencesLoaded(prefs));
     } catch (err) {
       log(opts, `while importing preferences: ${err}`);
     }

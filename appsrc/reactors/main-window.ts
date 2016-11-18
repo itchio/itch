@@ -27,7 +27,7 @@ const macOs = os.platform() === "darwin";
 
 import {IStore} from "../types";
 
-async function createWindow (store: IStore) {
+async function createWindow (store: IStore, hidden: boolean) {
   if (createLock) {
     return;
   }
@@ -199,7 +199,12 @@ async function createWindow (store: IStore) {
     }
 
     store.dispatch(actions.windowReady({id: window.id}));
-    showWindow(window);
+
+    if (hidden) {
+      store.dispatch(actions.bounce({}));
+    } else {
+      showWindow(window);
+    }
   });
 
   const uri = `file://${__dirname}/../index.html`;
@@ -225,8 +230,9 @@ function showWindow (window: any) {
 }
 
 export default function (watcher: Watcher) {
-  watcher.on(actions.boot, async (store, action) => {
-    store.dispatch(actions.focusWindow({}));
+  watcher.on(actions.preferencesLoaded, async (store, action) => {
+    const hidden = action.payload.openAsHidden;
+    store.dispatch(actions.focusWindow({hidden}));
   });
 
   watcher.on(actions.focusWindow, async (store, action) => {
@@ -242,7 +248,7 @@ export default function (watcher: Watcher) {
         showWindow(window);
       }
     } else {
-      await createWindow(store);
+      await createWindow(store, action.payload.hidden);
     }
   });
 

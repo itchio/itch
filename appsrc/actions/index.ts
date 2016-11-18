@@ -25,6 +25,7 @@ import {
     LANGUAGE_CHANGED, ILanguageChangedPayload,
 
     UPDATE_PREFERENCES, IUpdatePreferencesPayload,
+    PREFERENCES_LOADED, IPreferencesLoadedPayload,
 
     FETCH_COLLECTION_GAMES, IFetchCollectionGamesPayload,
     COLLECTION_GAMES_FETCHED, ICollectionGamesFetchedPayload,
@@ -39,6 +40,7 @@ export const languageSniffed = createAction<ILanguageSniffedPayload>(LANGUAGE_SN
 export const languageChanged = createAction<ILanguageChangedPayload>(LANGUAGE_CHANGED);
 
 export const updatePreferences = createAction<IUpdatePreferencesPayload>(UPDATE_PREFERENCES);
+export const preferencesLoaded = createAction<IPreferencesLoadedPayload>(PREFERENCES_LOADED);
 
 export const fetchCollectionGames = createAction<IFetchCollectionGamesPayload>(FETCH_COLLECTION_GAMES);
 export const collectionGamesFetched = createAction<ICollectionGamesFetchedPayload>(COLLECTION_GAMES_FETCHED);

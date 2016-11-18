@@ -162,6 +162,9 @@ export const FOCUS_WINDOW = "FOCUS_WINDOW";
 export interface IFocusWindowPayload {
   /** if set to true, toggle focus instead of always focusing */
   toggle?: boolean;
+
+  /** if set to true, create window as hidden if it doesn't exist, does nothing otherwise */
+  hidden?: boolean;
 }
 
 export const HIDE_WINDOW = "HIDE_WINDOW";
@@ -894,6 +897,9 @@ export interface IPreferencesSetLanguagePayload {}
 
 export const UPDATE_PREFERENCES = "UPDATE_PREFERENCES";
 export interface IUpdatePreferencesPayload extends Types.IPreferencesState {};
+
+export const PREFERENCES_LOADED = "PREFERENCES_LOADED";
+export interface IPreferencesLoadedPayload extends Types.IPreferencesState {};
 
 export const VIEW_CREATOR_PROFILE = "VIEW_CREATOR_PROFILE";
 export interface IViewCreatorProfilePayload {}
