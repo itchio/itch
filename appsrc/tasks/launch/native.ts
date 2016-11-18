@@ -177,6 +177,10 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
     }
   }
 
+  const spawnOpts = Object.assign({}, opts, {
+    cwd,
+  });
+
   let fullExec = exePath;
   if (platform === "darwin") {
     const isBundle = isAppBundle(exePath);
@@ -207,9 +211,6 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
       });
     } else {
       log(opts, "no app isolation");
-      const spawnOpts = Object.assign({}, opts, {
-        cwd,
-      });
 
       if (isBundle) {
         await doSpawn(fullExec, `open -W ${spawn.escapePath(exePath)} --args ${argString}`, env, out, spawnOpts);
@@ -247,7 +248,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
     } else {
       log(opts, "no app isolation");
     }
-    await doSpawn(exePath, cmd, env, out, opts);
+    await doSpawn(exePath, cmd, env, out, spawnOpts);
 
     if (isolateApps) {
       const denyRes = await spawn.getOutput({
@@ -270,10 +271,10 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
       await sf.writeFile(sandboxProfilePath, sandboxSource);
 
       cmd = `firejail "--profile=${sandboxProfilePath}" -- ${cmd}`;
-      await doSpawn(exePath, cmd, env, out, opts);
+      await doSpawn(exePath, cmd, env, out, spawnOpts);
     } else {
       log(opts, "no app isolation");
-      await doSpawn(exePath, cmd, env, out, opts);
+      await doSpawn(exePath, cmd, env, out, spawnOpts);
     }
   } else {
     throw new Error(`unsupported platform: ${platform}`);

@@ -316,7 +316,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
     log(opts, `error while launching ${cave.id}: ${e.stack || e}`);
     if (e instanceof Crash) {
       const secondsRunning = (Date.now() - startedAt) / 1000;
-      if (secondsRunning > 10) {
+      if (secondsRunning > 2) {
         // looks like the game actually launched fine!
         log(opts, `Game was running for ${secondsRunning} seconds, ignoring: ${e.toString()}`);
         return;
