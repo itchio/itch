@@ -20,10 +20,10 @@ export default function (watcher: Watcher) {
     if (err) {
       log(opts, `Error in task ${name}: ${err}`);
       if (name === "install") {
-        log(opts, "Install failed, attempting to destroy cave");
         const {gameId} = taskOpts;
         const cave = findWhere(getGlobalMarket().getEntities("caves"), {gameId}) as ICaveRecord;
         if (cave && cave.fresh) {
+          log(opts, "Install failed for fresh cave, destroying");
           store.dispatch(actions.implodeCave({caveId: cave.id}));
         }
       }
