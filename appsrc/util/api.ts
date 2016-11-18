@@ -126,7 +126,7 @@ export class Client {
   }
 
   async loginKey (key: string): Promise<any> {
-    return await this.request("post", `/${key}/me`, {
+    return await this.request("get", `/${key}/me`, {
       source: "desktop",
     });
   }
