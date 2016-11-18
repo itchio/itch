@@ -44,6 +44,7 @@ export default `
   (subpath "/usr/bin")
   (subpath "/bin")
   (subpath "/System/Library")
+  (subpath "/Library/Java/JavaVirtualMachines")
 
   ;; is this overkill and if so, what's the right fix?
   ;; without it, Chromium can't load images over HTTPS
