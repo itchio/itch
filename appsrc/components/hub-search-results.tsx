@@ -25,17 +25,32 @@ import {ILocalizer} from "../localizer";
 
 import {findDOMNode} from "react-dom";
 
+import watching, {Watcher} from "./watching";
+
 interface IGenericSearchResultProps {
   chosen: boolean;
 }
 
-class GenericSearchResult <Props extends IGenericSearchResultProps, State> extends React.Component<Props, State> {
+@watching
+abstract class GenericSearchResult <Props extends IGenericSearchResultProps, State>
+    extends React.Component<Props, State> {
+  subscribe (watcher: Watcher) {
+    watcher.on(actions.triggerOk, async (store, action) => {
+      if (this.props.chosen) {
+        store.dispatch(actions.navigate(this.getPath()));
+        store.dispatch(actions.closeSearch({}));
+      }
+    });
+  }
+
   componentDidUpdate() {
     if (this.props.chosen) {
       const node = findDOMNode(this);
       (node as any).scrollIntoViewIfNeeded();
     }
   }
+  
+  abstract getPath(): string
 }
 
 export class SearchResult extends GenericSearchResult<ISearchResultProps, void> {
@@ -66,7 +81,7 @@ export class SearchResult extends GenericSearchResult<ISearchResultProps, void> 
       chosen: chosen,
     });
 
-    return <div className={resultClasses} data-path={`games/${game.id}`} onClick={onClick} ref="root">
+    return <div className={resultClasses} onClick={onClick} ref="root">
       <img src={stillCoverUrl || coverUrl}/>
       <div className="title-block">
         <h4>{title}</h4>
@@ -76,6 +91,10 @@ export class SearchResult extends GenericSearchResult<ISearchResultProps, void> 
         </span>
       </div>
     </div>;
+  }
+
+  getPath(): string {
+    return `games/${this.props.game.id}`;
   }
 }
 
@@ -94,12 +113,16 @@ export class UserSearchResult extends GenericSearchResult<IUserSearchResultProps
       chosen,
     });
 
-    return <div className={resultClasses} data-path={`users/${user.id}`} onClick={onClick}>
+    return <div className={resultClasses} onClick={onClick}>
       <img src={stillCoverUrl || coverUrl}/>
       <div className="title-block">
         <h4>{displayName || username}</h4>
       </div>
     </div>;
+  }
+
+  getPath(): string {
+    return `users/${this.props.user.id}`;
   }
 }
 
