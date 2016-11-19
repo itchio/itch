@@ -21,6 +21,8 @@ import {shell} from "./electron";
 
 import store from "./store";
 
+import setupShortcuts from "./shortcuts";
+
 const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === "1";
 
 let devTools: JSX.Element;
@@ -32,6 +34,8 @@ if (REDUX_DEVTOOLS_ENABLED) {
 let appNode: Element;
 
 function render () {
+  setupShortcuts(store);
+
   appNode = document.querySelector("#app");
   // typing is hard let's go jogging
   const WrappedLayout = DragDropContext(HTML5Backend)(Layout) as typeof React.Component;
