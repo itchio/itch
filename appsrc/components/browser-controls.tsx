@@ -53,6 +53,19 @@ export class BrowserControls extends React.Component<IBrowserControlsProps, IBro
         this.startEditingURL();
       }
     });
+
+    watcher.on(actions.triggerBack, async (store, action) => {
+      if (!this.props.active) {
+        return;
+      }
+
+      const {browserAddress} = this;
+      if (!browserAddress) {
+        return;
+      }
+
+      browserAddress.blur();
+    });
   }
 
   render () {
