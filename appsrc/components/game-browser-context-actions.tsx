@@ -5,13 +5,13 @@ import {connect} from "./connect";
 
 import {map} from "underscore";
 
-import Icon from "./icon";
-
 import listSecondaryActions, {IActionOpts} from "./game-actions/list-secondary-actions";
 import {IActionsInfo} from "./game-actions/types";
 
 import {ILocalizer} from "../localizer";
 import {IAction} from "../constants/action-types";
+
+import GameBrowserContextAction from "./game-browser-context-action";
 
 class GameBrowserContextActions extends React.Component<IGameBrowserContextActionsProps, void> {
   render () {
@@ -23,17 +23,7 @@ class GameBrowserContextActions extends React.Component<IGameBrowserContextActio
   }
 
   action (opts: IActionOpts) {
-    const {t, dispatch} = this.props;
-    const {action, icon, hint, label, type = "action", classes = []} = opts;
-    const spanClasses = classNames("secondary-action", `type-${type}`, classes, {
-      ["hint--top"]: !!hint,
-    });
-
-    const textLabel = "" + label;
-
-    return <span key={textLabel} className={spanClasses} data-hint={hint} onClick={() => dispatch(action)}>
-      <Icon icon={icon}/> {t.format(label)}
-    </span>;
+    return <GameBrowserContextAction opts={opts}/>;
   }
 }
 
