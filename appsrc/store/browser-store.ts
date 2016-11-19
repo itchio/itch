@@ -34,7 +34,8 @@ if (beChatty) {
         !/^WINDOW_/.test(action.type) &&
         !/_DB_/.test(action.type) &&
         !/LOCALE_/.test(action.type) &&
-        !/_FETCHED$/.test(action.type);
+        !/_FETCHED$/.test(action.type) &&
+        !/_DATAPOINT$/.test(action.type);
     },
     stateTransformer: (state: any) => "",
   });
