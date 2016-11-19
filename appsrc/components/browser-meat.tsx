@@ -35,69 +35,7 @@ import {transformUrl} from "../util/navigation";
 import {ITabData, IState} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
 
-/** An electron webview */
-interface IWebView {
-  /** where cookies/etc. are stored */
-  partition: string;
-
-  /** page being shown */
-  src: string;
-
-  /** local path to a JavaScript file to load before all others in webview */
-  preload: string;
-
-  /** whether plugins are allowed */
-  plugins: boolean;
-
-  stop(): void;
-  reload(): void;
-  goBack(): void;
-  goForward(): void;
-  loadURL(url: string): void;
-  clearHistory(): void;
-
-  getWebContents(): IWebContents;
-  canGoBack(): boolean;
-  canGoForward(): boolean;
-
-  executeJavaScript(code: string, userGesture?: boolean, callback?: (result: any) => void): void;
-
-  addEventListener(ev: string, cb: (ev: any) => void): void;
-  removeEventListener(ev: string, cb: (ev: any) => void): void;
-}
-
-/** An electron webcontents */
-interface IWebContents {
-  session: ISession;
-
-  openDevTools(opts?: {mode?: string}): void;
-  isDestroyed(): boolean;
-}
-
-/** An electron web session */
-interface ISession {
-  webRequest: IWebRequest;
-}
-
-interface IWebRequest {
-  onBeforeRequest: (filter: IWebRequestFilter, cb: IWebRequestCallback) => void;
-}
-
-interface IWebRequestFilter {
-  urls: string[];
-}
-
-interface IWebRequestCallback {
-  (details: {url: string}, cb: IWebRequestResponseCallback): void;
-}
-
-interface IWebRequestResponseCallback {
-  (opts: IWebRequestResponseCallbackOpts): void;
-}
-
-interface IWebRequestResponseCallbackOpts {
-  cancel?: boolean;
-}
+import {IWebView, IWebContents, ISession} from "./electron-web-types";
 
 interface IHistoryEntry {
   url: string;
@@ -444,13 +382,13 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
   }
 
   render () {
-    const {tabData, tabPath, controls} = this.props;
+    const {tabId, tabData, tabPath, controls, active} = this.props;
     const {browserState} = this.state;
 
     const {goBack, goForward, stop, reload, openDevTools, loadUserURL} = this;
     const frozen = this.isFrozen();
-    const controlProps = {tabPath, tabData, browserState, goBack,
-      goForward, stop, reload, openDevTools, loadURL: loadUserURL, frozen};
+    const controlProps = {tabId, tabPath, tabData, browserState, goBack,
+      goForward, stop, reload, openDevTools, loadURL: loadUserURL, frozen, active};
 
     let context: React.ReactElement<any> = null;
     if (controls === "game") {
@@ -553,6 +491,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 export type ControlsType = "generic" | "game" | "user"
 
 interface IBrowserMeatProps {
+  active: boolean;
   url: string;
   tabPath: string;
   tabData: ITabData;

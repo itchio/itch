@@ -21,6 +21,7 @@ export class BrowserBar extends React.Component<IBrowserBarProps, void> {
   }
 }
 
+// FIXME: a lot of props are missing from here
 interface IBrowserBarProps {
   browserState: IBrowserState;
 }

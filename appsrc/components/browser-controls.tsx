@@ -10,7 +10,16 @@ import {ITabData} from "../types";
 import {ILocalizer} from "../localizer";
 import {IAction, dispatcher} from "../constants/action-types";
 
+import watching, {Watcher} from "./watching";
+
+function isHTMLInput (el: HTMLElement): el is HTMLInputElement {
+  return el.tagName === "INPUT";
+}
+
+@watching
 export class BrowserControls extends React.Component<IBrowserControlsProps, IBrowserControlsState> {
+  browserAddress: HTMLInputElement | HTMLElement;
+
   constructor () {
     super();
     this.state = {
@@ -20,8 +29,30 @@ export class BrowserControls extends React.Component<IBrowserControlsProps, IBro
     this.startEditingURL = this.startEditingURL.bind(this);
     this.addressKeyUp = this.addressKeyUp.bind(this);
     this.addressBlur = this.addressBlur.bind(this);
-    this.onAddressField = this.onAddressField.bind(this);
+    this.onBrowserAddress = this.onBrowserAddress.bind(this);
     this.popOutBrowser = this.popOutBrowser.bind(this);
+  }
+
+  subscribe (watcher: Watcher) {
+    watcher.on(actions.triggerLocation, async (store, action) => {
+      if (!this.props.active) {
+        return;
+      }
+
+      const {browserAddress} = this;
+      if (!browserAddress) {
+        return;
+      }
+
+      if (isHTMLInput(browserAddress)) {
+        // already editing url, just select existing text
+        browserAddress.focus();
+        browserAddress.select();
+      } else {
+        // not editing url yet, no time like the present
+        this.startEditingURL();
+      }
+    });
   }
 
   render () {
@@ -41,10 +72,10 @@ export class BrowserControls extends React.Component<IBrowserControlsProps, IBro
         : <span className="icon icon-repeat" onClick={reload}/>
       }
       {editingURL
-        ? <input type="text" disabled={frozen} ref={this.onAddressField}
+        ? <input type="text" disabled={frozen} ref={this.onBrowserAddress}
             className="browser-address editing visible" defaultValue={url}
             onKeyUp={this.addressKeyUp} onBlur={this.addressBlur}/>
-        : <span className={addressClasses} onClick={() =>
+        : <span className={addressClasses} ref={this.onBrowserAddress} onClick={() =>
             (url && url.length) && this.startEditingURL()
           }>{url || ""}</span>
       }
@@ -65,12 +96,17 @@ export class BrowserControls extends React.Component<IBrowserControlsProps, IBro
     this.setState({editingURL: true});
   }
 
-  onAddressField (addressField: HTMLInputElement) {
-    if (!addressField) {
+  onBrowserAddress (browserAddress: HTMLElement | HTMLInputElement) {
+    this.browserAddress = browserAddress;
+
+    if (!browserAddress) {
       return;
     }
-    addressField.focus();
-    addressField.select();
+
+    if (isHTMLInput(browserAddress)) {
+      browserAddress.focus();
+      browserAddress.select();
+    }
   }
 
   addressKeyUp (e: React.KeyboardEvent<HTMLInputElement>) {
@@ -101,6 +137,7 @@ interface IBrowserControlsProps {
     canGoForward: boolean;
   };
 
+  active: boolean;
   tabPath: string;
   tabData: ITabData;
   frozen: boolean;

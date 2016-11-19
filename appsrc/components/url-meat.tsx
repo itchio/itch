@@ -12,7 +12,7 @@ import {IState, ITabData} from "../types";
 
 export class UrlMeat extends React.Component<IUrlMeatProps, void> {
   render () {
-    const {path, tabData = {}, tabId} = this.props;
+    const {path, tabData = {}, tabId, active} = this.props;
 
     let url = tabData.url || "about:blank";
     let controls = "generic";
@@ -43,11 +43,13 @@ export class UrlMeat extends React.Component<IUrlMeatProps, void> {
       url = urls.itchio + "/";
     }
 
-    return <BrowserMeat key={tabId} url={url} tabId={tabId} tabPath={path} tabData={tabData} controls={controls}/>;
+    return <BrowserMeat key={tabId} url={url} tabId={tabId} tabPath={path}
+      tabData={tabData} controls={controls} active={active}/>;
   }
 }
 
 interface IUrlMeatProps {
+  active: boolean;
   path: string;
   tabId: string;
   tabData: ITabData;
