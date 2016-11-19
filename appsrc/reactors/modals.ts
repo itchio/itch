@@ -43,7 +43,7 @@ export default function (watcher: Watcher) {
 
     store.dispatch(actions.modalClosed({
       id: modal.id,
-      action: [],
+      action,
     }));
   });
 
