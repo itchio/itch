@@ -4,8 +4,10 @@ import { electronEnhancer } from "redux-electron-store";
 const createLogger = require("redux-logger");
 
 import route from "../reactors/route";
-import watcher from "../renderer-reactors";
 import reducer from "../reducers";
+import {Watcher} from "../reactors/watcher";
+
+const watcher = new Watcher();
 
 import {IRendererStore} from "../types";
 

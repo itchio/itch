@@ -5,31 +5,69 @@ import {connect} from "./connect";
 
 import {map} from "underscore";
 
-import listSecondaryActions, {IActionOpts} from "./game-actions/list-secondary-actions";
+import listSecondaryActions from "./game-actions/list-secondary-actions";
 import {IActionsInfo} from "./game-actions/types";
+import * as actions from "../actions";
 
 import {ILocalizer} from "../localizer";
 import {IAction} from "../constants/action-types";
 
 import GameBrowserContextAction from "./game-browser-context-action";
 
-class GameBrowserContextActions extends React.Component<IGameBrowserContextActionsProps, void> {
+import watching, {Watcher} from "./watching";
+
+const GENEROSITY_PREWARM = 500;
+const GENEROSITY_TIMEOUT = 1000;
+import delay from "../reactors/delay";
+
+/**
+ * Displays install, share, buy now buttons and so on.
+ */
+@watching
+class GameBrowserContextActions extends React.Component
+    <IGameBrowserContextActionsProps, IGameBrowserContextActionsState> {
+  constructor () {
+    super();
+    this.state = {
+      encouragingGenerosity: false,
+    };
+  }
+
+  subscribe (watcher: Watcher) {
+    watcher.on(actions.encourageGenerosity, async (store, action) => {
+      const {level} = action.payload;
+
+      if (level === "discreet") {
+        await delay(GENEROSITY_PREWARM);
+        this.setState({encouragingGenerosity: true});
+        await delay(GENEROSITY_TIMEOUT);
+        this.setState({encouragingGenerosity: false});
+      }
+    });
+  }
+
   render () {
     const {items, error} = listSecondaryActions(this.props);
 
-    return <div className={classNames("cave-actions", {error})}>
-      {map(items, this.action.bind(this))}
+    return <div className={classNames("cave-actions", {
+      error,
+      ["encouraging-generosity"]: this.state.encouragingGenerosity,
+    })}>
+      {map(items, (opts, i) => {
+        const key = `${opts.type}-${opts.icon}-${opts.label}`;
+        return <GameBrowserContextAction opts={opts} key={key}/>;
+      })}
     </div>;
-  }
-
-  action (opts: IActionOpts) {
-    return <GameBrowserContextAction opts={opts}/>;
   }
 }
 
 interface IGameBrowserContextActionsProps extends IActionsInfo {
   t: ILocalizer;
   dispatch: (action: IAction<any>) => void;
+}
+
+interface IGameBrowserContextActionsState {
+  encouragingGenerosity: boolean;
 }
 
 const mapStateToProps = () => ({});
