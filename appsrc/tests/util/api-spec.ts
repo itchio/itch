@@ -68,7 +68,7 @@ test("api", t => {
 
     testAPI(
       "loginKey", ["foobar"],
-      ["post", "/foobar/me", {source: "desktop"}]
+      ["get", "/foobar/me", {source: "desktop"}]
     );
 
     testAPI(
