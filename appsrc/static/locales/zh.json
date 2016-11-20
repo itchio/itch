@@ -8,7 +8,7 @@
     "grid.item.downloading": "正在下载……",
     "grid.item.finalize_installation": "完成安装",
     "grid.item.install": "安装",
-    "grid.item.installing": "下载中...",
+    "grid.item.installing": "正在安装...",
     "grid.item.launch": "启动",
     "grid.item.not_platform_compatible": "不适用于 {{platform}}",
     "grid.item.open_in_file_explorer": "在文件浏览器里打开安装文件夹",
@@ -136,5 +136,7 @@
     "grid.item.check_for_update": "检查更新",
     "grid.item.developer": "开发者",
     "grid.item.review": "反馈",
-    "grid.item.launch_demo": "启动演示版"
+    "grid.item.launch_demo": "启动演示版",
+    "grid.item.share": "分享",
+    "action.name.editor": "编辑器"
 }
