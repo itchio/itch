@@ -13,14 +13,6 @@ import {createSelector} from "reselect";
 
 import {IStore, IPreferencesState} from "../types";
 
-interface ISystemErr extends Error {
-  code: string;
-}
-
-function isSystemErr (err: any): err is ISystemErr {
-  return "code" in err;
-}
-
 async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openAsHidden: boolean) {
   log(opts, `Updating login item settings, open: ${openAtLogin}, hidden: ${openAsHidden}`);
 
@@ -33,7 +25,7 @@ async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openA
     const desktopFilePath = ospath.join("/usr/share/applications", desktopFileName);
     const autostartFilePath = ospath.join(configHome, desktopFileName);
 
-    log(opts, `Updating symlink ${desktopFilePath} => ${autostartFilePath}`);
+    log(opts, `Copying ${desktopFilePath} => ${autostartFilePath}`);
 
     if (openAtLogin) {
       try {
@@ -46,15 +38,12 @@ async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openA
           await sf.mkdir(configHome);
         }
 
-        try {
-          await sf.symlink(desktopFilePath, autostartFilePath);
-        } catch (err) {
-          if (isSystemErr(err) && err.code === "EEXIST") {
-            log(opts, `Symlink already there!`);
-          } else {
-            throw err;
-          }
+        const desktopContents = await sf.readFile(desktopFilePath);
+        if (await sf.exists(autostartFilePath)) {
+          await sf.unlink(autostartFilePath);
         }
+
+        await sf.writeFile(autostartFilePath, desktopContents);
       } catch (err) {
         log(opts, `Error while symlinking ${autostartFilePath}: ${err.message}`);
         store.dispatch(actions.openAtLoginError({cause: "error", message: err.message}));
