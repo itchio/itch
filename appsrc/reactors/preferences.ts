@@ -13,6 +13,8 @@ import {opts} from "../logger";
 
 let saveAtomicInvocations = 0;
 
+import {initialState} from "../reducers/preferences";
+
 export default function (watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
     try {
@@ -21,7 +23,7 @@ export default function (watcher: Watcher) {
 
       log(opts, "imported preferences: ", JSON.stringify(prefs, null, 2));
       store.dispatch(actions.updatePreferences(prefs));
-      store.dispatch(actions.preferencesLoaded(prefs));
+      store.dispatch(actions.preferencesLoaded(Object.assign({}, initialState, prefs)));
     } catch (err) {
       log(opts, `while importing preferences: ${err}`);
     }

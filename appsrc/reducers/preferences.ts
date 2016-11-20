@@ -10,7 +10,7 @@ import {IPreferencesState} from "../types";
 
 const OFFLINE_MODE = process.env.OFFLINE_MODE === "1";
 
-const initialState = {
+export const initialState = {
   downloadSelfUpdates: true,
   offlineMode: OFFLINE_MODE,
   installLocations: {},
