@@ -29,6 +29,7 @@ import watching, {Watcher} from "./watching";
 
 interface IGenericSearchResultProps {
   chosen: boolean;
+  active: boolean;
 }
 
 @watching
@@ -36,7 +37,7 @@ abstract class GenericSearchResult <Props extends IGenericSearchResultProps, Sta
     extends React.Component<Props, State> {
   subscribe (watcher: Watcher) {
     watcher.on(actions.triggerOk, async (store, action) => {
-      if (this.props.chosen) {
+      if (this.props.chosen && this.props.active) {
         store.dispatch(actions.navigate(this.getPath()));
         store.dispatch(actions.closeSearch({}));
       }
@@ -102,6 +103,7 @@ interface ISearchResultProps {
   game: IGameRecord;
   onClick: () => void;
   chosen: boolean;
+  active: boolean;
 }
 
 export class UserSearchResult extends GenericSearchResult<IUserSearchResultProps, void> {
@@ -130,6 +132,7 @@ interface IUserSearchResultProps {
   user: IUserRecord;
   onClick: () => void;
   chosen: boolean;
+  active: boolean;
 }
 
 export class HubSearchResults extends React.Component<IHubSearchResultsProps, IHubSearchResultsState> {
@@ -183,6 +186,7 @@ export class HubSearchResults extends React.Component<IHubSearchResultsProps, IH
 
   resultsGrid (results: ISearchResults) {
     const {typedQuery, highlight} = this.props.search;
+    const active = this.props.search.open;
     const fuseResults = typedQuery ? this.fuse.search(typedQuery) : [];
 
     const hasRemoteResults = results &&
@@ -221,7 +225,7 @@ export class HubSearchResults extends React.Component<IHubSearchResultsProps, IH
       each(fuseResults.slice(0, 5), (result) => {
         const game = result.item;
         items.push(<SearchResult key={`game-${game.id}`} game={game}
-          chosen={index++ === highlight}
+          chosen={index++ === highlight} active={active}
           onClick={() => { navigateToGame(game); closeSearch({}); }}/>);
       });
     }
@@ -232,7 +236,7 @@ export class HubSearchResults extends React.Component<IHubSearchResultsProps, IH
       each(userResults.result.userIds, (userId) => {
         const user = users[userId];
         items.push(<UserSearchResult key={`user-${userId}`} user={user}
-          chosen={index++ === highlight}
+          chosen={index++ === highlight} active={active}
           onClick={() => { navigateToUser(user); closeSearch({}); }}/>);
       });
     }
@@ -243,7 +247,7 @@ export class HubSearchResults extends React.Component<IHubSearchResultsProps, IH
       each(gameResults.result.gameIds, (gameId) => {
         const game = games[gameId];
         items.push(<SearchResult key={`game-${gameId}`} game={game}
-          chosen={index++ === highlight}
+          chosen={index++ === highlight} active={active}
           onClick={() => { navigateToGame(game); closeSearch({}); }}/>);
       });
     }
