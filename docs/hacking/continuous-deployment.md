@@ -4,33 +4,33 @@
 itch is continuously being built, tested, and deployed, to help us
 keep it high-quality and low on bugs.
 
-To do so, we run our own instance of [Gitlab CI][]:
+To do so, we run our own instance of [GitLab CI][]:
 
   * <https://git.itch.ovh>
 
-[Gitlab CI]: http://doc.gitlab.com/ce/ci/
+[GitLab CI]: https://docs.gitlab.com/ce/ci/
 
 ## Git mirroring
 
-Since the main repository for itch is [on Github][github repo], and since Gitlab CI
-will only build projects that are hosted on a Gitlab instance, itch and associated
-projects have pages on our gitlab instance:
+Since the main repository for itch is [on GitHub][github repo], and since GitLab CI
+will only build projects that are hosted on a GitLab instance, itch and associated
+projects have pages on our GitLab instance:
 
   * <https://git.itch.ovh/itchio/itch>
 
 [github repo]: https://github.com/itchio/itch
 
-Developers don't have to worry about the Gitlab project page: they should clone
-the repository from the Github remote and push to it, as usual. The github project
+Developers don't have to worry about the GitLab project page: they should clone
+the repository from the Github remote and push to it, as usual. The GitHub project
 has a webhook that POSTs a signed payload to a custom service, `git-mirror`, which
-fetches from Github and pushes to Gitlab on-demand:
+fetches from Github and pushes to GitLab on-demand:
 
   * <https://github.com/fasterthanlime/git-mirror>
 
 ## Build scripts
 
-Gitlab CI has a simple YAML configuration file, similar to Travis CI.
-Its format is detailed in the [Gitlab CI] documentation, and can be
+GitLab CI has a simple YAML configuration file, similar to Travis CI.
+Its format is detailed in the [GitLab CI] documentation, and can be
 validated using the [CI lint][] page.
 
 itch's [CI config][] is relatively straight-forward, most of the complexity lives
@@ -82,7 +82,7 @@ The building scripts run some common steps on every platform:
 [grunt-electron]: https://github.com/sindresorhus/grunt-electron
 [grunt-electron-installer]: https://github.com/electron/grunt-electron-installer
 
-#### OSX
+#### macOS / OS X
 
 .zip is built with `7za` (7-zip command-line), .dmg is built with [node-appdmg][],
 with a custom background made in GIMP.
@@ -132,7 +132,7 @@ by hand. The actual "ship it" process looks like:
 
   * Receive phone notification that release is ready (via [Pushover][])
   * Make sure everything looks good
-  * Edit Github draft release, publish it
+  * Edit GitHub draft release, publish it
   * Check out both rpm and deb repos on [Bintray][], publish unpublished packages.
 
 [Bintray]: https://bintray.com/itchio
