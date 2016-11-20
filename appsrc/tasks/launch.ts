@@ -40,7 +40,7 @@ import {app} from "../electron";
 
 import {find, findWhere, each} from "underscore";
 
-import {Crash} from "./errors";
+import {Crash, Cancelled} from "./errors";
 
 import {
   IModalButtonSpec, ICaveRecord, IStartTaskOpts, IGameRecord,
@@ -94,7 +94,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
     const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game});
 
     log(gameOpts, `crashed with ${e.message}`);
-    log(gameOpts, e.stack);
+    log(gameOpts, `${e.message || e}`);
     await diego.hire(gameOpts);
 
     store.dispatch(actions.openModal({
@@ -312,8 +312,9 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
       globalMarket.saveEntity("caves", cave.id, {secondsRun: newSecondsRun, lastTouched: now});
     }, UPDATE_PLAYTIME_INTERVAL * 1000);
     await launcher(out, gameOpts);
+
   } catch (e) {
-    log(opts, `error while launching ${cave.id}: ${e.stack || e}`);
+    log(opts, `error while launching ${cave.id}: ${e.message || e}`);
     if (e instanceof Crash) {
       const secondsRunning = (Date.now() - startedAt) / 1000;
       if (secondsRunning > 2) {
@@ -322,6 +323,12 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
         return;
       }
     }
+
+    if (e instanceof Cancelled) {
+      // all good then
+      return;
+    }
+
     throw e;
   } finally {
     clearInterval(interval);
