@@ -12,7 +12,7 @@ import delay from "./delay";
 const AUTODISMISS_DELAY = 5000;
 
 // OSX already shows the app's icon
-const DEFAULT_ICON = os.platform() === "darwin" ? null : `./static/images/tray/${app.getName()}-64.png`;
+const DEFAULT_ICON = os.platform() === "darwin" ? null : `./static/images/tray/${app.getName()}.png`;
 
 export default function (watcher: Watcher) {
   watcher.on(actions.bounce, async (store, action) => {
