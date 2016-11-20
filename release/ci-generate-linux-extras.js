@@ -22,7 +22,7 @@ locale_names.forEach(function (locale_name) {
     if (/englitch/.test(lang)) {
       return
     }
-    desktop += `Comment[${lang}]="${comm}"\n`
+    desktop += `Comment[${lang}]=${comm}\n`
   }
 })
 desktop = desktop.replace(/{{APPNAME}}/g, $.app_name())

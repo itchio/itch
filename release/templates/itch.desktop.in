@@ -8,4 +8,4 @@ Icon={{APPNAME}}
 Terminal=false
 Categories=Game
 MimeType=x-scheme-handler/{{APPNAME}}io
-Comment="Install and play itch.io games easily"
+Comment=Install and play itch.io games easily
