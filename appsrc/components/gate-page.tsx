@@ -151,7 +151,7 @@ export class GatePage extends React.Component<IGatePageProps, void> {
         <span className={classes}/>
         {translatedMessage}
         {hasError
-          ? <span className="icon icon-repeat retry-setup" onClick={retrySetup}/>
+          ? <span className="icon icon-repeat retry-setup" onClick={() => retrySetup({})}/>
           : ""
         }
       </p>;
