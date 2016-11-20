@@ -281,13 +281,17 @@ export default handleActions<ISessionNavigationState, any>({
 
   TAB_EVOLVED: (state: ISessionNavigationState, action: IAction<ITabEvolvedPayload>) => {
     const {id, data} = action.payload;
-
     const {tabData} = state;
-    const newTabData = Object.assign({}, tabData, {
-      [id]: Object.assign({}, tabData[id], data),
-    });
 
-    return Object.assign({}, state, {tabData: newTabData});
+    if (tabData[id]) {
+      const newTabData = Object.assign({}, tabData, {
+        [id]: Object.assign({}, tabData[id], data),
+      });
+
+      return Object.assign({}, state, {tabData: newTabData});
+    }
+
+    return state;
   },
 
   TABS_RESTORED: (state: ISessionNavigationState, action: IAction<ITabsRestoredPayload>) => {
