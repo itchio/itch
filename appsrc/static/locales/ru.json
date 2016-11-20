@@ -353,10 +353,12 @@
     "notification.download_installed": "{{title}} установлено!",
     "notification.download_updated": "{{title}} обновлено!",
     "preferences.behavior.ready_notification": "Уведомлять, когда что-нибудь установлено или обновлено",
-    "preferences.behavior.open_at_login": "Запускать itch при запуске компьютера",
-    "preferences.behavior.open_as_hidden": "Запускать itch свёрнутым",
+    "preferences.behavior.open_at_login": "Запускаться при запуске компьютера",
+    "preferences.behavior.open_as_hidden": "Запускаться свёрнутым",
     "preferences.notifications": "Уведомления",
     "preferences.notifications.ready_notification": "Уведомлять, когда что-то установлено или обновлено",
     "preferences.behavior.open_at_login.error": "Не получается применить настройки автозапуска: {{cause}}",
-    "preferences.behavior.open_at_login.causes.no_desktop_file": "Файл .desktop не найден. Это нормально, если установка была произведена не через пакетный менеджер. Узнать больше: {{linux_install_page}}."
+    "preferences.behavior.open_at_login.causes.no_desktop_file": "Файл .desktop не найден. Это нормально, если установка была произведена не через пакетный менеджер. Узнать больше: {{linux_install_page}}.",
+    "game.install.could_not_launch.missing_jre": "Это требует Java, которая не установлена на вашей системе.",
+    "grid.item.download_java": "Загрузить Java"
 }
