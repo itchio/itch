@@ -118,7 +118,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
         <h2>
           <span className="label">{t("sidebar.category.tabs")}</span>
           <div className="filler"/>
-          <span className="action hint--left" data-hint={t("sidebar.close_all_tabs")} onClick={closeAllTabs}>
+          <span className="action hint--left" data-hint={t("sidebar.close_all_tabs")} onClick={() => closeAllTabs({})}>
             <span className="icon icon-delete"/>
           </span>
         </h2>
@@ -146,7 +146,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
             sublabel, gameOverride, halloween};
           return <HubSidebarItem {...props}/>;
         })}
-        <section className="hub-sidebar-item new-tab" onClick={newTab}>
+        <section className="hub-sidebar-item new-tab" onClick={() => newTab({})}>
           <div className="row">
             <span className="symbol icon icon-plus"/>
             <span className="label">{t("sidebar.new_tab")}</span>
@@ -433,6 +433,7 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
   viewCommunityProfile: dispatcher(dispatch, actions.viewCommunityProfile),
   changeUser: dispatcher(dispatch, actions.changeUser),
   openTabContextMenu: dispatcher(dispatch, actions.openTabContextMenu),
+  newTab: dispatcher(dispatch, actions.newTab),
   copyToClipboard: dispatcher(dispatch, actions.copyToClipboard),
 
   focusSearch: dispatcher(dispatch, actions.focusSearch),

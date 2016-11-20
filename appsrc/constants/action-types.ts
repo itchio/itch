@@ -904,7 +904,7 @@ export interface IPreferencesLoadedPayload extends Types.IPreferencesState {};
 export const VIEW_CREATOR_PROFILE = "VIEW_CREATOR_PROFILE";
 export interface IViewCreatorProfilePayload {}
 
-export const VIEW_COMMUNITY_PROFILE = "VIEW_CREATOR_PROFILE";
+export const VIEW_COMMUNITY_PROFILE = "VIEW_COMMUNITY_PROFILE";
 export interface IViewCommunityProfilePayload {}
 
 export const OPEN_AT_LOGIN_ERROR = "OPEN_AT_LOGIN_ERROR";
