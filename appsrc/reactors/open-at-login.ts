@@ -13,6 +13,14 @@ import {createSelector} from "reselect";
 
 import {IStore, IPreferencesState} from "../types";
 
+interface ISystemErr extends Error {
+  code: string;
+}
+
+function isSystemErr (err: any): err is ISystemErr {
+  return "code" in err;
+}
+
 async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openAsHidden: boolean) {
   log(opts, `Updating login item settings, open: ${openAtLogin}, hidden: ${openAsHidden}`);
 
@@ -37,7 +45,16 @@ async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openA
         if (!(await sf.exists(configHome))) {
           await sf.mkdir(configHome);
         }
-        await sf.symlink(desktopFilePath, autostartFilePath);
+
+        try {
+          await sf.symlink(desktopFilePath, autostartFilePath);
+        } catch (err) {
+          if (isSystemErr(err) && err.code === "EEXIST") {
+            log(opts, `Symlink already there!`);
+          } else {
+            throw err;
+          }
+        }
       } catch (err) {
         log(opts, `Error while symlinking ${autostartFilePath}: ${err.message}`);
         store.dispatch(actions.openAtLoginError({cause: "error", message: err.message}));
