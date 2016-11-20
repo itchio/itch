@@ -135,5 +135,6 @@
     "new_tab.titles.input": "... 或者",
     "grid.item.check_for_update": "检查更新",
     "grid.item.developer": "开发者",
-    "grid.item.review": "反馈"
+    "grid.item.review": "反馈",
+    "grid.item.launch_demo": "启动 demo"
 }
