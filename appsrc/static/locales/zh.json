@@ -132,5 +132,7 @@
     "duration.minute": "少于一分钟",
     "action.name.manual": "用户手册",
     "new_tab.titles.browser_placeholder": "输入任意网址",
-    "new_tab.titles.input": "... 或者"
+    "new_tab.titles.input": "... 或者",
+    "grid.item.check_for_update": "检查更新",
+    "grid.item.developer": "开发者"
 }
