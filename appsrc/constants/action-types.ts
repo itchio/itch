@@ -668,6 +668,36 @@ export interface ICheckForGameUpdatePayload {
 export const CHECK_FOR_GAME_UPDATES = "CHECK_FOR_GAME_UPDATES";
 export interface ICheckForGameUpdatesPayload {}
 
+export const GAME_UPDATE_AVAILABLE = "GAME_UPDATE_AVAILABLE";
+export interface IGameUpdateAvailablePayload {
+  /** which cave has an update available */
+  caveId: string;
+
+  /** the actual update info */
+  update: Types.IGameUpdate;
+}
+
+export const SHOW_GAME_UPDATE = "SHOW_GAME_UPDATE";
+export interface IShowGameUpdatePayload {
+  /** the cave we're updating */
+  caveId: string;
+
+  /** the actual update info */
+  update: Types.IGameUpdate;
+}
+
+export const QUEUE_GAME_UPDATE = "QUEUE_GAME_UPDATE";
+export interface IQueueGameUpdatePayload {
+  /** the cave we're updating */
+  caveId: string;
+
+  /** the actual update info */
+  update: Types.IGameUpdate;
+
+  /** the upload that was picked */
+  upload: Types.IUploadRecord;
+}
+
 /** User requested game to be installed */
 export const QUEUE_GAME = "QUEUE_GAME";
 export interface IQueueGamePayload {

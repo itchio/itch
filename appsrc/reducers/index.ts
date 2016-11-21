@@ -16,6 +16,7 @@ import preferences from "./preferences";
 import tasks from "./tasks";
 import downloads from "./downloads";
 import status from "./status";
+import gameUpdates from "./game-updates";
 
 const reducer = combineReducers({
   history,
@@ -33,5 +34,6 @@ const reducer = combineReducers({
   tasks,
   downloads,
   status,
+  gameUpdates,
 });
 export default reducer;

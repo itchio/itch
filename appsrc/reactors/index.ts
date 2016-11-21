@@ -33,6 +33,7 @@ import perf from "./perf";
 import modals from "./modals";
 import halloween from "./halloween";
 import openAtLogin from "./open-at-login";
+import gameUpdates from "./game-updates";
 
 let watcher = new Watcher();
 preboot(watcher);
@@ -67,6 +68,7 @@ perf(watcher);
 modals(watcher);
 halloween(watcher);
 openAtLogin(watcher);
+gameUpdates(watcher);
 
 watcher.validate();
 

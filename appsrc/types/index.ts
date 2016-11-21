@@ -509,6 +509,7 @@ export interface IState {
     tasks: ITasksState;
     downloads: IDownloadsState;
     status: IStatusState;
+    gameUpdates: IGameUpdatesState;
 }
 
 export interface IHistoryItemOption {
@@ -541,6 +542,18 @@ export interface IHistoryState {
 
     /** all history items from newest to oldest */
     itemsByDate: IHistoryItem[];
+}
+
+export interface IGameUpdate {
+    game: IGameRecord;
+    recentUploads: IUploadRecord[];
+    downloadKey?: IDownloadKey;
+}
+
+export interface IGameUpdatesState {
+    updates: {
+        [caveId: string]: IGameUpdate;
+    };
 }
 
 export type IModalAction = Action<any> | Action<any>[]
@@ -927,6 +940,9 @@ export interface IPreferencesState {
 
   /** when the itch app starts at login, should it be hidden? */
   openAsHidden?: boolean;
+
+  /** show consent dialog before applying any game updates */
+  manualGameUpdates?: boolean;
 }
 
 export interface ITask {

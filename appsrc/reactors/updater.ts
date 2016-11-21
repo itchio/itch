@@ -25,7 +25,7 @@ const opts = {
 };
 
 import {startDownload} from "./tasks/start-download";
-import {findWhere, filter, map} from "underscore";
+import {findWhere, filter} from "underscore";
 
 const DELAY_BETWEEN_GAMES = 25;
 
@@ -216,35 +216,12 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
     if (recentUploads.length > 1) {
       log(opts, "Multiple recent uploads, asking user to pick");
 
-      const {title} = game;
-      store.dispatch(actions.openModal({
-        title: ["pick_update_upload.title", {title}],
-        message: ["pick_update_upload.message", {title}],
-        detail: ["pick_update_upload.detail"],
-        bigButtons: map(recentUploads, (upload) => {
-          const archivePath = pathmaker.downloadPath(upload);
-          return {
-            label: `${upload.displayName || upload.filename} (${humanize.fileSize(upload.size)})`,
-            timeAgo: {
-              label: ["prompt.updated_ago"],
-              date: Date.parse(upload.updatedAt),
-            },
-            action: actions.queueDownload({
-              game,
-              gameId: game.id,
-              upload,
-              totalSize: upload.size,
-              destPath: archivePath,
-              downloadKey,
-              handPicked: true,
-              reason: "update",
-            }),
-            icon: "download",
-          };
-        }),
-        buttons: [
-          "cancel",
-        ],
+      store.dispatch(actions.gameUpdateAvailable({
+        caveId: cave.id,
+        update: {
+          game,
+          recentUploads,
+        },
       }));
 
       return Object.assign({}, returnVars, {hasUpgrade: true});
