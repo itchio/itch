@@ -150,7 +150,7 @@ const self = {
   extract: async function (opts: IExtractOpts): Promise<void> {
     const {archivePath, destPath} = opts;
 
-    const isZip = /.zip$/i.test(archivePath);
+    const isZip = /\.zip$/i.test(archivePath);
     if (isZip) {
       const hasButler = await butler.sanityCheck();
       if (hasButler) {
