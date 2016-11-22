@@ -1,6 +1,4 @@
 
-import * as invariant from "invariant";
-
 import {EventEmitter} from "events";
 
 import butler from "../../util/butler";
