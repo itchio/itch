@@ -545,15 +545,27 @@ export interface IHistoryState {
 }
 
 export interface IGameUpdate {
+    /** which game an update is available for */
     game: IGameRecord;
+
+    /**
+     * uploads to pick from (fresher than our last install).
+     * will hopefully be often of size 1, but not always
+     */
     recentUploads: IUploadRecord[];
+
+    /** key we used to find uploads, and that should be used for downloads */
     downloadKey?: IDownloadKey;
 
+    /** true if wharf-enabled upgrade via butler */
     incremental?: boolean;
+
+    /** list of patch entries needed to upgrade to latest via butler */
     upgradePath?: IUpgradePathItem[];
 }
 
 export interface IGameUpdatesState {
+    /** pending game updates */
     updates: {
         [caveId: string]: IGameUpdate;
     };
