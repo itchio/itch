@@ -338,11 +338,11 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
 }
 
 async function launchTypeForAction (appPath: string, actionPath: string) {
-  if (/.(app|exe|bat|sh)$/i.test(actionPath)) {
+  if (/\.(app|exe|bat|sh)$/i.test(actionPath)) {
     return "native";
   }
 
-  if (/.html?$/i.test(actionPath)) {
+  if (/\.html?$/i.test(actionPath)) {
     return "html";
   }
 
