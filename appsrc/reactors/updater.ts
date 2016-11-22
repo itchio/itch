@@ -24,7 +24,6 @@ const opts = {
   }),
 };
 
-import {startDownload} from "./tasks/start-download";
 import {findWhere, filter} from "underscore";
 
 const DELAY_BETWEEN_GAMES = 25;
@@ -86,7 +85,6 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
     return {hasUpgrade: false};
   }
 
-  // TODO: use state instead of getUserMarket()
   const market = getUserMarket();
   let game: IGameRecord;
   try {
@@ -182,7 +180,6 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
           try {
             const {upgradePath, totalSize} = await findUpgradePath(out, upgradeOpts);
             log(opts, `Got ${upgradePath.length} patches to download, ${humanize.fileSize(totalSize)} total`);
-            const archivePath = pathmaker.downloadPath(upload);
 
             store.dispatch(actions.gameUpdateAvailable({
               caveId: cave.id,
@@ -242,18 +239,14 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
         log(opts, "(Reason: went wharf)");
       }
 
-      const archivePath = pathmaker.downloadPath(upload);
+      store.dispatch(actions.gameUpdateAvailable({
+        caveId: cave.id,
+        update: {
+          game,
+          recentUploads,
+        },
+      }));
 
-      await startDownload(store, {
-        game,
-        gameId: game.id,
-        upload,
-        handPicked: false,
-        totalSize: upload.size,
-        destPath: archivePath,
-        downloadKey,
-        reason: "update",
-      });
       return Object.assign({}, returnVars, {hasUpgrade});
     }
   } catch (e) {

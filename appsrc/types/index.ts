@@ -1004,7 +1004,12 @@ export interface IUpgradePathItem {
 
 type DownloadReason = "install" | "reinstall" | "update";
 
-export interface IStartDownloadOpts {
+export interface IStartTaskOpts {
+    /** which game is this task for? */
+    gameId: number;
+}
+
+export interface IQueueDownloadOpts {
   /** reason for starting this download */
   reason: DownloadReason;
 
@@ -1014,24 +1019,32 @@ export interface IStartDownloadOpts {
   /** if true, user disambiguated from list of uploads */
   handPicked?: boolean;
 
+  /** download key used for downloading */
   downloadKey?: IDownloadKey;
 
+  /** existing cave record if we're upgrading */
   cave?: ICaveRecord;
 
-  gameId: number;
-
+  /** which game we're downloading */
   game: IGameRecord;
 
+  /** upload we're downloading */
   upload: IUploadRecord;
 
+  /** total size of download (size of archive or sum of patch sizes) */
   totalSize?: number;
 
+  /** where to download archive file, depends on cave location */
   destPath: string;
 
+  /** true if wharf-enabled update via butler */
   incremental?: boolean;
 
+  /** patch entries to upgrade to latest via butler */
   upgradePath?: IUpgradePathItem[];
 }
+
+export type IStartDownloadOpts = IStartTaskOpts & IQueueDownloadOpts;
 
 export interface IEnvironment {
     [key: string]: string;
@@ -1086,7 +1099,7 @@ export interface IStartTaskOpts {
   globalMarket?: IMarket;
 }
 
-export interface IDownloadOpts extends IStartDownloadOpts {
+export interface IInternalDownloadOpts {
   credentials: ICredentials;
 
   upgradePath?: IUpgradePathItem[];
@@ -1095,6 +1108,8 @@ export interface IDownloadOpts extends IStartDownloadOpts {
 
   logger: any;
 }
+
+export type IDownloadOpts = IStartDownloadOpts & IInternalDownloadOpts;
 
 /**
  * A download in progress for the app. Always linked to a game,

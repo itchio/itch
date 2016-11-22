@@ -10,24 +10,14 @@ import client from "../../util/api";
 import mklog from "../../util/log";
 const log = mklog("download-patches");
 
-import {IDownloadOpts, ICaveRecord} from "../../types";
+import {IDownloadOpts} from "../../types";
 import {IProgressInfo} from "../../types";
 
 import {getGlobalMarket} from "../../reactors/market";
 
-interface IDownloadPatchesOpts extends IDownloadOpts {
-  cave: ICaveRecord;
-}
-
-export default async function downloadPatches (out: EventEmitter, opts: IDownloadPatchesOpts) {
-  const {cave, gameId, totalSize, upgradePath, upload, credentials, downloadKey, logger} = opts;
+export default async function downloadPatches (out: EventEmitter, opts: IDownloadOpts) {
+  const {cave, totalSize, upgradePath, upload, credentials, downloadKey, logger} = opts;
   const globalMarket = getGlobalMarket();
-  invariant(typeof gameId === "number", "downloadPatches must have gameId");
-  invariant(typeof upgradePath === "object", "downloadPatches must have an upgradePath");
-  invariant(typeof totalSize === "number", "downloadPatches must have a totalSize");
-  invariant(typeof upload === "object", "downloadPatches must have upload object");
-  invariant(typeof cave === "object", "downloadPatches must have cave");
-  invariant(credentials && credentials.key, "downloadPatches has valid key");
 
   const api = client.withKey(credentials.key);
 

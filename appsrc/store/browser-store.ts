@@ -35,7 +35,8 @@ if (beChatty) {
         !/_DB_/.test(action.type) &&
         !/LOCALE_/.test(action.type) &&
         !/_FETCHED$/.test(action.type) &&
-        !/_DATAPOINT$/.test(action.type);
+        !/_DATAPOINT$/.test(action.type) &&
+        action.type !== "TASK_PROGRESS";
     },
     stateTransformer: (state: any) => "",
   });

@@ -3,7 +3,6 @@ import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
 import {startTask} from "./start-task";
-import {startDownload} from "./start-download";
 import {log, opts} from "./log";
 
 import {omit} from "underscore";
@@ -16,27 +15,28 @@ export default function (watcher: Watcher) {
     let {err} = action.payload;
 
     const {reason, incremental} = downloadOpts;
-    if (reason === "install" || reason === "update") {
+    if (reason === "install" || reason === "update" || reason === "reinstall") {
       if (err) {
         if (incremental) {
           log(opts, "Incremental didn\'t work, doing full download");
           const newDownloadOpts = Object.assign({}, omit(downloadOpts, "upgradePath", "incremental"), {
             totalSize: downloadOpts.upload.size,
           });
-          await startDownload(store, newDownloadOpts);
+          store.dispatch(actions.queueDownload(newDownloadOpts));
         } else {
           log(opts, "Download had an error, should notify user");
         }
       } else {
         if (incremental) {
-          // all good
+          // install folder was patched directly, no further steps needed
           return;
         }
-        log(opts, "Download finished, installing..");
+        log(opts, `Download finished, starting ${reason}..`);
 
         const taskOpts = {
           name: "install",
-          gameId: downloadOpts.gameId,
+          reinstall: (reason as string === "reinstall"),
+          gameId: downloadOpts.game.id,
           game: downloadOpts.game,
           upload: downloadOpts.upload,
           archivePath: downloadOpts.destPath,

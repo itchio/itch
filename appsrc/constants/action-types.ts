@@ -517,7 +517,7 @@ export interface IAbortTaskPayload {
 
 /* Downloads */
 export const QUEUE_DOWNLOAD = "QUEUE_DOWNLOAD";
-export interface IQueueDownloadPayload extends Types.IStartDownloadOpts {};
+export interface IQueueDownloadPayload extends Types.IQueueDownloadOpts {};
 
 export const DOWNLOAD_STARTED = "DOWNLOAD_STARTED";
 export interface IDownloadStartedPayload extends Types.IDownloadItem {};
