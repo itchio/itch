@@ -8,7 +8,6 @@ import pathmaker from "../../util/pathmaker";
 
 import {log, opts} from "./log";
 import {startTask} from "./start-task";
-import {startDownload} from "./start-download";
 
 import {map, where} from "underscore";
 
@@ -19,9 +18,7 @@ interface IFindUploadResult {
   downloadKey: IDownloadKey;
 }
 
-interface IExtraOpts {
-
-}
+interface IExtraOpts {}
 
 async function startCave (store: IStore, game: IGameRecord, cave: ICaveRecord, extraOpts: IExtraOpts) {
   log(opts, `Starting cave ${cave.id}`);
@@ -122,7 +119,7 @@ export default function (watcher: Watcher) {
           destPath: pathmaker.downloadPath(upload),
           downloadKey,
           reason: "install",
-        }))
+        }));
       }
     } else {
       log(opts, `No uploads for ${game.title}`);

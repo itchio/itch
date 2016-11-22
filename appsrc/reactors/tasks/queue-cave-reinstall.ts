@@ -11,8 +11,6 @@ import {startTask} from "./start-task";
 import pathmaker from "../../util/pathmaker";
 import fetch from "../../util/fetch";
 
-import {startDownload} from "./start-download";
-
 export default function (watcher: Watcher) {
   watcher.on(actions.queueCaveReinstall, async (store, action) => {
     const {caveId} = action.payload;
