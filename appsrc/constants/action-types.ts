@@ -696,6 +696,9 @@ export interface IQueueGameUpdatePayload {
 
   /** the upload that was picked */
   upload: Types.IUploadRecord;
+
+  /** was the upload hand-picked? */
+  handPicked?: boolean;
 }
 
 /** User requested game to be installed */

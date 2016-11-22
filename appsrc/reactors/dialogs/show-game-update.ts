@@ -23,7 +23,7 @@ export default function (watcher: Watcher) {
             label: ["prompt.updated_ago"],
             date: Date.parse(upload.updatedAt),
           },
-          action: actions.queueGameUpdate(Object.assign({}, action.payload, {upload})),
+          action: actions.queueGameUpdate(Object.assign({}, action.payload, {upload, handPicked: true})),
           icon: "download",
         };
       }),

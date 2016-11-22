@@ -184,18 +184,17 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
             log(opts, `Got ${upgradePath.length} patches to download, ${humanize.fileSize(totalSize)} total`);
             const archivePath = pathmaker.downloadPath(upload);
 
-            await startDownload(store, {
-              cave,
-              game,
-              gameId: game.id,
-              upload,
-              destPath: archivePath,
-              downloadKey,
-              reason: "update",
-              incremental: true,
-              upgradePath,
-              totalSize,
-            });
+            store.dispatch(actions.gameUpdateAvailable({
+              caveId: cave.id,
+              update: {
+                game,
+                recentUploads: [upload],
+                downloadKey,
+                incremental: true,
+                upgradePath,
+              },
+            }));
+
             return Object.assign({}, returnVars, {hasUpgrade});
           } catch (e) {
             log(opts, `While getting upgrade path: ${e.message || e}`);

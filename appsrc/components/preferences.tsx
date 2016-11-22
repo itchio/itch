@@ -35,11 +35,13 @@ function getAppLogPath () {
   return logPath;
 }
 
+// TODO: split into smaller components
+
 export class Preferences extends React.Component<IPreferencesProps, void> {
   render () {
     const {t, lang, sniffedLang = "", downloading, locales} = this.props;
     const {isolateApps, openAtLogin, openAsHidden, closeToTray,
-       readyNotification, showAdvanced} = this.props.preferences;
+       readyNotification, manualGameUpdates, showAdvanced} = this.props.preferences;
     const {queueLocaleDownload, updatePreferences} = this.props;
 
     const options = [{
@@ -120,6 +122,13 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
             updatePreferences({closeToTray: e.currentTarget.checked});
           }}/>
           <span> {t("preferences.behavior.close_to_tray")} </span>
+        </label>
+
+        <label className={classNames({active: manualGameUpdates})}>
+          <input type="checkbox" checked={manualGameUpdates} onChange={(e) => {
+            updatePreferences({manualGameUpdates: e.currentTarget.checked});
+          }}/>
+          <span> {t("preferences.behavior.manual_game_updates")} </span>
         </label>
       </div>
 

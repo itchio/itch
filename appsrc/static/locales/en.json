@@ -41,6 +41,7 @@
     "grid.item.install": "Install",
     "grid.item.review": "Review",
     "grid.item.installing": "Installing...",
+    "grid.item.update": "Update",
     "grid.item.launch": "Launch",
     "grid.item.launch_demo": "Launch demo",
     "grid.item.share": "Share",

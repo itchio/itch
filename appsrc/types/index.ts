@@ -548,6 +548,9 @@ export interface IGameUpdate {
     game: IGameRecord;
     recentUploads: IUploadRecord[];
     downloadKey?: IDownloadKey;
+
+    incremental?: boolean;
+    upgradePath?: IUpgradePathItem[];
 }
 
 export interface IGameUpdatesState {

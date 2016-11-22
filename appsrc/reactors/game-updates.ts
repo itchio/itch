@@ -4,6 +4,8 @@ import {Watcher} from "./watcher";
 
 import pathmaker from "../util/pathmaker";
 
+import {IQueueDownloadPayload} from "../constants/action-types";
+
 export default function (watcher: Watcher) {
   watcher.on(actions.gameUpdateAvailable, async (store, action) => {
     const manualGameUpdates: boolean = store.getState().preferences.manualGameUpdates;
@@ -24,20 +26,35 @@ export default function (watcher: Watcher) {
   });
 
   watcher.on(actions.queueGameUpdate, async (store, action) => {
-    const {update, upload} = action.payload;
-    const {game, downloadKey} = update;
+    const {update, upload, handPicked} = action.payload;
+    const {game, downloadKey, incremental, upgradePath} = update;
 
-    const archivePath = pathmaker.downloadPath(upload);
+    const cave = store.getState().globalMarket.caves[action.payload.caveId];
 
-    store.dispatch(actions.queueDownload({
+    const destPath = pathmaker.downloadPath(upload);
+
+    let totalSize = upload.size;
+    if (update.incremental) {
+      totalSize = 0;
+      for (const item of update.upgradePath) {
+        totalSize += item.patchSize;
+      }
+    }
+
+    const downloadOpts = {
+      cave,
       game,
-      gameId: game.id,
+      gameId: game.id, // FIXME: why is this needed? we have game!
       upload,
-      totalSize: upload.size,
-      destPath: archivePath,
+      destPath,
+      totalSize,
       downloadKey,
-      handPicked: true,
+      incremental,
+      upgradePath,
+      handPicked,
       reason: "update",
-    }));
+    } as IQueueDownloadPayload;
+
+    store.dispatch(actions.queueDownload(downloadOpts));
   });
 }
