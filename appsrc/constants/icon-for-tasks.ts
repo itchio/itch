@@ -15,4 +15,7 @@ export default {
   "configure": "cog",
   "launch": "fire",
   "idle": "checkmark",
+  /* status tasks */
+  "open": "folder-open",
+  "update": "download",
 } as IIconForTasks;

@@ -60,10 +60,11 @@ async function doDownloadLocale (lang: string, resources: II18nResources) {
 }
 
 async function loadLocale (store: IStore, lang: string) {
-  const local = canonicalFileName(lang);
+  let local = canonicalFileName(lang);
   if (!(await ifs.exists(local))) {
     // try stripping region
     lang = lang.substring(0, 2);
+    local = canonicalFileName(lang);
   }
 
   try {

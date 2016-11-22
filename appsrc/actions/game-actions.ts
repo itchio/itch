@@ -23,6 +23,9 @@ import {
 
   CHECK_FOR_GAME_UPDATE, ICheckForGameUpdatePayload,
   CHECK_FOR_GAME_UPDATES, ICheckForGameUpdatesPayload,
+  GAME_UPDATE_AVAILABLE, IGameUpdateAvailablePayload,
+  SHOW_GAME_UPDATE, IShowGameUpdatePayload,
+  QUEUE_GAME_UPDATE, IQueueGameUpdatePayload,
 } from "../constants/action-types";
 
 export const queueGame = createAction<IQueueGamePayload>(QUEUE_GAME);
@@ -46,3 +49,6 @@ export const abortGame = createAction<IAbortGamePayload>(ABORT_GAME);
 
 export const checkForGameUpdate = createAction<ICheckForGameUpdatePayload>(CHECK_FOR_GAME_UPDATE);
 export const checkForGameUpdates = createAction<ICheckForGameUpdatesPayload>(CHECK_FOR_GAME_UPDATES);
+export const gameUpdateAvailable = createAction<IGameUpdateAvailablePayload>(GAME_UPDATE_AVAILABLE);
+export const showGameUpdate = createAction<IShowGameUpdatePayload>(SHOW_GAME_UPDATE);
+export const queueGameUpdate = createAction<IQueueGameUpdatePayload>(QUEUE_GAME_UPDATE);

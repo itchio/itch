@@ -21,7 +21,7 @@ import {IActionsInfo} from "./types";
 import {ILocalizer} from "../../localizer";
 import {
   IState, IGameRecord, ICaveRecord, IDownloadKey,
-  IDownloadItem, ITask,
+  IDownloadItem, ITask, IGameUpdate, IGameUpdatesState,
 } from "../../types";
 
 const platform = os.itchPlatform();
@@ -60,6 +60,7 @@ interface IGameActionsProps extends IActionsInfo {
   platformCompatible: boolean;
   progress: number;
   cancellable: boolean;
+  cave: ICaveRecord;
 
   t: ILocalizer;
 }
@@ -74,6 +75,7 @@ interface IHappenings {
   download: IDownloadItem;
   meId: number;
   mePress: boolean;
+  gameUpdates: IGameUpdatesState;
 }
 
 const makeMapStateToProps = () => {
@@ -87,9 +89,10 @@ const makeMapStateToProps = () => {
       meId: (state: IState, props: IGameActionsProps) => (state.session.credentials.me || {id: "anonymous"}).id,
       mePress: (state: IState, props: IGameActionsProps) =>
         (state.session.credentials.me || {pressUser: false}).pressUser,
+      gameUpdates: (state: IState, props: IGameActionsProps) => state.gameUpdates,
     }),
     (happenings: IHappenings) => {
-      const {game, cave, downloadKeys, task, download, meId, mePress} = happenings;
+      const {game, cave, downloadKeys, task, download, meId, mePress, gameUpdates} = happenings;
 
       const animate = false;
       let action = actionForGame(game, cave);
@@ -113,9 +116,15 @@ const makeMapStateToProps = () => {
 
       const downloading = download && !download.finished;
 
+      let update: IGameUpdate;
+      if (cave) {
+        update = gameUpdates.updates[cave.id];
+      }
+
       return {
         cancellable,
         cave,
+        update,
         animate,
         platform,
         mayDownload,

@@ -10,7 +10,7 @@ import {IStore, IStartDownloadOpts} from "../../types";
 
 let orderSeed = 0;
 
-export async function startDownload (store: IStore, downloadOpts: IStartDownloadOpts) {
+async function startDownload (store: IStore, downloadOpts: IStartDownloadOpts) {
   downloadOpts.order = orderSeed++;
 
   const downloadsState = store.getState().downloads;
@@ -33,7 +33,10 @@ export async function startDownload (store: IStore, downloadOpts: IStartDownload
 export default function (watcher: Watcher) {
   watcher.on(actions.queueDownload, async (store, action) => {
     const downloadOpts = action.payload;
-    await startDownload(store, downloadOpts);
+    await startDownload(store, Object.assign({}, downloadOpts, {
+      name: "download",
+      gameId: downloadOpts.game.id,
+    }));
   });
 
   watcher.on(actions.retryDownload, async (store, action) => {

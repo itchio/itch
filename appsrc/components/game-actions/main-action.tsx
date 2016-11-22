@@ -14,7 +14,7 @@ import * as actions from "../../actions";
 
 import {IActionsInfo} from "./types";
 
-import {IState, IDownloadItem} from "../../types";
+import {IState, IDownloadItem, ICaveRecord, IGameUpdate} from "../../types";
 import {IAction, dispatcher} from "../../constants/action-types";
 import {ILocalizer} from "../../localizer";
 
@@ -28,6 +28,7 @@ const linearGradient = (progress: number) => {
 
 interface IStatus {
   status: string;
+  statusTask?: string;
   hint?: string;
 }
 
@@ -38,13 +39,15 @@ class MainAction extends React.Component<IMainActionProps, void> {
 
     let child: React.ReactElement<any> | null = null;
     if (task) {
-      const {status, hint} = this.status();
+      const {status, hint, statusTask} = this.status();
       const classes = classNames("state", "normal-state", {
         ["hint--top"]: !!hint,
       });
 
+      const realTask = statusTask || task;
+
       child = <span className={classes} data-hint={hint}>
-        <TaskIcon task={task} animate={animate} action={action}/>
+        <TaskIcon task={realTask} animate={animate} action={action}/>
         {status}
         {cancellable
         ? <span className="cancel-cross">
@@ -111,8 +114,8 @@ class MainAction extends React.Component<IMainActionProps, void> {
   onClick (e: React.MouseEvent<HTMLElement>) {
     e.stopPropagation();
 
-    let {task, cave, game, platformCompatible, mayDownload} = this.props;
-    const {navigate, queueGame, initiatePurchase, abortGameRequest} = this.props;
+    let {task, cave, game, platformCompatible, mayDownload, update} = this.props;
+    const {navigate, queueGame, initiatePurchase, abortGameRequest, showGameUpdate} = this.props;
 
     if (task === "download" || task === "find-upload") {
       navigate("downloads");
@@ -121,7 +124,13 @@ class MainAction extends React.Component<IMainActionProps, void> {
         if (task === "launch") {
           abortGameRequest({game});
         } else if (!task || task === "idle") {
-          if (mayDownload || cave) {
+          if (cave) {
+            if (update) {
+              showGameUpdate({caveId: cave.id, update});
+            } else {
+              queueGame({game});
+            }
+          } else if (mayDownload) {
             queueGame({game});
           } else {
             initiatePurchase({game});
@@ -137,9 +146,14 @@ class MainAction extends React.Component<IMainActionProps, void> {
     const {t, task, action} = this.props;
 
     if (task === "idle") {
+      const update = this.props.update;
+      if (update) {
+        return {status: t("grid.item.update"), statusTask: "update"};
+      }
+
       switch (action) {
         case "open":
-          return {status: t("grid.item.open")};
+          return {status: t("grid.item.open"), statusTask: "open"};
         case "launch":
         default:
           return {status: t("grid.item.launch")};
@@ -196,10 +210,13 @@ interface IMainActionProps extends IActionsInfo {
   };
   downloadsPaused: boolean;
 
+  cave: ICaveRecord;
+  update: IGameUpdate;
+
   t: ILocalizer;
 
   queueGame: typeof actions.queueGame;
-  cancelCave: typeof actions.cancelCave;
+  showGameUpdate: typeof actions.showGameUpdate;
   initiatePurchase: typeof actions.initiatePurchase;
   abortGameRequest: typeof actions.abortGameRequest;
   navigate: typeof actions.navigate;
@@ -213,7 +230,7 @@ const mapStateToProps = (state: IState) => ({
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
   queueGame: dispatcher(dispatch, actions.queueGame),
-  cancelCave: dispatcher(dispatch, actions.cancelCave),
+  showGameUpdate: dispatcher(dispatch, actions.showGameUpdate),
   initiatePurchase: dispatcher(dispatch, actions.initiatePurchase),
   abortGameRequest: dispatcher(dispatch, actions.abortGameRequest),
   navigate: dispatcher(dispatch, actions.navigate),

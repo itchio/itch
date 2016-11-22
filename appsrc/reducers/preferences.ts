@@ -22,6 +22,7 @@ export const initialState = {
   showAdvanced: false,
   openAtLogin: false,
   openAsHidden: false,
+  manualGameUpdates: false,
 } as IPreferencesState;
 
 export default handleActions<IPreferencesState, any>({

@@ -11,8 +11,6 @@ import {startTask} from "./start-task";
 import pathmaker from "../../util/pathmaker";
 import fetch from "../../util/fetch";
 
-import {startDownload} from "./start-download";
-
 export default function (watcher: Watcher) {
   watcher.on(actions.queueCaveReinstall, async (store, action) => {
     const {caveId} = action.payload;
@@ -52,24 +50,13 @@ export default function (watcher: Watcher) {
       return findWhere(getUserMarket().getEntities("downloadKeys"), {gameId: game.id});
     };
 
-    await startDownload(store, {
+    store.dispatch(actions.queueDownload({
       game,
-      gameId: game.id,
       upload,
       totalSize: upload.size,
       destPath: archivePath,
       downloadKey: cave.downloadKey || findDownloadKey(),
       reason: "reinstall",
-    });
-
-    await startTask(store, {
-      name: "install",
-      reinstall: true,
-      upload,
-      gameId: game.id,
-      game,
-      cave,
-      archivePath,
-    });
+    }));
   });
 }

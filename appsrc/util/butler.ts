@@ -9,7 +9,7 @@ import sf from "./sf";
 import {EventEmitter} from "events";
 import {IProgressListener, IProgressInfo} from "../types";
 
-import mklog from "./log";
+import mklog, {Logger} from "./log";
 const log = mklog("butler");
 
 const showDebug = (process.env.MY_BUTLER_IS_MY_FRIEND === "1");
@@ -18,6 +18,7 @@ const dumpAllOutput = (process.env.MY_BUTLER_IS_MY_ENEMY === "1");
 interface IButlerOpts {
    emitter: EventEmitter;
    onProgress?: IProgressListener;
+   logger?: Logger;
 }
 
 function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, token: string) {
@@ -71,6 +72,7 @@ async function butler (opts: IButlerOpts, command: string, commandArgs: string[]
     onToken,
     onErrToken,
     emitter,
+    logger: dumpAllOutput ? opts.logger : null,
   });
 
   if (err) {
