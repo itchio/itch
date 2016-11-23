@@ -942,3 +942,8 @@ export interface IViewCommunityProfilePayload {}
 
 export const OPEN_AT_LOGIN_ERROR = "OPEN_AT_LOGIN_ERROR";
 export interface IOpenAtLoginErrorPayload extends Types.IOpenAtLoginError {}
+
+export const PROXY_SETTINGS_DETECTED = "PROXY_SETTINGS_DETECTED";
+export interface IProxySettingsDetectedPayload {
+  proxy: string;
+}

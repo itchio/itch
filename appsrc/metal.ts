@@ -39,6 +39,10 @@ function autoUpdateDone () {
 
   const {app, globalShortcut} = require("electron");
 
+  if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
+    app.commandLine.appendSwitch("ignore-certificate-errors");
+  }
+
   const store = require("./store").default;
 
   app.on("ready", async function () {

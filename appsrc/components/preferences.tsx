@@ -14,7 +14,9 @@ import urls from "../constants/urls";
 import Icon from "./icon";
 import SelectRow from "./select-row";
 import {versionString} from "./hub-sidebar";
+
 import OpenAtLoginError from "./preferences/open-at-login-error";
+import ProxySettings from "./preferences/proxy-settings";
 
 import * as actions from "../actions";
 
@@ -25,9 +27,6 @@ import diskspace from "../util/diskspace";
 import {IState, ILocaleInfo, IPreferencesState, IInstallLocation} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
-
-// XXX bad, but we'll live
-const needle = require("electron").remote.require("./promised/needle");
 
 function getAppLogPath () {
   const logOpts = require("electron").remote.require("./logger");
@@ -163,21 +162,7 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
       <span className="app-version">
       {versionString()}
       </span>
-      <span className="proxy-settings">
-        {t("preferences.proxy_server_address")}
-        {needle.proxy
-          ? <span className="value hint--right" data-hint={t(`preferences.proxy_server_source.${needle.proxySource}`)}>
-            {needle.proxy}
-          </span>
-          : <span className="value">
-            {t("preferences.proxy_server_source.direct")}
-          </span>
-        }
-        {" "}
-        <a href={urls.proxyDocs}>
-          {t("docs.learn_more")}
-        </a>
-      </span>
+      <ProxySettings/>
       <span className="link" onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()); }}>
         {t("preferences.advanced.open_app_log")}
       </span>

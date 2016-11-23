@@ -34,6 +34,8 @@ import {
     DISABLE_BONUS, IDisableBonusPayload,
 
     OPEN_AT_LOGIN_ERROR, IOpenAtLoginErrorPayload,
+
+    PROXY_SETTINGS_DETECTED, IProxySettingsDetectedPayload,
 } from "../constants/action-types";
 
 export const languageSniffed = createAction<ILanguageSniffedPayload>(LANGUAGE_SNIFFED);
@@ -49,3 +51,5 @@ export const enableBonus = createAction<IEnableBonusPayload>(ENABLE_BONUS);
 export const disableBonus = createAction<IDisableBonusPayload>(DISABLE_BONUS);
 
 export const openAtLoginError = createAction<IOpenAtLoginErrorPayload>(OPEN_AT_LOGIN_ERROR);
+
+export const proxySettingsDetected = createAction<IProxySettingsDetectedPayload>(PROXY_SETTINGS_DETECTED);

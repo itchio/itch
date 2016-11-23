@@ -674,6 +674,9 @@ export interface ISystemState {
 
     /** total/free space in various partitions/disks */
     diskInfo: IPartsInfo;
+
+    /** if non-null, the proxy specified by the OS (as sniffed by Chromium) */
+    proxy?: string;
 }
 
 export interface ISetupOperation {
