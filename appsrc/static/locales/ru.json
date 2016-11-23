@@ -343,7 +343,7 @@
     "preferences.behavior.close_to_tray": "Сворачиваться в системный трей при закрытии окна",
     "outlinks.open_dashboard": "Кабинет разработчика",
     "menu.file.new_tab": "Новая закладка",
-    "preferences.proxy_server_address": "HTTP прокси",
+    "preferences.proxy_server_address": "HTTPS прокси",
     "preferences.proxy_server_source.direct": "Не используется (прямое соединение)",
     "preferences.proxy_server_source.env": "Указано переменной окружения",
     "preferences.proxy_server_source.os": "Используется системная настройка",
