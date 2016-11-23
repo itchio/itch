@@ -1,5 +1,4 @@
 
-import * as needle from "../../promised/needle";
 import urls from "../../constants/urls";
 
 import * as querystring from "querystring";
@@ -95,7 +94,7 @@ function channel (formulaName: string): string {
 /** fetch latest version number from repo */
 async function getLatestVersion (channel: string): Promise<string> {
   const url = `${channel}/LATEST?${querystring.stringify({t: +new Date()})}`;
-  const res = await needle.getAsync(url, {});
+  const res = await net.request("get", url);
 
   if (res.statusCode !== 200) {
     throw new Error(`got HTTP ${res.statusCode} while fetching ${url}`);
@@ -107,7 +106,7 @@ async function getLatestVersion (channel: string): Promise<string> {
 
 async function getChecksums (opts: INetOpts, channel: string, v: string, algo: ChecksumAlgo): Promise<IChecksums> {
   const url = `${channel}/v${v}/${algo}SUMS`;
-  const res = await needle.getAsync(url, {});
+  const res = await net.request("get", url);
 
   if (res.statusCode !== 200) {
     log(opts, `couldn't get hashes: HTTP ${res.statusCode}, for ${url}`);
