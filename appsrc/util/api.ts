@@ -1,7 +1,7 @@
 
 import * as querystring from "querystring";
 
-import * as needle from "../promised/needle";
+import {net} from "electron";
 import urls from "../constants/urls";
 
 import mkcooldown from "./cooldown";
