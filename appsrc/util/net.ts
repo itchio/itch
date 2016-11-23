@@ -1,5 +1,5 @@
 
-import {net} from "electron";
+import {net} from "../electron";
 
 import * as querystring from "querystring";
 
@@ -60,8 +60,7 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
         statusCode: res.statusCode,
         status: res.statusMessage,
         body: null,
-        // TODO: remove workaround when @types/electron is fixed
-        headers: res.headers as any as IHeaders,
+        headers: res.headers,
       } as IResponse;
 
       if (opts.cb) {

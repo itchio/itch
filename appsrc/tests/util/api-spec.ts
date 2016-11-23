@@ -7,16 +7,20 @@ import * as proxyquire from "proxyquire";
 
 import cooldown = require("../stubs/cooldown");
 
-import {INeedleResponse} from "needle";
+import {IResponse} from "../../util/net";
 import {ApiError} from "../../util/api";
 
 test("api", t => {
-  const needle = test.module({
-    requestAsync: async (): Promise<INeedleResponse> => ({body: {id: 12}, statusCode: 200}),
+  const net = test.module({
+    request: async (): Promise<IResponse> => ({
+      statusCode: 200,
+      status: "OK",
+      body: {id: 12},
+    } as IResponse),
   });
 
   const stubs = {
-    "../promised/needle": needle,
+    "../util/net": net,
     "../util/cooldown": cooldown,
   };
 
@@ -29,15 +33,15 @@ test("api", t => {
   const uri = "http://example.org/yo";
 
   t.case("can GET", async t => {
-    const request = t.spy(needle, "requestAsync");
-    await client.request("GET", "yo", {b: 11});
-    sinon.assert.calledWith(request, "GET", uri, {b: 11});
+    const request = t.spy(net, "request");
+    await client.request("get", "yo", {b: 11});
+    sinon.assert.calledWith(request, "get", uri, {b: 11});
   });
 
   t.case("can POST", async t => {
-    const request = t.spy(needle, "requestAsync");
-    await client.request("POST", "yo", {b: 22});
-    sinon.assert.calledWith(request, "POST", uri, {b: 22});
+    const request = t.spy(net, "request");
+    await client.request("post", "yo", {b: 22});
+    sinon.assert.calledWith(request, "post", uri, {b: 22});
   });
 
   t.case("can make authenticated request", t => {
@@ -49,10 +53,10 @@ test("api", t => {
   t.case("rejects API errors", async t => {
     const errors = ["foo", "bar", "baz"];
 
-    t.stub(needle, "requestAsync").resolves({body: {errors}, statusCode: 200});
+    t.stub(net, "request").resolves({body: {errors}, statusCode: 200});
     let err: ApiError;
     try {
-      await client.request("GET", "", {});
+      await client.request("get", "", {});
     } catch (e) { err = e; }
     t.same(err, {errors});
   });
