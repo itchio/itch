@@ -30,7 +30,18 @@ export class RequestError extends Error {
   }
 }
 
-async function request (method: HTTPMethod, uri: string, data: any = {}): Promise<IResponse> {
+import {WriteStream} from "fs";
+
+export interface IRequestCallback {
+  (res: IResponse): void;
+}
+
+export interface IRequestOpts {
+  sink?: WriteStream;
+  cb?: IRequestCallback;
+}
+
+async function request (method: HTTPMethod, uri: string, data: any = {}, opts: IRequestOpts = {}): Promise<IResponse> {
   let url = uri;
 
   if (method as string === "GET") {
@@ -45,36 +56,46 @@ async function request (method: HTTPMethod, uri: string, data: any = {}): Promis
 
   const p = new Promise<IResponse>((resolve, reject) => {
     req.on("response", (res) => {
-      // TODO: binary
+      const response = {
+        statusCode: res.statusCode,
+        status: res.statusMessage,
+        body: null,
+        // TODO: remove workaround when @types/electron is fixed
+        headers: res.headers as any as IHeaders,
+      } as IResponse;
+
+      if (opts.cb) {
+        opts.cb(response);
+      }
+
       let text: any = "";
-      res.setEncoding("utf8");
-      res.on("data", function (chunk) {
-        text += chunk;
-      });
+
+      if (opts.sink) {
+        res.pipe(opts.sink);
+      } else {
+        res.setEncoding("utf8");
+        res.on("data", function (chunk) {
+          text += chunk;
+        });
+      }
 
       let contentType = res.headers["content-type"][0];
 
-      res.on("end", () => {
-        let body: any;
-
-        if (contentType === "application/json") {
+      res.on("end", async () => {
+        if (opts.sink) {
+          // all good, it's up to caller to wait on promised sink
+        } else if (contentType === "application/json") {
           try {
-            body = JSON.parse(text);
+            response.body = JSON.parse(text);
           } catch (e) {
             reject(e);
             return;
           }
         } else {
-          body = text;
+          response.body = text;
         }
 
-        resolve({
-          statusCode: res.statusCode,
-          status: res.statusMessage,
-          body: body,
-          // TODO: remove workaround when @types/electron is fixed
-          headers: res.headers as any as IHeaders,
-        } as IResponse);
+        resolve(response);
       });
     });
 

@@ -4,6 +4,7 @@ import { promisify, promisifyAll } from "bluebird";
 import * as bluebird from "bluebird";
 
 import {Stats} from "fs";
+import * as fsModule from "fs";
 
 // let's patch all the things! Electron randomly decides to
 // substitute 'fs' with their own version that considers '.asar'
@@ -23,11 +24,26 @@ import { EventEmitter } from "events";
 
 import * as proxyquire from "proxyquire";
 
+export interface IAsyncFSVariants {
+  R_OK: number;
+  readFileAsync: (path: string, opts?: {encoding: string}) => Promise<string>;
+  writeFileAsync: (path: string, data: string, opts?: {encoding: string}) => Promise<void>;
+  appendFileAsync: (path: string, data: string, opts?: {encoding: string}) => Promise<void>;
+  renameAsync: (oldpath: string, newpath: string) => Promise<void>;
+  chmodAsync: (path: string, mode: number) => Promise<void>;
+  statAsync: (path: string) => Promise<Stats>;
+  lstatAsync: (path: string) => Promise<Stats>;
+  readlinkAsync: (path: string) => Promise<string>;
+  symlinkAsync: (srcpath: string, dstpath: string) => Promise<string>;
+  rmdirAsync: (path: string) => Promise<string>;
+  unlinkAsync: (path: string) => Promise<string>;
+}
+
 let fs = Object.assign({}, require(fsName), {
   "@global": true, /* Work with transitive imports */
   "@noCallThru": true, /* Don't even require/hit electron fs */
   disableGlob: true, /* Don't ever use globs with rimraf */
-});
+}) as typeof fsModule & IAsyncFSVariants;
 
 // graceful-fs fixes a few things https://www.npmjs.com/package/graceful-fs
 // notably, EMFILE, EPERM, etc.

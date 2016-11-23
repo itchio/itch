@@ -17,7 +17,7 @@ import {Logger} from "../log";
 import mklog from "../log";
 const log = mklog("ibrew/net");
 
-import {INeedleResponse} from "needle";
+import net from "../../util/net";
 
 export type ChecksumAlgo = "SHA256" | "SHA1";
 
@@ -42,23 +42,20 @@ export interface IChecksums {
  * to install butler
  */
 async function downloadToFile (opts: INetOpts, url: string, file: string): Promise<void> {
-  let e: Error = null;
   let totalSize = 0;
-  let req = needle.get(url, {}, (err: Error, res: INeedleResponse) => {
-    e = err;
-    if (res) {
-      totalSize = parseInt(res.headers["content-length"], 10);
-    }
-  });
+
   await sf.mkdir(path.dirname(file));
   log(opts, `downloading ${url} to ${file}`);
   let sink = sf.createWriteStream(file, {flags: "w", mode: 0o777, defaultEncoding: "binary"});
-  req.pipe(sink);
-  await sf.promised(sink);
 
-  if (e) {
-    throw e;
-  }
+  await net.request("get", url, {}, {
+    sink,
+    cb: (res) => {
+      totalSize = parseInt(res.headers["content-length"][0], 10);
+    },
+  });
+
+  await sf.promised(sink);
 
   const stats = await sf.lstat(file);
   log(opts, `downloaded ${humanize.fileSize(stats.size)} / ${humanize.fileSize(totalSize)} (${stats.size} bytes)`);
