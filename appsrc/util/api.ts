@@ -1,7 +1,7 @@
 
 import * as querystring from "querystring";
 
-import {net} from "electron";
+import net from "../util/net";
 import urls from "../constants/urls";
 
 import mkcooldown from "./cooldown";
@@ -48,11 +48,6 @@ export class ApiError extends Error {
   }
 }
 
-import * as http from "http";
-import * as https from "https";
-
-let agent: http.Agent;
-
 type HTTPMethod = "get" | "head" | "post";
 
 interface ITransformerMap {
@@ -75,22 +70,6 @@ export class Client {
   }
 
   async request (method: HTTPMethod, path: string, data: any = {}, transformers: ITransformerMap = {}): Promise<any> {
-    if (!agent) {
-      const hasHttpProxy = needle.proxy && !/https:/i.test(needle.proxy);
-      const hasHttpApi = !/https:/i.test(urls.itchioApi);
-      if (hasHttpProxy || hasHttpApi) {
-        agent = new http.Agent({
-          keepAlive: true,
-          maxSockets: 1,
-        });
-      } else {
-        agent = new https.Agent({
-          keepAlive: true,
-          maxSockets: 1,
-        });
-      }
-    }
-
     const t1 = Date.now();
 
     const uri = `${this.rootUrl}${path}`;
@@ -98,9 +77,7 @@ export class Client {
     await cooldown();
     const t2 = Date.now();
 
-    const resp = await needle.requestAsync(method, uri, data, {
-      agent,
-    });
+    const resp = await net.request(method, uri, data);
     const body = resp.body;
     const t3 = Date.now();
 
