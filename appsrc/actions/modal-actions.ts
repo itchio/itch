@@ -1,5 +1,5 @@
 
-import * as uuid from "node-uuid";
+import * as uuid from "uuid";
 
 import { createAction } from "redux-actions";
 

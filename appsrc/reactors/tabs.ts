@@ -1,7 +1,7 @@
 
 import {Watcher} from "./watcher";
 
-import * as uuid from "node-uuid";
+import * as uuid from "uuid";
 
 import * as actions from "../actions";
 

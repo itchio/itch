@@ -1,6 +1,6 @@
 
 import { createAction } from "redux-actions";
-import * as uuid from "node-uuid";
+import * as uuid from "uuid";
 
 import {
   DISMISS_HISTORY_ITEM, IDismissHistoryItemPayload,
