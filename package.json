@@ -74,7 +74,6 @@
     "moment": "^2.15.1",
     "moment-timezone": "^0.5.4",
     "nconf": "^0.8.2",
-    "needle": "^1.0.0",
     "node-uuid": "^1.4.7",
     "proxyquire": "^1.7.3",
     "react": "^15.2.0",
