@@ -39,6 +39,7 @@ export interface IRequestCallback {
 export interface IRequestOpts {
   sink?: WriteStream;
   cb?: IRequestCallback;
+  format?: "json" | null;
 }
 
 async function request (method: HTTPMethod, uri: string, data: any = {}, opts: IRequestOpts = {}): Promise<IResponse> {
@@ -78,7 +79,8 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
         });
       }
 
-      let contentType = res.headers["content-type"][0];
+      const contentTypeHeader = res.headers["content-type"][0];
+      const contentType = /[^;]*/.exec(contentTypeHeader)[0];
 
       res.on("end", async () => {
         if (opts.sink) {
@@ -108,9 +110,13 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
     });
   });
 
-  // TODO: write body
   if (method as string !== "GET") {
-    const reqBody = querystring.stringify(data);
+    let reqBody: string;
+    if (opts.format === "json") {
+      reqBody = JSON.stringify(data);
+    } else {
+      reqBody = querystring.stringify(data);
+    }
 
     req.setHeader("content-type", "application/x-www-form-urlencoded");
     req.setHeader("content-length", String(Buffer.byteLength(reqBody)));
