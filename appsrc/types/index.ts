@@ -651,6 +651,14 @@ export interface IGlobalMarketState extends IMarketState {
 
 export type ProxySource = "os" | "env";
 
+export interface IProxySettings {
+    /** if non-null, the proxy specified by the OS (as sniffed by Chromium) */
+    proxy?: string;
+
+    /** if non-null, where the proxy settings come from */
+    proxySource?: ProxySource;
+}
+
 export interface ISystemState {
     /** version string, for example '19.0.0' */
     appVersion: string;

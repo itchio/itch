@@ -34,6 +34,7 @@ import modals from "./modals";
 import halloween from "./halloween";
 import openAtLogin from "./open-at-login";
 import gameUpdates from "./game-updates";
+import proxy from "./proxy";
 
 let watcher = new Watcher();
 preboot(watcher);
@@ -69,6 +70,7 @@ modals(watcher);
 halloween(watcher);
 openAtLogin(watcher);
 gameUpdates(watcher);
+proxy(watcher);
 
 watcher.validate();
 

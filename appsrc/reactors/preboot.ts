@@ -9,6 +9,8 @@ import {opts} from "../logger";
 import mklog from "../util/log";
 const log = mklog("preboot");
 
+import {applyProxySettings} from "../reactors/proxy";
+
 export default function (watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
     try {
@@ -34,22 +36,12 @@ export default function (watcher: Watcher) {
 
       if (envSettings) {
         log(opts, `Got proxy settings from environment: ${envSettings}`);
-        store.dispatch(actions.proxySettingsDetected({
+        const proxySettings = {
           proxy: envSettings,
           source: "env",
-        }));
-
-        await new Promise<void>((resolve, reject) => {
-          session.defaultSession.setProxy({
-            pacScript: null,
-            proxyRules: envSettings,
-            proxyBypassRules: null,
-          }, resolve);
-
-          setTimeout(function () {
-            reject(new Error("proxy settings adjustment timed out"));
-          }, 1000);
-        });
+        };
+        store.dispatch(actions.proxySettingsDetected(proxySettings));
+        await applyProxySettings(session.defaultSession, proxySettings);
       } else {
         const proxySettings = await new Promise<string>((resolve, reject) => {
           // resolveProxy accepts strings as well, and URL is not defined here for some reason?

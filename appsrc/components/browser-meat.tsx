@@ -9,6 +9,7 @@ import * as actions from "../actions";
 
 import urlParser from "../util/url";
 import navigation from "../util/navigation";
+import partitionForUser from "../util/partition-for-user";
 
 import staticTabData from "../constants/static-tab-data";
 
@@ -344,7 +345,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
     this.webview = wv;
 
     const {meId} = this.props;
-    const partition = `persist:itchio-${meId}`;
+    const partition = partitionForUser(meId);
 
     wv.partition = partition;
     wv.plugins = true;
@@ -497,7 +498,10 @@ interface IBrowserMeatProps {
   tabData: ITabData;
   tabId: string;
   className: string;
+
   meId: string;
+  proxy?: string;
+  proxySource?: string;
 
   navigate: typeof actions.navigate;
 
@@ -519,6 +523,8 @@ interface IBrowserMeatState {
 
 const mapStateToProps = createStructuredSelector({
   meId: (state: IState) => (state.session.credentials.me || {id: "anonymous"}).id,
+  proxy: (state: IState) => state.system.proxy,
+  proxySource: (state: IState) => state.system.proxySource,
 });
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
