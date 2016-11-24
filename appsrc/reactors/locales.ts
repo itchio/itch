@@ -4,7 +4,7 @@ import {Watcher} from "./watcher";
 import * as ospath from "path";
 import ifs from "../localizer/ifs";
 
-import * as needle from "../promised/needle";
+import net from "../util/net";
 import urls from "../constants/urls";
 import {app} from "../electron";
 import * as env from "../env";
@@ -45,7 +45,7 @@ async function doDownloadLocale (lang: string, resources: II18nResources) {
   const uri = `${urls.remoteLocalePath}/${lang}.json`;
 
   log(opts, `Downloading fresh locale file from ${uri}`);
-  const resp = await needle.requestAsync("get", uri, {}, {format: "json"});
+  const resp = await net.request("get", uri, {}, {format: "json"});
 
   log(opts, `HTTP GET ${uri}: ${resp.statusCode}`);
   if (resp.statusCode !== 200) {
