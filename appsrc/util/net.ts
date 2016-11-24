@@ -125,7 +125,7 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
     });
 
     req.on("close", () => {
-      console.log("Request closed: ", url); // tslint:disable-line:no-console
+      // no-op
     });
     
     if (!opts.sink) {
