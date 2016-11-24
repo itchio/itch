@@ -46,7 +46,10 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
   let url = uri;
 
   if (method as string === "GET") {
-    url = `${url}?${querystring.stringify(data)}`;
+    const query = querystring.stringify(data);
+    if (query !== "") {
+      url = `${url}?${query}`;
+    }
   }
 
   const req = net.request({
