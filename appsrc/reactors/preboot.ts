@@ -57,7 +57,7 @@ export default function (watcher: Watcher) {
       });
       log(opts, `Set up certificate error handler`);
     } catch (e) {
-      log(opts, `Could not set up certificate error handler: ${e.stack || e.message || e}`)
+      log(opts, `Could not set up certificate error handler: ${e.stack || e.message || e}`);
     }
 
     try {
