@@ -37,6 +37,10 @@ export class FakeRequest implements INetRequest {
   end () {
     // no-op
   }
+
+  abort() {
+    // no-op
+  }
 }
 
 const electron = {
