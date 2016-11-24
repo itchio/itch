@@ -172,11 +172,11 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
   log(gameOpts, `looking for manifest @ "${manifestPath}"`);
   const hasManifest = await sf.exists(manifestPath);
   let manifestAction: IManifestAction;
+  let manifest: IManifest;
 
   if (hasManifest) {
     log(gameOpts, "found manifest, parsing");
 
-    let manifest: IManifest;
     try {
       const contents = await sf.readFile(manifestPath);
       manifest = toml.parse(contents);
@@ -262,6 +262,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
 
   if (os.itchPlatform() === "windows") {
     await handleWindowsPrereqs({
+      manifest,
       caveId: cave.id,
       globalMarket: opts.globalMarket,
       logger: opts.logger,

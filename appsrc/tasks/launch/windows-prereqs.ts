@@ -2,15 +2,16 @@
 import mklog, {Logger} from "../../util/log";
 const log = mklog("windows-prereqs");
 
-import {find} from "underscore";
+import {each, find} from "underscore";
 import spawn from "../../util/spawn";
 import pathmaker from "../../util/pathmaker";
 
 import * as ospath from "path";
 
-import {IMarket, ICaveRecord} from "../../types";
+import {IManifest, IMarket, ICaveRecord} from "../../types";
 
 interface IWindowsPrereqsOpts {
+  manifest: IManifest;
   globalMarket: IMarket;
   caveId: string;
   logger: Logger;
@@ -23,6 +24,8 @@ export default async function handleWindowsPrereqs (opts: IWindowsPrereqsOpts) {
   if (!cave.installedUE4Prereq) {
     await handleUE4Prereq(cave, opts);
   }
+
+  await handleManifest(opts);
 }
 
 async function handleUE4Prereq (cave: ICaveRecord, opts: IWindowsPrereqsOpts) {
@@ -61,4 +64,16 @@ async function handleUE4Prereq (cave: ICaveRecord, opts: IWindowsPrereqsOpts) {
   } catch (e) {
     log(opts, `error while launching UE4 prereq for ${cave.id}: ${e.stack || e}`);
   }
+}
+
+async function handleManifest (opts: IWindowsPrereqsOpts) {
+  const {manifest} = opts;
+  if (!manifest) {
+    // TODO: auto-detect etc.
+    return;
+  }
+
+  each(manifest.prereqs, (prereq) => {
+    log(opts, `stub: should install prereq '${prereq.name}'`);
+  });
 }
