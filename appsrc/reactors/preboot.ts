@@ -11,6 +11,9 @@ const log = mklog("preboot");
 
 import {applyProxySettings} from "../reactors/proxy";
 
+let testProxy = false;
+let proxyTested = false;
+
 export default function (watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
     try {
@@ -23,6 +26,38 @@ export default function (watcher: Watcher) {
       await xdgMime.registerIfNeeded(opts);
     } catch (e) {
       log(opts, `Could not run xdg-mime: ${e.stack || e.message || e}`);
+    }
+
+    try {
+      const {app} = require("electron");
+      app.on("certificate-error", (ev, webContents, url, error, certificate, callback) => {
+        // do not trust
+        callback(false);
+
+        log(opts, `Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`);
+
+        store.dispatch(actions.openModal({
+          title: `Certificate error: ${error}`,
+          message: `There was an error with the certificate for ` +
+          `\`${certificate.subjectName}\` issued by \`${certificate.issuerName}\`.\n\n` +
+          `Please check your proxy configuration and try again.`,
+          detail: `If you ignore this error, the rest of the app might not work correctly.`,
+          buttons: [
+            {
+              label: "Ignore and continue",
+              action: actions.closeModal({}),
+              className: "secondary",
+            },
+            {
+              label: ["menu.file.quit"],
+              action: actions.quit({}),
+            },
+          ],
+        }));
+      });
+      log(opts, `Set up certificate error handler`);
+    } catch (e) {
+      log(opts, `Could not set up certificate error handler: ${e.stack || e.message || e}`)
     }
 
     try {
@@ -41,6 +76,7 @@ export default function (watcher: Watcher) {
           source: "env",
         };
         store.dispatch(actions.proxySettingsDetected(proxySettings));
+        testProxy = true;
         await applyProxySettings(session.defaultSession, proxySettings);
       } else {
         const proxySettings = await new Promise<string>((resolve, reject) => {
@@ -56,6 +92,7 @@ export default function (watcher: Watcher) {
           log(opts, `Got proxy settings: '${proxySettings}'`);
           const proxy = proxySettings.replace(/PROXY /, "");
           store.dispatch(actions.proxySettingsDetected({proxy, source: "os"}));
+          testProxy = true;
         } else {
           log(opts, `No proxy detected`);
         }
@@ -71,5 +108,33 @@ export default function (watcher: Watcher) {
     setTimeout(function () {
       diego.hire(opts);
     }, 3000);
+  });
+
+  watcher.on(actions.attemptLogin, async (store, action) => {
+    if (!testProxy) {
+      return;
+    }
+
+    if (proxyTested) {
+      return;
+    }
+    proxyTested = true;
+
+    const {BrowserWindow} = require("electron");
+    const win = new BrowserWindow({ show: false });
+
+    win.webContents.on("did-finish-load", () => {
+      log(opts, `Test page loaded with proxy successfully!`);
+    });
+    win.webContents.on("did-fail-load", () => {
+      log(opts, `Test page failed to load with proxy!`);
+    });
+
+    log(opts, `Testing proxy by loading a page in a hidden browser window...`);
+    win.loadURL("https://itch.io/country");
+
+    setTimeout(() => {
+      win.close();
+    }, 15 * 1000);
   });
 }

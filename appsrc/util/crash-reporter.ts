@@ -139,6 +139,7 @@ ${log}
     };
     process.on("uncaughtException", makeHandler("Uncaught exception"));
     process.on("unhandledRejection", makeHandler("Unhandled rejection"));
+    console.log("Fully mounted crash reporter"); // tslint:disable-line:no-console
   },
 };
 

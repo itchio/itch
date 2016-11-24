@@ -18,15 +18,21 @@ export interface IResponse {
   headers: IHeaders;
 }
 
-export class RequestAbortedError extends Error {
-  constructor () {
-    super("Request aborted!");
+export class RequestError extends Error {
+  constructor (message = "Request error") {
+    super(message);
   }
 }
 
-export class RequestError extends Error {
+export class RequestTimeout extends RequestError {
   constructor () {
-    super("Request error!");
+    super("Request timed out");
+  }
+}
+
+export class RequestAborted extends RequestError {
+  constructor () {
+    super("Request aborted");
   }
 }
 
@@ -104,13 +110,31 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
     });
 
     req.on("error", (error) => {
-      console.log("Request error: ", error); // tslint:disable-line:no-console
       reject(new RequestError());
     });
 
-    req.on("abort", () => {
-      reject(new RequestAbortedError());
+    req.on("abort", (error) => {
+      reject(new RequestAborted());
     });
+
+    req.on("login", (authInfo, callback) => {
+      // cf. https://github.com/electron/electron/blob/master/docs/api/client-request.md
+      // "Providing empty credentials will cancel the request and report
+      // an authentication error on the response object"
+      callback();
+    });
+
+    req.on("close", () => {
+      console.log("Request closed: ", url); // tslint:disable-line:no-console
+    });
+    
+    if (!opts.sink) {
+      const timeout = 10 * 1000;
+      setTimeout(() => {
+        reject(new RequestTimeout());
+        req.abort();
+      }, timeout);
+    }
   });
 
   if (method as string !== "GET") {
