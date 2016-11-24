@@ -110,7 +110,7 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
     });
 
     req.on("error", (error) => {
-      reject(new RequestError());
+      reject(new RequestError(error.message));
     });
 
     req.on("abort", (error) => {

@@ -42,7 +42,8 @@ export default function (watcher: Watcher) {
       store.dispatch(actions.loginSucceeded({key, me}));
     } catch (e) {
       const {me} = action.payload;
-      if (me && e.code === "ENOTFOUND") {
+      if (me && client.isNetworkError(e)) {
+        // log in anyway
         store.dispatch(actions.loginSucceeded({key, me}));
       } else {
         store.dispatch(actions.loginFailed({username, errors: e.errors || e.stack || e}));

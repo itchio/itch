@@ -125,14 +125,8 @@ export class Client {
   }
 
   isNetworkError (errorObject: any): boolean {
-    return (typeof errorObject === "object" && errorObject.code) && (
-      // DNS lookup failed (*nix)
-      errorObject.code === "ENOTFOUND" ||
-      // lost connectivity in the middle of request
-      errorObject.code === "ECONNRESET" ||
-      // DNS lookup failed (windows)
-      (errorObject.code === "ENOENT" && /getaddrinfo/.test(errorObject.message))
-    );
+    return errorObject.message === "net::ERR_INTERNET_DISCONNECTED" ||
+           errorObject.message === "net::ERR_PROXY_CONNECTION_FAILED";
   }
 }
 
