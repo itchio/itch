@@ -4,7 +4,7 @@ import {connect} from "./connect";
 import {createStructuredSelector} from "reselect";
 import Fuse = require("fuse.js");
 
-import {each, filter, map} from "underscore";
+import {each, filter, uniq, map} from "underscore";
 
 import * as actions from "../actions";
 
@@ -47,6 +47,14 @@ export class GameGrid extends React.Component<IGameGridProps, void> {
       }));
     }
     let hiddenCount = 0;
+
+    // corner case: if an invalid download key slips in, it may not be associated
+    // with a game — just keep displaying it instead of breaking the whole app,
+    // cf. https://itch.io/post/73405
+    filteredGames = filter(filteredGames, (game) => !!game);
+
+    // if you own a game multiple times, it might appear multiple times in the grid
+    filteredGames = uniq(filteredGames, (game) => game.id);
 
     if (onlyCompatible) {
       filteredGames = filter(filteredGames, (game) => isPlatformCompatible(game));
