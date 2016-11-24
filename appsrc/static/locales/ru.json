@@ -367,5 +367,6 @@
     "pick_update_upload.single.message": "Вы можете выполнить обновление сейчас или позже.",
     "pick_update_upload.single.detail": "Примечание: в настройках можно включить автоматическое обновление",
     "pick_update_upload.buttons.update": "Обновить сейчас",
-    "pick_update_upload.buttons.just_launch": "Просто запустить"
+    "pick_update_upload.buttons.just_launch": "Просто запустить",
+    "grid.item.advanced": "Дополнительно..."
 }
