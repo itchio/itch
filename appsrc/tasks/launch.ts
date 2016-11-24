@@ -12,6 +12,7 @@ import html from "./launch/html";
 import shell from "./launch/shell";
 import external from "./launch/external";
 import validateManifest from "./launch/validate-manifest";
+import handleWindowsPrereqs from "./launch/windows-prereqs";
 
 import store from "../store";
 import * as actions from "../actions";
@@ -34,11 +35,9 @@ import actionForGame from "../util/action-for-game";
 import {promisedModal} from "../reactors/modals";
 import {MODAL_RESPONSE} from "../constants/action-types";
 
-import spawn from "../util/spawn";
-
 import {app} from "../electron";
 
-import {find, findWhere, each} from "underscore";
+import {findWhere, each} from "underscore";
 
 import {Crash, Cancelled} from "./errors";
 
@@ -190,43 +189,34 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
     validateManifest(manifest, log, gameOpts);
 
     if (manifest.actions.length > 1) {
-      if (opts.manifestActionName) {
-        manifestAction = findWhere(manifest.actions, {name: opts.manifestActionName});
-        if (!action) {
-          log(gameOpts, `Picked invalid manifest action: ${opts.manifestActionName},` +
-            ` had: ${JSON.stringify(manifest.actions, null, 2)}`);
-          return;
+      const buttons: IModalButtonSpec[] = [];
+      const bigButtons: IModalButtonSpec[] = [];
+      each(manifest.actions, (actionOption, i) => {
+        if (!actionOption.name) {
+          throw new Error(`in manifest, action ${i} is missing a name`);
         }
+        bigButtons.push({
+          label: [`action.name.${actionOption.name}`, {defaultValue: actionOption.name}],
+          action: actions.modalResponse({manifestActionName: actionOption.name}),
+          icon: actionOption.icon || defaultManifestIcons[actionOption.name] || "star",
+          className: `action-${actionOption.name}`,
+        });
+      });
+
+      buttons.push("cancel");
+
+      const response = await promisedModal(store, {
+        title: game.title,
+        cover: game.stillCoverUrl || game.coverUrl,
+        message: "",
+        bigButtons,
+        buttons,
+      });
+
+      if (response.type === MODAL_RESPONSE) {
+        manifestAction = findWhere(manifest.actions, {name: response.payload.manifestActionName});
       } else {
-        const buttons: IModalButtonSpec[] = [];
-        const bigButtons: IModalButtonSpec[] = [];
-        each(manifest.actions, (actionOption, i) => {
-          if (!actionOption.name) {
-            throw new Error(`in manifest, action ${i} is missing a name`);
-          }
-          bigButtons.push({
-            label: [`action.name.${actionOption.name}`, {defaultValue: actionOption.name}],
-            action: actions.modalResponse({manifestActionName: actionOption.name}),
-            icon: actionOption.icon || defaultManifestIcons[actionOption.name] || "star",
-            className: `action-${actionOption.name}`,
-          });
-        });
-
-        buttons.push("cancel");
-
-        const response = await promisedModal(store, {
-          title: game.title,
-          cover: game.stillCoverUrl || game.coverUrl,
-          message: "",
-          bigButtons,
-          buttons,
-        });
-
-        if (response.type === MODAL_RESPONSE) {
-          manifestAction = findWhere(manifest.actions, {name: response.payload.manifestActionName});
-        } else {
-          return; // cancelled by user
-        }
+        return; // cancelled by user
       }
     } else {
       manifestAction = manifest.actions[0];
@@ -243,7 +233,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
       log(opts, `Requesting subkey with scope: ${manifestAction.scope}`);
       const client = api.withKey(credentials.key);
       const subkey = await client.subkey(game.id, manifestAction.scope);
-      log(opts, `Got subkey (${subkey.key.length} chars, expires ${subkey.expires_at})`);
+      log(opts, `Got subkey (${subkey.key.length} chars, expires ${subkey.expiresAt})`);
       (env as any).ITCHIO_API_KEY = subkey.key;
       (env as any).ITCHIO_API_KEY_EXPIRES_AT = subkey.expiresAt;
     }
@@ -270,33 +260,12 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
     throw new Error(`Unsupported launch type '${cave.launchType}'`);
   }
 
-  if (os.itchPlatform() === "windows") { // temp UE4 hack
-    const {installedUE4Prereq} = globalMarket.getEntity("caves", cave.id);
-    if (!installedUE4Prereq) {
-      log(opts, "looking for UE4 prereq setup");
-      try {
-        const executables = globalMarket.getEntity("caves", cave.id).executables;
-        const reqFile = find(executables, (x: string) => /UE4PrereqSetup(_x64)?.exe/i.test(x));
-
-        if (reqFile) {
-          log(opts, `launching installer ${reqFile}`);
-          const code = await spawn({
-            command: ospath.join(appPath, reqFile),
-            args: ["/quiet", "/norestart"],
-            onToken: (tok) => log(opts, `[ue4 prereq out] ${tok}`),
-            onErrToken: (tok) => log(opts, `[ue4 prereq err] ${tok}`),
-          });
-          if (code === 0) {
-            log(opts, "succesfully installed UE4 prereq");
-            globalMarket.saveEntity("caves", cave.id, {installedUE4Prereq: true});
-          } else {
-            log(opts, `couldn't install UE4 prereq (exit code ${code})`);
-          }
-        }
-      } catch (e) {
-        log(opts, `error while launching prereq for ${cave.id}: ${e.stack || e}`);
-      }
-    }
+  if (os.itchPlatform() === "windows") {
+    await handleWindowsPrereqs({
+      caveId: cave.id,
+      globalMarket: opts.globalMarket,
+      logger: opts.logger,
+    });
   }
 
   const startedAt = Date.now();

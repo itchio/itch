@@ -394,10 +394,10 @@ export type TableName = "caves" | "users" | "games" | "collections" | "downloadK
  * Tables have string indices, and they contain objects with string indices.
  */
 export interface IMarket {
-    saveEntity: (table: TableName, id: string, payload: any) => void;
     getEntities: (table: TableName) => IEntityMap;
     getEntity: (table: TableName, id: string) => any;
     saveAllEntities: (entityRecords: IEntityRecords, saveOpts?: IMarketSaveOpts) => Promise<void>;
+    saveEntity: (table: TableName, id: string, payload: any, saveOpts?: IMarketSaveOpts) => Promise<void>;
     deleteAllEntities: (deleteSpec: IMarketDeleteSpec, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
     deleteEntity: (table: TableName, id: string, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
 }
@@ -457,8 +457,13 @@ export interface IManifestAction {
     scope: string;
 }
 
+export interface IManifestPrereq {
+    name: string;
+}
+
 export interface IManifest {
     actions: IManifestAction[];
+    prereqs: IManifestPrereq[];
 }
 
 export interface IOwnUserRecord extends IUserRecord {
