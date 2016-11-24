@@ -28,9 +28,18 @@ interface IProxyConfig {
 /** Something that accepts electron proxy settings - usually a session */
 interface IAcceptsProxyConfig {
   setProxy(config: IProxyConfig, callback: Function): void;
+  enableNetworkEmulation(options: {
+    offline?: boolean,
+  }): void;
 }
 
 export async function applyProxySettings(session: IAcceptsProxyConfig, system: IProxySettings) {
+  if (process.env.ITCH_EMULATE_OFFLINE === "1") {
+    session.enableNetworkEmulation({
+      offline: true,
+    });
+  }
+
   if (system.proxySource === "os") {
     // this means they've been detected from OS, no need to set them manually
     return;
