@@ -11,7 +11,7 @@ following to get started with development:
 [electron]: https://github.com/atom/electron
 
 ```
-$ npm install -g electron@1.4.7
+$ npm install -g electron@1.4.8
 ```
 
 * Check out this repository
