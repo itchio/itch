@@ -42,9 +42,9 @@ export default function (watcher: Watcher) {
       const body =
   `:rotating_light: ${game.classification} [${game.title}](${game.url}) is broken for me.
 
-  :book: Here's the complete [debug log](${gist.html_url}).
+:book: Here's the complete [debug log](${gist.html_url}).
 
-  :running: Any additional details can go here!`;
+:running: Any additional details can go here!`;
 
       crashReporter.reportIssue({
         type: `${game.title} ↔`,

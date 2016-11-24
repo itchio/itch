@@ -4,7 +4,7 @@ import {Watcher} from "./watcher";
 import {app} from "../electron";
 import os from "../util/os";
 import client from "../util/api";
-import * as needle from "../promised/needle";
+import net from "../util/net";
 
 import delay from "./delay";
 
@@ -118,7 +118,7 @@ export default function (watcher: Watcher) {
     const uri = await getFeedURL();
 
     try {
-      const resp = await needle.getAsync(uri, {format: "json"});
+      const resp = await net.request("get", uri);
 
       log(opts, `HTTP GET ${uri}: ${resp.statusCode}`);
       if (resp.statusCode === 200) {

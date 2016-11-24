@@ -7,6 +7,7 @@ import {
   IAction,
   ILanguageSniffedPayload,
   IFreeSpaceUpdatedPayload,
+  IProxySettingsDetectedPayload,
 } from "../constants/action-types";
 
 import {ISystemState} from "../types";
@@ -27,6 +28,7 @@ const initialState = {
       size: 0,
     },
   },
+  proxy: null,
 } as ISystemState;
 
 export default handleActions<ISystemState, any>({
@@ -38,5 +40,10 @@ export default handleActions<ISystemState, any>({
   FREE_SPACE_UPDATED: (state: ISystemState, action: IAction<IFreeSpaceUpdatedPayload>) => {
     const {diskInfo} = action.payload;
     return Object.assign({}, state, {diskInfo});
+  },
+
+  PROXY_SETTINGS_DETECTED: (state: ISystemState, action: IAction<IProxySettingsDetectedPayload>) => {
+    const proxy: string = action.payload.proxy;
+    return Object.assign({}, state, {proxy});
   },
 }, initialState);

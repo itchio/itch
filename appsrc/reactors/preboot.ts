@@ -25,22 +25,22 @@ export default function (watcher: Watcher) {
 
     try {
       const proxySettings = await new Promise<string>((resolve, reject) => {
+        // TODO: move to an action instead
         const {session} = require("electron");
-        session.defaultSession.resolveProxy(new URL("https://itch.io"), resolve);
+        // resolveProxy accepts strings as well, and URL is not defined here for some reason?
+        session.defaultSession.resolveProxy("https://itch.io" as any, resolve);
 
         setTimeout(function () {
           reject(new Error("proxy resolution timed out"));
         }, 1000);
       });
-      log(opts, `Got proxy settings: '${proxySettings}'`);
-      if (/PROXY /.test(proxySettings)) {
-        const proxy = proxySettings.replace(/PROXY /, "");
-        const needle = require("../promised/needle");
 
-        if (!needle.proxy) {
-          needle.proxy = proxy;
-          needle.proxySource = "os";
-        }
+      if (/PROXY /.test(proxySettings)) {
+        log(opts, `Got proxy settings: '${proxySettings}'`);
+        const proxy = proxySettings.replace(/PROXY /, "");
+        store.dispatch(actions.proxySettingsDetected({proxy}));
+      } else {
+        log(opts, `No proxy detected`);
       }
     } catch (e) {
       log(opts, `Could not detect proxy settings: ${e ? e.message : "unknown error"}`);

@@ -1,5 +1,4 @@
 
-import * as needle from "../../promised/needle";
 import urls from "../../constants/urls";
 
 import * as querystring from "querystring";
@@ -17,7 +16,7 @@ import {Logger} from "../log";
 import mklog from "../log";
 const log = mklog("ibrew/net");
 
-import {INeedleResponse} from "needle";
+import net from "../../util/net";
 
 export type ChecksumAlgo = "SHA256" | "SHA1";
 
@@ -42,23 +41,20 @@ export interface IChecksums {
  * to install butler
  */
 async function downloadToFile (opts: INetOpts, url: string, file: string): Promise<void> {
-  let e: Error = null;
   let totalSize = 0;
-  let req = needle.get(url, {}, (err: Error, res: INeedleResponse) => {
-    e = err;
-    if (res) {
-      totalSize = parseInt(res.headers["content-length"], 10);
-    }
-  });
+
   await sf.mkdir(path.dirname(file));
   log(opts, `downloading ${url} to ${file}`);
   let sink = sf.createWriteStream(file, {flags: "w", mode: 0o777, defaultEncoding: "binary"});
-  req.pipe(sink);
-  await sf.promised(sink);
 
-  if (e) {
-    throw e;
-  }
+  await net.request("get", url, {}, {
+    sink,
+    cb: (res) => {
+      totalSize = parseInt(res.headers["content-length"][0], 10);
+    },
+  });
+
+  await sf.promised(sink);
 
   const stats = await sf.lstat(file);
   log(opts, `downloaded ${humanize.fileSize(stats.size)} / ${humanize.fileSize(totalSize)} (${stats.size} bytes)`);
@@ -98,7 +94,7 @@ function channel (formulaName: string): string {
 /** fetch latest version number from repo */
 async function getLatestVersion (channel: string): Promise<string> {
   const url = `${channel}/LATEST?${querystring.stringify({t: +new Date()})}`;
-  const res = await needle.getAsync(url, {});
+  const res = await net.request("get", url);
 
   if (res.statusCode !== 200) {
     throw new Error(`got HTTP ${res.statusCode} while fetching ${url}`);
@@ -110,7 +106,7 @@ async function getLatestVersion (channel: string): Promise<string> {
 
 async function getChecksums (opts: INetOpts, channel: string, v: string, algo: ChecksumAlgo): Promise<IChecksums> {
   const url = `${channel}/v${v}/${algo}SUMS`;
-  const res = await needle.getAsync(url, {});
+  const res = await net.request("get", url);
 
   if (res.statusCode !== 200) {
     log(opts, `couldn't get hashes: HTTP ${res.statusCode}, for ${url}`);

@@ -1,9 +1,52 @@
 
-import { EventEmitter } from "events";
+import {EventEmitter} from "events";
 
 const rnil = (): any => null;
 
+import {INetRequest} from "./types";
+
+interface IFakeRequestOpts {
+  statusCode: number;
+  status: string;
+  body: string;
+}
+
+export class FakeRequest implements INetRequest {
+  opts: IFakeRequestOpts;
+
+  constructor (opts: IFakeRequestOpts) {
+    this.opts = opts;
+  }
+
+  setHeader (name: string, ) {
+    // no-op
+  }
+
+  pipe (sink: any) {
+    // no-op
+  }
+
+  on (evType: string, cb: (...args: any[]) => void) {
+    // no-op
+  }
+
+  write (chunk: Buffer | string) {
+    // no-op
+  }
+
+  end () {
+    // no-op
+  }
+}
+
 const electron = {
+  net: {
+    request: () => new FakeRequest({
+      statusCode: 200,
+      status: "OK",
+      body: "hi",
+    }),
+  },
   app: {
     getVersion: () => "1.0",
     getPath: (p: string): string => `tmp/${p}`,

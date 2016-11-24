@@ -16,20 +16,9 @@ if (env.name === "test") {
   }
 }
 
-interface IDock {
-  bounce(): void;
-  setMenu(template: any): void;
-  setIcon(icon: string): void;
-}
+import {IApp, INet} from "./types";
 
-interface IApp {
-  dock: IDock;
-  getName(): string;
-  getPath(name: string): string;
-  getVersion(): string;
-  quit(): void;
-}
-
+export const net = electron.net as INet;
 export const app = electron.app as IApp;
 export const clipboard = electron.clipboard;
 export const powerSaveBlocker = electron.powerSaveBlocker;
