@@ -24,23 +24,49 @@ export default function (watcher: Watcher) {
     }
 
     try {
-      const proxySettings = await new Promise<string>((resolve, reject) => {
-        // TODO: move to an action instead
-        const {session} = require("electron");
-        // resolveProxy accepts strings as well, and URL is not defined here for some reason?
-        session.defaultSession.resolveProxy("https://itch.io" as any, resolve);
+      const {session} = require("electron");
 
-        setTimeout(function () {
-          reject(new Error("proxy resolution timed out"));
-        }, 1000);
-      });
+      const envSettings: string =
+        process.env.https_proxy ||
+        process.env.HTTPS_PROXY ||
+        process.env.http_proxy ||
+        process.env.HTTP_PROXY;
 
-      if (/PROXY /.test(proxySettings)) {
-        log(opts, `Got proxy settings: '${proxySettings}'`);
-        const proxy = proxySettings.replace(/PROXY /, "");
-        store.dispatch(actions.proxySettingsDetected({proxy}));
+      if (envSettings) {
+        log(opts, `Got proxy settings from environment: ${envSettings}`);
+        store.dispatch(actions.proxySettingsDetected({
+          proxy: envSettings,
+          source: "env",
+        }));
+
+        await new Promise<void>((resolve, reject) => {
+          session.defaultSession.setProxy({
+            pacScript: null,
+            proxyRules: envSettings,
+            proxyBypassRules: null,
+          }, resolve);
+
+          setTimeout(function () {
+            reject(new Error("proxy settings adjustment timed out"));
+          }, 1000);
+        });
       } else {
-        log(opts, `No proxy detected`);
+        const proxySettings = await new Promise<string>((resolve, reject) => {
+          // resolveProxy accepts strings as well, and URL is not defined here for some reason?
+          session.defaultSession.resolveProxy("https://itch.io" as any, resolve);
+
+          setTimeout(function () {
+            reject(new Error("proxy resolution timed out"));
+          }, 1000);
+        });
+
+        if (/PROXY /.test(proxySettings)) {
+          log(opts, `Got proxy settings: '${proxySettings}'`);
+          const proxy = proxySettings.replace(/PROXY /, "");
+          store.dispatch(actions.proxySettingsDetected({proxy, source: "os"}));
+        } else {
+          log(opts, `No proxy detected`);
+        }
       }
     } catch (e) {
       log(opts, `Could not detect proxy settings: ${e ? e.message : "unknown error"}`);

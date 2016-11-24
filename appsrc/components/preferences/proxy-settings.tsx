@@ -10,12 +10,12 @@ import {IState} from "../../types";
 
 class ProxySettings extends React.Component<IProxySettingsProps, void> {
   render () {
-    const {t, proxy} = this.props;
+    const {t, proxy, proxySource} = this.props;
 
     return <span className="proxy-settings">
       {t("preferences.proxy_server_address")}
       {proxy
-        ? <span className="value">
+        ? <span className="value hint--right" data-hint={proxySource}>
           {proxy}
         </span>
         : <span className="value">
@@ -33,11 +33,13 @@ class ProxySettings extends React.Component<IProxySettingsProps, void> {
 interface IProxySettingsProps {
   t: ILocalizer;
   proxy?: string;
+  proxySource?: string;
 }
 
 const mapDispatchToProps = () => ({});
 const mapStateToProps = (state: IState) => ({
   proxy: state.system.proxy,
+  proxySource: state.system.proxySource,
 });
 
 interface IProxySettingsState {

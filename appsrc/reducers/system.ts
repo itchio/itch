@@ -29,6 +29,7 @@ const initialState = {
     },
   },
   proxy: null,
+  proxySource: null,
 } as ISystemState;
 
 export default handleActions<ISystemState, any>({
@@ -44,6 +45,7 @@ export default handleActions<ISystemState, any>({
 
   PROXY_SETTINGS_DETECTED: (state: ISystemState, action: IAction<IProxySettingsDetectedPayload>) => {
     const proxy: string = action.payload.proxy;
-    return Object.assign({}, state, {proxy});
+    const proxySource: string = action.payload.source;
+    return Object.assign({}, state, {proxy, proxySource});
   },
 }, initialState);
