@@ -88,7 +88,7 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
         });
       }
 
-      const contentTypeHeader = res.headers["content-type"][0];
+      const contentTypeHeader = (res.headers["content-type"] || ["text/plain"])[0];
       const contentType = /[^;]*/.exec(contentTypeHeader)[0];
 
       res.on("end", async () => {
