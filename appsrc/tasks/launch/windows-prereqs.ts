@@ -117,6 +117,17 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
 
     await net.downloadToFile(opts, archiveUrl, archivePath);
 
+    log(opts, `Verifiying integrity of ${info.fullName} archive`);
+    const algo = "SHA256";
+    const sums = await net.getChecksums(opts, `${baseUrl}`, algo);
+    const sum = sums[`${prereq.name}.7z`];
+
+    await net.ensureChecksum(opts, {
+      algo,
+      expected: sum.hash,
+      file: archivePath,
+    });
+
     log(opts, `Extracting ${info.fullName} archive`);
     await extract.extract({
       emitter: new EventEmitter(),
