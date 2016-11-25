@@ -276,7 +276,12 @@ export default class Market extends EventEmitter {
     await sf.writeFile(tmpPath, JSON.stringify(record));
 
     if (this.data[tableName] && this.data[tableName][entityId]) {
-      await sf.rename(tmpPath, file);
+      try {
+        await sf.rename(tmpPath, file);
+      } catch (e) {
+        log(opts, `Could not save ${tmpPath}: ${e.message}`);
+        await sf.wipe(tmpPath);
+      }
     } else {
       // entity has been deleted in the meantime
       await sf.wipe(tmpPath);
