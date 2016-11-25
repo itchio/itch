@@ -89,37 +89,10 @@ class GameGrid extends React.Component<IGameGridProps, void> {
 
     const columnCount = Math.floor(this.props.containerWidth / 280);
     const rowCount = Math.ceil(filteredGames.length / columnCount);
-    const totalItems = rowCount * columnCount;
     const columnWidth = ((this.props.containerWidth - 10) / columnCount);
     const rowHeight = columnWidth * 1.18;
 
-    if (1 === 1) {
-      return <div>
-        Size: {this.props.containerWidth}x{this.props.containerHeight}<br/>
-        Fuse: {fuseTime}ms ({games.length} elements, {totalItems} in grid)
-        <Grid
-          cellRenderer={this.cellRenderer.bind(this, {filteredGames, columnCount})}
-          width={this.props.containerWidth}
-          height={this.props.containerHeight - 40}
-          columnWidth={columnWidth}
-          columnCount={columnCount}
-          rowCount={rowCount}
-          rowHeight={rowHeight}
-        />
-      </div>;
-    }
-
-    each(filteredGames, (record, index) => {
-      items.push(<HubItem key={`game-${record.game.id}`} game={record.game} searchScore={record.searchScore}/>);
-    });
-
-    for (let i = 0; i < 12; i++) {
-      items.push(<HubFiller key={`filler-${i}`}/>);
-    }
-
-    return <div className="hub-grid">
-      {items}
-
+    return <div>
       {hiddenCount > 0
       ? <div className="hidden-count">
         {t("grid.hidden_count", {count: hiddenCount})}
@@ -130,6 +103,16 @@ class GameGrid extends React.Component<IGameGridProps, void> {
         </span>
       </div>
       : ""}
+      <Grid
+        cellRenderer={this.cellRenderer.bind(this, {filteredGames, columnCount})}
+        width={this.props.containerWidth}
+        height={this.props.containerHeight - 40}
+        columnWidth={columnWidth}
+        columnCount={columnCount}
+        rowCount={rowCount}
+        rowHeight={rowHeight}
+        overscanRowCount={2}
+      />
     </div>;
   }
 

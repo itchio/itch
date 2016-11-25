@@ -40,7 +40,7 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
       }
     }
 
-    const actionProps = {game, showSecondary: true};
+    const actionProps = {game, showSecondary: this.state.hover};
     const itemClasses = classNames("hub-item", {dull: (searchScore && searchScore > 0.2)});
 
     return <div className={itemClasses}
