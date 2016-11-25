@@ -6,7 +6,7 @@ import sf from "../util/sf";
 import * as ospath from "path";
 
 import * as invariant from "invariant";
-import {map, indexBy} from "underscore";
+import {filter, map, indexBy} from "underscore";
 
 import * as actions from "../actions";
 
@@ -23,10 +23,16 @@ async function loadRememberedSessions (store: IStore) {
   // not using '**', as that would find arbitrarily deep files
   const tokenFiles = await sf.glob(`*/${TOKEN_FILE_NAME}`, {cwd: USERS_PATH, nodir: true});
 
-  const contents = await Promise.all(map(tokenFiles, (tokenFile) =>
-    sf.readFile(ospath.join(USERS_PATH, tokenFile))
-  ));
-  const sessions = map(contents, (content) => JSON.parse(content));
+  let sessions = await Promise.all(map(tokenFiles, async (tokenFile) => {
+    try {
+      const tokenFullPath = ospath.join(USERS_PATH, tokenFile);
+      const content = await sf.readFile(tokenFullPath);
+      return JSON.parse(content);
+    } catch (e) {
+      console.log(`Skipping ${tokenFile}: ${e.message}`); // tslint:disable-line:no-console
+    }
+  }));
+  sessions = filter(sessions, (s) => !!s);
 
   if (sessions.length > 0) {
     const sessionsById = indexBy(sessions, (x) => x.me.id);
