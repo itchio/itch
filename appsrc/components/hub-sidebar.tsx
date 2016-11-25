@@ -12,6 +12,7 @@ import urls from "../constants/urls";
 import {pathToIcon, makeLabel} from "../util/navigation";
 
 import {app} from "../electron";
+const appVersion = app.getVersion();
 
 import Icon from "./icon";
 import Dropdown from "./dropdown";
@@ -25,7 +26,7 @@ import {IAction, dispatcher} from "../constants/action-types";
 import watching, {Watcher} from "./watching";
 
 export function versionString () {
-  return `itch v${app.getVersion()}`;
+  return `itch v${appVersion}`;
 }
 
 @watching
