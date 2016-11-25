@@ -10,6 +10,12 @@ export function dispatcher <T> (dispatch: (action: IAction<any>) => void, action
   return (payload: T) => dispatch(actionCreator(payload));
 }
 
+export function multiDispatcher <T> (
+    dispatch: (action: IAction<any>) => void,
+    actionCreator: (...args: any[]) => IAction<T>) {
+  return (...args: any[]) => dispatch(actionCreator(...args));
+}
+
 // run upgrade operations
 export const PREBOOT = "PREBOOT";
 export interface IPrebootPayload {}
