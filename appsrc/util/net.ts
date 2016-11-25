@@ -155,4 +155,110 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
   return p;
 }
 
-export default {request};
+import sf from "./sf";
+import * as humanize from "humanize-plus";
+import mklog, {Logger} from "./log";
+const log = mklog("net");
+
+import * as ospath from "path";
+
+import {indexBy, filter, map} from "underscore";
+
+interface ILoggerOpts {
+  logger: Logger;
+}
+
+export type ChecksumAlgo = "SHA256" | "SHA1";
+
+export interface IChecksums {
+  [path: string]: {
+    path: string;
+    hash: string;
+  };
+}
+
+/**
+ * Download to file without using butler
+ */
+export async function downloadToFile (opts: ILoggerOpts, url: string, file: string): Promise<void> {
+  const sink = sf.createWriteStream(file, {
+    flags: "w",
+    mode: 0o777,
+    defaultEncoding: "binary",
+  });
+
+  let totalSize = 0;
+
+  await request("get", url, {}, {
+    sink,
+    cb: (res) => {
+      totalSize = parseInt(res.headers["content-length"][0], 10);
+    },
+  });
+  await sf.promised(sink);
+
+  const stats = await sf.lstat(file);
+  log(opts, `downloaded ${humanize.fileSize(stats.size)} / ${humanize.fileSize(totalSize)} (${stats.size} bytes)`);
+
+  if (totalSize !== 0 && stats.size !== totalSize) {
+    throw new Error(`download failed (short size) for ${url}`);
+  }
+}
+
+export async function getChecksums (opts: ILoggerOpts, basePath: string, algo: ChecksumAlgo): Promise<IChecksums> {
+  const url = `${basePath}/${algo}SUMS`;
+  const res = await request("get", url);
+
+  if (res.statusCode !== 200) {
+    log(opts, `couldn't get hashes: HTTP ${res.statusCode}, for ${url}`);
+    return null;
+  }
+
+  const lines = (res.body.toString("utf8") as string).split("\n");
+
+  return indexBy(filter(
+    map(lines, (line) => {
+      const matches = /^(\S+)\s+(\S+)$/.exec(line);
+      if (matches) {
+        return {
+          hash: matches[1],
+          path: matches[2],
+        };
+      }
+    }),
+    (x) => !!x
+  ), "path");
+}
+
+interface IEnsureChecksumArgs {
+  algo: ChecksumAlgo;
+  expected: string;
+  file: string;
+}
+
+export async function ensureChecksum (
+    opts: ILoggerOpts, args: IEnsureChecksumArgs): Promise<void> {
+  const {algo, file} = args;
+  const name = ospath.basename(file);
+
+  if (!args.expected) {
+    log(opts, `${name}: no ${algo} checksum, skipping`);
+    return;
+  }
+  const expected = args.expected.toLowerCase();
+
+  log(opts, `${name}: expected ${algo}: ${expected}`);
+  const h = require("crypto").createHash(algo.toLowerCase());
+  // null encoding = raw buffer
+  const fileContents = await sf.fs.readFileAsync(file, { encoding: null });
+  h.update(fileContents);
+  const actual = h.digest("hex");
+  log(opts, `${name}:   actual ${algo}: ${actual}`);
+
+  if (expected !== actual) {
+    throw new Error(`corrupted file ${name}: expected ${expected}, got ${actual}`);
+  }
+  log(opts, `${name}: ${algo} checks out!`);
+}
+
+export default {request, downloadToFile, getChecksums, ensureChecksum};

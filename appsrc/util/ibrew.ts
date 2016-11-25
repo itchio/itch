@@ -19,7 +19,7 @@ import {IVersionCheck} from "./ibrew/formulas";
 import version from "./ibrew/version";
 
 import net from "./ibrew/net";
-import {ChecksumAlgo, IChecksums} from "./ibrew/net";
+import {downloadToFile, getChecksums, ensureChecksum, ChecksumAlgo, IChecksums} from "./net";
 
 import {EventEmitter} from "events";
 
@@ -37,6 +37,7 @@ interface IAugmentedPaths {
 }
 
 interface IFetchOpts {
+  logger: Logger;
   onStatus: (status: string, extra?: any[]) => void;
 }
 
@@ -77,37 +78,26 @@ const self = {
       onStatus("download", ["login.status.dependency_install", {name, version: v}]);
       log(opts, `${name}: downloading '${v}' from ${archiveUrl}`);
 
-      await net.downloadToFile(opts, archiveUrl, archivePath);
+      await downloadToFile(opts, archiveUrl, archivePath);
 
       let algo: ChecksumAlgo;
       let sums: IChecksums;
 
       for (algo of net.CHECKSUM_ALGOS) {
         try {
-          sums = await net.getChecksums(opts, channel, v, algo);
+          sums = await getChecksums(opts, `${channel}/v${v}`, algo);
           break;
         } catch (e) {
           log(opts, `${name}: couldn't get ${algo} hashes (${e.message || "" + e})`);
         }
       }
 
-      if (sums) {
-        const sum = sums[archiveName];
-        if (sum) {
-          const expected = sum.hash.toLowerCase();
-          log(opts, `${name}: expected ${algo}: ${expected}`);
-          const h = require("crypto").createHash(algo.toLowerCase());
-          // null encoding = raw buffer
-          const fileContents = await sf.fs.readFileAsync(archivePath, {encoding: null});
-          h.update(fileContents);
-          const actual = h.digest("hex");
-          log(opts, `${name}:   actual ${algo}: ${actual}`);
-
-          if (expected !== actual) {
-            throw new Error(`corrupted download for ${archiveName}: expected ${expected}, got ${actual}`);
-          }
-          log(opts, `${name}: ${algo} checks out!`);
-        }
+      if (sums && sums[archiveName]) {
+        await ensureChecksum(opts, {
+          algo,
+          expected: sums[archiveName].hash,
+          file: archivePath,
+        });
       } else {
         log(opts, `${name}: no hashes found, skipping integrity check`);
       }

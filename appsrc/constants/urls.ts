@@ -43,4 +43,5 @@ export default {
   windowsSandboxSetup: `${manual}/sandbox/windows.html#one-time-setup`,
   releasesPage: `${itchRepo}/releases`,
   installingOnLinux: `${manual}/installing/linux/`,
+  redistsBase: `https://dl.itch.ovh/itch-redists`,
 };
