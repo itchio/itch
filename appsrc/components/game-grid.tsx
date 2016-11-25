@@ -51,41 +51,59 @@ class GameGrid extends React.Component<IGameGridProps, void> {
   render () {
     const {t, games, filterQuery = "", onlyCompatible, tab, clearFilters} = this.props;
 
-    let filteredGames: IFilteredGameRecord[] = [];
+    let uniqueGames = games;
+
+    // corner case: if an invalid download key slips in, it may not be associated
+    // with a game — just keep displaying it instead of breaking the whole app,
+    // cf. https://itch.io/post/73405
+    uniqueGames = filter(uniqueGames, (game) => !!game);
+
+    // if you own a game multiple times, it might appear multiple times in the grid
+    uniqueGames = uniq(uniqueGames, (game) => game.id);
+
+    let filteredGames: IFilteredGameRecord[];
     if (filterQuery.length > 0) {
-      this.fuse.set(games);
+      this.fuse.set(uniqueGames);
       const results = this.fuse.search(filterQuery);
       filteredGames = map(results, (result): IFilteredGameRecord => ({
         game: result.item,
         searchScore: result.score,
       }));
     } else {
-      filteredGames = map(games, (game): IFilteredGameRecord => ({
+      filteredGames = map(uniqueGames, (game): IFilteredGameRecord => ({
         game,
       }));
     }
     let hiddenCount = 0;
 
-    // corner case: if an invalid download key slips in, it may not be associated
-    // with a game — just keep displaying it instead of breaking the whole app,
-    // cf. https://itch.io/post/73405
-    filteredGames = filter(filteredGames, (record) => !!record.game);
-
-    // if you own a game multiple times, it might appear multiple times in the grid
-    filteredGames = uniq(filteredGames, (record) => record.game.id);
-
     if (onlyCompatible) {
       filteredGames = filter(filteredGames, (record) => isPlatformCompatible(record.game));
     }
 
-    hiddenCount = games.length - filteredGames.length;
+    hiddenCount = uniqueGames.length - filteredGames.length;
 
     const columnCount = Math.floor(this.props.containerWidth / 280);
     const rowCount = Math.ceil(filteredGames.length / columnCount);
     const columnWidth = ((this.props.containerWidth - 10) / columnCount);
-    const rowHeight = columnWidth * 1.18;
+    const rowHeight = columnWidth * 1.12;
 
-    return <div>
+    let gridHeight = this.props.containerHeight;
+    if (hiddenCount > 0) {
+      gridHeight -= 48;
+    }
+
+    return <div className="hub-game-grid">
+      <Grid
+        ref="grid"
+        cellRenderer={this.cellRenderer.bind(this, {filteredGames, columnCount})}
+        width={this.props.containerWidth}
+        height={gridHeight}
+        columnWidth={columnWidth}
+        columnCount={columnCount}
+        rowCount={rowCount}
+        rowHeight={rowHeight}
+        overscanRowCount={2}
+      />
       {hiddenCount > 0
       ? <div className="hidden-count">
         {t("grid.hidden_count", {count: hiddenCount})}
@@ -96,16 +114,6 @@ class GameGrid extends React.Component<IGameGridProps, void> {
         </span>
       </div>
       : ""}
-      <Grid
-        cellRenderer={this.cellRenderer.bind(this, {filteredGames, columnCount})}
-        width={this.props.containerWidth}
-        height={this.props.containerHeight - 40}
-        columnWidth={columnWidth}
-        columnCount={columnCount}
-        rowCount={rowCount}
-        rowHeight={rowHeight}
-        overscanRowCount={2}
-      />
     </div>;
   }
 

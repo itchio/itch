@@ -42,6 +42,22 @@
   }
 }
 
+.hub-game-grid {
+  .clear-filters {
+    margin-left: 8px;
+    font-size: 80%;
+    @include clickable;
+  }
+
+  .hidden-count {
+    width: 100%;
+    text-align: center;
+    display: block;
+    padding: 16px;
+    color: #A0A0A0;
+  }
+}
+
 .hub-grid {
   display: flex;
   flex-direction: row;

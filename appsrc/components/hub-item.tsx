@@ -10,7 +10,7 @@ import * as actions from "../actions";
 import GameActions from "./game-actions";
 
 import {IGameRecord} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IAction, multiDispatcher} from "../constants/action-types";
 
 export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
   constructor () {
@@ -86,7 +86,7 @@ interface IHubItemState {
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
-  navigateToGame: dispatcher(dispatch, actions.navigateToGame),
+  navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
 });
 
 export default connect(
