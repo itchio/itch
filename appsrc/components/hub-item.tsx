@@ -9,7 +9,7 @@ import doesEventMeanBackground from "./does-event-mean-background";
 import * as actions from "../actions";
 import GameActions from "./game-actions";
 
-import {IFilteredGameRecord} from "../types";
+import {IGameRecord} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
 
 export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
@@ -21,7 +21,7 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
   }
 
   render () {
-    const {game} = this.props;
+    const {game, searchScore} = this.props;
     const {title, coverUrl, stillCoverUrl} = game;
     const {navigateToGame} = this.props;
 
@@ -41,7 +41,7 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
     }
 
     const actionProps = {game, showSecondary: true};
-    const itemClasses = classNames("hub-item", {dull: (game._searchScore && game._searchScore > 0.2)});
+    const itemClasses = classNames("hub-item", {dull: (searchScore && searchScore > 0.2)});
 
     return <div className={itemClasses}
         onMouseEnter={this.onMouseEnter.bind(this)}
@@ -72,7 +72,8 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
 }
 
 interface IHubItemProps {
-  game: IFilteredGameRecord;
+  game: IGameRecord;
+  searchScore?: number;
 
   navigateToGame: typeof actions.navigateToGame;
 }

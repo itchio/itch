@@ -85,8 +85,9 @@ export interface IGameRecord {
  * This is used in some components, mostly grids/lists that can be filtered
  * using some user-provided query.
  */
-export interface IFilteredGameRecord extends IGameRecord {
-  _searchScore: number;
+export interface IFilteredGameRecord {
+    game: IGameRecord;
+    searchScore?: number;
 }
 
 /**

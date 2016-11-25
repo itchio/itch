@@ -28,6 +28,11 @@ interface ICellInfo {
   style: React.CSSProperties;
 }
 
+interface ILayoutInfo {
+  columnCount: number;
+  filteredGames: IFilteredGameRecord[];
+}
+
 class GameGrid extends React.Component<IGameGridProps, void> {
   fuse: Fuse<IGameRecord>;
 
@@ -51,11 +56,16 @@ class GameGrid extends React.Component<IGameGridProps, void> {
 
     const items: JSX.Element[] = [];
 
-    let filteredGames = games as IFilteredGameRecord[];
+    let filteredGames: IFilteredGameRecord[] = [];
     if (filterQuery.length > 0) {
       const results = this.fuse.search(filterQuery);
-      filteredGames = map(results, ({item, score}) => Object.assign({}, item, {
-        _searchScore: score,
+      filteredGames = map(results, (result): IFilteredGameRecord => ({
+        game: result.item,
+        searchScore: result.score,
+      }));
+    } else {
+      filteredGames = map(games, (game): IFilteredGameRecord => ({
+        game,
       }));
     }
     let hiddenCount = 0;
@@ -63,42 +73,44 @@ class GameGrid extends React.Component<IGameGridProps, void> {
     const t2 = Date.now();
     const fuseTime = t2 - t1;
 
-    const columnCount = Math.floor(this.props.containerWidth / 300);
-    const rowCount = 50;
-    const totalItems = rowCount * columnCount;
-
-    if (1 === 1) {
-      return <div style={{margin: "40px", fontSize: "24px"}}>
-        Size: {this.props.containerWidth}x{this.props.containerHeight}<br/>
-        Fuse: {fuseTime}ms ({games.length} elements, {totalItems} show)
-        <Grid
-          cellRenderer={this.cellRenderer}
-          width={this.props.containerWidth - 80}
-          height={this.props.containerHeight - 120}
-          columnWidth={(this.props.containerWidth / columnCount) - 20}
-          columnCount={columnCount}
-          rowCount={50}
-          rowHeight={300}
-        />
-      </div>;
-    }
-
     // corner case: if an invalid download key slips in, it may not be associated
     // with a game — just keep displaying it instead of breaking the whole app,
     // cf. https://itch.io/post/73405
-    filteredGames = filter(filteredGames, (game) => !!game);
+    filteredGames = filter(filteredGames, (record) => !!record.game);
 
     // if you own a game multiple times, it might appear multiple times in the grid
-    filteredGames = uniq(filteredGames, (game) => game.id);
+    filteredGames = uniq(filteredGames, (record) => record.game.id);
 
     if (onlyCompatible) {
-      filteredGames = filter(filteredGames, (game) => isPlatformCompatible(game));
+      filteredGames = filter(filteredGames, (record) => isPlatformCompatible(record.game));
     }
 
     hiddenCount = games.length - filteredGames.length;
 
-    each(filteredGames, (game, index) => {
-      items.push(<HubItem key={`game-${game.id}`} game={game}/>);
+    const columnCount = Math.floor(this.props.containerWidth / 280);
+    const rowCount = Math.ceil(filteredGames.length / columnCount);
+    const totalItems = rowCount * columnCount;
+    const columnWidth = ((this.props.containerWidth - 10) / columnCount);
+    const rowHeight = columnWidth * 1.18;
+
+    if (1 === 1) {
+      return <div>
+        Size: {this.props.containerWidth}x{this.props.containerHeight}<br/>
+        Fuse: {fuseTime}ms ({games.length} elements, {totalItems} in grid)
+        <Grid
+          cellRenderer={this.cellRenderer.bind(this, {filteredGames, columnCount})}
+          width={this.props.containerWidth}
+          height={this.props.containerHeight - 40}
+          columnWidth={columnWidth}
+          columnCount={columnCount}
+          rowCount={rowCount}
+          rowHeight={rowHeight}
+        />
+      </div>;
+    }
+
+    each(filteredGames, (record, index) => {
+      items.push(<HubItem key={`game-${record.game.id}`} game={record.game} searchScore={record.searchScore}/>);
     });
 
     for (let i = 0; i < 12; i++) {
@@ -121,23 +133,22 @@ class GameGrid extends React.Component<IGameGridProps, void> {
     </div>;
   }
 
-  cellRenderer(info: ICellInfo): JSX.Element {
-    const style = {
-      position: "absolute",
-      top: "10px",
-      left: "10px",
-      right: "10px",
-      bottom: "10px",
-      backgroundColor: "white",
-      color: "black",
-    };
+  cellRenderer(layout: ILayoutInfo, cell: ICellInfo): JSX.Element {
+    const gameIndex = (cell.rowIndex * layout.columnCount) + cell.columnIndex;
+    const record = layout.filteredGames[gameIndex];
 
-    const dateString = new Date().toISOString();
+    const style = cell.style;
+    style.padding = "10px";
+    if (cell.columnIndex < layout.columnCount - 1) {
+      style.marginRight = "10px";
+    }
 
-    return <div key={info.key} style={info.style}>
-      <div style={style}>
-        {info.rowIndex}, {info.columnIndex}, {dateString}
-      </div>
+    return <div key={cell.key} style={cell.style}>
+      {
+        record
+        ? <HubItem key={`game-${record.game.id}`} game={record.game} searchScore={record.searchScore}/>
+        : null
+      }
     </div>;
   }
 }
