@@ -6,6 +6,8 @@ import * as invariant from "invariant";
 
 import fetch from "../../util/fetch";
 
+import {ICaveRecord} from "../../types";
+
 // ¯\_(ツ)_/¯
 // TODO: use market state instead
 import {getGlobalMarket, getUserMarket} from "../../reactors/market";
@@ -17,7 +19,7 @@ export default function (watcher: Watcher) {
     const globalMarket = getGlobalMarket();
     const userMarket = getUserMarket();
 
-    const cave = globalMarket.getEntities("caves")[caveId];
+    const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
     invariant(cave, "cave to uninstall exists");
 
     const game = await fetch.gameLazily(userMarket, credentials, cave.gameId, {game: cave.game});

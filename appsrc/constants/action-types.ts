@@ -112,7 +112,7 @@ export const USER_DB_CLOSED = "USER_DB_CLOSED";
 
 export interface IDbReadyPayload {}
 export interface IDbCommitPayload {
-  updated: Types.IEntityMap;
+  updated: Types.IEntityMap<any>;
   deleted: Types.IEntityRefs;
   initial: boolean;
 }

@@ -21,7 +21,7 @@ export async function dashboardGames (market: IMarket, credentials: ICredentials
 
   const oldGameIds = pluck(
     where(
-      market.getEntities("games"),
+      market.getEntities<IGameRecord>("games"),
       {userId: me.id},
     ),
     "id",
@@ -73,10 +73,10 @@ export async function ownedKeys (market: IMarket, credentials: ICredentials): Pr
 }
 
 export async function collections (market: IMarket, credentials: ICredentials): Promise<void> {
-  const oldCollectionIds = pluck(market.getEntities("collections"), "id");
+  const oldCollectionIds = pluck(market.getEntities<ICollectionRecord>("collections"), "id");
 
   const prepareCollections = (normalized: any) => {
-    const colls = market.getEntities("collections");
+    const colls = market.getEntities<ICollectionRecord>("collections");
     each(normalized.entities.collections, (coll: ICollectionRecord, collectionID: number) => {
       const old = colls[collectionID];
       if (old) {
@@ -104,7 +104,7 @@ export async function collections (market: IMarket, credentials: ICredentials): 
 
 export async function collectionGames
     (market: IMarket, credentials: ICredentials, collectionID: number): Promise<void> {
-  let collection = market.getEntities("collections")[collectionID];
+  let collection = market.getEntity<ICollectionRecord>("collections", String(collectionID));
   if (!collection) {
     log(opts, `collection not found: ${collectionID}, stack = ${(new Error()).stack}`);
     return;
@@ -198,7 +198,7 @@ async function gameLazily (market: IMarket, credentials: ICredentials, gameId: n
   invariant(typeof gameId === "number", "gameLazily has gameId number");
 
   if (!opts.fresh) {
-    let record = market.getEntities("games")[gameId];
+    let record = market.getEntity<IGameRecord>("games", String(gameId));
     if (record) {
       return record;
     }
@@ -226,7 +226,7 @@ export async function userLazily (market: IMarket, credentials: ICredentials, us
   invariant(typeof userID === "number", "userLazily has userId number");
 
   if (!opts.fresh) {
-    const record = market.getEntities("users")[userID];
+    const record = market.getEntity<IUserRecord>("users", String(userID));
     if (record) {
       return record;
     }
@@ -241,9 +241,9 @@ interface ICollectionLazilyOpts {
   fresh?: boolean;
 }
 
-export async function collectionLazily (market: IMarket, credentials: ICredentials, collectionID: number,
+export async function collectionLazily (market: IMarket, credentials: ICredentials, collectionId: number,
                                         opts = {} as ICollectionLazilyOpts): Promise<ICollectionRecord> {
-  const oldRecord = market.getEntities("collections")[collectionID];
+  const oldRecord = market.getEntity<ICollectionRecord>("collections", String(collectionId));
   if (!opts.fresh) {
     if (oldRecord) {
       return oldRecord;
@@ -251,8 +251,8 @@ export async function collectionLazily (market: IMarket, credentials: ICredentia
   }
 
   const api = client.withKey(credentials.key);
-  const response = normalize(await api.collection(collectionID), {collection});
-  return Object.assign({}, oldRecord, response.entities.collections[collectionID]);
+  const response = normalize(await api.collection(collectionId), {collection});
+  return Object.assign({}, oldRecord, response.entities.collections[collectionId]);
 }
 
 export default {

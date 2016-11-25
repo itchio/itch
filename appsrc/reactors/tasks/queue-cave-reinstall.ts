@@ -11,7 +11,7 @@ import {startTask} from "./start-task";
 import pathmaker from "../../util/pathmaker";
 import fetch from "../../util/fetch";
 
-import {ICaveRecord} from "../../types";
+import {ICaveRecord, IDownloadKey} from "../../types";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.queueCaveReinstall, async (store, action) => {
@@ -49,7 +49,7 @@ export default function (watcher: Watcher) {
     const archivePath = pathmaker.downloadPath(upload);
 
     const findDownloadKey = () => {
-      return findWhere(getUserMarket().getEntities("downloadKeys"), {gameId: game.id});
+      return findWhere(getUserMarket().getEntities<IDownloadKey>("downloadKeys"), {gameId: game.id});
     };
 
     store.dispatch(actions.queueDownload({

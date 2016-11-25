@@ -53,7 +53,7 @@ export default async function downloadPatches (out: EventEmitter, opts: IDownloa
     const caveUpdate = {
       buildId: entry.id,
       buildUserVersion: entry.userVersion,
-      installedArchiveMtime: Date.parse(entry.updatedAt),
+      installedArchiveMtime: entry.updatedAt,
     };
     await globalMarket.saveEntity("caves", cave.id, caveUpdate, { wait: true });
 

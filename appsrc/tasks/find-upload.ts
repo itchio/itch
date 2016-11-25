@@ -113,7 +113,7 @@ export default async function start (out: EventEmitter, opts: IFindUploadOpts) {
   invariant(credentials && credentials.key, "find-upload has valid key");
   const keyClient = client.withKey(credentials.key);
 
-  const grabKey = () => findWhere(market.getEntities("downloadKeys"), {gameId});
+  const grabKey = () => findWhere(market.getEntities<IDownloadKey>("downloadKeys"), {gameId});
   const {downloadKey = grabKey()} = opts;
   let {uploads} = (await keyClient.listUploads(downloadKey, gameId));
 
@@ -121,7 +121,7 @@ export default async function start (out: EventEmitter, opts: IFindUploadOpts) {
   let finalUploads = uploads;
 
   if (uploads.length > 0) {
-    const freshGame = market.getEntities("games")[gameId] || game;
+    const freshGame = market.getEntities<IGameRecord>("games")[gameId] || game;
     const action = ClassificationActions[freshGame.classification] || "launch";
 
     const platformUploads = filterUploadsByPlatform(action, uploads);

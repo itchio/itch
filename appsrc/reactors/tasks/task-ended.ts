@@ -34,7 +34,7 @@ export default function (watcher: Watcher) {
       const {game, gameId, upload} = taskOpts;
       const {caveId} = result;
 
-      const cave = getGlobalMarket().getEntities("caves")[caveId];
+      const cave = getGlobalMarket().getEntity<ICaveRecord>("caves", caveId);
 
       const {err: taskErr} = await startTask(store, {
         name: "configure",

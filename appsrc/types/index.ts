@@ -268,16 +268,16 @@ export interface ICaveRecord extends ICaveRecordLocation {
     channelName?: string;
 
     /** "modified file time" of archive last installed */
-    installedArchiveMtime?: number;
+    installedArchiveMtime?: string;
 
     /**
      * if true, can be launched — if false, may have not finished
      * installing, may be in the middle of updating, etc.
      */
-    launchable: boolean;
+    launchable?: boolean;
 
     /** timestamp when that cave was last installed. updates count as install. */
-    installedAt: number;
+    installedAt?: number;
 
     /** timestamp when that cave was last opened/played */
     lastTouched?: number;
@@ -288,7 +288,7 @@ export interface ICaveRecord extends ICaveRecordLocation {
     /**
      * info on the user that installed the game in this app instance
      */
-    installedBy: {
+    installedBy?: {
         /** itch.io user id */
         id: number;
 
@@ -309,7 +309,7 @@ export interface ICaveRecord extends ICaveRecordLocation {
     fresh?: boolean;
 
     /** executable files, relative to the game's install folder */
-    executables: string[];
+    executables?: string[];
 
     /** type of launch associated with cave */
     launchType?: LaunchType;
@@ -403,20 +403,20 @@ export type TableName = "caves" | "users" | "games" | "collections" | "downloadK
  * Tables have string indices, and they contain objects with string indices.
  */
 export interface IMarket {
-    getEntities: (table: TableName) => IEntityMap;
+    getEntities: <T> (table: TableName) => IEntityMap<T>;
     getEntity: <T> (table: TableName, id: string) => T;
-    saveAllEntities: (entityRecords: IEntityRecords, saveOpts?: IMarketSaveOpts) => Promise<void>;
+    saveAllEntities: (entityRecords: IEntityRecords<any>, saveOpts?: IMarketSaveOpts) => Promise<void>;
     saveEntity: (table: TableName, id: string, payload: any, saveOpts?: IMarketSaveOpts) => Promise<void>;
     deleteAllEntities: (deleteSpec: IMarketDeleteSpec, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
     deleteEntity: (table: TableName, id: string, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
 }
 
-export interface IEntityMap {
-  [entityId: string]: any;
+export interface IEntityMap <T> {
+  [entityId: string]: T;
 }
 
-export interface ITableMap {
-  [table: string]: IEntityMap;
+export interface ITableMap<T> {
+  [table: string]: IEntityMap<T>;
 }
 
 /**
@@ -427,8 +427,8 @@ export interface IEntityRefs {
   [table: string]: string[];
 }
 
-export interface IEntityRecords {
-  entities: ITableMap;
+export interface IEntityRecords<T> {
+  entities: ITableMap<T>;
 }
 
 /** options for deleting records */

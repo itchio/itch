@@ -25,7 +25,7 @@ import {
  */
 export default class Market extends EventEmitter {
   /** contents of the database */
-  data: ITableMap;
+  data: ITableMap<any>;
 
   /** where the database is persisted on-disk */
   dbPath: string;
@@ -52,7 +52,7 @@ export default class Market extends EventEmitter {
 
     this.dbPath = dbPath;
     this.persist = true;
-    const entities: ITableMap = {};
+    const entities: ITableMap<any> = {};
 
     const TMP_RE = /\.tmp\d+/;
     const loadRecord = async function (recordPath: string): Promise<void> {
@@ -113,7 +113,7 @@ export default class Market extends EventEmitter {
   /**
    * Saves all passed entity records. See opts type for disk persistence and other options.
    */
-  async saveAllEntities (entityRecords: IEntityRecords, saveOpts = {} as IMarketSaveOpts) {
+  async saveAllEntities <T> (entityRecords: IEntityRecords<T>, saveOpts = {} as IMarketSaveOpts) {
     if (this.persist && !this.dbPath) {
       return;
     }
@@ -134,7 +134,7 @@ export default class Market extends EventEmitter {
 
       for (const entityId of Object.keys(entities)) {
         updated[tableName].push(entityId);
-        const entity = entities[entityId];
+        const entity = entities[entityId] as any;
 
         const record = table[entityId] || {};
         const same = every(Object.keys(entity), (key) => isEqual(entity[key], record[key]));
@@ -227,7 +227,7 @@ export default class Market extends EventEmitter {
    * Returns all entities of a given table, from the memory store.
    * Returns an empty IEntityMap if the table does not exist.
    */
-  getEntities (tableName: string): IEntityMap {
+  getEntities <T> (tableName: string): IEntityMap<T> {
     // lazily creates table in 'data' object
     const entities = this.data[tableName] || {};
     this.data[tableName] = entities;
@@ -239,7 +239,7 @@ export default class Market extends EventEmitter {
    * Returns null if the entity does not exist.
    */
   getEntity <T> (tableName: string, entityId: string): T {
-    return this.getEntities(tableName)[entityId];
+    return this.getEntities<T>(tableName)[entityId];
   }
 
   /**

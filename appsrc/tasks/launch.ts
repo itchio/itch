@@ -152,7 +152,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
       cave,
       upload: cave.uploads[cave.uploadId],
     });
-    cave = globalMarket.getEntities("caves")[cave.id];
+    cave = globalMarket.getEntities<ICaveRecord>("caves")[cave.id];
   }
 
   problem = caveProblem(cave);

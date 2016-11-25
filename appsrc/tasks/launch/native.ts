@@ -31,7 +31,7 @@ const log = mklog("tasks/launch/native");
 
 import {Crash} from "../errors";
 
-import {IEnvironment, IStartTaskOpts} from "../../types";
+import {IEnvironment, IStartTaskOpts, ICaveRecord} from "../../types";
 
 export default async function launch (out: EventEmitter, opts: IStartTaskOpts): Promise<void> {
   const {market, credentials, env} = opts;
@@ -88,7 +88,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
         cave,
         upload: cave.uploads[cave.uploadId],
       });
-      cave = globalMarket.getEntities("caves")[cave.id];
+      cave = globalMarket.getEntity<ICaveRecord>("caves", cave.id);
       return await launch(out, Object.assign({}, opts, {
         cave,
         hailMary: true,

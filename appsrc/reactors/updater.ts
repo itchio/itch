@@ -41,6 +41,7 @@ import {
   IStore,
   IGameRecord,
   ICaveRecord,
+  IDownloadKey,
 } from "../types";
 
 interface IUpdateCheckResult {
@@ -117,7 +118,7 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
   log(opts, `Looking for updates to ${game.title}...`);
 
   const out = new EventEmitter();
-  const findKey = () => findWhere(market.getEntities("downloadKeys"), {gameId: game.id});
+  const findKey = () => findWhere(market.getEntities<IDownloadKey>("downloadKeys"), {gameId: game.id});
   const taskOpts = Object.assign({}, opts, {
     logger,
     game,
@@ -294,7 +295,7 @@ export default function (watcher: Watcher) {
   });
 
   watcher.on(actions.checkForGameUpdates, async (store, action) => {
-    const caves = getGlobalMarket().getEntities("caves");
+    const caves = getGlobalMarket().getEntities<ICaveRecord>("caves");
 
     for (const caveId of Object.keys(caves)) {
       try {
