@@ -18,7 +18,17 @@ import {IState, IGameRecord, IFilteredGameRecord} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
-export class GameGrid extends React.Component<IGameGridProps, void> {
+import Dimensions = require("react-dimensions");
+import {Grid} from "react-virtualized";
+
+interface ICellInfo {
+  columnIndex: number;
+  key: string;
+  rowIndex: number;
+  style: React.CSSProperties;
+}
+
+class GameGrid extends React.Component<IGameGridProps, void> {
   fuse: Fuse<IGameRecord>;
 
   constructor () {
@@ -31,10 +41,12 @@ export class GameGrid extends React.Component<IGameGridProps, void> {
       threshold: 0.5,
       include: ["score"],
     });
+    this.cellRenderer = this.cellRenderer.bind(this);
   }
 
   render () {
     const {t, games, filterQuery = "", onlyCompatible, tab, clearFilters} = this.props;
+    const t1 = Date.now();
     this.fuse.set(games);
 
     const items: JSX.Element[] = [];
@@ -47,6 +59,29 @@ export class GameGrid extends React.Component<IGameGridProps, void> {
       }));
     }
     let hiddenCount = 0;
+    
+    const t2 = Date.now();
+    const fuseTime = t2 - t1;
+
+    const columnCount = Math.floor(this.props.containerWidth / 300);
+    const rowCount = 50;
+    const totalItems = rowCount * columnCount;
+
+    if (1 === 1) {
+      return <div style={{margin: "40px", fontSize: "24px"}}>
+        Size: {this.props.containerWidth}x{this.props.containerHeight}<br/>
+        Fuse: {fuseTime}ms ({games.length} elements, {totalItems} show)
+        <Grid
+          cellRenderer={this.cellRenderer}
+          width={this.props.containerWidth - 80}
+          height={this.props.containerHeight - 120}
+          columnWidth={(this.props.containerWidth / columnCount) - 20}
+          columnCount={columnCount}
+          rowCount={50}
+          rowHeight={300}
+        />
+      </div>;
+    }
 
     // corner case: if an invalid download key slips in, it may not be associated
     // with a game — just keep displaying it instead of breaking the whole app,
@@ -85,6 +120,26 @@ export class GameGrid extends React.Component<IGameGridProps, void> {
       : ""}
     </div>;
   }
+
+  cellRenderer(info: ICellInfo): JSX.Element {
+    const style = {
+      position: "absolute",
+      top: "10px",
+      left: "10px",
+      right: "10px",
+      bottom: "10px",
+      backgroundColor: "white",
+      color: "black",
+    };
+
+    const dateString = new Date().toISOString();
+
+    return <div key={info.key} style={info.style}>
+      <div style={style}>
+        {info.rowIndex}, {info.columnIndex}, {dateString}
+      </div>
+    </div>;
+  }
 }
 
 interface IGameGridProps {
@@ -96,6 +151,9 @@ interface IGameGridProps {
   onlyCompatible: boolean;
 
   t: ILocalizer;
+
+  containerWidth: number;
+  containerHeight: number;
 
   clearFilters: typeof actions.clearFilters;
 }
@@ -116,4 +174,4 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(GameGrid);
+)(Dimensions()(GameGrid));
