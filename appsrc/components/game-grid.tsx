@@ -4,7 +4,7 @@ import {connect} from "./connect";
 import {createStructuredSelector} from "reselect";
 import Fuse = require("fuse.js");
 
-import {each, filter, uniq, map} from "underscore";
+import {filter, uniq, map} from "underscore";
 
 import * as actions from "../actions";
 
@@ -12,7 +12,6 @@ import isPlatformCompatible from "../util/is-platform-compatible";
 
 import Icon from "./icon";
 import HubItem from "./hub-item";
-import HubFiller from "./hub-filler";
 
 import {IState, IGameRecord, IFilteredGameRecord} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
@@ -51,13 +50,10 @@ class GameGrid extends React.Component<IGameGridProps, void> {
 
   render () {
     const {t, games, filterQuery = "", onlyCompatible, tab, clearFilters} = this.props;
-    const t1 = Date.now();
-    this.fuse.set(games);
-
-    const items: JSX.Element[] = [];
 
     let filteredGames: IFilteredGameRecord[] = [];
     if (filterQuery.length > 0) {
+      this.fuse.set(games);
       const results = this.fuse.search(filterQuery);
       filteredGames = map(results, (result): IFilteredGameRecord => ({
         game: result.item,
@@ -69,9 +65,6 @@ class GameGrid extends React.Component<IGameGridProps, void> {
       }));
     }
     let hiddenCount = 0;
-    
-    const t2 = Date.now();
-    const fuseTime = t2 - t1;
 
     // corner case: if an invalid download key slips in, it may not be associated
     // with a game — just keep displaying it instead of breaking the whole app,

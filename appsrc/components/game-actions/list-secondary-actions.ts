@@ -108,39 +108,39 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
       items.push(browseAction(cave.id));
     }
 
-    // let version = "";
-    // if (cave.buildUserVersion) {
-    //   version = `${cave.buildUserVersion}`;
-    // } else if (cave.buildId) {
-    //   version = `#${cave.buildId}`;
-    // }
+    let version = "";
+    if (cave.buildUserVersion) {
+      version = `${cave.buildUserVersion}`;
+    } else if (cave.buildId) {
+      version = `#${cave.buildId}`;
+    }
 
-    // const upload = findWhere(cave.uploads, {id: cave.uploadId});
-    // if (upload && upload.displayName) {
-    //   version += ` (${upload.displayName})`;
-    // } else if (cave.channelName) {
-    //   version += ` (${cave.channelName})`;
-    // } else if (cave.uploadId) {
-    //   version += ` #${cave.uploadId}`;
-    // }
+    const upload = findWhere(cave.uploads, {id: cave.uploadId});
+    if (upload && upload.displayName) {
+      version += ` (${upload.displayName})`;
+    } else if (cave.channelName) {
+      version += ` (${cave.channelName})`;
+    } else if (cave.uploadId) {
+      version += ` #${cave.uploadId}`;
+    }
 
-    // // FIXME: this will display the wrong date for builds
-    // const hint = `${format.date(cave.installedArchiveMtime, DATE_FORMAT, t.lang)}`;
+    // FIXME: this will display the wrong date for builds
+    const hint = `${format.date(cave.installedArchiveMtime, DATE_FORMAT, t.lang)}`;
 
-    // items.push({
-    //   type: "info",
-    //   icon: "checkmark",
-    //   label: ["grid.item.version", {version}],
-    //   hint: hint,
-    //   action: actions.copyToClipboard({text: `game ${game.id}, version ${version}`}),
-    // });
+    items.push({
+      type: "info",
+      icon: "checkmark",
+      label: ["grid.item.version", {version}],
+      hint: hint,
+      action: actions.copyToClipboard({text: `game ${game.id}, version ${version}`}),
+    });
 
-    // items.push({
-    //   type: "secondary",
-    //   icon: "repeat",
-    //   label: ["grid.item.check_for_update"],
-    //   action: actions.checkForGameUpdate({caveId: cave.id, noisy: true}),
-    // });
+    items.push({
+      type: "secondary",
+      icon: "repeat",
+      label: ["grid.item.check_for_update"],
+      action: actions.checkForGameUpdate({caveId: cave.id, noisy: true}),
+    });
 
     items.push(uninstallAction(cave.id));
   } else {
