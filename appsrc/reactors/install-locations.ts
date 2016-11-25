@@ -3,7 +3,7 @@ import {Watcher} from "./watcher";
 
 import * as invariant from "invariant";
 import * as ospath from "path";
-import * as uuid from "node-uuid";
+import * as uuid from "uuid";
 
 import {omit, each} from "underscore";
 

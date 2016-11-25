@@ -1,6 +1,5 @@
 
 // TODO: refactor to use some shape matching library,
-// maybe React propTypes are reusable? maybe not.
 
 import { each } from "underscore";
 
@@ -12,6 +11,7 @@ const MANIFEST_REQUIRED_FIELDS = [
 
 const MANIFEST_VALID_FIELDS = [
   "actions", // list of action `[[actions]]` blocks
+  "prereqs",
 ];
 
 const ACTION_REQUIRED_FIELDS = [
@@ -26,6 +26,14 @@ const ACTION_VALID_FIELDS = [
   "args", // command-line arguments
   "sandbox", // sandbox opt-in
   "scope", // requested API scope
+];
+
+const PREREQ_REQUIRED_FIELDS = [
+  "name",
+];
+
+const PREREQ_VALID_FIELDS = [
+  "name", // standard name
 ];
 
 export default function validateManifest(manifest: IManifest, log: any, opts: any) {
@@ -53,6 +61,22 @@ export default function validateManifest(manifest: IManifest, log: any, opts: an
     for (const requiredField of ACTION_REQUIRED_FIELDS) {
       if (typeof (action as any)[requiredField] === "undefined") {
         throw new Error(`in manifest action ${denomination}, required field '${requiredField}' is missing`);
+      }
+    }
+  });
+
+  each(manifest.prereqs, (prereq, i) => {
+    const denomination = prereq.name || `#${i}`;
+
+    for (const field of Object.keys(prereq)) {
+      if (PREREQ_VALID_FIELDS.indexOf(field) === -1) {
+        log(opts, `in manifest prereq ${denomination}, unknown field '${field}' found`);
+      }
+    }
+
+    for (const requiredField of PREREQ_REQUIRED_FIELDS) {
+      if (typeof (prereq as any)[requiredField] === "undefined") {
+        throw new Error(`in manifest prereq ${denomination}, required field '${requiredField}' is missing`);
       }
     }
   });

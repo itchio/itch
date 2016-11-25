@@ -2,7 +2,7 @@
 import {EventEmitter} from "events";
 
 import * as invariant from "invariant";
-import * as uuid from "node-uuid";
+import * as uuid from "uuid";
 
 import {Transition} from "./errors";
 

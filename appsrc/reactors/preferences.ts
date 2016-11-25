@@ -17,16 +17,18 @@ import {initialState} from "../reducers/preferences";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
+    let prefs: any = {};
+
     try {
       const contents = await sf.readFile(pathmaker.preferencesPath());
-      const prefs = camelifyObject(JSON.parse(contents));
-
-      log(opts, "imported preferences: ", JSON.stringify(prefs, null, 2));
-      store.dispatch(actions.updatePreferences(prefs));
-      store.dispatch(actions.preferencesLoaded(Object.assign({}, initialState, prefs)));
+      prefs = camelifyObject(JSON.parse(contents));
     } catch (err) {
       log(opts, `while importing preferences: ${err}`);
     }
+
+    log(opts, "imported preferences: ", JSON.stringify(prefs, null, 2));
+    store.dispatch(actions.updatePreferences(prefs));
+    store.dispatch(actions.preferencesLoaded(Object.assign({}, initialState, prefs)));
   });
 
   watcher.on(actions.updatePreferences, async (store, action) => {

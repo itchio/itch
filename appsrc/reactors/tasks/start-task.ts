@@ -3,7 +3,7 @@ import {Watcher} from "../watcher";
 
 import {EventEmitter} from "events";
 
-import * as uuid from "node-uuid";
+import * as uuid from "uuid";
 import {getUserMarket, getGlobalMarket} from "../market";
 
 import {log, opts} from "./log";

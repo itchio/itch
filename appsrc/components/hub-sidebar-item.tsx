@@ -20,14 +20,14 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     this.onClick = this.onClick.bind(this);
   }
 
-  componentDidUpdate()  {
-    if (this.props.active) {
-      const node = findDOMNode(this);
-      if (node) {
-        (node as any).scrollIntoViewIfNeeded();
-      }
-    }
-  }
+  // componentDidUpdate()  {
+  //   if (this.props.active) {
+  //     const node = findDOMNode(this);
+  //     if (node) {
+  //       (node as any).scrollIntoViewIfNeeded();
+  //     }
+  //   }
+  // }
 
   onClick (e: React.MouseEvent<HTMLElement>) {
     const nativeEvent = e.nativeEvent as MouseEvent;

@@ -40,3 +40,8 @@ body, input {
     filter: sepia(30%);
   }
 }
+
+.ReactVirtualized__Grid {
+  outline: none;
+  transition: height 0.2s;
+}

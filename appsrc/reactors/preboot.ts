@@ -69,17 +69,20 @@ export default function (watcher: Watcher) {
         process.env.http_proxy ||
         process.env.HTTP_PROXY;
 
+      let proxySettings = {
+        proxy: null as string,
+        source: null as string,
+      };
+
       if (envSettings) {
         log(opts, `Got proxy settings from environment: ${envSettings}`);
-        const proxySettings = {
+        proxySettings = {
           proxy: envSettings,
           source: "env",
         };
-        store.dispatch(actions.proxySettingsDetected(proxySettings));
         testProxy = true;
-        await applyProxySettings(session.defaultSession, proxySettings);
       } else {
-        const proxySettings = await new Promise<string>((resolve, reject) => {
+        const electronProxy = await new Promise<string>((resolve, reject) => {
           // resolveProxy accepts strings as well, and URL is not defined here for some reason?
           session.defaultSession.resolveProxy("https://itch.io" as any, resolve);
 
@@ -88,15 +91,20 @@ export default function (watcher: Watcher) {
           }, 1000);
         });
 
-        if (/PROXY /.test(proxySettings)) {
-          log(opts, `Got proxy settings: '${proxySettings}'`);
-          const proxy = proxySettings.replace(/PROXY /, "");
-          store.dispatch(actions.proxySettingsDetected({proxy, source: "os"}));
+        if (/PROXY /.test(electronProxy)) {
+          log(opts, `Got proxy settings: '${electronProxy}'`);
+          const proxy = electronProxy.replace(/PROXY /, "");
+          proxySettings = {
+            proxy,
+            source: "os",
+          };
           testProxy = true;
         } else {
           log(opts, `No proxy detected`);
         }
       }
+      store.dispatch(actions.proxySettingsDetected(proxySettings));
+      await applyProxySettings(session.defaultSession, proxySettings);
     } catch (e) {
       log(opts, `Could not detect proxy settings: ${e ? e.message : "unknown error"}`);
     }

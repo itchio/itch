@@ -1,7 +1,7 @@
 
 import {handleActions} from "redux-actions";
 import {map, reject, omit, object, pick, indexBy, filter} from "underscore";
-import * as uuid from "node-uuid";
+import * as uuid from "uuid";
 
 import SearchExamples from "../../constants/search-examples";
 import staticTabData from "../../constants/static-tab-data";
