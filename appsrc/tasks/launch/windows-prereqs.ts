@@ -44,7 +44,7 @@ async function handleUE4Prereq (cave: ICaveRecord, opts: IWindowsPrereqsOpts) {
 
     log(opts, `launching UE4 prereq setup ${prereqFullPath}`);
     const code = await spawn({
-      command: ospath.join(appPath, prereqFullPath),
+      command: prereqFullPath,
       args: [
         "/quiet", // don't show any dialogs
         "/norestart", // don't ask for OS to reboot
