@@ -325,6 +325,14 @@ export interface ICaveRecord extends ICaveRecordLocation {
 
     /** size of installed folder, in bytes */
     installedSize?: number;
+
+    /** set to true if UE4's prereq setup file was succesfully run */
+    installedUE4Prereq?: boolean;
+
+    /** indexed by prereq name (standard, stored in ibrew-like repo), set to true when installed successfully */
+    installedPrereqs?: {
+        [prereqName: string]: boolean;
+    };
 }
 
 export interface ICaveRecordSet {
@@ -396,7 +404,7 @@ export type TableName = "caves" | "users" | "games" | "collections" | "downloadK
  */
 export interface IMarket {
     getEntities: (table: TableName) => IEntityMap;
-    getEntity: (table: TableName, id: string) => any;
+    getEntity: <T> (table: TableName, id: string) => T;
     saveAllEntities: (entityRecords: IEntityRecords, saveOpts?: IMarketSaveOpts) => Promise<void>;
     saveEntity: (table: TableName, id: string, payload: any, saveOpts?: IMarketSaveOpts) => Promise<void>;
     deleteAllEntities: (deleteSpec: IMarketDeleteSpec, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
@@ -643,11 +651,20 @@ export interface IItchAppProfileMyGames {
     ids: string[];
 }
 
+export interface IItchAppTabs {
+    /** id of current tab at time of snapshot */
+    current: string;
+
+    /** list of transient tabs when the snapshot was taken */
+    items: ITabDataSave[];
+}
+
 export interface IUserMarketState extends IMarketState {
     games: { [id: string]: IGameRecord };
     collections: { [id: string]: ICollectionRecord };
     downloadKeys: { [id: string]: IDownloadKey };
     itchAppProfile: IItchAppProfile;
+    itchAppTabs: IItchAppTabs;
 }
 
 export interface IGlobalMarketState extends IMarketState {

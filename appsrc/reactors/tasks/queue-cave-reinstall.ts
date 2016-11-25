@@ -11,10 +11,12 @@ import {startTask} from "./start-task";
 import pathmaker from "../../util/pathmaker";
 import fetch from "../../util/fetch";
 
+import {ICaveRecord} from "../../types";
+
 export default function (watcher: Watcher) {
   watcher.on(actions.queueCaveReinstall, async (store, action) => {
     const {caveId} = action.payload;
-    const cave = getGlobalMarket().getEntity("caves", caveId);
+    const cave = getGlobalMarket().getEntity<ICaveRecord>("caves", caveId);
     if (!cave) {
       // can't reinstall without a valid cave!
       return;

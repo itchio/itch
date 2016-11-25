@@ -312,7 +312,7 @@ export default function (watcher: Watcher) {
       log(opts, `Looking for updates for cave ${caveId}`);
     }
 
-    const cave = getGlobalMarket().getEntity("caves", caveId);
+    const cave = getGlobalMarket().getEntity<ICaveRecord>("caves", caveId);
     if (!cave) {
       log(opts, `No cave with id ${caveId}, bailing out`);
       return;

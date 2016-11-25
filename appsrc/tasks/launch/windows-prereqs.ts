@@ -32,7 +32,7 @@ import extract from "../../util/extract";
 
 export default async function handleWindowsPrereqs (opts: IWindowsPrereqsOpts) {
   const {globalMarket, caveId} = opts;
-  const cave = globalMarket.getEntity("caves", caveId);
+  const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
 
   if (!cave.installedUE4Prereq) {
     await handleUE4Prereq(cave, opts);
@@ -99,6 +99,14 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
 async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
   // TODO: check in cave if it's already installed
 
+  const {globalMarket, caveId} = opts;
+  const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
+  const {installedPrereqs} = cave;
+  if (installedPrereqs && installedPrereqs[prereq.name]) {
+    log(opts, `Already installed ${prereq.name}, skipping...`);
+    return;
+  }
+
   const workDir = tmp.dirSync();
 
   try {
@@ -144,7 +152,9 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
     });
 
     log(opts, `Installed ${info.fullName} succesfully!`);
-} finally {
+    installedPrereqs[prereq.name] = true;
+    await globalMarket.saveEntity("caves", caveId, installedPrereqs, {wait: true});
+  } finally {
     workDir.removeCallback();
   }
 }

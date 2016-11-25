@@ -277,7 +277,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
   try {
     interval = setInterval(() => {
       const now = Date.now();
-      const previousSecondsRun = globalMarket.getEntity("caves", cave.id).secondsRun || 0;
+      const previousSecondsRun = globalMarket.getEntity<ICaveRecord>("caves", cave.id).secondsRun || 0;
       const newSecondsRun = UPDATE_PLAYTIME_INTERVAL + previousSecondsRun;
       globalMarket.saveEntity("caves", cave.id, {secondsRun: newSecondsRun, lastTouched: now});
     }, UPDATE_PLAYTIME_INTERVAL * 1000);

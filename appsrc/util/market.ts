@@ -238,7 +238,7 @@ export default class Market extends EventEmitter {
    * Returns a specific entity of a given table, from the memory store.
    * Returns null if the entity does not exist.
    */
-  getEntity (tableName: string, entityId: string): any {
+  getEntity <T> (tableName: string, entityId: string): T {
     return this.getEntities(tableName)[entityId];
   }
 

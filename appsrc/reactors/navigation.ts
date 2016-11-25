@@ -28,7 +28,7 @@ const TABS_TABLE_NAME = "itchAppTabs";
 
 import * as actions from "../actions";
 
-import {IStore, IState, ITabData, ITabDataSet, IMarketState} from "../types";
+import {IStore, IState, ITabData, ITabDataSet, IMarketState, IItchAppTabs} from "../types";
 
 interface IFakeMarketData extends IMarketState {}
 
@@ -241,7 +241,7 @@ export default function (watcher: Watcher) {
   watcher.on(actions.sessionReady, async (store, action) => {
     log(opts, "Session ready! looking for tabs to restore");
     const userMarket = getUserMarket();
-    const snapshot = userMarket.getEntity(TABS_TABLE_NAME, "x");
+    const snapshot = userMarket.getEntity<IItchAppTabs>(TABS_TABLE_NAME, "x");
 
     if (snapshot) {
       log(opts, `Restoring ${snapshot.items.length} tabs`);

@@ -312,13 +312,7 @@ export const TABS_CHANGED = "TABS_CHANGED";
 export interface ITabsChangedPayload {}
 
 export const TABS_RESTORED = "TABS_RESTORED";
-export interface ITabsRestoredPayload {
-  /** current tab id at the time the snapshot was taken */
-  current: string;
-
-  /** list of transient tabs when the snapshot was taken */
-  items: Types.ITabDataSave[];
-}
+export interface ITabsRestoredPayload extends Types.IItchAppTabs {}
 
 export const TAB_DATA_FETCHED = "TAB_DATA_FETCHED";
 export interface ITabDataFetchedPayload {
