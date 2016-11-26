@@ -10,13 +10,12 @@ interface IIcaclsOptions {
 }
 
 async function icacls (opts: IIcaclsOptions, reason: string, args: string[]) {
-  const removeRes = await spawn.getOutput({
+  await spawn.assert({
     command: "icacls",
     args,
     onToken:    (tok) => { log(opts, `[${reason} out] ${tok}`); },
     onErrToken: (tok) => { log(opts, `[${reason} err] ${tok}`); },
   });
-  log(opts, `acl cleanup output:\n${removeRes}`);
 }
 
 async function removeGrants(opts: IIcaclsOptions, reason: string) {
