@@ -25,6 +25,12 @@ interface IWindowsPrereqsOpts {
   logger: Logger;
 }
 
+interface IRedistExitCode {
+  code: number;
+  success?: boolean;
+  message?: string;
+}
+
 interface IRedistInfo {
   /** Human-friendly name for redist, e.g. "Microsoft Visual C++ 2010 Redistributable" */
   fullName: string;
@@ -41,11 +47,14 @@ interface IRedistInfo {
   /** Should the executable be run as admin? */
   elevate?: boolean;
 
-  /** Registry key we can check to see if installed */
-  registryKey?: string;
+  /** Registry keys we can check to see if installed */
+  registryKeys?: string[];
 
   /** List of DLLs to check for, to make sure it's installed */
   dlls?: string[];
+
+  /** Meaning of some exit codes */
+  exitCodes?: IRedistExitCode[];
 }
 
 import {EventEmitter} from "events";
@@ -139,8 +148,10 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
 
     const info = infoRes.body as IRedistInfo;
 
-    if (info.registryKey) {
-      log(opts, `Stub: should check for registry key ${info.registryKey}`);
+    if (info.registryKeys) {
+      for (const registryKey of info.registryKeys) {
+        log(opts, `Stub: should check for registry key ${registryKey}`);
+      }
     }
 
     if (info.dlls) {
@@ -187,7 +198,7 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
     }
 
     log(opts, `Launching ${info.command} with args ${info.args.join(" ")}`);
-    await spawn.assert({
+    const code = await spawn({
       command,
       args,
       onToken:    (tok) => { log(opts, `[${prereq.name} out] ${tok}`); },
@@ -197,7 +208,30 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
       },
     });
 
-    log(opts, `Installed ${info.fullName} succesfully!`);
+    if (code === 0) {
+      log(opts, `Installed ${info.fullName} successfully!`);
+    } else {
+      let success = false;
+      let message = "Unknown error code";
+
+      if (info.exitCodes) {
+        for (const exitCode of info.exitCodes) {
+          if (exitCode.code === code) {
+            message = exitCode.message;
+            if (exitCode.success) {
+              success = true;
+              log(opts, `${prereq.name} exited with ${code}: ${exitCode.message}. Success!`);
+            }
+            break;
+          }
+        }
+      }
+
+      if (!success) {
+        throw new Error(`Installer for ${info.fullName} exited with code ${code}: ${message}`);
+      }
+    }
+
     if (!installedPrereqs) {
       installedPrereqs = {};
     }
