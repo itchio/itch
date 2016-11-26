@@ -213,7 +213,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
         buttons,
       });
 
-      if (response.type === MODAL_RESPONSE) {
+      if (response && response.type === MODAL_RESPONSE) {
         manifestAction = findWhere(manifest.actions, {name: response.payload.manifestActionName});
       } else {
         return; // cancelled by user
