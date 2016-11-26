@@ -21,6 +21,7 @@ import sf from "../../util/sf";
 import spawn from "../../util/spawn";
 import fetch from "../../util/fetch";
 import pathmaker from "../../util/pathmaker";
+import * as icacls from "./icacls";
 
 import {promisedModal} from "../../reactors/modals";
 import {startTask} from "../../reactors/tasks/start-task";
@@ -237,26 +238,19 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
       playerUsername = playerUsername.split("\n")[0].trim();
 
       log(opts, "app isolation enabled");
-      const grantRes = await spawn.getOutput({
-        command: "icacls",
-        args: [ grantPath, "/grant", playerUsername + ":F", "/T", "/Q", "/c" ],
-        logger: opts.logger,
-      });
-      log(opts, `grant output:\n${grantRes}`);
-
+      await icacls.shareWith({logger: opts.logger, sid: playerUsername, path: grantPath});
       cmd = `isolate ${cmd}`;
     } else {
       log(opts, "no app isolation");
     }
-    await doSpawn(exePath, cmd, env, out, spawnOpts);
 
-    if (isolateApps) {
-      const denyRes = await spawn.getOutput({
-        command: "icacls",
-        args: [ grantPath, "/deny", playerUsername + ":F", "/T", "/Q", "/c" ],
-        logger: opts.logger,
-      });
-      log(opts, `deny output:\n${denyRes}`);
+    try {
+      await doSpawn(exePath, cmd, env, out, spawnOpts);
+    } finally {
+      // always unshare, even if something happened
+      if (isolateApps) {
+        await icacls.unshareWith({logger: opts.logger, sid: playerUsername, path: grantPath});
+      }
     }
   } else if (platform === "linux") {
     let cmd = `${spawn.escapePath(exePath)}`;
