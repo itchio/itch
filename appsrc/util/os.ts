@@ -9,6 +9,8 @@ interface IAssertPresenceResult {
   parsed: string;
 }
 
+export type ItchPlatform = "osx" | "windows" | "linux" | "unknown";
+
 const self = {
   platform: function (): string {
     return process.platform;
@@ -42,7 +44,7 @@ const self = {
   /**
    * Get platform in the format used by the itch.io API
    */
-  itchPlatform: function (): string {
+  itchPlatform: function (): ItchPlatform {
     switch (self.platform()) {
       case "darwin":
         return "osx";

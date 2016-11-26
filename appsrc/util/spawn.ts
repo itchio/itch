@@ -38,11 +38,13 @@ interface ISpawnOpts {
     },
     /** Current working directory */
     cwd?: string;
+    /** shell that should be used to run a command */
+    shell?: string;
   };
   logger?: Logger;
 
-  /** if set, do not redirect stdout/stderr and attempt to open in new window */
-  console?: boolean;
+  /** if set, do not redirect stdout/stderr */
+  inheritStd?: boolean;
 }
 
 interface IExecResult {
@@ -73,13 +75,10 @@ spawn = async function (opts: ISpawnOpts): Promise<number> {
     ],
   } as any;
 
-  if (opts.console) {
+  if (opts.inheritStd) {
     stdioOpts = {
       stdio: [],
-      shell: "cmd.exe",
     };
-    args = ["/wait", command, ...args];
-    command = "start";
   }
 
   const spawnOpts = Object.assign({}, opts.opts || {}, stdioOpts);

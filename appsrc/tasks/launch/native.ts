@@ -34,6 +34,8 @@ import {Crash} from "../errors";
 
 import {IEnvironment, IStartTaskOpts, ICaveRecord} from "../../types";
 
+const itchPlatform = os.itchPlatform();
+
 export default async function launch (out: EventEmitter, opts: IStartTaskOpts): Promise<void> {
   const {market, credentials, env} = opts;
   let {cave} = opts;
@@ -137,8 +139,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
     }
   }
 
-  const platform = os.platform();
-  log(opts, `executing '${exePath}' on '${platform}' with args '${args.join(" ")}'`);
+  log(opts, `executing '${exePath}' on '${itchPlatform}' with args '${args.join(" ")}'`);
   const argString = map(args, spawn.escapePath).join(" ");
 
   if (isolateApps) {
@@ -148,8 +149,6 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
     }
 
     if (checkRes.needs.length > 0) {
-      const itchPlatform = os.itchPlatform();
-
       const response = await promisedModal(store, {
         title: ["sandbox.setup.title"],
         message: [`sandbox.setup.${itchPlatform}.message`],
@@ -189,7 +188,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
   });
 
   let fullExec = exePath;
-  if (platform === "darwin") {
+  if (itchPlatform === "osx") {
     const isBundle = isAppBundle(exePath);
     if (isBundle) {
       fullExec = await spawn.getOutput({
@@ -225,7 +224,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
         await doSpawn(fullExec, `${spawn.escapePath(exePath)} ${argString}`, env, out, spawnOpts);
       }
     }
-  } else if (platform === "win32") {
+  } else if (itchPlatform === "windows") {
     let cmd = `${spawn.escapePath(exePath)}`;
     if (argString.length > 0) {
       cmd += ` ${argString}`;
@@ -258,7 +257,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
         await icacls.unshareWith({logger: opts.logger, sid: playerUsername, path: grantPath});
       }
     }
-  } else if (platform === "linux") {
+  } else if (itchPlatform === "linux") {
     let cmd = `${spawn.escapePath(exePath)}`;
     if (argString.length > 0) {
       cmd += ` ${argString}`;
@@ -277,7 +276,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
       await doSpawn(exePath, cmd, env, out, spawnOpts);
     }
   } else {
-    throw new Error(`unsupported platform: ${platform}`);
+    throw new Error(`unsupported platform: ${os.platform()}`);
   }
 }
 
@@ -285,30 +284,44 @@ interface IDoSpawnOpts extends IStartTaskOpts {
   /** current working directory for spawning */
   cwd?: string;
 
-  /** don't redirect stderr/stdout */
+  /** don't redirect stderr/stdout and open terminal window */
   console?: boolean;
 }
 
 async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment, emitter: EventEmitter,
                         opts: IDoSpawnOpts) {
   log(opts, `spawn command: ${fullCommand}`);
-  const {console} = opts;
-  if (console) {
-    log(opts, `(in console mode)`);
-  }
 
   const cwd = opts.cwd || ospath.dirname(exePath);
   log(opts, `working directory: ${cwd}`);
 
-  const args = shellQuote.parse(fullCommand);
-  const command = args.shift();
+  let args = shellQuote.parse(fullCommand);
+  let command = args.shift();
+  let shell: string = null;
+
+  let inheritStd = false;
+  const {console} = opts;
+  if (console) {
+    log(opts, `(in console mode)`);
+    if (itchPlatform === "windows") {
+      const consoleCommandItems = [command, ...args];
+      const consoleCommand = consoleCommandItems.map((arg) => `"${arg}"`).join(" ");
+
+      inheritStd = true;
+      args = ["/wait", "cmd.exe", "/k", consoleCommand];
+      command = "start";
+      shell = "cmd.exe";
+    } else {
+      log(opts, `warning: console mode not supported on ${itchPlatform}`);
+    }
+  }
+
   log(opts, `command: ${command}`);
   log(opts, `args: ${JSON.stringify(args, null, 2)}`);
   log(opts, `env keys: ${JSON.stringify(Object.keys(env), null, 2)}`);
 
   let spawnEmitter = emitter;
-  const platform = os.platform();
-  if (platform === "darwin") {
+  if (itchPlatform === "osx") {
     spawnEmitter = new EventEmitter();
     emitter.once("cancel", async function () {
       log(opts, `asked to cancel, calling pkill with ${exePath}`);
@@ -329,8 +342,9 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     opts: {
       env: Object.assign({}, process.env, env),
       cwd,
+      shell,
     },
-    console,
+    inheritStd,
   });
 
   if (code !== 0) {

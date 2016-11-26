@@ -229,3 +229,5 @@ console = true
 ```
 
 On Windows, it'll also open a new command line window to display the game into.
+
+On other platforms, this attribute is not yet supported.
