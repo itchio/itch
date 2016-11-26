@@ -1,7 +1,7 @@
 
 import {handleActions} from "redux-actions";
 
-import {IStatusState} from "../types";
+import {IStatusState, ILocalizedString} from "../types";
 
 import {
   IAction,
@@ -20,9 +20,11 @@ const initialState = {
 
 export default handleActions<IStatusState, any>({
   STATUS_MESSAGE: (state: IStatusState, action: IAction<IStatusMessagePayload>) => {
+    const message: ILocalizedString = action.payload.message;
+
     return Object.assign({}, state, {
       messages: [
-        action.payload,
+        message,
         ...state.messages,
       ],
     });
