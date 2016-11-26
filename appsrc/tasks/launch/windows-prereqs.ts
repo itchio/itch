@@ -91,7 +91,6 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
   }
 
   for (const prereq of manifest.prereqs) {
-    log(opts, `stub: should install prereq '${prereq.name}'`);
     await installDep(opts, prereq);
   }
 }
@@ -112,6 +111,7 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
   try {
     const baseUrl = `${urls.redistsBase}/${prereq.name}`;
     const infoUrl = `${baseUrl}/info.json`;
+    log(opts, `Retrieving ${infoUrl}`);
     const infoRes = await net.request("get", infoUrl, {}, {format: "json"});
     if (infoRes.statusCode !== 200) {
       throw new Error(`Could not install prerequisite ${prereq.name}: server replied with HTTP ${infoRes.statusCode}`);
