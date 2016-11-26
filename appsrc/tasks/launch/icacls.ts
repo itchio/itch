@@ -19,7 +19,13 @@ async function icacls (opts: IIcaclsOptions, reason: string, args: string[]) {
 }
 
 async function removeGrants(opts: IIcaclsOptions, reason: string) {
-  await icacls(opts, reason, [
+}
+
+export async function shareWith(opts: IIcaclsOptions) {
+  // acl cleanup is needed because previous instances of the win32 sandbox
+  // would deny all access to all files recursively (and individually) after
+  // the sandbox ran, instead of removing ACL entries
+  await icacls(opts, "cleanup", [
     opts.path,
     "/remove:d", // remove any deny (:d) ACL entries for sid
     opts.sid,
@@ -27,13 +33,6 @@ async function removeGrants(opts: IIcaclsOptions, reason: string) {
     "/Q", // don't print success messages, only errors
     "/c", // continue on error
   ]);
-}
-
-export async function shareWith(opts: IIcaclsOptions) {
-  // acl cleanup is needed because previous instances of the win32 sandbox
-  // would deny all access to all files recursively (and individually) after
-  // the sandbox ran, instead of removing ACL entries
-  await removeGrants(opts, "cleanup");
 
   // We only need to grant access to the folder, thanks to inheritance:
   //   F = full access (list, read, write, create, etc.)
@@ -52,7 +51,11 @@ export async function shareWith(opts: IIcaclsOptions) {
 }
 
 export async function unshareWith(opts: IIcaclsOptions) {
-   // this undoes both what the old sandbox (change permission of all files) did
-   // and what the new sandbox does (inherited grant on root folder)
-   await removeGrants(opts, "unshare");
+   // this undoes what the new sandbox does (inherited grant on root folder)
+  await icacls(opts, "cleanup", [
+    opts.path,
+    "/remove", // remove any deny (:d) ACL entries for sid
+    opts.sid,
+    "/Q", // don't print success messages, only errors
+  ]);
 }
