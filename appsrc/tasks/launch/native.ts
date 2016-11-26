@@ -278,11 +278,18 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
 interface IDoSpawnOpts extends IStartTaskOpts {
   /** current working directory for spawning */
   cwd?: string;
+
+  /** don't redirect stderr/stdout */
+  console?: boolean;
 }
 
 async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment, emitter: EventEmitter,
                         opts: IDoSpawnOpts) {
   log(opts, `spawn command: ${fullCommand}`);
+  const {console} = opts;
+  if (console) {
+    log(opts, `(in console mode)`);
+  }
 
   const cwd = opts.cwd || ospath.dirname(exePath);
   log(opts, `working directory: ${cwd}`);
@@ -317,6 +324,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
       env: Object.assign({}, process.env, env),
       cwd,
     },
+    console,
   });
 
   if (code !== 0) {
