@@ -26,6 +26,7 @@ const ACTION_VALID_FIELDS = [
   "args", // command-line arguments
   "sandbox", // sandbox opt-in
   "scope", // requested API scope
+  "console", // don't redirect stdout/stderr, open in new console window
 ];
 
 const PREREQ_REQUIRED_FIELDS = [

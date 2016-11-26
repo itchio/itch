@@ -40,6 +40,9 @@ interface ISpawnOpts {
     cwd?: string;
   };
   logger?: Logger;
+
+  /** if set, do not redirect stdout/stderr and attempt to open in new window */
+  console?: boolean;
 }
 
 interface IExecResult {
@@ -59,15 +62,27 @@ interface ISpawnInterface {
 let spawn: ISpawnInterface;
 
 spawn = async function (opts: ISpawnOpts): Promise<number> {
-  const {emitter, command, args = [], split = "\n", onToken, onErrToken} = opts;
+  const {emitter, split = "\n", onToken, onErrToken} = opts;
+  let {command, args = []} = opts;
 
-  const spawnOpts = Object.assign({}, opts.opts || {}, {
+  let stdioOpts = {
     stdio: [
       "ignore", // stdin
       onToken ? "pipe" : "ignore", // stdout
       onErrToken ? "pipe" : "ignore", // stderr
     ],
-  });
+  } as any;
+
+  if (opts.console) {
+    stdioOpts = {
+      stdio: [],
+      shell: "cmd.exe",
+    };
+    args = ["/wait", command, ...args];
+    command = "start";
+  }
+
+  const spawnOpts = Object.assign({}, opts.opts || {}, stdioOpts);
 
   log(opts, `spawning ${command} with args ${args.join(" ")}`);
 

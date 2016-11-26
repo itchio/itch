@@ -37,6 +37,32 @@ both to humans and computers alike.
 
 [toml]: https://github.com/toml-lang/toml
 
+## Prerequisites (Windows)
+
+itch can ensure a certain number of prerequisites / redistributables are installed before
+your app is launched.
+
+Any number of prerequisites can be listed in an array named `prereqs`:
+
+```
+[[prereqs]]
+name = "vcredist-2010-x86"
+
+[[prereqs]]
+name = "xna-4.0"
+```
+
+These are completely optional - they're not required for your manifest file to be valid.
+
+The list of valid names is as follows:
+
+  * `vcredist-2010-x86`: Microsoft Visual C++ 2010 Redistributable (x86)
+
+If your game needs a prerequisite not on the list, please [open an issue](https://github.com/itchio/itch/issues/new)
+so we can add it to our repository.
+
+Prerequisites are not tied to any particular actions — they'll be checked on any .exe launch.
+
 ## Actions
 
 A valid manifest should contain one or more actions:
@@ -186,3 +212,20 @@ served the javascript: in the case of HTML5 games, an HTTP server is spinned
 up every time the game is launched. The itch app disables the same-origin
 policy so that your HTML5 game can make requests to the itch.io server or
 to your own server somewhere else.
+
+### Console / text-mode applications
+
+By default, the itch app redirects the standard output and standard error to
+a log file on disk, which helps debugging when reports are sent.
+
+For console applications, this might not be desirable. You can opt out from
+redirection by setting the `console` attribute of the relevant action to `true`:
+
+```
+[[actions]]
+name = "play"
+path = "TheWillowEffect.exe"
+console = true
+```
+
+On Windows, it'll also open a new command line window to display the game into.
