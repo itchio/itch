@@ -151,6 +151,9 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
       args: info.args,
       onToken:    (tok) => { log(opts, `[${prereq.name} out] ${tok}`); },
       onErrToken: (tok) => { log(opts, `[${prereq.name} err] ${tok}`); },
+      opts: {
+        cwd: workDir.name,
+      },
     });
 
     log(opts, `Installed ${info.fullName} succesfully!`);

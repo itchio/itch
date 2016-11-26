@@ -13,13 +13,32 @@ const log = mklog("spawn");
 import { EventEmitter } from "events";
 
 interface ISpawnOpts {
+  /** Command to spawn */
   command: string;
+
+  /** Arguments */
   args: string[];
+
+  /** Defaults to eol for the current platform ("\r\n" or "\n") */
   split?: string;
+
+  /** If set, spawn listens to this emitter for cancellation */
   emitter?: EventEmitter;
+
+  /** If set, called on each line of stdout */
   onToken?: (token: string) => void;
+
+  /** If set, called on each line of stderr */
   onErrToken?: (token: string) => void;
-  opts?: any;
+
+  opts?: {
+    /** Environment variables */
+    env?: {
+      [key: string]: string;
+    },
+    /** Current working directory */
+    cwd?: string;
+  };
   logger?: Logger;
 }
 
