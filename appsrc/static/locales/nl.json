@@ -150,5 +150,6 @@
     "action.name.manual": "Gebruikershandleiding",
     "label.experimental": "Expirimenteel",
     "collection.empty": "Deze collectie bevat geen spellen",
-    "desktop.shortcut.comment": "Installeer and speel itch.io spellen gemakkelijk"
+    "desktop.shortcut.comment": "Installeer and speel itch.io spellen gemakkelijk",
+    "grid.item.show_local_files": "Toon lokale bestanden"
 }
