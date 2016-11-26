@@ -158,6 +158,5 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
     await globalMarket.saveEntity("caves", caveId, installedPrereqs, {wait: true});
   } finally {
     await sf.wipe(workDir.name);
-    workDir.removeCallback();
   }
 }
