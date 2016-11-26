@@ -133,7 +133,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           const onClick = () => { navigate(id); };
           const onClose = () => { closeTab({id}); };
           const onContextMenu = (e?: MouseEvent) => {
-            openTabContextMenu({id, advanced: (e && e.altKey)});
+            openTabContextMenu({id, advanced: (e && e.shiftKey)});
           };
           const count = (counts as any)[id];
           const progress = progresses[id];
