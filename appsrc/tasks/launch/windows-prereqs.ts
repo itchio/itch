@@ -151,7 +151,7 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
       message: ["login.status.dependency_install", {
         name: info.fullName,
         version: info.version || "?",
-      }]
+      }],
     }));
 
     log(opts, `Downloading prereq ${info.fullName}`);

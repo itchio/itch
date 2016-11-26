@@ -344,7 +344,7 @@ export default function (watcher: Watcher) {
       log(opts, `While checking for cave ${caveId} update: ${e.stack || e}`);
       if (noisy) {
         store.dispatch(actions.statusMessage({
-          message: ["status.game_update.check_failed", {err: e}]
+          message: ["status.game_update.check_failed", {err: e}],
         }));
       }
     } finally {
