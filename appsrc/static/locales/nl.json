@@ -67,7 +67,7 @@
     "preferences.install_location.browse": "Open installatiepad in explorer",
     "preferences.install_location.browse_osx": "Open installatie locatie in Finder",
     "preferences.install_location.compute_size": "Bereken de mapgrootte op de schijf",
-    "preferences.install_location.delete": "Verwijder dit installatiepad en deïnstalleer de bestanden",
+    "preferences.install_location.delete": "Verwijder dit installatiepad en deïnstalleer alle bestanden",
     "preferences.install_location.empty": "Leeg",
     "preferences.install_location.free_space": "Vrije ruimte",
     "preferences.install_location.is_default": "Nieuwe items zullen standaard hier geïnstalleerd worden.",
