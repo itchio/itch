@@ -107,7 +107,7 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
 async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
   const {globalMarket, caveId} = opts;
   const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
-  const {installedPrereqs} = cave;
+  let {installedPrereqs} = cave;
   if (installedPrereqs && installedPrereqs[prereq.name]) {
     log(opts, `Already installed ${prereq.name}, skipping...`);
     return;
@@ -170,8 +170,11 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
     });
 
     log(opts, `Installed ${info.fullName} succesfully!`);
+    if (!installedPrereqs) {
+      installedPrereqs = {};
+    }
     installedPrereqs[prereq.name] = true;
-    await globalMarket.saveEntity("caves", caveId, installedPrereqs, {wait: true});
+    await globalMarket.saveEntity("caves", caveId, {installedPrereqs}, {wait: true});
   } finally {
     await sf.wipe(workDir.name);
   }
