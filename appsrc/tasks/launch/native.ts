@@ -37,7 +37,7 @@ import {IEnvironment, IStartTaskOpts, ICaveRecord} from "../../types";
 const itchPlatform = os.itchPlatform();
 
 export default async function launch (out: EventEmitter, opts: IStartTaskOpts): Promise<void> {
-  const {market, credentials, env} = opts;
+  const {market, credentials, env = {}} = opts;
   let {cave} = opts;
   let {args} = opts;
   invariant(cave, "launch-native has cave");
@@ -309,8 +309,10 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     log(opts, `(in console mode)`);
     if (itchPlatform === "windows") {
       if (opts.isolateApps) {
-        log(opts, `(app isolation is enabled, not doing anything special for console)`);
         inheritStd = true;
+        env = Object.assign({}, env, {
+          ISOLATE_DISABLE_REDIRECTS: "1",
+        });
       } else {
         const consoleCommandItems = [command, ...args];
         const consoleCommand = consoleCommandItems.map((arg) => `"${arg}"`).join(" ");
