@@ -18,9 +18,6 @@ async function icacls (opts: IIcaclsOptions, reason: string, args: string[]) {
   });
 }
 
-async function removeGrants(opts: IIcaclsOptions, reason: string) {
-}
-
 export async function shareWith(opts: IIcaclsOptions) {
   // acl cleanup is needed because previous instances of the win32 sandbox
   // would deny all access to all files recursively (and individually) after
