@@ -151,5 +151,10 @@
     "label.experimental": "Expirimenteel",
     "collection.empty": "Deze collectie bevat geen spellen",
     "desktop.shortcut.comment": "Installeer and speel itch.io spellen gemakkelijk",
-    "grid.item.show_local_files": "Toon lokale bestanden"
+    "grid.item.show_local_files": "Toon lokale bestanden",
+    "grid.item.downloads_paused": "Downloads zijn gepauzeerd",
+    "grid.item.version": "Versie {{version}}",
+    "browser.popout": "Open deze pagina in uw externe browser",
+    "install_location.empty": "Er is momenteel niks geïnstalleerd op deze locatie",
+    "login.messages.welcome_back": "Welkom terug!"
 }
