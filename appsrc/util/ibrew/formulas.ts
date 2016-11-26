@@ -35,7 +35,7 @@ export interface IFormulas {
   butler: IFormulaSpec;
   elevate: IFormulaSpec;
   isolate: IFormulaSpec;
-  assertdll: IFormulaSpec;
+  dllassert: IFormulaSpec;
   activate: IFormulaSpec;
   firejail: IFormulaSpec;
   arh: IFormulaSpec;
@@ -101,10 +101,10 @@ self.isolate = {
 /**
  * ensuring a DLL is present
  */
-self.assertdll = {
+self.dllassert = {
   format: "7z",
   osWhitelist: ["windows"],
-  subfolder: "assertdll",
+  subfolder: "dllassert",
 };
 
 /**
