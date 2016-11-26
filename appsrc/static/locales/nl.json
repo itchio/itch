@@ -80,7 +80,7 @@
     "preferences.install_location.used_space": "Gebruikte ruimte",
     "preferences.install_locations": "Installatie locaties",
     "preferences.language": "Taal",
-    "preferences.language.get_involved": "Help om {{name}} te vertalen naar jouw taal!",
+    "preferences.language.get_involved": "Help {{name}} naar jouw taal te vertalen!",
     "prompt.action.cancel": "Annuleren",
     "prompt.action.close": "Sluit",
     "prompt.action.confirm_removal": "Verdergaan met verwijderen",
