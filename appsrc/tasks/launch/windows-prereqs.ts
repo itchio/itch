@@ -6,6 +6,7 @@ import {find} from "underscore";
 import spawn from "../../util/spawn";
 import pathmaker from "../../util/pathmaker";
 import net from "../../util/net";
+import sf from "../../util/sf";
 
 import * as ospath from "path";
 import urls from "../../constants/urls";
@@ -155,6 +156,7 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
     installedPrereqs[prereq.name] = true;
     await globalMarket.saveEntity("caves", caveId, installedPrereqs, {wait: true});
   } finally {
+    await sf.wipe(workDir.name);
     workDir.removeCallback();
   }
 }
