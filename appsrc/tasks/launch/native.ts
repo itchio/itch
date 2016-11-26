@@ -310,6 +310,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     if (itchPlatform === "windows") {
       if (opts.isolateApps) {
         log(opts, `(app isolation is enabled, not doing anything special for console)`);
+        inheritStd = true;
       } else {
         const consoleCommandItems = [command, ...args];
         const consoleCommand = consoleCommandItems.map((arg) => `"${arg}"`).join(" ");
