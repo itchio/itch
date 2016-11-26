@@ -207,7 +207,8 @@ export async function downloadToFile (opts: ILoggerOpts, url: string, file: stri
 
 export async function getChecksums (opts: ILoggerOpts, basePath: string, algo: ChecksumAlgo): Promise<IChecksums> {
   const url = `${basePath}/${algo}SUMS`;
-  const res = await request("get", url);
+  // bust cloudflare cache
+  const res = await request("get", url, {t: Date.now()});
 
   if (res.statusCode !== 200) {
     log(opts, `couldn't get hashes: HTTP ${res.statusCode}, for ${url}`);
