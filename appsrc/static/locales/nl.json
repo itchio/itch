@@ -98,7 +98,7 @@
     "prompt.install_location_add.title": "Kies een nieuwe locatie om te installeren",
     "prompt.install_location_not_empty.detail": "Dit moet voorlopig manueel gedaan worden.",
     "prompt.install_location_not_empty.message": "Installatie locaties kunnen alleen worden verwijderd als alle inhoud is gedeïnstalleerd .",
-    "prompt.install_location_not_empty.show_contents": "Inhoud tonen",
+    "prompt.install_location_not_empty.show_contents": "Toon inhoud",
     "prompt.install_location_not_empty.title": "Deze installatie locatie is niet leeg",
     "prompt.install_location_remove.detail": "Alle bestanden die geïnstalleerd zijn in {{location}} zullen worden verwijderd.",
     "prompt.install_location_remove.message": "Weet u zeker dat u deze locatie wilt verwijderen?",
