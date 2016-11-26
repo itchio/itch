@@ -7,6 +7,7 @@ import spawn from "../../util/spawn";
 import pathmaker from "../../util/pathmaker";
 import net from "../../util/net";
 import sf from "../../util/sf";
+import reg from "../../util/reg";
 
 import * as ospath from "path";
 import urls from "../../constants/urls";
@@ -148,14 +149,48 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
 
     const info = infoRes.body as IRedistInfo;
 
+    let hasRegistry = false;
+
     if (info.registryKeys) {
       for (const registryKey of info.registryKeys) {
-        log(opts, `Stub: should check for registry key ${registryKey}`);
+        try {
+          await reg.regQuery(registryKey);
+          hasRegistry = true;
+          log(opts, `Found registry key ${registryKey}`);
+          break;
+        } catch (e) {
+          log(opts, `Key not present: ${registryKey}`);
+        }
       }
     }
 
-    if (info.dlls) {
-      log(opts, `Stub: should check for DLLs ${info.dlls.join(", ")}`);
+    let hasValidLibraries = false;
+
+    if (hasRegistry) {
+      if (info.dlls) {
+        for (const dll of info.dlls) {
+          log(opts, `Stub: should dllassert ${dll}`);
+        }
+        hasValidLibraries = true;
+      } else {
+        log(opts, `Traces of packages already found, no DLLs to test, assuming good!`);
+        hasValidLibraries = true;
+      }
+    }
+
+    const markSuccess = async () => {
+      if (!installedPrereqs) {
+        installedPrereqs = {};
+      }
+      installedPrereqs = Object.assign({}, installedPrereqs, {
+        [prereq.name]: true,
+      });
+      await globalMarket.saveEntity("caves", caveId, {installedPrereqs}, {wait: true});
+    };
+
+    if (hasValidLibraries) {
+      await markSuccess();
+      return;
     }
 
     opts.store.dispatch(actions.statusMessage({
@@ -232,14 +267,7 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
       }
     }
 
-    if (!installedPrereqs) {
-      installedPrereqs = {};
-    }
-
-    installedPrereqs = Object.assign({}, installedPrereqs, {
-      [prereq.name]: true,
-    });
-    await globalMarket.saveEntity("caves", caveId, {installedPrereqs}, {wait: true});
+    await markSuccess();
   } finally {
     await sf.wipe(workDir.name);
   }
