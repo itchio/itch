@@ -162,8 +162,8 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
 
     log(opts, `Launching ${info.command} with args ${info.args.join(" ")}`);
     await spawn.assert({
-      command: ospath.join(info.command),
-      args: info.args,
+      command,
+      args,
       onToken:    (tok) => { log(opts, `[${prereq.name} out] ${tok}`); },
       onErrToken: (tok) => { log(opts, `[${prereq.name} err] ${tok}`); },
       opts: {
