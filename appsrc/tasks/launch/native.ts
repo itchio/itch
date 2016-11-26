@@ -185,6 +185,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
   const spawnOpts = Object.assign({}, opts, {
     cwd,
     console,
+    isolateApps,
   });
 
   let fullExec = exePath;
@@ -286,6 +287,9 @@ interface IDoSpawnOpts extends IStartTaskOpts {
 
   /** don't redirect stderr/stdout and open terminal window */
   console?: boolean;
+
+  /** app isolation is enabled */
+  isolateApps?: boolean;
 }
 
 async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment, emitter: EventEmitter,
@@ -304,13 +308,17 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
   if (console) {
     log(opts, `(in console mode)`);
     if (itchPlatform === "windows") {
-      const consoleCommandItems = [command, ...args];
-      const consoleCommand = consoleCommandItems.map((arg) => `"${arg}"`).join(" ");
+      if (opts.isolateApps) {
+        log(opts, `(app isolation is enabled, not doing anything special for console)`);
+      } else {
+        const consoleCommandItems = [command, ...args];
+        const consoleCommand = consoleCommandItems.map((arg) => `"${arg}"`).join(" ");
 
-      inheritStd = true;
-      args = ["/wait", "cmd.exe", "/k", consoleCommand];
-      command = "start";
-      shell = "cmd.exe";
+        inheritStd = true;
+        args = ["/wait", "cmd.exe", "/k", consoleCommand];
+        command = "start";
+        shell = "cmd.exe";
+      }
     } else {
       log(opts, `warning: console mode not supported on ${itchPlatform}`);
     }
