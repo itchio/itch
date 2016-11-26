@@ -38,6 +38,7 @@ async function setup (store: IStore) {
     "isolate",
     "activate",
     "firejail",
+    "dllassert",
   ], (name) => fetch(store, name)));
   log(opts, "all deps done");
   store.dispatch(actions.setupDone({}));

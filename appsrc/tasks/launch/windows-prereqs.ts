@@ -39,6 +39,9 @@ interface IRedistInfo {
   /** The exact version provided */
   version: string;
 
+  /** Architecture of the redist */
+  arch: "i386" | "amd64";
+
   /** Executable to launch (in .7z archive) */
   command: string;
 
@@ -168,10 +171,19 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
 
     if (hasRegistry) {
       if (info.dlls) {
-        for (const dll of info.dlls) {
-          log(opts, `Stub: should dllassert ${dll}`);
-        }
+        const dllassert = `dllassert${info.arch === "amd64" ? "64" : "32"}` ;
         hasValidLibraries = true;
+        for (const dll of info.dlls) {
+          const code = await spawn({
+            command: dllassert,
+            args: [dll],
+            logger: opts.logger,
+          });
+          if (code !== 0) {
+            log(opts, `Could not assert dll ${dll}`);
+            hasValidLibraries = false;
+          }
+        }
       } else {
         log(opts, `Traces of packages already found, no DLLs to test, assuming good!`);
         hasValidLibraries = true;
