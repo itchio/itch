@@ -51,7 +51,7 @@ export interface IRequestOpts {
 async function request (method: HTTPMethod, uri: string, data: any = {}, opts: IRequestOpts = {}): Promise<IResponse> {
   let url = uri;
 
-  if (method as string === "GET") {
+  if (method === "get") {
     const query = querystring.stringify(data);
     if (query !== "") {
       url = `${url}?${query}`;
@@ -137,7 +137,7 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
     }
   });
 
-  if (method as string !== "GET") {
+  if (method !== "get") {
     let reqBody: string;
     if (opts.format === "json") {
       reqBody = JSON.stringify(data);
