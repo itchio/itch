@@ -52,7 +52,7 @@ export default function (watcher: Watcher) {
         });
         template.push({ type: "separator" });
         template.push({
-          label: t("grid.item.developer"),
+          label: t("grid.item.advanced"),
           submenu: [
             {
               label: t("grid.item.check_for_update"),
