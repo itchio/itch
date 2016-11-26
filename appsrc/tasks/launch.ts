@@ -262,6 +262,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
 
   if (os.itchPlatform() === "windows") {
     await handleWindowsPrereqs({
+      store,
       manifest,
       caveId: cave.id,
       globalMarket: opts.globalMarket,

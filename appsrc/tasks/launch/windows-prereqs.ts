@@ -13,9 +13,12 @@ import urls from "../../constants/urls";
 
 import * as tmp from "tmp";
 
-import {IManifest, IManifestPrereq, IMarket, ICaveRecord} from "../../types";
+import * as actions from "../../actions";
+
+import {IManifest, IManifestPrereq, IMarket, ICaveRecord, IStore} from "../../types";
 
 interface IWindowsPrereqsOpts {
+  store: IStore;
   manifest: IManifest;
   globalMarket: IMarket;
   caveId: string;
@@ -26,6 +29,9 @@ interface IRedistInfo {
   /** Human-friendly name for redist, e.g. "Microsoft Visual C++ 2010 Redistributable" */
   fullName: string;
 
+  /** The exact version provided */
+  version: string;
+
   /** Executable to launch (in .7z archive) */
   command: string;
 
@@ -34,6 +40,12 @@ interface IRedistInfo {
 
   /** Should the executable be run as admin? */
   elevate?: boolean;
+
+  /** Registry key we can check to see if installed */
+  registryKey?: string;
+
+  /** List of DLLs to check for, to make sure it's installed */
+  dlls?: string[];
 }
 
 import {EventEmitter} from "events";
@@ -126,6 +138,22 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
     }
 
     const info = infoRes.body as IRedistInfo;
+
+    if (info.registryKey) {
+      log(opts, `Stub: should check for registry key ${info.registryKey}`);
+    }
+
+    if (info.dlls) {
+      log(opts, `Stub: should check for DLLs ${info.dlls.join(", ")}`);
+    }
+
+    opts.store.dispatch(actions.statusMessage({
+      message: ["login.status.dependency_install", {
+        name: info.fullName,
+        version: info.version || "?",
+      }]
+    }));
+
     log(opts, `Downloading prereq ${info.fullName}`);
 
     const archiveUrl = `${baseUrl}/${prereq.name}.7z`;

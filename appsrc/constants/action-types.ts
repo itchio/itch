@@ -412,7 +412,9 @@ export const DISMISS_STATUS = "DISMISS_STATUS";
 export interface IDismissStatusPayload {};
 
 export const STATUS_MESSAGE = "STATUS_MESSAGE";
-export interface IStatusMessagePayload {};
+export interface IStatusMessagePayload {
+  message: Types.ILocalizedString;
+};
 
 export const DISMISS_STATUS_MESSAGE = "DISMISS_STATUS_MESSAGE";
 export interface IDismissStatusMessagePayload {};

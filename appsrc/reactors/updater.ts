@@ -168,7 +168,9 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
         if (upload.buildId !== cave.buildId) {
           log(opts, `Got new build available: ${upload.buildId} > ${cave.buildId}`);
           if (noisy) {
-            store.dispatch(actions.statusMessage(["status.game_update.found", {title: game.title}]));
+            store.dispatch(actions.statusMessage({
+              message: ["status.game_update.found", {title: game.title}],
+            }));
           }
 
           hasUpgrade = true;
@@ -323,19 +325,27 @@ export default function (watcher: Watcher) {
       const result = await doCheckForGameUpdate(store, cave, {noisy});
       if (noisy) {
         if (result && result.err) {
-          store.dispatch(actions.statusMessage(["status.game_update.check_failed", {err: result.err}]));
+          store.dispatch(actions.statusMessage({
+            message: ["status.game_update.check_failed", {err: result.err}],
+          }));
         } else if (result && result.hasUpgrade) {
           if (result.game) {
-            store.dispatch(actions.statusMessage(["status.game_update.found", {title: result.game.title}]));
+            store.dispatch(actions.statusMessage({
+              message: ["status.game_update.found", {title: result.game.title}],
+            }));
           }
         } else if (result && result.game) {
-          store.dispatch(actions.statusMessage(["status.game_update.not_found", {title: result.game.title}]));
+          store.dispatch(actions.statusMessage({
+            message: ["status.game_update.not_found", {title: result.game.title}],
+          }));
         }
       }
     } catch (e) {
       log(opts, `While checking for cave ${caveId} update: ${e.stack || e}`);
       if (noisy) {
-        store.dispatch(actions.statusMessage(["status.game_update.check_failed", {err: e}]));
+        store.dispatch(actions.statusMessage({
+          message: ["status.game_update.check_failed", {err: e}]
+        }));
       }
     } finally {
       if (noisy) {
