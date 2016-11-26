@@ -23,9 +23,17 @@ interface IWindowsPrereqsOpts {
 }
 
 interface IRedistInfo {
+  /** Human-friendly name for redist, e.g. "Microsoft Visual C++ 2010 Redistributable" */
   fullName: string;
+
+  /** Executable to launch (in .7z archive) */
   command: string;
+
+  /** Arguments to give to executable on launch - aim for quiet/unattended/no reboots */
   args: string[];
+
+  /** Should the executable be run as admin? */
+  elevate?: boolean;
 }
 
 import {EventEmitter} from "events";
@@ -144,6 +152,13 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
       archivePath,
       destPath: workDir.name,
     });
+
+    let command = ospath.join(info.command);
+    let args = info.args;
+    if (info.elevate) {
+      args = [command, ...args];
+      command = "elevate.exe";
+    }
 
     log(opts, `Launching ${info.command} with args ${info.args.join(" ")}`);
     await spawn.assert({
