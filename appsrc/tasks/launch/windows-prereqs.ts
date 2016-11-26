@@ -173,7 +173,10 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
     if (!installedPrereqs) {
       installedPrereqs = {};
     }
-    installedPrereqs[prereq.name] = true;
+
+    installedPrereqs = Object.assign({}, installedPrereqs, {
+      [prereq.name]: true,
+    });
     await globalMarket.saveEntity("caves", caveId, {installedPrereqs}, {wait: true});
   } finally {
     await sf.wipe(workDir.name);
