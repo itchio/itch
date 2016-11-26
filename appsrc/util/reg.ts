@@ -13,12 +13,17 @@ let systemRoot = process.env.SystemRoot || "missing-system-root";
 let system32Path = ospath.join(systemRoot, "System32");
 let regPath = ospath.join(system32Path, "reg.exe");
 
+interface IQueryOpts {
+  /** if true, don't log output */
+  quiet?: boolean;
+}
+
 let self = {
-  regQuery: async function (key: string): Promise<void> {
+  regQuery: async function (key: string, queryOpts: IQueryOpts = {}): Promise<void> {
     await spawn.assert({
       command: regPath,
       args: ["query", key, "/s"],
-      onToken: (tok) => log(opts, "query: " + tok),
+      onToken: queryOpts.quiet ? null : (tok) => log(opts, "query: " + tok),
     });
   },
 

@@ -154,7 +154,7 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
     if (info.registryKeys) {
       for (const registryKey of info.registryKeys) {
         try {
-          await reg.regQuery(registryKey);
+          await reg.regQuery(registryKey, {quiet: true});
           hasRegistry = true;
           log(opts, `Found registry key ${registryKey}`);
           break;
