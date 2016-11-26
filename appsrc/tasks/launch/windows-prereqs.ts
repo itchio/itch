@@ -105,8 +105,6 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
 }
 
 async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
-  // TODO: check in cave if it's already installed
-
   const {globalMarket, caveId} = opts;
   const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
   const {installedPrereqs} = cave;

@@ -9,6 +9,8 @@ import {opts} from "../logger";
 import mklog from "../util/log";
 const log = mklog("preboot");
 
+import {NET_PARTITION_NAME} from "../util/net";
+
 import {applyProxySettings} from "../reactors/proxy";
 
 let testProxy = false;
@@ -62,6 +64,7 @@ export default function (watcher: Watcher) {
 
     try {
       const {session} = require("electron");
+      const netSession = session.fromPartition(NET_PARTITION_NAME, {cache: false});
 
       const envSettings: string =
         process.env.https_proxy ||
@@ -104,7 +107,7 @@ export default function (watcher: Watcher) {
         }
       }
       store.dispatch(actions.proxySettingsDetected(proxySettings));
-      await applyProxySettings(session.defaultSession, proxySettings);
+      await applyProxySettings(netSession, proxySettings);
     } catch (e) {
       log(opts, `Could not detect proxy settings: ${e ? e.message : "unknown error"}`);
     }

@@ -16,7 +16,7 @@ export interface IApp {
 }
 
 export interface INet {
-  request(opts: {method?: string, url?: string}): INetRequest;
+  request(opts: {method?: string, url?: string, partition?: string}): INetRequest;
 }
 
 export interface IIncomingMessage {

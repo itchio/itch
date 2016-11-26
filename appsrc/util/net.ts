@@ -48,6 +48,9 @@ export interface IRequestOpts {
   format?: "json" | null;
 }
 
+// this session doesn't cache - see preboot for setup
+export const NET_PARTITION_NAME = "itch-zone";
+
 async function request (method: HTTPMethod, uri: string, data: any = {}, opts: IRequestOpts = {}): Promise<IResponse> {
   let url = uri;
 
@@ -61,6 +64,7 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
   const req = net.request({
     method,
     url,
+    partition: NET_PARTITION_NAME,
   });
   req.setHeader("user-agent", useragent);
 
