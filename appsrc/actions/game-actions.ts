@@ -26,6 +26,9 @@ import {
   GAME_UPDATE_AVAILABLE, IGameUpdateAvailablePayload,
   SHOW_GAME_UPDATE, IShowGameUpdatePayload,
   QUEUE_GAME_UPDATE, IQueueGameUpdatePayload,
+
+  NUKE_CAVE_PREREQS, INukeCavePrereqsPayload,
+  REVERT_CAVE_REQUEST, IRevertCaveRequestPayload,
 } from "../constants/action-types";
 
 export const queueGame = createAction<IQueueGamePayload>(QUEUE_GAME);
@@ -52,3 +55,6 @@ export const checkForGameUpdates = createAction<ICheckForGameUpdatesPayload>(CHE
 export const gameUpdateAvailable = createAction<IGameUpdateAvailablePayload>(GAME_UPDATE_AVAILABLE);
 export const showGameUpdate = createAction<IShowGameUpdatePayload>(SHOW_GAME_UPDATE);
 export const queueGameUpdate = createAction<IQueueGameUpdatePayload>(QUEUE_GAME_UPDATE);
+
+export const nukeCavePrereqs = createAction<INukeCavePrereqsPayload>(NUKE_CAVE_PREREQS);
+export const revertCaveRequest = createAction<IRevertCaveRequestPayload>(REVERT_CAVE_REQUEST);

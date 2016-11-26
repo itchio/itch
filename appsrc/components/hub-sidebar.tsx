@@ -130,9 +130,11 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           const label = makeLabel(id, tabData);
           const icon = pathToIcon(path);
           const active = currentId === id;
-          const onClick = () => navigate(id);
-          const onClose = () => closeTab({id});
-          const onContextMenu = () => openTabContextMenu({id});
+          const onClick = () => { navigate(id); };
+          const onClose = () => { closeTab({id}); };
+          const onContextMenu = (e?: MouseEvent) => {
+            openTabContextMenu({id, advanced: (e && e.altKey)});
+          };
           const count = (counts as any)[id];
           const progress = progresses[id];
           const sublabel = sublabels[id];

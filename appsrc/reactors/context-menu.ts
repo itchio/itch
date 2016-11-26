@@ -47,23 +47,35 @@ export default function (watcher: Watcher) {
           click: () => store.dispatch(actions.queueGame({game})),
         });
         template.push({
+          label: t("grid.item.check_for_update"),
+          click: () => store.dispatch(actions.checkForGameUpdate({caveId: cave.id, noisy: true})),
+        });
+        template.push({
           label: t("grid.item.show_local_files"),
           click: () => store.dispatch(actions.exploreCave({caveId: cave.id})),
         });
-        template.push({ type: "separator" });
-        template.push({
-          label: t("grid.item.advanced"),
-          submenu: [
-            {
-              label: t("grid.item.check_for_update"),
-              click: () => store.dispatch(actions.checkForGameUpdate({caveId: cave.id, noisy: true})),
-            },
-            {
-              label: t("grid.item.open_debug_log"),
-              click: () => store.dispatch(actions.probeCave({caveId: cave.id})),
-            },
-          ],
-        });
+
+        if (action.payload.advanced) {
+          template.push({ type: "separator" });
+          template.push({
+            label: t("grid.item.advanced"),
+            submenu: [
+              {
+                label: t("grid.item.open_debug_log"),
+                click: () => store.dispatch(actions.probeCave({caveId: cave.id})),
+              },
+              {
+                label: "Nuke prereqs",
+                click: () => store.dispatch(actions.nukeCavePrereqs({caveId: cave.id})),
+              },
+              {
+                label: "Revert to version...",
+                click: () => store.dispatch(actions.revertCaveRequest({caveId: cave.id})),
+              },
+            ],
+          });
+        }
+
         template.push({ type: "separator" });
         template.push({
           label: t("prompt.uninstall.reinstall"),

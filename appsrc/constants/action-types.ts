@@ -330,6 +330,9 @@ export const OPEN_TAB_CONTEXT_MENU = "OPEN_TAB_CONTEXT_MENU";
 export interface IOpenTabContextMenuPayload {
   /** id of the tab to open the context menu of */
   id: string;
+
+  /** if set to true, add more options! */
+  advanced?: boolean;
 }
 
 /** show a constant tab hidden for some users (press, dashboard, etc.) */
@@ -701,6 +704,16 @@ export interface IQueueGameUpdatePayload {
 
   /** was the upload hand-picked? */
   handPicked?: boolean;
+}
+
+export const NUKE_CAVE_PREREQS = "NUKE_CAVE_PREREQS";
+export interface INukeCavePrereqsPayload {
+  caveId: string;
+}
+
+export const REVERT_CAVE_REQUEST = "REVERT_CAVE_REQUEST";
+export interface IRevertCaveRequestPayload {
+  caveId: string;
 }
 
 /** User requested game to be installed */

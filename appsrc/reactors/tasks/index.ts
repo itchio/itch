@@ -14,6 +14,8 @@ import queueCaveUninstall from "./queue-cave-uninstall";
 import implodeCave from "./implode-cave";
 import exploreCave from "./explore-cave";
 import abortGame from "./abort-game";
+import nukeCavePrereqs from "./nuke-cave-prereqs";
+import revertCave from "./revert-cave";
 
 import downloadWatcher from "./download-watcher";
 import downloadSpeedWatcher from "./download-speed-watcher";
@@ -32,6 +34,8 @@ export default function (watcher: Watcher) {
   implodeCave(watcher);
   exploreCave(watcher);
   abortGame(watcher);
+  nukeCavePrereqs(watcher);
+  revertCave(watcher);
 
   downloadWatcher(watcher);
   downloadSpeedWatcher(watcher);
