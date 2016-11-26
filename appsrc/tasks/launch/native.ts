@@ -50,6 +50,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
   let {isolateApps} = opts.preferences;
   const appPath = pathmaker.appPath(cave);
   let exePath: string;
+  let console = false;
 
   const manifestPath = ospath.join(appPath, ".itch.toml");
   const hasManifest = await sf.exists(manifestPath);
@@ -58,6 +59,10 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
     // sandbox opt-in ?
     if (action.sandbox) {
       isolateApps = true;
+    }
+
+    if (action.console) {
+      console = true;
     }
 
     log(opts, `manifest action picked: ${JSON.stringify(action, null, 2)}`);
@@ -180,6 +185,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
 
   const spawnOpts = Object.assign({}, opts, {
     cwd,
+    console,
   });
 
   let fullExec = exePath;
