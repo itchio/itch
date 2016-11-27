@@ -227,16 +227,16 @@ function makeInstallScript (tasks: IPrereqTask[], baseWorkDir: string): string {
     lines.push(line);
 
     lines.push("IF %ERRORLEVEL% EQU 0 (");
-    lines.push("ECHO Success");
+    lines.push("ECHO success");
     for (const exitCode of info.exitCodes) {
       lines.push(`) ELSE IF %ERRORLEVEL% EQU ${exitCode.code} (`);
-      lines.push(`ECHO ${info.fullName} exited with ${exitCode.code}: ${exitCode.message}. Success!`);
+      lines.push(`ECHO success ${exitCode.code}`);
       if (!exitCode.success) {
         lines.push("EXIT 1");
       }
     }
     lines.push(") ELSE (");
-    lines.push(`ECHO Installing ${info.fullName} failed with code %ERRORLEVEL%`);
+    lines.push(`ECHO error %ERRORLEVEL%`);
     lines.push("EXIT 1");
     lines.push(")");
   }
