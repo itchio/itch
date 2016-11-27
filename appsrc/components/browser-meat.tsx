@@ -20,7 +20,7 @@ import {uniq, findWhere} from "underscore";
 import {IBrowserState} from "./browser-state";
 
 const injectPath = ospath.resolve(__dirname, "..", "inject", "itchio-monkeypatch.js");
-// const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === '1'
+const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
 const WILL_NAVIGATE_GRACE_PERIOD = 3000;
 
@@ -337,6 +337,10 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 
   componentDidMount () {
     const webviewShell = this.refs.webviewShell;
+
+    if (DONT_SHOW_WEBVIEWS) {
+      return;
+    }
 
     // cf. https://github.com/electron/electron/issues/6046
     webviewShell.innerHTML = "<webview/>";
