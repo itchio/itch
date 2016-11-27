@@ -52,7 +52,7 @@ export default function (watcher: Watcher) {
 
     const resolve = modalResolves[id];
     if (resolve) {
-      resolve(action);
+      resolve(action || actions.modalNoResponse({}));
     }
   });
 }

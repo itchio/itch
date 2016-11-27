@@ -61,6 +61,11 @@ export interface IModalResponsePayload {
   sandboxBlessing?: boolean;
 }
 
+export const MODAL_NO_RESPONSE = "MODAL_NO_RESPONSE";
+export interface IModalNoResponsePayload {
+
+}
+
 export const SETUP_STATUS = "SETUP_STATUS";
 export interface ISetupStatusPayload extends Types.ISetupOperation {};
 
