@@ -234,7 +234,6 @@ function makeInstallScript (tasks: IPrereqTask[], baseWorkDir: string): string {
       if (!exitCode.success) {
         lines.push("EXIT 1");
       }
-      lines.push(")");
     }
     lines.push(") ELSE (");
     lines.push(`ECHO Installing ${info.fullName} failed with code %ERRORLEVEL%`);
