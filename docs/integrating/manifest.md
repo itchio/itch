@@ -57,6 +57,7 @@ These are completely optional - they're not required for your manifest file to b
 The list of valid names is as follows:
 
   * `vcredist-2010-x86`: Microsoft Visual C++ 2010 Redistributable (x86)
+  * `vcredist-2010-x64`: Microsoft Visual C++ 2010 Redistributable (x64)
 
 If your game needs a prerequisite not on the list, please [open an issue](https://github.com/itchio/itch/issues/new)
 so we can add it to our repository.
