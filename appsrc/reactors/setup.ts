@@ -39,7 +39,7 @@ async function setup (store: IStore) {
     "activate",
     "firejail",
     "dllassert",
-  ], (name) => fetch(store, name)));
+  ], async (name) => await fetch(store, name)));
   log(opts, "all deps done");
   store.dispatch(actions.setupDone({}));
 }

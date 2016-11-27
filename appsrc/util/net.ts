@@ -2,6 +2,7 @@
 import {net} from "../electron";
 
 import * as querystring from "querystring";
+import {isEmpty} from "underscore";
 
 import useragent from "../constants/useragent";
 
@@ -185,6 +186,13 @@ export interface IChecksums {
  * Download to file without using butler
  */
 export async function downloadToFile (opts: ILoggerOpts, url: string, file: string): Promise<void> {
+  const dir = ospath.dirname(file);
+  try {
+    await sf.mkdir(dir);
+  } catch (e) {
+    log(opts, `Could not create ${dir}: ${e.message}`);
+  }
+
   const sink = sf.createWriteStream(file, {
     flags: "w",
     mode: 0o777,
@@ -196,7 +204,10 @@ export async function downloadToFile (opts: ILoggerOpts, url: string, file: stri
   await request("get", url, {}, {
     sink,
     cb: (res) => {
-      totalSize = parseInt(res.headers["content-length"][0], 10);
+      const contentLengthHeader = res.headers["content-length"];
+      if (!isEmpty(contentLengthHeader)) {
+        totalSize = parseInt(contentLengthHeader[0], 10);
+      }
     },
   });
   await sf.promised(sink);
