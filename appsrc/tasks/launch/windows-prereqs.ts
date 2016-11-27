@@ -144,7 +144,7 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
     return;
   }
 
-  log(opts, `Assessing prereqs ${prereqs.join(", ")}`);
+  log(opts, `Assessing prereqs ${prereqs.map((prereq) => prereq.name).join(", ")}`);
 
   let tasks = await bluebird.map(prereqs, async function (prereq) {
     return await assessDep(opts, prereq);
