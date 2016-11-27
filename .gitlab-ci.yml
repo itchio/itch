@@ -3,7 +3,6 @@ stages:
   - build # babel, node-sass etc.
   - package # .rpm, .deb, .dmg., .zip
   - deploy # github releases, bintray, AUR
-  - notify # pushover
 
 # Gitbook documentation
 book:
@@ -159,12 +158,3 @@ deploy-bintray:
     - package-linux-386
     - package-linux-amd64
 
-# Pushover
-notify:
-  stage: notify
-  tags:
-    - linux
-  script:
-    - release/ci-notify.sh
-  only:
-    - tags
