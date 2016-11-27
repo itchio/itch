@@ -194,6 +194,8 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
       command: "elevate.exe",
       args: ["cmd.exe", "/c", scriptFullPath],
       logger: opts.logger,
+      onToken:    (tok) => { log(opts, `[install-prereqs out] ${tok}`); },
+      onErrToken: (tok) => { log(opts, `[install-prereqs err] ${tok}`); },
     });
 
     const nowInstalledPrereqs = {} as {
