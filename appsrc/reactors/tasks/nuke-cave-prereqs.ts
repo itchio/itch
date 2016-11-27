@@ -18,7 +18,7 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    await market.saveEntity("caves", caveId, {installedPrereqs: {}});
+    await market.saveEntity("caves", caveId, {installedPrereqs: null});
     store.dispatch(actions.statusMessage({
       message: "Prereqs nuked!",
     }));

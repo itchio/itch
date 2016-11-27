@@ -153,7 +153,7 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
   const {globalMarket, caveId} = opts;
 
   const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
-  let {installedPrereqs = {}} = cave;
+  let installedPrereqs = cave.installedPrereqs || {};
 
   let [alreadyInstalledTasks, remainingTasks] = partition(tasks, (task) => task.alreadyInstalled);
   if (!isEmpty(alreadyInstalledTasks)) {
@@ -246,13 +246,9 @@ function makeInstallScript (tasks: IPrereqTask[], baseWorkDir: string): string {
 
 function pendingPrereqs (opts: IWindowsPrereqsOpts, prereqs: IManifestPrereq[]): IManifestPrereq[] {
   const cave = opts.globalMarket.getEntity<ICaveRecord>("caves", opts.caveId);
-  const {installedPrereqs} = cave;
+  const installedPrereqs = cave.installedPrereqs || {};
 
-  if (installedPrereqs) {
-    return prereqs;
-  } else {
-    return reject(prereqs, (prereq) => installedPrereqs[prereq.name]);
-  }
+  return reject(prereqs, (prereq) => installedPrereqs[prereq.name]);
 }
 
 /**
