@@ -171,12 +171,12 @@ export class HubSearchResults extends React.Component<IHubSearchResultsProps, IH
       <div className="header">
         <h2>{t("search.results.title", {query: query || ""})}</h2>
         <div className="filler"/>
-        <span className="icon icon-cross close-search" onClick={closeSearch}/>
+        <span className="icon icon-cross close-search" onClick={() => closeSearch({})}/>
       </div>
       {this.resultsGrid(results)}
       <div className="footer">
         <div className="filler"/>
-        <div className="button" onClick={openAsTab}>
+        <div className="button" onClick={() => openAsTab()}>
           {t("search.open_as_tab")}
         </div>
         <div className="filler"/>

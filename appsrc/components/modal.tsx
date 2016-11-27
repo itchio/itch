@@ -72,7 +72,7 @@ export class Modal extends React.Component<IModalProps, void> {
           <div className="header">
             <h2>{t.format(title)}</h2>
             <div className="filler"/>
-            <span className="icon icon-cross close-modal" onClick={closeModal}/>
+            <span className="icon icon-cross close-modal" onClick={() => closeModal({})}/>
           </div>
 
           <div className="body">

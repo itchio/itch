@@ -60,7 +60,7 @@ class Downloads extends React.Component<IDownloadsProps, void> {
             {t("status.downloads.category.finished")}
           </h2>
           <span className="clear hint--right" data-hint={t("status.downloads.clear_all_finished")}
-              onClick={clearFinishedDownloads}>
+              onClick={() => clearFinishedDownloads({})}>
             <span className="icon icon-delete"/>
           </span>
         </div>,

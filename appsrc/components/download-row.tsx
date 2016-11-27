@@ -62,7 +62,7 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
       }
 
       <div className="cover" style={coverStyle} onClick={() => navigateToGame(game)}/>
-      <div className="stats" onClick={onStatsClick}>
+      <div className="stats" onClick={() => { onStatsClick(); }}>
         {this.progress()}
       </div>
       {this.controls()}

@@ -54,17 +54,17 @@ export class Toast extends React.Component<IToastProps, IToastState> {
 
       <p>{t("toast.message")} {t("toast.call_to_action")}</p>
 
-      <div className="button" onClick={this.reload}>
+      <div className="button" onClick={() => this.reload()}>
         <Icon icon="repeat"/> {t("toast.actions.reload")}
       </div>
 
-      <span className="link" onClick={this.toggleExpand}>{t("toast.actions.learn_more")}</span>
+      <span className="link" onClick={() => this.toggleExpand()}>{t("toast.actions.learn_more")}</span>
 
       {this.state.expanded
       ? <p className="error">{data.error}</p>
       : ""}
 
-      <span className="link" onClick={this.sendFeedback}>{t("toast.actions.report")}</span>
+      <span className="link" onClick={() => this.sendFeedback()}>{t("toast.actions.report")}</span>
     </div>;
   }
 }

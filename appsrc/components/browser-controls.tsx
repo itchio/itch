@@ -77,12 +77,12 @@ export class BrowserControls extends React.Component<IBrowserControlsProps, IBro
     const addressClasses = classNames("browser-address", {frozen, visible: (!!url && !!url.length)});
 
     return <div className="browser-controls">
-      <span className={classNames("icon icon-arrow-left", {disabled: !canGoBack})} onClick={goBack}/>
-      <span className={classNames("icon icon-arrow-right", {disabled: !canGoForward})} onClick={goForward}/>
+      <span className={classNames("icon icon-arrow-left", {disabled: !canGoBack})} onClick={() => goBack()}/>
+      <span className={classNames("icon icon-arrow-right", {disabled: !canGoForward})} onClick={() => goForward()}/>
       {
         loading
-        ? <span className="icon icon-cross loading" onClick={stop}/>
-        : <span className="icon icon-repeat" onClick={reload}/>
+        ? <span className="icon icon-cross loading" onClick={() => stop()}/>
+        : <span className="icon icon-repeat" onClick={() => reload()}/>
       }
       {editingURL
         ? <input type="text" disabled={frozen} ref={this.onBrowserAddress}
@@ -93,7 +93,7 @@ export class BrowserControls extends React.Component<IBrowserControlsProps, IBro
           }>{url || ""}</span>
       }
       <span className="hint--right" data-hint={t("browser.popout")}>
-        <span className={classNames("icon icon-redo")} onClick={this.popOutBrowser}/>
+        <span className={classNames("icon icon-redo")} onClick={() => this.popOutBrowser()}/>
       </span>
     </div>;
   }
