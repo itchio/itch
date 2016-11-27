@@ -99,12 +99,17 @@ self.isolate = {
 };
 
 /**
- * ensuring a DLL is present
+ * ensuring a DLL is present:
+ * https://github.com/itchio/dllassert
  */
 self.dllassert = {
   format: "7z",
   osWhitelist: ["windows"],
   subfolder: "dllassert",
+  versionCheck: {
+    command: "dllassert32",
+    args: ["-V"],
+  },
 };
 
 /**
