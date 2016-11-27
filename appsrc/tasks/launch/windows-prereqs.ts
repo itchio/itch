@@ -220,7 +220,7 @@ function makeInstallScript (tasks: IPrereqTask[], baseWorkDir: string): string {
     const commandFullPath = ospath.join(workDir, info.command);
     line += `"${commandFullPath}"`;
     for (const arg of info.args) {
-      line += ` "${arg}"`;
+      line += ` ${arg}`;
     }
     lines.push(line);
 
