@@ -107,7 +107,6 @@
     "toml": "^2.3.0",
     "underscore": "^1.8.3",
     "uuid": "^3.0.0",
-    "walk": "^2.3.9",
     "which": "^1.2.11"
   },
   "devDependencies": {

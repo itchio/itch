@@ -49,6 +49,10 @@ function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, to
       log(opts, `butler error: ${status.message}`);
       return onerror(new Error(status.message));
     }
+    case "result": {
+      opts.emitter.emit("result", status);
+      return;
+    }
     default:
       // muffin
   }
@@ -82,6 +86,34 @@ async function butler (opts: IButlerOpts, command: string, commandArgs: string[]
   if (code !== 0) {
     throw new Error(`butler exited with error code ${code}`);
   }
+}
+
+interface ISizeofOpts {
+  path: string;
+}
+
+interface IButlerResult {
+  value: any;
+}
+
+async function sizeof (opts: ISizeofOpts): Promise<any> {
+  const {path} = opts;
+  const args = [path];
+
+  let value: any;
+
+  const emitter = new EventEmitter();
+  emitter.on("result", (result: IButlerResult) => {
+    value = result.value;
+  });
+
+  const butlerOpts = Object.assign({}, {
+    emitter,
+  });
+
+  await butler(butlerOpts, "sizeof", args);
+
+  return value;
 }
 
 interface ICpOpts extends IButlerOpts {
@@ -201,5 +233,5 @@ async function sanityCheck (): Promise<boolean> {
 }
 
 export default {
-  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify, sanityCheck,
+  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify, sizeof, sanityCheck,
 };
