@@ -2,7 +2,10 @@
 import mklog, {Logger} from "../../util/log";
 const log = mklog("windows-prereqs");
 
-import {find} from "underscore";
+import * as tmp from "tmp";
+import * as bluebird from "bluebird";
+import {isEmpty, find, filter, reject, partition, map} from "underscore";
+
 import spawn from "../../util/spawn";
 import pathmaker from "../../util/pathmaker";
 import net from "../../util/net";
@@ -11,8 +14,6 @@ import reg from "../../util/reg";
 
 import * as ospath from "path";
 import urls from "../../constants/urls";
-
-import * as tmp from "tmp";
 
 import * as actions from "../../actions";
 
@@ -101,7 +102,7 @@ async function handleUE4Prereq (cave: ICaveRecord, opts: IWindowsPrereqsOpts) {
     });
 
     if (code === 0) {
-      log(opts, "succesfully installed UE4 prereq");
+      log(opts, "successfully installed UE4 prereq");
       await globalMarket.saveEntity("caves", cave.id, {
         installedUE4Prereq: true,
       }, {wait: true});
@@ -113,6 +114,17 @@ async function handleUE4Prereq (cave: ICaveRecord, opts: IWindowsPrereqsOpts) {
   }
 }
 
+interface IPrereqTask {
+  /** prereq info taken from manifest */
+  prereq: IManifestPrereq;
+
+  /** contents of info.json file */
+  info: IRedistInfo;
+
+  /** if true, no further action is required */
+  alreadyInstalled: boolean;
+}
+
 async function handleManifest (opts: IWindowsPrereqsOpts) {
   const {manifest} = opts;
   if (!manifest) {
@@ -120,17 +132,248 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
     return;
   }
 
-  if (!manifest.prereqs) {
+  if (isEmpty(manifest.prereqs)) {
     return;
   }
 
-  for (const prereq of manifest.prereqs) {
-    await installDep(opts, prereq);
+  let prereqs = pendingPrereqs(opts, manifest.prereqs);
+  if (isEmpty(prereqs)) {
+    // everything already done
+    return;
+  }
+
+  log(opts, `Assessing prereqs ${prereqs.join(", ")}`);
+
+  let tasks = await bluebird.map(prereqs, async function (prereq) {
+    return await assessDep(opts, prereq);
+  });
+
+  const {globalMarket, caveId} = opts;
+
+  const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
+  let {installedPrereqs = {}} = cave;
+
+  let [alreadyInstalledTasks, remainingTasks] = partition(tasks, (task) => task.alreadyInstalled);
+  if (!isEmpty(alreadyInstalledTasks)) {
+    log(opts, `Already installed: ${tasks.map((task) => task.prereq.name).join(", ")}`);
+    const alreadyInstalledPrereqs = {} as {
+      [key: string]: boolean;
+    };
+    for (const task of alreadyInstalledTasks) {
+      alreadyInstalledPrereqs[task.prereq.name] = true;
+    }
+    installedPrereqs = Object.assign({}, installedPrereqs, alreadyInstalledPrereqs);
+    await globalMarket.saveEntity("caves", caveId, {installedPrereqs});
+  }
+
+  if (isEmpty(remainingTasks)) {
+    return;
+  }
+  log(opts, `Remaining tasks: ${tasks.map((task) => task.prereq.name).join(", ")}`);
+
+  const workDir = tmp.dirSync();
+
+  try {
+    tasks = filter(tasks, null);
+
+    await bluebird.all(map(tasks, async (task) => {
+      await fetchDep(opts, task, workDir.name);
+    }));
+
+    const installScript = makeInstallScript(tasks, workDir.name);
+
+    for (const task of tasks) {
+      await installDep(opts, task);
+    }
+  } finally {
+    await sf.wipe(workDir.name);
   }
 }
 
-async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
+function makeInstallScript (tasks: IPrereqTask[], baseWorkDir: string): string {
+  let lines = "";
+
+  for (const task of tasks) {
+
+  }
+
+  return lines.concat("\r\n");
+}
+
+function pendingPrereqs (opts: IWindowsPrereqsOpts, prereqs: IManifestPrereq[]): IManifestPrereq[] {
+  const cave = opts.globalMarket.getEntity<ICaveRecord>("caves", opts.caveId);
+  const {installedPrereqs} = cave;
+
+  if (installedPrereqs) {
+    return prereqs;
+  } else {
+    return reject(prereqs, (prereq) => installedPrereqs[prereq.name]);
+  }
+}
+
+/**
+ * Assess the amount of work needed for a prereq
+ * Does registry checks, DLL checks, with a bit of luck there's nothing to do
+ */
+async function assessDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq): Promise<IPrereqTask> {
+  const infoUrl = `${getBaseURL(prereq)}/info.json`;
+  log(opts, `Retrieving ${infoUrl}`);
+  // bust cloudflare cache
+  const infoRes = await net.request("get", infoUrl, {t: Date.now()}, {format: "json"});
+  if (infoRes.statusCode !== 200) {
+    throw new Error(`Could not install prerequisite ${prereq.name}: server replied with HTTP ${infoRes.statusCode}`);
+  }
+
+  const info = infoRes.body as IRedistInfo;
+
+  let hasRegistry = false;
+
+  if (info.registryKeys) {
+    for (const registryKey of info.registryKeys) {
+      try {
+        await reg.regQuery(registryKey, {quiet: true});
+        hasRegistry = true;
+        log(opts, `Found registry key ${registryKey}`);
+        break;
+      } catch (e) {
+        log(opts, `Key not present: ${registryKey}`);
+      }
+    }
+  }
+
+  let hasValidLibraries = false;
+
+  if (hasRegistry) {
+    if (info.dlls) {
+      const dllassert = `dllassert${info.arch === "amd64" ? "64" : "32"}` ;
+      hasValidLibraries = true;
+      for (const dll of info.dlls) {
+        const code = await spawn({
+          command: dllassert,
+          args: [dll],
+          logger: opts.logger,
+        });
+        if (code !== 0) {
+          log(opts, `Could not assert dll ${dll}`);
+          hasValidLibraries = false;
+        }
+      }
+    } else {
+      log(opts, `Traces of packages already found, no DLLs to test, assuming good!`);
+      hasValidLibraries = true;
+    }
+  }
+
+  return {
+    prereq,
+    info,
+    alreadyInstalled: hasValidLibraries,
+  };
+}
+
+/**
+ * Get the base URL for a prerequisite, where its info.json
+ * file is stored, along with the archive we might need to download.
+ */
+function getBaseURL(prereq: IManifestPrereq): string {
+  return `${urls.redistsBase}/${prereq.name}`;
+}
+
+function getWorkDir(baseWorkDir: string, prereq: IManifestPrereq): string {
+  return ospath.join(baseWorkDir, prereq.name);
+}
+
+async function fetchDep (opts: IWindowsPrereqsOpts, task: IPrereqTask, baseWorkDir: string) {
+  const {prereq, info} = task;
+ 
+  const workDir = getWorkDir(baseWorkDir, prereq);
+  await sf.mkdir(workDir);
+
+  try {
+    opts.store.dispatch(actions.statusMessage({
+      message: ["login.status.dependency_install", {
+        name: info.fullName,
+        version: info.version || "?",
+      }],
+    }));
+
+    log(opts, `Downloading prereq ${info.fullName}`);
+    const baseUrl = getBaseURL(prereq);
+    const archiveUrl = `${baseUrl}/${prereq.name}.7z`;
+    const archivePath = ospath.join(workDir, `${prereq.name}.7z`);
+
+    await net.downloadToFile(opts, archiveUrl, archivePath);
+
+    log(opts, `Verifiying integrity of ${info.fullName} archive`);
+    const algo = "SHA256";
+    const sums = await net.getChecksums(opts, `${baseUrl}`, algo);
+    const sum = sums[`${prereq.name}.7z`];
+
+    await net.ensureChecksum(opts, {
+      algo,
+      expected: sum.hash,
+      file: archivePath,
+    });
+
+    log(opts, `Extracting ${info.fullName} archive`);
+    await extract.extract({
+      emitter: new EventEmitter(),
+      archivePath,
+      destPath: workDir,
+    });
+
+    let command = ospath.join(info.command);
+    let args = info.args;
+    if (info.elevate) {
+      args = [command, ...args];
+      command = "elevate.exe";
+    }
+
+    log(opts, `Launching ${info.command} with args ${info.args.join(" ")}`);
+    const code = await spawn({
+      command,
+      args,
+      onToken:    (tok) => { log(opts, `[${prereq.name} out] ${tok}`); },
+      onErrToken: (tok) => { log(opts, `[${prereq.name} err] ${tok}`); },
+      opts: {
+        cwd: workDir.name,
+      },
+    });
+
+    if (code === 0) {
+      log(opts, `Installed ${info.fullName} successfully!`);
+    } else {
+      let success = false;
+      let message = "Unknown error code";
+
+      if (info.exitCodes) {
+        for (const exitCode of info.exitCodes) {
+          if (exitCode.code === code) {
+            message = exitCode.message;
+            if (exitCode.success) {
+              success = true;
+              log(opts, `${prereq.name} exited with ${code}: ${exitCode.message}. Success!`);
+            }
+            break;
+          }
+        }
+      }
+
+      if (!success) {
+        throw new Error(`Installer for ${info.fullName} exited with code ${code}: ${message}`);
+      }
+    }
+
+    await markSuccess();
+  } finally {
+    await sf.wipe(workDir.name);
+  }
+}
+
+async function installDep (opts: IWindowsPrereqsOpts, task: IPrereqTask) {
   const {globalMarket, caveId} = opts;
+  const {prereq, info} = task;
+
   const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
   let {installedPrereqs} = cave;
   if (installedPrereqs && installedPrereqs[prereq.name]) {
@@ -141,55 +384,6 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
   const workDir = tmp.dirSync();
 
   try {
-    const baseUrl = `${urls.redistsBase}/${prereq.name}`;
-    const infoUrl = `${baseUrl}/info.json`;
-    log(opts, `Retrieving ${infoUrl}`);
-    // bust cloudflare cache
-    const infoRes = await net.request("get", infoUrl, {t: Date.now()}, {format: "json"});
-    if (infoRes.statusCode !== 200) {
-      throw new Error(`Could not install prerequisite ${prereq.name}: server replied with HTTP ${infoRes.statusCode}`);
-    }
-
-    const info = infoRes.body as IRedistInfo;
-
-    let hasRegistry = false;
-
-    if (info.registryKeys) {
-      for (const registryKey of info.registryKeys) {
-        try {
-          await reg.regQuery(registryKey, {quiet: true});
-          hasRegistry = true;
-          log(opts, `Found registry key ${registryKey}`);
-          break;
-        } catch (e) {
-          log(opts, `Key not present: ${registryKey}`);
-        }
-      }
-    }
-
-    let hasValidLibraries = false;
-
-    if (hasRegistry) {
-      if (info.dlls) {
-        const dllassert = `dllassert${info.arch === "amd64" ? "64" : "32"}` ;
-        hasValidLibraries = true;
-        for (const dll of info.dlls) {
-          const code = await spawn({
-            command: dllassert,
-            args: [dll],
-            logger: opts.logger,
-          });
-          if (code !== 0) {
-            log(opts, `Could not assert dll ${dll}`);
-            hasValidLibraries = false;
-          }
-        }
-      } else {
-        log(opts, `Traces of packages already found, no DLLs to test, assuming good!`);
-        hasValidLibraries = true;
-      }
-    }
-
     const markSuccess = async () => {
       if (!installedPrereqs) {
         installedPrereqs = {};
@@ -199,11 +393,6 @@ async function installDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq) {
       });
       await globalMarket.saveEntity("caves", caveId, {installedPrereqs}, {wait: true});
     };
-
-    if (hasValidLibraries) {
-      await markSuccess();
-      return;
-    }
 
     opts.store.dispatch(actions.statusMessage({
       message: ["login.status.dependency_install", {

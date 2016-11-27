@@ -326,7 +326,7 @@ export interface ICaveRecord extends ICaveRecordLocation {
     /** size of installed folder, in bytes */
     installedSize?: number;
 
-    /** set to true if UE4's prereq setup file was succesfully run */
+    /** set to true if UE4's prereq setup file was successfully run */
     installedUE4Prereq?: boolean;
 
     /** indexed by prereq name (standard, stored in ibrew-like repo), set to true when installed successfully */

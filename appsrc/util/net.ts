@@ -223,7 +223,7 @@ export async function getChecksums (opts: ILoggerOpts, basePath: string, algo: C
 
   return indexBy(filter(
     map(lines, (line) => {
-      const matches = /^(\S+)\s+(\S+)$/.exec(line);
+      const matches = /^(\S+) [ \*](\S+)$/.exec(line);
       if (matches) {
         return {
           hash: matches[1],
