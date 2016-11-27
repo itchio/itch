@@ -16,7 +16,7 @@ export async function tendToNeeds(opts: any, needs: INeed[], caretakers: ICareta
       try {
         await Promise.resolve(caretaker(need));
       } catch (e) {
-        log(opts, `While tending to need ${need}: ${e.stack || e}`);
+        log(opts, `While tending to need ${JSON.stringify(need)}: ${e.stack || e}`);
         errors.push(e);
       }
     }
