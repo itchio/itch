@@ -19,6 +19,8 @@ import * as actions from "../../actions";
 
 import {IManifest, IManifestPrereq, IMarket, ICaveRecord, IStore} from "../../types";
 
+const dumpInstallScript = process.env.ITCH_DUMP_INSTALL_SCRIPT === "1";
+
 interface IWindowsPrereqsOpts {
   store: IStore;
   manifest: IManifest;
@@ -180,24 +182,65 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
       await fetchDep(opts, task, workDir.name);
     }));
 
-    const installScript = makeInstallScript(tasks, workDir.name);
-
-    for (const task of tasks) {
-      await installDep(opts, task);
+    const installScriptContents = makeInstallScript(tasks, workDir.name);
+    if (dumpInstallScript) {
+      log(opts, `Install script: \n\n${installScriptContents}\n\n`);
     }
+
+    const scriptFullPath = ospath.join(workDir.name, "install_prereqs.bat");
+    await sf.writeFile(scriptFullPath, installScriptContents);
+
+    await spawn.assert({
+      command: "elevate.exe",
+      args: ["cmd.exe", "/c", scriptFullPath],
+      logger: opts.logger,
+    });
+
+    const nowInstalledPrereqs = {} as {
+      [key: string]: boolean;
+    };
+    for (const task of alreadyInstalledTasks) {
+      nowInstalledPrereqs[task.prereq.name] = true;
+    }
+    installedPrereqs = Object.assign({}, installedPrereqs, nowInstalledPrereqs);
+    await globalMarket.saveEntity("caves", caveId, {installedPrereqs});
   } finally {
     await sf.wipe(workDir.name);
   }
 }
 
 function makeInstallScript (tasks: IPrereqTask[], baseWorkDir: string): string {
-  let lines = "";
+  let lines: string[] = [];
 
   for (const task of tasks) {
+    const {info} = task;
+    lines.push(`ECHO Installing ${info.fullName}`);
+    let line = "";
+    const workDir = getWorkDir(baseWorkDir, task.prereq);
+    const commandFullPath = ospath.join(workDir, info.command);
+    line += `"${commandFullPath}"`;
+    for (const arg of info.args) {
+      line += ` "${arg}"`;
+    }
+    lines.push(line);
 
+    lines.push("IF %ERRORLEVEL% EQU 0 (");
+    lines.push("ECHO Success");
+    for (const exitCode of info.exitCodes) {
+      lines.push(`) ELSE IF %ERRORLEVEL% EQU ${exitCode.code} (`);
+      lines.push(`ECHO ${info.fullName} exited with ${exitCode.code}: ${exitCode.message}. Success!`);
+      if (!exitCode.success) {
+        lines.push("EXIT 1");
+      }
+      lines.push(")");
+    }
+    lines.push(") ELSE (");
+    lines.push(`ECHO Installing ${info.fullName} failed with code %ERRORLEVEL%`);
+    lines.push("EXIT 1");
+    lines.push(")");
   }
 
-  return lines.concat("\r\n");
+  return lines.join("\r\n");
 }
 
 function pendingPrereqs (opts: IWindowsPrereqsOpts, prereqs: IManifestPrereq[]): IManifestPrereq[] {
@@ -289,187 +332,35 @@ async function fetchDep (opts: IWindowsPrereqsOpts, task: IPrereqTask, baseWorkD
   const workDir = getWorkDir(baseWorkDir, prereq);
   await sf.mkdir(workDir);
 
-  try {
-    opts.store.dispatch(actions.statusMessage({
-      message: ["login.status.dependency_install", {
-        name: info.fullName,
-        version: info.version || "?",
-      }],
-    }));
+  opts.store.dispatch(actions.statusMessage({
+    message: ["login.status.dependency_install", {
+      name: info.fullName,
+      version: info.version || "?",
+    }],
+  }));
 
-    log(opts, `Downloading prereq ${info.fullName}`);
-    const baseUrl = getBaseURL(prereq);
-    const archiveUrl = `${baseUrl}/${prereq.name}.7z`;
-    const archivePath = ospath.join(workDir, `${prereq.name}.7z`);
+  log(opts, `Downloading prereq ${info.fullName}`);
+  const baseUrl = getBaseURL(prereq);
+  const archiveUrl = `${baseUrl}/${prereq.name}.7z`;
+  const archivePath = ospath.join(workDir, `${prereq.name}.7z`);
 
-    await net.downloadToFile(opts, archiveUrl, archivePath);
+  await net.downloadToFile(opts, archiveUrl, archivePath);
 
-    log(opts, `Verifiying integrity of ${info.fullName} archive`);
-    const algo = "SHA256";
-    const sums = await net.getChecksums(opts, `${baseUrl}`, algo);
-    const sum = sums[`${prereq.name}.7z`];
+  log(opts, `Verifiying integrity of ${info.fullName} archive`);
+  const algo = "SHA256";
+  const sums = await net.getChecksums(opts, `${baseUrl}`, algo);
+  const sum = sums[`${prereq.name}.7z`];
 
-    await net.ensureChecksum(opts, {
-      algo,
-      expected: sum.hash,
-      file: archivePath,
-    });
+  await net.ensureChecksum(opts, {
+    algo,
+    expected: sum.hash,
+    file: archivePath,
+  });
 
-    log(opts, `Extracting ${info.fullName} archive`);
-    await extract.extract({
-      emitter: new EventEmitter(),
-      archivePath,
-      destPath: workDir,
-    });
-
-    let command = ospath.join(info.command);
-    let args = info.args;
-    if (info.elevate) {
-      args = [command, ...args];
-      command = "elevate.exe";
-    }
-
-    log(opts, `Launching ${info.command} with args ${info.args.join(" ")}`);
-    const code = await spawn({
-      command,
-      args,
-      onToken:    (tok) => { log(opts, `[${prereq.name} out] ${tok}`); },
-      onErrToken: (tok) => { log(opts, `[${prereq.name} err] ${tok}`); },
-      opts: {
-        cwd: workDir.name,
-      },
-    });
-
-    if (code === 0) {
-      log(opts, `Installed ${info.fullName} successfully!`);
-    } else {
-      let success = false;
-      let message = "Unknown error code";
-
-      if (info.exitCodes) {
-        for (const exitCode of info.exitCodes) {
-          if (exitCode.code === code) {
-            message = exitCode.message;
-            if (exitCode.success) {
-              success = true;
-              log(opts, `${prereq.name} exited with ${code}: ${exitCode.message}. Success!`);
-            }
-            break;
-          }
-        }
-      }
-
-      if (!success) {
-        throw new Error(`Installer for ${info.fullName} exited with code ${code}: ${message}`);
-      }
-    }
-
-    await markSuccess();
-  } finally {
-    await sf.wipe(workDir.name);
-  }
-}
-
-async function installDep (opts: IWindowsPrereqsOpts, task: IPrereqTask) {
-  const {globalMarket, caveId} = opts;
-  const {prereq, info} = task;
-
-  const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
-  let {installedPrereqs} = cave;
-  if (installedPrereqs && installedPrereqs[prereq.name]) {
-    log(opts, `Already installed ${prereq.name}, skipping...`);
-    return;
-  }
-
-  const workDir = tmp.dirSync();
-
-  try {
-    const markSuccess = async () => {
-      if (!installedPrereqs) {
-        installedPrereqs = {};
-      }
-      installedPrereqs = Object.assign({}, installedPrereqs, {
-        [prereq.name]: true,
-      });
-      await globalMarket.saveEntity("caves", caveId, {installedPrereqs}, {wait: true});
-    };
-
-    opts.store.dispatch(actions.statusMessage({
-      message: ["login.status.dependency_install", {
-        name: info.fullName,
-        version: info.version || "?",
-      }],
-    }));
-
-    log(opts, `Downloading prereq ${info.fullName}`);
-
-    const archiveUrl = `${baseUrl}/${prereq.name}.7z`;
-    const archivePath = ospath.join(workDir.name, `${prereq.name}.7z`);
-
-    await net.downloadToFile(opts, archiveUrl, archivePath);
-
-    log(opts, `Verifiying integrity of ${info.fullName} archive`);
-    const algo = "SHA256";
-    const sums = await net.getChecksums(opts, `${baseUrl}`, algo);
-    const sum = sums[`${prereq.name}.7z`];
-
-    await net.ensureChecksum(opts, {
-      algo,
-      expected: sum.hash,
-      file: archivePath,
-    });
-
-    log(opts, `Extracting ${info.fullName} archive`);
-    await extract.extract({
-      emitter: new EventEmitter(),
-      archivePath,
-      destPath: workDir.name,
-    });
-
-    let command = ospath.join(info.command);
-    let args = info.args;
-    if (info.elevate) {
-      args = [command, ...args];
-      command = "elevate.exe";
-    }
-
-    log(opts, `Launching ${info.command} with args ${info.args.join(" ")}`);
-    const code = await spawn({
-      command,
-      args,
-      onToken:    (tok) => { log(opts, `[${prereq.name} out] ${tok}`); },
-      onErrToken: (tok) => { log(opts, `[${prereq.name} err] ${tok}`); },
-      opts: {
-        cwd: workDir.name,
-      },
-    });
-
-    if (code === 0) {
-      log(opts, `Installed ${info.fullName} successfully!`);
-    } else {
-      let success = false;
-      let message = "Unknown error code";
-
-      if (info.exitCodes) {
-        for (const exitCode of info.exitCodes) {
-          if (exitCode.code === code) {
-            message = exitCode.message;
-            if (exitCode.success) {
-              success = true;
-              log(opts, `${prereq.name} exited with ${code}: ${exitCode.message}. Success!`);
-            }
-            break;
-          }
-        }
-      }
-
-      if (!success) {
-        throw new Error(`Installer for ${info.fullName} exited with code ${code}: ${message}`);
-      }
-    }
-
-    await markSuccess();
-  } finally {
-    await sf.wipe(workDir.name);
-  }
+  log(opts, `Extracting ${info.fullName} archive`);
+  await extract.extract({
+    emitter: new EventEmitter(),
+    archivePath,
+    destPath: workDir,
+  });
 }
