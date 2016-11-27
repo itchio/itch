@@ -191,7 +191,7 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.selfUpdateError, async (store, action) => {
     const error = action.payload;
-    log(opts, `Error: ${error}`);
+    log(opts, `Error: ${error.message}`);
   });
 
   watcher.on(actions.showAvailableSelfUpdate, async (store, action) => {

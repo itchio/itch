@@ -47,7 +47,7 @@ export default handleActions<ISelfUpdateState, any>({
   },
 
   SELF_UPDATE_ERROR: (state: ISelfUpdateState, action: IAction<ISelfUpdateErrorPayload>) => {
-    const error = action.payload;
+    const error: string = action.payload.message;
     return Object.assign({}, state, {error, available: null, downloading: null});
   },
 
