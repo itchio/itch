@@ -316,7 +316,7 @@
     "usage_stats.description.platforms": "per {{platforms}}",
     "usage_stats.description.price": "Disponibile per {{price}} o più",
     "usage_stats.description.soundtrack": "Una colonna sonora",
-    "usage_stats.description.tool": "Un tool",
+    "usage_stats.description.tool": "Uno strumento",
     "usage_stats.has_played_for_duration": "Giocato",
     "usage_stats.has_used_for_duration": "Usato",
     "usage_stats.last_opened_time_ago": "Ultima volta avviato {{time_ago}}",
