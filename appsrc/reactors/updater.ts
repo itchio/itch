@@ -220,6 +220,7 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
         update: {
           game,
           recentUploads,
+          downloadKey,
         },
       }));
 
@@ -247,6 +248,7 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
         update: {
           game,
           recentUploads,
+          downloadKey,
         },
       }));
 

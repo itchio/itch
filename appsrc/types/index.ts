@@ -583,7 +583,7 @@ export interface IGameUpdate {
     recentUploads: IUploadRecord[];
 
     /** key we used to find uploads, and that should be used for downloads */
-    downloadKey?: IDownloadKey;
+    downloadKey: IDownloadKey;
 
     /** true if wharf-enabled upgrade via butler */
     incremental?: boolean;
