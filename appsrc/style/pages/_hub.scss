@@ -51,7 +51,7 @@
 
   .hidden-count {
     background: $meat-background-color;
-    box-shadow: 0 0 4px 0 $meat-background-color;
+    box-shadow: 0 0 2px 0 darken($meat-background-color, 20%);
     border-radius: 4px 0 0 0;
     position: fixed;
     right: 0;
