@@ -169,4 +169,4 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Dimensions()(GameGrid));
+)(Dimensions({elementResize: true})(GameGrid));
