@@ -88,9 +88,6 @@ class GameGrid extends React.Component<IGameGridProps, void> {
     const rowHeight = columnWidth * 1.12;
 
     let gridHeight = this.props.containerHeight;
-    if (hiddenCount > 0) {
-      gridHeight -= 48;
-    }
 
     return <div className="hub-game-grid">
       <Grid
