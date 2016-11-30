@@ -32,11 +32,14 @@ interface ILayoutInfo {
   filteredGames: IFilteredGameRecord[];
 }
 
-class GameGrid extends React.Component<IGameGridProps, void> {
+class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
   fuse: Fuse<IGameRecord>;
 
   constructor () {
     super();
+    this.state = {
+      scrollTop: 0,
+    };
     this.fuse = new Fuse([], {
       keys: [
         { name: "title", weight: 0.8 },
@@ -89,6 +92,12 @@ class GameGrid extends React.Component<IGameGridProps, void> {
 
     let gridHeight = this.props.containerHeight;
 
+    let scrollTop = this.state.scrollTop;
+    if (this.props.containerHeight === 0) {
+      scrollTop = 0;
+    }
+    console.log(`rendering scrollTop: `, scrollTop);
+
     return <div className="hub-game-grid">
       <Grid
         ref="grid"
@@ -100,6 +109,17 @@ class GameGrid extends React.Component<IGameGridProps, void> {
         rowCount={rowCount}
         rowHeight={rowHeight}
         overscanRowCount={2}
+        onScroll={(e: any) => {
+          if (e.clientHeight === 0) {
+            // this happens then the tab is hidden — just ignore
+            return;
+          }
+          // console.log(e);
+          console.log(`remembering scrollTop: `, e.scrollTop);
+          this.setState({scrollTop: e.scrollTop});
+        }}
+        scrollTop={scrollTop}
+        scrollPositionChangeReason="requested"
       />
       {hiddenCount > 0
       ? <div className="hidden-count">
@@ -148,6 +168,10 @@ interface IGameGridProps {
   containerHeight: number;
 
   clearFilters: typeof actions.clearFilters;
+}
+
+interface IGameGridState {
+  scrollTop: number;
 }
 
 const mapStateToProps = (initialState: IState, props: IGameGridProps) => {

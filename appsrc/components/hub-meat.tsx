@@ -46,9 +46,6 @@ export class HubMeat extends React.Component<IHubMeatProps, void> {
 
   renderTab (tabId: string, path: string, data: ITabData, visible: boolean): JSX.Element {
     const isBrowser = /^(url|games|users|collections|search|featured)/.test(path);
-    if (!visible && !isBrowser) {
-      return <div/>;
-    }
 
     if (path === "dashboard") {
       return <Dashboard key={tabId}/>;
