@@ -33,14 +33,16 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
   const onProgress = (e: any) => out.emit("progress", e);
 
   if (opts.heal) {
-    log(opts, `Downloading wharf-enabled download, build #${upload.buildId}`);
+    const buildId = upload.buildId;
+
+    log(opts, `Downloading wharf-enabled download, build #${buildId}`);
 
     const {game} = opts;
     invariant(game, "startDownload opts must have game");
 
     // TODO: use manifest URL if available
-    const archiveURL = api.downloadBuildURL(downloadKey, upload.id, upload.buildId, "archive");
-    const signatureURL = api.downloadBuildURL(downloadKey, upload.id, upload.buildId, "signature");
+    const archiveURL = api.downloadBuildURL(downloadKey, upload.id, buildId, "archive");
+    const signatureURL = api.downloadBuildURL(downloadKey, upload.id, buildId, "signature");
 
     const store = require("../../store").default;
     const {defaultInstallLocation} = store.getState().preferences;

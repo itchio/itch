@@ -32,7 +32,11 @@ export default function (watcher: Watcher) {
         return;
       }
 
-      const upload = cave.uploads[cave.uploadId];
+      let upload = cave.uploads[cave.uploadId];
+      upload = Object.assign({}, upload, {
+        buildId: cave.buildId,
+      });
+
       const market = getUserMarket();
 
       const downloadKey = cave.downloadKey ||
