@@ -6,7 +6,8 @@ import {MODAL_RESPONSE} from "../../constants/action-types";
 import {getUserMarket, getGlobalMarket} from "../market";
 import {log, opts} from "./log";
 
-import {ICaveRecord} from "../../types";
+import {ICaveRecord, IDownloadKey} from "../../types";
+import {findWhere} from "underscore";
 
 import {promisedModal} from "../modals";
 
@@ -57,12 +58,16 @@ export default function (watcher: Watcher) {
       const credentials = store.getState().session.credentials;
       const market = getUserMarket();
 
+      const downloadKey = cave.downloadKey ||
+        findWhere(market.getEntities<IDownloadKey>("downloadKeys"), {gameId: cave.game.id});
+
       const upgradeOpts = {
         market,
         credentials,
         upload,
         gameId: cave.game.id,
         currentBuildId: buildId,
+        downloadKey,
       };
       const out = new EventEmitter();
 
@@ -72,6 +77,20 @@ export default function (watcher: Watcher) {
         log(opts, `Full path: \n\n${JSON.stringify(upgradePath, null, 2)}`);
         store.dispatch(actions.statusMessage({
           message: `Reverting ${upgradePath.length - 1} patches: stub!`,
+        }));
+
+        const changedUpload = Object.assign({}, upload, {
+          buildId,
+        });
+
+        store.dispatch(actions.queueDownload({
+          cave: cave,
+          game: cave.game,
+          upload: changedUpload,
+          downloadKey,
+          reason: "revert",
+          destPath: null,
+          heal: true,
         }));
       } catch (e) {
         log(opts, `Could not get upgrade path: ${e}`);

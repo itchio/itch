@@ -166,6 +166,8 @@ export default class Market extends EventEmitter {
    * Save a single entity to the db, optionally persisting to disk (see ISaveOpts).
    */
   async saveEntity (tableName: string, entityID: string, record: any, saveOpts = {} as IMarketSaveOpts): Promise<void> {
+    // console.log(`saveEntity ${tableName}/${entityID}:\n\n${JSON.stringify(record, null, 2)}`);
+
     const entityRecords = {
       entities: {
         [tableName]: { [entityID]: record },

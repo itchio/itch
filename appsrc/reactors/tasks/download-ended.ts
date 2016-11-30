@@ -15,7 +15,7 @@ export default function (watcher: Watcher) {
     let {err} = action.payload;
 
     const {reason, incremental} = downloadOpts;
-    if (reason === "install" || reason === "update" || reason === "reinstall") {
+    if (reason === "install" || reason === "update" || reason === "reinstall" || reason === "revert") {
       if (err) {
         if (incremental) {
           log(opts, "Incremental didn\'t work, doing full download");
@@ -36,6 +36,7 @@ export default function (watcher: Watcher) {
         const taskOpts = {
           name: "install",
           reinstall: (reason as string === "reinstall"),
+          becauseHeal: downloadOpts.heal,
           gameId: downloadOpts.game.id,
           game: downloadOpts.game,
           upload: downloadOpts.upload,

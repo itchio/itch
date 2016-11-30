@@ -26,13 +26,13 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
   invariant(opts.credentials, "install must have credentials");
   invariant(opts.globalMarket, "install must have a globalMarket");
   invariant(opts.market, "install must have a market");
-  invariant(opts.archivePath, "install must have a archivePath");
+  if (!opts.becauseHeal) {
+    invariant(opts.archivePath, "install must have a archivePath");
+  }
   invariant(opts.game, "install must have a game");
   invariant(opts.upload, "install must have an upload");
   const {market, credentials, globalMarket, archivePath, downloadKey, game, upload,
-    installLocation = defaultInstallLocation(), handPicked} = opts;
-
-  const experimentalZeroExtract = false && !!opts.upload.buildId;
+    installLocation = defaultInstallLocation(), handPicked, becauseHeal} = opts;
 
   let checkTimestamps = true;
 
@@ -62,7 +62,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
       downloadKey,
     } as ICaveRecord;
 
-    if (!opts.reinstall && !experimentalZeroExtract) {
+    if (!opts.reinstall && !becauseHeal) {
       const installFolderExists = async function () {
         const fullPath = pathmaker.appPath(cave);
         return await sf.exists(fullPath);
@@ -87,7 +87,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
   market.saveEntity("games", String(game.id), game);
 
   let amtime: number;
-  if (experimentalZeroExtract) {
+  if (becauseHeal) {
     amtime = Date.parse(upload.build.updatedAt);
   } else {
     let destPath = pathmaker.appPath(cave);

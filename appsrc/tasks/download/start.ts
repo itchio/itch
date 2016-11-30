@@ -25,9 +25,8 @@ export default async function start (out: EventEmitter, opts: IDownloadOpts) {
 
   const onProgress = (e: any) => out.emit("progress", e);
 
-  const experimentalDownloads = false;
-  if (experimentalDownloads && upload.buildId) {
-    log(opts, `Downloading wharf-enabled upload, build #${upload.buildId}`);
+  if (opts.heal) {
+    log(opts, `Downloading wharf-enabled download, build #${upload.buildId}`);
 
     const {game} = opts;
     invariant(game, "startDownload opts must have game");
@@ -41,14 +40,14 @@ export default async function start (out: EventEmitter, opts: IDownloadOpts) {
     const installLocation = defaultInstallLocation;
     const installFolder = pathmaker.sanitize(game.title);
 
-    const cave = {
+    const cave = opts.cave || {
       installLocation,
       installFolder,
       pathScheme: 2, // see pathmaker
     };
 
     const fullInstallFolder = pathmaker.appPath(cave);
-    log(opts, `Doing decompressing download to ${fullInstallFolder}`);
+    log(opts, `Doing verify+heal to ${fullInstallFolder}`);
 
     await butler.verify(signatureURL, fullInstallFolder, Object.assign({}, opts, {
       heal: `archive,${archiveURL}`,

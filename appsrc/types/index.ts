@@ -1066,7 +1066,7 @@ export interface IUpgradePathItem {
   patchSize: number;
 }
 
-type DownloadReason = "install" | "reinstall" | "update";
+type DownloadReason = "install" | "reinstall" | "update" | "revert";
 
 export interface IStartTaskOpts {
     /** which game is this task for? */
@@ -1106,6 +1106,9 @@ export interface IQueueDownloadOpts {
 
   /** patch entries to upgrade to latest via butler */
   upgradePath?: IUpgradePathItem[];
+
+  /** if true, will attempt to do a heal instead of a simple archive-download or patch-upgrade */
+  heal?: boolean;
 }
 
 export type IStartDownloadOpts = IStartTaskOpts & IQueueDownloadOpts;
@@ -1139,6 +1142,7 @@ export interface IStartTaskOpts {
   downloadKey?: IDownloadKey;
   handPicked?: boolean;
   installLocation?: string;
+  becauseHeal?: boolean;
 
   // launch-specific opts
   appPath?: string;
