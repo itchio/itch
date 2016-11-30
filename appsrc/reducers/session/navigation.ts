@@ -154,8 +154,8 @@ export default handleActions<ISessionNavigationState, any>({
       const newTabs = {
         constant,
         transient: [
-          ...transient,
           newTab,
+          ...transient,
         ],
       };
 
@@ -212,14 +212,13 @@ export default handleActions<ISessionNavigationState, any>({
 
     let newId = id;
     if (id === closeId) {
-      if (newTransient.length > 0) {
-        const newIds = constant.concat(newTransient);
-        const numNewIds = newIds.length;
+      const newIds = constant.concat(newTransient);
 
-        const nextIndex = Math.min(index, numNewIds - 1);
-        newId = newIds[nextIndex];
-      } else {
+      const nextIndex = Math.max(0, index - 1);
+      if (nextIndex < constant.length) {
         newId = state.lastConstant;
+      } else {
+        newId = newIds[nextIndex];
       }
     }
 
