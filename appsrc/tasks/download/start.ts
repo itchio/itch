@@ -10,7 +10,14 @@ import downloadPatches from "./download-patches";
 import {EventEmitter} from "events";
 import {IDownloadOpts} from "../../types";
 
-export default async function start (out: EventEmitter, opts: IDownloadOpts) {
+export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
+  let opts = inOpts;
+  if (opts.cave) {
+    opts = Object.assign({}, opts, {
+      logger: pathmaker.caveLogger(opts.cave.id),
+    });
+  }
+
   if (opts.upgradePath && opts.cave) {
     log(opts, "Got an upgrade path, downloading patches");
 

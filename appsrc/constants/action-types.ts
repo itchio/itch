@@ -716,11 +716,19 @@ export interface IQueueGameUpdatePayload {
 
 export const NUKE_CAVE_PREREQS = "NUKE_CAVE_PREREQS";
 export interface INukeCavePrereqsPayload {
+  /** the cave to nuke the prereqs of */
   caveId: string;
 }
 
 export const REVERT_CAVE_REQUEST = "REVERT_CAVE_REQUEST";
 export interface IRevertCaveRequestPayload {
+  /** the cave to revert to a different build */
+  caveId: string;
+}
+
+export const HEAL_CAVE = "HEAL_CAVE";
+export interface IHealCavePayload {
+  /** the cave to heal */
   caveId: string;
 }
 

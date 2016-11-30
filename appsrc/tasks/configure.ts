@@ -36,11 +36,15 @@ interface IConfigureOpts {
   globalMarket: IMarket;
 }
 
-export default async function start(out: EventEmitter, opts: IConfigureOpts) {
-  const {cave, upload, game, globalMarket} = opts;
+export default async function start(out: EventEmitter, inOpts: IConfigureOpts) {
+  const {cave, upload, game, globalMarket} = inOpts;
   invariant(cave, "configure has cave");
   invariant(game, "configure has game");
   invariant(upload, "configure has upload");
+
+  const opts = Object.assign({}, inOpts, {
+    logger: pathmaker.caveLogger(cave.id),
+  });
 
   const appPath = pathmaker.appPath(cave);
   log(opts, `configuring ${appPath}`);

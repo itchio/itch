@@ -29,6 +29,7 @@ import {
 
   NUKE_CAVE_PREREQS, INukeCavePrereqsPayload,
   REVERT_CAVE_REQUEST, IRevertCaveRequestPayload,
+  HEAL_CAVE, IHealCavePayload,
 } from "../constants/action-types";
 
 export const queueGame = createAction<IQueueGamePayload>(QUEUE_GAME);
@@ -58,3 +59,4 @@ export const queueGameUpdate = createAction<IQueueGameUpdatePayload>(QUEUE_GAME_
 
 export const nukeCavePrereqs = createAction<INukeCavePrereqsPayload>(NUKE_CAVE_PREREQS);
 export const revertCaveRequest = createAction<IRevertCaveRequestPayload>(REVERT_CAVE_REQUEST);
+export const healCave = createAction<IHealCavePayload>(HEAL_CAVE);

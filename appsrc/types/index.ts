@@ -1066,7 +1066,7 @@ export interface IUpgradePathItem {
   patchSize: number;
 }
 
-type DownloadReason = "install" | "reinstall" | "update" | "revert";
+type DownloadReason = "install" | "reinstall" | "update" | "revert" | "heal";
 
 export interface IStartTaskOpts {
     /** which game is this task for? */

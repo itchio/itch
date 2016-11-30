@@ -185,6 +185,8 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
         return t("download.reason.reinstall");
       case "revert":
         return t("download.reason.revert");
+      case "heal":
+        return t("download.reason.heal");
       default:
         return "";
     }

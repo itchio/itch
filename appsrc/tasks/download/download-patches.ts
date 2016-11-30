@@ -54,6 +54,11 @@ export default async function downloadPatches (out: EventEmitter, opts: IDownloa
       buildId: entry.id,
       buildUserVersion: entry.userVersion,
       installedArchiveMtime: entry.updatedAt,
+      uploads: {
+        [upload.id]: Object.assign({}, upload, {
+          buildId: entry.id,
+        }),
+      },
     };
     await globalMarket.saveEntity("caves", cave.id, caveUpdate, { wait: true });
 

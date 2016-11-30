@@ -16,6 +16,7 @@ import exploreCave from "./explore-cave";
 import abortGame from "./abort-game";
 import nukeCavePrereqs from "./nuke-cave-prereqs";
 import revertCave from "./revert-cave";
+import healCave from "./heal-cave";
 
 import downloadWatcher from "./download-watcher";
 import downloadSpeedWatcher from "./download-speed-watcher";
@@ -36,6 +37,7 @@ export default function (watcher: Watcher) {
   abortGame(watcher);
   nukeCavePrereqs(watcher);
   revertCave(watcher);
+  healCave(watcher);
 
   downloadWatcher(watcher);
   downloadSpeedWatcher(watcher);

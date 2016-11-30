@@ -4,7 +4,9 @@ import * as actions from "../../actions";
 import {MODAL_RESPONSE} from "../../constants/action-types";
 
 import {getUserMarket, getGlobalMarket} from "../market";
-import {log, opts} from "./log";
+import pathmaker from "../../util/pathmaker";
+import mklog from "../../util/log";
+const log = mklog("revert-cave");
 
 import {ICaveRecord, IDownloadKey} from "../../types";
 import {findWhere} from "underscore";
@@ -15,43 +17,51 @@ import findUpgradePath from "../../tasks/find-upgrade-path";
 import {EventEmitter} from "events";
 import {IRevertCaveParams} from "../../components/modal-widgets/revert-cave";
 
-import * as humanize from "humanize-plus";
-
 export default function (watcher: Watcher) {
   watcher.on(actions.revertCaveRequest, async (store, action) => {
     const {caveId} = action.payload;
-    const globalMarket = getGlobalMarket();
+    const logger = pathmaker.caveLogger(caveId);
+    const opts = {
+      logger,
+    };
 
-    const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
-    if (!cave) {
-      log(opts, `Cave not found, can't revert: ${caveId}`);
-      return;
-    }
+    try {
+      const globalMarket = getGlobalMarket();
 
-    if (!cave.buildId) {
-      log(opts, `Cave isn't wharf-enabled, can't revert : ${caveId}`);
-      return;
-    }
+      const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
+      if (!cave) {
+        log(opts, `Cave not found, can't revert: ${caveId}`);
+        return;
+      }
 
-    const response = await promisedModal(store, {
-      title: "Revert to given build",
-      message: "",
-      widget: "revert-cave",
-      widgetParams: {
-        currentCave: cave,
-      } as IRevertCaveParams,
-      buttons: [
-        {
-          label: "Revert",
-          icon: "checkmark",
-          action: actions.modalResponse({}),
-          actionSource: "widget",
-        },
-        "cancel",
-      ],
-    });
+      if (!cave.buildId) {
+        log(opts, `Cave isn't wharf-enabled, can't revert : ${caveId}`);
+        return;
+      }
 
-    if (response.type === MODAL_RESPONSE) {
+      const response = await promisedModal(store, {
+        title: "Revert to given build",
+        message: "",
+        widget: "revert-cave",
+        widgetParams: {
+          currentCave: cave,
+        } as IRevertCaveParams,
+        buttons: [
+          {
+            label: "Revert",
+            icon: "checkmark",
+            action: actions.modalResponse({}),
+            actionSource: "widget",
+          },
+          "cancel",
+        ],
+      });
+
+      if (response.type !== MODAL_RESPONSE) {
+        // modal was closed
+        return;
+      }
+
       const buildId = response.payload.revertBuildId;
 
       const upload = cave.uploads[cave.uploadId];
@@ -72,32 +82,34 @@ export default function (watcher: Watcher) {
       const out = new EventEmitter();
 
       try {
-        const {upgradePath, totalSize} = await findUpgradePath(out, upgradeOpts);
-        log(opts, `Got ${upgradePath.length} patches to download, ${humanize.fileSize(totalSize)} total`);
-        log(opts, `Full path: \n\n${JSON.stringify(upgradePath, null, 2)}`);
-        store.dispatch(actions.statusMessage({
-          message: `Reverting ${upgradePath.length - 1} patches...`,
-        }));
-
-        const changedUpload = Object.assign({}, upload, {
-          buildId,
-        });
-
-        store.dispatch(actions.queueDownload({
-          cave: cave,
-          game: cave.game,
-          upload: changedUpload,
-          downloadKey,
-          reason: "revert",
-          destPath: null,
-          heal: true,
-        }));
+        // this will throw if the buildId isn't in the chain of builds of the current upload
+        await findUpgradePath(out, upgradeOpts);
       } catch (e) {
         log(opts, `Could not get upgrade path: ${e}`);
         store.dispatch(actions.statusMessage({
           message: e.message,
         }));
       }
+
+      store.dispatch(actions.statusMessage({
+        message: `Reverting to ${buildId}...`,
+      }));
+
+      const changedUpload = Object.assign({}, upload, {
+        buildId,
+      });
+
+      store.dispatch(actions.queueDownload({
+        cave: cave,
+        game: cave.game,
+        upload: changedUpload,
+        downloadKey,
+        reason: "revert",
+        destPath: null,
+        heal: true,
+      }));
+    } finally {
+      logger.close();
     }
   });
 }

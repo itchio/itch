@@ -15,7 +15,8 @@ export default function (watcher: Watcher) {
     let {err} = action.payload;
 
     const {reason, incremental} = downloadOpts;
-    if (reason === "install" || reason === "update" || reason === "reinstall" || reason === "revert") {
+    if (reason === "install" || reason === "update" || reason === "reinstall"
+        || reason === "revert" || reason === "heal") {
       if (err) {
         if (incremental) {
           log(opts, "Incremental didn\'t work, doing full download");
@@ -55,18 +56,37 @@ export default function (watcher: Watcher) {
         const {readyNotification} = prefs;
 
         if (readyNotification) {
-          const i18n = store.getState().i18n;
-          const t = localizer.getT(i18n.strings, i18n.lang);
-          const message = t(
-            reason === "install"
-            ? "notification.download_installed"
-            : "notification.download_updated"
-            , {title: downloadOpts.game.title}
-          );
-          store.dispatch(actions.notify({
-            body: message,
-            onClick: actions.navigateToGame(downloadOpts.game),
-          }));
+          let notificationMessage: string = null;
+          let notificationOptions: any = {
+            title: downloadOpts.game.title,
+          };
+          switch (reason) {
+            case "install":
+              notificationMessage = "notification.download_installed";
+              break;
+            case "update":
+              notificationMessage = "notification.download_updated";
+              break;
+            case "revert":
+              notificationMessage = "notification.download_reverted";
+              notificationOptions.version = `#${downloadOpts.upload.buildId}`;
+              break;
+            case "heal":
+              notificationMessage = "notification.download_healed";
+              break;
+            default:
+              // make the typescript compiler happy
+          }
+
+          if (notificationMessage) {
+            const i18n = store.getState().i18n;
+            const t = localizer.getT(i18n.strings, i18n.lang);
+            const message = t(notificationMessage, notificationOptions)
+            store.dispatch(actions.notify({
+              body: message,
+              onClick: actions.navigateToGame(downloadOpts.game),
+            }));
+          }
         }
       }
     } else {

@@ -5,6 +5,7 @@ import { app } from "../electron";
 import * as invariant from "invariant";
 
 import {ICaveRecordLocation, IUploadRecord} from "../types";
+import {Logger} from "./log";
 
 const APPDATA_RE = /^appdata\/(.*)$/;
 
@@ -90,6 +91,15 @@ export function caveLogPath(caveId: string): string {
   return path.join(app.getPath("userData"), "cave-logs", "cave-" + caveId + ".txt");
 }
 
+export function caveLogger(caveId: string): Logger {
+  return new Logger({
+    sinks: {
+      console: true,
+      file: caveLogPath(caveId),
+    },
+  });
+}
+
 export function userDbPath(userId: number): string {
   invariant(userId, "valid user id");
   return path.join(app.getPath("userData"), "users", "" + userId, "marketdb");
@@ -106,5 +116,5 @@ export function sanitize(file: string): string {
 
 export default {
   appPath, downloadPath, globalDbPath, userDbPath, sanitize,
-  preferencesPath, logPath, updaterLogPath, caveLogPath,
+  preferencesPath, logPath, updaterLogPath, caveLogPath, caveLogger,
 };

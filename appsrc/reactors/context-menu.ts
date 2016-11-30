@@ -65,12 +65,16 @@ export default function (watcher: Watcher) {
                 click: () => store.dispatch(actions.probeCave({caveId: cave.id})),
               },
               {
-                label: "Nuke prereqs",
-                click: () => store.dispatch(actions.nukeCavePrereqs({caveId: cave.id})),
+                label: "Verify integrity",
+                click: () => store.dispatch(actions.healCave({caveId: cave.id})),
               },
               {
                 label: "Revert to version...",
                 click: () => store.dispatch(actions.revertCaveRequest({caveId: cave.id})),
+              },
+              {
+                label: "Nuke prereqs",
+                click: () => store.dispatch(actions.nukeCavePrereqs({caveId: cave.id})),
               },
             ],
           });

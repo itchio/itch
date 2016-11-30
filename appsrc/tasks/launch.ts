@@ -72,29 +72,23 @@ function caveProblem (cave: ICaveRecord) {
   }
 }
 
-export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
-  const {cave} = opts;
+export default async function start (out: EventEmitter, inOpts: IStartTaskOpts) {
+  const {cave} = inOpts;
 
-  const caveLogPath = pathmaker.caveLogPath(cave.id);
-  const gameLogger = new mklog.Logger({
-    sinks: {
-      console: true,
-      file: caveLogPath,
-    },
-  });
-  const gameOpts = Object.assign({}, opts, {
-    logger: gameLogger,
+  const logger = pathmaker.caveLogger(cave.id);
+  let opts = Object.assign({}, inOpts, {
+    logger,
   });
 
   try {
-    return await doStart(out, gameOpts);
+    return await doStart(out, opts);
   } catch (e) {
     const {market, credentials} = opts;
     const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game});
 
-    log(gameOpts, `crashed with ${e.message}`);
-    log(gameOpts, `${e.message || e}`);
-    await diego.hire(gameOpts);
+    log(opts, `crashed with ${e.message}`);
+    log(opts, `${e.message || e}`);
+    await diego.hire(opts);
 
     store.dispatch(actions.openModal({
       title: "",
@@ -116,7 +110,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
       ],
     }));
   } finally {
-    gameLogger.close();
+    logger.close();
   }
 }
 
