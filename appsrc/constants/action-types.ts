@@ -59,6 +59,9 @@ export interface IModalResponsePayload {
 
   // whether or not to install the sandbox
   sandboxBlessing?: boolean;
+
+  // which build id to revert to
+  revertBuildId?: number;
 }
 
 export const MODAL_NO_RESPONSE = "MODAL_NO_RESPONSE";

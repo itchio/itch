@@ -1,6 +1,5 @@
 
 import * as React from "react";
-import * as invariant from "invariant";
 import {connect} from "./connect";
 
 import ReactModal = require("react-modal");
@@ -8,12 +7,14 @@ import GFM from "./gfm";
 
 import colors from "../constants/colors";
 
-import {closeModal} from "../actions";
+import * as actions from "../actions";
 import {map} from "underscore";
 
 import {IState, IModal, IModalButtonSpec, IModalButton, IModalAction} from "../types";
 import {ILocalizer} from "../localizer";
-import {IAction, ICloseModalPayload} from "../constants/action-types";
+import {IAction, ICloseModalPayload, IModalResponsePayload} from "../constants/action-types";
+
+import {IModalWidgetProps} from "./modal-widgets/modal-widget";
 
 type Flavor = "normal" | "big";
 
@@ -48,24 +49,32 @@ interface IDefaultButtons {
 const DEFAULT_BUTTONS = {
   cancel: {
     label: ["prompt.action.cancel"],
-    action: closeModal({}),
+    action: actions.closeModal({}),
     className: "secondary",
   },
   ok: {
     label: ["prompt.action.ok"],
-    action: closeModal({}),
+    action: actions.closeModal({}),
     className: "secondary",
   },
 } as IDefaultButtons;
 
-export class Modal extends React.Component<IModalProps, void> {
+export class Modal extends React.Component<IModalProps, IModalState> {
+  constructor () {
+    super();
+    this.state = {
+      widgetPayload: null,
+    };
+    this.updatePayload = this.updatePayload.bind(this);
+  }
+
   render () {
     const {t, modals = [], closeModal, halloween} = this.props;
 
     const modal = modals[0];
 
     if (modal) {
-      const {bigButtons = [], buttons = [], cover, title = "", message = "", detail} = modal;
+      const {bigButtons = [], buttons = [], cover, title = "", message = "", detail, widget} = modal;
 
       return <ReactModal isOpen style={customStyles}>
         <div className={`modal ${halloween ? "halloween" : ""}`}>
@@ -82,6 +91,10 @@ export class Modal extends React.Component<IModalProps, void> {
             </div>
           </div>
 
+          {widget
+          ? this.renderWidget(widget, modal)
+          : null}
+
           {bigButtons.length > 0
           ? <div className="big-wrapper">
             {cover
@@ -89,7 +102,7 @@ export class Modal extends React.Component<IModalProps, void> {
               : ""}
             {this.renderButtons(bigButtons, "big")}
           </div>
-          : ""}
+          : null}
 
           {this.renderButtons(buttons, "normal")}
         </div>
@@ -112,13 +125,22 @@ export class Modal extends React.Component<IModalProps, void> {
         let button: IModalButton;
         if (typeof buttonSpec === "string") {
           button = DEFAULT_BUTTONS[buttonSpec];
-          // TODO: do static type checking for default buttons instead
-          invariant(button, "");
+          if (!button) {
+            button = {
+              label: "?",
+              action: actions.closeModal({}),
+            };
+          }
         } else {
           button = buttonSpec as IModalButton;
         }
         const {label, action, className = "", icon} = button;
         let onClick = () => dispatch(action);
+        if (button.actionSource === "widget") {
+          onClick = () => {
+            dispatch(actions.modalResponse(this.state.widgetPayload));
+          };
+        }
 
         return <div className={`button ${className}`} key={index} onClick={onClick}>
         {icon ? <span className={`icon icon-${icon}`}/> : ""}
@@ -126,6 +148,24 @@ export class Modal extends React.Component<IModalProps, void> {
         </div>;
       })}
     </div>;
+  }
+
+  renderWidget (widget: string, modal: IModal): JSX.Element {
+    // this is run in the context of `chrome.js`, so relative to `app`
+    try {
+      let module = require(`./modal-widgets/${widget}`);
+      if (!module) {
+        throw new Error("new export");
+      }
+      let Component = module.default as React.ComponentClass<IModalWidgetProps>;
+      return <Component modal={modal} updatePayload={this.updatePayload}/>;
+    } catch (e) {
+      return <div>Missing widget: {widget} — ${e.message}</div>;
+    }
+  }
+
+  updatePayload (payload: IModalResponsePayload) {
+    this.setState({widgetPayload: payload});
   }
 
   componentWillMount () {
@@ -142,6 +182,10 @@ interface IModalProps {
   dispatch(action: IModalAction): void;
 }
 
+interface IModalState {
+  widgetPayload?: IModalResponsePayload;
+}
+
 const mapStateToProps = (state: IState) => ({
   modals: state.modals,
   halloween: state.status.bonuses.halloween,
@@ -149,9 +193,9 @@ const mapStateToProps = (state: IState) => ({
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void, props: IModalProps) => ({
   dispatch: (action: IModalAction) => {
-    dispatch(closeModal({action}));
+    dispatch(actions.closeModal({action}));
   },
-  closeModal: () => dispatch(closeModal({})),
+  closeModal: () => dispatch(actions.closeModal({})),
 });
 
 export default connect(

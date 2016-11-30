@@ -601,12 +601,17 @@ export interface IGameUpdatesState {
 
 export type IModalAction = Action<any> | Action<any>[]
 
+export type ModalButtonActionSource = "widget";
+
 export interface IModalButton {
     /** icomoon icon to use for button */
     icon?: string;
 
     /** text to show on button */
     label: ILocalizedString;
+
+    /** whether this button directly specifies an action or if it's taken from the widget */
+    actionSource?: ModalButtonActionSource;
 
     /** what should happen when clicking the button */
     action: IModalAction;
@@ -643,6 +648,12 @@ export interface IModal {
 
     /** secondary buttons */
     buttons?: IModalButtonSpec[];
+
+    /** name of a custom React component to render below message */
+    widget?: string;
+
+    /** parameters to pass to React component */
+    widgetParams?: any;
 }
 
 export type IModalsState = IModal[];

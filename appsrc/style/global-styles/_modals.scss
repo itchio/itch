@@ -53,7 +53,6 @@
     }
   }
 
-
   .body {
     margin-top: 20px;
     display: flex;
@@ -114,6 +113,20 @@
       margin-top: 8px;
       margin-right: 12px;
       font-size: 48px;
+    }
+  }
+
+  .modal-widget {
+    padding: 10px 20px;
+
+    input {
+      @include heavy-input;
+      width: 100%;
+    }
+
+    p {
+      line-height: 1.4;
+      margin: 8px 0;
     }
   }
 
