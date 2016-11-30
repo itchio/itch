@@ -96,7 +96,6 @@ class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
     if (this.props.containerHeight === 0) {
       scrollTop = 0;
     }
-    console.log(`rendering scrollTop: `, scrollTop);
 
     return <div className="hub-game-grid">
       <Grid
@@ -111,11 +110,9 @@ class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
         overscanRowCount={2}
         onScroll={(e: any) => {
           if (e.clientHeight === 0) {
-            // this happens then the tab is hidden — just ignore
+            // when tab is hidden, its size is set to 0 and that resets scrollTop - ignore
             return;
           }
-          // console.log(e);
-          console.log(`remembering scrollTop: `, e.scrollTop);
           this.setState({scrollTop: e.scrollTop});
         }}
         scrollTop={scrollTop}
