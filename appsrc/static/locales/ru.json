@@ -359,7 +359,7 @@
     "preferences.notifications.ready_notification": "Уведомлять, когда что-то установлено или обновлено",
     "preferences.behavior.open_at_login.error": "Не получается применить настройки автозапуска: {{cause}}",
     "preferences.behavior.open_at_login.causes.no_desktop_file": "Файл .desktop не найден. Это нормально, если установка была произведена не через пакетный менеджер. Узнать больше: {{linux_install_page}}.",
-    "game.install.could_not_launch.missing_jre": "Это требует Java, которая не установлена на вашей системе.",
+    "game.install.could_not_launch.missing_jre": "Требуется Java, которая не установлена на вашей системе.",
     "grid.item.download_java": "Загрузить Java",
     "grid.item.update": "Обновить",
     "preferences.behavior.manual_game_updates": "Спрашивать перед обновлением чего-либо",
@@ -370,7 +370,7 @@
     "pick_update_upload.buttons.just_launch": "Просто запустить",
     "grid.item.advanced": "Дополнительно...",
     "download.reason.reinstall": "переустановка",
-    "download.reason.revert": "откат до ранней версии",
+    "download.reason.revert": "возврат к ранней версии",
     "notification.download_reverted": "{{title}} возвращёно к версии {{version}}!",
     "download.reason.heal": "проверка и восстановление",
     "notification.download_healed": "{{title}} проверено и восстановлено!"
