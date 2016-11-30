@@ -128,6 +128,12 @@
       line-height: 1.4;
       margin: 8px 0;
     }
+
+    .json-tree-container {
+      width: 100%;
+      height: 350px;
+      overflow-y: auto;
+    }
   }
 
   .buttons {

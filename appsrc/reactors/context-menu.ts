@@ -65,6 +65,9 @@ export default function (watcher: Watcher) {
                 click: () => store.dispatch(actions.probeCave({caveId: cave.id})),
               },
               {
+                type: "separator",
+              },
+              {
                 label: "Verify integrity",
                 click: () => store.dispatch(actions.healCave({caveId: cave.id})),
               },
@@ -73,8 +76,11 @@ export default function (watcher: Watcher) {
                 click: () => store.dispatch(actions.revertCaveRequest({caveId: cave.id})),
               },
               {
-                label: "Nuke prereqs",
-                click: () => store.dispatch(actions.nukeCavePrereqs({caveId: cave.id})),
+                type: "separator",
+              },
+              {
+                label: "View details...",
+                click: () => store.dispatch(actions.viewCaveDetails({caveId: cave.id})),
               },
             ],
           });

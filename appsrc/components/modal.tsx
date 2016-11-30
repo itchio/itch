@@ -104,13 +104,15 @@ export class Modal extends React.Component<IModalProps, IModalState> {
             <span className="icon icon-cross close-modal" onClick={() => closeModal({})}/>
           </div>
 
-          <div className="body">
+          { message !== ""
+          ? <div className="body">
             <div className="message">
               <div><GFM source={t.format(message)}/></div>
               {detail && <div className="secondary"><GFM source={t.format(detail)}/></div>}
             </div>
           </div>
-
+          : null }
+          
           {widget
           ? this.renderWidget(widget, modal)
           : null}

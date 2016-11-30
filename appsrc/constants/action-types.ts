@@ -732,6 +732,12 @@ export interface IHealCavePayload {
   caveId: string;
 }
 
+export const VIEW_CAVE_DETAILS = "VIEW_CAVE_DETAILS";
+export interface IViewCaveDetailsPayload {
+  /** the cave to view details of */
+  caveId: string;
+}
+
 /** User requested game to be installed */
 export const QUEUE_GAME = "QUEUE_GAME";
 export interface IQueueGamePayload {

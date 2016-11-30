@@ -52,7 +52,7 @@
     "grid.item.not_platform_compatible": "Not available on {{platform}}",
     "grid.item.open": "Open",
     "grid.item.open_demo": "Open demo",
-    "grid.item.open_debug_log": "Open debug log",
+    "grid.item.open_debug_log": "View logs...",
     "grid.item.show_local_files": "Show local files",
     "grid.item.probe": "Examine cause of failure",
     "grid.item.donate": "Tip the creator",
