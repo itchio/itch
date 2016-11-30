@@ -9,7 +9,7 @@
     "grid.item.installing": "Installeren...",
     "grid.item.launch": "Start",
     "grid.item.not_platform_compatible": "Niet beschikbaar voor {{platform}}",
-    "grid.item.probe": "Open het logboek om de reden van dit probleem te vinden (Geavanceerd)",
+    "grid.item.probe": "Bekijk de oorsprong van het probleem.",
     "grid.item.purchase_or_donate": "Koop item of maak een donatie",
     "grid.item.queued": "Wachtrij",
     "grid.item.report_problem": "Rapporteer als gebroken (Opent in browser)",
