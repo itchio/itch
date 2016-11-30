@@ -76,7 +76,7 @@ export default function (watcher: Watcher) {
         log(opts, `Got ${upgradePath.length} patches to download, ${humanize.fileSize(totalSize)} total`);
         log(opts, `Full path: \n\n${JSON.stringify(upgradePath, null, 2)}`);
         store.dispatch(actions.statusMessage({
-          message: `Reverting ${upgradePath.length - 1} patches: stub!`,
+          message: `Reverting ${upgradePath.length - 1} patches...`,
         }));
 
         const changedUpload = Object.assign({}, upload, {

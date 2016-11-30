@@ -47,19 +47,6 @@ export default function (watcher: Watcher) {
       }
       return;
     }
-
-    const button: IModalButtonSpec = (modal.bigButtons || modal.buttons || [])[0];
-    if (!button) {
-      return;
-    }
-
-    let modalAction: IModalAction;
-    if (isModalButton(button)) {
-      modalAction = button.action;
-    }
-
-    // FIXME: naughty any
-    store.dispatch(actions.closeModal({action: modalAction}));
   });
 
   watcher.on(actions.triggerBack, async (store, action) => {

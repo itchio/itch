@@ -16,6 +16,8 @@ import {IAction, ICloseModalPayload, IModalResponsePayload} from "../constants/a
 
 import {IModalWidgetProps} from "./modal-widgets/modal-widget";
 
+import watching, {Watcher} from "./watching";
+
 type Flavor = "normal" | "big";
 
 const customStyles = {
@@ -59,6 +61,7 @@ const DEFAULT_BUTTONS = {
   },
 } as IDefaultButtons;
 
+@watching
 export class Modal extends React.Component<IModalProps, IModalState> {
   constructor () {
     super();
@@ -66,6 +69,23 @@ export class Modal extends React.Component<IModalProps, IModalState> {
       widgetPayload: null,
     };
     this.updatePayload = this.updatePayload.bind(this);
+  }
+
+  subscribe (watcher: Watcher) {
+    watcher.on(actions.triggerOk, async (store, action) => {
+      const modal = this.props.modals[0];
+      if (!modal) {
+        return;
+      }
+
+      const mainButton = (modal.bigButtons || modal.buttons || [])[0];
+      if (!mainButton) {
+        return;
+      }
+
+      const onClick = this.buttonOnClick(this.specToButton(mainButton));
+      onClick();
+    });
   }
 
   render () {
@@ -117,30 +137,14 @@ export class Modal extends React.Component<IModalProps, IModalState> {
       return null;
     }
 
-    const {t, dispatch} = this.props;
+    const {t} = this.props;
 
     return <div className={`buttons flavor-${flavor}`}>
       <div className="filler"/>
       {map(buttons, (buttonSpec, index) => {
-        let button: IModalButton;
-        if (typeof buttonSpec === "string") {
-          button = DEFAULT_BUTTONS[buttonSpec];
-          if (!button) {
-            button = {
-              label: "?",
-              action: actions.closeModal({}),
-            };
-          }
-        } else {
-          button = buttonSpec as IModalButton;
-        }
-        const {label, action, className = "", icon} = button;
-        let onClick = () => dispatch(action);
-        if (button.actionSource === "widget") {
-          onClick = () => {
-            dispatch(actions.modalResponse(this.state.widgetPayload));
-          };
-        }
+        const button = this.specToButton(buttonSpec);
+        const {label, className = "", icon} = button;
+        let onClick = this.buttonOnClick(button);
 
         return <div className={`button ${className}`} key={index} onClick={onClick}>
         {icon ? <span className={`icon icon-${icon}`}/> : ""}
@@ -148,6 +152,35 @@ export class Modal extends React.Component<IModalProps, IModalState> {
         </div>;
       })}
     </div>;
+  }
+
+  specToButton (buttonSpec: IModalButtonSpec): IModalButton {
+    let button: IModalButton;
+    if (typeof buttonSpec === "string") {
+      button = DEFAULT_BUTTONS[buttonSpec];
+      if (!button) {
+        button = {
+          label: "?",
+          action: actions.closeModal({}),
+        };
+      }
+    } else {
+      button = buttonSpec as IModalButton;
+    }
+    return button;
+  }
+
+  buttonOnClick (button: IModalButton): () => void {
+    const {dispatch} = this.props;
+    const {action, actionSource} = button;
+
+    let onClick = () => dispatch(action);
+    if (actionSource === "widget") {
+      onClick = () => {
+        dispatch(actions.modalResponse(this.state.widgetPayload));
+      };
+    }
+    return onClick;
   }
 
   renderWidget (widget: string, modal: IModal): JSX.Element {
