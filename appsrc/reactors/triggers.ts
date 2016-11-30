@@ -7,8 +7,6 @@ import {pathToId} from "../util/navigation";
 
 import {sortBy} from "underscore";
 
-import {IModalButtonSpec, isModalButton, IModalAction} from "../types";
-
 export default function (watcher: Watcher) {
   watcher.on(actions.triggerMainAction, async (store, action) => {
     const id = store.getState().session.navigation.id;

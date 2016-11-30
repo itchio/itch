@@ -81,7 +81,7 @@ export default function (watcher: Watcher) {
           if (notificationMessage) {
             const i18n = store.getState().i18n;
             const t = localizer.getT(i18n.strings, i18n.lang);
-            const message = t(notificationMessage, notificationOptions)
+            const message = t(notificationMessage, notificationOptions);
             store.dispatch(actions.notify({
               body: message,
               onClick: actions.navigateToGame(downloadOpts.game),

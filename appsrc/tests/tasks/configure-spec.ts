@@ -23,7 +23,8 @@ test("configure", (t) => {
   const darwin = test.module({configure: noop});
   const linux = test.module({configure: noop});
   const pathmaker = test.module({
-    appPath: (): string => "/dev/null",
+    appPath: () => "/dev/null",
+    caveLogger: () => new mklog.Logger(),
   });
   const globalMarket = test.module({
     saveEntity: noop,
