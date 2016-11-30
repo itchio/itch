@@ -201,7 +201,7 @@
     "new_tab.twitter": "Популярное в Твиттере",
     "usage_stats.description.bought_time_ago": "Куплено {{time_ago}}",
     "install_location.empty": "В этой папке пока ничего не установлено",
-    "grid.item.open_debug_log": "Открыть отладочный лог",
+    "grid.item.open_debug_log": "Показать журнал...",
     "usage_stats.description.physical_game": "Физическая игра",
     "menu.view.history": "Журнал событий",
     "game.install.no_executables_found": "Не найдено ни одного исполняемого файла",
@@ -247,7 +247,7 @@
     "preferences.install_location.browse_osx": "Открыть папку установки в Finder",
     "status.copied_to_clipboard": "Скопировано!",
     "sidebar.collection.subtitle": "{{itemCount}} приложений в коллекции",
-    "status.game_update.found": "Выпущена новая версия {{title}}! Загружаем…",
+    "status.game_update.found": "Выпущена новая версия {{title}}!",
     "game.install.try_again": "Попробовать ещё раз",
     "status.downloads.category.finished": "Завершённые загрузки",
     "usage_stats.description.price": "Доступно за {{price}} или больше",
@@ -368,5 +368,10 @@
     "pick_update_upload.single.detail": "Примечание: в настройках можно включить автоматическое обновление",
     "pick_update_upload.buttons.update": "Обновить сейчас",
     "pick_update_upload.buttons.just_launch": "Просто запустить",
-    "grid.item.advanced": "Дополнительно..."
+    "grid.item.advanced": "Дополнительно...",
+    "download.reason.reinstall": "переустановка",
+    "download.reason.revert": "откат до ранней версии",
+    "notification.download_reverted": "{{title}} возвращёно к версии {{version}}!",
+    "download.reason.heal": "проверка и восстановление",
+    "notification.download_healed": "{{title}} проверено и восстановлено!"
 }
