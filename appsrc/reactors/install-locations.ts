@@ -148,7 +148,7 @@ export default function (watcher: Watcher) {
 
     const dialogOpts = {
       title: t("prompt.install_location_add.title"),
-      properties: ["openDirectory"],
+      properties: ["openDirectory", "createDirectory"],
     };
 
     const promise = new Promise<IAddInstallLocationPayload>((resolve, reject) => {
