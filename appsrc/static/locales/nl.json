@@ -195,5 +195,19 @@
     "grid.item.share": "Delen",
     "login.action.show_form": "Log in als iemand anders",
     "login.messages.welcome_back-halloween": "Wie durft mijn dutje te verstoren?",
-    "grid.item.open_demo": "Start Demo"
+    "grid.item.open_demo": "Start Demo",
+    "menu.file.new_tab": "Nieuwe Tab",
+    "menu.file.close_tab": "Tab Sluiten",
+    "menu.file.close_all_tabs": "Alle Tabs Sluiten",
+    "menu.help.about": "Over",
+    "menu.view.downloads": "Downloads",
+    "menu.view.history": "Geschiedenis",
+    "menu.view.view": "Bekijken",
+    "moment.now": "nu",
+    "toast.no_info_available": "Geen informatie beschikbaar",
+    "new_tab.community": "Community",
+    "new_tab.on_sale": "In de aanbieding",
+    "new_tab.titles.input": "...of",
+    "notification.download_installed": "{{title}} was geïnstalleerd!",
+    "outlinks.manage_collections": "Beheer collecties"
 }
