@@ -58,7 +58,7 @@
     "onboarding.caved.troubleshoot_advice": "如果出现问题，点击 {{report}} 报告错误，或者 {{probe}} 查看详情。",
     "onboarding.caved.usage": "游戏静默下载，安装，运行。",
     "onboarding.collections.auto_sync": "你的游戏将会在你下次登录时显示。",
-    "onboarding.collections.lets_shop": "我们去购物吧",
+    "onboarding.collections.lets_shop": "立刻浏览",
     "onboarding.collections.title_mix": "混合搭配",
     "onboarding.collections.usage": "先稍微浏览此网站， 然后用 {{add_to_collection}} 开始管理。",
     "onboarding.dashboard.docs_link": "了解详情",
