@@ -157,5 +157,6 @@
     "label.experimental": "实验性",
     "collection.empty": "此收藏集中没有游戏",
     "grid.item.download_java": "下载 Java 软件",
-    "grid.item.open": "打开"
+    "grid.item.open": "打开",
+    "grid.item.open_demo": "打开体验版"
 }
