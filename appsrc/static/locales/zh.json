@@ -146,5 +146,6 @@
     "duration.hour": "一个小时",
     "duration.hours": "{{x}} 小时",
     "duration.minutes": "{{x}} 分钟",
-    "game.install.could_not_launch": "启动 {{title}} 时发生了错误"
+    "game.install.could_not_launch": "启动 {{title}} 时发生了错误",
+    "game.install.could_not_launch.detail": "最后的错误信息： {{error}}"
 }
