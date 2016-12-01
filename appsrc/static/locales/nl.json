@@ -167,5 +167,9 @@
     "action.name.forums": "Forums",
     "docs.learn_more": "Leer meer",
     "download.started": "Opgestart",
-    "download.reason.update": "Om naar de laatste versie te updaten"
+    "download.reason.update": "om naar de laatste versie te updaten",
+    "download.reason.reinstall": "om te herinstalleren",
+    "download.reason.revert": "om terug te gaan naar een eerdere versie",
+    "download.reason.heal": "om te verzekeren en te herstellen",
+    "duration.hours": "{{x}} uur"
 }
