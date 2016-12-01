@@ -210,5 +210,7 @@
     "new_tab.titles.input": "...of",
     "notification.download_installed": "{{title}} was geïnstalleerd!",
     "outlinks.manage_collections": "Beheer collecties",
-    "sandbox.setup.title": "Eenmalige sandbox installatie"
+    "sandbox.setup.title": "Eenmalige sandbox installatie",
+    "preferences.install_location.is_default_short": "Standaard",
+    "preferences.install_location.make_default_short": "Als standaard instellen"
 }
