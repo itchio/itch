@@ -15,7 +15,7 @@
     "grid.item.report_problem": "Verstuur feedback",
     "grid.item.retry": "Probeer dit item nog een keer te downloaden / installeren / opstarten",
     "grid.item.running": "Opgestart…",
-    "grid.item.uninstall": "Deïnstalleren",
+    "grid.item.uninstall": "Deïnstalleer",
     "login.action.login": "Log in",
     "login.action.register": "Registreer",
     "login.action.reset_password": "Wachtwoord vergeten",
@@ -192,5 +192,6 @@
     "grid.item.review": "Review",
     "grid.item.update": "Update",
     "grid.item.launch_demo": "Demo opstarten",
-    "grid.item.share": "Delen"
+    "grid.item.share": "Delen",
+    "login.action.show_form": "Log in als iemand anders"
 }
