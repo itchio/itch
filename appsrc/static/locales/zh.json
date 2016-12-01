@@ -138,5 +138,13 @@
     "grid.item.review": "反馈",
     "grid.item.launch_demo": "启动演示版",
     "grid.item.share": "分享",
-    "action.name.editor": "编辑器"
+    "action.name.editor": "编辑器",
+    "action.name.play": "立即开始",
+    "docs.learn_more": "了解更多",
+    "download.started": "已开始",
+    "download.reason.update": "更新到最新版本",
+    "duration.hour": "一个小时",
+    "duration.hours": "{{x}} 小时",
+    "duration.minutes": "{{x}} 分钟",
+    "game.install.could_not_launch": "启动 {{title}} 时发生了错误"
 }
