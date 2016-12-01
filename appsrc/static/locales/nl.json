@@ -163,5 +163,8 @@
     "preferences.security.sandbox.description": "De itch.io sandbox zal proberen te voorkomen dat de gedownloade spellen geen schade verrichten of gevoelige data stelen. Alhoewel het geen complete veiligheid garandeert, is het veel veiliger om spellen in de itch.io sandbox uit te voeren.",
     "preferences.behavior": "Gedrag",
     "action.name.play": "Speel Nu",
-    "action.name.editor": "Editor"
+    "action.name.editor": "Editor",
+    "action.name.forums": "Forums",
+    "docs.learn_more": "Leer meer",
+    "download.started": "Opgestart"
 }
