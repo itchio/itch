@@ -163,5 +163,6 @@
     "grid.item.donate": "打赏作者",
     "grid.item.donate_again": "再次打赏作者！",
     "grid.item.downloads_paused": "下载暂停中",
-    "grid.item.version": "版本 {{version}}"
+    "grid.item.version": "版本 {{version}}",
+    "browser.popout": "用其他浏览器打开该页面"
 }
