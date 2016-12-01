@@ -147,5 +147,9 @@
     "duration.hours": "{{x}} 小时",
     "duration.minutes": "{{x}} 分钟",
     "game.install.could_not_launch": "启动 {{title}} 时发生了错误",
-    "game.install.could_not_launch.detail": "最后的错误信息： {{error}}"
+    "game.install.could_not_launch.detail": "最后的错误信息： {{error}}",
+    "game.install.no_uploads_available.detail": "可能此项目还不适用于您的系统或 itch 应用！",
+    "game.install.no_uploads_available.message": "找不到 `{{title}}` 的可用下载，所以\b未被安装。",
+    "game.install.try_again": "重试",
+    "game.install.visit_web_page": "访问网页"
 }
