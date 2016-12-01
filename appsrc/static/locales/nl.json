@@ -166,5 +166,6 @@
     "action.name.editor": "Editor",
     "action.name.forums": "Forums",
     "docs.learn_more": "Leer meer",
-    "download.started": "Opgestart"
+    "download.started": "Opgestart",
+    "download.reason.update": "Om naar de laatste versie te updaten"
 }
