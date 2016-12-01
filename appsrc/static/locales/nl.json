@@ -2,7 +2,7 @@
     "errors.api.login.incorrect_username_or_password": "Onjuiste gebruikersnaam of wachtwoord",
     "errors.api.login.password_must_be_provided": "Wachtwoord moet gegeven zijn",
     "errors.api.login.username_must_be_provided": "Gebruikersnaam moet ingevuld zijn",
-    "grid.item.buy_now": "Koop nu",
+    "grid.item.buy_now": "Nu kopen",
     "grid.item.cancel_download": "Download annuleren",
     "grid.item.downloading": "Downloaden…",
     "grid.item.install": "Installeer",
@@ -12,10 +12,10 @@
     "grid.item.probe": "Bekijk de oorsprong van het probleem.",
     "grid.item.purchase_or_donate": "Koop item of maak een donatie",
     "grid.item.queued": "In de wachtrij",
-    "grid.item.report_problem": "Rapporteer als gebroken (Opent in browser)",
-    "grid.item.retry": "Probeer nog een keer te downloaden / installeren / opstarten",
+    "grid.item.report_problem": "Verstuur feedback",
+    "grid.item.retry": "Probeer dit item nog een keer te downloaden / installeren / opstarten",
     "grid.item.running": "Bezig...",
-    "grid.item.uninstall": "Deïnstalleer dit item nu",
+    "grid.item.uninstall": "Deïnstalleren",
     "login.action.login": "Log in",
     "login.action.register": "Registreer",
     "login.action.reset_password": "Wachtwoord vergeten",
@@ -161,5 +161,6 @@
     "preferences.security": "Beveiliging & privacy",
     "preferences.security.sandbox.title": "Schakel de itch.io sandbox in",
     "preferences.security.sandbox.description": "De itch.io sandbox zal proberen te voorkomen dat de gedownloade spellen geen schade verrichten of gevoelige data stelen. Alhoewel het geen complete veiligheid garandeert, is het veel veiliger om spellen in de itch.io sandbox uit te voeren.",
-    "preferences.behavior": "Gedrag"
+    "preferences.behavior": "Gedrag",
+    "action.name.play": "Speel Nu"
 }
