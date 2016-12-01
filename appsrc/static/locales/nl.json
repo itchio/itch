@@ -14,7 +14,7 @@
     "grid.item.queued": "In de wachtrij",
     "grid.item.report_problem": "Verstuur feedback",
     "grid.item.retry": "Probeer dit item nog een keer te downloaden / installeren / opstarten",
-    "grid.item.running": "Bezig...",
+    "grid.item.running": "Opgestart",
     "grid.item.uninstall": "Deïnstalleren",
     "login.action.login": "Log in",
     "login.action.register": "Registreer",
