@@ -158,5 +158,8 @@
     "collection.empty": "此收藏集中没有游戏",
     "grid.item.download_java": "下载 Java 软件",
     "grid.item.open": "打开",
-    "grid.item.open_demo": "打开体验版"
+    "grid.item.open_demo": "打开体验版",
+    "grid.item.show_local_files": "显示本地文件",
+    "grid.item.donate": "打赏作者",
+    "grid.item.donate_again": "再次打赏作者！"
 }
