@@ -168,5 +168,6 @@
     "i18n.failed_downloading_locales": "{{lang}} 的翻译更新无法下载",
     "install_location.empty": "此位置目前未安装任何项目",
     "login.action.show_form": "以另一身份登入",
-    "login.messages.welcome_back": "欢迎回来！"
+    "login.messages.welcome_back": "欢迎回来！",
+    "login.remembered_session.last_connected": "最后一次连接"
 }
