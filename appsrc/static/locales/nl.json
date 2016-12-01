@@ -171,5 +171,6 @@
     "download.reason.reinstall": "om te herinstalleren",
     "download.reason.revert": "om terug te gaan naar een eerdere versie",
     "download.reason.heal": "om te verzekeren en te herstellen",
-    "duration.hours": "{{x}} uur"
+    "duration.hours": "{{x}} uur",
+    "duration.minute": "een minuut of minder"
 }
