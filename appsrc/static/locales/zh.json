@@ -14,13 +14,13 @@
     "grid.item.open_in_file_explorer": "在文件浏览器里打开安装文件夹",
     "grid.item.open_in_file_explorer_linux": "在文件管理器里打开安装文件夹",
     "grid.item.open_in_file_explorer_osx": "在 Finder 里显示此项目的安装位置",
-    "grid.item.probe": "打开此项目的日志查看失败原因（高级）",
+    "grid.item.probe": "查看失败原因",
     "grid.item.purchase_or_donate": "购买或捐赠此项目",
-    "grid.item.queued": "队列等待中",
-    "grid.item.report_problem": "报告损坏（浏览器里打开）",
+    "grid.item.queued": "已加入队列",
+    "grid.item.report_problem": "发送反馈",
     "grid.item.retry": "请重新尝试 下载/安装/启动 此项目",
     "grid.item.running": "运行中…",
-    "grid.item.uninstall": "立刻卸载此项目",
+    "grid.item.uninstall": "卸载",
     "grid.item.uninstalling": "正在卸载...",
     "login.action.login": "登录",
     "login.action.register": "注册",
@@ -152,5 +152,8 @@
     "game.install.no_uploads_available.message": "找不到 `{{title}}` 的可用下载，所以\b未被安装。",
     "game.install.try_again": "重试",
     "game.install.visit_web_page": "访问网页",
-    "grid.clear_filters": "清除过滤条件"
+    "grid.clear_filters": "清除过滤条件",
+    "action.name.forums": "论坛",
+    "label.experimental": "实验性",
+    "collection.empty": "此收藏集中没有游戏"
 }
