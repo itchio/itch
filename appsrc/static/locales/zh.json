@@ -151,5 +151,6 @@
     "game.install.no_uploads_available.detail": "可能此项目还不适用于您的系统或 itch 应用！",
     "game.install.no_uploads_available.message": "找不到 `{{title}}` 的可用下载，所以\b未被安装。",
     "game.install.try_again": "重试",
-    "game.install.visit_web_page": "访问网页"
+    "game.install.visit_web_page": "访问网页",
+    "grid.clear_filters": "清除过滤条件"
 }
