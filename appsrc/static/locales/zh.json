@@ -8,7 +8,7 @@
     "grid.item.downloading": "正在下载……",
     "grid.item.finalize_installation": "完成安装",
     "grid.item.install": "安装",
-    "grid.item.installing": "正在安装...",
+    "grid.item.installing": "安装中...",
     "grid.item.launch": "启动",
     "grid.item.not_platform_compatible": "不适用于 {{platform}}",
     "grid.item.open_in_file_explorer": "在文件浏览器里打开安装文件夹",
