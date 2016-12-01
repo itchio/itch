@@ -155,5 +155,6 @@
     "grid.clear_filters": "清除过滤条件",
     "action.name.forums": "论坛",
     "label.experimental": "实验性",
-    "collection.empty": "此收藏集中没有游戏"
+    "collection.empty": "此收藏集中没有游戏",
+    "grid.item.download_java": "下载 Java 软件"
 }
