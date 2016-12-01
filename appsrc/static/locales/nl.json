@@ -193,5 +193,7 @@
     "grid.item.update": "Update",
     "grid.item.launch_demo": "Demo opstarten",
     "grid.item.share": "Delen",
-    "login.action.show_form": "Log in als iemand anders"
+    "login.action.show_form": "Log in als iemand anders",
+    "login.messages.welcome_back-halloween": "Wie durft mijn dutje te verstoren?",
+    "grid.item.open_demo": "Open demo"
 }
