@@ -171,7 +171,7 @@
     "login.messages.welcome_back": "欢迎回来！",
     "login.remembered_session.last_connected": "最后一次连接",
     "game.install.no_executables_found": "找不到可执行文件",
-    "game.install.no_html_index_found": "找不到HTML索引页",
+    "game.install.no_html_index_found": "找不到 HTML 主页文件",
     "grid.criterion.filter": "过滤",
     "grid.item.buy_now_again": "购买一额外拷贝",
     "grid.item.prioritize_download": "把这个定位首要任务",
