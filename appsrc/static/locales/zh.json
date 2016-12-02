@@ -246,7 +246,7 @@
     "preferences.install_location.make_default_short": "设为默认",
     "preferences.install_location.item_count": "# 个项目",
     "pick_update_upload.single.message": "你可以选择现在或之后更新。",
-    "pick_update_upload.single.title": " {{title}} 新版本可以使用了",
+    "pick_update_upload.single.title": "{{title}} 新版本可以使用了",
     "pick_update_upload.detail": "我们会询问是因为您在安装时手动挑选了一个文件。",
     "pick_update_upload.message": "您要为 {{title}} 更新哪一个文件？",
     "pick_update_upload.title": "有 {{title}} 适用的新下载",
