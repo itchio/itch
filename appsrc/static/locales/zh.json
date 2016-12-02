@@ -219,5 +219,7 @@
     "toast.no_info_available": "无法获得资料",
     "new_tab.titles.buttons": "试试以下任何一项：",
     "new_tab.community": "社区",
-    "new_tab.on_sale": "促销中"
+    "new_tab.on_sale": "促销中",
+    "new_tab.random": "随机查看",
+    "new_tab.top_sellers": "畅销品"
 }
