@@ -165,7 +165,7 @@
     "action.name.forums": "Forum",
     "game.install.could_not_launch.detail": "Dess sista ord var: {{error}}",
     "grid.criterion.filter": "Filter...",
-    "grid.criterion.only_compatible": "Bara jämförbara",
+    "grid.criterion.only_compatible": "Bara kompatibla",
     "grid.hidden_count": "+ {{count}} saker dolda av filtren",
     "grid.item.prioritize_download": "Prioritera",
     "grid.item.review": "Granska",
