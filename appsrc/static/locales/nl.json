@@ -11,7 +11,7 @@
     "grid.item.not_platform_compatible": "Niet beschikbaar voor {{platform}}",
     "grid.item.probe": "Reden van storing onderzoeken",
     "grid.item.purchase_or_donate": "Koop item of maak een donatie",
-    "grid.item.queued": "In de wachtrij",
+    "grid.item.queued": "Wachtrij",
     "grid.item.report_problem": "Verstuur feedback",
     "grid.item.retry": "Probeer dit item nog een keer te downloaden / installeren / opstarten",
     "grid.item.running": "Opgestart…",
