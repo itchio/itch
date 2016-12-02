@@ -221,5 +221,9 @@
     "new_tab.community": "社区",
     "new_tab.on_sale": "促销中",
     "new_tab.random": "随机查看",
-    "new_tab.top_sellers": "畅销品"
+    "new_tab.top_sellers": "畅销品",
+    "new_tab.twitter": "推特热门",
+    "notification.see_you_soon.title": "再见！",
+    "notification.purchase_complete.just_bought": "你刚购买了{{title}}！",
+    "notification.purchase_complete.just_donated": "你刚捐给了{{title}}！"
 }
