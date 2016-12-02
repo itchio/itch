@@ -207,5 +207,6 @@
     "grid.item.open_debug_log": "查看日志...",
     "login.action.show_saved_logins": "已保存登录",
     "menu.view.downloads": "下载",
-    "menu.view.history": "历史"
+    "menu.view.history": "历史",
+    "menu.help.about": "关于"
 }
