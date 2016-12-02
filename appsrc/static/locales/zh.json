@@ -176,5 +176,6 @@
     "grid.item.buy_now_again": "购买一额外拷贝",
     "grid.item.prioritize_download": "把这个定位首要任务",
     "grid.item.update": "更新",
-    "login.messages.welcome_back-halloween": "谁敢扰我的睡？"
+    "login.messages.welcome_back-halloween": "谁敢扰我的睡？",
+    "menu.file.new_tab": "新的标签页"
 }
