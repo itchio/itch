@@ -214,5 +214,6 @@
     "preferences.install_location.is_default_short": "Standaard",
     "preferences.install_location.make_default_short": "Als standaard instellen",
     "grid.item.open_debug_log": "Logs bekijken...",
-    "grid.item.donate": "Doneer aan de ontwikkelaar"
+    "grid.item.donate": "Doneer aan de ontwikkelaar",
+    "grid.item.donate_again": "Doneer nogmaals aan de maker!"
 }
