@@ -225,5 +225,19 @@
     "new_tab.twitter": "推特热门",
     "notification.see_you_soon.title": "再见！",
     "notification.purchase_complete.just_bought": "你刚购买了{{title}}！",
-    "notification.purchase_complete.just_donated": "你刚捐给了{{title}}！"
+    "notification.purchase_complete.just_donated": "你刚捐给了{{title}}!",
+    "notification.purchase_complete.may_install_now": "你现在可以在任何时间安装此应用程式！",
+    "notification.purchase_complete.thanks_for_support": "感谢您的支持！",
+    "notification.download_installed": "成功安装{{title}}！",
+    "notification.download_updated": "成功更新{{title}}！",
+    "notification.download_reverted": "{{title}} 已被还原成  {{version}}！",
+    "notification.download_healed": "{{title}} 已被证实和愈合！",
+    "onboarding.dashboard.mission_statement": "我们已尽力使其为最舒适。",
+    "outlinks.open_dashboard": "打开仪表板",
+    "outlinks.manage_collections": "管理收藏品",
+    "sandbox.setup.title": "建立一次性沙盒",
+    "sandbox.setup.proceed": "继续",
+    "sandbox.setup.windows.message": "为了能使游戏在itch.io沙盒里运行，一次性的建立过程须以管理员身份运行。",
+    "sandbox.setup.windows.detail": "点击“继续”后，或许会有权限提示对话框弹出来，向您索取批准。这个权限会在您的系统内添加“itch-player”的用户账号以保护您的系统。",
+    "sandbox.setup.linux.message": "为了能使游戏在itch.io沙盒里运行，一次性的建立过程须以根用户身份运行。"
 }
