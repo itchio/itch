@@ -209,5 +209,7 @@
     "menu.view.downloads": "下载",
     "menu.view.history": "历史",
     "menu.help.about": "关于",
-    "moment.now": "现在"
+    "moment.now": "现在",
+    "toast.title": "啊，糟糕！",
+    "toast.message": "发生了预料之外的问题。"
 }
