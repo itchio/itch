@@ -215,5 +215,9 @@
     "toast.call_to_action": "继续，重新载入或是打开另一个页面。",
     "toast.actions.reload": "重新载入",
     "toast.actions.learn_more": "查看详情",
-    "toast.actions.report": "发送反馈以帮助改善itch"
+    "toast.actions.report": "发送反馈以帮助改善itch",
+    "toast.no_info_available": "无法获得资料",
+    "new_tab.titles.buttons": "试试以下任何一项：",
+    "new_tab.community": "社区",
+    "new_tab.on_sale": "促销中"
 }
