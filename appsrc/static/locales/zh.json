@@ -181,5 +181,7 @@
     "game.install.could_not_launch.missing_jre": "需要用到在系统内找不到的Java软件",
     "download.reason.revert": "还原较早版本",
     "download.reason.reinstall": "重新安装",
-    "grid.hidden_count": "+ {{count}}项被过滤器隐藏了"
+    "grid.hidden_count": "+ {{count}}项被过滤器隐藏了",
+    "menu.file.close_tab": "关闭标签页",
+    "menu.file.close_all_tabs": "关闭所有标签页"
 }
