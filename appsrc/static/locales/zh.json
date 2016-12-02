@@ -183,5 +183,21 @@
     "download.reason.reinstall": "重新安装",
     "grid.hidden_count": "+ {{count}}项被过滤器隐藏了",
     "menu.file.close_tab": "关闭标签页",
-    "menu.file.close_all_tabs": "关闭所有标签页"
+    "menu.file.close_all_tabs": "关闭所有标签页",
+    "sidebar.preferences": "设定",
+    "sidebar.close_all_tabs": "关闭所有标签页",
+    "sidebar.category.tabs": "标签",
+    "sidebar.collection": "收藏",
+    "sidebar.collections": "收藏",
+    "sidebar.dashboard_subtitle": "您制造与打破的东西",
+    "sidebar.downloads": "下载",
+    "sidebar.downloads_subtitle": "随意退出或重启，您的下载会在您回来后恢复",
+    "sidebar.empty": "我们开始吧！",
+    "sidebar.category.basics": "必备",
+    "sidebar.itchio": "你通往独立游戏宇宙的门",
+    "sidebar.featured": "精品",
+    "sidebar.log_out": "退出",
+    "sidebar.history": "历史",
+    "sidebar.new_tab": "新标签",
+    "sidebar.owned_subtitle": "你已购买或安装的东西"
 }
