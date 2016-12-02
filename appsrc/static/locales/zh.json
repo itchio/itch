@@ -260,5 +260,10 @@
     "preferences.notifications.ready_notification": "当下载完成或已更新后通知我",
     "preferences.notifications": "通知",
     "preferences.behavior.manual_game_updates": "在更新任何内容之前请先询问",
-    "preferences.behavior.open_at_login.causes.no_desktop_file": "找不到 .desktop 文件。若您没有从系统软件包中安装，这是正常的。在 {{linux_install_page}} 查看更多详情。"
+    "preferences.behavior.open_at_login.causes.no_desktop_file": "找不到 .desktop 文件。若您没有从系统软件包中安装，这是正常的。在 {{linux_install_page}} 查看更多详情。",
+    "preferences.behavior.open_at_login": "启动电脑时启动itch",
+    "preferences.behavior.open_as_hidden": "启动时启动itch为隐藏",
+    "preferences.behavior.open_at_login.error": "自动启动设定不能被应用：{{cause}}",
+    "preferences.security": "安全和隐私",
+    "preferences.behavior": "特性"
 }
