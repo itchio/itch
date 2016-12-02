@@ -205,5 +205,6 @@
     "sidebar.view_community_profile": "查看社区简介",
     "grid.item.advanced": "高级",
     "grid.item.open_debug_log": "查看日志",
-    "login.action.show_saved_logins": "已保存登录"
+    "login.action.show_saved_logins": "已保存登录",
+    "menu.view.downloads": "下载"
 }
