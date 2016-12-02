@@ -4,7 +4,7 @@
     "errors.api.login.password_must_be_provided": "Du måste uppge lösenord",
     "errors.api.login.username_must_be_provided": "Användarnamn måste uppges",
     "grid.item.buy_now": "Köp nu",
-    "grid.item.cancel_download": "Avbryt nerladdningen",
+    "grid.item.cancel_download": "Avbryt nedladdningen",
     "grid.item.downloading": "Laddar ner…",
     "grid.item.finalize_installation": "Slutför installationen",
     "grid.item.install": "Installera",
@@ -339,5 +339,6 @@
     "preferences.proxy_server_address": "HTTP Proxy",
     "preferences.proxy_server_source.direct": "Direkt (ingen proxy)",
     "preferences.proxy_server_source.env": "Ställ in miljövariabel",
-    "preferences.proxy_server_source.os": "Använder systeminställningar"
+    "preferences.proxy_server_source.os": "Använder systeminställningar",
+    "game.install.could_not_launch.missing_jre": "Detta behöver Java som inte är installerat."
 }
