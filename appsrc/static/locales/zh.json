@@ -199,5 +199,11 @@
     "sidebar.log_out": "退出",
     "sidebar.history": "历史",
     "sidebar.new_tab": "新标签",
-    "sidebar.owned_subtitle": "你已购买或安装的东西"
+    "sidebar.owned_subtitle": "你已购买或安装的东西",
+    "sidebar.aw_snap": "啊，糟糕！",
+    "sidebar.view_creator_profile": "查看建立者简介",
+    "sidebar.view_community_profile": "查看社区简介",
+    "grid.item.advanced": "高级",
+    "grid.item.open_debug_log": "查看日志",
+    "login.action.show_saved_logins": "已保存登录"
 }
