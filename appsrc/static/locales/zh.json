@@ -214,5 +214,6 @@
     "toast.message": "发生了预料之外的问题。",
     "toast.call_to_action": "继续，重新载入或是打开另一个页面。",
     "toast.actions.reload": "重新载入",
-    "toast.actions.learn_more": "查看详情"
+    "toast.actions.learn_more": "查看详情",
+    "toast.actions.report": "发送反馈以帮助改善itch"
 }
