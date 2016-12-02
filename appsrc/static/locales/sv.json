@@ -340,5 +340,6 @@
     "preferences.proxy_server_source.direct": "Direkt (ingen proxy)",
     "preferences.proxy_server_source.env": "Ställ in miljövariabel",
     "preferences.proxy_server_source.os": "Använder systeminställningar",
-    "game.install.could_not_launch.missing_jre": "Detta behöver Java som inte är installerat."
+    "game.install.could_not_launch.missing_jre": "Detta behöver Java som inte är installerat.",
+    "grid.item.download_java": "Ladda ner Java"
 }
