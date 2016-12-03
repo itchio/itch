@@ -82,6 +82,20 @@ export interface IGameRecord {
 }
 
 /**
+ * Extended game record for creators / admins of a game
+ */
+export interface IOwnGameRecord extends IGameRecord {
+    /** how many times has the game been downloaded (all time) */
+    downloadsCount: number;
+
+    /** how many times has the game been purchased (all time) */
+    purchasesCount: number;
+
+    /** how many page views has the game gotten (all time) */
+    viewsCount: number;
+}
+
+/**
  * This is used in some components, mostly grids/lists that can be filtered
  * using some user-provided query.
  */
