@@ -3,6 +3,7 @@ import {Watcher} from "./watcher";
 import * as actions from "../actions";
 
 import client from "../util/api";
+import partitionForUser from "../util/partition-for-user";
 
 import {sortBy} from "underscore";
 
@@ -20,7 +21,8 @@ export default function (watcher: Watcher) {
       const keyClient = client.withKey(key);
 
       if (res.cookie) {
-        const session = require("electron").session.fromPartition(String(res.key.userId));
+        const partition = partitionForUser(String(res.key.userId));
+        const session = require("electron").session.fromPartition(partition);
         
         for (const name of Object.keys(res.cookie)) {
           const value = res.cookie[name];
@@ -32,7 +34,7 @@ export default function (watcher: Watcher) {
               domain: ".itch.io",
               secure: true,
               httpOnly: true,
-              expirationDate: Date.now() + YEAR_IN_SECONDS,
+              expirationDate: (Date.now() * 0.001) + YEAR_IN_SECONDS,
             }, (error: Error) => {
               if (error) {
                 reject(error);
