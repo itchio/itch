@@ -45,6 +45,9 @@ export type ILoginKeyResult = IMeResult
 
 export interface ILoginWithPasswordResult {
   key: IAPIKey;
+  cookie: {
+    [name: string]: string;
+  };
 }
 
 export interface IUpgradeResponse {

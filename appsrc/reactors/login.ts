@@ -6,10 +6,7 @@ import client from "../util/api";
 
 import {sortBy} from "underscore";
 
-async function getKey (username: string, password: string) {
-  const res = await client.loginWithPassword(username, password);
-  return res.key.key;
-}
+const YEAR_IN_SECONDS = 365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60 /* seconds */;
 
 export default function (watcher: Watcher) {
   watcher.on(actions.loginWithPassword, async (store, action) => {
@@ -18,8 +15,34 @@ export default function (watcher: Watcher) {
     store.dispatch(actions.attemptLogin({}));
 
     try {
-      const key = await getKey(username, password);
+      const res = await client.loginWithPassword(username, password);
+      const key = res.key.key;
       const keyClient = client.withKey(key);
+
+      if (res.cookie) {
+        const session = require("electron").session.fromPartition(String(res.key.userId));
+        
+        for (const name of Object.keys(res.cookie)) {
+          const value = res.cookie[name];
+          await new Promise((resolve, reject) => {
+            session.cookies.set({
+              name,
+              value: encodeURIComponent(value),
+              url: "https://itch.io/",
+              domain: ".itch.io",
+              secure: true,
+              httpOnly: true,
+              expirationDate: Date.now() + YEAR_IN_SECONDS,
+            }, (error: Error) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve();
+              }
+            });
+          });
+        }
+      }
 
       // validate API key and get user profile in one fell swoop
       const me = (await keyClient.me()).user;
