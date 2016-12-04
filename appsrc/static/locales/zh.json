@@ -265,5 +265,6 @@
     "preferences.behavior.open_as_hidden": "启动时启动itch为隐藏",
     "preferences.behavior.open_at_login.error": "自动启动设定不能被应用：{{cause}}",
     "preferences.security": "安全和隐私",
-    "preferences.behavior": "特性"
+    "preferences.behavior": "特性",
+    "preferences.security.sandbox.title": "启用 itch.io 沙盒"
 }
