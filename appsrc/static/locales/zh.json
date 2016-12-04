@@ -266,5 +266,14 @@
     "preferences.behavior.open_at_login.error": "自动启动设定不能被应用：{{cause}}",
     "preferences.security": "安全和隐私",
     "preferences.behavior": "特性",
-    "preferences.security.sandbox.title": "启用 itch.io 沙盒"
+    "preferences.security.sandbox.title": "启用 itch.io 沙盒",
+    "menu.view.view": "查看",
+    "preferences.behavior.close_to_tray": "关闭视窗时把应用程式保留在托盘内",
+    "pick_update_upload.single.detail": "注意：您现在可以在设定标签内启用自动更新",
+    "pick_update_upload.buttons.update": "现在更新",
+    "pick_update_upload.buttons.just_launch": "刚刚启动",
+    "prompt.action.force_close": "强制关闭",
+    "prompt.abort_game.title": "强制关闭程序？",
+    "prompt.abort_game.message": "请问您要强制关闭 {{title}} 吗？",
+    "prompt.forget_session.detail": "您可以随时将其添加回来。"
 }
