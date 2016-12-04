@@ -107,6 +107,7 @@ export class Client {
   }
 
   async loginWithPassword (username: string, password: string): Promise<ILoginWithPasswordResult> {
+    // TODO: use v2, do something with cookie
     return await this.request("post", "/login", {
       username: username,
       password: password,
