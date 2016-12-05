@@ -372,5 +372,6 @@
     "grid.item.advanced": "Erweitert...",
     "prompt.install_error.title": "Während der Installation ist ein Fehler aufgetreten:",
     "prompt.install_error.find_upload": "Während der Suche nach einem Download: {{message}}",
-    "sidebar.aw_snap": "Ups!"
+    "sidebar.aw_snap": "Ups!",
+    "usage_stats.description.physical_game": "Ein physisches Spiel"
 }
