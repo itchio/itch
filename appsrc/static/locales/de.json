@@ -343,5 +343,6 @@
     "game.install.could_not_launch.missing_jre": "Es benötigt Java, welches nicht auf ihrem System installiert ist.",
     "grid.item.download_java": "Java herunterladen",
     "grid.item.update": "Update",
-    "grid.item.open_demo": "Demo öffnen"
+    "grid.item.open_demo": "Demo öffnen",
+    "login.messages.welcome_back-halloween": "Wer wagt es, meinen Schlaf zu stören?"
 }
