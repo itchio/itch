@@ -133,7 +133,7 @@
     "usage_stats.description.game": "Игра",
     "grid.item.show_local_files": "Показать файлы",
     "preferences.security": "Безопасность и приватность",
-    "prompt.self_update_ready.message": "Мы применим обновление при следующем запуске приложения.\n\nВыберите \"Перезапустить сейчас\", чтобы обновиться немедленно.",
+    "prompt.self_update_ready.message": "Мы применим обновление при следующем запуске приложения.\n\nВыберите '{{restart}}', чтобы обновиться немедленно.",
     "new_tab.random": "Показать что-нибудь случайное",
     "sidebar.category.tabs": "Закладки",
     "game.install.no_uploads_available.message": "'{{title}}' не имеет файлов, совместимых с вашей системой, так что мы ничего не установили.",
@@ -373,5 +373,10 @@
     "download.reason.revert": "возврат к ранней версии",
     "notification.download_reverted": "{{title}} возвращёно к версии {{version}}!",
     "download.reason.heal": "проверка и восстановление",
-    "notification.download_healed": "{{title}} проверено и восстановлено!"
+    "notification.download_healed": "{{title}} проверено и восстановлено!",
+    "login.two_factor.title": "Двухфакторая аутентификация",
+    "login.two_factor.as_user": "Входим как: {{username}}",
+    "login.two_factor.enter_code": "Введите код, отображаемый аутентификатором.",
+    "login.two_factor.verification_code_label": "Верификационный код",
+    "login.two_factor.learn_more": "Узнать больше о двухфакторной аутентификации"
 }
