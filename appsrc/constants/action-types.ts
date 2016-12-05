@@ -972,9 +972,6 @@ export const GC_DATABASE = "GC_DATABASE";
 export interface IGcDatabasePayload {}
 
 /* Preferences */
-export const PREFERENCES_SET_LANGUAGE = "PREFERENCES_SET_LANGUAGE";
-export interface IPreferencesSetLanguagePayload {}
-
 export const UPDATE_PREFERENCES = "UPDATE_PREFERENCES";
 export interface IUpdatePreferencesPayload extends Types.IPreferencesState {};
 
