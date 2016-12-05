@@ -371,5 +371,6 @@
     "game.install.could_not_launch.detail": "Seine letzten Worte waren: {{error}}",
     "grid.item.advanced": "Erweitert...",
     "prompt.install_error.title": "Während der Installation ist ein Fehler aufgetreten:",
-    "prompt.install_error.find_upload": "Während der Suche nach einem Download: {{message}}"
+    "prompt.install_error.find_upload": "Während der Suche nach einem Download: {{message}}",
+    "sidebar.aw_snap": "Ups!"
 }
