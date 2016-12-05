@@ -13,10 +13,17 @@ interface IUploadButton {
   icon: string;
 }
 
-export default function makeUploadButton (upload: IUploadRecord): IUploadButton {
+interface IMakeUploadButtonOpts {
+  /** Whether to show the size of uploads (default: true) */
+  showSize?: boolean;
+}
+
+export default function makeUploadButton (
+    upload: IUploadRecord, opts = {showSize: true} as IMakeUploadButtonOpts): IUploadButton {
   let label = `${upload.displayName || upload.filename}`;
   let tags: IModalButtonTag[] = [];
-  if (upload.size > 0) {
+
+  if (upload.size > 0 && opts.showSize) {
     tags.push({
       label: `${humanize.fileSize(upload.size)}`,
     });

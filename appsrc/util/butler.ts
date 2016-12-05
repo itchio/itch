@@ -76,7 +76,7 @@ async function butler (opts: IButlerOpts, command: string, commandArgs: string[]
     onToken,
     onErrToken,
     emitter,
-    logger: dumpAllOutput ? opts.logger : null,
+    logger: (dumpAllOutput || showDebug) ? opts.logger : null,
   });
 
   if (err) {

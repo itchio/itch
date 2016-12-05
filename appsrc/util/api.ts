@@ -35,7 +35,7 @@ import {
 
 const cooldown = mkcooldown(130);
 const log = mklog("api");
-const logger = new mklog.Logger({sinks: {console: !!process.env.LET_ME_IN}});
+const logger = new mklog.Logger({sinks: {console: process.env.LET_ME_IN === "1"}});
 const opts = {logger};
 
 type HTTPMethod = "get" | "head" | "post";
@@ -225,29 +225,22 @@ export class AuthenticatedClient {
   // list uploads
 
   async listUploads (downloadKey: IDownloadKey, gameID: number): Promise<IListUploadsResponse> {
+    // TODO: adjust API to support download_key_id
     if (downloadKey) {
-      return await this.request("get", `/download-key/${downloadKey.id}/uploads`, {}, {uploads: ensureArray});
+      return await this.request("get", `/download-key/${downloadKey.id}/uploads`, {}, { uploads: ensureArray });
     } else {
-      return await this.request("get", `/game/${gameID}/uploads`, {}, {uploads: ensureArray});
+      return await this.request("get", `/game/${gameID}/uploads`, {}, { uploads: ensureArray });
     }
   }
 
   // download uploads
 
   async downloadUpload (downloadKey: IDownloadKey, uploadID: number): Promise<IDownloadUploadResult> {
-    if (downloadKey) {
-      return await this.request("get", `/download-key/${downloadKey.id}/download/${uploadID}`);
-    } else {
-      return await this.request("get", `/upload/${uploadID}/download`);
-    }
+    return await this.request("get", `/upload/${uploadID}/download`, sprinkleDownloadKey(downloadKey, {}));
   }
 
   downloadUploadURL (downloadKey: IDownloadKey, uploadID: number): string {
-    if (downloadKey) {
-      return this.itchfsURL(`/download-key/${downloadKey.id}/download/${uploadID}`);
-    } else {
-      return this.itchfsURL(`/upload/${uploadID}/download`);
-    }
+    return this.itchfsURL(`/upload/${uploadID}/download`, sprinkleDownloadKey(downloadKey, {}));
   }
 
   // wharf-related endpoints
@@ -319,7 +312,7 @@ function sprinkleDownloadKey (downloadKey: IDownloadKey | null, params: any): an
     return params;
   }
 
-  return Object.assign({}, downloadKey, {
+  return Object.assign({}, params, {
     download_key_id: downloadKey.id,
   });
 }

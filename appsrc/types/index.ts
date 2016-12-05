@@ -398,7 +398,7 @@ export interface IUploadRecord {
 
 export interface IBuildRecord {
     /** unique itch.io identifier for build */
-    id: string;
+    id: number;
 
     /** itch.io-generated version number */
     version: string;

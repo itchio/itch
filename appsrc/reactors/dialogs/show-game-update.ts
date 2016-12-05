@@ -52,7 +52,7 @@ export default function (watcher: Watcher) {
       message: dialogMessage,
       detail: dialogDetail,
       bigButtons: map(update.recentUploads, (upload) => {
-        return Object.assign({}, makeUploadButton(upload), {
+        return Object.assign({}, makeUploadButton(upload, {showSize: false}), {
           timeAgo: {
             label: ["prompt.updated_ago"],
             date: Date.parse(upload.updatedAt),

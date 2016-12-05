@@ -9,6 +9,8 @@ import {omit} from "underscore";
 
 import localizer from "../../localizer";
 
+const ITCH_INCREMENTAL_ONLY = process.env.ITCH_INCREMENTAL_ONLY === "1";
+
 export default function (watcher: Watcher) {
   watcher.on(actions.downloadEnded, async (store, action) => {
     const {downloadOpts} = action.payload;
@@ -20,6 +22,13 @@ export default function (watcher: Watcher) {
       if (err) {
         if (incremental) {
           log(opts, "Incremental didn\'t work, doing full download");
+          if (ITCH_INCREMENTAL_ONLY) {
+            store.dispatch(actions.statusMessage({
+              message: "Incremental update failed, see console for details",
+            }));
+            return;
+          }
+
           const newDownloadOpts = Object.assign({}, omit(downloadOpts, "upgradePath", "incremental"), {
             totalSize: downloadOpts.upload.size,
           });

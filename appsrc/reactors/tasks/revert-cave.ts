@@ -8,8 +8,12 @@ import pathmaker from "../../util/pathmaker";
 import mklog from "../../util/log";
 const log = mklog("revert-cave");
 
+import format, {DATE_FORMAT} from "../../util/format";
+
+import client from "../../util/api";
+
 import {ICaveRecord, IDownloadKey} from "../../types";
-import {findWhere} from "underscore";
+import {map, filter, findWhere} from "underscore";
 
 import {promisedModal} from "../modals";
 
@@ -35,9 +39,35 @@ export default function (watcher: Watcher) {
       }
 
       if (!cave.buildId) {
-        log(opts, `Cave isn't wharf-enabled, can't revert : ${caveId}`);
+        log(opts, `Cave isn't wharf-enabled, can't revert: ${caveId}`);
         return;
       }
+      
+      const upload = cave.uploads[cave.uploadId];
+      if (!cave.buildId) {
+        log(opts, `No upload in acve, can't revert: ${caveId}`);
+        return;
+      }
+
+      const market = getUserMarket();
+      const downloadKey = cave.downloadKey ||
+        findWhere(market.getEntities<IDownloadKey>("downloadKeys"), {gameId: cave.game.id});
+
+      const credentials = store.getState().session.credentials;
+      if (!credentials) {
+        log(opts, `No credentials, cannot revert to build`);
+        return;
+      }
+      const keyClient = client.withKey(credentials.key);
+      const buildsList = await keyClient.listBuilds(downloadKey, upload.id);
+
+      log(opts, `Builds list:\n${JSON.stringify(buildsList, null, 2)}`);
+
+      const oldBuilds = filter(buildsList.builds, (build) => {
+        return build.id < cave.buildId;
+      });
+
+      const {lang} = store.getState().i18n;
 
       const response = await promisedModal(store, {
         title: "Revert to given build",
@@ -46,6 +76,24 @@ export default function (watcher: Watcher) {
         widgetParams: {
           currentCave: cave,
         } as IRevertCaveParams,
+        bigButtons: map(oldBuilds, (build) => {
+          let label = "";
+          if (build.userVersion) {
+            label = `${build.userVersion}`;
+          } else {
+            label = `#${build.id}`;
+          }
+
+          label = `${label} — ${format.date(Date.parse(build.updatedAt), DATE_FORMAT, lang)}`;
+
+          return {
+            label,
+            icon: "tag",
+            action: actions.modalResponse({
+              revertBuildId: build.id,
+            }),
+          };
+        }),
         buttons: [
           {
             label: "Revert",
@@ -63,13 +111,6 @@ export default function (watcher: Watcher) {
       }
 
       const buildId = response.payload.revertBuildId;
-
-      const upload = cave.uploads[cave.uploadId];
-      const credentials = store.getState().session.credentials;
-      const market = getUserMarket();
-
-      const downloadKey = cave.downloadKey ||
-        findWhere(market.getEntities<IDownloadKey>("downloadKeys"), {gameId: cave.game.id});
 
       const upgradeOpts = {
         market,
