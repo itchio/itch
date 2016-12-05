@@ -4,6 +4,8 @@ import * as React from "react";
 import {connect} from "../connect";
 import {IModalWidgetProps} from "./modal-widget";
 
+import {ILocalizer} from "../../localizer";
+
 export class TwoFactorInput extends React.Component<ITwoFactorInputProps, void> {
   refs: {
     totpInput?: HTMLInputElement;
@@ -15,15 +17,17 @@ export class TwoFactorInput extends React.Component<ITwoFactorInputProps, void> 
   }
 
   render () {
+    const {t} = this.props;
     const params = this.props.modal.widgetParams as ITwoFactorInputParams;
+    const {username} = params;
 
     return <div className="modal-widget">
-      <p><strong>Logging in as {params.username}</strong></p>
+      <p><strong>{t("login.two_factor.as_user", {username})}</strong></p>
 
-      <p>Please enter the code shown on your authenticator to continue logging in.</p>
+      <p>{t("login.two_factor.enter_code")}</p>
 
       <input
-        placeholder="Verification code"
+        placeholder={t("login.two_factor.verification_code_label")}
         ref="totpInput" type="number"
         onKeyDown={this.onChange}
         onKeyUp={this.onChange}
@@ -50,6 +54,7 @@ export interface ITwoFactorInputParams {
 }
 
 interface ITwoFactorInputProps extends IModalWidgetProps {
+  t: ILocalizer;
   params: ITwoFactorInputParams;
 }
 

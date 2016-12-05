@@ -25,7 +25,7 @@ export default function (watcher: Watcher) {
       let res = await client.loginWithPassword(username, password);
       if (res.totpNeeded) {
         const modalRes = await promisedModal(store, {
-          title: "Two-factor authentication",
+          title: ["login.two_factor.title"],
           message: "",
           buttons: [
             {
@@ -34,7 +34,7 @@ export default function (watcher: Watcher) {
               actionSource: "widget",
             },
             {
-              label: "Read about two-factor authentication",
+              label: ["login.two_factor.learn_more"],
               action: actions.openUrl({
                 url: urls.twoFactorHelp,
               }),
