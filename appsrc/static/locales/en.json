@@ -267,7 +267,7 @@
     "prompt.self_update_ready.action.restart": "Restart now",
     "prompt.self_update_ready.action.snooze": "Snooze",
     "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Published on {{pubDate}}.",
-    "prompt.self_update_ready.message": "Choose 'Restart now' to apply the update immediately.\n\nIf you don't, the update will be active the next time the app is restarted.",
+    "prompt.self_update_ready.message": "Choose '{{restart}}' to apply the update immediately.\n\nIf you don't, the update will be active the next time the app is restarted.",
     "prompt.self_update_ready.title": "An update has been downloaded and installed",
     "prompt.uninstall.cancel": "Cancel",
     "prompt.uninstall.message": "Are you sure you want to uninstall {{title}}?",

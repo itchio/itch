@@ -5,6 +5,7 @@ import {app} from "../electron";
 import os from "../util/os";
 import client from "../util/api";
 import net from "../util/net";
+import {getT} from "../localizer";
 
 import delay from "./delay";
 
@@ -148,7 +149,7 @@ export default function (watcher: Watcher) {
   });
 
   watcher.on(actions.applySelfUpdateRequest, async (store, action) => {
-    const lang = store.getState().i18n.lang;
+    const {strings, lang} = store.getState().i18n;
     const spec = store.getState().selfUpdate.downloaded;
     if (!spec) {
       log(opts, "Asked to apply update, but nothing downloaded? bailing out...");
@@ -156,10 +157,13 @@ export default function (watcher: Watcher) {
     }
 
     const pubDate = new Date(Date.parse(spec.pub_date));
+    const t = getT(strings, lang);
 
     store.dispatch(actions.openModal({
       title: ["prompt.self_update_ready.title", {version: spec.name}],
-      message: ["prompt.self_update_ready.message"],
+      message: ["prompt.self_update_ready.message", {
+        restart: t("prompt.self_update_ready.action.restart"),
+      }],
       detail: ["prompt.self_update_ready.detail", {
         notes: spec.notes,
         pubDate: format.date(pubDate, DATE_FORMAT, lang),
