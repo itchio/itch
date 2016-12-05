@@ -342,5 +342,6 @@
     "download.reason.revert": "zum Zurücksetzen auf eine frühere Version",
     "game.install.could_not_launch.missing_jre": "Es benötigt Java, welches nicht auf ihrem System installiert ist.",
     "grid.item.download_java": "Java herunterladen",
-    "grid.item.update": "Update"
+    "grid.item.update": "Update",
+    "grid.item.open_demo": "Demo öffnen"
 }
