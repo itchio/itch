@@ -205,6 +205,7 @@
     "pick_update_upload.single.detail": "Note: you can enable automatic updates in the Preferences tab",
     "pick_update_upload.buttons.update": "Update now",
     "pick_update_upload.buttons.just_launch": "Just launch",
+    "pick_update_upload.tags.demo": "demo",
     "prompt.action.cancel": "Cancel",
     "prompt.action.close": "Close",
     "prompt.action.confirm_removal": "Proceed with removal",

@@ -632,6 +632,13 @@ export interface IModalButton {
 
     /** use this to specify custom CSS classes (which is both naughty and nice) */
     className?: string;
+
+    /** Tags to tack after label */
+    tags?: IModalButtonTag[];
+}
+
+export interface IModalButtonTag {
+    label: ILocalizedString;
 }
 
 export function isModalButton (object: any): object is IModalButton {

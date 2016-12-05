@@ -166,18 +166,34 @@
       overflow-y: auto;
 
       .button {
+        transition: -webkit-filter 0.2s;
         font-weight: bold;
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.58);
 
         &:not(.action-play) {
-          -webkit-filter: grayscale(100%) brightness(60%);
+          -webkit-filter: grayscale(100%) brightness(70%);
+        }
+
+        &:hover {
+          -webkit-filter: brightness(110%);
         }
 
         &, &.secondary {
           display: flex;
+          align-items: center;
           margin: 8px 0;
           font-size: 16px;
           padding: 14px 14px;
+        }
+
+        .tag {
+          margin: 0 0 0 7px;
+          font-size: 80%;
+          padding: 5px 4px;
+          border-radius: 4px;
+          background: #fffff0;
+          color: $button-background-color;
+          text-shadow: none;
         }
 
         .icon {

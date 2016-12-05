@@ -145,12 +145,18 @@ export class Modal extends React.Component<IModalProps, IModalState> {
       <div className="filler"/>
       {map(buttons, (buttonSpec, index) => {
         const button = this.specToButton(buttonSpec);
-        const {label, className = "", icon} = button;
+        const {label, className = "", icon, tags} = button;
         let onClick = this.buttonOnClick(button);
 
         return <div className={`button ${className}`} key={index} onClick={onClick}>
-        {icon ? <span className={`icon icon-${icon}`}/> : ""}
+        {icon ? <span className={`icon icon-${icon}`}/> : null}
         {t.format(label)}
+        {tags
+          ? map(tags, (tag) => {
+            return <span className="tag">{t.format(tag.label)}</span>;
+          })
+          : null
+        }
         </div>;
       })}
     </div>;

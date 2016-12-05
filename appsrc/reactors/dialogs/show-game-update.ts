@@ -1,7 +1,7 @@
 
 import * as actions from "../../actions";
 
-import * as humanize from "humanize-plus";
+import makeUploadButton from "../make-upload-button";
 
 import {map} from "underscore";
 import {Watcher} from "../watcher";
@@ -52,15 +52,13 @@ export default function (watcher: Watcher) {
       message: dialogMessage,
       detail: dialogDetail,
       bigButtons: map(update.recentUploads, (upload) => {
-        return {
-          label: `${upload.displayName || upload.filename} (${humanize.fileSize(upload.size)})`,
+        return Object.assign({}, makeUploadButton(upload), {
           timeAgo: {
             label: ["prompt.updated_ago"],
             date: Date.parse(upload.updatedAt),
           },
           action: actions.queueGameUpdate(Object.assign({}, action.payload, {upload, handPicked: (!single)})),
-          icon: "download",
-        };
+        });
       }),
       buttons: dialogButtons,
     }));

@@ -2,7 +2,7 @@
 import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
-import * as humanize from "humanize-plus";
+import makeUploadButton from "../make-upload-button";
 
 import pathmaker from "../../util/pathmaker";
 
@@ -11,7 +11,9 @@ import {startTask} from "./start-task";
 
 import {map, where} from "underscore";
 
-import {IStore, IGameRecord, ICaveRecord, IUploadRecord, IDownloadKey} from "../../types";
+import {
+  IStore, IGameRecord, ICaveRecord, IUploadRecord, IDownloadKey,
+} from "../../types";
 
 interface IFindUploadResult {
   uploads: IUploadRecord[];
@@ -90,18 +92,11 @@ export default function (watcher: Watcher) {
           message: ["pick_install_upload.message", {title}],
           detail: ["pick_install_upload.detail"],
           bigButtons: map(uploads, (upload) => {
-            let label = `${upload.displayName || upload.filename}`;
-            if (upload.size > 0) {
-              label += ` (${humanize.fileSize(upload.size)})`;
-            }
-
-            return {
-              label,
+            return Object.assign({}, makeUploadButton(upload), {
               action: actions.queueGame(Object.assign({}, action.payload, {
                 pickedUpload: upload.id,
               })),
-              icon: "download",
-            };
+            });
           }),
           buttons: [
             "cancel",
