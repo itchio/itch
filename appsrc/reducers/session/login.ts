@@ -10,6 +10,7 @@ import {
   ILoginStopPickingPayload,
   ILoginFailedPayload,
   ILoginSucceededPayload,
+  ILoginCancelledPayload,
   ILogoutPayload,
 } from "../../constants/action-types";
 
@@ -44,6 +45,13 @@ export default handleActions<ISessionLoginState, any>({
     // to re-enter the password to see if we can obtain a new API token
     return Object.assign({}, initialState, {
       errors,
+      blockingOperation: null,
+      picking: false,
+    });
+  },
+
+  LOGIN_CANCELLED: (state: ISessionLoginState, action: IAction<ILoginCancelledPayload>) => {
+    return Object.assign({}, state, {
       blockingOperation: null,
       picking: false,
     });

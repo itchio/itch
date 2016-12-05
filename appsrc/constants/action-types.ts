@@ -54,14 +54,17 @@ export interface IModalClosedPayload {
 }
 export const MODAL_RESPONSE = "MODAL_RESPONSE";
 export interface IModalResponsePayload {
-  // which manifest action was picked when launching a game
+  /** which manifest action was picked when launching a game */
   manifestActionName?: string;
 
-  // whether or not to install the sandbox
+  /** whether or not to install the sandbox */
   sandboxBlessing?: boolean;
 
-  // which build id to revert to
+  /** which build id to revert to */
   revertBuildId?: number;
+
+  /** two-factor authentication code entered */
+  totpCode?: string;
 }
 
 export const MODAL_NO_RESPONSE = "MODAL_NO_RESPONSE";
@@ -901,6 +904,9 @@ export interface ILoginWithPasswordPayload {
 
   /** the password for the itch.io account to log in as */
   password: string;
+
+  /** the 2FA totp code entered by user */
+  totpCode?: string;
 }
 
 /** Private - login attempt with stored token */
@@ -925,6 +931,10 @@ export interface ILoginFailedPayload {
   /** a list of errors that occured while logging in */
   errors: string[];
 }
+
+/** Login cancelled (example: user closing two-factor dialog, etc.) */
+export const LOGIN_CANCELLED = "LOGIN_CANCELLED";
+export interface ILoginCancelledPayload {}
 
 /** API key available beyond this point */
 export const LOGIN_SUCCEEDED = "LOGIN_SUCCEEDED";
