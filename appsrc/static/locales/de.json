@@ -341,5 +341,6 @@
     "download.reason.reinstall": "zur Neuinstallation",
     "download.reason.revert": "zum Zurücksetzen auf eine frühere Version",
     "game.install.could_not_launch.missing_jre": "Es benötigt Java, welches nicht auf ihrem System installiert ist.",
-    "grid.item.download_java": "Java herunterladen"
+    "grid.item.download_java": "Java herunterladen",
+    "grid.item.update": "Update"
 }
