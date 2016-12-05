@@ -44,10 +44,16 @@ export interface IMeResult {
 export type ILoginKeyResult = IMeResult
 
 export interface ILoginWithPasswordResult {
-  key: IAPIKey;
-  cookie: {
+  /** itch.io API key (fresh or cached) */
+  key?: IAPIKey;
+
+  /** cookie for automatic web log-in */
+  cookie?: {
     [name: string]: string;
   };
+  
+  /** set if we tried to log in without totp code */
+  totpNeeded?: boolean;
 }
 
 export interface IUpgradeResponse {

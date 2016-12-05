@@ -29,6 +29,7 @@ export default {
 
   itchioApi: itchio,
   termsOfService: `${itchio}/docs/legal/terms`,
+  twoFactorHelp: `${itchio}/docs/advanced/two-factor-authentication`,
   accountRegister: `${itchio}/register`,
   accountForgotPassword: `${itchio}/user/forgot-password`,
   developersLearnMore: `${itchio}/developers`,

@@ -124,6 +124,18 @@
       width: 100%;
     }
 
+    input[type=number] {
+      &::-webkit-inner-spin-button, 
+      &::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+      }
+    }
+
+    strong {
+      font-weight: bold;
+    }
+
     p {
       line-height: 1.4;
       margin: 8px 0;

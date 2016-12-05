@@ -7,6 +7,12 @@ import partitionForUser from "../util/partition-for-user";
 
 import {sortBy} from "underscore";
 
+import {MODAL_RESPONSE} from "../constants/action-types";
+import urls from "../constants/urls";
+import {promisedModal} from "./modals";
+
+import {ITwoFactorInputParams} from "../components/modal-widgets/two-factor-input";
+
 const YEAR_IN_SECONDS = 365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60 /* seconds */;
 
 export default function (watcher: Watcher) {
@@ -16,7 +22,40 @@ export default function (watcher: Watcher) {
     store.dispatch(actions.attemptLogin({}));
 
     try {
-      const res = await client.loginWithPassword(username, password);
+      let res = await client.loginWithPassword(username, password);
+      if (res.totpNeeded) {
+        const modalRes = await promisedModal(store, {
+          title: "Two-factor authentication",
+          message: "",
+          buttons: [
+            {
+              label: ["login.action.login"],
+              action: actions.modalResponse({}),
+              actionSource: "widget",
+            },
+            {
+              label: "Read about two-factor authentication",
+              action: actions.openUrl({
+                url: urls.twoFactorHelp,
+              }),
+              className: "secondary",
+            },
+          ],
+          widget: "two-factor-input",
+          widgetParams: {
+            username,
+          } as ITwoFactorInputParams,
+        });
+
+        if (modalRes.type === MODAL_RESPONSE) {
+          const totpCode = modalRes.payload.totpCode;
+          res = await client.loginWithPassword(username, password, totpCode);
+        } else {
+          store.dispatch(actions.loginCancelled({}));
+          return;
+        }
+      }
+
       const key = res.key.key;
       const keyClient = client.withKey(key);
 

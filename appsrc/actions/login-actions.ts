@@ -8,6 +8,7 @@ import {
   ATTEMPT_LOGIN, IAttemptLoginPayload,
   LOGIN_WITH_PASSWORD, ILoginWithPasswordPayload,
   LOGIN_WITH_TOKEN, ILoginWithTokenPayload,
+  LOGIN_CANCELLED, ILoginCancelledPayload,
   LOGIN_FAILED, ILoginFailedPayload,
   LOGIN_SUCCEEDED, ILoginSucceededPayload,
 
@@ -21,6 +22,7 @@ export const loginStopPicking = createAction<ILoginStopPickingPayload>(LOGIN_STO
 export const attemptLogin = createAction<IAttemptLoginPayload>(ATTEMPT_LOGIN);
 export const loginWithPassword = createAction<ILoginWithPasswordPayload>(LOGIN_WITH_PASSWORD);
 export const loginWithToken = createAction<ILoginWithTokenPayload>(LOGIN_WITH_TOKEN);
+export const loginCancelled = createAction<ILoginCancelledPayload>(LOGIN_CANCELLED);
 export const loginFailed = createAction<ILoginFailedPayload>(LOGIN_FAILED);
 export const loginSucceeded = createAction<ILoginSucceededPayload>(LOGIN_SUCCEEDED);
 
