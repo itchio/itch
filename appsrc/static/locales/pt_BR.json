@@ -321,5 +321,10 @@
     "toast.actions.report": "Envie seu feedback para ajudar a aprimorar o itch",
     "new_tab.titles.buttons": "Tente uma destas opções:",
     "outlinks.open_dashboard": "Abrir painel",
-    "outlinks.manage_collections": "Gerenciar coleções"
+    "outlinks.manage_collections": "Gerenciar coleções",
+    "preferences.behavior": "Comportamento",
+    "preferences.behavior.close_to_tray": "Manter ícone na barra de tarefas ao fechar a janela",
+    "preferences.advanced": "Avançado",
+    "pick_install_upload.title": "Há múltiplos downloads disponíveis para {{title}}",
+    "pick_install_upload.message": "Qual arquivo deseja baixar para {{title}}?"
 }
