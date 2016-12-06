@@ -243,5 +243,5 @@
     "game.install.try_again": "Zkusit znovu",
     "game.install.visit_web_page": "Navštívit webovou stránku",
     "i18n.failed_downloading_locales": "Aktualizace překladu pro jazyk {{lang}} nemohla být stažena.",
-    "install_location.empty": "Nic není na tomto umístění nainstalováno"
+    "install_location.empty": "V tomto umístění ještě není nic nainstalováno"
 }
