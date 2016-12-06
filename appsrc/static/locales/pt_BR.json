@@ -311,5 +311,8 @@
     "game.install.could_not_launch.missing_jre": "Requer Java, o qual não foi encontrado no seu sistema.",
     "grid.item.download_java": "Baixar Java",
     "grid.item.update": "Atualizar",
-    "login.messages.welcome_back-halloween": "Quem se atreve a interromper meu sono"
+    "login.messages.welcome_back-halloween": "Quem se atreve a interromper meu sono",
+    "login.two_factor.title": "Autenticação em duas etapas",
+    "login.two_factor.enter_code": "Por favor digite o código que aparece em seu autenticador para continuar o login.",
+    "login.two_factor.verification_code_label": "Código de verificação"
 }
