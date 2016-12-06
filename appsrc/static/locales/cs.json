@@ -157,5 +157,8 @@
     "search.results.creators": "Tvůrci",
     "search.empty.no_results": "Žádné výsledky nenalezeny",
     "search.empty.tagline": "Potřebujete inspiraci? Zkuste vyhledat '{{example}}'",
-    "browser.popout": "Otevřít stránku v externím prohlížeči"
+    "browser.popout": "Otevřít stránku v externím prohlížeči",
+    "menu.view.downloads": "Stahování",
+    "menu.view.history": "Historie",
+    "menu.view.view": "Zobrazit"
 }
