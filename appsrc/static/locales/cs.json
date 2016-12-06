@@ -144,5 +144,17 @@
     "sidebar.collections": "Kolekce",
     "search.placeholder": "Hledání",
     "sidebar.itchio": "Váš portál do světa nezávislých her",
-    "menu.file.new_tab": "Nová karta"
+    "menu.file.new_tab": "Nová karta",
+    "menu.file.close_tab": "Zavřít kartu",
+    "menu.file.close_all_tabs": "Zavřít všechny karty",
+    "search.open_as_tab": "Otevřít jako kartu",
+    "sidebar.close_all_tabs": "Zavřít všechny karty",
+    "sidebar.category.tabs": "Karty",
+    "sidebar.new_tab": "Nová karta",
+    "search.results.title": "Výsledky hledání pro '{{query}}'",
+    "search.results.local": "Lokální",
+    "search.results.games": "Hry",
+    "search.results.creators": "Tvůrci",
+    "search.empty.no_results": "Žádné výsledky nenalezeny",
+    "search.empty.tagline": "Potřebujete inspiraci? Zkuste vyhledat '{{example}}'"
 }
