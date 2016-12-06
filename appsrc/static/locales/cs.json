@@ -245,5 +245,6 @@
     "i18n.failed_downloading_locales": "Aktualizace překladu pro jazyk {{lang}} nemohla být stažena.",
     "install_location.empty": "V tomto umístění ještě není nic nainstalováno",
     "login.action.show_form": "Přihlásit se jako někdo jiný",
-    "login.action.show_saved_logins": "Uložená přihlášení"
+    "login.action.show_saved_logins": "Uložená přihlášení",
+    "login.messages.welcome_back": "Vítejte zpátky!"
 }
