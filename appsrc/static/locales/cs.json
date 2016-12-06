@@ -222,5 +222,7 @@
     "prompt.uninstall.cancel": "Zrušit",
     "prompt.uninstall.message": "Opravdu chcete odinstalovat {{title}}?",
     "prompt.uninstall.reinstall": "Přeinstalovat",
-    "prompt.uninstall.uninstall": "Teď odinstalovat"
+    "prompt.uninstall.uninstall": "Teď odinstalovat",
+    "docs.learn_more": "Zjistit více",
+    "download.started": "Spuštěno"
 }
