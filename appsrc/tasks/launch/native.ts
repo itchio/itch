@@ -327,6 +327,12 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     }
   }
 
+  const tmpPath = ospath.join(cwd, "temp");
+  env = Object.assign({}, env, {
+    TMP: tmpPath,
+    TEMP: tmpPath,
+  });
+
   log(opts, `command: ${command}`);
   log(opts, `args: ${JSON.stringify(args, null, 2)}`);
   log(opts, `env keys: ${JSON.stringify(Object.keys(env), null, 2)}`);
