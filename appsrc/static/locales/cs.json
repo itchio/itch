@@ -228,5 +228,11 @@
     "download.reason.update": "kvůli aktualizaci na nejnovější verzi",
     "download.reason.reinstall": "kvůli přeinstalaci",
     "download.reason.revert": "kvůli vrácení na předchozí verzi",
-    "download.reason.heal": "kvůli ověření a opravení"
+    "download.reason.heal": "kvůli ověření a opravení",
+    "duration.hour": "hodina",
+    "duration.hours": "{{x}} hodin",
+    "duration.minute": "minuta nebo méně",
+    "duration.minutes": "{{x}} minut",
+    "game.install.could_not_launch": "Během spouštění {{title}} se vyskytla chyba",
+    "game.install.could_not_launch.detail": "Jeho poslední slova byla: {{error}}"
 }
