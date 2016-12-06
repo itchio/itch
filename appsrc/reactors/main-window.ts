@@ -3,6 +3,7 @@ import {Watcher} from "./watcher";
 
 import {darkMineShaft} from "../constants/colors";
 import {app, BrowserWindow} from "../electron";
+import {IBrowserWindow} from "../electron/types";
 import config from "../util/config";
 import os from "../util/os";
 import * as ospath from "path";
@@ -69,6 +70,7 @@ async function createWindow (store: IStore, hidden: boolean) {
   if (!center) {
     window.setPosition(bounds.x, bounds.y);
   }
+  ensureWindowInsideDisplay(window);
 
   let destroyTimeout: NodeJS.Timer;
 
@@ -186,7 +188,7 @@ async function createWindow (store: IStore, hidden: boolean) {
     log(opts, "Ready to show!");
     if (parseInt(process.env.DEVTOOLS, 10) > 0) {
       log(opts, "Opening devtools");
-      window.webContents.openDevTools({detach: true});
+      window.webContents.openDevTools({mode: "detach"});
     } else {
       log(opts, "No devtools");
     }
@@ -195,7 +197,7 @@ async function createWindow (store: IStore, hidden: boolean) {
     if (firstWindow) {
       firstWindow = false;
       log(opts, `Sending windowReady with id ${window.id}`);
-      store.dispatch(actions.firstWindowReady({id: window.id}));
+      store.dispatch(actions.firstWindowReady({}));
     }
 
     store.dispatch(actions.windowReady({id: window.id}));
@@ -212,6 +214,66 @@ async function createWindow (store: IStore, hidden: boolean) {
   log(opts, "Calling loadURL");
 }
 
+/**
+ * Make sure the window isn't outside the bounds of the screen,
+ * cf. https://github.com/itchio/itch/issues/1051
+ */
+function ensureWindowInsideDisplay (window: IBrowserWindow) {
+  const originalBounds = window.getBounds();
+  log(opts, `Ensuring ${JSON.stringify(originalBounds)} is inside a display`);
+
+  const {screen} = require("electron");
+  const display = screen.getDisplayMatching(originalBounds);
+  if (!display) {
+    log(opts, `No display found matching ${JSON.stringify(originalBounds)}`);
+    return;
+  }
+
+  const displayBounds = display.bounds;
+  log(opts, `Display bounds: ${JSON.stringify(displayBounds)}`);
+
+  let bounds = originalBounds;
+
+  const displayLeft = displayBounds.x;
+  if (bounds.x < displayLeft) {
+    log(opts, `Nudging right`);
+    bounds = Object.assign({}, bounds, {
+      x: displayLeft,
+    });
+  }
+
+  const displayTop = displayBounds.y;
+  if (bounds.y < displayTop) {
+    log(opts, `Nudging down`);
+    bounds = Object.assign({}, bounds, {
+      y: displayTop,
+    });
+  }
+
+  const displayRight = displayBounds.width + displayBounds.x;
+  if (bounds.x + bounds.width > displayRight) {
+    log(opts, `Nudging left`);
+    bounds = Object.assign({}, bounds, {
+      x: displayRight - bounds.width,
+    });
+  }
+
+  const displayBottom = displayBounds.height + displayBounds.y;
+  if (bounds.y + bounds.height > displayBottom) {
+    log(opts, `Nudging up`);
+    bounds = Object.assign({}, bounds, {
+      y: displayBottom - bounds.height,
+    });
+  }
+
+  if (bounds !== originalBounds) {
+    log(opts, `New bounds: ${JSON.stringify(bounds)}`);
+    window.setBounds(bounds);
+  } else {
+    log(opts, `Bounds unchanged: ${JSON.stringify(originalBounds)}`);
+  }
+}
+
 async function hideWindow () {
   const window = BrowserWindow.getFocusedWindow();
   if (window) {
@@ -219,20 +281,45 @@ async function hideWindow () {
   }
 }
 
-// TODO: type window? electron typings aren't really cooperating with our
-// whole fake-electron thing for testing.
-function showWindow (window: any) {
+function showWindow (window: IBrowserWindow) {
   window.show();
   const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false;
   if (maximized && !macOs) {
     window.maximize();
   }
+
+  if (!maximized) {
+    ensureWindowInsideDisplay(window);
+  }
+}
+
+function ensureMainWindowInsideDisplay (store: IStore) {
+  const id = store.getState().ui.mainWindow.id;
+  if (!id) {
+    return;
+  }
+
+  const window = BrowserWindow.fromId(id);
+  if (!window) {
+    return;
+  }
+
+  if (!window.isVisible()) {
+    return;
+  }
+
+  ensureWindowInsideDisplay(window);
 }
 
 export default function (watcher: Watcher) {
   watcher.on(actions.preferencesLoaded, async (store, action) => {
     const hidden = action.payload.openAsHidden;
     store.dispatch(actions.focusWindow({hidden}));
+
+    const {screen} = require("electron");
+    screen.on("display-added", () => ensureMainWindowInsideDisplay(store));
+    screen.on("display-removed", () => ensureMainWindowInsideDisplay(store));
+    screen.on("display-metrics-changed", () => ensureMainWindowInsideDisplay(store));
   });
 
   watcher.on(actions.focusWindow, async (store, action) => {

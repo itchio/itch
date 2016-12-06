@@ -16,7 +16,7 @@ if (env.name === "test") {
   }
 }
 
-import {IApp, INet} from "./types";
+import {IApp, INet, IBrowserWindowStatic} from "./types";
 
 export const net = electron.net as INet;
 export const app = electron.app as IApp;
@@ -30,7 +30,7 @@ export const dialog = electron.dialog;
 export const webFrame = electron.webFrame;
 export const Menu = electron.Menu;
 export const Tray = electron.Tray;
-export const BrowserWindow = electron.BrowserWindow;
+export const BrowserWindow = electron.BrowserWindow as IBrowserWindowStatic;
 
 export interface IMenuItem {
   type?: string;
