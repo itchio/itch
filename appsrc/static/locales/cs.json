@@ -247,5 +247,6 @@
     "login.action.show_form": "Přihlásit se jako někdo jiný",
     "login.action.show_saved_logins": "Uložená přihlášení",
     "login.messages.welcome_back": "Vítejte zpátky!",
-    "login.messages.welcome_back-halloween": "Kdo se to opovažuje rušit můj spánek?"
+    "login.messages.welcome_back-halloween": "Kdo se to opovažuje rušit můj spánek?",
+    "login.remembered_session.last_connected": "Naposledy připojen"
 }
