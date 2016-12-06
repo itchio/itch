@@ -316,5 +316,6 @@
     "login.two_factor.enter_code": "Por favor digite o código que aparece em seu autenticador para continuar o login.",
     "login.two_factor.verification_code_label": "Código de verificação",
     "menu.file.new_tab": "Nova aba",
-    "toast.call_to_action": "Para continuar, recarregue ou vá para outra página."
+    "toast.call_to_action": "Para continuar, recarregue ou vá para outra página.",
+    "toast.actions.reload": "Recarregar"
 }
