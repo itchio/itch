@@ -317,5 +317,7 @@
     "login.two_factor.verification_code_label": "Código de verificação",
     "menu.file.new_tab": "Nova aba",
     "toast.call_to_action": "Para continuar, recarregue ou vá para outra página.",
-    "toast.actions.reload": "Recarregar"
+    "toast.actions.reload": "Recarregar",
+    "toast.actions.report": "Envie seu feedback para ajudar a aprimorar o itch",
+    "new_tab.titles.buttons": "Tente uma destas opções:"
 }
