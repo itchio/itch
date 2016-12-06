@@ -326,5 +326,6 @@
     "preferences.behavior.close_to_tray": "Manter ícone na barra de tarefas ao fechar a janela",
     "preferences.advanced": "Avançado",
     "pick_install_upload.title": "Há múltiplos downloads disponíveis para {{title}}",
-    "pick_install_upload.message": "Qual arquivo deseja baixar para {{title}}?"
+    "pick_install_upload.message": "Qual arquivo deseja baixar para {{title}}?",
+    "grid.item.review": "Analisar"
 }
