@@ -237,5 +237,6 @@
     "game.install.could_not_launch.detail": "Jejich poslední slova byla: {{error}}",
     "game.install.could_not_launch.missing_jre": "Vyžaduje Javu, kterou jsme nenašli ve vašem systému.",
     "game.install.no_executables_found": "Nebyly nalezeny spustitelné soubory",
-    "game.install.no_html_index_found": "Nebyl nalezen soubor index.html"
+    "game.install.no_html_index_found": "Nebyl nalezen soubor index.html",
+    "game.install.no_uploads_available.detail": "Pravděpodobně není kompatibilní s Vaší platformou a nebo aplikací itch!"
 }
