@@ -184,5 +184,8 @@
     "grid.item.advanced": "Pokročilé...",
     "grid.item.download_java": "Stáhnout Javu",
     "grid.item.review": "Recenzovat",
-    "grid.item.update": "Aktualizovat"
+    "grid.item.update": "Aktualizovat",
+    "grid.item.launch_demo": "Spustit demo",
+    "grid.item.share": "Sdílet",
+    "grid.item.open": "Otevřít"
 }
