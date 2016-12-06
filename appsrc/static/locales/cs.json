@@ -277,5 +277,12 @@
     "preferences.behavior.manual_game_updates": "Ptát se před aktualizací čehokoliv",
     "preferences.notifications": "Oznámení",
     "preferences.notifications.ready_notification": "Upozornit mě o instalaci a aktualizaci položek",
-    "preferences.language.auto": "Jazyk systému ({{language}})"
+    "preferences.language.auto": "Jazyk systému ({{language}})",
+    "preferences.advanced": "Pokročilé",
+    "preferences.advanced.open_app_log": "Otevřít záznamy aplikace",
+    "preferences.proxy_server_address": "HTTPS proxy",
+    "preferences.proxy_server_source.direct": "Přímá (žádná proxy)",
+    "prompt.logout_action": "Odhlásit se",
+    "prompt.logout_title": "Odhlášení",
+    "sidebar.log_out": "Odhlásit se"
 }
