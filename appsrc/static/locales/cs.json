@@ -255,5 +255,7 @@
     "login.two_factor.verification_code_label": "Ověřovací kód",
     "login.two_factor.learn_more": "Zjistit více o dvoufázovém ověřování",
     "moment.now": "teď",
-    "toast.title": "Ale ne!"
+    "toast.title": "Ale ne!",
+    "toast.message": "Stalo se něco nečekaného.",
+    "toast.call_to_action": "Pokračujte obnovením, nebo přechodem na jinou stránku."
 }
