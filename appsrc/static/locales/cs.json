@@ -19,7 +19,7 @@
     "login.action.login": "Log in",
     "login.action.register": "Zaregistrovat",
     "login.action.reset_password": "Zapomenuté heslo",
-    "login.field.password": "Password",
+    "login.field.password": "Heslo",
     "login.field.username": "Uživatelské jméno nebo e-mail",
     "login.status.dependency_check": "Ověřování, zda je vše příslušně nastaveno…",
     "login.status.dependency_install": "Instaluji související {{name}} {{version}}",
