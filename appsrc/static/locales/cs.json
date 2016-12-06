@@ -224,5 +224,9 @@
     "prompt.uninstall.reinstall": "Přeinstalovat",
     "prompt.uninstall.uninstall": "Teď odinstalovat",
     "docs.learn_more": "Zjistit více",
-    "download.started": "Spuštěno"
+    "download.started": "Spuštěno",
+    "download.reason.update": "kvůli aktualizaci na nejnovější verzi",
+    "download.reason.reinstall": "kvůli přeinstalaci",
+    "download.reason.revert": "kvůli vrácení na předchozí verzi",
+    "download.reason.heal": "kvůli ověření a opravení"
 }
