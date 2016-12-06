@@ -306,5 +306,6 @@
     "toast.message": "Algo inesperado aconteceu.",
     "toast.actions.learn_more": "Saiba mais",
     "toast.no_info_available": "Nenhuma informação disponível",
-    "download.reason.reinstall": "para reinstalar"
+    "download.reason.reinstall": "para reinstalar",
+    "game.install.could_not_launch.detail": "Suas últimas palavras foram: {{error}}"
 }
