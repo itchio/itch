@@ -36,7 +36,7 @@ import {transformUrl} from "../util/navigation";
 import {ITabData, IState} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
 
-import {IWebView, IWebContents, ISession} from "./electron-web-types";
+import {IWebView, IWebContents, ISession} from "../electron/types";
 
 interface IHistoryEntry {
   url: string;
