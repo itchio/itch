@@ -77,7 +77,7 @@ test("api", t => {
 
     testAPI(
       "loginWithPassword", ["foo", "bar"],
-      ["post", "/login", {username: "foo", password: "bar", source: "desktop"}]
+      ["post", "/login", {username: "foo", password: "bar", source: "desktop", v: 2}]
     );
   }
 
@@ -124,7 +124,7 @@ test("api", t => {
     );
     testAPI(
       "downloadUpload", [{id: "foobar"}, 99],
-      ["get", "/download-key/foobar/download/99"]
+      ["get", "/upload/99/download", {download_key_id: "foobar"}]
     );
     testAPI(
       "listUploads", [null, 33],
