@@ -156,5 +156,6 @@
     "search.results.games": "Hry",
     "search.results.creators": "Tvůrci",
     "search.empty.no_results": "Žádné výsledky nenalezeny",
-    "search.empty.tagline": "Potřebujete inspiraci? Zkuste vyhledat '{{example}}'"
+    "search.empty.tagline": "Potřebujete inspiraci? Zkuste vyhledat '{{example}}'",
+    "browser.popout": "Otevřít stránku v externím prohlížeči"
 }
