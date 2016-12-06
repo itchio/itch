@@ -319,5 +319,7 @@
     "toast.call_to_action": "Para continuar, recarregue ou vá para outra página.",
     "toast.actions.reload": "Recarregar",
     "toast.actions.report": "Envie seu feedback para ajudar a aprimorar o itch",
-    "new_tab.titles.buttons": "Tente uma destas opções:"
+    "new_tab.titles.buttons": "Tente uma destas opções:",
+    "outlinks.open_dashboard": "Abrir painel",
+    "outlinks.manage_collections": "Gerenciar coleções"
 }
