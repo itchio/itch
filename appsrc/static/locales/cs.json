@@ -248,5 +248,10 @@
     "login.action.show_saved_logins": "Uložená přihlášení",
     "login.messages.welcome_back": "Vítejte zpátky!",
     "login.messages.welcome_back-halloween": "Kdo se to opovažuje rušit můj spánek?",
-    "login.remembered_session.last_connected": "Naposledy připojen"
+    "login.remembered_session.last_connected": "Naposledy připojen",
+    "login.two_factor.title": "Dvoufázové ověření",
+    "login.two_factor.as_user": "Přihlašování jako {{username}}",
+    "login.two_factor.enter_code": "Zadejte prosím kód z vašeho autentikátoru pro pokračování v přihlášení.",
+    "login.two_factor.verification_code_label": "Ověřovací kód",
+    "login.two_factor.learn_more": "Zjistit více o dvoufázovém ověřování"
 }
