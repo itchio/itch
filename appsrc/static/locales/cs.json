@@ -183,5 +183,6 @@
     "grid.item.developer": "Vývojář",
     "grid.item.advanced": "Pokročilé...",
     "grid.item.download_java": "Stáhnout Javu",
-    "grid.item.review": "Recenzovat"
+    "grid.item.review": "Recenzovat",
+    "grid.item.update": "Aktualizovat"
 }
