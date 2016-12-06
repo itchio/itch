@@ -187,5 +187,10 @@
     "grid.item.update": "Aktualizovat",
     "grid.item.launch_demo": "Spustit demo",
     "grid.item.share": "Sdílet",
-    "grid.item.open": "Otevřít"
+    "grid.item.open": "Otevřít",
+    "grid.item.open_demo": "Otevřít demo",
+    "grid.item.open_debug_log": "Zobrazit záznamy...",
+    "grid.item.show_local_files": "Zobrazit soubory na disku",
+    "grid.item.donate": "Přispět tvůrci",
+    "grid.item.donate_again": "Znovu přispějte tvůrci!"
 }
