@@ -327,5 +327,6 @@
     "preferences.advanced": "Avançado",
     "pick_install_upload.title": "Há múltiplos downloads disponíveis para {{title}}",
     "pick_install_upload.message": "Qual arquivo deseja baixar para {{title}}?",
-    "grid.item.review": "Analisar"
+    "grid.item.review": "Analisar",
+    "login.two_factor.as_user": "Logando como {{username}}"
 }
