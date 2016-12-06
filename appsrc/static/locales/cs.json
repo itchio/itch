@@ -276,5 +276,6 @@
     "preferences.behavior.open_at_login.causes.no_desktop_file": "Soubor .desktop nebyl nalezen. To je v pořádku, pokud jste nenainstalovali itch ze systémového balíčku. Podívejte se na {{linux_install_page}} pro více informací.",
     "preferences.behavior.manual_game_updates": "Ptát se před aktualizací čehokoliv",
     "preferences.notifications": "Oznámení",
-    "preferences.notifications.ready_notification": "Upozornit mě o instalaci a aktualizaci položek"
+    "preferences.notifications.ready_notification": "Upozornit mě o instalaci a aktualizaci položek",
+    "preferences.language.auto": "Jazyk systému ({{language}})"
 }
