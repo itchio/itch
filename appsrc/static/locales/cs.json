@@ -143,5 +143,6 @@
     "sidebar.collection": "Kolekce",
     "sidebar.collections": "Kolekce",
     "search.placeholder": "Hledání",
-    "sidebar.itchio": "Váš portál do světa nezávislých her"
+    "sidebar.itchio": "Váš portál do světa nezávislých her",
+    "menu.file.new_tab": "Nová karta"
 }
