@@ -182,5 +182,6 @@
     "grid.item.check_for_update": "Zkontrolovat aktualizace",
     "grid.item.developer": "Vývojář",
     "grid.item.advanced": "Pokročilé...",
-    "grid.item.download_java": "Stáhnout Javu"
+    "grid.item.download_java": "Stáhnout Javu",
+    "grid.item.review": "Recenzovat"
 }
