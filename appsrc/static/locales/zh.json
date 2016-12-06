@@ -280,5 +280,6 @@
     "usage_stats.description.comic": "漫画",
     "usage_stats.description.bought_time_ago": "已买 {{time_ago}}",
     "usage_stats.description.game": "游戏",
-    "search.placeholder": "搜索"
+    "search.placeholder": "搜索",
+    "usage_stats.description.book": "书籍"
 }
