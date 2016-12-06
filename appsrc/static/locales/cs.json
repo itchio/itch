@@ -160,5 +160,21 @@
     "browser.popout": "Otevřít stránku v externím prohlížeči",
     "menu.view.downloads": "Stahování",
     "menu.view.history": "Historie",
-    "menu.view.view": "Zobrazit"
+    "menu.view.view": "Zobrazit",
+    "menu.help.about": "O aplikaci",
+    "sidebar.empty": "Pojďme na to!",
+    "sidebar.aw_snap": "Ale ne!",
+    "new_tab.titles.buttons": "Zkuste něco z těchto:",
+    "new_tab.community": "Komunita",
+    "new_tab.on_sale": "Ve slevě",
+    "new_tab.random": "Zobrazit něco náhodného",
+    "new_tab.titles.browser_placeholder": "Napište jakoukoliv webovou adresu",
+    "new_tab.titles.input": "...nebo",
+    "new_tab.top_sellers": "Nejprodávanější",
+    "new_tab.twitter": "Populární na Twitteru",
+    "sidebar.view_creator_profile": "Zobrazit profil tvůrce",
+    "sidebar.view_community_profile": "Zobrazit komunitní profil",
+    "sidebar.downloads": "Stahování",
+    "sidebar.owned_subtitle": "Položky, které jste koupili nebo nainstalovali",
+    "grid.item.uninstalling": "Odinstalovávám…"
 }
