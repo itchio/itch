@@ -310,5 +310,6 @@
     "game.install.could_not_launch.detail": "Suas últimas palavras foram: {{error}}",
     "game.install.could_not_launch.missing_jre": "Requer Java, o qual não foi encontrado no seu sistema.",
     "grid.item.download_java": "Baixar Java",
-    "grid.item.update": "Atualizar"
+    "grid.item.update": "Atualizar",
+    "login.messages.welcome_back-halloween": "Quem se atreve a interromper meu sono"
 }
