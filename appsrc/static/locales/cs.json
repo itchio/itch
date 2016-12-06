@@ -238,5 +238,6 @@
     "game.install.could_not_launch.missing_jre": "Vyžaduje Javu, kterou jsme nenašli ve vašem systému.",
     "game.install.no_executables_found": "Nebyly nalezeny spustitelné soubory",
     "game.install.no_html_index_found": "Nebyl nalezen soubor index.html",
-    "game.install.no_uploads_available.detail": "Možná není kompatibilní s vaší platformou nebo s aplikací itch!"
+    "game.install.no_uploads_available.detail": "Možná není kompatibilní s vaší platformou nebo s aplikací itch!",
+    "game.install.no_uploads_available.message": "Nebyly nalezeny žádná kompatibilní stahování pro '{{title}}', instalace selhala."
 }
