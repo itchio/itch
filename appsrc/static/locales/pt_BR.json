@@ -307,5 +307,8 @@
     "toast.actions.learn_more": "Saiba mais",
     "toast.no_info_available": "Nenhuma informação disponível",
     "download.reason.reinstall": "para reinstalar",
-    "game.install.could_not_launch.detail": "A mensagem retornada foi: {{error}}"
+    "game.install.could_not_launch.detail": "Suas últimas palavras foram: {{error}}",
+    "game.install.could_not_launch.missing_jre": "Requer Java, o qual não foi encontrado no seu sistema.",
+    "grid.item.download_java": "Baixar Java",
+    "grid.item.update": "Atualizar"
 }
