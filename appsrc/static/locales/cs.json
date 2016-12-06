@@ -6,7 +6,7 @@
     "grid.item.cancel_download": "Zrušit stahování",
     "grid.item.downloading": "Stahování…",
     "grid.item.install": "Instalovat",
-    "grid.item.installing": "Instaluji...",
+    "grid.item.installing": "Probíhá instalace...",
     "grid.item.launch": "Spustit",
     "grid.item.not_platform_compatible": "Není k dispozici na {{platform}}",
     "grid.item.probe": "Otevřít záznam událostí této položky, a pokusit se z něj vyčíst příčinu problému (pokročilé)",
@@ -128,5 +128,15 @@
     "desktop.shortcut.comment": "Snadná instalace a hraní her z itch.io",
     "grid.item.finalize_installation": "Dokončit instalaci",
     "grid.item.open_in_file_explorer_linux": "Otevřít instalační adresář ve správci souborů",
-    "grid.item.open_in_file_explorer": "Otevřít instalační adresář v průzkumníku"
+    "grid.item.open_in_file_explorer": "Otevřít instalační adresář v průzkumníku",
+    "grid.criterion.filter": "Filtrovat...",
+    "grid.criterion.only_compatible": "Jen kompatibilní",
+    "grid.hidden_count": "+ {{count}} položek skrytých filtry",
+    "grid.clear_filters": "Vyčistit filtry",
+    "action.name.play": "Hrát",
+    "action.name.manual": "Uživatelský manuál",
+    "action.name.editor": "Editor",
+    "action.name.forums": "Diskuzní fóra",
+    "label.experimental": "Experimentální",
+    "collection.empty": "Tato kolekce je prázdná"
 }
