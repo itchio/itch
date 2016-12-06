@@ -314,5 +314,6 @@
     "login.messages.welcome_back-halloween": "Quem se atreve a interromper meu sono",
     "login.two_factor.title": "Autenticação em duas etapas",
     "login.two_factor.enter_code": "Por favor digite o código que aparece em seu autenticador para continuar o login.",
-    "login.two_factor.verification_code_label": "Código de verificação"
+    "login.two_factor.verification_code_label": "Código de verificação",
+    "menu.file.new_tab": "Nova aba"
 }
