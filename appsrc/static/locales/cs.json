@@ -253,5 +253,6 @@
     "login.two_factor.as_user": "Přihlašování jako {{username}}",
     "login.two_factor.enter_code": "Zadejte prosím kód z vašeho autentikátoru pro pokračování v přihlášení.",
     "login.two_factor.verification_code_label": "Ověřovací kód",
-    "login.two_factor.learn_more": "Zjistit více o dvoufázovém ověřování"
+    "login.two_factor.learn_more": "Zjistit více o dvoufázovém ověřování",
+    "moment.now": "teď"
 }
