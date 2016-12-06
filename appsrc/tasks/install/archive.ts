@@ -127,7 +127,6 @@ const self = {
     self.cacheType(opts, installerName);
     log(opts, `found a '${installerName}': ${onlyFile}`);
     const nestedOpts = Object.assign({}, opts, sniffOpts);
-    log(opts, `installing it with sniff opts: ${JSON.stringify(sniffOpts, null, 2)}`);
     await core.install(out, nestedOpts);
 
     return {deployed: true};
