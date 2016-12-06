@@ -176,5 +176,7 @@
     "sidebar.view_community_profile": "Zobrazit komunitní profil",
     "sidebar.downloads": "Stahování",
     "sidebar.owned_subtitle": "Položky, které jste koupili nebo nainstalovali",
-    "grid.item.uninstalling": "Odinstalovávám…"
+    "grid.item.uninstalling": "Odinstalovávám…",
+    "grid.item.buy_now_again": "Koupit kopii navíc",
+    "grid.item.prioritize_download": "Upřednostnit"
 }
