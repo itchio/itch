@@ -1,50 +1,52 @@
 
-import * as invariant from "invariant";
-
-import {handleActions} from "redux-actions";
 import {createStructuredSelector} from "reselect";
 import {sortBy, omit, map, indexBy, filter} from "underscore";
 
 import {IHistoryState} from "../types";
 
+import reducer from "./reducer";
 import derivedReducer from "./derived-reducer";
-
-import {
-  IAction,
-  IQueueHistoryItemPayload,
-  IDismissHistoryItemPayload,
-  IHistoryReadPayload,
-} from "../constants/action-types";
+import * as actions from "../actions";
 
 const initialState = {
   items: {},
   itemsByDate: [],
 } as IHistoryState;
 
-const reducer = handleActions<IHistoryState, any>({
-  QUEUE_HISTORY_ITEM: (state: IHistoryState, action: IAction<IQueueHistoryItemPayload>) => {
+const baseReducer = reducer<IHistoryState>(initialState, (on) => {
+  on(actions.queueHistoryItem, (state, action) => {
     const {payload} = action;
-    const {items} = state;
-    return Object.assign({}, state, {items: Object.assign({}, items, {[payload.id]: payload})});
-  },
+    return {
+      ...state,
+      items: {
+        ...state.items,
+        [payload.id]: payload,
+      },
+    };
+  });
 
-  DISMISS_HISTORY_ITEM: (state: IHistoryState, action: IAction<IDismissHistoryItemPayload>) => {
+  on(actions.dismissHistoryItem, (state, action) => {
     const {id} = action.payload;
-    invariant(typeof id === "string", "dismissing valid history item");
-    const {items} = state;
-    return Object.assign({}, state, {items: omit(items, id)});
-  },
+    return {
+      ...state,
+      items: omit(state.items, id),
+    };
+  });
 
-  HISTORY_READ: (state: IHistoryState, action: IAction<IHistoryReadPayload>) => {
-    const {items} = state;
-    const newItems = indexBy(map(items, (item, id) => Object.assign({}, item, {active: false})), "id");
-    return Object.assign({}, state, {items: newItems});
-  },
-}, initialState);
+  on(actions.historyRead, (state, action) => {
+    return {
+      ...state,
+      items: indexBy(map(state.items, (item, id) => ({
+        ...item,
+        active: false,
+      })), "id"),
+    };
+  });
+});
 
 const selector = createStructuredSelector({
   itemsByDate: (state: IHistoryState) => sortBy(state.items, (x) => -x.date),
   numActiveItems: (state: IHistoryState) => filter(state.items, (x) => x.active).length,
 });
 
-export default derivedReducer(reducer, selector);
+export default derivedReducer(baseReducer, selector);

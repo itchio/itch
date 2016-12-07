@@ -48,7 +48,7 @@ export default reducer<II18nState>(initialState, (on) => {
         [lang]: {
           ...state.strings[lang],
           ...resources,
-        }
+        },
       },
     };
   });

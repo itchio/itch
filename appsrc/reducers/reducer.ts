@@ -33,7 +33,7 @@ export default function reducer <State> (
     cb(<Payload> (actionCreator: IActionCreator<Payload>, reducer: IActionReducer<State, Payload>) => {
         const sampleAction = actionCreator({} as any);
         if (actionReducers[sampleAction.type]) {
-            throw new Error(`reducing same action type twice: ${sampleAction.type}`)
+            throw new Error(`reducing same action type twice: ${sampleAction.type}`);
         }
 
         actionReducers[sampleAction.type] = reducer;
