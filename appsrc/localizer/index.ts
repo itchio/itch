@@ -14,7 +14,12 @@ export interface ILocalizer {
 
 export function getT (strings: II18nResources, lang: string) {
   const t: ILocalizer = ((key: string | string[], variables?: any) => {
-    const langs = [lang, "en"];
+    let langs = [lang];
+    if (lang.length > 2) {
+      langs = [...langs, lang.substring(0, 2)];
+    }
+    
+    langs = [...langs, "en"];
     const keys = Array.isArray(key) ? key : [key];
 
     let str: string;
