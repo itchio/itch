@@ -1,42 +1,14 @@
 
-import * as uuid from "uuid";
-import {handleActions} from "redux-actions";
 import {createSelector, createStructuredSelector} from "reselect";
 
 import * as invariant from "invariant";
 import {indexBy, where, sortBy, pluck, filter, map, first, last, omit} from "underscore";
 
-import {IDownloadsState, IGameRecord} from "../types";
-import {
-   IAction,
-   IClearGameDownloadsPayload,
-   IDownloadStartedPayload, IDownloadProgressPayload, IDownloadEndedPayload,
-   IDownloadSpeedDatapointPayload,
-   IPrioritizeDownloadPayload, ICancelDownloadPayload,
-   IClearFinishedDownloadsPayload,
-   IPauseDownloadsPayload,
-   IResumeDownloadsPayload,
-  } from "../constants/action-types";
+import {IDownloadsState} from "../types";
 
+import reducer from "./reducer";
 import derivedReducer from "./derived-reducer";
-
-const makeFakeDownloads = () => indexBy(map([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], (x, i) => {
-  return {
-    id: uuid.v4(),
-    game: {
-      id: -i,
-      title: "Sample game",
-      userId: -(i + 100),
-    } as IGameRecord,
-    gameId: -i,
-    finished: (i >= 5),
-    reason: "install",
-    progress: (i + 3) * 0.1,
-    totalSize: i * 304138,
-    pOsx: (i % 2 === 0),
-    order: -i,
-  };
-}), "id");
+import * as actions from "../actions";
 
 const SPEED_DATA_POINT_COUNT = 60;
 
@@ -67,7 +39,7 @@ const selector = createSelector(
 
 const baseInitialState = {
   speeds: map(new Array(SPEED_DATA_POINT_COUNT), (x) => ({ bps: 0 })),
-  downloads: (process.env.FAKE_DOWNLOADS === "1" ? makeFakeDownloads() : {}),
+  downloads: {},
   downloadsPaused: false,
 };
 const initialState = Object.assign({}, baseInitialState, selector(baseInitialState));
@@ -83,49 +55,74 @@ const updateSingle = (state: IDownloadsState, record: any) => {
     return state;
   }
 
-  const newDownloads = Object.assign({}, downloads, {
-    [id]: Object.assign({}, download, record),
-  });
-  return Object.assign({}, state, {downloads: newDownloads});
+  return {
+    ...state,
+    downloads: {
+      ...state.downloads,
+      [id]: {
+        ...download,
+        ...record,
+      },
+    },
+  };
 };
 
-const reducer = handleActions<IDownloadsState, any>({
-  CLEAR_GAME_DOWNLOADS: (state: IDownloadsState, action: IAction<IClearGameDownloadsPayload>) => {
-    const {downloads} = state;
+function downloadsExceptForGame (downloads: IDownloadsState["downloads"], gameId: number) {
+  return indexBy(
+    filter(downloads, (dl) => dl.gameId !== gameId),
+    "id",
+  );
+}
+
+function downloadsExceptFinished (downloads: IDownloadsState["downloads"]) {
+  return indexBy(
+    filter(downloads, (dl) => !dl.finished),
+    "id",
+  );
+}
+
+const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
+  on(actions.clearGameDownloads, (state, action) => {
     const {gameId} = action.payload;
+    return {
+      ...state,
+      downloads: downloadsExceptForGame(state.downloads, gameId),
+    };
+  });
 
-    const newDownloads = indexBy(filter(downloads, (x) => x.game.id !== gameId), "id");
-    return Object.assign({}, state, {downloads: newDownloads});
-  },
-
-  DOWNLOAD_STARTED: (state: IDownloadsState, action: IAction<IDownloadStartedPayload>) => {
-    const {downloads} = state;
+  on(actions.downloadStarted, (state, action) => {
     const download = action.payload;
-    invariant(download.id, "valid download id in started");
-    const carryOver = indexBy(filter(downloads, (x) => x.gameId !== download.gameId), "id");
-    const newDownloads = Object.assign({}, carryOver, {[download.id]: download});
-    return Object.assign({}, state, {downloads: newDownloads});
-  },
 
-  DOWNLOAD_PROGRESS: (state: IDownloadsState, action: IAction<IDownloadProgressPayload>) => {
+    invariant(download.id, "valid download id in started");
+    return {
+      ...state,
+      downloads: {
+        ...downloadsExceptForGame(state.downloads, download.gameId),
+        [download.id]: download,
+      },
+    };
+  });
+
+  on(actions.downloadProgress, (state, action) => {
     const record = action.payload;
     return updateSingle(state, record);
-  },
+  });
 
-  DOWNLOAD_ENDED: (state: IDownloadsState, action: IAction<IDownloadEndedPayload>) => {
+  on(actions.downloadEnded, (state, action) => {
     const {id, err} = action.payload;
     return updateSingle(state, {id, finished: true, err});
-  },
+  });
 
-  DOWNLOAD_SPEED_DATAPOINT: (state: IDownloadsState, action: IAction<IDownloadSpeedDatapointPayload>) => {
+  on(actions.downloadSpeedDatapoint, (state, action) => {
     const {payload} = action;
 
-    return Object.assign({}, state, {
+    return {
+      ...state,
       speeds: last([...state.speeds, payload], SPEED_DATA_POINT_COUNT),
-    });
-  },
+    };
+  });
 
-  PRIORITIZE_DOWNLOAD: (state: IDownloadsState, action: IAction<IPrioritizeDownloadPayload>) => {
+  on(actions.prioritizeDownload, (state, action) => {
     const {id} = action.payload;
     const {activeDownload} = selector(state);
 
@@ -138,32 +135,39 @@ const reducer = handleActions<IDownloadsState, any>({
     const order = activeDownload.order - 1;
 
     return updateSingle(state, {id, order});
-  },
+  });
 
-  CANCEL_DOWNLOAD: (state: IDownloadsState, action: IAction<ICancelDownloadPayload>) => {
+  on(actions.cancelDownload, (state, action) => {
     const {id} = action.payload;
     const {downloads} = state;
 
     const download = downloads[id];
     invariant(download, "cancelling valid download");
 
-    const newDownloads = omit(downloads, id);
-    return Object.assign({}, state, {downloads: newDownloads});
-  },
+    return {
+      ...state,
+      downloads: omit(state.downloads, id),
+    };
+  });
 
-  CLEAR_FINISHED_DOWNLOADS: (state: IDownloadsState, action: IAction<IClearFinishedDownloadsPayload>) => {
-    const {downloads} = state;
-    const newDownloads = indexBy(filter(downloads, (x) => !x.finished), "id");
-    return Object.assign({}, state, {downloads: newDownloads});
-  },
+  on(actions.clearFinishedDownloads, (state, action) => {
+    return {
+      ...state,
+      downloads: downloadsExceptFinished(state.downloads),
+    };
+  });
 
-  PAUSE_DOWNLOADS: (state: IDownloadsState, action: IAction<IPauseDownloadsPayload>) => {
-    return Object.assign({}, state, {downloadsPaused: true});
-  },
+  on(actions.pauseDownloads, (state, action) => {
+    return Object.assign({}, state, {
+      downloadsPaused: true,
+    });
+  });
 
-  RESUME_DOWNLOADS: (state: IDownloadsState, action: IAction<IResumeDownloadsPayload>) => {
-    return Object.assign({}, state, {downloadsPaused: false});
-  },
-}, initialState);
+  on(actions.resumeDownloads, (state, action) => {
+    return Object.assign({}, state, {
+      downloadsPaused: false,
+    });
+  });
+});
 
-export default derivedReducer(reducer, selector);
+export default derivedReducer(baseReducer, selector);
