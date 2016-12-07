@@ -62,7 +62,7 @@
     "file-type": "^3.0.0",
     "finalhandler": "^0.4.1",
     "fnout": "^1.1.0",
-    "fuse.js": "^2.2.0",
+    "fuse.js": "2.2.0",
     "glob": "^7.0.3",
     "graceful-fs": "^4.1.2",
     "hint.css": "^2.2.0",
