@@ -24,6 +24,7 @@ import {
   TAB_DATA_FETCHED, ITabDataFetchedPayload,
 
   OPEN_TAB_CONTEXT_MENU, IOpenTabContextMenuPayload,
+  OPEN_GAME_CONTEXT_MENU, IOpenGameContextMenuPayload,
   UNLOCK_TAB, IUnlockTabPayload,
 
   OPEN_URL, IOpenUrlPayload,
@@ -75,6 +76,7 @@ export const tabsRestored = createAction<ITabsRestoredPayload>(TABS_RESTORED);
 export const tabDataFetched = createAction<ITabDataFetchedPayload>(TAB_DATA_FETCHED);
 
 export const openTabContextMenu = createAction<IOpenTabContextMenuPayload>(OPEN_TAB_CONTEXT_MENU);
+export const openGameContextMenu = createAction<IOpenGameContextMenuPayload>(OPEN_GAME_CONTEXT_MENU);
 export const unlockTab = createAction<IUnlockTabPayload>(UNLOCK_TAB);
 
 export const openUrl = createAction<IOpenUrlPayload>(OPEN_URL);

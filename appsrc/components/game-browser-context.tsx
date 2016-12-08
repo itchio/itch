@@ -13,10 +13,12 @@ import {pathToId} from "../util/navigation";
 import {findWhere} from "underscore";
 
 import {ILocalizer} from "../localizer";
+import {IAction, dispatcher} from "../constants/action-types";
 import {
   IState, IGameRecord, ICaveRecord, IDownloadKey, ITabData,
   IUserMarketState, IGlobalMarketState,
 } from "../types";
+import * as actions from "../actions";
 
 import {IBrowserState} from "./browser-state";
 import GameBrowserContextActions from "./game-browser-context-actions";
@@ -27,6 +29,13 @@ export class GameBrowserContext extends React.Component<IGameBrowserContextProps
     this.state = {
       hover: false,
     };
+
+    this.onContextMenu = this.onContextMenu.bind(this);
+  }
+
+  onContextMenu () {
+    const {game, openGameContextMenu} = this.props;
+    openGameContextMenu({game});
   }
 
   render () {
@@ -54,7 +63,7 @@ export class GameBrowserContext extends React.Component<IGameBrowserContextProps
       }
     }
 
-    return <div className={barClasses} style={barStyle}>
+    return <div className={barClasses} style={barStyle} onContextMenu={this.onContextMenu}>
       <div className="cover" style={coverStyle}
         onMouseEnter={this.onMouseEnter.bind(this)}
         onMouseLeave={this.onMouseLeave.bind(this)}>
@@ -113,6 +122,8 @@ interface IGameBrowserContextProps {
   tabPath: string;
   browserState: IBrowserState;
 
+  openGameContextMenu: typeof actions.openGameContextMenu;
+
   t: ILocalizer;
 }
 
@@ -156,7 +167,9 @@ const mapStateToProps = () => {
   );
 };
 
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+  openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
+});
 
 export default connect(
   mapStateToProps,

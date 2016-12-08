@@ -343,6 +343,12 @@ export interface IOpenTabContextMenuPayload {
   id: string;
 }
 
+export const OPEN_GAME_CONTEXT_MENU = "OPEN_GAME_CONTEXT_MENU";
+export interface IOpenGameContextMenuPayload {
+  /** game to open the context menu of */
+  game: Types.IGameRecord;
+}
+
 /** show a constant tab hidden for some users (press, dashboard, etc.) */
 export const UNLOCK_TAB = "UNLOCK_TAB";
 export interface IUnlockTabPayload {

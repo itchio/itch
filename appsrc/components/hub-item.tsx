@@ -10,7 +10,7 @@ import * as actions from "../actions";
 import GameActions from "./game-actions";
 
 import {IGameRecord} from "../types";
-import {IAction, multiDispatcher} from "../constants/action-types";
+import {IAction, dispatcher, multiDispatcher} from "../constants/action-types";
 
 export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
   constructor () {
@@ -18,6 +18,15 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
     this.state = {
       hover: false,
     };
+
+    this.onMouseEnter = this.onMouseEnter.bind(this);
+    this.onMouseLeave = this.onMouseLeave.bind(this);
+    this.onContextMenu = this.onContextMenu.bind(this);
+  }
+
+  onContextMenu () {
+    const {game, openGameContextMenu} = this.props;
+    openGameContextMenu({game});
   }
 
   render () {
@@ -44,8 +53,9 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
     const itemClasses = classNames("hub-item", {dull: (searchScore && searchScore > 0.2)});
 
     return <div className={itemClasses}
-        onMouseEnter={this.onMouseEnter.bind(this)}
-        onMouseLeave={this.onMouseLeave.bind(this)}>
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+        onContextMenu={this.onContextMenu}>
       {gif
         ? <span className="gif-marker">gif</span>
         : ""
@@ -76,6 +86,7 @@ interface IHubItemProps {
   searchScore?: number;
 
   navigateToGame: typeof actions.navigateToGame;
+  openGameContextMenu: typeof actions.openGameContextMenu;
 }
 
 interface IHubItemState {
@@ -87,6 +98,7 @@ const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
   navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
+  openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
 });
 
 export default connect(
