@@ -1,26 +1,21 @@
 
-import {handleActions} from "redux-actions";
-
 import {reject} from "underscore";
 
 import {IModalsState} from "../types";
 
-import {
-  IAction,
-  IOpenModalPayload,
-  IModalClosedPayload,
-} from "../constants/action-types";
+import * as actions from "../actions";
+import reducer from "./reducer";
 
 const initialState: IModalsState = [];
 
-export default handleActions<IModalsState, any>({
-  OPEN_MODAL: (state: IModalsState, action: IAction<IOpenModalPayload>) => {
+export default reducer<IModalsState>(initialState, (on) => {
+  on(actions.openModal, (state, action) => {
     const modal = action.payload;
     return [...state, modal];
-  },
+  });
 
-  MODAL_CLOSED: (state: IModalsState, action: IAction<IModalClosedPayload>) => {
+  on(actions.modalClosed, (state, action) => {
     const {id} = action.payload;
-    return reject(state, (x) => x.id === id);
-  },
-}, initialState);
+    return reject(state, (modal) => modal.id === id);
+  });
+});
