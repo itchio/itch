@@ -151,3 +151,10 @@ export interface IWebRequestResponseCallback {
 export interface IWebRequestResponseCallbackOpts {
   cancel?: boolean;
 }
+
+export interface IMenuItem {
+  type?: string;
+  label?: string;
+  click?: () => void;
+  submenu?: IMenuItem[];
+}

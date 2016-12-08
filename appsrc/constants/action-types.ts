@@ -341,9 +341,6 @@ export const OPEN_TAB_CONTEXT_MENU = "OPEN_TAB_CONTEXT_MENU";
 export interface IOpenTabContextMenuPayload {
   /** id of the tab to open the context menu of */
   id: string;
-
-  /** if set to true, add more options! */
-  advanced?: boolean;
 }
 
 /** show a constant tab hidden for some users (press, dashboard, etc.) */

@@ -4,6 +4,7 @@ import {Watcher} from "./watcher";
 import * as clone from "clone";
 
 import {BrowserWindow, Menu} from "../electron";
+import {IMenuItem} from "../electron/types";
 import localizer from "../localizer";
 
 import {pathToId} from "../util/navigation";
@@ -33,7 +34,7 @@ export default function (watcher: Watcher) {
     const i18n = store.getState().i18n;
     const t = localizer.getT(i18n.strings, i18n.lang);
 
-    const template = [] as any[];
+    const template: IMenuItem[] = [];
     if (/^games/.test(path)) {
       const gameId = pathToId(path);
       const games = (data.games || {});
@@ -55,36 +56,45 @@ export default function (watcher: Watcher) {
           click: () => store.dispatch(actions.exploreCave({caveId: cave.id})),
         });
 
-        if (action.payload.advanced) {
-          template.push({ type: "separator" });
-          template.push({
-            label: t("grid.item.advanced"),
-            submenu: [
-              {
-                label: t("grid.item.open_debug_log"),
-                click: () => store.dispatch(actions.probeCave({caveId: cave.id})),
-              },
-              {
-                type: "separator",
-              },
-              {
-                label: "Verify integrity",
-                click: () => store.dispatch(actions.healCave({caveId: cave.id})),
-              },
-              {
-                label: "Revert to version...",
-                click: () => store.dispatch(actions.revertCaveRequest({caveId: cave.id})),
-              },
-              {
-                type: "separator",
-              },
-              {
-                label: "View details...",
-                click: () => store.dispatch(actions.viewCaveDetails({caveId: cave.id})),
-              },
-            ],
-          });
+        template.push({ type: "separator" });
+
+        let advancedItems: IMenuItem[] = [
+          {
+            label: t("grid.item.open_debug_log"),
+            click: () => store.dispatch(actions.probeCave({caveId: cave.id})),
+          },
+        ];
+
+        if (cave && cave.buildId) {
+          advancedItems = [...advancedItems, 
+            {
+              type: "separator",
+            },
+            {
+              label: "Verify integrity",
+              click: () => store.dispatch(actions.healCave({caveId: cave.id})),
+            },
+            {
+              label: "Revert to version...",
+              click: () => store.dispatch(actions.revertCaveRequest({caveId: cave.id})),
+            },
+            {
+              type: "separator",
+            },
+          ];
         }
+
+        advancedItems = [...advancedItems,
+          {
+            label: "View details...",
+            click: () => store.dispatch(actions.viewCaveDetails({caveId: cave.id})),
+          },
+        ];
+
+        template.push({
+          label: t("grid.item.advanced"),
+          submenu: advancedItems,
+        });
 
         template.push({ type: "separator" });
         template.push({
