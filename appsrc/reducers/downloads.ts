@@ -33,7 +33,7 @@ const selector = createSelector(
     const {activeDownload} = fields;
     const progress = (activeDownload && activeDownload.progress) || -1;
 
-    return Object.assign({}, fields, {activeDownload, progress});
+    return { ...fields, activeDownload, progress };
   }
 );
 
@@ -42,7 +42,7 @@ const baseInitialState = {
   downloads: {},
   downloadsPaused: false,
 };
-const initialState = Object.assign({}, baseInitialState, selector(baseInitialState));
+const initialState = { ...baseInitialState, ...selector(baseInitialState) };
 
 const updateSingle = (state: IDownloadsState, record: any) => {
   const {downloads} = state;
@@ -158,15 +158,17 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
   });
 
   on(actions.pauseDownloads, (state, action) => {
-    return Object.assign({}, state, {
+    return {
+      ...state,
       downloadsPaused: true,
-    });
+    };
   });
 
   on(actions.resumeDownloads, (state, action) => {
-    return Object.assign({}, state, {
+    return {
+      ...state,
       downloadsPaused: false,
-    });
+    };
   });
 });
 
