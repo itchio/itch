@@ -9,6 +9,8 @@ import {opts} from "../logger";
 import mklog from "../util/log";
 const log = mklog("preboot");
 
+import {ProxySource} from "../types";
+
 import {NET_PARTITION_NAME} from "../util/net";
 
 import {applyProxySettings} from "../reactors/proxy";
@@ -74,7 +76,7 @@ export default function (watcher: Watcher) {
 
       let proxySettings = {
         proxy: null as string,
-        source: null as string,
+        source: null as ProxySource,
       };
 
       if (envSettings) {

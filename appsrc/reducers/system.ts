@@ -1,14 +1,9 @@
 
 import os from "../util/os";
 import {app} from "../electron";
-import {handleActions} from "redux-actions";
 
-import {
-  IAction,
-  ILanguageSniffedPayload,
-  IFreeSpaceUpdatedPayload,
-  IProxySettingsDetectedPayload,
-} from "../constants/action-types";
+import * as actions from "../actions";
+import reducer from "./reducer";
 
 import {ISystemState} from "../types";
 
@@ -32,20 +27,29 @@ const initialState = {
   proxySource: null,
 } as ISystemState;
 
-export default handleActions<ISystemState, any>({
-  LANGUAGE_SNIFFED: (state: ISystemState, action: IAction<ILanguageSniffedPayload>) => {
-    const sniffedLanguage: string = action.payload.lang;
-    return Object.assign({}, state, {sniffedLanguage});
-  },
+export default reducer<ISystemState>(initialState, (on) => {
+  on(actions.languageSniffed, (state, action) => {
+    const sniffedLanguage = action.payload.lang;
+    return {
+      ...state,
+      sniffedLanguage,
+    };
+  });
 
-  FREE_SPACE_UPDATED: (state: ISystemState, action: IAction<IFreeSpaceUpdatedPayload>) => {
+  on(actions.freeSpaceUpdated, (state, action) => {
     const {diskInfo} = action.payload;
-    return Object.assign({}, state, {diskInfo});
-  },
+    return {
+      ...state,
+      diskInfo,
+    };
+  });
 
-  PROXY_SETTINGS_DETECTED: (state: ISystemState, action: IAction<IProxySettingsDetectedPayload>) => {
-    const proxy: string = action.payload.proxy;
-    const proxySource: string = action.payload.source;
-    return Object.assign({}, state, {proxy, proxySource});
-  },
-}, initialState);
+  on(actions.proxySettingsDetected, (state, action) => {
+    const {proxy, source} = action.payload;
+    return {
+      ...state,
+      proxy,
+      proxySource: source,
+    };
+  });
+});

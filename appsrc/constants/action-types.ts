@@ -993,5 +993,5 @@ export interface IOpenAtLoginErrorPayload extends Types.IOpenAtLoginError {}
 export const PROXY_SETTINGS_DETECTED = "PROXY_SETTINGS_DETECTED";
 export interface IProxySettingsDetectedPayload {
   proxy: string;
-  source: string;
+  source: Types.ProxySource;
 }
