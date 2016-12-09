@@ -24,7 +24,7 @@ export default (state: IMarketState, action: IAction<any>) => {
   // FIXME: this is a workaround, shouldn't be needed,
   // but without it, sessionReady fires too soon on 2nd login
   if (action.type === LOGOUT) {
-    return Object.assign({}, state, {ready: false});
+    return {...state, ready: false};
   } else {
     return reducer(state, action);
   }
