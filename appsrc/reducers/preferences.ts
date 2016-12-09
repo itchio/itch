@@ -1,10 +1,6 @@
 
-import {handleActions} from "redux-actions";
-
-import {
-  IAction,
-  IUpdatePreferencesPayload,
-} from "../constants/action-types";
+import * as actions from "../actions";
+import reducer from "./reducer";
 
 import {IPreferencesState} from "../types";
 
@@ -25,9 +21,12 @@ export const initialState = {
   manualGameUpdates: false,
 } as IPreferencesState;
 
-export default handleActions<IPreferencesState, any>({
-  UPDATE_PREFERENCES: (state: IPreferencesState, action: IAction<IUpdatePreferencesPayload>) => {
+export default reducer<IPreferencesState>(initialState, (on) => {
+  on(actions.updatePreferences, (state, action) => {
     const record = action.payload;
-    return Object.assign({}, state, record);
-  },
-}, initialState);
+    return {
+      ...state,
+      ...record,
+    };
+  });
+});
