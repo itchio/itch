@@ -1,31 +1,33 @@
 
-import {handleActions} from "redux-actions";
-
 import {IGameUpdatesState} from "../types";
 import {omit} from "underscore";
 
-import {
-  IAction,
-  IGameUpdateAvailablePayload,
-  IQueueGameUpdatePayload,
-} from "../constants/action-types";
+import * as actions from "../actions";
+import reducer from "./reducer";
 
 const initialState = {
   updates: {},
 } as IGameUpdatesState;
 
-export default handleActions<IGameUpdatesState, any>({
-  GAME_UPDATE_AVAILABLE: (state: IGameUpdatesState, action: IAction<IGameUpdateAvailablePayload>) => {
-    const updates = Object.assign({}, state.updates, {
-      [action.payload.caveId]: action.payload.update,
-    });
+export default reducer<IGameUpdatesState>(initialState, (on) => {
+  on(actions.gameUpdateAvailable, (state, action) => {
+    const {caveId, update} = action.payload;
 
-    return Object.assign({}, state, {updates});
-  },
+    return {
+      ...state,
+      updates: {
+        ...state.updates,
+        [caveId]: update,
+      },
+    };
+  });
 
-  QUEUE_GAME_UPDATE: (state: IGameUpdatesState, action: IAction<IQueueGameUpdatePayload>) => {
-    const updates = omit(state.updates, action.payload.caveId);
+  on(actions.queueGameUpdate, (state, action) => {
+    const {caveId} = action.payload;
 
-    return Object.assign({}, state, {updates});
-  },
-}, initialState);
+    return {
+      ...state,
+      updates: omit(state.updates, caveId)
+    };
+  });
+});
