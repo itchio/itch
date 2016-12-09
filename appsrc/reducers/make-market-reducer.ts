@@ -49,7 +49,7 @@ export default function makeMarketReducer (prefix: IMarketPrefix, getMarket: IMa
 
   return handleActions({
     [dbActions.ready]: (state: IMarketState, action: IAction<IDbReadyPayload>) => {
-      return Object.assign({}, state, {ready: true});
+      return { ...state, ready: true };
     },
 
     [dbActions.closed]: (state: IMarketState, action: IAction<IDbClosedPayload>) => {
@@ -63,22 +63,22 @@ export default function makeMarketReducer (prefix: IMarketPrefix, getMarket: IMa
       for (const tableName of Object.keys(deleted)) {
         const deletedIds = deleted[tableName];
         const updatedTable = omit(state[tableName] || {}, deletedIds);
-        state = Object.assign({}, state, {[tableName]: updatedTable});
+        state = {...state, [tableName]: updatedTable};
       }
 
       for (const tableName of Object.keys(updated)) {
         const updatedIds = updated[tableName];
         const records = market.getEntities(tableName as TableName);
 
-        let updatedTable = (state[tableName] || {});
+        let updatedTable = (state[tableName] || {}) as any;
         for (const recordId of updatedIds) {
-          updatedTable = Object.assign({}, updatedTable, {[recordId]: records[recordId]});
+          updatedTable = {...updatedTable, [recordId]: records[recordId]};
         }
-        state = Object.assign({}, state, {[tableName]: updatedTable});
+        state = {...state, [tableName]: updatedTable};
       }
 
       if (initial) {
-        state = Object.assign({}, state, {ready: true});
+        state = {...state, ready: true};
       }
       return state;
     },
