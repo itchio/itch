@@ -16,7 +16,7 @@ import {
     RESUME_DOWNLOADS, IResumeDownloadsPayload,
     RETRY_DOWNLOAD, IRetryDownloadPayload,
 
-    DOWNLOAD_SPEED_DATAPOINT,
+    DOWNLOAD_SPEED_DATAPOINT, IDownloadSpeedDatapointPayload,
 } from "../constants/action-types";
 
 export const queueDownload = createAction<IQueueDownloadPayload>(QUEUE_DOWNLOAD);
@@ -38,4 +38,4 @@ export const pauseDownloads = createAction<IPauseDownloadsPayload>(PAUSE_DOWNLOA
 export const resumeDownloads = createAction<IResumeDownloadsPayload>(RESUME_DOWNLOADS);
 export const retryDownload = createAction<IRetryDownloadPayload>(RETRY_DOWNLOAD);
 
-export const downloadSpeedDatapoint = createAction(DOWNLOAD_SPEED_DATAPOINT);
+export const downloadSpeedDatapoint = createAction<IDownloadSpeedDatapointPayload>(DOWNLOAD_SPEED_DATAPOINT);

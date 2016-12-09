@@ -5,7 +5,7 @@ import { userToTabData, gameToTabData, collectionToTabData } from "../util/navig
 import { IGameRecord, IUserRecord, ICollectionRecord } from "../types";
 
 import {
-  NAVIGATE,
+  NAVIGATE, INavigatePayload,
   FOCUS_NTH_TAB, IFocusNthTabPayload,
   MOVE_TAB, IMoveTabPayload,
   EVOLVE_TAB, IEvolveTabPayload,
@@ -40,8 +40,7 @@ import {
   VIEW_COMMUNITY_PROFILE, IViewCommunityProfilePayload,
 } from "../constants/action-types";
 
-// TODO: type / un-ugh
-const internalNavigate = createAction(NAVIGATE);
+const internalNavigate = createAction<INavigatePayload>(NAVIGATE);
 export const navigate = (id: any, data = {}, background = false) => {
   if (typeof id === "object") {
     return internalNavigate(id);

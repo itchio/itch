@@ -1,9 +1,9 @@
 
-import {handleActions} from "redux-actions";
+import * as actions from "../../actions";
+import reducer from "../reducer";
 
 import {IUIMenuState} from "../../types";
 import {
-  IAction,
   IRefreshMenuPayload,
 } from "../../constants/action-types";
 
@@ -11,13 +11,13 @@ const initialState = {
   template: [],
 } as IUIMenuState;
 
-export default handleActions<IUIMenuState, any>({
-  REFRESH_MENU: (state: IUIMenuState, action: IAction<IRefreshMenuPayload>) => {
+export default reducer<IUIMenuState>(initialState, (on) => {
+  on(actions.refreshMenu, (state, action) => {
     return {
       template: computeMenuTemplate(action.payload),
     };
-  },
-}, initialState);
+  });
+});
 
 function computeMenuTemplate (payload: IRefreshMenuPayload) {
   const {system, credentials} = payload;
