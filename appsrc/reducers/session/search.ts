@@ -1,20 +1,10 @@
 
-import {handleActions} from "redux-actions";
-
 import SearchExamples from "../../constants/search-examples";
 
 import {ISessionSearchState} from "../../types";
 
-import {
-  IAction,
-  ISearchPayload,
-  ISearchHighlightOffsetPayload,
-  ISearchFetchedPayload,
-  ISearchStartedPayload,
-  ISearchFinishedPayload,
-  IFocusSearchPayload,
-  ICloseSearchPayload,
-} from "../../constants/action-types";
+import * as actions from "../../actions";
+import reducer from "../reducer";
 
 function randomExampleIndex () {
   return Math.floor(Math.random() * (SearchExamples.length - 1));
@@ -32,40 +22,52 @@ const initialState = {
   results: null,
 } as ISessionSearchState;
 
-export default handleActions<ISessionSearchState, any>({
-  SEARCH: (state: ISessionSearchState, action: IAction<ISearchPayload>) => {
-    const typedQuery: string = action.payload.query;
+export default reducer<ISessionSearchState>(initialState, (on) => {
+  on(actions.search, (state, action) => {
+    const typedQuery = action.payload.query;
     if (!typedQuery) {
       return state;
     }
 
-    return Object.assign({}, state, {typedQuery, highlight: 0});
-  },
+    return {
+      ...state,
+      typedQuery,
+      highlight: 0,
+    };
+  });
 
-  SEARCH_HIGHLIGHT_OFFSET: (state: ISessionSearchState, action: IAction<ISearchHighlightOffsetPayload>) => {
-    const offset: number = action.payload.offset;
-    return Object.assign({}, state, {highlight: (state.highlight + offset)});
-  },
+  on(actions.searchHighlightOffset, (state, action) => {
+    const {offset} = action.payload;
+    return {
+      ...state,
+      highlight: state.highlight + offset,
+    };
+  });
 
-  SEARCH_FETCHED: (state: ISessionSearchState, action: IAction<ISearchFetchedPayload>) => {
+  on(actions.searchFetched, (state, action) => {
     const {query, results} = action.payload;
     const example = SearchExamples[randomExampleIndex()];
-    return Object.assign({}, state, {results, query, example});
-  },
+    return {
+      ...state,
+      results,
+      query,
+      example,
+    };
+  });
 
-  SEARCH_STARTED: (state: ISessionSearchState, action: IAction<ISearchStartedPayload>) => {
-    return Object.assign({}, state, {loading: true});
-  },
+  on(actions.searchStarted, (state, action) => {
+    return {...state, loading: true};
+  });
 
-  SEARCH_FINISHED: (state: ISessionSearchState, action: IAction<ISearchFinishedPayload>) => {
-    return Object.assign({}, state, {loading: false});
-  },
+  on(actions.searchFinished, (state, action) => {
+    return {...state, loading: false};
+  });
 
-  FOCUS_SEARCH: (state: ISessionSearchState, action: IAction<IFocusSearchPayload>) => {
-    return Object.assign({}, state, {open: true});
-  },
+  on(actions.focusSearch, (state, action) => {
+    return {...state, open: true};
+  });
 
-  CLOSE_SEARCH: (state: ISessionSearchState, action: IAction<ICloseSearchPayload>) => {
-    return Object.assign({}, state, {open: false});
-  },
-}, initialState);
+  on(actions.closeSearch, (state, action) => {
+    return {...state, open: false};
+  });
+});
