@@ -27,7 +27,7 @@ export default reducer<IGameUpdatesState>(initialState, (on) => {
 
     return {
       ...state,
-      updates: omit(state.updates, caveId)
+      updates: omit(state.updates, caveId),
     };
   });
 });
