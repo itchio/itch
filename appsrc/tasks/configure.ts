@@ -12,7 +12,7 @@ import html from "./configure/html";
 import computeSize from "./configure/compute-size";
 
 import { IConfigureResult } from"./configure/common";
-import { ICaveRecord, IGameRecord, IUploadRecord, IMarket } from "../types";
+import { ICaveRecord, IGameRecord, IUploadRecord, IGlobalMarket } from "../types";
 import { EventEmitter } from "events";
 
 async function configure(appPath: string): Promise<IConfigureResult> {
@@ -33,7 +33,7 @@ interface IConfigureOpts {
   cave: ICaveRecord;
   game: IGameRecord;
   upload: IUploadRecord;
-  globalMarket: IMarket;
+  globalMarket: IGlobalMarket;
 }
 
 export default async function start(out: EventEmitter, inOpts: IConfigureOpts) {

@@ -17,14 +17,14 @@ import urls from "../../constants/urls";
 
 import * as actions from "../../actions";
 
-import {IManifest, IManifestPrereq, IMarket, ICaveRecord, IStore} from "../../types";
+import {IManifest, IManifestPrereq, IGlobalMarket, ICaveRecord, IStore} from "../../types";
 
 const dumpInstallScript = process.env.ITCH_DUMP_INSTALL_SCRIPT === "1";
 
 interface IWindowsPrereqsOpts {
   store: IStore;
   manifest: IManifest;
-  globalMarket: IMarket;
+  globalMarket: IGlobalMarket;
   caveId: string;
   logger: Logger;
 }

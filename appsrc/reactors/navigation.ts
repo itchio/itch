@@ -325,7 +325,13 @@ export default function (watcher: Watcher) {
     };
 
     const userMarket = getUserMarket();
-    await userMarket.saveEntity(TABS_TABLE_NAME, "x", snapshot);
+    await userMarket.saveAllEntities({
+      entities: {
+        [TABS_TABLE_NAME]: {
+          x: snapshot,
+        },
+      },
+    }, {wait: true});
   });
 
   watcher.on(actions.tabChanged, async (store, action) => {

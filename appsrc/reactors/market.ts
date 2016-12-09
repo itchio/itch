@@ -12,7 +12,7 @@ import mklog from "../util/log";
 import {opts} from "../logger";
 const log = mklog("navigation");
 
-import {IStore} from "../types";
+import {IStore, IUserMarket, IGlobalMarket} from "../types";
 
 import {
   IAction,
@@ -22,7 +22,7 @@ import {
 // abstraction leak but helps halving the bandwidth between browser and renderer:
 // the reducer can just pick data from here instead of getting it from the message,
 // which would also be serialized & sent by JSON
-export function getUserMarket () {
+export function getUserMarket (): IUserMarket {
   if (!userMarket) {
     throw new Error("called getUserMarket before market initialization");
   }
@@ -31,7 +31,7 @@ export function getUserMarket () {
 
 let globalMarket: Market = null;
 
-export function getGlobalMarket () {
+export function getGlobalMarket (): IGlobalMarket {
   if (!globalMarket) {
     throw new Error("called getGlobalMarket before market initialization");
   }

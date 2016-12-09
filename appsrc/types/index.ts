@@ -323,6 +323,12 @@ export interface ICaveRecord extends ICaveRecordLocation {
     /** download key what was used to install this game, if any */
     downloadKey: IDownloadKey;
 
+    /** true if the upload to install was hand-picked */
+    handPicked?: boolean;
+
+    /** if true, cave has been deleted */
+    dead?: boolean;
+
     /** true if the record was created just before installing for the first time */
     fresh?: boolean;
 
@@ -414,19 +420,34 @@ export interface IBuildRecord {
     updatedAt: string;
 }
 
-export type TableName = "caves" | "users" | "games" | "collections" | "downloadKeys";
+export type TableName = "caves" | "users" | "games" | "collections" | "downloadKeys" | "itchAppTabs";
 
 /**
  * MarketDB is a lightweight disk-based JSON object store.
  * Tables have string indices, and they contain objects with string indices.
  */
 export interface IMarket {
-    getEntities: <T> (table: TableName) => IEntityMap<T>;
-    getEntity: <T> (table: TableName, id: string) => T;
-    saveAllEntities: (entityRecords: IEntityRecords<any>, saveOpts?: IMarketSaveOpts) => Promise<void>;
-    saveEntity: <T> (table: TableName, id: string, payload: Partial<T>, saveOpts?: IMarketSaveOpts) => Promise<void>;
-    deleteAllEntities: (deleteSpec: IMarketDeleteSpec, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
-    deleteEntity: (table: TableName, id: string, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
+    getEntities <T> (table: TableName): IEntityMap<T>;
+    getEntity <T> (table: TableName, id: string): T;
+    saveAllEntities (entityRecords: IEntityRecords<any>, saveOpts?: IMarketSaveOpts): Promise<void>;
+
+    deleteAllEntities (deleteSpec: IMarketDeleteSpec, deleteOpts?: IMarketDeleteOpts): Promise<void>;
+    deleteEntity (table: TableName, id: string, deleteOpts?: IMarketDeleteOpts): Promise<void>;
+}
+
+export interface IGlobalMarket extends IMarket {
+    saveEntity (
+        table: "caves", id: string, payload: Partial<ICaveRecord>, saveOpts?: IMarketSaveOpts): Promise<void>;
+}
+
+export interface IUserMarket extends IMarket {
+    saveEntity (
+        table: "games", id: string, payload: Partial<IGameRecord>, saveOpts?: IMarketSaveOpts): Promise<void>;
+    saveEntity (
+        table: "users", id: string, payload: Partial<IUserRecord>, saveOpts?: IMarketSaveOpts): Promise<void>;
+    saveEntity (
+        table: "collections", id: string, payload: Partial<ICollectionRecord>,
+        saveOpts?: IMarketSaveOpts): Promise<void>;
 }
 
 export interface IEntityMap <T> {
@@ -1093,11 +1114,6 @@ export interface IUpgradePathItem {
 
 type DownloadReason = "install" | "reinstall" | "update" | "revert" | "heal";
 
-export interface IStartTaskOpts {
-    /** which game is this task for? */
-    gameId: number;
-}
-
 export interface IQueueDownloadOpts {
   /** reason for starting this download */
   reason: DownloadReason;
@@ -1179,7 +1195,8 @@ export interface IStartTaskOpts {
 
   // The following properties are set by start-task
 
-  market?: IMarket;
+  market?: IUserMarket;
+  globalMarket?: IGlobalMarket;
 
   credentials?: ICredentials;
 
@@ -1187,9 +1204,6 @@ export interface IStartTaskOpts {
 
   /** cave-specific logger */
   logger?: Logger;
-
-  /** the market this task should load/save db data from */
-  globalMarket?: IMarket;
 }
 
 export interface IInternalDownloadOpts {

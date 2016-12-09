@@ -16,6 +16,7 @@ import {EventEmitter} from "events";
 import {
   IEntityMap, ITableMap, IEntityRefs, IEntityRecords,
   IMarketSaveOpts, IMarketDeleteOpts, IMarketDeleteSpec,
+  IMarket,
 } from "../types";
 
 /**
@@ -23,7 +24,7 @@ import {
  * It's about the simplest thing one could think of: file paths are
  * keys
  */
-export default class Market extends EventEmitter {
+export default class Market extends EventEmitter implements IMarket {
   /** contents of the database */
   data: ITableMap<any>;
 
@@ -161,7 +162,7 @@ export default class Market extends EventEmitter {
 
     this.emit("commit", {updated, initial});
   }
-  
+
   /**
    * Save a single entity to the db, optionally persisting to disk (see ISaveOpts).
    */

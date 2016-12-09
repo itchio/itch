@@ -8,6 +8,7 @@ import {Transition} from "./errors";
 
 import pathmaker from "../util/pathmaker";
 import sf from "../util/sf";
+import {Stats} from "fs";
 import mklog from "../util/log";
 const log = mklog("tasks/install");
 
@@ -92,7 +93,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
   } else {
     let destPath = pathmaker.appPath(cave);
 
-    let archiveStat: any;
+    let archiveStat: Stats;
     try {
       archiveStat = await sf.lstat(archivePath);
     } catch (e) {
@@ -101,11 +102,11 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
     }
 
     let imtime = Date.parse(cave.installedArchiveMtime);
-    amtime = archiveStat.mtime;
+    amtime = Number(archiveStat.mtime);
     log(opts, `comparing mtimes, installed = ${imtime}, archive = ${amtime}`);
 
     if (checkTimestamps && imtime && !(amtime > imtime)) {
-      log(opts, "archive isn\'t more recent, nothing to install");
+      log(opts, "archive isn't more recent, nothing to install");
       return {caveId: cave.id};
     }
 
@@ -128,7 +129,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
     downloadKey,
     handPicked,
     launchable: true,
-    installedArchiveMtime: amtime,
+    installedArchiveMtime: new Date(amtime).toString(),
     installedAt: Date.now(),
     uploadId: upload.id,
     channelName: upload.channelName,
