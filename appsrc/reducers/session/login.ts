@@ -1,18 +1,7 @@
 
-import {handleActions} from "redux-actions";
-
 import {ISessionLoginState} from "../../types";
-
-import {
-  IAction,
-  IAttemptLoginPayload,
-  ILoginStartPickingPayload,
-  ILoginStopPickingPayload,
-  ILoginFailedPayload,
-  ILoginSucceededPayload,
-  ILoginCancelledPayload,
-  ILogoutPayload,
-} from "../../constants/action-types";
+import * as actions from "../../actions";
+import reducer from "../reducer";
 
 const initialState = {
   picking: true,
@@ -20,48 +9,51 @@ const initialState = {
   blockingOperation: null,
 } as ISessionLoginState;
 
-export default handleActions<ISessionLoginState, any>({
-  ATTEMPT_LOGIN: (state: ISessionLoginState, action: IAction<IAttemptLoginPayload>) => {
-    return Object.assign({}, state, {
+export default reducer<ISessionLoginState>(initialState, (on) => {
+  on(actions.attemptLogin, (state, action) => {
+    return {
+      ...state,
       errors: [],
       blockingOperation: {
         icon: "heart-filled",
         message: ["login.status.login"],
       },
-    });
-  },
+    };
+  });
 
-  LOGIN_START_PICKING: (state: ISessionLoginState, action: IAction<ILoginStartPickingPayload>) => {
-    return Object.assign({}, state, {picking: true});
-  },
+  on(actions.loginStartPicking, (state, action) => {
+    return { ...state, picking: true };
+  });
 
-  LOGIN_STOP_PICKING: (state: ISessionLoginState, action: IAction<ILoginStopPickingPayload>) => {
-    return Object.assign({}, state, {picking: false});
-  },
+  on(actions.loginStopPicking, (state, action) => {
+    return { ...state, picking: false };
+  });
 
-  LOGIN_FAILED: (state: ISessionLoginState, action: IAction<ILoginFailedPayload>) => {
+  on(actions.loginFailed, (state, action) => {
     const {errors} = action.payload;
     // set picking to false because if we were trying a key login, we probably want
     // to re-enter the password to see if we can obtain a new API token
-    return Object.assign({}, initialState, {
+    return {
+      ...initialState,
       errors,
       blockingOperation: null,
       picking: false,
-    });
-  },
+    };
+  });
 
-  LOGIN_CANCELLED: (state: ISessionLoginState, action: IAction<ILoginCancelledPayload>) => {
-    return Object.assign({}, state, {
+  on(actions.loginCancelled, (state, action) => {
+    return {
+      ...state,
       blockingOperation: null,
       picking: false,
-    });
-  },
+    };
+  });
 
-  LOGIN_SUCCEEDED: (state: ISessionLoginState, action: IAction<ILoginSucceededPayload>) => {
+  on(actions.loginSucceeded, (state, action) => {
     return initialState;
-  },
+  });
 
-  LOGOUT: (state: ISessionLoginState, action: IAction<ILogoutPayload>) => {
+  on(actions.logout, (state, action) => {
     return initialState;
-  },
-}, initialState);
+  });
+});
