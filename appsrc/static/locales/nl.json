@@ -3,7 +3,7 @@
     "errors.api.login.password_must_be_provided": "Wachtwoord moet gegeven zijn",
     "errors.api.login.username_must_be_provided": "Gebruikersnaam moet ingevuld zijn",
     "grid.item.buy_now": "Nu kopen",
-    "grid.item.cancel_download": "Annuleer download",
+    "grid.item.cancel_download": "Download annuleren",
     "grid.item.downloading": "Downloaden…",
     "grid.item.install": "Installeer",
     "grid.item.installing": "Installeren...",
