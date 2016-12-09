@@ -299,11 +299,6 @@ export interface ITriggerBackPayload {}
 export const TRIGGER_LOCATION = "TRIGGER_LOCATION";
 export interface ITriggerLocationPayload {}
 
-export const SHORTCUTS_VISIBILITY_CHANGED = "SHORTCUTS_VISIBILITY_CHANGED";
-export interface IShortcutsVisibilityChangedPayload {
-  visible: boolean;
-}
-
 export const TOGGLE_MINI_SIDEBAR = "TOGGLE_MINI_SIDEBAR";
 export interface IToggleMiniSidebarPayload {}
 
