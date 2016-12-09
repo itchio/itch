@@ -1,16 +1,9 @@
 
-import {handleActions} from "redux-actions";
+import {IStatusState} from "../types";
+import * as actions from "../actions";
+import reducer from "./reducer";
 
-import {IStatusState, ILocalizedString} from "../types";
-
-import {
-  IAction,
-  IStatusMessagePayload,
-  IDismissStatusMessagePayload,
-  IEnableBonusPayload,
-  IDisableBonusPayload,
-  IOpenAtLoginErrorPayload,
-} from "../constants/action-types";
+import {rest, omit} from "underscore";
 
 const initialState = {
   messages: [],
@@ -18,48 +11,52 @@ const initialState = {
   openAtLoginError: null,
 } as IStatusState;
 
-export default handleActions<IStatusState, any>({
-  STATUS_MESSAGE: (state: IStatusState, action: IAction<IStatusMessagePayload>) => {
-    const message: ILocalizedString = action.payload.message;
+export default reducer<IStatusState>(initialState, (on) => {
+  on(actions.statusMessage, (state, action) => {
+    const {message} = action.payload;
 
-    return Object.assign({}, state, {
+    return {
+      ...state,
       messages: [
         message,
         ...state.messages,
       ],
-    });
-  },
+    };
+  });
 
-  DISMISS_STATUS_MESSAGE: (state: IStatusState, action: IAction<IDismissStatusMessagePayload>) => {
-    return Object.assign({}, state, {
-      messages: state.messages.slice(1),
-    });
-  },
+  on(actions.dismissStatusMessage, (state, action) => {
+    return {
+      ...state,
+      messages: rest(state.messages),
+    };
+  });
 
-  ENABLE_BONUS: (state: IStatusState, action: IAction<IEnableBonusPayload>) => {
-    const bonusName = action.payload.name;
+  on(actions.enableBonus, (state, action) => {
+    const {name} = action.payload;
 
-    return Object.assign({}, state, {
-      bonuses: Object.assign({}, state.bonuses, {
-        [bonusName]: true,
-      }),
-    });
-  },
+    return {
+      ...state,
+      bonuses: {
+        ...state.bonuses,
+        [name]: true,
+      },
+    };
+  });
 
-  DISABLE_BONUS: (state: IStatusState, action: IAction<IDisableBonusPayload>) => {
-    const bonusName = action.payload.name;
+  on(actions.disableBonus, (state, action) => {
+    const {name} = action.payload;
 
-    return Object.assign({}, state, {
-      bonuses: Object.assign({}, state.bonuses, {
-        [bonusName]: false,
-      }),
-    });
-  },
+    return {
+      ...state,
+      bonuses: omit(state.bonuses, name),
+    };
+  });
 
-  OPEN_AT_LOGIN_ERROR: (state: IStatusState, action: IAction<IOpenAtLoginErrorPayload>) => {
+  on(actions.openAtLoginError, (state, action) => {
     const error = action.payload;
-    return Object.assign({}, state, {
+    return {
+      ...state,
       openAtLoginError: error,
-    });
-  },
-}, initialState);
+    };
+  });
+});
