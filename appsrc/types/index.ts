@@ -18,6 +18,10 @@ export interface IDispatch {
     (a: Action<any>): void;
 }
 
+export type Partial<T> = {
+    [P in keyof T]?: T[P];
+}
+
 export type GameType = "default" | "html" | "download";
 
 export type GameClassification = "game" | "tool" | "assets" |
@@ -420,7 +424,7 @@ export interface IMarket {
     getEntities: <T> (table: TableName) => IEntityMap<T>;
     getEntity: <T> (table: TableName, id: string) => T;
     saveAllEntities: (entityRecords: IEntityRecords<any>, saveOpts?: IMarketSaveOpts) => Promise<void>;
-    saveEntity: (table: TableName, id: string, payload: any, saveOpts?: IMarketSaveOpts) => Promise<void>;
+    saveEntity: <T> (table: TableName, id: string, payload: Partial<T>, saveOpts?: IMarketSaveOpts) => Promise<void>;
     deleteAllEntities: (deleteSpec: IMarketDeleteSpec, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
     deleteEntity: (table: TableName, id: string, deleteOpts?: IMarketDeleteOpts) => Promise<void>;
 }
