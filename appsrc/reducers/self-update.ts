@@ -1,19 +1,7 @@
 
-import {handleActions} from "redux-actions";
-
 import {ISelfUpdateState} from "../types";
-
-import {
-  IAction,
-  ICheckForSelfUpdatePayload,
-  ISelfUpdateAvailablePayload,
-  ISelfUpdateNotAvailablePayload,
-  ISelfUpdateErrorPayload,
-  ISelfUpdateDownloadedPayload,
-  ISnoozeSelfUpdatePayload,
-  IApplySelfUpdatePayload,
-  IDismissStatusPayload,
-} from "../constants/action-types";
+import * as actions from "../actions";
+import reducer from "./reducer";
 
 const initialState = {
   available: null,
@@ -25,46 +13,67 @@ const initialState = {
   error: null,
 } as ISelfUpdateState;
 
-export default handleActions<ISelfUpdateState, any>({
-  CHECK_FOR_SELF_UPDATE: (state: ISelfUpdateState, action: IAction<ICheckForSelfUpdatePayload>) => {
-    return Object.assign({}, state, {checking: true});
-  },
+export default reducer<ISelfUpdateState>(initialState, (on) => {
+  on(actions.checkForSelfUpdate, (state, action) => {
+    return {
+      ...state,
+      checking: true,
+    };
+  });
 
-  SELF_UPDATE_AVAILABLE: (state: ISelfUpdateState, action: IAction<ISelfUpdateAvailablePayload>) => {
+  on(actions.selfUpdateAvailable, (state, action) => {
     const {spec, downloading} = action.payload;
 
-    const base = Object.assign({}, state, {checking: false});
-    if (downloading) {
-      return Object.assign({}, base, {downloading: spec});
-    } else {
-      return Object.assign({}, base, {available: spec});
-    }
-  },
+    return {
+      ...state,
+      checking: false,
+      ...(downloading ? {downloading: spec} : {available: spec}),
+    };
+  });
 
-  SELF_UPDATE_NOT_AVAILABLE: (state: ISelfUpdateState, action: IAction<ISelfUpdateNotAvailablePayload>) => {
+  on(actions.selfUpdateNotAvailable, (state, action) => {
     const {uptodate} = action.payload;
-    return Object.assign({}, state, {checking: false, available: null, uptodate});
-  },
 
-  SELF_UPDATE_ERROR: (state: ISelfUpdateState, action: IAction<ISelfUpdateErrorPayload>) => {
-    const error: string = action.payload.message;
-    return Object.assign({}, state, {error, available: null, downloading: null});
-  },
+    return {
+      ...state,
+      checking: false,
+      available: null,
+      uptodate,
+    };
+  });
 
-  SELF_UPDATE_DOWNLOADED: (state: ISelfUpdateState, action: IAction<ISelfUpdateDownloadedPayload>) => {
+  on(actions.selfUpdateError, (state, action) => {
+    const error = action.payload.message;
+    return {
+      ...state,
+      error,
+      available: null,
+      downloading: null,
+    };
+  });
+
+  on(actions.selfUpdateDownloaded, (state, action) => {
     const {downloading} = state;
-    return Object.assign({}, state, {downloaded: downloading, downloading: null});
-  },
+    return {
+      ...state,
+      downloaded: downloading,
+      downloading: null,
+    };
+  });
 
-  SNOOZE_SELF_UPDATE: (state: ISelfUpdateState, action: IAction<ISnoozeSelfUpdatePayload>) => {
-    return Object.assign({}, state, {downloaded: null});
-  },
+  on(actions.snoozeSelfUpdate, (state, action) => {
+    return {
+      ...state,
+      downloaded: null,
+    };
+  });
 
-  APPLY_SELF_UPDATE: (state: ISelfUpdateState, action: IAction<IApplySelfUpdatePayload>) => {
-    return state;
-  },
-
-  DISMISS_STATUS: (state: ISelfUpdateState, action: IAction<IDismissStatusPayload>) => {
-    return Object.assign({}, state, {error: null, uptodate: false, available: null});
-  },
-}, initialState);
+  on(actions.dismissStatus, (state, action) => {
+    return {
+      ...state,
+      error: null,
+      uptodate: false,
+      available: null,
+    };
+  });
+});
