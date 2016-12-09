@@ -40,7 +40,7 @@ import {
   VIEW_COMMUNITY_PROFILE, IViewCommunityProfilePayload,
 } from "../constants/action-types";
 
-const internalNavigate = createAction<INavigatePayload>(NAVIGATE);
+const internalNavigate = createAction<INavigatePayload, any>(NAVIGATE);
 export const navigate = (id: any, data = {}, background = false) => {
   if (typeof id === "object") {
     return internalNavigate(id);

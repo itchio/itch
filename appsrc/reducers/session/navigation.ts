@@ -2,7 +2,6 @@
 import {map, reject, omit, object, pick, indexBy, filter} from "underscore";
 import * as uuid from "uuid";
 
-import SearchExamples from "../../constants/search-examples";
 import staticTabData from "../../constants/static-tab-data";
 
 import {ISessionNavigationState, ITabDataSet, ITabDataSave} from "../../types";
@@ -243,18 +242,6 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
     };
   });
 
-  on(actions.searchFetched, (state, action) => {
-    const {results} = action.payload;
-    const searchExampleIndex = Math.floor(Math.random() * (SearchExamples.length - 1));
-
-    return {
-      ...state,
-      searchResults: results,
-      searchOpen: true,
-      searchExample: SearchExamples[searchExampleIndex],
-    };
-  });
-
   on(actions.tabDataFetched, (state, action) => {
     const {id, timestamp, data} = action.payload;
     if (!timestamp) {
@@ -354,14 +341,6 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
           ...staticTabData[path],
         },
       },
-    };
-  });
-
-  on(actions.closeSearch, (state, action) => {
-    return {
-      ...state,
-      searchResults: null,
-      searchOpen: false,
     };
   });
 });
