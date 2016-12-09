@@ -29,7 +29,7 @@ export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
   const market = getUserMarket();
 
   const id = uuid.v4();
-  store.dispatch(actions.taskStarted(Object.assign({}, {id, startedAt: Date.now()}, taskOpts)));
+  store.dispatch(actions.taskStarted(Object.assign({}, {id, startedAt: Date.now(), progress: 0}, taskOpts)));
 
   let error: Error;
   let result: any;

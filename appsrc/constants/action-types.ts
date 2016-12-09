@@ -514,6 +514,9 @@ export const TASK_STARTED = "TASK_STARTED";
 export interface ITaskStartedPayload {
   name: string;
   id: string;
+  startedAt: number;
+  gameId: number;
+  progress: number;
 };
 export const TASK_PROGRESS = "TASK_PROGRESS";
 export interface ITaskProgressPayload extends IProgressInfo {

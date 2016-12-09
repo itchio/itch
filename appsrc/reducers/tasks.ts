@@ -1,65 +1,68 @@
 
-import {handleActions} from "redux-actions";
 import {createStructuredSelector} from "reselect";
 
-import * as invariant from "invariant";
 import {groupBy, omit} from "underscore";
 
 import {ITasksState} from "../types";
 
+import * as actions from "../actions";
 import derivedReducer from "./derived-reducer";
-
-import {
-  IAction,
-  ITaskStartedPayload,
-  ITaskProgressPayload,
-  ITaskEndedPayload,
-} from "../constants/action-types";
+import reducer from "./reducer";
 
 const initialState = {
   tasks: {},
   finishedTasks: [],
 } as ITasksState;
 
-const reducer = handleActions<ITasksState, any>({
-  TASK_STARTED: (state: ITasksState, action: IAction<ITaskStartedPayload>) => {
-    const {tasks} = state;
+const baseReducer = reducer<ITasksState>(initialState, (on) => {
+  on(actions.taskStarted, (state, action) => {
     const task = action.payload;
-    invariant(task.id, "valid task id in started");
-    const newTasks = Object.assign({}, tasks, {
-      [task.id]: task,
-    });
-    return Object.assign({}, state, {tasks: newTasks});
-  },
+    return {
+      ...state,
+      tasks: {
+        ...state.tasks,
+        [task.id]: task,
+      },
+    };
+  });
 
-  TASK_PROGRESS: (state: ITasksState, action: IAction<ITaskProgressPayload>) => {
-    const {tasks} = state;
+  on(actions.taskProgress, (state, action) => {
     const record = action.payload;
     const {id} = record;
 
-    const task = tasks[id];
-    const newTasks = Object.assign({}, tasks, {
-      [id]: Object.assign({}, task, record),
-    });
-    return Object.assign({}, state, {tasks: newTasks});
-  },
+    const task = state.tasks[id];
+    if (!task) {
+      return state;
+    }
 
-  TASK_ENDED: (state: ITasksState, action: IAction<ITaskEndedPayload>) => {
+    return {
+      ...state,
+      tasks: {
+        ...state.tasks,
+        [id]: {
+          ...task,
+          ...record,
+        },
+      },
+    };
+  });
+
+  on(actions.taskEnded, (state, action) => {
     const {id} = action.payload;
 
-    const {tasks, finishedTasks} = state;
-    const newTasks = omit(tasks, id);
-    const newFinishedTasks = [tasks[id], ...finishedTasks];
-
-    return Object.assign({}, state, {
-      tasks: newTasks,
-      finishedTasks: newFinishedTasks,
-    });
-  },
-}, initialState);
+    return {
+      ...state,
+      tasks: omit(state.tasks, id),
+      finishedTasks: [
+        state.tasks[id],
+        ...state.finishedTasks,
+      ],
+    };
+  });
+});
 
 const selector = createStructuredSelector({
   tasksByGameId: (state: ITasksState) => groupBy(state.tasks, "gameId"),
 });
 
-export default derivedReducer(reducer, selector);
+export default derivedReducer(baseReducer, selector);
