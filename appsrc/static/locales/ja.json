@@ -45,7 +45,7 @@
     "menu.edit.select_all": "全て選択",
     "menu.file.close_window": "ウィンドウを閉じる",
     "menu.file.file": "ファイル",
-    "menu.file.preferences": "設定",
+    "menu.file.preferences": "環境設定",
     "menu.file.quit": "終了",
     "menu.help.check_for_update": "アップデートを確認する",
     "menu.help.help": "ヘルプ",
@@ -201,7 +201,7 @@
     "usage_stats.description.comic": "コミック",
     "usage_stats.description.free_download": "無料ダウンロード",
     "usage_stats.description.game_mod": "ゲーム用MOD",
-    "usage_stats.description.other": "説明不能",
+    "usage_stats.description.other": "未分類",
     "usage_stats.description.physical_game": "物理ゲーム",
     "usage_stats.description.soundtrack": "サウンドトラック",
     "usage_stats.description.tool": "ツール",
@@ -287,7 +287,7 @@
     "preferences.advanced.open_app_log": "アプリログを開く",
     "pick_install_upload.title": "{{title}}の高速ダウンロードを有効",
     "pick_install_upload.message": "{{title}}のどのファイルをダウンロードしますか？",
-    "pick_install_upload.detail": "新しいアップデートが利用可能になった場合、再度確認します。",
+    "pick_install_upload.detail": "新しいアップデートが追加された時に再度確認します。",
     "pick_update_upload.title": "{{title}}の新しいダウンロードが可能です",
     "pick_update_upload.message": "{{title}}のどのファイルをアップデートしますか？",
     "pick_update_upload.detail": "前回ダウンロードした時にフォルダを選択したので、再度確認しています。",
@@ -337,5 +337,6 @@
     "label.experimental": "テスト中の機能",
     "collection.empty": "コレクションには、ゲームはありません",
     "sidebar.dashboard_subtitle": "開閉したもの",
-    "sidebar.press": "プレスハブ"
+    "sidebar.press": "プレスハブ",
+    "menu.file.new_tab": "新規タブ"
 }
