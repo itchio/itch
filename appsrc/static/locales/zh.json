@@ -304,5 +304,6 @@
     "prompt.self_update.action.dismiss": "忽略",
     "prompt.self_update.message.linux": "您可以手动下载，或用系统软件包管理器进行升级：前往网站获得更多指示。",
     "prompt.self_update.message.osx": "选择“现在下载”以自动安装此应用程式，或前往网站以获得更多指示。",
-    "prompt.deb_policy.detail": "itch只能安装便携式版本的Linux应用程式。"
+    "prompt.deb_policy.detail": "itch只能安装便携式版本的Linux应用程式。",
+    "prompt.uninstall.cancel": "取消"
 }
