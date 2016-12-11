@@ -306,5 +306,7 @@
     "prompt.self_update.message.osx": "选择“现在下载”以自动安装此应用程式，或前往网站以获得更多指示。",
     "prompt.deb_policy.detail": "itch只能安装便携式版本的Linux应用程式。",
     "prompt.uninstall.cancel": "取消",
-    "prompt.uninstall.message": "您确定要卸载 {{title}} 吗？"
+    "prompt.uninstall.message": "您确定要卸载 {{title}} 吗？",
+    "prompt.uninstall.reinstall": "重新安装",
+    "prompt.uninstall.uninstall": "立即卸载"
 }
