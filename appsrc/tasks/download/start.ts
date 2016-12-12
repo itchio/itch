@@ -13,17 +13,19 @@ import {IDownloadOpts} from "../../types";
 export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
   let opts = inOpts;
   if (opts.cave) {
-    opts = Object.assign({}, opts, {
+    opts = {
+      ...opts,
       logger: pathmaker.caveLogger(opts.cave.id),
-    });
+    };
   }
 
   if (opts.upgradePath && opts.cave) {
     log(opts, "Got an upgrade path, downloading patches");
 
-    return await downloadPatches(out, Object.assign({}, opts, {
+    return await downloadPatches(out, {
+      ...opts,
       cave: opts.cave,
-    }));
+    });
   }
 
   const {upload, destPath, downloadKey, credentials} = opts;
@@ -58,22 +60,24 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
     const fullInstallFolder = pathmaker.appPath(cave);
     log(opts, `Doing verify+heal to ${fullInstallFolder}`);
 
-    await butler.verify(signatureURL, fullInstallFolder, Object.assign({}, opts, {
+    await butler.verify(signatureURL, fullInstallFolder, {
+      ...opts,
       heal: `archive,${archiveURL}`,
       emitter: out,
       onProgress,
-    }));
+    });
   } else {
     const uploadURL = api.downloadUploadURL(downloadKey, upload.id);
 
     try {
-      await butler.cp(Object.assign({}, opts, {
+      await butler.cp({
+        ...opts,
         src: uploadURL,
         dest: destPath,
         resume: true,
         emitter: out,
         onProgress,
-      }));
+      });
     } catch (e) {
       if (e.errors && e.errors[0] === "invalid upload") {
         const e = new Error("invalid upload");

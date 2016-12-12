@@ -19,7 +19,7 @@ import debounce from "./debounce";
 
 import * as actions from "../actions";
 
-import {IStore, IState, IMarket, ICredentials} from "../types";
+import {IStore, IState, IUserMarket, ICredentials} from "../types";
 
 const fetchUsuals = debounce(async function fetchUsuals (credentials: ICredentials) {
   invariant(credentials.key, "have API key");
@@ -44,7 +44,7 @@ const fetchUsuals = debounce(async function fetchUsuals (credentials: ICredentia
 }, 300);
 
 async function fetchSingleCollectionGames
-    (store: IStore, market: IMarket, credentials: ICredentials, collectionId: number) {
+    (store: IStore, market: IUserMarket, credentials: ICredentials, collectionId: number) {
   await fetch.collectionGames(market, credentials, collectionId);
   store.dispatch(actions.collectionGamesFetched({collectionId}));
 }

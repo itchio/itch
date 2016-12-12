@@ -119,14 +119,15 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
 
   const out = new EventEmitter();
   const findKey = () => findWhere(market.getEntities<IDownloadKey>("downloadKeys"), {gameId: game.id});
-  const taskOpts = Object.assign({}, opts, {
+  const taskOpts = {
+    ...opts,
     logger,
     game,
     gameId: game.id,
     credentials,
     downloadKey: cave.downloadKey || findKey(),
     market,
-  });
+  };
 
   try {
     const {uploads, downloadKey} = await findUpload(out, taskOpts);
@@ -175,11 +176,12 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
 
           hasUpgrade = true;
 
-          const upgradeOpts = Object.assign({}, taskOpts, {
+          const upgradeOpts = {
+            ...taskOpts,
             upload,
             gameId: game.id,
             currentBuildId: cave.buildId,
-          });
+          };
           try {
             const {upgradePath, totalSize} = await findUpgradePath(out, upgradeOpts);
             log(opts, `Got ${upgradePath.length} patches to download, ${humanize.fileSize(totalSize)} total`);
@@ -195,7 +197,7 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
               },
             }));
 
-            return Object.assign({}, returnVars, {hasUpgrade});
+            return {...returnVars, hasUpgrade};
           } catch (e) {
             log(opts, `While getting upgrade path: ${e.message || e}`);
             return {err: e.message};
@@ -224,7 +226,7 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
         },
       }));
 
-      return Object.assign({}, returnVars, {hasUpgrade: true});
+      return {...returnVars, hasUpgrade: true};
     }
 
     const upload = recentUploads[0];
@@ -252,7 +254,7 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
         },
       }));
 
-      return Object.assign({}, returnVars, {hasUpgrade});
+      return {...returnVars, hasUpgrade};
     }
   } catch (e) {
     if (api.hasAPIError(e, "incorrect user for claim")) {

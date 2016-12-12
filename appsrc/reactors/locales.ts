@@ -34,7 +34,7 @@ function remoteFileName (lang: string): string {
   return ospath.join(remoteDir, lang + ".json");
 }
 
-async function doDownloadLocale (lang: string, resources: II18nResources) {
+async function doDownloadLocale (lang: string, resources: II18nResources): Promise<II18nResources> {
   const local = canonicalFileName(lang);
   if (!(await ifs.exists(local))) {
     // try stripping region
@@ -52,11 +52,18 @@ async function doDownloadLocale (lang: string, resources: II18nResources) {
     throw new Error("Locale update server is down, try again later");
   }
 
-  Object.assign(resources, resp.body);
+  const finalResources = {
+    ...resources,
+    ...resp.body,
+  };
 
-  log(opts, `Saving fresh ${lang} locale to ${remote}`);
-  const payload = JSON.stringify(resources, null, 2);
-  await ifs.writeFile(remote, payload);
+  try {
+    log(opts, `Saving fresh ${lang} locale to ${remote}`);
+    const payload = JSON.stringify(finalResources, null, 2);
+    await ifs.writeFile(remote, payload);
+  } finally {
+    return finalResources;
+  }
 }
 
 async function loadLocale (store: IStore, lang: string) {
@@ -123,9 +130,9 @@ export default function (watcher: Watcher) {
     log(opts, `Waiting a bit before downloading ${lang} locale...`);
     await delay(1000);
 
-    const resources = {};
+    let resources = {};
     try {
-      await doDownloadLocale(lang, resources);
+      resources = await doDownloadLocale(lang, resources);
     } catch (e) {
       log(opts, `Failed downloading locale for ${lang}: ${e.message}`);
       store.dispatch(actions.queueHistoryItem({

@@ -64,21 +64,23 @@ const self = {
 
     log(opts, `extracting archive '${archivePath}' to '${stagePath}'`);
 
-    const extractOpts = Object.assign({}, opts, {
+    const extractOpts = {
+      ...opts,
       emitter: out,
       onProgress: extractOnProgress,
       archivePath: opts.archivePath,
       destPath: stagePath,
-    });
+    };
     await extract.extract(extractOpts);
 
     log(opts, `extracted all files ${archivePath} into staging area`);
 
-    const deployOpts = Object.assign({}, opts, {
+    const deployOpts: IDeployOpts = {
+      ...opts,
       onProgress: deployOnProgress,
       stagePath,
       destPath: opts.destPath,
-    }) as IDeployOpts;
+    };
 
     deployOpts.onSingle = async function (onlyFile) {
       return await self.handleNested(out, opts, onlyFile);
@@ -99,9 +101,10 @@ const self = {
     const installerName = self.retrieveCachedType(opts);
     if (installerName) {
       log(opts, `have nested installer type ${installerName}, running...`);
-      const coreOpts = Object.assign({}, opts, {
+      const coreOpts = {
+        ...opts,
         installerName,
-      });
+      };
       await core.uninstall(out, coreOpts);
     } else {
       log(opts, `wiping directory ${destPath}`);
@@ -114,7 +117,11 @@ const self = {
 
   handleNested: async function (out: EventEmitter, opts: IStartTaskOpts, onlyFile: string) {
     // zipped installers need love too
-    const sniffOpts = Object.assign({}, opts, {archivePath: onlyFile, disableCache: true});
+    const sniffOpts = {
+      ...opts,
+      archivePath: onlyFile,
+      disableCache: true,
+    };
 
     let installerName: string;
     try {
@@ -126,7 +133,7 @@ const self = {
 
     self.cacheType(opts, installerName);
     log(opts, `found a '${installerName}': ${onlyFile}`);
-    const nestedOpts = Object.assign({}, opts, sniffOpts);
+    const nestedOpts = { ...opts, ...sniffOpts };
     await core.install(out, nestedOpts);
 
     return {deployed: true};

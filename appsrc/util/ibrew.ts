@@ -185,15 +185,16 @@ const self = {
     const formula = formulas[name] as IFormulaSpec;
     const {versionCheck = {}} = formula;
 
-    const check = Object.assign({}, defaultVersionCheck, versionCheck) as IVersionCheck;
+    const check: IVersionCheck = {...defaultVersionCheck, ...versionCheck};
 
     try {
       const command = check.command ? check.command : name;
       const extraOpts = {} as any;
       if (check.cleanPath) {
-        extraOpts.env = Object.assign({}, process.env, {
+        extraOpts.env = {
+          ...process.env,
           PATH: this.binPath(),
-        });
+        };
       }
       const info = await os.assertPresence(command, check.args, check.parser, extraOpts);
       return version.normalize(info.parsed);

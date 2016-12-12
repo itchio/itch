@@ -29,23 +29,25 @@ export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
   const market = getUserMarket();
 
   const id = uuid.v4();
-  store.dispatch(actions.taskStarted(Object.assign({}, {id, startedAt: Date.now(), progress: 0}, taskOpts)));
+  store.dispatch(actions.taskStarted({id, startedAt: Date.now(), progress: 0, ...taskOpts}));
 
   let error: Error;
   let result: any;
   try {
     const out = new EventEmitter();
     out.on("progress", throttle((ev: IProgressInfo) => {
-      store.dispatch(actions.taskProgress(Object.assign({}, {id}, ev)));
+      store.dispatch(actions.taskProgress({id, ...ev}));
     }, PROGRESS_THROTTLE));
 
     const preferences = store.getState().preferences;
-    const extendedOpts = Object.assign({}, opts, taskOpts, {
+    const extendedOpts = {
+      ...opts,
+      ...taskOpts,
       market,
       globalMarket: getGlobalMarket(),
       credentials,
       preferences,
-    });
+    };
 
     log(opts, `About to start ${taskOpts.name} (${id})`);
     const taskRunner = require(`../../tasks/${taskOpts.name}`).default;

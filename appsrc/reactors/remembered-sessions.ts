@@ -52,7 +52,7 @@ async function saveSession (store: IStore, userId: string, record: any) {
     // muffin
   }
 
-  const finalRecord = Object.assign({}, oldRecord, record, {lastConnected: Date.now()});
+  const finalRecord = {...oldRecord, ...record, lastConnected: Date.now()};
   const content = JSON.stringify(finalRecord);
   await sf.writeFile(tokenPath, content);
 

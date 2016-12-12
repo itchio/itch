@@ -90,11 +90,11 @@ async function start (store: IStore, download: IDownloadItem) {
       if (cancelled) {
         return;
       }
-      store.dispatch(actions.downloadProgress(Object.assign({}, {id: download.id}, ev)));
+      store.dispatch(actions.downloadProgress({id: download.id, ...ev}));
     }, 250));
 
     const credentials = store.getState().session.credentials;
-    const extendedOpts = Object.assign({}, opts, downloadOpts, { credentials });
+    const extendedOpts = {...opts, ...downloadOpts, credentials};
 
     log(opts, "Starting download...");
     await downloadTask(currentEmitter, extendedOpts);

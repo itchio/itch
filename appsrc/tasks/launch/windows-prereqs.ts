@@ -164,7 +164,7 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
     for (const task of alreadyInstalledTasks) {
       alreadyInstalledPrereqs[task.prereq.name] = true;
     }
-    installedPrereqs = Object.assign({}, installedPrereqs, alreadyInstalledPrereqs);
+    installedPrereqs = {...installedPrereqs, ...alreadyInstalledPrereqs};
     await globalMarket.saveEntity("caves", caveId, {installedPrereqs});
   }
 
@@ -204,7 +204,7 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
     for (const task of alreadyInstalledTasks) {
       nowInstalledPrereqs[task.prereq.name] = true;
     }
-    installedPrereqs = Object.assign({}, installedPrereqs, nowInstalledPrereqs);
+    installedPrereqs = {...installedPrereqs, ...nowInstalledPrereqs};
     await globalMarket.saveEntity("caves", caveId, {installedPrereqs});
   } finally {
     await sf.wipe(workDir.name);

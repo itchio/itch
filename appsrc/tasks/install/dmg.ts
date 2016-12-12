@@ -130,11 +130,12 @@ let self = {
       throw new Error("Failed to mount image (no mountpoint)");
     }
 
-    let deployOpts = Object.assign({}, opts, {
+    let deployOpts = {
+      ...opts,
       stagePath: mountpoint,
       destPath: opts.destPath,
       onProgress: onProgress,
-    });
+    };
     await deploy.deploy(deployOpts);
 
     const cleanup = async function () {

@@ -74,11 +74,15 @@ async function retrieveTabData (store: IStore, id: string, retrOpts = {} as IRet
       const oldCollectionData = (((data || {}).collections || {})[collectionId] || {});
 
       const fetchMarket = new Market();
-      fetchMarket.data = Object.assign({}, newData, {
-        collections: Object.assign({}, newData.collections, {
-          [collectionId]: Object.assign({}, oldCollectionData, newData.collections[collectionId]),
-        }),
-      });
+      fetchMarket.data = {
+        collections: {
+          ...newData.collections,
+          [collectionId]: {
+            ...oldCollectionData,
+            ...newData.collections[collectionId],
+          },
+        },
+      };
 
       try {
         await fetch.collectionGames(fetchMarket, credentials, collectionId);
@@ -284,7 +288,7 @@ export default function (watcher: Watcher) {
       const data = await retrieveTabData(store, id, {path});
       store.dispatch(actions.tabEvolved({
         id,
-        data: Object.assign({}, data, extras, {path}),
+        data: {...data, ...extras, path},
       }));
     } catch (e) {
       log(opts, `While evolving tab: ${e.stack || e}`);

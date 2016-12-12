@@ -31,7 +31,7 @@ export default function (watcher: Watcher) {
       dialogButtons.push({
         icon: "download",
         label: ["pick_update_upload.buttons.update"],
-        action: actions.queueGameUpdate(Object.assign({}, action.payload, {upload})),
+        action: actions.queueGameUpdate({...action.payload, upload}),
       });
     } else {
       dialogTitle = ["pick_update_upload.title", {title}];
@@ -52,13 +52,14 @@ export default function (watcher: Watcher) {
       message: dialogMessage,
       detail: dialogDetail,
       bigButtons: map(update.recentUploads, (upload) => {
-        return Object.assign({}, makeUploadButton(upload, {showSize: false}), {
+        return {
+          ...makeUploadButton(upload, {showSize: false}),
           timeAgo: {
             label: ["prompt.updated_ago"],
             date: Date.parse(upload.updatedAt),
           },
-          action: actions.queueGameUpdate(Object.assign({}, action.payload, {upload, handPicked: (!single)})),
-        });
+          action: actions.queueGameUpdate({...action.payload, upload, handPicked: (!single)}),
+        };
       }),
       buttons: dialogButtons,
     }));

@@ -136,9 +136,10 @@ export default function (watcher: Watcher) {
         message: `Reverting to ${buildId}...`,
       }));
 
-      const changedUpload = Object.assign({}, upload, {
+      const changedUpload = {
+        ...upload,
         buildId,
-      });
+      };
 
       store.dispatch(actions.queueDownload({
         cave: cave,

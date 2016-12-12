@@ -110,11 +110,12 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
       return {caveId: cave.id};
     }
 
-    let coreOpts = Object.assign({}, opts, {
+    let coreOpts = {
+      ...opts,
       cave,
       destPath,
       onProgress: (ev: IProgressInfo) => out.emit("progress", ev),
-    });
+    };
 
     globalMarket.saveEntity("caves", cave.id, {launchable: false});
     await core.install(out, coreOpts);

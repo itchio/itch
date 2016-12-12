@@ -75,9 +75,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
   }
 
   if (!exePath) {
-    const pokerOpts = Object.assign({}, opts, {
-      appPath,
-    });
+    const pokerOpts = {...opts, appPath};
     exePath = await poker(pokerOpts);
   }
 
@@ -97,10 +95,11 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
         upload: cave.uploads[cave.uploadId],
       });
       cave = globalMarket.getEntity<ICaveRecord>("caves", cave.id);
-      return await launch(out, Object.assign({}, opts, {
+      return await launch(out, {
+        ...opts,
         cave,
         hailMary: true,
-      }));
+      });
     }
   }
 
@@ -182,11 +181,12 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
     }
   }
 
-  const spawnOpts = Object.assign({}, opts, {
+  const spawnOpts = {
+    ...opts,
     cwd,
     console,
     isolateApps,
-  });
+  };
 
   let fullExec = exePath;
   if (itchPlatform === "osx") {
@@ -202,7 +202,8 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
     if (isolateApps) {
       log(opts, "app isolation enabled");
 
-      const sandboxOpts = Object.assign({}, opts, {
+      const sandboxOpts = {
+        ...opts,
         game,
         appPath,
         exePath,
@@ -211,7 +212,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
         isBundle,
         cwd,
         logger: opts.logger,
-      });
+      };
 
       await sandbox.within(sandboxOpts, async function ({fakeApp}) {
         await doSpawn(fullExec, `open -W ${spawn.escapePath(fakeApp)}`, env, out, opts);
@@ -310,9 +311,10 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     if (itchPlatform === "windows") {
       if (opts.isolateApps) {
         inheritStd = true;
-        env = Object.assign({}, env, {
+        env = {
+          ...env,
           ISOLATE_DISABLE_REDIRECTS: "1",
-        });
+        };
       } else {
         const consoleCommandItems = [command, ...args];
         const consoleCommand = consoleCommandItems.map((arg) => `"${arg}"`).join(" ");
@@ -328,10 +330,11 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
   }
 
   const tmpPath = ospath.join(cwd, "temp");
-  env = Object.assign({}, env, {
+  env = {
+    ...env,
     TMP: tmpPath,
     TEMP: tmpPath,
-  });
+  };
 
   log(opts, `command: ${command}`);
   log(opts, `args: ${JSON.stringify(args, null, 2)}`);
@@ -357,7 +360,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     onToken: (tok) => log(opts, `out: ${tok}`),
     onErrToken: (tok) => log(opts, `err: ${tok}`),
     opts: {
-      env: Object.assign({}, process.env, env),
+      env: {...process.env, env},
       cwd,
       shell,
     },
@@ -366,7 +369,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
 
   if (code !== 0) {
     const error = `process exited with code ${code}`;
-    throw new Crash({exePath, error});
+    throw new Crash({error});
   }
   return "child completed successfully";
 }

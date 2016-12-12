@@ -42,9 +42,10 @@ export default async function start(out: EventEmitter, inOpts: IConfigureOpts) {
   invariant(game, "configure has game");
   invariant(upload, "configure has upload");
 
-  const opts = Object.assign({}, inOpts, {
+  const opts = {
+    ...inOpts,
     logger: pathmaker.caveLogger(cave.id),
-  });
+  };
 
   const appPath = pathmaker.appPath(cave);
   log(opts, `configuring ${appPath}`);

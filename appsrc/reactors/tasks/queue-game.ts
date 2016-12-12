@@ -24,11 +24,12 @@ interface IExtraOpts {}
 
 async function startCave (store: IStore, game: IGameRecord, cave: ICaveRecord, extraOpts: IExtraOpts) {
   log(opts, `Starting cave ${cave.id}`);
-  const {err} = await startTask(store, Object.assign({}, {
+  const {err} = await startTask(store, {
     name: "launch",
     gameId: cave.game.id,
     cave,
-  }, extraOpts));
+    ...extraOpts,
+  });
 
   if (err) {
     store.dispatch(actions.queueHistoryItem({
@@ -92,11 +93,13 @@ export default function (watcher: Watcher) {
           message: ["pick_install_upload.message", {title}],
           detail: ["pick_install_upload.detail"],
           bigButtons: map(uploads, (upload) => {
-            return Object.assign({}, makeUploadButton(upload), {
-              action: actions.queueGame(Object.assign({}, action.payload, {
+            return {
+              ...makeUploadButton(upload),
+              action: actions.queueGame({
+                ...action.payload,
                 pickedUpload: upload.id,
-              })),
-            });
+              }),
+            };
           }),
           buttons: [
             "cancel",

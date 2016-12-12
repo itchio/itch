@@ -114,9 +114,10 @@ export class Client {
       v: 2,
     };
     if (totpCode) {
-      data = Object.assign({}, data, {
+      data = {
+        ...data,
         totp_code: totpCode,
-      });
+      };
     }
 
     return await this.request("post", "/login", data);
@@ -158,9 +159,10 @@ export class AuthenticatedClient {
    * Craft an itchfs url suitable for usage with butler
    */
   itchfsURL (path: string, data: any = {}) {
-    const queryParams = Object.assign({}, {
+    const queryParams = {
       api_key: this.key,
-    }, data);
+      ...data,
+    };
     return `itchfs://${path}?${querystring.stringify(queryParams)}`;
   }
 
@@ -312,9 +314,10 @@ function sprinkleDownloadKey (downloadKey: IDownloadKey | null, params: any): an
     return params;
   }
 
-  return Object.assign({}, params, {
+  return {
+    ...params,
     download_key_id: downloadKey.id,
-  });
+  };
 }
 
 /**

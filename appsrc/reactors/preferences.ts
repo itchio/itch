@@ -28,7 +28,7 @@ export default function (watcher: Watcher) {
 
     log(opts, "imported preferences: ", JSON.stringify(prefs, null, 2));
     store.dispatch(actions.updatePreferences(prefs));
-    store.dispatch(actions.preferencesLoaded(Object.assign({}, initialState, prefs)));
+    store.dispatch(actions.preferencesLoaded({...initialState, ...prefs}));
   });
 
   watcher.on(actions.updatePreferences, async (store, action) => {

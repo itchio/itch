@@ -31,9 +31,10 @@ const self = {
       // copy to temporary file, otherwise windows will refuse to open them
       // cf. https://github.com/itchio/itch/issues/322
       inst += ".exe";
-      await butler.ditto(opts.archivePath, inst, Object.assign({}, opts, {
+      await butler.ditto(opts.archivePath, inst, {
+        ...opts,
         emitter: out,
-      }));
+      });
       removeAfterUsage = true;
     }
 
@@ -49,9 +50,10 @@ const self = {
     });
 
     if (removeAfterUsage) {
-      await butler.wipe(inst, Object.assign({}, opts, {
+      await butler.wipe(inst, {
+        ...opts,
         emitter: out,
-      }));
+      });
     }
 
     if (code !== 0) {

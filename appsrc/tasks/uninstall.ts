@@ -34,12 +34,13 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
     log(opts, `Uninstalling app in ${destPath}, no archive available`);
   }
 
-  const coreOpts = Object.assign({}, opts, {
+  const coreOpts = {
+    ...opts,
     onProgress,
     upload,
     archivePath,
     destPath,
-  });
+  };
   globalMarket.saveEntity("caves", cave.id, {launchable: false, dead: true});
 
   try {

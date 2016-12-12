@@ -76,9 +76,10 @@ export default async function start (out: EventEmitter, inOpts: IStartTaskOpts) 
   const {cave} = inOpts;
 
   const logger = pathmaker.caveLogger(cave.id);
-  let opts = Object.assign({}, inOpts, {
+  let opts = {
+    ...inOpts,
     logger,
-  });
+  };
 
   try {
     return await doStart(out, opts);
@@ -122,7 +123,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
   invariant(credentials, "launch has credentials");
   invariant(market, "launch has market");
 
-  const gameOpts = Object.assign({}, opts);
+  const gameOpts = {...opts};
 
   const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game});
   const caveGame = (cave.game || {}) as IGameRecord;

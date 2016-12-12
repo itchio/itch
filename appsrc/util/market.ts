@@ -141,7 +141,7 @@ export default class Market extends EventEmitter implements IMarket {
         const same = every(Object.keys(entity), (key) => isEqual(entity[key], record[key]));
 
         if (!same) {
-          const newRecord = deepFreeze(Object.assign({}, record, entity));
+          const newRecord = deepFreeze({...record, ...entity});
           table[entityId] = newRecord;
 
           if (persist) {

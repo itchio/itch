@@ -29,9 +29,10 @@ export default function (watcher: Watcher) {
             return;
           }
 
-          const newDownloadOpts = Object.assign({}, omit(downloadOpts, "upgradePath", "incremental"), {
+          const newDownloadOpts = {
+            ...omit(downloadOpts, "upgradePath", "incremental"),
             totalSize: downloadOpts.upload.size,
-          });
+          };
           store.dispatch(actions.queueDownload(newDownloadOpts));
         } else {
           log(opts, "Download had an error, should notify user");

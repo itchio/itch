@@ -33,9 +33,10 @@ export default function (watcher: Watcher) {
       }
 
       let upload = cave.uploads[cave.uploadId];
-      upload = Object.assign({}, upload, {
+      upload = {
+        ...upload,
         buildId: cave.buildId,
-      });
+      };
 
       const market = getUserMarket();
 

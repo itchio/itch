@@ -81,8 +81,10 @@ spawn = async function (opts: ISpawnOpts): Promise<number> {
     };
   }
 
-  const spawnOpts = Object.assign({}, opts.opts || {}, stdioOpts);
-
+  const spawnOpts = {
+    ...(opts.opts || {}),
+    ...stdioOpts,
+  };
   log(opts, `spawning ${command} with args ${args.join(" ")}`);
 
   const child = childProcess.spawn(command, args, spawnOpts);
@@ -172,7 +174,8 @@ spawn.exec = async function (opts: ISpawnOpts): Promise<IExecResult> {
 
   const {onToken, onErrToken} = opts;
 
-  const actualOpts = Object.assign({}, opts, {
+  const actualOpts = {
+    ...opts,
     onToken: (tok: string) => {
       out += tok + "\n";
       if (onToken) { onToken(tok); }
@@ -181,7 +184,7 @@ spawn.exec = async function (opts: ISpawnOpts): Promise<IExecResult> {
       err += tok + "\n";
       if (onErrToken) { onErrToken(tok); }
     },
-  });
+  };
 
   const code = await spawn(actualOpts);
   return { code, out, err };

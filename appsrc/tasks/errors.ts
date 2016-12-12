@@ -1,11 +1,32 @@
 
-export class Transition extends Error {
-  to?: string;
-  reason?: string;
+type ItchErrorType = "transition" | "crash" | "cancelled";
 
-  constructor(opts: any) {
-    super("task transition");
-    Object.assign(this, opts, { type: "transition" });
+class ItchError extends Error {
+  type: ItchErrorType;
+
+  constructor (type: ItchErrorType) {
+    super();
+    this.type = type;
+  }
+
+  toString(): string {
+    return this.type;
+  }
+}
+
+interface ITransitionOpts {
+  to: string;
+  reason: string;
+}
+
+export class Transition extends ItchError {
+  to: string;
+  reason: string;
+
+  constructor(opts: ITransitionOpts) {
+    super("transition");
+    this.to = opts.to;
+    this.reason = opts.reason;
   }
 
   toString() {
@@ -13,23 +34,25 @@ export class Transition extends Error {
   }
 }
 
-export class InputRequired extends Error {
-  constructor(opts: any) {
-    super("user interaction required");
-    Object.assign(this, opts, { type: "input_required" });
+interface ICrashOpts {
+  error: string;
+}
+
+export class Crash extends ItchError {
+  error: string;
+
+  constructor(opts: ICrashOpts) {
+    super("crash");
+    this.error = opts.error;
+  }
+
+  toString() {
+    return `application crashed. ${this.error || ""}`;
   }
 }
 
-export class Crash extends Error {
-  constructor(opts: any) {
-    super(`application crashed. ${opts.error || ""}`);
-    Object.assign(this, opts, { type: "crash" });
-  }
-}
-
-export class Cancelled extends Error {
+export class Cancelled extends ItchError {
   constructor(opts: any = {}) {
     super("cancelled");
-    Object.assign(this, opts, { type: "cancelled" });
   }
 }

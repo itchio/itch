@@ -55,9 +55,9 @@ test("configure", (t) => {
       t.stub(os, "platform").returns(platform);
       t.mock((platforms as any)[platform]).expects("configure").resolves({executables: []});
       const out = new EventEmitter();
-      return configure.default(out, Object.assign({}, opts, {
-        cave: {}, game: {}, upload: {}, globalMarket,
-      }));
+      return configure.default(out, {
+        ...opts, cave: {}, game: {}, upload: {}, globalMarket,
+      });
     });
   });
 });

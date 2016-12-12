@@ -107,9 +107,9 @@ async function sizeof (opts: ISizeofOpts): Promise<any> {
     value = result.value;
   });
 
-  const butlerOpts = Object.assign({}, {
+  const butlerOpts = {
     emitter,
-  });
+  };
 
   await butler(butlerOpts, "sizeof", args);
 

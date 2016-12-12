@@ -50,9 +50,7 @@ const self = {
     if (code !== 0) {
       if (code === 1603 && !opts.elevated) {
         log(opts, "msi installer exited with 1603, retrying elevated");
-        return await self.install(out, Object.assign({}, opts, {
-          elevated: true,
-        }));
+        return await self.install(out, {...opts, elevated: true });
       }
       throw new Error(`msi installer exited with code ${code}`);
     }
@@ -83,9 +81,7 @@ const self = {
     if (code !== 0) {
       if (code === 1603 && !opts.elevated) {
         log(opts, "msi uninstaller exited with 1603, retrying elevated");
-        return await self.uninstall(out, Object.assign({}, opts, {
-          elevated: true,
-        }));
+        return await self.uninstall(out, {...opts, elevated: true });
       }
       throw new Error(`msi uninstaller exited with code ${code}`);
     }

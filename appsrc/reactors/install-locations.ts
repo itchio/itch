@@ -128,11 +128,13 @@ export default function (watcher: Watcher) {
 
     store.dispatch(actions.updatePreferences({
       defaultInstallLocation,
-      installLocations: Object.assign({}, installLocations, {
-        [name]: Object.assign({}, installLocations[name], {
+      installLocations: {
+        ...installLocations,
+        [name]: {
+          ...installLocations[name],
           deleted: true,
-        }),
-      }),
+        },
+      },
     }));
   });
 
@@ -176,9 +178,10 @@ export default function (watcher: Watcher) {
     const installLocations = store.getState().preferences.installLocations;
 
     store.dispatch(actions.updatePreferences({
-      installLocations: Object.assign({}, installLocations, {
+      installLocations: {
+        ...installLocations,
         [loc.name]: omit(loc, "name"),
-      }),
+      },
     }));
   });
 

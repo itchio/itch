@@ -39,18 +39,20 @@ export interface IAsyncFSVariants {
   unlinkAsync: (path: string) => Promise<string>;
 }
 
-let fs = Object.assign({}, require(fsName), {
+let fs = {
+  ...require(fsName),
   "@global": true, /* Work with transitive imports */
   "@noCallThru": true, /* Don't even require/hit electron fs */
   disableGlob: true, /* Don't ever use globs with rimraf */
-}) as typeof fsModule & IAsyncFSVariants;
+} as typeof fsModule & IAsyncFSVariants;
 
 // graceful-fs fixes a few things https://www.npmjs.com/package/graceful-fs
 // notably, EMFILE, EPERM, etc.
-const gracefulFs = Object.assign({}, proxyquire("graceful-fs", { fs }), {
+const gracefulFs = {
+  ...proxyquire("graceful-fs", { fs }),
   "@global": true, /* Work with transitive imports */
   "@noCallThru": true, /* Don't even require/hit electron fs */
-});
+};
 
 // when proxyquired modules load, they'll require what we give
 // them instead of

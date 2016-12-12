@@ -83,7 +83,7 @@ export function scoreUpload (upload: IUploadRecord): IScoredUpload {
     score -= 50;
   }
 
-  return Object.assign({}, upload, {score});
+  return {...upload, score};
 }
 
 export function sortUploads (scoredUploads: IScoredUpload[]): IScoredUpload[] {

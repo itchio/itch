@@ -27,16 +27,17 @@ async function startDownload (store: IStore, downloadOpts: IStartDownloadOpts) {
 
   const id = uuid.v4();
   // FIXME: wasteful but easy
-  store.dispatch(actions.downloadStarted(Object.assign({}, downloadOpts, {id, downloadOpts})));
+  store.dispatch(actions.downloadStarted({...downloadOpts, id, downloadOpts}));
 }
 
 export default function (watcher: Watcher) {
   watcher.on(actions.queueDownload, async (store, action) => {
     const downloadOpts = action.payload;
-    await startDownload(store, Object.assign({}, downloadOpts, {
+    await startDownload(store, {
+      ...downloadOpts,
       name: "download",
       gameId: downloadOpts.game.id,
-    }));
+    });
   });
 
   watcher.on(actions.retryDownload, async (store, action) => {

@@ -35,12 +35,13 @@ async function createWindow (store: IStore, hidden: boolean) {
   createLock = true;
 
   const userBounds = config.get(BOUNDS_CONFIG_KEY) || {};
-  const bounds = Object.assign({}, {
+  const bounds = {
     x: -1,
     y: -1,
     width: 1250,
     height: 720,
-  }, userBounds);
+    ...userBounds,
+  };
   const {width, height} = bounds;
   const center = (bounds.x === -1 && bounds.y === -1);
   const iconPath = ospath.resolve(`${__dirname}/../static/images/window/${app.getName()}/icon.png`);
@@ -237,33 +238,25 @@ function ensureWindowInsideDisplay (window: IBrowserWindow) {
   const displayLeft = displayBounds.x;
   if (bounds.x < displayLeft) {
     log(opts, `Nudging right`);
-    bounds = Object.assign({}, bounds, {
-      x: displayLeft,
-    });
+    bounds = { ...bounds, x: displayLeft };
   }
 
   const displayTop = displayBounds.y;
   if (bounds.y < displayTop) {
     log(opts, `Nudging down`);
-    bounds = Object.assign({}, bounds, {
-      y: displayTop,
-    });
+    bounds = { ...bounds, y: displayTop };
   }
 
   const displayRight = displayBounds.width + displayBounds.x;
   if (bounds.x + bounds.width > displayRight) {
     log(opts, `Nudging left`);
-    bounds = Object.assign({}, bounds, {
-      x: displayRight - bounds.width,
-    });
+    bounds = { ...bounds, x: displayRight - bounds.width };
   }
 
   const displayBottom = displayBounds.height + displayBounds.y;
   if (bounds.y + bounds.height > displayBottom) {
     log(opts, `Nudging up`);
-    bounds = Object.assign({}, bounds, {
-      y: displayBottom - bounds.height,
-    });
+    bounds = { ...bounds, y: displayBottom - bounds.height };
   }
 
   if (bounds !== originalBounds) {

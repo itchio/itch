@@ -27,10 +27,10 @@ setTimeout(function () {
   const querystring = require("querystring");
 
   const sendMessage = (verb: string, userAttrs = {}) => {
-    const attrs = Object.assign({}, userAttrs, {
+    const attrs = {
+      ...userAttrs,
       tabId: extendedWindow.__itchTabId,
-    });
-    // TODO: introduce ExtendedWindow interface or something?
+    };
 
     const url = `https://itch-internal/${verb}?${querystring.stringify(attrs)}`;
     const xhr = new XMLHttpRequest();
@@ -42,7 +42,7 @@ setTimeout(function () {
 
   Object.defineProperty(window, "I", {
     get: () => I,
-    set: (val) => Object.assign(I, val),
+    set: (val) => ({...I, val}),
   });
 
   let BBF: any;

@@ -23,18 +23,20 @@ const self = {
     const destFilePath = ospath.join(destPath, ospath.basename(archivePath));
     log(opts, `copying ${archivePath} to ${destFilePath}`);
 
-    await butler.ditto(archivePath, destFilePath, Object.assign({}, opts, {
+    await butler.ditto(archivePath, destFilePath, {
+      ...opts,
       emitter: out,
-    }));
+    });
   },
 
   uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
     const {destPath} = opts;
 
     log(opts, `nuking ${destPath}`);
-    await butler.wipe(destPath, Object.assign({}, opts, {
+    await butler.wipe(destPath, {
+      ...opts,
       emitter: out,
-    }));
+    });
   },
 };
 

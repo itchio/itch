@@ -20,9 +20,10 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    store.dispatch(actions.queueGameUpdate(Object.assign({}, action.payload, {
+    store.dispatch(actions.queueGameUpdate({
+      ...action.payload,
       upload: recentUploads[0],
-    })));
+    }));
   });
 
   watcher.on(actions.queueGameUpdate, async (store, action) => {
