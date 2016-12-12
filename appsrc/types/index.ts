@@ -363,9 +363,11 @@ export interface ICaveRecordSet {
     [key: string]: ICaveRecord;
 }
 
+export type InstallerType = "archive" | "air" | "dmg" | "exe" | "inno" | "nsis" | "msi" | "naked";
+
 /** Stores installer name by upload id */
 export interface IInstallerCache {
-    [uploadId: string]: string;
+    [uploadId: string]: InstallerType;
 }
 
 export interface IUploadRecord {

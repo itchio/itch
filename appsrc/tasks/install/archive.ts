@@ -13,10 +13,10 @@ import mklog from "../../util/log";
 const log = mklog("installers/archive");
 
 import {IStartTaskOpts, IInstallerCache} from "../../types";
-import {IProgressInfo} from "../../types";
+import {IProgressInfo, InstallerType} from "../../types";
 
 const self = {
-  retrieveCachedType: function (opts: IStartTaskOpts) {
+  retrieveCachedType: function (opts: IStartTaskOpts): InstallerType {
     const {cave} = opts;
     if (!cave) {
       return;
@@ -39,7 +39,7 @@ const self = {
     return type;
   },
 
-  cacheType: function (opts: IStartTaskOpts, type: string) {
+  cacheType: function (opts: IStartTaskOpts, type: InstallerType) {
     const cave = opts.cave;
     if (!cave) {
       return;
@@ -99,7 +99,7 @@ const self = {
     const destPath = opts.destPath;
 
     const installerName = self.retrieveCachedType(opts);
-    if (installerName) {
+    if (installerName && installerName !== "archive") {
       log(opts, `have nested installer type ${installerName}, running...`);
       const coreOpts = {
         ...opts,
@@ -123,7 +123,7 @@ const self = {
       disableCache: true,
     };
 
-    let installerName: string;
+    let installerName: InstallerType;
     try {
       installerName = await core.sniffType(sniffOpts);
     } catch (err) {

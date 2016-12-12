@@ -8,7 +8,7 @@ import spawn from "../../util/spawn";
 import mklog from "../../util/log";
 const log = mklog("install/core");
 
-import {IInstallerCache, IStartTaskOpts} from "../../types";
+import {IInstallerCache, InstallerType, IStartTaskOpts} from "../../types";
 
 type InstallOperation = "install" | "uninstall";
 
@@ -20,7 +20,7 @@ class UnhandledFormat extends Error {
 
 /** maps file extensions to installer types */
 interface IInstallerExtensionMap {
-  [ext: string]: string;
+  [ext: string]: InstallerType;
 }
 
 const self = {
@@ -61,7 +61,7 @@ const self = {
     return await self.operate(out, opts, "uninstall");
   },
 
-  cacheType: function (opts: IStartTaskOpts, installerName: string) {
+  cacheType: function (opts: IStartTaskOpts, installerName: InstallerType) {
     const {globalMarket, cave, upload} = opts;
     if (!cave) {
       return;
@@ -100,7 +100,7 @@ const self = {
     return installerName;
   },
 
-  sniffType: async function (opts: IStartTaskOpts) {
+  sniffType: async function (opts: IStartTaskOpts): Promise<InstallerType> {
     const {archivePath} = opts;
     if (!archivePath) {
       log(opts, 'no archive available, unable to sniff type, going with "archive" uninstaller');

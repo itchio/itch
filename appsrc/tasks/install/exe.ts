@@ -11,11 +11,11 @@ const log = mklog("installers/exe");
 
 import {partial} from "underscore";
 
-import {IStartTaskOpts, IInstallerCache} from "../../types";
+import {IStartTaskOpts, IInstallerCache, InstallerType} from "../../types";
 
 /** Map search string to installer format */
 interface INeedles {
-  [searchString: string]: string;
+  [searchString: string]: InstallerType;
 }
 
 let self = {
@@ -76,7 +76,7 @@ let self = {
     return type;
   },
 
-  cacheType: function (opts: IStartTaskOpts, type: string) {
+  cacheType: function (opts: IStartTaskOpts, type: InstallerType) {
     let cave = opts.cave;
     if (!cave) {
       return;
@@ -89,7 +89,7 @@ let self = {
     globalMarket.saveEntity("caves", cave.id, {installerExeCache});
   },
 
-  identify: async function (opts: IStartTaskOpts) {
+  identify: async function (opts: IStartTaskOpts): Promise<InstallerType> {
     let kind = await self.builtinSniff(opts, self.builtinNeedles);
     if (!kind) {
       kind = await self.externalSniff(opts, self.externalNeedles);
@@ -98,12 +98,14 @@ let self = {
     return kind;
   },
 
-  builtinSniff: async function (opts: IStartTaskOpts, needles: INeedles) {
+  builtinSniff: async function (opts: IStartTaskOpts, needles: INeedles): Promise<InstallerType> {
     const {archivePath} = opts;
-    let result: string = null;
+    let result: InstallerType = null;
     let searches: any[] = [];
 
-    let onInfo = (needle: string, format: string, isMatch: boolean, data: Buffer, start: number, end: number) => {
+    let onInfo = (
+        needle: string, format: InstallerType, isMatch: boolean,
+        data: Buffer, start: number, end: number) => {
       if (!isMatch) {
         return;
       }
@@ -138,7 +140,7 @@ let self = {
     "META-INF/AIR/application.xml": "air",
   } as INeedles,
 
-  externalSniff: async function (opts: IStartTaskOpts, needles: INeedles) {
+  externalSniff: async function (opts: IStartTaskOpts, needles: INeedles): Promise<InstallerType> {
     const {archivePath} = opts;
 
     let detail: string;
