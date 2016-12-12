@@ -35,7 +35,7 @@ function makeTray (store: IStore) {
   // cf. https://github.com/itchio/itch/issues/462
   // windows still displays a 16x16, whereas
   // some linux DEs don't know what to do with a @x2, etc.
-  const iconName = os.platform() === "linux" ? `${app.getName()}.png` : `${app.getName()}-small.png`;
+  const iconName = os.platform() === "linux" ? `white.png` : `white-small.png`;
   const iconPath = ospath.resolve(`${__dirname}/../static/images/tray/${iconName}`);
   tray = new Tray(iconPath);
   tray.setToolTip("itch.io");
