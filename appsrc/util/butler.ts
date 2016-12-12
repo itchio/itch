@@ -116,6 +116,38 @@ async function sizeof (opts: ISizeofOpts): Promise<any> {
   return value;
 }
 
+interface IFileOpts {
+  path: string;
+}
+
+interface IFileResult {
+  type?: string;
+  numFiles?: number;
+  numDirs?: number;
+  numSymlinks?: number;
+  uncompressedSize?: number;
+}
+
+async function file (opts: IFileOpts): Promise<IFileResult> {
+  const {path} = opts;
+  const args = [path];
+
+  let value: IFileResult = {};
+
+  const emitter = new EventEmitter();
+  emitter.on("result", (result: IButlerResult) => {
+    value = result.value;
+  });
+
+  const butlerOpts = {
+    emitter,
+  };
+
+  await butler(butlerOpts, "file", args);
+
+  return value;
+}
+
 interface ICpOpts extends IButlerOpts {
   src: string;
   dest: string;
@@ -233,5 +265,5 @@ async function sanityCheck (): Promise<boolean> {
 }
 
 export default {
-  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify, sizeof, sanityCheck,
+  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify, sizeof, file, sanityCheck,
 };

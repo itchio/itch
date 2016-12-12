@@ -150,16 +150,28 @@ const self = {
   extract: async function (opts: IExtractOpts): Promise<void> {
     const {archivePath, destPath} = opts;
 
-    const isZip = /\.zip$/i.test(archivePath);
-    if (isZip) {
-      const hasButler = await butler.sanityCheck();
-      if (hasButler) {
-        log(opts, "Using butler to extract zip");
-        await butler.unzip(opts);
-        return;
-      } else {
-        log(opts, "No sane butler around, using unar to extract zip");
+    const hasButler = await butler.sanityCheck();
+
+    let useButler = false;
+    if (hasButler) {
+      try {
+        const fileResult = await butler.file({path: archivePath});
+        if (fileResult.type === "zip") {
+          useButler = true;
+        } else {
+          log(opts, `Recognized by butler but not a zip: ${fileResult.type}`);
+        }
+      } catch (e) {
+        log(opts, `Butler choked: ${e.message || e}`);
       }
+    }
+
+    if (useButler) {
+      log(opts, "Using butler to extract zip");
+      await butler.unzip(opts);
+      return;
+    } else {
+      log(opts, "Using unar to extract zip");
     }
 
     return await self.unarchiver(opts);

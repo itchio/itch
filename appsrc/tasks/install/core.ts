@@ -4,6 +4,7 @@ import {EventEmitter} from "events";
 import * as invariant from "invariant";
 
 import fnout, {SniffResult} from "fnout";
+import butler from "../../util/butler";
 import spawn from "../../util/spawn";
 import mklog from "../../util/log";
 const log = mklog("install/core");
@@ -134,11 +135,23 @@ const self = {
       if (code === 0) {
         log(opts, "unarchiver saves the day! it is an archive.");
         installerName = "archive";
-      } else if (type.macExecutable || type.linuxExecutable) {
-        log(opts, "tis an executable, going with naked");
-        installerName = "naked";
       } else {
-        throw new UnhandledFormat(`${archivePath} of type ${JSON.stringify(type)}`);
+        try {
+          const fileResult = await butler.file({path: archivePath});
+          if (fileResult.type === "zip") {
+            log(opts, "butler saves the day! it's a file that ends with a zip");
+            installerName = "archive";
+          } else {
+            throw new Error(`unhandled file type ${fileResult.type || "unknown"}`);
+          }
+        } catch (e) {
+          if (type.macExecutable || type.linuxExecutable) {
+            log(opts, "tis an executable, going with naked");
+            installerName = "naked";
+          } else {
+            throw new UnhandledFormat(`${archivePath} of type ${JSON.stringify(type)}`);
+          }
+        }
       }
     }
 
