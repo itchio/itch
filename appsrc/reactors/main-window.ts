@@ -73,8 +73,6 @@ async function createWindow (store: IStore, hidden: boolean) {
   }
   ensureWindowInsideDisplay(window);
 
-  let destroyTimeout: NodeJS.Timer;
-
   window.on("close", (e: any) => {
     log(opts, "Main window being closed");
     if (quitting) {
@@ -115,37 +113,13 @@ async function createWindow (store: IStore, hidden: boolean) {
       }));
     }
 
-    // hide, only destroy after slight delay
+    // hide, never destroy
     e.preventDefault();
-    log(opts, "Hiding main window for a while..");
+    log(opts, "Hiding main window");
     window.hide();
-
-    destroyTimeout = setTimeout(() => {
-      if (window.isDestroyed()) {
-        log(opts, "Window already destroyed!");
-        return;
-      }
-
-      try {
-        if (!window.isVisible()) {
-          window.close();
-        }
-      } catch (e) {
-        log(opts, `While attempting to destroy window: ${e.message}`);
-      }
-    }, 10 * 1000);
-  });
-
-  window.on("closed", (e: any) => {
-    store.dispatch(actions.windowDestroyed({}));
   });
 
   window.on("focus", (e: any) => {
-    if (destroyTimeout) {
-      log(opts, "Got focused, clearing destroy timeout");
-      clearTimeout(destroyTimeout);
-      destroyTimeout = null;
-    }
     store.dispatch(actions.windowFocusChanged({focused: true}));
   });
 
