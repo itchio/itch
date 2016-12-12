@@ -216,5 +216,5 @@
     "grid.item.open_debug_log": "Logs bekijken...",
     "grid.item.donate": "Doneer aan de ontwikkelaar",
     "grid.item.donate_again": "Doneer nogmaals aan de maker!",
-    "i18n.failed_downloading_locales": "Vertalingsupdates voor {{lang}} konden niet worden gedownload."
+    "i18n.failed_downloading_locales": "Updates voor taal {{lang}} konden niet worden gedownload."
 }
