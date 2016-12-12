@@ -391,7 +391,7 @@ const mapStateToProps = createStructuredSelector({
     (history, downloads) => ({
       history: where(history, {active: true}).length,
       downloads: downloads.length,
-    })
+    }),
   ),
 
   downloadingGame: (state: IState) => {
@@ -455,5 +455,5 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(HubSidebar);

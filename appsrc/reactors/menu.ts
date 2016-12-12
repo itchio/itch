@@ -23,9 +23,9 @@ const makeRefreshSelector = (store: IStore) => createSelector(
   (state: IState) => state.session.credentials,
   (system, credentials) => {
     setImmediate(() =>
-      store.dispatch(actions.refreshMenu({system, credentials}))
+      store.dispatch(actions.refreshMenu({system, credentials})),
     );
-  }
+  },
 );
 
 let applySelector: (state: IState) => void;
@@ -38,7 +38,7 @@ const makeApplySelector = (store: IStore) => createSelector(
       const menu = Menu.buildFromTemplate(clone(fleshOutTemplate(template, i18n, store)));
       Menu.setApplicationMenu(menu);
     });
-  }
+  },
 );
 
 interface IMenuItemPayload {

@@ -30,7 +30,7 @@ const makeSelector = (store: IStore) => createSelector(
         store.dispatch(actions.queryFreeSpace({}));
       }
     });
-  }
+  },
 );
 
 export default function (watcher: Watcher) {

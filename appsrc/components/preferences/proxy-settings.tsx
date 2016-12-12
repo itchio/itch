@@ -48,5 +48,5 @@ interface IProxySettingsState {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(ProxySettings);

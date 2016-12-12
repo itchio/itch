@@ -137,5 +137,5 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(StatusBar);

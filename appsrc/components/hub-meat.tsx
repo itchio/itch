@@ -86,7 +86,7 @@ interface IHubMeatProps {
 
 const allTabsSelector = createSelector(
   (state: IState) => state.session.navigation.tabs,
-  (tabs: ITabs) => tabs.constant.concat(tabs.transient)
+  (tabs: ITabs) => tabs.constant.concat(tabs.transient),
 );
 
 const mapStateToProps = createStructuredSelector({
@@ -98,5 +98,5 @@ const mapDispatchToProps = () => ({});
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(HubMeat);

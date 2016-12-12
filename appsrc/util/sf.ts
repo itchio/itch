@@ -43,7 +43,7 @@ let fs = {
   ...require(fsName),
   "@global": true, /* Work with transitive imports */
   "@noCallThru": true, /* Don't even require/hit electron fs */
-  disableGlob: true, /* Don't ever use globs with rimraf */
+  "disableGlob": true, /* Don't ever use globs with rimraf */
 } as typeof fsModule & IAsyncFSVariants;
 
 // graceful-fs fixes a few things https://www.npmjs.com/package/graceful-fs

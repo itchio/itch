@@ -34,7 +34,7 @@ const selector = createSelector(
     const progress = (activeDownload && activeDownload.progress) || -1;
 
     return { ...fields, activeDownload, progress };
-  }
+  },
 );
 
 const baseInitialState = {

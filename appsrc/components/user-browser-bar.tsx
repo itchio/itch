@@ -53,7 +53,7 @@ const mapStateToProps = (initialState: IState, initialProps: IUserBrowserBarProp
       const getUser = (market: IUserContainer) => ((market || {} as IUserContainer).users || {})[cs.userId];
       const user = getUser(cs.tabData);
       return {user};
-    }
+    },
   );
   return userSelector;
 };
@@ -62,5 +62,5 @@ const mapDispatchToProps = () => ({});
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(UserBrowserBar);

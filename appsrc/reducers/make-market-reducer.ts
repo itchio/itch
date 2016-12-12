@@ -25,12 +25,12 @@ interface IPrefixActionMap {
 }
 
 const prefixToActions: IPrefixActionMap = {
-  "GLOBAL": {
+  GLOBAL: {
     ready: actionTypes.GLOBAL_DB_READY,
     commit: actionTypes.GLOBAL_DB_COMMIT,
     closed: actionTypes.GLOBAL_DB_CLOSED,
   },
-  "USER": {
+  USER: {
     ready: actionTypes.USER_DB_READY,
     commit: actionTypes.USER_DB_COMMIT,
     closed: actionTypes.USER_DB_CLOSED,

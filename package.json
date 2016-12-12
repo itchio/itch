@@ -120,7 +120,7 @@
     "grunt-newer": "^1.2.0",
     "grunt-sass": "^1.2.0",
     "grunt-ts": "^6.0.0-beta.3",
-    "grunt-tslint": "^3.3.0",
+    "grunt-tslint-ftl": "4.0.0",
     "load-grunt-tasks": "^3.3.0",
     "quiet-grunt": "^0.2.3",
     "react-addons-test-utils": "^15.0.0",
@@ -132,7 +132,7 @@
     "skin-deep": "^0.16.0",
     "tap-spec": "^4.1.1",
     "tape": "^4.2.1",
-    "tslint": "^3.15.1",
+    "tslint": "^4.0.2",
     "typescript": "2.1.4",
     "zopf": "^4.5.0"
   },

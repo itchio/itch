@@ -22,7 +22,7 @@ export class FakeRequest implements INetRequest {
     this.opts = opts;
   }
 
-  setHeader (name: string, ) {
+  setHeader (name: string, value: string) {
     // no-op
   }
 

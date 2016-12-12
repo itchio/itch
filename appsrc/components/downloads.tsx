@@ -49,7 +49,7 @@ class Downloads extends React.Component<IDownloadsProps, void> {
     : ""}
     {queuedItems.length > 0
     ? map(queuedItems, (item, i) =>
-      <DownloadRow key={item.id} item={item} active/>
+      <DownloadRow key={item.id} item={item} active/>,
     )
     : ""}
 
@@ -65,7 +65,7 @@ class Downloads extends React.Component<IDownloadsProps, void> {
           </span>
         </div>,
       ].concat(map(finishedItems, (item) =>
-        <DownloadRow key={item.id} item={item}/>
+        <DownloadRow key={item.id} item={item}/>,
       ))
       : ""}
 
@@ -93,5 +93,5 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Downloads);

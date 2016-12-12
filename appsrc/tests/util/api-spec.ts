@@ -72,12 +72,12 @@ test("api", t => {
 
     testAPI(
       "loginKey", ["foobar"],
-      ["get", "/foobar/me", {source: "desktop"}]
+      ["get", "/foobar/me", {source: "desktop"}],
     );
 
     testAPI(
       "loginWithPassword", ["foo", "bar"],
-      ["post", "/login", {username: "foo", password: "bar", source: "desktop", v: 2}]
+      ["post", "/login", {username: "foo", password: "bar", source: "desktop", v: 2}],
     );
   }
 
@@ -92,47 +92,47 @@ test("api", t => {
 
     testAPI(
       "myGames", [],
-      ["get", "/my-games"]
+      ["get", "/my-games"],
     );
     testAPI(
       "myOwnedKeys", [],
-      ["get", "/my-owned-keys"]
+      ["get", "/my-owned-keys"],
     );
     testAPI(
       "me", [],
-      ["get", "/me"]
+      ["get", "/me"],
     );
     testAPI(
       "myCollections", [],
-      ["get", "/my-collections"]
+      ["get", "/my-collections"],
     );
     testAPI(
       "collectionGames", [1708],
-      ["get", "/collection/1708/games", {page: 1}]
+      ["get", "/collection/1708/games", {page: 1}],
     );
     testAPI(
       "searchGames", ["baz"],
-      ["get", "/search/games", {query: "baz"}]
+      ["get", "/search/games", {query: "baz"}],
     );
     testAPI(
       "searchUsers", ["baz"],
-      ["get", "/search/users", {query: "baz"}]
+      ["get", "/search/users", {query: "baz"}],
     );
     testAPI(
       "downloadUpload", [null, 99],
-      ["get", "/upload/99/download"]
+      ["get", "/upload/99/download"],
     );
     testAPI(
       "downloadUpload", [{id: "foobar"}, 99],
-      ["get", "/upload/99/download", {download_key_id: "foobar"}]
+      ["get", "/upload/99/download", {download_key_id: "foobar"}],
     );
     testAPI(
       "listUploads", [null, 33],
-      ["get", "/game/33/uploads"]
+      ["get", "/game/33/uploads"],
     );
     testAPI(
       "listUploads", [{id: "foobar"}, 33],
-      ["get", "/download-key/foobar/uploads"]
+      ["get", "/download-key/foobar/uploads"],
     );
   }
 });

@@ -153,7 +153,7 @@ interface IGameSearchResults {
   entities: {
     games: {
       [key: string]: IGameRecord;
-    }
+    },
   };
 }
 
@@ -161,7 +161,7 @@ interface IUserSearchResults {
   entities: {
     users: {
       [key: string]: IUserRecord;
-    }
+    },
   };
 }
 

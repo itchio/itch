@@ -92,7 +92,7 @@ const mapStateToProps = () => {
       };
       const collection = getCollection(cs.tabData) || getCollection(cs.userMarket);
       return {collection, allGames, tabGames};
-    }
+    },
   );
 };
 
@@ -102,5 +102,5 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Collection);

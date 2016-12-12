@@ -2,7 +2,7 @@
 const state = {
   preferences: {
     installLocations: {
-      "kansas": {
+      kansas: {
         path: "/not/there/anymore",
       },
     },

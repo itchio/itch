@@ -135,7 +135,7 @@ export class GatePage extends React.Component<IGatePageProps, void> {
 
       return <div className="remembered-sessions">
         {map(sortBy(rememberedSessions, (x) => -x.lastConnected), (session, userId) =>
-          <RememberedSession key={userId} session={session} loginWithToken={onLogin} forgetSessionRequest={onForget}/>
+          <RememberedSession key={userId} session={session} loginWithToken={onLogin} forgetSessionRequest={onForget}/>,
         )}
       </div>;
     }
@@ -241,5 +241,5 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(GatePage);

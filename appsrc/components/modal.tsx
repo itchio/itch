@@ -241,5 +241,5 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void, props: IMo
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Modal);

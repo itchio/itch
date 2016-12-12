@@ -244,12 +244,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
   gameOpts.env = env;
   gameOpts.args = args;
 
-  const launchers = {
-    "native": native,
-    "html": html,
-    "shell": shell,
-    "external": external,
-  } as ILaunchers;
+  const launchers = { native, html, shell, external } as ILaunchers;
   const launcher = launchers[launchType];
   if (!launcher) {
     throw new Error(`Unsupported launch type '${cave.launchType}'`);

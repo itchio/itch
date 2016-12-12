@@ -104,7 +104,7 @@ const mapStateToProps = () => {
     (userMarket, globalMarket, game) => ({
       downloadKey: findWhere((userMarket || {} as IUserMarketState).downloadKeys || {}, {gameId: game.id}),
       cave: globalMarket.cavesByGameId[game.id],
-    })
+    }),
   );
 };
 
@@ -112,5 +112,5 @@ const mapDispatchToProps = () => ({});
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(GameStats);

@@ -4,7 +4,7 @@ import net from "../util/net";
 
 interface IGistFiles {
   [key: string]: {
-    content: string
+    content: string,
   };
 }
 

@@ -8,9 +8,9 @@ export function slugify(str: string): string {
 }
 
 const itchPlatforms = {
-  "linux": "GNU/Linux", // not SteamOS
-  "windows": "Windows",
-  "osx": "macOS", // since WWDC june 2016
+  linux: "GNU/Linux", // not SteamOS
+  windows: "Windows",
+  osx: "macOS", // since WWDC june 2016
 };
 
 export function itchPlatform(p: string): string {

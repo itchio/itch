@@ -75,7 +75,7 @@ function getSelector (store: IStore) {
       (prefs: IPreferencesState) => prefs.openAsHidden,
       (openAtLogin: boolean, openAsHidden: boolean) => {
         updateOpenAtLoginState(store, openAtLogin, openAsHidden);
-      }
+      },
     );
   }
 

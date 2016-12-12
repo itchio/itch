@@ -28,7 +28,7 @@ class SelectRow extends React.Component<ISelectRowProps, void> {
     let value = this.props.value;
 
     const optionTags = map(options, (option, index) =>
-      <option value={option.value}>{option.label}</option>
+      <option value={option.value}>{option.label}</option>,
     );
 
     return <div className="select-row">

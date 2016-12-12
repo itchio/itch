@@ -69,19 +69,19 @@ export async function within(opts: IWithinOpts, cb: (opts: IWithinCbOpts) => Pro
   await sf.writeFile(fakeBinary,
     `#!/bin/bash
 cd ${spawn.escapePath(cwd)}
-sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullExec)} ${argString}`
+sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullExec)} ${argString}`,
   );
   await sf.chmod(fakeBinary, 0o700);
 
   if (isBundle) {
     await sf.symlink(
       ospath.join(realApp, "Contents", "Resources"),
-      ospath.join(fakeApp, "Contents", "Resources")
+      ospath.join(fakeApp, "Contents", "Resources"),
     );
 
     await sf.symlink(
       ospath.join(realApp, "Contents", "Info.plist"),
-      ospath.join(fakeApp, "Contents", "Info.plist")
+      ospath.join(fakeApp, "Contents", "Info.plist"),
     );
   } else {
     await sf.writeFile(ospath.join(fakeApp, "Contents", "Info.plist"),

@@ -188,7 +188,7 @@ const makePathSelector = (store: IStore) => createSelector(
     setImmediate(() => {
       store.dispatch(actions.tabChanged({id}));
     });
-  }
+  },
 );
 
 // TODO: find less convoluted way to do that
@@ -207,7 +207,7 @@ const makeTransientSelector = (store: IStore) => {
     (state: ITransientState) => state.id,
     (ids: string[], paths: string[], id: string) => {
       setImmediate(() => store.dispatch(actions.tabsChanged(store)));
-    }
+    },
   );
 
   return createSelector(
@@ -216,7 +216,7 @@ const makeTransientSelector = (store: IStore) => {
       tabData: (state: IState) => state.session.navigation.tabData,
       id: (state: IState) => state.session.navigation.id,
     }),
-    innerSelector
+    innerSelector,
   );
 };
 

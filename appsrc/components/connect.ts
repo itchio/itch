@@ -20,7 +20,7 @@ const tMaker = createSelector(
     } else {
       return getT(strings, lang);
     }
-  }
+  },
 );
 
 const augment = createSelector(
@@ -28,7 +28,7 @@ const augment = createSelector(
   (state: IState, base: any) => base,
   (t, base) => {
     return {...base, t};
-  }
+  },
 );
 
 interface IStateMapper <T> {

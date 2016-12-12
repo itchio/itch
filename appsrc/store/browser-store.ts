@@ -52,7 +52,7 @@ const enhancer = compose(
       route(watcher, store, allAction);
     },
   }),
-  applyMiddleware(...middleware)
+  applyMiddleware(...middleware),
 ) as GenericStoreEnhancer;
 
 const initialState = {};

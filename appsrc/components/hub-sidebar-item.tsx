@@ -228,11 +228,11 @@ export default DragSource(
   (connect, monitor) => ({
     connectDragSource: connect.dragSource(),
     isDragging: monitor.isDragging(),
-  })
+  }),
 )(DropTarget(
   draggableTypes.TAB,
   tabTarget,
   (connect) => ({
     connectDropTarget: connect.dropTarget(),
-  })
+  }),
 )(HubSidebarItem)) as any as typeof HubSidebarItem; // typescript's void pointer cast...

@@ -6,11 +6,11 @@ import {getT} from "../localizer";
 
 const strings = {
   fr: {
-    "bar": "Café {{somekey}} pub.",
+    bar: "Café {{somekey}} pub.",
   },
   en: {
-    "foo": "Foo!",
-    "bar": "Bar {{somekey}} bar.",
+    foo: "Foo!",
+    bar: "Bar {{somekey}} bar.",
   },
 };
 

@@ -127,7 +127,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   let fileRoot = ospath.dirname(entryPoint);
   let indexName = ospath.basename(entryPoint);
 
-  let server = httpServer.create(fileRoot, {"index": [indexName]});
+  let server = httpServer.create(fileRoot, {index: [indexName]});
 
   let port: number;
   server.on("listening", function () {

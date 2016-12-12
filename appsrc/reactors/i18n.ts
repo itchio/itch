@@ -14,7 +14,7 @@ const makeSelector = (store: IStore) => createSelector(
     setImmediate(() => {
       store.dispatch(languageChanged({lang}));
     });
-  }
+  },
 );
 let selector: (state: IState) => void;
 

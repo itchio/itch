@@ -20,13 +20,13 @@ export interface IDispatch {
 
 export type Partial<T> = {
     [P in keyof T]?: T[P];
-}
+};
 
 export type GameType = "default" | "html" | "download";
 
 export type GameClassification = "game" | "tool" | "assets" |
     "game_mod" | "physical_game" | "soundtrack" | "other" |
-    "comic" | "book"
+    "comic" | "book";
 
 export type GenerosityLevel = "discreet";
 
@@ -638,7 +638,7 @@ export interface IGameUpdatesState {
     };
 }
 
-export type IModalAction = Action<any> | Action<any>[]
+export type IModalAction = Action<any> | Action<any>[];
 
 export type ModalButtonActionSource = "widget";
 
@@ -893,24 +893,24 @@ export interface ISearchResults {
     // TODO: make sane
     gameResults: {
         result: {
-            gameIds: string[]
+            gameIds: string[],
         },
         entities: {
             games?: {
-                [id: string]: IGameRecord
-            }
+                [id: string]: IGameRecord,
+            },
         },
     };
 
     userResults: {
         result: {
-            userIds: string[]
+            userIds: string[],
         }
         entities: {
             users?: {
-                [id: string]: IUserRecord
-            }
-        }
+                [id: string]: IUserRecord,
+            },
+        },
     };
 }
 
@@ -1284,7 +1284,7 @@ export interface IDownloadSpeedDataPoint {
     bps: number;
 }
 
-export type IDownloadSpeeds = IDownloadSpeedDataPoint[]
+export type IDownloadSpeeds = IDownloadSpeedDataPoint[];
 
 export interface IDownloadsState {
     /** All the downloads we know about, indexed by their own id */

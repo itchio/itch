@@ -83,8 +83,8 @@ async function start (store: IStore, download: IDownloadItem) {
 
   const downloadOpts = download.downloadOpts;
 
-  let cancelled = false;
   let error: Error;
+  let cancelled = false;
   try {
     currentEmitter.on("progress", throttle((ev: IProgressInfo) => {
       if (cancelled) {
@@ -98,22 +98,20 @@ async function start (store: IStore, download: IDownloadItem) {
 
     log(opts, "Starting download...");
     await downloadTask(currentEmitter, extendedOpts);
-  }  catch (e) {
+  } catch (e) {
     log(opts, "Download threw");
     error = e;
   } finally {
     if (error instanceof Cancelled) {
       // all good, but not ended
-      log(opts, "Download cancelled");
       cancelled = true;
-      return;
+      log(opts, "Download cancelled");
+    } else {
+      const err = error ? error.message || ("" + error) : null;
+      log(opts, `Download ended, err: ${err || "<none>"}`);
+      store.dispatch(actions.downloadEnded({id: download.id, err, downloadOpts}));
     }
-
-    const err = error ? error.message || ("" + error) : null;
-    log(opts, `Download ended, err: ${err || "<none>"}`);
-    store.dispatch(actions.downloadEnded({id: download.id, err, downloadOpts}));
   }
-  log(opts, "Download done!");
 }
 
 export default function (watcher: Watcher) {

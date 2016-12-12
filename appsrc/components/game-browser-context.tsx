@@ -163,7 +163,7 @@ const mapStateToProps = () => {
       const downloadKey = findWhere(keys, {gameId: cs.gameId});
       const cave = cs.globalMarket.cavesByGameId[cs.gameId];
       return {game, downloadKey, cave};
-    }
+    },
   );
 };
 
@@ -173,5 +173,5 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(GameBrowserContext);

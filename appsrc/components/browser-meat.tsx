@@ -495,7 +495,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
   }
 }
 
-export type ControlsType = "generic" | "game" | "user"
+export type ControlsType = "generic" | "game" | "user";
 
 interface IBrowserMeatProps {
   active: boolean;
@@ -542,5 +542,5 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(BrowserMeat);

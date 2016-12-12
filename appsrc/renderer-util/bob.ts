@@ -23,7 +23,7 @@ export interface IRGBColor {
   [componentIndex: number]: number;
 }
 
-type IPalette = IRGBColor[]
+type IPalette = IRGBColor[];
 
 interface IDominantColorCallback {
   (pal: IPalette): void;

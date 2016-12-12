@@ -19,5 +19,5 @@ export default derivedReducer(reducer, createSelector(
   (state: IGlobalMarketState) => state.caves,
   createStructuredSelector({
     cavesByGameId: (caves: ICaveMap) => indexBy(caves, "gameId"),
-  })
+  }),
 ));

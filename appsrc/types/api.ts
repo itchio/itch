@@ -41,7 +41,7 @@ export interface IMeResult {
   user: IOwnUserRecord;
 }
 
-export type ILoginKeyResult = IMeResult
+export type ILoginKeyResult = IMeResult;
 
 export interface ILoginWithPasswordResult {
   /** itch.io API key (fresh or cached) */
@@ -81,7 +81,7 @@ export interface IGameResult {
   game: IAPIGame;
 }
 
-export type BuildFileType = "archive" | "patch" | "manifest" | "signature"
+export type BuildFileType = "archive" | "patch" | "manifest" | "signature";
 
 export interface ICollectionResult {
   collection: ICollectionRecord;

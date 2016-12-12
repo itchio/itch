@@ -59,7 +59,7 @@ export class Collections extends React.Component<ICollectionsProps, void> {
       </GameGridFilters>
       <div className="hub-grid">
         {map(filteredCollections, (collection) =>
-          <CollectionHubItem collection={collection}/>
+          <CollectionHubItem collection={collection}/>,
         )}
         {fillerItems}
         {hiddenCount > 0
@@ -93,5 +93,5 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Collections);

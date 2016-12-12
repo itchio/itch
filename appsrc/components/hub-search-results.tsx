@@ -278,7 +278,7 @@ const mapStateToProps = createStructuredSelector({
   search: (state: IState) => state.session.search,
   allGames: createSelector(
     (state: IState) => ((state.market || {games: null}).games || {}),
-    (games) => values(games)
+    (games) => values(games),
   ),
 });
 
@@ -291,5 +291,5 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(HubSearchResults);

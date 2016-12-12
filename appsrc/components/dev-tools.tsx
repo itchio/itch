@@ -13,7 +13,7 @@ const DevTools = createDevTools(
     <FilterMonitor blacklist={["WINDOW_FOCUS_CHANGED"]}>
       <LogMonitor theme="tomorrow" expandActionRoot expandStateRoot={false}/>
     </FilterMonitor>
-  </DockMonitor>
+  </DockMonitor>,
 );
 
 export default DevTools;

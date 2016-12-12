@@ -36,5 +36,5 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({dispa
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(GameBrowserContextAction);

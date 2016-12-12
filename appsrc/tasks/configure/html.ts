@@ -21,7 +21,7 @@ export interface IHTMLConfigureResult {
     windowSize: {
         width: number
         height: number
-        fullscreen: boolean
+        fullscreen: boolean,
     };
 }
 

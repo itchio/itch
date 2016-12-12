@@ -136,7 +136,7 @@ const makeMapStateToProps = () => {
         task: (task ? task.name : (downloading ? "download" : (cave ? "idle" : null))),
         progress: (task ? task.progress : (downloading ? download.progress : 0)),
       };
-    }
+    },
   );
 
   return selector;
@@ -146,5 +146,5 @@ const mapDispatchToProps = () => ({});
 
 export default connect(
   makeMapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(GameActions);

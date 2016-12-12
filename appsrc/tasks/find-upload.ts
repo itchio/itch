@@ -44,7 +44,7 @@ export function filterUploadsByFormat (action: ClassificationAction, uploads: IU
 
   // Filter by format
   const compatibleUploads = uploads.filter((upload) =>
-    !(/\.(rpm|deb)$/i.test(upload.filename.toLowerCase()))
+    !(/\.(rpm|deb)$/i.test(upload.filename.toLowerCase())),
   );
 
   return compatibleUploads;
@@ -88,7 +88,7 @@ export function scoreUpload (upload: IUploadRecord): IScoredUpload {
 
 export function sortUploads (scoredUploads: IScoredUpload[]): IScoredUpload[] {
   return scoredUploads.sort((a, b) =>
-    (b.score - a.score)
+    (b.score - a.score),
   );
 }
 

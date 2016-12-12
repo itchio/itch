@@ -6,7 +6,7 @@ import {isEmpty} from "underscore";
 
 import useragent from "../constants/useragent";
 
-type HTTPMethod = "head" | "get" | "post"  | "put" | "patch" | "delete"
+type HTTPMethod = "head" | "get" | "post"  | "put" | "patch" | "delete";
 
 export interface IHeaders {
   [key: string]: string[];
@@ -242,7 +242,7 @@ export async function getChecksums (opts: ILoggerOpts, basePath: string, algo: C
         };
       }
     }),
-    (x) => !!x
+    (x) => !!x,
   ), "path");
 }
 

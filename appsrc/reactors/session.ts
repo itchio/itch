@@ -20,7 +20,7 @@ const makeSessionSelector = (store: IStore) => createSelector(
         store.dispatch(actions.sessionReady({}));
       });
     }
-  }
+  },
 );
 
 export default function (watcher: Watcher) {

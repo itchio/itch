@@ -59,7 +59,7 @@ interface IUpdateCheckOpts {
   noisy?: boolean;
 }
 
-async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOpts = {} as IUpdateCheckOpts
+async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOpts = {} as IUpdateCheckOpts,
     ): Promise<IUpdateCheckResult> {
   const {noisy = false} = inTaskOpts;
   const returnVars = {} as IUpdateCheckResult;

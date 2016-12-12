@@ -65,12 +65,12 @@ export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
   } catch (e) {
     log(opts, "Task threw");
     error = e.task || e;
-  } finally {
-    const err = error ? error.message || ("" + error) : null;
-    log(opts, `Task ended, err: ${err ? err : "<none>"}`);
-    store.dispatch(actions.taskEnded({name: taskOpts.name, id, err, result, taskOpts}));
-    return {err, result};
   }
+
+  const err = error ? error.message || ("" + error) : null;
+  log(opts, `Task ended, err: ${err ? err : "<none>"}`);
+  store.dispatch(actions.taskEnded({name: taskOpts.name, id, err, result, taskOpts}));
+  return {err, result};
 }
 
 export default function (watcher: Watcher) {

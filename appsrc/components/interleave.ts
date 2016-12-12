@@ -7,7 +7,7 @@ enum State {
   expectClose,
 }
 
-export type IComponent = JSX.Element | JSX.Element[] | string
+export type IComponent = JSX.Element | JSX.Element[] | string;
 
 interface IVars {
   [key: string]: string;

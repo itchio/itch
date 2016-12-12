@@ -116,5 +116,5 @@ const mapDispatchToProps = (dispatch: IDispatch) => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(NewTab);
