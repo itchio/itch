@@ -27,7 +27,7 @@ const augment = createSelector(
   (state: IState, base: any) => tMaker(state),
   (state: IState, base: any) => base,
   (t, base) => {
-    return Object.assign({}, base, {t});
+    return {...base, t};
   }
 );
 

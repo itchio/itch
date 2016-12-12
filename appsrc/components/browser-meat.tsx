@@ -92,10 +92,12 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
       console.warn(`${this.props.tabId}: webview has empty partition`);
     }
 
-    const browserState = Object.assign({}, this.state.browserState, {
+    const browserState = {
+      ...this.state.browserState,
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
-    }, props);
+      ...props,
+    };
 
     this.setState({browserState});
   }
@@ -482,7 +484,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
     if (navigation.isAppSupported(url) && this.isFrozen()) {
       navigate(`url/${url}`);
     } else {
-      const browserState = Object.assign({}, this.state.browserState, {url});
+      const browserState = {...this.state.browserState, url};
       this.setState({browserState});
 
       const {webview} = this;

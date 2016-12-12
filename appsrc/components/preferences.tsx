@@ -313,11 +313,12 @@ const mapStateToProps = createStructuredSelector({
         return {};
       }
 
-      locInfos = Object.assign({}, locInfos, {
+      locInfos = {
+        ...locInfos,
         appdata: {
           path: path.join(userDataPath, "apps"),
         },
-      });
+      };
 
       const locations = filter(map(locInfos, (locInfo, name) => {
         if (locInfo.deleted) {
@@ -336,12 +337,13 @@ const mapStateToProps = createStructuredSelector({
           }
         });
 
-        return Object.assign({}, locInfo, {
+        return {
+          ...locInfo,
           name,
           freeSpace: diskspace.freeInFolder(diskInfo, locInfo.path),
           itemCount,
           size,
-        });
+        };
       }), (x) => !!x);
 
       return {

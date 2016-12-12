@@ -3,7 +3,11 @@ import {EventEmitter} from "events";
 
 const rnil = (): any => null;
 
-import {INetRequest} from "./types";
+import {
+  INetRequest,
+  IBrowserWindow, IBrowserWindowOpts, IWebContents, ISession,
+  IWebRequest,
+} from "./types";
 
 interface IFakeRequestOpts {
   statusCode: number;
@@ -43,6 +47,133 @@ export class FakeRequest implements INetRequest {
   }
 }
 
+class FakeIPCMain extends EventEmitter {
+  constructor () {
+    super();
+  }
+}
+
+class FakeIPCRenderer extends EventEmitter {
+  constructor () {
+    super();
+  }
+  
+  send (...args: any[]) {
+    const ev = "";
+    electron.ipcMain.emit(ev, ...args);
+  }
+}
+
+class FakeTray {
+  setTooltip() {
+    return;
+  }
+
+  setContextMenu() {
+    return;
+  }
+
+  on() {
+    return;
+  }
+
+  displayBalloon() {
+    return;
+  }
+}
+
+class FakeBrowserWindow implements IBrowserWindow {
+  id: -1;
+  webContents: IWebContents;
+
+  constructor (opts: IBrowserWindowOpts) {
+    this.webContents = new FakeWebContents();
+    return;
+  }
+
+  loadURL (url: string) {
+    return;
+  }
+
+  getBounds(): any {
+    return {};
+  }
+
+  setBounds(bounds: any) {
+    return;
+  }
+
+  setPosition(x: number, y: number) {
+    return;
+  }
+
+  on(ev: string, cb: (ev: any) => void) {
+    return;
+  }
+
+  isVisible() {
+    return false;
+  }
+
+  isDestroyed() {
+    return false;
+  }
+
+  close() {
+    return false;
+  }
+
+  hide() {
+    return false;
+  }
+
+  show() {
+    return false;
+  }
+
+  maximize() {
+    return false;
+  }
+}
+
+class FakeWebContents implements IWebContents {
+  session: ISession;
+
+  constructor () {
+    this.session = new FakeSession();
+  }
+
+  openDevTools(opts: any) {
+    return;
+  }
+
+  isDestroyed() {
+    return false;
+  }
+}
+
+class FakeSession implements ISession {
+  webRequest: IWebRequest;
+
+  constructor () {
+    return;
+  }
+
+  clearCache(cb: () => void) {
+    cb();
+  }
+}
+
+class FakeWebRequest implements IWebRequest {
+  onBeforeRequest(opts: any, cb: any) {
+    return;
+  }
+
+  onBeforeSendHeaders(opts: any, cb: any) {
+    return;
+  }
+}
+
 const electron = {
   net: {
     request: () => new FakeRequest({
@@ -67,17 +198,8 @@ const electron = {
     start: rnil,
     stop: rnil,
   },
-  ipcMain: Object.assign({}, EventEmitter.prototype),
-  ipcRenderer: Object.assign({
-    send: function () {
-      let args: any[] = [];
-      for (let i = 0; i < arguments.length; i++) {
-        args.push(arguments[i]);
-      }
-      args.splice(1, 0, {}); // inject fake 'ev' object
-      electron.ipcMain.emit.apply(electron.ipcMain, args);
-    },
-  }, EventEmitter.prototype),
+  ipcMain: new FakeIPCMain(),
+  ipcRenderer: new FakeIPCRenderer(),
   remote: {
     require: (path: string): any => ({}),
     app: null as any,
@@ -96,56 +218,13 @@ const electron = {
     buildFromTemplate: rnil,
     setApplicationMenu: rnil,
   },
-  Tray: function () {
-    Object.assign(this, electron.Tray);
-  },
-  BrowserWindow: function () {
-    Object.assign(this, electron.BrowserWindow);
-  },
+  Tray: FakeTray,
+  BrowserWindow: FakeBrowserWindow,
 };
 
 electron.ipcRenderer.setMaxListeners(Infinity);
 electron.ipcMain.setMaxListeners(Infinity);
 
 electron.remote.app = electron.app;
-
-Object.assign(electron.Tray, {
-  setToolTip: rnil,
-  setContextMenu: rnil,
-  on: rnil,
-  displayBalloon: rnil, // win32-only
-});
-
-let webRequest = {
-  onBeforeSendHeaders: rnil,
-};
-
-let session = {
-  clearCache: (f: () => void) => f(),
-  webRequest,
-};
-
-let webContents = {
-  on: (e: string, cb: (e: any) => void) => cb({ preventDefault: rnil }),
-  executeJavaScript: rnil,
-  insertCSS: rnil,
-  openDevTools: rnil,
-  getUserAgent: () => "tester",
-  setUserAgent: rnil,
-  session,
-};
-
-Object.assign(electron.BrowserWindow, {
-  getAllWindows: (): any[] => [],
-  getFocusedWindow: () => null,
-  setProgressBar: rnil,
-  on: rnil,
-  loadURL: rnil,
-  setMenu: rnil,
-  hide: rnil,
-  show: rnil,
-  close: rnil,
-  webContents,
-});
 
 export default electron;

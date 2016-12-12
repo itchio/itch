@@ -28,7 +28,7 @@ class Layout extends React.Component<ILayoutProps, void> {
   subscribe (watcher: Watcher) {
     watcher.on(actions.notifyHtml5, async (store, action) => {
       const {title, onClick} = action.payload;
-      const opts = Object.assign({}, action.payload.opts);
+      const opts = {...action.payload.opts};
 
       if (opts.icon) {
         opts.icon = ospath.resolve(ospath.join(__dirname, "..", opts.icon));

@@ -11,10 +11,11 @@ import {
 export const dismissHistoryItem = createAction<IDismissHistoryItemPayload>(DISMISS_HISTORY_ITEM);
 
 const internalQueueHistoryItem = createAction<IQueueHistoryItemPayload>(QUEUE_HISTORY_ITEM);
-export const queueHistoryItem = (payload: any) => internalQueueHistoryItem(Object.assign({
+export const queueHistoryItem = (payload: any) => internalQueueHistoryItem({
   id: uuid.v4(),
   date: Date.now(),
   active: true,
-}, payload));
+  ...payload,
+});
 
 export const historyRead = createAction<IHistoryReadPayload>(HISTORY_READ);
