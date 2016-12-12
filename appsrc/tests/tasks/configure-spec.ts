@@ -66,6 +66,7 @@ test("configure (each platform)", (t) => {
   const originalSf = require("../../util/sf").default;
   const sf = test.module({
     chmod: () => Promise.resolve(),
+    lstat: originalSf.lstat,
     glob: originalSf.glob,
     "@global": true,
   });

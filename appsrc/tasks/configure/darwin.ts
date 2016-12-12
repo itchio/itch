@@ -1,39 +1,52 @@
 
 import * as bluebird from "bluebird";
-import * as path from "path";
-import * as walk from "walk";
+import * as ospath from "path";
+import sf from "../../util/sf";
 
 import { IConfigureResult, fixExecs } from"./common";
 
 const self = {
   configure: async function (cavePath: string): Promise<IConfigureResult> {
-    // TODO: this also sounds like a good candidate for a butler command.
-    // golang is much better at working with files.
     const bundles: string[] = [];
-    const walker = walk.walk(cavePath, {
-      followLinks: false,
-      filters: ["__MACOSX"],
-    });
 
-    walker.on("directory", (root, fileStats, next) => {
-      if (/\.app$/i.test(fileStats.name)) {
-        const fullPath = path.join(root, fileStats.name);
-        const relPath = path.relative(cavePath, fullPath);
-        bundles.push(relPath + "/");
+    const globRes = await sf.glob("**/*.app/", { cwd: cavePath });
+
+    for (const res of globRes) {
+      let skip = false;
+
+      const pathElements = res.split(ospath.sep);
+      let currentElements: string[] = [];
+      for (const element of pathElements) {
+        if (element === "__MACOSX") {
+          skip = true;
+          break;
+        }
+
+        currentElements = [...currentElements, element];
+        const path = ospath.join(cavePath, ...currentElements);
+        try {
+          const stats = await sf.lstat(path);
+          if (stats.isSymbolicLink()) {
+            skip = true;
+            break;
+          }
+        } catch (e) {
+          if (e.code === "ENOENT" || e.code === "EPERM") {
+            skip = true;
+            break;
+          } else {
+            throw e;
+          }
+        }
       }
-      next();
-    });
 
-    walker.on("errors", (root, nodeStatsArray, next) => {
-      next();
-    });
-
-    await new bluebird((resolve, reject) => {
-      walker.on("end", resolve);
-    });
+      if (!skip) {
+        bundles.push(res + "/");
+      }
+    }
 
     if (bundles.length) {
-      const fixer = (x: string) => fixExecs("macExecutable", path.join(cavePath, x));
+      const fixer = (x: string) => fixExecs("macExecutable", ospath.join(cavePath, x));
       await bluebird.each(bundles, fixer);
       return { executables: bundles };
     }
