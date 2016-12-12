@@ -94,7 +94,10 @@ async function retrieveTabData (store: IStore, id: string, retrOpts = {} as IRet
           throw err;
         }
       }
-      return fetchMarket.data;
+      return {
+        ...newData,
+        ...fetchMarket.data,
+      };
     } else {
       return null;
     }
