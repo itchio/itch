@@ -24,7 +24,7 @@ export const queueDownload = createAction<IQueueDownloadPayload>(QUEUE_DOWNLOAD)
 const internalDownloadStarted = createAction<IDownloadStartedPayload>(DOWNLOAD_STARTED);
 
 export const downloadStarted = (payload: any) =>
-    internalDownloadStarted(Object.assign({}, payload, { date: Date.now() }));
+    internalDownloadStarted({...payload, date: Date.now() });
 
 export const downloadProgress = createAction<IDownloadProgressPayload>(DOWNLOAD_PROGRESS);
 export const downloadEnded = createAction<IDownloadEndedPayload>(DOWNLOAD_ENDED);

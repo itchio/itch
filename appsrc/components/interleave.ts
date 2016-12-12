@@ -24,7 +24,7 @@ export default function interleave (
     textVars = {};
   }
 
-  let vars = Object.assign({}, textVars);
+  let vars = {...textVars};
   // source string is something like:
   //
   //   'Click {{button}} to do X'

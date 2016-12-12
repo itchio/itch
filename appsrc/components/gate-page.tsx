@@ -14,7 +14,7 @@ import RememberedSession from "./remembered-session";
 
 import * as actions from "../actions";
 
-import {IState, ISetupOperation, IRememberedSessionsState} from "../types";
+import {IState, ISetupOperation, IRememberedSessionsState, Partial} from "../types";
 import {IAction, dispatcher, ILoginWithTokenPayload} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
@@ -214,7 +214,7 @@ interface IGatePageProps {
   retrySetup: typeof actions.retrySetup;
 }
 
-const mapStateToProps = (state: IState) => {
+const mapStateToProps = (state: IState): Partial<IGatePageProps> => {
   const {rememberedSessions, session} = state;
   const {halloween} = state.status.bonuses;
   const {login} = session;
@@ -222,11 +222,11 @@ const mapStateToProps = (state: IState) => {
   if (!session.credentials.key) {
     const hasSessions = Object.keys(rememberedSessions).length > 0;
     const stage = (!login.blockingOperation && hasSessions && login.picking) ? "pick" : "login";
-    return Object.assign({}, login, {stage, rememberedSessions, halloween});
+    return {...login, stage, rememberedSessions, halloween};
   } else if (!state.setup.done) {
-    return Object.assign({}, {stage: "setup"}, state.setup, {halloween});
+    return {stage: "setup", ...state.setup, halloween};
   } else {
-    return Object.assign({}, {stage: "ready", errors: [], blockingOperation: null, halloween});
+    return {stage: "ready", errors: [], blockingOperation: null, halloween};
   }
 };
 

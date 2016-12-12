@@ -849,7 +849,7 @@ export interface ISessionLoginState {
      */
     picking: boolean;
 
-    errors: ILocalizedString[];
+    errors: string[];
     blockingOperation: ISetupOperation;
 }
 
