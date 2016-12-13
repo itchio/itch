@@ -42,7 +42,7 @@ setTimeout(function () {
 
   Object.defineProperty(window, "I", {
     get: () => I,
-    set: (val) => ({...I, val}),
+    set: (val) => Object.assign(I, val),
   });
 
   let BBF: any;
