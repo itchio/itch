@@ -10,7 +10,7 @@ import mklog from "../util/log";
 const log = mklog("reactors/fetch");
 import {opts} from "../logger";
 
-import {getUserMarket} from "./market";
+import {getUserMarket, getGlobalMarket} from "./market";
 import fetch from "../util/fetch";
 import api from "../util/api";
 
@@ -27,11 +27,12 @@ const fetchUsuals = debounce(async function fetchUsuals (credentials: ICredentia
   log(opts, "Fetching the usuals");
 
   const market = getUserMarket();
+  const globalMarket = getGlobalMarket();
 
   try {
     await bluebird.all([
       fetch.dashboardGames(market, credentials),
-      fetch.ownedKeys(market, credentials),
+      fetch.ownedKeys(market, globalMarket, credentials),
       fetch.collections(market, credentials),
     ]);
   } catch (e) {

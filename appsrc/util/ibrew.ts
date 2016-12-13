@@ -64,7 +64,7 @@ const self = {
         binPath: self.binPath(),
       });
       if (reason) {
-        log(opts, `${name}: skipping upgrade check (${reason})`);
+        log(opts, `${name}: skipping upgrade check (${JSON.stringify(reason)})`);
         return;
       }
     }

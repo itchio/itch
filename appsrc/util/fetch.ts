@@ -9,9 +9,13 @@ import client from "./api";
 
 import {normalize, arrayOf} from "./idealizr";
 import {game, user, collection, downloadKey} from "./schemas";
-import {each, union, pluck, where, difference} from "underscore";
+import {each, union, pluck, where, difference, filter, contains} from "underscore";
 
-import {IUserMarket, IUserRecord, IGameRecord, ICollectionRecord, ICredentials} from "../types";
+import {
+  IUserMarket, IGlobalMarket,
+  IUserRecord, IGameRecord, ICollectionRecord, ICredentials,
+  IDownloadKey, ICaveRecord,
+} from "../types";
 
 // TODO: don't use any in any of the return types here
 
@@ -54,9 +58,13 @@ export async function dashboardGames (market: IUserMarket, credentials: ICredent
   }
 }
 
-export async function ownedKeys (market: IUserMarket, credentials: ICredentials): Promise<void> {
+export async function ownedKeys (
+    market: IUserMarket, globalMarket: IGlobalMarket, credentials: ICredentials): Promise<void> {
   const {key} = credentials;
   const api = client.withKey(key);
+
+  const oldKeyIds = pluck(market.getEntities<IDownloadKey>("downloadKeys"), "id");
+  let newKeyIds: number[] = [];
 
   let page = 0;
 
@@ -66,9 +74,30 @@ export async function ownedKeys (market: IUserMarket, credentials: ICredentials)
       break;
     }
 
+    newKeyIds = [...newKeyIds, ...pluck(response.ownedKeys, "id")];
+
     market.saveAllEntities(normalize(response, {
       ownedKeys: arrayOf(downloadKey),
     }));
+  }
+
+  // any keys been revoked? we can't use those to download anymore, remove
+  // them from local db & strip them from cave records.
+  const goners = difference(oldKeyIds, newKeyIds);
+  if (goners.length > 0) {
+    log(opts, `Cleaning up ${goners.length} gone download keys`);
+    market.deleteAllEntities({entities: {downloadKeys: goners}});
+
+    let touchedCaves = 0;    
+    const allCaves = globalMarket.getEntities<ICaveRecord>("caves");
+    each(allCaves, (cave, caveId) => {
+      if (cave.downloadKey && contains(goners, cave.downloadKey.id)) {
+        globalMarket.saveEntity("caves", caveId, {downloadKey: null});
+        touchedCaves++;
+      }
+    });
+
+    log(opts, `${touchedCaves} caves affected`);
   }
 }
 
