@@ -35,7 +35,18 @@ function makeTray (store: IStore) {
   // cf. https://github.com/itchio/itch/issues/462
   // windows still displays a 16x16, whereas
   // some linux DEs don't know what to do with a @x2, etc.
-  const iconName = os.platform() === "linux" ? `white.png` : `white-small.png`;
+  let suffix = "";
+  if (os.platform() !== "linux") {
+    suffix = "-small";
+  }
+
+  let base = "white";
+  if (os.platform() === "win32" && !/^10\./.test(os.release())) {
+    // windows older than 10 get the old colorful tra yicon
+    base = app.getName();
+  }
+
+  const iconName = `${base}${suffix}.png`;
   const iconPath = ospath.resolve(`${__dirname}/../static/images/tray/${iconName}`);
   tray = new Tray(iconPath);
   tray.setToolTip("itch.io");
@@ -50,6 +61,7 @@ function makeTray (store: IStore) {
 
 function setMenu (trayMenu: IMenuTemplate, store: IStore) {
   if (os.platform() === "darwin") {
+    // don't have a tray icon on macOS, we just live in the dock
     app.dock.setMenu(trayMenu);
   } else {
     if (!tray) {
