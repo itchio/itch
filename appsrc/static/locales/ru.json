@@ -379,5 +379,8 @@
     "login.two_factor.enter_code": "Введите код, отображаемый аутентификатором.",
     "login.two_factor.verification_code_label": "Верификационный код",
     "login.two_factor.learn_more": "Узнать больше о двухфакторной аутентификации",
-    "pick_update_upload.tags.demo": "демо"
+    "pick_update_upload.tags.demo": "демо",
+    "status.game_update.busy": "Пока {{title}} запущено, оно не может быть обновлено.",
+    "status.uninstall.busy": "Пока {{title}} запущено, оно не может быть удалено.",
+    "status.reinstall.busy": "Пока {{title}} запущено, оно не может быть переустановлено."
 }
