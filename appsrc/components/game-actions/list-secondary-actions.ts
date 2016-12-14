@@ -3,10 +3,11 @@ import {findWhere} from "underscore";
 
 import * as actions from "../../actions";
 import format, {DATE_FORMAT} from "../../util/format";
+import store from "../../store";
 
 import {
   IGameRecord, ICaveRecord, IDownloadKey, ClassificationAction,
-  ILocalizedString,
+  ILocalizedString, IStore
 } from "../../types";
 
 import {IAction} from "../../constants/action-types";
@@ -135,14 +136,24 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
       action: actions.copyToClipboard({text: `game ${game.id}, version ${version}`}),
     });
 
-    items.push({
-      type: "secondary",
-      icon: "repeat",
-      label: ["grid.item.check_for_update"],
-      action: actions.checkForGameUpdate({caveId: cave.id, noisy: true}),
-    });
+    let busy = false;
 
-    items.push(uninstallAction(cave.id));
+    const state = store.getState();
+    const tasksForGame = state.tasks.tasksByGameId[game.id];
+    if (tasksForGame && tasksForGame.length > 0) {
+      busy = true;
+    }
+
+    if (!busy) {
+      items.push({
+        type: "secondary",
+        icon: "repeat",
+        label: ["grid.item.check_for_update"],
+        action: actions.checkForGameUpdate({caveId: cave.id, noisy: true}),
+      });
+
+      items.push(uninstallAction(cave.id));
+    }
   } else {
     // No cave
     const hasMinPrice = game.minPrice > 0;
