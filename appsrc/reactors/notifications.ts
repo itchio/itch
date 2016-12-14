@@ -1,4 +1,6 @@
 
+import * as ospath from "path";
+
 import {Watcher} from "./watcher";
 
 import {getTray} from "./tray";
@@ -29,7 +31,12 @@ export default function (watcher: Watcher) {
       const tray = getTray();
       if (tray) {
         // The HTML5 notification API has caveats on Windows earlier than 10
-        tray.displayBalloon({title, icon, content: body});
+        tray.displayBalloon({
+          title,
+          // this particular API requires absolute paths for some reason 
+          icon: ospath.join(__dirname, "..", icon),
+          content: body,
+        });
       }
     } else {
       const id = store.getState().ui.mainWindow.id;
