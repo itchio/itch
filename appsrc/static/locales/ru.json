@@ -382,5 +382,6 @@
     "pick_update_upload.tags.demo": "демо",
     "status.game_update.busy": "Пока {{title}} запущено, оно не может быть обновлено.",
     "status.uninstall.busy": "Пока {{title}} запущено, оно не может быть удалено.",
-    "status.reinstall.busy": "Пока {{title}} запущено, оно не может быть переустановлено."
+    "status.reinstall.busy": "Пока {{title}} запущено, оно не может быть переустановлено.",
+    "sidebar.loading": "Загрузка..."
 }
