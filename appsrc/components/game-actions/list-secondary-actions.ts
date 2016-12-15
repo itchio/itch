@@ -7,7 +7,7 @@ import store from "../../store";
 
 import {
   IGameRecord, ICaveRecord, IDownloadKey, ClassificationAction,
-  ILocalizedString, IStore
+  ILocalizedString, IStore,
 } from "../../types";
 
 import {IAction} from "../../constants/action-types";
