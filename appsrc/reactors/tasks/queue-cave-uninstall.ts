@@ -19,6 +19,15 @@ export default function (watcher: Watcher) {
       return;
     }
 
+    const state = store.getState();
+    const tasksForGame = state.tasks.tasksByGameId[cave.gameId];
+    if (tasksForGame && tasksForGame.length > 0) {
+      store.dispatch(actions.statusMessage({
+        message: ["status.uninstall.busy", {title: cave.game.title}],
+      }));
+      return;
+    }
+
     await startTask(store, {
       name: "uninstall",
       gameId: cave.gameId,

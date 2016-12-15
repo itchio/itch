@@ -68,14 +68,24 @@ export default function (watcher: Watcher) {
 
     const template: IMenuItem[] = [];
     if (cave) {
+      let busy = false;
+
+      const state = store.getState();
+      const tasksForGame = state.tasks.tasksByGameId[gameId];
+      if (tasksForGame && tasksForGame.length > 0) {
+        busy = true;
+      }
+
       template.push({
         label: t(`grid.item.${mainAction}`),
         click: () => store.dispatch(actions.queueGame({game})),
       });
-      template.push({
-        label: t("grid.item.check_for_update"),
-        click: () => store.dispatch(actions.checkForGameUpdate({caveId: cave.id, noisy: true})),
-      });
+      if (!busy) {
+        template.push({
+          label: t("grid.item.check_for_update"),
+          click: () => store.dispatch(actions.checkForGameUpdate({caveId: cave.id, noisy: true})),
+        });
+      }
       template.push({
         label: t("grid.item.show_local_files"),
         click: () => store.dispatch(actions.exploreCave({caveId: cave.id})),
@@ -121,15 +131,18 @@ export default function (watcher: Watcher) {
         submenu: advancedItems,
       });
 
-      template.push({ type: "separator" });
-      template.push({
-        label: t("prompt.uninstall.reinstall"),
-        click: () => store.dispatch(actions.queueCaveReinstall({caveId: cave.id})),
-      });
-      template.push({
-        label: t("prompt.uninstall.uninstall"),
-        click: () => store.dispatch(actions.queueCaveUninstall({caveId: cave.id})),
-      });
+      if (!busy) {
+        template.push({ type: "separator" });
+
+        template.push({
+          label: t("prompt.uninstall.reinstall"),
+          click: () => store.dispatch(actions.queueCaveReinstall({caveId: cave.id})),
+        });
+        template.push({
+          label: t("prompt.uninstall.uninstall"),
+          click: () => store.dispatch(actions.queueCaveUninstall({caveId: cave.id})),
+        });
+      }
     } else {
       const downloadKeys = getUserMarket().getEntities("downloadKeys");
       const downloadKey = findWhere(downloadKeys, {gameId: game.id});

@@ -46,6 +46,15 @@ export default function (watcher: Watcher) {
       return;
     }
 
+    const state = store.getState();
+    const tasksForGame = state.tasks.tasksByGameId[cave.gameId];
+    if (tasksForGame && tasksForGame.length > 0) {
+      store.dispatch(actions.statusMessage({
+        message: ["status.reinstall.busy", {title: cave.game.title}],
+      }));
+      return;
+    }
+
     const archivePath = pathmaker.downloadPath(upload);
 
     const findDownloadKey = () => {
