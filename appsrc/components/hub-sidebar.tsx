@@ -71,7 +71,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
 
   render () {
     const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
-      navigate, counts, progresses, sublabels, closeTab, closeAllTabs, moveTab,
+      navigate, closeTab, closeAllTabs, moveTab,
       openTabContextMenu, newTab, searchLoading, halloween} = this.props;
     const classes = classNames("hub-sidebar", {osx, fullscreen});
     const sidebarStyle = {
@@ -135,9 +135,15 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           const onContextMenu = (e?: MouseEvent) => {
             openTabContextMenu({id});
           };
-          const count = (counts as any)[id];
-          const progress = progresses[id];
-          const sublabel = sublabels[id];
+          let count = 0;
+          let progress = 0;
+          let sublabel: ILocalizedString = null;
+
+          if (id === "downloads") {
+            count = this.props.downloadCount;
+            progress = this.props.downloadProgress;
+            sublabel = this.props.downloadSublabel;
+          }
 
           let gameOverride: IGameRecord = null;
           if (id === "downloads") {
@@ -327,20 +333,9 @@ interface IHubSidebarProps {
   };
   tabData: ITabDataSet;
 
-  /** number of unread history items, 'unread' downloads, etc. */
-  counts: {
-    [key: string]: number;
-  };
-
-  /** progress of a tab in [0, 1] */
-  progresses: {
-    [key: string]: number;
-  };
-
-  /** secondary label for a tab */
-  sublabels: {
-    [key: string]: ILocalizedString;
-  };
+  downloadCount: number;
+  downloadProgress: number;  
+  downloadSublabel: ILocalizedString;
 
   /** game that's currently downloading, if any */
   downloadingGame?: IGameRecord;
@@ -385,15 +380,6 @@ const mapStateToProps = createStructuredSelector({
   searchLoading: (state: IState) => state.session.search.loading,
   halloween: (state: IState) => state.status.bonuses.halloween,
 
-  counts: createSelector(
-    (state: IState) => state.history.itemsByDate,
-    (state: IState) => state.downloads.finishedDownloads,
-    (history, downloads) => ({
-      history: where(history, {active: true}).length,
-      downloads: downloads.length,
-    }),
-  ),
-
   downloadingGame: (state: IState) => {
     const {activeDownload} = state.downloads;
     if (activeDownload) {
@@ -401,29 +387,34 @@ const mapStateToProps = createStructuredSelector({
     }
   },
 
-  progresses: (state: IState) => ({
-    downloads: state.downloads.progress,
-  }),
+  downloadCount: createSelector(
+    (state: IState) => state.downloads.finishedDownloads,
+    (downloads) => downloads.length,
+  ),
 
-  sublabels: (state: IState) => {
-    const {activeDownload} = state.downloads;
-    let label: ILocalizedString = null;
-    if (activeDownload && activeDownload.progress > 0) {
-      if (state.downloads.downloadsPaused) {
-        label = ["grid.item.downloads_paused"];
+  downloadProgress: (state: IState) => state.downloads.progress,
+
+  downloadSublabel: createSelector(
+    (state: IState) => state.downloads.activeDownload,
+    (state: IState) => state.downloads.downloadsPaused,
+    (state: IState) => state.i18n.lang,
+    (activeDownload, downloadsPaused, lang) => {
+      if (!activeDownload) {
+        return null;
+      }
+
+      if (downloadsPaused) {
+        return ["grid.item.downloads_paused"];
       } else {
         const title = activeDownload.game.title;
         const duration = moment.duration(activeDownload.eta, "seconds") as any;
         // silly typings, durations have locales!
-        const humanDuration = duration.locale(state.i18n.lang).humanize();
-        label = `${title} — ${humanDuration}`;
+        const humanDuration = duration.locale(lang).humanize();
+        return `${title} — ${humanDuration}`;
       }
-    }
+    },
+  ),
 
-    return {
-      downloads: label,
-    };
-  },
 });
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
