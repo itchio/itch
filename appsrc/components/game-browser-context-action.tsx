@@ -8,6 +8,7 @@ import {IAction} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 import {IActionOpts} from "./game-actions/list-secondary-actions";
+import Ink = require("react-ink");
 
 class GameBrowserContextAction extends React.Component<IGameBrowserContextAction, void> {
   render () {
@@ -18,9 +19,14 @@ class GameBrowserContextAction extends React.Component<IGameBrowserContextAction
     });
 
     const textLabel = "" + label;
+    const style: React.CSSProperties = {
+      position: "relative",
+    }
 
-    return <span key={textLabel} className={spanClasses} data-hint={hint} onClick={() => dispatch(action)}>
+    return <span style={style} key={textLabel}
+        className={spanClasses} data-hint={hint} onClick={() => dispatch(action)}>
       <Icon icon={icon}/> {t.format(label)}
+      {type === "separator" ? null : <Ink/>}
     </span>;
   }
 }

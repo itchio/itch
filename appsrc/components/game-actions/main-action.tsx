@@ -101,8 +101,8 @@ class MainAction extends React.Component<IMainActionProps, void> {
       branded,
     });
     const button = <div style={style} className={buttonClasses} onClick={(e) => this.onClick(e)} data-hint={hint}>
-      {child}
       <Ink/>
+      {child}
     </div>;
 
     if (!child) {
