@@ -25,13 +25,13 @@ export class CollectionHubItem extends React.Component<ICollectionHubItemProps, 
       games.push({} as IGameRecord);
     }
 
-    const gameItems = map(games, (game) => {
+    const gameItems = map(games, (game, index) => {
       const style: React.CSSProperties = {};
       const coverUrl = game.stillCoverUrl || game.coverUrl;
       if (coverUrl) {
         style.backgroundImage = `url('${coverUrl}')`;
       }
-      return <div className="cover" style={style}></div>;
+      return <div key={index} className="cover" style={style}></div>;
     });
 
     const rows: JSX.Element[] = [];
@@ -40,7 +40,7 @@ export class CollectionHubItem extends React.Component<ICollectionHubItemProps, 
       cols.push(item);
 
       if (i % 2 === 1) {
-        const row = <div className="row">{cols}</div>;
+        const row = <div className="row" key={rows.length}>{cols}</div>;
         rows.push(row);
         cols = [];
       }

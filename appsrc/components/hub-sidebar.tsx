@@ -93,7 +93,8 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           onKeyUp={this.onSearchKeyUp}
           onChange={this.onSearchChange}
           onFocus={this.onSearchFocus}
-          onBlur={this.onSearchBlur}/>
+          onBlur={this.onSearchBlur}>
+        </input>
         <span className="icon icon-search"/>
       </section>
 

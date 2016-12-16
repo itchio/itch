@@ -79,8 +79,8 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
         data-path={path}
         data-id={id}
         data-dragging={isDragging}>
-      <Ink/>
       <div className="row">
+        <Ink/>
         <span className="label">{t.format(label)}</span>
         {count > 0
           ? <span className="bubble">{count}</span>

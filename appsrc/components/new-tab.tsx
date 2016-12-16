@@ -64,7 +64,7 @@ export class NewTab extends React.Component<INewTabProps, void> {
         {map(newTabItems, (item) => {
           const {label, icon, path} = item;
 
-          return <div className="hub-item new-tab-item" onClick={() => evolveTab({id: tabId, path})}>
+          return <div key={path} className="hub-item new-tab-item" onClick={() => evolveTab({id: tabId, path})}>
             <Icon icon={icon}/>
             <span>{t.format(label)}</span>
           </div>;
