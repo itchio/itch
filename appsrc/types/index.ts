@@ -876,6 +876,11 @@ export interface ISessionNavigationState {
     /** opened tabs */
     tabs: ITabs;
 
+    /** set to true when a tab is loading */
+    loadingTabs: {
+        [key: string]: boolean;
+    };
+
     /** data associated with tabs: games, collections, etc. */
     tabData: {
         [id: string]: ITabData;

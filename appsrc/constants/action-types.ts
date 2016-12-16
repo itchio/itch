@@ -985,6 +985,12 @@ export interface IViewCreatorProfilePayload {}
 export const VIEW_COMMUNITY_PROFILE = "VIEW_COMMUNITY_PROFILE";
 export interface IViewCommunityProfilePayload {}
 
+export const TAB_LOADING = "TAB_LOADING";
+export interface ITabLoadingPayload {
+  id: string;
+  loading: boolean;
+}
+
 export const OPEN_AT_LOGIN_ERROR = "OPEN_AT_LOGIN_ERROR";
 export interface IOpenAtLoginErrorPayload extends Types.IOpenAtLoginError {}
 

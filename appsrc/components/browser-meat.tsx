@@ -127,10 +127,12 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
   }
 
   didStartLoading () {
+    this.props.tabLoading({id: this.props.tabId, loading: true});
     this.updateBrowserState({loading: true});
   }
 
   didStopLoading () {
+    this.props.tabLoading({id: this.props.tabId, loading: false});
     this.updateBrowserState({loading: false});
   }
 
@@ -514,6 +516,7 @@ interface IBrowserMeatProps {
   evolveTab: typeof actions.evolveTab;
   tabDataFetched: typeof actions.tabDataFetched;
   tabReloaded: typeof actions.tabReloaded;
+  tabLoading: typeof actions.tabLoading;
 
   controls: ControlsType;
 }
@@ -538,6 +541,7 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
   evolveTab: dispatcher(dispatch, actions.evolveTab),
   tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
   tabReloaded: dispatcher(dispatch, actions.tabReloaded),
+  tabLoading: dispatcher(dispatch, actions.tabLoading),
 });
 
 export default connect(

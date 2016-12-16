@@ -162,7 +162,7 @@ export function makeLabel(id: string, tabData: ITabDataSet) {
     }
   }
 
-  return "Loading...";
+  return ["sidebar.loading"];
 }
 
 export function isAppSupported(url: string) {

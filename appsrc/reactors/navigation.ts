@@ -41,102 +41,107 @@ interface IRetrieveOpts {
 }
 
 async function retrieveTabData (store: IStore, id: string, retrOpts = {} as IRetrieveOpts): Promise<ITabData> {
-  if (!id) {
-    return;
-  }
+  store.dispatch(actions.tabLoading({id, loading: true}));
+  try {
+    if (!id) {
+      return;
+    }
 
-  const data = store.getState().session.navigation.tabData[id];
-  if (!data) {
-    // tab was closed since
-    return;
-  }
+    const data = store.getState().session.navigation.tabData[id];
+    if (!data) {
+      // tab was closed since
+      return;
+    }
 
-  const path = retrOpts.path || data.path;
-  if (staticTabData[id] && id !== path) {
-    console.log(`Refusing to retrieve foreign tabData for frozen tab ${id}`); // tslint:disable-line:no-console
-    return;
-  }
+    const path = retrOpts.path || data.path;
+    if (staticTabData[id] && id !== path) {
+      console.log(`Refusing to retrieve foreign tabData for frozen tab ${id}`); // tslint:disable-line:no-console
+      return;
+    }
 
-  const credentials = store.getState().session.credentials;
+    const credentials = store.getState().session.credentials;
 
-  if (/^games/.test(path)) {
-    const game = await fetch.gameLazily(getUserMarket(), credentials, +pathToId(path), retrOpts);
-    return game && gameToTabData(game);
-  } else if (/^users/.test(path)) {
-    const user = await fetch.userLazily(getUserMarket(), credentials, +pathToId(path), retrOpts);
-    return user && userToTabData(user);
-  } else if (/^collections\//.test(path)) {
-    const collectionId = +pathToId(path);
-    const collection = await fetch.collectionLazily(getUserMarket(), credentials, collectionId, retrOpts);
-    const newData = collectionToTabData(collection);
-    if (collection) {
-      log(opts, `fetched collection ${collectionId}`);
-      const oldCollectionData = (((data || {}).collections || {})[collectionId] || {});
+    if (/^games/.test(path)) {
+      const game = await fetch.gameLazily(getUserMarket(), credentials, +pathToId(path), retrOpts);
+      return game && gameToTabData(game);
+    } else if (/^users/.test(path)) {
+      const user = await fetch.userLazily(getUserMarket(), credentials, +pathToId(path), retrOpts);
+      return user && userToTabData(user);
+    } else if (/^collections\//.test(path)) {
+      const collectionId = +pathToId(path);
+      const collection = await fetch.collectionLazily(getUserMarket(), credentials, collectionId, retrOpts);
+      const newData = collectionToTabData(collection);
+      if (collection) {
+        log(opts, `fetched collection ${collectionId}`);
+        const oldCollectionData = (((data || {}).collections || {})[collectionId] || {});
 
-      const fetchMarket = new Market();
-      fetchMarket.data = {
-        collections: {
-          ...newData.collections,
-          [collectionId]: {
-            ...oldCollectionData,
-            ...newData.collections[collectionId],
+        const fetchMarket = new Market();
+        fetchMarket.data = {
+          collections: {
+            ...newData.collections,
+            [collectionId]: {
+              ...oldCollectionData,
+              ...newData.collections[collectionId],
+            },
           },
-        },
-      };
+        };
 
-      try {
-        await fetch.collectionGames(fetchMarket, credentials, collectionId);
-      } catch (err) {
-        if (api.isNetworkError(err)) {
-          // oh well, let's just go with cached games
-        } else {
-          // otherwise, rethrow
-          throw err;
+        try {
+          await fetch.collectionGames(fetchMarket, credentials, collectionId);
+        } catch (err) {
+          if (api.isNetworkError(err)) {
+            // oh well, let's just go with cached games
+          } else {
+            // otherwise, rethrow
+            throw err;
+          }
+        }
+        return {
+          ...newData,
+          ...fetchMarket.data,
+        };
+      } else {
+        return null;
+      }
+    } else if (/^locations/.test(path)) {
+      const locationName = pathToId(path);
+      let location = store.getState().preferences.installLocations[locationName];
+      if (!location) {
+        if (locationName === "appdata") {
+          const userDataPath = store.getState().system.userDataPath;
+          location = {
+            path: ospath.join(userDataPath, "apps"),
+          };
         }
       }
+
+      return location && locationToTabData(location);
+    } else if (/^search/.test(path)) {
       return {
-        ...newData,
-        ...fetchMarket.data,
+        label: pathToId(path),
+      };
+    } else if (/^new/.test(path)) {
+      return {
+        label: ["sidebar.empty"],
+      };
+    } else if (/^toast/.test(path)) {
+      return {
+        label: ["sidebar.aw_snap"],
+      };
+    } else if (/^url/.test(path)) {
+      const existingTabData = store.getState().session.navigation.tabData[id] || {};
+      return {
+        label: existingTabData.webTitle || (urlParser.parse(pathToId(path)) || {}).hostname,
+        iconImage: existingTabData.webFavicon,
       };
     } else {
-      return null;
-    }
-  } else if (/^locations/.test(path)) {
-    const locationName = pathToId(path);
-    let location = store.getState().preferences.installLocations[locationName];
-    if (!location) {
-      if (locationName === "appdata") {
-        const userDataPath = store.getState().system.userDataPath;
-        location = {
-          path: ospath.join(userDataPath, "apps"),
-        };
+      const staticData = staticTabData[id];
+      if (id) {
+        return staticData;
       }
     }
-
-    return location && locationToTabData(location);
-  } else if (/^search/.test(path)) {
-    return {
-      label: pathToId(path),
-    };
-  } else if (/^new/.test(path)) {
-    return {
-      label: ["sidebar.empty"],
-    };
-  } else if (/^toast/.test(path)) {
-    return {
-      label: ["sidebar.aw_snap"],
-    };
-  } else if (/^url/.test(path)) {
-    const existingTabData = store.getState().session.navigation.tabData[id] || {};
-    return {
-      label: existingTabData.webTitle || (urlParser.parse(pathToId(path)) || {}).hostname,
-      iconImage: existingTabData.webFavicon,
-    };
-  } else {
-    const staticData = staticTabData[id];
-    if (id) {
-      return staticData;
-    }
+  } finally {
+    store.dispatch(actions.tabLoading({id, loading: false}));
   }
 }
 

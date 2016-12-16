@@ -19,7 +19,7 @@ import {IAction, dispatcher} from "../../constants/action-types";
 import {ILocalizer} from "../../localizer";
 
 import Ink = require("react-ink");
-import {Circle} from "rc-progress";
+import LoadingCircle from "../loading-circle";
 
 const linearGradient = (progress: number) => {
   let percent = (progress * 100).toFixed() + "%";
@@ -53,12 +53,7 @@ class MainAction extends React.Component<IMainActionProps, void> {
         { (
             progress > 0 || realTask === "find-upload" || realTask === "download" ||
             realTask === "configure" || realTask === "install")
-          ? <div className="circle-container">
-              <Circle
-                percent={progress > 0 ? progress * 100.0 : 0}
-                trailWidth="3" trailColor="#e0e0e2" 
-                strokeWidth="15" strokeColor="white"/>
-             </div>
+          ? <LoadingCircle progress={progress}/>
           : <TaskIcon task={realTask} animate={animate} action={action}/>
         }
         {status}

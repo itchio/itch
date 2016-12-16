@@ -25,6 +25,7 @@ const initialState = {
     constant: baseTabs,
     transient: [],
   },
+  loadingTabs: {},
   filters: {},
   binaryFilters: {
     onlyCompatible: true,
@@ -36,6 +37,24 @@ const initialState = {
 } as ISessionNavigationState;
 
 export default reducer<ISessionNavigationState>(initialState, (on) => {
+  on(actions.tabLoading, (state, action) => {
+    const {id, loading} = action.payload;
+    if (loading) {
+      return {
+        ...state,
+        loadingTabs: {
+          ...state.loadingTabs,
+          [id]: true,
+        },
+      };
+    } else {
+      return {
+        ...state,
+        loadingTabs: omit(state.loadingTabs, id),
+      };
+    }
+  });
+
   on(actions.binaryFilterChanged, (state, action) => {
     const {field, value} = action.payload;
     return {

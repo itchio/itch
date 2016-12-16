@@ -38,6 +38,8 @@ import {
 
   VIEW_CREATOR_PROFILE, IViewCreatorProfilePayload,
   VIEW_COMMUNITY_PROFILE, IViewCommunityProfilePayload,
+
+  TAB_LOADING, ITabLoadingPayload,
 } from "../constants/action-types";
 
 const internalNavigate = createAction<INavigatePayload, any>(NAVIGATE);
@@ -89,3 +91,5 @@ export const triggerLocation = createAction<ITriggerLocationPayload>(TRIGGER_LOC
 
 export const viewCreatorProfile = createAction<IViewCreatorProfilePayload>(VIEW_CREATOR_PROFILE);
 export const viewCommunityProfile = createAction<IViewCommunityProfilePayload>(VIEW_COMMUNITY_PROFILE);
+
+export const tabLoading = createAction<ITabLoadingPayload>(TAB_LOADING);

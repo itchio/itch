@@ -109,6 +109,20 @@
       flex-direction: row;
       align-items: center;
 
+      .icon-container {
+        width: 18px;
+        height: 16px;
+        margin-right: 4px;
+        text-align: center;
+
+        .icon-image {
+          width: 14px;
+          height: 14px;
+          margin-right: 2px;
+          border-radius: 2px;
+        }
+      }
+
       .progress-outer {
         @include progress;
         width: 60px;

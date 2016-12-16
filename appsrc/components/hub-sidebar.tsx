@@ -70,7 +70,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
   }
 
   render () {
-    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
+    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData, loadingTabs,
       navigate, closeTab, closeAllTabs, moveTab,
       openTabContextMenu, newTab, searchLoading, halloween} = this.props;
     const classes = classNames("hub-sidebar", {osx, fullscreen});
@@ -112,8 +112,9 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           const onContextMenu = () => {
             /* muffin */
           };
+          const loading = false;
 
-          const props = {id, path, label, icon, active, onClick, t, onContextMenu, halloween};
+          const props = {id, path, label, icon, active, onClick, t, onContextMenu, halloween, loading};
           return <HubSidebarItem {...props}/>;
         })}
 
@@ -127,7 +128,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
         {map(tabs.transient, (id, index) => {
           const data = tabData[id] || {};
           const {path} = data;
-          const iconImage = /^url/.test(path) && data.webFavicon;
+          const iconImage = /^url/.test(path) ? data.webFavicon : data.iconImage;
           const label = makeLabel(id, tabData);
           const icon = pathToIcon(path);
           const active = currentId === id;
@@ -139,6 +140,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           let count = 0;
           let progress = 0;
           let sublabel: ILocalizedString = null;
+          const loading = loadingTabs[id];
 
           if (id === "downloads") {
             count = this.props.downloadCount;
@@ -153,7 +155,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
 
           const props = {index, id, path, label, icon, iconImage, active,
             onClick, count, progress, onClose, onContextMenu, moveTab, data, t,
-            sublabel, gameOverride, halloween};
+            sublabel, gameOverride, halloween, loading};
           return <HubSidebarItem {...props}/>;
         })}
         <section className="hub-sidebar-item new-tab" onClick={() => newTab({})}>
@@ -333,6 +335,9 @@ interface IHubSidebarProps {
     transient: string[];
   };
   tabData: ITabDataSet;
+  loadingTabs: {
+    [key: string]: boolean;
+  };
 
   downloadCount: number;
   downloadProgress: number;  
@@ -378,6 +383,7 @@ const mapStateToProps = createStructuredSelector({
   id: (state: IState) => state.session.navigation.id,
   tabs: (state: IState) => state.session.navigation.tabs,
   tabData: (state: IState) => state.session.navigation.tabData,
+  loadingTabs: (state: IState) => state.session.navigation.loadingTabs,
   searchLoading: (state: IState) => state.session.search.loading,
   halloween: (state: IState) => state.status.bonuses.halloween,
 

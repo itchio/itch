@@ -15,6 +15,9 @@ import * as actions from "../actions";
 
 import Ink = require("react-ink");
 
+import LoadingCircle from "./loading-circle";
+import Icon from "./icon";
+
 export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSidebarItemState> {
   constructor () {
     super();
@@ -81,23 +84,30 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
         data-dragging={isDragging}>
       <div className="row">
         <Ink/>
+        <div className="icon-container">
+          {this.props.loading
+            ? <LoadingCircle progress={0.3}/>
+            : (this.props.iconImage
+              ? <img className="icon-image" src={this.props.iconImage}/>
+              : <Icon icon={this.props.icon || "tag"}/>)}
+        </div>
         <span className="label">{t.format(label)}</span>
         {count > 0
           ? <span className="bubble">{count}</span>
-          : ""
+          : null
         }
         <div className="filler"/>
         {progress > 0
         ? <div className="progress-outer">
           <div className="progress-inner" style={progressStyle}/>
         </div>
-        : ""}
+        : null}
         {onClose
           ? <span className="close-icon icon icon-cross" onClick={(e) => {
             onClose();
             e.stopPropagation();
           }}/>
-          : ""
+          : null
         }
       </div>
     </section>));
@@ -139,6 +149,10 @@ interface IHubSidebarItemProps {
   progress?: number;
   gameOverride?: IGameRecord;
 
+  icon?: string;
+  iconImage?: string;
+
+  loading: boolean;
   halloween: boolean;
 
   onClick?: () => void;
