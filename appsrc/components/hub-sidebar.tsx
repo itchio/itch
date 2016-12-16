@@ -156,7 +156,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           const props = {index, id, path, label, icon, iconImage, active,
             onClick, count, progress, onClose, onContextMenu, moveTab, data, t,
             sublabel, gameOverride, halloween, loading};
-          return <HubSidebarItem {...props}/>;
+          return <HubSidebarItem key={id} {...props}/>;
         })}
         <section className="hub-sidebar-item new-tab" onClick={() => newTab({})}>
           <div className="row">

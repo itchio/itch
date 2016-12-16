@@ -21,7 +21,9 @@ import Icon from "./icon";
 export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSidebarItemState> {
   constructor () {
     super();
-    this.state = {};
+    this.state = {
+      fresh: true,
+    };
     this.onClick = this.onClick.bind(this);
   }
 
@@ -55,7 +57,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     const {t, count, sublabel, progress, id, path, label, active, halloween} = this.props;
     const {isDragging, connectDragSource, connectDropTarget, onClose, onContextMenu} = this.props;
 
-    const classes = classNames("hub-sidebar-item", {active, ["hint--bottom"]: !!sublabel});
+    const classes = classNames("hub-sidebar-item", {active, ["hint--bottom"]: !!sublabel, fresh: this.state.fresh});
     const style: React.CSSProperties = {
       position: "relative",
     };
@@ -119,6 +121,10 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
 
   componentDidMount () {
     this.updateColor();
+
+    setTimeout(() => {
+      this.setState({fresh: false});
+    }, 200);
   }
 
   updateColor () {
@@ -170,6 +176,7 @@ interface IHubSidebarItemProps {
 }
 
 interface IHubSidebarItemState {
+  fresh?: boolean;
   dominantColor?: IRGBColor;
 }
 

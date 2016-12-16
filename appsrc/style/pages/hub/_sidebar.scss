@@ -1,12 +1,7 @@
 
 @keyframes sidebar-swoop-in {
-  0% { -webkit-transform: scale(1, 0) }
-  100% { -webkit-transform: scale(1, 1) }
-}
-
-@keyframes sidebar-swoop-in {
-  0% { -webkit-transform: scale(1, 1) }
-  100% { -webkit-transform: scale(1, 0) }
+  0% { transform: translateX(-100%) }
+  100% { transform: translateX(0%) }
 }
 
 .hub-sidebar-handle {
@@ -201,7 +196,7 @@
     }
 
     &.fresh {
-      animation: sidebar-swoop-in .2s ease-out;
+      animation: sidebar-swoop-in .35s ease-out;
     }
 
     &.dying {
