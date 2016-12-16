@@ -18,6 +18,8 @@ import {IState, IDownloadItem, ICaveRecord, IGameUpdate} from "../../types";
 import {IAction, dispatcher} from "../../constants/action-types";
 import {ILocalizer} from "../../localizer";
 
+import Ink = require("react-ink");
+
 const linearGradient = (progress: number) => {
   let percent = (progress * 100).toFixed() + "%";
   let doneColor = "#414141";
@@ -75,7 +77,9 @@ class MainAction extends React.Component<IMainActionProps, void> {
       }
     }
 
-    let style: React.CSSProperties = {};
+    let style: React.CSSProperties = {
+      position: "relative",
+    };
     let branded = false;
     if (progress > 0) {
       style.backgroundImage = linearGradient(progress);
@@ -94,6 +98,7 @@ class MainAction extends React.Component<IMainActionProps, void> {
     });
     const button = <div style={style} className={buttonClasses} onClick={(e) => this.onClick(e)} data-hint={hint}>
       {child}
+      <Ink/>
     </div>;
 
     if (!child) {
