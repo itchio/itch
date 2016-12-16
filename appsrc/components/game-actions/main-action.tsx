@@ -19,6 +19,7 @@ import {IAction, dispatcher} from "../../constants/action-types";
 import {ILocalizer} from "../../localizer";
 
 import Ink = require("react-ink");
+import {Circle} from "rc-progress";
 
 const linearGradient = (progress: number) => {
   let percent = (progress * 100).toFixed() + "%";
@@ -49,7 +50,17 @@ class MainAction extends React.Component<IMainActionProps, void> {
       const realTask = statusTask || task;
 
       child = <span className={classes} data-hint={hint}>
-        <TaskIcon task={realTask} animate={animate} action={action}/>
+        { (
+            progress > 0 || realTask === "find-upload" || realTask === "download" ||
+            realTask === "configure" || realTask === "install")
+          ? <div className="circle-container">
+              <Circle
+                percent={progress > 0 ? progress * 100.0 : 0}
+                trailWidth="3" trailColor="#e0e0e2" 
+                strokeWidth="15" strokeColor="white"/>
+             </div>
+          : <TaskIcon task={realTask} animate={animate} action={action}/>
+        }
         {status}
         {cancellable
         ? <span className="cancel-cross">
@@ -81,13 +92,6 @@ class MainAction extends React.Component<IMainActionProps, void> {
       position: "relative",
     };
     let branded = false;
-    if (progress > 0) {
-      style.backgroundImage = linearGradient(progress);
-      style.borderColor = "#444";
-    } else if (halloween) {
-      style.backgroundColor = colors.spooky;
-      style.borderColor = colors.spookyLight;
-    }
 
     const hint = this.hint();
 
@@ -98,7 +102,7 @@ class MainAction extends React.Component<IMainActionProps, void> {
     });
     const button = <div style={style} className={buttonClasses} onClick={(e) => this.onClick(e)} data-hint={hint}>
       {child}
-      <Ink/>
+      {1 === 1 ? null : <Ink/>}
     </div>;
 
     if (!child) {
@@ -182,8 +186,8 @@ class MainAction extends React.Component<IMainActionProps, void> {
       if (downloadItem && downloadItem.eta && downloadItem.bps) {
         const {eta, bps} = downloadItem;
         res = {
-          status: downloadProgress(t, {eta, bps}, this.props.downloadsPaused, {onlyBPS: true}),
-          hint: downloadProgress(t, {eta, bps}, this.props.downloadsPaused, {onlyETA: true}),
+          status: t("grid.item.downloading"),
+          hint: downloadProgress(t, {eta, bps}, this.props.downloadsPaused, {}),
         };
       } else {
         res = {status: t("grid.item.downloading")};

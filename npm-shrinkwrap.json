@@ -2850,6 +2850,11 @@
         }
       }
     },
+    "rc-progress": {
+      "version": "2.0.3",
+      "from": "rc-progress@latest",
+      "resolved": "https://registry.npmjs.org/rc-progress/-/rc-progress-2.0.3.tgz"
+    },
     "rcedit": {
       "version": "0.5.1",
       "from": "rcedit@>=0.5.1 <0.6.0",

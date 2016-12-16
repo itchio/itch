@@ -6,10 +6,15 @@ export const lightMineShaft = "#383434";
 export const spooky = "#ff713e";
 export const spookyLight = "#ff9c6d";
 
+export const carnation = "#fa5c5c";
+export const vividTangerine = "#ff8080";
+
 export default {
   codGray,
   darkMineShaft,
   lightMineShaft,
   spooky,
   spookyLight,
+  carnation,
+  vividTangerine,
 };

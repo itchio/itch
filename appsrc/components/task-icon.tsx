@@ -19,6 +19,8 @@ class TaskIcon extends React.Component<ITaskIconProps, void> {
       } else {
         icon = "rocket";
       }
+    } else if (task === "launch") {
+      icon = "";
     }
 
     return <Icon icon={icon} animate={animate}/>;
