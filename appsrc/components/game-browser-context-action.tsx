@@ -21,7 +21,7 @@ class GameBrowserContextAction extends React.Component<IGameBrowserContextAction
     const textLabel = "" + label;
     const style: React.CSSProperties = {
       position: "relative",
-    }
+    };
 
     return <span style={style} key={textLabel}
         className={spanClasses} data-hint={hint} onClick={() => dispatch(action)}>
