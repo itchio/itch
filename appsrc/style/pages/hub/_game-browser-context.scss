@@ -104,6 +104,10 @@ $secondary-action-bg: #2b2b2b;
         margin-left: -10px;
       }
 
+      .icon, .circle-container {
+        margin-left: -10px;
+      }
+
       &.branded {
         &, &:hover {
           border: inset 1px rgba(255, 255, 255, .3)
