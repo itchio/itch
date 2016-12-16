@@ -2880,7 +2880,7 @@
     },
     "react-addons-transition-group": {
       "version": "15.4.1",
-      "from": "react-addons-transition-group@>=0.14.0 <0.15.0||>=15.0.0 <16.0.0",
+      "from": "https://registry.npmjs.org/react-addons-transition-group/-/react-addons-transition-group-15.4.1.tgz",
       "resolved": "https://registry.npmjs.org/react-addons-transition-group/-/react-addons-transition-group-15.4.1.tgz"
     },
     "react-base16-styling": {
@@ -2918,6 +2918,11 @@
       "version": "15.4.1",
       "from": "react-dom@>=15.4.1 <16.0.0",
       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-15.4.1.tgz"
+    },
+    "react-ink": {
+      "version": "6.0.1",
+      "from": "react-ink@latest",
+      "resolved": "https://registry.npmjs.org/react-ink/-/react-ink-6.0.1.tgz"
     },
     "react-json-tree": {
       "version": "0.10.0",

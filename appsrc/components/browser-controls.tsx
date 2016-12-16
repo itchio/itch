@@ -12,6 +12,8 @@ import {IAction, dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
 
+import Ink = require("react-ink");
+
 function isHTMLInput (el: HTMLElement): el is HTMLInputElement {
   return el.tagName === "INPUT";
 }

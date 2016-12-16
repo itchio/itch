@@ -110,8 +110,8 @@
 
     &.task-download, &.task-install, &.task-configure, &.task-launch, &.task-find-upload, &.task-launch {
       .main-action {
-        margin-right: 0;
-        flex-grow: 1;
+        // margin-right: 0;
+        // flex-grow: 1;
         text-align: center;
         font-weight: normal;
         @include discreet-button;

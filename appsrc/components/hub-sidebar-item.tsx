@@ -13,6 +13,8 @@ import {ILocalizer} from "../localizer";
 
 import * as actions from "../actions";
 
+import Ink = require("react-ink");
+
 export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSidebarItemState> {
   constructor () {
     super();
@@ -51,7 +53,9 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     const {isDragging, connectDragSource, connectDropTarget, onClose, onContextMenu} = this.props;
 
     const classes = classNames("hub-sidebar-item", {active, ["hint--bottom"]: !!sublabel});
-    const style: React.CSSProperties = {};
+    const style: React.CSSProperties = {
+      position: "relative",
+    };
     const {dominantColor} = this.state;
 
     if (active) {
@@ -75,6 +79,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
         data-path={path}
         data-id={id}
         data-dragging={isDragging}>
+      <Ink/>
       <div className="row">
         <span className="label">{t.format(label)}</span>
         {count > 0
