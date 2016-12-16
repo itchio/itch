@@ -224,7 +224,11 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
     if (id === closeId) {
       const newIds = constant.concat(newTransient);
 
-      const nextIndex = Math.max(0, index - 1);
+      let nextIndex = index;
+      if (nextIndex >= newIds.length) {
+        nextIndex--;
+      }
+
       if (nextIndex < constant.length) {
         newId = state.lastConstant;
       } else {

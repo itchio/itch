@@ -124,7 +124,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
 
     setTimeout(() => {
       this.setState({fresh: false});
-    }, 200);
+    }, 400);
   }
 
   updateColor () {

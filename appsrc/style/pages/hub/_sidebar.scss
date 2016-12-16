@@ -196,7 +196,7 @@
     }
 
     &.fresh {
-      animation: sidebar-swoop-in .35s ease-out;
+      animation: sidebar-swoop-in .3s ease-out;
     }
 
     &.dying {
@@ -238,6 +238,7 @@
 
     display: flex;
     flex-shrink: 0;
+    align-items: center;
 
     .label {
       text-transform: uppercase;
@@ -255,6 +256,7 @@
       &:hover {
         color: $ivory;
       }
+      margin-left: 6px;
     }
   }
 

@@ -124,6 +124,9 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           <span className="action hint--left" data-hint={t("sidebar.close_all_tabs")} onClick={() => closeAllTabs({})}>
             <span className="icon icon-delete"/>
           </span>
+          <span className="action hint--left" data-hint={t("sidebar.new_tab")} onClick={() => newTab({})}>
+            <span className="icon icon-plus"/>
+          </span>
         </h2>
         {map(tabs.transient, (id, index) => {
           const data = tabData[id] || {};
@@ -158,13 +161,6 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
             sublabel, gameOverride, halloween, loading};
           return <HubSidebarItem key={id} {...props}/>;
         })}
-        <section className="hub-sidebar-item new-tab" onClick={() => newTab({})}>
-          <div className="row">
-            <span className="symbol icon icon-plus"/>
-            <span className="label">{t("sidebar.new_tab")}</span>
-            <div className="filler"/>
-          </div>
-        </section>
       </div>
 
       <section className="sidebar-blank"/>
