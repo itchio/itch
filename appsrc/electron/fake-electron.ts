@@ -134,6 +134,18 @@ class FakeBrowserWindow implements IBrowserWindow {
   maximize() {
     return false;
   }
+
+  setMenuBarVisibility(visible: boolean) {
+    return;
+  }
+
+  setFullScreen(fs: boolean) {
+    return;
+  }
+
+  isFullScreen(): boolean {
+    return false;
+  }
 }
 
 class FakeWebContents implements IWebContents {
@@ -149,6 +161,18 @@ class FakeWebContents implements IWebContents {
 
   isDestroyed() {
     return false;
+  }
+
+  setUserAgent(ua: string) {
+    return;
+  }
+
+  getUserAgent(): string {
+    return "";
+  }
+
+  on(ev: string, cb: (...args: any[]) => void) {
+    return;
   }
 }
 

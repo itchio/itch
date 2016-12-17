@@ -45,6 +45,13 @@ export interface INetRequest {
   abort(): void;
 }
 
+export interface IWebPreferences {
+  nodeIntegration?: boolean;
+  webSecurity?: boolean;
+  preload?: string;
+  partition?: string;
+}
+
 export interface IBrowserWindowOpts {
   title?: string;
   icon?: string;
@@ -55,6 +62,8 @@ export interface IBrowserWindowOpts {
   autoHideMenuBar?: boolean;
   backgroundColor?: string;
   titleBarStyle?: "hidden";
+  useContentSize?: boolean;
+  webPreferences?: IWebPreferences;
 }
 
 export interface IBrowserWindowStatic {
@@ -64,11 +73,17 @@ export interface IBrowserWindowStatic {
   getAllWindows(): IBrowserWindow[];
 }
 
+export interface ILoadUrlOpts {
+  // extra headers separated by "\n"
+  extraHeaders?: string;
+  httpReferrer?: string;
+}
+
 export interface IBrowserWindow {
   id: number;
   webContents: IWebContents;
 
-  loadURL(url: string): void;
+  loadURL(url: string, opts?: ILoadUrlOpts): void;
   getBounds(): IRectangle;
   setBounds(bounds: IRectangle): void;
   setPosition(x: number, y: number): void;
@@ -79,6 +94,9 @@ export interface IBrowserWindow {
   hide(): void;
   show(): void;
   maximize(): void;
+  setMenuBarVisibility(visible: boolean): void;
+  setFullScreen(fullscreen: boolean): void;
+  isFullScreen(): boolean;
 }
 
 export interface IRectangle {
@@ -125,14 +143,20 @@ export interface IWebContents {
 
   openDevTools(opts?: {mode?: string}): void;
   isDestroyed(): boolean;
+  setUserAgent(userAgent: string): void;
+  getUserAgent(): string;
+  on(ev: "new-window", cb: (ev: Event, url: string) => void): void;
 }
 
 /** An electron web session */
 export interface ISession {
   webRequest: IWebRequest;
+
+  clearCache(cb: () => void): void;
 }
 
 export interface IWebRequest {
+  onBeforeSendHeaders: (filter: IWebRequestFilter, cb: IWebRequestCallback) => void;
   onBeforeRequest: (filter: IWebRequestFilter, cb: IWebRequestCallback) => void;
 }
 

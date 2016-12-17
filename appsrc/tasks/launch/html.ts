@@ -4,15 +4,17 @@ import {EventEmitter} from "events";
 import * as btoa from "btoa";
 import * as ospath from "path";
 import * as invariant from "invariant";
+import * as querystring from "querystring";
 
-import electron from "../../electron";
-const {app, BrowserWindow, shell, powerSaveBlocker} = electron;
+import {app, BrowserWindow, shell, powerSaveBlocker} from "../../electron";
 
 import url from "../../util/url";
 import fetch from "../../util/fetch";
 import pathmaker from "../../util/pathmaker";
 import httpServer from "../../util/http-server";
 import debugBrowserWindow from "../../util/debug-browser-window";
+
+const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
 import mklog from "../../util/log";
 const log = mklog("tasks/launch");
@@ -69,7 +71,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
       /* don't enforce same-origin policy (to allow API requests) */
       webSecurity: false,
       /* hook up a few keyboard shortcuts of our own */
-      preload: injectPath,
+      preload: noPreload ? null : injectPath,
       /* stores cookies etc. in persistent session to save progress */
       partition: `persist:gamesession_${cave.gameId}`,
     },
@@ -83,7 +85,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   // open dev tools immediately if requested
   if (process.env.IMMEDIATE_NOSE_DIVE === "1") {
     debugBrowserWindow(`game ${game.title}`, win);
-    win.webContents.openDevTools({detach: true});
+    win.webContents.openDevTools({mode: "detach"});
   }
 
   // hide menu, cf. https://github.com/itchio/itch/issues/232
@@ -111,7 +113,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
         win.setFullScreen(!win.isFullScreen());
         break;
       case "open-devtools":
-        win.webContents.openDevTools({detach: true});
+        win.webContents.openDevTools({mode: "detach"});
         break;
       default:
         break;
@@ -134,10 +136,18 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
     port = server.address().port;
     log(opts, `serving game on port ${port}`);
 
-    // don't use the HTTP cache, we already have everything on disk!
-    const options = {extraHeaders: "pragma: no-cache\n"};
+    // nasty hack to pass in the itchObject
+    const itchObjectBase64 = btoa(JSON.stringify(itchObject));
+    const query = querystring.stringify({itchObject: itchObjectBase64});
+    const httpReferrer = `http://localhost:${port}/?${query}`;
 
-    win.loadURL(`http://localhost:${port}#${btoa(JSON.stringify(itchObject))}`, options);
+    // don't use the HTTP cache, we already have everything on disk!
+    const options = {
+      extraHeaders: "pragma: no-cache\n",
+      httpReferrer,
+    };
+
+    win.loadURL(`http://localhost:${port}`, options);
   });
 
   const blockerId = powerSaveBlocker.start("prevent-display-sleep");

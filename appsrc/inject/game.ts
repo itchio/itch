@@ -1,6 +1,8 @@
 
 // tslint:disable:no-console
 
+import * as querystring from "querystring";
+
 const sendMessage = (action: string) => {
   const url = `https://itch-internal/${action}`;
   const xhr = new XMLHttpRequest();
@@ -34,14 +36,15 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
 })
 
 ; (function () {
-  const {hash} = window.location;
-  if (hash.length > 1) {
-    try {
-      (global as any).Itch = JSON.parse((global as any).atob(window.location.hash.slice(1)));
-      console.log("Loaded itch environment");
-    } catch (e) {
-      console.log("While loading itch environment: ", e);
-    }
+  try {
+    const url = new URL(document.referrer);
+    const parsedQuery = querystring.parse(url.search.replace(/^\?/, ""));
+    console.log("Referrer query: ", parsedQuery);
+    const itchObjectBase64 = parsedQuery.itchObject;
+    (global as any).Itch = JSON.parse((global as any).atob(itchObjectBase64));
+    console.log("Loaded itch environment");
+  } catch (e) {
+    console.log("While loading itch environment: ", e);
   }
 })();
 
