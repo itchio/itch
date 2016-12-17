@@ -360,7 +360,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     onToken: (tok) => log(opts, `out: ${tok}`),
     onErrToken: (tok) => log(opts, `err: ${tok}`),
     opts: {
-      env: {...process.env, env},
+      env: {...process.env, ...env},
       cwd,
       shell,
     },
