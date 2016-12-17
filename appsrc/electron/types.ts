@@ -50,6 +50,7 @@ export interface IWebPreferences {
   webSecurity?: boolean;
   preload?: string;
   partition?: string;
+  allowRunningInsecureContent?: boolean;
 }
 
 export interface IBrowserWindowOpts {
@@ -174,6 +175,7 @@ export interface IWebRequestResponseCallback {
 
 export interface IWebRequestResponseCallbackOpts {
   cancel?: boolean;
+  redirectURL?: string;
 }
 
 export interface IMenuItem {

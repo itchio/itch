@@ -11,10 +11,12 @@ import {app, BrowserWindow, shell, powerSaveBlocker} from "../../electron";
 import url from "../../util/url";
 import fetch from "../../util/fetch";
 import pathmaker from "../../util/pathmaker";
-import httpServer from "../../util/http-server";
 import debugBrowserWindow from "../../util/debug-browser-window";
 
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
+
+const WEBGAME_HOST = "itch-game";
+const WEBGAME_PROTOCOL = "itch-cave";
 
 import mklog from "../../util/log";
 const log = mklog("tasks/launch");
@@ -31,6 +33,57 @@ interface IBeforeSendHeadersCallbackOpts {
 
 interface IBeforeSendHeadersCallback {
   (opts: IBeforeSendHeadersCallbackOpts): void;
+}
+
+interface IRegisteredProtocols {
+  [key: string]: boolean;
+}
+
+const registeredProtocols: IRegisteredProtocols = {};
+
+interface IRegisterProtocolOpts {
+  partition: string;
+  fileRoot: string;
+}
+
+async function registerProtocol (opts: IRegisterProtocolOpts) {
+  const {partition, fileRoot} = opts;
+  
+  if (registeredProtocols[partition]) {
+    return;
+  }
+
+  const {session} = require("electron");
+  const caveSession = session.fromPartition(partition);
+
+  await new Promise((resolve, reject) => {
+    caveSession.protocol.registerFileProtocol(WEBGAME_PROTOCOL, (request, callback) => {
+      const urlPath = url.parse(request.url).pathname;
+      const filePath = ospath.join(fileRoot, urlPath.replace(/^\//, ""));
+
+      callback({
+        path: filePath,
+      });
+    }, (error) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+
+  const handled = await new Promise((resolve, reject) => {
+    caveSession.protocol.isProtocolHandled(WEBGAME_PROTOCOL, (result) => {
+      resolve(result);
+    });
+  });
+
+  if (!handled) {
+    throw new Error(`could not register custom protocol ${WEBGAME_PROTOCOL}`);
+  }
+
+  registeredProtocols[partition] = true;
 }
 
 export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
@@ -52,6 +105,8 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   const {width, height} = cave.windowSize;
   log(opts, `starting at resolution ${width}x${height}`);
 
+  const partition = `persist:gamesession_${cave.gameId}`;
+
   let win = new BrowserWindow({
     title: game.title,
     icon: `./static/images/tray/${app.getName()}.png`,
@@ -70,10 +125,11 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
       nodeIntegration: false,
       /* don't enforce same-origin policy (to allow API requests) */
       webSecurity: false,
+      allowRunningInsecureContent: true,
       /* hook up a few keyboard shortcuts of our own */
       preload: noPreload ? null : injectPath,
       /* stores cookies etc. in persistent session to save progress */
-      partition: `persist:gamesession_${cave.gameId}`,
+      partition,
     },
   });
 
@@ -100,6 +156,20 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   let internalFilter = {
     urls: ["https://itch-internal/*"],
   };
+  win.webContents.session.webRequest.onBeforeRequest({urls: ["itch-cave://*"]}, (details, callback) => {
+    let parsed = url.parse(details.url);
+    // resources in `//` will be loaded using itch-cave, we need to
+    // redirect them to https for it to work - note this only happens with games
+    // that aren't fully offline-mode compliant
+    if (parsed.protocol === "itch-cave:" && parsed.host !== "game.itch") {
+      callback({
+        redirectURL: details.url.replace(/^itch-cave:/, "https:"),
+      });
+    } else {
+      callback({});
+    }
+  });
+
   win.webContents.session.webRequest.onBeforeSendHeaders(
       internalFilter, (details: IBeforeSendHeadersDetails, callback: IBeforeSendHeadersCallback) => {
     callback({cancel: true});
@@ -129,26 +199,18 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   let fileRoot = ospath.dirname(entryPoint);
   let indexName = ospath.basename(entryPoint);
 
-  let server = httpServer.create(fileRoot, {index: [indexName]});
+  await registerProtocol({partition, fileRoot});
 
-  let port: number;
-  server.on("listening", function () {
-    port = server.address().port;
-    log(opts, `serving game on port ${port}`);
+  // nasty hack to pass in the itchObject
+  const itchObjectBase64 = btoa(JSON.stringify(itchObject));
+  const query = querystring.stringify({itchObject: itchObjectBase64});
 
-    // nasty hack to pass in the itchObject
-    const itchObjectBase64 = btoa(JSON.stringify(itchObject));
-    const query = querystring.stringify({itchObject: itchObjectBase64});
-    const httpReferrer = `http://localhost:${port}/?${query}`;
+  // don't use the HTTP cache, we already have everything on disk!
+  const options = {
+    extraHeaders: "pragma: no-cache\n",
+  };
 
-    // don't use the HTTP cache, we already have everything on disk!
-    const options = {
-      extraHeaders: "pragma: no-cache\n",
-      httpReferrer,
-    };
-
-    win.loadURL(`http://localhost:${port}`, options);
-  });
+  win.loadURL(`itch-cave://game.itch/${indexName}?${query}`, options);
 
   const blockerId = powerSaveBlocker.start("prevent-display-sleep");
 
@@ -163,7 +225,4 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   });
 
   powerSaveBlocker.stop(blockerId);
-
-  log(opts, `shutting down http server on port ${port}`);
-  server.close();
 }

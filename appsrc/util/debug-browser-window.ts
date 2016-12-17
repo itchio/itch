@@ -18,8 +18,8 @@ function enableEventDebugging (prefix: string, win: any) {
     " did-stop-loading did-get-response-details did-get-redirect-request dom-ready" +
     " page-favicon-updated new-window will-navigate crashed plugin-crashed destroyed";
   cevents.split(" ").forEach((ev) => {
-    win.webContents.on(ev, (e: any, deets: any) => {
-      console.log(`${prefix} webcontents event: ${ev}, ${JSON.stringify(deets, null, 2)}`);
+    win.webContents.on(ev, (e: any, ...args: any[]) => {
+      console.log(`${prefix} webcontents event: ${ev}, ${JSON.stringify(args, null, 2)}`);
     });
   });
 }

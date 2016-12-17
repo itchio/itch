@@ -37,11 +37,12 @@ function autoUpdateDone () {
     }
   }
 
-  const {app, globalShortcut} = require("electron");
+  const {protocol, app, globalShortcut} = require("electron");
 
   if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
     app.commandLine.appendSwitch("ignore-certificate-errors");
   }
+  protocol.registerStandardSchemes(["itch-cave"]);
 
   const store = require("./store").default;
 

@@ -2,6 +2,7 @@
 // tslint:disable:no-console
 
 import * as querystring from "querystring";
+import * as urlParser from "url";
 
 const sendMessage = (action: string) => {
   const url = `https://itch-internal/${action}`;
@@ -37,8 +38,9 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
 
 ; (function () {
   try {
-    const url = new URL(document.referrer);
-    const parsedQuery = querystring.parse(url.search.replace(/^\?/, ""));
+    const url = urlParser.parse(window.location.href);
+    console.log("Parsed url: ", url);
+    const parsedQuery = querystring.parse(url.query);
     console.log("Referrer query: ", parsedQuery);
     const itchObjectBase64 = parsedQuery.itchObject;
     (global as any).Itch = JSON.parse((global as any).atob(itchObjectBase64));
