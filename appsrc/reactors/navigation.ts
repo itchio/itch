@@ -7,6 +7,7 @@ import {getUserMarket} from "./market";
 import * as invariant from "invariant";
 import * as ospath from "path";
 import * as urlParser from "url";
+import * as querystring from "querystring";
 
 import {map, filter, pluck} from "underscore";
 
@@ -38,6 +39,8 @@ interface IRetrieveOpts {
 
   /** when set, do not use any cached data, only fresh from API */
   fresh?: boolean;
+
+  extras?: ITabData;
 }
 
 async function retrieveTabData (store: IStore, id: string, retrOpts = {} as IRetrieveOpts): Promise<ITabData> {
@@ -62,7 +65,14 @@ async function retrieveTabData (store: IStore, id: string, retrOpts = {} as IRet
     const credentials = store.getState().session.credentials;
 
     if (/^games/.test(path)) {
-      const game = await fetch.gameLazily(getUserMarket(), credentials, +pathToId(path), retrOpts);
+      let password: string = null;
+      const {query} = urlParser.parse(path);
+      if (query) {
+        const {secret} = querystring.parse(query);
+        password = secret;
+      }
+
+      const game = await fetch.gameLazily(getUserMarket(), credentials, +pathToId(path), {...retrOpts, password});
       return game && gameToTabData(game);
     } else if (/^users/.test(path)) {
       const user = await fetch.userLazily(getUserMarket(), credentials, +pathToId(path), retrOpts);
@@ -293,14 +303,18 @@ export default function (watcher: Watcher) {
     }
 
     try {
-      const data = await retrieveTabData(store, id, {path});
+      const data = await retrieveTabData(store, id, {path, extras});
       store.dispatch(actions.tabEvolved({
         id,
         data: {...data, ...extras, path},
       }));
     } catch (e) {
-      log(opts, `While evolving tab: ${e.stack || e}`);
-      toast(store, id, e, path);
+      if (api.hasAPIError(e, "invalid game")) {
+        log(opts, `Got invalid game, ignoring`);
+      } else {
+        log(opts, `While evolving tab: ${e.stack || e}`);
+        toast(store, id, e, path);
+      }
     }
   });
 

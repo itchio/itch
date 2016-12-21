@@ -226,6 +226,11 @@ export interface ITabData {
 
     /** if this is a web tab, the url of the page we're showing */
     url?: string;
+
+    /** query string associated with tab */
+    query?: {
+        [key: string]: string;
+    };
 }
 
 export interface ITabDataSave extends ITabData {

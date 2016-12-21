@@ -220,6 +220,7 @@ export async function search (credentials: ICredentials, query: string): Promise
 interface IGameLazilyOpts {
   fresh?: boolean;
   game?: IGameRecord;
+  password?: string;
 }
 
 async function gameLazily (market: IUserMarket, credentials: ICredentials, gameId: number,
@@ -241,7 +242,8 @@ async function gameLazily (market: IUserMarket, credentials: ICredentials, gameI
   }
 
   const api = client.withKey(credentials.key);
-  const response = normalize(await api.game(gameId), {game});
+  const {password} = opts;
+  const response = normalize(await api.game(gameId, {password}), {game});
 
   return response.entities.games[gameId];
 }
