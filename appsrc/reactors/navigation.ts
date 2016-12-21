@@ -192,7 +192,7 @@ async function doFetchTabData (store: IStore, id: string, retrOpts?: IRetrieveOp
       log(opts, `Skipping tab data fetching because of network (${e.code})`);
     } else {
       log(opts, `Tab data fetching error: ${e.stack || e.message || e}`);
-      toast(store, id, e, retrOpts.path);
+      toast(store, id, e, retrOpts ? retrOpts.path : id);
     }
   }
 }

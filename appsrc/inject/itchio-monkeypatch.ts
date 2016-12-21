@@ -187,7 +187,12 @@ setTimeout(function () {
 
     const metaTag = document.querySelector('meta[name="itch:path"]') as HTMLMetaElement;
     if (metaTag) {
-      evolveTab(metaTag.content);
+      let path = metaTag.content;
+      const parsed = urlParser.parse(window.location.href);
+      if (parsed.search) {
+        path += parsed.search;
+      }
+      evolveTab(path);
     } else {
       analyzePage(window.location.href);
     }

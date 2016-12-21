@@ -3,6 +3,7 @@ import * as React from "react";
 import {connect} from "./connect";
 
 import {pathToId} from "../util/navigation";
+import urlParser from "../util/url";
 import urls from "../constants/urls";
 
 import BrowserMeat from "./browser-meat";
@@ -18,12 +19,16 @@ export class UrlMeat extends React.Component<IUrlMeatProps, void> {
     let controls = "generic";
 
     if (/^url/.test(path)) {
-      url = pathToId(path);
+      url = path.replace(/^url\//, "");
     } else if (/^games/.test(path)) {
       const gameId = +pathToId(path);
       const game = (tabData.games || {})[gameId];
       if (game) {
         url = game.url;
+        const parsed = urlParser.parse(url);
+        if (parsed.search) {
+          url += parsed.search;
+        }
         controls = "game";
       }
     } else if (/^users/.test(path)) {
