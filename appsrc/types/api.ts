@@ -154,4 +154,5 @@ export type IDownloadBuildResult = IDownloadUploadResult;
 
 export interface IGameExtras {
   password?: string;
+  secret?: string;
 }

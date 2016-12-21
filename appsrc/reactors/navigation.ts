@@ -65,14 +65,20 @@ async function retrieveTabData (store: IStore, id: string, retrOpts = {} as IRet
     const credentials = store.getState().session.credentials;
 
     if (/^games/.test(path)) {
-      let password: string = null;
+      let extraOpts = {} as {
+        password?: string;
+        secret?: string;
+      };
+
       const {query} = urlParser.parse(path);
       if (query) {
-        const {secret} = querystring.parse(query);
-        password = secret;
+        const {secret, password} = querystring.parse(query);
+        if (secret)   { extraOpts.secret = secret; }
+        if (password) { extraOpts.password = password; }
       }
 
-      const game = await fetch.gameLazily(getUserMarket(), credentials, +pathToId(path), {...retrOpts, password});
+      const game = await fetch.gameLazily(getUserMarket(), credentials, +pathToId(path),
+        {...retrOpts, ...extraOpts});
       return game && gameToTabData(game);
     } else if (/^users/.test(path)) {
       const user = await fetch.userLazily(getUserMarket(), credentials, +pathToId(path), retrOpts);
