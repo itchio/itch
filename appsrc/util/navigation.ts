@@ -9,7 +9,7 @@ import { IGameRecord, IUserRecord, ICollectionRecord,
   IInstallLocation, ITabData, ITabDataSet } from "../types";
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
-const ID_RE = /^[^\/]+\/(.*)$/;
+const ID_RE = /^[^\/]+\/([^\?]*)/;
 
 interface IDNSError {
   code?: number;

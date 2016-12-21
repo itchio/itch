@@ -31,6 +31,7 @@ import {
   IBuildResponse,
   BuildFileType,
   IDownloadBuildResult,
+  IGameExtras,
 } from "../types/api";
 
 const cooldown = mkcooldown(130);
@@ -200,8 +201,8 @@ export class AuthenticatedClient {
     return await this.request("get", "/my-collections", {}, {collections: ensureArray});
   }
 
-  async game (gameID: number): Promise<IGameResult> {
-    return await this.request("get", `/game/${gameID}`);
+  async game (gameID: number, gameExtras: IGameExtras = {}): Promise<IGameResult> {
+    return await this.request("get", `/game/${gameID}`, gameExtras);
   }
 
   async user (userID: number): Promise<IUserResult> {

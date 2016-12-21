@@ -315,7 +315,11 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
       }
       const meta = xhr.responseXML.querySelector('meta[name="itch:path"]');
       if (meta) {
-        const newPath = meta.content;
+        let newPath = meta.content;
+        const parsed = urlParser.parse(url);
+        if (parsed.search) {
+          newPath += parsed.search;
+        }
         evolveTab({id: tabId, path: newPath});
       }
     };
