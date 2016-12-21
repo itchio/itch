@@ -152,7 +152,11 @@ export interface IBuildResponse {
 
 export type IDownloadBuildResult = IDownloadUploadResult;
 
-export interface IGameExtras {
+export interface IPasswordOrSecret {
   password?: string;
   secret?: string;
 }
+
+export interface IGameExtras extends IPasswordOrSecret {}
+
+export interface IListUploadsExtras extends IPasswordOrSecret {}

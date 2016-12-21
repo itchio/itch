@@ -28,7 +28,7 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
     });
   }
 
-  const {upload, destPath, downloadKey, credentials} = opts;
+  const {upload, destPath, downloadKey, credentials, password, secret} = opts;
 
   const api = client.withKey(credentials.key);
 
@@ -43,8 +43,8 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
     invariant(game, "startDownload opts must have game");
 
     // TODO: use manifest URL if available
-    const archiveURL = api.downloadBuildURL(downloadKey, upload.id, buildId, "archive");
-    const signatureURL = api.downloadBuildURL(downloadKey, upload.id, buildId, "signature");
+    const archiveURL = api.downloadBuildURL(downloadKey, upload.id, buildId, "archive", {password, secret});
+    const signatureURL = api.downloadBuildURL(downloadKey, upload.id, buildId, "signature", {password, secret});
 
     const store = require("../../store").default;
     const {defaultInstallLocation} = store.getState().preferences;
@@ -67,7 +67,7 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
       onProgress,
     });
   } else {
-    const uploadURL = api.downloadUploadURL(downloadKey, upload.id);
+    const uploadURL = api.downloadUploadURL(downloadKey, upload.id, {password, secret});
 
     try {
       await butler.cp({

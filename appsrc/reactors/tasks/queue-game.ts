@@ -5,6 +5,8 @@ import * as actions from "../../actions";
 import makeUploadButton from "../make-upload-button";
 
 import pathmaker from "../../util/pathmaker";
+import urlParser from "../../util/url";
+import * as querystring from "querystring";
 
 import {log, opts} from "./log";
 import {startTask} from "./start-task";
@@ -48,6 +50,7 @@ async function startCave (store: IStore, game: IGameRecord, cave: ICaveRecord, e
 export default function (watcher: Watcher) {
   watcher.on(actions.queueGame, async (store, action) => {
     const {game, extraOpts = {}, pickedUpload} = action.payload;
+    let {password, secret} = extraOpts;
 
     const cave = store.getState().globalMarket.cavesByGameId[game.id];
 
@@ -58,10 +61,30 @@ export default function (watcher: Watcher) {
     }
 
     log(opts, `No cave for ${game.id}, attempting install`);
+
+    // look for password/secret if any
+    const tabData = store.getState().session.navigation.tabData;
+    let pathStart = "games/${game.id}";
+    for (const id of Object.keys(tabData)) {
+      const data = tabData[id];
+      if (data.path && data.path.indexOf(pathStart) === 0) {
+        const parsed = urlParser.parse(data.path);
+        const query = querystring.parse(parsed.query);
+        if (query.secret) {
+          secret = query.secret;
+        }
+        if (query.password) {
+          password = query.password;
+        }
+      }
+    }
+
     const uploadResponse = await startTask(store, {
       name: "find-upload",
       gameId: game.id,
       game: game,
+      password,
+      secret,
     });
 
     if (uploadResponse.err) {
@@ -98,6 +121,8 @@ export default function (watcher: Watcher) {
               action: actions.queueGame({
                 ...action.payload,
                 pickedUpload: upload.id,
+                password,
+                secret,
               }),
             };
           }),
@@ -117,6 +142,8 @@ export default function (watcher: Watcher) {
           destPath: pathmaker.downloadPath(upload),
           downloadKey,
           reason: "install",
+          password,
+          secret,
         }));
       }
     } else {

@@ -32,6 +32,8 @@ import {
   BuildFileType,
   IDownloadBuildResult,
   IGameExtras,
+  IListUploadsExtras,
+  IPasswordOrSecret,
 } from "../types/api";
 
 const cooldown = mkcooldown(130);
@@ -227,12 +229,14 @@ export class AuthenticatedClient {
 
   // list uploads
 
-  async listUploads (downloadKey: IDownloadKey, gameID: number): Promise<IListUploadsResponse> {
+  async listUploads (
+      downloadKey: IDownloadKey, gameID: number,
+      extras: IListUploadsExtras = {}): Promise<IListUploadsResponse> {
     // TODO: adjust API to support download_key_id
     if (downloadKey) {
-      return await this.request("get", `/download-key/${downloadKey.id}/uploads`, {}, { uploads: ensureArray });
+      return await this.request("get", `/download-key/${downloadKey.id}/uploads`, extras, { uploads: ensureArray });
     } else {
-      return await this.request("get", `/game/${gameID}/uploads`, {}, { uploads: ensureArray });
+      return await this.request("get", `/game/${gameID}/uploads`, extras, { uploads: ensureArray });
     }
   }
 
@@ -242,8 +246,8 @@ export class AuthenticatedClient {
     return await this.request("get", `/upload/${uploadID}/download`, sprinkleDownloadKey(downloadKey, {}));
   }
 
-  downloadUploadURL (downloadKey: IDownloadKey, uploadID: number): string {
-    return this.itchfsURL(`/upload/${uploadID}/download`, sprinkleDownloadKey(downloadKey, {}));
+  downloadUploadURL (downloadKey: IDownloadKey, uploadID: number, extras: IPasswordOrSecret = {}): string {
+    return this.itchfsURL(`/upload/${uploadID}/download`, sprinkleDownloadKey(downloadKey, extras));
   }
 
   // wharf-related endpoints
@@ -283,10 +287,12 @@ export class AuthenticatedClient {
   /**
    * Returns the itchfs URL of a given build
    */
-  downloadBuildURL (downloadKey: IDownloadKey, uploadID: number, buildID: number, fileType: BuildFileType): string {
+  downloadBuildURL (
+      downloadKey: IDownloadKey, uploadID: number, buildID: number, fileType: BuildFileType,
+      extras: IPasswordOrSecret = {}): string {
     const path = `/upload/${uploadID}/download/builds/${buildID}/${fileType}`;
 
-    return this.itchfsURL(path, sprinkleDownloadKey(downloadKey, {}));
+    return this.itchfsURL(path, sprinkleDownloadKey(downloadKey, extras));
   }
 
   async subkey (gameID: number, scope: string) {

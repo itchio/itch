@@ -752,7 +752,12 @@ export interface IQueueGamePayload {
   pickedUpload?: number;
 
   /** any extra download options */
-  extraOpts?: {};
+  extraOpts?: {
+    /** for draft pages */
+    password?: string;
+    /** for password-protected pages */
+    secret?: string;
+  };
 }
 
 /** Buy / support something! */

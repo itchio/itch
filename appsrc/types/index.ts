@@ -1162,6 +1162,12 @@ export interface IQueueDownloadOpts {
 
   /** if true, will attempt to do a heal instead of a simple archive-download or patch-upgrade */
   heal?: boolean;
+
+  /** for password-protected game pages */
+  password?: string;
+
+  /** for draft game pages */
+  secret?: string;
 }
 
 export type IStartDownloadOpts = IStartTaskOpts & IQueueDownloadOpts;
@@ -1181,6 +1187,10 @@ export interface IStartTaskOpts {
   game?: IGameRecord;
 
   // FIXME: this is a bad way to pass data - type individual task types instead
+
+  // find-upload-specific opts
+  password?: string;
+  secret?: string;
 
   // install-specific opts
   reinstall?: boolean;
