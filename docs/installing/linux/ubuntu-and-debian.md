@@ -31,15 +31,26 @@ This will prompt for your password, since `sudo` is used.
 ### Adding to your sources.list.d
 
 Then, either use [Ubuntu's graphical tools][ubuntools] to add our repository,
-or run the following commands in your terminal, replacing `{distribution}` with
-the appropriate value (see below):
+or run one of the following group of commands in your terminal:
 
 ```bash
-ITCHIO_DEB="deb https://dl.bintray.com/itchio/deb {distribution} main"
+ITCHIO_DEB="deb https://dl.bintray.com/itchio/deb xenial main"
+echo $ITCHIO_DEB | sudo tee /etc/apt/sources.list.d/itchio.list
+
+ITCHIO_DEB="deb https://dl.bintray.com/itchio/deb wily main"
+echo $ITCHIO_DEB | sudo tee /etc/apt/sources.list.d/itchio.list
+
+ITCHIO_DEB="deb https://dl.bintray.com/itchio/deb vivid main"
+echo $ITCHIO_DEB | sudo tee /etc/apt/sources.list.d/itchio.list
+
+ITCHIO_DEB="deb https://dl.bintray.com/itchio/deb jessie main"
+echo $ITCHIO_DEB | sudo tee /etc/apt/sources.list.d/itchio.list
+
+ITCHIO_DEB="deb https://dl.bintray.com/itchio/deb wheezy main"
 echo $ITCHIO_DEB | sudo tee /etc/apt/sources.list.d/itchio.list
 ```
 
-**Replace `{distribution}` with one the following codenames:**
+**The codenames correspond to a given distribution:**
 
   * `xenial` for Ubuntu 16.04
   * `wily` for Ubuntu 15.10
