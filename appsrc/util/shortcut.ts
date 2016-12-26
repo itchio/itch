@@ -17,10 +17,14 @@ const exeName = ospath.basename(process.execPath);
 const self = {
   updateRun: async function (args: string[]): Promise<void> {
     log(opts, `Update.exe located at = ${updateExePath}`);
-    await spawn.assert({
-      command: updateExePath,
-      args,
-    });
+    try {
+      await spawn.assert({
+        command: updateExePath,
+        args,
+      });
+    } catch (err) {
+      log(opts, `Running Update failed with ${err.message}`);
+    }
   },
 
   createOrUpdateShortcut: async function (): Promise<void> {
