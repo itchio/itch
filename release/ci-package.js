@@ -42,6 +42,27 @@ function ci_package (args) {
   $($.grunt(`-v electron:${os}-${arch_info.electron_arch}`))
   const build_path = `build/${$.build_tag()}/${$.app_name()}-${os}-${arch_info.electron_arch}`
 
+  $.say('Grabbing butler')
+  let ext = (os === 'windows' ? '.exe' : '')
+  let butler_name = `butler${ext}`
+  let butler_url = `https://dl.itch.ovh/butler/${os}-${arch}/head/${butler_name}`
+  $($.sh(`curl -L -O ${butler_url}`))
+  $($.sh(`chmod +x ${butler_name}`))
+  $($.sh(`./butler --version`))
+
+  let channel = os
+  let artifact_path = build_path
+  if (os === 'darwin') {
+    channel = mac
+    artifact_path = `${build_path}/${$.app_name()}.app`
+  }
+
+  channel = `${channel}-${arch === '386' ? '32' : '64'}`
+  const target = `fasterthanlime/${$.app_name()}`
+  $.say('Pushing to itch.io')
+  let push_path = build_path
+  $($.sh(`./butler push ${artifact_path} ${target} --userversion=${$.build_version()}`))
+
   switch (os) {
     case 'windows':
       windows.package(arch, build_path)
