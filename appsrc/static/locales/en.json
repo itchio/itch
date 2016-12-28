@@ -356,5 +356,15 @@
     "usage_stats.last_used_time_ago": "Last used {{time_ago}}",
     "usage_stats.never_opened": "Never opened",
     "usage_stats.never_played": "Never played",
-    "usage_stats.never_used": "Never used"
+    "usage_stats.never_used": "Never used",
+    "setup.window.title": "{{app_name}} Setup",
+    "setup.window.welcome": "Welcome to the {{app_name}} installer! Grab a drink, pick an install location and proceed.",
+    "setup.tooltip.location": "Click to change the install location",
+    "setup.action.install": "Install now",
+    "setup.status.preparing": "Warming up...",
+    "setup.status.progress": "{{percent}} done",
+    "setup.status.installing": "Downloading and installing @ {{speed}}",
+    "setup.status.done": "All done!",
+    "setup.status.notification": "The installation went well, {{app_name}} is now starting up!",
+    "setup.error_dialog.title": "Something went wrong"
 }
