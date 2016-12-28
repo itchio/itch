@@ -386,5 +386,6 @@
     "sidebar.loading": "Загрузка...",
     "setup.window.title": "Установка {{app_name}}",
     "setup.tooltip.location": "Изменить место установки",
-    "setup.location.message": "Выберите, куда должно быть установлено приложение\n"
+    "setup.location.message": "Выберите, куда должно быть установлено приложение",
+    "setup.action.install": "Установить"
 }
