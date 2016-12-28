@@ -40,14 +40,14 @@ function ci_package (args) {
 
   $.say('Packaging with binary release')
   $($.grunt(`-v electron:${os}-${arch_info.electron_arch}`))
-  const build_path = `build/${$.build_tag()}/${$.app_name()}-${os}-${arch_info.electron_arch}`
+  let electron_os = (os === 'windows' ? 'win32' : os)
+  const build_path = `build/${$.build_tag()}/${$.app_name()}-${electron_os}-${arch_info.electron_arch}`
 
   $.say('Grabbing butler')
   let ext = (os === 'windows' ? '.exe' : '')
-  let butler_arch = (process.arch === 'x64' ? 'amd64' : '386')
   let butler_name = `butler${ext}`
-  let butler_url = `https://dl.itch.ovh/butler/${os}-${arch}/head/butler.gz`
-  $($.sh(`curl -L ${butler_url} | gunzip -c > ${butler_name}`))
+  let butler_url = `https://dl.itch.ovh/butler/${os}-${arch}/head/${butler_name}`
+  $($.sh(`curl -L -O ${butler_url}`))
   $($.sh(`chmod +x ${butler_name}`))
   $($.sh(`./butler --version`))
 
