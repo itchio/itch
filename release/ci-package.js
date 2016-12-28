@@ -54,7 +54,7 @@ function ci_package (args) {
   let channel = os
   let artifact_path = build_path
   if (os === 'darwin') {
-    channel = mac
+    channel = 'mac'
     artifact_path = `${build_path}/${$.app_name()}.app`
   }
 
