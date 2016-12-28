@@ -45,8 +45,8 @@ function ci_package (args) {
   $.say('Grabbing butler')
   let ext = (os === 'windows' ? '.exe' : '')
   let butler_name = `butler${ext}`
-  let butler_url = `https://dl.itch.ovh/butler/${os}-${arch}/head/${butler_name}`
-  $($.sh(`curl -L -O ${butler_url}`))
+  let butler_url = `https://dl.itch.ovh/butler/${os}-${arch}/head/butler.gz`
+  $($.sh(`curl -L ${butler_url} | gunzip -c > ${butler_name}`))
   $($.sh(`chmod +x ${butler_name}`))
   $($.sh(`./butler --version`))
 
@@ -61,7 +61,7 @@ function ci_package (args) {
   const target = `fasterthanlime/${$.app_name()}`
   $.say('Pushing to itch.io')
   let push_path = build_path
-  $($.sh(`./butler push ${artifact_path} ${target} --userversion=${$.build_version()}`))
+  $($.sh(`./butler push ${artifact_path} ${target}:${channel} --userversion=${$.build_version()}`))
 
   switch (os) {
     case 'windows':
