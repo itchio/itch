@@ -43,6 +43,18 @@ function ci_package (args) {
   let electron_os = (os === 'windows' ? 'win32' : os)
   const build_path = `build/${$.build_tag()}/${$.app_name()}-${electron_os}-${arch_info.electron_arch}`
 
+  switch (os) {
+    case 'windows':
+      windows.sign(arch, build_path)
+      break
+    case 'darwin':
+      darwin.sign(arch, build_path)
+      break
+    case 'linux':
+      // tl;dr code-signing on Linux isn't a thing
+      break
+  }
+
   $.say('Grabbing butler')
   let ext = (os === 'windows' ? '.exe' : '')
   let butler_name = `butler${ext}`
