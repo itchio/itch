@@ -393,5 +393,6 @@
     "setup.status.notification": "Установка прошла успешно, запускаем {{app_name}}!",
     "setup.window.welcome": "Вас приветствует установщик {{app_name}}! Возьмите чашечку чая, выберите папку для установки и нажмите Установить.",
     "setup.status.installing": "Загружаем и устанавливаем на скорости {{speed}}",
-    "setup.status.preparing": "Подготавливаемся..."
+    "setup.status.preparing": "Подготавливаемся...",
+    "setup.error_dialog.title": "Что-то пошло не так"
 }
