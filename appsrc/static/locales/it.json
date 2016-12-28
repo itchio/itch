@@ -208,7 +208,7 @@
     "sandbox.setup.title": "Installazione unica sandbox",
     "sandbox.setup.proceed": "Procedi",
     "sandbox.setup.windows.message": "Per avviare il gioco nel sandbox itch.io, l'installazione unica deve essere avviata come Amministratore.",
-    "sandbox.setup.windows.detail": "Cliccando su 'Procedi', si aprirà un popup di conferma. Questo aggiungerà un account `itch-player` per proteggere i tuoi giochi dal resto del tuo sistema.",
+    "sandbox.setup.windows.detail": "Cliccando su 'Procedi', si potrebbe aprire un popup di richiesta permessi. Verrà aggiunto un account `itch-player` per schermare i tuoi giochi dal resto del tuo sistema.",
     "sandbox.setup.linux.message": "Per avviare il gioco nel sandbox itch.io, uno script di installazione unica deve essere avviato come root.",
     "sandbox.setup.linux.detail": "Cliccando su 'Procedi', si aprirà un popup per l'inserimento della password. Questo è necessario solo al primo avvio del sandbox, e la tua password non verrà mai visualizzata o salvata da itch.",
     "preferences.security": "Sicurezza & privacy",
