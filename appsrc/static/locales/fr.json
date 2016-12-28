@@ -380,5 +380,20 @@
     "pick_update_upload.single.message": "Vous pouvez choisir de mettre à jour maintenant ou à une date ultérieure.",
     "pick_update_upload.single.detail": "Astuce: vous pouvez activer les mises à jour automatiques dans l'onglet Préférences",
     "pick_update_upload.buttons.update": "Mettre à jour",
-    "pick_update_upload.buttons.just_launch": "Lancer sans mettre à jour"
+    "pick_update_upload.buttons.just_launch": "Lancer sans mettre à jour",
+    "pick_update_upload.tags.demo": "démo",
+    "sidebar.loading": "Chargement...",
+    "status.game_update.busy": "{{title}} ne peut pas être mis à jour pendant son exécution.",
+    "status.uninstall.busy": "{{title}} ne peut pas être désinstallé pendant son exécution.",
+    "status.reinstall.busy": "{{title}} ne peut pas être réinstallé pendant son exécution.",
+    "setup.window.title": "Installateur {{app_name}}",
+    "setup.window.welcome": "Bienvenue dans l'installateur {{app_name}}. Changez le dossier d'installation si nécessaire puis continuez.",
+    "setup.tooltip.location": "Cliquer pour changer l'emplacement d'installation",
+    "setup.action.install": "Installer",
+    "setup.status.preparing": "En préparation...",
+    "setup.status.progress": "{{percent}} fait",
+    "setup.status.installing": "Téléchargement et installation en cours @ {{speed}}",
+    "setup.status.done": "Et voilà !",
+    "setup.status.notification": "L'installation s'est bien déroulée, {{app_name}} est en train de se lancer !",
+    "setup.error_dialog.title": "L'installateur a eu un problème"
 }
