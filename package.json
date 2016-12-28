@@ -2,7 +2,7 @@
   "name": "itch",
   "productName": "itch",
   "desktopName": "itch",
-  "version": "22.2.0",
+  "version": "22.3.0-canary",
   "description": "itch.io desktop client",
   "keywords": [
     "itch.io",
