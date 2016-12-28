@@ -8,7 +8,7 @@
     "grid.item.finalize_installation": "Completa l'installazione",
     "grid.item.install": "Installa",
     "grid.item.installing": "Installazione in corso...",
-    "grid.item.launch": "Lancia",
+    "grid.item.launch": "Avvia",
     "grid.item.not_platform_compatible": "Non disponibile per {{platform}}",
     "grid.item.open_in_file_explorer_linux": "Apri la cartella di installazione nel gestore file",
     "grid.item.probe": "Esamina la causa del problema",
