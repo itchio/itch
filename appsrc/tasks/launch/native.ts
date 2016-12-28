@@ -148,6 +148,13 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
     }
 
     if (checkRes.needs.length > 0) {
+      const learnMoreMap: {
+        [key: string]: string;
+      } = {
+        linux: urls.linuxSandboxSetup,
+        windows: urls.windowsSandboxSetup,
+      };
+
       const response = await promisedModal(store, {
         title: ["sandbox.setup.title"],
         message: [`sandbox.setup.${itchPlatform}.message`],
@@ -160,7 +167,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
           },
           {
             label: ["docs.learn_more"],
-            action: actions.openUrl((urls as any)[`${itchPlatform}SandboxSetup`]),
+            action: actions.openUrl({url: learnMoreMap[itchPlatform]}),
             icon: "earth",
             className: "secondary",
           },
