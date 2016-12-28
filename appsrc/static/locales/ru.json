@@ -390,5 +390,5 @@
     "setup.action.install": "Установить",
     "setup.status.progress": "Завершено на {{percent}}",
     "setup.status.done": "Всё готово!",
-    "setup.status.notification": "Установка прошла успешно, {{app_name}} запускается!"
+    "setup.status.notification": "Установка прошла успешно, запускаем {{app_name}}!"
 }
