@@ -344,5 +344,9 @@
     "preferences.notifications": "Notifiche",
     "preferences.proxy_server_address": "Proxy HTTPS",
     "preferences.proxy_server_source.direct": "Diretto (no proxy)",
-    "pick_update_upload.single.title": "Una nuova versione di {{title}} è disponibile"
+    "pick_update_upload.single.title": "Una nuova versione di {{title}} è disponibile",
+    "sidebar.loading": "Caricamento in corso...",
+    "status.game_update.busy": "{{title}} non può essere aggiornato perchè è in esecuzione",
+    "status.uninstall.busy": "{{title}} non può essere disinstallato perché è in esecuzione.",
+    "status.reinstall.busy": "{{title}} non può essere reinstallato perché è in esecuzione."
 }
