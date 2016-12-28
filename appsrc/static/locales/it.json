@@ -333,5 +333,7 @@
     "menu.file.new_tab": "Nuova Scheda",
     "menu.file.close_tab": "Chiudi Scheda",
     "menu.file.close_all_tabs": "Chiudi Tutte le Schede",
-    "login.two_factor.verification_code_label": "Codice di verifica"
+    "login.two_factor.verification_code_label": "Codice di verifica",
+    "notification.download_installed": "{{title}} è stato installato!",
+    "notification.download_updated": "{{title}} è stato aggiornato!"
 }
