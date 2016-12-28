@@ -338,5 +338,6 @@
     "notification.download_updated": "{{title}} è stato aggiornato!",
     "notification.download_reverted": "{{title}} è stato riportato alla versione {{version}}!",
     "notification.download_healed": "{{title}} verificato e riparato",
-    "preferences.behavior.open_at_login": "Esegui itch all'avvio del computer"
+    "preferences.behavior.open_at_login": "Esegui itch all'avvio del computer",
+    "preferences.behavior.open_at_login.causes.no_desktop_file": "Non è stato trovato nessun file .desktop. Questo è normale se non si è installato da un pacchetto di sistema. Per più informazioni vai a {{linux_install_page}}"
 }
