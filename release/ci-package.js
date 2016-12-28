@@ -46,7 +46,8 @@ function ci_package (args) {
   $.say('Grabbing butler')
   let ext = (os === 'windows' ? '.exe' : '')
   let butler_name = `butler${ext}`
-  let butler_url = `https://dl.itch.ovh/butler/${os}-${arch}/head/${butler_name}`
+  let butler_arch = (process.arch === 'x64' ? 'amd64' : '386')
+  let butler_url = `https://dl.itch.ovh/butler/${os}-${butler_arch}/head/${butler_name}`
   $($.sh(`curl -L -O ${butler_url}`))
   $($.sh(`chmod +x ${butler_name}`))
   $($.sh(`./butler --version`))
