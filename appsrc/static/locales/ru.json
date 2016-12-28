@@ -387,5 +387,8 @@
     "setup.window.title": "Установка {{app_name}}",
     "setup.tooltip.location": "Изменить место установки",
     "setup.location.message": "Выберите, куда должно быть установлено приложение",
-    "setup.action.install": "Установить"
+    "setup.action.install": "Установить",
+    "setup.status.progress": "Завершено на {{percent}}",
+    "setup.status.done": "Всё готово!",
+    "setup.status.notification": "Установка прошла успешно, {{app_name}} запускается!"
 }
