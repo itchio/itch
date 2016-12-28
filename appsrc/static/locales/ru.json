@@ -390,5 +390,6 @@
     "setup.action.install": "Установить",
     "setup.status.progress": "Завершено на {{percent}}",
     "setup.status.done": "Всё готово!",
-    "setup.status.notification": "Установка прошла успешно, запускаем {{app_name}}!"
+    "setup.status.notification": "Установка прошла успешно, запускаем {{app_name}}!",
+    "setup.window.welcome": "Добро пожаловать в {{app_name}}, игрок! Возьми что-то попить, выбери место установки и продолжай."
 }
