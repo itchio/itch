@@ -385,11 +385,13 @@
     "status.reinstall.busy": "Пока {{title}} запущено, оно не может быть переустановлено.",
     "sidebar.loading": "Загрузка...",
     "setup.window.title": "Установка {{app_name}}",
-    "setup.tooltip.location": "Изменить место установки",
+    "setup.tooltip.location": "Изменить папку для установки",
     "setup.location.message": "Выберите, куда должно быть установлено приложение",
     "setup.action.install": "Установить",
     "setup.status.progress": "Завершено на {{percent}}",
     "setup.status.done": "Всё готово!",
     "setup.status.notification": "Установка прошла успешно, запускаем {{app_name}}!",
-    "setup.window.welcome": "Добро пожаловать в {{app_name}}, игрок! Возьми что-то попить, выбери место установки и продолжай."
+    "setup.window.welcome": "Вас приветствует установщик {{app_name}}! Возьмите чашечку чая, выберите папку для установки и нажмите Установить.",
+    "setup.status.installing": "Загружаем и устанавливаем на скорости {{speed}}",
+    "setup.status.preparing": "Подготавливаемся..."
 }
