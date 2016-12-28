@@ -395,5 +395,6 @@
     "setup.status.installing": "Téléchargement et installation en cours @ {{speed}}",
     "setup.status.done": "Et voilà !",
     "setup.status.notification": "L'installation s'est bien déroulée, {{app_name}} est en train de se lancer !",
-    "setup.error_dialog.title": "L'installateur a eu un problème"
+    "setup.error_dialog.title": "L'installateur a eu un problème",
+    "setup.location.message": "Choisissez où l'application sera installée"
 }
