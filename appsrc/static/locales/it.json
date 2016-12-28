@@ -339,5 +339,7 @@
     "notification.download_reverted": "{{title}} è stato riportato alla versione {{version}}!",
     "notification.download_healed": "{{title}} verificato e riparato",
     "preferences.behavior.open_at_login": "Esegui itch all'avvio del computer",
-    "preferences.behavior.open_at_login.causes.no_desktop_file": "Non è stato trovato nessun file .desktop. Questo è normale se non si è installato da un pacchetto di sistema. Per più informazioni vai a {{linux_install_page}}"
+    "preferences.behavior.open_at_login.causes.no_desktop_file": "Non è stato trovato nessun file .desktop. Questo è normale se non si è installato da un pacchetto di sistema. Per più informazioni vai a {{linux_install_page}}",
+    "preferences.behavior.manual_game_updates": "Chiedi prima di aggiornare qualunque cosa",
+    "preferences.notifications": "Notifiche"
 }
