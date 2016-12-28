@@ -335,5 +335,7 @@
     "menu.file.close_all_tabs": "Chiudi Tutte le Schede",
     "login.two_factor.verification_code_label": "Codice di verifica",
     "notification.download_installed": "{{title}} è stato installato!",
-    "notification.download_updated": "{{title}} è stato aggiornato!"
+    "notification.download_updated": "{{title}} è stato aggiornato!",
+    "notification.download_reverted": "{{title}} è stato riportato alla versione {{version}}!",
+    "notification.download_healed": "{{title}} verificato e riparato"
 }
