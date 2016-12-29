@@ -383,5 +383,16 @@
     "status.game_update.busy": "Пока {{title}} запущено, оно не может быть обновлено.",
     "status.uninstall.busy": "Пока {{title}} запущено, оно не может быть удалено.",
     "status.reinstall.busy": "Пока {{title}} запущено, оно не может быть переустановлено.",
-    "sidebar.loading": "Загрузка..."
+    "sidebar.loading": "Загрузка...",
+    "setup.window.title": "Установка {{app_name}}",
+    "setup.tooltip.location": "Изменить папку для установки",
+    "setup.location.message": "Выберите, куда должно быть установлено приложение",
+    "setup.action.install": "Установить",
+    "setup.status.progress": "Завершено на {{percent}}",
+    "setup.status.done": "Всё готово!",
+    "setup.status.notification": "Установка прошла успешно, запускаем {{app_name}}!",
+    "setup.window.welcome": "Вас приветствует установщик {{app_name}}! Возьмите чашечку чая, выберите папку для установки и нажмите Установить.",
+    "setup.status.installing": "Загружаем и устанавливаем на скорости {{speed}}",
+    "setup.status.preparing": "Подготавливаемся...",
+    "setup.error_dialog.title": "Что-то пошло не так"
 }
