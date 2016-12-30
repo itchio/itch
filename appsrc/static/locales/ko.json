@@ -8,7 +8,7 @@
     "grid.item.install": "설치",
     "grid.item.installing": "설치 중...",
     "grid.item.launch": "실행",
-    "grid.item.not_platform_compatible": "",
+    "grid.item.not_platform_compatible": "{{platform}}에서는 사용할 수 없습니다.",
     "grid.item.queued": "",
     "grid.item.running": "",
     "login.action.login": "Log in",
