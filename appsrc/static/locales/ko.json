@@ -88,5 +88,8 @@
     "status.checking": "",
     "status.downloaded": "클릭해서 재시작하고 업데이트를 적용합니다!",
     "status.downloading": "",
-    "status.uptodate": ""
+    "status.uptodate": "",
+    "grid.item.probe": "실패 이유 분석",
+    "grid.item.report_problem": "피드백 보내기",
+    "grid.item.uninstall": "삭제"
 }
