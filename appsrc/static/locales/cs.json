@@ -375,5 +375,10 @@
     "setup.location.message": "Vyberte, kam by měla být aplikace nainstalována",
     "setup.window.title": "Instalační průvodce {{app_name}}",
     "setup.action.install": "Instalovat nyní",
-    "setup.status.preparing": "Zahřívání..."
+    "setup.status.preparing": "Zahřívání...",
+    "setup.status.progress": "{{percent}} hotovo",
+    "setup.status.installing": "Stahování a instalace @ {{speed}}",
+    "setup.status.done": "Vše hotovo!",
+    "setup.status.notification": "Instalace proběhla dobře, {{app_name}} se nyní spouští!",
+    "setup.error_dialog.title": "Něco se pokazilo"
 }
