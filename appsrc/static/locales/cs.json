@@ -122,8 +122,8 @@
     "sidebar.installed": "Nainstalováno",
     "sidebar.owned": "Knihovna",
     "status.checking": "Hledání aktualizací…",
-    "status.downloaded": "Kliknutím restartovat & aktualizovat!",
-    "status.downloading": "Stahování aktualizace…",
+    "status.downloaded": "Klikněte pro restartování aplikace a instalaci aktualizace!",
+    "status.downloading": "Stahuji aktualizaci…",
     "status.uptodate": "Váš itch je aktuální!",
     "desktop.shortcut.comment": "Snadná instalace a hraní her z itch.io",
     "grid.item.finalize_installation": "Dokončit instalaci",
@@ -372,5 +372,7 @@
     "status.reinstall.busy": "{{title}} nemůže být přeinstalován protože je spuštěn.",
     "setup.window.welcome": "Vítejte u instalace {{app_name}}! Dejte si něco k pití, vyberte umístění instalace a pokračujte.",
     "setup.tooltip.location": "Klikněte pro změnu umístění instalace",
-    "setup.location.message": "Vyberte, kam by měla být aplikace nainstalována"
+    "setup.location.message": "Vyberte, kam by měla být aplikace nainstalována",
+    "setup.window.title": "Instalační průvodce {{app_name}}",
+    "setup.action.install": "Instalovat nyní"
 }
