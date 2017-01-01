@@ -374,5 +374,6 @@
     "setup.tooltip.location": "Klikněte pro změnu umístění instalace",
     "setup.location.message": "Vyberte, kam by měla být aplikace nainstalována",
     "setup.window.title": "Instalační průvodce {{app_name}}",
-    "setup.action.install": "Instalovat nyní"
+    "setup.action.install": "Instalovat nyní",
+    "setup.status.preparing": "Zahřívání..."
 }
