@@ -365,5 +365,9 @@
     "usage_stats.never_opened": "Nikdy neotevřeno",
     "usage_stats.never_played": "Nikdy nehráno",
     "usage_stats.never_used": "Nikdy nepoužito",
-    "usage_stats.description.assets": "Kolekce assetů"
+    "usage_stats.description.assets": "Kolekce assetů",
+    "sidebar.loading": "Načítání...",
+    "status.game_update.busy": "{{title}} nemůže být aktualizován protože je spuštěn.",
+    "status.uninstall.busy": "{{title}} nemůže být odinstalován protože je spuštěn.",
+    "status.reinstall.busy": "{{title}} nemůže být přeinstalován protože je spuštěn."
 }
