@@ -370,5 +370,7 @@
     "status.game_update.busy": "{{title}} nemůže být aktualizován protože je spuštěn.",
     "status.uninstall.busy": "{{title}} nemůže být odinstalován protože je spuštěn.",
     "status.reinstall.busy": "{{title}} nemůže být přeinstalován protože je spuštěn.",
-    "setup.window.welcome": "Vítejte u instalace {{app_name}}! Dejte si něco k pití, vyberte umístění instalace a pokračujte."
+    "setup.window.welcome": "Vítejte u instalace {{app_name}}! Dejte si něco k pití, vyberte umístění instalace a pokračujte.",
+    "setup.tooltip.location": "Klikněte pro změnu umístění instalace",
+    "setup.location.message": "Vyberte, kam by měla být aplikace nainstalována"
 }
