@@ -373,5 +373,20 @@
     "prompt.install_error.title": "Während der Installation ist ein Fehler aufgetreten:",
     "prompt.install_error.find_upload": "Während der Suche nach einem Download: {{message}}",
     "sidebar.aw_snap": "Ups!",
-    "usage_stats.description.physical_game": "Ein physisches Spiel"
+    "usage_stats.description.physical_game": "Ein physisches Spiel",
+    "sidebar.loading": "Lädt...",
+    "status.game_update.busy": "{{title}} kann nicht aktualisiert werden, da die Anwendung läuft.",
+    "status.uninstall.busy": "{{title}} kann nicht deinstalliert werden, da die Anwendung läuft.",
+    "status.reinstall.busy": "{{title}} kann nicht neuinstalliert werden, da die Anwendung läuft.",
+    "setup.window.title": "{{app_name}} Setup",
+    "setup.tooltip.location": "Klicke zum Ändern des Installationsverzeichnisses",
+    "setup.location.message": "Wähle, wohin die Anwendung installiert werden soll",
+    "setup.action.install": "Jetzt installieren",
+    "setup.status.preparing": "Wärmt sich auf...",
+    "setup.status.progress": "{{percent}} erledigt",
+    "setup.status.installing": "Lädt und installiert @ {{speed}}",
+    "setup.status.done": "Alles erledigt!",
+    "setup.status.notification": "Die Installation lief gut, {{app_name}} wird nun gestartet!",
+    "setup.error_dialog.title": "Etwas ist fehlgeschlagen",
+    "setup.window.welcome": "Willkommen beim {{app_name}} Installer! Schnapp dir ein Getränk, wähle ein Installationsverzeichnis und fahre fort."
 }
