@@ -366,5 +366,17 @@
     "prompt.install_error.find_upload": "Грешка при търсенето на сваляне: {{message}}",
     "status.game_update.busy": "„{{title}}“ не може да бъде обновено, защото в момента е пуснато.",
     "status.uninstall.busy": "„{{title}}“ не може да бъде деинсталирано, защото в момента е пуснато.",
-    "status.reinstall.busy": "„{{title}}“ не може да бъде преинсталирано, защото в момента е пуснато."
+    "status.reinstall.busy": "„{{title}}“ не може да бъде преинсталирано, защото в момента е пуснато.",
+    "sidebar.loading": "Зареждане…",
+    "setup.window.title": "Инсталиране на „{{app_name}}“",
+    "setup.window.welcome": "Добре дошли в инсталатора на „{{app_name}}“! Отпуснете се, изберете инсталационната папка и продължете напред.",
+    "setup.tooltip.location": "Щракнете, за да промените инсталационната папка",
+    "setup.location.message": "Изберете къде да бъде инсталирано приложението",
+    "setup.action.install": "Инсталиране сега",
+    "setup.status.preparing": "Загряване…",
+    "setup.status.progress": "Напредък: {{percent}}",
+    "setup.status.installing": "Сваляне и инсталиране със скорост от {{speed}}",
+    "setup.status.done": "Готово!",
+    "setup.status.notification": "Инсталацията беше успешна, „{{app_name}}“ се пуска!",
+    "setup.error_dialog.title": "Нещо се обърка"
 }
