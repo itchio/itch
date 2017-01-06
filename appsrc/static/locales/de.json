@@ -388,5 +388,12 @@
     "setup.status.done": "Alles erledigt!",
     "setup.status.notification": "Die Installation lief gut, {{app_name}} wird nun gestartet!",
     "setup.error_dialog.title": "Etwas ist fehlgeschlagen",
-    "setup.window.welcome": "Willkommen beim {{app_name}} Installer! Schnapp dir ein Getränk, wähle ein Installationsverzeichnis und fahre fort."
+    "setup.window.welcome": "Willkommen beim {{app_name}} Installer! Schnapp dir ein Getränk, wähle ein Installationsverzeichnis und fahre fort.",
+    "grid.item.verify_integrity": "Integrität prüfen",
+    "grid.item.revert_to_version": "Zurücksetzen auf Version...",
+    "grid.item.view_details": "Details anzeigen...",
+    "prompt.revert.title": "Auf diesen Build zurücksetzen",
+    "prompt.revert.message": "Zurücksetzen von Build {{buildId}} auf Build:",
+    "prompt.revert.action.revert": "Zurücksetzen",
+    "status.reverting": "Setzt zurück auf {{buildId}}..."
 }
