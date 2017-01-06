@@ -10,8 +10,13 @@ const log = mklog("revert-cave");
 import {ICaveRecord, IDownloadKey} from "../../types";
 import {findWhere} from "underscore";
 
+import localizer from "../../localizer";
+
 export default function (watcher: Watcher) {
   watcher.on(actions.healCave, async (store, action) => {
+    const i18n = store.getState().i18n;
+    const t = localizer.getT(i18n.strings, i18n.lang);
+
     const {caveId} = action.payload;
     const logger = pathmaker.caveLogger(caveId);
     const opts = {
@@ -44,7 +49,7 @@ export default function (watcher: Watcher) {
         findWhere(market.getEntities<IDownloadKey>("downloadKeys"), {gameId: cave.game.id});
 
       store.dispatch(actions.statusMessage({
-        message: `Healing cave...`,
+        message: t("status.healing")
       }));
 
       store.dispatch(actions.queueDownload({
