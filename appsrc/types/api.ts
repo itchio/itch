@@ -157,6 +157,10 @@ export interface IPasswordOrSecret {
   secret?: string;
 }
 
+export interface IDownloadBuildFileExtras extends IPasswordOrSecret {
+  prefer_optimized?: number;
+}
+
 export interface IGameExtras extends IPasswordOrSecret {}
 
 export interface IListUploadsExtras extends IPasswordOrSecret {}

@@ -34,6 +34,7 @@ import {
   IGameExtras,
   IListUploadsExtras,
   IPasswordOrSecret,
+  IDownloadBuildFileExtras,
 } from "../types/api";
 
 const cooldown = mkcooldown(130);
@@ -289,7 +290,7 @@ export class AuthenticatedClient {
    */
   downloadBuildURL (
       downloadKey: IDownloadKey, uploadID: number, buildID: number, fileType: BuildFileType,
-      extras: IPasswordOrSecret = {}): string {
+      extras: IDownloadBuildFileExtras = {}): string {
     const path = `/upload/${uploadID}/download/builds/${buildID}/${fileType}`;
 
     return this.itchfsURL(path, sprinkleDownloadKey(downloadKey, extras));

@@ -26,7 +26,7 @@ export default async function downloadPatches (out: EventEmitter, opts: IDownloa
 
     const cavePath = pathmaker.appPath(cave);
 
-    const patchPath = api.downloadBuildURL(downloadKey, upload.id, entry.id, "patch");
+    const patchPath = api.downloadBuildURL(downloadKey, upload.id, entry.id, "patch", {prefer_optimized: 1});
     const signaturePath = api.downloadBuildURL(downloadKey, upload.id, entry.id, "signature");
 
     const applyProgress = (e: IProgressInfo) => {
