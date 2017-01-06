@@ -28,6 +28,7 @@ export default async function downloadPatches (out: EventEmitter, opts: IDownloa
 
     const patchPath = api.downloadBuildURL(downloadKey, upload.id, entry.id, "patch", {prefer_optimized: 1});
     const signaturePath = api.downloadBuildURL(downloadKey, upload.id, entry.id, "signature");
+    const archivePath = api.downloadBuildURL(downloadKey, upload.id, entry.id, "archive");
 
     const applyProgress = (e: IProgressInfo) => {
       const entryProgress = e.progress;
@@ -45,6 +46,7 @@ export default async function downloadPatches (out: EventEmitter, opts: IDownloa
       patchPath,
       signaturePath,
       outPath: cavePath,
+      archivePath,
       logger,
     };
 

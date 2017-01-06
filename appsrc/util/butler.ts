@@ -183,12 +183,17 @@ interface IApplyOpts extends IButlerOpts {
   patchPath: string;
   outPath: string;
   signaturePath: string;
+  archivePath?: string;
 }
 
 /* Apply a wharf patch at ${patchPath} in-place into ${outPath}, while checking with ${signaturePath} */
 async function apply (opts: IApplyOpts) {
   const {patchPath, outPath, signaturePath} = opts;
-  const args = [patchPath, "--inplace", outPath, "--signature", signaturePath];
+  let args = [patchPath, "--inplace", outPath, "--signature", signaturePath];
+
+  if (opts.archivePath) {
+    args = [...args, "--heal", `archive,${opts.archivePath}`];
+  }
 
   return await butler(opts, "apply", args);
 }
