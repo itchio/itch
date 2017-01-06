@@ -106,11 +106,11 @@ export default function (watcher: Watcher) {
             type: "separator",
           },
           {
-            label: "Verify integrity",
+            label: t("grid.item.verify_integrity"),
             click: () => store.dispatch(actions.healCave({caveId: cave.id})),
           },
           {
-            label: "Revert to version...",
+            label: t("grid.item.revert_to_version"),
             click: () => store.dispatch(actions.revertCaveRequest({caveId: cave.id})),
           },
           {
@@ -121,7 +121,7 @@ export default function (watcher: Watcher) {
 
       advancedItems = [...advancedItems,
         {
-          label: "View details...",
+          label: t("grid.item.view_details"),
           click: () => store.dispatch(actions.viewCaveDetails({caveId: cave.id})),
         },
       ];
