@@ -49,7 +49,7 @@ export default function (watcher: Watcher) {
         findWhere(market.getEntities<IDownloadKey>("downloadKeys"), {gameId: cave.game.id});
 
       store.dispatch(actions.statusMessage({
-        message: t("status.healing")
+        message: t("status.healing"),
       }));
 
       store.dispatch(actions.queueDownload({
