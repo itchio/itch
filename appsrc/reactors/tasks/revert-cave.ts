@@ -21,6 +21,8 @@ import findUpgradePath from "../../tasks/find-upgrade-path";
 import {EventEmitter} from "events";
 import {IRevertCaveParams} from "../../components/modal-widgets/revert-cave";
 
+import localizer from "../../localizer";
+
 export default function (watcher: Watcher) {
   watcher.on(actions.revertCaveRequest, async (store, action) => {
     const {caveId} = action.payload;
@@ -67,10 +69,11 @@ export default function (watcher: Watcher) {
         return build.id < cave.buildId;
       });
 
-      const {lang} = store.getState().i18n;
+      const i18n = store.getState().i18n;
+      const t = localizer.getT(i18n.strings, i18n.lang);
 
       const response = await promisedModal(store, {
-        title: "Revert to given build",
+        title: t("prompt.revert.title"),
         message: "",
         widget: "revert-cave",
         widgetParams: {
@@ -84,7 +87,7 @@ export default function (watcher: Watcher) {
             label = `#${build.id}`;
           }
 
-          label = `${label} — ${format.date(Date.parse(build.updatedAt), DATE_FORMAT, lang)}`;
+          label = `${label} — ${format.date(Date.parse(build.updatedAt), DATE_FORMAT, i18n.lang)}`;
 
           return {
             label,
@@ -96,7 +99,7 @@ export default function (watcher: Watcher) {
         }),
         buttons: [
           {
-            label: "Revert",
+            label: t("prompt.revert.action.revert"),
             icon: "checkmark",
             action: actions.modalResponse({}),
             actionSource: "widget",
@@ -133,7 +136,7 @@ export default function (watcher: Watcher) {
       }
 
       store.dispatch(actions.statusMessage({
-        message: `Reverting to ${buildId}...`,
+        message: t("status.reverting", {buildId}),
       }));
 
       const changedUpload = {

@@ -6,6 +6,8 @@ import {IModalWidgetProps} from "./modal-widget";
 
 import {ICaveRecord} from "../../types";
 
+import {ILocalizer} from "../../localizer";
+
 export class RevertCave extends React.Component<IRevertCaveProps, void> {
   refs: {
     buildId?: HTMLInputElement;
@@ -17,10 +19,12 @@ export class RevertCave extends React.Component<IRevertCaveProps, void> {
   }
 
   render () {
+    const {t} = this.props;
     const params = this.props.modal.widgetParams as IRevertCaveParams;
+    const buildId = params.currentCave.buildId;
 
     return <div className="modal-widget">
-      <p>Revert from build <strong>{params.currentCave.buildId}</strong> to build:</p>
+      <p>{t("prompt.revert.message", {buildId})}</p>
 
       <input
         ref="buildId" type="number"
@@ -49,6 +53,7 @@ export interface IRevertCaveParams {
 }
 
 interface IRevertCaveProps extends IModalWidgetProps {
+  t: ILocalizer;
   params: IRevertCaveParams;
 }
 
