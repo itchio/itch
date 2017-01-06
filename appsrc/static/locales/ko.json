@@ -93,5 +93,6 @@
     "grid.item.report_problem": "피드백 보내기",
     "grid.item.uninstall": "삭제",
     "grid.item.developer": "개발자",
-    "search.results.games": "게임"
+    "search.results.games": "게임",
+    "grid.item.share": "공유"
 }

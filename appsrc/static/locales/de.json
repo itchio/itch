@@ -378,7 +378,7 @@
     "status.game_update.busy": "{{title}} kann nicht aktualisiert werden, da die Anwendung läuft.",
     "status.uninstall.busy": "{{title}} kann nicht deinstalliert werden, da die Anwendung läuft.",
     "status.reinstall.busy": "{{title}} kann nicht neuinstalliert werden, da die Anwendung läuft.",
-    "setup.window.title": "{{app_name}} Setup",
+    "setup.window.title": "{{app_name}} Installation",
     "setup.tooltip.location": "Klicke zum Ändern des Installationsverzeichnisses",
     "setup.location.message": "Wähle, wohin die Anwendung installiert werden soll",
     "setup.action.install": "Jetzt installieren",
