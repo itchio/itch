@@ -133,5 +133,8 @@
     "grid.item.developer": "Kehittäjä",
     "grid.item.finalize_installation": "Viimeistele asennus",
     "grid.item.review": "Arvostele",
-    "grid.item.launch_demo": "Käynnistä demo"
+    "grid.item.launch_demo": "Käynnistä demo",
+    "grid.item.share": "Jaa",
+    "grid.item.open": "Avaa",
+    "grid.item.open_demo": "Avaa demo"
 }
