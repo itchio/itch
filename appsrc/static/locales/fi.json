@@ -11,9 +11,9 @@
     "grid.item.not_platform_compatible": "Ei saatavilla alustalla {{platform}}",
     "grid.item.purchase_or_donate": "Osta tuote tai lahjoita rahaa tuotteen valmistukseen",
     "grid.item.queued": "Jonossa",
-    "grid.item.report_problem": "Ilmoita ongelmasta (Avaa uudessa ikkunassa)",
+    "grid.item.report_problem": "Lähetä palautetta",
     "grid.item.running": "Käynnissä...",
-    "grid.item.uninstall": "Poista sovellus",
+    "grid.item.uninstall": "Poista asennus",
     "login.action.login": "Kirjaudu sisään",
     "login.action.register": "Rekistöröidy",
     "login.action.reset_password": "Unohditko salasanasi",
@@ -119,5 +119,13 @@
     "status.checking": "Etsitään päivityksiä...",
     "status.downloaded": "Paina käynnistääksesi uudelleen & asentaaksesi päivitys!",
     "status.downloading": "Ladataan päivitystä...",
-    "status.uptodate": "Sinun itchisi on ajan tasalla!"
+    "status.uptodate": "Sinun itchisi on ajan tasalla!",
+    "grid.item.probe": "Tutki vian aiheuttajaa",
+    "action.name.play": "Pelaa nyt",
+    "action.name.manual": "Ohjekirja",
+    "action.name.forums": "Keskustelualue",
+    "label.experimental": "Kokeellinen",
+    "collection.empty": "Tässä kokoelmassa ei ole pelejä",
+    "desktop.shortcut.comment": "Asenna ja pelaa itch.io pelejä helposti",
+    "docs.learn_more": "Opi lisää"
 }
