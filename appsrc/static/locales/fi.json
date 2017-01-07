@@ -127,5 +127,6 @@
     "label.experimental": "Kokeellinen",
     "collection.empty": "Tässä kokoelmassa ei ole pelejä",
     "desktop.shortcut.comment": "Asenna ja pelaa itch.io pelejä helposti",
-    "docs.learn_more": "Opi lisää"
+    "docs.learn_more": "Opi lisää",
+    "grid.item.retry": "Kokeile ladata / asentaa / käynnistää tämä uudelleen"
 }
