@@ -135,6 +135,10 @@ class FakeBrowserWindow implements IBrowserWindow {
     return false;
   }
 
+  setMenu(menu: any) {
+    return;
+  }
+
   setMenuBarVisibility(visible: boolean) {
     return;
   }
