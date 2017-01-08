@@ -146,6 +146,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
 
   // hide menu, cf. https://github.com/itchio/itch/issues/232
   win.setMenuBarVisibility(false);
+  win.setMenu(null);
 
   // strip 'Electron' from user agent so some web games stop being confused
   let userAgent = win.webContents.getUserAgent();

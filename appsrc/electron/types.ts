@@ -95,6 +95,7 @@ export interface IBrowserWindow {
   hide(): void;
   show(): void;
   maximize(): void;
+  setMenu(menu: any): void;
   setMenuBarVisibility(visible: boolean): void;
   setFullScreen(fullscreen: boolean): void;
   isFullScreen(): boolean;
