@@ -394,5 +394,13 @@
     "setup.window.welcome": "Вас приветствует установщик {{app_name}}! Возьмите чашечку чая, выберите папку для установки и нажмите Установить.",
     "setup.status.installing": "Загружаем и устанавливаем на скорости {{speed}}",
     "setup.status.preparing": "Подготавливаемся...",
-    "setup.error_dialog.title": "Что-то пошло не так"
+    "setup.error_dialog.title": "Что-то пошло не так",
+    "grid.item.verify_integrity": "Проверить целостность",
+    "grid.item.revert_to_version": "Откатить до версии...",
+    "grid.item.view_details": "Подробности...",
+    "prompt.revert.title": "Откатить до заданной версии",
+    "prompt.revert.message": "Откатить с версии {{buildId}} до версии:",
+    "prompt.revert.action.revert": "Откатить",
+    "status.reverting": "Откатываем до версии {{buildId}...",
+    "status.healing": "Проверяем и восстанавливаем..."
 }
