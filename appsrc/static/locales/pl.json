@@ -278,5 +278,6 @@
     "collection.empty": "Brak gier w tej kolekcji",
     "docs.learn_more": "Dowiedz się więcej",
     "download.reason.update": "zaktualizuj do najnowszej wersji",
-    "download.reason.reinstall": "zainstalować jeszcze raz"
+    "download.reason.reinstall": "zainstalować jeszcze raz",
+    "grid.item.prioritize_download": "Pobierz teraz"
 }
