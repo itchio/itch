@@ -279,5 +279,6 @@
     "docs.learn_more": "Dowiedz się więcej",
     "download.reason.update": "zaktualizuj do najnowszej wersji",
     "download.reason.reinstall": "zainstalować jeszcze raz",
-    "grid.item.prioritize_download": "Pobierz teraz"
+    "grid.item.prioritize_download": "Pobierz teraz",
+    "grid.item.share": "Udostępnij"
 }
