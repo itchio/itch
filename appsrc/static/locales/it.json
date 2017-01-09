@@ -190,7 +190,7 @@
     "toast.actions.report": "Invia feedback per migliorare itch",
     "toast.no_info_available": "Nessuna informazione disponibile",
     "new_tab.titles.buttons": "Prova uno di questi:",
-    "new_tab.community": "Community",
+    "new_tab.community": "Comunità",
     "new_tab.on_sale": "Scontati",
     "new_tab.random": "Trova qualcosa a caso",
     "new_tab.titles.browser_placeholder": "Inserisci un indirizzo web",
@@ -348,5 +348,6 @@
     "sidebar.loading": "Caricamento in corso...",
     "status.game_update.busy": "{{title}} non può essere aggiornato perchè è in esecuzione",
     "status.uninstall.busy": "{{title}} non può essere disinstallato perché è in esecuzione.",
-    "status.reinstall.busy": "{{title}} non può essere reinstallato perché è in esecuzione."
+    "status.reinstall.busy": "{{title}} non può essere reinstallato perché è in esecuzione.",
+    "grid.item.download_java": "Scarica Java"
 }
