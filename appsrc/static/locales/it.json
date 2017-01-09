@@ -12,7 +12,7 @@
     "grid.item.not_platform_compatible": "Non disponibile per {{platform}}",
     "grid.item.open_in_file_explorer_linux": "Apri la cartella di installazione nel gestore file",
     "grid.item.probe": "Esamina la causa del problema",
-    "grid.item.purchase_or_donate": "Compra o dona in favore dell'oggetto",
+    "grid.item.purchase_or_donate": "Acquista, o fai una donazione per l'oggetto",
     "grid.item.queued": "In coda",
     "grid.item.report_problem": "Invia feedback",
     "grid.item.retry": "Prova nuovamente a scaricare / installare / avviare l'elemento",
