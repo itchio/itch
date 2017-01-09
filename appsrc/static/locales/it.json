@@ -350,5 +350,8 @@
     "status.uninstall.busy": "{{title}} non può essere disinstallato perché è in esecuzione.",
     "status.reinstall.busy": "{{title}} non può essere reinstallato perché è in esecuzione.",
     "grid.item.download_java": "Scarica Java",
-    "grid.item.update": "Aggiorna"
+    "grid.item.update": "Aggiorna",
+    "login.two_factor.title": "Verifica in due passaggi",
+    "login.two_factor.as_user": "Sto effettuando l'accesso come {{username}}",
+    "login.two_factor.learn_more": "Informazioni sulla verifica in due passaggi"
 }
