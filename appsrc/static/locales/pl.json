@@ -280,5 +280,7 @@
     "download.reason.update": "zaktualizuj do najnowszej wersji",
     "download.reason.reinstall": "zainstalować jeszcze raz",
     "grid.item.prioritize_download": "Pobierz teraz",
-    "grid.item.share": "Udostępnij"
+    "grid.item.share": "Udostępnij",
+    "grid.item.open_demo": "Otwórz demo",
+    "browser.popout": "Otwórz stronę w zewnętrznej przeglądarce"
 }
