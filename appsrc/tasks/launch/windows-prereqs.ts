@@ -11,6 +11,7 @@ import pathmaker from "../../util/pathmaker";
 import net from "../../util/net";
 import sf from "../../util/sf";
 import reg from "../../util/reg";
+import butler from "../../util/butler";
 
 import * as ospath from "path";
 import urls from "../../constants/urls";
@@ -157,7 +158,7 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
 
   let [alreadyInstalledTasks, remainingTasks] = partition(tasks, (task) => task.alreadyInstalled);
   if (!isEmpty(alreadyInstalledTasks)) {
-    log(opts, `Already installed: ${tasks.map((task) => task.prereq.name).join(", ")}`);
+    log(opts, `Already installed: ${alreadyInstalledTasks.map((task) => task.prereq.name).join(", ")}`);
     const alreadyInstalledPrereqs = {} as {
       [key: string]: boolean;
     };
@@ -171,12 +172,12 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
   if (isEmpty(remainingTasks)) {
     return;
   }
-  log(opts, `Remaining tasks: ${tasks.map((task) => task.prereq.name).join(", ")}`);
+  log(opts, `Remaining tasks: ${remainingTasks.map((task) => task.prereq.name).join(", ")}`);
 
   const workDir = tmp.dirSync();
 
   try {
-    tasks = filter(tasks, null);
+    tasks = filter(remainingTasks, null);
 
     await bluebird.all(map(tasks, async (task) => {
       await fetchDep(opts, task, workDir.name);
@@ -201,13 +202,18 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
     const nowInstalledPrereqs = {} as {
       [key: string]: boolean;
     };
-    for (const task of alreadyInstalledTasks) {
+    for (const task of tasks) {
       nowInstalledPrereqs[task.prereq.name] = true;
     }
     installedPrereqs = {...installedPrereqs, ...nowInstalledPrereqs};
     await globalMarket.saveEntity("caves", caveId, {installedPrereqs});
   } finally {
-    await sf.wipe(workDir.name);
+    const emitter = new EventEmitter();
+    try {
+      await butler.wipe(workDir.name, {emitter});
+    } catch (e) {
+      log(opts, `Couldn't wipe: ${e}`, e)
+    }
   }
 }
 
@@ -228,11 +234,13 @@ function makeInstallScript (tasks: IPrereqTask[], baseWorkDir: string): string {
 
     lines.push("IF %ERRORLEVEL% EQU 0 (");
     lines.push("ECHO success");
-    for (const exitCode of info.exitCodes) {
-      lines.push(`) ELSE IF %ERRORLEVEL% EQU ${exitCode.code} (`);
-      lines.push(`ECHO success ${exitCode.code}`);
-      if (!exitCode.success) {
-        lines.push("EXIT 1");
+    if (info.exitCodes) {
+      for (const exitCode of info.exitCodes) {
+        lines.push(`) ELSE IF %ERRORLEVEL% EQU ${exitCode.code} (`);
+        lines.push(`ECHO success ${exitCode.code}`);
+        if (!exitCode.success) {
+          lines.push("EXIT 1");
+        }
       }
     }
     lines.push(") ELSE (");

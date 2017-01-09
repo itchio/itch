@@ -251,13 +251,18 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
   }
 
   if (os.itchPlatform() === "windows") {
-    await handleWindowsPrereqs({
-      store,
-      manifest,
-      caveId: cave.id,
-      globalMarket: opts.globalMarket,
-      logger: opts.logger,
-    });
+    try {
+      await handleWindowsPrereqs({
+        store,
+        manifest,
+        caveId: cave.id,
+        globalMarket: opts.globalMarket,
+        logger: opts.logger,
+      });
+    } catch (e) {
+      log(opts, `Windows prereqs full stack: ${e.stack}`);
+      throw e;
+    }
   }
 
   const startedAt = Date.now();
