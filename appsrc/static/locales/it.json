@@ -310,7 +310,7 @@
     "usage_stats.description.comic": "Un fumetto",
     "usage_stats.description.free_download": "Download gratuito",
     "usage_stats.description.game": "Un gioco",
-    "usage_stats.description.game_mod": "Una mod",
+    "usage_stats.description.game_mod": "Una mod per il gioco",
     "usage_stats.description.other": "Una cosa",
     "usage_stats.description.physical_game": "Un gioco fisico",
     "usage_stats.description.platforms": "per {{platforms}}",
