@@ -154,7 +154,7 @@
     "game.install.no_uploads_available.message": "Non sono stati trovati download compatibili per '{{title}}', quindi non è stato installato.",
     "game.install.try_again": "Riprova",
     "game.install.visit_web_page": "Visita il sito web",
-    "grid.criterion.filter": "Filtri...",
+    "grid.criterion.filter": "Filtra...",
     "grid.hidden_count": "+ {{count}} oggetti nascosti dai filtri",
     "grid.clear_filters": "Elimina i filtri",
     "grid.item.buy_now_again": "Acquista una copia extra",
