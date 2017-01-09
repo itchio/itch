@@ -357,5 +357,7 @@
     "preferences.behavior.open_at_login.error": "Le impostazioni di auto-avvio non possono essere applicate: {{cause}}",
     "pick_update_upload.buttons.update": "Aggiorna ora",
     "pick_update_upload.buttons.just_launch": "Avvia soltanto",
-    "pick_update_upload.tags.demo": "demo"
+    "pick_update_upload.tags.demo": "demo",
+    "prompt.install_error.title": "Si è verificato un errore durante l'installazione:",
+    "prompt.install_error.find_upload": "Durante la ricerca di un download: {{message}}"
 }
