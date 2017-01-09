@@ -349,5 +349,6 @@
     "status.game_update.busy": "{{title}} non può essere aggiornato perchè è in esecuzione",
     "status.uninstall.busy": "{{title}} non può essere disinstallato perché è in esecuzione.",
     "status.reinstall.busy": "{{title}} non può essere reinstallato perché è in esecuzione.",
-    "grid.item.download_java": "Scarica Java"
+    "grid.item.download_java": "Scarica Java",
+    "grid.item.update": "Aggiorna"
 }
