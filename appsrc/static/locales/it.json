@@ -353,5 +353,9 @@
     "grid.item.update": "Aggiorna",
     "login.two_factor.title": "Verifica in due passaggi",
     "login.two_factor.as_user": "Sto effettuando l'accesso come {{username}}",
-    "login.two_factor.learn_more": "Informazioni sulla verifica in due passaggi"
+    "login.two_factor.learn_more": "Informazioni sulla verifica in due passaggi",
+    "preferences.behavior.open_at_login.error": "Le impostazioni di auto-avvio non possono essere applicate: {{cause}}",
+    "pick_update_upload.buttons.update": "Aggiorna ora",
+    "pick_update_upload.buttons.just_launch": "Avvia soltanto",
+    "pick_update_upload.tags.demo": "demo"
 }
