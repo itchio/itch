@@ -1100,6 +1100,8 @@ export interface ITask {
 
     /** estimated time remaining for task, in seconds, if available */
     eta?: number;
+
+    prereqsState?: IPrereqsState;
 }
 
 export interface ITasksState {
@@ -1398,8 +1400,57 @@ export interface IProgressInfo {
 
     /** estimated time remaining, in seconds */
     eta?: number;
+
+    prereqsState?: IPrereqsState;
 }
 
 export interface IProgressListener {
     (info: IProgressInfo): void;
+}
+
+export interface IPrereqsState {
+  tasks: {
+    [key: string]: ITaskProgressState;
+  };
+}
+
+export interface ITaskProgressState {
+  name: string;
+  progress: number;
+  eta: number;
+}
+
+export interface IRedistInfo {
+  /** Human-friendly name for redist, e.g. "Microsoft Visual C++ 2010 Redistributable" */
+  fullName: string;
+
+  /** The exact version provided */
+  version: string;
+
+  /** Architecture of the redist */
+  arch: "386" | "amd64";
+
+  /** Executable to launch (in .7z archive) */
+  command: string;
+
+  /** Arguments to give to executable on launch - aim for quiet/unattended/no reboots */
+  args: string[];
+
+  /** Should the executable be run as admin? */
+  elevate?: boolean;
+
+  /** Registry keys we can check to see if installed */
+  registryKeys?: string[];
+
+  /** List of DLLs to check for, to make sure it's installed */
+  dlls?: string[];
+
+  /** Meaning of some exit codes */
+  exitCodes?: IRedistExitCode[];
+}
+
+export interface IRedistExitCode {
+  code: number;
+  success?: boolean;
+  message?: string;
 }

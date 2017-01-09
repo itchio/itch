@@ -18,7 +18,11 @@ import urls from "../../constants/urls";
 
 import * as actions from "../../actions";
 
-import {IManifest, IManifestPrereq, IGlobalMarket, ICaveRecord, IStore} from "../../types";
+import {
+  IManifest, IManifestPrereq, IGlobalMarket, ICaveRecord, IStore,
+  IRedistInfo, IPrereqsState, ITaskProgressState,
+  IProgressListener,
+} from "../../types";
 
 const dumpInstallScript = process.env.ITCH_DUMP_INSTALL_SCRIPT === "1";
 
@@ -28,41 +32,7 @@ interface IWindowsPrereqsOpts {
   globalMarket: IGlobalMarket;
   caveId: string;
   logger: Logger;
-}
-
-interface IRedistExitCode {
-  code: number;
-  success?: boolean;
-  message?: string;
-}
-
-interface IRedistInfo {
-  /** Human-friendly name for redist, e.g. "Microsoft Visual C++ 2010 Redistributable" */
-  fullName: string;
-
-  /** The exact version provided */
-  version: string;
-
-  /** Architecture of the redist */
-  arch: "i386" | "amd64";
-
-  /** Executable to launch (in .7z archive) */
-  command: string;
-
-  /** Arguments to give to executable on launch - aim for quiet/unattended/no reboots */
-  args: string[];
-
-  /** Should the executable be run as admin? */
-  elevate?: boolean;
-
-  /** Registry keys we can check to see if installed */
-  registryKeys?: string[];
-
-  /** List of DLLs to check for, to make sure it's installed */
-  dlls?: string[];
-
-  /** Meaning of some exit codes */
-  exitCodes?: IRedistExitCode[];
+  emitter: EventEmitter;
 }
 
 import {EventEmitter} from "events";
@@ -179,8 +149,42 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
   try {
     tasks = filter(remainingTasks, null);
 
+    let prereqsState: IPrereqsState = {
+      tasks: {},
+    };
+
+    for (const task of tasks) {
+      prereqsState.tasks[task.prereq.name] = {
+        name: task.info.fullName,
+        progress: 0,
+        eta: 0,
+      };
+    }
+
+    const sendProgress = () => {
+      log(opts, `Sending progress:\n${JSON.stringify(prereqsState, null, 2)}`);
+      opts.emitter.emit("progress", {
+        progress: 0,
+        prereqsState,
+      });
+    };
+    sendProgress();
+
     await bluebird.all(map(tasks, async (task) => {
-      await fetchDep(opts, task, workDir.name);
+      const prereqName = task.prereq.name;
+      await fetchDep(opts, task, workDir.name, (progressInfo) => {
+        prereqsState = {
+          tasks: {
+            ...prereqsState.tasks,
+            [prereqName]: {
+              name: task.info.fullName,
+              progress: progressInfo.progress,
+              eta: progressInfo.eta,
+            },
+          },
+        };
+        sendProgress();
+      });
     }));
 
     const installScriptContents = makeInstallScript(tasks, workDir.name);
@@ -212,7 +216,7 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
     try {
       await butler.wipe(workDir.name, {emitter});
     } catch (e) {
-      log(opts, `Couldn't wipe: ${e}`, e)
+      log(opts, `Couldn't wipe: ${e}`, e);
     }
   }
 }
@@ -331,7 +335,9 @@ function getWorkDir(baseWorkDir: string, prereq: IManifestPrereq): string {
   return ospath.join(baseWorkDir, prereq.name);
 }
 
-async function fetchDep (opts: IWindowsPrereqsOpts, task: IPrereqTask, baseWorkDir: string) {
+async function fetchDep (
+    opts: IWindowsPrereqsOpts, task: IPrereqTask, baseWorkDir: string,
+    onProgress: IProgressListener) {
   const {prereq, info} = task;
  
   const workDir = getWorkDir(baseWorkDir, prereq);
@@ -349,7 +355,12 @@ async function fetchDep (opts: IWindowsPrereqsOpts, task: IPrereqTask, baseWorkD
   const archiveUrl = `${baseUrl}/${prereq.name}.7z`;
   const archivePath = ospath.join(workDir, `${prereq.name}.7z`);
 
-  await net.downloadToFile(opts, archiveUrl, archivePath);
+  await butler.cp({
+    emitter: new EventEmitter(),
+    onProgress,
+    src: archiveUrl,
+    dest: archivePath,
+  });
 
   log(opts, `Verifiying integrity of ${info.fullName} archive`);
   const algo = "SHA256";

@@ -517,6 +517,8 @@ export const TASK_PROGRESS = "TASK_PROGRESS";
 export interface ITaskProgressPayload extends IProgressInfo {
   /** the task this progress info is for */
   id: string;
+
+  prereqsState?: Types.IPrereqsState;
 };
 export const TASK_ENDED = "TASK_ENDED";
 export interface ITaskEndedPayload {

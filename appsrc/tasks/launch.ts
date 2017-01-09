@@ -258,6 +258,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
         caveId: cave.id,
         globalMarket: opts.globalMarket,
         logger: opts.logger,
+        emitter: out,
       });
     } catch (e) {
       log(opts, `Windows prereqs full stack: ${e.stack}`);
