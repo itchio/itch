@@ -298,7 +298,7 @@
     "status.downloads.no_active_downloads": "Nessun download attivo",
     "status.downloads.unknown_size": "Sconosciuto",
     "status.game_update.check_failed": "Controllo aggiornamenti fallito: {{err}}",
-    "status.game_update.found": "Trovata una nuova versione di {{title}}!",
+    "status.game_update.found": "Trovata una nuova versione di {{title}}! ",
     "status.game_update.not_found": "{{title}} è aggiornato.",
     "status.history.click_to_expand": "Clicca per espandere la cronologia.",
     "status.history.no_active_items": "Nessun oggetto nella cronologia richiede la tua attenzione.",
