@@ -110,7 +110,7 @@
     "prompt.last_remaining_install_location.content": "Questo è l'ultimo percorso di installazione, è impossibile rimuoverlo finchè non ne viene aggiunto un altro.",
     "prompt.last_remaining_install_location.title": "Impossibile rimuovere il percorso di installazione",
     "prompt.logout_confirm": "Sei sicuro di volerti disconnettere?",
-    "prompt.no_compatible_version.detail": "Forse questa {{classification}} non è ancora compatibile per ora?",
+    "prompt.no_compatible_version.detail": "Forse questa {{classification}} non è ancora compatibile?",
     "prompt.no_compatible_version.message": "Non abbiamo trovato una versione di {{title}} per {{platform}}.",
     "prompt.no_compatible_version.title": "{{title}} per {{platform}}",
     "prompt.payments_disabled.detail": "Forse puoi trovare un altro modo di supportarli?",
