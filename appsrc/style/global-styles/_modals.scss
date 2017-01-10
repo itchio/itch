@@ -146,6 +146,21 @@
       height: 350px;
       overflow-y: auto;
     }
+
+    .prereqs-row {
+      display: flex;
+      flex: 0 1;
+      flex-direction: row;
+      align-items: center;
+      margin: 14px 0;
+      margin-left: 10px;
+
+      .task-status {
+        margin-top: 5px;
+        font-size: 80%;
+        color: $secondary-text-color;
+      }
+    }
   }
 
   .buttons {

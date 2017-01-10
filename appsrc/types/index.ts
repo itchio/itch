@@ -707,6 +707,8 @@ export interface IModal {
 
     /** parameters to pass to React component */
     widgetParams?: any;
+
+    unclosable?: boolean;
 }
 
 export type IModalsState = IModal[];
@@ -1409,6 +1411,7 @@ export interface IProgressListener {
 }
 
 export interface IPrereqsState {
+  installing: boolean;
   tasks: {
     [key: string]: ITaskProgressState;
   };
@@ -1418,6 +1421,7 @@ export interface ITaskProgressState {
   name: string;
   progress: number;
   eta: number;
+  bps: number;
 }
 
 export interface IRedistInfo {

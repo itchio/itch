@@ -101,7 +101,10 @@ export class Modal extends React.Component<IModalProps, IModalState> {
           <div className="header">
             <h2>{t.format(title)}</h2>
             <div className="filler"/>
-            <span className="icon icon-cross close-modal" onClick={() => closeModal({})}/>
+            {modal.unclosable
+              ? null
+              : <span className="icon icon-cross close-modal" onClick={() => closeModal({})}/>
+            }
           </div>
 
           { message !== ""

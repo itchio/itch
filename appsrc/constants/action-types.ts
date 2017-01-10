@@ -45,6 +45,7 @@ export interface IOpenModalPayload extends Types.IModal {}
 /** close frontmost modal */
 export const CLOSE_MODAL = "CLOSE_MODAL";
 export interface ICloseModalPayload {
+  id?: string;
   action?: Types.IModalAction;
 }
 export const MODAL_CLOSED = "MODAL_CLOSED";
