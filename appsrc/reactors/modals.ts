@@ -2,7 +2,7 @@
 import {Watcher} from "./watcher";
 import * as actions from "../actions";
 
-import {each} from "underscore";
+import {each, findWhere} from "underscore";
 
 import {IStore} from "../types";
 import {IAction, IOpenModalPayload, IModalResponsePayload} from "../constants/action-types";
@@ -30,8 +30,13 @@ export function promisedModal (store: IStore, payload: IOpenModalPayload) {
 export default function (watcher: Watcher) {
   watcher.on(actions.closeModal, async (store, outerAction) => {
     const {payload = {}} = outerAction;
-    const {action} = payload;
-    const modal = store.getState().modals[0];
+    const {action, id} = payload;
+
+    const modals = store.getState().modals;
+    let modal = modals[0];
+    if (id) {
+      modal = findWhere(modals, {id});
+    }
 
     if (action) {
       if (Array.isArray(action)) {

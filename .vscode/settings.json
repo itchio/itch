@@ -18,5 +18,6 @@
     ".tscache": true
   },
 "files.eol": "\n",
+"editor.tabSize": 2,
 "typescript.tsdk": "./node_modules/typescript/lib"
 }

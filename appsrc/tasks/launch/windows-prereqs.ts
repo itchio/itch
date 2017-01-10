@@ -24,6 +24,12 @@ import {
   IProgressListener,
 } from "../../types";
 
+import {
+  IAction, IOpenModalPayload,
+} from "../../constants/action-types";
+
+import {IPrereqsStateParams} from "../../components/modal-widgets/prereqs-state";
+
 const dumpInstallScript = process.env.ITCH_DUMP_INSTALL_SCRIPT === "1";
 
 interface IWindowsPrereqsOpts {
@@ -145,11 +151,13 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
   log(opts, `Remaining tasks: ${remainingTasks.map((task) => task.prereq.name).join(", ")}`);
 
   const workDir = tmp.dirSync();
+  let openModalAction: IAction<IOpenModalPayload>;
 
   try {
     tasks = filter(remainingTasks, null);
 
     let prereqsState: IPrereqsState = {
+      installing: false,
       tasks: {},
     };
 
@@ -158,17 +166,30 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
         name: task.info.fullName,
         progress: 0,
         eta: 0,
+        bps: 0,
       };
     }
 
     const sendProgress = () => {
-      log(opts, `Sending progress:\n${JSON.stringify(prereqsState, null, 2)}`);
       opts.emitter.emit("progress", {
         progress: 0,
         prereqsState,
       });
     };
     sendProgress();
+
+    openModalAction = actions.openModal({
+      title: ["grid.item.installing"],
+      message: "",
+      widget: "prereqs-state",
+      widgetParams: {
+        gameId: String(cave.gameId),
+        gameTitle: cave.game.title,
+      } as IPrereqsStateParams,
+      buttons: [],
+      unclosable: true,
+    });
+    opts.store.dispatch(openModalAction);
 
     await bluebird.all(map(tasks, async (task) => {
       const prereqName = task.prereq.name;
@@ -178,14 +199,23 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
             ...prereqsState.tasks,
             [prereqName]: {
               name: task.info.fullName,
+              ...progressInfo,
               progress: progressInfo.progress,
               eta: progressInfo.eta,
+              bps: progressInfo.bps,
             },
           },
+          installing: false,
         };
         sendProgress();
       });
     }));
+
+    prereqsState = {
+      ...prereqsState,
+      installing: true,
+    };
+    sendProgress();
 
     const installScriptContents = makeInstallScript(tasks, workDir.name);
     if (dumpInstallScript) {
@@ -212,6 +242,10 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
     installedPrereqs = {...installedPrereqs, ...nowInstalledPrereqs};
     await globalMarket.saveEntity("caves", caveId, {installedPrereqs});
   } finally {
+    if (openModalAction) {
+      opts.store.dispatch(actions.closeModal({id: openModalAction.payload.id}));
+    }
+
     const emitter = new EventEmitter();
     try {
       await butler.wipe(workDir.name, {emitter});
@@ -379,4 +413,6 @@ async function fetchDep (
     archivePath,
     destPath: workDir,
   });
+
+  onProgress({progress: 1.0, eta: 0, bps: 0});
 }
