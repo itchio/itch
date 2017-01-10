@@ -402,5 +402,9 @@
     "prompt.revert.message": "Откатить с версии {{buildId}} до версии:",
     "prompt.revert.action.revert": "Откатить",
     "status.reverting": "Откатываем до версии {{buildId}...",
-    "status.healing": "Проверяем и восстанавливаем..."
+    "status.healing": "Проверяем и восстанавливаем...",
+    "prereq.explanation": "Для {{title}} нужно установить несколько дополнительных программных пакетов.",
+    "prereq.status.ready_for_install": "Готово к установке",
+    "prereq.main_status.downloading": "Загружаем…",
+    "prereq.main_status.installing": "Устанавливаем... (это может занять несколько минут)"
 }
