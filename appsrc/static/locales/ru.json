@@ -412,7 +412,7 @@
     "prereq.status.ready": "Готово к установке",
     "prereq.status.installing": "Устанавливаем... (это может занять несколько минут)",
     "prereq.status.done": "Готово!",
-    "preferences.advanced.clear_browsing_data": "Очистить историю встроенного браузера",
+    "preferences.advanced.clear_browsing_data": "Очистить данные встроенного браузера",
     "prompt.clear_browsing_data.clear": "Очистить данные",
     "prompt.clear_browsing_data.category.cache": "Кэш изображений и файлов",
     "prompt.clear_browsing_data.retrieving_cache_size": "Получаем размер кэша...",
