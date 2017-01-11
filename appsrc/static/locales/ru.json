@@ -411,5 +411,6 @@
     "prereq.status.extracting": "Распаковываем…",
     "prereq.status.ready": "Готово к установке",
     "prereq.status.installing": "Устанавливаем... (это может занять несколько минут)",
-    "prereq.status.done": "Готово!"
+    "prereq.status.done": "Готово!",
+    "preferences.advanced.clear_browsing_data": "Очистить историю встроенного браузера"
 }
