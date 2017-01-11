@@ -336,12 +336,17 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     }
   }
 
-  const tmpPath = ospath.join(cwd, "temp");
-  env = {
-    ...env,
-    TMP: tmpPath,
-    TEMP: tmpPath,
-  };
+  const tmpPath = ospath.join(cwd, ".itch", "temp");
+  try {
+    await sf.mkdir(tmpPath);
+    env = {
+      ...env,
+      TMP: tmpPath,
+      TEMP: tmpPath,
+    };
+  } catch (e) {
+    log(opts, `could not make custom temp path: ${e.message}`);
+  }
 
   log(opts, `command: ${command}`);
   log(opts, `args: ${JSON.stringify(args, null, 2)}`);
