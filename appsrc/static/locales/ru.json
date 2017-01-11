@@ -419,5 +419,5 @@
     "prompt.clear_browsing_data.cache_size_used": "Кэш использует {{size}} на диске",
     "prompt.clear_browsing_data.category.cookies": "Куки",
     "prompt.clear_browsing_data.cookies_info": "Это отменит авторизацию во встроенном браузере на всех сайтах.",
-    "prompt.clear_browsing_data.notification": "Очистка выполнена!"
+    "prompt.clear_browsing_data.notification": "Очистка браузера выполнена!"
 }
