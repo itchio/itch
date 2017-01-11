@@ -118,6 +118,7 @@
 
   .modal-widget {
     padding: 10px 20px;
+    flex-grow: 1;
 
     input[type=number], input[type=text], input[type=password] {
       @include heavy-input;
