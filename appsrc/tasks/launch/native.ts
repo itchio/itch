@@ -379,6 +379,12 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     inheritStd,
   });
 
+  try {
+    sf.wipe(tmpPath);
+  } catch (e) {
+    log(opts, `could not remove tmp dir: ${e.message}`);
+  }
+
   if (code !== 0) {
     const error = `process exited with code ${code}`;
     throw new Crash({error});
