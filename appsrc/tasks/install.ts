@@ -35,14 +35,8 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
   const {market, credentials, globalMarket, archivePath, downloadKey, game, upload,
     installLocation = defaultInstallLocation(), handPicked, becauseHeal} = opts;
 
-  let checkTimestamps = true;
-
   const grabCave = () => findWhere(globalMarket.getEntities<ICaveRecord>("caves"), {gameId: game.id});
   let {cave = grabCave()} = opts;
-
-  if (opts.reinstall) {
-    checkTimestamps = false;
-  }
 
   if (!cave) {
     invariant(!opts.reinstall, "need a cave for reinstall");
@@ -103,12 +97,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
 
     let imtime = Date.parse(cave.installedArchiveMtime);
     amtime = Number(archiveStat.mtime);
-    log(opts, `comparing mtimes, installed = ${imtime}, archive = ${amtime}`);
-
-    if (checkTimestamps && imtime && !(amtime > imtime)) {
-      log(opts, "archive isn't more recent, nothing to install");
-      return {caveId: cave.id};
-    }
+    log(opts, `installed mtime = ${imtime}, archive mtime = ${amtime}`);
 
     let coreOpts = {
       ...opts,
