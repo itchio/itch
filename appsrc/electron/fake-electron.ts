@@ -187,7 +187,15 @@ class FakeSession implements ISession {
     return;
   }
 
+  getCacheSize(cb: (cacheSize: number) => void) {
+    cb(0);
+  }
+
   clearCache(cb: () => void) {
+    cb();
+  }
+
+  clearStorageData(opts: any, cb: () => void) {
     cb();
   }
 }

@@ -158,18 +158,18 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
   renderAdvanced () {
     const {t, clearBrowsingDataRequest} = this.props;
 
-    return <p className="explanation">
-      <span className="app-version">
+    return <div className="explanation">
+      <p className="app-version">
       {versionString()}
-      </span>
+      </p>
       <ProxySettings/>
-      <span className="link" onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()); }}>
+      <p className="link" onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()); }}>
         {t("preferences.advanced.open_app_log")}
-      </span>
-      <span className="link" onClick={(e) => { e.preventDefault(); clearBrowsingDataRequest({}); }}>
+      </p>
+      <p className="link" onClick={(e) => { e.preventDefault(); clearBrowsingDataRequest({}); }}>
         {t("preferences.advanced.clear_browsing_data")}
-      </span>
-    </p>;
+      </p>
+    </div>;
   }
 
   onLanguageChange (lang: string) {

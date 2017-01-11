@@ -66,6 +66,12 @@ export interface IModalResponsePayload {
 
   /** two-factor authentication code entered */
   totpCode?: string;
+
+  /** whether to clear cookies */
+  cookies?: boolean;
+
+  /** whether to clear cache */
+  cache?: boolean;
 }
 
 export const MODAL_NO_RESPONSE = "MODAL_NO_RESPONSE";
@@ -990,7 +996,7 @@ export interface IPreferencesLoadedPayload extends Types.IPreferencesState {};
 export const CLEAR_BROWSING_DATA_REQUEST = "CLEAR_BROWSING_DATA_REQUEST";
 export interface IClearBrowsingDataRequestPayload {}
 
-export const CLEAR_BROWSING_DATA = "CLEAR_BROWSING_DATA_REQUEST";
+export const CLEAR_BROWSING_DATA = "CLEAR_BROWSING_DATA";
 export interface IClearBrowsingDataPayload {
   /** Whether to wipe cached images & files */
   cache: boolean;

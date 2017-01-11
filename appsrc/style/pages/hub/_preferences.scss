@@ -1,6 +1,4 @@
 
-$pref-border-color: $zambezi;
-
 @mixin pref-chunk {
   border-left: 3px solid $pref-border-color;
   transition: 0.2s border ease-in-out;

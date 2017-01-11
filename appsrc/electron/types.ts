@@ -150,11 +150,21 @@ export interface IWebContents {
   on(ev: "new-window", cb: (ev: Event, url: string) => void): void;
 }
 
+type StorageType = "appcache" | "cookies" | "filesystem" | "indexdb" |
+  "localstorage" | "shadercache" | "websql" | "serviceworkers";
+
+interface IClearStorageDataOptions {
+  origin?: string;
+  storages: StorageType[];
+}
+
 /** An electron web session */
 export interface ISession {
   webRequest: IWebRequest;
 
+  getCacheSize(cb: (cacheSize: number) => void): void;
   clearCache(cb: () => void): void;
+  clearStorageData(options: IClearStorageDataOptions, cb: () => void): void;
 }
 
 export interface IWebRequest {
