@@ -406,5 +406,11 @@
     "prereq.explanation": "Для {{title}} нужно установить несколько дополнительных программных пакетов.",
     "prereq.status.ready_for_install": "Готово к установке",
     "prereq.main_status.downloading": "Загружаем…",
-    "prereq.main_status.installing": "Устанавливаем... (это может занять несколько минут)"
+    "prereq.main_status.installing": "Устанавливаем... (это может занять несколько минут)",
+    "prereq.status.downloading": "Загружаем…",
+    "prereq.status.extracting": "Распаковываем…",
+    "prereq.status.ready": "Готово к установке",
+    "prereq.status.installing": "Устанавливаем... (это может занять несколько минут)",
+    "prereq.status.done": "Готово!",
+    "preferences.advanced.clear_browsing_data": "Очистить историю встроенного браузера"
 }
