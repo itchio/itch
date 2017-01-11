@@ -359,5 +359,8 @@
     "pick_update_upload.buttons.just_launch": "Avvia soltanto",
     "pick_update_upload.tags.demo": "demo",
     "prompt.install_error.title": "Si è verificato un errore durante l'installazione:",
-    "prompt.install_error.find_upload": "Durante la ricerca di un download: {{message}}"
+    "prompt.install_error.find_upload": "Durante la ricerca di un download: {{message}}",
+    "login.two_factor.enter_code": "Inserisci il codice indicato sul tuo autenticatore per accedere.",
+    "preferences.notifications.ready_notification": "Avvisami quando uno scaricamento ha finito di aggiornare o installare",
+    "pick_update_upload.single.message": "Puoi scegliere di aggiornare adesso o più avanti"
 }
