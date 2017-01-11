@@ -1,10 +1,14 @@
 
+import * as osnet from "net";
+import * as StreamSplitter from "stream-splitter";
+import LFTransform from "../../util/lf-transform";
+
 import mklog, {Logger} from "../../util/log";
 const log = mklog("windows-prereqs");
 
 import * as tmp from "tmp";
 import * as bluebird from "bluebird";
-import {isEmpty, find, filter, reject, partition, map} from "underscore";
+import {isEmpty, find, filter, reject, partition, map, each} from "underscore";
 
 import spawn from "../../util/spawn";
 import pathmaker from "../../util/pathmaker";
@@ -21,7 +25,7 @@ import * as actions from "../../actions";
 import {
   IManifest, IManifestPrereq, IGlobalMarket, ICaveRecord, IStore,
   IRedistInfo, IPrereqsState, ITaskProgressState,
-  IProgressListener,
+  IProgressListener, TaskProgressStatus,
 } from "../../types";
 
 import {
@@ -39,6 +43,21 @@ interface IWindowsPrereqsOpts {
   caveId: string;
   logger: Logger;
   emitter: EventEmitter;
+}
+
+interface IInstallPlan {
+  tasks: IInstallPlanItem[];
+}
+
+interface IInstallPlanItem {
+  name: string;
+  workDir: string;
+  info: IRedistInfo;
+}
+
+interface IButlerPrereqResult {
+  name: string;
+  status: TaskProgressStatus;
 }
 
 import {EventEmitter} from "events";
@@ -152,23 +171,25 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
 
   const workDir = tmp.dirSync();
   let openModalAction: IAction<IOpenModalPayload>;
+  let pollState = true;
 
   try {
     tasks = filter(remainingTasks, null);
 
     let prereqsState: IPrereqsState = {
-      installing: false,
       tasks: {},
     };
 
-    for (const task of tasks) {
+    each(tasks, (task, i) => {
       prereqsState.tasks[task.prereq.name] = {
         name: task.info.fullName,
+        status: "downloading",
+        order: i,
         progress: 0,
         eta: 0,
         bps: 0,
       };
-    }
+    });
 
     const sendProgress = () => {
       opts.emitter.emit("progress", {
@@ -191,46 +212,113 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
     });
     opts.store.dispatch(openModalAction);
 
-    await bluebird.all(map(tasks, async (task) => {
+    await bluebird.all(map(tasks, async (task, i) => {
       const prereqName = task.prereq.name;
-      await fetchDep(opts, task, workDir.name, (progressInfo) => {
+      const onProgress: IProgressListener = (progressInfo) => {
         prereqsState = {
           tasks: {
             ...prereqsState.tasks,
             [prereqName]: {
-              name: task.info.fullName,
+              ...prereqsState.tasks[prereqName],
               ...progressInfo,
-              progress: progressInfo.progress,
-              eta: progressInfo.eta,
-              bps: progressInfo.bps,
             },
           },
-          installing: false,
         };
         sendProgress();
-      });
+      };
+      const onStatus: ITaskProgressStatusListener = (status) => {
+        prereqsState = {
+          tasks: {
+            ...prereqsState.tasks,
+            [prereqName]: {
+              ...prereqsState.tasks[prereqName],
+              status,
+            },
+          },
+        };
+      };
+      await fetchDep(opts, task, workDir.name, onProgress, onStatus);
     }));
 
-    prereqsState = {
-      ...prereqsState,
-      installing: true,
+    const installPlan: IInstallPlan = {
+      tasks: map(tasks, (task) => {
+        return {
+          name: task.prereq.name,
+          workDir: getWorkDir(workDir.name, task.prereq),
+          info: task.info,
+        };
+      }),
     };
-    sendProgress();
 
-    const installScriptContents = makeInstallScript(tasks, workDir.name);
-    if (dumpInstallScript) {
-      log(opts, `Install script: \n\n${installScriptContents}\n\n`);
-    }
+    const installPlanContents = JSON.stringify(installPlan, null, 2);
 
-    const scriptFullPath = ospath.join(workDir.name, "install_prereqs.bat");
-    await sf.writeFile(scriptFullPath, installScriptContents);
+    const installPlanFullPath = ospath.join(workDir.name, "install_plan.json");
+    await sf.writeFile(installPlanFullPath, installPlanContents);
 
-    await spawn.assert({
-      command: "elevate.exe",
-      args: ["cmd.exe", "/c", scriptFullPath],
+    log(opts, `Wrote install plan to ${installPlanFullPath}`);
+    const emitter = new EventEmitter();
+
+    const stateDirPath = ospath.join(workDir.name, "statedir");
+    await sf.mkdir(stateDirPath);
+
+    emitter.on("result", (result: IButlerPrereqResult) => {
+      prereqsState = {
+        ...prereqsState,
+        tasks: {
+          ...prereqsState.tasks,
+          [result.name]: {
+            ...prereqsState.tasks[result.name],
+            status: result.status,
+          },
+        },
+      };
+      sendProgress();
+    });
+
+    log(opts, "Installing all prereqs via butler...");
+
+    const namedPipeName = `butler-windows-prereqs-${Date.now().toFixed(0)}`;
+    const namedPipePath = "\\\\.\\pipe\\" + namedPipeName;
+
+    log(opts, `Listening to status updates on ${namedPipePath}`);
+
+    const server = osnet.createServer(function (stream) {
+      const splitter = stream.pipe(new LFTransform()).pipe(StreamSplitter("\n"));
+      splitter.encoding = "utf8";
+      splitter.on("token", (token: string) => {
+        try {
+          let status: any;
+          try {
+            status = JSON.parse(token);
+          } catch (err) {
+            log(opts, `Couldn't parse line of butler output: ${token}`);
+            return;
+          }
+
+          if (status.name && status.status) {
+            prereqsState = {
+              ...prereqsState,
+              tasks: {
+                ...prereqsState.tasks,
+                [status.name]: {
+                  ...prereqsState.tasks[status.name],
+                  status: status.status as TaskProgressStatus,
+                },
+              },
+            };
+            sendProgress();
+          }
+        } catch (e) {
+          log(opts, `Could not parse status update: ${e.stack}`);
+        }
+      });
+    });
+    server.listen(namedPipePath);
+
+    await butler.installPrereqs(installPlanFullPath, {
+      pipe: namedPipePath,
       logger: opts.logger,
-      onToken:    (tok) => { log(opts, `[install-prereqs out] ${tok}`); },
-      onErrToken: (tok) => { log(opts, `[install-prereqs err] ${tok}`); },
+      emitter,
     });
 
     const nowInstalledPrereqs = {} as {
@@ -242,6 +330,8 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
     installedPrereqs = {...installedPrereqs, ...nowInstalledPrereqs};
     await globalMarket.saveEntity("caves", caveId, {installedPrereqs});
   } finally {
+    pollState = false;
+
     if (openModalAction) {
       opts.store.dispatch(actions.closeModal({id: openModalAction.payload.id}));
     }
@@ -369,20 +459,19 @@ function getWorkDir(baseWorkDir: string, prereq: IManifestPrereq): string {
   return ospath.join(baseWorkDir, prereq.name);
 }
 
+interface ITaskProgressStatusListener {
+  (status: TaskProgressStatus): void;
+}
+
 async function fetchDep (
     opts: IWindowsPrereqsOpts, task: IPrereqTask, baseWorkDir: string,
-    onProgress: IProgressListener) {
+    onProgress: IProgressListener, onStatus: ITaskProgressStatusListener) {
   const {prereq, info} = task;
  
   const workDir = getWorkDir(baseWorkDir, prereq);
   await sf.mkdir(workDir);
 
-  opts.store.dispatch(actions.statusMessage({
-    message: ["login.status.dependency_install", {
-      name: info.fullName,
-      version: info.version || "?",
-    }],
-  }));
+  onStatus("downloading");
 
   log(opts, `Downloading prereq ${info.fullName}`);
   const baseUrl = getBaseURL(prereq);
@@ -395,6 +484,8 @@ async function fetchDep (
     src: archiveUrl,
     dest: archivePath,
   });
+
+  onStatus("extracting");
 
   log(opts, `Verifiying integrity of ${info.fullName} archive`);
   const algo = "SHA256";
@@ -412,7 +503,10 @@ async function fetchDep (
     emitter: new EventEmitter(),
     archivePath,
     destPath: workDir,
+    onProgress,
   });
+
+  onStatus("ready");
 
   onProgress({progress: 1.0, eta: 0, bps: 0});
 }

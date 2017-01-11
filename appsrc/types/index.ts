@@ -1411,7 +1411,6 @@ export interface IProgressListener {
 }
 
 export interface IPrereqsState {
-  installing: boolean;
   tasks: {
     [key: string]: ITaskProgressState;
   };
@@ -1419,10 +1418,14 @@ export interface IPrereqsState {
 
 export interface ITaskProgressState {
   name: string;
+  order: number;
+  status: TaskProgressStatus;
   progress: number;
   eta: number;
   bps: number;
 }
+
+export type TaskProgressStatus = "downloading" | "extracting" | "ready" | "installing" | "done";
 
 export interface IRedistInfo {
   /** Human-friendly name for redist, e.g. "Microsoft Visual C++ 2010 Redistributable" */

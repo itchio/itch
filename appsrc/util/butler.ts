@@ -1,10 +1,11 @@
 
-import * as path from "path";
+import * as ospath from "path";
 import {partial} from "underscore";
 
 import noop from "./noop";
 import spawn from "./spawn";
 import sf from "./sf";
+import ibrew from "./ibrew";
 
 import {EventEmitter} from "events";
 import {IProgressListener, IProgressInfo} from "../types";
@@ -19,6 +20,7 @@ interface IButlerOpts {
    emitter: EventEmitter;
    onProgress?: IProgressListener;
    logger?: Logger;
+   elevate?: boolean;
 }
 
 function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, token: string) {
@@ -33,6 +35,7 @@ function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, to
     status = JSON.parse(token);
   } catch (err) {
     log(opts, `Couldn't parse line of butler output: ${token}`);
+    return;
   }
 
   switch (status.type) {
@@ -63,15 +66,21 @@ async function butler (opts: IButlerOpts, command: string, commandArgs: string[]
   const onerror = (e: Error) => { err = e; };
   let err = null as Error;
 
-  const args = [ "--json", command, ...commandArgs ];
+  let args = [ "--json", command, ...commandArgs ];
 
   const onToken = partial(parseButlerStatus, opts, onerror);
   const onErrToken = (line: string) => {
     log(opts, `butler stderr: ${line}`);
   };
 
+  let realCommand = "butler";
+  if (opts.elevate) {
+    args = [ospath.join(ibrew.binPath(), "butler.exe"), ...args];
+    realCommand = "elevate";
+  }
+
   const code = await spawn({
-    command: "butler",
+    command: realCommand,
     args,
     onToken,
     onErrToken,
@@ -175,7 +184,7 @@ async function dl (opts: IDlOpts) {
   const {url, dest} = opts;
   const args = [url, dest];
 
-  await sf.mkdir(path.dirname(dest));
+  await sf.mkdir(ospath.dirname(dest));
   return await butler(opts, "dl", args);
 }
 
@@ -257,6 +266,26 @@ async function verify (signature: string, dir: string, opts = {} as IVerifyOpts)
   return await butler(opts, "verify", args);
 }
 
+interface IInstallPrereqsOpts extends IButlerOpts {
+  pipe?: string;
+}
+
+/* Installs prerequisites as specified by ${planPath} */
+async function installPrereqs (planPath: string, opts = {} as IInstallPrereqsOpts) {
+  let args = [planPath];
+  const {pipe} = opts;
+  if (pipe) {
+    args.push("--pipe");
+    args.push(pipe);
+  }
+
+  const realOpts = {
+    ...opts,
+    elevate: true,
+  };
+  return await butler(realOpts, "install-prereqs", args);
+}
+
 async function sanityCheck (): Promise<boolean> {
   try {
     await spawn.assert({
@@ -270,5 +299,5 @@ async function sanityCheck (): Promise<boolean> {
 }
 
 export default {
-  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify, sizeof, file, sanityCheck,
+  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify, sizeof, file, installPrereqs, sanityCheck,
 };

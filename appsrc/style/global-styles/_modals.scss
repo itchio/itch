@@ -147,6 +147,13 @@
       overflow-y: auto;
     }
 
+    .prereqs-rows {
+      display: flex;
+      flex: 0 1;
+      flex-direction: column;
+      align-content: flex-start;
+    }
+
     .prereqs-row {
       display: flex;
       flex: 0 1;

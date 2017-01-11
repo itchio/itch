@@ -30,29 +30,29 @@ export class PrereqsState extends React.Component<IPrereqsStateProps, void> {
         return <div className="modal-widget">
             <p>{t("prereq.explanation", {title: params.gameTitle})}</p>
             
-            <ul>
+            <ul className="prereqs-rows">
             {map(prereqsState.tasks, (v, k) => {
-                return <li key={k} className="prereqs-row">
-                    <LoadingCircle progress={v.progress}/>
+                let progress = v.progress;
+                if (v.status === "installing" || v.status === "extracting") {
+                    // just displays a spinner
+                    progress = 0.1;
+                }
+
+                return <li key={k} className="prereqs-row" style={{order: v.order}}>
+                    <LoadingCircle progress={progress}/>
                     <div className="prereqs-info">
                         <div className="task-name">
                             {v.name}
                         </div>
                         <div className="task-status">
-                            {v.progress > 0
-                            ? (v.progress < 1
-                                ? downloadProgress(t, v, false)
-                                : t("prereq.status.ready_for_install"))
-                            : t("setup.status.preparing")}
+                            {v.status === "downloading" && v.progress
+                            ? downloadProgress(t, v, false)
+                            : t(`prereq.status.${v.status}`)}
                         </div>
                     </div>
                 </li>;
             })}
             </ul>
-
-            <p>{prereqsState.installing
-            ? t("prereq.main_status.downloading")
-            : t("prereq.main_status.installing") }</p>
         </div>;
     }
 }
