@@ -156,7 +156,7 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
   }
 
   renderAdvanced () {
-    const {t} = this.props;
+    const {t, clearBrowsingDataRequest} = this.props;
 
     return <p className="explanation">
       <span className="app-version">
@@ -165,6 +165,9 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
       <ProxySettings/>
       <span className="link" onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()); }}>
         {t("preferences.advanced.open_app_log")}
+      </span>
+      <span className="link" onClick={(e) => { e.preventDefault(); clearBrowsingDataRequest({}); }}>
+        {t("preferences.advanced.clear_browsing_data")}
       </span>
     </p>;
   }
@@ -286,14 +289,26 @@ interface IPreferencesProps {
 
   t: ILocalizer;
 
-  browseInstallLocation: typeof actions.browseInstallLocation;
   addInstallLocationRequest: typeof actions.addInstallLocationRequest;
   removeInstallLocationRequest: typeof actions.removeInstallLocationRequest;
   makeInstallLocationDefault: typeof actions.makeInstallLocationDefault;
   queueLocaleDownload: typeof actions.queueLocaleDownload;
+
   updatePreferences: typeof actions.updatePreferences;
+  clearBrowsingDataRequest: typeof actions.clearBrowsingDataRequest;
   navigate: typeof actions.navigate;
 }
+
+const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+  addInstallLocationRequest: dispatcher(dispatch, actions.addInstallLocationRequest),
+  removeInstallLocationRequest: dispatcher(dispatch, actions.removeInstallLocationRequest),
+  makeInstallLocationDefault: dispatcher(dispatch, actions.makeInstallLocationDefault),
+  queueLocaleDownload: dispatcher(dispatch, actions.queueLocaleDownload),
+
+  updatePreferences: dispatcher(dispatch, actions.updatePreferences),
+  clearBrowsingDataRequest: dispatcher(dispatch, actions.clearBrowsingDataRequest),
+  navigate: dispatcher(dispatch, actions.navigate),
+});
 
 const mapStateToProps = createStructuredSelector({
   preferences: (state: IState) => state.preferences,
@@ -355,15 +370,6 @@ const mapStateToProps = createStructuredSelector({
       };
     },
   ),
-});
-
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
-  queueLocaleDownload: dispatcher(dispatch, actions.queueLocaleDownload),
-  navigate: dispatcher(dispatch, actions.navigate),
-  addInstallLocationRequest: dispatcher(dispatch, actions.addInstallLocationRequest),
-  makeInstallLocationDefault: dispatcher(dispatch, actions.makeInstallLocationDefault),
-  removeInstallLocationRequest: dispatcher(dispatch, actions.removeInstallLocationRequest),
-  updatePreferences: dispatcher(dispatch, actions.updatePreferences),
 });
 
 export default connect(
