@@ -987,6 +987,18 @@ export interface IUpdatePreferencesPayload extends Types.IPreferencesState {};
 export const PREFERENCES_LOADED = "PREFERENCES_LOADED";
 export interface IPreferencesLoadedPayload extends Types.IPreferencesState {};
 
+export const CLEAR_BROWSING_DATA_REQUEST = "CLEAR_BROWSING_DATA_REQUEST";
+export interface IClearBrowsingDataRequestPayload {}
+
+export const CLEAR_BROWSING_DATA = "CLEAR_BROWSING_DATA_REQUEST";
+export interface IClearBrowsingDataPayload {
+  /** Whether to wipe cached images & files */
+  cache: boolean;
+
+  /** Whether to wipe cookies (will log out user) */
+  cookies: boolean;
+}
+
 export const VIEW_CREATOR_PROFILE = "VIEW_CREATOR_PROFILE";
 export interface IViewCreatorProfilePayload {}
 
