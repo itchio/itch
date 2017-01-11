@@ -10,6 +10,6 @@
   "license": "ISC",
   "devDependencies": {
     "colors": "^1.1.2",
-    "munyx": "^1.3.0"
+    "munyx": "^1.4.0"
   }
 }

@@ -7,6 +7,8 @@ const fs = require('fs')
 const ospath = require('path')
 const crypto = require('crypto')
 
+const STDIN = 0;
+
 const SH_PATH = (process.platform === 'win32') ? `${process.env.WD}sh.exe` : '/bin/sh'
 
 process.env.COLORTERM = '1'
@@ -209,10 +211,9 @@ $.prompt = function (msg) {
   process.stdout.write(`${msg}: `)
   const b = Buffer.alloc(1)
   let s = ''
-  const stdin = fs.openSync('/dev/stdin', 'rs')
 
   while (true) {
-    fs.readSync(stdin, b, 0, 1)
+    fs.readSync(STDIN, b, 0, 1)
 
     const c = b.toString('utf8')
     if (c === '\n') {
@@ -221,7 +222,6 @@ $.prompt = function (msg) {
       s += c
     }
   }
-  fs.closeSync(stdin)
 
   return s
 }
@@ -230,9 +230,7 @@ $.yesno = function (msg) {
   process.stdout.write(`${msg} (y/n) `)
   const b = Buffer.alloc(1)
 
-  const stdin = fs.openSync('/dev/stdin', 'rs')
-  fs.readSync(stdin, b, 0, 1)
-  fs.closeSync(stdin)
+  fs.readSync(STDIN, b, 0, 1)
 
   process.stdout.write('\n')
 
