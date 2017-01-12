@@ -390,5 +390,18 @@
     "prompt.revert.message": "Връщане от версия {{buildId}} към версия:",
     "prompt.revert.action.revert": "Връщане",
     "status.reverting": "Връщане към {{buildId}}…",
-    "status.healing": "Поправяне на файловете…"
+    "status.healing": "Поправяне на инсталацията…",
+    "prereq.status.downloading": "Сваляне…",
+    "prereq.status.ready": "Готово за инсталиране",
+    "prereq.status.installing": "Инсталиране… (Това може да отнеме няколко минути.)",
+    "prereq.status.done": "Готово!",
+    "preferences.advanced.clear_browsing_data": "Изчистване на данните на вградения браузър",
+    "prompt.clear_browsing_data.clear": "Изчистване на данните",
+    "prompt.clear_browsing_data.category.cache": "Кеширани изображения и файлове",
+    "prompt.clear_browsing_data.retrieving_cache_size": "Изчисляване на размера на кеша…",
+    "prompt.clear_browsing_data.cache_size_used": "В момента кешът използва {{size}} на диска",
+    "prompt.clear_browsing_data.category.cookies": "Бисквитки",
+    "prompt.clear_browsing_data.cookies_info": "Така ще излезете от всички уеб сайтове, в които сте влезли чрез вградения браузър.",
+    "prompt.clear_browsing_data.notification": "Данните на браузъра са изчистени!",
+    "prereq.status.extracting": "Разопаковане…"
 }
