@@ -403,5 +403,6 @@
     "prompt.clear_browsing_data.category.cookies": "Бисквитки",
     "prompt.clear_browsing_data.cookies_info": "Така ще излезете от всички уеб сайтове, в които сте влезли чрез вградения браузър.",
     "prompt.clear_browsing_data.notification": "Данните на браузъра са изчистени!",
-    "prereq.status.extracting": "Разопаковане…"
+    "prereq.status.extracting": "Разопаковане…",
+    "collection_grid.item.updated_at": "Последно обновено {{time_ago}}"
 }
