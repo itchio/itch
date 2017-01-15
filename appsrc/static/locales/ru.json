@@ -376,7 +376,7 @@
     "notification.download_healed": "{{title}} проверено и восстановлено!",
     "login.two_factor.title": "Двухфакторая аутентификация",
     "login.two_factor.as_user": "Входим как: {{username}}",
-    "login.two_factor.enter_code": "Введите код, отображаемый аутентификатором, чтобы войти.",
+    "login.two_factor.enter_code": "Введите код, отображаемый аутентификатором, чтобы продолжить вход.",
     "login.two_factor.verification_code_label": "Код подтверждения",
     "login.two_factor.learn_more": "Узнать больше о двухфакторной аутентификации",
     "pick_update_upload.tags.demo": "демо",
