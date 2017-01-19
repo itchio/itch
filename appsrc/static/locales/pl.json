@@ -282,5 +282,6 @@
     "grid.item.prioritize_download": "Pobierz teraz",
     "grid.item.share": "Udostępnij",
     "grid.item.open_demo": "Otwórz demo",
-    "browser.popout": "Otwórz stronę w zewnętrznej przeglądarce"
+    "browser.popout": "Otwórz stronę w zewnętrznej przeglądarce",
+    "grid.item.update": "Aktualizuj"
 }
