@@ -8,8 +8,8 @@ import client from "../../util/api";
 import mklog from "../../util/log";
 const log = mklog("download-patches");
 
-import {IDownloadOpts} from "../../types";
-import {IProgressInfo} from "../../types";
+import {IDownloadOpts, IProgressInfo, IStore} from "../../types";
+import {IDownloadBuildFileExtras} from "../../types/api";
 
 import {getGlobalMarket} from "../../reactors/market";
 
@@ -19,14 +19,21 @@ export default async function downloadPatches (out: EventEmitter, opts: IDownloa
 
   const api = client.withKey(credentials.key);
 
+  const store = require("../../store").default as IStore;
+  const patchExtras: IDownloadBuildFileExtras = {};
+  if (store.getState().preferences.preferOptimizedPatches) {
+    patchExtras.prefer_optimized = 1;
+  }
+
   let byteOffset = 0;
+  log(opts, `Downloading ${upgradePath.length} patches, extras: ${JSON.stringify(patchExtras, null, 2)})`);
 
   for (const entry of upgradePath) {
-    log(opts, `Dealing with entry ${JSON.stringify(entry, null, 2)}`);
+    log(opts, `Dealing with upgrade entry ${JSON.stringify(entry, null, 2)}`);
 
     const cavePath = pathmaker.appPath(cave);
 
-    const patchPath = api.downloadBuildURL(downloadKey, upload.id, entry.id, "patch", {prefer_optimized: 1});
+    const patchPath = api.downloadBuildURL(downloadKey, upload.id, entry.id, "patch", patchExtras);
     const signaturePath = api.downloadBuildURL(downloadKey, upload.id, entry.id, "signature");
     const archivePath = api.downloadBuildURL(downloadKey, upload.id, entry.id, "archive");
 
