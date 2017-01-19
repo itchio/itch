@@ -1082,6 +1082,8 @@ export interface IPreferencesState {
 
   /** show consent dialog before applying any game updates */
   manualGameUpdates?: boolean;
+
+  preferOptimizedPatches?: boolean;
 }
 
 export interface ITask {

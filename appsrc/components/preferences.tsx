@@ -156,19 +156,35 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
   }
 
   renderAdvanced () {
-    const {t, clearBrowsingDataRequest} = this.props;
+    const {t, clearBrowsingDataRequest, updatePreferences} = this.props;
+    const {preferOptimizedPatches} = this.props.preferences;
 
-    return <div className="explanation">
-      <p className="app-version">
+    return <div className="explanation advanced-form">
+      <p className="section app-version">
       {versionString()}
       </p>
-      <ProxySettings/>
-      <p className="link" onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()); }}>
+      <p>
+        <ProxySettings/>
+      </p>
+      <p className="section">
+        <span className="link" onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()); }}>
         {t("preferences.advanced.open_app_log")}
+        </span>
       </p>
-      <p className="link" onClick={(e) => { e.preventDefault(); clearBrowsingDataRequest({}); }}>
-        {t("preferences.advanced.clear_browsing_data")}
+      <p className="section">
+        <span className="link" onClick={(e) => { e.preventDefault(); clearBrowsingDataRequest({}); }}>
+          {t("preferences.advanced.clear_browsing_data")}
+        </span>
       </p>
+      <label className={classNames({active: preferOptimizedPatches})}>
+        <input type="checkbox" checked={preferOptimizedPatches} onChange={(e) => {
+          updatePreferences({preferOptimizedPatches: e.currentTarget.checked});
+        }}/>
+        <span>Prefer optimized patches</span>
+        <span className="hint--bottom" data-hint={t("label.experimental")}>
+          <Icon icon="lab-flask" onClick={(e: React.MouseEvent<any>) => e.preventDefault()}/>
+        </span>
+      </label>
     </div>;
   }
 

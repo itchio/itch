@@ -44,7 +44,12 @@ async function createWindow (store: IStore, hidden: boolean) {
   };
   const {width, height} = bounds;
   const center = (bounds.x === -1 && bounds.y === -1);
-  const iconPath = ospath.resolve(`${__dirname}/../static/images/window/${app.getName()}/icon.png`);
+  let iconName = "icon";
+  if (process.platform === "win32") {
+    iconName = "icon-32";
+  }
+
+  const iconPath = ospath.resolve(`${__dirname}/../static/images/window/${app.getName()}/${iconName}.png`);
   log(opts, `creating main window with icon: ${iconPath}`);
   log(opts, "cf. https://github.com/electron/electron/issues/6205");
 

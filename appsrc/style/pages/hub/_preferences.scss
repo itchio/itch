@@ -86,7 +86,7 @@
     }
   }
 
-  .security-form, .behavior-form, .notifications-form, .language-form {
+  .security-form, .behavior-form, .notifications-form, .language-form, .advanced-form {
     flex-shrink: 0;
 
     label {
@@ -109,6 +109,16 @@
 
     .icon-lab-flask {
       margin-left: 8px;
+    }
+  }
+
+  .advanced-form {
+    .section {
+      margin: 8px 0;
+
+      &:first-child {
+        margin-top: 0;
+      }
     }
   }
 
@@ -162,11 +172,6 @@
 
   .preferences-background {
     @include icon-as-background;
-  }
-
-  .app-version {
-    display: block;
-    padding: 0 0 5px 0;
   }
 
   .proxy-settings {
