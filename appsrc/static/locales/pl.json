@@ -37,7 +37,7 @@
     "grid.item.retry": "Spróbuj ściągnąć / zainstalować / uruchomić to jeszcze raz",
     "grid.item.running": "Uruchomiony…",
     "grid.item.show_local_files": "Pokaż pliki na dysku",
-    "grid.item.uninstall": "Odinstaluj tą pozycję",
+    "grid.item.uninstall": "Odinstaluj",
     "grid.item.uninstalling": "Usuwanie…",
     "grid.item.version": "Wersja {{version}}",
     "i18n.failed_downloading_locales": "Aktualizacje tłumaczenia dla języka {{lang}} nie mogły zostać pobrane",
