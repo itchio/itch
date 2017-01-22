@@ -283,5 +283,18 @@
     "grid.item.share": "Udostępnij",
     "grid.item.open_demo": "Otwórz demo",
     "browser.popout": "Otwórz stronę w zewnętrznej przeglądarce",
-    "grid.item.update": "Aktualizuj"
+    "grid.item.update": "Aktualizuj",
+    "grid.item.download_java": "Pobierz oprogramowanie Java",
+    "grid.item.advanced": "Zaawansowane",
+    "download.started": "Rozpoczęte",
+    "download.reason.revert": "powrócić do wcześniejszej wersji",
+    "game.install.could_not_launch.detail": "Jego ostatnie słowa to: {{error}}",
+    "game.install.could_not_launch.missing_jre": "Wymaga oprogramowania Java, którego nie znaleziono w twoim systemie.",
+    "grid.item.review": "Dodaj recencję",
+    "grid.item.launch_demo": "Uruchom wersję demo",
+    "grid.item.verify_integrity": "Sprawdź spójność",
+    "grid.item.view_details": "Pokaż szczegóły...",
+    "grid.item.donate": "Wspomóż twórcę",
+    "grid.item.donate_again": "Wspomóż twórcę ponownie!",
+    "grid.item.downloads_paused": "Pobieranie wstrzymane"
 }
