@@ -4,7 +4,7 @@
     "duration.hours": "{{x}} godzin(y)",
     "duration.minute": "minuta lub mniej",
     "duration.minutes": "{{x}} minut(y)",
-    "errors.api.login.incorrect_username_or_password": "Niewłaściwa nazwa użytkownika lub hasło",
+    "errors.api.login.incorrect_username_or_password": "Niepoprawna nazwa użytkownika lub hasło",
     "errors.api.login.password_must_be_provided": "Musisz podać hasło",
     "errors.api.login.username_must_be_provided": "Należy podać nazwę użytkownika",
     "game.install.could_not_launch": "Błąd wystąpił w trakcie uruchamiania {{title}}",
