@@ -11,7 +11,7 @@
     "game.install.no_executables_found": "Nie znaleziono binarek",
     "game.install.no_html_index_found": "Nie znaleziono pliku index HTML",
     "game.install.no_uploads_available.detail": "Być może ten przedmiot nie jest jeszcze kompatybilny z Twoją platformą lub z itchem!",
-    "game.install.no_uploads_available.message": "Nie znaleziono kompatybilnych plików do pobrania dla '{{title}}', więc nic nie zostało zainstalowane",
+    "game.install.no_uploads_available.message": "Nie znaleziono kompatybilnych plików do pobrania dla '{{title}}', więc nic nie zostało zainstalowane.",
     "game.install.try_again": "Spróbuj ponownie",
     "game.install.visit_web_page": "Odwiedź stronę internetową",
     "grid.criterion.filtered_by": "Filtr: “{{term}}”",
@@ -306,5 +306,5 @@
     "search.results.title": "Wyniki wyszukiwania dla '{{query}}'",
     "sidebar.close_all_tabs": "Zamknij wszystkie karty",
     "status.downloads.category.queued": "Kolejka pobierania",
-    "action.name.forums": "Fora"
+    "action.name.forums": "Dyskusje"
 }
