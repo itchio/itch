@@ -239,7 +239,7 @@
     "status.downloads.no_active_downloads": "Brak aktywnych pobrań",
     "status.downloads.unknown_size": "Nieznane",
     "status.game_update.check_failed": "Nie można było sprawdzić dostępności aktualizacji: {{err}}",
-    "status.game_update.found": "Znaleziono nową wersję {{title}}! Trwa pobieranie...",
+    "status.game_update.found": "Znaleziono nową wersję {{title}}!",
     "status.game_update.not_found": "{{title}} jest w najnowszej wersji.",
     "status.history.click_to_expand": "Kliknij, by rozwinąć historię",
     "status.history.no_active_items": "Żadne przedmioty w historii nie wymagają Twojej uwagi",
