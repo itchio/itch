@@ -304,5 +304,6 @@
     "outlinks.manage_collections": "Zarządzaj kolekcjami",
     "preferences.advanced": "Zaawansowane",
     "search.results.title": "Wyniki wyszukiwania dla '{{query}}'",
-    "sidebar.close_all_tabs": "Zamknij wszystkie karty"
+    "sidebar.close_all_tabs": "Zamknij wszystkie karty",
+    "status.downloads.category.queued": "Kolejka pobierania"
 }
