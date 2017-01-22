@@ -286,7 +286,7 @@
     "grid.item.update": "Aktualizuj",
     "grid.item.download_java": "Pobierz oprogramowanie Java",
     "grid.item.advanced": "Zaawansowane...",
-    "download.started": "Rozpoczęte",
+    "download.started": "Rozpoczęto",
     "download.reason.revert": "powrócić do wcześniejszej wersji",
     "game.install.could_not_launch.detail": "Jego ostatnie słowa to: {{error}}",
     "game.install.could_not_launch.missing_jre": "Wymaga oprogramowania Java, którego nie znaleziono w twoim systemie.",
