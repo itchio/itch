@@ -44,7 +44,7 @@
     "install_location.empty": "Obecnie nic nie jest zainstalowane w tej ścieżce",
     "login.action.login": "Zaloguj się",
     "login.action.register": "Rejestracja",
-    "login.action.reset_password": "Zapomniane hasło",
+    "login.action.reset_password": "Zapomniałem hasła",
     "login.action.show_form": "Zmień użytkownika",
     "login.action.show_saved_logins": "Zapisane loginy",
     "login.field.password": "Hasło",
