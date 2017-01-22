@@ -297,5 +297,6 @@
     "grid.item.donate": "Wspomóż twórcę",
     "grid.item.donate_again": "Wspomóż twórcę ponownie!",
     "grid.item.downloads_paused": "Pobieranie wstrzymane",
-    "menu.file.close_all_tabs": "Zamknij wszystkie karty"
+    "menu.file.close_all_tabs": "Zamknij wszystkie karty",
+    "action.name.play": "Graj"
 }
