@@ -170,7 +170,7 @@
     "download.reason.update": "om naar de laatste versie te updaten",
     "download.reason.reinstall": "om te herinstalleren",
     "download.reason.revert": "om terug te gaan naar een eerdere versie",
-    "download.reason.heal": "om te verzekeren en te herstellen",
+    "download.reason.heal": "om te verifiëren en te herstellen",
     "duration.hours": "{{x}} uur",
     "duration.minute": "een minuut of minder",
     "duration.minutes": "{{x}} minuten",
@@ -216,5 +216,9 @@
     "grid.item.open_debug_log": "Logs bekijken...",
     "grid.item.donate": "Doneer aan de ontwikkelaar",
     "grid.item.donate_again": "Doneer nogmaals aan de maker!",
-    "i18n.failed_downloading_locales": "Updates voor taal {{lang}} konden niet worden gedownload."
+    "i18n.failed_downloading_locales": "Updates voor taal {{lang}} konden niet worden gedownload.",
+    "grid.item.verify_integrity": "Integriteit verifiëren",
+    "grid.item.revert_to_version": "Terugvallen naar versie...",
+    "grid.item.view_details": "Details bekijken...",
+    "login.action.show_saved_logins": "Opgeslagen logins"
 }
