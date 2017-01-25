@@ -223,5 +223,6 @@
     "login.action.show_saved_logins": "Opgeslagen logins",
     "login.remembered_session.last_connected": "Laatst verbonden",
     "login.two_factor.title": "Tweestaps verificatie",
-    "login.two_factor.as_user": "Inloggen als {{username}}"
+    "login.two_factor.as_user": "Inloggen als {{username}}",
+    "login.two_factor.enter_code": "Vul alstublieft de code die u op uw authenticator ziet om verder te gaan met inloggen"
 }
