@@ -222,5 +222,6 @@
     "grid.item.view_details": "Details bekijken...",
     "login.action.show_saved_logins": "Opgeslagen logins",
     "login.remembered_session.last_connected": "Laatst verbonden",
-    "login.two_factor.title": "Tweestaps verificatie"
+    "login.two_factor.title": "Tweestaps verificatie",
+    "login.two_factor.as_user": "Inloggen als {{username}}"
 }
