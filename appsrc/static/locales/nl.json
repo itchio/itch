@@ -220,5 +220,6 @@
     "grid.item.verify_integrity": "Integriteit verifiëren",
     "grid.item.revert_to_version": "Terugvallen naar versie...",
     "grid.item.view_details": "Details bekijken...",
-    "login.action.show_saved_logins": "Opgeslagen logins"
+    "login.action.show_saved_logins": "Opgeslagen logins",
+    "login.remembered_session.last_connected": "Laatst verbonden"
 }
