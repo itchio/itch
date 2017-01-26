@@ -1,37 +1,61 @@
 
 .collections-meat {
-  overflow-y: auto;
-
-  .hub-grid {
-    .collection-hub-item, .hub-filler {
-      width: 280px;
-      margin: 10px 20px;
-    }
-
+  .hub-collections-grid {
     .collection-hub-item {
-      -webkit-filter: brightness(90%);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      filter: brightness(80%);
+      transition: filter 0.1s ease-in-out;
 
       &:hover {
-        -webkit-filter: none;
+        filter: brightness(100%);
         cursor: pointer;
       }
 
       .title {
-        padding: 6px 6px;
+        padding: 12px 6px 6px 8px;
+        flex-shrink: 0;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 0;
       }
 
       .fresco {
         display: flex;
         flex-direction: row;
+        flex-grow: 1;
+        overflow-x: hidden;
+        position: relative;
 
-        .row {
-          display: flex;
-          flex-direction: column;
-          flex: 1;
+        padding: 5px;
 
-          .cover {
-            flex: 1;
-          }
+        .cover {
+          width: 207px;
+          margin-right: 7px;
+          flex-shrink: 0;
+          padding-bottom: 0;
+        }
+      }
+
+      .info {
+        flex-shrink: 0;
+        padding: 6px;
+        color: $secondary-text-color;
+
+        display: flex;
+
+        .icon {
+          margin-right: 7px;
+          flex-shrink: 0;
+        }
+
+        .spacer {
+          flex-grow: 1;
+        }
+
+        .nice-ago {
+          margin-left: 5px;
         }
       }
     }

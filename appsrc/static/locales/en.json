@@ -69,6 +69,7 @@
     "grid.item.uninstall": "Uninstall",
     "grid.item.uninstalling": "Uninstalling…",
     "grid.item.version": "Version {{version}}",
+    "collection_grid.item.updated_at": "Last updated {{time_ago}}",
     "browser.popout": "Open page in external web browser",
     "i18n.failed_downloading_locales": "Translation updates for language {{lang}} could not be downloaded.",
     "install_location.empty": "Nothing is currently installed at this location",

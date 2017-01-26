@@ -10,20 +10,23 @@ import doesEventMeanBackground from "./does-event-mean-background";
 
 import * as actions from "../actions";
 
-import {IState, ICollectionRecord, IGameRecord, IGameRecordSet, IUserMarketState} from "../types";
+import {ILocalizer} from "../localizer";
+
+import Icon from "./icon";
+import NiceAgo from "./nice-ago";
+import interleave from "./interleave";
+
+import {IState, ICollectionRecord, IGameRecordSet, IUserMarketState} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
 
 export class CollectionHubItem extends React.Component<ICollectionHubItemProps, void> {
   render () {
-    const {allGames, collection} = this.props;
+    const {t, allGames, collection} = this.props;
     const {navigateToCollection} = this.props;
     const {title} = collection;
 
-    const gameIds = (collection.gameIds || []).slice(0, 4);
+    const gameIds = (collection.gameIds || []).slice(0, 8);
     const games = filter(map(gameIds, (gameId) => allGames[gameId]), (x) => !!x);
-    while (games.length < 4) {
-      games.push({} as IGameRecord);
-    }
 
     const gameItems = map(games, (game, index) => {
       const style: React.CSSProperties = {};
@@ -34,25 +37,29 @@ export class CollectionHubItem extends React.Component<ICollectionHubItemProps, 
       return <div key={index} className="cover" style={style}></div>;
     });
 
-    const rows: JSX.Element[] = [];
-    let cols: JSX.Element[] = [];
+    const cols: JSX.Element[] = [];
     each(gameItems, (item, i) => {
       cols.push(item);
-
-      if (i % 2 === 1) {
-        const row = <div className="row" key={rows.length}>{cols}</div>;
-        rows.push(row);
-        cols = [];
-      }
     });
+
+    const itemCount = (collection.gameIds || []).length;
 
     return <div className="hub-item collection-hub-item"
         onClick={(e) => navigateToCollection(collection, doesEventMeanBackground(e))}>
       <section className="title">
-        {title} ({(collection.gameIds || []).length})
+        {title}
       </section>
       <section className="fresco">
-        {rows}
+        {cols}
+      </section>
+      <section className="info">
+        <Icon icon="tag"/>
+        <span className="total">{t("sidebar.collection.subtitle", {itemCount})}</span>
+        <span className="spacer"/>
+        <Icon icon="history"/>
+        {interleave(t, "collection_grid.item.updated_at", {
+          time_ago: <NiceAgo date={collection.updatedAt}/>,
+        })}
       </section>
     </div>;
   }
@@ -66,6 +73,8 @@ interface ICollectionHubItemProps {
   allGames: IGameRecordSet;
 
   navigateToCollection: typeof actions.navigateToCollection;
+
+  t: ILocalizer;
 }
 
 const mapStateToProps = createStructuredSelector({
