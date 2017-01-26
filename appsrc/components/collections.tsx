@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import {connect} from "./connect";
-import {createStructuredSelector} from "reselect";
+import {createSelector, createStructuredSelector} from "reselect";
 import Fuse  = require("fuse.js");
 
 import urls from "../constants/urls";
@@ -20,31 +20,10 @@ import {ILocalizer} from "../localizer";
 const recency = (x: ICollectionRecord) => x.updatedAt ? -(new Date(x.updatedAt)) : 0;
 
 export class Collections extends React.Component<ICollectionsProps, void> {
-  fuse: Fuse<ICollectionRecord>;
-
-  constructor () {
-    super();
-    this.fuse = new Fuse([], {
-      keys: [
-        { name: "title", weight: 1.0 },
-      ],
-      threshold: 0.4,
-    });
-  }
-
   render () {
-    const {t, filterQuery = "", collections, navigate} = this.props;
+    const {t, collections, hiddenCount, navigate} = this.props;
 
-    const recentCollections = sortBy(collections, recency);
     const tab = "collections";
-
-    this.fuse.set(recentCollections);
-    const filteredCollections = (
-      filterQuery.length > 0
-      ? this.fuse.search(filterQuery)
-      : recentCollections) as ICollectionRecord[];
-
-    const hiddenCount = filteredCollections.length - recentCollections.length;
 
     const fillerItems: JSX.Element[] = [];
     for (let i = 0; i < 12; i++) {
@@ -58,8 +37,8 @@ export class Collections extends React.Component<ICollectionsProps, void> {
         </span>
       </GameGridFilters>
       <div className="hub-grid">
-        {map(filteredCollections, (collection) =>
-          <CollectionHubItem collection={collection}/>,
+        {map(collections, (collection) =>
+          <CollectionHubItem key={collection.id} collection={collection}/>,
         )}
         {fillerItems}
         {hiddenCount > 0
@@ -74,18 +53,54 @@ export class Collections extends React.Component<ICollectionsProps, void> {
 
 interface ICollectionsProps {
   // derived
-  collections: ICollectionRecordSet;
-  filterQuery: string;
+  collections: ICollectionRecord[];
+  hiddenCount: number;
 
   t: ILocalizer;
 
   navigate: typeof actions.navigate;
 }
 
-const mapStateToProps = createStructuredSelector({
-  collections: (state: IState) => state.market.collections || {},
-  filterQuery: (state: IState) => state.session.navigation.filters.collections,
-});
+const mapStateToProps = () => {
+  const getCollections = (state: IState, props: ICollectionsProps) => state.market.collections || {};
+  const getFilterQuery = (state: IState, props: ICollectionsProps) => state.session.navigation.filters.collections;
+
+  const getSortedCollections = createSelector(
+    getCollections,
+    (collections) => {
+      return sortBy(collections, recency);
+    },
+  );
+
+  const fuse = new Fuse([], {
+    keys: [
+      { name: "title", weight: 1.0 },
+    ],
+    threshold: 0.4,
+  });
+
+  const getFilteredCollections = createSelector(
+    getSortedCollections,
+    getFilterQuery,
+    (sortedCollections, filterQuery) => {
+      if (filterQuery) {
+        fuse.set(sortedCollections);
+        const filteredCollections = fuse.search(filterQuery);
+        return {
+          collections: filteredCollections,
+          hiddenCount: sortedCollections.length - filteredCollections.length,
+        };
+      } else {
+        return {
+          collections: sortedCollections,
+          hiddenCount: 0,
+        };
+      }
+    },
+  );
+
+  return getFilteredCollections;
+};
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
   navigate: dispatcher(dispatch, actions.navigate),
