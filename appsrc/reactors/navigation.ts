@@ -9,7 +9,7 @@ import * as ospath from "path";
 import * as urlParser from "url";
 import * as querystring from "querystring";
 
-import {map, filter, pluck} from "underscore";
+import {map, filter, pluck, sortBy} from "underscore";
 
 import {shell} from "../electron";
 
@@ -29,7 +29,7 @@ const TABS_TABLE_NAME = "itchAppTabs";
 
 import * as actions from "../actions";
 
-import {IStore, IState, ITabData, ITabDataSet, IMarketState, IItchAppTabs} from "../types";
+import {IStore, IState, ITabData, ITabDataSet, IMarketState, IItchAppTabs, ICollectionRecord} from "../types";
 
 interface IFakeMarketData extends IMarketState {}
 
