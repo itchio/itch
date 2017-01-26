@@ -36,8 +36,6 @@ interface ICollectionsProps {
   navigate: typeof actions.navigate;
 }
 
-interface ICollectionsState {}
-
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({

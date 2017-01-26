@@ -11,7 +11,6 @@
 		"object-literal-shorthand": false,
 		"max-classes-per-file": false,
 		"array-type": false,
-		"arrow-parens": false,
-		"no-unused-variable": true
+		"arrow-parens": false
 	}
 }

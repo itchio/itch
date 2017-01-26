@@ -24,7 +24,7 @@ import * as actions from "../../actions";
 
 import {
   IManifest, IManifestPrereq, IGlobalMarket, ICaveRecord, IStore,
-  IRedistInfo, IPrereqsState, ITaskProgressState,
+  IRedistInfo, IPrereqsState,
   IProgressListener, TaskProgressStatus,
 } from "../../types";
 
@@ -33,8 +33,6 @@ import {
 } from "../../constants/action-types";
 
 import {IPrereqsStateParams} from "../../components/modal-widgets/prereqs-state";
-
-const dumpInstallScript = process.env.ITCH_DUMP_INSTALL_SCRIPT === "1";
 
 interface IWindowsPrereqsOpts {
   store: IStore;
@@ -343,41 +341,6 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
       log(opts, `Couldn't wipe: ${e}`, e);
     }
   }
-}
-
-function makeInstallScript (tasks: IPrereqTask[], baseWorkDir: string): string {
-  let lines: string[] = [];
-
-  for (const task of tasks) {
-    const {info} = task;
-    lines.push(`ECHO Installing ${info.fullName}`);
-    let line = "";
-    const workDir = getWorkDir(baseWorkDir, task.prereq);
-    const commandFullPath = ospath.join(workDir, info.command);
-    line += `"${commandFullPath}"`;
-    for (const arg of info.args) {
-      line += ` ${arg}`;
-    }
-    lines.push(line);
-
-    lines.push("IF %ERRORLEVEL% EQU 0 (");
-    lines.push("ECHO success");
-    if (info.exitCodes) {
-      for (const exitCode of info.exitCodes) {
-        lines.push(`) ELSE IF %ERRORLEVEL% EQU ${exitCode.code} (`);
-        lines.push(`ECHO success ${exitCode.code}`);
-        if (!exitCode.success) {
-          lines.push("EXIT 1");
-        }
-      }
-    }
-    lines.push(") ELSE (");
-    lines.push(`ECHO error %ERRORLEVEL%`);
-    lines.push("EXIT 1");
-    lines.push(")");
-  }
-
-  return lines.join("\r\n");
 }
 
 function pendingPrereqs (opts: IWindowsPrereqsOpts, prereqs: IManifestPrereq[]): IManifestPrereq[] {

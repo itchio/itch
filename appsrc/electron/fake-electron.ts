@@ -184,6 +184,7 @@ class FakeSession implements ISession {
   webRequest: IWebRequest;
 
   constructor () {
+    this.webRequest = new FakeWebRequest();
     return;
   }
 

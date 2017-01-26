@@ -6,18 +6,12 @@ import * as querystring from "querystring";
 import os from "../os";
 import version from "./version";
 
-import {Logger} from "../log";
-
 import net, {ChecksumAlgo} from "../../util/net";
 
 const CHECKSUM_ALGOS: ChecksumAlgo[] = [
   "SHA256",
   "SHA1",
 ];
-
-interface INetOpts {
-  logger?: Logger;
-}
 
 /** platform in go format */
 function goos (): string {

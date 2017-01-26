@@ -2,7 +2,7 @@
 import * as React from "react";
 import * as moment from "moment";
 import {connect} from "./connect";
-import {map, where, debounce} from "underscore";
+import {map, debounce} from "underscore";
 import * as classNames from "classnames";
 import {createSelector, createStructuredSelector} from "reselect";
 

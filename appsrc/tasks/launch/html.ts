@@ -15,7 +15,6 @@ import debugBrowserWindow from "../../util/debug-browser-window";
 
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
-const WEBGAME_HOST = "itch-game";
 const WEBGAME_PROTOCOL = "itch-cave";
 
 import mklog from "../../util/log";

@@ -8,7 +8,6 @@ import TaskIcon from "../task-icon";
 
 import format from "../../util/format";
 import downloadProgress from "../../util/download-progress";
-import colors from "../../constants/colors";
 
 import * as actions from "../../actions";
 
@@ -21,14 +20,6 @@ import {ILocalizer} from "../../localizer";
 import Ink = require("react-ink");
 import LoadingCircle from "../loading-circle";
 
-const linearGradient = (progress: number) => {
-  let percent = (progress * 100).toFixed() + "%";
-  let doneColor = "#414141";
-  let undoneColor = "#2B2B2B";
-  return `-webkit-linear-gradient(left, ${doneColor}, ${doneColor} ` +
-    `${percent}, ${undoneColor} ${percent}, ${undoneColor})`;
-};
-
 interface IStatus {
   status: string;
   statusTask?: string;
@@ -38,7 +29,7 @@ interface IStatus {
 class MainAction extends React.Component<IMainActionProps, void> {
   render () {
     const {t, cancellable, platform, platformCompatible, mayDownload,
-      pressDownload, canBeBought, progress, task, action, animate, halloween} = this.props;
+      pressDownload, canBeBought, progress, task, action, animate} = this.props;
 
     let child: React.ReactElement<any> | null = null;
     if (task) {

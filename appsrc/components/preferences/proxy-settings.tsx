@@ -42,10 +42,6 @@ const mapStateToProps = (state: IState) => ({
   proxySource: state.system.proxySource,
 });
 
-interface IProxySettingsState {
-  proxy?: string;
-}
-
 export default connect(
   mapStateToProps,
   mapDispatchToProps,

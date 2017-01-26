@@ -148,7 +148,7 @@ const self = {
   },
 
   extract: async function (opts: IExtractOpts): Promise<void> {
-    const {archivePath, destPath} = opts;
+    const {archivePath} = opts;
 
     const hasButler = await butler.sanityCheck();
 

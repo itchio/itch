@@ -24,7 +24,7 @@ interface IButlerOpts {
 }
 
 function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, token: string) {
-  const {onProgress = noop, emitter} = opts;
+  const {onProgress = noop} = opts;
 
   if (dumpAllOutput) {
     console.log(`butler stdout: ${token}`); // tslint:disable-line:no-console
