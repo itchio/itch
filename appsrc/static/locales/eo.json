@@ -297,5 +297,11 @@
     "collection.empty": "Ne estas ludoj en ĉi tiu kolekto",
     "download.started": "Komencita",
     "download.reason.update": "— ĝisdatigo ĝis la lasta versio",
-    "download.reason.reinstall": "— reinstalado"
+    "download.reason.reinstall": "— reinstalado",
+    "download.reason.revert": "— revenigo al antaŭa versio",
+    "download.reason.heal": "— kontrolo kaj riparo",
+    "game.install.could_not_launch.detail": "Ĝiaj lastaj vortoj estis: {{error}}",
+    "game.install.could_not_launch.missing_jre": "Ĝi bezonas Java, kiu ne estis trovita en via sistemo.",
+    "grid.criterion.filter": "Filtrado…",
+    "grid.criterion.only_compatible": "Nur kongruaj"
 }
