@@ -242,7 +242,7 @@
     "usage_stats.description.tool": "Инструмент",
     "action.name.play": "Пускане сега",
     "download.started": "Започнато",
-    "download.reason.update": "за обновяване до последната версия",
+    "download.reason.update": "— обновяване до последната версия",
     "duration.hour": "час",
     "duration.hours": "{{x}} часа",
     "duration.minute": "по-малко от минута",
