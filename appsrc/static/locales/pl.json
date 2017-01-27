@@ -408,5 +408,6 @@
     "search.results.local": "Lokalne",
     "pick_update_upload.message": "Do którego pliku zaktualizować dla {{title}}?",
     "preferences.install_location.is_default_short": "Domyślnie",
-    "preferences.install_location.make_default_short": "Ustaw na domyślną"
+    "preferences.install_location.make_default_short": "Ustaw na domyślną",
+    "collection_grid.item.updated_at": "Ostatnio zaktualizowano {{time_ago}}"
 }
