@@ -6,6 +6,7 @@ import {createSelector} from "reselect";
 import {IState, IGameRecord, TabLayout} from "../types";
 
 import GameGrid from "./game-grid";
+import GameTable from "./game-table";
 
 class Games extends React.Component<IGamesProps, void> {
   render() {
@@ -13,8 +14,10 @@ class Games extends React.Component<IGamesProps, void> {
 
     if (layout === "grid") {
       return <GameGrid games={games} tab={tab}/>;
+    } else if (layout === "table") {
+      return <GameTable games={games} tab={tab}/>;
     } else {
-      return <div>Stub: layout {layout}</div>;
+      return <div>Unknown layout {layout}</div>;
     }
   }
 

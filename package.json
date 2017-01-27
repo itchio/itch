@@ -40,7 +40,7 @@
     "@types/react-dom": "^0.14.18",
     "@types/react-json-tree": "^0.6.2",
     "@types/react-redux": "^4.4.32",
-    "@types/react-virtualized": "0.0.3",
+    "@types/react-virtualized": "^8.9.2",
     "@types/redux-devtools": "^3.0.34",
     "@types/redux-devtools-dock-monitor": "^1.1.29",
     "@types/redux-devtools-log-monitor": "^1.0.29",
