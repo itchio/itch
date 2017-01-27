@@ -254,7 +254,7 @@
     "grid.criterion.filter": "Филтриране…",
     "grid.criterion.only_compatible": "Само съвместимите",
     "grid.hidden_count": "+ {{count}} неща, скрити от филтъра",
-    "grid.clear_filters": "Изчистване на филтрита",
+    "grid.clear_filters": "Изчистване на филтрите",
     "grid.item.buy_now_again": "Купете още едно копие",
     "grid.item.check_for_update": "Проверка за обновление",
     "grid.item.developer": "Разработчик",
@@ -404,5 +404,7 @@
     "prompt.clear_browsing_data.cookies_info": "Така ще излезете от всички уеб сайтове, в които сте влезли чрез вградения браузър.",
     "prompt.clear_browsing_data.notification": "Данните на браузъра са изчистени!",
     "prereq.status.extracting": "Разопаковане…",
-    "collection_grid.item.updated_at": "Последно обновено {{time_ago}}"
+    "collection_grid.item.updated_at": "Последно обновено {{time_ago}}",
+    "table.column.name": "Име",
+    "table.column.published": "Публикувано"
 }
