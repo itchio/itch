@@ -30,6 +30,24 @@
     .link {
       text-decoration: underline;
     }
+
+    .spacer {
+      flex-grow: 1;
+    }
+
+    .layout-picker {
+      padding: 6px 8px;
+      filter: brightness(60%);
+
+      &:hover {
+        cursor: pointer;
+        filter: brightness(80%);
+      }
+
+      &.active {
+        filter: brightness(100%);
+      }
+    }
   }
 
   section.checkboxes {

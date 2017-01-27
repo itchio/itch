@@ -26,6 +26,7 @@ const initialState = {
     transient: [],
   },
   loadingTabs: {},
+  layouts: {},
   filters: {},
   binaryFilters: {
     onlyCompatible: true,
@@ -73,6 +74,17 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
       filters: {
         ...state.filters,
         [tab]: query,
+      },
+    };
+  });
+
+  on(actions.layoutChanged, (state, action) => {
+    const {tab, layout} = action.payload;
+    return {
+      ...state,
+      layouts: {
+        ...state.layouts,
+        [tab]: layout,
       },
     };
   });

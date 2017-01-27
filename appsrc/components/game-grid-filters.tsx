@@ -8,11 +8,13 @@ import {debounce} from "underscore";
 
 import * as actions from "../actions";
 
-import {IState} from "../types";
+import {IState, TabLayout} from "../types";
 import {ILocalizer} from "../localizer";
 import {IAction, dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
+
+import Icon from "./icon";
 
 @watching
 class GameGridFilters extends React.Component<IGameGridFiltersProps, void> {
@@ -43,7 +45,14 @@ class GameGridFilters extends React.Component<IGameGridFiltersProps, void> {
   }
 
   render () {
-    const {t, filterQuery, onlyCompatible, showBinaryFilters = true} = this.props;
+    const {t, filterQuery, onlyCompatible, showBinaryFilters = true, showLayoutPicker = true} = this.props;
+
+    const layoutPickers: JSX.Element[] = [];
+
+    if (showLayoutPicker) {
+      layoutPickers.push(this.renderLayoutPicker("grid", "grid"));
+      layoutPickers.push(this.renderLayoutPicker("table", "list"));
+    }
 
     return <section className="filters">
       <section className="search">
@@ -65,6 +74,19 @@ class GameGridFilters extends React.Component<IGameGridFiltersProps, void> {
         </section>
         : ""}
       {this.props.children}
+      <section className="spacer"/>
+      {layoutPickers}
+    </section>;
+  }
+
+  renderLayoutPicker (layout: TabLayout, icon: string) {
+    const {tab} = this.props;
+    const active = (this.props.layout === layout);
+
+    return <section className={classNames("layout-picker", {active})} onClick={
+      (e) => this.props.layoutChanged({tab, layout})
+    }>
+      <Icon icon={icon}/>
     </section>;
   }
 
@@ -90,13 +112,16 @@ interface IGameGridFiltersProps {
 
   /** whether or not to show binary filters ('only compatible', etc.) */
   showBinaryFilters: boolean;
+  showLayoutPicker: boolean;
 
   filterQuery: string;
   onlyCompatible: boolean;
+  layout: TabLayout;
 
   t: ILocalizer;
 
   filterChanged: typeof actions.filterChanged;
+  layoutChanged: typeof actions.layoutChanged;
   binaryFilterChanged: typeof actions.binaryFilterChanged;
 }
 
@@ -105,12 +130,14 @@ const mapStateToProps = (initialState: IState, props: IGameGridFiltersProps) => 
 
   return createStructuredSelector({
     filterQuery: (state: IState) => state.session.navigation.filters[tab],
+    layout: (state: IState) => state.session.navigation.layouts[tab] || "grid",
     onlyCompatible: (state: IState) => state.session.navigation.binaryFilters.onlyCompatible,
   });
 };
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
   filterChanged: dispatcher(dispatch, actions.filterChanged),
+  layoutChanged: dispatcher(dispatch, actions.layoutChanged),
   binaryFilterChanged: dispatcher(dispatch, actions.binaryFilterChanged),
 });
 

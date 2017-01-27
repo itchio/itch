@@ -869,10 +869,17 @@ export interface ITabs {
     transient: string[];
 }
 
+export type TabLayout = "grid" | "table";
+
 export interface ISessionNavigationState {
     filters: {
         [tabId: string]: string | undefined;
         collections?: string;
+    };
+
+    layouts: {
+        [tabId: string]: TabLayout | undefined;
+        library?: TabLayout;
     };
 
     binaryFilters: {

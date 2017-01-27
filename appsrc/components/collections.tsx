@@ -19,7 +19,7 @@ export class Collections extends React.Component<ICollectionsProps, void> {
     const tab = "collections";
 
     return <div className="collections-meat">
-      <GameGridFilters tab={tab} showBinaryFilters={false}>
+      <GameGridFilters tab={tab} showBinaryFilters={false} showLayoutPicker={false}>
         <span className="link" onClick={(e) => navigate(`url/${urls.myCollections}`)}>
           {t("outlinks.manage_collections")}
         </span>
