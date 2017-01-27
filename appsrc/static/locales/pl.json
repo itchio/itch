@@ -408,5 +408,9 @@
     "search.results.local": "Lokalne",
     "pick_update_upload.message": "Do którego pliku zaktualizować dla {{title}}?",
     "preferences.install_location.is_default_short": "Domyślnie",
-    "preferences.install_location.make_default_short": "Ustaw na domyślną"
+    "preferences.install_location.make_default_short": "Ustaw na domyślną",
+    "collection_grid.item.updated_at": "Ostatnio zaktualizowano {{time_ago}}",
+    "preferences.behavior.open_at_login.causes.no_desktop_file": "Nie znaleziono pliku «.desktop». Jest to normalne jeśli nie instalowałeś aplikacji z pakietu systemowego. Odwiedź {{linux_install_page}} aby dowiedzieć się więcej.",
+    "prompt.install_error.find_upload": "Podczas szukania pliku do pobrania: {{message}}",
+    "setup.window.title": "Konfiguracja {{app_name}}"
 }
