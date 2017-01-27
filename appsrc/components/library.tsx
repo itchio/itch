@@ -20,7 +20,7 @@ function recency (cave: ICaveRecord): number {
 
 export class Library extends React.Component<ILibraryProps, void> {
   render () {
-    const {caves, recordGames, downloadKeys, layout} = this.props;
+    const {caves, recordGames, downloadKeys} = this.props;
 
     // associate caves with games
     let caveGames = map(caves, (c) => ({c, g: recordGames[c.gameId] || c.game}));
@@ -50,7 +50,7 @@ export class Library extends React.Component<ILibraryProps, void> {
     return <div className="library-meat">
       <GameGridFilters tab={tab}/>
       {installedGames.length > 0 || ownedGames.length > 0
-        ? <Games layout={layout} games={installedGames.concat(ownedGames)} tab={tab}/>
+        ? <Games games={installedGames.concat(ownedGames)} tab={tab}/>
         : ""
       }
     </div>;
@@ -77,7 +77,6 @@ const mapStateToProps = createStructuredSelector({
   caves: (state: IState) => state.globalMarket.caves || {},
   recordGames: (state: IState) => state.market.games || {},
   downloadKeys: (state: IState) => state.market.downloadKeys || {},
-  layout: (state: IState) => state.session.navigation.layouts.library || "grid",
 });
 
 const mapDispatchToProps = () => ({});

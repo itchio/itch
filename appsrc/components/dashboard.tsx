@@ -7,7 +7,7 @@ import * as classNames from "classnames";
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
-import GameGrid from "./game-grid";
+import Games from "./games";
 import GameGridFilters from "./game-grid-filters";
 import {map} from "underscore";
 
@@ -38,7 +38,7 @@ export class Dashboard extends React.Component<IDashboardProps, void> {
           {t("outlinks.open_dashboard")}
         </span>
       </GameGridFilters>
-      <GameGrid tab={tab} games={games}/>
+      <Games tab={tab} games={games}/>
     </div>;
   }
 }

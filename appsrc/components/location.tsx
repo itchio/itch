@@ -7,7 +7,7 @@ import * as ospath from "path";
 
 import * as actions from "../actions";
 
-import GameGrid from "./game-grid";
+import Games from "./games";
 import GameGridFilters from "./game-grid-filters";
 import {map, filter} from "underscore";
 
@@ -44,7 +44,7 @@ export class Location extends React.Component<ILocationProps, void> {
       </GameGridFilters>
 
       {locationGames.length > 0
-        ? <GameGrid games={locationGames} tab={tab}/>
+        ? <Games games={locationGames} tab={tab}/>
         : <p className="empty">{t("install_location.empty")}</p>
       }
     </div>;

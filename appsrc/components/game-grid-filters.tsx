@@ -45,7 +45,14 @@ class GameGridFilters extends React.Component<IGameGridFiltersProps, void> {
   }
 
   render () {
-    const {t, filterQuery, onlyCompatible, showBinaryFilters = true} = this.props;
+    const {t, filterQuery, onlyCompatible, showBinaryFilters = true, showLayoutPicker = true} = this.props;
+
+    const layoutPickers: JSX.Element[] = [];
+
+    if (showLayoutPicker) {
+      layoutPickers.push(this.renderLayoutPicker("grid", "grid"));
+      layoutPickers.push(this.renderLayoutPicker("table", "list"));
+    }
 
     return <section className="filters">
       <section className="search">
@@ -68,8 +75,7 @@ class GameGridFilters extends React.Component<IGameGridFiltersProps, void> {
         : ""}
       {this.props.children}
       <section className="spacer"/>
-      {this.renderLayoutPicker("grid", "grid")}
-      {this.renderLayoutPicker("table", "list")}
+      {layoutPickers}
     </section>;
   }
 
@@ -106,6 +112,7 @@ interface IGameGridFiltersProps {
 
   /** whether or not to show binary filters ('only compatible', etc.) */
   showBinaryFilters: boolean;
+  showLayoutPicker: boolean;
 
   filterQuery: string;
   onlyCompatible: boolean;

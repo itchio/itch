@@ -1,13 +1,15 @@
 
 import * as React from "react";
+import {connect} from "./connect";
+import {createSelector} from "reselect";
 
-import {IGameRecord, TabLayout} from "../types";
+import {IState, IGameRecord, TabLayout} from "../types";
 
 import GameGrid from "./game-grid";
 
 class Games extends React.Component<IGamesProps, void> {
   render() {
-    const {layout, games, tab} = this.props;
+    const {games, tab, layout} = this.props;
 
     if (layout === "grid") {
       return <GameGrid games={games} tab={tab}/>;
@@ -24,4 +26,16 @@ interface IGamesProps {
   tab: string;
 }
 
-export default Games;
+const mapStateToProps = () => {
+  return createSelector(
+    (state: IState, props: IGamesProps) => state.session.navigation.layouts[props.tab],
+    (layout) => ({layout: layout || "grid"}),
+  );
+};
+
+const mapDispatchToProps = () => ({});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Games);

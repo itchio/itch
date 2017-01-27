@@ -7,7 +7,7 @@ import * as actions from "../actions";
 import urls from "../constants/urls";
 
 import Icon from "./icon";
-import GameGrid from "./game-grid";
+import Games from "./games";
 import GameGridFilters from "./game-grid-filters";
 
 import {map, filter} from "underscore";
@@ -43,7 +43,7 @@ export class Collection extends React.Component<ICollectionProps, void> {
       </GameGridFilters>
 
       {games.length > 0
-        ? <GameGrid games={games} tab={tab}/>
+        ? <Games games={games} tab={tab}/>
         : <p className="empty">{t("collection.empty")}</p>
       }
     </div>;
