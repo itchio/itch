@@ -303,5 +303,13 @@
     "game.install.could_not_launch.detail": "Ĝiaj lastaj vortoj estis: {{error}}",
     "game.install.could_not_launch.missing_jre": "Ĝi bezonas Java, kiu ne estis trovita en via sistemo.",
     "grid.criterion.filter": "Filtrado…",
-    "grid.criterion.only_compatible": "Nur kongruaj"
+    "grid.criterion.only_compatible": "Nur kongruaj",
+    "grid.hidden_count": "+ {{count}} aĵoj, kaŝitaj de filtriloj",
+    "grid.clear_filters": "Forviŝi la filtrilojn",
+    "grid.item.prioritize_download": "Movi al la komenco",
+    "grid.item.advanced": "Pli detale…",
+    "grid.item.download_java": "Elŝuti Java",
+    "grid.item.review": "Recenzi",
+    "grid.item.update": "Ĝisdatigi",
+    "grid.item.verify_integrity": "Kontroli la integrecon"
 }
