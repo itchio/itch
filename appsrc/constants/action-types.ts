@@ -880,6 +880,14 @@ export interface IFilterChangedPayload {
   query: string;
 };
 
+export const LAYOUT_CHANGED = "LAYOUT_CHANGED";
+export interface ILayoutChangedPayload {
+  /** which tab's layout is being changed */
+  tab: string;
+  /** the new layout */
+  layout: Types.TabLayout;
+};
+
 export const BINARY_FILTER_CHANGED = "BINARY_FILTER_CHANGED";
 export interface IBinaryFilterChangedPayload {
   /** name of the binary filter */

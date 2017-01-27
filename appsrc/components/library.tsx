@@ -3,11 +3,11 @@ import * as React from "react";
 import {connect} from "./connect";
 import {createStructuredSelector} from "reselect";
 
-import GameGrid from "./game-grid";
+import Games from "./games";
 import GameGridFilters from "./game-grid-filters";
 import {map, filter, indexBy, sortBy} from "underscore";
 
-import {IState, ICaveRecord, IGameRecord, IDownloadKey} from "../types";
+import {IState, ICaveRecord, IGameRecord, IDownloadKey, TabLayout} from "../types";
 
 function recency (cave: ICaveRecord): number {
   const timestamp = cave.lastTouched || cave.installedAt;
@@ -20,7 +20,7 @@ function recency (cave: ICaveRecord): number {
 
 export class Library extends React.Component<ILibraryProps, void> {
   render () {
-    const {caves, recordGames, downloadKeys} = this.props;
+    const {caves, recordGames, downloadKeys, layout} = this.props;
 
     // associate caves with games
     let caveGames = map(caves, (c) => ({c, g: recordGames[c.gameId] || c.game}));
@@ -46,10 +46,11 @@ export class Library extends React.Component<ILibraryProps, void> {
       (key) => recordGames[key.gameId]);
 
     const tab = "library";
+
     return <div className="library-meat">
       <GameGridFilters tab={tab}/>
       {installedGames.length > 0 || ownedGames.length > 0
-        ? <GameGrid games={installedGames.concat(ownedGames)} tab={tab}/>
+        ? <Games layout={layout} games={installedGames.concat(ownedGames)} tab={tab}/>
         : ""
       }
     </div>;
@@ -68,12 +69,15 @@ interface ILibraryProps {
   downloadKeys: {
     [id: string]: IDownloadKey;
   };
+
+  layout: TabLayout;
 }
 
 const mapStateToProps = createStructuredSelector({
   caves: (state: IState) => state.globalMarket.caves || {},
   recordGames: (state: IState) => state.market.games || {},
   downloadKeys: (state: IState) => state.market.downloadKeys || {},
+  layout: (state: IState) => state.session.navigation.layouts.library || "grid",
 });
 
 const mapDispatchToProps = () => ({});

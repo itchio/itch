@@ -13,6 +13,7 @@ import {
   CLOSE_SEARCH, ICloseSearchPayload,
 
   FILTER_CHANGED, IFilterChangedPayload,
+  LAYOUT_CHANGED, ILayoutChangedPayload,
   BINARY_FILTER_CHANGED, IBinaryFilterChangedPayload,
 
   SEARCH_HIGHLIGHT_OFFSET, ISearchHighlightOffsetPayload,
@@ -33,6 +34,7 @@ export const searchFinished = createAction<ISearchFinishedPayload>(SEARCH_FINISH
 export const closeSearch = createAction<ICloseSearchPayload>(CLOSE_SEARCH);
 
 export const filterChanged = createAction<IFilterChangedPayload>(FILTER_CHANGED);
+export const layoutChanged = createAction<ILayoutChangedPayload>(LAYOUT_CHANGED);
 export const binaryFilterChanged = createAction<IBinaryFilterChangedPayload>(BINARY_FILTER_CHANGED);
 
 export const searchHighlightOffset = createAction<ISearchHighlightOffsetPayload>(SEARCH_HIGHLIGHT_OFFSET);
