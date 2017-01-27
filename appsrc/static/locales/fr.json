@@ -410,5 +410,14 @@
     "prompt.revert.message": "Revenir du build {{buildId}} au build :",
     "prompt.revert.action.revert": "Revenir",
     "status.reverting": "Retour vers {{buildId}} en cours...",
-    "status.healing": "Réparation en cours..."
+    "status.healing": "Réparation en cours...",
+    "collection_grid.item.updated_at": "Mis à jour {{time_ago}}",
+    "preferences.advanced.clear_browsing_data": "Effacer les données de navigation",
+    "prompt.clear_browsing_data.clear": "Effacer",
+    "prompt.clear_browsing_data.category.cache": "Images et fichiers en cache",
+    "prompt.clear_browsing_data.retrieving_cache_size": "Calcul de la taille du cache...",
+    "prompt.clear_browsing_data.cache_size_used": "Le cache utilise actuellement {{size}}",
+    "prompt.clear_browsing_data.category.cookies": "Cookies",
+    "prompt.clear_browsing_data.cookies_info": "Vous serez déconnecté des sites auxquels vous vous êtes connecté depuis l'application itch.",
+    "prompt.clear_browsing_data.notification": "Données effacées !"
 }
