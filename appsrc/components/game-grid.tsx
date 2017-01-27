@@ -17,8 +17,8 @@ import {IState, IGameRecord, IFilteredGameRecord} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
-import Dimensions = require("react-dimensions");
-import {Grid} from "react-virtualized";
+import {AutoSizer, Grid} from "react-virtualized";
+import {IAutoSizerParams} from "./autosizer-types";
 
 interface ICellInfo {
   columnIndex: number;
@@ -85,39 +85,35 @@ class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
 
     hiddenCount = uniqueGames.length - filteredGames.length;
 
-    const columnCount = Math.floor(this.props.containerWidth / 280);
-    const rowCount = Math.ceil(filteredGames.length / columnCount);
-    const columnWidth = ((this.props.containerWidth - 10) / columnCount);
-    const rowHeight = columnWidth * 1.12;
-
-    let gridHeight = this.props.containerHeight;
-
-    let scrollTop = this.state.scrollTop;
-    if (this.props.containerHeight === 0) {
-      scrollTop = 0;
-    }
-
     return <div className="hub-game-grid">
-      <Grid
-        ref="grid"
-        cellRenderer={this.cellRenderer.bind(this, {filteredGames, columnCount})}
-        width={this.props.containerWidth}
-        height={gridHeight}
-        columnWidth={columnWidth}
-        columnCount={columnCount}
-        rowCount={rowCount}
-        rowHeight={rowHeight}
-        overscanRowCount={2}
-        onScroll={(e: any) => {
-          if (e.clientHeight === 0) {
-            // when tab is hidden, its size is set to 0 and that resets scrollTop - ignore
-            return;
-          }
-          this.setState({scrollTop: e.scrollTop});
-        }}
-        scrollTop={scrollTop}
-        scrollPositionChangeReason="requested"
-      />
+      <AutoSizer>
+      {({width, height}: IAutoSizerParams) => {
+        const columnCount = Math.floor(width / 280);
+        const rowCount = Math.ceil(filteredGames.length / columnCount);
+        const columnWidth = ((width - 10) / columnCount);
+        const rowHeight = columnWidth * 1.12;
+        const scrollTop = height === 0 ? 0 : this.state.scrollTop;
+
+        return <Grid
+          ref="grid"
+          cellRenderer={this.cellRenderer.bind(this, {filteredGames, columnCount})}
+          width={width}
+          height={height}
+          columnWidth={columnWidth}
+          columnCount={columnCount}
+          rowCount={rowCount}
+          rowHeight={rowHeight}
+          overscanRowCount={2}
+          onScroll={(e: any) => {
+            // ignore data when tab's hidden
+            if (e.clientHeight === 0) { return; }
+            this.setState({ scrollTop: e.scrollTop });
+          }}
+          scrollTop={scrollTop}
+          scrollPositionChangeReason="requested"
+        />;
+      }}
+      </AutoSizer>
       {hiddenCount > 0
       ? <div className="hidden-count">
         {t("grid.hidden_count", {count: hiddenCount})}
@@ -161,14 +157,11 @@ interface IGameGridProps {
 
   t: ILocalizer;
 
-  containerWidth: number;
-  containerHeight: number;
-
   clearFilters: typeof actions.clearFilters;
 }
 
 interface IGameGridState {
-  scrollTop: number;
+  scrollTop: 0;
 }
 
 const mapStateToProps = (initialState: IState, props: IGameGridProps) => {
@@ -187,4 +180,4 @@ const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Dimensions({elementResize: true})(GameGrid));
+)(GameGrid);

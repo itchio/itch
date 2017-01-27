@@ -11,14 +11,10 @@ import {IAction, dispatcher} from "../constants/action-types";
 import * as actions from "../actions";
 
 import {AutoSizer, Table, Column} from "react-virtualized";
+import {IAutoSizerParams} from "./autosizer-types";
 
 interface IRowGetterParams {
   index: number;
-}
-
-interface IAutoSizerProps {
-  width: number;
-  height: number;
 }
 
 class GameTable extends React.Component<IGameTableProps, void> {
@@ -36,7 +32,7 @@ class GameTable extends React.Component<IGameTableProps, void> {
     const {t, games} = this.props;
 
     return <AutoSizer>
-      {({width, height}: IAutoSizerProps) => (
+      {({width, height}: IAutoSizerParams) => (
         <Table
             headerHeight={40}
             height={height}
