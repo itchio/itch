@@ -11,8 +11,8 @@ import CollectionHubItem from "./collection-hub-item";
 import {IState, ICollectionRecord} from "../types";
 import {ILocalizer} from "../localizer";
 
-import Dimensions = require("react-dimensions");
-import {Grid} from "react-virtualized";
+import {AutoSizer, Grid} from "react-virtualized";
+import {IAutoSizerParams} from "./autosizer-types";
 
 const recency = (x: ICollectionRecord) => x.updatedAt ? -(new Date(x.updatedAt)) : 0;
 
@@ -40,39 +40,35 @@ export class CollectionsGrid extends React.Component<ICollectionsGridProps, ICol
   render () {
     const {t, collections, hiddenCount} = this.props;
 
-    const columnCount = 1;
-    const rowCount = Math.ceil(collections.length / columnCount);
-    const columnWidth = ((this.props.containerWidth - 10) / columnCount);
-    const rowHeight = 260;
-
-    let gridHeight = this.props.containerHeight;
-
-    let scrollTop = this.state.scrollTop;
-    if (this.props.containerHeight === 0) {
-      scrollTop = 0;
-    }
-
     return <div className="hub-collections-grid">
-        <Grid
-          ref="grid"
-          cellRenderer={this.cellRenderer.bind(this, {collections, columnCount})}
-          width={this.props.containerWidth}
-          height={gridHeight}
-          columnWidth={columnWidth}
-          columnCount={columnCount}
-          rowCount={rowCount}
-          rowHeight={rowHeight}
-          overscanRowCount={2}
-          onScroll={(e: any) => {
-            if (e.clientHeight === 0) {
-              // when tab is hidden, its size is set to 0 and that resets scrollTop - ignore
-              return;
-            }
-            this.setState({scrollTop: e.scrollTop});
-          }}
-          scrollTop={scrollTop}
-          scrollPositionChangeReason="requested"
-        />
+        <AutoSizer>
+        {({width, height}: IAutoSizerParams) => {
+          const columnCount = 1;
+          const rowCount = Math.ceil(collections.length / columnCount);
+          const columnWidth = ((width - 10) / columnCount);
+          const rowHeight = 260;
+          const scrollTop = height === 0 ? 0 : this.state.scrollTop;
+
+          return <Grid
+            ref="grid"
+            cellRenderer={this.cellRenderer.bind(this, {collections, columnCount})}
+            width={width}
+            height={height}
+            columnWidth={columnWidth}
+            columnCount={columnCount}
+            rowCount={rowCount}
+            rowHeight={rowHeight}
+            overscanRowCount={2}
+            onScroll={(e: any) => {
+              // ignore when tab's hidden
+              if (e.clientHeight === 0) { return; }
+              this.setState({scrollTop: e.scrollTop});
+            }}
+            scrollTop={scrollTop}
+            scrollPositionChangeReason="requested"
+          />;
+        }}
+        </AutoSizer>
         {hiddenCount > 0
         ? <div className="hidden-count">
           {t("grid.hidden_count", {count: hiddenCount})}
@@ -107,9 +103,6 @@ interface ICollectionsGridProps {
   hiddenCount: number;
 
   t: ILocalizer;
-
-  containerWidth: number;
-  containerHeight: number;
 }
 
 interface ICollectionsGridState {
@@ -162,4 +155,4 @@ const mapDispatchToProps = () => ({});
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Dimensions()(CollectionsGrid));
+)(CollectionsGrid);
