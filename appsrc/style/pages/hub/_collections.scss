@@ -1,6 +1,8 @@
 
 .collections-meat {
   .hub-collections-grid {
+    flex-grow: 1;
+
     .collection-hub-item {
       height: 100%;
       display: flex;
