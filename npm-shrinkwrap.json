@@ -93,9 +93,9 @@
       "resolved": "https://registry.npmjs.org/@types/react-redux/-/react-redux-4.4.35.tgz"
     },
     "@types/react-virtualized": {
-      "version": "0.0.3",
-      "from": "@types/react-virtualized@0.0.3",
-      "resolved": "https://registry.npmjs.org/@types/react-virtualized/-/react-virtualized-0.0.3.tgz"
+      "version": "8.9.2",
+      "from": "@types/react-virtualized@latest",
+      "resolved": "https://registry.npmjs.org/@types/react-virtualized/-/react-virtualized-8.9.2.tgz"
     },
     "@types/redux-devtools": {
       "version": "3.0.36",
