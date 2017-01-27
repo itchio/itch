@@ -83,6 +83,9 @@ export interface IGameRecord {
 
     /** if true, this game accepts money (donations or purchases) */
     canBeBought?: boolean;
+
+    /** date the game was published, or empty/null if not published */
+    publishedAt?: string;
 }
 
 /**

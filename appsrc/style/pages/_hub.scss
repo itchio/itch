@@ -64,6 +64,50 @@
   }
 }
 
+.hub-game-table {
+  flex-grow: 1;
+
+  .cover {
+    width: 47px;
+    height: 36px;
+    vertical-align: middle;
+    margin-right: 7px;
+    background-size: cover;
+    background-position: 50% 50%;
+    border-radius: 1px;
+    background-color: $sidebar-background-color;
+  }
+
+  .ReactVirtualized__Table__headerRow {
+    background: $bread-background-color;
+    text-transform: initial;
+  }
+
+  .ReactVirtualized__Table__row {
+    border-bottom: 1px solid $filter-background-color;
+
+    &:hover {
+      background-color: $filter-background-color;
+    }
+  }
+
+  .title-column {
+    line-height: 1.4;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    .title, .description {
+      @include single-line;
+    }
+
+    .description {
+      color: $secondary-text-color;
+    }
+  }
+}
+
 .hub-grid {
   display: flex;
   flex-direction: row;
