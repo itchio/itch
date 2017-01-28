@@ -6,7 +6,7 @@ import {connect} from "./connect";
 
 import {ILocalizer} from "../localizer";
 
-import {IState, IGameRecord} from "../types";
+import {IState, IFilteredGameRecord} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
 import * as actions from "../actions";
 
@@ -14,13 +14,14 @@ import {AutoSizer, Table, Column} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";
 
 import NiceAgo from "./nice-ago";
+import HiddenIndicator from "./hidden-indicator";
 
 interface IRowGetterParams {
   index: number;
 }
 
 interface ICellRendererParams {
-  cellData: IGameRecord;
+  cellData: IFilteredGameRecord;
   columnData: any;
   dataKey: string;
   isScrolling: boolean;
@@ -55,22 +56,25 @@ class GameTable extends React.Component<IGameTableProps, void> {
 
   coverRenderer (params: ICellRendererParams): JSX.Element | string {
     const {cellData} = params;
-    return <div className="cover" style={{backgroundImage: `url("${cellData.stillCoverUrl || cellData.coverUrl}")`}}/>;
+    const {game} = cellData;
+    return <div className="cover" style={{backgroundImage: `url("${game.stillCoverUrl || game.coverUrl}")`}}/>;
   }
 
   titleRenderer (params: ICellRendererParams): JSX.Element | string {
     const {cellData} = params;
+    const {game} = cellData;
     return <div className="title-column" onClick={(e) => {
-        this.props.navigateToGame(cellData);
+        this.props.navigateToGame(game);
       }}>
-      <div className="title">{cellData.title}</div>
-      <div className="description">{cellData.shortText}</div>
+      <div className="title">{game.title}</div>
+      <div className="description">{game.shortText}</div>
     </div>;
   }
 
   publishedAtRenderer (params: ICellRendererParams): JSX.Element | string {
     const {cellData} = params;
-    const {publishedAt} = cellData;
+    const {game} = cellData;
+    const {publishedAt} = game;
     if (publishedAt) {
       return <NiceAgo date={publishedAt}/>;
     } else {
@@ -79,53 +83,55 @@ class GameTable extends React.Component<IGameTableProps, void> {
   }
 
   render () {
-    const {t, games} = this.props;
+    const {t, tab, games, hiddenCount} = this.props;
 
-    return <div className="hub-game-table">
-      <AutoSizer>
-      {({width, height}: IAutoSizerParams) => {
-        let remainingWidth = width;
-        let coverWidth = 50;
-        remainingWidth -= coverWidth;
+    return <div className="hub-games hub-game-table">
+        <AutoSizer>
+        {({width, height}: IAutoSizerParams) => {
+          let remainingWidth = width;
+          let coverWidth = 74;
+          remainingWidth -= coverWidth;
 
-        let publishedWidth = 150;
-        remainingWidth -= publishedWidth;
+          let publishedWidth = 150;
+          remainingWidth -= publishedWidth;
 
-        return <Table
-            headerHeight={30}
-            height={height}
-            width={width}
-            rowCount={games.length}
-            rowHeight={55}
-            rowGetter={this.rowGetter}
-          >
-          <Column
-            dataKey="cover"
-             width={coverWidth}
-             cellDataGetter={this.genericDataGetter}
-             cellRenderer={this.coverRenderer}/>
-          <Column
-            dataKey="title"
-             label={t("table.column.name")}
-             width={remainingWidth}
-             cellDataGetter={this.genericDataGetter}
-             cellRenderer={this.titleRenderer}/>
-           <Column
-             dataKey="publishedAt"
-             label={t("table.column.published")}
-             width={publishedWidth}
-             cellDataGetter={this.genericDataGetter}
-             cellRenderer={this.publishedAtRenderer}/>
-        </Table>;
-      }}
-    </AutoSizer>
+          return <Table
+              headerHeight={30}
+              height={height}
+              width={width}
+              rowCount={games.length}
+              rowHeight={72}
+              rowGetter={this.rowGetter}
+            >
+            <Column
+              dataKey="cover"
+              width={coverWidth}
+              cellDataGetter={this.genericDataGetter}
+              cellRenderer={this.coverRenderer}/>
+            <Column
+              dataKey="title"
+              label={t("table.column.name")}
+              width={remainingWidth}
+              cellDataGetter={this.genericDataGetter}
+              cellRenderer={this.titleRenderer}/>
+            <Column
+              dataKey="publishedAt"
+              label={t("table.column.published")}
+              width={publishedWidth}
+              cellDataGetter={this.genericDataGetter}
+              cellRenderer={this.publishedAtRenderer}/>
+          </Table>;
+        }}
+      </AutoSizer>
+      <HiddenIndicator tab={tab} count={hiddenCount}/>
     </div>;
   }
 }
 
 interface IGameTableProps {
   // specified
-  games: IGameRecord[];
+  games: IFilteredGameRecord[];
+  hiddenCount: number;
   tab: string;
 
   filterQuery: string;
