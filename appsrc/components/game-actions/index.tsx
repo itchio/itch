@@ -82,7 +82,7 @@ const makeMapStateToProps = () => {
   const selector = createSelector(
     createStructuredSelector({
       game: (state: IState, props: IGameActionsProps) => props.game,
-      cave: (state: IState, props: IGameActionsProps) => state.globalMarket.cavesByGameId[props.game.id],
+      cave: (state: IState, props: IGameActionsProps) => props.cave || state.globalMarket.cavesByGameId[props.game.id],
       downloadKeys: (state: IState, props: IGameActionsProps) => state.market.downloadKeys,
       task: (state: IState, props: IGameActionsProps) => first(state.tasks.tasksByGameId[props.game.id]),
       download: (state: IState, props: IGameActionsProps) => state.downloads.downloadsByGameId[props.game.id],

@@ -64,7 +64,7 @@ class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
           columnCount={columnCount}
           rowCount={rowCount}
           rowHeight={rowHeight}
-          overscanRowCount={2}
+          overscanRowCount={10}
           onScroll={(e: any) => {
             // ignore data when tab's hidden
             if (e.clientHeight === 0) { return; }
@@ -92,7 +92,11 @@ class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
     return <div key={cell.key} style={cell.style}>
       {
         record
-        ? <HubItem key={`game-${record.game.id}`} game={record.game} searchScore={record.searchScore}/>
+        ? <HubItem
+            key={`game-${record.game.id}`}
+            game={record.game}
+            cave={record.cave}
+            searchScore={record.searchScore}/>
         : null
       }
     </div>;

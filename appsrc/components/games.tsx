@@ -45,6 +45,8 @@ const mapStateToProps = () => {
     state.session.navigation.filters[props.tab] || "";
   const getGames = (state: IState, props: IGamesProps) =>
     props.games;
+  const getCavesByGameId = (state: IState, props: IGamesProps) =>
+    state.globalMarket.cavesByGameId;
   const getOnlyCompatible = (state: IState, props: IGamesProps) =>
     state.session.navigation.binaryFilters.onlyCompatible;
 
@@ -59,20 +61,23 @@ const mapStateToProps = () => {
 
   const getFilteredGames = createSelector(
     getGames,
+    getCavesByGameId,
     getFilterQuery,
     getOnlyCompatible,
-    (games, filterQuery, onlyCompatible) => {
+    (games, cavesByGameId, filterQuery, onlyCompatible) => {
       let filteredGames: IFilteredGameRecord[];
       if (filterQuery.length > 0) {
         fuse.set(games);
         const results = fuse.search(filterQuery);
         filteredGames = map(results, (result): IFilteredGameRecord => ({
           game: result.item,
+          cave: cavesByGameId[result.item.id],
           searchScore: result.score,
         }));
       } else {
-        filteredGames = map(games, (game): IFilteredGameRecord => ({
+        filteredGames = map<IGameRecord, IFilteredGameRecord>(games, (game) => ({
           game,
+          cave: cavesByGameId[game.id],
         }));
       }
 

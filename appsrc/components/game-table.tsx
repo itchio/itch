@@ -6,7 +6,7 @@ import {connect} from "./connect";
 
 import {ILocalizer} from "../localizer";
 
-import {IState, IFilteredGameRecord, ICaveRecord} from "../types";
+import {IState, IFilteredGameRecord} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
 import * as actions from "../actions";
 
@@ -90,8 +90,7 @@ class GameTable extends React.Component<IGameTableProps, void> {
 
   playtimeRenderer (params: ICellRendererParams): JSX.Element | string {
     const {cellData} = params;
-    const {game} = cellData;
-    const cave = this.props.cavesByGameId[game.id];
+    const {game, cave} = cellData;
 
     if (cave) {
       return <TotalPlaytime game={game} cave={cave} short={true}/>;
@@ -102,8 +101,7 @@ class GameTable extends React.Component<IGameTableProps, void> {
 
   lastPlayedRenderer (params: ICellRendererParams): JSX.Element | string {
     const {cellData} = params;
-    const {game} = cellData;
-    const cave = this.props.cavesByGameId[game.id];
+    const {game, cave} = cellData;
 
     if (cave) {
       return <LastPlayed game={game} cave={cave} short={true}/>;
@@ -184,7 +182,6 @@ interface IGameTableProps {
 
   filterQuery: string;
   onlyCompatible: boolean;
-  cavesByGameId: { [gameId: string]: ICaveRecord };
 
   t: ILocalizer;
 
@@ -198,7 +195,6 @@ const mapStateToProps = (initialState: IState, props: IGameTableProps) => {
   return createStructuredSelector({
     filterQuery: (state: IState) => state.session.navigation.filters[tab],
     onlyCompatible: (state: IState) => state.session.navigation.binaryFilters.onlyCompatible,
-    cavesByGameId: (state: IState) => state.globalMarket.cavesByGameId,
   });
 };
 

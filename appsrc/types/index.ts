@@ -108,6 +108,7 @@ export interface IOwnGameRecord extends IGameRecord {
  */
 export interface IFilteredGameRecord {
     game: IGameRecord;
+    cave?: ICaveRecord;
     searchScore?: number;
 }
 
