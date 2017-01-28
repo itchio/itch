@@ -86,7 +86,7 @@ $table-cover-width: $table-cover-height * $table-cover-ratio;
 
   .ReactVirtualized__Table__row,
   .ReactVirtualized__Table__headerRow {
-    border-left: 2px solid $filter-background-color;
+    border-left: 2px solid transparent;
   }
 
   .ReactVirtualized__Table__row {
