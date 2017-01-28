@@ -27,7 +27,16 @@ class Games extends React.Component<IGamesProps, IGamesState> {
   }
 
   onSortChange(params: ISortParams) {
-    const {sortBy, sortDirection} = params;
+    let {sortBy, sortDirection} = params;
+
+    if (sortBy !== this.state.sortBy) {
+      // sorting by different column
+      if (sortBy === "secondsRun" || sortBy === "lastTouchedAt") {
+        // default to desc for these, which makes the most sense
+        sortDirection = "DESC";
+      }
+    }
+
     this.setState({sortBy, sortDirection});
   }
 

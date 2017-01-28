@@ -79,15 +79,44 @@ $table-cover-width: $table-cover-height * $table-cover-ratio;
   }
 
   .ReactVirtualized__Table__headerRow {
-    background: $bread-background-color;
     text-transform: initial;
+    font-weight: normal;
+    font-size: 90%;
+  }
+
+  .ReactVirtualized__Table__row,
+  .ReactVirtualized__Table__headerRow {
+    border-left: 2px solid $filter-background-color;
   }
 
   .ReactVirtualized__Table__row {
+    background-color: $meat-background-color;
+
+    transition: 0.2s border-color, background-color;
+
     &:hover {
-      background-color: $filter-background-color;
+      background-color: darken($meat-background-color, 5%);
+      border-color: $accent-color;
       cursor: pointer;
     }
+  }
+
+  .ReactVirtualized__Table__sortableHeaderColumn {
+    height: 100%;
+    padding: 12px 0;
+
+    outline: 0;
+  }
+
+  .ReactVirtualized__Table__rowColumn {
+    &.secondary {
+      font-size: 95%;
+      color: $secondary-text-color;
+    }
+  }
+
+  .ReactVirtualized__Table__sortableHeaderIcon {
+    transform: translateX(50%) scale(2, 2);
   }
 
   .title-column {

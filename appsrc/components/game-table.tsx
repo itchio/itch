@@ -150,7 +150,7 @@ class GameTable extends React.Component<IGameTableProps, IGameTableState> {
           const {sortedGames, sortBy, sortDirection} = this.props;
 
           return <Table
-              headerHeight={30}
+              headerHeight={35}
               height={height}
               width={width}
               rowCount={sortedGames.length}
@@ -184,18 +184,21 @@ class GameTable extends React.Component<IGameTableProps, IGameTableState> {
               dataKey="secondsRun"
               label={t("table.column.play_time")}
               width={playtimeWidth}
+              className="secondary"
               cellDataGetter={this.genericDataGetter}
               cellRenderer={this.playtimeRenderer}/>
             <Column
               dataKey="lastTouchedAt"
               label={t("table.column.last_played")}
               width={lastPlayedWidth}
+              className="secondary"
               cellDataGetter={this.genericDataGetter}
               cellRenderer={this.lastPlayedRenderer}/>
             <Column
               dataKey="publishedAt"
               label={t("table.column.published")}
               width={publishedWidth}
+              className="secondary"
               cellDataGetter={this.genericDataGetter}
               cellRenderer={this.publishedAtRenderer}/>
           </Table>;
