@@ -86,15 +86,12 @@ $table-cover-width: $table-cover-height * $table-cover-ratio;
   .ReactVirtualized__Table__row {
     &:hover {
       background-color: $filter-background-color;
+      cursor: pointer;
     }
   }
 
   .title-column {
     line-height: 1.4;
-
-    &:hover {
-      cursor: pointer;
-    }
 
     .title, .description {
       max-width: 500px;

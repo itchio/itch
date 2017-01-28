@@ -37,10 +37,15 @@ interface ICellDataGetter {
   rowData: any;
 }
 
+interface IRowClickParams {
+  index: number;
+}
+
 class GameTable extends React.Component<IGameTableProps, void> {
   constructor() {
     super();
     this.rowGetter = this.rowGetter.bind(this);
+    this.onRowClick = this.onRowClick.bind(this);
     this.genericDataGetter = this.genericDataGetter.bind(this);
 
     this.coverRenderer = this.coverRenderer.bind(this);
@@ -48,6 +53,12 @@ class GameTable extends React.Component<IGameTableProps, void> {
     this.publishedAtRenderer = this.publishedAtRenderer.bind(this);
     this.playtimeRenderer = this.playtimeRenderer.bind(this);
     this.lastPlayedRenderer = this.lastPlayedRenderer.bind(this);
+  }
+
+  onRowClick (params: IRowClickParams) {
+    const {index} = params;
+
+    this.props.navigateToGame(this.props.games[index].game);
   }
 
   rowGetter (params: IRowGetterParams): any {
@@ -69,9 +80,7 @@ class GameTable extends React.Component<IGameTableProps, void> {
   titleRenderer (params: ICellRendererParams): JSX.Element | string {
     const {cellData} = params;
     const {game} = cellData;
-    return <div className="title-column" onClick={(e) => {
-        this.props.navigateToGame(game);
-      }}>
+    return <div className="title-column">
       <div className="title">{game.title}</div>
       <div className="description">{game.shortText}</div>
     </div>;
@@ -136,6 +145,7 @@ class GameTable extends React.Component<IGameTableProps, void> {
               rowCount={games.length}
               rowHeight={75}
               rowGetter={this.rowGetter}
+              onRowClick={this.onRowClick}
             >
             <Column
               dataKey="cover"
