@@ -327,5 +327,6 @@
     "prereq.status.downloading": "Elsutado…",
     "prereq.status.extracting": "Maldensigado…",
     "prereq.status.ready": "Preta por instalado",
-    "prereq.status.installing": "Instalado… (tio povas daŭri kelkajn minutojn)"
+    "prereq.status.installing": "Instalado… (tio povas daŭri kelkajn minutojn)",
+    "table.column.name": "Nomo"
 }
