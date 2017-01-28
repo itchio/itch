@@ -311,5 +311,21 @@
     "grid.item.download_java": "Elŝuti Java",
     "grid.item.review": "Recenzi",
     "grid.item.update": "Ĝisdatigi",
-    "grid.item.verify_integrity": "Kontroli la integrecon"
+    "grid.item.verify_integrity": "Kontroli la integrecon",
+    "grid.item.revert_to_version": "Revenigo al versio…",
+    "grid.item.view_details": "Detaloj…",
+    "grid.item.downloads_paused": "La elŝutadoj estas paŭzitaj",
+    "collection_grid.item.updated_at": "Lasta ĝisdatigo {{time_ago}}",
+    "browser.popout": "Malfermi la paĝon en ekstera retumilo",
+    "login.messages.welcome_back-halloween": "Kiu aŭdacas rompi mian trankvilon?",
+    "login.two_factor.title": "Dufaza aŭtentigo",
+    "login.two_factor.as_user": "Vi ensalutas kiel {{username}}",
+    "login.two_factor.enter_code": "Bonvolu entajpi la kodon, kiun montras via aŭtentigilo, por daŭrigi la ensalutadon.",
+    "login.two_factor.verification_code_label": "Kontrola kodo",
+    "login.two_factor.learn_more": "Legu pli pri la dufaza aŭtentigo",
+    "prereq.explanation": "Kelkaj pakoj devos unufoje instaliĝi, por ke {{title}} funkciu ĝuste.",
+    "prereq.status.downloading": "Elsutado…",
+    "prereq.status.extracting": "Maldensigado…",
+    "prereq.status.ready": "Preta por instalado",
+    "prereq.status.installing": "Instalado… (tio povas daŭri kelkajn minutojn)"
 }
