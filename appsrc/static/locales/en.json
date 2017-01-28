@@ -70,6 +70,8 @@
     "grid.item.uninstalling": "Uninstalling…",
     "grid.item.version": "Version {{version}}",
     "table.column.name": "Name",
+    "table.column.play_time": "Play time",
+    "table.column.last_played": "Last played",
     "table.column.published": "Published",
     "collection_grid.item.updated_at": "Last updated {{time_ago}}",
     "browser.popout": "Open page in external web browser",

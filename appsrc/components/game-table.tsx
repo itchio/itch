@@ -6,7 +6,7 @@ import {connect} from "./connect";
 
 import {ILocalizer} from "../localizer";
 
-import {IState, IFilteredGameRecord} from "../types";
+import {IState, IFilteredGameRecord, ICaveRecord} from "../types";
 import {IAction, dispatcher} from "../constants/action-types";
 import * as actions from "../actions";
 
@@ -15,6 +15,8 @@ import {IAutoSizerParams} from "./autosizer-types";
 
 import NiceAgo from "./nice-ago";
 import HiddenIndicator from "./hidden-indicator";
+import TotalPlaytime from "./total-playtime";
+import LastPlayed from "./last-played";
 
 interface IRowGetterParams {
   index: number;
@@ -39,14 +41,18 @@ class GameTable extends React.Component<IGameTableProps, void> {
   constructor() {
     super();
     this.rowGetter = this.rowGetter.bind(this);
+    this.genericDataGetter = this.genericDataGetter.bind(this);
+
     this.coverRenderer = this.coverRenderer.bind(this);
     this.titleRenderer = this.titleRenderer.bind(this);
     this.publishedAtRenderer = this.publishedAtRenderer.bind(this);
-    this.genericDataGetter = this.genericDataGetter.bind(this);
+    this.playtimeRenderer = this.playtimeRenderer.bind(this);
+    this.lastPlayedRenderer = this.lastPlayedRenderer.bind(this);
   }
 
   rowGetter (params: IRowGetterParams): any {
     const {index} = params;
+
     return this.props.games[index];
   }
 
@@ -82,6 +88,30 @@ class GameTable extends React.Component<IGameTableProps, void> {
     }
   }
 
+  playtimeRenderer (params: ICellRendererParams): JSX.Element | string {
+    const {cellData} = params;
+    const {game} = cellData;
+    const cave = this.props.cavesByGameId[game.id];
+
+    if (cave) {
+      return <TotalPlaytime game={game} cave={cave} short={true}/>;
+    } else {
+      return null;
+    }
+  }
+
+  lastPlayedRenderer (params: ICellRendererParams): JSX.Element | string {
+    const {cellData} = params;
+    const {game} = cellData;
+    const cave = this.props.cavesByGameId[game.id];
+
+    if (cave) {
+      return <LastPlayed game={game} cave={cave} short={true}/>;
+    } else {
+      return null;
+    }
+  }
+
   render () {
     const {t, tab, games, hiddenCount} = this.props;
 
@@ -92,15 +122,21 @@ class GameTable extends React.Component<IGameTableProps, void> {
           let coverWidth = 74;
           remainingWidth -= coverWidth;
 
-          let publishedWidth = 150;
+          let publishedWidth = 140;
           remainingWidth -= publishedWidth;
+
+          let playtimeWidth = 140;
+          remainingWidth -= playtimeWidth;
+
+          let lastPlayedWidth = 140;
+          remainingWidth -= lastPlayedWidth;
 
           return <Table
               headerHeight={30}
               height={height}
               width={width}
               rowCount={games.length}
-              rowHeight={72}
+              rowHeight={75}
               rowGetter={this.rowGetter}
             >
             <Column
@@ -114,6 +150,18 @@ class GameTable extends React.Component<IGameTableProps, void> {
               width={remainingWidth}
               cellDataGetter={this.genericDataGetter}
               cellRenderer={this.titleRenderer}/>
+            <Column
+              dataKey="secondsRun"
+              label={t("table.column.play_time")}
+              width={playtimeWidth}
+              cellDataGetter={this.genericDataGetter}
+              cellRenderer={this.playtimeRenderer}/>
+            <Column
+              dataKey="lastTouchedAt"
+              label={t("table.column.last_played")}
+              width={lastPlayedWidth}
+              cellDataGetter={this.genericDataGetter}
+              cellRenderer={this.lastPlayedRenderer}/>
             <Column
               dataKey="publishedAt"
               label={t("table.column.published")}
@@ -136,6 +184,7 @@ interface IGameTableProps {
 
   filterQuery: string;
   onlyCompatible: boolean;
+  cavesByGameId: { [gameId: string]: ICaveRecord };
 
   t: ILocalizer;
 
@@ -149,6 +198,7 @@ const mapStateToProps = (initialState: IState, props: IGameTableProps) => {
   return createStructuredSelector({
     filterQuery: (state: IState) => state.session.navigation.filters[tab],
     onlyCompatible: (state: IState) => state.session.navigation.binaryFilters.onlyCompatible,
+    cavesByGameId: (state: IState) => state.globalMarket.cavesByGameId,
   });
 };
 

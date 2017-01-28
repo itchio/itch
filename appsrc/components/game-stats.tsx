@@ -4,14 +4,17 @@ import {connect} from "./connect";
 import {createSelector} from "reselect";
 import {findWhere} from "underscore";
 
+import interleave from "./interleave";
+
 import platformData from "../constants/platform-data";
 import actionForGame from "../util/action-for-game";
 
 import format from "../util/format";
-import interleave from "./interleave";
 
 import NiceAgo from "./nice-ago";
 import Icon from "./icon";
+import TotalPlaytime from "./total-playtime";
+import LastPlayed from "./last-played";
 
 import {ILocalizer} from "../localizer";
 
@@ -23,32 +26,13 @@ import {
 export class GameStats extends React.Component<IGameStatsProps, void> {
   render () {
     const {t, cave, game = {} as IGameRecord, downloadKey, mdash = true} = this.props;
-    const {lastTouched = 0, secondsRun = 0} = (cave || {});
-
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
-    const xed = classAction === "open" ? "opened" : ((classification === "game") ? "played" : "used");
-    const lastTouchedDate = new Date(lastTouched);
 
     if (cave) {
       return <div className="game-stats">
-        {secondsRun > 0 && classAction === "launch"
-          ? <div className="total-playtime">
-            <span>
-              <label>{t(`usage_stats.has_${xed}_for_duration`)}</label>
-              {" " + t.format(format.seconds(secondsRun))}
-            </span>
-          </div>
-          : ""
-        }
-        <div className="last-playthrough">
-        {lastTouched > 0
-          ? <label>
-            {interleave(t, `usage_stats.last_${xed}_time_ago`, {time_ago: <NiceAgo date={lastTouchedDate}/>})}
-          </label>
-          : t(`usage_stats.never_${xed}`)
-        }
-        </div>
+        <TotalPlaytime game={game} cave={cave}/>
+        <LastPlayed game={game} cave={cave}/>
       </div>;
     } else {
       const platforms: JSX.Element[] = [];
