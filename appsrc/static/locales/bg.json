@@ -406,5 +406,7 @@
     "prereq.status.extracting": "Разопаковане…",
     "collection_grid.item.updated_at": "Последно обновено {{time_ago}}",
     "table.column.name": "Име",
-    "table.column.published": "Публикувано"
+    "table.column.published": "Публикувано",
+    "table.column.play_time": "Изиграно време",
+    "table.column.last_played": "Последно пускане"
 }
