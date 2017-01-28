@@ -79,7 +79,6 @@
     "rc-progress": "^2.0.3",
     "react": "^15.4.2",
     "react-addons-shallow-compare": "^15.4.1",
-    "react-dimensions": "^2.0.0-alpha1",
     "react-dnd": "^2.1.4",
     "react-dnd-html5-backend": "^2.1.2",
     "react-dom": "^15.4.1",
