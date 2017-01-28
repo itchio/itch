@@ -423,6 +423,6 @@
     "collection_grid.item.updated_at": "Обновлено {{time_ago}}",
     "table.column.name": "Название",
     "table.column.play_time": "В игре",
-    "table.column.last_played": "Последний раз в игре",
+    "table.column.last_played": "Последний раз",
     "table.column.published": "Опубликовано"
 }
