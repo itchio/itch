@@ -171,7 +171,9 @@ class GameTable extends React.Component<IGameTableProps, IGameTableState> {
               dataKey="cover"
               width={coverWidth}
               cellDataGetter={this.genericDataGetter}
-              cellRenderer={this.coverRenderer}/>
+              cellRenderer={this.coverRenderer}
+              disableSort={true}/>
+
             <Column
               dataKey="title"
               label={t("table.column.name")}
