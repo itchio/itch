@@ -13,19 +13,45 @@ import isPlatformCompatible from "../util/is-platform-compatible";
 import GameGrid from "./game-grid";
 import GameTable from "./game-table";
 
-class Games extends React.Component<IGamesProps, void> {
+import {ISortParams, SortDirectionType} from "./sort-types";
+
+class Games extends React.Component<IGamesProps, IGamesState> {
+  constructor () {
+    super();
+    this.state = {
+      sortBy: null,
+      sortDirection: null,
+    };
+
+    this.onSortChange = this.onSortChange.bind(this);
+  }
+
+  onSortChange(params: ISortParams) {
+    const {sortBy, sortDirection} = params;
+    this.setState({sortBy, sortDirection});
+  }
+
   render() {
     const {filteredGames, hiddenCount, tab, layout} = this.props;
+    const {sortBy, sortDirection} = this.state;
 
     if (layout === "grid") {
-      return <GameGrid games={filteredGames} hiddenCount={hiddenCount} tab={tab}/>;
+      return <GameGrid
+        games={filteredGames}
+        hiddenCount={hiddenCount}
+        tab={tab}/>;
     } else if (layout === "table") {
-      return <GameTable games={filteredGames} hiddenCount={hiddenCount} tab={tab}/>;
+      return <GameTable
+        games={filteredGames}
+        hiddenCount={hiddenCount}
+        tab={tab}
+        sortBy={sortBy}
+        sortDirection={sortDirection}
+        onSortChange={this.onSortChange}/>;
     } else {
       return <div>Unknown layout {layout}</div>;
     }
   }
-
 }
 
 interface IGamesProps {
@@ -36,6 +62,11 @@ interface IGamesProps {
   layout: TabLayout;
   filteredGames: IFilteredGameRecord[];
   hiddenCount: number;
+}
+
+interface IGamesState {
+  sortBy?: string;
+  sortDirection?: SortDirectionType;
 }
 
 const mapStateToProps = () => {
