@@ -41,9 +41,14 @@ interface IRowClickParams {
   index: number;
 }
 
-class GameTable extends React.Component<IGameTableProps, void> {
+class GameTable extends React.Component<IGameTableProps, IGameTableState> {
   constructor() {
     super();
+
+    this.state = {
+      scrollTop: 0,
+    };
+
     this.rowGetter = this.rowGetter.bind(this);
     this.onRowClick = this.onRowClick.bind(this);
     this.genericDataGetter = this.genericDataGetter.bind(this);
@@ -138,6 +143,8 @@ class GameTable extends React.Component<IGameTableProps, void> {
           let lastPlayedWidth = 140;
           remainingWidth -= lastPlayedWidth;
 
+          const scrollTop = height === 0 ? 0 : this.state.scrollTop;
+
           return <Table
               headerHeight={30}
               height={height}
@@ -146,6 +153,12 @@ class GameTable extends React.Component<IGameTableProps, void> {
               rowHeight={75}
               rowGetter={this.rowGetter}
               onRowClick={this.onRowClick}
+              onScroll={(e: any) => {
+                // ignore data when tab's hidden
+                if (e.clientHeight <= 0) { return; }
+                this.setState({ scrollTop: e.scrollTop });
+              }}
+              scrollTop={scrollTop}
             >
             <Column
               dataKey="cover"
@@ -197,6 +210,10 @@ interface IGameTableProps {
 
   clearFilters: typeof actions.clearFilters;
   navigateToGame: typeof actions.navigateToGame;
+}
+
+interface IGameTableState {
+  scrollTop: 0;
 }
 
 const mapStateToProps = (initialState: IState, props: IGameTableProps) => {

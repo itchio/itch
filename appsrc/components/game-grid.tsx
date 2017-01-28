@@ -67,7 +67,7 @@ class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
           overscanRowCount={10}
           onScroll={(e: any) => {
             // ignore data when tab's hidden
-            if (e.clientHeight === 0) { return; }
+            if (e.clientHeight <= 0) { return; }
             this.setState({ scrollTop: e.scrollTop });
           }}
           scrollTop={scrollTop}
