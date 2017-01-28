@@ -5,7 +5,7 @@ import {createStructuredSelector} from "reselect";
 
 import Games from "./games";
 import GameGridFilters from "./game-grid-filters";
-import {map, filter, indexBy, sortBy} from "underscore";
+import {map, filter, uniq, indexBy, sortBy} from "underscore";
 
 import {IState, ICaveRecord, IGameRecord, IDownloadKey, TabLayout} from "../types";
 
@@ -45,12 +45,22 @@ export class Library extends React.Component<ILibraryProps, void> {
       filter(downloadKeys, (key) => !installedGamesById[key.gameId]),
       (key) => recordGames[key.gameId]);
 
+    let games = installedGames.concat(ownedGames);
+
+    // corner case: if an invalid download key slips in, it may not be associated
+    // with a game — just keep displaying it instead of breaking the whole app,
+    // cf. https://itch.io/post/73405
+    games = filter(games, (game) => !!game);
+
+    // if you own a game multiple times, it might appear multiple times in the grid
+    games = uniq(games, (game) => game.id);
+
     const tab = "library";
 
     return <div className="library-meat">
       <GameGridFilters tab={tab}/>
       {installedGames.length > 0 || ownedGames.length > 0
-        ? <Games games={installedGames.concat(ownedGames)} tab={tab}/>
+        ? <Games games={games} tab={tab}/>
         : ""
       }
     </div>;

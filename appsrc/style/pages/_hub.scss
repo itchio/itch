@@ -42,7 +42,11 @@
   }
 }
 
-.hub-game-grid {
+$table-cover-ratio: 315.0 / 250.0;
+$table-cover-height: 45px;
+$table-cover-width: $table-cover-height * $table-cover-ratio;
+
+.hub-games {
   flex-grow: 1;
 
   .clear-filters {
@@ -65,12 +69,9 @@
 }
 
 .hub-game-table {
-  flex-grow: 1;
-
   .cover {
-    width: 47px;
-    height: 36px;
-    vertical-align: middle;
+    width: $table-cover-width;
+    height: $table-cover-height;
     margin-right: 7px;
     background-size: cover;
     background-position: 50% 50%;
@@ -84,8 +85,6 @@
   }
 
   .ReactVirtualized__Table__row {
-    border-bottom: 1px solid $filter-background-color;
-
     &:hover {
       background-color: $filter-background-color;
     }
@@ -99,10 +98,16 @@
     }
 
     .title, .description {
-      @include single-line;
+      max-width: 500px;
+      white-space: normal;
+    }
+
+    .title {
+      font-size: 110%;
     }
 
     .description {
+      font-size: 90%;
       color: $secondary-text-color;
     }
   }
@@ -144,14 +149,6 @@
     width: $grid-item-width;
     height: 0;
     margin: 0 .5em;
-  }
-
-  .hidden-count {
-    width: 100%;
-    text-align: center;
-    display: block;
-    margin: 16px;
-    color: #A0A0A0;
   }
 }
 

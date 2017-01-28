@@ -4,18 +4,10 @@ import {connect} from "./connect";
 import {createStructuredSelector} from "reselect";
 import Fuse = require("fuse.js");
 
-import {filter, uniq, map} from "underscore";
-
-import * as actions from "../actions";
-
-import isPlatformCompatible from "../util/is-platform-compatible";
-
-import Icon from "./icon";
 import HubItem from "./hub-item";
+import HiddenIndicator from "./hidden-indicator";
 
 import {IState, IGameRecord, IFilteredGameRecord} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
-import {ILocalizer} from "../localizer";
 
 import {AutoSizer, Grid} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";
@@ -29,7 +21,7 @@ interface ICellInfo {
 
 interface ILayoutInfo {
   columnCount: number;
-  filteredGames: IFilteredGameRecord[];
+  games: IFilteredGameRecord[];
 }
 
 class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
@@ -52,51 +44,20 @@ class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
   }
 
   render () {
-    const {t, games, filterQuery = "", onlyCompatible, tab, clearFilters} = this.props;
+    const {games, hiddenCount, tab} = this.props;
 
-    let uniqueGames = games;
-
-    // corner case: if an invalid download key slips in, it may not be associated
-    // with a game — just keep displaying it instead of breaking the whole app,
-    // cf. https://itch.io/post/73405
-    uniqueGames = filter(uniqueGames, (game) => !!game);
-
-    // if you own a game multiple times, it might appear multiple times in the grid
-    uniqueGames = uniq(uniqueGames, (game) => game.id);
-
-    let filteredGames: IFilteredGameRecord[];
-    if (filterQuery.length > 0) {
-      this.fuse.set(uniqueGames);
-      const results = this.fuse.search(filterQuery);
-      filteredGames = map(results, (result): IFilteredGameRecord => ({
-        game: result.item,
-        searchScore: result.score,
-      }));
-    } else {
-      filteredGames = map(uniqueGames, (game): IFilteredGameRecord => ({
-        game,
-      }));
-    }
-    let hiddenCount = 0;
-
-    if (onlyCompatible) {
-      filteredGames = filter(filteredGames, (record) => isPlatformCompatible(record.game));
-    }
-
-    hiddenCount = uniqueGames.length - filteredGames.length;
-
-    return <div className="hub-game-grid">
+    return <div className="hub-games hub-game-grid">
       <AutoSizer>
       {({width, height}: IAutoSizerParams) => {
         const columnCount = Math.floor(width / 280);
-        const rowCount = Math.ceil(filteredGames.length / columnCount);
+        const rowCount = Math.ceil(games.length / columnCount);
         const columnWidth = ((width - 10) / columnCount);
         const rowHeight = columnWidth * 1.12;
         const scrollTop = height === 0 ? 0 : this.state.scrollTop;
 
         return <Grid
           ref="grid"
-          cellRenderer={this.cellRenderer.bind(this, {filteredGames, columnCount})}
+          cellRenderer={this.cellRenderer.bind(this, {games, columnCount})}
           width={width}
           height={height}
           columnWidth={columnWidth}
@@ -114,22 +75,13 @@ class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
         />;
       }}
       </AutoSizer>
-      {hiddenCount > 0
-      ? <div className="hidden-count">
-        {t("grid.hidden_count", {count: hiddenCount})}
-        {" "}
-        <span className="clear-filters hint--top" data-hint={t("grid.clear_filters")}
-            onClick={() => clearFilters({tab})}>
-          <Icon icon="delete"/>
-        </span>
-      </div>
-      : ""}
+      <HiddenIndicator count={hiddenCount} tab={tab}/>
     </div>;
   }
 
   cellRenderer(layout: ILayoutInfo, cell: ICellInfo): JSX.Element {
     const gameIndex = (cell.rowIndex * layout.columnCount) + cell.columnIndex;
-    const record = layout.filteredGames[gameIndex];
+    const record = layout.games[gameIndex];
 
     const style = cell.style;
     style.padding = "10px";
@@ -149,15 +101,9 @@ class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
 
 interface IGameGridProps {
   // specified
-  games: IGameRecord[];
+  games: IFilteredGameRecord[];
+  hiddenCount: number;
   tab: string;
-
-  filterQuery: string;
-  onlyCompatible: boolean;
-
-  t: ILocalizer;
-
-  clearFilters: typeof actions.clearFilters;
 }
 
 interface IGameGridState {
@@ -173,11 +119,6 @@ const mapStateToProps = (initialState: IState, props: IGameGridProps) => {
   });
 };
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
-  clearFilters: dispatcher(dispatch, actions.clearFilters),
-});
-
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
 )(GameGrid);
