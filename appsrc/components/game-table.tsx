@@ -89,7 +89,7 @@ class GameTable extends React.Component<IGameTableProps, void> {
         <AutoSizer>
         {({width, height}: IAutoSizerParams) => {
           let remainingWidth = width;
-          let coverWidth = 57;
+          let coverWidth = 74;
           remainingWidth -= coverWidth;
 
           let publishedWidth = 150;

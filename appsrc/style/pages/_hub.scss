@@ -43,7 +43,7 @@
 }
 
 $table-cover-ratio: 315.0 / 250.0;
-$table-cover-height: 45px;
+$table-cover-height: 58px;
 $table-cover-width: $table-cover-height * $table-cover-ratio;
 
 .hub-games {
@@ -72,7 +72,6 @@ $table-cover-width: $table-cover-height * $table-cover-ratio;
   .cover {
     width: $table-cover-width;
     height: $table-cover-height;
-    margin-right: 7px;
     background-size: cover;
     background-position: 50% 50%;
     border-radius: 1px;
@@ -103,12 +102,16 @@ $table-cover-width: $table-cover-height * $table-cover-ratio;
     }
 
     .title {
-      font-size: 110%;
+      @include single-line;
+      font-weight: bold;
     }
 
     .description {
       font-size: 90%;
       color: $secondary-text-color;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
   }
 }
