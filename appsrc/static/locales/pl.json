@@ -414,5 +414,6 @@
     "prompt.install_error.find_upload": "Podczas szukania pliku do pobrania: {{message}}",
     "setup.window.title": "Konfiguracja {{app_name}}",
     "table.column.name": "Nazwa",
-    "table.column.play_time": "Czas gry"
+    "table.column.play_time": "Czas gry",
+    "table.column.last_played": "Ostatnio grano"
 }
