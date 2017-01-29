@@ -33,7 +33,7 @@ export class NiceAgo extends React.Component<INiceAgoProps, void> {
     }
 
     // pass empty title to TimeAgo on purpose so we don't have double tooltip on hover
-    return <span className="nice-ago hint--bottom" data-hint={format.date(m, DATE_FORMAT, t.lang)}>
+    return <span className="nice-ago" data-rh-at="bottom" data-rh={format.date(m, DATE_FORMAT, t.lang)}>
       <TimeAgo date={m} title="" formatter={momentBridge(t)}/>
     </span>;
   }

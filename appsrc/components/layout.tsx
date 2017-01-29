@@ -6,6 +6,7 @@ import {connect} from "react-redux";
 import GatePage from "./gate-page";
 import HubPage from "./hub-page";
 import StatusBar from "./status-bar";
+import ReactHint = require("react-hint");
 
 import {IState} from "../types";
 
@@ -51,6 +52,7 @@ class Layout extends React.Component<ILayoutProps, void> {
         <div className="layout-draggable"/>
         {this.main()}
         <StatusBar/>
+        <ReactHint/>
       </div>
     </div>;
   }
