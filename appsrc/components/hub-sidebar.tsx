@@ -82,7 +82,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
     return <div className={classes} style={sidebarStyle}>
       <div className="title-bar-padder"/>
 
-      <div className="logo hint--bottom" onClick={() => navigate("featured")} data-hint={versionString()}>
+      <div className="logo" onClick={() => navigate("featured")} data-rh-at="bottom" data-rh={versionString()}>
         <img src={`static/images/logos/app-${halloween ? "halloween" : "white"}.svg`}/>
       </div>
 
@@ -121,10 +121,16 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
         <h2>
           <span className="label">{t("sidebar.category.tabs")}</span>
           <div className="filler"/>
-          <span className="action hint--left" data-hint={t("sidebar.close_all_tabs")} onClick={() => closeAllTabs({})}>
+          <span className="action"
+              data-rh-at="left"
+              data-rh={t("sidebar.close_all_tabs")}
+              onClick={() => closeAllTabs({})}>
             <span className="icon icon-delete"/>
           </span>
-          <span className="action hint--left" data-hint={t("sidebar.new_tab")} onClick={() => newTab({})}>
+          <span className="action"
+              data-rh-at="left"
+              data-rh={t("sidebar.new_tab")}
+              onClick={() => newTab({})}>
             <span className="icon icon-plus"/>
           </span>
         </h2>

@@ -78,7 +78,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     };
 
     return connectDragSource(connectDropTarget(<section key={id} style={style} className={classes}
-        data-hint={t.format(sublabel)}
+        data-rh={t.format(sublabel)}
         onClick={this.onClick}
         onContextMenu={onContextMenu}
         data-path={path}

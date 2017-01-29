@@ -40,7 +40,7 @@ class MainAction extends React.Component<IMainActionProps, void> {
 
       const realTask = statusTask || task;
 
-      child = <span className={classes} data-hint={hint}>
+      child = <span className={classes} data-rh={hint}>
         { (
             progress > 0 || realTask === "find-upload" || realTask === "download" ||
             realTask === "configure" || realTask === "install")
@@ -83,10 +83,12 @@ class MainAction extends React.Component<IMainActionProps, void> {
 
     const buttonClasses = classNames("main-action", {
       "buy-now": (platformCompatible && !mayDownload && canBeBought),
-      "hint--top": !!hint,
       branded,
     });
-    const button = <div style={style} className={buttonClasses} onClick={(e) => this.onClick(e)} data-hint={hint}>
+    const button = <div style={style}
+        className={buttonClasses}
+        onClick={(e) => this.onClick(e)}
+        data-rh={hint} data-rh-at="top">
       <Ink/>
       {child}
     </div>;

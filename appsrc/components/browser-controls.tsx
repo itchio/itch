@@ -92,7 +92,7 @@ export class BrowserControls extends React.Component<IBrowserControlsProps, IBro
             (url && url.length) && this.startEditingURL()
           }>{url || ""}</span>
       }
-      <span className="hint--right" data-hint={t("browser.popout")}>
+      <span data-rh-at="right" data-rh={t("browser.popout")}>
         <span className={classNames("icon icon-redo")} onClick={() => this.popOutBrowser()}/>
       </span>
     </div>;

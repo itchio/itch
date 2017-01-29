@@ -59,7 +59,7 @@ class Downloads extends React.Component<IDownloadsProps, void> {
           <h2 className="finished-header">
             {t("status.downloads.category.finished")}
           </h2>
-          <span className="clear hint--right" data-hint={t("status.downloads.clear_all_finished")}
+          <span className="clear" data-rh-at="right" data-rh={t("status.downloads.clear_all_finished")}
               onClick={() => clearFinishedDownloads({})}>
             <span className="icon icon-delete"/>
           </span>

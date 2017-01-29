@@ -33,8 +33,13 @@ class SecondaryActions extends React.Component<ISecondaryActionsProps, void> {
 
     const key = "" + label;
 
-    const actionClasses = classNames("secondary-action", "hint--top", classes);
-    return <span key={key} className={actionClasses} onClick={() => dispatch(action)} data-hint={t.format(label)}>
+    const actionClasses = classNames("secondary-action", classes);
+    return <span
+        key={key}
+        className={actionClasses}
+        onClick={() => dispatch(action)}
+        data-rh-at="top"
+        data-rh={t.format(label)}>
       <Ink/>
       <Icon icon={icon}/>
     </span>;

@@ -14,9 +14,7 @@ class GameBrowserContextAction extends React.Component<IGameBrowserContextAction
   render () {
     const {t, dispatch, opts} = this.props;
     const {action, icon, hint, label, type = "action", classes = []} = opts;
-    const spanClasses = classNames("secondary-action", `type-${type}`, classes, {
-      ["hint--top"]: !!hint,
-    });
+    const spanClasses = classNames("secondary-action", `type-${type}`, classes);
 
     const textLabel = "" + label;
     const style: React.CSSProperties = {
@@ -24,7 +22,10 @@ class GameBrowserContextAction extends React.Component<IGameBrowserContextAction
     };
 
     return <span style={style} key={textLabel}
-        className={spanClasses} data-hint={hint} onClick={() => dispatch(action)}>
+        className={spanClasses}
+        data-rh-at="top"
+        data-rh={hint}
+        onClick={() => dispatch(action)}>
       <Icon icon={icon}/> {t.format(label)}
       {type === "separator" ? null : <Ink/>}
     </span>;
