@@ -21,7 +21,7 @@ class HiddenIndicator extends React.Component<IHiddenIndicatorProps, void> {
     return <div className="hidden-count">
       {t("grid.hidden_count", {count})}
       {" "}
-      <span className="clear-filters hint--top" data-hint={t("grid.clear_filters")}
+      <span className="clear-filters" data-rh-at="top" data-rh={t("grid.clear_filters")}
           onClick={() => clearFilters({tab})}>
         <Icon icon="delete"/>
       </span>

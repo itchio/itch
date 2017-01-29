@@ -84,7 +84,7 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
             updatePreferences({isolateApps: e.currentTarget.checked});
           }}/>
           <span> {t("preferences.security.sandbox.title")} </span>
-          <span className="hint--bottom" data-hint={t("label.experimental")}>
+          <span data-rh-at="bottom" data-rh={t("label.experimental")}>
             <Icon icon="lab-flask" onClick={(e: React.MouseEvent<any>) => e.preventDefault()}/>
           </span>
         </label>
@@ -181,7 +181,7 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
           updatePreferences({preferOptimizedPatches: e.currentTarget.checked});
         }}/>
         <span>Prefer optimized patches</span>
-        <span className="hint--bottom" data-hint={t("label.experimental")}>
+        <span data-rh-at="bottom" data-rh={t("label.experimental")}>
           <Icon icon="lab-flask" onClick={(e: React.MouseEvent<any>) => e.preventDefault()}/>
         </span>
       </label>
@@ -235,8 +235,9 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
 
       rows.push(<tr className={rowClasses} key={`location-${name}`}>
         <td className="action path" onClick={(e) => makeInstallLocationDefault({name})}>
-          <div className="default-switch hint--right"
-            data-hint={t("preferences.install_location." + (isDefault ? "is_default" : "make_default"))}>
+          <div className="default-switch"
+              data-rh-at="right"
+              data-rh={t("preferences.install_location." + (isDefault ? "is_default" : "make_default"))}>
             <span className="single-line">{path}</span>
             {isDefault
               ? <span className="single-line default-state">
@@ -253,7 +254,9 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
         </td>
 
         {mayDelete
-          ? <td className="action delete hint--top" data-hint={t("preferences.install_location.delete")}
+          ? <td className="action delete"
+                data-rh-at="top"
+                data-rh={t("preferences.install_location.delete")}
               onClick={(e) => removeInstallLocationRequest({name})}>
             <Icon icon="cross"/>
           </td>

@@ -32,7 +32,7 @@ export class RememberedSession extends React.Component<IRememberedSessionProps, 
         </p>
       </div>
       <div className="filler"/>
-      <span className="hint--left" data-hint="Forget this session">
+      <span data-rh-at="left" data-rh="Forget this session">
         <span className="icon icon-cross forget-session" onClick={onForget}/>
       </span>
     </div>;
