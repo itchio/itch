@@ -91,6 +91,7 @@ $table-cover-width: $table-cover-height * $table-cover-ratio;
 
   .ReactVirtualized__Table__row {
     background-color: $meat-background-color;
+    outline: 0;
 
     transition: 0.2s border-color, background-color;
 

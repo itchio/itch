@@ -4,7 +4,6 @@ import {connect} from "./connect";
 
 import * as actions from "../actions";
 
-import HubBread from "./hub-bread";
 import HubMeat from "./hub-meat";
 
 let FIRST_EVER_RENDER = true;
@@ -27,7 +26,6 @@ export class HubContent extends React.Component<IHubContentProps, void> {
     }
 
     return <div className="hub-content">
-      <HubBread/>
       <HubMeat/>
     </div>;
   }
