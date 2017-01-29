@@ -23,7 +23,7 @@ class GameBrowserContextAction extends React.Component<IGameBrowserContextAction
 
     return <span style={style} key={textLabel}
         className={spanClasses}
-        data-rh-at="top"
+        data-rh-at="left"
         data-rh={hint}
         onClick={() => dispatch(action)}>
       <Icon icon={icon}/> {t.format(label)}

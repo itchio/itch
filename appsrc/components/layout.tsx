@@ -52,7 +52,9 @@ class Layout extends React.Component<ILayoutProps, void> {
         <div className="layout-draggable"/>
         {this.main()}
         <StatusBar/>
-        <ReactHint/>
+        <div className="react-hint-container">
+          <ReactHint/>
+        </div>
       </div>
     </div>;
   }

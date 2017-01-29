@@ -36,7 +36,10 @@
     }
 
     .layout-picker {
-      padding: 6px 8px;
+      position: relative;
+      padding: 8px 10px;
+      border-radius: 50%;
+      font-size: 90%;
       filter: brightness(60%);
 
       &:hover {

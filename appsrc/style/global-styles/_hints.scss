@@ -1,11 +1,14 @@
 
+.react-hint-container {
+  pointer-events: none;
+}
+
 .react-hint__content {
-  padding: 4px;
+  padding: 5px;
   border-radius: 2px;
   background: $tooltip-background-color;
   color: $tooltip-text-color;
   font-size: 90%;
-  pointer-events: none;
 }
 
 .react-hint--top:after {

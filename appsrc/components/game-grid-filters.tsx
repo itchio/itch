@@ -14,6 +14,7 @@ import {IAction, dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
 
+import Ink = require("react-ink");
 import Icon from "./icon";
 
 @watching
@@ -83,10 +84,12 @@ class GameGridFilters extends React.Component<IGameGridFiltersProps, void> {
     const {tab} = this.props;
     const active = (this.props.layout === layout);
 
-    return <section className={classNames("layout-picker", {active})} onClick={
+    return <section className={classNames("layout-picker", {active})}
+      onClick={
       (e) => this.props.layoutChanged({tab, layout})
     }>
       <Icon icon={icon}/>
+      <Ink/>
     </section>;
   }
 
