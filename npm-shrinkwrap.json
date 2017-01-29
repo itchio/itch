@@ -1610,11 +1610,6 @@
       "resolved": "https://registry.npmjs.org/hawk/-/hawk-2.3.1.tgz",
       "dev": true
     },
-    "hint.css": {
-      "version": "2.4.1",
-      "from": "hint.css@>=2.2.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/hint.css/-/hint.css-2.4.1.tgz"
-    },
     "hoek": {
       "version": "2.16.3",
       "from": "hoek@>=2.0.0 <3.0.0",

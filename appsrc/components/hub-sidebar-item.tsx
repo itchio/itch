@@ -57,7 +57,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     const {t, count, sublabel, progress, id, path, label, active, halloween} = this.props;
     const {isDragging, connectDragSource, connectDropTarget, onClose, onContextMenu} = this.props;
 
-    const classes = classNames("hub-sidebar-item", {active, ["hint--bottom"]: !!sublabel, fresh: this.state.fresh});
+    const classes = classNames("hub-sidebar-item", {active, fresh: this.state.fresh});
     const style: React.CSSProperties = {
       position: "relative",
     };
@@ -78,6 +78,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     };
 
     return connectDragSource(connectDropTarget(<section key={id} style={style} className={classes}
+        data-rh-at="bottom"
         data-rh={t.format(sublabel)}
         onClick={this.onClick}
         onContextMenu={onContextMenu}

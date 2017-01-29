@@ -34,13 +34,11 @@ class MainAction extends React.Component<IMainActionProps, void> {
     let child: React.ReactElement<any> | null = null;
     if (task) {
       const {status, hint, statusTask} = this.status();
-      const classes = classNames("state", "normal-state", {
-        ["hint--top"]: !!hint,
-      });
+      const classes = classNames("state", "normal-state");
 
       const realTask = statusTask || task;
 
-      child = <span className={classes} data-rh={hint}>
+      child = <span className={classes} data-rh-at="top" data-rh={hint}>
         { (
             progress > 0 || realTask === "find-upload" || realTask === "download" ||
             realTask === "configure" || realTask === "install")

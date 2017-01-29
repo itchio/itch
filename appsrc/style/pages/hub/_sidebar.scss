@@ -141,10 +141,6 @@
       }
     }
 
-    &[class*="hint--"]:hover {
-      z-index: 20;
-    }
-
     &:hover {
       cursor: pointer;
       background: darken($sidebar-entry-focused-background-color, 5%);
