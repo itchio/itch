@@ -92,6 +92,11 @@
       "from": "@types/react-redux@>=4.4.32 <5.0.0",
       "resolved": "https://registry.npmjs.org/@types/react-redux/-/react-redux-4.4.35.tgz"
     },
+    "@types/react-select": {
+      "version": "1.0.40",
+      "from": "@types/react-select@latest",
+      "resolved": "https://registry.npmjs.org/@types/react-select/-/react-select-1.0.40.tgz"
+    },
     "@types/react-virtualized": {
       "version": "8.9.2",
       "from": "@types/react-virtualized@latest",
@@ -2856,6 +2861,11 @@
       "from": "react-ink@latest",
       "resolved": "https://registry.npmjs.org/react-ink/-/react-ink-6.0.1.tgz"
     },
+    "react-input-autosize": {
+      "version": "1.1.0",
+      "from": "react-input-autosize@>=1.1.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/react-input-autosize/-/react-input-autosize-1.1.0.tgz"
+    },
     "react-json-tree": {
       "version": "0.10.0",
       "from": "react-json-tree@>=0.10.0 <0.11.0",
@@ -2880,6 +2890,11 @@
       "version": "4.4.6",
       "from": "react-redux@>=4.4.5 <5.0.0",
       "resolved": "https://registry.npmjs.org/react-redux/-/react-redux-4.4.6.tgz"
+    },
+    "react-select": {
+      "version": "1.0.0-rc.2",
+      "from": "react-select@latest",
+      "resolved": "https://registry.npmjs.org/react-select/-/react-select-1.0.0-rc.2.tgz"
     },
     "react-smooth": {
       "version": "0.1.11",

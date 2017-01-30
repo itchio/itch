@@ -1090,6 +1090,12 @@ export interface IPreferencesState {
   /** hide games that aren't compatible with this computer (in native views) */
   onlyCompatibleGames?: boolean;
 
+  /** hide games that weren't purchased or claimed */
+  onlyOwnedGames?: boolean;
+
+  /** hide games that aren't currently installed */
+  onlyInstalledGames?: boolean;
+
   /** layout to use to show games */
   layout?: TabLayout;
 }

@@ -15,6 +15,7 @@ import {IAction, dispatcher} from "../constants/action-types";
 import watching, {Watcher} from "./watching";
 
 import Ink = require("react-ink");
+import Select = require("react-select");
 import Icon from "./icon";
 
 @watching
@@ -46,7 +47,9 @@ class GameFilters extends React.Component<IGameFiltersProps, void> {
   }
 
   render () {
-    const {t, filterQuery, onlyCompatible, showBinaryFilters = true, showLayoutPicker = true} = this.props;
+    const {t, filterQuery,
+       onlyCompatible, onlyOwned, onlyInstalled,
+       showBinaryFilters = true, showLayoutPicker = true} = this.props;
 
     const layoutPickers: JSX.Element[] = [];
 
@@ -55,25 +58,74 @@ class GameFilters extends React.Component<IGameFiltersProps, void> {
       layoutPickers.push(this.renderLayoutPicker("table", "list"));
     }
 
+    const compatibleOption = {
+      value: "onlyCompatibleGames",
+      label: t("grid.filters.options.compatible"),
+    };
+
+    const ownedOption = {
+      value: "onlyOwnedGames",
+      label: t("grid.filters.options.owned"),
+    };
+
+    const installedOption = {
+      value: "onlyInstalledGames",
+      label: t("grid.filters.options.installed"),
+    };
+
+    const options = [
+        compatibleOption,
+        ownedOption,
+        installedOption,
+    ];
+
+    const value = [];
+    if (onlyCompatible) {
+      value.push(compatibleOption);
+    }
+    if (onlyOwned) {
+      value.push(ownedOption);
+    }
+    if (onlyInstalled) {
+      value.push(installedOption);
+    }
+
     return <section className="filters">
-      <section className="search">
-        <input className="filter-input-field" ref="search" type="search" defaultValue={filterQuery}
-          placeholder={t("grid.criterion.filter")}
-          onKeyPress={this.onQueryChanged}
-          onKeyUp={this.onQueryChanged}
-          onChange={this.onQueryChanged}/>
-        <span className={classNames("icon", "icon-filter", {active: !!filterQuery})}/>
-      </section>
-      {showBinaryFilters
-        ? <section className="checkboxes">
-          <label>
-            <input type="checkbox" checked={onlyCompatible} onChange={
-              (e) => this.props.updatePreferences({onlyCompatibleGames: e.currentTarget.checked})
-            }/>
-            {t("grid.criterion.only_compatible")}
-          </label>
+      { true ? null 
+        : <section className="search">
+          <input className="filter-input-field" ref="search" type="search" defaultValue={filterQuery}
+            placeholder={t("grid.criterion.filter")}
+            onKeyPress={this.onQueryChanged}
+            onKeyUp={this.onQueryChanged}
+            onChange={this.onQueryChanged}/>
+          <span className={classNames("icon", "icon-filter", {active: !!filterQuery})}/>
         </section>
-        : ""}
+      }
+      
+      {showBinaryFilters
+      ? <section className="tag-filters">
+        <Select
+          multi={true}
+          options={options}
+          value={value}
+          onChange={(vals: {value: string}[]) => {
+            const prefs = {
+              onlyCompatibleGames: false,
+              onlyInstalledGames: false,
+              onlyOwnedGames: false,
+            } as {
+              [key: string]: boolean;
+            };
+
+            for (const val of vals) {
+              prefs[val.value] = true;
+            }
+            this.props.updatePreferences(prefs);
+          }}
+          placeholder={t("grid.criterion.filter")}/>
+      </section>
+      : null }
+
       {this.props.children}
       <section className="spacer"/>
       {layoutPickers}
@@ -114,6 +166,8 @@ interface IGameFiltersProps {
 
   filterQuery: string;
   onlyCompatible: boolean;
+  onlyOwned: boolean;
+  onlyInstalled: boolean;
   layout: TabLayout;
 
   t: ILocalizer;
@@ -129,6 +183,8 @@ const mapStateToProps = (initialState: IState, props: IGameFiltersProps) => {
     filterQuery: (state: IState) => state.session.navigation.filters[tab],
     layout: (state: IState) => state.preferences.layout,
     onlyCompatible: (state: IState) => state.preferences.onlyCompatibleGames,
+    onlyOwned: (state: IState) => state.preferences.onlyOwnedGames,
+    onlyInstalled: (state: IState) => state.preferences.onlyInstalledGames,
   });
 };
 

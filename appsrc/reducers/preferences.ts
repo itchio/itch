@@ -22,6 +22,8 @@ export const initialState = {
   preferOptimizedPatches: false,
 
   onlyCompatibleGames: true,
+  onlyOwnedGames: false,
+  onlyInstalledGames: false,
   layout: "grid",
 } as IPreferencesState;
 
