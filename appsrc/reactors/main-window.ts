@@ -323,7 +323,7 @@ const makeTitleSelector = (store: IStore) => {
     getT,
     (id, tabData, t) => {
       const label = makeLabel(id, tabData);
-      updateTitle(store, t.format(label));
+      updateTitle(store, t.format(label) + " - itch");
     },
   );
 };
