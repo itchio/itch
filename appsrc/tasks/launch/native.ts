@@ -18,6 +18,7 @@ import store from "../../store";
 import sandbox from "../../util/sandbox";
 import os from "../../util/os";
 import sf from "../../util/sf";
+import butler from "../../util/butler";
 import spawn from "../../util/spawn";
 import fetch from "../../util/fetch";
 import pathmaker from "../../util/pathmaker";
@@ -380,7 +381,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
   });
 
   try {
-    sf.wipe(tmpPath);
+    await butler.wipe(tmpPath);
   } catch (e) {
     log(opts, `could not remove tmp dir: ${e.message}`);
   }
