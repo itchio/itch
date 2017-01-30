@@ -50,10 +50,8 @@ export default function (watcher: Watcher) {
   watcher.on(actions.triggerBack, async (store, action) => {
     const modals = store.getState().modals;
     const [modal] = modals;
-    if (!modal) {
-      return;
+    if (modal) {
+      store.dispatch(actions.closeModal({}));
     }
-
-    store.dispatch(actions.closeModal({}));
   });
 }
