@@ -19,7 +19,7 @@
       "uploadPattern": "$1",
       "matrixParams": {
         "override": true,
-        "deb_distribution": "wheezy,jessie,stretch,precise,trusty,vivid,wily,xenial,yakkety",
+        "deb_distribution": "wheezy,jessie,stretch,precise,trusty,vivid,wily,xenial,yakkety,rafaela",
         "deb_component": "main",
         "deb_architecture": "{{DEB_ARCH}}"
       }
