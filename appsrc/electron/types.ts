@@ -99,6 +99,7 @@ export interface IBrowserWindow {
   setMenuBarVisibility(visible: boolean): void;
   setFullScreen(fullscreen: boolean): void;
   isFullScreen(): boolean;
+  setTitle(title: string): void;
 }
 
 export interface IRectangle {

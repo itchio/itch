@@ -54,7 +54,9 @@ $table-cover-width: $table-cover-height * $table-cover-ratio;
     font-size: 80%;
     @include clickable;
   }
+}
 
+.hub-games, .hub-collections-grid {
   .hidden-count {
     background: $meat-background-color;
     box-shadow: 0 0 2px 0 darken($meat-background-color, 20%);
