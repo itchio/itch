@@ -346,5 +346,14 @@
     "notification.download_updated": "{{title}} estis ĝisdatigita!",
     "notification.download_reverted": "{{title}} estis revenigita al versio {{version}}!",
     "notification.download_healed": "{{title}} estis kontrolita kaj riparita!",
-    "outlinks.open_dashboard": "Malfermi la stirpanelon"
+    "outlinks.open_dashboard": "Malfermi la stirpanelon",
+    "outlinks.manage_collections": "",
+    "sandbox.setup.title": "Unufoja agordo de la sablujo",
+    "sandbox.setup.proceed": "Daŭrigi",
+    "sandbox.setup.windows.message": "Por plenumi ludojn en la sablujo de itch.io, oni devas fari unufojan agordon kiel administranto.",
+    "sandbox.setup.windows.detail": "Post kiam vi alklakas la butonon „Daŭrigi“, la sistemo eble petos vian permeson kaj konfirmon. Tio aldonos al la sistemo uzantokonton „itch-player“, per kiu via sistemo estos ŝirmita de la ludoj.",
+    "sandbox.setup.linux.message": "Por plenumi ludojn en la sablujo de itch.io, oni devas unufoje ruli agordan skripton kiel ĉefuzanto.",
+    "sandbox.setup.linux.detail": "Post kiam vi alklakas la butonon „Daŭrigi“, la sistemo petos vian pasvorton. Tio estas necesa nur por la unua lanĉo, kaj itch nek vidos, nek memoros vian pasvorton.",
+    "preferences.behavior": "Konduto",
+    "preferences.behavior.close_to_tray": "Konservi la aplikaĵon en la taskopleto post fermo de la fenestro"
 }
