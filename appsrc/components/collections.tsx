@@ -5,7 +5,8 @@ import {connect} from "./connect";
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
-import GameGridFilters from "./game-grid-filters";
+// TODO: GameFilters doens't belong in Collections view
+import GameFilters from "./game-filters";
 
 import {IAction, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
@@ -19,11 +20,11 @@ export class Collections extends React.Component<ICollectionsProps, void> {
     const tab = "collections";
 
     return <div className="collections-meat">
-      <GameGridFilters tab={tab} showBinaryFilters={false} showLayoutPicker={false}>
+      <GameFilters tab={tab} showBinaryFilters={false} showLayoutPicker={false}>
         <span className="link" onClick={(e) => navigate(`url/${urls.myCollections}`)}>
           {t("outlinks.manage_collections")}
         </span>
-      </GameGridFilters>
+      </GameFilters>
       <CollectionsGrid/>
     </div>;
   }

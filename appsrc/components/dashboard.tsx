@@ -8,7 +8,7 @@ import urls from "../constants/urls";
 import * as actions from "../actions";
 
 import Games from "./games";
-import GameGridFilters from "./game-grid-filters";
+import GameFilters from "./game-filters";
 import {map} from "underscore";
 
 import {IState, IGameRecordSet, IItchAppProfile, IItchAppProfileMyGames} from "../types";
@@ -33,11 +33,11 @@ export class Dashboard extends React.Component<IDashboardProps, void> {
 
     return <div className="dashboard-meat">
       <h2 className={headerClasses}>{t("sidebar.dashboard")}</h2>
-      <GameGridFilters tab={tab}>
+      <GameFilters tab={tab}>
         <span className="link" onClick={(e) => navigate(`url/${urls.dashboard}`)}>
           {t("outlinks.open_dashboard")}
         </span>
-      </GameGridFilters>
+      </GameFilters>
       <Games tab={tab} games={games}/>
     </div>;
   }

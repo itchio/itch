@@ -18,7 +18,7 @@ import Ink = require("react-ink");
 import Icon from "./icon";
 
 @watching
-class GameGridFilters extends React.Component<IGameGridFiltersProps, void> {
+class GameFilters extends React.Component<IGameFiltersProps, void> {
   refs: {
     search: HTMLInputElement;
   };
@@ -68,7 +68,7 @@ class GameGridFilters extends React.Component<IGameGridFiltersProps, void> {
         ? <section className="checkboxes">
           <label>
             <input type="checkbox" checked={onlyCompatible} onChange={
-              (e) => this.onCheckboxChanged("onlyCompatible", e.currentTarget.checked)
+              (e) => this.props.updatePreferences({onlyCompatibleGames: e.currentTarget.checked})
             }/>
             {t("grid.criterion.only_compatible")}
           </label>
@@ -81,12 +81,11 @@ class GameGridFilters extends React.Component<IGameGridFiltersProps, void> {
   }
 
   renderLayoutPicker (layout: TabLayout, icon: string) {
-    const {tab} = this.props;
     const active = (this.props.layout === layout);
 
     return <section className={classNames("layout-picker", {active})}
       onClick={
-      (e) => this.props.layoutChanged({tab, layout})
+      (e) => this.props.updatePreferences({layout})
     }>
       <Icon icon={icon}/>
       <Ink/>
@@ -103,13 +102,9 @@ class GameGridFilters extends React.Component<IGameGridFiltersProps, void> {
 
     this.props.filterChanged({tab, query: search.value});
   }
-
-  onCheckboxChanged (field: string, value: boolean) {
-    this.props.binaryFilterChanged({field, value});
-  }
 }
 
-interface IGameGridFiltersProps {
+interface IGameFiltersProps {
   /** id of the tab this filter is for (for remembering queries, etc.) */
   tab: string;
 
@@ -124,27 +119,25 @@ interface IGameGridFiltersProps {
   t: ILocalizer;
 
   filterChanged: typeof actions.filterChanged;
-  layoutChanged: typeof actions.layoutChanged;
-  binaryFilterChanged: typeof actions.binaryFilterChanged;
+  updatePreferences: typeof actions.updatePreferences;
 }
 
-const mapStateToProps = (initialState: IState, props: IGameGridFiltersProps) => {
+const mapStateToProps = (initialState: IState, props: IGameFiltersProps) => {
   const {tab} = props;
 
   return createStructuredSelector({
     filterQuery: (state: IState) => state.session.navigation.filters[tab],
-    layout: (state: IState) => state.session.navigation.layouts[tab] || "grid",
-    onlyCompatible: (state: IState) => state.session.navigation.binaryFilters.onlyCompatible,
+    layout: (state: IState) => state.preferences.layout,
+    onlyCompatible: (state: IState) => state.preferences.onlyCompatibleGames,
   });
 };
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
   filterChanged: dispatcher(dispatch, actions.filterChanged),
-  layoutChanged: dispatcher(dispatch, actions.layoutChanged),
-  binaryFilterChanged: dispatcher(dispatch, actions.binaryFilterChanged),
+  updatePreferences: dispatcher(dispatch, actions.updatePreferences),
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(GameGridFilters);
+)(GameFilters);

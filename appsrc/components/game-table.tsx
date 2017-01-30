@@ -233,8 +233,6 @@ interface IGameTableState {
 }
 
 const mapStateToProps = (initialState: IState, initialProps: IGameTableProps) => {
-  const {tab} = initialProps;
-
   const getGames = (state: IState, props: IGameTableProps) => props.games;
   const getSortBy = (state: IState, props: IGameTableProps) => props.sortBy;
   const getSortDirection = (state: IState, props: IGameTableProps) => props.sortDirection;
@@ -273,8 +271,6 @@ const mapStateToProps = (initialState: IState, initialProps: IGameTableProps) =>
   );
 
   return createStructuredSelector({
-    filterQuery: (state: IState) => state.session.navigation.filters[tab],
-    onlyCompatible: (state: IState) => state.session.navigation.binaryFilters.onlyCompatible,
     sortedGames: getSortedGames,
   });
 };

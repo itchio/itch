@@ -8,7 +8,7 @@ import urls from "../constants/urls";
 
 import Icon from "./icon";
 import Games from "./games";
-import GameGridFilters from "./game-grid-filters";
+import GameFilters from "./game-filters";
 
 import {map, filter} from "underscore";
 import {pathToId} from "../util/navigation";
@@ -36,11 +36,11 @@ export class Collection extends React.Component<ICollectionProps, void> {
     const tab = tabPath;
 
     return <div className="collection-meat">
-      <GameGridFilters tab={tab}>
+      <GameFilters tab={tab}>
         <span className="link-icon" onClick={(e) => initiateShare({url: `${urls.itchio}/c/${collection.id}/x`})}>
           <Icon icon="share"/>
         </span>
-      </GameGridFilters>
+      </GameFilters>
 
       {games.length > 0
         ? <Games games={games} tab={tab}/>

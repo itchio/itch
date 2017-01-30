@@ -20,6 +20,9 @@ export const initialState = {
   openAsHidden: false,
   manualGameUpdates: false,
   preferOptimizedPatches: false,
+
+  onlyCompatibleGames: true,
+  layout: "grid",
 } as IPreferencesState;
 
 export default reducer<IPreferencesState>(initialState, (on) => {

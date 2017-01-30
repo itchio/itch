@@ -1,13 +1,11 @@
 
 import * as React from "react";
 import {connect} from "./connect";
-import {createStructuredSelector} from "reselect";
-import Fuse = require("fuse.js");
 
 import HubItem from "./hub-item";
 import HiddenIndicator from "./hidden-indicator";
 
-import {IState, IGameRecord, IFilteredGameRecord} from "../types";
+import {IFilteredGameRecord} from "../types";
 
 import {AutoSizer, Grid} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";
@@ -25,21 +23,11 @@ interface ILayoutInfo {
 }
 
 class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
-  fuse: Fuse<IGameRecord>;
-
   constructor () {
     super();
     this.state = {
       scrollTop: 0,
     };
-    this.fuse = new Fuse([], {
-      keys: [
-        { name: "title", weight: 0.8 },
-        { name: "shortText", weight: 0.4 },
-      ],
-      threshold: 0.5,
-      include: ["score"],
-    });
     this.cellRenderer = this.cellRenderer.bind(this);
   }
 
@@ -114,15 +102,4 @@ interface IGameGridState {
   scrollTop: 0;
 }
 
-const mapStateToProps = (initialState: IState, props: IGameGridProps) => {
-  const {tab} = props;
-
-  return createStructuredSelector({
-    filterQuery: (state: IState) => state.session.navigation.filters[tab],
-    onlyCompatible: (state: IState) => state.session.navigation.binaryFilters.onlyCompatible,
-  });
-};
-
-export default connect(
-  mapStateToProps,
-)(GameGrid);
+export default connect()(GameGrid);

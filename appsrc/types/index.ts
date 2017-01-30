@@ -881,16 +881,6 @@ export interface ISessionNavigationState {
         collections?: string;
     };
 
-    layouts: {
-        [tabId: string]: TabLayout | undefined;
-        library?: TabLayout;
-    };
-
-    binaryFilters: {
-        [key: string]: boolean;
-        onlyCompatible: boolean;
-    };
-
     /** opened tabs */
     tabs: ITabs;
 
@@ -1094,7 +1084,14 @@ export interface IPreferencesState {
   /** show consent dialog before applying any game updates */
   manualGameUpdates?: boolean;
 
+  /** if rediff'd patch is available, use it instead of original patch */
   preferOptimizedPatches?: boolean;
+
+  /** hide games that aren't compatible with this computer (in native views) */
+  onlyCompatibleGames?: boolean;
+
+  /** layout to use to show games */
+  layout?: TabLayout;
 }
 
 export interface ITask {

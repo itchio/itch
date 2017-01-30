@@ -382,7 +382,7 @@ export default function (watcher: Watcher) {
   watcher.on(actions.clearFilters, async (store, action) => {
     const {tab} = action.payload;
 
-    store.dispatch(actions.binaryFilterChanged({field: "onlyCompatible", value: false}));
+    store.dispatch(actions.updatePreferences({onlyCompatibleGames: false}));
     store.dispatch(actions.filterChanged({tab, query: ""}));
   });
 }

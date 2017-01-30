@@ -79,16 +79,15 @@ interface IGamesState {
 }
 
 const mapStateToProps = () => {
-  const getLayout = (state: IState, props: IGamesProps) =>
-    state.session.navigation.layouts[props.tab] || "grid";
+  const getLayout = (state: IState, props: IGamesProps) => state.preferences.layout;
+  const getOnlyCompatible = (state: IState, props: IGamesProps) =>
+    state.preferences.onlyCompatibleGames;
   const getFilterQuery = (state: IState, props: IGamesProps) =>
     state.session.navigation.filters[props.tab] || "";
   const getGames = (state: IState, props: IGamesProps) =>
     props.games;
   const getCavesByGameId = (state: IState, props: IGamesProps) =>
     state.globalMarket.cavesByGameId;
-  const getOnlyCompatible = (state: IState, props: IGamesProps) =>
-    state.session.navigation.binaryFilters.onlyCompatible;
 
   const fuse: Fuse<IGameRecord> = new Fuse([], {
     keys: [

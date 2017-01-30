@@ -26,11 +26,7 @@ const initialState = {
     transient: [],
   },
   loadingTabs: {},
-  layouts: {},
   filters: {},
-  binaryFilters: {
-    onlyCompatible: true,
-  },
   lastConstant: "featured",
   tabData: indexBy(pick(staticTabData, ...baseTabs), "id"),
   id: "featured",
@@ -56,17 +52,6 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
     }
   });
 
-  on(actions.binaryFilterChanged, (state, action) => {
-    const {field, value} = action.payload;
-    return {
-      ...state,
-      binaryFilters: {
-        ...state.binaryFilters,
-        [field]: value,
-      },
-    };
-  });
-
   on(actions.filterChanged, (state, action) => {
     const {tab, query} = action.payload;
     return {
@@ -74,17 +59,6 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
       filters: {
         ...state.filters,
         [tab]: query,
-      },
-    };
-  });
-
-  on(actions.layoutChanged, (state, action) => {
-    const {tab, layout} = action.payload;
-    return {
-      ...state,
-      layouts: {
-        ...state.layouts,
-        [tab]: layout,
       },
     };
   });
