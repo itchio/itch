@@ -339,5 +339,12 @@
     "toast.call_to_action": "Por daŭrigi, reŝargu aŭ iru al alia paĝo.",
     "toast.actions.reload": "Reŝargi",
     "toast.actions.learn_more": "Lernu pli",
-    "toast.actions.report": "Sendu viajn komentojn por helpi al ni plibonigi itch"
+    "toast.actions.report": "Sendu viajn komentojn por helpi al ni plibonigi itch",
+    "toast.no_info_available": "Ne estas disponeblaj informoj",
+    "new_tab.titles.buttons": "Elektu ion:",
+    "notification.download_installed": "{{title}} estis instalita!",
+    "notification.download_updated": "{{title}} estis ĝisdatigita!",
+    "notification.download_reverted": "{{title}} estis revenigita al versio {{version}}!",
+    "notification.download_healed": "{{title}} estis kontrolita kaj riparita!",
+    "outlinks.open_dashboard": "Malfermi la stirpanelon"
 }
