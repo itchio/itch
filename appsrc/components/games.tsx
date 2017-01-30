@@ -82,28 +82,37 @@ const mapStateToProps = () => {
   const getLayout = (state: IState, props: IGamesProps) => state.preferences.layout;
   const getOnlyCompatible = (state: IState, props: IGamesProps) =>
     state.preferences.onlyCompatibleGames;
+  const getOnlyOwned = (state: IState, props: IGamesProps) =>
+    state.preferences.onlyOwnedGames;
+  const getOnlyInstalled = (state: IState, props: IGamesProps) =>
+    state.preferences.onlyInstalledGames;
   const getFilterQuery = (state: IState, props: IGamesProps) =>
     state.session.navigation.filters[props.tab] || "";
   const getGames = (state: IState, props: IGamesProps) =>
     props.games;
   const getCavesByGameId = (state: IState, props: IGamesProps) =>
     state.globalMarket.cavesByGameId;
+  const getDownloadKeysByGameId = (state: IState, props: IGamesProps) =>
+    state.market.downloadKeysByGameId;
 
   const fuse: Fuse<IGameRecord> = new Fuse([], {
     keys: [
       { name: "title", weight: 0.8 },
       { name: "shortText", weight: 0.4 },
     ],
-    threshold: 0.5,
+    threshold: 0.1,
     include: ["score"],
   });
 
   const getFilteredGames = createSelector(
     getGames,
     getCavesByGameId,
+    getDownloadKeysByGameId,
     getFilterQuery,
     getOnlyCompatible,
-    (games, cavesByGameId, filterQuery, onlyCompatible) => {
+    getOnlyOwned,
+    getOnlyInstalled,
+    (games, cavesByGameId, downloadKeysByGameId, filterQuery, onlyCompatible, onlyOwned, onlyInstalled) => {
       let filteredGames: IFilteredGameRecord[];
       if (filterQuery.length > 0) {
         fuse.set(games);
@@ -122,6 +131,14 @@ const mapStateToProps = () => {
 
       if (onlyCompatible) {
         filteredGames = filter(filteredGames, (record) => isPlatformCompatible(record.game));
+      }
+
+      if (onlyInstalled) {
+        filteredGames = filter(filteredGames, (record) => !!record.cave);
+      }
+
+      if (onlyOwned) {
+        filteredGames = filter(filteredGames, (record) => !!downloadKeysByGameId[record.game.id]);
       }
 
       return filteredGames;

@@ -21,6 +21,7 @@
     box-shadow: 0 4px 8px -4px $bread-background-color;
     flex-shrink: 0;
     padding-right: 4px;
+    min-height: 40px;
 
     .link, .link-icon {
       margin-left: 8px;
@@ -98,7 +99,7 @@
       box-shadow: 0 0 2px #1B1919;
       transition: all 0.2s;
       width: 200px;
-      text-indent: 16px;
+      text-indent: 18px;
       padding: 6px 10px 5px 9px;
       height: 32px;
       font-size: 14px;
@@ -110,7 +111,7 @@
 
     .Select {
       width: auto;
-      min-width: 250px;
+      min-width: 350px;
       font-size: 14px;
 
       &.Select--multi {
@@ -137,12 +138,24 @@
             }
           }
         }
-      }
 
-      .Select-control {
-        // I know, I know, !important is bad. but it *is* important.
-        background: none !important;
-        border: none !important;
+        .Select-input input {
+          color: white;
+          margin-top: 5px;
+        }
+
+        .Select-control {
+          height: 40px;
+
+          // I know, I know, !important is bad. but it *is* important.
+          background: none !important;
+          border: none !important;
+          box-shadow: none !important;
+
+          .Select-placeholder {
+            line-height: 40px;
+          }
+        }
       }
     }
   }

@@ -2,13 +2,19 @@
 import makeMarketReducer from "./make-market-reducer";
 import {getUserMarket} from "../reactors/market";
 
+import {createSelector, createStructuredSelector} from "reselect";
+import {indexBy} from "underscore";
+
+import derivedReducer from "./derived-reducer";
+
 import {
   IAction,
   LOGOUT,
 } from "../constants/action-types";
 
 import {
-  IMarketState,
+  IUserMarketState,
+  IDownloadKeysMap,
 } from "../types";
 
 const reducer = makeMarketReducer("USER", getUserMarket, [
@@ -20,7 +26,7 @@ const reducer = makeMarketReducer("USER", getUserMarket, [
   "users",
 ]);
 
-export default (state: IMarketState, action: IAction<any>) => {
+const fixedReducer = (state: IUserMarketState, action: IAction<any>) => {
   // FIXME: this is a workaround, shouldn't be needed,
   // but without it, sessionReady fires too soon on 2nd login
   if (action.type === LOGOUT) {
@@ -29,3 +35,10 @@ export default (state: IMarketState, action: IAction<any>) => {
     return reducer(state, action);
   }
 };
+
+export default derivedReducer(fixedReducer, createSelector(
+  (state: IUserMarketState) => state.downloadKeys,
+  createStructuredSelector({
+    downloadKeysByGameId: (downloadKeys: IDownloadKeysMap) => indexBy(downloadKeys, "gameId"),
+  }),
+));

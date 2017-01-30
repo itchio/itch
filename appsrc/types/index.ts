@@ -743,12 +743,18 @@ export interface IItchAppTabs {
     items: ITabDataSave[];
 }
 
+export interface IDownloadKeysMap {
+    [id: string]: IDownloadKey;
+}
+
 export interface IUserMarketState extends IMarketState {
     games: { [id: string]: IGameRecord };
     collections: { [id: string]: ICollectionRecord };
-    downloadKeys: { [id: string]: IDownloadKey };
+    downloadKeys: IDownloadKeysMap;
     itchAppProfile: IItchAppProfile;
     itchAppTabs: IItchAppTabs;
+
+    downloadKeysByGameId: { [gameId: string]: IDownloadKey };
 }
 
 export interface IGlobalMarketState extends IMarketState {

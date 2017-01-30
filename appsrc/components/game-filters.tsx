@@ -91,16 +91,14 @@ class GameFilters extends React.Component<IGameFiltersProps, void> {
     }
 
     return <section className="filters">
-      { true ? null 
-        : <section className="search">
-          <input className="filter-input-field" ref="search" type="search" defaultValue={filterQuery}
-            placeholder={t("grid.criterion.filter")}
-            onKeyPress={this.onQueryChanged}
-            onKeyUp={this.onQueryChanged}
-            onChange={this.onQueryChanged}/>
-          <span className={classNames("icon", "icon-filter", {active: !!filterQuery})}/>
-        </section>
-      }
+      <section className="search">
+        <input className="filter-input-field" ref="search" type="search" defaultValue={filterQuery}
+          placeholder={t("grid.criterion.search")}
+          onKeyPress={this.onQueryChanged}
+          onKeyUp={this.onQueryChanged}
+          onChange={this.onQueryChanged}/>
+        <span className={classNames("icon", "icon-filter", { active: !!filterQuery })} />
+      </section>
       
       {showBinaryFilters
       ? <section className="tag-filters">
@@ -108,6 +106,8 @@ class GameFilters extends React.Component<IGameFiltersProps, void> {
           multi={true}
           options={options}
           value={value}
+          autoBlur={true}
+          noResultsText={t("grid.filter.options.no_results")}
           onChange={(vals: {value: string}[]) => {
             const prefs = {
               onlyCompatibleGames: false,
