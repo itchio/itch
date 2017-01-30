@@ -323,5 +323,8 @@
     "usage_stats.never_played": "Hiç oynanmadı",
     "usage_stats.never_used": "Hiç kullanılmadı",
     "prompt.no_compatible_version.detail": "Belki bu {{classification}} şimdilik uyumlu değildir?",
-    "prompt.url_install.credit": "{{username}} tarafından bir {{classification}}"
+    "prompt.url_install.credit": "{{username}} tarafından bir {{classification}}",
+    "download.reason.revert": "önceki sürüme dönmek için",
+    "download.reason.heal": "doğrulamak ve kurmak için",
+    "grid.item.advanced": "Gelişmiş..."
 }
