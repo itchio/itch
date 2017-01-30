@@ -328,5 +328,16 @@
     "prereq.status.extracting": "Maldensigado…",
     "prereq.status.ready": "Preta por instalado",
     "prereq.status.installing": "Instalado… (tio povas daŭri kelkajn minutojn)",
-    "table.column.name": "Nomo"
+    "table.column.name": "Nomo",
+    "table.column.play_time": "",
+    "table.column.last_played": "Laste ludita",
+    "table.column.published": "Publikigita",
+    "menu.file.new_tab": "Nova folio",
+    "menu.help.about": "Pri",
+    "toast.title": "Ho, ve!",
+    "toast.message": "Okazis io neatendita.",
+    "toast.call_to_action": "Por daŭrigi, reŝargu aŭ iru al alia paĝo.",
+    "toast.actions.reload": "Reŝargi",
+    "toast.actions.learn_more": "Lernu pli",
+    "toast.actions.report": "Sendu viajn komentojn por helpi al ni plibonigi itch"
 }
