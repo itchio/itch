@@ -257,6 +257,13 @@ async function hideWindow () {
   }
 }
 
+async function exitFullScreen () {
+  const window = BrowserWindow.getFocusedWindow();
+  if (window && window.isFullScreen()) {
+    window.setFullScreen(false);
+  }
+}
+
 function showWindow (window: IBrowserWindow) {
   window.show();
   const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false;
@@ -366,6 +373,10 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.hideWindow, async (store, action) => {
     hideWindow();
+  });
+
+  watcher.on(actions.triggerBack, async (store, action) => {
+    exitFullScreen();
   });
 
   watcher.on(actions.windowBoundsChanged, async (store, action) => {
