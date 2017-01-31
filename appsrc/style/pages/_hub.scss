@@ -112,6 +112,8 @@ $table-cover-width: $table-cover-height * $table-cover-ratio;
   }
 
   .ReactVirtualized__Table__rowColumn {
+    position: relative;
+
     &.secondary {
       font-size: 95%;
       color: $secondary-text-color;

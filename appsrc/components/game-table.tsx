@@ -14,6 +14,8 @@ import {AutoSizer, Table, Column} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";
 import {IOnSortChange, SortDirectionType} from "./sort-types";
 
+import gameTableRowRenderer from "./game-table-row-renderer";
+
 import NiceAgo from "./nice-ago";
 import HiddenIndicator from "./hidden-indicator";
 import TotalPlaytime from "./total-playtime";
@@ -82,7 +84,7 @@ class GameTable extends React.Component<IGameTableProps, IGameTableState> {
   coverRenderer (params: ICellRendererParams): JSX.Element | string {
     const {cellData} = params;
     const {game} = cellData;
-    const style: React.CSSProperties = {}
+    const style: React.CSSProperties = {};
     const cover = game.stillCoverUrl || game.coverUrl;
     if (cover) {
       style.backgroundImage = `url("${game.stillCoverUrl || game.coverUrl}")`;
@@ -172,6 +174,7 @@ class GameTable extends React.Component<IGameTableProps, IGameTableState> {
               sort={this.props.onSortChange}
               sortBy={sortBy}
               sortDirection={sortDirection}
+              rowRenderer={gameTableRowRenderer}
             >
             <Column
               dataKey="cover"
