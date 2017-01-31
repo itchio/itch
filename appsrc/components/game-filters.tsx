@@ -51,13 +51,6 @@ class GameFilters extends React.Component<IGameFiltersProps, void> {
        onlyCompatible, onlyOwned, onlyInstalled,
        showBinaryFilters = true, showLayoutPicker = true} = this.props;
 
-    const layoutPickers: JSX.Element[] = [];
-
-    if (showLayoutPicker) {
-      layoutPickers.push(this.renderLayoutPicker("grid", "grid"));
-      layoutPickers.push(this.renderLayoutPicker("table", "list"));
-    }
-
     const compatibleOption = {
       value: "onlyCompatibleGames",
       label: t("grid.filters.options.compatible"),
@@ -128,7 +121,16 @@ class GameFilters extends React.Component<IGameFiltersProps, void> {
 
       {this.props.children}
       <section className="spacer"/>
-      {layoutPickers}
+      {showLayoutPicker
+      ? this.renderLayoutPickers()
+      : null}
+    </section>;
+  }
+
+  renderLayoutPickers () {
+    return <section className="layout-pickers">
+      {this.renderLayoutPicker("grid", "grid")}
+      {this.renderLayoutPicker("table", "list")}
     </section>;
   }
 

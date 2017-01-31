@@ -37,6 +37,10 @@
       flex-grow: 1;
     }
 
+    .layout-pickers {
+      display: flex;
+    }
+
     .layout-picker {
       position: relative;
       padding: 8px 10px;
