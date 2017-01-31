@@ -360,5 +360,8 @@
     "grid.filters.options.compatible": "Kongruaj",
     "grid.filters.options.installed": "Instalitaj",
     "grid.filters.options.owned": "Posedaĵoj",
-    "grid.filters.options.no_results": "Troviĝis nenio"
+    "grid.filters.options.no_results": "Troviĝis nenio",
+    "prereq.status.done": "Preta!",
+    "preferences.behavior.open_at_login": "Lanĉi itch kiam la komputilo startas",
+    "preferences.behavior.open_as_hidden": "Startigi itch kun kaŝita fenestro"
 }
