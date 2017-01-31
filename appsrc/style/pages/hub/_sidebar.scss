@@ -1,9 +1,4 @@
 
-@keyframes sidebar-swoop-in {
-  0% { transform: translateX(-100%) }
-  100% { transform: translateX(0%) }
-}
-
 .hub-sidebar-handle {
   background: $sidebar-background-color;
   height: '100%';
@@ -63,168 +58,6 @@
     overflow-x: hidden;
     overflow-y: auto;
     flex-grow: 1;
-  }
-
-  .hub-sidebar-item {
-    transition: border-color 0.2s, transform 0.2s;
-    border-left: 5px solid transparent;
-    border-radius: 0 4px 4px 0;
-    word-break: break-word;
-
-    border-color: $secondary-text-color;
-
-    &[data-path='library'] {
-      border-color: #D2BE53;
-    }
-
-    &[data-path='featured'] {
-      border-color: #F96F6F;
-    }
-
-    &[data-path='dashboard'] {
-      border-color: #4EA260;
-    }
-
-    &[data-path='press'] {
-      border-color: #BF8036;
-    }
-
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    margin: 2px 0;
-    margin-right: 0;
-    padding: 5px 8px 5px 10px;
-    min-height: 30px;
-
-    transform: translateX(-6px);
-
-    .row {
-      display: flex;
-      flex-shrink: 0;
-      flex-direction: row;
-      align-items: center;
-
-      .icon-container {
-        width: 18px;
-        height: 16px;
-        margin-right: 4px;
-        text-align: center;
-
-        .icon-image {
-          width: 14px;
-          height: 14px;
-          margin-right: 2px;
-          border-radius: 2px;
-        }
-      }
-
-      .progress-outer {
-        @include progress;
-        width: 60px;
-        height: 4px;
-        margin: 4px 0 2px 10px;
-
-        &, .progress-inner {
-          border-radius: 4px;
-        }
-
-        .progress-inner {
-          background-color: white;
-        }
-      }
-
-      &.sublabel {
-        color: $secondary-text-color;
-        margin: 7px 0 6px 0;
-        font-size: 14px;
-      }
-    }
-
-    &:hover {
-      cursor: pointer;
-      background: darken($sidebar-entry-focused-background-color, 5%);
-      color: $ivory;
-
-      .icon-cross {
-        opacity: 1;
-      }
-    }
-
-    .icon {
-      flex-shrink: 0;
-      margin: 0 6px 0 0px;
-      font-size: 90%;
-      z-index: 100;
-    }
-
-    .label {
-      @include single-line;
-      padding: .2em 0;
-    }
-
-    * {
-      flex-grow: 0;
-    }
-
-    .filler {
-      flex-grow: 1;
-    }
-
-    .icon-cross {
-      margin: 0 0 0 4px;
-      opacity: 0;
-
-      color: $ternary-text-color;
-      &:hover {
-        color: $secondary-text-color;
-      }
-
-      font-weight: bold;
-      @include icon-button;
-    }
-
-    &.new-tab {
-      -webkit-filter: brightness(50%);
-    }
-
-    &[data-dragging=true] {
-      background: transparent;
-    }
-
-    &.fresh {
-      animation: sidebar-swoop-in .3s ease-out;
-    }
-
-    &.dying {
-      animation: sidebar-swoop-out .2s ease-in;
-    }
-
-    &.active {
-      transform: translateX(0px);
-
-      .icon-cross {
-        opacity: 1;
-        color: $secondary-text-color;
-
-        &:hover {
-          color: $ivory;
-        }
-      }
-
-      background: $sidebar-entry-focused-background-color;
-    }
-
-    .bubble {
-      font-size: 11px;
-      background: white;
-      border-radius: 2px;
-      color: $sidebar-background-color;
-      font-weight: bold;
-      padding: 1px 6px;
-      margin-left: 8px;
-      white-space: nowrap;
-    }
   }
 
   h2 {
@@ -317,5 +150,148 @@
 
   .sidebar-blank {
     flex-grow: 1;
+  }
+}
+
+.hub-sidebar-item {
+  font-size: 14px;
+  transition: border-color 0.2s;
+  border-left: 5px solid transparent;
+  border-radius: 0 4px 4px 0;
+  word-break: break-word;
+
+  border-color: $secondary-text-color;
+
+  &[data-path='library'] {
+    border-color: #D2BE53;
+  }
+
+  &[data-path='featured'] {
+    border-color: #F96F6F;
+  }
+
+  &[data-path='dashboard'] {
+    border-color: #4EA260;
+  }
+
+  &[data-path='press'] {
+    border-color: #BF8036;
+  }
+
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 2px 0;
+  margin-right: 0;
+  padding: 5px 8px 5px 10px;
+  min-height: 30px;
+
+  .row {
+    display: flex;
+    flex-shrink: 0;
+    flex-direction: row;
+    align-items: center;
+
+    .icon-container {
+      width: 18px;
+      height: 16px;
+      margin-right: 4px;
+      text-align: center;
+
+      .icon-image {
+        width: 14px;
+        height: 14px;
+        margin-right: 2px;
+        border-radius: 2px;
+      }
+    }
+
+    .progress-outer {
+      @include progress;
+      width: 60px;
+      height: 4px;
+      margin: 4px 0 2px 10px;
+
+      &, .progress-inner {
+        border-radius: 4px;
+      }
+
+      .progress-inner {
+        background-color: white;
+      }
+    }
+
+    &.sublabel {
+      color: $secondary-text-color;
+      margin: 7px 0 6px 0;
+      font-size: 14px;
+    }
+  }
+
+  &:hover {
+    cursor: pointer;
+    background: darken($sidebar-entry-focused-background-color, 5%);
+    color: $ivory;
+
+    .icon-cross {
+      opacity: 1;
+    }
+  }
+
+  .icon {
+    flex-shrink: 0;
+    margin: 0 6px 0 0px;
+    font-size: 90%;
+    z-index: 100;
+  }
+
+  .label {
+    @include single-line;
+    padding: .2em 0;
+  }
+
+  * {
+    flex-grow: 0;
+  }
+
+  .filler {
+    flex-grow: 1;
+  }
+
+  .icon-cross {
+    margin: 0 0 0 4px;
+    opacity: 0;
+
+    color: $ternary-text-color;
+    &:hover {
+      color: $secondary-text-color;
+    }
+
+    font-weight: bold;
+    @include icon-button;
+  }
+
+  &.active {
+    .icon-cross {
+      opacity: 1;
+      color: $secondary-text-color;
+
+      &:hover {
+        color: $ivory;
+      }
+    }
+
+    background: $sidebar-entry-focused-background-color;
+  }
+
+  .bubble {
+    font-size: 11px;
+    background: white;
+    border-radius: 2px;
+    color: $sidebar-background-color;
+    font-weight: bold;
+    padding: 1px 6px;
+    margin-left: 8px;
+    white-space: nowrap;
   }
 }

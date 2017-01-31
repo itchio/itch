@@ -22,6 +22,72 @@ import {IDispatch, dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
 
+import {SortableElement, SortableContainer} from "react-sortable-hoc";
+
+interface ISortEndParams {
+  oldIndex: number;
+  newIndex: number;
+}
+
+interface ISortableHubSidebarItemProps {
+  props: any & {
+    id: string;
+  };
+}
+
+const SortableHubSidebarItem = SortableElement((props: ISortableHubSidebarItemProps) => {
+  return <HubSidebarItem {...props.props}/>;
+});
+
+interface ISortableContainerParams {
+  items: string[];
+  sidebarProps: IHubSidebarProps;
+}
+
+const SortableList = SortableContainer((params: ISortableContainerParams) => {
+  const {sidebarProps, items} = params;
+  const {t, tabData, id: currentId, loadingTabs} = sidebarProps;
+  const {navigate, closeTab, openTabContextMenu} = sidebarProps;
+  const {downloadCount, downloadProgress, downloadSublabel} = sidebarProps;
+  const {downloadingGame} = sidebarProps;
+
+  return <div>
+    {map(items, (id, index) => {
+      const data = tabData[id] || {};
+      const {path} = data;
+      const iconImage = /^url/.test(path) ? data.webFavicon : data.iconImage;
+      const label = makeLabel(id, tabData);
+      const icon = pathToIcon(path);
+      const active = currentId === id;
+      const onClick = () => { navigate(id); };
+      const onClose = () => { closeTab({id}); };
+      const onContextMenu = (e?: MouseEvent) => {
+        openTabContextMenu({id});
+      };
+      let count = 0;
+      let progress = 0;
+      let sublabel: ILocalizedString = null;
+      const loading = loadingTabs[id];
+
+      if (id === "downloads") {
+        count = downloadCount;
+        progress = downloadProgress;
+        sublabel = downloadSublabel;
+      }
+
+      let gameOverride: IGameRecord = null;
+      if (id === "downloads") {
+        gameOverride = downloadingGame;
+      }
+
+      const props = {index, id, path, label, icon, iconImage, active,
+        onClick, count, progress, onClose, onContextMenu, data, t,
+        sublabel, gameOverride, loading};
+      return <SortableHubSidebarItem key={id} index={index} props={props}/>;
+    })}
+  </div>;
+});
+
 export function versionString () {
   return `itch v${appVersion}`;
 }
@@ -67,14 +133,18 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
   }
 
   render () {
-    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData, loadingTabs,
-      navigate, closeTab, closeAllTabs, moveTab,
-      openTabContextMenu, newTab, searchLoading, halloween} = this.props;
+    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
+      navigate, closeAllTabs,
+      newTab, searchLoading, halloween} = this.props;
     const classes = classNames("hub-sidebar", {osx, fullscreen});
     const sidebarStyle = {
       width: sidebarWidth + "px",
     };
     const searchClasses = classNames("search", {loading: searchLoading});
+
+    const onSortEnd = (params: ISortEndParams) => {
+      this.props.moveTab({before: params.oldIndex, after: params.newIndex});
+    };
 
     return <div className={classes} style={sidebarStyle}>
       <div className="title-bar-padder"/>
@@ -133,39 +203,8 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
             <Ink/>
           </span>
         </h2>
-        {map(tabs.transient, (id, index) => {
-          const data = tabData[id] || {};
-          const {path} = data;
-          const iconImage = /^url/.test(path) ? data.webFavicon : data.iconImage;
-          const label = makeLabel(id, tabData);
-          const icon = pathToIcon(path);
-          const active = currentId === id;
-          const onClick = () => { navigate(id); };
-          const onClose = () => { closeTab({id}); };
-          const onContextMenu = (e?: MouseEvent) => {
-            openTabContextMenu({id});
-          };
-          let count = 0;
-          let progress = 0;
-          let sublabel: ILocalizedString = null;
-          const loading = loadingTabs[id];
 
-          if (id === "downloads") {
-            count = this.props.downloadCount;
-            progress = this.props.downloadProgress;
-            sublabel = this.props.downloadSublabel;
-          }
-
-          let gameOverride: IGameRecord = null;
-          if (id === "downloads") {
-            gameOverride = this.props.downloadingGame;
-          }
-
-          const props = {index, id, path, label, icon, iconImage, active,
-            onClick, count, progress, onClose, onContextMenu, moveTab, data, t,
-            sublabel, gameOverride, halloween, loading};
-          return <HubSidebarItem key={id} {...props}/>;
-        })}
+        <SortableList items={tabs.transient} sidebarProps={this.props} onSortEnd={onSortEnd} distance={5}/>
       </div>
 
       <section className="sidebar-blank"/>

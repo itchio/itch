@@ -87,11 +87,6 @@
       "from": "@types/react-select@latest",
       "resolved": "https://registry.npmjs.org/@types/react-select/-/react-select-1.0.40.tgz"
     },
-    "@types/react-sortable-hoc": {
-      "version": "0.0.3",
-      "from": "@types/react-sortable-hoc@latest",
-      "resolved": "https://registry.npmjs.org/@types/react-sortable-hoc/-/react-sortable-hoc-0.0.3.tgz"
-    },
     "@types/react-virtualized": {
       "version": "8.9.2",
       "from": "@types/react-virtualized@latest",
