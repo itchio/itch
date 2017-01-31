@@ -1,15 +1,11 @@
 
 import * as electron from "electron";
-import * as env from "../env";
 
 import {IWebView, IMenuItem} from "../electron/types";
-
-const isDev = env.name === "development";
 
 interface IContextMenuOpts {
   prepend?: (opts: IContextMenuOpts, win: IWebView) => IMenuItem[];
   append?: (opts: IContextMenuOpts, win: IWebView) => IMenuItem[];
-  showInspectElement?: boolean;
   labels?: {
     [key: string]: string;
   };
@@ -80,26 +76,6 @@ export default function create(win: IWebView, opts: IContextMenuOpts = {}) {
       if (Array.isArray(result)) {
         menuTpl.push(...result);
       }
-    }
-
-    if (opts.showInspectElement || (opts.showInspectElement !== false && isDev)) {
-      menuTpl.push({
-        type: "separator",
-      },
-      {
-        id: "inspect",
-        label: "Inspect Element",
-        click(item, inspectWin) {
-          inspectWin.webContents.inspectElement(props.x, props.y);
-
-          if (inspectWin.webContents.isDevToolsOpened()) {
-            inspectWin.webContents.devToolsWebContents.focus();
-          }
-        },
-      },
-      {
-        type: "separator",
-      });
     }
 
     // apply custom labels for default menu items
