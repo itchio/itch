@@ -111,7 +111,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           const loading = false;
 
           const props = {id, path, label, icon, active, onClick, t, onContextMenu, halloween, loading, index};
-          return <HubSidebarItem {...props}/>;
+          return <HubSidebarItem key={id} {...props}/>;
         })}
 
         <h2>

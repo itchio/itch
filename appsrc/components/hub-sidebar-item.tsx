@@ -63,7 +63,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
       backgroundColor: progressColor,
     };
 
-    return <section key={id} style={style} className={classes}
+    return <section style={style} className={classes}
         data-rh-at="bottom"
         data-rh={t.format(sublabel)}
         onClick={this.onClick}
