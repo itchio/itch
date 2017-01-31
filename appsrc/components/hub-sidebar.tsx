@@ -7,21 +7,17 @@ import * as classNames from "classnames";
 import {createSelector, createStructuredSelector} from "reselect";
 
 import * as actions from "../actions";
-import defaultImages from "../constants/default-images";
-import urls from "../constants/urls";
 import {pathToIcon, makeLabel} from "../util/navigation";
 
 import {app} from "../electron";
 const appVersion = app.getVersion();
 
-import Icon from "./icon";
-import Dropdown from "./dropdown";
-
 import HubSidebarItem from "./hub-sidebar-item";
+import UserMenu from "./user-menu";
 
 import {IState, IUserRecord, IGameRecord, ITabDataSet, ILocalizedString} from "../types";
 import {ILocalizer} from "../localizer";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
 
@@ -114,7 +110,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           };
           const loading = false;
 
-          const props = {id, path, label, icon, active, onClick, t, onContextMenu, halloween, loading};
+          const props = {id, path, label, icon, active, onClick, t, onContextMenu, halloween, loading, index};
           return <HubSidebarItem {...props}/>;
         })}
 
@@ -171,7 +167,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
 
       <section className="sidebar-blank"/>
 
-      {this.dropdown()}
+      <UserMenu/>
     </div>;
   }
 
@@ -234,93 +230,6 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
     }
 
     this.props.search({query: search.value});
-  }
-
-  me () {
-    const me = (this.props.me || {}) as IUserRecord;
-    const {coverUrl = defaultImages.avatar, username, displayName} = me;
-
-    return <section className="hub-sidebar-item me">
-      <img src={coverUrl}/>
-      <span className="label">{username || displayName}</span>
-      <div className="filler"/>
-      <Icon icon="triangle-down" classes={["me-dropdown"]}/>
-    </section>;
-  }
-
-  dropdown () {
-    const {viewCreatorProfile, viewCommunityProfile, changeUser,
-      navigate, copyToClipboard, quit, reportIssue,
-      openUrl, checkForSelfUpdate} = this.props;
-
-    const items = [
-      {
-        icon: "rocket",
-        label: ["sidebar.view_creator_profile"],
-        onClick: viewCreatorProfile,
-      },
-      {
-        icon: "fire",
-        label: ["sidebar.view_community_profile"],
-        onClick: viewCommunityProfile,
-      },
-      {
-        type: "separator",
-      },
-      {
-        icon: "download",
-        label: ["sidebar.downloads"],
-        onClick: () => navigate("downloads"),
-      },
-      {
-        icon: "cog",
-        label: ["sidebar.preferences"],
-        onClick: () => navigate("preferences"),
-      },
-      {
-        type: "separator",
-      },
-      {
-        icon: "checkmark",
-        label: versionString(),
-        onClick: () => copyToClipboard({text: versionString()}),
-        type: "info",
-      },
-      {
-        icon: "repeat",
-        label: ["menu.help.check_for_update"],
-        onClick: () => checkForSelfUpdate({}),
-      },
-      {
-        icon: "search",
-        label: ["menu.help.search_issue"],
-        onClick: () => openUrl({url: `${urls.itchRepo}/search?type=Issues`}),
-      },
-      {
-        icon: "bug",
-        label: ["menu.help.report_issue"],
-        onClick: () => reportIssue({}),
-      },
-      {
-        icon: "lifebuoy",
-        label: ["menu.help.help"],
-        onClick: () => navigate("url/" + urls.manual),
-      },
-      {
-        type: "separator",
-      },
-      {
-        icon: "shuffle",
-        label: ["menu.account.change_user"],
-        onClick: changeUser,
-      },
-      {
-        icon: "exit",
-        label: ["menu.file.quit"],
-        onClick: quit,
-      },
-    ];
-    return <Dropdown items={items} inner={this.me()} updown/>;
   }
 }
 
@@ -426,7 +335,7 @@ const mapStateToProps = createStructuredSelector({
 
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   navigate: dispatcher(dispatch, actions.navigate),
   closeTab: dispatcher(dispatch, actions.closeTab),
   closeAllTabs: dispatcher(dispatch, actions.closeAllTabs),

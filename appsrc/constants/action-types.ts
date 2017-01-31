@@ -6,12 +6,16 @@ import {IProgressInfo} from "../types";
 
 export type IAction<T> = Action<T>;
 
-export function dispatcher <T> (dispatch: (action: IAction<any>) => void, actionCreator: (payload: T) => IAction<T>) {
+export interface IDispatch {
+  (action: IAction<any>): void;
+}
+
+export function dispatcher <T> (dispatch: IDispatch, actionCreator: (payload: T) => IAction<T>) {
   return (payload: T) => dispatch(actionCreator(payload));
 }
 
 export function multiDispatcher <T> (
-    dispatch: (action: IAction<any>) => void,
+    dispatch: IDispatch,
     actionCreator: (...args: any[]) => IAction<T>) {
   return (...args: any[]) => dispatch(actionCreator(...args));
 }
