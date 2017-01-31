@@ -257,7 +257,9 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
   newWindow (e: any) { // TODO: type
     const {navigate} = this.props;
     const {url} = e;
-    navigate("url/" + url, {}, /* background */ true);
+
+    const background = (e.disposition === "background-tab");
+    navigate("url/" + url, {}, background);
   }
 
   isFrozen () {
