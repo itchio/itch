@@ -408,5 +408,10 @@
     "table.column.name": "Име",
     "table.column.published": "Публикувано",
     "table.column.play_time": "Изиграно време",
-    "table.column.last_played": "Последно пускане"
+    "table.column.last_played": "Последно пускане",
+    "grid.criterion.search": "Търсене…",
+    "grid.filters.options.compatible": "Съвместими",
+    "grid.filters.options.installed": "Инсталирани",
+    "grid.filters.options.owned": "Притежавани",
+    "grid.filters.options.no_results": "Няма резултати"
 }
