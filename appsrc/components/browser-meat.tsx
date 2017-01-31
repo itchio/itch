@@ -18,6 +18,7 @@ import * as ospath from "path";
 import {uniq, findWhere} from "underscore";
 
 import {IBrowserState} from "./browser-state";
+import createContextMenu from "./browser-meat-context-menu";
 
 const injectPath = ospath.resolve(__dirname, "..", "inject", "itchio-monkeypatch.js");
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
@@ -375,6 +376,8 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
       wv.addEventListener("page-favicon-updated", this.pageFaviconUpdated.bind(this));
       wv.addEventListener("new-window", this.newWindow.bind(this));
       this.domReady();
+
+      createContextMenu(wv);
 
       // otherwise, back button is active and brings us back to 'about:blank'
       wv.clearHistory();

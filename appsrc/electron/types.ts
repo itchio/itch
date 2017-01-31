@@ -140,6 +140,20 @@ export interface IWebView {
   removeEventListener(ev: string, cb: (ev: any) => void): void;
 }
 
+export interface IContextMenuProps {
+  selectionText: string;
+  editFlags: {
+    [key: string]: boolean;
+    canPaste: boolean;
+  };
+  isEditable: boolean;
+  linkText?: string;
+  linkURL?: string;
+  mediaType?: string;
+  x: number;
+  y: number;
+}
+
 /** An electron webcontents */
 export interface IWebContents {
   session: ISession;
@@ -149,6 +163,7 @@ export interface IWebContents {
   setUserAgent(userAgent: string): void;
   getUserAgent(): string;
   on(ev: "new-window", cb: (ev: Event, url: string) => void): void;
+  on(ev: "context-menu", cb: (ev: Event, props: IContextMenuProps) => void): void;
 }
 
 type StorageType = "appcache" | "cookies" | "filesystem" | "indexdb" |
@@ -191,8 +206,12 @@ export interface IWebRequestResponseCallbackOpts {
 }
 
 export interface IMenuItem {
+  id?: string;
   type?: string;
+  role?: string;
   label?: string;
-  click?: () => void;
+  click?: (...args: any[]) => void;
   submenu?: IMenuItem[];
+  enabled?: boolean;
+  visible?: boolean;
 }
