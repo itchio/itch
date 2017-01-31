@@ -35,7 +35,7 @@ import GameBrowserContext from "./game-browser-context";
 import {transformUrl} from "../util/navigation";
 
 import {ITabData, IState} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
 
 import {IWebView, IWebContents, ISession} from "../electron/types";
 
@@ -549,8 +549,8 @@ const mapStateToProps = createStructuredSelector({
   proxySource: (state: IState) => state.system.proxySource,
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
-  navigate: dispatcher(dispatch, actions.navigate), 
+const mapDispatchToProps = (dispatch: IDispatch) => ({
+  navigate: multiDispatcher(dispatch, actions.navigate), 
   evolveTab: dispatcher(dispatch, actions.evolveTab),
   tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
   tabReloaded: dispatcher(dispatch, actions.tabReloaded),
