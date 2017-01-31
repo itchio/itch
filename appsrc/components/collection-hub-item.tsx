@@ -14,6 +14,7 @@ import {ILocalizer} from "../localizer";
 
 import Icon from "./icon";
 import NiceAgo from "./nice-ago";
+import Ink = require("react-ink");
 import interleave from "./interleave";
 
 import {IState, ICollectionRecord, IGameRecordSet, IUserMarketState} from "../types";
@@ -61,6 +62,7 @@ export class CollectionHubItem extends React.Component<ICollectionHubItemProps, 
           time_ago: <NiceAgo date={collection.updatedAt}/>,
         })}
       </section>
+      <Ink/>
     </div>;
   }
 }
