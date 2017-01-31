@@ -53,7 +53,7 @@ export default function create(win: IWebView, opts: IContextMenuOpts) {
         id: "openInNewTab",
         label: "Open in new tab",
         click() {
-          opts.navigate("url/" + props.linkURL, {webTitle: props.linkText}, /* background */ true);
+          opts.navigate("url/" + props.linkURL, {}, /* background */ true);
         },
       },
       {

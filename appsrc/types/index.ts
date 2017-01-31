@@ -235,6 +235,9 @@ export interface ITabData {
     query?: {
         [key: string]: string;
     };
+
+    /** true if the tab was restored as part of session */
+    restored?: boolean;
 }
 
 export interface ITabDataSave extends ITabData {

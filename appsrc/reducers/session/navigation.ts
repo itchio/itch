@@ -302,6 +302,7 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
 
       tabData[tab.id] = {
         ...omit(tab, "id"),
+        restored: true,
       };
       return tab.id;
     }), (x) => !!x);

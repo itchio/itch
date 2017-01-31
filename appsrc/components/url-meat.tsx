@@ -15,7 +15,7 @@ export class UrlMeat extends React.Component<IUrlMeatProps, IUrlMeatState> {
   constructor (props: IUrlMeatProps) {
     super();
     this.state = {
-      active: props.visible,
+      active: props.visible || !props.tabData.restored,
     };
   }
 
