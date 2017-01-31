@@ -2,7 +2,10 @@
 import * as React from "react";
 import Ink = require("react-ink");
 
-interface IRowHandlerParams {
+import {IWebkitMouseEvent} from "./does-event-mean-background";
+
+export interface IRowHandlerParams {
+  e?: IWebkitMouseEvent;
   index: number;
   rowData: any;
 }
@@ -47,10 +50,10 @@ export default function defaultRowRenderer (params: IRowRendererParams) {
     onRowMouseOut
   ) {
     if (onRowClick) {
-      props.onClick = () => onRowClick({ index, rowData });
+      props.onClick = (e: React.MouseEvent<any>) => onRowClick({ e, index, rowData });
     }
     if (onRowDoubleClick) {
-      props.onDoubleClick = () => onRowDoubleClick({ index, rowData });
+      props.onDoubleClick = (e: React.MouseEvent<any>) => onRowDoubleClick({ e, index, rowData });
     }
     if (onRowMouseOut) {
       props.onMouseOut = () => onRowMouseOut({ index, rowData });

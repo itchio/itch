@@ -7,19 +7,21 @@ import {connect} from "./connect";
 import {ILocalizer} from "../localizer";
 
 import {IState, IFilteredGameRecord} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IAction, dispatcher, multiDispatcher} from "../constants/action-types";
 import * as actions from "../actions";
 
 import {AutoSizer, Table, Column} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";
 import {IOnSortChange, SortDirectionType} from "./sort-types";
 
-import gameTableRowRenderer from "./game-table-row-renderer";
+import gameTableRowRenderer, {IRowHandlerParams} from "./game-table-row-renderer";
 
 import NiceAgo from "./nice-ago";
 import HiddenIndicator from "./hidden-indicator";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
+
+import doesEventMeanBackground from "./does-event-mean-background";
 
 import * as _ from "underscore";
 
@@ -42,10 +44,6 @@ interface ICellDataGetter {
   rowData: any;
 }
 
-interface IRowClickParams {
-  index: number;
-}
-
 class GameTable extends React.Component<IGameTableProps, IGameTableState> {
   constructor() {
     super();
@@ -65,10 +63,9 @@ class GameTable extends React.Component<IGameTableProps, IGameTableState> {
     this.lastPlayedRenderer = this.lastPlayedRenderer.bind(this);
   }
 
-  onRowClick (params: IRowClickParams) {
-    const {index} = params;
-
-    this.props.navigateToGame(this.props.sortedGames[index].game);
+  onRowClick (params: IRowHandlerParams) {
+    const {e, index} = params;
+    this.props.navigateToGame(this.props.sortedGames[index].game, doesEventMeanBackground(e));
   }
 
   rowGetter (params: IRowGetterParams): any {
@@ -286,7 +283,7 @@ const mapStateToProps = (initialState: IState, initialProps: IGameTableProps) =>
 
 const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
   clearFilters: dispatcher(dispatch, actions.clearFilters),
-  navigateToGame: dispatcher(dispatch, actions.navigateToGame),
+  navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
 });
 
 export default connect(
