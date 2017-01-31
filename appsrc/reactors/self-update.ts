@@ -143,6 +143,7 @@ export default function (watcher: Watcher) {
         log(opts, "Seems like we have no network connectivity, skipping self-update check");
         store.dispatch(actions.selfUpdateNotAvailable({uptodate: false}));
       } else {
+        log(opts, `Server-side error on HTTP GET ${uri}`);
         store.dispatch(actions.selfUpdateError({message: `While trying to reach update server: ${e.message || e}`}));
       }
     }
