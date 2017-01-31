@@ -349,6 +349,8 @@ export default function (watcher: Watcher) {
           return {
             id: itemId,
             path: (data.path || "").replace(/^toast\//, ""),
+            webTitle: data.webTitle,
+            webFavicon: data.webFavicon,
           };
         }
       }), (x) => !!x),
