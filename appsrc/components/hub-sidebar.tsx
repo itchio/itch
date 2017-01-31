@@ -98,10 +98,10 @@ export class HubSidebar extends React.Component<IHubSidebarProps, IHubSidebarSta
     search: HTMLInputElement;
   };
 
-  constructor () {
+  constructor (props: IHubSidebarProps) {
     super();
     this.state = {
-      transient: [],
+      transient: props.tabs.transient,
     };
 
     this.triggerSearch = debounce(this.triggerSearch.bind(this), 100);

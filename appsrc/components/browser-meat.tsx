@@ -396,6 +396,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 
   render () {
     const {tabId, tabData, tabPath, controls, active} = this.props;
+
     const {browserState} = this.state;
 
     const {goBack, goForward, stop, reload, openDevTools, loadUserURL} = this;

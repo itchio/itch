@@ -69,7 +69,7 @@ export class HubMeat extends React.Component<IHubMeatProps, void> {
     } else if (/^toast\//.test(path)) {
       return <Toast tabId={tabId} tabPath={path} data={data} key={tabId}/>;
     } else if (isBrowser) {
-      return <UrlMeat tabId={tabId} path={path} key={tabId} active={visible}/>;
+      return <UrlMeat tabId={tabId} path={path} key={tabId} visible={visible}/>;
     } else {
       return <div>?</div>;
     }
