@@ -321,6 +321,8 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
           newPath += parsed.search;
         }
         evolveTab({id: tabId, path: newPath});
+      } else {
+        evolveTab({id: tabId, path: `url/${url}`});
       }
     };
     xhr.open("GET", url);
@@ -368,6 +370,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
       wv.addEventListener("did-stop-loading", this.didStopLoading.bind(this));
       wv.addEventListener("will-navigate", this.willNavigate.bind(this));
       wv.addEventListener("did-navigate", this.didNavigate.bind(this));
+      wv.addEventListener("did-navigate-in-page", this.didNavigate.bind(this));
       wv.addEventListener("page-title-updated", this.pageTitleUpdated.bind(this));
       wv.addEventListener("page-favicon-updated", this.pageFaviconUpdated.bind(this));
       wv.addEventListener("new-window", this.newWindow.bind(this));
