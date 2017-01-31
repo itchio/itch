@@ -212,7 +212,12 @@ export class HubSidebar extends React.Component<IHubSidebarProps, IHubSidebarSta
           </span>
         </h2>
 
-        <SortableList items={this.state.transient} sidebarProps={this.props} onSortEnd={onSortEnd} distance={5}/>
+        <SortableList items={this.state.transient}
+          sidebarProps={this.props}
+          onSortEnd={onSortEnd}
+          distance={5}
+          lockAxis="y"
+        />
       </div>
 
       <section className="sidebar-blank"/>
