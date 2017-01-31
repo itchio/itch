@@ -424,5 +424,10 @@
     "table.column.name": "Название",
     "table.column.play_time": "В игре",
     "table.column.last_played": "Последний раз",
-    "table.column.published": "Опубликовано"
+    "table.column.published": "Опубликовано",
+    "grid.criterion.search": "Поиск...",
+    "grid.filters.options.compatible": "Совместимые",
+    "grid.filters.options.installed": "Установленные",
+    "grid.filters.options.owned": "Купленные",
+    "grid.filters.options.no_results": "Ничего не найдено"
 }
