@@ -9,6 +9,8 @@ import {ISessionNavigationState, ITabDataSet, ITabDataSave} from "../../types";
 import * as actions from "../../actions";
 import reducer from "../reducer";
 
+import {arrayMove} from "react-sortable-hoc";
+
 interface IPathToIdMap {
   [path: string]: string;
 }
@@ -170,16 +172,7 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
     const {tabs} = state;
     const {transient} = tabs;
 
-    const newTransient = map(transient, (t, i) => {
-      switch (i) {
-        case before:
-          return transient[after];
-        case after:
-          return transient[before];
-        default:
-          return t;
-      }
-    });
+    const newTransient = arrayMove(transient, before, after);
 
     return {
       ...state,

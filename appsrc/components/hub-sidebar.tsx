@@ -22,7 +22,7 @@ import {IDispatch, dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
 
-import {SortableElement, SortableContainer} from "react-sortable-hoc";
+import {SortableElement, SortableContainer, arrayMove} from "react-sortable-hoc";
 
 interface ISortEndParams {
   oldIndex: number;
@@ -93,13 +93,17 @@ export function versionString () {
 }
 
 @watching
-export class HubSidebar extends React.Component<IHubSidebarProps, void> {
+export class HubSidebar extends React.Component<IHubSidebarProps, IHubSidebarState> {
   refs: {
     search: HTMLInputElement;
   };
 
   constructor () {
     super();
+    this.state = {
+      transient: [],
+    };
+
     this.triggerSearch = debounce(this.triggerSearch.bind(this), 100);
     this.onSearchKeyUp = this.onSearchKeyUp.bind(this);
     this.onSearchKeyDown = this.onSearchKeyDown.bind(this);
@@ -135,7 +139,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
   render () {
     const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
       navigate, closeAllTabs,
-      newTab, searchLoading, halloween} = this.props;
+      newTab, searchLoading} = this.props;
     const classes = classNames("hub-sidebar", {osx, fullscreen});
     const sidebarStyle = {
       width: sidebarWidth + "px",
@@ -143,14 +147,18 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
     const searchClasses = classNames("search", {loading: searchLoading});
 
     const onSortEnd = (params: ISortEndParams) => {
-      this.props.moveTab({before: params.oldIndex, after: params.newIndex});
+      const {oldIndex, newIndex} = params;
+      this.setState({
+        transient: arrayMove(this.state.transient, oldIndex, newIndex),
+      });
+      this.props.moveTab({before: oldIndex, after: newIndex});
     };
 
     return <div className={classes} style={sidebarStyle}>
       <div className="title-bar-padder"/>
 
       <div className="logo" onClick={() => navigate("featured")} data-rh-at="bottom" data-rh={versionString()}>
-        <img src={`static/images/logos/app-${halloween ? "halloween" : "white"}.svg`}/>
+        <img src={`static/images/logos/app-white.svg`}/>
       </div>
 
       <section className={searchClasses}>
@@ -181,7 +189,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           };
           const loading = false;
 
-          const props = {id, path, label, icon, active, onClick, t, onContextMenu, halloween, loading, index};
+          const props = {id, path, label, icon, active, onClick, t, onContextMenu, loading, index};
           return <HubSidebarItem key={id} {...props}/>;
         })}
 
@@ -204,13 +212,19 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           </span>
         </h2>
 
-        <SortableList items={tabs.transient} sidebarProps={this.props} onSortEnd={onSortEnd} distance={5}/>
+        <SortableList items={this.state.transient} sidebarProps={this.props} onSortEnd={onSortEnd} distance={5}/>
       </div>
 
       <section className="sidebar-blank"/>
 
       <UserMenu/>
     </div>;
+  }
+
+  componentWillReceiveProps(props: IHubSidebarProps) {
+    this.setState({
+      transient: props.tabs.transient,
+    });
   }
 
   onSearchFocus (e: React.FocusEvent<HTMLInputElement>) {
@@ -302,9 +316,6 @@ interface IHubSidebarProps {
   /** true if we're currently fetching search results */
   searchLoading: boolean;
 
-  /** true if it's halloween */
-  halloween: boolean;
-
   t: ILocalizer;
 
   viewCreatorProfile: typeof actions.viewCreatorProfile;
@@ -328,6 +339,10 @@ interface IHubSidebarProps {
   quit: typeof actions.quit;
 }
 
+interface IHubSidebarState {
+  transient: string[];
+}
+
 const mapStateToProps = createStructuredSelector({
   osx: (state: IState) => state.system.osx,
   fullscreen: (state: IState) => state.ui.mainWindow.fullscreen,
@@ -338,7 +353,6 @@ const mapStateToProps = createStructuredSelector({
   tabData: (state: IState) => state.session.navigation.tabData,
   loadingTabs: (state: IState) => state.session.navigation.loadingTabs,
   searchLoading: (state: IState) => state.session.search.loading,
-  halloween: (state: IState) => state.status.bonuses.halloween,
 
   downloadingGame: (state: IState) => {
     const {activeDownload} = state.downloads;
