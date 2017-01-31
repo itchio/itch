@@ -10,7 +10,7 @@ let FIRST_EVER_RENDER = true;
 
 import {IState, ICredentials} from "../types";
 import {ILocalizer} from "../localizer";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 export class HubContent extends React.Component<IHubContentProps, void> {
   render () {
@@ -43,7 +43,7 @@ const mapStateToProps = (state: IState) => ({
   credentials: state.session.credentials,
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   firstUsefulPage: dispatcher(dispatch, actions.firstUsefulPage),
 });
 

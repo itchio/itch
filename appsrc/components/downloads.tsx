@@ -9,7 +9,7 @@ import * as actions from "../actions";
 import DownloadRow from "./download-row";
 
 import {IState, IDownloadItem} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 class Downloads extends React.Component<IDownloadsProps, void> {
@@ -87,7 +87,7 @@ const mapStateToProps = createStructuredSelector({
   finishedItems: (state: IState) => map(state.downloads.finishedDownloads, (id) => state.downloads.downloads[id]),
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   clearFinishedDownloads: dispatcher(dispatch, actions.clearFinishedDownloads),
 });
 

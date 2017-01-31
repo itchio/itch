@@ -18,7 +18,7 @@ import Ink = require("react-ink");
 import interleave from "./interleave";
 
 import {IState, ICollectionRecord, IGameRecordSet, IUserMarketState} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 export class CollectionHubItem extends React.Component<ICollectionHubItemProps, void> {
   render () {
@@ -83,7 +83,7 @@ const mapStateToProps = createStructuredSelector({
   allGames: (state: IState) => (state.market || {} as IUserMarketState).games || {},
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   navigateToCollection: dispatcher(dispatch, actions.navigateToCollection),
 });
 

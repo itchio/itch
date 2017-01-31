@@ -14,7 +14,7 @@ import * as actions from "../../actions";
 import {IActionsInfo} from "./types";
 
 import {IState, IDownloadItem, ICaveRecord, IGameUpdate} from "../../types";
-import {IAction, dispatcher} from "../../constants/action-types";
+import {IDispatch, dispatcher} from "../../constants/action-types";
 import {ILocalizer} from "../../localizer";
 
 import Ink = require("react-ink");
@@ -223,7 +223,7 @@ const mapStateToProps = (state: IState) => ({
   downloadsPaused: state.downloads.downloadsPaused,
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   queueGame: dispatcher(dispatch, actions.queueGame),
   showGameUpdate: dispatcher(dispatch, actions.showGameUpdate),
   initiatePurchase: dispatcher(dispatch, actions.initiatePurchase),

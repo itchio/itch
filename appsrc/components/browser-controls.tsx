@@ -8,7 +8,7 @@ import * as actions from "../actions";
 
 import {ITabData} from "../types";
 import {ILocalizer} from "../localizer";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
 
@@ -185,7 +185,7 @@ interface IBrowserControlsState {
 }
 
 const mapStateToProps = () => ({});
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   openUrl: dispatcher(dispatch, actions.openUrl),
 });
 

@@ -20,7 +20,7 @@ import Fuse = require("fuse.js");
 import Icon from "./icon";
 
 import {IState, IGameRecord, IUserRecord, ISessionSearchState, ISearchResults} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 import {findDOMNode} from "react-dom";
@@ -282,7 +282,7 @@ const mapStateToProps = createStructuredSelector({
   ),
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   closeSearch: dispatcher(dispatch, actions.closeSearch),
   navigate: dispatcher(dispatch, actions.navigate),
   navigateToGame: dispatcher(dispatch, actions.navigateToGame),

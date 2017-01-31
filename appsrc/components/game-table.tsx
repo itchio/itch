@@ -7,7 +7,7 @@ import {connect} from "./connect";
 import {ILocalizer} from "../localizer";
 
 import {IState, IFilteredGameRecord} from "../types";
-import {IAction, dispatcher, multiDispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
 import * as actions from "../actions";
 
 import {AutoSizer, Table, Column} from "react-virtualized";
@@ -281,7 +281,7 @@ const mapStateToProps = (initialState: IState, initialProps: IGameTableProps) =>
   });
 };
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   clearFilters: dispatcher(dispatch, actions.clearFilters),
   navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
 });

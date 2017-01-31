@@ -13,7 +13,7 @@ import {pathToId} from "../util/navigation";
 import {findWhere} from "underscore";
 
 import {ILocalizer} from "../localizer";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {
   IState, IGameRecord, ICaveRecord, IDownloadKey, ITabData,
   IUserMarketState, IGlobalMarketState,
@@ -167,7 +167,7 @@ const mapStateToProps = () => {
   );
 };
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
 });
 

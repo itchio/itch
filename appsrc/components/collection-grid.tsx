@@ -6,7 +6,7 @@ import {map} from "underscore";
 import * as actions from "../actions";
 
 import {ICollectionRecordSet} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 export class CollectionGrid extends React.Component<ICollectionGridProps, void> {
   render () {
@@ -34,7 +34,7 @@ interface ICollectionGridProps {
 }
 
 const mapStateToProps = () => ({});
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   navigate: dispatcher(dispatch, actions.navigate),
 });
 

@@ -12,7 +12,7 @@ import GameFilters from "./game-filters";
 import {map} from "underscore";
 
 import {IState, IGameRecordSet, IItchAppProfile, IItchAppProfileMyGames} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 export class Dashboard extends React.Component<IDashboardProps, void> {
@@ -64,7 +64,7 @@ const mapStateToProps = createStructuredSelector({
     ).ids || []),
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   navigate: dispatcher(dispatch, actions.navigate),
 });
 

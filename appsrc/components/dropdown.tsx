@@ -10,7 +10,7 @@ import {connect} from "./connect";
 
 import {ILocalizer} from "../localizer";
 import {ILocalizedString} from "../types";
-import {IAction} from "../constants/action-types";
+import {IAction, IDispatch} from "../constants/action-types";
 
 export class Dropdown extends React.Component<IDropdownProps, IDropdownState> {
   constructor () {
@@ -86,7 +86,7 @@ interface IDropdownProps {
   updown?: boolean;
 
   t: ILocalizer;
-  dispatch(action: IAction<any>): void;
+  dispatch: IDispatch;
 }
 
 interface IDropdownState {
@@ -96,7 +96,7 @@ interface IDropdownState {
 const listening = listensToClickOutside(Dropdown);
 
 const mapStateToProps = () => ({});
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({dispatch});
+const mapDispatchToProps = (dispatch: IDispatch) => ({dispatch});
 
 export default connect(
   mapStateToProps,

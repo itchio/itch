@@ -17,7 +17,7 @@ import {
   IState, IGameRecordSet, ICollectionRecord, ICollectionRecordSet, ITabData,
   IUserMarketState, IGlobalMarketState,
 } from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 export class Collection extends React.Component<ICollectionProps, void> {
@@ -96,7 +96,7 @@ const mapStateToProps = () => {
   );
 };
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   initiateShare: dispatcher(dispatch, actions.initiateShare),
 });
 

@@ -5,10 +5,10 @@ import {connect} from "./connect";
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
-// TODO: GameFilters doens't belong in Collections view
+// TODO: GameFilters doesn't belong in Collections view
 import GameFilters from "./game-filters";
 
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 import CollectionsGrid from "./collections-grid";
@@ -39,7 +39,7 @@ interface ICollectionsProps {
 
 const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   navigate: dispatcher(dispatch, actions.navigate),
 });
 

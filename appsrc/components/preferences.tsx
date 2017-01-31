@@ -25,7 +25,7 @@ import {map, each, filter} from "underscore";
 import diskspace from "../util/diskspace";
 
 import {IState, ILocaleInfo, IPreferencesState, IInstallLocation} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 function getAppLogPath () {
@@ -318,7 +318,7 @@ interface IPreferencesProps {
   navigate: typeof actions.navigate;
 }
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   addInstallLocationRequest: dispatcher(dispatch, actions.addInstallLocationRequest),
   removeInstallLocationRequest: dispatcher(dispatch, actions.removeInstallLocationRequest),
   makeInstallLocationDefault: dispatcher(dispatch, actions.makeInstallLocationDefault),

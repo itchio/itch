@@ -13,7 +13,7 @@ import NiceAgo from "./nice-ago";
 import GameActions from "./game-actions";
 
 import {IState, IDownloadSpeeds, IDownloadItem, ITask} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 import * as format from "../util/format";
@@ -234,7 +234,7 @@ const mapStateToProps = (state: IState) => ({
   tasksByGameId: state.tasks.tasksByGameId,
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   navigateToGame: dispatcher(dispatch, actions.navigateToGame),
   prioritizeDownload: dispatcher(dispatch, actions.prioritizeDownload),
   pauseDownloads: dispatcher(dispatch, actions.pauseDownloads),

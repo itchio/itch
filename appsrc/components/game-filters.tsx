@@ -10,7 +10,7 @@ import * as actions from "../actions";
 
 import {IState, TabLayout} from "../types";
 import {ILocalizer} from "../localizer";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
 
@@ -190,7 +190,7 @@ const mapStateToProps = (initialState: IState, props: IGameFiltersProps) => {
   });
 };
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   filterChanged: dispatcher(dispatch, actions.filterChanged),
   updatePreferences: dispatcher(dispatch, actions.updatePreferences),
 });

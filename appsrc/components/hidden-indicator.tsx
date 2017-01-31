@@ -4,7 +4,7 @@ import * as React from "react";
 import {connect} from "./connect";
 
 import * as actions from "../actions";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 import {ILocalizer} from "../localizer";
 
@@ -40,7 +40,7 @@ interface IHiddenIndicatorProps {
 
 const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   clearFilters: dispatcher(dispatch, actions.clearFilters),
 });
 

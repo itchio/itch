@@ -4,7 +4,7 @@ import * as classNames from "classnames";
 import {connect} from "./connect";
 
 import Icon from "./icon";
-import {IAction} from "../constants/action-types";
+import {IDispatch} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 import {IActionOpts} from "./game-actions/list-secondary-actions";
@@ -34,12 +34,12 @@ class GameBrowserContextAction extends React.Component<IGameBrowserContextAction
 
 interface IGameBrowserContextAction {
   t: ILocalizer;
-  dispatch: (action: IAction<any>) => void;
+  dispatch: IDispatch;
   opts: IActionOpts;
 }
 
 const mapStateToProps = () => ({});
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({dispatch});
+const mapDispatchToProps = (dispatch: IDispatch) => ({dispatch});
 
 export default connect(
   mapStateToProps,

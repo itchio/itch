@@ -12,7 +12,7 @@ import * as actions from "../actions";
 
 import {ILocalizer} from "../localizer";
 import {IState, IHistoryItem, IHistoryItemOption} from "../types";
-import {IAction} from "../constants/action-types";
+import {IDispatch} from "../constants/action-types";
 
 class History extends React.Component<IHistoryProps, void> {
   render () {
@@ -52,7 +52,7 @@ const mapStateToProps = createStructuredSelector({
   items: (state: IState) => state.history.itemsByDate,
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   pickOption: (itemId: string, option: IHistoryItemOption) => {
     invariant(itemId, "have item id");
     if (option.action) {

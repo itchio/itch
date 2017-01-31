@@ -12,7 +12,7 @@ import GameFilters from "./game-filters";
 import {map, filter} from "underscore";
 
 import {IState, ICaveRecordSet, IGameRecordSet, IInstallLocation, IDownloadKey} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 export class Location extends React.Component<ILocationProps, void> {
@@ -78,7 +78,7 @@ const mapStateToProps = createStructuredSelector({
   userDataPath: (state: IState) => state.system.userDataPath,
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   browseInstallLocation: dispatcher(dispatch, actions.browseInstallLocation),
 });
 
