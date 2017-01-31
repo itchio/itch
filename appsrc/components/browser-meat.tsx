@@ -377,7 +377,9 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
       wv.addEventListener("new-window", this.newWindow.bind(this));
       this.domReady();
 
-      createContextMenu(wv);
+      createContextMenu(wv, {
+        navigate: this.props.navigate,
+      });
 
       // otherwise, back button is active and brings us back to 'about:blank'
       wv.clearHistory();

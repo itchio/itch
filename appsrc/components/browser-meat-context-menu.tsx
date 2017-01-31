@@ -3,15 +3,16 @@ import * as electron from "electron";
 
 import {IWebView, IMenuItem} from "../electron/types";
 
+import * as actions from "../actions";
+
 interface IContextMenuOpts {
-  prepend?: (opts: IContextMenuOpts, win: IWebView) => IMenuItem[];
-  append?: (opts: IContextMenuOpts, win: IWebView) => IMenuItem[];
   labels?: {
     [key: string]: string;
   };
+  navigate: typeof actions.navigate;
 }
 
-export default function create(win: IWebView, opts: IContextMenuOpts = {}) {
+export default function create(win: IWebView, opts: IContextMenuOpts) {
   const wc = win.getWebContents();
   wc.on("context-menu", (e, props) => {
     const editFlags = props.editFlags;
@@ -47,7 +48,18 @@ export default function create(win: IWebView, opts: IContextMenuOpts = {}) {
     if (props.linkURL && props.mediaType === "none") {
       menuTpl = [{
         type: "separator",
-      }, {
+      },
+      {
+        id: "openInNewTab",
+        label: "Open in new tab",
+        click() {
+          opts.navigate("url/" + props.linkURL, {webTitle: props.linkText}, /* background */ true);
+        },
+      },
+      {
+        type: "separator",
+      },
+      {
         id: "copyLink",
         label: "Copy Link",
         click() {
@@ -57,25 +69,10 @@ export default function create(win: IWebView, opts: IContextMenuOpts = {}) {
             electron.clipboard.writeText(props.linkURL);
           }
         },
-      }, {
+      },
+      {
         type: "separator",
       }];
-    }
-
-    if (opts.prepend) {
-      const result = opts.prepend(props, win);
-
-      if (Array.isArray(result)) {
-        menuTpl.unshift(...result);
-      }
-    }
-
-    if (opts.append) {
-      const result = opts.append(props, win);
-
-      if (Array.isArray(result)) {
-        menuTpl.push(...result);
-      }
     }
 
     // apply custom labels for default menu items
