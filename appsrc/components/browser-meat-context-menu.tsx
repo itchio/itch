@@ -4,11 +4,10 @@ import * as electron from "electron";
 import {IWebView, IMenuItem} from "../electron/types";
 
 import * as actions from "../actions";
+import {IStore} from "../types";
+import {getT} from "../localizer";
 
 interface IContextMenuOpts {
-  labels?: {
-    [key: string]: string;
-  };
   navigate: typeof actions.navigate;
 }
 
@@ -19,11 +18,15 @@ export default function create(win: IWebView, opts: IContextMenuOpts) {
     const hasText = props.selectionText.trim().length > 0;
     const can = (type: string) => editFlags[`can${type}`] && hasText;
 
+    const store = require("../store").default as IStore;
+    const {lang, strings} = store.getState().i18n;
+    const t = getT(strings, lang);
+
     let menuTpl: IMenuItem[] = [{
       type: "separator",
     }, {
       id: "cut",
-      label: "Cut",
+      label: t("web.context_menu.cut"),
       // needed because of macOS limitation:
       // https://github.com/electron/electron/issues/5860
       role: can("Cut") ? "cut" : "",
@@ -31,13 +34,13 @@ export default function create(win: IWebView, opts: IContextMenuOpts) {
       visible: props.isEditable,
     }, {
       id: "copy",
-      label: "Copy",
+      label: t("web.context_menu.copy"),
       role: can("Copy") ? "copy" : "",
       enabled: can("Copy"),
       visible: props.isEditable || hasText,
     }, {
       id: "paste",
-      label: "Paste",
+      label: t("web.context_menu.paste"),
       role: editFlags.canPaste ? "paste" : "",
       enabled: editFlags.canPaste,
       visible: props.isEditable,
@@ -51,7 +54,7 @@ export default function create(win: IWebView, opts: IContextMenuOpts) {
       },
       {
         id: "openInNewTab",
-        label: "Open in new tab",
+        label: t("web.context_menu.open_in_new_tab"),
         click() {
           opts.navigate("url/" + props.linkURL, {}, /* background */ true);
         },
@@ -61,7 +64,7 @@ export default function create(win: IWebView, opts: IContextMenuOpts) {
       },
       {
         id: "copyLink",
-        label: "Copy Link",
+        label: t("web.context_menu.copy_link"),
         click() {
           if (process.platform === "darwin") {
             electron.clipboard.writeBookmark(props.linkText, props.linkURL);
@@ -73,15 +76,6 @@ export default function create(win: IWebView, opts: IContextMenuOpts) {
       {
         type: "separator",
       }];
-    }
-
-    // apply custom labels for default menu items
-    if (opts.labels) {
-      for (const menuItem of menuTpl) {
-        if (opts.labels[menuItem.id]) {
-          menuItem.label = opts.labels[menuItem.id];
-        }
-      }
     }
 
     // filter out leading/trailing separators

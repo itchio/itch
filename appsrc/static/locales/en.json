@@ -399,5 +399,10 @@
     "setup.status.installing": "Downloading and installing @ {{speed}}",
     "setup.status.done": "All done!",
     "setup.status.notification": "The installation went well, {{app_name}} is now starting up!",
-    "setup.error_dialog.title": "Something went wrong"
+    "setup.error_dialog.title": "Something went wrong",
+    "web.context_menu.cut": "Cut",
+    "web.context_menu.copy": "Copy",
+    "web.context_menu.paste": "Paste",
+    "web.context_menu.open_in_new_tab": "Open in new tab",
+    "web.context_menu.copy_link": "Copy link"
 }
