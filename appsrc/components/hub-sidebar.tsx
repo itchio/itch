@@ -80,7 +80,7 @@ const SortableList = SortableContainer((params: ISortableContainerParams) => {
         gameOverride = downloadingGame;
       }
 
-      const props = {index, id, path, label, icon, iconImage, active,
+      const props = {id, path, label, icon, iconImage, active,
         onClick, count, progress, onClose, onContextMenu, data, t,
         sublabel, gameOverride, loading};
       return <SortableHubSidebarItem key={id} index={index} props={props}/>;

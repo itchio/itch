@@ -156,27 +156,8 @@
 .hub-sidebar-item {
   font-size: 14px;
   transition: border-color 0.2s;
-  border-left: 5px solid transparent;
   border-radius: 0 4px 4px 0;
   word-break: break-word;
-
-  border-color: $secondary-text-color;
-
-  &[data-path='library'] {
-    border-color: #D2BE53;
-  }
-
-  &[data-path='featured'] {
-    border-color: #F96F6F;
-  }
-
-  &[data-path='dashboard'] {
-    border-color: #4EA260;
-  }
-
-  &[data-path='press'] {
-    border-color: #BF8036;
-  }
 
   flex-shrink: 0;
   display: flex;
@@ -185,6 +166,8 @@
   margin-right: 0;
   padding: 5px 8px 5px 10px;
   min-height: 30px;
+
+  position: relative;
 
   .row {
     display: flex;

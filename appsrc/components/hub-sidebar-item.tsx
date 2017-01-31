@@ -2,10 +2,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import colors from "../constants/colors";
-import bob, {IRGBColor} from "../renderer-util/bob";
-
-import {ILocalizedString, ITabData, IGameRecord, IGameRecordSet} from "../types";
+import {ILocalizedString, ITabData, IGameRecord} from "../types";
 import {ILocalizer} from "../localizer";
 
 import Ink = require("react-ink");
@@ -13,12 +10,9 @@ import Ink = require("react-ink");
 import LoadingCircle from "./loading-circle";
 import Icon from "./icon";
 
-export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSidebarItemState> {
+export class HubSidebarItem extends React.Component<IHubSidebarItemProps, void> {
   constructor () {
     super();
-    this.state = {
-      fresh: true,
-    };
     this.onClick = this.onClick.bind(this);
   }
 
@@ -40,30 +34,18 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
   }
 
   render () {
-    const {t, count, sublabel, progress, id, path, label, active, halloween} = this.props;
+    const {t, count, sublabel, progress, id, path, label, active} = this.props;
     const {onClose, onContextMenu} = this.props;
 
-    const classes = classNames("hub-sidebar-item", {active, fresh: this.state.fresh});
-    const style: React.CSSProperties = {
-      position: "relative",
-    };
-    const {dominantColor} = this.state;
+    const classes = classNames("hub-sidebar-item", {active});
 
-    if (active) {
-      if (halloween) {
-        style.borderColor = colors.spooky;
-      } else if (dominantColor) {
-        style.borderColor = bob.toCSS(dominantColor);
-      }
-    }
-
-    const progressColor = dominantColor ? bob.toCSS(dominantColor) : "white";
+    const progressColor = "white";
     const progressStyle = {
       width: `${Math.max(0, Math.min(1, progress)) * 100}%`,
       backgroundColor: progressColor,
     };
 
-    return <section style={style} className={classes}
+    return <section className={classes}
         data-rh-at="bottom"
         data-rh={t.format(sublabel)}
         onClick={this.onClick}
@@ -102,38 +84,9 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
       </div>
     </section>;
   }
-
-  componentWillReceiveProps () {
-    this.updateColor();
-  }
-
-  componentDidMount () {
-    this.updateColor();
-
-    setTimeout(() => {
-      this.setState({fresh: false});
-    }, 400);
-  }
-
-  updateColor () {
-    let game = this.props.gameOverride;
-    if (!game) {
-      const games = (this.props.data || {}).games as IGameRecordSet;
-      if (games) {
-        game = games[Object.keys(games)[0]];
-      }
-    }
-
-    if (game) {
-      bob.extractPalette(game.coverUrl, (palette) => {
-        this.setState({dominantColor: bob.pick(palette)});
-      });
-    }
-  }
 }
 
 interface IHubSidebarItemProps {
-  index?: number;
   path: string;
   id: string;
   label: ILocalizedString;
@@ -147,7 +100,6 @@ interface IHubSidebarItemProps {
   iconImage?: string;
 
   loading: boolean;
-  halloween: boolean;
 
   onClick?: () => void;
   onContextMenu: () => void;
@@ -155,11 +107,6 @@ interface IHubSidebarItemProps {
   data?: ITabData;
 
   t: ILocalizer;
-}
-
-interface IHubSidebarItemState {
-  fresh?: boolean;
-  dominantColor?: IRGBColor;
 }
 
 export default HubSidebarItem;
