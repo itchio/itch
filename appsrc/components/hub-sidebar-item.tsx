@@ -10,9 +10,12 @@ import Ink = require("react-ink");
 import LoadingCircle from "./loading-circle";
 import Icon from "./icon";
 
-export class HubSidebarItem extends React.Component<IHubSidebarItemProps, void> {
+export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSidebarItemState> {
   constructor () {
     super();
+    this.state = {
+      fresh: true,
+    };
     this.onClick = this.onClick.bind(this);
   }
 
@@ -35,9 +38,10 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, void> 
 
   render () {
     const {t, count, sublabel, progress, id, path, label, active} = this.props;
+    const {fresh} = this.state;
     const {onClose, onContextMenu} = this.props;
 
-    const classes = classNames("hub-sidebar-item", {active});
+    const classes = classNames("hub-sidebar-item", {active, fresh});
 
     const progressColor = "white";
     const progressStyle = {
@@ -84,6 +88,12 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, void> 
       </div>
     </section>;
   }
+
+  componentDidMount () {
+    setTimeout(() => {
+      this.setState({ fresh: false });
+    }, 400);
+  }
 }
 
 interface IHubSidebarItemProps {
@@ -107,6 +117,10 @@ interface IHubSidebarItemProps {
   data?: ITabData;
 
   t: ILocalizer;
+}
+
+interface IHubSidebarItemState {
+  fresh: boolean;
 }
 
 export default HubSidebarItem;

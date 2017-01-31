@@ -1,4 +1,9 @@
 
+@keyframes sidebar-swoop-in {
+  0% { transform: translateX(-100%) }
+  100% { transform: translateX(0%) }
+}
+
 .hub-sidebar-handle {
   background: $sidebar-background-color;
   height: '100%';
@@ -168,6 +173,10 @@
   min-height: 30px;
 
   position: relative;
+
+  &.fresh {
+    animation: sidebar-swoop-in .3s ease-out;
+  }
 
   .row {
     display: flex;
