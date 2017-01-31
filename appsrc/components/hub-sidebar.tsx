@@ -14,6 +14,7 @@ const appVersion = app.getVersion();
 
 import HubSidebarItem from "./hub-sidebar-item";
 import UserMenu from "./user-menu";
+import Ink = require("react-ink");
 
 import {IState, IUserRecord, IGameRecord, ITabDataSet, ILocalizedString} from "../types";
 import {ILocalizer} from "../localizer";
@@ -118,16 +119,18 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           <span className="label">{t("sidebar.category.tabs")}</span>
           <div className="filler"/>
           <span className="action"
-              data-rh-at="left"
+              data-rh-at="top"
               data-rh={t("sidebar.close_all_tabs")}
               onClick={() => closeAllTabs({})}>
             <span className="icon icon-delete"/>
+            <Ink/>
           </span>
           <span className="action"
-              data-rh-at="left"
+              data-rh-at="top"
               data-rh={t("sidebar.new_tab")}
               onClick={() => newTab({})}>
             <span className="icon icon-plus"/>
+            <Ink/>
           </span>
         </h2>
         {map(tabs.transient, (id, index) => {

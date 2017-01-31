@@ -249,6 +249,7 @@
     .action {
       @include icon-button;
       @include clickable;
+      position: relative;
 
       &:hover {
         color: $ivory;

@@ -94,7 +94,9 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
           ? <span className="close-icon icon icon-cross" onClick={(e) => {
             onClose();
             e.stopPropagation();
-          }}/>
+          }}>
+            <Ink/>
+          </span>
           : null
         }
       </div>
