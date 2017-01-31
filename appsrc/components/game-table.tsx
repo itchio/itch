@@ -82,7 +82,13 @@ class GameTable extends React.Component<IGameTableProps, IGameTableState> {
   coverRenderer (params: ICellRendererParams): JSX.Element | string {
     const {cellData} = params;
     const {game} = cellData;
-    return <div className="cover" style={{backgroundImage: `url("${game.stillCoverUrl || game.coverUrl}")`}}/>;
+    const style: React.CSSProperties = {}
+    const cover = game.stillCoverUrl || game.coverUrl;
+    if (cover) {
+      style.backgroundImage = `url("${game.stillCoverUrl || game.coverUrl}")`;
+    }
+
+    return <div className="cover" style={style}/>;
   }
 
   titleRenderer (params: ICellRendererParams): JSX.Element | string {
