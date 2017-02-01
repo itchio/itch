@@ -100,7 +100,11 @@ const self = {
   },
 
   isWin64: function(): boolean {
-    return process.arch === "x64" || WIN64_ARCHES[process.env.PROCESSOR_ARCHITECTURE];
+    // 64-bit exe on 64-bit windows: PROCESSOR_ARCHITECTURE has the original arch
+    // 32-bit exe on 64-bit windows: PROCESSOR_ARCHITECTURE has x86, PROCESSOR_ARCHITEW6432 has the real one
+    return process.arch === "x64" ||
+      WIN64_ARCHES[process.env.PROCESSOR_ARCHITECTURE] ||
+      WIN64_ARCHES[process.env.PROCESSOR_ARCHITEW6432];
   },
 };
 
