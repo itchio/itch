@@ -128,6 +128,7 @@ async function handleUE4Prereq (cave: ICaveRecord, opts: IWindowsPrereqsOpts) {
     const code = await spawn({
       command: prereqFullPath,
       args: [
+        "/quiet", // don't show UI, don't propose to uninstall/modify
         "/norestart", // don't ask for OS to reboot
       ],
       onToken: (tok) => log(opts, `[ue4-prereq out] ${tok}`),
