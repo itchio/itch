@@ -112,8 +112,6 @@ async function computeWeight (opts: IStartTaskOpts, appPath: string,
 
 async function computeArch (opts: IStartTaskOpts, appPath: string,
                             execs: IScoredExecutable[]): Promise<IScoredExecutable[]> {
-  const output: IScoredExecutable[] = [];
-
   const handleFile = async function (exe: IScoredExecutable) {
     const exePath = ospath.join(appPath, exe.path);
     let exeprops: IExePropsResult;
@@ -126,11 +124,10 @@ async function computeArch (opts: IStartTaskOpts, appPath: string,
     if (exeprops) {
       exe.arch = exeprops.arch;
     }
-    output.push(exe);
   };
   await bluebird.resolve(execs).map(handleFile, {concurrency: 4});
 
-  return output;
+  return execs;
 }
 
 function computeDepth (execs: IScoredExecutable[]): IScoredExecutable[] {
