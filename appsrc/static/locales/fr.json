@@ -428,5 +428,10 @@
     "table.column.name": "Nom",
     "table.column.play_time": "Temps de jeu",
     "table.column.last_played": "Dernière partie",
-    "table.column.published": "Publié"
+    "table.column.published": "Publié",
+    "web.context_menu.cut": "Couper",
+    "web.context_menu.copy": "Copier",
+    "web.context_menu.paste": "Coller",
+    "web.context_menu.open_in_new_tab": "Ouvrir dans un nouvel onglet",
+    "web.context_menu.copy_link": "Copier le lien"
 }
