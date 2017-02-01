@@ -305,6 +305,10 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
   }
 
   analyzePage (tabId: string, url: string) {
+    if (this.isFrozen()) {
+      return;
+    }
+
     const {evolveTab} = this.props;
 
     const xhr = new XMLHttpRequest();

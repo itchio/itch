@@ -55,7 +55,11 @@ const SortableList = SortableContainer((params: ISortableContainerParams) => {
     {map(items, (id, index) => {
       const data = tabData[id] || {};
       const {path} = data;
-      const iconImage = /^url/.test(path) ? data.webFavicon : data.iconImage;
+      let iconImage = data.iconImage;
+      if (/^url/.test(path)) {
+        iconImage = data.webFavicon;
+      }
+      
       const label = makeLabel(id, tabData);
       const icon = pathToIcon(path);
       const active = currentId === id;
