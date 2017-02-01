@@ -1257,6 +1257,12 @@ export interface IStartTaskOpts {
   logger?: Logger;
 }
 
+export interface ILaunchOpts extends IStartTaskOpts {
+  store: IStore;
+  manifest?: IManifest;
+  manifestAction?: IManifestAction;
+}
+
 export interface IInternalDownloadOpts {
   credentials: ICredentials;
 

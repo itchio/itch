@@ -66,10 +66,7 @@ export default async function handleWindowsPrereqs (opts: IWindowsPrereqsOpts) {
   const {globalMarket, caveId} = opts;
   const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
 
-  if (!cave.installedUE4Prereq) {
-    await handleUE4Prereq(cave, opts);
-  }
-
+  await handleUE4Prereq(cave, opts);
   await handleManifest(opts);
 }
 
@@ -77,6 +74,11 @@ const WIN32_UE4_RE = /UE4PrereqSetup_x86.exe$/i;
 const WIN64_UE4_RE = /UE4PrereqSetup_x64.exe$/i;
 
 async function handleUE4Prereq (cave: ICaveRecord, opts: IWindowsPrereqsOpts) {
+  if (cave.installedUE4Prereq) {
+    return;
+  }
+
+  let openModalAction: IAction<IOpenModalPayload>;
   const {globalMarket} = opts;
 
   try {
@@ -91,6 +93,36 @@ async function handleUE4Prereq (cave: ICaveRecord, opts: IWindowsPrereqsOpts) {
 
     const appPath = pathmaker.appPath(cave);
     const prereqFullPath = ospath.join(appPath, prereqRelativePath);
+
+    let prereqsState: IPrereqsState = {
+      tasks: {
+        ue4: {
+          name: "Unreal Engine 4 prerequisites",
+          status: "installing",
+          order: 1,
+          progress: 0,
+          eta: 0,
+          bps: 0,
+        },
+      },
+    };
+    opts.emitter.emit("progress", {
+      progress: 0,
+      prereqsState,
+    });
+
+    openModalAction = actions.openModal({
+      title: ["grid.item.installing"],
+      message: "",
+      widget: "prereqs-state",
+      widgetParams: {
+        gameId: String(cave.gameId),
+        gameTitle: cave.game.title,
+      } as IPrereqsStateParams,
+      buttons: [],
+      unclosable: true,
+    });
+    opts.store.dispatch(openModalAction);
 
     log(opts, `launching UE4 prereq setup ${prereqFullPath}`);
     const code = await spawn({
@@ -112,6 +144,17 @@ async function handleUE4Prereq (cave: ICaveRecord, opts: IWindowsPrereqsOpts) {
     }
   } catch (e) {
     log(opts, `error while launching UE4 prereq for ${cave.id}: ${e.stack || e}`);
+  } finally {
+    if (openModalAction) {
+      opts.store.dispatch(actions.closeModal({id: openModalAction.payload.id}));
+    }
+
+    opts.emitter.emit("progress", {
+      progress: 0,
+      prereqsState: {
+        tasks: {},
+      },
+    });
   }
 }
 

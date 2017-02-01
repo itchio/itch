@@ -33,11 +33,11 @@ const log = mklog("tasks/launch/native");
 
 import {Crash} from "../errors";
 
-import {IEnvironment, IStartTaskOpts, ICaveRecord} from "../../types";
+import {IEnvironment, ILaunchOpts, ICaveRecord} from "../../types";
 
 const itchPlatform = os.itchPlatform();
 
-export default async function launch (out: EventEmitter, opts: IStartTaskOpts): Promise<void> {
+export default async function launch (out: EventEmitter, opts: ILaunchOpts): Promise<void> {
   const {market, credentials, env = {}} = opts;
   let {cave} = opts;
   let {args} = opts;
@@ -290,7 +290,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
   }
 }
 
-interface IDoSpawnOpts extends IStartTaskOpts {
+interface IDoSpawnOpts extends ILaunchOpts {
   /** current working directory for spawning */
   cwd?: string;
 
