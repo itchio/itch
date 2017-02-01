@@ -14,6 +14,7 @@ import spawn from "../../util/spawn";
 import pathmaker from "../../util/pathmaker";
 import net from "../../util/net";
 import sf from "../../util/sf";
+import os from "../../util/os";
 import reg from "../../util/reg";
 import butler from "../../util/butler";
 
@@ -72,12 +73,17 @@ export default async function handleWindowsPrereqs (opts: IWindowsPrereqsOpts) {
   await handleManifest(opts);
 }
 
+const WIN32_UE4_RE = /UE4PrereqSetup_x86.exe$/i;
+const WIN64_UE4_RE = /UE4PrereqSetup_x64.exe$/i;
+
 async function handleUE4Prereq (cave: ICaveRecord, opts: IWindowsPrereqsOpts) {
   const {globalMarket} = opts;
 
   try {
     const executables = cave.executables;
-    const prereqRelativePath = find(executables, (x: string) => /UE4PrereqSetup(_x64)?.exe/i.test(x));
+    const setupRE = os.isWin64() ? WIN64_UE4_RE : WIN32_UE4_RE;
+
+    const prereqRelativePath = find(executables, (x: string) => setupRE.test(x));
     if (!prereqRelativePath) {
       // no UE4 prereqs
       return;
