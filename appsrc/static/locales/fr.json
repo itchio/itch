@@ -426,5 +426,6 @@
     "grid.filters.options.owned": "Possédé",
     "grid.filters.options.no_results": "Aucun résultat trouvé",
     "table.column.name": "Nom",
-    "table.column.play_time": "Temps de jeu"
+    "table.column.play_time": "Temps de jeu",
+    "table.column.last_played": "Dernière partie"
 }
