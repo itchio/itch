@@ -6,12 +6,13 @@ import makeUploadButton from "../make-upload-button";
 
 import pathmaker from "../../util/pathmaker";
 import urlParser from "../../util/url";
+import os from "../../util/os";
 import * as querystring from "querystring";
 
 import {log, opts} from "./log";
 import {startTask} from "./start-task";
 
-import {map, where} from "underscore";
+import {filter, map, where} from "underscore";
 
 import {
   IStore, IGameRecord, ICaveRecord, IUploadRecord, IDownloadKey,
@@ -106,6 +107,40 @@ export default function (watcher: Watcher) {
     let {uploads, downloadKey} = uploadResponse.result as IFindUploadResult;
     if (pickedUpload) {
       uploads = where(uploads, {id: pickedUpload});
+    }
+
+    if (uploads.length > 1 && process.platform === "win32") {
+      log(opts, `Got ${uploads.length} uploads, we're on windows, let's sniff platforms`);
+
+      const uploadContainsString = (upload: IUploadRecord, needle: string) => {
+        return (
+          ((upload.filename || "").indexOf(needle) !== -1) ||
+          ((upload.displayName || "").indexOf(needle) !== -1)
+        );
+      };
+
+      const anyUploadContainsString = (candidates: IUploadRecord[], needle: string): boolean => {
+        for (const upload of candidates) {
+          if (uploadContainsString(upload, needle)) {
+            return true;
+          }
+        }
+        return false;
+      };
+
+      if (os.isWin64()) {
+        // on 64-bit windows, if we have 64-bit builds, exclude 32-bit builds
+        if (anyUploadContainsString(uploads, "64")) {
+          uploads = filter(uploads, (u) => !uploadContainsString(u, "32"));
+        }
+      } else {
+        // on 32-bit windows, if there's a 32-bit build, exclude 64-bit builds
+        if (anyUploadContainsString(uploads, "32")) {
+          uploads = filter(uploads, (u) => !uploadContainsString(u, "64"));
+        }
+      }
+
+      log(opts, `After platform sniffing, uploads look like:\n${JSON.stringify(uploads, null, 2)}`);
     }
 
     if (uploads.length > 0) {
