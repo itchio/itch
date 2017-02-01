@@ -286,6 +286,32 @@ async function installPrereqs (planPath: string, opts = {} as IInstallPrereqsOpt
   return await butler(realOpts, "install-prereqs", args);
 }
 
+interface IExePropsOpts extends IButlerOpts {
+  path: string;
+}
+
+type ExeArch = "386" | "amd64";
+
+interface IExePropsResult {
+  arch?: ExeArch;
+}
+
+async function exeprops (opts: IExePropsOpts): Promise<IExePropsResult> {
+  const {path} = opts;
+  const args = [path];
+
+  let value: IExePropsResult;
+
+  const emitter = new EventEmitter();
+  emitter.on("result", (result: IButlerResult) => {
+    value = result.value;
+  });
+
+  await butler(opts, "exeprops", args);
+
+  return value;
+}
+
 async function sanityCheck (): Promise<boolean> {
   try {
     await spawn.assert({
@@ -299,5 +325,5 @@ async function sanityCheck (): Promise<boolean> {
 }
 
 export default {
-  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify, sizeof, file, installPrereqs, sanityCheck,
+  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify, sizeof, file, installPrereqs, sanityCheck, exeprops,
 };
