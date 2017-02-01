@@ -9,12 +9,12 @@ import * as invariant from "invariant";
 
 import validateManifest from "./launch/validate-manifest";
 
-import native from "./launch/native";
-import html from "./launch/html";
-import shell from "./launch/shell";
-import external from "./launch/external";
-
 import nativePrepare from "./prepare/native";
+
+import nativeLaunch from "./launch/native";
+import htmlLaunch from "./launch/html";
+import shellLaunch from "./launch/shell";
+import externalLaunch from "./launch/external";
 
 import store from "../store";
 import * as actions from "../actions";
@@ -254,13 +254,20 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
   launchOpts.env = env;
   launchOpts.args = args;
 
-  const launchers = { native, html, shell, external } as ILaunchers;
+  const launchers = {
+    native: nativeLaunch,
+    html: htmlLaunch,
+    shell: shellLaunch,
+    external: externalLaunch,
+  } as ILaunchers;
   const launcher = launchers[launchType];
   if (!launcher) {
     throw new Error(`Unsupported launch type '${cave.launchType}'`);
   }
 
-  const prepares = { nativePrepare } as IPrepares;
+  const prepares = {
+    native: nativePrepare,
+  } as IPrepares;
   const prepare = prepares[launchType];
   if (prepare) {
     await prepare(out, launchOpts);
