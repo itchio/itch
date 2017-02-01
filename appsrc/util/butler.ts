@@ -305,7 +305,11 @@ async function exeprops (opts: IExePropsOpts): Promise<IExePropsResult> {
     value = result.value;
   });
 
-  await butler(opts, "exeprops", args);
+  const butlerOpts = {
+    emitter,
+  };
+
+  await butler(butlerOpts, "exeprops", args);
 
   return value;
 }
