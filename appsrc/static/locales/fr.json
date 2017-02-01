@@ -424,5 +424,7 @@
     "grid.filters.options.compatible": "Compatible",
     "grid.filters.options.installed": "Installé",
     "grid.filters.options.owned": "Possédé",
-    "grid.filters.options.no_results": "Aucun résultat trouvé"
+    "grid.filters.options.no_results": "Aucun résultat trouvé",
+    "table.column.name": "Nom",
+    "table.column.play_time": "Temps de jeu"
 }
