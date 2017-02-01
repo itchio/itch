@@ -11,6 +11,13 @@ interface IAssertPresenceResult {
 
 export type ItchPlatform = "osx" | "windows" | "linux" | "unknown";
 
+const WIN64_ARCHES = {
+  AMD64: true,
+  IA64: true,
+} as {
+  [key: string]: boolean;
+};
+
 const self = {
   platform: function (): string {
     return process.platform;
@@ -90,6 +97,10 @@ const self = {
     }
 
     return { code, stdout, stderr, parsed };
+  },
+
+  isWin64: function(): boolean {
+    return process.arch === "x64" || WIN64_ARCHES[process.env.PROCESSOR_ARCHITECTURE];
   },
 };
 

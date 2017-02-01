@@ -1486,3 +1486,5 @@ export interface IRedistExitCode {
   success?: boolean;
   message?: string;
 }
+
+export type ExeArch = "386" | "amd64";

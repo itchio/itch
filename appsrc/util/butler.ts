@@ -8,7 +8,7 @@ import sf from "./sf";
 import ibrew from "./ibrew";
 
 import {EventEmitter} from "events";
-import {IProgressListener, IProgressInfo} from "../types";
+import {IProgressListener, IProgressInfo, ExeArch} from "../types";
 
 import mklog, {Logger} from "./log";
 const log = mklog("butler");
@@ -290,9 +290,7 @@ interface IExePropsOpts extends IButlerOpts {
   path: string;
 }
 
-type ExeArch = "386" | "amd64";
-
-interface IExePropsResult {
+export interface IExePropsResult {
   arch?: ExeArch;
 }
 
