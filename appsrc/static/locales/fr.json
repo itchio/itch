@@ -419,5 +419,10 @@
     "prompt.clear_browsing_data.cache_size_used": "Le cache utilise actuellement {{size}}",
     "prompt.clear_browsing_data.category.cookies": "Cookies",
     "prompt.clear_browsing_data.cookies_info": "Vous serez déconnecté des sites auxquels vous vous êtes connecté depuis l'application itch.",
-    "prompt.clear_browsing_data.notification": "Données effacées !"
+    "prompt.clear_browsing_data.notification": "Données effacées !",
+    "grid.criterion.search": "Rechercher...",
+    "grid.filters.options.compatible": "Compatible",
+    "grid.filters.options.installed": "Installé",
+    "grid.filters.options.owned": "Possédé",
+    "grid.filters.options.no_results": "Aucun résultat trouvé"
 }
