@@ -429,5 +429,10 @@
     "grid.filters.options.compatible": "Совместимые",
     "grid.filters.options.installed": "Установленные",
     "grid.filters.options.owned": "Купленные",
-    "grid.filters.options.no_results": "Ничего не найдено"
+    "grid.filters.options.no_results": "Ничего не найдено",
+    "web.context_menu.cut": "Вырезать",
+    "web.context_menu.copy": "Копировать",
+    "web.context_menu.paste": "Вставить",
+    "web.context_menu.open_in_new_tab": "Открыть в новой вкладке",
+    "web.context_menu.copy_link": "Копировать ссылку"
 }
