@@ -399,5 +399,20 @@
     "setup.status.installing": "Mendownload dan menginstall @ {{speed}}",
     "setup.status.done": "Semua selesai!",
     "setup.status.notification": "Installasi berjalan dengan baik, {{app_name}} sekarang akan dijalankan!",
-    "setup.error_dialog.title": "Ada suatu kesalahan"
+    "setup.error_dialog.title": "Ada suatu kesalahan",
+    "grid.criterion.search": "Mencari...",
+    "grid.filters.options.compatible": "Cocok",
+    "grid.filters.options.installed": "Terinstall",
+    "grid.filters.options.owned": "Dimiliki",
+    "grid.filters.options.no_results": "Tidak ditemukan hasil",
+    "table.column.name": "Nama",
+    "table.column.play_time": "Waktu bermain",
+    "table.column.last_played": "Terakhir dimainkan",
+    "table.column.published": "Diterbitkan",
+    "collection_grid.item.updated_at": "Terakhir diperbarui {{time_ago}}",
+    "web.context_menu.cut": "Potong",
+    "web.context_menu.copy": "Salin",
+    "web.context_menu.paste": "Tempel",
+    "web.context_menu.open_in_new_tab": "Buka di tab baru",
+    "web.context_menu.copy_link": "Salin tautan"
 }
