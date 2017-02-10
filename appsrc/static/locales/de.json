@@ -410,5 +410,20 @@
     "prompt.clear_browsing_data.category.cookies": "Cookies",
     "prompt.clear_browsing_data.cookies_info": "Dies wird dich aus allen Websites abmelden, auf denen du dich mit der itch-App angemeldet hast.",
     "prompt.clear_browsing_data.notification": "Browser-Daten gelöscht!",
-    "status.healing": "Repariert Installation..."
+    "status.healing": "Repariert Installation...",
+    "grid.criterion.search": "Suchen...",
+    "grid.filters.options.compatible": "Kompatibel",
+    "grid.filters.options.installed": "Installiert",
+    "grid.filters.options.owned": "In Besitz",
+    "grid.filters.options.no_results": "Keine Ergebnisse gefunden",
+    "table.column.name": "Name",
+    "table.column.play_time": "Spielzeit",
+    "table.column.last_played": "Zuletzt gespielt",
+    "table.column.published": "Veröffentlicht",
+    "collection_grid.item.updated_at": "Zuletzt aktualisiert {{time_ago}}",
+    "web.context_menu.cut": "Ausschneiden",
+    "web.context_menu.copy": "Kopieren",
+    "web.context_menu.paste": "Einfügen",
+    "web.context_menu.open_in_new_tab": "In neuem Tab öffnen",
+    "web.context_menu.copy_link": "Link kopieren"
 }
