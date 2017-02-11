@@ -230,5 +230,17 @@
     "grid.criterion.search": "Zoeken...",
     "grid.filters.options.compatible": "Compatibel",
     "grid.filters.options.installed": "Geïnstalleerd",
-    "grid.filters.options.owned": "In Bezit"
+    "grid.filters.options.owned": "In Bezit",
+    "grid.filters.options.no_results": "Geen resultaten gevonden",
+    "table.column.name": "Naam",
+    "table.column.play_time": "Speeltijd",
+    "table.column.last_played": "Laatst gespeeld",
+    "table.column.published": "Gepubliceerd",
+    "collection_grid.item.updated_at": "Laatst geupdate {{time_ago}}",
+    "prereq.explanation": "Er moeten een aantal pakketten geïnstalleerd worden voordat {{title}} correct kan werken.",
+    "prereq.status.downloading": "Downloaden...",
+    "prereq.status.extracting": "Uitpakken...",
+    "prereq.status.ready": "Gereed voor installatie",
+    "prereq.status.installing": "Installeren... (Dit kan enkele minuten duren)",
+    "prereq.status.done": "Klaar!"
 }
