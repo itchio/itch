@@ -248,5 +248,6 @@
     "toast.call_to_action": "Om verder te gaan, herlaad of ga naar een andere pagina.",
     "toast.actions.reload": "Herlaad",
     "toast.actions.learn_more": "Leer meer",
-    "toast.actions.report": "Stuur feedback om itch te helpen verbeteren"
+    "toast.actions.report": "Stuur feedback om itch te helpen verbeteren",
+    "new_tab.titles.buttons": "Probeer dit eens:"
 }
