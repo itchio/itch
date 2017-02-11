@@ -244,5 +244,6 @@
     "prereq.status.installing": "Installeren... (Dit kan enkele minuten duren)",
     "prereq.status.done": "Klaar!",
     "toast.title": "Oeps!",
-    "toast.message": "Er is iets onverwachts gebeurd."
+    "toast.message": "Er is iets onverwachts gebeurd.",
+    "toast.call_to_action": "Om verder te gaan, herlaad of ga naar een andere pagina."
 }
