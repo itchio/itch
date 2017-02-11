@@ -246,5 +246,6 @@
     "toast.title": "Oeps!",
     "toast.message": "Er is iets onverwachts gebeurd.",
     "toast.call_to_action": "Om verder te gaan, herlaad of ga naar een andere pagina.",
-    "toast.actions.reload": "Herlaad"
+    "toast.actions.reload": "Herlaad",
+    "toast.actions.learn_more": "Leer meer"
 }
