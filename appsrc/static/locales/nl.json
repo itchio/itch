@@ -249,5 +249,8 @@
     "toast.actions.reload": "Herlaad",
     "toast.actions.learn_more": "Leer meer",
     "toast.actions.report": "Stuur feedback om itch te helpen verbeteren",
-    "new_tab.titles.buttons": "Probeer dit eens:"
+    "new_tab.titles.buttons": "Probeer dit eens:",
+    "new_tab.random": "Bekijk iets willekeurigs",
+    "new_tab.titles.browser_placeholder": "Vul een webadres in",
+    "new_tab.top_sellers": "Best verkocht"
 }
