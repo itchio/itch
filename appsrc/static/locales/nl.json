@@ -265,5 +265,6 @@
     "notification.download_healed": "{{title}} geverifieerd en gerepareerd!",
     "outlinks.open_dashboard": "Dashboard openen",
     "sandbox.setup.proceed": "Ga door",
-    "sandbox.setup.windows.detail": "Nadat je op 'Verdergaan' hebt gedrukt, zal er misschien een toestemmingsprompt verschijnen die om jouw goedkeuring zal vragen. Dit zal een 'itch-player' gebruikersaccount toevoegen om je games te beschermen van de rest van je systeem."
+    "sandbox.setup.windows.detail": "Nadat je op 'Verdergaan' hebt gedrukt, zal er misschien een toestemmingsprompt verschijnen die om jouw goedkeuring zal vragen. Dit zal een 'itch-player' gebruikersaccount toevoegen om je games te beschermen van de rest van je systeem.",
+    "sandbox.setup.linux.message": "Om spellen uit te voeren in de itch.io sandbox, is een eenmalige installatie-procedure nodig dat moet worden uitgevoerd als root."
 }
