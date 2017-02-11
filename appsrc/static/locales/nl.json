@@ -264,5 +264,6 @@
     "notification.download_reverted": "{{title}} is teruggezet naar versie {{version}}!",
     "notification.download_healed": "{{title}} geverifieerd en gerepareerd!",
     "outlinks.open_dashboard": "Dashboard openen",
-    "sandbox.setup.proceed": "Ga door"
+    "sandbox.setup.proceed": "Ga door",
+    "sandbox.setup.windows.detail": "Nadat je op 'Verdergaan' hebt gedrukt, zal er misschien een toestemmingsprompt verschijnen die om jouw goedkeuring zal vragen. Dit zal een 'itch-player' gebruikersaccount toevoegen om je games te beschermen van de rest van je systeem."
 }
