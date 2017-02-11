@@ -262,5 +262,7 @@
     "notification.purchase_complete.thanks_for_support": "Dankjewel voor je steun!",
     "notification.download_updated": "{{title}} is geüpdatet!",
     "notification.download_reverted": "{{title}} is teruggezet naar versie {{version}}!",
-    "notification.download_healed": "{{title}} geverifieerd en gerepareerd!"
+    "notification.download_healed": "{{title}} geverifieerd en gerepareerd!",
+    "outlinks.open_dashboard": "Dashboard openen",
+    "sandbox.setup.proceed": "Ga door"
 }
