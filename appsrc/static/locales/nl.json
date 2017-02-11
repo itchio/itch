@@ -261,5 +261,6 @@
     "notification.purchase_complete.may_install_now": "Je kunt het nu op elk moment installeren!",
     "notification.purchase_complete.thanks_for_support": "Dankjewel voor je steun!",
     "notification.download_updated": "{{title}} is geüpdatet!",
-    "notification.download_reverted": "{{title}} is teruggezet naar versie {{version}}!"
+    "notification.download_reverted": "{{title}} is teruggezet naar versie {{version}}!",
+    "notification.download_healed": "{{title}} geverifieerd en gerepareerd!"
 }
