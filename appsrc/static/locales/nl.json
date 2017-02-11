@@ -242,5 +242,7 @@
     "prereq.status.extracting": "Uitpakken...",
     "prereq.status.ready": "Gereed voor installatie",
     "prereq.status.installing": "Installeren... (Dit kan enkele minuten duren)",
-    "prereq.status.done": "Klaar!"
+    "prereq.status.done": "Klaar!",
+    "toast.title": "Oeps!",
+    "toast.message": "Er is iets onverwachts gebeurd."
 }
