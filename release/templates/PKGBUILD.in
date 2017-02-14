@@ -10,7 +10,7 @@ arch=('i686' 'x86_64')
 url="https://github.com/itchio/{{CI_APPNAME}}"
 license=('MIT')
 
-depends=('alsa-lib' 'libnotify' 'nss' 'gconf' 'gtk2' 'libxtst' 'desktop-file-utils' 'gtk-update-icon-cache' 'libxss')
+depends=('alsa-lib' 'electron' 'libnotify' 'nss' 'gconf' 'gtk2' 'libxtst' 'desktop-file-utils' 'gtk-update-icon-cache' 'libxss')
 makedepends=('nodejs' 'nodejs-grunt-cli' 'npm')
 options=('!strip')
 install="{{CI_APPNAME}}.install"
@@ -40,7 +40,15 @@ build() {
   release/ci-compile.js
   release/ci-generate-linux-extras.js
 
-  grunt -v "electron:linux-${_ELECTRON_ARCH}"
+  cd stage
+  mv package.json{,_}
+  grep -v types/electron < package.json_ > package.json
+  npm prune --production
+  npm prune --production # actually removes more packages
+  mv package.json{_,}
+  cd ..
+  node_modules/asar/bin/asar pack stage app.asar
+  echo -e "#!/bin/sh\nelectron /usr/lib/itch/app.asar \$*\n" > itch
 }
 
 check() {
@@ -52,7 +60,7 @@ package() {
   cd "${srcdir}/itch-${pkgver}{{CI_SUFFIX}}"
 
   install -d "${pkgdir}/usr/lib/{{CI_APPNAME}}"
-  cp -a "build/v${pkgver}{{CI_SUFFIX}}/{{CI_APPNAME}}-linux-${_ELECTRON_ARCH}/." "${pkgdir}/usr/lib/{{CI_APPNAME}}"
+  cp -a app.asar "${pkgdir}/usr/lib/itch"
 
   install -d "${pkgdir}/usr/share/applications"
   install -Dm644 linux-extras/io.itch.{{CI_APPNAME}}.desktop "${pkgdir}/usr/share/applications/{{CI_APPNAME}}.desktop"
@@ -68,6 +76,5 @@ package() {
 
   install -D -m644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 
-  mkdir -p "${pkgdir}/usr/bin"
-  ln -s "/usr/lib/{{CI_APPNAME}}/{{CI_APPNAME}}" "${pkgdir}/usr/bin/{{CI_APPNAME}}"
+  install -D itch "${pkgdir}/usr/bin/itch"
 }
