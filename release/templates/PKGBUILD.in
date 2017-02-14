@@ -48,7 +48,7 @@ build() {
   mv package.json{_,}
   cd ..
   node_modules/asar/bin/asar pack stage app.asar
-  echo -e "#!/bin/sh\nelectron /usr/lib/itch/app.asar \$*\n" > {{CI_APPNAME}}
+  echo -e "#!/bin/sh\nelectron /usr/lib/{{CI_APPNAME}}/app.asar \$*\n" > {{CI_APPNAME}}
 }
 
 check() {
