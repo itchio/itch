@@ -333,7 +333,7 @@
     "pick_install_upload.message": "¿Que archivo quieres descargar para {{title}}?",
     "pick_install_upload.detail": "Te preguntaremos otra vez cuando haya una nueva versión disponible.",
     "pick_update_upload.title": "Se encontraron actualizaciones para {{title}}",
-    "pick_update_upload.message": "¿Que archivo quieres para actualizar de {{title}}?",
+    "pick_update_upload.message": "¿Que archivo quieres actualizar de {{title}}?",
     "pick_update_upload.detail": "Sólo te preguntamos porque escogiste un archivo manualmente al momento de instalar.",
     "prompt.action.force_close": "Forzar cierre",
     "prompt.abort_game.title": "¿Forzar cierre del programa?",
