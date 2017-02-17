@@ -366,5 +366,6 @@
     "pick_update_upload.buttons.update": "Actualizar ahora",
     "pick_update_upload.buttons.just_launch": "Sólo ejecutar",
     "prompt.install_error.title": "Ha ocurrido un error durante la instalación:",
-    "prompt.install_error.find_upload": "Al buscar una descarga: {{message}}"
+    "prompt.install_error.find_upload": "Al buscar una descarga: {{message}}",
+    "download.reason.revert": "para revertir a una versión anterior"
 }
