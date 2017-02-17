@@ -330,5 +330,8 @@
     "grid.item.review": "Analisar",
     "login.two_factor.as_user": "Logando como {{username}}",
     "login.two_factor.learn_more": "Ler sobre autenticação em duas etapas",
-    "grid.item.advanced": "Avançado..."
+    "grid.item.advanced": "Avançado...",
+    "grid.item.verify_integrity": "Verificar integridade",
+    "grid.item.view_details": "Ver detalhes...",
+    "table.column.name": "Nome"
 }
