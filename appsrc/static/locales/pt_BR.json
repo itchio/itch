@@ -329,5 +329,6 @@
     "pick_install_upload.message": "Qual arquivo deseja baixar para {{title}}?",
     "grid.item.review": "Analisar",
     "login.two_factor.as_user": "Logando como {{username}}",
-    "login.two_factor.learn_more": "Ler sobre autenticação em duas etapas"
+    "login.two_factor.learn_more": "Ler sobre autenticação em duas etapas",
+    "grid.item.advanced": "Avançado…"
 }
