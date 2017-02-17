@@ -372,5 +372,9 @@
     "grid.criterion.search": "Buscar...",
     "grid.filters.options.compatible": "Compatible",
     "grid.filters.options.installed": "Instalado",
-    "grid.item.advanced": "Avanzado..."
+    "grid.item.advanced": "Avanzado...",
+    "grid.item.verify_integrity": "Verificar integridad",
+    "table.column.name": "Nombre",
+    "table.column.play_time": "Tiempo jugado",
+    "table.column.published": "Publicado"
 }
