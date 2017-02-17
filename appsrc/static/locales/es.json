@@ -127,7 +127,7 @@
     "prompt.uninstall.uninstall": "Desinstalar ahora",
     "prompt.url_install.credit": "Una {{classification}} de {{username}}",
     "prompt.url_install.message": "¿Quieres instalar {{title}}?",
-    "prompt.url_install.title": "Solicitud de instalación",
+    "prompt.url_install.title": "Necesita instalación",
     "sidebar.broken": "Fuera de servicio",
     "sidebar.dashboard": "Mis creaciones",
     "sidebar.getting_started": "Primeros pasos",
