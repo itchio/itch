@@ -271,5 +271,7 @@
     "preferences.behavior.open_at_login": "Start itch wanneer mijn computer opstart",
     "preferences.notifications": "Notificaties",
     "preferences.advanced": "Geavanceerd",
-    "preferences.advanced.open_app_log": "App log openen"
+    "preferences.advanced.open_app_log": "App log openen",
+    "preferences.proxy_server_address": "HTTPS Proxy",
+    "preferences.proxy_server_source.direct": "Direct (geen proxy)"
 }
