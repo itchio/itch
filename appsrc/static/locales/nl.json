@@ -268,5 +268,6 @@
     "sandbox.setup.windows.detail": "Nadat je op 'Verdergaan' hebt gedrukt, zal er misschien een toestemmingsprompt verschijnen die om jouw goedkeuring zal vragen. Dit zal een 'itch-player' gebruikersaccount toevoegen om je games te beschermen van de rest van je systeem.",
     "sandbox.setup.linux.message": "Om spellen uit te voeren in de itch.io sandbox, is een eenmalige installatie-procedure nodig dat moet worden uitgevoerd als root.",
     "sandbox.setup.linux.detail": "Nadat je op 'Verdergaan' hebt geklikt, zal er een prompt verschijnen die je om je wachtwoord zal vragen. Dit is alleen nodig als je sandbox voor het eerst opstart, je wachtwoord wordt niet gezien of opgeslagen door itch.",
-    "preferences.behavior.open_at_login": "Start itch wanneer mijn computer opstart"
+    "preferences.behavior.open_at_login": "Start itch wanneer mijn computer opstart",
+    "preferences.notifications": "Notificaties"
 }
