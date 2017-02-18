@@ -273,5 +273,7 @@
     "preferences.advanced": "Geavanceerd",
     "preferences.advanced.open_app_log": "App log openen",
     "preferences.proxy_server_address": "HTTPS Proxy",
-    "preferences.proxy_server_source.direct": "Direct (geen proxy)"
+    "preferences.proxy_server_source.direct": "Direct (geen proxy)",
+    "pick_install_upload.message": "Welk bestand wil je downloaden voor {{title}}?",
+    "pick_update_upload.single.title": "Een nieuwe versie van {{title}} is beschikbaar"
 }
