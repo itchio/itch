@@ -393,7 +393,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     inheritStd,
   });
 
-  if(blockerId !== null) {
+  if (blockerId !== null) {
     powerSaveBlocker.stop(blockerId);
   }
 

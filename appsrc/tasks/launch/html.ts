@@ -224,7 +224,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
     });
   });
 
-  if(blockerId !== null) {
+  if (blockerId !== null) {
     powerSaveBlocker.stop(blockerId);
   }
 }
