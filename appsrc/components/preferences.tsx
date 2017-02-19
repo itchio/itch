@@ -40,7 +40,7 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
   render () {
     const {t, lang, sniffedLang = "", downloading, locales} = this.props;
     const {isolateApps, openAtLogin, openAsHidden, closeToTray,
-       readyNotification, manualGameUpdates, showAdvanced} = this.props.preferences;
+       readyNotification, manualGameUpdates, preventDisplaySleep, showAdvanced} = this.props.preferences;
     const {queueLocaleDownload, updatePreferences} = this.props;
 
     const options = [{
@@ -128,6 +128,13 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
             updatePreferences({manualGameUpdates: e.currentTarget.checked});
           }}/>
           <span> {t("preferences.behavior.manual_game_updates")} </span>
+        </label>
+
+        <label className={classNames({active: preventDisplaySleep})}>
+          <input type="checkbox" checked={preventDisplaySleep} onChange={(e) => {
+            updatePreferences({preventDisplaySleep: e.currentTarget.checked});
+          }}/>
+          <span> {t("preferences.behavior.prevent_display_sleep")} </span>
         </label>
       </div>
 

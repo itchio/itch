@@ -204,6 +204,7 @@
     "preferences.behavior.open_at_login.error": "Auto-start settings could not be applied: {{cause}}",
     "preferences.behavior.open_at_login.causes.no_desktop_file": "No .desktop file found. This is normal if you didn't install from a system package. See {{linux_install_page}} for more info.",
     "preferences.behavior.manual_game_updates": "Ask before updating anything",
+    "preferences.behavior.prevent_display_sleep": "Prevent display sleep while playing",
     "preferences.notifications": "Notifications",
     "preferences.notifications.ready_notification": "Notify me when a download has been installed or updated",
     "preferences.language": "Language",

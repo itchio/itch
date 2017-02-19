@@ -212,7 +212,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
 
   win.loadURL(`itch-cave://game.itch/${indexName}?${query}`, options);
 
-  const blockerId = powerSaveBlocker.start("prevent-display-sleep");
+  const blockerId = opts.preferences.preventDisplaySleep ? powerSaveBlocker.start("prevent-display-sleep") : null;
 
   await new Promise((resolve, reject) => {
     win.on("close", () => {
@@ -224,5 +224,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
     });
   });
 
-  powerSaveBlocker.stop(blockerId);
+  if(blockerId !== null) {
+    powerSaveBlocker.stop(blockerId);
+  }
 }
