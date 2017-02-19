@@ -15,7 +15,9 @@ class ProxySettings extends React.Component<IProxySettingsProps, void> {
     return <span className="proxy-settings">
       {t("preferences.proxy_server_address")}
       {proxy
-        ? <span className="value hint--right" data-hint={proxySource}>
+        ? <span className="value"
+            data-rh-at="right"
+            data-rh={proxySource}>
           {proxy}
         </span>
         : <span className="value">

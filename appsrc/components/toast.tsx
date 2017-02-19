@@ -7,7 +7,7 @@ import * as actions from "../actions";
 import Icon from "./icon";
 
 import {ILocalizer} from "../localizer";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 /**
  * Unapologetically and heavily inspired from Google Chrome's "stuff went wrong" tab
@@ -88,7 +88,7 @@ interface IToastProps {
 
 const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   evolveTab: dispatcher(dispatch, actions.evolveTab),
   reportIssue: dispatcher(dispatch, actions.reportIssue),
 });

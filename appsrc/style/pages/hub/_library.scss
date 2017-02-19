@@ -20,6 +20,8 @@
     background: $bread-background-color;
     box-shadow: 0 4px 8px -4px $bread-background-color;
     flex-shrink: 0;
+    padding-right: 4px;
+    min-height: 40px;
 
     .link, .link-icon {
       margin-left: 8px;
@@ -35,8 +37,15 @@
       flex-grow: 1;
     }
 
+    .layout-pickers {
+      display: flex;
+    }
+
     .layout-picker {
-      padding: 6px 8px;
+      position: relative;
+      padding: 8px 10px;
+      border-radius: 50%;
+      font-size: 90%;
       filter: brightness(60%);
 
       &:hover {
@@ -94,10 +103,64 @@
       box-shadow: 0 0 2px #1B1919;
       transition: all 0.2s;
       width: 200px;
-      text-indent: 16px;
+      text-indent: 18px;
       padding: 6px 10px 5px 9px;
       height: 32px;
       font-size: 14px;
+    }
+  }
+
+  section.tag-filters {
+    margin: 4px 8px;
+
+    .Select {
+      width: auto;
+      min-width: 350px;
+      font-size: 14px;
+
+      &.Select--multi {
+        .Select-value {
+          background-color: rgba(97, 97, 97, 0.7);
+          color: #d8d8d8;
+
+          &, .Select-value-icon {
+            border-color: transparent;
+          }
+
+          .Select-value-label {
+            font-size: 14px;
+            line-height: 1.6;
+          }
+
+          .Select-value-icon {
+            font-size: 18px;
+            padding: 1px 3px 0px 5px;
+
+            &:hover, &:focus {
+              color: white;
+              background-color: rgba(97, 97, 97, 0.5)
+            }
+          }
+        }
+
+        .Select-input input {
+          color: white;
+          margin-top: 5px;
+        }
+
+        .Select-control {
+          height: 40px;
+
+          // I know, I know, !important is bad. but it *is* important.
+          background: none !important;
+          border: none !important;
+          box-shadow: none !important;
+
+          .Select-placeholder {
+            line-height: 40px;
+          }
+        }
+      }
     }
   }
 }

@@ -408,5 +408,15 @@
     "table.column.name": "Име",
     "table.column.published": "Публикувано",
     "table.column.play_time": "Изиграно време",
-    "table.column.last_played": "Последно пускане"
+    "table.column.last_played": "Последно пускане",
+    "grid.criterion.search": "Търсене…",
+    "grid.filters.options.compatible": "Съвместими",
+    "grid.filters.options.installed": "Инсталирани",
+    "grid.filters.options.owned": "Притежавани",
+    "grid.filters.options.no_results": "Няма резултати",
+    "web.context_menu.cut": "Изрязване",
+    "web.context_menu.copy": "Копиране",
+    "web.context_menu.paste": "Поставяне",
+    "web.context_menu.open_in_new_tab": "Отваряне в нов раздел",
+    "web.context_menu.copy_link": "Копиране на връзката"
 }

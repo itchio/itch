@@ -1,6 +1,10 @@
 
 import {Watcher} from "./watcher";
 
+import {createSelector} from "reselect";
+
+import {makeLabel} from "../util/navigation";
+
 import {darkMineShaft} from "../constants/colors";
 import {app, BrowserWindow} from "../electron";
 import {IBrowserWindow} from "../electron/types";
@@ -26,7 +30,7 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = os.platform() === "darwin";
 
-import {IStore} from "../types";
+import {IState, IStore} from "../types";
 
 async function createWindow (store: IStore, hidden: boolean) {
   if (createLock) {
@@ -253,6 +257,13 @@ async function hideWindow () {
   }
 }
 
+async function exitFullScreen () {
+  const window = BrowserWindow.getFocusedWindow();
+  if (window && window.isFullScreen()) {
+    window.setFullScreen(false);
+  }
+}
+
 function showWindow (window: IBrowserWindow) {
   window.show();
   const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false;
@@ -283,7 +294,56 @@ function ensureMainWindowInsideDisplay (store: IStore) {
   ensureWindowInsideDisplay(window);
 }
 
+function updateTitle (store: IStore, title: string) {
+  const id = store.getState().ui.mainWindow.id;
+  if (!id) {
+    return;
+  }
+
+  const window = BrowserWindow.fromId(id);
+  if (!window) {
+    return;
+  }
+
+  window.setTitle(title);
+}
+
+let titleSelector: (state: IState) => void;
+const makeTitleSelector = (store: IStore) => {
+  const getLang = (state: IState) => state.i18n.lang;
+  const getStrings = (state: IState) => state.i18n.strings;
+
+  const getT = createSelector(
+    getLang,
+    getStrings,
+    (lang, strings) => {
+      return localizer.getT(strings, lang);
+    },
+  );
+
+  const getID = (state: IState) => state.session.navigation.id;
+  const getTabData = (state: IState) => state.session.navigation.tabData;
+
+  return createSelector(
+    getID,
+    getTabData,
+    getT,
+    (id, tabData, t) => {
+      const label = makeLabel(id, tabData);
+      updateTitle(store, t.format(label) + " - itch");
+    },
+  );
+};
+
 export default function (watcher: Watcher) {
+  watcher.onAll(async (store, action) => {
+    const state = store.getState();
+    if (!titleSelector) {
+      titleSelector = makeTitleSelector(store);
+    }
+    titleSelector(state);
+  });
+
   watcher.on(actions.preferencesLoaded, async (store, action) => {
     const hidden = action.payload.openAsHidden;
     store.dispatch(actions.focusWindow({hidden}));
@@ -313,6 +373,10 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.hideWindow, async (store, action) => {
     hideWindow();
+  });
+
+  watcher.on(actions.triggerBack, async (store, action) => {
+    exitFullScreen();
   });
 
   watcher.on(actions.windowBoundsChanged, async (store, action) => {

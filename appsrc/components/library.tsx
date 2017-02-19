@@ -4,7 +4,7 @@ import {connect} from "./connect";
 import {createStructuredSelector} from "reselect";
 
 import Games from "./games";
-import GameGridFilters from "./game-grid-filters";
+import GameFilters from "./game-filters";
 import {map, filter, uniq, indexBy, sortBy} from "underscore";
 
 import {IState, ICaveRecord, IGameRecord, IDownloadKey, TabLayout} from "../types";
@@ -58,7 +58,7 @@ export class Library extends React.Component<ILibraryProps, void> {
     const tab = "library";
 
     return <div className="library-meat">
-      <GameGridFilters tab={tab}/>
+      <GameFilters tab={tab}/>
       {installedGames.length > 0 || ownedGames.length > 0
         ? <Games games={games} tab={tab}/>
         : ""

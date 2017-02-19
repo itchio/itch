@@ -8,9 +8,11 @@ import * as actions from "../actions";
 
 import {ITabData} from "../types";
 import {ILocalizer} from "../localizer";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
+
+import Ink = require("react-ink");
 
 function isHTMLInput (el: HTMLElement): el is HTMLInputElement {
   return el.tagName === "INPUT";
@@ -77,12 +79,20 @@ export class BrowserControls extends React.Component<IBrowserControlsProps, IBro
     const addressClasses = classNames("browser-address", {frozen, visible: (!!url && !!url.length)});
 
     return <div className="browser-controls">
-      <span className={classNames("icon icon-arrow-left", {disabled: !canGoBack})} onClick={() => goBack()}/>
-      <span className={classNames("icon icon-arrow-right", {disabled: !canGoForward})} onClick={() => goForward()}/>
+      <span className={classNames("icon icon-arrow-left", {disabled: !canGoBack})} onClick={() => goBack()}>
+        <Ink/>
+      </span>
+      <span className={classNames("icon icon-arrow-right", {disabled: !canGoForward})} onClick={() => goForward()}>
+        <Ink/>
+      </span>
       {
         loading
-        ? <span className="icon icon-cross loading" onClick={() => stop()}/>
-        : <span className="icon icon-repeat" onClick={() => reload()}/>
+        ? <span className="icon icon-cross loading" onClick={() => stop()}>
+            <Ink/>
+          </span>
+        : <span className="icon icon-repeat" onClick={() => reload()}>
+            <Ink/>
+          </span>
       }
       {editingURL
         ? <input type="text" disabled={frozen} ref={this.onBrowserAddress}
@@ -92,8 +102,11 @@ export class BrowserControls extends React.Component<IBrowserControlsProps, IBro
             (url && url.length) && this.startEditingURL()
           }>{url || ""}</span>
       }
-      <span className="hint--right" data-hint={t("browser.popout")}>
-        <span className={classNames("icon icon-redo")} onClick={() => this.popOutBrowser()}/>
+      <span
+          data-rh-at="right"
+          data-rh={t("browser.popout")}
+          className={classNames("icon icon-redo")} onClick={() => this.popOutBrowser()}>
+        <Ink/>
       </span>
     </div>;
   }
@@ -172,7 +185,7 @@ interface IBrowserControlsState {
 }
 
 const mapStateToProps = () => ({});
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   openUrl: dispatcher(dispatch, actions.openUrl),
 });
 

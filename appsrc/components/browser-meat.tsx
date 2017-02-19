@@ -18,6 +18,7 @@ import * as ospath from "path";
 import {uniq, findWhere} from "underscore";
 
 import {IBrowserState} from "./browser-state";
+import createContextMenu from "./browser-meat-context-menu";
 
 const injectPath = ospath.resolve(__dirname, "..", "inject", "itchio-monkeypatch.js");
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
@@ -34,7 +35,7 @@ import GameBrowserContext from "./game-browser-context";
 import {transformUrl} from "../util/navigation";
 
 import {ITabData, IState} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
 
 import {IWebView, IWebContents, ISession} from "../electron/types";
 
@@ -256,7 +257,9 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
   newWindow (e: any) { // TODO: type
     const {navigate} = this.props;
     const {url} = e;
-    navigate("url/" + url, {}, /* background */ true);
+
+    const background = (e.disposition === "background-tab");
+    navigate("url/" + url, {}, background);
   }
 
   isFrozen () {
@@ -302,6 +305,10 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
   }
 
   analyzePage (tabId: string, url: string) {
+    if (this.isFrozen()) {
+      return;
+    }
+
     const {evolveTab} = this.props;
 
     const xhr = new XMLHttpRequest();
@@ -321,6 +328,8 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
           newPath += parsed.search;
         }
         evolveTab({id: tabId, path: newPath});
+      } else {
+        evolveTab({id: tabId, path: `url/${url}`});
       }
     };
     xhr.open("GET", url);
@@ -368,10 +377,15 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
       wv.addEventListener("did-stop-loading", this.didStopLoading.bind(this));
       wv.addEventListener("will-navigate", this.willNavigate.bind(this));
       wv.addEventListener("did-navigate", this.didNavigate.bind(this));
+      wv.addEventListener("did-navigate-in-page", this.didNavigate.bind(this));
       wv.addEventListener("page-title-updated", this.pageTitleUpdated.bind(this));
       wv.addEventListener("page-favicon-updated", this.pageFaviconUpdated.bind(this));
       wv.addEventListener("new-window", this.newWindow.bind(this));
       this.domReady();
+
+      createContextMenu(wv, {
+        navigate: this.props.navigate,
+      });
 
       // otherwise, back button is active and brings us back to 'about:blank'
       wv.clearHistory();
@@ -396,6 +410,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 
   render () {
     const {tabId, tabData, tabPath, controls, active} = this.props;
+
     const {browserState} = this.state;
 
     const {goBack, goForward, stop, reload, openDevTools, loadUserURL} = this;
@@ -540,8 +555,8 @@ const mapStateToProps = createStructuredSelector({
   proxySource: (state: IState) => state.system.proxySource,
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
-  navigate: dispatcher(dispatch, actions.navigate), 
+const mapDispatchToProps = (dispatch: IDispatch) => ({
+  navigate: multiDispatcher(dispatch, actions.navigate), 
   evolveTab: dispatcher(dispatch, actions.evolveTab),
   tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
   tabReloaded: dispatcher(dispatch, actions.tabReloaded),

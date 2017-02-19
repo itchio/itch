@@ -15,7 +15,7 @@ import RememberedSession from "./remembered-session";
 import * as actions from "../actions";
 
 import {IState, ISetupOperation, IRememberedSessionsState, Partial} from "../types";
-import {IAction, dispatcher, ILoginWithTokenPayload} from "../constants/action-types";
+import {IDispatch, dispatcher, ILoginWithTokenPayload} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 import watching, {Watcher} from "./watching";
@@ -230,7 +230,7 @@ const mapStateToProps = (state: IState): Partial<IGatePageProps> => {
   }
 };
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   loginWithPassword: dispatcher(dispatch, actions.loginWithPassword),
   loginWithToken: dispatcher(dispatch, actions.loginWithToken),
   loginStartPicking: dispatcher(dispatch, actions.loginStartPicking),

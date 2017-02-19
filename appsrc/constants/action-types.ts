@@ -6,12 +6,16 @@ import {IProgressInfo} from "../types";
 
 export type IAction<T> = Action<T>;
 
-export function dispatcher <T> (dispatch: (action: IAction<any>) => void, actionCreator: (payload: T) => IAction<T>) {
+export interface IDispatch {
+  (action: IAction<any>): void;
+}
+
+export function dispatcher <T> (dispatch: IDispatch, actionCreator: (payload: T) => IAction<T>) {
   return (payload: T) => dispatch(actionCreator(payload));
 }
 
 export function multiDispatcher <T> (
-    dispatch: (action: IAction<any>) => void,
+    dispatch: IDispatch,
     actionCreator: (...args: any[]) => IAction<T>) {
   return (...args: any[]) => dispatch(actionCreator(...args));
 }
@@ -878,22 +882,6 @@ export interface IFilterChangedPayload {
   tab: string;
   /** text by which a tab is being filtered */
   query: string;
-};
-
-export const LAYOUT_CHANGED = "LAYOUT_CHANGED";
-export interface ILayoutChangedPayload {
-  /** which tab's layout is being changed */
-  tab: string;
-  /** the new layout */
-  layout: Types.TabLayout;
-};
-
-export const BINARY_FILTER_CHANGED = "BINARY_FILTER_CHANGED";
-export interface IBinaryFilterChangedPayload {
-  /** name of the binary filter */
-  field: string;
-  /** new value for the boolean filter */
-  value: boolean;
 };
 
 /** Data retrieval */

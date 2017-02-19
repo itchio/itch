@@ -8,7 +8,7 @@ import urls from "../constants/urls";
 
 import Icon from "./icon";
 import Games from "./games";
-import GameGridFilters from "./game-grid-filters";
+import GameFilters from "./game-filters";
 
 import {map, filter} from "underscore";
 import {pathToId} from "../util/navigation";
@@ -17,7 +17,7 @@ import {
   IState, IGameRecordSet, ICollectionRecord, ICollectionRecordSet, ITabData,
   IUserMarketState, IGlobalMarketState,
 } from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 export class Collection extends React.Component<ICollectionProps, void> {
@@ -36,11 +36,11 @@ export class Collection extends React.Component<ICollectionProps, void> {
     const tab = tabPath;
 
     return <div className="collection-meat">
-      <GameGridFilters tab={tab}>
+      <GameFilters tab={tab}>
         <span className="link-icon" onClick={(e) => initiateShare({url: `${urls.itchio}/c/${collection.id}/x`})}>
           <Icon icon="share"/>
         </span>
-      </GameGridFilters>
+      </GameFilters>
 
       {games.length > 0
         ? <Games games={games} tab={tab}/>
@@ -96,7 +96,7 @@ const mapStateToProps = () => {
   );
 };
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   initiateShare: dispatcher(dispatch, actions.initiateShare),
 });
 

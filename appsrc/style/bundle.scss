@@ -1,6 +1,7 @@
 
-@import '../../node_modules/hint.css/src/hint.scss';
+@import '../../node_modules/react-hint/css/index.css';
 @import '../../node_modules/react-virtualized/styles.css';
+@import '../../node_modules/react-select/dist/react-select.css';
 
 @import 'global-styles/emoji';
 @import 'global-styles/reset';
@@ -39,6 +40,7 @@
 @import 'global-styles/icons';
 @import 'global-styles/dropdown';
 @import 'global-styles/kb-shortcut';
+@import 'global-styles/hints';
 
 @import 'pages/gate';
 @import 'pages/hub';

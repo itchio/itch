@@ -14,7 +14,7 @@ import * as actions from "../../actions";
 import {IActionsInfo} from "./types";
 
 import {IState, IDownloadItem, ICaveRecord, IGameUpdate} from "../../types";
-import {IAction, dispatcher} from "../../constants/action-types";
+import {IDispatch, dispatcher} from "../../constants/action-types";
 import {ILocalizer} from "../../localizer";
 
 import Ink = require("react-ink");
@@ -34,13 +34,11 @@ class MainAction extends React.Component<IMainActionProps, void> {
     let child: React.ReactElement<any> | null = null;
     if (task) {
       const {status, hint, statusTask} = this.status();
-      const classes = classNames("state", "normal-state", {
-        ["hint--top"]: !!hint,
-      });
+      const classes = classNames("state", "normal-state");
 
       const realTask = statusTask || task;
 
-      child = <span className={classes} data-hint={hint}>
+      child = <span className={classes} data-rh-at="top" data-rh={hint}>
         { (
             progress > 0 || realTask === "find-upload" || realTask === "download" ||
             realTask === "configure" || realTask === "install")
@@ -83,10 +81,12 @@ class MainAction extends React.Component<IMainActionProps, void> {
 
     const buttonClasses = classNames("main-action", {
       "buy-now": (platformCompatible && !mayDownload && canBeBought),
-      "hint--top": !!hint,
       branded,
     });
-    const button = <div style={style} className={buttonClasses} onClick={(e) => this.onClick(e)} data-hint={hint}>
+    const button = <div style={style}
+        className={buttonClasses}
+        onClick={(e) => this.onClick(e)}
+        data-rh={hint} data-rh-at="top">
       <Ink/>
       {child}
     </div>;
@@ -223,7 +223,7 @@ const mapStateToProps = (state: IState) => ({
   downloadsPaused: state.downloads.downloadsPaused,
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   queueGame: dispatcher(dispatch, actions.queueGame),
   showGameUpdate: dispatcher(dispatch, actions.showGameUpdate),
   initiatePurchase: dispatcher(dispatch, actions.initiatePurchase),

@@ -11,7 +11,7 @@ import {connect} from "./connect";
 import {createStructuredSelector} from "reselect";
 
 import {IState, ISelfUpdateState, ILocalizedString} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 /**
@@ -128,7 +128,7 @@ const mapStateToProps = createStructuredSelector({
   statusMessages: (state: IState) => state.status.messages,
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   showAvailableSelfUpdate: dispatcher(dispatch, actions.showAvailableSelfUpdate),
   applySelfUpdateRequest: dispatcher(dispatch, actions.applySelfUpdateRequest),
   dismissStatus: dispatcher(dispatch, actions.dismissStatus),

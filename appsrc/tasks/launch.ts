@@ -7,12 +7,14 @@ import * as toml from "toml";
 
 import * as invariant from "invariant";
 
-import native from "./launch/native";
-import html from "./launch/html";
-import shell from "./launch/shell";
-import external from "./launch/external";
 import validateManifest from "./launch/validate-manifest";
-import handleWindowsPrereqs from "./launch/windows-prereqs";
+
+import nativePrepare from "./prepare/native";
+
+import nativeLaunch from "./launch/native";
+import htmlLaunch from "./launch/html";
+import shellLaunch from "./launch/shell";
+import externalLaunch from "./launch/external";
 
 import store from "../store";
 import * as actions from "../actions";
@@ -42,16 +44,24 @@ import {findWhere, each} from "underscore";
 import {Crash, Cancelled} from "./errors";
 
 import {
-  IModalButtonSpec, ICaveRecord, IStartTaskOpts, IGameRecord,
+  IModalButtonSpec, ICaveRecord, IStartTaskOpts, ILaunchOpts, IGameRecord,
   IManifest, IManifestAction, IEnvironment,
 } from "../types";
 
 interface ILauncher {
-  (out: EventEmitter, opts: IStartTaskOpts): Promise<void>;
+  (out: EventEmitter, opts: ILaunchOpts): Promise<void>;
 }
 
 interface ILaunchers {
   [key: string]: ILauncher;
+}
+
+interface IPrepare {
+  (out: EventEmitter, opts: ILaunchOpts): Promise<void>;
+}
+
+interface IPrepares {
+  [key: string]: IPrepare;
 }
 
 function caveProblem (cave: ICaveRecord) {
@@ -123,7 +133,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
   invariant(credentials, "launch has credentials");
   invariant(market, "launch has market");
 
-  const gameOpts = {...opts};
+  const launchOpts = {...opts, store};
 
   const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game});
   const caveGame = (cave.game || {}) as IGameRecord;
@@ -158,30 +168,30 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
     throw err;
   }
 
-  log(gameOpts, `itch ${app.getVersion()} launching game ${game.id}: ${game.title}`);
+  log(launchOpts, `itch ${app.getVersion()} launching game ${game.id}: ${game.title}`);
 
   const env: IEnvironment = {};
   const args: string[] = [];
   const appPath = pathmaker.appPath(cave);
   const manifestPath = ospath.join(appPath, ".itch.toml");
-  log(gameOpts, `looking for manifest @ "${manifestPath}"`);
+  log(launchOpts, `looking for manifest @ "${manifestPath}"`);
   const hasManifest = await sf.exists(manifestPath);
   let manifestAction: IManifestAction;
   let manifest: IManifest;
 
   if (hasManifest) {
-    log(gameOpts, "found manifest, parsing");
+    log(launchOpts, "found manifest, parsing");
 
     try {
       const contents = await sf.readFile(manifestPath);
       manifest = toml.parse(contents);
     } catch (e) {
-      log(gameOpts, `error reading manifest: ${e}`);
+      log(launchOpts, `error reading manifest: ${e}`);
       throw e;
     }
 
-    log(gameOpts, `manifest:\n ${JSON.stringify(manifest, null, 2)}`);
-    validateManifest(manifest, log, gameOpts);
+    log(launchOpts, `manifest:\n ${JSON.stringify(manifest, null, 2)}`);
+    validateManifest(manifest, log, launchOpts);
 
     if (manifest.actions.length > 1) {
       const buttons: IModalButtonSpec[] = [];
@@ -217,7 +227,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
       manifestAction = manifest.actions[0];
     }
   } else {
-    log(gameOpts, "No manifest found (no \'.itch.toml\' file in top-level directory). Proceeding with heuristics.");
+    log(launchOpts, "No manifest found (no \'.itch.toml\' file in top-level directory). Proceeding with heuristics.");
   }
 
   if (manifestAction) {
@@ -240,30 +250,27 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
     }
   }
 
-  gameOpts.manifestAction = manifestAction;
-  gameOpts.env = env;
-  gameOpts.args = args;
+  launchOpts.manifestAction = manifestAction;
+  launchOpts.env = env;
+  launchOpts.args = args;
 
-  const launchers = { native, html, shell, external } as ILaunchers;
+  const launchers = {
+    native: nativeLaunch,
+    html: htmlLaunch,
+    shell: shellLaunch,
+    external: externalLaunch,
+  } as ILaunchers;
   const launcher = launchers[launchType];
   if (!launcher) {
     throw new Error(`Unsupported launch type '${cave.launchType}'`);
   }
 
-  if (os.itchPlatform() === "windows") {
-    try {
-      await handleWindowsPrereqs({
-        store,
-        manifest,
-        caveId: cave.id,
-        globalMarket: opts.globalMarket,
-        logger: opts.logger,
-        emitter: out,
-      });
-    } catch (e) {
-      log(opts, `Windows prereqs full stack: ${e.stack}`);
-      throw e;
-    }
+  const prepares = {
+    native: nativePrepare,
+  } as IPrepares;
+  const prepare = prepares[launchType];
+  if (prepare) {
+    await prepare(out, launchOpts);
   }
 
   const startedAt = Date.now();
@@ -278,7 +285,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
       const newSecondsRun = UPDATE_PLAYTIME_INTERVAL + previousSecondsRun;
       globalMarket.saveEntity("caves", cave.id, {secondsRun: newSecondsRun, lastTouched: now});
     }, UPDATE_PLAYTIME_INTERVAL * 1000);
-    await launcher(out, gameOpts);
+    await launcher(out, launchOpts);
 
   } catch (e) {
     log(opts, `error while launching ${cave.id}: ${e.message || e}`);

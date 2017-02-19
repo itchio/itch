@@ -10,7 +10,7 @@ import {IActionsInfo} from "./game-actions/types";
 import * as actions from "../actions";
 
 import {ILocalizer} from "../localizer";
-import {IAction} from "../constants/action-types";
+import {IDispatch} from "../constants/action-types";
 
 import GameBrowserContextAction from "./game-browser-context-action";
 
@@ -63,7 +63,7 @@ class GameBrowserContextActions extends React.Component
 
 interface IGameBrowserContextActionsProps extends IActionsInfo {
   t: ILocalizer;
-  dispatch: (action: IAction<any>) => void;
+  dispatch: IDispatch;
 }
 
 interface IGameBrowserContextActionsState {
@@ -71,7 +71,7 @@ interface IGameBrowserContextActionsState {
 }
 
 const mapStateToProps = () => ({});
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({dispatch});
+const mapDispatchToProps = (dispatch: IDispatch) => ({dispatch});
 
 export default connect(
   mapStateToProps,

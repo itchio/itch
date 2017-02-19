@@ -11,6 +11,13 @@ interface IAssertPresenceResult {
 
 export type ItchPlatform = "osx" | "windows" | "linux" | "unknown";
 
+const WIN64_ARCHES = {
+  AMD64: true,
+  IA64: true,
+} as {
+  [key: string]: boolean;
+};
+
 const self = {
   platform: function (): string {
     return process.platform;
@@ -90,6 +97,14 @@ const self = {
     }
 
     return { code, stdout, stderr, parsed };
+  },
+
+  isWin64: function(): boolean {
+    // 64-bit exe on 64-bit windows: PROCESSOR_ARCHITECTURE has the original arch
+    // 32-bit exe on 64-bit windows: PROCESSOR_ARCHITECTURE has x86, PROCESSOR_ARCHITEW6432 has the real one
+    return process.arch === "x64" ||
+      WIN64_ARCHES[process.env.PROCESSOR_ARCHITECTURE] ||
+      WIN64_ARCHES[process.env.PROCESSOR_ARCHITEW6432];
   },
 };
 

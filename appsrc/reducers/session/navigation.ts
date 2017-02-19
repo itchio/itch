@@ -9,6 +9,8 @@ import {ISessionNavigationState, ITabDataSet, ITabDataSave} from "../../types";
 import * as actions from "../../actions";
 import reducer from "../reducer";
 
+import {arrayMove} from "react-sortable-hoc";
+
 interface IPathToIdMap {
   [path: string]: string;
 }
@@ -26,11 +28,7 @@ const initialState = {
     transient: [],
   },
   loadingTabs: {},
-  layouts: {},
   filters: {},
-  binaryFilters: {
-    onlyCompatible: true,
-  },
   lastConstant: "featured",
   tabData: indexBy(pick(staticTabData, ...baseTabs), "id"),
   id: "featured",
@@ -56,17 +54,6 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
     }
   });
 
-  on(actions.binaryFilterChanged, (state, action) => {
-    const {field, value} = action.payload;
-    return {
-      ...state,
-      binaryFilters: {
-        ...state.binaryFilters,
-        [field]: value,
-      },
-    };
-  });
-
   on(actions.filterChanged, (state, action) => {
     const {tab, query} = action.payload;
     return {
@@ -74,17 +61,6 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
       filters: {
         ...state.filters,
         [tab]: query,
-      },
-    };
-  });
-
-  on(actions.layoutChanged, (state, action) => {
-    const {tab, layout} = action.payload;
-    return {
-      ...state,
-      layouts: {
-        ...state.layouts,
-        [tab]: layout,
       },
     };
   });
@@ -196,16 +172,7 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
     const {tabs} = state;
     const {transient} = tabs;
 
-    const newTransient = map(transient, (t, i) => {
-      switch (i) {
-        case before:
-          return transient[after];
-        case after:
-          return transient[before];
-        default:
-          return t;
-      }
-    });
+    const newTransient = arrayMove(transient, before, after);
 
     return {
       ...state,
@@ -334,7 +301,8 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
       }
 
       tabData[tab.id] = {
-        path: tab.path,
+        ...omit(tab, "id"),
+        restored: true,
       };
       return tab.id;
     }), (x) => !!x);

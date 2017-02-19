@@ -5,7 +5,7 @@ import {createStructuredSelector} from "reselect";
 
 import * as actions from "../actions";
 
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 class HubSidebarHandle extends React.Component<IHubSidebarHandleProps, IHubSidebarState> {
 
@@ -66,7 +66,7 @@ interface IHubSidebarState {
 
 const mapStateToProps = createStructuredSelector({});
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   updatePreferences: dispatcher(dispatch, actions.updatePreferences),
 });
 

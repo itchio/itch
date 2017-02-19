@@ -7,36 +7,107 @@ import * as classNames from "classnames";
 import {createSelector, createStructuredSelector} from "reselect";
 
 import * as actions from "../actions";
-import defaultImages from "../constants/default-images";
-import urls from "../constants/urls";
 import {pathToIcon, makeLabel} from "../util/navigation";
 
 import {app} from "../electron";
 const appVersion = app.getVersion();
 
-import Icon from "./icon";
-import Dropdown from "./dropdown";
-
 import HubSidebarItem from "./hub-sidebar-item";
+import UserMenu from "./user-menu";
+import Ink = require("react-ink");
 
 import {IState, IUserRecord, IGameRecord, ITabDataSet, ILocalizedString} from "../types";
 import {ILocalizer} from "../localizer";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
+
+import {SortableElement, SortableContainer, arrayMove} from "react-sortable-hoc";
+
+interface ISortEndParams {
+  oldIndex: number;
+  newIndex: number;
+}
+
+interface ISortableHubSidebarItemProps {
+  props: any & {
+    id: string;
+  };
+}
+
+const SortableHubSidebarItem = SortableElement((props: ISortableHubSidebarItemProps) => {
+  return <HubSidebarItem {...props.props}/>;
+});
+
+interface ISortableContainerParams {
+  items: string[];
+  sidebarProps: IHubSidebarProps;
+}
+
+const SortableList = SortableContainer((params: ISortableContainerParams) => {
+  const {sidebarProps, items} = params;
+  const {t, tabData, id: currentId, loadingTabs} = sidebarProps;
+  const {navigate, closeTab, openTabContextMenu} = sidebarProps;
+  const {downloadCount, downloadProgress, downloadSublabel} = sidebarProps;
+  const {downloadingGame} = sidebarProps;
+
+  return <div>
+    {map(items, (id, index) => {
+      const data = tabData[id] || {};
+      const {path} = data;
+      let iconImage = data.iconImage;
+      if (/^url/.test(path)) {
+        iconImage = data.webFavicon;
+      }
+      
+      const label = makeLabel(id, tabData);
+      const icon = pathToIcon(path);
+      const active = currentId === id;
+      const onClick = () => { navigate(id); };
+      const onClose = () => { closeTab({id}); };
+      const onContextMenu = (e?: MouseEvent) => {
+        openTabContextMenu({id});
+      };
+      let count = 0;
+      let progress = 0;
+      let sublabel: ILocalizedString = null;
+      const loading = loadingTabs[id];
+
+      if (id === "downloads") {
+        count = downloadCount;
+        progress = downloadProgress;
+        sublabel = downloadSublabel;
+      }
+
+      let gameOverride: IGameRecord = null;
+      if (id === "downloads") {
+        gameOverride = downloadingGame;
+      }
+
+      const props = {id, path, label, icon, iconImage, active,
+        onClick, count, progress, onClose, onContextMenu, data, t,
+        sublabel, gameOverride, loading};
+      return <SortableHubSidebarItem key={id} index={index} props={props}/>;
+    })}
+  </div>;
+});
 
 export function versionString () {
   return `itch v${appVersion}`;
 }
 
 @watching
-export class HubSidebar extends React.Component<IHubSidebarProps, void> {
+export class HubSidebar extends React.Component<IHubSidebarProps, IHubSidebarState> {
   refs: {
     search: HTMLInputElement;
   };
 
-  constructor () {
+  constructor (props: IHubSidebarProps) {
     super();
+    this.state = {
+      transient: props.tabs.transient,
+    };
+
     this.triggerSearch = debounce(this.triggerSearch.bind(this), 100);
     this.onSearchKeyUp = this.onSearchKeyUp.bind(this);
     this.onSearchKeyDown = this.onSearchKeyDown.bind(this);
@@ -70,20 +141,28 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
   }
 
   render () {
-    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData, loadingTabs,
-      navigate, closeTab, closeAllTabs, moveTab,
-      openTabContextMenu, newTab, searchLoading, halloween} = this.props;
+    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
+      navigate, closeAllTabs,
+      newTab, searchLoading} = this.props;
     const classes = classNames("hub-sidebar", {osx, fullscreen});
     const sidebarStyle = {
       width: sidebarWidth + "px",
     };
     const searchClasses = classNames("search", {loading: searchLoading});
 
+    const onSortEnd = (params: ISortEndParams) => {
+      const {oldIndex, newIndex} = params;
+      this.setState({
+        transient: arrayMove(this.state.transient, oldIndex, newIndex),
+      });
+      this.props.moveTab({before: oldIndex, after: newIndex});
+    };
+
     return <div className={classes} style={sidebarStyle}>
       <div className="title-bar-padder"/>
 
-      <div className="logo hint--bottom" onClick={() => navigate("featured")} data-hint={versionString()}>
-        <img src={`static/images/logos/app-${halloween ? "halloween" : "white"}.svg`}/>
+      <div className="logo" onClick={() => navigate("featured")} data-rh-at="bottom" data-rh={versionString()}>
+        <img src={`static/images/logos/app-white.svg`}/>
       </div>
 
       <section className={searchClasses}>
@@ -114,59 +193,47 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
           };
           const loading = false;
 
-          const props = {id, path, label, icon, active, onClick, t, onContextMenu, halloween, loading};
-          return <HubSidebarItem {...props}/>;
+          const props = {id, path, label, icon, active, onClick, t, onContextMenu, loading, index};
+          return <HubSidebarItem key={id} {...props}/>;
         })}
 
         <h2>
           <span className="label">{t("sidebar.category.tabs")}</span>
           <div className="filler"/>
-          <span className="action hint--left" data-hint={t("sidebar.close_all_tabs")} onClick={() => closeAllTabs({})}>
+          <span className="action"
+              data-rh-at="top"
+              data-rh={t("sidebar.close_all_tabs")}
+              onClick={() => closeAllTabs({})}>
             <span className="icon icon-delete"/>
+            <Ink/>
           </span>
-          <span className="action hint--left" data-hint={t("sidebar.new_tab")} onClick={() => newTab({})}>
+          <span className="action"
+              data-rh-at="top"
+              data-rh={t("sidebar.new_tab")}
+              onClick={() => newTab({})}>
             <span className="icon icon-plus"/>
+            <Ink/>
           </span>
         </h2>
-        {map(tabs.transient, (id, index) => {
-          const data = tabData[id] || {};
-          const {path} = data;
-          const iconImage = /^url/.test(path) ? data.webFavicon : data.iconImage;
-          const label = makeLabel(id, tabData);
-          const icon = pathToIcon(path);
-          const active = currentId === id;
-          const onClick = () => { navigate(id); };
-          const onClose = () => { closeTab({id}); };
-          const onContextMenu = (e?: MouseEvent) => {
-            openTabContextMenu({id});
-          };
-          let count = 0;
-          let progress = 0;
-          let sublabel: ILocalizedString = null;
-          const loading = loadingTabs[id];
 
-          if (id === "downloads") {
-            count = this.props.downloadCount;
-            progress = this.props.downloadProgress;
-            sublabel = this.props.downloadSublabel;
-          }
-
-          let gameOverride: IGameRecord = null;
-          if (id === "downloads") {
-            gameOverride = this.props.downloadingGame;
-          }
-
-          const props = {index, id, path, label, icon, iconImage, active,
-            onClick, count, progress, onClose, onContextMenu, moveTab, data, t,
-            sublabel, gameOverride, halloween, loading};
-          return <HubSidebarItem key={id} {...props}/>;
-        })}
+        <SortableList items={this.state.transient}
+          sidebarProps={this.props}
+          onSortEnd={onSortEnd}
+          distance={5}
+          lockAxis="y"
+        />
       </div>
 
       <section className="sidebar-blank"/>
 
-      {this.dropdown()}
+      <UserMenu/>
     </div>;
+  }
+
+  componentWillReceiveProps(props: IHubSidebarProps) {
+    this.setState({
+      transient: props.tabs.transient,
+    });
   }
 
   onSearchFocus (e: React.FocusEvent<HTMLInputElement>) {
@@ -229,93 +296,6 @@ export class HubSidebar extends React.Component<IHubSidebarProps, void> {
 
     this.props.search({query: search.value});
   }
-
-  me () {
-    const me = (this.props.me || {}) as IUserRecord;
-    const {coverUrl = defaultImages.avatar, username, displayName} = me;
-
-    return <section className="hub-sidebar-item me">
-      <img src={coverUrl}/>
-      <span className="label">{username || displayName}</span>
-      <div className="filler"/>
-      <Icon icon="triangle-down" classes={["me-dropdown"]}/>
-    </section>;
-  }
-
-  dropdown () {
-    const {viewCreatorProfile, viewCommunityProfile, changeUser,
-      navigate, copyToClipboard, quit, reportIssue,
-      openUrl, checkForSelfUpdate} = this.props;
-
-    const items = [
-      {
-        icon: "rocket",
-        label: ["sidebar.view_creator_profile"],
-        onClick: viewCreatorProfile,
-      },
-      {
-        icon: "fire",
-        label: ["sidebar.view_community_profile"],
-        onClick: viewCommunityProfile,
-      },
-      {
-        type: "separator",
-      },
-      {
-        icon: "download",
-        label: ["sidebar.downloads"],
-        onClick: () => navigate("downloads"),
-      },
-      {
-        icon: "cog",
-        label: ["sidebar.preferences"],
-        onClick: () => navigate("preferences"),
-      },
-      {
-        type: "separator",
-      },
-      {
-        icon: "checkmark",
-        label: versionString(),
-        onClick: () => copyToClipboard({text: versionString()}),
-        type: "info",
-      },
-      {
-        icon: "repeat",
-        label: ["menu.help.check_for_update"],
-        onClick: () => checkForSelfUpdate({}),
-      },
-      {
-        icon: "search",
-        label: ["menu.help.search_issue"],
-        onClick: () => openUrl({url: `${urls.itchRepo}/search?type=Issues`}),
-      },
-      {
-        icon: "bug",
-        label: ["menu.help.report_issue"],
-        onClick: () => reportIssue({}),
-      },
-      {
-        icon: "lifebuoy",
-        label: ["menu.help.help"],
-        onClick: () => navigate("url/" + urls.manual),
-      },
-      {
-        type: "separator",
-      },
-      {
-        icon: "shuffle",
-        label: ["menu.account.change_user"],
-        onClick: changeUser,
-      },
-      {
-        icon: "exit",
-        label: ["menu.file.quit"],
-        onClick: quit,
-      },
-    ];
-    return <Dropdown items={items} inner={this.me()} updown/>;
-  }
 }
 
 interface IHubSidebarProps {
@@ -345,9 +325,6 @@ interface IHubSidebarProps {
   /** true if we're currently fetching search results */
   searchLoading: boolean;
 
-  /** true if it's halloween */
-  halloween: boolean;
-
   t: ILocalizer;
 
   viewCreatorProfile: typeof actions.viewCreatorProfile;
@@ -371,6 +348,10 @@ interface IHubSidebarProps {
   quit: typeof actions.quit;
 }
 
+interface IHubSidebarState {
+  transient: string[];
+}
+
 const mapStateToProps = createStructuredSelector({
   osx: (state: IState) => state.system.osx,
   fullscreen: (state: IState) => state.ui.mainWindow.fullscreen,
@@ -381,7 +362,6 @@ const mapStateToProps = createStructuredSelector({
   tabData: (state: IState) => state.session.navigation.tabData,
   loadingTabs: (state: IState) => state.session.navigation.loadingTabs,
   searchLoading: (state: IState) => state.session.search.loading,
-  halloween: (state: IState) => state.status.bonuses.halloween,
 
   downloadingGame: (state: IState) => {
     const {activeDownload} = state.downloads;
@@ -420,7 +400,7 @@ const mapStateToProps = createStructuredSelector({
 
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   navigate: dispatcher(dispatch, actions.navigate),
   closeTab: dispatcher(dispatch, actions.closeTab),
   closeAllTabs: dispatcher(dispatch, actions.closeAllTabs),

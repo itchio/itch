@@ -15,8 +15,6 @@ import * as ReactDOM from "react-dom";
 import Layout from "./components/layout";
 import Modal from "./components/modal";
 import {Provider} from "react-redux";
-import HTML5Backend from "react-dnd-html5-backend";
-import {DragDropContext} from "react-dnd";
 import {shell} from "./electron";
 
 import store from "./store";
@@ -37,11 +35,9 @@ function render () {
   setupShortcuts(store);
 
   appNode = document.querySelector("#app");
-  // typing is hard let's go jogging
-  const WrappedLayout = DragDropContext(HTML5Backend)(Layout) as typeof React.Component;
   const rootComponent = <Provider store={store}>
     <div>
-      <WrappedLayout/>
+      <Layout/>
       <Modal/>
       {devTools}
     </div>

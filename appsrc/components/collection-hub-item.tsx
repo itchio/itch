@@ -14,10 +14,11 @@ import {ILocalizer} from "../localizer";
 
 import Icon from "./icon";
 import NiceAgo from "./nice-ago";
+import Ink = require("react-ink");
 import interleave from "./interleave";
 
 import {IState, ICollectionRecord, IGameRecordSet, IUserMarketState} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 export class CollectionHubItem extends React.Component<ICollectionHubItemProps, void> {
   render () {
@@ -61,6 +62,7 @@ export class CollectionHubItem extends React.Component<ICollectionHubItemProps, 
           time_ago: <NiceAgo date={collection.updatedAt}/>,
         })}
       </section>
+      <Ink/>
     </div>;
   }
 }
@@ -81,7 +83,7 @@ const mapStateToProps = createStructuredSelector({
   allGames: (state: IState) => (state.market || {} as IUserMarketState).games || {},
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   navigateToCollection: dispatcher(dispatch, actions.navigateToCollection),
 });
 

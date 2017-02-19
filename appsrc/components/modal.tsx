@@ -12,7 +12,7 @@ import {map} from "underscore";
 
 import {IState, IModal, IModalButtonSpec, IModalButton, IModalAction} from "../types";
 import {ILocalizer} from "../localizer";
-import {IAction, ICloseModalPayload, IModalResponsePayload} from "../constants/action-types";
+import {IDispatch, ICloseModalPayload, IModalResponsePayload} from "../constants/action-types";
 
 import {IModalWidgetProps} from "./modal-widgets/modal-widget";
 
@@ -235,7 +235,7 @@ const mapStateToProps = (state: IState) => ({
   halloween: state.status.bonuses.halloween,
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void, props: IModalProps) => ({
+const mapDispatchToProps = (dispatch: IDispatch, props: IModalProps) => ({
   dispatch: (action: IModalAction) => {
     dispatch(actions.closeModal({action}));
   },

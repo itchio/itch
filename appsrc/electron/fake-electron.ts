@@ -150,6 +150,10 @@ class FakeBrowserWindow implements IBrowserWindow {
   isFullScreen(): boolean {
     return false;
   }
+
+  setTitle(title: string): void {
+    return;
+  }
 }
 
 class FakeWebContents implements IWebContents {

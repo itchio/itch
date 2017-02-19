@@ -235,6 +235,9 @@ export interface ITabData {
     query?: {
         [key: string]: string;
     };
+
+    /** true if the tab was restored as part of session */
+    restored?: boolean;
 }
 
 export interface ITabDataSave extends ITabData {
@@ -743,12 +746,18 @@ export interface IItchAppTabs {
     items: ITabDataSave[];
 }
 
+export interface IDownloadKeysMap {
+    [id: string]: IDownloadKey;
+}
+
 export interface IUserMarketState extends IMarketState {
     games: { [id: string]: IGameRecord };
     collections: { [id: string]: ICollectionRecord };
-    downloadKeys: { [id: string]: IDownloadKey };
+    downloadKeys: IDownloadKeysMap;
     itchAppProfile: IItchAppProfile;
     itchAppTabs: IItchAppTabs;
+
+    downloadKeysByGameId: { [gameId: string]: IDownloadKey };
 }
 
 export interface IGlobalMarketState extends IMarketState {
@@ -879,16 +888,6 @@ export interface ISessionNavigationState {
     filters: {
         [tabId: string]: string | undefined;
         collections?: string;
-    };
-
-    layouts: {
-        [tabId: string]: TabLayout | undefined;
-        library?: TabLayout;
-    };
-
-    binaryFilters: {
-        [key: string]: boolean;
-        onlyCompatible: boolean;
     };
 
     /** opened tabs */
@@ -1094,7 +1093,20 @@ export interface IPreferencesState {
   /** show consent dialog before applying any game updates */
   manualGameUpdates?: boolean;
 
+  /** if rediff'd patch is available, use it instead of original patch */
   preferOptimizedPatches?: boolean;
+
+  /** hide games that aren't compatible with this computer (in native views) */
+  onlyCompatibleGames?: boolean;
+
+  /** hide games that weren't purchased or claimed */
+  onlyOwnedGames?: boolean;
+
+  /** hide games that aren't currently installed */
+  onlyInstalledGames?: boolean;
+
+  /** layout to use to show games */
+  layout?: TabLayout;
 }
 
 export interface ITask {
@@ -1243,6 +1255,12 @@ export interface IStartTaskOpts {
 
   /** cave-specific logger */
   logger?: Logger;
+}
+
+export interface ILaunchOpts extends IStartTaskOpts {
+  store: IStore;
+  manifest?: IManifest;
+  manifestAction?: IManifestAction;
 }
 
 export interface IInternalDownloadOpts {
@@ -1474,3 +1492,5 @@ export interface IRedistExitCode {
   success?: boolean;
   message?: string;
 }
+
+export type ExeArch = "386" | "amd64";

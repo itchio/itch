@@ -11,9 +11,17 @@ import * as querystring from "querystring";
 
 import {IState, ITabData} from "../types";
 
-export class UrlMeat extends React.Component<IUrlMeatProps, void> {
+export class UrlMeat extends React.Component<IUrlMeatProps, IUrlMeatState> {
+  constructor (props: IUrlMeatProps) {
+    super();
+    this.state = {
+      active: props.visible || !props.tabData.restored,
+    };
+  }
+
   render () {
-    const {path, tabData = {}, tabId, active} = this.props;
+    const {path, tabData = {}, tabId, visible} = this.props;
+    const {active} = this.state;
 
     let url = tabData.url || "about:blank";
     let controls = "generic";
@@ -48,16 +56,32 @@ export class UrlMeat extends React.Component<IUrlMeatProps, void> {
       url = urls.itchio + "/";
     }
 
+    if (!active) {
+      return null;
+    }
+
     return <BrowserMeat key={tabId} url={url} tabId={tabId} tabPath={path}
-      tabData={tabData} controls={controls} active={active}/>;
+      tabData={tabData} controls={controls} active={visible}/>;
+  }
+
+  componentWillReceiveProps (props: IUrlMeatProps) {
+    if (props.visible && !this.state.active) {
+      this.setState({
+        active: true,
+      });
+    }
   }
 }
 
 interface IUrlMeatProps {
-  active: boolean;
+  visible: boolean;
   path: string;
   tabId: string;
   tabData: ITabData;
+}
+
+interface IUrlMeatState {
+  active: boolean;
 }
 
 const mapStateToProps = (state: IState, props: IUrlMeatProps) => ({

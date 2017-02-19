@@ -10,7 +10,7 @@ import * as actions from "../actions";
 
 import {IRememberedSession} from "../types";
 import {ILocalizer} from "../localizer";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 
 export class RememberedSession extends React.Component<IRememberedSessionProps, void> {
   render () {
@@ -32,7 +32,7 @@ export class RememberedSession extends React.Component<IRememberedSessionProps, 
         </p>
       </div>
       <div className="filler"/>
-      <span className="hint--left" data-hint="Forget this session">
+      <span data-rh-at="left" data-rh="Forget this session">
         <span className="icon icon-cross forget-session" onClick={onForget}/>
       </span>
     </div>;
@@ -50,7 +50,7 @@ interface IRememberedSessionProps {
 
 const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   loginWithToken: dispatcher(dispatch, actions.loginWithToken),
   forgetSessionRequest: dispatcher(dispatch, actions.forgetSessionRequest),
 });

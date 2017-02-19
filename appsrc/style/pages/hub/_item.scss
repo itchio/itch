@@ -86,7 +86,9 @@
   flex-grow: 1;
 
   .secondary-action {
-    margin: 0 6px;
+    position: relative;
+    padding: 8px;
+    border-radius: 50%;
     color: $secondary-text-color;
 
     &:hover {

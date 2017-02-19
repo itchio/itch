@@ -18,6 +18,7 @@ import store from "../../store";
 import sandbox from "../../util/sandbox";
 import os from "../../util/os";
 import sf from "../../util/sf";
+import butler from "../../util/butler";
 import spawn from "../../util/spawn";
 import fetch from "../../util/fetch";
 import pathmaker from "../../util/pathmaker";
@@ -32,11 +33,11 @@ const log = mklog("tasks/launch/native");
 
 import {Crash} from "../errors";
 
-import {IEnvironment, IStartTaskOpts, ICaveRecord} from "../../types";
+import {IEnvironment, ILaunchOpts, ICaveRecord} from "../../types";
 
 const itchPlatform = os.itchPlatform();
 
-export default async function launch (out: EventEmitter, opts: IStartTaskOpts): Promise<void> {
+export default async function launch (out: EventEmitter, opts: ILaunchOpts): Promise<void> {
   const {market, credentials, env = {}} = opts;
   let {cave} = opts;
   let {args} = opts;
@@ -289,7 +290,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts): 
   }
 }
 
-interface IDoSpawnOpts extends IStartTaskOpts {
+interface IDoSpawnOpts extends ILaunchOpts {
   /** current working directory for spawning */
   cwd?: string;
 
@@ -380,7 +381,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
   });
 
   try {
-    sf.wipe(tmpPath);
+    await butler.wipe(tmpPath);
   } catch (e) {
     log(opts, `could not remove tmp dir: ${e.message}`);
   }

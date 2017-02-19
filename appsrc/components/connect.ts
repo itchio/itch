@@ -7,7 +7,7 @@ import {connect as reduxConnect} from "react-redux";
 import {getT} from "../localizer";
 
 import {IState} from "../types";
-import {IAction} from "../constants/action-types";
+import {IDispatch} from "../constants/action-types";
 
 const identity = (x: any) => x;
 
@@ -36,7 +36,7 @@ interface IStateMapper <T> {
 }
 
 interface IDispatchMapper <T> {
-  (dispatch: (action: IAction<any>) => void, props: any): T;
+  (dispatch: IDispatch, props: any): T;
 }
 
 // TODO: type better (typescript has multiple dispatch right?)

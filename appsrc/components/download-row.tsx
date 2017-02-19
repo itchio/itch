@@ -13,7 +13,7 @@ import NiceAgo from "./nice-ago";
 import GameActions from "./game-actions";
 
 import {IState, IDownloadSpeeds, IDownloadItem, ITask} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 import * as format from "../util/format";
@@ -82,7 +82,7 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
 
     if (!active) {
       return <div className="controls">
-        <span className="hint--left" data-hint={t("status.downloads.clear_finished")}>
+        <span data-rh-at="left" data-rh={t("status.downloads.clear_finished")}>
           <span className="icon icon-delete" onClick={() => cancelDownload({id})}/>
         </span>
       </div>;
@@ -94,11 +94,11 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
         ? <span className="icon icon-triangle-right" onClick={() => resumeDownloads({})}/>
         : <span className="icon icon-pause" onClick={() => pauseDownloads({})}/>
       )
-      : <span className="hint--left" data-hint={t("grid.item.prioritize_download")}>
+      : <span data-rh-at="left" data-rh={t("grid.item.prioritize_download")}>
         <span className="icon icon-caret-up" onClick={() => prioritizeDownload({id})}/>
       </span>
     }
-      <span className="hint--left" data-hint={t("grid.item.cancel_download")}>
+      <span data-rh-at="left" data-rh={t("grid.item.cancel_download")}>
         <span className="icon icon-cross" onClick={() => cancelDownload({id})}/>
       </span>
     </div>;
@@ -115,7 +115,7 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
       if (err) {
         return <div className="error-message">
           {t("status.downloads.download_error")}
-          <div className="timeago hint--top" data-hint={err}>
+          <div className="timeago" data-rh-at="top" data-rh={err}>
             {format.truncate(err, {length: 60})}
           </div>
         </div>;
@@ -234,7 +234,7 @@ const mapStateToProps = (state: IState) => ({
   tasksByGameId: state.tasks.tasksByGameId,
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   navigateToGame: dispatcher(dispatch, actions.navigateToGame),
   prioritizeDownload: dispatcher(dispatch, actions.prioritizeDownload),
   pauseDownloads: dispatcher(dispatch, actions.pauseDownloads),

@@ -8,11 +8,11 @@ import * as ospath from "path";
 import * as actions from "../actions";
 
 import Games from "./games";
-import GameGridFilters from "./game-grid-filters";
+import GameFilters from "./game-filters";
 import {map, filter} from "underscore";
 
 import {IState, ICaveRecordSet, IGameRecordSet, IInstallLocation, IDownloadKey} from "../types";
-import {IAction, dispatcher} from "../constants/action-types";
+import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 export class Location extends React.Component<ILocationProps, void> {
@@ -37,11 +37,11 @@ export class Location extends React.Component<ILocationProps, void> {
     const tab = `location/${locationName}`;
 
     return <div className="location-meat">
-      <GameGridFilters tab={tab}>
+      <GameFilters tab={tab}>
         <span className="link" onClick={(e) => browseInstallLocation({name: locationName})}>
           {t("grid.item.show_local_files")}
         </span>
-      </GameGridFilters>
+      </GameFilters>
 
       {locationGames.length > 0
         ? <Games games={locationGames} tab={tab}/>
@@ -78,7 +78,7 @@ const mapStateToProps = createStructuredSelector({
   userDataPath: (state: IState) => state.system.userDataPath,
 });
 
-const mapDispatchToProps = (dispatch: (action: IAction<any>) => void) => ({
+const mapDispatchToProps = (dispatch: IDispatch) => ({
   browseInstallLocation: dispatcher(dispatch, actions.browseInstallLocation),
 });
 
