@@ -278,5 +278,6 @@
     "search.results.title": "Søgeresultater for \"{{query}}\"",
     "search.results.local": "Lokale",
     "search.results.games": "Spil",
-    "search.results.creators": "Skabere"
+    "search.results.creators": "Skabere",
+    "action.name.manual": "Brugermanual"
 }
