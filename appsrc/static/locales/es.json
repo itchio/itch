@@ -267,7 +267,7 @@
     "status.game_update.not_found": "{{title}} está al día.",
     "status.history.click_to_expand": "Clic para expandir el historial.",
     "status.history.no_active_items": "No hay artículos en el historial que requieran tu atención.",
-    "status.offline_mode.active": "Modo desconectado activo",
+    "status.offline_mode.active": "Modo desconectado activado",
     "status.offline_mode.inactive": "Haz clic para habilitar el modo desconectado",
     "usage_stats.description.assets": "Una colección de recursos",
     "usage_stats.description.book": "Un libro",
@@ -354,7 +354,7 @@
     "notification.download_installed": "¡{{title}} ha sido instalado!",
     "notification.download_updated": "¡{{title}} ha sido actualizado!",
     "preferences.behavior.open_at_login": "Ejecutar itch al inicio del sistema",
-    "preferences.behavior.open_as_hidden": "Esconder itch en la bandeja de sistema al iniciar",
+    "preferences.behavior.open_as_hidden": "Iniciar itch en la bandeja del sistema",
     "preferences.behavior.open_at_login.error": "La configuración de inicio automático no ha podido ser aplicada: {{cause}}",
     "preferences.behavior.open_at_login.causes.no_desktop_file": "No se ha encontrado un archivo .desktop. Esto es normal si no instalaste desde un paquete de sistema. Ver {{linux_install_page}} para mas información.",
     "preferences.behavior.manual_game_updates": "Preguntar antes de actualizar cualquier juego",
@@ -399,5 +399,6 @@
     "web.context_menu.copy": "Copiar",
     "web.context_menu.paste": "Pegar",
     "web.context_menu.copy_link": "Copiar enlace",
-    "grid.item.view_details": "Ver detalles..."
+    "grid.item.view_details": "Ver detalles...",
+    "collection_grid.item.updated_at": "Ultima actualización {{time_ago}}"
 }
