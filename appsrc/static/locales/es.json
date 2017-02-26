@@ -378,5 +378,6 @@
     "table.column.play_time": "Tiempo jugado",
     "table.column.published": "Publicado",
     "grid.filters.options.no_results": "No se encontraron resultados",
-    "table.column.last_played": "Última vez jugado"
+    "table.column.last_played": "Última vez jugado",
+    "login.two_factor.verification_code_label": "Código de verificación"
 }
