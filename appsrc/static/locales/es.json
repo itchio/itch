@@ -398,5 +398,6 @@
     "web.context_menu.cut": "Cortar",
     "web.context_menu.copy": "Copiar",
     "web.context_menu.paste": "Pegar",
-    "web.context_menu.copy_link": "Copiar enlace"
+    "web.context_menu.copy_link": "Copiar enlace",
+    "grid.item.view_details": "Ver detalles..."
 }
