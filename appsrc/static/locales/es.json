@@ -376,5 +376,7 @@
     "grid.item.verify_integrity": "Verificar integridad",
     "table.column.name": "Nombre",
     "table.column.play_time": "Tiempo jugado",
-    "table.column.published": "Publicado"
+    "table.column.published": "Publicado",
+    "grid.filters.options.no_results": "No se encontraron resultados",
+    "table.column.last_played": "Última vez jugado"
 }
