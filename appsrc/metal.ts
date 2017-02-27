@@ -12,6 +12,8 @@ import {isItchioURL} from "./util/url";
 
 import * as actions from "./actions";
 
+const appUserModelId = "com.squirrel.itch.itch";
+
 // tslint:disable:no-console
 
 async function autoUpdate (autoUpdateDone: () => void) {
@@ -71,6 +73,10 @@ function autoUpdateDone () {
 
   app.on("activate", () => {
     store.dispatch(actions.focusWindow({}));
+  });
+
+  app.on("fill-finish-launching", () => {
+    app.setAppUserModelId(appUserModelId);
   });
 
   app.on("before-quit", (e: Event) => {
