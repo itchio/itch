@@ -361,7 +361,7 @@
     "grid.filters.options.installed": "Instalitaj",
     "grid.filters.options.owned": "Posedataj",
     "grid.filters.options.no_results": "Troviĝis nenio",
-    "prereq.status.done": "Preta!",
+    "prereq.status.done": "Farite!",
     "preferences.behavior.open_at_login": "Lanĉi itch kiam la komputilo startas",
     "preferences.behavior.open_as_hidden": "Startigi itch kun kaŝita fenestro",
     "preferences.behavior.open_at_login.error": "La agordoj pri aŭtomata starto ne povas aplikiĝi: {{cause}}",
