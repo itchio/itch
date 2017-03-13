@@ -11,29 +11,37 @@ import * as humanize from "humanize-plus";
 import html from "./configure/html";
 import computeSize from "./configure/compute-size";
 
-import { IConfigureResult } from"./configure/common";
-import { ICaveRecord, IGameRecord, IUploadRecord, IGlobalMarket } from "../types";
+import { IConfigureOpts, IConfigureResult } from"./configure/common";
 import { EventEmitter } from "events";
 
-async function configure(appPath: string): Promise<IConfigureResult> {
-  const platform = os.platform();
+import * as linuxConfigure from "./configure/linux";
+import * as macosConfigure from "./configure/macos";
+import * as windowsConfigure from "./configure/windows";
 
-  switch (platform) {
-    case "win32":
-    case "darwin":
-    case "linux":
-      const configurator = require(`./configure/${platform}`).default;
-      return await configurator.configure(appPath);
-    default:
-      throw new Error(`Unsupported platform: ${platform}`);
-  }
+interface IConfigureFunction {
+  (opts: IConfigureOpts, appPath: string): Promise<IConfigureResult>;
 }
 
-interface IConfigureOpts {
-  cave: ICaveRecord;
-  game: IGameRecord;
-  upload: IUploadRecord;
-  globalMarket: IGlobalMarket;
+interface IConfigureMap {
+  [key: string]: IConfigureFunction;
+}
+
+const configureFuncs: IConfigureMap = {
+  osx: macosConfigure.configure,
+  windows: windowsConfigure.configure,
+  linux: linuxConfigure.configure,
+};
+
+async function configure(opts: IConfigureOpts, appPath: string): Promise<IConfigureResult> {
+  const platform = os.itchPlatform();
+
+  let doConfigure = configureFuncs[platform];
+  if (!doConfigure) {
+    throw new Error(`don't know how to configure on platform ${platform}.` +
+      ` known platforms: ${Object.keys(configureFuncs)}`);
+  }
+
+  return await doConfigure(opts, appPath);
 }
 
 export default async function start(out: EventEmitter, inOpts: IConfigureOpts) {
@@ -58,7 +66,7 @@ export default async function start(out: EventEmitter, inOpts: IConfigureOpts) {
     log(opts, `html-configure yielded res: ${JSON.stringify(res, null, 2)}`);
     globalMarket.saveEntity("caves", cave.id, res);
   } else {
-    const executables = (await configure(appPath)).executables;
+    const executables = (await configure(opts, appPath)).executables;
     log(opts, `native-configure yielded execs: ${JSON.stringify(executables, null, 2)}`);
     globalMarket.saveEntity("caves", cave.id, { executables });
   }

@@ -1,21 +1,17 @@
 
-import {IConfigureResult, fixExecs} from "./common";
+import {IConfigureOpts, IConfigureResult, fixExecs} from "./common";
 
 const SO_RE = /\.so(\.[^/])*$/i;
 
-const self = {
-  configure: async function (appPath: string): Promise<IConfigureResult> {
-    const executablesAndLibraries = await fixExecs("linuxExecutable", appPath);
+export async function configure (opts: IConfigureOpts, appPath: string): Promise<IConfigureResult> {
+  const executablesAndLibraries = await fixExecs(opts, "linuxExecutable", appPath);
 
-    const executables = executablesAndLibraries.filter((x) => {
-      if (SO_RE.test(x)) {
-        // ignore libraries
-        return false;
-      }
-      return true;
-    });
-    return {executables};
-  },
-};
-
-export default self;
+  const executables = executablesAndLibraries.filter((x) => {
+    if (SO_RE.test(x)) {
+      // ignore libraries
+      return false;
+    }
+    return true;
+  });
+  return {executables};
+}
