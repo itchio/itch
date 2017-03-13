@@ -1,4 +1,7 @@
 
+// sic. this module is named osx, even though the OS is now named
+// macOS, for consistency with the itch.io API
+
 import * as bluebird from "bluebird";
 import * as ospath from "path";
 import sf from "../../util/sf";

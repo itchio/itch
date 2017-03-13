@@ -80,7 +80,7 @@ let self = {
     let destFiles = [] as string[];
 
     try {
-      let receiptContents = await sf.readFile(receiptPath);
+      let receiptContents = await sf.readFile(receiptPath, {encoding: "utf8"});
       let receipt = JSON.parse(receiptContents);
       destFiles = receipt.files || [];
       log(opts, `Got receipt for an existing ${destFiles.length}-files install.`);
@@ -116,10 +116,9 @@ let self = {
     log(opts, "everything copied, writing receipt");
     let cave = opts.cave || {};
 
-    await sf.writeFile(receiptPath, JSON.stringify({
-      cave,
-      files: stageFiles,
-    }, null, 2));
+    const receiptObject = { cave, files: stageFiles };
+    const receiptJson = JSON.stringify(receiptObject, null, 2);
+    await sf.writeFile(receiptPath, receiptJson, {encoding: "utf8"});
 
     return {status: "ok"};
   },

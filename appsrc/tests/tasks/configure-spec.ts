@@ -2,6 +2,7 @@
 // tslint:disable:no-shadowed-variable
 
 import test = require ("zopf");
+import * as sinon from "sinon";
 import * as proxyquire from "proxyquire";
 import * as path from "path";
 
@@ -15,13 +16,19 @@ const opts = {id: "kalamazoo", logger};
 
 test("configure", (t) => {
   const os = test.module({
-    platform: () => null,
+    itchPlatform: () => null,
   });
 
   const noop = () => Promise.resolve();
-  const win32 = test.module({configure: noop});
-  const darwin = test.module({configure: noop});
-  const linux = test.module({configure: noop});
+
+  const windows: any = test.module({});
+  const osx: any = test.module({});
+  const linux: any = test.module({});
+
+  for (const fakeModule of [windows, osx, linux]) {
+    fakeModule.configure = sinon.spy(() => Promise.resolve({executables: [] as string[]}));
+  }
+
   const pathmaker = test.module({
     appPath: () => "/dev/null",
     caveLogger: () => new mklog.Logger(),
@@ -32,8 +39,8 @@ test("configure", (t) => {
 
   const stubs = {
     "../util/os": os,
-    "./configure/win32": win32,
-    "./configure/darwin": darwin,
+    "./configure/windows": windows,
+    "./configure/osx": osx,
     "./configure/linux": linux,
     "./configure/compute-size": test.module({
       computeFolderSize: async function (): Promise<number> { return 0; },
@@ -42,22 +49,23 @@ test("configure", (t) => {
   };
 
   const configure = proxyquire("../../tasks/configure", stubs);
-  const platforms = {win32, darwin, linux};
+  const platforms: any = {windows, osx, linux};
 
   t.case("rejects unsupported platform", (t) => {
-    t.stub(os, "platform").returns("irix");
+    t.stub(os, "itchPlatform").returns("irix");
     const out = new EventEmitter();
     return t.rejects(configure.default(out, opts));
   });
 
-  ["win32", "darwin", "linux"].forEach((platform) => {
-    t.case(platform, (t) => {
-      t.stub(os, "platform").returns(platform);
-      t.mock((platforms as any)[platform]).expects("configure").resolves({executables: []});
+  ["windows", "osx", "linux"].forEach((platform) => {
+    t.case(`configures for ${platform}`, async (t) => {
+      t.stub(os, "itchPlatform").returns(platform);
+
       const out = new EventEmitter();
-      return configure.default(out, {
+      await configure.default(out, {
         ...opts, cave: {}, game: {}, upload: {}, globalMarket,
       });
+      t.true(platforms[platform].configure.called, `${platform} configure was called`);
     });
   });
 });
@@ -74,11 +82,11 @@ test("configure (each platform)", (t) => {
     "../../util/sf": sf,
   };
 
-  const win32 = proxyquire("../../tasks/configure/win32", stubs).default;
-  const win32Path = fixture.path("configure/win32");
+  const windows = proxyquire("../../tasks/configure/windows", stubs);
+  const windowsPath = fixture.path("configure/windows");
 
-  t.case("win32 finds bats and exes", async function (t) {
-    const res = await win32.configure(win32Path);
+  t.case("windows finds bats and exes", async function (t) {
+    const res = await windows.configure(opts, windowsPath);
     const names = [
       "game.exe", "launcher.bat",
       path.join("resources", "editor.exe"),
@@ -87,21 +95,21 @@ test("configure (each platform)", (t) => {
     t.samePaths(res.executables, names);
   });
 
-  const darwin = proxyquire("../../tasks/configure/darwin", stubs).default;
-  const darwinPath = fixture.path("configure/darwin");
+  const osx = proxyquire("../../tasks/configure/osx", stubs);
+  const osxPath = fixture.path("configure/osx");
 
-  t.case("darwin finds app bundles", async function (t) {
-    const res = await darwin.configure(darwinPath);
+  t.case("osx finds app bundles", async function (t) {
+    const res = await osx.configure(opts, osxPath);
     const names = [
       "Some Grand Game.app/",
     ];
     t.samePaths(res.executables, names);
   });
 
-  const darwinNestedPath = fixture.path("configure/darwin-nested");
+  const osxNestedPath = fixture.path("configure/osx-nested");
 
-  t.case("darwin finds nested app bundles", async function (t) {
-    const res = await darwin.configure(darwinNestedPath);
+  t.case("osx finds nested app bundles", async function (t) {
+    const res = await osx.configure(opts, osxNestedPath);
     const names = [
       "osx64/dragonjousting.app/",
       "osx64/dragonjousting.app/Contents/Frameworks/node-webkit Helper EH.app/",
@@ -111,21 +119,21 @@ test("configure (each platform)", (t) => {
     t.samePaths(res.executables, names);
   });
 
-  const darwinSymlinkPath = fixture.path("configure/darwin-symlink");
+  const osxSymlinkPath = fixture.path("configure/osx-symlink");
 
-  t.case("darwin does not find bundles in symlinks", async function (t) {
-    const res = await darwin.configure(darwinSymlinkPath);
+  t.case("osx does not find bundles in symlinks", async function (t) {
+    const res = await osx.configure(opts, osxSymlinkPath);
     const names = [
       "hello.app/",
     ];
     t.samePaths(res.executables, names);
   });
 
-  const linux = proxyquire("../../tasks/configure/linux", stubs).default;
+  const linux = proxyquire("../../tasks/configure/linux", stubs);
   const linuxPath = fixture.path("configure/linux");
 
-  t.case("darwin finds binaries when no app bundles", async function (t) {
-    const res = await darwin.configure(linuxPath);
+  t.case("osx finds scripts & binaries when there's no app bundles", async function (t) {
+    const res = await osx.configure(opts, linuxPath);
     const names = [
       "bin/mach-o",
       "bin/mach-o-bis",
@@ -136,7 +144,7 @@ test("configure (each platform)", (t) => {
   });
 
   t.case("linux finds scripts & binaries", async function (t) {
-    const res = await linux.configure(linuxPath);
+    const res = await linux.configure(opts, linuxPath);
     const names = [
       "bin/game32",
       "bin/game64",

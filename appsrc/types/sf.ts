@@ -12,7 +12,7 @@ export interface IGlobOpts {
 }
 
 export interface IReadFileOpts {
-  encoding?: "utf8" | null;
+  encoding: "utf8" | null;
   flag?: string;
 }
 
@@ -30,7 +30,7 @@ export interface IReadStreamOpts {
   end?: number;
 }
 
-export interface IWriteStreamOpts extends IWriteFileOpts {
+export interface IWriteStreamOpts {
   flags?: string;
   defaultEncoding: "utf8" | "binary";
   fd?: number;
@@ -41,9 +41,9 @@ export interface IWriteStreamOpts extends IWriteFileOpts {
 
 export interface IAsyncFSVariants {
   R_OK: number;
-  readFileAsync: (file: string, opts?: IReadFileOpts) => Promise<string>;
-  writeFileAsync: (file: string, data: string | Buffer, opts?: IWriteFileOpts) => Promise<void>;
-  appendFileAsync: (file: string, data: string | Buffer, opts?: IWriteFileOpts) => Promise<void>;
+  readFileAsync: (file: string, opts: IReadFileOpts) => Promise<string>;
+  writeFileAsync: (file: string, data: string | Buffer, opts: IWriteFileOpts) => Promise<void>;
+  appendFileAsync: (file: string, data: string | Buffer, opts: IWriteFileOpts) => Promise<void>;
   renameAsync: (oldfile: string, newfile: string) => Promise<void>;
   chmodAsync: (file: string, mode: number) => Promise<void>;
   statAsync: (file: string) => Promise<Stats>;
@@ -61,9 +61,9 @@ export interface IFSError {
 
 export interface ISFStatic {
   exists: (file: string) => Promise<boolean>;
-  readFile: (file: string, opts?: IReadFileOpts) => Promise<string>;
-  appendFile: (file: string, contents: string | Buffer, opts?: IWriteFileOpts) => Promise<void>;
-  writeFile: (file: string, contents: string | Buffer, opts?: IWriteFileOpts) => Promise<void>;
+  readFile: (file: string, opts: IReadFileOpts) => Promise<string>;
+  appendFile: (file: string, contents: string | Buffer, opts: IWriteFileOpts) => Promise<void>;
+  writeFile: (file: string, contents: string | Buffer, opts: IWriteFileOpts) => Promise<void>;
   promised: (ev: EventEmitter) => Promise<any>;
   mkdir: (dir: string) => Promise<void>;
   wipe: (shelter: string) => Promise<void>;

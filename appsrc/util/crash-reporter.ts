@@ -39,7 +39,7 @@ let self = {
     if (os.platform() === "win32") {
       log = log.replace(/\n/g, "\r\n");
     }
-    await sf.writeFile(crashFile, log);
+    await sf.writeFile(crashFile, log, {encoding: "utf8"});
 
     return {log, crashFile};
   },

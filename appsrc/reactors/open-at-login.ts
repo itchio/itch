@@ -38,12 +38,12 @@ async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openA
           await sf.mkdir(configHome);
         }
 
-        const desktopContents = await sf.readFile(desktopFilePath);
+        const desktopContents = await sf.readFile(desktopFilePath, {encoding: "utf8"});
         if (await sf.exists(autostartFilePath)) {
           await sf.unlink(autostartFilePath);
         }
 
-        await sf.writeFile(autostartFilePath, desktopContents);
+        await sf.writeFile(autostartFilePath, desktopContents, {encoding: "utf8"});
       } catch (err) {
         log(opts, `Error while symlinking ${autostartFilePath}: ${err.message}`);
         store.dispatch(actions.openAtLoginError({cause: "error", message: err.message}));

@@ -64,7 +64,7 @@ interface ISudoRunScriptResult {
 async function sudoRunScript(lines: string[]): Promise<ISudoRunScriptResult> {
   const contents = lines.join("\n");
   const tmpObjName = tmp.tmpNameSync();
-  await sf.writeFile(tmpObjName, contents);
+  await sf.writeFile(tmpObjName, contents, {encoding: "utf8"});
   await sf.chmod(tmpObjName, 0o777);
 
   const res = await spawn.exec({ command: "pkexec", args: [tmpObjName] });

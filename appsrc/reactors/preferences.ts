@@ -28,7 +28,7 @@ export default function (watcher: Watcher) {
     let prefs: any = {};
 
     try {
-      const contents = await sf.readFile(pathmaker.preferencesPath());
+      const contents = await sf.readFile(pathmaker.preferencesPath(), {encoding: "utf8"});
       prefs = camelifyObject(JSON.parse(contents));
     } catch (err) {
       log(opts, `while importing preferences: ${err}`);
@@ -45,7 +45,7 @@ export default function (watcher: Watcher) {
     // write prefs atomically
     const file = pathmaker.preferencesPath();
     const tmpPath = file + ".tmp" + (saveAtomicInvocations++);
-    await sf.writeFile(tmpPath, JSON.stringify(prefs));
+    await sf.writeFile(tmpPath, JSON.stringify(prefs), {encoding: "utf8"});
     await sf.rename(tmpPath, file);
   });
 

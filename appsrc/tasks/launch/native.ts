@@ -277,7 +277,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
       const sandboxProfilePath = ospath.join(appPath, ".itch", "isolate-app.profile");
 
       const sandboxSource = linuxSandboxTemplate;
-      await sf.writeFile(sandboxProfilePath, sandboxSource);
+      await sf.writeFile(sandboxProfilePath, sandboxSource, {encoding: "utf8"});
 
       cmd = `firejail "--profile=${sandboxProfilePath}" -- ${cmd}`;
       await doSpawn(exePath, cmd, env, out, spawnOpts);

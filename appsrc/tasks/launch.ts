@@ -197,7 +197,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
     log(launchOpts, "found manifest, parsing");
 
     try {
-      const contents = await sf.readFile(manifestPath);
+      const contents = await sf.readFile(manifestPath, {encoding: "utf8"});
       manifest = toml.parse(contents);
     } catch (e) {
       log(launchOpts, `error reading manifest: ${e}`);

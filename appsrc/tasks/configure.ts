@@ -15,7 +15,7 @@ import { IConfigureOpts, IConfigureResult } from"./configure/common";
 import { EventEmitter } from "events";
 
 import * as linuxConfigure from "./configure/linux";
-import * as macosConfigure from "./configure/macos";
+import * as osxConfigure from "./configure/osx";
 import * as windowsConfigure from "./configure/windows";
 
 interface IConfigureFunction {
@@ -27,7 +27,7 @@ interface IConfigureMap {
 }
 
 const configureFuncs: IConfigureMap = {
-  osx: macosConfigure.configure,
+  osx: osxConfigure.configure,
   windows: windowsConfigure.configure,
   linux: linuxConfigure.configure,
 };

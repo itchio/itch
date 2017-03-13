@@ -300,7 +300,7 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
     const installPlanContents = JSON.stringify(installPlan, null, 2);
 
     const installPlanFullPath = ospath.join(workDir.name, "install_plan.json");
-    await sf.writeFile(installPlanFullPath, installPlanContents);
+    await sf.writeFile(installPlanFullPath, installPlanContents, {encoding: "utf8"});
 
     log(opts, `Wrote install plan to ${installPlanFullPath}`);
     const emitter = new EventEmitter();

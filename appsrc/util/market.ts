@@ -69,7 +69,7 @@ export default class Market extends EventEmitter implements IMarket {
       entities[camelTableName] = entities[camelTableName] || {};
 
       const file = path.join(dbPath, recordPath);
-      const contents = await sf.readFile(file);
+      const contents = await sf.readFile(file, {encoding: "utf8"});
 
       try {
         entities[camelTableName][entityId] = JSON.parse(contents);
@@ -280,7 +280,7 @@ export default class Market extends EventEmitter implements IMarket {
   protected async saveToDisk (tableName: string, entityId: string, record: any): Promise<void> {
     const file = this.entityPath(tableName, entityId);
     const tmpPath = file + ".tmp" + (this.atomicInvocations++);
-    await sf.writeFile(tmpPath, JSON.stringify(record));
+    await sf.writeFile(tmpPath, JSON.stringify(record), {encoding: "utf8"});
 
     if (this.data[tableName] && this.data[tableName][entityId]) {
       try {
