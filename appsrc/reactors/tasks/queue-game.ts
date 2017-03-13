@@ -109,8 +109,9 @@ export default function (watcher: Watcher) {
       uploads = where(uploads, {id: pickedUpload});
     }
 
-    if (uploads.length > 1 && process.platform === "win32") {
-      log(opts, `Got ${uploads.length} uploads, we're on windows, let's sniff platforms`);
+    const itchPlatform = os.itchPlatform();
+    if (uploads.length > 1 && (itchPlatform === "windows" || itchPlatform === "linux")) {
+      log(opts, `Got ${uploads.length} uploads, we're on ${itchPlatform}, let's sniff platforms`);
 
       const uploadContainsString = (upload: IUploadRecord, needle: string) => {
         return (
@@ -128,13 +129,20 @@ export default function (watcher: Watcher) {
         return false;
       };
 
-      if (os.isWin64()) {
-        // on 64-bit windows, if we have 64-bit builds, exclude 32-bit builds
+      let is64 = false;
+      if (itchPlatform === "windows") {
+        is64 = os.isWin64();
+      } else if (itchPlatform === "linux") {
+        is64 = os.isLinux64();
+      }
+
+      if (is64) {
+        // on 64-bit, if we have 64-bit builds, exclude 32-bit builds
         if (anyUploadContainsString(uploads, "64")) {
           uploads = filter(uploads, (u) => !uploadContainsString(u, "32"));
         }
       } else {
-        // on 32-bit windows, if there's a 32-bit build, exclude 64-bit builds
+        // on 32-bit, if there's a 32-bit build, exclude 64-bit builds
         if (anyUploadContainsString(uploads, "32")) {
           uploads = filter(uploads, (u) => !uploadContainsString(u, "64"));
         }
