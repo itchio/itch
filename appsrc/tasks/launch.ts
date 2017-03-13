@@ -106,7 +106,7 @@ export default async function start (out: EventEmitter, inOpts: IStartTaskOpts) 
     const i18n = store.getState().i18n;
     const t = localizer.getT(i18n.strings, i18n.lang);
 
-    let errorMessage = e.message;
+    let errorMessage = String(e);
     if (e.reason) {
       if (Array.isArray(e.reason)) {
         errorMessage = t.format(e.reason);
@@ -118,7 +118,7 @@ export default async function start (out: EventEmitter, inOpts: IStartTaskOpts) 
     store.dispatch(actions.openModal({
       title: "",
       message: ["game.install.could_not_launch", {title: game.title}],
-      detail: ["game.install.could_not_launch.detail", {error: errorMessage}],
+      detail: errorMessage,
       buttons: [
         {
           label: ["grid.item.report_problem"],

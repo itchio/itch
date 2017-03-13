@@ -31,7 +31,7 @@ import {MODAL_RESPONSE} from "../../constants/action-types";
 import mklog from "../../util/log";
 const log = mklog("launch/native");
 
-import {Crash} from "../errors";
+import {Crash, MissingLibs} from "../errors";
 
 import {IEnvironment, ILaunchOpts, ICaveRecord} from "../../types";
 
@@ -366,12 +366,21 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     });
   }
 
+  const missingLibs: string[] = [];
+  const MISSINGLIB_RE = /: error while loading shared libraries: ([^:]+):/g;
+
   const code = await spawn({
     command,
     args,
     emitter: spawnEmitter,
     onToken: (tok) => log(opts, `out: ${tok}`),
-    onErrToken: (tok) => log(opts, `err: ${tok}`),
+    onErrToken: (tok) => {
+      log(opts, `err: ${tok}`);
+      const matches = MISSINGLIB_RE.exec(tok);
+      if (matches) {
+        missingLibs.push(matches[1]);
+      }
+    },
     opts: {
       env: {...process.env, ...env},
       cwd,
@@ -387,8 +396,24 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
   }
 
   if (code !== 0) {
-    const error = `process exited with code ${code}`;
-    throw new Crash({error});
+    if (code === 127 && missingLibs.length > 0) {
+      let arch = "386";
+      
+      try {
+        const props = await butler.elfprops({path: exePath, emitter: null, logger: opts.logger});
+        arch = props.arch;
+      } catch (e) {
+        log(opts, `could not determine arch for crash message: ${e.message}`);
+      }
+
+      throw new MissingLibs({
+        arch,
+        libs: missingLibs,
+      });
+    } else {
+      const error = `process exited with code ${code}`;
+      throw new Crash({error});
+    }
   }
   return "child completed successfully";
 }
