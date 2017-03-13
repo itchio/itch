@@ -5,7 +5,6 @@
         "target": "es6",
         "module": "commonjs",
         "noImplicitAny": true,
-        "alwaysStrict": true,
         "experimentalDecorators": true,
         "noUnusedLocals": true,
         "jsx": "react"

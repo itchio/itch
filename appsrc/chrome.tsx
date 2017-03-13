@@ -1,5 +1,3 @@
-"use strict";
-
 // This file is the entry point for renderer processes
 
 import "./boot/env";

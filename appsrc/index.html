@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="static/fonts/lato/latofonts.css" />
   <link rel="stylesheet" href="static/fonts/icomoon/style.css" />
 
+  <!-- this wonderful bit of hackery is brought to you by typescript 2.2,
+       which emits Object.defineProperty(exports, "__esModule", {value: true})
+       even if your module has zero exports. -->  
+  <script>window.exports = {};</script>  
   <script type="text/javascript" src="chrome.js"></script>
 </head>
 <body>
