@@ -52,6 +52,6 @@ export async function configure(opts: IConfigureOpts, cavePath: string): Promise
 
   // some games aren't properly packaged app bundles but rather a shell
   // script / binary - try it the linux way
-  const executables = await fixExecs(opts, "macExecutable", cavePath);
-  return { executables };
+  const fixResult = await fixExecs(opts, "macExecutable", cavePath);
+  return { executables: fixResult.executables };
 }
