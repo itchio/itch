@@ -6,6 +6,11 @@ import * as bluebird from "bluebird";
 import {Stats} from "fs";
 import * as fsModule from "fs";
 
+import {
+  IAsyncFSVariants, IFSError, IGlobStatic,
+  ISFStatic, IReadFileOpts, IWriteFileOpts,
+} from "../types/sf";
+
 // let's patch all the things! Electron randomly decides to
 // substitute 'fs' with their own version that considers '.asar'
 // files to be read-only directories
@@ -23,21 +28,6 @@ if (!(process.versions as any).electron) {
 import { EventEmitter } from "events";
 
 import * as proxyquire from "proxyquire";
-
-export interface IAsyncFSVariants {
-  R_OK: number;
-  readFileAsync: (path: string, opts?: {encoding: string}) => Promise<string>;
-  writeFileAsync: (path: string, data: string, opts?: {encoding: string}) => Promise<void>;
-  appendFileAsync: (path: string, data: string, opts?: {encoding: string}) => Promise<void>;
-  renameAsync: (oldpath: string, newpath: string) => Promise<void>;
-  chmodAsync: (path: string, mode: number) => Promise<void>;
-  statAsync: (path: string) => Promise<Stats>;
-  lstatAsync: (path: string) => Promise<Stats>;
-  readlinkAsync: (path: string) => Promise<string>;
-  symlinkAsync: (srcpath: string, dstpath: string) => Promise<string>;
-  rmdirAsync: (path: string) => Promise<string>;
-  unlinkAsync: (path: string) => Promise<string>;
-}
 
 let fs = {
   ...require(fsName),
@@ -76,8 +66,7 @@ fs = gracefulFs;
 promisifyAll(fs);
 
 // single function, callback-based, can't specify fs
-const glob = promisify(proxyquire("glob", stubs) as
-  (path: string, opts: any, cb: (err: any, files: string[]) => any) => void);
+const glob = promisify(proxyquire("glob", stubs) as IGlobStatic);
 
 // single function, callback-based, can't specify fs
 const mkdirp = promisify(proxyquire("mkdirp", stubs) as (path: string, cb: () => any) => void);
@@ -96,11 +85,6 @@ const ignore = [
 
 const concurrency = 8;
 
-interface IFSError {
-  code?: string;
-  message: string;
-}
-
 /*
  * sf = backward fs, because fs itself is quite backwards
  */
@@ -109,7 +93,7 @@ const self = {
    * Returns true if file exists, false if ENOENT, throws if other error
    */
   exists: (file: string) => {
-    return new bluebird((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const callback = (err: IFSError) => {
         if (err) {
           if (err.code === "ENOENT") {
@@ -127,23 +111,28 @@ const self = {
   },
 
   /**
-   * Return utf-8 file contents as string
+   * Return file contents (defaults to utf-8)
    */
-  readFile: async (file: string): Promise<string> => {
-    return await fs.readFileAsync(file, { encoding: "utf8" });
-  },
-
-  appendFile: async (file: string, contents: string, options?: any): Promise<void> => {
-    await self.mkdir(path.dirname(file));
-    return await fs.appendFileAsync(file, contents, options);
+  readFile: async (file: string, opts?: IReadFileOpts): Promise<string> => {
+    return await fs.readFileAsync(file, opts);
   },
 
   /**
-   * Writes an utf-8 string to 'file'. Creates any directory needed.
+   * Append content to a file (defaults to utf-8)
+   * Creates the file and any required parent directory if they don't exist.
    */
-  writeFile: async (file: string, contents: string): Promise<void> => {
+  appendFile: async (file: string, contents: string | Buffer, opts?: IWriteFileOpts): Promise<void> => {
     await self.mkdir(path.dirname(file));
-    return await fs.writeFileAsync(file, contents);
+    return await fs.appendFileAsync(file, contents, opts);
+  },
+
+  /**
+   * Writes an utf-8 string to 'file'.
+   * Creates the file and any required parent directory if they don't exist.
+   */
+  writeFile: async (file: string, contents: string | Buffer, opts?: IWriteFileOpts): Promise<void> => {
+    await self.mkdir(path.dirname(file));
+    return await fs.writeFileAsync(file, contents, opts);
   },
 
   /**
@@ -168,8 +157,8 @@ const self = {
    * If the directory already exists, do nothing.
    * Uses mkdirp: https://www.npmjs.com/package/mkdirp
    */
-  mkdir: async (dir: string): Promise<any> => {
-    return await mkdirp(dir);
+  mkdir: async (dir: string): Promise<void> => {
+    await mkdirp(dir);
   },
 
   /**
@@ -253,7 +242,7 @@ const self = {
    * Promised version of isaacs' little globber
    * https://www.npmjs.com/package/glob
    */
-  glob,
+  glob: glob as any, // trust the types
 
   globIgnore: ignore,
 
@@ -261,7 +250,7 @@ const self = {
    * Promised version of readChunk
    * https://www.npmjs.com/package/read-chunk
    */
-  readChunk,
+  readChunk: readChunk as any, // trust the types
 
   // Mirrors
   createReadStream: fs.createReadStream.bind(fs),
@@ -277,6 +266,6 @@ const self = {
 
   fsName,
   fs,
-};
+} as ISFStatic;
 
 export default self;

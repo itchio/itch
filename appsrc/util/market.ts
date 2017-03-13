@@ -85,10 +85,12 @@ export default class Market extends EventEmitter implements IMarket {
     };
 
     log(opts, `cleaning temporary files from ${dbPath}`);
-    await sf.glob("*/*.tmp*", {cwd: this.getDbRoot()}).map(wipeTemp, {concurrency: 4});
+    const tempFiles = sf.glob("*/*.tmp*", {cwd: this.getDbRoot()});
+    await bluebird.map(tempFiles, wipeTemp, {concurrency: 4});
 
     log(opts, `loading records for ${dbPath}`);
-    await sf.glob("*/*", {cwd: this.getDbRoot()}).map(loadRecord, {concurrency: 4});
+    const recordFiles = sf.glob("*/*", {cwd: this.getDbRoot()});
+    await bluebird.map(recordFiles, loadRecord, {concurrency: 4});
 
     log(opts, "populating in-memory DB with disk records");
     await this.saveAllEntities({entities}, {persist: false, initial: true});

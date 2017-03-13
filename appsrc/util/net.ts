@@ -265,8 +265,8 @@ export async function ensureChecksum (
 
   log(opts, `${name}: expected ${algo}: ${expected}`);
   const h = require("crypto").createHash(algo.toLowerCase());
-  // null encoding = raw buffer
-  const fileContents = await sf.fs.readFileAsync(file, { encoding: null });
+  // null encoding = raw buffer (e.g. not utf-8)
+  const fileContents = await sf.readFile(file, { encoding: null });
   h.update(fileContents);
   const actual = h.digest("hex");
   log(opts, `${name}:   actual ${algo}: ${actual}`);
