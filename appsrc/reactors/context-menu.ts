@@ -31,7 +31,7 @@ function openMenu (store: IStore, template: IMenuItem[]) {
   const menu = Menu.buildFromTemplate(clone(template));
   const mainWindowId = store.getState().ui.mainWindow.id;
   const mainWindow = BrowserWindow.fromId(mainWindowId);
-  menu.popup(mainWindow);
+  menu.popup(mainWindow, {async: true});
 }
 
 export default function (watcher: Watcher) {

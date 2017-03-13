@@ -28,9 +28,9 @@
       "resolved": "https://registry.npmjs.org/@types/colors/-/colors-0.6.33.tgz"
     },
     "@types/electron": {
-      "version": "1.4.29",
-      "from": "@types/electron@1.4.29",
-      "resolved": "https://registry.npmjs.org/@types/electron/-/electron-1.4.29.tgz"
+      "version": "1.4.33",
+      "from": "@types/electron@latest",
+      "resolved": "https://registry.npmjs.org/@types/electron/-/electron-1.4.33.tgz"
     },
     "@types/glob": {
       "version": "5.0.30",
