@@ -88,9 +88,9 @@ async function sniffAndChmod(opts: IFixExecsOpts, result: IFixExecsResult,
   }
 
   try {
-      log(opts, `${rel}: is ${field}, chmod +x`);
-      await sf.chmod(file, 0o777);
-      result.numFixed++;
+    log(opts, `${rel}: is ${field}, chmod +x`);
+    await sf.chmod(file, 0o777);
+    result.numFixed++;
   } catch (e) {
     log(opts, `Could not chmod ${file}: ${e.message}`);
     log(opts, `This might prevent the game from launching properly`);
