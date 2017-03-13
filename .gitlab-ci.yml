@@ -1,6 +1,6 @@
 
 stages:
-  - build # babel, node-sass etc.
+  - build # tsc, node-sass etc.
   - package # .rpm, .deb, .dmg., .zip
   - deploy # github releases, bintray, AUR
 

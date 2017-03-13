@@ -65,11 +65,11 @@ command-line tool to make sure all our code conforms to [JavaScript standard sty
 
 The building scripts run some common steps on every platform:
 
-  * Compiling [ES2015][] code down to ES6 (see [Coding Style](./coding-style.md) for more details)
+  * Compiling [TypeScript][] code down to ES6 (see [Coding Style](./coding-style.md) for more details)
   * Compiling [SASS][] code down to CSS
   * Copying some asset files (vendor CSS/JS/images)
 
-[ES2015]: http://babeljs.io/
+[TypeScript]: https://www.typescriptlang.org/
 [SASS]: http://sass-lang.com/
 
 ### Packaging
