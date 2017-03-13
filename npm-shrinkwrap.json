@@ -63,9 +63,9 @@
       "resolved": "https://registry.npmjs.org/@types/proxyquire/-/proxyquire-1.3.27.tgz"
     },
     "@types/react": {
-      "version": "0.14.57",
-      "from": "@types/react@0.14.57",
-      "resolved": "https://registry.npmjs.org/@types/react/-/react-0.14.57.tgz"
+      "version": "15.0.16",
+      "from": "@types/react@15.0.16",
+      "resolved": "https://registry.npmjs.org/@types/react/-/react-15.0.16.tgz"
     },
     "@types/react-dom": {
       "version": "0.14.23",
