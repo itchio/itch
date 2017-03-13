@@ -41,6 +41,8 @@ import {app} from "../electron";
 
 import {findWhere, each} from "underscore";
 
+import localizer from "../localizer";
+
 import {Crash, Cancelled} from "./errors";
 
 import {
@@ -101,10 +103,22 @@ export default async function start (out: EventEmitter, inOpts: IStartTaskOpts) 
     log(opts, `${e.message || e}`);
     await diego.hire(opts);
 
+    const i18n = store.getState().i18n;
+    const t = localizer.getT(i18n.strings, i18n.lang);
+
+    let errorMessage = e.message;
+    if (e.reason) {
+      if (Array.isArray(e.reason)) {
+        errorMessage = t.format(e.reason);
+      } else {
+        errorMessage = String(e.reason);
+      }
+    }
+
     store.dispatch(actions.openModal({
       title: "",
       message: ["game.install.could_not_launch", {title: game.title}],
-      detail: ["game.install.could_not_launch.detail", {error: e.message}],
+      detail: ["game.install.could_not_launch.detail", {error: errorMessage}],
       buttons: [
         {
           label: ["grid.item.report_problem"],
@@ -163,7 +177,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
   problem = caveProblem(cave);
   if (problem) {
     // FIXME: this swallows the problem.
-    const err = new Error(`game.install.could_not_launch (${problem})`) as Error;
+    const err = new Error(`The game could not be configured (${problem})`) as Error;
     (err as any).reason = problem;
     throw err;
   }
