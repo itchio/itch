@@ -1,7 +1,7 @@
 
 import spawn from "../../util/spawn";
 import mklog, {Logger} from "../../util/log";
-const log = mklog("icacls");
+const log = mklog("launch/icacls");
 
 interface IIcaclsOptions {
   path: string;

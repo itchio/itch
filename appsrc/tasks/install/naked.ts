@@ -8,7 +8,7 @@ import * as invariant from "invariant";
 import * as ospath from "path";
 
 import mklog from "../../util/log";
-const log = mklog("installers/naked");
+const log = mklog("install/naked");
 
 import {IStartTaskOpts} from "../../types";
 

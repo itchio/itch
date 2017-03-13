@@ -4,11 +4,10 @@ import * as ospath from "path";
 
 import spawn from "../spawn";
 import sf from "../sf";
-// import ibrew from '../ibrew'
-const ibrew = require("../ibrew").default;
+import ibrew from "../ibrew";
 
 import mklog from "../log";
-const log = mklog("sandbox-linux");
+const log = mklog("sandbox/linux");
 
 import common from "./common";
 

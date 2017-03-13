@@ -7,7 +7,7 @@ import sf from "../../util/sf";
 import blessing from "./blessing";
 
 import mklog from "../../util/log";
-const log = mklog("installers/air");
+const log = mklog("install/air");
 
 import * as ospath from "path";
 

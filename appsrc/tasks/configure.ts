@@ -4,7 +4,7 @@ import * as invariant from "invariant";
 import os from "../util/os";
 
 import mklog from "../util/log";
-const log = mklog("tasks/configure");
+const log = mklog("configure");
 import pathmaker from "../util/pathmaker";
 import * as humanize from "humanize-plus";
 

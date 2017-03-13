@@ -8,7 +8,7 @@ import * as ospath from "path";
 import {camelify} from "../util/format";
 import os from "../util/os";
 import mklog from "../util/log";
-const log = mklog("tasks/find-upload");
+const log = mklog("find-upload");
 
 import client from "../util/api";
 

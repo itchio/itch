@@ -11,7 +11,7 @@ import archive from "./archive";
 import * as ospath from "path";
 
 import mklog from "../../util/log";
-const log = mklog("installers/dmg");
+const log = mklog("install/dmg");
 
 import {IStartTaskOpts} from "../../types";
 

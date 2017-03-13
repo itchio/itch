@@ -8,7 +8,7 @@ import blessing from "./blessing";
 import {Transition} from "../errors";
 
 import mklog from "../../util/log";
-const log = mklog("installers/inno");
+const log = mklog("install/inno");
 
 import {IStartTaskOpts} from "../../types";
 

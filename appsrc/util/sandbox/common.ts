@@ -1,6 +1,6 @@
 
 import mklog from "../log";
-const log = mklog("sandbox-common");
+const log = mklog("sandbox/common");
 
 import { INeed, ICaretakerSet } from "./types";
 

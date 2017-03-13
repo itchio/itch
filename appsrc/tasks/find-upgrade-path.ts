@@ -4,7 +4,7 @@ import * as invariant from "invariant";
 
 import client from "../util/api";
 import mklog from "../util/log";
-const log = mklog("tasks/find-upgrade-path");
+const log = mklog("find-upgrade-path");
 
 import {each} from "underscore";
 

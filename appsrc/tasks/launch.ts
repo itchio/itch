@@ -21,7 +21,7 @@ import * as actions from "../actions";
 import {startTask} from "../reactors/tasks/start-task";
 
 import mklog from "../util/log";
-const log = mklog("tasks/launch");
+const log = mklog("launch");
 
 import diego from "../util/diego";
 import api from "../util/api";

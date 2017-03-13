@@ -29,7 +29,7 @@ import {startTask} from "../../reactors/tasks/start-task";
 import {MODAL_RESPONSE} from "../../constants/action-types";
 
 import mklog from "../../util/log";
-const log = mklog("tasks/launch/native");
+const log = mklog("launch/native");
 
 import {Crash} from "../errors";
 

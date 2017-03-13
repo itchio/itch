@@ -18,7 +18,7 @@ const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 const WEBGAME_PROTOCOL = "itch-cave";
 
 import mklog from "../../util/log";
-const log = mklog("tasks/launch");
+const log = mklog("launch/html");
 
 import {IStartTaskOpts} from "../../types";
 
