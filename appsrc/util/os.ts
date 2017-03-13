@@ -1,6 +1,7 @@
 
 import spawn from "./spawn";
 import * as os from "os";
+import * as childProcess from "child_process";
 
 interface IAssertPresenceResult {
   code: number;
@@ -105,6 +106,31 @@ const self = {
     return process.arch === "x64" ||
       WIN64_ARCHES[process.env.PROCESSOR_ARCHITECTURE] ||
       WIN64_ARCHES[process.env.PROCESSOR_ARCHITEW6432];
+  },
+
+  isLinux64: function(): boolean {
+    try {
+      // weeeeeeeee
+      const arch = String(childProcess.execSync("uname -m")).trim();
+      return (arch === "x86_64");
+    } catch (e) {
+      // tslint:disable-next-line
+      console.log(`Could not determine if linux64 via uname: ${e.message}`);
+    }
+
+    try {
+      // weeeeeeeee
+      const arch = String(childProcess.execSync("arch")).trim();
+      return (arch === "x86_64");
+    } catch (e) {
+      // tslint:disable-next-line
+      console.log(`Could not determine if linux64 via arch: ${e.message}`);
+    }
+
+    // if we're lacking uname AND arch, honestly, our chances are slim.
+    // but in doubt, let's just assume the architecture of itch is the
+    // same as the os.
+    return process.arch === "x64";
   },
 };
 
