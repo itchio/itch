@@ -3,7 +3,7 @@ import {Watcher} from "./watcher";
 import * as actions from "../actions";
 
 import mklog from "../util/log";
-const log = mklog("reactors/fetch");
+const log = mklog("reactors/report");
 import {opts} from "../logger";
 
 import {getUserMarket} from "./market";
