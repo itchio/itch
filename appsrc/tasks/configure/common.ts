@@ -1,4 +1,6 @@
 
+import * as bluebird from "bluebird";
+
 import fnout from "fnout";
 import sf from "../../util/sf";
 import { partial } from "underscore";
@@ -35,13 +37,23 @@ export async function fixExecs(opts: IFixExecsOpts, field: string, basePath: str
   // My (amos) instinct is that doing it in node generates a lot of garbage and can make the UI lag.
   const mapper = partial(sniffAndChmod, opts, field, basePath);
 
-  return sf.glob("**", { nodir: true, cwd: basePath }).map(mapper, { concurrency: 2 }).filter((x: string) => !!x);
+  const globResults = sf.glob("**", { nodir: true, cwd: basePath });
+  return bluebird.map(globResults, mapper, { concurrency: 2 }).filter((x: string) => !!x);
 }
 
 async function sniffAndChmod(opts: IFixExecsOpts, field: string, base: string, rel: string): Promise<string> {
-  let file = ospath.join(base, rel);
+  const file = ospath.join(base, rel);
 
-  let type = await fnout.path(file);
+  // cf. https://github.com/itchio/itch/issues/1154
+  // if the file is a fifo, trying to read it will mess things up
+  // this slows everything down, but it might be worth taking things
+  // slow to prevent the apocalypse?
+  const stats = await sf.lstat(file);
+  if (!stats.isFile()) {
+    return;
+  }
+
+  const type = await fnout.path(file);
   if (type && (type as any)[field]) {
     try {
       log(opts, `Fixing permissions for ${rel}: ${JSON.stringify(type, null, 2)}`);
