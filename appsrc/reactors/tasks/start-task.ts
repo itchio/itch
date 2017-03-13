@@ -49,7 +49,6 @@ export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
       preferences,
     };
 
-    log(opts, `About to start ${taskOpts.name} (${id})`);
     const taskRunner = require(`../../tasks/${taskOpts.name}`).default;
 
     log(opts, `Starting ${taskOpts.name} (${id})...`);
@@ -58,17 +57,17 @@ export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
     };
     result = await taskRunner(out, extendedOpts);
 
-    log(opts, `Checking results for ${taskOpts.name} (${id})...`);
     if (result) {
-      log(opts, `Task results: ${JSON.stringify(result, null, 2)}`);
+      log(opts, `${taskOpts.name} ended, result: ${JSON.stringify(result, null, 2)}`);
+    } else {
+      log(opts, `${taskOpts.name} ended, no result`);
     }
   } catch (e) {
-    log(opts, "Task threw");
+    log(opts, `${taskOpts.name} threw, error: ${e.task || e}`);
     error = e.task || e;
   }
 
-  const err = error ? error.message || ("" + error) : null;
-  log(opts, `Task ended, err: ${err ? err : "<none>"}`);
+  const err = error ? (error.message || ("" + error)) : null;
   store.dispatch(actions.taskEnded({name: taskOpts.name, id, err, result, taskOpts}));
   return {err, result};
 }
