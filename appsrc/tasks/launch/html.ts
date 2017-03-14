@@ -6,7 +6,7 @@ import * as ospath from "path";
 import * as invariant from "invariant";
 import * as querystring from "querystring";
 
-import {app, BrowserWindow, shell, powerSaveBlocker} from "../../electron";
+import {app, BrowserWindow, shell} from "../../electron";
 
 import url from "../../util/url";
 import fetch from "../../util/fetch";
@@ -212,8 +212,6 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
 
   win.loadURL(`itch-cave://game.itch/${indexName}?${query}`, options);
 
-  const blockerId = opts.preferences.preventDisplaySleep ? powerSaveBlocker.start("prevent-display-sleep") : null;
-
   await new Promise((resolve, reject) => {
     win.on("close", () => {
       win.webContents.session.clearCache(resolve);
@@ -223,8 +221,4 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
       win.close();
     });
   });
-
-  if (blockerId !== null) {
-    powerSaveBlocker.stop(blockerId);
-  }
 }

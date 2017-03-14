@@ -14,8 +14,6 @@ import linuxSandboxTemplate from "../../constants/sandbox-policies/linux-templat
 
 import * as actions from "../../actions";
 
-import {powerSaveBlocker} from "../../electron";
-
 import store from "../../store";
 import sandbox from "../../util/sandbox";
 import os from "../../util/os";
@@ -368,8 +366,6 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     });
   }
 
-  const blockerId = opts.preferences.preventDisplaySleep ? powerSaveBlocker.start("prevent-display-sleep") : null;
-
   const missingLibs: string[] = [];
   const MISSINGLIB_RE = /: error while loading shared libraries: ([^:]+):/g;
 
@@ -392,10 +388,6 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     },
     inheritStd,
   });
-
-  if (blockerId !== null) {
-    powerSaveBlocker.stop(blockerId);
-  }
 
   try {
     await butler.wipe(tmpPath);
