@@ -15,7 +15,7 @@ import pathmaker from "../../util/pathmaker";
 import net from "../../util/net";
 import sf from "../../util/sf";
 import os from "../../util/os";
-import reg from "../../util/reg";
+import registry from "../../util/registry";
 import butler from "../../util/butler";
 
 import * as ospath from "path";
@@ -300,7 +300,7 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
     const installPlanContents = JSON.stringify(installPlan, null, 2);
 
     const installPlanFullPath = ospath.join(workDir.name, "install_plan.json");
-    await sf.writeFile(installPlanFullPath, installPlanContents);
+    await sf.writeFile(installPlanFullPath, installPlanContents, {encoding: "utf8"});
 
     log(opts, `Wrote install plan to ${installPlanFullPath}`);
     const emitter = new EventEmitter();
@@ -419,7 +419,7 @@ async function assessDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq): P
   if (info.registryKeys) {
     for (const registryKey of info.registryKeys) {
       try {
-        await reg.regQuery(registryKey, {quiet: true});
+        await registry.regQuery(registryKey, {quiet: true});
         hasRegistry = true;
         log(opts, `Found registry key ${registryKey}`);
         break;

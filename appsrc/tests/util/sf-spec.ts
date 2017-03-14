@@ -17,7 +17,8 @@ test("sf", t => {
   });
 
   t.case("sf.readFile", async t => {
-    t.same(await sf.readFile(fixture.path("txt")), "Hello there, just writing a bit of text for the sniffer specs\n");
+    t.same(await sf.readFile(fixture.path("txt"), {encoding: "utf8"}),
+      "Hello there, just writing a bit of text for the sniffer specs\n");
   });
 
   t.case("sf.writeFile", async t => {
@@ -27,8 +28,8 @@ test("sf", t => {
     const tmpObj = tmp.fileSync();
 
     try {
-      await sf.writeFile(tmpObj.name, contents);
-      readContents = await sf.readFile(tmpObj.name);
+      await sf.writeFile(tmpObj.name, contents, {encoding: "utf8"});
+      readContents = await sf.readFile(tmpObj.name, {encoding: "utf8"});
     } catch (e) {
       err = e;
     } finally {
@@ -49,9 +50,9 @@ test("sf", t => {
     const tmpObj = tmp.fileSync();
 
     try {
-      await sf.writeFile(tmpObj.name, contentsA);
-      await sf.appendFile(tmpObj.name, contentsB);
-      readContents = await sf.readFile(tmpObj.name);
+      await sf.writeFile(tmpObj.name, contentsA, {encoding: "utf8"});
+      await sf.appendFile(tmpObj.name, contentsB, {encoding: "utf8"});
+      readContents = await sf.readFile(tmpObj.name, {encoding: "utf8"});
     } catch (e) {
       err = e;
     } finally {
@@ -70,7 +71,7 @@ test("sf", t => {
 
     const touch = async function (name: string) {
       const path = ospath.join(tmpObj.name, name);
-      await sf.writeFile(path, name);
+      await sf.writeFile(path, name, {encoding: "utf8"});
     };
 
     try {

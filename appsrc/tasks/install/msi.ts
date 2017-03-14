@@ -5,7 +5,7 @@ import spawn from "../../util/spawn";
 import os from "../../util/os";
 
 import mklog from "../../util/log";
-const log = mklog("installers/msi");
+const log = mklog("install/msi");
 
 import {IStartTaskOpts} from "../../types";
 

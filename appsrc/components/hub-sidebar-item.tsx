@@ -16,18 +16,17 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     this.state = {
       fresh: true,
     };
-    this.onClick = this.onClick.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
   }
 
-  onClick (e: React.MouseEvent<HTMLElement>) {
-    const nativeEvent = e.nativeEvent as MouseEvent;
-    if (nativeEvent.which === 2) {
+  onMouseUp (e: React.MouseEvent<HTMLElement>) {
+    if (e.button === 1) {
       // middle click
       const {onClose} = this.props;
       if (onClose) {
         onClose();
       }
-    } else {
+    } else if (e.button === 0) {
       // left (normal) click
       const {onClick} = this.props;
       if (onClick) {
@@ -52,7 +51,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     return <section className={classes}
         data-rh-at="bottom"
         data-rh={t.format(sublabel)}
-        onClick={this.onClick}
+        onMouseUp={this.onMouseUp}
         onContextMenu={onContextMenu}
         data-path={path}
         data-id={id}>

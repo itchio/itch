@@ -7,7 +7,7 @@ import sf from "../../util/sf";
 import blessing from "./blessing";
 
 import mklog from "../../util/log";
-const log = mklog("installers/air");
+const log = mklog("install/air");
 
 import * as ospath from "path";
 
@@ -72,7 +72,7 @@ let self = {
     log(opts, `Found app manifest at ${candidates[0]}`);
 
     let manifestPath = ospath.join(destPath, candidates[0]);
-    let manifestContents = await sf.readFile(manifestPath);
+    let manifestContents = await sf.readFile(manifestPath, {encoding: "utf8"});
     let matches = ID_RE.exec(manifestContents);
     if (!matches) {
       throw new Error(`Could not extract app id from manifest at ${manifestPath}`);

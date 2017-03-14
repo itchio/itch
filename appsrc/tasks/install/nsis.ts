@@ -9,7 +9,7 @@ import blessing from "./blessing";
 import butler from "../../util/butler";
 
 import mklog from "../../util/log";
-const log = mklog("installers/nsis");
+const log = mklog("install/nsis");
 
 import {IStartTaskOpts} from "../../types";
 

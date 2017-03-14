@@ -7,5 +7,5 @@ export default function doesEventMeanBackground (e: IWebkitMouseEvent) {
   if (!e) {
     return false;
   }
-  return e.metaKey || e.ctrlKey || e.which === 2;
+  return e.metaKey || e.ctrlKey || e.button === 1;
 }

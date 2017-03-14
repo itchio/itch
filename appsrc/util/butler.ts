@@ -314,6 +314,34 @@ async function exeprops (opts: IExePropsOpts): Promise<IExePropsResult> {
   return value;
 }
 
+interface IElfPropsOpts extends IButlerOpts {
+  path: string;
+}
+
+export interface IElfPropsResult {
+  arch?: ExeArch;
+}
+
+async function elfprops (opts: IElfPropsOpts): Promise<IElfPropsResult> {
+  const {path} = opts;
+  const args = [path];
+
+  let value: IElfPropsResult;
+
+  const emitter = new EventEmitter();
+  emitter.on("result", (result: IButlerResult) => {
+    value = result.value;
+  });
+
+  const butlerOpts = {
+    emitter,
+  };
+
+  await butler(butlerOpts, "elfprops", args);
+
+  return value;
+}
+
 async function sanityCheck (): Promise<boolean> {
   try {
     await spawn.assert({
@@ -327,5 +355,6 @@ async function sanityCheck (): Promise<boolean> {
 }
 
 export default {
-  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify, sizeof, file, installPrereqs, sanityCheck, exeprops,
+  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify,
+  sizeof, file, installPrereqs, sanityCheck, exeprops, elfprops,
 };

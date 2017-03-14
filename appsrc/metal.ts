@@ -12,6 +12,8 @@ import {isItchioURL} from "./util/url";
 
 import * as actions from "./actions";
 
+const appUserModelId = "com.squirrel.itch.itch";
+
 // tslint:disable:no-console
 
 async function autoUpdate (autoUpdateDone: () => void) {
@@ -73,6 +75,10 @@ function autoUpdateDone () {
     store.dispatch(actions.focusWindow({}));
   });
 
+  app.on("fill-finish-launching", () => {
+    app.setAppUserModelId(appUserModelId);
+  });
+
   app.on("before-quit", (e: Event) => {
     console.log(`Got before-quit!`);
     store.dispatch(actions.prepareQuit({}));
@@ -91,6 +97,8 @@ function autoUpdateDone () {
 
   // macOS (Info.pList)
   app.on("open-url", (e: Event, url: string) => {
+    console.log(`Processing 1 url`);
+
     if (isItchioURL(url)) {
       // macOS will err -600 if we don't
       e.preventDefault();
@@ -103,11 +111,15 @@ function autoUpdateDone () {
   // URL handling
 
   function handleUrls (argv: string[]) {
+    console.log(`Processing ${argv.length} potential urls`);
+
     // Windows (reg.exe), Linux (XDG)
     argv.forEach((arg) => {
       // XXX should we limit to one url at most ?
       if (isItchioURL(arg)) {
         store.dispatch(actions.openUrl({url: arg}));
+      } else {
+        console.log(`Ignoring non-itchio url: ${arg}`);
       }
     });
   }

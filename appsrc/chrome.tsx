@@ -1,5 +1,3 @@
-"use strict";
-
 // This file is the entry point for renderer processes
 
 import "./boot/env";
@@ -76,6 +74,7 @@ if (os.platform() === "darwin") {
   try {
     require("electron").webFrame.setVisualZoomLevelLimits(1, 1);
   } catch (e) {
-    console.log(`couldn't disable two-finger zoom: ${e.stack || e}`); // tslint:disable-line:no-console
+    // tslint:disable-next-line:no-console
+    console.log(`couldn't disable two-finger zoom: ${e.stack || e}`);
   }
 }

@@ -60,7 +60,8 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
         ? <span className="gif-marker">gif</span>
         : ""
       }
-      <section className="cover" style={coverStyle} onClick={(e) => navigateToGame(game, doesEventMeanBackground(e))}/>
+      <section className="cover" style={coverStyle}
+        onMouseUp={(e) => navigateToGame(game, doesEventMeanBackground(e))}/>
 
       <section className="undercover">
         <section className="title">

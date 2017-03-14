@@ -60,7 +60,7 @@ async function doDownloadLocale (lang: string, resources: II18nResources): Promi
   try {
     log(opts, `Saving fresh ${lang} locale to ${remote}`);
     const payload = JSON.stringify(finalResources, null, 2);
-    await ifs.writeFile(remote, payload);
+    await ifs.writeFile(remote, payload, {encoding: "utf8"});
   } catch (e) {
     log(opts, `Could not save locale to ${remote}: ${e.stack || e.message || e}`);
   }

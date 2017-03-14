@@ -10,7 +10,7 @@ import deploy, {IDeployOpts} from "../../util/deploy";
 import core from "./core";
 
 import mklog from "../../util/log";
-const log = mklog("installers/archive");
+const log = mklog("install/archive");
 
 import {IStartTaskOpts, IInstallerCache} from "../../types";
 import {IProgressInfo, InstallerType} from "../../types";

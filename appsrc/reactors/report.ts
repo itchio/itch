@@ -3,7 +3,7 @@ import {Watcher} from "./watcher";
 import * as actions from "../actions";
 
 import mklog from "../util/log";
-const log = mklog("reactors/fetch");
+const log = mklog("reactors/report");
 import {opts} from "../logger";
 
 import {getUserMarket} from "./market";
@@ -28,7 +28,7 @@ export default function (watcher: Watcher) {
       const userMarket = getUserMarket();
       const game = await fetch.gameLazily(userMarket, credentials, cave.gameId, {game: cave.game});
 
-      const gameLog = await sf.readFile(logPath);
+      const gameLog = await sf.readFile(logPath, {encoding: "utf8"});
 
       const gistData = {
         description: `itch log for ${game.title} — ${game.url}`,

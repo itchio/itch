@@ -10,7 +10,7 @@ import pathmaker from "../util/pathmaker";
 import sf from "../util/sf";
 import {Stats} from "fs";
 import mklog from "../util/log";
-const log = mklog("tasks/install");
+const log = mklog("install");
 
 import core from "./install/core";
 import {findWhere} from "underscore";

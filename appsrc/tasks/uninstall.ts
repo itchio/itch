@@ -5,7 +5,7 @@ import pathmaker from "../util/pathmaker";
 
 import sf from "../util/sf";
 import mklog from "../util/log";
-const log = mklog("tasks/uninstall");
+const log = mklog("uninstall");
 
 import core from "./install/core";
 

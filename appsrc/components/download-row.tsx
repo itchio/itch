@@ -22,6 +22,13 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
   constructor () {
     super();
     this.state = {};
+    this.onCoverContextMenu = this.onCoverContextMenu.bind(this);
+  }
+
+  onCoverContextMenu () {
+    const {item, openGameContextMenu} = this.props;
+    const {game} = item;
+    openGameContextMenu({game});
   }
 
   render () {
@@ -61,7 +68,9 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
       : ""
       }
 
-      <div className="cover" style={coverStyle} onClick={() => navigateToGame(game)}/>
+      <div className="cover" style={coverStyle}
+        onClick={() => navigateToGame(game)}
+        onContextMenu={this.onCoverContextMenu}/>
       <div className="stats" onClick={() => { onStatsClick(); }}>
         {this.progress()}
       </div>
@@ -222,6 +231,7 @@ interface IDownloadRowProps {
   resumeDownloads: typeof actions.resumeDownloads;
   retryDownload: typeof actions.retryDownload;
   cancelDownload: typeof actions.cancelDownload;
+  openGameContextMenu: typeof actions.openGameContextMenu;
 }
 
 interface IDownloadRowState {
@@ -241,6 +251,7 @@ const mapDispatchToProps = (dispatch: IDispatch) => ({
   resumeDownloads: dispatcher(dispatch, actions.resumeDownloads),
   retryDownload: dispatcher(dispatch, actions.retryDownload),
   cancelDownload: dispatcher(dispatch, actions.cancelDownload),
+  openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
 });
 
 export default connect(

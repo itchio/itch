@@ -38,8 +38,9 @@ export function getT (strings: II18nResources, lang: string) {
     }
 
     if (!str) {
-      // fallback
-      const {defaultValue = key} = variables || {};
+      // fall back to specified default value, or key name +
+      // variables stringified as json
+      let defaultValue = (variables || {}).defaultValue || `${key} ${JSON.stringify(variables || {})}`;
       return defaultValue;
     }
 

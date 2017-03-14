@@ -322,7 +322,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
       }
       const meta = xhr.responseXML.querySelector('meta[name="itch:path"]');
       if (meta) {
-        let newPath = meta.content;
+        let newPath = meta.getAttribute("content");
         const parsed = urlParser.parse(url);
         if (parsed.search) {
           newPath += parsed.search;

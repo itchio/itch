@@ -26,7 +26,7 @@ async function loadRememberedSessions (store: IStore) {
   let sessions = await Promise.all(map(tokenFiles, async (tokenFile) => {
     try {
       const tokenFullPath = ospath.join(USERS_PATH, tokenFile);
-      const content = await sf.readFile(tokenFullPath);
+      const content = await sf.readFile(tokenFullPath, {encoding: "utf8"});
       return JSON.parse(content);
     } catch (e) {
       console.log(`Skipping ${tokenFile}: ${e.message}`); // tslint:disable-line:no-console
@@ -46,7 +46,7 @@ async function saveSession (store: IStore, userId: string, record: any) {
   const tokenPath = getTokenPath(userId);
   let oldRecord: any = {};
   try {
-    const oldContent = await sf.readFile(tokenPath);
+    const oldContent = await sf.readFile(tokenPath, {encoding: "utf8"});
     oldRecord = JSON.parse(oldContent);
   } catch (e) {
     // muffin
@@ -54,7 +54,7 @@ async function saveSession (store: IStore, userId: string, record: any) {
 
   const finalRecord = {...oldRecord, ...record, lastConnected: Date.now()};
   const content = JSON.stringify(finalRecord);
-  await sf.writeFile(tokenPath, content);
+  await sf.writeFile(tokenPath, content, {encoding: "utf8"});
 
   // first time connecting?
   if (!oldRecord.lastConnected) {

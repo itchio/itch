@@ -2,13 +2,13 @@
 import * as bluebird from "bluebird";
 
 import os from "../os";
-import reg from "../reg";
+import registry from "../registry";
 import shortcut from "../shortcut";
 
 const self = {
   onInstall: async () => {
     await bluebird.all([
-      reg.install(),
+      registry.install(),
       shortcut.install(),
     ]);
     return true;
@@ -16,7 +16,7 @@ const self = {
 
   onUpdate: async () => {
     await bluebird.all([
-      reg.update(),
+      registry.update(),
       shortcut.update(),
     ]);
     return true;
@@ -24,7 +24,7 @@ const self = {
 
   onUninstall: async () => {
     await bluebird.all([
-      reg.uninstall(),
+      registry.uninstall(),
       shortcut.uninstall(),
     ]);
     return true;

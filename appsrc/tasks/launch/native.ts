@@ -29,9 +29,9 @@ import {startTask} from "../../reactors/tasks/start-task";
 import {MODAL_RESPONSE} from "../../constants/action-types";
 
 import mklog from "../../util/log";
-const log = mklog("tasks/launch/native");
+const log = mklog("launch/native");
 
-import {Crash} from "../errors";
+import {Crash, MissingLibs} from "../errors";
 
 import {IEnvironment, ILaunchOpts, ICaveRecord} from "../../types";
 
@@ -277,7 +277,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
       const sandboxProfilePath = ospath.join(appPath, ".itch", "isolate-app.profile");
 
       const sandboxSource = linuxSandboxTemplate;
-      await sf.writeFile(sandboxProfilePath, sandboxSource);
+      await sf.writeFile(sandboxProfilePath, sandboxSource, {encoding: "utf8"});
 
       cmd = `firejail "--profile=${sandboxProfilePath}" -- ${cmd}`;
       await doSpawn(exePath, cmd, env, out, spawnOpts);
@@ -366,12 +366,21 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     });
   }
 
+  const missingLibs: string[] = [];
+  const MISSINGLIB_RE = /: error while loading shared libraries: ([^:]+):/g;
+
   const code = await spawn({
     command,
     args,
     emitter: spawnEmitter,
     onToken: (tok) => log(opts, `out: ${tok}`),
-    onErrToken: (tok) => log(opts, `err: ${tok}`),
+    onErrToken: (tok) => {
+      log(opts, `err: ${tok}`);
+      const matches = MISSINGLIB_RE.exec(tok);
+      if (matches) {
+        missingLibs.push(matches[1]);
+      }
+    },
     opts: {
       env: {...process.env, ...env},
       cwd,
@@ -387,8 +396,24 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
   }
 
   if (code !== 0) {
-    const error = `process exited with code ${code}`;
-    throw new Crash({error});
+    if (code === 127 && missingLibs.length > 0) {
+      let arch = "386";
+      
+      try {
+        const props = await butler.elfprops({path: exePath, emitter: null, logger: opts.logger});
+        arch = props.arch;
+      } catch (e) {
+        log(opts, `could not determine arch for crash message: ${e.message}`);
+      }
+
+      throw new MissingLibs({
+        arch,
+        libs: missingLibs,
+      });
+    } else {
+      const error = `process exited with code ${code}`;
+      throw new Crash({error});
+    }
   }
   return "child completed successfully";
 }

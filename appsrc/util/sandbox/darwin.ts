@@ -46,7 +46,7 @@ export async function within(opts: IWithinOpts, cb: (opts: IWithinCbOpts) => Pro
   const sandboxSource = sandboxTemplate
     .replace(/{{USER_LIBRARY}}/g, userLibrary)
     .replace(/{{INSTALL_LOCATION}}/g, appPath);
-  await sf.writeFile(sandboxProfilePath, sandboxSource);
+  await sf.writeFile(sandboxProfilePath, sandboxSource, {encoding: "utf8"});
 
   log(opts, "creating fake app bundle");
   const workDir = tmp.dirSync();
@@ -70,7 +70,7 @@ export async function within(opts: IWithinOpts, cb: (opts: IWithinCbOpts) => Pro
     `#!/bin/bash
 cd ${spawn.escapePath(cwd)}
 sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullExec)} ${argString}`,
-  );
+  {encoding: "utf8"});
   await sf.chmod(fakeBinary, 0o700);
 
   if (isBundle) {
@@ -92,7 +92,7 @@ sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullE
   <key>CFBundleExecutable</key>
   <string>${exeName}</string>
 </dict>
-</plist>`);
+</plist>`, {encoding: "utf8"});
   }
 
   let err: Error;

@@ -11,6 +11,10 @@ interface IContextMenuOpts {
   navigate: typeof actions.navigate;
 }
 
+interface IActualElectronMenuAsOfV162 {
+  popup(target: any, opts: {async: boolean}): void;
+}
+
 export default function create(win: IWebView, opts: IContextMenuOpts) {
   const wc = win.getWebContents();
   wc.on("context-menu", (e, props) => {
@@ -83,7 +87,8 @@ export default function create(win: IWebView, opts: IContextMenuOpts) {
     menuTpl = delUnusedElements(menuTpl);
 
     if (menuTpl.length > 0) {
-      const menu = (electron.Menu || electron.remote.Menu).buildFromTemplate(menuTpl as any);
+      const menu = (electron.Menu || electron.remote.Menu).buildFromTemplate(menuTpl as any) as
+        any as IActualElectronMenuAsOfV162;
 
 			/*
 			 * When electron.remote is not available this runs in the browser process.
@@ -92,7 +97,7 @@ export default function create(win: IWebView, opts: IContextMenuOpts) {
 			 * When this is being called from a webView, we can't use win as this
 			 * would refere to the webView which is not allowed to render a popup menu.
 			 */
-      menu.popup((electron.remote ? electron.remote.getCurrentWindow() : win) as any);
+      menu.popup((electron.remote ? electron.remote.getCurrentWindow() : win) as any, {async: true});
     }
   });
 }

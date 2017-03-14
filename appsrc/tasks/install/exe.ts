@@ -7,7 +7,7 @@ import sf from "../../util/sf";
 import spawn from "../../util/spawn";
 
 import mklog from "../../util/log";
-const log = mklog("installers/exe");
+const log = mklog("install/exe");
 
 import {partial} from "underscore";
 

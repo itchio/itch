@@ -34,7 +34,7 @@ class Layout extends React.Component<ILayoutProps, void> {
       if (opts.icon) {
         opts.icon = ospath.resolve(ospath.join(__dirname, "..", opts.icon));
       }
-      const notification = new Notification(title, opts); // eslint-disable-line
+      const notification = new Notification(title, opts);
 
       if (onClick) {
         notification.onclick = () => {

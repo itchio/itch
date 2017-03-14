@@ -100,7 +100,7 @@ class GameFilters extends React.Component<IGameFiltersProps, void> {
           options={options}
           value={value}
           autoBlur={true}
-          noResultsText={t("grid.filter.options.no_results")}
+          noResultsText={t("grid.filters.options.no_results")}
           onChange={(vals: {value: string}[]) => {
             const prefs = {
               onlyCompatibleGames: false,

@@ -23,7 +23,7 @@ const self = {
     log(opts, "registering self as default handler for itchio:// protocol");
     return await spawn.assert({
       command: "xdg-mime",
-      args: ["default", "itch.desktop", self.mimeType],
+      args: ["default", "io.itch.itch.desktop", self.mimeType],
       onToken: (tok) => log(opts, "set_default: " + tok),
       logger,
     });

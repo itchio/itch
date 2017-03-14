@@ -21,7 +21,7 @@ import * as actions from "../actions";
 import {startTask} from "../reactors/tasks/start-task";
 
 import mklog from "../util/log";
-const log = mklog("tasks/launch");
+const log = mklog("launch");
 
 import diego from "../util/diego";
 import api from "../util/api";
@@ -40,6 +40,8 @@ import {MODAL_RESPONSE} from "../constants/action-types";
 import {app} from "../electron";
 
 import {findWhere, each} from "underscore";
+
+import localizer from "../localizer";
 
 import {Crash, Cancelled} from "./errors";
 
@@ -101,10 +103,22 @@ export default async function start (out: EventEmitter, inOpts: IStartTaskOpts) 
     log(opts, `${e.message || e}`);
     await diego.hire(opts);
 
+    const i18n = store.getState().i18n;
+    const t = localizer.getT(i18n.strings, i18n.lang);
+
+    let errorMessage = String(e);
+    if (e.reason) {
+      if (Array.isArray(e.reason)) {
+        errorMessage = t.format(e.reason);
+      } else {
+        errorMessage = String(e.reason);
+      }
+    }
+
     store.dispatch(actions.openModal({
       title: "",
       message: ["game.install.could_not_launch", {title: game.title}],
-      detail: ["game.install.could_not_launch.detail", {error: e.message}],
+      detail: errorMessage,
       buttons: [
         {
           label: ["grid.item.report_problem"],
@@ -163,7 +177,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
   problem = caveProblem(cave);
   if (problem) {
     // FIXME: this swallows the problem.
-    const err = new Error(`game.install.could_not_launch (${problem})`) as Error;
+    const err = new Error(`The game could not be configured (${problem})`) as Error;
     (err as any).reason = problem;
     throw err;
   }
@@ -183,7 +197,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
     log(launchOpts, "found manifest, parsing");
 
     try {
-      const contents = await sf.readFile(manifestPath);
+      const contents = await sf.readFile(manifestPath, {encoding: "utf8"});
       manifest = toml.parse(contents);
     } catch (e) {
       log(launchOpts, `error reading manifest: ${e}`);

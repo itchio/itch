@@ -1,6 +1,6 @@
 
 import mklog from "../../util/log";
-const log = mklog("blessing");
+const log = mklog("install/blessing");
 
 import {EventEmitter} from "events";
 

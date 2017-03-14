@@ -161,7 +161,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, IHubSidebarSta
     return <div className={classes} style={sidebarStyle}>
       <div className="title-bar-padder"/>
 
-      <div className="logo" onClick={() => navigate("featured")} data-rh-at="bottom" data-rh={versionString()}>
+      <div className="logo" onClick={(e) => navigate("featured")} data-rh-at="bottom" data-rh={versionString()}>
         <img src={`static/images/logos/app-white.svg`}/>
       </div>
 
