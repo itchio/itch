@@ -10,7 +10,7 @@ $($.sh('mkdir -p linux-extras'))
 
 // generate .desktop file
 $.say('Generating desktop file')
-let desktop = $.read_file('release/templates/itch.desktop.in')
+let desktop = $.read_file('release/templates/io.itch.itch.desktop.in')
 const locales_dir = 'appsrc/static/locales'
 const locale_names = $.ls(locales_dir).filter(function (x) { return /\.json$/i.test(x) })
 locale_names.forEach(function (locale_name) {
