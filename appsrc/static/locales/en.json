@@ -19,7 +19,7 @@
     "errors.api.login.incorrect_username_or_password": "Incorrect username or password",
     "errors.api.login.password_must_be_provided": "Password must be provided",
     "errors.api.login.username_must_be_provided": "Username must be provided",
-    "game.install.could_not_launch": "An error occured while launching {{title}}",
+    "game.install.could_not_launch": "An error occurred while launching {{title}}",
     "game.install.could_not_launch.missing_jre": "It requires Java which was not found on your system.",
     "game.install.no_executables_found": "No executables were found",
     "game.install.libraries_missing": "Some required {{arch}} libraries are missing: {{libraries}}",
