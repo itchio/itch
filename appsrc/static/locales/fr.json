@@ -309,7 +309,7 @@
     "sandbox.setup.windows.message": "Afin de pouvoir vous protéger avec le bac à sable, itch a besoin des droits Administrateurs cette fois-ci.",
     "sandbox.setup.windows.detail": "Après avoir choisi 'Continuer', un dialogue de permission peut apparaitre pour obtenir votre accord. Ceci ajoutera un compte utilisateur `itch-player` pour séparer vos jeux du reste de votre système.",
     "sandbox.setup.linux.message": "Pour pouvoir vous protéger avec le bac à sable itch.io, un script de mise en place doit être exécuté en tant que super-utilisateur.",
-    "sandbox.setup.linux.detail": "Après avoir choisi 'Continuer', un dialogue apparaitra, vous demandant votre mot de passe. Ceci n'est nécessaire que pour la première utilisation du bac à sable et votre mot de passe n'est pas retenu par l'appli itch.",
+    "sandbox.setup.linux.detail": "Après avoir choisi 'Continuer', un dialogue apparaitra, vous demandant votre mot de passe. Ceci n'est nécessaire que pour la première utilisation du bac à sable ou sa mise à jour et votre mot de passe n'est pas retenu par l'appli itch.",
     "prompt.action.force_close": "Fermer le programme",
     "prompt.abort_game.title": "Fermeture forcée d'un programme",
     "prompt.abort_game.message": "Voulez-vous forcer {{title}} à se fermer ?",
@@ -433,5 +433,6 @@
     "web.context_menu.copy": "Copier",
     "web.context_menu.paste": "Coller",
     "web.context_menu.open_in_new_tab": "Ouvrir dans un nouvel onglet",
-    "web.context_menu.copy_link": "Copier le lien"
+    "web.context_menu.copy_link": "Copier le lien",
+    "game.install.libraries_missing": "Des bibliothèques {{arch}} requises sont manquantes: {{libraries}}"
 }
