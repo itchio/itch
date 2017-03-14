@@ -298,7 +298,7 @@
     "sandbox.setup.proceed": "Установить",
     "sandbox.setup.windows.message": "Для запуска игр в песочнице itch.io необходимо один раз выполнить процедуру установки от имени администратора.",
     "sandbox.setup.windows.detail": "После нажатия на кнопку \"Установить\" Windows может попросить у вас подтверждение. В систему будет добавлен пользователь `itch-player`, изолирующий игры с itch.io от остальной системы.",
-    "sandbox.setup.linux.message": "Для запуска игр в песочнице itch.io необходимо один раз выполнить установочный скрипт от имени суперпользователя (root).",
+    "sandbox.setup.linux.message": "Для запуска игр в песочнице itch.io нужно выполнить установочный скрипт от имени root.",
     "sandbox.setup.linux.detail": "После нажатия на кнопку \"Установить\" введите ваш пароль пользователя. Это необходимо только для первого запуска песочницы; itch не видит и не записывает ваш пароль.",
     "sidebar.close_all_tabs": "Закрыть все закладки",
     "action.name.forums": "Форумы",
@@ -434,5 +434,6 @@
     "web.context_menu.copy": "Копировать",
     "web.context_menu.paste": "Вставить",
     "web.context_menu.open_in_new_tab": "Открыть в новой вкладке",
-    "web.context_menu.copy_link": "Копировать ссылку"
+    "web.context_menu.copy_link": "Копировать ссылку",
+    "game.install.libraries_missing": "Не хватает кое-каких {{arch}} библиотек: {{libraries}}"
 }
