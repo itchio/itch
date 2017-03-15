@@ -348,12 +348,12 @@
     "notification.download_healed": "{{title}} estis kontrolita kaj riparita!",
     "outlinks.open_dashboard": "Malfermi la stirpanelon",
     "outlinks.manage_collections": "Administri kolektojn",
-    "sandbox.setup.title": "Unufoja agordo de la sablujo",
+    "sandbox.setup.title": "Komenca agordo de la sablujo",
     "sandbox.setup.proceed": "Daŭrigi",
     "sandbox.setup.windows.message": "Por plenumi ludojn en la sablujo de itch.io, oni devas fari unufojan agordon kiel administranto.",
     "sandbox.setup.windows.detail": "Post kiam vi alklakas la butonon „Daŭrigi“, la sistemo eble petos vian permeson kaj konfirmon. Tio aldonos al la sistemo uzantokonton „itch-player“, per kiu via sistemo estos ŝirmita de la ludoj.",
-    "sandbox.setup.linux.message": "Por plenumi ludojn en la sablujo de itch.io, oni devas unufoje ruli agordan skripton kiel ĉefuzanto.",
-    "sandbox.setup.linux.detail": "Post kiam vi alklakas la butonon „Daŭrigi“, la sistemo petos vian pasvorton. Tio estas necesa nur por la unua lanĉo, kaj itch nek vidos, nek memoros vian pasvorton.",
+    "sandbox.setup.linux.message": "Por plenumi ludojn en la sablujo de itch.io, oni devas ruli agordan skripton kiel ĉefuzanto.",
+    "sandbox.setup.linux.detail": "Post kiam vi alklakas la butonon „Daŭrigi“, la sistemo petos vian pasvorton. Tio estas necesa nur la unuan fojon, kiam oni uzas aŭ ĝisdatigas la sablujon, kaj itch ne memoros vian pasvorton.",
     "preferences.behavior": "Konduto",
     "preferences.behavior.close_to_tray": "Konservi la aplikaĵon en la taskopleto post fermo de la fenestro",
     "grid.criterion.search": "Serĉado…",
@@ -426,5 +426,6 @@
     "web.context_menu.copy": "Kopii",
     "web.context_menu.paste": "Alglui",
     "web.context_menu.open_in_new_tab": "Malfermi en nova folio",
-    "web.context_menu.copy_link": "Kopii ligilon"
+    "web.context_menu.copy_link": "Kopii ligilon",
+    "game.install.libraries_missing": "Kelkaj bibliotekoj por {{arch}} mankas: {{libraries}}"
 }
