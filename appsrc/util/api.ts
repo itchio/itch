@@ -139,7 +139,8 @@ export class Client {
     return errorObject.message === "net::ERR_INTERNET_DISCONNECTED" ||
            errorObject.message === "net::ERR_PROXY_CONNECTION_FAILED" || 
            errorObject.message === "net::ERR_CONNECTION_RESET" ||
-           errorObject.message === "net::ERR_CONNECTION_CLOSE";
+           errorObject.message === "net::ERR_CONNECTION_CLOSE" ||
+           errorObject.message === "Request timed out";
   }
 }
 

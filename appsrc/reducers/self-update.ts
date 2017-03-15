@@ -47,6 +47,7 @@ export default reducer<ISelfUpdateState>(initialState, (on) => {
     return {
       ...state,
       error,
+      checking: false,
       available: null,
       downloading: null,
     };

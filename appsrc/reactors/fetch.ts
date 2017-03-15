@@ -37,7 +37,7 @@ const fetchUsuals = debounce(async function fetchUsuals (credentials: ICredentia
     ]);
   } catch (e) {
     if (api.isNetworkError(e)) {
-      log(opts, `Skipping fetch usuals, having network issues (${e.code})`);
+      log(opts, `Skipping fetch usuals, having network issues (${e.message})`);
     } else {
       throw e;
     }

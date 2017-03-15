@@ -140,22 +140,22 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
         req.abort();
       }, timeout);
     }
-  });
 
-  if (method !== "get") {
-    let reqBody: string;
-    if (opts.format === "json") {
-      reqBody = JSON.stringify(data);
-    } else {
-      reqBody = querystring.stringify(data);
+    if (method !== "get") {
+      let reqBody: string;
+      if (opts.format === "json") {
+        reqBody = JSON.stringify(data);
+      } else {
+        reqBody = querystring.stringify(data);
+      }
+
+      req.setHeader("content-type", "application/x-www-form-urlencoded");
+      req.setHeader("content-length", String(Buffer.byteLength(reqBody)));
+      req.write(reqBody);
     }
 
-    req.setHeader("content-type", "application/x-www-form-urlencoded");
-    req.setHeader("content-length", String(Buffer.byteLength(reqBody)));
-    req.write(reqBody);
-  }
-
-  req.end();
+    req.end();
+  });
 
   return p;
 }
