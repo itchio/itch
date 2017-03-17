@@ -219,6 +219,9 @@ function computeScore (execs: IScoredExecutable[]): IScoredExecutable[] {
     if (/^kick\.bin$/i.test(name)) {
       score -= 50;
     }
+    if (/\.vshost\.exe$/i.test(name)) {
+      score -= 50;
+    }
     if (/nacl_helper/i.test(name)) {
       score -= 20;
     }
