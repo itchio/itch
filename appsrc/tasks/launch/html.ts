@@ -8,6 +8,7 @@ import * as querystring from "querystring";
 
 import {app, BrowserWindow, shell} from "../../electron";
 
+import spawn from "../../util/spawn";
 import url from "../../util/url";
 import fetch from "../../util/fetch";
 import pathmaker from "../../util/pathmaker";
@@ -211,6 +212,41 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   };
 
   win.loadURL(`itch-cave://game.itch/${indexName}?${query}`, options);
+
+  let capsulePromise: Promise<number>;
+  const capsulePath = process.env.CAPSULERUN_PATH;
+  if (capsulePath) {
+    log(opts, `Launching capsule...`);
+    const capsulerunPath = ospath.join(capsulePath, "capsulerun");
+    const capsulelibPath = ospath.join(capsulePath, "..", "libcapsule");
+
+    const CAPS_RE = /<CAPS> (.*)$/;
+    capsulePromise = spawn({
+      command: capsulerunPath,
+      args: [
+        "-L", capsulelibPath,
+        "--",
+        "headless",
+      ],
+      onToken: (tok) => {
+        log(opts, `[capsule out] ${tok}`);
+      },
+      onErrToken: (tok) => {
+        log(opts, `[capsule err] ${tok}`);
+        const matches = CAPS_RE.exec(tok);
+        if (matches) {
+          const contents = matches[1];
+          try {
+            const obj = JSON.parse(contents);
+            log(opts, `Got CAPS message: ${JSON.stringify(obj, null, 2)}`);
+          } catch (e) {
+            log(opts, `Couldn't parse ${contents}`);
+          }
+        }
+      },
+      logger: opts.logger,
+    });
+  }
 
   await new Promise((resolve, reject) => {
     win.on("close", () => {
