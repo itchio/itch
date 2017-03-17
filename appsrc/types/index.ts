@@ -1093,6 +1093,9 @@ export interface IPreferencesState {
   /** show consent dialog before applying any game updates */
   manualGameUpdates?: boolean;
 
+  /** prevent display sleep while playing */
+  preventDisplaySleep?: boolean;
+
   /** if rediff'd patch is available, use it instead of original patch */
   preferOptimizedPatches?: boolean;
 

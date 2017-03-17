@@ -19,6 +19,7 @@ export const initialState = {
   openAtLogin: false,
   openAsHidden: false,
   manualGameUpdates: false,
+  preventDisplaySleep: true,
   preferOptimizedPatches: false,
 
   onlyCompatibleGames: true,

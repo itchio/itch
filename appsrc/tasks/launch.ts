@@ -20,6 +20,8 @@ import store from "../store";
 import * as actions from "../actions";
 import {startTask} from "../reactors/tasks/start-task";
 
+import {powerSaveBlocker} from "../electron";
+
 import mklog from "../util/log";
 const log = mklog("launch");
 
@@ -292,6 +294,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
 
   let interval: NodeJS.Timer;
   const UPDATE_PLAYTIME_INTERVAL = 10;
+  let powerSaveBlockerId = null;
   try {
     interval = setInterval(() => {
       const now = Date.now();
@@ -299,6 +302,9 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
       const newSecondsRun = UPDATE_PLAYTIME_INTERVAL + previousSecondsRun;
       globalMarket.saveEntity("caves", cave.id, {secondsRun: newSecondsRun, lastTouched: now});
     }, UPDATE_PLAYTIME_INTERVAL * 1000);
+
+    powerSaveBlockerId = opts.preferences.preventDisplaySleep ? powerSaveBlocker.start("prevent-display-sleep") : null;
+
     await launcher(out, launchOpts);
 
   } catch (e) {
@@ -320,6 +326,9 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
     throw e;
   } finally {
     clearInterval(interval);
+    if (powerSaveBlockerId !== null) {
+      powerSaveBlocker.stop(powerSaveBlockerId);
+    }
     const now = Date.now();
     globalMarket.saveEntity("caves", cave.id, {lastTouched: now});
   }
