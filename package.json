@@ -139,7 +139,7 @@
   },
   "scripts": {
     "start": "grunt && electron . --color",
-    "electron-rebuild": "electron-rebuild",
+    "install": "electron-rebuild",
     "test": "grunt && nyc -s node app/tests/runner.js | tap-spec",
     "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "local-cov": "grunt && nyc -s node app/tests/runner.js | tap-spec && nyc report -r html",
