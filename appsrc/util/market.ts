@@ -56,6 +56,7 @@ export default class Market extends EventEmitter implements IMarket {
     const entities: ITableMap<any> = {};
 
     const TMP_RE = /\.tmp\d+/;
+    let numRecords = 0;
     const loadRecord = async function (recordPath: string): Promise<void> {
       if (TMP_RE.test(recordPath)) {
         // timing issue: the session is being written to while the DB is loading
@@ -72,6 +73,7 @@ export default class Market extends EventEmitter implements IMarket {
       const contents = await sf.readFile(file, {encoding: "utf8"});
 
       try {
+        numRecords++;
         entities[camelTableName][entityId] = JSON.parse(contents);
       } catch (e) {
         log(opts, `warning: skipping record ${tableName}/${entityId} (${e})`);
@@ -90,7 +92,10 @@ export default class Market extends EventEmitter implements IMarket {
 
     log(opts, `loading records for ${dbPath}`);
     const recordFiles = sf.glob("*/*", {cwd: this.getDbRoot()});
+    const t1 = Date.now();
     await bluebird.map(recordFiles, loadRecord, {concurrency: 4});
+    const t2 = Date.now();
+    log(opts, `loaded ${numRecords} records in ${t2 - t1} ms`);
 
     log(opts, "populating in-memory DB with disk records");
     await this.saveAllEntities({entities}, {persist: false, initial: true});
