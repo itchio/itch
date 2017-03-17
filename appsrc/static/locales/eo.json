@@ -427,5 +427,6 @@
     "web.context_menu.paste": "Alglui",
     "web.context_menu.open_in_new_tab": "Malfermi en nova folio",
     "web.context_menu.copy_link": "Kopii ligilon",
-    "game.install.libraries_missing": "Kelkaj bibliotekoj por {{arch}} mankas: {{libraries}}"
+    "game.install.libraries_missing": "Kelkaj bibliotekoj por {{arch}} mankas: {{libraries}}",
+    "preferences.behavior.prevent_display_sleep": "Malebligi al la ekrano dormeti dum ludado"
 }

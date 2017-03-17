@@ -419,5 +419,6 @@
     "web.context_menu.paste": "Поставяне",
     "web.context_menu.open_in_new_tab": "Отваряне в нов раздел",
     "web.context_menu.copy_link": "Копиране на връзката",
-    "game.install.libraries_missing": "Липсват някои необходими библиотеки за {{arch}}: {{libraries}}"
+    "game.install.libraries_missing": "Липсват някои необходими библиотеки за {{arch}}: {{libraries}}",
+    "preferences.behavior.prevent_display_sleep": "Предотвратяване на приспиването на екрана по време на игра"
 }
