@@ -23,6 +23,14 @@ within the `itch` directory you've just cloned:
 $ npm install
 ```
 
+* (Recommended) recompile the native modules for electron:
+
+```bash
+$ npm run electron-rebuild
+```
+
+(You need a compiler toolchain for this: Visual Studio 2015 on Windows, gcc/clang on Linux/macOS)
+
 * Install grunt's CLI if you don't have it already:
 
 ```bash

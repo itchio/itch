@@ -97,6 +97,7 @@
     "redux-logger": "^2.6.1",
     "reselect": "^2.5.2",
     "shell-quote": "^1.6.0",
+    "shoom": "1.0.0",
     "sinon": "^1.17.6",
     "source-map-support": "^0.4.0",
     "stream-splitter": "^0.3.2",
@@ -110,7 +111,9 @@
     "which": "^1.2.11"
   },
   "devDependencies": {
+    "electron": "^1.6.2",
     "electron-packager": "^7.0.1",
+    "electron-rebuild": "^1.5.7",
     "grunt": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-electron": "^4.0.0",
@@ -136,6 +139,7 @@
   },
   "scripts": {
     "start": "grunt && electron . --color",
+    "electron-rebuild": "electron-rebuild",
     "test": "grunt && nyc -s node app/tests/runner.js | tap-spec",
     "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "local-cov": "grunt && nyc -s node app/tests/runner.js | tap-spec && nyc report -r html",
