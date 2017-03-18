@@ -107,5 +107,6 @@
     "status.downloaded": "Fes click per a reiniciar i aplicar les actualitzacións!",
     "status.downloading": "Descarregant actualització...",
     "status.uptodate": "La teva versió de itch està al día!",
-    "grid.item.cancel_download": "Cancel·lar descàrrega"
+    "grid.item.cancel_download": "Cancel·lar descàrrega",
+    "grid.item.developer": "Desenvolupador"
 }
