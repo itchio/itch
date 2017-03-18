@@ -85,6 +85,7 @@ export interface IBrowserWindow {
   webContents: IWebContents;
 
   loadURL(url: string, opts?: ILoadUrlOpts): void;
+  getContentSize(): number[];
   getBounds(): IRectangle;
   setBounds(bounds: IRectangle): void;
   setPosition(x: number, y: number): void;
@@ -164,6 +165,8 @@ export interface IWebContents {
   getUserAgent(): string;
   on(ev: "new-window", cb: (ev: Event, url: string) => void): void;
   on(ev: "context-menu", cb: (ev: Event, props: IContextMenuProps) => void): void;
+  beginFrameSubscription(f: (frameBuffer: Buffer) => void): void;
+  endFrameSubscription(): void;
 }
 
 type StorageType = "appcache" | "cookies" | "filesystem" | "indexdb" |
