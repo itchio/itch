@@ -10,7 +10,7 @@ interface IEmojify {
   replace(source: string, cb: IEmojifyReplaceCallback): string;
 }
 
-// emojify is generated but pure js, the reason the extrajs/ folder exists
+// emojify is generated but pure js, one reason the extrajs/ folder exists
 const emojify = require("../util/emojify") as IEmojify;
 
 import urls from "../constants/urls";

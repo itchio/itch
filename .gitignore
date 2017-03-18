@@ -16,6 +16,9 @@ tmp
 *.tmp.txt
 /butler
 
+# capsule stuff
+/*.mp4
+
 # coverage
 /coverage
 *.lcov
