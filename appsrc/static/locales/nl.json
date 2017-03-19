@@ -279,5 +279,6 @@
     "usage_stats.description.book": "Een boek",
     "usage_stats.description.game": "Een spel",
     "usage_stats.description.platforms": "voor {{platforms}}",
-    "preferences.behavior.close_to_tray": "Houdt de app in je systeemvak wanneer je het venster sluit"
+    "preferences.behavior.close_to_tray": "Houdt de app in je systeemvak wanneer je het venster sluit",
+    "preferences.behavior.open_as_hidden": "Laat itch op de achtergrond draaien bij het opstarten van de computer."
 }
