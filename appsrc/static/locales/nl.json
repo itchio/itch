@@ -280,5 +280,7 @@
     "usage_stats.description.game": "Een spel",
     "usage_stats.description.platforms": "voor {{platforms}}",
     "preferences.behavior.close_to_tray": "Houdt de app in je systeemvak wanneer je het venster sluit",
-    "preferences.behavior.open_as_hidden": "Laat itch op de achtergrond draaien bij het opstarten van de computer."
+    "preferences.behavior.open_as_hidden": "Laat itch op de achtergrond draaien bij het opstarten van de computer.",
+    "preferences.behavior.open_at_login.error": "Auto-start instelling kon niet worden toegepast: {{cause}}",
+    "preferences.behavior.open_at_login.causes.no_desktop_file": "Geen .desktop bestand gevonden. Dit is normaal wanneer je niet installeert via een systeem pakket. Zie {{linux_install_page}} voor meer informatie."
 }
