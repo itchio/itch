@@ -278,5 +278,6 @@
     "pick_update_upload.single.title": "Een nieuwe versie van {{title}} is beschikbaar",
     "usage_stats.description.book": "Een boek",
     "usage_stats.description.game": "Een spel",
-    "usage_stats.description.platforms": "voor {{platforms}}"
+    "usage_stats.description.platforms": "voor {{platforms}}",
+    "preferences.behavior.close_to_tray": "Houdt de app in je systeemvak wanneer je het venster sluit"
 }
