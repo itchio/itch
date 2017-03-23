@@ -17,9 +17,13 @@ export default class Connection {
   readable: ReadStream;
   writable: WriteStream;
 
-  constructor (readPath: string, writePath: string) {
-    this.readPath = readPath;
-    this.writePath = writePath;
+  constructor (pipeName: string) {
+    let prefix = "/tmp";
+    if (process.platform === "win32") {
+      prefix = "";
+    }
+    this.readPath = pipeName + ".runwrite";
+    this.writePath = pipeName + ".runread";
   }
 
   async connect () {
@@ -53,7 +57,7 @@ export default class Connection {
   }
 
   private async connectNamedPipe(pipePath: string): Promise<any> {
-    await new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       let connected = false;
       const conn = net.connect(`\\\\.\\pipe\\${pipePath}`, () => {
         connected = true;
