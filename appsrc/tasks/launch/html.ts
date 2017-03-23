@@ -218,111 +218,102 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
 
   let capsulePromise: Promise<number>;
   let connection: Connection;
-  const capsulePath = process.env.CAPSULERUN_PATH;
+  const capsulerunPath = process.env.CAPSULERUN_PATH;
   const capsuleEmitter = new EventEmitter();
-  if (capsulePath) {
+  if (capsulerunPath) {
     log(opts, `Launching capsule...`);
-    const capsulerunPath = ospath.join(capsulePath, "capsulerun");
-    const capsulelibPath = ospath.join(capsulePath, "..", "libcapsule");
 
-    const CAPS_RE = /<CAPS> (.*)$/;
+    const pipeName = "capsule_html5";
+    connection = new Connection(pipeName);  
+
     capsulePromise = spawn({
       command: capsulerunPath,
       args: [
-        "-L", capsulelibPath,
-        "--",
-        "headless",
+        "--pipe",
+        pipeName,
+        "--headless",
       ],
       onToken: (tok) => {
         log(opts, `[capsule out] ${tok}`);
       },
       onErrToken: async (tok) => {
         log(opts, `[capsule err] ${tok}`);
-        const matches = CAPS_RE.exec(tok);
-        if (matches) {
-          const contents = matches[1];
-          try {
-            const obj = JSON.parse(contents);
-            log(opts, `Got CAPS message: ${JSON.stringify(obj, null, 2)}`);
-
-            if (obj.r_path && obj.w_path) {
-              connection = new Connection(obj.r_path, obj.w_path);  
-              try {
-                await connection.connect();
-
-                const [width, height] = win.getContentSize();
-                log(opts, `framebuffer size: ${width}x${height}`);
-                const components = 4;
-                const pitch = width * components;
-
-                const shoom = require("shoom");
-                const shmPath = "capsule-html5.shm";
-                const shmSize = pitch * height;
-                const shm = new shoom.Shm({
-                  path: shmPath,
-                  size: shmSize,
-                });
-                shm.create();
-
-                connection.writePacket((builder) => {
-                  const offset = Messages.VideoSetup.createOffsetVector(builder, [0]);
-                  const linesize = Messages.VideoSetup.createLinesizeVector(builder, [pitch]);
-                  const shmemPath = builder.createString(shmPath);
-                  const shmemSize = builder.createLong(shmSize);
-                  Messages.Shmem.startShmem(builder);
-                  Messages.Shmem.addPath(builder, shmemPath);
-                  Messages.Shmem.addSize(builder, shmemSize);
-                  const shmem = Messages.Shmem.endShmem(builder);
-                  Messages.VideoSetup.startVideoSetup(builder);
-                  Messages.VideoSetup.addWidth(builder, width);
-                  Messages.VideoSetup.addHeight(builder, height);
-                  Messages.VideoSetup.addPixFmt(builder, Messages.PixFmt.BGRA);
-                  Messages.VideoSetup.addVflip(builder, 0);
-                  Messages.VideoSetup.addOffset(builder, offset);
-                  Messages.VideoSetup.addLinesize(builder, linesize);
-                  Messages.VideoSetup.addShmem(builder, shmem);
-                  const vs = Messages.VideoSetup.endVideoSetup(builder);
-                  Messages.Packet.startPacket(builder);
-                  Messages.Packet.addMessageType(builder, Messages.Message.VideoSetup);
-                  Messages.Packet.addMessage(builder, vs);
-                  const pkt = Messages.Packet.endPacket(builder);
-                  builder.finish(pkt);
-                });
-
-                const wc = win.webContents;
-                wc.beginFrameSubscription(function (frameBuffer) {
-                  shm.write(0, frameBuffer);
-                  const timestamp = Date.now() * 1000;
-
-                  connection.writePacket((builder) => {
-                    const frameTimestamp = builder.createLong(timestamp);
-                    Messages.VideoFrameCommitted.startVideoFrameCommitted(builder);
-                    Messages.VideoFrameCommitted.addTimestamp(builder, frameTimestamp);
-                    Messages.VideoFrameCommitted.addIndex(builder, 0);
-                    const vfc = Messages.VideoFrameCommitted.endVideoFrameCommitted(builder);
-                    Messages.Packet.startPacket(builder);
-                    Messages.Packet.addMessageType(builder, Messages.Message.VideoFrameCommitted);
-                    Messages.Packet.addMessage(builder, vfc);
-                    const pkt = Messages.Packet.endPacket(builder);
-                    builder.finish(pkt);
-                  });
-                });
-              } catch (e) {
-                log(opts, `While attempting to connect capsule: ${e.stack}`);
-              }
-            }
-          } catch (e) {
-            log(opts, `Couldn't parse ${contents}: ${e}`);
-          }
-        }
       },
       emitter: capsuleEmitter,
       logger: opts.logger,
     });
+
     capsulePromise.catch((reason) => {
       // tslint:disable-next-line
       console.log(`capsule threw an error: ${reason}`);
     });
+
+    try {
+      await new Promise((resolve, reject) => {
+        setTimeout(resolve, 1000);
+      });
+      await connection.connect();
+
+      const [contentWidth, contentHeight] = win.getContentSize();
+      log(opts, `framebuffer size: ${contentWidth}x${contentHeight}`);
+      const components = 4;
+      const pitch = contentWidth * components;
+
+      const shoom = require("shoom");
+      const shmPath = "capsule_html5.shm";
+      const shmSize = pitch * contentHeight;
+      const shm = new shoom.Shm({
+        path: shmPath,
+        size: shmSize,
+      });
+      shm.create();
+
+      connection.writePacket((builder) => {
+        const offset = Messages.VideoSetup.createOffsetVector(builder, [0]);
+        const linesize = Messages.VideoSetup.createLinesizeVector(builder, [pitch]);
+        const shmemPath = builder.createString(shmPath);
+        const shmemSize = builder.createLong(shmSize);
+        Messages.Shmem.startShmem(builder);
+        Messages.Shmem.addPath(builder, shmemPath);
+        Messages.Shmem.addSize(builder, shmemSize);
+        const shmem = Messages.Shmem.endShmem(builder);
+        Messages.VideoSetup.startVideoSetup(builder);
+        Messages.VideoSetup.addWidth(builder, contentWidth);
+        Messages.VideoSetup.addHeight(builder, contentHeight);
+        Messages.VideoSetup.addPixFmt(builder, Messages.PixFmt.BGRA);
+        Messages.VideoSetup.addVflip(builder, 0);
+        Messages.VideoSetup.addOffset(builder, offset);
+        Messages.VideoSetup.addLinesize(builder, linesize);
+        Messages.VideoSetup.addShmem(builder, shmem);
+        const vs = Messages.VideoSetup.endVideoSetup(builder);
+        Messages.Packet.startPacket(builder);
+        Messages.Packet.addMessageType(builder, Messages.Message.VideoSetup);
+        Messages.Packet.addMessage(builder, vs);
+        const pkt = Messages.Packet.endPacket(builder);
+        builder.finish(pkt);
+      });
+
+      const wc = win.webContents;
+      wc.beginFrameSubscription(function (frameBuffer) {
+        shm.write(0, frameBuffer);
+        const timestamp = Date.now() * 1000;
+
+        connection.writePacket((builder) => {
+          const frameTimestamp = builder.createLong(timestamp);
+          Messages.VideoFrameCommitted.startVideoFrameCommitted(builder);
+          Messages.VideoFrameCommitted.addTimestamp(builder, frameTimestamp);
+          Messages.VideoFrameCommitted.addIndex(builder, 0);
+          const vfc = Messages.VideoFrameCommitted.endVideoFrameCommitted(builder);
+          Messages.Packet.startPacket(builder);
+          Messages.Packet.addMessageType(builder, Messages.Message.VideoFrameCommitted);
+          Messages.Packet.addMessage(builder, vfc);
+          const pkt = Messages.Packet.endPacket(builder);
+          builder.finish(pkt);
+        });
+      });
+    } catch (e) {
+      log(opts, `While attempting to connect capsule: ${e.stack}`);
+    }
   }
 
   await new Promise((resolve, reject) => {
