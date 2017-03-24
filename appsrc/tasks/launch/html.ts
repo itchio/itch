@@ -15,7 +15,8 @@ import pathmaker from "../../util/pathmaker";
 import debugBrowserWindow from "../../util/debug-browser-window";
 
 import Connection from "../../capsule/connection";
-const messages = require("../../capsule/messages_generated").capsule.messages;
+import {capsule} from "../../capsule/messages_generated";
+const {messages} = capsule;
 
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
@@ -274,8 +275,8 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
       shm.create();
 
       connection.writePacket((builder) => {
-        const offset = messages.VideoSetup.createOffsetVector(builder, [0]);
-        const linesize = messages.VideoSetup.createLinesizeVector(builder, [pitch]);
+        const offset = messages.VideoSetup.createOffsetVector(builder, [builder.createLong(0)]);
+        const linesize = messages.VideoSetup.createLinesizeVector(builder, [builder.createLong(pitch)]);
         const shmemPath = builder.createString(shmPath);
         const shmemSize = builder.createLong(shmSize);
         messages.Shmem.startShmem(builder);
@@ -286,7 +287,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
         messages.VideoSetup.addWidth(builder, contentWidth);
         messages.VideoSetup.addHeight(builder, contentHeight);
         messages.VideoSetup.addPixFmt(builder, messages.PixFmt.BGRA);
-        messages.VideoSetup.addVflip(builder, 0);
+        messages.VideoSetup.addVflip(builder, false);
         messages.VideoSetup.addOffset(builder, offset);
         messages.VideoSetup.addLinesize(builder, linesize);
         messages.VideoSetup.addShmem(builder, shmem);
@@ -326,9 +327,12 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   }
 
   await new Promise((resolve, reject) => {
-    win.on("close", () => {
+    win.on("close", async () => {
       if (connection) {
         connection.close();
+      }
+      if (capsulePromise) {
+        await capsulePromise;
       }
       win.webContents.session.clearCache(resolve);
     });

@@ -154,6 +154,10 @@ class FakeBrowserWindow implements IBrowserWindow {
   setTitle(title: string): void {
     return;
   }
+
+  getContentSize(): number[] {
+    return [0, 0];
+  }
 }
 
 class FakeWebContents implements IWebContents {
@@ -180,6 +184,14 @@ class FakeWebContents implements IWebContents {
   }
 
   on(ev: string, cb: (...args: any[]) => void) {
+    return;
+  }
+
+  beginFrameSubscription(f: (frameBuffer: Buffer) => void) {
+    return;
+  }
+
+  endFrameSubscription() {
     return;
   }
 }

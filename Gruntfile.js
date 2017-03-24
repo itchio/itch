@@ -117,7 +117,9 @@ module.exports = function (grunt) {
       },
       'files': [
         'appsrc/**/*.ts',
-        'appsrc/**/*.tsx'
+        'appsrc/**/*.tsx',
+        '!appsrc/capsule/flatbuffers.ts',
+        '!appsrc/capsule/*_generated.ts'
       ]
     },
     'sass': {
