@@ -369,6 +369,12 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
   const missingLibs: string[] = [];
   const MISSINGLIB_RE = /: error while loading shared libraries: ([^:]+):/g;
 
+  const capsulerunPath = process.env.CAPSULERUN_PATH;
+  if (capsulerunPath) {
+    args = [ "--", command, ...args ];
+    command = capsulerunPath;
+  }
+
   const code = await spawn({
     command,
     args,
