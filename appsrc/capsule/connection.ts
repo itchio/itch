@@ -2,7 +2,6 @@
 const flatbuffers = require("./flatbuffers").flatbuffers;
 
 import sf from "../util/sf";
-import * as net from "net";
 import {ReadStream, WriteStream} from "fs";
 
 type FlatbuffersBuilder = any;
@@ -12,35 +11,36 @@ interface IBuilderFunc {
 };
 
 export default class Connection {
+  closed: boolean;
   readPath: string;
   writePath: string;
   readable: ReadStream;
   writable: WriteStream;
 
   constructor (pipeName: string) {
-    let prefix = "/tmp";
+    let prefix = "/tmp/";
     if (process.platform === "win32") {
-      prefix = "";
+      prefix = "\\\\.\\pipe\\";
     }
-    this.readPath = pipeName + ".runwrite";
-    this.writePath = pipeName + ".runread";
+    this.readPath = prefix + pipeName + ".runwrite";
+    this.writePath = prefix + pipeName + ".runread";
+    this.closed = false;
   }
 
   async connect () {
-    if (process.platform === "win32") {
-      this.readable = await this.connectNamedPipe(this.readPath);
-      this.writable = await this.connectNamedPipe(this.writePath);
-    } else {
-      this.readable = sf.createReadStream(this.readPath, {
-        encoding: "binary",
-      });
-      this.writable = sf.createWriteStream(this.writePath, {
-        defaultEncoding: "binary",
-      });
-    }
+    this.writable = sf.createWriteStream(this.writePath, {
+      defaultEncoding: "binary",
+    });
+    this.readable = sf.createReadStream(this.readPath, {
+      encoding: "binary",
+    });
   }
 
   writePacket(f: IBuilderFunc) {
+    if (this.closed) {
+      return;
+    }
+
     const builder = new flatbuffers.Builder(1024);
     f(builder);
 
@@ -54,20 +54,6 @@ export default class Connection {
 
   close() {
     this.writable.end();
-  }
-
-  private async connectNamedPipe(pipePath: string): Promise<any> {
-    return await new Promise((resolve, reject) => {
-      let connected = false;
-      const conn = net.connect(`\\\\.\\pipe\\${pipePath}`, () => {
-        connected = true;
-        resolve(conn);
-      });
-      setTimeout(() => {
-        if (!connected) {
-          reject(`capsule: timeout while connecting to ${pipePath}`);
-        }
-      }, 200);
-    });
+    this.closed = true;
   }
 }

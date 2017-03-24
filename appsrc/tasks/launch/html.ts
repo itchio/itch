@@ -15,7 +15,7 @@ import pathmaker from "../../util/pathmaker";
 import debugBrowserWindow from "../../util/debug-browser-window";
 
 import Connection from "../../capsule/connection";
-const Messages = require("../../capsule/messages_generated").Capsule.Messages;
+const messages = require("../../capsule/messages_generated").capsule.messages;
 
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
@@ -254,6 +254,11 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
       });
       await connection.connect();
 
+      log(opts, `Should be connected now, will send videosetup soon`);
+      await new Promise((resolve, reject) => {
+        setTimeout(resolve, 1000);
+      });
+
       const [contentWidth, contentHeight] = win.getContentSize();
       log(opts, `framebuffer size: ${contentWidth}x${contentHeight}`);
       const components = 4;
@@ -269,27 +274,27 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
       shm.create();
 
       connection.writePacket((builder) => {
-        const offset = Messages.VideoSetup.createOffsetVector(builder, [0]);
-        const linesize = Messages.VideoSetup.createLinesizeVector(builder, [pitch]);
+        const offset = messages.VideoSetup.createOffsetVector(builder, [0]);
+        const linesize = messages.VideoSetup.createLinesizeVector(builder, [pitch]);
         const shmemPath = builder.createString(shmPath);
         const shmemSize = builder.createLong(shmSize);
-        Messages.Shmem.startShmem(builder);
-        Messages.Shmem.addPath(builder, shmemPath);
-        Messages.Shmem.addSize(builder, shmemSize);
-        const shmem = Messages.Shmem.endShmem(builder);
-        Messages.VideoSetup.startVideoSetup(builder);
-        Messages.VideoSetup.addWidth(builder, contentWidth);
-        Messages.VideoSetup.addHeight(builder, contentHeight);
-        Messages.VideoSetup.addPixFmt(builder, Messages.PixFmt.BGRA);
-        Messages.VideoSetup.addVflip(builder, 0);
-        Messages.VideoSetup.addOffset(builder, offset);
-        Messages.VideoSetup.addLinesize(builder, linesize);
-        Messages.VideoSetup.addShmem(builder, shmem);
-        const vs = Messages.VideoSetup.endVideoSetup(builder);
-        Messages.Packet.startPacket(builder);
-        Messages.Packet.addMessageType(builder, Messages.Message.VideoSetup);
-        Messages.Packet.addMessage(builder, vs);
-        const pkt = Messages.Packet.endPacket(builder);
+        messages.Shmem.startShmem(builder);
+        messages.Shmem.addPath(builder, shmemPath);
+        messages.Shmem.addSize(builder, shmemSize);
+        const shmem = messages.Shmem.endShmem(builder);
+        messages.VideoSetup.startVideoSetup(builder);
+        messages.VideoSetup.addWidth(builder, contentWidth);
+        messages.VideoSetup.addHeight(builder, contentHeight);
+        messages.VideoSetup.addPixFmt(builder, messages.PixFmt.BGRA);
+        messages.VideoSetup.addVflip(builder, 0);
+        messages.VideoSetup.addOffset(builder, offset);
+        messages.VideoSetup.addLinesize(builder, linesize);
+        messages.VideoSetup.addShmem(builder, shmem);
+        const vs = messages.VideoSetup.endVideoSetup(builder);
+        messages.Packet.startPacket(builder);
+        messages.Packet.addMessageType(builder, messages.Message.VideoSetup);
+        messages.Packet.addMessage(builder, vs);
+        const pkt = messages.Packet.endPacket(builder);
         builder.finish(pkt);
       });
 
@@ -298,16 +303,20 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
         shm.write(0, frameBuffer);
         const timestamp = Date.now() * 1000;
 
+        if (connection.closed) {
+          wc.endFrameSubscription();
+        }
+
         connection.writePacket((builder) => {
           const frameTimestamp = builder.createLong(timestamp);
-          Messages.VideoFrameCommitted.startVideoFrameCommitted(builder);
-          Messages.VideoFrameCommitted.addTimestamp(builder, frameTimestamp);
-          Messages.VideoFrameCommitted.addIndex(builder, 0);
-          const vfc = Messages.VideoFrameCommitted.endVideoFrameCommitted(builder);
-          Messages.Packet.startPacket(builder);
-          Messages.Packet.addMessageType(builder, Messages.Message.VideoFrameCommitted);
-          Messages.Packet.addMessage(builder, vfc);
-          const pkt = Messages.Packet.endPacket(builder);
+          messages.VideoFrameCommitted.startVideoFrameCommitted(builder);
+          messages.VideoFrameCommitted.addTimestamp(builder, frameTimestamp);
+          messages.VideoFrameCommitted.addIndex(builder, 0);
+          const vfc = messages.VideoFrameCommitted.endVideoFrameCommitted(builder);
+          messages.Packet.startPacket(builder);
+          messages.Packet.addMessageType(builder, messages.Message.VideoFrameCommitted);
+          messages.Packet.addMessage(builder, vfc);
+          const pkt = messages.Packet.endPacket(builder);
           builder.finish(pkt);
         });
       });

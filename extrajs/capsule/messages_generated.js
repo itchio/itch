@@ -4,18 +4,18 @@
  * @const
  * @namespace
  */
-var Capsule = Capsule || {};
+var capsule = capsule || {};
 
 /**
  * @const
  * @namespace
  */
-Capsule.Messages = Capsule.Messages || {};
+capsule.messages = capsule.messages || {};
 
 /**
  * @enum
  */
-Capsule.Messages.PixFmt = {
+capsule.messages.PixFmt = {
   UNKNOWN: 0,
   RGBA: 40069,
   BGRA: 40070,
@@ -26,19 +26,20 @@ Capsule.Messages.PixFmt = {
 /**
  * @enum
  */
-Capsule.Messages.Message = {
+capsule.messages.Message = {
   NONE: 0,
-  CaptureStart: 1,
-  CaptureStop: 2,
-  VideoSetup: 3,
-  VideoFrameCommitted: 4,
-  VideoFrameProcessed: 5
+  HotkeyPressed: 1,
+  CaptureStart: 2,
+  CaptureStop: 3,
+  VideoSetup: 4,
+  VideoFrameCommitted: 5,
+  VideoFrameProcessed: 6
 };
 
 /**
  * @constructor
  */
-Capsule.Messages.Packet = function() {
+capsule.messages.Packet = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -53,9 +54,9 @@ Capsule.Messages.Packet = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {Capsule.Messages.Packet}
+ * @returns {capsule.messages.Packet}
  */
-Capsule.Messages.Packet.prototype.__init = function(i, bb) {
+capsule.messages.Packet.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -63,26 +64,26 @@ Capsule.Messages.Packet.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {Capsule.Messages.Packet=} obj
- * @returns {Capsule.Messages.Packet}
+ * @param {capsule.messages.Packet=} obj
+ * @returns {capsule.messages.Packet}
  */
-Capsule.Messages.Packet.getRootAsPacket = function(bb, obj) {
-  return (obj || new Capsule.Messages.Packet).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+capsule.messages.Packet.getRootAsPacket = function(bb, obj) {
+  return (obj || new capsule.messages.Packet).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
- * @returns {Capsule.Messages.Message}
+ * @returns {capsule.messages.Message}
  */
-Capsule.Messages.Packet.prototype.messageType = function() {
+capsule.messages.Packet.prototype.messageType = function() {
   var offset = this.bb.__offset(this.bb_pos, 4);
-  return offset ? /** @type {Capsule.Messages.Message} */ (this.bb.readUint8(this.bb_pos + offset)) : Capsule.Messages.Message.NONE;
+  return offset ? /** @type {capsule.messages.Message} */ (this.bb.readUint8(this.bb_pos + offset)) : capsule.messages.Message.NONE;
 };
 
 /**
  * @param {flatbuffers.Table} obj
  * @returns {?flatbuffers.Table}
  */
-Capsule.Messages.Packet.prototype.message = function(obj) {
+capsule.messages.Packet.prototype.message = function(obj) {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.__union(obj, this.bb_pos + offset) : null;
 };
@@ -90,23 +91,23 @@ Capsule.Messages.Packet.prototype.message = function(obj) {
 /**
  * @param {flatbuffers.Builder} builder
  */
-Capsule.Messages.Packet.startPacket = function(builder) {
+capsule.messages.Packet.startPacket = function(builder) {
   builder.startObject(2);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
- * @param {Capsule.Messages.Message} messageType
+ * @param {capsule.messages.Message} messageType
  */
-Capsule.Messages.Packet.addMessageType = function(builder, messageType) {
-  builder.addFieldInt8(0, messageType, Capsule.Messages.Message.NONE);
+capsule.messages.Packet.addMessageType = function(builder, messageType) {
+  builder.addFieldInt8(0, messageType, capsule.messages.Message.NONE);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} messageOffset
  */
-Capsule.Messages.Packet.addMessage = function(builder, messageOffset) {
+capsule.messages.Packet.addMessage = function(builder, messageOffset) {
   builder.addFieldOffset(1, messageOffset, 0);
 };
 
@@ -114,7 +115,7 @@ Capsule.Messages.Packet.addMessage = function(builder, messageOffset) {
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-Capsule.Messages.Packet.endPacket = function(builder) {
+capsule.messages.Packet.endPacket = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
@@ -123,14 +124,14 @@ Capsule.Messages.Packet.endPacket = function(builder) {
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} offset
  */
-Capsule.Messages.Packet.finishPacketBuffer = function(builder, offset) {
+capsule.messages.Packet.finishPacketBuffer = function(builder, offset) {
   builder.finish(offset);
 };
 
 /**
  * @constructor
  */
-Capsule.Messages.CaptureStart = function() {
+capsule.messages.HotkeyPressed = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -145,9 +146,9 @@ Capsule.Messages.CaptureStart = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {Capsule.Messages.CaptureStart}
+ * @returns {capsule.messages.HotkeyPressed}
  */
-Capsule.Messages.CaptureStart.prototype.__init = function(i, bb) {
+capsule.messages.HotkeyPressed.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -155,116 +156,17 @@ Capsule.Messages.CaptureStart.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {Capsule.Messages.CaptureStart=} obj
- * @returns {Capsule.Messages.CaptureStart}
+ * @param {capsule.messages.HotkeyPressed=} obj
+ * @returns {capsule.messages.HotkeyPressed}
  */
-Capsule.Messages.CaptureStart.getRootAsCaptureStart = function(bb, obj) {
-  return (obj || new Capsule.Messages.CaptureStart).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @returns {number}
- */
-Capsule.Messages.CaptureStart.prototype.fps = function() {
-  var offset = this.bb.__offset(this.bb_pos, 4);
-  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
-};
-
-/**
- * @returns {number}
- */
-Capsule.Messages.CaptureStart.prototype.sizeDivider = function() {
-  var offset = this.bb.__offset(this.bb_pos, 6);
-  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
-};
-
-/**
- * @returns {boolean}
- */
-Capsule.Messages.CaptureStart.prototype.gpuColorConv = function() {
-  var offset = this.bb.__offset(this.bb_pos, 8);
-  return offset ? !!this.bb.readInt8(this.bb_pos + offset) : false;
+capsule.messages.HotkeyPressed.getRootAsHotkeyPressed = function(bb, obj) {
+  return (obj || new capsule.messages.HotkeyPressed).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
  */
-Capsule.Messages.CaptureStart.startCaptureStart = function(builder) {
-  builder.startObject(3);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @param {number} fps
- */
-Capsule.Messages.CaptureStart.addFps = function(builder, fps) {
-  builder.addFieldInt32(0, fps, 0);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @param {number} sizeDivider
- */
-Capsule.Messages.CaptureStart.addSizeDivider = function(builder, sizeDivider) {
-  builder.addFieldInt32(1, sizeDivider, 0);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @param {boolean} gpuColorConv
- */
-Capsule.Messages.CaptureStart.addGpuColorConv = function(builder, gpuColorConv) {
-  builder.addFieldInt8(2, +gpuColorConv, +false);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- * @returns {flatbuffers.Offset}
- */
-Capsule.Messages.CaptureStart.endCaptureStart = function(builder) {
-  var offset = builder.endObject();
-  return offset;
-};
-
-/**
- * @constructor
- */
-Capsule.Messages.CaptureStop = function() {
-  /**
-   * @type {flatbuffers.ByteBuffer}
-   */
-  this.bb = null;
-
-  /**
-   * @type {number}
-   */
-  this.bb_pos = 0;
-};
-
-/**
- * @param {number} i
- * @param {flatbuffers.ByteBuffer} bb
- * @returns {Capsule.Messages.CaptureStop}
- */
-Capsule.Messages.CaptureStop.prototype.__init = function(i, bb) {
-  this.bb_pos = i;
-  this.bb = bb;
-  return this;
-};
-
-/**
- * @param {flatbuffers.ByteBuffer} bb
- * @param {Capsule.Messages.CaptureStop=} obj
- * @returns {Capsule.Messages.CaptureStop}
- */
-Capsule.Messages.CaptureStop.getRootAsCaptureStop = function(bb, obj) {
-  return (obj || new Capsule.Messages.CaptureStop).__init(bb.readInt32(bb.position()) + bb.position(), bb);
-};
-
-/**
- * @param {flatbuffers.Builder} builder
- */
-Capsule.Messages.CaptureStop.startCaptureStop = function(builder) {
+capsule.messages.HotkeyPressed.startHotkeyPressed = function(builder) {
   builder.startObject(0);
 };
 
@@ -272,7 +174,7 @@ Capsule.Messages.CaptureStop.startCaptureStop = function(builder) {
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-Capsule.Messages.CaptureStop.endCaptureStop = function(builder) {
+capsule.messages.HotkeyPressed.endHotkeyPressed = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
@@ -280,7 +182,7 @@ Capsule.Messages.CaptureStop.endCaptureStop = function(builder) {
 /**
  * @constructor
  */
-Capsule.Messages.VideoSetup = function() {
+capsule.messages.CaptureStart = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -295,9 +197,9 @@ Capsule.Messages.VideoSetup = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {Capsule.Messages.VideoSetup}
+ * @returns {capsule.messages.CaptureStart}
  */
-Capsule.Messages.VideoSetup.prototype.__init = function(i, bb) {
+capsule.messages.CaptureStart.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -305,17 +207,17 @@ Capsule.Messages.VideoSetup.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {Capsule.Messages.VideoSetup=} obj
- * @returns {Capsule.Messages.VideoSetup}
+ * @param {capsule.messages.CaptureStart=} obj
+ * @returns {capsule.messages.CaptureStart}
  */
-Capsule.Messages.VideoSetup.getRootAsVideoSetup = function(bb, obj) {
-  return (obj || new Capsule.Messages.VideoSetup).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+capsule.messages.CaptureStart.getRootAsCaptureStart = function(bb, obj) {
+  return (obj || new capsule.messages.CaptureStart).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @returns {number}
  */
-Capsule.Messages.VideoSetup.prototype.width = function() {
+capsule.messages.CaptureStart.prototype.fps = function() {
   var offset = this.bb.__offset(this.bb_pos, 4);
   return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
@@ -323,90 +225,224 @@ Capsule.Messages.VideoSetup.prototype.width = function() {
 /**
  * @returns {number}
  */
-Capsule.Messages.VideoSetup.prototype.height = function() {
+capsule.messages.CaptureStart.prototype.sizeDivider = function() {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
 
 /**
- * @returns {Capsule.Messages.PixFmt}
+ * @returns {boolean}
  */
-Capsule.Messages.VideoSetup.prototype.pixFmt = function() {
+capsule.messages.CaptureStart.prototype.gpuColorConv = function() {
   var offset = this.bb.__offset(this.bb_pos, 8);
-  return offset ? /** @type {Capsule.Messages.PixFmt} */ (this.bb.readInt32(this.bb_pos + offset)) : Capsule.Messages.PixFmt.UNKNOWN;
+  return offset ? !!this.bb.readInt8(this.bb_pos + offset) : false;
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ */
+capsule.messages.CaptureStart.startCaptureStart = function(builder) {
+  builder.startObject(3);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} fps
+ */
+capsule.messages.CaptureStart.addFps = function(builder, fps) {
+  builder.addFieldInt32(0, fps, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {number} sizeDivider
+ */
+capsule.messages.CaptureStart.addSizeDivider = function(builder, sizeDivider) {
+  builder.addFieldInt32(1, sizeDivider, 0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @param {boolean} gpuColorConv
+ */
+capsule.messages.CaptureStart.addGpuColorConv = function(builder, gpuColorConv) {
+  builder.addFieldInt8(2, +gpuColorConv, +false);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @returns {flatbuffers.Offset}
+ */
+capsule.messages.CaptureStart.endCaptureStart = function(builder) {
+  var offset = builder.endObject();
+  return offset;
+};
+
+/**
+ * @constructor
+ */
+capsule.messages.CaptureStop = function() {
+  /**
+   * @type {flatbuffers.ByteBuffer}
+   */
+  this.bb = null;
+
+  /**
+   * @type {number}
+   */
+  this.bb_pos = 0;
+};
+
+/**
+ * @param {number} i
+ * @param {flatbuffers.ByteBuffer} bb
+ * @returns {capsule.messages.CaptureStop}
+ */
+capsule.messages.CaptureStop.prototype.__init = function(i, bb) {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param {flatbuffers.ByteBuffer} bb
+ * @param {capsule.messages.CaptureStop=} obj
+ * @returns {capsule.messages.CaptureStop}
+ */
+capsule.messages.CaptureStop.getRootAsCaptureStop = function(bb, obj) {
+  return (obj || new capsule.messages.CaptureStop).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ */
+capsule.messages.CaptureStop.startCaptureStop = function(builder) {
+  builder.startObject(0);
+};
+
+/**
+ * @param {flatbuffers.Builder} builder
+ * @returns {flatbuffers.Offset}
+ */
+capsule.messages.CaptureStop.endCaptureStop = function(builder) {
+  var offset = builder.endObject();
+  return offset;
+};
+
+/**
+ * @constructor
+ */
+capsule.messages.VideoSetup = function() {
+  /**
+   * @type {flatbuffers.ByteBuffer}
+   */
+  this.bb = null;
+
+  /**
+   * @type {number}
+   */
+  this.bb_pos = 0;
+};
+
+/**
+ * @param {number} i
+ * @param {flatbuffers.ByteBuffer} bb
+ * @returns {capsule.messages.VideoSetup}
+ */
+capsule.messages.VideoSetup.prototype.__init = function(i, bb) {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param {flatbuffers.ByteBuffer} bb
+ * @param {capsule.messages.VideoSetup=} obj
+ * @returns {capsule.messages.VideoSetup}
+ */
+capsule.messages.VideoSetup.getRootAsVideoSetup = function(bb, obj) {
+  return (obj || new capsule.messages.VideoSetup).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @returns {number}
+ */
+capsule.messages.VideoSetup.prototype.width = function() {
+  var offset = this.bb.__offset(this.bb_pos, 4);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @returns {number}
+ */
+capsule.messages.VideoSetup.prototype.height = function() {
+  var offset = this.bb.__offset(this.bb_pos, 6);
+  return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @returns {capsule.messages.PixFmt}
+ */
+capsule.messages.VideoSetup.prototype.pixFmt = function() {
+  var offset = this.bb.__offset(this.bb_pos, 8);
+  return offset ? /** @type {capsule.messages.PixFmt} */ (this.bb.readInt32(this.bb_pos + offset)) : capsule.messages.PixFmt.UNKNOWN;
 };
 
 /**
  * @returns {boolean}
  */
-Capsule.Messages.VideoSetup.prototype.vflip = function() {
+capsule.messages.VideoSetup.prototype.vflip = function() {
   var offset = this.bb.__offset(this.bb_pos, 10);
   return offset ? !!this.bb.readInt8(this.bb_pos + offset) : false;
 };
 
 /**
  * @param {number} index
- * @returns {number}
+ * @returns {flatbuffers.Long}
  */
-Capsule.Messages.VideoSetup.prototype.offset = function(index) {
+capsule.messages.VideoSetup.prototype.offset = function(index) {
   var offset = this.bb.__offset(this.bb_pos, 12);
-  return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
+  return offset ? this.bb.readInt64(this.bb.__vector(this.bb_pos + offset) + index * 8) : this.bb.createLong(0, 0);
 };
 
 /**
  * @returns {number}
  */
-Capsule.Messages.VideoSetup.prototype.offsetLength = function() {
+capsule.messages.VideoSetup.prototype.offsetLength = function() {
   var offset = this.bb.__offset(this.bb_pos, 12);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
-};
-
-/**
- * @returns {Uint32Array}
- */
-Capsule.Messages.VideoSetup.prototype.offsetArray = function() {
-  var offset = this.bb.__offset(this.bb_pos, 12);
-  return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
  * @param {number} index
- * @returns {number}
+ * @returns {flatbuffers.Long}
  */
-Capsule.Messages.VideoSetup.prototype.linesize = function(index) {
+capsule.messages.VideoSetup.prototype.linesize = function(index) {
   var offset = this.bb.__offset(this.bb_pos, 14);
-  return offset ? this.bb.readUint32(this.bb.__vector(this.bb_pos + offset) + index * 4) : 0;
+  return offset ? this.bb.readInt64(this.bb.__vector(this.bb_pos + offset) + index * 8) : this.bb.createLong(0, 0);
 };
 
 /**
  * @returns {number}
  */
-Capsule.Messages.VideoSetup.prototype.linesizeLength = function() {
+capsule.messages.VideoSetup.prototype.linesizeLength = function() {
   var offset = this.bb.__offset(this.bb_pos, 14);
   return offset ? this.bb.__vector_len(this.bb_pos + offset) : 0;
 };
 
 /**
- * @returns {Uint32Array}
+ * @param {capsule.messages.Shmem=} obj
+ * @returns {capsule.messages.Shmem}
  */
-Capsule.Messages.VideoSetup.prototype.linesizeArray = function() {
-  var offset = this.bb.__offset(this.bb_pos, 14);
-  return offset ? new Uint32Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
-};
-
-/**
- * @param {Capsule.Messages.Shmem=} obj
- * @returns {Capsule.Messages.Shmem}
- */
-Capsule.Messages.VideoSetup.prototype.shmem = function(obj) {
+capsule.messages.VideoSetup.prototype.shmem = function(obj) {
   var offset = this.bb.__offset(this.bb_pos, 16);
-  return offset ? (obj || new Capsule.Messages.Shmem).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
+  return offset ? (obj || new capsule.messages.Shmem).__init(this.bb.__indirect(this.bb_pos + offset), this.bb) : null;
 };
 
 /**
  * @param {flatbuffers.Builder} builder
  */
-Capsule.Messages.VideoSetup.startVideoSetup = function(builder) {
+capsule.messages.VideoSetup.startVideoSetup = function(builder) {
   builder.startObject(7);
 };
 
@@ -414,7 +450,7 @@ Capsule.Messages.VideoSetup.startVideoSetup = function(builder) {
  * @param {flatbuffers.Builder} builder
  * @param {number} width
  */
-Capsule.Messages.VideoSetup.addWidth = function(builder, width) {
+capsule.messages.VideoSetup.addWidth = function(builder, width) {
   builder.addFieldInt32(0, width, 0);
 };
 
@@ -422,23 +458,23 @@ Capsule.Messages.VideoSetup.addWidth = function(builder, width) {
  * @param {flatbuffers.Builder} builder
  * @param {number} height
  */
-Capsule.Messages.VideoSetup.addHeight = function(builder, height) {
+capsule.messages.VideoSetup.addHeight = function(builder, height) {
   builder.addFieldInt32(1, height, 0);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
- * @param {Capsule.Messages.PixFmt} pixFmt
+ * @param {capsule.messages.PixFmt} pixFmt
  */
-Capsule.Messages.VideoSetup.addPixFmt = function(builder, pixFmt) {
-  builder.addFieldInt32(2, pixFmt, Capsule.Messages.PixFmt.UNKNOWN);
+capsule.messages.VideoSetup.addPixFmt = function(builder, pixFmt) {
+  builder.addFieldInt32(2, pixFmt, capsule.messages.PixFmt.UNKNOWN);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
  * @param {boolean} vflip
  */
-Capsule.Messages.VideoSetup.addVflip = function(builder, vflip) {
+capsule.messages.VideoSetup.addVflip = function(builder, vflip) {
   builder.addFieldInt8(3, +vflip, +false);
 };
 
@@ -446,19 +482,19 @@ Capsule.Messages.VideoSetup.addVflip = function(builder, vflip) {
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} offsetOffset
  */
-Capsule.Messages.VideoSetup.addOffset = function(builder, offsetOffset) {
+capsule.messages.VideoSetup.addOffset = function(builder, offsetOffset) {
   builder.addFieldOffset(4, offsetOffset, 0);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
- * @param {Array.<number>} data
+ * @param {Array.<flatbuffers.Long>} data
  * @returns {flatbuffers.Offset}
  */
-Capsule.Messages.VideoSetup.createOffsetVector = function(builder, data) {
-  builder.startVector(4, data.length, 4);
+capsule.messages.VideoSetup.createOffsetVector = function(builder, data) {
+  builder.startVector(8, data.length, 8);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt32(data[i]);
+    builder.addInt64(data[i]);
   }
   return builder.endVector();
 };
@@ -467,27 +503,27 @@ Capsule.Messages.VideoSetup.createOffsetVector = function(builder, data) {
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-Capsule.Messages.VideoSetup.startOffsetVector = function(builder, numElems) {
-  builder.startVector(4, numElems, 4);
+capsule.messages.VideoSetup.startOffsetVector = function(builder, numElems) {
+  builder.startVector(8, numElems, 8);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} linesizeOffset
  */
-Capsule.Messages.VideoSetup.addLinesize = function(builder, linesizeOffset) {
+capsule.messages.VideoSetup.addLinesize = function(builder, linesizeOffset) {
   builder.addFieldOffset(5, linesizeOffset, 0);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
- * @param {Array.<number>} data
+ * @param {Array.<flatbuffers.Long>} data
  * @returns {flatbuffers.Offset}
  */
-Capsule.Messages.VideoSetup.createLinesizeVector = function(builder, data) {
-  builder.startVector(4, data.length, 4);
+capsule.messages.VideoSetup.createLinesizeVector = function(builder, data) {
+  builder.startVector(8, data.length, 8);
   for (var i = data.length - 1; i >= 0; i--) {
-    builder.addInt32(data[i]);
+    builder.addInt64(data[i]);
   }
   return builder.endVector();
 };
@@ -496,15 +532,15 @@ Capsule.Messages.VideoSetup.createLinesizeVector = function(builder, data) {
  * @param {flatbuffers.Builder} builder
  * @param {number} numElems
  */
-Capsule.Messages.VideoSetup.startLinesizeVector = function(builder, numElems) {
-  builder.startVector(4, numElems, 4);
+capsule.messages.VideoSetup.startLinesizeVector = function(builder, numElems) {
+  builder.startVector(8, numElems, 8);
 };
 
 /**
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} shmemOffset
  */
-Capsule.Messages.VideoSetup.addShmem = function(builder, shmemOffset) {
+capsule.messages.VideoSetup.addShmem = function(builder, shmemOffset) {
   builder.addFieldOffset(6, shmemOffset, 0);
 };
 
@@ -512,7 +548,7 @@ Capsule.Messages.VideoSetup.addShmem = function(builder, shmemOffset) {
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-Capsule.Messages.VideoSetup.endVideoSetup = function(builder) {
+capsule.messages.VideoSetup.endVideoSetup = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
@@ -520,7 +556,7 @@ Capsule.Messages.VideoSetup.endVideoSetup = function(builder) {
 /**
  * @constructor
  */
-Capsule.Messages.Shmem = function() {
+capsule.messages.Shmem = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -535,9 +571,9 @@ Capsule.Messages.Shmem = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {Capsule.Messages.Shmem}
+ * @returns {capsule.messages.Shmem}
  */
-Capsule.Messages.Shmem.prototype.__init = function(i, bb) {
+capsule.messages.Shmem.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -545,18 +581,18 @@ Capsule.Messages.Shmem.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {Capsule.Messages.Shmem=} obj
- * @returns {Capsule.Messages.Shmem}
+ * @param {capsule.messages.Shmem=} obj
+ * @returns {capsule.messages.Shmem}
  */
-Capsule.Messages.Shmem.getRootAsShmem = function(bb, obj) {
-  return (obj || new Capsule.Messages.Shmem).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+capsule.messages.Shmem.getRootAsShmem = function(bb, obj) {
+  return (obj || new capsule.messages.Shmem).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @param {flatbuffers.Encoding=} optionalEncoding
  * @returns {string|Uint8Array}
  */
-Capsule.Messages.Shmem.prototype.path = function(optionalEncoding) {
+capsule.messages.Shmem.prototype.path = function(optionalEncoding) {
   var offset = this.bb.__offset(this.bb_pos, 4);
   return offset ? this.bb.__string(this.bb_pos + offset, optionalEncoding) : null;
 };
@@ -564,7 +600,7 @@ Capsule.Messages.Shmem.prototype.path = function(optionalEncoding) {
 /**
  * @returns {flatbuffers.Long}
  */
-Capsule.Messages.Shmem.prototype.size = function() {
+capsule.messages.Shmem.prototype.size = function() {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.readUint64(this.bb_pos + offset) : this.bb.createLong(0, 0);
 };
@@ -572,7 +608,7 @@ Capsule.Messages.Shmem.prototype.size = function() {
 /**
  * @param {flatbuffers.Builder} builder
  */
-Capsule.Messages.Shmem.startShmem = function(builder) {
+capsule.messages.Shmem.startShmem = function(builder) {
   builder.startObject(2);
 };
 
@@ -580,7 +616,7 @@ Capsule.Messages.Shmem.startShmem = function(builder) {
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Offset} pathOffset
  */
-Capsule.Messages.Shmem.addPath = function(builder, pathOffset) {
+capsule.messages.Shmem.addPath = function(builder, pathOffset) {
   builder.addFieldOffset(0, pathOffset, 0);
 };
 
@@ -588,7 +624,7 @@ Capsule.Messages.Shmem.addPath = function(builder, pathOffset) {
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Long} size
  */
-Capsule.Messages.Shmem.addSize = function(builder, size) {
+capsule.messages.Shmem.addSize = function(builder, size) {
   builder.addFieldInt64(1, size, builder.createLong(0, 0));
 };
 
@@ -596,7 +632,7 @@ Capsule.Messages.Shmem.addSize = function(builder, size) {
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-Capsule.Messages.Shmem.endShmem = function(builder) {
+capsule.messages.Shmem.endShmem = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
@@ -604,7 +640,7 @@ Capsule.Messages.Shmem.endShmem = function(builder) {
 /**
  * @constructor
  */
-Capsule.Messages.VideoFrameCommitted = function() {
+capsule.messages.VideoFrameCommitted = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -619,9 +655,9 @@ Capsule.Messages.VideoFrameCommitted = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {Capsule.Messages.VideoFrameCommitted}
+ * @returns {capsule.messages.VideoFrameCommitted}
  */
-Capsule.Messages.VideoFrameCommitted.prototype.__init = function(i, bb) {
+capsule.messages.VideoFrameCommitted.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -629,17 +665,17 @@ Capsule.Messages.VideoFrameCommitted.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {Capsule.Messages.VideoFrameCommitted=} obj
- * @returns {Capsule.Messages.VideoFrameCommitted}
+ * @param {capsule.messages.VideoFrameCommitted=} obj
+ * @returns {capsule.messages.VideoFrameCommitted}
  */
-Capsule.Messages.VideoFrameCommitted.getRootAsVideoFrameCommitted = function(bb, obj) {
-  return (obj || new Capsule.Messages.VideoFrameCommitted).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+capsule.messages.VideoFrameCommitted.getRootAsVideoFrameCommitted = function(bb, obj) {
+  return (obj || new capsule.messages.VideoFrameCommitted).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @returns {flatbuffers.Long}
  */
-Capsule.Messages.VideoFrameCommitted.prototype.timestamp = function() {
+capsule.messages.VideoFrameCommitted.prototype.timestamp = function() {
   var offset = this.bb.__offset(this.bb_pos, 4);
   return offset ? this.bb.readUint64(this.bb_pos + offset) : this.bb.createLong(0, 0);
 };
@@ -647,7 +683,7 @@ Capsule.Messages.VideoFrameCommitted.prototype.timestamp = function() {
 /**
  * @returns {number}
  */
-Capsule.Messages.VideoFrameCommitted.prototype.index = function() {
+capsule.messages.VideoFrameCommitted.prototype.index = function() {
   var offset = this.bb.__offset(this.bb_pos, 6);
   return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
@@ -655,7 +691,7 @@ Capsule.Messages.VideoFrameCommitted.prototype.index = function() {
 /**
  * @param {flatbuffers.Builder} builder
  */
-Capsule.Messages.VideoFrameCommitted.startVideoFrameCommitted = function(builder) {
+capsule.messages.VideoFrameCommitted.startVideoFrameCommitted = function(builder) {
   builder.startObject(2);
 };
 
@@ -663,7 +699,7 @@ Capsule.Messages.VideoFrameCommitted.startVideoFrameCommitted = function(builder
  * @param {flatbuffers.Builder} builder
  * @param {flatbuffers.Long} timestamp
  */
-Capsule.Messages.VideoFrameCommitted.addTimestamp = function(builder, timestamp) {
+capsule.messages.VideoFrameCommitted.addTimestamp = function(builder, timestamp) {
   builder.addFieldInt64(0, timestamp, builder.createLong(0, 0));
 };
 
@@ -671,7 +707,7 @@ Capsule.Messages.VideoFrameCommitted.addTimestamp = function(builder, timestamp)
  * @param {flatbuffers.Builder} builder
  * @param {number} index
  */
-Capsule.Messages.VideoFrameCommitted.addIndex = function(builder, index) {
+capsule.messages.VideoFrameCommitted.addIndex = function(builder, index) {
   builder.addFieldInt32(1, index, 0);
 };
 
@@ -679,7 +715,7 @@ Capsule.Messages.VideoFrameCommitted.addIndex = function(builder, index) {
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-Capsule.Messages.VideoFrameCommitted.endVideoFrameCommitted = function(builder) {
+capsule.messages.VideoFrameCommitted.endVideoFrameCommitted = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
@@ -687,7 +723,7 @@ Capsule.Messages.VideoFrameCommitted.endVideoFrameCommitted = function(builder) 
 /**
  * @constructor
  */
-Capsule.Messages.VideoFrameProcessed = function() {
+capsule.messages.VideoFrameProcessed = function() {
   /**
    * @type {flatbuffers.ByteBuffer}
    */
@@ -702,9 +738,9 @@ Capsule.Messages.VideoFrameProcessed = function() {
 /**
  * @param {number} i
  * @param {flatbuffers.ByteBuffer} bb
- * @returns {Capsule.Messages.VideoFrameProcessed}
+ * @returns {capsule.messages.VideoFrameProcessed}
  */
-Capsule.Messages.VideoFrameProcessed.prototype.__init = function(i, bb) {
+capsule.messages.VideoFrameProcessed.prototype.__init = function(i, bb) {
   this.bb_pos = i;
   this.bb = bb;
   return this;
@@ -712,17 +748,17 @@ Capsule.Messages.VideoFrameProcessed.prototype.__init = function(i, bb) {
 
 /**
  * @param {flatbuffers.ByteBuffer} bb
- * @param {Capsule.Messages.VideoFrameProcessed=} obj
- * @returns {Capsule.Messages.VideoFrameProcessed}
+ * @param {capsule.messages.VideoFrameProcessed=} obj
+ * @returns {capsule.messages.VideoFrameProcessed}
  */
-Capsule.Messages.VideoFrameProcessed.getRootAsVideoFrameProcessed = function(bb, obj) {
-  return (obj || new Capsule.Messages.VideoFrameProcessed).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+capsule.messages.VideoFrameProcessed.getRootAsVideoFrameProcessed = function(bb, obj) {
+  return (obj || new capsule.messages.VideoFrameProcessed).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 };
 
 /**
  * @returns {number}
  */
-Capsule.Messages.VideoFrameProcessed.prototype.index = function() {
+capsule.messages.VideoFrameProcessed.prototype.index = function() {
   var offset = this.bb.__offset(this.bb_pos, 4);
   return offset ? this.bb.readUint32(this.bb_pos + offset) : 0;
 };
@@ -730,7 +766,7 @@ Capsule.Messages.VideoFrameProcessed.prototype.index = function() {
 /**
  * @param {flatbuffers.Builder} builder
  */
-Capsule.Messages.VideoFrameProcessed.startVideoFrameProcessed = function(builder) {
+capsule.messages.VideoFrameProcessed.startVideoFrameProcessed = function(builder) {
   builder.startObject(1);
 };
 
@@ -738,7 +774,7 @@ Capsule.Messages.VideoFrameProcessed.startVideoFrameProcessed = function(builder
  * @param {flatbuffers.Builder} builder
  * @param {number} index
  */
-Capsule.Messages.VideoFrameProcessed.addIndex = function(builder, index) {
+capsule.messages.VideoFrameProcessed.addIndex = function(builder, index) {
   builder.addFieldInt32(0, index, 0);
 };
 
@@ -746,10 +782,10 @@ Capsule.Messages.VideoFrameProcessed.addIndex = function(builder, index) {
  * @param {flatbuffers.Builder} builder
  * @returns {flatbuffers.Offset}
  */
-Capsule.Messages.VideoFrameProcessed.endVideoFrameProcessed = function(builder) {
+capsule.messages.VideoFrameProcessed.endVideoFrameProcessed = function(builder) {
   var offset = builder.endObject();
   return offset;
 };
 
 // Exports for Node.js and RequireJS
-this.Capsule = Capsule;
+this.capsule = capsule;
