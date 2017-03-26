@@ -1,6 +1,6 @@
 {
   "name": "itch",
-  "version": "23.3.4-canary",
+  "version": "23.3.6-canary",
   "dependencies": {
     "@types/base16": {
       "version": "1.0.1",
@@ -1770,9 +1770,9 @@
       "dev": true
     },
     "grunt-electron-itchio": {
-      "version": "5.0.0",
+      "version": "5.0.1",
       "from": "grunt-electron-itchio@latest",
-      "resolved": "https://registry.npmjs.org/grunt-electron-itchio/-/grunt-electron-itchio-5.0.0.tgz",
+      "resolved": "https://registry.npmjs.org/grunt-electron-itchio/-/grunt-electron-itchio-5.0.1.tgz",
       "dev": true,
       "dependencies": {
         "asar": {
