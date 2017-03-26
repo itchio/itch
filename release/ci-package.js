@@ -75,7 +75,7 @@ function ci_package (args) {
   const target = `fasterthanlime/${$.app_name()}`
   $.say('Pushing to itch.io')
   let push_path = build_path
-  $($.sh(`./butler push ${artifact_path} ${target}:${channel} --userversion=${$.build_version()}`))
+  // $($.sh(`./butler push ${artifact_path} ${target}:${channel} --userversion=${$.build_version()}`))
 
   switch (os) {
     case 'windows':
