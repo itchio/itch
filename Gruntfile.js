@@ -21,8 +21,8 @@ var companyName = 'Itch Corp'
 var gruntElectronCommon = {
   dir: 'stage',
   name: appName,
-  version: electronVersion,
-  'app-version': version,
+  electronVersion: electronVersion,
+  appVersion: version,
   prune: true,
   asar: true,
   overwrite: true,
