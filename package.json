@@ -117,7 +117,7 @@
     "grunt": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-electron-installer": "^2.1.0",
-    "grunt-electron-itchio": "^5.0.1",
+    "grunt-electron-itchio": "5.0.1",
     "grunt-newer": "^1.2.0",
     "grunt-sass": "^1.2.0",
     "grunt-ts": "^6.0.0-beta.3",
