@@ -11,7 +11,7 @@ import {
   ISFStatic, IReadFileOpts, IWriteFileOpts,
 } from "../types/sf";
 
-process.noAsar = true;
+// process.noAsar = true;
 
 // let's patch all the things! Electron randomly decides to
 // substitute 'fs' with their own version that considers '.asar'

@@ -5719,6 +5719,12 @@
       "resolved": "https://registry.npmjs.org/webpack-node-externals/-/webpack-node-externals-1.5.4.tgz",
       "dev": true
     },
+    "webpack-shell-plugin": {
+      "version": "0.5.0",
+      "from": "webpack-shell-plugin@latest",
+      "resolved": "https://registry.npmjs.org/webpack-shell-plugin/-/webpack-shell-plugin-0.5.0.tgz",
+      "dev": true
+    },
     "webpack-sources": {
       "version": "0.2.3",
       "from": "webpack-sources@>=0.2.3 <0.3.0",

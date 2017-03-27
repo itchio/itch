@@ -142,15 +142,18 @@
     "webpack": "^2.3.2",
     "webpack-dev-server": "^2.4.2",
     "webpack-node-externals": "^1.5.4",
+    "webpack-shell-plugin": "^0.5.0",
     "zopf": "^4.5.0"
   },
   "scripts": {
-    "start": "grunt && electron . --color",
+    "start": "electron . --color",
     "install": "electron-rebuild",
-    "test": "grunt && nyc -s node app/tests/runner.js | tap-spec",
+    "test": "webpack --progress --colors --config webpack.config.tests.js",
+    "watch-tests": "webpack --progress --colors --config webpack.config.tests.js --watch",
+    "serve-renderer": "webpack-dev-server --progress --colors --config webpack.config.js",
+    "build-main": "webpack --progress --colors --config webpack.config.electron.js",
+    "run-tests": "node tests/runner.js | tap-spec",
     "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "local-cov": "grunt && nyc -s node app/tests/runner.js | tap-spec && nyc report -r html",
-    "lint": "grunt tslint",
     "i18n": "release/i18n-check.sh"
   }
 }
