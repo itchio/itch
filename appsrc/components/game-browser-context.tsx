@@ -29,8 +29,6 @@ export class GameBrowserContext extends React.Component<IGameBrowserContextProps
     this.state = {
       hover: false,
     };
-
-    this.onContextMenu = this.onContextMenu.bind(this);
   }
 
   onContextMenu () {
@@ -63,7 +61,7 @@ export class GameBrowserContext extends React.Component<IGameBrowserContextProps
       }
     }
 
-    return <div className={barClasses} style={barStyle} onContextMenu={this.onContextMenu}>
+    return <div className={barClasses} style={barStyle} onContextMenu={this.onContextMenu.bind(this)}>
       <div className="cover" style={coverStyle}
         onMouseEnter={this.onMouseEnter.bind(this)}
         onMouseLeave={this.onMouseLeave.bind(this)}>

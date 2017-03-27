@@ -2,10 +2,8 @@
 import * as React from "react";
 import Ink = require("react-ink");
 
-import {IWebkitMouseEvent} from "./does-event-mean-background";
-
 export interface IRowHandlerParams {
-  e?: IWebkitMouseEvent;
+  e?: React.MouseEvent<any>;
   index: number;
   rowData: any;
 }
@@ -53,7 +51,7 @@ export default function defaultRowRenderer (params: IRowRendererParams) {
       // sic.: we'd do the proper thing here and add a field named differently
       // but then typescript flips it shit and says proprety `onRowMouseUp` doesn't exist.
       // oh well.
-      props.onMouseUp = (e: React.MouseEvent<any>) => onRowClick({ e, index, rowData });
+      props.onMouseDown = (e: React.MouseEvent<any>) => onRowClick({ e, index, rowData });
     }
     if (onRowDoubleClick) {
       props.onDoubleClick = (e: React.MouseEvent<any>) => onRowDoubleClick({ e, index, rowData });

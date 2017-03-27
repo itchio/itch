@@ -21,7 +21,7 @@ import HiddenIndicator from "./hidden-indicator";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
-import doesEventMeanBackground from "./does-event-mean-background";
+import {whenClickNavigates} from "./when-click-navigates";
 
 import * as _ from "underscore";
 
@@ -51,21 +51,15 @@ class GameTable extends React.Component<IGameTableProps, IGameTableState> {
     this.state = {
       scrollTop: 0,
     };
-
-    this.rowGetter = this.rowGetter.bind(this);
-    this.onRowClick = this.onRowClick.bind(this);
-    this.genericDataGetter = this.genericDataGetter.bind(this);
-
-    this.coverRenderer = this.coverRenderer.bind(this);
-    this.titleRenderer = this.titleRenderer.bind(this);
-    this.publishedAtRenderer = this.publishedAtRenderer.bind(this);
-    this.playtimeRenderer = this.playtimeRenderer.bind(this);
-    this.lastPlayedRenderer = this.lastPlayedRenderer.bind(this);
   }
 
   onRowClick (params: IRowHandlerParams) {
     const {e, index} = params;
-    this.props.navigateToGame(this.props.sortedGames[index].game, doesEventMeanBackground(e));
+    whenClickNavigates(e, ({background}) => {
+      const {sortedGames, navigateToGame} = this.props;
+      const game = sortedGames[index].game;
+      navigateToGame(game, background);
+    });
   }
 
   rowGetter (params: IRowGetterParams): any {
@@ -160,15 +154,15 @@ class GameTable extends React.Component<IGameTableProps, IGameTableState> {
               width={width}
               rowCount={sortedGames.length}
               rowHeight={75}
-              rowGetter={this.rowGetter}
-              onRowClick={this.onRowClick}
+              rowGetter={this.rowGetter.bind(this)}
+              onRowClick={this.onRowClick.bind(this)}
               onScroll={(e: any) => {
                 // ignore data when tab's hidden
                 if (e.clientHeight <= 0) { return; }
                 this.setState({ scrollTop: e.scrollTop });
               }}
               scrollTop={scrollTop}
-              sort={this.props.onSortChange}
+              sort={this.props.onSortChange.bind(this)}
               sortBy={sortBy}
               sortDirection={sortDirection}
               rowRenderer={gameTableRowRenderer}
@@ -176,37 +170,37 @@ class GameTable extends React.Component<IGameTableProps, IGameTableState> {
             <Column
               dataKey="cover"
               width={coverWidth}
-              cellDataGetter={this.genericDataGetter}
-              cellRenderer={this.coverRenderer}
+              cellDataGetter={this.genericDataGetter.bind(this)}
+              cellRenderer={this.coverRenderer.bind(this)}
               disableSort={true}/>
 
             <Column
               dataKey="title"
               label={t("table.column.name")}
               width={remainingWidth}
-              cellDataGetter={this.genericDataGetter}
-              cellRenderer={this.titleRenderer}/>
+              cellDataGetter={this.genericDataGetter.bind(this)}
+              cellRenderer={this.titleRenderer.bind(this)}/>
             <Column
               dataKey="secondsRun"
               label={t("table.column.play_time")}
               width={playtimeWidth}
               className="secondary"
-              cellDataGetter={this.genericDataGetter}
-              cellRenderer={this.playtimeRenderer}/>
+              cellDataGetter={this.genericDataGetter.bind(this)}
+              cellRenderer={this.playtimeRenderer.bind(this)}/>
             <Column
               dataKey="lastTouchedAt"
               label={t("table.column.last_played")}
               width={lastPlayedWidth}
               className="secondary"
-              cellDataGetter={this.genericDataGetter}
-              cellRenderer={this.lastPlayedRenderer}/>
+              cellDataGetter={this.genericDataGetter.bind(this)}
+              cellRenderer={this.lastPlayedRenderer.bind(this)}/>
             <Column
               dataKey="publishedAt"
               label={t("table.column.published")}
               width={publishedWidth}
               className="secondary"
-              cellDataGetter={this.genericDataGetter}
-              cellRenderer={this.publishedAtRenderer}/>
+              cellDataGetter={this.genericDataGetter.bind(this)}
+              cellRenderer={this.publishedAtRenderer.bind(this)}/>
           </Table>;
         }}
       </AutoSizer>

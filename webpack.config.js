@@ -15,7 +15,7 @@ module.exports = {
     },
 
     // Enable sourcemaps for debugging webpack's output.
-    devtool: "source-map",
+    devtool: "eval",
 
     resolve: {
         // Add '.ts' and '.tsx' as resolvable extensions.
@@ -32,7 +32,7 @@ module.exports = {
         ],
     },
 
-    externals: nodeExternals(),
+    // externals: nodeExternals(),
 
     plugins: [
         new CheckerPlugin(),

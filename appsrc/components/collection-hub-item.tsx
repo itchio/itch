@@ -6,7 +6,7 @@ import {connect} from "./connect";
 
 import {map, each, filter} from "underscore";
 
-import doesEventMeanBackground from "./does-event-mean-background";
+import {whenClickNavigates} from "./when-click-navigates";
 
 import * as actions from "../actions";
 
@@ -18,12 +18,18 @@ import Ink = require("react-ink");
 import interleave from "./interleave";
 
 import {IState, ICollectionRecord, IGameRecordSet, IUserMarketState} from "../types";
-import {IDispatch, dispatcher} from "../constants/action-types";
+import {IDispatch, multiDispatcher} from "../constants/action-types";
 
 export class CollectionHubItem extends React.Component<ICollectionHubItemProps, void> {
+  onMouseDown (e: React.MouseEvent<any>) {
+    const {navigateToCollection, collection} = this.props;
+    whenClickNavigates(e, ({background}) => {
+      navigateToCollection(collection, background);
+    });
+  }
+
   render () {
     const {t, allGames, collection} = this.props;
-    const {navigateToCollection} = this.props;
     const {title} = collection;
 
     const gameIds = (collection.gameIds || []).slice(0, 8);
@@ -46,7 +52,7 @@ export class CollectionHubItem extends React.Component<ICollectionHubItemProps, 
     const itemCount = (collection.gameIds || []).length;
 
     return <div className="hub-item collection-hub-item"
-        onClick={(e) => navigateToCollection(collection, doesEventMeanBackground(e))}>
+        onMouseDown={this.onMouseDown.bind(this)}>
       <section className="title">
         {title}
       </section>
@@ -84,7 +90,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = (dispatch: IDispatch) => ({
-  navigateToCollection: dispatcher(dispatch, actions.navigateToCollection),
+  navigateToCollection: multiDispatcher(dispatch, actions.navigateToCollection),
 });
 
 export default connect(

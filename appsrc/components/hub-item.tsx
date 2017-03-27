@@ -4,7 +4,7 @@ import * as classNames from "classnames";
 
 import {connect} from "./connect";
 
-import doesEventMeanBackground from "./does-event-mean-background";
+import {whenClickNavigates} from "./when-click-navigates";
 
 import * as actions from "../actions";
 import GameActions from "./game-actions";
@@ -18,11 +18,6 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
     this.state = {
       hover: false,
     };
-
-    this.onMouseEnter = this.onMouseEnter.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
-    this.onContextMenu = this.onContextMenu.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
   }
 
   onContextMenu () {
@@ -30,12 +25,11 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
     openGameContextMenu({game});
   }
 
-  onMouseUp (e: React.MouseEvent<any>) {
-    console.log("mouse button: ", e.button);
-    if (e.button === 0) {
-      const {game, navigateToGame} = this.props;
-      navigateToGame(game, doesEventMeanBackground(e));
-    }
+  onMouseDown (e: React.MouseEvent<any>) {
+    const {game, navigateToGame} = this.props;
+    whenClickNavigates(e, ({background}) => {
+      navigateToGame(game, background);
+    });
   }
 
   render () {
@@ -61,15 +55,15 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
     const itemClasses = classNames("hub-item", {dull: (searchScore && searchScore > 0.2)});
 
     return <div className={itemClasses}
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-        onContextMenu={this.onContextMenu}>
+        onMouseEnter={this.onMouseEnter.bind(this)}
+        onMouseLeave={this.onMouseLeave.bind(this)}
+        onContextMenu={this.onContextMenu.bind(this)}>
       {gif
         ? <span className="gif-marker">gif</span>
         : ""
       }
       <section className="cover" style={coverStyle}
-        onMouseUp={this.onMouseUp}/>
+        onMouseDown={this.onMouseDown.bind(this)}/>
 
       <section className="undercover">
         <section className="title">

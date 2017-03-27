@@ -74,14 +74,6 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
       scrollHistory: [],
       wentBackOrForward: false,
     };
-
-    this.goBack = this.goBack.bind(this);
-    this.goForward = this.goForward.bind(this);
-    this.reload = this.reload.bind(this);
-    this.stop = this.stop.bind(this);
-    this.openDevTools = this.openDevTools.bind(this);
-    this.loadURL = this.loadURL.bind(this);
-    this.loadUserURL = this.loadUserURL.bind(this);
   }
 
   updateBrowserState (props = {}) {
@@ -413,10 +405,21 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 
     const {browserState} = this.state;
 
-    const {goBack, goForward, stop, reload, openDevTools, loadUserURL} = this;
     const frozen = this.isFrozen();
-    const controlProps = {tabId, tabPath, tabData, browserState, goBack,
-      goForward, stop, reload, openDevTools, loadURL: loadUserURL, frozen, active};
+    const controlProps = {
+      tabId,
+      tabPath,
+      tabData,
+      browserState,
+      goBack: this.goBack.bind(this),
+      goForward: this.goForward.bind(this),
+      stop: this.stop.bind(this),
+      reload: this.reload.bind(this),
+      openDevTools: this.openDevTools.bind(this),
+      loadURL: this.loadUserURL.bind(this),
+      frozen,
+      active,
+    };
 
     let context: React.ReactElement<any> = null;
     if (controls === "game") {
