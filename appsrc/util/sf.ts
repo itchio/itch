@@ -11,6 +11,8 @@ import {
   ISFStatic, IReadFileOpts, IWriteFileOpts,
 } from "../types/sf";
 
+process.noAsar = true;
+
 // let's patch all the things! Electron randomly decides to
 // substitute 'fs' with their own version that considers '.asar'
 // files to be read-only directories
@@ -19,37 +21,42 @@ import {
 // to operate some magic for various modules to use the original file system,
 // not the Electron-patched one.
 
-let fsName = "original-fs";
-if (!(process.versions as any).electron) {
-  // when running tests, we don't have access to original-fs
-  fsName = "fs";
-}
+let baseFs = require("fs");
+// if ((process.versions as any).electron) {
+//   const r = ((global || window) as any).require;
+//   baseFs = r("original-fs");
+// }
 
 import { EventEmitter } from "events";
 
-import * as proxyquire from "proxyquire";
+// import * as proxyquire from "proxyquire";
+
+// let fs = {
+//   ...baseFs,
+//   "@global": true, /* Work with transitive imports */
+//   "@noCallThru": true, /* Don't even require/hit electron fs */
+//   "disableGlob": true, /* Don't ever use globs with rimraf */
+// } as typeof fsModule & IAsyncFSVariants;
 
 let fs = {
-  ...require(fsName),
-  "@global": true, /* Work with transitive imports */
-  "@noCallThru": true, /* Don't even require/hit electron fs */
-  "disableGlob": true, /* Don't ever use globs with rimraf */
+  ...baseFs,
 } as typeof fsModule & IAsyncFSVariants;
 
 // graceful-fs fixes a few things https://www.npmjs.com/package/graceful-fs
 // notably, EMFILE, EPERM, etc.
-const gracefulFs = {
-  ...proxyquire("graceful-fs", { fs }),
-  "@global": true, /* Work with transitive imports */
-  "@noCallThru": true, /* Don't even require/hit electron fs */
-};
+// const gracefulFs = {
+//   ...proxyquire("graceful-fs", { fs }),
+//   "@global": true, /* Work with transitive imports */
+//   "@noCallThru": true, /* Don't even require/hit electron fs */
+// };
+const gracefulFs = require("graceful-fs");
 
 // when proxyquired modules load, they'll require what we give
 // them instead of
-const stubs = {
-  "fs": gracefulFs,
-  "graceful-fs": gracefulFs,
-};
+// const stubs = {
+//   "fs": gracefulFs,
+//   "graceful-fs": gracefulFs,
+// };
 
 const debugLevel = parseInt(process.env.INCENTIVE_MET, 10) || -1;
 const debug = (level: number, parts: string[]) => {
@@ -66,13 +73,16 @@ fs = gracefulFs;
 promisifyAll(fs);
 
 // single function, callback-based, can't specify fs
-const glob = promisify(proxyquire("glob", stubs) as IGlobStatic);
+// const glob = promisify(proxyquire("glob", stubs) as IGlobStatic);
+const glob = promisify(require("glob") as IGlobStatic);
 
 // single function, callback-based, can't specify fs
-const mkdirp = promisify(proxyquire("mkdirp", stubs) as (path: string, cb: () => any) => void);
+// const mkdirp = promisify(proxyquire("mkdirp", stubs) as (path: string, cb: () => any) => void);
+const mkdirp = promisify(require("mkdirp") as (path: string, cb: () => any) => void);
 
 // single function, callback-based, doesn't accept fs
-const readChunk = promisify(proxyquire("read-chunk", stubs));
+// const readChunk = promisify(proxyquire("read-chunk", stubs));
+const readChunk = promisify(require("read-chunk"));
 
 // other deps
 import * as path from "path";
@@ -264,7 +274,6 @@ const self = {
   rmdir: fs.rmdirAsync.bind(fs),
   unlink: fs.unlinkAsync.bind(fs),
 
-  fsName,
   fs,
 } as ISFStatic;
 

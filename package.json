@@ -111,6 +111,7 @@
     "which": "^1.2.11"
   },
   "devDependencies": {
+    "awesome-typescript-loader": "^3.1.2",
     "electron": "^1.6.2",
     "electron-packager": "^7.0.1",
     "electron-rebuild": "^1.5.7",
@@ -131,10 +132,14 @@
     "redux-devtools-log-monitor": "^1.0.11",
     "sinon": "^1.17.1",
     "skin-deep": "^0.16.0",
+    "source-map-loader": "^0.2.0",
     "tap-spec": "^4.1.1",
     "tape": "^4.2.1",
     "tslint": "^4.0.2",
     "typescript": "^2.2.1",
+    "webpack": "^2.3.2",
+    "webpack-dev-server": "^2.4.2",
+    "webpack-node-externals": "^1.5.4",
     "zopf": "^4.5.0"
   },
   "scripts": {

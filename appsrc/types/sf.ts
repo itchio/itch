@@ -85,6 +85,5 @@ export interface ISFStatic {
   rmdir: (file: string) => Promise<string>;
   unlink: (file: string) => Promise<string>;
 
-  fsName: string;
   fs: typeof fsModule;
 }
