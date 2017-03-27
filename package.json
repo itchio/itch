@@ -124,6 +124,7 @@
     "grunt-sass": "^1.2.0",
     "grunt-ts": "^6.0.0-beta.3",
     "grunt-tslint-ftl": "4.0.0",
+    "inject-loader": "^3.0.0",
     "load-grunt-tasks": "^3.3.0",
     "quiet-grunt": "^0.2.3",
     "react-addons-test-utils": "^15.0.0",
@@ -142,18 +143,16 @@
     "webpack": "^2.3.2",
     "webpack-dev-server": "^2.4.2",
     "webpack-node-externals": "^1.5.4",
-    "webpack-shell-plugin": "^0.5.0",
     "zopf": "^4.5.0"
   },
   "scripts": {
     "start": "electron . --color",
     "install": "electron-rebuild",
-    "test": "webpack --progress --colors --config webpack.config.tests.js",
+    "test": "webpack --progress --colors --config webpack.config.tests.js && npm run run-tests",
     "watch-tests": "webpack --progress --colors --config webpack.config.tests.js --watch",
     "serve-renderer": "webpack-dev-server --progress --colors --config webpack.config.js",
     "build-main": "webpack --progress --colors --config webpack.config.electron.js",
-    "run-tests": "node tests/runner.js | tap-spec",
-    "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "run-tests": "node tests/runner.js | tap-spec --color",
     "i18n": "release/i18n-check.sh"
   }
 }

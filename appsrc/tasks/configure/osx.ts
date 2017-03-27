@@ -16,7 +16,7 @@ export async function configure(opts: IConfigureOpts, cavePath: string): Promise
   for (const res of globRes) {
     let skip = false;
 
-    const pathElements = res.split(ospath.sep);
+    const pathElements = ospath.normalize(res).split(ospath.sep);
     let currentElements: string[] = [];
     for (const element of pathElements) {
       if (element === "__MACOSX") {

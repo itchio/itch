@@ -1,7 +1,6 @@
 
 const nodeExternals = require("webpack-node-externals");
 const {resolve} = require("path");
-const WebpackShellPlugin = require("webpack-shell-plugin");
 
 module.exports = {
   entry: [
@@ -23,12 +22,6 @@ module.exports = {
       { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
     ],
   },
-
-  plugins: [
-    new WebpackShellPlugin({
-      onBuildExit: "npm run run-tests"
-    }),
-  ],
 
   externals: [nodeExternals()],
 
