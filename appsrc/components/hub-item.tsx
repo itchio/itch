@@ -22,6 +22,7 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
     this.onContextMenu = this.onContextMenu.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
   }
 
   onContextMenu () {
@@ -29,10 +30,17 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
     openGameContextMenu({game});
   }
 
+  onMouseUp (e: React.MouseEvent<any>) {
+    console.log("mouse button: ", e.button);
+    if (e.button === 0) {
+      const {game, navigateToGame} = this.props;
+      navigateToGame(game, doesEventMeanBackground(e));
+    }
+  }
+
   render () {
     const {game, searchScore} = this.props;
     const {title, coverUrl, stillCoverUrl} = game;
-    const {navigateToGame} = this.props;
 
     let gif: boolean;
     const coverStyle: React.CSSProperties = {};
@@ -61,7 +69,7 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
         : ""
       }
       <section className="cover" style={coverStyle}
-        onMouseUp={(e) => navigateToGame(game, doesEventMeanBackground(e))}/>
+        onMouseUp={this.onMouseUp}/>
 
       <section className="undercover">
         <section className="title">

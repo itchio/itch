@@ -10,40 +10,35 @@ import os from "./util/os";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import Layout from "./components/layout";
-import Modal from "./components/modal";
-import {Provider} from "react-redux";
+import {AppContainer} from "react-hot-loader";
 import {shell} from "./electron";
+import App from "./components/app";
 
 import store from "./store";
 
 import setupShortcuts from "./shortcuts";
 
-const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === "1";
-
-let devTools: JSX.Element;
-if (REDUX_DEVTOOLS_ENABLED) {
-  const DevTools = require("./components/dev-tools").default;
-  devTools = <DevTools/>;
-}
-
 let appNode: Element;
 
-function render () {
-  setupShortcuts(store);
-
+function render (RealApp: typeof App) {
   appNode = document.querySelector("#app");
-  const rootComponent = <Provider store={store}>
-    <div>
-      <Layout/>
-      <Modal/>
-      {devTools}
-    </div>
-  </Provider>;
+  const rootComponent =
+    <AppContainer>
+      <RealApp/>
+    </AppContainer>;
   ReactDOM.render(rootComponent, appNode);
 }
 
-document.addEventListener("DOMContentLoaded", render);
+document.addEventListener("DOMContentLoaded", () => {
+  setupShortcuts(store);
+  render(App);
+
+  if ((module as any).hot) {
+    (module as any).hot.accept("./components/app", () => {
+      render(App);
+    });
+  }
+});
 
 window.addEventListener("beforeunload", () => {
   if (appNode) {
