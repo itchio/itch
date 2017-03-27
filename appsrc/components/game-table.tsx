@@ -55,10 +55,15 @@ class GameTable extends React.Component<IGameTableProps, IGameTableState> {
 
   onRowClick (params: IRowHandlerParams) {
     const {e, index} = params;
+    const {sortedGames} = this.props;
+    const game = sortedGames[index].game;
+
+    const rightButton = 2;
+    if (e.button === rightButton) {
+      this.props.openGameContextMenu({game});
+    }
     whenClickNavigates(e, ({background}) => {
-      const {sortedGames, navigateToGame} = this.props;
-      const game = sortedGames[index].game;
-      navigateToGame(game, background);
+      this.props.navigateToGame(game, background);
     });
   }
 
@@ -226,6 +231,7 @@ interface IGameTableProps {
 
   clearFilters: typeof actions.clearFilters;
   navigateToGame: typeof actions.navigateToGame;
+  openGameContextMenu: typeof actions.openGameContextMenu;
 }
 
 interface IGameTableState {
@@ -278,6 +284,7 @@ const mapStateToProps = (initialState: IState, initialProps: IGameTableProps) =>
 const mapDispatchToProps = (dispatch: IDispatch) => ({
   clearFilters: dispatcher(dispatch, actions.clearFilters),
   navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
+  openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
 });
 
 export default connect(

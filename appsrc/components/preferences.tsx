@@ -49,11 +49,13 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
     }].concat(locales);
 
     let translateUrl = `${urls.itchTranslationPlatform}/projects/itch/itch`;
-    if (lang !== "en" && lang !== "__") {
+    const english = /^en/.test(lang);
+    if (!english && lang !== "__") {
       translateUrl += `/${lang}`;
     }
 
-    const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itch/${lang || "en"}/svg-badge.svg`;
+    const badgeLang = lang ? lang.substr(0, 2) : "en";
+    const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itch/${badgeLang}/svg-badge.svg`;
 
     return <div className="preferences-meat">
       <h2>{t("preferences.language")}</h2>
@@ -169,6 +171,17 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
     return <div className="explanation advanced-form">
       <p className="section app-version">
       {versionString()}
+      <span className="button"
+          onClick={() => {
+            const {checkForSelfUpdate} = this.props;
+            checkForSelfUpdate({});
+          }}
+          style={{
+            marginLeft: "10px",
+            borderBottom: "1px solid",
+          }}>
+        Check for update
+      </span>
       </p>
       <p>
         <ProxySettings/>
@@ -323,6 +336,7 @@ interface IPreferencesProps {
   updatePreferences: typeof actions.updatePreferences;
   clearBrowsingDataRequest: typeof actions.clearBrowsingDataRequest;
   navigate: typeof actions.navigate;
+  checkForSelfUpdate: typeof actions.checkForSelfUpdate;
 }
 
 const mapDispatchToProps = (dispatch: IDispatch) => ({
@@ -334,6 +348,7 @@ const mapDispatchToProps = (dispatch: IDispatch) => ({
   updatePreferences: dispatcher(dispatch, actions.updatePreferences),
   clearBrowsingDataRequest: dispatcher(dispatch, actions.clearBrowsingDataRequest),
   navigate: dispatcher(dispatch, actions.navigate),
+  checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
 });
 
 const mapStateToProps = createStructuredSelector({

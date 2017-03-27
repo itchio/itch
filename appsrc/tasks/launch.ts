@@ -301,7 +301,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
       const previousSecondsRun = globalMarket.getEntity<ICaveRecord>("caves", cave.id).secondsRun || 0;
       const newSecondsRun = UPDATE_PLAYTIME_INTERVAL + previousSecondsRun;
       globalMarket.saveEntity("caves", cave.id, {secondsRun: newSecondsRun, lastTouched: now});
-    }, UPDATE_PLAYTIME_INTERVAL * 1000);
+    }, UPDATE_PLAYTIME_INTERVAL * 1000) as any as NodeJS.Timer;
 
     powerSaveBlockerId = opts.preferences.preventDisplaySleep ? powerSaveBlocker.start("prevent-display-sleep") : null;
 

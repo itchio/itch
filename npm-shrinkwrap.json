@@ -397,26 +397,6 @@
       "resolved": "https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz",
       "dev": true
     },
-    "awesome-typescript-loader": {
-      "version": "3.1.2",
-      "from": "awesome-typescript-loader@latest",
-      "resolved": "https://registry.npmjs.org/awesome-typescript-loader/-/awesome-typescript-loader-3.1.2.tgz",
-      "dev": true,
-      "dependencies": {
-        "lodash": {
-          "version": "4.17.4",
-          "from": "lodash@>=4.17.4 <5.0.0",
-          "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.4.tgz",
-          "dev": true
-        },
-        "object-assign": {
-          "version": "4.1.1",
-          "from": "object-assign@>=4.1.1 <5.0.0",
-          "resolved": "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz",
-          "dev": true
-        }
-      }
-    },
     "aws-sign2": {
       "version": "0.5.0",
       "from": "aws-sign2@>=0.5.0 <0.6.0",
@@ -5384,6 +5364,12 @@
       "version": "1.0.2",
       "from": "truncate-utf8-bytes@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/truncate-utf8-bytes/-/truncate-utf8-bytes-1.0.2.tgz",
+      "dev": true
+    },
+    "ts-loader": {
+      "version": "2.0.3",
+      "from": "ts-loader@latest",
+      "resolved": "https://registry.npmjs.org/ts-loader/-/ts-loader-2.0.3.tgz",
       "dev": true
     },
     "tslint": {

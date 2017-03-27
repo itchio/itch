@@ -1,21 +1,27 @@
 
+const webpack = require("webpack");
 const nodeExternals = require("webpack-node-externals");
-const {CheckerPlugin} = require("awesome-typescript-loader");
 const {resolve} = require("path");
+
+const port = process.env.PORT || 8080;
+const publicPath = `http://localhost:${port}/app`
 
 module.exports = {
     entry: [
         "react-hot-loader/patch",
+        `webpack-dev-server/client?http://localhost:${port}/`,
+        "webpack/hot/only-dev-server",
         "./appsrc/chrome.tsx",
     ],
     output: {
-        filename: "chrome.js",
         path: resolve(__dirname, "app"),
+        filename: "chrome.js",
         libraryTarget: "commonjs2",
+        publicPath,
     },
 
     // Enable sourcemaps for debugging webpack's output.
-    devtool: "eval",
+    devtool: "inline-source-map",
 
     resolve: {
         // Add '.ts' and '.tsx' as resolvable extensions.
@@ -24,23 +30,28 @@ module.exports = {
 
     module: {
         rules: [
-            // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-            { test: /\.tsx?$/, loaders: ["react-hot-loader/webpack", "awesome-typescript-loader"] },
-
-            // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+            { test: /\.tsx?$/, loaders: ["react-hot-loader/webpack", "ts-loader"] },
             { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
         ],
     },
 
-    // externals: nodeExternals(),
+    externals: [nodeExternals({
+        whitelist: [/webpack/]
+    })],
 
     plugins: [
-        new CheckerPlugin(),
+        new webpack.NamedModulesPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
     ],
 
     target: "electron-renderer",
 
     devServer: {
+        port,
+        hot: true,
+        inline: false,
+        historyApiFallback: true,
         contentBase: resolve(__dirname, "app"),
+        publicPath,
     },
 };

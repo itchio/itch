@@ -35,7 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if ((module as any).hot) {
     (module as any).hot.accept("./components/app", () => {
-      render(App);
+      const NextApp = require("./components/app").default;
+      render(NextApp);
     });
   }
 });

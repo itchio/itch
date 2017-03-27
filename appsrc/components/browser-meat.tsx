@@ -169,7 +169,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
             this.registerScrollTop(url, scrollTop);
           }
         });
-      }, 700);
+      }, 700) as any as NodeJS.Timer;
     };
 
     const scrollHistoryItem = findWhere(this.state.scrollHistory, {url});
