@@ -1,7 +1,7 @@
 
 // tslint:disable:no-shadowed-variable
 
-import test = require ("zopf");
+import test = require("zopf");
 import * as sinon from "sinon";
 import * as path from "path";
 
@@ -9,11 +9,23 @@ import {EventEmitter} from "events";
 
 import fixture from "../fixture";
 
-import mklog from "../../util/log";
-const logger = new mklog.Logger({sinks: {console: false}});
-const opts = {id: "kalamazoo", logger};
+import mklog, {Logger} from "../../util/log";
+const testLogger = (t: any): Logger => {
+  return new mklog.Logger({
+    sinks: {
+      console: false,
+      // stream: {
+      //   write: (contents: string) => (t as any).comment(contents),
+      //   end: () => { /* muffin */ },
+      // },
+    },
+  });
+};
 
 test("configure", (t) => {
+  const logger = testLogger(t);
+  const opts = {id: "kalamazoo", logger};
+
   const os = test.module({
     itchPlatform: () => null,
   });
@@ -30,7 +42,7 @@ test("configure", (t) => {
 
   const pathmaker = test.module({
     appPath: () => "/dev/null",
-    caveLogger: () => new mklog.Logger(),
+    caveLogger: () => logger,
   });
   const globalMarket = test.module({
     saveEntity: noop,
@@ -70,6 +82,9 @@ test("configure", (t) => {
 });
 
 test("configure (each platform)", (t) => {
+  const logger = testLogger(t);
+  const opts = {id: "kalamazoo", logger};
+
   const originalSf = require("../../util/sf").default;
   t.stub(originalSf, "chmod").resolves(null);
 

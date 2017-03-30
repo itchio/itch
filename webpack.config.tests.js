@@ -16,6 +16,8 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js", ".json"]
   },
 
+  devtool: "inline-source-map",
+
   module: {
     rules: [
       { test: /\.tsx?$/, loaders: ["ts-loader"] },
@@ -25,10 +27,10 @@ module.exports = {
 
   externals: [nodeExternals()],
 
-  target: "node",
+  target: "electron-main",
 
   node: {
     __dirname: false,
     __filename: false,
-  }
+  },
 };

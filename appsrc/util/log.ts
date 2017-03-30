@@ -99,6 +99,11 @@ export class Logger {
           break;
         }
 
+        case "stream": {
+          this.fileSink = val;
+          break;
+        }
+
         case "string": {
           this.stringSink = !!val;
           break;

@@ -116,6 +116,7 @@
     "electron": "^1.6.2",
     "electron-packager": "^7.0.1",
     "electron-rebuild": "^1.5.7",
+    "faucet": "0.0.1",
     "grunt": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-electron-installer": "^2.1.0",
@@ -133,9 +134,7 @@
     "redux-devtools-filter-actions": "^1.1.1",
     "redux-devtools-log-monitor": "^1.0.11",
     "sinon": "^1.17.1",
-    "skin-deep": "^0.16.0",
     "source-map-loader": "^0.2.0",
-    "tap-spec": "^4.1.1",
     "tape": "^4.2.1",
     "ts-loader": "^2.0.3",
     "tslint": "^4.0.2",
@@ -148,12 +147,12 @@
   "scripts": {
     "start": "electron . --color",
     "install": "electron-rebuild",
-    "test": "webpack --progress --colors --config webpack.config.tests.js && npm run run-tests",
+    "test": "webpack --progress --colors --config webpack.config.tests.js && npm run -s run-tests",
     "watch-tests": "webpack --progress --colors --config webpack.config.tests.js --watch",
     "serve-chrome": "webpack-dev-server --progress --colors --config webpack.config.chrome.js",
     "build-metal": "webpack --progress --colors --config webpack.config.metal.js",
     "watch-metal": "webpack --progress --colors --config webpack.config.metal.js --watch",
-    "run-tests": "node tests/runner.js | tap-spec --color",
+    "run-tests": "electron tests/runner.js",
     "i18n": "release/i18n-check.sh"
   }
 }
