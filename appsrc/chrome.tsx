@@ -14,7 +14,7 @@ import {AppContainer} from "react-hot-loader";
 import {shell} from "./electron";
 import App from "./components/app";
 
-import store from "./store";
+import store from "./store/chrome-store";
 
 import setupShortcuts from "./shortcuts";
 

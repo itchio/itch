@@ -1,4 +1,8 @@
 
+if (process.type !== "browser") {
+  throw new Error("metal store required from chrome");
+}
+
 import { createStore, applyMiddleware, compose, GenericStoreEnhancer, Store } from "redux";
 import { electronEnhancer } from "redux-electron-store";
 

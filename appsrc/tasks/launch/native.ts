@@ -14,7 +14,7 @@ import linuxSandboxTemplate from "../../constants/sandbox-policies/linux-templat
 
 import * as actions from "../../actions";
 
-import store from "../../store";
+import store from "../../store/metal-store";
 import sandbox from "../../util/sandbox";
 import os from "../../util/os";
 import sf from "../../util/sf";
@@ -51,7 +51,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
   invariant(game, "was able to fetch game properly");
 
   let {isolateApps} = opts.preferences;
-  const appPath = pathmaker.appPath(cave);
+  const appPath = pathmaker.appPath(cave, store.getState().preferences);
   let exePath: string;
   let console = false;
 

@@ -182,7 +182,7 @@ export default function (watcher: Watcher) {
           upload: upload,
           handPicked: (pickedUpload != null),
           totalSize: upload.size,
-          destPath: pathmaker.downloadPath(upload),
+          destPath: pathmaker.downloadPath(upload, store.getState().preferences),
           downloadKey,
           reason: "install",
           password,

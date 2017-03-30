@@ -23,16 +23,11 @@ import * as actions from "../actions";
 import {map, each, filter} from "underscore";
 
 import diskspace from "../util/diskspace";
+import pathmaker from "../util/pathmaker";
 
 import {IState, ILocaleInfo, IPreferencesState, IInstallLocation} from "../types";
 import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
-
-function getAppLogPath () {
-  const logOpts = require("electron").remote.require("./logger");
-  const logPath = logOpts.logger.opts.sinks.file;
-  return logPath;
-}
 
 // TODO: split into smaller components
 
@@ -187,7 +182,7 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
         <ProxySettings/>
       </p>
       <p className="section">
-        <span className="link" onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()); }}>
+        <span className="link" onClick={(e) => { e.preventDefault(); shell.openItem(pathmaker.logPath()); }}>
         {t("preferences.advanced.open_app_log")}
         </span>
       </p>

@@ -1,5 +1,5 @@
 
-import store from "../store";
+import store from "../store/chrome-store";
 import * as React from "react";
 import {Provider} from "react-redux";
 

@@ -30,9 +30,10 @@ export default function (watcher: Watcher) {
     const {update, upload, handPicked} = action.payload;
     const {game, downloadKey, incremental, upgradePath} = update;
 
-    const cave = store.getState().globalMarket.caves[action.payload.caveId];
+    const state = store.getState();
+    const cave = state.globalMarket.caves[action.payload.caveId];
 
-    const destPath = pathmaker.downloadPath(upload);
+    const destPath = pathmaker.downloadPath(upload, state.preferences);
 
     let totalSize = upload.size;
     if (update.incremental) {

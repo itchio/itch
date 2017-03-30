@@ -27,6 +27,8 @@ const log = mklog("launch/html");
 
 import {IStartTaskOpts} from "../../types";
 
+import store from "../../store/metal-store";
+
 interface IBeforeSendHeadersDetails {
   url: string;
 }
@@ -101,7 +103,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game});
   const injectPath = ospath.resolve(__dirname, "inject", "game.js");
 
-  const appPath = pathmaker.appPath(cave);
+  const appPath = pathmaker.appPath(cave, store.getState().preferences);
   const entryPoint = ospath.join(appPath, cave.gamePath);
 
   log(opts, `entry point: ${entryPoint}`);

@@ -4,8 +4,9 @@ import * as electron from "electron";
 import {IWebView, IMenuItem} from "../electron/types";
 
 import * as actions from "../actions";
-import {IStore} from "../types";
 import {getT} from "../localizer";
+
+import store from "../store/chrome-store";
 
 interface IContextMenuOpts {
   navigate: typeof actions.navigate;
@@ -22,7 +23,6 @@ export default function create(win: IWebView, opts: IContextMenuOpts) {
     const hasText = props.selectionText.trim().length > 0;
     const can = (type: string) => editFlags[`can${type}`] && hasText;
 
-    const store = require("../store").default as IStore;
     const {lang, strings} = store.getState().i18n;
     const t = getT(strings, lang);
 

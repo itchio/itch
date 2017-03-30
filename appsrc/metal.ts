@@ -38,7 +38,7 @@ function autoUpdateDone () {
   }
   protocol.registerStandardSchemes(["itch-cave"]);
 
-  const store = require("./store").default;
+  const store = require("./store/metal-store").default;
 
   app.on("ready", async function () {
     const shouldQuit = app.makeSingleInstance((argv, cwd) => {

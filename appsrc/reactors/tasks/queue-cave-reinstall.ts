@@ -55,7 +55,7 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    const archivePath = pathmaker.downloadPath(upload);
+    const archivePath = pathmaker.downloadPath(upload, store.getState().preferences);
 
     const findDownloadKey = () => {
       return findWhere(getUserMarket().getEntities<IDownloadKey>("downloadKeys"), {gameId: game.id});

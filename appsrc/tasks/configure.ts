@@ -18,6 +18,8 @@ import * as linuxConfigure from "./configure/linux";
 import * as osxConfigure from "./configure/osx";
 import * as windowsConfigure from "./configure/windows";
 
+import store from "../store/metal-store";
+
 interface IConfigureFunction {
   (opts: IConfigureOpts, appPath: string): Promise<IConfigureResult>;
 }
@@ -55,7 +57,7 @@ export default async function start(out: EventEmitter, inOpts: IConfigureOpts) {
     logger: pathmaker.caveLogger(cave.id),
   };
 
-  const appPath = pathmaker.appPath(cave);
+  const appPath = pathmaker.appPath(cave, store.getState().preferences);
   log(opts, `configuring ${appPath}`);
 
   const launchType = upload.type === "html" ? "html" : "native";

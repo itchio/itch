@@ -10,7 +10,7 @@ interface IWatcher {
     removeSub(sub: IWatcher): void;
 }
 
-export interface IRendererStore extends IStore {
+export interface IChromeStore extends IStore {
     watcher: IWatcher;
 }
 

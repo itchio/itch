@@ -10,6 +10,8 @@ import downloadPatches from "./download-patches";
 import {EventEmitter} from "events";
 import {IDownloadOpts} from "../../types";
 
+import store from "../../store/metal-store";
+
 export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
   let opts = inOpts;
   if (opts.cave) {
@@ -46,8 +48,8 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
     const archiveURL = api.downloadBuildURL(downloadKey, upload.id, buildId, "archive", {password, secret});
     const signatureURL = api.downloadBuildURL(downloadKey, upload.id, buildId, "signature", {password, secret});
 
-    const store = require("../../store").default;
-    const {defaultInstallLocation} = store.getState().preferences;
+    const {preferences} = store.getState();
+    const {defaultInstallLocation} = preferences;
     const installLocation = defaultInstallLocation;
     const installFolder = pathmaker.sanitize(game.title);
 
@@ -57,7 +59,7 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
       pathScheme: 2, // see pathmaker
     };
 
-    const fullInstallFolder = pathmaker.appPath(cave);
+    const fullInstallFolder = pathmaker.appPath(cave, preferences);
     log(opts, `Doing verify+heal to ${fullInstallFolder}`);
 
     await butler.verify(signatureURL, fullInstallFolder, {

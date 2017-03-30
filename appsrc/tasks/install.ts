@@ -15,10 +15,11 @@ const log = mklog("install");
 import core from "./install/core";
 import {findWhere} from "underscore";
 
-import {IStartTaskOpts, IProgressInfo, ICaveRecord} from "../types";
+import {IStartTaskOpts, IProgressInfo, ICaveRecord, IStore} from "../types";
 
-function defaultInstallLocation () {
-  const store = require("../store").default;
+import store from "../store/metal-store";
+
+function defaultInstallLocation (store: IStore) {
   const {defaultInstallLocation} = store.getState().preferences;
   return defaultInstallLocation;
 }
@@ -32,8 +33,9 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
   }
   invariant(opts.game, "install must have a game");
   invariant(opts.upload, "install must have an upload");
+
   const {market, credentials, globalMarket, archivePath, downloadKey, game, upload,
-    installLocation = defaultInstallLocation(), handPicked, becauseHeal} = opts;
+    installLocation = defaultInstallLocation(store), handPicked, becauseHeal} = opts;
 
   const grabCave = () => findWhere(globalMarket.getEntities<ICaveRecord>("caves"), {gameId: game.id});
   let {cave = grabCave()} = opts;
@@ -59,7 +61,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
 
     if (!opts.reinstall && !becauseHeal) {
       const installFolderExists = async function () {
-        const fullPath = pathmaker.appPath(cave);
+        const fullPath = pathmaker.appPath(cave, store.getState().preferences);
         return await sf.exists(fullPath);
       };
 
@@ -85,7 +87,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
   if (becauseHeal) {
     amtime = Date.parse(upload.build.updatedAt);
   } else {
-    let destPath = pathmaker.appPath(cave);
+    let destPath = pathmaker.appPath(cave, store.getState().preferences);
 
     let archiveStat: Stats;
     try {
