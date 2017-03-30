@@ -53,7 +53,7 @@ async function createWindow (store: IStore, hidden: boolean) {
     iconName = "icon-32";
   }
 
-  const iconPath = ospath.resolve(`${__dirname}/../static/images/window/${app.getName()}/${iconName}.png`);
+  const iconPath = ospath.resolve(`${__dirname}/static/images/window/${app.getName()}/${iconName}.png`);
   log(opts, `creating main window with icon: ${iconPath}`);
   log(opts, "cf. https://github.com/electron/electron/issues/6205");
 
@@ -193,7 +193,7 @@ async function createWindow (store: IStore, hidden: boolean) {
     }
   });
 
-  const uri = `file://${__dirname}/../index.html`;
+  const uri = `file://${__dirname}/index.html`;
   window.loadURL(uri);
   log(opts, "Calling loadURL");
 }

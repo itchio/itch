@@ -126,6 +126,8 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
     }
 
     // FIXME: this will display the wrong date for builds
+    console.log(`installedArchiveMtime: ${JSON.stringify(cave.installedArchiveMtime)}`);
+    console.log(`typeof installedArchiveMtime: ${typeof cave.installedArchiveMtime}`);
     const hint = `${format.date(cave.installedArchiveMtime, DATE_FORMAT, t.lang)}`;
 
     items.push({

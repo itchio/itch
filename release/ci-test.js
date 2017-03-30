@@ -7,7 +7,6 @@ const $ = require('./common')
 $.show_versions(['npm', 'gsutil'])
 
 $($.npm('install'))
-$($.npm('install grunt-cli codecov nyc'))
+$($.npm('install grunt-cli'))
 
 $($.npm('test'))
-$($.npm('run codecov'))

@@ -99,7 +99,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   invariant(args, "launch-html has args");
 
   const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game});
-  const injectPath = ospath.resolve(__dirname, "..", "..", "inject", "game.js");
+  const injectPath = ospath.resolve(__dirname, "inject", "game.js");
 
   const appPath = pathmaker.appPath(cave);
   const entryPoint = ospath.join(appPath, cave.gamePath);

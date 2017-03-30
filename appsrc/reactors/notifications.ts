@@ -34,7 +34,7 @@ export default function (watcher: Watcher) {
         tray.displayBalloon({
           title,
           // this particular API requires absolute paths for some reason 
-          icon: ospath.join(__dirname, "..", icon),
+          icon: ospath.join(__dirname, icon),
           content: body,
         });
       }

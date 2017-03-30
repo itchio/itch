@@ -47,7 +47,7 @@ function makeTray (store: IStore) {
   }
 
   const iconName = `${base}${suffix}.png`;
-  const iconPath = ospath.resolve(`${__dirname}/../static/images/tray/${iconName}`);
+  const iconPath = ospath.resolve(`${__dirname}/static/images/tray/${iconName}`);
   tray = new Tray(iconPath);
   tray.setToolTip("itch.io");
   tray.on("click", () => store.dispatch(actions.focusWindow({toggle: true})));

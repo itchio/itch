@@ -4,12 +4,14 @@ const nodeExternals = require("webpack-node-externals");
 const {resolve} = require("path");
 
 module.exports = {
-    entry: [
-        "./appsrc/metal.ts",
-    ],
+    entry: {
+        "metal.js": "./appsrc/metal.ts",
+        "inject/itchio-monkeypatch.js": "./appsrc/inject/itchio-monkeypatch.ts",
+        "inject/game.js": "./appsrc/inject/game.ts",
+    },
     output: {
         path: resolve(__dirname, "app"),
-        filename: "metal.js",
+        filename: "[name]",
         libraryTarget: "commonjs2",
     },
 

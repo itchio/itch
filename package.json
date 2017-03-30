@@ -150,8 +150,9 @@
     "install": "electron-rebuild",
     "test": "webpack --progress --colors --config webpack.config.tests.js && npm run run-tests",
     "watch-tests": "webpack --progress --colors --config webpack.config.tests.js --watch",
-    "serve-renderer": "webpack-dev-server --progress --colors --config webpack.config.js",
-    "build-main": "webpack --progress --colors --config webpack.config.electron.js",
+    "serve-chrome": "webpack-dev-server --progress --colors --config webpack.config.chrome.js",
+    "build-metal": "webpack --progress --colors --config webpack.config.metal.js",
+    "watch-metal": "webpack --progress --colors --config webpack.config.metal.js --watch",
     "run-tests": "node tests/runner.js | tap-spec --color",
     "i18n": "release/i18n-check.sh"
   }

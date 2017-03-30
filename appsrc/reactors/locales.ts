@@ -14,7 +14,7 @@ import delay from "../reactors/delay";
 const upgradesEnabled = (env.name === "production") || (process.env.DID_I_STUTTER === "1");
 
 const remoteDir = ospath.join(app.getPath("userData"), "locales");
-const localesDir = ospath.resolve(ospath.join(__dirname, "..", "static", "locales"));
+const localesDir = ospath.resolve(ospath.join(__dirname, "static", "locales"));
 const localesConfigPath = ospath.resolve(ospath.join(localesDir, "..", "locales.json"));
 
 import {IStore, II18nResources} from "../types";

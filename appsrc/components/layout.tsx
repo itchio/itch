@@ -32,7 +32,7 @@ class Layout extends React.Component<ILayoutProps, void> {
       const opts = {...action.payload.opts};
 
       if (opts.icon) {
-        opts.icon = ospath.resolve(ospath.join(__dirname, "..", opts.icon));
+        opts.icon = ospath.resolve(ospath.join(__dirname, opts.icon));
       }
       const notification = new Notification(title, opts);
 

@@ -3,7 +3,7 @@ const webpack = require("webpack");
 const nodeExternals = require("webpack-node-externals");
 const {resolve} = require("path");
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8009;
 const publicPath = `http://localhost:${port}/app`
 
 module.exports = {
@@ -11,6 +11,7 @@ module.exports = {
         "react-hot-loader/patch",
         `webpack-dev-server/client?http://localhost:${port}/`,
         "webpack/hot/only-dev-server",
+        "./appsrc/webpack-require.ts",
         "./appsrc/chrome.tsx",
     ],
     output: {
@@ -21,7 +22,7 @@ module.exports = {
     },
 
     // Enable sourcemaps for debugging webpack's output.
-    devtool: "inline-source-map",
+    devtool: "eval",
 
     resolve: {
         // Add '.ts' and '.tsx' as resolvable extensions.

@@ -20,7 +20,7 @@ import * as actions from "../actions";
 import {BrowserWindow} from "electron";
 import * as ospath from "path";
 
-const injectPath = ospath.resolve(__dirname, "..", "inject", "itchio-monkeypatch.js");
+const injectPath = ospath.resolve(__dirname, "inject", "itchio-monkeypatch.js");
 
 /**
  * Creates a new browser window to initiate the purchase flow
