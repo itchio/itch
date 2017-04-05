@@ -364,5 +364,6 @@
     "usage_stats.never_used": "未曾使用",
     "usage_stats.last_used_time_ago": "最后使用于 {{time_ago}}",
     "usage_stats.last_played_time_ago": "最后玩过于 {{time_ago}}",
-    "prompt.install_error.find_upload": "搜索下载时：{{message}}"
+    "prompt.install_error.find_upload": "搜索下载时：{{message}}",
+    "grid.item.view_details": "查看详情..."
 }
