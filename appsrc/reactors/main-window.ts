@@ -193,9 +193,10 @@ async function createWindow (store: IStore, hidden: boolean) {
     }
   });
 
-  const uri = `file://${__dirname}/index.html`;
+  log(opts, `dirname is ${__dirname}`);
+  const uri = `file://${__dirname}/index.real.html`; // sic.
+  log(opts, `Calling loadURL with ${uri}`);
   window.loadURL(uri);
-  log(opts, "Calling loadURL");
 }
 
 /**

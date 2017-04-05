@@ -21,9 +21,8 @@ interface IExtendedWindow {
 const extendedWindow = (window as any) as IExtendedWindow;
 
 setTimeout(function () {
-  const {remote} = require("electron");
-  const urlParser = remote.require("./util/url").default;
-  const store = remote.require("./store").default;
+  const urlParser = require("../util/url").default;
+  const store = require("../store/chrome-store").default;
   const querystring = require("querystring");
 
   const sendMessage = (verb: string, userAttrs = {}) => {

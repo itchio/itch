@@ -1,7 +1,6 @@
 
 import {Watcher} from "./watcher";
 
-import * as ospath from "path";
 import os from "../util/os";
 import localizer from "../localizer";
 import {app, Menu, Tray, IMenuTemplate} from "../electron";
@@ -42,12 +41,12 @@ function makeTray (store: IStore) {
 
   let base = "white";
   if (os.platform() === "win32" && !/^10\./.test(os.release())) {
-    // windows older than 10 get the old colorful tra yicon
+    // windows older than 10 get the old colorful tray icon
     base = app.getName();
   }
 
   const iconName = `${base}${suffix}.png`;
-  const iconPath = ospath.resolve(`${__dirname}/static/images/tray/${iconName}`);
+  const iconPath = require("../static/images/tray/" + iconName);
   tray = new Tray(iconPath);
   tray.setToolTip("itch.io");
   tray.on("click", () => store.dispatch(actions.focusWindow({toggle: true})));

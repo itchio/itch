@@ -51,7 +51,7 @@ export class GatePage extends React.Component<IGatePageProps, void> {
     return <div className={classes} data-stage={stage}>
       <section className="top-filler"/>
       <section className="logo">
-        <img src="static/images/logos/app-white.svg"/>
+        <img src={require("../static/images/logos/app-white.svg")}/>
       </section>
 
       {this.errors()}

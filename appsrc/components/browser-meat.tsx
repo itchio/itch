@@ -10,17 +10,16 @@ import * as actions from "../actions";
 import urlParser from "../util/url";
 import navigation from "../util/navigation";
 import partitionForUser from "../util/partition-for-user";
+import injectPath from "../util/inject-path";
 
 import staticTabData from "../constants/static-tab-data";
 
 import * as querystring from "querystring";
-import * as ospath from "path";
 import {uniq, findWhere} from "underscore";
 
 import {IBrowserState} from "./browser-state";
 import createContextMenu from "./browser-meat-context-menu";
 
-const injectPath = ospath.resolve(__dirname, "inject", "itchio-monkeypatch.js");
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
 const WILL_NAVIGATE_GRACE_PERIOD = 3000;
@@ -362,7 +361,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 
     wv.partition = partition;
     wv.plugins = true;
-    wv.preload = injectPath;
+    wv.preload = injectPath("itchio-monkeypatch");
 
     const callbackSetup = () => {
       wv.addEventListener("did-start-loading", this.didStartLoading.bind(this));
