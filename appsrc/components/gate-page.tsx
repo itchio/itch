@@ -43,7 +43,7 @@ export class GatePage extends React.Component<IGatePageProps, void> {
   }
 
   render () {
-    const {t, stage, blockingOperation, halloween} = this.props;
+    const {t, stage, blockingOperation} = this.props;
     const disabled = !!blockingOperation;
 
     const classes = classNames("gate-page", {disabled});
@@ -51,7 +51,7 @@ export class GatePage extends React.Component<IGatePageProps, void> {
     return <div className={classes} data-stage={stage}>
       <section className="top-filler"/>
       <section className="logo">
-        <img src={`static/images/logos/app-${halloween ? "halloween" : "white"}.svg`}/>
+        <img src="static/images/logos/app-white.svg"/>
       </section>
 
       {this.errors()}
@@ -72,13 +72,13 @@ export class GatePage extends React.Component<IGatePageProps, void> {
   }
 
   errors () {
-    const {t, errors, stage, halloween} = this.props;
+    const {t, errors, stage} = this.props;
 
     if (stage === "pick") {
       return <section className="errors">
         <span className="welcome-back">
           <Icon icon="heart-filled"/>
-          {t("login.messages.welcome_back" + (halloween ? "-halloween" : ""))}
+          {t("login.messages.welcome_back")}
         </span>
       </section>;
     } else {
@@ -202,8 +202,6 @@ interface IGatePageProps {
   blockingOperation?: ISetupOperation;
   rememberedSessions: IRememberedSessionsState;
 
-  halloween: boolean;
-
   t: ILocalizer;
 
   loginWithPassword: typeof actions.loginWithPassword;
@@ -216,17 +214,16 @@ interface IGatePageProps {
 
 const mapStateToProps = (state: IState): Partial<IGatePageProps> => {
   const {rememberedSessions, session} = state;
-  const {halloween} = state.status.bonuses;
   const {login} = session;
 
   if (!session.credentials.key) {
     const hasSessions = Object.keys(rememberedSessions).length > 0;
     const stage = (!login.blockingOperation && hasSessions && login.picking) ? "pick" : "login";
-    return {...login, stage, rememberedSessions, halloween};
+    return {...login, stage, rememberedSessions};
   } else if (!state.setup.done) {
-    return {stage: "setup", ...state.setup, halloween};
+    return {stage: "setup", ...state.setup};
   } else {
-    return {stage: "ready", errors: [], blockingOperation: null, halloween};
+    return {stage: "ready", errors: [], blockingOperation: null};
   }
 };
 

@@ -45,9 +45,7 @@ class Layout extends React.Component<ILayoutProps, void> {
   }
 
   render () {
-    const {halloween} = this.props;
-
-    return <div className={`layout ${halloween ? "halloween" : ""}`}>
+    return <div className="layout">
       <div className="layout-main">
         <div className="layout-draggable"/>
         {this.main()}
@@ -75,12 +73,10 @@ class Layout extends React.Component<ILayoutProps, void> {
 
 interface ILayoutProps {
   page: string;
-  halloween: boolean;
 }
 
 const mapStateToProps = createStructuredSelector({
   page: (state: IState) => state.session.navigation.page,
-  halloween: (state: IState) => state.status.bonuses.halloween,
 });
 
 const mapDispatchToProps = () => ({});

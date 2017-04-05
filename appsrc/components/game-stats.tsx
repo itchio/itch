@@ -39,7 +39,7 @@ export class GameStats extends React.Component<IGameStatsProps, void> {
       if (classAction === "launch") {
         for (const p of platformData) {
           if ((game as any)[p.field]) {
-            platforms.push(<Icon title={p.platform} icon={p.icon}/>);
+            platforms.push(<Icon hint={p.platform} icon={p.icon}/>);
           }
         }
       }

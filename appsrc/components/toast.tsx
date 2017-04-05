@@ -49,7 +49,7 @@ export class Toast extends React.Component<IToastProps, IToastState> {
     const {t, data = {}} = this.props;
 
     return <div className="toast-meat">
-      <Icon icon="heart-broken" classes="leader"/>
+      <Icon icon="heart-broken" classes={["leader"]}/>
       <h2>{t("toast.title")}</h2>
 
       <p>{t("toast.message")} {t("toast.call_to_action")}</p>

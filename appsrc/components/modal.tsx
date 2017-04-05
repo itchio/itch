@@ -89,7 +89,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
   }
 
   render () {
-    const {t, modals = [], closeModal, halloween} = this.props;
+    const {t, modals = [], closeModal} = this.props;
 
     const modal = modals[0];
 
@@ -97,7 +97,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
       const {bigButtons = [], buttons = [], cover, title = "", message = "", detail, widget} = modal;
 
       return <ReactModal isOpen style={customStyles}>
-        <div className={`modal ${halloween ? "halloween" : ""}`}>
+        <div className="modal">
           <div className="header">
             <h2>{t.format(title)}</h2>
             <div className="filler"/>
@@ -219,7 +219,6 @@ export class Modal extends React.Component<IModalProps, IModalState> {
 
 interface IModalProps {
   modals: IModal[];
-  halloween: boolean;
   t: ILocalizer;
 
   closeModal(payload: ICloseModalPayload): void;
@@ -232,7 +231,6 @@ interface IModalState {
 
 const mapStateToProps = (state: IState) => ({
   modals: state.modals,
-  halloween: state.status.bonuses.halloween,
 });
 
 const mapDispatchToProps = (dispatch: IDispatch, props: IModalProps) => ({

@@ -1392,9 +1392,7 @@ export interface IOpenAtLoginError {
 export interface IStatusState {
     messages: ILocalizedString[];
     /** app easter eggs, enabled throughout some periods */
-    bonuses: {
-        halloween: boolean;
-    };
+    bonuses: {};
     openAtLoginError: IOpenAtLoginError;
 }
 

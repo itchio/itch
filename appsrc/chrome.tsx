@@ -18,6 +18,8 @@ import store from "./store/chrome-store";
 
 import setupShortcuts from "./shortcuts";
 
+require("./style/bundle.scss");
+
 let appNode: Element;
 
 function render (RealApp: typeof App) {

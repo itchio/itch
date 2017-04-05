@@ -199,7 +199,6 @@ interface IMainActionProps extends IActionsInfo {
   cancellable: boolean;
 
   pressDownload: boolean;
-  halloween: boolean;
   downloadsByGameId: {
     [gameId: string]: IDownloadItem;
   };
@@ -218,7 +217,6 @@ interface IMainActionProps extends IActionsInfo {
 }
 
 const mapStateToProps = (state: IState) => ({
-  halloween: state.status.bonuses.halloween,
   downloadsByGameId: state.downloads.downloadsByGameId,
   downloadsPaused: state.downloads.downloadsPaused,
 });

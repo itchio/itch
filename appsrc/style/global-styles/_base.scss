@@ -35,10 +35,6 @@ body, input {
     top: 0;
     bottom: $status-bar-height;
   }
-
-  &.halloween {
-    filter: sepia(30%);
-  }
 }
 
 .circle-container {
