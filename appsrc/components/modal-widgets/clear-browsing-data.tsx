@@ -10,7 +10,7 @@ import * as humanize from "humanize-plus";
 
 import LoadingCircle from "../loading-circle";
 
-import {ISession} from "../../electron/types";
+import "electron";
 
 export class ClearBrowsingData extends React.Component<IProps & IDerivedProps & I18nProps, IClearBrowsingDataState> {
   constructor () {
@@ -25,8 +25,9 @@ export class ClearBrowsingData extends React.Component<IProps & IDerivedProps & 
   componentDidMount() {
     const {userId} = this.props;
 
+    // FIXME: surely there's something less horrible we can do?
     const {session} = require("electron").remote.require("electron");
-    const ourSession = session.fromPartition(partitionForUser(String(userId))) as ISession;
+    const ourSession = session.fromPartition(partitionForUser(String(userId))) as Electron.Session;
 
     ourSession.getCacheSize((cacheSize) => {
       this.setState({

@@ -6,8 +6,7 @@ import {createSelector} from "reselect";
 import {makeLabel} from "../util/navigation";
 
 import {darkMineShaft} from "../constants/colors";
-import {app, BrowserWindow} from "../electron";
-import {IBrowserWindow} from "../electron/types";
+import {app, BrowserWindow} from "electron";
 import config from "../util/config";
 import os from "../util/os";
 import * as ospath from "path";
@@ -203,7 +202,7 @@ async function createWindow (store: IStore, hidden: boolean) {
  * Make sure the window isn't outside the bounds of the screen,
  * cf. https://github.com/itchio/itch/issues/1051
  */
-function ensureWindowInsideDisplay (window: IBrowserWindow) {
+function ensureWindowInsideDisplay (window: Electron.BrowserWindow) {
   const originalBounds = window.getBounds();
   log(opts, `Ensuring ${JSON.stringify(originalBounds)} is inside a display`);
 
@@ -265,7 +264,7 @@ async function exitFullScreen () {
   }
 }
 
-function showWindow (window: IBrowserWindow) {
+function showWindow (window: Electron.BrowserWindow) {
   window.show();
   const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false;
   if (maximized && !macOs) {

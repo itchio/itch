@@ -15,7 +15,7 @@ import {createSelector, createStructuredSelector} from "reselect";
 import * as actions from "../actions";
 import {pathToIcon, makeLabel} from "../util/navigation";
 
-import {app} from "../electron";
+import {app} from "electron";
 const appVersion = app.getVersion();
 
 import HubSidebarItem from "./hub-sidebar-item";

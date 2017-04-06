@@ -1,6 +1,6 @@
 
 import * as path from "path";
-import { app } from "../electron";
+import {app} from "electron";
 
 import * as invariant from "invariant";
 

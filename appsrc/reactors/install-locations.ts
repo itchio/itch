@@ -15,7 +15,7 @@ import localizer from "../localizer";
 
 import * as actions from "../actions";
 
-import {BrowserWindow, dialog} from "../electron";
+import {BrowserWindow, dialog} from "electron";
 
 import {IStore, IAppState} from "../types";
 import {IAddInstallLocationPayload} from "../constants/action-types";
@@ -150,7 +150,8 @@ export default function (watcher: Watcher) {
 
     const dialogOpts = {
       title: t("prompt.install_location_add.title"),
-      properties: ["openDirectory", "createDirectory"],
+      // crazy typescript workaround, avert your eyes
+      properties: ["openDirectory", "createDirectory"] as ("openDirectory" | "createDirectory")[],
     };
 
     const promise = new Promise<IAddInstallLocationPayload>((resolve, reject) => {

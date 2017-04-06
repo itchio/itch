@@ -3,8 +3,7 @@ import {Watcher} from "./watcher";
 
 import * as clone from "clone";
 
-import {BrowserWindow, Menu} from "../electron";
-import {IMenuItem} from "../electron/types";
+import {BrowserWindow, Menu} from "electron";
 import localizer from "../localizer";
 
 import {IStore} from "../types";
@@ -22,6 +21,8 @@ import mklog from "../util/log";
 import {opts} from "../logger";
 const log = mklog("reactors/context-menu");
 
+type IMenuItem = Electron.MenuItemOptions;
+
 function openMenu (store: IStore, template: IMenuItem[]) {
   if (template.length === 0) {
     // showing empty context menus would be NSANE!
@@ -31,7 +32,8 @@ function openMenu (store: IStore, template: IMenuItem[]) {
   const menu = Menu.buildFromTemplate(clone(template));
   const mainWindowId = store.getState().ui.mainWindow.id;
   const mainWindow = BrowserWindow.fromId(mainWindowId);
-  menu.popup(mainWindow, {async: true});
+  // FIXME: change when typings are updated
+  (menu.popup as any)(mainWindow, {async: true});
 }
 
 export default function (watcher: Watcher) {

@@ -1,7 +1,7 @@
 
 import * as nconf from "nconf";
 import * as ospath from "path";
-import {app} from "../electron";
+import {app} from "electron";
 
 let configFile = ospath.join(app.getPath("userData"), "config.json");
 try {

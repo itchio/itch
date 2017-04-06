@@ -6,7 +6,7 @@ import {dirname, basename, join} from "path";
 import * as invariant from "invariant";
 import * as querystring from "querystring";
 
-import {app, BrowserWindow, shell} from "../../electron";
+import {app, BrowserWindow, shell} from "electron";
 
 import spawn from "../../util/spawn";
 import url from "../../util/url";
@@ -277,10 +277,10 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
       shm.create();
 
       connection.writePacket((builder) => {
-        const offset = messages.VideoSetup.createOffsetVector(builder, [builder.createLong(0)]);
-        const linesize = messages.VideoSetup.createLinesizeVector(builder, [builder.createLong(pitch)]);
+        const offset = messages.VideoSetup.createOffsetVector(builder, [builder.createLong(0, 0)]);
+        const linesize = messages.VideoSetup.createLinesizeVector(builder, [builder.createLong(pitch, 0)]);
         const shmemPath = builder.createString(shmPath);
-        const shmemSize = builder.createLong(shmSize);
+        const shmemSize = builder.createLong(shmSize, 0);
         messages.Shmem.startShmem(builder);
         messages.Shmem.addPath(builder, shmemPath);
         messages.Shmem.addSize(builder, shmemSize);
@@ -311,7 +311,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
         }
 
         connection.writePacket((builder) => {
-          const frameTimestamp = builder.createLong(timestamp);
+          const frameTimestamp = builder.createLong(timestamp, 0);
           messages.VideoFrameCommitted.startVideoFrameCommitted(builder);
           messages.VideoFrameCommitted.addTimestamp(builder, frameTimestamp);
           messages.VideoFrameCommitted.addIndex(builder, 0);

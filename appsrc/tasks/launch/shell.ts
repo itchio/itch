@@ -1,7 +1,7 @@
 
 import * as ospath from "path";
 
-import { shell } from "../../electron";
+import {shell} from "electron";
 
 import pathmaker from "../../util/pathmaker";
 

@@ -11,7 +11,7 @@ import {isItchioURL} from "../util/url";
 import crashReporter from "../util/crash-reporter";
 import urls from "../constants/urls";
 
-import {shell} from "../electron";
+import {shell} from "electron";
 
 import * as actions from "../actions";
 

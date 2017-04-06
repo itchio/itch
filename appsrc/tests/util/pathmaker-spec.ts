@@ -4,7 +4,7 @@
 import * as ospath from "path";
 import test = require("zopf");
 import pathmaker from "../../util/pathmaker";
-import {app} from "../../electron";
+import {app} from "electron";
 
 import preferencesReducer from "../../reducers/preferences";
 

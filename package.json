@@ -28,7 +28,7 @@
     "@types/classnames": "0.0.31",
     "@types/clone": "^0.1.30",
     "@types/colors": "^0.6.33",
-    "@types/electron": "1.4.33",
+    "@types/electron": "^1.4.35",
     "@types/glob": "^5.0.30",
     "@types/invariant": "^2.2.28",
     "@types/moment-timezone": "^0.2.32",

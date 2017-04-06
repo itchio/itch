@@ -1,6 +1,6 @@
 
 import * as ospath from "path";
-import {app} from "../electron";
+import {app} from "electron";
 import os from "./os";
 
 import {partial} from "underscore";

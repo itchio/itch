@@ -20,8 +20,21 @@ module.exports = {
 
   module: {
     rules: [
-      { test: /\.tsx?$/, loaders: ["ts-loader"] },
-      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
+      {
+        test: /\.tsx?$/,
+        loaders: ["ts-loader"],
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg|woff2?|ttf|eot)$/i,
+        loaders: [
+          "file-loader"
+        ],
+      },
+      {
+        enforce: "pre",
+        test: /\.js$/,
+        loader: "source-map-loader"
+      },
     ],
   },
 

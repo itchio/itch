@@ -1,7 +1,7 @@
 
 import * as ospath from "path";
 
-import {app} from "../electron";
+import {app} from "electron";
 import spawn from "./spawn";
 import sf from "./sf";
 

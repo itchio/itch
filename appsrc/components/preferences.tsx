@@ -3,7 +3,7 @@ import * as React from "react";
 import {createSelector, createStructuredSelector} from "reselect";
 import {connect, I18nProps} from "./connect";
 
-import {shell} from "../electron";
+import {shell} from "electron";
 
 import * as path from "path";
 import * as humanize from "humanize-plus";

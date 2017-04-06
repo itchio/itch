@@ -36,7 +36,7 @@ import {transformUrl} from "../util/navigation";
 import {ITabData, IAppState} from "../types";
 import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
 
-import {IWebView, IWebContents, ISession} from "../electron/types";
+import "electron";
 
 interface IHistoryEntry {
   url: string;
@@ -44,7 +44,7 @@ interface IHistoryEntry {
 }
 
 // updated when switching accounts
-let currentSession: ISession = null;
+let currentSession: Electron.Session = null;
 
 export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nProps, IBrowserMeatState> {
   refs: {
@@ -58,7 +58,7 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
   watcher: NodeJS.Timer;
 
   /** the devil incarnate */
-  webview: IWebView;
+  webview: Electron.WebViewElement;
 
   constructor () {
     super();
@@ -226,7 +226,7 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
 
     // sometimes we get double will-navigate events because life is fun?!
     if (this.lastNavigationUrl === url && e.timeStamp - this.lastNavigationTimeStamp < WILL_NAVIGATE_GRACE_PERIOD) {
-      this.with((wv: IWebView) => {
+      this.with((wv: Electron.WebViewElement) => {
         wv.stop();
         wv.loadURL(this.props.url);
       });
@@ -259,7 +259,7 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
     return frozen;
   }
 
-  setupItchInternal (session: ISession) {
+  setupItchInternal (session: Electron.Session) {
     currentSession = session;
 
     // requests to 'itch-internal' are used to communicate between web content & the app
@@ -353,14 +353,14 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
     // cf. https://github.com/electron/electron/issues/6046
     webviewShell.innerHTML = "<webview/>";
     // woo please sign my cast
-    const wv = (webviewShell.querySelector("webview") as any) as IWebView;
+    const wv = (webviewShell.querySelector("webview") as any) as Electron.WebViewElement;
     this.webview = wv;
 
     const {meId} = this.props;
     const partition = partitionForUser(meId);
 
     wv.partition = partition;
-    wv.plugins = true;
+    wv.plugins = "on";
     wv.preload = injectPath("itchio-monkeypatch");
 
     const callbackSetup = () => {
@@ -383,7 +383,7 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
       wv.removeEventListener("dom-ready", callbackSetup);
 
       wv.addEventListener("did-stop-loading", (e) => {
-        if (e.target.src === "about:blank") {
+        if (wv.src === "about:blank") {
           return;
         }
         this.updateBrowserState({firstLoad: false});
@@ -438,7 +438,7 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
     </div>;
   }
 
-  with (cb: (wv: IWebView, wc: IWebContents) => void, opts = {insist: false}) {
+  with (cb: (wv: Electron.WebViewElement, wc: Electron.WebContents) => void, opts = {insist: false}) {
     const {webview} = this;
     if (!webview) {
       return;
@@ -457,7 +457,7 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
   }
 
   openDevTools () {
-    this.with((wv: IWebView, wc: IWebContents) => wc.openDevTools({mode: "detach"}));
+    this.with((wv: Electron.WebViewElement, wc: Electron.WebContents) => wc.openDevTools({mode: "detach"}));
   }
 
   stop () {

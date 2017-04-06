@@ -1,7 +1,7 @@
 
 import * as electron from "electron";
 
-import {IWebView, IMenuItem} from "../electron/types";
+import "electron";
 
 import * as actions from "../actions";
 import {getT} from "../localizer";
@@ -12,40 +12,36 @@ interface IContextMenuOpts {
   navigate: typeof actions.navigate;
 }
 
-interface IActualElectronMenuAsOfV162 {
-  popup(target: any, opts: {async: boolean}): void;
-}
-
-export default function create(win: IWebView, opts: IContextMenuOpts) {
-  const wc = win.getWebContents();
+export default function create(wv: Electron.WebViewElement, opts: IContextMenuOpts) {
+  const wc = wv.getWebContents();
   wc.on("context-menu", (e, props) => {
     const editFlags = props.editFlags;
     const hasText = props.selectionText.trim().length > 0;
-    const can = (type: string) => editFlags[`can${type}`] && hasText;
+    const can = (type: string) => ((editFlags as any)[`can${type}`] as boolean) && hasText;
 
     const {lang, strings} = store.getState().i18n;
     const t = getT(strings, lang);
 
-    let menuTpl: IMenuItem[] = [{
+    let menuTpl: Electron.MenuItemOptions[] = [{
       type: "separator",
     }, {
       id: "cut",
       label: t("web.context_menu.cut"),
       // needed because of macOS limitation:
       // https://github.com/electron/electron/issues/5860
-      role: can("Cut") ? "cut" : "",
+      role: can("Cut") ? "cut" : null,
       enabled: can("Cut"),
       visible: props.isEditable,
     }, {
       id: "copy",
       label: t("web.context_menu.copy"),
-      role: can("Copy") ? "copy" : "",
+      role: can("Copy") ? "copy" : null,
       enabled: can("Copy"),
       visible: props.isEditable || hasText,
     }, {
       id: "paste",
       label: t("web.context_menu.paste"),
-      role: editFlags.canPaste ? "paste" : "",
+      role: editFlags.canPaste ? "paste" : null,
       enabled: editFlags.canPaste,
       visible: props.isEditable,
     }, {
@@ -87,8 +83,7 @@ export default function create(win: IWebView, opts: IContextMenuOpts) {
     menuTpl = delUnusedElements(menuTpl);
 
     if (menuTpl.length > 0) {
-      const menu = (electron.Menu || electron.remote.Menu).buildFromTemplate(menuTpl as any) as
-        any as IActualElectronMenuAsOfV162;
+      const menu = (electron.Menu || electron.remote.Menu).buildFromTemplate(menuTpl as any);
 
 			/*
 			 * When electron.remote is not available this runs in the browser process.
@@ -97,13 +92,14 @@ export default function create(win: IWebView, opts: IContextMenuOpts) {
 			 * When this is being called from a webView, we can't use win as this
 			 * would refere to the webView which is not allowed to render a popup menu.
 			 */
-      menu.popup((electron.remote ? electron.remote.getCurrentWindow() : win) as any, {async: true});
+      // electron 1.6.2 accepts an opts object - typings aren't up-to-date yet
+      (menu.popup as any)((electron.remote ? electron.remote.getCurrentWindow() : wv) as any, {async: true});
     }
   });
 }
 
-function delUnusedElements(menuTpl: IMenuItem[]) {
-  let notDeletedPrevEl: IMenuItem;
+function delUnusedElements(menuTpl: Electron.MenuItemOptions[]) {
+  let notDeletedPrevEl: Electron.MenuItemOptions;
   return menuTpl.filter((el) => el.visible !== false).filter((el, i, arr) => {
     const toDelete = el.type === "separator" &&
       (!notDeletedPrevEl || i === arr.length - 1 || arr[i + 1].type === "separator");

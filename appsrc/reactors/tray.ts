@@ -3,7 +3,7 @@ import {Watcher} from "./watcher";
 
 import os from "../util/os";
 import localizer from "../localizer";
-import {app, Menu, Tray, IMenuTemplate} from "../electron";
+import {app, Menu, Tray} from "electron";
 
 import {createSelector} from "reselect";
 
@@ -12,23 +12,12 @@ import * as actions from "../actions";
 import {IStore, IAppState, II18nState} from "../types";
 import {Action} from "redux-actions";
 
-import {EventEmitter} from "events";
+type IMenuTemplate = Electron.MenuItemOptions[];
 
 // used to glue balloon click with notification callbacks
 let lastNotificationAction: Action<any>;
 
-interface IBalloonOpts {
-  title: string;
-  icon: string;
-  content: string;
-}
-
-interface ITray extends EventEmitter {
-  setToolTip(message: string): void;
-  setContextMenu(menu: IMenuTemplate): void;
-  displayBalloon(opts: IBalloonOpts): void;
-}
-let tray: ITray;
+let tray: Electron.Tray;
 
 function makeTray (store: IStore) {
   // cf. https://github.com/itchio/itch/issues/462
@@ -61,12 +50,12 @@ function makeTray (store: IStore) {
 function setMenu (trayMenu: IMenuTemplate, store: IStore) {
   if (os.platform() === "darwin") {
     // don't have a tray icon on macOS, we just live in the dock
-    app.dock.setMenu(trayMenu);
+    app.dock.setMenu(Menu.buildFromTemplate(trayMenu));
   } else {
     if (!tray) {
       makeTray(store);
     }
-    tray.setContextMenu(trayMenu);
+    tray.setContextMenu(Menu.buildFromTemplate(trayMenu));
   }
 }
 
@@ -89,9 +78,7 @@ function refreshTray (store: IStore, i18n: II18nState) {
       click: () => store.dispatch(actions.quit({})),
     });
   }
-
-  const trayMenu = Menu.buildFromTemplate(menuTemplate);
-  setMenu(trayMenu, store);
+  setMenu(menuTemplate, store);
 }
 
 // TODO: make the tray a lot more useful? that'd be good.

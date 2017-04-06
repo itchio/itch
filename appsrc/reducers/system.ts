@@ -1,6 +1,6 @@
 
 import os from "../util/os";
-import {app} from "../electron";
+import {app} from "electron";
 
 import * as actions from "../actions";
 import reducer from "./reducer";

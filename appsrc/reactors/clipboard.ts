@@ -1,7 +1,7 @@
 
 import {Watcher} from "./watcher";
 
-import {clipboard} from "../electron";
+import {clipboard} from "electron";
 
 import * as actions from "../actions";
 

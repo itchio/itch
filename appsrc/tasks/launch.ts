@@ -20,7 +20,7 @@ import store from "../store/metal-store";
 import * as actions from "../actions";
 import {startTask} from "../reactors/tasks/start-task";
 
-import {powerSaveBlocker} from "../electron";
+import {app, powerSaveBlocker} from "electron";
 
 import mklog from "../util/log";
 const log = mklog("launch");
@@ -38,8 +38,6 @@ import actionForGame from "../util/action-for-game";
 
 import {promisedModal} from "../reactors/modals";
 import {MODAL_RESPONSE} from "../constants/action-types";
-
-import {app} from "../electron";
 
 import {findWhere, each} from "underscore";
 

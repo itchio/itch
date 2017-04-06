@@ -11,7 +11,7 @@ import os from "./util/os";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {AppContainer} from "react-hot-loader";
-import {shell} from "./electron";
+import {shell} from "electron";
 import App from "./components/app";
 
 import store from "./store/chrome-store";

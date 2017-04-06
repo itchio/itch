@@ -4,7 +4,7 @@ import * as ospath from "path";
 import {Watcher} from "./watcher";
 
 import {getTray} from "./tray";
-import {app, BrowserWindow} from "../electron";
+import {app, BrowserWindow} from "electron";
 import os from "../util/os";
 
 import * as actions from "../actions";
@@ -34,7 +34,7 @@ export default function (watcher: Watcher) {
         tray.displayBalloon({
           title,
           // this particular API requires absolute paths for some reason 
-          icon: ospath.join(__dirname, icon),
+          icon: Electron.NativeImage.createFromPath(ospath.join(__dirname, icon)),
           content: body,
         });
       }

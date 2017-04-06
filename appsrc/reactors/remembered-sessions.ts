@@ -1,7 +1,7 @@
 
 import {Watcher} from "./watcher";
 
-import {app} from "../electron";
+import {app} from "electron";
 import sf from "../util/sf";
 import * as ospath from "path";
 

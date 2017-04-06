@@ -11,7 +11,7 @@ import * as querystring from "querystring";
 
 import {map, filter, pluck} from "underscore";
 
-import {shell} from "../electron";
+import {shell} from "electron";
 
 import staticTabData from "../constants/static-tab-data";
 

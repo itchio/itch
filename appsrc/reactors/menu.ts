@@ -1,7 +1,7 @@
 
 import {Watcher} from "./watcher";
 
-import {Menu, IMenuItem, IMenuTemplate} from "../electron";
+import {Menu} from "electron";
 
 import {map} from "underscore";
 import {createSelector} from "reselect";
@@ -16,6 +16,9 @@ import os from "../util/os";
 const macos = os.itchPlatform() === "osx";
 
 import {IStore, IAppState, II18nState} from "../types";
+
+type IMenuItem = Electron.MenuItemOptions;
+type IMenuTemplate = IMenuItem[];
 
 let refreshSelector: (state: IAppState) => void;
 const makeRefreshSelector = (store: IStore) => createSelector(
@@ -99,7 +102,7 @@ function fleshOutTemplate (template: IMenuTemplate, i18n: II18nState, store: ISt
     }
 
     if (node.submenu) {
-      node.submenu = map(node.submenu, visitNode);
+      node.submenu = map(node.submenu as IMenuItem[], visitNode);
     }
 
     return node;
