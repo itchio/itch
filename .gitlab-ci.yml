@@ -22,16 +22,6 @@ test-linux:
   except:
     - tags
 
-# Unit tests
-test-windows:
-  stage: build
-  tags:
-    - windows
-  script:
-    - release/ci-test.js
-  except:
-    - tags
-
 # I18n check
 i18n-check:
   stage: build
