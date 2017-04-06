@@ -10,7 +10,6 @@ module.exports = {
     "metal.js": "./appsrc/metal.ts",
     "inject/itchio-monkeypatch.js": "./appsrc/inject/itchio-monkeypatch.ts",
     "inject/game.js": "./appsrc/inject/game.ts",
-    "index.html": "./appsrc/index.html",
   },
   output: {
     path: resolve(__dirname, "app"),
@@ -25,7 +24,7 @@ module.exports = {
 
   module: {
     rules: [
-      {test: /\.tsx?$/, loaders: ["awesome-typescript-loader"]},
+      {test: /\.tsx?$/, loaders: ["ts-loader"]},
       {test: /\.html$/, loaders: ["file-loader?name=[name].real.[ext]"]},
       {test: /\.png$/, loaders: ["file-loader?name=[path][name].[ext]"]},
       shared.sourceMapRule,

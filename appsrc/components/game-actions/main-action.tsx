@@ -28,7 +28,7 @@ interface IStatus {
 class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, cancellable, platform, platformCompatible, mayDownload,
-      pressDownload, canBeBought, progress, task, action, animate} = this.props;
+      pressDownload, canBeBought, progress, task, action, animate, cave} = this.props;
 
     let child: React.ReactElement<any> | null = null;
     if (task) {
@@ -79,7 +79,7 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
     const hint = this.hint();
 
     const buttonClasses = classNames("main-action", {
-      "buy-now": (platformCompatible && !mayDownload && canBeBought),
+      "buy-now": (platformCompatible && !mayDownload && canBeBought && !cave),
       branded,
     });
     const button = <div style={style}

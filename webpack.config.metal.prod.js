@@ -23,7 +23,7 @@ module.exports = {
 
   module: {
     rules: [
-      {test: /\.tsx?$/, loaders: ["awesome-typescript-loader"]},
+      {test: /\.tsx?$/, loaders: ["ts-loader"]},
       {test: /\.png$/, loaders: ["file-loader?name=app/[path][name].[ext]"]},
       shared.sourceMapRule,
       shared.tslintRule,

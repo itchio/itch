@@ -1,5 +1,8 @@
 
+const webpack = require("webpack");
 const nodeExternals = require("webpack-node-externals");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const WriteFilePlugin = require("write-file-webpack-plugin");
 const {resolve} = require("path");
 const shared = require("./webpack.config.shared");
 
@@ -29,7 +32,7 @@ module.exports = {
 
   module: {
     rules: [
-      {test: /\.tsx?$/, loaders: ["react-hot-loader/webpack", "awesome-typescript-loader"]},
+      {test: /\.tsx?$/, loaders: ["react-hot-loader/webpack", "ts-loader"]},
       {
         test: /\.scss$/,
         use: [
@@ -48,6 +51,13 @@ module.exports = {
   plugins: [
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
+    new HtmlWebpackPlugin({
+      filename: "index.html",
+      template: "appsrc/index.ejs",
+    }),
+    new WriteFilePlugin({
+      test: /\.html$/,
+    }),
   ],
 
   target: "electron-renderer",

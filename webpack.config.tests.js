@@ -24,7 +24,7 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        loaders: ["awesome-typescript-loader"],
+        loaders: ["ts-loader"],
       },
       shared.imageRule,
       shared.sourceMapRule,
