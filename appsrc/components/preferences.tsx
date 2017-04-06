@@ -25,7 +25,7 @@ import {map, each, filter} from "underscore";
 import diskspace from "../util/diskspace";
 import pathmaker from "../util/pathmaker";
 
-import {IState, ILocaleInfo, IPreferencesState, IInstallLocation} from "../types";
+import {IAppState, ILocaleInfo, IPreferencesState, IInstallLocation} from "../types";
 import {dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
@@ -337,18 +337,18 @@ interface IDerivedProps {
 
 export default connect<IProps>(Preferences, {
   state: createStructuredSelector({
-    preferences: (state: IState) => state.preferences,
-    downloading: (state: IState) => Object.keys(state.i18n.downloading).length > 0,
-    lang: (state: IState) => state.i18n.lang,
-    locales: (state: IState) => state.i18n.locales,
-    sniffedLang: (state: IState) => state.system.sniffedLanguage,
+    preferences: (state: IAppState) => state.preferences,
+    downloading: (state: IAppState) => Object.keys(state.i18n.downloading).length > 0,
+    lang: (state: IAppState) => state.i18n.lang,
+    locales: (state: IAppState) => state.i18n.locales,
+    sniffedLang: (state: IAppState) => state.system.sniffedLanguage,
     installLocations: createSelector(
-      (state: IState) => state.preferences.installLocations,
-      (state: IState) => state.preferences.defaultInstallLocation,
-      (state: IState) => state.globalMarket.caves,
-      (state: IState) => state.system.homePath,
-      (state: IState) => state.system.userDataPath,
-      (state: IState) => state.system.diskInfo,
+      (state: IAppState) => state.preferences.installLocations,
+      (state: IAppState) => state.preferences.defaultInstallLocation,
+      (state: IAppState) => state.globalMarket.caves,
+      (state: IAppState) => state.system.homePath,
+      (state: IAppState) => state.system.userDataPath,
+      (state: IAppState) => state.system.diskInfo,
       (locInfos, defaultLoc, caves, homePath, userDataPath, diskInfo) => {
         if (!locInfos || !caves) {
           return {};

@@ -10,7 +10,7 @@ import NiceAgo from "./nice-ago";
 
 import * as actions from "../actions";
 
-import {IState as IAppState, IHistoryItem, IHistoryItemOption} from "../types";
+import {IAppState, IHistoryItem, IHistoryItemOption} from "../types";
 import {IDispatch} from "../constants/action-types";
 
 class History extends React.Component<IProps & IDerivedProps & I18nProps, void> {

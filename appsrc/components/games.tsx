@@ -4,7 +4,7 @@ import {connect, I18nProps} from "./connect";
 import {createSelector} from "reselect";
 import Fuse = require("fuse.js");
 
-import {IState as IAppState, IFilteredGameRecord, IGameRecord, TabLayout} from "../types";
+import {IAppState, IFilteredGameRecord, IGameRecord, TabLayout} from "../types";
 
 import {map, filter} from "underscore";
 

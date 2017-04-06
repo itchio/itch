@@ -8,7 +8,7 @@ import HubPage from "./hub-page";
 import StatusBar from "./status-bar";
 import ReactHint = require("react-hint");
 
-import {IState} from "../types";
+import {IAppState} from "../types";
 
 import watching, {Watcher} from "./watching";
 import * as actions from "../actions";
@@ -79,6 +79,6 @@ interface IDerivedProps {
 
 export default connect<IProps>(Layout, {
   state: createStructuredSelector({
-    page: (state: IState) => state.session.navigation.page,
+    page: (state: IAppState) => state.session.navigation.page,
   }),
 });

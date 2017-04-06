@@ -8,7 +8,7 @@ import * as actions from "../actions";
 
 import DownloadRow from "./download-row";
 
-import {IState, IDownloadItem} from "../types";
+import {IAppState, IDownloadItem} from "../types";
 import {dispatcher} from "../constants/action-types";
 
 class Downloads extends React.Component<IProps & IDerivedProps & I18nProps, void> {
@@ -83,8 +83,8 @@ interface IDerivedProps {
 
 export default connect<IProps>(Downloads, {
   state: createStructuredSelector({
-    items: (state: IState) => map(state.downloads.downloadsByOrder, (id) => state.downloads.downloads[id]),
-    finishedItems: (state: IState) => map(state.downloads.finishedDownloads, (id) => state.downloads.downloads[id]),
+    items: (state: IAppState) => map(state.downloads.downloadsByOrder, (id) => state.downloads.downloads[id]),
+    finishedItems: (state: IAppState) => map(state.downloads.finishedDownloads, (id) => state.downloads.downloads[id]),
   }),
   dispatch: (dispatch) => ({
   clearFinishedDownloads: dispatcher(dispatch, actions.clearFinishedDownloads),

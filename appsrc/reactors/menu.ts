@@ -15,12 +15,12 @@ import * as actions from "../actions";
 import os from "../util/os";
 const macos = os.itchPlatform() === "osx";
 
-import {IStore, IState, II18nState} from "../types";
+import {IStore, IAppState, II18nState} from "../types";
 
-let refreshSelector: (state: IState) => void;
+let refreshSelector: (state: IAppState) => void;
 const makeRefreshSelector = (store: IStore) => createSelector(
-  (state: IState) => state.system,
-  (state: IState) => state.session.credentials,
+  (state: IAppState) => state.system,
+  (state: IAppState) => state.session.credentials,
   (system, credentials) => {
     setImmediate(() =>
       store.dispatch(actions.refreshMenu({system, credentials})),
@@ -28,10 +28,10 @@ const makeRefreshSelector = (store: IStore) => createSelector(
   },
 );
 
-let applySelector: (state: IState) => void;
+let applySelector: (state: IAppState) => void;
 const makeApplySelector = (store: IStore) => createSelector(
-  (state: IState) => state.ui.menu.template,
-  (state: IState) => state.i18n,
+  (state: IAppState) => state.ui.menu.template,
+  (state: IAppState) => state.i18n,
   (template, i18n) => {
     setImmediate(() => {
       // electron gotcha: buildFromTemplate mutates its argument

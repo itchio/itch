@@ -33,7 +33,7 @@ import GameBrowserContext from "./game-browser-context";
 
 import {transformUrl} from "../util/navigation";
 
-import {ITabData, IState as IAppState} from "../types";
+import {ITabData, IAppState} from "../types";
 import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
 
 import {IWebView, IWebContents, ISession} from "../electron/types";

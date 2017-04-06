@@ -7,7 +7,7 @@ import Games from "./games";
 import GameFilters from "./game-filters";
 import {map, filter, uniq, indexBy, sortBy} from "underscore";
 
-import {IState as IAppState, ICaveRecord, IGameRecord, IDownloadKey} from "../types";
+import {IAppState, ICaveRecord, IGameRecord, IDownloadKey} from "../types";
 
 function recency (cave: ICaveRecord): number {
   const timestamp = cave.lastTouched || cave.installedAt;

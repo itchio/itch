@@ -11,7 +11,7 @@ import Games from "./games";
 import GameFilters from "./game-filters";
 import {map} from "underscore";
 
-import {IState, IGameRecordSet, IItchAppProfile, IItchAppProfileMyGames} from "../types";
+import {IAppState, IGameRecordSet, IItchAppProfile, IItchAppProfileMyGames} from "../types";
 import {dispatcher} from "../constants/action-types";
 
 export class Dashboard extends React.Component<IProps & IDerivedProps & I18nProps, void> {
@@ -53,8 +53,8 @@ interface IDerivedProps {
 
 export default connect<IProps>(Dashboard, {
   state: createStructuredSelector({
-    allGames: (state: IState) => state.market.games,
-    myGameIds: (state: IState) => ((
+    allGames: (state: IAppState) => state.market.games,
+    myGameIds: (state: IAppState) => ((
       (
         state.market.itchAppProfile ||
         {} as IItchAppProfile

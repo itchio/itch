@@ -8,7 +8,7 @@ import {debounce} from "underscore";
 
 import * as actions from "../actions";
 
-import {IState as IAppState, TabLayout} from "../types";
+import {IAppState, TabLayout} from "../types";
 import {dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";

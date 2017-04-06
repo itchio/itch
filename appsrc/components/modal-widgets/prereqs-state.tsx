@@ -10,7 +10,7 @@ import downloadProgress from "../../util/download-progress";
 import {IModalWidgetProps} from "./modal-widget";
 import LoadingCircle from "../loading-circle";
 
-import {IState, ITask, IPrereqsState} from "../../types";
+import {IAppState, ITask, IPrereqsState} from "../../types";
 
 export class PrereqsState extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render() {
@@ -69,7 +69,7 @@ interface IStructuredSelectorResult {
 export default connect<IProps>(PrereqsState, {
   state: () => {
     const selector = createStructuredSelector({
-      tasks: (state: IState, props: IProps) => {
+      tasks: (state: IAppState, props: IProps) => {
         const params = props.modal.widgetParams as IPrereqsStateParams;
         const tasks = state.tasks.tasksByGameId[params.gameId];
         return tasks;

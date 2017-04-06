@@ -14,7 +14,7 @@ import {map, filter} from "underscore";
 import {pathToId} from "../util/navigation";
 
 import {
-  IState, IGameRecordSet, ICollectionRecord, ICollectionRecordSet, ITabData,
+  IAppState, IGameRecordSet, ICollectionRecord, ICollectionRecordSet, ITabData,
   IUserMarketState, IGlobalMarketState,
 } from "../types";
 import {dispatcher} from "../constants/action-types";
@@ -76,10 +76,10 @@ interface ICollectionsContainer {
 export default connect<IProps>(Collection, {
   state: () => {
     const marketSelector = createStructuredSelector({
-      collectionId: (state: IState, props: IProps) => +pathToId(props.tabPath),
-      userMarket: (state: IState, props: IProps) => state.market,
-      globalMarket: (state: IState, props: IProps) => state.globalMarket,
-      tabData: (state: IState, props: IProps) => state.session.navigation.tabData[props.tabId] || {},
+      collectionId: (state: IAppState, props: IProps) => +pathToId(props.tabPath),
+      userMarket: (state: IAppState, props: IProps) => state.market,
+      globalMarket: (state: IAppState, props: IProps) => state.globalMarket,
+      tabData: (state: IAppState, props: IProps) => state.session.navigation.tabData[props.tabId] || {},
     });
 
     return createSelector(

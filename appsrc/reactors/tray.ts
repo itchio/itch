@@ -9,7 +9,7 @@ import {createSelector} from "reselect";
 
 import * as actions from "../actions";
 
-import {IStore, IState, II18nState} from "../types";
+import {IStore, IAppState, II18nState} from "../types";
 import {Action} from "redux-actions";
 
 import {EventEmitter} from "events";
@@ -97,9 +97,9 @@ function refreshTray (store: IStore, i18n: II18nState) {
 // TODO: make the tray a lot more useful? that'd be good.
 // (like: make it display recent stuff / maybe the last few tabs)
 
-let traySelector: (state: IState, props?: any) => void;
+let traySelector: (state: IAppState, props?: any) => void;
 const makeTraySelector = (store: IStore) => createSelector(
-  (state: IState) => state.i18n,
+  (state: IAppState) => state.i18n,
   (i18n) => {
     setImmediate(() => {
       refreshTray(store, i18n);

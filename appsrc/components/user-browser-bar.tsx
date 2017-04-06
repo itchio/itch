@@ -8,7 +8,7 @@ import BrowserControls from "./browser-controls";
 import {pathToId} from "../util/navigation";
 
 import {IBrowserControlProperties} from "./browser-state";
-import {IState, IUserRecord, ITabData, IUserMarketState, IUserRecordSet} from "../types";
+import {IAppState, IUserRecord, ITabData, IUserMarketState, IUserRecordSet} from "../types";
 
 export class UserBrowserBar extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
@@ -43,8 +43,8 @@ interface IUserContainer {
 export default connect<IProps>(UserBrowserBar, {
   state: (initialState, initialProps) => {
     const marketSelector = createStructuredSelector({
-      userId: (state: IState, props: IProps) => +pathToId(props.tabPath),
-      tabData: (state: IState, props: IProps) => props.tabData,
+      userId: (state: IAppState, props: IProps) => +pathToId(props.tabPath),
+      tabData: (state: IAppState, props: IProps) => props.tabData,
     });
 
     const userSelector = createSelector(

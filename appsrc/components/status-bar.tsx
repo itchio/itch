@@ -9,7 +9,7 @@ import urls from "../constants/urls";
 
 import Icon from "./icon";
 
-import {IState as IAppState, ISelfUpdateState, ILocalizedString} from "../types";
+import {IAppState, ISelfUpdateState, ILocalizedString} from "../types";
 import {dispatcher} from "../constants/action-types";
 
 /**

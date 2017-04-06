@@ -14,7 +14,7 @@ import {findWhere} from "underscore";
 
 import {IDispatch, dispatcher} from "../constants/action-types";
 import {
-  IState as IAppState, IGameRecord, ICaveRecord, IDownloadKey, ITabData,
+  IAppState, IGameRecord, ICaveRecord, IDownloadKey, ITabData,
   IUserMarketState, IGlobalMarketState,
 } from "../types";
 import * as actions from "../actions";

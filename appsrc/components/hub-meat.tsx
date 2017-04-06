@@ -21,7 +21,7 @@ import Toast from "./toast";
 
 import {sortBy, map} from "underscore";
 
-import {IState as IAppState, ITabs, ITabDataSet, ITabData} from "../types";
+import {IAppState, ITabs, ITabDataSet, ITabData} from "../types";
 
 export class HubMeat extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {

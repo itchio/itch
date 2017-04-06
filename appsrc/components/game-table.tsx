@@ -4,7 +4,7 @@ import {createSelector, createStructuredSelector} from "reselect";
 
 import {connect, I18nProps} from "./connect";
 
-import {IState as IAppState, IFilteredGameRecord} from "../types";
+import {IAppState, IFilteredGameRecord} from "../types";
 import {dispatcher, multiDispatcher} from "../constants/action-types";
 import * as actions from "../actions";
 

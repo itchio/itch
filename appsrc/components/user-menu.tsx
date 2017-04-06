@@ -3,7 +3,7 @@ import * as React from "react";
 import {createSelector} from "reselect";
 import {connect, I18nProps} from "./connect";
 
-import {IState as IAppState} from "../types";
+import {IAppState} from "../types";
 
 import * as actions from "../actions";
 import {dispatcher} from "../constants/action-types";

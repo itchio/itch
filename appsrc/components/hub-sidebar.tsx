@@ -22,7 +22,7 @@ import HubSidebarItem from "./hub-sidebar-item";
 import UserMenu from "./user-menu";
 import Ink = require("react-ink");
 
-import {IState as IAppState, IUserRecord, IGameRecord, ITabDataSet, ILocalizedString} from "../types";
+import {IAppState, IUserRecord, IGameRecord, ITabDataSet, ILocalizedString} from "../types";
 import {dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";

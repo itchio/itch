@@ -15,7 +15,7 @@ import NiceAgo from "./nice-ago";
 import Ink = require("react-ink");
 import interleave from "./interleave";
 
-import {IState, ICollectionRecord, IGameRecordSet, IUserMarketState} from "../types";
+import {IAppState, ICollectionRecord, IGameRecordSet, IUserMarketState} from "../types";
 import {multiDispatcher} from "../constants/action-types";
 
 export class CollectionHubItem extends React.Component<IProps & IDerivedProps & I18nProps, void> {
@@ -83,7 +83,7 @@ interface IDerivedProps {
 
 export default connect<IProps>(CollectionHubItem, {
   state: createStructuredSelector({
-    allGames: (state: IState) => (state.market || {} as IUserMarketState).games || {},
+    allGames: (state: IAppState) => (state.market || {} as IUserMarketState).games || {},
   }),
   dispatch: (dispatch) => ({
     navigateToCollection: multiDispatcher(dispatch, actions.navigateToCollection),

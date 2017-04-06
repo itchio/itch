@@ -7,7 +7,7 @@ import urls from "../../constants/urls";
 
 import Icon from "../icon";
 
-import {IState, IOpenAtLoginError} from "../../types";
+import {IAppState, IOpenAtLoginError} from "../../types";
 import interleave, {IComponent} from "../interleave";
 
 class OpenAtLoginError extends React.Component<IProps & IDerivedProps & I18nProps, void> {
@@ -49,6 +49,6 @@ interface IDerivedProps {
 
 export default connect<IProps>(OpenAtLoginError, {
   state: createStructuredSelector({
-    openAtLoginError: (state: IState) => state.status.openAtLoginError,
+    openAtLoginError: (state: IAppState) => state.status.openAtLoginError,
   }),
 });

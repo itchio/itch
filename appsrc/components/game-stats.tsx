@@ -17,7 +17,7 @@ import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
 import {
-  IState, IUserMarketState,
+  IAppState, IUserMarketState,
   IGameRecord, ICaveRecord, IDownloadKey,
 } from "../types";
 
@@ -82,9 +82,9 @@ interface IDerivedProps {
 export default connect<IProps>(GameStats, {
   state: () => {
     return createSelector(
-      (state: IState, props: IProps) => state.market,
-      (state: IState, props: IProps) => state.globalMarket,
-      (state: IState, props: IProps) => props.game,
+      (state: IAppState, props: IProps) => state.market,
+      (state: IAppState, props: IProps) => state.globalMarket,
+      (state: IAppState, props: IProps) => props.game,
       (userMarket, globalMarket, game) => ({
         downloadKey: findWhere((userMarket || {} as IUserMarketState).downloadKeys || {}, { gameId: game.id }),
         cave: globalMarket.cavesByGameId[game.id],

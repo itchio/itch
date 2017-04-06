@@ -17,13 +17,13 @@ import * as actions from "../actions";
 
 import {BrowserWindow, dialog} from "../electron";
 
-import {IStore, IState} from "../types";
+import {IStore, IAppState} from "../types";
 import {IAddInstallLocationPayload} from "../constants/action-types";
 
-let selector: (state: IState) => void;
+let selector: (state: IAppState) => void;
 const makeSelector = (store: IStore) => createSelector(
-  (state: IState) => state.preferences.installLocations,
-  (state: IState) => state.session.navigation.id,
+  (state: IAppState) => state.preferences.installLocations,
+  (state: IAppState) => state.session.navigation.id,
   (installLocs, id) => {
     setImmediate(() => {
       if (id === "preferences") {

@@ -8,7 +8,7 @@ import {sortBy} from "underscore";
 
 import CollectionHubItem from "./collection-hub-item";
 
-import {IState as IAppState, ICollectionRecord} from "../types";
+import {IAppState, ICollectionRecord} from "../types";
 
 import {AutoSizer, Grid} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";

@@ -30,7 +30,7 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = os.platform() === "darwin";
 
-import {IState, IStore} from "../types";
+import {IAppState, IStore} from "../types";
 
 async function createWindow (store: IStore, hidden: boolean) {
   if (createLock) {
@@ -309,10 +309,10 @@ function updateTitle (store: IStore, title: string) {
   window.setTitle(title);
 }
 
-let titleSelector: (state: IState) => void;
+let titleSelector: (state: IAppState) => void;
 const makeTitleSelector = (store: IStore) => {
-  const getLang = (state: IState) => state.i18n.lang;
-  const getStrings = (state: IState) => state.i18n.strings;
+  const getLang = (state: IAppState) => state.i18n.lang;
+  const getStrings = (state: IAppState) => state.i18n.strings;
 
   const getT = createSelector(
     getLang,
@@ -322,8 +322,8 @@ const makeTitleSelector = (store: IStore) => {
     },
   );
 
-  const getID = (state: IState) => state.session.navigation.id;
-  const getTabData = (state: IState) => state.session.navigation.tabData;
+  const getID = (state: IAppState) => state.session.navigation.id;
+  const getTabData = (state: IAppState) => state.session.navigation.tabData;
 
   return createSelector(
     getID,

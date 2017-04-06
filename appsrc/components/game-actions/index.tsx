@@ -19,7 +19,7 @@ import SecondaryActions from "./secondary-actions";
 
 import {IActionsInfo} from "./types";
 import {
-  IState, IGameRecord, ICaveRecord, IDownloadKey,
+  IAppState, IGameRecord, ICaveRecord, IDownloadKey,
   IDownloadItem, ITask, IGameUpdate, IGameUpdatesState,
 } from "../../types";
 
@@ -85,15 +85,15 @@ export default connect<IProps>(GameActions, {
     // FIXME: squash code complexity
     const selector = createSelector(
       createStructuredSelector({
-        game: (state: IState, props: IProps) => props.game,
-        cave: (state: IState, props: IProps) => props.cave || state.globalMarket.cavesByGameId[props.game.id],
-        downloadKeys: (state: IState, props: IProps) => state.market.downloadKeys,
-        task: (state: IState, props: IProps) => first(state.tasks.tasksByGameId[props.game.id]),
-        download: (state: IState, props: IProps) => state.downloads.downloadsByGameId[props.game.id],
-        meId: (state: IState, props: IProps) => (state.session.credentials.me || { id: "anonymous" }).id,
-        mePress: (state: IState, props: IProps) =>
+        game: (state: IAppState, props: IProps) => props.game,
+        cave: (state: IAppState, props: IProps) => props.cave || state.globalMarket.cavesByGameId[props.game.id],
+        downloadKeys: (state: IAppState, props: IProps) => state.market.downloadKeys,
+        task: (state: IAppState, props: IProps) => first(state.tasks.tasksByGameId[props.game.id]),
+        download: (state: IAppState, props: IProps) => state.downloads.downloadsByGameId[props.game.id],
+        meId: (state: IAppState, props: IProps) => (state.session.credentials.me || { id: "anonymous" }).id,
+        mePress: (state: IAppState, props: IProps) =>
           (state.session.credentials.me || { pressUser: false }).pressUser,
-        gameUpdates: (state: IState, props: IProps) => state.gameUpdates,
+        gameUpdates: (state: IAppState, props: IProps) => state.gameUpdates,
       }),
       (happenings: IHappenings) => {
         const { game, cave, downloadKeys, task, download, meId, mePress, gameUpdates } = happenings;

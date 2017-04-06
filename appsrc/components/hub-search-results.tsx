@@ -11,7 +11,7 @@ import * as actions from "../actions";
 
 import Fuse = require("fuse.js");
 
-import {IState as IAppState, IGameRecord, ISessionSearchState, ISearchResults} from "../types";
+import {IAppState, IGameRecord, ISessionSearchState, ISearchResults} from "../types";
 import {dispatcher} from "../constants/action-types";
 
 import GameSearchResult from "./search-results/game-search-result";
