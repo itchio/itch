@@ -12,6 +12,7 @@ npm-debug.log
 /test
 /tests
 /.tscache
+/.awcache
 *.map
 tmp
 *.tmp.txt

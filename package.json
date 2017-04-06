@@ -113,6 +113,7 @@
     "which": "^1.2.11"
   },
   "devDependencies": {
+    "awesome-typescript-loader": "^3.1.2",
     "css-loader": "^0.28.0",
     "electron": "^1.6.2",
     "electron-packager": "^7.0.1",
@@ -138,7 +139,6 @@
     "source-map-loader": "^0.2.0",
     "style-loader": "^0.16.1",
     "tape": "^4.2.1",
-    "ts-loader": "^2.0.3",
     "tslint": "^4.0.2",
     "tslint-loader": "^3.4.3",
     "typescript": "^2.2.2",

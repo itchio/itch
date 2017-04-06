@@ -32,7 +32,7 @@ module.exports = {
 
   module: {
     rules: [
-      {test: /\.tsx?$/, loaders: ["react-hot-loader/webpack", "ts-loader"]},
+      {test: /\.tsx?$/, loaders: ["react-hot-loader/webpack", "awesome-typescript-loader"]},
       {
         test: /\.scss$/,
         use: [

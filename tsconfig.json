@@ -10,6 +10,9 @@
         "sourceMap": true,
         "jsx": "react"
     },
+    "awesomeTypescriptLoaderOptions": {
+        "useCache": true
+    },
     "exclude": [
         "build",
         "stage",
