@@ -102,48 +102,5 @@ module.exports = function (grunt) {
         outputDirectory: process.env.CI_WINDOWS_INSTALLER_PATH || path.join('build', 'squirrel-ia32')
       })
     },
-    'ts': {
-      'default': {
-        tsconfig: true,
-        options: {
-          fast: 'never'
-        }
-      }
-    },
-    'tslint': {
-      'options': {
-        configuration: 'tslint.json',
-        force: false
-      },
-      'files': [
-        'appsrc/**/*.ts',
-        'appsrc/**/*.tsx',
-        '!appsrc/capsule/flatbuffers.ts',
-        '!appsrc/capsule/*_generated.ts'
-      ]
-    },
-    'sass': {
-      options: {
-        sourceMap: true
-      },
-      dist: {
-        files: {
-          'app/style/bundle.css': ['appsrc/style/bundle.scss', 'appsrc/style/**/*.scss']
-        }
-      }
-    },
-    'copy': {
-      options: {
-        mode: true
-      },
-      dist: {
-        files: [
-          { expand: true, cwd: 'appsrc', src: ['**/*.html', 'static/**'], dest: 'app' },
-          { expand: true, cwd: 'extrajs', src: ['**/*.js'], dest: 'app' }
-        ]
-      }
-    }
   })
-
-  grunt.registerTask('default', ['ts', 'newer:sass', 'newer:copy'])
 }

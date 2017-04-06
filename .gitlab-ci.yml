@@ -22,17 +22,7 @@ test:
   except:
     - tags
 
-# JavaScript standard formatting
-lint:
-  stage: build
-  tags:
-    - linux
-  script:
-    - release/ci-lint.js
-  except:
-    - tags
-
-# compile javascript & scss using babel & node-sass
+# Compile javascript & css
 compile:
   stage: build
   tags:

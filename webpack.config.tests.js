@@ -2,6 +2,8 @@
 const nodeExternals = require("webpack-node-externals");
 const {resolve} = require("path");
 
+const shared = require("./webpack.config.shared");
+
 module.exports = {
   entry: [
     "./appsrc/tests/runner.ts"
@@ -24,17 +26,9 @@ module.exports = {
         test: /\.tsx?$/,
         loaders: ["ts-loader"],
       },
-      {
-        test: /\.(jpe?g|png|gif|svg|woff2?|ttf|eot)$/i,
-        loaders: [
-          "file-loader"
-        ],
-      },
-      {
-        enforce: "pre",
-        test: /\.js$/,
-        loader: "source-map-loader"
-      },
+      shared.imageRule,
+      shared.sourceMapRule,
+      shared.tslintRule,
     ],
   },
 

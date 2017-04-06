@@ -3,6 +3,8 @@ const webpack = require("webpack");
 const nodeExternals = require("webpack-node-externals");
 const {resolve} = require("path");
 
+const shared = require("./webpack.config.shared");
+
 module.exports = {
     entry: {
         "metal.js": "./appsrc/metal.ts",
@@ -37,11 +39,8 @@ module.exports = {
                 test: /\.png$/,
                 loaders: ["file-loader?name=[path][name].[ext]"]
             },
-            {
-                enforce: "pre",
-                test: /\.js$/,
-                loader: "source-map-loader"
-            },
+            shared.sourceMapRule,
+            shared.tslintRule,
         ],
     },
 
