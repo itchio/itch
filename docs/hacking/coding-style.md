@@ -4,10 +4,12 @@ this way, and how to write new code that fits in with the old one.
 
 ## Tree structure
 
-Electron apps have two sides: what happens in the `browser (node.js)` process,
-and what happens in the `renderer (chromium)` process.
+Electron apps have two sides:
 
-In itch, things that happen on the browser/node side are:
+  * what happens in the `browser (node.js)` process, which we call **metal**
+  * what happens in the `renderer (chromium)` process, which we call **chrome**
+
+On metal, we have:
 
   * itch.io API requests
   * Installing dependencies (unarchiver, for example)
@@ -15,42 +17,40 @@ In itch, things that happen on the browser/node side are:
   * Launching applications
   * Showing native notifications, interacting with the OS shell, etc.
 
-Things that happen on the renderer/chromium-content side:
+On chrome, we have:
 
   * Rendering the whole user interface
   * Showing HTML5 notifications
+  * Sniffing the user's preferred language
 
 These used to be separated in the source tree, but they no longer are,
 because it's useful to share code between them sometimes (with two copies,
 one on each side).
 
-Since the redux rewrite, there's only a single store per process:
-the browser store is the reference one, and it sends diffs to all renderer
-processes so that they're all kept in sync, using [redux-electron-store][].
+There's one store in metal, and one store per BrowserWindow in chrome.
+The metal store is the reference, and the chrome ones are kept in sync
+via IPC by [redux-electron-store][].
 
 [redux-electron-store]: https://github.com/samiskin/redux-electron-store
 
 ## Building
 
-Sources are in `appsrc` and `testsrc`, compiled javascript files are
-in `app`, and `test`.
+TypeScript sources, sass sources and static assets live in `appsrc`.
 
-Grunt drives the build process:
+In development, `webpack-dev-server` is used and serves what the **chrome** part of the
+app uses.
 
-  * the `copy` task copies some files as-is (example: `testsrc/runner`)
-  * the `sass` task compiles SCSS into CSS
-  * the `ts` task compiles TypeScript into ES6 that Chrome & node.js understand
+You can use `npm run serve-chrome` to watch those files, rebuild them when needed, and
+serve them from memory to `http://localhost:8009`.
 
-There's `newer` variants of some tasks (`newer:sass`) which
-only recompile required files — those are the default grunt task.
+The **metal** part is built on-disk into the `app` folder. You can do a one-off build with
+`npm run build-metal`, or watch for changes and rebuild as needed with `npm run watch-metal`.
 
-The recommended workflow is simply to edit files in `appsrc` and `testsrc`,
-and start the app with `npm start`. It calls the necessary grunt tasks, and
-starts electron for you.
+In production, everything is built on-disk into `app`.
 
 ## TypeScript usage and features
 
-We try to use recent versions of TypeScript, to take advante of new features.
+We try to use recent versions of TypeScript, to take advantage of new features.
 
 ### Async/await
 
@@ -85,15 +85,11 @@ async function installSoftware (name: string) {
 
 ## Code style
 
-We abide by a pretty standard TSLint (by ) rules file, except:
+Our TSLint rules file is `tslint.json` - it should be easier to read it than
+keep those docs up-to-date.
 
-  * `object-literal-sort-keys` is disabled because OCD doesn't make software better
-  * `no-require-imports` is disabled because some node modules don't play well without it
-  (might be solved by better typings / use of TypeScript namespaces)
-
-Every CI build checks the code for conformance.
-
-You can also run it manually on your machine with `npm run lint`.
+`tslint-loader` is in the webpack loader chain, so code is linted while developing,
+on CI, and while generating production builds of the app.
 
 Additionally, some editors have plug-ins to support real-time linting:
 
@@ -109,90 +105,28 @@ Notable exceptions include:
 
   * SCSS variables, classes and partials are `kebab-case`
   * Source files are `kebab-case`
-    * e.g. the `GridItem` content would live in `grid-item.js`
+    * e.g. the `GridItem` content would live in `grid-item.tsx`
   * i18n keys are `snake_case` for historical reasons
 
 ## Testing
 
-`npm test` is a bit sluggish, because it uses [nyc][] to register code
-coverage. It also runs a full linting of the source code.
-
-[nyc]: https://www.npmjs.com/package/nyc
+It's recommended to keep `npm run watch-tests` running, and use `npm run run-tests`
+now and then to actually run the tests.
 
 The test harness we use is a spruced-up version of [substack/tape][], named
-[zopf][]. It's basically the same except you can define cases, like so:
+[zopf][]. It's basically the same except it integrates with sinon (for mocks/stubs/etc.)
+and groks async tests/cases.
 
 [substack/tape]: https://github.com/substack/tape
 [zopf]: https://github.com/itchio/zopf
 
-```javascript
-import test from "zopf";
-
-test("light tests", t => {
-  t.case("in the dark", t => {
-    // ... test things
-  })
-  t.case("in broad daylight", t => {
-    // ... test things
-  })
-  t.case("whilst holding your hand", t => {
-    // ... test things
-  })
-})
-```
-
-Cases run in-order and produce pretty output via [tap-spec][], like this:
-
-[tap-spec]: https://github.com/scottcorgan/tap-spec
-
-![](test-output.png)
-
-Also, test cases can be asynchronous:
-
-```javascript
-import test from "zopf"
-
-test("filesystem stuff", t => {
-  t.case("can touch and unlink", async t => {
-    const file = "tmp/some_file";
-    await myfs.touch(file);
-    t.ok(await myfs.exists(file), "exists after being touched");
-    await myfs.unlink(file);
-    t.notOk(await myfs.exists(file), "no longer exists after unlink");
-  })
-})
-```
-
-### import, export, modules, require
-
-Since we now use TypeScript's `import` and `export` support, faking modules has become
-a bit trickier. Basically, the canonical way to get the default export of a module
-is now this:
-
-```javascript
-// preferred way
-import mymodule from "./my-module";
-
-// sometimes required when the module needs to be required at a precise
-// point in time because of side-effects
-const mymodule = require("./my-module").default;
-```
-
-Two other tools we use heavily in tests are [proxyquire][], to provide fake
-versions of modules, and `sinon`, to create spies/stubs/mocks. They're both
-pretty solid libraries, and together with tape
-
-[proxyquire]: https://github.com/thlorenz/proxyquire
-[sinon]: https://github.com/sinonjs/sinon
-
 ## React components
 
-Follow redux conventions, look at `appsrc/components/icon.tsx` for a good example.
+React components are TypeScript classes that extend `React.Component`.
 
-We have our own `connect` which provides `props.t` for i18n, and we
-usually export the un-connected class too, for testing.
+One file = one component, as default export.
 
-## CSS
+We have our own `connect` flavor that does state mapping and dispatch mapping,
+and adds `t` (in the `I18nProps` interface) for i18n.
 
-Our CSS is a bit of a wasteland for now, it could use a good cleanup and
-better documentation.
+Look at `appsrc/components/proxy-settings.tsx` for a good example.

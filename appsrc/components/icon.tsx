@@ -6,7 +6,7 @@ import * as classNames from "classnames";
  * An icon from the icomoon font.
  * Peek in the static/fonts/icomoon/ folder to learn more.
  */
-class Icon extends React.Component<IIconProps, void> {
+class Icon extends React.Component<IProps, void> {
   render () {
     const {icon, classes, hint, onClick} = this.props;
     if (!icon) {
@@ -24,7 +24,7 @@ class Icon extends React.Component<IIconProps, void> {
   }
 }
 
-interface IIconProps {
+interface IProps {
   icon: string;
   classes?: string[];
   hint?: string;

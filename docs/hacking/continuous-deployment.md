@@ -54,12 +54,10 @@ As a result, the bleeding-edge version of this book is always available at:
 
 ### Unit tests & linting
 
-The codebase is covered by a certain amount of unit tests, in `testsrc/`.
+The codebase is covered by a certain amount of unit tests, in `appsrc/tests`.
 
-On every commit, the CI executes all unit tests, and runs the `standard`
-command-line tool to make sure all our code conforms to [JavaScript standard style][].
-
-[JavaScript standard style]: http://standardjs.com/
+On every commit, the CI executes all unit tests, and runs `tslint`
+command-line tool to make sure all our code conforms to our style rules.
 
 ### Building
 

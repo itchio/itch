@@ -4,15 +4,9 @@
 itch is built in HTML/SCSS/TypeScript and runs inside of Electron. Install the
 following to get started with development:
 
-* Install [node.js][] (any version >*5.1.x* should work)
-* Install [electron][]:
+* Install [node.js][] (7.6 or newer)
 
 [node.js]: https://nodejs.org/
-[electron]: https://github.com/atom/electron
-
-```
-$ npm install -g electron@latest
-```
 
 * Check out this repository
 
@@ -25,26 +19,26 @@ $ npm install
 
 (For native modules, you'll need a compiler toolchain: Visual Studio 2015 on Windows, gcc/clang on Linux/macOS)
 
-* Install grunt's CLI if you don't have it already:
+* Compile the metal part of the app
 
 ```bash
-$ npm install -g grunt-cli
+$ npm run build-metal
 ```
 
-* You can now run the app:
+* Start serving the chrome part of the app
+
+```bash
+$ npm run serve-chrome
+```
+
+* You can now run the app in another terminal:
 
 ```bash
 $ npm start
 ```
 
-This command first compiles newer files from [typescript][] to ES6
-understood by both Node.js & Chromium.
-
-We use [grunt][] for building and packaging, see our [CI job definitions][ci].
-
-[typescript]: https://www.typescriptlang.org/
-[grunt]: https://github.com/gruntjs/grunt
-[ci]: https://github.com/itchio/itch/blob/master/.gitlab-ci.yml
+webpack is pretty slow to warm up, so instead of `build-metal`, you may want to keep `watch-metal` running
+in another terminal/pane.
 
 ### Running tests
 
@@ -54,19 +48,7 @@ Run:
 $ npm test
 ```
 
-To run all tests. You can run a single test with:
-
-```bash
-$ grunt && node app/tests/runner.js app/tests/localizer-spec.js | tap-spec
-```
-
-Or run all the tests in a directory with:
-
-```bash
-$ grunt && node app/tests/runner.js app/tests/util | tap-spec
-```
-
-[tap-spec]: https://github.com/scottcorgan/tap-spec
+Alternatively, run `npm run watch-tests` in a terminal, and `npm run run-tests` when you actually want to run them.
 
 ### Debug facilities
 
