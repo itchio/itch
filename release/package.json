@@ -9,7 +9,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "bluebird": "^3.5.0",
     "colors": "^1.1.2",
+    "glob": "^7.1.1",
     "munyx": "^1.4.0"
   }
 }

@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import {pathToId} from "../util/navigation";
 import {createSelector, createStructuredSelector} from "reselect";
 import * as classNames from "classnames";
@@ -21,9 +21,9 @@ import Toast from "./toast";
 
 import {sortBy, map} from "underscore";
 
-import {IState, ITabs, ITabDataSet, ITabData} from "../types";
+import {IAppState, ITabs, ITabDataSet, ITabData} from "../types";
 
-export class HubMeat extends React.Component<IHubMeatProps, void> {
+export class HubMeat extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {tabData, tabs, id: currentId} = this.props;
 
@@ -65,9 +65,9 @@ export class HubMeat extends React.Component<IHubMeatProps, void> {
     } else if (/^new/.test(path)) {
       return <NewTab tabId={tabId} key={tabId}/>;
     } else if (/^collections\//.test(path)) {
-      return <Collection tabId={tabId} tabPath={path} data={data} key={tabId}/>;
+      return <Collection tabId={tabId} tabPath={path} key={tabId}/>;
     } else if (/^toast\//.test(path)) {
-      return <Toast tabId={tabId} tabPath={path} data={data} key={tabId}/>;
+      return <Toast tabId={tabId} data={data} key={tabId}/>;
     } else if (isBrowser) {
       return <UrlMeat tabId={tabId} path={path} key={tabId} visible={visible}/>;
     } else {
@@ -76,27 +76,24 @@ export class HubMeat extends React.Component<IHubMeatProps, void> {
   }
 }
 
-interface IHubMeatProps {
+interface IProps {}
+
+interface IDerivedProps {
   /** current tab shown */
   id: string;
-
   tabs: string[];
   tabData: ITabDataSet;
 }
 
 const allTabsSelector = createSelector(
-  (state: IState) => state.session.navigation.tabs,
+  (state: IAppState) => state.session.navigation.tabs,
   (tabs: ITabs) => tabs.constant.concat(tabs.transient),
 );
 
-const mapStateToProps = createStructuredSelector({
-  id: (state: IState) => state.session.navigation.id,
-  tabs: (state: IState) => allTabsSelector(state),
-  tabData: (state: IState) => state.session.navigation.tabData,
+export default connect<IProps>(HubMeat, {
+  state: createStructuredSelector({
+    id: (state: IAppState) => state.session.navigation.id,
+    tabs: (state: IAppState) => allTabsSelector(state),
+    tabData: (state: IAppState) => state.session.navigation.tabData,
+  }),
 });
-const mapDispatchToProps = () => ({});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(HubMeat);

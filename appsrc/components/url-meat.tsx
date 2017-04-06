@@ -1,18 +1,18 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import {pathToId} from "../util/navigation";
 import urlParser from "../util/url";
 import urls from "../constants/urls";
 
-import BrowserMeat from "./browser-meat";
+import BrowserMeat, {ControlsType} from "./browser-meat";
 import * as querystring from "querystring";
 
-import {IState, ITabData} from "../types";
+import {ITabData} from "../types";
 
-export class UrlMeat extends React.Component<IUrlMeatProps, IUrlMeatState> {
-  constructor (props: IUrlMeatProps) {
+export class UrlMeat extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+  constructor (props: IProps & IDerivedProps & I18nProps) {
     super();
     this.state = {
       active: props.visible || !props.tabData.restored,
@@ -24,7 +24,7 @@ export class UrlMeat extends React.Component<IUrlMeatProps, IUrlMeatState> {
     const {active} = this.state;
 
     let url = tabData.url || "about:blank";
-    let controls = "generic";
+    let controls: ControlsType = "generic";
 
     if (/^url/.test(path)) {
       url = path.replace(/^url\//, "");
@@ -64,7 +64,7 @@ export class UrlMeat extends React.Component<IUrlMeatProps, IUrlMeatState> {
       tabData={tabData} controls={controls} active={visible}/>;
   }
 
-  componentWillReceiveProps (props: IUrlMeatProps) {
+  componentWillReceiveProps (props: IProps) {
     if (props.visible && !this.state.active) {
       this.setState({
         active: true,
@@ -73,24 +73,22 @@ export class UrlMeat extends React.Component<IUrlMeatProps, IUrlMeatState> {
   }
 }
 
-interface IUrlMeatProps {
+interface IProps {
   visible: boolean;
   path: string;
   tabId: string;
+}
+
+interface IDerivedProps {
   tabData: ITabData;
 }
 
-interface IUrlMeatState {
+interface IState {
   active: boolean;
 }
 
-const mapStateToProps = (state: IState, props: IUrlMeatProps) => ({
-  tabData: state.session.navigation.tabData[props.tabId],
+export default connect<IProps>(UrlMeat, {
+  state: (state, props) => ({
+    tabData: state.session.navigation.tabData[props.tabId],
+  }),
 });
-
-const mapDispatchToProps = () => ({});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UrlMeat);

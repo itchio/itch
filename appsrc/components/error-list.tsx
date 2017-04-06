@@ -1,11 +1,9 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import {map} from "underscore";
 
 import {slugify} from "../util/format";
-
-import {ILocalizer} from "../localizer";
 
 /**
  * A bunch of errors displayed in a list
@@ -14,7 +12,7 @@ import {ILocalizer} from "../localizer";
  *  - errors.api.login.password_must_be_provided
  *  - errors.api.login.username_must_be_provided
  */
-class ErrorList extends React.Component<IErrorListProps, void> {
+class ErrorList extends React.Component<IProps & I18nProps, void> {
   render () {
     const {t, errors, before = "", i18nNamespace} = this.props;
     const prefix = i18nNamespace ? `errors.${i18nNamespace}` : "errors";
@@ -35,12 +33,10 @@ class ErrorList extends React.Component<IErrorListProps, void> {
   }
 }
 
-interface IErrorListProps {
+interface IProps {
   errors: string[];
   before: JSX.Element;
   i18nNamespace: string;
-
-  t: ILocalizer;
 }
 
-export default connect()(ErrorList);
+export default connect<IProps>(ErrorList);

@@ -8,10 +8,12 @@ import client from "../../util/api";
 import mklog from "../../util/log";
 const log = mklog("download-patches");
 
-import {IDownloadOpts, IProgressInfo, IStore} from "../../types";
+import {IDownloadOpts, IProgressInfo} from "../../types";
 import {IDownloadBuildFileExtras} from "../../types/api";
 
 import {getGlobalMarket} from "../../reactors/market";
+
+import store from "../../store/metal-store";
 
 export default async function downloadPatches (out: EventEmitter, opts: IDownloadOpts) {
   const {cave, totalSize, upgradePath, upload, credentials, downloadKey, logger} = opts;
@@ -19,9 +21,9 @@ export default async function downloadPatches (out: EventEmitter, opts: IDownloa
 
   const api = client.withKey(credentials.key);
 
-  const store = require("../../store").default as IStore;
   const patchExtras: IDownloadBuildFileExtras = {};
-  if (store.getState().preferences.preferOptimizedPatches) {
+  const {preferences} = store.getState();
+  if (preferences.preferOptimizedPatches) {
     patchExtras.prefer_optimized = 1;
   }
 
@@ -31,7 +33,7 @@ export default async function downloadPatches (out: EventEmitter, opts: IDownloa
   for (const entry of upgradePath) {
     log(opts, `Dealing with upgrade entry ${JSON.stringify(entry, null, 2)}`);
 
-    const cavePath = pathmaker.appPath(cave);
+    const cavePath = pathmaker.appPath(cave, preferences);
 
     const patchPath = api.downloadBuildURL(downloadKey, upload.id, entry.id, "patch", patchExtras);
     const signaturePath = api.downloadBuildURL(downloadKey, upload.id, entry.id, "signature");

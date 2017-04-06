@@ -21,7 +21,7 @@ export default function (watcher: Watcher) {
       log(opts, `Cave not found, can't explore: ${caveId}`);
       return;
     }
-    const appPath = pathmaker.appPath(cave);
+    const appPath = pathmaker.appPath(cave, store.getState().preferences);
 
     const exists = await sf.exists(appPath);
     if (exists) {

@@ -6,8 +6,7 @@ import {createSelector} from "reselect";
 import {makeLabel} from "../util/navigation";
 
 import {darkMineShaft} from "../constants/colors";
-import {app, BrowserWindow} from "../electron";
-import {IBrowserWindow} from "../electron/types";
+import {app, BrowserWindow} from "electron";
 import config from "../util/config";
 import os from "../util/os";
 import * as ospath from "path";
@@ -30,7 +29,7 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = os.platform() === "darwin";
 
-import {IState, IStore} from "../types";
+import {IAppState, IStore} from "../types";
 
 async function createWindow (store: IStore, hidden: boolean) {
   if (createLock) {
@@ -53,7 +52,7 @@ async function createWindow (store: IStore, hidden: boolean) {
     iconName = "icon-32";
   }
 
-  const iconPath = ospath.resolve(`${__dirname}/../static/images/window/${app.getName()}/${iconName}.png`);
+  const iconPath = ospath.resolve(`${__dirname}/static/images/window/${app.getName()}/${iconName}.png`);
   log(opts, `creating main window with icon: ${iconPath}`);
   log(opts, "cf. https://github.com/electron/electron/issues/6205");
 
@@ -193,16 +192,17 @@ async function createWindow (store: IStore, hidden: boolean) {
     }
   });
 
-  const uri = `file://${__dirname}/../index.html`;
+  log(opts, `dirname is ${__dirname}`);
+  const uri = `file://${__dirname}/index.html`;
+  log(opts, `Calling loadURL with ${uri}`);
   window.loadURL(uri);
-  log(opts, "Calling loadURL");
 }
 
 /**
  * Make sure the window isn't outside the bounds of the screen,
  * cf. https://github.com/itchio/itch/issues/1051
  */
-function ensureWindowInsideDisplay (window: IBrowserWindow) {
+function ensureWindowInsideDisplay (window: Electron.BrowserWindow) {
   const originalBounds = window.getBounds();
   log(opts, `Ensuring ${JSON.stringify(originalBounds)} is inside a display`);
 
@@ -264,7 +264,7 @@ async function exitFullScreen () {
   }
 }
 
-function showWindow (window: IBrowserWindow) {
+function showWindow (window: Electron.BrowserWindow) {
   window.show();
   const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false;
   if (maximized && !macOs) {
@@ -308,10 +308,10 @@ function updateTitle (store: IStore, title: string) {
   window.setTitle(title);
 }
 
-let titleSelector: (state: IState) => void;
+let titleSelector: (state: IAppState) => void;
 const makeTitleSelector = (store: IStore) => {
-  const getLang = (state: IState) => state.i18n.lang;
-  const getStrings = (state: IState) => state.i18n.strings;
+  const getLang = (state: IAppState) => state.i18n.lang;
+  const getStrings = (state: IAppState) => state.i18n.strings;
 
   const getT = createSelector(
     getLang,
@@ -321,8 +321,8 @@ const makeTitleSelector = (store: IStore) => {
     },
   );
 
-  const getID = (state: IState) => state.session.navigation.id;
-  const getTabData = (state: IState) => state.session.navigation.tabData;
+  const getID = (state: IAppState) => state.session.navigation.id;
+  const getTabData = (state: IAppState) => state.session.navigation.tabData;
 
   return createSelector(
     getID,

@@ -16,7 +16,6 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     this.state = {
       fresh: true,
     };
-    this.onMouseUp = this.onMouseUp.bind(this);
   }
 
   onMouseUp (e: React.MouseEvent<HTMLElement>) {
@@ -51,7 +50,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     return <section className={classes}
         data-rh-at="bottom"
         data-rh={t.format(sublabel)}
-        onMouseUp={this.onMouseUp}
+        onMouseUp={(e) => this.onMouseUp(e)}
         onContextMenu={onContextMenu}
         data-path={path}
         data-id={id}>

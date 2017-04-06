@@ -2,17 +2,18 @@
 import {EventEmitter} from "events";
 
 import * as btoa from "btoa";
-import * as ospath from "path";
+import {dirname, basename, join} from "path";
 import * as invariant from "invariant";
 import * as querystring from "querystring";
 
-import {app, BrowserWindow, shell} from "../../electron";
+import {app, BrowserWindow, shell} from "electron";
 
 import spawn from "../../util/spawn";
 import url from "../../util/url";
 import fetch from "../../util/fetch";
 import pathmaker from "../../util/pathmaker";
 import debugBrowserWindow from "../../util/debug-browser-window";
+import injectPath from "../../util/inject-path";
 
 import Connection from "../../capsule/connection";
 import {capsule} from "../../capsule/messages_generated";
@@ -26,6 +27,8 @@ import mklog from "../../util/log";
 const log = mklog("launch/html");
 
 import {IStartTaskOpts} from "../../types";
+
+import store from "../../store/metal-store";
 
 interface IBeforeSendHeadersDetails {
   url: string;
@@ -63,7 +66,7 @@ async function registerProtocol (opts: IRegisterProtocolOpts) {
   await new Promise((resolve, reject) => {
     caveSession.protocol.registerFileProtocol(WEBGAME_PROTOCOL, (request, callback) => {
       const urlPath = url.parse(request.url).pathname;
-      const filePath = ospath.join(fileRoot, urlPath.replace(/^\//, ""));
+      const filePath = join(fileRoot, urlPath.replace(/^\//, ""));
 
       callback({
         path: filePath,
@@ -99,10 +102,9 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   invariant(args, "launch-html has args");
 
   const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game});
-  const injectPath = ospath.resolve(__dirname, "..", "..", "inject", "game.js");
 
-  const appPath = pathmaker.appPath(cave);
-  const entryPoint = ospath.join(appPath, cave.gamePath);
+  const appPath = pathmaker.appPath(cave, store.getState().preferences);
+  const entryPoint = join(appPath, cave.gamePath);
 
   log(opts, `entry point: ${entryPoint}`);
 
@@ -131,7 +133,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
       webSecurity: false,
       allowRunningInsecureContent: true,
       /* hook up a few keyboard shortcuts of our own */
-      preload: noPreload ? null : injectPath,
+      preload: noPreload ? null : injectPath("game"),
       /* stores cookies etc. in persistent session to save progress */
       partition,
     },
@@ -201,8 +203,8 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   });
 
   // serve files
-  let fileRoot = ospath.dirname(entryPoint);
-  let indexName = ospath.basename(entryPoint);
+  let fileRoot = dirname(entryPoint);
+  let indexName = basename(entryPoint);
 
   await registerProtocol({partition, fileRoot});
 
@@ -275,10 +277,10 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
       shm.create();
 
       connection.writePacket((builder) => {
-        const offset = messages.VideoSetup.createOffsetVector(builder, [builder.createLong(0)]);
-        const linesize = messages.VideoSetup.createLinesizeVector(builder, [builder.createLong(pitch)]);
+        const offset = messages.VideoSetup.createOffsetVector(builder, [builder.createLong(0, 0)]);
+        const linesize = messages.VideoSetup.createLinesizeVector(builder, [builder.createLong(pitch, 0)]);
         const shmemPath = builder.createString(shmPath);
-        const shmemSize = builder.createLong(shmSize);
+        const shmemSize = builder.createLong(shmSize, 0);
         messages.Shmem.startShmem(builder);
         messages.Shmem.addPath(builder, shmemPath);
         messages.Shmem.addSize(builder, shmemSize);
@@ -309,7 +311,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
         }
 
         connection.writePacket((builder) => {
-          const frameTimestamp = builder.createLong(timestamp);
+          const frameTimestamp = builder.createLong(timestamp, 0);
           messages.VideoFrameCommitted.startVideoFrameCommitted(builder);
           messages.VideoFrameCommitted.addTimestamp(builder, frameTimestamp);
           messages.VideoFrameCommitted.addIndex(builder, 0);

@@ -1,7 +1,10 @@
 
-@import '../../node_modules/react-hint/css/index.css';
-@import '../../node_modules/react-virtualized/styles.css';
-@import '../../node_modules/react-select/dist/react-select.css';
+@import '~react-hint/css/index.css';
+@import '~react-virtualized/styles.css';
+@import '~react-select/dist/react-select.css';
+
+@import '../static/fonts/lato/latofonts.css';
+@import '../static/fonts/icomoon/style.css';
 
 @import 'global-styles/emoji';
 @import 'global-styles/reset';

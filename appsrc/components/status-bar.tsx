@@ -1,23 +1,21 @@
 
-import * as classNames from "classnames";
 import * as React from "react";
+import * as classNames from "classnames";
+import {createStructuredSelector} from "reselect";
+import {connect, I18nProps} from "./connect";
 
 import * as actions from "../actions";
 import urls from "../constants/urls";
 
 import Icon from "./icon";
 
-import {connect} from "./connect";
-import {createStructuredSelector} from "reselect";
-
-import {IState, ISelfUpdateState, ILocalizedString} from "../types";
-import {IDispatch, dispatcher} from "../constants/action-types";
-import {ILocalizer} from "../localizer";
+import {IAppState, ISelfUpdateState, ILocalizedString} from "../types";
+import {dispatcher} from "../constants/action-types";
 
 /**
  * Displays our current progress when checking for updates, etc.
  */
-class StatusBar extends React.Component<IStatusBarProps, void> {
+class StatusBar extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   constructor () {
     super();
   }
@@ -111,11 +109,11 @@ class StatusBar extends React.Component<IStatusBarProps, void> {
   }
 }
 
-interface IStatusBarProps {
+interface IProps {}
+
+interface IDerivedProps {
   selfUpdate: ISelfUpdateState;
   statusMessages: ILocalizedString[];
-
-  t: ILocalizer;
 
   applySelfUpdateRequest: typeof actions.applySelfUpdateRequest;
   showAvailableSelfUpdate: typeof actions.showAvailableSelfUpdate;
@@ -123,19 +121,15 @@ interface IStatusBarProps {
   dismissStatusMessage: typeof actions.dismissStatusMessage;
 }
 
-const mapStateToProps = createStructuredSelector({
-  selfUpdate: (state: IState) => state.selfUpdate,
-  statusMessages: (state: IState) => state.status.messages,
+export default connect<IProps>(StatusBar, {
+  state: createStructuredSelector({
+    selfUpdate: (state: IAppState) => state.selfUpdate,
+    statusMessages: (state: IAppState) => state.status.messages,
+  }),
+  dispatch: (dispatch) => ({
+    showAvailableSelfUpdate: dispatcher(dispatch, actions.showAvailableSelfUpdate),
+    applySelfUpdateRequest: dispatcher(dispatch, actions.applySelfUpdateRequest),
+    dismissStatus: dispatcher(dispatch, actions.dismissStatus),
+    dismissStatusMessage: dispatcher(dispatch, actions.dismissStatusMessage),
+  }),
 });
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  showAvailableSelfUpdate: dispatcher(dispatch, actions.showAvailableSelfUpdate),
-  applySelfUpdateRequest: dispatcher(dispatch, actions.applySelfUpdateRequest),
-  dismissStatus: dispatcher(dispatch, actions.dismissStatus),
-  dismissStatusMessage: dispatcher(dispatch, actions.dismissStatusMessage),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(StatusBar);

@@ -54,12 +54,10 @@ As a result, the bleeding-edge version of this book is always available at:
 
 ### Unit tests & linting
 
-The codebase is covered by a certain amount of unit tests, in `testsrc/`.
+The codebase is covered by a certain amount of unit tests, in `appsrc/tests`.
 
-On every commit, the CI executes all unit tests, and runs the `standard`
-command-line tool to make sure all our code conforms to [JavaScript standard style][].
-
-[JavaScript standard style]: http://standardjs.com/
+On every commit, the CI executes all unit tests, and runs `tslint`
+command-line tool to make sure all our code conforms to our style rules.
 
 ### Building
 
@@ -76,11 +74,11 @@ The building scripts run some common steps on every platform:
 
 #### Windows
 
-.exe + resources is built with [grunt-electron][], then [grunt-electron-installer][] generates `-full.nupkg`, `-delta.nupkg`, and
+.exe + resources is built with [electron-packager][], then [electron-winstaller][] generates `-full.nupkg`, `-delta.nupkg`, and
 `RELEASES`, needed for Squirrel.Windows update.
 
-[grunt-electron]: https://github.com/sindresorhus/grunt-electron
-[grunt-electron-installer]: https://github.com/electron/grunt-electron-installer
+[electron-packager]: https://www.npmjs.com/package/electron-packager
+[electron-winstaller]: https://github.com/electron/windows-installer
 
 #### macOS / OS X
 

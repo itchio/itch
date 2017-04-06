@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import ReactModal = require("react-modal");
 import GFM from "./gfm";
@@ -10,9 +10,8 @@ import colors from "../constants/colors";
 import * as actions from "../actions";
 import {map} from "underscore";
 
-import {IState, IModal, IModalButtonSpec, IModalButton, IModalAction} from "../types";
-import {ILocalizer} from "../localizer";
-import {IDispatch, ICloseModalPayload, IModalResponsePayload} from "../constants/action-types";
+import {IModal, IModalButtonSpec, IModalButton, IModalAction} from "../types";
+import {IModalResponsePayload} from "../constants/action-types";
 
 import {IModalWidgetProps} from "./modal-widgets/modal-widget";
 
@@ -62,7 +61,7 @@ const DEFAULT_BUTTONS = {
 } as IDefaultButtons;
 
 @watching
-export class Modal extends React.Component<IModalProps, IModalState> {
+export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {
@@ -89,7 +88,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
   }
 
   render () {
-    const {t, modals = [], closeModal, halloween} = this.props;
+    const {t, modals = [], closeModal} = this.props;
 
     const modal = modals[0];
 
@@ -97,7 +96,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
       const {bigButtons = [], buttons = [], cover, title = "", message = "", detail, widget} = modal;
 
       return <ReactModal isOpen style={customStyles}>
-        <div className={`modal ${halloween ? "halloween" : ""}`}>
+        <div className="modal">
           <div className="header">
             <h2>{t.format(title)}</h2>
             <div className="filler"/>
@@ -217,32 +216,27 @@ export class Modal extends React.Component<IModalProps, IModalState> {
   }
 }
 
-interface IModalProps {
-  modals: IModal[];
-  halloween: boolean;
-  t: ILocalizer;
+interface IProps {}
 
-  closeModal(payload: ICloseModalPayload): void;
-  dispatch(action: IModalAction): void;
+interface IDerivedProps {
+  modals: IModal[];
+
+  closeModal: typeof actions.closeModal;
+  dispatch: (action: IModalAction) => void;
 }
 
-interface IModalState {
+interface IState {
   widgetPayload?: IModalResponsePayload;
 }
 
-const mapStateToProps = (state: IState) => ({
-  modals: state.modals,
-  halloween: state.status.bonuses.halloween,
+export default connect<IProps>(Modal, {
+  state: (state) => ({
+    modals: state.modals,
+  }),
+  dispatch: (dispatch, props) => ({
+    dispatch: (action: IModalAction) => {
+      dispatch(actions.closeModal({action}));
+    },
+    closeModal: () => dispatch(actions.closeModal({})),
+  }),
 });
-
-const mapDispatchToProps = (dispatch: IDispatch, props: IModalProps) => ({
-  dispatch: (action: IModalAction) => {
-    dispatch(actions.closeModal({action}));
-  },
-  closeModal: () => dispatch(actions.closeModal({})),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Modal);

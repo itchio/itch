@@ -11,7 +11,7 @@ import * as querystring from "querystring";
 
 import {map, filter, pluck} from "underscore";
 
-import {shell} from "../electron";
+import {shell} from "electron";
 
 import staticTabData from "../constants/static-tab-data";
 
@@ -29,7 +29,7 @@ const TABS_TABLE_NAME = "itchAppTabs";
 
 import * as actions from "../actions";
 
-import {IStore, IState, ITabData, ITabDataSet, IItchAppTabs} from "../types";
+import {IStore, IAppState, ITabData, ITabDataSet, IItchAppTabs} from "../types";
 
 interface IRetrieveOpts {
   /** when set, use this path to retrieve data instead of the tab's existing path */
@@ -203,9 +203,9 @@ async function doFetchTabData (store: IStore, id: string, retrOpts?: IRetrieveOp
 
 let saveTabs = false;
 
-let pathSelector: (state: IState) => void;
+let pathSelector: (state: IAppState) => void;
 const makePathSelector = (store: IStore) => createSelector(
-  (state: IState) => state.session.navigation.id,
+  (state: IAppState) => state.session.navigation.id,
   (id) => {
     setImmediate(() => {
       store.dispatch(actions.tabChanged({id}));
@@ -214,7 +214,7 @@ const makePathSelector = (store: IStore) => createSelector(
 );
 
 // TODO: find less convoluted way to do that
-let transientSelector: (state: IState) => void;
+let transientSelector: (state: IAppState) => void;
 
 interface ITransientState {
   transient: string[];
@@ -234,9 +234,9 @@ const makeTransientSelector = (store: IStore) => {
 
   return createSelector(
     createStructuredSelector({
-      transient: (state: IState) => state.session.navigation.tabs.transient,
-      tabData: (state: IState) => state.session.navigation.tabData,
-      id: (state: IState) => state.session.navigation.id,
+      transient: (state: IAppState) => state.session.navigation.tabs.transient,
+      tabData: (state: IAppState) => state.session.navigation.tabData,
+      id: (state: IAppState) => state.session.navigation.id,
     }),
     innerSelector,
   );

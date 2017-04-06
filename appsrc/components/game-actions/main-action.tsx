@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "../connect";
+import {connect, I18nProps} from "../connect";
 import * as classNames from "classnames";
 
 import Icon from "../icon";
@@ -13,9 +13,8 @@ import * as actions from "../../actions";
 
 import {IActionsInfo} from "./types";
 
-import {IState, IDownloadItem, ICaveRecord, IGameUpdate} from "../../types";
-import {IDispatch, dispatcher} from "../../constants/action-types";
-import {ILocalizer} from "../../localizer";
+import {IDownloadItem, ICaveRecord, IGameUpdate} from "../../types";
+import {dispatcher} from "../../constants/action-types";
 
 import Ink = require("react-ink");
 import LoadingCircle from "../loading-circle";
@@ -26,10 +25,10 @@ interface IStatus {
   hint?: string;
 }
 
-class MainAction extends React.Component<IMainActionProps, void> {
+class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, cancellable, platform, platformCompatible, mayDownload,
-      pressDownload, canBeBought, progress, task, action, animate} = this.props;
+      pressDownload, canBeBought, progress, task, action, animate, cave} = this.props;
 
     let child: React.ReactElement<any> | null = null;
     if (task) {
@@ -80,7 +79,7 @@ class MainAction extends React.Component<IMainActionProps, void> {
     const hint = this.hint();
 
     const buttonClasses = classNames("main-action", {
-      "buy-now": (platformCompatible && !mayDownload && canBeBought),
+      "buy-now": (platformCompatible && !mayDownload && canBeBought && !cave),
       branded,
     });
     const button = <div style={style}
@@ -190,7 +189,7 @@ class MainAction extends React.Component<IMainActionProps, void> {
   }
 }
 
-interface IMainActionProps extends IActionsInfo {
+interface IProps extends IActionsInfo {
   /** whether or not to animate the main action's icon (to indicate something's going on) */
   animate: boolean;
   platform: string;
@@ -199,16 +198,16 @@ interface IMainActionProps extends IActionsInfo {
   cancellable: boolean;
 
   pressDownload: boolean;
-  halloween: boolean;
+
+  cave: ICaveRecord;
+  update: IGameUpdate;
+}
+
+interface IDerivedProps {
   downloadsByGameId: {
     [gameId: string]: IDownloadItem;
   };
   downloadsPaused: boolean;
-
-  cave: ICaveRecord;
-  update: IGameUpdate;
-
-  t: ILocalizer;
 
   queueGame: typeof actions.queueGame;
   showGameUpdate: typeof actions.showGameUpdate;
@@ -217,18 +216,16 @@ interface IMainActionProps extends IActionsInfo {
   navigate: typeof actions.navigate;
 }
 
-const mapStateToProps = (state: IState) => ({
-  halloween: state.status.bonuses.halloween,
-  downloadsByGameId: state.downloads.downloadsByGameId,
-  downloadsPaused: state.downloads.downloadsPaused,
+export default connect<IProps>(MainAction, {
+  state: (state) => ({
+    downloadsByGameId: state.downloads.downloadsByGameId,
+    downloadsPaused: state.downloads.downloadsPaused,
+  }),
+  dispatch: (dispatch) => ({
+    queueGame: dispatcher(dispatch, actions.queueGame),
+    showGameUpdate: dispatcher(dispatch, actions.showGameUpdate),
+    initiatePurchase: dispatcher(dispatch, actions.initiatePurchase),
+    abortGameRequest: dispatcher(dispatch, actions.abortGameRequest),
+    navigate: dispatcher(dispatch, actions.navigate),
+  }),
 });
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  queueGame: dispatcher(dispatch, actions.queueGame),
-  showGameUpdate: dispatcher(dispatch, actions.showGameUpdate),
-  initiatePurchase: dispatcher(dispatch, actions.initiatePurchase),
-  abortGameRequest: dispatcher(dispatch, actions.abortGameRequest),
-  navigate: dispatcher(dispatch, actions.navigate),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MainAction);

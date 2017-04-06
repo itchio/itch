@@ -5,6 +5,8 @@ import {
     LANGUAGE_SNIFFED, ILanguageSniffedPayload,
     LANGUAGE_CHANGED, ILanguageChangedPayload,
 
+    OPEN_APP_LOG, IOpenAppLogPayload,
+
     UPDATE_PREFERENCES, IUpdatePreferencesPayload,
     PREFERENCES_LOADED, IPreferencesLoadedPayload,
 
@@ -17,6 +19,8 @@ import {
 
 export const languageSniffed = createAction<ILanguageSniffedPayload>(LANGUAGE_SNIFFED);
 export const languageChanged = createAction<ILanguageChangedPayload>(LANGUAGE_CHANGED);
+
+export const openAppLog = createAction<IOpenAppLogPayload>(OPEN_APP_LOG);
 
 export const updatePreferences = createAction<IUpdatePreferencesPayload>(UPDATE_PREFERENCES);
 export const preferencesLoaded = createAction<IPreferencesLoadedPayload>(PREFERENCES_LOADED);

@@ -31,14 +31,6 @@ autoUpdate(autoUpdateDone); // no need to wait for app.on('ready')
 // App lifecycle
 
 function autoUpdateDone () {
-  if (process.env.PROFILE_REQUIRE === "1") {
-    try {
-      require("time-require");
-    } catch (e) {
-      console.log(`No require profiling: ${e.message}`);
-    }
-  }
-
   const {protocol, app, globalShortcut} = require("electron");
 
   if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
@@ -46,7 +38,7 @@ function autoUpdateDone () {
   }
   protocol.registerStandardSchemes(["itch-cave"]);
 
-  const store = require("./store").default;
+  const store = require("./store/metal-store").default;
 
   app.on("ready", async function () {
     const shouldQuit = app.makeSingleInstance((argv, cwd) => {

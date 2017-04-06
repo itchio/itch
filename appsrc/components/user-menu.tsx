@@ -1,36 +1,36 @@
 
 import * as React from "react";
-import {connect} from "./connect";
 import {createSelector} from "reselect";
+import {connect, I18nProps} from "./connect";
 
-import {IState} from "../types";
+import {IAppState} from "../types";
 
 import * as actions from "../actions";
-import {dispatcher, IDispatch} from "../constants/action-types";
+import {dispatcher} from "../constants/action-types";
 
 import defaultImages from "../constants/default-images";
 
-import Dropdown from "./dropdown";
+import Dropdown, {IDropdownItem} from "./dropdown";
 import Icon from "./icon";
 
 import urls from "../constants/urls";
 
-class UserMenu extends React.Component<IUserMenuProps, void> {
+class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {viewCreatorProfile, viewCommunityProfile, changeUser,
       navigate, quit, reportIssue,
       openUrl, checkForSelfUpdate} = this.props;
 
-    const items = [
+    const items: IDropdownItem[] = [
       {
         icon: "rocket",
         label: ["sidebar.view_creator_profile"],
-        onClick: viewCreatorProfile,
+        onClick: () => viewCreatorProfile({}),
       },
       {
         icon: "fire",
         label: ["sidebar.view_community_profile"],
-        onClick: viewCommunityProfile,
+        onClick: () => viewCommunityProfile({}),
       },
       {
         type: "separator",
@@ -74,12 +74,12 @@ class UserMenu extends React.Component<IUserMenuProps, void> {
       {
         icon: "shuffle",
         label: ["menu.account.change_user"],
-        onClick: changeUser,
+        onClick: () => changeUser({}),
       },
       {
         icon: "exit",
         label: ["menu.file.quit"],
-        onClick: quit,
+        onClick: () => quit({}),
       },
     ];
     return <Dropdown items={items} inner={this.me()} updown/>;
@@ -98,11 +98,11 @@ class UserMenu extends React.Component<IUserMenuProps, void> {
   }
 }
 
-interface IUserMenuProps {
-  // derived
+interface IProps {}
+
+interface IDerivedProps {
   me: ILightUserRecord;
 
-  // actions
   viewCreatorProfile: typeof actions.viewCreatorProfile;
   viewCommunityProfile: typeof actions.viewCommunityProfile;
   changeUser: typeof actions.changeUser;
@@ -119,36 +119,32 @@ interface ILightUserRecord {
   coverUrl: string;
 }
 
-const mapStateToProps = () => {
-  const userDefaults: ILightUserRecord = {
-    username: "",
-    coverUrl: defaultImages.avatar,
-  };
+export default connect<IProps>(UserMenu, {
+  state: () => {
+    const userDefaults: ILightUserRecord = {
+      username: "",
+      coverUrl: defaultImages.avatar,
+    };
 
-  const getMe = (state: IState): ILightUserRecord => state.session.credentials.me;
+    const getMe = (state: IAppState): ILightUserRecord => state.session.credentials.me;
 
-  return createSelector(
-    getMe,
-    (me) => {
-      return {
-        me: { ...userDefaults, ...me },
-      };
-    },
-  );
-};
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  viewCreatorProfile: dispatcher(dispatch, actions.viewCreatorProfile),
-  viewCommunityProfile: dispatcher(dispatch, actions.viewCommunityProfile),
-  changeUser: dispatcher(dispatch, actions.changeUser),
-  navigate: dispatcher(dispatch, actions.navigate),
-  quit: dispatcher(dispatch, actions.quit),
-  reportIssue: dispatcher(dispatch, actions.reportIssue),
-  openUrl: dispatcher(dispatch, actions.openUrl),
-  checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
+    return createSelector(
+      getMe,
+      (me) => {
+        return {
+          me: { ...userDefaults, ...me },
+        };
+      },
+    );
+  },
+  dispatch: (dispatch) => ({
+    viewCreatorProfile: dispatcher(dispatch, actions.viewCreatorProfile),
+    viewCommunityProfile: dispatcher(dispatch, actions.viewCommunityProfile),
+    changeUser: dispatcher(dispatch, actions.changeUser),
+    navigate: dispatcher(dispatch, actions.navigate),
+    quit: dispatcher(dispatch, actions.quit),
+    reportIssue: dispatcher(dispatch, actions.reportIssue),
+    openUrl: dispatcher(dispatch, actions.openUrl),
+    checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(UserMenu);

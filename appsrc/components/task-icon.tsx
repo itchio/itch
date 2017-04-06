@@ -21,7 +21,8 @@ class TaskIcon extends React.Component<ITaskIconProps, void> {
       }
     }
 
-    return <Icon icon={icon} animate={animate}/>;
+    const classes = animate ? ["scan"] : [];    
+    return <Icon icon={icon} classes={classes}/>;
   }
 }
 

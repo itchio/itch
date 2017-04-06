@@ -2,32 +2,31 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
+import listensToClickOutside = require("react-onclickoutside");
+import {connect, I18nProps} from "./connect";
+
 import Icon from "./icon";
 import {map} from "underscore";
 
-import listensToClickOutside = require("react-onclickoutside");
-import {connect} from "./connect";
-
-import {ILocalizer} from "../localizer";
 import {ILocalizedString} from "../types";
-import {IAction, IDispatch} from "../constants/action-types";
 
-export class Dropdown extends React.Component<IDropdownProps, IDropdownState> {
+const noop = () => { /* muffin */ };
+
+export class Dropdown extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {open: false};
   }
 
   render () {
-    const {t, dispatch, items, inner, className = "dropdown-container", updown = false} = this.props;
+    const {t, items, inner, className = "dropdown-container", updown = false} = this.props;
 
     const {open} = this.state;
     const containerClasses = classNames(className, {disabled: items.length === 0});
     const dropdownClasses = classNames("dropdown", {active: open, updown});
 
     const children = map(items, (item, index) => {
-      const {label, icon, action, type} = item;
-      const {onClick = () => dispatch(action)} = item;
+      const {label, icon, type, onClick = noop} = item;
       const itemClasses = classNames("dropdown-item", `type-${type}`);
 
       const key = (type === "separator") ? ("separator-" + index) : (label + "-" + icon);
@@ -71,34 +70,24 @@ export class Dropdown extends React.Component<IDropdownProps, IDropdownState> {
   }
 }
 
-interface IDropdownItem {
-  label: ILocalizedString;
-  action: IAction<any>;
-  type: string;
+export interface IDropdownItem {
+  type?: string;
+  label?: ILocalizedString;
   icon?: string;
   onClick?: () => void;
 }
 
-interface IDropdownProps {
+interface IProps {
   inner: React.ReactElement<any>;
   className?: string;
   items: IDropdownItem[];
   updown?: boolean;
-
-  t: ILocalizer;
-  dispatch: IDispatch;
 }
 
-interface IDropdownState {
+interface IDerivedProps {}
+
+interface IState {
   open: boolean;
 }
 
-const listening = listensToClickOutside(Dropdown);
-
-const mapStateToProps = () => ({});
-const mapDispatchToProps = (dispatch: IDispatch) => ({dispatch});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(listening);
+export default connect<IProps>(listensToClickOutside(Dropdown));

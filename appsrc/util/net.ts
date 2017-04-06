@@ -1,5 +1,5 @@
 
-import {net} from "../electron";
+import {net} from "electron";
 
 import * as querystring from "querystring";
 import {isEmpty} from "underscore";
@@ -118,7 +118,7 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
       reject(new RequestError(error.message));
     });
 
-    req.on("abort", (error) => {
+    req.on("abort", (error: Error) => {
       reject(new RequestAborted());
     });
 

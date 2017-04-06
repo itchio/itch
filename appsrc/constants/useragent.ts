@@ -1,8 +1,10 @@
 
-import { app, remote } from "../electron";
+import {app, remote} from "electron";
 import os from "../util/os";
 
 let userAgent: string;
+
+// TODO: investigate - is that needed?
 
 if (os.processType() === "browser") {
   userAgent = `itch/${app.getVersion()} (${os.platform()}; ` +

@@ -91,7 +91,7 @@ async function handleUE4Prereq (cave: ICaveRecord, opts: IWindowsPrereqsOpts) {
       return;
     }
 
-    const appPath = pathmaker.appPath(cave);
+    const appPath = pathmaker.appPath(cave, opts.store.getState().preferences);
     const prereqFullPath = ospath.join(appPath, prereqRelativePath);
 
     let prereqsState: IPrereqsState = {

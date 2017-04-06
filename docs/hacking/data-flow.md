@@ -75,6 +75,7 @@ of the object to be sent, though (all the application state, for example), it mi
                                     ||
                                     ||
          NODE.JS SIDE               ||                CHROMIUM SIDE
+         aka 'metal'                ||                aka 'chrome'
   (process.type === 'browser')      ||         (process.type === 'renderer')
        _______________              ||            ___________________
       [               ]             ||           [                   ]

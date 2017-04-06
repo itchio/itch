@@ -2,7 +2,7 @@
 import * as fs from "fs";
 import * as ospath from "path";
 
-const fixturesPath = ospath.resolve(`${__dirname}/../../fixtures`);
+const fixturesPath = ospath.resolve(`${__dirname}/../fixtures`);
 
 let self = {
   path: function (spec: string) {

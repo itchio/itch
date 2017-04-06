@@ -1,7 +1,7 @@
 
 import {createStructuredSelector} from "reselect";
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import * as classNames from "classnames";
 
@@ -10,17 +10,16 @@ import * as actions from "../actions";
 import urlParser from "../util/url";
 import navigation from "../util/navigation";
 import partitionForUser from "../util/partition-for-user";
+import injectPath from "../util/inject-path";
 
 import staticTabData from "../constants/static-tab-data";
 
 import * as querystring from "querystring";
-import * as ospath from "path";
 import {uniq, findWhere} from "underscore";
 
-import {IBrowserState} from "./browser-state";
+import {IBrowserState, IBrowserControlProperties} from "./browser-state";
 import createContextMenu from "./browser-meat-context-menu";
 
-const injectPath = ospath.resolve(__dirname, "..", "inject", "itchio-monkeypatch.js");
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
 const WILL_NAVIGATE_GRACE_PERIOD = 3000;
@@ -34,10 +33,10 @@ import GameBrowserContext from "./game-browser-context";
 
 import {transformUrl} from "../util/navigation";
 
-import {ITabData, IState} from "../types";
+import {ITabData, IAppState} from "../types";
 import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
 
-import {IWebView, IWebContents, ISession} from "../electron/types";
+import "electron";
 
 interface IHistoryEntry {
   url: string;
@@ -45,9 +44,9 @@ interface IHistoryEntry {
 }
 
 // updated when switching accounts
-let currentSession: ISession = null;
+let currentSession: Electron.Session = null;
 
-export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeatState> {
+export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nProps, IBrowserMeatState> {
   refs: {
     webviewShell: Element;
   };
@@ -59,7 +58,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
   watcher: NodeJS.Timer;
 
   /** the devil incarnate */
-  webview: IWebView;
+  webview: Electron.WebViewElement;
 
   constructor () {
     super();
@@ -74,14 +73,6 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
       scrollHistory: [],
       wentBackOrForward: false,
     };
-
-    this.goBack = this.goBack.bind(this);
-    this.goForward = this.goForward.bind(this);
-    this.reload = this.reload.bind(this);
-    this.stop = this.stop.bind(this);
-    this.openDevTools = this.openDevTools.bind(this);
-    this.loadURL = this.loadURL.bind(this);
-    this.loadUserURL = this.loadUserURL.bind(this);
   }
 
   updateBrowserState (props = {}) {
@@ -177,7 +168,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
             this.registerScrollTop(url, scrollTop);
           }
         });
-      }, 700);
+      }, 700) as any as NodeJS.Timer;
     };
 
     const scrollHistoryItem = findWhere(this.state.scrollHistory, {url});
@@ -235,7 +226,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 
     // sometimes we get double will-navigate events because life is fun?!
     if (this.lastNavigationUrl === url && e.timeStamp - this.lastNavigationTimeStamp < WILL_NAVIGATE_GRACE_PERIOD) {
-      this.with((wv: IWebView) => {
+      this.with((wv: Electron.WebViewElement) => {
         wv.stop();
         wv.loadURL(this.props.url);
       });
@@ -264,11 +255,11 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 
   isFrozen () {
     const {tabId} = this.props;
-    const frozen = staticTabData[tabId] || !tabId;
+    const frozen = !!staticTabData[tabId] || !tabId;
     return frozen;
   }
 
-  setupItchInternal (session: ISession) {
+  setupItchInternal (session: Electron.Session) {
     currentSession = session;
 
     // requests to 'itch-internal' are used to communicate between web content & the app
@@ -339,7 +330,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
     xhr.send();
   }
 
-  componentWillReceiveProps (nextProps: IBrowserMeatProps) {
+  componentWillReceiveProps (nextProps: IProps) {
     if (nextProps.url) {
       const {webview} = this;
       if (!webview) {
@@ -362,15 +353,15 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
     // cf. https://github.com/electron/electron/issues/6046
     webviewShell.innerHTML = "<webview/>";
     // woo please sign my cast
-    const wv = (webviewShell.querySelector("webview") as any) as IWebView;
+    const wv = (webviewShell.querySelector("webview") as any) as Electron.WebViewElement;
     this.webview = wv;
 
     const {meId} = this.props;
     const partition = partitionForUser(meId);
 
     wv.partition = partition;
-    wv.plugins = true;
-    wv.preload = injectPath;
+    wv.plugins = "on";
+    wv.preload = injectPath("itchio-monkeypatch");
 
     const callbackSetup = () => {
       wv.addEventListener("did-start-loading", this.didStartLoading.bind(this));
@@ -392,7 +383,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
       wv.removeEventListener("dom-ready", callbackSetup);
 
       wv.addEventListener("did-stop-loading", (e) => {
-        if (e.target.src === "about:blank") {
+        if (wv.src === "about:blank") {
           return;
         }
         this.updateBrowserState({firstLoad: false});
@@ -413,10 +404,21 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 
     const {browserState} = this.state;
 
-    const {goBack, goForward, stop, reload, openDevTools, loadUserURL} = this;
     const frozen = this.isFrozen();
-    const controlProps = {tabId, tabPath, tabData, browserState, goBack,
-      goForward, stop, reload, openDevTools, loadURL: loadUserURL, frozen, active};
+    const controlProps: IBrowserControlProperties = {
+      tabId,
+      tabPath,
+      tabData,
+      browserState,
+      goBack: this.goBack.bind(this),
+      goForward: this.goForward.bind(this),
+      stop: this.stop.bind(this),
+      reload: this.reload.bind(this),
+      openDevTools: this.openDevTools.bind(this),
+      loadURL: this.loadUserURL.bind(this),
+      frozen,
+      active,
+    };
 
     let context: React.ReactElement<any> = null;
     if (controls === "game") {
@@ -436,7 +438,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
     </div>;
   }
 
-  with (cb: (wv: IWebView, wc: IWebContents) => void, opts = {insist: false}) {
+  with (cb: (wv: Electron.WebViewElement, wc: Electron.WebContents) => void, opts = {insist: false}) {
     const {webview} = this;
     if (!webview) {
       return;
@@ -455,7 +457,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
   }
 
   openDevTools () {
-    this.with((wv: IWebView, wc: IWebContents) => wc.openDevTools({mode: "detach"}));
+    this.with((wv: Electron.WebViewElement, wc: Electron.WebContents) => wc.openDevTools({mode: "detach"}));
   }
 
   stop () {
@@ -518,52 +520,48 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 
 export type ControlsType = "generic" | "game" | "user";
 
-interface IBrowserMeatProps {
+interface IProps {
   active: boolean;
   url: string;
   tabPath: string;
   tabData: ITabData;
   tabId: string;
-  className: string;
+  controls: ControlsType;
+}
 
+interface IDerivedProps {
   meId: string;
   proxy?: string;
   proxySource?: string;
 
   navigate: typeof actions.navigate;
-
   evolveTab: typeof actions.evolveTab;
   tabDataFetched: typeof actions.tabDataFetched;
   tabReloaded: typeof actions.tabReloaded;
   tabLoading: typeof actions.tabLoading;
-
-  controls: ControlsType;
 }
 
 interface IBrowserMeatState {
-  // using '?' everywhere because @types/react is dumb and doesn't account for
-  // `setState` making a shallow merge, not a set (so the types can lack
-  // properties)
+  // FIXME: currently we're using '?' everywhere because @types/react is dumb
+  // and doesn't account for `setState` making a shallow merge, not a set
+  // (so the types can lack properties)
+  // TODO: regularly check if it's been fixed.
   browserState?: IBrowserState;
   scrollHistory?: IHistoryEntry[];
   wentBackOrForward?: boolean;
 }
 
-const mapStateToProps = createStructuredSelector({
-  meId: (state: IState) => (state.session.credentials.me || {id: "anonymous"}).id,
-  proxy: (state: IState) => state.system.proxy,
-  proxySource: (state: IState) => state.system.proxySource,
+export default connect<IProps>(BrowserMeat, {
+  state: createStructuredSelector({
+    meId: (state: IAppState) => (state.session.credentials.me || { id: "anonymous" }).id,
+    proxy: (state: IAppState) => state.system.proxy,
+    proxySource: (state: IAppState) => state.system.proxySource,
+  }),
+  dispatch: (dispatch: IDispatch) => ({
+    navigate: multiDispatcher(dispatch, actions.navigate),
+    evolveTab: dispatcher(dispatch, actions.evolveTab),
+    tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
+    tabReloaded: dispatcher(dispatch, actions.tabReloaded),
+    tabLoading: dispatcher(dispatch, actions.tabLoading),
+  }),
 });
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  navigate: multiDispatcher(dispatch, actions.navigate), 
-  evolveTab: dispatcher(dispatch, actions.evolveTab),
-  tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
-  tabReloaded: dispatcher(dispatch, actions.tabReloaded),
-  tabLoading: dispatcher(dispatch, actions.tabLoading),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(BrowserMeat);

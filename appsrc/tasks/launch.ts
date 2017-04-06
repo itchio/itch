@@ -16,11 +16,11 @@ import htmlLaunch from "./launch/html";
 import shellLaunch from "./launch/shell";
 import externalLaunch from "./launch/external";
 
-import store from "../store";
+import store from "../store/metal-store";
 import * as actions from "../actions";
 import {startTask} from "../reactors/tasks/start-task";
 
-import {powerSaveBlocker} from "../electron";
+import {app, powerSaveBlocker} from "electron";
 
 import mklog from "../util/log";
 const log = mklog("launch");
@@ -38,8 +38,6 @@ import actionForGame from "../util/action-for-game";
 
 import {promisedModal} from "../reactors/modals";
 import {MODAL_RESPONSE} from "../constants/action-types";
-
-import {app} from "../electron";
 
 import {findWhere, each} from "underscore";
 
@@ -157,7 +155,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
   const action = actionForGame(caveGame, cave);
   if (action === "open") {
     globalMarket.saveEntity("caves", cave.id, {lastTouched: Date.now()});
-    explorer.open(pathmaker.appPath(cave));
+    explorer.open(pathmaker.appPath(cave, store.getState().preferences));
     return;
   }
 
@@ -188,7 +186,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
 
   const env: IEnvironment = {};
   const args: string[] = [];
-  const appPath = pathmaker.appPath(cave);
+  const appPath = pathmaker.appPath(cave, store.getState().preferences);
   const manifestPath = ospath.join(appPath, ".itch.toml");
   log(launchOpts, `looking for manifest @ "${manifestPath}"`);
   const hasManifest = await sf.exists(manifestPath);
@@ -301,7 +299,7 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
       const previousSecondsRun = globalMarket.getEntity<ICaveRecord>("caves", cave.id).secondsRun || 0;
       const newSecondsRun = UPDATE_PLAYTIME_INTERVAL + previousSecondsRun;
       globalMarket.saveEntity("caves", cave.id, {secondsRun: newSecondsRun, lastTouched: now});
-    }, UPDATE_PLAYTIME_INTERVAL * 1000);
+    }, UPDATE_PLAYTIME_INTERVAL * 1000) as any as NodeJS.Timer;
 
     powerSaveBlockerId = opts.preferences.preventDisplaySleep ? powerSaveBlocker.start("prevent-display-sleep") : null;
 

@@ -1,9 +1,9 @@
 
-// tslint:disable:no-console
-
-import * as fs from "fs";
-import * as ospath from "path";
-import * as glob from "glob";
+process.on("uncaughtException", (e: Error) => {
+  // tslint:disable-next-line
+  console.log("Uncaught exception: ", e.stack);
+  process.exit(127);
+});
 
 require("source-map-support").install();
 require("bluebird").config({
@@ -14,30 +14,20 @@ const env = require("../env");
 env.name = "test";
 process.env.NODE_ENV = "test";
 
-const isDir = (f: string) => {
-  try {
-    return fs.lstatSync(f).isDirectory();
-  } catch (e) {
-    // probably a glob
-  }
-  return false;
-};
+require("chalk").enabled = true;
 
-const args = process.argv.slice(2);
-if (args.length === 0) {
-  args.push(ospath.resolve(__dirname));
-}
+const app = require("electron").app;
 
-for (let arg of args) {
-  if (isDir(arg)) {
-    console.log(`Running all specs in ${arg}`);
-    arg = `${arg}/**/*-spec.js`;
-  }
+app.on("ready", () => {
+  const tape = require("tape");
+  const formatter = require("faucet");
+  tape.createStream().pipe(formatter()).pipe(process.stdout);
 
-  glob(arg, function (e, files) {
-    files.forEach(function (file) {
-      const test = ospath.resolve(process.cwd(), file);
-      require(test);
-    });
+  tape.onFinish(() => {
+    app.quit();
   });
-}
+
+  const context = (require as any).context(".", true, /\.ts$/);
+  context.keys().forEach(context);
+  module.exports = context;
+});

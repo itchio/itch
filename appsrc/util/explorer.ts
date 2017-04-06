@@ -1,5 +1,5 @@
 
-import {shell} from "../electron";
+import {shell} from "electron";
 import os from "./os";
 
 export function open (folder: string) {

@@ -3,9 +3,6 @@
 
 import test  = require("zopf");
 import * as sinon from "sinon";
-import * as proxyquire from "proxyquire";
-
-import cooldown = require("../stubs/cooldown");
 
 import {IResponse} from "../../util/net";
 import {ApiError} from "../../util/api";
@@ -21,10 +18,9 @@ test("api", t => {
 
   const stubs = {
     "../util/net": net,
-    "../util/cooldown": cooldown,
   };
 
-  const api = proxyquire("../../util/api", stubs).default;
+  const api = require("inject-loader!../../util/api")(stubs).default;
   api.rootUrl = "http://example.org/";
 
   const user = api.withKey("key");

@@ -1,18 +1,17 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import * as actions from "../actions";
 
 import Icon from "./icon";
 
-import {ILocalizer} from "../localizer";
-import {IDispatch, dispatcher} from "../constants/action-types";
+import {dispatcher} from "../constants/action-types";
 
 /**
  * Unapologetically and heavily inspired from Google Chrome's "stuff went wrong" tab
  */
-export class Toast extends React.Component<IToastProps, IToastState> {
+export class Toast extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {
@@ -49,7 +48,7 @@ export class Toast extends React.Component<IToastProps, IToastState> {
     const {t, data = {}} = this.props;
 
     return <div className="toast-meat">
-      <Icon icon="heart-broken" classes="leader"/>
+      <Icon icon="heart-broken" classes={["leader"]}/>
       <h2>{t("toast.title")}</h2>
 
       <p>{t("toast.message")} {t("toast.call_to_action")}</p>
@@ -69,31 +68,27 @@ export class Toast extends React.Component<IToastProps, IToastState> {
   }
 }
 
-interface IToastState {
-  expanded: boolean;
-}
-
-interface IToastProps {
-  t: ILocalizer;
+interface IProps {
   data: {
     path?: string;
     error?: string;
     stack?: string;
   };
   tabId: string;
+}
 
+interface IDerivedProps {
   evolveTab: typeof actions.evolveTab;
   reportIssue: typeof actions.reportIssue;
 }
 
-const mapStateToProps = () => ({});
+interface IState {
+  expanded: boolean;
+}
 
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  evolveTab: dispatcher(dispatch, actions.evolveTab),
-  reportIssue: dispatcher(dispatch, actions.reportIssue),
+export default connect<IProps>(Toast, {
+  dispatch: (dispatch) => ({
+    evolveTab: dispatcher(dispatch, actions.evolveTab),
+    reportIssue: dispatcher(dispatch, actions.reportIssue),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Toast);

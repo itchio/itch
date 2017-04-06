@@ -13,7 +13,7 @@ import mklog from "../util/log";
 const log = mklog("preferences");
 import {opts} from "../logger";
 
-import {ISession} from "../electron/types";
+import {shell} from "electron";
 
 import {promisedModal} from "./modals";
 
@@ -82,7 +82,7 @@ export default function (watcher: Watcher) {
     const userId = store.getState().session.credentials.me.id;
 
     const session = require("electron").session;
-    const ourSession = session.fromPartition(partitionForUser(String(userId))) as ISession;
+    const ourSession = session.fromPartition(partitionForUser(String(userId))) as Electron.Session;
 
     if (action.payload.cache) {
       promises.push(new Promise((resolve, reject) => {
@@ -103,5 +103,11 @@ export default function (watcher: Watcher) {
     store.dispatch(actions.statusMessage({
       message: ["prompt.clear_browsing_data.notification"],
     }));
+  });
+
+  watcher.on(actions.openAppLog, async(store, action) => {
+    const path = pathmaker.logPath();
+    log(opts, `Opening app log at ${path}`);
+    shell.openItem(path);
   });
 }

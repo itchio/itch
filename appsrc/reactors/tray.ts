@@ -1,35 +1,23 @@
 
 import {Watcher} from "./watcher";
 
-import * as ospath from "path";
 import os from "../util/os";
 import localizer from "../localizer";
-import {app, Menu, Tray, IMenuTemplate} from "../electron";
+import {app, Menu, Tray} from "electron";
 
 import {createSelector} from "reselect";
 
 import * as actions from "../actions";
 
-import {IStore, IState, II18nState} from "../types";
+import {IStore, IAppState, II18nState} from "../types";
 import {Action} from "redux-actions";
 
-import {EventEmitter} from "events";
+type IMenuTemplate = Electron.MenuItemOptions[];
 
 // used to glue balloon click with notification callbacks
 let lastNotificationAction: Action<any>;
 
-interface IBalloonOpts {
-  title: string;
-  icon: string;
-  content: string;
-}
-
-interface ITray extends EventEmitter {
-  setToolTip(message: string): void;
-  setContextMenu(menu: IMenuTemplate): void;
-  displayBalloon(opts: IBalloonOpts): void;
-}
-let tray: ITray;
+let tray: Electron.Tray;
 
 function makeTray (store: IStore) {
   // cf. https://github.com/itchio/itch/issues/462
@@ -42,12 +30,12 @@ function makeTray (store: IStore) {
 
   let base = "white";
   if (os.platform() === "win32" && !/^10\./.test(os.release())) {
-    // windows older than 10 get the old colorful tra yicon
+    // windows older than 10 get the old colorful tray icon
     base = app.getName();
   }
 
   const iconName = `${base}${suffix}.png`;
-  const iconPath = ospath.resolve(`${__dirname}/../static/images/tray/${iconName}`);
+  const iconPath = require("../static/images/tray/" + iconName);
   tray = new Tray(iconPath);
   tray.setToolTip("itch.io");
   tray.on("click", () => store.dispatch(actions.focusWindow({toggle: true})));
@@ -62,12 +50,12 @@ function makeTray (store: IStore) {
 function setMenu (trayMenu: IMenuTemplate, store: IStore) {
   if (os.platform() === "darwin") {
     // don't have a tray icon on macOS, we just live in the dock
-    app.dock.setMenu(trayMenu);
+    app.dock.setMenu(Menu.buildFromTemplate(trayMenu));
   } else {
     if (!tray) {
       makeTray(store);
     }
-    tray.setContextMenu(trayMenu);
+    tray.setContextMenu(Menu.buildFromTemplate(trayMenu));
   }
 }
 
@@ -90,17 +78,15 @@ function refreshTray (store: IStore, i18n: II18nState) {
       click: () => store.dispatch(actions.quit({})),
     });
   }
-
-  const trayMenu = Menu.buildFromTemplate(menuTemplate);
-  setMenu(trayMenu, store);
+  setMenu(menuTemplate, store);
 }
 
 // TODO: make the tray a lot more useful? that'd be good.
 // (like: make it display recent stuff / maybe the last few tabs)
 
-let traySelector: (state: IState, props?: any) => void;
+let traySelector: (state: IAppState, props?: any) => void;
 const makeTraySelector = (store: IStore) => createSelector(
-  (state: IState) => state.i18n,
+  (state: IAppState) => state.i18n,
   (i18n) => {
     setImmediate(() => {
       refreshTray(store, i18n);

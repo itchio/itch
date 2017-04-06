@@ -1,6 +1,6 @@
 
 // TODO: reduce dependency on electron to allow easier testing
-import {app, shell, dialog} from "../electron";
+import {app, shell, dialog} from "electron";
 
 import * as path from "path";
 import * as querystring from "querystring";
@@ -90,7 +90,7 @@ ${log}
     const t = require("../localizer").getT({}, "en");
 
     let dialogOpts = {
-      type: "error",
+      type: "error" as "error", // woo typescript is crazy stuff, friendos
       buttons: [
         t("prompt.crash_reporter.report_issue", {defaultValue: "Report issue"}),
         t("prompt.crash_reporter.open_crash_log", {defaultValue: "Open crash log"}),

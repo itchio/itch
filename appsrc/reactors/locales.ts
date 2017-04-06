@@ -6,7 +6,7 @@ import ifs from "../localizer/ifs";
 
 import net from "../util/net";
 import urls from "../constants/urls";
-import {app} from "../electron";
+import {app} from "electron";
 import * as env from "../env";
 
 import delay from "../reactors/delay";
@@ -14,7 +14,7 @@ import delay from "../reactors/delay";
 const upgradesEnabled = (env.name === "production") || (process.env.DID_I_STUTTER === "1");
 
 const remoteDir = ospath.join(app.getPath("userData"), "locales");
-const localesDir = ospath.resolve(ospath.join(__dirname, "..", "static", "locales"));
+const localesDir = ospath.resolve(ospath.join(__dirname, "static", "locales"));
 const localesConfigPath = ospath.resolve(ospath.join(localesDir, "..", "locales.json"));
 
 import {IStore, II18nResources} from "../types";

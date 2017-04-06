@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import {createSelector} from "reselect";
 import {findWhere} from "underscore";
 
@@ -16,14 +16,12 @@ import Icon from "./icon";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
-import {ILocalizer} from "../localizer";
-
 import {
-  IState, IUserMarketState,
+  IAppState, IUserMarketState,
   IGameRecord, ICaveRecord, IDownloadKey,
 } from "../types";
 
-export class GameStats extends React.Component<IGameStatsProps, void> {
+export class GameStats extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, cave, game = {} as IGameRecord, downloadKey, mdash = true} = this.props;
     const classification = game.classification || "game";
@@ -39,7 +37,7 @@ export class GameStats extends React.Component<IGameStatsProps, void> {
       if (classAction === "launch") {
         for (const p of platformData) {
           if ((game as any)[p.field]) {
-            platforms.push(<Icon title={p.platform} icon={p.icon}/>);
+            platforms.push(<Icon hint={p.platform} icon={p.icon}/>);
           }
         }
       }
@@ -71,30 +69,26 @@ export class GameStats extends React.Component<IGameStatsProps, void> {
   }
 }
 
-interface IGameStatsProps {
+interface IProps {
   game: IGameRecord;
-  cave: ICaveRecord;
-  downloadKey: IDownloadKey;
-  mdash: boolean;
-
-  t: ILocalizer;
+  mdash?: boolean;
 }
 
-const mapStateToProps = () => {
-  return createSelector(
-    (state: IState, props: IGameStatsProps) => state.market,
-    (state: IState, props: IGameStatsProps) => state.globalMarket,
-    (state: IState, props: IGameStatsProps) => props.game,
-    (userMarket, globalMarket, game) => ({
-      downloadKey: findWhere((userMarket || {} as IUserMarketState).downloadKeys || {}, {gameId: game.id}),
-      cave: globalMarket.cavesByGameId[game.id],
-    }),
-  );
-};
+interface IDerivedProps {
+  cave?: ICaveRecord;
+  downloadKey: IDownloadKey;
+}
 
-const mapDispatchToProps = () => ({});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(GameStats);
+export default connect<IProps>(GameStats, {
+  state: () => {
+    return createSelector(
+      (state: IAppState, props: IProps) => state.market,
+      (state: IAppState, props: IProps) => state.globalMarket,
+      (state: IAppState, props: IProps) => props.game,
+      (userMarket, globalMarket, game) => ({
+        downloadKey: findWhere((userMarket || {} as IUserMarketState).downloadKeys || {}, { gameId: game.id }),
+        cave: globalMarket.cavesByGameId[game.id],
+      }),
+    );
+  },
+});

@@ -13,7 +13,7 @@ book:
     - release/ci-book.js
 
 # Unit tests
-test:
+test-linux:
   stage: build
   tags:
     - linux
@@ -22,17 +22,17 @@ test:
   except:
     - tags
 
-# JavaScript standard formatting
-lint:
+# I18n check
+i18n-check:
   stage: build
   tags:
     - linux
   script:
-    - release/ci-lint.js
+    - release/ci-i18n-check.js
   except:
     - tags
 
-# compile javascript & scss using babel & node-sass
+# Compile javascript & css
 compile:
   stage: build
   tags:

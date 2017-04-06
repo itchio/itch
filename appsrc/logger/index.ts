@@ -8,7 +8,7 @@ const full = (process.type !== "renderer" && env.name !== "test");
 import pathmaker from "../util/pathmaker";
 import mklog from "../util/log";
 
-import {app} from "../electron";
+import {app} from "electron";
 
 // naughty
 try {

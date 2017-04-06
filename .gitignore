@@ -10,7 +10,9 @@ npm-debug.log
 /*.app
 /app
 /test
+/tests
 /.tscache
+/.awcache
 *.map
 tmp
 *.tmp.txt
@@ -28,6 +30,7 @@ tmp
 /build
 /cache
 /stage*
+/dist*
 /deb-stage
 /rpm-stage
 /aur-stage

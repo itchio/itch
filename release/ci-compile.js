@@ -8,7 +8,6 @@ $.say(`Compiling ${$.app_name()}`)
 
 $.show_versions(['npm', 'node'])
 
-$($.npm_dep('grunt', 'grunt-cli'))
 $($.npm('install'))
 
 $.say('Compiling JavaScript')

@@ -1,7 +1,7 @@
 
 import {Watcher} from "./watcher";
 
-import {app} from "../electron";
+import {app} from "electron";
 import os from "../util/os";
 import client from "../util/api";
 import net from "../util/net";

@@ -4,11 +4,11 @@ import {createSelector} from "reselect";
 
 import {languageChanged} from "../actions";
 
-import {IStore, IState} from "../types";
+import {IStore, IAppState} from "../types";
 
 const makeSelector = (store: IStore) => createSelector(
-  (state: IState) => state.system.sniffedLanguage,
-  (state: IState) => state.preferences.lang,
+  (state: IAppState) => state.system.sniffedLanguage,
+  (state: IAppState) => state.preferences.lang,
   (systemLang, prefLang) => {
     const lang = prefLang || systemLang || "en";
     setImmediate(() => {
@@ -16,7 +16,7 @@ const makeSelector = (store: IStore) => createSelector(
     });
   },
 );
-let selector: (state: IState) => void;
+let selector: (state: IAppState) => void;
 
 export default function (watcher: Watcher) {
   watcher.onAll(async (store, action) => {

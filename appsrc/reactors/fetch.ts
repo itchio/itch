@@ -19,7 +19,7 @@ import debounce from "./debounce";
 
 import * as actions from "../actions";
 
-import {IStore, IState, IUserMarket, ICredentials} from "../types";
+import {IStore, IAppState, IUserMarket, ICredentials} from "../types";
 
 const fetchUsuals = debounce(async function fetchUsuals (credentials: ICredentials) {
   invariant(credentials.key, "have API key");
@@ -50,12 +50,12 @@ async function fetchSingleCollectionGames
   store.dispatch(actions.collectionGamesFetched({collectionId}));
 }
 
-let collectionsWatcher: (state: IState) => void;
+let collectionsWatcher: (state: IAppState) => void;
 const makeCollectionsWatcher = (store: IStore) => {
   let oldIds: string[] = [];
 
   return createSelector(
-    (state: IState) => state.market.collections,
+    (state: IAppState) => state.market.collections,
     (collections) => {
       setImmediate(() => {
         const ids = map(collections, (c, id) => id);

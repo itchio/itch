@@ -1,17 +1,16 @@
 
-import {createStructuredSelector} from "reselect";
 import * as React from "react";
-import {connect} from "../connect";
+import {createStructuredSelector} from "reselect";
+import {connect, I18nProps} from "../connect";
 
 import urls from "../../constants/urls";
 
 import Icon from "../icon";
 
-import {IState, IOpenAtLoginError} from "../../types";
-import {ILocalizer} from "../../localizer";
+import {IAppState, IOpenAtLoginError} from "../../types";
 import interleave, {IComponent} from "../interleave";
 
-class OpenAtLoginError extends React.Component<IOpenAtLoginErrorProps, void> {
+class OpenAtLoginError extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, openAtLoginError} = this.props;
 
@@ -42,18 +41,14 @@ class OpenAtLoginError extends React.Component<IOpenAtLoginErrorProps, void> {
   }
 }
 
-interface IOpenAtLoginErrorProps {
-  t: ILocalizer;
+interface IProps {}
+
+interface IDerivedProps {
   openAtLoginError: IOpenAtLoginError;
 }
 
-const mapStateToProps = createStructuredSelector({
-  openAtLoginError: (state: IState) => state.status.openAtLoginError,
+export default connect<IProps>(OpenAtLoginError, {
+  state: createStructuredSelector({
+    openAtLoginError: (state: IAppState) => state.status.openAtLoginError,
+  }),
 });
-
-const mapDispatchToProps = () => ({});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(OpenAtLoginError);

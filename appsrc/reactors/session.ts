@@ -7,13 +7,13 @@ import * as actions from "../actions";
 
 import delay from "./delay";
 
-import {IStore, IState} from "../types";
+import {IStore, IAppState} from "../types";
 
-let sessionSelector: (state: IState) => void;
+let sessionSelector: (state: IAppState) => void;
 const makeSessionSelector = (store: IStore) => createSelector(
-  (state: IState) => state.setup.done,
-  (state: IState) => state.market.ready,
-  (state: IState) => state.session.credentials.key,
+  (state: IAppState) => state.setup.done,
+  (state: IAppState) => state.market.ready,
+  (state: IAppState) => state.session.credentials.key,
   (setupDone, marketReady, loginDone) => {
     if (setupDone && marketReady && loginDone) {
       setImmediate(() => {

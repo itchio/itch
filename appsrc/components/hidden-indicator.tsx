@@ -1,16 +1,13 @@
 
 import * as React from "react";
-
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import * as actions from "../actions";
-import {IDispatch, dispatcher} from "../constants/action-types";
-
-import {ILocalizer} from "../localizer";
+import {dispatcher} from "../constants/action-types";
 
 import Icon from "./icon";
 
-class HiddenIndicator extends React.Component<IHiddenIndicatorProps, void> {
+class HiddenIndicator extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, tab, count, clearFilters} = this.props;
 
@@ -29,22 +26,17 @@ class HiddenIndicator extends React.Component<IHiddenIndicatorProps, void> {
   }
 }
 
-interface IHiddenIndicatorProps {
+interface IProps {
   tab: string;
   count: number;
+}
 
-  t: ILocalizer;
-
+interface IDerivedProps {
   clearFilters: typeof actions.clearFilters;
 }
 
-const mapStateToProps = () => ({});
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  clearFilters: dispatcher(dispatch, actions.clearFilters),
+export default connect<IProps>(HiddenIndicator, {
+  dispatch: (dispatch) => ({
+    clearFilters: dispatcher(dispatch, actions.clearFilters),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(HiddenIndicator);

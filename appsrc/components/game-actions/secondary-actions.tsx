@@ -2,19 +2,18 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import {connect} from "../connect";
+import {connect, I18nProps} from "../connect";
 import Icon from "../icon";
 
 import listSecondaryActions, {IActionOpts} from "./list-secondary-actions";
 import {map} from "underscore";
 
-import {ILocalizer} from "../../localizer";
 import {IDispatch} from "../../constants/action-types";
 import {IActionsInfo} from "./types";
 
 import Ink = require("react-ink");
 
-class SecondaryActions extends React.Component<ISecondaryActionsProps, void> {
+class SecondaryActions extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {items, error} = listSecondaryActions(this.props);
 
@@ -46,15 +45,13 @@ class SecondaryActions extends React.Component<ISecondaryActionsProps, void> {
   }
 }
 
-interface ISecondaryActionsProps extends IActionsInfo {
-  t: ILocalizer;
+interface IProps extends IActionsInfo {
+}
+
+interface IDerivedProps {
   dispatch: IDispatch;
 }
 
-const mapStateToProps = () => ({});
-const mapDispatchToProps = (dispatch: IDispatch) => ({dispatch});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(SecondaryActions);
+export default connect<IProps>(SecondaryActions, {
+  dispatch: (dispatch) => ({ dispatch }),
+});

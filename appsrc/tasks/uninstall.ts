@@ -9,6 +9,8 @@ const log = mklog("uninstall");
 
 import core from "./install/core";
 
+import store from "../store/metal-store";
+
 const keepArchives = (process.env.REMEMBER_ME_WHEN_IM_GONE === "1");
 
 import {IStartTaskOpts, IUploadRecord} from "../types";
@@ -21,14 +23,15 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
     out.emit("progress", e);
   };
 
-  const destPath = pathmaker.appPath(cave);
+  const {preferences} = store.getState();
+  const destPath = pathmaker.appPath(cave, preferences);
 
   let upload: IUploadRecord = null;
   let archivePath: string = null;
 
   if (cave.uploadId && cave.uploads && cave.uploads[cave.uploadId]) {
     upload = cave.uploads[cave.uploadId];
-    archivePath = pathmaker.downloadPath(upload);
+    archivePath = pathmaker.downloadPath(upload, preferences);
     log(opts, `Uninstalling app in ${destPath} from archive ${archivePath}`);
   } else {
     log(opts, `Uninstalling app in ${destPath}, no archive available`);

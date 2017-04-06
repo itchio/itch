@@ -1,16 +1,15 @@
 
 import * as React from "react";
 import * as classNames from "classnames";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import {createStructuredSelector} from "reselect";
 
 import {debounce} from "underscore";
 
 import * as actions from "../actions";
 
-import {IState, TabLayout} from "../types";
-import {ILocalizer} from "../localizer";
-import {IDispatch, dispatcher} from "../constants/action-types";
+import {IAppState, TabLayout} from "../types";
+import {dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
 
@@ -19,7 +18,7 @@ import Select = require("react-select");
 import Icon from "./icon";
 
 @watching
-class GameFilters extends React.Component<IGameFiltersProps, void> {
+class GameFilters extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   refs: {
     search: HTMLInputElement;
   };
@@ -158,44 +157,40 @@ class GameFilters extends React.Component<IGameFiltersProps, void> {
   }
 }
 
-interface IGameFiltersProps {
+interface IProps {
   /** id of the tab this filter is for (for remembering queries, etc.) */
   tab: string;
 
   /** whether or not to show binary filters ('only compatible', etc.) */
-  showBinaryFilters: boolean;
-  showLayoutPicker: boolean;
+  showBinaryFilters?: boolean;
+  showLayoutPicker?: boolean;
+}
 
+interface IDerivedProps {
   filterQuery: string;
+  layout: TabLayout;
   onlyCompatible: boolean;
   onlyOwned: boolean;
   onlyInstalled: boolean;
-  layout: TabLayout;
-
-  t: ILocalizer;
 
   filterChanged: typeof actions.filterChanged;
   updatePreferences: typeof actions.updatePreferences;
 }
 
-const mapStateToProps = (initialState: IState, props: IGameFiltersProps) => {
-  const {tab} = props;
+export default connect<IProps>(GameFilters, {
+  state: (initialState, props) => {
+    const { tab } = props;
 
-  return createStructuredSelector({
-    filterQuery: (state: IState) => state.session.navigation.filters[tab],
-    layout: (state: IState) => state.preferences.layout,
-    onlyCompatible: (state: IState) => state.preferences.onlyCompatibleGames,
-    onlyOwned: (state: IState) => state.preferences.onlyOwnedGames,
-    onlyInstalled: (state: IState) => state.preferences.onlyInstalledGames,
-  });
-};
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  filterChanged: dispatcher(dispatch, actions.filterChanged),
-  updatePreferences: dispatcher(dispatch, actions.updatePreferences),
+    return createStructuredSelector({
+      filterQuery: (state: IAppState) => state.session.navigation.filters[tab],
+      layout: (state: IAppState) => state.preferences.layout,
+      onlyCompatible: (state: IAppState) => state.preferences.onlyCompatibleGames,
+      onlyOwned: (state: IAppState) => state.preferences.onlyOwnedGames,
+      onlyInstalled: (state: IAppState) => state.preferences.onlyInstalledGames,
+    });
+  },
+  dispatch: (dispatch) => ({
+    filterChanged: dispatcher(dispatch, actions.filterChanged),
+    updatePreferences: dispatcher(dispatch, actions.updatePreferences),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(GameFilters);

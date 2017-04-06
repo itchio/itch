@@ -3,7 +3,7 @@ import {findWhere} from "underscore";
 
 import * as actions from "../../actions";
 import format, {DATE_FORMAT} from "../../util/format";
-import store from "../../store";
+import store from "../../store/chrome-store";
 
 import {
   IGameRecord, ICaveRecord, IDownloadKey, ClassificationAction,
@@ -126,7 +126,12 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
     }
 
     // FIXME: this will display the wrong date for builds
-    const hint = `${format.date(cave.installedArchiveMtime, DATE_FORMAT, t.lang)}`;
+    let mtime: any = cave.installedArchiveMtime;
+    if (typeof mtime === "string") {
+      // FIXME: this is a crude workaround for moment.js warnings
+      mtime = new Date(mtime);
+    }
+    const hint = `${format.date(mtime, DATE_FORMAT, t.lang)}`;
 
     items.push({
       type: "info",

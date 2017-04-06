@@ -11,7 +11,11 @@ export interface IDispatch {
 }
 
 export function dispatcher <T> (dispatch: IDispatch, actionCreator: (payload: T) => IAction<T>) {
-  return (payload: T) => dispatch(actionCreator(payload));
+  return (payload: T) => {
+    const action = actionCreator(payload);
+    dispatch(action);
+    return action;
+  };
 }
 
 export function multiDispatcher <T> (
@@ -42,6 +46,9 @@ export const LANGUAGE_CHANGED = "LANGUAGE_CHANGED";
 export interface ILanguageChangedPayload {
   lang: string;
 }
+
+export const OPEN_APP_LOG = "OPEN_APP_LOG";
+export interface IOpenAppLogPayload {}
 
 export const OPEN_MODAL = "OPEN_MODAL";
 export interface IOpenModalPayload extends Types.IModal {}

@@ -1,14 +1,13 @@
 
 import listensToClickOutside = require("react-onclickoutside");
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import * as classNames from "classnames";
 
 import * as actions from "../actions";
 
 import {ITabData} from "../types";
-import {ILocalizer} from "../localizer";
-import {IDispatch, dispatcher} from "../constants/action-types";
+import {dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
 
@@ -19,7 +18,7 @@ function isHTMLInput (el: HTMLElement): el is HTMLInputElement {
 }
 
 @watching
-export class BrowserControls extends React.Component<IBrowserControlsProps, IBrowserControlsState> {
+export class BrowserControls extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   browserAddress: HTMLInputElement | HTMLElement;
 
   constructor () {
@@ -155,7 +154,7 @@ export class BrowserControls extends React.Component<IBrowserControlsProps, IBro
   }
 }
 
-interface IBrowserControlsProps {
+interface IProps {
   browserState: {
     url: string;
     loading: boolean;
@@ -168,11 +167,6 @@ interface IBrowserControlsProps {
   tabData: ITabData;
   frozen: boolean;
 
-  t: ILocalizer;
-
-  /** open URL in external browser */
-  openUrl: typeof actions.openUrl;
-
   goBack: () => void;
   goForward: () => void;
   stop: () => void;
@@ -180,16 +174,17 @@ interface IBrowserControlsProps {
   loadURL: (url: string) => void;
 }
 
-interface IBrowserControlsState {
+interface IDerivedProps {
+  /** open URL in external browser */
+  openUrl: typeof actions.openUrl;
+}
+
+interface IState {
   editingURL: boolean;
 }
 
-const mapStateToProps = () => ({});
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  openUrl: dispatcher(dispatch, actions.openUrl),
+export default connect<IProps>(listensToClickOutside(BrowserControls), {
+  dispatch: (dispatch) => ({
+    openUrl: dispatcher(dispatch, actions.openUrl),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(listensToClickOutside(BrowserControls));

@@ -4,15 +4,15 @@ import * as env from "../env";
 import {createSelector} from "reselect";
 
 import {connect as reduxConnect} from "react-redux";
-import {getT} from "../localizer";
+import {ILocalizer, getT} from "../localizer";
 
-import {IState} from "../types";
+import {IAppState} from "../types";
 import {IDispatch} from "../constants/action-types";
 
 const identity = (x: any) => x;
 
 const tMaker = createSelector(
-  (state: IState) => state.i18n,
+  (state: IAppState) => state.i18n,
   (i18n) => {
     const {lang, strings} = i18n;
     if (env.name === "test") {
@@ -24,28 +24,38 @@ const tMaker = createSelector(
 );
 
 const augment = createSelector(
-  (state: IState, base: any) => tMaker(state),
-  (state: IState, base: any) => base,
+  (state: IAppState, base: any) => tMaker(state),
+  (state: IAppState, base: any) => base,
   (t, base) => {
     return {...base, t};
   },
 );
 
-interface IStateMapper <T> {
-  (state: IState, props: any): T;
+interface IStateMapper {
+  (state: IAppState, props: any): any;
 }
 
-interface IDispatchMapper <T> {
-  (dispatch: IDispatch, props: any): T;
+interface IDispatchMapper {
+  (dispatch: IDispatch, props: any): any;
 }
 
-// TODO: type better (typescript has multiple dispatch right?)
-export function connect <S, P> (mapStateToProps?: IStateMapper<S>, mapDispatchToProps?: IDispatchMapper<P>) {
-  const augmentedMapStateToProps = (state: IState, props: any) => {
-    if (mapStateToProps) {
-      const base = mapStateToProps(state, props);
+export interface I18nProps {
+  t: ILocalizer;
+}
+
+interface IConnectOpts {
+  state?: IStateMapper;
+  dispatch?: IDispatchMapper;
+}
+
+export function connect <TProps> (
+    component: React.ComponentClass<any>,
+    opts: IConnectOpts = {}): React.ComponentClass<TProps> {
+  const augmentedMapStateToProps = (state: IAppState, props: any) => {
+    if (opts.state) {
+      const base = opts.state(state, props);
       if (typeof base === "function") {
-        return (innerState: IState, innerProps: any) => augment(innerState, base(innerState, innerProps));
+        return (innerState: IAppState, innerProps: any) => augment(innerState, base(innerState, innerProps));
       } else {
         return augment(state, base);
       }
@@ -53,5 +63,6 @@ export function connect <S, P> (mapStateToProps?: IStateMapper<S>, mapDispatchTo
       return augment(state, {});
     }
   };
-  return reduxConnect(augmentedMapStateToProps, mapDispatchToProps);
+  const mapDispatchToProps = opts.dispatch;
+  return reduxConnect(augmentedMapStateToProps, mapDispatchToProps)(component);
 }

@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import * as classNames from "classnames";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import bob, {IRGBColor} from "../renderer-util/bob";
 import {ResponsiveContainer, AreaChart, Area} from "recharts";
 
@@ -12,13 +12,13 @@ import * as actions from "../actions";
 import NiceAgo from "./nice-ago";
 import GameActions from "./game-actions";
 
-import {IState, IDownloadSpeeds, IDownloadItem, ITask} from "../types";
-import {IDispatch, dispatcher} from "../constants/action-types";
+import {IDownloadSpeeds, IDownloadItem, ITask} from "../types";
+import {dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 import * as format from "../util/format";
 
-class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> {
+class DownloadRow extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {};
@@ -212,10 +212,14 @@ class DownloadRow extends React.Component<IDownloadRowProps, IDownloadRowState> 
   }
 }
 
-interface IDownloadRowProps {
-  first: boolean;
-  active: boolean;
+interface IProps {
+  // TODO: first really means active, active really means !finished
+  first?: boolean;
+  active?: boolean;
   item: IDownloadItem;
+}
+
+interface IDerivedProps {
   speeds: IDownloadSpeeds;
 
   downloadsPaused: boolean;
@@ -234,27 +238,23 @@ interface IDownloadRowProps {
   openGameContextMenu: typeof actions.openGameContextMenu;
 }
 
-interface IDownloadRowState {
+interface IState {
   dominantColor?: IRGBColor;
 }
 
-const mapStateToProps = (state: IState) => ({
-  speeds: state.downloads.speeds,
-  downloadsPaused: state.downloads.downloadsPaused,
-  tasksByGameId: state.tasks.tasksByGameId,
+export default connect<IProps>(DownloadRow, {
+  state: (state) => ({
+    speeds: state.downloads.speeds,
+    downloadsPaused: state.downloads.downloadsPaused,
+    tasksByGameId: state.tasks.tasksByGameId,
+  }),
+  dispatch: (dispatch) => ({
+    navigateToGame: dispatcher(dispatch, actions.navigateToGame),
+    prioritizeDownload: dispatcher(dispatch, actions.prioritizeDownload),
+    pauseDownloads: dispatcher(dispatch, actions.pauseDownloads),
+    resumeDownloads: dispatcher(dispatch, actions.resumeDownloads),
+    retryDownload: dispatcher(dispatch, actions.retryDownload),
+    cancelDownload: dispatcher(dispatch, actions.cancelDownload),
+    openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
+  }),
 });
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  navigateToGame: dispatcher(dispatch, actions.navigateToGame),
-  prioritizeDownload: dispatcher(dispatch, actions.prioritizeDownload),
-  pauseDownloads: dispatcher(dispatch, actions.pauseDownloads),
-  resumeDownloads: dispatcher(dispatch, actions.resumeDownloads),
-  retryDownload: dispatcher(dispatch, actions.retryDownload),
-  cancelDownload: dispatcher(dispatch, actions.cancelDownload),
-  openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(DownloadRow);

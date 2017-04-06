@@ -1,9 +1,7 @@
 
 import * as React from "react";
 import {createSelector, createStructuredSelector} from "reselect";
-import {connect} from "./connect";
-
-import {shell} from "../electron";
+import {connect, I18nProps} from "./connect";
 
 import * as path from "path";
 import * as humanize from "humanize-plus";
@@ -13,7 +11,6 @@ import urls from "../constants/urls";
 
 import Icon from "./icon";
 import SelectRow from "./select-row";
-import {versionString} from "./hub-sidebar";
 
 import OpenAtLoginError from "./preferences/open-at-login-error";
 import ProxySettings from "./preferences/proxy-settings";
@@ -24,19 +21,13 @@ import {map, each, filter} from "underscore";
 
 import diskspace from "../util/diskspace";
 
-import {IState, ILocaleInfo, IPreferencesState, IInstallLocation} from "../types";
-import {IDispatch, dispatcher} from "../constants/action-types";
+import {IAppState, ILocaleInfo, IPreferencesState, IInstallLocation} from "../types";
+import {dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
-
-function getAppLogPath () {
-  const logOpts = require("electron").remote.require("./logger");
-  const logPath = logOpts.logger.opts.sinks.file;
-  return logPath;
-}
 
 // TODO: split into smaller components
 
-export class Preferences extends React.Component<IPreferencesProps, void> {
+export class Preferences extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, lang, sniffedLang = "", downloading, locales} = this.props;
     const {isolateApps, openAtLogin, openAsHidden, closeToTray,
@@ -49,11 +40,13 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
     }].concat(locales);
 
     let translateUrl = `${urls.itchTranslationPlatform}/projects/itch/itch`;
-    if (lang !== "en" && lang !== "__") {
+    const english = /^en/.test(lang);
+    if (!english && lang !== "__") {
       translateUrl += `/${lang}`;
     }
 
-    const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itch/${lang || "en"}/svg-badge.svg`;
+    const badgeLang = lang ? lang.substr(0, 2) : "en";
+    const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itch/${badgeLang}/svg-badge.svg`;
 
     return <div className="preferences-meat">
       <h2>{t("preferences.language")}</h2>
@@ -63,7 +56,7 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
 
           <div className="locale-fetcher" onClick={(e) => { e.preventDefault(); queueLocaleDownload({lang}); }}>
             {downloading
-              ? <Icon icon="download" classes="scan"/>
+              ? <Icon icon="download" classes={["scan"]}/>
               : <Icon icon="repeat"/>
             }
           </div>
@@ -163,18 +156,29 @@ export class Preferences extends React.Component<IPreferencesProps, void> {
   }
 
   renderAdvanced () {
-    const {t, clearBrowsingDataRequest, updatePreferences} = this.props;
+    const {t, appVersion, clearBrowsingDataRequest, updatePreferences, openAppLog} = this.props;
     const {preferOptimizedPatches} = this.props.preferences;
 
     return <div className="explanation advanced-form">
       <p className="section app-version">
-      {versionString()}
+      itch v{appVersion}
+      <span className="button"
+          onClick={() => {
+            const {checkForSelfUpdate} = this.props;
+            checkForSelfUpdate({});
+          }}
+          style={{
+            marginLeft: "10px",
+            borderBottom: "1px solid",
+          }}>
+        Check for update
+      </span>
       </p>
       <p>
         <ProxySettings/>
       </p>
       <p className="section">
-        <span className="link" onClick={(e) => { e.preventDefault(); shell.openItem(getAppLogPath()); }}>
+        <span className="link" onClick={(e) => { e.preventDefault(); openAppLog({}); }}>
         {t("preferences.advanced.open_app_log")}
         </span>
       </p>
@@ -302,12 +306,14 @@ interface IExtendedInstallLocations {
   locations: IExtendedInstallLocation[];
 }
 
-interface IPreferencesProps {
+interface IProps {}
+
+interface IDerivedProps {
   locales: ILocaleInfo[];
+  appVersion: string;
   preferences: IPreferencesState;
 
   /** if true, we're downloading a locale right now */
-
   downloading: boolean;
   sniffedLang: string;
   lang: string;
@@ -321,84 +327,85 @@ interface IPreferencesProps {
   queueLocaleDownload: typeof actions.queueLocaleDownload;
 
   updatePreferences: typeof actions.updatePreferences;
+  openAppLog: typeof actions.openAppLog;
   clearBrowsingDataRequest: typeof actions.clearBrowsingDataRequest;
   navigate: typeof actions.navigate;
+  checkForSelfUpdate: typeof actions.checkForSelfUpdate;
 }
 
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  addInstallLocationRequest: dispatcher(dispatch, actions.addInstallLocationRequest),
-  removeInstallLocationRequest: dispatcher(dispatch, actions.removeInstallLocationRequest),
-  makeInstallLocationDefault: dispatcher(dispatch, actions.makeInstallLocationDefault),
-  queueLocaleDownload: dispatcher(dispatch, actions.queueLocaleDownload),
-
-  updatePreferences: dispatcher(dispatch, actions.updatePreferences),
-  clearBrowsingDataRequest: dispatcher(dispatch, actions.clearBrowsingDataRequest),
-  navigate: dispatcher(dispatch, actions.navigate),
-});
-
-const mapStateToProps = createStructuredSelector({
-  preferences: (state: IState) => state.preferences,
-  downloading: (state: IState) => Object.keys(state.i18n.downloading).length > 0,
-  lang: (state: IState) => state.i18n.lang,
-  locales: (state: IState) => state.i18n.locales,
-  sniffedLang: (state: IState) => state.system.sniffedLanguage,
-  installLocations: createSelector(
-    (state: IState) => state.preferences.installLocations,
-    (state: IState) => state.preferences.defaultInstallLocation,
-    (state: IState) => state.globalMarket.caves,
-    (state: IState) => state.system.homePath,
-    (state: IState) => state.system.userDataPath,
-    (state: IState) => state.system.diskInfo,
-    (locInfos, defaultLoc, caves, homePath, userDataPath, diskInfo) => {
-      if (!locInfos || !caves) {
-        return {};
-      }
-
-      locInfos = {
-        ...locInfos,
-        appdata: {
-          path: path.join(userDataPath, "apps"),
-        },
-      };
-
-      const locations = filter(map(locInfos, (locInfo, name) => {
-        if (locInfo.deleted) {
-          return;
+export default connect<IProps>(Preferences, {
+  state: createStructuredSelector({
+    appVersion: (state: IAppState) => state.system.appVersion,
+    preferences: (state: IAppState) => state.preferences,
+    downloading: (state: IAppState) => Object.keys(state.i18n.downloading).length > 0,
+    lang: (state: IAppState) => state.i18n.lang,
+    locales: (state: IAppState) => state.i18n.locales,
+    sniffedLang: (state: IAppState) => state.system.sniffedLanguage,
+    installLocations: createSelector(
+      (state: IAppState) => state.preferences.installLocations,
+      (state: IAppState) => state.preferences.defaultInstallLocation,
+      (state: IAppState) => state.globalMarket.caves,
+      (state: IAppState) => state.system.homePath,
+      (state: IAppState) => state.system.userDataPath,
+      (state: IAppState) => state.system.diskInfo,
+      (locInfos, defaultLoc, caves, homePath, userDataPath, diskInfo) => {
+        if (!locInfos || !caves) {
+          return {};
         }
 
-        const isAppData = (name === "appdata");
+        locInfos = {
+          ...locInfos,
+          appdata: {
+            path: path.join(userDataPath, "apps"),
+          },
+        };
 
-        let itemCount = 0;
-        let size = 0;
-        each(caves, (cave) => {
-          // TODO: handle per-user appdata ?
-          if (cave.installLocation === name || (isAppData && !cave.installLocation)) {
-            size += (cave.installedSize || 0);
-            itemCount++;
+        const locations = filter(map(locInfos, (locInfo, name) => {
+          if (locInfo.deleted) {
+            return;
           }
-        });
+
+          const isAppData = (name === "appdata");
+
+          let itemCount = 0;
+          let size = 0;
+          each(caves, (cave) => {
+            // TODO: handle per-user appdata ?
+            if (cave.installLocation === name || (isAppData && !cave.installLocation)) {
+              size += (cave.installedSize || 0);
+              itemCount++;
+            }
+          });
+
+          return {
+            ...locInfo,
+            name,
+            freeSpace: diskspace.freeInFolder(diskInfo, locInfo.path),
+            itemCount,
+            size,
+          };
+        }), (x) => !!x);
 
         return {
-          ...locInfo,
-          name,
-          freeSpace: diskspace.freeInFolder(diskInfo, locInfo.path),
-          itemCount,
-          size,
+          locations,
+          aliases: [
+            [homePath, "~"],
+          ],
+          defaultLoc,
         };
-      }), (x) => !!x);
+      },
+    ),
+  }),
+  dispatch: (dispatch) => ({
+    addInstallLocationRequest: dispatcher(dispatch, actions.addInstallLocationRequest),
+    removeInstallLocationRequest: dispatcher(dispatch, actions.removeInstallLocationRequest),
+    makeInstallLocationDefault: dispatcher(dispatch, actions.makeInstallLocationDefault),
+    queueLocaleDownload: dispatcher(dispatch, actions.queueLocaleDownload),
 
-      return {
-        locations,
-        aliases: [
-          [homePath, "~"],
-        ],
-        defaultLoc,
-      };
-    },
-  ),
+    updatePreferences: dispatcher(dispatch, actions.updatePreferences),
+    openAppLog: dispatcher(dispatch, actions.openAppLog),
+    clearBrowsingDataRequest: dispatcher(dispatch, actions.clearBrowsingDataRequest),
+    navigate: dispatcher(dispatch, actions.navigate),
+    checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Preferences);

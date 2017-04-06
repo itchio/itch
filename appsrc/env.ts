@@ -3,7 +3,7 @@
 // with a 'production' one. in test, 'name' is overwritten
 // to be test.
 const self = {
-  name: process.env.NODE_ENV || "development",
+  name: process.env.WEBPACK_NODE_ENV || "development",
   channel: "canary",
 };
 

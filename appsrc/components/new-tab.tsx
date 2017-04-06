@@ -1,6 +1,7 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
+
 import {map} from "underscore";
 
 import urls from "../constants/urls";
@@ -12,8 +13,6 @@ import {transformUrl} from "../util/navigation";
 import os from "../util/os";
 const osx = os.itchPlatform() === "osx";
 
-import {IState, IDispatch} from "../types";
-import {ILocalizer} from "../localizer";
 import {dispatcher} from "../constants/action-types";
 
 // TODO: show recommended for you?
@@ -45,7 +44,7 @@ const newTabItems = [
   },
 ];
 
-export class NewTab extends React.Component<INewTabProps, void> {
+export class NewTab extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   constructor () {
     super();
 
@@ -101,20 +100,16 @@ export class NewTab extends React.Component<INewTabProps, void> {
   }
 }
 
-interface INewTabProps {
-  t: ILocalizer;
+interface IProps {
   tabId: string;
+}
 
+interface IDerivedProps {
   evolveTab: typeof actions.evolveTab;
 }
 
-const mapStateToProps = (state: IState) => ({});
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  evolveTab: dispatcher(dispatch, actions.evolveTab),
+export default connect<IProps>(NewTab, {
+  dispatch: (dispatch) => ({
+    evolveTab: dispatcher(dispatch, actions.evolveTab),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(NewTab);

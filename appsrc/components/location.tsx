@@ -1,7 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
-import {createStructuredSelector} from "reselect";
+import {connect, I18nProps} from "./connect";
 
 import * as ospath from "path";
 
@@ -11,11 +10,10 @@ import Games from "./games";
 import GameFilters from "./game-filters";
 import {map, filter} from "underscore";
 
-import {IState, ICaveRecordSet, IGameRecordSet, IInstallLocation, IDownloadKey} from "../types";
-import {IDispatch, dispatcher} from "../constants/action-types";
-import {ILocalizer} from "../localizer";
+import {ICaveRecordSet, IGameRecordSet, IInstallLocation, IDownloadKey} from "../types";
+import {dispatcher} from "../constants/action-types";
 
-export class Location extends React.Component<ILocationProps, void> {
+export class Location extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, locationName, userDataPath, locations, caves, allGames, browseInstallLocation} = this.props;
 
@@ -51,11 +49,11 @@ export class Location extends React.Component<ILocationProps, void> {
   }
 }
 
-interface ILocationProps {
-  // specified
+interface IProps {
   locationName: string;
+}
 
-  // derived
+interface IDerivedProps {
   userDataPath: string;
   locations: {
     [key: string]: IInstallLocation;
@@ -66,23 +64,17 @@ interface ILocationProps {
     [key: string]: IDownloadKey;
   };
 
-  t: ILocalizer;
-
   browseInstallLocation: typeof actions.browseInstallLocation;
 }
 
-const mapStateToProps = createStructuredSelector({
-  caves: (state: IState) => state.globalMarket.caves || {},
-  allGames: (state: IState) => state.market.games || {},
-  locations: (state: IState) => state.preferences.installLocations,
-  userDataPath: (state: IState) => state.system.userDataPath,
+export default connect<IProps>(Location, {
+  state: (state): Partial<IDerivedProps> => ({
+    caves: state.globalMarket.caves || {},
+    allGames: state.market.games || {},
+    locations: state.preferences.installLocations,
+    userDataPath: state.system.userDataPath,
+  }),
+  dispatch: (dispatch): Partial<IDerivedProps> => ({
+    browseInstallLocation: dispatcher(dispatch, actions.browseInstallLocation),
+  }),
 });
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  browseInstallLocation: dispatcher(dispatch, actions.browseInstallLocation),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Location);

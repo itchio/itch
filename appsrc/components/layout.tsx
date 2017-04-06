@@ -1,14 +1,14 @@
 
 import * as React from "react";
 import {createStructuredSelector} from "reselect";
-import {connect} from "react-redux";
+import {connect, I18nProps} from "./connect";
 
 import GatePage from "./gate-page";
 import HubPage from "./hub-page";
 import StatusBar from "./status-bar";
 import ReactHint = require("react-hint");
 
-import {IState} from "../types";
+import {IAppState} from "../types";
 
 import watching, {Watcher} from "./watching";
 import * as actions from "../actions";
@@ -25,14 +25,14 @@ declare class Notification {
  * Also, subscribes to app store to synchronize its state
  */
 @watching
-class Layout extends React.Component<ILayoutProps, void> {
+class Layout extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   subscribe (watcher: Watcher) {
     watcher.on(actions.notifyHtml5, async (store, action) => {
       const {title, onClick} = action.payload;
       const opts = {...action.payload.opts};
 
       if (opts.icon) {
-        opts.icon = ospath.resolve(ospath.join(__dirname, "..", opts.icon));
+        opts.icon = ospath.resolve(ospath.join(__dirname, opts.icon));
       }
       const notification = new Notification(title, opts);
 
@@ -45,9 +45,7 @@ class Layout extends React.Component<ILayoutProps, void> {
   }
 
   render () {
-    const {halloween} = this.props;
-
-    return <div className={`layout ${halloween ? "halloween" : ""}`}>
+    return <div className="layout">
       <div className="layout-main">
         <div className="layout-draggable"/>
         {this.main()}
@@ -73,19 +71,14 @@ class Layout extends React.Component<ILayoutProps, void> {
   }
 }
 
-interface ILayoutProps {
+interface IProps {}
+
+interface IDerivedProps {
   page: string;
-  halloween: boolean;
 }
 
-const mapStateToProps = createStructuredSelector({
-  page: (state: IState) => state.session.navigation.page,
-  halloween: (state: IState) => state.status.bonuses.halloween,
+export default connect<IProps>(Layout, {
+  state: createStructuredSelector({
+    page: (state: IAppState) => state.session.navigation.page,
+  }),
 });
-
-const mapDispatchToProps = () => ({});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Layout);

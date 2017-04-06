@@ -14,22 +14,18 @@ new version before release[^1]
   * app should allow forgetting logins
     * but protect that with a confirmation prompt
 
-
 * i18n updates should not prevent startup even if
   * server is down
   * server returns invalid JSON document
   * server returns empty JSON document
 
-
 * relaunching app should pick up cave tasks where they left off
   * resume downloads
   * restart installations
 
-
 * launching html games
   * should use right window size
   * F11 and Esc should work
-
 
 * install formats
   * various types

@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import * as actions from "../actions";
 
@@ -8,11 +8,10 @@ import HubMeat from "./hub-meat";
 
 let FIRST_EVER_RENDER = true;
 
-import {IState, ICredentials} from "../types";
-import {ILocalizer} from "../localizer";
-import {IDispatch, dispatcher} from "../constants/action-types";
+import {ICredentials} from "../types";
+import {dispatcher} from "../constants/action-types";
 
-export class HubContent extends React.Component<IHubContentProps, void> {
+export class HubContent extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     if (!this.props.credentials) {
       return <div/>;
@@ -31,23 +30,19 @@ export class HubContent extends React.Component<IHubContentProps, void> {
   }
 }
 
-interface IHubContentProps {
-  credentials: ICredentials;
+interface IProps {}
 
-  t: ILocalizer;
+interface IDerivedProps {
+  credentials: ICredentials;
 
   firstUsefulPage: typeof actions.firstUsefulPage;
 }
 
-const mapStateToProps = (state: IState) => ({
-  credentials: state.session.credentials,
+export default connect<IProps>(HubContent, {
+  state: (state) => ({
+    credentials: state.session.credentials,
+  }),
+  dispatch: (dispatch) => ({
+    firstUsefulPage: dispatcher(dispatch, actions.firstUsefulPage),
+  }),
 });
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  firstUsefulPage: dispatcher(dispatch, actions.firstUsefulPage),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(HubContent);

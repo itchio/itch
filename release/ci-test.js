@@ -4,10 +4,16 @@
 
 const $ = require('./common')
 
-$.show_versions(['npm', 'gsutil'])
+$.show_versions(['npm'])
 
 $($.npm('install'))
-$($.npm('install grunt-cli codecov nyc'))
+$($.npm('run build-tests'))
 
-$($.npm('test'))
-$($.npm('run codecov'))
+process.env.ELECTRON_ENABLE_LOGGING = '1';
+
+if (process.platform === "linux") {
+  $($.npm('run run-tests-xvfb'))
+} else {
+  $($.npm('run run-tests'))
+}
+

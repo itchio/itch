@@ -1,20 +1,31 @@
 
 // tslint:disable:no-shadowed-variable
 
-import test = require ("zopf");
+import test = require("zopf");
 import * as sinon from "sinon";
-import * as proxyquire from "proxyquire";
 import * as path from "path";
 
 import {EventEmitter} from "events";
 
 import fixture from "../fixture";
 
-import mklog from "../../util/log";
-const logger = new mklog.Logger({sinks: {console: false}});
-const opts = {id: "kalamazoo", logger};
+import mklog, {Logger} from "../../util/log";
+const testLogger = (t: any): Logger => {
+  return new mklog.Logger({
+    sinks: {
+      console: false,
+      // stream: {
+      //   write: (contents: string) => (t as any).comment(contents),
+      //   end: () => { /* muffin */ },
+      // },
+    },
+  });
+};
 
 test("configure", (t) => {
+  const logger = testLogger(t);
+  const opts = {id: "kalamazoo", logger};
+
   const os = test.module({
     itchPlatform: () => null,
   });
@@ -31,7 +42,7 @@ test("configure", (t) => {
 
   const pathmaker = test.module({
     appPath: () => "/dev/null",
-    caveLogger: () => new mklog.Logger(),
+    caveLogger: () => logger,
   });
   const globalMarket = test.module({
     saveEntity: noop,
@@ -48,7 +59,7 @@ test("configure", (t) => {
     "../util/pathmaker": pathmaker,
   };
 
-  const configure = proxyquire("../../tasks/configure", stubs);
+  const configure = require("inject-loader!../../tasks/configure")(stubs);
   const platforms: any = {windows, osx, linux};
 
   t.case("rejects unsupported platform", (t) => {
@@ -71,18 +82,14 @@ test("configure", (t) => {
 });
 
 test("configure (each platform)", (t) => {
-  const originalSf = require("../../util/sf").default;
-  const sf = test.module({
-    "chmod": () => Promise.resolve(),
-    "lstat": originalSf.lstat,
-    "glob": originalSf.glob,
-    "@global": true,
-  });
-  const stubs = {
-    "../../util/sf": sf,
-  };
+  const logger = testLogger(t);
+  const opts = {id: "kalamazoo", logger};
 
-  const windows = proxyquire("../../tasks/configure/windows", stubs);
+  const originalSf = require("../../util/sf").default;
+  t.stub(originalSf, "chmod").resolves(null);
+
+  const stubs = {};
+  const windows = require("inject-loader!../../tasks/configure/windows")(stubs);
   const windowsPath = fixture.path("configure/windows");
 
   t.case("windows finds bats and exes", async function (t) {
@@ -95,7 +102,7 @@ test("configure (each platform)", (t) => {
     t.samePaths(res.executables, names);
   });
 
-  const osx = proxyquire("../../tasks/configure/osx", stubs);
+  const osx = require("inject-loader!../../tasks/configure/osx")(stubs);
   const osxPath = fixture.path("configure/osx");
 
   t.case("osx finds app bundles", async function (t) {
@@ -129,7 +136,7 @@ test("configure (each platform)", (t) => {
     t.samePaths(res.executables, names);
   });
 
-  const linux = proxyquire("../../tasks/configure/linux", stubs);
+  const linux = require("inject-loader!../../tasks/configure/linux")(stubs);
   const linuxPath = fixture.path("configure/linux");
 
   t.case("osx finds scripts & binaries when there's no app bundles", async function (t) {

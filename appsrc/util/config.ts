@@ -1,11 +1,13 @@
 
-import * as nconf from "nconf";
 import * as ospath from "path";
-import {app} from "../electron";
+import * as fs from "fs";
+import {app} from "electron";
 
 let configFile = ospath.join(app.getPath("userData"), "config.json");
+let data: any = {};
+
 try {
-  nconf.file({file: configFile});
+  data = JSON.parse(fs.readFileSync(configFile, {encoding: "utf8"}));
 } catch (e) {
   // We don't want that to be fatal
   console.log(`Could not read config: ${e}`); // tslint:disable-line:no-console
@@ -13,24 +15,24 @@ try {
 
 let self = {
   save: function () {
-    nconf.save((err: Error) => {
-      if (err) {
-        console.log(`Could not save config: ${err}`); // tslint:disable-line:no-console
-      }
-    });
+    try {
+      fs.writeFileSync(configFile, JSON.stringify(data), {encoding: "utf8"});
+    } catch (err) {
+      console.log(`Could not save config: ${err}`); // tslint:disable-line:no-console
+    }
   },
 
   get: function (key: string): any {
-    return nconf.get(key);
+    return data[key];
   },
 
   set: function (key: string, value: any) {
-    nconf.set(key, value);
+    data[key] = value;
     self.save();
   },
 
   clear: function (key: string) {
-    nconf.clear(key);
+    delete data[key];
     self.save();
   },
 };

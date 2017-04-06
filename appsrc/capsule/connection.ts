@@ -1,13 +1,11 @@
 
-const flatbuffers = require("./flatbuffers").flatbuffers;
+import {flatbuffers} from "./flatbuffers";
 
 import sf from "../util/sf";
 import {ReadStream, WriteStream} from "fs";
 
-type FlatbuffersBuilder = any;
-
 interface IBuilderFunc {
-  (builder: FlatbuffersBuilder): void;
+  (builder: flatbuffers.Builder): void;
 };
 
 export default class Connection {
@@ -49,7 +47,7 @@ export default class Connection {
     lenbuf.writeUInt32LE(msgbuf.length, 0);
 
     this.writable.write(lenbuf);
-    this.writable.write(Buffer.from(msgbuf));
+    this.writable.write(msgbuf.buffer);
   }
 
   close() {

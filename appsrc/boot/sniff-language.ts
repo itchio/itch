@@ -1,9 +1,5 @@
 
 import {languageSniffed} from "../actions";
-import store from "../store";
-
-if (process.type !== "renderer") {
-  throw new Error("boot/sniff-language is only relevant in renderer process");
-}
+import store from "../store/chrome-store";
 
 store.dispatch(languageSniffed({lang: navigator.language}));

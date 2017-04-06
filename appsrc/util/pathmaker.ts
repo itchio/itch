@@ -1,15 +1,17 @@
 
 import * as path from "path";
-import { app } from "../electron";
+import * as electron from "electron";
+
+const app = electron.app || electron.remote.app;
 
 import * as invariant from "invariant";
 
-import {ICaveRecordLocation, IUploadRecord} from "../types";
+import {ICaveRecordLocation, IUploadRecord, IPreferencesState} from "../types";
 import {Logger} from "./log";
 
 const APPDATA_RE = /^appdata\/(.*)$/;
 
-export function appPath(cave: ICaveRecordLocation) {
+export function appPath(cave: ICaveRecordLocation, preferences: IPreferencesState) {
   // < 0.13.x, installFolder isn't set, it's implicitly the cave's id
   // < 18.5.x, everything is installed in an `apps` subfolder
   const {installLocation, installFolder = cave.id, pathScheme = 1} = cave;
@@ -30,8 +32,7 @@ export function appPath(cave: ICaveRecordLocation) {
     base = path.join(app.getPath("userData"));
     appsSuffix = true;
   } else {
-    const store = require("../store").default;
-    const locations = store.getState().preferences.installLocations;
+    const locations = preferences.installLocations;
     const location = locations[installLocation];
     invariant(location, "install location exists");
     base = location.path;
@@ -48,7 +49,7 @@ export function appPath(cave: ICaveRecordLocation) {
   }
 }
 
-export function downloadPath(upload: IUploadRecord) {
+export function downloadPath(upload: IUploadRecord, preferences: IPreferencesState) {
   invariant(typeof upload === "object", "valid upload");
   invariant(upload.id, "upload has id");
   invariant(typeof upload.filename === "string", "upload has filename");
@@ -60,8 +61,6 @@ export function downloadPath(upload: IUploadRecord) {
     slug = `${slug}-${upload.buildId}`;
   }
 
-  const store = require("../store").default;
-  const {preferences} = store.getState();
   const {installLocations, defaultInstallLocation} = preferences;
   if (defaultInstallLocation === "appdata") {
     return path.join(app.getPath("userData"), "downloads", "" + slug + ext.toLowerCase());

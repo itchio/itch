@@ -1,6 +1,6 @@
 
 import * as ospath from "path";
-import {app} from "../../electron";
+import {app} from "electron";
 
 import {ISessionFoldersState} from "../../types";
 import * as actions from "../../actions";

@@ -3,14 +3,14 @@ import {Store} from "redux";
 import {Action} from "redux-actions";
 import {Logger} from "../util/log";
 
-export interface IStore extends Store<IState> {}
+export interface IStore extends Store<IAppState> {}
 
 interface IWatcher {
     addSub(sub: IWatcher): void;
     removeSub(sub: IWatcher): void;
 }
 
-export interface IRendererStore extends IStore {
+export interface IChromeStore extends IStore {
     watcher: IWatcher;
 }
 
@@ -574,7 +574,7 @@ export interface ICredentials {
 /**
  * The entire application state, following the redux philosophy
  */
-export interface IState {
+export interface IAppState {
     history: IHistoryState;
     modals: IModalsState;
     globalMarket: IGlobalMarketState;
@@ -1392,9 +1392,7 @@ export interface IOpenAtLoginError {
 export interface IStatusState {
     messages: ILocalizedString[];
     /** app easter eggs, enabled throughout some periods */
-    bonuses: {
-        halloween: boolean;
-    };
+    bonuses: {};
     openAtLoginError: IOpenAtLoginError;
 }
 

@@ -1,13 +1,13 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import {createStructuredSelector} from "reselect";
 
 import Games from "./games";
 import GameFilters from "./game-filters";
 import {map, filter, uniq, indexBy, sortBy} from "underscore";
 
-import {IState, ICaveRecord, IGameRecord, IDownloadKey, TabLayout} from "../types";
+import {IAppState, ICaveRecord, IGameRecord, IDownloadKey} from "../types";
 
 function recency (cave: ICaveRecord): number {
   const timestamp = cave.lastTouched || cave.installedAt;
@@ -18,7 +18,7 @@ function recency (cave: ICaveRecord): number {
   return 0;
 };
 
-export class Library extends React.Component<ILibraryProps, void> {
+export class Library extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {caves, recordGames, downloadKeys} = this.props;
 
@@ -67,7 +67,9 @@ export class Library extends React.Component<ILibraryProps, void> {
   }
 }
 
-interface ILibraryProps {
+interface IProps {}
+
+interface IDerivedProps {
   caves: {
     [id: string]: ICaveRecord;
   };
@@ -79,19 +81,12 @@ interface ILibraryProps {
   downloadKeys: {
     [id: string]: IDownloadKey;
   };
-
-  layout: TabLayout;
 }
 
-const mapStateToProps = createStructuredSelector({
-  caves: (state: IState) => state.globalMarket.caves || {},
-  recordGames: (state: IState) => state.market.games || {},
-  downloadKeys: (state: IState) => state.market.downloadKeys || {},
+export default connect<IProps>(Library, {
+  state: createStructuredSelector({
+    caves: (state: IAppState) => state.globalMarket.caves || {},
+    recordGames: (state: IAppState) => state.market.games || {},
+    downloadKeys: (state: IAppState) => state.market.downloadKeys || {},
+  }),
 });
-
-const mapDispatchToProps = () => ({});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Library);
