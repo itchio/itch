@@ -7,7 +7,7 @@ const $ = require('./common')
 $.show_versions(['npm'])
 
 $($.npm('install'))
-$($.npm('webpack --profile --config webpack.config.tests.js'))
+$($.npm('run build-tests'))
 
 process.env.ELECTRON_ENABLE_LOGGING = '1';
 
