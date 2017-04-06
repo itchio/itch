@@ -23,16 +23,6 @@ test-linux:
     - tags
 
 # Unit tests
-test-darwin:
-  stage: build
-  tags:
-    - darwin
-  script:
-    - release/ci-test.js
-  except:
-    - tags
-
-# Unit tests
 test-windows:
   stage: build
   tags:

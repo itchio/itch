@@ -7,6 +7,13 @@ const $ = require('./common')
 $.show_versions(['npm'])
 
 $($.npm('install'))
-$($.npm('install grunt-cli'))
+$($.npm('webpack --profile --config webpack.config.tests.js'))
 
-$($.npm('test'))
+process.env.ELECTRON_ENABLE_LOGGING = '1';
+
+if (process.platform === "linux") {
+  $($.npm('run run-tests-xvfb'))
+} else {
+  $($.npm('run run-tests'))
+}
+

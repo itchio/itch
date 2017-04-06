@@ -151,12 +151,14 @@
   "scripts": {
     "start": "electron . --color",
     "install": "electron-rebuild",
-    "test": "webpack --config webpack.config.tests.js && npm run -s run-tests",
+    "test": "npm run -s build-tests && npm run -s run-tests",
     "watch-tests": "webpack --progress --colors --config webpack.config.tests.js --watch",
     "serve-chrome": "webpack-dev-server --progress --colors --config webpack.config.chrome.js",
     "build-metal": "webpack --progress --colors --config webpack.config.metal.js",
     "watch-metal": "webpack --progress --colors --config webpack.config.metal.js --watch",
+    "build-tests": "webpack --profile --config webpack.config.tests.js",
     "run-tests": "electron tests/runner.js",
+    "run-tests-xvfb": "xvfb-run electron tests/runner.js",
     "i18n": "node release/ci-i18n-check.js"
   }
 }
