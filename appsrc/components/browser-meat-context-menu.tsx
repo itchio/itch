@@ -1,8 +1,6 @@
 
 import * as electron from "electron";
 
-import "electron";
-
 import * as actions from "../actions";
 import {getT} from "../localizer";
 

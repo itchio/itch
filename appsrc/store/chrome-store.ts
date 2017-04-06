@@ -8,7 +8,6 @@ import { electronEnhancer } from "redux-electron-store";
 const createLogger = require("redux-logger");
 
 import route from "../reactors/route";
-import reducer from "../reducers";
 import {Watcher} from "../reactors/watcher";
 
 const watcher = new Watcher();
@@ -49,7 +48,7 @@ if (REDUX_DEVTOOLS_ENABLED) {
 }
 
 const initialState = {};
-const store = createStore(reducer, initialState, enhancer) as IChromeStore;
+const store = createStore((state: any) => state, initialState, enhancer) as IChromeStore;
 route(watcher, store, { type: "__MOUNT", payload: null });
 
 store.watcher = watcher;

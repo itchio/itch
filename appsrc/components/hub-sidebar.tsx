@@ -15,9 +15,6 @@ import {createSelector, createStructuredSelector} from "reselect";
 import * as actions from "../actions";
 import {pathToIcon, makeLabel} from "../util/navigation";
 
-import {app} from "electron";
-const appVersion = app.getVersion();
-
 import HubSidebarItem from "./hub-sidebar-item";
 import UserMenu from "./user-menu";
 import Ink = require("react-ink");
@@ -97,10 +94,6 @@ const SortableList = SortableContainer((params: ISortableContainerParams) => {
   </div>;
 });
 
-export function versionString () {
-  return `itch v${appVersion}`;
-}
-
 @watching
 export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   refs: {
@@ -146,8 +139,8 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
   }
 
   render () {
-    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, tabData,
-      navigate, closeAllTabs,
+    const {t, appVersion, osx, sidebarWidth, fullscreen, id: currentId, tabs,
+      tabData, navigate, closeAllTabs,
       newTab, searchLoading} = this.props;
     const classes = classNames("hub-sidebar", {osx, fullscreen});
     const sidebarStyle = {
@@ -166,7 +159,7 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
     return <div className={classes} style={sidebarStyle}>
       <div className="title-bar-padder"/>
 
-      <div className="logo" onClick={(e) => navigate("featured")} data-rh-at="bottom" data-rh={versionString()}>
+      <div className="logo" onClick={(e) => navigate("featured")} data-rh-at="bottom" data-rh={`itch v${appVersion}`}>
         <img src={require("../static/images/logos/app-white.svg")}/>
       </div>
 
@@ -306,6 +299,7 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
 interface IProps {}
 
 interface IDerivedProps {
+  appVersion: string;
   osx: boolean;
   sidebarWidth: number;
   fullscreen: boolean;
@@ -361,6 +355,7 @@ interface IState {
 
 export default connect<IProps>(HubSidebar, {
   state: createStructuredSelector({
+    appVersion: (state: IAppState) => state.system.appVersion,
     osx: (state: IAppState) => state.system.osx,
     fullscreen: (state: IAppState) => state.ui.mainWindow.fullscreen,
     sidebarWidth: (state: IAppState) => state.preferences.sidebarWidth || 240,

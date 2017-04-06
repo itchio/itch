@@ -3,8 +3,6 @@ import * as React from "react";
 import {createSelector, createStructuredSelector} from "reselect";
 import {connect, I18nProps} from "./connect";
 
-import {shell} from "electron";
-
 import * as path from "path";
 import * as humanize from "humanize-plus";
 import * as classNames from "classnames";
@@ -13,7 +11,6 @@ import urls from "../constants/urls";
 
 import Icon from "./icon";
 import SelectRow from "./select-row";
-import {versionString} from "./hub-sidebar";
 
 import OpenAtLoginError from "./preferences/open-at-login-error";
 import ProxySettings from "./preferences/proxy-settings";
@@ -23,7 +20,6 @@ import * as actions from "../actions";
 import {map, each, filter} from "underscore";
 
 import diskspace from "../util/diskspace";
-import pathmaker from "../util/pathmaker";
 
 import {IAppState, ILocaleInfo, IPreferencesState, IInstallLocation} from "../types";
 import {dispatcher} from "../constants/action-types";
@@ -160,12 +156,12 @@ export class Preferences extends React.Component<IProps & IDerivedProps & I18nPr
   }
 
   renderAdvanced () {
-    const {t, clearBrowsingDataRequest, updatePreferences} = this.props;
+    const {t, appVersion, clearBrowsingDataRequest, updatePreferences, openAppLog} = this.props;
     const {preferOptimizedPatches} = this.props.preferences;
 
     return <div className="explanation advanced-form">
       <p className="section app-version">
-      {versionString()}
+      itch v{appVersion}
       <span className="button"
           onClick={() => {
             const {checkForSelfUpdate} = this.props;
@@ -182,7 +178,7 @@ export class Preferences extends React.Component<IProps & IDerivedProps & I18nPr
         <ProxySettings/>
       </p>
       <p className="section">
-        <span className="link" onClick={(e) => { e.preventDefault(); shell.openItem(pathmaker.logPath()); }}>
+        <span className="link" onClick={(e) => { e.preventDefault(); openAppLog({}); }}>
         {t("preferences.advanced.open_app_log")}
         </span>
       </p>
@@ -314,6 +310,7 @@ interface IProps {}
 
 interface IDerivedProps {
   locales: ILocaleInfo[];
+  appVersion: string;
   preferences: IPreferencesState;
 
   /** if true, we're downloading a locale right now */
@@ -330,6 +327,7 @@ interface IDerivedProps {
   queueLocaleDownload: typeof actions.queueLocaleDownload;
 
   updatePreferences: typeof actions.updatePreferences;
+  openAppLog: typeof actions.openAppLog;
   clearBrowsingDataRequest: typeof actions.clearBrowsingDataRequest;
   navigate: typeof actions.navigate;
   checkForSelfUpdate: typeof actions.checkForSelfUpdate;
@@ -337,6 +335,7 @@ interface IDerivedProps {
 
 export default connect<IProps>(Preferences, {
   state: createStructuredSelector({
+    appVersion: (state: IAppState) => state.system.appVersion,
     preferences: (state: IAppState) => state.preferences,
     downloading: (state: IAppState) => Object.keys(state.i18n.downloading).length > 0,
     lang: (state: IAppState) => state.i18n.lang,
@@ -404,6 +403,7 @@ export default connect<IProps>(Preferences, {
     queueLocaleDownload: dispatcher(dispatch, actions.queueLocaleDownload),
 
     updatePreferences: dispatcher(dispatch, actions.updatePreferences),
+    openAppLog: dispatcher(dispatch, actions.openAppLog),
     clearBrowsingDataRequest: dispatcher(dispatch, actions.clearBrowsingDataRequest),
     navigate: dispatcher(dispatch, actions.navigate),
     checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),

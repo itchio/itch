@@ -13,7 +13,7 @@ import mklog from "../util/log";
 const log = mklog("preferences");
 import {opts} from "../logger";
 
-import "electron";
+import {shell} from "electron";
 
 import {promisedModal} from "./modals";
 
@@ -103,5 +103,11 @@ export default function (watcher: Watcher) {
     store.dispatch(actions.statusMessage({
       message: ["prompt.clear_browsing_data.notification"],
     }));
+  });
+
+  watcher.on(actions.openAppLog, async(store, action) => {
+    const path = pathmaker.logPath();
+    log(opts, `Opening app log at ${path}`);
+    shell.openItem(path);
   });
 }

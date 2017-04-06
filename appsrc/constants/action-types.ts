@@ -47,6 +47,9 @@ export interface ILanguageChangedPayload {
   lang: string;
 }
 
+export const OPEN_APP_LOG = "OPEN_APP_LOG";
+export interface IOpenAppLogPayload {}
+
 export const OPEN_MODAL = "OPEN_MODAL";
 export interface IOpenModalPayload extends Types.IModal {}
 

@@ -11,7 +11,7 @@ import os from "./util/os";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {AppContainer} from "react-hot-loader";
-import {shell} from "electron";
+import * as electron from "electron";
 import App from "./components/app";
 
 import store from "./store/chrome-store";
@@ -61,7 +61,7 @@ document.addEventListener("click", (e: MouseEvent) => {
 
   if (target) {
     e.preventDefault();
-    shell.openExternal((target as HTMLLinkElement).href);
+    electron.remote.shell.openExternal((target as HTMLLinkElement).href);
     return false;
   }
 });
@@ -70,7 +70,7 @@ document.addEventListener("click", (e: MouseEvent) => {
 
 if (os.platform() === "darwin") {
   try {
-    require("electron").webFrame.setVisualZoomLevelLimits(1, 1);
+    electron.webFrame.setVisualZoomLevelLimits(1, 1);
   } catch (e) {
     // tslint:disable-next-line:no-console
     console.log(`couldn't disable two-finger zoom: ${e.stack || e}`);
