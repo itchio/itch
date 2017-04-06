@@ -13,7 +13,7 @@ book:
     - release/ci-book.js
 
 # Unit tests
-test:
+test-linux:
   stage: build
   tags:
     - linux
@@ -22,8 +22,28 @@ test:
   except:
     - tags
 
+# Unit tests
+test-darwin:
+  stage: build
+  tags:
+    - darwin
+  script:
+    - release/ci-test.js
+  except:
+    - tags
+
+# Unit tests
+test-windows:
+  stage: build
+  tags:
+    - windows
+  script:
+    - release/ci-test.js
+  except:
+    - tags
+
 # I18n check
-test:
+i18n-check:
   stage: build
   tags:
     - linux
