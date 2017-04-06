@@ -22,6 +22,16 @@ test:
   except:
     - tags
 
+# I18n check
+test:
+  stage: build
+  tags:
+    - linux
+  script:
+    - release/ci-i18n-check.js
+  except:
+    - tags
+
 # Compile javascript & css
 compile:
   stage: build

@@ -157,6 +157,6 @@
     "build-metal": "webpack --progress --colors --config webpack.config.metal.js",
     "watch-metal": "webpack --progress --colors --config webpack.config.metal.js --watch",
     "run-tests": "electron tests/runner.js",
-    "i18n": "release/i18n-check.sh"
+    "i18n": "node release/ci-i18n-check.js"
   }
 }
