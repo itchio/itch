@@ -1,6 +1,6 @@
 
-import {connect} from "./connect";
 import * as React from "react";
+import {connect, I18nProps} from "./connect";
 
 import NiceAgo from "./nice-ago";
 
@@ -9,10 +9,9 @@ import defaultImages from "../constants/default-images";
 import * as actions from "../actions";
 
 import {IRememberedSession} from "../types";
-import {ILocalizer} from "../localizer";
-import {IDispatch, dispatcher} from "../constants/action-types";
+import {dispatcher} from "../constants/action-types";
 
-export class RememberedSession extends React.Component<IRememberedSessionProps, void> {
+export class RememberedSession extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, session, loginWithToken, forgetSessionRequest} = this.props;
     const {me, key} = session;
@@ -23,7 +22,13 @@ export class RememberedSession extends React.Component<IRememberedSessionProps, 
       forgetSessionRequest({id, username});
     };
 
-    return <div className="remembered-session" onClick={() => loginWithToken({username, key, me})}>
+    return <div className="remembered-session" onClick={() => {
+        const payload = {username, key, me};
+        if (this.props.onLogin) {
+          this.props.onLogin(payload);
+        }
+        loginWithToken(payload);
+      }}>
       <img className="avatar" src={coverUrl}/>
       <div className="rest">
         <p className="username">{displayName || username}</p>
@@ -39,20 +44,19 @@ export class RememberedSession extends React.Component<IRememberedSessionProps, 
   }
 }
 
-interface IRememberedSessionProps {
+interface IProps {
   session: IRememberedSession;
-
-  loginWithToken: typeof actions.loginWithToken;
-  forgetSessionRequest: typeof actions.forgetSessionRequest;
-
-  t: ILocalizer;
+  onLogin?: typeof actions.loginWithToken;
 }
 
-const mapStateToProps = () => ({});
+interface IDerivedProps {
+  loginWithToken: typeof actions.loginWithToken;
+  forgetSessionRequest: typeof actions.forgetSessionRequest;
+}
 
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  loginWithToken: dispatcher(dispatch, actions.loginWithToken),
-  forgetSessionRequest: dispatcher(dispatch, actions.forgetSessionRequest),
+export default connect<IProps>(RememberedSession, {
+  dispatch: (dispatch) => ({
+    loginWithToken: dispatcher(dispatch, actions.loginWithToken),
+    forgetSessionRequest: dispatcher(dispatch, actions.forgetSessionRequest),
+  }),
 });
-
-export default connect(mapStateToProps, mapDispatchToProps)(RememberedSession);

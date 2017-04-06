@@ -1,9 +1,15 @@
 
+// TODO: oh god please break me down into pieces
+// please please
+// I beg of you
+// I'm too large for my own good
+
 import * as React from "react";
-import * as moment from "moment";
-import {connect} from "./connect";
-import {map, debounce} from "underscore";
 import * as classNames from "classnames";
+import {connect, I18nProps} from "./connect";
+
+import * as moment from "moment";
+import {map, debounce} from "underscore";
 import {createSelector, createStructuredSelector} from "reselect";
 
 import * as actions from "../actions";
@@ -16,9 +22,8 @@ import HubSidebarItem from "./hub-sidebar-item";
 import UserMenu from "./user-menu";
 import Ink = require("react-ink");
 
-import {IState, IUserRecord, IGameRecord, ITabDataSet, ILocalizedString} from "../types";
-import {ILocalizer} from "../localizer";
-import {IDispatch, dispatcher} from "../constants/action-types";
+import {IState as IAppState, IUserRecord, IGameRecord, ITabDataSet, ILocalizedString} from "../types";
+import {dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
 
@@ -41,7 +46,7 @@ const SortableHubSidebarItem = SortableElement((props: ISortableHubSidebarItemPr
 
 interface ISortableContainerParams {
   items: string[];
-  sidebarProps: IHubSidebarProps;
+  sidebarProps: IProps & IDerivedProps & I18nProps;
 }
 
 const SortableList = SortableContainer((params: ISortableContainerParams) => {
@@ -97,12 +102,12 @@ export function versionString () {
 }
 
 @watching
-export class HubSidebar extends React.Component<IHubSidebarProps, IHubSidebarState> {
+export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   refs: {
     search: HTMLInputElement;
   };
 
-  constructor (props: IHubSidebarProps) {
+  constructor (props: IProps & IDerivedProps & I18nProps) {
     super();
     this.state = {
       transient: props.tabs.transient,
@@ -230,7 +235,7 @@ export class HubSidebar extends React.Component<IHubSidebarProps, IHubSidebarSta
     </div>;
   }
 
-  componentWillReceiveProps(props: IHubSidebarProps) {
+  componentWillReceiveProps(props: IProps & IDerivedProps & I18nProps) {
     this.setState({
       transient: props.tabs.transient,
     });
@@ -298,7 +303,9 @@ export class HubSidebar extends React.Component<IHubSidebarProps, IHubSidebarSta
   }
 }
 
-interface IHubSidebarProps {
+interface IProps {}
+
+interface IDerivedProps {
   osx: boolean;
   sidebarWidth: number;
   fullscreen: boolean;
@@ -324,16 +331,14 @@ interface IHubSidebarProps {
 
   /** true if we're currently fetching search results */
   searchLoading: boolean;
-
-  t: ILocalizer;
-
-  viewCreatorProfile: typeof actions.viewCreatorProfile;
-  viewCommunityProfile: typeof actions.viewCommunityProfile;
-  changeUser: typeof actions.changeUser;
   navigate: typeof actions.navigate;
   closeTab: typeof actions.closeTab;
   closeAllTabs: typeof actions.closeAllTabs;
   moveTab: typeof actions.moveTab;
+
+  viewCreatorProfile: typeof actions.viewCreatorProfile;
+  viewCommunityProfile: typeof actions.viewCommunityProfile;
+  changeUser: typeof actions.changeUser;
   openTabContextMenu: typeof actions.openTabContextMenu;
   newTab: typeof actions.newTab;
   copyToClipboard: typeof actions.copyToClipboard;
@@ -342,92 +347,87 @@ interface IHubSidebarProps {
   closeSearch: typeof actions.closeSearch;
   search: typeof actions.search;
   searchHighlightOffset: typeof actions.searchHighlightOffset;
+
+  reportIssue: typeof actions.reportIssue;
   openUrl: typeof actions.openUrl;
   checkForSelfUpdate: typeof actions.checkForSelfUpdate;
-  reportIssue: typeof actions.reportIssue;
+
   quit: typeof actions.quit;
 }
 
-interface IHubSidebarState {
+interface IState {
   transient: string[];
 }
 
-const mapStateToProps = createStructuredSelector({
-  osx: (state: IState) => state.system.osx,
-  fullscreen: (state: IState) => state.ui.mainWindow.fullscreen,
-  sidebarWidth: (state: IState) => state.preferences.sidebarWidth || 240,
-  me: (state: IState) => state.session.credentials.me,
-  id: (state: IState) => state.session.navigation.id,
-  tabs: (state: IState) => state.session.navigation.tabs,
-  tabData: (state: IState) => state.session.navigation.tabData,
-  loadingTabs: (state: IState) => state.session.navigation.loadingTabs,
-  searchLoading: (state: IState) => state.session.search.loading,
+export default connect<IProps>(HubSidebar, {
+  state: createStructuredSelector({
+    osx: (state: IAppState) => state.system.osx,
+    fullscreen: (state: IAppState) => state.ui.mainWindow.fullscreen,
+    sidebarWidth: (state: IAppState) => state.preferences.sidebarWidth || 240,
+    me: (state: IAppState) => state.session.credentials.me,
+    id: (state: IAppState) => state.session.navigation.id,
+    tabs: (state: IAppState) => state.session.navigation.tabs,
+    tabData: (state: IAppState) => state.session.navigation.tabData,
+    loadingTabs: (state: IAppState) => state.session.navigation.loadingTabs,
+    searchLoading: (state: IAppState) => state.session.search.loading,
 
-  downloadingGame: (state: IState) => {
-    const {activeDownload} = state.downloads;
-    if (activeDownload) {
-      return activeDownload.game;
-    }
-  },
-
-  downloadCount: createSelector(
-    (state: IState) => state.downloads.finishedDownloads,
-    (downloads) => downloads.length,
-  ),
-
-  downloadProgress: (state: IState) => state.downloads.progress,
-
-  downloadSublabel: createSelector(
-    (state: IState) => state.downloads.activeDownload,
-    (state: IState) => state.downloads.downloadsPaused,
-    (state: IState) => state.i18n.lang,
-    (activeDownload, downloadsPaused, lang) => {
-      if (!activeDownload) {
-        return null;
-      }
-
-      if (downloadsPaused) {
-        return ["grid.item.downloads_paused"];
-      } else {
-        const title = activeDownload.game.title;
-        const duration = moment.duration(activeDownload.eta, "seconds") as any;
-        // silly typings, durations have locales!
-        const humanDuration = duration.locale(lang).humanize();
-        return `${title} — ${humanDuration}`;
+    downloadingGame: (state: IAppState) => {
+      const { activeDownload } = state.downloads;
+      if (activeDownload) {
+        return activeDownload.game;
       }
     },
-  ),
 
+    downloadCount: createSelector(
+      (state: IAppState) => state.downloads.finishedDownloads,
+      (downloads) => downloads.length,
+    ),
+
+    downloadProgress: (state: IAppState) => state.downloads.progress,
+
+    downloadSublabel: createSelector(
+      (state: IAppState) => state.downloads.activeDownload,
+      (state: IAppState) => state.downloads.downloadsPaused,
+      (state: IAppState) => state.i18n.lang,
+      (activeDownload, downloadsPaused, lang) => {
+        if (!activeDownload) {
+          return null;
+        }
+
+        if (downloadsPaused) {
+          return ["grid.item.downloads_paused"];
+        } else {
+          const title = activeDownload.game.title;
+          const duration = moment.duration(activeDownload.eta, "seconds") as any;
+          // silly typings, durations have locales!
+          const humanDuration = duration.locale(lang).humanize();
+          return `${title} — ${humanDuration}`;
+        }
+      },
+    ),
+  }),
+  dispatch: (dispatch) => ({
+    navigate: dispatcher(dispatch, actions.navigate),
+    closeTab: dispatcher(dispatch, actions.closeTab),
+    closeAllTabs: dispatcher(dispatch, actions.closeAllTabs),
+    moveTab: dispatcher(dispatch, actions.moveTab),
+
+    viewCreatorProfile: dispatcher(dispatch, actions.viewCreatorProfile),
+    viewCommunityProfile: dispatcher(dispatch, actions.viewCommunityProfile),
+    changeUser: dispatcher(dispatch, actions.changeUser),
+    openTabContextMenu: dispatcher(dispatch, actions.openTabContextMenu),
+    newTab: dispatcher(dispatch, actions.newTab),
+    copyToClipboard: dispatcher(dispatch, actions.copyToClipboard),
+
+    focusSearch: dispatcher(dispatch, actions.focusSearch),
+    closeSearch: dispatcher(dispatch, actions.closeSearch),
+    search: dispatcher(dispatch, actions.search),
+    searchHighlightOffset: dispatcher(dispatch, actions.searchHighlightOffset),
+
+    reportIssue: dispatcher(dispatch, actions.reportIssue),
+    openUrl: dispatcher(dispatch, actions.openUrl),
+    checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
+
+    quit: dispatcher(dispatch, actions.quit),
+  }),
 });
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  navigate: dispatcher(dispatch, actions.navigate),
-  closeTab: dispatcher(dispatch, actions.closeTab),
-  closeAllTabs: dispatcher(dispatch, actions.closeAllTabs),
-  moveTab: dispatcher(dispatch, actions.moveTab),
-
-  viewCreatorProfile: dispatcher(dispatch, actions.viewCreatorProfile),
-  viewCommunityProfile: dispatcher(dispatch, actions.viewCommunityProfile),
-  changeUser: dispatcher(dispatch, actions.changeUser),
-  openTabContextMenu: dispatcher(dispatch, actions.openTabContextMenu),
-  newTab: dispatcher(dispatch, actions.newTab),
-  copyToClipboard: dispatcher(dispatch, actions.copyToClipboard),
-
-  focusSearch: dispatcher(dispatch, actions.focusSearch),
-  closeSearch: dispatcher(dispatch, actions.closeSearch),
-  search: dispatcher(dispatch, actions.search),
-
-  reportIssue: dispatcher(dispatch, actions.reportIssue),
-  openUrl: dispatcher(dispatch, actions.openUrl),
-
-  searchHighlightOffset: dispatcher(dispatch, actions.searchHighlightOffset),
-
-  checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
-
-  quit: dispatcher(dispatch, actions.quit),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(HubSidebar);

@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import {createStructuredSelector} from "reselect";
 import * as invariant from "invariant";
 
@@ -10,11 +10,10 @@ import NiceAgo from "./nice-ago";
 
 import * as actions from "../actions";
 
-import {ILocalizer} from "../localizer";
-import {IState, IHistoryItem, IHistoryItemOption} from "../types";
+import {IState as IAppState, IHistoryItem, IHistoryItemOption} from "../types";
 import {IDispatch} from "../constants/action-types";
 
-class History extends React.Component<IHistoryProps, void> {
+class History extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, pickOption, items} = this.props;
 
@@ -41,28 +40,25 @@ class History extends React.Component<IHistoryProps, void> {
   }
 }
 
-interface IHistoryProps {
+interface IProps {}
+
+interface IDerivedProps {
   items: IHistoryItem[];
 
-  t: ILocalizer;
-  pickOption(itemId: string, option: IHistoryItemOption): void;
+  pickOption: (itemId: string, option: IHistoryItemOption) => void;
 }
 
-const mapStateToProps = createStructuredSelector({
-  items: (state: IState) => state.history.itemsByDate,
+export default connect<IProps>(History, {
+  state: createStructuredSelector({
+    items: (state: IAppState) => state.history.itemsByDate,
+  }),
+  dispatch: (dispatch: IDispatch) => ({
+    pickOption: (itemId: string, option: IHistoryItemOption) => {
+      invariant(itemId, "have item id");
+      if (option.action) {
+        dispatch(option.action);
+      }
+      dispatch(actions.dismissHistoryItem({ id: itemId }));
+    },
+  }),
 });
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  pickOption: (itemId: string, option: IHistoryItemOption) => {
-    invariant(itemId, "have item id");
-    if (option.action) {
-      dispatch(option.action);
-    }
-    dispatch(actions.dismissHistoryItem({id: itemId}));
-  },
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(History);

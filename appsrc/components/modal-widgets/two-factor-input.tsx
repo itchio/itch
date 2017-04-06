@@ -1,12 +1,10 @@
 
 import * as React from "react";
+import {connect, I18nProps} from "../connect";
 
-import {connect} from "../connect";
 import {IModalWidgetProps} from "./modal-widget";
 
-import {ILocalizer} from "../../localizer";
-
-export class TwoFactorInput extends React.Component<ITwoFactorInputProps, void> {
+export class TwoFactorInput extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   refs: {
     totpInput?: HTMLInputElement;
   };
@@ -53,15 +51,10 @@ export interface ITwoFactorInputParams {
   username: string;
 }
 
-interface ITwoFactorInputProps extends IModalWidgetProps {
-  t: ILocalizer;
+interface IProps extends IModalWidgetProps {
   params: ITwoFactorInputParams;
 }
 
-const mapStateToProps = () => ({});
-const mapDispatchToProps = () => ({});
+interface IDerivedProps {}
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(TwoFactorInput);
+export default connect<IProps>(TwoFactorInput);

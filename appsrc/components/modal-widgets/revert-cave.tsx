@@ -1,14 +1,12 @@
 
 import * as React from "react";
+import {connect, I18nProps} from "../connect";
 
-import {connect} from "../connect";
 import {IModalWidgetProps} from "./modal-widget";
 
 import {ICaveRecord} from "../../types";
 
-import {ILocalizer} from "../../localizer";
-
-export class RevertCave extends React.Component<IRevertCaveProps, void> {
+export class RevertCave extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   refs: {
     buildId?: HTMLInputElement;
   };
@@ -52,15 +50,10 @@ export interface IRevertCaveParams {
   currentCave: ICaveRecord;
 }
 
-interface IRevertCaveProps extends IModalWidgetProps {
-  t: ILocalizer;
+interface IProps extends IModalWidgetProps {
   params: IRevertCaveParams;
 }
 
-const mapStateToProps = () => ({});
-const mapDispatchToProps = () => ({});
+interface IDerivedProps {}
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(RevertCave);
+export default connect<IProps>(RevertCave);

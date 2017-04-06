@@ -1,13 +1,12 @@
 
-import {connect} from "./connect";
 import * as React from "react";
-import {createStructuredSelector} from "reselect";
+import {connect, I18nProps} from "./connect";
 
 import * as actions from "../actions";
 
-import {IDispatch, dispatcher} from "../constants/action-types";
+import {dispatcher} from "../constants/action-types";
 
-class HubSidebarHandle extends React.Component<IHubSidebarHandleProps, IHubSidebarState> {
+class HubSidebarHandle extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
 
   constructor () {
     super();
@@ -54,23 +53,18 @@ class HubSidebarHandle extends React.Component<IHubSidebarHandleProps, IHubSideb
   }
 }
 
-interface IHubSidebarHandleProps {
-  mini: boolean;
+interface IProps {}
 
+interface IDerivedProps {
   updatePreferences: typeof actions.updatePreferences;
 }
 
-interface IHubSidebarState {
+interface IState {
   isResizing: boolean;
 }
 
-const mapStateToProps = createStructuredSelector({});
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  updatePreferences: dispatcher(dispatch, actions.updatePreferences),
+export default connect<IProps>(HubSidebarHandle, {
+  dispatch: (dispatch) => ({
+    updatePreferences: dispatcher(dispatch, actions.updatePreferences),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(HubSidebarHandle);

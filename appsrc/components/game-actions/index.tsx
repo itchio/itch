@@ -4,7 +4,7 @@ import {} from "redux-actions";
 import * as React from "react";
 import * as classNames from "classnames";
 
-import {connect} from "../connect";
+import {connect, I18nProps} from "../connect";
 import {createSelector, createStructuredSelector} from "reselect";
 
 import {findWhere, first} from "underscore";
@@ -18,7 +18,6 @@ import MainAction from "./main-action";
 import SecondaryActions from "./secondary-actions";
 
 import {IActionsInfo} from "./types";
-import {ILocalizer} from "../../localizer";
 import {
   IState, IGameRecord, ICaveRecord, IDownloadKey,
   IDownloadItem, ITask, IGameUpdate, IGameUpdatesState,
@@ -26,7 +25,7 @@ import {
 
 const platform = os.itchPlatform();
 
-class GameActions extends React.Component<IGameActionsProps, void> {
+class GameActions extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {props} = this;
     const {showSecondary, CustomSecondary} = props;
@@ -49,20 +48,23 @@ class GameActions extends React.Component<IGameActionsProps, void> {
 
 }
 
-interface IGameActionsProps extends IActionsInfo {
-  // specified
+interface IProps {
   game: IGameRecord;
-  showSecondary: boolean;
-  CustomSecondary: typeof React.Component;
+  showSecondary?: boolean;
+  CustomSecondary?: typeof React.Component;
+  /** if not specified, will be looked up from game */
+  cave?: ICaveRecord;
+}
 
-  // derived
+interface IDerivedProps extends IActionsInfo {
   animate: boolean;
+  platform: string;
   platformCompatible: boolean;
   progress: number;
   cancellable: boolean;
   cave: ICaveRecord;
-
-  t: ILocalizer;
+  pressDownload: boolean;
+  update: IGameUpdate;
 }
 
 interface IHappenings {
@@ -78,73 +80,69 @@ interface IHappenings {
   gameUpdates: IGameUpdatesState;
 }
 
-const makeMapStateToProps = () => {
-  const selector = createSelector(
-    createStructuredSelector({
-      game: (state: IState, props: IGameActionsProps) => props.game,
-      cave: (state: IState, props: IGameActionsProps) => props.cave || state.globalMarket.cavesByGameId[props.game.id],
-      downloadKeys: (state: IState, props: IGameActionsProps) => state.market.downloadKeys,
-      task: (state: IState, props: IGameActionsProps) => first(state.tasks.tasksByGameId[props.game.id]),
-      download: (state: IState, props: IGameActionsProps) => state.downloads.downloadsByGameId[props.game.id],
-      meId: (state: IState, props: IGameActionsProps) => (state.session.credentials.me || {id: "anonymous"}).id,
-      mePress: (state: IState, props: IGameActionsProps) =>
-        (state.session.credentials.me || {pressUser: false}).pressUser,
-      gameUpdates: (state: IState, props: IGameActionsProps) => state.gameUpdates,
-    }),
-    (happenings: IHappenings) => {
-      const {game, cave, downloadKeys, task, download, meId, mePress, gameUpdates} = happenings;
+export default connect<IProps>(GameActions, {
+  state: () => {
+    // FIXME: squash code complexity
+    const selector = createSelector(
+      createStructuredSelector({
+        game: (state: IState, props: IProps) => props.game,
+        cave: (state: IState, props: IProps) => props.cave || state.globalMarket.cavesByGameId[props.game.id],
+        downloadKeys: (state: IState, props: IProps) => state.market.downloadKeys,
+        task: (state: IState, props: IProps) => first(state.tasks.tasksByGameId[props.game.id]),
+        download: (state: IState, props: IProps) => state.downloads.downloadsByGameId[props.game.id],
+        meId: (state: IState, props: IProps) => (state.session.credentials.me || { id: "anonymous" }).id,
+        mePress: (state: IState, props: IProps) =>
+          (state.session.credentials.me || { pressUser: false }).pressUser,
+        gameUpdates: (state: IState, props: IProps) => state.gameUpdates,
+      }),
+      (happenings: IHappenings) => {
+        const { game, cave, downloadKeys, task, download, meId, mePress, gameUpdates } = happenings;
 
-      const animate = false;
-      let action = actionForGame(game, cave);
+        const animate = false;
+        let action = actionForGame(game, cave);
 
-      const platformCompatible = (action === "open" ? true : isPlatformCompatible(game));
-      const cancellable = false;
-      const downloadKey = findWhere(downloadKeys, {gameId: game.id});
-      const hasMinPrice = game.minPrice > 0;
-      const hasDemo = game.hasDemo;
-      // FIXME game admins
-      const canEdit = game.userId === meId;
-      let mayDownload = !!(downloadKey || !hasMinPrice || canEdit || hasDemo);
-      let pressDownload = false;
-      if (!mayDownload) {
-        pressDownload = (game.inPressSystem && mePress);
-        if (pressDownload) {
-          mayDownload = true;
+        const platformCompatible = (action === "open" ? true : isPlatformCompatible(game));
+        const cancellable = false;
+        const downloadKey = findWhere(downloadKeys, { gameId: game.id });
+        const hasMinPrice = game.minPrice > 0;
+        const hasDemo = game.hasDemo;
+        // FIXME game admins
+        const canEdit = game.userId === meId;
+        let mayDownload = !!(downloadKey || !hasMinPrice || canEdit || hasDemo);
+        let pressDownload = false;
+        if (!mayDownload) {
+          pressDownload = (game.inPressSystem && mePress);
+          if (pressDownload) {
+            mayDownload = true;
+          }
         }
-      }
-      const canBeBought = game.canBeBought;
+        const canBeBought = game.canBeBought;
 
-      const downloading = download && !download.finished;
+        const downloading = download && !download.finished;
 
-      let update: IGameUpdate;
-      if (cave) {
-        update = gameUpdates.updates[cave.id];
-      }
+        let update: IGameUpdate;
+        if (cave) {
+          update = gameUpdates.updates[cave.id];
+        }
 
-      return {
-        cancellable,
-        cave,
-        update,
-        animate,
-        platform,
-        mayDownload,
-        canBeBought,
-        downloadKey,
-        pressDownload,
-        platformCompatible,
-        action,
-        task: (task ? task.name : (downloading ? "download" : (cave ? "idle" : null))),
-        progress: (task ? task.progress : (downloading ? download.progress : 0)),
-      };
-    },
-  );
+        return {
+          cancellable,
+          cave,
+          update,
+          animate,
+          mayDownload,
+          canBeBought,
+          downloadKey,
+          pressDownload,
+          platform,
+          platformCompatible,
+          action,
+          task: (task ? task.name : (downloading ? "download" : (cave ? "idle" : null))),
+          progress: (task ? task.progress : (downloading ? download.progress : 0)),
+        };
+      },
+    );
 
-  return selector;
-};
-
-const mapDispatchToProps = () => ({});
-
-export default connect(
-  makeMapStateToProps,
-  mapDispatchToProps,
-)(GameActions);
+    return selector;
+  },
+});

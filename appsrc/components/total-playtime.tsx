@@ -1,16 +1,14 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import format from "../util/format";
 
 import actionForGame from "../util/action-for-game";
 
-import {ILocalizer} from "../localizer";
-
 import {IGameRecord, ICaveRecord} from "../types";
 
-class TotalPlaytime extends React.Component<ITotalPlaytimeProps, void> {
+class TotalPlaytime extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, game, cave, short = false} = this.props;
     const {secondsRun = 0} = (cave || {});
@@ -36,12 +34,12 @@ class TotalPlaytime extends React.Component<ITotalPlaytimeProps, void> {
   }
 }
 
-interface ITotalPlaytimeProps {
+interface IProps {
   game: IGameRecord;
   cave: ICaveRecord;
   short?: boolean;
-
-  t: ILocalizer;
 }
 
-export default connect()(TotalPlaytime);
+interface IDerivedProps {}
+
+export default connect<IProps>(TotalPlaytime);

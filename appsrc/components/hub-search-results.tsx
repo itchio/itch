@@ -1,141 +1,23 @@
 
-// TODO: this module is like the 2016 itch.io halloween event: too long and too ambitious
-
 import * as React from "react";
 import * as classNames from "classnames";
 
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import {createSelector, createStructuredSelector} from "reselect";
 
 import {each, values} from "underscore";
 
 import * as actions from "../actions";
 
-import platformData from "../constants/platform-data";
-
-import isPlatformCompatible from "../util/is-platform-compatible";
-import format from "../util/format";
 import Fuse = require("fuse.js");
 
-import Icon from "./icon";
+import {IState as IAppState, IGameRecord, ISessionSearchState, ISearchResults} from "../types";
+import {dispatcher} from "../constants/action-types";
 
-import {IState, IGameRecord, IUserRecord, ISessionSearchState, ISearchResults} from "../types";
-import {IDispatch, dispatcher} from "../constants/action-types";
-import {ILocalizer} from "../localizer";
+import GameSearchResult from "./search-results/game-search-result";
+import UserSearchResult from "./search-results/user-search-result";
 
-import {findDOMNode} from "react-dom";
-
-import watching, {Watcher} from "./watching";
-
-interface IGenericSearchResultProps {
-  chosen: boolean;
-  active: boolean;
-}
-
-@watching
-abstract class GenericSearchResult <Props extends IGenericSearchResultProps, State>
-    extends React.Component<Props, State> {
-  subscribe (watcher: Watcher) {
-    watcher.on(actions.triggerOk, async (store, action) => {
-      if (this.props.chosen && this.props.active) {
-        store.dispatch(actions.navigate(this.getPath()));
-        store.dispatch(actions.closeSearch({}));
-      }
-    });
-  }
-
-  componentDidUpdate() {
-    if (this.props.chosen) {
-      const node = findDOMNode(this);
-      (node as any).scrollIntoViewIfNeeded();
-    }
-  }
-  
-  abstract getPath(): string
-}
-
-export class SearchResult extends GenericSearchResult<ISearchResultProps, void> {
-  render () {
-    const {game, onClick, chosen} = this.props;
-    const {title, stillCoverUrl, coverUrl} = game;
-
-    const platforms: React.ReactElement<any>[] = [];
-    let compatible = isPlatformCompatible(game);
-
-    if (game.type === "html") {
-      platforms.push(<Icon hint="web" icon="earth"/>);
-    }
-
-    for (const p of platformData) {
-      if ((game as any)[p.field]) {
-        platforms.push(<Icon hint={p.platform} icon={p.icon}/>);
-      }
-    }
-
-    let price: React.ReactElement<any> = null;
-    if (game.minPrice > 0) {
-      price = <span className="price">{format.price("USD", game.minPrice)}</span>;
-    }
-
-    const resultClasses = classNames("search-result", {
-      ["not-platform-compatible"]: !compatible,
-      chosen: chosen,
-    });
-
-    return <div className={resultClasses} onClick={onClick} ref="root">
-      <img src={stillCoverUrl || coverUrl}/>
-      <div className="title-block">
-        <h4>{title}</h4>
-        <span className="platforms">
-          {platforms}
-          {price}
-        </span>
-      </div>
-    </div>;
-  }
-
-  getPath(): string {
-    return `games/${this.props.game.id}`;
-  }
-}
-
-interface ISearchResultProps {
-  game: IGameRecord;
-  onClick: () => void;
-  chosen: boolean;
-  active: boolean;
-}
-
-export class UserSearchResult extends GenericSearchResult<IUserSearchResultProps, void> {
-  render () {
-    const {user, onClick, chosen} = this.props;
-    const {displayName, username, stillCoverUrl, coverUrl} = user;
-
-    const resultClasses = classNames("search-result", "user-search-result", {
-      chosen,
-    });
-
-    return <div className={resultClasses} onClick={onClick}>
-      <img src={stillCoverUrl || coverUrl}/>
-      <div className="title-block">
-        <h4>{displayName || username}</h4>
-      </div>
-    </div>;
-  }
-
-  getPath(): string {
-    return `users/${this.props.user.id}`;
-  }
-}
-
-interface IUserSearchResultProps {
-  user: IUserRecord;
-  onClick: () => void;
-  chosen: boolean;
-  active: boolean;
-}
-
-export class HubSearchResults extends React.Component<IHubSearchResultsProps, IHubSearchResultsState> {
+export class HubSearchResults extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   fuse: Fuse<IGameRecord>;
 
   constructor () {
@@ -224,7 +106,7 @@ export class HubSearchResults extends React.Component<IHubSearchResultsProps, IH
       items.push(<h3>{t("search.results.local")}</h3>);
       each(fuseResults.slice(0, 5), (result) => {
         const game = result.item;
-        items.push(<SearchResult key={`game-${game.id}`} game={game}
+        items.push(<GameSearchResult key={`game-${game.id}`} game={game}
           chosen={index++ === highlight} active={active}
           onClick={() => { navigateToGame(game); closeSearch({}); }}/>);
       });
@@ -246,7 +128,7 @@ export class HubSearchResults extends React.Component<IHubSearchResultsProps, IH
       items.push(<h3>{t("search.results.games")}</h3>);
       each(gameResults.result.gameIds, (gameId) => {
         const game = games[gameId];
-        items.push(<SearchResult key={`game-${gameId}`} game={game}
+        items.push(<GameSearchResult key={`game-${gameId}`} game={game}
           chosen={index++ === highlight} active={active}
           onClick={() => { navigateToGame(game); closeSearch({}); }}/>);
       });
@@ -258,11 +140,12 @@ export class HubSearchResults extends React.Component<IHubSearchResultsProps, IH
   }
 }
 
-interface IHubSearchResultsProps {
+interface IProps {
+}
+
+interface IDerivedProps {
   search: ISessionSearchState;
   allGames: IGameRecord[];
-
-  t: ILocalizer;
 
   closeSearch: typeof actions.closeSearch;
   navigate: typeof actions.navigate;
@@ -270,26 +153,22 @@ interface IHubSearchResultsProps {
   navigateToUser: typeof actions.navigateToUser;
 }
 
-interface IHubSearchResultsState {
+interface IState {
   chosen: number;
 }
 
-const mapStateToProps = createStructuredSelector({
-  search: (state: IState) => state.session.search,
-  allGames: createSelector(
-    (state: IState) => ((state.market || {games: null}).games || {}),
-    (games) => values(games),
-  ),
+export default connect<IProps>(HubSearchResults, {
+  state: createStructuredSelector({
+    search: (state: IAppState) => state.session.search,
+    allGames: createSelector(
+      (state: IAppState) => ((state.market || { games: null }).games || {}),
+      (games) => values(games),
+    ),
+  }),
+  dispatch: (dispatch) => ({
+    closeSearch: dispatcher(dispatch, actions.closeSearch),
+    navigate: dispatcher(dispatch, actions.navigate),
+    navigateToGame: dispatcher(dispatch, actions.navigateToGame),
+    navigateToUser: dispatcher(dispatch, actions.navigateToUser),
+  }),
 });
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  closeSearch: dispatcher(dispatch, actions.closeSearch),
-  navigate: dispatcher(dispatch, actions.navigate),
-  navigateToGame: dispatcher(dispatch, actions.navigateToGame),
-  navigateToUser: dispatcher(dispatch, actions.navigateToUser),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(HubSearchResults);

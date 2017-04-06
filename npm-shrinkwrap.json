@@ -6144,9 +6144,9 @@
       "dev": true
     },
     "typescript": {
-      "version": "2.2.1",
-      "from": "typescript@2.2.1",
-      "resolved": "https://registry.npmjs.org/typescript/-/typescript-2.2.1.tgz",
+      "version": "2.2.2",
+      "from": "typescript@2.2.2",
+      "resolved": "https://registry.npmjs.org/typescript/-/typescript-2.2.2.tgz",
       "dev": true
     },
     "ua-parser-js": {

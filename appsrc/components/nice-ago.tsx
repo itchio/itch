@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import TimeAgo from "react-timeago-titlefix";
 import format, {DATE_FORMAT} from "../util/format";
@@ -22,7 +22,7 @@ function momentBridge (t: ILocalizer) {
   };
 }
 
-export class NiceAgo extends React.Component<INiceAgoProps, void> {
+class NiceAgo extends React.Component<IProps & I18nProps, void> {
   render () {
     const {t, date} = this.props;
 
@@ -44,10 +44,9 @@ export class NiceAgo extends React.Component<INiceAgoProps, void> {
   }
 }
 
-interface INiceAgoProps {
+interface IProps {
   // TODO: with typescript we can probably have consistent typing here
   date: number | any;
-  t: ILocalizer;
 }
 
-export default connect()(NiceAgo);
+export default connect<IProps>(NiceAgo);

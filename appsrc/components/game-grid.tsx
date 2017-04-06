@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import HubItem from "./hub-item";
 import HiddenIndicator from "./hidden-indicator";
@@ -22,7 +22,7 @@ interface ILayoutInfo {
   games: IFilteredGameRecord[];
 }
 
-class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
+class GameGrid extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {
@@ -91,15 +91,16 @@ class GameGrid extends React.Component<IGameGridProps, IGameGridState> {
   }
 }
 
-interface IGameGridProps {
-  // specified
+interface IProps {
   games: IFilteredGameRecord[];
   hiddenCount: number;
   tab: string;
 }
 
-interface IGameGridState {
+interface IDerivedProps {}
+
+interface IState {
   scrollTop: 0;
 }
 
-export default connect()(GameGrid);
+export default connect<IProps>(GameGrid);

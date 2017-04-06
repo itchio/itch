@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import {createStructuredSelector} from "reselect";
 
 import {map, first, rest} from "underscore";
@@ -9,10 +9,9 @@ import * as actions from "../actions";
 import DownloadRow from "./download-row";
 
 import {IState, IDownloadItem} from "../types";
-import {IDispatch, dispatcher} from "../constants/action-types";
-import {ILocalizer} from "../localizer";
+import {dispatcher} from "../constants/action-types";
 
-class Downloads extends React.Component<IDownloadsProps, void> {
+class Downloads extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   constructor () {
     super();
   }
@@ -73,25 +72,21 @@ class Downloads extends React.Component<IDownloadsProps, void> {
   }
 }
 
-interface IDownloadsProps {
+interface IProps {}
+
+interface IDerivedProps {
   items: IDownloadItem[];
   finishedItems: IDownloadItem[];
-
-  t: ILocalizer;
 
   clearFinishedDownloads: typeof actions.clearFinishedDownloads;
 }
 
-const mapStateToProps = createStructuredSelector({
-  items: (state: IState) => map(state.downloads.downloadsByOrder, (id) => state.downloads.downloads[id]),
-  finishedItems: (state: IState) => map(state.downloads.finishedDownloads, (id) => state.downloads.downloads[id]),
-});
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
+export default connect<IProps>(Downloads, {
+  state: createStructuredSelector({
+    items: (state: IState) => map(state.downloads.downloadsByOrder, (id) => state.downloads.downloads[id]),
+    finishedItems: (state: IState) => map(state.downloads.finishedDownloads, (id) => state.downloads.downloads[id]),
+  }),
+  dispatch: (dispatch) => ({
   clearFinishedDownloads: dispatcher(dispatch, actions.clearFinishedDownloads),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Downloads);

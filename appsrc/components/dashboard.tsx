@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import {createStructuredSelector} from "reselect";
 import * as classNames from "classnames";
 
@@ -12,10 +12,9 @@ import GameFilters from "./game-filters";
 import {map} from "underscore";
 
 import {IState, IGameRecordSet, IItchAppProfile, IItchAppProfileMyGames} from "../types";
-import {IDispatch, dispatcher} from "../constants/action-types";
-import {ILocalizer} from "../localizer";
+import {dispatcher} from "../constants/action-types";
 
-export class Dashboard extends React.Component<IDashboardProps, void> {
+export class Dashboard extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, allGames, myGameIds, navigate} = this.props;
 
@@ -43,32 +42,27 @@ export class Dashboard extends React.Component<IDashboardProps, void> {
   }
 }
 
-interface IDashboardProps {
-  // derived
+interface IProps {}
+
+interface IDerivedProps {
   allGames: IGameRecordSet;
   myGameIds: string[];
-
-  t: ILocalizer;
 
   navigate: typeof actions.navigate;
 }
 
-const mapStateToProps = createStructuredSelector({
-  allGames: (state: IState) => state.market.games,
-  myGameIds: (state: IState) => ((
+export default connect<IProps>(Dashboard, {
+  state: createStructuredSelector({
+    allGames: (state: IState) => state.market.games,
+    myGameIds: (state: IState) => ((
       (
         state.market.itchAppProfile ||
         {} as IItchAppProfile
       ).myGames ||
       {} as IItchAppProfileMyGames
     ).ids || []),
+  }),
+  dispatch: (dispatch) => ({
+    navigate: dispatcher(dispatch, actions.navigate),
+  }),
 });
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  navigate: dispatcher(dispatch, actions.navigate),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Dashboard);

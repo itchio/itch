@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import {createSelector, createStructuredSelector} from "reselect";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import {shell} from "../electron";
 
@@ -26,12 +26,12 @@ import diskspace from "../util/diskspace";
 import pathmaker from "../util/pathmaker";
 
 import {IState, ILocaleInfo, IPreferencesState, IInstallLocation} from "../types";
-import {IDispatch, dispatcher} from "../constants/action-types";
+import {dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 // TODO: split into smaller components
 
-export class Preferences extends React.Component<IPreferencesProps, void> {
+export class Preferences extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, lang, sniffedLang = "", downloading, locales} = this.props;
     const {isolateApps, openAtLogin, openAsHidden, closeToTray,
@@ -310,12 +310,13 @@ interface IExtendedInstallLocations {
   locations: IExtendedInstallLocation[];
 }
 
-interface IPreferencesProps {
+interface IProps {}
+
+interface IDerivedProps {
   locales: ILocaleInfo[];
   preferences: IPreferencesState;
 
   /** if true, we're downloading a locale right now */
-
   downloading: boolean;
   sniffedLang: string;
   lang: string;
@@ -334,81 +335,77 @@ interface IPreferencesProps {
   checkForSelfUpdate: typeof actions.checkForSelfUpdate;
 }
 
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  addInstallLocationRequest: dispatcher(dispatch, actions.addInstallLocationRequest),
-  removeInstallLocationRequest: dispatcher(dispatch, actions.removeInstallLocationRequest),
-  makeInstallLocationDefault: dispatcher(dispatch, actions.makeInstallLocationDefault),
-  queueLocaleDownload: dispatcher(dispatch, actions.queueLocaleDownload),
-
-  updatePreferences: dispatcher(dispatch, actions.updatePreferences),
-  clearBrowsingDataRequest: dispatcher(dispatch, actions.clearBrowsingDataRequest),
-  navigate: dispatcher(dispatch, actions.navigate),
-  checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
-});
-
-const mapStateToProps = createStructuredSelector({
-  preferences: (state: IState) => state.preferences,
-  downloading: (state: IState) => Object.keys(state.i18n.downloading).length > 0,
-  lang: (state: IState) => state.i18n.lang,
-  locales: (state: IState) => state.i18n.locales,
-  sniffedLang: (state: IState) => state.system.sniffedLanguage,
-  installLocations: createSelector(
-    (state: IState) => state.preferences.installLocations,
-    (state: IState) => state.preferences.defaultInstallLocation,
-    (state: IState) => state.globalMarket.caves,
-    (state: IState) => state.system.homePath,
-    (state: IState) => state.system.userDataPath,
-    (state: IState) => state.system.diskInfo,
-    (locInfos, defaultLoc, caves, homePath, userDataPath, diskInfo) => {
-      if (!locInfos || !caves) {
-        return {};
-      }
-
-      locInfos = {
-        ...locInfos,
-        appdata: {
-          path: path.join(userDataPath, "apps"),
-        },
-      };
-
-      const locations = filter(map(locInfos, (locInfo, name) => {
-        if (locInfo.deleted) {
-          return;
+export default connect<IProps>(Preferences, {
+  state: createStructuredSelector({
+    preferences: (state: IState) => state.preferences,
+    downloading: (state: IState) => Object.keys(state.i18n.downloading).length > 0,
+    lang: (state: IState) => state.i18n.lang,
+    locales: (state: IState) => state.i18n.locales,
+    sniffedLang: (state: IState) => state.system.sniffedLanguage,
+    installLocations: createSelector(
+      (state: IState) => state.preferences.installLocations,
+      (state: IState) => state.preferences.defaultInstallLocation,
+      (state: IState) => state.globalMarket.caves,
+      (state: IState) => state.system.homePath,
+      (state: IState) => state.system.userDataPath,
+      (state: IState) => state.system.diskInfo,
+      (locInfos, defaultLoc, caves, homePath, userDataPath, diskInfo) => {
+        if (!locInfos || !caves) {
+          return {};
         }
 
-        const isAppData = (name === "appdata");
+        locInfos = {
+          ...locInfos,
+          appdata: {
+            path: path.join(userDataPath, "apps"),
+          },
+        };
 
-        let itemCount = 0;
-        let size = 0;
-        each(caves, (cave) => {
-          // TODO: handle per-user appdata ?
-          if (cave.installLocation === name || (isAppData && !cave.installLocation)) {
-            size += (cave.installedSize || 0);
-            itemCount++;
+        const locations = filter(map(locInfos, (locInfo, name) => {
+          if (locInfo.deleted) {
+            return;
           }
-        });
+
+          const isAppData = (name === "appdata");
+
+          let itemCount = 0;
+          let size = 0;
+          each(caves, (cave) => {
+            // TODO: handle per-user appdata ?
+            if (cave.installLocation === name || (isAppData && !cave.installLocation)) {
+              size += (cave.installedSize || 0);
+              itemCount++;
+            }
+          });
+
+          return {
+            ...locInfo,
+            name,
+            freeSpace: diskspace.freeInFolder(diskInfo, locInfo.path),
+            itemCount,
+            size,
+          };
+        }), (x) => !!x);
 
         return {
-          ...locInfo,
-          name,
-          freeSpace: diskspace.freeInFolder(diskInfo, locInfo.path),
-          itemCount,
-          size,
+          locations,
+          aliases: [
+            [homePath, "~"],
+          ],
+          defaultLoc,
         };
-      }), (x) => !!x);
+      },
+    ),
+  }),
+  dispatch: (dispatch) => ({
+    addInstallLocationRequest: dispatcher(dispatch, actions.addInstallLocationRequest),
+    removeInstallLocationRequest: dispatcher(dispatch, actions.removeInstallLocationRequest),
+    makeInstallLocationDefault: dispatcher(dispatch, actions.makeInstallLocationDefault),
+    queueLocaleDownload: dispatcher(dispatch, actions.queueLocaleDownload),
 
-      return {
-        locations,
-        aliases: [
-          [homePath, "~"],
-        ],
-        defaultLoc,
-      };
-    },
-  ),
+    updatePreferences: dispatcher(dispatch, actions.updatePreferences),
+    clearBrowsingDataRequest: dispatcher(dispatch, actions.clearBrowsingDataRequest),
+    navigate: dispatcher(dispatch, actions.navigate),
+    checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Preferences);

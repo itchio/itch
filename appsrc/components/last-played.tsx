@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import interleave from "./interleave";
 
@@ -8,11 +8,9 @@ import actionForGame from "../util/action-for-game";
 
 import NiceAgo from "./nice-ago";
 
-import {ILocalizer} from "../localizer";
-
 import {IGameRecord, ICaveRecord} from "../types";
 
-class LastPlayed extends React.Component<ILastPlayedProps, void> {
+class LastPlayed extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, game, cave, short = false} = this.props;
     const {lastTouched = 0} = (cave || {});
@@ -37,12 +35,12 @@ class LastPlayed extends React.Component<ILastPlayedProps, void> {
   }
 }
 
-interface ILastPlayedProps {
+interface IProps {
   game: IGameRecord;
   cave: ICaveRecord;
   short?: boolean;
-
-  t: ILocalizer;
 }
 
-export default connect()(LastPlayed);
+interface IDerivedProps {}
+
+export default connect<IProps>(LastPlayed);

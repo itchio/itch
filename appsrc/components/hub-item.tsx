@@ -1,18 +1,17 @@
 
 import * as React from "react";
 import * as classNames from "classnames";
-
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import {whenClickNavigates} from "./when-click-navigates";
 
 import * as actions from "../actions";
 import GameActions from "./game-actions";
 
-import {IGameRecord} from "../types";
-import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
+import {IGameRecord, ICaveRecord} from "../types";
+import {dispatcher, multiDispatcher} from "../constants/action-types";
 
-export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
+export class HubItem extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {
@@ -33,7 +32,7 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
   }
 
   render () {
-    const {game, searchScore} = this.props;
+    const {game, searchScore, cave} = this.props;
     const {title, coverUrl, stillCoverUrl} = game;
 
     let gif: boolean;
@@ -51,7 +50,7 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
       }
     }
 
-    const actionProps = {game, showSecondary: this.state.hover};
+    const actionProps = {game, showSecondary: this.state.hover, cave};
     const itemClasses = classNames("hub-item", {dull: (searchScore && searchScore > 0.2)});
 
     return <div className={itemClasses}
@@ -84,27 +83,25 @@ export class HubItem extends React.Component<IHubItemProps, IHubItemState> {
   }
 }
 
-interface IHubItemProps {
+interface IProps {
   game: IGameRecord;
+  cave?: ICaveRecord;
   searchScore?: number;
+}
 
+interface IDerivedProps {
   navigateToGame: typeof actions.navigateToGame;
   openGameContextMenu: typeof actions.openGameContextMenu;
 }
 
-interface IHubItemState {
+interface IState {
   /** true if mouse is over this hub item */
   hover: boolean;
 }
 
-const mapStateToProps = () => ({});
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
-  openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
+export default connect<IProps>(HubItem, {
+  dispatch: (dispatch) => ({
+    navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
+    openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(HubItem);

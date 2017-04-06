@@ -4,7 +4,7 @@ import * as env from "../env";
 import {createSelector} from "reselect";
 
 import {connect as reduxConnect} from "react-redux";
-import {getT} from "../localizer";
+import {ILocalizer, getT} from "../localizer";
 
 import {IState} from "../types";
 import {IDispatch} from "../constants/action-types";
@@ -31,19 +31,29 @@ const augment = createSelector(
   },
 );
 
-interface IStateMapper <T> {
-  (state: IState, props: any): T;
+interface IStateMapper {
+  (state: IState, props: any): any;
 }
 
-interface IDispatchMapper <T> {
-  (dispatch: IDispatch, props: any): T;
+interface IDispatchMapper {
+  (dispatch: IDispatch, props: any): any;
 }
 
-// TODO: type better (typescript has multiple dispatch right?)
-export function connect <S, P> (mapStateToProps?: IStateMapper<S>, mapDispatchToProps?: IDispatchMapper<P>) {
+export interface I18nProps {
+  t: ILocalizer;
+}
+
+interface IConnectOpts {
+  state?: IStateMapper;
+  dispatch?: IDispatchMapper;
+}
+
+export function connect <TProps> (
+    component: React.ComponentClass<any>,
+    opts: IConnectOpts = {}): React.ComponentClass<TProps> {
   const augmentedMapStateToProps = (state: IState, props: any) => {
-    if (mapStateToProps) {
-      const base = mapStateToProps(state, props);
+    if (opts.state) {
+      const base = opts.state(state, props);
       if (typeof base === "function") {
         return (innerState: IState, innerProps: any) => augment(innerState, base(innerState, innerProps));
       } else {
@@ -53,5 +63,6 @@ export function connect <S, P> (mapStateToProps?: IStateMapper<S>, mapDispatchTo
       return augment(state, {});
     }
   };
-  return reduxConnect(augmentedMapStateToProps, mapDispatchToProps);
+  const mapDispatchToProps = opts.dispatch;
+  return reduxConnect(augmentedMapStateToProps, mapDispatchToProps)(component);
 }

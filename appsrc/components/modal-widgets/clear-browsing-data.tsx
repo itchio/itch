@@ -1,8 +1,8 @@
 
 import * as React from "react";
 import * as classNames from "classnames";
+import {connect, I18nProps} from "../connect";
 
-import {connect} from "../connect";
 import {IModalWidgetProps} from "./modal-widget";
 
 import partitionForUser from "../../util/partition-for-user";
@@ -10,17 +10,9 @@ import * as humanize from "humanize-plus";
 
 import LoadingCircle from "../loading-circle";
 
-import {
-  IState,
-} from "../../types";
+import {ISession} from "../../electron/types";
 
-import {
-  ISession,
-} from "../../electron/types";
-
-import {ILocalizer} from "../../localizer";
-
-export class ClearBrowsingData extends React.Component<IClearBrowsingDataProps, IClearBrowsingDataState> {
+export class ClearBrowsingData extends React.Component<IProps & IDerivedProps & I18nProps, IClearBrowsingDataState> {
   constructor () {
     super();
     this.state = {
@@ -92,10 +84,9 @@ export class ClearBrowsingData extends React.Component<IClearBrowsingDataProps, 
 
 export interface IClearBrowsingDataParams {}
 
-interface IClearBrowsingDataProps extends IModalWidgetProps {
-  t: ILocalizer;
+interface IProps extends IModalWidgetProps {}
 
-  // computed
+interface IDerivedProps {
   userId: number;
 }
 
@@ -107,13 +98,8 @@ interface IClearBrowsingDataState {
   clearCookies?: boolean;
 }
 
-const mapStateToProps = (state: IState) => ({
-  userId: state.session.credentials.me.id,
+export default connect<IProps>(ClearBrowsingData, {
+  state: (state) => ({
+    userId: state.session.credentials.me.id,
+  }),
 });
-
-const mapDispatchToProps = () => ({});
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(ClearBrowsingData);

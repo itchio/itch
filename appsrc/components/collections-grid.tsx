@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import {createSelector} from "reselect";
 import Fuse  = require("fuse.js");
 
@@ -8,8 +8,7 @@ import {sortBy} from "underscore";
 
 import CollectionHubItem from "./collection-hub-item";
 
-import {IState, ICollectionRecord} from "../types";
-import {ILocalizer} from "../localizer";
+import {IState as IAppState, ICollectionRecord} from "../types";
 
 import {AutoSizer, Grid} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";
@@ -28,7 +27,7 @@ interface ILayoutInfo {
   collections: ICollectionRecord[];
 }
 
-export class CollectionsGrid extends React.Component<ICollectionsGridProps, ICollectionsGridState> {
+export class CollectionsGrid extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {
@@ -97,62 +96,56 @@ export class CollectionsGrid extends React.Component<ICollectionsGridProps, ICol
   }
 }
 
-interface ICollectionsGridProps {
-  // derived
+interface IProps {}
+
+interface IDerivedProps {
   collections: ICollectionRecord[];
   hiddenCount: number;
-
-  t: ILocalizer;
 }
 
-interface ICollectionsGridState {
+interface IState {
   scrollTop?: number;
 }
 
-const mapStateToProps = () => {
-  const getCollections = (state: IState, props: ICollectionsGridProps) => state.market.collections || {};
-  const getFilterQuery = (state: IState, props: ICollectionsGridProps) => state.session.navigation.filters.collections;
+export default connect<IProps>(CollectionsGrid, {
+  state: () => {
+    const getCollections = (state: IAppState, props: IProps) => state.market.collections || {};
+    const getFilterQuery = (state: IAppState, props: IProps) => state.session.navigation.filters.collections;
 
-  const getSortedCollections = createSelector(
-    getCollections,
-    (collections) => {
-      return sortBy(collections, recency);
-    },
-  );
+    const getSortedCollections = createSelector(
+      getCollections,
+      (collections) => {
+        return sortBy(collections, recency);
+      },
+    );
 
-  const fuse = new Fuse([], {
-    keys: [
-      { name: "title", weight: 1.0 },
-    ],
-    threshold: 0.4,
-  });
+    const fuse = new Fuse([], {
+      keys: [
+        { name: "title", weight: 1.0 },
+      ],
+      threshold: 0.4,
+    });
 
-  const getFilteredCollections = createSelector(
-    getSortedCollections,
-    getFilterQuery,
-    (sortedCollections, filterQuery) => {
-      if (filterQuery) {
-        fuse.set(sortedCollections);
-        const filteredCollections = fuse.search(filterQuery);
-        return {
-          collections: filteredCollections,
-          hiddenCount: sortedCollections.length - filteredCollections.length,
-        };
-      } else {
-        return {
-          collections: sortedCollections,
-          hiddenCount: 0,
-        };
-      }
-    },
-  );
+    const getFilteredCollections = createSelector(
+      getSortedCollections,
+      getFilterQuery,
+      (sortedCollections, filterQuery) => {
+        if (filterQuery) {
+          fuse.set(sortedCollections);
+          const filteredCollections = fuse.search(filterQuery);
+          return {
+            collections: filteredCollections,
+            hiddenCount: sortedCollections.length - filteredCollections.length,
+          };
+        } else {
+          return {
+            collections: sortedCollections,
+            hiddenCount: 0,
+          };
+        }
+      },
+    );
 
-  return getFilteredCollections;
-};
-
-const mapDispatchToProps = () => ({});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(CollectionsGrid);
+    return getFilteredCollections;
+  },
+});

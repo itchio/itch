@@ -2,12 +2,10 @@
 import * as React from "react";
 import {createSelector, createStructuredSelector} from "reselect";
 
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
-import {ILocalizer} from "../localizer";
-
-import {IState, IFilteredGameRecord} from "../types";
-import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
+import {IState as IAppState, IFilteredGameRecord} from "../types";
+import {dispatcher, multiDispatcher} from "../constants/action-types";
 import * as actions from "../actions";
 
 import {AutoSizer, Table, Column} from "react-virtualized";
@@ -44,7 +42,7 @@ interface ICellDataGetter {
   rowData: any;
 }
 
-class GameTable extends React.Component<IGameTableProps, IGameTableState> {
+class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGameTableState> {
   constructor() {
     super();
 
@@ -214,7 +212,7 @@ class GameTable extends React.Component<IGameTableProps, IGameTableState> {
   }
 }
 
-interface IGameTableProps {
+interface IProps {
   // specified
   games: IFilteredGameRecord[];
   hiddenCount: number;
@@ -223,11 +221,10 @@ interface IGameTableProps {
   sortBy: string;
   sortDirection?: SortDirectionType;
   onSortChange: IOnSortChange;
+}
 
-  // derived
+interface IDerivedProps {
   sortedGames: IFilteredGameRecord[];
-
-  t: ILocalizer;
 
   clearFilters: typeof actions.clearFilters;
   navigateToGame: typeof actions.navigateToGame;
@@ -238,56 +235,52 @@ interface IGameTableState {
   scrollTop?: number;
 }
 
-const mapStateToProps = (initialState: IState, initialProps: IGameTableProps) => {
-  const getGames = (state: IState, props: IGameTableProps) => props.games;
-  const getSortBy = (state: IState, props: IGameTableProps) => props.sortBy;
-  const getSortDirection = (state: IState, props: IGameTableProps) => props.sortDirection;
+export default connect<IProps>(GameTable, {
+  state: (initialState, initialProps) => {
+    const getGames = (state: IAppState, props: IProps) => props.games;
+    const getSortBy = (state: IAppState, props: IProps) => props.sortBy;
+    const getSortDirection = (state: IAppState, props: IProps) => props.sortDirection;
 
-  const getSortedGames = createSelector(
-    getGames,
-    getSortBy,
-    getSortDirection,
-    (games, sortBy, sortDirection) => {
-      if (sortBy && sortDirection) {
-        if (sortBy === "title") {
-          games = games.sort((a, b) => {
-            // case-insensitive sort for EN locale (bad for i18n but game titles may be in any language!)
-            return a.game.title.localeCompare(b.game.title, "en", {sensitivity: "base"});
-          });
-        } else if (sortBy === "publishedAt") {
-          games = _.sortBy(games, (record) => record.game.publishedAt);
-        } else if (sortBy === "secondsRun") {
-          games = _.sortBy(games, (record) => {
-            const {cave} = record;
-            return (cave && cave.secondsRun) || 0;
-          });
-        } else if (sortBy === "lastTouchedAt") {
-          games = _.sortBy(games, (record) => {
-            const {cave} = record;
-            return (cave && cave.lastTouched) || 0;
-          });
+    const getSortedGames = createSelector(
+      getGames,
+      getSortBy,
+      getSortDirection,
+      (games, sortBy, sortDirection) => {
+        if (sortBy && sortDirection) {
+          if (sortBy === "title") {
+            games = games.sort((a, b) => {
+              // case-insensitive sort for EN locale (bad for i18n but game titles may be in any language!)
+              return a.game.title.localeCompare(b.game.title, "en", { sensitivity: "base" });
+            });
+          } else if (sortBy === "publishedAt") {
+            games = _.sortBy(games, (record) => record.game.publishedAt);
+          } else if (sortBy === "secondsRun") {
+            games = _.sortBy(games, (record) => {
+              const { cave } = record;
+              return (cave && cave.secondsRun) || 0;
+            });
+          } else if (sortBy === "lastTouchedAt") {
+            games = _.sortBy(games, (record) => {
+              const { cave } = record;
+              return (cave && cave.lastTouched) || 0;
+            });
+          }
+
+          if (sortDirection === "DESC") {
+            games = games.reverse();
+          }
         }
+        return games;
+      },
+    );
 
-        if (sortDirection === "DESC") {
-          games = games.reverse();
-        }
-      }
-      return games;
-    },
-  );
-
-  return createStructuredSelector({
-    sortedGames: getSortedGames,
-  });
-};
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  clearFilters: dispatcher(dispatch, actions.clearFilters),
-  navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
-  openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
+    return createStructuredSelector({
+      sortedGames: getSortedGames,
+    });
+  },
+  dispatch: (dispatch) => ({
+    clearFilters: dispatcher(dispatch, actions.clearFilters),
+    navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
+    openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(GameTable);

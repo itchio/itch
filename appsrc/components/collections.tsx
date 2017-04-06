@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import urls from "../constants/urls";
 import * as actions from "../actions";
@@ -8,12 +8,11 @@ import * as actions from "../actions";
 // TODO: GameFilters doesn't belong in Collections view
 import GameFilters from "./game-filters";
 
-import {IDispatch, dispatcher} from "../constants/action-types";
-import {ILocalizer} from "../localizer";
+import {dispatcher} from "../constants/action-types";
 
 import CollectionsGrid from "./collections-grid";
 
-export class Collections extends React.Component<ICollectionsProps, void> {
+export class Collections extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, navigate} = this.props;
 
@@ -30,20 +29,14 @@ export class Collections extends React.Component<ICollectionsProps, void> {
   }
 }
 
-interface ICollectionsProps {
-  // derived
-  t: ILocalizer;
+interface IProps {}
 
+interface IDerivedProps {
   navigate: typeof actions.navigate;
 }
 
-const mapStateToProps = () => ({});
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  navigate: dispatcher(dispatch, actions.navigate),
+export default connect<IProps>(Collections, {
+  dispatch: (dispatch) => ({
+    navigate: dispatcher(dispatch, actions.navigate),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Collections);

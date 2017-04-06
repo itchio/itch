@@ -1,7 +1,7 @@
 
 import * as React from "react";
+import {connect, I18nProps} from "../connect";
 
-import {connect} from "../connect";
 import {IModalWidgetProps} from "./modal-widget";
 
 import {ICaveRecord} from "../../types";
@@ -31,7 +31,7 @@ const theme = {
   base0F: "#cc6633",
 };
 
-export class ViewCaveDetails extends React.Component<IViewCaveDetailsProps, void> {
+export class ViewCaveDetails extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const params = this.props.modal.widgetParams as IViewCaveDetailsParams;
 
@@ -49,14 +49,10 @@ export interface IViewCaveDetailsParams {
   currentCave: ICaveRecord;
 }
 
-interface IViewCaveDetailsProps extends IModalWidgetProps {
+interface IProps extends IModalWidgetProps {
   params: IViewCaveDetailsParams;
 }
 
-const mapStateToProps = () => ({});
-const mapDispatchToProps = () => ({});
+interface IDerivedProps {}
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ViewCaveDetails);
+export default connect<IProps>(ViewCaveDetails);

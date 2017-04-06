@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import {createStructuredSelector} from "reselect";
-import {connect} from "react-redux";
+import {connect, I18nProps} from "./connect";
 
 import GatePage from "./gate-page";
 import HubPage from "./hub-page";
@@ -25,7 +25,7 @@ declare class Notification {
  * Also, subscribes to app store to synchronize its state
  */
 @watching
-class Layout extends React.Component<ILayoutProps, void> {
+class Layout extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   subscribe (watcher: Watcher) {
     watcher.on(actions.notifyHtml5, async (store, action) => {
       const {title, onClick} = action.payload;
@@ -71,17 +71,14 @@ class Layout extends React.Component<ILayoutProps, void> {
   }
 }
 
-interface ILayoutProps {
+interface IProps {}
+
+interface IDerivedProps {
   page: string;
 }
 
-const mapStateToProps = createStructuredSelector({
-  page: (state: IState) => state.session.navigation.page,
+export default connect<IProps>(Layout, {
+  state: createStructuredSelector({
+    page: (state: IState) => state.session.navigation.page,
+  }),
 });
-
-const mapDispatchToProps = () => ({});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Layout);

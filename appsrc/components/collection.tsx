@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 import {createSelector, createStructuredSelector} from "reselect";
 
 import * as actions from "../actions";
@@ -17,10 +17,9 @@ import {
   IState, IGameRecordSet, ICollectionRecord, ICollectionRecordSet, ITabData,
   IUserMarketState, IGlobalMarketState,
 } from "../types";
-import {IDispatch, dispatcher} from "../constants/action-types";
-import {ILocalizer} from "../localizer";
+import {dispatcher} from "../constants/action-types";
 
-export class Collection extends React.Component<ICollectionProps, void> {
+export class Collection extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, allGames, tabGames, tabPath, collection, initiateShare} = this.props;
 
@@ -50,15 +49,15 @@ export class Collection extends React.Component<ICollectionProps, void> {
   }
 }
 
-interface ICollectionProps {
+interface IProps {
   tabPath: string;
   tabId: string;
+}
 
+interface IDerivedProps {
   allGames: IGameRecordSet;
   tabGames: IGameRecordSet;
   collection: ICollectionRecord;
-
-  t: ILocalizer;
 
   initiateShare: typeof actions.initiateShare;
 }
@@ -74,33 +73,29 @@ interface ICollectionsContainer {
   collections?: ICollectionRecordSet;
 }
 
-const mapStateToProps = () => {
-  const marketSelector = createStructuredSelector({
-    collectionId: (state: IState, props: ICollectionProps) => +pathToId(props.tabPath),
-    userMarket: (state: IState, props: ICollectionProps) => state.market,
-    globalMarket: (state: IState, props: ICollectionProps) => state.globalMarket,
-    tabData: (state: IState, props: ICollectionProps) => state.session.navigation.tabData[props.tabId] || {},
-  });
+export default connect<IProps>(Collection, {
+  state: () => {
+    const marketSelector = createStructuredSelector({
+      collectionId: (state: IState, props: IProps) => +pathToId(props.tabPath),
+      userMarket: (state: IState, props: IProps) => state.market,
+      globalMarket: (state: IState, props: IProps) => state.globalMarket,
+      tabData: (state: IState, props: IProps) => state.session.navigation.tabData[props.tabId] || {},
+    });
 
-  return createSelector(
-    marketSelector,
-    (cs: IStructuredSelectorResult) => {
-      const allGames = (cs.userMarket || {} as IUserMarketState).games || {};
-      const tabGames = cs.tabData.games || {};
-      const getCollection = (market: ICollectionsContainer) => {
-        return ((market || {}).collections || {})[cs.collectionId] || {};
-      };
-      const collection = getCollection(cs.tabData) || getCollection(cs.userMarket);
-      return {collection, allGames, tabGames};
-    },
-  );
-};
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  initiateShare: dispatcher(dispatch, actions.initiateShare),
+    return createSelector(
+      marketSelector,
+      (cs: IStructuredSelectorResult) => {
+        const allGames = (cs.userMarket || {} as IUserMarketState).games || {};
+        const tabGames = cs.tabData.games || {};
+        const getCollection = (market: ICollectionsContainer) => {
+          return ((market || {}).collections || {})[cs.collectionId] || {};
+        };
+        const collection = getCollection(cs.tabData) || getCollection(cs.userMarket);
+        return { collection, allGames, tabGames };
+      },
+    );
+  },
+  dispatch: (dispatch) => ({
+    initiateShare: dispatcher(dispatch, actions.initiateShare),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Collection);

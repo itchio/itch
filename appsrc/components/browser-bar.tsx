@@ -4,9 +4,9 @@ import * as classNames from "classnames";
 
 import BrowserControls from "./browser-controls";
 
-import {IBrowserState} from "./browser-state";
+import {IBrowserControlProperties} from "./browser-state";
 
-export class BrowserBar extends React.Component<IBrowserBarProps, void> {
+export class BrowserBar extends React.Component<IProps, void> {
   render () {
     const {browserState} = this.props;
     const {loading} = browserState;
@@ -21,9 +21,6 @@ export class BrowserBar extends React.Component<IBrowserBarProps, void> {
   }
 }
 
-// FIXME: a lot of props are missing from here
-interface IBrowserBarProps {
-  browserState: IBrowserState;
-}
+interface IProps extends IBrowserControlProperties {}
 
 export default BrowserBar;

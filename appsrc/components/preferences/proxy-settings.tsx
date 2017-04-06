@@ -1,14 +1,10 @@
 
 import * as React from "react";
-import {connect} from "../connect";
+import {connect, I18nProps} from "../connect";
 
 import urls from "../../constants/urls";
 
-import {ILocalizer} from "../../localizer";
-
-import {IState} from "../../types";
-
-class ProxySettings extends React.Component<IProxySettingsProps, void> {
+class ProxySettings extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, proxy, proxySource} = this.props;
 
@@ -32,19 +28,16 @@ class ProxySettings extends React.Component<IProxySettingsProps, void> {
   }
 }
 
-interface IProxySettingsProps {
-  t: ILocalizer;
+interface IProps {}
+
+interface IDerivedProps {
   proxy?: string;
   proxySource?: string;
 }
 
-const mapDispatchToProps = () => ({});
-const mapStateToProps = (state: IState) => ({
-  proxy: state.system.proxy,
-  proxySource: state.system.proxySource,
+export default connect<IProps>(ProxySettings, {
+  state: (state) => ({
+    proxy: state.system.proxy,
+    proxySource: state.system.proxySource,
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ProxySettings);

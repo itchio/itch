@@ -1,7 +1,7 @@
 
 import {createStructuredSelector} from "reselect";
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import * as classNames from "classnames";
 
@@ -17,7 +17,7 @@ import staticTabData from "../constants/static-tab-data";
 import * as querystring from "querystring";
 import {uniq, findWhere} from "underscore";
 
-import {IBrowserState} from "./browser-state";
+import {IBrowserState, IBrowserControlProperties} from "./browser-state";
 import createContextMenu from "./browser-meat-context-menu";
 
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
@@ -33,7 +33,7 @@ import GameBrowserContext from "./game-browser-context";
 
 import {transformUrl} from "../util/navigation";
 
-import {ITabData, IState} from "../types";
+import {ITabData, IState as IAppState} from "../types";
 import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
 
 import {IWebView, IWebContents, ISession} from "../electron/types";
@@ -46,7 +46,7 @@ interface IHistoryEntry {
 // updated when switching accounts
 let currentSession: ISession = null;
 
-export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeatState> {
+export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nProps, IBrowserMeatState> {
   refs: {
     webviewShell: Element;
   };
@@ -255,7 +255,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 
   isFrozen () {
     const {tabId} = this.props;
-    const frozen = staticTabData[tabId] || !tabId;
+    const frozen = !!staticTabData[tabId] || !tabId;
     return frozen;
   }
 
@@ -330,7 +330,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
     xhr.send();
   }
 
-  componentWillReceiveProps (nextProps: IBrowserMeatProps) {
+  componentWillReceiveProps (nextProps: IProps) {
     if (nextProps.url) {
       const {webview} = this;
       if (!webview) {
@@ -405,7 +405,7 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
     const {browserState} = this.state;
 
     const frozen = this.isFrozen();
-    const controlProps = {
+    const controlProps: IBrowserControlProperties = {
       tabId,
       tabPath,
       tabData,
@@ -520,52 +520,48 @@ export class BrowserMeat extends React.Component<IBrowserMeatProps, IBrowserMeat
 
 export type ControlsType = "generic" | "game" | "user";
 
-interface IBrowserMeatProps {
+interface IProps {
   active: boolean;
   url: string;
   tabPath: string;
   tabData: ITabData;
   tabId: string;
-  className: string;
+  controls: ControlsType;
+}
 
+interface IDerivedProps {
   meId: string;
   proxy?: string;
   proxySource?: string;
 
   navigate: typeof actions.navigate;
-
   evolveTab: typeof actions.evolveTab;
   tabDataFetched: typeof actions.tabDataFetched;
   tabReloaded: typeof actions.tabReloaded;
   tabLoading: typeof actions.tabLoading;
-
-  controls: ControlsType;
 }
 
 interface IBrowserMeatState {
-  // using '?' everywhere because @types/react is dumb and doesn't account for
-  // `setState` making a shallow merge, not a set (so the types can lack
-  // properties)
+  // FIXME: currently we're using '?' everywhere because @types/react is dumb
+  // and doesn't account for `setState` making a shallow merge, not a set
+  // (so the types can lack properties)
+  // TODO: regularly check if it's been fixed.
   browserState?: IBrowserState;
   scrollHistory?: IHistoryEntry[];
   wentBackOrForward?: boolean;
 }
 
-const mapStateToProps = createStructuredSelector({
-  meId: (state: IState) => (state.session.credentials.me || {id: "anonymous"}).id,
-  proxy: (state: IState) => state.system.proxy,
-  proxySource: (state: IState) => state.system.proxySource,
+export default connect<IProps>(BrowserMeat, {
+  state: createStructuredSelector({
+    meId: (state: IAppState) => (state.session.credentials.me || { id: "anonymous" }).id,
+    proxy: (state: IAppState) => state.system.proxy,
+    proxySource: (state: IAppState) => state.system.proxySource,
+  }),
+  dispatch: (dispatch: IDispatch) => ({
+    navigate: multiDispatcher(dispatch, actions.navigate),
+    evolveTab: dispatcher(dispatch, actions.evolveTab),
+    tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
+    tabReloaded: dispatcher(dispatch, actions.tabReloaded),
+    tabLoading: dispatcher(dispatch, actions.tabLoading),
+  }),
 });
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  navigate: multiDispatcher(dispatch, actions.navigate), 
-  evolveTab: dispatcher(dispatch, actions.evolveTab),
-  tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
-  tabReloaded: dispatcher(dispatch, actions.tabReloaded),
-  tabLoading: dispatcher(dispatch, actions.tabLoading),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(BrowserMeat);

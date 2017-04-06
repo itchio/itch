@@ -1,16 +1,15 @@
 
 import * as React from "react";
 import * as classNames from "classnames";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import Icon from "./icon";
 import {IDispatch} from "../constants/action-types";
-import {ILocalizer} from "../localizer";
 
 import {IActionOpts} from "./game-actions/list-secondary-actions";
 import Ink = require("react-ink");
 
-class GameBrowserContextAction extends React.Component<IGameBrowserContextAction, void> {
+class GameBrowserContextAction extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, dispatch, opts} = this.props;
     const {action, icon, hint, label, type = "action", classes = []} = opts;
@@ -32,16 +31,14 @@ class GameBrowserContextAction extends React.Component<IGameBrowserContextAction
   }
 }
 
-interface IGameBrowserContextAction {
-  t: ILocalizer;
-  dispatch: IDispatch;
+interface IProps {
   opts: IActionOpts;
 }
 
-const mapStateToProps = () => ({});
-const mapDispatchToProps = (dispatch: IDispatch) => ({dispatch});
+interface IDerivedProps {
+  dispatch: IDispatch;
+}
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(GameBrowserContextAction);
+export default connect<IProps>(GameBrowserContextAction, {
+  dispatch: (dispatch) => ({dispatch}),
+});

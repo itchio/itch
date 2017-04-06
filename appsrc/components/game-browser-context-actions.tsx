@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import * as classNames from "classnames";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import {map} from "underscore";
 
@@ -9,7 +9,6 @@ import listSecondaryActions from "./game-actions/list-secondary-actions";
 import {IActionsInfo} from "./game-actions/types";
 import * as actions from "../actions";
 
-import {ILocalizer} from "../localizer";
 import {IDispatch} from "../constants/action-types";
 
 import GameBrowserContextAction from "./game-browser-context-action";
@@ -24,8 +23,7 @@ import delay from "../reactors/delay";
  * Displays install, share, buy now buttons and so on.
  */
 @watching
-class GameBrowserContextActions extends React.Component
-    <IGameBrowserContextActionsProps, IGameBrowserContextActionsState> {
+class GameBrowserContextActions extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {
@@ -61,19 +59,16 @@ class GameBrowserContextActions extends React.Component
   }
 }
 
-interface IGameBrowserContextActionsProps extends IActionsInfo {
-  t: ILocalizer;
+interface IProps extends IActionsInfo {}
+
+interface IDerivedProps {
   dispatch: IDispatch;
 }
 
-interface IGameBrowserContextActionsState {
+interface IState {
   encouragingGenerosity: boolean;
 }
 
-const mapStateToProps = () => ({});
-const mapDispatchToProps = (dispatch: IDispatch) => ({dispatch});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(GameBrowserContextActions);
+export default connect<IProps>(GameBrowserContextActions, {
+  dispatch: (dispatch) => ({dispatch}),
+});

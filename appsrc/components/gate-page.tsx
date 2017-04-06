@@ -1,7 +1,7 @@
 
 import * as classNames from "classnames";
 import * as React from "react";
-import {connect} from "./connect";
+import {connect, I18nProps} from "./connect";
 
 import {map, sortBy} from "underscore";
 
@@ -14,14 +14,13 @@ import RememberedSession from "./remembered-session";
 
 import * as actions from "../actions";
 
-import {IState, ISetupOperation, IRememberedSessionsState, Partial} from "../types";
-import {IDispatch, dispatcher, ILoginWithTokenPayload} from "../constants/action-types";
-import {ILocalizer} from "../localizer";
+import {ISetupOperation, IRememberedSessionsState} from "../types";
+import {dispatcher, ILoginWithTokenPayload} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
 
 @watching
-export class GatePage extends React.Component<IGatePageProps, void> {
+export class GatePage extends React.Component<IProps & IInternalProps & I18nProps, void> {
   refs: {
     username: HTMLInputElement;
     password: HTMLInputElement;
@@ -123,7 +122,7 @@ export class GatePage extends React.Component<IGatePageProps, void> {
     const {t, blockingOperation, rememberedSessions = {}, stage, retrySetup} = this.props;
 
     if (stage === "pick") {
-      const onLogin = (payload: ILoginWithTokenPayload) => {
+      const onLogin = (payload: ILoginWithTokenPayload): any => {
         const {username} = this.refs;
         if (username) {
           (username as HTMLInputElement).value = payload.username;
@@ -131,11 +130,9 @@ export class GatePage extends React.Component<IGatePageProps, void> {
         this.props.loginWithToken(payload);
       };
 
-      const onForget = this.props.forgetSessionRequest;
-
       return <div className="remembered-sessions">
         {map(sortBy(rememberedSessions, (x) => -x.lastConnected), (session, userId) =>
-          <RememberedSession key={userId} session={session} loginWithToken={onLogin} forgetSessionRequest={onForget}/>,
+          <RememberedSession key={userId} session={session} onLogin={onLogin}/>,
         )}
       </div>;
     }
@@ -161,7 +158,7 @@ export class GatePage extends React.Component<IGatePageProps, void> {
     }
   }
 
-  componentWillReceiveProps (nextProps: IGatePageProps) {
+  componentWillReceiveProps (nextProps: IInternalProps) {
     // so very reacty...
     if (!nextProps.blockingOperation && nextProps.errors && nextProps.errors.length) {
       this.handleLoginFailure();
@@ -196,14 +193,13 @@ export class GatePage extends React.Component<IGatePageProps, void> {
   }
 }
 
-interface IGatePageProps {
+interface IProps {}
+
+interface IInternalProps {
   stage: string;
   errors: string[];
   blockingOperation?: ISetupOperation;
   rememberedSessions: IRememberedSessionsState;
-
-  t: ILocalizer;
-
   loginWithPassword: typeof actions.loginWithPassword;
   loginWithToken: typeof actions.loginWithToken;
   loginStartPicking: typeof actions.loginStartPicking;
@@ -212,31 +208,27 @@ interface IGatePageProps {
   retrySetup: typeof actions.retrySetup;
 }
 
-const mapStateToProps = (state: IState): Partial<IGatePageProps> => {
-  const {rememberedSessions, session} = state;
-  const {login} = session;
+export default connect<IProps>(GatePage, {
+  state: (state): Partial<IInternalProps> => {
+    const { rememberedSessions, session } = state;
+    const { login } = session;
 
-  if (!session.credentials.key) {
-    const hasSessions = Object.keys(rememberedSessions).length > 0;
-    const stage = (!login.blockingOperation && hasSessions && login.picking) ? "pick" : "login";
-    return {...login, stage, rememberedSessions};
-  } else if (!state.setup.done) {
-    return {stage: "setup", ...state.setup};
-  } else {
-    return {stage: "ready", errors: [], blockingOperation: null};
-  }
-};
-
-const mapDispatchToProps = (dispatch: IDispatch) => ({
-  loginWithPassword: dispatcher(dispatch, actions.loginWithPassword),
-  loginWithToken: dispatcher(dispatch, actions.loginWithToken),
-  loginStartPicking: dispatcher(dispatch, actions.loginStartPicking),
-  loginStopPicking: dispatcher(dispatch, actions.loginStopPicking),
-  forgetSessionRequest: dispatcher(dispatch, actions.forgetSessionRequest),
-  retrySetup: dispatcher(dispatch, actions.retrySetup),
+    if (!session.credentials.key) {
+      const hasSessions = Object.keys(rememberedSessions).length > 0;
+      const stage = (!login.blockingOperation && hasSessions && login.picking) ? "pick" : "login";
+      return { ...login, stage, rememberedSessions };
+    } else if (!state.setup.done) {
+      return { stage: "setup", ...state.setup };
+    } else {
+      return { stage: "ready", errors: [], blockingOperation: null };
+    }
+  },
+  dispatch: (dispatch): Partial<IInternalProps> => ({
+    loginWithPassword: dispatcher(dispatch, actions.loginWithPassword),
+    loginWithToken: dispatcher(dispatch, actions.loginWithToken),
+    loginStartPicking: dispatcher(dispatch, actions.loginStartPicking),
+    loginStopPicking: dispatcher(dispatch, actions.loginStopPicking),
+    forgetSessionRequest: dispatcher(dispatch, actions.forgetSessionRequest),
+    retrySetup: dispatcher(dispatch, actions.retrySetup),
+  }),
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(GatePage);
