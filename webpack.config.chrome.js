@@ -1,12 +1,10 @@
 
-const webpack = require("webpack");
 const nodeExternals = require("webpack-node-externals");
 const {resolve} = require("path");
+const shared = require("./webpack.config.shared");
 
 const port = process.env.PORT || 8009;
 const publicPath = `http://localhost:${port}/app`
-
-const shared = require("./webpack.config.shared");
 
 module.exports = {
   entry: [
@@ -19,14 +17,13 @@ module.exports = {
   output: {
     path: resolve(__dirname, "app"),
     filename: "chrome.js",
-    libraryTarget: "commonjs2", publicPath,
+    libraryTarget: "commonjs2",
+    publicPath,
   },
 
-  // Enable sourcemaps for debugging webpack's output.
   devtool: "eval",
 
   resolve: {
-    // Add '.ts' and '.tsx' as resolvable extensions.
     extensions: [".ts", ".tsx", ".js", ".json", ".scss"],
   },
 

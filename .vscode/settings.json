@@ -8,11 +8,12 @@
     ".nyc_output": true,
     "node_modules": true,
     "tmp": true,
-    "test": true,
+    "tests": true,
     "app": true,
     "stage": true,
     "coverage": true,
     "build": true,
+    "dist": true,
     "fixtures": true,
     ".tscache": true
   },

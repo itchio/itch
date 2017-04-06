@@ -1,6 +1,8 @@
 
 import * as path from "path";
-import {app} from "electron";
+import * as electron from "electron";
+
+const app = electron.app || electron.remote.app;
 
 import * as invariant from "invariant";
 

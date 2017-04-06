@@ -10,7 +10,13 @@ import os from "./util/os";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {AppContainer} from "react-hot-loader";
+
+let AppContainer: React.ComponentClass<void> = null;
+try {
+  const rhl = require("react-hot-loader");
+  AppContainer = rhl.AppContainer;
+} catch (e) { /* muffin */ }
+
 import * as electron from "electron";
 import App from "./components/app";
 
@@ -24,10 +30,14 @@ let appNode: Element;
 
 function render (RealApp: typeof App) {
   appNode = document.querySelector("#app");
-  const rootComponent =
-    <AppContainer>
+  let rootComponent: JSX.Element;
+  if (AppContainer) {
+    rootComponent = <AppContainer>
       <RealApp/>
     </AppContainer>;
+  } else {
+    rootComponent = <RealApp/>;
+  }
   ReactDOM.render(rootComponent, appNode);
 }
 

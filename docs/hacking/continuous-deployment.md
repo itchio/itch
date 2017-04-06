@@ -74,11 +74,11 @@ The building scripts run some common steps on every platform:
 
 #### Windows
 
-.exe + resources is built with [grunt-electron][], then [grunt-electron-installer][] generates `-full.nupkg`, `-delta.nupkg`, and
+.exe + resources is built with [electron-packager][], then [electron-winstaller][] generates `-full.nupkg`, `-delta.nupkg`, and
 `RELEASES`, needed for Squirrel.Windows update.
 
-[grunt-electron]: https://github.com/sindresorhus/grunt-electron
-[grunt-electron-installer]: https://github.com/electron/grunt-electron-installer
+[electron-packager]: https://www.npmjs.com/package/electron-packager
+[electron-winstaller]: https://github.com/electron/windows-installer
 
 #### macOS / OS X
 

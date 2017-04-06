@@ -30,6 +30,7 @@ tmp
 /build
 /cache
 /stage*
+/dist*
 /deb-stage
 /rpm-stage
 /aur-stage

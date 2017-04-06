@@ -7,35 +7,28 @@ const shared = require("./webpack.config.shared");
 
 module.exports = {
   entry: {
-    "metal.js": "./appsrc/metal.ts",
-    "inject/itchio-monkeypatch.js": "./appsrc/inject/itchio-monkeypatch.ts",
-    "inject/game.js": "./appsrc/inject/game.ts",
-    "index.html": "./appsrc/index.html",
+    "app/metal.js": "./appsrc/metal.ts",
+    "app/inject/itchio-monkeypatch.js": "./appsrc/inject/itchio-monkeypatch.ts",
+    "app/inject/game.js": "./appsrc/inject/game.ts",
   },
   output: {
-    path: resolve(__dirname, "app"),
+    path: resolve(__dirname, "dist"),
     filename: "[name]",
     libraryTarget: "commonjs2",
   },
 
-  // Enable sourcemaps for debugging webpack's output.
-  devtool: "inline-source-map",
+  devtool: "source-map",
 
-  resolve: {extensions: [".ts", ".tsx", ".js", ".json", ".html"]},
+  resolve: {extensions: [".ts", ".tsx", ".js", ".json"]},
 
   module: {
     rules: [
       {test: /\.tsx?$/, loaders: ["awesome-typescript-loader"]},
-      {test: /\.html$/, loaders: ["file-loader?name=[name].real.[ext]"]},
-      {test: /\.png$/, loaders: ["file-loader?name=[path][name].[ext]"]},
+      {test: /\.png$/, loaders: ["file-loader?name=app/[path][name].[ext]"]},
       shared.sourceMapRule,
       shared.tslintRule,
     ],
   },
-
-  plugins: [
-    new webpack.NamedModulesPlugin(),
-  ],
 
   target: "electron-main",
 
@@ -50,4 +43,8 @@ module.exports = {
   },
 
   externals: [nodeExternals()],
+
+  plugins: [
+    new webpack.DefinePlugin({"process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "production")}),
+  ]
 };
