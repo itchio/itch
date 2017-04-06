@@ -4,7 +4,7 @@
 
 const $ = require('./common')
 
-$.show_versions(['npm', 'gsutil'])
+$.show_versions(['npm'])
 
 $($.npm('install'))
 $($.npm('install grunt-cli'))
