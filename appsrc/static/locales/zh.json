@@ -402,5 +402,12 @@
     "status.uninstall.busy": "{{title}} 正在运行，无法卸载。",
     "status.reinstall.busy": "{{title}} 正在运行，无法重新安装。",
     "status.reverting": "正在回滚到版本 {{buildId}}…",
-    "status.healing": "正在修复安装…"
+    "status.healing": "正在修复安装…",
+    "setup.window.title": "{{app_name}} 安装程序",
+    "setup.window.welcome": "欢迎安装 {{app_name}} ！坐和放宽，选择安装位置并继续。",
+    "setup.tooltip.location": "点击以选择安装路径",
+    "setup.location.message": "选择应用的安装位置",
+    "setup.action.install": "现在安装！",
+    "setup.status.preparing": "正在准备...",
+    "setup.status.progress": "已完成 {{percent}} "
 }
