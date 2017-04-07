@@ -397,5 +397,6 @@
     "prompt.revert.title": "恢复到指定版本",
     "prompt.revert.message": "从版本 {{buildId}} 恢复到此版本：",
     "prompt.revert.action.revert": "恢复",
-    "sidebar.loading": "正在加载..."
+    "sidebar.loading": "正在加载...",
+    "status.game_update.busy": "{{title}} 无法更新，因为程序正在运行中"
 }
