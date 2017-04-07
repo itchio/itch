@@ -11,7 +11,7 @@ book:
     - dropsy
   script:
     - npm install babel-cli babel-preset-es2017
-    - node_modules/.bin/babel-node --presets es2017 --only release/* release/ci-book.js
+    - node_modules/.bin/babel-node --presets es2017 --only 'release/*' release/ci-book.js
 
 # Unit tests
 test-linux:
