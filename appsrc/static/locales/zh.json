@@ -368,5 +368,11 @@
     "grid.item.view_details": "查看详情...",
     "game.install.libraries_missing": "缺少必要的 {{arch}} 库：{{libraries}}",
     "grid.criterion.search": "搜索...",
-    "grid.filters.options.compatible": "兼容"
+    "grid.filters.options.compatible": "兼容",
+    "grid.filters.options.installed": "已安装",
+    "grid.filters.options.owned": "已拥有",
+    "grid.filters.options.no_results": "未发现结果",
+    "grid.item.verify_integrity": "验证完整性",
+    "grid.item.revert_to_version": "还原到某一版本...",
+    "table.column.name": "名称"
 }
