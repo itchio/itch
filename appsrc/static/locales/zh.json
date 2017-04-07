@@ -401,5 +401,5 @@
     "status.game_update.busy": "{{title}} 正在运行，无法更新。",
     "status.uninstall.busy": "{{title}} 正在运行，无法卸载。",
     "status.reinstall.busy": "{{title}} 正在运行，无法重新安装。",
-    "status.reverting": "正在回滚到{{buildId}}…"
+    "status.reverting": "正在回滚到版本 {{buildId}}…"
 }
