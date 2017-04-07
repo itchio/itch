@@ -26,7 +26,7 @@ module.exports = {
     rules: [
       {test: /\.tsx?$/, loaders: ["ts-loader"]},
       {test: /\.html$/, loaders: ["file-loader?name=[name].real.[ext]"]},
-      {test: /\.png$/, loaders: ["file-loader?name=[path][name].[ext]"]},
+      shared.imageRule,
       shared.sourceMapRule,
       shared.tslintRule,
     ],

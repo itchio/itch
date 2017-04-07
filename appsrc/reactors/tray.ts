@@ -2,6 +2,7 @@
 import {Watcher} from "./watcher";
 
 import os from "../util/os";
+import {getImagePath} from "../util/resources";
 import localizer from "../localizer";
 import {app, Menu, Tray} from "electron";
 
@@ -35,7 +36,8 @@ function makeTray (store: IStore) {
   }
 
   const iconName = `${base}${suffix}.png`;
-  const iconPath = require("../static/images/tray/" + iconName);
+  const iconPath = getImagePath("tray/" + iconName);
+
   tray = new Tray(iconPath);
   tray.setToolTip("itch.io");
   tray.on("click", () => store.dispatch(actions.focusWindow({toggle: true})));

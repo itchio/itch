@@ -7,12 +7,12 @@ const shared = require("./webpack.config.shared");
 
 module.exports = {
   entry: {
-    "app/metal.js": "./appsrc/metal.ts",
-    "app/inject/itchio-monkeypatch.js": "./appsrc/inject/itchio-monkeypatch.ts",
-    "app/inject/game.js": "./appsrc/inject/game.ts",
+    "metal.js": "./appsrc/metal.ts",
+    "inject/itchio-monkeypatch.js": "./appsrc/inject/itchio-monkeypatch.ts",
+    "inject/game.js": "./appsrc/inject/game.ts",
   },
   output: {
-    path: resolve(__dirname, "dist"),
+    path: resolve(__dirname, "dist", "app"),
     filename: "[name]",
     libraryTarget: "commonjs2",
   },
@@ -24,7 +24,7 @@ module.exports = {
   module: {
     rules: [
       {test: /\.tsx?$/, loaders: ["ts-loader"]},
-      {test: /\.png$/, loaders: ["file-loader?name=app/[path][name].[ext]"]},
+      shared.imageRule,
       shared.sourceMapRule,
       shared.tslintRule,
     ],

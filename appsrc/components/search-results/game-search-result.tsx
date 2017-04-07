@@ -1,5 +1,6 @@
 
 import * as React from "react";
+import * as classNames from "classnames";
 import GenericSearchResult from "./generic-search-result";
 
 import platformData from "../../constants/platform-data";

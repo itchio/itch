@@ -8,7 +8,7 @@ type IInjectName = "itchio-monkeypatch" | "game";
 export default function injectPath(name: IInjectName) {
   console.log(`inject-path: __dirname = ${__dirname}`);
   console.log(`inject-path: __filename = ${__filename}`);
-  const result = resolve(__dirname, "inject", name);
+  const result = resolve(__dirname, "inject", name + ".js");
   console.log(`inject-path: result = ${result}`);
   return result;
 }

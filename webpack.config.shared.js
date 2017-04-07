@@ -11,7 +11,7 @@ module.exports = {
     ],
   },
   imageRule: {
-    test: /\.(jpe?g|png|gif|svg|woff2?|ttf|eot)$/i,
+    test: /\.(jpe?g|png|gif|svg|woff2?|ttf|eot|svg)$/i,
     loaders: ["file-loader"]
   },
   sourceMapRule: {enforce: "pre", test: /\.js$/, loader: "source-map-loader"}
