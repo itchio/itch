@@ -43,7 +43,7 @@ compile:
     - tags
   artifacts:
     paths:
-      - stage.tar.gz
+      - dist.tar
 
 # generate .desktop file for Linux
 generate-linux-extras:

@@ -6,6 +6,10 @@ const $ = require('.');
 async function main () {
   $.benchmark = true;
 
+  await $.measure("just waiting", async () => {
+    await new Promise((resolve, reject) => setTimeout(resolve, 200));
+  });
+
   await $.show_versions(['node']);
 
   const input = await $.prompt('type something');

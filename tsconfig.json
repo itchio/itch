@@ -17,6 +17,7 @@
         "build",
         "stage",
         "node_modules",
-        "fixtures"
+        "fixtures",
+        "dist"
     ]
 }

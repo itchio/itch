@@ -95,6 +95,15 @@ $.say = function (cmd) {
   return true
 }
 
+$.measure = async function (name, cb) {
+  const start = Date.now();
+  const ret = await cb();
+  const end = Date.now();
+  const ms = end - start;
+  $.putln(chalk.cyan(`⌚ ${name} took ${(ms / 1000).toFixed(3)}s`));
+  return ret;
+}
+
 async function system (cmd, opts = {}) {
   const start = Date.now();
 

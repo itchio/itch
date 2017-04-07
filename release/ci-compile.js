@@ -7,11 +7,14 @@ const bluebird = require('bluebird');
 const humanize = require('humanize-plus');
 
 async function main () {
-  $.say(`Preparing to compile ${$.app_name()}`);
+  $.say(`Preparing to compile ${$.app_name()} ${$.build_version()}`);
 
   await $.show_versions(['npm', 'node']);
 
   $(await $.npm('install'));
+
+  $.say('Wiping dist...');
+  $(await $.sh('rm -rf dist'));
 
   $.say('Compiling sources...');
   const js_outputs = await bluebird.all([
@@ -28,6 +31,7 @@ async function main () {
   for (const field of ['name', 'productName', 'desktopName']) {
     pkg[field] = $.app_name();
   }
+  pkg.version = $.build_version();
   const pkg_contents = JSON.stringify(pkg, null, 2);
   await $.write_file(`dist/package.json`, pkg_contents);
 
