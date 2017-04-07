@@ -231,7 +231,7 @@
     "notification.download_installed": "成功安装{{title}}！",
     "notification.download_updated": "成功更新{{title}}！",
     "notification.download_reverted": "{{title}} 已被还原成  {{version}}！",
-    "notification.download_healed": "{{title}} 已被证实和愈合！",
+    "notification.download_healed": "{{title}} 已验证并修复！",
     "onboarding.dashboard.mission_statement": "我们已尽力使其为最舒适。",
     "outlinks.open_dashboard": "打开仪表板",
     "outlinks.manage_collections": "管理收藏品",
@@ -380,5 +380,9 @@
     "table.column.published": "已发布",
     "collection_grid.item.updated_at": "上次更新时间： {{time_ago}}",
     "prereq.explanation": "需要安装一些文件来保证 {{title}} 的正确运行（仅本次）。",
-    "prereq.status.downloading": "正在下载..."
+    "prereq.status.downloading": "正在下载...",
+    "prereq.status.extracting": "提取文件…",
+    "prereq.status.ready": "准备安装",
+    "prereq.status.installing": "正在安装...（这可能要花费一些时间）",
+    "prereq.status.done": "完成！"
 }
