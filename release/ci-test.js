@@ -4,16 +4,19 @@
 
 const $ = require('./common')
 
-$.show_versions(['npm'])
+async function main () {
+  await $.show_versions(['npm'])
 
-$($.npm('install'))
-$($.npm('run build-tests'))
+  $(await $.npm('install'))
+  $(await $.npm('run build-tests'))
 
-process.env.ELECTRON_ENABLE_LOGGING = '1';
+  process.env.ELECTRON_ENABLE_LOGGING = '1';
 
-if (process.platform === "linux") {
-  $($.npm('run run-tests-xvfb'))
-} else {
-  $($.npm('run run-tests'))
+  if (process.platform === "linux") {
+    $(await $.npm('run run-tests-xvfb'))
+  } else {
+    $(await $.npm('run run-tests'))
+  }
 }
 
+main();

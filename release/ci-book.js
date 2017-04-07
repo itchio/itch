@@ -5,11 +5,15 @@
 
 const $ = require('./common')
 
-$.show_versions(['npm', 'node'])
-$($.npm_dep('gitbook', 'gitbook-cli'))
+async function main () {
+  await $.show_versions(['npm', 'node'])
+  $(await $.npm_dep('gitbook', 'gitbook-cli'))
 
-$.cd('docs', function () {
-  $($.npm('install'))
-  $($.sh('gitbook build'))
-  $($.gcp(`_book/* gs://docs.itch.ovh/itch/${$.build_ref_name()}`))
-})
+  await $.cd('docs', async function () {
+    $(await $.npm('install'))
+    $(await $.sh('gitbook build'))
+    $(await $.gcp(`_book/* gs://docs.itch.ovh/itch/${$.build_ref_name()}`))
+  });
+}
+
+main();
