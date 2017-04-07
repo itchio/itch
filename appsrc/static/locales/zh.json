@@ -169,7 +169,7 @@
     "install_location.empty": "此路径目前未安装任何项目",
     "login.action.show_form": "以另一账户登入",
     "login.messages.welcome_back": "欢迎回来！",
-    "login.remembered_session.last_connected": "最后一次连接",
+    "login.remembered_session.last_connected": "上次登录",
     "game.install.no_executables_found": "找不到可执行文件",
     "game.install.no_html_index_found": "找不到 HTML 索引文件",
     "grid.criterion.filter": "过滤...",
