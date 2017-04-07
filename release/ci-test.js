@@ -5,17 +5,17 @@
 const $ = require('./common')
 
 async function main () {
-  await $.show_versions(['npm'])
+  await $.show_versions(['npm']);
 
-  $(await $.npm('install'))
-  $(await $.npm('run build-tests'))
+  $(await $.npm('install'));
+  $(await $.npm('run build-tests'));
 
   process.env.ELECTRON_ENABLE_LOGGING = '1';
 
   if (process.platform === "linux") {
-    $(await $.npm('run run-tests-xvfb'))
+    $(await $.npm('run run-tests-xvfb'));
   } else {
-    $(await $.npm('run run-tests'))
+    $(await $.npm('run run-tests'));
   }
 }
 

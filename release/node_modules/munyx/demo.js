@@ -4,6 +4,8 @@ process.env.BUILD_TAG = "v1.2.3"
 const $ = require('.');
 
 async function main () {
+  $.benchmark = true;
+
   await $.show_versions(['node']);
 
   const input = await $.prompt('type something');

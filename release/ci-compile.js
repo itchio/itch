@@ -3,41 +3,39 @@
 // compile itch for production environemnts
 
 const $ = require('./common')
+const bluebird = require('bluebird');
+const humanize = require('humanize-plus');
 
-$.say(`Compiling ${$.app_name()}`)
+async function main () {
+  $.say(`Preparing to compile ${$.app_name()}`);
 
-$.show_versions(['npm', 'node'])
+  await $.show_versions(['npm', 'node']);
 
-$($.npm('install'))
+  $(await $.npm('install'));
 
-$.say('Compiling JavaScript')
-process.env.NODE_ENV = 'production'
-$($.grunt('ts sass copy'))
+  $.say('Compiling sources...');
+  const js_outputs = await bluebird.all([
+    $.get_output('npm run -s build-metal-prod'),
+    $.get_output('npm run -s build-chrome-prod')
+  ]);
 
-$.say('Preparing stage')
-const stage_path = 'stage'
-$($.sh(`rm -rf "${stage_path}"`))
-$($.sh(`mkdir -p "${stage_path}"`))
+  $.say('Sources compilation output:');
+  $.putln('-------- Metal -------:\n' + js_outputs[0]);
+  $.putln('------- Chrome -------:\n' + js_outputs[1]);
 
-$.say('Copying compiled code+assets...')
-$($.sh(`cp -rf app node_modules "${stage_path}"`))
+  $.say('Generating custom package.json...')
+  const pkg = JSON.parse(await $.read_file('package.json'));
+  for (const field of ['name', 'productName', 'desktopName']) {
+    pkg[field] = $.app_name();
+  }
+  const pkg_contents = JSON.stringify(pkg, null, 2);
+  await $.write_file(`dist/package.json`, pkg_contents);
 
-$.say('Generating custom package.json + environment')
+  $.say('Compressing dist...')
+  $(await $.sh('tar cf dist.tar dist'))
 
-const pkg = JSON.parse($.read_file('package.json'))
-;['name', 'productName', 'desktopName'].forEach(function (field) {
-  pkg[field] = $.app_name()
-})
-
-const env = {
-  name: 'production',
-  channel: $.channel_name()
+  const stats = await $.lstat('dist.tar');
+  $.say(`dist.tar is ${humanize.fileSize(stats.size)}`)
 }
-$.write_file(`${stage_path}/package.json`, JSON.stringify(pkg, 0, 2))
 
-const envjs = `
-module.exports = ${JSON.stringify(env, 0, 2)}
-`
-$.write_file(`${stage_path}/app/env.js`, envjs)
-
-$($.sh('tar cfz stage.tar.gz stage'))
+main();

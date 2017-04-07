@@ -1,0 +1,26 @@
+{
+  "name": "humanize-plus",
+  "version": "1.8.1",
+  "homepage": "https://github.com/HubSpot/humanize",
+  "authors": [
+    "HubSpot <devteam@hubspot.com> (http://dev.hubspot.com)",
+    "Jonathan Kim <me@jonathan-kim.com> (http://jonathan-kim.com)",
+    "Bryan Ash <ashbryanct@gmail.com> (http://github.com/b-ash)",
+    "Andy Aylward <aaylward@gmail.com> (http://github.com/aaylward)",
+    "Nicholas Hwang <geek@nicholashwang.com> (http://github.com/geekjuice)"
+  ],
+  "description": "A simple utility library for making the web more humane.",
+  "main": "./src/humanize.js",
+  "keywords": [
+    "humanize",
+    "format"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

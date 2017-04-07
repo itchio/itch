@@ -111,7 +111,6 @@
     "which": "^1.2.11"
   },
   "devDependencies": {
-    "awesome-typescript-loader": "^3.1.2",
     "css-loader": "^0.28.0",
     "electron": "^1.6.2",
     "electron-packager": "^7.0.1",
@@ -162,6 +161,8 @@
     "build-tests": "webpack --profile --config webpack.config.tests.js",
     "run-tests": "electron tests/runner.js",
     "run-tests-xvfb": "xvfb-run electron tests/runner.js",
+    "build-metal-prod": "webpack --config webpack.config.metal.prod.js",
+    "build-chrome-prod": "webpack --config webpack.config.chrome.prod.js",
     "i18n": "node release/ci-i18n-check.js"
   }
 }

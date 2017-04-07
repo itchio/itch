@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+RESET='\033[0m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+
+FIND_ROOT="git rev-parse --show-toplevel"
+$($FIND_ROOT &>/dev/null)
+if [[ $? -eq 0 ]]; then
+    PROJECT_ROOT=$($FIND_ROOT)
+    cd $PROJECT_ROOT
+fi
+
+printf "\n${BLUE}[Humanize]${RESET} Wiping build directory...\n"
+npm run clean
+
+printf "\n${BLUE}[Humanize]${RESET} Compiling ES6 files...\n"
+npm run babel
+
+printf "\n${BLUE}[Humanize]${RESET} Compressing compiled files...\n"
+npm run uglify
+
+printf "\n${BLUE}[Humanize]${RESET} Appending headers...\n"
+npm run header
+
+printf "\n${CYAN}(づ｡◕‿‿◕｡)づ All done!${RESET}\n"

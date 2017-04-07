@@ -2,4 +2,6 @@
 
 const $ = require('munyx')
 
+$.benchmark = true
+
 module.exports = $
