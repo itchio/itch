@@ -366,5 +366,6 @@
     "usage_stats.last_played_time_ago": "最后玩过于 {{time_ago}}",
     "prompt.install_error.find_upload": "搜索下载时：{{message}}",
     "grid.item.view_details": "查看详情...",
-    "game.install.libraries_missing": "缺少需要的 {{arch}} 库：{{libraries}}"
+    "game.install.libraries_missing": "缺少必要的 {{arch}} 库：{{libraries}}",
+    "grid.criterion.search": "搜索..."
 }
