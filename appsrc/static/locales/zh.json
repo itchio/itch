@@ -413,5 +413,8 @@
     "setup.status.installing": "正在以 {{speed}} 的速度下载并安装",
     "setup.status.done": "所有项目均已完成！",
     "setup.status.notification": "安装成功，正在启动 {{app_name}}！ ",
-    "setup.error_dialog.title": "发生了一些错误"
+    "setup.error_dialog.title": "发生了一些错误",
+    "web.context_menu.cut": "剪切",
+    "web.context_menu.copy": "复制",
+    "web.context_menu.paste": "粘贴"
 }
