@@ -379,5 +379,6 @@
     "table.column.last_played": "上次游戏时间",
     "table.column.published": "已发布",
     "collection_grid.item.updated_at": "上次更新时间： {{time_ago}}",
-    "prereq.explanation": "需要安装一些文件来保证 {{title}} 的正确运行（仅本次）。"
+    "prereq.explanation": "需要安装一些文件来保证 {{title}} 的正确运行（仅本次）。",
+    "prereq.status.downloading": "正在下载..."
 }
