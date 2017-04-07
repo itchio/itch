@@ -375,5 +375,9 @@
     "grid.item.verify_integrity": "验证完整性",
     "grid.item.revert_to_version": "还原到某一版本...",
     "table.column.name": "名称",
-    "table.column.play_time": "游戏时间"
+    "table.column.play_time": "游戏时间",
+    "table.column.last_played": "上次游戏时间",
+    "table.column.published": "已发布",
+    "collection_grid.item.updated_at": "上次更新时间： {{time_ago}}",
+    "prereq.explanation": "需要安装一些文件来保证 {{title}} 的正确运行（仅本次）。"
 }
