@@ -374,5 +374,6 @@
     "grid.filters.options.no_results": "未发现结果",
     "grid.item.verify_integrity": "验证完整性",
     "grid.item.revert_to_version": "还原到某一版本...",
-    "table.column.name": "名称"
+    "table.column.name": "名称",
+    "table.column.play_time": "游戏时间"
 }
