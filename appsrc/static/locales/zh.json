@@ -239,8 +239,8 @@
     "sandbox.setup.proceed": "继续",
     "sandbox.setup.windows.message": "为了能使游戏在itch.io沙盒里运行，一次性的建立过程须以管理员身份运行。",
     "sandbox.setup.windows.detail": "点击“继续”后，或许会有权限提示对话框弹出来，向您索取批准。这个权限会在您的系统内添加“itch-player”的用户账号以保护您的系统。",
-    "sandbox.setup.linux.message": "为了能使游戏在itch.io沙盒里运行，建立过程须以管理员用户身份运行。",
-    "sandbox.setup.linux.detail": "点击“继续”后，会有提示弹出来，向您索取密码。密码只需要在第一次运行沙盒时被索取，而您的密码是不会被itch查看或记录。",
+    "sandbox.setup.linux.message": "为了能使游戏在itch.io沙盒里运行，安装程序须以管理员权限运行。",
+    "sandbox.setup.linux.detail": "点击“继续”后，会弹出提示要求您输入密码。密码只需要在第一次运行沙盒时输入，并且不会被itch.io查看或记录。",
     "preferences.security.sandbox.description": "itch.io 沙盒系统将尽可能防止您下载的游戏破坏系统或者盗取敏感信息。虽然并不能完全保证安全性，但是在 itch.io 沙盒里运行游戏仍然会安全的多。",
     "preferences.install_location.is_default_short": "默认",
     "preferences.install_location.make_default_short": "设为默认",
@@ -384,5 +384,10 @@
     "prereq.status.extracting": "提取文件…",
     "prereq.status.ready": "准备安装",
     "prereq.status.installing": "正在安装...（这可能要花费一些时间）",
-    "prereq.status.done": "完成！"
+    "prereq.status.done": "完成！",
+    "preferences.behavior.prevent_display_sleep": "游戏时禁止显示器自动关闭",
+    "preferences.advanced.clear_browsing_data": "清除浏览数据",
+    "prompt.clear_browsing_data.clear": "清除数据",
+    "prompt.clear_browsing_data.category.cache": "缓存图片和文件",
+    "prompt.clear_browsing_data.retrieving_cache_size": "检测缓存大小"
 }
