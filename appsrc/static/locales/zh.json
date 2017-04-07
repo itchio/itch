@@ -417,5 +417,6 @@
     "web.context_menu.cut": "剪切",
     "web.context_menu.copy": "复制",
     "web.context_menu.paste": "粘贴",
-    "web.context_menu.open_in_new_tab": "在新标签页中打开"
+    "web.context_menu.open_in_new_tab": "在新标签页中打开",
+    "web.context_menu.copy_link": "复制链接"
 }
