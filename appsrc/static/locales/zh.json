@@ -416,5 +416,6 @@
     "setup.error_dialog.title": "发生了一些错误",
     "web.context_menu.cut": "剪切",
     "web.context_menu.copy": "复制",
-    "web.context_menu.paste": "粘贴"
+    "web.context_menu.paste": "粘贴",
+    "web.context_menu.open_in_new_tab": "在新标签页中打开"
 }
