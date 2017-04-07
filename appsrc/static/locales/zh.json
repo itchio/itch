@@ -390,5 +390,12 @@
     "prompt.clear_browsing_data.clear": "清除数据",
     "prompt.clear_browsing_data.category.cache": "缓存图片和文件",
     "prompt.clear_browsing_data.retrieving_cache_size": "检测缓存大小",
-    "prompt.clear_browsing_data.cache_size_used": "缓存占用空间： {{size}} "
+    "prompt.clear_browsing_data.cache_size_used": "缓存占用空间： {{size}} ",
+    "prompt.clear_browsing_data.category.cookies": "Cookies",
+    "prompt.clear_browsing_data.cookies_info": "这将使你从所有使用itch应用登陆过的网站注销。",
+    "prompt.clear_browsing_data.notification": "浏览数据已清除！",
+    "prompt.revert.title": "恢复到指定版本",
+    "prompt.revert.message": "从版本 {{buildId}} 恢复到此版本：",
+    "prompt.revert.action.revert": "恢复",
+    "sidebar.loading": "正在加载..."
 }
