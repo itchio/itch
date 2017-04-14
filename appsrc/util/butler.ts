@@ -342,6 +342,56 @@ async function elfprops (opts: IElfPropsOpts): Promise<IElfPropsResult> {
   return value;
 }
 
+export interface IConfigureResult extends IButlerOpts {
+  basePath: string;
+  totalSize: number;
+  candidates?: ICandidate[];
+}
+
+export type Flavor = "linux" | "macos" | "windows" | "script" | "jar" | "html" | "love";
+
+export type Arch = "386" | "amd64";
+
+export interface ICandidate {
+  path: string;
+  flavor: Flavor;
+  arch?: Arch;
+  size: number;
+}
+
+export interface IConfigureOpts extends IButlerOpts {
+  path: string;
+  osFilter?: string;
+  archFilter?: string;
+}
+
+async function configure (opts: IConfigureOpts): Promise<IConfigureResult> {
+  const {path} = opts;
+  let args = [path];
+  if (opts.osFilter) {
+    args = [...args, "--os-filter", opts.osFilter];
+  }
+  if (opts.archFilter) {
+    args = [...args, "--arch-filter", opts.archFilter];
+  }
+
+  let value: IConfigureResult;
+
+  const emitter = new EventEmitter();
+  emitter.on("result", (result: IButlerResult) => {
+    value = result.value;
+  });
+
+  const butlerOpts = {
+    emitter,
+  };
+
+  log(opts, `Launching butler with args: ${JSON.stringify(args)}`);
+  await butler(butlerOpts, "configure", args);
+
+  return value;
+}
+
 async function sanityCheck (): Promise<boolean> {
   try {
     await spawn.assert({
@@ -357,4 +407,5 @@ async function sanityCheck (): Promise<boolean> {
 export default {
   cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify,
   sizeof, file, installPrereqs, sanityCheck, exeprops, elfprops,
+  configure,
 };

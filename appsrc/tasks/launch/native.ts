@@ -53,6 +53,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
   let {isolateApps} = opts.preferences;
   const appPath = pathmaker.appPath(cave, store.getState().preferences);
   let exePath: string;
+  let isJar = false;
   let console = false;
 
   const manifestPath = ospath.join(appPath, ".itch.toml");
@@ -73,6 +74,15 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
     exePath = ospath.join(appPath, actionPath);
   } else {
     log(opts, "no manifest action picked");
+  }
+
+  if (!exePath) {
+    const verdict = (cave as any).verdict;
+    if (verdict && verdict.candidates && verdict.candidates.length > 0) {
+      const candidate = verdict.candidates[0];
+      exePath = ospath.join(appPath, candidate.path);
+      isJar = candidate.flavor === "jar";
+    }
   }
 
   if (!exePath) {
@@ -112,7 +122,13 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
 
   let cwd: string;
 
-  if (/\.jar$/i.test(exePath)) {
+  if (!isJar) {
+    if (/\.jar$/i.test(exePath)) {
+      isJar = true;
+    }
+  }
+
+  if (isJar) {
     log(opts, "checking existence of system JRE before launching .jar");
     try {
       const javaPath = await which("java");
