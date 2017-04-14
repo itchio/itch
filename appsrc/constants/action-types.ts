@@ -744,6 +744,12 @@ export interface INukeCavePrereqsPayload {
   caveId: string;
 }
 
+export const CONFIGURE_CAVE = "CONFIGURE_CAVE";
+export interface IConfigureCavePayload {
+  /** the cave to configure */
+  caveId: string;
+}
+
 export const REVERT_CAVE_REQUEST = "REVERT_CAVE_REQUEST";
 export interface IRevertCaveRequestPayload {
   /** the cave to revert to a different build */

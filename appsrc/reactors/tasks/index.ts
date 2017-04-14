@@ -15,6 +15,7 @@ import implodeCave from "./implode-cave";
 import exploreCave from "./explore-cave";
 import abortGame from "./abort-game";
 import nukeCavePrereqs from "./nuke-cave-prereqs";
+import configureCave from "./configure-cave";
 import revertCave from "./revert-cave";
 import healCave from "./heal-cave";
 import viewCaveDetails from "./view-cave-details";
@@ -37,6 +38,7 @@ export default function (watcher: Watcher) {
   exploreCave(watcher);
   abortGame(watcher);
   nukeCavePrereqs(watcher);
+  configureCave(watcher);
   revertCave(watcher);
   healCave(watcher);
   viewCaveDetails(watcher);

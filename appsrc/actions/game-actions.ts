@@ -28,6 +28,7 @@ import {
   QUEUE_GAME_UPDATE, IQueueGameUpdatePayload,
 
   NUKE_CAVE_PREREQS, INukeCavePrereqsPayload,
+  CONFIGURE_CAVE, IConfigureCavePayload,
   REVERT_CAVE_REQUEST, IRevertCaveRequestPayload,
   HEAL_CAVE, IHealCavePayload,
   VIEW_CAVE_DETAILS, IViewCaveDetailsPayload,
@@ -59,6 +60,7 @@ export const showGameUpdate = createAction<IShowGameUpdatePayload>(SHOW_GAME_UPD
 export const queueGameUpdate = createAction<IQueueGameUpdatePayload>(QUEUE_GAME_UPDATE);
 
 export const nukeCavePrereqs = createAction<INukeCavePrereqsPayload>(NUKE_CAVE_PREREQS);
+export const configureCave = createAction<IConfigureCavePayload>(CONFIGURE_CAVE);
 export const revertCaveRequest = createAction<IRevertCaveRequestPayload>(REVERT_CAVE_REQUEST);
 export const healCave = createAction<IHealCavePayload>(HEAL_CAVE);
 export const viewCaveDetails = createAction<IViewCaveDetailsPayload>(VIEW_CAVE_DETAILS);

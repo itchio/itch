@@ -2,6 +2,7 @@
 import * as invariant from "invariant";
 
 import os from "../util/os";
+import butler from "../util/butler";
 
 import mklog from "../util/log";
 const log = mklog("configure");
@@ -60,21 +61,69 @@ export default async function start(out: EventEmitter, inOpts: IConfigureOpts) {
   const appPath = pathmaker.appPath(cave, store.getState().preferences);
   log(opts, `configuring ${appPath}`);
 
-  const launchType = upload.type === "html" ? "html" : "native";
-  globalMarket.saveEntity("caves", cave.id, { launchType });
+  let osFilter;
+  let archFilter;
 
-  if (launchType === "html") {
-    const res = await html.configure(game, appPath);
-    log(opts, `html-configure yielded res: ${JSON.stringify(res, null, 2)}`);
-    globalMarket.saveEntity("caves", cave.id, res);
-  } else {
-    const executables = (await configure(opts, appPath)).executables;
-    log(opts, `native-configure yielded execs: ${JSON.stringify(executables, null, 2)}`);
-    globalMarket.saveEntity("caves", cave.id, { executables });
+  switch (process.platform) {
+    case "linux":
+      osFilter = "linux";
+      if (os.isLinux64()) {
+        archFilter = "amd64";
+      } else {
+        archFilter = "386";
+      }
+      break;
+    case "darwin":
+      osFilter = "darwin";
+      archFilter = "amd64";
+      break;
+    case "win32":
+      osFilter = "windows";
+      if (os.isWin64()) {
+        archFilter = "amd64";
+      } else {
+        archFilter = "386";
+      }
+      break;
+    default: 
+      log(opts, `unrecognized platform, assuming linux-amd64`);
+      osFilter = "linux";
+      archFilter = "amd64";
   }
 
-  const totalSize = await computeSize.computeFolderSize(opts, appPath);
-  log(opts, `total size of ${appPath}: ${humanize.fileSize(totalSize)} (${totalSize} bytes)`);
+  try {
+    const verdict = await butler.configure({
+      path: appPath,
+      osFilter,
+      archFilter,
+      logger: opts.logger,
+      emitter: out,
+    });
+    log(opts, `verdict =\n${JSON.stringify(verdict, null, 2)}`);
 
-  globalMarket.saveEntity("caves", cave.id, { installedSize: totalSize });
+    globalMarket.saveEntity("caves", cave.id, {
+      installedSize: verdict.totalSize,
+      verdict: verdict,
+    } as any);
+  } catch (e) {
+    const launchType = upload.type === "html" ? "html" : "native";
+    globalMarket.saveEntity("caves", cave.id, { launchType });
+
+    if (launchType === "html") {
+      const res = await html.configure(game, appPath);
+      log(opts, `html-configure yielded res: ${JSON.stringify(res, null, 2)}`);
+      globalMarket.saveEntity("caves", cave.id, res);
+    } else {
+      const executables = (await configure(opts, appPath)).executables;
+      log(opts, `native-configure yielded execs: ${JSON.stringify(executables, null, 2)}`);
+      globalMarket.saveEntity("caves", cave.id, { executables });
+    }
+
+    const totalSize = await computeSize.computeFolderSize(opts, appPath);
+    log(opts, `total size of ${appPath}: ${humanize.fileSize(totalSize)} (${totalSize} bytes)`);
+
+    globalMarket.saveEntity("caves", cave.id, {
+      installedSize: totalSize,
+    });
+  }
 }

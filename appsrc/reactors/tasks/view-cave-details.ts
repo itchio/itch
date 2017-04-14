@@ -34,6 +34,11 @@ export default function (watcher: Watcher) {
           action: actions.nukeCavePrereqs({caveId: cave.id}),
           className: "secondary",
         },
+        {
+          label: "Re-configure",
+          action: actions.configureCave({caveId: cave.id}),
+          className: "secondary",
+        },
       ],
     }));
   });
