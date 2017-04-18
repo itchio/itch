@@ -3,26 +3,26 @@ const $ = require('../../common')
 const base = require('./base')
 
 module.exports = {
-  package_rpm: function (arch, build_path) {
+  packageRpm: async function (arch, buildPath) {
     // RPM package
-    const rpm_arch = $.to_rpm_arch(arch)
-    $($.gem_dep('fpm', 'fpm'))
+    const rpmArch = $.toRpmArch(arch)
+    $(await $.gemDep('fpm', 'fpm'))
 
     $.say('Preparing stage2')
-    const stage2_path = 'rpm-stage'
-    base.prepare_stage2(build_path, stage2_path)
+    const stage2Path = 'rpm-stage'
+    await base.prepareStage2(buildPath, stage2Path)
 
-    const distro_files = '.=/'
+    const distroFiles = '.=/'
 
-    $($.sh(`fpm --force \
-      -C ${stage2_path} -s dir -t rpm \
+    $(await $.sh(`fpm --force \
+      -C ${stage2Path} -s dir -t rpm \
       --rpm-compression xz \
-      --name "${$.app_name()}" \
+      --name "${$.appName()}" \
       --description "${$.DESCRIPTION}" \
       --url "${$.HOMEPAGE}" \
-      --version "${$.build_version()}" \
+      --version "${$.buildVersion()}" \
       --maintainer "${$.MAINTAINER}" \
-      --architecture "${rpm_arch}" \
+      --architecture "${rpmArch}" \
       --license "MIT" \
       --vendor "itch.io" \
       --category "games" \
@@ -30,9 +30,9 @@ module.exports = {
       -d "desktop-file-utils" \
       -d "libappindicator" \
       -d "libXScrnSaver" \
-    ${distro_files}
+    ${distroFiles}
     `))
 
-    $($.sh('cp *.rpm packages/'))
+    $(await $.sh('cp *.rpm packages/'))
   }
 }

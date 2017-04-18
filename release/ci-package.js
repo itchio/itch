@@ -5,13 +5,10 @@
 const ospath = require('path');
 
 const $ = require('./common');
-const darwin = require('./package/darwin');
-const windows = require('./package/windows');
-const linux = require('./package/linux');
 
 const bluebird = require('bluebird');
 
-async function ci_package (args) {
+async function ciPackage (args) {
   if (args.length !== 2) {
     throw new Error(`ci-package expects two arguments, not ${args.length}. (got: ${args.join(', ')})`);
   }
@@ -21,12 +18,12 @@ async function ci_package (args) {
     throw new Error(`invalid os ${os}, must be one of ${Object.keys($.OSES).join(', ')}`);
   }
 
-  const arch_info = $.ARCHES[arch];
-  if (!arch_info) {
+  const archInfo = $.ARCHES[arch];
+  if (!archInfo) {
     throw new Error(`invalid arch ${arch}, must be one of ${Object.keys($.ARCHES).join(', ')}`);
   }
 
-  $.say(`Packaging ${$.app_name()} for ${os}-${arch}`);
+  $.say(`Packaging ${$.appName()} for ${os}-${arch}`);
 
   $.say('Decompressing dist...');
   $(await $.sh('tar xf dist.tar'));
@@ -34,14 +31,14 @@ async function ci_package (args) {
   $.say('Copying modules...');
   $(await $.sh('cp -rf node_modules dist/'));
 
-  await $.show_versions(['npm', 'node']);
+  await $.showVersions(['npm', 'node']);
   $(await $.npm('install'));
 
-  const electronVersion = JSON.parse(await $.read_file('./node_modules/electron/package.json')).version;
+  const electronVersion = JSON.parse(await $.readFile('.node_modulesl/electron/package.json')).version;
   $.say(`Using electron ${electronVersion}`)
 
-  const appName = $.app_name();
-  const appVersion = $.build_version();
+  const appName = $.appName();
+  const appVersion = $.buildVersion();
   const outDir = ospath.join("build", "v" + appVersion);
   const companyName = "Itch Corp";
 
@@ -101,11 +98,15 @@ async function ci_package (args) {
   }
   $(await $.npm(`install ${packages.join(' ')}`));
 
+  const darwin = require('./package/darwin');
+  const windows = require('./package/windows');
+  const linux = require('./package/linux');
+
   const electronPackager = bluebird.promisify(require('electron-packager'));
   const electronRebuild = require('electron-rebuild').default;
 
   $.say('Packaging with binary release...');
-  const electronConfigKey = `${os}-${arch_info.electron_arch}`;
+  const electronConfigKey = `${os}-${archInfo.electronArch}`;
   const electronFinalOptions = Object.assign({}, electronOptions[electronConfigKey], {
     afterCopy: [
       async (buildPath, electronVersion, platform, arch, callback) => {
@@ -123,16 +124,16 @@ async function ci_package (args) {
   const appPaths = await $.measure("electron package + rebuild", async () => {
     return await electronPackager(electronFinalOptions);
   });
-  const build_path = appPaths[0];
+  const buildPath = appPaths[0];
 
-  $.say(`Built app is in ${build_path}`);
+  $.say(`Built app is in ${buildPath}`);
 
   switch (os) {
     case 'windows':
-      await windows.sign(arch, build_path);
+      await windows.sign(arch, buildPath);
       break
     case 'darwin':
-      await darwin.sign(arch, build_path);
+      await darwin.sign(arch, buildPath);
       break
     case 'linux':
       // tl;dr code-signing on Linux isn't a thing
@@ -141,48 +142,48 @@ async function ci_package (args) {
 
   $.say('Grabbing butler');
   const ext = (os === 'windows' ? '.exe' : '');
-  const butler_name = `butler${ext}`;
-  const butler_arch = (process.arch === 'x64' ? 'amd64' : '386');
-  const butler_url = `https://dl.itch.ovh/butler/${os}-${butler_arch}/head/${butler_name}`;
-  $(await $.sh(`curl -L -O ${butler_url}`));
-  $(await $.sh(`chmod +x ${butler_name}`));
+  const butlerName = `butler${ext}`;
+  const butlerArch = (process.arch === 'x64' ? 'amd64' : '386');
+  const butlerUrl = `https://dl.itch.ovh/butler/${os}-${butlerArch}/head/${butlerName}`;
+  $(await $.sh(`curl -L -O ${butlerUrl}`));
+  $(await $.sh(`chmod +x ${butlerName}`));
   $(await $.sh(`./butler --version`));
 
   if (process.env.NO_BUTLER == "1") {
     $.say('NO_BUTLER=1 set, not pushing with butler');
   } else {
-    let butler_channel = os
-    let artifact_path = build_path
+    let butlerChannel = os
+    let artifactPath = buildPath
     if (os === 'darwin') {
-      butler_channel = 'mac'
-      artifact_path = `${build_path}/${$.app_name()}.app`
+      butlerChannel = 'mac'
+      artifactPath = `${buildPath}/${$.appName()}.app`
     }
 
-    butler_channel = `${butler_channel}-${arch === '386' ? '32' : '64'}`
-    const butler_target = `fasterthanlime/${$.app_name()}`
+    butlerChannel = `${butlerChannel}-${arch === '386' ? '32' : '64'}`
+    const butlerTarget = `fasterthanlime/${$.appName()}`
     $.say('Pushing to itch.io...');
-    let push_path = build_path
-    $(await $.sh(`./butler push ${artifact_path} ${butler_target}:${butler_channel} --userversion=${$.build_version()}`))
+    let pushPath = buildPath
+    $(await $.sh(`./butler push ${artifactPath} ${butlerTarget}:${butlerChannel} --userversion=${$.buildVersion()}`))
   }
 
   switch (os) {
     case 'windows':
-      await windows.package(arch, build_path);
+      await windows.package(arch, buildPath);
       break
     case 'darwin':
-      await darwin.package(arch, build_path);
+      await darwin.package(arch, buildPath);
       break
     case 'linux':
       $.say('.deb package')
-      await linux.package_deb(arch, build_path);
+      await linux.packageDeb(arch, buildPath);
 
       $.say('.portable binary archive')
-      await linux.package_portable(arch, build_path);
+      await linux.packagePortable(arch, buildPath);
 
       $.say('.rpm package')
-      await linux.package_rpm(arch, build_path);
+      await linux.packageRpm(arch, buildPath);
       break
   }
 }
 
-ci_package(process.argv.slice(2))
+ciPackage(process.argv.slice(2))
