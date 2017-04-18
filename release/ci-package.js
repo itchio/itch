@@ -34,7 +34,7 @@ async function ciPackage (args) {
   await $.showVersions(['npm', 'node']);
   $(await $.npm('install'));
 
-  const electronVersion = JSON.parse(await $.readFile('.node_modules/electron/package.json')).version;
+  const electronVersion = JSON.parse(await $.readFile('node_modules/electron/package.json')).version;
   $.say(`Using electron ${electronVersion}`)
 
   const appName = $.appName();
