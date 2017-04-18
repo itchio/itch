@@ -1,9 +1,10 @@
 
 import {Watcher} from "./watcher";
 
-import * as ospath from "path";
+import {join} from "path";
 import ifs from "../localizer/ifs";
 
+import {getLocalesConfigPath, getLocalePath} from "../util/resources";
 import net from "../util/net";
 import urls from "../constants/urls";
 import {app} from "electron";
@@ -13,9 +14,8 @@ import delay from "../reactors/delay";
 
 const upgradesEnabled = (env.name === "production") || (process.env.DID_I_STUTTER === "1");
 
-const remoteDir = ospath.join(app.getPath("userData"), "locales");
-const localesDir = ospath.resolve(ospath.join(__dirname, "static", "locales"));
-const localesConfigPath = ospath.resolve(ospath.join(localesDir, "..", "locales.json"));
+const remoteDir = join(app.getPath("userData"), "locales");
+const localesConfigPath = getLocalesConfigPath();
 
 import {IStore, II18nResources} from "../types";
 
@@ -27,16 +27,21 @@ const opts = {logger};
 import * as actions from "../actions";
 
 function canonicalFileName (lang: string): string {
-  return ospath.join(localesDir, lang + ".json");
+  try {
+    return getLocalePath(`${lang}.json`);
+  } catch (e) {
+    // this looks bad, but it's actually what we want
+    return null;
+  }
 }
 
 function remoteFileName (lang: string): string {
-  return ospath.join(remoteDir, lang + ".json");
+  return join(remoteDir, `${lang}.json`);
 }
 
 async function doDownloadLocale (lang: string, resources: II18nResources): Promise<II18nResources> {
   const local = canonicalFileName(lang);
-  if (!(await ifs.exists(local))) {
+  if (!local) {
     // try stripping region
     lang = lang.substring(0, 2);
   }
@@ -70,7 +75,7 @@ async function doDownloadLocale (lang: string, resources: II18nResources): Promi
 
 async function loadLocale (store: IStore, lang: string) {
   let local = canonicalFileName(lang);
-  if (!(await ifs.exists(local))) {
+  if (!local) {
     // try stripping region
     lang = lang.substring(0, 2);
     local = canonicalFileName(lang);
