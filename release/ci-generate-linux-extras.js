@@ -13,7 +13,7 @@ async function generateLinuxExtras() {
   $.say('Generating desktop file')
   let desktop = await $.readFile('release/templates/io.itch.itch.desktop.in')
   const localesDir = 'appsrc/static/locales'
-  const localeNames = (await $.ls(locales_dir)).filter((x) => /\.json$/i.test(x))
+  const localeNames = (await $.ls(localesDir)).filter((x) => /\.json$/i.test(x))
 
   for (const localeName of localeNames) {
     const localePath = join(localesDir, localeName)
