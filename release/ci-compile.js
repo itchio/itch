@@ -17,14 +17,8 @@ async function main () {
   $(await $.sh('rm -rf dist'));
 
   $.say('Compiling sources...');
-  const jsOutputs = await bluebird.all([
-    $.getOutput('npm run -s build-metal-prod'),
-    $.getOutput('npm run -s build-chrome-prod')
-  ]);
-
-  $.say('Sources compilation output:');
-  $.putln('-------- Metal -------:\n' + jsOutputs[0]);
-  $.putln('------- Chrome -------:\n' + jsOutputs[1]);
+  $(await $.sh('npm run -s build-metal-prod'))
+  $(await $.sh('npm run -s build-chrome-prod'))
 
   $.say('Generating custom package.json...')
   const pkg = JSON.parse(await $.readFile('package.json'));
