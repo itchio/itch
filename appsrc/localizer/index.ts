@@ -21,6 +21,9 @@ export function getT (strings: II18nResources, lang: string) {
     
     langs = [...langs, "en"];
     const keys = Array.isArray(key) ? key : [key];
+    if (key.length < 1) {
+      return key;
+    }
 
     let str: string;
     for (const localeLang of langs) {
@@ -40,7 +43,11 @@ export function getT (strings: II18nResources, lang: string) {
     if (!str) {
       // fall back to specified default value, or key name +
       // variables stringified as json
-      let defaultValue = (variables || {}).defaultValue || `${key} ${JSON.stringify(variables || {})}`;
+      let defaultSuffix = "";
+      if (Object.keys(variables || {}).length > 0) {
+        defaultSuffix = ` ${JSON.stringify(variables || {})}`;
+      }
+      let defaultValue = (variables || {}).defaultValue || `${key}${defaultSuffix}`;
       return defaultValue;
     }
 

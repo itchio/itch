@@ -93,9 +93,7 @@ function fleshOutTemplate (template: IMenuTemplate, i18n: II18nState, store: ISt
     const {label, role = null, enabled = true} = input;
     const node = clone(input);
 
-    if (label) {
-      node.label = t(label);
-    }
+    node.label = t(label);
     const menuAction = convertMenuAction({label, role});
     if (enabled && menuAction) {
       node.click = (e) => {
