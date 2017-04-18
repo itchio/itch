@@ -1,7 +1,6 @@
 
 const $ = require('../common')
 const {join} = require('path')
-const electronInstaller = require('electron-winstaller')
 
 module.exports = {
   sign: async function (arch, buildPath) {
@@ -23,6 +22,7 @@ module.exports = {
     const iconsPath = join('release', 'images', appName + '-icons')
     const icoPath = join(iconsPath, 'itch.ico')
     const installerGifPath = 'release/images/installer.gif'
+    const electronInstaller = require('electron-winstaller')
     const electronInstallerOpts = {
       authors: companyName,
       exe: appName + '.exe',
