@@ -338,5 +338,6 @@
     "collection.empty": "コレクションには、ゲームはありません",
     "sidebar.dashboard_subtitle": "開閉したもの",
     "sidebar.press": "プレスハブ",
-    "menu.file.new_tab": "新規タブ"
+    "menu.file.new_tab": "新規タブ",
+    "grid.item.update": "アップデートする"
 }
