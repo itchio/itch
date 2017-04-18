@@ -8,8 +8,8 @@ import {makeLabel} from "../util/navigation";
 import {darkMineShaft} from "../constants/colors";
 import {app, BrowserWindow} from "electron";
 import config from "../util/config";
+import {getImagePath} from "../util/resources";
 import os from "../util/os";
-import * as ospath from "path";
 import * as invariant from "invariant";
 import {debounce} from "underscore";
 
@@ -52,7 +52,7 @@ async function createWindow (store: IStore, hidden: boolean) {
     iconName = "icon-32";
   }
 
-  const iconPath = ospath.resolve(`${__dirname}/static/images/window/${app.getName()}/${iconName}.png`);
+  const iconPath = getImagePath("window/" + app.getName() + "/" + iconName + ".png");
   log(opts, `creating main window with icon: ${iconPath}`);
   log(opts, "cf. https://github.com/electron/electron/issues/6205");
 
