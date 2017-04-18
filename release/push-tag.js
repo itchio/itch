@@ -1,69 +1,72 @@
 #!/usr/bin/env node
 
 const $ = require('./common')
-const ospath = require('path')
+const {resolve} = require('path')
 
-const pkg_path = ospath.resolve(__dirname, '..', 'package.json')
+async function pushTag() {
+  const pkgPath = resolve(__dirname, '..', 'package.json')
+  const pkg = JSON.parse(await $.readFile(pkgPath))
+  const pkgVersion = pkg.version
 
-const pkg = JSON.parse($.read_file(pkg_path))
-const pkg_version = pkg.version
-
-let force = false
-const args = []
-process.argv.slice(2).forEach(function (arg) {
-  switch (arg) {
-    case '--force':
-      $.say('(Running in forced mode)')
-      force = true
-      break
-    default:
-      if (/^--/.test(arg)) {
-        throw new Error(`Unknown option ${arg}`)
-      }
-      args.push(arg)
+  let force = false
+  const args = []
+  for (const arg of process.argv.slice(2)) {
+    switch (arg) {
+      case '--force':
+        $.say('(Running in forced mode)')
+        force = true
+        break
+      default:
+        if (/^--/.test(arg)) {
+          throw new Error(`Unknown option ${arg}`)
+        }
+        args.push(arg)
+    }
   }
-})
 
-const version_input = args[0] || $.prompt(`Package version is: ${pkg.version}, type yours`)
-if (!/^v\d+.\d+.\d+(-canary)?$/.test(version_input)) {
-  throw new Error(`Version must be of the form /vX.Y.Z(-canary)?/ (was '${version_input}')`)
+  const versionInput = args[0] || $.prompt(`Package version is: ${pkg.version}, type yours`)
+  if (!/^v\d+.\d+.\d+(-canary)?$/.test(versionInput)) {
+    throw new Error(`Version must be of the form /vX.Y.Z(-canary)?/ (was '${versionInput}')`)
+  }
+
+  const nextVersion = versionInput.replace(/^v/, '')
+
+  if (pkgVersion !== nextVersion) {
+    if (!force) {
+      await $.yesno(`Bump package.json? [${pkgVersion} => ${nextVersion}]`)
+    }
+    pkg.version = nextVersion
+    await $.writeFile(pkgPath, JSON.stringify(pkg, 0, 2))
+    $.say('Bumped package.json')
+    $(await $.sh('git add package.json'))
+    $(await $.sh(`git commit -m ':arrow_up: ${nextVersion}'`))
+  }
+
+  const tag = `v${nextVersion}`
+  const isCanary = /-canary$/.test(nextVersion)
+  const addCmd = `git tag ${isCanary ? '' : '-s'} -a ${tag} -m ${tag}`
+
+  if (await $.sh(addCmd)) {
+    $.say('Tag added...')
+  } else {
+    if (!force) {
+      await $.yesno('Tag already exists locally. Replace?')
+    }
+    $(await $.sh(`git tag -d ${tag}`))
+    $(await $.sh(addCmd))
+  }
+
+  const pushCmd = `git push origin ${tag}`
+  if (await $.sh(pushCmd)) {
+    $.say('Tag pushed...')
+  } else {
+    if (!force) {
+      await $.yesno('Tag already exists on remote. Force-push?')
+    }
+    $(await $.sh(`${pushCmd} --force`))
+  }
+
+  $(await $.sh('git push'))
 }
 
-const next_version = version_input.replace(/^v/, '')
-
-if (pkg_version !== next_version) {
-  if (!force) {
-    $.yesno(`Bump package.json? [${pkg_version} => ${next_version}]`)
-  }
-  pkg.version = next_version
-  $.write_file(pkg_path, JSON.stringify(pkg, 0, 2))
-  $.say('Bumped package.json')
-  $($.sh('git add package.json'))
-  $($.sh(`git commit -m ':arrow_up: ${next_version}'`))
-}
-
-const tag = `v${next_version}`
-const is_canary = /-canary$/.test(next_version)
-const add_cmd = `git tag ${is_canary ? '' : '-s'} -a ${tag} -m ${tag}`
-
-if ($.sh(add_cmd)) {
-  $.say('Tag added...')
-} else {
-  if (!force) {
-    $.yesno('Tag already exists locally. Replace?')
-  }
-  $($.sh(`git tag -d ${tag}`))
-  $($.sh(add_cmd))
-}
-
-const push_cmd = `git push origin ${tag}`
-if ($.sh(push_cmd)) {
-  $.say('Tag pushed...')
-} else {
-  if (!force) {
-    $.yesno('Tag already exists on remote. Force-push?')
-  }
-  $($.sh(`${push_cmd} --force`))
-}
-
-$($.sh('git push'))
+pushTag()

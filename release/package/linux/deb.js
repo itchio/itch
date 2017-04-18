@@ -3,52 +3,52 @@ const $ = require('../../common')
 const base = require('./base')
 
 module.exports = {
-  package_deb: function (arch, build_path) {
+  packageDeb: async function (arch, buildPath) {
     // APT package
-    const deb_arch = $.to_deb_arch(arch)
-    $.show_versions(['fakeroot', 'ar'])
+    const debArch = $.toDebArch(arch)
+    await $.showVersions(['fakeroot', 'ar'])
 
     $.say('Preparing stage2')
-    const stage2_path = 'deb-stage'
-    base.prepare_stage2(build_path, stage2_path)
-    $($.sh(`mkdir -p ${stage2_path}/DEBIAN`))
-    $($.sh(`mkdir -p ${stage2_path}/usr/share/lintian/overrides`))
+    const stage2Path = 'deb-stage'
+    await base.prepareStage2(buildPath, stage2Path)
+    $(await $.sh(`mkdir -p ${stage2Path}/DEBIAN`))
+    $(await $.sh(`mkdir -p ${stage2Path}/usr/share/lintian/overrides`))
 
     $.say('Copying copyright')
-    $($.sh(`cp "release/debian/copyright" "${stage2_path}/usr/share/doc/${$.app_name()}"`))
+    $(await $.sh(`cp "release/debian/copyright" "${stage2Path}/usr/share/doc/${$.appName()}"`))
 
     $.say('Copying lintian overrides')
-    $($.sh(`cp "release/debian/lintian-overrides" "${stage2_path}/usr/share/lintian/overrides/${$.app_name()}"`))
+    $(await $.sh(`cp "release/debian/lintian-overrides" "${stage2Path}/usr/share/lintian/overrides/${$.appName()}"`))
 
     $.say('Copying license')
-    $($.sh(`rm "${stage2_path}/usr/lib/${$.app_name()}/LICENSE"`))
-    $($.sh(`mv "${stage2_path}/usr/lib/${$.app_name()}/LICENSES.chromium.html" "${stage2_path}/usr/share/doc/${$.app_name()}/LICENSE"`))
+    $(await $.sh(`rm "${stage2Path}/usr/lib/${$.appName()}/LICENSE"`))
+    $(await $.sh(`mv "${stage2Path}/usr/lib/${$.appName()}/LICENSES.chromium.html" "${stage2Path}/usr/share/doc/${$.appName()}/LICENSE"`))
 
     $.say('Generating changelog...')
-    let changelog = $.read_file('release/debian/changelog.in')
-    changelog = changelog.replace(/{{APPNAME}}/g, $.app_name())
-    changelog = changelog.replace(/{{VERSION}}/g, $.build_version())
-    changelog = changelog.replace(/{{DATE}}/g, $.build_time().toUTCString())
-    $.write_file(`${stage2_path}/usr/share/doc/${$.app_name()}/changelog`, changelog)
+    let changelog = await $.readFile('release/debian/changelog.in')
+    changelog = changelog.replace(/{{APPNAME}}/g, $.appName())
+    changelog = changelog.replace(/{{VERSION}}/g, $.buildVersion())
+    changelog = changelog.replace(/{{DATE}}/g, $.buildTime().toUTCString())
+    await $.writeFile(`${stage2Path}/usr/share/doc/${$.appName()}/changelog`, changelog)
 
     $.say('Compressing man page & changelog')
-    $($.sh(`gzip -f9 ${stage2_path}/usr/share/doc/${$.app_name()}/changelog ${stage2_path}/usr/share/man/man6/${$.app_name()}.6`))
+    $(await $.sh(`gzip -f9 ${stage2Path}/usr/share/doc/${$.appName()}/changelog ${stage2Path}/usr/share/man/man6/${$.appName()}.6`))
 
-    const du_lines = $.get_output(`du -ck ${stage2_path}`).trim().split('\n')
-    const total_line = du_lines[du_lines.length - 1]
-    const installed_size = parseInt(/^[0-9]+/.exec(total_line), 10)
+    const duLines = (await $.getOutput(`du -ck ${stage2Path}`)).trim().split('\n')
+    const totalLine = duLines[duLines.length - 1]
+    const installedSize = parseInt(/^[0-9]+/.exec(totalLine), 10)
 
-    $.say(`deb installed size: ${(installed_size / 1024).toFixed(2)} MB`)
+    $.say(`deb installed size: ${(installedSize / 1024).toFixed(2)} MB`)
 
     $.say('Generating control file...')
 
     // note: update dependencies from time to time
     const control = `
-Package: ${$.app_name()}
-Version: ${$.build_version()}
+Package: ${$.appName()}
+Version: ${$.buildVersion()}
 Architecture: ${deb_arch}
 Maintainer: ${$.MAINTAINER}
-Installed-Size: ${Math.ceil(installed_size)}
+Installed-Size: ${Math.ceil(installedSize)}
 Depends: gconf-service, libasound2 (>= 1.0.16), libatk1.0-0 (>= 1.12.4), libc6 (>= 2.12), libcairo2 (>= 1.6.0), libcups2 (>= 1.4.0), libdbus-1-3 (>= 1.2.14), libexpat1 (>= 2.0.1), libfontconfig1 (>= 2.9.0), libfreetype6 (>= 2.4.2), libgcc1 (>= 1:4.1.1), libgconf-2-4 (>= 2.31.1), libgdk-pixbuf2.0-0 (>= 2.22.0), libglib2.0-0 (>= 2.31.8), libgtk2.0-0 (>= 2.24.0), libnotify4 (>= 0.7.0), libnspr4 (>= 2:4.9-2~) | libnspr4-0d (>= 1.8.0.10), libnss3 (>= 2:3.13.4-2~) | libnss3-1d (>= 3.12.4), libpango-1.0-0 (>= 1.14.0), libpangocairo-1.0-0 (>= 1.14.0), libstdc++6 (>= 4.6), libx11-6 (>= 2:1.4.99.1), libxcomposite1 (>= 1:0.3-1), libxcursor1 (>> 1.1.2), libxdamage1 (>= 1:1.1), libxext6, libxfixes3, libxi6 (>= 2:1.2.99.4), libxrandr2 (>= 2:1.2.99.2), libxrender1, libxtst6, libappindicator1
 Section: games
 Priority: optional
@@ -62,44 +62,45 @@ Description: install and play itch.io games easily
   Once you're back online you'll be able to grab any updates if necessary.
   Thanks to the itch.io community, itch is available in over 20 languages!
 `
-    $.write_file(`${stage2_path}/DEBIAN/control`, control)
+    await $.writeFile(`${stage2Path}/DEBIAN/control`, control)
 
-    $.cd(stage2_path, function () {
+    await $.cd(stage2Path, async () => {
       let sums = ''
-      $.find_all_files('usr/').forEach(function (f) {
+
+      for (const f of (await $.findAllFiles('usr/'))) {
         sums += `${$.md5(f)} ${f}\n`
-      })
-      $.write_file('DEBIAN/md5sums', sums)
+      }
+      await $.writeFile('DEBIAN/md5sums', sums)
 
       $.say('Fixing permissions...')
-      $.find_all_files('.').forEach(function (f) {
-        const stat = $.lstat(f)
+      for (const f of (await $.findAllFiles('.'))) {
+        const stat = await $.lstat(f)
         const perms = stat.mode & 0o777
         switch (perms) {
           case 0o775:
-            $.chmod(0o755, f)
+            await $.chmod(0o755, f)
             break
           case 0o664:
-            $.chmod(0o644, f)
+            await $.chmod(0o644, f)
             break
         }
-      })
+      }
 
       $.say('Compressing files...')
-      $.cd('DEBIAN', function () {
-        $($.sh('fakeroot tar cfz ../control.tar.gz .'))
+      await $.cd('DEBIAN', async () => {
+        $(await $.sh('fakeroot tar cfz ../control.tar.gz .'))
       })
 
-      $($.sh('mkdir data'))
-      $($.sh('mv usr data/'))
-      $.cd('data', function () {
-        $($.sh('fakeroot tar cfJ ../data.tar.xz .'))
+      $(await $.sh('mkdir data'))
+      $(await $.sh('mv usr data/'))
+      await $.cd('data', async () => {
+        $(await $.sh('fakeroot tar cfJ ../data.tar.xz .'))
       })
 
-      const deb = `../packages/${$.app_name()}_${$.build_version()}_${deb_arch}.deb`
-      $($.sh(`rm -f ${deb}`))
-      $.write_file('debian-binary', '2.0\n')
-      $($.sh(`ar cq ${deb} debian-binary control.tar.gz data.tar.xz`))
+      const deb = `../packages/${$.appName()}_${$.buildVersion()}_${debArch}.deb`
+      $(await $.sh(`rm -f ${deb}`))
+      await $.writeFile('debian-binary', '2.0\n')
+      $(await $.sh(`ar cq ${deb} debian-binary control.tar.gz data.tar.xz`))
     })
   }
 }

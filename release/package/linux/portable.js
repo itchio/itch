@@ -2,15 +2,15 @@
 const $ = require('../../common')
 
 module.exports = {
-  package_portable: function (arch, build_path) {
+  packagePortable: async function (arch, buildPath) {
     $.say('Generating portable linux archive (.tar.xz)')
-    const dir_name = `${$.app_name()}-${$.build_version()}-${arch}`
-    $($.sh('rm -rf portable-stage'))
-    $($.sh('mkdir -p portable-stage'))
-    $($.sh(`cp -rf ${build_path} portable-stage/${dir_name}`))
-    $.cd('portable-stage', function () {
-      $($.sh(`tar cfJ ${dir_name}.tar.xz ${dir_name}`))
+    const dir_name = `${$.appName()}-${$.buildVersion()}-${arch}`
+    $(await $.sh('rm -rf portable-stage'))
+    $(await $.sh('mkdir -p portable-stage'))
+    $(await $.sh(`cp -rf ${buildPath} portable-stage/${dirName}`))
+    await $.cd('portable-stage', async () => {
+      $(await $.sh(`tar cfJ ${dirName}.tar.xz ${dirName}`))
     })
-    $($.sh(`mv portable-stage/${dir_name}.tar.xz packages/`))
+    $(await $.sh(`mv portable-stage/${dirName}.tar.xz packages/`))
   }
 }

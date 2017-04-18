@@ -5,7 +5,7 @@
 const $ = require('./common')
 
 async function main () {
-  await $.show_versions(['npm']);
+  await $.showVersions(['npm']);
 
   $(await $.npm('install'));
   $(await $.npm('run build-tests'));

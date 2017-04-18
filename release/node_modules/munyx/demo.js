@@ -10,7 +10,7 @@ async function main () {
     await new Promise((resolve, reject) => setTimeout(resolve, 200));
   });
 
-  await $.show_versions(['node']);
+  await $.showVersions(['node']);
 
   const input = await $.prompt('type something');
   $.putln(`had output: ${input}`);
@@ -20,14 +20,14 @@ async function main () {
 
   await $.sh('echo hi');
   await $.sh('echa hi');
-  const out = await $.get_output('ls');
+  const out = await $.getOutput('ls');
   $.putln(`had output:\n${out}`);
 
   const files = await $.ls('.');
   $.putln(`files: ${files.length} total, first ${files[0]}`);
 
-  const all_files = await $.find_all_files('.');
-  $.putln(`all files: ${all_files.length} total, first ${all_files[0]}`);
+  const allFiles = await $.findAllFiles('.');
+  $.putln(`all files: ${allFiles.length} total, first ${allFiles[0]}`);
 
   $.putln('npm list');
   await $.npm('list');
@@ -36,8 +36,8 @@ async function main () {
   const stats = await $.lstat('demo.js');
   $.putln(`stats for demo.js: ${JSON.stringify(stats, null, 2)}`);
 
-  $.putln(`read_file demo.js`);
-  const contents = await $.read_file('demo.js');
+  $.putln(`readFile demo.js`);
+  const contents = await $.readFile('demo.js');
   $.putln(`characters in demo.js: ${contents.length}`);
 
   await $.cd(`node_modules`, async () => {

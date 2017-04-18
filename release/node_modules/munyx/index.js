@@ -4,7 +4,7 @@
 
 const bluebird = require('bluebird');
 require('bluebird').config({longStackTraces: true});
-const child_process = require('child_process')
+const childProcess = require('child_process')
 const fs = bluebird.promisifyAll(require('fs'))
 const ospath = require('path')
 const crypto = require('crypto')
@@ -45,24 +45,24 @@ $.OSES = {
 
 $.ARCHES = {
   ['386']: {
-    electron_arch: 'ia32'
+    electronArch: 'ia32'
   },
   amd64: {
-    electron_arch: 'x64'
+    electronArch: 'x64'
   }
 }
 
-$.add_to_path = function (element) {
+$.addToPath = function (element) {
   process.env.PATH += ospath.delimiter + element
 }
 
 // local golang executables
 $.GOPATH = ospath.join($.HOME, 'go')
 process.env.GOPATH = $.GOPATH
-$.add_to_path(ospath.join($.GOPATH, 'bin'))
+$.addToPath(ospath.join($.GOPATH, 'bin'))
 
 // local npm executables
-$.add_to_path(ospath.resolve(__dirname, '..', 'node_modules', '.bin'))
+$.addToPath(ospath.resolve(__dirname, '..', 'node_modules', '.bin'))
 
 $.VERSION_SPECS = {
   ['7za']: '7za | head -2',
@@ -82,9 +82,9 @@ $.putln = function (s) {
   return true
 }
 
-$.show_versions = async function (names) {
+$.showVersions = async function (names) {
   await bluebird.each(names, async function (name) {
-    const v = (await $.get_output($.VERSION_SPECS[name])).trim()
+    const v = (await $.getOutput($.VERSION_SPECS[name])).trim()
     $.putln(chalk.yellow(`★ ${name} ${v}`))
   })
   return true
@@ -107,7 +107,7 @@ $.measure = async function (name, cb) {
 async function system (cmd, opts = {}) {
   const start = Date.now();
 
-  const child = child_process.spawn(SH_PATH, ['-c', cmd], {
+  const child = childProcess.spawn(SH_PATH, ['-c', cmd], {
     stdio: 'inherit'
   })
 
@@ -137,10 +137,10 @@ async function system (cmd, opts = {}) {
   return true
 }
 
-$.get_output = async function (cmd) {
+$.getOutput = async function (cmd) {
   const start = Date.now();
 
-  const child = child_process.spawn(SH_PATH, ['-c', cmd], {
+  const child = childProcess.spawn(SH_PATH, ['-c', cmd], {
     encoding: 'utf8'
   })
 
@@ -156,18 +156,18 @@ $.get_output = async function (cmd) {
     if (status !== 0) {
       $.putln(chalk.red(`☃ non-zero exit code: ${status}`))
       $.putln(chalk.red(`...at ${new Error().stack}`))
-      throw new Error("get_output: non-zero exit code");
+      throw new Error("getOutput: non-zero exit code");
     }
   } catch (error) {
     $.putln(chalk.red(`☃ error executing ${cmd}`));
     $.putln(chalk.red(`...at ${error.stack}`));
-    throw new Error("get_output: couldn't execute command");
+    throw new Error("getOutput: couldn't execute command");
   }
 
   if ($.benchmark) {
     const end = Date.now();
     const ms = end - start;
-    $.putln(chalk.cyan(`⌚ ${cmd} (get_output) took ${(ms / 1000).toFixed(3)}s`));
+    $.putln(chalk.cyan(`⌚ ${cmd} (getOutput) took ${(ms / 1000).toFixed(3)}s`));
   }
 
   return stdout;
@@ -215,7 +215,7 @@ $.gothub = async function (args) {
   return await $.sh(`gothub ${args}`)
 }
 
-$.go_dep = async function (cmd, pkg) {
+$.goDep = async function (cmd, pkg) {
   if (await system(`which ${cmd} > /dev/null`)) {
     $.putln(chalk.yellow(`★ got ${cmd}`))
     return true
@@ -225,7 +225,7 @@ $.go_dep = async function (cmd, pkg) {
   }
 }
 
-$.gem_dep = async function (cmd, pkg) {
+$.gemDep = async function (cmd, pkg) {
   if (await system(`which ${cmd} > /dev/null`)) {
     $.putln(chalk.yellow(`★ got ${cmd}`))
     return true
@@ -235,7 +235,7 @@ $.gem_dep = async function (cmd, pkg) {
   }
 }
 
-$.npm_dep = async function (cmd, pkg) {
+$.npmDep = async function (cmd, pkg) {
   if (await system(`which ${cmd} > /dev/null`)) {
     $.putln(chalk.yellow(`★ got ${cmd}`))
     return true
@@ -290,7 +290,7 @@ $.yesno = async function (msg) {
 }
 
 $.cd = async function (dir, cb) {
-  const original_wd = process.cwd()
+  const originalWd = process.cwd()
   var e
   var ret
 
@@ -302,7 +302,7 @@ $.cd = async function (dir, cb) {
     e = err
   } finally {
     $.putln(chalk.magenta(`☜ leaving ${dir}`))
-    process.chdir(original_wd)
+    process.chdir(originalWd)
   }
 
   if (e) {
@@ -313,7 +313,7 @@ $.cd = async function (dir, cb) {
 
 // environment variables etc.
 
-$.build_ref_name = function () {
+$.buildRefName = function () {
   const v = process.env.CI_BUILD_REF_NAME
   if (!v) {
     throw new Error('No build ref!')
@@ -321,7 +321,7 @@ $.build_ref_name = function () {
   return v
 }
 
-$.build_tag = function () {
+$.buildTag = function () {
   const v = process.env.CI_BUILD_TAG
   if (!v) {
     throw new Error('No build tag!')
@@ -329,27 +329,27 @@ $.build_tag = function () {
   return v
 }
 
-$.build_version = function () {
-  return $.build_tag().replace(/^v/, '').replace(/-.+$/, '')
+$.buildVersion = function () {
+  return $.buildTag().replace(/^v/, '').replace(/-.+$/, '')
 }
 
-$.app_name = function () {
-  if (/-canary$/.test($.build_tag())) {
+$.appName = function () {
+  if (/-canary$/.test($.buildTag())) {
     return 'kitch'
   } else {
     return 'itch'
   }
 }
 
-$.channel_name = function () {
-  if (/-canary$/.test($.build_tag())) {
+$.channelName = function () {
+  if (/-canary$/.test($.buildTag())) {
     return 'canary'
   } else {
     return 'stable'
   }
 }
 
-$.to_deb_arch = function (arch) {
+$.toDebArch = function (arch) {
   switch (arch) {
     case '386': return 'i386'
     case 'amd64': return 'amd64'
@@ -357,7 +357,7 @@ $.to_deb_arch = function (arch) {
   }
 }
 
-$.to_rpm_arch = function (arch) {
+$.toRpmArch = function (arch) {
   switch (arch) {
     case '386': return 'i386'
     case 'amd64': return 'x86_64'
@@ -365,15 +365,15 @@ $.to_rpm_arch = function (arch) {
   }
 }
 
-$.build_time = function () {
+$.buildTime = function () {
   return $.BUILD_TIME
 }
 
-$.read_file = async function (file) {
+$.readFile = async function (file) {
   return await fs.readFileAsync(file, {encoding: 'utf8'})
 }
 
-$.write_file = async function (file, contents) {
+$.writeFile = async function (file, contents) {
   return await fs.writeFileAsync(file, contents, {encoding: 'utf8'})
 }
 
@@ -389,12 +389,12 @@ $.chmod = async function (mode, path) {
   await fs.chmodAsync(path, mode)
 }
 
-$.find_all_files = async function (path) {
+$.findAllFiles = async function (path) {
   let files = []
   const stat = await $.lstat(path)
   if (stat.isDirectory()) {
     await bluebird.each($.ls(path), async (child) => {
-      files = files.concat(await $.find_all_files(ospath.join(path, child)))
+      files = files.concat(await $.findAllFiles(ospath.join(path, child)))
     })
   } else {
     files.push(path)
@@ -407,11 +407,11 @@ $.md5 = async function (path) {
   return crypto.createHash('md5').update(buf).digest('hex')
 }
 
-$.winstaller_path = function (arch) {
-  return `/c/jenkins/workspace/${$.app_name()}-installers-${arch}`
+$.winstallerPath = function (arch) {
+  return `/c/jenkins/workspace/${$.appName()}-installers-${arch}`
 }
 
-$.left_pad = function (input, len, filler) {
+$.leftPad = function (input, len, filler) {
   let res = input
   while (res.length < len) {
     res = `${filler}${res}`
