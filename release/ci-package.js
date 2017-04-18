@@ -93,7 +93,7 @@ async function ciPackage (args) {
 
   $.say('Installing electron packaging tools...');
   packages = ['electron-packager@8.6.0'];
-  if (os === windows) {
+  if (os === 'windows') {
     packages.push('electron-winstaller@2.5.2');
   }
   $(await $.npm(`install ${packages.join(' ')}`));
