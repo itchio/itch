@@ -52,6 +52,7 @@ export interface IAsyncFSVariants {
   symlinkAsync: (srcfile: string, dstfile: string) => Promise<string>;
   rmdirAsync: (file: string) => Promise<string>;
   unlinkAsync: (file: string) => Promise<string>;
+  utimesAsync: (file: string, atime: number, mtime: number) => Promise<void>;
 }
 
 export interface IFSError {
@@ -67,6 +68,7 @@ export interface ISFStatic {
   promised: (ev: EventEmitter) => Promise<any>;
   mkdir: (dir: string) => Promise<void>;
   wipe: (shelter: string) => Promise<void>;
+  utimes: (file: string, atime: number, mtime: number) => Promise<void>;
 
   glob: (path: string, opts: IGlobOpts) => Promise<Array<string>>;
   globIgnore: Array<string>;

@@ -4,6 +4,7 @@ import * as actions from "../actions";
 
 import {cleanOldLogs} from "./preboot/clean-old-logs";
 import xdgMime from "./preboot/xdg-mime";
+import visualElements from "./preboot/visual-elements";
 
 import {opts} from "../logger";
 import mklog from "../util/log";
@@ -30,6 +31,12 @@ export default function (watcher: Watcher) {
       await xdgMime.registerIfNeeded(opts);
     } catch (e) {
       log(opts, `Could not run xdg-mime: ${e.stack || e.message || e}`);
+    }
+
+    try {
+      await visualElements.createIfNeeded(opts);
+    } catch (e) {
+      log(opts, `Could not run visualElements: ${e.stack || e.message || e}`);
     }
 
     try {

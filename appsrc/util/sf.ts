@@ -248,6 +248,10 @@ const self = {
     }
   },
 
+  utimes: async (file: string, atime: number, mtime: number): Promise<void> => {
+    await fs.utimesAsync(file, atime, mtime);
+  },
+
   /**
    * Promised version of isaacs' little globber
    * https://www.npmjs.com/package/glob

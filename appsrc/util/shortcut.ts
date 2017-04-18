@@ -1,6 +1,5 @@
 
-import * as ospath from "path";
-
+import {resolve, join, basename} from "path";
 import {app} from "electron";
 import spawn from "./spawn";
 import sf from "./sf";
@@ -9,10 +8,10 @@ import mklog from "./log";
 const log = mklog("shortcut");
 const opts = {logger: new mklog.Logger()};
 
-const appFolder = ospath.resolve(process.execPath, "..");
-const rootFolder = ospath.resolve(appFolder, "..");
-const updateExePath = ospath.join(rootFolder, "Update.exe");
-const exeName = ospath.basename(process.execPath);
+const appFolder = resolve(process.execPath, "..");
+const rootFolder = resolve(appFolder, "..");
+const updateExePath = join(rootFolder, "Update.exe");
+const exeName = basename(process.execPath);
 
 const self = {
   updateRun: async function (args: string[]): Promise<void> {
@@ -33,7 +32,7 @@ const self = {
 
   update: async function (): Promise<void> {
     const desktopPath = app.getPath("desktop");
-    const shortcutPath = ospath.join(desktopPath, "itch.lnk");
+    const shortcutPath = join(desktopPath, "itch.lnk");
 
     // find out if the user has deleted the desktop shortcut
     // cf. https://github.com/itchio/itch/issues/239
@@ -77,6 +76,7 @@ const self = {
     }
   },
 
+  updateExePath,
 };
 
 export default self;

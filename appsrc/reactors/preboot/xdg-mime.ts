@@ -32,7 +32,6 @@ const self = {
   // lets us handle the itchio:// URL scheme on linux / freedesktop
   async registerIfNeeded (opts: any): Promise<void> {
     if (os.platform() !== "linux") {
-      log(opts, "non-linux platform, skipping xdg-mime");
       return;
     }
 
