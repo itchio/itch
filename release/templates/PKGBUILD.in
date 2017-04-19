@@ -43,8 +43,8 @@ build() {
 }
 
 check() {
-  cd "${srcdir}/itch-${pkgver}{{CI_SUFFIX}}"
-  node app/tests/runner.js
+  # tests are run with electron and, trust me, you don't
+  # want this in your PKGBUILD
 }
 
 package() {
