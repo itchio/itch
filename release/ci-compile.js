@@ -9,9 +9,9 @@ const humanize = require('humanize-plus');
 async function main () {
   $.say(`Preparing to compile ${$.appName()} ${$.buildVersion()}`);
 
-  await $.showVersions(['npm', 'node']);
+  await $.showVersions(['yarn', 'node']);
 
-  $(await $.npm('install'));
+  $(await $.yarn('install'));
 
   $.say('Wiping dist...');
   $(await $.sh('rm -rf dist'));

@@ -42,13 +42,11 @@ async function ciPackage (argsIn) {
   $(await $.sh('tar xf dist.tar'));
 
   $.say('Installing modules...');
-  $(await $.npm('install'));
+  await $.showVersions(['yarn', 'node']);
+  $(await $.yarn('install'));
 
   $.say('Copying modules...');
   $(await $.sh('cp -rf node_modules dist/'));
-
-  await $.showVersions(['npm', 'node']);
-  $(await $.npm('install'));
 
   const electronVersion = JSON.parse(await $.readFile('node_modules/electron/package.json')).version;
   $.say(`Using electron ${electronVersion}`)

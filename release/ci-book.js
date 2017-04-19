@@ -6,11 +6,11 @@
 const $ = require('./common')
 
 async function main () {
-  await $.showVersions(['npm', 'node']);
+  await $.showVersions(['npm', 'yarn', 'node']);
   $(await $.npmDep('gitbook', 'gitbook-cli'));
 
   await $.cd('docs', async () => {
-    $(await $.npm('install'));
+    $(await $.yarn('install'));
     $(await $.sh('gitbook build'));
    $(await $.gcp(`_book/* gs://docs.itch.ovh/itch/${$.buildRefName()}`));
   });
