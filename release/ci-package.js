@@ -127,7 +127,7 @@ async function ciPackage (args) {
   const appPaths = await $.measure("electron package + rebuild", async () => {
     return await electronPackager(electronFinalOptions);
   });
-  const buildPath = appPaths[0];
+  let buildPath = appPaths[0].replace(/\\/g, "/");
 
   $.say(`Built app is in ${buildPath}`);
 
