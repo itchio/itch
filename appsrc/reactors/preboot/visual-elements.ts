@@ -24,7 +24,7 @@ const self = {
       return;
     }
 
-    log(opts, `Checking for Squirrel at %s`, shortcut.updateExePath);
+    log(opts, `Checking for Squirrel at ${shortcut.updateExePath}`);
     try {
       const updateStats = await sf.stat(shortcut.updateExePath);
       if (!updateStats.isFile()) {
@@ -38,7 +38,7 @@ const self = {
     const updateDirName = dirname(shortcut.updateExePath);
     const manifestPath = join(updateDirName, "itch.VisualElementsManifest.xml");
 
-    log(opts, `Writing visual elements manifest at %s`, manifestPath);
+    log(opts, `Writing visual elements manifest at ${manifestPath}`);
     await sf.writeFile(manifestPath, visualElementsManifest, {encoding: "utf8"});
 
     log(opts, `Looking for start menu folder`);
