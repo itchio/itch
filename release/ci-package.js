@@ -66,7 +66,6 @@ async function ciPackage (argsIn) {
     name: appName,
     electronVersion,
     appVersion,
-    prune: true,
     asar: true,
     overwrite: true,
     out: outDir
@@ -127,11 +126,16 @@ async function ciPackage (argsIn) {
         $.say('Rebuilding native dependencies...');
         try {
           await electronRebuild(buildPath, electronVersion, arch, [], true);
-          callback();
         } catch (err) {
           $.say(`While building native deps:\n${err.stack}`);
           callback(err);
         }
+
+        $.say('Pruning dev packages');
+        await $.cd(buildPath, async function () {
+          await $.yarn('install --production --ignore-scripts --prefer-offline');
+        });
+        callback();
       }
     ]
   });
