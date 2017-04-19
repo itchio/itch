@@ -68,6 +68,7 @@ $.VERSION_SPECS = {
   ['7za']: '7za | head -2',
   node: 'node --version',
   npm: 'npm --version',
+  yarn: 'yarn --version',
   gsutil: 'gsutil --version',
   go: 'go version',
   gothub: 'gothub --version',
@@ -186,6 +187,11 @@ $.qsh = async function (cmd) {
 // run npm command (silently)
 $.npm = async function (args) {
   return await $.sh(`npm --no-progress --quiet ${args}`)
+}
+
+// run yarn command
+$.yarn = async function (args) {
+  return await $.sh(`yarn ${args}`)
 }
 
 // run gem command
