@@ -39,9 +39,11 @@ module.exports = {
       signWithParams: '/v /s MY /n "itch corp." /fd sha256 /tr http://timestamp.comodoca.com/?td=sha256 /td sha256',
       noMsi: true,
       appDirectory: join(outDir, appName + '-win32-ia32'),
-      outputDirectory: process.env.CI_WINDOWS_INSTALLER_PATH || join('build', 'squirrel-ia32')
+      outputDirectory: $.winstallerPath(arch)
     }
-    await electronInstaller.createWindowsInstaller(electronInstallerOpts)
+    await $.measure('Creating windows installer', async () => {
+      await electronInstaller.createWindowsInstaller(electronInstallerOpts);
+    });
 
     $.say('Copying artifacts to packages/')
     $(await $.sh(`cp -vf ${$.winstallerPath(arch)}/${$.appName()}-${$.buildVersion()}*.nupkg ${$.winstallerPath(arch)}/*.exe ${$.winstallerPath(arch)}/RELEASES packages/`))
