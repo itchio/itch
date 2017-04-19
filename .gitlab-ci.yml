@@ -65,6 +65,7 @@ package-linux-386:
   tags:
     - linux
   script:
+    - export BUTLER_ENABLE=1
     - release/ci-package.js linux 386
   only:
     - tags
@@ -81,6 +82,7 @@ package-linux-amd64:
   tags:
     - linux
   script:
+    - export BUTLER_ENABLE=1
     - release/ci-package.js linux amd64
   only:
     - tags
@@ -97,6 +99,7 @@ package-darwin-amd64:
   tags:
     - darwin
   script:
+    - export BUTLER_ENABLE=1
     - release/ci-package.js darwin amd64
   only:
     - tags
@@ -113,6 +116,7 @@ package-windows-386:
   only:
     - tags
   script:
+    - export BUTLER_ENABLE=1
     - release/ci-package.js windows 386
   artifacts:
     paths:

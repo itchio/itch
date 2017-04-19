@@ -4,7 +4,7 @@ const $ = require('../../common')
 module.exports = {
   packagePortable: async function (arch, buildPath) {
     $.say('Generating portable linux archive (.tar.xz)')
-    const dir_name = `${$.appName()}-${$.buildVersion()}-${arch}`
+    const dirName = `${$.appName()}-${$.buildVersion()}-${arch}`
     $(await $.sh('rm -rf portable-stage'))
     $(await $.sh('mkdir -p portable-stage'))
     $(await $.sh(`cp -rf ${buildPath} portable-stage/${dirName}`))

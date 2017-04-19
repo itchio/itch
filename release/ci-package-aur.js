@@ -5,6 +5,8 @@
 const $ = require('./common')
 
 async function ciPackageAur() {
+  delete process.env.BUTLER_ENABLE
+
   $.say('Cloning repo...')
   $(await $.sh('rm -rf aur-stage'))
   $(await $.sh(`git clone ssh+git://aur@aur.archlinux.org/${$.appName()}.git aur-stage`))
