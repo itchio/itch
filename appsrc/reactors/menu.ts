@@ -75,8 +75,6 @@ function convertMenuAction (payload: IMenuItemPayload) {
     case "menu.help.report_issue": return actions.openUrl({url: `${urls.itchRepo}/issues/new`});
     case "menu.help.search_issue": return actions.openUrl({url: `${urls.itchRepo}/search?type=Issues`});
     case "menu.help.release_notes": return actions.openUrl({url: `${urls.itchRepo}/releases`});
-    case "crash.test":
-      (async function () { throw new Error("crash test!"); })();
     default:
       return null;
   }
@@ -99,6 +97,9 @@ function fleshOutTemplate (template: IMenuTemplate, i18n: II18nState, store: ISt
       node.click = (e) => {
         store.dispatch(menuAction);
       };
+    }
+    if (label === "crash.test") {
+      node.click = function () { setTimeout(function () { throw new Error("crash test!"); }, 500); };
     }
 
     if (node.submenu) {

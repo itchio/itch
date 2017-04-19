@@ -214,6 +214,10 @@ function computeMenuTemplate (payload: IRefreshMenuPayload) {
     },
   };
 
+  if (process.env.SHOW_ME_CRASHY === "1") {
+    menus.help.submenu.push({label: "crash.test"});
+  }
+
   const template = [] as any;
   if (system.macos) {
     template.push(menus.mainMac);
