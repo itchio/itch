@@ -157,7 +157,7 @@ async function request (method: HTTPMethod, uri: string, data: any = {}, opts: I
     req.end();
   });
 
-  return p;
+  return await p;
 }
 
 import sf from "./sf";
