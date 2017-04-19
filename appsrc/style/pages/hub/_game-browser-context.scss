@@ -62,6 +62,11 @@ $secondary-action-bg: #2b2b2b;
       .nice-ago {
         color: $secondary-text-color; // sigh
       }
+
+      &.original-price {
+        text-decoration: line-through;
+        color: inherit;
+      }
     }
 
     .total-playtime .icon {

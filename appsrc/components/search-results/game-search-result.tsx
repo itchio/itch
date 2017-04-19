@@ -30,9 +30,16 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
       }
     }
 
+    let originalPrice: React.ReactElement<any> = null;
     let price: React.ReactElement<any> = null;
+
     if (game.minPrice > 0) {
-      price = <span className="price">{format.price("USD", game.minPrice)}</span>;
+      if (game.sale) {
+        price = <span className="price"> {format.price("USD", game.minPrice * game.sale.rate / 100)}</span>;
+        originalPrice = <span className="price original">{format.price("USD", game.minPrice)}</span>;
+      } else {
+        price = <span className="price">{format.price("USD", game.minPrice)}</span>;
+      }
     }
 
     const resultClasses = classNames("search-result", {
@@ -46,6 +53,7 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
         <h4>{title}</h4>
         <span className="platforms">
           {platforms}
+          {originalPrice}
           {price}
         </span>
       </div>
