@@ -75,6 +75,9 @@ export interface IGameRecord {
     /** price of a game, in cents of a dollar */
     minPrice?: number;
 
+    /** current sale, if any */
+    sale?: IGameSaleInfo;
+
     /** as of November 7, 2016, this property doesn't exist yet in the API, but a man can dream.. */
     currency?: string;
 
@@ -110,6 +113,14 @@ export interface IFilteredGameRecord {
     game: IGameRecord;
     cave?: ICaveRecord;
     searchScore?: number;
+}
+
+/**
+ * Sale info
+ */
+export interface IGameSaleInfo {
+    id: number;
+    rate: number;
 }
 
 /**

@@ -135,6 +135,10 @@ $search-thumbnail-scale: 0.8;
       .price {
         color: #888;
         font-size: 90%;
+
+        &.original {
+          text-decoration: line-through;
+        }
       }
     }
 

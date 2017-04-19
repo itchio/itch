@@ -41,7 +41,7 @@ export class GameStats extends React.Component<IProps & IDerivedProps & I18nProp
           }
         }
       }
-      const {minPrice, currency = "USD"} = game;
+      const {minPrice, sale, currency = "USD"} = game;
 
       return <div className="game-stats">
         <div className="total-playtime">
@@ -56,9 +56,20 @@ export class GameStats extends React.Component<IProps & IDerivedProps & I18nProp
               {time_ago: <NiceAgo date={downloadKey.createdAt}/>})
           : (minPrice > 0
             ? interleave(t, "usage_stats.description.price", {
-              price: <label>
-                {format.price(currency, minPrice)}
-              </label>,
+              price: (sale ?
+                [
+                  <label className="original-price">
+                    {format.price(currency, minPrice)}
+                  </label>,
+                  <label>
+                    {" "}
+                    {format.price(currency, minPrice * (1 - sale.rate / 100))}
+                  </label>,
+                ]
+              : <label>
+                 {format.price(currency, minPrice)}
+                </label>
+              ),
             })
             : t("usage_stats.description.free_download")
           )
