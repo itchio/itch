@@ -9,7 +9,7 @@ import client from "./api";
 
 import {normalize, arrayOf} from "./idealizr";
 import {game, user, collection, downloadKey} from "./schemas";
-import {each, union, pluck, where, difference, contains} from "underscore";
+import {each, union, pluck, where, difference, contains, underscore} from "underscore";
 
 import {
   IUserMarket, IGlobalMarket,
@@ -145,6 +145,7 @@ export async function collectionGames
   let fetched = 0;
   let totalItems = 1;
   let fetchedGameIDs = [] as number[];
+  const localGameIds = collection.gameIds || [];
 
   while (fetched < totalItems) {
     let res = await api.collectionGames(collectionID, page);
@@ -153,19 +154,17 @@ export async function collectionGames
 
     const normalized = normalize(res, {games: arrayOf(game)});
     const pageGameIds = pluck(normalized.entities.games, "id");
-    collection = {
-      ...collection,
-      gameIds: [
-        ...(collection.gameIds || []),
-        ...pageGameIds,
-      ],
-    };
-    market.saveEntity("collections", String(collection.id), collection);
-
     fetchedGameIDs = [
       ...fetchedGameIDs,
       ...pageGameIds,
     ];
+
+    collection = {
+      ...collection,
+      gameIds: union(localGameIds, fetchedGameIDs),
+    };
+
+    market.saveEntity("collections", String(collection.id), collection, {persist: false});
     market.saveAllEntities(normalized);
     page++;
   }
