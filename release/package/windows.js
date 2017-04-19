@@ -1,6 +1,6 @@
 
 const $ = require('../common')
-const {join} = require('path')
+const {join} = require('path').posix
 
 module.exports = {
   sign: async function (arch, buildPath) {
@@ -18,7 +18,7 @@ module.exports = {
     $(await $.sh(`mkdir -p ${$.winstallerPath(arch)}`))
     const appName = $.appName();
     const appVersion = $.buildVersion()
-    const outDir = path.join('build', 'v' + appVersion)
+    const outDir = join('build', 'v' + appVersion)
     const companyName = 'Itch Corp'
     const iconsPath = join('release', 'images', appName + '-icons')
     const icoPath = join(iconsPath, 'itch.ico')
