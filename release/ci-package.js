@@ -143,18 +143,16 @@ async function ciPackage (args) {
       break
   }
 
-  $.say('Grabbing butler');
-  const ext = (os === 'windows' ? '.exe' : '');
-  const butlerName = `butler${ext}`;
-  const butlerArch = (process.arch === 'x64' ? 'amd64' : '386');
-  const butlerUrl = `https://dl.itch.ovh/butler/${os}-${butlerArch}/head/${butlerName}`;
-  $(await $.sh(`curl -L -O ${butlerUrl}`));
-  $(await $.sh(`chmod +x ${butlerName}`));
-  $(await $.sh(`./butler --version`));
+  if (process.env.BUTLER_ENABLE == "1") {
+    $.say('Grabbing butler');
+    const ext = (os === 'windows' ? '.exe' : '');
+    const butlerName = `butler${ext}`;
+    const butlerArch = (process.arch === 'x64' ? 'amd64' : '386');
+    const butlerUrl = `https://dl.itch.ovh/butler/${os}-${butlerArch}/head/${butlerName}`;
+    $(await $.sh(`curl -L -O ${butlerUrl}`));
+    $(await $.sh(`chmod +x ${butlerName}`));
+    $(await $.sh(`./butler --version`));
 
-  if (process.env.NO_BUTLER == "1") {
-    $.say('NO_BUTLER=1 set, not pushing with butler');
-  } else {
     let butlerChannel = os
     let artifactPath = buildPath
     if (os === 'darwin') {

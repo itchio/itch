@@ -11,7 +11,7 @@ url="https://github.com/itchio/{{CI_APPNAME}}"
 license=('MIT')
 
 depends=('alsa-lib' 'libnotify' 'nss' 'gconf' 'gtk2' 'libxtst' 'desktop-file-utils' 'gtk-update-icon-cache' 'libxss')
-makedepends=('nodejs' 'nodejs-grunt-cli' 'npm' 'python2' 'gcc')
+makedepends=('nodejs' 'npm' 'python2' 'gcc')
 options=('!strip')
 install="{{CI_APPNAME}}.install"
 
@@ -19,7 +19,7 @@ install="{{CI_APPNAME}}.install"
 source=("https://github.com/itchio/itch/archive/v${pkgver}{{CI_SUFFIX}}.tar.gz")
 sha256sums=('0eafdc5c12f2a007a146b2925dc99c210ee9aeb2c859ce81fa523244098c5779')
 
-[ "$CARCH" = "i686" ]   && _ELECTRON_ARCH=ia32; _ITCH_ARCH=i386
+[ "$CARCH" = "i686" ]   && _ELECTRON_ARCH=ia32; _ITCH_ARCH=386
 [ "$CARCH" = "x86_64" ] && _ELECTRON_ARCH=x64;  _ITCH_ARCH=amd64
 
 prepare() {
@@ -39,8 +39,7 @@ build() {
 
   release/ci-compile.js
   release/ci-generate-linux-extras.js
-
-  grunt -v "electron:linux-${_ELECTRON_ARCH}"
+  release/ci-package.js linux "${_ITCH_ARCH}"
 }
 
 check() {
