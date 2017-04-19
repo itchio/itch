@@ -9,7 +9,7 @@ import client from "./api";
 
 import {normalize, arrayOf} from "./idealizr";
 import {game, user, collection, downloadKey} from "./schemas";
-import {each, union, pluck, where, difference, contains, underscore} from "underscore";
+import {each, union, pluck, where, difference, contains} from "underscore";
 
 import {
   IUserMarket, IGlobalMarket,
