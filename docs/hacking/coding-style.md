@@ -35,18 +35,11 @@ via IPC by [redux-electron-store][].
 
 ## Building
 
-TypeScript sources, sass sources and static assets live in `appsrc`.
+TypeScript sources, sass sources and static assets live in `src`.
 
-In development, `webpack-dev-server` is used and serves what the **chrome** part of the
-app uses.
+In development, files are built as they're required, by [electron-compile](https://github.com/electron/electron-compile).
 
-You can use `npm run serve-chrome` to watch those files, rebuild them when needed, and
-serve them from memory to `http://localhost:8009`.
-
-The **metal** part is built on-disk into the `app` folder. You can do a one-off build with
-`npm run build-metal`, or watch for changes and rebuild as needed with `npm run watch-metal`.
-
-In production, everything is built on-disk into `app`.
+In production, they're precompiled.
 
 ## TypeScript usage and features
 
@@ -87,9 +80,6 @@ async function installSoftware (name: string) {
 
 Our TSLint rules file is `tslint.json` - it should be easier to read it than
 keep those docs up-to-date.
-
-`tslint-loader` is in the webpack loader chain, so code is linted while developing,
-on CI, and while generating production builds of the app.
 
 Additionally, some editors have plug-ins to support real-time linting:
 

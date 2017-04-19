@@ -5,7 +5,7 @@
 declare module 'react-ink' {
   import * as React from "react";
 
-  class Ink extends React.Component<void, void> {}
+  class Ink extends React.Component<{}, {}> {}
 
   export = Ink;
 }

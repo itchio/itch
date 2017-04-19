@@ -3,6 +3,7 @@
 /docs/node_modules
 config.json
 npm-debug.log
+/.cache
 
 # build artifacts
 /*.dmg

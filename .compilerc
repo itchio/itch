@@ -1,0 +1,14 @@
+{
+  "application/javascript": {
+    "passthrough": true
+  },
+  "text/typescript": {
+    "target": "es6",
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "experimentalDecorators": true,
+    "noUnusedLocals": true,
+    "sourceMap": true,
+    "jsx": "react"
+  }
+}

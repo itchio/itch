@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "rootDir": "appsrc",
+        "rootDir": "src",
         "outDir": "app",
         "target": "es6",
         "module": "commonjs",
@@ -9,9 +9,6 @@
         "noUnusedLocals": true,
         "sourceMap": true,
         "jsx": "react"
-    },
-    "awesomeTypescriptLoaderOptions": {
-        "useCache": true
     },
     "exclude": [
         "build",

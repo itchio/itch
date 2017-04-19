@@ -5,8 +5,10 @@ itch is built in HTML/SCSS/TypeScript and runs inside of Electron. Install the
 following to get started with development:
 
 * Install [node.js][] (7.6 or newer)
+* Install [yarn][]
 
 [node.js]: https://nodejs.org/
+[yarn]: https://yarnpkg.com/en/
 
 * Check out this repository
 
@@ -14,31 +16,16 @@ following to get started with development:
 within the `itch` directory you've just cloned:
 
 ```bash
-$ npm install
+$ yarn install
 ```
 
 (For native modules, you'll need a compiler toolchain: Visual Studio 2015 on Windows, gcc/clang on Linux/macOS)
 
-* Compile the metal part of the app
-
-```bash
-$ npm run build-metal
-```
-
-* Start serving the chrome part of the app
-
-```bash
-$ npm run serve-chrome
-```
-
-* You can now run the app in another terminal:
+* Start the app!
 
 ```bash
 $ npm start
 ```
-
-webpack is pretty slow to warm up, so instead of `build-metal`, you may want to keep `watch-metal` running
-in another terminal/pane.
 
 ### Running tests
 
@@ -47,8 +34,6 @@ Run:
 ```bash
 $ npm test
 ```
-
-Alternatively, run `npm run watch-tests` in a terminal, and `npm run run-tests` when you actually want to run them.
 
 ### Debug facilities
 

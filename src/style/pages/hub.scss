@@ -1,0 +1,227 @@
+
+@import 'pages/hub/sidebar';
+@import 'pages/hub/bread';
+@import 'pages/hub/item';
+@import 'pages/hub/search';
+@import 'pages/hub/history';
+@import 'pages/hub/downloads';
+@import 'pages/hub/browser-meat';
+@import 'pages/hub/game-browser-context';
+@import 'pages/hub/preferences';
+@import 'pages/hub/library';
+@import 'pages/hub/new-tab';
+@import 'pages/hub/toast';
+@import 'pages/hub/collections';
+@import 'pages/hub/location';
+
+.hub-page {
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.hub-content {
+  border-left: 1px solid $sidebar-border-color;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  .hub-bread {
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+  .hub-meat {
+    flex-shrink: 1;
+    flex-grow: 1;
+  }
+}
+
+$table-cover-ratio: 315.0 / 250.0;
+$table-cover-height: 58px;
+$table-cover-width: $table-cover-height * $table-cover-ratio;
+
+.hub-games {
+  flex-grow: 1;
+
+  .clear-filters {
+    margin-left: 8px;
+    font-size: 80%;
+    @include clickable;
+  }
+}
+
+.hub-games, .hub-collections-grid {
+  .hidden-count {
+    background: $meat-background-color;
+    box-shadow: 0 0 2px 0 darken($meat-background-color, 20%);
+    border-radius: 4px 0 0 0;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    display: block;
+    padding: 12px;
+    color: #A0A0A0;
+  }
+}
+
+.hub-game-table {
+  .cover {
+    width: $table-cover-width;
+    height: $table-cover-height;
+    background-size: cover;
+    background-position: 50% 50%;
+    border-radius: 1px;
+    background-color: $sidebar-background-color;
+  }
+
+  .ReactVirtualized__Table__headerRow {
+    text-transform: initial;
+    font-weight: normal;
+    font-size: 90%;
+  }
+
+  .ReactVirtualized__Table__row,
+  .ReactVirtualized__Table__headerRow {
+    border-left: 2px solid transparent;
+  }
+
+  .ReactVirtualized__Table__row {
+    background-color: $meat-background-color;
+    outline: 0;
+
+    transition: 0.2s border-color, background-color;
+
+    &:hover {
+      background-color: darken($meat-background-color, 5%);
+      border-color: $accent-color;
+      cursor: pointer;
+    }
+  }
+
+  .ReactVirtualized__Table__sortableHeaderColumn {
+    height: 100%;
+    padding: 12px 0;
+
+    outline: 0;
+  }
+
+  .ReactVirtualized__Table__rowColumn {
+    position: relative;
+
+    &.secondary {
+      font-size: 95%;
+      color: $secondary-text-color;
+    }
+  }
+
+  .ReactVirtualized__Table__sortableHeaderIcon {
+    transform: translateX(50%) scale(2, 2);
+  }
+
+  .title-column {
+    line-height: 1.4;
+
+    .title, .description {
+      max-width: 500px;
+      white-space: normal;
+    }
+
+    .title {
+      @include single-line;
+      font-weight: bold;
+    }
+
+    .description {
+      font-size: 90%;
+      color: $secondary-text-color;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+  }
+}
+
+.hub-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  align-content: flex-start;
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex: 1;
+
+  .criterion-bar {
+    flex-basis: 100%;
+    display: flex;
+  }
+
+  .hub-item {
+    width: $grid-item-width;
+    margin: .5em;
+    cursor: default;
+
+    .main-action {
+      @include single-line;
+    }
+  }
+
+  .clear-filters {
+    margin-left: 8px;
+    font-size: 80%;
+    @include clickable;
+  }
+
+  .hub-filler {
+    width: $grid-item-width;
+    height: 0;
+    margin: 0 .5em;
+  }
+}
+
+.hub-meat {
+  background: $meat-background-color; // FIXME colors
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+
+  .hub-meat-tab {
+    // each of these redundant CSS properties is a workaround
+    // for a separate issue. we cannot use display: none here
+    // because of webviews, `visibility: hidden` makes the address
+    // bar linger when switching to another tab, opacity takes
+    // care of that. (and flex dimensions does the actual 'switching')
+    visibility: hidden;
+    opacity: 0;
+    display: flex;
+    flex: 0 1;
+    width: 100%;
+    height: 0px;
+
+    .ReactVirtualized__Grid {
+      padding-bottom: 48px;
+    }
+
+    &.visible {
+      visibility: visible;
+      opacity: 1;
+      display: flex;
+      flex: 1 1;
+      height: 100%;
+    }
+
+    p.empty {
+      padding: 10px;
+      color: $secondary-text-color;
+    }
+  }
+}
