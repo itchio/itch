@@ -28,6 +28,9 @@ async function ciPackage (args) {
   $.say('Decompressing dist...');
   $(await $.sh('tar xf dist.tar'));
 
+  $.say('Installing modules...');
+  $(await $.npm('install'));
+
   $.say('Copying modules...');
   $(await $.sh('cp -rf node_modules dist/'));
 
