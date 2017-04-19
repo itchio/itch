@@ -39,7 +39,7 @@ build() {
 
   release/ci-compile.js
   release/ci-generate-linux-extras.js
-  release/ci-package.js linux "${_ITCH_ARCH}"
+  release/ci-package.js --build-only linux "${_ITCH_ARCH}"
 }
 
 check() {

@@ -8,7 +8,20 @@ const $ = require('./common');
 
 const bluebird = require('bluebird');
 
-async function ciPackage (args) {
+async function ciPackage (argsIn) {
+  const opts = {
+    buildOnly: false,
+  }
+  const args = [];
+
+  for (const arg of argsIn) {
+    if (arg === "--build-only") {
+      opts.buildOnly = true;
+    } else {
+      args.push(arg);
+    }
+  }
+
   if (args.length !== 2) {
     throw new Error(`ci-package expects two arguments, not ${args.length}. (got: ${args.join(', ')})`);
   }
@@ -130,6 +143,10 @@ async function ciPackage (args) {
   let buildPath = appPaths[0].replace(/\\/g, "/");
 
   $.say(`Built app is in ${buildPath}`);
+
+  if (opts.buildOnly) {
+    return;
+  }
 
   switch (os) {
     case 'windows':
