@@ -63,7 +63,7 @@ export class GameStats extends React.Component<IProps & IDerivedProps & I18nProp
                   </label>,
                   <label>
                     {" "}
-                    {format.price(currency, minPrice * sale.rate / 100)}
+                    {format.price(currency, minPrice * (1 - sale.rate / 100))}
                   </label>,
                 ]
               : <label>

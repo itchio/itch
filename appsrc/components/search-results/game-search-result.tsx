@@ -35,7 +35,7 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
 
     if (game.minPrice > 0) {
       if (game.sale) {
-        price = <span className="price"> {format.price("USD", game.minPrice * game.sale.rate / 100)}</span>;
+        price = <span className="price"> {format.price("USD", game.minPrice * (1 - game.sale.rate / 100))}</span>;
         originalPrice = <span className="price original">{format.price("USD", game.minPrice)}</span>;
       } else {
         price = <span className="price">{format.price("USD", game.minPrice)}</span>;
