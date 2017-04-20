@@ -58,7 +58,7 @@
     "combokeys-ftl": "^2.4.4-npmgate1",
     "deep-assign": "^2.0.0",
     "deep-freeze": "0.0.1",
-    "electron-compile": "^6.4.0",
+    "electron-compile-ftl": "^6.4.1",
     "eol": "^0.2.0",
     "file-type": "^3.0.0",
     "fnout": "^1.1.0",
@@ -112,7 +112,7 @@
   },
   "devDependencies": {
     "electron": "^1.6.2",
-    "electron-compilers": "^5.8.0",
+    "electron-compilers-ftl": "^5.8.0",
     "electron-rebuild": "^1.5.7",
     "faucet": "0.0.1",
     "react-addons-test-utils": "^15.0.0",
