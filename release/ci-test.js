@@ -8,7 +8,6 @@ async function main () {
   await $.showVersions(['yarn']);
 
   $(await $.yarn('install'));
-  $(await $.yarn('run build-tests'));
 
   process.env.ELECTRON_ENABLE_LOGGING = '1';
 
