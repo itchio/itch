@@ -13,6 +13,29 @@ import watching, {Watcher} from "./watching";
 
 import Ink = require("react-ink");
 
+import {style, classes} from "typestyle";
+import * as styles from "./styles";
+
+const browserButtonStyle = style(styles.inkContainer, {
+  color: styles.colors.secondaryText,
+  fontSize: "20px",
+  width: "32px",
+  height: "32px",
+  lineHeight: "32px",
+  textAlign: "center",
+  borderRadius: "50%",
+  verticalAlign: "middle",
+});
+
+const disabledButtonStyle = style({
+  filter: "brightness(50%)",
+  textShadow: "none",
+});
+
+const loadingButtonStyle = style(
+  styles.horizontalScanMixin(),
+);
+
 function isHTMLInput (el: HTMLElement): el is HTMLInputElement {
   return el.tagName === "INPUT";
 }
@@ -78,18 +101,22 @@ export class BrowserControls extends React.Component<IProps & IDerivedProps & I1
     const addressClasses = classNames("browser-address", {frozen, visible: (!!url && !!url.length)});
 
     return <div className="browser-controls">
-      <span className={classNames("icon icon-arrow-left", {disabled: !canGoBack})} onClick={() => goBack()}>
+      <span className={classes("icon", "icon-arrow-left",
+          browserButtonStyle, !canGoBack && disabledButtonStyle)} onClick={() => goBack()}>
         <Ink/>
       </span>
-      <span className={classNames("icon icon-arrow-right", {disabled: !canGoForward})} onClick={() => goForward()}>
+      <span className={classes("icon", "icon-arrow-right",
+          browserButtonStyle, !canGoForward && disabledButtonStyle)} onClick={() => goForward()}>
         <Ink/>
       </span>
       {
         loading
-        ? <span className="icon icon-cross loading" onClick={() => stop()}>
+        ? <span className={classes("icon", "icon-cross",
+              browserButtonStyle, loadingButtonStyle)} onClick={() => stop()}>
             <Ink/>
           </span>
-        : <span className="icon icon-repeat" onClick={() => reload()}>
+        : <span className={classes("icon", "icon-repeat",
+              browserButtonStyle)} onClick={() => reload()}>
             <Ink/>
           </span>
       }
@@ -104,7 +131,7 @@ export class BrowserControls extends React.Component<IProps & IDerivedProps & I1
       <span
           data-rh-at="right"
           data-rh={t("browser.popout")}
-          className={classNames("icon icon-redo")} onClick={() => this.popOutBrowser()}>
+          className={classes("icon", "icon-redo", browserButtonStyle)} onClick={() => this.popOutBrowser()}>
         <Ink/>
       </span>
     </div>;

@@ -27,6 +27,30 @@ import watching, {Watcher} from "./watching";
 
 import {SortableElement, SortableContainer, arrayMove} from "react-sortable-hoc";
 
+import {
+  itemContainerStyle,
+  titleBarPadderStyle,
+  logoStyle, logoImgStyle, 
+  h2Style, labelStyle, fillerStyle, actionStyle,
+} from "./sidebar-styles";
+import * as styles from "./styles";
+
+import styled from "styled-components";
+
+const SidebarDiv = styled.div`
+  background: ${props => props.theme.sidebarBackgroundColor};
+  font-size: ${styles.fontSizes.sidebar};
+
+  width: ${props => props.width}px;
+  height: 100%;
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+`;
+
 interface ISortEndParams {
   oldIndex: number;
   newIndex: number;
@@ -143,10 +167,6 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
     const {t, appVersion, osx, sidebarWidth, fullscreen, id: currentId, tabs,
       tabData, navigate, closeAllTabs,
       newTab, searchLoading} = this.props;
-    const classes = classNames("hub-sidebar", {osx, fullscreen});
-    const sidebarStyle = {
-      width: sidebarWidth + "px",
-    };
     const searchClasses = classNames("search", {loading: searchLoading});
 
     const onSortEnd = (params: ISortEndParams) => {
@@ -157,11 +177,15 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
       this.props.moveTab({before: oldIndex, after: newIndex});
     };
 
-    return <div className={classes} style={sidebarStyle}>
-      <div className="title-bar-padder"/>
+    return <SidebarDiv width={sidebarWidth}>
+      {(osx && !fullscreen)
+      ? <div className={titleBarPadderStyle}/>
+      : null}
 
-      <div className="logo" onClick={(e) => navigate("featured")} data-rh-at="bottom" data-rh={`itch v${appVersion}`}>
-        <img src={resolve(__dirname, "../static/images/logos/app-white.svg")}/>
+      <div className={logoStyle}
+          onClick={(e) => navigate("featured")}
+          data-rh-at="bottom" data-rh={`itch v${appVersion}`}>
+        <img className={logoImgStyle} src={resolve(__dirname, "../static/images/logos/app-white.svg")}/>
       </div>
 
       <section className={searchClasses}>
@@ -176,9 +200,9 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
         <span className="icon icon-search"/>
       </section>
 
-      <div className="sidebar-items">
-        <h2>
-          <span className="label">{t("sidebar.category.basics")}</span>
+      <div className={itemContainerStyle}>
+        <h2 className={h2Style}>
+          <span className={labelStyle}>{t("sidebar.category.basics")}</span>
         </h2>
         {map(tabs.constant, (id, index) => {
           const data = tabData[id] || {};
@@ -197,16 +221,16 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
         })}
 
         <h2>
-          <span className="label">{t("sidebar.category.tabs")}</span>
-          <div className="filler"/>
-          <span className="action"
+          <span className={labelStyle}>{t("sidebar.category.tabs")}</span>
+          <div className={fillerStyle}/>
+          <span className={actionStyle}
               data-rh-at="top"
               data-rh={t("sidebar.close_all_tabs")}
               onClick={() => closeAllTabs({})}>
             <span className="icon icon-delete"/>
             <Ink/>
           </span>
-          <span className="action"
+          <span className={actionStyle}
               data-rh-at="top"
               data-rh={t("sidebar.new_tab")}
               onClick={() => newTab({})}>
@@ -223,10 +247,10 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
         />
       </div>
 
-      <section className="sidebar-blank"/>
+      <section className={fillerStyle}/>
 
       <UserMenu/>
-    </div>;
+    </SidebarDiv>;
   }
 
   componentWillReceiveProps(props: IProps & IDerivedProps & I18nProps) {

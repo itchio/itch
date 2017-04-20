@@ -6,10 +6,15 @@ import "./boot/fs";
 import "./boot/env";
 import "./boot/sniff-language";
 
+import store from "./store/chrome-store";
+
 import os from "./util/os";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
+import setupShortcuts from "./shortcuts";
+setupShortcuts(store);
 
 let AppContainer: React.ComponentClass<void> = null;
 try {
@@ -19,10 +24,6 @@ try {
 
 import * as electron from "electron";
 import App from "./components/app";
-
-import store from "./store/chrome-store";
-
-import setupShortcuts from "./shortcuts";
 
 let appNode: Element;
 
@@ -40,7 +41,6 @@ function render (RealApp: typeof App) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  setupShortcuts(store);
   render(App);
 
   if ((module as any).hot) {

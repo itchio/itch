@@ -1,6 +1,5 @@
 
 import * as React from "react";
-import * as classNames from "classnames";
 
 import {ILocalizedString, ITabData, IGameRecord} from "../types";
 import {ILocalizer} from "../localizer";
@@ -9,6 +8,9 @@ import Ink = require("react-ink");
 
 import LoadingCircle from "./loading-circle";
 import Icon from "./icon";
+
+import {classes} from "typestyle";
+import {itemStyle, freshItemStyle, activeItemStyle} from "./sidebar-styles";
 
 export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSidebarItemState> {
   constructor () {
@@ -39,7 +41,11 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     const {fresh} = this.state;
     const {onClose, onContextMenu} = this.props;
 
-    const classes = classNames("hub-sidebar-item", {active, fresh});
+    const itemClass = classes(
+      itemStyle,
+      active && activeItemStyle,
+      fresh && freshItemStyle,
+    );
 
     const progressColor = "white";
     const progressStyle = {
@@ -47,7 +53,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
       backgroundColor: progressColor,
     };
 
-    return <section className={classes}
+    return <section className={itemClass}
         data-rh-at="bottom"
         data-rh={t.format(sublabel)}
         onMouseUp={(e) => this.onMouseUp(e)}

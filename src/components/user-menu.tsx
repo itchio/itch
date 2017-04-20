@@ -15,6 +15,12 @@ import Icon from "./icon";
 
 import urls from "../constants/urls";
 
+import {classes} from "typestyle";
+import {
+  itemStyle, userMenuStyle,
+  fillerStyle,
+} from "./sidebar-styles";
+
 class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {viewCreatorProfile, viewCommunityProfile, changeUser,
@@ -89,10 +95,10 @@ class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void>
     const {me} = this.props;
     const {coverUrl = defaultImages.avatar, username, displayName} = me;
 
-    return <section className="hub-sidebar-item me">
+    return <section className={classes(itemStyle, userMenuStyle)}>
       <img src={coverUrl}/>
       <span className="label">{username || displayName}</span>
-      <div className="filler"/>
+      <div className={fillerStyle}/>
       <Icon icon="triangle-down" classes={["me-dropdown"]}/>
     </section>;
   }

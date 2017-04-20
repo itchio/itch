@@ -17,6 +17,26 @@ import Ink = require("react-ink");
 import Select = require("react-select");
 import Icon from "./icon";
 
+import {inkContainer} from "./styles";
+import {style, classes} from "typestyle";
+
+const layoutPickerStyle = style(inkContainer, {
+  padding: "8px 10px",
+  borderRadius: "50%",
+  fontSize: "90%",
+  filter: "brightness(60%)",
+  $nest: {
+    "&:hover": {
+      cursor: "pointer",
+      filter: "brightness(80%)",
+    },
+  },
+});
+
+const activeLayoutPickerStyle = style({
+  filter: "brightness(100%)",
+});
+
 @watching
 class GameFilters extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   refs: {
@@ -136,7 +156,7 @@ class GameFilters extends React.Component<IProps & IDerivedProps & I18nProps, vo
   renderLayoutPicker (layout: TabLayout, icon: string) {
     const active = (this.props.layout === layout);
 
-    return <section className={classNames("layout-picker", {active})}
+    return <section className={classes(layoutPickerStyle, active && activeLayoutPickerStyle)}
       onClick={
       (e) => this.props.updatePreferences({layout})
     }>
