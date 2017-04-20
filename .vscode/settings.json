@@ -15,7 +15,8 @@
     "build": true,
     "dist": true,
     "fixtures": true,
-    ".tscache": true
+    ".tscache": true,
+    ".cache": true
   },
 "files.eol": "\n",
 "editor.tabSize": 2,
