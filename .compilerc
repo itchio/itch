@@ -9,6 +9,7 @@
     "experimentalDecorators": true,
     "noUnusedLocals": true,
     "sourceMap": true,
-    "jsx": "react"
+    "jsx": "react",
+    "noEmitOnError": true
   }
 }

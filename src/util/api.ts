@@ -58,9 +58,13 @@ export class Client {
   /** timestamp of last request */
   lastRequest: number;
 
+  /** http request maker */
+  netStack: typeof net;
+
   constructor () {
     this.rootUrl = `${urls.itchioApi}/api/1`;
     this.lastRequest = 0;
+    this.netStack = net;
   }
 
   /**
@@ -76,7 +80,7 @@ export class Client {
     await cooldown();
     const t2 = Date.now();
 
-    const resp = await net.request(method, uri, data);
+    const resp = await this.netStack.request(method, uri, data);
     const body = resp.body;
     const t3 = Date.now();
 

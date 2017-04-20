@@ -1,5 +1,6 @@
 
 import {net} from "electron";
+import * as env from "../env";
 
 import * as querystring from "querystring";
 import {isEmpty} from "underscore";
@@ -53,6 +54,9 @@ export interface IRequestOpts {
 export const NET_PARTITION_NAME = "itch-zone";
 
 async function request (method: HTTPMethod, uri: string, data: any = {}, opts: IRequestOpts = {}): Promise<IResponse> {
+  if (env.name === "test") {
+    throw new Error("refusing to perform HTTP request in test");
+  }
   let url = uri;
 
   if (method === "get") {
