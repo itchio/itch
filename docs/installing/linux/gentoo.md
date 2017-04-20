@@ -14,17 +14,8 @@ to start a discussion!
 
 ## Git installation
 
-In the meantime, you can always:
+We ship portable archives of itch at <https://github.com/itchio/itch/releases>
+which you should be able to unpack and run without much trouble, provided
+you have the few X and gtk libraries required.
 
-  * `npm install -g electron grunt-cli`
-  * `git clone https://github.com/itchio/itch`
-  * `cd itch`
-  * `git checkout SOME_STABLE_VERSION` (refer to <https://github.com/itchio/itch/releases>)
-  * `npm install`
-  * `NODE_ENV=production npm start` to launch the app
-
-You could put the launch command in a script somewhere in your `$PATH`.
-
-There are .desktop file templates in `release/` that you could adapt.
-
-For more detailed instructions, check the [hacking](../../hacking/getting-started.md) section.
+Alternatively, you can always follow the [Getting started](hacking/getting-started.md) guide to run it as if in dev.

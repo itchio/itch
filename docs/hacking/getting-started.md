@@ -24,7 +24,7 @@ $ yarn install
 * Start the app!
 
 ```bash
-$ npm start
+$ yarn start
 ```
 
 ### Running tests
@@ -32,7 +32,7 @@ $ npm start
 Run:
 
 ```bash
-$ npm test
+$ yarn test
 ```
 
 ### Debug facilities
