@@ -13,6 +13,11 @@ const readline = require('readline')
 process.env.COLORTERM = '1'
 const chalk = require('chalk')
 
+let yarnCmd = 'yarn'
+if (process.platform === 'win32') {
+  yarnCmd = 'yarn.cmd'
+}
+
 const STDIN = 0;
 
 const SH_PATH = (process.platform === 'win32') ? `${process.env.WD}sh.exe` : '/bin/sh'
@@ -68,7 +73,7 @@ $.VERSION_SPECS = {
   ['7za']: '7za | head -2',
   node: 'node --version',
   npm: 'npm --version',
-  yarn: 'yarn --version',
+  yarn: `${yarnCmd} --version`,
   gsutil: 'gsutil --version',
   go: 'go version',
   gothub: 'gothub --version',
@@ -147,6 +152,8 @@ $.getOutput = async function (cmd) {
 
   let stdout = "";
   child.stdout.on("data", (data) => { stdout += data });
+  let stderr = "";
+  child.stderr.on("data", (data) => { stderr += data });
 
   try {
     const status = await new bluebird((resolve, reject) => {
@@ -157,11 +164,13 @@ $.getOutput = async function (cmd) {
     if (status !== 0) {
       $.putln(chalk.red(`☃ non-zero exit code: ${status}`))
       $.putln(chalk.red(`...at ${new Error().stack}`))
+      $.putln(chalk.red(`stderr: ${stderr}`))
       throw new Error("getOutput: non-zero exit code");
     }
   } catch (error) {
     $.putln(chalk.red(`☃ error executing ${cmd}`));
     $.putln(chalk.red(`...at ${error.stack}`));
+    $.putln(chalk.red(`stderr: ${stderr}`))
     throw new Error("getOutput: couldn't execute command");
   }
 
@@ -191,7 +200,7 @@ $.npm = async function (args) {
 
 // run yarn command
 $.yarn = async function (args) {
-  return await $.sh(`yarn ${args}`)
+  return await $.sh(`${yarnCmd} ${args}`)
 }
 
 // run gem command

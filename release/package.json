@@ -11,7 +11,7 @@
   "devDependencies": {
     "bluebird": "^3.5.0",
     "glob": "^7.1.1",
-    "munyx": "^3.1.0",
+    "munyx": "^3.2.0",
     "humanize-plus": "^1.8.2"
   }
 }

@@ -10,7 +10,7 @@ async function main () {
     await new Promise((resolve, reject) => setTimeout(resolve, 200));
   });
 
-  await $.showVersions(['node']);
+  await $.showVersions(['yarn', 'node']);
 
   const input = await $.prompt('type something');
   $.putln(`had output: ${input}`);
