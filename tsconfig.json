@@ -2,7 +2,8 @@
     "compilerOptions": {
         "rootDir": "src",
         "outDir": "app",
-        "target": "es6",
+        "target": "es2017",
+        "lib": ["dom", "dom.iterable", "scripthost", "es6"],
         "module": "commonjs",
         "noImplicitAny": true,
         "experimentalDecorators": true,

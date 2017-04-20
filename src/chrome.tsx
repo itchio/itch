@@ -11,11 +11,11 @@ import os from "./util/os";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-// let AppContainer: React.ComponentClass<void> = null;
-// try {
-//   const rhl = require("react-hot-loader");
-//   AppContainer = rhl.AppContainer;
-// } catch (e) { /* muffin */ }
+let AppContainer: React.ComponentClass<void> = null;
+try {
+  const rhl = require("react-hot-loader");
+  AppContainer = rhl.AppContainer;
+} catch (e) { /* muffin */ }
 
 import * as electron from "electron";
 import App from "./components/app";
@@ -29,13 +29,13 @@ let appNode: Element;
 function render (RealApp: typeof App) {
   appNode = document.querySelector("#app");
   let rootComponent: JSX.Element;
-  /*if (AppContainer) {
+  if (AppContainer) {
     rootComponent = <AppContainer>
       <RealApp/>
     </AppContainer>;
-  } else {*/
+  } else {
     rootComponent = <RealApp/>;
-  // }
+  }
   ReactDOM.render(rootComponent, appNode);
 }
 
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   render(App);
 
   if ((module as any).hot) {
-    (module as any).hot.accept("./components/app", () => {
+    (module as any).hot.accept(() => {
       const NextApp = require("./components/app").default;
       render(NextApp);
     });

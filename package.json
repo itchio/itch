@@ -111,7 +111,7 @@
     "which": "^1.2.11"
   },
   "devDependencies": {
-    "electron": "^1.6.2",
+    "electron": "1.6.2",
     "electron-compilers-ftl": "^5.8.0",
     "electron-rebuild": "^1.5.7",
     "faucet": "0.0.1",
