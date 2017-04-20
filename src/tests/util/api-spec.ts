@@ -7,21 +7,17 @@ import * as sinon from "sinon";
 import {IResponse} from "../../util/net";
 import {ApiError} from "../../util/api";
 
+import api from "../../util/api";
+import net from "../../util/net";
+
 test("api", t => {
-  const net = test.module({
-    request: async (): Promise<IResponse> => ({
-      statusCode: 200,
-      status: "OK",
-      body: {id: 12},
-    } as IResponse),
-  });
-
-  const stubs = {
-    "../util/net": net,
-  };
-
-  const api = require("inject-loader!../../util/api")(stubs).default;
   api.rootUrl = "http://example.org/";
+  const request = t.stub(net, "request");
+  request.resolves(<IResponse> {
+    statusCode: 200,
+    status: "OK",
+    body: {id: 12},
+  });
 
   const user = api.withKey("key");
   const client = api;
@@ -29,13 +25,11 @@ test("api", t => {
   const uri = "http://example.org/yo";
 
   t.case("can GET", async t => {
-    const request = t.spy(net, "request");
     await client.request("get", "yo", {b: 11});
     sinon.assert.calledWith(request, "get", uri, {b: 11});
   });
 
   t.case("can POST", async t => {
-    const request = t.spy(net, "request");
     await client.request("post", "yo", {b: 22});
     sinon.assert.calledWith(request, "post", uri, {b: 22});
   });
@@ -49,7 +43,7 @@ test("api", t => {
   t.case("rejects API errors", async t => {
     const errors = ["foo", "bar", "baz"];
 
-    t.stub(net, "request").resolves({body: {errors}, statusCode: 200});
+    request.resolves({body: {errors}, statusCode: 200});
     let err: ApiError;
     try {
       await client.request("get", "", {});

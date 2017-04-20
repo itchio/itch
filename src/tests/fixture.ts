@@ -1,20 +1,20 @@
 
 import * as fs from "fs";
-import * as ospath from "path";
+import {join, resolve} from "path";
 
-const fixturesPath = ospath.resolve(`${__dirname}/../fixtures`);
+const fixturesPath = resolve(__dirname, "..", "..", "fixtures");
 
 let self = {
   path: function (spec: string) {
-    return ospath.join(fixturesPath, `files/${spec}`);
+    return join(fixturesPath, `files/${spec}`);
   },
 
   lines: function (spec: string, file: string): string[] {
-    return fs.readFileSync(ospath.join(fixturesPath, `files/${spec}/${file}.txt`), {encoding: "utf8"}).split("\n");
+    return fs.readFileSync(join(fixturesPath, `files/${spec}/${file}.txt`), {encoding: "utf8"}).split("\n");
   },
 
   json: function (spec: string): any {
-    const path = ospath.join(fixturesPath, `${spec}.json`);
+    const path = join(fixturesPath, `${spec}.json`);
     return JSON.parse(fs.readFileSync(path, {encoding: "utf8"}));
   },
 

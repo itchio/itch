@@ -130,9 +130,7 @@
   "scripts": {
     "start": "electron . --color",
     "install": "electron-rebuild",
-    "test": "npm run -s build-tests && npm run -s run-tests",
-    "run-tests": "electron tests/runner.js",
-    "run-tests-xvfb": "xvfb-run electron tests/runner.js",
+    "test": "electron src/tests/init.js",
     "i18n": "node release/ci-i18n-check.js"
   }
 }

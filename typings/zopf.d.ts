@@ -1,6 +1,6 @@
 
 declare module 'zopf' {
-  import {SinonSpy, SinonMock} from "sinon";
+  import {SinonSpy, SinonStub, SinonMock} from "sinon";
 
   interface ITest {
     /**
@@ -48,7 +48,7 @@ declare module 'zopf' {
     /**
      * Stub a method of a class for the duration of this test.
      */
-    stub(object: any, methodName: string): IStub;
+    stub(object: any, methodName: string): SinonStub;
 
     /**
      * Return a Sinon spy for an object's method
@@ -64,28 +64,6 @@ declare module 'zopf' {
      * Assert that a and b contain the same file paths (they're normalized for comparison)
      */
     samePaths(a: string[], b: string[]): void;
-  }
-
-  interface IStub {
-    /**
-     * Make this stub resolve (return asynchronously) with the given value.
-     */
-    resolves(value: any): void;
-
-    /**
-     * Make this stub reject (throw asynchronously) with the given value.
-     */
-    rejects(value: any): void;
-
-    /**
-     * Make this stub return the given value
-     */
-    returns(value: any): void;
-
-    /**
-     * Make this stub throw an error
-     */
-    throws(e: Error): void;
   }
 
   interface ITestStatic {

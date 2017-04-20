@@ -13,9 +13,9 @@ async function main () {
   process.env.ELECTRON_ENABLE_LOGGING = '1';
 
   if (process.platform === "linux") {
-    $(await $.yarn('run run-tests-xvfb'));
+    $(await $.sh('xvfb-run yarn test'));
   } else {
-    $(await $.yarn('run run-tests'));
+    $(await $.sh('yarn test'));
   }
 }
 
