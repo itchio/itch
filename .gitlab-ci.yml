@@ -1,4 +1,10 @@
 
+cache:
+  # per-job caching (per-branch would be wasteful)
+  key: "$CI_BUILD_NAME"
+  paths:
+    - node_modules
+
 stages:
   - build # tsc, node-sass etc.
   - package # .rpm, .deb, .dmg., .zip
