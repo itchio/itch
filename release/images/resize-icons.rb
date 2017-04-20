@@ -10,8 +10,8 @@ Dir["*-icons/"].each do |dir|
 end
 
 %w(itch kitch).each do |app|
-  system("cp -f #{app}-icons/icon256.png ../../appsrc/static/images/tray/#{app}.png")
-  system("cp -f #{app}-icons/icon16.png ../../appsrc/static/images/tray/#{app}-small.png")
+  system("cp -f #{app}-icons/icon256.png ../../src/static/images/tray/#{app}.png")
+  system("cp -f #{app}-icons/icon16.png ../../src/static/images/tray/#{app}-small.png")
 end
 
 puts "done - don't forget to optimize + .icns / .ico!"

@@ -8,14 +8,14 @@ const fs = bluebird.promisifyAll(require("fs"));
 const glob = bluebird.promisify(require("glob"));
 
 async function main() {
-  const localesContents = await fs.readFileAsync("appsrc/static/locales/en.json", {encoding: "utf8"});
+  const localesContents = await fs.readFileAsync("src/static/locales/en.json", {encoding: "utf8"});
   const strings = JSON.parse(localesContents);
   console.log("[info] en.json is valid json");
 
   let numberUndefined = 0;
   let numberUsed = 0;
 
-  const inputFiles = await glob("appsrc/**/*.@(ts|tsx)");
+  const inputFiles = await glob("src/**/*.@(ts|tsx)");
   const used = {};
 
   await bluebird.map(inputFiles, async (inputFile) => {

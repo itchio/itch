@@ -59,7 +59,7 @@ by the sandbox.
 
 Here's the policy template the itch app uses:
 
-  * <https://github.com/itchio/itch/blob/master/appsrc/constants/sandbox-policies/linux-template.js>
+  * <https://github.com/itchio/itch/blob/master/src/constants/sandbox-policies/linux-template.js>
 
 The default sandbox policy should be more than enough to get most games running,
 but if you run into an issue that you need help resolving, feel free to open

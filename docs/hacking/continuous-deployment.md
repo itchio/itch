@@ -54,7 +54,7 @@ As a result, the bleeding-edge version of this book is always available at:
 
 ### Unit tests & linting
 
-The codebase is covered by a certain amount of unit tests, in `appsrc/tests`.
+The codebase is covered by a certain amount of unit tests, in `src/tests`.
 
 On every commit, the CI executes all unit tests, and runs `tslint`
 command-line tool to make sure all our code conforms to our style rules.

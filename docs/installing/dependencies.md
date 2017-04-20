@@ -93,7 +93,7 @@ on [our CI server](https://git.itch.ovh/itchio/firejail-buildscripts)
 The logic for downloading, extracting and installing itch dependencies
 can be found in [ibrew.js][] and required files.
 
-[ibrew.js]: https://github.com/itchio/itch/blob/master/appsrc/util/ibrew.js
+[ibrew.js]: https://github.com/itchio/itch/blob/master/src/util/ibrew.js
 
 The authors are aware of the irony of having an ad-hoc, half-baked Implementation
 of a package manager inside a package managing application, itself installed by

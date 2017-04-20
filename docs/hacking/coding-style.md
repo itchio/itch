@@ -119,4 +119,4 @@ One file = one component, as default export.
 We have our own `connect` flavor that does state mapping and dispatch mapping,
 and adds `t` (in the `I18nProps` interface) for i18n.
 
-Look at `appsrc/components/proxy-settings.tsx` for a good example.
+Look at `src/components/proxy-settings.tsx` for a good example.

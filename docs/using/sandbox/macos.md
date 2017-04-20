@@ -11,7 +11,7 @@ It dynamically generates sandbox policy when launching a game, which:
 
 Here's the policy template the itch app uses:
 
-  * <https://github.com/itchio/itch/blob/master/appsrc/constants/sandbox-policies/macos-template.js>
+  * <https://github.com/itchio/itch/blob/master/src/constants/sandbox-policies/macos-template.js>
 
 ## Troubleshooting
 
