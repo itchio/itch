@@ -13,28 +13,41 @@ import watching, {Watcher} from "./watching";
 
 import Ink = require("react-ink");
 
-import {style, classes} from "typestyle";
 import * as styles from "./styles";
+import styled from "styled-components";
 
-const browserButtonStyle = style(styles.inkContainer, {
-  color: styles.colors.secondaryText,
-  fontSize: "20px",
-  width: "32px",
-  height: "32px",
-  lineHeight: "32px",
-  textAlign: "center",
-  borderRadius: "50%",
-  verticalAlign: "middle",
-});
+const BrowserControlsContainer = styled.span`
+  .icon {
+    ${styles.inkContainer()}
+    color: ${props => props.theme.secondaryText};
+    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    vertical-align: middle;
 
-const disabledButtonStyle = style({
-  filter: "brightness(50%)",
-  textShadow: "none",
-});
+    &:first-child {
+      padding-left: none;
+    }
 
-const loadingButtonStyle = style(
-  styles.horizontalScanMixin(),
-);
+    text-shadow: 0 0 1px;
+
+    @include clickable;
+
+    &.loading {
+      ${styles.horizontalScan()};
+    }
+
+    &.disabled {
+      -webkit-filter: brightness(50%);
+      text-shadow: none;
+    }
+
+    ${styles.inkContainer()}
+  }
+`;
 
 function isHTMLInput (el: HTMLElement): el is HTMLInputElement {
   return el.tagName === "INPUT";
@@ -100,23 +113,19 @@ export class BrowserControls extends React.Component<IProps & IDerivedProps & I1
 
     const addressClasses = classNames("browser-address", {frozen, visible: (!!url && !!url.length)});
 
-    return <div className="browser-controls">
-      <span className={classes("icon", "icon-arrow-left",
-          browserButtonStyle, !canGoBack && disabledButtonStyle)} onClick={() => goBack()}>
+    return <BrowserControlsContainer>
+      <span className={classNames("icon", "icon-arrow-left", {disabled: !canGoBack})} onClick={() => goBack()}>
         <Ink/>
       </span>
-      <span className={classes("icon", "icon-arrow-right",
-          browserButtonStyle, !canGoForward && disabledButtonStyle)} onClick={() => goForward()}>
+      <span className={classNames("icon", "icon-arrow-right", {disabled: !canGoForward})} onClick={() => goForward()}>
         <Ink/>
       </span>
       {
         loading
-        ? <span className={classes("icon", "icon-cross",
-              browserButtonStyle, loadingButtonStyle)} onClick={() => stop()}>
+        ? <span className={classNames("icon", "icon-cross", "loading")} onClick={() => stop()}>
             <Ink/>
           </span>
-        : <span className={classes("icon", "icon-repeat",
-              browserButtonStyle)} onClick={() => reload()}>
+        : <span className={classNames("icon", "icon-repeat")} onClick={() => reload()}>
             <Ink/>
           </span>
       }
@@ -131,10 +140,10 @@ export class BrowserControls extends React.Component<IProps & IDerivedProps & I1
       <span
           data-rh-at="right"
           data-rh={t("browser.popout")}
-          className={classes("icon", "icon-redo", browserButtonStyle)} onClick={() => this.popOutBrowser()}>
+          className={classNames("icon", "icon-redo")} onClick={() => this.popOutBrowser()}>
         <Ink/>
       </span>
-    </div>;
+    </BrowserControlsContainer>;
   }
 
   popOutBrowser () {

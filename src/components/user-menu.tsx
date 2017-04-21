@@ -15,11 +15,31 @@ import Icon from "./icon";
 
 import urls from "../constants/urls";
 
-import {classes} from "typestyle";
-import {
-  itemStyle, userMenuStyle,
-  fillerStyle,
-} from "./sidebar-styles";
+import styled from "styled-components";
+import {SidebarSection, SidebarHeading, Filler} from "./sidebar-styles";
+
+const UserMenuContainer = styled(SidebarSection)`
+  margin-right: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px 8px;
+
+  * {
+    flex-grow: 0;
+  }
+
+  .icon {
+    margin: 0;
+  }
+
+  img {
+    height: 2em;
+    width: 2em;
+    margin: 0 5px;
+    border-radius: 2px;
+  }
+`;
 
 class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
@@ -95,12 +115,12 @@ class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void>
     const {me} = this.props;
     const {coverUrl = defaultImages.avatar, username, displayName} = me;
 
-    return <section className={classes(itemStyle, userMenuStyle)}>
+    return <UserMenuContainer>
       <img src={coverUrl}/>
-      <span className="label">{username || displayName}</span>
-      <div className={fillerStyle}/>
+      <SidebarHeading>{username || displayName}</SidebarHeading>
+      <Filler/>
       <Icon icon="triangle-down" classes={["me-dropdown"]}/>
-    </section>;
+    </UserMenuContainer>;
   }
 }
 

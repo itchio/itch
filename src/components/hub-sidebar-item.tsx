@@ -1,5 +1,6 @@
 
 import * as React from "react";
+import * as classNames from "classnames";
 
 import {ILocalizedString, ITabData, IGameRecord} from "../types";
 import {ILocalizer} from "../localizer";
@@ -9,8 +10,91 @@ import Ink = require("react-ink");
 import LoadingCircle from "./loading-circle";
 import Icon from "./icon";
 
-import {classes} from "typestyle";
-import {itemStyle, freshItemStyle, activeItemStyle} from "./sidebar-styles";
+import styled from "styled-components";
+import {SidebarHeading} from "./sidebar-styles";
+import * as styles from "./styles";
+
+const SidebarItem = styled.section`
+  background: ${props => props.theme.sidebarBackground};
+  font-size: 14px;
+  border-radius: 0 4px 4px 0;
+  word-break: break-word;
+
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 2px 0;
+  margin-right: 0;
+  padding: 5px 8px 5px 10px;
+  min-height: 30px;
+
+  position: relative;
+
+  &.fresh {
+    animation: ${styles.animations.enterLeft} .3s ease-out;
+  }
+
+  &.active {
+    .icon-cross {
+      opacity: 1;
+      color: ${props => props.theme.secondaryText}
+
+      &:hover {
+        color: ${props => props.theme.secondaryTextHover}
+      }
+    }
+    
+    background: ${props => props.theme.sidebarEntryFocusedBackground}
+  }
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const IconContainer = styled.div`
+  width: 18px;
+  height: 16px;
+  margin-right: 4px;
+  text-align: center;
+
+  img {
+    width: 14px;
+    height: 14px;
+    margin-right: 2px;
+    border-radius: 2px;
+  }
+`;
+
+const ProgressOuter = styled.div`
+  ${styles.progress()}
+
+  width: 60px;
+  height: 4px;
+  margin: 4px 0 2px 10px;
+
+  &, .progress-inner {
+    border-radius: 4px;
+  }
+
+  .progress-inner {
+    background-color: white;
+  }
+`;
+
+const Bubble = styled.span`
+  font-size: 11px;
+  background: white;
+  border-radius: 2px;
+  color: ${props => props.theme.sidebarBackground};
+  font-weight: bold;
+  padding: 1px 6px;
+  margin-left: 8px;
+  white-space: nowrap;
+`;
 
 export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSidebarItemState> {
   constructor () {
@@ -41,44 +125,38 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
     const {fresh} = this.state;
     const {onClose, onContextMenu} = this.props;
 
-    const itemClass = classes(
-      itemStyle,
-      active && activeItemStyle,
-      fresh && freshItemStyle,
-    );
-
     const progressColor = "white";
     const progressStyle = {
       width: `${Math.max(0, Math.min(1, progress)) * 100}%`,
       backgroundColor: progressColor,
     };
 
-    return <section className={itemClass}
+    return <SidebarItem className={classNames({active, fresh})}
         data-rh-at="bottom"
         data-rh={t.format(sublabel)}
         onMouseUp={(e) => this.onMouseUp(e)}
         onContextMenu={onContextMenu}
         data-path={path}
         data-id={id}>
-      <div className="row">
+      <Row>
         <Ink/>
-        <div className="icon-container">
+        <IconContainer>
           {this.props.loading
             ? <LoadingCircle progress={0.3}/>
             : (this.props.iconImage
               ? <img className="icon-image" src={this.props.iconImage}/>
               : <Icon icon={this.props.icon || "tag"}/>)}
-        </div>
-        <span className="label">{t.format(label)}</span>
+        </IconContainer>
+        <SidebarHeading>{t.format(label)}</SidebarHeading>
         {count > 0
-          ? <span className="bubble">{count}</span>
+          ? <Bubble>{count}</Bubble>
           : null
         }
         <div className="filler"/>
         {progress > 0
-        ? <div className="progress-outer">
+        ? <ProgressOuter>
           <div className="progress-inner" style={progressStyle}/>
-        </div>
+        </ProgressOuter>
         : null}
         {onClose
           ? <span className="close-icon icon icon-cross" onClick={(e) => {
@@ -89,8 +167,8 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
           </span>
           : null
         }
-      </div>
-    </section>;
+      </Row>
+    </SidebarItem>;
   }
 
   componentDidMount () {

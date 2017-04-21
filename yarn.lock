@@ -1896,10 +1896,6 @@ formatio@1.1.1:
   dependencies:
     samsam "~1.1"
 
-free-style@2.3.1:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/free-style/-/free-style-2.3.1.tgz#ae256f7e78926bf034d2a51f4ba45715b4e6a709"
-
 fs-extra@^0.30.0:
   version "0.30.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-0.30.0.tgz#f233ffcc08d4da7d432daa449776989db1df93f0"
@@ -4492,12 +4488,6 @@ typedarray@~0.0.5:
 typescript@2.2.2, typescript@>=1.6:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.2.2.tgz#606022508479b55ffa368b58fee963a03dfd7b0c"
-
-typestyle@^1.3.2:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/typestyle/-/typestyle-1.3.2.tgz#c230cce7d3ffaa0f6316f6bf443af97121189219"
-  dependencies:
-    free-style "2.3.1"
 
 ua-parser-js@^0.7.9:
   version "0.7.12"

@@ -14,20 +14,20 @@ import watching, {Watcher} from "./watching";
 import * as actions from "../actions";
 import * as ospath from "path";
 
-import {style} from "typestyle";
+import styled from "styled-components";
 
-const reactHintContainerStyle = style({
-  pointerEvents: "none",
-});
+const ReactHintContainer = styled.div`
+  pointer-events: none;
+`;
 
-const layoutDraggableStyle = style({
-  "position": "absolute",
-  "left": 0,
-  "right": 0,
-  "top": 0,
-  "height": "40px",
-  "-webkit-app-region": "drag",
-});
+const LayoutDraggable = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 40px;
+  -webkit-app-region: drag;
+`;
 
 declare class Notification {
   onclick: () => void;
@@ -62,12 +62,12 @@ class Layout extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     return <div>
       <div>
-        <div className={layoutDraggableStyle}/>
+        <LayoutDraggable/>
         {this.main()}
         <StatusBar/>
-        <div className={reactHintContainerStyle}>
+        <ReactHintContainer>
           <ReactHint/>
-        </div>
+        </ReactHintContainer>
       </div>
     </div>;
   }

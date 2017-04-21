@@ -17,25 +17,30 @@ import Ink = require("react-ink");
 import Select = require("react-select");
 import Icon from "./icon";
 
-import {inkContainer} from "./styles";
-import {style, classes} from "typestyle";
+import styled, {css} from "styled-components";
+import * as styles from "./styles";
 
-const layoutPickerStyle = style(inkContainer, {
-  padding: "8px 10px",
-  borderRadius: "50%",
-  fontSize: "90%",
-  filter: "brightness(60%)",
-  $nest: {
-    "&:hover": {
-      cursor: "pointer",
-      filter: "brightness(80%)",
-    },
-  },
-});
+interface ILayoutPickerProps {
+  theme?: styles.ITheme;
+  active?: boolean;
+}
 
-const activeLayoutPickerStyle = style({
-  filter: "brightness(100%)",
-});
+const LayoutPicker = styled.section`
+  ${styles.inkContainer()}
+
+  padding: 8px 10px;
+  border-radius: 50%;
+  font-size: 90%;
+  filter: brightness(60%);
+  &:hover {
+    cursor: pointer;
+    filter: brightness(80%);
+  }
+
+  ${(props: ILayoutPickerProps) => props.active
+  ? css`filter: brightness(100%)`
+  : ""}
+`;
 
 @watching
 class GameFilters extends React.Component<IProps & IDerivedProps & I18nProps, void> {
@@ -156,13 +161,13 @@ class GameFilters extends React.Component<IProps & IDerivedProps & I18nProps, vo
   renderLayoutPicker (layout: TabLayout, icon: string) {
     const active = (this.props.layout === layout);
 
-    return <section className={classes(layoutPickerStyle, active && activeLayoutPickerStyle)}
+    return <LayoutPicker active={active}
       onClick={
       (e) => this.props.updatePreferences({layout})
     }>
       <Icon icon={icon}/>
       <Ink/>
-    </section>;
+    </LayoutPicker>;
   }
 
   onQueryChanged () {

@@ -27,18 +27,12 @@ import watching, {Watcher} from "./watching";
 
 import {SortableElement, SortableContainer, arrayMove} from "react-sortable-hoc";
 
-import {
-  itemContainerStyle,
-  titleBarPadderStyle,
-  logoStyle, logoImgStyle, 
-  h2Style, labelStyle, fillerStyle, actionStyle,
-} from "./sidebar-styles";
-import * as styles from "./styles";
-
 import styled from "styled-components";
+import * as styles from "./styles";
+import {SidebarSection, SidebarHeading, Filler} from "./sidebar-styles";
 
 const SidebarDiv = styled.div`
-  background: ${props => props.theme.sidebarBackgroundColor};
+  background: ${props => props.theme.sidebarBackground};
   font-size: ${styles.fontSizes.sidebar};
 
   width: ${props => props.width}px;
@@ -49,6 +43,41 @@ const SidebarDiv = styled.div`
   display: flex;
   align-items: stretch;
   flex-direction: column;
+`;
+
+const TitleBarPadder = styled.div`
+  flex-basis: 20px;
+  flex-shrink: 0;
+`;
+
+const Logo = styled.div`
+  text-align: center;
+  cursor: pointer;
+
+  img {
+    width: 120px;
+    margin: 10px 0;
+  }
+`;
+
+const SidebarItems = styled.div`
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex-grow: 1;
+`;
+
+const SidebarAction = styled.span`
+  ${styles.iconButton()}
+  ${styles.clickable()}
+
+  &:hover {
+    color: ${props => props.theme.secondaryTextHover},
+  }
+  margin-left: 6px;
 `;
 
 interface ISortEndParams {
@@ -179,14 +208,14 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
 
     return <SidebarDiv width={sidebarWidth}>
       {(osx && !fullscreen)
-      ? <div className={titleBarPadderStyle}/>
+      ? <TitleBarPadder/>
       : null}
 
-      <div className={logoStyle}
+      <Logo
           onClick={(e) => navigate("featured")}
           data-rh-at="bottom" data-rh={`itch v${appVersion}`}>
-        <img className={logoImgStyle} src={resolve(__dirname, "../static/images/logos/app-white.svg")}/>
-      </div>
+        <img src={resolve(__dirname, "../static/images/logos/app-white.svg")}/>
+      </Logo>
 
       <section className={searchClasses}>
         <input id="search" ref="search" type="search"
@@ -200,10 +229,10 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
         <span className="icon icon-search"/>
       </section>
 
-      <div className={itemContainerStyle}>
-        <h2 className={h2Style}>
-          <span className={labelStyle}>{t("sidebar.category.basics")}</span>
-        </h2>
+      <SidebarItems>
+        <SidebarSection>
+          <SidebarHeading>{t("sidebar.category.basics")}</SidebarHeading>
+        </SidebarSection>
         {map(tabs.constant, (id, index) => {
           const data = tabData[id] || {};
           const {path} = data;
@@ -220,24 +249,24 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
           return <HubSidebarItem key={id} {...props}/>;
         })}
 
-        <h2>
-          <span className={labelStyle}>{t("sidebar.category.tabs")}</span>
-          <div className={fillerStyle}/>
-          <span className={actionStyle}
+        <SidebarSection>
+          <SidebarHeading>{t("sidebar.category.tabs")}</SidebarHeading>
+          <Filler/>
+          <SidebarAction
               data-rh-at="top"
               data-rh={t("sidebar.close_all_tabs")}
               onClick={() => closeAllTabs({})}>
             <span className="icon icon-delete"/>
             <Ink/>
-          </span>
-          <span className={actionStyle}
+          </SidebarAction>
+          <SidebarAction
               data-rh-at="top"
               data-rh={t("sidebar.new_tab")}
               onClick={() => newTab({})}>
             <span className="icon icon-plus"/>
             <Ink/>
-          </span>
-        </h2>
+          </SidebarAction>
+        </SidebarSection>
 
         <SortableList items={this.state.transient}
           sidebarProps={this.props}
@@ -245,9 +274,9 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
           distance={5}
           lockAxis="y"
         />
-      </div>
+      </SidebarItems>
 
-      <section className={fillerStyle}/>
+      <Filler/>
 
       <UserMenu/>
     </SidebarDiv>;

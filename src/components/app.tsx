@@ -2,6 +2,8 @@
 import store from "../store/chrome-store";
 import * as React from "react";
 import {Provider} from "react-redux";
+import {ThemeProvider} from "styled-components";
+import {theme} from "./styles";
 
 import Layout from "./layout";
 import Modal from "./modal";
@@ -17,11 +19,13 @@ if (REDUX_DEVTOOLS_ENABLED) {
 export default class App extends React.Component<void, void> {
   render () {
     return <Provider store={store}>
-      <div>
-        <Layout/>
-        <Modal/>
-        {devTools}
-      </div>
+      <ThemeProvider theme={theme}>
+        <div>
+          <Layout/>
+          <Modal/>
+          {devTools}
+        </div>
+      </ThemeProvider>
     </Provider>;
   }
 }

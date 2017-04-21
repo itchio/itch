@@ -1,6 +1,6 @@
 
-import {keyframes, types} from "typestyle";
 import {color} from "csx";
+import {css, keyframes} from "styled-components";
 
 // colors
 
@@ -39,14 +39,32 @@ export const uiColors = {
 };
 
 export const colors = {
+  accent: baseColors.carnation,
+  lightAccent: baseColors.vividTangerine,
+
+  error: baseColors.flushMahogany,
+  warning: baseColors.mintJulep,
+  success: baseColors.gossip,
+
+  buy: baseColors.shamrock,
+  sale: baseColors.amber,
+  bundle: baseColors.heliotrope,
+
+  explanation: color("#464545"),
+
+  meatBackground: color("#333131"),
+
   inputBackground: uiColors.background,
   inputPlaceholder: baseColors.zambezi,
 
   inputBorder: uiColors.border,
   inputBorderFocused: uiColors.borderFocused,
 
+  inputBoxShadow: uiColors.boxShadow,
+
   sidebarBackground: baseColors.codGray,
-  sidebarEntryFocusedBackgroundColor: baseColors.codGray.lighten("10%"),
+  sidebarBorder: baseColors.lightMineShaft,
+  sidebarEntryFocusedBackground: baseColors.codGray.lighten("10%"),
 
   secondaryText: baseColors.silverChalice.darken("10%"),
   secondaryTextHover: baseColors.ivory.lighten("10%"),
@@ -58,100 +76,140 @@ export const fontSizes = {
   sidebar: "14px",
 };
 
+export const borderRadii = {
+  explanation: "4px",
+};
+
+export const theme = {
+  ...colors,
+  baseColors,
+  uiColors,
+  fontSizes,
+  borderRadii,
+};
+
+export type ITheme = typeof theme;
+export interface IThemeProps {
+  theme: ITheme;
+}
+
 // animations
 
 export const animations = {
-  horizontalScan: keyframes({
-    "0%": {
-      backgroundPosition: "0em 0",
-    },
-    "100%": {
-      backgroundPosition: "1em 0",
-    },
-  }),
+  horizontalScan: keyframes`
+    0% {
+      background-position: 0em 0;
+    }
+    100% {
+      background-position: 1em 0;
+    }
+  `,
 
-  enterLeft: keyframes({
-    "0%": {
-      transform: "translateX(-100%)",
-    },
-    "100%": {
-      transform: "translateX(0%)",
-    },
-  }),
+  enterLeft: keyframes`
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0%);
+    }
+  `,
 };
 
 // styles
 
-export const inkContainer = <types.NestedCSSProperties> {
-  position: "relative",
-};
+export const inkContainer = () => css`
+  position: relative;
+`;
 
-export const heavyInput = <types.NestedCSSProperties> {
-  // fontSize: fontSizes.baseText,
-  // padding: "12px 10px 9px 10px",
-  // margin: "8px 4px",
+export const heavyInput = () => css`
+  font-size: ${props => props.theme.fontSizes.baseText};
+  padding: 12px 10px 9px 10px;
+  margin: 8px 4px;
 
-  // border: `2px solid ${colors.inputBorder}`,
-  // borderRadius: "4px 2px 4px 2px",
+  border: 2px solid ${props => props.theme.inputBorder};
+  border-radius: 4px 2px 4px 2px;
 
-  // backgroundColor: colors.inputBackground,
-  // color: colors.inputText,
+  background-color: ${props => props.theme.inputBackground};
+  color: ${props => props.theme.inputText};
 
-  // textShadow: `0 0 2px ${colors.inputTextShadow}`,
-  // boxShadow: `0 0 2px ${colors.inputBoxShadow}`,
+  text-shadow: 0 0 2px ${props => props.theme.inputTextShadow};
+  box-shadow: 0 0 2px ${props => props.theme.inputBoxShadow};
 
-  // $nest: {
-  //   "&::-webkit-input-placeholder": {
-  //     textShadow: `0 0 2px transparent`,
-  //     color: colors.inputPlaceholder.toString(),
-  //   },
-  //   "&:focus": {
-  //     borderColor: colors.inputFocusedBorder,
-  //     boxShadow: colors.,
-  //   },
-  // },
-};
+  &::-webkit-input-placeholder {
+    text-shadow: 0 0 2px transparent;
+    color: ${props => props.theme.inputPlaceholder};
+  }
 
-export const iconButton = <types.NestedCSSProperties> {
-  position: "relative",
-  borderRadius: "50%",
-  padding: "5px",
-  margin: "-2px",
-  $nest: {
-    "&:hover": {
-      // color: colors.secondaryTextHover.toString(),
-    },
-  },
-};
+  &:focus {
+    border-color: ${props => props.theme.inputBorderFocused};
+    box-shadow: 0 0 2px ${props => props.theme.inputBoxShadowFocused};
+    outline: 0;
+  }
+`;
 
-export const clickable = <types.NestedCSSProperties> {
-  filter: "brightness(90%)",
-  $nest: {
-    "&:hover": {
-      filter: "brightness(110%)",
-      cursor: "pointer",
-    },
-    "&:active": {
-      transform: "translateY(2px)",
-    },
-  },
-};
+export const iconButton = () => css`
+  position: relative;
+  border-radius: 50%;
+  padding: 5px;
+  margin: -2px;
+
+  &:hover {
+    color: ${props => props.theme.secondaryTextHover}
+  }
+`;
+
+export const clickable = () => css`
+  -webkit-filter: brightness(90%);
+
+  &:hover {
+    -webkit-filter: brightness(110%);
+    cursor: pointer;
+  }
+
+  &:active {
+    transform: translateY(2px);
+  }
+`;
+
+const downloadProgressColorOut = "rgba(165, 165, 165, 0.47)";
+const downloadProgressColorInA = "rgba(255, 255, 255, .1)";
+const downloadProgressColorInB = "rgba(255, 255, 255, .4)";
+
+export const progress = () => css`
+  position: relative;
+  height: 3px;
+  width: 100%;
+
+  background: ${downloadProgressColorOut};
+  transition: background 1s;
+
+  .progress-inner {
+    position: absolute;
+    transition: width .3s;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: ${props => props.theme.accent};
+    background-image: -webkit-repeating-linear-gradient(
+    -60deg,
+    ${downloadProgressColorInA} 0,
+    ${downloadProgressColorInA} 4px,
+    ${downloadProgressColorInB} 4px,
+    ${downloadProgressColorInB} 8px);
+  }
+`;
 
 // mixins
 
-export const horizontalScanMixin = (
-    dark = colors.secondaryText,
-    light = colors.secondaryTextHover): types.NestedCSSProperties => ({
-  background: `-webkit-linear-gradient(
+export const horizontalScan = () => css`
+  background: -webkit-linear-gradient(
     left,
-    ${light} 0%,
-    ${light} 50%,
-    ${dark} 50%,
-  )`,
-  backgroundSize: "200% 100%",
-  animationName: animations.horizontalScan,
-  animationDuration: "2s",
-  animationIterationCount: "infinite",
-  backgroundClip: "text",
-  "-webkit-text-fill-color": "transparent",
-});
+    ${props => props.theme.secondaryTextHover} 0%
+    ${props => props.theme.secondaryTextHover} 50%
+    ${props => props.theme.secondaryText} 50%
+  );
+  background-size: 200% 100%;
+  animation: horizontal-scan 2s infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
