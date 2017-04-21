@@ -11,15 +11,25 @@ let FIRST_EVER_RENDER = true;
 import {ICredentials} from "../types";
 import {dispatcher} from "../constants/action-types";
 
+import styled from "styled-components";
+
+const ContentContainer = styled.div`
+  border-left: 1px solid ${props => props.theme.sidebarBorder};
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+`;
+
 export class HubContent extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     if (!this.props.credentials) {
       return <div/>;
     }
 
-    return <div className="hub-content">
+    return <ContentContainer>
       <HubMeat/>
-    </div>;
+    </ContentContainer>;
   }
 
   componentDidMount() {

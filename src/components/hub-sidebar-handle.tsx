@@ -6,8 +6,21 @@ import * as actions from "../actions";
 
 import {dispatcher} from "../constants/action-types";
 
-class HubSidebarHandle extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+import styled from "styled-components";
 
+const HandleDiv = styled.div`
+  background: $sidebar-background-color;
+  height: '100%';
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 8px;
+
+  &:hover {
+    cursor: col-resize;
+  }
+`;
+
+class HubSidebarHandle extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -17,7 +30,7 @@ class HubSidebarHandle extends React.Component<IProps & IDerivedProps & I18nProp
   }
 
   render () {
-    return <div className="hub-sidebar-handle" onMouseDown={this.handleMouseDown}/>;
+    return <HandleDiv onMouseDown={this.handleMouseDown}/>;
   }
 
   componentDidMount () {

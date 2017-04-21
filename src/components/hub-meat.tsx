@@ -23,11 +23,35 @@ import {sortBy, map} from "underscore";
 
 import {IAppState, ITabs, ITabDataSet, ITabData} from "../types";
 
+import styled from "styled-components";
+
+const MeatContainer = styled.div`
+  flex-shrink: 1;
+  flex-grow: 1;
+`;
+
+const MeatTab = styled.div`
+  visibility: hidden;
+  opacity: 0;
+  display: flex;
+  flex: 0 1;
+  width: 100%;
+  height: 0px;
+
+  &.visible {
+    visibility: visible;
+    opacity: 1;
+    display: flex;
+    flex: 1 1;
+    height: 100%;
+  }
+`;
+
 export class HubMeat extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {tabData, tabs, id: currentId} = this.props;
 
-    return <div className="hub-meat">
+    return <MeatContainer>
       {map(sortBy(tabs, (x) => x), (id) => {
         const data = tabData[id];
         if (!data) {
@@ -35,13 +59,12 @@ export class HubMeat extends React.Component<IProps & IDerivedProps & I18nProps,
         }
         const {path} = data;
         const visible = (id === currentId);
-        const classes = classNames("hub-meat-tab", {visible});
-        return <div key={id} className={classes}>
+        return <MeatTab key={id} className={classNames({visible})}>
           {this.renderTab(id, path, data, visible)}
-        </div>;
+        </MeatTab>;
       })}
       <HubSearchResults/>
-    </div>;
+    </MeatContainer>;
   }
 
   renderTab (tabId: string, path: string, data: ITabData, visible: boolean): JSX.Element {
