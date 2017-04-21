@@ -4,17 +4,11 @@ import "./boot/env";
 import "./boot/bluebird";
 import "./boot/fs";
 import "./boot/env";
-import "./boot/sniff-language";
-
-import store from "./store/chrome-store";
 
 import os from "./util/os";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-
-import setupShortcuts from "./shortcuts";
-setupShortcuts(store);
 
 let AppContainer: React.ComponentClass<void> = null;
 try {

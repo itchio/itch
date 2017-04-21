@@ -10,7 +10,7 @@ import * as actions from "../actions";
 import urlParser from "../util/url";
 import navigation from "../util/navigation";
 import partitionForUser from "../util/partition-for-user";
-import injectPath from "../util/inject-path";
+import {getInjectPath} from "../util/resources";
 
 import staticTabData from "../constants/static-tab-data";
 
@@ -37,6 +37,49 @@ import {ITabData, IAppState} from "../types";
 import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
 
 import "electron";
+
+import styled from "./styles";
+
+const BrowserMeatContainer = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+const BrowserMain = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+`;
+
+export const BrowserContextContainer = styled.div`
+  flex-basis: 240px;
+  background: $sidebar-background-color;
+
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+`;
+
+const WebviewShell = styled.div`
+  background: white;
+
+  &.fresh {
+    background-color: #292727;
+    background-image: url("../static/images/logos/app-white.svg");
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+  }
+
+  &, webview {
+    display: flex;
+    flex: 1 1;
+  }
+
+  webview {
+    margin-right: -1px;
+  }
+`;
 
 interface IHistoryEntry {
   url: string;
@@ -361,7 +404,7 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
 
     wv.partition = partition;
     wv.plugins = "on";
-    wv.preload = injectPath("itchio-monkeypatch");
+    wv.preload = getInjectPath("itchio-monkeypatch");
 
     const callbackSetup = () => {
       wv.addEventListener("did-start-loading", this.didStartLoading.bind(this));
@@ -425,17 +468,17 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
       context = <GameBrowserContext {...controlProps}/>;
     }
 
-    const shellClasses = classNames("webview-shell", {
-      ["first-load"]: this.state.browserState.firstLoad,
+    const shellClasses = classNames({
+      fresh: this.state.browserState.firstLoad,
     });
 
-    return <div className="browser-meat">
+    return <BrowserMeatContainer>
       <BrowserBar {...controlProps}/>
-      <div className="browser-main">
-        <div className={shellClasses} ref="webviewShell"></div>
+      <BrowserMain>
+        <WebviewShell className={shellClasses} ref="webviewShell"/>
         {context}
-      </div>
-    </div>;
+      </BrowserMain>
+    </BrowserMeatContainer>;
   }
 
   with (cb: (wv: Electron.WebViewElement, wc: Electron.WebContents) => void, opts = {insist: false}) {

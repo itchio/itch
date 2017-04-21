@@ -1,5 +1,11 @@
 
+import "../boot/sniff-language";
+
 import store from "../store/chrome-store";
+
+import setupShortcuts from "../shortcuts";
+setupShortcuts(store);
+
 import * as React from "react";
 import {Provider} from "react-redux";
 
