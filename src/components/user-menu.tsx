@@ -15,7 +15,7 @@ import Icon from "./icon";
 
 import urls from "../constants/urls";
 
-import styled from "styled-components";
+import styled from "./styles";
 import {SidebarSection, SidebarHeading, Filler} from "./sidebar-styles";
 
 const UserMenuContainer = styled(SidebarSection)`

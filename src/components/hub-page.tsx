@@ -5,7 +5,7 @@ import HubSidebar from "./hub-sidebar";
 import HubSidebarHandle from "./hub-sidebar-handle";
 import HubContent from "./hub-content";
 
-import styled from "styled-components";
+import styled from "./styles";
 
 const HubPageContainer = styled.div`
   overflow: hidden;

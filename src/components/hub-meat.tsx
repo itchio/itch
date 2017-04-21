@@ -23,7 +23,7 @@ import {sortBy, map} from "underscore";
 
 import {IAppState, ITabs, ITabDataSet, ITabData} from "../types";
 
-import styled from "styled-components";
+import styled from "./styles";
 
 const MeatContainer = styled.div`
   flex-shrink: 1;

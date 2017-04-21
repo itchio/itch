@@ -14,7 +14,17 @@ import watching, {Watcher} from "./watching";
 import * as actions from "../actions";
 import * as ospath from "path";
 
-import styled from "styled-components";
+import styled from "./styles";
+
+const LayoutContainer = styled.div`
+  background: ${props => props.theme.baseBackground};
+  color: ${props => props.theme.baseText};
+  font-size: ${props => props.theme.fontSizes.baseText};
+
+  &, input {
+    font-family: LatoWeb, sans-serif;
+  }
+`;
 
 const ReactHintContainer = styled.div`
   pointer-events: none;
@@ -60,16 +70,14 @@ class Layout extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   }
 
   render () {
-    return <div>
-      <div>
-        <LayoutDraggable/>
-        {this.main()}
-        <StatusBar/>
-        <ReactHintContainer>
-          <ReactHint/>
-        </ReactHintContainer>
-      </div>
-    </div>;
+    return <LayoutContainer>
+      <LayoutDraggable/>
+      {this.main()}
+      <StatusBar/>
+      <ReactHintContainer>
+        <ReactHint/>
+      </ReactHintContainer>
+    </LayoutContainer>;
   }
 
   main () {

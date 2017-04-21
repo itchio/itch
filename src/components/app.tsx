@@ -2,11 +2,32 @@
 import store from "../store/chrome-store";
 import * as React from "react";
 import {Provider} from "react-redux";
-import {ThemeProvider} from "styled-components";
-import {theme} from "./styles";
 
 import Layout from "./layout";
 import Modal from "./modal";
+
+import {ThemeProvider, injectGlobal, theme} from "./styles";
+
+// tslint:disable-next-line
+injectGlobal`
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    -webkit-user-select: none;
+  }
+
+  body {
+    font-size: $base-text-size;
+    color: $base-text-color;
+  }
+
+  body, input {
+    font-family: LatoWeb, sans-serif;
+  }
+`;
 
 const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === "1";
 

@@ -13,8 +13,7 @@ import watching, {Watcher} from "./watching";
 
 import Ink = require("react-ink");
 
-import * as styles from "./styles";
-import styled from "styled-components";
+import styled, * as styles from "./styles";
 
 const BrowserControlsContainer = styled.span`
   .icon {

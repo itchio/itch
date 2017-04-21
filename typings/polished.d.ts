@@ -1,0 +1,13 @@
+
+interface PolishedStatic {
+  lighten(amount: number, color: string): string
+  darken(amount: number, color: string): string
+}
+
+/**
+ * Typings for https://github.com/styled-components/polished
+ */
+declare module 'polished' {
+  var polished: PolishedStatic;
+  export = polished;
+}

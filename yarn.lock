@@ -3133,6 +3133,10 @@ pinkie@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
 
+polished@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/polished/-/polished-1.0.3.tgz#e34276239f0af08990aaa02f8475b9ec72e83e39"
+
 postcss-calc@^5.2.0:
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/postcss-calc/-/postcss-calc-5.3.1.tgz#77bae7ca928ad85716e2fda42f261bf7c1d65b5e"

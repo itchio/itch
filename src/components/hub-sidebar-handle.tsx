@@ -6,7 +6,7 @@ import * as actions from "../actions";
 
 import {dispatcher} from "../constants/action-types";
 
-import styled from "styled-components";
+import styled from "./styles";
 
 const HandleDiv = styled.div`
   background: $sidebar-background-color;

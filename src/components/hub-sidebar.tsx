@@ -27,8 +27,7 @@ import watching, {Watcher} from "./watching";
 
 import {SortableElement, SortableContainer, arrayMove} from "react-sortable-hoc";
 
-import styled from "styled-components";
-import * as styles from "./styles";
+import styled, * as styles from "./styles";
 import {SidebarSection, SidebarHeading, Filler} from "./sidebar-styles";
 
 const SidebarDiv = styled.div`

@@ -11,7 +11,7 @@ let FIRST_EVER_RENDER = true;
 import {ICredentials} from "../types";
 import {dispatcher} from "../constants/action-types";
 
-import styled from "styled-components";
+import styled from "./styles";
 
 const ContentContainer = styled.div`
   border-left: 1px solid ${props => props.theme.sidebarBorder};

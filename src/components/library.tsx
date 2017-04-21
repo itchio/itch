@@ -9,6 +9,8 @@ import {map, filter, uniq, indexBy, sortBy} from "underscore";
 
 import {IAppState, ICaveRecord, IGameRecord, IDownloadKey} from "../types";
 
+import styled, * as styles from "./styles";
+
 function recency (cave: ICaveRecord): number {
   const timestamp = cave.lastTouched || cave.installedAt;
   if (timestamp) {
@@ -17,6 +19,10 @@ function recency (cave: ICaveRecord): number {
 
   return 0;
 };
+
+const LibraryContainer = styled.div`
+  ${styles.meat()}
+`;
 
 export class Library extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
@@ -57,13 +63,13 @@ export class Library extends React.Component<IProps & IDerivedProps & I18nProps,
 
     const tab = "library";
 
-    return <div className="library-meat">
+    return <LibraryContainer>
       <GameFilters tab={tab}/>
       {installedGames.length > 0 || ownedGames.length > 0
         ? <Games games={games} tab={tab}/>
         : ""
       }
-    </div>;
+    </LibraryContainer>;
   }
 }
 

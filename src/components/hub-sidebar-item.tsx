@@ -10,9 +10,8 @@ import Ink = require("react-ink");
 import LoadingCircle from "./loading-circle";
 import Icon from "./icon";
 
-import styled from "styled-components";
 import {SidebarHeading} from "./sidebar-styles";
-import * as styles from "./styles";
+import styled, * as styles from "./styles";
 
 const SidebarItem = styled.section`
   background: ${props => props.theme.sidebarBackground};

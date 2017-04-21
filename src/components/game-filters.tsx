@@ -17,13 +17,118 @@ import Ink = require("react-ink");
 import Select = require("react-select");
 import Icon from "./icon";
 
-import styled, {css} from "styled-components";
-import * as styles from "./styles";
+import styled, * as styles from "./styles";
+import {css} from "./styles";
 
 interface ILayoutPickerProps {
   theme?: styles.ITheme;
   active?: boolean;
 }
+
+const FiltersContainer = styled.section`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: $bread-background-color;
+  box-shadow: 0 4px 8px -4px $bread-background-color;
+  flex-shrink: 0;
+  padding-right: 4px;
+  min-height: 40px;
+`;
+
+const Filler = styled.div`
+  flex-grow: 1;
+`;
+
+const TagFilters = styled.section`
+  margin: 4px 8px;
+
+  .Select {
+    width: auto;
+    min-width: 350px;
+    font-size: 14px;
+
+    &.Select--multi {
+      .Select-value {
+        background-color: rgba(97, 97, 97, 0.7);
+        color: #d8d8d8;
+
+        &, .Select-value-icon {
+          border-color: transparent;
+        }
+
+        .Select-value-label {
+          font-size: 14px;
+          line-height: 1.6;
+        }
+
+        .Select-value-icon {
+          font-size: 18px;
+          padding: 1px 3px 0px 5px;
+
+          &:hover, &:focus {
+            color: white;
+            background-color: rgba(97, 97, 97, 0.5)
+          }
+        }
+      }
+
+      .Select-input input {
+        color: white;
+        margin-top: 5px;
+      }
+
+      .Select-control {
+        height: 40px;
+
+        // I know, I know, !important is bad. but it *is* important.
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+
+        .Select-placeholder {
+          line-height: 40px;
+        }
+      }
+    }
+  }
+`;
+
+const Search = styled.section`
+  margin: 8px 8px;
+  position: relative;
+  padding: 0;
+
+  .icon-filter {
+    position: absolute;
+    left: 10px;
+    bottom: 50%;
+    transform: translateY(55%);
+    font-size: 14px;
+    color: ${props => props.theme.inputPlaceholder};
+    pointer-events: none;
+
+    &.active {
+      color: $light-accent-color;
+    }
+  }
+
+  /* FIXME: that's pretty bad */
+  input[type=search] {
+    border: 2px solid #404040;
+    border-radius: 4px 2px 4px 2px;
+    background-color: #2D2B2B;
+    color: #D4CECE;
+    text-shadow: 0 0 2px black;
+    box-shadow: 0 0 2px #1B1919;
+    transition: all 0.2s;
+    width: 200px;
+    text-indent: 18px;
+    padding: 6px 10px 5px 9px;
+    height: 32px;
+    font-size: 14px;
+  }
+`;
 
 const LayoutPicker = styled.section`
   ${styles.inkContainer()}
@@ -107,18 +212,18 @@ class GameFilters extends React.Component<IProps & IDerivedProps & I18nProps, vo
       value.push(installedOption);
     }
 
-    return <section className="filters">
-      <section className="search">
+    return <FiltersContainer>
+      <Search>
         <input className="filter-input-field" ref="search" type="search" defaultValue={filterQuery}
           placeholder={t("grid.criterion.search")}
           onKeyPress={this.onQueryChanged}
           onKeyUp={this.onQueryChanged}
           onChange={this.onQueryChanged}/>
         <span className={classNames("icon", "icon-filter", { active: !!filterQuery })} />
-      </section>
+      </Search>
       
       {showBinaryFilters
-      ? <section className="tag-filters">
+      ? <TagFilters>
         <Select
           multi={true}
           options={options}
@@ -140,15 +245,15 @@ class GameFilters extends React.Component<IProps & IDerivedProps & I18nProps, vo
             this.props.updatePreferences(prefs);
           }}
           placeholder={t("grid.criterion.filter")}/>
-      </section>
+      </TagFilters>
       : null }
 
       {this.props.children}
-      <section className="spacer"/>
+      <Filler/>
       {showLayoutPicker
       ? this.renderLayoutPickers()
       : null}
-    </section>;
+    </FiltersContainer>;
   }
 
   renderLayoutPickers () {

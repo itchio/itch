@@ -1,41 +1,40 @@
 
-import {color} from "csx";
-import {css, keyframes} from "styled-components";
+import {lighten, darken} from "polished";
 
 // colors
 
 export const baseColors = {
-  codGray: color("#1d1c1c"),
-  darkMineShaft: color("#2e2b2c"),
-  lightMineShaft: color("#383434"),
-  zambezi: color("#5d5757"),
-  silverChalice: color("#a0a0a0"),
-  swissCoffee: color("#dad2d2"),
-  ivory: color("#fffff0"),
+  codGray: "#1d1c1c",
+  darkMineShaft: "#2e2b2c",
+  lightMineShaft: "#383434",
+  zambezi: "#5d5757",
+  silverChalice: "#a0a0a0",
+  swissCoffee: "#dad2d2",
+  ivory: "#fffff0",
 
-  flushMahogany: color("#d14343"),
-  mintJulep: color("#efeebf"),
-  gossip: color("#b9e8a1"),
+  flushMahogany: "#d14343",
+  mintJulep: "#efeebf",
+  gossip: "#b9e8a1",
 
-  shamrock: color("#24c091"),
-  amber: color("#ffc200"),
-  heliotrope: color("#c17dff"),
+  shamrock: "#24c091",
+  amber: "#ffc200",
+  heliotrope: "#c17dff",
 
-  carnation: color("#fa5c5c"),
-  vividTangerine: color("#ff8080"),
+  carnation: "#fa5c5c",
+  vividTangerine: "#ff8080",
 };
 
 export const uiColors = {
-  background: color("#2d2b2b"),
+  background: "#2d2b2b",
 
-  border: color("#404040"),
-  borderFocused: color("#676767"),
+  border: "#404040",
+  borderFocused: "#676767",
 
   prefBorder: baseColors.zambezi,
 
   // FIXME: no pure blacks
-  textShadow: color("#000000"),
-  boxShadow: color("#1b1919"),
+  textShadow: "#000000",
+  boxShadow: "#1b1919",
 };
 
 export const colors = {
@@ -50,30 +49,37 @@ export const colors = {
   sale: baseColors.amber,
   bundle: baseColors.heliotrope,
 
-  explanation: color("#464545"),
+  explanation: "#464545",
 
-  meatBackground: color("#333131"),
+  meatBackground: "#333131",
+
+  baseBackground: baseColors.darkMineShaft,
+  baseText: baseColors.ivory,
 
   inputBackground: uiColors.background,
+  inputText: "#d4cece",
   inputPlaceholder: baseColors.zambezi,
 
   inputBorder: uiColors.border,
   inputBorderFocused: uiColors.borderFocused,
 
+  inputTextShadow: uiColors.textShadow,
   inputBoxShadow: uiColors.boxShadow,
+  inputBoxShadowFocused: "#1b1919",
 
   sidebarBackground: baseColors.codGray,
   sidebarBorder: baseColors.lightMineShaft,
-  sidebarEntryFocusedBackground: baseColors.codGray.lighten("10%"),
+  sidebarEntryFocusedBackground: lighten(0.1, baseColors.codGray),
 
-  secondaryText: baseColors.silverChalice.darken("10%"),
-  secondaryTextHover: baseColors.ivory.lighten("10%"),
+  secondaryText: darken(0.1, baseColors.silverChalice),
+  secondaryTextHover: lighten(0.1, baseColors.ivory),
 
   ternaryText: baseColors.zambezi,
 };
 
 export const fontSizes = {
   sidebar: "14px",
+  baseText: "16px",
 };
 
 export const borderRadii = {
@@ -82,8 +88,6 @@ export const borderRadii = {
 
 export const theme = {
   ...colors,
-  baseColors,
-  uiColors,
   fontSizes,
   borderRadii,
 };
@@ -92,6 +96,19 @@ export type ITheme = typeof theme;
 export interface IThemeProps {
   theme: ITheme;
 }
+
+import * as styledComponents from "styled-components";
+import { ThemedStyledComponentsModule } from "styled-components";
+const {
+    default: styled,
+    css,
+    injectGlobal,
+    keyframes,
+    ThemeProvider,
+} = styledComponents as ThemedStyledComponentsModule<ITheme>;
+
+export default styled;
+export { css, injectGlobal, keyframes, ThemeProvider };
 
 // animations
 
@@ -115,7 +132,7 @@ export const animations = {
   `,
 };
 
-// styles
+// mixins
 
 export const inkContainer = () => css`
   position: relative;
@@ -199,8 +216,6 @@ export const progress = () => css`
   }
 `;
 
-// mixins
-
 export const horizontalScan = () => css`
   background: -webkit-linear-gradient(
     left,
@@ -212,4 +227,12 @@ export const horizontalScan = () => css`
   animation: horizontal-scan 2s infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+`;
+
+export const meat = () => css`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: hidden;
 `;
