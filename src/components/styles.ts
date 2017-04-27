@@ -71,6 +71,8 @@ export const colors = {
   sidebarBorder: baseColors.lightMineShaft,
   sidebarEntryFocusedBackground: lighten(0.1, baseColors.codGray),
 
+  dropdownBackground: lighten(0.15, baseColors.codGray),
+
   secondaryText: darken(0.1, baseColors.silverChalice),
   secondaryTextHover: lighten(0.1, baseColors.ivory),
 

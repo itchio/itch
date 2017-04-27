@@ -33,6 +33,10 @@ injectGlobal`
   body, input {
     font-family: LatoWeb, sans-serif;
   }
+
+  * {
+    box-sizing: border-box;
+  }
 `;
 
 const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === "1";

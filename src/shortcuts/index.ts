@@ -20,6 +20,13 @@ function openDevTools () {
 }
 
 export default function setupShortcuts (store: IStore) {
+  const winAny = window as any;
+  if (winAny.__hasShortcuts) {
+    return;
+  }
+
+  winAny.__hasShortcuts = true;
+
   // dev shortcuts
   combo.bindGlobal(["shift+f12", "ctrl+shift+c", "command+shift+c"], openDevTools);
   combo.bindGlobal(["shift+f5", "shift+command+r"], () => window.location.reload());

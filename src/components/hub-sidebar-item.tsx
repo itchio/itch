@@ -11,6 +11,8 @@ import LoadingCircle from "./loading-circle";
 import Icon from "./icon";
 
 import styled, * as styles from "./styles";
+import {Filler} from "./sidebar-styles";
+import {darken} from "polished";
 
 const ItemHeading = styled.div`
     ${styles.singleLine()};
@@ -48,6 +50,16 @@ const SidebarItem = styled.section`
     }
     
     background: ${props => props.theme.sidebarEntryFocusedBackground}
+  }
+
+  &:hover {
+    cursor: pointer;
+    background: ${props => darken(0.05, props.theme.sidebarEntryFocusedBackground)};
+    color: ${props => props.theme.baseText};
+
+    .icon-cross {
+      opacity: 1;
+    }
   }
 `;
 
@@ -155,7 +167,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
           ? <Bubble>{count}</Bubble>
           : null
         }
-        <div className="filler"/>
+        <Filler/>
         {progress > 0
         ? <ProgressOuter>
           <div className="progress-inner" style={progressStyle}/>

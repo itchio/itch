@@ -10,6 +10,67 @@ import {map} from "underscore";
 
 import {ILocalizedString} from "../types";
 
+import styled from "./styles";
+import {lighten} from "polished";
+
+const DropdownContainer = styled.div`
+  position: relative;
+
+  &.disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+`;
+
+const DropdownDiv = styled.div`
+  background-color: ${props => lighten(.05, props.theme.sidebarBackground)};
+  border: 1px solid ${props => props.theme.dropdownBackground};
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 1px;
+  visibility: hidden;
+
+  &.updown {
+    top: initial;
+    bottom: 60px;
+  }
+
+  &.active {
+    visibility: visible;
+  }
+`;
+
+const DropdownItem = styled.div`
+  border-radius: 1px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 10px 8px 10px 3px;
+  line-height: 1.4;
+  font-size: 14px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: ${props => props.theme.sidebarBackground};
+  }
+
+  .icon {
+    margin: 0 8px;
+  }
+
+  &.type-info {
+    color: #6D6D6D;
+  }
+
+  &.type-separator {
+    height: 1px;
+    padding: 0;
+    background: #444242;
+  }
+`;
+
 const noop = () => { /* muffin */ };
 
 export class Dropdown extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
@@ -19,22 +80,22 @@ export class Dropdown extends React.Component<IProps & IDerivedProps & I18nProps
   }
 
   render () {
-    const {t, items, inner, className = "dropdown-container", updown = false} = this.props;
+    const {t, items, inner, className, updown = false} = this.props;
 
     const {open} = this.state;
     const containerClasses = classNames(className, {disabled: items.length === 0});
-    const dropdownClasses = classNames("dropdown", {active: open, updown});
+    const dropdownClasses = classNames({active: open, updown});
 
     const children = map(items, (item, index) => {
       const {label, icon, type, onClick = noop} = item;
-      const itemClasses = classNames("dropdown-item", `type-${type}`);
+      const itemClasses = classNames(`type-${type}`);
 
       const key = (type === "separator") ? ("separator-" + index) : (label + "-" + icon);
 
-      return <section className={itemClasses} key={key} onClick={() => { onClick(); this.close(); }}>
+      return <DropdownItem className={itemClasses} key={key} onClick={() => { onClick(); this.close(); }}>
         <Icon icon={icon}/>
         {t.format(label)}
-      </section>;
+      </DropdownItem>;
     });
 
     let innerClasses = "";
@@ -42,19 +103,20 @@ export class Dropdown extends React.Component<IProps & IDerivedProps & I18nProps
       innerClasses += "flipped";
     }
 
-    const innerC = <div className={innerClasses} onClick={this.toggle.bind(this)}>{inner}</div>;
-    const childrenC = <div className={dropdownClasses}>
+    const toggle = this.toggle.bind(this);
+    const innerC = <div className={innerClasses} onClick={toggle}>{inner}</div>;
+    const childrenC = <DropdownDiv className={dropdownClasses}>
       {children}
-    </div>;
+    </DropdownDiv>;
 
-    return <div style={{position: "relative"}} className={containerClasses}>
+    return <DropdownContainer style={{position: "relative"}} className={containerClasses}>
       <div className="dropdown-container">
       {updown
         ? [childrenC, innerC]
         : [innerC, childrenC]
       }
       </div>
-    </div>;
+    </DropdownContainer>;
   }
 
   toggle () {

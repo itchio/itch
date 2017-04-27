@@ -39,6 +39,10 @@ const UserMenuContainer = styled(SidebarSection)`
     margin: 0 5px;
     border-radius: 2px;
   }
+
+  .flipped .me-dropdown {
+    transform: rotateX(180deg);
+  }
 `;
 
 class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void> {
