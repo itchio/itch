@@ -4,7 +4,7 @@ if (process.type !== "browser") {
 }
 
 import { createStore, applyMiddleware, compose, GenericStoreEnhancer, Store } from "redux";
-import { electronEnhancer } from "redux-electron-store";
+import { electronEnhancer } from "ftl-redux-electron-store";
 
 import route from "../reactors/route";
 import watcher from "../reactors";

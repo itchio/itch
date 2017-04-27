@@ -4,11 +4,12 @@ if (process.type !== "renderer") {
 }
 
 import { createStore, applyMiddleware, compose, GenericStoreEnhancer, Middleware } from "redux";
-import { electronEnhancer } from "redux-electron-store";
+import { electronEnhancer } from "ftl-redux-electron-store";
 const createLogger = require("redux-logger");
 
 import route from "../reactors/route";
 import {Watcher} from "../reactors/watcher";
+import reducer from "../reducers";
 
 const watcher = new Watcher();
 
@@ -29,7 +30,6 @@ if (REDUX_DEVTOOLS_ENABLED) {
 const allAction = Object.freeze({ type: "__ALL", payload: null });
 const ee = electronEnhancer({
   filter,
-  synchronous: false,
   postDispatchCallback: (action: any) => {
     route(watcher, store, action);
     route(watcher, store, allAction);
@@ -48,7 +48,8 @@ if (REDUX_DEVTOOLS_ENABLED) {
 }
 
 const initialState = {};
-const store = createStore((state: any) => state, initialState, enhancer) as IChromeStore;
+// const store = createStore((state: any) => state, initialState, enhancer) as IChromeStore;
+const store = createStore(reducer, initialState, enhancer) as IChromeStore;
 route(watcher, store, { type: "__MOUNT", payload: null });
 
 store.watcher = watcher;

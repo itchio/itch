@@ -917,8 +917,8 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000655"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000655.tgz#e40b6287adc938848d6708ef83d65b5f54ac1874"
+  version "1.0.30000660"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000660.tgz#d2d57b309dc5a11bb5b46018f51855f7a41efee5"
 
 capture-stack-trace@^1.0.0:
   version "1.0.0"
@@ -1552,9 +1552,9 @@ editions@^1.1.1, editions@^1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/editions/-/editions-1.3.3.tgz#0907101bdda20fac3cbe334c27cbd0688dc99a5b"
 
-electron-compile-ftl@^6.4.1:
-  version "6.4.1"
-  resolved "https://registry.yarnpkg.com/electron-compile-ftl/-/electron-compile-ftl-6.4.1.tgz#bdc811b12287e6cd9669d27bcd45f626445a5db9"
+electron-compile@^6.4.0:
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/electron-compile/-/electron-compile-6.4.0.tgz#c2670d8b512f41613ed37dea7a8b22548ca754ae"
   dependencies:
     "@paulcbetts/mime-types" "^2.1.10"
     "@types/node" "^7.0.12"
@@ -1568,9 +1568,9 @@ electron-compile-ftl@^6.4.1:
     spawn-rx "^2.0.3"
     yargs "^4.8.1"
 
-electron-compilers-ftl@^5.8.0:
-  version "5.8.0"
-  resolved "https://registry.yarnpkg.com/electron-compilers-ftl/-/electron-compilers-ftl-5.8.0.tgz#db6090107b334e3389a2fc7cae103b4880627a32"
+electron-compilers@^5.8.3:
+  version "5.8.3"
+  resolved "https://registry.yarnpkg.com/electron-compilers/-/electron-compilers-5.8.3.tgz#b0c04b0093733cd8b158b637c9544f64e16e742e"
   dependencies:
     "@paulcbetts/mime-types" "^2.1.10"
     "@paulcbetts/vueify" "9.4.3"
@@ -1634,8 +1634,8 @@ electron-rebuild@^1.5.7:
     yargs "^3.31.0"
 
 electron-to-chromium@^1.2.7:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.4.tgz#e51769c0cf550e0cf5aedf6aa2b803a264b3a900"
+  version "1.3.8"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.8.tgz#b2c8a2c79bb89fbbfd3724d9555e15095b5f5fb6"
 
 electron@1.6.2:
   version "1.6.2"
@@ -1729,6 +1729,10 @@ escodegen@1.8.x, escodegen@^1.6.1:
 esprima@2.7.x, esprima@^2.6.0, esprima@^2.7.1:
   version "2.7.3"
   resolved "https://registry.yarnpkg.com/esprima/-/esprima-2.7.3.tgz#96e3b70d5779f6ad49cd032673d1c312767ba581"
+
+esprima@^3.1.1:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/esprima/-/esprima-3.1.3.tgz#fdca51cee6133895e3c88d535ce49dbff62a4633"
 
 estraverse@^1.9.1:
   version "1.9.3"
@@ -1935,6 +1939,12 @@ fstream@^1.0.0, fstream@^1.0.2:
     inherits "~2.0.0"
     mkdirp ">=0.5 0"
     rimraf "2"
+
+ftl-redux-electron-store@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ftl-redux-electron-store/-/ftl-redux-electron-store-1.0.0.tgz#08b485a954f792ab26cbd624f5d790fb007735ba"
+  dependencies:
+    lodash "^4.13.1"
 
 function-bind@^1.0.2, function-bind@^1.1.0, function-bind@~1.1.0:
   version "1.1.0"
@@ -2245,7 +2255,7 @@ is-arrayish@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.2.1.tgz#77c99840527aa8ecb1a8ba697b80645a7a926a9d"
 
-is-buffer@^1.0.2:
+is-buffer@^1.1.5:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.5.tgz#1f3b26ef613b214b88cbca23cc6c01d87961eecc"
 
@@ -2439,7 +2449,14 @@ js-tokens@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.1.tgz#08e9f132484a2c45a30907e9dc4d5567b7f114d7"
 
-js-yaml@3.x, js-yaml@~3.7.0:
+js-yaml@3.x:
+  version "3.8.3"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.8.3.tgz#33a05ec481c850c8875929166fe1beb61c728766"
+  dependencies:
+    argparse "^1.0.7"
+    esprima "^3.1.1"
+
+js-yaml@~3.7.0:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.7.0.tgz#5c967ddd837a9bfdca5f2de84253abe8a1c03b80"
   dependencies:
@@ -2527,10 +2544,10 @@ keymirror@~0.1.0:
   resolved "https://registry.yarnpkg.com/keymirror/-/keymirror-0.1.1.tgz#918889ea13f8d0a42e7c557250eee713adc95c35"
 
 kind-of@^3.0.2:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.1.0.tgz#475d698a5e49ff5e53d14e3e732429dc8bf4cf47"
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.2.0.tgz#b58abe4d5c044ad33726a8c1525b48cf891bff07"
   dependencies:
-    is-buffer "^1.0.2"
+    is-buffer "^1.1.5"
 
 klaw@^1.0.0:
   version "1.3.1"
@@ -3797,12 +3814,6 @@ redux-devtools@^3.2.0:
     lodash "^4.2.0"
     redux-devtools-instrument "^1.0.1"
 
-redux-electron-store@^0.3.13:
-  version "0.3.13"
-  resolved "https://registry.yarnpkg.com/redux-electron-store/-/redux-electron-store-0.3.13.tgz#c39070a639b997a65bdeb173c20d9498cab7a830"
-  dependencies:
-    lodash "^4.13.1"
-
 redux-logger@^2.6.1:
   version "2.10.2"
   resolved "https://registry.yarnpkg.com/redux-logger/-/redux-logger-2.10.2.tgz#3c5a5f0a6f32577c1deadf6655f257f82c6c3937"
@@ -3928,8 +3939,8 @@ resolve@1.1.x, resolve@~1.1.7:
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.1.7.tgz#203114d82ad2c5ed9e8e0411b3932875e889e97b"
 
 resolve@^1.1.7, resolve@^1.2.0:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.3.2.tgz#1f0442c9e0cbb8136e87b9305f932f46c7f28235"
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.3.3.tgz#655907c3469a8680dc2de3a275a8fdd69691f0e5"
   dependencies:
     path-parse "^1.0.5"
 
@@ -4310,8 +4321,8 @@ symbol-observable@^1.0.1, symbol-observable@^1.0.2:
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.2.tgz#ae27db38f660a7ae2e1c3b7d1bc290819b8519e6"
 
 synchronous-promise@^1.0.7:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/synchronous-promise/-/synchronous-promise-1.0.10.tgz#2b8707c43fe909ad93bd217c5ff096ba33bdb247"
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/synchronous-promise/-/synchronous-promise-1.0.12.tgz#3421c0ed860a34fe9e46df92831b1270c41e5240"
 
 tap-parser@~0.4.0:
   version "0.4.3"
@@ -4489,7 +4500,7 @@ typedarray@~0.0.5:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@2.2.2, typescript@>=1.6:
+typescript@>=1.6, typescript@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.2.2.tgz#606022508479b55ffa368b58fee963a03dfd7b0c"
 

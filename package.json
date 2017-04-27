@@ -58,10 +58,11 @@
     "combokeys-ftl": "^2.4.4-npmgate1",
     "deep-assign": "^2.0.0",
     "deep-freeze": "0.0.1",
-    "electron-compile-ftl": "^6.4.1",
+    "electron-compile": "^6.4.0",
     "eol": "^0.2.0",
     "file-type": "^3.0.0",
     "fnout": "^1.1.0",
+    "ftl-redux-electron-store": "^1.0.0",
     "fuse.js": "2.2.0",
     "glob": "^7.0.3",
     "graceful-fs": "^4.1.2",
@@ -95,7 +96,6 @@
     "redux": "^3.6.0",
     "redux-actions": "^0.9.1",
     "redux-cli-logger": "2.0.0",
-    "redux-electron-store": "^0.3.13",
     "redux-logger": "^2.6.1",
     "reselect": "^2.5.2",
     "shell-quote": "^1.6.0",
@@ -114,7 +114,7 @@
   },
   "devDependencies": {
     "electron": "1.6.2",
-    "electron-compilers-ftl": "^5.8.0",
+    "electron-compilers": "^5.8.3",
     "electron-rebuild": "^1.5.7",
     "faucet": "0.0.1",
     "react-addons-test-utils": "^15.0.0",
@@ -126,7 +126,7 @@
     "sinon": "^1.17.6",
     "tape": "^4.2.1",
     "tslint": "^4.0.2",
-    "typescript": "2.2.2",
+    "typescript": "^2.2.2",
     "zopf": "^4.5.0"
   },
   "scripts": {

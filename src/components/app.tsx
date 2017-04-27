@@ -1,10 +1,14 @@
 
-import store from "../store/chrome-store";
 import * as React from "react";
-import {Provider} from "react-redux";
 
 import Layout from "./layout";
 import Modal from "./modal";
+import {Provider} from "react-redux";
+
+import store from "../store/chrome-store";
+
+import setupShortcuts from "../shortcuts";
+setupShortcuts(store);
 
 import {ThemeProvider, injectGlobal, theme} from "./styles";
 
@@ -40,7 +44,7 @@ if (REDUX_DEVTOOLS_ENABLED) {
 export default class App extends React.Component<void, void> {
   render () {
     return <Provider store={store}>
-      <ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
         <div>
           <Layout/>
           <Modal/>
