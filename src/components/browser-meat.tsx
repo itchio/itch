@@ -90,10 +90,6 @@ interface IHistoryEntry {
 let currentSession: Electron.Session = null;
 
 export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nProps, IBrowserMeatState> {
-  refs: {
-    webviewShell: Element;
-  };
-
   lastNavigationUrl: string;
   lastNavigationTimeStamp: number;
 
@@ -387,63 +383,49 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
   }
 
   componentDidMount () {
-    const webviewShell = this.refs.webviewShell;
-
     if (DONT_SHOW_WEBVIEWS) {
       return;
     }
 
-    // cf. https://github.com/electron/electron/issues/6046
-    webviewShell.innerHTML = "<webview/>";
-    // woo please sign my cast
-    const wv = (webviewShell.querySelector("webview") as any) as Electron.WebViewElement;
-    this.webview = wv;
-
-    const {meId} = this.props;
-    const partition = partitionForUser(meId);
-
-    wv.partition = partition;
-    wv.plugins = "on";
-    wv.preload = getInjectPath("itchio-monkeypatch");
-
     const callbackSetup = () => {
-      wv.addEventListener("did-start-loading", this.didStartLoading.bind(this));
-      wv.addEventListener("did-stop-loading", this.didStopLoading.bind(this));
-      wv.addEventListener("will-navigate", this.willNavigate.bind(this));
-      wv.addEventListener("did-navigate", this.didNavigate.bind(this));
-      wv.addEventListener("did-navigate-in-page", this.didNavigate.bind(this));
-      wv.addEventListener("page-title-updated", this.pageTitleUpdated.bind(this));
-      wv.addEventListener("page-favicon-updated", this.pageFaviconUpdated.bind(this));
-      wv.addEventListener("new-window", this.newWindow.bind(this));
+      this.webview.addEventListener("did-start-loading", this.didStartLoading.bind(this));
+      this.webview.addEventListener("did-stop-loading", this.didStopLoading.bind(this));
+      this.webview.addEventListener("will-navigate", this.willNavigate.bind(this));
+      this.webview.addEventListener("did-navigate", this.didNavigate.bind(this));
+      this.webview.addEventListener("did-navigate-in-page", this.didNavigate.bind(this));
+      this.webview.addEventListener("page-title-updated", this.pageTitleUpdated.bind(this));
+      this.webview.addEventListener("page-favicon-updated", this.pageFaviconUpdated.bind(this));
+      this.webview.addEventListener("new-window", this.newWindow.bind(this));
       this.domReady();
 
-      createContextMenu(wv, {
+      createContextMenu(this.webview, {
         navigate: this.props.navigate,
       });
 
       // otherwise, back button is active and brings us back to 'about:blank'
-      wv.clearHistory();
-      wv.removeEventListener("dom-ready", callbackSetup);
+      this.webview.clearHistory();
+      this.webview.removeEventListener("dom-ready", callbackSetup);
 
-      wv.addEventListener("did-stop-loading", (e) => {
-        if (wv.src === "about:blank") {
+      this.webview.addEventListener("did-stop-loading", (e) => {
+        if (this.webview.src === "about:blank") {
           return;
         }
         this.updateBrowserState({firstLoad: false});
       });
     };
-    wv.addEventListener("dom-ready", callbackSetup);
+    this.webview.addEventListener("dom-ready", callbackSetup);
 
     const {tabId} = this.props;
-    wv.addEventListener("dom-ready", () => {
-      wv.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tabId)})`);
+    this.webview.addEventListener("dom-ready", () => {
+      this.webview.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tabId)})`);
     });
 
-    wv.src = "about:blank";
+    this.webview.src = "about:blank";
   }
 
   render () {
-    const {tabId, tabData, tabPath, controls, active} = this.props;
+    const {tabId, tabData, tabPath, controls, active, meId} = this.props;
+    const partition = partitionForUser(meId);
 
     const {browserState} = this.state;
 
@@ -475,7 +457,14 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
     return <BrowserMeatContainer>
       <BrowserBar {...controlProps}/>
       <BrowserMain>
-        <WebviewShell className={shellClasses} ref="webviewShell"/>
+        <WebviewShell className={shellClasses}>
+          <webview is
+            partition={partition}
+            plugins="on"
+            preload={getInjectPath("itchio-monkeypatch")}
+            src="about:blank"
+            ref={(wv) => this.webview = wv}/>
+        </WebviewShell>
         {context}
       </BrowserMain>
     </BrowserMeatContainer>;
