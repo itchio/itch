@@ -13,7 +13,7 @@ import url from "../../util/url";
 import fetch from "../../util/fetch";
 import pathmaker from "../../util/pathmaker";
 import debugBrowserWindow from "../../util/debug-browser-window";
-import injectPath from "../../util/inject-path";
+import {getInjectPath} from "../../util/resources";
 
 import Connection from "../../capsule/connection";
 import {capsule} from "../../capsule/messages_generated";
@@ -133,7 +133,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
       webSecurity: false,
       allowRunningInsecureContent: true,
       /* hook up a few keyboard shortcuts of our own */
-      preload: noPreload ? null : injectPath("game"),
+      preload: noPreload ? null : getInjectPath("game"),
       /* stores cookies etc. in persistent session to save progress */
       partition,
     },

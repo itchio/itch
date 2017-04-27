@@ -79,6 +79,36 @@ const SidebarAction = styled.span`
   margin-left: 6px;
 `;
 
+const SearchContainer = styled.section`
+  position: relative;
+  padding: 0 8px;
+  margin: 8px 4px;
+
+  &.loading .icon-search {
+    ${styles.horizontalScan()};
+  }
+
+  input[type=search] {
+    ${styles.heavyInput()}
+    transition: all 0.2s;
+    width: 100%;
+    text-indent: 14px;
+    padding: 6px 10px 5px 9px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .icon-search {
+    position: absolute;
+    left: 20px;
+    bottom: 50%;
+    transform: translateY(55%);
+    font-size: 14px;
+    color: ${props => props.theme.inputPlaceholder};
+    pointer-events: none;
+  }
+`;
+
 interface ISortEndParams {
   oldIndex: number;
   newIndex: number;
@@ -195,7 +225,6 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
     const {t, appVersion, osx, sidebarWidth, fullscreen, id: currentId, tabs,
       tabData, navigate, closeAllTabs,
       newTab, searchLoading} = this.props;
-    const searchClasses = classNames("search", {loading: searchLoading});
 
     const onSortEnd = (params: ISortEndParams) => {
       const {oldIndex, newIndex} = params;
@@ -216,7 +245,7 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
         <img src={resolve(__dirname, "../static/images/logos/app-white.svg")}/>
       </Logo>
 
-      <section className={searchClasses}>
+      <SearchContainer className={classNames({loading: searchLoading})}>
         <input id="search" ref="search" type="search"
           placeholder={t("search.placeholder")}
           onKeyDown={this.onSearchKeyDown}
@@ -226,7 +255,7 @@ export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nPro
           onBlur={this.onSearchBlur}>
         </input>
         <span className="icon icon-search"/>
-      </section>
+      </SearchContainer>
 
       <SidebarItems>
         <SidebarSection>

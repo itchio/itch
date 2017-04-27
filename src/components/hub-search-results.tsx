@@ -17,6 +17,37 @@ import {dispatcher} from "../constants/action-types";
 import GameSearchResult from "./search-results/game-search-result";
 import UserSearchResult from "./search-results/user-search-result";
 
+import {stripUnit} from "polished";
+import styled from "./styles";
+
+const ResultsContainer = styled.div`
+  background: ${props => props.theme.sidebarBackground};
+  border-right: 1px solid ${props => props.theme.sidebarBorder};
+  border-bottom: 1px solid ${props => props.theme.sidebarBorder};
+  opacity: 0.0;
+  z-index: 40;
+
+  width: ${props => props.theme.widths.searchSidebar};
+
+  position: absolute;
+  left: ${props => -stripUnit(props.theme.widths.searchSidebar) - 30}px;
+  top: 0;
+  bottom: 0;
+  box-shadow: 0 0 30px ${props => props.theme.sidebarBackground};
+  border-radius: 0 0 0 2px;
+
+  overflow: hidden;
+  transition: left 0.14s ease-in-out, opacity 0.28s ease-in-out;
+
+  display: flex;
+  flex-direction: column;
+
+  &.open {
+    left: 0;
+    opacity: 1.0;
+  }
+`;
+
 export class HubSearchResults extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   fuse: Fuse<IGameRecord>;
 
@@ -49,7 +80,7 @@ export class HubSearchResults extends React.Component<IProps & IDerivedProps & I
       navigate(`search/${query}`);
     };
 
-    return <div className={classNames("hub-search-results", {active: open})}>
+    return <ResultsContainer className={classNames({open})}>
       <div className="header">
         <h2>{t("search.results.title", {query: query || ""})}</h2>
         <div className="filler"/>
@@ -63,7 +94,7 @@ export class HubSearchResults extends React.Component<IProps & IDerivedProps & I
         </div>
         <div className="filler"/>
       </div>
-    </div>;
+    </ResultsContainer>;
   }
 
   resultsGrid (results: ISearchResults) {

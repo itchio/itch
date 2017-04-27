@@ -26,6 +26,13 @@ import {IAppState, ITabs, ITabDataSet, ITabData} from "../types";
 import styled from "./styles";
 
 const MeatContainer = styled.div`
+  background: ${props => props.theme.meatBackground};
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+
   flex-shrink: 1;
   flex-grow: 1;
 `;

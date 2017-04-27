@@ -10,8 +10,12 @@ import Ink = require("react-ink");
 import LoadingCircle from "./loading-circle";
 import Icon from "./icon";
 
-import {SidebarHeading} from "./sidebar-styles";
 import styled, * as styles from "./styles";
+
+const ItemHeading = styled.div`
+    ${styles.singleLine()};
+    padding: .2em 0;
+`;
 
 const SidebarItem = styled.section`
   background: ${props => props.theme.sidebarBackground};
@@ -146,7 +150,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
               ? <img className="icon-image" src={this.props.iconImage}/>
               : <Icon icon={this.props.icon || "tag"}/>)}
         </IconContainer>
-        <SidebarHeading>{t.format(label)}</SidebarHeading>
+        <ItemHeading>{t.format(label)}</ItemHeading>
         {count > 0
           ? <Bubble>{count}</Bubble>
           : null

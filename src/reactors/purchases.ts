@@ -5,7 +5,7 @@ import {findWhere} from "underscore";
 
 import url from "../util/url";
 import enableEventDebugging from "../util/debug-browser-window";
-import injectPath from "../util/inject-path";
+import {getInjectPath} from "../util/resources";
 
 // So this isn't great, but it's not terrible either — we need some
 // kind of renderer-side debug/logging system at some point.
@@ -35,7 +35,7 @@ function makePurchaseWindow (me: IOwnUserRecord, game: IGameRecord) {
       /* don't let web code control the OS */
       nodeIntegration: false,
       /* prevent window close, prefill login form, etc. */
-      preload: injectPath("itchio-monkeypatch"),
+      preload: getInjectPath("itchio-monkeypatch"),
       /* stores browser session in an user_id-specific partition so,
        * in multi-seat installs, users have to log in one time each at least */
       partition,

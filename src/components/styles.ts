@@ -86,10 +86,15 @@ export const borderRadii = {
   explanation: "4px",
 };
 
+export const widths = {
+  searchSidebar: "400px",
+};
+
 export const theme = {
   ...colors,
   fontSizes,
   borderRadii,
+  widths,
 };
 
 export type ITheme = typeof theme;
@@ -227,6 +232,12 @@ export const horizontalScan = () => css`
   animation: horizontal-scan 2s infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+`;
+
+export const singleLine = () => css`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const meat = () => css`
