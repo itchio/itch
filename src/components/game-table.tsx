@@ -14,7 +14,7 @@ import {IOnSortChange, SortDirectionType} from "./sort-types";
 
 import gameTableRowRenderer, {IRowHandlerParams} from "./game-table-row-renderer";
 
-import NiceAgo from "./nice-ago";
+import TimeAgo from "./basics/time-ago";
 import HiddenIndicator from "./hidden-indicator";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
@@ -101,7 +101,7 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
     const {game} = cellData;
     const {publishedAt} = game;
     if (publishedAt) {
-      return <NiceAgo date={publishedAt}/>;
+      return <TimeAgo date={publishedAt}/>;
     } else {
       return "";
     }

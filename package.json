@@ -59,6 +59,7 @@
     "deep-assign": "^2.0.0",
     "deep-freeze": "0.0.1",
     "electron-compile": "^6.4.1",
+    "electron-is-dev": "^0.1.2",
     "eol": "^0.2.0",
     "file-type": "^3.0.0",
     "fnout": "^1.1.0",

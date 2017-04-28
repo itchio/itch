@@ -1,25 +1,26 @@
 
 import * as React from "react";
 import {createSelector} from "reselect";
-import {connect, I18nProps} from "./connect";
+import {connect, I18nProps} from "../connect";
 
-import {IAppState} from "../types";
+import {IAppState} from "../../types";
 
-import * as actions from "../actions";
-import {dispatcher} from "../constants/action-types";
+import * as actions from "../../actions";
+import {dispatcher} from "../../constants/action-types";
 
-import defaultImages from "../constants/default-images";
+import defaultImages from "../../constants/default-images";
+
+import urls from "../../constants/urls";
+
+import styled from "../styles";
+import Filler from "../basics/filler";
+import {SidebarHeading} from "./styles";
+import {ItemDiv} from "./item";
 
 import Dropdown, {IDropdownItem} from "./dropdown";
-import Icon from "./icon";
+import Icon from "../basics/icon";
 
-import urls from "../constants/urls";
-
-import styled from "./styles";
-import {SidebarHeading, Filler} from "./sidebar-styles";
-import {SidebarItem} from "./hub-sidebar-item";
-
-const UserMenuContainer = styled(SidebarItem)`
+const UserMenuContainer = styled(ItemDiv)`
   margin-right: -${props => props.theme.widths.handle};
   display: flex;
   flex-direction: row;

@@ -7,11 +7,12 @@ import {createStructuredSelector} from "reselect";
 
 import * as actions from "../actions";
 
-import UserMenu from "./user-menu";
 import Ink = require("react-ink");
-import SidebarSearch from "./hub-sidebar-search";
-import SidebarTab from "./hub-sidebar-tab";
-import SidebarLogo from "./sidebar-logo";
+import Filler from "./basics/filler";
+import SidebarSearch from "./sidebar/search";
+import SidebarTab from "./sidebar/tab";
+import SidebarLogo from "./sidebar/logo";
+import UserMenu from "./sidebar/user-menu";
 
 import {IAppState, IUserRecord} from "../types";
 import {dispatcher} from "../constants/action-types";
@@ -19,7 +20,7 @@ import {dispatcher} from "../constants/action-types";
 import {SortableContainer, arrayMove} from "react-sortable-hoc";
 
 import styled, * as styles from "./styles";
-import {SidebarSection, SidebarHeading, Filler} from "./sidebar-styles";
+import {SidebarSection, SidebarHeading} from "./sidebar/styles";
 
 const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -85,7 +86,7 @@ const SortableList = SortableContainer((params: ISortableContainerParams) => {
   </SortableListContainer>;
 });
 
-export class HubSidebar extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+class Sidebar extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor (props: IProps & IDerivedProps & I18nProps) {
     super();
     this.state = {
@@ -194,7 +195,7 @@ interface IState {
   transient: string[];
 }
 
-export default connect<IProps>(HubSidebar, {
+export default connect<IProps>(Sidebar, {
   state: createStructuredSelector({
     appVersion: (state: IAppState) => state.system.appVersion,
     osx: (state: IAppState) => state.system.osx,

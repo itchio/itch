@@ -8,7 +8,7 @@ import {IModalWidgetProps} from "./modal-widget";
 import partitionForUser from "../../util/partition-for-user";
 import * as humanize from "humanize-plus";
 
-import LoadingCircle from "../loading-circle";
+import LoadingCircle from "../basics/loading-circle";
 
 import * as electron from "electron";
 

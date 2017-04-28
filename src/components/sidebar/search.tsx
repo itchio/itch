@@ -3,14 +3,14 @@ import * as React from "react";
 import * as classNames from "classnames";
 
 import {debounce} from "underscore";
-import styled, * as styles from "./styles";
+import styled, * as styles from "../styles";
 
-import watching, {Watcher} from "./watching";
+import watching, {Watcher} from "../watching";
 
-import {connect, I18nProps} from "./connect";
+import {connect, I18nProps} from "../connect";
 
-import * as actions from "../actions";
-import {dispatcher} from "../constants/action-types";
+import * as actions from "../../actions";
+import {dispatcher} from "../../constants/action-types";
 
 const SearchContainer = styled.section`
   position: relative;

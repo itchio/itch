@@ -20,7 +20,7 @@ const HandleDiv = styled.div`
   }
 `;
 
-class HubSidebarHandle extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+class SidebarHandle extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -76,7 +76,7 @@ interface IState {
   isResizing: boolean;
 }
 
-export default connect<IProps>(HubSidebarHandle, {
+export default connect<IProps>(SidebarHandle, {
   dispatch: (dispatch) => ({
     updatePreferences: dispatcher(dispatch, actions.updatePreferences),
   }),

@@ -3,20 +3,20 @@ import * as React from "react";
 import {SortableElement} from "react-sortable-hoc";
 
 import * as moment from "moment";
-import HubSidebarItem from "./hub-sidebar-item";
+import Item from "./item";
 
-import {pathToIcon, makeLabel} from "../util/navigation";
-import {connect, I18nProps} from "./connect";
+import {pathToIcon, makeLabel} from "../../util/navigation";
+import {connect, I18nProps} from "../connect";
 
-import * as actions from "../actions";
-import {dispatcher} from "../constants/action-types";
+import * as actions from "../../actions";
+import {dispatcher} from "../../constants/action-types";
 
 import {
   ITabData,
   IGameRecord,
   ILocalizedString,
   IDownloadsState,
-} from "../types";
+} from "../../types";
 
 interface ISortableHubSidebarItemProps {
   props: any & {
@@ -24,11 +24,11 @@ interface ISortableHubSidebarItemProps {
   };
 }
 
-const SortableHubSidebarItem = SortableElement((props: ISortableHubSidebarItemProps) => {
-  return <HubSidebarItem {...props.props}/>;
+const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
+  return <Item {...props.props}/>;
 });
 
-class HubSidebarTab extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class Tab extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, id, index, sortable, data, active, loading} = this.props;
     const {navigate, closeTab, openTabContextMenu} = this.props;
@@ -76,9 +76,9 @@ class HubSidebarTab extends React.Component<IProps & IDerivedProps & I18nProps, 
       sublabel, gameOverride, loading};
     
     if (sortable) {
-      return <SortableHubSidebarItem key={id} index={index} props={props}/>;
+      return <SortableItem key={id} index={index} props={props}/>;
     } else {
-      return <HubSidebarItem key={id} {...props}/>;
+      return <Item key={id} {...props}/>;
     }
   }
 }
@@ -100,7 +100,7 @@ interface IDerivedProps {
   openTabContextMenu: typeof actions.openTabContextMenu;
 }
 
-export default connect<IProps>(HubSidebarTab, {
+export default connect<IProps>(Tab, {
   state: (state, props: IProps) => ({
     data: state.session.navigation.tabData[props.id] || {},
     loading: !!state.session.navigation.loadingTabs[props.id],

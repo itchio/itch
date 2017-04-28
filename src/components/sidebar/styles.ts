@@ -1,10 +1,6 @@
 
 import styled from "styled-components";
 
-export const Filler = styled.div`
-  flex-grow: 1;
-`;
-
 export const SidebarSection = styled.div`
   color: ${props => props.theme.ternaryText};
 

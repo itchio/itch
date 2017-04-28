@@ -1,15 +1,15 @@
 
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import {connect, I18nProps} from "../../connect";
 
-import NiceAgo from "./nice-ago";
+import TimeAgo from "../../basics/time-ago";
 
-import defaultImages from "../constants/default-images";
+import defaultImages from "../../../constants/default-images";
 
-import * as actions from "../actions";
+import * as actions from "../../../actions";
 
-import {IRememberedSession} from "../types";
-import {dispatcher} from "../constants/action-types";
+import {IRememberedSession} from "../../../types";
+import {dispatcher} from "../../../constants/action-types";
 
 export class RememberedSession extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
@@ -33,7 +33,7 @@ export class RememberedSession extends React.Component<IProps & IDerivedProps & 
       <div className="rest">
         <p className="username">{displayName || username}</p>
         <p className="last-connected">
-          {t("login.remembered_session.last_connected")} <NiceAgo date={session.lastConnected}/>
+          {t("login.remembered_session.last_connected")} <TimeAgo date={session.lastConnected}/>
         </p>
       </div>
       <div className="filler"/>

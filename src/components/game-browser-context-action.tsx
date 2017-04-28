@@ -3,7 +3,7 @@ import * as React from "react";
 import * as classNames from "classnames";
 import {connect, I18nProps} from "./connect";
 
-import Icon from "./icon";
+import Icon from "./basics/icon";
 import {IDispatch} from "../constants/action-types";
 
 import {IActionOpts} from "./game-actions/list-secondary-actions";

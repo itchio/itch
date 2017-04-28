@@ -15,7 +15,7 @@ import watching, {Watcher} from "./watching";
 
 import Ink = require("react-ink");
 import Select = require("react-select");
-import Icon from "./icon";
+import Icon from "./basics/icon";
 
 import styled, * as styles from "./styles";
 import {css} from "./styles";

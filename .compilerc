@@ -4,14 +4,13 @@
   },
   "text/typescript": {
     "target": "es2017",
-    "lib": ["dom", "dom.iterable", "scripthost", "es6"],
+    "lib": ["dom", "es6"],
     "module": "commonjs",
-    "noImplicitAny": true,
     "experimentalDecorators": true,
     "noUnusedLocals": true,
     "sourceMap": true,
     "inlineSourceMap": true,
     "jsx": "react",
-    "noEmitOnError": true
+    "allowJs": true
   }
 }

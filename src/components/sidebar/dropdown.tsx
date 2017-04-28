@@ -1,16 +1,16 @@
 
 import * as React from "react";
 import * as classNames from "classnames";
-
-import listensToClickOutside = require("react-onclickoutside");
-import {connect, I18nProps} from "./connect";
-
-import Icon from "./icon";
 import {map} from "underscore";
 
-import {ILocalizedString} from "../types";
+import listensToClickOutside = require("react-onclickoutside");
+import {connect, I18nProps} from "../connect";
 
-import styled from "./styles";
+import Icon from "../basics/icon";
+
+import {ILocalizedString} from "../../types";
+
+import styled from "../styles";
 import {lighten} from "polished";
 
 const DropdownContainer = styled.div`

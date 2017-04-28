@@ -5,7 +5,7 @@ import {connect, I18nProps} from "./connect";
 import * as actions from "../actions";
 import {dispatcher} from "../constants/action-types";
 
-import Icon from "./icon";
+import Icon from "./basics/icon";
 
 class HiddenIndicator extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {

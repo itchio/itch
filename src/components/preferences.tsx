@@ -9,8 +9,8 @@ import * as classNames from "classnames";
 
 import urls from "../constants/urls";
 
-import Icon from "./icon";
-import SelectRow from "./select-row";
+import Icon from "./basics/icon";
+import SelectRow from "./basics/select-row";
 
 import OpenAtLoginError from "./preferences/open-at-login-error";
 import ProxySettings from "./preferences/proxy-settings";

@@ -3,8 +3,9 @@ import * as React from "react";
 import {connect, I18nProps} from "../connect";
 import * as classNames from "classnames";
 
-import Icon from "../icon";
-import TaskIcon from "../task-icon";
+import Icon from "../basics/icon";
+import TaskIcon from "../basics/task-icon";
+import LoadingCircle from "../basics/loading-circle";
 
 import format from "../../util/format";
 import downloadProgress from "../../util/download-progress";
@@ -17,7 +18,6 @@ import {IDownloadItem, ICaveRecord, IGameUpdate} from "../../types";
 import {dispatcher} from "../../constants/action-types";
 
 import Ink = require("react-ink");
-import LoadingCircle from "../loading-circle";
 
 interface IStatus {
   status: string;

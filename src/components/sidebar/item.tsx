@@ -2,16 +2,16 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import {ILocalizedString, ITabData} from "../types";
-import {ILocalizer} from "../localizer";
+import {ILocalizedString, ITabData} from "../../types";
+import {ILocalizer} from "../../localizer";
 
 import Ink = require("react-ink");
 
-import LoadingCircle from "./loading-circle";
-import Icon from "./icon";
+import Filler from "../basics/filler";
+import LoadingCircle from "../basics/loading-circle";
+import Icon from "../basics/icon";
 
-import styled, * as styles from "./styles";
-import {Filler} from "./sidebar-styles";
+import styled, * as styles from "../styles";
 import {darken} from "polished";
 
 const ItemHeading = styled.div`
@@ -24,7 +24,7 @@ const SidebarButton = styled.div`
   ${styles.clickable()};
 `;
 
-export const SidebarItem = styled.section`
+export const ItemDiv = styled.section`
   background: ${props => props.theme.sidebarBackground};
   font-size: 14px;
   border-radius: 0 4px 4px 0;
@@ -116,7 +116,7 @@ const Bubble = styled.span`
   white-space: nowrap;
 `;
 
-export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSidebarItemState> {
+class Item extends React.Component<IProps, IState> {
   constructor () {
     super();
     this.state = {
@@ -151,7 +151,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
       backgroundColor: progressColor,
     };
 
-    return <SidebarItem className={classNames({active, fresh})}
+    return <ItemDiv className={classNames({active, fresh})}
         data-rh-at="bottom"
         data-rh={t.format(sublabel)}
         onMouseUp={(e) => this.onMouseUp(e)}
@@ -188,7 +188,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
           : null
         }
       </Row>
-    </SidebarItem>;
+    </ItemDiv>;
   }
 
   componentDidMount () {
@@ -198,7 +198,7 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
   }
 }
 
-interface IHubSidebarItemProps {
+interface IProps {
   path: string;
   id: string;
   label: ILocalizedString;
@@ -220,8 +220,8 @@ interface IHubSidebarItemProps {
   t: ILocalizer;
 }
 
-interface IHubSidebarItemState {
+interface IState {
   fresh: boolean;
 }
 
-export default HubSidebarItem;
+export default Item;

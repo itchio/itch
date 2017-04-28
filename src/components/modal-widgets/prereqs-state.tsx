@@ -8,7 +8,7 @@ import {findWhere, map} from "underscore";
 import downloadProgress from "../../util/download-progress";
 
 import {IModalWidgetProps} from "./modal-widget";
-import LoadingCircle from "../loading-circle";
+import LoadingCircle from "../basics/loading-circle";
 
 import {IAppState, ITask, IPrereqsState} from "../../types";
 

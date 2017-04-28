@@ -1,9 +1,9 @@
 
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import {connect, I18nProps} from "../../connect";
 import {map} from "underscore";
 
-import {slugify} from "../util/format";
+import {slugify} from "../../../util/format";
 
 /**
  * A bunch of errors displayed in a list

@@ -89,7 +89,7 @@ interface IHistoryEntry {
 // updated when switching accounts
 let currentSession: Electron.Session = null;
 
-export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nProps, IBrowserMeatState> {
+export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   lastNavigationUrl: string;
   lastNavigationTimeStamp: number;
 
@@ -573,14 +573,10 @@ interface IDerivedProps {
   tabLoading: typeof actions.tabLoading;
 }
 
-interface IBrowserMeatState {
-  // FIXME: currently we're using '?' everywhere because @types/react is dumb
-  // and doesn't account for `setState` making a shallow merge, not a set
-  // (so the types can lack properties)
-  // TODO: regularly check if it's been fixed.
-  browserState?: IBrowserState;
-  scrollHistory?: IHistoryEntry[];
-  wentBackOrForward?: boolean;
+interface IState {
+  browserState: IBrowserState;
+  scrollHistory: IHistoryEntry[];
+  wentBackOrForward: boolean;
 }
 
 export default connect<IProps>(BrowserMeat, {

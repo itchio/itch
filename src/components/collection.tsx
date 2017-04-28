@@ -6,7 +6,7 @@ import {createSelector, createStructuredSelector} from "reselect";
 import * as actions from "../actions";
 import urls from "../constants/urls";
 
-import Icon from "./icon";
+import Icon from "./basics/icon";
 import Games from "./games";
 import GameFilters from "./game-filters";
 

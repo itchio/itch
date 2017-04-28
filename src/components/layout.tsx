@@ -3,8 +3,8 @@ import * as React from "react";
 import {createStructuredSelector} from "reselect";
 import {connect, I18nProps} from "./connect";
 
-import GatePage from "./gate-page";
-import HubPage from "./hub-page";
+import GatePage from "./pages/gate";
+import HubPage from "./pages/hub";
 import StatusBar from "./status-bar";
 import ReactHint = require("react-hint");
 

@@ -7,7 +7,7 @@ import {map} from "underscore";
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
-import Icon from "./icon";
+import Icon from "./basics/icon";
 
 import {transformUrl} from "../util/navigation";
 

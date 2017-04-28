@@ -3,7 +3,7 @@ import * as React from "react";
 
 import Icon from "./icon";
 
-import taskToIcon from "../constants/icon-for-tasks";
+import taskToIcon from "../../constants/icon-for-tasks";
 
 /**
  * An icon that represents the state of a given task

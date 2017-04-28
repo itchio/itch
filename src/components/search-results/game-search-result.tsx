@@ -10,7 +10,7 @@ import format from "../../util/format";
 
 import {IGameRecord} from "../../types";
 
-import Icon from "../icon";
+import Icon from "../basics/icon";
 
 class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
   render () {

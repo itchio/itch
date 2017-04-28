@@ -1,13 +1,13 @@
 
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import {connect, I18nProps} from "../connect";
 
-import TimeAgo from "react-timeago-titlefix";
-import format, {DATE_FORMAT} from "../util/format";
+import ReactTimeAgo from "react-timeago-titlefix";
+import format, {DATE_FORMAT} from "../../util/format";
 
 import * as moment from "moment-timezone";
 
-import {ILocalizer} from "../localizer";
+import {ILocalizer} from "../../localizer";
 
 type Direction = "ago" | "from now";
 
@@ -22,7 +22,7 @@ function momentBridge (t: ILocalizer) {
   };
 }
 
-class NiceAgo extends React.Component<IProps & I18nProps, void> {
+class TimeAgo extends React.Component<IProps & I18nProps, void> {
   render () {
     const {t, date} = this.props;
 
@@ -32,9 +32,9 @@ class NiceAgo extends React.Component<IProps & I18nProps, void> {
       return <span className="nice-ago">?</span>;
     }
 
-    // pass empty title to TimeAgo on purpose so we don't have double tooltip on hover
+    // pass empty title to ReactTimeAgo on purpose so we don't have double tooltip on hover
     return <span className="nice-ago" data-rh-at="bottom" data-rh={format.date(m, DATE_FORMAT, t.lang)}>
-      <TimeAgo date={m} title="" formatter={momentBridge(t)}/>
+      <ReactTimeAgo date={m} title="" formatter={momentBridge(t)}/>
     </span>;
   }
 
@@ -49,4 +49,4 @@ interface IProps {
   date: number | any;
 }
 
-export default connect<IProps>(NiceAgo);
+export default connect<IProps>(TimeAgo);

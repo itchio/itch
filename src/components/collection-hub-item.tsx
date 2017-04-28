@@ -10,8 +10,8 @@ import {whenClickNavigates} from "./when-click-navigates";
 
 import * as actions from "../actions";
 
-import Icon from "./icon";
-import NiceAgo from "./nice-ago";
+import Icon from "./basics/icon";
+import TimeAgo from "./basics/time-ago";
 import Ink = require("react-ink");
 import interleave from "./interleave";
 
@@ -63,7 +63,7 @@ export class CollectionHubItem extends React.Component<IProps & IDerivedProps & 
         <span className="spacer"/>
         <Icon icon="history"/>
         {interleave(t, "collection_grid.item.updated_at", {
-          time_ago: <NiceAgo date={collection.updatedAt}/>,
+          time_ago: <TimeAgo date={collection.updatedAt}/>,
         })}
       </section>
       <Ink/>

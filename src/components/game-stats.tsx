@@ -11,8 +11,8 @@ import actionForGame from "../util/action-for-game";
 
 import format from "../util/format";
 
-import NiceAgo from "./nice-ago";
-import Icon from "./icon";
+import TimeAgo from "./basics/time-ago";
+import Icon from "./basics/icon";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
@@ -53,7 +53,7 @@ export class GameStats extends React.Component<IProps & IDerivedProps & I18nProp
         {mdash ? " — " : <br/>}
         {downloadKey
           ? interleave(t, "usage_stats.description.bought_time_ago",
-              {time_ago: <NiceAgo date={downloadKey.createdAt}/>})
+              {time_ago: <TimeAgo date={downloadKey.createdAt}/>})
           : (minPrice > 0
             ? interleave(t, "usage_stats.description.price", {
               price: (sale ?

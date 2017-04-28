@@ -3,7 +3,7 @@ import * as React from "react";
 import {connect, I18nProps} from "./connect";
 
 import ReactModal = require("react-modal");
-import GFM from "./gfm";
+import Markdown from "./basics/markdown";
 
 import colors from "../constants/colors";
 
@@ -95,7 +95,7 @@ export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, I
     if (modal) {
       const {bigButtons = [], buttons = [], cover, title = "", message = "", detail, widget} = modal;
 
-      return <ReactModal isOpen style={customStyles}>
+      return <ReactModal isOpen contentLabel="Modal" style={customStyles}>
         <div className="modal">
           <div className="header">
             <h2>{t.format(title)}</h2>
@@ -109,8 +109,8 @@ export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, I
           { message !== ""
           ? <div className="body">
             <div className="message">
-              <div><GFM source={t.format(message)}/></div>
-              {detail && <div className="secondary"><GFM source={t.format(detail)}/></div>}
+              <div><Markdown source={t.format(message)}/></div>
+              {detail && <div className="secondary"><Markdown source={t.format(detail)}/></div>}
             </div>
           </div>
           : null }

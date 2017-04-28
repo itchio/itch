@@ -1,24 +1,23 @@
 
 import * as classNames from "classnames";
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import {connect, I18nProps} from "../connect";
 
 import {map, sortBy} from "underscore";
 import {resolve} from "path";
 
-import urls from "../constants/urls";
+import urls from "../../constants/urls";
 
-import ErrorList from "./error-list";
-import Icon from "./icon";
+import ErrorList from "./gate/error-list";
+import RememberedSession from "./gate/remembered-session";
+import Icon from "../basics/icon";
 
-import RememberedSession from "./remembered-session";
+import * as actions from "../../actions";
 
-import * as actions from "../actions";
+import {ISetupOperation, IRememberedSessionsState} from "../../types";
+import {dispatcher, ILoginWithTokenPayload} from "../../constants/action-types";
 
-import {ISetupOperation, IRememberedSessionsState} from "../types";
-import {dispatcher, ILoginWithTokenPayload} from "../constants/action-types";
-
-import watching, {Watcher} from "./watching";
+import watching, {Watcher} from "../watching";
 
 @watching
 export class GatePage extends React.Component<IProps & IInternalProps & I18nProps, void> {
@@ -51,7 +50,7 @@ export class GatePage extends React.Component<IProps & IInternalProps & I18nProp
     return <div className={classes} data-stage={stage}>
       <section className="top-filler"/>
       <section className="logo">
-        <img src={resolve(__dirname, "../static/images/logos/app-white.svg")}/>
+        <img src={resolve(__dirname, "../../static/images/logos/app-white.svg")}/>
       </section>
 
       {this.errors()}

@@ -82,6 +82,7 @@ export const colors = {
 export const fontSizes = {
   sidebar: "14px",
   baseText: "16px",
+  modal: "18px",
 };
 
 export const borderRadii = {
@@ -249,71 +250,4 @@ export const meat = () => css`
   flex-grow: 1;
   flex-shrink: 1;
   overflow: hidden;
-`;
-
-export const globalStyles = css`
-  html,
-  body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-    -webkit-user-select: none;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-size: $base-text-size;
-    color: $base-text-color;
-  }
-
-  body, input {
-    font-family: LatoWeb, sans-serif;
-  }
-
-  *, *:before, *:after {
-    box-sizing: inherit;
-  }
-  ::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #4b4a4a;
-    border-radius: 1px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    border-radius: 1px;
-    background: #fa5c5c;
-    -webkit-box-shadow: inset 0 0 2px #FF8081;
-  }
-
-  .react-hint-container {
-    pointer-events: none;
-  }
-
-  .react-hint__content {
-    padding: 5px;
-    border-radius: 2px;
-    background: $tooltip-background-color;
-    color: $tooltip-text-color;
-    font-size: 90%;
-  }
-
-  .react-hint--top:after {
-    border-top-color: $tooltip-background-color;
-  }
-
-  .react-hint--left:after {
-    border-left-color: $tooltip-background-color;
-  }
-
-  .react-hint--right:after {
-    border-right-color: $tooltip-background-color;
-  }
-
-  .react-hint--bottom:after {
-    border-bottom-color: $tooltip-background-color;
-  }
 `;

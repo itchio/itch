@@ -5,7 +5,7 @@ import {connect, I18nProps} from "../connect";
 
 import urls from "../../constants/urls";
 
-import Icon from "../icon";
+import Icon from "../basics/icon";
 
 import {IAppState, IOpenAtLoginError} from "../../types";
 import interleave, {IComponent} from "../interleave";

@@ -9,7 +9,7 @@ import downloadProgress from "../util/download-progress";
 
 import * as actions from "../actions";
 
-import NiceAgo from "./nice-ago";
+import TimeAgo from "./basics/time-ago";
 import GameActions from "./game-actions";
 
 import {IDownloadSpeeds, IDownloadItem, ITask} from "../types";
@@ -166,7 +166,7 @@ class DownloadRow extends React.Component<IProps & IDerivedProps & I18nProps, IS
       )
       : (first
       ? <div>
-        {t("download.started")} <NiceAgo date={date}/>
+        {t("download.started")} <TimeAgo date={date}/>
         {reasonText ? ` — ${reasonText}` : ""}
       </div>
       : t("grid.item.queued")

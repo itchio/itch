@@ -17,7 +17,8 @@ import store from "./store/chrome-store";
 import setupShortcuts from "./shortcuts";
 setupShortcuts(store);
 
-import {injectGlobal, globalStyles} from "./components/styles";
+import {injectGlobal} from "./components/styles";
+import globalStyles from "./components/global-styles";
 
 // tslint:disable-next-line
 injectGlobal`
