@@ -15,11 +15,16 @@ import {Filler} from "./sidebar-styles";
 import {darken} from "polished";
 
 const ItemHeading = styled.div`
-    ${styles.singleLine()};
-    padding: .2em 0;
+  ${styles.singleLine()};
+  padding: .2em 0;
 `;
 
-const SidebarItem = styled.section`
+const SidebarButton = styled.div`
+  ${styles.iconButton()};
+  ${styles.clickable()};
+`;
+
+export const SidebarItem = styled.section`
   background: ${props => props.theme.sidebarBackground};
   font-size: 14px;
   border-radius: 0 4px 4px 0;
@@ -174,12 +179,12 @@ export class HubSidebarItem extends React.Component<IHubSidebarItemProps, IHubSi
         </ProgressOuter>
         : null}
         {onClose
-          ? <span className="close-icon icon icon-cross" onClick={(e) => {
+          ? <SidebarButton className="close-icon icon icon-cross" onClick={(e) => {
             onClose();
             e.stopPropagation();
           }}>
             <Ink/>
-          </span>
+          </SidebarButton>
           : null
         }
       </Row>

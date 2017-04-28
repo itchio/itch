@@ -9,11 +9,11 @@ import {dispatcher} from "../constants/action-types";
 import styled from "./styles";
 
 const HandleDiv = styled.div`
-  background: $sidebar-background-color;
+  background: ${props => props.theme.sidebarBackground};
   height: '100%';
   flex-grow: 0;
   flex-shrink: 0;
-  flex-basis: 8px;
+  flex-basis: ${props => props.theme.widths.handle};
 
   &:hover {
     cursor: col-resize;

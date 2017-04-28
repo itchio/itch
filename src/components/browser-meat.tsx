@@ -66,7 +66,7 @@ const WebviewShell = styled.div`
 
   &.fresh {
     background-color: #292727;
-    background-image: url("../static/images/logos/app-white.svg");
+    background-image: url("./static/images/logos/app-white.svg");
     background-position: 50% 50%;
     background-repeat: no-repeat;
   }

@@ -74,13 +74,6 @@ export class NewTab extends React.Component<IProps & IDerivedProps & I18nProps, 
           <input className="browser-address" autoFocus onKeyUp={this.addressKeyUp}
             placeholder={t("new_tab.titles.browser_placeholder")}/>
           <span className="icon icon-earth"/>
-          <div className="kb-shortcut">
-          {osx
-            ? <Icon icon="command"/>
-            : <Icon icon="ctrl"/>
-          }
-          +L
-          </div>
         </div>
       </div>
     </div>;

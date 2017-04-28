@@ -22,6 +22,12 @@ const DropdownContainer = styled.div`
   }
 `;
 
+const DropdownInnerContainer = styled.div`
+  &.flipped .flipper {
+    transform: rotateX(180deg);
+  }
+`;
+
 const DropdownDiv = styled.div`
   background-color: ${props => lighten(.05, props.theme.sidebarBackground)};
   border: 1px solid ${props => props.theme.dropdownBackground};
@@ -33,7 +39,7 @@ const DropdownDiv = styled.div`
 
   &.updown {
     top: initial;
-    bottom: 60px;
+    bottom: 100%;
   }
 
   &.active {
@@ -88,7 +94,7 @@ export class Dropdown extends React.Component<IProps & IDerivedProps & I18nProps
 
     const children = map(items, (item, index) => {
       const {label, icon, type, onClick = noop} = item;
-      const itemClasses = classNames(`type-${type}`);
+      const itemClasses = classNames(type && `type-${type}`);
 
       const key = (type === "separator") ? ("separator-" + index) : (label + "-" + icon);
 
@@ -104,18 +110,16 @@ export class Dropdown extends React.Component<IProps & IDerivedProps & I18nProps
     }
 
     const toggle = this.toggle.bind(this);
-    const innerC = <div className={innerClasses} onClick={toggle}>{inner}</div>;
+    const innerC = <DropdownInnerContainer className={innerClasses} onClick={toggle}>{inner}</DropdownInnerContainer>;
     const childrenC = <DropdownDiv className={dropdownClasses}>
       {children}
     </DropdownDiv>;
 
     return <DropdownContainer style={{position: "relative"}} className={containerClasses}>
-      <div className="dropdown-container">
       {updown
         ? [childrenC, innerC]
         : [innerC, childrenC]
       }
-      </div>
     </DropdownContainer>;
   }
 

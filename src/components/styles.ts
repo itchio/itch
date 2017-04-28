@@ -90,6 +90,7 @@ export const borderRadii = {
 
 export const widths = {
   searchSidebar: "400px",
+  handle: "8px",
 };
 
 export const theme = {
@@ -172,7 +173,7 @@ export const heavyInput = () => css`
 `;
 
 export const iconButton = () => css`
-  position: relative;
+  ${inkContainer()};
   border-radius: 50%;
   padding: 5px;
   margin: -2px;
@@ -248,4 +249,43 @@ export const meat = () => css`
   flex-grow: 1;
   flex-shrink: 1;
   overflow: hidden;
+`;
+
+export const globalStyles = css`
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    -webkit-user-select: none;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-size: $base-text-size;
+    color: $base-text-color;
+  }
+
+  body, input {
+    font-family: LatoWeb, sans-serif;
+  }
+
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #4b4a4a;
+    border-radius: 1px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 1px;
+    background: #fa5c5c;
+    -webkit-box-shadow: inset 0 0 2px #FF8081;
+  }
 `;

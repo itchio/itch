@@ -15,25 +15,18 @@ import Ink = require("react-ink");
 
 import styled, * as styles from "./styles";
 
-const BrowserControlsContainer = styled.span`
+const BrowserControlsContainer = styled.div`
+  height: 32px;
+
   .icon {
-    ${styles.inkContainer()}
+    ${styles.iconButton()}
     color: ${props => props.theme.secondaryText};
-    font-size: 20px;
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-    text-align: center;
-    border-radius: 50%;
-    vertical-align: middle;
 
     &:first-child {
       padding-left: none;
     }
 
     text-shadow: 0 0 1px;
-
-    @include clickable;
 
     &.loading {
       ${styles.horizontalScan()};
@@ -43,8 +36,6 @@ const BrowserControlsContainer = styled.span`
       -webkit-filter: brightness(50%);
       text-shadow: none;
     }
-
-    ${styles.inkContainer()}
   }
 `;
 

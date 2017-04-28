@@ -10,6 +10,12 @@ import os from "./util/os";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import {Provider} from "react-redux";
+
+import store from "./store/chrome-store";
+
+import setupShortcuts from "./shortcuts";
+setupShortcuts(store);
 
 let AppContainer: React.ComponentClass<void> = null;
 try {
@@ -32,7 +38,7 @@ function render (RealApp: typeof App) {
   } else {
     rootComponent = <RealApp/>;
   }
-  ReactDOM.render(rootComponent, appNode);
+  ReactDOM.render(<Provider store={store}>{rootComponent}</Provider>, appNode);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

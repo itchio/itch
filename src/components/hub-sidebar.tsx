@@ -64,8 +64,7 @@ const SidebarItems = styled.div`
   align-items: stretch;
   flex-direction: column;
 
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
   flex-grow: 1;
 `;
 
@@ -129,6 +128,10 @@ interface ISortableContainerParams {
   sidebarProps: IProps & IDerivedProps & I18nProps;
 }
 
+const SortableListContainer = styled.div`
+  overflow-y: auto;  
+`;
+
 const SortableList = SortableContainer((params: ISortableContainerParams) => {
   const {sidebarProps, items} = params;
   const {t, tabData, id: currentId, loadingTabs} = sidebarProps;
@@ -136,7 +139,7 @@ const SortableList = SortableContainer((params: ISortableContainerParams) => {
   const {downloadCount, downloadProgress, downloadSublabel} = sidebarProps;
   const {downloadingGame} = sidebarProps;
 
-  return <div>
+  return <SortableListContainer>
     {map(items, (id, index) => {
       const data = tabData[id] || {};
       const {path} = data;
@@ -174,7 +177,7 @@ const SortableList = SortableContainer((params: ISortableContainerParams) => {
         sublabel, gameOverride, loading};
       return <SortableHubSidebarItem key={id} index={index} props={props}/>;
     })}
-  </div>;
+  </SortableListContainer>;
 });
 
 @watching

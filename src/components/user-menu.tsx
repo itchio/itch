@@ -16,18 +16,15 @@ import Icon from "./icon";
 import urls from "../constants/urls";
 
 import styled from "./styles";
-import {SidebarSection, SidebarHeading, Filler} from "./sidebar-styles";
+import {SidebarHeading, Filler} from "./sidebar-styles";
+import {SidebarItem} from "./hub-sidebar-item";
 
-const UserMenuContainer = styled(SidebarSection)`
-  margin-right: 0;
+const UserMenuContainer = styled(SidebarItem)`
+  margin-right: -${props => props.theme.widths.handle};
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 16px 8px;
-
-  * {
-    flex-grow: 0;
-  }
+  padding: 8px;
 
   .icon {
     margin: 0;
@@ -38,10 +35,6 @@ const UserMenuContainer = styled(SidebarSection)`
     width: 2em;
     margin: 0 5px;
     border-radius: 2px;
-  }
-
-  .flipped .me-dropdown {
-    transform: rotateX(180deg);
   }
 `;
 
@@ -123,7 +116,7 @@ class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void>
       <img src={coverUrl}/>
       <SidebarHeading>{username || displayName}</SidebarHeading>
       <Filler/>
-      <Icon icon="triangle-down" classes={["me-dropdown"]}/>
+      <Icon icon="triangle-down" classes={["flipper"]}/>
     </UserMenuContainer>;
   }
 }
