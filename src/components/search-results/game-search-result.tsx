@@ -21,12 +21,12 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
     let compatible = isPlatformCompatible(game);
 
     if (game.type === "html") {
-      platforms.push(<Icon hint="web" icon="earth"/>);
+      platforms.push(<Icon key="web" hint="web" icon="earth"/>);
     }
 
     for (const p of platformData) {
       if ((game as any)[p.field]) {
-        platforms.push(<Icon hint={p.platform} icon={p.icon}/>);
+        platforms.push(<Icon key={p.platform} hint={p.platform} icon={p.icon}/>);
       }
     }
 

@@ -67,11 +67,14 @@ export class HubSearchResults extends React.Component<IProps & IDerivedProps & I
   }
 
   render () {
-    const {allGames} = this.props;
-    this.fuse.set(allGames);
-
     const {t, search} = this.props;
     const {query, open, results} = search;
+    if (!open) {
+      return null;
+    }
+
+    const {allGames} = this.props;
+    this.fuse.set(allGames);
 
     const {closeSearch, navigate} = this.props;
 

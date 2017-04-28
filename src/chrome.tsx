@@ -17,6 +17,13 @@ import store from "./store/chrome-store";
 import setupShortcuts from "./shortcuts";
 setupShortcuts(store);
 
+import {injectGlobal, globalStyles} from "./components/styles";
+
+// tslint:disable-next-line
+injectGlobal`
+  ${globalStyles};
+`;
+
 let AppContainer: React.ComponentClass<void> = null;
 try {
   const rhl = require("react-hot-loader");

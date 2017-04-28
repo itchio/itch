@@ -110,9 +110,13 @@ export class Dropdown extends React.Component<IProps & IDerivedProps & I18nProps
     }
 
     const toggle = this.toggle.bind(this);
-    const innerC = <DropdownInnerContainer className={innerClasses} onClick={toggle}>{inner}</DropdownInnerContainer>;
-    const childrenC = <DropdownDiv className={dropdownClasses}>
-      {children}
+    const innerC = <DropdownInnerContainer key="inner"
+      className={innerClasses}
+      onClick={toggle}>
+        {inner}
+    </DropdownInnerContainer>;
+    const childrenC = <DropdownDiv key="children" className={dropdownClasses}>
+      {open ? children : null}
     </DropdownDiv>;
 
     return <DropdownContainer style={{position: "relative"}} className={containerClasses}>

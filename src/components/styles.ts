@@ -288,4 +288,32 @@ export const globalStyles = css`
     background: #fa5c5c;
     -webkit-box-shadow: inset 0 0 2px #FF8081;
   }
+
+  .react-hint-container {
+    pointer-events: none;
+  }
+
+  .react-hint__content {
+    padding: 5px;
+    border-radius: 2px;
+    background: $tooltip-background-color;
+    color: $tooltip-text-color;
+    font-size: 90%;
+  }
+
+  .react-hint--top:after {
+    border-top-color: $tooltip-background-color;
+  }
+
+  .react-hint--left:after {
+    border-left-color: $tooltip-background-color;
+  }
+
+  .react-hint--right:after {
+    border-right-color: $tooltip-background-color;
+  }
+
+  .react-hint--bottom:after {
+    border-bottom-color: $tooltip-background-color;
+  }
 `;

@@ -6,12 +6,7 @@ import * as React from "react";
 import Layout from "./layout";
 import Modal from "./modal";
 
-import {ThemeProvider, injectGlobal, globalStyles, theme} from "./styles";
-
-// tslint:disable-next-line
-injectGlobal`
-  ${globalStyles};
-`;
+import {ThemeProvider, theme} from "./styles";
 
 const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === "1";
 

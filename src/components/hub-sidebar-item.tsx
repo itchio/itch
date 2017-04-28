@@ -2,7 +2,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import {ILocalizedString, ITabData, IGameRecord} from "../types";
+import {ILocalizedString, ITabData} from "../types";
 import {ILocalizer} from "../localizer";
 
 import Ink = require("react-ink");
@@ -206,7 +206,6 @@ interface IHubSidebarItemProps {
   count?: number;
   sublabel?: ILocalizedString;
   progress?: number;
-  gameOverride?: IGameRecord;
 
   icon?: string;
   iconImage?: string;

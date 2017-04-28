@@ -2,7 +2,6 @@
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
 import {createStructuredSelector} from "reselect";
-import * as classNames from "classnames";
 
 import urls from "../constants/urls";
 import * as actions from "../actions";
@@ -20,18 +19,9 @@ export class Dashboard extends React.Component<IProps & IDerivedProps & I18nProp
 
     const games = map(myGameIds, (id) => allGames[id]);
 
-    let sectionCount = 0;
-    if (games.length > 0) {
-      sectionCount++;
-    }
-
-    const showHeaders = (sectionCount > 1);
-    const headerClasses = classNames("", {shown: showHeaders});
-
     const tab = "dashboard";
 
     return <div className="dashboard-meat">
-      <h2 className={headerClasses}>{t("sidebar.dashboard")}</h2>
       <GameFilters tab={tab}>
         <span className="link" onClick={(e) => navigate(`url/${urls.dashboard}`)}>
           {t("outlinks.open_dashboard")}

@@ -10,8 +10,6 @@ import * as actions from "../actions";
 import Icon from "./icon";
 
 import {transformUrl} from "../util/navigation";
-import os from "../util/os";
-const osx = os.itchPlatform() === "osx";
 
 import {dispatcher} from "../constants/action-types";
 

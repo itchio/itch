@@ -6,7 +6,7 @@ import * as querystring from "querystring";
 import staticTabData from "../constants/static-tab-data";
 
 import { IGameRecord, IUserRecord, ICollectionRecord,
-  IInstallLocation, ITabData, ITabDataSet } from "../types";
+  IInstallLocation, ITabData } from "../types";
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
 const ID_RE = /^[^\/]+\/([^\?]*)/;
@@ -138,17 +138,12 @@ export function locationToTabData(location: IInstallLocation) {
   };
 }
 
-export function makeLabel(id: string, tabData: ITabDataSet) {
+export function makeLabel(id: string, data: ITabData) {
   const staticData = staticTabData[id];
   if (staticData) {
     return staticData.label;
   }
 
-  if (!tabData) {
-    tabData = {} as ITabDataSet;
-  }
-
-  const data = tabData[id];
   if (data) {
     const {path} = data;
     if (path && /^url/.test(path)) {
