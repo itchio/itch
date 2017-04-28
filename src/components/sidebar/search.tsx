@@ -45,17 +45,7 @@ const SearchContainer = styled.section`
 @watching
 class SidebarSearch extends React.Component<IDerivedProps & I18nProps, void> {
   input: HTMLInputElement;
-
-  constructor () {
-    super();
-
-    this.triggerSearch = debounce(this.triggerSearch.bind(this), 100);
-    this.onSearchKeyUp = this.onSearchKeyUp.bind(this);
-    this.onSearchKeyDown = this.onSearchKeyDown.bind(this);
-    this.onSearchChange = this.onSearchChange.bind(this);
-    this.onSearchFocus = this.onSearchFocus.bind(this);
-    this.onSearchBlur = debounce(this.onSearchBlur.bind(this), 200);
-  }
+  doTrigger: () => void;
 
   subscribe (watcher: Watcher) {
     watcher.on(actions.focusSearch, async (store, action) => {
@@ -84,29 +74,29 @@ class SidebarSearch extends React.Component<IDerivedProps & I18nProps, void> {
     return <SearchContainer className={classNames({loading})}>
       <input id="search" ref={(input) => this.input = input} type="search"
         placeholder={t("search.placeholder")}
-        onKeyDown={this.onSearchKeyDown}
-        onKeyUp={this.onSearchKeyUp}
-        onChange={this.onSearchChange}
-        onFocus={this.onSearchFocus}
-        onBlur={this.onSearchBlur}>
+        onKeyDown={this.onKeyDown.bind(this)}
+        onKeyUp={this.onKeyUp.bind(this)}
+        onChange={this.onChange.bind(this)}
+        onFocus={this.onFocus.bind(this)}
+        onBlur={debounce(this.onBlur.bind(this), 200)}>
       </input>
       <span className="icon icon-search" />
     </SearchContainer>;
   }
 
-  onSearchFocus (e: React.FocusEvent<HTMLInputElement>) {
+  onFocus (e: React.FocusEvent<HTMLInputElement>) {
     this.props.focusSearch({});
   }
 
-  onSearchBlur (e: React.FocusEvent<HTMLInputElement>) {
+  onBlur (e: React.FocusEvent<HTMLInputElement>) {
     this.props.closeSearch({});
   }
 
-  onSearchChange (e: React.FormEvent<HTMLInputElement>) {
-    this.triggerSearch();
+  onChange (e: React.FormEvent<HTMLInputElement>) {
+    this.trigger();
   }
 
-  onSearchKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
+  onKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
     const {key} = e;
 
     let passthrough = false;
@@ -130,7 +120,7 @@ class SidebarSearch extends React.Component<IDerivedProps & I18nProps, void> {
     }
   }
 
-  onSearchKeyUp (e: React.KeyboardEvent<HTMLInputElement>) {
+  onKeyUp (e: React.KeyboardEvent<HTMLInputElement>) {
     const {key} = e;
 
     if (key === "Escape") {
@@ -143,15 +133,20 @@ class SidebarSearch extends React.Component<IDerivedProps & I18nProps, void> {
       return;
     }
 
-    this.triggerSearch();
+    this.trigger();
   }
 
-  triggerSearch () {
-    if (!this.input) {
-      return;
+  trigger () {
+    if (!this.doTrigger) {
+      this.doTrigger = debounce(() => {
+        if (!this.input) {
+          return;
+        }
+        this.props.search({query: this.input.value});
+      }, 100);
     }
 
-    this.props.search({query: this.input.value});
+    this.doTrigger();
   }
 }
 

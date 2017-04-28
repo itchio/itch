@@ -3483,10 +3483,6 @@ randexp@^0.4.2:
     discontinuous-range "1.0.0"
     ret "~0.1.10"
 
-rc-progress@^2.0.3:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/rc-progress/-/rc-progress-2.1.0.tgz#b9072b1f8dcbbb4763f3ee66a42becb457113966"
-
 rc@^1.0.1, rc@^1.1.2, rc@^1.1.6:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.1.tgz#2e03e8e42ee450b8cb3dce65be1bf8974e1dfd95"

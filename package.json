@@ -78,7 +78,6 @@
     "moment-timezone": "^0.5.4",
     "polished": "^1.0.3",
     "proxyquire": "^1.7.3",
-    "rc-progress": "^2.0.3",
     "react": "^15.4.2",
     "react-addons-shallow-compare": "^15.4.1",
     "react-dom": "^15.4.1",

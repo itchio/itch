@@ -14,7 +14,6 @@ import urls from "../../constants/urls";
 
 import styled from "../styles";
 import Filler from "../basics/filler";
-import {SidebarHeading} from "./styles";
 import {ItemDiv} from "./item";
 
 import Dropdown, {IDropdownItem} from "./dropdown";
@@ -115,7 +114,7 @@ class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void>
 
     return <UserMenuContainer>
       <img src={coverUrl}/>
-      <SidebarHeading>{username || displayName}</SidebarHeading>
+      {username || displayName}
       <Filler/>
       <Icon icon="triangle-down" classes={["flipper"]}/>
     </UserMenuContainer>;
