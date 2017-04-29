@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import * as classNames from "classnames";
-import GenericSearchResult from "./generic-search-result";
+import GenericSearchResult, {searchResultStyle} from "./generic-search-result";
 
 import platformData from "../../constants/platform-data";
 
@@ -11,6 +11,44 @@ import format from "../../util/format";
 import {IGameRecord} from "../../types";
 
 import Icon from "../basics/icon";
+import Filler from "../basics/filler";
+
+import styled, * as styles from "../styles";
+
+const GameSearchResultDiv = styled.div`
+  ${searchResultStyle}
+`;
+
+const Platforms = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .icon {
+    margin-right: 8px;
+  }
+`;
+
+const TitleBlock = styled.div`
+  padding: 8px 12px;
+  flex-grow: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+`;
+
+const Title = styled.div`
+  ${styles.singleLine()}
+`;
+
+const Price = styled.div`
+  color: ${props => props.theme.secondaryText};
+
+  &.original {
+    text-decoration: line-through;
+  }
+`;
 
 class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
   render () {
@@ -35,29 +73,31 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
 
     if (game.minPrice > 0) {
       if (game.sale) {
-        price = <span className="price"> {format.price("USD", game.minPrice * (1 - game.sale.rate / 100))}</span>;
-        originalPrice = <span className="price original">{format.price("USD", game.minPrice)}</span>;
+        price = <Price>{format.price("USD", game.minPrice * (1 - game.sale.rate / 100))}</Price>;
+        originalPrice = <Price className="original">{format.price("USD", game.minPrice)}</Price>;
       } else {
         price = <span className="price">{format.price("USD", game.minPrice)}</span>;
       }
     }
 
-    const resultClasses = classNames("search-result", {
+    const resultClasses = classNames({
       ["not-platform-compatible"]: !compatible,
       chosen: chosen,
     });
 
-    return <div className={resultClasses} onClick={onClick} ref="root">
+    return <GameSearchResultDiv className={resultClasses} onClick={onClick} ref="root">
       <img src={stillCoverUrl || coverUrl}/>
-      <div className="title-block">
-        <h4>{title}</h4>
-        <span className="platforms">
+      <TitleBlock>
+        <Title>{title}</Title>
+        <Filler/>
+        <Platforms>
           {platforms}
+          <Filler/>
           {originalPrice}
           {price}
-        </span>
-      </div>
-    </div>;
+        </Platforms>
+      </TitleBlock>
+    </GameSearchResultDiv>;
   }
 
   getPath(): string {

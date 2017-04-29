@@ -17,6 +17,10 @@ import {dispatcher} from "../constants/action-types";
 import GameSearchResult from "./search-results/game-search-result";
 import UserSearchResult from "./search-results/user-search-result";
 
+import Button from "./basics/button";
+import IconButton from "./basics/icon-button";
+import Filler from "./basics/filler";
+
 import {stripUnit} from "polished";
 import styled from "./styles";
 
@@ -42,10 +46,59 @@ const ResultsContainer = styled.div`
   display: flex;
   flex-direction: column;
 
+  padding: 8px 12px;
+
   &.open {
     left: 0;
     opacity: 1.0;
   }
+`;
+
+const Category = styled.div`
+  padding: 8px;
+  margin: 8px 0;
+  box-shadow: 0 0 8px #171717;
+  font-size: ${props => props.theme.fontSizes.large};
+  text-align: center;
+  flex-shrink: 0;
+`;
+
+const ResultList = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  flex-grow: 1;
+
+  font-size: ${props => props.theme.fontSizes.baseText};
+`;
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  flex-shrink: 0;
+
+  margin-bottom: 8px;
+
+  font-size: ${props => props.theme.fontSizes.large};
+`;
+
+const Footer = styled.div`
+  flex-shrink: 0;
+  display: flex;
+  padding: 15px;
+  box-shadow: 0 0 20px ${props => props.theme.sidebarBackground};
+`;
+
+const NoResults = styled.p`
+  font-size: ${props => props.theme.fontSizes.large};
+  text-align: center;
+  background-color: #2b2a2a;
+  padding: 12px 8px;
+  border-radius: 4px;
 `;
 
 export class HubSearchResults extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
@@ -84,19 +137,20 @@ export class HubSearchResults extends React.Component<IProps & IDerivedProps & I
     };
 
     return <ResultsContainer className={classNames({open})}>
-      <div className="header">
+      <Header>
         <h2>{t("search.results.title", {query: query || ""})}</h2>
-        <div className="filler"/>
-        <span className="icon icon-cross close-search" onClick={() => closeSearch({})}/>
-      </div>
+        <Filler/>
+        <IconButton icon="cross" onClick={() => closeSearch({})}/>
+      </Header>
       {this.resultsGrid(results)}
-      <div className="footer">
-        <div className="filler"/>
-        <div className="button" onClick={() => openAsTab()}>
-          {t("search.open_as_tab")}
-        </div>
-        <div className="filler"/>
-      </div>
+      <Footer>
+        <Filler/>
+        <Button
+          label={t("search.open_as_tab")}
+          onClick={() => openAsTab()}
+        />
+        <Filler/>
+      </Footer>
     </ResultsContainer>;
   }
 
@@ -113,9 +167,9 @@ export class HubSearchResults extends React.Component<IProps & IDerivedProps & I
     if (!(hasRemoteResults || hasLocalResults)) {
       const {t} = this.props;
 
-      return <div className="result-list">
-        <p className="no-results">{t("search.empty.no_results")}</p>
-      </div>;
+      return <ResultList>
+        <NoResults>{t("search.empty.no_results")}</NoResults>
+      </ResultList>;
     }
 
     const items: React.ReactElement<any>[] = [];
@@ -137,7 +191,7 @@ export class HubSearchResults extends React.Component<IProps & IDerivedProps & I
     let index = 0;
 
     if (fuseResults.length > 0) {
-      items.push(<h3>{t("search.results.local")}</h3>);
+      items.push(<Category>{t("search.results.local")}</Category>);
       each(fuseResults.slice(0, 5), (result) => {
         const game = result.item;
         items.push(<GameSearchResult key={`game-${game.id}`} game={game}
@@ -148,7 +202,7 @@ export class HubSearchResults extends React.Component<IProps & IDerivedProps & I
 
     const {userIds} = userResults.result;
     if (userIds.length > 0) {
-      items.push(<h3>{t("search.results.creators")}</h3>);
+      items.push(<Category>{t("search.results.creators")}</Category>);
       each(userResults.result.userIds, (userId) => {
         const user = users[userId];
         items.push(<UserSearchResult key={`user-${userId}`} user={user}
@@ -159,7 +213,7 @@ export class HubSearchResults extends React.Component<IProps & IDerivedProps & I
 
     const {gameIds} = gameResults.result;
     if (gameIds.length > 0) {
-      items.push(<h3>{t("search.results.games")}</h3>);
+      items.push(<Category>{t("search.results.games")}</Category>);
       each(gameResults.result.gameIds, (gameId) => {
         const game = games[gameId];
         items.push(<GameSearchResult key={`game-${gameId}`} game={game}
@@ -168,9 +222,9 @@ export class HubSearchResults extends React.Component<IProps & IDerivedProps & I
       });
     }
 
-    return <div className="result-list">
+    return <ResultList>
       {items}
-    </div>;
+    </ResultList>;
   }
 }
 

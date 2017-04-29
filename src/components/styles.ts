@@ -268,6 +268,7 @@ export const singleLine = () => css`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 `;
 
 export const secondaryLink = () => css`
