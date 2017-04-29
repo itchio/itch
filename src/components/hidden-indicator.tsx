@@ -5,7 +5,22 @@ import {connect, I18nProps} from "./connect";
 import * as actions from "../actions";
 import {dispatcher} from "../constants/action-types";
 
-import Icon from "./basics/icon";
+import IconButton from "./basics/icon-button";
+
+import styled from "./styles";
+import {darken} from "polished";
+
+const HiddenIndicatorDiv = styled.div`
+  background: ${props => props.theme.meatBackground};
+  box-shadow: 0 0 2px 0 ${props => darken(0.2, props.theme.meatBackground)};
+  border-radius: 4px 0 0 0;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  display: block;
+  padding: 12px;
+  color: ${props => props.theme.secondaryText};
+`;
 
 class HiddenIndicator extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
@@ -15,14 +30,14 @@ class HiddenIndicator extends React.Component<IProps & IDerivedProps & I18nProps
       return null;
     }
 
-    return <div className="hidden-count">
-      {t("grid.hidden_count", {count})}
+    return <HiddenIndicatorDiv>
+      <IconButton
+        icon="delete"
+        hint={t("grid.clear_filters")}
+        onClick={() => clearFilters({tab})}/>
       {" "}
-      <span className="clear-filters" data-rh-at="top" data-rh={t("grid.clear_filters")}
-          onClick={() => clearFilters({tab})}>
-        <Icon icon="delete"/>
-      </span>
-    </div>;
+      {t("grid.hidden_count", {count})}
+    </HiddenIndicatorDiv>;
   }
 }
 

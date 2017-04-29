@@ -3,6 +3,8 @@ import * as React from "react";
 import {connect, I18nProps} from "../connect";
 import * as classNames from "classnames";
 
+import {first, find} from "underscore";
+
 import Icon from "../basics/icon";
 import TaskIcon from "../basics/task-icon";
 import LoadingCircle from "../basics/loading-circle";
@@ -14,7 +16,7 @@ import * as actions from "../../actions";
 
 import {IActionsInfo} from "./types";
 
-import {IDownloadItem, ICaveRecord, IGameUpdate} from "../../types";
+import {IGameUpdate, IDownloadItem} from "../../types";
 import {dispatcher} from "../../constants/action-types";
 
 import Ink = require("react-ink");
@@ -28,11 +30,23 @@ interface IStatus {
 class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, cancellable, platform, platformCompatible, mayDownload,
-      pressDownload, canBeBought, progress, task, action, animate, cave} = this.props;
+      pressDownload, canBeBought, tasks, action, animate, cave} = this.props;
+
+    let progress = 0;
+    let task = "idle";
+    const activeDownload = this.activeDownload();
+    const firstTask = first(tasks);
+    if (activeDownload) {
+      task = "download";
+      progress = activeDownload.progress;
+    } else if (firstTask) {
+      task = firstTask.name;
+      progress = firstTask.progress;
+    }
 
     let child: React.ReactElement<any> | null = null;
     if (task) {
-      const {status, hint, statusTask} = this.status();
+      const {status, hint, statusTask} = this.status(task);
       const classes = classNames("state", "normal-state");
 
       const realTask = statusTask || task;
@@ -76,7 +90,7 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
     };
     let branded = false;
 
-    const hint = this.hint();
+    const hint = this.hint(task);
 
     const buttonClasses = classNames("main-action", {
       "buy-now": (platformCompatible && !mayDownload && canBeBought && !cave),
@@ -84,7 +98,7 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
     });
     const button = <div style={style}
         className={buttonClasses}
-        onClick={(e) => this.onClick(e)}
+        onClick={(e) => this.onClick(e, task)}
         data-rh={hint} data-rh-at="top">
       <Ink/>
       {child}
@@ -97,18 +111,22 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
     return button;
   }
 
-  hint () {
-    const {t, task} = this.props;
+  activeDownload(): IDownloadItem | null {
+    return find(this.props.downloads, (d) => !d.finished);
+  }
+
+  hint (task: string) {
+    const {t} = this.props;
 
     if (task === "error") {
       return t("grid.item.report_problem");
     }
   }
 
-  onClick (e: React.MouseEvent<HTMLElement>) {
+  onClick (e: React.MouseEvent<HTMLElement>, task: string) {
     e.stopPropagation();
 
-    let {task, cave, game, platformCompatible, mayDownload, update} = this.props;
+    let {cave, game, platformCompatible, mayDownload, update} = this.props;
     const {navigate, queueGame, initiatePurchase, abortGameRequest, showGameUpdate} = this.props;
 
     if (task === "download" || task === "find-upload") {
@@ -136,8 +154,8 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
     }
   }
 
-  status (): IStatus {
-    const {t, task, action} = this.props;
+  status (task: string): IStatus {
+    const {t, action} = this.props;
 
     if (task === "idle") {
       const update = this.props.update;
@@ -167,7 +185,7 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
       res = {status: t("grid.item.uninstalling")};
     }
     if (task === "download" || task === "find-upload") {
-      const downloadItem = this.props.downloadsByGameId[this.props.game.id];
+      const downloadItem = this.activeDownload();
       if (downloadItem && downloadItem.eta && downloadItem.bps) {
         const {eta, bps} = downloadItem;
         res = {
@@ -199,14 +217,10 @@ interface IProps extends IActionsInfo {
 
   pressDownload: boolean;
 
-  cave: ICaveRecord;
   update: IGameUpdate;
 }
 
 interface IDerivedProps {
-  downloadsByGameId: {
-    [gameId: string]: IDownloadItem;
-  };
   downloadsPaused: boolean;
 
   queueGame: typeof actions.queueGame;
@@ -218,7 +232,6 @@ interface IDerivedProps {
 
 export default connect<IProps>(MainAction, {
   state: (state) => ({
-    downloadsByGameId: state.downloads.downloadsByGameId,
     downloadsPaused: state.downloads.downloadsPaused,
   }),
   dispatch: (dispatch) => ({

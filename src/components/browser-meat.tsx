@@ -398,7 +398,7 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
       this.webview.addEventListener("new-window", this.newWindow.bind(this));
       this.domReady();
 
-      createContextMenu(this.webview, {
+      createContextMenu(this.webview, this.props.t, {
         navigate: this.props.navigate,
       });
 

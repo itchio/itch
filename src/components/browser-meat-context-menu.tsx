@@ -2,23 +2,18 @@
 import * as electron from "electron";
 
 import * as actions from "../actions";
-import {getT} from "../localizer";
-
-import store from "../store/chrome-store";
+import {ILocalizer} from "../localizer";
 
 interface IContextMenuOpts {
   navigate: typeof actions.navigate;
 }
 
-export default function create(wv: Electron.WebViewElement, opts: IContextMenuOpts) {
+export default function create(wv: Electron.WebViewElement, t: ILocalizer, opts: IContextMenuOpts) {
   const wc = wv.getWebContents();
   wc.on("context-menu", (e, props) => {
     const editFlags = props.editFlags;
     const hasText = props.selectionText.trim().length > 0;
     const can = (type: string) => ((editFlags as any)[`can${type}`] as boolean) && hasText;
-
-    const {lang, strings} = store.getState().i18n;
-    const t = getT(strings, lang);
 
     let menuTpl: Electron.MenuItemOptions[] = [{
       type: "separator",

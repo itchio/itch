@@ -3,6 +3,7 @@ import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
 import * as uuid from "uuid";
+import {find} from "underscore";
 
 import {log, opts} from "./log";
 
@@ -15,7 +16,7 @@ async function startDownload (store: IStore, downloadOpts: IStartDownloadOpts) {
 
   const downloadsState = store.getState().downloads;
 
-  const existing = downloadsState.downloadsByGameId[downloadOpts.game.id];
+  const existing = find(downloadsState.downloadsByGameId[downloadOpts.game.id], (d) => !d.finished);
   if (existing && !existing.finished) {
     log(opts, `Not starting another download for ${downloadOpts.game.title}`);
     store.dispatch(actions.navigate("downloads"));

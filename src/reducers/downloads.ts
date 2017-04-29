@@ -2,7 +2,7 @@
 import {createSelector, createStructuredSelector} from "reselect";
 
 import * as invariant from "invariant";
-import {indexBy, where, sortBy, pluck, filter, map, first, last, omit} from "underscore";
+import {indexBy, groupBy, where, sortBy, pluck, filter, map, first, last, omit} from "underscore";
 
 import {IDownloadsState} from "../types";
 
@@ -23,7 +23,7 @@ const structSel = createStructuredSelector({
     pluck(sortBy(where(state.downloads, {finished: true}), "order"), "id")
   ),
   downloadsByGameId: (state: IDownloadsState) => (
-    indexBy(state.downloads, "gameId")
+    groupBy(state.downloads, "gameId")
   ),
 });
 

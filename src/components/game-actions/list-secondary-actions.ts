@@ -3,11 +3,10 @@ import {findWhere} from "underscore";
 
 import * as actions from "../../actions";
 import format, {DATE_FORMAT} from "../../util/format";
-import store from "../../store/chrome-store";
 
 import {
   IGameRecord, ICaveRecord, IDownloadKey, ClassificationAction,
-  ILocalizedString,
+  ILocalizedString, ITask,
 } from "../../types";
 
 import {IAction} from "../../constants/action-types";
@@ -85,11 +84,13 @@ interface IListSecondaryActionsProps {
 
   action: ClassificationAction;
 
+  tasks: ITask[];
+
   t: ILocalizer;
 }
 
 export default function listSecondaryActions (props: IListSecondaryActionsProps) {
-  const {game, cave, mayDownload, canBeBought, downloadKey, action, t} = props;
+  const {game, cave, mayDownload, canBeBought, downloadKey, action, tasks, t} = props;
   let error = false;
 
   const items: IActionOpts[] = [];
@@ -143,9 +144,7 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
 
     let busy = false;
 
-    const state = store.getState();
-    const tasksForGame = state.tasks.tasksByGameId[game.id];
-    if (tasksForGame && tasksForGame.length > 0) {
+    if (tasks && tasks.length > 0) {
       busy = true;
     }
 

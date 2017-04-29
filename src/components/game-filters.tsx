@@ -29,8 +29,8 @@ const FiltersContainer = styled.section`
   display: flex;
   align-items: center;
   width: 100%;
-  background: $bread-background-color;
-  box-shadow: 0 4px 8px -4px $bread-background-color;
+  background: ${props => props.theme.breadBackground};
+  box-shadow: 0 4px 8px -4px ${props => props.theme.breadBackground};
   flex-shrink: 0;
   padding-right: 4px;
   min-height: 40px;
@@ -109,7 +109,7 @@ const Search = styled.section`
     pointer-events: none;
 
     &.active {
-      color: $light-accent-color;
+      color: ${props => props.theme.lightAccent};
     }
   }
 
@@ -130,6 +130,10 @@ const Search = styled.section`
   }
 `;
 
+const LayoutPickers = styled.section`
+  display: flex;
+`;
+
 const LayoutPicker = styled.section`
   ${styles.inkContainer()}
 
@@ -137,6 +141,7 @@ const LayoutPicker = styled.section`
   border-radius: 50%;
   font-size: 90%;
   filter: brightness(60%);
+
   &:hover {
     cursor: pointer;
     filter: brightness(80%);
@@ -257,10 +262,10 @@ class GameFilters extends React.Component<IProps & IDerivedProps & I18nProps, vo
   }
 
   renderLayoutPickers () {
-    return <section className="layout-pickers">
+    return <LayoutPickers>
       {this.renderLayoutPicker("grid", "grid")}
       {this.renderLayoutPicker("table", "list")}
-    </section>;
+    </LayoutPickers>;
   }
 
   renderLayoutPicker (layout: TabLayout, icon: string) {

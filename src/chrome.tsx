@@ -17,13 +17,8 @@ import store from "./store/chrome-store";
 import setupShortcuts from "./shortcuts";
 setupShortcuts(store);
 
-import {injectGlobal} from "./components/styles";
-import globalStyles from "./components/global-styles";
-
-// tslint:disable-next-line
-injectGlobal`
-  ${globalStyles};
-`;
+import * as globalStyles from "./components/global-styles";
+globalStyles.inject();
 
 let AppContainer: React.ComponentClass<void> = null;
 try {

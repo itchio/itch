@@ -8,7 +8,6 @@
     "module": "commonjs",
     "experimentalDecorators": true,
     "noUnusedLocals": true,
-    "sourceMap": true,
     "inlineSourceMap": true,
     "jsx": "react",
     "allowJs": true

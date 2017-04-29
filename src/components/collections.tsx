@@ -11,6 +11,13 @@ import GameFilters from "./game-filters";
 import {dispatcher} from "../constants/action-types";
 
 import CollectionsGrid from "./collections-grid";
+import Link from "./basics/link";
+
+import styled, * as styles from "./styles";
+
+const CollectionsContainer = styled.div`
+  ${styles.meat()}
+`;
 
 export class Collections extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
@@ -18,14 +25,14 @@ export class Collections extends React.Component<IProps & IDerivedProps & I18nPr
 
     const tab = "collections";
 
-    return <div className="collections-meat">
+    return <CollectionsContainer>
       <GameFilters tab={tab} showBinaryFilters={false} showLayoutPicker={false}>
-        <span className="link" onClick={(e) => navigate(`url/${urls.myCollections}`)}>
+        <Link onClick={(e) => navigate(`url/${urls.myCollections}`)}>
           {t("outlinks.manage_collections")}
-        </span>
+        </Link>
       </GameFilters>
       <CollectionsGrid/>
-    </div>;
+    </CollectionsContainer>;
   }
 }
 

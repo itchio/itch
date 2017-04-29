@@ -1,5 +1,5 @@
 
-import {lighten, darken} from "polished";
+import {lighten} from "polished";
 
 // colors
 
@@ -73,15 +73,25 @@ export const colors = {
 
   dropdownBackground: lighten(0.15, baseColors.codGray),
 
-  secondaryText: darken(0.1, baseColors.silverChalice),
-  secondaryTextHover: lighten(0.1, baseColors.ivory),
+  secondaryText: baseColors.silverChalice,
+  secondaryTextHover: baseColors.ivory,
 
   ternaryText: baseColors.zambezi,
+
+  breadBackground: "#292727",
+  breadBoxShadow: "#171717",
+
+  filterBackground: "#4a4848",
+  filterBorder: "#333",
+
+  filterTagBorder: "#777575",
+  filterTagBackground: "#5f5c5c",
+  filterTagText: "#e0dfdf",
 };
 
 export const fontSizes = {
   sidebar: "14px",
-  baseText: "16px",
+  baseText: "14px",
   modal: "18px",
 };
 
@@ -242,6 +252,16 @@ export const singleLine = () => css`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+export const secondaryLink = () => css`
+  color: ${props => props.theme.secondaryText};
+  text-decoration: underline;
+
+  &:hover {
+    cursor: pointer;
+    color: ${props => props.theme.secondaryTextHover};
+  }
 `;
 
 export const meat = () => css`

@@ -1,12 +1,19 @@
 
-import globalBaseStyle from "./base";
-import globalScrollStyle from "./scroll";
-import globalHintStyle from "./hint";
-import globalModalStyle from "./modal";
+import reset from "./reset";
+import base from "./base";
+import scroll from "./scroll";
+import hint from "./hint";
+import modal from "./modal";
 
-export default `
-  ${globalBaseStyle};
-  ${globalScrollStyle};
-  ${globalHintStyle};
-  ${globalModalStyle};
-`;
+import {injectGlobal} from "../styles";
+
+export function inject() {
+  // tslint:disable-next-line
+  injectGlobal`
+    ${reset};
+    ${base};
+    ${scroll};
+    ${hint};
+    ${modal};
+  `;
+}

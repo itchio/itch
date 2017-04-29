@@ -6,12 +6,19 @@ import {createStructuredSelector} from "reselect";
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
+import Link from "./basics/link";
 import Games from "./games";
 import GameFilters from "./game-filters";
 import {map} from "underscore";
 
 import {IAppState, IGameRecordSet, IItchAppProfile, IItchAppProfileMyGames} from "../types";
 import {dispatcher} from "../constants/action-types";
+
+import styled, * as styles from "./styles";
+
+const DashboardContainer = styled.div`
+  ${styles.meat()}
+`;
 
 export class Dashboard extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
@@ -21,14 +28,14 @@ export class Dashboard extends React.Component<IProps & IDerivedProps & I18nProp
 
     const tab = "dashboard";
 
-    return <div className="dashboard-meat">
+    return <DashboardContainer>
       <GameFilters tab={tab}>
-        <span className="link" onClick={(e) => navigate(`url/${urls.dashboard}`)}>
+        <Link onClick={(e) => navigate(`url/${urls.dashboard}`)}>
           {t("outlinks.open_dashboard")}
-        </span>
+        </Link>
       </GameFilters>
       <Games tab={tab} games={games}/>
-    </div>;
+    </DashboardContainer>;
   }
 }
 

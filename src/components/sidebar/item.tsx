@@ -36,7 +36,8 @@ export const ItemDiv = styled.section`
   margin: 2px 0;
   margin-right: 0;
   padding: 5px 8px 5px 10px;
-  min-height: 30px;
+  min-height: 26px;
+  justify-content: center;
 
   position: relative;
 

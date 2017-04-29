@@ -4,7 +4,7 @@
 import {Watcher} from "../reactors/watcher";
 export {Watcher} from "../reactors/watcher";
 
-import store from "../store/chrome-store";
+import * as PropTypes from "prop-types";
 
 /**
  * watching is an ES2017 decorator that lets components subscribe
@@ -16,24 +16,44 @@ export default function (constructor: Function) {
         throw new Error(`Component ${constructor.name} is missing subscribe method (watching decorator)`);
     }
 
+    const origContextTypes = (constructor as any).contextTypes || {};
+    (constructor as any).contextTypes = {
+        ...origContextTypes,
+        store: PropTypes.shape({
+            subscribe: PropTypes.func.isRequired,
+            dispatch: PropTypes.func.isRequired,
+            getState: PropTypes.func.isRequired,
+        }),
+    };
+
     const originalWillMount = constructor.prototype.componentWillMount;
     constructor.prototype.componentWillMount = function () {
+        if (!this.context.store) {
+            throw new Error(`Can't set up watching because no `
+            + `store in context. Did you forget to wrap your top-level component in <Provider/> ?`);
+        }
+
         this.watcher = new Watcher();
-        store.watcher.addSub(this.watcher);
-        constructor.prototype.subscribe.apply(this, [this.watcher]);
+        this.context.store.watcher.addSub(this.watcher);
+        constructor.prototype.subscribe.call(this, this.watcher);
 
         if (originalWillMount) {
-            originalWillMount.apply(this);
+            originalWillMount.call(this);
         }
     };
 
     const originalWillUnmount = constructor.prototype.componentWillUnmount;
     constructor.prototype.componentWillUnmount = function () {
-        store.watcher.removeSub(this.watcher);
+        if (!this.context.store) {
+            throw new Error(`Can't tear down watching because no `
+            + `store in context. Did you forget to wrap your top-level component in <Provider/> ?`);
+        }
+
+        this.context.store.watcher.removeSub(this.watcher);
         this.watcher = null;
 
         if (originalWillUnmount) {
-            originalWillUnmount.apply(this);
+            originalWillUnmount.call(this);
         }
     };
 };

@@ -1151,7 +1151,7 @@ export interface ITasksState {
         [key: string]: ITask;
     };
 
-    /** same as tasks, but indexed by gameId - there may be multiple for the same game */
+    /** same as tasks, grouped by gameId - there may be multiple for the same game */
     tasksByGameId: {
         [gameId: string]: ITask[];
     };
@@ -1363,9 +1363,9 @@ export interface IDownloadsState {
         [id: string]: IDownloadItem;
     };
 
-    /** All the downloads we know about, indexed by the id of the game they're associated to */
+    /** All the downloads we know about, grouped by the id of the game they're associated to */
     downloadsByGameId: {
-        [gameId: string]: IDownloadItem;
+        [gameId: string]: IDownloadItem[];
     };
 
     /** ids of all the downloads finished but not cleared yet */

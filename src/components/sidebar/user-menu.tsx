@@ -114,7 +114,7 @@ class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void>
 
     return <UserMenuContainer>
       <img src={coverUrl}/>
-      {username || displayName}
+      {"yay! productivity!" || username || displayName}
       <Filler/>
       <Icon icon="triangle-down" classes={["flipper"]}/>
     </UserMenuContainer>;

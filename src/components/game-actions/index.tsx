@@ -7,7 +7,7 @@ import * as classNames from "classnames";
 import {connect, I18nProps} from "../connect";
 import {createSelector, createStructuredSelector} from "reselect";
 
-import {findWhere, first} from "underscore";
+import {findWhere} from "underscore";
 
 import os from "../../util/os";
 
@@ -30,7 +30,12 @@ class GameActions extends React.Component<IProps & IDerivedProps & I18nProps, vo
     const {props} = this;
     const {showSecondary, CustomSecondary} = props;
 
-    const classes = classNames("game-actions", `action-${props.action}`, `task-${props.task}`, {
+    let taskName = "idle";
+    if (props.tasks && props.tasks.length > 0) {
+      taskName = props.tasks[0].name;
+    }
+
+    const classes = classNames("game-actions", `action-${props.action}`, `task-${taskName}`, {
       incompatible: !props.platformCompatible,
       uninstalled: !props.cave,
     });
@@ -73,8 +78,8 @@ interface IHappenings {
   downloadKeys: {
     [id: string]: IDownloadKey;
   };
-  task: ITask;
-  download: IDownloadItem;
+  tasks: ITask[];
+  downloads: IDownloadItem[];
   meId: number;
   mePress: boolean;
   gameUpdates: IGameUpdatesState;
@@ -88,15 +93,15 @@ export default connect<IProps>(GameActions, {
         game: (state: IAppState, props: IProps) => props.game,
         cave: (state: IAppState, props: IProps) => props.cave || state.globalMarket.cavesByGameId[props.game.id],
         downloadKeys: (state: IAppState, props: IProps) => state.market.downloadKeys,
-        task: (state: IAppState, props: IProps) => first(state.tasks.tasksByGameId[props.game.id]),
-        download: (state: IAppState, props: IProps) => state.downloads.downloadsByGameId[props.game.id],
+        tasks: (state: IAppState, props: IProps) => state.tasks.tasksByGameId[props.game.id],
+        downloads: (state: IAppState, props: IProps) => state.downloads.downloadsByGameId[props.game.id],
         meId: (state: IAppState, props: IProps) => (state.session.credentials.me || { id: "anonymous" }).id,
         mePress: (state: IAppState, props: IProps) =>
           (state.session.credentials.me || { pressUser: false }).pressUser,
         gameUpdates: (state: IAppState, props: IProps) => state.gameUpdates,
       }),
       (happenings: IHappenings) => {
-        const { game, cave, downloadKeys, task, download, meId, mePress, gameUpdates } = happenings;
+        const { game, cave, downloadKeys, tasks, downloads, meId, mePress, gameUpdates } = happenings;
 
         const animate = false;
         let action = actionForGame(game, cave);
@@ -106,6 +111,7 @@ export default connect<IProps>(GameActions, {
         const downloadKey = findWhere(downloadKeys, { gameId: game.id });
         const hasMinPrice = game.minPrice > 0;
         const hasDemo = game.hasDemo;
+
         // FIXME game admins
         const canEdit = game.userId === meId;
         let mayDownload = !!(downloadKey || !hasMinPrice || canEdit || hasDemo);
@@ -117,8 +123,6 @@ export default connect<IProps>(GameActions, {
           }
         }
         const canBeBought = game.canBeBought;
-
-        const downloading = download && !download.finished;
 
         let update: IGameUpdate;
         if (cave) {
@@ -137,8 +141,8 @@ export default connect<IProps>(GameActions, {
           platform,
           platformCompatible,
           action,
-          task: (task ? task.name : (downloading ? "download" : (cave ? "idle" : null))),
-          progress: (task ? task.progress : (downloading ? download.progress : 0)),
+          downloads,
+          tasks,
         };
       },
     );
