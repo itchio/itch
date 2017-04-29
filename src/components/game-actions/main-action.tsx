@@ -9,8 +9,6 @@ import LoadingCircle from "../basics/loading-circle";
 import Button from "../basics/button";
 
 import format from "../../util/format";
-import downloadProgress from "../../util/download-progress";
-
 import * as actions from "../../actions";
 
 import {IActionsInfo} from "./types";
@@ -166,16 +164,7 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
       res = {status: t("grid.item.uninstalling")};
     }
     if (task === "download" || task === "find-upload") {
-      const downloadItem = this.activeDownload();
-      if (downloadItem && downloadItem.eta && downloadItem.bps) {
-        const {eta, bps} = downloadItem;
-        res = {
-          status: t("grid.item.downloading"),
-          hint: downloadProgress(t, {eta, bps}, this.props.downloadsPaused, {}),
-        };
-      } else {
-        res = {status: t("grid.item.downloading")};
-      }
+      res = {status: t("grid.item.downloading")};
     }
     if (task === "ask-before-install") {
       res = {status: t("grid.item.finalize_installation")};

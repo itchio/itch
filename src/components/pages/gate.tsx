@@ -11,6 +11,8 @@ import urls from "../../constants/urls";
 import ErrorList from "./gate/error-list";
 import RememberedSession from "./gate/remembered-session";
 import Icon from "../basics/icon";
+import Link from "../basics/link";
+import Button from "../basics/button";
 
 import * as actions from "../../actions";
 
@@ -19,8 +21,199 @@ import {dispatcher, ILoginWithTokenPayload} from "../../constants/action-types";
 
 import watching, {Watcher} from "../watching";
 
+import styled, * as styles from "../styles";
+
+const GateDiv = styled.div`
+  animation: drop-down .3s ease-in;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+
+  section {
+    flex-grow: 0;
+  }
+
+  .top-filler {
+    flex-grow: 1;
+  }
+
+  .logo {
+    flex-grow: 1;
+    pointer-events: none;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    img {
+      width: 90%;
+      margin: 0 auto;
+    }
+  }
+
+  .errors {
+    color: ${props => props.theme.warning};
+    height: 4em;
+    max-width: 400px;
+    white-space: pre-wrap;
+    overflow-y: auto;
+
+    -webkit-user-select: initial;
+
+    li {
+      margin: 4px 0;
+      line-height: 1.4;
+    }
+
+    .welcome-back {
+      color: ${props => props.theme.baseText};
+      font-size: 18px;
+    }
+  }
+
+  .errors, .actions {
+    .icon {
+      margin-right: .4em;
+      font-size: 120%;
+      vertical-align: middle;
+    }
+  }
+
+  .crux {
+    flex-grow: .2;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    align-items: center;
+  }
+
+  .actions {
+    position: relative;
+    color: ${props => props.theme.secondaryText};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 160px;
+    min-height: 160px;
+
+    .icon.scanning {
+      @include horizontal-scan;
+      margin-right: 12px;
+    }
+  }
+
+  .links {
+    flex-grow: 1;
+    font-size: 16px;
+    transition: 0 .2s;
+    margin: 1em 0;
+    color: $swiss-coffee;
+  }
+
+  &.disabled {
+    form input, .links {
+      pointer-events: none;
+      opacity: 0;
+    }
+  }
+
+  &[data-stage='pick'] {
+    form input {
+      pointer-events: none;
+      opacity: 0;
+    }
+  }
+
+  &[data-stage='ready'] {
+    .crux, .links, .actions, .errors {
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .top-filler {
+      transition: all 0.8s;
+      flex-grow: 10;
+    }
+
+    .logo {
+      transition: all 0.8s ease-in;
+      opacity: 0;
+    }
+  }
+
+  .status-container.error {
+    line-height: 1.4;
+    font-size: 16px;
+    white-space: pre;
+    text-align: center;
+
+    .retry-setup {
+      display: block;
+      font-size: 48px;
+      margin: 20px;
+
+      @include clickable;
+    }
+  }
+`;
+
+const Form = styled.form`
+  width: 60%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  position: relative;
+
+  input {
+    ${styles.heavyInput()}
+
+    font-size: ${props => props.theme.fontSizes.large};
+
+    transform: scale(1.0) rotateZ(0deg);
+    transition: all 0.2s;
+
+    &[disabled] {
+      transform: scale(0.96);
+      opacity: 0;
+    }
+  }
+
+  input[type='text']:focus {
+    transform: scale(1.08) rotateZ(0.5deg);
+  }
+
+  input[type='password']:focus {
+    transform: scale(1.07) rotateZ(-0.3deg);
+  }
+
+  input[type='submit']:focus {
+    transform: scale(1.06) rotateZ(0deg);
+  }
+`;
+
+const RememberedSessions = styled.div`
+  animation: fade-in .2s;
+
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+`;
+
 @watching
-export class GatePage extends React.Component<IProps & IInternalProps & I18nProps, void> {
+export class GatePage extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   refs: {
     username: HTMLInputElement;
     password: HTMLInputElement;
@@ -45,9 +238,7 @@ export class GatePage extends React.Component<IProps & IInternalProps & I18nProp
     const {t, stage, blockingOperation} = this.props;
     const disabled = !!blockingOperation;
 
-    const classes = classNames("gate-page", {disabled});
-
-    return <div className={classes} data-stage={stage}>
+    return <GateDiv className={classNames({disabled})} data-stage={stage}>
       <section className="top-filler"/>
       <section className="logo">
         <img src={resolve(__dirname, "../../static/images/logos/app-white.svg")}/>
@@ -56,18 +247,18 @@ export class GatePage extends React.Component<IProps & IInternalProps & I18nProp
       {this.errors()}
 
       <section className="crux">
-        <form onSubmit={this.handleSubmit}>
+        <Form onSubmit={this.handleSubmit}>
           <input id="login-username" ref="username" type="text"
             placeholder={t("login.field.username")} autoFocus disabled={disabled}/>
           <input ref="password" type="password" placeholder={t("login.field.password")} disabled={disabled}/>
           <section className="actions">
             {this.renderActions()}
           </section>
-        </form>
+        </Form>
       </section>
 
       {this.links()}
-    </div>;
+    </GateDiv>;
   }
 
   errors () {
@@ -88,30 +279,36 @@ export class GatePage extends React.Component<IProps & IInternalProps & I18nProp
   }
 
   links () {
-    const {t, stage} = this.props;
+    const {t, stage, openUrl, loginStopPicking} = this.props;
 
     if (stage === "pick") {
-      const onClick = () => {
-        this.props.loginStopPicking({});
-      };
-
       return <section className="links">
-        <span className="link" onClick={onClick}>{t("login.action.show_form")}</span>
+        <Link
+          label={t("login.action.show_form")}
+          onClick={() => loginStopPicking({})}
+        />
       </section>;
     } else {
       const {rememberedSessions = {}} = this.props;
       const numSavedSessions = Object.keys(rememberedSessions).length;
 
       return <section className="links">
-        <a className="link" href={urls.accountRegister}>{t("login.action.register")}</a>
+        <Link
+          label={t("login.action.register")}
+          onClick={() => openUrl({url: urls.accountRegister})}
+        />
         <span>{" · "}</span>
-        <a className="link" href={urls.accountForgotPassword}>{t("login.action.reset_password")}</a>
+        <Link
+          label={t("login.action.reset_password")}
+          onClick={() => openUrl({url: urls.accountForgotPassword})}
+        />
         {numSavedSessions > 0
         ? [
           <span key="separator">{" · "}</span>,
-          <span key="show-saved" className="link" onClick={() => this.props.loginStartPicking({})}>
-            {t("login.action.show_saved_logins")}
-          </span>,
+          <Link
+            label={t("login.action.show_saved_logins")}
+            onClick={() => this.props.loginStartPicking({})}
+          />,
         ]
         : ""}
       </section>;
@@ -130,11 +327,11 @@ export class GatePage extends React.Component<IProps & IInternalProps & I18nProp
         this.props.loginWithToken(payload);
       };
 
-      return <div className="remembered-sessions">
+      return <RememberedSessions>
         {map(sortBy(rememberedSessions, (x) => -x.lastConnected), (session, userId) =>
           <RememberedSession key={userId} session={session} onLogin={onLogin}/>,
         )}
-      </div>;
+      </RememberedSessions>;
     }
     
     if (blockingOperation) {
@@ -154,11 +351,11 @@ export class GatePage extends React.Component<IProps & IInternalProps & I18nProp
       </p>;
     } else {
       const translatedMessage = t("login.action.login");
-      return <input type="submit" value={translatedMessage}/>;
+      return <Button fat primary label={translatedMessage}/>;
     }
   }
 
-  componentWillReceiveProps (nextProps: IInternalProps) {
+  componentWillReceiveProps (nextProps: IDerivedProps) {
     // so very reacty...
     if (!nextProps.blockingOperation && nextProps.errors && nextProps.errors.length) {
       this.handleLoginFailure();
@@ -195,7 +392,7 @@ export class GatePage extends React.Component<IProps & IInternalProps & I18nProp
 
 interface IProps {}
 
-interface IInternalProps {
+interface IDerivedProps {
   stage: string;
   errors: string[];
   blockingOperation?: ISetupOperation;
@@ -206,10 +403,11 @@ interface IInternalProps {
   loginStopPicking: typeof actions.loginStopPicking;
   forgetSessionRequest: typeof actions.forgetSessionRequest;
   retrySetup: typeof actions.retrySetup;
+  openUrl: typeof actions.openUrl;
 }
 
 export default connect<IProps>(GatePage, {
-  state: (state): Partial<IInternalProps> => {
+  state: (state): Partial<IDerivedProps> => {
     const { rememberedSessions, session } = state;
     const { login } = session;
 
@@ -223,12 +421,13 @@ export default connect<IProps>(GatePage, {
       return { stage: "ready", errors: [], blockingOperation: null };
     }
   },
-  dispatch: (dispatch): Partial<IInternalProps> => ({
+  dispatch: (dispatch): Partial<IDerivedProps> => ({
     loginWithPassword: dispatcher(dispatch, actions.loginWithPassword),
     loginWithToken: dispatcher(dispatch, actions.loginWithToken),
     loginStartPicking: dispatcher(dispatch, actions.loginStartPicking),
     loginStopPicking: dispatcher(dispatch, actions.loginStopPicking),
     forgetSessionRequest: dispatcher(dispatch, actions.forgetSessionRequest),
     retrySetup: dispatcher(dispatch, actions.retrySetup),
+    openUrl: dispatcher(dispatch, actions.openUrl),
   }),
 });

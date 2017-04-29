@@ -27,9 +27,10 @@ export class Collections extends React.Component<IProps & IDerivedProps & I18nPr
 
     return <CollectionsContainer>
       <GameFilters tab={tab} showBinaryFilters={false} showLayoutPicker={false}>
-        <Link onClick={(e) => navigate(`url/${urls.myCollections}`)}>
-          {t("outlinks.manage_collections")}
-        </Link>
+        <Link
+          label={t("outlinks.manage_collections")}
+          onClick={(e) => navigate(`url/${urls.myCollections}`)}
+        />
       </GameFilters>
       <CollectionsGrid/>
     </CollectionsContainer>;

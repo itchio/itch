@@ -30,9 +30,10 @@ export class Dashboard extends React.Component<IProps & IDerivedProps & I18nProp
 
     return <DashboardContainer>
       <GameFilters tab={tab}>
-        <Link onClick={(e) => navigate(`url/${urls.dashboard}`)}>
-          {t("outlinks.open_dashboard")}
-        </Link>
+        <Link
+          label={t("outlinks.open_dashboard")}
+          onClick={(e) => navigate(`url/${urls.dashboard}`)}
+        />
       </GameFilters>
       <Games tab={tab} games={games}/>
     </DashboardContainer>;

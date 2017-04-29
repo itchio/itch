@@ -912,6 +912,9 @@ export const COLLECTION_GAMES_FETCHED = "COLLECTION_GAMES_FETCHED";
 export interface ICollectionGamesFetchedPayload {
   /** The collection whose games were just fetched */
   collectionId: number;
+
+  /** timestamp of when the collection was fetched */
+  fetchedAt: number;
 }
 
 /** Start picking from a list of remembered sessions */

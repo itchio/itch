@@ -12,14 +12,17 @@ const LinkSpan = styled.span`
 
 class Link extends React.Component<IProps, void> {
   render () {
-    return <LinkSpan {...this.props}>
-      {this.props.children}
+    const {label, ...restProps} = this.props;
+
+    return <LinkSpan {...restProps}>
+      {label}
     </LinkSpan>;
   }
 };
 
 class IProps {
   onClick?: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
+  label?: string;
 }
 
 export default Link;

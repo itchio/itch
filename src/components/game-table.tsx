@@ -160,6 +160,7 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
     const {coverUrl, stillCoverUrl} = game;
 
     return <Cover
+      hover={false}
       coverUrl={coverUrl}
       stillCoverUrl={stillCoverUrl}
     />;

@@ -55,7 +55,7 @@ class GameBrowserContextActions extends React.Component<IProps & IDerivedProps &
   }
 
   render () {
-    const {items, error} = listSecondaryActions(this.props);
+    const {items} = listSecondaryActions(this.props);
 
     return <ActionsDiv>
       {map(items, (opts, i) => {

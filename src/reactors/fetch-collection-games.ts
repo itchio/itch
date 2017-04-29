@@ -20,7 +20,7 @@ import {IStore, IAppState, IUserMarket, ICredentials} from "../types";
 async function fetchSingleCollectionGames
     (store: IStore, market: IUserMarket, credentials: ICredentials, collectionId: number) {
   await fetch.collectionGames(market, credentials, collectionId);
-  store.dispatch(actions.collectionGamesFetched({collectionId}));
+  store.dispatch(actions.collectionGamesFetched({collectionId, fetchedAt: Date.now()}));
 }
 
 let collectionsWatcher: (state: IAppState) => void;

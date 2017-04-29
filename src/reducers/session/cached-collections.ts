@@ -9,13 +9,13 @@ const initialState = {
 
 export default reducer<ISessionCachedCollectionsState>(initialState, (on) => {
   on(actions.collectionGamesFetched, (state, action) => {
-    const {collectionId} = action.payload;
+    const {collectionId, fetchedAt} = action.payload;
 
     return {
       ...state,
       fetched: {
         ...state.fetched,
-        [collectionId]: Date.now(),
+        [collectionId]: fetchedAt,
       },
     };
   });

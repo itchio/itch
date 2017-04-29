@@ -46,6 +46,12 @@ const ButtonDiv = styled.div`
     box-shadow: none;
   }
 
+  &.fat {
+    font-size: ${props => props.theme.fontSizes.huge};
+    font-weight: bold;
+    padding: 16px 80px;
+  }
+
   background-color: #2B2B2B;
   border-color: #444;
 
@@ -61,13 +67,17 @@ const Spacer = styled.div`
 
 class Button extends React.Component<IProps, any> {
   render() {
-    const {className, primary, discreet, icon, iconComponent, label, hint, onClick, ...restProps} = this.props;
+    const {
+      className, primary, discreet, fat,
+      icon, iconComponent, label, hint, onClick,
+      ...restProps,
+    } = this.props;
 
     return <ButtonDiv
         onClick={onClick}
         data-rh={hint}
         data-rh-at="top"
-        className={classNames(className, {primary, discreet})}
+        className={classNames(className, {primary, discreet, fat})}
         {...restProps}>
       {iconComponent
       ? iconComponent
@@ -99,6 +109,7 @@ interface IProps {
   iconComponent?: JSX.Element;
   label: string;
   discreet?: boolean;
+  fat?: boolean;
 }
 
 export default Button;
