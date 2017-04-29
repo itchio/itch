@@ -11,6 +11,41 @@ import DownloadRow from "./download-row";
 import {IAppState, IDownloadItem} from "../types";
 import {dispatcher} from "../constants/action-types";
 
+import styled, * as styles from "./styles";
+
+const DownloadsDiv = styled.div`
+  ${styles.meat()}
+
+  overflow-y: auto;
+  padding: 0 20px 20px 20px;
+
+  .section-bar {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    align-content: center;
+    margin: 20px 0 10px 10px;
+    flex-shrink: 0;
+
+    h2 {
+      font-size: 22px;
+    }
+
+    .clear {
+      margin-left: 8px;
+      ${styles.clickable()}
+    }
+  }
+
+  .game-actions .main-action {
+    padding: 3px 10px;
+  }
+
+  li.empty {
+    color: $secondary-text-color;
+  }
+`;
+
 class Downloads extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   constructor () {
     super();
@@ -30,7 +65,7 @@ class Downloads extends React.Component<IProps & IDerivedProps & I18nProps, void
     const firstItem = first(items);
     const queuedItems = rest(items);
 
-    return <ul className="downloads-page">
+    return <DownloadsDiv>
     {firstItem
     ? <div className="section-bar">
       <h2>{t("status.downloads.category.active")}</h2>
@@ -68,7 +103,7 @@ class Downloads extends React.Component<IProps & IDerivedProps & I18nProps, void
       ))
       : ""}
 
-    </ul>;
+    </DownloadsDiv>;
   }
 }
 

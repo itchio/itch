@@ -224,6 +224,12 @@ export interface INavigatePayload {
   background: boolean;
 }
 
+export const OPEN_TAB = "OPEN_TAB";
+export interface IOpenTabPayload extends INavigatePayload {
+  /** the id of the new tab */
+  tabId?: string;
+}
+
 export const FOCUS_NTH_TAB = "FOCUS_NTH_TAB";
 export interface IFocusNthTabPayload {
   /** the index of the constant tab to focus (0-based) */

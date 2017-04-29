@@ -48,7 +48,6 @@ if (REDUX_DEVTOOLS_ENABLED) {
 }
 
 const initialState = {};
-// const store = createStore((state: any) => state, initialState, enhancer) as IChromeStore;
 const store = createStore(reducer, initialState, enhancer) as IChromeStore;
 route(watcher, store, { type: "__MOUNT", payload: null });
 

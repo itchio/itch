@@ -4,8 +4,11 @@ import { userToTabData, gameToTabData, collectionToTabData } from "../util/navig
 
 import { IGameRecord, IUserRecord, ICollectionRecord } from "../types";
 
+import * as uuid from "uuid";
+
 import {
   NAVIGATE, INavigatePayload,
+  OPEN_TAB, IOpenTabPayload,
   FOCUS_NTH_TAB, IFocusNthTabPayload,
   MOVE_TAB, IMoveTabPayload,
   EVOLVE_TAB, IEvolveTabPayload,
@@ -51,6 +54,10 @@ export const navigate = (id: any, data = {}, background = false) => {
   }
 };
 
+const internalOpenTab = createAction<IOpenTabPayload>(OPEN_TAB);
+export const openTab = (payload: IOpenTabPayload) => {
+  return internalOpenTab({...payload, tabId: uuid.v4()});
+}
 export const focusNthTab = createAction<IFocusNthTabPayload>(FOCUS_NTH_TAB);
 
 export const navigateToGame = (game: IGameRecord, background = false) =>

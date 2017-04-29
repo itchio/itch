@@ -9,7 +9,7 @@ import * as ospath from "path";
 import * as urlParser from "url";
 import * as querystring from "querystring";
 
-import {map, filter, pluck} from "underscore";
+import {object, map, filter, pluck} from "underscore";
 
 import {shell} from "electron";
 
@@ -386,5 +386,23 @@ export default function (watcher: Watcher) {
 
     store.dispatch(actions.updatePreferences({onlyCompatibleGames: false}));
     store.dispatch(actions.filterChanged({tab, query: ""}));
+  });
+
+  watcher.on(actions.navigate, async (store, action) => {
+    const state = store.getState();
+    const {id} = action.payload;
+
+    const {tabData} = state.session.navigation;
+
+    const pathToId = object(map(tabData, (x, xId) => [x.path, xId]));
+
+    if (tabData[id]) {
+      // switching to existing tab by id - that's fine
+    } else if (pathToId[id]) {
+      // switching to existing tab by path - that's fine
+    } else {
+      // woop, that's a new tab
+      store.dispatch(actions.openTab(action.payload));
+    }
   });
 }

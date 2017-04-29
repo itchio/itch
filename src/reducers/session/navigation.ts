@@ -1,6 +1,5 @@
 
 import {map, reject, omit, object, pick, indexBy, filter} from "underscore";
-import * as uuid from "uuid";
 
 import staticTabData from "../../constants/static-tab-data";
 
@@ -112,12 +111,42 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
     };
   });
 
-  on(actions.navigate, (state, action) => {
-    const {id, data, background} = action.payload;
-
+  on(actions.openTab, (state, action) => {
+    const {id, tabId, data, background} = action.payload;
     const {tabData} = state;
-    const {tabs} = state;
-    const {constant, transient} = tabs;
+    const {constant, transient} = state.tabs;
+
+    const newTab = staticTabData[id] ? id : tabId;
+
+    const newTabs = {
+      constant,
+      transient: [
+        newTab,
+        ...transient,
+      ],
+    };
+
+    const newTabData = {
+      ...tabData,
+      [newTab]: {
+        ...staticTabData[id],
+        ...tabData[id],
+        path: id,
+        ...data,
+      },
+    };
+
+    return {
+      ...state,
+      id: background ? state.id : newTab,
+      tabs: newTabs,
+      tabData: newTabData,
+    };
+  });
+
+  on(actions.navigate, (state, action) => {
+    const {id, background} = action.payload;
+    const {tabData} = state;
 
     const pathToId = object(map(tabData, (x, xId) => [x.path, xId])) as IPathToIdMap;
 
@@ -135,34 +164,8 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
       const idForPath = pathToId[id];
       return {...state, id: idForPath};
     } else {
-      // open a new tab
-      // static tabs don't get UUIDs
-      const newTab = staticTabData[id] ? id : uuid.v4();
-
-      const newTabs = {
-        constant,
-        transient: [
-          newTab,
-          ...transient,
-        ],
-      };
-
-      const newTabData = {
-        ...tabData,
-        [newTab]: {
-          ...staticTabData[id],
-          ...tabData[id],
-          path: id,
-          ...data,
-        },
-      };
-
-      return {
-        ...state,
-        id: background ? state.id : newTab,
-        tabs: newTabs,
-        tabData: newTabData,
-      };
+      // new tab maybe? handled by reactor
+      return state;
     }
   });
 

@@ -14,7 +14,7 @@ const ButtonDiv = styled.div`
 
   font-size: ${props => props.theme.fontSizes.baseText};
   font-weight: normal;
-  padding: 10px;
+  padding: 4px 10px;
 
   border: 1px solid;
   border-width: 4px 1px 1px 1px;

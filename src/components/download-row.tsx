@@ -10,6 +10,8 @@ import downloadProgress from "../util/download-progress";
 import * as actions from "../actions";
 
 import TimeAgo from "./basics/time-ago";
+import IconButton from "./basics/icon-button";
+import Cover from "./basics/cover";
 import GameActions from "./game-actions";
 
 import {IDownloadSpeeds, IDownloadItem, ITask} from "../types";
@@ -17,6 +19,120 @@ import {dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 import * as format from "../util/format";
+
+import styled, * as styles from "./styles";
+
+const DownloadRowDiv = styled.div`
+  font-size: ${props => props.theme.fontSizes.large};
+
+  flex-shrink: 0;
+  line-height: 1.6;
+  border-radius: 2px;
+  padding: 7px 5px 7px 10px;
+  margin: 10px 0px 5px 0px;
+  cursor: default;
+  position: relative;
+
+  max-width: 800px;
+
+  border: 1px solid transparent;
+
+  .recharts-responsive-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  &.finished {
+    cursor: pointer;
+  }
+
+  &.first, &:hover {
+    background-color: ${props => props.theme.explanation};
+  }
+
+  .cover, .progress, .controls, .game-title, .timeago {
+    z-index: 4;
+  }
+
+  .cover, .progress {
+    transition: -webkit-filter 1s;
+  }
+
+  &.dimmed {
+    .cover, .progress {
+      -webkit-filter: grayscale(100%) brightness(50%);
+    }
+
+    .controls, .game-title {
+      color: $secondary-text-color;
+    }
+
+    .stats {
+      color: darken($secondary-text-color, 10%);
+    }
+  }
+
+  .game-title {
+    ${styles.singleLine()}
+
+    max-width: 500px;
+  }
+
+  .timeago {
+    font-size: 80%;
+    color: $secondary-text-color;
+    display: flex;
+    flex-direction: row;
+
+    .filler {
+      flex-grow: 1;
+      min-width: 20px;
+    }
+  }
+
+  display: flex;
+  align-items: center;
+
+  .stats {
+    flex-grow: 1;
+    height: $download-cover-height;
+    display: flex;
+    align-items: center;
+
+    .stats-inner {
+      width: 100%;
+    }
+
+    .progress {
+      ${styles.progress()}
+      margin: 10px 0;
+      height: 5px;
+
+      &, .progress-inner {
+        border-radius: 5px;
+      }
+    }
+  }
+`;
+
+const StyledCover = styled(Cover)`
+  flex-shrink: 0;
+  width: 105px;
+  height: 80px;
+  padding-bottom: 0;
+
+  margin-right: 8px;
+`;
+
+const Controls = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 8px;
+`;
 
 class DownloadRow extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
@@ -34,23 +150,19 @@ class DownloadRow extends React.Component<IProps & IDerivedProps & I18nProps, IS
   render () {
     const {first, active, item, navigateToGame, speeds} = this.props;
 
-    const {game, id} = item;
-    const coverUrl = game.stillCoverUrl || game.coverUrl;
-    const coverStyle: React.CSSProperties = {};
-    if (coverUrl) {
-      coverStyle.backgroundImage = `url("${coverUrl}")`;
-    }
+    const {game} = item;
+    const {coverUrl, stillCoverUrl} = game;
 
     let onStatsClick = (): void => null;
     if (!active) {
       onStatsClick = () => navigateToGame(game);
     }
 
-    const itemClasses = classNames("history-item", {first, dimmed: (active && !first), finished: !active});
+    const itemClasses = classNames({first, dimmed: (active && !first), finished: !active});
 
     const gradientColor = "rgb(158, 150, 131)";
 
-    return <li key={id} className={itemClasses}>
+    return <DownloadRowDiv className={itemClasses} onContextMenu={this.onCoverContextMenu}>
       {first
       ? <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={speeds} margin={{top: 0, right: 0, left: 0, bottom: 0}}>
@@ -68,14 +180,16 @@ class DownloadRow extends React.Component<IProps & IDerivedProps & I18nProps, IS
       : ""
       }
 
-      <div className="cover" style={coverStyle}
-        onClick={() => navigateToGame(game)}
-        onContextMenu={this.onCoverContextMenu}/>
+      <StyledCover
+        hover={false}
+        coverUrl={coverUrl}
+        stillCoverUrl={stillCoverUrl}
+        onClick={() => navigateToGame(game)}/>
       <div className="stats" onClick={() => { onStatsClick(); }}>
         {this.progress()}
       </div>
       {this.controls()}
-    </li>;
+    </DownloadRowDiv>;
   }
 
   controls () {
@@ -91,26 +205,34 @@ class DownloadRow extends React.Component<IProps & IDerivedProps & I18nProps, IS
 
     if (!active) {
       return <div className="controls">
-        <span data-rh-at="left" data-rh={t("status.downloads.clear_finished")}>
-          <span className="icon icon-delete" onClick={() => cancelDownload({id})}/>
-        </span>
+        <IconButton
+          icon="delete"
+          hintPosition="left"
+          hint={t("status.downloads.clear_finished")}
+          onClick={() => cancelDownload({ id })}
+        />
       </div>;
     }
 
-    return <div className="controls">
+    return <Controls>
     {first
       ? (downloadsPaused
-        ? <span className="icon icon-triangle-right" onClick={() => resumeDownloads({})}/>
-        : <span className="icon icon-pause" onClick={() => pauseDownloads({})}/>
+        ? <IconButton icon="triangle-right" onClick={() => resumeDownloads({})}/>
+        : <IconButton icon="pause" onClick={() => pauseDownloads({})}/>
       )
-      : <span data-rh-at="left" data-rh={t("grid.item.prioritize_download")}>
-        <span className="icon icon-caret-up" onClick={() => prioritizeDownload({id})}/>
-      </span>
+      : <IconButton
+          hint={t("grid.item.prioritize_download")}
+          icon="caret-up"
+          onClick={() => prioritizeDownload({ id })}
+        />
     }
-      <span data-rh-at="left" data-rh={t("grid.item.cancel_download")}>
-        <span className="icon icon-cross" onClick={() => cancelDownload({id})}/>
-      </span>
-    </div>;
+      <IconButton
+        hintPosition="left"
+        hint={t("grid.item.cancel_download")}
+        icon="cross"
+        onClick={() => cancelDownload({id})}
+      />
+    </Controls>;
   }
 
   progress () {
@@ -174,10 +296,12 @@ class DownloadRow extends React.Component<IProps & IDerivedProps & I18nProps, IS
         <div className="filler"/>
         <div>
         {downloadsPaused
-        ? <div className="paused">{t("grid.item.downloads_paused")}</div>
+        ? (first
+          ? <div className="paused">{t("grid.item.downloads_paused")}</div>
+          : null)
         : (((first || task) && eta && bps)
           ? <span>{downloadProgress(t, {eta, bps}, downloadsPaused)}</span>
-          : ""
+          : null
         )}
         </div>
       </div>
