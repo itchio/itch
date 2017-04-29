@@ -15,6 +15,12 @@ import GameTable from "./game-table";
 
 import {ISortParams, SortDirectionType} from "./sort-types";
 
+import styled from "./styles";
+
+export const HubGamesDiv = styled.div`
+  flex-grow: 1;
+`;
+
 class Games extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();

@@ -21,6 +21,13 @@ import {dispatcher} from "../../constants/action-types";
 
 import Ink = require("react-ink");
 
+import styled, * as styles from "../styles";
+
+const MainActionDiv = styled.div`
+  ${styles.singleLine()};
+  ${styles.inkContainer()};
+`;
+
 interface IStatus {
   status: string;
   statusTask?: string;
@@ -96,13 +103,13 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
       "buy-now": (platformCompatible && !mayDownload && canBeBought && !cave),
       branded,
     });
-    const button = <div style={style}
+    const button = <MainActionDiv style={style}
         className={buttonClasses}
         onClick={(e) => this.onClick(e, task)}
         data-rh={hint} data-rh-at="top">
       <Ink/>
       {child}
-    </div>;
+    </MainActionDiv>;
 
     if (!child) {
       return <div/>;

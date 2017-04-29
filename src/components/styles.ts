@@ -1,5 +1,5 @@
 
-import {lighten} from "polished";
+import {darken, lighten} from "polished";
 
 // colors
 
@@ -67,7 +67,7 @@ export const colors = {
   inputBoxShadow: uiColors.boxShadow,
   inputBoxShadowFocused: "#1b1919",
 
-  sidebarBackground: baseColors.codGray,
+  sidebarBackground: darken(0.02, baseColors.codGray),
   sidebarBorder: baseColors.lightMineShaft,
   sidebarEntryFocusedBackground: lighten(0.1, baseColors.codGray),
 
@@ -102,6 +102,7 @@ export const borderRadii = {
 export const widths = {
   searchSidebar: "400px",
   handle: "8px",
+  gridItem: "235px",
 };
 
 export const theme = {
@@ -269,5 +270,18 @@ export const meat = () => css`
   flex-direction: column;
   flex-grow: 1;
   flex-shrink: 1;
-  overflow: hidden;
+`;
+
+export const thumbnailStyle = () => css`
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+`;
+
+export const defaultCoverBackground = () => css`
+  background-image: linear-gradient(
+     -10deg,
+     rgba(0, 0, 0, 0.08) 0%,
+     rgba(255, 255, 255, 0.05) 100%
+  );
 `;

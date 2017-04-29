@@ -7,9 +7,39 @@ import {whenClickNavigates} from "./when-click-navigates";
 
 import * as actions from "../actions";
 import GameActions from "./game-actions";
+import Cover from "./basics/cover";
 
 import {IGameRecord, ICaveRecord} from "../types";
 import {dispatcher, multiDispatcher} from "../constants/action-types";
+
+import styled, * as styles from "./styles";
+
+const HubItemDiv = styled.div`
+  ${styles.inkContainer()};
+  ${styles.thumbnailStyle()};
+  margin: .5em;
+  cursor: default;
+
+  background: #232222; // FIXME colors
+  border: 1px solid #191919; // FIXME colors
+  transition: all 0.4s;
+
+  &.dull {
+    -webkit-filter: grayscale(95%);
+    opacity: .4;
+  }
+`;
+
+const UnderCover = styled.div`
+  padding: 0.5em 0.5em 0.25em 0.5em;
+
+  &.title {
+    ${styles.singleLine()};
+    padding: .2em 0;
+    margin: 0 0 4px 0;
+    text-shadow: 0 0 1px ${props => props.theme.inputTextShadow};
+  }
+`;
 
 export class HubItem extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
@@ -33,45 +63,26 @@ export class HubItem extends React.Component<IProps & IDerivedProps & I18nProps,
 
   render () {
     const {game, searchScore, cave} = this.props;
+    const {hover} = this.state;
     const {title, coverUrl, stillCoverUrl} = game;
 
-    let gif: boolean;
-    const coverStyle: React.CSSProperties = {};
-    if (coverUrl) {
-      if (this.state.hover) {
-        coverStyle.backgroundImage = `url('${coverUrl}')`;
-      } else {
-        if (stillCoverUrl) {
-          gif = true;
-          coverStyle.backgroundImage = `url('${stillCoverUrl}')`;
-        } else {
-          coverStyle.backgroundImage = `url('${coverUrl}')`;
-        }
-      }
-    }
-
     const actionProps = {game, showSecondary: this.state.hover, cave};
-    const itemClasses = classNames("hub-item", {dull: (searchScore && searchScore > 0.2)});
+    const itemClasses = classNames({dull: (searchScore && searchScore > 0.2)});
 
-    return <div className={itemClasses}
+    return <HubItemDiv className={itemClasses}
         onMouseEnter={this.onMouseEnter.bind(this)}
         onMouseLeave={this.onMouseLeave.bind(this)}
         onContextMenu={this.onContextMenu.bind(this)}>
-      {gif
-        ? <span className="gif-marker">gif</span>
-        : ""
-      }
-      <section className="cover" style={coverStyle}
-        onMouseDown={this.onMouseDown.bind(this)}/>
+      <Cover coverUrl={coverUrl} stillCoverUrl={stillCoverUrl} hover={hover}/>
 
-      <section className="undercover">
+      <UnderCover>
         <section className="title">
           {title}
         </section>
 
         <GameActions {...actionProps}/>
-      </section>
-    </div>;
+      </UnderCover>
+    </HubItemDiv>;
   }
 
   onMouseEnter () {

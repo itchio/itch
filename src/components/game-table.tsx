@@ -21,6 +21,8 @@ import LastPlayed from "./last-played";
 
 import {whenClickNavigates} from "./when-click-navigates";
 
+import {HubGamesDiv} from "./games";
+
 import * as _ from "underscore";
 
 interface IRowGetterParams {

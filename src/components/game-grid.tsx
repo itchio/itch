@@ -10,6 +10,9 @@ import {IFilteredGameRecord} from "../types";
 import {AutoSizer, Grid} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";
 
+import {HubGamesDiv} from "./games";
+import styled from "./styles";
+
 interface ICellInfo {
   columnIndex: number;
   key: string;
@@ -21,6 +24,10 @@ interface ILayoutInfo {
   columnCount: number;
   games: IFilteredGameRecord[];
 }
+
+const StyledGrid = styled(Grid)`
+  outline: none;
+`;
 
 class GameGrid extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
@@ -34,7 +41,7 @@ class GameGrid extends React.Component<IProps & IDerivedProps & I18nProps, IStat
   render () {
     const {games, hiddenCount, tab} = this.props;
 
-    return <div className="hub-games hub-game-grid">
+    return <HubGamesDiv>
       <AutoSizer>
       {({width, height}: IAutoSizerParams) => {
         const columnCount = Math.floor(width / 280);
@@ -43,7 +50,7 @@ class GameGrid extends React.Component<IProps & IDerivedProps & I18nProps, IStat
         const rowHeight = columnWidth * 1.12;
         const scrollTop = height === 0 ? 0 : this.state.scrollTop;
 
-        return <Grid
+        return <StyledGrid
           ref="grid"
           cellRenderer={this.cellRenderer.bind(this, {games, columnCount})}
           width={width}
@@ -64,7 +71,7 @@ class GameGrid extends React.Component<IProps & IDerivedProps & I18nProps, IStat
       }}
       </AutoSizer>
       <HiddenIndicator count={hiddenCount} tab={tab}/>
-    </div>;
+    </HubGamesDiv>;
   }
 
   cellRenderer(layout: ILayoutInfo, cell: ICellInfo): JSX.Element {
