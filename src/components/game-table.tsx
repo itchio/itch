@@ -15,6 +15,7 @@ import {IOnSortChange, SortDirectionType} from "./sort-types";
 import gameTableRowRenderer, {IRowHandlerParams} from "./game-table-row-renderer";
 
 import TimeAgo from "./basics/time-ago";
+import Cover from "./basics/cover";
 import HiddenIndicator from "./hidden-indicator";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
@@ -22,6 +23,8 @@ import LastPlayed from "./last-played";
 import {whenClickNavigates} from "./when-click-navigates";
 
 import {HubGamesDiv} from "./games";
+import styled from "./styles";
+import {darken} from "polished";
 
 import * as _ from "underscore";
 
@@ -43,6 +46,80 @@ interface ICellDataGetter {
   dataKey: string;
   rowData: any;
 }
+
+const StyledTable = styled(Table)`
+  font-size: ${props => props.theme.fontSizes.large};
+
+  .ReactVirtualized__Grid {
+    outline: none;
+  }
+
+  .ReactVirtualized__Table__headerRow {
+    text-transform: initial;
+    font-weight: normal;
+    font-size: 90%;
+  }
+
+  .ReactVirtualized__Table__row,
+  .ReactVirtualized__Table__headerRow {
+    border-left: 2px solid transparent;
+  }
+
+  .ReactVirtualized__Table__row {
+    background-color: ${props => props.theme.meatBackground};
+    outline: 0;
+
+    transition: 0.2s border-color, background-color;
+
+    &:hover {
+      background-color: ${props => darken(0.05, props.theme.meatBackground)};
+      border-color: ${props => props.theme.accent};
+      cursor: pointer;
+    }
+  }
+
+  .ReactVirtualized__Table__sortableHeaderColumn {
+    height: 100%;
+    padding: 12px 0;
+
+    outline: 0;
+  }
+
+  .ReactVirtualized__Table__rowColumn {
+    position: relative;
+
+    &.secondary {
+      font-size: 95%;
+      color: ${props => props.theme.secondaryText};
+    }
+  }
+
+  .ReactVirtualized__Table__sortableHeaderIcon {
+    transform: translateX(50%) scale(2, 2);
+  }
+
+  .title-column {
+    line-height: 1.4;
+
+    .title, .description {
+      max-width: 500px;
+      white-space: normal;
+    }
+
+    .title {
+      @include single-line;
+      font-weight: bold;
+    }
+
+    .description {
+      font-size: 90%;
+      color: ${props => props.theme.secondaryText};
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+  }
+`;
 
 class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGameTableState> {
   constructor() {
@@ -80,13 +157,12 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
   coverRenderer (params: ICellRendererParams): JSX.Element | string {
     const {cellData} = params;
     const {game} = cellData;
-    const style: React.CSSProperties = {};
-    const cover = game.stillCoverUrl || game.coverUrl;
-    if (cover) {
-      style.backgroundImage = `url("${game.stillCoverUrl || game.coverUrl}")`;
-    }
+    const {coverUrl, stillCoverUrl} = game;
 
-    return <div className="cover" style={style}/>;
+    return <Cover
+      coverUrl={coverUrl}
+      stillCoverUrl={stillCoverUrl}
+    />;
   }
 
   titleRenderer (params: ICellRendererParams): JSX.Element | string {
@@ -134,7 +210,7 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
   render () {
     const {t, tab, hiddenCount} = this.props;
 
-    return <div className="hub-games hub-game-table">
+    return <HubGamesDiv>
         <AutoSizer>
         {({width, height}: IAutoSizerParams) => {
           let remainingWidth = width;
@@ -153,7 +229,7 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
           const scrollTop = height <= 0 ? 0 : this.state.scrollTop;
           const {sortedGames, sortBy, sortDirection} = this.props;
 
-          return <Table
+          return <StyledTable
               headerHeight={35}
               height={height}
               width={width}
@@ -206,11 +282,11 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
               className="secondary"
               cellDataGetter={this.genericDataGetter.bind(this)}
               cellRenderer={this.publishedAtRenderer.bind(this)}/>
-          </Table>;
+          </StyledTable>;
         }}
       </AutoSizer>
       <HiddenIndicator tab={tab} count={hiddenCount}/>
-    </div>;
+    </HubGamesDiv>;
   }
 }
 
