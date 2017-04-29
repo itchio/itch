@@ -10,6 +10,7 @@ import Ink = require("react-ink");
 import Filler from "../basics/filler";
 import LoadingCircle from "../basics/loading-circle";
 import Icon from "../basics/icon";
+import IconButton from "../basics/icon-button";
 
 import styled, * as styles from "../styles";
 import {darken} from "polished";
@@ -17,11 +18,6 @@ import {darken} from "polished";
 const ItemHeading = styled.div`
   ${styles.singleLine()};
   padding: .2em 0;
-`;
-
-const SidebarButton = styled.div`
-  ${styles.iconButton()};
-  ${styles.clickable()};
 `;
 
 export const ItemDiv = styled.section`
@@ -180,12 +176,10 @@ class Item extends React.Component<IProps, IState> {
         </ProgressOuter>
         : null}
         {onClose
-          ? <SidebarButton className="close-icon icon icon-cross" onClick={(e) => {
+          ? <IconButton icon="cross" onClick={(e) => {
             onClose();
             e.stopPropagation();
-          }}>
-            <Ink/>
-          </SidebarButton>
+          }}/>
           : null
         }
       </Row>

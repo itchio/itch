@@ -3,8 +3,7 @@ import * as React from "react";
 import * as classNames from "classnames";
 
 import {connect, I18nProps} from "../connect";
-import Icon from "../basics/icon";
-import Ink = require("react-ink");
+import IconButton from "../basics/icon-button";
 
 import listSecondaryActions, {IActionOpts} from "./list-secondary-actions";
 import {map} from "underscore";
@@ -12,13 +11,21 @@ import {map} from "underscore";
 import {IDispatch} from "../../constants/action-types";
 import {IActionsInfo} from "./types";
 
+import styled from "../styles";
+
+const SecondaryActionsDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
 class SecondaryActions extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {items, error} = listSecondaryActions(this.props);
 
-    return <div className={classNames("cave-actions", {error})}>
+    return <SecondaryActionsDiv className={classNames("cave-actions", {error})}>
       {map(items, this.action.bind(this))}
-    </div>;
+    </SecondaryActionsDiv>;
   }
 
   action (opts: IActionOpts) {
@@ -32,15 +39,13 @@ class SecondaryActions extends React.Component<IProps & IDerivedProps & I18nProp
     const key = "" + label;
 
     const actionClasses = classNames("secondary-action", classes);
-    return <span
-        key={key}
-        className={actionClasses}
-        onClick={() => dispatch(action)}
-        data-rh-at="top"
-        data-rh={t.format(label)}>
-      <Ink/>
-      <Icon icon={icon}/>
-    </span>;
+    return <IconButton
+      icon={icon}
+      key={key}
+      className={actionClasses}
+      onClick={() => dispatch(action)}
+      hint={t.format(label)}
+    />;
   }
 }
 

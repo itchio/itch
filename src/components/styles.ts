@@ -87,11 +87,15 @@ export const colors = {
   filterTagBorder: "#777575",
   filterTagBackground: "#5f5c5c",
   filterTagText: "#e0dfdf",
+
+  tooltipBackground: baseColors.swissCoffee,
+  tooltipText: baseColors.codGray,
 };
 
 export const fontSizes = {
   sidebar: "14px",
   baseText: "14px",
+  large: "16px",
   modal: "18px",
 };
 
@@ -187,8 +191,8 @@ export const heavyInput = () => css`
 export const iconButton = () => css`
   ${inkContainer()};
   border-radius: 50%;
-  padding: 5px;
-  margin: -2px;
+  width: 30px;
+  height: 30px;
 
   &:hover {
     color: ${props => props.theme.secondaryTextHover}

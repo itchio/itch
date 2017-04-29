@@ -25,6 +25,15 @@ import {
 
 const platform = os.itchPlatform();
 
+import styled from "../styles";
+import Filler from "../basics/filler";
+
+const GameActionsDiv = styled.div`
+  height: 3em;
+  display: flex;
+  align-items: center;
+`;
+
 class GameActions extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {props} = this;
@@ -35,20 +44,21 @@ class GameActions extends React.Component<IProps & IDerivedProps & I18nProps, vo
       taskName = props.tasks[0].name;
     }
 
-    const classes = classNames("game-actions", `action-${props.action}`, `task-${taskName}`, {
+    const classes = classNames(`action-${props.action}`, `task-${taskName}`, {
       incompatible: !props.platformCompatible,
       uninstalled: !props.cave,
     });
 
-    return <div className={classes}>
+    return <GameActionsDiv className={classes}>
       <MainAction {...props}/>
+      <Filler/>
       {showSecondary
         ? <SecondaryActions {...props}/>
         : ""}
       {CustomSecondary
         ? <CustomSecondary {...props}/>
         : ""}
-    </div>;
+    </GameActionsDiv>;
   }
 
 }

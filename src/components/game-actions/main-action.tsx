@@ -8,6 +8,7 @@ import {first, find} from "underscore";
 import Icon from "../basics/icon";
 import TaskIcon from "../basics/task-icon";
 import LoadingCircle from "../basics/loading-circle";
+import Button from "../basics/button";
 
 import format from "../../util/format";
 import downloadProgress from "../../util/download-progress";
@@ -19,28 +20,18 @@ import {IActionsInfo} from "./types";
 import {IGameUpdate, IDownloadItem} from "../../types";
 import {dispatcher} from "../../constants/action-types";
 
-import Ink = require("react-ink");
-
-import styled, * as styles from "../styles";
-
-const MainActionDiv = styled.div`
-  ${styles.singleLine()};
-  ${styles.inkContainer()};
-`;
-
 interface IStatus {
   status: string;
   statusTask?: string;
-  hint?: string;
 }
 
 class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
-    const {t, cancellable, platform, platformCompatible, mayDownload,
-      pressDownload, canBeBought, tasks, action, animate, cave} = this.props;
+    const {t, platform, platformCompatible, mayDownload,
+      pressDownload, canBeBought, tasks, action, cave} = this.props;
 
     let progress = 0;
-    let task = "idle";
+    let task: string;
     const activeDownload = this.activeDownload();
     const firstTask = first(tasks);
     if (activeDownload) {
@@ -49,41 +40,39 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
     } else if (firstTask) {
       task = firstTask.name;
       progress = firstTask.progress;
+    } else if (cave) {
+      task = "idle";
     }
 
-    let child: React.ReactElement<any> | null = null;
-    if (task) {
-      const {status, hint, statusTask} = this.status(task);
-      const classes = classNames("state", "normal-state");
+    let icon: string;
+    let iconComponent: JSX.Element;
+    let label: string;
+    let primary: boolean;
 
+    if (task) {
+      const {status, statusTask} = this.status(task);
       const realTask = statusTask || task;
 
-      child = <span className={classes} data-rh-at="top" data-rh={hint}>
-        { (
-            progress > 0 || realTask === "find-upload" || realTask === "download" ||
-            realTask === "configure" || realTask === "install")
-          ? <LoadingCircle progress={progress}/>
-          : <TaskIcon task={realTask} animate={animate} action={action}/>
+      const hasProgress = progress > 0 || realTask === "find-upload" || realTask === "download" ||
+          realTask === "configure" || realTask === "install";
+      if (hasProgress) {
+        iconComponent = <LoadingCircle progress={progress}/>;
+      } else {
+        iconComponent = <TaskIcon task={realTask} action={action}/>;
+        if (realTask === "idle") {
+          primary = true;
         }
-        {status}
-        {cancellable
-        ? <span className="cancel-cross">
-          <Icon icon="cross"/>
-        </span>
-        : ""}
-      </span>;
+      }
+      label = status;
     } else {
       if (platformCompatible) {
         if (mayDownload) {
-          child = <span className="state">
-            <Icon icon="install"/>
-            {t("grid.item." + (pressDownload ? "review" : "install"))}
-          </span>;
+          icon = "install";
+          label = t("grid.item." + (pressDownload ? "review" : "install"));
         } else if (canBeBought) {
-          child = <span className="state">
-            <Icon icon="shopping_cart"/>
-            {t("grid.item.buy_now")}
-          </span>;
+          icon = "shopping_cart";
+          label = t("grid.item.buy_now");
+          primary = true;
         }
       } else {
         return <span className="state not-platform-compatible">
@@ -92,30 +81,16 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
       }
     }
 
-    let style: React.CSSProperties = {
-      position: "relative",
-    };
-    let branded = false;
-
     const hint = this.hint(task);
 
-    const buttonClasses = classNames("main-action", {
-      "buy-now": (platformCompatible && !mayDownload && canBeBought && !cave),
-      branded,
-    });
-    const button = <MainActionDiv style={style}
-        className={buttonClasses}
+    return <Button
+        icon={icon}
+        discreet
+        iconComponent={iconComponent}
+        label={label}
+        primary={primary}
         onClick={(e) => this.onClick(e, task)}
-        data-rh={hint} data-rh-at="top">
-      <Ink/>
-      {child}
-    </MainActionDiv>;
-
-    if (!child) {
-      return <div/>;
-    }
-
-    return button;
+        hint={hint}/>;
   }
 
   activeDownload(): IDownloadItem | null {

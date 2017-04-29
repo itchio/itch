@@ -20,8 +20,8 @@ const HubItemDiv = styled.div`
   margin: .5em;
   cursor: default;
 
-  background: #232222; // FIXME colors
-  border: 1px solid #191919; // FIXME colors
+  background: #232222;
+  border: 1px solid #191919;
   transition: all 0.4s;
 
   &.dull {
@@ -31,11 +31,16 @@ const HubItemDiv = styled.div`
 `;
 
 const UnderCover = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+
   padding: 0.5em 0.5em 0.25em 0.5em;
 
-  &.title {
+  .title {
     ${styles.singleLine()};
-    padding: .2em 0;
+    font-size: ${styles.fontSizes.large};
+    padding: .4em 0;
     margin: 0 0 4px 0;
     text-shadow: 0 0 1px ${props => props.theme.inputTextShadow};
   }

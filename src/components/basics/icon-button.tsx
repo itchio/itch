@@ -12,6 +12,12 @@ const IconButtonDiv = styled.div`
   display: inline-block;
   ${styles.inkContainer()}
   ${styles.iconButton()}
+  ${styles.clickable()}
+
+  font-size: ${props => props.theme.fontSizes.baseText};
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 class IconButton extends React.Component<IProps & I18nProps, void> {
@@ -30,6 +36,7 @@ class IconButton extends React.Component<IProps & I18nProps, void> {
 
 interface IProps {
   icon: string;
+  className?: string;
   hint?: ILocalizedString;
   hintPosition?: "top" | "left" | "right" | "bottom";
 

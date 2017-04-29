@@ -1,5 +1,5 @@
 
-import {css} from "../styles";
+import {css, theme} from "../styles";
 
 export default css`
   .react-hint-container {
@@ -9,24 +9,24 @@ export default css`
   .react-hint__content {
     padding: 5px;
     border-radius: 2px;
-    background: $tooltip-background-color;
-    color: $tooltip-text-color;
+    background: ${theme.tooltipBackground};
+    color: ${theme.tooltipText};
     font-size: 90%;
   }
 
   .react-hint--top:after {
-    border-top-color: $tooltip-background-color;
+    border-top-color: ${theme.tooltipBackground};
   }
 
   .react-hint--left:after {
-    border-left-color: $tooltip-background-color;
+    border-left-color: ${theme.tooltipBackground};
   }
 
   .react-hint--right:after {
-    border-right-color: $tooltip-background-color;
+    border-right-color: ${theme.tooltipBackground};
   }
 
   .react-hint--bottom:after {
-    border-bottom-color: $tooltip-background-color;
+    border-bottom-color: ${theme.tooltipBackground};
   }
 `;

@@ -17,9 +17,11 @@ const HiddenIndicatorDiv = styled.div`
   position: fixed;
   right: 0;
   bottom: 0;
-  display: block;
-  padding: 12px;
+  padding: 8px;
   color: ${props => props.theme.secondaryText};
+
+  display: flex;
+  align-items: center;
 `;
 
 class HiddenIndicator extends React.Component<IProps & IDerivedProps & I18nProps, void> {

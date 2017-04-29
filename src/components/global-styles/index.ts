@@ -10,10 +10,10 @@ import {injectGlobal} from "../styles";
 export function inject() {
   // tslint:disable-next-line
   injectGlobal`
-    ${reset};
-    ${base};
-    ${scroll};
-    ${hint};
-    ${modal};
+    ${reset}
+    ${base}
+    ${scroll}
+    ${hint}
+    ${modal}
   `;
 }
