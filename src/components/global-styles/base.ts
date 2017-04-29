@@ -1,5 +1,5 @@
 
-import {css} from "../styles";
+import {css, theme} from "../styles";
 
 export default css`
   html, body {
@@ -8,5 +8,8 @@ export default css`
     height: 100%;
     overflow: hidden;
     -webkit-user-select: none;
+
+    font-family: LatoWeb, sans-serif;
+    color: ${theme.baseText};
   }
 `;

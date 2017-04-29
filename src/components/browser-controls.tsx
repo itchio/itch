@@ -1,8 +1,8 @@
 
 import listensToClickOutside = require("react-onclickoutside");
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
 import * as classNames from "classnames";
+import {connect, I18nProps} from "./connect";
 
 import * as actions from "../actions";
 
@@ -11,31 +11,52 @@ import {dispatcher} from "../constants/action-types";
 
 import watching, {Watcher} from "./watching";
 
-import Ink = require("react-ink");
+import IconButton from "./basics/icon-button";
 
 import styled, * as styles from "./styles";
+import {css} from "./styles";
+import {darken} from "polished";
 
 const BrowserControlsContainer = styled.div`
-  height: 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
-  .icon {
-    ${styles.iconButton()}
-    color: ${props => props.theme.secondaryText};
+  flex-grow: 1;
+`;
 
-    &:first-child {
-      padding-left: none;
-    }
+const browserAddressStyle = css`
+  ${styles.singleLine()}
+  font-size: 14px;
+  height: 33px;
+  line-height: 30px;
+  margin: 0 6px;
+  color: $base-text-color;
+  border: 2px solid ${props => darken(0.2, props.theme.secondaryText)};
+  background: #353535;
+  box-shadow: 0 0 2px #000000;
+  text-shadow: 0 0 1px black;
+  padding: 0 8px;
+  border-radius: 2px;
+  flex-grow: 1;
+  max-width: 300px;
 
-    text-shadow: 0 0 1px;
+  transition: all 0.4s;
+`;
 
-    &.loading {
-      ${styles.horizontalScan()};
-    }
+const BrowserAddressInput = styled.input`
+  ${browserAddressStyle}
 
-    &.disabled {
-      -webkit-filter: brightness(50%);
-      text-shadow: none;
-    }
+  text-shadow: 0 0 1px transparent;
+  color: ${props => props.theme.sidebarBackground};
+  background: white;
+`;
+
+const BrowserAddressSpan = styled.span`
+  ${browserAddressStyle}
+
+  &.frozen {
+    cursor: not-allowed;
   }
 `;
 
@@ -101,38 +122,30 @@ export class BrowserControls extends React.Component<IProps & IDerivedProps & I1
     const {canGoBack, canGoForward, loading, url = ""} = browserState;
     const {goBack, goForward, stop, reload, frozen} = this.props;
 
-    const addressClasses = classNames("browser-address", {frozen, visible: (!!url && !!url.length)});
-
     return <BrowserControlsContainer>
-      <span className={classNames("icon", "icon-arrow-left", {disabled: !canGoBack})} onClick={() => goBack()}>
-        <Ink/>
-      </span>
-      <span className={classNames("icon", "icon-arrow-right", {disabled: !canGoForward})} onClick={() => goForward()}>
-        <Ink/>
-      </span>
+      <IconButton icon="arrow-left" disabled={!canGoBack} onClick={() => goBack()}/>
+      <IconButton icon="arrow-right" disabled={!canGoForward} onClick={() => goForward()}/>
       {
         loading
-        ? <span className={classNames("icon", "icon-cross", "loading")} onClick={() => stop()}>
-            <Ink/>
-          </span>
-        : <span className={classNames("icon", "icon-repeat")} onClick={() => reload()}>
-            <Ink/>
-          </span>
+        ? <IconButton icon="cross" onClick={() => stop()}/>
+        : <IconButton icon="repeat" onClick={() => reload()}/>
       }
       {editingURL
-        ? <input type="text" disabled={frozen} ref={this.onBrowserAddress}
-            className="browser-address editing visible" defaultValue={url}
-            onKeyUp={this.addressKeyUp} onBlur={this.addressBlur}/>
-        : <span className={addressClasses} ref={this.onBrowserAddress} onClick={() =>
-            (url && url.length) && this.startEditingURL()
-          }>{url || ""}</span>
+        ? <BrowserAddressInput
+              type="search"
+              disabled={frozen}
+              ref={this.onBrowserAddress as any}
+              defaultValue={url}
+              onKeyUp={this.addressKeyUp}
+              onBlur={this.addressBlur}/>
+        : <BrowserAddressSpan className={classNames({frozen})}
+              ref={this.onBrowserAddress as any}
+              onClick={() => (url && url.length) && this.startEditingURL()
+          }>
+            {url || ""}
+          </BrowserAddressSpan>
       }
-      <span
-          data-rh-at="right"
-          data-rh={t("browser.popout")}
-          className={classNames("icon", "icon-redo")} onClick={() => this.popOutBrowser()}>
-        <Ink/>
-      </span>
+      <IconButton hint={t("browser.popout")} hintPosition="bottom" icon="redo" onClick={() => this.popOutBrowser()}/>
     </BrowserControlsContainer>;
   }
 

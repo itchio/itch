@@ -4,7 +4,7 @@ import styled from "styled-components";
 export const SidebarSection = styled.div`
   color: ${props => props.theme.ternaryText};
 
-  padding: 0 7px 0 14px;
+  padding-left: 14px;
   margin: 20px 0 8px 0;
 
   display: flex;

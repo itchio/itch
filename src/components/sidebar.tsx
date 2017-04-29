@@ -7,8 +7,8 @@ import {createStructuredSelector} from "reselect";
 
 import * as actions from "../actions";
 
-import Ink = require("react-ink");
 import Filler from "./basics/filler";
+import IconButton from "./basics/icon-button";
 import SidebarSearch from "./sidebar/search";
 import SidebarTab from "./sidebar/tab";
 import SidebarLogo from "./sidebar/logo";
@@ -126,20 +126,16 @@ class Sidebar extends React.Component<IProps & IDerivedProps & I18nProps, IState
         <SidebarSection>
           <SidebarHeading>{t("sidebar.category.tabs")}</SidebarHeading>
           <Filler/>
-          <SidebarAction
-              data-rh-at="top"
-              data-rh={t("sidebar.close_all_tabs")}
-              onClick={() => closeAllTabs({})}>
-            <span className="icon icon-delete"/>
-            <Ink/>
-          </SidebarAction>
-          <SidebarAction
-              data-rh-at="top"
-              data-rh={t("sidebar.new_tab")}
-              onClick={() => newTab({})}>
-            <span className="icon icon-plus"/>
-            <Ink/>
-          </SidebarAction>
+          <IconButton
+            icon="delete"
+            hint={t("sidebar.close_all_tabs")}
+            onClick={() => closeAllTabs({})}
+          />
+          <IconButton
+            icon="plus"
+            hint={t("sidebar.new_tab")}
+            onClick={() => newTab({})}
+          />
         </SidebarSection>
 
         <SortableList items={this.state.transient}

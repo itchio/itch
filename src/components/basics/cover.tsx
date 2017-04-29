@@ -18,7 +18,7 @@ const CoverDiv = styled.div`
 
 class Cover extends React.Component<IProps, void> {
   render () {
-    const {coverUrl, stillCoverUrl, hover} = this.props;
+    const {coverUrl, stillCoverUrl, hover, ...restProps} = this.props;
 
     let gif: boolean;
     const coverStyle: React.CSSProperties = {};
@@ -35,7 +35,7 @@ class Cover extends React.Component<IProps, void> {
       }
     }
 
-    return <CoverDiv style={coverStyle}>
+    return <CoverDiv style={coverStyle} {...restProps}>
       {gif
       ? <GifMarker/>
       : null}
@@ -47,6 +47,9 @@ interface IProps {
   coverUrl: string;
   stillCoverUrl: string;
   hover: boolean;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 export default Cover;

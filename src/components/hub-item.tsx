@@ -78,7 +78,12 @@ export class HubItem extends React.Component<IProps & IDerivedProps & I18nProps,
         onMouseEnter={this.onMouseEnter.bind(this)}
         onMouseLeave={this.onMouseLeave.bind(this)}
         onContextMenu={this.onContextMenu.bind(this)}>
-      <Cover coverUrl={coverUrl} stillCoverUrl={stillCoverUrl} hover={hover}/>
+      <Cover
+        coverUrl={coverUrl}
+        stillCoverUrl={stillCoverUrl}
+        hover={hover}
+        onClick={(e) => this.onMouseDown(e)}
+      />
 
       <UnderCover>
         <section className="title">

@@ -1,7 +1,6 @@
 
 import {createSelector, createStructuredSelector} from "reselect";
 import * as React from "react";
-import * as classNames from "classnames";
 import {connect, I18nProps} from "./connect";
 
 import bob, {IRGBColor} from "../renderer-util/bob";
@@ -21,6 +20,17 @@ import * as actions from "../actions";
 
 import {IBrowserControlProperties} from "./browser-state";
 import GameBrowserContextActions from "./game-browser-context-actions";
+import Cover from "./basics/cover"; 
+import styled from "./styles";
+
+const BrowserContextDiv = styled.div`
+  flex-basis: 240px;
+  background: $sidebar-background-color;
+
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+`;
 
 export class GameBrowserContext extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
@@ -36,42 +46,22 @@ export class GameBrowserContext extends React.Component<IProps & IDerivedProps &
   }
 
   render () {
-    const barStyle = {};
-
-    const {browserState, game} = this.props;
-    const {loading} = browserState;
-    const barClasses = classNames("browser-context", "game-browser-context", {loading});
-
+    const {game} = this.props;
     const {coverUrl, stillCoverUrl} = game;
+    const {hover} = this.state;
 
-    // FIXME: DRY — duplicate code from HubItem
-    let gif: boolean;
-    const coverStyle = {} as React.CSSProperties;
-    if (coverUrl) {
-      if (this.state.hover) {
-        coverStyle.backgroundImage = `url('${coverUrl}')`;
-      } else {
-        if (stillCoverUrl) {
-          gif = true;
-          coverStyle.backgroundImage = `url('${stillCoverUrl}')`;
-        } else {
-          coverStyle.backgroundImage = `url('${coverUrl}')`;
-        }
-      }
-    }
-
-    return <div className={barClasses} style={barStyle} onContextMenu={this.onContextMenu.bind(this)}>
-      <div className="cover" style={coverStyle}
+    return <BrowserContextDiv
+        onContextMenu={this.onContextMenu.bind(this)}>
+      <Cover
+        coverUrl={coverUrl}
+        stillCoverUrl={stillCoverUrl}
+        hover={hover}
         onMouseEnter={this.onMouseEnter.bind(this)}
-        onMouseLeave={this.onMouseLeave.bind(this)}>
-      {gif
-        ? <span className="gif-marker">gif</span>
-        : ""
-      }
-      </div>
+        onMouseLeave={this.onMouseLeave.bind(this)}
+      />
       <GameStats game={game} mdash={false}/>
       {this.gameActions()}
-    </div>;
+    </BrowserContextDiv>;
   }
 
   gameActions () {

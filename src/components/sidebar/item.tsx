@@ -31,8 +31,8 @@ export const ItemDiv = styled.section`
   flex-direction: column;
   margin: 2px 0;
   margin-right: 0;
-  padding: 5px 8px 5px 10px;
-  min-height: 26px;
+  padding-left: 8px;
+  height: 32px;
   justify-content: center;
 
   position: relative;

@@ -154,6 +154,17 @@ export const animations = {
       transform: translateX(0%);
     }
   `,
+
+  loadBorder: keyframes`
+    0% {
+      border-image-slice: 0% 0% 10% 92%;
+      border-image-width: 0 0 2px 0;
+    }
+    100% {
+      border-image-slice: 0% 0% 10% 0%;
+      border-image-width: 0 0 2px 0;
+    }
+  `,
 };
 
 // mixins
