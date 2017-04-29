@@ -28,6 +28,8 @@ export default function route (watcher: Watcher, store: IStore, action: IAction<
   });
 
   each(watcher.subs, (sub) => {
+    if (!sub) { return; }
+
     each(sub.reactors[action.type], async (reactor) => {
       try {
         await reactor(store, action);

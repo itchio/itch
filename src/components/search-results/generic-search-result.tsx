@@ -4,6 +4,7 @@ import {findDOMNode} from "react-dom";
 
 import * as actions from "../../actions";
 import watching, {Watcher} from "../watching";
+import {IAction} from "../../constants/action-types";
 
 import * as styles from "../styles";
 import {css} from "../styles";
@@ -80,7 +81,7 @@ abstract class GenericSearchResult <Props extends IGenericSearchResultProps, Sta
   subscribe (watcher: Watcher) {
     watcher.on(actions.triggerOk, async (store, action) => {
       if (this.props.chosen && this.props.active) {
-        store.dispatch(actions.navigate(this.getPath()));
+        store.dispatch(this.getNavigateAction());
         store.dispatch(actions.closeSearch({}));
       }
     });
@@ -93,7 +94,7 @@ abstract class GenericSearchResult <Props extends IGenericSearchResultProps, Sta
     }
   }
   
-  abstract getPath(): string
+  abstract getNavigateAction(): IAction<any>
 };
 
 export default GenericSearchResult;

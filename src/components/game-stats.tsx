@@ -21,6 +21,44 @@ import {
   IGameRecord, ICaveRecord, IDownloadKey,
 } from "../types";
 
+import styled from "./styles";
+
+const GameStatsDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  color: $secondary-text-color;
+  padding: 16px 0;
+  line-height: 1.8;
+  flex-shrink: 0;
+
+  div {
+    margin-right: 12px;
+  }
+
+  label {
+    color: #B3B2B7; // FIXME: exceptions bad
+
+    .nice-ago {
+      color: $secondary-text-color; // sigh
+    }
+
+    &.original-price {
+      text-decoration: line-through;
+      color: inherit;
+    }
+  }
+
+  .total-playtime .icon {
+    margin: 0 3px;
+  }
+
+  .total-playtime, .last-playthrough {
+    font-size: 14px;
+    margin-right: 5px;
+  }
+`;
+
 export class GameStats extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, cave, game = {} as IGameRecord, downloadKey, mdash = true} = this.props;
@@ -28,10 +66,10 @@ export class GameStats extends React.Component<IProps & IDerivedProps & I18nProp
     const classAction = actionForGame(game, cave);
 
     if (cave) {
-      return <div className="game-stats">
+      return <GameStatsDiv>
         <TotalPlaytime game={game} cave={cave}/>
         <LastPlayed game={game} cave={cave}/>
-      </div>;
+      </GameStatsDiv>;
     } else {
       const platforms: JSX.Element[] = [];
       if (classAction === "launch") {
@@ -43,7 +81,7 @@ export class GameStats extends React.Component<IProps & IDerivedProps & I18nProp
       }
       const {minPrice, sale, currency = "USD"} = game;
 
-      return <div className="game-stats">
+      return <GameStatsDiv>
         <div className="total-playtime">
         {t(`usage_stats.description.${classification}`)}
         {(platforms.length > 0)
@@ -75,7 +113,7 @@ export class GameStats extends React.Component<IProps & IDerivedProps & I18nProp
           )
         }
         </div>
-      </div>;
+      </GameStatsDiv>;
     }
   }
 }

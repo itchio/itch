@@ -14,6 +14,7 @@ import Icon from "../basics/icon";
 import Filler from "../basics/filler";
 
 import styled, * as styles from "../styles";
+import * as actions from "../../actions";
 
 const GameSearchResultDiv = styled.div`
   ${searchResultStyle}
@@ -100,8 +101,8 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
     </GameSearchResultDiv>;
   }
 
-  getPath(): string {
-    return `games/${this.props.game.id}`;
+  getNavigateAction() {
+    return actions.navigateToGame(this.props.game);
   }
 }
 

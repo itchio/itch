@@ -1,6 +1,5 @@
 
 import * as React from "react";
-import * as classNames from "classnames";
 import {connect, I18nProps} from "./connect";
 
 import {map} from "underscore";
@@ -18,6 +17,17 @@ import watching, {Watcher} from "./watching";
 const GENEROSITY_PREWARM = 500;
 const GENEROSITY_TIMEOUT = 1000;
 import delay from "../reactors/delay";
+
+import styled from "./styles";
+
+const ActionsDiv = styled.div`
+  flex-grow: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  padding-top: 4px;
+`;
 
 /**
  * Displays install, share, buy now buttons and so on.
@@ -47,15 +57,12 @@ class GameBrowserContextActions extends React.Component<IProps & IDerivedProps &
   render () {
     const {items, error} = listSecondaryActions(this.props);
 
-    return <div className={classNames("cave-actions", {
-      error,
-      ["encouraging-generosity"]: this.state.encouragingGenerosity,
-    })}>
+    return <ActionsDiv>
       {map(items, (opts, i) => {
         const key = `${opts.type}-${opts.icon}-${opts.label}`;
         return <GameBrowserContextAction opts={opts} key={key}/>;
       })}
-    </div>;
+    </ActionsDiv>;
   }
 }
 

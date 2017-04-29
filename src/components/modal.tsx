@@ -3,6 +3,8 @@ import * as React from "react";
 import {connect, I18nProps} from "./connect";
 
 import ReactModal = require("react-modal");
+import Button from "./basics/button";
+import IconButton from "./basics/icon-button";
 import Markdown from "./basics/markdown";
 import Filler from "./basics/filler";
 
@@ -18,6 +20,7 @@ import {IModalWidgetProps} from "./modal-widgets/modal-widget";
 
 import watching, {Watcher} from "./watching";
 import styled, * as styles from "./styles";
+import {stripUnit} from "polished";
 
 type Flavor = "normal" | "big";
 
@@ -43,205 +46,6 @@ const customStyles = {
     zIndex: 400,
   },
 };
-
-interface IDefaultButtons {
-  [key: string]: IModalButton;
-  cancel: IModalButton;
-}
-
-const DEFAULT_BUTTONS = {
-  cancel: {
-    label: ["prompt.action.cancel"],
-    action: actions.closeModal({}),
-    className: "secondary",
-  },
-  ok: {
-    label: ["prompt.action.ok"],
-    action: actions.closeModal({}),
-    className: "secondary",
-  },
-} as IDefaultButtons;
-
-@watching
-export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
-  constructor () {
-    super();
-    this.state = {
-      widgetPayload: null,
-    };
-    this.updatePayload = this.updatePayload.bind(this);
-  }
-
-  subscribe (watcher: Watcher) {
-    watcher.on(actions.triggerOk, async (store, action) => {
-      const modal = this.props.modals[0];
-      if (!modal) {
-        return;
-      }
-
-      const mainButton = (modal.bigButtons || modal.buttons || [])[0];
-      if (!mainButton) {
-        return;
-      }
-
-      const onClick = this.buttonOnClick(this.specToButton(mainButton));
-      onClick();
-    });
-  }
-
-  render () {
-    const {t, modals = [], closeModal} = this.props;
-
-    const modal = modals[0];
-
-    if (modal) {
-      const {bigButtons = [], buttons = [], cover, title = "", message = "", detail, widget} = modal;
-
-      return <ReactModal isOpen contentLabel="Modal" style={customStyles}>
-        <ModalDiv>
-          <HeaderDiv>
-            <h2>{t.format(title)}</h2>
-            <Filler/>
-            {modal.unclosable
-              ? null
-              : <span className="icon icon-cross close-modal" onClick={() => closeModal({})}/>
-            }
-          </HeaderDiv>
-
-          { message !== ""
-          ? <div className="body">
-            <div className="message">
-              <div><Markdown source={t.format(message)}/></div>
-              {detail && <div className="secondary"><Markdown source={t.format(detail)}/></div>}
-            </div>
-          </div>
-          : null }
-          
-          {widget
-          ? this.renderWidget(widget, modal)
-          : null}
-
-          {bigButtons.length > 0
-          ? <div className="big-wrapper">
-            {cover
-              ? <img className="cover" src={cover}/>
-              : ""}
-            {this.renderButtons(bigButtons, "big")}
-          </div>
-          : null}
-
-          {this.renderButtons(buttons, "normal")}
-        </ModalDiv>
-      </ReactModal>;
-    } else {
-      return <div/>;
-    }
-  }
-
-  renderButtons (buttons: IModalButtonSpec[], flavor: Flavor) {
-    if (buttons.length === 0) {
-      return null;
-    }
-
-    const {t} = this.props;
-
-    return <div className={`buttons flavor-${flavor}`}>
-      <div className="filler"/>
-      {map(buttons, (buttonSpec, index) => {
-        const button = this.specToButton(buttonSpec);
-        const {label, className = "", icon, tags} = button;
-        let onClick = this.buttonOnClick(button);
-
-        return <div className={`button ${className}`} key={index} onClick={onClick}>
-        {icon ? <span className={`icon icon-${icon}`}/> : null}
-        {t.format(label)}
-        {tags
-          ? map(tags, (tag) => {
-            return <span className="tag">{t.format(tag.label)}</span>;
-          })
-          : null
-        }
-        </div>;
-      })}
-    </div>;
-  }
-
-  specToButton (buttonSpec: IModalButtonSpec): IModalButton {
-    let button: IModalButton;
-    if (typeof buttonSpec === "string") {
-      button = DEFAULT_BUTTONS[buttonSpec];
-      if (!button) {
-        button = {
-          label: "?",
-          action: actions.closeModal({}),
-        };
-      }
-    } else {
-      button = buttonSpec as IModalButton;
-    }
-    return button;
-  }
-
-  buttonOnClick (button: IModalButton): () => void {
-    const {dispatch} = this.props;
-    const {action, actionSource} = button;
-
-    let onClick = () => dispatch(action);
-    if (actionSource === "widget") {
-      onClick = () => {
-        dispatch(actions.modalResponse(this.state.widgetPayload));
-      };
-    }
-    return onClick;
-  }
-
-  renderWidget (widget: string, modal: IModal): JSX.Element {
-    // this is run in the context of `chrome.js`, so relative to `app`
-    try {
-      let module = require(`./modal-widgets/${widget}`);
-      if (!module) {
-        throw new Error("new export");
-      }
-      let Component = module.default as React.ComponentClass<IModalWidgetProps>;
-      return <Component modal={modal} updatePayload={this.updatePayload}/>;
-    } catch (e) {
-      return <div>Missing widget: {widget} — ${e.message}</div>;
-    }
-  }
-
-  updatePayload (payload: IModalResponsePayload) {
-    this.setState({widgetPayload: payload});
-  }
-
-  componentWillMount () {
-    ReactModal.setAppElement("body");
-  }
-}
-
-interface IProps {}
-
-interface IDerivedProps {
-  modals: IModal[];
-
-  closeModal: typeof actions.closeModal;
-  dispatch: (action: IModalAction) => void;
-}
-
-interface IState {
-  widgetPayload?: IModalResponsePayload;
-}
-
-export default connect<IProps>(Modal, {
-  state: (state) => ({
-    modals: state.modals,
-  }),
-  dispatch: (dispatch, props) => ({
-    dispatch: (action: IModalAction) => {
-      dispatch(actions.closeModal({action}));
-    },
-    closeModal: () => dispatch(actions.closeModal({})),
-  }),
-});
 
 const ModalDiv = styled.div`
   min-width: 200px;
@@ -293,7 +97,7 @@ const ModalDiv = styled.div`
 
       h1, h2, h3, h4, h5, h6 {
         margin-bottom: .4em;
-        font-size: $base-text-size + 2px;
+        font-size: ${props => stripUnit(props.theme.fontSizes.baseText) + 2}px;
         font-weight: bold;
       }
 
@@ -313,10 +117,10 @@ const ModalDiv = styled.div`
       code {
         font-family: monospace;
       }
-    }
 
-    .message .secondary {
-      color: $secondary-text-color;
+      .secondary {
+        color: ${props => props.theme.secondaryText};
+      }
     }
 
     p {
@@ -430,10 +234,6 @@ const ModalDiv = styled.div`
     align-items: center;
     padding: 20px;
 
-    .filler {
-      flex-grow: 8;
-    }
-
     &.flavor-big {
       flex-direction: column;
       align-items: stretch;
@@ -477,48 +277,240 @@ const ModalDiv = styled.div`
         }
       }
     }
-
-    .button {
-      flex-shrink: 0;
-      margin: 0 8px;
-      @include light-button;
-
-      &.secondary {
-        @include light-button($ui-background-color);
-      }
-
-      .icon {
-        margin-right: 5px;
-      }
-
-      &:first-child {
-        margin-left: 0;
-      }
-
-      &:last-child {
-        margin-right: 0;
-      }
-    }
   }
 `;
 
 const HeaderDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
-  padding: 15px 20px;
+  padding: 8px;
+  padding-left: 20px;
   display: flex;
   flex-direction: row;
+  align-items: center;
 
-  h2 {
+  .title {
     color: ${props => props.theme.secondaryText};
-    font-size: ${props => props.theme.fontSizes.modal};
+    font-size: ${props => props.theme.fontSizes.large};
   }
 
   .close-modal {
     font-size: 20px;
     ${styles.secondaryLink()};
   }
+`;
 
-  .filler {
-    flex-grow: 8;
+const ButtonsDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 20px;
+
+  & > * {
+    margin-left: 8px;
   }
 `;
+
+interface IDefaultButtons {
+  [key: string]: IModalButton;
+  cancel: IModalButton;
+}
+
+const DEFAULT_BUTTONS = {
+  cancel: {
+    label: ["prompt.action.cancel"],
+    action: actions.closeModal({}),
+    className: "secondary",
+  },
+  ok: {
+    label: ["prompt.action.ok"],
+    action: actions.closeModal({}),
+    className: "secondary",
+  },
+} as IDefaultButtons;
+
+@watching
+export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+  constructor () {
+    super();
+    this.state = {
+      widgetPayload: null,
+    };
+    this.updatePayload = this.updatePayload.bind(this);
+  }
+
+  subscribe (watcher: Watcher) {
+    watcher.on(actions.triggerOk, async (store, action) => {
+      const modal = this.props.modals[0];
+      if (!modal) {
+        return;
+      }
+
+      const mainButton = (modal.bigButtons || modal.buttons || [])[0];
+      if (!mainButton) {
+        return;
+      }
+
+      const onClick = this.buttonOnClick(this.specToButton(mainButton));
+      onClick();
+    });
+  }
+
+  render () {
+    const {t, modals = [], closeModal} = this.props;
+
+    const modal = modals[0];
+
+    if (modal) {
+      const {bigButtons = [], buttons = [], cover, title = "", message = "", detail, widget} = modal;
+
+      return <ReactModal isOpen contentLabel="Modal" style={customStyles}>
+        <ModalDiv>
+          <HeaderDiv>
+            <span className="title">{t.format(title)}</span>
+            <Filler/>
+            {modal.unclosable
+              ? null
+              : <IconButton icon="cross" onClick={() => closeModal({})}/>
+            }
+          </HeaderDiv>
+
+          { message !== ""
+          ? <div className="body">
+            <div className="message">
+              <div><Markdown source={t.format(message)}/></div>
+              {detail && <div className="secondary"><Markdown source={t.format(detail)}/></div>}
+            </div>
+          </div>
+          : null }
+          
+          {widget
+          ? this.renderWidget(widget, modal)
+          : null}
+
+          {bigButtons.length > 0
+          ? <div className="big-wrapper">
+            {cover
+              ? <img className="cover" src={cover}/>
+              : ""}
+            {this.renderButtons(bigButtons, "big")}
+          </div>
+          : null}
+
+          {this.renderButtons(buttons, "normal")}
+        </ModalDiv>
+      </ReactModal>;
+    } else {
+      return <div/>;
+    }
+  }
+
+  renderButtons (buttons: IModalButtonSpec[], flavor: Flavor) {
+    if (buttons.length === 0) {
+      return null;
+    }
+
+    const {t} = this.props;
+
+    return <ButtonsDiv>
+      <Filler/>
+      {map(buttons, (buttonSpec, index) => {
+        const button = this.specToButton(buttonSpec);
+        const {label, className = "", icon} = button;
+        let onClick = this.buttonOnClick(button);
+
+        return <Button
+          primary={className !== "secondary"}
+          discreet
+          key={index}
+          onClick={onClick}
+          icon={icon}
+          label={t.format(label)}
+        />;
+
+        // TODO: tags
+        /*{tags
+          ? map(tags, (tag) => {
+            return <span className="tag">{t.format(tag.label)}</span>;
+          })
+          : null
+        }*/
+      })}
+    </ButtonsDiv>;
+  }
+
+  specToButton (buttonSpec: IModalButtonSpec): IModalButton {
+    let button: IModalButton;
+    if (typeof buttonSpec === "string") {
+      button = DEFAULT_BUTTONS[buttonSpec];
+      if (!button) {
+        button = {
+          label: "?",
+          action: actions.closeModal({}),
+        };
+      }
+    } else {
+      button = buttonSpec as IModalButton;
+    }
+    return button;
+  }
+
+  buttonOnClick (button: IModalButton): () => void {
+    const {dispatch} = this.props;
+    const {action, actionSource} = button;
+
+    let onClick = () => dispatch(action);
+    if (actionSource === "widget") {
+      onClick = () => {
+        dispatch(actions.modalResponse(this.state.widgetPayload));
+      };
+    }
+    return onClick;
+  }
+
+  renderWidget (widget: string, modal: IModal): JSX.Element {
+    // this is run in the context of `chrome.js`, so relative to `app`
+    try {
+      let module = require(`./modal-widgets/${widget}`);
+      if (!module) {
+        throw new Error("new export");
+      }
+      let Component = module.default as React.ComponentClass<IModalWidgetProps>;
+      return <Component modal={modal} updatePayload={this.updatePayload}/>;
+    } catch (e) {
+      return <div>Missing widget: {widget} — ${e.message}</div>;
+    }
+  }
+
+  updatePayload (payload: IModalResponsePayload) {
+    this.setState({widgetPayload: payload});
+  }
+
+  componentWillMount () {
+    ReactModal.setAppElement("body");
+  }
+}
+
+interface IProps {}
+
+interface IDerivedProps {
+  modals: IModal[];
+
+  closeModal: typeof actions.closeModal;
+  dispatch: (action: IModalAction) => void;
+}
+
+interface IState {
+  widgetPayload?: IModalResponsePayload;
+}
+
+export default connect<IProps>(Modal, {
+  state: (state) => ({
+    modals: state.modals,
+  }),
+  dispatch: (dispatch, props) => ({
+    dispatch: (action: IModalAction) => {
+      dispatch(actions.closeModal({action}));
+    },
+    closeModal: () => dispatch(actions.closeModal({})),
+  }),
+});

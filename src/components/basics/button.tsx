@@ -9,19 +9,22 @@ const Ink = require("react-ink");
 const ButtonDiv = styled.div`
   ${styles.inkContainer()}
   ${styles.singleLine()}
+
   transition: all 0.4s;
 
-  font-size: ${props => props.theme.fontSizes.large};
-  font-weight: bold;
+  font-size: ${props => props.theme.fontSizes.baseText};
+  font-weight: normal;
   padding: 10px;
 
   border: 1px solid;
   border-width: 4px 1px 1px 1px;
   border-radius: 4px;
-  box-shadow: 0 0 3px ${props => props.theme.inputBoxShadow};
+  box-shadow: 0 1px 3px ${props => props.theme.inputBoxShadow};
   
   color: ${props => props.theme.baseText};
-  text-shadow: 0 0 2px ${props => props.theme.inputTextShadow};
+  text-shadow: 1px 1px 4px ${props => props.theme.baseBackground};
+
+  min-height: 38px;
 
   &:hover {
     box-shadow: 0 0 8px ${props => props.theme.inputBoxShadow};
@@ -29,7 +32,7 @@ const ButtonDiv = styled.div`
   }
 
   &:active {
-    transform: translateY(-2px);
+    transform: translateY(1px);
   }
 
   &.primary {
@@ -40,6 +43,7 @@ const ButtonDiv = styled.div`
   &.discreet {
     border-width: 1px;
     border-radius: 2px;
+    box-shadow: none;
   }
 
   background-color: #2B2B2B;
@@ -51,18 +55,19 @@ const ButtonDiv = styled.div`
 `;
 
 const Spacer = styled.div`
-  width: 8px;
+  min-width: 8px;
+  flex-shrink: 0;
 `;
 
 class Button extends React.Component<IProps, any> {
   render() {
-    const {primary, discreet, icon, iconComponent, label, hint, onClick, ...restProps} = this.props;
+    const {className, primary, discreet, icon, iconComponent, label, hint, onClick, ...restProps} = this.props;
 
     return <ButtonDiv
         onClick={onClick}
         data-rh={hint}
         data-rh-at="top"
-        className={classNames({primary, discreet})}
+        className={classNames(className, {primary, discreet})}
         {...restProps}>
       {iconComponent
       ? iconComponent
@@ -86,6 +91,7 @@ class Button extends React.Component<IProps, any> {
 }
 
 interface IProps {
+  className?: string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   primary?: boolean;
   hint?: string;

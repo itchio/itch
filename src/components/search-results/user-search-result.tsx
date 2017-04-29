@@ -2,6 +2,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 import GenericSearchResult, {searchResultStyle} from "./generic-search-result";
+import * as actions from "../../actions";
 
 import {IUserRecord} from "../../types";
 import styled from "../styles";
@@ -29,8 +30,8 @@ class UserSearchResult extends GenericSearchResult<IUserSearchResultProps, void>
     </UserSearchResultDiv>;
   }
 
-  getPath(): string {
-    return `users/${this.props.user.id}`;
+  getNavigateAction() {
+    return actions.navigateToUser(this.props.user);
   }
 }
 

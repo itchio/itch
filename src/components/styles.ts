@@ -219,7 +219,7 @@ export const clickable = () => css`
   }
 
   &:active {
-    transform: translateY(2px);
+    transform: translateY(1px);
   }
 `;
 
@@ -286,6 +286,7 @@ export const meat = () => css`
   flex-direction: column;
   flex-grow: 1;
   flex-shrink: 1;
+  width: 100%;
 `;
 
 export const thumbnailStyle = () => css`

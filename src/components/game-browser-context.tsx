@@ -25,11 +25,29 @@ import styled from "./styles";
 
 const BrowserContextDiv = styled.div`
   flex-basis: 240px;
-  background: $sidebar-background-color;
+  background: ${props => props.theme.sidebarBackground};
 
   display: flex;
   align-items: stretch;
   flex-direction: column;
+  align-items: stretch;
+
+  padding: 12px;
+  border-left: 1px solid #3e3e3e;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.16);
+  z-index: 50;
+  overflow-y: auto;
+  overflow-x: hidden;
+`;
+
+const GameActionsContainer = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  flex-grow: 1;
+  flex-direction: column;
+  padding-right: 0;
+  height: auto;
+  align-items: stretch;
 `;
 
 export class GameBrowserContext extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
@@ -60,7 +78,7 @@ export class GameBrowserContext extends React.Component<IProps & IDerivedProps &
         onMouseLeave={this.onMouseLeave.bind(this)}
       />
       <GameStats game={game} mdash={false}/>
-      {this.gameActions()}
+      <GameActionsContainer>{this.gameActions()}</GameActionsContainer>
     </BrowserContextDiv>;
   }
 
@@ -70,7 +88,7 @@ export class GameBrowserContext extends React.Component<IProps & IDerivedProps &
       return null;
     }
 
-    return <GameActions game={game} CustomSecondary={GameBrowserContextActions}/>;
+    return <GameActions vertical game={game} CustomSecondary={GameBrowserContextActions}/>;
   }
 
   componentWillReceiveProps () {

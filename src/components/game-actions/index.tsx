@@ -28,30 +28,42 @@ const platform = os.itchPlatform();
 import styled from "../styles";
 import Filler from "../basics/filler";
 
+const StyledMainAction = styled(MainAction)`
+  &.vertical {
+    width: 100%;
+  }
+`;
+
 const GameActionsDiv = styled.div`
-  height: 3em;
+  min-height: 3em;
   display: flex;
   align-items: center;
+  flex-direction: row;
+  flex-grow: 1;
+
+  &.vertical {
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
 class GameActions extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {props} = this;
-    const {showSecondary, CustomSecondary} = props;
+    const {vertical, showSecondary, CustomSecondary} = this.props;
 
     let taskName = "idle";
     if (props.tasks && props.tasks.length > 0) {
       taskName = props.tasks[0].name;
     }
 
-    const classes = classNames(`action-${props.action}`, `task-${taskName}`, {
-      incompatible: !props.platformCompatible,
-      uninstalled: !props.cave,
-    });
+    const classes = classNames({vertical});
 
     return <GameActionsDiv className={classes}>
-      <MainAction {...props}/>
-      <Filler/>
+      <StyledMainAction {...props} className={classNames({vertical})}/>
+      {vertical
+      ? null
+      : <Filler/>}
       {showSecondary
         ? <SecondaryActions {...props}/>
         : ""}
@@ -60,7 +72,6 @@ class GameActions extends React.Component<IProps & IDerivedProps & I18nProps, vo
         : ""}
     </GameActionsDiv>;
   }
-
 }
 
 interface IProps {
@@ -69,6 +80,8 @@ interface IProps {
   CustomSecondary?: typeof React.Component;
   /** if not specified, will be looked up from game */
   cave?: ICaveRecord;
+
+  vertical?: boolean;
 }
 
 interface IDerivedProps extends IActionsInfo {

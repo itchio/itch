@@ -1,11 +1,9 @@
 
 import * as React from "react";
 import {connect, I18nProps} from "../connect";
-import * as classNames from "classnames";
 
 import {first, find} from "underscore";
 
-import Icon from "../basics/icon";
 import TaskIcon from "../basics/task-icon";
 import LoadingCircle from "../basics/loading-circle";
 import Button from "../basics/button";
@@ -28,7 +26,7 @@ interface IStatus {
 class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, platform, platformCompatible, mayDownload,
-      pressDownload, canBeBought, tasks, action, cave} = this.props;
+      pressDownload, canBeBought, tasks, action, cave, className} = this.props;
 
     let progress = 0;
     let task: string;
@@ -84,13 +82,14 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
     const hint = this.hint(task);
 
     return <Button
-        icon={icon}
-        discreet
-        iconComponent={iconComponent}
-        label={label}
-        primary={primary}
-        onClick={(e) => this.onClick(e, task)}
-        hint={hint}/>;
+      className={className}
+      icon={icon}
+      discreet
+      iconComponent={iconComponent}
+      label={label}
+      primary={primary}
+      onClick={(e) => this.onClick(e, task)}
+      hint={hint}/>;
   }
 
   activeDownload(): IDownloadItem | null {
@@ -200,6 +199,7 @@ interface IProps extends IActionsInfo {
   pressDownload: boolean;
 
   update: IGameUpdate;
+  className?: string;
 }
 
 interface IDerivedProps {

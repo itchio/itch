@@ -38,12 +38,10 @@ import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types"
 
 import "electron";
 
-import styled from "./styles";
+import styled, * as styles from "./styles";
 
 const BrowserMeatContainer = styled.div`
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+  ${styles.meat()}
 `;
 
 const BrowserMain = styled.div`
@@ -543,7 +541,7 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
       this.setState({browserState});
 
       const {webview} = this;
-      if (webview) {
+      if (webview && webview.getWebContents()) {
         webview.loadURL(url);
       }
     }

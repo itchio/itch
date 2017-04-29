@@ -25,6 +25,8 @@ const UserMenuContainer = styled(ItemDiv)`
   flex-direction: row;
   align-items: center;
   padding: 8px;
+  min-height: 50px;
+  flex-shrink: 0;
 
   .icon {
     margin: 0;
