@@ -107,6 +107,8 @@ class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void>
         onClick: () => quit({}),
       },
     ];
+
+    throw new Error(`hello from user-menu!`);
     return <Dropdown items={items} inner={this.me()} updown/>;
   }
 

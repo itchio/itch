@@ -373,6 +373,7 @@ export class GatePage extends React.Component<IProps & IDerivedProps & I18nProps
   }
 
   reportIssue (blockingOperation: ISetupOperation) {
+    console.log(`should report issue with\n${blockingOperation.stack}`);
     reporter.reportIssue({
       type:  "Trouble in setup",
       body: blockingOperation.stack,

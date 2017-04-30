@@ -1,6 +1,8 @@
 
-// TODO: reduce dependency on electron to allow easier testing
-import {app, shell, dialog} from "electron";
+import {dialog} from "electron";
+import * as electron from "electron";
+const shell = electron.shell || electron.remote.shell;
+const app = electron.app || electron.remote.app;
 
 import * as path from "path";
 import * as querystring from "querystring";
@@ -13,7 +15,7 @@ import {findWhere} from "underscore";
 import os from "./os";
 import sf from "./sf";
 
-interface IReportIssueOpts {
+export interface IReportIssueOpts {
   log?: string;
   body?: string;
   type?: string;
@@ -71,7 +73,9 @@ ${log}
       title: `${platformEmoji} ${type} v${app.getVersion()}`,
       body: (before + body),
     });
-    shell.openExternal(`${repo}/issues/new?${query}`);
+    const url = `${repo}/issues/new?${query}`;
+    console.log(`now doing openExternal with ${url}`);
+    shell.openExternal(url);
   },
 
   handle: async function (type: string, e: Error) {

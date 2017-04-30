@@ -53,6 +53,7 @@ async function doSetup (store: IStore) {
     store.dispatch(actions.setupStatus({
       icon: "error",
       message: ["login.status.setup_failure", {error: (err.message || "" + err)}],
+      stack: e.stack,
     }));
   }
 }

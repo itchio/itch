@@ -8,8 +8,14 @@
     "module": "commonjs",
     "experimentalDecorators": true,
     "noUnusedLocals": true,
-    "inlineSourceMap": true,
+    "sourceMap": true,
     "jsx": "react",
-    "allowJs": true
+    "allowJs": true,
+    "skipLibCheck": true,
+    "babel": {
+      "presets": ["async-to-bluebird"],
+      "plugins": ["transform-es2015-modules-commonjs"],
+      "sourceMaps": true
+    }
   }
 }

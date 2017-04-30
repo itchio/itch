@@ -24,7 +24,7 @@
   "main": "src/init.js",
   "license": "MIT",
   "dependencies": {
-    "@types/bluebird": "^3.0.35",
+    "@types/bluebird": "^3.5.3",
     "@types/classnames": "0.0.31",
     "@types/clone": "^0.1.30",
     "@types/colors": "^0.6.33",
@@ -49,6 +49,9 @@
     "@types/tmp": "0.0.31",
     "@types/uuid": "^2.0.29",
     "@types/which": "^1.0.28",
+    "babel-core": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
+    "babel-preset-async-to-bluebird": "^1.1.0",
     "bluebird": "^3.4.0",
     "btoa": "^1.1.2",
     "classnames": "^2.2.5",

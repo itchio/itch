@@ -11,7 +11,8 @@ process.on("unhandledRejection", (reason: string, p: Promise<any>) => {
 });
 
 require("source-map-support").install();
-require("bluebird").config({
+const bluebird = require("bluebird");
+bluebird.config({
   longStackTraces: true,
 });
 
