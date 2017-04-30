@@ -11,8 +11,11 @@ import urls from "../../constants/urls";
 import ErrorList from "./gate/error-list";
 import RememberedSession from "./gate/remembered-session";
 import Icon from "../basics/icon";
+import LoadingCircle from "../basics/loading-circle";
 import Link from "../basics/link";
 import Button from "../basics/button";
+
+import reporter, {IReportIssueOpts} from "../../util/crash-reporter";
 
 import * as actions from "../../actions";
 
@@ -148,18 +151,17 @@ const GateDiv = styled.div`
     }
   }
 
+  .status-container {
+    font-size: ${props => props.theme.fontSizes.large};
+  }
+
   .status-container.error {
     line-height: 1.4;
-    font-size: 16px;
     white-space: pre;
     text-align: center;
 
-    .retry-setup {
-      display: block;
-      font-size: 48px;
+    .error-actions {
       margin: 20px;
-
-      @include clickable;
     }
   }
 `;
@@ -338,21 +340,43 @@ export class GatePage extends React.Component<IProps & IDerivedProps & I18nProps
       const {message, icon} = blockingOperation;
       const translatedMessage = t.format(message);
       const hasError = icon === "error";
-      const classes = classNames(`icon icon-${icon}`, {scanning: !hasError});
-      const pClasses = classNames("status-container", {error: hasError});
+      let iconElement: JSX.Element;
+      if (hasError) {
+        iconElement = <Icon icon={icon}/>;
+      } else {
+        iconElement = <LoadingCircle progress={0.3}/>;
+      }
 
-      return <p className={pClasses}>
-        <span className={classes}/>
+      return <p className={classNames("status-container", {error: hasError})}>
+        {iconElement}
         {translatedMessage}
         {hasError
-          ? <span className="icon icon-repeat retry-setup" onClick={() => retrySetup({})}/>
-          : ""
+          ? <div className="error-actions">
+              <Button
+                discreet
+                icon="repeat"
+                label={t("login.action.retry_setup")}
+                onClick={() => retrySetup({})}/>
+              <Button
+                discreet
+                icon="bug"
+                label={t("grid.item.report_problem")}
+                onClick={() => this.reportIssue(blockingOperation)}/>
+            </div>
+          : null
         }
       </p>;
     } else {
       const translatedMessage = t("login.action.login");
       return <Button fat primary label={translatedMessage}/>;
     }
+  }
+
+  reportIssue (blockingOperation: ISetupOperation) {
+    reporter.reportIssue({
+      type:  "Trouble in setup",
+      body: blockingOperation.stack,
+    } as IReportIssueOpts);
   }
 
   componentWillReceiveProps (nextProps: IDerivedProps) {

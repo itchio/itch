@@ -50,16 +50,6 @@ const SidebarItems = styled.div`
   flex-grow: 1;
 `;
 
-const SidebarAction = styled.span`
-  ${styles.iconButton()}
-  ${styles.clickable()}
-
-  &:hover {
-    color: ${props => props.theme.secondaryTextHover},
-  }
-  margin-left: 6px;
-`;
-
 interface ISortEndParams {
   oldIndex: number;
   newIndex: number;

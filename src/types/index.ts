@@ -822,6 +822,7 @@ export interface ISystemState {
 export interface ISetupOperation {
     message: ILocalizedString;
     icon: string;
+    stack?: string;
 }
 
 export interface ISetupState {

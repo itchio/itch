@@ -87,6 +87,7 @@
     "login.action.reset_password": "Forgot password",
     "login.action.show_form": "Log in as someone else",
     "login.action.show_saved_logins": "Saved logins",
+    "login.action.retry_setup": "Retry setup",
     "login.field.password": "Password",
     "login.field.username": "Username or e-mail",
     "login.messages.welcome_back": "Welcome back!",
