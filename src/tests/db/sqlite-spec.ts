@@ -64,6 +64,22 @@ test("sqlite", t => {
     t.ok(fetchedGame);
     t.same(fetchedGame.title, "Overland", "title is still the same");
     t.same(fetchedGame.shortDesc, "Good luck");
+
+    fetchedGame = await gameRepo.findOne({title: "Puzzle Puppers"});
+    t.ok(fetchedGame);
+    t.same(fetchedGame.id, 2);
+
+    const searchGame = async (query: string) => await gameRepo.createQueryBuilder("g")
+      .where("lower(g.title) LIKE lower(:query)", {query: `%${query}%`})
+      .getOne();
+
+    fetchedGame = await searchGame("puzzle");
+    t.ok(fetchedGame);
+    t.same(fetchedGame.id, 2);
+
+    fetchedGame = await searchGame("COLONY");
+    t.ok(fetchedGame);
+    t.same(fetchedGame.id, 4);
   });
 });
 
