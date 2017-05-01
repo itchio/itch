@@ -3,6 +3,7 @@
 
 import {createConnection, Entity, Column, PrimaryColumn} from "typeorm";
 import test = require("zopf");
+import * as _ from "underscore";
 
 @Entity()
 class Game {
@@ -34,6 +35,7 @@ test("sqlite", t => {
       [2, "Puzzle Puppers", "Drag out doggos!"],
       [3, "Thorny Weather", "Underrated puzzle game"],
       [4, "Aven Colony", "It's huge"],
+      [5, "Not A Puzzle", "Be warned"],
     ];
 
     let entities = [];
@@ -69,9 +71,11 @@ test("sqlite", t => {
     t.ok(fetchedGame);
     t.same(fetchedGame.id, 2);
 
-    const searchGame = async (query: string) => await gameRepo.createQueryBuilder("g")
-      .where("lower(g.title) LIKE lower(:query)", {query: `%${query}%`})
-      .getOne();
+    const gameQuery = gameRepo.createQueryBuilder("g")
+      .where("lower(g.title) LIKE lower(:query)");
+
+    const searchGame = async (query: string) =>
+      await gameQuery.setParameter("query", `%${query}%`).getOne();
 
     fetchedGame = await searchGame("puzzle");
     t.ok(fetchedGame);
@@ -80,6 +84,41 @@ test("sqlite", t => {
     fetchedGame = await searchGame("COLONY");
     t.ok(fetchedGame);
     t.same(fetchedGame.id, 4);
+
+    const puzzleGamesQuery = gameRepo.createQueryBuilder("g")
+      .where("lower(g.title) LIKE lower(:query) OR lower(g.shortDesc) LIKE lower(:query)")
+      .setParameter("query", "%puzzle%")
+      .orderBy("g.id", "ASC");
+    
+    let puzzleGames = await puzzleGamesQuery.clone().setOffset(0).setLimit(1).getMany();
+    t.ok(puzzleGames);
+    t.same(puzzleGames.length, 1, "fetches first page");
+
+    puzzleGames = await puzzleGamesQuery.clone().setOffset(1).setLimit(1).getMany();
+    t.ok(puzzleGames);
+    t.same(puzzleGames.length, 1, "fetches second page");
+
+    puzzleGames = await puzzleGamesQuery.clone().setOffset(2).setLimit(1).getMany();
+    t.ok(puzzleGames);
+    t.same(puzzleGames.length, 1, "fetches third page");
+
+    puzzleGames = await puzzleGamesQuery.clone().setOffset(3).setLimit(1).getMany();
+    t.ok(puzzleGames);
+    t.same(puzzleGames.length, 0, "fourth page is empty");
+
+    let puzzleGamesCount;
+    [puzzleGames, puzzleGamesCount] = await puzzleGamesQuery.setLimit(2).getManyAndCount();
+    t.ok(puzzleGames);
+    t.same(puzzleGames.length, 2, "finds two games");
+    t.same(puzzleGamesCount, 3, "counts three games");
+
+    let specificGames = await gameRepo.createQueryBuilder("g")
+      .where("g.id in (:ids)", {ids: [2, 4, 6]}).getMany();
+    t.ok(specificGames);
+    t.same(specificGames.length, 2, "found both games by id");
+    t.ok(_.find(specificGames, {id: 2}));
+    t.ok(_.find(specificGames, {id: 4}));
+    t.notOk(_.find(specificGames, {id: 6}));
   });
 });
 
