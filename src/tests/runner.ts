@@ -29,7 +29,7 @@ const {join, extname} = require("path").posix;
 
 app.on("ready", async () => {
   const glob = require("bluebird").promisify(require("glob"));
-  const testFiles = await glob("**/*-spec.ts", {cwd: __dirname});
+  let testFiles = await glob("**/*-spec.ts", {cwd: __dirname});
 
   const tape = require("tape");
   const formatter = require("faucet");
@@ -38,6 +38,13 @@ app.on("ready", async () => {
   tape.onFinish(() => {
     app.quit();
   });
+
+  const args = process.argv.slice(2);
+  console.log(`command line arguments: ${args.join(" +++ ")}`)
+
+  if (args.length > 0) {
+    testFiles = args.map((arg) => arg.replace(/.*src\/tests\//, ""));
+  }
 
   console.log(chalk.blue(`loading ${testFiles.length} test suites`));
 

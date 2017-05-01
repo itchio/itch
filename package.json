@@ -104,6 +104,7 @@
     "shell-quote": "^1.6.0",
     "shoom": "1.0.0",
     "source-map-support": "^0.4.15",
+    "sqlite3": "^3.1.8",
     "stream-splitter": "^0.3.2",
     "streamsearch": "^0.1.2",
     "styled-components": "^1.4.5",
@@ -111,6 +112,7 @@
     "tinycolor2": "^1.3.0",
     "tmp": "0.0.29",
     "toml": "^2.3.0",
+    "typeorm": "^0.0.11",
     "underscore": "^1.8.3",
     "uuid": "^3.0.0",
     "which": "^1.2.11"
