@@ -107,7 +107,7 @@ test("sqlite", t => {
     t.same(puzzleGames.length, 0, "fourth page is empty");
 
     let puzzleGamesCount;
-    [puzzleGames, puzzleGamesCount] = await puzzleGamesQuery.setLimit(2).getManyAndCount();
+    [puzzleGames, puzzleGamesCount] = await puzzleGamesQuery.clone().setLimit(2).getManyAndCount();
     t.ok(puzzleGames);
     t.same(puzzleGames.length, 2, "finds two games");
     t.same(puzzleGamesCount, 3, "counts three games");
