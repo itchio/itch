@@ -28,6 +28,30 @@ const LayoutContainer = styled.div`
 
 const ReactHintContainer = styled.div`
   pointer-events: none;
+
+  .react-hint__content {
+    padding: 5px;
+    border-radius: 2px;
+    background: ${props => props.theme.tooltipBackground};
+    color: ${props => props.theme.tooltipText};
+    font-size: 90%;
+  }
+
+  .react-hint--top:after {
+    border-top-color: ${props => props.theme.tooltipBackground};
+  }
+
+  .react-hint--left:after {
+    border-left-color: ${props => props.theme.tooltipBackground};
+  }
+
+  .react-hint--right:after {
+    border-right-color: ${props => props.theme.tooltipBackground};
+  }
+
+  .react-hint--bottom:after {
+    border-bottom-color: ${props => props.theme.tooltipBackground};
+  }
 `;
 
 const LayoutDraggable = styled.div`

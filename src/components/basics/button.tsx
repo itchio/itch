@@ -6,6 +6,10 @@ import styled, * as styles from "../styles";
 import Icon from "./icon";
 const Ink = require("react-ink");
 
+const Label = styled.div`
+  ${styles.singleLine()}  
+`;
+
 const ButtonDiv = styled.div`
   ${styles.inkContainer()}
   ${styles.singleLine()}
@@ -22,7 +26,7 @@ const ButtonDiv = styled.div`
   box-shadow: 0 1px 3px ${props => props.theme.inputBoxShadow};
   
   color: ${props => props.theme.baseText};
-  text-shadow: 1px 1px 4px ${props => props.theme.baseBackground};
+  ${styles.accentTextShadow()}
 
   min-height: 38px;
 
@@ -93,8 +97,9 @@ class Button extends React.Component<IProps, any> {
       ? " "
       : null}
       {label
-      ? label
+      ? <Label>{label}</Label>
       : null}
+      {this.props.children}
       <Ink/>
     </ButtonDiv>;
   }
@@ -107,7 +112,7 @@ interface IProps {
   hint?: string;
   icon?: string;
   iconComponent?: JSX.Element;
-  label: string;
+  label?: string;
   discreet?: boolean;
   fat?: boolean;
 }

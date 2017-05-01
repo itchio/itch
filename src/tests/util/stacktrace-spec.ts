@@ -60,7 +60,6 @@ test("stacktrace", t => {
 
 async function checkStack(t, promise: Promise<any>) {
   let threw = false;
-  await promise;
   try {
     await promise;
   } catch (e) {

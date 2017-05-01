@@ -1,3 +1,5 @@
 
 import * as sourcemaps from "source-map-support";
-sourcemaps.install();
+sourcemaps.install({
+  hookRequire: true,
+});

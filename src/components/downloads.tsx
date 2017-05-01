@@ -40,10 +40,13 @@ const DownloadsDiv = styled.div`
   .game-actions .main-action {
     padding: 3px 10px;
   }
+`;
 
-  li.empty {
-    color: $secondary-text-color;
-  }
+const EmptyState = styled.div`
+  font-size: ${props => props.theme.fontSizes.large};
+  color: ${props => props.theme.secondaryText};
+
+  margin: 20px;
 `;
 
 class Downloads extends React.Component<IProps & IDerivedProps & I18nProps, void> {
@@ -57,9 +60,9 @@ class Downloads extends React.Component<IProps & IDerivedProps & I18nProps, void
 
     const hasItems = (items.length + finishedItems.length) > 0;
     if (!hasItems) {
-      return <p className="empty">
+      return <EmptyState>
           {t("status.downloads.no_active_downloads")}
-      </p>;
+      </EmptyState>;
     }
 
     const firstItem = first(items);

@@ -1,6 +1,10 @@
 
+interface SourceMapOpts {
+  hookRequire: boolean;
+}
+
 interface SourceMapSupportStatic {
-  install(): void;
+  install(opts?: ISourceMapOpts): void;
 }
 
 /**

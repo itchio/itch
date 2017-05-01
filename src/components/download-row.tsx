@@ -11,6 +11,7 @@ import * as actions from "../actions";
 
 import TimeAgo from "./basics/time-ago";
 import IconButton from "./basics/icon-button";
+import HoverBoard from "./basics/hover-board";
 import Cover from "./basics/cover";
 import GameActions from "./game-actions";
 
@@ -124,7 +125,7 @@ const StyledCover = styled(Cover)`
   height: 80px;
   padding-bottom: 0;
 
-  margin-right: 8px;
+  margin-right: 16px;
 `;
 
 const Controls = styled.div`
@@ -162,34 +163,40 @@ class DownloadRow extends React.Component<IProps & IDerivedProps & I18nProps, IS
 
     const gradientColor = "rgb(158, 150, 131)";
 
-    return <DownloadRowDiv className={itemClasses} onContextMenu={this.onCoverContextMenu}>
-      {first
-      ? <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={speeds} margin={{top: 0, right: 0, left: 0, bottom: 0}}>
-          <defs>
-            <linearGradient id="downloadGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={gradientColor} stopOpacity={0.2}/>
-              <stop offset="50%" stopColor={gradientColor} stopOpacity={0.2}/>
-              <stop offset="100%" stopColor={gradientColor} stopOpacity={0.1}/>
-            </linearGradient>
-          </defs>
-          <Area type="monotone" curve={false} dot={false} isAnimationActive={false}
-            dataKey="bps" fill="url(#downloadGradient)" fillOpacity={1.0}/>
-        </AreaChart>
-      </ResponsiveContainer>
-      : ""
-      }
+    return <HoverBoard>
+      {({hover, props}) =>
+      <DownloadRowDiv className={itemClasses} onContextMenu={this.onCoverContextMenu} {...props}>
+        {first
+        ? <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={speeds} margin={{top: 0, right: 0, left: 0, bottom: 0}}>
+            <defs>
+              <linearGradient id="downloadGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={gradientColor} stopOpacity={0.2}/>
+                <stop offset="50%" stopColor={gradientColor} stopOpacity={0.2}/>
+                <stop offset="100%" stopColor={gradientColor} stopOpacity={0.1}/>
+              </linearGradient>
+            </defs>
+            <Area type="monotone" curve={false} dot={false} isAnimationActive={false}
+              dataKey="bps" fill="url(#downloadGradient)" fillOpacity={1.0}/>
+          </AreaChart>
+        </ResponsiveContainer>
+        : ""
+        }
 
-      <StyledCover
-        hover={false}
-        coverUrl={coverUrl}
-        stillCoverUrl={stillCoverUrl}
-        onClick={() => navigateToGame(game)}/>
-      <div className="stats" onClick={() => { onStatsClick(); }}>
-        {this.progress()}
-      </div>
-      {this.controls()}
-    </DownloadRowDiv>;
+        <StyledCover
+          hover={hover}
+          coverUrl={coverUrl}
+          stillCoverUrl={stillCoverUrl}
+          onClick={() => navigateToGame(game)}
+        />
+        <div className="stats" onClick={() => { onStatsClick(); }}>
+          {this.progress()}
+        </div>
+        {this.controls()}
+      </DownloadRowDiv>
+    }
+    </HoverBoard>
+    ;
   }
 
   controls () {

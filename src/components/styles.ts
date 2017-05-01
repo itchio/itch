@@ -156,6 +156,17 @@ export const animations = {
     }
   `,
 
+  enterBottom: keyframes`
+    0% {
+      opacity: 0;
+      transform: translateY(25%) scaleY(.5);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0%) scaleY(1);
+    }
+  `,
+
   loadBorder: keyframes`
     0% {
       border-image-slice: 0% 0% 10% 92%;
@@ -302,4 +313,8 @@ export const defaultCoverBackground = () => css`
      rgba(0, 0, 0, 0.08) 0%,
      rgba(255, 255, 255, 0.05) 100%
   );
+`;
+
+export const accentTextShadow = () => css`
+  text-shadow: .5px .5px 2px ${props => props.theme.baseBackground};
 `;

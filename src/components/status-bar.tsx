@@ -7,6 +7,7 @@ import {connect, I18nProps} from "./connect";
 import * as actions from "../actions";
 
 import Icon from "./basics/icon";
+import LoadingCircle from "./basics/loading-circle";
 
 import {IAppState, ISelfUpdateState, ILocalizedString} from "../types";
 import {dispatcher} from "../constants/action-types";
@@ -50,12 +51,6 @@ const StatusBarDiv = styled.div`
       &.busy {
         cursor: default;
       }
-    }
-  }
-
-  .self-update.busy {
-    .icon:first-child {
-      @include horizontal-scan($dark: $light-accent-color, $light: white);
     }
   }
 
@@ -130,7 +125,7 @@ class StatusBar extends React.Component<IProps & IDerivedProps & I18nProps, void
     } else if (checking) {
       busy = true;
       children = [
-        <Icon key="icon" icon="stopwatch"/>,
+        <LoadingCircle progress={0.3}/>,
         <span key="message">{t("status.checking")}</span>,
       ];
     } else if (uptodate) {

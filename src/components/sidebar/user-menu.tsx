@@ -14,28 +14,24 @@ import urls from "../../constants/urls";
 
 import styled from "../styles";
 import Filler from "../basics/filler";
-import {ItemDiv} from "./item";
+import Button from "../basics/button";
 
 import Dropdown, {IDropdownItem} from "./dropdown";
 import Icon from "../basics/icon";
 
-const UserMenuContainer = styled(ItemDiv)`
-  margin-right: -${props => props.theme.widths.handle};
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 8px;
-  min-height: 50px;
-  flex-shrink: 0;
+const UserMenuButton = styled(Button)`
+  margin: 8px;
+  margin-right: 0;
 
   .icon {
     margin: 0;
+    transition: all 0.2s;
   }
 
   img {
-    height: 2em;
-    width: 2em;
-    margin: 0 5px;
+    height: 32px;
+    width: 32px;
+    margin-right: 8px;
     border-radius: 2px;
   }
 `;
@@ -108,7 +104,6 @@ class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void>
       },
     ];
 
-    throw new Error(`hello from user-menu!`);
     return <Dropdown items={items} inner={this.me()} updown/>;
   }
 
@@ -116,12 +111,12 @@ class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void>
     const {me} = this.props;
     const {coverUrl = defaultImages.avatar, username, displayName} = me;
 
-    return <UserMenuContainer>
+    return <UserMenuButton discreet>
       <img src={coverUrl}/>
       {username || displayName}
       <Filler/>
       <Icon icon="triangle-down" classes={["flipper"]}/>
-    </UserMenuContainer>;
+    </UserMenuButton>;
   }
 }
 

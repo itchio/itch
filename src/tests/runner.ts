@@ -10,7 +10,9 @@ process.on("unhandledRejection", (reason: string, p: Promise<any>) => {
   process.exit(1);
 });
 
-require("source-map-support").install();
+require("source-map-support").install({
+  hookRequire: true,
+});
 const bluebird = require("bluebird");
 bluebird.config({
   longStackTraces: true,

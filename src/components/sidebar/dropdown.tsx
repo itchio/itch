@@ -7,11 +7,11 @@ import listensToClickOutside = require("react-onclickoutside");
 import {connect, I18nProps} from "../connect";
 
 import Icon from "../basics/icon";
+import Ink = require("react-ink");
 
 import {ILocalizedString} from "../../types";
 
-import styled from "../styles";
-import {lighten} from "polished";
+import styled, * as styles from "../styles";
 
 const DropdownContainer = styled.div`
   position: relative;
@@ -24,17 +24,18 @@ const DropdownContainer = styled.div`
 
 const DropdownInnerContainer = styled.div`
   &.flipped .flipper {
-    transform: rotateX(180deg);
+    transform: rotateZ(180deg);
   }
 `;
 
 const DropdownDiv = styled.div`
-  background-color: ${props => lighten(.05, props.theme.sidebarBackground)};
-  border: 1px solid ${props => props.theme.dropdownBackground};
+  background-color: ${props => props.theme.accent};
+  border: 1px solid ${props => props.theme.lightAccent};
+  box-shadow: 0 0 2px ${props => props.theme.accent};
   position: absolute;
   top: 0;
-  left: 0;
-  right: 1px;
+  left: 8px;
+  right: 0px;
   visibility: hidden;
 
   &.updown {
@@ -44,10 +45,14 @@ const DropdownDiv = styled.div`
 
   &.active {
     visibility: visible;
+    animation: ${styles.animations.enterBottom} ease-in 0.2s;
   }
 `;
 
 const DropdownItem = styled.div`
+  ${styles.inkContainer()};
+  ${styles.accentTextShadow()};
+
   border-radius: 1px;
   flex-shrink: 0;
   display: flex;
@@ -59,7 +64,7 @@ const DropdownItem = styled.div`
 
   &:hover {
     cursor: pointer;
-    background-color: ${props => props.theme.sidebarBackground};
+    background-color: ${props => props.theme.lightAccent};
   }
 
   .icon {
@@ -73,7 +78,7 @@ const DropdownItem = styled.div`
   &.type-separator {
     height: 1px;
     padding: 0;
-    background: #444242;
+    background: ${props => props.theme.lightAccent};
   }
 `;
 
@@ -99,6 +104,7 @@ export class Dropdown extends React.Component<IProps & IDerivedProps & I18nProps
       const key = (type === "separator") ? ("separator-" + index) : (label + "-" + icon);
 
       return <DropdownItem className={itemClasses} key={key} onClick={() => { onClick(); this.close(); }}>
+        <Ink/>
         <Icon icon={icon}/>
         {t.format(label)}
       </DropdownItem>;

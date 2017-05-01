@@ -16,6 +16,7 @@ import gameTableRowRenderer, {IRowHandlerParams} from "./game-table-row-renderer
 
 import TimeAgo from "./basics/time-ago";
 import Cover from "./basics/cover";
+import HoverBoard from "./basics/hover-board";
 import HiddenIndicator from "./hidden-indicator";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
@@ -159,11 +160,14 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
     const {game} = cellData;
     const {coverUrl, stillCoverUrl} = game;
 
-    return <Cover
-      hover={false}
-      coverUrl={coverUrl}
-      stillCoverUrl={stillCoverUrl}
-    />;
+    return <HoverBoard>
+      {({hover, props}) => <Cover
+        hover={hover}
+        coverUrl={coverUrl}
+        stillCoverUrl={stillCoverUrl}
+        {...props}
+      />}
+    </HoverBoard>;
   }
 
   titleRenderer (params: ICellRendererParams): JSX.Element | string {

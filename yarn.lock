@@ -4108,19 +4108,19 @@ sort-keys@^1.0.0:
   dependencies:
     is-plain-obj "^1.0.0"
 
-source-map-support@^0.3.2:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.3.3.tgz#34900977d5ba3f07c7757ee72e73bb1a9b53754f"
+source-map-support@^0.4.15:
+  version "0.4.15"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.15.tgz#03202df65c06d2bd8c7ec2362a193056fef8d3b1"
   dependencies:
-    source-map "0.1.32"
+    source-map "^0.5.6"
 
-source-map-support@^0.4.0, source-map-support@^0.4.2:
+source-map-support@^0.4.2:
   version "0.4.14"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.14.tgz#9d4463772598b86271b4f523f6c1f4e02a7d6aef"
   dependencies:
     source-map "^0.5.6"
 
-source-map@0.1.32, source-map@0.1.x, source-map@~0.1.7:
+source-map@0.1.x, source-map@~0.1.7:
   version "0.1.32"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.1.32.tgz#c8b6c167797ba4740a8ea33252162ff08591b266"
   dependencies:
@@ -4813,12 +4813,11 @@ yauzl@2.4.1:
   dependencies:
     fd-slicer "~1.0.1"
 
-zopf@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/zopf/-/zopf-4.5.0.tgz#0fd113d3edd6ff7c89b04f2eb98582261eb085fd"
+zopf@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/zopf/-/zopf-5.0.0.tgz#bb5dee3b7800add9fac351a4a38e4640cf965b8f"
   dependencies:
     bluebird "^3.0.0"
     sinon "^1.17.1"
     sinon-as-promised "^4.0.0"
-    source-map-support "^0.3.2"
     tape "^4.2.1"

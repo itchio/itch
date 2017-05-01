@@ -3,7 +3,7 @@ import * as classNames from "classnames";
 import * as React from "react";
 import {connect, I18nProps} from "../connect";
 
-import {map, sortBy} from "underscore";
+import {isEmpty, map, sortBy} from "underscore";
 import {resolve} from "path";
 
 import urls from "../../constants/urls";
@@ -14,6 +14,7 @@ import Icon from "../basics/icon";
 import LoadingCircle from "../basics/loading-circle";
 import Link from "../basics/link";
 import Button from "../basics/button";
+import Filler from "../basics/filler";
 
 import reporter, {IReportIssueOpts} from "../../util/crash-reporter";
 
@@ -25,6 +26,12 @@ import {dispatcher, ILoginWithTokenPayload} from "../../constants/action-types";
 import watching, {Watcher} from "../watching";
 
 import styled, * as styles from "../styles";
+
+const Spacer = styled.div`
+  flex-basis: 8px;
+  flex-grow: 0;
+  flex-shrink: 0;
+`;
 
 const GateDiv = styled.div`
   animation: drop-down .3s ease-in;
@@ -61,13 +68,19 @@ const GateDiv = styled.div`
   }
 
   .errors {
+    transition: all 0.4s;
     color: ${props => props.theme.warning};
     height: 4em;
-    max-width: 400px;
+    width: 100%;
+    max-width: 500px;
     white-space: pre-wrap;
     overflow-y: auto;
 
     -webkit-user-select: initial;
+
+    &.hasError {
+      height: 8em;
+    }
 
     li {
       margin: 4px 0;
@@ -77,11 +90,12 @@ const GateDiv = styled.div`
     .welcome-back {
       color: ${props => props.theme.baseText};
       font-size: 18px;
+      display: flex;
     }
   }
 
   .errors, .actions {
-    .icon {
+    .status-container .icon {
       margin-right: .4em;
       font-size: 120%;
       vertical-align: middle;
@@ -107,7 +121,7 @@ const GateDiv = styled.div`
     min-height: 160px;
 
     .icon.scanning {
-      @include horizontal-scan;
+      ${styles.horizontalScan()};
       margin-right: 12px;
     }
   }
@@ -269,12 +283,15 @@ export class GatePage extends React.Component<IProps & IDerivedProps & I18nProps
     if (stage === "pick") {
       return <section className="errors">
         <span className="welcome-back">
+          <Filler/>
           <Icon icon="heart-filled"/>
-          {t("login.messages.welcome_back")}
+          <Spacer/>
+          <span>{t("login.messages.welcome_back")}</span>
+          <Filler/>
         </span>
       </section>;
     } else {
-      return <section className="errors">
+      return <section className={classNames("errors", {hasError: !isEmpty(errors)})}>
         <ErrorList errors={errors} before={<Icon icon="neutral"/>} i18nNamespace="api.login"/>
       </section>;
     }

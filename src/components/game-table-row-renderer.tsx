@@ -72,7 +72,6 @@ export default function defaultRowRenderer (params: IRowRendererParams) {
       style={style}
     >
       {columns}
-      <Ink/>
     </div>
   );
 }

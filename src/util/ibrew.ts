@@ -143,8 +143,6 @@ const self = {
 
     const localVersion = await self.getLocalVersion(name);
 
-    throw new Error(`woops error in fetch`);
-
     if (!localVersion) {
       log(opts, `${name}: missing, downloading latest`);
       const latestVersion = await getLatestVersion();

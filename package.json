@@ -103,7 +103,7 @@
     "reselect": "^2.5.2",
     "shell-quote": "^1.6.0",
     "shoom": "1.0.0",
-    "source-map-support": "^0.4.0",
+    "source-map-support": "^0.4.15",
     "stream-splitter": "^0.3.2",
     "streamsearch": "^0.1.2",
     "styled-components": "^1.4.5",
@@ -130,7 +130,7 @@
     "tape": "^4.2.1",
     "tslint": "^4.0.2",
     "typescript": "^2.2.2",
-    "zopf": "^4.5.0"
+    "zopf": "^5.0.0"
   },
   "scripts": {
     "start": "electron . --color",

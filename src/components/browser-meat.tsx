@@ -199,6 +199,10 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
           return;
         }
         this.webview.executeJavaScript("document.body.scrollTop", false, (scrollTop) => {
+          if (!this.webview) {
+            // nothing to see here yet
+            return;
+          }
           if (this.webview.src !== url) {
             // disregarding scrollTop, we have navigated
           } else {
