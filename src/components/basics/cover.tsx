@@ -35,8 +35,6 @@ class Cover extends React.Component<IProps, void> {
       }
     }
 
-    console.log(`cover rendering, restProps keys = `, Object.keys(restProps));
-
     return <CoverDiv style={coverStyle} {...restProps}>
       {gif
       ? <GifMarker/>

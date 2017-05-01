@@ -7,7 +7,7 @@ import "./boot/crash";
 import "./boot/env";
 import "./boot/fs";
 
-import {enableLiveReload} from "electron-compile";
+import {enableLiveReload} from "electron-compile-ftl";
 
 import autoUpdater from "./util/auto-updater";
 import {isItchioURL} from "./util/url";
