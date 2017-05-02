@@ -36,4 +36,5 @@ export const opts = {logger};
 
 if (full) {
   log(opts, `itch ${app.getVersion()} on electron ${process.versions.electron}`);
+  log(opts, `user data path: ${app.getPath("userData")}`);
 }

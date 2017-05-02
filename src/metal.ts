@@ -35,6 +35,11 @@ autoUpdate(autoUpdateDone); // no need to wait for app.on('ready')
 function autoUpdateDone () {
   const {protocol, app, globalShortcut} = require("electron");
 
+  if (process.env.CAPSULE_LIBRARY_PATH) {
+    // disable acceleration when captured by capsule
+    app.disableHardwareAcceleration();
+  }
+
   if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
     app.commandLine.appendSwitch("ignore-certificate-errors");
   }

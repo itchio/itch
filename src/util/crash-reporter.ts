@@ -1,7 +1,6 @@
 
-import {dialog} from "electron";
+import {shell, dialog} from "electron";
 import * as electron from "electron";
-const shell = electron.shell || electron.remote.shell;
 const app = electron.app || electron.remote.app;
 
 import * as path from "path";
@@ -73,8 +72,11 @@ ${log}
       title: `${platformEmoji} ${type} v${app.getVersion()}`,
       body: (before + body),
     });
-    const url = `${repo}/issues/new?${query}`;
-    console.log(`now doing openExternal with ${url}`);
+    let url = `${repo}/issues/new?${query}`;
+    const maxLen = 2000;
+    if (url.length > maxLen) {
+      url = url.substring(0, maxLen);
+    }
     shell.openExternal(url);
   },
 

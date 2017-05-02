@@ -122,7 +122,7 @@ export class Dropdown extends React.Component<IProps & IDerivedProps & I18nProps
         {inner}
     </DropdownInnerContainer>;
     const childrenC = <DropdownDiv key="children" className={dropdownClasses}>
-      {open ? children : null}
+      {children}
     </DropdownDiv>;
 
     return <DropdownContainer style={{position: "relative"}} className={containerClasses}>

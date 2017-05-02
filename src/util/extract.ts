@@ -53,7 +53,13 @@ const self = {
       ],
       logger,
     });
-    const info = JSON.parse(contents);
+
+    let info: any;
+    try {
+      info = JSON.parse(contents);
+    } catch (e) {
+      throw new Error(`Error while reading lsar's output: ${e.message || e}`);
+    }
 
     if (verbose) {
       log(opts, `${info.lsarContents.length} lsarContent entries`);
