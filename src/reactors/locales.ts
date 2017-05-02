@@ -27,12 +27,7 @@ const opts = {logger};
 import * as actions from "../actions";
 
 function canonicalFileName (lang: string): string {
-  try {
-    return getLocalePath(`${lang}.json`);
-  } catch (e) {
-    // this looks bad, but it's actually what we want
-    return null;
-  }
+  return getLocalePath(`${lang}.json`);
 }
 
 function remoteFileName (lang: string): string {
@@ -86,7 +81,11 @@ async function loadLocale (store: IStore, lang: string) {
     const resources = JSON.parse(payload);
     store.dispatch(actions.localeDownloadEnded({lang, resources}));
   } catch (e) {
-    log(opts, `Failed to load locale from ${local}: ${e.stack}`);
+    if (e.code === "ENOENT") {
+      log(opts, `No such locale ${local}`);
+    } else {
+      log(opts, `Failed to load locale from ${local}: ${e.stack}`);
+    }
   }
 
   const remote = remoteFileName(lang);

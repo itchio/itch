@@ -13,11 +13,18 @@ import {isEqual, every} from "underscore";
 
 import {EventEmitter} from "events";
 
+import {createConnection, Connection} from "typeorm";
+import GameModel from "../models/game";
+
 import {
   IEntityMap, ITableMap, IEntityRefs, IEntityRecords,
   IMarketSaveOpts, IMarketDeleteOpts, IMarketDeleteSpec,
   IMarket,
+
+  IGameRecord,
 } from "../types";
+
+const useSqlite = process.env.ITCH_SQLITE === "1";
 
 /**
  * MarketDB is a simple in-memory database that persists on disk.
@@ -25,6 +32,8 @@ import {
  * keys
  */
 export default class Market extends EventEmitter implements IMarket {
+  conn: Connection;
+
   /** contents of the database */
   data: ITableMap<any>;
 
@@ -50,6 +59,41 @@ export default class Market extends EventEmitter implements IMarket {
    */
   async load (dbPath: string): Promise<void> {
     log(opts, `loading market db from ${dbPath}`);
+
+    if (useSqlite) {
+      this.conn = await createConnection({
+        name: dbPath,
+        driver: {
+          type: "sqlite",
+          storage: dbPath + ".sqlite",
+        },
+        entities: [GameModel],
+        autoSchemaSync: true,
+      });
+
+      // load games
+      {
+        const t1 = Date.now();
+        const gameRepo = this.conn.getRepository(GameModel);
+        const games = await gameRepo.find();
+        const t2 = Date.now();
+        this.data = {games: {}};
+
+        const updated = {games: [] as any};
+        const initial = true;
+        for (const game of games) {
+          this.data.games[game.id] = game.toRecord();
+          updated.games.push(game.id);
+        }
+        this.emit("commit", {updated, initial});
+        const t3 = Date.now();
+        log(opts, `Loaded ${games.length} games in ${(t2 - t1).toFixed(2)} ms`);
+        log(opts, `Saved in memory in ${(t3 - t2).toFixed(2)} ms`);
+      }
+
+      this.emit("ready");
+      return;
+    }
 
     this.dbPath = dbPath;
     this.persist = true;
@@ -122,6 +166,30 @@ export default class Market extends EventEmitter implements IMarket {
    * Saves all passed entity records. See opts type for disk persistence and other options.
    */
   async saveAllEntities <T> (entityRecords: IEntityRecords<T>, saveOpts = {} as IMarketSaveOpts) {
+    if (useSqlite) {
+      for (const tableName of Object.keys(entityRecords.entities)) {
+        if (tableName === "games") {
+          const gameRepo = this.conn.getRepository(GameModel);
+          const entities = entityRecords.entities[tableName];
+          const entityIds = Object.keys(entities);
+          log(opts, `Should save ${entityIds.length} game!`);
+
+          let gameModels = [];
+          for (const entityId of entityIds) {
+            const game = entities[entityId] as any as IGameRecord;
+            const gameModel = gameRepo.create(game);
+            gameModels.push(gameModel);
+          }
+          const t1 = Date.now();
+          await gameRepo.persist(gameModels);
+          const t2 = Date.now();
+          log(opts, `Saved ${entityIds.length} games in ${(t2 - t1).toFixed(2)} ms`);
+        }
+      }
+
+      return;
+    }
+
     if (this.persist && !this.dbPath) {
       return;
     }
