@@ -109,7 +109,8 @@ interface IState {
 
 export default connect<IProps>(CollectionsGrid, {
   state: () => {
-    const getCollections = (state: IAppState, props: IProps) => state.market.collections || {};
+    // FIXME db
+    const getCollections = (state: IAppState, props: IProps) => {};
     const getFilterQuery = (state: IAppState, props: IProps) => state.session.navigation.filters.collections;
 
     const getSortedCollections = createSelector(

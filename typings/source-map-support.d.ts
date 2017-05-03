@@ -1,5 +1,5 @@
 
-interface SourceMapOpts {
+interface ISourceMapOpts {
   hookRequire: boolean;
 }
 

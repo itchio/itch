@@ -14,7 +14,6 @@ import {findWhere} from "underscore";
 import {IDispatch, dispatcher} from "../constants/action-types";
 import {
   IAppState, IGameRecord, ICaveRecord, IDownloadKey, ITabData,
-  IUserMarketState, IGlobalMarketState,
 } from "../types";
 import * as actions from "../actions";
 
@@ -138,34 +137,25 @@ interface IState {
 
 interface IContextSelectorResult {
   gameId: number;
-  globalMarket: IGlobalMarketState;
-  userMarket: IUserMarketState;
   tabData: ITabData;
-}
-
-interface IGamesHolder {
-  games?: {
-    [gameId: string]: IGameRecord;
-  };
 }
 
 export default connect<IProps>(GameBrowserContext, {
   state: () => {
     const marketSelector = createStructuredSelector({
       gameId: (state: IAppState, props: IProps) => +pathToId(props.tabPath),
-      userMarket: (state: IAppState, props: IProps) => state.market,
-      globalMarket: (state: IAppState, props: IProps) => state.globalMarket,
       tabData: (state: IAppState, props: IProps) => props.tabData,
     });
 
     return createSelector(
       marketSelector,
       (cs: IContextSelectorResult) => {
-        const getGame = (market: IGamesHolder) => ((market || {}).games || {})[cs.gameId];
-        const game = getGame(cs.userMarket) || getGame(cs.tabData);
-        const keys = (cs.userMarket || {} as IUserMarketState).downloadKeys || {};
-        const downloadKey = findWhere(keys, { gameId: cs.gameId });
-        const cave = cs.globalMarket.cavesByGameId[cs.gameId];
+        // TODO db
+        const game = null;
+        // TODO db
+        const downloadKey = null;
+        // TODO db
+        const cave = null;
         return { game, downloadKey, cave };
       },
     );

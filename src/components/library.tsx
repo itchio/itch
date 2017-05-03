@@ -91,8 +91,9 @@ interface IDerivedProps {
 
 export default connect<IProps>(Library, {
   state: createStructuredSelector({
-    caves: (state: IAppState) => state.globalMarket.caves || {},
-    recordGames: (state: IAppState) => state.market.games || {},
-    downloadKeys: (state: IAppState) => state.market.downloadKeys || {},
+    // TODO db
+    caves: (state: IAppState) => /* state.globalMarket.caves || */ ({}),
+    recordGames: (state: IAppState) => /* state.market.games || */ ({}),
+    downloadKeys: (state: IAppState) => /* state.market.downloadKeys || */ ({}),
   }),
 });

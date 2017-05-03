@@ -99,10 +99,12 @@ export default connect<IProps>(Games, {
       state.session.navigation.filters[props.tab] || "";
     const getGames = (state: IAppState, props: IProps) =>
       props.games;
+    // TODO db
     const getCavesByGameId = (state: IAppState, props: IProps) =>
-      state.globalMarket.cavesByGameId;
+      /* state.globalMarket.cavesByGameId */ ({});
+    // TODO db
     const getDownloadKeysByGameId = (state: IAppState, props: IProps) =>
-      state.market.downloadKeysByGameId;
+      /* state.market.downloadKeysByGameId */ ({});
 
     const fuse: Fuse<IGameRecord> = new Fuse([], {
       keys: [

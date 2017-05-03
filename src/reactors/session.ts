@@ -12,7 +12,7 @@ import {IStore, IAppState} from "../types";
 let sessionSelector: (state: IAppState) => void;
 const makeSessionSelector = (store: IStore) => createSelector(
   (state: IAppState) => state.setup.done,
-  (state: IAppState) => state.market.ready,
+  (state: IAppState) => state.session.market.ready,
   (state: IAppState) => state.session.credentials.key,
   (setupDone, marketReady, loginDone) => {
     if (setupDone && marketReady && loginDone) {

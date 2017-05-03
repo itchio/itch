@@ -15,17 +15,10 @@ import TimeAgo from "./basics/time-ago";
 import Ink = require("react-ink");
 import interleave from "./interleave";
 
-import {IAppState, ICollectionRecord, IGameRecordSet, IUserMarketState} from "../types";
+import {IAppState, ICollectionRecord, IGameRecordSet} from "../types";
 import {multiDispatcher} from "../constants/action-types";
 
-export class CollectionHubItem extends React.Component<IProps & IDerivedProps & I18nProps, void> {
-  onMouseDown (e: React.MouseEvent<any>) {
-    const {navigateToCollection, collection} = this.props;
-    whenClickNavigates(e, ({background}) => {
-      navigateToCollection(collection, background);
-    });
-  }
-
+export class Collection extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, allGames, collection} = this.props;
     const {title} = collection;
@@ -69,6 +62,13 @@ export class CollectionHubItem extends React.Component<IProps & IDerivedProps & 
       <Ink/>
     </div>;
   }
+
+  onMouseDown (e: React.MouseEvent<any>) {
+    const {navigateToCollection, collection} = this.props;
+    whenClickNavigates(e, ({background}) => {
+      navigateToCollection(collection, background);
+    });
+  }
 }
 
 interface IProps {
@@ -81,7 +81,7 @@ interface IDerivedProps {
   navigateToCollection: typeof actions.navigateToCollection;
 }
 
-export default connect<IProps>(CollectionHubItem, {
+export default connect<IProps>(Collection, {
   state: createStructuredSelector({
     allGames: (state: IAppState) => (state.market || {} as IUserMarketState).games || {},
   }),

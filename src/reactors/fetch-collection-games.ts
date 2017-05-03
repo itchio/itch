@@ -1,8 +1,6 @@
 
 import {Watcher} from "./watcher";
 
-import {createSelector} from "reselect";
-
 import mklog from "../util/log";
 const log = mklog("reactors/fetch");
 import {opts} from "../logger";
@@ -11,11 +9,9 @@ import {getUserMarket} from "./market";
 import fetch from "../util/fetch";
 import api from "../util/api";
 
-import {map, isEqual} from "underscore";
-
 import * as actions from "../actions";
 
-import {IStore, IAppState, IUserMarket, ICredentials} from "../types";
+import {IStore, IUserMarket, ICredentials} from "../types";
 
 async function fetchSingleCollectionGames
     (store: IStore, market: IUserMarket, credentials: ICredentials, collectionId: number) {
@@ -23,23 +19,24 @@ async function fetchSingleCollectionGames
   store.dispatch(actions.collectionGamesFetched({collectionId, fetchedAt: Date.now()}));
 }
 
-let collectionsWatcher: (state: IAppState) => void;
-const makeCollectionsWatcher = (store: IStore) => {
-  let oldIds: string[] = [];
+// TODO db
+// let collectionsWatcher: (state: IAppState) => void;
+// const makeCollectionsWatcher = (store: IStore) => {
+//   let oldIds: string[] = [];
 
-  return createSelector(
-    (state: IAppState) => state.market.collections,
-    (collections) => {
-      setImmediate(() => {
-        const ids = map(collections, (c, id) => id);
-        if (!isEqual(ids, oldIds)) {
-          oldIds = ids;
-          store.dispatch(actions.fetchCollectionGames({}));
-        }
-      });
-    },
-  );
-};
+//   return createSelector(
+//     (state: IAppState) => state.market.collections,
+//     (collections) => {
+//       setImmediate(() => {
+//         const ids = map(collections, (c, id) => id);
+//         if (!isEqual(ids, oldIds)) {
+//           oldIds = ids;
+//           store.dispatch(actions.fetchCollectionGames({}));
+//         }
+//       });
+//     },
+//   );
+// };
 
 export default function (watcher: Watcher) {
   watcher.onDebounced(actions.fetchCollectionGames, 300, async (store, action) => {
@@ -64,12 +61,13 @@ export default function (watcher: Watcher) {
     }
   });
 
-  watcher.on(actions.userDbCommit, async (store, action) => {
-    if (!collectionsWatcher) {
-      collectionsWatcher = makeCollectionsWatcher(store);
-    }
-    collectionsWatcher(store.getState());
-  });
+  // TODO db
+  // watcher.on(actions.userDbCommit, async (store, action) => {
+  //   if (!collectionsWatcher) {
+  //     collectionsWatcher = makeCollectionsWatcher(store);
+  //   }
+  //   collectionsWatcher(store.getState());
+  // });
 
   watcher.on(actions.userDbReady, async (store, action) => {
     store.dispatch(actions.fetchCollectionGames({}));

@@ -2,6 +2,7 @@
 import {Store} from "redux";
 import {Action} from "redux-actions";
 import {Logger} from "../util/log";
+import {ObjectType, Repository} from "typeorm";
 
 export interface IStore extends Store<IAppState> {}
 
@@ -448,31 +449,31 @@ export interface IBuildRecord {
 export type TableName = "caves" | "users" | "games" | "collections" | "downloadKeys" | "itchAppTabs";
 
 /**
- * MarketDB is a lightweight disk-based JSON object store.
- * Tables have string indices, and they contain objects with string indices.
+ * A Market saves, retrieves and deletes records.
  */
 export interface IMarket {
     getEntities <T> (table: TableName): IEntityMap<T>;
     getEntity <T> (table: TableName, id: string): T;
-    saveAllEntities (entityRecords: IEntityRecords<any>, saveOpts?: IMarketSaveOpts): Promise<void>;
+    saveAllEntities (entityRecords: IEntityRecords<any>): Promise<void>;
 
-    deleteAllEntities (deleteSpec: IMarketDeleteSpec, deleteOpts?: IMarketDeleteOpts): Promise<void>;
-    deleteEntity (table: TableName, id: string, deleteOpts?: IMarketDeleteOpts): Promise<void>;
+    deleteAllEntities (deleteSpec: IMarketDeleteSpec): Promise<void>;
+    deleteEntity (table: TableName, id: string): Promise<void>;
+
+    getRepo <T> (model: ObjectType<T>): Repository<T>;
 }
 
 export interface IGlobalMarket extends IMarket {
     saveEntity (
-        table: "caves", id: string, payload: Partial<ICaveRecord>, saveOpts?: IMarketSaveOpts): Promise<void>;
+        table: "caves", id: string, payload: Partial<ICaveRecord>): Promise<void>;
 }
 
 export interface IUserMarket extends IMarket {
     saveEntity (
-        table: "games", id: string, payload: Partial<IGameRecord>, saveOpts?: IMarketSaveOpts): Promise<void>;
+        table: "games", id: string, payload: Partial<IGameRecord>): Promise<void>;
     saveEntity (
-        table: "users", id: string, payload: Partial<IUserRecord>, saveOpts?: IMarketSaveOpts): Promise<void>;
+        table: "users", id: string, payload: Partial<IUserRecord>): Promise<void>;
     saveEntity (
-        table: "collections", id: string, payload: Partial<ICollectionRecord>,
-        saveOpts?: IMarketSaveOpts): Promise<void>;
+        table: "collections", id: string, payload: Partial<ICollectionRecord>): Promise<void>;
 }
 
 export interface IEntityMap <T> {
@@ -493,24 +494,6 @@ export interface IEntityRefs {
 
 export interface IEntityRecords<T> {
   entities: ITableMap<T>;
-}
-
-/** options for deleting records */
-export interface IMarketDeleteOpts {
-  /** if true, delete waits for all changes to be committed to disk before resolving */
-  wait?: boolean;
-}
-
-/** options for saving records */
-export interface IMarketSaveOpts {
-  /** if true, save waits for all changes to be committed before resolving */
-  wait?: boolean;
-
-  /** if true, save will persist changes to disk, not just in-memory */
-  persist?: boolean;
-
-  /** internal: set to true on the first saveAllEntities, which happens while loading the DB */
-  initial?: boolean;
 }
 
 /**
@@ -588,8 +571,6 @@ export interface ICredentials {
 export interface IAppState {
     history: IHistoryState;
     modals: IModalsState;
-    globalMarket: IGlobalMarketState;
-    market: IUserMarketState;
     system: ISystemState;
     setup: ISetupState;
     rememberedSessions: IRememberedSessionsState;
@@ -761,21 +742,6 @@ export interface IDownloadKeysMap {
     [id: string]: IDownloadKey;
 }
 
-export interface IUserMarketState extends IMarketState {
-    games: { [id: string]: IGameRecord };
-    collections: { [id: string]: ICollectionRecord };
-    downloadKeys: IDownloadKeysMap;
-    itchAppProfile: IItchAppProfile;
-    itchAppTabs: IItchAppTabs;
-
-    downloadKeysByGameId: { [gameId: string]: IDownloadKey };
-}
-
-export interface IGlobalMarketState extends IMarketState {
-    caves: { [id: string]: ICaveRecord };
-    cavesByGameId: { [gameId: string]: ICaveRecord };
-}
-
 export type ProxySource = "os" | "env";
 
 export interface IProxySettings {
@@ -851,6 +817,7 @@ export interface ISessionState {
     cachedCollections: ISessionCachedCollectionsState;
     credentials: ISessionCredentialsState;
     folders: ISessionFoldersState;
+    market: ISessionMarketState;
     login: ISessionLoginState;
     navigation: ISessionNavigationState;
     search: ISessionSearchState;
@@ -874,6 +841,11 @@ export interface ISessionCredentialsState {
 export interface ISessionFoldersState {
     /** path where user-specific data is stored, such as their marketdb and credentials */
     libraryDir: string;
+}
+
+export interface ISessionMarketState {
+    /** whether the connection to the user market is ready or not */
+    ready: boolean;
 }
 
 export interface ISessionLoginState {

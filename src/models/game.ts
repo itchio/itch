@@ -17,18 +17,21 @@ export default class Game {
   userId: number;
 
   @Column("text", {nullable: true})
+  title: number;
+
+  @Column("text", {nullable: true})
   shortText: string;
 
-  @Column("string", {nullable: true})
+  @Column("text", {nullable: true})
   stillCoverUrl: string;
 
-  @Column("string", {nullable: true})
+  @Column("text", {nullable: true})
   coverUrl: string;
 
-  @Column("string", {nullable: true})
+  @Column("text", {nullable: true})
   type: string;
 
-  @Column("string", {nullable: true})
+  @Column("text", {nullable: true})
   classification: string;
 
   @Column("json", {nullable: true})
@@ -43,7 +46,7 @@ export default class Game {
   @Column("json", {nullable: true})
   sale: IGameSaleInfo;
 
-  @Column("string", {nullable: true})
+  @Column("text", {nullable: true})
   currency: string;
 
   @Column("boolean", {nullable: true})

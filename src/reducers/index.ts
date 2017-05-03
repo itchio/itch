@@ -3,8 +3,6 @@ import {combineReducers} from "redux";
 
 import history from "./history";
 import modals from "./modals";
-import globalMarket from "./global-market";
-import market from "./market";
 import system from "./system";
 import setup from "./setup";
 import rememberedSessions from "./remembered-sessions";
@@ -21,8 +19,6 @@ import gameUpdates from "./game-updates";
 const reducer = combineReducers({
   history,
   modals,
-  globalMarket,
-  market,
   system,
   setup,
   rememberedSessions,

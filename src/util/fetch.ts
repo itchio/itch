@@ -7,9 +7,11 @@ import {opts} from "../logger";
 
 import client from "./api";
 
+import GameModel from "../models/game";
+
 import {normalize, arrayOf} from "./idealizr";
 import {game, user, collection, downloadKey} from "./schemas";
-import {each, union, pluck, where, difference, contains} from "underscore";
+import {each, union, pluck, difference, contains} from "underscore";
 
 import {
   IUserMarket, IGlobalMarket,
@@ -23,13 +25,9 @@ export async function dashboardGames (market: IUserMarket, credentials: ICredent
   const {key, me} = credentials;
   const api = client.withKey(key);
 
-  const oldGameIds = pluck(
-    where(
-      market.getEntities<IGameRecord>("games"),
-      {userId: me.id},
-    ),
-    "id",
-  );
+  // TODO: figure out what the typeorm equivalent of `fields` is
+  const oldGames = await market.getRepo(GameModel).find({userId: me.id});
+  const oldGameIds = pluck(oldGames, "id");
 
   const normalized = normalize(await api.myGames(), {
     games: arrayOf(game),
@@ -49,12 +47,12 @@ export async function dashboardGames (market: IUserMarket, credentials: ICredent
       ids: pluck(normalized.entities.games, "id"),
     },
   };
-  market.saveAllEntities(normalized);
+  await market.saveAllEntities(normalized);
 
   const newGameIds = pluck(normalized.entities.games, "id");
   const goners = difference(oldGameIds, newGameIds);
   if (goners.length > 0) {
-    market.deleteAllEntities({entities: {games: goners}});
+    await market.deleteAllEntities({entities: {games: goners}});
   }
 }
 
@@ -76,7 +74,7 @@ export async function ownedKeys (
 
     newKeyIds = [...newKeyIds, ...pluck(response.ownedKeys, "id")];
 
-    market.saveAllEntities(normalize(response, {
+    await market.saveAllEntities(normalize(response, {
       ownedKeys: arrayOf(downloadKey),
     }));
   }
@@ -121,7 +119,7 @@ export async function collections (market: IUserMarket, credentials: ICredential
   const myCollectionsRes = normalize(await api.myCollections(), {
     collections: arrayOf(collection),
   });
-  market.saveAllEntities(prepareCollections(myCollectionsRes));
+  await market.saveAllEntities(prepareCollections(myCollectionsRes));
 
   let newCollectionIds = pluck(myCollectionsRes.entities.collections, "id");
 
@@ -164,8 +162,8 @@ export async function collectionGames
       gameIds: union(localGameIds, fetchedGameIDs),
     };
 
-    market.saveEntity("collections", String(collection.id), collection, {persist: false});
-    market.saveAllEntities(normalized);
+    await market.saveEntity("collections", String(collection.id), collection);
+    await market.saveAllEntities(normalized);
     page++;
   }
 
@@ -174,7 +172,7 @@ export async function collectionGames
     ...collection,
     gameIds: fetchedGameIDs,
   };
-  market.saveEntity("collections", String(collection.id), collection);
+  await market.saveEntity("collections", String(collection.id), collection);
 }
 
 interface IGameSearchResults {

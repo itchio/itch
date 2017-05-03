@@ -1,6 +1,5 @@
 
 import * as React from "react";
-import Ink = require("react-ink");
 
 export interface IRowHandlerParams {
   e?: React.MouseEvent<any>;

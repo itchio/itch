@@ -8,23 +8,26 @@ import mklog from "./log";
 const log = mklog("market");
 const opts = {logger: new mklog.Logger()};
 
-import * as deepFreeze from "deep-freeze";
-import {isEqual, every} from "underscore";
-
 import {EventEmitter} from "events";
 
-import {createConnection, Connection} from "typeorm";
+import {createConnection, Connection, ObjectType, Repository} from "typeorm";
 import GameModel from "../models/game";
 
-import {
-  IEntityMap, ITableMap, IEntityRefs, IEntityRecords,
-  IMarketSaveOpts, IMarketDeleteOpts, IMarketDeleteSpec,
-  IMarket,
+import * as _ from "underscore";
 
-  IGameRecord,
+import {
+  IEntityMap, ITableMap, IEntityRecords,
+  IMarketDeleteSpec,
+  IMarket,
 } from "../types";
 
-const useSqlite = process.env.ITCH_SQLITE === "1";
+interface IModelMap {
+  [key: string]: Function;
+}
+
+const modelMap: IModelMap = {
+  "games": GameModel,
+};
 
 /**
  * MarketDB is a simple in-memory database that persists on disk.
@@ -34,23 +37,15 @@ const useSqlite = process.env.ITCH_SQLITE === "1";
 export default class Market extends EventEmitter implements IMarket {
   conn: Connection;
 
-  /** contents of the database */
-  data: ITableMap<any>;
-
   /** where the database is persisted on-disk */
   dbPath: string;
 
   /** if set, saves records to disk */
   persist: boolean;
 
-  /** internal: used for generating temporary file paths */
-  private atomicInvocations: number;
-
   /** returns a new, not-loaded-yet db */
   constructor () {
     super();
-    this.data = {};
-    this.atomicInvocations = 0;
   }
 
   /**
@@ -59,43 +54,24 @@ export default class Market extends EventEmitter implements IMarket {
    */
   async load (dbPath: string): Promise<void> {
     log(opts, `loading market db from ${dbPath}`);
-
-    if (useSqlite) {
-      this.conn = await createConnection({
-        name: dbPath,
-        driver: {
-          type: "sqlite",
-          storage: dbPath + ".sqlite",
-        },
-        entities: [GameModel],
-        autoSchemaSync: true,
-      });
-
-      // load games
-      {
-        const t1 = Date.now();
-        const gameRepo = this.conn.getRepository(GameModel);
-        const games = await gameRepo.find();
-        const t2 = Date.now();
-        this.data = {games: {}};
-
-        const updated = {games: [] as any};
-        const initial = true;
-        for (const game of games) {
-          this.data.games[game.id] = game.toRecord();
-          updated.games.push(game.id);
-        }
-        this.emit("commit", {updated, initial});
-        const t3 = Date.now();
-        log(opts, `Loaded ${games.length} games in ${(t2 - t1).toFixed(2)} ms`);
-        log(opts, `Saved in memory in ${(t3 - t2).toFixed(2)} ms`);
-      }
-
-      this.emit("ready");
-      return;
-    }
-
     this.dbPath = dbPath;
+
+    // sqlite init
+    this.conn = await createConnection({
+      name: dbPath,
+      driver: {
+        type: "sqlite",
+        storage: dbPath + ".sqlite",
+      },
+      entities: [GameModel],
+      autoSchemaSync: true,
+    });
+
+    this.emit("ready");
+    log(opts, `market ready! ${dbPath}`);
+  }
+
+  async oldLoad() {
     this.persist = true;
     const entities: ITableMap<any> = {};
 
@@ -113,7 +89,7 @@ export default class Market extends EventEmitter implements IMarket {
       const camelTableName = camelify(tableName);
       entities[camelTableName] = entities[camelTableName] || {};
 
-      const file = path.join(dbPath, recordPath);
+      const file = path.join(this.dbPath, recordPath);
       const contents = await sf.readFile(file, {encoding: "utf8"});
 
       try {
@@ -126,15 +102,15 @@ export default class Market extends EventEmitter implements IMarket {
     };
 
     const wipeTemp = async function (recordPath: string): Promise<void> {
-      const file = path.join(dbPath, recordPath);
+      const file = path.join(this.dbPath, recordPath);
       await sf.wipe(file);
     };
 
-    log(opts, `cleaning temporary files from ${dbPath}`);
+    log(opts, `cleaning temporary files from ${this.dbPath}`);
     const tempFiles = sf.glob("*/*.tmp*", {cwd: this.getDbRoot()});
     await bluebird.map(tempFiles, wipeTemp, {concurrency: 4});
 
-    log(opts, `loading records for ${dbPath}`);
+    log(opts, `loading records for ${this.dbPath}`);
     const recordFiles = sf.glob("*/*", {cwd: this.getDbRoot()});
     const t1 = Date.now();
     await bluebird.map(recordFiles, loadRecord, {concurrency: 4});
@@ -142,9 +118,9 @@ export default class Market extends EventEmitter implements IMarket {
     log(opts, `loaded ${numRecords} records in ${t2 - t1} ms`);
 
     log(opts, "populating in-memory DB with disk records");
-    await this.saveAllEntities({entities}, {persist: false, initial: true});
+    await this.saveAllEntities({entities});
 
-    log(opts, `done loading db from ${dbPath}`);
+    log(opts, `done loading db from ${this.dbPath}`);
     this.emit("ready");
   }
 
@@ -165,127 +141,81 @@ export default class Market extends EventEmitter implements IMarket {
   /**
    * Saves all passed entity records. See opts type for disk persistence and other options.
    */
-  async saveAllEntities <T> (entityRecords: IEntityRecords<T>, saveOpts = {} as IMarketSaveOpts) {
-    if (useSqlite) {
-      for (const tableName of Object.keys(entityRecords.entities)) {
-        if (tableName === "games") {
-          const gameRepo = this.conn.getRepository(GameModel);
-          const entities = entityRecords.entities[tableName];
-          const entityIds = Object.keys(entities);
-          log(opts, `Should save ${entityIds.length} game!`);
-
-          let gameModels = [];
-          for (const entityId of entityIds) {
-            const game = entities[entityId] as any as IGameRecord;
-            const gameModel = gameRepo.create(game);
-            gameModels.push(gameModel);
-          }
-          const t1 = Date.now();
-          await gameRepo.persist(gameModels);
-          const t2 = Date.now();
-          log(opts, `Saved ${entityIds.length} games in ${(t2 - t1).toFixed(2)} ms`);
-        }
-      }
-
-      return;
-    }
-
-    if (this.persist && !this.dbPath) {
-      return;
-    }
-
-    const {wait = false, persist = this.persist, initial = false} = saveOpts;
-
-    let promises = null as Promise<any>[];
-    if (wait) {
-      promises = [];
-    }
-
-    const updated: IEntityRefs = {};
-
+  async saveAllEntities <T> (entityRecords: IEntityRecords<T>) {
     for (const tableName of Object.keys(entityRecords.entities)) {
-      const entities = entityRecords.entities[tableName];
-      let table = this.data[tableName] || {};
-      updated[tableName] = updated[tableName] || [];
+      const entities: IEntityMap<Object> = entityRecords.entities[tableName];
+      const entityIds = Object.keys(entities);
 
-      for (const entityId of Object.keys(entities)) {
-        updated[tableName].push(entityId);
-        const entity = entities[entityId] as any;
+      const Model = modelMap[tableName];
+      if (!Model) {
+        log(opts, `Dunno how to persist ${tableName}, skipping ${entityIds.length} records`);
+        continue;
+      }
 
-        const record = table[entityId] || {};
-        const same = every(Object.keys(entity), (key) => isEqual(entity[key], record[key]));
+      const repo = this.conn.getRepository(Model);
 
-        if (!same) {
-          const newRecord = deepFreeze({...record, ...entity});
-          table[entityId] = newRecord;
+      const savedRows = await repo
+        .createQueryBuilder("g")
+        .where("g.id in (:entityIds)", {entityIds})
+        .getMany();
+      const existingEntities = _.indexBy(savedRows, "id");
 
-          if (persist) {
-            let p = this.saveToDisk(tableName, entityId, newRecord);
-            if (wait) {
-              promises.push(p);
-            }
-          }
+      let rows = [];
+      for (const id of entityIds) {
+        let entity = existingEntities[id];
+        if (entity) {
+          rows.push(repo.merge(entities[id]));
+        } else {
+          entity = repo.create(entities[id]);
+          (entity as any).id = id;
+          rows.push(entity);
         }
       }
 
-      this.data[tableName] = table;
+      const t1 = Date.now();
+      await repo.persist(rows);
+      const t2 = Date.now();
+      log(opts, `Saved ${entityIds.length} ${tableName} in ${(t2 - t1).toFixed(2)} ms`);
     }
 
-    if (wait) {
-      await bluebird.all(promises);
-    }
-
-    this.emit("commit", {updated, initial});
+    this.emit("commit", {updated: {}});
   }
 
   /**
    * Save a single entity to the db, optionally persisting to disk (see ISaveOpts).
    */
-  async saveEntity <T> (
-      tableName: string, entityID: string, record: Partial<T>,
-      saveOpts = {} as IMarketSaveOpts): Promise<void> {
-    // console.log(`saveEntity ${tableName}/${entityID}:\n\n${JSON.stringify(record, null, 2)}`);
+  async saveEntity <T> (tableName: string, id: string, record: Partial<T>): Promise<void> {
+    const Model = modelMap[tableName];
+    if (!Model) {
+      log(opts, `Dunno how to persist ${tableName}, skipping single record`);
+      return;
+    }
 
-    const entityRecords = {
-      entities: {
-        [tableName]: { [entityID]: record },
-      },
-    };
-    return await this.saveAllEntities(entityRecords, saveOpts);
+    const repo = this.conn.getRepository(Model);
+    const entity = repo.create(record as any);
+    (entity as any).id = id;
+    await repo.persist(entity);
   }
 
   /**
    * Delete all referenced entities. See IDeleteOpts for options.
    */
-  async deleteAllEntities (deleteSpec: IMarketDeleteSpec, deleteOpts = {} as IMarketDeleteOpts) {
-    const {wait = false} = deleteOpts;
-    const {persist} = this;
-
-    let promises = null as Promise<any>[];
-    if (wait) {
-      promises = [];
-    }
-
+  async deleteAllEntities (deleteSpec: IMarketDeleteSpec) {
     for (const tableName of Object.keys(deleteSpec.entities)) {
       const entities = deleteSpec.entities[tableName];
-      const table = this.data[tableName] || {};
 
-      for (const entityId of entities) {
-        delete table[entityId];
-
-        if (persist) {
-          const p = this.deleteFromDisk(tableName, entityId);
-          if (promises) {
-            promises.push(p);
-          }
-        }
+      const Model = modelMap[tableName];
+      if (!Model) {
+        log(opts, `Dunno how to persist ${tableName}, skipping delete of ${entities.length} items`);
+        continue;
       }
+      const repo = this.conn.getRepository(Model);
 
-      this.data[tableName] = table;
-    }
-
-    if (wait) {
-      await bluebird.all(promises);
+      const toRemove = [];      
+      for (const id of entities) {
+        toRemove.push({id});
+      }
+      await repo.remove(toRemove);
     }
 
     const deleted = deleteSpec.entities;
@@ -295,12 +225,16 @@ export default class Market extends EventEmitter implements IMarket {
   /**
    * Deletes a single entity, optionally from the disk store too, see opts type
    */
-  async deleteEntity (tableName: string, entityId: string, deleteOpts: IMarketDeleteOpts) {
-    await this.deleteAllEntities({
-      entities: {
-        [tableName]: [entityId],
-      },
-    }, deleteOpts);
+  async deleteEntity (tableName: string, id: string) {
+    const Model = modelMap[tableName];
+    if (!Model) {
+      log(opts, `Dunno how to persist ${tableName}, skipping single delete`);
+      return;
+    }
+    const repo = this.conn.getRepository(Model);
+    await repo.remove({id});
+
+    this.emit("commit", {deleted: [id]});
   }
 
   /**
@@ -308,10 +242,9 @@ export default class Market extends EventEmitter implements IMarket {
    * Returns an empty IEntityMap if the table does not exist.
    */
   getEntities <T> (tableName: string): IEntityMap<T> {
-    // lazily creates table in 'data' object
-    const entities = this.data[tableName] || {};
-    this.data[tableName] = entities;
-    return entities;
+    const shortStack = (new Error().stack).split("\n").slice(1, 4).join("\n");
+    log(opts, `getEntities called from ${shortStack}`);
+    return {};
   }
 
   /**
@@ -319,53 +252,27 @@ export default class Market extends EventEmitter implements IMarket {
    * Returns null if the entity does not exist.
    */
   getEntity <T> (tableName: string, entityId: string): T {
-    return this.getEntities<T>(tableName)[entityId];
+    const shortStack = (new Error().stack).split("\n").slice(1, 4).join("\n");
+    log(opts, `getEntity called from ${shortStack}`);
+    return null;
   }
 
-  /**
-   * Remove all records from memory - doesn't wipe the disk store
-   */
-  clear () {
-    this.data = {};
+  getRepo <T> (model: ObjectType<T>): Repository<T> {
+    return this.conn.getRepository(model);
   }
 
   /**
    * After closing the DB, no methods may called on it any more.
    */
-  close () {
+  async close () {
     log(opts, `closing db ${this.dbPath}`);
-    this.clear();
+    await this.conn.close();
     this.emit("close");
     this.dbPath = null;
-  }
-
-  /** Removes an entity from the disk store */
-  protected async deleteFromDisk (tableName: string, entityId: string): Promise<void> {
-    await sf.wipe(this.entityPath(tableName, entityId));
   }
 
   /** Returns the path an entity is stored in */
   protected entityPath (tableName: string, entityId: string): string {
     return path.join(this.getDbRoot(), `${tableName}/${entityId}`);
-  }
-  
-  /** Saves a given entity to disk */
-  protected async saveToDisk (tableName: string, entityId: string, record: any): Promise<void> {
-    const file = this.entityPath(tableName, entityId);
-    const tmpPath = file + ".tmp" + (this.atomicInvocations++);
-    const contents = JSON.stringify(record);
-    await sf.writeFile(tmpPath, contents, {encoding: "utf8"});
-
-    if (this.data[tableName] && this.data[tableName][entityId]) {
-      try {
-        await sf.rename(tmpPath, file);
-      } catch (e) {
-        log(opts, `Could not save ${tmpPath}: ${e.message}`);
-        await sf.wipe(tmpPath);
-      }
-    } else {
-      // entity has been deleted in the meantime
-      await sf.wipe(tmpPath);
-    }
   }
 }
