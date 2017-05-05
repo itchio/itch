@@ -12,6 +12,7 @@ import {EventEmitter} from "events";
 
 import {createConnection, Connection, ObjectType, Repository} from "typeorm";
 import GameModel from "../models/game";
+import CollectionModel from "../models/game";
 
 import * as _ from "underscore";
 
@@ -27,6 +28,7 @@ interface IModelMap {
 
 const modelMap: IModelMap = {
   "games": GameModel,
+  "collections": CollectionModel,
 };
 
 /**
@@ -63,7 +65,7 @@ export default class Market extends EventEmitter implements IMarket {
         type: "sqlite",
         storage: dbPath + ".sqlite",
       },
-      entities: [GameModel],
+      entities: Object.keys(modelMap).map((k) => modelMap[k]),
       autoSchemaSync: true,
     });
 
@@ -161,21 +163,41 @@ export default class Market extends EventEmitter implements IMarket {
       const existingEntities = _.indexBy(savedRows, "id");
 
       let rows = [];
+      let numUpToDate = 0;
       for (const id of entityIds) {
-        let entity = existingEntities[id];
-        if (entity) {
-          rows.push(repo.merge(entities[id]));
+        let entity = entities[id];
+        let existingEntity = existingEntities[id];
+        if (existingEntity) {
+          for (const key of Object.keys(existingEntity)) {
+            if (existingEntity[key] instanceof Date) {
+              let oldTime = existingEntity[key].getTime();
+              let newTime = new Date(entity[key]).getTime();
+              if (oldTime !== newTime) {
+                log(opts, `${tableName} ${id}, field ${key} is different: ${existingEntity[key]} !== ${entity[key]}`);
+                log(opts, `${tableName} ${id}, field ${key} times: ${oldTime} !== ${newTime}`);
+                numUpToDate++;
+                continue;
+              }
+            } else {
+              if (existingEntity[key] !== entity[key]) {
+                log(opts, `${tableName} ${id}, field ${key} is different: ${existingEntity[key]} !== ${entity[key]}`);
+                numUpToDate++;
+                continue;
+              }
+            }
+          }
+          rows.push(repo.merge(entity));
         } else {
-          entity = repo.create(entities[id]);
-          (entity as any).id = id;
-          rows.push(entity);
+          existingEntity = repo.create(entity);
+          (existingEntity as any).id = id;
+          rows.push(existingEntity);
         }
       }
 
       const t1 = Date.now();
       await repo.persist(rows);
       const t2 = Date.now();
-      log(opts, `Saved ${entityIds.length} ${tableName} in ${(t2 - t1).toFixed(2)} ms`);
+      log(opts, `Saved ${entityIds.length} ${tableName} in ${(t2 - t1).toFixed(2)} ms (${numUpToDate} up-to-date)`);
     }
 
     this.emit("commit", {updated: {}});

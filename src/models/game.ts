@@ -1,11 +1,10 @@
 
 import {Entity, PrimaryColumn, Column} from "typeorm";
 import {
-  IGameRecord,
   IGameEmbedInfo, IGameSaleInfo,
 } from "../types";
 
-@Entity()
+@Entity("games")
 export default class Game {
   @PrimaryColumn("int")
   id: number;
@@ -66,10 +65,4 @@ export default class Game {
 
   @Column("boolean", {nullable: true})
   pLinux: string;
-
-  toRecord(): IGameRecord {
-    const r = {} as any;
-    Object.assign(r, this);
-    return r;
-  }
 }
