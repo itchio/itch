@@ -55,7 +55,10 @@ export default class Game {
   canBeBought: boolean;
 
   @Column("datetime", {nullable: true})
-  publishedAt: string;
+  createdAt: Date;
+
+  @Column("datetime", {nullable: true})
+  publishedAt: Date;
 
   @Column("boolean", {nullable: true})
   pOsx: string;

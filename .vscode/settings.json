@@ -14,7 +14,6 @@
     "coverage": true,
     "build": true,
     "dist": true,
-    "fixtures": true,
     ".tscache": true,
     ".cache": true
   },

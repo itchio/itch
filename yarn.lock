@@ -2231,9 +2231,9 @@ iconv-lite@~0.4.13:
   version "0.4.15"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.15.tgz#fe265a218ac6a57cfe854927e9d04c19825eddeb"
 
-idealizr@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/idealizr/-/idealizr-1.1.0.tgz#ab7d802fc4700f70d8831a354217b1e48ead5d98"
+idealizr@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/idealizr/-/idealizr-2.0.2.tgz#d315b5668bdf4ac828aca4d1e7a23ae9d790f0b1"
   dependencies:
     deep-equal "^1.0.1"
 

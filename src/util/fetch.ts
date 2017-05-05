@@ -9,7 +9,8 @@ import client from "./api";
 
 import GameModel from "../models/game";
 
-import {normalize, arrayOf} from "./idealizr";
+import normalize from "./normalize";
+import {arrayOf} from "idealizr";
 import {game, user, collection, downloadKey} from "./schemas";
 import {each, union, pluck, difference, contains} from "underscore";
 
