@@ -11,6 +11,7 @@ export default async function prepare (out: EventEmitter, opts: ILaunchOpts): Pr
   const {store, manifest, cave} = opts;
 
   if (process.platform === "win32") {
+    log(opts, `launching windows-prereqs`);
     try {
       await handleWindowsPrereqs({
         store,
@@ -24,5 +25,7 @@ export default async function prepare (out: EventEmitter, opts: ILaunchOpts): Pr
       log(opts, `Windows prereqs full stack: ${e.stack}`);
       throw e;
     }
+  } else {
+    log(opts, `not on windows, nothing to do`);
   }
 }
