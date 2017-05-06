@@ -60,8 +60,12 @@ interface ILaunchers {
   [key: string]: ILauncher;
 }
 
+interface IPrepareOpts extends ILaunchOpts {
+  manifest: IManifest;
+}
+
 interface IPrepare {
-  (out: EventEmitter, opts: ILaunchOpts): Promise<void>;
+  (out: EventEmitter, opts: IPrepareOpts): Promise<void>;
 }
 
 interface IPrepares {
@@ -286,7 +290,10 @@ export async function doStart (out: EventEmitter, opts: IStartTaskOpts) {
   } as IPrepares;
   const prepare = prepares[launchType];
   if (prepare) {
-    await prepare(out, launchOpts);
+    log(opts, `launching prepare for ${launchType}`);
+    await prepare(out, {...launchOpts, manifest});
+  } else {
+    log(opts, `no prepare for ${launchType}`);
   }
 
   const startedAt = Date.now();
