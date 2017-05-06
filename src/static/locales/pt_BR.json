@@ -333,5 +333,6 @@
     "grid.item.advanced": "Avançado...",
     "grid.item.verify_integrity": "Verificar integridade",
     "grid.item.view_details": "Ver detalhes...",
-    "table.column.name": "Nome"
+    "table.column.name": "Nome",
+    "download.reason.revert": "voltar para uma versão anterior"
 }
