@@ -174,16 +174,19 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
   const {manifest} = opts;
   if (!manifest) {
     // TODO: auto-detect etc.
+    log(opts, `no manifest, nothing to do`);
     return;
   }
 
   if (isEmpty(manifest.prereqs)) {
+    log(opts, `manifest, but no prereqs, nothing to do`);
     return;
   }
 
   let prereqs = pendingPrereqs(opts, manifest.prereqs);
   if (isEmpty(prereqs)) {
     // everything already done
+    log(opts, `manifest, prereqs, but none are pending, nothing to do`);
     return;
   }
 
