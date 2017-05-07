@@ -1,5 +1,5 @@
 
-import * as env from "../env";
+import env from "../env";
 
 import {createSelector} from "reselect";
 

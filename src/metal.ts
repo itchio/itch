@@ -7,12 +7,13 @@ import "./boot/crash";
 import "./boot/env";
 import "./boot/fs";
 
-import {enableLiveReload} from "electron-compile-ftl";
+import {enableLiveReload} from "electron-compile";
 
 import autoUpdater from "./util/auto-updater";
 import {isItchioURL} from "./util/url";
 
 import * as actions from "./actions";
+import env from "./env";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
@@ -63,7 +64,9 @@ function autoUpdateDone () {
     }
     handleUrls(process.argv);
 
-    enableLiveReload({strategy: "react-hmr"});
+    if (env.name === "development") {
+      enableLiveReload({strategy: "react-hmr"});
+    }
 
     store.dispatch(actions.preboot({}));
 

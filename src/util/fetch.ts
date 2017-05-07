@@ -8,6 +8,8 @@ import {opts} from "../logger";
 import client from "./api";
 
 import GameModel from "../models/game";
+import CollectionModel from "../models/collection";
+import DownloadKeyModel from "../models/download-key";
 
 import normalize from "./normalize";
 import {arrayOf} from "idealizr";
@@ -17,7 +19,7 @@ import {each, union, pluck, difference, contains} from "underscore";
 import {
   IUserMarket, IGlobalMarket,
   IUserRecord, IGameRecord, ICollectionRecord, ICredentials,
-  IDownloadKey, ICaveRecord,
+  ICaveRecord,
 } from "../types";
 
 // TODO: don't use any in any of the return types here
@@ -30,29 +32,43 @@ export async function dashboardGames (market: IUserMarket, credentials: ICredent
   const oldGames = await market.getRepo(GameModel).find({userId: me.id});
   const oldGameIds = pluck(oldGames, "id");
 
-  const normalized = normalize(await api.myGames(), {
+  const apiResponse = await api.myGames();
+  const normalized = normalize(apiResponse, {
     games: arrayOf(game),
   });
+  const entities = normalized.entities as {
+    games: { [key: string]: IGameRecord }
+    users: { [key: string]: IUserRecord }
+    itchAppProfile: { myGames: { ids: number[]; } }
+  };
 
   // the 'myGames' endpoint doesn't set the userId
   // AND might return games you're not the user of
-  if (!normalized.entities.games) {
-    normalized.entities.games = {};
+  if (!entities.games) {
+    entities.games = {};
   }
-  each(normalized.entities.games, (g: IGameRecord) => { g.userId = g.userId || me.id; });
-  normalized.entities.users = {
+  for (const gameId of Object.keys(entities.games)) {
+    // FIXME: remove once the api returns userId for the /my-games
+    const game = entities.games[gameId];
+    if (!game.userId) {
+      game.userId = me.id;
+    }
+  }
+  entities.users = {
     [me.id]: me,
   };
-  normalized.entities.itchAppProfile = {
+
+  const newGameIds = pluck(entities.games, "id");
+  entities.itchAppProfile = {
     myGames: {
-      ids: pluck(normalized.entities.games, "id"),
+      ids: newGameIds,
     },
   };
-  await market.saveAllEntities(normalized);
+  await market.saveAllEntities({entities});
 
-  const newGameIds = pluck(normalized.entities.games, "id");
   const goners = difference(oldGameIds, newGameIds);
   if (goners.length > 0) {
+    log(opts, `After /my-games, removing ${goners.length} goners: ${JSON.stringify(goners)}`)
     await market.deleteAllEntities({entities: {games: goners}});
   }
 }
@@ -62,7 +78,11 @@ export async function ownedKeys (
   const {key} = credentials;
   const api = client.withKey(key);
 
-  const oldKeyIds = pluck(market.getEntities<IDownloadKey>("downloadKeys"), "id");
+  const keyRepo = market.getRepo(DownloadKeyModel);
+
+  // TODO: figure out the typeorm equivalen of 'fields'
+  const oldKeys = await keyRepo.find();
+  const oldKeyIds = pluck(oldKeys, "id");
   let newKeyIds: number[] = [];
 
   let page = 0;
@@ -101,31 +121,25 @@ export async function ownedKeys (
 }
 
 export async function collections (market: IUserMarket, credentials: ICredentials): Promise<void> {
-  const oldCollectionIds = pluck(market.getEntities<ICollectionRecord>("collections"), "id");
+  const collectionRepo = market.getRepo(CollectionModel);
 
-  const prepareCollections = (normalized: any) => {
-    const colls = market.getEntities<ICollectionRecord>("collections");
-    each(normalized.entities.collections, (coll: ICollectionRecord, collectionID: number) => {
-      const old = colls[collectionID];
-      if (old) {
-        coll.gameIds = union(old.gameIds, coll.gameIds);
-      }
-    });
-    return normalized;
-  };
+  // TODO: figure out what the typeorm equivalent of 'fields' is
+  const oldCollections = await collectionRepo.find();
+  const oldCollectionIds = pluck(oldCollections, "id");
 
   const {key} = credentials;
   const api = client.withKey(key);
 
-  const myCollectionsRes = normalize(await api.myCollections(), {
+  const normalized = normalize(await api.myCollections(), {
     collections: arrayOf(collection),
   });
-  await market.saveAllEntities(prepareCollections(myCollectionsRes));
+  const {entities} = normalized;
+  await market.saveAllEntities({entities});
 
-  let newCollectionIds = pluck(myCollectionsRes.entities.collections, "id");
-
+  const newCollectionIds = pluck(entities.collections, "id");
   const goners = difference(oldCollectionIds, newCollectionIds);
   if (goners.length > 0) {
+    log(opts, `After /my-collections, removing ${goners.length} goners: ${JSON.stringify(goners)}`);
     market.deleteAllEntities({entities: {collections: goners}});
   }
 }
@@ -202,12 +216,15 @@ export async function search (credentials: ICredentials, query: string): Promise
 
   const api = client.withKey(credentials.key);
 
+  // typing is fun!
   const gameResults = normalize(await api.searchGames(query), {
     games: arrayOf(game),
-  }) as IGameSearchResults;
+  }) as any as IGameSearchResults;
+
+  // typing is fun!
   const userResults = normalize(await api.searchUsers(query), {
     users: arrayOf(user),
-  }) as IUserSearchResults;
+  }) as any as IUserSearchResults;
 
   return {
     gameResults,
@@ -217,19 +234,21 @@ export async function search (credentials: ICredentials, query: string): Promise
 
 interface IGameLazilyOpts {
   fresh?: boolean;
-  game?: IGameRecord;
+  game?: GameModel;
   password?: string; // for password-protected games
   secret?: string; // for draft games
 }
 
 async function gameLazily (market: IUserMarket, credentials: ICredentials, gameId: number,
-                           opts = {} as IGameLazilyOpts): Promise<IGameRecord> {
+                           opts = {} as IGameLazilyOpts): Promise<GameModel> {
   invariant(typeof market === "object", "gameLazily has market");
   invariant(typeof credentials === "object", "gameLazily has credentials");
   invariant(typeof gameId === "number", "gameLazily has gameId number");
 
+  const gameRepo = market.getRepo(GameModel);
+
   if (!opts.fresh) {
-    let record = market.getEntity<IGameRecord>("games", String(gameId));
+    let record = await gameRepo.findOneById(gameId);
     if (record) {
       return record;
     }

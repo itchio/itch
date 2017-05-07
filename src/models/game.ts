@@ -1,7 +1,7 @@
 
 import {Entity, PrimaryColumn, Column} from "typeorm";
 import {
-  IGameEmbedInfo, IGameSaleInfo,
+  IGameEmbedInfo, IGameSaleInfo, GameType, GameClassification
 } from "../types";
 
 @Entity("games")
@@ -16,7 +16,7 @@ export default class Game {
   userId: number;
 
   @Column("text", {nullable: true})
-  title: number;
+  title: string;
 
   @Column("text", {nullable: true})
   shortText: string;
@@ -28,10 +28,10 @@ export default class Game {
   coverUrl: string;
 
   @Column("text", {nullable: true})
-  type: string;
+  type: GameType;
 
   @Column("text", {nullable: true})
-  classification: string;
+  classification: GameClassification;
 
   @Column("json", {nullable: true})
   embed: IGameEmbedInfo;

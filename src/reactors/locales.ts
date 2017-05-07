@@ -8,7 +8,7 @@ import {getLocalesConfigPath, getLocalePath} from "../util/resources";
 import net from "../util/net";
 import urls from "../constants/urls";
 import {app} from "electron";
-import * as env from "../env";
+import env from "../env";
 
 import delay from "../reactors/delay";
 

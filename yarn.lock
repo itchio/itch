@@ -48,6 +48,10 @@
   version "0.6.33"
   resolved "https://registry.yarnpkg.com/@types/colors/-/colors-0.6.33.tgz#17dada5971c395259490d6c83d7c182cf6e9ce55"
 
+"@types/deep-equal@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/deep-equal/-/deep-equal-1.0.0.tgz#9ebeaa73d1fc4791f038a5f1440e0449ea968495"
+
 "@types/electron@^1.4.35":
   version "1.4.37"
   resolved "https://registry.yarnpkg.com/@types/electron/-/electron-1.4.37.tgz#cfff6958f224842c1742a6e4873ed7135e5f2ff3"
@@ -80,8 +84,8 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.70.tgz#f6e04b859205ee3611849921f09819701dbfa5e8"
 
 "@types/node@^7.0.12":
-  version "7.0.14"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.14.tgz#1470fa002a113316ac9d9ad163fc738c7a0de2a4"
+  version "7.0.18"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.18.tgz#cd67f27d3dc0cfb746f0bdd5e086c4c5d55be173"
 
 "@types/proxyquire@^1.3.27":
   version "1.3.27"
@@ -754,7 +758,7 @@ babel-runtime@6.18.0:
     core-js "^2.4.0"
     regenerator-runtime "^0.9.5"
 
-babel-runtime@^6.0.0, babel-runtime@^6.11.6, babel-runtime@^6.18.0, babel-runtime@^6.2.0, babel-runtime@^6.22.0, babel-runtime@^6.6.1:
+babel-runtime@^6.11.6, babel-runtime@^6.18.0, babel-runtime@^6.2.0, babel-runtime@^6.22.0, babel-runtime@^6.6.1:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.23.0.tgz#0a9489f144de70efb3ce4300accdb329e2fc543b"
   dependencies:
@@ -798,11 +802,9 @@ babylon@^6.11.0, babylon@^6.15.0:
   version "6.16.1"
   resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.16.1.tgz#30c5a22f481978a9e7f8cdfdf496b11d94b404d3"
 
-babylon@~6.8.1:
-  version "6.8.4"
-  resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.8.4.tgz#097306b8dabae95159225cf29b3ea55912053180"
-  dependencies:
-    babel-runtime "^6.0.0"
+babylon@^6.17.0:
+  version "6.17.0"
+  resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.17.0.tgz#37da948878488b9c4e3c4038893fa3314b3fc932"
 
 balanced-match@^0.4.1, balanced-match@^0.4.2:
   version "0.4.2"
@@ -944,8 +946,8 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000664"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000664.tgz#e16316e5fdabb9c7209b2bf0744ffc8a14201f22"
+  version "1.0.30000665"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000665.tgz#e84f4277935f295f546f8533cb0b410a8415b972"
 
 capture-stack-trace@^1.0.0:
   version "1.0.0"
@@ -1579,9 +1581,9 @@ editions@^1.1.1, editions@^1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/editions/-/editions-1.3.3.tgz#0907101bdda20fac3cbe334c27cbd0688dc99a5b"
 
-electron-compile-ftl@^6.4.2:
-  version "6.4.2"
-  resolved "https://registry.yarnpkg.com/electron-compile-ftl/-/electron-compile-ftl-6.4.2.tgz#268322cd1829581b41653587628909af96d938b1"
+electron-compile@^6.4.1:
+  version "6.4.1"
+  resolved "https://registry.yarnpkg.com/electron-compile/-/electron-compile-6.4.1.tgz#3f89918d72f9bd3b8b8e97d792511d69cade0884"
   dependencies:
     "@paulcbetts/mime-types" "^2.1.10"
     "@types/node" "^7.0.12"
@@ -1595,9 +1597,9 @@ electron-compile-ftl@^6.4.2:
     spawn-rx "^2.0.3"
     yargs "^4.8.1"
 
-electron-compilers-ftl@^5.8.4:
-  version "5.8.4"
-  resolved "https://registry.yarnpkg.com/electron-compilers-ftl/-/electron-compilers-ftl-5.8.4.tgz#158d644379c79f27bc32e18be57981cb6e063b4d"
+electron-compilers@^5.9.0:
+  version "5.9.0"
+  resolved "https://registry.yarnpkg.com/electron-compilers/-/electron-compilers-5.9.0.tgz#953dc14e24fb15b37d5e90de2c39d753f3f8140e"
   dependencies:
     "@paulcbetts/mime-types" "^2.1.10"
     "@paulcbetts/vueify" "9.4.3"
@@ -1666,8 +1668,8 @@ electron-rebuild@^1.5.7:
     yargs "^3.31.0"
 
 electron-to-chromium@^1.2.7:
-  version "1.3.8"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.8.tgz#b2c8a2c79bb89fbbfd3724d9555e15095b5f5fb6"
+  version "1.3.9"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.9.tgz#db1cba2a26aebcca2f7f5b8b034554468609157d"
 
 electron@1.6.2:
   version "1.6.2"
@@ -2111,14 +2113,14 @@ graphql-tag@^2.0.0:
   resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.0.0.tgz#f3efe3b4d64f33bfe8479ae06a461c9d72f2a6fe"
 
 graphql@^0.9.3:
-  version "0.9.5"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.9.5.tgz#efe588b98fe3ce036d7d55b4ad940daed56c4622"
+  version "0.9.6"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.9.6.tgz#514421e9d225c29dfc8fd305459abae58815ef2c"
   dependencies:
     iterall "^1.0.0"
 
 handlebars@^4.0.1:
-  version "4.0.7"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.7.tgz#e97325aeb8ea0b9e12b9c4dd73c4c312ad0ede59"
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.8.tgz#22b875cd3f0e6cbea30314f144e82bc7a72ff420"
   dependencies:
     async "^1.4.0"
     optimist "^0.6.1"
@@ -2231,9 +2233,9 @@ iconv-lite@~0.4.13:
   version "0.4.15"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.15.tgz#fe265a218ac6a57cfe854927e9d04c19825eddeb"
 
-idealizr@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/idealizr/-/idealizr-2.0.2.tgz#d315b5668bdf4ac828aca4d1e7a23ae9d790f0b1"
+idealizr@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/idealizr/-/idealizr-2.1.0.tgz#e5abbcfe4d7f55132c45ffe57d835b01ab7c0f99"
   dependencies:
     deep-equal "^1.0.1"
 
@@ -2969,10 +2971,10 @@ node-pre-gyp@~0.6.31:
     tar-pack "^3.4.0"
 
 node-source-walk@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/node-source-walk/-/node-source-walk-3.2.0.tgz#3c605cc53abdee4b45ab65e947dfb1db7c90f0e3"
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/node-source-walk/-/node-source-walk-3.2.1.tgz#12bb1b9a3fb1873f785c4a7547b6034f953f669f"
   dependencies:
-    babylon "~6.8.1"
+    babylon "^6.17.0"
 
 nomnom@~1.6.2:
   version "1.6.2"
@@ -4652,8 +4654,8 @@ ua-parser-js@^0.7.9:
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.12.tgz#04c81a99bdd5dc52263ea29d24c6bf8d4818a4bb"
 
 uglify-js@^2.6:
-  version "2.8.22"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.22.tgz#d54934778a8da14903fa29a326fb24c0ab51a1a0"
+  version "2.8.23"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.23.tgz#8230dd9783371232d62a7821e2cf9a817270a8a0"
   dependencies:
     source-map "~0.5.1"
     yargs "~3.10.0"
@@ -4774,8 +4776,8 @@ vue-hot-reload-api@^2.0.1:
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.1.0.tgz#9ca58a6e0df9078554ce1708688b6578754d86de"
 
 vue-template-compiler@^2.0.0-alpha.8:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/vue-template-compiler/-/vue-template-compiler-2.3.0.tgz#a89a17064b68e182569da51ebbedd71ce57f93bf"
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/vue-template-compiler/-/vue-template-compiler-2.3.2.tgz#d48a7f53df5f497033827182ceb4f0d340803017"
   dependencies:
     de-indent "^1.0.2"
     he "^1.1.0"

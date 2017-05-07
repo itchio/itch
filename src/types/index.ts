@@ -172,9 +172,9 @@ export interface ICollectionRecord {
     /** identifiers of the games in this collection */
     gameIds: number[];
 
-    createdAt: string;
+    createdAt: Date;
 
-    updatedAt: string;
+    updatedAt: Date;
 }
 
 export interface IInstallLocationRecord {
@@ -310,7 +310,7 @@ export interface ICaveRecord extends ICaveRecordLocation {
     channelName?: string;
 
     /** "modified file time" of archive last installed */
-    installedArchiveMtime?: string;
+    installedArchiveMtime?: Date;
 
     /**
      * if true, can be launched — if false, may have not finished
@@ -319,10 +319,10 @@ export interface ICaveRecord extends ICaveRecordLocation {
     launchable?: boolean;
 
     /** timestamp when that cave was last installed. updates count as install. */
-    installedAt?: number;
+    installedAt?: Date;
 
     /** timestamp when that cave was last opened/played */
-    lastTouched?: number;
+    lastTouched?: Date;
 
     /** number of seconds played/run, as recorded locally */
     secondsRun?: number;
@@ -426,10 +426,10 @@ export interface IUploadRecord {
     demo?: boolean;
 
     /** when the upload was created */
-    createdAt: string;
+    createdAt: Date;
 
     /** when the upload was updated */
-    updatedAt: string;
+    updatedAt: Date;
 }
 
 export interface IBuildRecord {
@@ -443,7 +443,7 @@ export interface IBuildRecord {
     userVersion: string;
 
     /** when the build was last updated */
-    updatedAt: string;
+    updatedAt: Date;
 }
 
 export type TableName = "caves" | "users" | "games" | "collections" | "downloadKeys" | "itchAppTabs";
@@ -557,7 +557,7 @@ export interface IDownloadKey {
     gameId: number;
 
     /** date the download key was issued on (often: date purchase was completed) */
-    createdAt: string;
+    createdAt: Date;
 }
 
 export interface ICredentials {

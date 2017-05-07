@@ -2,7 +2,7 @@
 import * as ospath from "path";
 import * as mkdirp from "mkdirp";
 
-import * as env from "../env";
+import env from "../env";
 const full = (process.type !== "renderer" && env.name !== "test");
 
 import pathmaker from "../util/pathmaker";

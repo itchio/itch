@@ -1,8 +1,8 @@
 
-import {ISchema, normalize as underNormalize} from "idealizr";
+import {ISchema, INormalized, normalize as underNormalize} from "idealizr";
 import {camelify} from "./format";
 
-export default function normalize(schema: ISchema, input: any): any {
+export default function normalize(input: any, schema: ISchema): INormalized {
   return underNormalize(input, schema, {
     keyTransformer: camelify,
   });

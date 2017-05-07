@@ -15,11 +15,13 @@ import actionForGame from "../util/action-for-game";
 
 import * as actions from "../actions";
 
-import {findWhere} from "underscore";
-
 import mklog from "../util/log";
 import {opts} from "../logger";
 const log = mklog("reactors/context-menu");
+
+import {getGlobalMarket} from "./market";
+import CaveModel from "../models/cave";
+import DownloadKeyModel from "../models/download-key";
 
 type IMenuItem = Electron.MenuItemOptions;
 
@@ -65,7 +67,9 @@ export default function (watcher: Watcher) {
 
     const {game} = action.payload;
     const gameId = game.id;
-    const cave = store.getState().globalMarket.cavesByGameId[gameId];
+    const globalMarket = getGlobalMarket();
+    const caveRepo = globalMarket.getRepo(CaveModel);
+    const cave = await caveRepo.findOne({gameId});
     const mainAction = actionForGame(game, cave);
 
     const template: IMenuItem[] = [];
@@ -146,8 +150,8 @@ export default function (watcher: Watcher) {
         });
       }
     } else {
-      const downloadKeys = getUserMarket().getEntities("downloadKeys");
-      const downloadKey = findWhere(downloadKeys, {gameId: game.id});
+      const downloadKeyStore = getUserMarket().getRepo(DownloadKeyModel);
+      const downloadKey = await downloadKeyStore.findOne({gameId: game.id});
       const hasMinPrice = game.minPrice > 0;
       // FIXME game admins
       const meId = store.getState().session.credentials.me.id;

@@ -9,8 +9,6 @@ import GameActions from "./game-actions";
 import GameStats from "./game-stats";
 import {pathToId} from "../util/navigation";
 
-import {findWhere} from "underscore";
-
 import {IDispatch, dispatcher} from "../constants/action-types";
 import {
   IAppState, IGameRecord, ICaveRecord, IDownloadKey, ITabData,
@@ -64,6 +62,10 @@ export class GameBrowserContext extends React.Component<IProps & IDerivedProps &
 
   render () {
     const {game} = this.props;
+    // FIXME db
+    if (!game) {
+      return <div/>;
+    }
     const {coverUrl, stillCoverUrl} = game;
     const {hover} = this.state;
 

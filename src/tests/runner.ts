@@ -18,14 +18,14 @@ bluebird.config({
   longStackTraces: true,
 });
 
-const env = require("../env");
+import env from "../env";
 env.name = "test";
 process.env.NODE_ENV = "test";
 
 const chalk = require("chalk");
 
 const {app} = require("electron");
-const {join, extname} = require("path").posix;
+const {extname} = require("path").posix;
 
 app.on("ready", async () => {
   const glob = require("bluebird").promisify(require("glob"));

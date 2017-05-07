@@ -9,7 +9,7 @@ import {getT} from "../localizer";
 
 import delay from "./delay";
 
-import * as env from "../env";
+import env from "../env";
 import urls from "../constants/urls";
 
 import mklog from "../util/log";

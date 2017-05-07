@@ -1,6 +1,6 @@
 
 import {net} from "electron";
-import * as env from "../env";
+import env from "../env";
 
 import * as querystring from "querystring";
 import {isEmpty} from "underscore";

@@ -12,8 +12,11 @@ import {EventEmitter} from "events";
 
 import {createConnection, Connection, ObjectType, Repository} from "typeorm";
 import GameModel from "../models/game";
-import CollectionModel from "../models/game";
+import CollectionModel from "../models/collection";
+import DownloadKeyModel from "../models/download-key";
+import CaveModel from "../models/cave";
 
+import deepEqual  = require("deep-equal");
 import * as _ from "underscore";
 
 import {
@@ -29,6 +32,8 @@ interface IModelMap {
 const modelMap: IModelMap = {
   "games": GameModel,
   "collections": CollectionModel,
+  "downloadKeys": DownloadKeyModel,
+  "caves": CaveModel,
 };
 
 /**
@@ -145,6 +150,7 @@ export default class Market extends EventEmitter implements IMarket {
    */
   async saveAllEntities <T> (entityRecords: IEntityRecords<T>) {
     for (const tableName of Object.keys(entityRecords.entities)) {
+      const t1 = Date.now();
       const entities: IEntityMap<Object> = entityRecords.entities[tableName];
       const entityIds = Object.keys(entities);
 
@@ -168,23 +174,9 @@ export default class Market extends EventEmitter implements IMarket {
         let entity = entities[id];
         let existingEntity = existingEntities[id];
         if (existingEntity) {
-          for (const key of Object.keys(existingEntity)) {
-            if (existingEntity[key] instanceof Date) {
-              let oldTime = existingEntity[key].getTime();
-              let newTime = new Date(entity[key]).getTime();
-              if (oldTime !== newTime) {
-                log(opts, `${tableName} ${id}, field ${key} is different: ${existingEntity[key]} !== ${entity[key]}`);
-                log(opts, `${tableName} ${id}, field ${key} times: ${oldTime} !== ${newTime}`);
-                numUpToDate++;
-                continue;
-              }
-            } else {
-              if (existingEntity[key] !== entity[key]) {
-                log(opts, `${tableName} ${id}, field ${key} is different: ${existingEntity[key]} !== ${entity[key]}`);
-                numUpToDate++;
-                continue;
-              }
-            }
+          if (deepEqual(existingEntity, entity)) {
+            numUpToDate++;
+            continue;
           }
           rows.push(repo.merge(entity));
         } else {
@@ -194,8 +186,9 @@ export default class Market extends EventEmitter implements IMarket {
         }
       }
 
-      const t1 = Date.now();
-      await repo.persist(rows);
+      if (rows.length > 0){
+        await repo.persist(rows);
+      }
       const t2 = Date.now();
       log(opts, `Saved ${entityIds.length} ${tableName} in ${(t2 - t1).toFixed(2)} ms (${numUpToDate} up-to-date)`);
     }
