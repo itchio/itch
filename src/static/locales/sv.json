@@ -423,5 +423,7 @@
     "web.context_menu.copy": "Kopiera",
     "web.context_menu.paste": "Klistra in",
     "web.context_menu.open_in_new_tab": "Öppna i ny flik",
-    "web.context_menu.copy_link": "Kopiera länk"
+    "web.context_menu.copy_link": "Kopiera länk",
+    "game.install.libraries_missing": "Några nödvändiga {{arch}} bibliotek saknas: {{libraries}}",
+    "preferences.behavior.prevent_display_sleep": "Förhindra strömspararläge medan du spelar"
 }
