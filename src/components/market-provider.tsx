@@ -122,11 +122,14 @@ export default class MarketProvider extends React.Component<void, IState> {
 
   render() {
     console.log(`market provider rendering, markets = : `, this.state.market, this.state.globalMarket);
+    if (!this.state.globalMarket) {
+      return <div/>;
+    }
+
     return React.Children.only(this.props.children);
   }
 
   getChildContext() {
-    console.log(`market provider asked to give child context = `, this.state);
     return this.state;
   }
 }
