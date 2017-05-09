@@ -1,7 +1,7 @@
 
 import * as React from "react";
+import * as PropTypes from "prop-types";
 import {connect, I18nProps} from "./connect";
-import {createStructuredSelector} from "reselect";
 
 import urls from "../constants/urls";
 import * as actions from "../actions";
@@ -9,11 +9,9 @@ import * as actions from "../actions";
 import Link from "./basics/link";
 import Games from "./games";
 import GameFilters from "./game-filters";
-import {map} from "underscore";
 
 import {dispatcher} from "../constants/action-types";
 
-import {getUserMarket} from "./market";
 import GameModel from "../models/game";
 
 import styled, * as styles from "./styles";
@@ -50,6 +48,10 @@ interface IDerivedProps {
 }
 
 class DashboardFetcher extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+  static contextTypes = {
+    market: PropTypes.object,
+  };
+
   constructor() {
     super();
 
@@ -61,13 +63,14 @@ class DashboardFetcher extends React.Component<IProps & IDerivedProps & I18nProp
   }
 
   async fetch() {
+    if (!this.context.market) {
+      console.warn(`no market, can't fetch`);
+      return;
+    }
+
     const {meId} = this.props;
-    console.log(`Dashboard fetching games for ${meId}`);
-    const market = await getUserMarket();
-    const gameRepo = market.getRepo(GameModel);
+    const gameRepo = this.context.market.getRepo(GameModel);
     const games = await gameRepo.find({userId: meId});
-    console.log(`Got ${games.length} games`);
-    console.log(`First few: ${JSON.stringify(games.slice(0, 5), null, 2)}`);
     this.setState({ games });
   }
 
