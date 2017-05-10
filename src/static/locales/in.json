@@ -414,5 +414,7 @@
     "web.context_menu.copy": "Salin",
     "web.context_menu.paste": "Tempel",
     "web.context_menu.open_in_new_tab": "Buka di tab baru",
-    "web.context_menu.copy_link": "Salin tautan"
+    "web.context_menu.copy_link": "Salin tautan",
+    "game.install.libraries_missing": "Beberapa pustaka {{arch}} yang dibutuhkan tidak ditemukan: {{libraries}}",
+    "preferences.behavior.prevent_display_sleep": "Cegah layar untuk tidur selama bermain"
 }
