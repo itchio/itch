@@ -11,14 +11,11 @@ import * as querystring from "querystring";
 
 import {object, map, filter, pluck} from "underscore";
 
-import {shell} from "electron";
-
 import staticTabData from "../constants/static-tab-data";
 
 import {pathToId, gameToTabData, userToTabData, collectionToTabData, locationToTabData} from "../util/navigation";
 import fetch from "../util/fetch";
 import api from "../util/api";
-import pathmaker from "../util/pathmaker";
 import Market from "../util/market";
 
 import mklog from "../util/log";
@@ -183,6 +180,9 @@ function toast (store: IStore, id: string, e: Error, path: string) {
 }
 
 async function doFetchTabData (store: IStore, id: string, retrOpts?: IRetrieveOpts): Promise<void> {
+  // FIXME: trying things, eh?
+  return;
+
   invariant(typeof store === "object", "doFetchTabData has a store");
 
   const timestamp = +new Date();
@@ -322,14 +322,6 @@ export default function (watcher: Watcher) {
     }
   });
 
-  watcher.on(actions.probeCave, async (store, action) => {
-    const {caveId} = action.payload;
-
-    const caveLogPath = pathmaker.caveLogPath(caveId);
-    log(opts, `Opening cave log path ${caveLogPath}`);
-    shell.openItem(caveLogPath);
-  });
-
   watcher.on(actions.tabsChanged, async (store, action) => {
     const key = store.getState().session.credentials.key;
     if (!key || !saveTabs) {
@@ -363,7 +355,7 @@ export default function (watcher: Watcher) {
           x: snapshot,
         },
       },
-    }, {wait: true});
+    });
   });
 
   watcher.on(actions.tabChanged, async (store, action) => {
@@ -381,6 +373,7 @@ export default function (watcher: Watcher) {
     saveTabs = false;
   });
 
+  // TODO: this doesn't belong in navigation
   watcher.on(actions.clearFilters, async (store, action) => {
     const {tab} = action.payload;
 

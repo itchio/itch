@@ -18,6 +18,7 @@ import nukeCavePrereqs from "./nuke-cave-prereqs";
 import configureCave from "./configure-cave";
 import revertCave from "./revert-cave";
 import healCave from "./heal-cave";
+import probeCave from "./probe-cave";
 import viewCaveDetails from "./view-cave-details";
 
 import downloadWatcher from "./download-watcher";
@@ -41,6 +42,7 @@ export default function (watcher: Watcher) {
   configureCave(watcher);
   revertCave(watcher);
   healCave(watcher);
+  probeCave(watcher);
   viewCaveDetails(watcher);
 
   downloadWatcher(watcher);

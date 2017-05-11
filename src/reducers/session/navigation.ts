@@ -31,7 +31,6 @@ const initialState = {
   lastConstant: "featured",
   tabData: indexBy(pick(staticTabData, ...baseTabs), "id"),
   id: "featured",
-  shortcutsShown: false,
 } as ISessionNavigationState;
 
 export default reducer<ISessionNavigationState>(initialState, (on) => {

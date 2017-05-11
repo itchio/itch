@@ -5,7 +5,9 @@ import * as querystring from "querystring";
 
 import staticTabData from "../constants/static-tab-data";
 
-import { IGameRecord, IUserRecord, ICollectionRecord,
+import GameModel from "../models/game";
+
+import { IUserRecord, ICollectionRecord,
   IInstallLocation, ITabData } from "../types";
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
@@ -96,7 +98,7 @@ export function pathToIcon(path: string) {
   return "earth";
 }
 
-export function gameToTabData(game: IGameRecord): ITabData {
+export function gameToTabData(game: GameModel): ITabData {
   return {
     games: {
       [game.id]: game,

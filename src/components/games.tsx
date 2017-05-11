@@ -4,7 +4,8 @@ import {connect, I18nProps} from "./connect";
 import {createSelector} from "reselect";
 import Fuse = require("fuse.js");
 
-import {IAppState, IFilteredGameRecord, IGameRecord, TabLayout} from "../types";
+import {IAppState, IFilteredGameRecord, TabLayout} from "../types";
+import Game from "../models/game";
 
 import {map, filter} from "underscore";
 
@@ -71,7 +72,7 @@ class Games extends React.Component<IProps & IDerivedProps & I18nProps, IState> 
 
 interface IProps {
   tab: string;
-  games: IGameRecord[];
+  games: Game[];
 }
 
 interface IDerivedProps {
@@ -106,7 +107,7 @@ export default connect<IProps>(Games, {
     const getDownloadKeysByGameId = (state: IAppState, props: IProps) =>
       /* state.market.downloadKeysByGameId */ ({});
 
-    const fuse: Fuse<IGameRecord> = new Fuse([], {
+    const fuse: Fuse<Game> = new Fuse([], {
       keys: [
         { name: "title", weight: 0.8 },
         { name: "shortText", weight: 0.4 },
@@ -134,7 +135,7 @@ export default connect<IProps>(Games, {
             searchScore: result.score,
           }));
         } else {
-          filteredGames = map<IGameRecord, IFilteredGameRecord>(games, (game) => ({
+          filteredGames = map<Game, IFilteredGameRecord>(games, (game) => ({
             game,
             cave: cavesByGameId[game.id],
           }));

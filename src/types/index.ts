@@ -4,6 +4,8 @@ import {Action} from "redux-actions";
 import {Logger} from "../util/log";
 import {ObjectType, Repository} from "typeorm";
 
+import GameModel from "../models/game";
+
 export interface IStore extends Store<IAppState> {}
 
 interface IWatcher {
@@ -111,7 +113,7 @@ export interface IOwnGameRecord extends IGameRecord {
  * using some user-provided query.
  */
 export interface IFilteredGameRecord {
-    game: IGameRecord;
+    game: GameModel;
     cave?: ICaveRecord;
     searchScore?: number;
 }
@@ -190,7 +192,7 @@ export interface ITabDataSet {
 }
 
 export interface IGameRecordSet {
-    [id: string]: IGameRecord;
+    [id: string]: GameModel;
 }
 
 export interface ICollectionRecordSet {
@@ -226,7 +228,7 @@ export interface ITabData {
     timestamp?: number;
 
     /** games in relation to this tab (single game, games in a collection) */
-    games?: IGameRecordSet;
+    games?: GameModel[];
 
     /** collections in relation to this tab */
     collections?: ICollectionRecordSet;
@@ -821,6 +823,8 @@ export interface ISessionState {
     login: ISessionLoginState;
     navigation: ISessionNavigationState;
     search: ISessionSearchState;
+
+    tabData: ITabDataSet;
 }
 
 export interface ISessionCachedCollectionsState {

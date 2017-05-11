@@ -28,7 +28,6 @@ try {
 
 import * as electron from "electron";
 import App from "./components/app";
-import MarketProvider from "./components/market-provider";
 
 let appNode: Element;
 
@@ -42,9 +41,6 @@ function render (RealApp: typeof App) {
   } else {
     rootComponent = <RealApp/>;
   }
-  rootComponent = <MarketProvider>
-    {rootComponent}  
-  </MarketProvider>
   ReactDOM.render(<Provider store={store}>{rootComponent}</Provider>, appNode);
 }
 

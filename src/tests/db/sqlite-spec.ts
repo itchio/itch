@@ -3,6 +3,7 @@
 
 import {createConnection, Entity, Column, PrimaryColumn} from "typeorm";
 import test = require("zopf");
+import deepEquals = require("deep-equal");
 import * as _ from "underscore";
 
 @Entity()
@@ -119,6 +120,29 @@ test("sqlite", t => {
     t.ok(_.find(specificGames, {id: 2}));
     t.ok(_.find(specificGames, {id: 4}));
     t.notOk(_.find(specificGames, {id: 6}));
+
+    {
+      const game1 = await gameRepo.findOneById(1);
+      const game2 = await gameRepo.findOneById(1);
+      t.is(typeof game1, "object");
+      t.false(game1 === game2);
+      t.true(deepEquals(game1, game2));
+      game1.title = "Something else now!";
+      t.false(deepEquals(game1, game2));
+
+      const game3 = gameRepo.merge(game2);
+      t.is(typeof game3, "object");
+      t.false(game2 === game3);
+      t.true(deepEquals(game2, game3));
+      await gameRepo.persist(game3);
+
+      const game4 = {
+        ...game3,
+        title: "Yeah",
+      };
+      t.false(deepEquals(game3, game4));
+      await gameRepo.persist(game4);
+    }
   });
 });
 

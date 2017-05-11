@@ -60,6 +60,7 @@
     "colorgram": "^0.1.5",
     "colors": "^1.1.2",
     "combokeys-ftl": "^2.4.4-npmgate1",
+    "debug": "^2.6.6",
     "deep-assign": "^2.0.0",
     "deep-equal": "^1.0.1",
     "deep-freeze": "0.0.1",

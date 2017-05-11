@@ -7,6 +7,7 @@ import search from "./search";
 import folders from "./folders";
 import cachedCollections from "./cached-collections";
 import market from "./market";
+import tabData from "./tab-data";
 
 import {Reducer} from "redux";
 import {ISessionState} from "../../types";
@@ -19,4 +20,5 @@ export default combineReducers({
   folders,
   cachedCollections,
   market,
+  tabData,
 }) as Reducer<ISessionState>;
