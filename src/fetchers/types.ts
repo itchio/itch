@@ -41,6 +41,8 @@ export class Fetcher {
     this.emitter.on("abort", () =>  {
       this.aborted = true;
     });
+
+    this.prevData = store.getState().session.tabData[tabId];
   }
 
   start() {
@@ -96,7 +98,7 @@ export class Fetcher {
       this.debug(`we're cancelled, suppressing push`);
     }
 
-    if (this.prevData && deepEqual(this.prevData)) {
+    if (this.prevData && deepEqual(this.prevData, data)) {
       this.debug(`push ignoring duplicate data`);
       return;
     }

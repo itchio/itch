@@ -5,6 +5,7 @@ import {Logger} from "../util/log";
 import {ObjectType, Repository} from "typeorm";
 
 import GameModel from "../models/game";
+import CollectionModel from "../models/collection";
 
 export interface IStore extends Store<IAppState> {}
 
@@ -196,7 +197,7 @@ export interface IGameRecordSet {
 }
 
 export interface ICollectionRecordSet {
-    [id: string]: ICollectionRecord;
+    [id: string]: CollectionModel;
 }
 
 export interface ITabData {
@@ -228,7 +229,9 @@ export interface ITabData {
     timestamp?: number;
 
     /** games in relation to this tab (single game, games in a collection) */
-    games?: GameModel[];
+    games?: IGameRecordSet;
+
+    gameIndices?: number[];
 
     /** collections in relation to this tab */
     collections?: ICollectionRecordSet;

@@ -4,6 +4,7 @@ import {Watcher} from "./watcher";
 import {createSelector} from "reselect";
 
 import {makeLabel} from "../util/navigation";
+import env from "../env";
 
 import {darkMineShaft} from "../constants/colors";
 import {app, BrowserWindow} from "electron";
@@ -199,6 +200,9 @@ async function createWindow (store: IStore, hidden: boolean) {
   const uri = `file://${rootDir}/index.html`;
   log(opts, `Calling loadURL with ${uri}`);
   window.loadURL(uri);
+  if (env.name === "development") {
+    window.emit("ready-to-show", {});
+  }
 }
 
 /**

@@ -1,12 +1,12 @@
 
 import {Watcher} from "../reactors/watcher";
 
-import tabFetcher from "./tab-fetcher";
+import fetchers from "./fetchers";
 import marketProvider, {getMarkets} from "./market-provider";
 
 let watcher = new Watcher();
 marketProvider(watcher);
-tabFetcher(watcher, getMarkets);
+fetchers(watcher, getMarkets);
 
 watcher.validate();
 

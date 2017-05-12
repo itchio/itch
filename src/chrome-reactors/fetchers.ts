@@ -7,7 +7,7 @@ import * as actions from "../actions";
 import {Fetcher, FetchReason} from "../fetchers/types";
 import {IStore} from "../types";
 import {IMarketGetter} from "../fetchers/types";
-import DashboardFetcher from "../fetchers/dashboard";
+import DashboardFetcher from "../fetchers/dashboard-fetcher";
 
 const staticFetchers = {
   "dashboard": DashboardFetcher,
