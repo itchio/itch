@@ -16,7 +16,9 @@ import {IAutoSizerParams} from "./autosizer-types";
 
 import styled from "./styles";
 
-const recency = (x: CollectionModel) => x.updatedAt ? -x.updatedAt.getTime() : 0;
+const recency = (x: CollectionModel) => {
+  return x.updatedAt ? -(x.updatedAt.getTime()) : 0;
+};
 
 interface ICellInfo {
   columnIndex: number;

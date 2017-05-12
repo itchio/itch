@@ -119,7 +119,7 @@ export class CollectionRow extends React.Component<IProps & IDerivedProps & I18n
         <span className="spacer"/>
         <Icon icon="history"/>
         {interleave(t, "collection_grid.item.updated_at", {
-          time_ago: <TimeAgo date={collection.updatedAt}/>,
+          time_ago: <TimeAgo key="timeago" date={collection.updatedAt}/>,
         })}
       </section>
       <Ink/>
