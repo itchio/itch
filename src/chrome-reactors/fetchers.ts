@@ -8,9 +8,11 @@ import {Fetcher, FetchReason} from "../fetchers/types";
 import {IStore} from "../types";
 import {IMarketGetter} from "../fetchers/types";
 import DashboardFetcher from "../fetchers/dashboard-fetcher";
+import CollectionsFetcher from "../fetchers/collections-fetcher";
 
 const staticFetchers = {
   "dashboard": DashboardFetcher,
+  "collections": CollectionsFetcher,
 };
 
 export function queueFetch (store: IStore, tabId: string, reason: FetchReason, getMarkets: IMarketGetter) {

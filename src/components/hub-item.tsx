@@ -16,13 +16,9 @@ import styled, * as styles from "./styles";
 
 const HubItemDiv = styled.div`
   ${styles.inkContainer()};
-  ${styles.thumbnailStyle()};
+  ${styles.hubItemStyle()};
   margin: .5em;
   cursor: default;
-
-  background: #232222;
-  border: 1px solid #191919;
-  transition: all 0.4s;
 
   &.dull {
     -webkit-filter: grayscale(95%);

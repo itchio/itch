@@ -1,9 +1,7 @@
 // This file is the entry point for renderer processes
 
-import "./boot/env";
 import "./boot/bluebird";
 import "./boot/fs";
-import "./boot/env";
 import "./boot/sniff-language";
 
 import os from "./util/os";

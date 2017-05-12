@@ -307,6 +307,14 @@ export const thumbnailStyle = () => css`
   border-radius: 2px;
 `;
 
+export const hubItemStyle = () => css`
+  ${thumbnailStyle()}
+
+  background: #232222;
+  border: 1px solid #191919;
+  transition: all 0.4s;
+`;
+
 export const defaultCoverBackground = () => css`
   background-image: linear-gradient(
      -10deg,
@@ -317,4 +325,10 @@ export const defaultCoverBackground = () => css`
 
 export const accentTextShadow = () => css`
   text-shadow: .5px .5px 2px ${props => props.theme.baseBackground};
+`;
+
+export const emptyMeat = () => css`
+  margin: 20px;
+  color: ${props => props.theme.secondaryText};
+  font-size: ${props => props.theme.fontSizes.large};
 `;

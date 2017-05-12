@@ -19,11 +19,11 @@ const CollectionsContainer = styled.div`
   ${styles.meat()}
 `;
 
+const tab = "collections";
+
 export class Collections extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, navigate} = this.props;
-
-    const tab = "collections";
 
     return <CollectionsContainer>
       <GameFilters tab={tab} showBinaryFilters={false} showLayoutPicker={false}>

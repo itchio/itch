@@ -4,7 +4,6 @@
 import "./boot/sourcemaps";
 import "./boot/bluebird";
 import "./boot/crash";
-import "./boot/env";
 import "./boot/fs";
 
 import {enableLiveReload} from "electron-compile";

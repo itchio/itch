@@ -15,18 +15,27 @@ import {pathToId} from "../util/navigation";
 
 import {
   IAppState, IGameRecordSet, ICollectionRecord, ICollectionRecordSet, ITabData,
-  IUserMarketState, IGlobalMarketState,
 } from "../types";
 import {dispatcher} from "../constants/action-types";
+
+import styled, * as styles from "./styles";
+
+const CollectionDiv = styled.div`
+  ${styles.meat()}
+`;
+
+const Empty = styled.p`
+  ${styles.emptyMeat()}
+`;
 
 export class Collection extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, allGames, tabGames, tabPath, collection, initiateShare} = this.props;
 
     if (!collection) {
-      return <div className="collection-meat">
+      return <CollectionDiv>
         Loading...
-      </div>;
+      </CollectionDiv>;
     }
 
     const {gameIds} = collection;
@@ -34,7 +43,7 @@ export class Collection extends React.Component<IProps & IDerivedProps & I18nPro
 
     const tab = tabPath;
 
-    return <div className="collection-meat">
+    return <CollectionDiv>
       <GameFilters tab={tab}>
         <span className="link-icon" onClick={(e) => initiateShare({url: `${urls.itchio}/c/${collection.id}/x`})}>
           <Icon icon="share"/>
@@ -43,9 +52,9 @@ export class Collection extends React.Component<IProps & IDerivedProps & I18nPro
 
       {games.length > 0
         ? <Games games={games} tab={tab}/>
-        : <p className="empty">{t("collection.empty")}</p>
+        : <Empty>{t("collection.empty")}</Empty>
       }
-    </div>;
+    </CollectionDiv>;
   }
 }
 

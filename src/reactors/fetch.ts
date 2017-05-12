@@ -19,6 +19,9 @@ import * as actions from "../actions";
 import {ICredentials} from "../types";
 
 const fetchUsuals = debounce(async function fetchUsuals (credentials: ICredentials) {
+  log(opts, `Not fetching the ususal`);
+  return;
+
   invariant(credentials.key, "have API key");
 
   log(opts, "Fetching the usuals");

@@ -1,11 +1,12 @@
 
 import {Fetcher, Outcome} from "./types";
 import Collection from "../models/collection";
+import Game from "../models/game";
 import client from "../util/api";
 
 import normalize from "../util/normalize";
 import {arrayOf} from "idealizr";
-import {game} from "../util/schemas";
+import {collection} from "../util/schemas";
 
 import {indexBy} from "underscore";
 
@@ -30,8 +31,22 @@ export default class CollectionsFetcher extends Fetcher {
     }
 
     const collectionsRepo = market.getRepo(Collection);
-    let localCollections = await collectionsRepo.find({userId: meId});
-    this.push({collections: indexBy(localCollections, "id")});
+    const gamesRepo = market.getRepo(Game);
+    let pushFromLocal = async () => {
+      const localCollections = await collectionsRepo.find();
+      let allGameIds: number[] = [];
+      for (const c of localCollections) {
+        if (c.gameIds) {
+          allGameIds = [...allGameIds, ...c.gameIds];
+        }
+      }
+      const localGames = await gamesRepo.findByIds(allGameIds);
+      this.push({
+        collections: indexBy(localCollections, "id"),
+        games: indexBy(localGames, "id"),
+      });
+    };
+    await pushFromLocal();
 
     const {credentials} = this.store.getState().session;
     if (!credentials) {
@@ -43,8 +58,8 @@ export default class CollectionsFetcher extends Fetcher {
     let normalized;
     try {
       this.debug(`Firing API requests...`);
-      normalized = normalize(await api.myGames(), {
-        games: arrayOf(game),
+      normalized = normalize(await api.myCollections(), {
+        collections: arrayOf(collection),
       });
     } catch (e) {
       this.debug(`API error:`, e);
@@ -54,6 +69,11 @@ export default class CollectionsFetcher extends Fetcher {
         throw e;
       }
     }
+
+    await market.saveAllEntities({
+      entities: normalized.entities,
+    });
+    await pushFromLocal();
 
     return new Outcome("success");
   }

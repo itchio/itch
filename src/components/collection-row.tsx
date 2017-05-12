@@ -1,6 +1,5 @@
 
 import * as React from "react";
-import {createStructuredSelector} from "reselect";
 
 import {connect, I18nProps} from "./connect";
 
@@ -15,10 +14,74 @@ import TimeAgo from "./basics/time-ago";
 import Ink = require("react-ink");
 import interleave from "./interleave";
 
-import {IAppState, ICollectionRecord, IGameRecordSet} from "../types";
+import {ICollectionRecord, IGameRecordSet} from "../types";
 import {multiDispatcher} from "../constants/action-types";
 
-export class Collection extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+import styled, * as styles from "./styles";
+
+const CollectionRowDiv = styled.div`
+  ${styles.inkContainer()}
+  ${styles.hubItemStyle()};
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  filter: brightness(80%);
+  transition: filter 0.1s ease-in-out;
+
+  &:hover {
+    filter: brightness(100%);
+    cursor: pointer;
+  }
+
+  .title {
+    padding: 12px 6px 6px 8px;
+    flex-shrink: 0;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 0;
+  }
+
+  .fresco {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    overflow-x: hidden;
+    position: relative;
+
+    padding: 5px;
+
+    .cover {
+      width: 207px;
+      margin-right: 7px;
+      flex-shrink: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  .info {
+    flex-shrink: 0;
+    padding: 6px;
+    color: $secondary-text-color;
+
+    display: flex;
+
+    .icon {
+      margin-right: 7px;
+      flex-shrink: 0;
+    }
+
+    .spacer {
+      flex-grow: 1;
+    }
+
+    .nice-ago {
+      margin-left: 5px;
+    }
+  }
+`;
+
+export class CollectionRow extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, allGames, collection} = this.props;
     const {title} = collection;
@@ -42,7 +105,7 @@ export class Collection extends React.Component<IProps & IDerivedProps & I18nPro
 
     const itemCount = (collection.gameIds || []).length;
 
-    return <div className="hub-item collection-hub-item"
+    return <CollectionRowDiv className="hub-item collection-hub-item"
         onMouseDown={this.onMouseDown.bind(this)}>
       <section className="title">
         {title}
@@ -60,7 +123,7 @@ export class Collection extends React.Component<IProps & IDerivedProps & I18nPro
         })}
       </section>
       <Ink/>
-    </div>;
+    </CollectionRowDiv>;
   }
 
   onMouseDown (e: React.MouseEvent<any>) {
@@ -73,18 +136,14 @@ export class Collection extends React.Component<IProps & IDerivedProps & I18nPro
 
 interface IProps {
   collection: ICollectionRecord;
+  allGames: IGameRecordSet;
 }
 
 interface IDerivedProps {
-  allGames: IGameRecordSet;
-
   navigateToCollection: typeof actions.navigateToCollection;
 }
 
-export default connect<IProps>(Collection, {
-  state: createStructuredSelector({
-    allGames: (state: IAppState) => (state.market || {} as IUserMarketState).games || {},
-  }),
+export default connect<IProps>(CollectionRow, {
   dispatch: (dispatch) => ({
     navigateToCollection: multiDispatcher(dispatch, actions.navigateToCollection),
   }),

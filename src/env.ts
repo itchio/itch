@@ -1,5 +1,5 @@
 
-import isDev from "electron-is-dev";
+const isDev = require("electron-is-dev");
 const isCanary = require("../package.json").name === "kitch";
 
 export default {

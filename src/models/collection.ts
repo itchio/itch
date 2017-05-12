@@ -10,10 +10,10 @@ export default class Collection {
   title: string;
 
   @Column("datetime", {nullable: true})
-  createdAt: string;
+  createdAt: Date;
 
   @Column("datetime", {nullable: true})
-  updatedAt: string;
+  updatedAt: Date;
 
   @Column("int", {nullable: true})
   gamesCount: number;

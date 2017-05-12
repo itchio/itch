@@ -6,14 +6,17 @@ import Fuse  = require("fuse.js");
 
 import {sortBy} from "underscore";
 
-import CollectionHubItem from "./collection-hub-item";
+import CollectionRow from "./collection-row";
+import CollectionModel from "../models/collection";
 
-import {IAppState, ICollectionRecord} from "../types";
+import {IAppState, ICollectionRecord, IGameRecordSet} from "../types";
 
 import {AutoSizer, Grid} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";
 
-const recency = (x: ICollectionRecord) => x.updatedAt ? -(new Date(x.updatedAt)) : 0;
+import styled from "./styles";
+
+const recency = (x: CollectionModel) => x.updatedAt ? -x.updatedAt.getTime() : 0;
 
 interface ICellInfo {
   columnIndex: number;
@@ -27,6 +30,12 @@ interface ILayoutInfo {
   collections: ICollectionRecord[];
 }
 
+const tab = "collections";
+
+const HubCollectionsGrid = styled.div`
+  flex-grow: 1;
+`;
+
 export class CollectionsGrid extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
@@ -39,7 +48,7 @@ export class CollectionsGrid extends React.Component<IProps & IDerivedProps & I1
   render () {
     const {t, collections, hiddenCount} = this.props;
 
-    return <div className="hub-collections-grid">
+    return <HubCollectionsGrid>
         <AutoSizer>
         {({width, height}: IAutoSizerParams) => {
           const columnCount = 1;
@@ -73,10 +82,11 @@ export class CollectionsGrid extends React.Component<IProps & IDerivedProps & I1
           {t("grid.hidden_count", {count: hiddenCount})}
         </div>
     : ""}
-    </div>;
+    </HubCollectionsGrid>;
   }
 
   cellRenderer(layout: ILayoutInfo, cell: ICellInfo): JSX.Element {
+    const games = this.props.games;
     const collectionIndex = (cell.rowIndex * layout.columnCount) + cell.columnIndex;
     const record = layout.collections[collectionIndex];
 
@@ -89,7 +99,7 @@ export class CollectionsGrid extends React.Component<IProps & IDerivedProps & I1
     return <div key={cell.key} style={cell.style}>
       {
         record
-        ? <CollectionHubItem key={record.id} collection={record}/>
+        ? <CollectionRow key={record.id} collection={record} allGames={games}/>
         : null
       }
     </div>;
@@ -99,6 +109,7 @@ export class CollectionsGrid extends React.Component<IProps & IDerivedProps & I1
 interface IProps {}
 
 interface IDerivedProps {
+  games: IGameRecordSet;
   collections: ICollectionRecord[];
   hiddenCount: number;
 }
@@ -109,9 +120,9 @@ interface IState {
 
 export default connect<IProps>(CollectionsGrid, {
   state: () => {
-    // FIXME db
-    const getCollections = (state: IAppState, props: IProps) => {};
+    const getCollections = (state: IAppState, props: IProps) => (state.session.tabData[tab] || {}).collections || {};
     const getFilterQuery = (state: IAppState, props: IProps) => state.session.navigation.filters.collections;
+    const getGames = (state: IAppState, props: IProps) => (state.session.tabData[tab] || {}).games || {};
 
     const getSortedCollections = createSelector(
       getCollections,
@@ -130,18 +141,21 @@ export default connect<IProps>(CollectionsGrid, {
     const getFilteredCollections = createSelector(
       getSortedCollections,
       getFilterQuery,
-      (sortedCollections, filterQuery) => {
+      getGames,
+      (sortedCollections, filterQuery, games) => {
         if (filterQuery) {
           fuse.set(sortedCollections);
           const filteredCollections = fuse.search(filterQuery);
           return {
             collections: filteredCollections,
             hiddenCount: sortedCollections.length - filteredCollections.length,
+            games,
           };
         } else {
           return {
             collections: sortedCollections,
             hiddenCount: 0,
+            games,
           };
         }
       },
