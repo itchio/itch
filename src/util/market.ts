@@ -68,7 +68,7 @@ export default class Market extends EventEmitter implements IMarket {
       name: dbPath,
       driver: {
         type: "sqlite",
-        storage: dbPath + ".sqlite",
+        storage: dbPath + ".db",
       },
       entities: Object.keys(modelMap).map((k) => modelMap[k]),
       autoSchemaSync: true,
