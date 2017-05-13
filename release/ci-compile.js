@@ -3,7 +3,6 @@
 // compile itch for production environemnts
 
 const $ = require('./common')
-const bluebird = require('bluebird');
 const humanize = require('humanize-plus');
 
 async function main () {
@@ -17,8 +16,14 @@ async function main () {
   $(await $.sh('rm -rf dist'));
 
   $.say('Compiling sources...');
-  $(await $.sh('npm run -s build-metal-prod'))
-  $(await $.sh('npm run -s build-chrome-prod'))
+  $(await $.sh('yarn run compile'))
+
+  $.say('Creating dist...')
+  $(await $.sh('mkdir dist'))
+
+  $.say('Moving sources and cache...')
+  $(await $.sh('cp -rf src dist/'))
+  $(await $.sh('mv .cache dist/.cache'))
 
   $.say('Generating custom package.json...')
   const pkg = JSON.parse(await $.readFile('package.json'));

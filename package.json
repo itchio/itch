@@ -121,6 +121,7 @@
     "which": "^1.2.11"
   },
   "devDependencies": {
+    "cross-env": "^5.0.0",
     "electron": "1.6.2",
     "electron-compilers": "^5.9.0",
     "electron-rebuild": "^1.5.7",
@@ -141,6 +142,7 @@
     "start": "electron . --color",
     "install": "electron-rebuild",
     "test": "electron src/tests/init.js",
-    "i18n": "node release/ci-i18n-check.js"
+    "i18n": "node release/ci-i18n-check.js",
+    "compile": "cross-env NODE_ENV=production electron-compile --appdir . ./src"
   }
 }

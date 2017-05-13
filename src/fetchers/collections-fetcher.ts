@@ -8,7 +8,7 @@ import normalize from "../util/normalize";
 import {arrayOf} from "idealizr";
 import {collection} from "../util/schemas";
 
-import {indexBy, each, map} from "underscore";
+import {indexBy} from "underscore";
 
 export default class CollectionsFetcher extends Fetcher {
   constructor () {
@@ -40,7 +40,10 @@ export default class CollectionsFetcher extends Fetcher {
           allGameIds = [...allGameIds, ...c.gameIds];
         }
       }
-      const localGames = await gamesRepo.findByIds(allGameIds);
+      let localGames = [];
+      if (allGameIds.length > 0) {
+        localGames = await gamesRepo.findByIds(allGameIds);
+      }
       this.push({
         collections: indexBy(localCollections, "id"),
         games: indexBy(localGames, "id"),

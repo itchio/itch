@@ -7,7 +7,7 @@ import normalize from "../util/normalize";
 import {arrayOf} from "idealizr";
 import {game} from "../util/schemas";
 
-import {pluck, difference, indexBy} from "underscore";
+import {pluck, difference, indexBy, each} from "underscore";
 
 export default class DashboardFetcher extends Fetcher {
   constructor () {
@@ -57,6 +57,13 @@ export default class DashboardFetcher extends Fetcher {
     const localGameIds = pluck(localGames, "id");
     const remoteGameIds = pluck(normalized.entities.games, "id");
     this.debug(`Fetched ${Object.keys(normalized.entities.games).length} games from API`);
+
+    // FIXME: once the API is cleaned up, this will be unnecessary
+    each(normalized.entities.games, (game: Game) => {
+      if (!game.userId) {
+        game.userId = meId;
+      }
+    });
 
     await market.saveAllEntities({
       entities: {

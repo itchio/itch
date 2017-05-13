@@ -123,6 +123,16 @@ async function ciPackage (argsIn) {
   const electronFinalOptions = Object.assign({}, electronOptions[electronConfigKey], {
     afterCopy: [
       async (buildPath, electronVersion, platform, arch, callback) => {
+        $.say('Pruning dev packages');
+        try {
+          await $.cd(buildPath, async function () {
+            await $.yarn('install --production --ignore-scripts');
+          });
+        } catch (err) {
+          $.say(`While pruning dev packages:\n${err.stack}`);
+          callback(err);
+        }
+
         $.say('Rebuilding native dependencies...');
         try {
           await electronRebuild(buildPath, electronVersion, arch, [], true);
@@ -131,10 +141,6 @@ async function ciPackage (argsIn) {
           callback(err);
         }
 
-        $.say('Pruning dev packages');
-        await $.cd(buildPath, async function () {
-          await $.yarn('install --production --ignore-scripts --prefer-offline');
-        });
         callback();
       }
     ]

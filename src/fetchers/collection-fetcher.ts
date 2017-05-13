@@ -7,7 +7,7 @@ import client from "../util/api";
 import normalize from "../util/normalize";
 import {arrayOf} from "idealizr";
 import {collection, game} from "../util/schemas";
-import {indexBy, pluck} from "underscore";
+import {indexBy} from "underscore";
 
 import {pathToId} from "../util/navigation";
 
@@ -30,7 +30,7 @@ export default class CollectionFetcher extends Fetcher {
     const collectionRepo = market.getRepo(Collection);
     let localCollection = await collectionRepo.findOneById(collectionId);
     let localGames = {};
-    if (localCollection && localCollection.gameIds) {
+    if (localCollection && localCollection.gameIds && localCollection.gameIds.length > 0) {
       localGames = indexBy(await gameRepo.findByIds(localCollection.gameIds), "id");
     }
     this.push({
