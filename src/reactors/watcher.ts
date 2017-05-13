@@ -7,6 +7,9 @@ import {each} from "underscore";
 
 import debounce from "./debounce";
 
+// TODO: work out better module boundaries
+import {IMarketGetter} from "../fetchers/types";
+
 export interface IReactor<T> {
   (store: IStore, action: IAction<T>): Promise<void>;
 }
@@ -22,6 +25,9 @@ export class Watcher {
   };
 
   subs: Watcher[];
+
+  // TODO: work out better module boundaries
+  public getMarkets: IMarketGetter;
 
   constructor() {
     this.reactors = {};

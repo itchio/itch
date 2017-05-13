@@ -37,26 +37,26 @@ function getFetcherClass(tabId): typeof Fetcher {
   return null;
 }
 
-export default function (watcher: Watcher, getMarkets: IMarketGetter) {
+export default function (watcher: Watcher) {
   // changing tabs? it's a fetching
   watcher.on(actions.tabChanged, async (store, action) => {
-    queueFetch(store, action.payload.id, "tab-changed", getMarkets);
+    queueFetch(store, action.payload.id, "tab-changed", watcher.getMarkets);
   });
 
   // tab navigated to something else? let's fetch
   watcher.on(actions.tabEvolved, async (store, action) => {
-    queueFetch(store, action.payload.id, "tab-evolved", getMarkets);
+    queueFetch(store, action.payload.id, "tab-evolved", watcher.getMarkets);
   });
 
   // tab reloaded by user? let's fetch!
   watcher.on(actions.tabReloaded, async (store, action) => {
-    queueFetch(store, action.payload.id, "tab-reloaded", getMarkets);
+    queueFetch(store, action.payload.id, "tab-reloaded", watcher.getMarkets);
   });
 
   // window gaining focus? fetch away!
   watcher.on(actions.windowFocusChanged, async (store, action) => {
     if (action.payload.focused) {
-      queueFetch(store, store.getState().session.navigation.id, "window-focused", getMarkets);
+      queueFetch(store, store.getState().session.navigation.id, "window-focused", watcher.getMarkets);
     }
   });
 }

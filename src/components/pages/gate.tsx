@@ -364,7 +364,7 @@ export class GatePage extends React.Component<IProps & IDerivedProps & I18nProps
         iconElement = <LoadingCircle progress={0.3}/>;
       }
 
-      return <p className={classNames("status-container", {error: hasError})}>
+      return <div className={classNames("status-container", {error: hasError})}>
         {iconElement}
         {translatedMessage}
         {hasError
@@ -382,7 +382,7 @@ export class GatePage extends React.Component<IProps & IDerivedProps & I18nProps
             </div>
           : null
         }
-      </p>;
+      </div>;
     } else {
       const translatedMessage = t("login.action.login");
       return <Button fat primary label={translatedMessage}/>;

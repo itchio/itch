@@ -1,7 +1,7 @@
 
 import * as actions from "../../actions";
 
-import makeUploadButton from "../make-upload-button";
+import makeUploadButton from "../../reactors/make-upload-button";
 
 import {map} from "underscore";
 import {Watcher} from "../watcher";

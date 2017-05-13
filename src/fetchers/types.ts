@@ -1,5 +1,5 @@
 
-import {IStore, IMarket, ITabData} from "../types";
+import {IStore, IUserMarket, IGlobalMarket, ITabData} from "../types";
 
 import * as actions from "../actions";
 import {EventEmitter} from "events";
@@ -130,8 +130,8 @@ export class Fetcher {
 }
 
 export interface IMarkets {
-  market?: IMarket;
-  globalMarket?: IMarket;
+  market?: IUserMarket;
+  globalMarket?: IGlobalMarket;
 }
 
 export type IMarketGetter = () => IMarkets;

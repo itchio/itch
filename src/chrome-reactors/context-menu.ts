@@ -3,13 +3,16 @@ import {Watcher} from "./watcher";
 
 import * as clone from "clone";
 
-import {BrowserWindow, Menu} from "electron";
+// FIXME: this blows
+// import {BrowserWindow, Menu} from "electron";
+import * as electron from "electron";
+const {BrowserWindow, Menu} = electron.remote;
+
 import localizer from "../localizer";
 
 import {IStore} from "../types";
 
 import {pathToId} from "../util/navigation";
-import {getUserMarket} from "./market";
 
 import actionForGame from "../util/action-for-game";
 
@@ -19,11 +22,12 @@ import mklog from "../util/log";
 import {opts} from "../logger";
 const log = mklog("reactors/context-menu");
 
-import {getGlobalMarket} from "./market";
 import CaveModel from "../models/cave";
 import DownloadKeyModel from "../models/download-key";
 
 type IMenuItem = Electron.MenuItemOptions;
+
+const debug = require("debug")("itch:reactors:context-menu");
 
 function openMenu (store: IStore, template: IMenuItem[]) {
   if (template.length === 0) {
@@ -67,9 +71,16 @@ export default function (watcher: Watcher) {
 
     const {game} = action.payload;
     const gameId = game.id;
-    const globalMarket = getGlobalMarket();
-    const caveRepo = globalMarket.getRepo(CaveModel);
-    const cave = await caveRepo.findOne({gameId});
+    const {globalMarket, market} = watcher.getMarkets();
+    if (!globalMarket) {
+      debug(`no global market`);
+      return;
+    }
+    if (!market) {
+      debug(`no user market`);
+      return;
+    }
+    const cave = await globalMarket.getRepo(CaveModel).findOne({gameId});
     const mainAction = actionForGame(game, cave);
 
     const template: IMenuItem[] = [];
@@ -149,8 +160,8 @@ export default function (watcher: Watcher) {
           click: () => store.dispatch(actions.queueCaveUninstall({caveId: cave.id})),
         });
       }
-    } else {
-      const downloadKeyStore = getUserMarket().getRepo(DownloadKeyModel);
+    } else { // if (cave)
+      const downloadKeyStore = market.getRepo(DownloadKeyModel);
       const downloadKey = await downloadKeyStore.findOne({gameId: game.id});
       const hasMinPrice = game.minPrice > 0;
       // FIXME game admins

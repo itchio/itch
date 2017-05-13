@@ -7,7 +7,7 @@ import Fuse = require("fuse.js");
 import {IAppState, IFilteredGameRecord, TabLayout} from "../types";
 import Game from "../models/game";
 
-import {map, filter} from "underscore";
+import {map, filter, size} from "underscore";
 
 import isPlatformCompatible from "../util/is-platform-compatible";
 
@@ -164,7 +164,7 @@ export default connect<IProps>(Games, {
       (layout, games, filteredGames) => ({
         layout,
         filteredGames,
-        hiddenCount: games.length - filteredGames.length,
+        hiddenCount: size(games) - size(filteredGames),
       }),
     );
   },

@@ -1,6 +1,7 @@
 
 import * as ospath from "path";
-import {app} from "electron";
+import * as electron from "electron";
+const app = electron.app || electron.remote.app;
 
 import {ISessionFoldersState} from "../../types";
 import * as actions from "../../actions";

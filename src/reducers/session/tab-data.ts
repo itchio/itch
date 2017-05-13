@@ -7,7 +7,7 @@ const debug = require("debug")(`itch:tab-data-reducer`);
 
 const initialState = {} as ITabDataSet;
 
-export default reducer<ITabDataSet>(initialState, (on) => {
+let r = reducer<ITabDataSet>(initialState, (on) => {
   on(actions.tabDataFetched, (state, action) => {
     const {id, timestamp, data} = action.payload;
     const oldData = state[id];
@@ -26,3 +26,10 @@ export default reducer<ITabDataSet>(initialState, (on) => {
     };
   });
 });
+
+if (process.type === "browser") {
+  // give a no-op to the browser
+  r = (state, action) => ({});
+}
+
+export default r;

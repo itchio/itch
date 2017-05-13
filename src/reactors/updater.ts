@@ -4,7 +4,6 @@ import {Watcher} from "./watcher";
 import {EventEmitter} from "events";
 import * as humanize from "humanize-plus";
 
-import {getUserMarket, getGlobalMarket} from "./market";
 import delay from "./delay";
 
 import * as actions from "../actions";
@@ -319,7 +318,8 @@ export default function (watcher: Watcher) {
       log(opts, `Looking for updates for cave ${caveId}`);
     }
 
-    const cave = getGlobalMarket().getEntity<ICaveRecord>("caves", caveId);
+    // FIXME market
+    const cave = null /* getGlobalMarket().getEntity<ICaveRecord>("caves", caveId) */;
     if (!cave) {
       log(opts, `No cave with id ${caveId}, bailing out`);
       return;

@@ -1,12 +1,12 @@
 
-import {Watcher} from "./watcher";
+import {Watcher} from "../reactors/watcher";
 import * as actions from "../actions";
 
 import mklog from "../util/log";
 const log = mklog("reactors/report");
 import {opts} from "../logger";
 
-import {getUserMarket} from "./market";
+import Cave from "../models/cave";
 
 import urls from "../constants/urls";
 
@@ -23,10 +23,11 @@ export default function (watcher: Watcher) {
     try {
       const state = store.getState();
       const credentials = state.session.credentials;
-      const cave = state.globalMarket.caves[caveId];
+      const {globalMarket, market} = watcher.getMarkets();
+      const cave = await globalMarket.getRepo(Cave).findOneById(caveId);
+
       const logPath = pathmaker.caveLogPath(caveId);
-      const userMarket = getUserMarket();
-      const game = await fetch.gameLazily(userMarket, credentials, cave.gameId, {game: cave.game});
+      const game = await fetch.gameLazily(market, credentials, cave.gameId);
 
       const gameLog = await sf.readFile(logPath, {encoding: "utf8"});
 

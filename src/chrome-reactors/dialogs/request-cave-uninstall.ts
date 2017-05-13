@@ -4,25 +4,25 @@ import * as actions from "../../actions";
 
 import * as invariant from "invariant";
 
+import CaveModel from "../../models/cave";
 import fetch from "../../util/fetch";
 
-import {ICaveRecord} from "../../types";
-
-// ¯\_(ツ)_/¯
-// TODO: use market state instead
-import {getGlobalMarket, getUserMarket} from "../../reactors/market";
+const debug = require("debug")("itch:reactors:dialogs:request-cave-uninstall");
 
 export default function (watcher: Watcher) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {
     const {caveId} = action.payload;
     const credentials = store.getState().session.credentials;
-    const globalMarket = getGlobalMarket();
-    const userMarket = getUserMarket();
+    const {globalMarket, market} = watcher.getMarkets();
+    if (!globalMarket || !market) {
+      debug(`missing markets!`);
+      return;
+    }
 
-    const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
+    const cave = await globalMarket.getRepo(CaveModel).findOneById(caveId);
     invariant(cave, "cave to uninstall exists");
 
-    const game = await fetch.gameLazily(userMarket, credentials, cave.gameId, {game: cave.game});
+    const game = await fetch.gameLazily(market, credentials, cave.gameId);
     invariant(game, "was able to fetch game properly");
     const {title} = game;
 

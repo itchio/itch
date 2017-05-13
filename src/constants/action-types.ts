@@ -4,6 +4,8 @@ import {Action} from "redux-actions";
 import * as Types from "../types";
 import {IProgressInfo} from "../types";
 
+import GameModel from "../models/game";
+
 export type IAction<T> = Action<T>;
 
 export interface IDispatch {
@@ -365,7 +367,7 @@ export interface IOpenTabContextMenuPayload {
 export const OPEN_GAME_CONTEXT_MENU = "OPEN_GAME_CONTEXT_MENU";
 export interface IOpenGameContextMenuPayload {
   /** game to open the context menu of */
-  game: Types.IGameRecord;
+  game: GameModel;
 }
 
 /** show a constant tab hidden for some users (press, dashboard, etc.) */
@@ -687,7 +689,7 @@ export interface IRecordGameInteractionPayload {}
 export const ABORT_GAME_REQUEST = "ABORT_GAME_REQUEST";
 export interface IAbortGameRequestPayload {
   /** the game we want to force-quit */
-  game: Types.IGameRecord;
+  game: GameModel;
 }
 
 export const ABORT_LAST_GAME = "ABORT_LAST_GAME";
@@ -778,7 +780,7 @@ export interface IViewCaveDetailsPayload {
 export const QUEUE_GAME = "QUEUE_GAME";
 export interface IQueueGamePayload {
   /** the game we want to download */
-  game: Types.IGameRecord;
+  game: GameModel;
 
   /** when manually picking which upload to download, the id of the upload the user picked */
   pickedUpload?: number;
@@ -795,7 +797,7 @@ export interface IQueueGamePayload {
 /** Buy / support something! */
 export const INITIATE_PURCHASE = "INITIATE_PURCHASE";
 export interface IInitiatePurchasePayload {
-  game: Types.IGameRecord;
+  game: GameModel;
 }
 
 export const PURCHASE_COMPLETED = "PURCHASE_COMPLETED";

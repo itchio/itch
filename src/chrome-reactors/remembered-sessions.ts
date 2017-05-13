@@ -1,7 +1,8 @@
 
 import {Watcher} from "./watcher";
 
-import {app} from "electron";
+import * as electron from "electron";
+const {app} = electron.remote;
 import sf from "../util/sf";
 import * as ospath from "path";
 
@@ -65,7 +66,7 @@ async function saveSession (store: IStore, userId: string, record: any) {
 }
 
 export default function (watcher: Watcher) {
-  watcher.on(actions.firstWindowReady, async (store, action) => {
+  watcher.onMount(async (store, action) => {
     await loadRememberedSessions(store);
   });
 
