@@ -30,8 +30,6 @@ export const uiColors = {
   border: "#404040",
   borderFocused: "#676767",
 
-  prefBorder: baseColors.zambezi,
-
   // FIXME: no pure blacks
   textShadow: "#000000",
   boxShadow: "#1b1919",
@@ -90,6 +88,8 @@ export const colors = {
 
   tooltipBackground: baseColors.swissCoffee,
   tooltipText: baseColors.codGray,
+
+  prefBorder: baseColors.zambezi,
 };
 
 export const fontSizes = {
@@ -331,4 +331,13 @@ export const emptyMeat = () => css`
   margin: 20px;
   color: ${props => props.theme.secondaryText};
   font-size: ${props => props.theme.fontSizes.large};
+`;
+
+export const prefChunk = () => css`
+  border-left: 3px solid ${props => props.theme.prefBorder};
+  transition: 0.2s border ease-in-out;
+`;
+
+export const prefChunkActive = () => css`
+  border-left: 3px solid ${props => props.theme.accent};
 `;

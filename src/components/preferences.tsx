@@ -10,6 +10,8 @@ import * as classNames from "classnames";
 import urls from "../constants/urls";
 
 import Icon from "./basics/icon";
+import LoadingCircle from "./basics/loading-circle";
+import IconButton from "./basics/icon-button";
 import SelectRow from "./basics/select-row";
 
 import OpenAtLoginError from "./preferences/open-at-login-error";
@@ -26,6 +28,253 @@ import {dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
 // TODO: split into smaller components
+
+import styled, * as styles from "./styles";
+
+const PreferencesDiv = styled.div`
+  ${styles.meat()}
+
+  overflow-y: auto;
+  padding: 0px 20px 30px 20px;
+  font-size: 20px;
+
+  color: ${props => props.theme.baseText};
+
+  .heading, h2 {
+    font-size: 18px;
+  }
+
+  h2 {
+    padding: 10px 15px;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    flex-shrink: 0;
+
+    &.toggle {
+      padding-bottom: 0;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .icon.turner {
+    display: inline-block;
+    width: 15px;
+    text-align: center;
+    transform: rotateZ(0deg);
+    transition: transform 0.2s ease-in-out;
+
+    &.turned {
+      transform: rotateZ(90deg);
+    }
+  }
+
+  .preferences-background {
+    position: absolute;
+    right: 0px;
+    top: 30px;
+  }
+
+  .preferences-form {
+    z-index: 5;
+  }
+
+  .select-row {
+    display: inline-block;
+  }
+
+  .select-row select {
+    margin-left: 2px;
+  }
+
+  .buttons {
+    float: right;
+    opacity: .7;
+
+    &:hover {
+      opacity: 1;
+      cursor: hand;
+    }
+  }
+
+  .security-form, .behavior-form, .notifications-form, .language-form, .advanced-form {
+    flex-shrink: 0;
+
+    label {
+      background: ${props => props.theme.explanation};
+      padding: 8px 11px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+
+      ${styles.prefChunk()}
+
+      &.active {
+        ${styles.prefChunkActive()};
+      }
+
+      input[type=checkbox] {
+        margin-right: 8px;
+      }
+    }
+
+    .icon-lab-flask {
+      margin-left: 8px;
+    }
+  }
+
+  .advanced-form {
+    .section {
+      margin: 8px 0;
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .explanation {
+    padding: 0 15px;
+    margin: 15px 0 0 0;
+
+    color: #b9b9b9;
+    font-size: 14px;
+    max-width: 500px;
+    border-radius: $explanation-border-radius;
+    line-height: 1.6;
+
+    &.drop-down {
+      animation: soft-drop .8s;
+    }
+
+    &.flex {
+      display: flex;
+      flex-shrink: 0;
+
+      a, .link {
+        margin-left: 8px;
+        display: flex;
+      }
+    }
+
+    a, .link {
+      text-decoration: underline;
+      color: #ececec;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .link-box {
+    margin: 20px 15px;
+    font-size: 80%;
+
+    .icon {
+      margin-right: 8px;
+    }
+
+    a {
+      color: #87A7C3;
+      text-decoration: none;
+    }
+  }
+
+  .preferences-background {
+    @include icon-as-background;
+  }
+
+  .proxy-settings {
+    display: flex;
+    align-items: center;
+    padding: 5px 0 5px 0;
+
+    .value {
+      min-width: 150px;
+      background: $explanation-color;
+      padding: 0 5px;
+      margin: 0 5px;
+      height: 32px;
+      line-height: 32px;
+      color: $ivory;
+      -webkit-user-select: initial;
+    }
+  }
+
+  .install-locations {
+    width: 100%;
+    font-size: 14px;
+    border-collapse: collapse;
+    background-color: $explanation-color;
+
+    td {
+      padding: 10px 15px;
+      text-align: left;
+
+      &:first-child {
+        @include pref-chunk;
+      }
+    }
+
+    tr.default {
+      td {
+        &:first-child {
+          @include pref-chunk-active;
+        }
+      }
+    }
+
+    tr.header {
+      td {
+        background: $pref-border-color;
+        color: $base-text-color;
+      }
+    }
+
+    td {
+      color: #999;
+    }
+
+    .borderless {
+      td {
+        border: none;
+      }
+    }
+
+    .action {
+      color: white;
+
+      .single-line {
+        @include single-line;
+        width: 100%;
+      }
+
+      .default-state {
+        color: #999;
+        margin-left: 8px;
+      }
+
+      .icon {
+        -webkit-filter: brightness(70%);
+      }
+
+      .icon-plus, .icon-refresh, .icon-stopwatch, .icon-folder, .icon-star, .icon-star2 {
+        font-size: 80%;
+        margin-right: 8px;
+      }
+
+      &:hover {
+        .icon {
+          -webkit-filter: none;
+        }
+        cursor: pointer;
+      }
+    }
+  }
+`;
 
 export class Preferences extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
@@ -48,18 +297,24 @@ export class Preferences extends React.Component<IProps & IDerivedProps & I18nPr
     const badgeLang = lang ? lang.substr(0, 2) : "en";
     const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itch/${badgeLang}/svg-badge.svg`;
 
-    return <div className="preferences-meat">
+    return <PreferencesDiv>
       <h2>{t("preferences.language")}</h2>
       <div className="language-form">
         <label className="active">
           <SelectRow onChange={this.onLanguageChange.bind(this)} options={options} value={lang || "__"}/>
 
-          <div className="locale-fetcher" onClick={(e) => { e.preventDefault(); queueLocaleDownload({lang}); }}>
-            {downloading
-              ? <Icon icon="download" classes={["scan"]}/>
-              : <Icon icon="repeat"/>
-            }
-          </div>
+          {
+            downloading
+            ? <LoadingCircle progress={0.3}/>
+            : <IconButton
+                icon="repeat"
+                onClick={(e) => {
+                  e.preventDefault();
+                  queueLocaleDownload({lang});
+                }}
+              />
+          }
+          
         </label>
       </div>
 
@@ -152,7 +407,7 @@ export class Preferences extends React.Component<IProps & IDerivedProps & I18nPr
       {showAdvanced
       ? this.renderAdvanced()
       : ""}
-    </div>;
+    </PreferencesDiv>;
   }
 
   renderAdvanced () {
@@ -344,12 +599,11 @@ export default connect<IProps>(Preferences, {
     installLocations: createSelector(
       (state: IAppState) => state.preferences.installLocations,
       (state: IAppState) => state.preferences.defaultInstallLocation,
-      (state: IAppState) => state.globalMarket.caves,
       (state: IAppState) => state.system.homePath,
       (state: IAppState) => state.system.userDataPath,
       (state: IAppState) => state.system.diskInfo,
-      (locInfos, defaultLoc, caves, homePath, userDataPath, diskInfo) => {
-        if (!locInfos || !caves) {
+      (locInfos, defaultLoc, homePath, userDataPath, diskInfo) => {
+        if (!locInfos) {
           return {};
         }
 
@@ -365,17 +619,18 @@ export default connect<IProps>(Preferences, {
             return;
           }
 
-          const isAppData = (name === "appdata");
-
           let itemCount = 0;
           let size = 0;
-          each(caves, (cave) => {
-            // TODO: handle per-user appdata ?
-            if (cave.installLocation === name || (isAppData && !cave.installLocation)) {
-              size += (cave.installedSize || 0);
-              itemCount++;
-            }
-          });
+
+          // const isAppData = (name === "appdata");
+          // FIXME: what about caves?
+          // each(caves, (cave) => {
+          //   // TODO: handle per-user appdata ?
+          //   if (cave.installLocation === name || (isAppData && !cave.installLocation)) {
+          //     size += (cave.installedSize || 0);
+          //     itemCount++;
+          //   }
+          // });
 
           return {
             ...locInfo,

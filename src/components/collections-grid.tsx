@@ -38,6 +38,10 @@ const HubCollectionsGrid = styled.div`
   flex-grow: 1;
 `;
 
+const StyledGrid = styled(Grid)`
+  outline: none;
+`;
+
 export class CollectionsGrid extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
@@ -59,7 +63,7 @@ export class CollectionsGrid extends React.Component<IProps & IDerivedProps & I1
           const rowHeight = 260;
           const scrollTop = height === 0 ? 0 : this.state.scrollTop;
 
-          return <Grid
+          return <StyledGrid
             ref="grid"
             cellRenderer={this.cellRenderer.bind(this, {collections, columnCount})}
             width={width}
