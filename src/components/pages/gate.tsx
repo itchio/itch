@@ -325,6 +325,7 @@ export class GatePage extends React.Component<IProps & IDerivedProps & I18nProps
         ? [
           <span key="separator">{" · "}</span>,
           <Link
+            key="show-saved-logins"
             label={t("login.action.show_saved_logins")}
             onClick={() => this.props.loginStartPicking({})}
           />,

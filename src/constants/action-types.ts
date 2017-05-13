@@ -812,11 +812,6 @@ export interface IEncourageGenerosityPayload {
   level: Types.GenerosityLevel;
 }
 
-export const INITIATE_SHARE = "INITIATE_SHARE";
-export interface IInitiateSharePayload {
-  url: string;
-}
-
 /** macOS-only, bounce dock */
 export const BOUNCE = "BOUNCE";
 export interface IBouncePayload {}

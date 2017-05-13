@@ -15,7 +15,6 @@ import {
   INITIATE_PURCHASE, IInitiatePurchasePayload,
   PURCHASE_COMPLETED, IPurchaseCompletedPayload,
   ENCOURAGE_GENEROSITY, IEncourageGenerosityPayload,
-  INITIATE_SHARE, IInitiateSharePayload,
 
   ABORT_GAME_REQUEST, IAbortGameRequestPayload,
   ABORT_LAST_GAME, IAbortLastGamePayload,
@@ -46,7 +45,6 @@ export const queueCaveUninstall = createAction<IQueueCaveUninstallPayload>(QUEUE
 export const queueCaveReinstall = createAction<IQueueCaveReinstallPayload>(QUEUE_CAVE_REINSTALL);
 export const initiatePurchase = createAction<IInitiatePurchasePayload>(INITIATE_PURCHASE);
 export const encourageGenerosity = createAction<IEncourageGenerosityPayload>(ENCOURAGE_GENEROSITY);
-export const initiateShare = createAction<IInitiateSharePayload>(INITIATE_SHARE);
 export const purchaseCompleted = createAction<IPurchaseCompletedPayload>(PURCHASE_COMPLETED);
 
 export const abortGameRequest = createAction<IAbortGameRequestPayload>(ABORT_GAME_REQUEST);

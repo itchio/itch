@@ -10,15 +10,23 @@ import {IMarketGetter} from "../fetchers/types";
 import DashboardFetcher from "../fetchers/dashboard-fetcher";
 import CollectionsFetcher from "../fetchers/collections-fetcher";
 
+import GameFetcher from "../fetchers/game-fetcher";
+import CollectionFetcher from "../fetchers/collection-fetcher";
+
 const staticFetchers = {
   "dashboard": DashboardFetcher,
   "collections": CollectionsFetcher,
 };
 
+const pathFetchers = {
+  "games": GameFetcher,
+  "collections": CollectionFetcher,
+};
+
 export function queueFetch (store: IStore, tabId: string, reason: FetchReason, getMarkets: IMarketGetter) {
   debug(`Queuing fetch for "${tabId}" because ${reason}`);
 
-  const fetcherClass = getFetcherClass(tabId);
+  const fetcherClass = getFetcherClass(store, tabId);
   if (!fetcherClass) {
     debug(`No fetcher for "${tabId}", nothing to do`);
     return;
@@ -29,11 +37,22 @@ export function queueFetch (store: IStore, tabId: string, reason: FetchReason, g
   fetcher.start();
 }
 
-function getFetcherClass(tabId): typeof Fetcher {
+function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
   let staticFetcher = staticFetchers[tabId];
   if (staticFetcher) {
     return staticFetcher;
   }
+
+  const path = store.getState().session.navigation.tabData[tabId].path;
+  if (path) {
+    const pathBase = path.substr(0, path.indexOf("/"));
+    debug(`path base = ${pathBase}`);
+    const pathFetcher = pathFetchers[pathBase];
+    if (pathFetcher) {
+      return pathFetcher;
+    }
+  }
+
   return null;
 }
 

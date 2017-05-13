@@ -1,5 +1,7 @@
 // This file is the entry point for renderer processes
 
+require("debug");
+
 import "./boot/bluebird";
 import "./boot/fs";
 import "./boot/sniff-language";

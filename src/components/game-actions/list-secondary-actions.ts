@@ -57,15 +57,6 @@ function purchaseAction (game: IGameRecord, downloadKey: IDownloadKey, t: ILocal
   }
 }
 
-function shareAction (game: IGameRecord): IActionOpts {
-  return {
-    label: ["grid.item.share"],
-    icon: "share",
-    classes: ["generous"],
-    action: actions.initiateShare({url: game.url}),
-  };
-}
-
 function uninstallAction (caveId: string): IActionOpts {
   return {
     label: ["grid.item.uninstall"],
@@ -100,7 +91,6 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
     if (canBeBought) {
       items.push(purchaseAction(game, downloadKey, t));
     }
-    items.push(shareAction(game));
 
     items.push({
       type: "separator",
@@ -166,8 +156,6 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
     if (!mainIsPurchase && canBeBought) {
       items.push(purchaseAction(game, downloadKey, t));
     }
-
-    items.push(shareAction(game));
 
     items.push({
       type: "separator",

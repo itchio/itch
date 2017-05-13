@@ -8,7 +8,7 @@ import normalize from "../util/normalize";
 import {arrayOf} from "idealizr";
 import {collection} from "../util/schemas";
 
-import {indexBy} from "underscore";
+import {indexBy, each, map} from "underscore";
 
 export default class CollectionsFetcher extends Fetcher {
   constructor () {

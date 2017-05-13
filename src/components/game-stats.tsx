@@ -16,8 +16,12 @@ import Icon from "./basics/icon";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
+import CaveModel from "../models/cave";
+import GameModel from "../models/game";
+import DownloadKeyModel from "../models/download-key";
+
 import {
-  IAppState, IUserMarketState,
+  IAppState,
   IGameRecord, ICaveRecord, IDownloadKey,
 } from "../types";
 
@@ -119,7 +123,9 @@ export class GameStats extends React.Component<IProps & IDerivedProps & I18nProp
 }
 
 interface IProps {
-  game: IGameRecord;
+  game: GameModel;
+  downloadKey: DownloadKeyModel;
+  cave: CaveModel;
   mdash?: boolean;
 }
 
@@ -128,16 +134,4 @@ interface IDerivedProps {
   downloadKey: IDownloadKey;
 }
 
-export default connect<IProps>(GameStats, {
-  state: () => {
-    return createSelector(
-      (state: IAppState, props: IProps) => state.market,
-      (state: IAppState, props: IProps) => state.globalMarket,
-      (state: IAppState, props: IProps) => props.game,
-      (userMarket, globalMarket, game) => ({
-        downloadKey: findWhere((userMarket || {} as IUserMarketState).downloadKeys || {}, { gameId: game.id }),
-        cave: globalMarket.cavesByGameId[game.id],
-      }),
-    );
-  },
-});
+export default connect<IProps>(GameStats);
