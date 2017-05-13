@@ -6,7 +6,8 @@ import format from "../util/format";
 
 import actionForGame from "../util/action-for-game";
 
-import {IGameRecord, ICaveRecord} from "../types";
+import GameModel from "../models/game";
+import CaveModel from "../models/cave";
 
 class TotalPlaytime extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
@@ -35,8 +36,8 @@ class TotalPlaytime extends React.Component<IProps & IDerivedProps & I18nProps, 
 }
 
 interface IProps {
-  game: IGameRecord;
-  cave: ICaveRecord;
+  game: GameModel;
+  cave: CaveModel;
   short?: boolean;
 }
 

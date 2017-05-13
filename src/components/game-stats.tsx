@@ -1,8 +1,6 @@
 
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
-import {createSelector} from "reselect";
-import {findWhere} from "underscore";
 
 import interleave from "./interleave";
 
@@ -20,18 +18,13 @@ import CaveModel from "../models/cave";
 import GameModel from "../models/game";
 import DownloadKeyModel from "../models/download-key";
 
-import {
-  IAppState,
-  IGameRecord, ICaveRecord, IDownloadKey,
-} from "../types";
-
 import styled from "./styles";
 
 const GameStatsDiv = styled.div`
   display: flex;
   flex-direction: column;
   font-size: 14px;
-  color: $secondary-text-color;
+  color: ${props => props.theme.secondaryText};
   padding: 16px 0;
   line-height: 1.8;
   flex-shrink: 0;
@@ -44,7 +37,7 @@ const GameStatsDiv = styled.div`
     color: #B3B2B7; // FIXME: exceptions bad
 
     .nice-ago {
-      color: $secondary-text-color; // sigh
+      color: ${props => props.theme.secondaryText}; // sigh
     }
 
     &.original-price {
@@ -65,7 +58,7 @@ const GameStatsDiv = styled.div`
 
 export class GameStats extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
-    const {t, cave, game = {} as IGameRecord, downloadKey, mdash = true} = this.props;
+    const {t, cave, game = {} as GameModel, downloadKey, mdash = true} = this.props;
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
 
@@ -129,9 +122,6 @@ interface IProps {
   mdash?: boolean;
 }
 
-interface IDerivedProps {
-  cave?: ICaveRecord;
-  downloadKey: IDownloadKey;
-}
+interface IDerivedProps {}
 
 export default connect<IProps>(GameStats);
