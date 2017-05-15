@@ -79,6 +79,10 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
 
     const hint = this.hint(task);
 
+    if (!label) {
+      return <div/>;
+    }
+
     return <Button
       className={className}
       icon={icon}

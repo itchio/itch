@@ -59,7 +59,7 @@ class GameGrid extends React.Component<IProps & IDerivedProps & I18nProps, IStat
           columnCount={columnCount}
           rowCount={rowCount}
           rowHeight={rowHeight}
-          overscanRowCount={10}
+          overscanRowCount={3}
           onScroll={(e: any) => {
             // ignore data when tab's hidden
             if (e.clientHeight <= 0) { return; }

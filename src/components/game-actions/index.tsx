@@ -1,6 +1,4 @@
 
-import {} from "redux-actions";
-
 import * as React from "react";
 import * as classNames from "classnames";
 
@@ -18,8 +16,10 @@ import MainAction from "./main-action";
 import SecondaryActions from "./secondary-actions";
 
 import {IActionsInfo} from "./types";
+import GameModel from "../../models/game";
+import CaveModel from "../../models/cave";
 import {
-  IAppState, IGameRecord, ICaveRecord, IDownloadKey,
+  IAppState, IDownloadKey,
   IDownloadItem, ITask, IGameUpdate, IGameUpdatesState,
 } from "../../types";
 
@@ -75,11 +75,10 @@ class GameActions extends React.Component<IProps & IDerivedProps & I18nProps, vo
 }
 
 interface IProps {
-  game: IGameRecord;
+  game: GameModel;
   showSecondary?: boolean;
   CustomSecondary?: typeof React.Component;
-  /** if not specified, will be looked up from game */
-  cave?: ICaveRecord;
+  cave?: CaveModel;
 
   vertical?: boolean;
 }
@@ -90,14 +89,13 @@ interface IDerivedProps extends IActionsInfo {
   platformCompatible: boolean;
   progress: number;
   cancellable: boolean;
-  cave: ICaveRecord;
   pressDownload: boolean;
   update: IGameUpdate;
 }
 
 interface IHappenings {
-  game: IGameRecord;
-  cave: ICaveRecord;
+  game: GameModel;
+  cave: CaveModel;
   downloadKeys: {
     [id: string]: IDownloadKey;
   };

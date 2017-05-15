@@ -588,6 +588,13 @@ export interface IAppState {
     downloads: IDownloadsState;
     status: IStatusState;
     gameUpdates: IGameUpdatesState;
+    queries: IQueriesState;
+}
+
+export interface IQueriesState {
+    [key: string]: {
+        [key: string]: any[],
+    };
 }
 
 export interface IHistoryItemOption {

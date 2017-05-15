@@ -10,6 +10,7 @@ import contextMenu from "./context-menu";
 import rememberedSessions from "./remembered-sessions";
 import session from "./session";
 import navigation from "./navigation";
+import querier from "./querier";
 
 let watcher = new Watcher();
 watcher.getMarkets = getMarkets;
@@ -22,6 +23,7 @@ contextMenu(watcher);
 rememberedSessions(watcher);
 session(watcher);
 navigation(watcher);
+querier(watcher);
 
 watcher.validate();
 

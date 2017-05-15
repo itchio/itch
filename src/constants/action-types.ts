@@ -6,6 +6,8 @@ import {IProgressInfo} from "../types";
 
 import GameModel from "../models/game";
 
+import {IQueryTable} from "../chrome-reactors/querier";
+
 export type IAction<T> = Action<T>;
 
 export interface IDispatch {
@@ -1039,4 +1041,24 @@ export const PROXY_SETTINGS_DETECTED = "PROXY_SETTINGS_DETECTED";
 export interface IProxySettingsDetectedPayload {
   proxy: string;
   source: Types.ProxySource;
+}
+
+export const REGISTER_QUERY = "REGISTER_QUERY";
+export interface IRegisterQueryPayload {
+  loadId: number;
+  query: IQueryTable;
+}
+
+export const LIBERATE_QUERY = "LIBERATE_QUERY";
+export interface ILiberateQueryPayload {
+  loadId: number;
+}
+
+export const FETCHED_QUERY = "FETCHED_QUERY";
+export interface IFetchedQueryPayload {
+  data: {
+    [key: string]: {
+      [queryParam: string]: any[];
+    }
+  };
 }

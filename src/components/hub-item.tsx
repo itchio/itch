@@ -9,39 +9,18 @@ import * as actions from "../actions";
 import GameActions from "./game-actions";
 import Cover from "./basics/cover";
 
-import {IGameRecord, ICaveRecord} from "../types";
+import GameModel from "../models/game";
+import CaveModel from "../models/cave";
 import {dispatcher, multiDispatcher} from "../constants/action-types";
 
 import styled, * as styles from "./styles";
 
-const HubItemDiv = styled.div`
-  ${styles.inkContainer()};
-  ${styles.hubItemStyle()};
-  margin: .5em;
-  cursor: default;
+import load from "./load";
 
-  &.dull {
-    -webkit-filter: grayscale(95%);
-    opacity: .4;
-  }
-`;
-
-const UnderCover = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-
-  padding: 0.5em 0.5em 0.25em 0.5em;
-
-  .title {
-    ${styles.singleLine()};
-    font-size: ${styles.fontSizes.large};
-    padding: .4em 0;
-    margin: 0 0 4px 0;
-    text-shadow: 0 0 1px ${props => props.theme.inputTextShadow};
-  }
-`;
-
+@load((props) => ({
+  caves: {source: "cavesByGameId", query: props.game.id},
+  downloadKeys: {source: "downloadKeysByGameId", query: props.game.id},
+}))
 export class HubItem extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
@@ -100,9 +79,37 @@ export class HubItem extends React.Component<IProps & IDerivedProps & I18nProps,
   }
 }
 
+const HubItemDiv = styled.div`
+  ${styles.inkContainer()};
+  ${styles.hubItemStyle()};
+  margin: .5em;
+  cursor: default;
+
+  &.dull {
+    -webkit-filter: grayscale(95%);
+    opacity: .4;
+  }
+`;
+
+const UnderCover = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+
+  padding: 0.5em 0.5em 0.25em 0.5em;
+
+  .title {
+    ${styles.singleLine()};
+    font-size: ${styles.fontSizes.large};
+    padding: .4em 0;
+    margin: 0 0 4px 0;
+    text-shadow: 0 0 1px ${props => props.theme.inputTextShadow};
+  }
+`;
+
 interface IProps {
-  game: IGameRecord;
-  cave?: ICaveRecord;
+  game: GameModel;
+  cave?: CaveModel;
   searchScore?: number;
 }
 

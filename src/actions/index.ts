@@ -18,6 +18,7 @@ export * from "./self-update-actions"
 export * from "./install-locations-actions"
 export * from "./modal-actions"
 export * from "./preference-actions"
+export * from "./query-actions"
 
 import { createAction } from "redux-actions";
 

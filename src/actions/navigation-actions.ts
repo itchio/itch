@@ -2,7 +2,8 @@
 import { createAction } from "redux-actions";
 import { userToTabData, gameToTabData, collectionToTabData } from "../util/navigation";
 
-import { IGameRecord, IUserRecord, ICollectionRecord } from "../types";
+import { IUserRecord, ICollectionRecord } from "../types";
+import GameModel from "../models/game";
 
 import * as uuid from "uuid";
 
@@ -60,7 +61,7 @@ export const openTab = (payload: IOpenTabPayload) => {
 }
 export const focusNthTab = createAction<IFocusNthTabPayload>(FOCUS_NTH_TAB);
 
-export const navigateToGame = (game: IGameRecord, background = false) =>
+export const navigateToGame = (game: GameModel, background = false) =>
   navigate(`games/${game.id}`, gameToTabData(game), background);
 export const navigateToUser = (user: IUserRecord, background = false) =>
   navigate(`users/${user.id}`, userToTabData(user), background);
