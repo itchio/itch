@@ -26,9 +26,12 @@ export default class GameFetcher extends Fetcher {
     const gameRepo = market.getRepo(Game);
     let localGame = await gameRepo.findOneById(gameId);
     let pushGame = (game: Game) => {
+      if (!game) {
+        return;
+      }
       this.push({
         games: {
-          [gameId]: localGame,
+          [gameId]: game,
         },
       });
     };
@@ -57,7 +60,7 @@ export default class GameFetcher extends Fetcher {
     }
 
     this.debug(`normalized: `, normalized);
-    pushGame(gameRepo.merge(normalized.entities.games[normalized.result.gameId]));
+    pushGame(normalized.entities.games[normalized.result.gameId]);
 
     return new Outcome("success");
   }

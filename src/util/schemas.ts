@@ -6,10 +6,11 @@ export const user = new Schema("users");
 export const collection = new Schema("collections");
 export const downloadKey = new Schema("downloadKeys");
 
-import moment = require("moment-timezone");
-
 function parseDate(input: string) {
-  return moment(`${input} +0000`, "YYYY-MM-DD HH:mm:ss Z").toDate();
+  // without `+0` it parses a local date - this is the fastest
+  // way to parse a UTC date.
+  // see https://jsperf.com/parse-utc-date
+  return new Date(input + "+0");
 }
 
 const date = transform(parseDate);
