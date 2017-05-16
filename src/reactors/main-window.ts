@@ -171,12 +171,6 @@ async function createWindow (store: IStore, hidden: boolean) {
 
   window.on("ready-to-show", (e: any) => {
     log(opts, "Ready to show!");
-    if (parseInt(process.env.DEVTOOLS, 10) > 0) {
-      log(opts, "Opening devtools");
-      window.webContents.openDevTools({mode: "detach"});
-    } else {
-      log(opts, "No devtools");
-    }
 
     createLock = false;
     if (firstWindow) {
@@ -194,6 +188,12 @@ async function createWindow (store: IStore, hidden: boolean) {
     }
   });
 
+  if (parseInt(process.env.DEVTOOLS, 10) > 0) {
+    log(opts, "Opening devtools");
+    window.webContents.openDevTools({mode: "detach"});
+  } else {
+    log(opts, "No devtools");
+  }
 
   const rootDir = resolve(__dirname, "..");
   log(opts, `rootDir is ${rootDir}`);

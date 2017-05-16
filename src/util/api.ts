@@ -80,7 +80,7 @@ export class Client {
     await cooldown();
     const t2 = Date.now();
 
-    const resp = await this.netStack.request(method, uri, data);
+    const resp = await this.netStack.request(method, uri, data, {});
     const body = resp.body;
     const t3 = Date.now();
 
@@ -94,15 +94,7 @@ export class Client {
     if (body.errors) {
       throw new ApiError(body.errors);
     }
-    const camelBody = camelifyObject(body);
-    for (const key in transformers) {
-      if (!transformers.hasOwnProperty(key)) {
-        continue;
-      }
-      camelBody[key] = transformers[key](camelBody[key]);
-    }
-
-    return camelBody;
+    return body;
   }
 
   /**
@@ -140,11 +132,13 @@ export class Client {
   }
 
   isNetworkError (errorObject: any): boolean {
-    return errorObject.message === "net::ERR_INTERNET_DISCONNECTED" ||
-           errorObject.message === "net::ERR_PROXY_CONNECTION_FAILED" || 
-           errorObject.message === "net::ERR_CONNECTION_RESET" ||
-           errorObject.message === "net::ERR_CONNECTION_CLOSE" ||
-           errorObject.message === "Request timed out";
+    const msg = errorObject.message;
+    return msg === "net::ERR_INTERNET_DISCONNECTED" ||
+           msg === "net::ERR_PROXY_CONNECTION_FAILED" || 
+           msg === "net::ERR_CONNECTION_RESET" ||
+           msg === "net::ERR_CONNECTION_CLOSE" ||
+           msg === "Request timed out" ||
+           msg === "Failed to fetch";
   }
 }
 
@@ -197,7 +191,7 @@ export class AuthenticatedClient {
    * Retrieve download keys linked to this account
    */
   async myOwnedKeys (data = {}): Promise<IMyOwnedKeysResult> {
-    return await this.request("get", "/my-owned-keys", data, {ownedKeys: ensureArray});
+    return await this.request("get", "/my-owned-keys", data, {owned_keys: ensureArray});
   }
 
   /**
@@ -242,9 +236,9 @@ export class AuthenticatedClient {
       extras: IListUploadsExtras = {}): Promise<IListUploadsResponse> {
     // TODO: adjust API to support download_key_id
     if (downloadKey) {
-      return await this.request("get", `/download-key/${downloadKey.id}/uploads`, extras, { uploads: ensureArray });
+      return await this.request("get", `/download-key/${downloadKey.id}/uploads`, extras, {uploads: ensureArray});
     } else {
-      return await this.request("get", `/game/${gameID}/uploads`, extras, { uploads: ensureArray });
+      return await this.request("get", `/game/${gameID}/uploads`, extras, {uploads: ensureArray});
     }
   }
 

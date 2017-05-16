@@ -34,7 +34,6 @@ export class Collection extends React.Component<IProps & IDerivedProps & I18nPro
     }
 
     const {gameIds} = collection;
-    console.log(`gameIds = `, gameIds);
     const games = filter(map(gameIds, (gameId) => tabGames[gameId]), (x) => !!x);
 
     const tab = tabPath;

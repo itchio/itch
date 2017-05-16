@@ -100,10 +100,10 @@ export default connect<IProps>(Games, {
       state.session.navigation.filters[props.tab] || "";
     const getGames = (state: IAppState, props: IProps) =>
       props.games;
-    // TODO db
+    // TODO: db
     const getCavesByGameId = (state: IAppState, props: IProps) =>
       /* state.globalMarket.cavesByGameId */ ({});
-    // TODO db
+    // TODO: db
     const getDownloadKeysByGameId = (state: IAppState, props: IProps) =>
       /* state.market.downloadKeysByGameId */ ({});
 

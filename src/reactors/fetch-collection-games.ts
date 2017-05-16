@@ -19,7 +19,7 @@ async function fetchSingleCollectionGames
   store.dispatch(actions.collectionGamesFetched({collectionId, fetchedAt: Date.now()}));
 }
 
-// TODO db
+// TODO: db
 // let collectionsWatcher: (state: IAppState) => void;
 // const makeCollectionsWatcher = (store: IStore) => {
 //   let oldIds: string[] = [];
@@ -61,7 +61,7 @@ export default function (watcher: Watcher) {
     }
   });
 
-  // TODO db
+  // TODO: db
   // watcher.on(actions.userDbCommit, async (store, action) => {
   //   if (!collectionsWatcher) {
   //     collectionsWatcher = makeCollectionsWatcher(store);

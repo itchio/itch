@@ -112,9 +112,9 @@ export default connect<IProps>(GameActions, {
     const selector = createSelector(
       createStructuredSelector({
         game: (state: IAppState, props: IProps) => props.game,
-        // TODO db
+        // TODO: db
         cave: (state: IAppState, props: IProps) => props.cave /* || state.globalMarket.cavesByGameId[props.game.id] */,
-        // TODO db
+        // TODO: db
         downloadKeys: (state: IAppState, props: IProps) => ({}) /* state.market.downloadKeys */,
         tasks: (state: IAppState, props: IProps) => state.tasks.tasksByGameId[props.game.id],
         downloads: (state: IAppState, props: IProps) => state.downloads.downloadsByGameId[props.game.id],

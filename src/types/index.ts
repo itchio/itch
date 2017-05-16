@@ -6,6 +6,7 @@ import {ObjectType, Repository} from "typeorm";
 
 import GameModel from "../models/game";
 import CollectionModel from "../models/collection";
+import DownloadKeyModel from "../models/download-key";
 
 export interface IStore extends Store<IAppState> {}
 
@@ -233,6 +234,8 @@ export interface ITabData {
 
     gameIndices?: number[];
 
+    downloadKeys?: IDownloadKeysMap;
+
     /** collections in relation to this tab */
     collections?: ICollectionRecordSet;
 
@@ -350,7 +353,7 @@ export interface ICaveRecord extends ICaveRecordLocation {
     game: IGameRecord;
 
     /** download key what was used to install this game, if any */
-    downloadKey: IDownloadKey;
+    downloadKey: DownloadKeyModel;
 
     /** true if the upload to install was hand-picked */
     handPicked?: boolean;
@@ -640,7 +643,7 @@ export interface IGameUpdate {
     recentUploads: IUploadRecord[];
 
     /** key we used to find uploads, and that should be used for downloads */
-    downloadKey: IDownloadKey;
+    downloadKey: DownloadKeyModel;
 
     /** true if wharf-enabled upgrade via butler */
     incremental?: boolean;
@@ -751,7 +754,7 @@ export interface IItchAppTabs {
 }
 
 export interface IDownloadKeysMap {
-    [id: string]: IDownloadKey;
+    [id: string]: DownloadKeyModel;
 }
 
 export type ProxySource = "os" | "env";
@@ -1167,7 +1170,7 @@ export interface IQueueDownloadOpts {
   handPicked?: boolean;
 
   /** download key used for downloading */
-  downloadKey?: IDownloadKey;
+  downloadKey?: DownloadKeyModel;
 
   /** existing cave record if we're upgrading */
   cave?: ICaveRecord;
@@ -1232,7 +1235,7 @@ export interface IStartTaskOpts {
   disableCache?: boolean;
   onProgress?: (info: any) => void;
   elevated?: boolean;
-  downloadKey?: IDownloadKey;
+  downloadKey?: DownloadKeyModel;
   handPicked?: boolean;
   installLocation?: string;
   becauseHeal?: boolean;
@@ -1320,7 +1323,7 @@ export interface IDownloadItem {
     handPicked?: boolean;
 
     /** if set, the download key we're using to download a particular upload */
-    downloadKey?: IDownloadKey;
+    downloadKey?: DownloadKeyModel;
 
     /** initial options passed to download */
     downloadOpts: IDownloadOpts;

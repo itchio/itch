@@ -46,9 +46,7 @@ export default function (loadSpecs: IQueryFunc = () => ({})) {
         this.__load_id = seed++;
       }
 
-      // console.log(`hey it mounted!`);
       const specs = loadSpecs(this.props);
-      console.log(`${this.__load_id} specs: ${JSON.stringify(specs)}`);
       this.context.store.dispatch(actions.registerQuery({
         loadId: this.__load_id,
         query: specs,
@@ -61,7 +59,6 @@ export default function (loadSpecs: IQueryFunc = () => ({})) {
         originalWillUnmount.call(this);
       }
 
-      console.log(`${this.__load_id} unmounting`);
       this.context.store.dispatch(actions.liberateQuery({
         loadId: this.__load_id,
       }));

@@ -24,6 +24,8 @@ const LibraryContainer = styled.div`
   ${styles.meat()}
 `;
 
+const tab = "library";
+
 export class Library extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {caves, recordGames, downloadKeys} = this.props;
@@ -91,9 +93,9 @@ interface IDerivedProps {
 
 export default connect<IProps>(Library, {
   state: createStructuredSelector({
-    // TODO db
+    // TODO: db
     caves: (state: IAppState) => /* state.globalMarket.caves || */ ({}),
-    recordGames: (state: IAppState) => /* state.market.games || */ ({}),
-    downloadKeys: (state: IAppState) => /* state.market.downloadKeys || */ ({}),
+    recordGames: (state: IAppState) => (state.session.tabData[tab] || {}).games,
+    downloadKeys: (state: IAppState) => (state.session.tabData[tab] || {}).downloadKeys,
   }),
 });

@@ -153,9 +153,9 @@ export default connect<IProps>(GameBrowserContext, {
       marketSelector,
       (cs: IContextSelectorResult) => {
         const game = cs.tabData.games[cs.gameId];
-        // TODO db
+        // TODO: db
         const downloadKey = null;
-        // TODO db
+        // TODO: db
         const cave = null;
         return { game, downloadKey, cave };
       },

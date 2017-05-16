@@ -9,6 +9,7 @@ import {IStore} from "../types";
 import {IMarketGetter} from "../fetchers/types";
 import DashboardFetcher from "../fetchers/dashboard-fetcher";
 import CollectionsFetcher from "../fetchers/collections-fetcher";
+import LibraryFetcher from "../fetchers/library-fetcher";
 
 import GameFetcher from "../fetchers/game-fetcher";
 import CollectionFetcher from "../fetchers/collection-fetcher";
@@ -16,6 +17,7 @@ import CollectionFetcher from "../fetchers/collection-fetcher";
 const staticFetchers = {
   "dashboard": DashboardFetcher,
   "collections": CollectionsFetcher,
+  "library": LibraryFetcher,
 };
 
 const pathFetchers = {
