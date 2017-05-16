@@ -1,12 +1,12 @@
 
 import * as React from "react";
-import {createSelector, createStructuredSelector} from "reselect";
 
 import {connect, I18nProps} from "./connect";
 
-import {IAppState, IFilteredGameRecord} from "../types";
 import {dispatcher, multiDispatcher} from "../constants/action-types";
 import * as actions from "../actions";
+
+import GameModel from "../models/game";
 
 import {AutoSizer, Table, Column} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";
@@ -34,7 +34,7 @@ interface IRowGetterParams {
 }
 
 interface ICellRendererParams {
-  cellData: IFilteredGameRecord;
+  cellData: GameModel;
   columnData: any;
   dataKey: string;
   isScrolling: boolean;
@@ -133,8 +133,8 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
 
   onRowClick (params: IRowHandlerParams) {
     const {e, index} = params;
-    const {sortedGames} = this.props;
-    const game = sortedGames[index].game;
+    const {games} = this.props;
+    const game = games[index];
 
     const rightButton = 2;
     if (e.button === rightButton) {
@@ -156,8 +156,7 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
   }
 
   coverRenderer (params: ICellRendererParams): JSX.Element | string {
-    const {cellData} = params;
-    const {game} = cellData;
+    const game = params.cellData;
     const {coverUrl, stillCoverUrl} = game;
 
     return <HoverBoard>
@@ -171,8 +170,7 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
   }
 
   titleRenderer (params: ICellRendererParams): JSX.Element | string {
-    const {cellData} = params;
-    const {game} = cellData;
+    const game = params.cellData;
     return <div className="title-column">
       <div className="title">{game.title}</div>
       <div className="description">{game.shortText}</div>
@@ -180,8 +178,7 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
   }
 
   publishedAtRenderer (params: ICellRendererParams): JSX.Element | string {
-    const {cellData} = params;
-    const {game} = cellData;
+    const game = params.cellData;
     const {publishedAt} = game;
     if (publishedAt) {
       return <TimeAgo date={publishedAt}/>;
@@ -191,8 +188,9 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
   }
 
   playtimeRenderer (params: ICellRendererParams): JSX.Element | string {
-    const {cellData} = params;
-    const {game, cave} = cellData;
+    const game = params.cellData;
+    // TODO: db
+    let cave = null;
 
     if (cave) {
       return <TotalPlaytime game={game} cave={cave} short={true}/>;
@@ -202,8 +200,9 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
   }
 
   lastPlayedRenderer (params: ICellRendererParams): JSX.Element | string {
-    const {cellData} = params;
-    const {game, cave} = cellData;
+    const game = params.cellData;
+    // TODO: db
+    let cave = null;
 
     if (cave) {
       return <LastPlayed game={game} cave={cave} short={true}/>;
@@ -297,7 +296,7 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
 
 interface IProps {
   // specified
-  games: IFilteredGameRecord[];
+  games: GameModel[];
   hiddenCount: number;
   tab: string;
 
@@ -307,7 +306,7 @@ interface IProps {
 }
 
 interface IDerivedProps {
-  sortedGames: IFilteredGameRecord[];
+  sortedGames: GameModel[];
 
   clearFilters: typeof actions.clearFilters;
   navigateToGame: typeof actions.navigateToGame;
@@ -319,48 +318,6 @@ interface IGameTableState {
 }
 
 export default connect<IProps>(GameTable, {
-  state: (initialState, initialProps) => {
-    const getGames = (state: IAppState, props: IProps) => props.games;
-    const getSortBy = (state: IAppState, props: IProps) => props.sortBy;
-    const getSortDirection = (state: IAppState, props: IProps) => props.sortDirection;
-
-    const getSortedGames = createSelector(
-      getGames,
-      getSortBy,
-      getSortDirection,
-      (games, sortBy, sortDirection) => {
-        if (sortBy && sortDirection) {
-          if (sortBy === "title") {
-            games = games.sort((a, b) => {
-              // case-insensitive sort for EN locale (bad for i18n but game titles may be in any language!)
-              return a.game.title.localeCompare(b.game.title, "en", { sensitivity: "base" });
-            });
-          } else if (sortBy === "publishedAt") {
-            games = _.sortBy(games, (record) => record.game.publishedAt);
-          } else if (sortBy === "secondsRun") {
-            games = _.sortBy(games, (record) => {
-              const { cave } = record;
-              return (cave && cave.secondsRun) || 0;
-            });
-          } else if (sortBy === "lastTouchedAt") {
-            games = _.sortBy(games, (record) => {
-              const { cave } = record;
-              return (cave && cave.lastTouched) || 0;
-            });
-          }
-
-          if (sortDirection === "DESC") {
-            games = games.reverse();
-          }
-        }
-        return games;
-      },
-    );
-
-    return createStructuredSelector({
-      sortedGames: getSortedGames,
-    });
-  },
   dispatch: (dispatch) => ({
     clearFilters: dispatcher(dispatch, actions.clearFilters),
     navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),

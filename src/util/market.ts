@@ -16,7 +16,7 @@ import CollectionModel from "../models/collection";
 import DownloadKeyModel from "../models/download-key";
 import CaveModel from "../models/cave";
 
-import deepEqual  = require("deep-equal");
+import compareRecords from "./compare-records";
 import * as _ from "underscore";
 
 import {
@@ -69,6 +69,9 @@ export default class Market extends EventEmitter implements IMarket {
       driver: {
         type: "sqlite",
         storage: dbPath + ".db",
+      },
+      logging: {
+        logQueries: true,
       },
       entities: Object.keys(modelMap).map((k) => modelMap[k]),
       autoSchemaSync: true,
@@ -174,7 +177,7 @@ export default class Market extends EventEmitter implements IMarket {
         let entity = entities[id];
         let existingEntity = existingEntities[id];
         if (existingEntity) {
-          if (deepEqual(existingEntity, entity)) {
+          if (compareRecords(existingEntity, entity)) {
             numUpToDate++;
             continue;
           }

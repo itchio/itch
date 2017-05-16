@@ -5,7 +5,7 @@ import {connect, I18nProps} from "./connect";
 import HubItem from "./hub-item";
 import HiddenIndicator from "./hidden-indicator";
 
-import {IFilteredGameRecord} from "../types";
+import GameModel from "../models/game";
 
 import {AutoSizer, Grid} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";
@@ -22,7 +22,7 @@ interface ICellInfo {
 
 interface ILayoutInfo {
   columnCount: number;
-  games: IFilteredGameRecord[];
+  games: GameModel[];
 }
 
 const StyledGrid = styled(Grid)`
@@ -76,7 +76,7 @@ class GameGrid extends React.Component<IProps & IDerivedProps & I18nProps, IStat
 
   cellRenderer(layout: ILayoutInfo, cell: ICellInfo): JSX.Element {
     const gameIndex = (cell.rowIndex * layout.columnCount) + cell.columnIndex;
-    const record = layout.games[gameIndex];
+    const game = layout.games[gameIndex];
 
     const style = cell.style;
     style.padding = "10px";
@@ -86,12 +86,10 @@ class GameGrid extends React.Component<IProps & IDerivedProps & I18nProps, IStat
 
     return <div key={cell.key} style={cell.style}>
       {
-        record
+        game
         ? <HubItem
-            key={`game-${record.game.id}`}
-            game={record.game}
-            cave={record.cave}
-            searchScore={record.searchScore}/>
+            key={`game-${game.id}`}
+            game={game}/>
         : null
       }
     </div>;
@@ -99,7 +97,7 @@ class GameGrid extends React.Component<IProps & IDerivedProps & I18nProps, IStat
 }
 
 interface IProps {
-  games: IFilteredGameRecord[];
+  games: GameModel[];
   hiddenCount: number;
   tab: string;
 }

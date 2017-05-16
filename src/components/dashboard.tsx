@@ -11,6 +11,8 @@ import GameFilters from "./game-filters";
 
 import {dispatcher} from "../constants/action-types";
 
+import {values} from "underscore";
+
 import styled, * as styles from "./styles";
 
 const DashboardContainer = styled.div`
@@ -30,7 +32,7 @@ export class Dashboard extends React.Component<IProps & IDerivedProps & I18nProp
           onClick={(e) => navigate(`url/${urls.dashboard}`)}
         />
       </GameFilters>
-      <Games tab={tab} games={games}/>
+      <Games tab={tab} games={values(games)}/>
     </DashboardContainer>;
   }
 }
@@ -47,7 +49,7 @@ interface IDerivedProps {
 export default connect<IProps>(Dashboard, {
   state: (state) => ({
     meId: state.session.credentials.me.id,
-    games: (state.session.tabData[tab] || {}).games || [],
+    games: (state.session.tabData[tab] || {}).games || {},
   }),
   dispatch: (dispatch) => ({
     navigate: dispatcher(dispatch, actions.navigate),

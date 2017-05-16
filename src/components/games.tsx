@@ -1,15 +1,10 @@
 
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
-import {createSelector} from "reselect";
-import Fuse = require("fuse.js");
+import {createStructuredSelector} from "reselect";
 
-import {IAppState, IFilteredGameRecord, TabLayout} from "../types";
+import {TabLayout} from "../types";
 import Game from "../models/game";
-
-import {map, filter, size} from "underscore";
-
-import isPlatformCompatible from "../util/is-platform-compatible";
 
 import GameGrid from "./game-grid";
 import GameTable from "./game-table";
@@ -48,17 +43,17 @@ class Games extends React.Component<IProps & IDerivedProps & I18nProps, IState> 
   }
 
   render() {
-    const {filteredGames, hiddenCount, tab, layout} = this.props;
+    const {games, hiddenCount, tab, layout} = this.props;
     const {sortBy, sortDirection} = this.state;
 
     if (layout === "grid") {
       return <GameGrid
-        games={filteredGames}
+        games={games}
         hiddenCount={hiddenCount}
         tab={tab}/>;
     } else if (layout === "table") {
       return <GameTable
-        games={filteredGames}
+        games={games}
         hiddenCount={hiddenCount}
         tab={tab}
         sortBy={sortBy}
@@ -77,7 +72,6 @@ interface IProps {
 
 interface IDerivedProps {
   layout: TabLayout;
-  filteredGames: IFilteredGameRecord[];
   hiddenCount: number;
 }
 
@@ -87,85 +81,7 @@ interface IState {
 }
 
 export default connect<IProps>(Games, {
-  state: () => {
-    // TODO: that seems a bit excessively long
-    const getLayout = (state: IAppState, props: IProps) => state.preferences.layout;
-    const getOnlyCompatible = (state: IAppState, props: IProps) =>
-      state.preferences.onlyCompatibleGames;
-    const getOnlyOwned = (state: IAppState, props: IProps) =>
-      state.preferences.onlyOwnedGames;
-    const getOnlyInstalled = (state: IAppState, props: IProps) =>
-      state.preferences.onlyInstalledGames;
-    const getFilterQuery = (state: IAppState, props: IProps) =>
-      state.session.navigation.filters[props.tab] || "";
-    const getGames = (state: IAppState, props: IProps) =>
-      props.games;
-    // TODO: db
-    const getCavesByGameId = (state: IAppState, props: IProps) =>
-      /* state.globalMarket.cavesByGameId */ ({});
-    // TODO: db
-    const getDownloadKeysByGameId = (state: IAppState, props: IProps) =>
-      /* state.market.downloadKeysByGameId */ ({});
-
-    const fuse: Fuse<Game> = new Fuse([], {
-      keys: [
-        { name: "title", weight: 0.8 },
-        { name: "shortText", weight: 0.4 },
-      ],
-      threshold: 0.1,
-      include: ["score"],
-    });
-
-    const getFilteredGames = createSelector(
-      getGames,
-      getCavesByGameId,
-      getDownloadKeysByGameId,
-      getFilterQuery,
-      getOnlyCompatible,
-      getOnlyOwned,
-      getOnlyInstalled,
-      (games, cavesByGameId, downloadKeysByGameId, filterQuery, onlyCompatible, onlyOwned, onlyInstalled) => {
-        let filteredGames: IFilteredGameRecord[];
-        if (filterQuery.length > 0) {
-          fuse.set(games);
-          const results = fuse.search(filterQuery);
-          filteredGames = map(results, (result): IFilteredGameRecord => ({
-            game: result.item,
-            cave: cavesByGameId[result.item.id],
-            searchScore: result.score,
-          }));
-        } else {
-          filteredGames = map<Game, IFilteredGameRecord>(games, (game) => ({
-            game,
-            cave: cavesByGameId[game.id],
-          }));
-        }
-
-        if (onlyCompatible) {
-          filteredGames = filter(filteredGames, (record) => isPlatformCompatible(record.game));
-        }
-
-        if (onlyInstalled) {
-          filteredGames = filter(filteredGames, (record) => !!record.cave);
-        }
-
-        if (onlyOwned) {
-          filteredGames = filter(filteredGames, (record) => !!downloadKeysByGameId[record.game.id]);
-        }
-
-        return filteredGames;
-      },
-    );
-
-    return createSelector(
-      getLayout,
-      getGames,
-      getFilteredGames,
-      (layout, games, filteredGames) => ({
-        layout,
-        filteredGames,
-        hiddenCount: size(games) - size(filteredGames),
-      }),
-    );
-  },
+  state: createStructuredSelector({
+    layout: (state) => state.preferences.layout,
+  }),
 });

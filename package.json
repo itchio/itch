@@ -126,6 +126,7 @@
     "electron-compilers": "^5.9.0",
     "electron-rebuild": "^1.5.11",
     "faucet": "0.0.1",
+    "react-addons-perf": "^15.4.2",
     "react-addons-test-utils": "^15.0.0",
     "react-hot-loader": "^3.0.0-beta.6",
     "redux-devtools": "^3.2.0",

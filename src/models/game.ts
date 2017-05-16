@@ -61,11 +61,14 @@ export default class Game {
   publishedAt: Date;
 
   @Column("boolean", {nullable: true})
-  pOsx: string;
+  pOsx: boolean;
 
   @Column("boolean", {nullable: true})
-  pWindows: string;
+  pWindows: boolean;
 
   @Column("boolean", {nullable: true})
-  pLinux: string;
+  pLinux: boolean;
+
+  @Column("boolean", {nullable: true})
+  pAndroid: boolean;
 }

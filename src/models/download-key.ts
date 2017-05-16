@@ -14,4 +14,8 @@ export default class DownloadKey {
   /** date the download key was issued on (often: date purchase was completed) */
   @Column("datetime", {nullable: true})
   createdAt: string;
+
+  /** not sure to be completely honest */
+  @Column("datetime", {nullable: true})
+  updatedAt: string;
 }

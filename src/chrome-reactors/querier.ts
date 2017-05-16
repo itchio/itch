@@ -36,7 +36,7 @@ let keysDbTime = 0;
 async function updateCavesByGameId(store: IStore, watcher: Watcher, gameIds: string[]) {
   const {globalMarket} = watcher.getMarkets();
   if (!globalMarket) {
-    return;
+    return {};
   }
 
   const t1 = Date.now();
@@ -47,17 +47,13 @@ async function updateCavesByGameId(store: IStore, watcher: Watcher, gameIds: str
   const t2 = Date.now();
   cavesDbTime = t2 - t1;
 
-  store.dispatch(actions.fetchedQuery({
-    data: {
-      cavesByGameId: groupBy(caves, "gameId"),
-    },
-  }));
+  return groupBy(caves, "gameId");
 }
 
 async function updateDownloadKeysByGameId(store: IStore, watcher: Watcher, gameIds: string[]) {
   const {market} = watcher.getMarkets();
   if (!market) {
-    return;
+    return {};
   }
 
   const t1 = Date.now();
@@ -68,11 +64,7 @@ async function updateDownloadKeysByGameId(store: IStore, watcher: Watcher, gameI
   const t2 = Date.now();
   keysDbTime = t2 - t1;
 
-  store.dispatch(actions.fetchedQuery({
-    data: {
-      downloadKeysByGameId: groupBy(downloadKeys, "gameId"),
-    },
-  }));
+  return groupBy(downloadKeys, "gameId");
 }
 
 // TODO: a lot of smart things we can do here for performance
@@ -120,16 +112,29 @@ async function actuallyRunQueries(store: IStore, watcher: Watcher) {
     }
     const t2 = Date.now();
 
+    let cavesByGameId = {};
     if (flattened["cavesByGameId"]) {
-      await updateCavesByGameId(store, watcher, Object.keys(flattened["cavesByGameId"]));
+      cavesByGameId = await updateCavesByGameId(
+        store, watcher, Object.keys(flattened["cavesByGameId"]));
     }
     const t3 = Date.now();
+    let downloadKeysByGameId = {};
     if (flattened["downloadKeysByGameId"]) {
-      await updateDownloadKeysByGameId(store, watcher, Object.keys(flattened["downloadKeysByGameId"]));
-      debug(`Done running cavesByGameId`)
+      downloadKeysByGameId = await updateDownloadKeysByGameId(
+         store, watcher, Object.keys(flattened["downloadKeysByGameId"]));
     }
     const t4 = Date.now();
-    debug(`flatten ${(t2 - t1).toFixed(2)}ms, cavesByGameId ${(t3 - t2).toFixed(2)}ms, downloadKeysByGameId ${(t4 - t3).toFixed(2)}ms\ncaves db: ${cavesDbTime.toFixed(2)}ms, keys db: ${keysDbTime.toFixed(2)}ms`);
+
+    store.dispatch(actions.fetchedQuery({
+      data: {
+        cavesByGameId,
+        downloadKeysByGameId,
+      },
+    }));
+    const t5 = Date.now();
+    debug(`flatten ${(t2 - t1).toFixed(2)}ms, caves ${(t3 - t2).toFixed(2)}ms, downloadKeys ${(t4 - t3).toFixed(2)}ms`
+     + `\ndispatch ${(t5 - t4).toFixed(2)}ms`
+     + `\ncaves db: ${cavesDbTime.toFixed(2)}ms, keys db: ${keysDbTime.toFixed(2)}ms`);
   })();
   await promise;
   promise = null;
