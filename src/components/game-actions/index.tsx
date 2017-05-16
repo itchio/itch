@@ -5,7 +5,7 @@ import * as classNames from "classnames";
 import {connect, I18nProps} from "../connect";
 import {createSelector, createStructuredSelector} from "reselect";
 
-import {findWhere} from "underscore";
+import {size} from "underscore";
 
 import os from "../../util/os";
 
@@ -28,6 +28,8 @@ const platform = os.itchPlatform();
 import styled from "../styles";
 import Filler from "../basics/filler";
 
+import load from "../load";
+
 const StyledMainAction = styled(MainAction)`
   &.vertical {
     width: 100%;
@@ -47,6 +49,10 @@ const GameActionsDiv = styled.div`
   }
 `;
 
+@load((props) => [
+  {source: "cavesByGameId", query: props.game.id},
+  {source: "downloadKeysByGameId", query: props.game.id},
+])
 class GameActions extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {props} = this;
@@ -95,9 +101,11 @@ interface IDerivedProps extends IActionsInfo {
 
 interface IHappenings {
   game: GameModel;
-  cave: CaveModel;
-  downloadKeys: {
-    [id: string]: IDownloadKey;
+  cavesByGameId: {
+    [gameId: string]: CaveModel[];
+  };
+  downloadKeysByGameId: {
+    [gameId: string]: IDownloadKey[];
   };
   tasks: ITask[];
   downloads: IDownloadItem[];
@@ -112,10 +120,8 @@ export default connect<IProps>(GameActions, {
     const selector = createSelector(
       createStructuredSelector({
         game: (state: IAppState, props: IProps) => props.game,
-        // TODO: db
-        cave: (state: IAppState, props: IProps) => props.cave /* || state.globalMarket.cavesByGameId[props.game.id] */,
-        // TODO: db
-        downloadKeys: (state: IAppState, props: IProps) => ({}) /* state.market.downloadKeys */,
+        cavesByGameId: (state: IAppState, props: IProps) => state.queries.cavesByGameId,
+        downloadKeysByGameId: (state: IAppState, props: IProps) => state.queries.downloadKeysByGameId,
         tasks: (state: IAppState, props: IProps) => state.tasks.tasksByGameId[props.game.id],
         downloads: (state: IAppState, props: IProps) => state.downloads.downloadsByGameId[props.game.id],
         meId: (state: IAppState, props: IProps) => (state.session.credentials.me || { id: "anonymous" }).id,
@@ -124,14 +130,26 @@ export default connect<IProps>(GameActions, {
         gameUpdates: (state: IAppState, props: IProps) => state.gameUpdates,
       }),
       (happenings: IHappenings) => {
-        const { game, cave, downloadKeys, tasks, downloads, meId, mePress, gameUpdates } = happenings;
+        const { game, cavesByGameId, downloadKeysByGameId, tasks, downloads, meId, mePress, gameUpdates } = happenings;
+        let cave;
+        const caves = cavesByGameId[game.id];
+        if (size(caves) > 0) {
+          // TODO: handle multiple caves
+          cave = caves[0];
+        }
 
         const animate = false;
         let action = actionForGame(game, cave);
 
         const platformCompatible = (action === "open" ? true : isPlatformCompatible(game));
         const cancellable = false;
-        const downloadKey = findWhere(downloadKeys, { gameId: game.id });
+
+        let downloadKey;
+        const downloadKeys = downloadKeysByGameId[game.id];
+        if (size(downloadKeys) > 0) {
+          // TODO: ignore revoked ones
+          downloadKey = downloadKeys[0];
+        }
         const hasMinPrice = game.minPrice > 0;
         const hasDemo = game.hasDemo;
 

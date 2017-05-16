@@ -15,12 +15,6 @@ import {dispatcher, multiDispatcher} from "../constants/action-types";
 
 import styled, * as styles from "./styles";
 
-import load from "./load";
-
-@load((props) => ({
-  caves: {source: "cavesByGameId", query: props.game.id},
-  downloadKeys: {source: "downloadKeysByGameId", query: props.game.id},
-}))
 export class HubItem extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
@@ -42,14 +36,13 @@ export class HubItem extends React.Component<IProps & IDerivedProps & I18nProps,
   }
 
   render () {
-    const {game, searchScore, cave} = this.props;
+    const {game} = this.props;
     const {hover} = this.state;
     const {title, coverUrl, stillCoverUrl} = game;
 
-    const actionProps = {game, showSecondary: this.state.hover, cave};
-    const itemClasses = classNames({dull: (searchScore && searchScore > 0.2)});
+    const actionProps = {game, showSecondary: this.state.hover};
 
-    return <HubItemDiv className={itemClasses}
+    return <HubItemDiv
         onMouseEnter={this.onMouseEnter.bind(this)}
         onMouseLeave={this.onMouseLeave.bind(this)}
         onContextMenu={this.onContextMenu.bind(this)}>
@@ -109,7 +102,6 @@ const UnderCover = styled.div`
 
 interface IProps {
   game: GameModel;
-  cave?: CaveModel;
   searchScore?: number;
 }
 

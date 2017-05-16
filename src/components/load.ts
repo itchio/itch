@@ -3,12 +3,12 @@ let seed = 0;
 
 import * as PropTypes from "prop-types";
 import {IStore} from "../types";
-import {IQueryTable} from "../chrome-reactors/querier";
+import {IQueryList} from "../chrome-reactors/querier";
 
 import * as actions from "../actions";
 
 export interface IQueryFunc {
-  (props: any): IQueryTable;
+  (props: any): IQueryList;
 }
 
 interface IWrappedComponent {
@@ -19,7 +19,7 @@ interface IWrappedComponent {
   };
 }
 
-export default function (loadSpecs: IQueryFunc = () => ({})) {
+export default function (loadSpecs: IQueryFunc = () => []) {
   return (constructor: any) => {
     const origContextTypes = constructor.contextTypes || {};
     constructor.contextTypes = {

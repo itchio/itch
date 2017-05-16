@@ -197,7 +197,11 @@ async function createWindow (store: IStore, hidden: boolean) {
 
   const rootDir = resolve(__dirname, "..");
   log(opts, `rootDir is ${rootDir}`);
-  const uri = `file://${rootDir}/index.html`;
+  let uri = `file://${rootDir}/index.html`;
+  if (process.env.ITCH_REACT_PERF === "1") {
+    log(opts, `Enabling react perf`);
+    uri += `?react_perf`;
+  }
   log(opts, `Calling loadURL with ${uri}`);
   window.loadURL(uri);
   if (env.name === "development") {

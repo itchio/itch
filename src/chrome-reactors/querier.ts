@@ -12,19 +12,17 @@ import Cave from "../models/cave";
 
 import {groupBy} from "underscore";
 
-import {ILiberateQueryPayload, IRegisterQueryPayload} from "../action-types";
+import {ILiberateQueryPayload, IRegisterQueryPayload} from "../constants/action-types";
 
 export interface IQuery {
   source: LoadSource;
   query: number | string;
 }
 
-export interface IQueryTable {
-  [propName: string]: IQuery;
-}
+export type IQueryList = IQuery[];
 
 interface IQueryRegister {
-  [loadId: number]: IQueryTable;
+  [loadId: number]: IQueryList;
 }
 
 const queryRegister: IQueryRegister = {};
@@ -32,16 +30,22 @@ const queryRegister: IQueryRegister = {};
 let timeout: any;
 let promise: any;
 
+let cavesDbTime = 0;
+let keysDbTime = 0;
+
 async function updateCavesByGameId(store: IStore, watcher: Watcher, gameIds: string[]) {
   const {globalMarket} = watcher.getMarkets();
   if (!globalMarket) {
     return;
   }
 
+  const t1 = Date.now();
   const caves = await globalMarket.getRepo(Cave)
     .createQueryBuilder("c")
     .where("c.gameId in (:gameIds)", {gameIds})
     .getMany();
+  const t2 = Date.now();
+  cavesDbTime = t2 - t1;
 
   store.dispatch(actions.fetchedQuery({
     data: {
@@ -55,10 +59,14 @@ async function updateDownloadKeysByGameId(store: IStore, watcher: Watcher, gameI
   if (!market) {
     return;
   }
+
+  const t1 = Date.now();
   const downloadKeys = await market.getRepo(DownloadKey)
     .createQueryBuilder("dk")
     .where("dk.gameId in (:gameIds)", {gameIds})
     .getMany();
+  const t2 = Date.now();
+  keysDbTime = t2 - t1;
 
   store.dispatch(actions.fetchedQuery({
     data: {
@@ -69,13 +77,13 @@ async function updateDownloadKeysByGameId(store: IStore, watcher: Watcher, gameI
 
 // TODO: a lot of smart things we can do here for performance
 // but let's do the dumbest working thing first
-async function runQueries(store: IStore, watcher: Watcher) {
+function runQueries(store: IStore, watcher: Watcher) {
   if (!timeout) {
     timeout = setTimeout(() => {
       actuallyRunQueries(store, watcher).catch((error) => {
         debug(`While running queries:`, error);
       }).then(() => timeout = null);
-    }, 300);
+    }, 50);
   }
 }
 
@@ -83,7 +91,6 @@ let added: IRegisterQueryPayload[] = [];
 let deleted: ILiberateQueryPayload[] = [];
 
 async function actuallyRunQueries(store: IStore, watcher: Watcher) {
-  debug(`${added} added, ${deleted} deleted`);
   while (deleted.length > 0) {
     const {loadId} = deleted.shift();
     delete queryRegister[loadId];
@@ -95,6 +102,7 @@ async function actuallyRunQueries(store: IStore, watcher: Watcher) {
 
   debug(`running queries...`);
   promise = (async function() {
+    const t1 = Date.now();
     const flattened: {
       [key: string]: {
         [key: string]: boolean;
@@ -103,36 +111,39 @@ async function actuallyRunQueries(store: IStore, watcher: Watcher) {
 
     for (const loadId of Object.keys(queryRegister)) {
       const queries = queryRegister[loadId];
-      for (const propName of Object.keys(queries)) {
-        const {query, source} = queries[propName];
+      for (const {query, source} of queries) {
         if (!flattened[source]) {
           flattened[source] = {};
         }
         flattened[source][query] = true;
       }
     }
+    const t2 = Date.now();
 
     if (flattened["cavesByGameId"]) {
       await updateCavesByGameId(store, watcher, Object.keys(flattened["cavesByGameId"]));
     }
+    const t3 = Date.now();
     if (flattened["downloadKeysByGameId"]) {
       await updateDownloadKeysByGameId(store, watcher, Object.keys(flattened["downloadKeysByGameId"]));
+      debug(`Done running cavesByGameId`)
     }
+    const t4 = Date.now();
+    debug(`flatten ${(t2 - t1).toFixed(2)}ms, cavesByGameId ${(t3 - t2).toFixed(2)}ms, downloadKeysByGameId ${(t4 - t3).toFixed(2)}ms\ncaves db: ${cavesDbTime.toFixed(2)}ms, keys db: ${keysDbTime.toFixed(2)}ms`);
   })();
   await promise;
   promise = null;
-  debug(`done running queries`);
 }
 
 // TODO: this looks suspiciously like a reducer, maybe some of it belongs in the state instead?
 export default function (watcher: Watcher) {
   watcher.on(actions.registerQuery, async (store, action) => {
     added.push(action.payload);
-    await runQueries(store, watcher);
+    runQueries(store, watcher);
   });
 
   watcher.on(actions.liberateQuery, async (store, action) => {
     deleted.push(action.payload);
-    await runQueries(store, watcher);
+    runQueries(store, watcher);
   });
 }

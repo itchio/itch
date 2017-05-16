@@ -7,6 +7,7 @@ import {ObjectType, Repository} from "typeorm";
 import GameModel from "../models/game";
 import CollectionModel from "../models/collection";
 import DownloadKeyModel from "../models/download-key";
+import CaveModel from "../models/cave";
 
 export interface IStore extends Store<IAppState> {}
 
@@ -597,6 +598,14 @@ export interface IAppState {
 export interface IQueriesState {
     [key: string]: {
         [key: string]: any[],
+    };
+
+    cavesByGameId: {
+        [gameId: string]: CaveModel[],
+    };
+
+    downloadKeysByGameId: {
+        [gameId: string]: DownloadKeyModel[],
     };
 }
 

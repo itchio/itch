@@ -4,7 +4,10 @@ import reducer from "./reducer";
 
 import {IQueriesState} from "../types";
 
-const initialState = {};
+const initialState: IQueriesState = {
+  cavesByGameId: {},
+  downloadKeysByGameId: {},
+};
 
 export default reducer<IQueriesState>(initialState, (on) => {
   // TODO: be much smarter+faster here.
