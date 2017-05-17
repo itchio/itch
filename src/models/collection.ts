@@ -18,6 +18,6 @@ export default class Collection {
   @Column("int", {nullable: true})
   gamesCount: number;
 
-  @Column("simple_array", {nullable: true})
+  @Column("json", {nullable: true})
   gameIds: number[];
 }
