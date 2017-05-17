@@ -1,6 +1,6 @@
 
 import * as bluebird from "bluebird";
-import {camelify} from "./format";
+import {camelify, elapsed} from "./format";
 
 import * as path from "path";
 import sf from "./sf";
@@ -10,7 +10,11 @@ const opts = {logger: new mklog.Logger()};
 
 import {EventEmitter} from "events";
 
-import {createConnection, Connection, ObjectType, Repository} from "typeorm";
+import {
+  createConnection,
+  Connection, ObjectType, Repository,
+  getMetadataArgsStorage,
+} from "typeorm";
 import GameModel from "../models/game";
 import CollectionModel from "../models/collection";
 import DownloadKeyModel from "../models/download-key";
@@ -71,7 +75,7 @@ export default class Market extends EventEmitter implements IMarket {
         storage: dbPath + ".db",
       },
       logging: {
-        logQueries: true,
+        logQueries: false,
       },
       entities: Object.keys(modelMap).map((k) => modelMap[k]),
       autoSchemaSync: true,
@@ -125,7 +129,7 @@ export default class Market extends EventEmitter implements IMarket {
     const t1 = Date.now();
     await bluebird.map(recordFiles, loadRecord, {concurrency: 4});
     const t2 = Date.now();
-    log(opts, `loaded ${numRecords} records in ${t2 - t1} ms`);
+    log(opts, `loaded ${numRecords} records in ${elapsed(t1, t2)}`);
 
     log(opts, "populating in-memory DB with disk records");
     await this.saveAllEntities({entities});
@@ -162,8 +166,11 @@ export default class Market extends EventEmitter implements IMarket {
         log(opts, `Dunno how to persist ${tableName}, skipping ${entityIds.length} records`);
         continue;
       }
+      const columns = getColumns(Model);
 
       const repo = this.conn.getRepository(Model);
+
+      const t2 = Date.now();
 
       const savedRows = await repo
         .createQueryBuilder("g")
@@ -171,13 +178,15 @@ export default class Market extends EventEmitter implements IMarket {
         .getMany();
       const existingEntities = _.indexBy(savedRows, "id");
 
+      const t3 = Date.now();
+
       let rows = [];
       let numUpToDate = 0;
       for (const id of entityIds) {
         let entity = entities[id];
         let existingEntity = existingEntities[id];
         if (existingEntity) {
-          if (compareRecords(existingEntity, entity)) {
+          if (compareRecords(existingEntity, entity, columns)) {
             numUpToDate++;
             continue;
           }
@@ -189,11 +198,16 @@ export default class Market extends EventEmitter implements IMarket {
         }
       }
 
+      const t4 = Date.now();
+
       if (rows.length > 0){
         await repo.persist(rows);
       }
-      const t2 = Date.now();
-      log(opts, `Saved ${entityIds.length} ${tableName} in ${(t2 - t1).toFixed(2)} ms (${numUpToDate} up-to-date)`);
+      const t5 = Date.now();
+      log(opts, `saved ${entityIds.length - numUpToDate}/${entityIds.length}`
+        + ` ${tableName}, skipped ${numUpToDate} up-to-date\n`
+        + `prep ${elapsed(t1, t2)}, quer ${elapsed(t2, t3)}, `
+        + `comp ${elapsed(t3, t4)}, save ${elapsed(t4, t5)}`);
     }
 
     this.emit("commit", {updated: {}});
@@ -293,4 +307,19 @@ export default class Market extends EventEmitter implements IMarket {
   protected entityPath (tableName: string, entityId: string): string {
     return path.join(this.getDbRoot(), `${tableName}/${entityId}`);
   }
+}
+
+const columnsCache = new Map<Function, Set<string>>();
+
+function getColumns (model: Function): Set<string> {
+  const cached = columnsCache.get(model);
+  if (cached) {
+    return cached;
+  }
+
+  const storage = getMetadataArgsStorage();
+  const columns = storage.columns.filterByTarget(model);
+  const set = new Set(_.pluck(columns.toArray(), "propertyName"));
+  columnsCache.set(model, set);
+  return set;
 }

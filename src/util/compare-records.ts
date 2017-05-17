@@ -1,8 +1,13 @@
 
 const debug = require("debug")("itch:compare-records");
 
-export default function compareRecords (oldRecord: any, newRecord: any): boolean {
+export default function compareRecords (oldRecord: any, newRecord: any, fields?: Set<string>): boolean {
   for (const newKey in newRecord) {
+    if (fields && !fields.has(newKey)) {
+      // we're ignoring this one
+      continue;
+    }
+
     if (!newRecord.hasOwnProperty(newKey)) {
       // that's okay, they're merged anyway
       continue;
@@ -20,10 +25,13 @@ export default function compareRecords (oldRecord: any, newRecord: any): boolean
       if (newVal instanceof Date) {
         if (oldVal instanceof Date) {
           if (newVal.getTime() !== oldVal.getTime()) {
+            debug(`different dates: old ${oldVal.toUTCString()}, new ${newVal.toUTCString()}`);
+            debug(`to be precise, old time = ${oldVal.getTime()}, new time = ${newVal.getTime()}, diff = ${newVal.getTime() - oldVal.getTime()}`);
             return false;
           }
         } else {
           debug(`${newKey} turned into a Date`);
+          return false;
         }
       } else {
         if (!compareRecords(oldVal, newVal)) {
@@ -33,7 +41,7 @@ export default function compareRecords (oldRecord: any, newRecord: any): boolean
       }
     } else {
       if (oldVal !== newVal) {
-        debug(`=== was false for ${newKey}`);
+        debug(`for ${newKey}, ${oldVal} !== ${newVal}`);
         return false;
       }
     }
