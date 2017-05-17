@@ -5,6 +5,7 @@ import DownloadKey from "../models/download-key";
 import client from "../util/api";
 
 import normalize from "../util/normalize";
+import {elapsed} from "../util/format";
 import {arrayOf} from "idealizr";
 import {downloadKey} from "../util/schemas";
 
@@ -33,16 +34,18 @@ export default class LibraryFetcher extends Fetcher {
     const gameRepo = market.getRepo(Game);
     const keyRepo = market.getRepo(DownloadKey);
     let pushLocal = async () => {
-      this.debug(`retrieving library from db`);
+      const t1 = Date.now();
       let keys = await keyRepo.find();
       let games = await gameRepo.createQueryBuilder("g").where("g.id in (:gameIds)", {
         gameIds: pluck(keys, "gameId"),
       }).getMany();
-      this.debug(`got em!`);
+      const t2 = Date.now();
       this.push({
         games: indexBy(games, "id"),
         downloadKeys: indexBy(keys, "id"),
       });
+      const t3 = Date.now();
+      this.debug(`db ${elapsed(t1, t2)}, push ${elapsed(t2, t3)}`)
     };
     await pushLocal();
 
@@ -55,12 +58,14 @@ export default class LibraryFetcher extends Fetcher {
     const api = client.withKey(key);
     let normalized;
     try {
-      this.debug(`Firing API requests...`);
+      const t1 = Date.now();
       const apiResponse = await api.myOwnedKeys();
-      this.debug(`API response:, `, apiResponse);
+      const t2 = Date.now();
       normalized = normalize(apiResponse, {
         owned_keys: arrayOf(downloadKey),
       });
+      const t3 = Date.now();
+      this.debug(`api ${(t2 - t1).toFixed()}ms, norm ${(t3 - t2).toFixed(2)}ms`);
     } catch (e) {
       this.debug(`API error:`, e);
       if (client.isNetworkError(e)) {
@@ -69,11 +74,10 @@ export default class LibraryFetcher extends Fetcher {
         throw e;
       }
     }
-    this.debug(`fetched entities: `, normalized.entities);
+
     await market.saveAllEntities({
       entities: normalized.entities,
     });
-    this.debug(`saved in db!`);
     await pushLocal();
 
     return new Outcome("success");
