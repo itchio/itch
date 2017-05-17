@@ -143,6 +143,14 @@ test("sqlite", t => {
       t.false(deepEquals(game3, game4));
       await gameRepo.persist(game4);
     }
+
+    {
+      const game1 = await gameRepo.findOneById(1);
+      await gameRepo.remove({id: 1} as any);
+      const game2 = await gameRepo.findOneById(1);
+      t.ok(game1);
+      t.notOk(game2);
+    }
   });
 });
 
