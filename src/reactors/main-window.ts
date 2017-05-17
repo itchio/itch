@@ -138,11 +138,15 @@ async function createWindow (store: IStore, hidden: boolean) {
   });
 
   window.on("enter-full-screen", (e: any) => {
-    store.dispatch(actions.windowFullscreenChanged({fullscreen: true}));
+    if (!store.getState().ui.mainWindow.fullscreen) {
+      store.dispatch(actions.windowFullscreenChanged({fullscreen: true}));
+    }
   });
 
   window.on("leave-full-screen", (e: any) => {
-    store.dispatch(actions.windowFullscreenChanged({fullscreen: false}));
+    if (store.getState().ui.mainWindow.fullscreen) {
+      store.dispatch(actions.windowFullscreenChanged({fullscreen: false}));
+    }
   });
 
   const debouncedBounds = debounce(() => {

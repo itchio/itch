@@ -2,11 +2,11 @@
 import * as querystring from "querystring";
 
 import net from "../util/net";
+import {camelifyObject} from "../util/format";
 import urls from "../constants/urls";
 
 import mkcooldown from "./cooldown";
 import mklog from "./log";
-import {camelifyObject} from "./format";
 
 import {contains} from "underscore";
 
@@ -48,6 +48,12 @@ interface ITransformerMap {
   [key: string]: (input: any) => any;
 }
 
+// ugh
+interface IAPIRequestOpts {
+  keepSnakeCase?: boolean;
+  transformers?: ITransformerMap;
+}
+
 /**
  * async Wrapper for the itch.io API
  */
@@ -72,7 +78,11 @@ export class Client {
    * `transformers` contain functions that change the result. Before transformers are run
    * the response is camelified.
    */
-  async request (method: HTTPMethod, path: string, data: any = {}, transformers: ITransformerMap = {}): Promise<any> {
+  async request (
+      method: HTTPMethod,
+      path: string,
+      data: any = {},
+      requestOpts: IAPIRequestOpts = {}): Promise<any> {
     const t1 = Date.now();
 
     const uri = `${this.rootUrl}${path}`;
@@ -81,7 +91,7 @@ export class Client {
     const t2 = Date.now();
 
     const resp = await this.netStack.request(method, uri, data, {});
-    const body = resp.body;
+    let body = resp.body;
     const t3 = Date.now();
 
     const shortPath = path.replace(/^\/[^\/]*\//, "");
@@ -94,6 +104,20 @@ export class Client {
     if (body.errors) {
       throw new ApiError(body.errors);
     }
+
+    if (!requestOpts.keepSnakeCase) {
+      body = camelifyObject(body);
+    }
+
+    if (requestOpts.transformers) {
+      for (const key in requestOpts.transformers) {
+        if (!requestOpts.transformers.hasOwnProperty(key)) {
+          continue;
+        }
+        body[key] = requestOpts.transformers[key](body[key]);
+      }
+    }
+
     return body;
   }
 
@@ -174,24 +198,34 @@ export class AuthenticatedClient {
   /**
    * Make an authenticated request to the itch.io server
    */
-  async request (method: HTTPMethod, path: string, data: any = {}, transformers: ITransformerMap = {}): Promise<any> {
+  async request (
+      method: HTTPMethod,
+      path: string,
+      data: any = {},
+      requestOpts: IAPIRequestOpts = {}): Promise<any> {
     const url = `/${this.key}${path}`;
-    return await this.client.request(method, url, data, transformers);
+    return await this.client.request(method, url, data, requestOpts);
   }
 
   /**
-   * Retrieve games one is a creator or game admin of
+   * Retrieve games ones create or is a game admin for.
    */
   async myGames (data: any = {}): Promise<IMyGamesResult> {
     // TODO: paging, for the prolific game dev.
-    return await this.request("get", "/my-games", data, {games: ensureArray});
+    return await this.request("get", "/my-games", data, {
+      keepSnakeCase: true,
+      transformers: {games: ensureArray},
+    });
   }
 
   /**
    * Retrieve download keys linked to this account
    */
   async myOwnedKeys (data = {}): Promise<IMyOwnedKeysResult> {
-    return await this.request("get", "/my-owned-keys", data, {owned_keys: ensureArray});
+    return await this.request("get", "/my-owned-keys", data, {
+      keepSnakeCase: true,
+      transformers: {owned_keys: ensureArray},
+    });
   }
 
   /**
@@ -202,7 +236,10 @@ export class AuthenticatedClient {
   }
 
   async myCollections (): Promise<IMyCollectionsResult> {
-    return await this.request("get", "/my-collections", {}, {collections: ensureArray});
+    return await this.request("get", "/my-collections", {}, {
+      keepSnakeCase: true,
+      transformers: {collections: ensureArray},
+    });
   }
 
   async game (gameID: number, gameExtras: IGameExtras = {}): Promise<IGameResult> {
@@ -222,11 +259,17 @@ export class AuthenticatedClient {
   }
 
   async searchGames (query: string): Promise<ISearchGamesResult> {
-    return await this.request("get", "/search/games", {query}, {games: ensureArray});
+    return await this.request("get", "/search/games", {query}, {
+      keepSnakeCase: true,
+      transformers: {games: ensureArray},
+    });
   }
 
   async searchUsers (query: string): Promise<ISearchUsersResult> {
-    return await this.request("get", "/search/users", {query}, {users: ensureArray});
+    return await this.request("get", "/search/users", {query}, {
+      keepSnakeCase: true,
+      transformers: {users: ensureArray},
+    });
   }
 
   // list uploads
@@ -236,9 +279,13 @@ export class AuthenticatedClient {
       extras: IListUploadsExtras = {}): Promise<IListUploadsResponse> {
     // TODO: adjust API to support download_key_id
     if (downloadKey) {
-      return await this.request("get", `/download-key/${downloadKey.id}/uploads`, extras, {uploads: ensureArray});
+      return await this.request("get", `/download-key/${downloadKey.id}/uploads`, extras, {
+        transformers: {uploads: ensureArray},
+      });
     } else {
-      return await this.request("get", `/game/${gameID}/uploads`, extras, {uploads: ensureArray});
+      return await this.request("get", `/game/${gameID}/uploads`, extras, {
+        transformers: {uploads: ensureArray},
+      });
     }
   }
 
@@ -258,8 +305,9 @@ export class AuthenticatedClient {
    * List the N most recent builds for a wharf-enabled upload
    */
   async listBuilds (downloadKey: IDownloadKey, uploadID: number): Promise<IListBuildsResponse> {
-    return await this.request("get", `/upload/${uploadID}/builds`,
-      sprinkleDownloadKey(downloadKey, {}), {builds: ensureArray});
+    return await this.request("get", `/upload/${uploadID}/builds`, sprinkleDownloadKey(downloadKey, {}), {
+      transformers: {builds: ensureArray},
+    });
   }
 
   /**

@@ -6,7 +6,7 @@ import {IProgressInfo} from "../types";
 
 import GameModel from "../models/game";
 
-import {IQueryTable} from "../chrome-reactors/querier";
+import {IQueryList} from "../chrome-reactors/querier";
 
 export type IAction<T> = Action<T>;
 
@@ -1046,7 +1046,7 @@ export interface IProxySettingsDetectedPayload {
 export const REGISTER_QUERY = "REGISTER_QUERY";
 export interface IRegisterQueryPayload {
   loadId: number;
-  query: IQueryTable;
+  query: IQueryList;
 }
 
 export const LIBERATE_QUERY = "LIBERATE_QUERY";
@@ -1059,6 +1059,6 @@ export interface IFetchedQueryPayload {
   data: {
     [key: string]: {
       [queryParam: string]: any[];
-    }
+    },
   };
 }

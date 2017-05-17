@@ -4,7 +4,6 @@ import marketProvider, {getMarkets} from "./market-provider";
 
 import fetchers from "./fetchers";
 import dialogs from "./dialogs";
-import login from "./login";
 import i18n from "./i18n";
 import contextMenu from "./context-menu";
 import rememberedSessions from "./remembered-sessions";
@@ -17,7 +16,6 @@ watcher.getMarkets = getMarkets;
 marketProvider(watcher);
 dialogs(watcher);
 fetchers(watcher);
-login(watcher);
 i18n(watcher);
 contextMenu(watcher);
 rememberedSessions(watcher);

@@ -80,11 +80,16 @@ const GateDiv = styled.div`
 
     &.hasError {
       height: 8em;
+      padding: 8px;
     }
 
     li {
       margin: 4px 0;
       line-height: 1.4;
+    }
+
+    .icon {
+      margin-right: 4px;
     }
 
     .welcome-back {
@@ -266,7 +271,8 @@ export class GatePage extends React.Component<IProps & IDerivedProps & I18nProps
         <Form onSubmit={this.handleSubmit}>
           <input id="login-username" ref="username" type="text"
             placeholder={t("login.field.username")} autoFocus disabled={disabled}/>
-          <input ref="password" type="password" placeholder={t("login.field.password")} disabled={disabled}/>
+          <input ref="password" type="password" placeholder={t("login.field.password")} disabled={disabled}
+            onKeyDown={(e) => { if (e.key === "Enter") { this.handleSubmit(); } }}/>
           <section className="actions">
             {this.renderActions()}
           </section>
@@ -386,12 +392,11 @@ export class GatePage extends React.Component<IProps & IDerivedProps & I18nProps
       </div>;
     } else {
       const translatedMessage = t("login.action.login");
-      return <Button fat primary label={translatedMessage}/>;
+      return <Button fat primary label={translatedMessage} onClick={this.handleSubmit}/>;
     }
   }
 
   reportIssue (blockingOperation: ISetupOperation) {
-    console.log(`should report issue with\n${blockingOperation.stack}`);
     reporter.reportIssue({
       type:  "Trouble in setup",
       body: blockingOperation.stack,
@@ -409,8 +414,7 @@ export class GatePage extends React.Component<IProps & IDerivedProps & I18nProps
     }
   }
 
-  handleSubmit (e: React.FormEvent<any>) {
-    e.preventDefault();
+  handleSubmit () {
     const {username, password} = this.refs;
     this.props.loginWithPassword({
       username: username.value,

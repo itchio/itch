@@ -99,4 +99,7 @@ export function elapsed (t1: number, t2: number) {
   return (t2 - t1).toFixed(2) + "ms";
 }
 
-export default { date, slugify, camelify, camelifyObject, seconds, DATE_FORMAT, price, itchPlatform, truncate, elapsed };
+export default {
+  date, slugify, camelify, camelifyObject, seconds, DATE_FORMAT,
+  price, itchPlatform, truncate, elapsed,
+};

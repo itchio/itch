@@ -2,7 +2,7 @@
 import * as React from "react";
 import {connect, I18nProps} from "../connect";
 
-import {IModalWidgetProps} from "./modal-widget";
+import {IModalWidgetProps, ModalWidgetDiv} from "./modal-widget";
 
 export class TwoFactorInput extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   refs: {
@@ -19,7 +19,7 @@ export class TwoFactorInput extends React.Component<IProps & IDerivedProps & I18
     const params = this.props.modal.widgetParams as ITwoFactorInputParams;
     const {username} = params;
 
-    return <div className="modal-widget">
+    return <ModalWidgetDiv>
       <p><strong>{t("login.two_factor.as_user", {username})}</strong></p>
 
       <p>{t("login.two_factor.enter_code")}</p>
@@ -32,7 +32,7 @@ export class TwoFactorInput extends React.Component<IProps & IDerivedProps & I18
         onChange={this.onChange}
         autoFocus={true}
         />
-    </div>;
+    </ModalWidgetDiv>;
   }
 
   onChange () {

@@ -91,7 +91,7 @@ async function getGlobalMarket(store: IStore) {
     await market.load(pathmaker.globalDbPath());
     debug(`global: connected!`);
   } catch (e) {
-    console.error(`global: couldn't connect:\n${e.stack}`)
+    console.error(`global: couldn't connect:\n${e.stack}`);
     market = null;
   }
   cache.__itch_global_market = market;

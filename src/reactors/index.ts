@@ -15,6 +15,7 @@ import triggers from "./triggers";
 import modals from "./modals";
 import openAtLogin from "./open-at-login";
 import proxy from "./proxy";
+import login from "./login";
 
 let watcher = new Watcher();
 preboot(watcher);
@@ -31,6 +32,7 @@ triggers(watcher);
 modals(watcher);
 openAtLogin(watcher);
 proxy(watcher);
+login(watcher);
 
 watcher.validate();
 

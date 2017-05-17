@@ -54,7 +54,7 @@ export interface IRequestOpts {
 // this session doesn't cache - see preboot for setup
 export const NET_PARTITION_NAME = "itch-zone";
 
-type RequestFunc = (method: HTTPMethod, uri: string, data: any, opts: IRequestOpts) => Promise<IResponse>;
+type RequestFunc = (method: HTTPMethod, uri: string, data: any, opts?: IRequestOpts) => Promise<IResponse>;
 
 let request: RequestFunc;
 
@@ -77,15 +77,24 @@ if (process.type === "renderer") {
     }
 
     let body;
+    let headers: any = {
+      "user-agent": useragent,
+    };
+
     if (method === "post") {
-      body = new FormData(data);
+      if (opts.format === "json") {
+        body = JSON.stringify(data);
+      } else {
+        body = querystring.stringify(data);
+      }
+
+      headers["content-type"] = "application/x-www-form-urlencoded";
+      headers["content-length"] = String(Buffer.byteLength(body));
     }
 
     const p = fetch(uri, {
       method,
-      headers: {
-        "user-agent": useragent,
-      },
+      headers,
       body,
     });
     const response = await p;
@@ -93,20 +102,23 @@ if (process.type === "renderer") {
     const contentTypeHeader = response.headers.get("content-type") || "text/plain";
     const contentType = /[^;]*/.exec(contentTypeHeader)[0];
 
+    console.log(`net contentType = ${contentType}`);
+
     let responseBody;
     if (contentType === "application/json") {
       responseBody = await response.json();
     } else {
       responseBody = await response.text();
     }
+    console.log(`responseBody: `, responseBody);
 
     // FIXME: reduce waste
-    const headers = {} as any;
+    const responseHeaders = {} as any;
     response.headers.forEach((key, val) => {
-      if (!headers[key]) {
-        headers[key] = [];
+      if (!responseHeaders[key]) {
+        responseHeaders[key] = [];
       }
-      headers[key].push(val);
+      responseHeaders[key].push(val);
     });
 
     return {
