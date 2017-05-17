@@ -333,6 +333,11 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
 
     const {constant} = state.tabs;
 
+    if (constant.indexOf(path) !== -1) {
+      // already unlocked, nothing to do
+      return state;
+    }
+
     return {
       ...state,
       tabs: {
