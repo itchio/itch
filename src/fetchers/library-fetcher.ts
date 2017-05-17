@@ -9,7 +9,7 @@ import {elapsed} from "../util/format";
 import {arrayOf} from "idealizr";
 import {downloadKey} from "../util/schemas";
 
-import {pluck, indexBy} from "underscore";
+import {pluck, indexBy, difference} from "underscore";
 
 export default class LibraryFetcher extends Fetcher {
   constructor () {
@@ -35,16 +35,15 @@ export default class LibraryFetcher extends Fetcher {
     const keyRepo = market.getRepo(DownloadKey);
     let pushLocal = async () => {
       const t1 = Date.now();
-      let keys = await keyRepo.find();
-      let games = await gameRepo.createQueryBuilder("g").where("g.id in (:gameIds)", {
-        gameIds: pluck(keys, "gameId"),
-      }).getMany();
+      let games = await gameRepo.createQueryBuilder("games")
+        .where("exists (select 1 from downloadKeys where downloadKeys.gameId = games.id)")
+        .getMany();
       const t2 = Date.now();
       this.push({
         games: indexBy(games, "id"),
       });
       const t3 = Date.now();
-      this.debug(`db ${elapsed(t1, t2)}, push ${elapsed(t2, t3)}`)
+      this.debug(`db ${elapsed(t1, t2)}, push ${elapsed(t2, t3)}`);
     };
     await pushLocal();
 
@@ -74,6 +73,21 @@ export default class LibraryFetcher extends Fetcher {
       }
     }
 
+    const rawKeys = await keyRepo.createQueryBuilder("k").select("id").getRawMany();
+    let oldKeyIds = pluck(rawKeys, "id");
+    let newKeyIds = pluck(normalized.entities.downloadKeys, "id");
+    let goners = difference(oldKeyIds, newKeyIds);
+    if (goners.length > 0) {
+      this.debug(`goners = `, goners);
+      await market.deleteAllEntities({
+        entities: {
+          downloadKeys: goners,
+        },
+      });
+    } else {
+      this.debug(`no goners`);
+    }
+
     await market.saveAllEntities({
       entities: normalized.entities,
     });
@@ -82,4 +96,3 @@ export default class LibraryFetcher extends Fetcher {
     return new Outcome("success");
   }
 }
-
