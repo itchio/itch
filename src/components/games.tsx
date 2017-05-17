@@ -43,7 +43,7 @@ class Games extends React.Component<IProps & IDerivedProps & I18nProps, IState> 
   }
 
   render() {
-    const {games, hiddenCount, tab, layout} = this.props;
+    const {games, gamesCount, gamesOffset, hiddenCount, tab, layout} = this.props;
     const {sortBy, sortDirection} = this.state;
 
     if (layout === "grid") {
@@ -54,6 +54,8 @@ class Games extends React.Component<IProps & IDerivedProps & I18nProps, IState> 
     } else if (layout === "table") {
       return <GameTable
         games={games}
+        gamesCount={gamesCount}
+        gamesOffset={gamesOffset}
         hiddenCount={hiddenCount}
         tab={tab}
         sortBy={sortBy}
@@ -68,6 +70,8 @@ class Games extends React.Component<IProps & IDerivedProps & I18nProps, IState> 
 interface IProps {
   tab: string;
   games: Game[];
+  gamesCount?: number;
+  gamesOffset?: number;
 }
 
 interface IDerivedProps {

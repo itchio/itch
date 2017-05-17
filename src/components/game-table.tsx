@@ -46,6 +46,13 @@ interface ICellDataGetter {
   rowData: any;
 }
 
+interface IRowsRenderedInfo {
+ overscanStartIndex: number;
+ overscanStopIndex: number;
+ startIndex: number;
+ stopIndex: number ;
+}
+
 const StyledTable = styled(Table)`
   font-size: ${props => props.theme.fontSizes.large};
 
@@ -146,7 +153,7 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
   rowGetter (params: IRowGetterParams): any {
     const {index} = params;
 
-    return this.props.games[index];
+    return this.props.games[index - this.props.gamesOffset];
   }
 
   genericDataGetter (params: ICellDataGetter): any {
@@ -155,6 +162,9 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
 
   coverRenderer (params: ICellRendererParams): JSX.Element | string {
     const game = params.cellData;
+    if (!game) {
+      return null;
+    }
     const {coverUrl, stillCoverUrl} = game;
 
     return <HoverBoard>
@@ -169,6 +179,9 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
 
   titleRenderer (params: ICellRendererParams): JSX.Element | string {
     const game = params.cellData;
+    if (!game) {
+      return null;
+    }
     return <div className="title-column">
       <div className="title">{game.title}</div>
       <div className="description">{game.shortText}</div>
@@ -177,6 +190,9 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
 
   publishedAtRenderer (params: ICellRendererParams): JSX.Element | string {
     const game = params.cellData;
+    if (!game) {
+      return null;
+    }
     const {publishedAt} = game;
     if (publishedAt) {
       return <TimeAgo date={publishedAt}/>;
@@ -187,6 +203,9 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
 
   playtimeRenderer (params: ICellRendererParams): JSX.Element | string {
     const game = params.cellData;
+    if (!game) {
+      return null;
+    }
     // TODO: db
     let cave = null;
 
@@ -199,6 +218,9 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
 
   lastPlayedRenderer (params: ICellRendererParams): JSX.Element | string {
     const game = params.cellData;
+    if (!game) {
+      return null;
+    }
     // TODO: db
     let cave = null;
 
@@ -207,6 +229,17 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
     } else {
       return null;
     }
+  }
+
+  onRowsRendered (info: IRowsRenderedInfo) {
+    console.log(`rows rendered: `, info);
+    this.props.tabParamsChanged({
+      id: this.props.tab,
+      params: {
+        offset: info.overscanStartIndex,
+        limit: info.overscanStopIndex - info.overscanStartIndex,
+      },
+    });
   }
 
   render () {
@@ -229,13 +262,13 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
           remainingWidth -= lastPlayedWidth;
 
           const scrollTop = height <= 0 ? 0 : this.state.scrollTop;
-          const {games, sortBy, sortDirection} = this.props;
+          const {gamesCount, sortBy, sortDirection} = this.props;
 
           return <StyledTable
               headerHeight={35}
               height={height}
               width={width}
-              rowCount={games.length}
+              rowCount={gamesCount}
               rowHeight={75}
               rowGetter={this.rowGetter.bind(this)}
               onRowClick={this.onRowClick.bind(this)}
@@ -249,6 +282,7 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
               sortBy={sortBy}
               sortDirection={sortDirection}
               rowRenderer={gameTableRowRenderer}
+              onRowsRendered={this.onRowsRendered.bind(this)}
             >
             <Column
               dataKey="cover"
@@ -295,6 +329,8 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
 interface IProps {
   // specified
   games: GameModel[];
+  gamesCount: number;
+  gamesOffset: number;
   hiddenCount: number;
   tab: string;
 
@@ -307,6 +343,7 @@ interface IDerivedProps {
   clearFilters: typeof actions.clearFilters;
   navigateToGame: typeof actions.navigateToGame;
   openGameContextMenu: typeof actions.openGameContextMenu;
+  tabParamsChanged: typeof actions.tabParamsChanged;
 }
 
 interface IGameTableState {
@@ -318,5 +355,6 @@ export default connect<IProps>(GameTable, {
     clearFilters: dispatcher(dispatch, actions.clearFilters),
     navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
     openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
+    tabParamsChanged: dispatcher(dispatch, actions.tabParamsChanged),
   }),
 });

@@ -74,6 +74,11 @@ export default function (watcher: Watcher) {
     queueFetch(store, action.payload.id, "tab-reloaded", watcher.getMarkets);
   });
 
+  // tab got new params? it's a fetching!
+  watcher.on(actions.tabParamsChanged, async (store, action) => {
+    queueFetch(store, action.payload.id, "tab-params-changed", watcher.getMarkets);
+  });
+
   // window gaining focus? fetch away!
   watcher.on(actions.windowFocusChanged, async (store, action) => {
     if (action.payload.focused) {

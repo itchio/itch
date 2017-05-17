@@ -44,6 +44,8 @@ import {
   VIEW_COMMUNITY_PROFILE, IViewCommunityProfilePayload,
 
   TAB_LOADING, ITabLoadingPayload,
+
+  TAB_PARAMS_CHANGED, ITabParamsChangedPayload,
 } from "../constants/action-types";
 
 const internalNavigate = createAction<INavigatePayload, any>(NAVIGATE);
@@ -83,6 +85,8 @@ export const tabChanged = createAction<ITabChangedPayload>(TAB_CHANGED);
 export const tabsChanged = createAction<ITabsChangedPayload>(TABS_CHANGED);
 export const tabsRestored = createAction<ITabsRestoredPayload>(TABS_RESTORED);
 export const tabDataFetched = createAction<ITabDataFetchedPayload>(TAB_DATA_FETCHED);
+
+export const tabParamsChanged = createAction<ITabParamsChangedPayload>(TAB_PARAMS_CHANGED);
 
 export const openTabContextMenu = createAction<IOpenTabContextMenuPayload>(OPEN_TAB_CONTEXT_MENU);
 export const openGameContextMenu = createAction<IOpenGameContextMenuPayload>(OPEN_GAME_CONTEXT_MENU);

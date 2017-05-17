@@ -194,6 +194,19 @@ export interface ITabDataSet {
     [key: string]: ITabData;
 }
 
+
+export interface ITabParamsSet {
+    [key: string]: ITabParams;
+}
+
+export interface ITabParams {
+    query?: string;
+    offset?: number;
+    limit?: number;
+
+    // TODO: filters etc.
+}
+
 export interface IGameRecordSet {
     [id: string]: GameModel;
 }
@@ -233,7 +246,10 @@ export interface ITabData {
     /** games in relation to this tab (single game, games in a collection) */
     games?: IGameRecordSet;
 
-    gameIndices?: number[];
+    gamesCount?: number;
+    gamesOffset?: number;
+
+    gameIds?: number[];
 
     downloadKeys?: IDownloadKeysMap;
 
@@ -847,6 +863,7 @@ export interface ISessionState {
     search: ISessionSearchState;
 
     tabData: ITabDataSet;
+    tabParams: ITabParamsSet;
 }
 
 export interface ISessionCachedCollectionsState {

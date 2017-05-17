@@ -23,31 +23,43 @@ export default class LibraryFetcher extends Fetcher {
       return this.retry();
     }
 
+    const {session} = this.store.getState();
+
     let meId: number;
     try {
-      meId = this.store.getState().session.credentials.me.id;
+      meId = session.credentials.me.id;
     } catch (e) {
       this.debug(`Couldn't get meId, not logged in maybe? ${e}`);
       return this.retry();
     }
 
+    const tabParams = session.tabParams[this.tabId];
+    this.debug(`tabParams = `, tabParams);
+
     const gameRepo = market.getRepo(Game);
     const keyRepo = market.getRepo(DownloadKey);
     let pushLocal = async () => {
       const t1 = Date.now();
-      let games = await gameRepo.createQueryBuilder("games")
+      let {offset = 0, limit = 30} = (tabParams || {});
+      let query = gameRepo.createQueryBuilder("games")
         .where("exists (select 1 from downloadKeys where downloadKeys.gameId = games.id)")
-        .getMany();
+        .orderBy("games.createdAt", "DESC")
+        .setOffset(offset).setLimit(limit); 
+
+      let [games, gamesCount] = await query.getManyAndCount();
       const t2 = Date.now();
       this.push({
         games: indexBy(games, "id"),
+        gameIds: pluck(games, "id"),
+        gamesCount,
+        gamesOffset: offset,
       });
       const t3 = Date.now();
       this.debug(`db ${elapsed(t1, t2)}, push ${elapsed(t2, t3)}`);
     };
     await pushLocal();
 
-    const {credentials} = this.store.getState().session;
+    const {credentials} = session;
     if (!credentials) {
       throw new Error(`No user credentials yet`);
     }

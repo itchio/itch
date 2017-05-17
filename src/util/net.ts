@@ -102,15 +102,12 @@ if (process.type === "renderer") {
     const contentTypeHeader = response.headers.get("content-type") || "text/plain";
     const contentType = /[^;]*/.exec(contentTypeHeader)[0];
 
-    console.log(`net contentType = ${contentType}`);
-
     let responseBody;
     if (contentType === "application/json") {
       responseBody = await response.json();
     } else {
       responseBody = await response.text();
     }
-    console.log(`responseBody: `, responseBody);
 
     // FIXME: reduce waste
     const responseHeaders = {} as any;

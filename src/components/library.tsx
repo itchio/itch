@@ -1,15 +1,14 @@
 
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
-import {createStructuredSelector} from "reselect";
+import {createSelector, createStructuredSelector} from "reselect";
 
 import GameModel from "../models/game";
 
 import Games from "./games";
 import GameFilters from "./game-filters";
-import {values} from "underscore";
 
-import {IAppState} from "../types";
+import {IAppState, ITabData} from "../types";
 
 import styled, * as styles from "./styles";
 
@@ -21,12 +20,12 @@ const tab = "library";
 
 export class Library extends React.Component<IProps & IDerivedProps & I18nProps, void> {
   render () {
-    const {games} = this.props;
+    const {games, gamesCount, gamesOffset} = this.props;
 
     return <LibraryContainer>
       <GameFilters tab={tab}/>
       {Object.keys(games).length > 0
-        ? <Games games={values<GameModel>(games)} tab={tab}/>
+        ? <Games games={games} gamesCount={gamesCount} gamesOffset={gamesOffset} tab={tab}/>
         : ""
       }
     </LibraryContainer>;
@@ -36,13 +35,22 @@ export class Library extends React.Component<IProps & IDerivedProps & I18nProps,
 interface IProps {}
 
 interface IDerivedProps {
-  games: {
-    [id: number]: GameModel;
-  };
+  games: GameModel[];
+  gamesCount: number;
+  gamesOffset: number;
 }
 
 export default connect<IProps>(Library, {
-  state: createStructuredSelector({
-    games: (state: IAppState) => (state.session.tabData[tab] || {}).games || {},
-  }),
+  state: createSelector(
+    (state: IAppState) => state.session.tabData[tab] || {},
+    createStructuredSelector({
+      games: (data: ITabData) => {
+        const games = data.games || {};
+        const gameIds = data.gameIds || [];
+        return gameIds.map((id) => games[id]);
+      },
+      gamesCount: (data: ITabData) => data.gamesCount || 0,
+      gamesOffset: (data: ITabData) => data.gamesOffset || 0,
+    }),
+  )
 });

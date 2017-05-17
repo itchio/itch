@@ -6,7 +6,7 @@ import {EventEmitter} from "events";
 const makeDebug = require("debug");
 
 const deepEqual = require("deep-equal");
-export type FetchReason = "tab-changed" | "tab-evolved" | "tab-reloaded" | "window-focused";
+export type FetchReason = "tab-changed" | "tab-evolved" | "tab-reloaded" | "window-focused" | "tab-params-changed";
 
 /**
  * Fetches all the data a tab needs to display, except webviews.

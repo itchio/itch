@@ -360,6 +360,15 @@ export interface ITabDataFetchedPayload {
   timestamp: number;
 }
 
+export const TAB_PARAMS_CHANGED = "TAB_PARAMS_CHANGED";
+export interface ITabParamsChangedPayload {
+  /** tab for which the params are changing */
+  id: string;
+
+  /** the params that changed (deep partial) */  
+  params: Types.ITabParams;
+}
+
 export const OPEN_TAB_CONTEXT_MENU = "OPEN_TAB_CONTEXT_MENU";
 export interface IOpenTabContextMenuPayload {
   /** id of the tab to open the context menu of */

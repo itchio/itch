@@ -7,12 +7,11 @@ import search from "./search";
 import folders from "./folders";
 import cachedCollections from "./cached-collections";
 import market from "./market";
-import tabData from "./tab-data";
 
 import {Reducer} from "redux";
 import {ISessionState} from "../../types";
 
-export default combineReducers({
+let reducers: any = {
   login,
   credentials,
   navigation,
@@ -20,5 +19,15 @@ export default combineReducers({
   folders,
   cachedCollections,
   market,
-  tabData,
-}) as Reducer<ISessionState>;
+};
+
+if (process.type === "renderer") {
+  // renderer gets a few more reducers
+  reducers = {
+    ...reducers,
+    tabData: require("./tab-data").default,
+    tabParams: require("./tab-params").default,
+  };
+}
+
+export default combineReducers(reducers) as Reducer<ISessionState>;
