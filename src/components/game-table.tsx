@@ -27,8 +27,6 @@ import {HubGamesDiv} from "./games";
 import styled from "./styles";
 import {darken} from "polished";
 
-import * as _ from "underscore";
-
 interface IRowGetterParams {
   index: number;
 }
@@ -148,7 +146,7 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
   rowGetter (params: IRowGetterParams): any {
     const {index} = params;
 
-    return this.props.sortedGames[index];
+    return this.props.games[index];
   }
 
   genericDataGetter (params: ICellDataGetter): any {
@@ -231,13 +229,13 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
           remainingWidth -= lastPlayedWidth;
 
           const scrollTop = height <= 0 ? 0 : this.state.scrollTop;
-          const {sortedGames, sortBy, sortDirection} = this.props;
+          const {games, sortBy, sortDirection} = this.props;
 
           return <StyledTable
               headerHeight={35}
               height={height}
               width={width}
-              rowCount={sortedGames.length}
+              rowCount={games.length}
               rowHeight={75}
               rowGetter={this.rowGetter.bind(this)}
               onRowClick={this.onRowClick.bind(this)}
@@ -306,8 +304,6 @@ interface IProps {
 }
 
 interface IDerivedProps {
-  sortedGames: GameModel[];
-
   clearFilters: typeof actions.clearFilters;
   navigateToGame: typeof actions.navigateToGame;
   openGameContextMenu: typeof actions.openGameContextMenu;
