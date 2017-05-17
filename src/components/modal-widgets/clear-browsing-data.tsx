@@ -3,7 +3,7 @@ import * as React from "react";
 import * as classNames from "classnames";
 import {connect, I18nProps} from "../connect";
 
-import {IModalWidgetProps} from "./modal-widget";
+import {IModalWidgetProps, ModalWidgetDiv} from "./modal-widget";
 
 import partitionForUser from "../../util/partition-for-user";
 import * as humanize from "humanize-plus";
@@ -49,7 +49,7 @@ export class ClearBrowsingData extends React.Component<IProps & IDerivedProps & 
     const {t} = this.props;
     const {fetchedCacheSize, cacheSize, clearCache, clearCookies} = this.state;
 
-    return <div className="modal-widget">
+    return <ModalWidgetDiv>
       <div className="clear-browsing-data-list">
       <label className={classNames({active: clearCache})}>
           <div className="checkbox">
@@ -78,7 +78,7 @@ export class ClearBrowsingData extends React.Component<IProps & IDerivedProps & 
           </div>
         </label>
       </div>
-    </div>;
+    </ModalWidgetDiv>;
   }
 }
 

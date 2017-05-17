@@ -2,7 +2,7 @@
 import * as React from "react";
 import {connect, I18nProps} from "../connect";
 
-import {IModalWidgetProps} from "./modal-widget";
+import {IModalWidgetProps, ModalWidgetDiv} from "./modal-widget";
 
 import {ICaveRecord} from "../../types";
 
@@ -21,7 +21,7 @@ export class RevertCave extends React.Component<IProps & IDerivedProps & I18nPro
     const params = this.props.modal.widgetParams as IRevertCaveParams;
     const buildId = params.currentCave.buildId;
 
-    return <div className="modal-widget">
+    return <ModalWidgetDiv>
       <p>{t("prompt.revert.message", {buildId})}</p>
 
       <input
@@ -31,7 +31,7 @@ export class RevertCave extends React.Component<IProps & IDerivedProps & I18nPro
         onChange={this.onChange}
         autoFocus={true}
         />
-    </div>;
+    </ModalWidgetDiv>;
   }
 
   onChange () {

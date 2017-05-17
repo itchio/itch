@@ -2,7 +2,7 @@
 import * as React from "react";
 import {connect, I18nProps} from "../connect";
 
-import {IModalWidgetProps} from "./modal-widget";
+import {IModalWidgetProps, ModalWidgetDiv} from "./modal-widget";
 
 import {ICaveRecord} from "../../types";
 
@@ -35,13 +35,13 @@ export class ViewCaveDetails extends React.Component<IProps & IDerivedProps & I1
   render () {
     const params = this.props.modal.widgetParams as IViewCaveDetailsParams;
 
-    return <div className="modal-widget">
+    return <ModalWidgetDiv>
       <p>Local cave record:</p>
 
       <div className="json-tree-container">
         <JSONTree data={params.currentCave} theme={theme} invertTheme={false}/>
       </div>
-    </div>;
+    </ModalWidgetDiv>;
   }
 }
 

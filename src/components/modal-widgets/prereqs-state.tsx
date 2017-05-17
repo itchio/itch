@@ -7,7 +7,7 @@ import {findWhere, map} from "underscore";
 
 import downloadProgress from "../../util/download-progress";
 
-import {IModalWidgetProps} from "./modal-widget";
+import {IModalWidgetProps, ModalWidgetDiv} from "./modal-widget";
 import LoadingCircle from "../basics/loading-circle";
 
 import {IAppState, ITask, IPrereqsState} from "../../types";
@@ -18,10 +18,10 @@ export class PrereqsState extends React.Component<IProps & IDerivedProps & I18nP
     const params = this.props.modal.widgetParams as IPrereqsStateParams;
 
     if (!prereqsState) {
-      return <div className="modal-widget">{t("setup.status.preparing")}</div>;
+      return <ModalWidgetDiv>{t("setup.status.preparing")}</ModalWidgetDiv>;
     }
 
-    return <div className="modal-widget">
+    return <ModalWidgetDiv>
       <p>{t("prereq.explanation", { title: params.gameTitle })}</p>
 
       <ul className="prereqs-rows">
@@ -47,7 +47,7 @@ export class PrereqsState extends React.Component<IProps & IDerivedProps & I18nP
           </li>;
         })}
       </ul>
-    </div>;
+    </ModalWidgetDiv>;
   }
 }
 
