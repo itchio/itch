@@ -25,12 +25,10 @@ if (REDUX_DEVTOOLS_ENABLED) {
   middleware.push(logger);
 }
 
-const allAction = Object.freeze({ type: "__ALL", payload: null });
 const ee = electronEnhancer({
   filter,
   postDispatchCallback: (action: any) => {
     route(watcher, store, action);
-    route(watcher, store, allAction);
   },
 }) as GenericStoreEnhancer;
 

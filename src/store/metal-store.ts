@@ -48,12 +48,10 @@ if (beChatty) {
   middleware.push(logger);
 }
 
-const allAction = Object.freeze({ type: "__ALL", payload: null });
 const enhancer = compose(
   electronEnhancer({
     postDispatchCallback: (action: any) => {
       route(watcher, store, action);
-      route(watcher, store, allAction);
     },
   }),
   applyMiddleware(...middleware),
