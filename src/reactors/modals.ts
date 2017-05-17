@@ -38,25 +38,18 @@ export default function (watcher: Watcher) {
       modal = findWhere(modals, {id});
     }
 
-    setTimeout(() => {
-      try {
-        if (action) {
-          if (Array.isArray(action)) {
-            each(action, (a) => store.dispatch(a));
-          } else {
-            store.dispatch(action);
-          }
-        }
-
-        store.dispatch(actions.modalClosed({
-          id: modal.id,
-          action,
-        }));
-      } catch (e) {
-        // tslint:disable-next-line
-        console.log(`Couldn't dispatch modal action: ${e.stack}`);
+    if (action) {
+      if (Array.isArray(action)) {
+        each(action, (a) => store.dispatch(a));
+      } else {
+        store.dispatch(action);
       }
-    }, 0);
+    }
+
+    store.dispatch(actions.modalClosed({
+      id: modal.id,
+      action,
+    }));
   });
 
   watcher.on(actions.modalClosed, async (store, outerAction) => {
