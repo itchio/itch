@@ -121,6 +121,7 @@
     "which": "^1.2.11"
   },
   "devDependencies": {
+    "benchmark": "^2.1.4",
     "cross-env": "^5.0.0",
     "electron": "1.6.2",
     "electron-compilers": "^5.9.0",
