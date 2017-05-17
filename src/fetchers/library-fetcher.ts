@@ -42,7 +42,6 @@ export default class LibraryFetcher extends Fetcher {
       const t2 = Date.now();
       this.push({
         games: indexBy(games, "id"),
-        downloadKeys: indexBy(keys, "id"),
       });
       const t3 = Date.now();
       this.debug(`db ${elapsed(t1, t2)}, push ${elapsed(t2, t3)}`)
