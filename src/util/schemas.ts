@@ -10,7 +10,11 @@ function parseDate(input: string) {
   // without `+0` it parses a local date - this is the fastest
   // way to parse a UTC date.
   // see https://jsperf.com/parse-utc-date
-  return new Date(input + "+0");
+  const date = new Date(input + "+0");
+  // we don't store milliseconds in the db anyway,
+  // so let's just discard it here
+  date.setMilliseconds(0);
+  return date;
 }
 
 const date = transform(parseDate);
