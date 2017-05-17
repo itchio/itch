@@ -460,12 +460,14 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
       <BrowserBar {...controlProps}/>
       <BrowserMain>
         <WebviewShell className={shellClasses}>
+          {DONT_SHOW_WEBVIEWS ?
+          null :
           <webview is
             partition={partition}
             plugins="on"
             preload={getInjectPath("itchio-monkeypatch")}
             src="about:blank"
-            ref={(wv) => this.webview = wv}/>
+            ref={(wv) => this.webview = wv}/>}
         </WebviewShell>
         {context}
       </BrowserMain>
