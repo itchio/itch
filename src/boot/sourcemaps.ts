@@ -1,5 +1,9 @@
 
 import * as sourcemaps from "source-map-support";
-sourcemaps.install({
-  hookRequire: true,
-});
+import env from "../env";
+
+if (env.name === "development") {
+  sourcemaps.install({
+    hookRequire: true,
+  });
+}
