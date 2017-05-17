@@ -11,6 +11,11 @@
     "sourceMap": true,
     "jsx": "react",
     "allowJs": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "babel": {
+      "presets": ["async-to-bluebird"],
+      "plugins": ["transform-es2015-modules-commonjs"],
+      "sourceMaps": true
+    }
   }
 }
