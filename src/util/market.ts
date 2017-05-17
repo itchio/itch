@@ -1,6 +1,7 @@
 
 import * as bluebird from "bluebird";
 import {camelify, elapsed} from "./format";
+import env from "../env";
 
 import * as path from "path";
 import sf from "./sf";
@@ -75,7 +76,7 @@ export default class Market extends EventEmitter implements IMarket {
         storage: dbPath + ".db",
       },
       logging: {
-        logQueries: false,
+        logQueries: (env.name === "development"),
       },
       entities: Object.keys(modelMap).map((k) => modelMap[k]),
       autoSchemaSync: true,
@@ -200,7 +201,7 @@ export default class Market extends EventEmitter implements IMarket {
 
       const t4 = Date.now();
 
-      if (rows.length > 0){
+      if (rows.length > 0) {
         await repo.persist(rows);
       }
       const t5 = Date.now();
