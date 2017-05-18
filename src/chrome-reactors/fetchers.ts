@@ -1,6 +1,7 @@
 
 import {Watcher} from "../reactors/watcher";
-const debug = require("debug")("itch:tab-fetcher");
+import rootPino from "../util/pino";
+const pino = rootPino.child("fetchers");
 
 import * as actions from "../actions";
 
@@ -27,38 +28,31 @@ const pathFetchers = {
 
 let currentFetchers: any = {};
 let waitingFor: {
-  [key: string]: boolean;
+  [key: string]: NodeJS.Timer;
 } = {};
 
 export async function queueFetch (store: IStore, tabId: string, reason: FetchReason, getMarkets: IMarketGetter) {
-  debug(`Queuing fetch for "${tabId}" because ${reason}`);
+  if (waitingFor[tabId]) {
+    clearTimeout(waitingFor[tabId]);
+  }
 
-  if (currentFetchers[tabId]) {
-    if (waitingFor[tabId]) {
-      debug(`Debounced "${tabId}" fetch`);
-      // this isn't great because the fetch might be different depending on `reason`
+  waitingFor[tabId] = setTimeout(() => {
+    delete waitingFor[tabId];
+    pino.info(tabId, reason, ", reloading.");
+
+    const fetcherClass = getFetcherClass(store, tabId);
+    if (!fetcherClass) {
       return;
     }
-    waitingFor[tabId] = true;
-    await new Promise((resolve, reject) => {
-      currentFetchers[tabId].emitter.on("done", resolve);
+
+    const fetcher = new fetcherClass();
+    currentFetchers[tabId] = fetcher;
+    fetcher.hook(store, tabId, reason, getMarkets);
+    fetcher.start();
+    fetcher.emitter.on("done", () => {
+      delete currentFetchers[tabId];
     });
-    delete waitingFor[tabId];
-  }
-
-  const fetcherClass = getFetcherClass(store, tabId);
-  if (!fetcherClass) {
-    debug(`No fetcher for "${tabId}", nothing to do`);
-    return;
-  }
-
-  const fetcher = new fetcherClass();
-  currentFetchers[tabId] = fetcher;
-  fetcher.hook(store, tabId, reason, getMarkets);
-  fetcher.start();
-  fetcher.emitter.on("done", () => {
-    delete currentFetchers[tabId];
-  });
+  }, 250);
 }
 
 function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
@@ -70,7 +64,6 @@ function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
   const path = store.getState().session.navigation.tabData[tabId].path;
   if (path) {
     const pathBase = path.substr(0, path.indexOf("/"));
-    debug(`path base = ${pathBase}`);
     const pathFetcher = pathFetchers[pathBase];
     if (pathFetcher) {
       return pathFetcher;

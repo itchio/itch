@@ -27,7 +27,8 @@ import DownloadKeyModel from "../models/download-key";
 
 type IMenuItem = Electron.MenuItemOptions;
 
-const debug = require("debug")("itch:reactors:context-menu");
+import rootPino from "../util/pino";
+const pino = rootPino.child("context-menu");
 
 function openMenu (store: IStore, template: IMenuItem[]) {
   if (template.length === 0) {
@@ -73,7 +74,7 @@ export default function (watcher: Watcher) {
     const gameId = game.id;
     const {globalMarket, market} = watcher.getMarkets();
     if (!globalMarket) {
-      debug(`no global market`);
+      pino.info(`no global market`);
       return;
     }
     if (!market) {

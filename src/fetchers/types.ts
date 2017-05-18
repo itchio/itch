@@ -7,8 +7,7 @@ import {EventEmitter} from "events";
 const deepEqual = require("deep-equal");
 export type FetchReason = "tab-changed" | "tab-evolved" | "tab-reloaded" | "window-focused" | "tab-params-changed";
 
-import {Logger} from "pino";
-const pino: Logger = require("pino/browser")();
+import rootPino from "../util/pino";
 
 /**
  * Fetches all the data a tab needs to display, except webviews.
@@ -26,14 +25,14 @@ export class Fetcher {
   emitter: EventEmitter;
   startedAt: number;
 
-  logger?: typeof pino;
+  logger?: typeof rootPino;
 
   prevData?: ITabData;
 
   retryCount = 0;
 
   hook(store: IStore, tabId: string, reason: FetchReason, getMarkets: IMarketGetter) {
-    this.logger = pino.child(`itch:tab-fetcher:${tabId}:${reason}`);
+    this.logger = rootPino.child(`tab-fetcher:${tabId}:${reason}`);
     this.store = store;
     this.tabId = tabId;
     this.reason = reason;

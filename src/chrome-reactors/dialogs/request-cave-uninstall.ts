@@ -7,7 +7,8 @@ import * as invariant from "invariant";
 import CaveModel from "../../models/cave";
 import fetch from "../../util/fetch";
 
-const debug = require("debug")("itch:reactors:dialogs:request-cave-uninstall");
+import rootPino from "../../util/pino";
+const pino = rootPino.child("requets-cave-uninstall");
 
 export default function (watcher: Watcher) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {
@@ -15,7 +16,7 @@ export default function (watcher: Watcher) {
     const credentials = store.getState().session.credentials;
     const {globalMarket, market} = watcher.getMarkets();
     if (!globalMarket || !market) {
-      debug(`missing markets!`);
+      pino.debug(`missing markets!`);
       return;
     }
 
