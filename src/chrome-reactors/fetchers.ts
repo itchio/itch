@@ -25,8 +25,26 @@ const pathFetchers = {
   "collections": CollectionFetcher,
 };
 
-export function queueFetch (store: IStore, tabId: string, reason: FetchReason, getMarkets: IMarketGetter) {
+let currentFetchers: any = {};
+let waitingFor: {
+  [key: string]: boolean;
+} = {};
+
+export async function queueFetch (store: IStore, tabId: string, reason: FetchReason, getMarkets: IMarketGetter) {
   debug(`Queuing fetch for "${tabId}" because ${reason}`);
+
+  if (currentFetchers[tabId]) {
+    if (waitingFor[tabId]) {
+      debug(`Debounced "${tabId}" fetch`);
+      // this isn't great because the fetch might be different depending on `reason`
+      return;
+    }
+    waitingFor[tabId] = true;
+    await new Promise((resolve, reject) => {
+      currentFetchers[tabId].emitter.on("done", resolve);
+    });
+    delete waitingFor[tabId];
+  }
 
   const fetcherClass = getFetcherClass(store, tabId);
   if (!fetcherClass) {
@@ -35,8 +53,12 @@ export function queueFetch (store: IStore, tabId: string, reason: FetchReason, g
   }
 
   const fetcher = new fetcherClass();
+  currentFetchers[tabId] = fetcher;
   fetcher.hook(store, tabId, reason, getMarkets);
   fetcher.start();
+  fetcher.emitter.on("done", () => {
+    delete currentFetchers[tabId];
+  });
 }
 
 function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {

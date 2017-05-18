@@ -232,7 +232,6 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
   }
 
   onRowsRendered (info: IRowsRenderedInfo) {
-    console.log(`rows rendered: `, info);
     this.props.tabParamsChanged({
       id: this.props.tab,
       params: {

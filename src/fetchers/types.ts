@@ -3,10 +3,12 @@ import {IStore, IUserMarket, IGlobalMarket, ITabData} from "../types";
 
 import * as actions from "../actions";
 import {EventEmitter} from "events";
-const makeDebug = require("debug");
 
 const deepEqual = require("deep-equal");
 export type FetchReason = "tab-changed" | "tab-evolved" | "tab-reloaded" | "window-focused" | "tab-params-changed";
+
+import {Logger} from "pino";
+const pino: Logger = require("pino/browser")();
 
 /**
  * Fetches all the data a tab needs to display, except webviews.
@@ -24,14 +26,14 @@ export class Fetcher {
   emitter: EventEmitter;
   startedAt: number;
 
-  debug?: any;
+  logger?: typeof pino;
 
   prevData?: ITabData;
 
   retryCount = 0;
 
   hook(store: IStore, tabId: string, reason: FetchReason, getMarkets: IMarketGetter) {
-    this.debug = makeDebug(`itch:tab-fetcher:${tabId}:${reason}`);
+    this.logger = pino.child(`itch:tab-fetcher:${tabId}:${reason}`);
     this.store = store;
     this.tabId = tabId;
     this.reason = reason;
@@ -47,12 +49,12 @@ export class Fetcher {
 
   start() {
     this.startedAt = Date.now();
-    this.debug(`Starting work...`);
+    this.logger.info(`Starting work...`);
     this.work().then((outcome) => {
       if (isOutcome(outcome)) {
         switch (outcome.state) {
           case "success":
-            this.debug(`Success!`);
+            this.logger.info(`Success!`);
             this.emitter.emit("done");
             break;
           case "retry":
@@ -61,23 +63,22 @@ export class Fetcher {
               throw new Error(`Too many retries, giving up`);
             } else {
               let sleepTime = 100 * Math.pow(2, this.retryCount);
-              this.debug(`Sleeping ${sleepTime}ms then retrying...`);
+              this.logger.info(`Sleeping ${sleepTime}ms then retrying...`);
               setTimeout(() => {
                 this.start();
               }, sleepTime);
             }
             break;
           default:
-            this.debug(`Fetcher returned unknown outcome state ${outcome.state}`);
+            this.logger.info(`Fetcher returned unknown outcome state ${outcome.state}`);
             this.emitter.emit("done");
             break;
         }
       } else {
-        this.debug(`Fetcher did not return any outcome`);
         this.emitter.emit("done");
       }
     }).catch((e) => {
-      this.debug(`Error in work:\n${e.stack}`);
+      this.logger.error(`Error in work:\n${e.stack}`);
       this.emitter.emit("done");
     });
   }
@@ -95,15 +96,15 @@ export class Fetcher {
    */
   push (data: ITabData) {
     if (this.aborted) {
-      this.debug(`we're cancelled, suppressing push`);
+      this.logger.warn(`we're cancelled, suppressing push`);
     }
 
     if (this.prevData && deepEqual(this.prevData, data)) {
-      this.debug(`push ignoring duplicate data`);
+      this.logger.warn(`push ignoring duplicate data`);
       return;
     }
 
-    this.debug(`push got fresh data!`, data);
+    this.logger.info(`push got fresh data!`, data);
     this.prevData = data;
     const timestamp = Date.now();
 
@@ -118,7 +119,7 @@ export class Fetcher {
   cancel() {
     if (this.aborted) {
       // already cancelled
-      this.debug(`Fetch for ${this.tabId}`);
+      this.logger.warn(`Fetch for ${this.tabId} cancelled twice`);
       return;
     }
     this.emitter.emit("abort");
@@ -126,6 +127,10 @@ export class Fetcher {
 
   retry() {
     return new Outcome("retry");
+  }
+
+  debug(msg: string, ...args: any[]) {
+    this.logger.info(msg, ...args);
   }
 }
 

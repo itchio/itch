@@ -2,6 +2,7 @@
 import {Fetcher, Outcome} from "./types";
 import Game from "../models/game";
 import DownloadKey from "../models/download-key";
+import compareRecords from "../util/compare-records";
 import client from "../util/api";
 
 import normalize from "../util/normalize";
@@ -11,6 +12,8 @@ import {downloadKey} from "../util/schemas";
 
 import {pluck, indexBy, difference} from "underscore";
 
+import {getColumns} from "../util/market";
+
 export default class LibraryFetcher extends Fetcher {
   constructor () {
     super();
@@ -19,7 +22,7 @@ export default class LibraryFetcher extends Fetcher {
   async work(): Promise<Outcome> {
     const {market} = this.getMarkets();
     if (!market) {
-      this.debug(`No user market :(`);
+      this.logger.warn(`No user market :(`);
       return this.retry();
     }
 
@@ -29,12 +32,11 @@ export default class LibraryFetcher extends Fetcher {
     try {
       meId = session.credentials.me.id;
     } catch (e) {
-      this.debug(`Couldn't get meId, not logged in maybe? ${e}`);
+      this.logger.warn(`Couldn't get meId, not logged in maybe? ${e}`);
       return this.retry();
     }
 
     const tabParams = session.tabParams[this.tabId];
-    this.debug(`tabParams = `, tabParams);
 
     const gameRepo = market.getRepo(Game);
     const keyRepo = market.getRepo(DownloadKey);
@@ -45,19 +47,50 @@ export default class LibraryFetcher extends Fetcher {
         .where("exists (select 1 from downloadKeys where downloadKeys.gameId = games.id)")
         .orderBy("games.createdAt", "DESC")
         .setOffset(offset).setLimit(limit); 
+      const t2 = Date.now();
 
       let [games, gamesCount] = await query.getManyAndCount();
-      const t2 = Date.now();
+      const t3 = Date.now();
+
+      const oldTabData = this.store.getState().session.tabData[this.tabId];
+      let equalGames = 0;
+      let presentGames = 0;
+
+      if (oldTabData && oldTabData.games && Object.keys(oldTabData.games).length > 0) {
+        // tslint:disable-next-line
+        for (let i = 0; i < games.length; i++) {
+          const game = games[i];
+          const oldGame = oldTabData.games[game.id];
+          if (oldGame) {
+            if (compareRecords(oldGame, game, getColumns(Game))) {
+              games[i] = oldGame;
+              equalGames++;
+            } else {
+              presentGames++;
+            }
+          }
+        }
+      }
+      this.logger.info("games equal", equalGames,
+       "present", presentGames, "fresh", games.length - equalGames - presentGames);
+
       this.push({
         games: indexBy(games, "id"),
         gameIds: pluck(games, "id"),
         gamesCount,
         gamesOffset: offset,
       });
-      const t3 = Date.now();
-      this.debug(`db ${elapsed(t1, t2)}, push ${elapsed(t2, t3)}`);
+      const t4 = Date.now();
+      this.logger.info("query", elapsed(t1, t2),
+        "select", elapsed(t2, t3),
+        "push", elapsed(t3, t4));
     };
     await pushLocal();
+
+    if (this.reason === "tab-params-changed") {
+      // that'll do. no need to fire an API request when scrolling :)
+      return new Outcome("success");
+    }
 
     const {credentials} = session;
     if (!credentials) {
@@ -75,11 +108,11 @@ export default class LibraryFetcher extends Fetcher {
         owned_keys: arrayOf(downloadKey),
       });
       const t3 = Date.now();
-      this.debug(`api ${(t2 - t1).toFixed()}ms, norm ${(t3 - t2).toFixed(2)}ms`);
+      this.logger.info("api", elapsed(t1, t2), "norm", elapsed(t2, t3));
     } catch (e) {
-      this.debug(`API error:`, e);
+      this.logger.error(`API error:`, e);
       if (client.isNetworkError(e)) {
-        return new Outcome("retry");
+        return this.retry();
       } else {
         throw e;
       }
@@ -90,14 +123,14 @@ export default class LibraryFetcher extends Fetcher {
     let newKeyIds = pluck(normalized.entities.downloadKeys, "id");
     let goners = difference(oldKeyIds, newKeyIds);
     if (goners.length > 0) {
-      this.debug(`goners = `, goners);
+      this.logger.info(`goners = `, goners);
       await market.deleteAllEntities({
         entities: {
           downloadKeys: goners,
         },
       });
     } else {
-      this.debug(`no goners`);
+      this.logger.info(`no goners`);
     }
 
     await market.saveAllEntities({

@@ -1,7 +1,6 @@
 
 import * as bluebird from "bluebird";
 import {camelify, elapsed} from "./format";
-import env from "../env";
 
 import * as path from "path";
 import sf from "./sf";
@@ -76,7 +75,7 @@ export default class Market extends EventEmitter implements IMarket {
         storage: dbPath + ".db",
       },
       logging: {
-        logQueries: (env.name === "development"),
+        logQueries: process.env.ITCH_SQL === "1",
       },
       entities: Object.keys(modelMap).map((k) => modelMap[k]),
       autoSchemaSync: true,
@@ -312,7 +311,7 @@ export default class Market extends EventEmitter implements IMarket {
 
 const columnsCache = new Map<Function, Set<string>>();
 
-function getColumns (model: Function): Set<string> {
+export function getColumns (model: Function): Set<string> {
   const cached = columnsCache.get(model);
   if (cached) {
     return cached;
