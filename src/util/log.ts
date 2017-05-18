@@ -165,7 +165,7 @@ export class Logger {
   }
 
   timestamp(): string {
-    return "[" + format.date(Date.now(), "YYYY-MM-DD @ HH:mm:ss.SSS") + "]";
+    return "[" + format.date(new Date(), "YYYY-MM-DD @ HH:mm:ss.SSS") + "]";
   }
 }
 make.Logger = Logger;

@@ -37,7 +37,7 @@ test("format", t => {
   });
 
   t.case("date", t => {
-    t.same(format.date(Date.parse("1994-04-03T11:47:21"), "DD MMMM, YYYY", "en"), "03 April, 1994");
+    t.same(format.date(new Date("1994-04-03T11:47:21")), "1994-04-03T11:47:21.000Z");
   });
 
   t.case("price", t => {

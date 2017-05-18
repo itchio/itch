@@ -207,7 +207,7 @@ export default function (watcher: Watcher) {
       store.dispatch(actions.dismissStatus({}));
       return;
     }
-    const pubDate = new Date(Date.parse(spec.pub_date));
+    const pubDate = new Date(spec.pub_date);
     const lang = store.getState().i18n.lang;
 
     const messageString = `prompt.self_update.message.${os.itchPlatform()}`;

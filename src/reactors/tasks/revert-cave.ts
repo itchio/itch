@@ -87,7 +87,8 @@ export default function (watcher: Watcher) {
             label = `#${build.id}`;
           }
 
-          label = `${label} — ${format.date(Date.parse(build.updatedAt), DATE_FORMAT, i18n.lang)}`;
+          // TODO: check, I have doubts about this Date constructor
+          label = `${label} — ${format.date(new Date(build.updatedAt), DATE_FORMAT, i18n.lang)}`;
 
           return {
             label,

@@ -64,14 +64,9 @@ export function seconds(secs: number): any[] {
   }
 }
 
-export function date(v: any, f: string, lang = "en"): string {
-  try {
-    return moment.tz(v, "UTC").tz(moment.tz.guess()).locale(lang).format(f);
-  } catch (err) {
-    /* tslint:disable:no-console */
-    console.log(`Invalid date: ${v} — ${err.toString()}`);
-    return "?";
-  }
+export function date(v: Date, f?: string, lang?: string): string {
+  // TODO: localize again at some point, see https://github.com/gosquared/speed-date
+  return v.toISOString();
 }
 
 export const DATE_FORMAT = "DD MMMM, YYYY @ HH:mm zz";

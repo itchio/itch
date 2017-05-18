@@ -1006,6 +1006,10 @@ classnames@2.2.5, classnames@^2.2.3, classnames@^2.2.4, classnames@^2.2.5:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.5.tgz#fb3801d453467649ef3603c7d61a02bd129bde6d"
 
+cldr-dates-modern@^31.0.1:
+  version "31.0.1"
+  resolved "https://registry.yarnpkg.com/cldr-dates-modern/-/cldr-dates-modern-31.0.1.tgz#87eb95a39e07a8bfa6ea9e1c5edfe8c60dbbb4c3"
+
 clean-css@^3.1.9:
   version "3.4.25"
   resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-3.4.25.tgz#9e9a52d5c1e6bc5123e1b2783fa65fe958946ede"
@@ -2326,6 +2330,16 @@ inline-style-prefixer@^2.0.5:
     bowser "^1.0.0"
     hyphenate-style-name "^1.0.1"
 
+intl-messageformat-parser@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/intl-messageformat-parser/-/intl-messageformat-parser-1.2.0.tgz#5906b7f953ab7470e0dc8549097b648b991892ff"
+
+intl-messageformat@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/intl-messageformat/-/intl-messageformat-1.3.0.tgz#f7d926aded7a3ab19b2dc601efd54e99a4bd4eae"
+  dependencies:
+    intl-messageformat-parser "1.2.0"
+
 invariant@^2.0.0, invariant@^2.2.0, invariant@^2.2.1, invariant@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.2.tgz#9e1f56ac0acdb6bf303306f338be3b204ae60360"
@@ -2523,6 +2537,12 @@ jade@^1.11.0:
     transformers "2.1.0"
     void-elements "~2.0.1"
     with "~4.0.0"
+
+javascript-time-ago@^0.4.9:
+  version "0.4.9"
+  resolved "https://registry.yarnpkg.com/javascript-time-ago/-/javascript-time-ago-0.4.9.tgz#0eb26538458210b529b259445b0e9c04894c39ed"
+  dependencies:
+    babel-runtime "^6.6.1"
 
 jodid25519@^1.0.0:
   version "1.0.2"
@@ -3561,14 +3581,14 @@ promise@~2.0:
   dependencies:
     is-promise "~1"
 
-prop-types@^15.5.10:
+prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6:
   version "15.5.10"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.10.tgz#2797dfc3126182e3a95e3dfbb2e893ddd7456154"
   dependencies:
     fbjs "^0.8.9"
     loose-envify "^1.3.1"
 
-prop-types@^15.5.4, prop-types@^15.5.7, prop-types@~15.5.7:
+prop-types@^15.5.7, prop-types@~15.5.7:
   version "15.5.8"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.8.tgz#6b7b2e141083be38c8595aa51fc55775c7199394"
   dependencies:
@@ -3659,7 +3679,7 @@ react-addons-perf@^15.4.2:
     fbjs "^0.8.4"
     object-assign "^4.1.0"
 
-react-addons-shallow-compare@^15.4.1:
+react-addons-shallow-compare@^15.3.2, react-addons-shallow-compare@^15.4.1:
   version "15.5.2"
   resolved "https://registry.yarnpkg.com/react-addons-shallow-compare/-/react-addons-shallow-compare-15.5.2.tgz#7cb0ee7acc8d7c93fcc202df0bf47ba916a7bdad"
   dependencies:
@@ -3806,6 +3826,14 @@ react-sortable-hoc@^0.4.12:
     babel-runtime "^6.11.6"
     invariant "^2.2.1"
     lodash "^4.12.0"
+
+react-time-ago@^0.3.6:
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/react-time-ago/-/react-time-ago-0.3.6.tgz#8e267eac0ea585660dd563d3bf6c3aa4fe8a89f1"
+  dependencies:
+    babel-runtime "^6.6.1"
+    prop-types "^15.5.6"
+    react-addons-shallow-compare "^15.3.2"
 
 react-timeago-titlefix@3.1.1-fix1:
   version "3.1.1-fix1"

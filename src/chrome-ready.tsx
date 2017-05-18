@@ -3,6 +3,7 @@
 import "./boot/bluebird";
 import "./boot/fs";
 import "./boot/sniff-language";
+import "./boot/time-ago-locales";
 
 import os from "./util/os";
 
