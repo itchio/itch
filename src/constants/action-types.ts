@@ -327,6 +327,12 @@ export interface ITriggerBackPayload {}
 export const TRIGGER_LOCATION = "TRIGGER_LOCATION";
 export interface ITriggerLocationPayload {}
 
+export const TRIGGER_BROWSER_BACK = "TRIGGER_BROWSER_BACK";
+export interface ITriggerBrowserBackPayload {}
+
+export const TRIGGER_BROWSER_FORWARD = "TRIGGER_BROWSER_FORWARD";
+export interface ITriggerBrowserForwardPayload {}
+
 export const TOGGLE_MINI_SIDEBAR = "TOGGLE_MINI_SIDEBAR";
 export interface IToggleMiniSidebarPayload {}
 

@@ -39,6 +39,8 @@ import {
   TRIGGER_OK, ITriggerOkPayload,
   TRIGGER_BACK, ITriggerBackPayload,
   TRIGGER_LOCATION, ITriggerLocationPayload,
+  TRIGGER_BROWSER_BACK, ITriggerBrowserBackPayload,
+  TRIGGER_BROWSER_FORWARD, ITriggerBrowserForwardPayload,
 
   VIEW_CREATOR_PROFILE, IViewCreatorProfilePayload,
   VIEW_COMMUNITY_PROFILE, IViewCommunityProfilePayload,
@@ -100,6 +102,8 @@ export const triggerMainAction = createAction<ITriggerMainActionPayload>(TRIGGER
 export const triggerOk = createAction<ITriggerOkPayload>(TRIGGER_OK);
 export const triggerBack = createAction<ITriggerBackPayload>(TRIGGER_BACK);
 export const triggerLocation = createAction<ITriggerLocationPayload>(TRIGGER_LOCATION);
+export const triggerBrowserBack = createAction<ITriggerBrowserBackPayload>(TRIGGER_BROWSER_BACK);
+export const triggerBrowserForward = createAction<ITriggerBrowserForwardPayload>(TRIGGER_BROWSER_FORWARD);
 
 export const viewCreatorProfile = createAction<IViewCreatorProfilePayload>(VIEW_CREATOR_PROFILE);
 export const viewCommunityProfile = createAction<IViewCommunityProfilePayload>(VIEW_COMMUNITY_PROFILE);

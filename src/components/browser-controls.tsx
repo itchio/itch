@@ -1,6 +1,7 @@
 
 import listensToClickOutside = require("react-onclickoutside");
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import * as classNames from "classnames";
 import {connect, I18nProps} from "./connect";
 
@@ -113,6 +114,23 @@ export class BrowserControls extends React.Component<IProps & IDerivedProps & I1
       }
 
       browserAddress.blur();
+    });
+
+    watcher.on(actions.triggerBrowserBack, async (store, action) => {
+      if (store.getState().modals.length > 0) {
+        // ignore browser back if there's modals shown
+      }
+      if (this.props.browserState.canGoBack) {
+        this.props.goBack();
+      }
+    });
+    watcher.on(actions.triggerBrowserForward, async (store, action) => {
+      if (store.getState().modals.length > 0) {
+        // ignore browser forward if there's modals shown
+      }
+      if (this.props.browserState.canGoForward) {
+        this.props.goForward();
+      }
     });
   }
 

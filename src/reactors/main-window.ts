@@ -26,6 +26,8 @@ let createLock = false;
 let quitting = false;
 let firstWindow = true;
 
+type AppCommand = "browser-backward" | "browser-forward";
+
 const BOUNDS_CONFIG_KEY = "main_window_bounds";
 const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
@@ -146,6 +148,19 @@ async function createWindow (store: IStore, hidden: boolean) {
   window.on("leave-full-screen", (e: any) => {
     if (store.getState().ui.mainWindow.fullscreen) {
       store.dispatch(actions.windowFullscreenChanged({fullscreen: false}));
+    }
+  });
+
+  window.on("app-command", (e: any, cmd: AppCommand) => {
+    switch (cmd) {
+      case "browser-backward":
+        store.dispatch(actions.triggerBrowserBack({}));
+        break;
+      case "browser-forward":
+        store.dispatch(actions.triggerBrowserForward({}));
+        break;
+      default:
+        log(opts, `Unknown app command "${cmd}", ignoring`);
     }
   });
 
