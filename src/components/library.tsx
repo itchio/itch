@@ -47,6 +47,7 @@ export default connect<IProps>(Library, {
   state: createSelector(
     (state: IAppState) => state.session.tabData[tab] || emptyObj,
     createStructuredSelector({
+      // FIXME: this doesn't memoize like you think it would
       games: (data: ITabData) => {
         const games = data.games || emptyObj;
         const gameIds = data.gameIds || emptyArr;

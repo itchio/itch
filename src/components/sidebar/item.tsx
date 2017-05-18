@@ -119,6 +119,7 @@ class Item extends React.PureComponent<IProps, IState> {
     this.state = {
       fresh: true,
     };
+    this.onCloseClick = this.onCloseClick.bind(this);
   }
 
   onMouseUp (e: React.MouseEvent<HTMLElement>) {
@@ -134,6 +135,15 @@ class Item extends React.PureComponent<IProps, IState> {
       if (onClick) {
         onClick();
       }
+    }
+  }
+
+  onCloseClick (e: React.MouseEvent<any>) {
+    e.stopPropagation();
+
+    const {onClose} = this.props;
+    if (onClose) {
+      onClose();
     }
   }
 
@@ -176,10 +186,7 @@ class Item extends React.PureComponent<IProps, IState> {
         </ProgressOuter>
         : null}
         {onClose
-          ? <IconButton icon="cross" onClick={(e) => {
-            onClose();
-            e.stopPropagation();
-          }}/>
+          ? <IconButton icon="cross" onClick={this.onCloseClick}/>
           : null
         }
       </Row>

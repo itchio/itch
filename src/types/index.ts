@@ -1328,7 +1328,7 @@ export interface IDownloadItem {
      * game record at the time the download started - in case we're downloading
      * something that's not cached locally.
      */
-    game: IGameRecord;
+    game: GameModel;
 
     /** order in the download list: can be negative, for reordering */
     order: number;

@@ -34,6 +34,7 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
     super();
     this.onClick = this.onClick.bind(this);
     this.onClose = this.onClose.bind(this);
+    this.onContextMenu = this.onContextMenu.bind(this);
   }
 
   onClick() {
@@ -42,10 +43,8 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
   }
 
   onClose() {
-    const {sortable, id, closeTab} = this.props;
-    if (sortable) {
-      closeTab({id});
-    }
+    const {id, closeTab} = this.props;
+    closeTab({id});
   }
 
   onContextMenu() {
@@ -55,7 +54,6 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
 
   render () {
     const {t, id, index, sortable, data, active, loading} = this.props;
-    const {openTabContextMenu} = this.props;
 
     const {path} = data;
     let iconImage = data.iconImage;
@@ -65,7 +63,6 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
     
     const label = makeLabel(id, data);
     const icon = pathToIcon(path);
-    const onContextMenu = () => openTabContextMenu({id});
     let count = 0;
     let progress = 0;
     let sublabel: ILocalizedString = null;
@@ -89,7 +86,7 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
     }
 
     let gameOverride: IGameRecord = null;
-    let {onClick, onClose} = this;
+    let {onClick, onClose, onContextMenu} = this;
     if (!sortable) {
       onClose = null;
     }

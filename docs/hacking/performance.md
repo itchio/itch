@@ -102,4 +102,14 @@ export GoodComponent extends React.PureComponent<any, any> {
 }
 ```
 
-More details: https://medium.com/@esamatti/react-js-pure-render-performance-anti-pattern-fb88c101332f
+More details in [this medium article](https://medium.com/@esamatti/react-js-pure-render-performance-anti-pattern-fb88c101332f)
+
+## Queries
+
+The app is SQLite-backed now, so:
+
+  * Avoid doing filtering in components (even in `mapStateToProps`)
+  * Avoid doing joins yourself
+  * Avoid doing dumb queries
+
+Use `ITCH_SQL=1` to make typeorm print queries to the console.

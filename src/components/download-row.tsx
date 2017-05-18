@@ -11,7 +11,7 @@ import * as actions from "../actions";
 
 import TimeAgo from "./basics/time-ago";
 import IconButton from "./basics/icon-button";
-import HoverBoard from "./basics/hover-board";
+import Hover, {IHoverProps} from "./basics/hover-hoc";
 import Cover from "./basics/cover";
 import GameActions from "./game-actions";
 
@@ -140,12 +140,18 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps & I18nProps
     super();
     this.state = {};
     this.onCoverContextMenu = this.onCoverContextMenu.bind(this);
+    this.onNavigate = this.onNavigate.bind(this);
   }
 
   onCoverContextMenu () {
     const {item, openGameContextMenu} = this.props;
     const {game} = item;
     openGameContextMenu({game});
+  }
+
+  onNavigate () {
+    const {item, navigateToGame} = this.props;
+    navigateToGame(item.game);
   }
 
   render () {
@@ -156,16 +162,17 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps & I18nProps
 
     let onStatsClick = (): void => null;
     if (!active) {
-      onStatsClick = () => navigateToGame(game);
+      onStatsClick = this.onNavigate;
     }
 
     const itemClasses = classNames({first, dimmed: (active && !first), finished: !active});
 
     const gradientColor = "rgb(158, 150, 131)";
 
-    return <HoverBoard>
-      {({hover, props}) =>
-      <DownloadRowDiv className={itemClasses} onContextMenu={this.onCoverContextMenu} {...props}>
+    const {hover, onMouseEnter, onMouseLeave} = this.props;
+
+    return <DownloadRowDiv className={itemClasses} onContextMenu={this.onCoverContextMenu}
+      onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
         {first
         ? <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={speeds} margin={{top: 0, right: 0, left: 0, bottom: 0}}>
@@ -189,14 +196,11 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps & I18nProps
           stillCoverUrl={stillCoverUrl}
           onClick={() => navigateToGame(game)}
         />
-        <div className="stats" onClick={() => { onStatsClick(); }}>
+        <div className="stats" onClick={onStatsClick}>
           {this.progress()}
         </div>
         {this.controls()}
-      </DownloadRowDiv>
-    }
-    </HoverBoard>
-    ;
+    </DownloadRowDiv>;
   }
 
   controls () {
@@ -343,7 +347,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps & I18nProps
   }
 }
 
-interface IProps {
+interface IProps extends IHoverProps {
   // TODO: first really means active, active really means !finished
   first?: boolean;
   active?: boolean;
@@ -373,7 +377,9 @@ interface IState {
   dominantColor?: IRGBColor;
 }
 
-export default connect<IProps>(DownloadRow, {
+const HoverDownloadRow = Hover(DownloadRow);
+
+export default connect<IProps>(HoverDownloadRow, {
   state: (state) => ({
     speeds: state.downloads.speeds,
     downloadsPaused: state.downloads.downloadsPaused,

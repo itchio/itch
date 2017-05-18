@@ -82,19 +82,29 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps & I18nProps, IS
     this.state = {
       transient: props.tabs.transient,
     };
+    this.closeAllTabs = this.closeAllTabs.bind(this);
+    this.newTab = this.newTab.bind(this);
+    this.onSortEnd = this.onSortEnd.bind(this);
+  }
+
+  closeAllTabs () {
+    this.props.closeAllTabs({});
+  }
+
+  newTab () {
+    this.props.newTab({});
+  }
+
+  onSortEnd (params: ISortEndParams) {
+    const {oldIndex, newIndex} = params;
+    this.setState({
+      transient: arrayMove(this.state.transient, oldIndex, newIndex),
+    });
+    this.props.moveTab({before: oldIndex, after: newIndex});
   }
 
   render () {
-    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs, closeAllTabs,
-      newTab} = this.props;
-
-    const onSortEnd = (params: ISortEndParams) => {
-      const {oldIndex, newIndex} = params;
-      this.setState({
-        transient: arrayMove(this.state.transient, oldIndex, newIndex),
-      });
-      this.props.moveTab({before: oldIndex, after: newIndex});
-    };
+    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs} = this.props;
 
     return <SidebarDiv width={sidebarWidth}>
       {(osx && !fullscreen)
@@ -119,18 +129,18 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps & I18nProps, IS
           <IconButton
             icon="delete"
             hint={t("sidebar.close_all_tabs")}
-            onClick={() => closeAllTabs({})}
+            onClick={this.closeAllTabs}
           />
           <IconButton
             icon="plus"
             hint={t("sidebar.new_tab")}
-            onClick={() => newTab({})}
+            onClick={this.newTab}
           />
         </SidebarSection>
 
         <SortableList items={this.state.transient}
           sidebarProps={this.props}
-          onSortEnd={onSortEnd}
+          onSortEnd={this.onSortEnd}
           distance={5}
           lockAxis="y"
         />

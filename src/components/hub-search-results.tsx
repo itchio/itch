@@ -3,13 +3,13 @@ import * as React from "react";
 import * as classNames from "classnames";
 
 import {connect, I18nProps} from "./connect";
-import {createSelector, createStructuredSelector} from "reselect";
+import {createStructuredSelector} from "reselect";
 
-import {each, values} from "underscore";
+import {each} from "underscore";
 
 import * as actions from "../actions";
 
-import {IAppState, IGameRecord, ISessionSearchState, ISearchResults} from "../types";
+import {IAppState, ISearchResults} from "../types";
 import {dispatcher} from "../constants/action-types";
 
 import GameSearchResult from "./search-results/game-search-result";
@@ -108,8 +108,7 @@ export class HubSearchResults extends React.PureComponent<IProps & IDerivedProps
   }
 
   render () {
-    const {t, search} = this.props;
-    const {query, open, results} = search;
+    const {t, query, open, results} = this.props;
     if (!open) {
       return null;
     }
@@ -140,8 +139,8 @@ export class HubSearchResults extends React.PureComponent<IProps & IDerivedProps
   }
 
   resultsGrid (results: ISearchResults) {
-    const {highlight} = this.props.search;
-    const active = this.props.search.open;
+    const {highlight} = this.props;
+    const active = this.props.open;
     const fuseResults = [];
 
     const hasRemoteResults = results &&
@@ -217,8 +216,10 @@ interface IProps {
 }
 
 interface IDerivedProps {
-  search: ISessionSearchState;
-  allGames: IGameRecord[];
+  open: boolean;
+  highlight: number;
+  query: string;
+  results: ISearchResults;
 
   closeSearch: typeof actions.closeSearch;
   navigate: typeof actions.navigate;
@@ -232,7 +233,10 @@ interface IState {
 
 export default connect<IProps>(HubSearchResults, {
   state: createStructuredSelector({
-    search: (state: IAppState) => state.session.search,
+    open: (state: IAppState) => state.session.search.open,
+    highlight: (state: IAppState) => state.session.search.highlight,
+    query: (state: IAppState) => state.session.search.query,
+    results: (state: IAppState) => state.session.search.results,
   }),
   dispatch: (dispatch) => ({
     closeSearch: dispatcher(dispatch, actions.closeSearch),
