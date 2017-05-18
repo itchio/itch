@@ -48,6 +48,11 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
     }
   }
 
+  onContextMenu() {
+    const {id, openTabContextMenu} = this.props;
+    openTabContextMenu({id});
+  }
+
   render () {
     const {t, id, index, sortable, data, active, loading} = this.props;
     const {openTabContextMenu} = this.props;

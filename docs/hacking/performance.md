@@ -37,3 +37,69 @@ environment include:
   * Hot Module Reloading (?)
 
 Note: `react-addons-perf` only works in the development environment.
+
+## Chrome DevTools
+
+Chrome has many tools that let us know what we're doing.
+
+First off, don't check "Hide Violations". Violations are bad, let's not do them.
+
+They may happen when first-time-loading large datasets, that's okay - but in normal,
+we-have-almost-everything-cached state, they shouldn't happen.
+
+Use the "Timelines" tab to see where time is spent. You can also Profile javascript,
+and capture the Heap or profile memory allocations. Get to know the tools. They're good.
+
+## React performance tips
+
+In short:
+
+  * Only use React.PureComponent, always
+  * For connected components, use reselect (createStructuredSelector, createSelector)
+  in `mapStateToProps` (grep the codebase for examples)
+  * Never use `[]` or `{}` in `mapStateToProps`, do this instead:
+
+```javascript
+const emptyObj = {};
+const emptyArr = [];
+
+export default connect(SomeComponent, {
+  state: createStructuredSelector({
+    // Don't do this!
+    baadValue: (state) => ((state.a || {}).b || [])[0];
+    // Do this instead:
+    goodValue: (state) => ((state.a || emptyObj).b || emptyArr)[0];
+  }),
+})
+```
+
+  * Anonymous functions or `this.something.bind(this)` create a new value every time,
+  and will wreck `shouldComponentUpdate`.
+
+```javascript
+export BadComponent extends React.PureComponent<any, any> {
+  render () {
+    // Don't do this!
+    return <div onClick={() => doStuff()}/>
+  }
+}
+
+// Do this!
+export GoodComponent extends React.PureComponent<any, any> {
+  constructor () {
+    super();
+    this.doStuff = this.doStuff.bind(this);
+  }
+
+  doStuff () {
+    // stuff.
+  }
+
+  render () {
+    // `this.doStuff` stays the same, won't trigger unnecessary renders
+    return <div onClick={this.doStuff}/>
+  }
+}
+```
+
+More details: https://medium.com/@esamatti/react-js-pure-render-performance-anti-pattern-fb88c101332f
