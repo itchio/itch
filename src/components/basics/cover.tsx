@@ -16,7 +16,7 @@ const CoverDiv = styled.div`
   }
 `;
 
-class Cover extends React.Component<IProps, void> {
+class Cover extends React.PureComponent<IProps, void> {
   render () {
     const {coverUrl, stillCoverUrl, hover, ...restProps} = this.props;
 

@@ -11,23 +11,15 @@ import {IDispatch} from "../constants/action-types";
 
 const identity = (x: any) => x;
 
-const tMaker = createSelector(
+const i18nPropsSelector = createSelector(
   (state: IAppState) => state.i18n,
   (i18n) => {
     const {lang, strings} = i18n;
     if (env.name === "test") {
-      return identity;
+      return {t: identity};
     } else {
-      return getT(strings, lang);
+      return {t: getT(strings, lang)};
     }
-  },
-);
-
-const augment = createSelector(
-  (state: IAppState, base: any) => tMaker(state),
-  (state: IAppState, base: any) => base,
-  (t, base) => {
-    return {...base, t};
   },
 );
 
@@ -51,16 +43,26 @@ interface IConnectOpts {
 export function connect <TProps> (
     component: React.ComponentClass<any>,
     opts: IConnectOpts = {}): React.ComponentClass<TProps> {
-  const augmentedMapStateToProps = (state: IAppState, props: any) => {
-    if (opts.state) {
-      const base = opts.state(state, props);
-      if (typeof base === "function") {
-        return (innerState: IAppState, innerProps: any) => augment(innerState, base(innerState, innerProps));
-      } else {
-        return augment(state, base);
-      }
+
+  const augmentedMapStateToProps = (initialState: IAppState, initialProps: any) => {
+    const augment = createSelector(
+      (state: IAppState, base: any) => i18nPropsSelector(state),
+      (state: IAppState, base: any) => base,
+      (i18nProps, base) => {
+        console.log("based changed, keys =", Object.keys(base).join(", "));
+        return {...base, ...i18nProps};
+      },
+    );
+
+    if (!opts.state) {
+      return (state: IAppState, props: any) => i18nPropsSelector(state);
+    }
+
+    const base = opts.state(initialState, initialProps);
+    if (typeof base === "function") {
+      return (state: IAppState, props: any) => augment(state, base(state, props));
     } else {
-      return augment(state, {});
+      return (state: IAppState, props: any) => augment(state, opts.state(state, props));
     }
   };
   const mapDispatchToProps = opts.dispatch;

@@ -18,7 +18,7 @@ const LibraryContainer = styled.div`
 
 const tab = "library";
 
-export class Library extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class Library extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {games, gamesCount, gamesOffset} = this.props;
 

@@ -21,7 +21,7 @@ const DashboardContainer = styled.div`
 
 const tab = "dashboard";
 
-export class Dashboard extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class Dashboard extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, games, navigate} = this.props;
 

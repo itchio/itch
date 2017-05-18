@@ -54,7 +54,7 @@ const MeatTab = styled.div`
   }
 `;
 
-export class HubMeat extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class HubMeat extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {tabData, tabs, id: currentId} = this.props;
 

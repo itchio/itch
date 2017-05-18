@@ -137,9 +137,11 @@ class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGam
   }
 
   onRowClick (params: IRowHandlerParams) {
-    const {e, index} = params;
-    const {games} = this.props;
-    const game = games[index];
+    const {e} = params;
+    const game = this.rowGetter(params);
+    if (!game) {
+      return;
+    }
 
     const rightButton = 2;
     if (e.button === rightButton) {

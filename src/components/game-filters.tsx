@@ -153,7 +153,7 @@ const LayoutPicker = styled.section`
 `;
 
 @watching
-class GameFilters extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class GameFilters extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   refs: {
     search: HTMLInputElement;
   };

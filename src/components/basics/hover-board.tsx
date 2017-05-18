@@ -1,7 +1,7 @@
 
 import * as React from "react";
 
-class HoverBoard extends React.Component<void, IState> {
+class HoverBoard extends React.PureComponent<void, IState> {
   childProps: any;
 
   constructor () {
