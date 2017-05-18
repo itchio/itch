@@ -30,9 +30,27 @@ const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
 });
 
 class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
+  constructor () {
+    super();
+    this.onClick = this.onClick.bind(this);
+    this.onClose = this.onClose.bind(this);
+  }
+
+  onClick() {
+    const {id, navigate} = this.props;
+    navigate({id});
+  }
+
+  onClose() {
+    const {sortable, id, closeTab} = this.props;
+    if (sortable) {
+      closeTab({id});
+    }
+  }
+
   render () {
     const {t, id, index, sortable, data, active, loading} = this.props;
-    const {navigate, closeTab, openTabContextMenu} = this.props;
+    const {openTabContextMenu} = this.props;
 
     const {path} = data;
     let iconImage = data.iconImage;
@@ -42,11 +60,6 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
     
     const label = makeLabel(id, data);
     const icon = pathToIcon(path);
-    const onClick = () => navigate(id);
-    let onClose;
-    if (sortable) {
-      onClose = () => closeTab({id});
-    }
     const onContextMenu = () => openTabContextMenu({id});
     let count = 0;
     let progress = 0;
@@ -71,6 +84,10 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
     }
 
     let gameOverride: IGameRecord = null;
+    let {onClick, onClose} = this;
+    if (!sortable) {
+      onClose = null;
+    }
 
     const props = {id, path, label, icon, iconImage, active,
       onClick, count, progress, onClose, onContextMenu, data, t,

@@ -11,6 +11,11 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Provider} from "react-redux";
 
+if (process.env.ITCH_WHY_UPDATE === "1") {
+  const {whyDidYouUpdate} = require("why-did-you-update");
+  whyDidYouUpdate(React, {exclude: [/[^a-zA-Z0-9]/, /^Connect/]});
+}
+
 import store from "./store/chrome-store";
 
 import setupShortcuts from "./shortcuts";

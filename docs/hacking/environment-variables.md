@@ -7,13 +7,12 @@ These environment variables will change the behavior of the app:
     We attempt to filter that (see `private` field in payloads) but **please
     pay extra care to any logs you post publicly** to make sure you're not leaking
     your own credentials.
+  * `REDUX_DEVTOOLS=1`
   * `LET_ME_IN=1` — dump itch.io API calls to console
   * `DIEGO_IS_ASLEEP=1` - forbid [our diagnostics tool][diego] from running commands like
     `uname`, `lspci`, `sw_vers`, `wmic`, and `ver` on your system and writing
     the results to a file on your local disk.
   * `CAST_NO_SHADOW=1` — opens devtools for the purchase window
-  * `NO_TEACHING=1` — disable featured collections (useful to debug data transfer
-    between node and browser side)
   * `TRUST_ME_IM_AN_ENGINEER=1` - never show `Buy now` instead of `Install`.
     Obviously, the backend has to agree with you.
   * `REMEMBER_ME_WHEN_IM_GONE=1` - don't wipe downloads when uninstalling.
@@ -26,3 +25,5 @@ These environment variables will change the behavior of the app:
   * `PROFILE_REQUIRE=1` - profile how much time it takes to require modules
   * `ITCH_IGNORE_CERTIFICATE_ERRORS=1` - ignore certificate errors - USE WITH CARE only with debugging proxies that do SSL proxying
   * `ITCH_EMULATE_OFFLINE=1` - simulate a network outage
+
+See the "Performance hacking" section for other environment variables that impact the app.

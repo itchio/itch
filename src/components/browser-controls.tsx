@@ -141,12 +141,12 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
     const {goBack, goForward, stop, reload, frozen} = this.props;
 
     return <BrowserControlsContainer>
-      <IconButton icon="arrow-left" disabled={!canGoBack} onClick={() => goBack()}/>
-      <IconButton icon="arrow-right" disabled={!canGoForward} onClick={() => goForward()}/>
+      <IconButton icon="arrow-left" disabled={!canGoBack} onClick={goBack}/>
+      <IconButton icon="arrow-right" disabled={!canGoForward} onClick={goForward}/>
       {
         loading
-        ? <IconButton icon="cross" onClick={() => stop()}/>
-        : <IconButton icon="repeat" onClick={() => reload()}/>
+        ? <IconButton icon="cross" onClick={stop}/>
+        : <IconButton icon="repeat" onClick={reload}/>
       }
       {editingURL
         ? <BrowserAddressInput
@@ -158,12 +158,11 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
               onBlur={this.addressBlur}/>
         : <BrowserAddressSpan className={classNames({frozen})}
               ref={this.onBrowserAddress as any}
-              onClick={() => (url && url.length) && this.startEditingURL()
-          }>
+              onClick={this.startEditingURL}>
             {url || ""}
           </BrowserAddressSpan>
       }
-      <IconButton hint={t("browser.popout")} hintPosition="bottom" icon="redo" onClick={() => this.popOutBrowser()}/>
+      <IconButton hint={t("browser.popout")} hintPosition="bottom" icon="redo" onClick={this.popOutBrowser}/>
     </BrowserControlsContainer>;
   }
 
@@ -175,7 +174,10 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
     if (this.props.frozen) {
       return;
     }
-    this.setState({editingURL: true});
+    const {url} = this.props.browserState;
+    if (url && url.length) {
+      this.setState({editingURL: true});
+    }
   }
 
   onBrowserAddress (browserAddress: HTMLElement | HTMLInputElement) {

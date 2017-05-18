@@ -108,6 +108,9 @@ export class HubMeat extends React.PureComponent<IProps & IDerivedProps & I18nPr
 
 interface IProps {}
 
+// FIXME: tabData is way overkill for this
+// we just want path, and it should be stored separately
+
 interface IDerivedProps {
   /** current tab shown */
   id: string;

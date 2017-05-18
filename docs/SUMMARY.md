@@ -38,6 +38,7 @@
     * [Data flow](hacking/data-flow.md)
     * [Coding style](hacking/coding-style.md)
     * [Environment variables](hacking/environment-variables.md)
+    * [Performance hacking](hacking/performance.md)
   * [Behind the scenes](hacking/behind-the-scenes.md)
     * [Continuous deployment](hacking/continuous-deployment.md)
     * [Dependencies (ibrew)](installing/dependencies.md)

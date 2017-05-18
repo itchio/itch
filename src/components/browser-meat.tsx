@@ -91,6 +91,9 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
   lastNavigationUrl: string;
   lastNavigationTimeStamp: number;
 
+  scrollHistory: IHistoryEntry[] = [];
+  wentBackOrForward = false;
+
   /** polls scrollTop */
   watcher: NodeJS.Timer;
 
@@ -107,9 +110,14 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
         loading: true,
         url: "",
       },
-      scrollHistory: [],
-      wentBackOrForward: false,
     };
+
+    this.goBack = this.goBack.bind(this);
+    this.goForward = this.goForward.bind(this);
+    this.stop = this.stop.bind(this);
+    this.reload = this.reload.bind(this);
+    this.openDevTools = this.openDevTools.bind(this);
+    this.loadUserURL = this.loadUserURL.bind(this);
   }
 
   updateBrowserState (props = {}) {
@@ -182,10 +190,8 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     this.updateBrowserState({url});
     this.analyzePage(tabId, url);
 
-    this.updateScrollWatcher(url, this.state.wentBackOrForward);
-    this.setState({
-      wentBackOrForward: false,
-    });
+    this.updateScrollWatcher(url, this.wentBackOrForward);
+    this.wentBackOrForward = false;
   }
 
   updateScrollWatcher (url: string, restore: boolean) {
@@ -212,7 +218,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
       }, 700) as any as NodeJS.Timer;
     };
 
-    const scrollHistoryItem = findWhere(this.state.scrollHistory, {url});
+    const scrollHistoryItem = findWhere(this.scrollHistory, {url});
     if (restore && scrollHistoryItem && scrollHistoryItem.scrollTop > 0) {
       const oldScrollTop = scrollHistoryItem.scrollTop;
       let count = 0;
@@ -243,7 +249,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
   }
 
   registerScrollTop (url: string, scrollTop: number) {
-    const previousItem = findWhere(this.state.scrollHistory, {url});
+    const previousItem = findWhere(this.scrollHistory, {url});
     if (previousItem && previousItem.scrollTop === scrollTop) {
       // don't wake up react
       return;
@@ -251,10 +257,9 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
 
     const inputHistory = [
       { url, scrollTop },
-      ...this.state.scrollHistory,
+      ...this.scrollHistory,
     ];
-    const scrollHistory = uniq(inputHistory, (x: IHistoryEntry) => x.url).slice(0, SCROLL_HISTORY_SIZE);
-    this.setState({scrollHistory});
+    this.scrollHistory = uniq(inputHistory, (x: IHistoryEntry) => x.url).slice(0, SCROLL_HISTORY_SIZE);
   }
 
   willNavigate (e: any) { // TODO: type
@@ -437,12 +442,12 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
       tabPath,
       tabData,
       browserState,
-      goBack: this.goBack.bind(this),
-      goForward: this.goForward.bind(this),
-      stop: this.stop.bind(this),
-      reload: this.reload.bind(this),
-      openDevTools: this.openDevTools.bind(this),
-      loadURL: this.loadUserURL.bind(this),
+      goBack: this.goBack,
+      goForward: this.goForward,
+      stop: this.stop,
+      reload: this.reload,
+      openDevTools: this.openDevTools,
+      loadURL: this.loadUserURL,
       frozen,
       active,
     };
@@ -513,9 +518,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
       if (!wv.canGoBack()) {
         return;
       }
-      this.setState({
-        wentBackOrForward: true,
-      });
+      this.wentBackOrForward = true;
       wv.goBack();
     });
   }
@@ -525,9 +528,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
       if (!wv.canGoForward()) {
         return;
       }
-      this.setState({
-        wentBackOrForward: true,
-      });
+      this.wentBackOrForward = true;
       wv.goForward();
     });
   }
@@ -579,8 +580,6 @@ interface IDerivedProps {
 
 interface IState {
   browserState: IBrowserState;
-  scrollHistory: IHistoryEntry[];
-  wentBackOrForward: boolean;
 }
 
 export default connect<IProps>(BrowserMeat, {
