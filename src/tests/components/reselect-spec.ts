@@ -29,7 +29,7 @@ test("reselect", t => {
     sel({});
     sel({});
     sel({});
-    t.same(count, 1);
+    t.same(count, 3);
   });
 
   t.case("memoization prevents recompute for shallow equal objects", t => {
@@ -43,6 +43,6 @@ test("reselect", t => {
     sel({...model});
     sel({...model});
     sel({...model});
-    t.same(count, 1);
+    t.same(count, 3);
   });
 });
