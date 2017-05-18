@@ -36,7 +36,7 @@ const UserMenuButton = styled(Button)`
   }
 `;
 
-class UserMenu extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {viewCreatorProfile, viewCommunityProfile, changeUser,
       navigate, quit, reportIssue,

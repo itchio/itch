@@ -77,7 +77,7 @@ interface IGenericSearchResultProps {
 
 @watching
 abstract class GenericSearchResult <Props extends IGenericSearchResultProps, State>
-    extends React.Component<Props, State> {
+    extends React.PureComponent<Props, State> {
   subscribe (watcher: Watcher) {
     watcher.on(actions.triggerOk, async (store, action) => {
       if (this.props.chosen && this.props.active) {

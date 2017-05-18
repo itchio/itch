@@ -10,7 +10,7 @@ import Icon from "../basics/icon";
 import {IAppState, IOpenAtLoginError} from "../../types";
 import interleave, {IComponent} from "../interleave";
 
-class OpenAtLoginError extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class OpenAtLoginError extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, openAtLoginError} = this.props;
 

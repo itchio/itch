@@ -12,7 +12,7 @@ import LoadingCircle from "../basics/loading-circle";
 
 import {IAppState, ITask, IPrereqsState} from "../../types";
 
-export class PrereqsState extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class PrereqsState extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render() {
     const { t, prereqsState } = this.props;
     const params = this.props.modal.widgetParams as IPrereqsStateParams;

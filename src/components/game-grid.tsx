@@ -29,7 +29,7 @@ const StyledGrid = styled(Grid)`
   outline: none;
 `;
 
-class GameGrid extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+class GameGrid extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {

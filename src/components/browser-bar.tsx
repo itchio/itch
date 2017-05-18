@@ -46,7 +46,7 @@ const BrowserBarDiv = styled.div`
   align-items: center;
 `;
 
-export class BrowserBar extends React.Component<IProps, void> {
+export class BrowserBar extends React.PureComponent<IProps, void> {
   render () {
     const {browserState} = this.props;
     const {loading} = browserState;

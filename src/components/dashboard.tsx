@@ -1,6 +1,7 @@
 
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
+import {createStructuredSelector} from "reselect";
 
 import urls from "../constants/urls";
 import * as actions from "../actions";
@@ -46,10 +47,12 @@ interface IDerivedProps {
   navigate: typeof actions.navigate;
 }
 
+const emptyObj = {};
+
 export default connect<IProps>(Dashboard, {
-  state: (state) => ({
-    meId: state.session.credentials.me.id,
-    games: (state.session.tabData[tab] || {}).games || {},
+  state: createStructuredSelector({
+    meId: (state) => state.session.credentials.me.id,
+    games: (state) => (state.session.tabData[tab] || emptyObj).games || emptyObj,
   }),
   dispatch: (dispatch) => ({
     navigate: dispatcher(dispatch, actions.navigate),

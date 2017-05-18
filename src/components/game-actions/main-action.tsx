@@ -21,7 +21,7 @@ interface IStatus {
   statusTask?: string;
 }
 
-class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class MainAction extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, platform, platformCompatible, mayDownload,
       pressDownload, canBeBought, tasks, action, cave, className} = this.props;

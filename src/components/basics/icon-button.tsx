@@ -24,7 +24,7 @@ const IconButtonDiv = styled.div`
   }
 `;
 
-class IconButton extends React.Component<IProps, void> {
+class IconButton extends React.PureComponent<IProps, void> {
   render () {
     const {disabled, icon, hint, hintPosition = "top", ...restProps} = this.props;
 

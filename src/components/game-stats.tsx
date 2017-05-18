@@ -56,7 +56,7 @@ const GameStatsDiv = styled.div`
   }
 `;
 
-export class GameStats extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class GameStats extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, cave, game = {} as GameModel, downloadKey, mdash = true} = this.props;
     const classification = game.classification || "game";

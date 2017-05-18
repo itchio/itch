@@ -18,7 +18,7 @@ const HubPageDiv = styled.div`
   flex-direction: row;
 `;
 
-class HubPage extends React.Component<void, void> {
+class HubPage extends React.PureComponent<void, void> {
   render () {
     return <HubPageDiv>
       <Sidebar/>

@@ -13,7 +13,7 @@ import * as actions from "../actions";
 import {IAppState, IHistoryItem, IHistoryItemOption} from "../types";
 import {IDispatch} from "../constants/action-types";
 
-class History extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class History extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, pickOption, items} = this.props;
 

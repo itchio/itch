@@ -49,12 +49,10 @@ export class Fetcher {
 
   start() {
     this.startedAt = Date.now();
-    this.logger.info(`Starting work...`);
     this.work().then((outcome) => {
       if (isOutcome(outcome)) {
         switch (outcome.state) {
           case "success":
-            this.logger.info(`Success!`);
             this.emitter.emit("done");
             break;
           case "retry":
@@ -96,15 +94,13 @@ export class Fetcher {
    */
   push (data: ITabData) {
     if (this.aborted) {
-      this.logger.warn(`we're cancelled, suppressing push`);
-    }
-
-    if (this.prevData && deepEqual(this.prevData, data)) {
-      this.logger.warn(`push ignoring duplicate data`);
       return;
     }
 
-    this.logger.info(`push got fresh data!`, data);
+    if (this.prevData && deepEqual(this.prevData, data)) {
+      return;
+    }
+
     this.prevData = data;
     const timestamp = Date.now();
 

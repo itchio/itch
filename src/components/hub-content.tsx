@@ -1,6 +1,7 @@
 
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
+import {createStructuredSelector} from "reselect";
 
 import * as actions from "../actions";
 
@@ -21,7 +22,7 @@ const ContentContainer = styled.div`
   flex-grow: 1;
 `;
 
-export class HubContent extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class HubContent extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     if (!this.props.credentials) {
       return <div/>;
@@ -49,8 +50,8 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(HubContent, {
-  state: (state) => ({
-    credentials: state.session.credentials,
+  state: createStructuredSelector({
+    credentials: (state) => state.session.credentials,
   }),
   dispatch: (dispatch) => ({
     firstUsefulPage: dispatcher(dispatch, actions.firstUsefulPage),

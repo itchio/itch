@@ -87,7 +87,7 @@ interface IHistoryEntry {
 // updated when switching accounts
 let currentSession: Electron.Session = null;
 
-export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   lastNavigationUrl: string;
   lastNavigationTimeStamp: number;
 

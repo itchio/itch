@@ -9,8 +9,6 @@ import {each, values} from "underscore";
 
 import * as actions from "../actions";
 
-import Fuse = require("fuse.js");
-
 import {IAppState, IGameRecord, ISessionSearchState, ISearchResults} from "../types";
 import {dispatcher} from "../constants/action-types";
 
@@ -101,19 +99,9 @@ const NoResults = styled.p`
   border-radius: 4px;
 `;
 
-export class HubSearchResults extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
-  fuse: Fuse<IGameRecord>;
-
+export class HubSearchResults extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
-    this.fuse = new Fuse([], {
-      keys: [
-        { name: "title", weight: 0.9 },
-        { name: "shortText", weight: 0.3 },
-      ],
-      threshold: 0.3,
-      include: ["score"],
-    });
     this.state = {
       chosen: 0,
     };
@@ -125,9 +113,6 @@ export class HubSearchResults extends React.Component<IProps & IDerivedProps & I
     if (!open) {
       return null;
     }
-
-    const {allGames} = this.props;
-    this.fuse.set(allGames);
 
     const {closeSearch, navigate} = this.props;
 
@@ -155,9 +140,9 @@ export class HubSearchResults extends React.Component<IProps & IDerivedProps & I
   }
 
   resultsGrid (results: ISearchResults) {
-    const {typedQuery, highlight} = this.props.search;
+    const {highlight} = this.props.search;
     const active = this.props.search.open;
-    const fuseResults = typedQuery ? this.fuse.search(typedQuery) : [];
+    const fuseResults = [];
 
     const hasRemoteResults = results &&
       (results.gameResults.result.gameIds.length > 0 ||
@@ -248,10 +233,6 @@ interface IState {
 export default connect<IProps>(HubSearchResults, {
   state: createStructuredSelector({
     search: (state: IAppState) => state.session.search,
-    allGames: createSelector(
-      (state: IAppState) => ((state.market || { games: null }).games || {}),
-      (games) => values(games),
-    ),
   }),
   dispatch: (dispatch) => ({
     closeSearch: dispatcher(dispatch, actions.closeSearch),

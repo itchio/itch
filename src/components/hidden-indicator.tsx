@@ -24,7 +24,7 @@ const HiddenIndicatorDiv = styled.div`
   align-items: center;
 `;
 
-class HiddenIndicator extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class HiddenIndicator extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, tab, count, clearFilters} = this.props;
 

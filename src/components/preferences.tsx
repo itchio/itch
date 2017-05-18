@@ -276,7 +276,7 @@ const PreferencesDiv = styled.div`
   }
 `;
 
-export class Preferences extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class Preferences extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, lang, sniffedLang = "", downloading, locales} = this.props;
     const {isolateApps, openAtLogin, openAsHidden, closeToTray,

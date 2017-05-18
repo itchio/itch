@@ -81,7 +81,7 @@ const CollectionRowDiv = styled.div`
   }
 `;
 
-export class CollectionRow extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class CollectionRow extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, allGames, collection} = this.props;
     const {title} = collection;

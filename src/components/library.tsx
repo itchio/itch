@@ -40,13 +40,16 @@ interface IDerivedProps {
   gamesOffset: number;
 }
 
+const emptyObj = {};
+const emptyArr = [];
+
 export default connect<IProps>(Library, {
   state: createSelector(
-    (state: IAppState) => state.session.tabData[tab] || {},
+    (state: IAppState) => state.session.tabData[tab] || emptyObj,
     createStructuredSelector({
       games: (data: ITabData) => {
-        const games = data.games || {};
-        const gameIds = data.gameIds || [];
+        const games = data.games || emptyObj;
+        const gameIds = data.gameIds || emptyArr;
         return gameIds.map((id) => games[id]);
       },
       gamesCount: (data: ITabData) => data.gamesCount || 0,

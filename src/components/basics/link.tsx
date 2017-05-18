@@ -10,7 +10,7 @@ const LinkSpan = styled.span`
   transition: color 0.4s;
 `;
 
-class Link extends React.Component<IProps, void> {
+class Link extends React.PureComponent<IProps, void> {
   render () {
     const {label, ...restProps} = this.props;
 

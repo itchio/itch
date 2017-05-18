@@ -135,7 +135,7 @@ const Controls = styled.div`
   padding-left: 8px;
 `;
 
-class DownloadRow extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+class DownloadRow extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {};

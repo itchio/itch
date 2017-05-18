@@ -40,6 +40,8 @@ interface IConnectOpts {
   dispatch?: IDispatchMapper;
 }
 
+const checkSelectors = process.env.ITCH_RESELECT_EVERYTHING === "1";
+
 export function connect <TProps> (
     component: React.ComponentClass<any>,
     opts: IConnectOpts = {}): React.ComponentClass<TProps> {
@@ -49,7 +51,6 @@ export function connect <TProps> (
       (state: IAppState, base: any) => i18nPropsSelector(state),
       (state: IAppState, base: any) => base,
       (i18nProps, base) => {
-        console.log("based changed, keys =", Object.keys(base).join(", "));
         return {...base, ...i18nProps};
       },
     );
@@ -59,10 +60,34 @@ export function connect <TProps> (
     }
 
     const base = opts.state(initialState, initialProps);
-    if (typeof base === "function") {
-      return (state: IAppState, props: any) => augment(state, base(state, props));
+    if (checkSelectors) {
+      let compareReduced = (b1, b2) => {
+        if (b1 !== b2) {
+          console.error(component.name, "should use reselect! reduced = ", b1);
+        }
+      }
+
+      if (typeof base === "function") {
+        return (state: IAppState, props: any) => {
+          const b1 = base(state, props);
+          const b2 = base(state, props);
+          compareReduced(b1, b2);
+          return augment(state, b1);
+        }
+      } else {
+        return (state: IAppState, props: any) => {
+          const b1 = opts.state(state, props);
+          const b2 = opts.state(state, props);
+          compareReduced(b1, b2);
+          return augment(state, opts.state(state, props));
+        }
+      }
     } else {
-      return (state: IAppState, props: any) => augment(state, opts.state(state, props));
+      if (typeof base === "function") {
+        return (state: IAppState, props: any) => augment(state, base(state, props));
+      } else {
+        return (state: IAppState, props: any) => augment(state, opts.state(state, props));
+      }
     }
   };
   const mapDispatchToProps = opts.dispatch;

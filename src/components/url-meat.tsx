@@ -1,6 +1,7 @@
 
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
+import {createStructuredSelector} from "reselect";
 
 import {pathToId} from "../util/navigation";
 import urlParser from "../util/url";
@@ -11,7 +12,7 @@ import * as querystring from "querystring";
 
 import {ITabData} from "../types";
 
-export class UrlMeat extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+export class UrlMeat extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor (props: IProps & IDerivedProps & I18nProps) {
     super();
     this.state = {
@@ -88,7 +89,11 @@ interface IState {
 }
 
 export default connect<IProps>(UrlMeat, {
-  state: (state, props) => ({
-    tabData: state.session.navigation.tabData[props.tabId],
-  }),
+  state: (initialState, initialProps) => {
+    let {tabId} = initialProps;
+
+    return createStructuredSelector({
+      tabData: (state) => state.session.navigation.tabData[tabId],
+    });
+  },
 });

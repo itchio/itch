@@ -113,7 +113,7 @@ const Bubble = styled.span`
   white-space: nowrap;
 `;
 
-class Item extends React.Component<IProps, IState> {
+class Item extends React.PureComponent<IProps, IState> {
   constructor () {
     super();
     this.state = {

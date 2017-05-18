@@ -17,7 +17,7 @@ export const HubGamesDiv = styled.div`
   flex-grow: 1;
 `;
 
-class Games extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {

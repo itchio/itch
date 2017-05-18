@@ -81,7 +81,7 @@ const RememberedSessionDiv = styled.div`
   }
 `;
 
-export class RememberedSession extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class RememberedSession extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, session, loginWithToken, forgetSessionRequest} = this.props;
     const {me, key} = session;

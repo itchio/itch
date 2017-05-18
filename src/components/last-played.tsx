@@ -9,7 +9,7 @@ import CaveModel from "../models/cave";
 import interleave from "./interleave";
 import TimeAgo from "./basics/time-ago";
 
-class LastPlayed extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class LastPlayed extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, game, cave, short = false} = this.props;
     const {lastTouched = null} = (cave || {});

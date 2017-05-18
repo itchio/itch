@@ -1,24 +1,18 @@
 
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
-import {createSelector} from "reselect";
-import Fuse  = require("fuse.js");
-
-import {sortBy} from "underscore";
+import {createSelector, createStructuredSelector} from "reselect";
 
 import CollectionRow from "./collection-row";
-import CollectionModel from "../models/collection";
 
-import {IAppState, ICollectionRecord, IGameRecordSet} from "../types";
+import {IAppState, ICollectionRecord, ICollectionRecordSet, ITabData, IGameRecordSet} from "../types";
 
 import {AutoSizer, Grid} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";
 
-import styled from "./styles";
+import {values} from "underscore";
 
-const recency = (x: CollectionModel) => {
-  return x.updatedAt ? -(x.updatedAt.getTime()) : 0;
-};
+import styled from "./styles";
 
 interface ICellInfo {
   columnIndex: number;
@@ -42,7 +36,7 @@ const StyledGrid = styled(Grid)`
   outline: none;
 `;
 
-export class CollectionsGrid extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+export class CollectionsGrid extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {
@@ -52,7 +46,8 @@ export class CollectionsGrid extends React.Component<IProps & IDerivedProps & I1
   }
 
   render () {
-    const {t, collections, hiddenCount} = this.props;
+    const {t, hiddenCount} = this.props;
+    const collections = values(this.props.collections);
 
     return <HubCollectionsGrid>
         <AutoSizer>
@@ -116,7 +111,7 @@ interface IProps {}
 
 interface IDerivedProps {
   games: IGameRecordSet;
-  collections: ICollectionRecord[];
+  collections: ICollectionRecordSet;
   hiddenCount: number;
 }
 
@@ -124,49 +119,15 @@ interface IState {
   scrollTop?: number;
 }
 
+const emptyObj = {};
+
 export default connect<IProps>(CollectionsGrid, {
-  state: () => {
-    const getCollections = (state: IAppState, props: IProps) => (state.session.tabData[tab] || {}).collections || {};
-    const getFilterQuery = (state: IAppState, props: IProps) => state.session.navigation.filters.collections;
-    const getGames = (state: IAppState, props: IProps) => (state.session.tabData[tab] || {}).games || {};
-
-    const getSortedCollections = createSelector(
-      getCollections,
-      (collections) => {
-        return sortBy(collections, recency);
-      },
-    );
-
-    const fuse = new Fuse([], {
-      keys: [
-        { name: "title", weight: 1.0 },
-      ],
-      threshold: 0.4,
-    });
-
-    const getFilteredCollections = createSelector(
-      getSortedCollections,
-      getFilterQuery,
-      getGames,
-      (sortedCollections, filterQuery, games) => {
-        if (filterQuery) {
-          fuse.set(sortedCollections);
-          const filteredCollections = fuse.search(filterQuery);
-          return {
-            collections: filteredCollections,
-            hiddenCount: sortedCollections.length - filteredCollections.length,
-            games,
-          };
-        } else {
-          return {
-            collections: sortedCollections,
-            hiddenCount: 0,
-            games,
-          };
-        }
-      },
-    );
-
-    return getFilteredCollections;
-  },
+  state: createSelector(
+    (state: IAppState) => state.session.tabData[tab] || emptyObj,
+    createStructuredSelector({
+      games: (tabData: ITabData) => tabData.games || emptyObj,
+      collections: (tabData: ITabData) => tabData.collections || emptyObj,
+      hiddenCount: (tabData: ITabData) => 0,
+    }),
+  ),
 });

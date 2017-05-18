@@ -21,7 +21,7 @@ const CollectionsContainer = styled.div`
 
 const tab = "collections";
 
-export class Collections extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class Collections extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, navigate} = this.props;
 

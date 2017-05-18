@@ -19,7 +19,7 @@ const SecondaryActionsDiv = styled.div`
   align-items: center;
 `;
 
-class SecondaryActions extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class SecondaryActions extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {items, error} = listSecondaryActions(this.props);
 

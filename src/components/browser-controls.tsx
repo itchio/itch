@@ -66,7 +66,7 @@ function isHTMLInput (el: HTMLElement): el is HTMLInputElement {
 }
 
 @watching
-export class BrowserControls extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+export class BrowserControls extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   browserAddress: HTMLInputElement | HTMLElement;
 
   constructor () {

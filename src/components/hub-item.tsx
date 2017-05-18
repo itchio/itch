@@ -15,7 +15,7 @@ import {dispatcher, multiDispatcher} from "../constants/action-types";
 
 import styled, * as styles from "./styles";
 
-export class HubItem extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+export class HubItem extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {

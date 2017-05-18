@@ -47,7 +47,7 @@ const GameActionsContainer = styled.div`
   align-items: stretch;
 `;
 
-export class GameBrowserContext extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+export class GameBrowserContext extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {

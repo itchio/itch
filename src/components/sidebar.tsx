@@ -76,7 +76,7 @@ const SortableList = SortableContainer((params: ISortableContainerParams) => {
   </SortableListContainer>;
 });
 
-class Sidebar extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+class Sidebar extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor (props: IProps & IDerivedProps & I18nProps) {
     super();
     this.state = {

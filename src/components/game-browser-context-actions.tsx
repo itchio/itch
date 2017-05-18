@@ -33,7 +33,7 @@ const ActionsDiv = styled.div`
  * Displays install, share, buy now buttons and so on.
  */
 @watching
-class GameBrowserContextActions extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+class GameBrowserContextActions extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {

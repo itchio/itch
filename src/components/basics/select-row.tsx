@@ -6,7 +6,7 @@ import {map} from "underscore";
 /**
  * A drop-down you can select from
  */
-class SelectRow extends React.Component<ISelectRowProps, void> {
+class SelectRow extends React.PureComponent<ISelectRowProps, void> {
   refs: {
     input: HTMLInputElement;
   };

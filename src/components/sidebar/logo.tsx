@@ -2,13 +2,14 @@
 import * as React from "react";
 import {resolve} from "path";
 import styled from "../styles";
+import {createStructuredSelector} from "reselect";
 
 import {connect} from "../connect";
 
 import * as actions from "../../actions";
 import {dispatcher} from "../../constants/action-types";
 
-class Logo extends React.Component<IDerivedProps, void> {
+class Logo extends React.PureComponent<IDerivedProps, void> {
   render() {
     const {navigate, appVersion} = this.props;
 
@@ -37,8 +38,8 @@ const LogoDiv = styled.div`
 `;
 
 export default connect(Logo, {
-  state: (state) => ({
-    appVersion: state.system.appVersion,
+  state: createStructuredSelector({
+    appVersion: (state) => state.system.appVersion,
   }),
   dispatch: (dispatch) => ({
     navigate: dispatcher(dispatch, actions.navigate),

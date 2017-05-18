@@ -31,7 +31,7 @@ const theme = {
   base0F: "#cc6633",
 };
 
-export class ViewCaveDetails extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class ViewCaveDetails extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const params = this.props.modal.widgetParams as IViewCaveDetailsParams;
 

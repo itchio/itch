@@ -23,7 +23,7 @@ const Empty = styled.p`
   ${styles.emptyMeat()}
 `;
 
-export class Collection extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class Collection extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, tabGames, tabPath, collection} = this.props;
 

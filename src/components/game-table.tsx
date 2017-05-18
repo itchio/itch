@@ -127,7 +127,7 @@ const StyledTable = styled(Table)`
   }
 `;
 
-class GameTable extends React.Component<IProps & IDerivedProps & I18nProps, IGameTableState> {
+class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, IGameTableState> {
   constructor() {
     super();
 

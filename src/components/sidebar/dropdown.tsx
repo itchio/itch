@@ -84,7 +84,7 @@ const DropdownItem = styled.div`
 
 const noop = () => { /* muffin */ };
 
-export class Dropdown extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+export class Dropdown extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {open: false};

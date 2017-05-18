@@ -14,7 +14,7 @@ if (REDUX_DEVTOOLS_ENABLED) {
   devTools = <DevTools/>;
 }
 
-export default class App extends React.Component<void, void> {
+export default class App extends React.PureComponent<void, void> {
   render () {
     return <ThemeProvider theme={theme}>
         <div>

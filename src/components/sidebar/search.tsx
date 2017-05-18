@@ -1,6 +1,7 @@
 
 import * as React from "react";
 import * as classNames from "classnames";
+import {createStructuredSelector} from "reselect";
 
 import {debounce} from "underscore";
 import styled, * as styles from "../styles";
@@ -43,7 +44,7 @@ const SearchContainer = styled.section`
 `;
 
 @watching
-class SidebarSearch extends React.Component<IDerivedProps & I18nProps, void> {
+class Search extends React.PureComponent<IDerivedProps & I18nProps, void> {
   input: HTMLInputElement;
   doTrigger: () => void;
 
@@ -159,9 +160,9 @@ interface IDerivedProps {
   searchHighlightOffset: typeof actions.searchHighlightOffset;
 }
 
-export default connect<void>(SidebarSearch, {
-  state: (state) => ({
-    loading: state.session.search.loading,
+export default connect<void>(Search, {
+  state: createStructuredSelector({
+    loading: (state) => state.session.search.loading,
   }),
   dispatch: (dispatch) => ({
     search: dispatcher(dispatch, actions.search),

@@ -5,7 +5,7 @@
 declare module 'react-hint' {
   import * as React from "react";
 
-  class ReactHint extends React.Component<any, any> {}
+  class ReactHint extends React.PureComponent<any, any> {}
 
   export = ReactHint;
 }

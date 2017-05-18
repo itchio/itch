@@ -1,6 +1,7 @@
 
 import * as React from "react";
 import {SortableElement} from "react-sortable-hoc";
+import {createStructuredSelector} from "reselect";
 
 import * as moment from "moment";
 import Item from "./item";
@@ -28,7 +29,7 @@ const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
   return <Item {...props.props}/>;
 });
 
-class Tab extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, id, index, sortable, data, active, loading} = this.props;
     const {navigate, closeTab, openTabContextMenu} = this.props;
@@ -101,11 +102,15 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(Tab, {
-  state: (state, props: IProps) => ({
-    data: state.session.navigation.tabData[props.id] || {},
-    loading: !!state.session.navigation.loadingTabs[props.id],
-    downloads: (props.id === "downloads" && state.downloads),
-  }),
+  state: (initialState, initialProps) => {
+    let {id} = initialProps;
+
+    return createStructuredSelector({
+      data: (state) => state.session.navigation.tabData[id] || {},
+      loading: (state) => !!state.session.navigation.loadingTabs[id],
+      downloads: (state) => (id === "downloads" && state.downloads),
+    });
+  },
   dispatch: (dispatch) => ({
     navigate: dispatcher(dispatch, actions.navigate),
     closeTab: dispatcher(dispatch, actions.closeTab),

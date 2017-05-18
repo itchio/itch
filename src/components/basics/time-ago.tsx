@@ -22,7 +22,7 @@ function momentBridge (t: ILocalizer) {
   };
 }
 
-class TimeAgo extends React.Component<IProps & I18nProps, void> {
+class TimeAgo extends React.PureComponent<IProps & I18nProps, void> {
   render () {
     const {t, date} = this.props;
 

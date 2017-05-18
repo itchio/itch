@@ -4,7 +4,7 @@ import {connect, I18nProps} from "../connect";
 
 import {IModalWidgetProps, ModalWidgetDiv} from "./modal-widget";
 
-export class TwoFactorInput extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class TwoFactorInput extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   refs: {
     totpInput?: HTMLInputElement;
   };

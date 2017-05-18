@@ -234,7 +234,7 @@ const RememberedSessions = styled.div`
 `;
 
 @watching
-export class GatePage extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   refs: {
     username: HTMLInputElement;
     password: HTMLInputElement;

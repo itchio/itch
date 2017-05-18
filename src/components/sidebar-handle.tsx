@@ -20,7 +20,7 @@ const HandleDiv = styled.div`
   }
 `;
 
-class SidebarHandle extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+class SidebarHandle extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.handleMouseDown = this.handleMouseDown.bind(this);

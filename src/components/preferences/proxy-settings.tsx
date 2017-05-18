@@ -4,7 +4,7 @@ import {connect, I18nProps} from "../connect";
 
 import urls from "../../constants/urls";
 
-class ProxySettings extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class ProxySettings extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, proxy, proxySource} = this.props;
 

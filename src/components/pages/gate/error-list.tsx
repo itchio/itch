@@ -12,7 +12,7 @@ import {slugify} from "../../../util/format";
  *  - errors.api.login.password_must_be_provided
  *  - errors.api.login.username_must_be_provided
  */
-class ErrorList extends React.Component<IProps & I18nProps, void> {
+class ErrorList extends React.PureComponent<IProps & I18nProps, void> {
   render () {
     const {t, errors, before = "", i18nNamespace} = this.props;
     const prefix = i18nNamespace ? `errors.${i18nNamespace}` : "errors";

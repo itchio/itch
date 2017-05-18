@@ -11,7 +11,7 @@ import {dispatcher} from "../constants/action-types";
 /**
  * Unapologetically and heavily inspired from Google Chrome's "stuff went wrong" tab
  */
-export class Toast extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+export class Toast extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {

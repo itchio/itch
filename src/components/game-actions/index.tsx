@@ -53,7 +53,7 @@ const GameActionsDiv = styled.div`
   {source: "cavesByGameId", query: props.game.id},
   {source: "downloadKeysByGameId", query: props.game.id},
 ])
-class GameActions extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class GameActions extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {props} = this;
     const {vertical, showSecondary, CustomSecondary} = this.props;

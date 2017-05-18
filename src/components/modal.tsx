@@ -1,6 +1,7 @@
 
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
+import {createStructuredSelector} from "reselect";
 
 import ReactModal = require("react-modal");
 import Button from "./basics/button";
@@ -329,7 +330,7 @@ const DEFAULT_BUTTONS = {
 } as IDefaultButtons;
 
 @watching
-export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
+export class Modal extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {
@@ -340,7 +341,7 @@ export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, I
 
   subscribe (watcher: Watcher) {
     watcher.on(actions.triggerOk, async (store, action) => {
-      const modal = this.props.modals[0];
+      const {modal} = this.props;
       if (!modal) {
         return;
       }
@@ -356,9 +357,7 @@ export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, I
   }
 
   render () {
-    const {t, modals = [], closeModal} = this.props;
-
-    const modal = modals[0];
+    const {t, modal, closeModal} = this.props;
 
     if (modal) {
       const {bigButtons = [], buttons = [], cover, title = "", message = "", detail, widget} = modal;
@@ -493,7 +492,7 @@ export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, I
 interface IProps {}
 
 interface IDerivedProps {
-  modals: IModal[];
+  modal: IModal;
 
   closeModal: typeof actions.closeModal;
   dispatch: (action: IModalAction) => void;
@@ -504,8 +503,8 @@ interface IState {
 }
 
 export default connect<IProps>(Modal, {
-  state: (state) => ({
-    modals: state.modals,
+  state: createStructuredSelector({
+    modal: (state) => state.modals[0],
   }),
   dispatch: (dispatch, props) => ({
     dispatch: (action: IModalAction) => {

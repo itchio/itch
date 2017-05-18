@@ -69,7 +69,7 @@ const Spacer = styled.div`
   flex-shrink: 0;
 `;
 
-class Button extends React.Component<IProps, any> {
+class Button extends React.PureComponent<IProps, any> {
   render() {
     const {
       className, primary, discreet, fat,

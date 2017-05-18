@@ -9,7 +9,7 @@ import actionForGame from "../util/action-for-game";
 import GameModel from "../models/game";
 import CaveModel from "../models/cave";
 
-class TotalPlaytime extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class TotalPlaytime extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, game, cave, short = false} = this.props;
     const {secondsRun = 0} = (cave || {});

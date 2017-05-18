@@ -5,14 +5,14 @@
 declare module 'recharts' {
   import * as React from "react";
 
-  export class ResponsiveContainer extends React.Component<IResponsiveContainerProps, any> {}
+  export class ResponsiveContainer extends React.PureComponent<IResponsiveContainerProps, any> {}
 
   export interface IResponsiveContainerProps {
     width?: string | number;
     height?: string | number;
   }
 
-  export class AreaChart extends React.Component<IAreaChartProps, any> {}
+  export class AreaChart extends React.PureComponent<IAreaChartProps, any> {}
 
   export interface IAreaChartProps {
     margin?: {
@@ -24,7 +24,7 @@ declare module 'recharts' {
     data: any; /** whoo, free-form! can't type that. */
   }
 
-  export class Area extends React.Component<IAreaProps, any> {}
+  export class Area extends React.PureComponent<IAreaProps, any> {}
 
   export type AreaType = "monotone";
 

@@ -49,7 +49,7 @@ const EmptyState = styled.div`
   margin: 20px;
 `;
 
-class Downloads extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class Downloads extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   constructor () {
     super();
   }

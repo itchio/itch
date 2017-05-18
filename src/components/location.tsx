@@ -13,7 +13,7 @@ import {map, filter} from "underscore";
 import {ICaveRecordSet, IGameRecordSet, IInstallLocation, IDownloadKey} from "../types";
 import {dispatcher} from "../constants/action-types";
 
-export class Location extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+export class Location extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, locationName, userDataPath, locations, caves, allGames, browseInstallLocation} = this.props;
 

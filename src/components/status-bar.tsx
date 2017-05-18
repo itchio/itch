@@ -75,7 +75,7 @@ const StatusBarDiv = styled.div`
 /**
  * Displays our current progress when checking for updates, etc.
  */
-class StatusBar extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+class StatusBar extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   constructor () {
     super();
   }
