@@ -235,7 +235,7 @@
     "i18n.failed_downloading_locales": "Übersetzungsaktualisierungen für die Sprache {{lang}} konnten nicht heruntergeladen werden.",
     "notification.see_you_soon.message": "itch ist nun im Hintergrund aktiv. Benutze das Menü um es vollständig zu schließen.",
     "menu.file.close_tab": "Tab schließen",
-    "usage_stats.last_played_time_ago": "Zuletzt gespielt {{time ago}}",
+    "usage_stats.last_played_time_ago": "Zuletzt gespielt {{time_ago}}",
     "prompt.forget_session.title": "Sitzung vergessen",
     "new_tab.community": "Community",
     "status.downloads.category.finished": "Abgeschlossene Downloads",
