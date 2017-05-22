@@ -25,12 +25,17 @@ export function makeLogger (logPath?: string): Logger {
     const fs = require("fs");
     const path = require("path");
     const stream = require("logrotate-stream");
+    const pretty = require("pino/pretty");
 
+    let consoleOut = pretty({
+      forceColor: true,
+    });
+    consoleOut.pipe(process.stdout);
     let streamSpecs: {
-      stdout: Stream,
+      consoleOut: Stream,
       file?: Writable,
     } = {
-      stdout: process.stdout,
+      consoleOut,
     };
 
     if (logPath) {
