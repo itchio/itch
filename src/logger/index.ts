@@ -44,7 +44,7 @@ export function makeLogger (logPath?: string): Logger {
     }
     const l = pinoFactory({
       browser: {
-        write: (opts: any) {
+        write: (opts: any) => {
           const {name, level, msg} = opts;
           // tslint:disable-next-line
           console.log(
@@ -55,7 +55,7 @@ export function makeLogger (logPath?: string): Logger {
             "color:black;",
             "color:44e;");
         },
-      }
+      },
     });
     l.close = () => {/* muffin */ };
     l.level = LOG_LEVEL;
@@ -80,20 +80,25 @@ export function makeLogger (logPath?: string): Logger {
     };
 
     if (logPath) {
+      let hasDir = true;
       try {
         fs.mkdirSync(path.dirname(logPath));
-        streamSpecs.file = stream({
-          file: logPath,
-          size: "2M",
-          keep: 5,
-        });
       } catch (err) {
         if ((err as any).code === "EEXIST") {
           // good
         } else {
           // tslint:disable-next-line
           console.log(`Could not create file sink: ${err.stack || err.message}`);
+          hasDir = false;
         }
+      }
+
+      if (hasDir) {
+        streamSpecs.file = stream({
+          file: logPath,
+          size: "2M",
+          keep: 5,
+        });
       }
     }
 
@@ -148,4 +153,4 @@ export const devNull: Logger = new (class {
   close() { /* muffin */ }
 })();
 
-export default makeLogger(logPath());
+export default defaultLogger;
