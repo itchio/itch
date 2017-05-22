@@ -7,14 +7,14 @@ import sf from "../os/sf";
 import * as ospath from "path";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("open-at-login");
+const logger = rootLogger.child({name: "open-at-login"});
 
 import {createSelector} from "reselect";
 
 import {IStore, IPreferencesState} from "../types";
 
 async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openAsHidden: boolean) {
-  logger.info(`Updating login item settings, open: ${openAtLogin}, hidden: ${openAsHidden}`);
+  logger.debug(`Updating login item settings, open=${openAtLogin}, hidden=${openAsHidden}`);
 
   const app = require("electron").app;
 

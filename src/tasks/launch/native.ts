@@ -27,7 +27,7 @@ import {startTask} from "../../reactors/tasks/start-task";
 import {MODAL_RESPONSE} from "../../constants/action-types";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("launch/native");
+const logger = rootLogger.child({name: "launch/native"});
 
 import {Crash, MissingLibs} from "../errors";
 

@@ -7,7 +7,7 @@ import LFTransform from "./lf-transform";
 import { Cancelled } from "../tasks/errors";
 
 import rootLogger, {Logger} from "../logger";
-const spawnLogger = rootLogger.child("spawn");
+const spawnLogger = rootLogger.child({name: "spawn"});
 
 import { EventEmitter } from "events";
 
@@ -84,7 +84,7 @@ spawn = async function (opts: ISpawnOpts): Promise<number> {
     ...(opts.opts || {}),
     ...stdioOpts,
   };
-  logger.info(`spawning ${command} with args ${args.join(" ")}`);
+  logger.debug(`spawning ${command} with args ${args.join(" ")}`);
 
   const child = childProcess.spawn(command, args, spawnOpts);
   let cancelled = false;

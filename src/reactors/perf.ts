@@ -3,7 +3,7 @@ import {Watcher} from "./watcher";
 import * as actions from "../actions";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("perf");
+const logger = rootLogger.child({name: "perf"});
 
 import {elapsed} from "../format";
 

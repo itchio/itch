@@ -8,7 +8,7 @@ import blessing from "./blessing";
 import {Transition} from "../errors";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("install/inno");
+const logger = rootLogger.child({name: "install/inno"});
 
 import {IStartTaskOpts} from "../../types";
 

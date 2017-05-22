@@ -7,7 +7,7 @@ import xdgMime from "./preboot/xdg-mime";
 import visualElements from "./preboot/visual-elements";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("preboot");
+const logger = rootLogger.child({name: "preboot"});
 const opts = {logger};
 
 import {ProxySource} from "../types";
@@ -66,7 +66,7 @@ export default function (watcher: Watcher) {
           ],
         }));
       });
-      logger.info(`Set up certificate error handler`);
+      logger.debug(`Set up certificate error handler`);
     } catch (e) {
       logger.error(`Could not set up certificate error handler: ${e.stack || e.message || e}`);
     }
@@ -100,7 +100,7 @@ export default function (watcher: Watcher) {
 
           setTimeout(function () {
             reject(new Error("proxy resolution timed out"));
-          }, 1000);
+          }, 5000);
         });
 
         if (/PROXY /.test(electronProxy)) {
@@ -118,7 +118,7 @@ export default function (watcher: Watcher) {
       store.dispatch(actions.proxySettingsDetected(proxySettings));
       await applyProxySettings(netSession, proxySettings);
     } catch (e) {
-      logger.error(`Could not detect proxy settings: ${e ? e.message : "unknown error"}`);
+      logger.warn(`Could not detect proxy settings: ${e ? e.message : "unknown error"}`);
     }
 
     store.dispatch(actions.boot({}));

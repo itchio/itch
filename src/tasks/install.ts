@@ -11,7 +11,7 @@ import sf from "../os/sf";
 import {Stats} from "fs";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("install");
+const logger = rootLogger.child({name: "install"});
 
 import core from "./install/core";
 import {findWhere} from "underscore";

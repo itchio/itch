@@ -8,7 +8,7 @@ import CaveModel from "../../db/models/cave";
 import fetch from "../../util/fetch";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("request-cave-uninstall");
+const logger = rootLogger.child({name: "request-cave-uninstall"});
 
 export default function (watcher: Watcher) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {

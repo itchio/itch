@@ -4,7 +4,7 @@ import * as invariant from "invariant";
 
 import client from "../api";
 import rootLogger from "../logger";
-const logger = rootLogger.child("find-upgrade-path");
+const logger = rootLogger.child({name: "find-upgrade-path"});
 
 import {each} from "underscore";
 

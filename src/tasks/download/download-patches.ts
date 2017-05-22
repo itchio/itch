@@ -12,7 +12,7 @@ import store from "../../store/metal-store";
 
 export default async function downloadPatches (out: EventEmitter, opts: IDownloadOpts) {
   const {cave, totalSize, upgradePath, upload, credentials, downloadKey} = opts;
-  const logger = opts.logger.child("download-patches");
+  const logger = opts.logger.child({name: "download-patches"});
   const globalMarket: any = null;
 
   const api = client.withKey(credentials.key);

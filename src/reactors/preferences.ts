@@ -10,7 +10,7 @@ import * as actions from "../actions";
 import {MODAL_RESPONSE} from "../constants/action-types";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("preferences");
+const logger = rootLogger.child({name: "preferences"});
 
 import {shell} from "electron";
 

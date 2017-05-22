@@ -2,7 +2,7 @@
 import {elapsed} from "../format";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("db");
+const logger = rootLogger.child({name: "db"});
 
 import getColumns from "./get-columns";
 

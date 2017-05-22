@@ -1,7 +1,7 @@
 
 import {Watcher} from "../reactors/watcher";
 import rootLogger from "../logger";
-const logger = rootLogger.child("fetchers");
+const logger = rootLogger.child({name: "fetchers"});
 
 import * as actions from "../actions";
 

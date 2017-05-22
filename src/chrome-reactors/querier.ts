@@ -4,7 +4,7 @@ import {IStore} from "../types";
 import * as actions from "../actions";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("querier");
+const logger = rootLogger.child({name: "querier"});
 
 import {elapsed} from "../format";
 

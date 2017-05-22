@@ -2,7 +2,7 @@
 import * as invariant from "invariant";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("fetch");
+const logger = rootLogger.child({name: "fetch"});
 
 import client from "../api";
 import normalize from "../api/normalize";

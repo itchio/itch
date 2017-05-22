@@ -5,7 +5,7 @@ import * as actions from "../../actions";
 import delay from "../delay";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("download-speed-watcher");
+const logger = rootLogger.child({name: "download-speed-watcher"});
 
 const DOWNLOAD_SPEED_DELAY = 1000;
 

@@ -9,7 +9,7 @@ import blessing from "./blessing";
 import butler from "../../util/butler";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("install/nsis");
+const logger = rootLogger.child({name: "install/nsis"});
 
 import {IStartTaskOpts} from "../../types";
 

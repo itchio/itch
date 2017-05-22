@@ -11,7 +11,7 @@ import useragent from "../constants/useragent";
 import sf from "../os/sf";
 import * as humanize from "humanize-plus";
 import rootLogger, {Logger} from "../logger";
-const logger = rootLogger.child("net");
+const logger = rootLogger.child({name: "net"});
 
 import * as ospath from "path";
 

@@ -9,7 +9,7 @@ import {camelify} from "../format";
 import * as os from "../os";
 
 import rootLog from "../logger";
-const logger = rootLog.child("find-upload");
+const logger = rootLog.child({name: "find-upload"});
 
 import client from "../api";
 

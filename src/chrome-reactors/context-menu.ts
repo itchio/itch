@@ -24,7 +24,7 @@ import DownloadKeyModel from "../db/models/download-key";
 type IMenuItem = Electron.MenuItemOptions;
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("context-menu");
+const logger = rootLogger.child({name: "context-menu"});
 
 function openMenu (store: IStore, template: IMenuItem[]) {
   if (template.length === 0) {
@@ -70,11 +70,11 @@ export default function (watcher: Watcher) {
     const gameId = game.id;
     const {globalMarket, market} = watcher.getMarkets();
     if (!globalMarket) {
-      pino.info(`no global market`);
+      logger.info(`no global market`);
       return;
     }
     if (!market) {
-      debug(`no user market`);
+      logger.info(`no user market`);
       return;
     }
     const cave = await globalMarket.getRepo(CaveModel).findOne({gameId});

@@ -8,7 +8,7 @@ import * as paths from "../../os/paths";
 import urlParser from "../../util/url";
 import * as os from "../../os";
 import rootLogger from "../../logger";
-const logger = rootLogger.child("queue-game");
+const logger = rootLogger.child({name: "queue-game"});
 import * as querystring from "querystring";
 
 import {startTask} from "./start-task";

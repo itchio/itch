@@ -4,7 +4,7 @@ import {Watcher} from "./watcher";
 import * as urlParser from "url";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("reactors/url");
+const logger = rootLogger.child({name: "reactors/url"});
 
 import {isItchioURL} from "../util/url";
 import crashReporter from "../util/crash-reporter";

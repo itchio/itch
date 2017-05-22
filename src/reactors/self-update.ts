@@ -13,7 +13,7 @@ import env from "../env";
 import urls from "../constants/urls";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("self-update");
+const logger = rootLogger.child({name: "self-update"});
 import {formatDate, DATE_FORMAT} from "../format/datetime";
 
 import * as actions from "../actions";

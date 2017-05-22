@@ -3,7 +3,7 @@ import {Watcher} from "../reactors/watcher";
 import * as actions from "../actions";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("report");
+const logger = rootLogger.child({name: "report"});
 
 import Cave from "../db/models/cave";
 

@@ -14,7 +14,7 @@ import {
 import * as actions from "../actions";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("setup");
+const logger = rootLogger.child({name: "setup"});
 
 async function fetch (store: IStore, name: string) {
   const opts = {

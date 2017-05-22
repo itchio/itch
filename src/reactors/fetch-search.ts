@@ -2,7 +2,7 @@
 import {Watcher} from "./watcher";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("fetch-search");
+const logger = rootLogger.child({name: "fetch-search"});
 
 import fetch from "../util/fetch";
 

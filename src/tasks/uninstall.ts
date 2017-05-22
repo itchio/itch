@@ -5,7 +5,7 @@ import * as paths from "../os/paths";
 
 import sf from "../os/sf";
 import rootLogger from "../logger";
-const logger = rootLogger.child("uninstall");
+const logger = rootLogger.child({name: "uninstall"});
 
 import core from "./install/core";
 

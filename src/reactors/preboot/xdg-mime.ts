@@ -6,7 +6,7 @@ const self = {
   mimeType: "x-scheme-handler/itchio",
 
   async query (opts: any): Promise<number> {
-    const logger = opts.logger.child("xdg-mime");
+    const logger = opts.logger.child({name: "xdg-mime"});
     logger.info("querying default handler for itchio:// protocol");
     return await spawn({
       command: "xdg-mime",
@@ -17,7 +17,7 @@ const self = {
   },
 
   async setDefault (opts: any): Promise<void> {
-    const logger = opts.logger.child("xdg-mime");
+    const logger = opts.logger.child({name: "xdg-mime"});
     logger.info("registering self as default handler for itchio:// protocol");
     return await spawn.assert({
       command: "xdg-mime",
@@ -37,7 +37,7 @@ const self = {
       await self.setDefault(opts);
       await self.query(opts);
     } catch (e) {
-      const logger = opts.logger.child("xdg-mime");
+      const logger = opts.logger.child({name: "xdg-mime"});
       logger.error(`Couldn't register handler: ${e.stack || e}`);
     }
   },

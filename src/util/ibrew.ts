@@ -47,7 +47,7 @@ const self = {
   fetch: async function (opts: IFetchOpts, name: string) {
     const noop = (): any => null;
     const {onStatus = noop} = opts;
-    const logger = opts.logger.child("ibrew");
+    const logger = opts.logger.child({name: "ibrew"});
 
     const formula = formulas[name];
     if (!formula) {

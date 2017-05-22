@@ -1,6 +1,6 @@
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("compare-records");
+const logger = rootLogger.child({name: "compare-records"});
 
 export default function compareRecords (oldRecord: any, newRecord: any, fields?: Set<string>): boolean {
   for (const newKey in newRecord) {

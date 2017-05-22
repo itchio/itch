@@ -4,7 +4,7 @@ import * as ospath from "path";
 import spawn from "../spawn";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("registry");
+const logger = rootLogger.child({name: "registry"});
 
 let base = "HKCU\\Software\\Classes\\itchio";
 

@@ -3,6 +3,8 @@ These environment variables will change the behavior of the app:
 
   * `DEVTOOLS=1` — start with Chromium Devtools open — useful when something goes
     wrong before the `F12` binding becomes available.
+  * `ITCH_LOG_LEVEL=debug` — see https://github.com/pinojs/pino/blob/master/docs/API.md for available
+    levels - defaults to "info"
   * `MARCO_POLO=1` — dumps all redux events being dispatched throughout the app.
     We attempt to filter that (see `private` field in payloads) but **please
     pay extra care to any logs you post publicly** to make sure you're not leaking

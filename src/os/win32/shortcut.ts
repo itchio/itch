@@ -5,7 +5,7 @@ import spawn from "../spawn";
 import sf from "../sf";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("shortcut");
+const logger = rootLogger.child({name: "shortcut"});
 
 const appFolder = resolve(process.execPath, "..");
 const rootFolder = resolve(appFolder, "..");

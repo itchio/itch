@@ -35,7 +35,7 @@ let self = {
   install: async function (out: EventEmitter, opts: IStartTaskOpts) {
     // FIXME: db
     const globalMarket: any = null;
-    const logger = opts.logger.child("install/air");
+    const logger = opts.logger.child({name: "install/air"});
 
     await blessing(out, opts);
     out.emit("progress", {progress: -1});
@@ -84,7 +84,7 @@ let self = {
 
   uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
     const {globalMarket} = opts;
-    const logger = opts.logger.child("uninstall/air");
+    const logger = opts.logger.child({name: "uninstall/air"});
 
     out.emit("progress", {progress: -1});
 

@@ -2,7 +2,7 @@
 import handleWindowsPrereqs from "./windows-prereqs";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("prepare/native");
+const logger = rootLogger.child({name: "prepare/native"});
 
 import {EventEmitter} from "events";
 import {ILaunchOpts} from "../../types";

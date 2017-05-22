@@ -1,6 +1,6 @@
 
 import rootLogger from "../logger";
-const pino = rootLogger.child("market-provider");
+const pino = rootLogger.child({name: "market-provider"});
 
 import {IStore} from "../types";
 import {IMarkets, IMarketGetter} from "../fetchers/types";

@@ -3,21 +3,62 @@ import {logPath} from "../os/paths";
 import {Logger as PinoLogger, Level} from "pino";
 import {Stream, Writable} from "stream";
 
+const LOG_LEVEL = process.env.ITCH_LOG_LEVEL || "info" as Level;
+
+interface IChildProps {
+  name: string;
+}
+
 // tslint:disable-next-line
 export interface Logger extends PinoLogger {
   close();
-  child(name: string): Logger;
+  child(props: IChildProps): Logger;
 }
 
 let pinoFactory: (opts?: any, stream?: Stream) => Logger;
+
+const levels = {
+  default: "USERLVL",
+  60: "FATAL",
+  50: "ERROR",
+  40: "WARN",
+  30: "INFO",
+  20: "DEBUG",
+  10: "TRACE",
+};
+
+const levelColors = {
+  default: "color:black;",
+  60: "background-color:red;",
+  50: "color:red;",
+  40: "color:yellow;",
+  30: "color:green;",
+  20: "color:blue;",
+  10: "color:grey;",
+};
 
 export function makeLogger (logPath?: string): Logger {
   if (process.type === "renderer") {
     if (!pinoFactory) {
       pinoFactory = require("pino/browser");
     }
-    const l = pinoFactory();
-    l.close = () => { /* muffin */ };
+    const l = pinoFactory({
+      browser: {
+        write: (opts: any) {
+          const {name, level, msg} = opts;
+          // tslint:disable-next-line
+          console.log(
+            "%c " + levels[level]
+            + " %c" + (name ? ("(" + name + ")") : "") + ":"
+            + " %c" + msg,
+            levelColors[level],
+            "color:black;",
+            "color:44e;");
+        },
+      }
+    });
+    l.close = () => {/* muffin */ };
+    l.level = LOG_LEVEL;
     return l;
 
   } else {
@@ -25,7 +66,7 @@ export function makeLogger (logPath?: string): Logger {
     const fs = require("fs");
     const path = require("path");
     const stream = require("logrotate-stream");
-    const pretty = require("pino/pretty");
+    const pretty = require("./pretty");
 
     let consoleOut = pretty({
       forceColor: true,
@@ -74,6 +115,7 @@ export function makeLogger (logPath?: string): Logger {
         }
       }
     };
+    l.level = LOG_LEVEL;
     return l;
   }
 };
@@ -103,6 +145,7 @@ export const devNull: Logger = new (class {
   info(...args: any[]) { /* muffin */ }
   debug(...args: any[]) { /* muffin */ }
   trace(...args: any[]) { /* muffin */ }
+  close() { /* muffin */ }
 })();
 
 export default makeLogger(logPath());

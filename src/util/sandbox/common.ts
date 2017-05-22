@@ -1,6 +1,6 @@
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("sandbox/common");
+const logger = rootLogger.child({name: "sandbox/common"});
 
 import { INeed, ICaretakerSet } from "./types";
 

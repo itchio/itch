@@ -5,7 +5,7 @@ import * as actions from "../../actions";
 import {startTask} from "./start-task";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("configure-cave");
+const logger = rootLogger.child({name: "configure-cave"});
 
 export default function (watcher: Watcher) {
   watcher.on(actions.configureCave, async (store, action) => {

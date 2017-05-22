@@ -11,7 +11,7 @@ import archive from "./archive";
 import * as ospath from "path";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("install/dmg");
+const logger = rootLogger.child({name: "install/dmg"});
 
 import {IStartTaskOpts} from "../../types";
 

@@ -7,7 +7,7 @@ import sf from "../../os/sf";
 import spawn from "../../os/spawn";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("install/exe");
+const logger = rootLogger.child({name: "install/exe"});
 
 import {partial} from "underscore";
 

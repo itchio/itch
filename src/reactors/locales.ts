@@ -20,7 +20,7 @@ const localesConfigPath = getLocalesConfigPath();
 import {IStore, II18nResources} from "../types";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("locales");
+const logger = rootLogger.child({name: "locales"});
 
 import * as actions from "../actions";
 

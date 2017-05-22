@@ -16,7 +16,7 @@ import * as invariant from "invariant";
 import {debounce} from "underscore";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child("main-window");
+const logger = rootLogger.child({name: "main-window"});
 
 import localizer from "../localizer";
 import * as actions from "../actions";
@@ -56,8 +56,6 @@ async function createWindow (store: IStore, hidden: boolean) {
   }
 
   const iconPath = getImagePath("window/" + app.getName() + "/" + iconName + ".png");
-  logger.info(`creating main window with icon: ${iconPath}`);
-  logger.info("cf. https://github.com/electron/electron/issues/6205");
 
   const window = new BrowserWindow({
     title: app.getName(),
@@ -214,13 +212,11 @@ async function createWindow (store: IStore, hidden: boolean) {
   }
 
   const rootDir = resolve(__dirname, "..");
-  logger.info(`rootDir is ${rootDir}`);
   let uri = `file://${rootDir}/index.html`;
   if (process.env.ITCH_REACT_PERF === "1") {
     logger.info(`Enabling react perf`);
     uri += `?react_perf`;
   }
-  logger.info(`Calling loadURL with ${uri}`);
   window.loadURL(uri);
   if (env.name === "development") {
     window.emit("ready-to-show", {});
@@ -233,49 +229,43 @@ async function createWindow (store: IStore, hidden: boolean) {
  */
 function ensureWindowInsideDisplay (window: Electron.BrowserWindow) {
   const originalBounds = window.getBounds();
-  logger.info(`Ensuring ${JSON.stringify(originalBounds)} is inside a display`);
+  logger.debug(`Ensuring ${JSON.stringify(originalBounds)} is inside a display`);
 
   const {screen} = require("electron");
   const display = screen.getDisplayMatching(originalBounds);
   if (!display) {
-    logger.info(`No display found matching ${JSON.stringify(originalBounds)}`);
+    logger.warn(`No display found matching ${JSON.stringify(originalBounds)}`);
     return;
   }
 
   const displayBounds = display.bounds;
-  logger.info(`Display bounds: ${JSON.stringify(displayBounds)}`);
+  logger.debug(`Display bounds: ${JSON.stringify(displayBounds)}`);
 
   let bounds = originalBounds;
 
   const displayLeft = displayBounds.x;
   if (bounds.x < displayLeft) {
-    logger.info(`Nudging right`);
     bounds = { ...bounds, x: displayLeft };
   }
 
   const displayTop = displayBounds.y;
   if (bounds.y < displayTop) {
-    logger.info(`Nudging down`);
     bounds = { ...bounds, y: displayTop };
   }
 
   const displayRight = displayBounds.width + displayBounds.x;
   if (bounds.x + bounds.width > displayRight) {
-    logger.info(`Nudging left`);
     bounds = { ...bounds, x: displayRight - bounds.width };
   }
 
   const displayBottom = displayBounds.height + displayBounds.y;
   if (bounds.y + bounds.height > displayBottom) {
-    logger.info(`Nudging up`);
     bounds = { ...bounds, y: displayBottom - bounds.height };
   }
 
   if (bounds !== originalBounds) {
-    logger.info(`New bounds: ${JSON.stringify(bounds)}`);
+    logger.debug(`New bounds: ${JSON.stringify(bounds)}`);
     window.setBounds(bounds);
-  } else {
-    logger.info(`Bounds unchanged: ${JSON.stringify(originalBounds)}`);
   }
 }
 

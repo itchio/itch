@@ -74,7 +74,7 @@ interface IDiegoOpts {
 
 const self = {
   hire: async function (opts: IDiegoOpts): Promise<void> {
-    const logger = opts.logger.child("diego");
+    const logger = opts.logger.child({name: "diego"});
     const output = await promisedDiego; // sic. no parenthesis — called once on startup
     logger.info(output);
   },

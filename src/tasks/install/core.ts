@@ -8,7 +8,7 @@ import butler from "../../util/butler";
 import spawn from "../../os/spawn";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("install/core");
+const logger = rootLogger.child({name: "install/core"});
 
 import {IInstallerCache, InstallerType, IStartTaskOpts} from "../../types";
 

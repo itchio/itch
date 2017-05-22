@@ -8,7 +8,7 @@ import {app} from "electron";
 import {join, dirname} from "path";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("visual-elements");
+const logger = rootLogger.child({name: "visual-elements"});
 
 const getStartMenuVbs = `set sh = WScript.CreateObject("Wscript.Shell")
 startPath = sh.SpecialFolders("StartMenu")

@@ -7,7 +7,7 @@ import sf from "../../os/sf";
 import ibrew from "../ibrew";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("sandbox/linux");
+const logger = rootLogger.child({name: "sandbox/linux"});
 
 import common from "./common";
 

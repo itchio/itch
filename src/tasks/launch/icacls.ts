@@ -9,7 +9,7 @@ interface IIcaclsOptions {
 }
 
 async function icacls (opts: IIcaclsOptions, reason: string, args: string[]) {
-  const logger = opts.logger.child("icacls");
+  const logger = opts.logger.child({name: "icacls"});
 
   await spawn.assert({
     command: "icacls",

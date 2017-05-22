@@ -4,7 +4,7 @@ import * as actions from "../../actions";
 
 import {startTask} from "./start-task";
 import rootLogger from "../../logger";
-const logger = rootLogger.child("download-ended");
+const logger = rootLogger.child({name: "download-ended"});
 
 import {omit} from "underscore";
 

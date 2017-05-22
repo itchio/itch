@@ -5,7 +5,7 @@ import * as actions from "../../actions";
 import delay from "../delay";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("download-watcher");
+const logger = rootLogger.child({name: "download-watcher"});
 
 import {EventEmitter} from "events";
 import {throttle} from "underscore";

@@ -10,7 +10,7 @@ import deploy, {IDeployOpts} from "../../util/deploy";
 import core from "./core";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child("install/archive");
+const logger = rootLogger.child({name: "install/archive"});
 
 import {
   IStartTaskOpts, IInstallerCache, IProgressInfo, InstallerType,
