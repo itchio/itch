@@ -1,8 +1,12 @@
 
 // tslint:disable:no-shadowed-variable
 
-var Application = require('spectron').Application;
-var test = require("zopf");
+const Application = require('spectron').Application;
+const test = require("zopf");
+
+const tape = require("tape");
+const formatter = require("faucet");
+tape.createStream().pipe(formatter()).pipe(process.stdout);
 
 let app = null;
 
