@@ -11,8 +11,8 @@ import urls from "../constants/urls";
 
 import {findWhere} from "underscore";
 
-import os from "./os";
-import sf from "./sf";
+import * as os from "../os";
+import sf from "../os/sf";
 
 export interface IReportIssueOpts {
   log?: string;

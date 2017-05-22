@@ -9,15 +9,14 @@ import env from "../env";
 import {darkMineShaft} from "../constants/colors";
 import {app, BrowserWindow} from "electron";
 import config from "../util/config";
-import {getImagePath} from "../util/resources";
-import os from "../util/os";
+import {getImagePath} from "../os/resources";
+import * as os from "../os";
 import {resolve} from "path";
 import * as invariant from "invariant";
 import {debounce} from "underscore";
 
-import mklog from "../util/log";
-const log = mklog("reactors/main-window");
-import {opts} from "../logger";
+import rootLogger from "../logger";
+const logger = rootLogger.child("main-window");
 
 import localizer from "../localizer";
 import * as actions from "../actions";
@@ -57,8 +56,8 @@ async function createWindow (store: IStore, hidden: boolean) {
   }
 
   const iconPath = getImagePath("window/" + app.getName() + "/" + iconName + ".png");
-  log(opts, `creating main window with icon: ${iconPath}`);
-  log(opts, "cf. https://github.com/electron/electron/issues/6205");
+  logger.info(`creating main window with icon: ${iconPath}`);
+  logger.info("cf. https://github.com/electron/electron/issues/6205");
 
   const window = new BrowserWindow({
     title: app.getName(),
@@ -73,10 +72,10 @@ async function createWindow (store: IStore, hidden: boolean) {
 
   if (os.platform() === "darwin") {
     try {
-      log(opts, `setting icon to: ${iconPath}`);
+      logger.info(`setting icon to: ${iconPath}`);
       app.dock.setIcon(iconPath);
     } catch (err) {
-      log(opts, `error setting icon: ${err.stack || err}`);
+      logger.error(`error setting icon: ${err.stack || err}`);
     }
   }
 
@@ -86,9 +85,9 @@ async function createWindow (store: IStore, hidden: boolean) {
   ensureWindowInsideDisplay(window);
 
   window.on("close", (e: any) => {
-    log(opts, "Main window being closed");
+    logger.info("Main window being closed");
     if (quitting) {
-      log(opts, "Quitting, letting main window close");
+      logger.info("Quitting, letting main window close");
       // alright alright you get to close
       return;
     }
@@ -97,9 +96,9 @@ async function createWindow (store: IStore, hidden: boolean) {
 
     const {closeToTray} = prefs;
     if (closeToTray) {
-      log(opts, "Close to tray enabled");
+      logger.info("Close to tray enabled");
     } else {
-      log(opts, "Close to tray disabled, quitting!");
+      logger.info("Close to tray disabled, quitting!");
       setTimeout(() => {
         store.dispatch(actions.quit({}));
       }, 100);
@@ -107,7 +106,7 @@ async function createWindow (store: IStore, hidden: boolean) {
     }
 
     if (!window.isVisible()) {
-      log(opts, "Main window hidden, letting it close");
+      logger.info("Main window hidden, letting it close");
       // timeout elapsed and still not shown - it's a closin'!
       return;
     }
@@ -127,7 +126,7 @@ async function createWindow (store: IStore, hidden: boolean) {
 
     // hide, never destroy
     e.preventDefault();
-    log(opts, "Hiding main window");
+    logger.info("Hiding main window");
     window.hide();
   });
 
@@ -160,7 +159,7 @@ async function createWindow (store: IStore, hidden: boolean) {
         store.dispatch(actions.triggerBrowserForward({}));
         break;
       default:
-        log(opts, `Unknown app command "${cmd}", ignoring`);
+        logger.info(`Unknown app command "${cmd}", ignoring`);
     }
   });
 
@@ -189,12 +188,12 @@ async function createWindow (store: IStore, hidden: boolean) {
   });
 
   window.on("ready-to-show", (e: any) => {
-    log(opts, "Ready to show!");
+    logger.info("Ready to show!");
 
     createLock = false;
     if (firstWindow) {
       firstWindow = false;
-      log(opts, `Sending windowReady with id ${window.id}`);
+      logger.info(`Sending windowReady with id ${window.id}`);
       store.dispatch(actions.firstWindowReady({}));
     }
 
@@ -208,20 +207,20 @@ async function createWindow (store: IStore, hidden: boolean) {
   });
 
   if (parseInt(process.env.DEVTOOLS, 10) > 0) {
-    log(opts, "Opening devtools");
+    logger.info("Opening devtools");
     window.webContents.openDevTools({mode: "detach"});
   } else {
-    log(opts, "No devtools");
+    logger.info("No devtools");
   }
 
   const rootDir = resolve(__dirname, "..");
-  log(opts, `rootDir is ${rootDir}`);
+  logger.info(`rootDir is ${rootDir}`);
   let uri = `file://${rootDir}/index.html`;
   if (process.env.ITCH_REACT_PERF === "1") {
-    log(opts, `Enabling react perf`);
+    logger.info(`Enabling react perf`);
     uri += `?react_perf`;
   }
-  log(opts, `Calling loadURL with ${uri}`);
+  logger.info(`Calling loadURL with ${uri}`);
   window.loadURL(uri);
   if (env.name === "development") {
     window.emit("ready-to-show", {});
@@ -234,49 +233,49 @@ async function createWindow (store: IStore, hidden: boolean) {
  */
 function ensureWindowInsideDisplay (window: Electron.BrowserWindow) {
   const originalBounds = window.getBounds();
-  log(opts, `Ensuring ${JSON.stringify(originalBounds)} is inside a display`);
+  logger.info(`Ensuring ${JSON.stringify(originalBounds)} is inside a display`);
 
   const {screen} = require("electron");
   const display = screen.getDisplayMatching(originalBounds);
   if (!display) {
-    log(opts, `No display found matching ${JSON.stringify(originalBounds)}`);
+    logger.info(`No display found matching ${JSON.stringify(originalBounds)}`);
     return;
   }
 
   const displayBounds = display.bounds;
-  log(opts, `Display bounds: ${JSON.stringify(displayBounds)}`);
+  logger.info(`Display bounds: ${JSON.stringify(displayBounds)}`);
 
   let bounds = originalBounds;
 
   const displayLeft = displayBounds.x;
   if (bounds.x < displayLeft) {
-    log(opts, `Nudging right`);
+    logger.info(`Nudging right`);
     bounds = { ...bounds, x: displayLeft };
   }
 
   const displayTop = displayBounds.y;
   if (bounds.y < displayTop) {
-    log(opts, `Nudging down`);
+    logger.info(`Nudging down`);
     bounds = { ...bounds, y: displayTop };
   }
 
   const displayRight = displayBounds.width + displayBounds.x;
   if (bounds.x + bounds.width > displayRight) {
-    log(opts, `Nudging left`);
+    logger.info(`Nudging left`);
     bounds = { ...bounds, x: displayRight - bounds.width };
   }
 
   const displayBottom = displayBounds.height + displayBounds.y;
   if (bounds.y + bounds.height > displayBottom) {
-    log(opts, `Nudging up`);
+    logger.info(`Nudging up`);
     bounds = { ...bounds, y: displayBottom - bounds.height };
   }
 
   if (bounds !== originalBounds) {
-    log(opts, `New bounds: ${JSON.stringify(bounds)}`);
+    logger.info(`New bounds: ${JSON.stringify(bounds)}`);
     window.setBounds(bounds);
   } else {
-    log(opts, `Bounds unchanged: ${JSON.stringify(originalBounds)}`);
+    logger.info(`Bounds unchanged: ${JSON.stringify(originalBounds)}`);
   }
 }
 
@@ -455,7 +454,7 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.quitAndInstall, async (store, action) => {
     quitting = true;
-    log(opts, "Handing off to Squirrel for self-update");
+    logger.info("Handing off to Squirrel for self-update");
     require("electron").autoUpdater.quitAndInstall();
   });
 }

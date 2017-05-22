@@ -1,17 +1,16 @@
 
 import {Watcher} from "./watcher";
 
-import pathmaker from "../util/pathmaker";
-import {camelifyObject} from "../util/format";
-import sf from "../util/sf";
+import {preferencesPath, logPath} from "../os/paths";
+import sf from "../os/sf";
+import {camelifyObject} from "../format";
 import partitionForUser from "../util/partition-for-user";
 
 import * as actions from "../actions";
 import {MODAL_RESPONSE} from "../constants/action-types";
 
-import mklog from "../util/log";
-const log = mklog("preferences");
-import {opts} from "../logger";
+import rootLogger from "../logger";
+const logger = rootLogger.child("preferences");
 
 import {shell} from "electron";
 
@@ -28,13 +27,13 @@ export default function (watcher: Watcher) {
     let prefs: any = {};
 
     try {
-      const contents = await sf.readFile(pathmaker.preferencesPath(), {encoding: "utf8"});
+      const contents = await sf.readFile(preferencesPath(), {encoding: "utf8"});
       prefs = camelifyObject(JSON.parse(contents));
     } catch (err) {
-      log(opts, `while importing preferences: ${err}`);
+      logger.info(`while importing preferences: ${err}`);
     }
 
-    log(opts, "imported preferences: ", JSON.stringify(prefs, null, 2));
+    logger.info("imported preferences: ", JSON.stringify(prefs, null, 2));
     store.dispatch(actions.updatePreferences(prefs));
     store.dispatch(actions.preferencesLoaded({...initialState, ...prefs}));
   });
@@ -43,7 +42,7 @@ export default function (watcher: Watcher) {
     const prefs = store.getState().preferences;
 
     // write prefs atomically
-    const file = pathmaker.preferencesPath();
+    const file = preferencesPath();
     const tmpPath = file + ".tmp" + (saveAtomicInvocations++);
     await sf.writeFile(tmpPath, JSON.stringify(prefs), {encoding: "utf8"});
     await sf.rename(tmpPath, file);
@@ -106,8 +105,8 @@ export default function (watcher: Watcher) {
   });
 
   watcher.on(actions.openAppLog, async(store, action) => {
-    const path = pathmaker.logPath();
-    log(opts, `Opening app log at ${path}`);
+    const path = logPath();
+    logger.info(`Opening app log at ${path}`);
     shell.openItem(path);
   });
 }

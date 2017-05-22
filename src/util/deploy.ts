@@ -2,9 +2,10 @@
 import {difference} from "underscore";
 import * as bluebird from "bluebird";
 
-import sf from "./sf";
+import sf from "../os/sf";
 import noop from "./noop";
 import butler from "./butler";
+import {Logger} from "../logger";
 
 import * as ospath from "path";
 
@@ -12,9 +13,6 @@ import {IProgressListener} from "../types";
 import {ICaveRecord} from "../types";
 
 import {EventEmitter} from "events";
-
-import mklog from "./log";
-const log = mklog("deploy");
 
 // FIXME: all this can and should be done with a butler command instead.
 // Using a staging folder is overkill and slows down the install process!
@@ -38,6 +36,7 @@ export interface IDeployOpts {
   cave?: ICaveRecord;
   onProgress: IProgressListener;
   onSingle?: ISingleListener;
+  logger?: Logger;
 }
 
 let singlenoop: ISingleListener = async (onlyFile: string) => {
@@ -54,7 +53,7 @@ let self = {
    *     (that receipt will be used on next deploy)
    */
   deploy: async function (opts: IDeployOpts): Promise<IDeployResult> {
-    const {stagePath, destPath, onProgress = noop, onSingle = singlenoop} = opts;
+    const {stagePath, destPath, onProgress = noop, onSingle = singlenoop, logger} = opts;
 
     const stageFiles = await sf.glob("**", {
       cwd: stagePath,
@@ -74,7 +73,7 @@ let self = {
 
     await butler.mkdir(destPath);
 
-    log(opts, `cleaning up dest path ${destPath}`);
+    logger.info(`cleaning up dest path ${destPath}`);
 
     const receiptPath = ospath.join(destPath, ".itch", "receipt.json");
     let destFiles = [] as string[];
@@ -83,37 +82,37 @@ let self = {
       let receiptContents = await sf.readFile(receiptPath, {encoding: "utf8"});
       let receipt = JSON.parse(receiptContents);
       destFiles = receipt.files || [];
-      log(opts, `Got receipt for an existing ${destFiles.length}-files install.`);
+      logger.info(`Got receipt for an existing ${destFiles.length}-files install.`);
     } catch (err) {
-      log(opts, `Could not read receipt: ${err.message}`);
+      logger.warn(`Could not read receipt: ${err.message}`);
     }
     if (!destFiles.length) {
-      log(opts, "Globbing for destfiles");
+      logger.info("Globbing for destfiles");
       destFiles = await sf.glob("**", {cwd: destPath, dot: true, nodir: true, ignore: sf.globIgnore});
     }
 
-    log(opts, `dest has ${destFiles.length} potential dinosaurs`);
+    logger.info(`dest has ${destFiles.length} potential dinosaurs`);
 
     const dinosaurs = difference(destFiles, stageFiles);
     if (dinosaurs.length) {
-      log(opts, `removing ${dinosaurs.length} dinosaurs in dest`);
-      log(opts, `example dinosaurs: ${JSON.stringify(dinosaurs.slice(0, 10), null, 2)}`);
+      logger.info(`removing ${dinosaurs.length} dinosaurs in dest`);
+      logger.info(`example dinosaurs: ${JSON.stringify(dinosaurs.slice(0, 10), null, 2)}`);
 
       await bluebird.map(dinosaurs, (rel) => {
         let dinosaur = ospath.join(destPath, rel);
         return butler.wipe(dinosaur);
       }, {concurrency: 4});
     } else {
-      log(opts, "no dinosaurs");
+      logger.info("no dinosaurs");
     }
 
-    log(opts, "merging stage with dest");
+    logger.info("merging stage with dest");
     await butler.ditto(stagePath, destPath, {
       emitter: new EventEmitter(),
       onProgress,
     });
 
-    log(opts, "everything copied, writing receipt");
+    logger.info("everything copied, writing receipt");
     let cave = opts.cave || {};
 
     const receiptObject = { cave, files: stageFiles };

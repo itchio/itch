@@ -6,7 +6,7 @@ import {connect, I18nProps} from "./connect";
 import {dispatcher, multiDispatcher} from "../constants/action-types";
 import * as actions from "../actions";
 
-import GameModel from "../models/game";
+import GameModel from "../db/models/game";
 
 import {AutoSizer, Table, Column} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";

@@ -3,8 +3,8 @@ import * as React from "react";
 import {connect, I18nProps} from "./connect";
 
 import actionForGame from "../util/action-for-game";
-import GameModel from "../models/game";
-import CaveModel from "../models/cave";
+import GameModel from "../db/models/game";
+import CaveModel from "../db/models/cave";
 
 import interleave from "./interleave";
 import TimeAgo from "./basics/time-ago";

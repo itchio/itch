@@ -9,8 +9,8 @@ import * as actions from "../actions";
 import GameActions from "./game-actions";
 import Cover from "./basics/cover";
 
-import GameModel from "../models/game";
-import CaveModel from "../models/cave";
+import GameModel from "../db/models/game";
+import CaveModel from "../db/models/cave";
 import {dispatcher, multiDispatcher} from "../constants/action-types";
 
 import styled, * as styles from "./styles";

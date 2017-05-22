@@ -6,9 +6,9 @@ import {cleanOldLogs} from "./preboot/clean-old-logs";
 import xdgMime from "./preboot/xdg-mime";
 import visualElements from "./preboot/visual-elements";
 
-import {opts} from "../logger";
-import mklog from "../util/log";
-const log = mklog("preboot");
+import rootLogger from "../logger";
+const logger = rootLogger.child("preboot");
+const opts = {logger};
 
 import {ProxySource} from "../types";
 
@@ -24,19 +24,19 @@ export default function (watcher: Watcher) {
     try {
       await cleanOldLogs();
     } catch (e) {
-      log(opts, `Could not clean old logs: ${e.stack || e.message || e}`);
+      logger.error(`Could not clean old logs: ${e.stack || e.message || e}`);
     }
 
     try {
       await xdgMime.registerIfNeeded(opts);
     } catch (e) {
-      log(opts, `Could not run xdg-mime: ${e.stack || e.message || e}`);
+      logger.error(`Could not run xdg-mime: ${e.stack || e.message || e}`);
     }
 
     try {
       await visualElements.createIfNeeded(opts);
     } catch (e) {
-      log(opts, `Could not run visualElements: ${e.stack || e.message || e}`);
+      logger.error(`Could not run visualElements: ${e.stack || e.message || e}`);
     }
 
     try {
@@ -45,7 +45,7 @@ export default function (watcher: Watcher) {
         // do not trust
         callback(false);
 
-        log(opts, `Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`);
+        logger.error(`Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`);
 
         store.dispatch(actions.openModal({
           title: `Certificate error: ${error}`,
@@ -66,9 +66,9 @@ export default function (watcher: Watcher) {
           ],
         }));
       });
-      log(opts, `Set up certificate error handler`);
+      logger.info(`Set up certificate error handler`);
     } catch (e) {
-      log(opts, `Could not set up certificate error handler: ${e.stack || e.message || e}`);
+      logger.error(`Could not set up certificate error handler: ${e.stack || e.message || e}`);
     }
 
     try {
@@ -87,7 +87,7 @@ export default function (watcher: Watcher) {
       };
 
       if (envSettings) {
-        log(opts, `Got proxy settings from environment: ${envSettings}`);
+        logger.info(`Got proxy settings from environment: ${envSettings}`);
         proxySettings = {
           proxy: envSettings,
           source: "env",
@@ -104,7 +104,7 @@ export default function (watcher: Watcher) {
         });
 
         if (/PROXY /.test(electronProxy)) {
-          log(opts, `Got proxy settings: '${electronProxy}'`);
+          logger.info(`Got proxy settings: '${electronProxy}'`);
           const proxy = electronProxy.replace(/PROXY /, "");
           proxySettings = {
             proxy,
@@ -112,13 +112,13 @@ export default function (watcher: Watcher) {
           };
           testProxy = true;
         } else {
-          log(opts, `No proxy detected`);
+          logger.info(`No proxy detected`);
         }
       }
       store.dispatch(actions.proxySettingsDetected(proxySettings));
       await applyProxySettings(netSession, proxySettings);
     } catch (e) {
-      log(opts, `Could not detect proxy settings: ${e ? e.message : "unknown error"}`);
+      logger.error(`Could not detect proxy settings: ${e ? e.message : "unknown error"}`);
     }
 
     store.dispatch(actions.boot({}));
@@ -144,13 +144,13 @@ export default function (watcher: Watcher) {
     const win = new BrowserWindow({ show: false });
 
     win.webContents.on("did-finish-load", () => {
-      log(opts, `Test page loaded with proxy successfully!`);
+      logger.info(`Test page loaded with proxy successfully!`);
     });
     win.webContents.on("did-fail-load", () => {
-      log(opts, `Test page failed to load with proxy!`);
+      logger.warn(`Test page failed to load with proxy!`);
     });
 
-    log(opts, `Testing proxy by loading a page in a hidden browser window...`);
+    logger.info(`Testing proxy by loading a page in a hidden browser window...`);
     win.loadURL("https://itch.io/country");
 
     setTimeout(() => {

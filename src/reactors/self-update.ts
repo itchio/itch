@@ -2,9 +2,9 @@
 import {Watcher} from "./watcher";
 
 import {app} from "electron";
-import os from "../util/os";
-import client from "../util/api";
-import net from "../util/net";
+import * as os from "../os";
+import client from "../api";
+import net from "../api/net";
 import {getT} from "../localizer";
 
 import delay from "./delay";
@@ -12,10 +12,9 @@ import delay from "./delay";
 import env from "../env";
 import urls from "../constants/urls";
 
-import mklog from "../util/log";
-const log = mklog("reactors/self-update");
-import {opts} from "../logger";
-import format, {DATE_FORMAT} from "../util/format";
+import rootLogger from "../logger";
+const logger = rootLogger.child("self-update");
+import {formatDate, DATE_FORMAT} from "../format/datetime";
 
 import * as actions from "../actions";
 
@@ -80,26 +79,26 @@ export default function (watcher: Watcher) {
         if (/^Could not get code signature/.test(err) &&
             (env.name === "development" || environmentSetManually)) {
           // electron-prebuilt isn't signed, we know you can't work Squirrel.mac, don't worry
-          log(opts, "Ignoring Squirrel.mac complaint");
+          logger.info("Ignoring Squirrel.mac complaint");
         } else {
           store.dispatch(actions.selfUpdateError({message: err}));
         }
       });
-      log(opts, "Installed!");
+      logger.info("Installed!");
     } catch (e) {
-      log(opts, `While installing: ${e.message}`);
+      logger.error(`While installing: ${e.message}`);
       autoUpdater = null;
       return;
     }
 
     const feedUrl = await getFeedURL();
-    log(opts, `Update feed: ${feedUrl}`);
+    logger.info(`Update feed: ${feedUrl}`);
     autoUpdater.setFeedURL(feedUrl);
 
     autoUpdater.on("checking-for-update", () => store.dispatch(actions.checkingForSelfUpdate({})));
     autoUpdater.on("update-downloaded", (ev: any, releaseNotes: string, releaseName: string) => {
-      log(opts, `update downloaded, release name: '${releaseName}'`);
-      log(opts, `release notes: \n'${releaseNotes}'`);
+      logger.info(`update downloaded, release name: '${releaseName}'`);
+      logger.info(`release notes: \n'${releaseNotes}'`);
       store.dispatch(actions.selfUpdateDownloaded(releaseName));
     });
 
@@ -110,19 +109,19 @@ export default function (watcher: Watcher) {
         await delay(UPDATE_INTERVAL + Math.random() + UPDATE_INTERVAL_WIGGLE);
         store.dispatch(actions.checkForSelfUpdate({}));
       } catch (e) {
-        log(opts, `While doing regularly self-update check: ${e}`);
+        logger.error(`While doing regularly self-update check: ${e}`);
       }
     }
   });
 
   watcher.on(actions.checkForSelfUpdate, async (store, action) => {
-    log(opts, "Checking...");
+    logger.info("Checking...");
     const uri = await getFeedURL();
 
     try {
-      const resp = await net.request("get", uri);
+      const resp = await net.request("get", uri, {});
 
-      log(opts, `HTTP GET ${uri}: ${resp.statusCode}`);
+      logger.info(`HTTP GET ${uri}: ${resp.statusCode}`);
       if (resp.statusCode === 200) {
         const downloadSelfUpdates = store.getState().preferences.downloadSelfUpdates;
 
@@ -141,10 +140,10 @@ export default function (watcher: Watcher) {
       }
     } catch (e) {
       if (client.isNetworkError(e)) {
-        log(opts, "Seems like we have no network connectivity, skipping self-update check");
+        logger.warn("Seems like we have no network connectivity, skipping self-update check");
         store.dispatch(actions.selfUpdateNotAvailable({uptodate: false}));
       } else {
-        log(opts, `Server-side error on HTTP GET ${uri}`);
+        logger.error(`Server-side error on HTTP GET ${uri}`);
         store.dispatch(actions.selfUpdateError({message: `While trying to reach update server: ${e.message || e}`}));
       }
     }
@@ -154,7 +153,7 @@ export default function (watcher: Watcher) {
     const {strings, lang} = store.getState().i18n;
     const spec = store.getState().selfUpdate.downloaded;
     if (!spec) {
-      log(opts, "Asked to apply update, but nothing downloaded? bailing out...");
+      logger.warn("Asked to apply update, but nothing downloaded? bailing out...");
       return;
     }
 
@@ -168,7 +167,7 @@ export default function (watcher: Watcher) {
       }],
       detail: ["prompt.self_update_ready.detail", {
         notes: spec.notes,
-        pubDate: format.date(pubDate, DATE_FORMAT, lang),
+        pubDate: formatDate(pubDate, lang, DATE_FORMAT),
       }],
       buttons: [
         {
@@ -187,23 +186,23 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.applySelfUpdate, async (store, action) => {
     if (!autoUpdater) {
-      log(opts, "not applying self update, got no auto-updater");
+      logger.warn("not applying self update, got no auto-updater");
       return;
     }
 
-    log(opts, "Preparing for restart...");
+    logger.info("Preparing for restart...");
     store.dispatch(actions.quitAndInstall({}));
   });
 
   watcher.on(actions.selfUpdateError, async (store, action) => {
     const error = action.payload;
-    log(opts, `Error: ${error.message}`);
+    logger.error(`Self-updater barfed: ${error.message}`);
   });
 
   watcher.on(actions.showAvailableSelfUpdate, async (store, action) => {
     const spec = store.getState().selfUpdate.available;
     if (!spec) {
-      log(opts, "Asked to show available self-update but there wasn\'t any");
+      logger.warn("Asked to show available self-update but there wasn\'t any");
       store.dispatch(actions.dismissStatus({}));
       return;
     }
@@ -215,7 +214,7 @@ export default function (watcher: Watcher) {
     store.dispatch(actions.openModal({
       title: ["prompt.self_update.title", {version: spec.name}],
       message: [messageString],
-      detail: ["prompt.self_update.detail", {notes: spec.notes, pubDate: format.date(pubDate, DATE_FORMAT, lang)}],
+      detail: ["prompt.self_update.detail", {notes: spec.notes, pubDate: formatDate(pubDate, lang, DATE_FORMAT)}],
       buttons: [
         {
           label: ["prompt.self_update.action.download"],

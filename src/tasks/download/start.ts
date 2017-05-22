@@ -1,8 +1,8 @@
 
 import * as invariant from "invariant";
 
-import mklog from "../../util/log";
-const log = mklog("download"); import pathmaker from "../../util/pathmaker"; import client from "../../util/api";
+import * as paths from "../../os/paths";
+import client from "../../api";
 import butler from "../../util/butler";
 
 import downloadPatches from "./download-patches";
@@ -17,12 +17,13 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
   if (opts.cave) {
     opts = {
       ...opts,
-      logger: pathmaker.caveLogger(opts.cave.id),
+      logger: paths.caveLogger(opts.cave.id),
     };
   }
+  const {logger} = opts;
 
   if (opts.upgradePath && opts.cave) {
-    log(opts, "Got an upgrade path, downloading patches");
+    logger.info("Got an upgrade path, downloading patches");
 
     return await downloadPatches(out, {
       ...opts,
@@ -39,7 +40,7 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
   if (opts.heal) {
     const buildId = upload.buildId;
 
-    log(opts, `Downloading wharf-enabled download, build #${buildId}`);
+    logger.info(`Downloading wharf-enabled download, build #${buildId}`);
 
     const {game} = opts;
     invariant(game, "startDownload opts must have game");
@@ -51,16 +52,16 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
     const {preferences} = store.getState();
     const {defaultInstallLocation} = preferences;
     const installLocation = defaultInstallLocation;
-    const installFolder = pathmaker.sanitize(game.title);
+    const installFolder = paths.sanitize(game.title);
 
     const cave = opts.cave || {
       installLocation,
       installFolder,
-      pathScheme: 2, // see pathmaker
+      pathScheme: 2, // see paths
     };
 
-    const fullInstallFolder = pathmaker.appPath(cave, preferences);
-    log(opts, `Doing verify+heal to ${fullInstallFolder}`);
+    const fullInstallFolder = paths.appPath(cave, preferences);
+    logger.info(`Doing verify+heal to ${fullInstallFolder}`);
 
     await butler.verify(signatureURL, fullInstallFolder, {
       ...opts,
@@ -68,7 +69,7 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
       emitter: out,
       onProgress,
     });
-  } else {
+ } else {
     const uploadURL = api.downloadUploadURL(downloadKey, upload.id, {password, secret});
 
     try {

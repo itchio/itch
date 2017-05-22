@@ -3,10 +3,8 @@ import {Watcher} from "../watcher";
 
 import {findWhere} from "underscore";
 
-import {getGlobalMarket} from "../market";
-
 import {startTask} from "./start-task";
-import {log, opts} from "./log";
+import logger from "../../logger";
 
 import * as actions from "../../actions";
 
@@ -17,13 +15,16 @@ export default function (watcher: Watcher) {
     const {taskOpts, result, err} = action.payload;
     const {name} = taskOpts;
 
+    // FIXME: db    
+    const globalMarket: any = null;
+
     if (err) {
-      log(opts, `Error in task ${name}: ${err}`);
+      logger.error(`Error in task ${name}: ${err}`);
       if (name === "install") {
         const {gameId} = taskOpts;
-        const cave = findWhere(getGlobalMarket().getEntities("caves"), {gameId}) as ICaveRecord;
+        const cave = findWhere(globalMarket.getEntities("caves"), {gameId}) as ICaveRecord;
         if (cave && cave.fresh) {
-          log(opts, "Install failed for fresh cave, destroying");
+          logger.error("Install failed for fresh cave, destroying");
           store.dispatch(actions.implodeCave({caveId: cave.id}));
         }
       }
@@ -34,7 +35,7 @@ export default function (watcher: Watcher) {
       const {game, gameId, upload} = taskOpts;
       const {caveId} = result;
 
-      const cave = getGlobalMarket().getEntity<ICaveRecord>("caves", caveId);
+      const cave = globalMarket.getEntity("caves", caveId);
 
       const {err: taskErr} = await startTask(store, {
         name: "configure",
@@ -44,17 +45,17 @@ export default function (watcher: Watcher) {
         upload,
       });
       if (taskErr) {
-        log(opts, `Error in task ${name}: ${taskErr}`);
+        logger.error(`Error in task ${name}: ${taskErr}`);
         return;
       }
     } else if (name === "launch") {
       const {gameId} = taskOpts;
       const state = store.getState();
       const tab = state.session.navigation.tabData[state.session.navigation.id];
-      log(opts, `game ${gameId} just exited!`);
+      logger.info(`game ${gameId} just exited!`);
 
       if (tab && tab.path === `games/${gameId}`) {
-        log(opts, "encouraging generosity!");
+        logger.info("encouraging generosity!");
         store.dispatch(actions.encourageGenerosity({gameId: gameId, level: "discreet"}));
       }
     }

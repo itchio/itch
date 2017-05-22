@@ -9,8 +9,8 @@ import deploy, {IDeployOpts} from "../../util/deploy";
 
 import core from "./core";
 
-import mklog from "../../util/log";
-const log = mklog("install/archive");
+import rootLogger from "../logger";
+const logger = rootLogger.child("install/archive");
 
 import {IStartTaskOpts, IInstallerCache} from "../../types";
 import {IProgressInfo, InstallerType} from "../../types";
@@ -21,7 +21,7 @@ const self = {
     if (!cave) {
       return;
     }
-    log(opts, `got cave: ${JSON.stringify(cave, null, 2)}`);
+    logger.info(`got cave: ${JSON.stringify(cave, null, 2)}`);
 
     const {archiveNestedCache = {}} = cave;
     const type = archiveNestedCache[cave.uploadId];
@@ -29,10 +29,10 @@ const self = {
       return;
     }
 
-    log(opts, `found cached installer type ${type}`);
+    logger.info(`found cached installer type ${type}`);
 
     if (core.validInstallers.indexOf(type) === -1) {
-      log(opts, `invalid installer type stored: ${type} - discarding`);
+      logger.warn(`invalid installer type stored: ${type} - discarding`);
       return null;
     }
 
@@ -62,7 +62,7 @@ const self = {
     await butler.wipe(stagePath);
     await butler.mkdir(stagePath);
 
-    log(opts, `extracting archive '${archivePath}' to '${stagePath}'`);
+    logger.info(`extracting archive '${archivePath}' to '${stagePath}'`);
 
     const extractOpts = {
       ...opts,
@@ -73,7 +73,7 @@ const self = {
     };
     await extract.extract(extractOpts);
 
-    log(opts, `extracted all files ${archivePath} into staging area`);
+    logger.info(`extracted all files ${archivePath} into staging area`);
 
     const deployOpts: IDeployOpts = {
       ...opts,
@@ -88,9 +88,9 @@ const self = {
 
     await deploy.deploy(deployOpts);
 
-    log(opts, "wiping stage...");
+    logger.info("wiping stage...");
     await butler.wipe(stagePath);
-    log(opts, "done wiping stage");
+    logger.info("done wiping stage");
 
     return {status: "ok"};
   },
@@ -100,18 +100,18 @@ const self = {
 
     const installerName = self.retrieveCachedType(opts);
     if (installerName && installerName !== "archive") {
-      log(opts, `have nested installer type ${installerName}, running...`);
+      logger.info(`have nested installer type ${installerName}, running...`);
       const coreOpts = {
         ...opts,
         installerName,
       };
       await core.uninstall(out, coreOpts);
     } else {
-      log(opts, `wiping directory ${destPath}`);
+      logger.info(`wiping directory ${destPath}`);
       await butler.wipe(destPath);
     }
 
-    log(opts, "cleaning up cache");
+    logger.info("cleaning up cache");
     self.cacheType(opts, null);
   },
 
@@ -127,12 +127,12 @@ const self = {
     try {
       installerName = await core.sniffType(sniffOpts);
     } catch (err) {
-      log(opts, `not a recognized installer type: ${onlyFile}`);
+      logger.warn(`not a recognized installer type: ${onlyFile}`);
       return null;
     }
 
     self.cacheType(opts, installerName);
-    log(opts, `found a '${installerName}': ${onlyFile}`);
+    logger.info(`found a '${installerName}': ${onlyFile}`);
     const nestedOpts = { ...opts, ...sniffOpts };
     await core.install(out, nestedOpts);
 

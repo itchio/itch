@@ -5,7 +5,7 @@ import {connect, I18nProps} from "./connect";
 import HubItem from "./hub-item";
 import HiddenIndicator from "./hidden-indicator";
 
-import GameModel from "../models/game";
+import GameModel from "../db/models/game";
 
 import {AutoSizer, Grid} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";

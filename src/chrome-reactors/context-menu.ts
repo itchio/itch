@@ -18,17 +18,13 @@ import actionForGame from "../util/action-for-game";
 
 import * as actions from "../actions";
 
-import mklog from "../util/log";
-import {opts} from "../logger";
-const log = mklog("reactors/context-menu");
-
-import CaveModel from "../models/cave";
-import DownloadKeyModel from "../models/download-key";
+import CaveModel from "../db/models/cave";
+import DownloadKeyModel from "../db/models/download-key";
 
 type IMenuItem = Electron.MenuItemOptions;
 
-import rootPino from "../util/pino";
-const pino = rootPino.child("context-menu");
+import rootLogger from "../logger";
+const logger = rootLogger.child("context-menu");
 
 function openMenu (store: IStore, template: IMenuItem[]) {
   if (template.length === 0) {
@@ -49,7 +45,7 @@ export default function (watcher: Watcher) {
 
     const data = store.getState().session.navigation.tabData[id];
     if (!data) {
-      log(opts, `Can't make context menu for non-transient tab ${id}`);
+      logger.warn(`Can't make context menu for non-transient tab ${id}`);
       return;
     }
 

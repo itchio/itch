@@ -1,30 +1,29 @@
 
 import * as invariant from "invariant";
 
-import mklog from "./log";
-const log = mklog("fetch");
-import {opts} from "../logger";
+import rootLogger from "../logger";
+const logger = rootLogger.child("fetch");
 
-import client from "./api";
+import client from "../api";
+import normalize from "../api/normalize";
+import {game, user, collection, downloadKey} from "../api/schemas";
 
-import GameModel from "../models/game";
-import CollectionModel from "../models/collection";
-import DownloadKeyModel from "../models/download-key";
-
-import normalize from "./normalize";
 import {arrayOf} from "idealizr";
-import {game, user, collection, downloadKey} from "./schemas";
 import {each, union, pluck, difference, contains} from "underscore";
 
+import GameModel from "../db/models/game";
+import CollectionModel from "../db/models/collection";
+import DownloadKeyModel from "../db/models/download-key";
+
 import {
-  IUserMarket, IGlobalMarket,
   IUserRecord, IGameRecord, ICollectionRecord, ICredentials,
   ICaveRecord,
 } from "../types";
 
 // TODO: don't use any in any of the return types here
 
-export async function dashboardGames (market: IUserMarket, credentials: ICredentials) {
+// FIXME: db
+export async function dashboardGames (market: any, credentials: ICredentials) {
   const {key, me} = credentials;
   const api = client.withKey(key);
 
@@ -68,13 +67,14 @@ export async function dashboardGames (market: IUserMarket, credentials: ICredent
 
   const goners = difference(oldGameIds, newGameIds);
   if (goners.length > 0) {
-    log(opts, `After /my-games, removing ${goners.length} goners: ${JSON.stringify(goners)}`)
+    logger.info(`After /my-games, removing ${goners.length} goners: ${JSON.stringify(goners)}`)
     await market.deleteAllEntities({entities: {games: goners}});
   }
 }
 
+// FIXME: db
 export async function ownedKeys (
-    market: IUserMarket, globalMarket: IGlobalMarket, credentials: ICredentials): Promise<void> {
+    market: any, globalMarket: any, credentials: ICredentials): Promise<void> {
   const {key} = credentials;
   const api = client.withKey(key);
 
@@ -104,7 +104,7 @@ export async function ownedKeys (
   // them from local db & strip them from cave records.
   const goners = difference(oldKeyIds, newKeyIds);
   if (goners.length > 0) {
-    log(opts, `Cleaning up ${goners.length} gone download keys`);
+    logger.info(`Cleaning up ${goners.length} gone download keys`);
     market.deleteAllEntities({entities: {downloadKeys: goners}});
 
     let touchedCaves = 0;    
@@ -116,11 +116,12 @@ export async function ownedKeys (
       }
     });
 
-    log(opts, `${touchedCaves} caves affected`);
+    logger.info(`${touchedCaves} caves affected`);
   }
 }
 
-export async function collections (market: IUserMarket, credentials: ICredentials): Promise<void> {
+// FIXME: db
+export async function collections (market: any, credentials: ICredentials): Promise<void> {
   const collectionRepo = market.getRepo(CollectionModel);
 
   // TODO: figure out what the typeorm equivalent of 'fields' is
@@ -139,16 +140,17 @@ export async function collections (market: IUserMarket, credentials: ICredential
   const newCollectionIds = pluck(entities.collections, "id");
   const goners = difference(oldCollectionIds, newCollectionIds);
   if (goners.length > 0) {
-    log(opts, `After /my-collections, removing ${goners.length} goners: ${JSON.stringify(goners)}`);
+    logger.info(`After /my-collections, removing ${goners.length} goners: ${JSON.stringify(goners)}`);
     market.deleteAllEntities({entities: {collections: goners}});
   }
 }
 
+// FIXME: db
 export async function collectionGames
-    (market: IUserMarket, credentials: ICredentials, collectionID: number): Promise<void> {
+    (market: any, credentials: ICredentials, collectionID: number): Promise<void> {
   let collection = market.getEntity<ICollectionRecord>("collections", String(collectionID));
   if (!collection) {
-    log(opts, `collection not found: ${collectionID}, stack = ${(new Error()).stack}`);
+    logger.warn(`collection not found: ${collectionID}, stack = ${(new Error()).stack}`);
     return;
   }
 
@@ -239,7 +241,8 @@ interface IGameLazilyOpts {
   secret?: string; // for draft games
 }
 
-async function gameLazily (market: IUserMarket, credentials: ICredentials, gameId: number,
+// FIXME: db
+async function gameLazily (market: any, credentials: ICredentials, gameId: number,
                            opts = {} as IGameLazilyOpts): Promise<GameModel> {
   invariant(typeof market === "object", "gameLazily has market");
   invariant(typeof credentials === "object", "gameLazily has credentials");
@@ -270,14 +273,15 @@ interface IUserLazilyOpts {
   fresh?: boolean;
 }
 
-export async function userLazily (market: IUserMarket, credentials: ICredentials, userID: number,
+// FIXME: db
+export async function userLazily (market: any, credentials: ICredentials, userID: number,
                                   opts = {} as IUserLazilyOpts): Promise<IUserRecord> {
   invariant(typeof market === "object", "userLazily has market");
   invariant(typeof credentials === "object", "userLazily has credentials");
   invariant(typeof userID === "number", "userLazily has userId number");
 
   if (!opts.fresh) {
-    const record = market.getEntity<IUserRecord>("users", String(userID));
+    const record = market.getEntity("users", String(userID));
     if (record) {
       return record;
     }
@@ -292,9 +296,10 @@ interface ICollectionLazilyOpts {
   fresh?: boolean;
 }
 
-export async function collectionLazily (market: IUserMarket, credentials: ICredentials, collectionId: number,
+// FIXME: db
+export async function collectionLazily (market: any, credentials: ICredentials, collectionId: number,
                                         opts = {} as ICollectionLazilyOpts): Promise<ICollectionRecord> {
-  const oldRecord = market.getEntity<ICollectionRecord>("collections", String(collectionId));
+  const oldRecord = market.getEntity("collections", String(collectionId));
   if (!opts.fresh) {
     if (oldRecord) {
       return oldRecord;

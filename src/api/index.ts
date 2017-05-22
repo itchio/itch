@@ -1,12 +1,11 @@
 
 import * as querystring from "querystring";
 
-import net from "../util/net";
-import {camelifyObject} from "../util/format";
+import net from "./net";
+import {camelifyObject} from "../format";
 import urls from "../constants/urls";
 
 import mkcooldown from "./cooldown";
-import mklog from "./log";
 
 import {contains} from "underscore";
 
@@ -37,10 +36,11 @@ import {
   IDownloadBuildFileExtras,
 } from "../types/api";
 
+const DUMP_API_CALLS = process.env.LET_ME_IN === "1";
+import {makeLogger, devNull} from "../logger";
+const logger = DUMP_API_CALLS ? makeLogger() : devNull;
+
 const cooldown = mkcooldown(130);
-const log = mklog("api");
-const logger = new mklog.Logger({sinks: {console: process.env.LET_ME_IN === "1"}});
-const opts = {logger};
 
 type HTTPMethod = "get" | "head" | "post";
 
@@ -95,7 +95,7 @@ export class Client {
     const t3 = Date.now();
 
     const shortPath = path.replace(/^\/[^\/]*\//, "");
-    log(opts, `${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${shortPath} with ${JSON.stringify(data)}`);
+    logger.info(`${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${shortPath} with ${JSON.stringify(data)}`);
 
     if (resp.statusCode !== 200) {
       throw new Error(`HTTP ${resp.statusCode} ${path}`);

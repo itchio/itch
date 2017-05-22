@@ -2,12 +2,12 @@
 import * as tmp from "tmp";
 import * as ospath from "path";
 
-import spawn from "../spawn";
-import sf from "../sf";
+import spawn from "../../os/spawn";
+import sf from "../../os/sf";
 import ibrew from "../ibrew";
 
-import mklog from "../log";
-const log = mklog("sandbox/linux");
+import rootLogger from "../../logger";
+const logger = rootLogger.child("sandbox/linux");
 
 import common from "./common";
 
@@ -17,7 +17,7 @@ export async function check(opts: any): Promise<ICheckResult> {
   const needs: INeed[] = [];
   const errors: Error[] = [];
 
-  log(opts, "Testing firejail");
+  logger.info("Testing firejail");
   const firejailCheck = await spawn.exec({ command: "firejail", args: ["--noprofile", "--", "whoami"] });
   if (firejailCheck.code !== 0) {
     needs.push({
@@ -33,7 +33,7 @@ export async function check(opts: any): Promise<ICheckResult> {
 export async function install(opts: any, needs: INeed[]) {
   return await common.tendToNeeds(opts, needs, {
     firejail: async function (need) {
-      log(opts, `installing firejail, because ${need.err} (code ${need.code})`);
+      logger.info(`installing firejail, because ${need.err} (code ${need.code})`);
 
       const firejailBinary = ospath.join(ibrew.binPath(), "firejail");
       const firejailBinaryExists = await sf.exists(firejailBinary);
@@ -45,7 +45,7 @@ export async function install(opts: any, needs: INeed[]) {
         lines.push(`chown root:root ${firejailBinary}`);
         lines.push(`chmod u+s ${firejailBinary}`);
 
-        log(opts, "Making firejail binary setuid");
+        logger.info("Making firejail binary setuid");
         await sudoRunScript(lines);
       }
     },

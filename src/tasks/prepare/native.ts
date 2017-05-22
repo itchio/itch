@@ -1,8 +1,8 @@
 
 import handleWindowsPrereqs from "./windows-prereqs";
 
-import mklog from "../../util/log";
-const log = mklog("prepare/native");
+import rootLogger from "../../logger";
+const logger = rootLogger.child("prepare/native");
 
 import {EventEmitter} from "events";
 import {ILaunchOpts} from "../../types";
@@ -11,21 +11,20 @@ export default async function prepare (out: EventEmitter, opts: ILaunchOpts): Pr
   const {store, manifest, cave} = opts;
 
   if (process.platform === "win32") {
-    log(opts, `launching windows-prereqs`);
+    logger.info(`launching windows-prereqs`);
     try {
       await handleWindowsPrereqs({
         store,
         manifest,
         caveId: cave.id,
-        globalMarket: opts.globalMarket,
         logger: opts.logger,
         emitter: out,
       });
     } catch (e) {
-      log(opts, `Windows prereqs full stack: ${e.stack}`);
+      logger.error(`Windows prereqs full stack: ${e.stack}`);
       throw e;
     }
   } else {
-    log(opts, `not on windows, nothing to do`);
+    logger.info(`not on windows, nothing to do`);
   }
 }

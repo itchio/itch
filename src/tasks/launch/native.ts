@@ -7,8 +7,6 @@ import * as shellQuote from "shell-quote";
 import {EventEmitter} from "events";
 import which from "../../promised/which";
 
-import poker from "./poker";
-
 import urls from "../../constants/urls";
 import linuxSandboxTemplate from "../../constants/sandbox-policies/linux-template";
 
@@ -16,20 +14,20 @@ import * as actions from "../../actions";
 
 import store from "../../store/metal-store";
 import sandbox from "../../util/sandbox";
-import os from "../../util/os";
-import sf from "../../util/sf";
+import * as os from "../../os";
+import sf from "../../os/sf";
+import spawn from "../../os/spawn";
+import * as paths from "../../os/paths";
 import butler from "../../util/butler";
-import spawn from "../../util/spawn";
 import fetch from "../../util/fetch";
-import pathmaker from "../../util/pathmaker";
 import * as icacls from "./icacls";
 
 import {promisedModal} from "../../reactors/modals";
 import {startTask} from "../../reactors/tasks/start-task";
 import {MODAL_RESPONSE} from "../../constants/action-types";
 
-import mklog from "../../util/log";
-const log = mklog("launch/native");
+import rootLogger from "../../logger";
+const logger = rootLogger.child("launch/native");
 
 import {Crash, MissingLibs} from "../errors";
 
@@ -38,12 +36,14 @@ import {IEnvironment, ILaunchOpts, ICaveRecord} from "../../types";
 const itchPlatform = os.itchPlatform();
 
 export default async function launch (out: EventEmitter, opts: ILaunchOpts): Promise<void> {
-  const {market, credentials, env = {}} = opts;
+  const {credentials, env = {}} = opts;
+  // FIXME: db
+  const market: any = null;
   let {cave} = opts;
   let {args} = opts;
   invariant(cave, "launch-native has cave");
   invariant(cave, "launch-native has env");
-  log(opts, `cave location: "${cave.installLocation}/${cave.installFolder}"`);
+  logger.info(`cave location: "${cave.installLocation}/${cave.installFolder}"`);
 
   invariant(credentials, "launch-native has credentials");
 
@@ -51,7 +51,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
   invariant(game, "was able to fetch game properly");
 
   let {isolateApps} = opts.preferences;
-  const appPath = pathmaker.appPath(cave, store.getState().preferences);
+  const appPath = paths.appPath(cave, store.getState().preferences);
   let exePath: string;
   let isJar = false;
   let console = false;
@@ -69,11 +69,11 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
       console = true;
     }
 
-    log(opts, `manifest action picked: ${JSON.stringify(action, null, 2)}`);
+    logger.info(`manifest action picked: ${JSON.stringify(action, null, 2)}`);
     const actionPath = action.path;
     exePath = ospath.join(appPath, actionPath);
   } else {
-    log(opts, "no manifest action picked");
+    logger.warn("no manifest action picked");
   }
 
   if (!exePath) {
@@ -86,18 +86,14 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
   }
 
   if (!exePath) {
-    const pokerOpts = {...opts, appPath};
-    exePath = await poker(pokerOpts);
-  }
-
-  if (!exePath) {
     // poker failed, maybe paths shifted around?
     if (opts.hailMary) {
       // let it fail
-      log(opts, "no candidates after poker and reconfiguration, giving up");
+      logger.error("no candidates after poker and reconfiguration, giving up");
     } else {
-      log(opts, "reconfiguring because still no candidates after poker");
-      const {globalMarket} = opts;
+      logger.info("reconfiguring because no candidates");
+      // FIXME: db
+      const globalMarket: any = null;
       await startTask(store, {
         name: "configure",
         gameId: game.id,
@@ -105,7 +101,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
         cave,
         upload: cave.uploads[cave.uploadId],
       });
-      cave = globalMarket.getEntity<ICaveRecord>("caves", cave.id);
+      cave = globalMarket.getEntity("caves", cave.id);
       return await launch(out, {
         ...opts,
         cave,
@@ -129,7 +125,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
   }
 
   if (isJar) {
-    log(opts, "checking existence of system JRE before launching .jar");
+    logger.info("checking existence of system JRE before launching .jar");
     try {
       const javaPath = await which("java");
       args = [
@@ -155,7 +151,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
     }
   }
 
-  log(opts, `executing '${exePath}' on '${itchPlatform}' with args '${args.join(" ")}'`);
+  logger.info(`executing '${exePath}' on '${itchPlatform}' with args '${args.join(" ")}'`);
   const argString = map(args, spawn.escapePath).join(" ");
 
   if (isolateApps) {
@@ -224,7 +220,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
     }
 
     if (isolateApps) {
-      log(opts, "app isolation enabled");
+      logger.info("app isolation enabled");
 
       const sandboxOpts = {
         ...opts,
@@ -242,7 +238,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
         await doSpawn(fullExec, `open -W ${spawn.escapePath(fakeApp)}`, env, out, opts);
       });
     } else {
-      log(opts, "no app isolation");
+      logger.info("no app isolation");
 
       if (isBundle) {
         await doSpawn(fullExec, `open -W ${spawn.escapePath(exePath)} --args ${argString}`, env, out, spawnOpts);
@@ -268,11 +264,11 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
 
       playerUsername = playerUsername.split("\n")[0].trim();
 
-      log(opts, "app isolation enabled");
+      logger.info("app isolation enabled");
       await icacls.shareWith({logger: opts.logger, sid: playerUsername, path: grantPath});
       cmd = `isolate ${cmd}`;
     } else {
-      log(opts, "no app isolation");
+      logger.info("no app isolation");
     }
 
     try {
@@ -289,7 +285,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
       cmd += ` ${argString}`;
     }
     if (isolateApps) {
-      log(opts, "generating firejail profile");
+      logger.info("generating firejail profile");
       const sandboxProfilePath = ospath.join(appPath, ".itch", "isolate-app.profile");
 
       const sandboxSource = linuxSandboxTemplate;
@@ -298,7 +294,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
       cmd = `firejail "--profile=${sandboxProfilePath}" -- ${cmd}`;
       await doSpawn(exePath, cmd, env, out, spawnOpts);
     } else {
-      log(opts, "no app isolation");
+      logger.info("no app isolation");
       await doSpawn(exePath, cmd, env, out, spawnOpts);
     }
   } else {
@@ -319,10 +315,10 @@ interface IDoSpawnOpts extends ILaunchOpts {
 
 async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment, emitter: EventEmitter,
                         opts: IDoSpawnOpts) {
-  log(opts, `spawn command: ${fullCommand}`);
+  logger.info(`spawn command: ${fullCommand}`);
 
   const cwd = opts.cwd || ospath.dirname(exePath);
-  log(opts, `working directory: ${cwd}`);
+  logger.info(`working directory: ${cwd}`);
 
   let args = shellQuote.parse(fullCommand);
   let command = args.shift();
@@ -331,7 +327,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
   let inheritStd = false;
   const {console} = opts;
   if (console) {
-    log(opts, `(in console mode)`);
+    logger.info(`(in console mode)`);
     if (itchPlatform === "windows") {
       if (opts.isolateApps) {
         inheritStd = true;
@@ -349,7 +345,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
         shell = "cmd.exe";
       }
     } else {
-      log(opts, `warning: console mode not supported on ${itchPlatform}`);
+      logger.info(`warning: console mode not supported on ${itchPlatform}`);
     }
   }
 
@@ -362,21 +358,21 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
       TEMP: tmpPath,
     };
   } catch (e) {
-    log(opts, `could not make custom temp path: ${e.message}`);
+    logger.info(`could not make custom temp path: ${e.message}`);
   }
 
-  log(opts, `command: ${command}`);
-  log(opts, `args: ${JSON.stringify(args, null, 2)}`);
-  log(opts, `env keys: ${JSON.stringify(Object.keys(env), null, 2)}`);
+  logger.info(`command: ${command}`);
+  logger.info(`args: ${JSON.stringify(args, null, 2)}`);
+  logger.info(`env keys: ${JSON.stringify(Object.keys(env), null, 2)}`);
 
   let spawnEmitter = emitter;
   if (itchPlatform === "osx") {
     spawnEmitter = new EventEmitter();
     emitter.once("cancel", async function () {
-      log(opts, `asked to cancel, calling pkill with ${exePath}`);
+      logger.warn(`asked to cancel, calling pkill with ${exePath}`);
       const killRes = await spawn.exec({command: "pkill", args: ["-f", exePath]});
       if (killRes.code !== 0) {
-        log(opts, `Failed to kill with code ${killRes.code}, out = ${killRes.out}, err = ${killRes.err}`);
+        logger.error(`Failed to kill with code ${killRes.code}, out = ${killRes.out}, err = ${killRes.err}`);
         spawnEmitter.emit("cancel");
       }
     });
@@ -395,9 +391,9 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     command,
     args,
     emitter: spawnEmitter,
-    onToken: (tok) => log(opts, `out: ${tok}`),
+    onToken: (tok) => logger.info(`out: ${tok}`),
     onErrToken: (tok) => {
-      log(opts, `err: ${tok}`);
+      logger.info(`err: ${tok}`);
       const matches = MISSINGLIB_RE.exec(tok);
       if (matches) {
         missingLibs.push(matches[1]);
@@ -414,7 +410,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
   try {
     await butler.wipe(tmpPath);
   } catch (e) {
-    log(opts, `could not remove tmp dir: ${e.message}`);
+    logger.warn(`could not remove tmp dir: ${e.message}`);
   }
 
   if (code !== 0) {
@@ -425,7 +421,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
         const props = await butler.elfprops({path: exePath, emitter: null, logger: opts.logger});
         arch = props.arch;
       } catch (e) {
-        log(opts, `could not determine arch for crash message: ${e.message}`);
+        logger.warn(`could not determine arch for crash message: ${e.message}`);
       }
 
       throw new MissingLibs({

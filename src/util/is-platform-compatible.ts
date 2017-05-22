@@ -2,7 +2,7 @@
 import os from "./os";
 import {camelify} from "./format";
 
-import Game from "../models/game";
+import Game from "../db/models/game";
 
 import classificationActions from "../constants/classification-actions";
 

@@ -4,9 +4,6 @@ import {Watcher} from "../watcher";
 import {EventEmitter} from "events";
 
 import * as uuid from "uuid";
-import {getUserMarket, getGlobalMarket} from "../market";
-
-import {log, opts} from "./log";
 
 import * as actions from "../../actions";
 
@@ -15,6 +12,8 @@ const PROGRESS_THROTTLE = 50;
 
 import {IStore, IStartTaskOpts} from "../../types";
 import {IProgressInfo} from "../../types";
+
+import logger from "../../logger";
 
 interface ITaskMap {
   [key: string]: {
@@ -26,7 +25,8 @@ let currentTasks = {} as ITaskMap;
 
 export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
   const credentials = store.getState().session.credentials;
-  const market = getUserMarket();
+  // FIXME: db
+  const market: any = null;
 
   const id = uuid.v4();
   store.dispatch(actions.taskStarted({id, startedAt: Date.now(), progress: 0, ...taskOpts}));
@@ -41,29 +41,29 @@ export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
 
     const preferences = store.getState().preferences;
     const extendedOpts = {
-      ...opts,
       ...taskOpts,
       market,
-      globalMarket: getGlobalMarket(),
+      globalMarket: null, // FIXME: db
       credentials,
       preferences,
+      logger,
     };
 
     const taskRunner = require(`../../tasks/${taskOpts.name}`).default;
 
-    log(opts, `Starting ${taskOpts.name} (${id})...`);
+    logger.info(`Starting ${taskOpts.name} (${id})...`);
     currentTasks[id] = {
       emitter: out,
     };
     result = await taskRunner(out, extendedOpts);
 
     if (result) {
-      log(opts, `${taskOpts.name} ended, result: ${JSON.stringify(result, null, 2)}`);
+      logger.info(`${taskOpts.name} ended, result: ${JSON.stringify(result, null, 2)}`);
     } else {
-      log(opts, `${taskOpts.name} ended, no result`);
+      logger.info(`${taskOpts.name} ended, no result`);
     }
   } catch (e) {
-    log(opts, `${taskOpts.name} threw, error: ${e.task || e}`);
+    logger.error(`${taskOpts.name} threw, error: ${e.task || e}`);
     error = e.task || e;
   }
 

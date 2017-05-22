@@ -8,6 +8,16 @@ import {isEmpty} from "underscore";
 
 import useragent from "../constants/useragent";
 
+import sf from "./sf";
+import * as humanize from "humanize-plus";
+import rootLogger from "../logger";
+const logger = rootLogger.child("net");
+
+import * as ospath from "path";
+
+import {indexBy, filter, map} from "underscore";
+
+
 type HTTPMethod = "head" | "get" | "post"  | "put" | "patch" | "delete";
 
 export interface IHeaders {
@@ -242,15 +252,6 @@ if (process.type === "renderer") {
   };
 }
 
-import sf from "./sf";
-import * as humanize from "humanize-plus";
-import mklog, {Logger} from "./log";
-const log = mklog("net");
-
-import * as ospath from "path";
-
-import {indexBy, filter, map} from "underscore";
-
 interface ILoggerOpts {
   logger: Logger;
 }
@@ -272,7 +273,7 @@ export async function downloadToFile (opts: ILoggerOpts, url: string, file: stri
   try {
     await sf.mkdir(dir);
   } catch (e) {
-    log(opts, `Could not create ${dir}: ${e.message}`);
+    logger.error(`Could not create ${dir}: ${e.message}`);
   }
 
   const sink = sf.createWriteStream(file, {
@@ -295,7 +296,7 @@ export async function downloadToFile (opts: ILoggerOpts, url: string, file: stri
   await sf.promised(sink);
 
   const stats = await sf.lstat(file);
-  log(opts, `downloaded ${humanize.fileSize(stats.size)} / ${humanize.fileSize(totalSize)} (${stats.size} bytes)`);
+  logger.info(`downloaded ${humanize.fileSize(stats.size)} / ${humanize.fileSize(totalSize)} (${stats.size} bytes)`);
 
   if (totalSize !== 0 && stats.size !== totalSize) {
     throw new Error(`download failed (short size) for ${url}`);
@@ -308,7 +309,7 @@ export async function getChecksums (opts: ILoggerOpts, basePath: string, algo: C
   const res = await request("get", url, {t: Date.now()});
 
   if (res.statusCode !== 200) {
-    log(opts, `couldn't get hashes: HTTP ${res.statusCode}, for ${url}`);
+    logger.warn(`couldn't get hashes: HTTP ${res.statusCode}, for ${url}`);
     return null;
   }
 
@@ -340,23 +341,23 @@ export async function ensureChecksum (
   const name = ospath.basename(file);
 
   if (!args.expected) {
-    log(opts, `${name}: no ${algo} checksum, skipping`);
+    logger.info(`${name}: no ${algo} checksum, skipping`);
     return;
   }
   const expected = args.expected.toLowerCase();
 
-  log(opts, `${name}: expected ${algo}: ${expected}`);
+  logger.info(`${name}: expected ${algo}: ${expected}`);
   const h = require("crypto").createHash(algo.toLowerCase());
   // null encoding = raw buffer (e.g. not utf-8)
   const fileContents = await sf.readFile(file, { encoding: null });
   h.update(fileContents);
   const actual = h.digest("hex");
-  log(opts, `${name}:   actual ${algo}: ${actual}`);
+  logger.info(`${name}:   actual ${algo}: ${actual}`);
 
   if (expected !== actual) {
     throw new Error(`corrupted file ${name}: expected ${expected}, got ${actual}`);
   }
-  log(opts, `${name}: ${algo} checks out!`);
+  logger.info(`${name}: ${algo} checks out!`);
 }
 
 export default {request, downloadToFile, getChecksums, ensureChecksum};

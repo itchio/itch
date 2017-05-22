@@ -2,17 +2,14 @@
 import * as humanize from "humanize-plus";
 import * as ospath from "path";
 
-import mklog from "./log";
-const log = mklog("util/extract");
-
 const verbose = (process.env.THE_DEPTHS_OF_THE_SOUL === "1");
 
 import noop from "./noop";
-import sf from "./sf";
-import spawn from "./spawn";
+import sf from "../os/sf";
+import spawn from "../os/spawn";
 import butler from "./butler";
 
-import {Logger} from "./log";
+import {Logger} from "../logger";
 import {IProgressListener} from "../types";
 import {EventEmitter} from "events";
 
@@ -62,12 +59,12 @@ const self = {
     }
 
     if (verbose) {
-      log(opts, `${info.lsarContents.length} lsarContent entries`);
+      logger.debug(`${info.lsarContents.length} lsarContent entries`);
     }
     
     for (const entry of info.lsarContents) {
       if (verbose) {
-        log(opts, `${entry.XADFileName} ${entry.XADFileSize}`);
+        logger.debug(`${entry.XADFileName} ${entry.XADFileSize}`);
       }
       sizes[ospath.normalize(entry.XADFileName)] = entry.XADFileSize;
       totalSize += entry.XADFileSize;
@@ -106,13 +103,13 @@ const self = {
       split: "\n",
       onToken: (token) => {
         if (verbose) {
-          log(opts, `extract: ${token}`);
+          logger.debug(`extract: ${token}`);
         }
         out += token;
 
         let matches = EXTRACT_RE.exec(token);
         if (verbose) {
-          log(opts, `matches: ${matches}`);
+          logger.debug(`matches: ${matches}`);
         }
         if (!matches) {
           return;
@@ -120,7 +117,7 @@ const self = {
 
         let itemPath = ospath.normalize(matches[1]);
         if (verbose) {
-          log(opts, `itemPath: ${itemPath}`);
+          logger.debug(`itemPath: ${itemPath}`);
         }
         onItemDone(itemPath);
       },
@@ -140,11 +137,11 @@ const self = {
 
     const info = await self.unarchiverList(logger, archivePath);
     totalSize = info.totalSize;
-    log(opts, `archive contains ${Object.keys(info.sizes).length} files, ${humanize.fileSize(totalSize)} total`);
+    logger.info(`archive contains ${Object.keys(info.sizes).length} files, ${humanize.fileSize(totalSize)} total`);
 
     const onEntryDone: IEntryDoneListener = (f) => {
       if (verbose) {
-        log(opts, `progress!: ${f} ${info.sizes[f]}`);
+        logger.debug(`progress!: ${f} ${info.sizes[f]}`);
       }
       extractedSize += (info.sizes[f] || 0);
       const progress = extractedSize / totalSize;
@@ -154,7 +151,7 @@ const self = {
   },
 
   extract: async function (opts: IExtractOpts): Promise<void> {
-    const {archivePath} = opts;
+    const {archivePath, logger} = opts;
 
     const hasButler = await butler.sanityCheck();
 
@@ -165,19 +162,19 @@ const self = {
         if (fileResult.type === "zip") {
           useButler = true;
         } else {
-          log(opts, `Recognized by butler but not a zip: ${fileResult.type}`);
+          logger.warn(`Recognized by butler but not a zip: ${fileResult.type}`);
         }
       } catch (e) {
-        log(opts, `Butler choked: ${e.message || e}`);
+        logger.error(`Butler choked: ${e.message || e}`);
       }
     }
 
     if (useButler) {
-      log(opts, "Using butler to extract zip");
+      logger.info("Using butler to extract zip");
       await butler.unzip(opts);
       return;
     } else {
-      log(opts, "Using unar to extract zip");
+      logger.info("Using unar to extract zip");
     }
 
     return await self.unarchiver(opts);

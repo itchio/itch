@@ -14,9 +14,9 @@ import Icon from "./basics/icon";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
-import CaveModel from "../models/cave";
-import GameModel from "../models/game";
-import DownloadKeyModel from "../models/download-key";
+import CaveModel from "../db/models/cave";
+import GameModel from "../db/models/game";
+import DownloadKeyModel from "../db/models/download-key";
 
 import styled from "./styles";
 

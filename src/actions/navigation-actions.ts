@@ -3,7 +3,7 @@ import { createAction } from "redux-actions";
 import { userToTabData, gameToTabData, collectionToTabData } from "../util/navigation";
 
 import { IUserRecord, ICollectionRecord } from "../types";
-import GameModel from "../models/game";
+import GameModel from "../db/models/game";
 
 import * as uuid from "uuid";
 

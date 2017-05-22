@@ -2,16 +2,16 @@
 import {EventEmitter} from "events";
 
 import noop from "../../util/noop";
-import spawn from "../../util/spawn";
 import butler from "../../util/butler";
 import deploy from "../../util/deploy";
+import spawn from "../../os/spawn";
 
 import archive from "./archive";
 
 import * as ospath from "path";
 
-import mklog from "../../util/log";
-const log = mklog("install/dmg");
+import rootLogger from "../../logger";
+const logger = rootLogger.child("install/dmg");
 
 import {IStartTaskOpts} from "../../types";
 
@@ -22,7 +22,7 @@ let self = {
     let archivePath = opts.archivePath;
     let onProgress = opts.onProgress || noop;
 
-    log(opts, `Preparing installation of '${archivePath}'`);
+    logger.info(`Preparing installation of '${archivePath}'`);
     onProgress({percent: -1});
 
     let cdrPath = ospath.resolve(archivePath + ".cdr");
@@ -50,7 +50,7 @@ let self = {
         }
       }
 
-      log(opts, `Found image ${imagePath}`);
+      logger.info(`Found image ${imagePath}`);
       if (imagePath && imagePath === cdrPath) {
         let mountpoint: string;
 
@@ -62,11 +62,11 @@ let self = {
         }
 
         if (!mountpoint) {
-          log(opts, `Could not detach ${cdrPath}`);
+          logger.warn(`Could not detach ${cdrPath}`);
           continue;
         }
 
-        log(opts, `Trying to detach ${cdrPath}...`);
+        logger.info(`Trying to detach ${cdrPath}...`);
         code = await spawn({
           command: "hdiutil",
           args: [ "detach", "-force", mountpoint ],
@@ -74,16 +74,16 @@ let self = {
       }
     }
 
-    log(opts, "Done looking for previously mounted images");
-    log(opts, `Trying to unlink ${cdrPath}`);
+    logger.info("Done looking for previously mounted images");
+    logger.info(`Trying to unlink ${cdrPath}`);
 
     try {
       await butler.wipe(cdrPath);
     } catch (e) {
-      log(opts, `Couldn't unlink ${cdrPath}: ${e}`);
+      logger.warn(`Couldn't unlink ${cdrPath}: ${e}`);
     }
 
-    log(opts, `Converting archive '${archivePath}' to CDR with hdiutil`);
+    logger.info(`Converting archive '${archivePath}' to CDR with hdiutil`);
 
     code = await spawn({
       command: "hdiutil",
@@ -98,7 +98,7 @@ let self = {
       throw new Error(`Failed to convert dmg image, with code ${code}`);
     }
 
-    log(opts, `Attaching cdr file ${cdrPath}`);
+    logger.info(`Attaching cdr file ${cdrPath}`);
 
     let device: string;
     let mountpoint: string;
@@ -113,12 +113,12 @@ let self = {
         cdrPath,
       ],
       onToken: (tok) => {
-        log(opts, `hdiutil attach: ${tok}`);
+        logger.info(`hdiutil attach: ${tok}`);
         let hfsMatches = HFS_RE.exec(tok);
         if (hfsMatches) {
           device = hfsMatches[1].trim();
           mountpoint = hfsMatches[3].trim();
-          log(opts, `found dev / mountpoint: '${device}' '${mountpoint}'`);
+          logger.info(`found dev / mountpoint: '${device}' '${mountpoint}'`);
         }
       },
     });
@@ -139,7 +139,7 @@ let self = {
     await deploy.deploy(deployOpts);
 
     const cleanup = async function () {
-      log(opts, `Detaching cdr file ${cdrPath}`);
+      logger.info(`Detaching cdr file ${cdrPath}`);
       code = await spawn({
         command: "hdiutil",
         args: [
@@ -152,16 +152,16 @@ let self = {
         throw new Error(`Failed to mount image, with code ${code}`);
       }
 
-      log(opts, `Removing cdr file ${cdrPath}`);
+      logger.info(`Removing cdr file ${cdrPath}`);
       await butler.wipe(cdrPath);
     };
 
-    log(opts, "Launching cleanup asynchronously...");
+    logger.info("Launching cleanup asynchronously...");
     cleanup();
   },
 
   uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
-    log(opts, "Relying on archive\'s uninstall routine");
+    logger.info("Relying on archive\'s uninstall routine");
     await archive.uninstall(out, opts);
   },
 };

@@ -5,7 +5,7 @@ import * as querystring from "querystring";
 
 import staticTabData from "../constants/static-tab-data";
 
-import GameModel from "../models/game";
+import GameModel from "../db/models/game";
 
 import { IUserRecord, ICollectionRecord,
   IInstallLocation, ITabData } from "../types";

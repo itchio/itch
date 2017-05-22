@@ -7,7 +7,8 @@ import findUninstallers from "./find-uninstallers";
 import blessing from "./blessing";
 import {Transition} from "../errors";
 
-import mklog from "../../util/log";
+import rootLogger from "../../logger";
+const logger = rootLogger.child("install/inno");
 const log = mklog("install/inno");
 
 import {IStartTaskOpts} from "../../types";
@@ -38,10 +39,10 @@ const self = {
         `/LOG=${logPath}`, // store log on disk
         `/DIR=${destPath}`, // install in apps directory if possible
       ],
-      onToken: (token: string) => log(opts, token),
+      onToken: (token: string) => logger.info(token),
     };
     const code = await spawn(spawnOpts);
-    log(opts, `inno installer exited with code ${code}`);
+    logger.info(`inno installer exited with code ${code}`);
   },
 
   uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
@@ -51,22 +52,22 @@ const self = {
     const uninstallers = await findUninstallers(destPath);
 
     if (uninstallers.length === 0) {
-      log(opts, "could not find an uninstaller");
+      logger.error("could not find an uninstaller");
       return;
     }
 
     for (let unins of uninstallers) {
-      log(opts, `running inno uninstaller ${unins}`);
+      logger.info(`running inno uninstaller ${unins}`);
       let spawnOpts = {
         command: unins,
         args: [
           "/VERYSILENT", // be vewwy vewwy quiet
         ],
         opts: {cwd: destPath},
-        onToken: (tok: string) => log(opts, `${unins}: ${tok}`),
+        onToken: (tok: string) => logger.info(`${unins}: ${tok}`),
       };
       let code = await spawn(spawnOpts);
-      log(opts, `inno uninstaller exited with code ${code}`);
+      logger.info(`inno uninstaller exited with code ${code}`);
 
       if (code !== 0) {
         const reason = "uninstaller failed, cancelling uninstallation";

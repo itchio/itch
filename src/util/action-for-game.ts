@@ -2,8 +2,8 @@
 import {ClassificationAction} from "../types";
 import classificationActions from "../constants/classification-actions";
 
-import GameModel from "../models/game";
-import CaveModel from "../models/cave";
+import GameModel from "../db/models/game";
+import CaveModel from "../db/models/cave";
 
 /**
  * Returns whether a game can be "launched" or "opened", where "launching" means

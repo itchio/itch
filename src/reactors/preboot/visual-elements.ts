@@ -1,11 +1,14 @@
 
-import os from "../../util/os";
-import spawn from "../../util/spawn";
-import mklog from "../../util/log";
-import sf from "../../util/sf";
-import shortcut from "../../util/shortcut";
+import * as os from "../../os";
+import spawn from "../../os/spawn";
+import sf from "../../os/sf";
+import shortcut from "../../os/shortcut";
+
+import {app} from "electron";
 import {join, dirname} from "path";
-const log = mklog("visual-elements");
+
+import rootLogger from "../../logger";
+const logger = rootLogger.child("visual-elements");
 
 const getStartMenuVbs = `set sh = WScript.CreateObject("Wscript.Shell")
 startPath = sh.SpecialFolders("StartMenu")
@@ -24,24 +27,24 @@ const self = {
       return;
     }
 
-    log(opts, `Checking for Squirrel at ${shortcut.updateExePath}`);
+    logger.info(`Checking for Squirrel at ${shortcut.updateExePath}`);
     try {
       const updateStats = await sf.stat(shortcut.updateExePath);
       if (!updateStats.isFile()) {
         throw new Error("Update.exe is not a regular file");
       }
     } catch (e) {
-      log(opts, `While checking for squirrel: ${e} - skipping`);
+      logger.warn(`While checking for squirrel: ${e} - skipping`);
       return;
     }
 
     const updateDirName = dirname(shortcut.updateExePath);
     const manifestPath = join(updateDirName, "itch.VisualElementsManifest.xml");
 
-    log(opts, `Writing visual elements manifest at ${manifestPath}`);
+    logger.info(`Writing visual elements manifest at ${manifestPath}`);
     await sf.writeFile(manifestPath, visualElementsManifest, {encoding: "utf8"});
 
-    log(opts, `Looking for start menu folder`);
+    logger.info(`Looking for start menu folder`);
 
     // avert your gaze for a minute...
     const vbsTempPath = join(app.getPath("temp"), "getstart.vbs");
@@ -52,26 +55,26 @@ const self = {
       args: ["/nologo", vbsTempPath],
     });
     const startMenuPath = out.trim();
-    log(opts, `Start menu path: ${out}`);
+    logger.info(`Start menu path: ${out}`);
 
     // ...in fact, maybe don't read this file at all?
     const startStats = await sf.stat(out);
     if (!startStats.isDirectory()) {
-      log(opts, `Start menu is not a directory, giving up`);
+      logger.warn(`Start menu is not a directory, giving up`);
       return;
     }
 
     const itchLinks = await sf.glob(`${app.getName()}.lnk`, {cwd: startMenuPath});
-    log(opts, `Found shortcuts:\n${JSON.stringify(itchLinks, null, 2)}`);
+    logger.info(`Found shortcuts:\n${JSON.stringify(itchLinks, null, 2)}`);
 
     const mtime = Date.now() / 1000;
     for (const link of itchLinks) {
       const fullPath = join(startMenuPath, link);
-      log(opts, `Touching ${fullPath}`);
+      logger.info(`Touching ${fullPath}`);
       await sf.utimes(fullPath, mtime, mtime);
     }
 
-    log(opts, `VisualElementsManifest successfully installed/updated!`);
+    logger.info(`VisualElementsManifest successfully installed/updated!`);
   },
 };
 

@@ -1,9 +1,10 @@
 
 // TODO: refactor to use some shape matching library,
 
-import { each } from "underscore";
+import {each} from "underscore";
 
-import { IManifest } from "../../types";
+import {IManifest} from "../../types";
+import {Logger} from "../../logger";
 
 const MANIFEST_REQUIRED_FIELDS = [
   "actions",
@@ -37,10 +38,10 @@ const PREREQ_VALID_FIELDS = [
   "name", // standard name
 ];
 
-export default function validateManifest(manifest: IManifest, log: any, opts: any) {
+export default function validateManifest(manifest: IManifest, logger: Logger) {
   for (const field of Object.keys(manifest)) {
     if (MANIFEST_VALID_FIELDS.indexOf(field) === -1) {
-      log(opts, `in manifest, unknown field '${field}' found`);
+      logger.warn(`in manifest, unknown field '${field}' found`);
     }
   }
 
@@ -55,7 +56,7 @@ export default function validateManifest(manifest: IManifest, log: any, opts: an
 
     for (const field of Object.keys(action)) {
       if (ACTION_VALID_FIELDS.indexOf(field) === -1) {
-        log(opts, `in manifest action ${denomination}, unknown field '${field}' found`);
+        logger.warn(`in manifest action ${denomination}, unknown field '${field}' found`);
       }
     }
 
@@ -71,7 +72,7 @@ export default function validateManifest(manifest: IManifest, log: any, opts: an
 
     for (const field of Object.keys(prereq)) {
       if (PREREQ_VALID_FIELDS.indexOf(field) === -1) {
-        log(opts, `in manifest prereq ${denomination}, unknown field '${field}' found`);
+        logger.warn(`in manifest prereq ${denomination}, unknown field '${field}' found`);
       }
     }
 

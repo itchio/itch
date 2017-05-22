@@ -1,8 +1,8 @@
 
-import * as invariant from "invariant";
-
-const self = function (msBetweenRequests: number) {
-  invariant(msBetweenRequests > 0, "cooldown has positive msBetweenRequests");
+export default function (msBetweenRequests: number) {
+  if (msBetweenRequests <= 0) {
+    throw new Error("cooldown must have strictly positive msBetweenRequests");
+  }
   let lastRequest = 0;
 
   return function cooldown (): Promise<void> {
@@ -22,5 +22,3 @@ const self = function (msBetweenRequests: number) {
     });
   };
 };
-
-export default self;

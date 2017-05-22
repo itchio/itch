@@ -3,15 +3,14 @@ import * as ospath from "path";
 import {partial} from "underscore";
 
 import noop from "./noop";
-import spawn from "./spawn";
-import sf from "./sf";
+import spawn from "../os/spawn";
+import sf from "../os/sf";
 import ibrew from "./ibrew";
 
 import {EventEmitter} from "events";
 import {IProgressListener, IProgressInfo, ExeArch} from "../types";
 
-import mklog, {Logger} from "./log";
-const log = mklog("butler");
+import {Logger} from "../logger";
 
 const showDebug = (process.env.MY_BUTLER_IS_MY_FRIEND === "1");
 const dumpAllOutput = (process.env.MY_BUTLER_IS_MY_ENEMY === "1");
@@ -24,17 +23,18 @@ interface IButlerOpts {
 }
 
 function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, token: string) {
-  const {onProgress = noop} = opts;
+  const {onProgress = noop, logger} = opts;
 
   if (dumpAllOutput) {
-    console.log(`butler stdout: ${token}`); // tslint:disable-line:no-console
+    // tslint:disable-next-line
+    console.log(`butler stdout: ${token}`);
   }
 
   let status: any;
   try {
     status = JSON.parse(token);
   } catch (err) {
-    log(opts, `Couldn't parse line of butler output: ${token}`);
+    logger.warn(`Couldn't parse line of butler output: ${token}`);
     return;
   }
 
@@ -43,13 +43,13 @@ function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, to
       if (!showDebug && status.level === "debug") {
         return;
       }
-      return log(opts, `butler: ${status.message}`);
+      return logger.info(`butler: ${status.message}`);
     }
     case "progress": {
       return onProgress(status as IProgressInfo);
     }
     case "error": {
-      log(opts, `butler error: ${status.message}`);
+      logger.error(`butler error: ${status.message}`);
       return onerror(new Error(status.message));
     }
     case "result": {
@@ -62,7 +62,7 @@ function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, to
 }
 
 async function butler (opts: IButlerOpts, command: string, commandArgs: string[]): Promise<void> {
-  const {emitter} = opts;
+  const {emitter, logger} = opts;
   const onerror = (e: Error) => { err = e; };
   let err = null as Error;
 
@@ -70,7 +70,7 @@ async function butler (opts: IButlerOpts, command: string, commandArgs: string[]
 
   const onToken = partial(parseButlerStatus, opts, onerror);
   const onErrToken = (line: string) => {
-    log(opts, `butler stderr: ${line}`);
+    logger.info(`butler stderr: ${line}`);
   };
 
   let realCommand = "butler";
@@ -366,7 +366,7 @@ export interface IConfigureOpts extends IButlerOpts {
 }
 
 async function configure (opts: IConfigureOpts): Promise<IConfigureResult> {
-  const {path} = opts;
+  const {path, logger} = opts;
   let args = [path];
   if (opts.osFilter) {
     args = [...args, "--os-filter", opts.osFilter];
@@ -386,7 +386,7 @@ async function configure (opts: IConfigureOpts): Promise<IConfigureResult> {
     emitter,
   };
 
-  log(opts, `Launching butler with args: ${JSON.stringify(args)}`);
+  logger.info(`Launching butler with args: ${JSON.stringify(args)}`);
   await butler(butlerOpts, "configure", args);
 
   return value;

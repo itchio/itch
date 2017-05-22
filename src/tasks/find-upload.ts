@@ -5,19 +5,19 @@ import {findWhere, map} from "underscore";
 import * as invariant from "invariant";
 import * as ospath from "path";
 
-import {camelify} from "../util/format";
-import os from "../util/os";
-import mklog from "../util/log";
-const log = mklog("find-upload");
+import {camelify} from "../format";
+import * as os from "../os";
 
-import client from "../util/api";
+import rootLog from "../logger";
+const logger = rootLog.child("find-upload");
+
+import client from "../api";
 
 import ClassificationActions from "../constants/classification-actions";
 import {ClassificationAction} from "../types";
 
 import {
   IUploadRecord,
-  IMarket,
   IGameRecord,
   ICredentials,
   IDownloadKey,
@@ -100,8 +100,6 @@ export interface IFindUploadOpts {
 
   credentials: ICredentials;
 
-  market: IMarket;
-
   downloadKey?: IDownloadKey;
 }
 
@@ -117,7 +115,7 @@ export default async function start (out: EventEmitter, opts: IFindUploadOpts) {
   const {downloadKey = grabKey()} = opts;
   let {uploads} = (await keyClient.listUploads(downloadKey, gameId));
 
-  log(opts, `got a list of ${uploads.length} uploads (${downloadKey ? "with" : "without"} download key)`);
+  logger.info(`got a list of ${uploads.length} uploads (${downloadKey ? "with" : "without"} download key)`);
   let finalUploads = uploads;
 
   if (uploads.length > 0) {
@@ -129,12 +127,12 @@ export default async function start (out: EventEmitter, opts: IFindUploadOpts) {
     if (formatUploads.length === 0 && platformUploads.length > 0) {
       const unwelcomeUpload = platformUploads[0];
       const format = ospath.extname(unwelcomeUpload.filename).replace(/^\./, "").toLowerCase();
-      log(opts, `Found upload that's platform-compatible but format-incompatible:` +
+      logger.warn(`Found upload that's platform-compatible but format-incompatible:` +
         ` ${JSON.stringify(unwelcomeUpload, null, 2)}`);
       if (["deb", "rpm"].indexOf(format) !== -1) {
-        log(opts, `Known incompatible format ${format}`);
+        logger.warn(`Known incompatible format ${format}`);
       } else {
-        log(opts, `Unknown incompatible format ${format}, not reporting`);
+        logger.warn(`Unknown incompatible format ${format}, not reporting`);
       }
     }
 
@@ -142,7 +140,7 @@ export default async function start (out: EventEmitter, opts: IFindUploadOpts) {
     const sortedUploads = sortUploads(scoredUploads);
     finalUploads = sortedUploads;
 
-    log(opts, `final uploads: ${JSON.stringify(finalUploads, null, 2)}`);
+    logger.info(`final uploads: ${JSON.stringify(finalUploads, null, 2)}`);
   }
 
   return {

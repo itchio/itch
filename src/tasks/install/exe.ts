@@ -2,12 +2,12 @@
 import {EventEmitter} from "events";
 
 import * as StreamSearch from "streamsearch";
-import os from "../../util/os";
-import sf from "../../util/sf";
-import spawn from "../../util/spawn";
+import * as os from "../../os";
+import sf from "../../os/sf";
+import spawn from "../../os/spawn";
 
-import mklog from "../../util/log";
-const log = mklog("install/exe");
+import rootLogger from "../../logger";
+const logger = rootLogger.child("install/exe");
 
 import {partial} from "underscore";
 
@@ -40,16 +40,16 @@ let self = {
     let type = self.retrieveCachedType(opts);
 
     if (type) {
-      log(opts, `using cached installer type ${type} for ${archivePath}`);
+      logger.info(`using cached installer type ${type} for ${archivePath}`);
     } else {
       type = await self.identify(opts);
 
       if (type) {
-        log(opts, `found exe installer type ${type} for ${archivePath}`);
+        logger.info(`found exe installer type ${type} for ${archivePath}`);
         self.cacheType(opts, type);
       } else {
         // don't cache that, we might find better later
-        log(opts, `falling back to 'naked exe' for ${archivePath}`);
+        logger.info(`falling back to 'naked exe' for ${archivePath}`);
         type = "naked";
       }
     }
@@ -62,14 +62,14 @@ let self = {
     if (!cave) {
       return;
     }
-    log(opts, `got cave: ${JSON.stringify(cave, null, 2)}`);
+    logger.info(`got cave: ${JSON.stringify(cave, null, 2)}`);
 
     let installerExeCache = cave.installerExeCache || {};
     let type = installerExeCache[cave.uploadId];
-    log(opts, `found cached installer type ${type}`);
+    logger.info(`found cached installer type ${type}`);
 
     if (self.validInstallers.indexOf(type) === -1) {
-      log(opts, `invalid exe installer type stored: ${type} - discarding`);
+      logger.warn(`invalid exe installer type stored: ${type} - discarding`);
       return null;
     }
 
@@ -85,7 +85,8 @@ let self = {
     let installerExeCache = {} as IInstallerCache;
     installerExeCache[cave.uploadId] = type;
 
-    const {globalMarket} = opts;
+    // FIXME: db
+    const globalMarket: any = null;
     globalMarket.saveEntity("caves", cave.id, {installerExeCache});
   },
 
@@ -109,7 +110,7 @@ let self = {
       if (!isMatch) {
         return;
       }
-      log(opts, `builtinSniff: found needle ${needle}`);
+      logger.info(`builtinSniff: found needle ${needle}`);
       result = format;
     };
 
@@ -153,10 +154,10 @@ let self = {
       const lsarInfo = JSON.parse(contents);
       detail = lsarInfo.lsarFormatName;
     } catch (e) {
-      log(opts, `Could not run external sniff: ${e.message}`);
+      logger.info(`Could not run external sniff: ${e.message}`);
     }
 
-    log(opts, `lsar format name: '${detail}'`);
+    logger.info(`lsar format name: '${detail}'`);
 
     if (!detail) {
       return null;
@@ -164,7 +165,7 @@ let self = {
 
     const format = needles[detail];
     if (format) {
-      log(opts, `recognized archive format ${format} (from ${detail})`);
+      logger.info(`recognized archive format ${format} (from ${detail})`);
       return format;
     }
 

@@ -1,7 +1,6 @@
 
-import spawn from "../../util/spawn";
-import mklog, {Logger} from "../../util/log";
-const log = mklog("launch/icacls");
+import spawn from "../../os/spawn";
+import {Logger} from "../../logger";
 
 interface IIcaclsOptions {
   path: string;
@@ -10,11 +9,13 @@ interface IIcaclsOptions {
 }
 
 async function icacls (opts: IIcaclsOptions, reason: string, args: string[]) {
+  const logger = opts.logger.child("icacls");
+
   await spawn.assert({
     command: "icacls",
     args,
-    onToken:    (tok) => { log(opts, `[${reason} out] ${tok}`); },
-    onErrToken: (tok) => { log(opts, `[${reason} err] ${tok}`); },
+    onToken:    (tok) => { logger.info(`[${reason} out] ${tok}`); },
+    onErrToken: (tok) => { logger.info(`[${reason} err] ${tok}`); },
   });
 }
 

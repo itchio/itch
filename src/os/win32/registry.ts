@@ -1,11 +1,10 @@
 
 import * as ospath from "path";
 
-import spawn from "./spawn";
+import spawn from "../spawn";
 
-import mklog from "./log";
-const log = mklog("registry");
-const opts = {logger: new mklog.Logger()};
+import rootLogger from "../../logger";
+const logger = rootLogger.child("registry");
 
 let base = "HKCU\\Software\\Classes\\itchio";
 
@@ -23,7 +22,7 @@ let self = {
     await spawn.assert({
       command: regPath,
       args: ["query", key, "/s"],
-      onToken: queryOpts.quiet ? null : (tok) => log(opts, "query: " + tok),
+      onToken: queryOpts.quiet ? null : (tok) => logger.info("query: " + tok),
     });
   },
 
@@ -55,7 +54,7 @@ let self = {
       await self.regAddDefault(`${base}\\DefaultIcon`, "itch.exe");
       await self.regAddDefault(`${base}\\Shell\\Open\\Command`, `"${process.execPath}" "%1"`);
     } catch (e) {
-      log(opts, `Could not register itchio:// as default protocol handler: ${e.stack || e}`);
+      logger.warn(`Could not register itchio:// as default protocol handler: ${e.stack || e}`);
     }
   },
 
@@ -67,7 +66,7 @@ let self = {
     try {
       await self.regDeleteAll(base);
     } catch (e) {
-      log(opts, `Could not register itchio:// as default protocol handler: ${e.stack || e}`);
+      logger.warn(`Could not register itchio:// as default protocol handler: ${e.stack || e}`);
     }
   },
 };

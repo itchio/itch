@@ -1,15 +1,15 @@
 
 import {EventEmitter} from "events";
 
-import spawn from "../../util/spawn";
+import spawn from "../../os/spawn";
 import findUninstallers from "./find-uninstallers";
 
 import {Transition} from "../errors";
 import blessing from "./blessing";
 import butler from "../../util/butler";
 
-import mklog from "../../util/log";
-const log = mklog("install/nsis");
+import rootLogger from "../../logger";
+const logger = rootLogger.child("install/nsis");
 
 import {IStartTaskOpts} from "../../types";
 
@@ -46,7 +46,7 @@ const self = {
         "/NCRC", // disable CRC-check, we do hash checking ourselves
         `/D=${destPath}`,
       ],
-      onToken: (tok) => log(opts, `${inst}: ${tok}`),
+      onToken: (tok) => logger.info(`${inst}: ${tok}`),
     });
 
     if (removeAfterUsage) {
@@ -60,7 +60,7 @@ const self = {
       throw new Error(`elevate / nsis installer exited with code ${code}`);
     }
 
-    log(opts, "elevate/nsis installer completed successfully");
+    logger.info("elevate/nsis installer completed successfully");
   },
 
   uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
@@ -70,12 +70,12 @@ const self = {
     const uninstallers = await findUninstallers(destPath);
 
     if (uninstallers.length === 0) {
-      log(opts, "could not find an uninstaller");
+      logger.error("could not find an uninstaller");
       return;
     }
 
     for (const unins of uninstallers) {
-      log(opts, `running nsis uninstaller ${unins}`);
+      logger.info(`running nsis uninstaller ${unins}`);
       const spawnOpts = {
         command: "elevate.exe",
         args: [
@@ -84,10 +84,10 @@ const self = {
           `_?=${destPath}`, // specify uninstallation path
         ],
         opts: {cwd: destPath},
-        onToken: (tok: string) => log(opts, `${unins}: ${tok}`),
+        onToken: (tok: string) => logger.info(`${unins}: ${tok}`),
       };
       const code = await spawn(spawnOpts);
-      log(opts, `elevate / nsis uninstaller exited with code ${code}`);
+      logger.info(`elevate / nsis uninstaller exited with code ${code}`);
 
       if (code !== 0) {
         const reason = "uninstaller failed, cancelling uninstallation";

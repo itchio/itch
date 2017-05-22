@@ -4,7 +4,7 @@ import {connect, I18nProps} from "./connect";
 import {createStructuredSelector} from "reselect";
 
 import {TabLayout} from "../types";
-import Game from "../models/game";
+import Game from "../db/models/game";
 
 import GameGrid from "./game-grid";
 import GameTable from "./game-table";

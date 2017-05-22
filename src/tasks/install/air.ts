@@ -1,13 +1,13 @@
 
 import {EventEmitter} from "events";
 
-import spawn from "../../util/spawn";
-import sf from "../../util/sf";
+import spawn from "../../os/spawn";
+import sf from "../../os/sf";
 
 import blessing from "./blessing";
 
-import mklog from "../../util/log";
-const log = mklog("install/air");
+import rootLogger from "../logger";
+const logger = rootLogger.child("install/air");
 
 import * as ospath from "path";
 
@@ -52,24 +52,24 @@ let self = {
         "-eulaAccepted", // let AIR install if it so wishes
         "-location", destPath, // install where we want to
       ],
-      onToken: (token: string) => log(opts, token),
+      onToken: (token: string) => logger.info(token),
     };
     let code = await spawn(spawnOpts);
-    log(opts, `air installer exited with code ${code}`);
+    logger.info(`air installer exited with code ${code}`);
 
     if (code !== 0) {
       let message = CODE_MESSAGES[code];
       throw new Error(`AIR installer error: ${message}`);
     }
 
-    log(opts, "Locating app manifest");
+    logger.info("Locating app manifest");
 
     let candidates = await sf.glob(MANIFEST_GLOB, {cwd: destPath});
     if (candidates.length === 0) {
       throw new Error("Adobe AIR app manifest not found, cannot uninstall");
     }
 
-    log(opts, `Found app manifest at ${candidates[0]}`);
+    logger.info(`Found app manifest at ${candidates[0]}`);
 
     let manifestPath = ospath.join(destPath, candidates[0]);
     let manifestContents = await sf.readFile(manifestPath, {encoding: "utf8"});
@@ -79,7 +79,7 @@ let self = {
     }
 
     let appid = matches[1];
-    log(opts, `Found appid ${appid}, remembering`);
+    logger.info(`Found appid ${appid}, remembering`);
     globalMarket.saveEntity("caves", opts.cave.id, {airAppid: appid});
   },
 
@@ -88,23 +88,23 @@ let self = {
 
     out.emit("progress", {progress: -1});
 
-    log(opts, "Grabbing adobe\'s Air Runtime Helper if needed...");
+    logger.info("Grabbing adobe\'s Air Runtime Helper if needed...");
 
     const ibrew = require("../../util/ibrew").default;
     let ibrewOpts = {
       logger,
-      onStatus: (msg: string) => log(opts, `ibrew status: ${msg}`),
+      onStatus: (msg: string) => logger.info(`ibrew status: ${msg}`),
     };
     await ibrew.fetch(ibrewOpts, "arh");
 
     let cave = opts.cave;
     let appid = cave.airAppid;
     if (!appid) {
-      log(opts, "No appid, skipping arh uninstall");
+      logger.info("No appid, skipping arh uninstall");
       return;
     }
 
-    log(opts, `Uninstalling appid ${appid}`);
+    logger.info(`Uninstalling appid ${appid}`);
 
     let spawnOpts = {
       command: "elevate.exe",
@@ -113,7 +113,7 @@ let self = {
         "-uninstallAppSilent",
         appid,
       ],
-      onToken: (tok: string) => log(opts, `arh: ${tok}`),
+      onToken: (tok: string) => logger.info(`arh: ${tok}`),
     };
     let code = await spawn(spawnOpts);
     if (code !== 0) {
@@ -121,7 +121,7 @@ let self = {
     }
     globalMarket.saveEntity("caves", cave.id, {airAppid: null});
 
-    log(opts, "Uninstallation successful");
+    logger.info("Uninstallation successful");
   },
 };
 

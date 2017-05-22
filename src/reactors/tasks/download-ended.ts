@@ -3,7 +3,8 @@ import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
 import {startTask} from "./start-task";
-import {log, opts} from "./log";
+import rootLogger from "../logger";
+const logger = rootLogger.child("download-ended");
 
 import {omit} from "underscore";
 
@@ -21,7 +22,7 @@ export default function (watcher: Watcher) {
         || reason === "revert" || reason === "heal") {
       if (err) {
         if (incremental) {
-          log(opts, "Incremental didn\'t work, doing full download");
+          logger.warn("Incremental didn\'t work, doing full download");
           if (ITCH_INCREMENTAL_ONLY) {
             store.dispatch(actions.statusMessage({
               message: "Incremental update failed, see console for details",
@@ -35,14 +36,14 @@ export default function (watcher: Watcher) {
           };
           store.dispatch(actions.queueDownload(newDownloadOpts));
         } else {
-          log(opts, "Download had an error, should notify user");
+          logger.error("Download had an error, should notify user");
         }
       } else {
         if (incremental) {
           // install folder was patched directly, no further steps needed
           return;
         }
-        log(opts, `Download finished, starting ${reason}..`);
+        logger.info(`Download finished, starting ${reason}..`);
 
         const taskOpts = {
           name: "install",
@@ -58,7 +59,7 @@ export default function (watcher: Watcher) {
 
         const {err: installErr} = await startTask(store, taskOpts);
         if (installErr) {
-          log(opts, `Error in install: ${installErr}`);
+          logger.error(`Error in install: ${installErr}`);
           return;
         }
 
@@ -100,7 +101,7 @@ export default function (watcher: Watcher) {
         }
       }
     } else {
-      log(opts, `Downloaded something for reason ${reason}`);
+      logger.info(`Downloaded something for reason ${reason}`);
     }
   });
 }

@@ -10,8 +10,8 @@ import {elapsed} from "../util/format";
 
 export type LoadSource = "cavesByGameId" | "downloadKeysByGameId";
 
-import DownloadKey from "../models/download-key";
-import Cave from "../models/cave";
+import DownloadKey from "../db/models/download-key";
+import Cave from "../db/models/cave";
 
 import {groupBy} from "underscore";
 

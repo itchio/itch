@@ -1,7 +1,7 @@
 
 import {Fetcher, Outcome} from "./types";
-import Game from "../models/game";
-import DownloadKey from "../models/download-key";
+import Game from "../db/models/game";
+import DownloadKey from "../db/models/download-key";
 import compareRecords from "../util/compare-records";
 import client from "../util/api";
 

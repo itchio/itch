@@ -3,19 +3,19 @@ import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
 import {startTask} from "./start-task";
-import {getGlobalMarket} from "../market";
-import {log, opts} from "./log";
 
-import {ICaveRecord} from "../../types";
+import rootLogger from "../../logger";
+const logger = rootLogger.child("configure-cave");
 
 export default function (watcher: Watcher) {
   watcher.on(actions.configureCave, async (store, action) => {
     const {caveId} = action.payload;
-    const market = getGlobalMarket();
+    // FIXME: db
+    const market: any = null;
 
-    const cave = market.getEntity<ICaveRecord>("caves", caveId);
+    const cave = market.getEntity("caves", caveId);
     if (!cave) {
-      log(opts, `Cave not found, can't configure: ${caveId}`);
+      logger.warn(`Cave not found, can't configure: ${caveId}`);
       return;
     }
 

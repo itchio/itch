@@ -3,7 +3,7 @@ import * as React from "react";
 import {connect, I18nProps} from "./connect";
 import {createSelector, createStructuredSelector} from "reselect";
 
-import GameModel from "../models/game";
+import GameModel from "../db/models/game";
 
 import Games from "./games";
 import GameFilters from "./game-filters";

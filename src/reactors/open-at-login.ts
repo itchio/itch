@@ -2,19 +2,19 @@
 import {Watcher} from "./watcher";
 import * as actions from "../actions";
 
-import mklog from "../util/log";
-import os from "../util/os";
-import sf from "../util/sf";
+import * as os from "../os";
+import sf from "../os/sf";
 import * as ospath from "path";
-const log = mklog("reactors/open-at-login");
-import {opts} from "../logger";
+
+import rootLogger from "../logger";
+const logger = rootLogger.child("open-at-login");
 
 import {createSelector} from "reselect";
 
 import {IStore, IPreferencesState} from "../types";
 
 async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openAsHidden: boolean) {
-  log(opts, `Updating login item settings, open: ${openAtLogin}, hidden: ${openAsHidden}`);
+  logger.info(`Updating login item settings, open: ${openAtLogin}, hidden: ${openAsHidden}`);
 
   const app = require("electron").app;
 
@@ -25,7 +25,7 @@ async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openA
     const desktopFilePath = ospath.join("/usr/share/applications", desktopFileName);
     const autostartFilePath = ospath.join(configHome, desktopFileName);
 
-    log(opts, `Copying ${desktopFilePath} => ${autostartFilePath}`);
+    logger.info(`Copying ${desktopFilePath} => ${autostartFilePath}`);
 
     if (openAtLogin) {
       try {
@@ -45,7 +45,7 @@ async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openA
 
         await sf.writeFile(autostartFilePath, desktopContents, {encoding: "utf8"});
       } catch (err) {
-        log(opts, `Error while symlinking ${autostartFilePath}: ${err.message}`);
+        logger.error(`Error while symlinking ${autostartFilePath}: ${err.message}`);
         store.dispatch(actions.openAtLoginError({cause: "error", message: err.message}));
         return;
       }
@@ -53,7 +53,7 @@ async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openA
       try {
         await sf.unlink(autostartFilePath);
       } catch (err) {
-        log(opts, `Error while unlinking ${autostartFilePath}: ${err.message}`);
+        logger.error(`Error while unlinking ${autostartFilePath}: ${err.message}`);
       }
 
       store.dispatch(actions.openAtLoginError(null));

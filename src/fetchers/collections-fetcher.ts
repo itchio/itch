@@ -1,7 +1,7 @@
 
 import {Fetcher, Outcome} from "./types";
-import Collection from "../models/collection";
-import Game from "../models/game";
+import Collection from "../db/models/collection";
+import Game from "../db/models/game";
 import client from "../util/api";
 
 import normalize from "../util/normalize";

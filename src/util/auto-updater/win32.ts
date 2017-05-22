@@ -1,9 +1,9 @@
 
 import * as bluebird from "bluebird";
 
-import os from "../os";
-import registry from "../registry";
-import shortcut from "../shortcut";
+import * as os from "../../os";
+import registry from "../../os/win32/registry";
+import shortcut from "../../os/win32/shortcut";
 
 const self = {
   onInstall: async () => {

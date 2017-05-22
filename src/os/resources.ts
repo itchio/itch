@@ -1,6 +1,11 @@
 
 import {resolve} from "path";
 
+/*
+ * Resources are files shipped with the app, that are static
+ * and don't usually change, unless updated.
+ */
+
 export function getImagePath (path: string): string {
   const resourcePath = "../static/images/" + path;
   return resolve(__dirname, resourcePath);

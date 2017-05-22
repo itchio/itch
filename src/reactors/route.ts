@@ -4,22 +4,21 @@ import {IAction} from "../constants/action-types";
 
 import {Watcher} from "./watcher";
 
-import {opts} from "../logger";
-import mklog from "../util/log";
-const log = mklog("reactors");
+import rootLogger from "../logger";
+const logger = rootLogger.child("route");
 
 export default async function route (watcher: Watcher, store: IStore, action: IAction<any>) {
   setTimeout(() => {
     try {
       for (const r of (watcher.reactors[action.type] || [])) {
         r(store, action).catch((e) => {
-          log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
+          logger.info(`while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
         });
       }
 
       for (const r of (watcher.reactors._ALL || [])) {
         r(store, action).catch((e) => {
-          log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
+          logger.info(`while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
         });
       }
 
@@ -28,13 +27,13 @@ export default async function route (watcher: Watcher, store: IStore, action: IA
 
         for (const r of (sub.reactors[action.type] || [])) {
           r(store, action).catch((e) => {
-            log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
+            logger.info(`while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
           });
         }
 
         for (const r of (sub.reactors._ALL || [])) {
           r(store, action).catch((e) => {
-            log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
+            logger.info(`while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
           });
         }
       }

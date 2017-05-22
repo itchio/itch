@@ -2,10 +2,9 @@
 import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
-import * as uuid from "uuid";
 import {find} from "underscore";
 
-import {log, opts} from "./log";
+import logger from "../../logger";
 
 import {IStore, IStartDownloadOpts} from "../../types";
 
@@ -18,17 +17,16 @@ async function startDownload (store: IStore, downloadOpts: IStartDownloadOpts) {
 
   const existing = find(downloadsState.downloadsByGameId[downloadOpts.game.id], (d) => !d.finished);
   if (existing && !existing.finished) {
-    log(opts, `Not starting another download for ${downloadOpts.game.title}`);
+    logger.warn(`Not starting another download for ${downloadOpts.game.title}`);
     store.dispatch(actions.navigate("downloads"));
     return;
   }
 
   const {upload, downloadKey} = downloadOpts;
-  log(opts, `Should download ${upload.id}, has dl key ? ${!!downloadKey}`);
+  logger.info(`Should download ${upload.id}, has dl key ? ${!!downloadKey}`);
 
-  const id = uuid.v4();
-  // FIXME: wasteful but easy
-  store.dispatch(actions.downloadStarted({...downloadOpts, id, downloadOpts}));
+  // FIXME: passing all downloadOpts here is wasteful (but easy)
+  store.dispatch(actions.downloadStarted({...downloadOpts, downloadOpts}));
 }
 
 export default function (watcher: Watcher) {

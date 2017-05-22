@@ -1,6 +1,6 @@
 
 import {Fetcher, Outcome} from "./types";
-import Game from "../models/game";
+import Game from "../db/models/game";
 import client from "../util/api";
 
 import normalize from "../util/normalize";

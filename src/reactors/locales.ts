@@ -4,7 +4,7 @@ import {Watcher} from "./watcher";
 import {join} from "path";
 import ifs from "../localizer/ifs";
 
-import {getLocalesConfigPath, getLocalePath} from "../util/resources";
+import {getLocalesConfigPath, getLocalePath} from "../os/resources";
 import net from "../util/net";
 import urls from "../constants/urls";
 import {app} from "electron";
@@ -19,10 +19,8 @@ const localesConfigPath = getLocalesConfigPath();
 
 import {IStore, II18nResources} from "../types";
 
-import logger from "../logger";
-import mklog from "../util/log";
-const log = mklog("locales");
-const opts = {logger};
+import rootLogger from "../logger";
+const logger = rootLogger.child("locales");
 
 import * as actions from "../actions";
 
@@ -44,10 +42,10 @@ async function doDownloadLocale (lang: string, resources: II18nResources): Promi
   const remote = remoteFileName(lang);
   const uri = `${urls.remoteLocalePath}/${lang}.json`;
 
-  log(opts, `Downloading fresh locale file from ${uri}`);
+  logger.info(`Downloading fresh locale file from ${uri}`);
   const resp = await net.request("get", uri, {}, {format: "json"});
 
-  log(opts, `HTTP GET ${uri}: ${resp.statusCode}`);
+  logger.info(`HTTP GET ${uri}: ${resp.statusCode}`);
   if (resp.statusCode !== 200) {
     throw new Error("Locale update server is down, try again later");
   }
@@ -58,11 +56,11 @@ async function doDownloadLocale (lang: string, resources: II18nResources): Promi
   };
 
   try {
-    log(opts, `Saving fresh ${lang} locale to ${remote}`);
+    logger.info(`Saving fresh ${lang} locale to ${remote}`);
     const payload = JSON.stringify(finalResources, null, 2);
     await ifs.writeFile(remote, payload, {encoding: "utf8"});
   } catch (e) {
-    log(opts, `Could not save locale to ${remote}: ${e.stack || e.message || e}`);
+    logger.info(`Could not save locale to ${remote}: ${e.stack || e.message || e}`);
   }
 
   return finalResources;
@@ -82,9 +80,9 @@ async function loadLocale (store: IStore, lang: string) {
     store.dispatch(actions.localeDownloadEnded({lang, resources}));
   } catch (e) {
     if (e.code === "ENOENT") {
-      log(opts, `No such locale ${local}`);
+      logger.warn(`No such locale ${local}`);
     } else {
-      log(opts, `Failed to load locale from ${local}: ${e.stack}`);
+      logger.warn(`Failed to load locale from ${local}: ${e.stack}`);
     }
   }
 
@@ -102,7 +100,7 @@ async function loadLocale (store: IStore, lang: string) {
       store.dispatch(actions.localeDownloadEnded({lang, resources}));
     }
   } catch (e) {
-    log(opts, `Failed to load locale from ${local}: ${e.stack}`);
+    logger.warn(`Failed to load locale from ${local}: ${e.stack}`);
   }
 
   store.dispatch(actions.queueLocaleDownload({lang}));
@@ -122,7 +120,7 @@ export default function (watcher: Watcher) {
     let {lang} = action.payload;
 
     if (!upgradesEnabled) {
-      log(opts, `Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`);
+      logger.warn(`Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`);
       return;
     }
 
@@ -133,14 +131,14 @@ export default function (watcher: Watcher) {
 
     store.dispatch(actions.localeDownloadStarted({lang}));
 
-    log(opts, `Waiting a bit before downloading ${lang} locale...`);
+    logger.info(`Waiting a bit before downloading ${lang} locale...`);
     await delay(1000);
 
     let resources = {};
     try {
       resources = await doDownloadLocale(lang, resources);
     } catch (e) {
-      log(opts, `Failed downloading locale for ${lang}: ${e.message}`);
+      logger.warn(`Failed downloading locale for ${lang}: ${e.message}`);
       store.dispatch(actions.queueHistoryItem({
         label: ["i18n.failed_downloading_locales", {lang}],
         detail: e.stack || e,

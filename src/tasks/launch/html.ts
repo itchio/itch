@@ -8,12 +8,12 @@ import * as querystring from "querystring";
 
 import {app, BrowserWindow, shell} from "electron";
 
-import spawn from "../../util/spawn";
+import spawn from "../../os/spawn";
+import * as paths from "../../os/paths";
+import {getInjectPath} from "../../os/resources";
 import url from "../../util/url";
 import fetch from "../../util/fetch";
-import pathmaker from "../../util/pathmaker";
 import debugBrowserWindow from "../../util/debug-browser-window";
-import {getInjectPath} from "../../util/resources";
 
 import Connection from "../../capsule/connection";
 import {capsule} from "../../capsule/messages_generated";
@@ -22,9 +22,6 @@ const {messages} = capsule;
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
 const WEBGAME_PROTOCOL = "itch-cave";
-
-import mklog from "../../util/log";
-const log = mklog("launch/html");
 
 import {IStartTaskOpts} from "../../types";
 
@@ -94,7 +91,7 @@ async function registerProtocol (opts: IRegisterProtocolOpts) {
 }
 
 export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
-  const {cave, market, credentials, args, env} = opts;
+  const {cave, market, credentials, args, env, logger} = opts;
   invariant(cave, "launch-html has cave");
   invariant(market, "launch-html has market");
   invariant(credentials, "launch-html has credentials");
@@ -103,13 +100,13 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
 
   const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game});
 
-  const appPath = pathmaker.appPath(cave, store.getState().preferences);
+  const appPath = paths.appPath(cave, store.getState().preferences);
   const entryPoint = join(appPath, cave.gamePath);
 
-  log(opts, `entry point: ${entryPoint}`);
+  logger.info(`entry point: ${entryPoint}`);
 
   const {width, height} = cave.windowSize;
-  log(opts, `starting at resolution ${width}x${height}`);
+  logger.info(`starting at resolution ${width}x${height}`);
 
   const partition = `persist:gamesession_${cave.gameId}`;
 
@@ -224,7 +221,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   const capsulerunPath = process.env.CAPSULERUN_PATH;
   const capsuleEmitter = new EventEmitter();
   if (capsulerunPath) {
-    log(opts, `Launching capsule...`);
+    logger.info(`Launching capsule...`);
 
     const pipeName = "capsule_html5";
     connection = new Connection(pipeName);  
@@ -237,10 +234,10 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
         "--headless",
       ],
       onToken: (tok) => {
-        log(opts, `[capsule out] ${tok}`);
+        logger.info(`[capsule out] ${tok}`);
       },
       onErrToken: async (tok) => {
-        log(opts, `[capsule err] ${tok}`);
+        logger.info(`[capsule err] ${tok}`);
       },
       emitter: capsuleEmitter,
       logger: opts.logger,
@@ -257,13 +254,13 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
       });
       await connection.connect();
 
-      log(opts, `Should be connected now, will send videosetup soon`);
+      logger.info(`Should be connected now, will send videosetup soon`);
       await new Promise((resolve, reject) => {
         setTimeout(resolve, 1000);
       });
 
       const [contentWidth, contentHeight] = win.getContentSize();
-      log(opts, `framebuffer size: ${contentWidth}x${contentHeight}`);
+      logger.info(`framebuffer size: ${contentWidth}x${contentHeight}`);
       const components = 4;
       const pitch = contentWidth * components;
 
@@ -324,7 +321,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
         });
       });
     } catch (e) {
-      log(opts, `While attempting to connect capsule: ${e.stack}`);
+      logger.error(`While attempting to connect capsule: ${e.stack}`);
     }
   }
 

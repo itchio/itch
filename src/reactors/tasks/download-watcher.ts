@@ -4,9 +4,8 @@ import * as actions from "../../actions";
 
 import delay from "../delay";
 
-import {opts} from "./log";
-import mklog from "../../util/log";
-const log = mklog("download-watcher");
+import rootLogger from "../../logger";
+const logger = rootLogger.child("download-watcher");
 
 import {EventEmitter} from "events";
 import {throttle} from "underscore";
@@ -42,14 +41,14 @@ async function updateDownloadState (store: IStore) {
   const activeDownload = downloadsState.activeDownload;
   if (activeDownload) {
     if (!currentDownload || currentDownload.id !== activeDownload.id) {
-      log(opts, `${activeDownload.id} is the new active download`);
+      logger.info(`${activeDownload.id} is the new active download`);
       start(store, activeDownload);
     } else {
       // still downloading currentDownload
     }
   } else {
     if (currentDownload) {
-      log(opts, "Cancelling/clearing out last download");
+      logger.info("Cancelling/clearing out last download");
       cancelCurrent();
     } else {
       // idle
@@ -96,19 +95,19 @@ async function start (store: IStore, download: IDownloadItem) {
     const credentials = store.getState().session.credentials;
     const extendedOpts = {...opts, ...downloadOpts, credentials};
 
-    log(opts, "Starting download...");
+    logger.info("Starting download...");
     await downloadTask(currentEmitter, extendedOpts);
   } catch (e) {
-    log(opts, "Download threw");
+    logger.error("Download threw");
     error = e;
   } finally {
     if (error instanceof Cancelled) {
       // all good, but not ended
       cancelled = true;
-      log(opts, "Download cancelled");
+      logger.info("Download cancelled");
     } else {
       const err = error ? error.message || ("" + error) : null;
-      log(opts, `Download ended, err: ${err || "<none>"}`);
+      logger.info(`Download ended, err: ${err || "<none>"}`);
       store.dispatch(actions.downloadEnded({id: download.id, err, downloadOpts}));
     }
   }
@@ -120,7 +119,7 @@ export default function (watcher: Watcher) {
       try {
         await updateDownloadState(store);
       } catch (e) {
-        log(opts, `While updating download state: ${e.stack || e}`);
+        logger.error(`While updating download state: ${e.stack || e}`);
       }
     }
   });

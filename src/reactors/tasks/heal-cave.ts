@@ -2,12 +2,8 @@
 import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
-import {getUserMarket, getGlobalMarket} from "../market";
-import pathmaker from "../../util/pathmaker";
-import mklog from "../../util/log";
-const log = mklog("revert-cave");
+import * as paths from "../../os/paths";
 
-import {ICaveRecord, IDownloadKey} from "../../types";
 import {findWhere} from "underscore";
 
 import localizer from "../../localizer";
@@ -18,22 +14,22 @@ export default function (watcher: Watcher) {
     const t = localizer.getT(i18n.strings, i18n.lang);
 
     const {caveId} = action.payload;
-    const logger = pathmaker.caveLogger(caveId);
     const opts = {
-      logger,
+      logger: paths.caveLogger(caveId),
     };
 
     try {
-      const globalMarket = getGlobalMarket();
+      // FIXME: db
+      const globalMarket: any = null;
 
-      const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
+      const cave = globalMarket.getEntity("caves", caveId);
       if (!cave) {
-        log(opts, `Cave not found, can't heal: ${caveId}`);
+        opts.logger.warn(`Cave not found, can't heal: ${caveId}`);
         return;
       }
 
       if (!cave.buildId) {
-        log(opts, `Cave isn't wharf-enabled, can't heal: ${caveId}`);
+        opts.logger.warn(`Cave isn't wharf-enabled, can't heal: ${caveId}`);
         return;
       }
 
@@ -43,10 +39,10 @@ export default function (watcher: Watcher) {
         buildId: cave.buildId,
       };
 
-      const market = getUserMarket();
+      const market: any = null;
 
       const downloadKey = cave.downloadKey ||
-        findWhere(market.getEntities<IDownloadKey>("downloadKeys"), {gameId: cave.game.id});
+        findWhere(market.getEntities("downloadKeys"), {gameId: cave.game.id});
 
       store.dispatch(actions.statusMessage({
         message: t("status.healing"),
@@ -62,7 +58,7 @@ export default function (watcher: Watcher) {
         heal: true,
       }));
     } finally {
-      logger.close();
+      opts.logger.close();
     }
   });
 }

@@ -4,7 +4,7 @@ import * as actions from "../../actions";
 
 import * as invariant from "invariant";
 
-import CaveModel from "../../models/cave";
+import CaveModel from "../../db/models/cave";
 import fetch from "../../util/fetch";
 
 import rootPino from "../../util/pino";

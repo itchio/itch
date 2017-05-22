@@ -7,9 +7,14 @@ const app = electron.app || electron.remote.app;
 import * as invariant from "invariant";
 
 import {ICaveRecordLocation, IUploadRecord, IPreferencesState} from "../types";
-import {Logger} from "./log";
+import {makeLogger, Logger} from "../logger";
 
 const APPDATA_RE = /^appdata\/(.*)$/;
+
+/*
+ * Pathmaker returns the location of disk of files that usually change from
+ * one install to the other (as opposed to resources)
+ */
 
 export function appPath(cave: ICaveRecordLocation, preferences: IPreferencesState) {
   // < 0.13.x, installFolder isn't set, it's implicitly the cave's id
@@ -91,12 +96,7 @@ export function caveLogPath(caveId: string): string {
 }
 
 export function caveLogger(caveId: string): Logger {
-  return new Logger({
-    sinks: {
-      console: true,
-      file: caveLogPath(caveId),
-    },
-  });
+  return makeLogger(caveLogPath(caveId));
 }
 
 export function userDbPath(userId: number): string {
@@ -112,8 +112,3 @@ export function sanitize(file: string): string {
     return "nihilo";
   }
 }
-
-export default {
-  appPath, downloadPath, globalDbPath, userDbPath, sanitize,
-  preferencesPath, logPath, updaterLogPath, caveLogPath, caveLogger,
-};

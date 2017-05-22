@@ -13,9 +13,8 @@ import {
 
 import * as actions from "../actions";
 
-import mklog from "../util/log";
-const log = mklog("reactors/setup");
-import logger, {opts} from "../logger";
+import rootLogger from "../logger";
+const logger = rootLogger.child("setup");
 
 async function fetch (store: IStore, name: string) {
   const opts = {
@@ -29,9 +28,9 @@ async function fetch (store: IStore, name: string) {
 }
 
 async function setup (store: IStore) {
-  log(opts, "setup starting");
+  logger.info("setup starting");
   await fetch(store, "unarchiver");
-  log(opts, "unarchiver done");
+  logger.info("unarchiver done");
   await bluebird.all(map([
     "butler",
     "elevate",
@@ -40,7 +39,7 @@ async function setup (store: IStore) {
     "firejail",
     "dllassert",
   ], async (name) => await fetch(store, name)));
-  log(opts, "all deps done");
+  logger.info("all deps done");
   store.dispatch(actions.setupDone({}));
 }
 
@@ -49,7 +48,7 @@ async function doSetup (store: IStore) {
     await setup(store);
   } catch (e) {
     const err = e.ibrew || e;
-    log(opts, "setup got error: ", err);
+    logger.error("setup got error: ", err);
     store.dispatch(actions.setupStatus({
       icon: "error",
       message: ["login.status.setup_failure", {error: (err.message || "" + err)}],

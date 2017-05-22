@@ -4,11 +4,8 @@ import * as tmp from "tmp";
 
 import sandboxTemplate from "../../constants/sandbox-policies/macos-template";
 
-import spawn from "../spawn";
-import sf from "../sf";
-
-import mklog from "../log";
-const log = mklog("sandbox/darwin");
+import spawn from "../../os/spawn";
+import sf from "../../os/sf";
 
 import common from "./common";
 
@@ -29,11 +26,11 @@ export async function check() {
 }
 
 export async function within(opts: IWithinOpts, cb: (opts: IWithinCbOpts) => Promise<void>) {
-  const {appPath, exePath, fullExec, argString, game, isBundle} = opts;
+  const {appPath, exePath, fullExec, argString, game, isBundle, logger} = opts;
 
   const cwd = opts.cwd || ospath.dirname(fullExec);
 
-  log(opts, "generating sandbox policy");
+  logger.info("generating sandbox policy");
   const sandboxProfilePath = ospath.join(appPath, ".itch", "isolate-app.sb");
 
   const userLibrary = (await spawn.getOutput({
@@ -41,14 +38,14 @@ export async function within(opts: IWithinOpts, cb: (opts: IWithinCbOpts) => Pro
     args: ["--print-library-paths"],
     logger: opts.logger,
   })).split("\n")[0].trim();
-  log(opts, `user library = '${userLibrary}'`);
+  logger.info(`user library = '${userLibrary}'`);
 
   const sandboxSource = sandboxTemplate
     .replace(/{{USER_LIBRARY}}/g, userLibrary)
     .replace(/{{INSTALL_LOCATION}}/g, appPath);
   await sf.writeFile(sandboxProfilePath, sandboxSource, {encoding: "utf8"});
 
-  log(opts, "creating fake app bundle");
+  logger.info("creating fake app bundle");
   const workDir = tmp.dirSync();
   const exeName = ospath.basename(fullExec);
 
@@ -59,7 +56,7 @@ export async function within(opts: IWithinOpts, cb: (opts: IWithinCbOpts) => Pro
   } else {
     fakeApp = ospath.join(workDir.name, game.title + ".app");
   }
-  log(opts, `fake app path: ${fakeApp}`);
+  logger.info(`fake app path: ${fakeApp}`);
 
   await sf.mkdir(fakeApp);
   await sf.mkdir(ospath.join(fakeApp, "Contents"));
@@ -101,11 +98,11 @@ sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullE
   } catch (e) { err = e; }
 
   if (INVESTIGATE_SANDBOX) {
-    log(opts, "waiting forever for someone to investigate the sandbox");
+    logger.warn("waiting forever for someone to investigate the sandbox");
     await new Promise((resolve, reject) => null);
   }
 
-  log(opts, "cleaning up fake app");
+  logger.info("cleaning up fake app");
   await sf.wipe(fakeApp);
   workDir.removeCallback();
 

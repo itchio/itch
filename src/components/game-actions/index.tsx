@@ -16,8 +16,8 @@ import MainAction from "./main-action";
 import SecondaryActions from "./secondary-actions";
 
 import {IActionsInfo} from "./types";
-import GameModel from "../../models/game";
-import CaveModel from "../../models/cave";
+import GameModel from "../../db/models/game";
+import CaveModel from "../../db/models/cave";
 import {
   IAppState, IDownloadKey,
   IDownloadItem, ITask, IGameUpdate, IGameUpdatesState,

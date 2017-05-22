@@ -1,11 +1,11 @@
 
 import {EventEmitter} from "events";
 
-import pathmaker from "../util/pathmaker";
+import * as paths from "../os/paths";
 
-import sf from "../util/sf";
-import mklog from "../util/log";
-const log = mklog("uninstall");
+import sf from "../os/sf";
+import rootLogger from "../logger";
+const logger = rootLogger.child("uninstall");
 
 import core from "./install/core";
 
@@ -17,24 +17,26 @@ import {IStartTaskOpts, IUploadRecord} from "../types";
 import {IProgressInfo} from "../types";
 
 export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
-  const {cave, globalMarket} = opts;
+  const {cave} = opts;
+  // FIXME: db
+  const globalMarket: any = null;
 
   const onProgress = (e: IProgressInfo) => {
     out.emit("progress", e);
   };
 
   const {preferences} = store.getState();
-  const destPath = pathmaker.appPath(cave, preferences);
+  const destPath = paths.appPath(cave, preferences);
 
   let upload: IUploadRecord = null;
   let archivePath: string = null;
 
   if (cave.uploadId && cave.uploads && cave.uploads[cave.uploadId]) {
     upload = cave.uploads[cave.uploadId];
-    archivePath = pathmaker.downloadPath(upload, preferences);
-    log(opts, `Uninstalling app in ${destPath} from archive ${archivePath}`);
+    archivePath = paths.downloadPath(upload, preferences);
+    logger.info(`Uninstalling app in ${destPath} from archive ${archivePath}`);
   } else {
-    log(opts, `Uninstalling app in ${destPath}, no archive available`);
+    logger.info(`Uninstalling app in ${destPath}, no archive available`);
   }
 
   const coreOpts = {
@@ -48,11 +50,11 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
 
   try {
     await core.uninstall(out, coreOpts);
-    log(opts, "Uninstallation successful");
+    logger.info("Uninstallation successful");
   } catch (e) {
     if (e instanceof core.UnhandledFormat) {
-      log(opts, e.message);
-      log(opts, "Imploding anyway");
+      logger.warn(e.message);
+      logger.info("Imploding anyway");
       await sf.wipe(destPath);
     } else {
       // re-raise other errors
@@ -61,10 +63,10 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
   }
 
   if (archivePath && !keepArchives) {
-    log(opts, `Erasing archive ${archivePath}`);
+    logger.info(`Erasing archive ${archivePath}`);
     await sf.wipe(archivePath);
   }
 
-  log(opts, `Imploding cave ${destPath}`);
+  logger.info(`Imploding cave ${destPath}`);
   await globalMarket.deleteEntity("caves", cave.id, {wait: true});
 }

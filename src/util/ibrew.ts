@@ -1,17 +1,16 @@
 
 import * as ospath from "path";
 import {app} from "electron";
-import os from "./os";
+import * as os from "../os";
+import sf from "../os/sf";
+import spawn from "../os/spawn";
 
 import {partial} from "underscore";
 
-import {Logger} from "./log";
-import mklog from "./log";
-const log = mklog("ibrew");
+import {Logger} from "../logger";
+
 import extract from "./extract";
 import targz from "./targz";
-import sf from "./sf";
-import spawn from "./spawn";
 
 import formulas, {IFormulaSpec} from "./ibrew/formulas";
 import {IVersionCheck} from "./ibrew/formulas";
@@ -45,6 +44,7 @@ const self = {
   fetch: async function (opts: IFetchOpts, name: string) {
     const noop = (): any => null;
     const {onStatus = noop} = opts;
+    const logger = opts.logger.child("ibrew");
 
     const formula = formulas[name];
     if (!formula) {
@@ -64,7 +64,7 @@ const self = {
         binPath: self.binPath(),
       });
       if (reason) {
-        log(opts, `${name}: skipping upgrade check (${JSON.stringify(reason)})`);
+        logger.warn(`${name}: skipping upgrade check (${JSON.stringify(reason)})`);
         return;
       }
     }
@@ -76,7 +76,7 @@ const self = {
       const archivePath = ospath.join(self.binPath(), archiveName);
       const archiveUrl = `${channel}/v${v}/${archiveName}`;
       onStatus("download", ["login.status.dependency_install", {name, version: v}]);
-      log(opts, `${name}: downloading '${v}' from ${archiveUrl}`);
+      logger.info(`${name}: downloading '${v}' from ${archiveUrl}`);
 
       await downloadToFile(opts, archiveUrl, archivePath);
 
@@ -88,7 +88,7 @@ const self = {
           sums = await getChecksums(opts, `${channel}/v${v}`, algo);
           break;
         } catch (e) {
-          log(opts, `${name}: couldn't get ${algo} hashes (${e.message || "" + e})`);
+          logger.warn(`${name}: couldn't get ${algo} hashes (${e.message || "" + e})`);
         }
       }
 
@@ -99,27 +99,27 @@ const self = {
           file: archivePath,
         });
       } else {
-        log(opts, `${name}: no hashes found, skipping integrity check`);
+        logger.warn(`${name}: no hashes found, skipping integrity check`);
       }
 
       if (formula.format === "executable") {
-        log(opts, `${name}: installed!`);
+        logger.info(`${name}: installed!`);
       } else if (formula.format === "7z") {
-        log(opts, `${name}: extracting ${formula.format} archive`);
+        logger.info(`${name}: extracting ${formula.format} archive`);
         await extract.extract({
           emitter: new EventEmitter(),
           archivePath,
           destPath: self.binPath(),
         });
-        log(opts, `${name}: cleaning up ${formula.format} archive`);
+        logger.info(`${name}: cleaning up ${formula.format} archive`);
         await sf.wipe(archivePath);
       } else if (formula.format === "tar.gz") {
-        log(opts, `${name}: extracting ${formula.format} archive`);
+        logger.info(`${name}: extracting ${formula.format} archive`);
         await targz.extract({
           archivePath,
           destPath: self.binPath(),
         });
-        log(opts, `${name}: cleaning up ${formula.format} arhcive`);
+        logger.info(`${name}: cleaning up ${formula.format} arhcive`);
         await sf.wipe(archivePath);
       } else {
         throw new Error(`unsupported ibrew formula format: ${formula.format}`);
@@ -127,7 +127,7 @@ const self = {
 
       const {sanityCheck} = formula;
       if (sanityCheck) {
-        log(opts, `${name}: running sanity check ${JSON.stringify(sanityCheck)}`);
+        logger.info(`${name}: running sanity check ${JSON.stringify(sanityCheck)}`);
 
         const sanityRes = await spawn.exec(sanityCheck);
         if (sanityRes.code !== 0) {
@@ -135,7 +135,7 @@ const self = {
             `, out = ${sanityRes.out}, err = ${sanityRes.err}`);
         }
       }
-      log(opts, `${name}: installed!`);
+      logger.info(`${name}: installed!`);
     };
 
     onStatus("stopwatch", ["login.status.dependency_check"]);
@@ -144,7 +144,7 @@ const self = {
     const localVersion = await self.getLocalVersion(name);
 
     if (!localVersion) {
-      log(opts, `${name}: missing, downloading latest`);
+      logger.info(`${name}: missing, downloading latest`);
       const latestVersion = await getLatestVersion();
       return await downloadVersion(latestVersion);
     }
@@ -153,17 +153,17 @@ const self = {
     try {
       latestVersion = await getLatestVersion();
     } catch (err) {
-      log(opts, `${name}: cannot get latest version, skipping: ${err.message || err}`);
+      logger.warn(`${name}: cannot get latest version, skipping: ${err.message || err}`);
       return;
     }
 
     if (version.equal(localVersion, latestVersion) ||
         localVersion === "head") {
-      log(opts, `${name}: have latest (${localVersion})`);
+      logger.info(`${name}: have latest (${localVersion})`);
       return;
     }
 
-    log(opts, `${name}: upgrading '${localVersion}' => '${latestVersion}'`);
+    logger.info(`${name}: upgrading '${localVersion}' => '${latestVersion}'`);
     await downloadVersion(latestVersion);
   },
 
@@ -213,6 +213,7 @@ const self = {
   augmentedPaths: {} as IAugmentedPaths,
 
   augmentPath: function (opts: IBrewOpts, subfolder: string): string {
+    const {logger} = opts;
     let binPath = self.binPath();
     if (subfolder) {
       binPath = ospath.join(binPath, subfolder);
@@ -221,7 +222,7 @@ const self = {
       return;
     }
     self.augmentedPaths[binPath] = true;
-    log(opts, `Augmenting $PATH: ${binPath}`);
+    logger.info(`Augmenting $PATH: ${binPath}`);
 
     process.env.PATH = `${binPath}${ospath.delimiter}${process.env.PATH}`;
     return binPath;

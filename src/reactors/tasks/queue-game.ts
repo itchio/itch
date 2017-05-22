@@ -4,15 +4,18 @@ import * as actions from "../../actions";
 
 import makeUploadButton from "../make-upload-button";
 
-import pathmaker from "../../util/pathmaker";
+import * as paths from "../../os/paths";
 import urlParser from "../../util/url";
-import os from "../../util/os";
+import * as os from "../../os";
+import rootLogger from "../../logger";
+const logger = rootLogger.child("queue-game");
 import * as querystring from "querystring";
 
 import {log, opts} from "./log";
 import {startTask} from "./start-task";
 
 import {filter, map, where} from "underscore";
+
 
 import {
   IStore, IGameRecord, ICaveRecord, IUploadRecord, IDownloadKey,
@@ -26,7 +29,7 @@ interface IFindUploadResult {
 interface IExtraOpts {}
 
 async function startCave (store: IStore, game: IGameRecord, cave: ICaveRecord, extraOpts: IExtraOpts) {
-  log(opts, `Starting cave ${cave.id}`);
+  logger.info(`Starting cave ${cave.id}`);
   const {err} = await startTask(store, {
     name: "launch",
     gameId: cave.game.id,
@@ -56,12 +59,12 @@ export default function (watcher: Watcher) {
     const cave = store.getState().globalMarket.cavesByGameId[game.id];
 
     if (cave) {
-      log(opts, `Have a cave for game ${game.id}, launching`);
+      logger.info(`Have a cave for game ${game.id}, launching`);
       await startCave(store, game, cave, extraOpts);
       return;
     }
 
-    log(opts, `No cave for ${game.id}, attempting install`);
+    logger.info(`No cave for ${game.id}, attempting install`);
 
     // look for password/secret if any
     const tabData = store.getState().session.navigation.tabData;
@@ -111,7 +114,7 @@ export default function (watcher: Watcher) {
 
     const itchPlatform = os.itchPlatform();
     if (uploads.length > 1 && (itchPlatform === "windows" || itchPlatform === "linux")) {
-      log(opts, `Got ${uploads.length} uploads, we're on ${itchPlatform}, let's sniff platforms`);
+      logger.info(`Got ${uploads.length} uploads, we're on ${itchPlatform}, let's sniff platforms`);
 
       const uploadContainsString = (upload: IUploadRecord, needle: string) => {
         return (
@@ -148,7 +151,7 @@ export default function (watcher: Watcher) {
         }
       }
 
-      log(opts, `After platform sniffing, uploads look like:\n${JSON.stringify(uploads, null, 2)}`);
+      logger.info(`After platform sniffing, uploads look like:\n${JSON.stringify(uploads, null, 2)}`);
     }
 
     if (uploads.length > 0) {
@@ -182,7 +185,7 @@ export default function (watcher: Watcher) {
           upload: upload,
           handPicked: (pickedUpload != null),
           totalSize: upload.size,
-          destPath: pathmaker.downloadPath(upload, store.getState().preferences),
+          destPath: paths.downloadPath(upload, store.getState().preferences),
           downloadKey,
           reason: "install",
           password,
@@ -190,7 +193,7 @@ export default function (watcher: Watcher) {
         }));
       }
     } else {
-      log(opts, `No uploads for ${game.title}`);
+      logger.warn(`No uploads for ${game.title}`);
       store.dispatch(actions.openModal({
         title: ["game.install.no_uploads_available.message", {title: game.title}],
         message: ["game.install.no_uploads_available.message", {title: game.title}],

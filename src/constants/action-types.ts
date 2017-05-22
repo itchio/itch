@@ -4,7 +4,7 @@ import {Action} from "redux-actions";
 import * as Types from "../types";
 import {IProgressInfo} from "../types";
 
-import GameModel from "../models/game";
+import GameModel from "../db/models/game";
 
 import {IQueryList} from "../chrome-reactors/querier";
 

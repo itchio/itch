@@ -1,37 +1,35 @@
 
-import os from "../../util/os";
-import spawn from "../../util/spawn";
-import mklog from "../../util/log";
-const log = mklog("xdg-mime");
+import {platform} from "../../os";
+import spawn from "../../os/spawn";
 
 const self = {
   mimeType: "x-scheme-handler/itchio",
 
   async query (opts: any): Promise<number> {
-    let logger = opts.logger;
-    log(opts, "querying default handler for itchio:// protocol");
+    const logger = opts.logger.child("xdg-mime");
+    logger.info("querying default handler for itchio:// protocol");
     return await spawn({
       command: "xdg-mime",
       args: ["query", "default", self.mimeType],
-      onToken: (tok) => log(opts, "query: " + tok),
+      onToken: (tok) => logger.info("query: " + tok),
       logger,
     });
   },
 
   async setDefault (opts: any): Promise<void> {
-    let logger = opts.logger;
-    log(opts, "registering self as default handler for itchio:// protocol");
+    const logger = opts.logger.child("xdg-mime");
+    logger.info("registering self as default handler for itchio:// protocol");
     return await spawn.assert({
       command: "xdg-mime",
       args: ["default", "io.itch.itch.desktop", self.mimeType],
-      onToken: (tok) => log(opts, "set_default: " + tok),
+      onToken: (tok) => logger.info("set_default: " + tok),
       logger,
     });
   },
 
   // lets us handle the itchio:// URL scheme on linux / freedesktop
   async registerIfNeeded (opts: any): Promise<void> {
-    if (os.platform() !== "linux") {
+    if (platform() !== "linux") {
       return;
     }
 
@@ -39,7 +37,8 @@ const self = {
       await self.setDefault(opts);
       await self.query(opts);
     } catch (e) {
-      log(opts, `Couldn't register xdg mime-type handler: ${e.stack || e}`);
+      const logger = opts.logger.child("xdg-mime");
+      logger.error(`Couldn't register handler: ${e.stack || e}`);
     }
   },
 

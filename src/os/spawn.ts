@@ -6,9 +6,8 @@ import LFTransform from "./lf-transform";
 
 import { Cancelled } from "../tasks/errors";
 
-import { Logger } from "./log";
-import mklog from "./log";
-const log = mklog("spawn");
+import rootLogger, {Logger} from "../logger";
+const spawnLogger = rootLogger.child("spawn");
 
 import { EventEmitter } from "events";
 
@@ -64,7 +63,7 @@ interface ISpawnInterface {
 let spawn: ISpawnInterface;
 
 spawn = async function (opts: ISpawnOpts): Promise<number> {
-  const {emitter, split = "\n", onToken, onErrToken} = opts;
+  const {emitter, split = "\n", onToken, onErrToken, logger = spawnLogger} = opts;
   let {command, args = []} = opts;
 
   let stdioOpts = {
@@ -85,7 +84,7 @@ spawn = async function (opts: ISpawnOpts): Promise<number> {
     ...(opts.opts || {}),
     ...stdioOpts,
   };
-  log(opts, `spawning ${command} with args ${args.join(" ")}`);
+  logger.info(`spawning ${command} with args ${args.join(" ")}`);
 
   const child = childProcess.spawn(command, args, spawnOpts);
   let cancelled = false;
@@ -144,7 +143,7 @@ spawn = async function (opts: ISpawnOpts): Promise<number> {
           cancelled = true;
           child.kill("SIGKILL");
         } catch (e) {
-          log(opts, `error while killing ${command}: ${e.stack || e}`);
+          logger.info(`error while killing ${command}: ${e.stack || e}`);
         }
       });
       emitter.once("fake-close", (e: Error) => {
@@ -152,7 +151,7 @@ spawn = async function (opts: ISpawnOpts): Promise<number> {
           child.kill("SIGTERM");
           fakeCode = (e as any).code;
         } catch (e) {
-          log(opts, `error while terminating ${command}: ${e.stack || e}`);
+          logger.info(`error while terminating ${command}: ${e.stack || e}`);
         }
       });
     }
@@ -195,7 +194,7 @@ spawn.getOutput = async function (opts: ISpawnOpts): Promise<string> {
   const {command} = opts;
 
   if (code !== 0) {
-    log(opts, `${command} failed:\n${err}`);
+    spawnLogger.info(`${command} failed:\n${err}`);
     throw new Error(`${command} failed with code ${code}`);
   }
 

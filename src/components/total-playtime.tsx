@@ -6,8 +6,8 @@ import format from "../util/format";
 
 import actionForGame from "../util/action-for-game";
 
-import GameModel from "../models/game";
-import CaveModel from "../models/cave";
+import GameModel from "../db/models/game";
+import CaveModel from "../db/models/cave";
 
 class TotalPlaytime extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {

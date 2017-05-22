@@ -4,9 +4,8 @@ import * as actions from "../../actions";
 
 import delay from "../delay";
 
-import {opts} from "./log";
-import mklog from "../../util/log";
-const log = mklog("download-speed-watcher");
+import rootLogger from "../../logger";
+const logger = rootLogger.child("download-speed-watcher");
 
 const DOWNLOAD_SPEED_DELAY = 1000;
 
@@ -33,7 +32,7 @@ export default function (watcher: Watcher) {
       try {
         await updateDownloadSpeed(store);
       } catch (e) {
-        log(opts, `While updating download speed: ${e.stack || e}`);
+        logger.error(`While updating download speed: ${e.stack || e}`);
       }
     }
   });

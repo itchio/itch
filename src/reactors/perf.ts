@@ -2,11 +2,10 @@
 import {Watcher} from "./watcher";
 import * as actions from "../actions";
 
-import mklog from "../util/log";
-const log = mklog("reactors/perf");
-import {opts} from "../logger";
+import rootLogger from "../logger";
+const logger = rootLogger.child("perf");
 
-import {elapsed} from "../util/format";
+import {elapsed} from "../format";
 
 let prebootTime: number;
 let bootTime: number;
@@ -34,8 +33,8 @@ export default function (watcher: Watcher) {
     done = true;
 
     pageTime = Date.now();
-    log(opts, `preboot -> boot        = ${elapsed(prebootTime, bootTime)}`);
-    log(opts, `boot    -> login       = ${elapsed(bootTime, loginTime)}`);
-    log(opts, `login   -> first page  = ${elapsed(loginTime, pageTime)}`);
+    logger.info(`preboot -> boot        = ${elapsed(prebootTime, bootTime)}`);
+    logger.info(`boot    -> login       = ${elapsed(bootTime, loginTime)}`);
+    logger.info(`login   -> first page  = ${elapsed(loginTime, pageTime)}`);
   });
 }

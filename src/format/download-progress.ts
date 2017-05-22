@@ -19,8 +19,9 @@ interface IDownloadProgressOpts {
   onlyETA?: boolean;
 }
 
-export default function downloadProgress (t: ILocalizer, holder: IProgressHolder,
-                                          downloadsPaused: boolean, opts = {} as IDownloadProgressOpts): string {
+export function downloadProgress (
+    t: ILocalizer, holder: IProgressHolder,
+    downloadsPaused: boolean, opts = {} as IDownloadProgressOpts): string {
 
   if (downloadsPaused) {
     return t("grid.item.downloads_paused");

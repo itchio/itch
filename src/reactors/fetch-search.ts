@@ -1,9 +1,8 @@
 
 import {Watcher} from "./watcher";
 
-import mklog from "../util/log";
-const log = mklog("reactors/fetch");
-import {opts} from "../logger";
+import rootLogger from "../logger";
+const logger = rootLogger.child("fetch-search");
 
 import fetch from "../util/fetch";
 
@@ -17,12 +16,10 @@ export default function (watcher: Watcher) {
     try {
       const credentials = store.getState().session.credentials;
       if (!credentials.key) {
-        log(opts, "Not logged in, can\'t search");
         return;
       }
 
       if (!query) {
-        log(opts, "Clearing query");
         store.dispatch(actions.searchFetched({query: "", results: null}));
         return;
       }
@@ -31,6 +28,7 @@ export default function (watcher: Watcher) {
       store.dispatch(actions.searchFetched({query, results}));
     } catch (e) {
       // TODO: relay search error (network offline, etc.)
+      logger.error(e.message);
     } finally {
       store.dispatch(actions.searchFinished({}));
     }

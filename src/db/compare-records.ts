@@ -1,6 +1,6 @@
 
-import rootPino from "./pino";
-const pino = rootPino.child("compare-records");
+import rootLogger from "../logger";
+const logger = rootLogger.child("compare-records");
 
 export default function compareRecords (oldRecord: any, newRecord: any, fields?: Set<string>): boolean {
   for (const newKey in newRecord) {
@@ -15,7 +15,7 @@ export default function compareRecords (oldRecord: any, newRecord: any, fields?:
     }
     if (!oldRecord.hasOwnProperty(newKey)) {
       // ah, it's a new key! record is fresh then
-      pino.info(`new key ${newKey}`);
+      logger.info(`new key ${newKey}`);
       return false;
     }
 
@@ -26,24 +26,24 @@ export default function compareRecords (oldRecord: any, newRecord: any, fields?:
       if (newVal instanceof Date) {
         if (oldVal instanceof Date) {
           if (newVal.getTime() !== oldVal.getTime()) {
-            pino.info(`different dates: old ${oldVal.toUTCString()}, new ${newVal.toUTCString()}`);
-            pino.info(`to be precise, old time = ${oldVal.getTime()}, new time = ${newVal.getTime()}`
+            logger.info(`different dates: old ${oldVal.toUTCString()}, new ${newVal.toUTCString()}`);
+            logger.info(`to be precise, old time = ${oldVal.getTime()}, new time = ${newVal.getTime()}`
               + `, diff = ${newVal.getTime() - oldVal.getTime()}`);
             return false;
           }
         } else {
-          pino.info(`${newKey} turned into a Date`);
+          logger.info(`${newKey} turned into a Date`);
           return false;
         }
       } else {
         if (!compareRecords(oldVal, newVal)) {
-          pino.info(`recursive comparison for ${newKey} was falsy`);
+          logger.info(`recursive comparison for ${newKey} was falsy`);
           return false;
         }
       }
     } else {
       if (oldVal !== newVal) {
-        pino.info(`for ${newKey}, ${oldVal} !== ${newVal}`);
+        logger.info(`for ${newKey}, ${oldVal} !== ${newVal}`);
         return false;
       }
     }

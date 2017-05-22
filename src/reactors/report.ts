@@ -2,19 +2,18 @@
 import {Watcher} from "../reactors/watcher";
 import * as actions from "../actions";
 
-import mklog from "../util/log";
-const log = mklog("reactors/report");
-import {opts} from "../logger";
+import rootLogger from "../logger";
+const logger = rootLogger.child("report");
 
-import Cave from "../models/cave";
+import Cave from "../db/models/cave";
 
 import urls from "../constants/urls";
 
 import crashReporter from "../util/crash-reporter";
-import github, {IGistData} from "../util/github";
-import sf from "../util/sf";
+import github, {IGistData} from "../api/github";
+import sf from "../os/sf";
+import {caveLogPath} from "../os/paths";
 import fetch from "../util/fetch";
-import pathmaker from "../util/pathmaker";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.reportCave, async (store, action) => {
@@ -26,7 +25,7 @@ export default function (watcher: Watcher) {
       const {globalMarket, market} = watcher.getMarkets();
       const cave = await globalMarket.getRepo(Cave).findOneById(caveId);
 
-      const logPath = pathmaker.caveLogPath(caveId);
+      const logPath = caveLogPath(caveId);
       const game = await fetch.gameLazily(market, credentials, cave.gameId);
 
       const gameLog = await sf.readFile(logPath, {encoding: "utf8"});
@@ -53,7 +52,7 @@ export default function (watcher: Watcher) {
         body,
       });
     } catch (e) {
-      log(opts, `Error reporting cave: ${e.stack || e}`);
+      logger.error(`Error reporting cave: ${e.stack || e}`);
     }
   });
 }

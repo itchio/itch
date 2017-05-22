@@ -3,9 +3,8 @@ import {Watcher} from "./watcher";
 
 import * as urlParser from "url";
 
-import mklog from "../util/log";
-const log = mklog("reactors/url");
-import {opts} from "../logger";
+import rootLogger from "../logger";
+const logger = rootLogger.child("reactors/url");
 
 import {isItchioURL} from "../util/url";
 import crashReporter from "../util/crash-reporter";
@@ -30,10 +29,10 @@ export default function (watcher: Watcher) {
   watcher.on(actions.handleItchioUrl, async (store, action) => {
     const {uri} = action.payload;
 
-    log(opts, `Starting to handle itch.io url ${uri}`);
+    logger.info(`Starting to handle itch.io url ${uri}`);
     const key = store.getState().session.credentials.key;
     if (!key) {
-      log(opts, "Waiting for session to be ready before handling itchio url");
+      logger.info("Waiting for session to be ready before handling itchio url");
       await new Promise((resolve, reject) => {
         onSessionReady = resolve;
       });
@@ -47,7 +46,7 @@ export default function (watcher: Watcher) {
       case "install":
       case "launch": {
         if (!tokens[1]) {
-          log(opts, "for install: missing game, bailing out.");
+          logger.warn("for install: missing game, bailing out.");
           return;
         }
         const gameId = tokens[1];
@@ -57,7 +56,7 @@ export default function (watcher: Watcher) {
 
       default: {
         const resourcePath = url.hostname + url.pathname;
-        log(opts, `Opening resource directly: ${resourcePath}`);
+        logger.info(`Opening resource directly: ${resourcePath}`);
         store.dispatch(actions.navigate(resourcePath));
       }
     }

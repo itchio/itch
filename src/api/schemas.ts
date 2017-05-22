@@ -6,7 +6,7 @@ export const user = new Schema("users");
 export const collection = new Schema("collections");
 export const downloadKey = new Schema("downloadKeys");
 
-function parseDate(input: string) {
+export function parseDate(input: string) {
   // without `+0` it parses a local date - this is the fastest
   // way to parse a UTC date.
   // see https://jsperf.com/parse-utc-date

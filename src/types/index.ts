@@ -1,13 +1,12 @@
 
 import {Store} from "redux";
 import {Action} from "redux-actions";
-import {Logger} from "../util/log";
-import {ObjectType, Repository} from "typeorm";
+import {Logger} from "../logger";
 
-import GameModel from "../models/game";
-import CollectionModel from "../models/collection";
-import DownloadKeyModel from "../models/download-key";
-import CaveModel from "../models/cave";
+import GameModel from "../db/models/game";
+import CollectionModel from "../db/models/collection";
+import DownloadKeyModel from "../db/models/download-key";
+import CaveModel from "../db/models/cave";
 
 export interface IStore extends Store<IAppState> {}
 
@@ -473,34 +472,6 @@ export interface IBuildRecord {
 
 export type TableName = "caves" | "users" | "games" | "collections" | "downloadKeys" | "itchAppTabs";
 
-/**
- * A Market saves, retrieves and deletes records.
- */
-export interface IMarket {
-    getEntities <T> (table: TableName): IEntityMap<T>;
-    getEntity <T> (table: TableName, id: string): T;
-    saveAllEntities (entityRecords: IEntityRecords<any>): Promise<void>;
-
-    deleteAllEntities (deleteSpec: IMarketDeleteSpec): Promise<void>;
-    deleteEntity (table: TableName, id: string): Promise<void>;
-
-    getRepo <T> (model: ObjectType<T>): Repository<T>;
-}
-
-export interface IGlobalMarket extends IMarket {
-    saveEntity (
-        table: "caves", id: string, payload: Partial<ICaveRecord>): Promise<void>;
-}
-
-export interface IUserMarket extends IMarket {
-    saveEntity (
-        table: "games", id: string, payload: Partial<IGameRecord>): Promise<void>;
-    saveEntity (
-        table: "users", id: string, payload: Partial<IUserRecord>): Promise<void>;
-    saveEntity (
-        table: "collections", id: string, payload: Partial<ICollectionRecord>): Promise<void>;
-}
-
 export interface IEntityMap <T> {
   [entityId: string]: T;
 }
@@ -752,15 +723,6 @@ export interface IModal {
 
 export type IModalsState = IModal[];
 
-export interface IMarketState {
-    [tableName: string]: {
-        [id: string]: any;
-    } | boolean | undefined; // ouch
-
-    /** if true, market is done loading from disk */
-    ready?: boolean;
-}
-
 export interface IItchAppProfile {
     [id: string]: any;
     myGames: IItchAppProfileMyGames;
@@ -857,7 +819,6 @@ export interface ISessionState {
     cachedCollections: ISessionCachedCollectionsState;
     credentials: ISessionCredentialsState;
     folders: ISessionFoldersState;
-    market: ISessionMarketState;
     login: ISessionLoginState;
     navigation: ISessionNavigationState;
     search: ISessionSearchState;
@@ -882,13 +843,8 @@ export interface ISessionCredentialsState {
 }
 
 export interface ISessionFoldersState {
-    /** path where user-specific data is stored, such as their marketdb and credentials */
+    /** path where user-specific data is stored, such as their credentials */
     libraryDir: string;
-}
-
-export interface ISessionMarketState {
-    /** whether the connection to the user market is ready or not */
-    ready: boolean;
 }
 
 export interface ISessionLoginState {
@@ -1275,10 +1231,6 @@ export interface IStartTaskOpts {
   hailMary?: boolean;
 
   // The following properties are set by start-task
-
-  market?: IUserMarket;
-  globalMarket?: IGlobalMarket;
-
   credentials?: ICredentials;
 
   preferences?: IPreferencesState;
