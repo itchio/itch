@@ -73,9 +73,6 @@ if (process.type === "renderer") {
                             uri: string, 
                             data: any = {},
                             opts: IRequestOpts = {}): Promise<IResponse> {
-    if (env.name === "test") {
-      throw new Error("refusing to perform HTTP request in test");
-    }
     let url = uri;
 
     if (method === "get") {
@@ -140,9 +137,6 @@ if (process.type === "renderer") {
                             uri: string, 
                             data: any = {},
                             opts: IRequestOpts = {}): Promise<IResponse> {
-    if (env.name === "test") {
-      throw new Error("refusing to perform HTTP request in test");
-    }
     let url = uri;
 
     if (method === "get") {

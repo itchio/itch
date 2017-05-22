@@ -117,13 +117,12 @@ function autoUpdateDone () {
     console.log(`Processing ${argv.length} potential urls`);
 
     // Windows (reg.exe), Linux (XDG)
-    argv.forEach((arg) => {
-      // XXX should we limit to one url at most ?
+    // open at most one URL
+    for (const arg of argv) {
       if (isItchioURL(arg)) {
         store.dispatch(actions.openUrl({url: arg}));
-      } else {
-        console.log(`Ignoring non-itchio url: ${arg}`);
+        break;
       }
-    });
+    }
   }
 }

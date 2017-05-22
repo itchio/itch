@@ -26,24 +26,48 @@ const chalk = require("chalk");
 
 const {app} = require("electron");
 const {extname} = require("path").posix;
+const {join} = require("path");
 
 app.on("ready", async () => {
+  const BrowserWindow = require("electron").BrowserWindow;
+
   const glob = require("bluebird").promisify(require("glob"));
-  let testFiles = await glob("**/*-spec.ts", {cwd: __dirname});
+  const cwd = join(__dirname, "unit-tests");
+  console.log(`looking for tests in ${cwd}`);
+  let testFiles = await glob("**/*-spec.ts", {cwd});
 
   const tape = require("tape");
   const formatter = require("faucet");
   tape.createStream().pipe(formatter()).pipe(process.stdout);
 
-  tape.onFinish(() => {
-    app.quit();
+  tape.onFinish((a, b, c) => {
+    const harness = tape.getHarness();
+    harness._results.close();
+
+    console.log(`tape results = ${JSON.stringify(tape._results)}`);
+
+    const win = new BrowserWindow({width: 800, height: 600});
+    win.setTitle(harness._exitCode === 0 ? "pass" : "fail");
+    win.loadURL("about:blank");
+    win.show();
   });
 
   const args = process.argv.slice(2);
-  console.log(`command line arguments: ${args.join(" +++ ")}`)
-
-  if (args.length > 0) {
-    testFiles = args.map((arg) => arg.replace(/.*src\/tests\//, ""));
+  let state = 0;
+  for (const arg of args) {
+    if (state === 2) {
+      testFiles = [arg.replace(/.*src\/tests\/unit-tests\//, "")];
+      console.log(`Unit test runner only running ${JSON.stringify(testFiles)}`);
+      break;
+    } else if (state === 1) {
+      if (arg === "--test" || arg === "-t") {
+        state = 2;
+      }
+    } else {
+      if (arg === "--run-unit-tests") {
+        state = 1;
+      }
+    }
   }
 
   console.log(chalk.blue(`loading ${testFiles.length} test suites`));
@@ -51,7 +75,7 @@ app.on("ready", async () => {
   for (const testFile of testFiles) {
     const ext = extname(testFile);
     const extless = testFile.slice(0, -(ext.length));
-    const requirePath = `./${extless}`;
+    const requirePath = `./unit-tests/${extless}`;
     require(requirePath);
   }
 });

@@ -1,6 +1,4 @@
 
-import env from "../env";
-
 import {createSelector} from "reselect";
 
 import {connect as reduxConnect} from "react-redux";
@@ -9,17 +7,11 @@ import {ILocalizer, getT} from "../localizer";
 import {IAppState} from "../types";
 import {IDispatch} from "../constants/action-types";
 
-const identity = (x: any) => x;
-
 const i18nPropsSelector = createSelector(
   (state: IAppState) => state.i18n,
   (i18n) => {
     const {lang, strings} = i18n;
-    if (env.name === "test") {
-      return {t: identity};
-    } else {
-      return {t: getT(strings, lang)};
-    }
+    return {t: getT(strings, lang)};
   },
 );
 

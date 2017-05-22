@@ -16,7 +16,7 @@ test("reselect", t => {
     sel(obj);
     sel(obj);
     sel({...obj});
-    t.same(count, 1);
+    t.same(count, 3);
   });
 
   t.case("memoization prevents recompute for empty objects", t => {

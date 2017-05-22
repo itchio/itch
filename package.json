@@ -129,7 +129,7 @@
   "devDependencies": {
     "benchmark": "^2.1.4",
     "cross-env": "^5.0.0",
-    "electron": "1.6.2",
+    "electron": "1.7.1",
     "electron-compilers": "^5.9.0",
     "electron-rebuild": "^1.5.11",
     "faucet": "0.0.1",
@@ -141,6 +141,7 @@
     "redux-devtools-filter-actions": "^1.1.1",
     "redux-devtools-log-monitor": "^1.0.11",
     "sinon": "^1.17.6",
+    "spectron": "3.7.1",
     "tape": "^4.2.1",
     "tslint": "^4.0.2",
     "typescript": "^2.2.2",
@@ -150,7 +151,7 @@
   "scripts": {
     "start": "electron . --color",
     "install": "electron-rebuild",
-    "test": "electron src/tests/init.js",
+    "test": "node ./src/tests/integration-tests/index.js",
     "i18n": "node release/ci-i18n-check.js",
     "compile": "cross-env NODE_ENV=production electron-compile --appdir . ./src"
   }

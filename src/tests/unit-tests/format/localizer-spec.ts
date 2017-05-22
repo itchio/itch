@@ -2,7 +2,7 @@
 // tslint:disable:no-shadowed-variable
 
 import test = require("zopf");
-import {getT} from "../localizer";
+import {getT} from "../../../localizer";
 
 const strings = {
   fr: {

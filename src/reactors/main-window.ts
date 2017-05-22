@@ -92,7 +92,12 @@ async function createWindow (store: IStore, hidden: boolean) {
 
     const prefs = store.getState().preferences || {closeToTray: true};
 
-    const {closeToTray} = prefs;
+    let {closeToTray} = prefs;
+    if (env.name === "test") {
+      // always let app close in testing
+      closeToTray = false;
+    }
+
     if (closeToTray) {
       logger.info("Close to tray enabled");
     } else {
