@@ -19,11 +19,28 @@ book:
     - npm install babel-cli babel-preset-es2017
     - node_modules/.bin/babel-node --presets es2017 --only 'release/*' release/ci-book.js
 
-# Unit tests
 test-linux:
   stage: build
   tags:
     - linux
+  script:
+    - release/ci-test.js
+  except:
+    - tags
+
+test-darwin:
+  stage: build
+  tags:
+    - darwin
+  script:
+    - release/ci-test.js
+  except:
+    - tags
+
+test-windows:
+  stage: build
+  tags:
+    - windows
   script:
     - release/ci-test.js
   except:
