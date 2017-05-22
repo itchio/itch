@@ -41,10 +41,18 @@ test('application launch', async (t) => {
         await beforeEach(t, opts);
         await f(t);
       } catch (e) {
+        t.comment(`caught error ${e.message}`);
+        t.comment(`~~~ main process output ~~~`)
+        t.comment(``)
+
         let logs = await app.client.getMainProcessLogs()
         logs.forEach(function (log) {
           console.log(log)
         })
+
+        t.comment(``)
+        t.comment(`~~~ render process output ~~~`)
+        t.comment(``)
 
         logs = await app.client.getRenderProcessLogs()
           logs.forEach(function (log) {
@@ -52,6 +60,10 @@ test('application launch', async (t) => {
           console.log(log.source)
           console.log(log.level)
         })
+
+        t.comment(``)
+        t.comment(`~~~ end of output ~~~`)
+        t.comment(``)
 
         err = e;
       } finally {
@@ -67,7 +79,9 @@ test('application launch', async (t) => {
   }
 
   spec("it runs unit tests", async (t) => {
-    t.same(await app.browserWindow.getTitle(), "pass");
+    if ("pass" !== await app.browserWindow.getTitle()) {
+      throw new Error("Unit tests failed!");
+    }
   }, {
     args: ["--run-unit-tests"],
   })

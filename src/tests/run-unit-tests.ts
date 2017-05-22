@@ -44,8 +44,6 @@ app.on("ready", async () => {
     const harness = tape.getHarness();
     harness._results.close();
 
-    console.log(`tape results = ${JSON.stringify(tape._results)}`);
-
     const win = new BrowserWindow({width: 800, height: 600});
     win.setTitle(harness._exitCode === 0 ? "pass" : "fail");
     win.loadURL("about:blank");
