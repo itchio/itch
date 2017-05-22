@@ -3,7 +3,7 @@ import {Watcher} from "./watcher";
 
 import * as electron from "electron";
 const {app} = electron.remote;
-import sf from "../util/sf";
+import sf from "../os/sf";
 import * as ospath from "path";
 
 import * as invariant from "invariant";

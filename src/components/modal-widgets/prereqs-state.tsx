@@ -5,7 +5,7 @@ import {connect, I18nProps} from "../connect";
 
 import {findWhere, map} from "underscore";
 
-import downloadProgress from "../../util/download-progress";
+import {downloadProgress} from "../../format";
 
 import {IModalWidgetProps, ModalWidgetDiv} from "./modal-widget";
 import LoadingCircle from "../basics/loading-circle";

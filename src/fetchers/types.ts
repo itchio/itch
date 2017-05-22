@@ -1,5 +1,5 @@
 
-import {IStore, IUserMarket, IGlobalMarket, ITabData} from "../types";
+import {IStore, ITabData} from "../types";
 
 import * as actions from "../actions";
 import {EventEmitter} from "events";
@@ -7,7 +7,7 @@ import {EventEmitter} from "events";
 const deepEqual = require("deep-equal");
 export type FetchReason = "tab-changed" | "tab-evolved" | "tab-reloaded" | "window-focused" | "tab-params-changed";
 
-import rootPino from "../util/pino";
+import rootLogger, {Logger} from "../logger";
 
 /**
  * Fetches all the data a tab needs to display, except webviews.
@@ -19,24 +19,22 @@ export class Fetcher {
   store: IStore;
   tabId: string;
   reason: FetchReason;
-  getMarkets: IMarketGetter;
   aborted = false;
 
   emitter: EventEmitter;
   startedAt: number;
 
-  logger?: typeof rootPino;
+  logger?: Logger;
 
   prevData?: ITabData;
 
   retryCount = 0;
 
-  hook(store: IStore, tabId: string, reason: FetchReason, getMarkets: IMarketGetter) {
-    this.logger = rootPino.child(`tab-fetcher:${tabId}:${reason}`);
+  hook(store: IStore, tabId: string, reason: FetchReason) {
+    this.logger = rootLogger.child(`tab-fetcher:${tabId}:${reason}`);
     this.store = store;
     this.tabId = tabId;
     this.reason = reason;
-    this.getMarkets = getMarkets;
 
     this.emitter = new EventEmitter();
     this.emitter.on("abort", () =>  {
@@ -128,13 +126,6 @@ export class Fetcher {
     this.logger.info(msg, ...args);
   }
 }
-
-export interface IMarkets {
-  market?: IUserMarket;
-  globalMarket?: IGlobalMarket;
-}
-
-export type IMarketGetter = () => IMarkets;
 
 export type OutcomeState = "success" | "retry";
 

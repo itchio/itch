@@ -1,7 +1,7 @@
 
 import {Watcher} from "../reactors/watcher";
-import rootPino from "../util/pino";
-const pino = rootPino.child("fetchers");
+import rootLogger from "../logger";
+const logger = rootLogger.child("fetchers");
 
 import * as actions from "../actions";
 
@@ -38,7 +38,7 @@ export async function queueFetch (store: IStore, tabId: string, reason: FetchRea
 
   waitingFor[tabId] = setTimeout(() => {
     delete waitingFor[tabId];
-    pino.info(tabId, reason, ", reloading.");
+    logger.info(tabId, reason, ", reloading.");
 
     const fetcherClass = getFetcherClass(store, tabId);
     if (!fetcherClass) {

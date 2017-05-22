@@ -2,7 +2,8 @@
 // tslint:disable:no-shadowed-variable
 
 import test = require("zopf");
-import format from "../../util/format";
+import * as format from "../../format";
+import {ILocalizer} from "../../localizer";
 
 test("format", t => {
   t.case("camelify", t => {
@@ -30,24 +31,29 @@ test("format", t => {
   });
 
   t.case("seconds", t => {
-    t.same(format.seconds(38), ["duration.minute"]);
-    t.same(format.seconds(123), ["duration.minutes", {x: "2"}]);
-    t.same(format.seconds(3800), ["duration.hour"]);
-    t.same(format.seconds(3600 * 4 + 120), ["duration.hours", {x: "4"}]);
+    const localizer = {
+      format: (x: any[]) => x,
+    } as any as ILocalizer;
+
+    t.same<any>(format.formatDuration(38, localizer), ["duration.minute"]);
+    t.same<any>(format.formatDuration(123, localizer), ["duration.minutes", {x: "2"}]);
+    t.same<any>(format.formatDuration(3800, localizer), ["duration.hour"]);
+    t.same<any>(format.formatDuration(3600 * 4 + 120, localizer), ["duration.hours", {x: "4"}]);
   });
 
   t.case("date", t => {
-    t.same(format.date(new Date("1994-04-03T11:47:21")), "1994-04-03T11:47:21.000Z");
+    t.same(format.formatDate(new Date("1994-04-03 11:47:21 +0"), "en", format.DATE_FORMAT),
+      "April 3, 1994, 11:47:21");
   });
 
   t.case("price", t => {
-    t.same(format.price("USD", 1500), "$15.00");
-    t.same(format.price("CAD", 60), "CAD $0.60");
-    t.same(format.price("AUD", 75.1), "AUD $0.75");
-    t.same(format.price("GBP", 1000), "£10.00");
-    t.same(format.price("EUR", 2000), "20.00 €");
-    t.same(format.price("JPY", 1500), "¥1500.00");
-    t.same(format.price("BLORGONS", 100), "???");
+    t.same(format.formatPrice("USD", 1500), "$15.00");
+    t.same(format.formatPrice("CAD", 60), "CAD $0.60");
+    t.same(format.formatPrice("AUD", 75.1), "AUD $0.75");
+    t.same(format.formatPrice("GBP", 1000), "£10.00");
+    t.same(format.formatPrice("EUR", 2000), "20.00 €");
+    t.same(format.formatPrice("JPY", 1500), "¥1500.00");
+    t.same(format.formatPrice("BLORGONS", 100), "???");
   });
 
   t.case("truncate", t => {

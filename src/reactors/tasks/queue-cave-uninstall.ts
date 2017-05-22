@@ -2,18 +2,15 @@
 import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
-import {getGlobalMarket} from "../market";
-
 import {startTask} from "./start-task";
-
-import {ICaveRecord} from "../../types";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.queueCaveUninstall, async (store, action) => {
     const {caveId} = action.payload;
 
-    // TODO: use state instead
-    const cave = getGlobalMarket().getEntity<ICaveRecord>("caves", caveId);
+    // FIXME: db
+    const globalMarket: any = null;
+    const cave = globalMarket.getEntity("caves", caveId);
     if (!cave) {
       // no such cave, can't uninstall!
       return;

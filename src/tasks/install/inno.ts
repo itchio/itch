@@ -1,7 +1,7 @@
 
 import {EventEmitter} from "events";
 
-import spawn from "../../util/spawn";
+import spawn from "../../os/spawn";
 import findUninstallers from "./find-uninstallers";
 
 import blessing from "./blessing";
@@ -9,7 +9,6 @@ import {Transition} from "../errors";
 
 import rootLogger from "../../logger";
 const logger = rootLogger.child("install/inno");
-const log = mklog("install/inno");
 
 import {IStartTaskOpts} from "../../types";
 

@@ -2,7 +2,7 @@
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
 
-import format from "../util/format";
+import {formatDuration} from "../format";
 
 import actionForGame from "../util/action-for-game";
 
@@ -25,7 +25,7 @@ class TotalPlaytime extends React.PureComponent<IProps & IDerivedProps & I18nPro
             ? null
             : <label>{t(`usage_stats.has_${xed}_for_duration`)} </label>
           }
-          {t.format(format.seconds(secondsRun))}
+          {formatDuration(secondsRun, t)}
         </span>
       </div>;
     }

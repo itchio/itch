@@ -6,9 +6,6 @@ import sf from "../../os/sf";
 
 import blessing from "./blessing";
 
-import rootLogger from "../logger";
-const logger = rootLogger.child("install/air");
-
 import * as ospath from "path";
 
 import {IStartTaskOpts} from "../../types";
@@ -36,7 +33,9 @@ let CODE_MESSAGES = {
 
 let self = {
   install: async function (out: EventEmitter, opts: IStartTaskOpts) {
-    const {globalMarket} = opts;
+    // FIXME: db
+    const globalMarket: any = null;
+    const logger = opts.logger.child("install/air");
 
     await blessing(out, opts);
     out.emit("progress", {progress: -1});
@@ -84,7 +83,8 @@ let self = {
   },
 
   uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
-    const {globalMarket, logger} = opts;
+    const {globalMarket} = opts;
+    const logger = opts.logger.child("uninstall/air");
 
     out.emit("progress", {progress: -1});
 

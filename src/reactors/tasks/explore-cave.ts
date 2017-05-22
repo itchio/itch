@@ -4,7 +4,7 @@ import * as actions from "../../actions";
 
 import sf from "../../os/sf";
 import * as paths from "../../os/paths";
-import explorer from "../../util/explorer";
+import explorer from "../../os/explorer";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.exploreCave, async (store, action) => {

@@ -11,6 +11,6 @@ const itchPlatforms = {
 /**
  * Formats a platform for humans to read.
  */
-export function itchPlatform(p: ItchPlatform): string {
+export function formatItchPlatform(p: ItchPlatform): string {
   return itchPlatforms[p] || p;
 }

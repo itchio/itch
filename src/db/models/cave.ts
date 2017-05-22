@@ -3,7 +3,8 @@ import {Entity, PrimaryColumn, Column} from "typeorm";
 import {
   IUploadRecord, IInstallerCache, IGameRecord, IDownloadKey,
   LaunchType,
-} from "../types";
+} from "../../types";
+import {PathScheme} from "../../os/paths";
 
 @Entity("caves")
 export default class Cave {
@@ -151,6 +152,6 @@ export default class Cave {
   installFolder?: string;
 
   @Column("int", {nullable: true})
-  /** scheme used for computing paths: see util/pathmaker */
-  pathScheme: number;
+  /** scheme used for computing paths */
+  pathScheme: PathScheme;
 }

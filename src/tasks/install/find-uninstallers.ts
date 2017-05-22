@@ -1,5 +1,5 @@
 
-import sf from "../../util/sf";
+import sf from "../../os/sf";
 import * as invariant from "invariant";
 
 // example installer names:

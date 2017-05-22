@@ -1,6 +1,6 @@
 
 import * as ospath from "path";
-import sf from "../sf";
+import sf from "../../os/sf";
 
 export interface ISkipUpgradeWhenOpts {
   binPath: string;

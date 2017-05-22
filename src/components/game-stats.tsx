@@ -7,7 +7,7 @@ import interleave from "./interleave";
 import platformData from "../constants/platform-data";
 import actionForGame from "../util/action-for-game";
 
-import format from "../util/format";
+import {formatPrice} from "../format";
 
 import TimeAgo from "./basics/time-ago";
 import Icon from "./basics/icon";
@@ -94,15 +94,15 @@ export class GameStats extends React.PureComponent<IProps & IDerivedProps & I18n
               price: (sale ?
                 [
                   <label className="original-price">
-                    {format.price(currency, minPrice)}
+                    {formatPrice(currency, minPrice)}
                   </label>,
                   <label>
                     {" "}
-                    {format.price(currency, minPrice * (1 - sale.rate / 100))}
+                    {formatPrice(currency, minPrice * (1 - sale.rate / 100))}
                   </label>,
                 ]
               : <label>
-                 {format.price(currency, minPrice)}
+                 {formatPrice(currency, minPrice)}
                 </label>
               ),
             })

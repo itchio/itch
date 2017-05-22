@@ -4,8 +4,8 @@
 import test = require("zopf");
 import fixture from "../fixture";
 
-import diskspace from "../../util/diskspace";
-import os from "../../util/os";
+import diskspace from "../../os/diskspace";
+import * as os from "../../os";
 
 test("diskspace", (t) => {
   t.case("df (macOS 10.11)", async (t) => {

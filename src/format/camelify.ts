@@ -14,10 +14,7 @@ export function camelifyObject(obj: any): any {
       return res;
     } else {
       const res: any = {};
-      for (const key in obj) {
-        if (!obj.hasOwnPropery(key)) {
-          continue;
-        }
+      for (const key of Object.keys(obj)) {
         res[camelify(key)] = camelifyObject(obj[key]);
       }
       return res;

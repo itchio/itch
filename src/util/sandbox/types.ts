@@ -1,6 +1,6 @@
 
-import { Logger } from "../log";
-import { IGameRecord } from "../../types";
+import {Logger} from "../../logger";
+import {IGameRecord} from "../../types";
 
 export interface INeed {
     type: string;

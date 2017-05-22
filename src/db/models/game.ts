@@ -2,7 +2,7 @@
 import {Entity, PrimaryColumn, Column} from "typeorm";
 import {
   IGameEmbedInfo, IGameSaleInfo, GameType, GameClassification
-} from "../types";
+} from "../../types";
 
 @Entity("games")
 export default class Game {

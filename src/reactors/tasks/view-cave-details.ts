@@ -2,17 +2,15 @@
 import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
-import {getGlobalMarket} from "../market";
-
-import {ICaveRecord} from "../../types";
 import {IViewCaveDetailsParams} from "../../components/modal-widgets/view-cave-details";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.viewCaveDetails, async (store, action) => {
     const {caveId} = action.payload;
 
-    const globalMarket = getGlobalMarket();
-    const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
+    // FIXME: db
+    const globalMarket: any = null;
+    const cave = globalMarket.getEntity("caves", caveId);
     if (!cave) {
       return;
     }

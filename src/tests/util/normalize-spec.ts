@@ -4,9 +4,8 @@
 import test  = require("zopf");
 
 import fixture from "../fixture";
-import {game} from "../../util/schemas";
-import normalize from "../../util/normalize";
-import {Schema, arrayOf} from "idealizr";
+import {game, Schema, arrayOf} from "../../api/schemas";
+import normalize from "../../api/normalize";
 
 test("normalize", t => {
   let collectionGamesSchema = new Schema("collectionGames");

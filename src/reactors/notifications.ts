@@ -5,7 +5,7 @@ import {Watcher} from "./watcher";
 
 import {getTray} from "./tray";
 import {app, BrowserWindow} from "electron";
-import os from "../util/os";
+import * as os from "../os";
 
 import * as actions from "../actions";
 

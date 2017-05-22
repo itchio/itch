@@ -5,7 +5,8 @@ import {connect, I18nProps} from "./connect";
 import bob, {IRGBColor} from "../renderer-util/bob";
 import {ResponsiveContainer, AreaChart, Area} from "recharts";
 
-import downloadProgress from "../util/download-progress";
+import {truncate, downloadProgress} from "../format";
+import {parseDate} from "../api/schemas";
 
 import * as actions from "../actions";
 
@@ -18,8 +19,6 @@ import GameActions from "./game-actions";
 import {IDownloadSpeeds, IDownloadItem, ITask} from "../types";
 import {dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
-
-import * as format from "../util/format";
 
 import styled, * as styles from "./styles";
 
@@ -258,7 +257,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps & I18nProps
         return <div className="error-message">
           {t("status.downloads.download_error")}
           <div className="timeago" data-rh-at="top" data-rh={err}>
-            {format.truncate(err, {length: 60})}
+            {truncate(err, {length: 60})}
           </div>
         </div>;
       }
@@ -299,7 +298,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps & I18nProps
       )
       : (first
       ? <div>
-        {t("download.started")} <TimeAgo date={date}/>
+        {t("download.started")} <TimeAgo date={parseDate(date)}/>
         {reasonText ? ` — ${reasonText}` : ""}
       </div>
       : t("grid.item.queued")

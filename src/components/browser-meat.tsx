@@ -10,7 +10,7 @@ import * as actions from "../actions";
 import urlParser from "../util/url";
 import navigation from "../util/navigation";
 import partitionForUser from "../util/partition-for-user";
-import {getInjectPath} from "../util/resources";
+import {getInjectPath} from "../os/resources";
 
 import staticTabData from "../constants/static-tab-data";
 

@@ -1,7 +1,7 @@
 
 import {flatbuffers} from "./flatbuffers";
 
-import sf from "../util/sf";
+import sf from "../os/sf";
 import {ReadStream, WriteStream} from "fs";
 
 interface IBuilderFunc {

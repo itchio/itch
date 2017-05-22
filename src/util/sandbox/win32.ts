@@ -1,8 +1,8 @@
 
-import spawn from "../spawn";
+import spawn from "../../os/spawn";
 import common from "./common";
 
-import { ICheckResult, INeed } from "./types";
+import {ICheckResult, INeed} from "./types";
 
 export async function check(): Promise<ICheckResult> {
   const errors: Error[] = [];

@@ -3,7 +3,7 @@ import * as ospath from "path";
 
 import {shell} from "electron";
 
-import pathmaker from "../../util/pathmaker";
+import * as paths from "../../os/paths";
 
 import {EventEmitter} from "events";
 import {IStartTaskOpts} from "../../types";
@@ -15,7 +15,7 @@ interface ILaunchOpts extends IStartTaskOpts {}
 export default async function launch(out: EventEmitter, opts: ILaunchOpts) {
   const {cave, manifestAction} = opts;
 
-  const appPath = pathmaker.appPath(cave, store.getState().preferences);
+  const appPath = paths.appPath(cave, store.getState().preferences);
   const fullPath = ospath.join(appPath, manifestAction.path);
   shell.openItem(fullPath);
 }

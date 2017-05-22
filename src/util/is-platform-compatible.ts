@@ -1,6 +1,6 @@
 
-import os from "./os";
-import {camelify} from "./format";
+import * as os from "../os";
+import {camelify} from "../format";
 
 import Game from "../db/models/game";
 

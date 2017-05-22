@@ -1,6 +1,6 @@
 
 import urls from "../constants/urls";
-import net from "../util/net";
+import net from "./net";
 
 interface IGistFiles {
   [key: string]: {

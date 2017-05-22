@@ -2,17 +2,17 @@
 import {Fetcher, Outcome} from "./types";
 import Game from "../db/models/game";
 import DownloadKey from "../db/models/download-key";
-import compareRecords from "../util/compare-records";
-import client from "../util/api";
+import compareRecords from "../db/compare-records";
+import getColumns from "../db/get-columns";
 
-import normalize from "../util/normalize";
-import {elapsed} from "../util/format";
+import client from "../api";
+import normalize from "../api/normalize";
+import {downloadKey} from "../api/schemas";
+
+import {elapsed} from "../format";
 import {arrayOf} from "idealizr";
-import {downloadKey} from "../util/schemas";
 
 import {pluck, indexBy, difference} from "underscore";
-
-import {getColumns} from "../util/market";
 
 export default class LibraryFetcher extends Fetcher {
   constructor () {

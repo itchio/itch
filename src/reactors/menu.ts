@@ -12,8 +12,7 @@ import localizer from "../localizer";
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
-import os from "../util/os";
-const macos = os.itchPlatform() === "osx";
+const macos = process.platform === "darwin";
 
 import {IStore, IAppState, II18nState} from "../types";
 

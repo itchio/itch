@@ -2,7 +2,7 @@
 import {Watcher} from "./watcher";
 import * as actions from "../actions";
 
-import client from "../util/api";
+import client from "../api";
 import partitionForUser from "../util/partition-for-user";
 
 import {sortBy} from "underscore";

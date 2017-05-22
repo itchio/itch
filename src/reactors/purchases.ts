@@ -5,7 +5,7 @@ import {findWhere} from "underscore";
 
 import url from "../util/url";
 import enableEventDebugging from "../util/debug-browser-window";
-import {getInjectPath} from "../util/resources";
+import {getInjectPath} from "../os/resources";
 
 // So this isn't great, but it's not terrible either — we need some
 // kind of renderer-side debug/logging system at some point.

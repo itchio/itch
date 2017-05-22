@@ -11,7 +11,6 @@ import rootLogger from "../../logger";
 const logger = rootLogger.child("queue-game");
 import * as querystring from "querystring";
 
-import {log, opts} from "./log";
 import {startTask} from "./start-task";
 
 import {filter, map, where} from "underscore";
@@ -56,7 +55,9 @@ export default function (watcher: Watcher) {
     const {game, extraOpts = {}, pickedUpload} = action.payload;
     let {password, secret} = extraOpts;
 
-    const cave = store.getState().globalMarket.cavesByGameId[game.id];
+    // FIXME: db
+    const cave: any = null;
+    // const cave = store.getState().globalMarket.cavesByGameId[game.id];
 
     if (cave) {
       logger.info(`Have a cave for game ${game.id}, launching`);

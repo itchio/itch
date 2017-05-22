@@ -1,6 +1,8 @@
 
 import {ILocalizer} from "../localizer";
 
+import env from "../env";
+
 /**
  * Return an input suitable for t.format() for a duration.
  */
@@ -45,6 +47,11 @@ function getFormatter(format: IDateFormat, locale: string): Intl.DateTimeFormat 
     let stripped = locale.replace(/-.*$/, "");
     if (stripped !== locale) {
       locales = [locale, stripped];
+    }
+    if (env.name === "test") {
+      // use UTC for tests, keep using guessed locale for
+      // development/production environments.
+      (format.options as any).timeZone = "UTC";
     }
     formatter = new Intl.DateTimeFormat(locales, format.options);
   }

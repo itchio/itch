@@ -2,7 +2,7 @@
 import * as actions from "../actions";
 import {Watcher} from "./watcher";
 
-import pathmaker from "../util/pathmaker";
+import * as paths from "../os/paths";
 
 import {IQueueDownloadPayload} from "../constants/action-types";
 
@@ -31,9 +31,11 @@ export default function (watcher: Watcher) {
     const {game, downloadKey, incremental, upgradePath} = update;
 
     const state = store.getState();
-    const cave = state.globalMarket.caves[action.payload.caveId];
+    // FIXME: db
+    const cave: any = null;
+    // const cave = state.globalMarket.caves[action.payload.caveId];
 
-    const destPath = pathmaker.downloadPath(upload, state.preferences);
+    const destPath = paths.downloadPath(upload, state.preferences);
 
     let totalSize = upload.size;
     if (update.incremental) {

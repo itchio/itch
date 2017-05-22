@@ -18,7 +18,10 @@ import {IVersionCheck} from "./ibrew/formulas";
 import version from "./ibrew/version";
 
 import net from "./ibrew/net";
-import {downloadToFile, getChecksums, ensureChecksum, ChecksumAlgo, IChecksums} from "./net";
+import {
+  downloadToFile, getChecksums, ensureChecksum,
+  ChecksumAlgo, IChecksums,
+} from "../api/net";
 
 import {EventEmitter} from "events";
 

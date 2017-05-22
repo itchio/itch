@@ -5,7 +5,7 @@ import {join} from "path";
 import ifs from "../localizer/ifs";
 
 import {getLocalesConfigPath, getLocalePath} from "../os/resources";
-import net from "../util/net";
+import net from "../api/net";
 import urls from "../constants/urls";
 import {app} from "electron";
 import env from "../env";

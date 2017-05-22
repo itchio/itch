@@ -1,6 +1,6 @@
 
 import spawn from "./spawn";
-import os from "./os";
+import * as os from ".";
 
 import {ISpaceInfo, IPartInfo, IPartsInfo} from "../types";
 

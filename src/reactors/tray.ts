@@ -1,8 +1,8 @@
 
 import {Watcher} from "./watcher";
 
-import os from "../util/os";
-import {getImagePath} from "../util/resources";
+import * as os from "../os";
+import {getImagePath} from "../os/resources";
 import localizer from "../localizer";
 import {app, Menu, Tray} from "electron";
 

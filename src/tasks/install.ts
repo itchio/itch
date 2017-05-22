@@ -56,7 +56,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
       uploads: {[upload.id]: upload},
       installLocation,
       installFolder,
-      pathScheme: 2, // see pathmaker
+      pathScheme: paths.PathScheme.MODERN_SHARED,
       handPicked,
       fresh: true,
       downloadKey,

@@ -21,7 +21,7 @@ import * as actions from "../actions";
 
 import {map, each, filter} from "underscore";
 
-import diskspace from "../util/diskspace";
+import diskspace from "../os/diskspace";
 
 import {IAppState, ILocaleInfo, IPreferencesState, IInstallLocation} from "../types";
 import {dispatcher} from "../constants/action-types";

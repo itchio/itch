@@ -3,7 +3,7 @@ import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
 import {startTask} from "./start-task";
-import rootLogger from "../logger";
+import rootLogger from "../../logger";
 const logger = rootLogger.child("download-ended");
 
 import {omit} from "underscore";

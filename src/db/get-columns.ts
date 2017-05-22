@@ -4,7 +4,7 @@ import {pluck} from "underscore";
 
 const columnsCache = new Map<Function, Set<string>>();
 
-export function getColumns (model: Function): Set<string> {
+export default function getColumns (model: Function): Set<string> {
   const cached = columnsCache.get(model);
   if (cached) {
     return cached;

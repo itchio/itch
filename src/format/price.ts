@@ -1,5 +1,5 @@
 
-export function price(currency: string, value: number) {
+export function formatPrice(currency: string, value: number) {
   if (currency === "USD") {
     return `$${(value / 100).toFixed(2)}`;
   } else if (currency === "CAD") {

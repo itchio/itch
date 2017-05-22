@@ -3,7 +3,7 @@ import * as React from "react";
 import * as marked from "marked-extra";
 
 // emojify is generated but pure js, one reason the extrajs/ folder exists
-import * as emojify from "../../util/emojify";
+import * as emojify from "../../format/emojify";
 
 import urls from "../../constants/urls";
 

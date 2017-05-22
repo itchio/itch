@@ -7,7 +7,7 @@ import {createSelector, createStructuredSelector} from "reselect";
 
 import {size} from "underscore";
 
-import os from "../../util/os";
+import * as os from "../../os";
 
 import actionForGame from "../../util/action-for-game";
 import isPlatformCompatible from "../../util/is-platform-compatible";

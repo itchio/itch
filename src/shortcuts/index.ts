@@ -11,8 +11,7 @@ hookGlobalBind(combo);
 
 import {remote} from "electron";
 
-import os from "../util/os";
-const osx = os.itchPlatform() === "osx";
+const macos = process.platform === "darwin";
 
 function openDevTools () {
   const win = remote.getCurrentWindow();
@@ -56,7 +55,7 @@ export default function setupShortcuts (store: IStore) {
     store.dispatch(actions.triggerBack({}));
   });
 
-  const prefix = osx ? "command" : "ctrl";
+  const prefix = macos ? "command" : "ctrl";
 
   for (const i of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
     combo.bindGlobal([`${prefix}+${i}`], () => {

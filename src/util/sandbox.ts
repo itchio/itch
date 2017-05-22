@@ -1,5 +1,5 @@
 
-import os from "./os";
+import * as os from "../os";
 
 // TODO: better typing?
 import {IStartTaskOpts} from "../types";

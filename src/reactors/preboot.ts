@@ -12,7 +12,7 @@ const opts = {logger};
 
 import {ProxySource} from "../types";
 
-import {NET_PARTITION_NAME} from "../util/net";
+import {NET_PARTITION_NAME} from "../api/net";
 
 import {applyProxySettings} from "../reactors/proxy";
 
@@ -124,7 +124,7 @@ export default function (watcher: Watcher) {
     store.dispatch(actions.boot({}));
 
     // print various machine specs, see docs/
-    const diego = require("../util/diego").default;
+    const diego = require("../os/diego").default;
     setTimeout(function () {
       diego.hire(opts);
     }, 3000);

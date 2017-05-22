@@ -8,7 +8,7 @@ import fixture from "../fixture";
 
 import {EventEmitter} from "events";
 
-import sf from "../../util/sf";
+import sf from "../../os/sf";
 
 test("sf", t => {
   t.case("sf.exists", async t => {

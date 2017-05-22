@@ -1,10 +1,10 @@
 
 import {Fetcher, Outcome} from "./types";
 import Game from "../db/models/game";
-import client from "../util/api";
 
-import normalize from "../util/normalize";
-import {game} from "../util/schemas";
+import client from "../api";
+import normalize from "../api/normalize";
+import {game} from "../api/schemas";
 
 import {pathToId} from "../util/navigation";
 

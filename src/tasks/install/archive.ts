@@ -9,11 +9,12 @@ import deploy, {IDeployOpts} from "../../util/deploy";
 
 import core from "./core";
 
-import rootLogger from "../logger";
+import rootLogger from "../../logger";
 const logger = rootLogger.child("install/archive");
 
-import {IStartTaskOpts, IInstallerCache} from "../../types";
-import {IProgressInfo, InstallerType} from "../../types";
+import {
+  IStartTaskOpts, IInstallerCache, IProgressInfo, InstallerType,
+} from "../../types";
 
 const self = {
   retrieveCachedType: function (opts: IStartTaskOpts): InstallerType {

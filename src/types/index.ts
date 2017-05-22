@@ -8,6 +8,8 @@ import CollectionModel from "../db/models/collection";
 import DownloadKeyModel from "../db/models/download-key";
 import CaveModel from "../db/models/cave";
 
+import {PathScheme} from "../os/paths";
+
 export interface IStore extends Store<IAppState> {}
 
 interface IWatcher {
@@ -193,7 +195,6 @@ export interface ITabDataSet {
     [key: string]: ITabData;
 }
 
-
 export interface ITabParamsSet {
     [key: string]: ITabParams;
 }
@@ -290,8 +291,8 @@ export interface ICaveRecordLocation {
     /** name of the install folder in the install location, derived from the game's title */
     installFolder?: string;
 
-    /** scheme used for computing paths: see util/pathmaker */
-    pathScheme: number;
+    /** scheme used for computing paths */
+    pathScheme: PathScheme;
 }
 
 /** Describes an installed item, that can be launched or opened */
@@ -495,7 +496,7 @@ export interface IEntityRecords<T> {
 /**
  * Specifies what to delete from the DB
  */
-export interface IMarketDeleteSpec {
+export interface IDBDeleteSpec {
   entities: IEntityRefs;
 }
 

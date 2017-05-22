@@ -19,7 +19,7 @@ const APPDATA_RE = /^appdata\/(.*)$/;
 export function appPath(cave: ICaveRecordLocation, preferences: IPreferencesState) {
   // < 0.13.x, installFolder isn't set, it's implicitly the cave's id
   // < 18.5.x, everything is installed in an `apps` subfolder
-  const {installLocation, installFolder = cave.id, pathScheme = 1} = cave;
+  const {installLocation, installFolder = cave.id, pathScheme = PathScheme.LEGACY_PER_USER} = cave;
 
   invariant(typeof installLocation === "string", "valid install location name");
   invariant(typeof installFolder === "string", "valid install folder");
@@ -43,7 +43,7 @@ export function appPath(cave: ICaveRecordLocation, preferences: IPreferencesStat
     base = location.path;
   }
 
-  if (pathScheme === 1) {
+  if (pathScheme === PathScheme.LEGACY_PER_USER) {
     appsSuffix = true;
   }
 
@@ -112,3 +112,8 @@ export function sanitize(file: string): string {
     return "nihilo";
   }
 }
+
+export enum PathScheme {
+  LEGACY_PER_USER = 1,
+  MODERN_SHARED = 2,
+};

@@ -9,8 +9,8 @@ import {omit, each} from "underscore";
 
 import {createSelector} from "reselect";
 
-import diskspace from "../util/diskspace";
-import explorer from "../util/explorer";
+import diskspace from "../os/diskspace";
+import explorer from "../os/explorer";
 import localizer from "../localizer";
 
 import * as actions from "../actions";

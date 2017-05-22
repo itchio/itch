@@ -1,6 +1,6 @@
 
-import rootPino from "../util/pino";
-const pino = rootPino.child("market-provider");
+import rootLogger from "../logger";
+const pino = rootLogger.child("market-provider");
 
 import {IStore} from "../types";
 import {IMarkets, IMarketGetter} from "../fetchers/types";
@@ -8,8 +8,10 @@ import {IMarkets, IMarketGetter} from "../fetchers/types";
 import * as actions from "../actions";
 import {Watcher} from "../reactors/watcher";
 
-import pathmaker from "../util/pathmaker";
-import Market from "../util/market";
+import * as paths from "../os/paths";
+import Market from "../db";
+
+// FIXME: market is dead
 
 let cache = window as any as {
   __itch_user_market: Market;
@@ -68,7 +70,7 @@ async function getUserMarket(store: IStore) {
   const meId = state.session.credentials.me.id;
   market = new Market();
   try {
-    await market.load(pathmaker.userDbPath(meId));
+    await market.load(paths.userDbPath(meId));
     pino.info(`user: connected!`);
   } catch (e) {
     console.error(`user: couldn't connect:\n${e.stack}`);
@@ -89,7 +91,7 @@ async function getGlobalMarket(store: IStore) {
   pino.info(`global: connecting...`);
   market = new Market();
   try {
-    await market.load(pathmaker.globalDbPath());
+    await market.load(paths.globalDbPath());
     pino.info(`global: connected!`);
   } catch (e) {
     console.error(`global: couldn't connect:\n${e.stack}`);

@@ -1,7 +1,7 @@
 
 import * as osnet from "net";
 import * as StreamSplitter from "stream-splitter";
-import LFTransform from "../../util/lf-transform";
+import LFTransform from "../../os/lf-transform";
 
 import * as tmp from "tmp";
 import * as bluebird from "bluebird";

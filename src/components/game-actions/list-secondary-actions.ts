@@ -2,7 +2,7 @@
 import {findWhere} from "underscore";
 
 import * as actions from "../../actions";
-import format, {DATE_FORMAT} from "../../util/format";
+import {formatDate, DATE_FORMAT} from "../../format";
 
 import {
   IGameRecord, ICaveRecord, IDownloadKey, ClassificationAction,
@@ -36,7 +36,7 @@ function browseAction (caveId: string): IActionOpts {
 function purchaseAction (game: IGameRecord, downloadKey: IDownloadKey, t: ILocalizer): IActionOpts {
   const donate = (game.minPrice === 0);
   const againSuffix = downloadKey ? "_again" : "";
-  const hint = downloadKey ? format.date(downloadKey.createdAt, DATE_FORMAT, t.lang) : null;
+  const hint = downloadKey ? formatDate(downloadKey.createdAt, t.lang, DATE_FORMAT) : null;
 
   if (donate) {
     return {

@@ -3,10 +3,10 @@ import urls from "../../constants/urls";
 
 import * as querystring from "querystring";
 
-import os from "../os";
+import * as os from "../../os";
 import version from "./version";
 
-import net, {ChecksumAlgo} from "../../util/net";
+import net, {ChecksumAlgo} from "../../api/net";
 
 const CHECKSUM_ALGOS: ChecksumAlgo[] = [
   "SHA256",

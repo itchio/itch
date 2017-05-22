@@ -6,6 +6,7 @@ import {Stream, Writable} from "stream";
 // tslint:disable-next-line
 export interface Logger extends PinoLogger {
   close();
+  child(name: string): Logger;
 }
 
 let pinoFactory: (opts?: any, stream?: Stream) => Logger;

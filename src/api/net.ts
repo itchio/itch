@@ -8,15 +8,14 @@ import {isEmpty} from "underscore";
 
 import useragent from "../constants/useragent";
 
-import sf from "./sf";
+import sf from "../os/sf";
 import * as humanize from "humanize-plus";
-import rootLogger from "../logger";
+import rootLogger, {Logger} from "../logger";
 const logger = rootLogger.child("net");
 
 import * as ospath from "path";
 
 import {indexBy, filter, map} from "underscore";
-
 
 type HTTPMethod = "head" | "get" | "post"  | "put" | "patch" | "delete";
 
@@ -269,6 +268,9 @@ export interface IChecksums {
  * Download to file without using butler
  */
 export async function downloadToFile (opts: ILoggerOpts, url: string, file: string): Promise<void> {
+  // tslint:disable-next-line
+  const {logger} = opts;
+
   const dir = ospath.dirname(file);
   try {
     await sf.mkdir(dir);

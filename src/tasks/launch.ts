@@ -22,13 +22,14 @@ import {startTask} from "../reactors/tasks/start-task";
 
 import {app, powerSaveBlocker} from "electron";
 
-import diego from "../util/diego";
 import api from "../api";
 import * as os from "../os";
 import sf from "../os/sf";
 import * as paths from "../os/paths";
+import explorer from "../os/explorer";
+import diego from "../os/diego";
+
 import fetch from "../util/fetch";
-import explorer from "../util/explorer";
 import defaultManifestIcons from "../constants/default-manifest-icons";
 
 import actionForGame from "../util/action-for-game";

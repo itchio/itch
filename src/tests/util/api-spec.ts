@@ -4,10 +4,8 @@
 import test  = require("zopf");
 import * as sinon from "sinon";
 
-import {IResponse} from "../../util/net";
-import {ApiError} from "../../util/api";
-
-import api from "../../util/api";
+import {IResponse} from "../../api/net";
+import api, {ApiError} from "../../api";
 
 test("api", t => {
   api.rootUrl = "http://example.org/";

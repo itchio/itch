@@ -6,7 +6,7 @@ import GenericSearchResult, {searchResultStyle} from "./generic-search-result";
 import platformData from "../../constants/platform-data";
 
 import isPlatformCompatible from "../../util/is-platform-compatible";
-import format from "../../util/format";
+import {formatPrice} from "../../format";
 
 import {IGameRecord} from "../../types";
 
@@ -74,10 +74,10 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
 
     if (game.minPrice > 0) {
       if (game.sale) {
-        price = <Price>{format.price("USD", game.minPrice * (1 - game.sale.rate / 100))}</Price>;
-        originalPrice = <Price className="original">{format.price("USD", game.minPrice)}</Price>;
+        price = <Price>{formatPrice("USD", game.minPrice * (1 - game.sale.rate / 100))}</Price>;
+        originalPrice = <Price className="original">{formatPrice("USD", game.minPrice)}</Price>;
       } else {
-        price = <span className="price">{format.price("USD", game.minPrice)}</span>;
+        price = <span className="price">{formatPrice("USD", game.minPrice)}</span>;
       }
     }
 

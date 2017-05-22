@@ -4,26 +4,26 @@ import * as actions from "../../actions";
 
 import {findWhere} from "underscore";
 
-import {getGlobalMarket, getUserMarket} from "../market";
-
 import {startTask} from "./start-task";
 
-import pathmaker from "../../util/pathmaker";
+import * as paths from "../../os/paths";
 import fetch from "../../util/fetch";
 
-import {ICaveRecord, IDownloadKey} from "../../types";
+// FIXME: db
+const globalMarket: any = null;
+const userMarket: any = null;
 
 export default function (watcher: Watcher) {
   watcher.on(actions.queueCaveReinstall, async (store, action) => {
     const {caveId} = action.payload;
-    const cave = getGlobalMarket().getEntity<ICaveRecord>("caves", caveId);
+    const cave = globalMarket.getEntity("caves", caveId);
     if (!cave) {
       // can't reinstall without a valid cave!
       return;
     }
 
     const credentials = store.getState().session.credentials;
-    const game = await fetch.gameLazily(getUserMarket(), credentials, cave.gameId);
+    const game = await fetch.gameLazily(userMarket, credentials, cave.gameId);
     if (!game) {
       // no valid game
       return;
@@ -55,10 +55,10 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    const archivePath = pathmaker.downloadPath(upload, store.getState().preferences);
+    const archivePath = paths.downloadPath(upload, store.getState().preferences);
 
     const findDownloadKey = () => {
-      return findWhere(getUserMarket().getEntities<IDownloadKey>("downloadKeys"), {gameId: game.id});
+      return findWhere(userMarket.getEntities("downloadKeys"), {gameId: game.id});
     };
 
     store.dispatch(actions.queueDownload({

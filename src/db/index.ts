@@ -4,6 +4,8 @@ import {elapsed} from "../format";
 import rootLogger from "../logger";
 const logger = rootLogger.child("db");
 
+import getColumns from "./get-columns";
+
 import {
   createConnection,
   Connection, ObjectType, Repository,
@@ -18,7 +20,7 @@ import * as _ from "underscore";
 
 import {
   IEntityMap, IEntityRecords,
-  IMarketDeleteSpec,
+  IDBDeleteSpec,
 } from "../types";
 
 interface IModelMap {
@@ -146,7 +148,7 @@ export class DB {
   /**
    * Delete all referenced entities. See IDeleteOpts for options.
    */
-  async deleteAllEntities (deleteSpec: IMarketDeleteSpec) {
+  async deleteAllEntities (deleteSpec: IDBDeleteSpec) {
     for (const tableName of Object.keys(deleteSpec.entities)) {
       const entities = deleteSpec.entities[tableName];
 
@@ -196,5 +198,3 @@ export class DB {
     this.dbPath = null;
   }
 }
-
-export default from "./get-columns";

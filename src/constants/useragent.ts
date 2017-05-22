@@ -1,6 +1,6 @@
 
 import {app, remote} from "electron";
-import os from "../util/os";
+import * as os from "../os";
 
 let userAgent: string;
 

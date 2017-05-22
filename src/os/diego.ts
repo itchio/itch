@@ -1,11 +1,9 @@
 
 /* Diego is your little diagnostics mercenary! */
-import mklog from "./log";
-const realLog = mklog("diego");
-import os from "./os";
+import * as os from ".";
 import spawn from "./spawn";
 
-import {Logger} from "./log";
+import {Logger} from "../logger";
 
 const promisedDiego = collect();
 
@@ -76,8 +74,9 @@ interface IDiegoOpts {
 
 const self = {
   hire: async function (opts: IDiegoOpts): Promise<void> {
+    const logger = opts.logger.child("diego");
     const output = await promisedDiego; // sic. no parenthesis — called once on startup
-    realLog(opts, output);
+    logger.info(output);
   },
 };
 

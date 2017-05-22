@@ -1,4 +1,4 @@
 
-import os from "../os";
+import {platform} from "../../os";
 
-export default require(`./${os.platform()}`).default;
+export default require(`./${platform()}`).default;

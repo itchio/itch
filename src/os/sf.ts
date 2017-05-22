@@ -5,6 +5,7 @@ import * as bluebird from "bluebird";
 
 import {Stats} from "fs";
 import * as fsModule from "fs";
+const baseFs = require("original-fs");
 
 import {
   IAsyncFSVariants, IFSError, IGlobStatic,
@@ -24,14 +25,7 @@ import {
  * asar-aware one.
  */
 
-let baseFs = require("fs");
-if ((process.versions as any).electron) {
-  const r = ((global || window) as any).require;
-  baseFs = r("original-fs");
-}
-
 import { EventEmitter } from "events";
-
 import * as proxyquire from "proxyquire";
 
 let fs = {

@@ -57,7 +57,7 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
     const cave = opts.cave || {
       installLocation,
       installFolder,
-      pathScheme: 2, // see paths
+      pathScheme: paths.PathScheme.MODERN_SHARED, // see paths
     };
 
     const fullInstallFolder = paths.appPath(cave, preferences);

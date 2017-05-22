@@ -2,11 +2,10 @@
 import {Fetcher, Outcome} from "./types";
 import Collection from "../db/models/collection";
 import Game from "../db/models/game";
-import client from "../util/api";
 
-import normalize from "../util/normalize";
-import {arrayOf} from "idealizr";
-import {collection} from "../util/schemas";
+import client from "../api";
+import normalize from "../api/normalize";
+import {collection, arrayOf} from "../api/schemas";
 
 import {indexBy} from "underscore";
 

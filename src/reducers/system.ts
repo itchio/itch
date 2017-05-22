@@ -1,5 +1,5 @@
 
-import os from "../util/os";
+import * as os from "../os";
 import * as electron from "electron";
 const app = electron.app || electron.remote.app;
 

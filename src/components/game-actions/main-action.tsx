@@ -8,7 +8,7 @@ import TaskIcon from "../basics/task-icon";
 import LoadingCircle from "../basics/loading-circle";
 import Button from "../basics/button";
 
-import format from "../../util/format";
+import {formatItchPlatform} from "../../format";
 import * as actions from "../../actions";
 
 import {IActionsInfo} from "./types";
@@ -72,7 +72,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps & I18nProps,
         }
       } else {
         return <span className="state not-platform-compatible">
-          {t("grid.item.not_platform_compatible", {platform: format.itchPlatform(platform)})}
+          {t("grid.item.not_platform_compatible", {platform: formatItchPlatform(platform)})}
         </span>;
       }
     }

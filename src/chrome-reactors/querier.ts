@@ -3,10 +3,10 @@ import {Watcher} from "./watcher";
 import {IStore} from "../types";
 import * as actions from "../actions";
 
-import rootPino from "../util/pino";
-const pino = rootPino.child("querier");
+import rootLogger from "../logger";
+const logger = rootLogger.child("querier");
 
-import {elapsed} from "../util/format";
+import {elapsed} from "../format";
 
 export type LoadSource = "cavesByGameId" | "downloadKeysByGameId";
 
@@ -76,7 +76,7 @@ function runQueries(store: IStore, watcher: Watcher) {
   if (!timeout) {
     timeout = setTimeout(() => {
       actuallyRunQueries(store, watcher).catch((error) => {
-        pino.info(`While running queries:`, error);
+        logger.info(`While running queries:`, error);
       }).then(() => timeout = null);
     }, 50);
   }
@@ -95,7 +95,7 @@ async function actuallyRunQueries(store: IStore, watcher: Watcher) {
     queryRegister[loadId] = query;
   }
 
-  pino.info(`running queries...`);
+  logger.info(`running queries...`);
   promise = (async function() {
     const t1 = Date.now();
     const flattened: {
@@ -135,7 +135,7 @@ async function actuallyRunQueries(store: IStore, watcher: Watcher) {
       },
     }));
     const t5 = Date.now();
-    pino.info(`flatten ${elapsed(t1, t2)}, caves ${elapsed(t2, t3)}, keys ${elapsed(t3, t4)}`
+    logger.info(`flatten ${elapsed(t1, t2)}, caves ${elapsed(t2, t3)}, keys ${elapsed(t3, t4)}`
      + `\ndispatch ${elapsed(t4, t5)}`
      + `\ncaves db: ${elapsed(0, cavesDbTime)}, keys db: ${elapsed(0, keysDbTime)}ms`);
   })();
