@@ -1,7 +1,8 @@
 
 cache:
   # per-job caching (per-branch would be wasteful)
-  key: "$CI_BUILD_NAME"
+  key: "$CI_JOB_NAME"
+  untracked: true
   paths:
     - node_modules
 
