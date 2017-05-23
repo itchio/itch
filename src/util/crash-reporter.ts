@@ -3,6 +3,8 @@ import {shell, dialog} from "electron";
 import * as electron from "electron";
 const app = electron.app || electron.remote.app;
 
+import env from "../env";
+
 import * as path from "path";
 import * as querystring from "querystring";
 
@@ -82,15 +84,24 @@ ${log}
 
   handle: async function (type: string, e: Error) {
     if (self.catching) {
-      console.log(`While catching: ${e.stack || e}`); // tslint:disable-line:no-console
+      // tslint:disable-next-line
+      console.log(`While catching: ${e.stack || e}`);
       return;
     }
     self.catching = true;
 
-    console.log(`${type}: ${e.stack}`); // tslint:disable-line:no-console
+    // tslint:disable-next-line
+    console.log(`${type}: ${e.stack}`);
     let res = await self.writeCrashLog(e);
     let log = res.log;
     let crashFile = res.crashFile;
+
+    if (env.name === "test") {
+      // tslint:disable-next-line
+      console.log(`Crash log written to ${res.crashFile}, bailing out`);
+      process.exit(1);
+      return;
+    }
 
     // TODO: something better
     const t = require("../localizer").getT({}, "en");
