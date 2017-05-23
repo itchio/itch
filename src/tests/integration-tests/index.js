@@ -97,10 +97,9 @@ test('application launch', async (t) => {
     }
 
     await t.app.stop()
-    t.comment("app stopped!");
+    t.comment(`App stopped. Exit code ${t.itch.exitCode}`);
 
-    // if (t.itch.exitCode !== 0) {
-      t.comment(`Got exit code ${t.itch.exitCode}`);
+    if (t.itch.exitCode !== 0) {
       t.comment(`Main logs: `);
       for (const line of t.itch.mainLogs) {
         t.comment(line);
@@ -115,7 +114,7 @@ test('application launch', async (t) => {
       // }
 
       throw new Error(`Non-zero exit code ${t.itch.exitCode}`);
-    // }
+    }
   }
 
   const spec = function (name, f, opts) {
@@ -146,7 +145,7 @@ test('application launch', async (t) => {
   })
 
   spec("it shows an initial window", async (t) => {
-    await bluebird.delay(5000);
-    t.same(await t.app.client.getWindowCount(), 1);
+    const numWindows = await t.app.client.getWindowCount();
+    t.ok(numWindows >= 1);
   })
 })

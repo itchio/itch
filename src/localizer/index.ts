@@ -14,6 +14,10 @@ export interface ILocalizer {
 
 export function getT (strings: II18nResources, lang: string) {
   const t: ILocalizer = ((key: string | string[], variables?: any) => {
+    if (!key) {
+      return key;
+    }
+
     let langs = [lang];
     if (lang.length > 2) {
       langs = [...langs, lang.substring(0, 2)];
@@ -21,9 +25,6 @@ export function getT (strings: II18nResources, lang: string) {
     
     langs = [...langs, "en"];
     const keys = Array.isArray(key) ? key : [key];
-    if (process.type === "renderer") {
-      throw new Error("test error in localizer");
-    }
     if (key.length < 1) {
       return key;
     }
