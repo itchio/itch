@@ -15,7 +15,7 @@ async function main () {
   if (process.platform === "linux") {
     $(await $.sh('xvfb-run yarn test'));
   } else {
-    $(await $.sh('yarn test'));
+    $(await $.yarn('test'));
   }
 }
 
