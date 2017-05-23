@@ -5,10 +5,6 @@ const Application = require('spectron').Application;
 const test = require("zopf");
 const bluebird = require("bluebird");
 
-// const tape = require("tape");
-// const formatter = require("faucet");
-// tape.createStream().pipe(formatter()).pipe(process.stdout);
-
 const exitCodeRegexp = /this is the magic exit code: ([0-9]+)/;
 
 test('application launch', async (t) => {
@@ -27,7 +23,7 @@ test('application launch', async (t) => {
       }
     }
 
-    const args = ["src/init.js", ...additionalArgs];
+    const args = [".", ...additionalArgs];
     try {
       require("fs").mkdirSync("tmp");
     } catch (e) {
@@ -68,9 +64,10 @@ test('application launch', async (t) => {
           }
 
           if (!t.app || !t.app.isRunning()) { return; }
-          for (const line of await t.app.client.getRenderProcessLogs()) {
+          for (const entry of await t.app.client.getRenderProcessLogs()) {
+            const line = entry.message;
             t.itch.rendererLogs.push(line);
-            const matches = re.exec(line);
+            const matches = exitCodeRegexp.exec(line);
             if (matches) {
               t.itch.exitCode = +matches[1];
               t.comment(`Got exit code ${t.itch.exitCode} from renderer process`);
@@ -102,19 +99,23 @@ test('application launch', async (t) => {
     await t.app.stop()
     t.comment("app stopped!");
 
-    if (t.itch.exitCode !== 0) {
+    // if (t.itch.exitCode !== 0) {
       t.comment(`Got exit code ${t.itch.exitCode}`);
       t.comment(`Main logs: `);
       for (const line of t.itch.mainLogs) {
         t.comment(line);
       }
-      t.comment(`Renderer logs: `);
-      for (const line of t.itch.rendererLogs) {
-        t.comment(line);
-      }
+
+      // It looks like these are printed in main
+      // process log as well?
+
+      // t.comment(`Renderer logs: `);
+      // for (const line of t.itch.rendererLogs) {
+      //   t.comment(line);
+      // }
 
       throw new Error(`Non-zero exit code ${t.itch.exitCode}`);
-    }
+    // }
   }
 
   const spec = function (name, f, opts) {

@@ -129,7 +129,7 @@ const defaultLogger = makeLogger(logPath());
 
 if (process.type === "browser") {
   const {app} = require("electron");
-  defaultLogger.info(`itch ${app.getVersion()} on electron ${process.versions.electron}`);
+  defaultLogger.info(`${app.getName()} ${app.getVersion()} on electron ${process.versions.electron}`);
 }
 
 export const devNull: Logger = new (class {
