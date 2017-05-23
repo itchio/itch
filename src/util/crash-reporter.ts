@@ -99,7 +99,7 @@ ${log}
     if (env.name === "test") {
       // tslint:disable-next-line
       console.log(`Crash log written to ${res.crashFile}, bailing out`);
-      process.exit(1);
+      os.exit(1);
       return;
     }
 
@@ -127,7 +127,7 @@ ${log}
         } else if (response === 1) {
           shell.openItem(crashFile);
         }
-        process.exit(1);
+        os.exit(1);
       };
 
       // try to show error dialog
@@ -139,7 +139,6 @@ ${log}
   },
 
   mount: () => {
-    console.log("Mounting crash reporter"); // tslint:disable-line:no-console
     const makeHandler = (type: string) => {
       return async function (e: Error) {
         try {
@@ -149,14 +148,13 @@ ${log}
           console.log(`Error in crash-reporter (${type})\n${e.message || e}`); // tslint:disable-line:no-console
         } finally {
           if (type === "uncaughtException") {
-            process.exit(1);
+            os.exit(1);
           }
         }
       };
     };
     process.on("uncaughtException", makeHandler("Uncaught exception"));
     process.on("unhandledRejection", makeHandler("Unhandled rejection"));
-    console.log("Fully mounted crash reporter"); // tslint:disable-line:no-console
   },
 };
 

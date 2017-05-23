@@ -1,13 +1,17 @@
 // tslint:disable:no-console
 
+function exit (exitCode) {
+  console.log(`this is the magic exit code: ${exitCode}`);
+}
+
 process.on("uncaughtException", (e: Error) => {
   console.log("Uncaught exception: ", e.stack);
-  process.exit(127);
+  exit(127);
 });
 
 process.on("unhandledRejection", (reason: string, p: Promise<any>) => {
   console.log("Unhandled Rejection at: Promise", p, "reason:", reason);
-  process.exit(1);
+  exit(129);
 });
 
 require("source-map-support").install({
@@ -29,7 +33,10 @@ const {extname} = require("path").posix;
 const {join} = require("path");
 
 app.on("ready", async () => {
-  const BrowserWindow = require("electron").BrowserWindow;
+  const {BrowserWindow} = require("electron");
+  const win = new BrowserWindow({});
+  win.setTitle("Running tests...");
+  win.loadURL("about:blank");
 
   const glob = require("bluebird").promisify(require("glob"));
   const cwd = join(__dirname, "unit-tests");
@@ -37,17 +44,12 @@ app.on("ready", async () => {
   let testFiles = await glob("**/*-spec.ts", {cwd});
 
   const tape = require("tape");
-  const formatter = require("faucet");
-  tape.createStream().pipe(formatter()).pipe(process.stdout);
 
   tape.onFinish((a, b, c) => {
     const harness = tape.getHarness();
     harness._results.close();
-
-    const win = new BrowserWindow({width: 800, height: 600});
-    win.setTitle(harness._exitCode === 0 ? "pass" : "fail");
-    win.loadURL("about:blank");
-    win.show();
+    win.setTitle(`Exit code = ${harness._exitCode}`);
+    exit(harness._exitCode);
   });
 
   const args = process.argv.slice(2);

@@ -42,12 +42,5 @@ tmp
 /*.app
 /*.dmg
 
-# ruby-specific stuff
-/.bundle
-/vendor/bundle
-
-# updated locales stuff
-/app/static/locales/*.remote.json
-
 # OS-specific junk
 .DS_Store

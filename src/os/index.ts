@@ -3,6 +3,7 @@ import * as os from "os";
 
 export * from "./arch";
 export * from "./assert-presence";
+import env from "../env";
 
 export type ItchPlatform = "osx" | "windows" | "linux" | "unknown";
 
@@ -54,4 +55,15 @@ export function itchPlatform(): ItchPlatform {
 
 export function cliArgs(): string[] {
   return process.argv;
+}
+
+export function exit(exitCode: number) {
+  if (env.name === "test") {
+    // tslint:disable-next-line
+    console.log(`this is the magic exit code: ${exitCode}`);
+  } else {
+    const electron = require("electron");
+    const app = electron.app || electron.remote.app;
+    app.exit(exitCode);
+  }
 }

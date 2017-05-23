@@ -5,6 +5,7 @@ import {IAction} from "../constants/action-types";
 import {Watcher} from "./watcher";
 
 import env from "../env";
+import * as os from "../os";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({name: "route"});
@@ -17,7 +18,7 @@ if (env.name === "test") {
   err = (msg: string) => {
     logger.error(msg);
     logger.error("Bailing out...");
-    process.exit(1);
+    os.exit(1);
   };
 }
 

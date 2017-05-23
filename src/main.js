@@ -1,4 +1,9 @@
 
+require("./boot/sourcemaps");
+require("./boot/bluebird");
+require("./boot/crash");
+require("./boot/fs");
+
 function main () {
   for (const arg of process.argv) {
     if (arg === "--run-unit-tests") {

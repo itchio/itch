@@ -153,6 +153,7 @@
     "install": "electron-rebuild",
     "test": "node ./src/tests/integration-tests/index.js",
     "i18n": "node release/ci-i18n-check.js",
+    "repl": "node --inspect-brk src/tests/repl.js",
     "compile": "cross-env NODE_ENV=production electron-compile --appdir . ./src"
   }
 }

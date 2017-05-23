@@ -1,11 +1,6 @@
 
 // This file is the entry point for the main (browser) process
 
-import "./boot/sourcemaps";
-import "./boot/bluebird";
-import "./boot/crash";
-import "./boot/fs";
-
 import {enableLiveReload} from "electron-compile";
 
 import autoUpdater from "./util/auto-updater";
@@ -67,11 +62,11 @@ function autoUpdateDone () {
       enableLiveReload({strategy: "react-hmr"});
     }
 
-    store.dispatch(actions.preboot({}));
-
     globalShortcut.register("Control+Alt+Backspace", function () {
       store.dispatch(actions.abortLastGame({}));
     });
+
+    store.dispatch(actions.preboot({}));
   });
 
   app.on("activate", () => {
