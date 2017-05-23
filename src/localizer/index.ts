@@ -21,7 +21,9 @@ export function getT (strings: II18nResources, lang: string) {
     
     langs = [...langs, "en"];
     const keys = Array.isArray(key) ? key : [key];
-    throw new Error("test error in localizer");
+    if (process.type === "renderer") {
+      throw new Error("test error in localizer");
+    }
     if (key.length < 1) {
       return key;
     }
