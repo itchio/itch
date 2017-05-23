@@ -7,6 +7,7 @@ import "./boot/sniff-language";
 import "./boot/time-ago-locales";
 
 import * as os from "./os";
+import env from "./env";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
@@ -47,6 +48,13 @@ function render (RealApp: typeof App) {
     rootComponent = <RealApp/>;
   }
   ReactDOM.render(<Provider store={store}>{rootComponent}</Provider>, appNode);
+}
+
+if (env.name === "test") {
+  window.onerror = (evt, source, line, column, err) => {
+    console.error(`Unhandled error: ${err.stack}`);
+    os.exit(1);
+  };
 }
 
 window.addEventListener("beforeunload", () => {
