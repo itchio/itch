@@ -1237,7 +1237,7 @@ export interface IStartTaskOpts {
   preferences?: IPreferencesState;
 
   /** cave-specific logger */
-  logger?: Logger;
+  logger: Logger;
 }
 
 export interface ILaunchOpts extends IStartTaskOpts {

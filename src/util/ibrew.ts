@@ -110,6 +110,7 @@ const self = {
       } else if (formula.format === "7z") {
         logger.info(`${name}: extracting ${formula.format} archive`);
         await extract.extract({
+          logger,
           emitter: new EventEmitter(),
           archivePath,
           destPath: self.binPath(),

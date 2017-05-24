@@ -525,6 +525,7 @@ async function fetchDep (
 
   logger.info(`Extracting ${info.fullName} archive`);
   await extract.extract({
+    logger,
     emitter: new EventEmitter(),
     archivePath,
     destPath: workDir,

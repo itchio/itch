@@ -23,7 +23,7 @@ interface IListResult {
 }
 
 interface IExtractOpts {
-  logger?: Logger;
+  logger: Logger;
   emitter: EventEmitter;
   onProgress?: IProgressListener;
   archivePath: string;
@@ -36,8 +36,6 @@ interface IEntryDoneListener {
 
 const self = {
   unarchiverList: async function (logger: Logger, archivePath: string): Promise<IListResult> {
-    const opts = {logger};
-
     const sizes = {} as ISizeMap;
     let totalSize = 0;
 
@@ -75,8 +73,6 @@ const self = {
 
   unarchiverExtract: async function (logger: Logger, archivePath: string, destPath: string,
                                      onItemDone: IEntryDoneListener) {
-    const opts = {logger};
-
     let EXTRACT_RE = /^ {2}(.+) {2}\(.+\)\.\.\. OK\.$/;
 
     await sf.mkdir(destPath);
