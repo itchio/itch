@@ -154,7 +154,7 @@ const self = {
     let useButler = false;
     if (hasButler) {
       try {
-        const fileResult = await butler.file({path: archivePath});
+        const fileResult = await butler.file({path: archivePath, logger});
         if (fileResult.type === "zip") {
           useButler = true;
         } else {
