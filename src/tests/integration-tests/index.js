@@ -12,8 +12,6 @@ test('application launch', async (t) => {
     t.itch = {
       polling: true,
       exitCode: 0,
-      mainLogs: [],
-      rendererLogs: [],
     }
 
     let additionalArgs = []
@@ -40,7 +38,7 @@ test('application launch', async (t) => {
         NODE_ENV: "test",
       },
       chromeDriverLogPath: "tmp/chrome-driver-log.txt",
-      webDriverLogPath: "tmp/web-driver-log.txt",
+      webdriverLogPath: "tmp/web-driver-log.txt",
     })
     t.comment(`starting app with args ${args.join(" ")}`);
     await t.app.start();
@@ -50,11 +48,10 @@ test('application launch', async (t) => {
       try {
         while (true) {
           await bluebird.delay(250);
-          if (!t.itch.polling) { return; }
 
           if (!t.app || !t.app.isRunning()) { return; }
           for (const line of await t.app.client.getMainProcessLogs()) {
-            t.itch.mainLogs.push(line);
+            t.comment(`☃ ${line}`);
             const matches = exitCodeRegexp.exec(line);
             if (matches) {
               t.itch.exitCode = +matches[1];
@@ -63,17 +60,7 @@ test('application launch', async (t) => {
             }
           }
 
-          if (!t.app || !t.app.isRunning()) { return; }
-          for (const entry of await t.app.client.getRenderProcessLogs()) {
-            const line = entry.message;
-            t.itch.rendererLogs.push(line);
-            const matches = exitCodeRegexp.exec(line);
-            if (matches) {
-              t.itch.exitCode = +matches[1];
-              t.comment(`Got exit code ${t.itch.exitCode} from renderer process`);
-              return;
-            }
-          }
+          if (!t.itch.polling) { return; }
         }
       } catch (e) {
         t.comment(`While polling logs: ${e.stack}`);
@@ -82,37 +69,28 @@ test('application launch', async (t) => {
   }
 
   const afterEach = async (t) => {
+    t.comment("cleaning up test...");
+
     if (!(t.app && t.app.isRunning())) {
       return;
     }
 
     if (t.ownExit) {
+      t.comment("waiting for test to exit on its own...");
       await t.itch.pollPromise;
     }
 
     t.comment("stopping app...");
     t.itch.polling = false;
     if (!t.ownExit) {
+      t.comment("printing the last of logs...");
       await t.itch.pollPromise;
     }
 
     await t.app.stop()
-    t.comment(`App stopped. Exit code ${t.itch.exitCode}`);
+    t.comment(`app stopped. Exit code ${t.itch.exitCode}`);
 
     if (t.itch.exitCode !== 0) {
-      t.comment(`Main logs: `);
-      for (const line of t.itch.mainLogs) {
-        t.comment(line);
-      }
-
-      // It looks like these are printed in main
-      // process log as well?
-
-      // t.comment(`Renderer logs: `);
-      // for (const line of t.itch.rendererLogs) {
-      //   t.comment(line);
-      // }
-
       throw new Error(`Non-zero exit code ${t.itch.exitCode}`);
     }
   }
@@ -146,6 +124,6 @@ test('application launch', async (t) => {
 
   spec("it shows an initial window", async (t) => {
     const numWindows = await t.app.client.getWindowCount();
-    t.ok(numWindows >= 1);
+    t.is(numWindows, 1);
   })
 })
