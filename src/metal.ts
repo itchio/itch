@@ -51,6 +51,14 @@ function autoUpdateDone () {
     const shouldQuit = app.makeSingleInstance((argv, cwd) => {
       // we only get inside this callback when another instance
       // is launched - so this executes in the context of the main instance
+      if (env.name === "test") {
+        // if we get this in testing, chromedriver probably
+        // timed out while waiting for a command to execute
+        // remotely - let's clean up & wait for it to try again
+        app.exit(0);
+        return;
+      }
+
       handleUrls(argv);
       store.dispatch(actions.focusWindow({}));
     });
@@ -58,7 +66,7 @@ function autoUpdateDone () {
     if (shouldQuit) {
       // app.quit() is the source of all our problems,
       // cf. https://github.com/itchio/itch/issues/202
-      process.exit(0);
+      app.exit(0);
       return;
     }
     handleUrls(process.argv);
