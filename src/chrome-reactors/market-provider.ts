@@ -47,6 +47,8 @@ async function updateMarkets(store: IStore) {
 }
 
 async function getUserMarket(store: IStore) {
+  return null;
+
   const state = store.getState();
 
   // we only want a user market if we're loaded
@@ -81,6 +83,8 @@ async function getUserMarket(store: IStore) {
 }
 
 async function getGlobalMarket(store: IStore) {
+  return null;
+
   let market = cache.__itch_global_market;
 
   if (market) {
