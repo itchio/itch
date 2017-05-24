@@ -1,6 +1,6 @@
 
 import urls from "../constants/urls";
-import net from "./net";
+import {request} from "../net/request";
 
 interface IGistFiles {
   [key: string]: {
@@ -16,7 +16,7 @@ export interface IGistData {
 
 export async function createGist (data: IGistData) {
   let uri = `${urls.githubApi}/gists`;
-  let resp = await net.request("post", uri, data, {format: "json"});
+  let resp = await request("post", uri, data, {format: "json"});
   if (resp.statusCode === 201) {
     return resp.body;
   }

@@ -1,7 +1,7 @@
 
+require("./boot/crash");
 require("./boot/sourcemaps");
 require("./boot/bluebird");
-require("./boot/crash");
 require("./boot/fs");
 
 function main () {

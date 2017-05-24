@@ -13,7 +13,7 @@ import sf from "../../os/sf";
 import * as os from "../../os";
 import registry from "../../os/win32/registry";
 
-import net from "../../api/net";
+import {request, getChecksums, ensureChecksum} from "../../net";
 import butler from "../../util/butler";
 import {Logger} from "../../logger";
 
@@ -419,7 +419,7 @@ async function assessDep (opts: IWindowsPrereqsOpts, prereq: IManifestPrereq): P
   const infoUrl = `${getBaseURL(prereq)}/info.json`;
   logger.info(`Retrieving ${infoUrl}`);
   // bust cloudflare cache
-  const infoRes = await net.request("get", infoUrl, {t: Date.now()}, {format: "json"});
+  const infoRes = await request("get", infoUrl, {t: Date.now()}, {format: "json"});
   if (infoRes.statusCode !== 200) {
     throw new Error(`Could not install prerequisite ${prereq.name}: server replied with HTTP ${infoRes.statusCode}`);
   }
@@ -514,10 +514,10 @@ async function fetchDep (
 
   logger.info(`Verifiying integrity of ${info.fullName} archive`);
   const algo = "SHA256";
-  const sums = await net.getChecksums(opts, `${baseUrl}`, algo);
+  const sums = await getChecksums(opts.logger, `${baseUrl}`, algo);
   const sum = sums[`${prereq.name}.7z`];
 
-  await net.ensureChecksum(opts, {
+  await ensureChecksum(opts.logger, {
     algo,
     expected: sum.hash,
     file: archivePath,

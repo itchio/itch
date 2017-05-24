@@ -10,6 +10,7 @@ import * as querystring from "querystring";
 
 import platformData from "../constants/platform-data";
 import urls from "../constants/urls";
+import {isNetworkError} from "../net/errors";
 
 import {findWhere} from "underscore";
 
@@ -140,17 +141,21 @@ ${log}
 
   mount: () => {
     const makeHandler = (type: string) => {
-      return async function (e: Error) {
-        try {
-          await self.handle(type, e);
-        } catch (e) {
+      return (e: Error) => {
+        if (isNetworkError(e)) {
+          console.error(`Uncaught network error: ${e.stack}`);
+          return;
+        }
+
+        self.handle(type, e).catch((e2) => {
           // well, we tried.
-          console.log(`Error in crash-reporter (${type})\n${e.message || e}`); // tslint:disable-line:no-console
-        } finally {
+          // tslint:disable-next-line
+          console.log(`Error in crash-reporter (${type})\n${e2.stack}`);
+        }).then(() => {
           if (type === "uncaughtException") {
             os.exit(1);
           }
-        }
+        });
       };
     };
     process.on("uncaughtException", makeHandler("Uncaught exception"));

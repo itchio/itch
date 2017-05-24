@@ -8,8 +8,13 @@ import {isItchioURL} from "./util/url";
 
 import * as actions from "./actions";
 import env from "./env";
+import {app} from "electron";
 
 const appUserModelId = "com.squirrel.itch.itch";
+
+if (env.name === "test") {
+  app.setName("itch-test");
+}
 
 // tslint:disable:no-console
 

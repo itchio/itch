@@ -5,6 +5,7 @@ import Game from "../db/models/game";
 import client from "../api";
 import normalize from "../api/normalize";
 import {game, arrayOf} from "../api/schemas";
+import {isNetworkError} from "../net/errors";
 
 import {pluck, difference, indexBy, each} from "underscore";
 
@@ -47,7 +48,7 @@ export default class DashboardFetcher extends Fetcher {
       });
     } catch (e) {
       this.debug(`API error:`, e);
-      if (client.isNetworkError(e)) {
+      if (isNetworkError(e)) {
         return new Outcome("retry");
       } else {
         throw e;

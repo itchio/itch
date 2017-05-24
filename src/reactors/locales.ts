@@ -5,7 +5,7 @@ import {join} from "path";
 import ifs from "../localizer/ifs";
 
 import {getLocalesConfigPath, getLocalePath} from "../os/resources";
-import net from "../api/net";
+import {request} from "../net/request";
 import urls from "../constants/urls";
 import {app} from "electron";
 import env from "../env";
@@ -43,7 +43,7 @@ async function doDownloadLocale (lang: string, resources: II18nResources): Promi
   const uri = `${urls.remoteLocalePath}/${lang}.json`;
 
   logger.info(`Downloading fresh locale file from ${uri}`);
-  const resp = await net.request("get", uri, {}, {format: "json"});
+  const resp = await request("get", uri, {}, {format: "json"});
 
   logger.info(`HTTP GET ${uri}: ${resp.statusCode}`);
   if (resp.statusCode !== 200) {

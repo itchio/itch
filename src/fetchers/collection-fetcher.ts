@@ -6,6 +6,7 @@ import client from "../api";
 
 import normalize from "../api/normalize";
 import {collection, game, arrayOf} from "../api/schemas";
+import {isNetworkError} from "../net/errors";
 
 import {indexBy} from "underscore";
 
@@ -55,7 +56,7 @@ export default class CollectionFetcher extends Fetcher {
       });
     } catch (e) {
       this.debug(`API error:`, e);
-      if (client.isNetworkError(e)) {
+      if (isNetworkError(e)) {
         return new Outcome("retry");
       } else {
         throw e;
@@ -70,7 +71,7 @@ export default class CollectionFetcher extends Fetcher {
       });
     } catch (e) {
       this.debug(`API error:`, e);
-      if (client.isNetworkError(e)) {
+      if (isNetworkError(e)) {
         return new Outcome("retry");
       } else {
         throw e;

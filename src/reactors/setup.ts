@@ -47,11 +47,11 @@ async function doSetup (store: IStore) {
   try {
     await setup(store);
   } catch (e) {
-    const err = e.ibrew || e;
-    logger.error("setup got error: ", err);
+    logger.error("setup got error: ", e.stack);
+
     store.dispatch(actions.setupStatus({
       icon: "error",
-      message: ["login.status.setup_failure", {error: (err.message || "" + err)}],
+      message: ["login.status.setup_failure", {error: (e.message || "" + e)}],
       stack: e.stack,
     }));
   }

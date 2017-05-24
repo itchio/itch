@@ -8,13 +8,14 @@ import {app, BrowserWindow} from "electron";
 import * as os from "../os";
 
 import * as actions from "../actions";
+import env from "../env";
 
 import delay from "./delay";
 
 const AUTODISMISS_DELAY = 5000;
 
 // OSX already shows the app's icon
-const DEFAULT_ICON = os.platform() === "darwin" ? null : `./static/images/tray/${app.getName()}.png`;
+const DEFAULT_ICON = os.platform() === "darwin" ? null : `./static/images/tray/${env.appName}.png`;
 
 export default function (watcher: Watcher) {
   watcher.on(actions.bounce, async (store, action) => {

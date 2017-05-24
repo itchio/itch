@@ -23,7 +23,7 @@ class LastPlayed extends React.PureComponent<IProps & IDerivedProps & I18nProps,
         ? <label>
           {short
             ? <TimeAgo date={lastTouched}/>
-            : interleave(t, `usage_stats.last_${xed}_time_ago`, {time_ago: <TimeAgo date={lastTouchedDate}/>})
+            : interleave(t, `usage_stats.last_${xed}_time_ago`, {time_ago: <TimeAgo date={lastTouched}/>})
           }
             
           </label>

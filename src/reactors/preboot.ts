@@ -12,8 +12,7 @@ const opts = {logger};
 
 import {ProxySource} from "../types";
 
-import {NET_PARTITION_NAME} from "../api/net";
-
+import {NET_PARTITION_NAME} from "../constants/net";
 import {applyProxySettings} from "../reactors/proxy";
 
 let testProxy = false;

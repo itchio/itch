@@ -55,7 +55,7 @@ async function createWindow (store: IStore, hidden: boolean) {
     iconName = "icon-32";
   }
 
-  const iconPath = getImagePath("window/" + app.getName() + "/" + iconName + ".png");
+  const iconPath = getImagePath("window/" + env.appName + "/" + iconName + ".png");
 
   const window = new BrowserWindow({
     title: app.getName(),

@@ -8,6 +8,7 @@ import getColumns from "../db/get-columns";
 import client from "../api";
 import normalize from "../api/normalize";
 import {downloadKey} from "../api/schemas";
+import {isNetworkError} from "../net/errors";
 
 import {elapsed} from "../format";
 import {arrayOf} from "idealizr";
@@ -111,7 +112,7 @@ export default class LibraryFetcher extends Fetcher {
       this.logger.info("api", elapsed(t1, t2), "norm", elapsed(t2, t3));
     } catch (e) {
       this.logger.error(`API error:`, e);
-      if (client.isNetworkError(e)) {
+      if (isNetworkError(e)) {
         return this.retry();
       } else {
         throw e;

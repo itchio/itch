@@ -7,7 +7,9 @@ const $ = require('./common')
 async function main () {
   await $.showVersions(['yarn']);
 
+  process.env.DEBUG = "electron-rebuild";
   $(await $.yarn('install'));
+  delete process.env.DEBUG;
 
   process.env.ELECTRON_ENABLE_LOGGING = '1';
 

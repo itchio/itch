@@ -122,7 +122,7 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
       // FIXME: this is a crude workaround for moment.js warnings
       mtime = new Date(mtime);
     }
-    const hint = `${format.date(mtime, DATE_FORMAT, t.lang)}`;
+    const hint = `${formatDate(mtime, t.lang, DATE_FORMAT)}`;
 
     items.push({
       type: "info",

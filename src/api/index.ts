@@ -1,7 +1,7 @@
 
 import * as querystring from "querystring";
 
-import net from "./net";
+import {request, RequestFunc} from "../net";
 import {camelifyObject} from "../format";
 import urls from "../constants/urls";
 
@@ -65,12 +65,12 @@ export class Client {
   lastRequest: number;
 
   /** http request maker */
-  netStack: typeof net;
+  requestFunc: RequestFunc;
 
   constructor () {
     this.rootUrl = `${urls.itchioApi}/api/1`;
     this.lastRequest = 0;
-    this.netStack = net;
+    this.requestFunc = request;
   }
 
   /**
@@ -90,7 +90,7 @@ export class Client {
     await cooldown();
     const t2 = Date.now();
 
-    const resp = await this.netStack.request(method, uri, data, {});
+    const resp = await this.requestFunc(method, uri, data, {});
     let body = resp.body;
     const t3 = Date.now();
 
@@ -153,16 +153,6 @@ export class Client {
 
   hasAPIError (errorObject: ApiError, apiError: string): boolean {
     return contains(errorObject.errors || [], apiError);
-  }
-
-  isNetworkError (errorObject: any): boolean {
-    const msg = errorObject.message;
-    return msg === "net::ERR_INTERNET_DISCONNECTED" ||
-           msg === "net::ERR_PROXY_CONNECTION_FAILED" || 
-           msg === "net::ERR_CONNECTION_RESET" ||
-           msg === "net::ERR_CONNECTION_CLOSE" ||
-           msg === "Request timed out" ||
-           msg === "Failed to fetch";
   }
 }
 

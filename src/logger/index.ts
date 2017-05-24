@@ -3,6 +3,8 @@ import {logPath} from "../os/paths";
 import {Logger as PinoLogger, Level} from "pino";
 import {Stream, Writable} from "stream";
 
+import env from "../env";
+
 const LOG_LEVEL = process.env.ITCH_LOG_LEVEL || "info" as Level;
 
 interface IChildProps {
@@ -129,7 +131,7 @@ const defaultLogger = makeLogger(logPath());
 
 if (process.type === "browser") {
   const {app} = require("electron");
-  defaultLogger.info(`${app.getName()} ${app.getVersion()} on electron ${process.versions.electron}`);
+  defaultLogger.info(`${env.appName} ${app.getVersion()} on electron ${process.versions.electron}`);
 }
 
 export const devNull: Logger = new (class {

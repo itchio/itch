@@ -10,6 +10,7 @@ import {sortBy} from "underscore";
 import {MODAL_RESPONSE} from "../constants/action-types";
 import urls from "../constants/urls";
 import {promisedModal} from "./modals";
+import {isNetworkError} from "../net/errors";
 
 import {ITwoFactorInputParams} from "../components/modal-widgets/two-factor-input";
 
@@ -106,7 +107,7 @@ export default function (watcher: Watcher) {
       store.dispatch(actions.loginSucceeded({key, me}));
     } catch (e) {
       const {me} = action.payload;
-      if (me && client.isNetworkError(e)) {
+      if (me && isNetworkError(e)) {
         // log in anyway
         store.dispatch(actions.loginSucceeded({key, me}));
       } else {

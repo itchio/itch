@@ -21,7 +21,7 @@ import net from "./ibrew/net";
 import {
   downloadToFile, getChecksums, ensureChecksum,
   ChecksumAlgo, IChecksums,
-} from "../api/net";
+} from "../net";
 
 import {EventEmitter} from "events";
 
@@ -81,14 +81,14 @@ const self = {
       onStatus("download", ["login.status.dependency_install", {name, version: v}]);
       logger.info(`${name}: downloading '${v}' from ${archiveUrl}`);
 
-      await downloadToFile(opts, archiveUrl, archivePath);
+      await downloadToFile(opts.logger, archiveUrl, archivePath);
 
       let algo: ChecksumAlgo;
       let sums: IChecksums;
 
       for (algo of net.CHECKSUM_ALGOS) {
         try {
-          sums = await getChecksums(opts, `${channel}/v${v}`, algo);
+          sums = await getChecksums(opts.logger, `${channel}/v${v}`, algo);
           break;
         } catch (e) {
           logger.warn(`${name}: couldn't get ${algo} hashes (${e.message || "" + e})`);
@@ -96,7 +96,7 @@ const self = {
       }
 
       if (sums && sums[archiveName]) {
-        await ensureChecksum(opts, {
+        await ensureChecksum(opts.logger, {
           algo,
           expected: sums[archiveName].hash,
           file: archivePath,

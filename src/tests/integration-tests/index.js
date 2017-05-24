@@ -38,9 +38,10 @@ test('application launch', async (t) => {
         NODE_ENV: "test",
       },
       chromeDriverLogPath: "tmp/chrome-driver-log.txt",
-      webdriverLogPath: "tmp/web-driver-log.txt",
+      webdriverLogPath: "tmp/web-driver-logs",
     })
     t.comment(`starting app with args ${args.join(" ")}`);
+
     await t.app.start();
     t.comment("app started!");
 
@@ -80,14 +81,14 @@ test('application launch', async (t) => {
       await t.itch.pollPromise;
     }
 
-    t.comment("stopping app...");
     t.itch.polling = false;
     if (!t.ownExit) {
       t.comment("printing the last of logs...");
       await t.itch.pollPromise;
     }
 
-    await t.app.stop()
+    t.comment("stopping app...");
+    await t.app.stop();
     t.comment(`app stopped. Exit code ${t.itch.exitCode}`);
 
     if (t.itch.exitCode !== 0) {
@@ -103,6 +104,7 @@ test('application launch', async (t) => {
         await beforeEach(t, opts);
         await f(t);
       } catch (e) {
+        t.comment(`In spec, caught ${e}`);
         err = e;
       } finally {
         await afterEach(t);
@@ -127,3 +129,7 @@ test('application launch', async (t) => {
     t.is(numWindows, 1);
   })
 })
+
+require("tape").onFinish(() => {
+  console.log("tape finished!");
+});

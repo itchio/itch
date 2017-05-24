@@ -3,8 +3,8 @@ import {Watcher} from "./watcher";
 
 import {app} from "electron";
 import * as os from "../os";
-import client from "../api";
-import net from "../api/net";
+import {request} from "../net/request";
+import {isNetworkError} from "../net/errors";
 import {getT} from "../localizer";
 
 import delay from "./delay";
@@ -119,7 +119,7 @@ export default function (watcher: Watcher) {
     const uri = await getFeedURL();
 
     try {
-      const resp = await net.request("get", uri, {});
+      const resp = await request("get", uri, {});
 
       logger.info(`HTTP GET ${uri}: ${resp.statusCode}`);
       if (resp.statusCode === 200) {
@@ -139,7 +139,7 @@ export default function (watcher: Watcher) {
         store.dispatch(actions.selfUpdateError({message: `While trying to reach update server: ${resp.status}`}));
       }
     } catch (e) {
-      if (client.isNetworkError(e)) {
+      if (isNetworkError(e)) {
         logger.warn("Seems like we have no network connectivity, skipping self-update check");
         store.dispatch(actions.selfUpdateNotAvailable({uptodate: false}));
       } else {
