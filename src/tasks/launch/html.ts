@@ -6,7 +6,9 @@ import {dirname, basename, join} from "path";
 import * as invariant from "invariant";
 import * as querystring from "querystring";
 
-import {app, BrowserWindow, shell} from "electron";
+import {BrowserWindow, shell} from "electron";
+import appEnv from "../../env";
+const {appName} = appEnv;
 
 import spawn from "../../os/spawn";
 import * as paths from "../../os/paths";
@@ -112,7 +114,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
 
   let win = new BrowserWindow({
     title: game.title,
-    icon: `./static/images/tray/${app.getName()}.png`,
+    icon: `./static/images/tray/${appName}.png`,
     width, height,
     center: true,
     show: true,

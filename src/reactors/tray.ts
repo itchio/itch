@@ -5,6 +5,7 @@ import * as os from "../os";
 import {getImagePath} from "../os/resources";
 import localizer from "../localizer";
 import {app, Menu, Tray} from "electron";
+import env from "../env";
 
 import {createSelector} from "reselect";
 
@@ -32,7 +33,7 @@ function makeTray (store: IStore) {
   let base = "white";
   if (os.platform() === "win32" && !/^10\./.test(os.release())) {
     // windows older than 10 get the old colorful tray icon
-    base = app.getName();
+    base = env.appName;
   }
 
   const iconName = `${base}${suffix}.png`;
