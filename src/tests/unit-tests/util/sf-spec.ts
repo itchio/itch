@@ -107,7 +107,7 @@ test("sf", t => {
   t.case("sf.promised (rejects)", async t => {
     const stream = new EventEmitter();
     const p = sf.promised(stream);
-    setTimeout(() => stream.emit("error"), 0);
+    setTimeout(() => stream.emit("error", new Error()), 0);
     await t.rejects(p);
   });
 });
