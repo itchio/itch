@@ -173,7 +173,7 @@ interface IApplyOpts extends IButlerOpts {
 }
 
 /* Apply a wharf patch at ${patchPath} in-place into ${outPath}, while checking with ${signaturePath} */
-async function apply (opts: IButlerOpts) {
+async function apply (opts: IApplyOpts) {
   const {patchPath, outPath, signaturePath} = opts;
   let args = [patchPath, "--inplace", outPath, "--signature", signaturePath];
 
