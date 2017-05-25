@@ -75,7 +75,7 @@ export default async function configure(out: EventEmitter, inOpts: IConfigureOpt
     path: appPath,
     osFilter,
     archFilter,
-    logger: opts.logger,
+    logger,
     emitter: out,
   });
   logger.info(`verdict =\n${JSON.stringify(verdict, null, 2)}`);

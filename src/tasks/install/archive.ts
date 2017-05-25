@@ -53,15 +53,15 @@ const self = {
   },
 
   install: async function (out: EventEmitter, opts: IStartTaskOpts) {
-    const archivePath = opts.archivePath;
+    const {logger, archivePath} = opts;
 
     const onProgress = (ev: IProgressInfo) => out.emit("progress", ev);
     const extractOnProgress = subprogress(onProgress, 0, 0.8);
     const deployOnProgress = subprogress(onProgress, 0.8, 1);
 
     const stagePath = opts.archivePath + "-stage";
-    await butler.wipe(stagePath);
-    await butler.mkdir(stagePath);
+    await butler.wipe(stagePath, {logger, emitter: out});
+    await butler.mkdir(stagePath, {logger, emitter: out});
 
     logger.info(`extracting archive '${archivePath}' to '${stagePath}'`);
 
@@ -90,14 +90,14 @@ const self = {
     await deploy.deploy(deployOpts);
 
     logger.info("wiping stage...");
-    await butler.wipe(stagePath);
+    await butler.wipe(stagePath, {logger, emitter: out});
     logger.info("done wiping stage");
 
     return {status: "ok"};
   },
 
   uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
-    const destPath = opts.destPath;
+    const {logger, destPath} = opts;
 
     const installerName = self.retrieveCachedType(opts);
     if (installerName && installerName !== "archive") {
@@ -109,7 +109,7 @@ const self = {
       await core.uninstall(out, coreOpts);
     } else {
       logger.info(`wiping directory ${destPath}`);
-      await butler.wipe(destPath);
+      await butler.wipe(destPath, {logger, emitter: out});
     }
 
     logger.info("cleaning up cache");

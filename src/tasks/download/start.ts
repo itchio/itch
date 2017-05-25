@@ -64,7 +64,7 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
     logger.info(`Doing verify+heal to ${fullInstallFolder}`);
 
     await butler.verify(signatureURL, fullInstallFolder, {
-      ...opts,
+      logger,
       heal: `archive,${archiveURL}`,
       emitter: out,
       onProgress,
@@ -74,11 +74,11 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
 
     try {
       await butler.cp({
-        ...opts,
         src: uploadURL,
         dest: destPath,
         resume: true,
         emitter: out,
+        logger,
         onProgress,
       });
     } catch (e) {
