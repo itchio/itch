@@ -147,21 +147,21 @@ const self = {
   },
 
   extract: async function (opts: IExtractOpts): Promise<void> {
-    const {archivePath, logger} = opts;
+    const {archivePath, logger, emitter} = opts;
 
     const hasButler = await butler.sanityCheck();
 
     let useButler = false;
     if (hasButler) {
       try {
-        const fileResult = await butler.file({path: archivePath, logger});
+        const fileResult = await butler.file({path: archivePath, logger, emitter});
         if (fileResult.type === "zip") {
           useButler = true;
         } else {
           logger.warn(`Recognized by butler but not a zip: ${fileResult.type}`);
         }
       } catch (e) {
-        logger.error(`Butler choked: ${e.message || e}`);
+        logger.error(`butler choked: ${e.stack}`);
       }
     }
 
