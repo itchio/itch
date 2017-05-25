@@ -53,7 +53,12 @@ async function updateOpenAtLoginState(store: IStore, openAtLogin: boolean, openA
       try {
         await sf.unlink(autostartFilePath);
       } catch (err) {
-        logger.error(`Error while unlinking ${autostartFilePath}: ${err.message}`);
+        if (err.code === "ENOENT") {
+          // not even there, good!
+        } else {
+          logger.error(`Error while unlinking ${autostartFilePath}: ${err.message}`);
+          return;
+        }
       }
 
       store.dispatch(actions.openAtLoginError(null));
