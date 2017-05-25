@@ -25,6 +25,7 @@ export default function (watcher: Watcher) {
       game: cave.game,
       gameId: cave.gameId,
       upload: cave.uploads[cave.uploadId],
+      logger,
     };
 
     await startTask(store, taskOpts);

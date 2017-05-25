@@ -14,7 +14,7 @@ import * as os from "../../os";
 import registry from "../../os/win32/registry";
 
 import {request, getChecksums, ensureChecksum} from "../../net";
-import butler from "../../util/butler";
+import butler, {IButlerResult} from "../../util/butler";
 import {Logger} from "../../logger";
 
 import * as ospath from "path";
@@ -203,7 +203,7 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
   // FIXME: db
   const globalMarket: any = null;
 
-  const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
+  const cave = globalMarket.getEntity("caves", caveId);
   let installedPrereqs = cave.installedPrereqs || {};
 
   let [alreadyInstalledTasks, remainingTasks] = partition(tasks, (task) => task.alreadyInstalled);
@@ -311,24 +311,25 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
     await sf.writeFile(installPlanFullPath, installPlanContents, {encoding: "utf8"});
 
     logger.info(`Wrote install plan to ${installPlanFullPath}`);
-    const emitter = new EventEmitter();
 
     const stateDirPath = ospath.join(workDir.name, "statedir");
     await sf.mkdir(stateDirPath);
 
-    emitter.on("result", (result: IButlerPrereqResult) => {
+    const onButlerResult = (result: IButlerResult) => {
+      const value = result.value as IButlerPrereqResult;
+
       prereqsState = {
         ...prereqsState,
         tasks: {
           ...prereqsState.tasks,
-          [result.name]: {
-            ...prereqsState.tasks[result.name],
-            status: result.status,
+          [value.name]: {
+            ...prereqsState.tasks[value.name],
+            status: value.status,
           },
         },
       };
       sendProgress();
-    });
+    };
 
     logger.info("Installing all prereqs via butler...");
 
@@ -372,8 +373,9 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
 
     await butler.installPrereqs(installPlanFullPath, {
       pipe: namedPipePath,
-      logger: opts.logger,
-      emitter,
+      emitter: opts.emitter,
+      logger,
+      onResult: onButlerResult,
     });
 
     const nowInstalledPrereqs = {} as {
@@ -393,7 +395,7 @@ async function handleManifest (opts: IWindowsPrereqsOpts) {
 
     const emitter = new EventEmitter();
     try {
-      await butler.wipe(workDir.name, {emitter});
+      await butler.wipe(workDir.name, {emitter, logger});
     } catch (e) {
       logger.warn(`Couldn't wipe: ${e}`, e);
     }
@@ -504,10 +506,11 @@ async function fetchDep (
   const archivePath = ospath.join(workDir, `${prereq.name}.7z`);
 
   await butler.cp({
-    emitter: new EventEmitter(),
-    onProgress,
     src: archiveUrl,
     dest: archivePath,
+    emitter: opts.emitter,
+    logger,
+    onProgress,
   });
 
   onStatus("extracting");

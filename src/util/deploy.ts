@@ -71,7 +71,8 @@ let self = {
       }
     }
 
-    await butler.mkdir(destPath);
+    const emitter = new EventEmitter();
+    await butler.mkdir(destPath, {emitter, logger});
 
     logger.info(`cleaning up dest path ${destPath}`);
 
@@ -100,7 +101,7 @@ let self = {
 
       await bluebird.map(dinosaurs, (rel) => {
         let dinosaur = ospath.join(destPath, rel);
-        return butler.wipe(dinosaur);
+        return butler.wipe(dinosaur, {emitter, logger});
       }, {concurrency: 4});
     } else {
       logger.info("no dinosaurs");
@@ -108,7 +109,8 @@ let self = {
 
     logger.info("merging stage with dest");
     await butler.ditto(stagePath, destPath, {
-      emitter: new EventEmitter(),
+      emitter,
+      logger,
       onProgress,
     });
 

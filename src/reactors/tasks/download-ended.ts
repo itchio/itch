@@ -55,6 +55,7 @@ export default function (watcher: Watcher) {
           archivePath: downloadOpts.destPath,
           downloadKey: downloadOpts.downloadKey,
           handPicked: downloadOpts.handPicked,
+          logger,
         };
 
         const {err: installErr} = await startTask(store, taskOpts);

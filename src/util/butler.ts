@@ -15,7 +15,7 @@ import {Logger} from "../logger";
 const showDebug = (process.env.MY_BUTLER_IS_MY_FRIEND === "1");
 const dumpAllOutput = (process.env.MY_BUTLER_IS_MY_ENEMY === "1");
 
-interface IButlerResult extends IButlerOpts {
+export interface IButlerResult extends IButlerOpts {
   value: any;
 }
 
@@ -25,6 +25,7 @@ interface IButlerOpts {
   logger: Logger;
   emitter: EventEmitter;
   onProgress?: IProgressListener;
+  onResult?: IResultListener;
   elevate?: boolean;
 }
 
@@ -82,9 +83,9 @@ async function butler <T> (opts: IButlerOpts, command: string, commandArgs: stri
   let args = ["--json", command, ...commandArgs];
 
   const onToken = partial(parseButlerStatus, {
-    ...opts,
     onError: (e: Error) => { err = e; },
     onResult: (result: IButlerResult) => { value = result.value; },
+    ...opts,
   });
   const onErrToken = (line: string) => {
     logger.info(`butler stderr: ${line}`);
