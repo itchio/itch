@@ -32,6 +32,7 @@ import {
   UNLOCK_TAB, IUnlockTabPayload,
 
   OPEN_URL, IOpenUrlPayload,
+  PROCESS_URL_ARGUMENTS, IProcessUrlArgumentsPayload,
   REPORT_ISSUE, IReportIssuePayload,
   COPY_TO_CLIPBOARD, ICopyToClipboardPayload,
   HANDLE_ITCHIO_URL, IHandleItchioUrlPayload,
@@ -95,6 +96,7 @@ export const openGameContextMenu = createAction<IOpenGameContextMenuPayload>(OPE
 export const unlockTab = createAction<IUnlockTabPayload>(UNLOCK_TAB);
 
 export const openUrl = createAction<IOpenUrlPayload>(OPEN_URL);
+export const processUrlArguments = createAction<IProcessUrlArgumentsPayload>(PROCESS_URL_ARGUMENTS);
 export const reportIssue = createAction<IReportIssuePayload>(REPORT_ISSUE);
 export const copyToClipboard = createAction<ICopyToClipboardPayload>(COPY_TO_CLIPBOARD);
 export const handleItchioUrl = createAction<IHandleItchioUrlPayload>(HANDLE_ITCHIO_URL);

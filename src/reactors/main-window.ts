@@ -6,6 +6,8 @@ import {createSelector} from "reselect";
 import {makeLabel} from "../util/navigation";
 import env from "../env";
 
+import sf from "../os/sf";
+
 import {darkMineShaft} from "../constants/colors";
 import {app, BrowserWindow} from "electron";
 import config from "../util/config";
@@ -70,10 +72,9 @@ async function createWindow (store: IStore, hidden: boolean) {
 
   if (os.platform() === "darwin") {
     try {
-      logger.info(`setting icon to: ${iconPath}`);
       app.dock.setIcon(iconPath);
     } catch (err) {
-      logger.error(`error setting icon: ${err.stack || err}`);
+      logger.warn(`Could not set dock icon: ${err.stack}`);
     }
   }
 
@@ -83,9 +84,9 @@ async function createWindow (store: IStore, hidden: boolean) {
   ensureWindowInsideDisplay(window);
 
   window.on("close", (e: any) => {
-    logger.info("Main window being closed");
+    logger.debug("Main window being closed");
     if (quitting) {
-      logger.info("Quitting, letting main window close");
+      logger.debug("Quitting, letting main window close");
       // alright alright you get to close
       return;
     }
@@ -99,12 +100,12 @@ async function createWindow (store: IStore, hidden: boolean) {
     }
 
     if (closeToTray) {
-      logger.info("Close to tray enabled");
+      logger.debug("Close to tray enabled");
     } else {
-      logger.info("Close to tray disabled, quitting!");
-      setTimeout(() => {
+      logger.debug("Close to tray disabled, quitting!");
+      process.nextTick(() => {
         store.dispatch(actions.quit({}));
-      }, 100);
+      });
       return;
     }
 
@@ -162,7 +163,7 @@ async function createWindow (store: IStore, hidden: boolean) {
         store.dispatch(actions.triggerBrowserForward({}));
         break;
       default:
-        logger.info(`Unknown app command "${cmd}", ignoring`);
+        // ignore unknown app commands
     }
   });
 
@@ -190,13 +191,28 @@ async function createWindow (store: IStore, hidden: boolean) {
     config.set(MAXIMIZED_CONFIG_KEY, false);
   });
 
-  window.on("ready-to-show", (e: any) => {
-    logger.info("Ready to show!");
+  window.on("ready-to-show", async (e: any) => {
+    if (env.name === "development") {
+      try {
+        await sf.stat(".cache");
+        logger.warn("");
+        logger.warn("####################################");
+        logger.warn("# Did you forget to wipe '.cache'? #");
+        logger.warn("#                                  #");
+        logger.warn("# The app is running in dev, yet   #");
+        logger.warn("# there is a '.cache' folder, so   #");
+        logger.warn("# only precompiled sources will be #");
+        logger.warn("# used.                            #");
+        logger.warn("####################################");
+        logger.warn("");
+      } catch (e) {
+        /* most probably ENOENT - which is good (in dev) */
+      }
+    }
 
     createLock = false;
     if (firstWindow) {
       firstWindow = false;
-      logger.info(`Sending windowReady with id ${window.id}`);
       store.dispatch(actions.firstWindowReady({}));
     }
 
@@ -210,10 +226,7 @@ async function createWindow (store: IStore, hidden: boolean) {
   });
 
   if (parseInt(process.env.DEVTOOLS, 10) > 0) {
-    logger.info("Opening devtools");
     window.webContents.openDevTools({mode: "detach"});
-  } else {
-    logger.info("No devtools");
   }
 
   const rootDir = resolve(__dirname, "..");

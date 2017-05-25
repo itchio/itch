@@ -59,7 +59,9 @@ function autoUpdateDone () {
         return;
       }
 
-      handleUrls(argv);
+      store.dispatch(actions.processUrlArguments({
+        args: argv,
+      }));
       store.dispatch(actions.focusWindow({}));
     });
 
@@ -69,7 +71,9 @@ function autoUpdateDone () {
       app.exit(0);
       return;
     }
-    handleUrls(process.argv);
+    store.dispatch(actions.processUrlArguments({
+      args: process.argv,
+    }));
 
     if (env.name === "development") {
       enableLiveReload({strategy: "react-hmr"});
@@ -108,8 +112,6 @@ function autoUpdateDone () {
 
   // macOS (Info.pList)
   app.on("open-url", (e: Event, url: string) => {
-    console.log(`Processing 1 url`);
-
     if (isItchioURL(url)) {
       // macOS will err -600 if we don't
       e.preventDefault();
@@ -120,17 +122,4 @@ function autoUpdateDone () {
   });
 
   // URL handling
-
-  function handleUrls (argv: string[]) {
-    console.log(`Processing ${argv.length} potential urls`);
-
-    // Windows (reg.exe), Linux (XDG)
-    // open at most one URL
-    for (const arg of argv) {
-      if (isItchioURL(arg)) {
-        store.dispatch(actions.openUrl({url: arg}));
-        break;
-      }
-    }
-  }
 }

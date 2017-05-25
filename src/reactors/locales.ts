@@ -120,7 +120,7 @@ export default function (watcher: Watcher) {
     let {lang} = action.payload;
 
     if (!upgradesEnabled) {
-      logger.warn(`Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`);
+      logger.info(`Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`);
       return;
     }
 

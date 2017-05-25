@@ -30,10 +30,10 @@ export default function (watcher: Watcher) {
       const contents = await sf.readFile(preferencesPath(), {encoding: "utf8"});
       prefs = camelifyObject(JSON.parse(contents));
     } catch (err) {
-      logger.info(`while importing preferences: ${err}`);
+      logger.warn(`while importing preferences: ${err.stack}`);
     }
 
-    logger.info("imported preferences: ", JSON.stringify(prefs, null, 2));
+    logger.debug("imported preferences: ", prefs);
     store.dispatch(actions.updatePreferences(prefs));
     store.dispatch(actions.preferencesLoaded({...initialState, ...prefs}));
   });

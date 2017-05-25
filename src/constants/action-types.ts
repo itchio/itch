@@ -299,6 +299,11 @@ export interface IOpenUrlPayload {
   url: string;
 }
 
+export const PROCESS_URL_ARGUMENTS = "PROCESS_URL_ARGUMENTS";
+export interface IProcessUrlArgumentsPayload {
+  args: string[];
+}
+
 export const REPORT_ISSUE = "REPORT_ISSUE";
 export interface IReportIssuePayload {
   log?: string;

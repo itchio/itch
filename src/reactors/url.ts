@@ -17,6 +17,16 @@ import * as actions from "../actions";
 let onSessionReady: () => void;
 
 export default function (watcher: Watcher) {
+  watcher.on(actions.processUrlArguments, async (store, action) => {
+    const {args} = action.payload;
+    for (const uri of args) {
+      if (isItchioURL(uri)) {
+        store.dispatch(actions.handleItchioUrl({uri}));
+        break;
+      }
+    }
+  });
+
   watcher.on(actions.openUrl, async (store, action) => {
     const uri = action.payload.url;
     if (isItchioURL(uri)) {

@@ -28,9 +28,7 @@ async function fetch (store: IStore, name: string) {
 }
 
 async function setup (store: IStore) {
-  logger.info("setup starting");
   await fetch(store, "unarchiver");
-  logger.info("unarchiver done");
   await bluebird.all(map([
     "butler",
     "elevate",
@@ -39,7 +37,6 @@ async function setup (store: IStore) {
     "firejail",
     "dllassert",
   ], async (name) => await fetch(store, name)));
-  logger.info("all deps done");
   store.dispatch(actions.setupDone({}));
 }
 

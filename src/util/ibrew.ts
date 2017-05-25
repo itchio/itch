@@ -79,7 +79,7 @@ const self = {
       const archivePath = ospath.join(self.binPath(), archiveName);
       const archiveUrl = `${channel}/v${v}/${archiveName}`;
       onStatus("download", ["login.status.dependency_install", {name, version: v}]);
-      logger.info(`${name}: downloading '${v}' from ${archiveUrl}`);
+      logger.info(`fetching ${name}@${v} from ${archiveUrl}`);
 
       await downloadToFile(opts.logger, archiveUrl, archivePath);
 
@@ -163,11 +163,11 @@ const self = {
 
     if (version.equal(localVersion, latestVersion) ||
         localVersion === "head") {
-      logger.info(`${name}: have latest (${localVersion})`);
+      logger.info(`✔ ${name}@${localVersion} is up-to-date`);
       return;
     }
 
-    logger.info(`${name}: upgrading '${localVersion}' => '${latestVersion}'`);
+    logger.info(`▲ upgrading ${name}@${localVersion} to ${latestVersion}`);
     await downloadVersion(latestVersion);
   },
 
@@ -226,7 +226,7 @@ const self = {
       return;
     }
     self.augmentedPaths[binPath] = true;
-    logger.info(`Augmenting $PATH: ${binPath}`);
+    logger.debug(`Augmenting $PATH: ${binPath}`);
 
     process.env.PATH = `${binPath}${ospath.delimiter}${process.env.PATH}`;
     return binPath;

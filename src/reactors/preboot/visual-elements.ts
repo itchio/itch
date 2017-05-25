@@ -27,14 +27,18 @@ const self = {
       return;
     }
 
-    logger.info(`Checking for Squirrel at ${shortcut.updateExePath}`);
+    logger.debug(`Checking for Squirrel at ${shortcut.updateExePath}`);
     try {
       const updateStats = await sf.stat(shortcut.updateExePath);
       if (!updateStats.isFile()) {
         throw new Error("Update.exe is not a regular file");
       }
     } catch (e) {
-      logger.warn(`While checking for squirrel: ${e} - skipping`);
+      if (e.code === "ENOENT") {
+        logger.debug(`Skipping visual elements, squirrel not found`);
+      } else {
+        logger.warn("Couldn't find squirrel", e.stack);
+      }
       return;
     }
 
@@ -44,7 +48,7 @@ const self = {
     logger.info(`Writing visual elements manifest at ${manifestPath}`);
     await sf.writeFile(manifestPath, visualElementsManifest, {encoding: "utf8"});
 
-    logger.info(`Looking for start menu folder`);
+    logger.debug(`Looking for start menu folder`);
 
     // avert your gaze for a minute...
     const vbsTempPath = join(app.getPath("temp"), "getstart.vbs");
@@ -55,7 +59,7 @@ const self = {
       args: ["/nologo", vbsTempPath],
     });
     const startMenuPath = out.trim();
-    logger.info(`Start menu path: ${out}`);
+    logger.debug(`Start menu path: ${out}`);
 
     // ...in fact, maybe don't read this file at all?
     const startStats = await sf.stat(out);
@@ -65,7 +69,7 @@ const self = {
     }
 
     const itchLinks = await sf.glob(`${app.getName()}.lnk`, {cwd: startMenuPath});
-    logger.info(`Found shortcuts:\n${JSON.stringify(itchLinks, null, 2)}`);
+    logger.debug(`Found shortcuts:\n${JSON.stringify(itchLinks, null, 2)}`);
 
     const mtime = Date.now() / 1000;
     for (const link of itchLinks) {
@@ -73,8 +77,6 @@ const self = {
       logger.info(`Touching ${fullPath}`);
       await sf.utimes(fullPath, mtime, mtime);
     }
-
-    logger.info(`VisualElementsManifest successfully installed/updated!`);
   },
 };
 
