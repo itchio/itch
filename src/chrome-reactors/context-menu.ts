@@ -18,6 +18,7 @@ import actionForGame from "../util/action-for-game";
 
 import * as actions from "../actions";
 
+import db from "../db";
 import CaveModel from "../db/models/cave";
 import DownloadKeyModel from "../db/models/download-key";
 
@@ -68,16 +69,7 @@ export default function (watcher: Watcher) {
 
     const {game} = action.payload;
     const gameId = game.id;
-    const {globalMarket, market} = watcher.getMarkets();
-    if (!globalMarket) {
-      logger.info(`no global market`);
-      return;
-    }
-    if (!market) {
-      logger.info(`no user market`);
-      return;
-    }
-    const cave = await globalMarket.getRepo(CaveModel).findOne({gameId});
+    const cave = await db.getRepo(CaveModel).findOne({gameId});
     const mainAction = actionForGame(game, cave);
 
     const template: IMenuItem[] = [];
@@ -157,11 +149,11 @@ export default function (watcher: Watcher) {
           click: () => store.dispatch(actions.queueCaveUninstall({caveId: cave.id})),
         });
       }
-    } else { // if (cave)
-      const downloadKeyStore = market.getRepo(DownloadKeyModel);
+    } else {
+      const downloadKeyStore = db.getRepo(DownloadKeyModel);
       const downloadKey = await downloadKeyStore.findOne({gameId: game.id});
       const hasMinPrice = game.minPrice > 0;
-      // FIXME game admins
+      // FIXME: game admins can edit too, but `userId` isn't `meId` in that case
       const meId = store.getState().session.credentials.me.id;
       const canEdit = game.userId === meId;
       const mayDownload = !!(downloadKey || !hasMinPrice || canEdit);

@@ -18,6 +18,8 @@ import CaveModel from "./models/cave";
 import compareRecords from "./compare-records";
 import * as _ from "underscore";
 
+import {globalDbPath} from "../os/paths";
+
 import {
   IEntityMap, IEntityRecords,
   IDBDeleteSpec,
@@ -198,3 +200,11 @@ export class DB {
     this.dbPath = null;
   }
 }
+
+const db = new DB();
+
+export async function connectDatabase() {
+  await db.load(globalDbPath());
+}
+
+export default db;

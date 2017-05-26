@@ -1,5 +1,7 @@
 
 import {Fetcher, Outcome} from "./types";
+
+import db from "../db";
 import Game from "../db/models/game";
 
 import client from "../api";
@@ -15,16 +17,10 @@ export default class GameFetcher extends Fetcher {
   }
 
   async work(): Promise<Outcome> {
-    const {market} = this.getMarkets();
-    if (!market) {
-      this.debug(`No user market :(`);
-      return this.retry();
-    }
-
     const path = this.store.getState().session.navigation.tabData[this.tabId].path;
     const gameId = +pathToId(path);
 
-    const gameRepo = market.getRepo(Game);
+    const gameRepo = db.getRepo(Game);
     let localGame = await gameRepo.findOneById(gameId);
     let pushGame = (game: Game) => {
       if (!game) {

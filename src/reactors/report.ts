@@ -5,6 +5,7 @@ import * as actions from "../actions";
 import rootLogger from "../logger";
 const logger = rootLogger.child({name: "report"});
 
+import db from "../db";
 import Cave from "../db/models/cave";
 
 import urls from "../constants/urls";
@@ -22,11 +23,10 @@ export default function (watcher: Watcher) {
     try {
       const state = store.getState();
       const credentials = state.session.credentials;
-      const {globalMarket, market} = watcher.getMarkets();
-      const cave = await globalMarket.getRepo(Cave).findOneById(caveId);
+      const cave = await db.getRepo(Cave).findOneById(caveId);
 
       const logPath = caveLogPath(caveId);
-      const game = await fetch.gameLazily(market, credentials, cave.gameId);
+      const game = await fetch.gameLazily(credentials, cave.gameId);
 
       const gameLog = await sf.readFile(logPath, {encoding: "utf8"});
 

@@ -1,5 +1,6 @@
 
 import {Fetcher, Outcome} from "./types";
+import db from "../db";
 import Game from "../db/models/game";
 import DownloadKey from "../db/models/download-key";
 import compareRecords from "../db/compare-records";
@@ -21,12 +22,6 @@ export default class LibraryFetcher extends Fetcher {
   }
 
   async work(): Promise<Outcome> {
-    const {market} = this.getMarkets();
-    if (!market) {
-      this.logger.warn(`No user market :(`);
-      return this.retry();
-    }
-
     const {session} = this.store.getState();
 
     let meId: number;
@@ -39,13 +34,15 @@ export default class LibraryFetcher extends Fetcher {
 
     const tabParams = session.tabParams[this.tabId];
 
-    const gameRepo = market.getRepo(Game);
-    const keyRepo = market.getRepo(DownloadKey);
+    const gameRepo = db.getRepo(Game);
+    const keyRepo = db.getRepo(DownloadKey);
     let pushLocal = async () => {
       const t1 = Date.now();
       let {offset = 0, limit = 30} = (tabParams || {});
       let query = gameRepo.createQueryBuilder("games")
-        .where("exists (select 1 from downloadKeys where downloadKeys.gameId = games.id)")
+        .where("exists (select 1 from downloadKeys where " +
+        "downloadKeys.gameId = games.id and " +
+        "downloadKeys.ownerId = :meId)", {meId})
         .orderBy("games.createdAt", "DESC")
         .setOffset(offset).setLimit(limit); 
       const t2 = Date.now();
@@ -125,7 +122,7 @@ export default class LibraryFetcher extends Fetcher {
     let goners = difference(oldKeyIds, newKeyIds);
     if (goners.length > 0) {
       this.logger.info(`goners = `, goners);
-      await market.deleteAllEntities({
+      await db.deleteAllEntities({
         entities: {
           downloadKeys: goners,
         },
@@ -134,7 +131,12 @@ export default class LibraryFetcher extends Fetcher {
       this.logger.info(`no goners`);
     }
 
-    await market.saveAllEntities({
+    const {downloadKeys} = normalized.entities;
+    for (const id of Object.keys(downloadKeys)) {
+      downloadKeys[id].ownerId = meId;
+    }
+
+    await db.saveAllEntities({
       entities: normalized.entities,
     });
     await pushLocal();

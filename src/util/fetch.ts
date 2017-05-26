@@ -9,26 +9,27 @@ import normalize from "../api/normalize";
 import {game, user, collection, downloadKey} from "../api/schemas";
 
 import {arrayOf} from "idealizr";
-import {each, union, pluck, difference, contains} from "underscore";
+import {union, pluck, difference} from "underscore";
 
+import db from "../db";
+import UserModel from "../db/models/user";
 import GameModel from "../db/models/game";
 import CollectionModel from "../db/models/collection";
 import DownloadKeyModel from "../db/models/download-key";
 
 import {
-  IUserRecord, IGameRecord, ICollectionRecord, ICredentials,
-  ICaveRecord,
+  IUserRecord, IGameRecord, ICollectionRecord, ICredentials, ICaveRecord,
 } from "../types";
 
 // TODO: don't use any in any of the return types here
 
 // FIXME: db
-export async function dashboardGames (market: any, credentials: ICredentials) {
+export async function dashboardGames (credentials: ICredentials) {
   const {key, me} = credentials;
   const api = client.withKey(key);
 
   // TODO: figure out what the typeorm equivalent of `fields` is
-  const oldGames = await market.getRepo(GameModel).find({userId: me.id});
+  const oldGames = await db.getRepo(GameModel).find({userId: me.id});
   const oldGameIds = pluck(oldGames, "id");
 
   const apiResponse = await api.myGames();
@@ -63,22 +64,22 @@ export async function dashboardGames (market: any, credentials: ICredentials) {
       ids: newGameIds,
     },
   };
-  await market.saveAllEntities({entities});
+  // TODO: get rid of any?
+  await db.saveAllEntities<any>({entities});
 
   const goners = difference(oldGameIds, newGameIds);
   if (goners.length > 0) {
     logger.info(`After /my-games, removing ${goners.length} goners: ${JSON.stringify(goners)}`)
-    await market.deleteAllEntities({entities: {games: goners}});
+    await db.deleteAllEntities({entities: {games: goners}});
   }
 }
 
 // FIXME: db
-export async function ownedKeys (
-    market: any, globalMarket: any, credentials: ICredentials): Promise<void> {
+export async function ownedKeys (credentials: ICredentials): Promise<void> {
   const {key} = credentials;
   const api = client.withKey(key);
 
-  const keyRepo = market.getRepo(DownloadKeyModel);
+  const keyRepo = db.getRepo(DownloadKeyModel);
 
   // TODO: figure out the typeorm equivalen of 'fields'
   const oldKeys = await keyRepo.find();
@@ -95,7 +96,7 @@ export async function ownedKeys (
 
     newKeyIds = [...newKeyIds, ...pluck(response.ownedKeys, "id")];
 
-    await market.saveAllEntities(normalize(response, {
+    await db.saveAllEntities(normalize(response, {
       ownedKeys: arrayOf(downloadKey),
     }));
   }
@@ -105,27 +106,21 @@ export async function ownedKeys (
   const goners = difference(oldKeyIds, newKeyIds);
   if (goners.length > 0) {
     logger.info(`Cleaning up ${goners.length} gone download keys`);
-    market.deleteAllEntities({entities: {downloadKeys: goners}});
+    db.deleteAllEntities({entities: {downloadKeys: goners}});
 
-    let touchedCaves = 0;    
-    const allCaves = globalMarket.getEntities<ICaveRecord>("caves");
-    each(allCaves, (cave, caveId) => {
-      if (cave.downloadKey && contains(goners, cave.downloadKey.id)) {
-        globalMarket.saveEntity("caves", caveId, {downloadKey: null});
-        touchedCaves++;
-      }
-    });
-
-    logger.info(`${touchedCaves} caves affected`);
+    // we used to clean up caves as well, but with the single db
+    // scheme (v25+), download keys are no longer stored in caves.
   }
 }
 
-// FIXME: db
-export async function collections (market: any, credentials: ICredentials): Promise<void> {
-  const collectionRepo = market.getRepo(CollectionModel);
+export async function collections (credentials: ICredentials): Promise<void> {
+  const collectionRepo = db.getRepo(CollectionModel);
 
-  // TODO: figure out what the typeorm equivalent of 'fields' is
-  const oldCollections = await collectionRepo.find();
+  const oldCollections = await collectionRepo
+    .createQueryBuilder("c")
+    .select("id")
+    .where("c.userId = :userId", {userId: credentials.me.id})
+    .getRawMany();
   const oldCollectionIds = pluck(oldCollections, "id");
 
   const {key} = credentials;
@@ -135,22 +130,25 @@ export async function collections (market: any, credentials: ICredentials): Prom
     collections: arrayOf(collection),
   });
   const {entities} = normalized;
-  await market.saveAllEntities({entities});
+  await db.saveAllEntities({entities});
 
   const newCollectionIds = pluck(entities.collections, "id");
   const goners = difference(oldCollectionIds, newCollectionIds);
   if (goners.length > 0) {
+    // FIXME: this is the wrong place to do that.
+    // what if a collection changes owners? we'll delete it unnecessarily.
+    // this should be a "garbage collection" step that takes all users into account
     logger.info(`After /my-collections, removing ${goners.length} goners: ${JSON.stringify(goners)}`);
-    market.deleteAllEntities({entities: {collections: goners}});
+    db.deleteAllEntities({entities: {collections: goners}});
   }
 }
 
-// FIXME: db
 export async function collectionGames
-    (market: any, credentials: ICredentials, collectionID: number): Promise<void> {
-  let collection = market.getEntity<ICollectionRecord>("collections", String(collectionID));
+    (credentials: ICredentials, collectionId: number): Promise<void> {
+
+  let collection = await db.getRepo(CollectionModel).findOneById(collectionId);
   if (!collection) {
-    logger.warn(`collection not found: ${collectionID}, stack = ${(new Error()).stack}`);
+    logger.warn(`collection not found: ${collectionId}, stack = ${(new Error()).stack}`);
     return;
   }
 
@@ -163,7 +161,7 @@ export async function collectionGames
   const localGameIds = collection.gameIds || [];
 
   while (fetched < totalItems) {
-    let res = await api.collectionGames(collectionID, page);
+    let res = await api.collectionGames(collectionId, page);
     totalItems = res.totalItems;
     fetched = res.perPage * page;
 
@@ -179,8 +177,8 @@ export async function collectionGames
       gameIds: union(localGameIds, fetchedGameIDs),
     };
 
-    await market.saveEntity("collections", String(collection.id), collection);
-    await market.saveAllEntities(normalized);
+    await db.saveEntity("collections", String(collection.id), collection);
+    await db.saveAllEntities(normalized);
     page++;
   }
 
@@ -189,7 +187,7 @@ export async function collectionGames
     ...collection,
     gameIds: fetchedGameIDs,
   };
-  await market.saveEntity("collections", String(collection.id), collection);
+  await db.saveEntity("collections", String(collection.id), collection);
 }
 
 interface IGameSearchResults {
@@ -241,14 +239,12 @@ interface IGameLazilyOpts {
   secret?: string; // for draft games
 }
 
-// FIXME: db
-async function gameLazily (market: any, credentials: ICredentials, gameId: number,
+async function gameLazily (credentials: ICredentials, gameId: number,
                            opts = {} as IGameLazilyOpts): Promise<GameModel> {
-  invariant(typeof market === "object", "gameLazily has market");
   invariant(typeof credentials === "object", "gameLazily has credentials");
   invariant(typeof gameId === "number", "gameLazily has gameId number");
 
-  const gameRepo = market.getRepo(GameModel);
+  const gameRepo = db.getRepo(GameModel);
 
   if (!opts.fresh) {
     let record = await gameRepo.findOneById(gameId);
@@ -273,15 +269,13 @@ interface IUserLazilyOpts {
   fresh?: boolean;
 }
 
-// FIXME: db
-export async function userLazily (market: any, credentials: ICredentials, userID: number,
-                                  opts = {} as IUserLazilyOpts): Promise<IUserRecord> {
-  invariant(typeof market === "object", "userLazily has market");
+export async function userLazily (credentials: ICredentials, userID: number,
+                                  opts = {} as IUserLazilyOpts): Promise<UserModel> {
   invariant(typeof credentials === "object", "userLazily has credentials");
   invariant(typeof userID === "number", "userLazily has userId number");
 
   if (!opts.fresh) {
-    const record = market.getEntity("users", String(userID));
+    const record = await db.getRepo(UserModel).findOneById(userID);
     if (record) {
       return record;
     }

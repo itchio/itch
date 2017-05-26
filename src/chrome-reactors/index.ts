@@ -1,6 +1,5 @@
 
 import {Watcher} from "../reactors/watcher";
-import marketProvider, {getMarkets} from "./market-provider";
 
 import fetchers from "./fetchers";
 import dialogs from "./dialogs";
@@ -12,8 +11,6 @@ import navigation from "./navigation";
 import querier from "./querier";
 
 let watcher = new Watcher();
-watcher.getMarkets = getMarkets;
-marketProvider(watcher);
 dialogs(watcher);
 fetchers(watcher);
 i18n(watcher);

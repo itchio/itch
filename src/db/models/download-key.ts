@@ -18,4 +18,8 @@ export default class DownloadKey {
   /** not sure to be completely honest */
   @Column("datetime", {nullable: true})
   updatedAt: string;
+
+  /** user the download key belongs to */
+  @Column("int")
+  ownerId: number;
 }

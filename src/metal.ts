@@ -8,7 +8,9 @@ import {isItchioURL} from "./util/url";
 
 import * as actions from "./actions";
 import env from "./env";
-import {app} from "electron";
+import {app, protocol, globalShortcut} from "electron";
+
+import {connectDatabase} from "./db";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
@@ -29,8 +31,6 @@ autoUpdate(autoUpdateDone); // no need to wait for app.on('ready')
 // App lifecycle
 
 function autoUpdateDone () {
-  const {protocol, app, globalShortcut} = require("electron");
-
   if (process.env.CAPSULE_LIBRARY_PATH) {
     // disable acceleration when captured by capsule
     app.disableHardwareAcceleration();
@@ -44,6 +44,8 @@ function autoUpdateDone () {
   const store = require("./store/metal-store").default;
 
   app.on("ready", async function () {
+    await connectDatabase();
+
     const shouldQuit = app.makeSingleInstance((argv, cwd) => {
       // we only get inside this callback when another instance
       // is launched - so this executes in the context of the main instance
@@ -67,13 +69,14 @@ function autoUpdateDone () {
       app.exit(0);
       return;
     }
-    store.dispatch(actions.processUrlArguments({
-      args: process.argv,
-    }));
 
     if (env.name === "development") {
       enableLiveReload({strategy: "react-hmr"});
     }
+
+    store.dispatch(actions.processUrlArguments({
+      args: process.argv,
+    }));
 
     globalShortcut.register("Control+Alt+Backspace", function () {
       store.dispatch(actions.abortLastGame({}));
@@ -116,6 +119,4 @@ function autoUpdateDone () {
       console.log(`Ignoring non-itchio url: ${url}`);
     }
   });
-
-  // URL handling
 }

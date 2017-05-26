@@ -4,26 +4,19 @@ import * as actions from "../../actions";
 
 import * as invariant from "invariant";
 
+import db from "../../db";
 import CaveModel from "../../db/models/cave";
 import fetch from "../../util/fetch";
-
-import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "request-cave-uninstall"});
 
 export default function (watcher: Watcher) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {
     const {caveId} = action.payload;
     const credentials = store.getState().session.credentials;
-    const {globalMarket, market} = watcher.getMarkets();
-    if (!globalMarket || !market) {
-      logger.debug(`missing markets!`);
-      return;
-    }
 
-    const cave = await globalMarket.getRepo(CaveModel).findOneById(caveId);
+    const cave = await db.getRepo(CaveModel).findOneById(caveId);
     invariant(cave, "cave to uninstall exists");
 
-    const game = await fetch.gameLazily(market, credentials, cave.gameId);
+    const game = await fetch.gameLazily(credentials, cave.gameId);
     invariant(game, "was able to fetch game properly");
     const {title} = game;
 

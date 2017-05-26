@@ -31,7 +31,7 @@ export class Fetcher {
   retryCount = 0;
 
   hook(store: IStore, tabId: string, reason: FetchReason) {
-    this.logger = rootLogger.child(`tab-fetcher:${tabId}:${reason}`);
+    this.logger = rootLogger.child({name: `tab-fetcher:${tabId}:${reason}`});
     this.store = store;
     this.tabId = tabId;
     this.reason = reason;

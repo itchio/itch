@@ -1,5 +1,7 @@
 
 import {Fetcher, Outcome} from "./types";
+
+import db from "../db";
 import Game from "../db/models/game";
 
 import client from "../api";
@@ -15,12 +17,6 @@ export default class DashboardFetcher extends Fetcher {
   }
 
   async work(): Promise<Outcome> {
-    const {market} = this.getMarkets();
-    if (!market) {
-      this.debug(`No user market :(`);
-      return this.retry();
-    }
-
     let meId: number;
     try {
       meId = this.store.getState().session.credentials.me.id;
@@ -29,7 +25,7 @@ export default class DashboardFetcher extends Fetcher {
       return this.retry();
     }
 
-    const gameRepo = market.getRepo(Game);
+    const gameRepo = db.getRepo(Game);
     let localGames = await gameRepo.find({userId: meId});
     this.push({games: indexBy(localGames, "id")});
 
@@ -65,7 +61,7 @@ export default class DashboardFetcher extends Fetcher {
       }
     });
 
-    await market.saveAllEntities({
+    await db.saveAllEntities({
       entities: {
         ...normalized.entities,
         itchAppProfile: {
@@ -82,7 +78,7 @@ export default class DashboardFetcher extends Fetcher {
     const goners = difference(localGameIds, remoteGameIds);
     if (goners.length > 0) {
       this.debug(`After /my-games, removing ${goners.length} goners: ${JSON.stringify(goners)}`)
-      await market.deleteAllEntities({entities: {games: goners}});
+      await db.deleteAllEntities({entities: {games: goners}});
     }
 
     return new Outcome("success");

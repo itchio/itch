@@ -1,5 +1,6 @@
 
 import {Fetcher, Outcome} from "./types";
+import db from "../db";
 import Game from "../db/models/game";
 import Collection from "../db/models/collection";
 import client from "../api";
@@ -18,17 +19,11 @@ export default class CollectionFetcher extends Fetcher {
   }
 
   async work(): Promise<Outcome> {
-    const {market} = this.getMarkets();
-    if (!market) {
-      this.debug(`No user market :(`);
-      return this.retry();
-    }
-
     const path = this.store.getState().session.navigation.tabData[this.tabId].path;
     const collectionId = +pathToId(path);
 
-    const gameRepo = market.getRepo(Game);
-    const collectionRepo = market.getRepo(Collection);
+    const gameRepo = db.getRepo(Game);
+    const collectionRepo = db.getRepo(Collection);
     let localCollection = await collectionRepo.findOneById(collectionId);
     let localGames = {};
     if (localCollection && localCollection.gameIds && localCollection.gameIds.length > 0) {

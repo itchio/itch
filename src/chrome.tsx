@@ -3,8 +3,9 @@
 
 import "./boot/bluebird";
 import "./boot/fs";
-import "./boot/sniff-language";
 import "./boot/time-ago-locales";
+
+import {connectDatabase} from "./db";
 
 import * as os from "./os";
 import env from "./env";
@@ -13,12 +14,13 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Provider} from "react-redux";
 
+import store from "./store/chrome-store";
+import * as actions from "./actions";
+
 if (process.env.ITCH_WHY_UPDATE === "1") {
   const {whyDidYouUpdate} = require("why-did-you-update");
   whyDidYouUpdate(React, {exclude: [/[^a-zA-Z0-9]/, /^Connect/]});
 }
-
-import store from "./store/chrome-store";
 
 import setupShortcuts from "./shortcuts";
 setupShortcuts(store);
@@ -91,7 +93,11 @@ if (os.platform() === "darwin") {
   }
 }
 
-function start() {
+async function start() {
+  store.dispatch(actions.languageSniffed({lang: navigator.language}));
+
+  await connectDatabase();
+
   render(App);
 
   if ((module as any).hot) {

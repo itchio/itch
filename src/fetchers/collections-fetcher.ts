@@ -1,5 +1,6 @@
 
 import {Fetcher, Outcome} from "./types";
+import db from "../db";
 import Collection from "../db/models/collection";
 import Game from "../db/models/game";
 
@@ -16,12 +17,6 @@ export default class CollectionsFetcher extends Fetcher {
   }
 
   async work(): Promise<Outcome> {
-    const {market} = this.getMarkets();
-    if (!market) {
-      this.debug(`No user market :(`);
-      return this.retry();
-    }
-
     let meId: number;
     try {
       meId = this.store.getState().session.credentials.me.id;
@@ -30,8 +25,8 @@ export default class CollectionsFetcher extends Fetcher {
       return this.retry();
     }
 
-    const collectionsRepo = market.getRepo(Collection);
-    const gamesRepo = market.getRepo(Game);
+    const collectionsRepo = db.getRepo(Collection);
+    const gamesRepo = db.getRepo(Game);
     let pushFromLocal = async () => {
       const localCollections = await collectionsRepo.find();
       let allGameIds: number[] = [];
@@ -73,7 +68,12 @@ export default class CollectionsFetcher extends Fetcher {
       }
     }
 
-    await market.saveAllEntities({
+    const {collections} = normalized.entities;
+    for (const id of Object.keys(collections)) {
+      collections[id].userId = meId;
+    }
+
+    await db.saveAllEntities({
       entities: normalized.entities,
     });
     await pushFromLocal();

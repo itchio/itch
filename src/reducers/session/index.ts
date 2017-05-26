@@ -6,7 +6,6 @@ import navigation from "./navigation";
 import search from "./search";
 import folders from "./folders";
 import cachedCollections from "./cached-collections";
-import market from "./market";
 
 import {Reducer} from "redux";
 import {ISessionState} from "../../types";
@@ -18,7 +17,6 @@ let reducers: any = {
   search,
   folders,
   cachedCollections,
-  market,
 };
 
 if (process.type === "renderer") {

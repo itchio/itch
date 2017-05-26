@@ -10,6 +10,7 @@ import {elapsed} from "../format";
 
 export type LoadSource = "cavesByGameId" | "downloadKeysByGameId";
 
+import db from "../db";
 import DownloadKey from "../db/models/download-key";
 import Cave from "../db/models/cave";
 
@@ -37,13 +38,8 @@ let cavesDbTime = 0;
 let keysDbTime = 0;
 
 async function updateCavesByGameId(store: IStore, watcher: Watcher, gameIds: string[]) {
-  const {globalMarket} = watcher.getMarkets();
-  if (!globalMarket) {
-    return {};
-  }
-
   const t1 = Date.now();
-  const caves = await globalMarket.getRepo(Cave)
+  const caves = await db.getRepo(Cave)
     .createQueryBuilder("c")
     .where("c.gameId in (:gameIds)", {gameIds})
     .getMany();
@@ -54,13 +50,8 @@ async function updateCavesByGameId(store: IStore, watcher: Watcher, gameIds: str
 }
 
 async function updateDownloadKeysByGameId(store: IStore, watcher: Watcher, gameIds: string[]) {
-  const {market} = watcher.getMarkets();
-  if (!market) {
-    return {};
-  }
-
   const t1 = Date.now();
-  const downloadKeys = await market.getRepo(DownloadKey)
+  const downloadKeys = await db.getRepo(DownloadKey)
     .createQueryBuilder("dk")
     .where("dk.gameId in (:gameIds)", {gameIds})
     .getMany();

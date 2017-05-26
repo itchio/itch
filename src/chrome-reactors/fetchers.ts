@@ -7,7 +7,6 @@ import * as actions from "../actions";
 
 import {Fetcher, FetchReason} from "../fetchers/types";
 import {IStore} from "../types";
-import {IMarketGetter} from "../fetchers/types";
 import DashboardFetcher from "../fetchers/dashboard-fetcher";
 import CollectionsFetcher from "../fetchers/collections-fetcher";
 import LibraryFetcher from "../fetchers/library-fetcher";
@@ -31,7 +30,7 @@ let waitingFor: {
   [key: string]: NodeJS.Timer;
 } = {};
 
-export async function queueFetch (store: IStore, tabId: string, reason: FetchReason, getMarkets: IMarketGetter) {
+export async function queueFetch (store: IStore, tabId: string, reason: FetchReason) {
   if (waitingFor[tabId]) {
     clearTimeout(waitingFor[tabId]);
   }
@@ -47,7 +46,7 @@ export async function queueFetch (store: IStore, tabId: string, reason: FetchRea
 
     const fetcher = new fetcherClass();
     currentFetchers[tabId] = fetcher;
-    fetcher.hook(store, tabId, reason, getMarkets);
+    fetcher.hook(store, tabId, reason);
     fetcher.start();
     fetcher.emitter.on("done", () => {
       delete currentFetchers[tabId];
@@ -76,28 +75,28 @@ function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
 export default function (watcher: Watcher) {
   // changing tabs? it's a fetching
   watcher.on(actions.tabChanged, async (store, action) => {
-    queueFetch(store, action.payload.id, "tab-changed", watcher.getMarkets);
+    queueFetch(store, action.payload.id, "tab-changed");
   });
 
   // tab navigated to something else? let's fetch
   watcher.on(actions.tabEvolved, async (store, action) => {
-    queueFetch(store, action.payload.id, "tab-evolved", watcher.getMarkets);
+    queueFetch(store, action.payload.id, "tab-evolved");
   });
 
   // tab reloaded by user? let's fetch!
   watcher.on(actions.tabReloaded, async (store, action) => {
-    queueFetch(store, action.payload.id, "tab-reloaded", watcher.getMarkets);
+    queueFetch(store, action.payload.id, "tab-reloaded");
   });
 
   // tab got new params? it's a fetching!
   watcher.on(actions.tabParamsChanged, async (store, action) => {
-    queueFetch(store, action.payload.id, "tab-params-changed", watcher.getMarkets);
+    queueFetch(store, action.payload.id, "tab-params-changed");
   });
 
   // window gaining focus? fetch away!
   watcher.on(actions.windowFocusChanged, async (store, action) => {
     if (action.payload.focused) {
-      queueFetch(store, store.getState().session.navigation.id, "window-focused", watcher.getMarkets);
+      queueFetch(store, store.getState().session.navigation.id, "window-focused");
     }
   });
 }
