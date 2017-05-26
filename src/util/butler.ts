@@ -10,7 +10,7 @@ import ibrew from "./ibrew";
 import {EventEmitter} from "events";
 import {IProgressListener, IProgressInfo, ExeArch} from "../types";
 
-import {Logger} from "../logger";
+import {Logger, devNull} from "../logger";
 
 const showDebug = (process.env.MY_BUTLER_IS_MY_FRIEND === "1");
 const dumpAllOutput = (process.env.MY_BUTLER_IS_MY_ENEMY === "1");
@@ -334,6 +334,7 @@ async function sanityCheck (): Promise<boolean> {
     await spawn.assert({
       command: "butler",
       args: ["--version"],
+      logger: devNull,
     });
     return true;
   } catch (err) {

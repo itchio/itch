@@ -12,10 +12,6 @@ import {app} from "electron";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
-if (env.name === "test") {
-  app.setName("itch-test");
-}
-
 // tslint:disable:no-console
 
 async function autoUpdate (autoUpdateDone: () => void) {

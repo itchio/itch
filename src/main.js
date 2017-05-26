@@ -1,4 +1,9 @@
 
+const env = require("./env").default;
+
+if (require("./env").default.name === "test") {
+  require("./boot/test-paths").setup();
+}
 require("./boot/crash");
 require("./boot/sourcemaps");
 require("./boot/bluebird");

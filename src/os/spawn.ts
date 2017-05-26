@@ -40,7 +40,7 @@ interface ISpawnOpts {
     /** shell that should be used to run a command */
     shell?: string;
   };
-  logger?: Logger;
+  logger: Logger;
 
   /** if set, do not redirect stdout/stderr */
   inheritStd?: boolean;

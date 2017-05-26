@@ -4,71 +4,106 @@
 const Application = require('spectron').Application;
 const test = require("zopf");
 const bluebird = require("bluebird");
+const mkdirp = bluebird.promisify(require("mkdirp"));
 
+// Lessons learned from messing around with spectron:
+// 
+// chromedriver really needs the app to start up fully - 
+// it needs a BrowserWindow to connect to.
+//
+// That means we need an uncaught exception handler, and
+// we can't process.exit() or app.exit() from the app
+// in the test environment.
+//
+// Instead, we output a known string to the app's logs,
+// which the test runner (this file) can actually fetch,
+// and figure out what happened.
 const exitCodeRegexp = /this is the magic exit code: ([0-9]+)/;
 
-test('application launch', async (t) => {
-  const beforeEach = async (t, opts) => {
-    t.itch = {
-      polling: true,
-      exitCode: 0,
-    }
+// When run in node.js (not electron's browser, not electron's renderer),
+// this returns a path to electron-prebuilt's executable. Spectron is fine
+// with it.
+const electronBinaryPath = require("electron");
 
-    let additionalArgs = []
-    if (opts) {
-      if (opts.args) {
-        additionalArgs = opts.args;
-      }
-    }
+// This makes electron output renderer logs to browser logs as well.
+// (Simply put: whatever ends up in the chrome devtools console also
+// ends up in the terminal. Although, when run with spectron, nothing is
+// connected to the terminal by default).
+process.env.ELECTRON_ENABLE_LOGGING = "1";
 
-    const args = [".", ...additionalArgs];
-    try {
-      require("fs").mkdirSync("tmp");
-    } catch (e) {
-      if (e.code === "EEXIST") {
-        // ok
-      } else {
-        throw new Error(`Could not create log dir: ${e.stack}`);
-      }
-    }
-    t.app = new Application({
-      path: require("electron"),
-      args,
-      env: {
-        NODE_ENV: "test",
-      },
-      chromeDriverLogPath: "tmp/chrome-driver-log.txt",
-      webdriverLogPath: "tmp/web-driver-logs",
-    })
-    t.comment(`starting app with args ${args.join(" ")}`);
-
-    await t.app.start();
-    t.comment("app started!");
-
-    t.itch.pollPromise = (async function () {
-      try {
-        while (true) {
-          await bluebird.delay(250);
-
-          if (!t.app || !t.app.isRunning()) { return; }
-          for (const line of await t.app.client.getMainProcessLogs()) {
-            t.comment(`☃ ${line}`);
-            const matches = exitCodeRegexp.exec(line);
-            if (matches) {
-              t.itch.exitCode = +matches[1];
-              t.comment(`Got exit code ${t.itch.exitCode} from main process`);
-              return;
-            }
-          }
-
-          if (!t.itch.polling) { return; }
-        }
-      } catch (e) {
-        t.comment(`While polling logs: ${e.stack}`);
-      }
-    }())
+// Start up the app
+async function beforeEach (t, opts) {
+  // `t` is different for each spec, so we use
+  // it to store some state.
+  t.itch = {
+    polling: true,
+    exitCode: 0,
   }
 
+  let specArgs = [];
+  if (opts) {
+    specArgs = opts.args || specArgs;
+  }
+
+  const args = [".", ...specArgs];
+
+  try {
+    // with NODE_ENV=test, the app uses that folder
+    // to store userData, desktop, home etc.
+    // this lets us wipe it, copy it, or do whatever we
+    // want to it between tests.
+    await mkdirp("./tmp");
+  } catch (e) {
+    if (e.code === "EEXIST") {
+      // ok
+    } else {
+      throw new Error(`Could not create app temporary dir: ${e.stack}`);
+    }
+  }
+
+  t.app = new Application({
+    path: electronBinaryPath,
+    args,
+    env: {
+      NODE_ENV: "test",
+    },
+  })
+  t.comment(`starting app with args ${args.join(" ")}`);
+
+  await t.app.start();
+  t.comment("app started!");
+
+  t.itch.pollPromise = pollLogs(t);
+}
+
+// Continuously fetch the test app's logs.
+async function pollLogs (t) {
+  try {
+    while (true) {
+      await bluebird.delay(500);
+
+      if (t.app && t.app.isRunning()) {
+        for (const line of await t.app.client.getMainProcessLogs()) {
+          t.comment(`☃ ${line}`);
+          const matches = exitCodeRegexp.exec(line);
+          if (matches) {
+            t.itch.exitCode = +matches[1];
+            t.comment(`Got exit code ${t.itch.exitCode} from main process`);
+            return;
+          }
+        }
+      }
+
+      if (!t.itch.polling) {
+        return;
+      }
+    }
+  } catch (e) {
+    t.comment(`While polling logs: ${e.stack}`);
+  }
+}
+
+test('integration tests', async (t) => {
   const afterEach = async (t) => {
     t.comment("cleaning up test...");
 
@@ -96,6 +131,7 @@ test('application launch', async (t) => {
     }
   }
 
+  // a little wrapper on top of zopf's test
   const spec = function (name, f, opts) {
     t.case(name, async (t) => {
       const t1 = Date.now();
@@ -113,21 +149,13 @@ test('application launch', async (t) => {
       }
 
       if (err) {
+        // this'll make the test fail
         throw err;
       }
     })
   }
 
-  spec("it runs unit tests", async (t) => {
-    t.ownExit = true;
-  }, {
-    args: ["--run-unit-tests"],
-  })
-
-  spec("it shows an initial window", async (t) => {
-    const numWindows = await t.app.client.getWindowCount();
-    t.is(numWindows, 1);
-  })
+  require("./tests")(spec);
 })
 
 require("tape").onFinish(() => {
