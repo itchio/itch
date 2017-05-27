@@ -30,24 +30,17 @@ const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
 });
 
 class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  constructor () {
-    super();
-    this.onClick = this.onClick.bind(this);
-    this.onClose = this.onClose.bind(this);
-    this.onContextMenu = this.onContextMenu.bind(this);
-  }
-
-  onClick() {
+  onClick = () => {
     const {id, navigate} = this.props;
     navigate({id});
   }
 
-  onClose() {
+  onClose = () => {
     const {id, closeTab} = this.props;
     closeTab({id});
   }
 
-  onContextMenu() {
+  onContextMenu = () => {
     const {id, openTabContextMenu} = this.props;
     openTabContextMenu({id});
   }

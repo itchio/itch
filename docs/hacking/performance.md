@@ -78,20 +78,22 @@ export default connect(SomeComponent, {
 
 ```javascript
 export BadComponent extends React.PureComponent<any, any> {
+  doStuff () {
+    // stuff.
+  }
+
   render () {
-    // Don't do this!
-    return <div onClick={() => doStuff()}/>
+    // Don't! This generates a different closure for each render call
+    return <div onClick={() => this.doStuff()}/>
+    // Don't either! This also generates a different function on every render
+    return <div onClick={this.doStuff.bind(this)}/>
   }
 }
 
 // Do this!
 export GoodComponent extends React.PureComponent<any, any> {
-  constructor () {
-    super();
-    this.doStuff = this.doStuff.bind(this);
-  }
-
-  doStuff () {
+  // In TypeScript, this is called an instance function
+  doStuff = () => {
     // stuff.
   }
 

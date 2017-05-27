@@ -9,7 +9,6 @@ import * as actions from "../actions";
 import GameModel from "../db/models/game";
 
 import {AutoSizer, Table, Column} from "react-virtualized";
-import {IAutoSizerParams} from "./autosizer-types";
 import {IOnSortChange, SortDirectionType} from "./sort-types";
 
 import gameTableRowRenderer, {IRowHandlerParams} from "./game-table-row-renderer";
@@ -130,6 +129,8 @@ const StyledTable = styled(Table)`
 `;
 
 class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, IGameTableState> {
+  numNull = 0;
+
   constructor() {
     super();
 
@@ -138,7 +139,7 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
     };
   }
 
-  onRowClick (params: IRowHandlerParams) {
+  onRowClick = (params: IRowHandlerParams) => {
     const {e} = params;
     const game = this.rowGetter(params);
     if (!game) {
@@ -154,19 +155,21 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
     });
   }
 
-  rowGetter (params: IRowGetterParams): any {
+  rowGetter = (params: IRowGetterParams): any => {
     const {index} = params;
 
     return this.props.games[index - this.props.gamesOffset];
   }
 
-  genericDataGetter (params: ICellDataGetter): any {
+  genericDataGetter = (params: ICellDataGetter): any => {
     return params.rowData;
   }
 
-  coverRenderer (params: ICellRendererParams): JSX.Element | string {
+  coverRenderer = (params: ICellRendererParams): JSX.Element | string => {
     const game = params.cellData;
     if (!game) {
+      this.numNull++;
+      console.warn(`null cover, ${this.numNull} nulls so far`);
       return null;
     }
     const {coverUrl, stillCoverUrl} = game;
@@ -177,151 +180,158 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
     />;
   }
 
-  titleRenderer (params: ICellRendererParams): JSX.Element | string {
+  titleRenderer = (params: ICellRendererParams): JSX.Element | string => {
     const game = params.cellData;
     if (!game) {
       return null;
     }
     return <div className="title-column">
-      <div className="title">{game.title}</div>
-      <div className="description">{game.shortText}</div>
-    </div>;
+    <div className="title">{game.title}</div>
+    <div className="description">{game.shortText}</div>
+  </div>;
+}
+
+publishedAtRenderer = (params: ICellRendererParams): JSX.Element | string => {
+  const game = params.cellData;
+  if (!game) {
+    return null;
   }
-
-  publishedAtRenderer (params: ICellRendererParams): JSX.Element | string {
-    const game = params.cellData;
-    if (!game) {
-      return null;
-    }
-    const {publishedAt} = game;
-    if (publishedAt) {
-      return <TimeAgo date={publishedAt}/>;
-    } else {
-      return "";
-    }
+  const {publishedAt} = game;
+  if (publishedAt) {
+    return <TimeAgo date={publishedAt}/>;
+  } else {
+    return "";
   }
+}
 
-  playtimeRenderer (params: ICellRendererParams): JSX.Element | string {
-    const game = params.cellData;
-    if (!game) {
-      return null;
-    }
-    // TODO: db
-    let cave = null;
-
-    if (cave) {
-      return <TotalPlaytime game={game} cave={cave} short={true}/>;
-    } else {
-      return null;
-    }
+playtimeRenderer = (params: ICellRendererParams): JSX.Element | string => {
+  const game = params.cellData;
+  if (!game) {
+    return null;
   }
+  // TODO: db
+  let cave = null;
 
-  lastPlayedRenderer (params: ICellRendererParams): JSX.Element | string {
-    const game = params.cellData;
-    if (!game) {
-      return null;
-    }
-    // TODO: db
-    let cave = null;
-
-    if (cave) {
-      return <LastPlayed game={game} cave={cave} short={true}/>;
-    } else {
-      return null;
-    }
+  if (cave) {
+    return <TotalPlaytime game={game} cave={cave} short={true}/>;
+  } else {
+    return null;
   }
+}
 
-  onRowsRendered (info: IRowsRenderedInfo) {
-    this.props.tabParamsChanged({
-      id: this.props.tab,
-      params: {
-        offset: info.overscanStartIndex,
-        limit: info.overscanStopIndex - info.overscanStartIndex,
-      },
-    });
+lastPlayedRenderer = (params: ICellRendererParams): JSX.Element | string => {
+  const game = params.cellData;
+  if (!game) {
+    return null;
   }
+  // TODO: db
+  let cave = null;
 
-  render () {
-    const {t, tab, hiddenCount} = this.props;
+  if (cave) {
+    return <LastPlayed game={game} cave={cave} short={true}/>;
+  } else {
+    return null;
+  }
+}
 
-    return <HubGamesDiv>
-        <AutoSizer>
-        {({width, height}: IAutoSizerParams) => {
-          let remainingWidth = width;
-          let coverWidth = 74;
-          remainingWidth -= coverWidth;
+onRowsRendered = (info: IRowsRenderedInfo) => {
+  this.props.tabParamsChanged({
+    id: this.props.tab,
+    params: {
+      offset: info.overscanStartIndex,
+      limit: info.overscanStopIndex - info.overscanStartIndex,
+    },
+  });
+}
 
-          let publishedWidth = 140;
-          remainingWidth -= publishedWidth;
+render () {
+  const {tab, hiddenCount} = this.props;
 
-          let playtimeWidth = 140;
-          remainingWidth -= playtimeWidth;
+  console.warn(`game table rendering, numNull was ${this.numNull}`);
+  this.numNull = 0;
 
-          let lastPlayedWidth = 140;
-          remainingWidth -= lastPlayedWidth;
+  return <HubGamesDiv>
+      <AutoSizer>
+        {this.renderWithSize}
+    </AutoSizer>
+    <HiddenIndicator tab={tab} count={hiddenCount}/>
+  </HubGamesDiv>;
+}
 
-          const scrollTop = height <= 0 ? 0 : this.state.scrollTop;
-          const {gamesCount, sortBy, sortDirection} = this.props;
+renderWithSize = ({width, height}) => {
+  const {t} = this.props;
 
-          return <StyledTable
-              headerHeight={35}
-              height={height}
-              width={width}
-              rowCount={gamesCount}
-              rowHeight={75}
-              rowGetter={this.rowGetter.bind(this)}
-              onRowClick={this.onRowClick.bind(this)}
-              onScroll={(e: any) => {
-                // ignore data when tab's hidden
-                if (e.clientHeight <= 0) { return; }
-                this.setState({ scrollTop: e.scrollTop });
-              }}
-              scrollTop={scrollTop}
-              sort={this.props.onSortChange.bind(this)}
-              sortBy={sortBy}
-              sortDirection={sortDirection}
-              rowRenderer={gameTableRowRenderer}
-              onRowsRendered={this.onRowsRendered.bind(this)}
-            >
-            <Column
-              dataKey="cover"
-              width={coverWidth}
-              cellDataGetter={this.genericDataGetter.bind(this)}
-              cellRenderer={this.coverRenderer.bind(this)}
-              disableSort={true}/>
+  let remainingWidth = width;
+  let coverWidth = 74;
+  remainingWidth -= coverWidth;
 
-            <Column
-              dataKey="title"
-              label={t("table.column.name")}
-              width={remainingWidth}
-              cellDataGetter={this.genericDataGetter.bind(this)}
-              cellRenderer={this.titleRenderer.bind(this)}/>
-            <Column
-              dataKey="secondsRun"
-              label={t("table.column.play_time")}
-              width={playtimeWidth}
-              className="secondary"
-              cellDataGetter={this.genericDataGetter.bind(this)}
-              cellRenderer={this.playtimeRenderer.bind(this)}/>
-            <Column
-              dataKey="lastTouchedAt"
-              label={t("table.column.last_played")}
-              width={lastPlayedWidth}
-              className="secondary"
-              cellDataGetter={this.genericDataGetter.bind(this)}
-              cellRenderer={this.lastPlayedRenderer.bind(this)}/>
-            <Column
-              dataKey="publishedAt"
-              label={t("table.column.published")}
-              width={publishedWidth}
-              className="secondary"
-              cellDataGetter={this.genericDataGetter.bind(this)}
-              cellRenderer={this.publishedAtRenderer.bind(this)}/>
-          </StyledTable>;
-        }}
-      </AutoSizer>
-      <HiddenIndicator tab={tab} count={hiddenCount}/>
-    </HubGamesDiv>;
+  let publishedWidth = 140;
+  remainingWidth -= publishedWidth;
+
+  let playtimeWidth = 140;
+  remainingWidth -= playtimeWidth;
+
+  let lastPlayedWidth = 140;
+  remainingWidth -= lastPlayedWidth;
+
+  const scrollTop = height <= 0 ? 0 : this.state.scrollTop;
+  const {gamesCount = 0, sortBy, sortDirection} = this.props;
+
+  return <StyledTable
+      headerHeight={35}
+      height={height}
+      width={width}
+      rowCount={gamesCount}
+      rowHeight={75}
+      rowGetter={this.rowGetter}
+      onRowClick={this.onRowClick}
+      onScroll={(e: any) => {
+        // ignore data when tab's hidden
+        if (e.clientHeight <= 0) { return; }
+        this.setState({ scrollTop: e.scrollTop });
+      }}
+      scrollTop={scrollTop}
+      sort={this.props.onSortChange}
+      sortBy={sortBy}
+      sortDirection={sortDirection}
+      rowRenderer={gameTableRowRenderer}
+      onRowsRendered={this.onRowsRendered}
+    >
+    <Column
+      dataKey="cover"
+      width={coverWidth}
+      cellDataGetter={this.genericDataGetter}
+      cellRenderer={this.coverRenderer}
+      disableSort={true}/>
+
+    <Column
+      dataKey="title"
+      label={t("table.column.name")}
+      width={remainingWidth}
+      cellDataGetter={this.genericDataGetter}
+      cellRenderer={this.titleRenderer}/>
+    <Column
+      dataKey="secondsRun"
+      label={t("table.column.play_time")}
+      width={playtimeWidth}
+      className="secondary"
+      cellDataGetter={this.genericDataGetter}
+      cellRenderer={this.playtimeRenderer}/>
+    <Column
+      dataKey="lastTouchedAt"
+      label={t("table.column.last_played")}
+      width={lastPlayedWidth}
+      className="secondary"
+      cellDataGetter={this.genericDataGetter}
+      cellRenderer={this.lastPlayedRenderer}/>
+    <Column
+      dataKey="publishedAt"
+      label={t("table.column.published")}
+      width={publishedWidth}
+      className="secondary"
+      cellDataGetter={this.genericDataGetter}
+      cellRenderer={this.publishedAtRenderer}/>
+    </StyledTable>;
   }
 }
 

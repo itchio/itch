@@ -11,8 +11,8 @@ class HoverBoard extends React.PureComponent<void, IState> {
       hover: false,
     };
     this.childProps = {
-      onMouseEnter: this.onMouseEnter.bind(this),
-      onMouseLeave: this.onMouseLeave.bind(this),
+      onMouseEnter: this.onMouseEnter,
+      onMouseLeave: this.onMouseLeave,
     };
   }
 
@@ -24,11 +24,11 @@ class HoverBoard extends React.PureComponent<void, IState> {
     });
   }
 
-  onMouseEnter() {
+  onMouseEnter = () => {
     this.setState({hover: true});
   }
 
-  onMouseLeave() {
+  onMouseLeave = () => {
     this.setState({hover: false});
   }
 }

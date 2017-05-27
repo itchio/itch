@@ -240,12 +240,6 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
     password: HTMLInputElement;
   };
 
-  constructor () {
-    super();
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleLoginFailure = this.handleLoginFailure.bind(this);
-  }
-
   subscribe (watcher: Watcher) {
     watcher.on(actions.loginFailed, async (store, action) => {
       const {username} = this.refs;
@@ -272,7 +266,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
           <input id="login-username" ref="username" type="text"
             placeholder={t("login.field.username")} autoFocus disabled={disabled}/>
           <input ref="password" type="password" placeholder={t("login.field.password")} disabled={disabled}
-            onKeyDown={(e) => { if (e.key === "Enter") { this.handleSubmit(); } }}/>
+            onKeyDown={this.handleKeyDown}/>
           <section className="actions">
             {this.renderActions()}
           </section>
@@ -333,7 +327,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
           <Link
             key="show-saved-logins"
             label={t("login.action.show_saved_logins")}
-            onClick={() => this.props.loginStartPicking({})}
+            onClick={this.onStartPicking}
           />,
         ]
         : ""}
@@ -385,7 +379,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
                 discreet
                 icon="bug"
                 label={t("grid.item.report_problem")}
-                onClick={() => this.reportIssue(blockingOperation)}/>
+                onClick={this.onReportBlockingOperation}/>
             </div>
           : null
         }
@@ -414,7 +408,13 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
     }
   }
 
-  handleSubmit () {
+  handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      this.handleSubmit();
+    }
+  }
+
+  handleSubmit = () => {
     const {username, password} = this.refs;
     this.props.loginWithPassword({
       username: username.value,
@@ -422,17 +422,28 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
     });
   }
 
-  handleStoppedPicking () {
+  handleStoppedPicking = () => {
     const username = this.refs.username;
     if (username) {
       setTimeout(() => username.focus(), 200);
     }
   }
 
-  handleLoginFailure () {
+  handleLoginFailure = () => {
     const {password} = this.refs;
     if (password) {
       setTimeout(() => password.focus(), 200);
+    }
+  }
+
+  onStartPicking = () => {
+    this.props.loginStartPicking({});
+  }
+
+  onReportBlockingOperation = () => {
+    const {blockingOperation} = this.props;
+    if (blockingOperation) {
+      this.reportIssue(blockingOperation);
     }
   }
 }

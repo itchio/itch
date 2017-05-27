@@ -13,7 +13,6 @@ export class RevertCave extends React.PureComponent<IProps & IDerivedProps & I18
 
   constructor () {
     super();
-    this.onChange = this.onChange.bind(this);
   }
 
   render () {
@@ -34,7 +33,7 @@ export class RevertCave extends React.PureComponent<IProps & IDerivedProps & I18
     </ModalWidgetDiv>;
   }
 
-  onChange () {
+  onChange = () => {
     const {buildId} = this.refs;
     if (!buildId) {
       return;

@@ -1,6 +1,5 @@
 
 import * as React from "react";
-import * as classNames from "classnames";
 import {connect, I18nProps} from "./connect";
 
 import {whenClickNavigates} from "./when-click-navigates";
@@ -23,12 +22,12 @@ export class HubItem extends React.PureComponent<IProps & IDerivedProps & I18nPr
     };
   }
 
-  onContextMenu () {
+  onContextMenu = () => {
     const {game, openGameContextMenu} = this.props;
     openGameContextMenu({game});
   }
 
-  onMouseDown (e: React.MouseEvent<any>) {
+  onMouseDown = (e: React.MouseEvent<any>) => {
     const {game, navigateToGame} = this.props;
     whenClickNavigates(e, ({background}) => {
       navigateToGame(game, background);
@@ -43,14 +42,14 @@ export class HubItem extends React.PureComponent<IProps & IDerivedProps & I18nPr
     const actionProps = {game, showSecondary: this.state.hover};
 
     return <HubItemDiv
-        onMouseEnter={this.onMouseEnter.bind(this)}
-        onMouseLeave={this.onMouseLeave.bind(this)}
-        onContextMenu={this.onContextMenu.bind(this)}>
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+        onContextMenu={this.onContextMenu}>
       <Cover
         coverUrl={coverUrl}
         stillCoverUrl={stillCoverUrl}
         hover={hover}
-        onClick={(e) => this.onMouseDown(e)}
+        onClick={this.onMouseDown}
       />
 
       <UnderCover>
@@ -63,11 +62,11 @@ export class HubItem extends React.PureComponent<IProps & IDerivedProps & I18nPr
     </HubItemDiv>;
   }
 
-  onMouseEnter () {
+  onMouseEnter = () => {
     this.setState({hover: true});
   }
 
-  onMouseLeave () {
+  onMouseLeave = () => {
     this.setState({hover: false});
   }
 }

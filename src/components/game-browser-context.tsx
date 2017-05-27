@@ -17,7 +17,9 @@ import * as actions from "../actions";
 
 import {IBrowserControlProperties} from "./browser-state";
 import GameBrowserContextActions from "./game-browser-context-actions";
+
 import Cover from "./basics/cover"; 
+
 import styled from "./styles";
 
 const BrowserContextDiv = styled.div`
@@ -55,11 +57,6 @@ export class GameBrowserContext extends React.PureComponent<IProps & IDerivedPro
     };
   }
 
-  onContextMenu () {
-    const {game, openGameContextMenu} = this.props;
-    openGameContextMenu({game});
-  }
-
   render () {
     const {game} = this.props;
     // FIXME db
@@ -70,17 +67,22 @@ export class GameBrowserContext extends React.PureComponent<IProps & IDerivedPro
     const {hover} = this.state;
 
     return <BrowserContextDiv
-        onContextMenu={this.onContextMenu.bind(this)}>
+        onContextMenu={this.onContextMenu}>
       <Cover
         coverUrl={coverUrl}
         stillCoverUrl={stillCoverUrl}
         hover={hover}
-        onMouseEnter={this.onMouseEnter.bind(this)}
-        onMouseLeave={this.onMouseLeave.bind(this)}
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
       />
       <GameStats game={game} mdash={false}/>
       <GameActionsContainer>{this.gameActions()}</GameActionsContainer>
     </BrowserContextDiv>;
+  }
+
+  onContextMenu = () => {
+    const {game, openGameContextMenu} = this.props;
+    openGameContextMenu({game});
   }
 
   gameActions () {
@@ -109,11 +111,11 @@ export class GameBrowserContext extends React.PureComponent<IProps & IDerivedPro
     }
   }
 
-  onMouseEnter () {
+  onMouseEnter = () => {
     this.setState({hover: true});
   }
 
-  onMouseLeave () {
+  onMouseLeave = () => {
     this.setState({hover: false});
   }
 }

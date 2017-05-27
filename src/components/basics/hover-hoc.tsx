@@ -19,15 +19,15 @@ export default function <P> (WrappedComponent: React.ComponentClass<P & IHoverPr
       this.state = {
         hover: false,
       };
-      this.onMouseEnter = this.onMouseEnter.bind(this);
-      this.onMouseLeave = this.onMouseLeave.bind(this);
+      this.onMouseEnter = this.onMouseEnter;
+      this.onMouseLeave = this.onMouseLeave;
     };
 
-    onMouseEnter() {
+    onMouseEnter = () => {
       this.setState({hover: true});
     }
 
-    onMouseLeave() {
+    onMouseLeave = () => {
       this.setState({hover: false});
     }
 

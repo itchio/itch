@@ -22,6 +22,8 @@ export class Library extends React.PureComponent<IProps & IDerivedProps & I18nPr
   render () {
     const {games, gamesCount, gamesOffset} = this.props;
 
+    console.warn("library rendering");
+
     return <LibraryContainer>
       <GameFilters tab={tab}/>
       {Object.keys(games).length > 0

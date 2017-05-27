@@ -46,7 +46,65 @@ const SearchContainer = styled.section`
 @watching
 class Search extends React.PureComponent<IDerivedProps & I18nProps, void> {
   input: HTMLInputElement;
-  doTrigger: () => void;
+
+  trigger = debounce(() => {
+    if (!this.input) {
+      return;
+    }
+    this.props.search({query: this.input.value});
+  }, 100);
+
+  onBlur = debounce((e: React.FocusEvent<HTMLInputElement>) => {
+    this.props.closeSearch({});
+  }, 200);
+
+  onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    this.props.focusSearch({});
+  }
+
+  onChange = (e: React.FormEvent<HTMLInputElement>) => {
+    this.trigger();
+  }
+
+  onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const {key} = e;
+
+    let passthrough = false;
+
+    if (key === "Escape") {
+      // default behavior is to clear - don't
+    } else if (key === "ArrowDown") {
+      this.props.searchHighlightOffset({offset: 1});
+      // default behavior is to jump to end of input - don't
+    } else if (key === "ArrowUp") {
+      this.props.searchHighlightOffset({offset: -1});
+      // default behavior is to jump to start of input - don't
+    } else {
+      passthrough = true;
+    }
+
+    if (!passthrough) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  }
+
+  onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const {key} = e;
+
+    if (key === "Escape") {
+      return;
+    } else if (key === "ArrowDown") {
+      return;
+    } else if (key === "ArrowUp") {
+      return;
+    } else if (key === "Enter") {
+      return;
+    }
+
+    this.trigger();
+  }
 
   subscribe (watcher: Watcher) {
     watcher.on(actions.focusSearch, async (store, action) => {
@@ -75,79 +133,14 @@ class Search extends React.PureComponent<IDerivedProps & I18nProps, void> {
     return <SearchContainer className={classNames({loading})}>
       <input id="search" ref={(input) => this.input = input} type="search"
         placeholder={t("search.placeholder")}
-        onKeyDown={this.onKeyDown.bind(this)}
-        onKeyUp={this.onKeyUp.bind(this)}
-        onChange={this.onChange.bind(this)}
-        onFocus={this.onFocus.bind(this)}
-        onBlur={debounce(this.onBlur.bind(this), 200)}>
+        onKeyDown={this.onKeyDown}
+        onKeyUp={this.onKeyUp}
+        onChange={this.onChange}
+        onFocus={this.onFocus}
+        onBlur={this.onBlur}>
       </input>
       <span className="icon icon-search" />
     </SearchContainer>;
-  }
-
-  onFocus (e: React.FocusEvent<HTMLInputElement>) {
-    this.props.focusSearch({});
-  }
-
-  onBlur (e: React.FocusEvent<HTMLInputElement>) {
-    this.props.closeSearch({});
-  }
-
-  onChange (e: React.FormEvent<HTMLInputElement>) {
-    this.trigger();
-  }
-
-  onKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
-    const {key} = e;
-
-    let passthrough = false;
-
-    if (key === "Escape") {
-      // default behavior is to clear - don't
-    } else if (key === "ArrowDown") {
-      this.props.searchHighlightOffset({offset: 1});
-      // default behavior is to jump to end of input - don't
-    } else if (key === "ArrowUp") {
-      this.props.searchHighlightOffset({offset: -1});
-      // default behavior is to jump to start of input - don't
-    } else {
-      passthrough = true;
-    }
-
-    if (!passthrough) {
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
-    }
-  }
-
-  onKeyUp (e: React.KeyboardEvent<HTMLInputElement>) {
-    const {key} = e;
-
-    if (key === "Escape") {
-      return;
-    } else if (key === "ArrowDown") {
-      return;
-    } else if (key === "ArrowUp") {
-      return;
-    } else if (key === "Enter") {
-      return;
-    }
-
-    this.trigger();
-  }
-
-  trigger () {
-    if (!this.doTrigger) {
-      this.doTrigger = debounce(() => {
-        if (!this.input) {
-          return;
-        }
-        this.props.search({query: this.input.value});
-      }, 100);
-    }
-
-    this.doTrigger();
   }
 }
 

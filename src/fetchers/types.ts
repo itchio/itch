@@ -95,6 +95,7 @@ export class Fetcher {
     }
 
     if (this.prevData && deepEqual(this.prevData, data)) {
+      this.logger.warn("Ignoring dupe data");
       return;
     }
 

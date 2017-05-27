@@ -5,10 +5,9 @@ import {createSelector, createStructuredSelector} from "reselect";
 
 import CollectionRow from "./collection-row";
 
-import {IAppState, ICollectionRecord, ICollectionRecordSet, ITabData, IGameRecordSet} from "../types";
+import {IAppState, ICollectionRecord, ITabData, IGameRecordSet} from "../types";
 
 import {AutoSizer, Grid} from "react-virtualized";
-import {IAutoSizerParams} from "./autosizer-types";
 
 import {values} from "underscore";
 
@@ -42,42 +41,13 @@ export class CollectionsGrid extends React.PureComponent<IProps & IDerivedProps 
     this.state = {
       scrollTop: 0,
     };
-    this.cellRenderer = this.cellRenderer.bind(this);
   }
 
   render () {
     const {t, hiddenCount} = this.props;
-    const collections = values(this.props.collections);
 
     return <HubCollectionsGrid>
-        <AutoSizer>
-        {({width, height}: IAutoSizerParams) => {
-          const columnCount = 1;
-          const rowCount = Math.ceil(collections.length / columnCount);
-          const columnWidth = ((width - 10) / columnCount);
-          const rowHeight = 260;
-          const scrollTop = height === 0 ? 0 : this.state.scrollTop;
-
-          return <StyledGrid
-            ref="grid"
-            cellRenderer={this.cellRenderer.bind(this, {collections, columnCount})}
-            width={width}
-            height={height}
-            columnWidth={columnWidth}
-            columnCount={columnCount}
-            rowCount={rowCount}
-            rowHeight={rowHeight}
-            overscanRowCount={2}
-            onScroll={(e: any) => {
-              // ignore when tab's hidden
-              if (e.clientHeight === 0) { return; }
-              this.setState({scrollTop: e.scrollTop});
-            }}
-            scrollTop={scrollTop}
-            scrollPositionChangeReason="requested"
-          />;
-        }}
-        </AutoSizer>
+        <AutoSizer>{this.renderWithSize}</AutoSizer>
         {hiddenCount > 0
         ? <div className="hidden-count">
           {t("grid.hidden_count", {count: hiddenCount})}
@@ -86,14 +56,45 @@ export class CollectionsGrid extends React.PureComponent<IProps & IDerivedProps 
     </HubCollectionsGrid>;
   }
 
-  cellRenderer(layout: ILayoutInfo, cell: ICellInfo): JSX.Element {
+  renderWithSize = ({width, height}) => {
+    const {collections} = this.props;
+    const columnCount = 1;
+    const rowCount = Math.ceil(collections.length / columnCount);
+    const columnWidth = ((width - 10) / columnCount);
+    const rowHeight = 260;
+    const scrollTop = height === 0 ? 0 : this.state.scrollTop;
+
+    return <StyledGrid
+      ref="grid"
+      cellRenderer={this.cellRenderer}
+      width={width}
+      height={height}
+      columnWidth={columnWidth}
+      columnCount={columnCount}
+      rowCount={rowCount}
+      rowHeight={rowHeight}
+      overscanRowCount={2}
+      onScroll={(e: any) => {
+        // ignore when tab's hidden
+        if (e.clientHeight === 0) { return; }
+        this.setState({scrollTop: e.scrollTop});
+      }}
+      scrollTop={scrollTop}
+      scrollPositionChangeReason="requested"
+    />;
+  }
+
+  cellRenderer = (cell: ICellInfo): JSX.Element => {
+    const {collections} = this.props;
+    const columnCount = 1;
+
     const games = this.props.games;
-    const collectionIndex = (cell.rowIndex * layout.columnCount) + cell.columnIndex;
-    const record = layout.collections[collectionIndex];
+    const collectionIndex = (cell.rowIndex * columnCount) + cell.columnIndex;
+    const record = collections[collectionIndex];
 
     const style = cell.style;
     style.padding = "10px";
-    if (cell.columnIndex < layout.columnCount - 1) {
+    if (cell.columnIndex < columnCount - 1) {
       style.marginRight = "10px";
     }
 
@@ -111,7 +112,7 @@ interface IProps {}
 
 interface IDerivedProps {
   games: IGameRecordSet;
-  collections: ICollectionRecordSet;
+  collections: ICollectionRecord[];
   hiddenCount: number;
 }
 
@@ -126,7 +127,7 @@ export default connect<IProps>(CollectionsGrid, {
     (state: IAppState) => state.session.tabData[tab] || emptyObj,
     createStructuredSelector({
       games: (tabData: ITabData) => tabData.games || emptyObj,
-      collections: (tabData: ITabData) => tabData.collections || emptyObj,
+      collections: (tabData: ITabData) => values(tabData.collections || emptyObj),
       hiddenCount: (tabData: ITabData) => 0,
     }),
   ),

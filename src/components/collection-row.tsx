@@ -106,7 +106,7 @@ export class CollectionRow extends React.PureComponent<IProps & IDerivedProps & 
     const itemCount = (collection.gameIds || []).length;
 
     return <CollectionRowDiv className="hub-item collection-hub-item"
-        onMouseDown={this.onMouseDown.bind(this)}>
+        onMouseDown={this.onMouseDown}>
       <section className="title">
         {title}
       </section>
@@ -126,7 +126,7 @@ export class CollectionRow extends React.PureComponent<IProps & IDerivedProps & 
     </CollectionRowDiv>;
   }
 
-  onMouseDown (e: React.MouseEvent<any>) {
+  onMouseDown = (e: React.MouseEvent<any>) => {
     const {navigateToCollection, collection} = this.props;
     whenClickNavigates(e, ({background}) => {
       navigateToCollection(collection, background);

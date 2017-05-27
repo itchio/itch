@@ -24,11 +24,9 @@ class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps, ISta
       sortBy: null,
       sortDirection: null,
     };
-
-    this.onSortChange = this.onSortChange.bind(this);
   }
 
-  onSortChange(params: ISortParams) {
+  onSortChange = (params: ISortParams) => {
     let {sortBy, sortDirection} = params;
 
     if (sortBy !== this.state.sortBy) {

@@ -336,7 +336,6 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps & I18nProp
     this.state = {
       widgetPayload: null,
     };
-    this.updatePayload = this.updatePayload.bind(this);
   }
 
   subscribe (watcher: Watcher) {
@@ -480,7 +479,7 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps & I18nProp
     }
   }
 
-  updatePayload (payload: IModalResponsePayload) {
+  updatePayload = (payload: IModalResponsePayload) => {
     this.setState({widgetPayload: payload});
   }
 

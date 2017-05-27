@@ -158,9 +158,19 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps & I18nProps
     search: HTMLInputElement;
   };
 
+  onQueryChanged = debounce(() => {
+    const {search} = this.refs;
+    if (!search) {
+      return;
+    }
+
+    const {tab} = this.props;
+
+    this.props.filterChanged({tab, query: search.value});
+  }, 100)
+
   constructor () {
     super();
-    this.onQueryChanged = debounce(this.onQueryChanged.bind(this), 100);
   }
 
   subscribe (watcher: Watcher) {
@@ -278,17 +288,6 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps & I18nProps
       <Icon icon={icon}/>
       <Ink/>
     </LayoutPicker>;
-  }
-
-  onQueryChanged () {
-    const {search} = this.refs;
-    if (!search) {
-      return;
-    }
-
-    const {tab} = this.props;
-
-    this.props.filterChanged({tab, query: search.value});
   }
 }
 

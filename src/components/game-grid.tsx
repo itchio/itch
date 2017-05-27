@@ -35,7 +35,6 @@ class GameGrid extends React.PureComponent<IProps & IDerivedProps & I18nProps, I
     this.state = {
       scrollTop: 0,
     };
-    this.cellRenderer = this.cellRenderer.bind(this);
   }
 
   render () {

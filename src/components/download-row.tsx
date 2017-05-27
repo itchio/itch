@@ -138,17 +138,15 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps & I18nProps
   constructor () {
     super();
     this.state = {};
-    this.onCoverContextMenu = this.onCoverContextMenu.bind(this);
-    this.onNavigate = this.onNavigate.bind(this);
   }
 
-  onCoverContextMenu () {
+  onCoverContextMenu = () => {
     const {item, openGameContextMenu} = this.props;
     const {game} = item;
     openGameContextMenu({game});
   }
 
-  onNavigate () {
+  onNavigate = () => {
     const {item, navigateToGame} = this.props;
     navigateToGame(item.game);
   }

@@ -45,8 +45,6 @@ const newTabItems = [
 export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   constructor () {
     super();
-
-    this.addressKeyUp = this.addressKeyUp.bind(this);
   }
 
   render () {
@@ -77,7 +75,7 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nPro
     </div>;
   }
 
-  async addressKeyUp (e: React.KeyboardEvent<HTMLInputElement>) {
+  addressKeyUp = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       let input = e.currentTarget.value;
       if (input.length < 1) {

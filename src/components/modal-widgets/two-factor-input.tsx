@@ -11,7 +11,6 @@ export class TwoFactorInput extends React.PureComponent<IProps & IDerivedProps &
 
   constructor () {
     super();
-    this.onChange = this.onChange.bind(this);
   }
 
   render () {
@@ -35,7 +34,7 @@ export class TwoFactorInput extends React.PureComponent<IProps & IDerivedProps &
     </ModalWidgetDiv>;
   }
 
-  onChange () {
+  onChange = () => {
     const {totpInput} = this.refs;
     if (!totpInput) {
       return;

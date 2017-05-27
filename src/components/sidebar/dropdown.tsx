@@ -6,10 +6,7 @@ import {map} from "underscore";
 import listensToClickOutside = require("react-onclickoutside");
 import {connect, I18nProps} from "../connect";
 
-import Icon from "../basics/icon";
-import Ink = require("react-ink");
-
-import {ILocalizedString} from "../../types";
+import DropdownItem, {IDropdownItem} from "./dropdown-item";
 
 import styled, * as styles from "../styles";
 
@@ -49,41 +46,6 @@ const DropdownDiv = styled.div`
   }
 `;
 
-const DropdownItem = styled.div`
-  ${styles.inkContainer()};
-  ${styles.accentTextShadow()};
-
-  border-radius: 1px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  margin: 0;
-  padding: 10px 8px 10px 3px;
-  line-height: 1.4;
-  font-size: 14px;
-
-  &:hover {
-    cursor: pointer;
-    background-color: ${props => props.theme.lightAccent};
-  }
-
-  .icon {
-    margin: 0 8px;
-  }
-
-  &.type-info {
-    color: #6D6D6D;
-  }
-
-  &.type-separator {
-    height: 1px;
-    padding: 0;
-    background: ${props => props.theme.lightAccent};
-  }
-`;
-
-const noop = () => { /* muffin */ };
-
 export class Dropdown extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
@@ -91,36 +53,28 @@ export class Dropdown extends React.PureComponent<IProps & IDerivedProps & I18nP
   }
 
   render () {
-    const {t, items, inner, className, updown = false} = this.props;
+    const {items, inner, className, updown = false} = this.props;
 
     const {open} = this.state;
     const containerClasses = classNames(className, {disabled: items.length === 0});
     const dropdownClasses = classNames({active: open, updown});
 
-    const children = map(items, (item, index) => {
-      const {label, icon, type, onClick = noop} = item;
-      const itemClasses = classNames(type && `type-${type}`);
-
-      const key = (type === "separator") ? ("separator-" + index) : (label + "-" + icon);
-
-      return <DropdownItem className={itemClasses} key={key} onClick={() => { onClick(); this.close(); }}>
-        <Ink/>
-        <Icon icon={icon}/>
-        {t.format(label)}
-      </DropdownItem>;
-    });
+    const children = map(
+      items,
+      (item, i) => <DropdownItem key={i} item={item} onClick={this.close}/>,
+    );
 
     let innerClasses = "";
     if (updown !== open) { // boolean xor
       innerClasses += "flipped";
     }
 
-    const toggle = this.toggle.bind(this);
     const innerC = <DropdownInnerContainer key="inner"
       className={innerClasses}
-      onClick={toggle}>
+      onClick={this.toggle}>
         {inner}
     </DropdownInnerContainer>;
+
     const childrenC = <DropdownDiv key="children" className={dropdownClasses}>
       {children}
     </DropdownDiv>;
@@ -133,7 +87,7 @@ export class Dropdown extends React.PureComponent<IProps & IDerivedProps & I18nP
     </DropdownContainer>;
   }
 
-  toggle () {
+  toggle = () => {
     this.setState({open: !this.state.open});
   }
 
@@ -144,13 +98,6 @@ export class Dropdown extends React.PureComponent<IProps & IDerivedProps & I18nP
   handleClickOutside () {
     this.close();
   }
-}
-
-export interface IDropdownItem {
-  type?: string;
-  label?: ILocalizedString;
-  icon?: string;
-  onClick?: () => void;
 }
 
 interface IProps {

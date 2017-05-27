@@ -301,7 +301,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps & I1
       <h2>{t("preferences.language")}</h2>
       <div className="language-form">
         <label className="active">
-          <SelectRow onChange={this.onLanguageChange.bind(this)} options={options} value={lang || "__"}/>
+          <SelectRow onChange={this.onLanguageChange} options={options} value={lang || "__"}/>
 
           {
             downloading
@@ -454,7 +454,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps & I1
     </div>;
   }
 
-  onLanguageChange (lang: string) {
+  onLanguageChange = (lang: string) => {
     const {updatePreferences} = this.props;
     if (lang === "__") {
       lang = null;

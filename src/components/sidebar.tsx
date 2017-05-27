@@ -82,20 +82,17 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps & I18nProps, IS
     this.state = {
       transient: props.tabs.transient,
     };
-    this.closeAllTabs = this.closeAllTabs.bind(this);
-    this.newTab = this.newTab.bind(this);
-    this.onSortEnd = this.onSortEnd.bind(this);
   }
 
-  closeAllTabs () {
+  closeAllTabs = () => {
     this.props.closeAllTabs({});
   }
 
-  newTab () {
+  newTab = () => {
     this.props.newTab({});
   }
 
-  onSortEnd (params: ISortEndParams) {
+  onSortEnd = (params: ISortEndParams) => {
     const {oldIndex, newIndex} = params;
     this.setState({
       transient: arrayMove(this.state.transient, oldIndex, newIndex),

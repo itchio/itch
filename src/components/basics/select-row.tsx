@@ -13,10 +13,9 @@ class SelectRow extends React.PureComponent<ISelectRowProps, void> {
 
   constructor (props: ISelectRowProps) {
     super(props);
-    this.onChange = this.onChange.bind(this);
   }
 
-  onChange (event: React.FormEvent<HTMLSelectElement>) {
+  onChange = (event: React.FormEvent<HTMLSelectElement>) => {
     const {onChange} = this.props;
     if (onChange) {
       onChange(event.currentTarget.value);

@@ -23,9 +23,6 @@ const HandleDiv = styled.div`
 class SidebarHandle extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
-    this.handleMouseDown = this.handleMouseDown.bind(this);
-    this.handleMouseUp = this.handleMouseUp.bind(this);
-    this.handleMouseMove = this.handleMouseMove.bind(this);
     this.state = { isResizing: false };
   }
 
@@ -43,15 +40,15 @@ class SidebarHandle extends React.PureComponent<IProps & IDerivedProps & I18nPro
     window.removeEventListener("mousemove", this.handleMouseMove);
   }
 
-  handleMouseDown (e: React.MouseEvent<any>) {
+  handleMouseDown = (e: React.MouseEvent<any>) => {
     this.setState({ isResizing: true });
   }
 
-  handleMouseUp (e: MouseEvent) {
+  handleMouseUp = (e: MouseEvent) => {
     this.setState({ isResizing: false });
   }
 
-  handleMouseMove (e: MouseEvent) {
+  handleMouseMove = (e: MouseEvent) => {
     if (!this.state.isResizing) {
       return;
     }

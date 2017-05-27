@@ -111,13 +111,6 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
         url: "",
       },
     };
-
-    this.goBack = this.goBack.bind(this);
-    this.goForward = this.goForward.bind(this);
-    this.stop = this.stop.bind(this);
-    this.reload = this.reload.bind(this);
-    this.openDevTools = this.openDevTools.bind(this);
-    this.loadUserURL = this.loadUserURL.bind(this);
   }
 
   updateBrowserState (props = {}) {
@@ -163,27 +156,27 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     }
   }
 
-  didStartLoading () {
+  didStartLoading = () => {
     this.props.tabLoading({id: this.props.tabId, loading: true});
     this.updateBrowserState({loading: true});
   }
 
-  didStopLoading () {
+  didStopLoading = () => {
     this.props.tabLoading({id: this.props.tabId, loading: false});
     this.updateBrowserState({loading: false});
   }
 
-  pageTitleUpdated (e: any) { // TODO: type
+  pageTitleUpdated = (e: any) => { // TODO: type
     const {tabId, tabDataFetched} = this.props;
     tabDataFetched({id: tabId, data: {webTitle: e.title}, timestamp: Date.now()});
   }
 
-  pageFaviconUpdated (e: any) { // TODO: type
+  pageFaviconUpdated = (e: any) => { // TODO: type
     const {tabId, tabDataFetched} = this.props;
     tabDataFetched({id: tabId, data: {webFavicon: e.favicons[0]}, timestamp: Date.now()});
   }
 
-  didNavigate (e: any) { // TODO: type
+  didNavigate = (e: any) => { // TODO: type
     const {tabId} = this.props;
     const {url} = e;
 
@@ -262,7 +255,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     this.scrollHistory = uniq(inputHistory, (x: IHistoryEntry) => x.url).slice(0, SCROLL_HISTORY_SIZE);
   }
 
-  willNavigate (e: any) { // TODO: type
+  willNavigate = (e: any) => { // TODO: type
     if (!this.isFrozen()) {
       return;
     }
@@ -291,7 +284,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     });
   }
 
-  newWindow (e: any) { // TODO: type
+  newWindow = (e: any) => { // TODO: type
     const {navigate} = this.props;
     const {url} = e;
 
@@ -395,14 +388,14 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     }
 
     const callbackSetup = () => {
-      this.webview.addEventListener("did-start-loading", this.didStartLoading.bind(this));
-      this.webview.addEventListener("did-stop-loading", this.didStopLoading.bind(this));
-      this.webview.addEventListener("will-navigate", this.willNavigate.bind(this));
-      this.webview.addEventListener("did-navigate", this.didNavigate.bind(this));
-      this.webview.addEventListener("did-navigate-in-page", this.didNavigate.bind(this));
-      this.webview.addEventListener("page-title-updated", this.pageTitleUpdated.bind(this));
-      this.webview.addEventListener("page-favicon-updated", this.pageFaviconUpdated.bind(this));
-      this.webview.addEventListener("new-window", this.newWindow.bind(this));
+      this.webview.addEventListener("did-start-loading", this.didStartLoading);
+      this.webview.addEventListener("did-stop-loading", this.didStopLoading);
+      this.webview.addEventListener("will-navigate", this.willNavigate);
+      this.webview.addEventListener("did-navigate", this.didNavigate);
+      this.webview.addEventListener("did-navigate-in-page", this.didNavigate);
+      this.webview.addEventListener("page-title-updated", this.pageTitleUpdated);
+      this.webview.addEventListener("page-favicon-updated", this.pageFaviconUpdated);
+      this.webview.addEventListener("new-window", this.newWindow);
       this.domReady();
 
       createContextMenu(this.webview, this.props.t, {
@@ -497,15 +490,15 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     cb(webview, webContents);
   }
 
-  openDevTools () {
+  openDevTools = () => {
     this.with((wv: Electron.WebViewElement, wc: Electron.WebContents) => wc.openDevTools({mode: "detach"}));
   }
 
-  stop () {
+  stop = () => {
     this.with((wv) => wv.stop());
   }
 
-  reload () {
+  reload = () => {
     this.with((wv) => {
       wv.reload();
     });
@@ -513,7 +506,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     tabReloaded({id: tabId});
   }
 
-  goBack () {
+  goBack = () => {
     this.with((wv) => {
       if (!wv.canGoBack()) {
         return;
@@ -523,7 +516,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     });
   }
 
-  goForward () {
+  goForward = () => {
     this.with((wv) => {
       if (!wv.canGoForward()) {
         return;
@@ -533,7 +526,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     });
   }
 
-  async loadUserURL (input: string) {
+  loadUserURL = async (input: string) => {
     const url = await transformUrl(input);
     await this.loadURL(url);
   }

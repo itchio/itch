@@ -1,7 +1,6 @@
 
 import listensToClickOutside = require("react-onclickoutside");
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import * as classNames from "classnames";
 import {connect, I18nProps} from "./connect";
 
@@ -74,12 +73,6 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
     this.state = {
       editingURL: false,
     };
-
-    this.startEditingURL = this.startEditingURL.bind(this);
-    this.addressKeyUp = this.addressKeyUp.bind(this);
-    this.addressBlur = this.addressBlur.bind(this);
-    this.onBrowserAddress = this.onBrowserAddress.bind(this);
-    this.popOutBrowser = this.popOutBrowser.bind(this);
   }
 
   subscribe (watcher: Watcher) {
@@ -166,11 +159,11 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
     </BrowserControlsContainer>;
   }
 
-  popOutBrowser () {
+  popOutBrowser = () => {
     this.props.openUrl({url: this.props.browserState.url});
   }
 
-  startEditingURL () {
+  startEditingURL = () => {
     if (this.props.frozen) {
       return;
     }
@@ -180,7 +173,7 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
     }
   }
 
-  onBrowserAddress (browserAddress: HTMLElement | HTMLInputElement) {
+  onBrowserAddress = (browserAddress: HTMLElement | HTMLInputElement) => {
     this.browserAddress = browserAddress;
 
     if (!browserAddress) {
@@ -193,7 +186,7 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
     }
   }
 
-  addressKeyUp (e: React.KeyboardEvent<HTMLInputElement>) {
+  addressKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const url = e.currentTarget.value;
       this.setState({editingURL: false});
@@ -204,11 +197,7 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
     }
   }
 
-  addressBlur () {
-    this.setState({editingURL: false});
-  }
-
-  handleClickOutside () {
+  addressBlur = () => {
     this.setState({editingURL: false});
   }
 }

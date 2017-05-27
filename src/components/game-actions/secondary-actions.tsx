@@ -24,11 +24,11 @@ class SecondaryActions extends React.PureComponent<IProps & IDerivedProps & I18n
     const {items, error} = listSecondaryActions(this.props);
 
     return <SecondaryActionsDiv className={classNames("cave-actions", {error})}>
-      {map(items, this.action.bind(this))}
+      {map(items, this.action)}
     </SecondaryActionsDiv>;
   }
 
-  action (opts: IActionOpts) {
+  action = (opts: IActionOpts) => {
     const {t, dispatch} = this.props;
     const {action, label, icon, type = "action", classes = []} = opts;
 

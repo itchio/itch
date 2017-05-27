@@ -119,10 +119,9 @@ class Item extends React.PureComponent<IProps, IState> {
     this.state = {
       fresh: true,
     };
-    this.onCloseClick = this.onCloseClick.bind(this);
   }
 
-  onMouseUp (e: React.MouseEvent<HTMLElement>) {
+  onMouseUp = (e: React.MouseEvent<HTMLElement>) => {
     if (e.button === 1) {
       // middle click
       const {onClose} = this.props;
@@ -138,7 +137,7 @@ class Item extends React.PureComponent<IProps, IState> {
     }
   }
 
-  onCloseClick (e: React.MouseEvent<any>) {
+  onCloseClick = (e: React.MouseEvent<any>) => {
     e.stopPropagation();
 
     const {onClose} = this.props;
@@ -161,7 +160,7 @@ class Item extends React.PureComponent<IProps, IState> {
     return <ItemDiv className={classNames({active, fresh})}
         data-rh-at="bottom"
         data-rh={t.format(sublabel)}
-        onMouseUp={(e) => this.onMouseUp(e)}
+        onMouseUp={this.onMouseUp}
         onContextMenu={onContextMenu}
         data-path={path}
         data-id={id}>

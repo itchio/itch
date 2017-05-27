@@ -17,26 +17,22 @@ export class Toast extends React.PureComponent<IProps & IDerivedProps & I18nProp
     this.state = {
       expanded: false,
     };
-
-    this.toggleExpand = this.toggleExpand.bind(this);
-    this.sendFeedback = this.sendFeedback.bind(this);
-    this.reload = this.reload.bind(this);
   }
 
-  toggleExpand () {
+  toggleExpand = () => {
     this.setState({
       expanded: !this.state.expanded,
     });
   }
 
-  sendFeedback () {
+  sendFeedback = () => {
     const {reportIssue, data} = this.props;
     const {error, stack} = data;
 
     reportIssue({log: error + "\n\nstack:\n" + stack});
   }
 
-  reload () {
+  reload = () => {
     const {evolveTab, data, tabId} = this.props;
     const {path} = data;
     const untoastedPath = path.replace(/^toast\//, "");
@@ -53,17 +49,17 @@ export class Toast extends React.PureComponent<IProps & IDerivedProps & I18nProp
 
       <p>{t("toast.message")} {t("toast.call_to_action")}</p>
 
-      <div className="button" onClick={() => this.reload()}>
+      <div className="button" onClick={this.reload}>
         <Icon icon="repeat"/> {t("toast.actions.reload")}
       </div>
 
-      <span className="link" onClick={() => this.toggleExpand()}>{t("toast.actions.learn_more")}</span>
+      <span className="link" onClick={this.toggleExpand}>{t("toast.actions.learn_more")}</span>
 
       {this.state.expanded
       ? <p className="error">{data.error}</p>
       : ""}
 
-      <span className="link" onClick={() => this.sendFeedback()}>{t("toast.actions.report")}</span>
+      <span className="link" onClick={this.sendFeedback}>{t("toast.actions.report")}</span>
     </div>;
   }
 }
