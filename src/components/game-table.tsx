@@ -8,7 +8,10 @@ import * as actions from "../actions";
 
 import GameModel from "../db/models/game";
 
-import {AutoSizer, Table, Column} from "react-virtualized";
+import {
+  AutoSizer, Table, Column,
+  TableCellProps,
+} from "react-virtualized";
 import {IOnSortChange, SortDirectionType} from "./sort-types";
 
 import gameTableRowRenderer, {IRowHandlerParams} from "./game-table-row-renderer";
@@ -25,20 +28,12 @@ const HoverCover = Hoverable(Cover);
 import {whenClickNavigates} from "./when-click-navigates";
 
 import {HubGamesDiv} from "./games";
-import styled from "./styles";
+import styled, * as styles from "./styles";
+import {css} from "./styles";
 import {darken} from "polished";
 
 interface IRowGetterParams {
   index: number;
-}
-
-interface ICellRendererParams {
-  cellData: GameModel;
-  columnData: any;
-  dataKey: string;
-  isScrolling: boolean;
-  rowData: any;
-  rowIndex: number;
 }
 
 interface ICellDataGetter {
@@ -104,32 +99,49 @@ const StyledTable = styled(Table)`
   .ReactVirtualized__Table__sortableHeaderIcon {
     transform: translateX(50%) scale(2, 2);
   }
+`;
 
-  .title-column {
-    line-height: 1.4;
+const TitleColumnDiv = styled.div`
+  line-height: 1.4;
+`;
 
-    .title, .description {
-      max-width: 500px;
-      white-space: normal;
-    }
+const titleColumn = () => css`
+  max-width: 500px;
+  white-space: normal;
+`;
 
-    .title {
-      @include single-line;
-      font-weight: bold;
-    }
+const TitleDiv = styled.div`
+  ${titleColumn()};
+  ${styles.singleLine()};
 
-    .description {
-      font-size: 90%;
-      color: ${props => props.theme.secondaryText};
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-    }
-  }
+  font-weight: bold;
+`;
+
+const EmptyTitleDiv = styled(TitleDiv)`
+  width: 120px;
+  min-height: .7em;
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.18);
+`;
+
+const DescriptionDiv = styled.div`
+  ${titleColumn()};
+
+  font-size: 90%;
+  color: ${props => props.theme.secondaryText};
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+`;
+
+const EmptyDescriptionDiv = styled(DescriptionDiv)`
+  width: 320px;
+  min-height: 1.4em;
+  background: rgba(255, 255, 255, 0.08);
 `;
 
 class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, IGameTableState> {
-  numNull = 0;
+  table: Table;
 
   constructor() {
     super();
@@ -137,6 +149,10 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
     this.state = {
       scrollTop: 0,
     };
+  }
+
+  grabTable = (table: any) => {
+    this.table = table;
   }
 
   onRowClick = (params: IRowHandlerParams) => {
@@ -165,12 +181,14 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
     return params.rowData;
   }
 
-  coverRenderer = (params: ICellRendererParams): JSX.Element | string => {
+  coverRenderer = (params: TableCellProps): JSX.Element | string => {
     const game = params.cellData;
     if (!game) {
-      this.numNull++;
-      console.warn(`null cover, ${this.numNull} nulls so far`);
-      return null;
+      return <Cover
+        hover={false}
+        coverUrl={null}
+        stillCoverUrl={null}
+      />;
     }
     const {coverUrl, stillCoverUrl} = game;
 
@@ -180,18 +198,24 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
     />;
   }
 
-  titleRenderer = (params: ICellRendererParams): JSX.Element | string => {
+  titleRenderer = (params: TableCellProps): JSX.Element | string => {
     const game = params.cellData;
+
     if (!game) {
-      return null;
+      return <TitleColumnDiv>
+        <EmptyTitleDiv/>
+        <EmptyDescriptionDiv/>
+      </TitleColumnDiv>;
     }
-    return <div className="title-column">
-    <div className="title">{game.title}</div>
-    <div className="description">{game.shortText}</div>
-  </div>;
+
+    const {title, shortText} = game;
+    return <TitleColumnDiv>
+      <TitleDiv>{title}</TitleDiv>
+      <DescriptionDiv>{shortText}</DescriptionDiv>
+    </TitleColumnDiv>;
 }
 
-publishedAtRenderer = (params: ICellRendererParams): JSX.Element | string => {
+publishedAtRenderer = (params: TableCellProps): JSX.Element | string => {
   const game = params.cellData;
   if (!game) {
     return null;
@@ -204,7 +228,7 @@ publishedAtRenderer = (params: ICellRendererParams): JSX.Element | string => {
   }
 }
 
-playtimeRenderer = (params: ICellRendererParams): JSX.Element | string => {
+playtimeRenderer = (params: TableCellProps): JSX.Element | string => {
   const game = params.cellData;
   if (!game) {
     return null;
@@ -219,7 +243,7 @@ playtimeRenderer = (params: ICellRendererParams): JSX.Element | string => {
   }
 }
 
-lastPlayedRenderer = (params: ICellRendererParams): JSX.Element | string => {
+lastPlayedRenderer = (params: TableCellProps): JSX.Element | string => {
   const game = params.cellData;
   if (!game) {
     return null;
@@ -247,15 +271,20 @@ onRowsRendered = (info: IRowsRenderedInfo) => {
 render () {
   const {tab, hiddenCount} = this.props;
 
-  console.warn(`game table rendering, numNull was ${this.numNull}`);
-  this.numNull = 0;
-
   return <HubGamesDiv>
       <AutoSizer>
         {this.renderWithSize}
     </AutoSizer>
     <HiddenIndicator tab={tab} count={hiddenCount}/>
   </HubGamesDiv>;
+}
+
+componentDidUpdate (prevProps: IProps, prevState) {
+  if (prevProps.games !== this.props.games) {
+    if (this.table) {
+      this.table.forceUpdateGrid();
+    }
+  }
 }
 
 renderWithSize = ({width, height}) => {
@@ -277,7 +306,7 @@ renderWithSize = ({width, height}) => {
   const scrollTop = height <= 0 ? 0 : this.state.scrollTop;
   const {gamesCount = 0, sortBy, sortDirection} = this.props;
 
-  return <StyledTable
+  return <StyledTable innerRef={this.grabTable}
       headerHeight={35}
       height={height}
       width={width}

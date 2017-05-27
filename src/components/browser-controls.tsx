@@ -200,6 +200,10 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
   addressBlur = () => {
     this.setState({editingURL: false});
   }
+
+  handleClickOutside = () => {
+    this.addressBlur();
+  }
 }
 
 interface IProps {

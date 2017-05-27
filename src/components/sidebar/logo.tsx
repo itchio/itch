@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import {resolve} from "path";
+import {getImagePath} from "../../os/resources";
 import styled from "../styles";
 import {createStructuredSelector} from "reselect";
 
@@ -16,7 +16,7 @@ class Logo extends React.PureComponent<IDerivedProps, void> {
     return <LogoDiv
         onClick={(e) => navigate("featured")}
         data-rh-at="bottom" data-rh={`itch v${appVersion}`}>
-      <img src={resolve(__dirname, "../../static/images/logos/app-white.svg")}/>
+      <img src={getImagePath("logos/app-white.svg")}/>
     </LogoDiv>;
   }
 }

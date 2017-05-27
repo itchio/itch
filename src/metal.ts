@@ -71,6 +71,8 @@ function autoUpdateDone () {
     }
 
     if (env.name === "development") {
+      const logger = require("./logger").default;
+      logger.info("Enabling hot-module reload!");
       enableLiveReload({strategy: "react-hmr"});
     }
 

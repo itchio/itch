@@ -1,28 +1,36 @@
 
-import {resolve} from "path";
+import {sep, posix} from "path";
+const {normalize} = posix;
+
+// this gives us a unix-style base path
+const basePath = normalize(__dirname.split(sep).join("/") + "/..");
 
 /*
  * Resources are files shipped with the app, that are static
  * and don't usually change, unless updated.
  */
 
+function getPath (resourcePath: string) {
+  return basePath + "/" + resourcePath;
+}
+
 export function getImagePath (path: string): string {
-  const resourcePath = "../static/images/" + path;
-  return resolve(__dirname, resourcePath);
+  const resourcePath = "static/images/" + path;
+  return getPath(resourcePath);
 }
 
 export function getLocalePath (path: string): string {
-  const resourcePath = "../static/locales/" + path;
-  return resolve(__dirname, resourcePath);
+  const resourcePath = "static/locales/" + path;
+  return getPath(resourcePath);
 }
 
 export function getLocalesConfigPath (): string {
-  let resourcePath = "../static/locales.json";
-  return resolve(__dirname, resourcePath);
+  let resourcePath = "static/locales.json";
+  return getPath(resourcePath);
 }
 
 type IInjectName = "itchio-monkeypatch" | "game";
 
 export function getInjectPath(name: IInjectName) {
-  return resolve(__dirname, "inject", name + ".js");
+  return getPath(`src/inject/${name}.js`);
 }

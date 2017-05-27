@@ -32,7 +32,6 @@ let waitingFor: {
 
 export async function queueFetch (store: IStore, tabId: string, reason: FetchReason) {
   if (waitingFor[tabId]) {
-    logger.info("clearing timeout for", tabId);
     clearTimeout(waitingFor[tabId]);
   }
 
@@ -53,7 +52,6 @@ export async function queueFetch (store: IStore, tabId: string, reason: FetchRea
       delete currentFetchers[tabId];
     });
   }, 250);
-  logger.info("set 250ms timeout", tabId);
 }
 
 function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {

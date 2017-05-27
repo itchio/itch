@@ -316,11 +316,7 @@ export const hubItemStyle = () => css`
 `;
 
 export const defaultCoverBackground = () => css`
-  background-image: linear-gradient(
-     -10deg,
-     rgba(0, 0, 0, 0.08) 0%,
-     rgba(255, 255, 255, 0.05) 100%
-  );
+  background-color: rgba(255, 255, 255, 0.05);
 `;
 
 export const accentTextShadow = () => css`

@@ -91,11 +91,11 @@ export class Dropdown extends React.PureComponent<IProps & IDerivedProps & I18nP
     this.setState({open: !this.state.open});
   }
 
-  close () {
+  close = () => {
     this.setState({open: false});
   }
 
-  handleClickOutside () {
+  handleClickOutside = () => {
     this.close();
   }
 }

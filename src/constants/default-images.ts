@@ -1,7 +1,7 @@
 
-import {resolve} from "path";
+import {getImagePath} from "../os/resources";
 
 export default {
-  avatar: resolve(__dirname, "../static/images/logos/itchio-textless-pink.svg"),
-  thumbnail: resolve(__dirname, "../static/images/logos/itchio-textless-pink.svg"),
+  avatar: getImagePath("logos/itchio-textless-pink.svg"),
+  thumbnail: getImagePath("logos/itchio-textless-pink.svg"),
 };
