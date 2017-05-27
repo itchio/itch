@@ -3,13 +3,16 @@ import * as React from "react";
 import {connect, I18nProps} from "./connect";
 import {createStructuredSelector} from "reselect";
 
-import {TabLayout} from "../types";
+import {IAppState, TabLayout, ITabParams} from "../types";
 import Game from "../db/models/game";
 
 import GameGrid from "./game-grid";
 import GameTable from "./game-table";
 
-import {ISortParams, SortDirectionType} from "./sort-types";
+import {ISortParams} from "./sort-types";
+
+import * as actions from "../actions";
+import {dispatcher} from "../constants/action-types";
 
 import styled from "./styles";
 
@@ -17,19 +20,12 @@ export const HubGamesDiv = styled.div`
   flex-grow: 1;
 `;
 
-class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
-  constructor () {
-    super();
-    this.state = {
-      sortBy: null,
-      sortDirection: null,
-    };
-  }
-
+class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   onSortChange = (params: ISortParams) => {
+    const {tabParams, tab} = this.props;
     let {sortBy, sortDirection} = params;
 
-    if (sortBy !== this.state.sortBy) {
+    if (sortBy !== tabParams.sortBy) {
       // sorting by different column
       if (sortBy === "secondsRun" || sortBy === "lastTouchedAt") {
         // default to desc for these, which makes the most sense
@@ -37,12 +33,15 @@ class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps, ISta
       }
     }
 
-    this.setState({sortBy, sortDirection});
+    this.props.tabParamsChanged({
+      id: tab,
+      params: {sortBy, sortDirection},
+    });
   }
 
   render() {
-    const {games, gamesCount, gamesOffset, hiddenCount, tab, layout} = this.props;
-    const {sortBy, sortDirection} = this.state;
+    const {games, gamesCount, gamesOffset, hiddenCount, tab, tabParams, layout} = this.props;
+    const {sortBy, sortDirection} = tabParams;
 
     if (layout === "grid") {
       return <GameGrid
@@ -70,20 +69,27 @@ interface IProps {
   games: Game[];
   gamesCount?: number;
   gamesOffset?: number;
+  hiddenCount?: number;
 }
 
 interface IDerivedProps {
   layout: TabLayout;
-  hiddenCount: number;
+  tabParams: ITabParams;
+
+  tabParamsChanged: typeof actions.tabParamsChanged;
 }
 
-interface IState {
-  sortBy?: string;
-  sortDirection?: SortDirectionType;
-}
+const defaultObj = {};
 
 export default connect<IProps>(Games, {
-  state: createStructuredSelector({
-    layout: (state) => state.preferences.layout,
+  state: (initialState, initialProps) => {
+    const {tab} = initialProps;
+    return createStructuredSelector({
+      layout: (state: IAppState) => state.preferences.layout,
+      tabParams: (state: IAppState) => state.session.tabParams[tab] || defaultObj,
+    });
+  },
+  dispatch: (dispatch) => ({
+    tabParamsChanged: dispatcher(dispatch, actions.tabParamsChanged),
   }),
 });

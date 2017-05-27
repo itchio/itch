@@ -141,18 +141,12 @@ const EmptyDescriptionDiv = styled(DescriptionDiv)`
 `;
 
 class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, IGameTableState> {
-  table: Table;
-
   constructor() {
     super();
 
     this.state = {
       scrollTop: 0,
     };
-  }
-
-  grabTable = (table: any) => {
-    this.table = table;
   }
 
   onRowClick = (params: IRowHandlerParams) => {
@@ -171,6 +165,12 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
     });
   }
 
+  onScroll = (e: any) => {
+    // ignore data when tab's hidden
+    if (e.clientHeight <= 0) { return; }
+    this.setState({ scrollTop: e.scrollTop });
+  }
+
   rowGetter = (params: IRowGetterParams): any => {
     const {index} = params;
 
@@ -185,6 +185,7 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
     const game = params.cellData;
     if (!game) {
       return <Cover
+        showGifMarker={false}
         hover={false}
         coverUrl={null}
         stillCoverUrl={null}
@@ -193,6 +194,7 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
     const {coverUrl, stillCoverUrl} = game;
 
     return <HoverCover
+      showGifMarker={false}
       coverUrl={coverUrl}
       stillCoverUrl={stillCoverUrl}
     />;
@@ -263,7 +265,7 @@ onRowsRendered = (info: IRowsRenderedInfo) => {
     id: this.props.tab,
     params: {
       offset: info.overscanStartIndex,
-      limit: info.overscanStopIndex - info.overscanStartIndex,
+      limit: (info.overscanStopIndex - info.overscanStartIndex) + 1,
     },
   });
 }
@@ -271,20 +273,14 @@ onRowsRendered = (info: IRowsRenderedInfo) => {
 render () {
   const {tab, hiddenCount} = this.props;
 
+  // the AutoSizer stuff below looks extremely dumb, but it's actually the only
+  // way to make sure AutoSizer re-renders
   return <HubGamesDiv>
-      <AutoSizer>
-        {this.renderWithSize}
+    <AutoSizer>
+      {(size) => this.renderWithSize(size)}
     </AutoSizer>
     <HiddenIndicator tab={tab} count={hiddenCount}/>
   </HubGamesDiv>;
-}
-
-componentDidUpdate (prevProps: IProps, prevState) {
-  if (prevProps.games !== this.props.games) {
-    if (this.table) {
-      this.table.forceUpdateGrid();
-    }
-  }
 }
 
 renderWithSize = ({width, height}) => {
@@ -306,7 +302,7 @@ renderWithSize = ({width, height}) => {
   const scrollTop = height <= 0 ? 0 : this.state.scrollTop;
   const {gamesCount = 0, sortBy, sortDirection} = this.props;
 
-  return <StyledTable innerRef={this.grabTable}
+  return <StyledTable
       headerHeight={35}
       height={height}
       width={width}
@@ -314,11 +310,7 @@ renderWithSize = ({width, height}) => {
       rowHeight={75}
       rowGetter={this.rowGetter}
       onRowClick={this.onRowClick}
-      onScroll={(e: any) => {
-        // ignore data when tab's hidden
-        if (e.clientHeight <= 0) { return; }
-        this.setState({ scrollTop: e.scrollTop });
-      }}
+      onScroll={this.onScroll}
       scrollTop={scrollTop}
       sort={this.props.onSortChange}
       sortBy={sortBy}

@@ -16,6 +16,8 @@ import {arrayOf} from "idealizr";
 
 import {pluck, indexBy, difference} from "underscore";
 
+const defaultObj = {} as any;
+
 export default class LibraryFetcher extends Fetcher {
   constructor () {
     super();
@@ -32,19 +34,39 @@ export default class LibraryFetcher extends Fetcher {
       return this.retry();
     }
 
-    const tabParams = session.tabParams[this.tabId];
+    const tabParams = session.tabParams[this.tabId] || defaultObj;
+    let {offset = 0, limit = 30, sortBy} = tabParams;
+    const sortDirection: "DESC" | "ASC" = tabParams.sortDirection || "DESC";
+
+    const filter = session.navigation.filters[this.tabId];
 
     const gameRepo = db.getRepo(Game);
     const keyRepo = db.getRepo(DownloadKey);
     let pushLocal = async () => {
       const t1 = Date.now();
-      let {offset = 0, limit = 30} = (tabParams || {});
-      let query = gameRepo.createQueryBuilder("games")
-        .where("exists (select 1 from downloadKeys where " +
+      let query = gameRepo.createQueryBuilder("games");
+
+      query.where("exists (select 1 from downloadKeys where " +
         "downloadKeys.gameId = games.id and " +
-        "downloadKeys.ownerId = :meId)", {meId})
-        .orderBy("games.createdAt", "DESC")
-        .setOffset(offset).setLimit(limit); 
+        "downloadKeys.ownerId = :meId)", {meId});
+
+      const totalCount = await query.getCount();
+
+      if (filter) {
+        query.andWhere("(games.title LIKE :query or games.shortText LIKE :query)", {
+          query: `%${filter.toLowerCase()}%`,
+        });
+      }
+
+      if (sortBy === "title") {
+        query.orderBy("games.title", ("COLLATE NOCASE " + sortDirection) as any);
+      } else if (sortBy === "publishedAt") {
+        query.orderBy("games.publishedAt", sortDirection);
+      } else {
+        query.orderBy("games.createdAt", sortDirection);
+      }
+      query.setOffset(offset).setLimit(limit); 
+
       const t2 = Date.now();
 
       let [games, gamesCount] = await query.getManyAndCount();
@@ -77,6 +99,7 @@ export default class LibraryFetcher extends Fetcher {
         gameIds: pluck(games, "id"),
         gamesCount,
         gamesOffset: offset,
+        hiddenCount: totalCount - gamesCount,
       });
       const t4 = Date.now();
       this.logger.info("query", elapsed(t1, t2),
@@ -85,7 +108,7 @@ export default class LibraryFetcher extends Fetcher {
     };
     await pushLocal();
 
-    if (this.reason === "tab-params-changed") {
+    if (this.reason === "tab-params-changed" || this.reason === "tab-filter-changed") {
       // that'll do. no need to fire an API request when scrolling :)
       return new Outcome("success");
     }

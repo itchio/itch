@@ -47,7 +47,7 @@ export class CollectionsGrid extends React.PureComponent<IProps & IDerivedProps 
     const {t, hiddenCount} = this.props;
 
     return <HubCollectionsGrid>
-        <AutoSizer>{this.renderWithSize}</AutoSizer>
+        <AutoSizer>{(size) => this.renderWithSize(size)}</AutoSizer>
         {hiddenCount > 0
         ? <div className="hidden-count">
           {t("grid.hidden_count", {count: hiddenCount})}

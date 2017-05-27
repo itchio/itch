@@ -204,6 +204,9 @@ export interface ITabParams {
     offset?: number;
     limit?: number;
 
+    sortBy?: string;
+    sortDirection?: "DESC" | "ASC";
+
     // TODO: filters etc.
 }
 
@@ -248,6 +251,7 @@ export interface ITabData {
 
     gamesCount?: number;
     gamesOffset?: number;
+    hiddenCount?: number;
 
     gameIds?: number[];
 

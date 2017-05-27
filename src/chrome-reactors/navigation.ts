@@ -19,6 +19,13 @@ const makePathSelector = (store: IStore) => createSelector(
 );
 
 export default function (watcher: Watcher) {
+  watcher.on(actions.clearFilters, async (store, action) => {
+    const {tab} = action.payload;
+
+    store.dispatch(actions.updatePreferences({onlyCompatibleGames: false}));
+    store.dispatch(actions.filterChanged({tab, query: ""}));
+  });
+
   watcher.on(actions.navigate, async (store, action) => {
     const state = store.getState();
     const {id} = action.payload;

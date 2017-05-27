@@ -20,12 +20,12 @@ const tab = "library";
 
 export class Library extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
-    const {games, gamesCount, gamesOffset} = this.props;
+    const {games, gamesCount, hiddenCount, gamesOffset} = this.props;
 
     return <LibraryContainer>
       <GameFilters tab={tab}/>
       {Object.keys(games).length > 0
-        ? <Games games={games} gamesCount={gamesCount} gamesOffset={gamesOffset} tab={tab}/>
+        ? <Games games={games} gamesCount={gamesCount} hiddenCount={hiddenCount} gamesOffset={gamesOffset} tab={tab}/>
         : ""
       }
     </LibraryContainer>;
@@ -55,6 +55,7 @@ export default connect<IProps>(Library, {
       },
       gamesCount: (data: ITabData) => data.gamesCount || 0,
       gamesOffset: (data: ITabData) => data.gamesOffset || 0,
+      hiddenCount: (data: ITabData) => data.hiddenCount || 0,
     }),
   )
 });

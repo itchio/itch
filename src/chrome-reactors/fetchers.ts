@@ -51,7 +51,7 @@ export async function queueFetch (store: IStore, tabId: string, reason: FetchRea
     fetcher.emitter.on("done", () => {
       delete currentFetchers[tabId];
     });
-  }, 250);
+  }, 50);
 }
 
 function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
@@ -90,8 +90,12 @@ export default function (watcher: Watcher) {
 
   // tab got new params? it's a fetching!
   watcher.on(actions.tabParamsChanged, async (store, action) => {
-    logger.info("got tabParamsChanged for", action.payload.id);
     queueFetch(store, action.payload.id, "tab-params-changed");
+  });
+
+  // tab got new filter? it's a fetching!
+  watcher.on(actions.filterChanged, async (store, action) => {
+    queueFetch(store, action.payload.tab, "tab-filter-changed");
   });
 
   // window gaining focus? fetch away!

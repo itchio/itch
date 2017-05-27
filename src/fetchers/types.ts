@@ -5,7 +5,7 @@ import * as actions from "../actions";
 import {EventEmitter} from "events";
 
 const deepEqual = require("deep-equal");
-export type FetchReason = "tab-changed" | "tab-evolved" | "tab-reloaded" | "window-focused" | "tab-params-changed";
+export type FetchReason = "tab-changed" | "tab-evolved" | "tab-reloaded" | "window-focused" | "tab-params-changed" | "tab-filter-changed";
 
 import rootLogger, {Logger} from "../logger";
 

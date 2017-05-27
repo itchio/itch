@@ -18,7 +18,7 @@ const CoverDiv = styled.div`
 
 class Cover extends React.PureComponent<IProps, void> {
   render () {
-    const {coverUrl, stillCoverUrl, hover, ...restProps} = this.props;
+    const {showGifMarker = true, coverUrl, stillCoverUrl, hover, ...restProps} = this.props;
 
     let gif: boolean;
     const coverStyle: React.CSSProperties = {};
@@ -36,7 +36,7 @@ class Cover extends React.PureComponent<IProps, void> {
     }
 
     return <CoverDiv style={coverStyle} {...restProps}>
-      {gif
+      {gif && showGifMarker
       ? <GifMarker/>
       : null}
     </CoverDiv>;
@@ -44,6 +44,7 @@ class Cover extends React.PureComponent<IProps, void> {
 }
 
 interface IProps {
+  showGifMarker?: boolea;n
   coverUrl: string;
   stillCoverUrl: string;
   hover: boolean;
