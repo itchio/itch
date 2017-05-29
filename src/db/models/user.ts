@@ -21,4 +21,3 @@ export default class User {
   @Column("text", {nullable: true})
   stillCoverUrl: string;
 }
-

@@ -6,8 +6,14 @@ import {
 } from "../../types";
 import {PathScheme} from "../../os/paths";
 
+export interface ICaveSummary {
+  id: string;
+  gameId: number;
+  lastTouched?: string;
+}
+
 @Entity("caves")
-export default class Cave {
+export default class Cave implements ICaveSummary {
   @PrimaryColumn("text")
   /* unique GUID generated locally */
   id: string;
@@ -68,7 +74,7 @@ export default class Cave {
 
   @Column("datetime", {nullable: true})
   /** timestamp when that cave was last opened/played */
-  lastTouched?: Date;
+  lastTouched?: string;
 
   @Column("int", {nullable: true})
   /** number of seconds played/run, as recorded locally */

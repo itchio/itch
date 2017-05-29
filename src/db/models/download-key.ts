@@ -1,8 +1,14 @@
 
 import {Entity, PrimaryColumn, Column} from "typeorm";
 
+export interface IDownloadKeySummary {
+  id: number;
+  gameId: number;
+  createdAt: string;
+}
+
 @Entity("downloadKeys")
-export default class DownloadKey {
+export default class DownloadKey implements IDownloadKeySummary {
   /** itch.io-generated identifier for the download key */
   @PrimaryColumn("int")
   id: number;
