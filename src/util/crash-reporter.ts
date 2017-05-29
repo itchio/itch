@@ -107,13 +107,17 @@ ${log}
     // TODO: something better
     const t = require("../localizer").getT({}, "en");
 
+    const buttons = [
+      t("prompt.crash_reporter.report_issue", {defaultValue: "Report issue"}),
+      t("prompt.crash_reporter.open_crash_log", {defaultValue: "Open crash log"}),
+      t("prompt.action.close", {defaultValue: "Close"}),
+    ];
+    if (env.name === "development") {
+      buttons.push("Ignore and continue (dev only)");
+    }
     let dialogOpts = {
       type: "error" as "error", // woo typescript is crazy stuff, friendos
-      buttons: [
-        t("prompt.crash_reporter.report_issue", {defaultValue: "Report issue"}),
-        t("prompt.crash_reporter.open_crash_log", {defaultValue: "Open crash log"}),
-        t("prompt.action.close", {defaultValue: "Close"}),
-      ],
+      buttons,
       message: t("prompt.crash_reporter.message", {defaultValue: "The application has crashed"}),
       detail: t("prompt.crash_reporter.detail", {
         defaultValue: `A crash log was written to ${crashFile}`,
@@ -127,6 +131,9 @@ ${log}
           self.reportIssue({log});
         } else if (response === 1) {
           shell.openItem(crashFile);
+        } else if (response === 3) {
+          // ignore and continue
+          return;
         }
         os.exit(1);
       };
