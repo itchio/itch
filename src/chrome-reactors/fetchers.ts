@@ -25,33 +25,41 @@ const pathFetchers = {
   "collections": CollectionFetcher,
 };
 
-let currentFetchers: any = {};
-let waitingFor: {
-  [key: string]: NodeJS.Timer;
+let fetching: {
+  [key: string]: boolean;
+} = {};
+
+let nextFetchReason: {
+  [key: string]: FetchReason;
 } = {};
 
 export async function queueFetch (store: IStore, tabId: string, reason: FetchReason) {
-  if (waitingFor[tabId]) {
-    clearTimeout(waitingFor[tabId]);
+  if (fetching[tabId]) {
+    nextFetchReason[tabId] = reason;
+    return;
   }
 
-  waitingFor[tabId] = setTimeout(() => {
-    delete waitingFor[tabId];
-    logger.info(tabId, reason, ", reloading.");
+  fetching[tabId] = true;
 
-    const fetcherClass = getFetcherClass(store, tabId);
-    if (!fetcherClass) {
-      return;
+  const fetcherClass = getFetcherClass(store, tabId);
+  if (!fetcherClass) {
+    return;
+  }
+
+  const fetcher = new fetcherClass();
+  fetcher.hook(store, tabId, reason);
+
+  fetcher.emitter.on("done", () => {
+    delete fetching[tabId];
+
+    const nextReason = nextFetchReason[tabId];
+    if (nextReason) {
+      delete nextFetchReason[tabId];
+      queueFetch(store, tabId, nextReason);
     }
+  });
 
-    const fetcher = new fetcherClass();
-    currentFetchers[tabId] = fetcher;
-    fetcher.hook(store, tabId, reason);
-    fetcher.start();
-    fetcher.emitter.on("done", () => {
-      delete currentFetchers[tabId];
-    });
-  }, 50);
+  fetcher.start();
 }
 
 function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
