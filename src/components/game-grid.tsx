@@ -1,13 +1,21 @@
 
 import * as React from "react";
+
 import {connect, I18nProps} from "./connect";
+
+import {dispatcher} from "../constants/action-types";
+import * as actions from "../actions";
 
 import HubItem from "./hub-item";
 import HiddenIndicator from "./hidden-indicator";
 
 import GameModel from "../db/models/game";
 
-import {AutoSizer, Grid} from "react-virtualized";
+import {
+  AutoSizer,
+  Grid,
+  SectionRenderedParams,
+} from "react-virtualized";
 import {IAutoSizerParams} from "./autosizer-types";
 
 import {HubGamesDiv} from "./games";
@@ -37,20 +45,33 @@ class GameGrid extends React.PureComponent<IProps & IDerivedProps & I18nProps, I
     };
   }
 
+  onSectionRendered = (info: SectionRenderedParams) => {
+    const columnCount = info.columnStopIndex + 1;
+    const offset = info.rowStartIndex * columnCount;
+    const limit = (1 + info.rowStopIndex - info.rowStartIndex) * columnCount;
+
+    this.props.tabParamsChanged({
+      id: this.props.tab,
+      params: {
+        offset,
+        limit,
+      },
+    });
+  }
+
   render () {
-    const {games, hiddenCount, tab} = this.props;
+    const {games, gamesCount = 0, hiddenCount, tab} = this.props;
 
     return <HubGamesDiv>
       <AutoSizer>
       {({width, height}: IAutoSizerParams) => {
         const columnCount = Math.floor(width / 280);
-        const rowCount = Math.ceil(games.length / columnCount);
+        const rowCount = Math.ceil(gamesCount / columnCount);
         const columnWidth = ((width - 10) / columnCount);
         const rowHeight = columnWidth * 1.12;
         const scrollTop = height === 0 ? 0 : this.state.scrollTop;
 
         return <StyledGrid
-          ref="grid"
           cellRenderer={this.cellRenderer.bind(this, {games, columnCount})}
           width={width}
           height={height}
@@ -59,6 +80,7 @@ class GameGrid extends React.PureComponent<IProps & IDerivedProps & I18nProps, I
           rowCount={rowCount}
           rowHeight={rowHeight}
           overscanRowCount={3}
+          onSectionRendered={this.onSectionRendered}
           onScroll={(e: any) => {
             // ignore data when tab's hidden
             if (e.clientHeight <= 0) { return; }
@@ -75,7 +97,7 @@ class GameGrid extends React.PureComponent<IProps & IDerivedProps & I18nProps, I
 
   cellRenderer(layout: ILayoutInfo, cell: ICellInfo): JSX.Element {
     const gameIndex = (cell.rowIndex * layout.columnCount) + cell.columnIndex;
-    const game = layout.games[gameIndex];
+    const game = layout.games[gameIndex - this.props.gamesOffset];
 
     const style = cell.style;
     style.padding = "10px";
@@ -97,14 +119,22 @@ class GameGrid extends React.PureComponent<IProps & IDerivedProps & I18nProps, I
 
 interface IProps {
   games: GameModel[];
+  gamesCount: number;
+  gamesOffset: number;
   hiddenCount: number;
   tab: string;
 }
 
-interface IDerivedProps {}
+interface IDerivedProps {
+  tabParamsChanged: typeof actions.tabParamsChanged;
+}
 
 interface IState {
   scrollTop: 0;
 }
 
-export default connect<IProps>(GameGrid);
+export default connect<IProps>(GameGrid, {
+  dispatch: (dispatch) => ({
+    tabParamsChanged: dispatcher(dispatch, actions.tabParamsChanged),
+  }),
+});

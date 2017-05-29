@@ -3,6 +3,7 @@ import {Fetcher, Outcome} from "./types";
 import db from "../db";
 import Game from "../db/models/game";
 import DownloadKey from "../db/models/download-key";
+import Cave from "../db/models/cave";
 import compareRecords from "../db/compare-records";
 import getColumns from "../db/get-columns";
 
@@ -11,7 +12,6 @@ import normalize from "../api/normalize";
 import {downloadKey} from "../api/schemas";
 import {isNetworkError} from "../net/errors";
 
-import {elapsed} from "../format";
 import {arrayOf} from "idealizr";
 
 import {pluck, indexBy, difference} from "underscore";
@@ -38,17 +38,43 @@ export default class LibraryFetcher extends Fetcher {
     let {offset = 0, limit = 30, sortBy} = tabParams;
     const sortDirection: "DESC" | "ASC" = tabParams.sortDirection || "DESC";
 
+    if (this.reason === "tab-filter-changed") {
+      offset = 0;
+    }
+
     const filter = session.navigation.filters[this.tabId];
 
     const gameRepo = db.getRepo(Game);
     const keyRepo = db.getRepo(DownloadKey);
     let pushLocal = async () => {
-      const t1 = Date.now();
       let query = gameRepo.createQueryBuilder("games");
 
-      query.where("exists (select 1 from downloadKeys where " +
-        "downloadKeys.gameId = games.id and " +
-        "downloadKeys.ownerId = :meId)", {meId});
+      query.leftJoin(
+        DownloadKey,
+        "downloadKeys",
+        "downloadKeys.id = (" +
+            "select id from downloadKeys " +
+            "where downloadKeys.gameId = games.id " +
+            "and downloadKeys.ownerId = :meId " +
+            "limit 1" +
+          ")",
+      );
+
+      query.leftJoin(
+        Cave,
+        "caves",
+        "caves.id = (" +
+            "select id from caves " +
+            "where caves.gameId = games.id " +
+            "limit 1" +
+          ")",
+      );
+
+      query.where("(downloadKeys.id is not null or caves.id is not null)");
+
+      query.setParameters({
+        meId,
+      });
 
       const totalCount = await query.getCount();
 
@@ -67,10 +93,7 @@ export default class LibraryFetcher extends Fetcher {
       }
       query.setOffset(offset).setLimit(limit); 
 
-      const t2 = Date.now();
-
       let [games, gamesCount] = await query.getManyAndCount();
-      const t3 = Date.now();
 
       const oldTabData = this.store.getState().session.tabData[this.tabId];
       let equalGames = 0;
@@ -101,10 +124,6 @@ export default class LibraryFetcher extends Fetcher {
         gamesOffset: offset,
         hiddenCount: totalCount - gamesCount,
       });
-      const t4 = Date.now();
-      this.logger.info("query", elapsed(t1, t2),
-        "select", elapsed(t2, t3),
-        "push", elapsed(t3, t4));
     };
     await pushLocal();
 
@@ -122,14 +141,10 @@ export default class LibraryFetcher extends Fetcher {
     const api = client.withKey(key);
     let normalized;
     try {
-      const t1 = Date.now();
       const apiResponse = await api.myOwnedKeys();
-      const t2 = Date.now();
       normalized = normalize(apiResponse, {
         owned_keys: arrayOf(downloadKey),
       });
-      const t3 = Date.now();
-      this.logger.info("api", elapsed(t1, t2), "norm", elapsed(t2, t3));
     } catch (e) {
       this.logger.error(`API error:`, e);
       if (isNetworkError(e)) {

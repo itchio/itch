@@ -46,6 +46,8 @@ class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps, void
     if (layout === "grid") {
       return <GameGrid
         games={games}
+        gamesCount={gamesCount}
+        gamesOffset={gamesOffset}
         hiddenCount={hiddenCount}
         tab={tab}/>;
     } else if (layout === "table") {

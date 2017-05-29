@@ -11,6 +11,7 @@ import GameModel from "../db/models/game";
 import {
   AutoSizer, Table, Column,
   TableCellProps,
+  IndexRange, OverscanIndexRange,
 } from "react-virtualized";
 import {IOnSortChange, SortDirectionType} from "./sort-types";
 
@@ -40,13 +41,6 @@ interface ICellDataGetter {
   columnData: any;
   dataKey: string;
   rowData: any;
-}
-
-interface IRowsRenderedInfo {
- overscanStartIndex: number;
- overscanStopIndex: number;
- startIndex: number;
- stopIndex: number ;
 }
 
 const StyledTable = styled(Table)`
@@ -165,6 +159,7 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
     });
   }
 
+  // FIXME: find another way to do this
   onScroll = (e: any) => {
     // ignore data when tab's hidden
     if (e.clientHeight <= 0) { return; }
@@ -260,7 +255,7 @@ lastPlayedRenderer = (params: TableCellProps): JSX.Element | string => {
   }
 }
 
-onRowsRendered = (info: IRowsRenderedInfo) => {
+onRowsRendered = (info: IndexRange & OverscanIndexRange) => {
   this.props.tabParamsChanged({
     id: this.props.tab,
     params: {
@@ -310,7 +305,6 @@ renderWithSize = ({width, height}) => {
       rowHeight={75}
       rowGetter={this.rowGetter}
       onRowClick={this.onRowClick}
-      onScroll={this.onScroll}
       scrollTop={scrollTop}
       sort={this.props.onSortChange}
       sortBy={sortBy}
