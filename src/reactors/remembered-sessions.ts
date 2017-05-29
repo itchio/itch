@@ -1,8 +1,7 @@
 
 import {Watcher} from "./watcher";
 
-import * as electron from "electron";
-const {app} = electron.remote;
+import {app} from "electron";
 import sf from "../os/sf";
 import * as ospath from "path";
 

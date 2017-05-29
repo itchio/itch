@@ -94,17 +94,8 @@ export class Fetcher {
       return;
     }
 
-    if (this.prevData && deepEqual(this.prevData, data)) {
-      this.logger.warn("Ignoring dupe data");
-      return;
-    }
-
-    this.prevData = data;
-    const timestamp = Date.now();
-
     const action = actions.tabDataFetched({
       id: this.tabId,
-      timestamp,
       data,
     });
     this.store.dispatch(action);

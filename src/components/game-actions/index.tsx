@@ -17,9 +17,12 @@ import SecondaryActions from "./secondary-actions";
 
 import {IActionsInfo} from "./types";
 import GameModel from "../../db/models/game";
-import CaveModel from "../../db/models/cave";
+import {ICaveSummary} from "../../db/models/cave";
+import {IDownloadKeySummary} from "../../db/models/download-key";
+import getByIds from "../../db/get-by-ids";
+
 import {
-  IAppState, IDownloadKey,
+  IAppState,
   IDownloadItem, ITask, IGameUpdate, IGameUpdatesState,
 } from "../../types";
 
@@ -49,10 +52,6 @@ const GameActionsDiv = styled.div`
   }
 `;
 
-@load((props) => [
-  {source: "cavesByGameId", query: props.game.id},
-  {source: "downloadKeysByGameId", query: props.game.id},
-])
 class GameActions extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {props} = this;
@@ -101,12 +100,8 @@ interface IDerivedProps extends IActionsInfo {
 
 interface IHappenings {
   game: GameModel;
-  cavesByGameId: {
-    [gameId: string]: CaveModel[];
-  };
-  downloadKeysByGameId: {
-    [gameId: string]: IDownloadKey[];
-  };
+  caves: ICaveSummary[];
+  downloadKeys: IDownloadKeySummary[];
   tasks: ITask[];
   downloads: IDownloadItem[];
   meId: number;
@@ -120,8 +115,10 @@ export default connect<IProps>(GameActions, {
     const selector = createSelector(
       createStructuredSelector({
         game: (state: IAppState, props: IProps) => props.game,
-        cavesByGameId: (state: IAppState, props: IProps) => state.queries.cavesByGameId,
-        downloadKeysByGameId: (state: IAppState, props: IProps) => state.queries.downloadKeysByGameId,
+        caves: (state: IAppState, props: IProps) =>
+          getByIds(state.commons.caves, state.commons.caveIdsByGameId[props.game.id]),
+        downloadKeys: (state: IAppState, props: IProps) =>
+          getByIds(state.commons.downloadKeys, state.commons.downloadKeyIdsByGameId[props.game.id]),
         tasks: (state: IAppState, props: IProps) => state.tasks.tasksByGameId[props.game.id],
         downloads: (state: IAppState, props: IProps) => state.downloads.downloadsByGameId[props.game.id],
         meId: (state: IAppState, props: IProps) => (state.session.credentials.me || { id: "anonymous" }).id,
@@ -130,11 +127,9 @@ export default connect<IProps>(GameActions, {
         gameUpdates: (state: IAppState, props: IProps) => state.gameUpdates,
       }),
       (happenings: IHappenings) => {
-        const { game, cavesByGameId, downloadKeysByGameId, tasks, downloads, meId, mePress, gameUpdates } = happenings;
+        const { game, caves, downloadKeys, tasks, downloads, meId, mePress, gameUpdates } = happenings;
         let cave;
-        const caves = cavesByGameId[game.id];
         if (size(caves) > 0) {
-          // TODO: handle multiple caves
           cave = caves[0];
         }
 
@@ -145,7 +140,6 @@ export default connect<IProps>(GameActions, {
         const cancellable = false;
 
         let downloadKey;
-        const downloadKeys = downloadKeysByGameId[game.id];
         if (size(downloadKeys) > 0) {
           // TODO: ignore revoked ones
           downloadKey = downloadKeys[0];

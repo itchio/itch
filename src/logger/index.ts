@@ -7,14 +7,10 @@ import env from "../env";
 
 const LOG_LEVEL = process.env.ITCH_LOG_LEVEL || "info" as Level;
 
-interface IChildProps {
-  name: string;
-}
-
 // tslint:disable-next-line
 export interface Logger extends PinoLogger {
   close();
-  child(props: IChildProps): Logger;
+  child(props: {name: string}): Logger;
 }
 
 let pinoFactory: (opts?: any, stream?: Stream) => Logger;

@@ -7,7 +7,7 @@ import {formatDuration} from "../format";
 import actionForGame from "../util/action-for-game";
 
 import GameModel from "../db/models/game";
-import CaveModel from "../db/models/cave";
+import {ICaveSummary} from "../db/models/cave";
 
 class TotalPlaytime extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
@@ -37,7 +37,7 @@ class TotalPlaytime extends React.PureComponent<IProps & IDerivedProps & I18nPro
 
 interface IProps {
   game: GameModel;
-  cave: CaveModel;
+  cave: ICaveSummary;
   short?: boolean;
 }
 

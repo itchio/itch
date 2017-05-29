@@ -1,6 +1,7 @@
 
 import {Watcher} from "./watcher";
 
+import fetchers from "./fetchers";
 import preboot from "./preboot";
 import preferences from "./preferences";
 import mainWindow from "./main-window";
@@ -16,8 +17,18 @@ import modals from "./modals";
 import openAtLogin from "./open-at-login";
 import proxy from "./proxy";
 import login from "./login";
+import querier from "./querier";
+import dialogs from "./dialogs";
+import i18n from "./i18n";
+import contextMenu from "./context-menu";
+import rememberedSessions from "./remembered-sessions";
+import session from "./session";
+import navigation from "./navigation";
+import commons from "./commons";
 
-let watcher = new Watcher();
+const watcher = new Watcher();
+
+fetchers(watcher);
 preboot(watcher);
 preferences(watcher);
 mainWindow(watcher);
@@ -33,6 +44,14 @@ modals(watcher);
 openAtLogin(watcher);
 proxy(watcher);
 login(watcher);
+querier(watcher);
+dialogs(watcher);
+i18n(watcher);
+contextMenu(watcher);
+rememberedSessions(watcher);
+session(watcher);
+navigation(watcher);
+commons(watcher);
 
 watcher.validate();
 

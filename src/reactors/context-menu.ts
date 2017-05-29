@@ -3,10 +3,7 @@ import {Watcher} from "./watcher";
 
 import * as clone from "clone";
 
-// FIXME: this blows
-// import {BrowserWindow, Menu} from "electron";
-import * as electron from "electron";
-const {BrowserWindow, Menu} = electron.remote;
+import {BrowserWindow, Menu} from "electron";
 
 import localizer from "../localizer";
 

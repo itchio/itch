@@ -5,8 +5,8 @@ import {Logger} from "../logger";
 
 import GameModel from "../db/models/game";
 import CollectionModel from "../db/models/collection";
-import DownloadKeyModel from "../db/models/download-key";
-import CaveModel from "../db/models/cave";
+import DownloadKeyModel, {IDownloadKeySummary} from "../db/models/download-key";
+import CaveModel, {ICaveSummary} from "../db/models/cave";
 
 import {PathScheme} from "../os/paths";
 
@@ -279,6 +279,9 @@ export interface ITabData {
 
     /** true if the tab was restored as part of session */
     restored?: boolean;
+
+    lastOffset?: number;
+    lastLimit?: number;
 }
 
 export interface ITabDataSave extends ITabData {
@@ -585,6 +588,8 @@ export interface IAppState {
     status: IStatusState;
     gameUpdates: IGameUpdatesState;
     queries: IQueriesState;
+    /** commonly-needed subset of DB rows available in a compact & performance-friendly format */
+    commons: ICommonsState;
 }
 
 export interface IQueriesState {
@@ -599,6 +604,22 @@ export interface IQueriesState {
     downloadKeysByGameId: {
         [gameId: string]: DownloadKeyModel[],
     };
+}
+
+export interface ICommonsState {
+    downloadKeys: {
+        [downloadKeyId: string]: IDownloadKeySummary;
+    };
+    downloadKeyIdsByGameId: {
+        [gameId: string]: string[];
+    };
+    caves: {
+        [caveId: string]: ICaveSummary;
+    };
+    caveIdsByGameId: {
+        [gameId: string]: string[];
+    };
+    libraryGameIds: string[];
 }
 
 export interface IHistoryItemOption {

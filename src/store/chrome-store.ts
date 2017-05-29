@@ -8,8 +8,10 @@ import { electronEnhancer } from "ftl-redux-electron-store";
 const createLogger = require("redux-logger");
 
 import route from "../reactors/route";
-import watcher from "../chrome-reactors";
+import {Watcher} from "../reactors/watcher";
 import reducer from "../reducers";
+
+const watcher = new Watcher();
 
 import {IChromeStore} from "../types";
 

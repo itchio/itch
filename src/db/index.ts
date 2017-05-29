@@ -1,4 +1,8 @@
 
+if (process.type === "renderer") {
+  throw new Error("can't require db from renderer.");
+}
+
 import {elapsed} from "../format";
 
 import rootLogger from "../logger";
@@ -14,11 +18,15 @@ import GameModel from "./models/game";
 import CollectionModel from "./models/collection";
 import DownloadKeyModel from "./models/download-key";
 import CaveModel from "./models/cave";
+import UserModel from "./models/user";
 
 import compareRecords from "./compare-records";
 import * as _ from "underscore";
 
 import {globalDbPath} from "../os/paths";
+
+import store from "../store/metal-store";
+import * as actions from "../actions";
 
 import {
   IEntityMap, IEntityRecords,
@@ -34,6 +42,7 @@ const modelMap: IModelMap = {
   "collections": CollectionModel,
   "downloadKeys": DownloadKeyModel,
   "caves": CaveModel,
+  "users": UserModel,
 };
 
 /**
@@ -76,8 +85,11 @@ export class DB {
    * Saves all passed entity records. See opts type for disk persistence and other options.
    */
   async saveAllEntities <T> (entityRecords: IEntityRecords<T>) {
+    const updated: {
+      [table: string]: string[];
+    } = {};
+
     for (const tableName of Object.keys(entityRecords.entities)) {
-      const t1 = Date.now();
       const entities: IEntityMap<Object> = entityRecords.entities[tableName];
       const entityIds = Object.keys(entities);
 
@@ -90,15 +102,11 @@ export class DB {
 
       const repo = this.conn.getRepository(Model);
 
-      const t2 = Date.now();
-
       const savedRows = await repo
         .createQueryBuilder("g")
         .where("g.id in (:entityIds)", {entityIds})
         .getMany();
       const existingEntities = _.indexBy(savedRows, "id");
-
-      const t3 = Date.now();
 
       let rows = [];
       let numUpToDate = 0;
@@ -118,16 +126,13 @@ export class DB {
         }
       }
 
-      const t4 = Date.now();
-
       if (rows.length > 0) {
+        // TODO: what do we do if this fails?
         await repo.persist(rows);
+        store.dispatch(actions.dbCommit({tableName, updated: _.pluck(rows, "id")}));
       }
-      const t5 = Date.now();
       logger.info(`saved ${entityIds.length - numUpToDate}/${entityIds.length}`
-        + ` ${tableName}, skipped ${numUpToDate} up-to-date\n`
-        + `prep ${elapsed(t1, t2)}, quer ${elapsed(t2, t3)}, `
-        + `comp ${elapsed(t3, t4)}, save ${elapsed(t4, t5)}`);
+        + ` ${tableName}, skipped ${numUpToDate} up-to-date\n`);
     }
   }
 

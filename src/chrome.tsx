@@ -5,8 +5,6 @@ import "./boot/bluebird";
 import "./boot/fs";
 import "./boot/time-ago-locales";
 
-import {connectDatabase} from "./db";
-
 import * as os from "./os";
 import env from "./env";
 
@@ -95,8 +93,6 @@ if (os.platform() === "darwin") {
 
 async function start() {
   store.dispatch(actions.languageSniffed({lang: navigator.language}));
-
-  await connectDatabase();
 
   render(App);
 

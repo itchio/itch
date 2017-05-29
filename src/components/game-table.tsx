@@ -1,5 +1,6 @@
 
 import * as React from "react";
+import {createStructuredSelector} from "reselect";
 
 import {connect, I18nProps} from "./connect";
 
@@ -7,6 +8,7 @@ import {dispatcher, multiDispatcher} from "../constants/action-types";
 import * as actions from "../actions";
 
 import GameModel from "../db/models/game";
+import getByIds from "../db/get-by-ids";
 
 import {
   AutoSizer, Table, Column,
@@ -14,6 +16,8 @@ import {
   IndexRange, OverscanIndexRange,
 } from "react-virtualized";
 import {IOnSortChange, SortDirectionType} from "./sort-types";
+
+import {ICommonsState} from "../types";
 
 import gameTableRowRenderer, {IRowHandlerParams} from "./game-table-row-renderer";
 
@@ -230,8 +234,12 @@ playtimeRenderer = (params: TableCellProps): JSX.Element | string => {
   if (!game) {
     return null;
   }
-  // TODO: db
-  let cave = null;
+
+  const {commons} = this.props;
+  const caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+
+  // TODO: pick cave with highest play time
+  const cave = caves.length > 0 ? caves[0] : caves;
 
   if (cave) {
     return <TotalPlaytime game={game} cave={cave} short={true}/>;
@@ -245,8 +253,12 @@ lastPlayedRenderer = (params: TableCellProps): JSX.Element | string => {
   if (!game) {
     return null;
   }
-  // TODO: db
-  let cave = null;
+
+  const {commons} = this.props;
+  const caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+
+  // TODO: pick cave with highest play time
+  const cave = caves.length > 0 ? caves[0] : caves;
 
   if (cave) {
     return <LastPlayed game={game} cave={cave} short={true}/>;
@@ -311,6 +323,7 @@ renderWithSize = ({width, height}) => {
       sortDirection={sortDirection}
       rowRenderer={gameTableRowRenderer}
       onRowsRendered={this.onRowsRendered}
+      overscanRowCount={0}
     >
     <Column
       dataKey="cover"
@@ -364,6 +377,8 @@ interface IProps {
 }
 
 interface IDerivedProps {
+  commons: ICommonsState;
+
   clearFilters: typeof actions.clearFilters;
   navigateToGame: typeof actions.navigateToGame;
   openGameContextMenu: typeof actions.openGameContextMenu;
@@ -375,6 +390,9 @@ interface IGameTableState {
 }
 
 export default connect<IProps>(GameTable, {
+  state: () => createStructuredSelector({
+    commons: (state) => state.commons,
+  }),
   dispatch: (dispatch) => ({
     clearFilters: dispatcher(dispatch, actions.clearFilters),
     navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),

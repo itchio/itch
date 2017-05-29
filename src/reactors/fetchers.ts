@@ -39,12 +39,12 @@ export async function queueFetch (store: IStore, tabId: string, reason: FetchRea
     return;
   }
 
-  fetching[tabId] = true;
-
   const fetcherClass = getFetcherClass(store, tabId);
   if (!fetcherClass) {
     return;
   }
+
+  fetching[tabId] = true;
 
   const fetcher = new fetcherClass();
   fetcher.hook(store, tabId, reason);
@@ -55,7 +55,9 @@ export async function queueFetch (store: IStore, tabId: string, reason: FetchRea
     const nextReason = nextFetchReason[tabId];
     if (nextReason) {
       delete nextFetchReason[tabId];
-      queueFetch(store, tabId, nextReason);
+      queueFetch(store, tabId, nextReason).catch((err) => {
+        logger.error(`In queued fetcher: ${err.stack}`);
+      });
     }
   });
 
@@ -68,7 +70,12 @@ function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
     return staticFetcher;
   }
 
-  const path = store.getState().session.navigation.tabData[tabId].path;
+  const tabData = store.getState().session.navigation.tabData[tabId];
+  if (!tabData) {
+    return null;
+  }
+
+  const {path} = tabData;
   if (path) {
     const pathBase = path.substr(0, path.indexOf("/"));
     const pathFetcher = pathFetchers[pathBase];

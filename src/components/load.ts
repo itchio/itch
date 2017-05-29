@@ -3,7 +3,7 @@ let seed = 0;
 
 import * as PropTypes from "prop-types";
 import {IStore} from "../types";
-import {IQueryList} from "../chrome-reactors/querier";
+import {IQueryList} from "../reactors/querier";
 
 import * as actions from "../actions";
 

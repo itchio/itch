@@ -9,7 +9,6 @@ import GameActions from "./game-actions";
 import Cover from "./basics/cover";
 
 import GameModel from "../db/models/game";
-import CaveModel from "../db/models/cave";
 import {dispatcher, multiDispatcher} from "../constants/action-types";
 
 import styled, * as styles from "./styles";

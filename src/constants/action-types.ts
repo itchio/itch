@@ -6,7 +6,7 @@ import {IProgressInfo} from "../types";
 
 import GameModel from "../db/models/game";
 
-import {IQueryList} from "../chrome-reactors/querier";
+import {IQueryList} from "../reactors/querier";
 
 export type IAction<T> = Action<T>;
 
@@ -134,22 +134,6 @@ export interface IStartOnboardingPayload {}
 
 export const EXIT_ONBOARDING = "EXIT_ONBOARDING";
 export interface IExitOnboardingPayload {}
-
-export const GLOBAL_DB_COMMIT = "GLOBAL_DB_COMMIT";
-export const GLOBAL_DB_READY = "GLOBAL_DB_READY";
-export const GLOBAL_DB_CLOSED = "GLOBAL_DB_CLOSED";
-
-export const USER_DB_COMMIT = "USER_DB_COMMIT";
-export const USER_DB_READY = "USER_DB_READY";
-export const USER_DB_CLOSED = "USER_DB_CLOSED";
-
-export interface IDbReadyPayload {}
-export interface IDbCommitPayload {
-  updated: Types.IEntityMap<any>;
-  deleted: Types.IEntityRefs;
-  initial: boolean;
-}
-export interface IDbClosedPayload {}
 
 /* Background stuff */
 export const DISMISS_HISTORY_ITEM = "DISMISS_HISTORY_ITEM";
@@ -366,9 +350,6 @@ export interface ITabDataFetchedPayload {
 
   /** the data we fetched */
   data: Types.ITabData;
-
-  /** when we started fetching it */
-  timestamp: number;
 }
 
 export const TAB_PARAMS_CHANGED = "TAB_PARAMS_CHANGED";
@@ -1082,3 +1063,12 @@ export interface IFetchedQueryPayload {
     },
   };
 }
+
+export const DB_COMMIT = "DB_COMMIT";
+export interface IDbCommitPayload {
+  tableName: string;
+  updated: string[];
+}
+
+export const COMMONS_UPDATED = "COMMONS_UPDATED";
+export interface ICommonsUpdatedPayload extends Types.ICommonsState {}

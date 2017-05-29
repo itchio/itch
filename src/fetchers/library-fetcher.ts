@@ -36,6 +36,17 @@ export default class LibraryFetcher extends Fetcher {
 
     const tabParams = session.tabParams[this.tabId] || defaultObj;
     let {offset = 0, limit = 30, sortBy} = tabParams;
+
+    const {libraryGameIds} = this.store.getState().commons;
+
+    const overscan = 12;
+
+    limit += overscan;
+    offset -= overscan;
+    offset = (offset >= 0 ? offset : 0);
+
+    const oldTabData = this.store.getState().session.tabData[this.tabId];
+
     const sortDirection: "DESC" | "ASC" = tabParams.sortDirection || "DESC";
 
     if (this.reason === "tab-filter-changed") {
@@ -49,34 +60,14 @@ export default class LibraryFetcher extends Fetcher {
     let pushLocal = async () => {
       let query = gameRepo.createQueryBuilder("games");
 
-      query.leftJoin(
-        DownloadKey,
-        "downloadKeys",
-        "downloadKeys.id = (" +
-            "select id from downloadKeys " +
-            "where downloadKeys.gameId = games.id " +
-            "and downloadKeys.ownerId = :meId " +
-            "limit 1" +
-          ")",
-      );
-
-      query.leftJoin(
-        Cave,
-        "caves",
-        "caves.id = (" +
-            "select id from caves " +
-            "where caves.gameId = games.id " +
-            "limit 1" +
-          ")",
-      );
-
-      query.where("(downloadKeys.id is not null or caves.id is not null)");
+      query.where("games.id in (:gameIds)");
 
       query.setParameters({
         meId,
+        gameIds: libraryGameIds,
       });
 
-      const totalCount = await query.getCount();
+      const totalCount = libraryGameIds.length;
 
       if (filter) {
         query.andWhere("(games.title LIKE :query or games.shortText LIKE :query)", {
@@ -84,18 +75,41 @@ export default class LibraryFetcher extends Fetcher {
         });
       }
 
+      let joinCave = false;
+
       if (sortBy === "title") {
         query.orderBy("games.title", ("COLLATE NOCASE " + sortDirection) as any);
       } else if (sortBy === "publishedAt") {
         query.orderBy("games.publishedAt", sortDirection);
+      } else if (sortBy === "secondsRun") {
+        query.orderBy("caves.secondsRun", sortDirection);
+        joinCave = true;
+      } else if (sortBy === "lastTouched") {
+        query.orderBy("caves.lastTouched", sortDirection);
+        joinCave = true;
       } else {
         query.orderBy("games.createdAt", sortDirection);
       }
+
+      if (joinCave) {
+        query.leftJoin(
+          Cave,
+          "caves",
+          "caves.id = (" +
+              "select caves.id from caves " +
+              "where caves.gameId = games.id " +
+              "limit 1" +
+            ")",
+        );
+      }
+
       query.setOffset(offset).setLimit(limit); 
 
-      let [games, gamesCount] = await query.getManyAndCount();
+      query.select("games.*");
 
-      const oldTabData = this.store.getState().session.tabData[this.tabId];
+      const games = await query.getRawMany();
+      const gamesCount = await query.getCount();
+
       let equalGames = 0;
       let presentGames = 0;
 
@@ -123,6 +137,8 @@ export default class LibraryFetcher extends Fetcher {
         gamesCount,
         gamesOffset: offset,
         hiddenCount: totalCount - gamesCount,
+        lastOffset: offset,
+        lastLimit: limit,
       });
     };
     await pushLocal();

@@ -2,17 +2,25 @@
 import * as React from "react";
 import {connect, I18nProps} from "../connect";
 
+import {parseDate} from "../../api/schemas";
+
 import ReactTimeAgo from "react-time-ago";
 
 class TimeAgo extends React.PureComponent<IProps & I18nProps, void> {
   render () {
-    const {t, date} = this.props;
+    const {t} = this.props;
+    let {date} = this.props;
 
     if (!date) {
       return <span/>;
     }
 
-    if (!(date instanceof Date)) {
+    const type = typeof date;
+    if (type === "string") {
+      date = parseDate(date);
+    } else if (type === "object") {
+      // already good
+    } else {
       console.warn("TimeAgo wasn't passed a date: ", date);
       return <span/>;
     }
@@ -27,8 +35,7 @@ class TimeAgo extends React.PureComponent<IProps & I18nProps, void> {
 }
 
 interface IProps {
-  // TODO: with typescript we can probably have consistent typing here
-  date: Date;
+  date: Date | string;
 }
 
 export default connect<IProps>(TimeAgo);

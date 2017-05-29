@@ -4,7 +4,7 @@ import {connect, I18nProps} from "./connect";
 
 import actionForGame from "../util/action-for-game";
 import GameModel from "../db/models/game";
-import CaveModel from "../db/models/cave";
+import ICaveSummary from "../db/models/cave";
 
 import interleave from "./interleave";
 import TimeAgo from "./basics/time-ago";
@@ -35,7 +35,7 @@ class LastPlayed extends React.PureComponent<IProps & IDerivedProps & I18nProps,
 
 interface IProps {
   game: GameModel;
-  cave: CaveModel;
+  cave: ICaveSummary;
   short?: boolean;
 }
 
