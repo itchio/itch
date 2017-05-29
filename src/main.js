@@ -1,9 +1,21 @@
 
 const env = require("./env").default;
 
-if (require("./env").default.name === "test") {
+if (env.name === "test") {
   require("./boot/test-paths").setup();
 }
+
+if (env.name === "development") {
+  global.require = require;
+  setInterval(function () {}, 400);
+
+  global.wait = function (p) {
+    p
+      .then((res) => console.log("Promise result: ", res))
+      .catch((e) => console.log("Promise rejected: ", e))
+  }
+}
+
 require("./boot/crash");
 require("./boot/sourcemaps");
 require("./boot/bluebird");

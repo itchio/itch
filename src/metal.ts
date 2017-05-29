@@ -44,8 +44,6 @@ function autoUpdateDone () {
   const store = require("./store/metal-store").default;
 
   app.on("ready", async function () {
-    await connectDatabase();
-
     const shouldQuit = app.makeSingleInstance((argv, cwd) => {
       // we only get inside this callback when another instance
       // is launched - so this executes in the context of the main instance
@@ -69,6 +67,8 @@ function autoUpdateDone () {
       app.exit(0);
       return;
     }
+
+    await connectDatabase();
 
     if (env.name === "development") {
       const logger = require("./logger").default;
