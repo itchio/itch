@@ -58,6 +58,7 @@ const StyledTable = styled(Table)`
     text-transform: initial;
     font-weight: normal;
     font-size: 90%;
+    background: rgba(0, 0, 0, 0.3);
   }
 
   .ReactVirtualized__Table__row,
@@ -68,8 +69,6 @@ const StyledTable = styled(Table)`
   .ReactVirtualized__Table__row {
     background-color: ${props => props.theme.meatBackground};
     outline: 0;
-
-    transition: 0.2s border-color, background-color;
 
     &:hover {
       background-color: ${props => darken(0.05, props.theme.meatBackground)};
@@ -89,7 +88,7 @@ const StyledTable = styled(Table)`
     position: relative;
 
     &.secondary {
-      font-size: 95%;
+      font-size: 90%;
       color: ${props => props.theme.secondaryText};
     }
   }

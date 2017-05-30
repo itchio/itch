@@ -23,23 +23,20 @@ const SearchContainer = styled.section`
   }
 
   input[type=search] {
-    ${styles.heavyInput()}
-    transition: all 0.2s;
+    ${styles.searchInput()}
+
     width: 100%;
-    text-indent: 14px;
+    margin-left: 4px;
+    text-indent: 16px;
     padding: 6px 10px 5px 9px;
     height: 32px;
     font-size: 14px;
   }
 
   .icon-search {
-    position: absolute;
+    ${styles.searchIcon()}
+
     left: 20px;
-    bottom: 50%;
-    transform: translateY(55%);
-    font-size: 14px;
-    color: ${props => props.theme.inputPlaceholder};
-    pointer-events: none;
   }
 `;
 
@@ -132,7 +129,7 @@ class Search extends React.PureComponent<IDerivedProps & I18nProps, void> {
 
     return <SearchContainer className={classNames({loading})}>
       <input id="search" ref={(input) => this.input = input} type="search"
-        placeholder={t("search.placeholder")}
+        placeholder={t("search.placeholder") + "..."}
         onKeyDown={this.onKeyDown}
         onKeyUp={this.onKeyUp}
         onChange={this.onChange}

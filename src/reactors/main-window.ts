@@ -59,7 +59,7 @@ async function createWindow (store: IStore, hidden: boolean) {
 
   const iconPath = getImagePath("window/" + env.appName + "/" + iconName + ".png");
 
-  const window = new BrowserWindow({
+  let opts: Electron.BrowserWindowConstructorOptions = {
     title: app.getName(),
     icon: iconPath,
     width, height,
@@ -68,7 +68,9 @@ async function createWindow (store: IStore, hidden: boolean) {
     autoHideMenuBar: true,
     backgroundColor: darkMineShaft,
     titleBarStyle: "hidden",
-  });
+    frame: false,
+  };
+  const window = new BrowserWindow(opts);
 
   if (os.platform() === "darwin") {
     try {

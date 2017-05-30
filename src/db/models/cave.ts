@@ -1,5 +1,9 @@
 
-import {Entity, PrimaryColumn, Column} from "typeorm";
+import {
+  Entity, PrimaryColumn, Column,
+  Index,
+} from "typeorm";
+
 import {
   IUploadRecord, IInstallerCache, IGameRecord, IDownloadKey,
   LaunchType,
@@ -13,10 +17,20 @@ export interface ICaveSummary {
 }
 
 @Entity("caves")
+@Index("caves_by_gameId", (cave: Cave) => [cave.gameId])
+@Index("caves_by_externalGameId", (cave: Cave) => [cave.externalGameId])
 export default class Cave implements ICaveSummary {
   @PrimaryColumn("text")
   /* unique GUID generated locally */
   id: string;
+
+  @Column("int", {nullable: true})
+  /** itch.io game id this cave contains */
+  gameId: number;
+
+  @Column("int", {nullable: true})
+  /** external game id this cave contains */
+  externalGameId: number;
 
   @Column("int", {nullable: true})
   /** identifier of itch.io upload currently installed */
@@ -74,7 +88,7 @@ export default class Cave implements ICaveSummary {
 
   @Column("datetime", {nullable: true})
   /** timestamp when that cave was last opened/played */
-  lastTouched?: string;
+  lastTouched?: Date;
 
   @Column("int", {nullable: true})
   /** number of seconds played/run, as recorded locally */
@@ -91,10 +105,6 @@ export default class Cave implements ICaveSummary {
       /** itch.io username at the time it was installed (usernames can change) */
       username: string;
   };
-
-  @Column("int", {nullable: true})
-  /** itch.io game id this cave contains */
-  gameId: number;
 
   @Column("json", {nullable: true})
   /** itch.io game info at the time of install */

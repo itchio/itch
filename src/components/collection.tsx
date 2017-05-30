@@ -43,7 +43,7 @@ export class Collection extends React.PureComponent<IProps & IDerivedProps & I18
       </GameFilters>
 
       {games.length > 0
-        ? <Games games={games} tab={tab}/>
+        ? <Games games={games} gamesCount={gameIds.length} gamesOffset={0} hiddenCount={0} tab={tab}/>
         : <Empty>{t("collection.empty")}</Empty>
       }
     </CollectionDiv>;
@@ -69,21 +69,20 @@ interface ICollectionsContainer {
   collections?: ICollectionRecordSet;
 }
 
+const emptyObj = {};
+
 export default connect<IProps>(Collection, {
   state: () => {
     const marketSelector = createStructuredSelector({
       collectionId: (state: IAppState, props: IProps) => +pathToId(props.tabPath),
-      tabData: (state: IAppState, props: IProps) => state.session.navigation.tabData[props.tabId] || {},
+      tabData: (state: IAppState, props: IProps) => state.session.tabData[props.tabId] || emptyObj,
     });
 
     return createSelector(
       marketSelector,
       (cs: IStructuredSelectorResult) => {
-        const tabGames = cs.tabData.games || {};
-        const getCollection = (market: ICollectionsContainer) => {
-          return ((market || {}).collections || {})[cs.collectionId] || {};
-        };
-        const collection = getCollection(cs.tabData);
+        const tabGames = cs.tabData.games || emptyObj;
+        const collection = (cs.tabData.collections || emptyObj)[cs.collectionId];
         return { collection, tabGames };
       },
     );

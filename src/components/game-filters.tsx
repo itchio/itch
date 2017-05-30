@@ -25,7 +25,7 @@ interface ILayoutPickerProps {
   active?: boolean;
 }
 
-const FiltersContainer = styled.section`
+export const FiltersContainer = styled.section`
   display: flex;
   align-items: center;
   width: 100%;
@@ -81,7 +81,6 @@ const TagFilters = styled.section`
       .Select-control {
         height: 40px;
 
-        // I know, I know, !important is bad. but it *is* important.
         background: none !important;
         border: none !important;
         box-shadow: none !important;
@@ -100,13 +99,7 @@ const Search = styled.section`
   padding: 0;
 
   .icon-filter {
-    position: absolute;
-    left: 10px;
-    bottom: 50%;
-    transform: translateY(55%);
-    font-size: 14px;
-    color: ${props => props.theme.inputPlaceholder};
-    pointer-events: none;
+    ${styles.searchIcon()}
 
     &.active {
       color: ${props => props.theme.lightAccent};
@@ -115,18 +108,7 @@ const Search = styled.section`
 
   /* FIXME: that's pretty bad */
   input[type=search] {
-    border: 2px solid #404040;
-    border-radius: 4px 2px 4px 2px;
-    background-color: #2D2B2B;
-    color: #D4CECE;
-    text-shadow: 0 0 2px black;
-    box-shadow: 0 0 2px #1B1919;
-    transition: all 0.2s;
-    width: 200px;
-    text-indent: 18px;
-    padding: 6px 10px 5px 9px;
-    height: 32px;
-    font-size: 14px;
+    ${styles.searchInput()}
   }
 `;
 
@@ -228,6 +210,7 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps & I18nProps
     }
 
     return <FiltersContainer>
+      {true ? null :
       <Search>
         <input className="filter-input-field" ref="search" type="search" defaultValue={filterQuery}
           placeholder={t("grid.criterion.search")}
@@ -236,6 +219,7 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps & I18nProps
           onChange={this.onQueryChanged}/>
         <span className={classNames("icon", "icon-filter", { active: !!filterQuery })} />
       </Search>
+      }
       
       {showBinaryFilters
       ? <TagFilters>

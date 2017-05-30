@@ -14,7 +14,8 @@ import TimeAgo from "./basics/time-ago";
 import Ink = require("react-ink");
 import interleave from "./interleave";
 
-import {ICollectionRecord, IGameRecordSet} from "../types";
+import {IGameRecordSet} from "../types";
+import CollectionModel from "../db/models/collection";
 import {multiDispatcher} from "../constants/action-types";
 
 import styled, * as styles from "./styles";
@@ -81,12 +82,19 @@ const CollectionRowDiv = styled.div`
   }
 `;
 
+const emptyArr = [];
+
 export class CollectionRow extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
     const {t, allGames, collection} = this.props;
     const {title} = collection;
 
-    const gameIds = (collection.gameIds || []).slice(0, 8);
+    let originalGameIds: number[] = emptyArr;    
+    try {
+      originalGameIds = JSON.parse(collection.gameIds);
+    } catch (e) { /* muffin */ }
+
+    const gameIds = originalGameIds.slice(0, 8);
     const games = filter(map(gameIds, (gameId) => allGames[gameId]), (x) => !!x);
 
     const gameItems = map(games, (game, index) => {
@@ -135,7 +143,7 @@ export class CollectionRow extends React.PureComponent<IProps & IDerivedProps & 
 }
 
 interface IProps {
-  collection: ICollectionRecord;
+  collection: CollectionModel;
   allGames: IGameRecordSet;
 }
 

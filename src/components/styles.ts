@@ -56,7 +56,7 @@ export const colors = {
 
   inputBackground: uiColors.background,
   inputText: "#d4cece",
-  inputPlaceholder: baseColors.zambezi,
+  inputPlaceholder: baseColors.silverChalice,
 
   inputBorder: uiColors.border,
   inputBorderFocused: uiColors.borderFocused,
@@ -209,6 +209,34 @@ export const heavyInput = () => css`
     box-shadow: 0 0 2px ${props => props.theme.inputBoxShadowFocused};
     outline: 0;
   }
+`;
+
+export const searchInput = () => css`
+  border: 2px solid #404040;
+  border-radius: 4px 2px 4px 2px;
+  background-color: #2D2B2B;
+  color: ${props => props.theme.secondaryTextHover};
+
+  ::-webkit-input-placeholder {
+    color: ${props => props.theme.inputPlaceholder};
+  }
+
+  box-shadow: 0 0 2px #1B1919;
+  width: 200px;
+  text-indent: 18px;
+  padding: 6px 10px 5px 9px;
+  height: 32px;
+  font-size: 14px;
+`;
+
+export const searchIcon = () => css`
+  position: absolute;
+  left: 10px;
+  bottom: 50%;
+  transform: translateY(55%);
+  font-size: 14px;
+  color: ${props => props.theme.secondaryText};
+  pointer-events: none;
 `;
 
 export const iconButton = () => css`

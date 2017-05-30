@@ -29,6 +29,67 @@ export default class DashboardFetcher extends Fetcher {
     let localGames = await gameRepo.find({userId: meId});
     this.push({games: indexBy(localGames, "id")});
 
+    let pushLocal = async () => {
+      let query = gameRepo.createQueryBuilder("games");
+
+      query.where("games.id in (:gameIds)");
+
+      query.setParameters({
+        meId,
+        gameIds: libraryGameIds,
+      });
+
+      const totalCount = libraryGameIds.length;
+
+      if (filter) {
+        query.andWhere("(games.title LIKE :query or games.shortText LIKE :query)", {
+          query: `%${filter.toLowerCase()}%`,
+        });
+      }
+
+      let joinCave = false;
+
+      if (sortBy === "title") {
+        query.orderBy("games.title", ("COLLATE NOCASE " + sortDirection) as any);
+      } else if (sortBy === "publishedAt") {
+        query.orderBy("games.publishedAt", sortDirection);
+      } else if (sortBy === "secondsRun") {
+        query.orderBy("caves.secondsRun", sortDirection);
+        joinCave = true;
+      } else if (sortBy === "lastTouched") {
+        query.orderBy("caves.lastTouched", sortDirection);
+        joinCave = true;
+      } else {
+        query.orderBy("games.createdAt", sortDirection);
+      }
+
+      if (joinCave) {
+        query.leftJoin(
+          Cave,
+          "caves",
+          "caves.id = (" +
+              "select caves.id from caves " +
+              "where caves.gameId = games.id " +
+              "limit 1" +
+            ")",
+        );
+      }
+
+      query.setOffset(offset).setLimit(limit); 
+
+      const [games, gamesCount] = await query.getManyAndCount();
+
+      this.push({
+        games: indexBy(games, "id"),
+        gameIds: pluck(games, "id"),
+        gamesCount,
+        gamesOffset: offset,
+        hiddenCount: totalCount - gamesCount,
+        lastOffset: offset,
+        lastLimit: limit,
+      });
+    };
+
     const {credentials} = this.store.getState().session;
     if (!credentials) {
       throw new Error(`No user credentials yet`);
@@ -64,8 +125,8 @@ export default class DashboardFetcher extends Fetcher {
     await db.saveAllEntities({
       entities: {
         ...normalized.entities,
-        itchAppProfile: {
-          "x": {
+        profiles: {
+          [meId]: {
             myGameIds: remoteGameIds,
           },
         },
@@ -73,7 +134,9 @@ export default class DashboardFetcher extends Fetcher {
     });
 
     localGames = await gameRepo.find({userId: meId});
-    this.push({games: indexBy(localGames, "id")});
+    this.push({
+      games: indexBy(localGames, "id")
+    });
 
     const goners = difference(localGameIds, remoteGameIds);
     if (goners.length > 0) {

@@ -25,7 +25,7 @@ export default class Collection {
 
   /** the list of identifiers for games that belong to that collection */
   @Column("json", {nullable: true})
-  gameIds: number[];
+  gameIds: string;
 
   /**  */
   @Column("int")

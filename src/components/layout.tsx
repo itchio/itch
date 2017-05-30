@@ -21,6 +21,14 @@ const LayoutContainer = styled.div`
   color: ${props => props.theme.baseText};
   font-size: ${props => props.theme.fontSizes.baseText};
 
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+
   &, input {
     font-family: LatoWeb, sans-serif;
   }

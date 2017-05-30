@@ -6,7 +6,9 @@ import {createSelector, createStructuredSelector} from "reselect";
 import GameModel from "../db/models/game";
 
 import Games from "./games";
-import GameFilters from "./game-filters";
+import GameFilters, {FiltersContainer} from "./game-filters";
+
+import IconButton from "./basics/icon-button";
 
 import {IAppState, ITabData} from "../types";
 
@@ -23,11 +25,22 @@ export class Library extends React.PureComponent<IProps & IDerivedProps & I18nPr
     const {games, gamesCount, hiddenCount, gamesOffset} = this.props;
 
     return <LibraryContainer>
+      <FiltersContainer>
+        <div style={{marginLeft: 10}}/>
+        <div style={{fontSize: 16}}>Library</div>
+        <div style={{flex: "1 1"}}/>
+        <IconButton icon="cross" onClick={() => {
+          window.alert("oh hi there");
+        }}/>
+      </FiltersContainer>
       <GameFilters tab={tab}/>
-      {Object.keys(games).length > 0
-        ? <Games games={games} gamesCount={gamesCount} hiddenCount={hiddenCount} gamesOffset={gamesOffset} tab={tab}/>
-        : ""
-      }
+      <Games
+        games={games}
+        gamesCount={gamesCount}
+        hiddenCount={hiddenCount}
+        gamesOffset={gamesOffset}
+        tab={tab}
+      />
     </LibraryContainer>;
   }
 }
@@ -38,6 +51,7 @@ interface IDerivedProps {
   games: GameModel[];
   gamesCount: number;
   gamesOffset: number;
+  hiddenCount: number;
 }
 
 const emptyObj = {};

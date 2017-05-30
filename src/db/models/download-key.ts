@@ -1,5 +1,8 @@
 
-import {Entity, PrimaryColumn, Column} from "typeorm";
+import {
+  Entity, PrimaryColumn, Column,
+  Index,
+} from "typeorm";
 
 export interface IDownloadKeySummary {
   id: number;
@@ -8,22 +11,23 @@ export interface IDownloadKeySummary {
 }
 
 @Entity("downloadKeys")
+@Index("downloadKeysByGameId", (dk: DownloadKey) => [dk.gameId])
 export default class DownloadKey implements IDownloadKeySummary {
   /** itch.io-generated identifier for the download key */
   @PrimaryColumn("int")
   id: number;
 
-  /** game the download key is for */
+  /** itch.io game the download key is for */
   @Column("int", {nullable: true})
   gameId: number;
 
   /** date the download key was issued on (often: date purchase was completed) */
   @Column("datetime", {nullable: true})
-  createdAt: string;
+  createdAt: Date;
 
   /** not sure to be completely honest */
   @Column("datetime", {nullable: true})
-  updatedAt: string;
+  updatedAt: Date;
 
   /** user the download key belongs to */
   @Column("int")

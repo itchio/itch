@@ -15,6 +15,7 @@ import {
   Connection, ObjectType, Repository,
 } from "typeorm";
 import GameModel from "./models/game";
+import ExternalGameModel from "./models/external-game";
 import CollectionModel from "./models/collection";
 import DownloadKeyModel from "./models/download-key";
 import CaveModel from "./models/cave";
@@ -39,6 +40,7 @@ interface IModelMap {
 
 const modelMap: IModelMap = {
   "games": GameModel,
+  "externalGames": ExternalGameModel,
   "collections": CollectionModel,
   "downloadKeys": DownloadKeyModel,
   "caves": CaveModel,
@@ -85,10 +87,6 @@ export class DB {
    * Saves all passed entity records. See opts type for disk persistence and other options.
    */
   async saveAllEntities <T> (entityRecords: IEntityRecords<T>) {
-    const updated: {
-      [table: string]: string[];
-    } = {};
-
     for (const tableName of Object.keys(entityRecords.entities)) {
       const entities: IEntityMap<Object> = entityRecords.entities[tableName];
       const entityIds = Object.keys(entities);
@@ -103,8 +101,8 @@ export class DB {
       const repo = this.conn.getRepository(Model);
 
       const savedRows = await repo
-        .createQueryBuilder("g")
-        .where("g.id in (:entityIds)", {entityIds})
+        .createQueryBuilder("e")
+        .where("e.id in (:entityIds)", {entityIds})
         .getMany();
       const existingEntities = _.indexBy(savedRows, "id");
 

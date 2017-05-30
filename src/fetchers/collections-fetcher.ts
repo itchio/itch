@@ -28,16 +28,25 @@ export default class CollectionsFetcher extends Fetcher {
     const collectionsRepo = db.getRepo(Collection);
     const gamesRepo = db.getRepo(Game);
     let pushFromLocal = async () => {
-      const localCollections = await collectionsRepo.find();
+      const localCollections = await collectionsRepo.createQueryBuilder("c").select("c.*").getRawMany();
       let allGameIds: number[] = [];
       for (const c of localCollections) {
-        if (c.gameIds) {
-          allGameIds = [...allGameIds, ...c.gameIds];
+        let gameIds: number[] = null;
+        try {
+          gameIds = JSON.parse(c.gameIds);
+        } catch (e) {
+          continue;
+        }
+
+        if (gameIds) {
+          allGameIds = [...allGameIds, ...gameIds];
         }
       }
       let localGames = [];
       if (allGameIds.length > 0) {
-        localGames = await gamesRepo.findByIds(allGameIds);
+        localGames = await gamesRepo.createQueryBuilder("g")
+          .select("g.*").where("g.id in (:gameIds)")
+          .setParameters({gameIds: allGameIds}).getRawMany();
       }
       this.push({
         collections: indexBy(localCollections, "id"),

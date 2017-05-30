@@ -31,6 +31,8 @@ const LogoDiv = styled.div`
   text-align: center;
   cursor: pointer;
 
+  margin-top: 10px;
+
   img {
     width: 120px;
     margin: 10px 0;

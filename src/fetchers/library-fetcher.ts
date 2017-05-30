@@ -105,31 +105,7 @@ export default class LibraryFetcher extends Fetcher {
 
       query.setOffset(offset).setLimit(limit); 
 
-      query.select("games.*");
-
-      const games = await query.getRawMany();
-      const gamesCount = await query.getCount();
-
-      let equalGames = 0;
-      let presentGames = 0;
-
-      if (oldTabData && oldTabData.games && Object.keys(oldTabData.games).length > 0) {
-        // tslint:disable-next-line
-        for (let i = 0; i < games.length; i++) {
-          const game = games[i];
-          const oldGame = oldTabData.games[game.id];
-          if (oldGame) {
-            if (compareRecords(oldGame, game, getColumns(Game))) {
-              games[i] = oldGame;
-              equalGames++;
-            } else {
-              presentGames++;
-            }
-          }
-        }
-      }
-      this.logger.info("games equal", equalGames,
-       "present", presentGames, "fresh", games.length - equalGames - presentGames);
+      const [games, gamesCount] = await query.getManyAndCount();
 
       this.push({
         games: indexBy(games, "id"),

@@ -1,11 +1,21 @@
 
-import {Entity, PrimaryColumn, Column} from "typeorm";
 import {
-  IGameEmbedInfo, IGameSaleInfo, GameType, GameClassification
+  Entity, PrimaryColumn, Column,
+} from "typeorm";
+
+import {
+  IGameEmbedInfo, IGameSaleInfo, GameType, GameClassification,
 } from "../../types";
 
+export interface IGameBase {
+  id: number | string;
+  title?: string;
+  shortText?: string;
+  coverUrl?: string;
+}
+
 @Entity("games")
-export default class Game {
+export default class Game implements IGameBase {
   @PrimaryColumn("int")
   id: number;
 
