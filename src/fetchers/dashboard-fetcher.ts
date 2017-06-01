@@ -3,13 +3,17 @@ import {Fetcher, Outcome} from "./types";
 
 import db from "../db";
 import Game from "../db/models/game";
+import Cave from "../db/models/cave";
+import Profile from "../db/models/profile";
 
 import client from "../api";
 import normalize from "../api/normalize";
 import {game, arrayOf} from "../api/schemas";
 import {isNetworkError} from "../net/errors";
 
-import {pluck, difference, indexBy, each} from "underscore";
+import {pluck, indexBy} from "underscore";
+
+const emptyArr = [];
 
 export default class DashboardFetcher extends Fetcher {
   constructor () {
@@ -25,27 +29,30 @@ export default class DashboardFetcher extends Fetcher {
       return this.retry();
     }
 
+    const profileRepo = db.getRepo(Profile);
     const gameRepo = db.getRepo(Game);
-    let localGames = await gameRepo.find({userId: meId});
-    this.push({games: indexBy(localGames, "id")});
 
-    let pushLocal = async () => {
+    const tabParams = this.store.getState().session.tabParams[this.tabId] || {};
+
+    const pushLocal = async () => {
+      const profile = await profileRepo.findOneById(meId);
+      if (!profile) {
+        return;
+      }
+      const myGameIds = profile.myGameIds || emptyArr;
+
       let query = gameRepo.createQueryBuilder("games");
 
       query.where("games.id in (:gameIds)");
 
       query.setParameters({
         meId,
-        gameIds: libraryGameIds,
+        gameIds: myGameIds,
       });
 
-      const totalCount = libraryGameIds.length;
+      const totalCount = myGameIds.length;
 
-      if (filter) {
-        query.andWhere("(games.title LIKE :query or games.shortText LIKE :query)", {
-          query: `%${filter.toLowerCase()}%`,
-        });
-      }
+      const {sortBy, sortDirection = "DESC"} = tabParams;
 
       let joinCave = false;
 
@@ -75,7 +82,7 @@ export default class DashboardFetcher extends Fetcher {
         );
       }
 
-      query.setOffset(offset).setLimit(limit); 
+      // TODO: offset, limit
 
       const [games, gamesCount] = await query.getManyAndCount();
 
@@ -83,12 +90,11 @@ export default class DashboardFetcher extends Fetcher {
         games: indexBy(games, "id"),
         gameIds: pluck(games, "id"),
         gamesCount,
-        gamesOffset: offset,
+        gamesOffset: 0,
         hiddenCount: totalCount - gamesCount,
-        lastOffset: offset,
-        lastLimit: limit,
       });
     };
+    await pushLocal();
 
     const {credentials} = this.store.getState().session;
     if (!credentials) {
@@ -106,21 +112,13 @@ export default class DashboardFetcher extends Fetcher {
     } catch (e) {
       this.debug(`API error:`, e);
       if (isNetworkError(e)) {
-        return new Outcome("retry");
+        return this.retry();
       } else {
         throw e;
       }
     }
-    const localGameIds = pluck(localGames, "id");
     const remoteGameIds = pluck(normalized.entities.games, "id");
     this.debug(`Fetched ${Object.keys(normalized.entities.games).length} games from API`);
-
-    // FIXME: once the API is cleaned up, this will be unnecessary
-    each(normalized.entities.games, (game: Game) => {
-      if (!game.userId) {
-        game.userId = meId;
-      }
-    });
 
     await db.saveAllEntities({
       entities: {
@@ -132,18 +130,8 @@ export default class DashboardFetcher extends Fetcher {
         },
       },
     });
+    await pushLocal();    
 
-    localGames = await gameRepo.find({userId: meId});
-    this.push({
-      games: indexBy(localGames, "id")
-    });
-
-    const goners = difference(localGameIds, remoteGameIds);
-    if (goners.length > 0) {
-      this.debug(`After /my-games, removing ${goners.length} goners: ${JSON.stringify(goners)}`)
-      await db.deleteAllEntities({entities: {games: goners}});
-    }
-
-    return new Outcome("success");
+    return this.success();
   }
 }

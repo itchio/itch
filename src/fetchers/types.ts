@@ -120,6 +120,10 @@ export class Fetcher {
     return new Outcome(OutcomeState.Retry);
   }
 
+  success() {
+    return new Outcome(OutcomeState.Success);
+  }
+
   debug(msg: string, ...args: any[]) {
     this.logger.info(msg, ...args);
   }
