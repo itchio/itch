@@ -36,7 +36,7 @@ export default class CollectionFetcher extends Fetcher {
       games: indexBy<Game>(localGames, "id"),
       gameIds: gameIds,
       gamesOffset: 0,
-      gamesCount: gameIds.length,
+      gamesCount: localCollection.gamesCount,
       collections: {
         [collectionId]: localCollection,
       },
@@ -85,7 +85,7 @@ export default class CollectionFetcher extends Fetcher {
       games: remoteCollectionGames,
       gameIds: remoteCollection.gameIds,
       gamesOffset: 0,
-      gamesCount: remoteCollection.gameIds.length,
+      gamesCount: remoteCollection.gamesCount,
       collections: {
         [collectionId]: remoteCollection,
       },
