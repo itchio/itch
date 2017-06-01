@@ -45,10 +45,7 @@ export class AllMeats extends React.PureComponent<IProps & IDerivedProps & I18nP
 
     return <MeatContainer>
       {map(tabs, (id) => {
-        const data = tabData[id];
-        if (!data) {
-          return;
-        }
+        const data = tabData[id] || {};
         const visible = (id === currentId);
         return <MeatTab key={id} className={classNames({visible})}>
           <Meat tab={id} tabData={data} visible={visible}/>

@@ -1,5 +1,5 @@
 
-import {Fetcher, Outcome} from "./types";
+import {Fetcher, Outcome, OutcomeState} from "./types";
 import db from "../db";
 import Game from "../db/models/game";
 import Collection from "../db/models/collection";
@@ -19,18 +19,24 @@ export default class CollectionFetcher extends Fetcher {
   }
 
   async work(): Promise<Outcome> {
-    const path = this.store.getState().session.navigation.tabData[this.tabId].path;
+    const path = this.store.getState().session.tabData[this.tabId].path;
     const collectionId = +pathToId(path);
 
     const gameRepo = db.getRepo(Game);
     const collectionRepo = db.getRepo(Collection);
     let localCollection = await collectionRepo.findOneById(collectionId);
     let localGames = {};
-    if (localCollection && localCollection.gameIds && localCollection.gameIds.length > 0) {
-      localGames = indexBy(await gameRepo.findByIds(localCollection.gameIds), "id");
+    let gameIds = [];
+    if (localCollection && localCollection.gameIds) {
+      gameIds = localCollection.gameIds;
     }
+
+    localGames = await gameRepo.findByIds(localCollection.gameIds);
     this.push({
-      games: localGames,
+      games: indexBy<Game>(localGames, "id"),
+      gameIds: gameIds,
+      gamesOffset: 0,
+      gamesCount: gameIds.length,
       collections: {
         [collectionId]: localCollection,
       },
@@ -52,7 +58,7 @@ export default class CollectionFetcher extends Fetcher {
     } catch (e) {
       this.debug(`API error:`, e);
       if (isNetworkError(e)) {
-        return new Outcome("retry");
+        return new Outcome(OutcomeState.Retry);
       } else {
         throw e;
       }
@@ -67,7 +73,7 @@ export default class CollectionFetcher extends Fetcher {
     } catch (e) {
       this.debug(`API error:`, e);
       if (isNetworkError(e)) {
-        return new Outcome("retry");
+        return new Outcome(OutcomeState.Retry);
       } else {
         throw e;
       }
@@ -77,12 +83,15 @@ export default class CollectionFetcher extends Fetcher {
 
     this.push({
       games: remoteCollectionGames,
+      gameIds: remoteCollection.gameIds,
+      gamesOffset: 0,
+      gamesCount: remoteCollection.gameIds.length,
       collections: {
         [collectionId]: remoteCollection,
       },
     });
 
-    return new Outcome("success");
+    return new Outcome(OutcomeState.Success);
   }
 }
 

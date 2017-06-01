@@ -12,12 +12,18 @@ export default class User {
   username: string;
 
   @Column("text", {nullable: true})
+  /** the user's display name */
+  displayName: string;
+
+  @Column("text", {nullable: true})
   /** the canonical address of the game's page */
   url: string;
 
   @Column("text", {nullable: true})
+  /** user's avatar, may be a gif */
   coverUrl: string;
 
   @Column("text", {nullable: true})
+  /** user's avatar static version, only if coverUrl is a gif */
   stillCoverUrl: string;
 }

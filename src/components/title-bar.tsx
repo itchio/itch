@@ -18,6 +18,13 @@ const DraggableDiv = styled.div`
   -webkit-app-region: drag;
   flex: 1 1;
   display: flex;
+  align-self: stretch;
+`;
+
+const DraggableDivInner = styled.div`
+  flex: 1 1;
+  display: flex;
+  align-self: center;
 `;
 
 const Filler = styled.div`
@@ -41,8 +48,10 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps & I18nP
 
     return <FiltersContainer>
         <DraggableDiv>
-          <TitleDiv>{t.format(label)}</TitleDiv>
-          <Filler/>
+          <DraggableDivInner>
+            <TitleDiv>{t.format(label)}</TitleDiv>
+            <Filler/>
+          </DraggableDivInner>
         </DraggableDiv>
         <IconButton icon="cross" onClick={this.closeClick}/>
       </FiltersContainer>;
@@ -65,7 +74,7 @@ interface IDerivedProps {
 
 export default connect<IProps>(TitleBar, {
   state: () => createStructuredSelector({
-    tabData: (state: IAppState, props: IProps) => state.session.tabData[props.tab],
+    tabData: (state: IAppState, props: IProps) => state.session.tabData[props.tab] || emptyObj,
   }),
   dispatch: (dispatch) => ({
     hideWindow: dispatcher(dispatch, actions.hideWindow),

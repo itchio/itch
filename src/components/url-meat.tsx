@@ -42,6 +42,8 @@ export class UrlMeat extends React.PureComponent<IProps & I18nProps, IState> {
 
     const tabUrl = tabData.url;
 
+    console.warn(tab, tabData, tabPath);
+
     switch (tab) {
       case "featured":
         return {url: urls.itchio + "/", controls: "generic"};

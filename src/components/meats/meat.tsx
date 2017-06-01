@@ -34,6 +34,8 @@ export default class Meat extends React.PureComponent<IProps, void> {
   getConcrete(): React.ComponentClass<IMeatProps>  {
     const {tab, tabData} = this.props;
 
+    console.warn(tab, tabData);
+
     switch (tab) {
       case "featured":
         return Browser;

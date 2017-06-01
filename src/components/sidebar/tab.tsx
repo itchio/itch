@@ -51,7 +51,7 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
   render () {
     const {t, id, index, sortable, data, active, loading} = this.props;
 
-    const {path} = data;
+    const path = data.path || id;
     let iconImage = data.iconImage;
     if (/^url/.test(path)) {
       iconImage = data.webFavicon;
@@ -73,6 +73,7 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
           sublabel = ["grid.item.downloads_paused"];
         } else {
           const title = activeDownload.game.title;
+          // FIXME: moment.js is absolutely an FPS killer.
           const duration = moment.duration(activeDownload.eta, "seconds") as any;
           // silly typings, durations have locales!
           const humanDuration = duration.locale(t.lang).humanize();

@@ -4,6 +4,7 @@ import {Action} from "redux-actions";
 import {Logger} from "../logger";
 
 import GameModel from "../db/models/game";
+import UserModel from "../db/models/user";
 import CollectionModel from "../db/models/collection";
 import DownloadKeyModel, {IDownloadKeySummary} from "../db/models/download-key";
 import CaveModel, {ICaveSummary} from "../db/models/cave";
@@ -162,7 +163,7 @@ export interface IUserRecord {
 }
 
 export interface IUserRecordSet {
-    [id: string]: IUserRecord;
+    [id: string]: UserModel;
 }
 
 export interface ICollectionRecord {
