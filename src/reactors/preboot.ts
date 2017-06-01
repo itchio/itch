@@ -121,12 +121,6 @@ export default function (watcher: Watcher) {
     }
 
     store.dispatch(actions.boot({}));
-
-    // print various machine specs, see docs/
-    const diego = require("../os/diego").default;
-    setTimeout(function () {
-      diego.hire(opts);
-    }, 3000);
   });
 
   watcher.on(actions.attemptLogin, async (store, action) => {
