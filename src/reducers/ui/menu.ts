@@ -149,10 +149,6 @@ function computeMenuTemplate (payload: IRefreshMenuPayload) {
       label: "menu.view.view",
       submenu: [
         {
-          label: "menu.view.history",
-          accelerator: system.macos ? "Cmd+Y" : "Ctrl+H",
-        },
-        {
           label: "menu.view.downloads",
           accelerator: "CmdOrCtrl+J",
         },

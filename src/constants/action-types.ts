@@ -135,17 +135,6 @@ export interface IStartOnboardingPayload {}
 export const EXIT_ONBOARDING = "EXIT_ONBOARDING";
 export interface IExitOnboardingPayload {}
 
-/* Background stuff */
-export const DISMISS_HISTORY_ITEM = "DISMISS_HISTORY_ITEM";
-export interface IDismissHistoryItemPayload {
-  /** the item to dismiss */
-  id: string;
-}
-export const QUEUE_HISTORY_ITEM = "QUEUE_HISTORY_ITEM";
-export interface IQueueHistoryItemPayload extends Types.IHistoryItem {};
-export const HISTORY_READ = "HISTORY_READ";
-export interface IHistoryReadPayload {};
-
 /* Main window events */
 export const FIRST_WINDOW_READY = "FIRST_WINDOW_READY";
 export interface IFirstWindowReadyPayload {}
@@ -200,10 +189,11 @@ export const CLOSE_ALL_TABS = "CLOSE_ALL_TABS";
 export interface ICloseAllTabsPayload {}
 
 /* Navigation */
-export const NAVIGATE = "NAVIGATE";
-export interface INavigatePayload {
-  /** tab to navigate to */
-  id: string;
+
+export const OPEN_TAB = "OPEN_TAB";
+export interface IOpenTabPayload {
+  /** the id of the new tab to open (generated) */
+  id?: string;
 
   /** any data we already known about the tab */
   data: Types.ITabData;
@@ -212,10 +202,16 @@ export interface INavigatePayload {
   background: boolean;
 }
 
-export const OPEN_TAB = "OPEN_TAB";
-export interface IOpenTabPayload extends INavigatePayload {
+export const NAVIGATE = "NAVIGATE";
+export interface INavigatePayload extends IOpenTabPayload {
+  /** tab to navigate to */
+  id: string;
+}
+
+export const FOCUS_TAB = "FOCUS_TAB";
+export interface IFocusTabPayload {
   /** the id of the new tab */
-  tabId?: string;
+  id: string;
 }
 
 export const FOCUS_NTH_TAB = "FOCUS_NTH_TAB";
@@ -359,6 +355,15 @@ export interface ITabParamsChangedPayload {
 
   /** the params that changed (deep partial) */  
   params: Types.ITabParams;
+}
+
+export const TAB_PAGINATION_CHANGED = "TAB_PAGINATION_CHANGED";
+export interface ITabPaginationChangedPayload {
+  /** tab for which the pagination is changing */
+  id: string;
+
+  /** the pagination that changed (deep partial) */  
+  pagination: Types.ITabPagination;
 }
 
 export const OPEN_TAB_CONTEXT_MENU = "OPEN_TAB_CONTEXT_MENU";
@@ -856,9 +861,6 @@ export interface INotifyHtml5Payload {
 export const FOCUS_SEARCH = "FOCUS_SEARCH";
 export interface IFocusSearchPayload {};
 
-export const FOCUS_FILTER = "FOCUS_FILTER";
-export interface IFocusFilterPayload {};
-
 export const CLEAR_FILTERS = "CLEAR_FILTERS";
 export interface IClearFiltersPayload {
   /** id of the tab for which to clear filters */
@@ -893,14 +895,6 @@ export const SEARCH_HIGHLIGHT_OFFSET = "SEARCH_HIGHLIGHT_OFFSET";
 export interface ISearchHighlightOffsetPayload {
   /** search highlight offset */
   offset: number;
-};
-
-export const FILTER_CHANGED = "FILTER_CHANGED";
-export interface IFilterChangedPayload {
-  /** which tab is being filtered */
-  tab: string;
-  /** text by which a tab is being filtered */
-  query: string;
 };
 
 /** Data retrieval */

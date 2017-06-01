@@ -11,6 +11,8 @@ import DownloadRow from "./download-row";
 import {IAppState, IDownloadItem} from "../types";
 import {dispatcher} from "../constants/action-types";
 
+import {IMeatProps} from "./meats/types";
+
 import styled, * as styles from "./styles";
 
 const DownloadsDiv = styled.div`
@@ -110,7 +112,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
   }
 }
 
-interface IProps {}
+interface IProps extends IMeatProps {}
 
 interface IDerivedProps {
   items: IDownloadItem[];

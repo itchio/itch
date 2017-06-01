@@ -8,6 +8,7 @@ import urls from "../constants/urls";
 import * as actions from "../actions";
 
 import Icon from "./basics/icon";
+import {IMeatProps} from "./meats/types";
 
 import {transformUrl} from "../util/navigation";
 
@@ -48,7 +49,7 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nPro
   }
 
   render () {
-    const {t, tabId, evolveTab} = this.props;
+    const {t, tab, evolveTab} = this.props;
 
     return <div className="new-tab-meat">
       <div className="hub-grid">
@@ -59,7 +60,7 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nPro
         {map(newTabItems, (item) => {
           const {label, icon, path} = item;
 
-          return <div key={path} className="hub-item new-tab-item" onClick={() => evolveTab({id: tabId, path})}>
+          return <div key={path} className="hub-item new-tab-item" onClick={() => evolveTab({id: tab, path})}>
             <Icon icon={icon}/>
             <span>{t.format(label)}</span>
           </div>;
@@ -83,15 +84,13 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nPro
       }
 
       const url = await transformUrl(input);
-      const {tabId, evolveTab} = this.props;
-      evolveTab({id: tabId, path: `url/${url}`});
+      const {tab, evolveTab} = this.props;
+      evolveTab({id: tab, path: `url/${url}`});
     }
   }
 }
 
-interface IProps {
-  tabId: string;
-}
+interface IProps extends IMeatProps {}
 
 interface IDerivedProps {
   evolveTab: typeof actions.evolveTab;

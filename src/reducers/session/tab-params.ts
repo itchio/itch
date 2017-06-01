@@ -5,6 +5,8 @@ import reducer from "../reducer";
 
 const initialState = {} as ITabParamsSet;
 
+const emptyObj = {};
+
 export default reducer<ITabParamsSet>(initialState, (on) => {
   on(actions.tabParamsChanged, (state, action) => {
     const {id, params} = action.payload;
@@ -12,7 +14,7 @@ export default reducer<ITabParamsSet>(initialState, (on) => {
     return {
       ...state,
       [id]: {
-        ...(state[id] || {}),
+        ...(state[id] || emptyObj),
         ...params,
       },
     };

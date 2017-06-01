@@ -62,15 +62,6 @@ const ReactHintContainer = styled.div`
   }
 `;
 
-const LayoutDraggable = styled.div`
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 40px;
-  -webkit-app-region: drag;
-`;
-
 declare class Notification {
   onclick: () => void;
 
@@ -103,7 +94,6 @@ class Layout extends React.PureComponent<IProps & IDerivedProps & I18nProps, voi
 
   render () {
     return <LayoutContainer>
-      <LayoutDraggable/>
       {this.main()}
       <StatusBar/>
       <ReactHintContainer>

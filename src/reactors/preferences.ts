@@ -81,7 +81,8 @@ export default function (watcher: Watcher) {
     const userId = store.getState().session.credentials.me.id;
 
     const session = require("electron").session;
-    const ourSession = session.fromPartition(partitionForUser(String(userId))) as Electron.Session;
+    const partition = partitionForUser(String(userId));
+    const ourSession = session.fromPartition(partition, {});
 
     if (action.payload.cache) {
       promises.push(new Promise((resolve, reject) => {

@@ -10,6 +10,7 @@ import * as uuid from "uuid";
 import {
   NAVIGATE, INavigatePayload,
   OPEN_TAB, IOpenTabPayload,
+  FOCUS_TAB, IFocusTabPayload,
   FOCUS_NTH_TAB, IFocusNthTabPayload,
   MOVE_TAB, IMoveTabPayload,
   EVOLVE_TAB, IEvolveTabPayload,
@@ -49,6 +50,7 @@ import {
   TAB_LOADING, ITabLoadingPayload,
 
   TAB_PARAMS_CHANGED, ITabParamsChangedPayload,
+  TAB_PAGINATION_CHANGED, ITabPaginationChangedPayload,
 } from "../constants/action-types";
 
 const internalNavigate = createAction<INavigatePayload, any>(NAVIGATE);
@@ -62,8 +64,9 @@ export const navigate = (id: any, data = {}, background = false) => {
 
 const internalOpenTab = createAction<IOpenTabPayload>(OPEN_TAB);
 export const openTab = (payload: IOpenTabPayload) => {
-  return internalOpenTab({...payload, tabId: uuid.v4()});
-}
+  return internalOpenTab({...payload, id: uuid.v4()});
+};
+export const focusTab = createAction<IFocusTabPayload>(FOCUS_TAB);
 export const focusNthTab = createAction<IFocusNthTabPayload>(FOCUS_NTH_TAB);
 
 export const navigateToGame = (game: GameModel, background = false) =>
@@ -90,6 +93,7 @@ export const tabsRestored = createAction<ITabsRestoredPayload>(TABS_RESTORED);
 export const tabDataFetched = createAction<ITabDataFetchedPayload>(TAB_DATA_FETCHED);
 
 export const tabParamsChanged = createAction<ITabParamsChangedPayload>(TAB_PARAMS_CHANGED);
+export const tabPaginationChanged = createAction<ITabPaginationChangedPayload>(TAB_PAGINATION_CHANGED);
 
 export const openTabContextMenu = createAction<IOpenTabContextMenuPayload>(OPEN_TAB_CONTEXT_MENU);
 export const openGameContextMenu = createAction<IOpenGameContextMenuPayload>(OPEN_GAME_CONTEXT_MENU);

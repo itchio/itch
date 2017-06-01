@@ -139,10 +139,6 @@ export default function (watcher: Watcher) {
       resources = await doDownloadLocale(lang, resources);
     } catch (e) {
       logger.warn(`Failed downloading locale for ${lang}: ${e.message}`);
-      store.dispatch(actions.queueHistoryItem({
-        label: ["i18n.failed_downloading_locales", {lang}],
-        detail: e.stack || e,
-      }));
     } finally {
       store.dispatch(actions.localeDownloadEnded({lang, resources}));
     }

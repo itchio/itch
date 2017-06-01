@@ -64,7 +64,6 @@ function convertMenuAction (payload: IMenuItemPayload) {
     case "menu.file.quit": return actions.quitWhenMain({});
     case "menu.file.preferences": return actions.navigate("preferences");
     case "menu.view.downloads": return actions.navigate("downloads");
-    case "menu.view.history": return actions.navigate("history");
     case "menu.account.change_user": return actions.changeUser({});
     // TODO: change to proper about tab/window
     case "menu.help.about": return actions.openUrl({url: urls.appHomepage});

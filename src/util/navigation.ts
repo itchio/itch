@@ -6,12 +6,15 @@ import * as querystring from "querystring";
 import staticTabData from "../constants/static-tab-data";
 
 import GameModel from "../db/models/game";
+import UserModel from "../db/models/user";
 
-import { IUserRecord, ICollectionRecord,
-  IInstallLocation, ITabData } from "../types";
+import {
+  ICollectionRecord,
+  IInstallLocation,
+  ITabData
+} from "../types";
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
-const ID_RE = /^[^\/]+\/([^\?]*)/;
 
 interface IDNSError {
   code?: number;
@@ -51,11 +54,19 @@ export async function transformUrl(original: string): Promise<string> {
 }
 
 export function pathToId(path: string): string {
-  const matches = ID_RE.exec(path);
-  if (!matches) {
-    throw new Error(`Could not extract id from path: ${JSON.stringify(path)}`);
+  const slashIndex = path.indexOf("/");
+  if (slashIndex >= 0) {
+    return path.substring(slashIndex + 1);
   }
-  return matches[1];
+  return "";
+}
+
+export function pathPrefix(path: string): string {
+  const slashIndex = path.indexOf("/");
+  if (slashIndex >= 0) {
+    return path.substring(0, slashIndex);
+  }
+  return "";
 }
 
 export function pathToIcon(path: string) {
@@ -70,9 +81,6 @@ export function pathToIcon(path: string) {
   }
   if (path === "preferences") {
     return "cog";
-  }
-  if (path === "history") {
-    return "history";
   }
   if (path === "downloads") {
     return "download";
@@ -111,7 +119,7 @@ export function gameToTabData(game: GameModel): ITabData {
   };
 }
 
-export function userToTabData(user: IUserRecord) {
+export function userToTabData(user: UserModel): ITabData {
   return {
     users: {
       [user.id]: user,
@@ -181,4 +189,4 @@ export function isAppSupported(url: string) {
   return null;
 }
 
-export default { transformUrl, pathToId, pathToIcon, gameToTabData, collectionToTabData, isAppSupported };
+export default { transformUrl, pathToId, pathPrefix, pathToIcon, gameToTabData, collectionToTabData, isAppSupported };

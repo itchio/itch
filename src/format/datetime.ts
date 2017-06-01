@@ -25,11 +25,31 @@ interface IDateFormat {
 
 const formatterCache = new Map<number, Map<string, Intl.DateTimeFormat>>();
 
+export type MixedDate = Date | string;
+
 /**
  * Format a date for humans in the given locale
  */
 
-export function formatDate(date: Date, locale: string, format: IDateFormat): string {
+export function formatDate(mixedDate: MixedDate, locale: string, format: IDateFormat): string {
+  let date: any;
+  if (!mixedDate) {
+    return "";
+  }
+
+  const type = typeof mixedDate;
+  if (type === "string") {
+    date = new Date(mixedDate as string);
+  } else if (type === "object") {
+    date = mixedDate;
+  } else {
+    return "Ø";
+  }
+
+  if (!(date as any).getTime || isNaN((date as any).getTime())) {
+    return "Ø";
+  }
+
   return getFormatter(format, locale).format(date);
 }
 

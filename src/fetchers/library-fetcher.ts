@@ -1,11 +1,9 @@
 
-import {Fetcher, Outcome} from "./types";
+import {Fetcher, Outcome, OutcomeState, FetchReason} from "./types";
 import db from "../db";
 import Game from "../db/models/game";
 import DownloadKey from "../db/models/download-key";
 import Cave from "../db/models/cave";
-import compareRecords from "../db/compare-records";
-import getColumns from "../db/get-columns";
 
 import client from "../api";
 import normalize from "../api/normalize";
@@ -35,7 +33,10 @@ export default class LibraryFetcher extends Fetcher {
     }
 
     const tabParams = session.tabParams[this.tabId] || defaultObj;
-    let {offset = 0, limit = 30, sortBy} = tabParams;
+    const {sortBy, sortDirection = "DESC"} = tabParams;
+
+    const tabPagination = session.tabPagination[this.tabId] || defaultObj;
+    let {offset = 0, limit = 30} = tabPagination;
 
     const {libraryGameIds} = this.store.getState().commons;
 
@@ -45,15 +46,7 @@ export default class LibraryFetcher extends Fetcher {
     offset -= overscan;
     offset = (offset >= 0 ? offset : 0);
 
-    const oldTabData = this.store.getState().session.tabData[this.tabId];
-
-    const sortDirection: "DESC" | "ASC" = tabParams.sortDirection || "DESC";
-
-    if (this.reason === "tab-filter-changed") {
-      offset = 0;
-    }
-
-    const filter = session.navigation.filters[this.tabId];
+    this.logger.info(`offset = ${offset}, limit = ${limit}`);
 
     const gameRepo = db.getRepo(Game);
     const keyRepo = db.getRepo(DownloadKey);
@@ -68,12 +61,6 @@ export default class LibraryFetcher extends Fetcher {
       });
 
       const totalCount = libraryGameIds.length;
-
-      if (filter) {
-        query.andWhere("(games.title LIKE :query or games.shortText LIKE :query)", {
-          query: `%${filter.toLowerCase()}%`,
-        });
-      }
 
       let joinCave = false;
 
@@ -119,9 +106,9 @@ export default class LibraryFetcher extends Fetcher {
     };
     await pushLocal();
 
-    if (this.reason === "tab-params-changed" || this.reason === "tab-filter-changed") {
+    if (this.reason === FetchReason.TabParamsChanged || this.reason === FetchReason.TabPaginationChanged) {
       // that'll do. no need to fire an API request when scrolling :)
-      return new Outcome("success");
+      return new Outcome(OutcomeState.Success);
     }
 
     const {credentials} = session;
@@ -171,6 +158,6 @@ export default class LibraryFetcher extends Fetcher {
     });
     await pushLocal();
 
-    return new Outcome("success");
+    return new Outcome(OutcomeState.Success);
   }
 }

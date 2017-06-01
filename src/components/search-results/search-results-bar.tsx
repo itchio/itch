@@ -2,25 +2,25 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import {connect, I18nProps} from "./connect";
+import {connect, I18nProps} from "../connect";
 import {createStructuredSelector} from "reselect";
 
 import {each} from "underscore";
 
-import * as actions from "../actions";
+import * as actions from "../../actions";
 
-import {IAppState, ISearchResults} from "../types";
-import {dispatcher} from "../constants/action-types";
+import {IAppState, ISearchResults} from "../../types";
+import {dispatcher} from "../../constants/action-types";
 
-import GameSearchResult from "./search-results/game-search-result";
-import UserSearchResult from "./search-results/user-search-result";
+import GameSearchResult from "./game-search-result";
+import UserSearchResult from "./user-search-result";
 
-import Button from "./basics/button";
-import IconButton from "./basics/icon-button";
-import Filler from "./basics/filler";
+import Button from "../basics/button";
+import IconButton from "../basics/icon-button";
+import Filler from "../basics/filler";
 
 import {stripUnit} from "polished";
-import styled from "./styles";
+import styled from "../styles";
 
 const ResultsContainer = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -99,7 +99,7 @@ const NoResults = styled.p`
   border-radius: 4px;
 `;
 
-export class HubSearchResults extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
+export class SearchResultBar extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {
@@ -231,7 +231,7 @@ interface IState {
   chosen: number;
 }
 
-export default connect<IProps>(HubSearchResults, {
+export default connect<IProps>(SearchResultBar, {
   state: createStructuredSelector({
     open: (state: IAppState) => state.session.search.open,
     highlight: (state: IAppState) => state.session.search.highlight,

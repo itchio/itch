@@ -5,7 +5,7 @@ import {createStructuredSelector} from "reselect";
 
 import * as actions from "../actions";
 
-import HubMeat from "./hub-meat";
+import AllMeats from "./meats/all-meats";
 
 let FIRST_EVER_RENDER = true;
 
@@ -29,7 +29,7 @@ export class HubContent extends React.PureComponent<IProps & IDerivedProps & I18
     }
 
     return <ContentContainer>
-      <HubMeat/>
+      <AllMeats/>
     </ContentContainer>;
   }
 

@@ -50,9 +50,9 @@ class GameGrid extends React.PureComponent<IProps & IDerivedProps & I18nProps, I
     const offset = info.rowStartIndex * columnCount;
     const limit = (1 + info.rowStopIndex - info.rowStartIndex) * columnCount;
 
-    this.props.tabParamsChanged({
+    this.props.tabPaginationChanged({
       id: this.props.tab,
-      params: {
+      pagination: {
         offset,
         limit,
       },
@@ -126,7 +126,7 @@ interface IProps {
 }
 
 interface IDerivedProps {
-  tabParamsChanged: typeof actions.tabParamsChanged;
+  tabPaginationChanged: typeof actions.tabPaginationChanged;
 }
 
 interface IState {
@@ -135,6 +135,6 @@ interface IState {
 
 export default connect<IProps>(GameGrid, {
   dispatch: (dispatch) => ({
-    tabParamsChanged: dispatcher(dispatch, actions.tabParamsChanged),
+    tabPaginationChanged: dispatcher(dispatch, actions.tabPaginationChanged),
   }),
 });

@@ -5,6 +5,7 @@ import {connect, I18nProps} from "./connect";
 import * as actions from "../actions";
 
 import Icon from "./basics/icon";
+import {IMeatProps} from "./meats/types";
 
 import {dispatcher} from "../constants/action-types";
 
@@ -26,22 +27,22 @@ export class Toast extends React.PureComponent<IProps & IDerivedProps & I18nProp
   }
 
   sendFeedback = () => {
-    const {reportIssue, data} = this.props;
-    const {error, stack} = data;
+    const {reportIssue, tabData} = this.props;
+    const {error, stack} = tabData;
 
     reportIssue({log: error + "\n\nstack:\n" + stack});
   }
 
   reload = () => {
-    const {evolveTab, data, tabId} = this.props;
-    const {path} = data;
+    const {evolveTab, tabData, tab} = this.props;
+    const {path} = tabData;
     const untoastedPath = path.replace(/^toast\//, "");
 
-    evolveTab({id: tabId, path: untoastedPath, quick: true});
+    evolveTab({id: tab, path: untoastedPath, quick: true});
   }
 
   render () {
-    const {t, data = {}} = this.props;
+    const {t, tabData = {}} = this.props;
 
     return <div className="toast-meat">
       <Icon icon="heart-broken" classes={["leader"]}/>
@@ -56,7 +57,7 @@ export class Toast extends React.PureComponent<IProps & IDerivedProps & I18nProp
       <span className="link" onClick={this.toggleExpand}>{t("toast.actions.learn_more")}</span>
 
       {this.state.expanded
-      ? <p className="error">{data.error}</p>
+      ? <p className="error">{tabData.error}</p>
       : ""}
 
       <span className="link" onClick={this.sendFeedback}>{t("toast.actions.report")}</span>
@@ -64,14 +65,7 @@ export class Toast extends React.PureComponent<IProps & IDerivedProps & I18nProp
   }
 }
 
-interface IProps {
-  data: {
-    path?: string;
-    error?: string;
-    stack?: string;
-  };
-  tabId: string;
-}
+interface IProps extends IMeatProps {}
 
 interface IDerivedProps {
   evolveTab: typeof actions.evolveTab;

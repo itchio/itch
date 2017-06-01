@@ -17,6 +17,8 @@ import SelectRow from "./basics/select-row";
 import OpenAtLoginError from "./preferences/open-at-login-error";
 import ProxySettings from "./preferences/proxy-settings";
 
+import TitleBar from "./title-bar";
+
 import * as actions from "../actions";
 
 import {map, each, filter} from "underscore";
@@ -25,7 +27,8 @@ import diskspace from "../os/diskspace";
 
 import {IAppState, ILocaleInfo, IPreferencesState, IInstallLocation} from "../types";
 import {dispatcher} from "../constants/action-types";
-import {ILocalizer} from "../localizer";
+
+import {IMeatProps} from "./meats/types";
 
 // TODO: split into smaller components
 
@@ -278,7 +281,7 @@ const PreferencesDiv = styled.div`
 
 export class Preferences extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
-    const {t, lang, sniffedLang = "", downloading, locales} = this.props;
+    const {t, tab, lang, sniffedLang = "", downloading, locales} = this.props;
     const {isolateApps, openAtLogin, openAsHidden, closeToTray,
        readyNotification, manualGameUpdates, preventDisplaySleep, showAdvanced} = this.props.preferences;
     const {queueLocaleDownload, updatePreferences} = this.props;
@@ -298,6 +301,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps & I1
     const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itch/${badgeLang}/svg-badge.svg`;
 
     return <PreferencesDiv>
+      <TitleBar tab={tab}/>
       <h2>{t("preferences.language")}</h2>
       <div className="language-form">
         <label className="active">
@@ -561,7 +565,7 @@ interface IExtendedInstallLocations {
   locations: IExtendedInstallLocation[];
 }
 
-interface IProps {}
+interface IProps extends IMeatProps {}
 
 interface IDerivedProps {
   locales: ILocaleInfo[];
@@ -573,8 +577,6 @@ interface IDerivedProps {
   sniffedLang: string;
   lang: string;
   installLocations: IExtendedInstallLocations;
-
-  t: ILocalizer;
 
   addInstallLocationRequest: typeof actions.addInstallLocationRequest;
   removeInstallLocationRequest: typeof actions.removeInstallLocationRequest;

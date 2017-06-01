@@ -12,7 +12,10 @@ import CollectionsFetcher from "../fetchers/collections-fetcher";
 import LibraryFetcher from "../fetchers/library-fetcher";
 
 import GameFetcher from "../fetchers/game-fetcher";
+import UserFetcher from "../fetchers/user-fetcher";
 import CollectionFetcher from "../fetchers/collection-fetcher";
+
+import {pathPrefix} from "../util/navigation";
 
 const staticFetchers = {
   "dashboard": DashboardFetcher,
@@ -22,6 +25,7 @@ const staticFetchers = {
 
 const pathFetchers = {
   "games": GameFetcher,
+  "users": UserFetcher,
   "collections": CollectionFetcher,
 };
 
@@ -70,14 +74,14 @@ function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
     return staticFetcher;
   }
 
-  const tabData = store.getState().session.navigation.tabData[tabId];
+  const tabData = store.getState().session.tabData[tabId];
   if (!tabData) {
     return null;
   }
 
   const {path} = tabData;
   if (path) {
-    const pathBase = path.substr(0, path.indexOf("/"));
+    const pathBase = pathPrefix(path);
     const pathFetcher = pathFetchers[pathBase];
     if (pathFetcher) {
       return pathFetcher;
@@ -90,33 +94,34 @@ function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
 export default function (watcher: Watcher) {
   // changing tabs? it's a fetching
   watcher.on(actions.tabChanged, async (store, action) => {
-    queueFetch(store, action.payload.id, "tab-changed");
+    queueFetch(store, action.payload.id, FetchReason.TabChanged);
   });
 
   // tab navigated to something else? let's fetch
   watcher.on(actions.tabEvolved, async (store, action) => {
-    queueFetch(store, action.payload.id, "tab-evolved");
+    queueFetch(store, action.payload.id, FetchReason.TabEvolved);
   });
 
   // tab reloaded by user? let's fetch!
   watcher.on(actions.tabReloaded, async (store, action) => {
-    queueFetch(store, action.payload.id, "tab-reloaded");
+    queueFetch(store, action.payload.id, FetchReason.TabReloaded);
   });
 
   // tab got new params? it's a fetching!
   watcher.on(actions.tabParamsChanged, async (store, action) => {
-    queueFetch(store, action.payload.id, "tab-params-changed");
+    queueFetch(store, action.payload.id, FetchReason.TabParamsChanged);
   });
 
-  // tab got new filter? it's a fetching!
-  watcher.on(actions.filterChanged, async (store, action) => {
-    queueFetch(store, action.payload.tab, "tab-filter-changed");
+  // tab got new pagination? it's a fetching
+  watcher.on(actions.tabPaginationChanged, async (store, action) => {
+    queueFetch(store, action.payload.id, FetchReason.TabPaginationChanged);
   });
 
   // window gaining focus? fetch away!
   watcher.on(actions.windowFocusChanged, async (store, action) => {
     if (action.payload.focused) {
-      queueFetch(store, store.getState().session.navigation.id, "window-focused");
+      const currentTabId = store.getState().session.navigation.id;
+      queueFetch(store, currentTabId, FetchReason.WindowFocused);
     }
   });
 }

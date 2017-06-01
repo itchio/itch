@@ -3,15 +3,19 @@ import * as React from "react";
 import {connect, I18nProps} from "./connect";
 
 import urls from "../constants/urls";
+import staticTabData from "../constants/static-tab-data";
 import * as actions from "../actions";
 
 // TODO: GameFilters doesn't belong in Collections view
 import GameFilters from "./game-filters";
 
+import {IMeatProps} from "./meats/types";
+
 import {dispatcher} from "../constants/action-types";
 
 import CollectionsGrid from "./collections-grid";
 import Link from "./basics/link";
+import TitleBar from "./title-bar";
 
 import styled, * as styles from "./styles";
 
@@ -26,6 +30,7 @@ export class Collections extends React.PureComponent<IProps & IDerivedProps & I1
     const {t, navigate} = this.props;
 
     return <CollectionsContainer>
+      <TitleBar tab={tab}/>
       <GameFilters tab={tab} showBinaryFilters={false} showLayoutPicker={false}>
         <Link
           label={t("outlinks.manage_collections")}
@@ -37,7 +42,7 @@ export class Collections extends React.PureComponent<IProps & IDerivedProps & I1
   }
 }
 
-interface IProps {}
+interface IProps extends IMeatProps {}
 
 interface IDerivedProps {
   navigate: typeof actions.navigate;

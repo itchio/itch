@@ -1,17 +1,12 @@
 
 import * as React from "react";
-import * as classNames from "classnames";
 import {connect, I18nProps} from "./connect";
 import {createStructuredSelector} from "reselect";
-
-import {debounce} from "underscore";
 
 import * as actions from "../actions";
 
 import {IAppState, TabLayout} from "../types";
 import {dispatcher} from "../constants/action-types";
-
-import watching, {Watcher} from "./watching";
 
 import Ink = require("react-ink");
 import Select = require("react-select");
@@ -32,6 +27,7 @@ export const FiltersContainer = styled.section`
   background: ${props => props.theme.breadBackground};
   box-shadow: 0 4px 8px -4px ${props => props.theme.breadBackground};
   flex-shrink: 0;
+  padding-left: 10px;
   padding-right: 4px;
   min-height: 40px;
 `;
@@ -41,7 +37,7 @@ const Filler = styled.div`
 `;
 
 const TagFilters = styled.section`
-  margin: 4px 8px;
+  margin: 4px 0;
 
   .Select {
     width: auto;
@@ -93,25 +89,6 @@ const TagFilters = styled.section`
   }
 `;
 
-const Search = styled.section`
-  margin: 8px 8px;
-  position: relative;
-  padding: 0;
-
-  .icon-filter {
-    ${styles.searchIcon()}
-
-    &.active {
-      color: ${props => props.theme.lightAccent};
-    }
-  }
-
-  /* FIXME: that's pretty bad */
-  input[type=search] {
-    ${styles.searchInput()}
-  }
-`;
-
 const LayoutPickers = styled.section`
   display: flex;
 `;
@@ -134,46 +111,9 @@ const LayoutPicker = styled.section`
   : ""}
 `;
 
-@watching
 class GameFilters extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  refs: {
-    search: HTMLInputElement;
-  };
-
-  onQueryChanged = debounce(() => {
-    const {search} = this.refs;
-    if (!search) {
-      return;
-    }
-
-    const {tab} = this.props;
-
-    this.props.filterChanged({tab, query: search.value});
-  }, 100)
-
-  constructor () {
-    super();
-  }
-
-  subscribe (watcher: Watcher) {
-    watcher.on(actions.focusFilter, async (store, action) => {
-      const {search} = this.refs;
-      if (search) {
-        search.focus();
-        search.select();
-      }
-    });
-
-    watcher.on(actions.clearFilters, async (store, action) => {
-      const {search} = this.refs;
-      if (search) {
-        search.value = "";
-      }
-    });
-  }
-
   render () {
-    const {t, filterQuery,
+    const {t, 
        onlyCompatible, onlyOwned, onlyInstalled,
        showBinaryFilters = true, showLayoutPicker = true} = this.props;
 
@@ -210,17 +150,6 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps & I18nProps
     }
 
     return <FiltersContainer>
-      {true ? null :
-      <Search>
-        <input className="filter-input-field" ref="search" type="search" defaultValue={filterQuery}
-          placeholder={t("grid.criterion.search")}
-          onKeyPress={this.onQueryChanged}
-          onKeyUp={this.onQueryChanged}
-          onChange={this.onQueryChanged}/>
-        <span className={classNames("icon", "icon-filter", { active: !!filterQuery })} />
-      </Search>
-      }
-      
       {showBinaryFilters
       ? <TagFilters>
         <Select
@@ -285,22 +214,17 @@ interface IProps {
 }
 
 interface IDerivedProps {
-  filterQuery: string;
   layout: TabLayout;
   onlyCompatible: boolean;
   onlyOwned: boolean;
   onlyInstalled: boolean;
 
-  filterChanged: typeof actions.filterChanged;
   updatePreferences: typeof actions.updatePreferences;
 }
 
 export default connect<IProps>(GameFilters, {
   state: (initialState, props) => {
-    const { tab } = props;
-
     return createStructuredSelector({
-      filterQuery: (state: IAppState) => state.session.navigation.filters[tab],
       layout: (state: IAppState) => state.preferences.layout,
       onlyCompatible: (state: IAppState) => state.preferences.onlyCompatibleGames,
       onlyOwned: (state: IAppState) => state.preferences.onlyOwnedGames,
@@ -308,7 +232,6 @@ export default connect<IProps>(GameFilters, {
     });
   },
   dispatch: (dispatch) => ({
-    filterChanged: dispatcher(dispatch, actions.filterChanged),
     updatePreferences: dispatcher(dispatch, actions.updatePreferences),
   }),
 });

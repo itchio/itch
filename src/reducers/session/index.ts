@@ -8,6 +8,7 @@ import folders from "./folders";
 import cachedCollections from "./cached-collections";
 import tabData from "./tab-data";
 import tabParams from "./tab-params";
+import tabPagination from "./tab-pagination";
 
 import {Reducer} from "redux";
 import {ISessionState} from "../../types";
@@ -21,6 +22,7 @@ const reducers: any = {
   cachedCollections,
   tabData,
   tabParams,
+  tabPagination,
 };
 
 export default combineReducers(reducers) as Reducer<ISessionState>;

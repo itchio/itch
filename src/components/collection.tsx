@@ -6,7 +6,8 @@ import {createSelector, createStructuredSelector} from "reselect";
 import Games from "./games";
 import GameFilters from "./game-filters";
 
-import {map, filter} from "underscore";
+import {IMeatProps} from "./meats/types";
+
 import {pathToId} from "../util/navigation";
 
 import {
@@ -19,13 +20,10 @@ const CollectionDiv = styled.div`
   ${styles.meat()}
 `;
 
-const Empty = styled.p`
-  ${styles.emptyMeat()}
-`;
-
 export class Collection extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
-    const {t, tabGames, tabPath, collection} = this.props;
+    const {tabGames, tabData, collection} = this.props;
+    const tabPath = tabData.path;
 
     if (!collection) {
       return <CollectionDiv>
@@ -33,27 +31,18 @@ export class Collection extends React.PureComponent<IProps & IDerivedProps & I18
       </CollectionDiv>;
     }
 
-    const {gameIds} = collection;
-    const games = filter(map(gameIds, (gameId) => tabGames[gameId]), (x) => !!x);
-
     const tab = tabPath;
 
     return <CollectionDiv>
       <GameFilters tab={tab}>
       </GameFilters>
 
-      {games.length > 0
-        ? <Games games={games} gamesCount={gameIds.length} gamesOffset={0} hiddenCount={0} tab={tab}/>
-        : <Empty>{t("collection.empty")}</Empty>
-      }
+      <Games tab={tab}/>
     </CollectionDiv>;
   }
 }
 
-interface IProps {
-  tabPath: string;
-  tabId: string;
-}
+interface IProps extends IMeatProps {}
 
 interface IDerivedProps {
   tabGames: IGameRecordSet;
@@ -74,8 +63,8 @@ const emptyObj = {};
 export default connect<IProps>(Collection, {
   state: () => {
     const marketSelector = createStructuredSelector({
-      collectionId: (state: IAppState, props: IProps) => +pathToId(props.tabPath),
-      tabData: (state: IAppState, props: IProps) => state.session.tabData[props.tabId] || emptyObj,
+      collectionId: (state: IAppState, props: IProps) => +pathToId(props.tabData.path),
+      tabData: (state: IAppState, props: IProps) => props.tabData,
     });
 
     return createSelector(

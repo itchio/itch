@@ -15,7 +15,6 @@ import {startTask} from "./start-task";
 
 import {filter, map, where} from "underscore";
 
-
 import {
   IStore, IGameRecord, ICaveRecord, IUploadRecord, IDownloadKey,
 } from "../../types";
@@ -29,25 +28,13 @@ interface IExtraOpts {}
 
 async function startCave (store: IStore, game: IGameRecord, cave: ICaveRecord, extraOpts: IExtraOpts) {
   logger.info(`Starting cave ${cave.id}`);
-  const {err} = await startTask(store, {
+  await startTask(store, {
     name: "launch",
     gameId: cave.game.id,
     cave,
+    logger,
     ...extraOpts,
   });
-
-  if (err) {
-    store.dispatch(actions.queueHistoryItem({
-      label: ["game.install.could_not_launch", {title: game.title}],
-      detail: (err as any).reason || ("" + err), // TODO: type properly
-      options: [
-        {
-          label: ["game.install.try_again"],
-          action: actions.queueGame({game}),
-        },
-      ],
-    }));
-  }
 }
 
 export default function (watcher: Watcher) {

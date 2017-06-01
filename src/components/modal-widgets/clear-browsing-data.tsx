@@ -26,7 +26,7 @@ export class ClearBrowsingData extends React.PureComponent<IProps & IDerivedProp
     const {userId} = this.props;
 
     // FIXME: surely we can do that without remote ?
-    const ourSession = electron.remote.session.fromPartition(partitionForUser(String(userId)));
+    const ourSession = electron.remote.session.fromPartition(partitionForUser(String(userId)), {});
 
     ourSession.getCacheSize((cacheSize) => {
       this.setState({

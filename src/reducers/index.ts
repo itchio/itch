@@ -1,7 +1,6 @@
 
 import {combineReducers} from "redux";
 
-import history from "./history";
 import modals from "./modals";
 import system from "./system";
 import setup from "./setup";
@@ -19,7 +18,6 @@ import queries from "./queries";
 import commons from "./commons";
 
 const reducer = combineReducers({
-  history,
   modals,
   system,
   setup,

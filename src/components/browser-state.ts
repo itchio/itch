@@ -10,7 +10,7 @@ export interface IBrowserState {
 }
 
 export interface IBrowserControlProperties {
-  tabId: string;
+  tab: string;
   tabPath: string;
   tabData: ITabData;
   browserState: IBrowserState;
@@ -21,5 +21,4 @@ export interface IBrowserControlProperties {
   openDevTools: () => void;
   loadURL: (url: string) => void;
   frozen: boolean;
-  active: boolean;
 }

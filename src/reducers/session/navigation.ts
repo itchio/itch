@@ -1,7 +1,5 @@
 
-import {map, reject, omit, object, pick, indexBy, filter} from "underscore";
-
-import staticTabData from "../../constants/static-tab-data";
+import {map, reject, omit, filter} from "underscore";
 
 import {ISessionNavigationState, ITabDataSet, ITabDataSave} from "../../types";
 
@@ -10,15 +8,7 @@ import reducer from "../reducer";
 
 import {arrayMove} from "react-sortable-hoc";
 
-interface IPathToIdMap {
-  [path: string]: string;
-}
-
-const perish = process.env.PERISH === "1" ? console.log.bind(console) : () => 0;
-
 const baseTabs = ["featured", "library", "collections"];
-
-// TODO: please, please split me into different sub-reducers.
 
 const initialState = {
   page: "gate",
@@ -27,9 +17,7 @@ const initialState = {
     transient: [],
   },
   loadingTabs: {},
-  filters: {},
   lastConstant: "featured",
-  tabData: indexBy(pick(staticTabData, ...baseTabs), "id"),
   id: "featured",
 } as ISessionNavigationState;
 
@@ -50,17 +38,6 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
         loadingTabs: omit(state.loadingTabs, id),
       };
     }
-  });
-
-  on(actions.filterChanged, (state, action) => {
-    const {tab, query} = action.payload;
-    return {
-      ...state,
-      filters: {
-        ...state.filters,
-        [tab]: query,
-      },
-    };
   });
 
   on(actions.tabChanged, (state, action) => {
@@ -95,10 +72,6 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
         ...state.tabs,
         transient: [ "downloads", ...transient ],
       },
-      tabData: {
-        ...state.tabData,
-        downloads: staticTabData.downloads,
-      },
     };
   });
 
@@ -111,60 +84,28 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
   });
 
   on(actions.openTab, (state, action) => {
-    const {id, tabId, data, background} = action.payload;
-    const {tabData} = state;
+    const {id, background} = action.payload;
     const {constant, transient} = state.tabs;
-
-    const newTab = staticTabData[id] ? id : tabId;
-
-    const newTabs = {
-      constant,
-      transient: [
-        newTab,
-        ...transient,
-      ],
-    };
-
-    const newTabData = {
-      ...tabData,
-      [newTab]: {
-        ...staticTabData[id],
-        ...tabData[id],
-        path: id,
-        ...data,
-      },
-    };
 
     return {
       ...state,
-      id: background ? state.id : newTab,
-      tabs: newTabs,
-      tabData: newTabData,
+      id: background ? state.id : id,
+      tabs: {
+        constant,
+        transient: [
+          id,
+          ...transient,
+        ],
+      },
     };
   });
 
-  on(actions.navigate, (state, action) => {
-    const {id, background} = action.payload;
-    const {tabData} = state;
+  on(actions.focusTab, (state, action) => {
+    const {id} = action.payload;
 
-    const pathToId = object(map(tabData, (x, xId) => [x.path, xId])) as IPathToIdMap;
-
-    if (tabData[id]) {
-      // switching to an existing tab, by id
-      if (background) {
-        return state;
-      }
-      return {...state, id};
-    } else if (pathToId[id]) {
-      // switching to an existing tab, by path (don't open same game twice, etc.)
-      if (background) {
-        return state;
-      }
-      const idForPath = pathToId[id];
-      return {...state, id: idForPath};
-    } else {
-      // new tab maybe? handled by reactor
-      return state;
+    return {
+      ...state,
+      id,
     }
   });
 
@@ -186,7 +127,7 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
   });
 
   on(actions.closeTab, (state, action) => {
-    const {id, tabs, tabData} = state;
+    const {id, tabs} = state;
     const closeId = action.payload.id || id;
     const {constant, transient} = tabs;
 
@@ -199,11 +140,10 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
     const index = ids.indexOf(id);
 
     const newTransient = reject(transient, (tabId) => tabId === closeId);
-    const newTabData = omit(tabData, closeId);
 
     let newId = id;
     if (id === closeId) {
-      const newIds = constant.concat(newTransient);
+      const newIds = [...constant, ...newTransient];
 
       let nextIndex = index;
       if (nextIndex >= newIds.length) {
@@ -224,72 +164,7 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
         ...state.tabs,
         transient: newTransient,
       },
-      tabData: newTabData,
     };
-  });
-
-  on(actions.closeAllTabs, (state, action) => {
-    const {id, tabs, tabData} = state;
-    const {constant, transient} = tabs;
-
-    const newTabData = omit(tabData, ...transient);
-    const newId = (constant.indexOf(id) === -1) ? "featured" : id;
-
-    return {
-      ...state,
-      id: newId,
-      tabs: {
-        constant,
-        transient: [],
-      },
-      tabData: newTabData,
-    };
-  });
-
-  on(actions.tabDataFetched, (state, action) => {
-    const {id, timestamp, data} = action.payload;
-    if (!timestamp) {
-      perish("Ignoring non-timestamped tabData: ", id, data);
-      return state;
-    }
-
-    const {tabData} = state;
-    const oldData = tabData[id];
-    if (oldData && oldData.timestamp && oldData.timestamp > timestamp) {
-      perish("Ignoring stale tabData: ", id, data);
-      return state;
-    }
-
-    return {
-      ...state,
-      tabData: {
-        ...tabData,
-        [id]: {
-          ...tabData[id],
-          ...data,
-        },
-      },
-    };
-  });
-
-  on(actions.tabEvolved, (state, action) => {
-    const {id, data} = action.payload;
-    const {tabData} = state;
-
-    if (tabData[id]) {
-      return {
-        ...state,
-        tabData: {
-          ...tabData,
-          [id]: {
-            ...tabData[id],
-            ...data,
-          },
-        },
-      };
-    }
-
-    return state;
   });
 
   on(actions.tabsRestored, (state, action) => {
@@ -343,13 +218,6 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
       tabs: {
         ...state.tabs,
         constant: [...constant, path],
-      },
-      tabData: {
-        ...state.tabData,
-        [path]: {
-          ...state.tabData[path],
-          ...staticTabData[path],
-        },
       },
     };
   });

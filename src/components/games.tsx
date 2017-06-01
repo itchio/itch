@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
-import {createStructuredSelector} from "reselect";
+import {createSelector, createStructuredSelector} from "reselect";
 
 import {IAppState, TabLayout, ITabParams} from "../types";
 import Game from "../db/models/game";
@@ -21,11 +21,11 @@ export const HubGamesDiv = styled.div`
 `;
 
 class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  onSortChange = (params: ISortParams) => {
-    const {tabParams, tab} = this.props;
-    let {sortBy, sortDirection} = params;
+  onSortChange = (sortParams: ISortParams) => {
+    const {params: oldParams, tab} = this.props;
+    let {sortBy, sortDirection} = sortParams;
 
-    if (sortBy !== tabParams.sortBy) {
+    if (sortBy !== oldParams.sortBy) {
       // sorting by different column
       if (sortBy === "secondsRun" || sortBy === "lastTouchedAt") {
         // default to desc for these, which makes the most sense
@@ -40,8 +40,8 @@ class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps, void
   }
 
   render() {
-    const {games, gamesCount, gamesOffset, hiddenCount, tab, tabParams, layout} = this.props;
-    const {sortBy, sortDirection} = tabParams;
+    const {games, gamesCount, gamesOffset, hiddenCount, tab, params, layout} = this.props;
+    const {sortBy, sortDirection} = params;
 
     if (layout === "grid") {
       return <GameGrid
@@ -68,28 +68,44 @@ class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps, void
 
 interface IProps {
   tab: string;
+}
+
+interface IDerivedProps {
   games: Game[];
   gamesCount?: number;
   gamesOffset?: number;
   hiddenCount?: number;
-}
 
-interface IDerivedProps {
   layout: TabLayout;
-  tabParams: ITabParams;
+  params: ITabParams;
 
   tabParamsChanged: typeof actions.tabParamsChanged;
 }
 
-const defaultObj = {};
+const emptyObj = {};
+const emptyArr = [];
 
 export default connect<IProps>(Games, {
   state: (initialState, initialProps) => {
     const {tab} = initialProps;
-    return createStructuredSelector({
-      layout: (state: IAppState) => state.preferences.layout,
-      tabParams: (state: IAppState) => state.session.tabParams[tab] || defaultObj,
-    });
+    return createSelector(
+      (state: IAppState) => state.session.tabData[tab] || emptyObj,
+      (state: IAppState) => state.session.tabParams[tab] || emptyObj,
+      (state: IAppState) => state.preferences.layout,
+      createStructuredSelector({
+        // FIXME: this doesn't memoize like you think it would
+        games: (data, params, layout) => {
+          const games = data.games || emptyObj;
+          const gameIds = data.gameIds || emptyArr;
+          return gameIds.map((id) => games[id]);
+        },
+        gamesCount: (data, params, layout) => data.gamesCount || 0,
+        gamesOffset: (data, params, layout) => data.gamesOffset || 0,
+        hiddenCount: (data, params, layout) => data.hiddenCount || 0,
+        layout: (data, params, layout) => layout,
+        params: (data, params, layout) => params,
+      }),
+    );
   },
   dispatch: (dispatch) => ({
     tabParamsChanged: dispatcher(dispatch, actions.tabParamsChanged),

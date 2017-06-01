@@ -4,8 +4,14 @@ import {IStore, ITabData} from "../types";
 import * as actions from "../actions";
 import {EventEmitter} from "events";
 
-const deepEqual = require("deep-equal");
-export type FetchReason = "tab-changed" | "tab-evolved" | "tab-reloaded" | "window-focused" | "tab-params-changed" | "tab-filter-changed";
+export enum FetchReason {
+  TabChanged,
+  TabEvolved,
+  TabReloaded,
+  WindowFocused,
+  TabParamsChanged,
+  TabPaginationChanged,
+}
 
 import rootLogger, {Logger} from "../logger";
 
@@ -31,7 +37,7 @@ export class Fetcher {
   retryCount = 0;
 
   hook(store: IStore, tabId: string, reason: FetchReason) {
-    this.logger = rootLogger.child({name: `tab-fetcher:${tabId}:${reason}`});
+    this.logger = rootLogger.child({name: `tab-fetcher:${tabId}`});
     this.store = store;
     this.tabId = tabId;
     this.reason = reason;
@@ -49,10 +55,10 @@ export class Fetcher {
     this.work().then((outcome) => {
       if (isOutcome(outcome)) {
         switch (outcome.state) {
-          case "success":
+          case OutcomeState.Success:
             this.emitter.emit("done");
             break;
-          case "retry":
+          case OutcomeState.Retry:
             this.retryCount++;  
             if (this.retryCount > 8) {
               throw new Error(`Too many retries, giving up`);
@@ -111,7 +117,7 @@ export class Fetcher {
   }
 
   retry() {
-    return new Outcome("retry");
+    return new Outcome(OutcomeState.Retry);
   }
 
   debug(msg: string, ...args: any[]) {
@@ -119,7 +125,10 @@ export class Fetcher {
   }
 }
 
-export type OutcomeState = "success" | "retry";
+export enum OutcomeState {
+  Success,
+  Retry,
+};
 
 export class Outcome {
   constructor (public state: OutcomeState) {

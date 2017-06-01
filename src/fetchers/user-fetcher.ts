@@ -2,16 +2,16 @@
 import {Fetcher, Outcome, OutcomeState} from "./types";
 
 import db from "../db";
-import Game from "../db/models/game";
+import User from "../db/models/user";
 
 import client from "../api";
 import normalize from "../api/normalize";
-import {game} from "../api/schemas";
+import {user} from "../api/schemas";
 import {isNetworkError} from "../net/errors";
 
-import {pathToId, gameToTabData} from "../util/navigation";
+import {pathToId, userToTabData} from "../util/navigation";
 
-export default class GameFetcher extends Fetcher {
+export default class UserFetcher extends Fetcher {
   constructor () {
     super();
   }
@@ -24,17 +24,17 @@ export default class GameFetcher extends Fetcher {
 
     const {path} = tabData;
 
-    const gameId = +pathToId(path);
+    const userId = +pathToId(path);
 
-    const gameRepo = db.getRepo(Game);
-    let localGame = await gameRepo.findOneById(gameId);
-    let pushGame = (game: Game) => {
-      if (!game) {
+    const userRepo = db.getRepo(User);
+    let localUser = await userRepo.findOneById(userId);
+    let pushUser = (user: User) => {
+      if (!user) {
         return;
       }
-      this.push(gameToTabData(game));
+      this.push(userToTabData(user));
     };
-    pushGame(localGame);
+    pushUser(localUser);
 
     const {credentials} = this.store.getState().session;
     if (!credentials) {
@@ -46,8 +46,8 @@ export default class GameFetcher extends Fetcher {
     let normalized;
     try {
       this.debug(`Firing API requests...`);
-      normalized = normalize(await api.game(gameId), {
-        game: game,
+      normalized = normalize(await api.user(userId), {
+        user: user,
       });
     } catch (e) {
       this.debug(`API error:`, e);
@@ -59,9 +59,10 @@ export default class GameFetcher extends Fetcher {
     }
 
     this.debug(`normalized: `, normalized);
-    pushGame(normalized.entities.games[normalized.result.gameId]);
+    pushUser(normalized.entities.users[normalized.result.userId]);
 
     return new Outcome(OutcomeState.Success);
   }
 }
+
 

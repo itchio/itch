@@ -13,6 +13,7 @@ import * as actions from "../../actions";
 import {dispatcher} from "../../constants/action-types";
 
 import {
+  IAppState,
   ITabData,
   IGameRecord,
   ILocalizedString,
@@ -24,6 +25,8 @@ interface ISortableHubSidebarItemProps {
     id: string;
   };
 }
+
+const emptyObj = {};
 
 const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
   return <Item {...props.props}/>;
@@ -118,9 +121,9 @@ export default connect<IProps>(Tab, {
     let {id} = initialProps;
 
     return createStructuredSelector({
-      data: (state) => state.session.navigation.tabData[id] || {},
-      loading: (state) => !!state.session.navigation.loadingTabs[id],
-      downloads: (state) => (id === "downloads" && state.downloads),
+      data: (state: IAppState) => state.session.tabData[id] || emptyObj,
+      loading: (state: IAppState) => !!state.session.navigation.loadingTabs[id],
+      downloads: (state: IAppState) => (id === "downloads" && state.downloads),
     });
   },
   dispatch: (dispatch) => ({

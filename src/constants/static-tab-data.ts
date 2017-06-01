@@ -12,7 +12,6 @@ interface IBaseTabDataSet {
   collections: IBaseTabData;
   library: IBaseTabData;
   preferences: IBaseTabData;
-  history: IBaseTabData;
   downloads: IBaseTabData;
 }
 
@@ -22,7 +21,6 @@ const baseData = {
   collections: { label: ["sidebar.collections"] },
   library: { label: ["sidebar.owned"], subtitle: ["sidebar.owned_subtitle"] },
   preferences: { label: ["sidebar.preferences"] },
-  history: { label: ["sidebar.history"] },
   downloads: { label: ["sidebar.downloads"] },
 } as IBaseTabDataSet;
 

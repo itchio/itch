@@ -200,14 +200,17 @@ export interface ITabParamsSet {
 }
 
 export interface ITabParams {
-    query?: string;
-    offset?: number;
-    limit?: number;
-
     sortBy?: string;
     sortDirection?: "DESC" | "ASC";
+}
 
-    // TODO: filters etc.
+export interface ITabPaginationSet {
+    [key: string]: ITabPagination;
+}
+
+export interface ITabPagination {
+    offset?: number;
+    limit?: number;
 }
 
 export interface IGameRecordSet {
@@ -573,7 +576,6 @@ export interface ICredentials {
  * The entire application state, following the redux philosophy
  */
 export interface IAppState {
-    history: IHistoryState;
     modals: IModalsState;
     system: ISystemState;
     setup: ISetupState;
@@ -620,38 +622,6 @@ export interface ICommonsState {
         [gameId: string]: string[];
     };
     libraryGameIds: string[];
-}
-
-export interface IHistoryItemOption {
-    label: ILocalizedString;
-
-    action?: Action<any>;
-}
-
-export interface IHistoryItem {
-    /** generated identifier */
-    id: string;
-
-    /** localized message */
-    label: any[];
-
-    /** Date at which the history item occured */
-    date: number;
-
-    /** if true, counts as unread */
-    active: boolean;
-
-    options: IHistoryItemOption[];
-}
-
-export interface IHistoryState {
-    /** all history items that haven't been dismissed */
-    items: {
-        [id: string]: IHistoryItem;
-    };
-
-    /** all history items from newest to oldest */
-    itemsByDate: IHistoryItem[];
 }
 
 export interface IGameUpdate {
@@ -851,6 +821,7 @@ export interface ISessionState {
 
     tabData: ITabDataSet;
     tabParams: ITabParamsSet;
+    tabPagination: ITabPaginationSet;
 }
 
 export interface ISessionCachedCollectionsState {
@@ -894,22 +865,12 @@ export interface ITabs {
 export type TabLayout = "grid" | "table";
 
 export interface ISessionNavigationState {
-    filters: {
-        [tabId: string]: string | undefined;
-        collections?: string;
-    };
-
     /** opened tabs */
     tabs: ITabs;
 
     /** set to true when a tab is loading */
     loadingTabs: {
         [key: string]: boolean;
-    };
-
-    /** data associated with tabs: games, collections, etc. */
-    tabData: {
-        [id: string]: ITabData;
     };
 
     /** current page (gate, etc.) */

@@ -30,6 +30,7 @@ interface IDerivedProps {
 const LogoDiv = styled.div`
   text-align: center;
   cursor: pointer;
+  -webkit-app-region: drag;
 
   margin-top: 10px;
 

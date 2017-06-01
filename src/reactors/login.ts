@@ -62,7 +62,7 @@ export default function (watcher: Watcher) {
 
       if (res.cookie) {
         const partition = partitionForUser(String(res.key.userId));
-        const session = require("electron").session.fromPartition(partition);
+        const session = require("electron").session.fromPartition(partition, {});
         
         for (const name of Object.keys(res.cookie)) {
           const value = res.cookie[name];

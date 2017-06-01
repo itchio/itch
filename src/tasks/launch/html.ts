@@ -60,7 +60,7 @@ async function registerProtocol (opts: IRegisterProtocolOpts) {
   }
 
   const {session} = require("electron");
-  const caveSession = session.fromPartition(partition);
+  const caveSession = session.fromPartition(partition, {cache: false});
 
   await new Promise((resolve, reject) => {
     caveSession.protocol.registerFileProtocol(WEBGAME_PROTOCOL, (request, callback) => {

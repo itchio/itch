@@ -238,7 +238,7 @@ playtimeRenderer = (params: TableCellProps): JSX.Element | string => {
   const caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
 
   // TODO: pick cave with highest play time
-  const cave = caves.length > 0 ? caves[0] : caves;
+  const cave = caves.length > 0 ? caves[0] : null;
 
   if (cave) {
     return <TotalPlaytime game={game} cave={cave} short={true}/>;
@@ -257,7 +257,7 @@ lastPlayedRenderer = (params: TableCellProps): JSX.Element | string => {
   const caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
 
   // TODO: pick cave with highest play time
-  const cave = caves.length > 0 ? caves[0] : caves;
+  const cave = caves.length > 0 ? caves[0] : null;
 
   if (cave) {
     return <LastPlayed game={game} cave={cave} short={true}/>;
@@ -267,9 +267,9 @@ lastPlayedRenderer = (params: TableCellProps): JSX.Element | string => {
 }
 
 onRowsRendered = (info: IndexRange & OverscanIndexRange) => {
-  this.props.tabParamsChanged({
+  this.props.tabPaginationChanged({
     id: this.props.tab,
-    params: {
+    pagination: {
       offset: info.overscanStartIndex,
       limit: (info.overscanStopIndex - info.overscanStartIndex) + 1,
     },
@@ -381,7 +381,7 @@ interface IDerivedProps {
   clearFilters: typeof actions.clearFilters;
   navigateToGame: typeof actions.navigateToGame;
   openGameContextMenu: typeof actions.openGameContextMenu;
-  tabParamsChanged: typeof actions.tabParamsChanged;
+  tabPaginationChanged: typeof actions.tabPaginationChanged;
 }
 
 interface IGameTableState {
@@ -396,6 +396,6 @@ export default connect<IProps>(GameTable, {
     clearFilters: dispatcher(dispatch, actions.clearFilters),
     navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
     openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
-    tabParamsChanged: dispatcher(dispatch, actions.tabParamsChanged),
+    tabPaginationChanged: dispatcher(dispatch, actions.tabPaginationChanged),
   }),
 });

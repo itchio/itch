@@ -20,6 +20,10 @@ import {uniq, findWhere} from "underscore";
 import {IBrowserState, IBrowserControlProperties} from "./browser-state";
 import createContextMenu from "./browser-meat-context-menu";
 
+import {IMeatProps} from "./meats/types";
+
+import TitleBar from "./title-bar";
+
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
 const WILL_NAVIGATE_GRACE_PERIOD = 3000;
@@ -33,7 +37,7 @@ import GameBrowserContext from "./game-browser-context";
 
 import {transformUrl} from "../util/navigation";
 
-import {ITabData, IAppState} from "../types";
+import {IAppState} from "../types";
 import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
 
 import "electron";
@@ -119,7 +123,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
       return;
     }
     if (!webview.partition || webview.partition === "") {
-      console.warn(`${this.props.tabId}: webview has empty partition`);
+      console.warn(`${this.props.tab}: webview has empty partition`);
     }
 
     const browserState = {
@@ -157,31 +161,31 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
   }
 
   didStartLoading = () => {
-    this.props.tabLoading({id: this.props.tabId, loading: true});
+    this.props.tabLoading({id: this.props.tab, loading: true});
     this.updateBrowserState({loading: true});
   }
 
   didStopLoading = () => {
-    this.props.tabLoading({id: this.props.tabId, loading: false});
+    this.props.tabLoading({id: this.props.tab, loading: false});
     this.updateBrowserState({loading: false});
   }
 
   pageTitleUpdated = (e: any) => { // TODO: type
-    const {tabId, tabDataFetched} = this.props;
-    tabDataFetched({id: tabId, data: {webTitle: e.title}, timestamp: Date.now()});
+    const {tab, tabDataFetched} = this.props;
+    tabDataFetched({id: tab, data: {webTitle: e.title}});
   }
 
   pageFaviconUpdated = (e: any) => { // TODO: type
-    const {tabId, tabDataFetched} = this.props;
-    tabDataFetched({id: tabId, data: {webFavicon: e.favicons[0]}, timestamp: Date.now()});
+    const {tab, tabDataFetched} = this.props;
+    tabDataFetched({id: tab, data: {webFavicon: e.favicons[0]}});
   }
 
   didNavigate = (e: any) => { // TODO: type
-    const {tabId} = this.props;
+    const {tab} = this.props;
     const {url} = e;
 
     this.updateBrowserState({url});
-    this.analyzePage(tabId, url);
+    this.analyzePage(tab, url);
 
     this.updateScrollWatcher(url, this.wentBackOrForward);
     this.wentBackOrForward = false;
@@ -293,8 +297,8 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
   }
 
   isFrozen () {
-    const {tabId} = this.props;
-    const frozen = !!staticTabData[tabId] || !tabId;
+    const {tab} = this.props;
+    const frozen = !!staticTabData[tab] || !tab;
     return frozen;
   }
 
@@ -312,7 +316,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
       let parsed = urlParser.parse(details.url);
       const {pathname, query} = parsed;
       const params = querystring.parse(query);
-      const {tabId} = params;
+      const {tab} = params;
 
       switch (pathname) {
         case "/open-devtools":
@@ -322,11 +326,11 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
           }
           break;
         case "/analyze-page":
-          this.analyzePage(tabId, params.url);
+          this.analyzePage(tab, params.url);
           break;
         case "/evolve-tab":
           const {evolveTab} = this.props;
-          evolveTab({id: tabId, path: params.path});
+          evolveTab({id: tab, path: params.path});
           break;
         default:
           break;
@@ -334,7 +338,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     });
   }
 
-  analyzePage (tabId: string, url: string) {
+  analyzePage (tab: string, url: string) {
     if (this.isFrozen()) {
       return;
     }
@@ -357,9 +361,9 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
         if (parsed.search) {
           newPath += parsed.search;
         }
-        evolveTab({id: tabId, path: newPath});
+        evolveTab({id: tab, path: newPath});
       } else {
-        evolveTab({id: tabId, path: `url/${url}`});
+        evolveTab({id: tab, path: `url/${url}`});
       }
     };
     xhr.open("GET", url);
@@ -415,23 +419,23 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     };
     this.webview.addEventListener("dom-ready", callbackSetup);
 
-    const {tabId} = this.props;
+    const {tab} = this.props;
     this.webview.addEventListener("dom-ready", () => {
-      this.webview.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tabId)})`);
+      this.webview.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tab)})`);
     });
 
     this.webview.src = "about:blank";
   }
 
   render () {
-    const {tabId, tabData, tabPath, controls, active, meId} = this.props;
+    const {tab, tabPath, tabData, controls, meId} = this.props;
     const partition = partitionForUser(meId);
 
     const {browserState} = this.state;
 
     const frozen = this.isFrozen();
     const controlProps: IBrowserControlProperties = {
-      tabId,
+      tab,
       tabPath,
       tabData,
       browserState,
@@ -442,7 +446,6 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
       openDevTools: this.openDevTools,
       loadURL: this.loadUserURL,
       frozen,
-      active,
     };
 
     let context: React.ReactElement<any> = null;
@@ -455,6 +458,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     });
 
     return <BrowserMeatContainer>
+      <TitleBar tab={tab}/>
       <BrowserBar {...controlProps}/>
       <BrowserMain>
         <WebviewShell className={shellClasses}>
@@ -502,8 +506,8 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     this.with((wv) => {
       wv.reload();
     });
-    const {tabId, tabReloaded} = this.props;
-    tabReloaded({id: tabId});
+    const {tab, tabReloaded} = this.props;
+    tabReloaded({id: tab});
   }
 
   goBack = () => {
@@ -550,12 +554,8 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
 
 export type ControlsType = "generic" | "game" | "user";
 
-interface IProps {
-  active: boolean;
+interface IProps extends IMeatProps {
   url: string;
-  tabPath: string;
-  tabData: ITabData;
-  tabId: string;
   controls: ControlsType;
 }
 
