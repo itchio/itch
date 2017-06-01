@@ -20,6 +20,7 @@ import CollectionModel from "./models/collection";
 import DownloadKeyModel from "./models/download-key";
 import CaveModel from "./models/cave";
 import UserModel from "./models/user";
+import ProfileModel from "./models/profile";
 
 import compareRecords from "./compare-records";
 import * as _ from "underscore";
@@ -45,6 +46,7 @@ const modelMap: IModelMap = {
   "downloadKeys": DownloadKeyModel,
   "caves": CaveModel,
   "users": UserModel,
+  "profiles": ProfileModel,
 };
 
 /**
