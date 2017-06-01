@@ -3,7 +3,7 @@ import {Fetcher, Outcome} from "./types";
 import db from "../db";
 import Game from "../db/models/game";
 
-import {addFilterAndSortToQuery} from "./sort-and-filter";
+import {addSortAndFilterToQuery} from "./sort-and-filter";
 
 import normalize from "../api/normalize";
 import {downloadKey} from "../api/schemas";
@@ -63,7 +63,7 @@ export default class LibraryFetcher extends Fetcher {
 
     const totalCount = libraryGameIds.length;
 
-    addFilterAndSortToQuery(query, this.tabId, this.store);
+    addSortAndFilterToQuery(query, this.tabId, this.store);
 
     query.setOffset(offset).setLimit(limit); 
 

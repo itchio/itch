@@ -8,7 +8,7 @@ import Profile from "../db/models/profile";
 import normalize from "../api/normalize";
 import {game, arrayOf} from "../api/schemas";
 
-import {addFilterAndSortToQuery} from "./sort-and-filter";
+import {addSortAndFilterToQuery} from "./sort-and-filter";
 
 import {pluck, indexBy} from "underscore";
 
@@ -44,7 +44,7 @@ export default class DashboardFetcher extends Fetcher {
     query.addParameters({ gameIds: myGameIds });
     const totalCount = myGameIds.length;
 
-    addFilterAndSortToQuery(query, this.tabId, this.store);
+    addSortAndFilterToQuery(query, this.tabId, this.store);
 
     const [games, gamesCount] = await query.getManyAndCount();
 

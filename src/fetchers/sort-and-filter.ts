@@ -27,7 +27,7 @@ function getCaveSummary (commons: ICommonsState, game: Game): ICaveSummary {
   return null;
 }
 
-export function filterAndSort (games: Game[], tab: string, store: IStore) {
+export function sortAndFilter (games: Game[], tab: string, store: IStore): Game[] {
   let set = games;
   const state = store.getState();
   const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
@@ -80,13 +80,15 @@ export function filterAndSort (games: Game[], tab: string, store: IStore) {
         // don't sort if we don't know how to
     }
 
-    if (sortDirection === "ASC") {
+    if (sortDirection === "DESC") {
       set.reverse();
     }
   }
+
+  return set;
 }
 
-export function addFilterAndSortToQuery (query: QueryBuilder<Game>, tab: string, store: IStore) {
+export function addSortAndFilterToQuery (query: QueryBuilder<Game>, tab: string, store: IStore) {
   const state = store.getState();
   const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
   const {sortBy, sortDirection = "DESC"} = tabParams;

@@ -3,20 +3,17 @@ import {Fetcher, Outcome, OutcomeState} from "./types";
 import db from "../db";
 import Game from "../db/models/game";
 import Collection from "../db/models/collection";
-import client from "../api";
 
 import normalize from "../api/normalize";
 import {collection, game, arrayOf} from "../api/schemas";
-import {isNetworkError} from "../net/errors";
 
-import {indexBy} from "underscore";
+import {sortAndFilter} from "./sort-and-filter";
+
+import {indexBy, map, pluck} from "underscore";
 
 import {pathToId} from "../util/navigation";
 
 export default class CollectionFetcher extends Fetcher {
-  constructor () {
-    super();
-  }
 
   async work(): Promise<Outcome> {
     const path = this.store.getState().session.tabData[this.tabId].path;
@@ -47,43 +44,33 @@ export default class CollectionFetcher extends Fetcher {
       throw new Error(`No user credentials yet`);
     }
 
-    const {key} = credentials;
-    const api = client.withKey(key);
     let normalized;
-    try {
-      this.debug(`Fetching collection via API...`);
-      normalized = normalize(await api.collection(collectionId), {
-        collection: collection,
-      });
-    } catch (e) {
-      this.debug(`API error:`, e);
-      if (isNetworkError(e)) {
-        return new Outcome(OutcomeState.Retry);
-      } else {
-        throw e;
-      }
-    }
+    const collResponse = await this.withApi(async (api) => {
+      return await api.collection(collectionId);
+    });
+
+    normalized = normalize(collResponse, {
+      collection: collection,
+    });
     let remoteCollection = normalized.entities.collections[collectionId];
 
-    try {
-      this.debug(`Fetching collection games via API...`);
-      normalized = normalize(await api.collectionGames(collectionId), {
-        games: arrayOf(game),
-      });
-    } catch (e) {
-      this.debug(`API error:`, e);
-      if (isNetworkError(e)) {
-        return new Outcome(OutcomeState.Retry);
-      } else {
-        throw e;
-      }
-    }
-    let remoteCollectionGames = normalized.entities.games;
-    remoteCollection.gameIds = normalized.result.gameIds;
+    const gamesResponse = await this.withApi(async (api) => {
+      return await api.collectionGames(collectionId);
+    });
+
+    normalized = normalize(gamesResponse, {
+      games: arrayOf(game),
+    });
+
+    const remoteGames = normalized.entities.games;
+    const remoteGameIds = normalized.result.gameIds;
+
+    const games = map(remoteGameIds, (id) => remoteGames[id]);
+    const sortedGames = sortAndFilter(games, this.tabId, this.store);
 
     this.push({
-      games: remoteCollectionGames,
-      gameIds: remoteCollection.gameIds,
+      games: remoteGames,
+      gameIds: pluck(sortedGames, "id"),
       gamesOffset: 0,
       gamesCount: remoteCollection.gamesCount,
       collections: {
