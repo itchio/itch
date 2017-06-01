@@ -16,27 +16,7 @@ import * as actions from "../actions";
 import rootLogger from "../logger";
 const logger = rootLogger.child({name: "setup"});
 
-async function fetch (store: IStore, name: string) {
-  const opts = {
-    logger,
-    onStatus: (icon: string, message: ILocalizedString) => {
-      store.dispatch(actions.setupStatus({icon, message}));
-    },
-  };
-
-  await ibrew.fetch(opts, name);
-}
-
 async function setup (store: IStore) {
-  await fetch(store, "unarchiver");
-  await bluebird.all(map([
-    "butler",
-    "elevate",
-    "isolate",
-    "activate",
-    "firejail",
-    "dllassert",
-  ], async (name) => await fetch(store, name)));
   store.dispatch(actions.setupDone({}));
 }
 

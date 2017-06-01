@@ -7,7 +7,7 @@ import {
 export interface IDownloadKeySummary {
   id: number;
   gameId: number;
-  createdAt: string;
+  createdAt: Date;
 }
 
 @Entity("downloadKeys")

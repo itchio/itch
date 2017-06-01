@@ -11,6 +11,8 @@ import CaveModel, {ICaveSummary} from "../db/models/cave";
 
 import {PathScheme} from "../os/paths";
 
+import {SortDirection, SortKey} from "../components/sort-types";
+
 export interface IStore extends Store<IAppState> {}
 
 interface IWatcher {
@@ -201,8 +203,8 @@ export interface ITabParamsSet {
 }
 
 export interface ITabParams {
-    sortBy?: string;
-    sortDirection?: "DESC" | "ASC";
+    sortBy?: SortKey;
+    sortDirection?: SortDirection;
 }
 
 export interface ITabPaginationSet {

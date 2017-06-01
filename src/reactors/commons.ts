@@ -27,19 +27,24 @@ async function updateCommons (store: IStore) {
 
   if (!downloadKeyQuery) {
     downloadKeyQuery = db.getRepo(DownloadKeyModel)
-      .createQueryBuilder("d")
-      .select("id, gameId, createdAt");
+      .createQueryBuilder("downloadKeys")
+      .select("id as downloadKeys_id, " +
+        "gameId as downloadKeys_gameId, " +
+        "createdAt as downloadKeys_createdAt");
   }
 
   if (!cavesQuery) {
     cavesQuery = db.getRepo(CaveModel)
-      .createQueryBuilder("c")
-      .select("id, gameId, lastTouched, secondsRun");
+      .createQueryBuilder("caves")
+      .select("id as caves_id, " +
+        "gameId as caves_gameId, " +
+        "lastTouched as caves_lastTouched, " +
+        "secondsRun as caves_secondsRun");
   }
 
   const {downloadKeys, caves} = await bluebird.props({
-    downloadKeys: downloadKeyQuery.getRawMany(),
-    caves: cavesQuery.getRawMany(),
+    downloadKeys: downloadKeyQuery.getMany(),
+    caves: cavesQuery.getMany(),
   }) as any as {
     downloadKeys: IDownloadKeySummary[];
     caves: ICaveSummary[];

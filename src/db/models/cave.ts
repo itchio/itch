@@ -13,7 +13,7 @@ import {PathScheme} from "../../os/paths";
 export interface ICaveSummary {
   id: string;
   gameId: number;
-  lastTouched?: string;
+  lastTouched?: Date;
 }
 
 @Entity("caves")

@@ -1,9 +1,11 @@
 
-export type SortDirectionType = "ASC" | "DESC";
+export type SortDirection = "ASC" | "DESC";
+
+export type SortKey = "title" | "secondsRun" | "lastTouched" | "publishedAt";
 
 export interface ISortParams {
-  sortBy: string;
-  sortDirection: SortDirectionType;
+  sortBy: SortKey;
+  sortDirection: SortDirection;
 };
 
 export interface IOnSortChange {

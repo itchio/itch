@@ -1,8 +1,11 @@
 
-import {IStore, ITabData} from "../types";
+import {IStore, ITabData, ICredentials} from "../types";
 
 import * as actions from "../actions";
 import {EventEmitter} from "events";
+
+import client, {AuthenticatedClient} from "../api";
+import {isNetworkError} from "../net/errors";
 
 export enum FetchReason {
   TabChanged,
@@ -59,16 +62,7 @@ export class Fetcher {
             this.emitter.emit("done");
             break;
           case OutcomeState.Retry:
-            this.retryCount++;  
-            if (this.retryCount > 8) {
-              throw new Error(`Too many retries, giving up`);
-            } else {
-              let sleepTime = 100 * Math.pow(2, this.retryCount);
-              this.logger.info(`Sleeping ${sleepTime}ms then retrying...`);
-              setTimeout(() => {
-                this.start();
-              }, sleepTime);
-            }
+            this.doRetry();
             break;
           default:
             this.logger.info(`Fetcher returned unknown outcome state ${outcome.state}`);
@@ -79,9 +73,47 @@ export class Fetcher {
         this.emitter.emit("done");
       }
     }).catch((e) => {
-      this.logger.error(`Error in work:\n${e.stack}`);
-      this.emitter.emit("done");
+      if (e instanceof BrutalRetry) {
+        this.doRetry();
+      } else {
+        this.logger.error(`Error in work:\n${e.stack}`);
+        this.emitter.emit("done");
+      }
     });
+  }
+
+  async withApi <T> (cb: (api: AuthenticatedClient) => Promise<T>): T {
+    const {credentials} = this.store.getState().session;
+    if (!credentials || !credentials.me) {
+      this.debug("missing credentials");
+      throw new BrutalRetry();
+    }
+
+    const {key} = credentials;
+    const api = client.withKey(key);
+    try {
+      return await cb(api);
+    } catch (e) {
+      this.logger.error(`API error:`, e);
+      if (isNetworkError(e)) {
+        throw new BrutalRetry();
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  doRetry() {
+    this.retryCount++;  
+    if (this.retryCount > 8) {
+      throw new Error(`Too many retries, giving up`);
+    } else {
+      let sleepTime = 100 * Math.pow(2, this.retryCount);
+      this.logger.info(`Sleeping ${sleepTime}ms then retrying...`);
+      setTimeout(() => {
+        this.start();
+      }, sleepTime);
+    }
   }
 
   /**
@@ -127,12 +159,38 @@ export class Fetcher {
   debug(msg: string, ...args: any[]) {
     this.logger.info(msg, ...args);
   }
+
+  warrantsRemote (reason: FetchReason) {
+    switch (reason) {
+      case FetchReason.TabPaginationChanged:
+      case FetchReason.TabParamsChanged:
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  ensureCredentials (): ICredentials {
+    const {credentials} = this.store.getState().session;
+    if (!credentials || !credentials.me) {
+      this.debug(`missing credentials`);
+      throw new BrutalRetry();
+    }
+
+    return credentials;
+  }
 }
 
 export enum OutcomeState {
   Success,
   Retry,
 };
+
+export class BrutalRetry extends Error {
+  constructor() {
+    super("BrutalRetry");
+  }
+}
 
 export class Outcome {
   constructor (public state: OutcomeState) {

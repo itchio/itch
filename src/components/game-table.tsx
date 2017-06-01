@@ -15,7 +15,7 @@ import {
   TableCellProps,
   IndexRange, OverscanIndexRange,
 } from "react-virtualized";
-import {IOnSortChange, SortDirectionType} from "./sort-types";
+import {IOnSortChange, SortDirection, SortKey} from "./sort-types";
 
 import {ICommonsState} from "../types";
 
@@ -370,8 +370,8 @@ interface IProps {
   hiddenCount: number;
   tab: string;
 
-  sortBy: string;
-  sortDirection?: SortDirectionType;
+  sortBy: SortKey;
+  sortDirection?: SortDirection;
   onSortChange: IOnSortChange;
 }
 
