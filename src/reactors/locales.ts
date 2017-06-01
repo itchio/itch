@@ -42,11 +42,14 @@ async function doDownloadLocale (lang: string, resources: II18nResources): Promi
   const remote = remoteFileName(lang);
   const uri = `${urls.remoteLocalePath}/${lang}.json`;
 
-  logger.info(`Downloading fresh locale file from ${uri}`);
+  logger.debug(`Downloading fresh locale file from ${uri}`);
   const resp = await request("get", uri, {}, {format: "json"});
 
-  logger.info(`HTTP GET ${uri}: ${resp.statusCode}`);
-  if (resp.statusCode !== 200) {
+  logger.debug(`HTTP GET ${uri}: ${resp.statusCode}`);
+  if (resp.statusCode === 404) {
+    // no such locale, alrighty then.
+    return;
+  } else if (resp.statusCode !== 200) {
     throw new Error("Locale update server is down, try again later");
   }
 
@@ -56,11 +59,11 @@ async function doDownloadLocale (lang: string, resources: II18nResources): Promi
   };
 
   try {
-    logger.info(`Saving fresh ${lang} locale to ${remote}`);
+    logger.debug(`Saving fresh ${lang} locale to ${remote}`);
     const payload = JSON.stringify(finalResources, null, 2);
     await ifs.writeFile(remote, payload, {encoding: "utf8"});
   } catch (e) {
-    logger.info(`Could not save locale to ${remote}: ${e.stack || e.message || e}`);
+    logger.warn(`Could not save locale to ${remote}: ${e.stack || e.message || e}`);
   }
 
   return finalResources;
@@ -68,7 +71,7 @@ async function doDownloadLocale (lang: string, resources: II18nResources): Promi
 
 async function loadLocale (store: IStore, lang: string) {
   let local = canonicalFileName(lang);
-  if (!local) {
+  if (!(await ifs.exists(local))) {
     // try stripping region
     lang = lang.substring(0, 2);
     local = canonicalFileName(lang);
@@ -131,7 +134,8 @@ export default function (watcher: Watcher) {
 
     store.dispatch(actions.localeDownloadStarted({lang}));
 
-    logger.info(`Waiting a bit before downloading ${lang} locale...`);
+    // FIXME: this happens twice - it shouldn't
+    logger.debug(`Waiting a bit before downloading ${lang} locale...`);
     await delay(1000);
 
     let resources = {};
