@@ -68,8 +68,8 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps & I18nProps,
         } else if (canBeBought) {
           icon = "shopping_cart";
           label = t("grid.item.buy_now");
-          primary = true;
         }
+        primary = true;
       } else {
         return <span className="state not-platform-compatible">
           {t("grid.item.not_platform_compatible", {platform: formatItchPlatform(platform)})}
