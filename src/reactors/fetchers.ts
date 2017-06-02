@@ -17,6 +17,8 @@ import CollectionFetcher from "../fetchers/collection-fetcher";
 
 import {pathPrefix} from "../util/navigation";
 
+import {some} from "underscore";
+
 const staticFetchers = {
   "dashboard": DashboardFetcher,
   "collections": CollectionsFetcher,
@@ -122,6 +124,20 @@ export default function (watcher: Watcher) {
     if (action.payload.focused) {
       const currentTabId = store.getState().session.navigation.id;
       queueFetch(store, currentTabId, FetchReason.WindowFocused);
+    }
+  });
+
+  const watchedPreferences = [
+    "onlyCompatibleGames",
+    "onlyInstalledGames",
+    "onlyOwnedGames",
+  ];
+
+  watcher.on(actions.updatePreferences, async (store, action) => {
+    const prefs = action.payload;
+    if (some(watchedPreferences, (k) => prefs.hasOwnProperty(k))) {
+      const currentTabId = store.getState().session.navigation.id;
+      queueFetch(store, currentTabId, FetchReason.TabParamsChanged);
     }
   });
 }
