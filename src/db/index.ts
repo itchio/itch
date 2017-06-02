@@ -132,7 +132,7 @@ export class DB {
         store.dispatch(actions.dbCommit({tableName, updated: _.pluck(rows, "id")}));
       }
       logger.info(`saved ${entityIds.length - numUpToDate}/${entityIds.length}`
-        + ` ${tableName}, skipped ${numUpToDate} up-to-date\n`);
+        + ` ${tableName}, skipped ${numUpToDate} up-to-date`);
     }
   }
 
