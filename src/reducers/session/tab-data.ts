@@ -12,28 +12,44 @@ const emptyObj = {};
 export default reducer<ITabDataSet>(initialState, (on) => {
   on(actions.tabDataFetched, (state, action) => {
     const {id, data} = action.payload;
-    const oldData = state[id] || emptyObj;
+    const oldData = state[id];
+    if (!oldData) {
+      // ignore fresh data for closed tabs
+      return state;
+    }
 
     return {
       ...state,
-      [id]: {
-        ...oldData,
-        ...data,
-      },
+      [id]: {...oldData, ...data},
     };
   });
 
   on(actions.tabEvolved, (state, action) => {
     const {id, data} = action.payload;
-    const oldData = state[id] || emptyObj;
+    const oldData = state[id];
+    if (!oldData) {
+      // ignore fresh data for closed tabs
+      return state;
+    }
 
     return {
       ...state,
-      [id]: {
-        ...oldData,
-        ...data,
-      },
+      [id]: {...oldData, ...data},
     };
+  });
+
+  on(actions.focusTab, (state, action) => {
+    const {id} = action.payload;
+    const oldData = state[id] || emptyObj;
+
+    // when constants tabs are focused, they need
+    // an initial empty set of tabData, otherwise
+    // we won't accept the result of fetchers for
+    // those.
+    return {
+      ...state,
+      [id]: {...oldData},
+    }
   });
 
   on(actions.closeTab, (state, action) => {
@@ -41,10 +57,10 @@ export default reducer<ITabDataSet>(initialState, (on) => {
   });
 
   on(actions.openTab, (state, action) => {
-    const {id, data} = action.payload;
+    const {id, data = emptyObj} = action.payload;
     return {
       ...state,
-      [id]: data,
+      [id]: {...data},
     };
   });
 });
