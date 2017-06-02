@@ -56,7 +56,12 @@ export async function transformUrl(original: string): Promise<string> {
 export function pathToId(path: string): string {
   const slashIndex = path.indexOf("/");
   if (slashIndex >= 0) {
-    return path.substring(slashIndex + 1);
+    const sub = path.substring(slashIndex + 1);
+    const questionIndex = sub.lastIndexOf("?");
+    if (questionIndex === -1) {
+      return sub;
+    } 
+    return sub.substring(0, questionIndex);
   }
   return "";
 }
