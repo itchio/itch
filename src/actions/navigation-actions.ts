@@ -67,7 +67,7 @@ export const navigate = (id: any, data = {}, background = false) => {
   }
 };
 
-const internalOpenTab = createAction<IOpenTabPayload>(OPEN_TAB);
+export const internalOpenTab = createAction<IOpenTabPayload>(OPEN_TAB);
 export const openTab = (payload: IOpenTabPayload) => {
   return internalOpenTab({...payload, id: uuid.v4()});
 };

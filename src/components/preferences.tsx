@@ -36,7 +36,9 @@ import styled, * as styles from "./styles";
 
 const PreferencesDiv = styled.div`
   ${styles.meat()}
+`;
 
+const PreferencesContentDiv = styled.div`
   overflow-y: auto;
   padding: 0px 20px 30px 20px;
   font-size: 20px;
@@ -302,115 +304,117 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps & I1
 
     return <PreferencesDiv>
       <TitleBar tab={tab}/>
-      <h2>{t("preferences.language")}</h2>
-      <div className="language-form">
-        <label className="active">
-          <SelectRow onChange={this.onLanguageChange} options={options} value={lang || "__"}/>
+      <PreferencesContentDiv>
+        <h2>{t("preferences.language")}</h2>
+        <div className="language-form">
+          <label className="active">
+            <SelectRow onChange={this.onLanguageChange} options={options} value={lang || "__"}/>
 
-          {
-            downloading
-            ? <LoadingCircle progress={0.3}/>
-            : <IconButton
-                icon="repeat"
-                onClick={(e) => {
-                  e.preventDefault();
-                  queueLocaleDownload({lang});
-                }}
-              />
-          }
-          
-        </label>
-      </div>
+            {
+              downloading
+              ? <LoadingCircle progress={0.3}/>
+              : <IconButton
+                  icon="repeat"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    queueLocaleDownload({lang});
+                  }}
+                />
+            }
+            
+          </label>
+        </div>
 
-      <p className="explanation flex">
-        {t("preferences.language.get_involved", {name: "itch"}) + " "}
-        <a href={translateUrl}>
-          <img className="weblate-badge" src={translationBadgeUrl}/>
-        </a>
-      </p>
+        <p className="explanation flex">
+          {t("preferences.language.get_involved", {name: "itch"}) + " "}
+          <a href={translateUrl}>
+            <img className="weblate-badge" src={translationBadgeUrl}/>
+          </a>
+        </p>
 
-      <h2>{t("preferences.security")}</h2>
-      <div className="security-form">
-        <label className={classNames({active: isolateApps})}>
-          <input type="checkbox" checked={isolateApps} onChange={(e) => {
-            updatePreferences({isolateApps: e.currentTarget.checked});
-          }}/>
-          <span> {t("preferences.security.sandbox.title")} </span>
-          <span data-rh-at="bottom" data-rh={t("label.experimental")}>
-            <Icon icon="lab-flask" onClick={(e: React.MouseEvent<any>) => e.preventDefault()}/>
-          </span>
-        </label>
-      </div>
+        <h2>{t("preferences.security")}</h2>
+        <div className="security-form">
+          <label className={classNames({active: isolateApps})}>
+            <input type="checkbox" checked={isolateApps} onChange={(e) => {
+              updatePreferences({isolateApps: e.currentTarget.checked});
+            }}/>
+            <span> {t("preferences.security.sandbox.title")} </span>
+            <span data-rh-at="bottom" data-rh={t("label.experimental")}>
+              <Icon icon="lab-flask" onClick={(e: React.MouseEvent<any>) => e.preventDefault()}/>
+            </span>
+          </label>
+        </div>
 
-      <p className="explanation">
-        {t("preferences.security.sandbox.description")}
-        {" "}
-        <a href={urls.sandboxDocs}>
-          {t("docs.learn_more")}
-        </a>
-      </p>
+        <p className="explanation">
+          {t("preferences.security.sandbox.description")}
+          {" "}
+          <a href={urls.sandboxDocs}>
+            {t("docs.learn_more")}
+          </a>
+        </p>
 
-      <h2>{t("preferences.behavior")}</h2>
-      <div className="behavior-form">
-        <label className={classNames({active: openAtLogin})}>
-          <input type="checkbox" checked={openAtLogin} onChange={(e) => {
-            updatePreferences({openAtLogin: e.currentTarget.checked});
-          }}/>
-          <span> {t("preferences.behavior.open_at_login")} </span>
-        </label>
+        <h2>{t("preferences.behavior")}</h2>
+        <div className="behavior-form">
+          <label className={classNames({active: openAtLogin})}>
+            <input type="checkbox" checked={openAtLogin} onChange={(e) => {
+              updatePreferences({openAtLogin: e.currentTarget.checked});
+            }}/>
+            <span> {t("preferences.behavior.open_at_login")} </span>
+          </label>
 
-        <OpenAtLoginError/>
+          <OpenAtLoginError/>
 
-        <label className={classNames({active: openAsHidden})}>
-          <input type="checkbox" checked={openAsHidden} onChange={(e) => {
-            updatePreferences({openAsHidden: e.currentTarget.checked});
-          }}/>
-          <span> {t("preferences.behavior.open_as_hidden")} </span>
-        </label>
+          <label className={classNames({active: openAsHidden})}>
+            <input type="checkbox" checked={openAsHidden} onChange={(e) => {
+              updatePreferences({openAsHidden: e.currentTarget.checked});
+            }}/>
+            <span> {t("preferences.behavior.open_as_hidden")} </span>
+          </label>
 
-        <label className={classNames({active: closeToTray})}>
-          <input type="checkbox" checked={closeToTray} onChange={(e) => {
-            updatePreferences({closeToTray: e.currentTarget.checked});
-          }}/>
-          <span> {t("preferences.behavior.close_to_tray")} </span>
-        </label>
+          <label className={classNames({active: closeToTray})}>
+            <input type="checkbox" checked={closeToTray} onChange={(e) => {
+              updatePreferences({closeToTray: e.currentTarget.checked});
+            }}/>
+            <span> {t("preferences.behavior.close_to_tray")} </span>
+          </label>
 
-        <label className={classNames({active: manualGameUpdates})}>
-          <input type="checkbox" checked={manualGameUpdates} onChange={(e) => {
-            updatePreferences({manualGameUpdates: e.currentTarget.checked});
-          }}/>
-          <span> {t("preferences.behavior.manual_game_updates")} </span>
-        </label>
+          <label className={classNames({active: manualGameUpdates})}>
+            <input type="checkbox" checked={manualGameUpdates} onChange={(e) => {
+              updatePreferences({manualGameUpdates: e.currentTarget.checked});
+            }}/>
+            <span> {t("preferences.behavior.manual_game_updates")} </span>
+          </label>
 
-        <label className={classNames({active: preventDisplaySleep})}>
-          <input type="checkbox" checked={preventDisplaySleep} onChange={(e) => {
-            updatePreferences({preventDisplaySleep: e.currentTarget.checked});
-          }}/>
-          <span> {t("preferences.behavior.prevent_display_sleep")} </span>
-        </label>
-      </div>
+          <label className={classNames({active: preventDisplaySleep})}>
+            <input type="checkbox" checked={preventDisplaySleep} onChange={(e) => {
+              updatePreferences({preventDisplaySleep: e.currentTarget.checked});
+            }}/>
+            <span> {t("preferences.behavior.prevent_display_sleep")} </span>
+          </label>
+        </div>
 
-      <h2>{t("preferences.notifications")}</h2>
-      <div className="behavior-form">
-        <label className={classNames({active: readyNotification})}>
-          <input type="checkbox" checked={readyNotification} onChange={(e) => {
-            updatePreferences({readyNotification: e.currentTarget.checked});
-          }}/>
-          <span> {t("preferences.notifications.ready_notification")} </span>
-        </label>
-      </div>
+        <h2>{t("preferences.notifications")}</h2>
+        <div className="behavior-form">
+          <label className={classNames({active: readyNotification})}>
+            <input type="checkbox" checked={readyNotification} onChange={(e) => {
+              updatePreferences({readyNotification: e.currentTarget.checked});
+            }}/>
+            <span> {t("preferences.notifications.ready_notification")} </span>
+          </label>
+        </div>
 
-      <h2>{t("preferences.install_locations")}</h2>
-      {this.installLocationTable()}
+        <h2>{t("preferences.install_locations")}</h2>
+        {this.installLocationTable()}
 
-      <h2 className="toggle" onClick={(e) => updatePreferences({showAdvanced: !showAdvanced})}>
-        <span className={`icon icon-triangle-right turner ${showAdvanced ? "turned" : ""}`}/>
-        {" "}
-        {t("preferences.advanced")}
-      </h2>
-      {showAdvanced
-      ? this.renderAdvanced()
-      : ""}
+        <h2 className="toggle" onClick={(e) => updatePreferences({showAdvanced: !showAdvanced})}>
+          <span className={`icon icon-triangle-right turner ${showAdvanced ? "turned" : ""}`}/>
+          {" "}
+          {t("preferences.advanced")}
+        </h2>
+        {showAdvanced
+        ? this.renderAdvanced()
+        : ""}
+      </PreferencesContentDiv>
     </PreferencesDiv>;
   }
 

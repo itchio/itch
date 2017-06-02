@@ -2,9 +2,9 @@
 import * as actions from "../actions";
 import {Watcher} from "./watcher";
 
-import {createSelector} from "reselect";
-
 import staticTabData from "../constants/static-tab-data";
+
+import {createSelector} from "reselect";
 
 import {IAppState, IStore} from "../types";
 
@@ -31,7 +31,9 @@ export default function (watcher: Watcher) {
 
     const {tabData} = state.session;
 
-    if (staticTabData[id]) {
+    const constantTabs = new Set<string>(state.session.navigation.tabs.constant);
+
+    if (constantTabs.has(id)) {
       // switching to constant tab, that's good
       store.dispatch(actions.focusTab({id}));
       return;
@@ -54,13 +56,24 @@ export default function (watcher: Watcher) {
     const {data, background} = action.payload;
 
     // must be a new tab then!
-    store.dispatch(actions.openTab({
-      background,
-      data: {
-        path: id,
-        ...data,
-      },
-    }));
+    if (staticTabData[id]) {
+      store.dispatch(actions.internalOpenTab({
+        id,
+        background,
+        data: {
+          path: id,
+          ...data,
+        },
+      }));
+    } else {
+      store.dispatch(actions.openTab({
+        background,
+        data: {
+          path: id,
+          ...data,
+        },
+      }));
+    }
   });
 
   watcher.on(actions.evolveTab, async (store, action) => {
