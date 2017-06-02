@@ -58,7 +58,7 @@ function convertMenuAction (payload: IMenuItemPayload) {
 
   switch (label) {
     case "sidebar.new_tab": return actions.newTab({});
-    case "menu.file.close_tab": return macos ? actions.closeTabOrAuxWindow({}) : actions.closeTab({id: null});
+    case "menu.file.close_tab": return macos ? actions.closeTabOrAuxWindow({}) : actions.closeCurrentTab({});
     case "menu.file.close_all_tabs": return actions.closeAllTabs({});
     case "menu.file.close_window": return actions.hideWindow({});
     case "menu.file.quit": return actions.quitWhenMain({});
