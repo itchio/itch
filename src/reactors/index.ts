@@ -25,6 +25,8 @@ import rememberedSessions from "./remembered-sessions";
 import session from "./session";
 import navigation from "./navigation";
 import commons from "./commons";
+import purchases from "./purchases";
+import url from "./url";
 
 const watcher = new Watcher();
 
@@ -52,6 +54,8 @@ rememberedSessions(watcher);
 session(watcher);
 navigation(watcher);
 commons(watcher);
+purchases(watcher);
+url(watcher);
 
 watcher.validate();
 
