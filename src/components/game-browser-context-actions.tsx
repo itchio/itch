@@ -26,7 +26,7 @@ const ActionsDiv = styled.div`
   display: flex;
   flex-direction: column;
 
-  padding-top: 4px;
+  padding-left: 20px;
 `;
 
 /**

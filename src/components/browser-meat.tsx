@@ -472,8 +472,8 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
             src="about:blank"
             ref={(wv) => this.webview = wv}/>}
         </WebviewShell>
-        {context}
       </BrowserMain>
+      {context}
     </BrowserMeatContainer>;
   }
 
@@ -553,7 +553,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
   }
 }
 
-export type ControlsType = "generic" | "game" | "user";
+export type ControlsType = "generic" | "game";
 
 interface IProps extends IMeatProps {
   url: string;

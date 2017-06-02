@@ -9,29 +9,28 @@ import GameActions from "./game-actions";
 import GameStats from "./game-stats";
 import {pathToId} from "../util/navigation";
 
+import Game from "../db/models/game";
+import {ICaveSummary} from "../db/models/cave";
+
 import {IDispatch, dispatcher} from "../constants/action-types";
 import {
-  IAppState, IGameRecord, ICaveRecord, IDownloadKey, ITabData,
+  IAppState, IDownloadKey, ITabData,
 } from "../types";
 import * as actions from "../actions";
 
 import {IBrowserControlProperties} from "./browser-state";
 import GameBrowserContextActions from "./game-browser-context-actions";
 
-import Cover from "./basics/cover"; 
-
 import styled from "./styles";
 
 const BrowserContextDiv = styled.div`
-  flex-basis: 240px;
   background: ${props => props.theme.sidebarBackground};
 
   display: flex;
-  align-items: stretch;
-  flex-direction: column;
-  align-items: stretch;
+  justify-content: center;
+  flex-direction: row;
 
-  padding: 12px;
+  padding: 6px;
   border-left: 1px solid #3e3e3e;
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.16);
   z-index: 50;
@@ -42,40 +41,29 @@ const BrowserContextDiv = styled.div`
 const GameActionsContainer = styled.div`
   display: flex;
   flex-shrink: 0;
-  flex-grow: 1;
-  flex-direction: column;
+  flex-grow: 0;
+  flex-direction: row;
   padding-right: 0;
   height: auto;
   align-items: stretch;
+  margin-left: 10px;
 `;
 
 export class GameBrowserContext extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
-    this.state = {
-      hover: false,
-    };
+    this.state = {};
   }
 
   render () {
-    const {game} = this.props;
-    // FIXME db
+    const {game, cave, downloadKey} = this.props;
     if (!game) {
       return <div/>;
     }
-    const {coverUrl, stillCoverUrl} = game;
-    const {hover} = this.state;
 
     return <BrowserContextDiv
         onContextMenu={this.onContextMenu}>
-      <Cover
-        coverUrl={coverUrl}
-        stillCoverUrl={stillCoverUrl}
-        hover={hover}
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-      />
-      <GameStats game={game} mdash={false}/>
+      <GameStats game={game} cave={cave} downloadKey={downloadKey} mdash={true}/>
       <GameActionsContainer>{this.gameActions()}</GameActionsContainer>
     </BrowserContextDiv>;
   }
@@ -91,7 +79,7 @@ export class GameBrowserContext extends React.PureComponent<IProps & IDerivedPro
       return null;
     }
 
-    return <GameActions vertical game={game} CustomSecondary={GameBrowserContextActions}/>;
+    return <GameActions game={game} CustomSecondary={GameBrowserContextActions}/>;
   }
 
   componentWillReceiveProps () {
@@ -110,14 +98,6 @@ export class GameBrowserContext extends React.PureComponent<IProps & IDerivedPro
       });
     }
   }
-
-  onMouseEnter = () => {
-    this.setState({hover: true});
-  }
-
-  onMouseLeave = () => {
-    this.setState({hover: false});
-  }
 }
 
 interface IProps extends IBrowserControlProperties {}
@@ -125,17 +105,14 @@ interface IProps extends IBrowserControlProperties {}
 interface IDerivedProps {
   gameId: number;
 
-  game: IGameRecord;
-  cave?: ICaveRecord;
+  game: Game;
+  cave?: ICaveSummary;
   downloadKey: IDownloadKey;
 
   openGameContextMenu: typeof actions.openGameContextMenu;
 }
 
-// optional everything because react typings is overzealous
-// TODO: check if still needed
 interface IState {
-  hover?: boolean;
   dominantColor?: IRGBColor;
 }
 
