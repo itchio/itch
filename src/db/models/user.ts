@@ -15,6 +15,14 @@ export default class User {
   /** the user's display name */
   displayName: string;
 
+  @Column("boolean", {nullable: true})
+  /** true if the user is a developer */
+  developer: boolean;
+
+  @Column("boolean", {nullable: true})
+  /** true if the user is a press user */
+  pressUser: boolean;
+
   @Column("text", {nullable: true})
   /** the canonical address of the game's page */
   url: string;
