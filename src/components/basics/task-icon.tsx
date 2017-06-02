@@ -21,8 +21,8 @@ class TaskIcon extends React.PureComponent<ITaskIconProps, void> {
       }
     }
 
-    const classes = animate ? ["scan"] : [];    
-    return <Icon icon={icon} classes={classes}/>;
+    const className = animate ? "scan" : "";
+    return <Icon icon={icon} className={className}/>;
   }
 }
 

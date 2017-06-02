@@ -45,7 +45,7 @@ export class Toast extends React.PureComponent<IProps & IDerivedProps & I18nProp
     const {t, tabData = {}} = this.props;
 
     return <div className="toast-meat">
-      <Icon icon="heart-broken" classes={["leader"]}/>
+      <Icon icon="heart-broken" className="leader"/>
       <h2>{t("toast.title")}</h2>
 
       <p>{t("toast.message")} {t("toast.call_to_action")}</p>

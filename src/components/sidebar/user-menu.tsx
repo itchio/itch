@@ -22,6 +22,11 @@ import Dropdown from "./dropdown";
 import {IDropdownItem} from "./dropdown-item";
 import Icon from "../basics/icon";
 
+const IconBadge = styled(Icon)`
+  display: inline-block;
+  padding: 0 4px;
+`;
+
 const UserMenuButton = styled(Button)`
   margin: 8px;
   margin-right: 0;
@@ -113,8 +118,10 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps, v
     return <UserMenuButton discreet>
       <img src={coverUrl}/>
       {displayName || username}
+      {me.developer ? <IconBadge icon="rocket"/> : null}
+      {me.pressUser ? <IconBadge icon="newspaper-o"/> : null}
       <Filler/>
-      <Icon icon="triangle-down" classes={["flipper"]}/>
+      <Icon icon="triangle-down" className="flipper"/>
     </UserMenuButton>;
   }
 }

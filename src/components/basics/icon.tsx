@@ -8,26 +8,26 @@ import * as classNames from "classnames";
  */
 class Icon extends React.PureComponent<IProps, void> {
   render () {
-    const {icon, classes, hint, onClick} = this.props;
+    const {icon, className, hint, ...restProps} = this.props;
     if (!icon) {
       return <span/>;
     }
 
-    const className = classNames(`icon icon-${icon}`, classes);
+    const finalClassName = classNames(className, `icon icon-${icon}`);
     const hintProps: any = {};
     if (hint) {
       hintProps["data-rh"] = hint;
       hintProps["data-rh-at"] = "top";
     }
 
-    return <span className={className} {...hintProps} onClick={onClick}/>;
+    return <span className={finalClassName} {...hintProps} {...restProps}/>;
   }
 }
 
 interface IProps {
   icon: string;
-  classes?: string[];
   hint?: string;
+  className?: string;
   onClick?: any;
 }
 
