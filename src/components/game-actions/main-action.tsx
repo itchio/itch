@@ -8,7 +8,7 @@ import TaskIcon from "../basics/task-icon";
 import LoadingCircle from "../basics/loading-circle";
 import Button from "../basics/button";
 
-import {formatItchPlatform} from "../../format";
+import {ItchPlatform, formatItchPlatform} from "../../format";
 import * as actions from "../../actions";
 
 import {IActionsInfo} from "./types";
@@ -184,7 +184,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps & I18nProps,
 interface IProps extends IActionsInfo {
   /** whether or not to animate the main action's icon (to indicate something's going on) */
   animate: boolean;
-  platform: string;
+  platform: ItchPlatform;
   platformCompatible: boolean;
   progress: number;
   cancellable: boolean;
