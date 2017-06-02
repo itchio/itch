@@ -2,7 +2,7 @@
 export type ItchPlatform = "linux" | "windows" | "osx" | "android";
 
 const itchPlatforms = {
-  linux: "GNU/Linux", // not SteamOS
+  linux: "Linux", // we hardly GNU you
   windows: "Windows",
   osx: "macOS", // since WWDC june 2016
   android: "Android",
