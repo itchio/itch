@@ -32,5 +32,5 @@ export function getLocalesConfigPath (): string {
 type IInjectName = "itchio-monkeypatch" | "game";
 
 export function getInjectPath(name: IInjectName) {
-  return getPath(`src/inject/${name}.js`);
+  return `./inject/${name}`;
 }

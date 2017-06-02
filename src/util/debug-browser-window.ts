@@ -1,5 +1,6 @@
 
-// tslint:disable:no-console
+import rootLogger from "../logger";
+const logger = rootLogger.child({name: "debug-browser-window"});
 
 /**
  * Gives us some log of what happens in the browser window, helps debugging the flow
@@ -10,7 +11,7 @@ function enableEventDebugging (prefix: string, win: any) {
     " leave-html-full-screen app-command";
   events.split(" ").forEach((ev) => {
     win.on(ev, (e: any, deets: any) => {
-      console.log(`${prefix} window event: ${ev}, ${JSON.stringify(deets, null, 2)}`);
+      logger.debug(`${prefix} window event: ${ev}, ${JSON.stringify(deets, null, 2)}`);
     });
   });
 
@@ -19,7 +20,7 @@ function enableEventDebugging (prefix: string, win: any) {
     " page-favicon-updated new-window will-navigate crashed plugin-crashed destroyed";
   cevents.split(" ").forEach((ev) => {
     win.webContents.on(ev, (e: any, ...args: any[]) => {
-      console.log(`${prefix} webcontents event: ${ev}, ${JSON.stringify(args, null, 2)}`);
+      logger.debug(`${prefix} webcontents event: ${ev}, ${JSON.stringify(args, null, 2)}`);
     });
   });
 }
