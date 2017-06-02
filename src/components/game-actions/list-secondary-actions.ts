@@ -1,83 +1,78 @@
 
-import {findWhere} from "underscore";
+  import * as actions from "../../actions";
 
-import * as actions from "../../actions";
-import {formatDate, DATE_FORMAT} from "../../format";
+  import Game from "../../db/models/game";
+  import {ICaveSummary} from "../../db/models/cave";
 
-import {
-  IGameRecord, ICaveRecord, IDownloadKey, ClassificationAction,
-  ILocalizedString, ITask,
-} from "../../types";
+  import {
+    IDownloadKey, ClassificationAction,
+    ILocalizedString, ITask,
+  } from "../../types";
 
-import {IAction} from "../../constants/action-types";
+  import {IAction} from "../../constants/action-types";
 
-import {ILocalizer} from "../../localizer";
+  import {ILocalizer} from "../../localizer";
 
-export type ActionType = "secondary" | "separator" | "info";
+  export type ActionType = "secondary" | "separator" | "info";
 
-export interface IActionOpts {
-  type?: ActionType;
-  label?: ILocalizedString;
-  icon?: string;
-  action?: IAction<any>;
-  classes?: string[];
-  hint?: string;
-}
+  export interface IActionOpts {
+    type?: ActionType;
+    label?: ILocalizedString;
+    icon?: string;
+    action?: IAction<any>;
+    classes?: string[];
+  }
 
-function browseAction (caveId: string): IActionOpts {
-  return {
-    type: "secondary",
-    label: ["grid.item.show_local_files"],
-    icon: "folder-open",
-    action: actions.exploreCave({caveId}),
-  };
-}
-
-function purchaseAction (game: IGameRecord, downloadKey: IDownloadKey, t: ILocalizer): IActionOpts {
-  const donate = (game.minPrice === 0);
-  const againSuffix = downloadKey ? "_again" : "";
-  const hint = downloadKey ? formatDate(downloadKey.createdAt, t.lang, DATE_FORMAT) : null;
-
-  if (donate) {
+  function browseAction (caveId: string): IActionOpts {
     return {
-      label: ["grid.item.donate" + againSuffix],
-      icon: "heart-filled",
-      action: actions.initiatePurchase({game}),
-      classes: ["generous"],
-      hint,
-    };
-  } else {
-    return {
-      label: ["grid.item.buy_now" + againSuffix],
-      icon: "shopping_cart",
-      action: actions.initiatePurchase({game}),
-      classes: ["generous"],
-      hint,
+      type: "secondary",
+      label: ["grid.item.show_local_files"],
+      icon: "folder-open",
+      action: actions.exploreCave({caveId}),
     };
   }
-}
 
-function uninstallAction (caveId: string): IActionOpts {
-  return {
-    label: ["grid.item.uninstall"],
-    icon: "uninstall",
-    action: actions.requestCaveUninstall({caveId}),
-  };
-}
+  function purchaseAction (game: Game, downloadKey: IDownloadKey, t: ILocalizer): IActionOpts {
+    const donate = (game.minPrice === 0);
 
-interface IListSecondaryActionsProps {
-  game: IGameRecord;
-  cave: ICaveRecord;
-  downloadKey: IDownloadKey;
+    if (donate) {
+      return {
+        label: ["grid.item.donate"],
+        icon: "heart-filled",
+        action: actions.initiatePurchase({game}),
+        classes: ["generous"],
+      };
+    } else {
+      return {
+        label: ["grid.item.buy_now"],
+        icon: "shopping_cart",
+        action: actions.initiatePurchase({game}),
+        classes: ["generous"],
+      };
+    }
+  }
 
-  mayDownload: boolean;
-  canBeBought: boolean;
+  function uninstallAction (caveId: string): IActionOpts {
+    return {
+      label: ["grid.item.uninstall"],
+      icon: "uninstall",
+      action: actions.requestCaveUninstall({caveId}),
+    };
+  }
 
-  action: ClassificationAction;
+  interface IListSecondaryActionsProps {
+    game: Game;
+    cave: ICaveSummary;
+    downloadKey: IDownloadKey;
 
-  tasks: ITask[];
+    mayDownload: boolean;
+    canBeBought: boolean;
 
-  t: ILocalizer;
+    action: ClassificationAction;
+
+    tasks: ITask[];
+
+    t: ILocalizer;
 }
 
 export default function listSecondaryActions (props: IListSecondaryActionsProps) {
@@ -99,41 +94,6 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
     if (action !== "open") {
       items.push(browseAction(cave.id));
     }
-
-    let version = "";
-    if (cave.buildUserVersion) {
-      version = `${cave.buildUserVersion}`;
-    } else if (cave.buildId) {
-      version = `#${cave.buildId}`;
-    }
-
-    const upload = findWhere(cave.uploads, {id: cave.uploadId});
-    if (upload && upload.displayName) {
-      version += ` (${upload.displayName})`;
-    } else if (cave.channelName) {
-      version += ` (${cave.channelName})`;
-    } else if (cave.uploadId) {
-      version += ` #${cave.uploadId}`;
-    }
-
-    // FIXME: this will display the wrong date for builds
-    let mtime: any = cave.installedArchiveMtime;
-    if (typeof mtime === "string") {
-      // FIXME: this is a crude workaround for moment.js warnings
-      mtime = new Date(mtime);
-    }
-    let hint = null;
-    if (mtime) {
-      hint = `${formatDate(mtime, t.lang, DATE_FORMAT)}`;
-    }
-
-    items.push({
-      type: "info",
-      icon: "checkmark",
-      label: ["grid.item.version", {version}],
-      hint: hint,
-      action: actions.copyToClipboard({text: `game ${game.id}, version ${version}`}),
-    });
 
     let busy = false;
 

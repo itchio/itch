@@ -31,8 +31,6 @@ const platform = os.itchPlatform();
 import styled from "../styles";
 import Filler from "../basics/filler";
 
-import load from "../load";
-
 const StyledMainAction = styled(MainAction)`
   &.vertical {
     width: 100%;
@@ -83,7 +81,7 @@ interface IProps {
   game: GameModel;
   showSecondary?: boolean;
   CustomSecondary?: typeof React.Component;
-  cave?: CaveModel;
+  cave?: ICaveSummary;
 
   vertical?: boolean;
 }
